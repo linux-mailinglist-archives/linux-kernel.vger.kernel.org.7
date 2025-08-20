@@ -1,540 +1,244 @@
-Return-Path: <linux-kernel+bounces-777733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 341DEB2DD36
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:02:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D4BB2DD21
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 700D13B5EE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:00:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F6D04E22BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA943218A1;
-	Wed, 20 Aug 2025 12:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C5331A042;
+	Wed, 20 Aug 2025 12:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BdimJlES"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="lT0lBpYf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ghRXDfDR"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDA8320CB3;
-	Wed, 20 Aug 2025 12:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA73308F11
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755694718; cv=none; b=phne29HH62kvpeOCuk1CKjFLDhssN9kxTIvbhTsxwjx8CBEwtj9DX5hlMpVr3o5Jsc/CdLlJ4bP9we/K4/uYGpvtkNi0AtkDsVlnVRkgXhwVcVTbg/mJSCoEaP6N1eXyDsxABWjoRDICC/mpsOMCpUFw/g7qowBMxibU//bi6F8=
+	t=1755694704; cv=none; b=rBSKqf7i4UTEbM2HZrjKi4vmTok73lkhkdJ7lKEHM5gs92jDwAj4mNxenkGWysze6BYEjWMwdkdmp+pUcfJursVZiw8mhb4B1hRI7XEKEK7Z1B6XaaiaUcua6uVISCLjRbyHIIkUonOAR18K7JB0MRJMGZi5zVNIEzaAwA4azgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755694718; c=relaxed/simple;
-	bh=60RNjZpwSNZ6wBilj4su/4Aeh008/tMwIResm6EJvmA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=R4XMOenCFEJ94oFFZzLHFMC4HwhGXimEL8gInU0VnVHU7y3Ek/vs7Z5GfeeGEGAQd0KCaSQt9m3dDDU3Nscur6X6KPpCTEaNOJlvp/sR5EZnJ4PCpXoCL2nDCGUkUDGxyIWaMw1ZRC05x4+hNPAGAZJZU3hXUOxvl0PycJyTnCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BdimJlES; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.1.106] (mob-5-90-62-213.net.vodafone.it [5.90.62.213])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CDE2D2F0D;
-	Wed, 20 Aug 2025 14:57:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755694649;
-	bh=60RNjZpwSNZ6wBilj4su/4Aeh008/tMwIResm6EJvmA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=BdimJlESJvXOqNFAC73aoODI0hwIJSIRiZ0KLhZhEmBpFFTN2uFnxQPsHBuzBRZ67
-	 7XQZFAMhCkKe6fMpSXysqOdZltIl8KU48HiEJLVetypgXWpfPkdt53svVLKpFJV5Hh
-	 GhtQWjdWjYudUJHO6Si2QmZpOTkIVJ8MAmVxuI+w=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Wed, 20 Aug 2025 14:58:15 +0200
-Subject: [PATCH v4 7/8] media: amlogic-c3: Use v4l2-params for validation
+	s=arc-20240116; t=1755694704; c=relaxed/simple;
+	bh=+I4+TkLLbHArQp0sRrr2pPuND6uRxKXdIx4RVwLLJGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E0XtMWsxUhF9KiLgjWNu9lQvW77FJjLD67kICW0YUDjpuNXqnbXcEX6WCP0oP3cTYgHTsiuUq78vrq+iFt3BL7FigROnANEFgz7nXKU8lWN30xPyHUu4nPKQ3umKVjrlXFmFpsI1eWLe4F5VLTQNtuQBGvpstqIa7sCC4DAizM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=lT0lBpYf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ghRXDfDR; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9BB76EC08CA;
+	Wed, 20 Aug 2025 08:58:20 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Wed, 20 Aug 2025 08:58:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1755694700; x=
+	1755781100; bh=0wsGx0mAlZVoMlqY3YzRKD0yjauwkX1n/YWAvB+PZcA=; b=l
+	T0lBpYfanUhN9GxgC5VP7dA3SFHzSpFOxvKxKVPNyW85QOaYSCAcEhdJ5ndmDwzM
+	mQ2vRxIT212ZPeGogVoiujTXPhWjFSFOHwXfoe5iXbhDmjUpCC6wUj5Ohel2tEpw
+	9SsikI3ltYXtSMRxoSxlqC3vAFKOKDSs+95ReOoaUwEaIBhb8D0/Tm7QZZdMP1Rs
+	B4xv3P02KaybnlZbv6+2NJJu9LSE5/Bjp9FKZpWFtFn1gAiHXreLVGKXUYwP05uq
+	ancKxTKw8jtNq7H2QfgoW1juLVqEVYf4YOxXIjq1CCfQA/mcKwXTIdwJ4yVBWLk5
+	1mVNYZF9rfpX2vjmrNPtw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1755694700; x=1755781100; bh=0wsGx0mAlZVoMlqY3YzRKD0yjauwkX1n/YW
+	AvB+PZcA=; b=ghRXDfDR6cq4ZaBhAqZTkfK91U5D2lmmmQCOwhvTr1gFm39pSkv
+	Mob3O9d+wqkBskkxXQP2HvHGZJhMAOkLDIzcK+M0p6CsinFIa80FrcBgRZxx9hrk
+	UnBpXgPNIK7v3hacqwyYuCksNmrykR6W0IpWJmy7SI9xp59GQ9QhGvAZ2RVqEAuf
+	+BJUZz62xzplL6bCMoRy/CS41I1Fx+RN2LD5XkfShQlzFyeH1gyjO8o5ubvMhV7j
+	GGOISeZiLBevWcN2uLVc28psZQgEV6/x7gtRdbaa+92erBmaSrCISy+FUiSOr37u
+	o3gacTzobQcoxkhgprzcO+zQBoqnBIvsKLg==
+X-ME-Sender: <xms:a8alaO7m6bzlkI-e5GAgu826TdPmhkSO3oSjDw8YwlGYIfauW6VT-w>
+    <xme:a8alaD_Yd9nsUiXAt1SUa2u1ACqAx0BuTYqIL2xeP73e0o4tcppx4aNlvy-svqW6B
+    XF20NyTb3pKpTXS9sI>
+X-ME-Received: <xmr:a8alaIyi0pmAb_bpMXJ8a9zVLfH0rUGAga247GmZ_a65t7OB6dRRv9mewVSu>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheekgedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedv
+    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhhrghkvggvlhdrsghuthhtse
+    hlihhnuhigrdguvghvpdhrtghpthhtohepjhhoshhhuhgrrdhhrghhnhhjhiesghhmrghi
+    lhdrtghomhdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdrohhrghdprhgtph
+    htthhopegtlhhmsehfsgdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhho
+    uhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipd
+    hrtghpthhtohepshhurhgvnhgssehgohhglhgvrdgtohhmpdhrtghpthhtohepmhhhohgt
+    khhosehsuhhsvgdrtghomhdprhgtphhtthhopehjrggtkhhmrghnsgesghhoohhglhgvrd
+    gtohhm
+X-ME-Proxy: <xmx:a8alaKFaNQIAE1_v9rISkD9ON5DAaeweWQiDe3JYR6YI5fAEtLX-XQ>
+    <xmx:a8alaLO7cismCRVmooK_wrIYqEMEUL5Cssc2uzzKFNuFJRW980L-Mg>
+    <xmx:a8alaBfEWC6ONWM9Pr6UdWmbS2hTXchelQ7MN2cfadebezcPvHidiw>
+    <xmx:a8alaATf3BqwDkC0B5FoahWuxdG3L3puwiqIGM-S-c9NhmyMC8snXQ>
+    <xmx:bMalaGpUTqr-rMEyOLbMK1kqqL-_OJ4uc-AAPIDuQrPeuhMRp7o_QRXP>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 20 Aug 2025 08:58:18 -0400 (EDT)
+Date: Wed, 20 Aug 2025 13:58:15 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Chris Mason <clm@fb.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@gogle.com>, Michal Hocko <mhocko@suse.com>, 
+	Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] mm/page_alloc: Occasionally relinquish zone lock in
+ batch freeing
+Message-ID: <wuuz7itgcjb7vu466k6nwxfjiy4ytx7ip3yvauqucwlpqqibri@bpxnpevzermg>
+References: <20250818185804.21044-1-joshua.hahnjy@gmail.com>
+ <k6fpx5adh45t4jrxgiccq7acubwcgmi746crggxi6e4oihtvpt@thks5zrn53n3>
+ <x3xp3cj6wpgxu5mjsd62fzvuzpn2mxpvlk6sau65si7bk6ncu5@dx6jbuacy42i>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-extensible-parameters-validation-v4-7-30fe5a99cb1f@ideasonboard.com>
-References: <20250820-extensible-parameters-validation-v4-0-30fe5a99cb1f@ideasonboard.com>
-In-Reply-To: <20250820-extensible-parameters-validation-v4-0-30fe5a99cb1f@ideasonboard.com>
-To: Dafna Hirschfeld <dafna@fastmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=17404;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=60RNjZpwSNZ6wBilj4su/4Aeh008/tMwIResm6EJvmA=;
- b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBopcZrntxB/p4OdPOTLYRHgVgjvAybu9eSaxqNK
- cxghk9yJBSJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaKXGawAKCRByNAaPFqFW
- PDWqD/921OXH72ertvmpZHmsiwHK0I7UNgZlFoPln+f78U1kNG18f226vP2F1Sx/zIDJCxVT+M3
- XKiP1d7qPjbGhKpr3Fu6REf0po2vCykOHQaQHQaz+Nvx+Mco4Q1vrlwJ6mMFhpgR0utdL/1e16C
- OLlJmj1V2LK6xGVAfQd5Co6sm73vjXaGmSE3XFwXC66TQeCef2RAtVX9esZcC/G/kvTG6RraLGt
- nKviStQBaztMs7DW2i5upRQsegkAzZ1MSpJmZW7u3ArUNEGZ+zlHwNn2/RVwnakJD0uul41EfIh
- /6ULfLCbCBuADMk7TfaEDR7moJzsKg+PZd2ZgxuMdCZ6Q1ktmeqGEQRVVm1FGxYi/hGqeYMdGDf
- zL5jNR+rdnLvU8vyqTtFqSvDDZSly95Q8H7BY35HrYT6Nu+qiCU/v/uDyGiy8xzy3vhDSzAmuGD
- drnVs+ar35QMHN9d22moCb6Z+DyzFSSOe3j19ZLqrSYjQY/mIQEQ0SBFnWoTiUhsG++/+EQFiJ7
- Fqr9bres1XYdSvoaLLvkVq8NdXC7W8fmCe1xJtIaipnrGBqNThnq/kGRxwxjDOzAJQo8tS9SMln
- 1r2HYvqX9dFwGM5u/BhmtNyMsFajLoMxIKMk71Aox7zYxFE2PGnuJkXv/JIfACHWFhsT6ZJgOXr
- ffEZH/Iym2XN2Yw==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <x3xp3cj6wpgxu5mjsd62fzvuzpn2mxpvlk6sau65si7bk6ncu5@dx6jbuacy42i>
 
-Convert c3-ispa-params.c to use the new types fro block handlers
-defined in v4l2-params.h and use the new helpers from v4l2-params.c
-to remove boilerplate code from the driver.
+On Tue, Aug 19, 2025 at 10:15:39AM -0700, Shakeel Butt wrote:
+> On Tue, Aug 19, 2025 at 10:15:13AM +0100, Kiryl Shutsemau wrote:
+> > On Mon, Aug 18, 2025 at 11:58:03AM -0700, Joshua Hahn wrote:
+> > > While testing workloads with high sustained memory pressure on large machines
+> > > (1TB memory, 316 CPUs), we saw an unexpectedly high number of softlockups.
+> > > Further investigation showed that the lock in free_pcppages_bulk was being held
+> > > for a long time, even being held while 2k+ pages were being freed.
+> > > 
+> > > Instead of holding the lock for the entirety of the freeing, check to see if
+> > > the zone lock is contended every pcp->batch pages. If there is contention,
+> > > relinquish the lock so that other processors have a change to grab the lock
+> > > and perform critical work.
+> > 
+> > Hm. It doesn't necessary to be contention on the lock, but just that you
+> > holding the lock for too long so the CPU is not available for the scheduler.
+> > 
+> > > In our fleet, we have seen that performing batched lock freeing has led to
+> > > significantly lower rates of softlockups, while incurring relatively small
+> > > regressions (relative to the workload and relative to the variation).
+> > > 
+> > > The following are a few synthetic benchmarks:
+> > > 
+> > > Test 1: Small machine (30G RAM, 36 CPUs)
+> > > 
+> > > stress-ng --vm 30 --vm-bytes 1G -M -t 100
+> > > +----------------------+---------------+-----------+
+> > > |        Metric        | Variation (%) | Delta (%) |
+> > > +----------------------+---------------+-----------+
+> > > | bogo ops             |        0.0076 |   -0.0183 |
+> > > | bogo ops/s (real)    |        0.0064 |   -0.0207 |
+> > > | bogo ops/s (usr+sys) |        0.3151 |   +0.4141 |
+> > > +----------------------+---------------+-----------+
+> > > 
+> > > stress-ng --vm 20 --vm-bytes 3G -M -t 100
+> > > +----------------------+---------------+-----------+
+> > > |        Metric        | Variation (%) | Delta (%) |
+> > > +----------------------+---------------+-----------+
+> > > | bogo ops             |        0.0295 |   -0.0078 |
+> > > | bogo ops/s (real)    |        0.0267 |   -0.0177 |
+> > > | bogo ops/s (usr+sys) |        1.7079 |   -0.0096 |
+> > > +----------------------+---------------+-----------+
+> > > 
+> > > Test 2: Big machine (250G RAM, 176 CPUs)
+> > > 
+> > > stress-ng --vm 50 --vm-bytes 5G -M -t 100
+> > > +----------------------+---------------+-----------+
+> > > |        Metric        | Variation (%) | Delta (%) |
+> > > +----------------------+---------------+-----------+
+> > > | bogo ops             |        0.0362 |   -0.0187 |
+> > > | bogo ops/s (real)    |        0.0391 |   -0.0220 |
+> > > | bogo ops/s (usr+sys) |        2.9603 |   +1.3758 |
+> > > +----------------------+---------------+-----------+
+> > > 
+> > > stress-ng --vm 10 --vm-bytes 30G -M -t 100
+> > > +----------------------+---------------+-----------+
+> > > |        Metric        | Variation (%) | Delta (%) |
+> > > +----------------------+---------------+-----------+
+> > > | bogo ops             |        2.3130 |   -0.0754 |
+> > > | bogo ops/s (real)    |        3.3069 |   -0.8579 |
+> > > | bogo ops/s (usr+sys) |        4.0369 |   -1.1985 |
+> > > +----------------------+---------------+-----------+
+> > > 
+> > > Suggested-by: Chris Mason <clm@fb.com>
+> > > Co-developed-by: Johannes Weiner <hannes@cmpxchg.org>
+> > > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> > > 
+> > > ---
+> > >  mm/page_alloc.c | 15 ++++++++++++++-
+> > >  1 file changed, 14 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > > index a8a84c3b5fe5..bd7a8da3e159 100644
+> > > --- a/mm/page_alloc.c
+> > > +++ b/mm/page_alloc.c
+> > > @@ -1238,6 +1238,8 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> > >  	 * below while (list_empty(list)) loop.
+> > >  	 */
+> > >  	count = min(pcp->count, count);
+> > > +	if (!count)
+> > > +		return;
+> > >  
+> > >  	/* Ensure requested pindex is drained first. */
+> > >  	pindex = pindex - 1;
+> > > @@ -1247,6 +1249,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> > >  	while (count > 0) {
+> > >  		struct list_head *list;
+> > >  		int nr_pages;
+> > > +		int batch = min(count, pcp->batch);
+> > >  
+> > >  		/* Remove pages from lists in a round-robin fashion. */
+> > >  		do {
+> > > @@ -1267,12 +1270,22 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> > >  
+> > >  			/* must delete to avoid corrupting pcp list */
+> > >  			list_del(&page->pcp_list);
+> > > +			batch -= nr_pages;
+> > >  			count -= nr_pages;
+> > >  			pcp->count -= nr_pages;
+> > >  
+> > >  			__free_one_page(page, pfn, zone, order, mt, FPI_NONE);
+> > >  			trace_mm_page_pcpu_drain(page, order, mt);
+> > > -		} while (count > 0 && !list_empty(list));
+> > > +		} while (batch > 0 && !list_empty(list));
+> > > +
+> > > +		/*
+> > > +		 * Prevent starving the lock for other users; every pcp->batch
+> > > +		 * pages freed, relinquish the zone lock if it is contended.
+> > > +		 */
+> > > +		if (count && spin_is_contended(&zone->lock)) {
+> > 
+> > I would rather drop the count thing and do something like this:
+> > 
+> > 		if (need_resched() || spin_needbreak(&zone->lock) {
+> > 			spin_unlock_irqrestore(&zone->lock, flags);
+> > 			cond_resched();
+> 
+> Can this function be called from non-sleepable context?
 
-Reviewed-by: Keke Li <keke.li@amlogic.com>
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
- .../media/platform/amlogic/c3/isp/c3-isp-params.c  | 263 ++++++++-------------
- 1 file changed, 94 insertions(+), 169 deletions(-)
+No, it cannot.
 
-diff --git a/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
-index c80667dd766210d2b2e1ee60c8254a5814b9d81b..259cb354ffddf4a1195422dfd9b3ba24c79607fc 100644
---- a/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
-+++ b/drivers/media/platform/amlogic/c3/isp/c3-isp-params.c
-@@ -9,64 +9,26 @@
- 
- #include <media/v4l2-ioctl.h>
- #include <media/v4l2-mc.h>
-+#include <media/v4l2-params.h>
- #include <media/videobuf2-vmalloc.h>
- 
- #include "c3-isp-common.h"
- #include "c3-isp-regs.h"
- 
--/*
-- * union c3_isp_params_block - Generalisation of a parameter block
-- *
-- * This union allows the driver to treat a block as a generic struct to this
-- * union and safely access the header and block-specific struct without having
-- * to resort to casting. The header member is accessed first, and the type field
-- * checked which allows the driver to determine which of the other members
-- * should be used.
-- *
-- * @header:		The shared header struct embedded as the first member
-- *			of all the possible other members. This member would be
-- *			accessed first and the type field checked to determine
-- *			which of the other members should be accessed.
-- * @awb_gains:		For header.type == C3_ISP_PARAMS_BLOCK_AWB_GAINS
-- * @awb_cfg:		For header.type == C3_ISP_PARAMS_BLOCK_AWB_CONFIG
-- * @ae_cfg:		For header.type == C3_ISP_PARAMS_BLOCK_AE_CONFIG
-- * @af_cfg:		For header.type == C3_ISP_PARAMS_BLOCK_AF_CONFIG
-- * @pst_gamma:		For header.type == C3_ISP_PARAMS_BLOCK_PST_GAMMA
-- * @ccm:		For header.type == C3_ISP_PARAMS_BLOCK_CCM
-- * @csc:		For header.type == C3_ISP_PARAMS_BLOCK_CSC
-- * @blc:		For header.type == C3_ISP_PARAMS_BLOCK_BLC
-- */
--union c3_isp_params_block {
--	struct c3_isp_params_block_header header;
--	struct c3_isp_params_awb_gains awb_gains;
--	struct c3_isp_params_awb_config awb_cfg;
--	struct c3_isp_params_ae_config ae_cfg;
--	struct c3_isp_params_af_config af_cfg;
--	struct c3_isp_params_pst_gamma pst_gamma;
--	struct c3_isp_params_ccm ccm;
--	struct c3_isp_params_csc csc;
--	struct c3_isp_params_blc blc;
--};
--
--typedef void (*c3_isp_block_handler)(struct c3_isp_device *isp,
--				     const union c3_isp_params_block *block);
--
--struct c3_isp_params_handler {
--	size_t size;
--	c3_isp_block_handler handler;
--};
--
- #define to_c3_isp_params_buffer(vbuf) \
- 	container_of(vbuf, struct c3_isp_params_buffer, vb)
- 
- /* Hardware configuration */
- 
--static void c3_isp_params_cfg_awb_gains(struct c3_isp_device *isp,
--					const union c3_isp_params_block *block)
-+static void
-+c3_isp_params_cfg_awb_gains(void *dev,
-+			    const struct v4l2_params_block_header *block)
- {
--	const struct c3_isp_params_awb_gains *awb_gains = &block->awb_gains;
-+	const struct c3_isp_params_awb_gains *awb_gains =
-+		(const struct c3_isp_params_awb_gains *)block;
-+	struct c3_isp_device *isp = dev;
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
- 		c3_isp_update_bits(isp, ISP_TOP_BEO_CTRL,
- 				   ISP_TOP_BEO_CTRL_WB_EN_MASK,
- 				   ISP_TOP_BEO_CTRL_WB_DIS);
-@@ -89,7 +51,7 @@ static void c3_isp_params_cfg_awb_gains(struct c3_isp_device *isp,
- 			   ISP_LSWB_WB_GAIN2_IR_GAIN_MASK,
- 			   ISP_LSWB_WB_GAIN2_IR_GAIN(awb_gains->gb_gain));
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
- 		c3_isp_update_bits(isp, ISP_TOP_BEO_CTRL,
- 				   ISP_TOP_BEO_CTRL_WB_EN_MASK,
- 				   ISP_TOP_BEO_CTRL_WB_EN);
-@@ -151,12 +113,15 @@ static void c3_isp_params_awb_cood(struct c3_isp_device *isp,
- 			     ISP_AWB_IDX_DATA_VIDX_DATA(cfg->vert_coord[i]));
- }
- 
--static void c3_isp_params_cfg_awb_config(struct c3_isp_device *isp,
--					 const union c3_isp_params_block *block)
-+static void
-+c3_isp_params_cfg_awb_config(void *dev,
-+			     const struct v4l2_params_block_header *block)
- {
--	const struct c3_isp_params_awb_config *awb_cfg = &block->awb_cfg;
-+	const struct c3_isp_params_awb_config *awb_cfg =
-+		(const struct c3_isp_params_awb_config *)block;
-+	struct c3_isp_device *isp = dev;
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
- 		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
- 				   ISP_TOP_3A_STAT_CRTL_AWB_STAT_EN_MASK,
- 				   ISP_TOP_3A_STAT_CRTL_AWB_STAT_DIS);
-@@ -205,7 +170,7 @@ static void c3_isp_params_cfg_awb_config(struct c3_isp_device *isp,
- 	c3_isp_params_awb_wt(isp, awb_cfg);
- 	c3_isp_params_awb_cood(isp, awb_cfg);
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
- 		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
- 				   ISP_TOP_3A_STAT_CRTL_AWB_STAT_EN_MASK,
- 				   ISP_TOP_3A_STAT_CRTL_AWB_STAT_EN);
-@@ -268,12 +233,15 @@ static void c3_isp_params_ae_cood(struct c3_isp_device *isp,
- 			     ISP_AE_IDX_DATA_VIDX_DATA(cfg->vert_coord[i]));
- }
- 
--static void c3_isp_params_cfg_ae_config(struct c3_isp_device *isp,
--					const union c3_isp_params_block *block)
-+static void
-+c3_isp_params_cfg_ae_config(void *dev,
-+			    const struct v4l2_params_block_header *block)
- {
--	const struct c3_isp_params_ae_config *ae_cfg = &block->ae_cfg;
-+	const struct c3_isp_params_ae_config *ae_cfg =
-+		(const struct c3_isp_params_ae_config *)block;
-+	struct c3_isp_device *isp = dev;
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
- 		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
- 				   ISP_TOP_3A_STAT_CRTL_AE_STAT_EN_MASK,
- 				   ISP_TOP_3A_STAT_CRTL_AE_STAT_DIS);
-@@ -303,7 +271,7 @@ static void c3_isp_params_cfg_ae_config(struct c3_isp_device *isp,
- 	c3_isp_params_ae_wt(isp, ae_cfg);
- 	c3_isp_params_ae_cood(isp, ae_cfg);
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
- 		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
- 				   ISP_TOP_3A_STAT_CRTL_AE_STAT_EN_MASK,
- 				   ISP_TOP_3A_STAT_CRTL_AE_STAT_EN);
-@@ -326,12 +294,15 @@ static void c3_isp_params_af_cood(struct c3_isp_device *isp,
- 			     ISP_AF_IDX_DATA_VIDX_DATA(cfg->vert_coord[i]));
- }
- 
--static void c3_isp_params_cfg_af_config(struct c3_isp_device *isp,
--					const union c3_isp_params_block *block)
-+static void
-+c3_isp_params_cfg_af_config(void *dev,
-+			    const struct v4l2_params_block_header *block)
- {
--	const struct c3_isp_params_af_config *af_cfg = &block->af_cfg;
-+	const struct c3_isp_params_af_config *af_cfg =
-+		(const struct c3_isp_params_af_config *)block;
-+	struct c3_isp_device *isp = dev;
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
- 		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
- 				   ISP_TOP_3A_STAT_CRTL_AF_STAT_EN_MASK,
- 				   ISP_TOP_3A_STAT_CRTL_AF_STAT_DIS);
-@@ -351,20 +322,23 @@ static void c3_isp_params_cfg_af_config(struct c3_isp_device *isp,
- 
- 	c3_isp_params_af_cood(isp, af_cfg);
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
- 		c3_isp_update_bits(isp, ISP_TOP_3A_STAT_CRTL,
- 				   ISP_TOP_3A_STAT_CRTL_AF_STAT_EN_MASK,
- 				   ISP_TOP_3A_STAT_CRTL_AF_STAT_EN);
- }
- 
--static void c3_isp_params_cfg_pst_gamma(struct c3_isp_device *isp,
--					const union c3_isp_params_block *block)
-+static void
-+c3_isp_params_cfg_pst_gamma(void *dev,
-+			    const struct v4l2_params_block_header *block)
- {
--	const struct c3_isp_params_pst_gamma *gm = &block->pst_gamma;
-+	const struct c3_isp_params_pst_gamma *gm =
-+		(const struct c3_isp_params_pst_gamma *)block;
-+	struct c3_isp_device *isp = dev;
- 	unsigned int base;
- 	unsigned int i;
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
- 		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
- 				   ISP_TOP_BED_CTRL_PST_GAMMA_EN_MASK,
- 				   ISP_TOP_BED_CTRL_PST_GAMMA_DIS);
-@@ -393,19 +367,21 @@ static void c3_isp_params_cfg_pst_gamma(struct c3_isp_device *isp,
- 		}
- 	}
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
- 		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
- 				   ISP_TOP_BED_CTRL_PST_GAMMA_EN_MASK,
- 				   ISP_TOP_BED_CTRL_PST_GAMMA_EN);
- }
- 
- /* Configure 3 x 3 ccm matrix */
--static void c3_isp_params_cfg_ccm(struct c3_isp_device *isp,
--				  const union c3_isp_params_block *block)
-+static void c3_isp_params_cfg_ccm(void *dev,
-+				  const struct v4l2_params_block_header *block)
- {
--	const struct c3_isp_params_ccm *ccm = &block->ccm;
-+	const struct c3_isp_params_ccm *ccm =
-+		(const struct c3_isp_params_ccm *)block;
-+	struct c3_isp_device *isp = dev;
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
- 		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
- 				   ISP_TOP_BED_CTRL_CCM_EN_MASK,
- 				   ISP_TOP_BED_CTRL_CCM_DIS);
-@@ -442,19 +418,21 @@ static void c3_isp_params_cfg_ccm(struct c3_isp_device *isp,
- 			   ISP_CCM_MTX_22_23_RS_MTX_22_MASK,
- 			   ISP_CCM_MTX_22_23_RS_MTX_22(ccm->matrix[2][2]));
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
- 		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
- 				   ISP_TOP_BED_CTRL_CCM_EN_MASK,
- 				   ISP_TOP_BED_CTRL_CCM_EN);
- }
- 
- /* Configure color space conversion matrix parameters */
--static void c3_isp_params_cfg_csc(struct c3_isp_device *isp,
--				  const union c3_isp_params_block *block)
-+static void c3_isp_params_cfg_csc(void *dev,
-+				  const struct v4l2_params_block_header *block)
- {
--	const struct c3_isp_params_csc *csc = &block->csc;
-+	const struct c3_isp_params_csc *csc =
-+		(const struct c3_isp_params_csc *)block;
-+	struct c3_isp_device *isp = dev;
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
- 		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
- 				   ISP_TOP_BED_CTRL_CM0_EN_MASK,
- 				   ISP_TOP_BED_CTRL_CM0_DIS);
-@@ -491,19 +469,21 @@ static void c3_isp_params_cfg_csc(struct c3_isp_device *isp,
- 			   ISP_CM0_COEF22_OUP_OFST0_MTX_22_MASK,
- 			   ISP_CM0_COEF22_OUP_OFST0_MTX_22(csc->matrix[2][2]));
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
- 		c3_isp_update_bits(isp, ISP_TOP_BED_CTRL,
- 				   ISP_TOP_BED_CTRL_CM0_EN_MASK,
- 				   ISP_TOP_BED_CTRL_CM0_EN);
- }
- 
- /* Set blc offset of each color channel */
--static void c3_isp_params_cfg_blc(struct c3_isp_device *isp,
--				  const union c3_isp_params_block *block)
-+static void c3_isp_params_cfg_blc(void *dev,
-+				  const struct v4l2_params_block_header *block)
- {
--	const struct c3_isp_params_blc *blc = &block->blc;
-+	const struct c3_isp_params_blc *blc =
-+		(const struct c3_isp_params_blc *)block;
-+	struct c3_isp_device *isp = dev;
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_DISABLE) {
- 		c3_isp_update_bits(isp, ISP_TOP_BEO_CTRL,
- 				   ISP_TOP_BEO_CTRL_BLC_EN_MASK,
- 				   ISP_TOP_BEO_CTRL_BLC_DIS);
-@@ -517,13 +497,13 @@ static void c3_isp_params_cfg_blc(struct c3_isp_device *isp,
- 		     ISP_LSWB_BLC_OFST1_GB_OFST(blc->gb_ofst) |
- 		     ISP_LSWB_BLC_OFST1_B_OFST(blc->b_ofst));
- 
--	if (block->header.flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
-+	if (block->flags & C3_ISP_PARAMS_BLOCK_FL_ENABLE)
- 		c3_isp_update_bits(isp, ISP_TOP_BEO_CTRL,
- 				   ISP_TOP_BEO_CTRL_BLC_EN_MASK,
- 				   ISP_TOP_BEO_CTRL_BLC_EN);
- }
- 
--static const struct c3_isp_params_handler c3_isp_params_handlers[] = {
-+static const struct v4l2_params_handler c3_isp_params_handlers[] = {
- 	[C3_ISP_PARAMS_BLOCK_AWB_GAINS] = {
- 		.size = sizeof(struct c3_isp_params_awb_gains),
- 		.handler = c3_isp_params_cfg_awb_gains,
-@@ -568,16 +548,16 @@ static void c3_isp_params_cfg_blocks(struct c3_isp_params *params)
- 
- 	/* Walk the list of parameter blocks and process them */
- 	while (block_offset < config->data_size) {
--		const struct c3_isp_params_handler *block_handler;
--		const union c3_isp_params_block *block;
-+		const struct v4l2_params_handler *block_handler;
-+		const struct v4l2_params_block_header *block;
- 
--		block = (const union c3_isp_params_block *)
-+		block = (const struct v4l2_params_block_header *)
- 			 &config->data[block_offset];
- 
--		block_handler = &c3_isp_params_handlers[block->header.type];
-+		block_handler = &c3_isp_params_handlers[block->type];
- 		block_handler->handler(params->isp, block);
- 
--		block_offset += block->header.size;
-+		block_offset += block->size;
- 	}
- }
- 
-@@ -766,31 +746,35 @@ static void c3_isp_params_vb2_buf_queue(struct vb2_buffer *vb)
- 	list_add_tail(&buf->list, &params->pending);
- }
- 
-+static int
-+c3_isp_params_validate_buffer(struct device *dev,
-+			      const struct v4l2_params_buffer *buffer)
-+{
-+	/* Only v0 is supported at the moment */
-+	if (buffer->version != C3_ISP_PARAMS_BUFFER_V0) {
-+		dev_dbg(dev, "Invalid params buffer version: %u\n",
-+			buffer->version);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int c3_isp_params_vb2_buf_prepare(struct vb2_buffer *vb)
- {
- 	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
- 	struct c3_isp_params_buffer *buf = to_c3_isp_params_buffer(vbuf);
- 	struct c3_isp_params *params = vb2_get_drv_priv(vb->vb2_queue);
--	struct c3_isp_params_cfg *cfg = buf->cfg;
- 	struct c3_isp_params_cfg *usr_cfg = vb2_plane_vaddr(vb, 0);
- 	size_t payload_size = vb2_get_plane_payload(vb, 0);
--	size_t header_size = offsetof(struct c3_isp_params_cfg, data);
--	size_t block_offset = 0;
--	size_t cfg_size;
--
--	/* Payload size can't be greater than the destination buffer size */
--	if (payload_size > params->vfmt.fmt.meta.buffersize) {
--		dev_dbg(params->isp->dev,
--			"Payload size is too large: %zu\n", payload_size);
--		return -EINVAL;
--	}
-+	struct c3_isp_params_cfg *cfg = buf->cfg;
-+	int ret;
- 
--	/* Payload size can't be smaller than the header size */
--	if (payload_size < header_size) {
--		dev_dbg(params->isp->dev,
--			"Payload size is too small: %zu\n", payload_size);
--		return -EINVAL;
--	}
-+	ret = v4l2_params_buffer_validate(params->isp->dev, vb,
-+					  params->vfmt.fmt.meta.buffersize,
-+					  c3_isp_params_validate_buffer);
-+	if (ret)
-+		return ret;
- 
- 	/*
- 	 * Use the internal scratch buffer to avoid userspace modifying
-@@ -798,70 +782,11 @@ static int c3_isp_params_vb2_buf_prepare(struct vb2_buffer *vb)
- 	 */
- 	memcpy(cfg, usr_cfg, payload_size);
- 
--	/* Only v0 is supported at the moment */
--	if (cfg->version != C3_ISP_PARAMS_BUFFER_V0) {
--		dev_dbg(params->isp->dev,
--			"Invalid params buffer version: %u\n", cfg->version);
--		return -EINVAL;
--	}
--
--	/* Validate the size reported in the parameter buffer header */
--	cfg_size = header_size + cfg->data_size;
--	if (cfg_size != payload_size) {
--		dev_dbg(params->isp->dev,
--			"Data size %zu and payload size %zu are different\n",
--			cfg_size, payload_size);
--		return -EINVAL;
--	}
--
--	/* Walk the list of parameter blocks and validate them */
--	cfg_size = cfg->data_size;
--	while (cfg_size >= sizeof(struct c3_isp_params_block_header)) {
--		const struct c3_isp_params_block_header *block;
--		const struct c3_isp_params_handler *handler;
--
--		block = (struct c3_isp_params_block_header *)
--			&cfg->data[block_offset];
--
--		if (block->type >= ARRAY_SIZE(c3_isp_params_handlers)) {
--			dev_dbg(params->isp->dev,
--				"Invalid params block type\n");
--			return -EINVAL;
--		}
--
--		if (block->size > cfg_size) {
--			dev_dbg(params->isp->dev,
--				"Block size is greater than cfg size\n");
--			return -EINVAL;
--		}
--
--		if ((block->flags & (C3_ISP_PARAMS_BLOCK_FL_ENABLE |
--				     C3_ISP_PARAMS_BLOCK_FL_DISABLE)) ==
--		    (C3_ISP_PARAMS_BLOCK_FL_ENABLE |
--		     C3_ISP_PARAMS_BLOCK_FL_DISABLE)) {
--			dev_dbg(params->isp->dev,
--				"Invalid parameters block flags\n");
--			return -EINVAL;
--		}
--
--		handler = &c3_isp_params_handlers[block->type];
--		if (block->size != handler->size) {
--			dev_dbg(params->isp->dev,
--				"Invalid params block size\n");
--			return -EINVAL;
--		}
--
--		block_offset += block->size;
--		cfg_size -= block->size;
--	}
--
--	if (cfg_size) {
--		dev_dbg(params->isp->dev,
--			"Unexpected data after the params buffer end\n");
--		return -EINVAL;
--	}
--
--	return 0;
-+	return v4l2_params_blocks_validate(params->isp->dev,
-+					   (struct v4l2_params_buffer *)cfg,
-+					   c3_isp_params_handlers,
-+					   ARRAY_SIZE(c3_isp_params_handlers),
-+					   NULL);
- }
- 
- static int c3_isp_params_vb2_buf_init(struct vb2_buffer *vb)
+And looking at the locking context -- caller holds pcp->lock -- looks
+like my proposal with need_resched()/cond_resched() doesn't work.
+
+We need to either push for wider rework and make cond_resched() happen
+upper by the stack or ignore it and have cpu_relax() called on the lock
+drop.
 
 -- 
-2.50.1
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
