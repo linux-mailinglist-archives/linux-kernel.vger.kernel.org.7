@@ -1,107 +1,184 @@
-Return-Path: <linux-kernel+bounces-778367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1043B2E4AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B11B2E499
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D81821C855B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:06:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 197BF1BC842B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C080925A347;
-	Wed, 20 Aug 2025 18:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3A92475E3;
+	Wed, 20 Aug 2025 18:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngex5nso"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aQudd5ab"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9653C27EFF1;
-	Wed, 20 Aug 2025 18:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7D325EFBF
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 18:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755713066; cv=none; b=ioWsBX5bm1uge0WMWlhgMKH4ozk5VNeybRaVyAFdJtUz6VA5jzOlZ72rL9JfCXEZmCiCCEBUcr9B5mx2XY1WvRtscujuTIOmE3nVQ6LgF7t3Njt4EIsYz67gt9YHFq3AOakcEzdxG/W5LEjlZKyoylp3FTx88ESC6ZTv72VoPfU=
+	t=1755713031; cv=none; b=vFM8QVLRigrpPyLW8jtpdUIChx52EC2b5f+7Bz6lOOhubVnTzG9i0YuV8HTf3AmWWjawmVPf5rYwGV9dH1JieW5XM1rcQpQydvhKB51D3bLrckzPoIsl0rzq900cqw06Z/stDAKKUE+kx0Xj64cnkDf1DpAJ3PcaMRU2NHuh+70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755713066; c=relaxed/simple;
-	bh=FD0EJ8+cUesEx3BIgE1WisKxGgEGkMQBMuyAb5sxtAg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=eycpxz/bJGIIGLiYzqkFi39p4NSYqyI3AjVQRjyvkNIMNwg6jOFymLER1ftxgf76nyBwNX/UvRFCPJWv4cVRwoXYhkTYBn9ws0r2TbE0K32XJCiJ+RXLymbNbnVQS6lC8A6JNu2QfuQzvjESyvmN3WBAJrA8Vp230wg8EDieKf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngex5nso; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F845C116C6;
-	Wed, 20 Aug 2025 18:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755713066;
-	bh=FD0EJ8+cUesEx3BIgE1WisKxGgEGkMQBMuyAb5sxtAg=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=ngex5nsolHfM597TaDXyV3Bzqp8R9w2//2W5sYbpdX3JVGIMJouuIx7UgR6NfxNkb
-	 +7Uybuu76zqshglzV860PkAKGZ6C84oAr9fQLEZbR2s2qnviGirCGLVjh/+XQ05xdu
-	 lARbK1Fb+eRqDFHG6tUomMYr0dZiA0eDcFAZqaQOLNIWvLtBQXtpc5wQ1Jlzbg+iRe
-	 tZRg6ZMs+WTr2Dmy11sgvnO+UAnh7jD99X0JkZIOPcXJTGs1mvP8qB/mdJm5NCSk+h
-	 wceOdI3aQTpvbh0ht+q+6XOugFzOmbDmvx4qQIo9cVQq1Dk7lALJ3wJC1YT5dPs3//
-	 8dFMPfe+IKHsw==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1uonAj-00000000rvC-0KK9;
-	Wed, 20 Aug 2025 14:04:29 -0400
-Message-ID: <20250820180428.930791978@kernel.org>
-User-Agent: quilt/0.68
-Date: Wed, 20 Aug 2025 14:03:43 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>,
- Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: [RESEND][PATCH 5/5] perf: Skip user unwind if the task is a kernel thread
-References: <20250820180338.701352023@kernel.org>
+	s=arc-20240116; t=1755713031; c=relaxed/simple;
+	bh=rKv98XLHwvEm5WMdFuF2YJ4XeKCnSZd7Pvd6o2ymfjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hSiZBZ3v5BHuLNc8Et+iSezhzxbzLxIp+0sKLFIq7idlfl+mhfE2MSWKYYpDWrgRmZb4yUCJkWDNpzaW3Spm0auY4TuLI4puJmssXIIh/lSsJ7pa2HVVT3DLFKp6J2VTItLUpCtm/IIQ2a2RKUeX7+9cuwos9Ij9b0ieSUUmI5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aQudd5ab; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755713030; x=1787249030;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=rKv98XLHwvEm5WMdFuF2YJ4XeKCnSZd7Pvd6o2ymfjY=;
+  b=aQudd5aboLHFUbClOWttkOO6568/6sbcmKlfInKYkq2Rm77DOh/7Z/5k
+   h6PF19hT5aY/JoVsixGSmVVVQOaJZUEhluY0/+8Pch5Qnc9zvCMpYYZhK
+   pJfuP6njvND5zcVlJ5nR9jQ3rnL2sKPd8ULYSNBT2blj/R1WMjKGJUT3C
+   oYwan+HympD02W8EdcaH/pdbstbSG6VQhRkth78Kl0lOvlHMRtQHVQZ5T
+   XAHeKFeDU2JYgqqprIaQfefsQtXrA8r8oQb1paJRLbQNi6bZ2ToxxkL3S
+   lHI7f8WWLlAPnuDlR2PfBkRNQKesg0d2I6r4Rgbpmt5vC8GnwBqx6n7hE
+   g==;
+X-CSE-ConnectionGUID: WuI0H7iyREivaySpCodarA==
+X-CSE-MsgGUID: B7tlrbc0T0WGjaRczTUpcw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="60617630"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="60617630"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 11:03:48 -0700
+X-CSE-ConnectionGUID: G7KAgankQRSpaU4xYHmx9w==
+X-CSE-MsgGUID: U2NMvFT6TveCWltat3PufA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="205346610"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 11:03:48 -0700
+Received: from [10.246.144.138] (kliang2-mobl1.ccr.corp.intel.com [10.246.144.138])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 77A9520B571C;
+	Wed, 20 Aug 2025 11:03:45 -0700 (PDT)
+Message-ID: <53aebb23-2520-4016-ae71-18b66dec452f@linux.intel.com>
+Date: Wed, 20 Aug 2025 11:03:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 05/17] perf/x86: Support XMM register for non-PEBS and
+ REGS_USER
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ tglx@linutronix.de, dave.hansen@linux.intel.com, irogers@google.com,
+ adrian.hunter@intel.com, jolsa@kernel.org,
+ alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+ ak@linux.intel.com, zide.chen@intel.com, mark.rutland@arm.com,
+ broonie@kernel.org, ravi.bangoria@amd.com, eranian@google.com
+References: <20250815213435.1702022-1-kan.liang@linux.intel.com>
+ <20250815213435.1702022-6-kan.liang@linux.intel.com>
+ <20250819133902.GJ4067720@noisy.programming.kicks-ass.net>
+ <7009606d-0c47-4c3f-a7f9-0ae1922c9e5f@linux.intel.com>
+ <47cbf0f3-9480-497a-ad88-5eb0c50dd88a@linux.intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <47cbf0f3-9480-497a-ad88-5eb0c50dd88a@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Josh Poimboeuf <jpoimboe@kernel.org>
 
-If the task is not a user thread, there's no user stack to unwind.
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/events/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 2025-08-20 2:46 a.m., Mi, Dapeng wrote:
+> 
+> On 8/19/2025 11:55 PM, Liang, Kan wrote:
+>>
+>> On 2025-08-19 6:39 a.m., Peter Zijlstra wrote:
+>>> On Fri, Aug 15, 2025 at 02:34:23PM -0700, kan.liang@linux.intel.com wrote:
+>>>> From: Kan Liang <kan.liang@linux.intel.com>
+>>>>
+>>>> Collecting the XMM registers in a PEBS record has been supported since
+>>>> the Icelake. But non-PEBS events don't support the feature. It's
+>>>> possible to retrieve the XMM registers from the XSAVE for non-PEBS.
+>>>> Add it to make the feature complete.
+>>>>
+>>>> To utilize the XSAVE, a 64-byte aligned buffer is required. Add a
+>>>> per-CPU ext_regs_buf to store the vector registers. The size of the
+>>>> buffer is ~2K. kzalloc_node() is used because there's a _guarantee_
+>>>> that all kmalloc()'s with powers of 2 are naturally aligned and also
+>>>> 64b aligned.
+>>>>
+>>>> Extend the support for both REGS_USER and REGS_INTR. For REGS_USER, the
+>>>> perf_get_regs_user() returns the regs from the task_pt_regs(current),
+>>>> which is struct pt_regs. Need to move it to local struct x86_perf_regs
+>>>> x86_user_regs.
+>>>> For PEBS, the HW support is still preferred. The XMM should be retrieved
+>>>> from PEBS records.
+>>>>
+>>>> There could be more vector registers supported later. Add ext_regs_mask
+>>>> to track the supported vector register group.
+>>>
+>>> I'm a little confused... *again* :-)
+>>>
+>>> Specifically, we should consider two sets of registers:
+>>>
+>>>  - the live set, as per the CPU (XSAVE)
+>>>  - the stored set, as per x86_task_fpu()
+>>>
+>>> regs_intr should always get a copy of the live set; however
+>>> regs_user should not. It might need a copy of the x86_task_fpu() instead
+>>> of the live set, depending on TIF_NEED_FPU_LOAD (more or less, we need
+>>> another variable set in kernel_fpu_begin_mask() *after*
+>>> save_fpregs_to_fpstate() is completed).
+>>>
+>>> I don't see this code make this distinction.
+>>>
+>>> Consider getting a sample while the kernel is doing some avx enhanced
+>>> crypto and such.
+>> The regs_user only needs a set when the NMI hits the user mode
+>> (user_mode(regs)) or a non-kernel thread (!(current->flags &
+>> PF_KTHREAD)). The live set is good enough for both cases.
+> 
+> It's fine if NMI hits user mode, but if NMI hits the kernel mode
+> (!(current->flags &PF_KTHREAD)), won't the kernel space SIMD/eGPR regs be
+> exposed to user space for user-regs option? I'm not sure if kernel space
+> really use these SIMD/eGPR regs right now, but it seems a risk.
+> 
+>
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f880cec0c980..28de3baff792 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8198,7 +8198,8 @@ struct perf_callchain_entry *
- perf_callchain(struct perf_event *event, struct pt_regs *regs)
- {
- 	bool kernel = !event->attr.exclude_callchain_kernel;
--	bool user   = !event->attr.exclude_callchain_user;
-+	bool user   = !event->attr.exclude_callchain_user &&
-+		!(current->flags & (PF_KTHREAD | PF_USER_WORKER));
- 	/* Disallow cross-task user callchains. */
- 	bool crosstask = event->ctx->task && event->ctx->task != current;
- 	const u32 max_stack = event->attr.sample_max_stack;
--- 
-2.50.1
+I don't think it's possible for the existing kernel. But I cannot
+guarantee future usage.
 
+If the kernel mode handling is still a concern, I think we should drop
+the SIMD/eGPR regs for the case for now. Because
+- To profile a userspace application which requires SIMD/eGPR regs, the
+NMI usually hits the usersapce. It's not common to hit the kernel mode.
+- The SIMD/eGPR cannot be retrieved from the task_pt_regs(). Although
+it's possible to retrieve the values when the TIF_NEED_FPU_LOAD flag is
+set, I don't think it's worth introducing such complexity to handle an
+uncommon case in the critical path.
+- Furthermore, only checking the TIF_NEED_FPU_LOAD flag cannot cure
+everything. Some corner cases cannot be handled either. For example, an
+NMI can happen when the flag just switched, but still in the kernel mode.
+
+We can always add the support later if someone thinks it's important to
+retrieve the user SIMD/eGPR regs during the kernel syscall.
+
+Thanks,
+Kan
+>>
+>> I think the kernel crypto should be to a kernel thread (current->flags &
+>> PF_KTHREAD). If so, the regs_user should return NULL.
+>>
+>> Thanks,
+>> Kan
+>>
+> 
 
 
