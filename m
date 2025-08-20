@@ -1,85 +1,112 @@
-Return-Path: <linux-kernel+bounces-776981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A9CB2D3B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:42:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038D9B2D3BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D41A1C421C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B417D3B49A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8646129C327;
-	Wed, 20 Aug 2025 05:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="1JkOaB6i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1541C26F476;
+	Wed, 20 Aug 2025 05:42:36 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A088F19D8A8
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 05:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559D221C18E;
+	Wed, 20 Aug 2025 05:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755668472; cv=none; b=Rxxvldx+f0sqHnF1GH4u6d76liRuzljxgkxYG/Wc3hPSQbE7brCTN5ppKL3YEHar50XyHvxiw1qyfY58zH3n68HSa3mtSb4ao0iatMFklEyhK4MxIeXiQ/fIKs9t7pdgGvS+YwFY0hooPkSyP64pLAGiiP6LXR6VpvAqWQVrBRc=
+	t=1755668555; cv=none; b=UmQBNd28PxrgLkwCPeOrh9AxCR4Y3kDrXAaad3Y2fqsdxr/QJTC8eLsdgGPULA11kqB8Z8petq1AzLBFlbrSCHC0RDPsTWxcv4gQH1Vcgyl1G2n26sNWctQDvmXAOX9RspxKE2mKKwipRPRN935R1U1KgLxyAdqJVcvyUCokB0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755668472; c=relaxed/simple;
-	bh=sJbRMZ3dzMihdohhvVLrwvHrGo59fz+haIPct8foZ4Q=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fksE02T897U9KFN2mP97TNFLW4JLfiHk2gFR98o/dCO1sviN8FxKvwtvwMFSteeQqUo87ESZfB9OuO4cvUk/T4agw1oNkDxZlKSpCx/PUKzHzdQS2auSDRu9gnbAha1HgMAvSgKNKLf0VV6iqyvaipgNBx3pUx3jJ6px3ANCut8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=1JkOaB6i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE618C4CEEB;
-	Wed, 20 Aug 2025 05:41:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755668472;
-	bh=sJbRMZ3dzMihdohhvVLrwvHrGo59fz+haIPct8foZ4Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=1JkOaB6ia1UgG2tx2yeCD5I6d69KDl5YYU8TGj8hJLynPffr2A2fqGrt4v/GUIkTb
-	 UDUItDtyJVtxG/Q5n/egJnaDiez4L9MDZrI12FAhYWS9mzqaHKek0MAq0ahDtwaRx+
-	 /Z0cnDDhMFSmJrwf8P3LgXR6mMjKM9ey/BGPXiw4=
-Date: Tue, 19 Aug 2025 22:41:11 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Chris Mason <clm@fb.com>,
- Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@gogle.com>,
- Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>, Zi
- Yan <ziy@nvidia.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-team@meta.com
-Subject: Re: [PATCH] mm/page_alloc: Occasionally relinquish zone lock in
- batch freeing
-Message-Id: <20250819224111.e710eab683b7c7f941c7d1a7@linux-foundation.org>
-In-Reply-To: <20250818185804.21044-1-joshua.hahnjy@gmail.com>
-References: <20250818185804.21044-1-joshua.hahnjy@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755668555; c=relaxed/simple;
+	bh=ebvnygw/n9riSKGs3brN0qOEfvzkCQbrCSPg8SWnUQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fr95VHDLIy9lIJfl14hPlscBhF4U6wW5MkniTl2UcTbZNOR5yMSIs05zLBzJK8kbTYb3v4jAnxen6jjqD148p5YZ+VWp9hP8ptVy/3gdeWiju6l/ahcWUrTnRnP/DZXfCM363a1KZZ8FP9ja8puCNRLZ/W5rlSY+41GZN1L2RBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 723da54e7d8811f0b29709d653e92f7d-20250820
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:1eff894f-f567-4815-9398-2176bde908bd,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:b53c3dcd636209bd0edfe60b3616c205,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 723da54e7d8811f0b29709d653e92f7d-20250820
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1968329055; Wed, 20 Aug 2025 13:42:23 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 1D8CDE008FA3;
+	Wed, 20 Aug 2025 13:42:23 +0800 (CST)
+X-ns-mid: postfix-68A5603F-3015255
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 77B49E008FA2;
+	Wed, 20 Aug 2025 13:42:21 +0800 (CST)
+Message-ID: <ffe2344d-e825-44c0-ad2b-9544b123079f@kylinos.cn>
+Date: Wed, 20 Aug 2025 13:42:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] cpufreq: simplify cpufreq_set_policy() interface
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "rafael J . wysocki" <rafael@kernel.org>,
+ zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250819103940.342774-1-zhangzihuan@kylinos.cn>
+ <20250819103940.342774-3-zhangzihuan@kylinos.cn>
+ <20250819105925.34o5f5attd5rboh7@vireshk-i7>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250819105925.34o5f5attd5rboh7@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 18 Aug 2025 11:58:03 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
 
-> While testing workloads with high sustained memory pressure on large machines
-> (1TB memory, 316 CPUs), we saw an unexpectedly high number of softlockups.
-> Further investigation showed that the lock in free_pcppages_bulk was being held
-> for a long time, even being held while 2k+ pages were being freed.
+=E5=9C=A8 2025/8/19 18:59, Viresh Kumar =E5=86=99=E9=81=93:
+> On 19-08-25, 18:39, Zihuan Zhang wrote:
+>>   static int cpufreq_set_policy(struct cpufreq_policy *policy,
+>> -			      struct cpufreq_governor *new_gov,
+>> -			      unsigned int new_pol);
+>> +			      struct cpufreq_governor *new_gov);
+> A driver will either support the policy or the governor. If we are
+> keeping `new_gov` around, I don't see why `new_pol` should be dropped.
 
-It would be interesting to share some of those softlockup traces.
+Thanks for the reminder.
 
-We have this CONFIG_PCP_BATCH_SCALE_MAX which appears to exist to
-address precisely this issue.  But only about half of the
-free_pcppages_bulk() callers actually honor it.
+If we remove new_pol, then new_gov should indeed be removed as well.
 
-So perhaps the fix is to fix the callers which forgot to implement this?
+> And changing the policy for a `setpolicy` driver should happen from
+> within cpufreq_set_policy() instead of the caller. Also there is at
+> least one case (verify()) where we may end up returning early, before
+> changing the policy.
+>
+You=E2=80=99re right, we didn=E2=80=99t really consider that case before.
 
-- decay_pcp_high() tried to implement CONFIG_PCP_BATCH_SCALE_MAX, but
-  that code hurts my brain.
+The interface of cpufreq_set_policy() does look a bit odd:
 
-- drain_pages_zone() implements it but, regrettably, doesn't use it
-  to periodically release pcp->lock.  Room for improvement there.
+- drivers using governors don=E2=80=99t really need the new_pol parameter
 
+- while drivers using the setpolicy method don=E2=80=99t need the new_gov=
+ one.
+
+
+I guess this might be due to some historical reasons.
+
+The question is whether it=E2=80=99s worth modifying this function, or if=
+ we=20
+should just keep it as it is.
 
 
