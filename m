@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-777350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74961B2D846
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:34:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446F9B2D89C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8951BA00071
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:29:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05F01C4796F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE9B2DAFA5;
-	Wed, 20 Aug 2025 09:26:46 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF31220322;
-	Wed, 20 Aug 2025 09:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0ABC2DCF70;
+	Wed, 20 Aug 2025 09:28:30 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F8E24BCE8;
+	Wed, 20 Aug 2025 09:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755682005; cv=none; b=Y3y8ptUcdMj1rlrK7nAJ0SANrpfiCukWq+LOdE58NSFCOdnCIxgikNP9m8EhI/tLvUaVEhVUPRrtMI2xajHYlJna33pEKcofTvGNH9uhhnTGc2hF+L4YzBH6KlFyUUc68SG7vwGXnr4fDTa1wWasIRLMsy7kiT2usUmP2r+qvP8=
+	t=1755682110; cv=none; b=RuHZODT8Go0IL/QYTjkSDgkwWD9Lnz9sufvs4NMTveZxPywW3rM7pnNkUBWtTUq1cFYpdt38GrECi7ZRVmxnq0Zh5LmwQQGOspw6kWsYmBrnH1mZLtVyEC1HuwX5l1819Nm32aaXM4WtGuGUEg/1ACi9clstiBxDIY4Co3VL9xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755682005; c=relaxed/simple;
-	bh=2uU5ZrZ3dDyK5rPaTauckpsLKjSNLSaN7NEv0euQgVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dyYWJm+RKtomDa9EU/qiKBu5RinqiTQJGQeG196/gAkMCKGsY+e5kg4GuOxn5Nff4JML6LzYt/InKHVBnDwAyYQ3A0Ieymvu6yiZ5U+otvAyApE1NmbVaiqh4Bi3AtpFhRd8Ri3X9CI0+tfoiYW15CV/30QVj5Ejko6SpJ10LPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: c4a19ca47da711f0b29709d653e92f7d-20250820
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:fd378d40-514e-4215-996f-0aeebd413e45,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-5
-X-CID-INFO: VERSION:1.1.45,REQID:fd378d40-514e-4215-996f-0aeebd413e45,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6493067,CLOUDID:336d5cb5b5924752fdd99b4725ca7b31,BulkI
-	D:250820145207GW1MRF9C,BulkQuantity:3,Recheck:0,SF:17|19|24|44|64|66|78|80
-	|81|82|83|102|841,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,B
-	ulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:
-	0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: c4a19ca47da711f0b29709d653e92f7d-20250820
-X-User: duanchenghao@kylinos.cn
-Received: from localhost [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 382454535; Wed, 20 Aug 2025 17:26:36 +0800
-Date: Wed, 20 Aug 2025 17:26:28 +0800
-From: Chenghao Duan <duanchenghao@kylinos.cn>
-To: Pu Lehui <pulehui@huawei.com>
-Cc: ast@kernel.org, bjorn@kernel.org, puranjay@kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
-	haoluo@google.com, jolsa@kernel.org, alex@ghiti.fr,
-	bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: bpf: Fix uninitialized symbol 'retval_off'
-Message-ID: <20250820092628.GA1289807@chenghao-pc>
-References: <20250820062520.846720-1-duanchenghao@kylinos.cn>
- <8b836b6e-103a-41c2-b111-0417d8db4dce@huawei.com>
+	s=arc-20240116; t=1755682110; c=relaxed/simple;
+	bh=W5vE5WeHG2HQjSKkH4tpgmk3A7OE8K28nDCuKd5sGUo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IRjRst9R76ZE6rvbG2qgQLVaYaYdgqpZv9EVFwxAPwZnmp8Hfv56OEYQaqu4GA3va9kN6zHaWvsZaxp2flvl9dcCSZ/EXmsaZrnGPmvQTeID5q+1OCjxtMFja4pE42hWdDZxsor/ovqc85aID6Cem8MVzpnuqVLTePLxVVMGkxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
+	by app2 (Coremail) with SMTP id TQJkCgAHmZIilaVoRwTBAA--.56702S2;
+	Wed, 20 Aug 2025 17:28:03 +0800 (CST)
+From: Yulin Lu <luyulin@eswincomputing.com>
+To: dlemoal@kernel.org,
+	cassel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	linux-phy@lists.infradead.org
+Cc: ningyu@eswincomputing.com,
+	zhengyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	fenglin@eswincomputing.com,
+	lianghujun@eswincomputing.com,
+	Yulin Lu <luyulin@eswincomputing.com>
+Subject: [PATCH v2 2/3] dt-bindings: phy: eswin: Document for EIC7700 SoC SATA PHY
+Date: Wed, 20 Aug 2025 17:27:58 +0800
+Message-Id: <20250820092758.803-1-luyulin@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20250819134722.220-1-luyulin@eswincomputing.com>
+References: <20250819134722.220-1-luyulin@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8b836b6e-103a-41c2-b111-0417d8db4dce@huawei.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgAHmZIilaVoRwTBAA--.56702S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur15Ww4xXw1rWFyUXF4DCFg_yoW8GFy3pa
+	1kGrykWFnaqr1Ik39xJ3W0kF13Jws7uFWYvrs7K3WUtrn8J3Z5ta1ak3WYv3WUAF48Way5
+	XFZIga43Aw4UA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
+X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
 
-On Wed, Aug 20, 2025 at 02:52:01PM +0800, Pu Lehui wrote:
-> 
-> 
-> On 2025/8/20 14:25, Chenghao Duan wrote:
-> > In __arch_prepare_bpf_trampoline(), retval_off is only meaningful when
-> > save_ret is true, so the current logic is correct. However, in the
-> 
-> lgtm, and same for `ip_off`, pls patch it together.
+Add document for the SATA phy on the EIC7700 SoC platform,
+describing its usage.
 
-I also checked at the time that ip_off is only initialized and assigned
-when flags & BPF_TRAMP_F_IP_ARG is true. However, I noticed that the use
-of ip_off also requires this condition, so the compiler did not issue a
-warning.
+Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
+---
+ .../bindings/phy/eswin,eic7700-sata-phy.yaml  | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
 
-Chenghao
+diff --git a/Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml b/Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
+new file mode 100644
+index 000000000000..d914cb4402d8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
+@@ -0,0 +1,36 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/eswin,eic7700-sata-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Eswin EIC7700 SoC SATA PHY
++
++maintainers:
++  - Yulin Lu <luyulin@eswincomputing.com>
++  - Huan He <hehuan1@eswincomputing.com>
++
++properties:
++  compatible:
++    const: eswin,eic7700-sata-phy
++
++  "#phy-cells":
++    const: 0
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - "#phy-cells"
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    sata-phy@50440300 {
++        compatible = "eswin,eic7700-sata-phy";
++        reg = <0x50440300 0x40>;
++        #phy-cells = <0>;
++    };
+-- 
+2.25.1
 
-> 
-> > original logic, retval_off is only initialized under certain
-> > conditions, which may cause a build warning.
-> > 
-> > So initialize retval_off unconditionally to fix it.
-> > 
-> > Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
-> > ---
-> >   arch/riscv/net/bpf_jit_comp64.c | 5 ++---
-> >   1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
-> > index 10e01ff06312..49bbda8372b0 100644
-> > --- a/arch/riscv/net/bpf_jit_comp64.c
-> > +++ b/arch/riscv/net/bpf_jit_comp64.c
-> > @@ -1079,10 +1079,9 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im,
-> >   	stack_size += 16;
-> >   	save_ret = flags & (BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_RET_FENTRY_RET);
-> > -	if (save_ret) {
-> > +	if (save_ret)
-> >   		stack_size += 16; /* Save both A5 (BPF R0) and A0 */
-> > -		retval_off = stack_size;
-> > -	}
-> > +	retval_off = stack_size;
-> >   	stack_size += nr_arg_slots * 8;
-> >   	args_off = stack_size;
 
