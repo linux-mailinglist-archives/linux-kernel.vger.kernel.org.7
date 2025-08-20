@@ -1,158 +1,212 @@
-Return-Path: <linux-kernel+bounces-777701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3BCB2DCE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:45:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3B3B2DCE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA93B5E3718
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6A263B5934
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78917311C1F;
-	Wed, 20 Aug 2025 12:41:31 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF9B311978;
+	Wed, 20 Aug 2025 12:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0uEwwL3"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE692DCF58
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36D1308F05
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755693691; cv=none; b=MrFR0COwkwh90Uv0pGHnox2hN8O90buioBvbv5+Q+koKkygmxp03HLdlFX4icBd3hyw/fDzURpo7nSGx1RUypqmKxLOMSZSbMfQlaSgc0x2fcMfc25ez3PkDXdhGf80qT4vtWHDDeIy3vvhniqJ1N1+JqCynyFnjMwF1wp19hdY=
+	t=1755693740; cv=none; b=lawLW3182tWc9+xoR/WM/GFKj914X1MJut85bto3zi2BkCowGJngmuMGwVkUTLgLlaUjrnJGb+/E/xUKC+hGwMxZL9KlSUdN0fxOcUQ2RSW2r4LieCWfAQVrR/v4nR8yf5DdA+HL1anZDcAkId/C/lV8Hx1PoY+PDxVu2ayK0Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755693691; c=relaxed/simple;
-	bh=x78F7lRawwe1Z0wXQDL/XNv/NO5uAviym5okoWYCCG4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bkxMSEYZDLm0NKTdRwEAvUDot4oCREYvgg7ApL4J4IzUDZ+pphXECiaHg4zSSresQKfS0RItyV+J+0K3Yf+tldBu+gb3W7G88zA8XDm/VXWmfWa61grkZHgVSeT+5GzYNnwzOsSoueuGmeuPpBiRbTYzJWfrKHyyQuDcS8z5exo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-884454c97dbso428120639f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 05:41:29 -0700 (PDT)
+	s=arc-20240116; t=1755693740; c=relaxed/simple;
+	bh=wfUj5GVqJdy8Gzu7HZkb5EvyfjAxA67sUfDfZ4Afc9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dPhfPy8u98WxQwNwA0MMX6LKlBjQKg+/yzSoUq4qh+t81o9fKUdDhFjTC/5wnpTLhXa62T0ts5ppq7/DNrRk6klE/OlwD83RmXoZvIPiNd/Rg8EeDdUR9mJOrduWKlv78NVvQ67YOroThrW9yWCkH62AJ6ckmV/u1HBpFmfsMwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0uEwwL3; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61a1663bd7dso5932425a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 05:42:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755693736; x=1756298536; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BIg9W/3Kh0nknE9bg10iXxQ5gJtP6ZAIJOJFszr9STA=;
+        b=d0uEwwL31dnXDvO9LsAqgGV/MLoxmBWlhq6M/foaxyzT/6rHYN+wLlnHVpXNZs0x+A
+         WCdUnc1TqCnQ4f6h6Dmh7Ohc4a5vmthAOmRvBKuvli+dp2b9ogST5UJN9A+AarPAqYq9
+         dRHjTpATwqOH2/N5X8aYnzseiQ7Rs7AFPh/Dtm6GwODe5Cy1oR6vj27CuncWYQc+8IPP
+         UkSE3KjXtXflwK5R0nOJ0kodg6VEwvr5HwmzsW/cLLKqRbHsVRe9pyoF/w4450N8Qesh
+         D8Jzam3iDcFMNacp3aHmW+uDWCc8L4IMwhbU8NzEFYSKZQs93iMi1yzkWBLiCEMM6D82
+         QlEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755693688; x=1756298488;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=79PojQnQKnnfTCReFZXRMGbZgUX1Dqbfz+VlKTtOi18=;
-        b=kJnnvh3F33HSAULpaBy5SZDVpwGmOA9NnsjV8Br8Z74WGhm7NZDrGKovt5pD2xkEyG
-         roUZ84Xg0YjkUaDOpUqfphcy0lWItAOq/U4n7h1sYeyymO3bBuHGqum/+Htkpfz0ut3D
-         S3JyqxUKAVe2l0MeoTNYYSgqpNVeGo9d/lxUsdI1iYs8etihuQDG4R9FdznLmRsQfpxE
-         uDgOGEvPIwwxywRmvwjyDwDAbthJfF+vdTfn/MzVDS6fnjI/aYWMdL5HzyA3S8pCzYz0
-         tQQBQ5aQyXREy8jA/HQSci8GSAEXPkbD3l6HjHx2naQn5ImiTKF7wT5cVQpTda3xuGxB
-         HDgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTb6XGuAh78gKNiEPObWcy+2WNCzwet1T0f6XFC4aMdv1Ldg7fU9e0r/xTLWN0mcI/prAngLbmxz8Y00A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqsQAncwIS8Hik/mEDihWikUbz6aI1S1XPrhS7FYWqiKsNXRfc
-	vVmDhgerI1ghrolAT+6fM1KYuUOJ/+WN2AANrA7eT7Vu7EWaY049kfPyN3D704ilVlG+v4PBivc
-	7qIw4SQ7EF8VNsmoxj/umoHcXOH17tJM3DvWj1r6oU8rOKpv7fm2A2YRvF4I=
-X-Google-Smtp-Source: AGHT+IFbfTZVAfWArENtiYam9/cfnU1Ih1mBxJ8G64Cy9UG+vCbIq/2GwOYnouO9KA9ie9GdDmE6X0qZekWRu8sDNSc09b/nGd6w
+        d=1e100.net; s=20230601; t=1755693736; x=1756298536;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=BIg9W/3Kh0nknE9bg10iXxQ5gJtP6ZAIJOJFszr9STA=;
+        b=i1rPfIsv8XEicRZWwcZ/iu+kGfh2XhSCI6sxu7CerxWZpGHf4bU6ABwRQGNJulyfjB
+         /yBbYrbh8jh/khfNYWo9WqfiBfH4cmtyPA2cSXGlY3B2eTQNtwCos9KE/tAfbTSfL+sW
+         6myDs20y7Nvylv6AfjWtV8FX8b20cvsYyPvpUADckKg+8I9Z7ZeLLkpJwqPnxbuz0Np/
+         p4j7QIXqmzBWO87kLAqY96c5aO9rgSx60jVmKyM5BdsyTQd/DmEaHlvpCh9XV0/06qY9
+         QQ+mDe9e6WKtfuxk972z/H7EFBG/3Zh9pVrqKt0+qONmzMbSV+fDXcxVezKCHklNSjMQ
+         GrOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwdMWVgu6BJhmg/Sx0M2eNliPJIsAh/6iDC2UAangSdf+B+zhadl8EAs9cOqfgTIr1B0QqS7Bg4kI1Y8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUtVv9TSze3CmU2letBdlUn9VWdsx1c+S1RF61cXWob9aA5NWA
+	02rLDK6CONioSPxH6Fv0/4Ie4w4oeEB46Vr2kmH8BhxcdFhaOpxdKcoTCAlMcA==
+X-Gm-Gg: ASbGncuRUyurC4Lj3DygnzYrShzsf58PUnjMBnlBiF1PZBOB3CiGk0l+79tRAEjOZ/7
+	Pf+RYhqsFOnk93+wppvKE3sz6v+5Ph1hV5saqSSLNE2JnT2svPdhHkRF3twFIAT0UMfKM+YGm0r
+	gOxVL8BbuKhth5uIRk3vZvXDRltGTBIGNV1ekMiTXmyW/1pIaP8G3fJdCfsZHuwUJqOs527SOW1
+	QskDV/aaUCY3R34jK+xbo1Y3ApAtE8EKigj3RopYJs6IilOd3Zw9JR6KxTS1qXMVFQfMPt5xRe0
+	GmHrAB2fFjb+7UqSvOYgzQH//oiThFnSF9cJ+ZZqF12o3KgWyM3lbKzj8w5S3S39t98NKXejZwB
+	sKnkkhpPZs+GZHOVD6YW01VuE3cKlBREk3+4f
+X-Google-Smtp-Source: AGHT+IHHRa/Wjm92m9kTtxGRWzJ7agHg8ZuSbyEGNlj7C81CaI3UVA8ffbMZiBB1+byaZJtVfu6Ixw==
+X-Received: by 2002:a05:6402:4306:b0:618:aed3:38a with SMTP id 4fb4d7f45d1cf-61a9782d02cmr2281770a12.31.1755693735970;
+        Wed, 20 Aug 2025 05:42:15 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a758bff1csm3633444a12.56.2025.08.20.05.42.15
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Aug 2025 05:42:15 -0700 (PDT)
+Date: Wed, 20 Aug 2025 12:42:15 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bill Wendling <morbo@google.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 1/4] mm/mm_init: use deferred_init_memmap_chunk() in
+ deferred_grow_zone()
+Message-ID: <20250820124215.igq7ug4juiomjyng@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250818064615.505641-1-rppt@kernel.org>
+ <20250818064615.505641-2-rppt@kernel.org>
+ <20250819095223.ckjdsii4gc6u4nec@master>
+ <aKRX9iIe8h9fFi9v@kernel.org>
+ <20250819235158.mgei7l4yraheech4@master>
+ <aKWTSq-JcTviuGlU@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:388b:b0:87c:1d65:3aeb with SMTP id
- ca18e2360f4ac-884717e502bmr595120439f.2.1755693688491; Wed, 20 Aug 2025
- 05:41:28 -0700 (PDT)
-Date: Wed, 20 Aug 2025 05:41:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a5c278.050a0220.3d78fd.0000.GAE@google.com>
-Subject: [syzbot] [mptcp?] WARNING in subflow_data_ready (4)
-From: syzbot <syzbot+0ff6b771b4f7a5bce83b@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, geliang@kernel.org, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	martineau@kernel.org, matttbe@kernel.org, mptcp@lists.linux.dev, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKWTSq-JcTviuGlU@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-Hello,
+On Wed, Aug 20, 2025 at 12:20:10PM +0300, Mike Rapoport wrote:
+>On Tue, Aug 19, 2025 at 11:51:58PM +0000, Wei Yang wrote:
+>> On Tue, Aug 19, 2025 at 01:54:46PM +0300, Mike Rapoport wrote:
+>> >On Tue, Aug 19, 2025 at 09:52:23AM +0000, Wei Yang wrote:
+>> >> Hi, Mike
+>> >> 
+>> >> After going through the code again, I have some trivial thoughts to discuss
+>> >> with you. If not right, please let me know.
+>> >> 
+>> >> On Mon, Aug 18, 2025 at 09:46:12AM +0300, Mike Rapoport wrote:
+>> >> 
+>> >> In the file above this line, there is a compare between first_deferred_pfn and
+>> >> its original value after grab pgdat_resize_lock.
+>> >
+>> >Do you mean this one:
+>> >
+>> >	if (first_deferred_pfn != pgdat->first_deferred_pfn) {
+>> >		pgdat_resize_unlock(pgdat, &flags);
+>> >		return true;
+>> >	}
+>> > 
+>> 
+>> Yes.
+>> 
+>> I am thinking something like this:
+>> 
+>>  	if (first_deferred_pfn != pgdat->first_deferred_pfn || 
+>> 	    first_deferred_pfn == ULONG_MAX)
+>> 
+>> This means
+>> 
+>>   * someone else has grow zone before we grab the lock
+>>   * or the whole zone has already been initialized
+>
+>deferred_grow_zone() can be called only before deferred_init_memmap(), so
+>it's very unlikely that a zone will be completely initialized here. We
+>start with at least one section with each deferred zone and every call to
+>deferred_grow_zone() adds a section.
+>
+>And even if that was a case and first_deferred_pfn is ULONG_MAX, the loop
+>below will end immediately, so I don't think additional condition here
+>would be helpful.
+> 
 
-syzbot found the following issue on:
+I think you are right.
 
-HEAD commit:    b19a97d57c15 Merge tag 'pull-fixes' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=174817a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b7511150b112b9c3
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ff6b771b4f7a5bce83b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>> >> I am thinking to compare first_deferred_pfn with ULONG_MAX, as it compared in
+>> >> deferred_init_memmap(). This indicate this zone has already been initialized
+>> >> totally.
+>> >
+>> >It may be another CPU ran deferred_grow_zone() and won the race for resize
+>> >lock. Then pgdat->first_deferred_pfn will be larger than
+>> >first_deferred_pfn, but still not entire zone would be initialized.
+>> > 
+>> >> Current code guard this by spfn < zone_end_pfn(zone). Maybe a check ahead
+>> >> would be more clear?
+>> >
+>> >Not sure I follow you here. The check that we don't pass zone_end_pfn is
+>> >inside the loop for every section we initialize.
+>> > 
+>> 
+>> In case the zone has been initialized totally, first_deferred_pfn = ULONG_MAX.
+>> 
+>> Then we come to the loop with initial state:
+>> 
+>>     spfn = ULONG_MAX
+>>     epfn = 0 (which is wrap around)
+>> 
+>> And loop condition check (spfn < zone_end_pfn(zone)) is false, so the loop is
+>> skipped. This is how we handle a fully initialized zone now.
+>> 
+>> Would this be a little un-common?
+>
+>Why? The important thing is (spfn < zone_end_pfn(zone)) is false, and I
+>think that's good enough.
+> 
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Well, no more else.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-b19a97d5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d6e98c49ae62/vmlinux-b19a97d5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c90ded1d8e17/bzImage-b19a97d5.xz
+>> >> > 
+>> >> >-	/* If the zone is empty somebody else may have cleared out the zone */
+>> >> >-	if (!deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn,
+>> >> >-						 first_deferred_pfn)) {
+>> >> >-		pgdat->first_deferred_pfn = ULONG_MAX;
+>> >> >-		pgdat_resize_unlock(pgdat, &flags);
+>> >> >-		/* Retry only once. */
+>> >> >-		return first_deferred_pfn != ULONG_MAX;
+>> >> >+	/*
+>> >> >+	 * Initialize at least nr_pages_needed in section chunks.
+>> >> >+	 * If a section has less free memory than nr_pages_needed, the next
+>> >> >+	 * section will be also initalized.
+>> 
+>> Nit, one typo here. s/initalized/initialized/
+>
+>Thanks, will fix.
+> 
+>-- 
+>Sincerely yours,
+>Mike.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ff6b771b4f7a5bce83b@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 3 PID: 33 at net/mptcp/subflow.c:1515 subflow_data_ready+0x40b/0x7c0 net/mptcp/subflow.c:1515
-Modules linked in:
-CPU: 3 UID: 0 PID: 33 Comm: ksoftirqd/3 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:subflow_data_ready+0x40b/0x7c0 net/mptcp/subflow.c:1515
-Code: 89 ee e8 78 61 3c f6 40 84 ed 75 21 e8 8e 66 3c f6 44 89 fe bf 07 00 00 00 e8 c1 61 3c f6 41 83 ff 07 74 09 e8 76 66 3c f6 90 <0f> 0b 90 e8 6d 66 3c f6 48 89 df e8 e5 ad ff ff 31 ff 89 c5 89 c6
-RSP: 0018:ffffc900006cf338 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff888031acd100 RCX: ffffffff8b7f2abf
-RDX: ffff88801e6ea440 RSI: ffffffff8b7f2aca RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000007
-R10: 0000000000000004 R11: 0000000000002c10 R12: ffff88802ba69900
-R13: 1ffff920000d9e67 R14: ffff888046f81800 R15: 0000000000000004
-FS:  0000000000000000(0000) GS:ffff8880d69bc000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000560fc0ca1670 CR3: 0000000032c3a000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- tcp_data_queue+0x13b0/0x4f90 net/ipv4/tcp_input.c:5197
- tcp_rcv_state_process+0xfdf/0x4ec0 net/ipv4/tcp_input.c:6922
- tcp_v6_do_rcv+0x492/0x1740 net/ipv6/tcp_ipv6.c:1672
- tcp_v6_rcv+0x2976/0x41e0 net/ipv6/tcp_ipv6.c:1918
- ip6_protocol_deliver_rcu+0x188/0x1520 net/ipv6/ip6_input.c:438
- ip6_input_finish+0x1e4/0x4b0 net/ipv6/ip6_input.c:489
- NF_HOOK include/linux/netfilter.h:318 [inline]
- NF_HOOK include/linux/netfilter.h:312 [inline]
- ip6_input+0x105/0x2f0 net/ipv6/ip6_input.c:500
- dst_input include/net/dst.h:471 [inline]
- ip6_rcv_finish net/ipv6/ip6_input.c:79 [inline]
- NF_HOOK include/linux/netfilter.h:318 [inline]
- NF_HOOK include/linux/netfilter.h:312 [inline]
- ipv6_rcv+0x264/0x650 net/ipv6/ip6_input.c:311
- __netif_receive_skb_one_core+0x12d/0x1e0 net/core/dev.c:5979
- __netif_receive_skb+0x1d/0x160 net/core/dev.c:6092
- process_backlog+0x442/0x15e0 net/core/dev.c:6444
- __napi_poll.constprop.0+0xba/0x550 net/core/dev.c:7494
- napi_poll net/core/dev.c:7557 [inline]
- net_rx_action+0xa9f/0xfe0 net/core/dev.c:7684
- handle_softirqs+0x216/0x8e0 kernel/softirq.c:579
- run_ksoftirqd kernel/softirq.c:968 [inline]
- run_ksoftirqd+0x3a/0x60 kernel/softirq.c:960
- smpboot_thread_fn+0x3f7/0xae0 kernel/smpboot.c:160
- kthread+0x3c2/0x780 kernel/kthread.c:463
- ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Wei Yang
+Help you, Help me
 
