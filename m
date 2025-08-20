@@ -1,104 +1,108 @@
-Return-Path: <linux-kernel+bounces-778422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C35BB2E579
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:07:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0EB9B2E57C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF2F1C85558
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:07:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EBDF1C84E69
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3414F28489F;
-	Wed, 20 Aug 2025 19:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECC62820D7;
+	Wed, 20 Aug 2025 19:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hD15oUwa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bm54gcJz"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F82D284B26;
-	Wed, 20 Aug 2025 19:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F9617A314;
+	Wed, 20 Aug 2025 19:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755716829; cv=none; b=U6QSl+WanJ1KP7H3LJ4Y8gm7xu3JwnWegfptCJvK1wkO07ZkI3l4j+6RynaQnecJViah6wEpntXr1DLv9HgeHKT9uzxZagBRh+3G+xBU766YR1BQH0Iu61n+IGt5p3XjVf9wMuisb62gfVAhjgoVbNKKx4cJXDyFStR1YPRNIcg=
+	t=1755716926; cv=none; b=ECImqAOap4inlPd4aoM1Iy3LgWDhSOTMpNl0mpG8nGWT591zk9jJmlhkCXdalLGThZP+7N52vr2U3x9vhm1Cl8IEMpyZXl9q7kwmaXeI84SMkpdstBnOx/HtJrfvL84mis77sWrtSJRwzXC5HZIab8pHrG+qsnuaEvU2NpzFYR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755716829; c=relaxed/simple;
-	bh=PLodxzCvgqaYbD8M4yslfd7XA3TXl3CKdavXZrRjThM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hqHFA211Aw4rwyqEKxrTsDn9ywLkR25mpg56UQ8UFarTGhGx0TFwEF7kXCslhZPqXscUxXQaAsfVAoLXJl45fBdVGWgXLq4sXp2HMkJEkHHJXuktu0W8rUzEFZBJ8fAgeluN/C/W7P5bfcthhi4L5pGYLOMAnmLRoz3RdgpHQwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hD15oUwa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2001C4CEE7;
-	Wed, 20 Aug 2025 19:07:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755716828;
-	bh=PLodxzCvgqaYbD8M4yslfd7XA3TXl3CKdavXZrRjThM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hD15oUwaW6gmjcX44pRkEjMfF/K6uiXmGaPRvOHub4nK3iodX7cBdkQoIEUk0S/N4
-	 W8GZLUtInWU+x/PpwLwW46YK2vjZ04RTmWzOuB9/T9IGhp5U8D5CH4kJ6xZB4D3hvG
-	 fEbYjVCgCM0qySVhbYNw1c/LcOjDgdg2GYNLq45O0zlZFcSovcK5QM7Oc4RYwQlbUu
-	 biZ78Fsllhxqdw3/mQ99HGUFshxgbhmm8BNsv9b4DRmPNsqZfwIH07+Ln9PtpyRkSw
-	 OqKwbEK0DxqkabkNGKX8ab/wzd4Tq+b9dNEi3bJ01z6z4gvHvPmRIU6xRDNaO0DqgF
-	 KaMTYYnThKlaQ==
-Date: Wed, 20 Aug 2025 14:07:08 -0500
-From: Rob Herring <robh@kernel.org>
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mark Kettenis <kettenis@openbsd.org>,
-	Hector Martin <marcan@marcan.st>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: arm: apple: Add t8112 j415 compatible
-Message-ID: <20250820190708.GA538860-robh@kernel.org>
-References: <20250813-apple-dt-sync-6-17-v1-0-209f15d10aa0@jannau.net>
- <20250813-apple-dt-sync-6-17-v1-4-209f15d10aa0@jannau.net>
+	s=arc-20240116; t=1755716926; c=relaxed/simple;
+	bh=HcDyeRjH+0g3ubSN5NYaXUP6Sk1mYq3xyhgSnMrL9KU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mQ8TF1pNz/sZeu+/LLKLqLcMLMNoyz7COe/BH3Ac+iMg1sgHFy8j6RIbtQXoRrA/GJh2ZApBfqBftzj0YXuaZ5Rq5IWUBj757dlcmE+1XI5Px/vA1G2vWSDnrjlnlQfrjZHFTQJdi+G1jRJTv3p0nhLeUvwAKOynpaQLOANLuSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bm54gcJz; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6188b5b1f1cso258471a12.0;
+        Wed, 20 Aug 2025 12:08:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755716923; x=1756321723; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HcDyeRjH+0g3ubSN5NYaXUP6Sk1mYq3xyhgSnMrL9KU=;
+        b=Bm54gcJzgoCLvoyYrnvPzCblGkc0rtViUv+4bN7zXTxkYeaSL52pQ8FzfDav8wnoEp
+         8WfxoaA5TB3OB8qOfofAWVKEb57PSI4l8qVHWaFuGXN1/PFvUuvKy4nVajWWJi8bg7xW
+         wfHQ1K5/TGjG4swQVqjppJXuFABBU51thzsUJ20dUEdwpLbzbediWINaO/+rGNMurAhj
+         KNExOrngXn7xhpWl6WO2u7zFauc46nD+VCsMm7mhkQykkEzfx0v1dCsaviy6e+tKH0T3
+         5bhFM4hBHhgh9dJNMn1+Inltd5XWG54HkWhKYTvjXK6ofDkuRZ4SYwIfjrMSkV7rSvtA
+         aUmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755716923; x=1756321723;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HcDyeRjH+0g3ubSN5NYaXUP6Sk1mYq3xyhgSnMrL9KU=;
+        b=sBsQJwT5Lw7U7uaN+qsmKcXz7SRo6XZgJcRSBaRKEW04QXPSlxjpUvGsr4p1dapNxw
+         vRc1W7UwHd1cx1hYhrovxcmTLfYj5XEcHiPWiPn2oe6+Pnow4Ehn66C7jDkaIulHMCtI
+         qP5NIuAsqLqyfk3CCwE3STWGcLoJ/vUNPOuL0H0WXaiDbc6LCPp0Vaj0GfaWVO9t+A0L
+         /kVBayag5WojjToGSpmqnqA74DUP12oPoErp5gLX5mEKcamI4trhYRkFqP7etPbrLGIK
+         /lJrmz5iJ0djKDJiv7FFNlc/YZqfIjb/D97BAAppoV5rQJ40TU63i7GyJyYx4bNXo79o
+         bAmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVf+Kv5H+Fd4SpeNfmJ5lUhO3WSNLlgpG1f5qjMCWHlWN2VODxB+W069TCMgPm6yzvesKxosBA+5GzN@vger.kernel.org, AJvYcCVwBEhn0M1sbArW8KKDFpNj794U9AmzdjGqFIDNunvwDQ7FA7er90zR12faxI54l9GiwdIRzmyngkKeFF5O@vger.kernel.org, AJvYcCXqG56w1DT/dJCyv03JgTIAoo+8Ebxi2sg9RF4tJ44MhsxhhdTwikeix8HfwDlJjr1M2kT3lRo0wGP0Gg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7zQO3x0apKB3ST7JHm62nNhpiLHNtNjOktJP2tW5/Dhs3AOKF
+	BSjVPNU1KWtXmy0dm9vtVURrHOxAIQavEWxeF0UzNicg8kAnC+nJ5UdgWE5WreAZ9VnxKe/m8gH
+	F0BLyhgTRZuQe5JGBPM7vvp/t5L998Zc=
+X-Gm-Gg: ASbGncviTmiTnBLu88xdcyeQrZQMOLJH20ob5G/SI/Tn6Rhm40a3PLAFde5Kud58Krp
+	06EMHT3Wv6muO6FIV1qC3CArz5bNKb7+GWAUEq24cN/zMXmFBh9+UFX3eOk0bMgyFAlPVyImYKr
+	6vqARzoRsQWGxCIvFboQjArPV5IlHw6uRMXVvktxXfE5P9vl70aGnxsIbMEcqBuXnZpzahBBxaB
+	HVLEnQ+2OzG0/1tsQ==
+X-Google-Smtp-Source: AGHT+IHjCRoLLJwsbsTLX+7XbOUyGhHR35RnvdQoPKy3xduLiLTbN+JBYUbUk+vA0ohxdOk67QoYySFRQIuqws38vG8=
+X-Received: by 2002:a17:907:3fa3:b0:af9:6bfb:58b7 with SMTP id
+ a640c23a62f3a-afdf00f7b01mr337333866b.5.1755716923109; Wed, 20 Aug 2025
+ 12:08:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813-apple-dt-sync-6-17-v1-4-209f15d10aa0@jannau.net>
+References: <20250820163120.24997-1-jefflessard3@gmail.com> <20250820163120.24997-5-jefflessard3@gmail.com>
+In-Reply-To: <20250820163120.24997-5-jefflessard3@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 20 Aug 2025 22:08:06 +0300
+X-Gm-Features: Ac12FXwmMQGAdofCnD6L6CapMXC695A-jukjMfaKnUeE5mWFbt2l_Dj9Qq6u1fQ
+Message-ID: <CAHp75VfyR0cjnC6C6Xy8x9nTREdAgbjo18RLYNRzoLc6KmXnTA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] MAINTAINERS: Add entry for TM16xx driver
+To: =?UTF-8?Q?Jean=2DFran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, devicetree@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Boris Gjenero <boris.gjenero@gmail.com>, Christian Hewitt <christianshewitt@gmail.com>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Paolo Sabatino <paolo.sabatino@gmail.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 11:53:36AM +0200, Janne Grunau wrote:
-> This adds the "apple,j415" (MacBook Air (15-inch, M2, 2023) to the
-> apple,t8112 platform.
-> 
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> ---
->  Documentation/devicetree/bindings/arm/apple.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/apple.yaml b/Documentation/devicetree/bindings/arm/apple.yaml
-> index da60e9de1cfbd0151e973c3aafba6d0880fc21aa..3b90b5df60507b245de387de104a4e64f234139a 100644
-> --- a/Documentation/devicetree/bindings/arm/apple.yaml
-> +++ b/Documentation/devicetree/bindings/arm/apple.yaml
-> @@ -93,6 +93,7 @@ description: |
->  
->    - MacBook Air (M2, 2022)
->    - MacBook Pro (13-inch, M2, 2022)
-> +  - MacBook Pro (15-inch, M2, 2023)
+On Wed, Aug 20, 2025 at 7:31=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
+<jefflessard3@gmail.com> wrote:
 
-s/Pro/Air/?
+Besides the missing commit message, the main part of this patch should
+be merged with the patch 2 where the YAML file is being added.
+Otherwise it will be a dangling file. I dunno if DT tooling has its
+own concept of a maintainer database, though.
 
->    - Mac mini (M2, 2023)
->  
->    And devices based on the "M1 Pro", "M1 Max" and "M1 Ultra" SoCs:
-> @@ -279,6 +280,7 @@ properties:
->          items:
->            - enum:
->                - apple,j413 # MacBook Air (M2, 2022)
-> +              - apple,j415 # MacBook Air (M2, 2023)
->                - apple,j473 # Mac mini (M2, 2023)
->                - apple,j493 # MacBook Pro (13-inch, M2, 2022)
->            - const: apple,t8112
-> 
-> -- 
-> 2.50.1
-> 
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
