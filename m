@@ -1,210 +1,154 @@
-Return-Path: <linux-kernel+bounces-777449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FF2B2D991
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:05:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DB4B2D984
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A61E21894CD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4683A7221
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306E22DCF79;
-	Wed, 20 Aug 2025 09:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827932DA76F;
+	Wed, 20 Aug 2025 10:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L/Le0mB+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YcMlGS+2"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E242B227563
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595E51D5170;
+	Wed, 20 Aug 2025 10:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755683981; cv=none; b=ba0GUPi4i8wQf7jEgzhHJO0eQx2fE1Fo8KP8jmxVzkIeSV3k15nHTWGVsQs1qXsw61n+WcO4/cbpuOaXY/fZqk8gA4DRpzObxJuNcizuE7ffUdy5gLvoLOJOHdSXogajk/RYqlb6cRfh06vjzNTvC3Ijgl6+QKTYmTxNenZq9mk=
+	t=1755684032; cv=none; b=Vp/PouNWHfr1D/4HEpye5OvWZuHgnlILwX1PvjO0E0euf9VZLDgf5ZDpsu9rsz6EeVP8P6OrUf1iUzh9krsm042FeFfmbUR/s74GL/l1JC6E2c6GjRzdD8GaxFdpwbWWM2QuZLdFF8OpAX3fVGmwkKAMfHBFSGGOjRdl9fCIA9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755683981; c=relaxed/simple;
-	bh=kf8ZOAZzu5DNf1xefAAp9+GONvpaFNba+GUV/PT8Ka8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jm6lB7lZ+E0VQNk2WtPBCtfG6rk/SQcsizfwQxE9uGz0TDHjuRxLaPSJierJyAZtVEqWSuXguXf3pMgYlMxHr+bmByt6lE/D7BtN7LsFDRkDGxAG7Z++zOJ3BHOutnVbncg3ChaZp9oBDjReEw/jizk2+CWTMUvbVuD7n+WnpzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L/Le0mB+; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755683980; x=1787219980;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=kf8ZOAZzu5DNf1xefAAp9+GONvpaFNba+GUV/PT8Ka8=;
-  b=L/Le0mB+m0y0hVqBYkR3FZDYHYfFQrxBDspWWZh+JvY5str8kuN2vzCf
-   0PwFkvADNp/9q4tXj8DdtVa/j0yonKRlGiwz4jl9Be+iXIygTS8281rG+
-   AbQ5BqeZxsHwIM/dtkIRmdmijDCEZUDWX0BaAHxpCfus3p8MM82PTXVAX
-   FvItNiOwe2WZHRy+P34rHtiC5L7LJFchzsEW/fzmj6cfaN0ns4HmekcwQ
-   DkSoUuOktZrUoqsad7Poz+22026Sb+qQhW9wUZJ9qesEtClhjKf/S+adO
-   v2ZSX8AJQn98W6xHlKdzZuzac+Ua5RfRnhpxsudTlbgLeH7hRkbcsMeyU
-   Q==;
-X-CSE-ConnectionGUID: WN77LjCqT/eZuCFmeUftxA==
-X-CSE-MsgGUID: ul5tnPJVRQmG9dNNxD7hcw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61583283"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="61583283"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 02:59:38 -0700
-X-CSE-ConnectionGUID: 9IMX+Q2pRQmn0+XbktvmBg==
-X-CSE-MsgGUID: Gebw+EpQQsOh/Jy7Ez8s4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="167307336"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.36]) ([10.124.240.36])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 02:59:33 -0700
-Message-ID: <8f535bbc-bb24-4baf-b9c6-ac0c8fb4c730@linux.intel.com>
-Date: Wed, 20 Aug 2025 17:59:31 +0800
+	s=arc-20240116; t=1755684032; c=relaxed/simple;
+	bh=Yth+q92SHcEaq64lLAMMSgnCn7UK8xiYQ7jCdTKJVKo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qveNhx5avz1BE/yFJwI/pDXHFQz8ZeNgC3s/2rtFhHnRrbobJvGPhLaSYZ10t66a1S+pdNEOiccKi4lNSJgmiI2J9+WbnsmyRMPvqFH4GtxTYaeMlKnRfqGfq0ekvoDyYy/zmuo2uLT0jYJq0AhtVPOR7KS+iTNO5VES6F2rCNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YcMlGS+2; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3c380aa1ad0so271260f8f.3;
+        Wed, 20 Aug 2025 03:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755684028; x=1756288828; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sWEMWib46hxbOTAQbWhLdYmAtxQxdWrlDQL0tYExbxs=;
+        b=YcMlGS+2SWYyi7jXhIJAuOVt12xUxUTGAdCfKdX7+e5VIUplZ4xfpV4fSNiq+5yGYg
+         JomCsaXoJZUmvQi6Oa7jfzyO21ARZS3p91dXaRlmZkOfxh+Q9NwUJWwFnaBXIQ+okVsi
+         /Ubw21EuImvWPTO3ZeJ1q2GSqrAF3opKUPQlOJwsToaq5/kib4A7aBDJJgRRYJThCTyF
+         e8SFVZOzgKOl4Tb31TmY6Z2O7nH5ZAXUJdX2air7BsRZIOXBXZt5jeQukLhy7P6qhJrB
+         kHShJcd9rRqIltlkPdIT/M1SOj24+tAsWFagp3A+pxco0tdrKit6CDL42fJYgibWqsho
+         fAmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755684028; x=1756288828;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sWEMWib46hxbOTAQbWhLdYmAtxQxdWrlDQL0tYExbxs=;
+        b=MAh6DTLFkfqVHbpInPjLt5e/jbIWW0gdozmpjBOn9VY6Kw6ru9ojScxLbI60L/xkWN
+         rJ4+Ic+CA8Oc7/ZKhdtginotm7PQIuJOw8+uSO99/4HaRcMOfxF0dSumEmm6LRjT4JA4
+         A8SwPergYhbf1CGcujhdRbeyPvYQalmUgqmH+WfyBsGNs/n9KsvhJu21itfEfGhfiYt6
+         e/vZw97uXtqZ4AeTF9u7I0BjmcHfLzzPN8npBa4rlTPlcyX+MuxkZuAv8qc9U5sZF+nR
+         AeT3c0CN7E33zw3vsGoew5m7V4JmmXsUqkuvObmaMCkY9Vs42ViZ9R3oOlOvX95sIt7j
+         kMIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBZt9B4x5b49s7RZKKy8dhtqVhxTXP2fBbG+cpkVbuQ6uHCj/fJ/F4ANsZas6QPb8XZLXYigqYijezrtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfh0M4LOsMc44Lnu4DtHqgZfYdppCqOU+cAKGCnYgH5tmHNtKT
+	JLCN2CbCdLhJHacVSaOIhFMYisAamNGxRwBnhPTsx5/JkeGTMLEBmbW+9NEuNw==
+X-Gm-Gg: ASbGncsMYbSSeBeTLkVvsMaPwzx/S6+gPMHPpgDp5twkpKuvPFP1DtmSDLwIR1qwQZd
+	Fccy9Wl2mmHi3hhSmojClYChHw/MiG1659S2Rbtongc2IUqAyMbEwoFMB9r3ahhufb32dCmQjC4
+	xUljoqNdbcSekORZLlZyxsI3443+dldCsHAJwX1lb2zuelBsJ+8HueE7CKbHECt4Q6U9gtmfnuh
+	291kJtmam0DowZCbvzT941fC1KjMk+3HO8qE32NaTer0Bkucgj06dwt768VjUvGIHPk73Rxs7KP
+	Qmx2l26J66FtIahVzciVNvWOJAg39vxHoNBwaRcdiGAPTLs6PqpVnvT0piqdOsfGn5g6n7PV93X
+	70j8BguGa54WnNlQ5pDCiwQ==
+X-Google-Smtp-Source: AGHT+IFUO/XFYDY72yU5JmwENY+JkNhcVuHx67L9BJd+04wRNPVoF8gQQvcb+8Bkc2HCcKnYUmENxg==
+X-Received: by 2002:a05:6000:18ac:b0:3b6:1630:9204 with SMTP id ffacd0b85a97d-3c32e03e7d7mr1468617f8f.19.1755684027595;
+        Wed, 20 Aug 2025 03:00:27 -0700 (PDT)
+Received: from fedora ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0748797acsm6830129f8f.10.2025.08.20.03.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 03:00:26 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: kvm@vger.kernel.org,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] KVM: VMX: Fix SPEC_CTRL handling
+Date: Wed, 20 Aug 2025 11:59:54 +0200
+Message-ID: <20250820100007.356761-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 08/17] perf/x86: Add YMM into sample_simd_vec_regs
-To: kan.liang@linux.intel.com, peterz@infradead.org, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
- dave.hansen@linux.intel.com, irogers@google.com, adrian.hunter@intel.com,
- jolsa@kernel.org, alexander.shishkin@linux.intel.com,
- linux-kernel@vger.kernel.org
-Cc: ak@linux.intel.com, zide.chen@intel.com, mark.rutland@arm.com,
- broonie@kernel.org, ravi.bangoria@amd.com, eranian@google.com
-References: <20250815213435.1702022-1-kan.liang@linux.intel.com>
- <20250815213435.1702022-9-kan.liang@linux.intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250815213435.1702022-9-kan.liang@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+SPEC_CTRL is an MSR, i.e. a 64-bit value, but the assembly code
+assumes bits 63:32 are always zero. The bug is _currently_ benign
+because neither KVM nor the kernel support setting any of bits 63:32,
+but it's still a bug that needs to be fixed
 
-On 8/16/2025 5:34 AM, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
->
-> The YMM0-15 is composed of XMM and YMMH. It requires 2 XSAVE commands to
-> get the complete value. Internally, the XMM and YMMH are stored in
-> different structures, which follow the XSAVE format. But the output
-> dumps the YMM as a whole.
->
-> The qwords 4 imply YMM.
->
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> ---
->  arch/x86/events/core.c                | 13 +++++++++++++
->  arch/x86/include/asm/perf_event.h     |  4 ++++
->  arch/x86/include/uapi/asm/perf_regs.h |  4 +++-
->  arch/x86/kernel/perf_regs.c           | 10 +++++++++-
->  4 files changed, 29 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 1789b91c95c6..aebd4e56dff1 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -423,6 +423,9 @@ static void x86_pmu_get_ext_regs(struct x86_perf_regs *perf_regs, u64 mask)
->  
->  	if (valid_mask & XFEATURE_MASK_SSE)
->  		perf_regs->xmm_space = xsave->i387.xmm_space;
-> +
-> +	if (valid_mask & XFEATURE_MASK_YMM)
-> +		perf_regs->ymmh = get_xsave_addr(xsave, XFEATURE_YMM);
->  }
->  
->  static void release_ext_regs_buffers(void)
-> @@ -725,6 +728,9 @@ int x86_pmu_hw_config(struct perf_event *event)
->  			if (event->attr.sample_simd_vec_reg_qwords >= PERF_X86_XMM_QWORDS &&
->  			    !(x86_pmu.ext_regs_mask & XFEATURE_MASK_SSE))
->  				return -EINVAL;
-> +			if (event->attr.sample_simd_vec_reg_qwords >= PERF_X86_YMM_QWORDS &&
-> +			    !(x86_pmu.ext_regs_mask & XFEATURE_MASK_YMM))
-> +				return -EINVAL;
->  		}
->  	}
->  	return x86_setup_perfctr(event);
-> @@ -1837,6 +1843,13 @@ void x86_pmu_setup_regs_data(struct perf_event *event,
->  		mask |= XFEATURE_MASK_SSE;
->  	}
->  
-> +	if (attr->sample_simd_regs_enabled) {
-> +		if (attr->sample_simd_vec_reg_qwords >= PERF_X86_YMM_QWORDS) {
-> +			perf_regs->ymmh_regs = NULL;
-> +			mask |= XFEATURE_MASK_YMM;
-> +		}
-> +	}
-> +
->  	mask &= ~ignore_mask;
->  	if (mask)
->  		x86_pmu_get_ext_regs(perf_regs, mask);
-> diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-> index 538219c59979..81e3143fd91a 100644
-> --- a/arch/x86/include/asm/perf_event.h
-> +++ b/arch/x86/include/asm/perf_event.h
-> @@ -597,6 +597,10 @@ struct x86_perf_regs {
->  		u64	*xmm_regs;
->  		u32	*xmm_space;	/* for xsaves */
->  	};
-> +	union {
-> +		u64	*ymmh_regs;
-> +		struct ymmh_struct *ymmh;
-> +	};
->  };
->  
->  extern unsigned long perf_arch_instruction_pointer(struct pt_regs *regs);
-> diff --git a/arch/x86/include/uapi/asm/perf_regs.h b/arch/x86/include/uapi/asm/perf_regs.h
-> index bd8af802f757..feb3e8f80761 100644
-> --- a/arch/x86/include/uapi/asm/perf_regs.h
-> +++ b/arch/x86/include/uapi/asm/perf_regs.h
-> @@ -59,6 +59,8 @@ enum perf_event_x86_regs {
->  #define PERF_X86_SIMD_VEC_MASK		GENMASK_ULL(PERF_X86_SIMD_VEC_REGS_MAX - 1, 0)
->  
->  #define PERF_X86_XMM_QWORDS		2
-> -#define PERF_X86_SIMD_QWORDS_MAX	PERF_X86_XMM_QWORDS
-> +#define PERF_X86_YMM_QWORDS		4
-> +#define PERF_X86_YMMH_QWORDS		(PERF_X86_YMM_QWORDS / 2)
-> +#define PERF_X86_SIMD_QWORDS_MAX	PERF_X86_YMM_QWORDS
->  
->  #endif /* _ASM_X86_PERF_REGS_H */
-> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-> index 397357c5896b..d94bc687e4bf 100644
-> --- a/arch/x86/kernel/perf_regs.c
-> +++ b/arch/x86/kernel/perf_regs.c
-> @@ -66,6 +66,9 @@ void perf_simd_reg_check(struct pt_regs *regs,
->  	if (*vec_qwords >= PERF_X86_XMM_QWORDS && !perf_regs->xmm_regs)
->  		*nr_vectors = 0;
->  
-> +	if (*vec_qwords >= PERF_X86_YMM_QWORDS && !perf_regs->xmm_regs)
+Fixes: 07853adc29a0 ("KVM: VMX: Prevent RSB underflow before vmenter")
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/kvm/vmx/vmenter.S | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-should be "!perf_regs->ymmh_regs"?
+diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
+index 0a6cf5bff2aa..fb250ddae00b 100644
+--- a/arch/x86/kvm/vmx/vmenter.S
++++ b/arch/x86/kvm/vmx/vmenter.S
+@@ -118,13 +118,23 @@ SYM_FUNC_START(__vmx_vcpu_run)
+ 	 * and vmentry.
+ 	 */
+ 	mov 2*WORD_SIZE(%_ASM_SP), %_ASM_DI
+-	movl VMX_spec_ctrl(%_ASM_DI), %edi
+-	movl PER_CPU_VAR(x86_spec_ctrl_current), %esi
+-	cmp %edi, %esi
++#ifdef CONFIG_X86_64
++	mov VMX_spec_ctrl(%rdi), %rdx
++	cmp PER_CPU_VAR(x86_spec_ctrl_current), %rdx
++	je .Lspec_ctrl_done
++	movl %edx, %eax
++	shr $32, %rdx
++#else
++	mov VMX_spec_ctrl(%edi), %eax
++	mov PER_CPU_VAR(x86_spec_ctrl_current), %ecx
++	xor %eax, %ecx
++	mov VMX_spec_ctrl + 4(%edi), %edx
++	mov PER_CPU_VAR(x86_spec_ctrl_current + 4), %edi
++	xor %edx, %edi
++	or %edi, %ecx
+ 	je .Lspec_ctrl_done
++#endif
+ 	mov $MSR_IA32_SPEC_CTRL, %ecx
+-	xor %edx, %edx
+-	mov %edi, %eax
+ 	wrmsr
+ 
+ .Lspec_ctrl_done:
+-- 
+2.50.1
 
-
-> +		*vec_qwords = PERF_X86_XMM_QWORDS;
-> +
->  	*nr_pred = 0;
->  }
->  
-> @@ -105,6 +108,10 @@ u64 perf_simd_reg_value(struct pt_regs *regs, int idx,
->  		if (!perf_regs->xmm_regs)
->  			return 0;
->  		return perf_regs->xmm_regs[idx * PERF_X86_XMM_QWORDS + qwords_idx];
-> +	} else if (qwords_idx < PERF_X86_YMM_QWORDS) {
-> +		if (!perf_regs->ymmh_regs)
-> +			return 0;
-> +		return perf_regs->ymmh_regs[idx * PERF_X86_YMMH_QWORDS + qwords_idx - PERF_X86_XMM_QWORDS];
->  	}
->  
->  	return 0;
-> @@ -121,7 +128,8 @@ int perf_simd_reg_validate(u16 vec_qwords, u64 vec_mask,
->  		if (vec_mask)
->  			return -EINVAL;
->  	} else {
-> -		if (vec_qwords != PERF_X86_XMM_QWORDS)
-> +		if (vec_qwords != PERF_X86_XMM_QWORDS &&
-> +		    vec_qwords != PERF_X86_YMM_QWORDS)
->  			return -EINVAL;
->  		if (vec_mask & ~PERF_X86_SIMD_VEC_MASK)
->  			return -EINVAL;
 
