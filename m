@@ -1,243 +1,242 @@
-Return-Path: <linux-kernel+bounces-776778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA1DB2D16C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:31:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A664B2D16E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4A6526D48
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:31:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0211C25C5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB1B23BD01;
-	Wed, 20 Aug 2025 01:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8991482F2;
+	Wed, 20 Aug 2025 01:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ObZyYwPj"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="iCDfySv9"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68369236A8B
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761093D76
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755653484; cv=none; b=PiTpNBQRNzWUOExA9SfVDlg8xdWp6xKJQMKsYU2/7hUsaJLJCDqkR7yRFtMSyxTbd/CNUtWV83RK6aY+KEvnW9sPBQxB5djNA7m5p6qOY2T/L0oLImVVbi011sTtHyfrNPKMCA4KbW035G/COgnx5pActoEkeFa772857kRl+pc=
+	t=1755653539; cv=none; b=VjG4pl8cUhxPuk15AsGOabS4wt5EzEe+3U2vfBcRqz2Wss7h8Skco0P7sXnzeBZQe4A1LoEyIjob3y+bqsHlUdIjvQrWCQhvflQpq7ST8LYFV0jW8lDjteh4A8ArIj24anGQ8LUC3VbMzWBUoPUl866ch4xoE0KcoGttvJStMFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755653484; c=relaxed/simple;
-	bh=oo/j3PfymDzX+Hfsh2NLLWeSisZgQLS8hkdxexH4V10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m3C+6t4bguXhCaOrwR0vZm5clhZi04ESTljr8U+yDBqEzSaFvdpdQVNC7rHklAWj8wlurm7aulgMuVCon8MsRcn7G19NXj32cvJ9OueewzmjMB+/mbunfseUeGxhUuRiaCdnHHBT+uQXigjWmbdsD2YSl5oFFtH+KgwEbCRF5lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ObZyYwPj; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55df3796649so3942e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 18:31:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755653480; x=1756258280; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wTLUau1fwutTQtmzxY3qvClC5HiGTupDvi5aS9lWfFg=;
-        b=ObZyYwPjB+5pQqWsOtcpzc58aj8MjwXOvv6cwfb/dgyVlHMgPqzC/rtg+UmYHvQHSW
-         NHnTrCsCIioadokygKQcgJW2gQwx9RYNuPP/kW9wxe8LLdzCurA4YWvnSd0XWvPRdj+6
-         a2lwlsWqMSh84vSad3SHq/sDZElm9ScBkjRmbi8ojPoWghQ2Bn/zFGzD5I5/H66gJmjy
-         y37l6buj/VMZe4qZogj6AmmU71ywjU/OGH5f3QXzp0ESKqer6nyDGgYBApVPbZPfvavA
-         9TaqupeqI8jGtpNrpVOV01nw0CobKt4VR0FhL6bOYY23AEpCbahtOLbWeuvmuw/sPjE1
-         llTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755653480; x=1756258280;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wTLUau1fwutTQtmzxY3qvClC5HiGTupDvi5aS9lWfFg=;
-        b=vtfUs3JwlYSc1j9hyWeXRf1tGu4ZqgJs/RuCMo3sKCjMzgYzf2e/KnqG/SND+jQDIV
-         +sEfCOJmifSY7RzdWx63Z9CBNqKCgeCPsfXWPk1nmFECzBQkr4YybglltpEcijE0SNqK
-         a/F5KotZAacQuY4IpDqvSP0Ta7pgWLogFHgiHYBetr6xXvXfETs/rhC6uoIRVTLd8ZCd
-         gWpwqNJWJfRkYCYArF3C7pPFrdZRzKi9YVMh/yD92PNFqSm9+y63sXsdP4ZzDon3bXV3
-         HPId27HdbxS1LARXQd4wAZQlPROYDSU+qt9870sYip2YWnQKrc/AQphHpvTbBApicgY3
-         dzvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV19ZF3Y+cUr08rh87Ou7Dvnop+9LIB33pxvpRpXxxxEshqttiJoA1NiNX3Cj161uTpUPHT26vVuMoBqoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2P5fjmBc8d9UiClB94FAFk42aoP9pggjpmRX6a/WljWOCq/pI
-	63ys/CASBTyO0k9et2msrMteL9DNKXMCq6yaejmerSn55Q5xf+R/LU1Df5H8U3f+4sj56UpXhyO
-	vqRcd1kuHalMNpIUkFLW1FjjkDI0bK3Sjb39G5Wh5
-X-Gm-Gg: ASbGncsBsJCpo+qs/Gqzf/DHT8czWozKRU5MHwvehhC+ZpxlU3IsoPiKNjengCICgON
-	y6Dq8jLUNJOCrky09drpihfdX4nZ5Sw8qoaA8wHwfSqbV7LrWE5HJ1xHctcHBXK4fh87TWgxglK
-	on8hp7lxoyNEk7g1Ed1ICsCEilXK1i86ccO/B7BFMJ0xuygQd2dWmlT4RCdLNbZGB6neemnEcSR
-	7q5FcEA0ESvgE8=
-X-Google-Smtp-Source: AGHT+IHT/6vjJ3shGdDPb9Fd3Wy97s1NrKmmnjPVT/7BhrMd3DmV+U6ospo8fL4BuQOHHl7LwakWHhHJqlcVvP+21aw=
-X-Received: by 2002:a05:6512:288:b0:557:e3bc:4950 with SMTP id
- 2adb3069b0e04-55e0706cc54mr65685e87.7.1755653480027; Tue, 19 Aug 2025
- 18:31:20 -0700 (PDT)
+	s=arc-20240116; t=1755653539; c=relaxed/simple;
+	bh=zsYbIwSLhjEbPkZcJrtIGMF9sDg+qkbytHqQqqjqktM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=un9nkJCXIyZQS4JgkpuPIc9ubjoVAY98AVahlifdgplJpBRMLC67+s2YQy6RoobbICxsidYi6YLWz9KP7ys41132e/8syrt9b9oo4R8rOGMYtNVsldd1/kbAEANS3Q0rIlHEPMYgRD/pCWEs0BAz/fK25KMBbgSI8keCrT40AxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=iCDfySv9; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1755653492;
+	bh=rS4WsZVk4BCyE0nXY7ZBQdE3RLBRdyUulsrOQIeNKts=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=iCDfySv9E2TNV35x0mgAAwVv+qAEuGpOKll40oZ26uXY0rqt4jTS3pVCxtBtg0mAg
+	 spVq+XC3LB/QOOPispOEYKslnemCZUWDFy9LUASWJzv5DsWPOBxJ3QwWKQgbTRjlHP
+	 JHmsFOeyJuqfNaWyy53wDOD5THmWxJvCuq+Xb18A=
+X-QQ-mid: zesmtpsz5t1755653486t11fbf78b
+X-QQ-Originating-IP: w6OMFnHZ/Bt7Y45CN2LgpTqzON3eHq+vWyy7C8Hlcuo=
+Received: from = ( [120.239.196.181])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 20 Aug 2025 09:31:24 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 4849368715872619627
+EX-QQ-RecipientCnt: 15
+Date: Wed, 20 Aug 2025 09:31:24 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Drew Fustini <fustini@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Darius Rad <darius@bluespec.com>,
+	Vivian Wang <wangruikang@iscas.ac.cn>,
+	Florian Weimer <fweimer@redhat.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Drew Fustini <dfustini@tenstorrent.com>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH v3] riscv: Add sysctl to control discard of vstate on
+ syscall entry
+Message-ID: <9D2DE979F179BFC6+aKUlbEZa2vvgmGdQ@LT-Guozexi>
+References: <20250819-riscv_v_vstate_discard-v3-1-0af577dafdc2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755499375.git.asml.silence@gmail.com> <819d46e1354b0c7cc97945c6c7bde09f12df1da6.1755499376.git.asml.silence@gmail.com>
- <CAHS8izOru3+zGPkOa5XMWOo1uhtzz+Zt7yDC7R=NZFfyPdeK9Q@mail.gmail.com>
-In-Reply-To: <CAHS8izOru3+zGPkOa5XMWOo1uhtzz+Zt7yDC7R=NZFfyPdeK9Q@mail.gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 19 Aug 2025 18:31:08 -0700
-X-Gm-Features: Ac12FXxQQ5U6eRVSrC6zCcNwvwL1-NkxxJKMgfbxZblDH0DrKqPtvKdkhFJsl34
-Message-ID: <CAHS8izMLPkw1y93iRwoT5yuscSHZGuwhg1tfkF7SSkKAbgQKsg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 14/23] net: add queue config validation callback
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org, 
-	davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk, 
-	michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819-riscv_v_vstate_discard-v3-1-0af577dafdc2@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NnpBY4370xRXIi6nbfEAP49DuoOfQwxnToavodgQ/GbcIBE8dP1lu7RP
+	wmM9PRrERWqCrNWsrfC32bl93fXUaS4XpT3herMbZLpt6+uK51Zz1EPTvUwARRet+tgHzCw
+	/Ugw83J+oSoZ09z+aZz6GgrJSW52Un467Vwuvt1ezsSAxcvaZVxD1ilxUY1tUFBEjt8nt+S
+	TL0FSYH3WT2/ETf0ZXZ86Dc+ctU/7xIUGdM89+HsoQjLZKJQLNeUxcM2b4Pfr3aE0dzFrXJ
+	7gy1aSzXnNw08f/YUxvyUUl29OCfO+aW45vS0byEtLVeL3CDICv//N8GerBzLAQK8wQC2Ba
+	xZuvwH/oiYg/uHQ12ZBH2uR03Vbe4I3tGe7kO62/ecuFgz0xbBblhtA9Ggf1+2hVLfGs04k
+	gpUrwE001s2CHpNuZzFWYkZT5hrAB8z47bzcVrC8p+kpzSi7u9GfruFpgzlElkojGhXKCP8
+	d/aeZ5s7FOOyuNxBhRbuz/y/8nGMvStoEEgAHGX9ya5cIvzz3lQKDxtgG3CgecgLfuTKNTF
+	A/x1fFBmfbPeo8w/GruHJE23cXksfvw8khc5njo6m60bC+PN7zKMbwLaATuOkb5VcDy1Dfh
+	6aEL6QWH9TOncG3eo9tFj4tqIQrW+wGrd0qC+AVpPUiRBphvErVScdM0nSwr4vCM89oGWU8
+	2wPx5wkpzZ9yYaG+i3HQEa1Z3Tfd0f4Et4xVavPKRPOagipKYLf4tZigG135Ld2I3I4SR4Y
+	HTGvmchvrBQX+MxjQXMcjhIITny2GA+kVJ+8B345Y5HcrxKlq4Wow4aSeGgNV+1sTc2CBFL
+	w80xdVx5c+39mNKcQbZst2aTVREKqmlRfwaVp6MnsF5iWxd3vedoRg77thPGfXaDGYucfpp
+	y1h1567WtXtDLyxBQzgbxCSgsw1OzcUeONxrNNF8DL4GtYXWnAzDs7rXoMsX5eKEjrkGumb
+	Te8+ITvLMbfzCDG3SVPaOPGf37V8ldrkfZSd7Hu6NO/pgSCh/8WR4Jq/RE07GNdH4T0QLOc
+	W91H/qveOEwUX+0GycBu3oQuA5z/JXg1H0mi2mKRPQvoAjPvv0kmB4xfHgHIplQjORjpdyZ
+	W1N1x3zM1iR
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Aug 19, 2025 at 2:54=E2=80=AFPM Mina Almasry <almasrymina@google.co=
-m> wrote:
->
-> On Mon, Aug 18, 2025 at 6:56=E2=80=AFAM Pavel Begunkov <asml.silence@gmai=
-l.com> wrote:
-> >
-> > From: Jakub Kicinski <kuba@kernel.org>
-> >
-> > I imagine (tm) that as the number of per-queue configuration
-> > options grows some of them may conflict for certain drivers.
-> > While the drivers can obviously do all the validation locally
-> > doing so is fairly inconvenient as the config is fed to drivers
-> > piecemeal via different ops (for different params and NIC-wide
-> > vs per-queue).
-> >
-> > Add a centralized callback for validating the queue config
-> > in queue ops. The callback gets invoked before each queue restart
-> > and when ring params are modified.
-> >
-> > For NIC-wide changes the callback gets invoked for each active
-> > (or active to-be) queue, and additionally with a negative queue
-> > index for NIC-wide defaults. The NIC-wide check is needed in
-> > case all queues have an override active when NIC-wide setting
-> > is changed to an unsupported one. Alternatively we could check
-> > the settings when new queues are enabled (in the channel API),
-> > but accepting invalid config is a bad idea. Users may expect
-> > that resetting a queue override will always work.
-> >
-> > The "trick" of passing a negative index is a bit ugly, we may
-> > want to revisit if it causes confusion and bugs. Existing drivers
-> > don't care about the index so it "just works".
-> >
-> > Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> > ---
-> >  include/net/netdev_queues.h | 12 ++++++++++++
-> >  net/core/dev.h              |  2 ++
-> >  net/core/netdev_config.c    | 20 ++++++++++++++++++++
-> >  net/core/netdev_rx_queue.c  |  6 ++++++
-> >  net/ethtool/rings.c         |  5 +++++
-> >  5 files changed, 45 insertions(+)
-> >
-> > diff --git a/include/net/netdev_queues.h b/include/net/netdev_queues.h
-> > index b850cff71d12..d0cc475ec51e 100644
-> > --- a/include/net/netdev_queues.h
-> > +++ b/include/net/netdev_queues.h
-> > @@ -147,6 +147,14 @@ void netdev_stat_queue_sum(struct net_device *netd=
-ev,
-> >   *                     defaults. Queue config structs are passed to th=
-is
-> >   *                     helper before the user-requested settings are a=
-pplied.
-> >   *
-> > + * @ndo_queue_cfg_validate: (Optional) Check if queue config is suppor=
-ted.
-> > + *                     Called when configuration affecting a queue may=
- be
-> > + *                     changing, either due to NIC-wide config, or con=
-fig
-> > + *                     scoped to the queue at a specified index.
-> > + *                     When NIC-wide config is changed the callback wi=
-ll
-> > + *                     be invoked for all queues, and in addition to t=
-hat
-> > + *                     with a negative queue index for the base settin=
-gs.
-> > + *
-> >   * @ndo_queue_mem_alloc: Allocate memory for an RX queue at the specif=
-ied index.
-> >   *                      The new memory is written at the specified add=
-ress.
-> >   *
-> > @@ -167,6 +175,10 @@ struct netdev_queue_mgmt_ops {
-> >         void    (*ndo_queue_cfg_defaults)(struct net_device *dev,
-> >                                           int idx,
-> >                                           struct netdev_queue_config *q=
-cfg);
-> > +       int     (*ndo_queue_cfg_validate)(struct net_device *dev,
-> > +                                         int idx,
-> > +                                         struct netdev_queue_config *q=
-cfg,
-> > +                                         struct netlink_ext_ack *extac=
-k);
-> >         int     (*ndo_queue_mem_alloc)(struct net_device *dev,
-> >                                        struct netdev_queue_config *qcfg=
-,
-> >                                        void *per_queue_mem,
-> > diff --git a/net/core/dev.h b/net/core/dev.h
-> > index a553a0f1f846..523d50e6f88d 100644
-> > --- a/net/core/dev.h
-> > +++ b/net/core/dev.h
-> > @@ -99,6 +99,8 @@ void netdev_free_config(struct net_device *dev);
-> >  int netdev_reconfig_start(struct net_device *dev);
-> >  void __netdev_queue_config(struct net_device *dev, int rxq,
-> >                            struct netdev_queue_config *qcfg, bool pendi=
-ng);
-> > +int netdev_queue_config_revalidate(struct net_device *dev,
-> > +                                  struct netlink_ext_ack *extack);
-> >
-> >  /* netdev management, shared between various uAPI entry points */
-> >  struct netdev_name_node {
-> > diff --git a/net/core/netdev_config.c b/net/core/netdev_config.c
-> > index bad2d53522f0..fc700b77e4eb 100644
-> > --- a/net/core/netdev_config.c
-> > +++ b/net/core/netdev_config.c
-> > @@ -99,3 +99,23 @@ void netdev_queue_config(struct net_device *dev, int=
- rxq,
-> >         __netdev_queue_config(dev, rxq, qcfg, true);
-> >  }
-> >  EXPORT_SYMBOL(netdev_queue_config);
-> > +
-> > +int netdev_queue_config_revalidate(struct net_device *dev,
-> > +                                  struct netlink_ext_ack *extack)
-> > +{
-> > +       const struct netdev_queue_mgmt_ops *qops =3D dev->queue_mgmt_op=
-s;
-> > +       struct netdev_queue_config qcfg;
-> > +       int i, err;
-> > +
-> > +       if (!qops || !qops->ndo_queue_cfg_validate)
-> > +               return 0;
-> > +
-> > +       for (i =3D -1; i < (int)dev->real_num_rx_queues; i++) {
-> > +               netdev_queue_config(dev, i, &qcfg);
->
-> This function as written feels very useless tbh. There is no config
-> passed in from the caller, so the function does a netdev_queue_config,
-> which grabs the current-or-default-config (I'm not sure which tbh),
-> and then validates that is applicable. But of course the current or
-> default configs can be applied, right?
->
-> I thought there would be a refactor in a future patch that makes this
-> function useful, but I don't see one.
->
-> The qcfg being applied needs to be passed in by the caller of this
-> function, no? That would make sense to me (the caller is wondering if
-> this new config is applicable).
->
+On Tue, Aug 19, 2025 at 02:40:21AM -0700, Drew Fustini wrote:
+> From: Drew Fustini <dfustini@tenstorrent.com>
+> 
+> Vector registers are always clobbered in the syscall entry path to
+> enforce the documented ABI that vector state is not preserved across
+> syscalls. However, this operation can be slow on some RISC-V cores.
+> To mitigate this performance impact, add a sysctl knob to control
+> whether vector state is discarded in the syscall entry path:
+> 
+> /proc/sys/abi/riscv_v_vstate_discard
+> 
+> Valid values are:
+> 
+> 0: Vector state is not intentionally clobbered when entering a syscall
+> 1: Vector state is always clobbered when entering a syscall
+> 
+> The initial state is controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
+> 
+> Fixes: 9657e9b7d253 ("riscv: Discard vector state on syscalls")
+> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> ---
+> Changes in v3:
+>  - Reword the Kconfig description to clarify that the sysctl can still
+>    be changed during runtime regardless of the initial value chosen
+>  - Improve the description of vstate clobbering and the sysctl in
+>    section 3 of vector.rst
+>  - v2: https://lore.kernel.org/linux-riscv/20250806-riscv_v_vstate_discard-v2-1-6bfd61b2c23b@kernel.org/
+> 
+> Changes in v2:
+>  - Reword the description of the abi.riscv_v_vstate_discard sysctl to
+>    clarify that option '0' does not preserve the vector state - it just
+>    means that vector state will not always be clobbered in the syscall
+>    path.
+>  - Add clarification suggested by Palmer in v1 to the "Vector Register
+>    State Across System Calls" documentation section.
+>  - v1: https://lore.kernel.org/linux-riscv/20250719033912.1313955-1-fustini@kernel.org/
+> 
+> Test results:
+> I've tested the impact of riscv_v_vstate_discard() on the SiFive X280
+> cores [1] in the Tenstorrent Blackhole SoC [2]. The results from the
+> Blackhole P100 [3] card show that discarding the vector registers
+> increases null syscall latency by 25%.
+> 
+> The null syscall program [4] executes vsetvli and then calls getppid()
+> in a loop. The average duration of getppid() is 198 ns when registers
+> are clobbered in riscv_v_vstate_discard(). The average duration drops
+> to 149 ns when riscv_v_vstate_discard() skips clobbering the registers
+> because riscv_v_vstate_discard is set to 0.
+> 
+> $ sudo sysctl abi.riscv_v_vstate_discard=1
+> abi.riscv_v_vstate_discard = 1
+> 
+> $ ./null_syscall --vsetvli
+> vsetvli complete
+>  iterations: 1000000000
+>    duration: 198 seconds
+> avg latency: 198.73 ns
+> 
+> $ sudo sysctl abi.riscv_v_vstate_discard=0
+> abi.riscv_v_vstate_discard = 0
+> 
+> $ ./null_syscall --vsetvli
+> vsetvli complete
+>  iterations: 1000000000
+>    duration: 149 seconds
+> avg latency: 149.89 ns
+> 
+> I'm testing on the tt-blackhole-v6.16-rc1_vstate_discard [5] branch that
+> has 13 patches, including this one, on top of v6.16-rc1. Most are simple
+> yaml patches for dt bindings along with dts files and a bespoke network
+> driver. I don't think the other patches are relevant to this discussion.
+> 
+> This patch applies clean on its own mainline and riscv/for-next.
+> 
+> [1] https://www.sifive.com/cores/intelligence-x200-series
+> [2] https://tenstorrent.com/en/hardware/blackhole
+> [3] https://github.com/tenstorrent/tt-bh-linux
+> [4] https://gist.github.com/tt-fustini/ab9b217756912ce75522b3cce11d0d58
+> [5] https://github.com/tenstorrent/linux/tree/tt-blackhole-v6.16-rc1_vstate_discard
+> 
+> Signed-off-by: Drew Fustini <fustini@kernel.org>
+> ---
+[...]
 
-OK, I misunderstood how this works on first read. netdev_queue_config
-returns the pending config, not the current one, and that is what's
-being validated. I'll give this a closer look.
+> diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
+> index 184f780c932d443d81eecac7a6fb8070ee7a5824..7a4c209ad337efd7a3995cfc7cf1700c03e55b40 100644
+> --- a/arch/riscv/kernel/vector.c
+> +++ b/arch/riscv/kernel/vector.c
+> @@ -26,6 +26,7 @@ static struct kmem_cache *riscv_v_user_cachep;
+>  static struct kmem_cache *riscv_v_kernel_cachep;
+>  #endif
+>  
+> +bool riscv_v_vstate_discard_ctl = IS_ENABLED(CONFIG_RISCV_ISA_V_VSTATE_DISCARD);
+>  unsigned long riscv_v_vsize __read_mostly;
+>  EXPORT_SYMBOL_GPL(riscv_v_vsize);
+>  
+> @@ -307,11 +308,24 @@ static const struct ctl_table riscv_v_default_vstate_table[] = {
+>  	},
+>  };
+>  
+> +static const struct ctl_table riscv_v_vstate_discard_table[] = {
+> +	{
+> +		.procname       = "riscv_v_vstate_discard",
+> +		.data           = &riscv_v_vstate_discard_ctl,
+> +		.maxlen         = sizeof(riscv_v_vstate_discard_ctl),
+> +		.mode           = 0644,
+> +		.proc_handler   = proc_dobool,
+> +	},
+> +};
+> +
+>  static int __init riscv_v_sysctl_init(void)
+>  {
+> -	if (has_vector() || has_xtheadvector())
+> +	if (has_vector() || has_xtheadvector()) {
+Is this pair of curly braces strictly necessary?
+for potential extensibility?
 
+Acked-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
-
---=20
-Thanks,
-Mina
+Best regards,
+Troy
+>  		if (!register_sysctl("abi", riscv_v_default_vstate_table))
+>  			return -EINVAL;
+> +		if (!register_sysctl("abi", riscv_v_vstate_discard_table))
+> +			return -EINVAL;
+> +	}
+>  	return 0;
+>  }
+>  
+> 
+> ---
+> base-commit: 3ac864c2d9bb8608ee236e89bf561811613abfce
+> change-id: 20250818-riscv_v_vstate_discard-e89b3181e0ac
+> 
+> Best regards,
+> -- 
+> Drew Fustini <fustini@kernel.org>
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
