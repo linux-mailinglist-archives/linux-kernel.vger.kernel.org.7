@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-777501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF97B2DA3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:41:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6894B2DA3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32DC81898E03
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:41:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0165721362
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DFF2E2DF5;
-	Wed, 20 Aug 2025 10:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4BB2E2F18;
+	Wed, 20 Aug 2025 10:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oqH/EZ9R"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="K6eVh+nW"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7891A08A3
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755686473; cv=none; b=IvCZc4NRnihQ+VVC8eclO3n//ilZd4oIxE7EHoaL8D058SPbP19h9wzW6LsWWk9TgLLpoKOC52NsxvPn0fsBIDnAlOG0uM2BhZGjsVpx5fd5Jkyoh0iDrcjQo5e5E3SkpzBekXuc44TOFzRyLuP4wn7loDY0LxjPJl9qpdw8fVE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755686473; c=relaxed/simple;
-	bh=AHuXBTFxcxocvj4BxQLFQjPbuTRuQ7KRfmsRM7/bPXc=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0B71A08A3
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755686480; cv=pass; b=MoX6ChRiK29O1rtK7M7YQPlqo1HTw8SDI5S+Ba2hhXXs12fNRTb7GI2sBiWUcCDSJFFHAmYSUTxeNcUCLLevNRIrFI9wp2fcpd01zFvEuxY1FavoJn1OC2e6iBFmLRcCFiFmk2eFPwfE3osz41HnV//k5OE/LyMfDQctiuc/ous=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755686480; c=relaxed/simple;
+	bh=xPpBRwaQQGl/B024YCPt11Pwq77b3ButnwaiZ/ZvwZc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VmLmcBX2EycpiFNUGwVmOY4l3naiNXcY1xyCWfdoFVz+OU8Tp2cjRvct79jEeMLIYqXCxotfzVsTTCUkdQ06Zuh4w349iqhbCBaObrFubZOywt9M2NzMIV6oLNIizTgINjE1qCHdyPOlFAYVWMmNR4/VhEVP+wIKluqBh/4a2f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oqH/EZ9R; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1755686459; x=1756291259; i=markus.elfring@web.de;
-	bh=AHuXBTFxcxocvj4BxQLFQjPbuTRuQ7KRfmsRM7/bPXc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=oqH/EZ9Rj8+ct/DD0nmo/5q3qlAetnLZck/KFkDU8kbAwnBwHIgkGUKKaPvQRv09
-	 lA/M8G1KgqPweVqqp9wk35jkWtna9St7LQShupBHlIrQbR9mdTWgFT7/JL8gRcZon
-	 Z/99bCvX0RzWc6DsUNDO5jqW7kO9H+Qbjnz8HNJrF460IWGOFrLkBqxKPh0rC1xUL
-	 APA5svDAIC3oit/WKad/s3eN7zQUeh4gbA2UE6E8AXG+q9HfV7IThUVonousigY3Z
-	 uhw/2nbx+teIUXK1W0csQwyOjMW7trizTrcPplwGFnJIXT/SuLMaFtEzYG7fUeVpI
-	 RU/fCgsAdxna+H/rsA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.226]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRk4e-1v0Gq912IE-00SjdF; Wed, 20
- Aug 2025 12:40:59 +0200
-Message-ID: <17ba1116-35bc-4a47-ab51-0626006ee35a@web.de>
-Date: Wed, 20 Aug 2025 12:40:57 +0200
+	 In-Reply-To:Content-Type; b=fqbASHA+AFnws2QR1p5GAAI7/rAh2j5vdQF9P2YnQ56l3U9W0sUN9ucmWDqGNV3jFwApaigQc67rzXRDgllj9yy1T3qS/Vir6FH1LFuxttlVTerDbZGpMqFme4IL8zoQExlzPgYdgOzKO7Y4MT/d0pDoZk8hUI900HCQbVhmCfs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=K6eVh+nW; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755686466; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mg8kez02dL0yr3cLTAPqma6DgrEOk7l3g5c8GTrBunmhbp+Vhg2BwIcFIcP1dtGLPleFnCS3w8STqhopvOlZjEmBDgz2mBFpjguvBb+IivVHJuRKpM0HCrsP+KprdEcEzM9ySOu/gYoEGLYVqrBR2CwnATyjyfy+RPQNszQIITA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755686466; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=wYJMM9MtjnvFHsKajzTRCpet/Cte+2iHoWrfocRvt20=; 
+	b=DmtHs5TvlsH87TX4XTHU6SF8eQJAEGTpXshRE019PKAhN+2TlE1buiaVtlItHeRPJ2xOT7HfLRqWgjdj9gc3O5+2CIQ/hbyjD63zqFomfnj39nEntxL1Qf3qIsedjfaUKSuNsE1bTbLFnUiJ5XVmF7T0B2+HorDows428FzUgM0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755686466;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=wYJMM9MtjnvFHsKajzTRCpet/Cte+2iHoWrfocRvt20=;
+	b=K6eVh+nW75B6Eo3fefA+ub1yyDhFJhhUgg8fCu2RJy/QRkQbVvyFCCr+UWzPhoci
+	UHBV2rZv8ts9jwCCahUFKN0OMVtzHGfGlajZ8uCM+1VmEyaPW50udTTZLn13qMwoi/3
+	mTswNnuGuHaodRfQgMAJV+gyEpIKTHhgDflqdKhw=
+Received: by mx.zohomail.com with SMTPS id 1755686464645877.8597452911921;
+	Wed, 20 Aug 2025 03:41:04 -0700 (PDT)
+Message-ID: <39b17698-a1ce-452d-ada5-5c3741e888b2@collabora.com>
+Date: Wed, 20 Aug 2025 13:41:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,98 +59,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v4] iommu/riscv: prevent NULL deref in iova_to_phys
-To: XianLiang Huang <huangxianliang@lanxincomputing.com>,
- iommu@lists.linux.dev, linux-riscv@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
- <joro@8bytes.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
- <robin.murphy@arm.com>, Tomasz Jeznach <tjeznach@rivosinc.com>,
- Will Deacon <will@kernel.org>
-References: <568d8b25-8cb5-48f8-850e-0298e3fc456a@web.de>
- <20250820092128.8069-1-huangxianliang@lanxincomputing.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250820092128.8069-1-huangxianliang@lanxincomputing.com>
+Subject: Re: [PATCH] drm/virtio: clean up minor codestyle issues
+To: Athul Raj Kollareth <krathul3152@gmail.com>, airlied@redhat.com,
+ kraxel@redhat.com, gurchetansingh@chromium.org
+Cc: dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
+ skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250813062109.5326-1-krathul3152@gmail.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250813062109.5326-1-krathul3152@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LmMIgwZxpcnx9uXCpVgI9b8wFBdYmU0JB/76T7DnOX7LFJ5EY9Q
- 5ep55ygyR9aBJhG0GiijO21r4ku+qqhKpfdF5wExOBN0gLv/sZWmAb2cu0BWHOm3O8Y+gPj
- +D3sb1P5QD2DW/yNYg1Q4p9DaDM8p+8NiNgvEzu66tAMjp737XEPZxaFNDIEY9TYQda2sWg
- 7dlIwfHK5fibWfVPatbig==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/8jzp7G7PtA=;tuBZ+4E0xzvkgoWlJawydAJhlgc
- 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
- dAIMGnoN5Q7ctECzger0P+jiQrfjRqRN+tXuF
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-=E2=80=A6> but put your proposal at the patch Subject...
-=E2=80=A6
-Does it trigger undesirable communication difficulties?
+On 8/13/25 09:21, Athul Raj Kollareth wrote:
+> Fix codestyle warnings and errors generated by CHECKPATCH in virtio
+> source files.
+> 
+> Signed-off-by: Athul Raj Kollareth <krathul3152@gmail.com>
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_display.c |  3 +--
+>  drivers/gpu/drm/virtio/virtgpu_kms.c     | 20 ++++++++++----------
+>  drivers/gpu/drm/virtio/virtgpu_object.c  |  4 ++--
+>  drivers/gpu/drm/virtio/virtgpu_plane.c   |  2 +-
+>  drivers/gpu/drm/virtio/virtgpu_vq.c      |  2 ++
+>  5 files changed, 16 insertions(+), 15 deletions(-)
 
-Regards,
-Markus
+Applied to misc-next, thanks.
+
+-- 
+Best regards,
+Dmitry
 
