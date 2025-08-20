@@ -1,114 +1,86 @@
-Return-Path: <linux-kernel+bounces-778302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A88B2E3FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:34:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F10F0B2E3FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E439721171
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:28:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B35BAA04DE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA74A34AB0D;
-	Wed, 20 Aug 2025 17:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dt7gdEqT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC87334377;
+	Wed, 20 Aug 2025 17:25:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E78256C70;
-	Wed, 20 Aug 2025 17:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8748F1B423B
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755710672; cv=none; b=C//Wy0Bz+Hua1h/nCnELLJf00oLOlBDlifF2/GA0smjzKc/spdryA6DVP49ygGg2T31okpuYZj5Ca060gNTwqz6+6Lnav447E4qzwjZ5BYfyCLmJewV2mc2zy1kozS8d0JaRGDH8zULJZwdcpIZlIkbBNlh84bwbsLyONUu/CXM=
+	t=1755710706; cv=none; b=gc3Jx7kpZjvzWiVL06MBUrE88NIuWI+q+h17QOSW6JCU2VsBzohNye+RzPwIQ9GFbtgDpnbV8UreuAl3aY4bTct7J9sf5h3+dFkICuQdHLLzYf6G4qZ0yS68GM+8msX56ixWrZoxSZ1BOKGG/T1ffRMa340Kjg73qvEg44bDQgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755710672; c=relaxed/simple;
-	bh=zK2/t7pB5uRi95w0k0HULqrZQXZoKb6HKfmiVR24b+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HdjIzD7dnBOmqZC86hWHao62J7KYg9zB0EHB0Zs7KJm718SZajqrGHKNPazPrY8e4dUgBhkI3QKtHbWH4jFdMtaEZ+i1S9rQ+6zAv8QrlH0JNPJ6zkdDXLibIdxDFfh6XdGnL4+giPVlvSDznvVBTEwkzptccxww76zytQgp+A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dt7gdEqT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29CE3C4CEE7;
-	Wed, 20 Aug 2025 17:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755710671;
-	bh=zK2/t7pB5uRi95w0k0HULqrZQXZoKb6HKfmiVR24b+k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dt7gdEqTTlWr9uPsmbh5dC5JHyQ4ajY1BeBLVEaA84XW568wCEGwP59iZSsYbHZIa
-	 Fg2vygO7X8vp2m0Cm8YNFm4BhJ0cPlOHCvQXCj08/3tNm8Sxc4iKm6wZCiDOLd0f+Q
-	 1mUo6JG+1d3EvgEjhlPdbZq2YQeh51uVV/NZel0Mz4AGEFZ9gSJf71pS09llaBr1tY
-	 ErI0mCisKCney0RRErNlxuIam2AH6ODhP72wMuuXXpqF4K2jA3yjtOQ+NBoc/Vodlh
-	 Q7h/cj0WBupi6f8SVmwzot9Vv7r6LhQ6Jk/BHLy4+BjC4dpexOyvP8xLGC9M1B1MRY
-	 J5/PE82VmYVaA==
-Date: Wed, 20 Aug 2025 18:24:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
-	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
-	liaochang1@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/7] arm64: uaccess: Add additional userspace GCS
- accessors
-Message-ID: <7bc27e3d-7667-4366-89bc-93a084808ace@sirena.org.uk>
-References: <20250818213452.50439-1-jeremy.linton@arm.com>
- <20250818213452.50439-4-jeremy.linton@arm.com>
+	s=arc-20240116; t=1755710706; c=relaxed/simple;
+	bh=aDUMdWMRU4DxTbo4WOJts3/VxrpxQpqAchuZH4u5ATk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GQ1Axzs9vGspAZn81+A/ZVo555vuauzlzKFYDoIj+DyiKkpbDslXTCr7Qk7RaipZDccPiT1TJzA51+99oBibDNbXH7KAnZhfDcwx+34up3p6DezG75RNWa/kZlW/m/AwyJDVLR7qQ8+TosdeUlQqqx3pz4ReU5GrM06XTXlE5OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-88432e62d01so5203939f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:25:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755710704; x=1756315504;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TyVgA7tHoc/pEZvZL4GEV9LwU8L5mvPzLIm9tu726+c=;
+        b=gEi31VZ+Wqm2DhG5nKhVZRqlCMy8t7UcEgCVAE240ptpTB/7CPpd31dtEyuszzIwC+
+         ZLvSs3VzPBp2/xxtk3uOeEDJpofAL+peAs20u4ESNzud+E9Sy6TpJ867sjfKLFUeCkmz
+         0wj8ateAwOPPRYoI7AV7RseJWdueVu37izbASBBmCgJtqtJ1Zg6tPFquzgupIooLt1kY
+         CZn6CWa3N3qiYQGB+Ftpcn0jlsOfvsygpOqAkFc8Soa90ZZdh/4gtpkk+TzIgGUypLpN
+         6D/6BwAYiDdZCiaU8S0nCIUu/S0OfWJfXXLjEH7bVJZRTCUNoHTUSQ+9KFdArY11/HYL
+         7KHQ==
+X-Gm-Message-State: AOJu0YyVTBgHVE59Xf/Ip2IRSsWAq7K+ItUhFxMbUgvwFAqhD66FHpyO
+	CfBYpGOnoiCe74dQNeelt8Lp+Hbr8X9YOIFqwRelPtaaIRrZeh3WKLqHJbS+iFZbZWVkITffWEo
+	My3M3BLEYsyJEvfJmgEBU7+ghziqh4AyDoMbUSFEkPwZFxsf5gsEoOJoKICo=
+X-Google-Smtp-Source: AGHT+IGalnh0JlSuAjA1QY7oTpOBGQ7OX/7D/JF5c4sAQTxL+1nCKDHC14Am/qP0NHp1ddl2r9OCLOWbnvSBzFbavtbX2fU+yh95
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CxxZay3cgRaUrHlW"
-Content-Disposition: inline
-In-Reply-To: <20250818213452.50439-4-jeremy.linton@arm.com>
-X-Cookie: Whoever dies with the most toys wins.
+X-Received: by 2002:a05:6602:1549:b0:86d:9ec7:267e with SMTP id
+ ca18e2360f4ac-8847189df9dmr820767839f.4.1755710703627; Wed, 20 Aug 2025
+ 10:25:03 -0700 (PDT)
+Date: Wed, 20 Aug 2025 10:25:03 -0700
+In-Reply-To: <aKX7nTwVVk9dVAkn@kernel-devel>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a604ef.050a0220.3d78fd.0009.GAE@google.com>
+Subject: Re: [syzbot] [net?] KMSAN: uninit-value in hsr_get_node (3)
+From: syzbot <syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syoshida@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---CxxZay3cgRaUrHlW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Mon, Aug 18, 2025 at 04:34:48PM -0500, Jeremy Linton wrote:
+Reported-by: syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com
+Tested-by: syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com
 
-> Its important to note that GCS pages can be read by normal
-> instructions, but the hardware validates that pages used by GCS
-> specific operations, have a GCS privilege set. We aren't validating this
-> in load_user_gcs because it requires stabilizing the VMA over the read
-> which may fault.
+Tested on:
 
-I think in the context of uprobes this is reasonable.  We can always go
-back later and tighten things up.
+commit:         b19a97d5 Merge tag 'pull-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=133633bc580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=eb938e97c43073ea
+dashboard link: https://syzkaller.appspot.com/bug?extid=a81f2759d022496b40ab
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=107317a2580000
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
-
-> +/*
-> + * Unlike put/push_user_gcs() above, get/pop_user_gsc() doesn't
-> + * validate the GCS permission is set on the page being read.  This
-> + * differs from how the hardware works when it consumes data stored at
-> + * GCSPR. Callers should assure this is acceptable.
-
-s/assure/ensure/
-
---CxxZay3cgRaUrHlW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmimBMcACgkQJNaLcl1U
-h9DStgf6A0dCzGu8uuMoynkApBSWEG4f5HAlmVPAHWXzCcGU2w83eDn+Q9HoQHoV
-JY8tRaql2Xt08gBFi2xdoJIsgVGy5vSpAqXC0gA62YDv9sjsyKAsklb8D0bv+9kw
-2Omq5CiJDjBCH0eREe52xvExTcCazZeiXpI18GXPU9/D5t8cWNwIqCaQojQoEqFV
-pJN+543otg+v8NN9fFgwkGlQ1vfdnIHa8ERKEYykCdx1oQ98dXonsbWnwhH1WYyw
-Om6XvXeDLfnRajhgFM7gSSp1jK900upFFXeOQRPwaNgRnCcwQOeVCC+1zfIp6P1v
-IfNStDtyZvXvoMdlMY7QrIB/yBbLVg==
-=igX0
------END PGP SIGNATURE-----
-
---CxxZay3cgRaUrHlW--
+Note: testing is done by a robot and is best-effort only.
 
