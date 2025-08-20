@@ -1,124 +1,276 @@
-Return-Path: <linux-kernel+bounces-778455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5C4B2E5FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:00:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5BE8B2E5FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05EF63A64C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:57:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99196189EE0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A59F27CB04;
-	Wed, 20 Aug 2025 19:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C08285CA0;
+	Wed, 20 Aug 2025 20:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpYq/SIj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KM2ME80B"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40351CCEE0;
-	Wed, 20 Aug 2025 19:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F7C1DDA18;
+	Wed, 20 Aug 2025 19:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755719844; cv=none; b=K6QsMr9hAZKH/LdP+SkcHMWXaVwxUhkrm4tqqow/XTRmcdn1xla0/NKFZKmXcQ7d047z/v1q3uV2QK9HukEiQyPI2vu97rRkLwaWXGpzWBX6Ihsqkx+0NbVWSjfU6vvxUZeh/tt2IzbjumeOmz9PwSx5pzghlf8dT/zXTliEqZ8=
+	t=1755720001; cv=none; b=D58JMiRKWNB3ofTJQ55I132h2uMVoGh+9eWwLZBeGc1oh/fH4wePC2voLfuMF83b3AwOUpKSPfG4Pew5IknHI6QLyakpKMNByC28SrkV8lMW5vnnxaymhoUJ4zxGAj2fzjiLTzm+hmIAWZHg+P4W+g92fSQOC1YE8qYHDKB2YQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755719844; c=relaxed/simple;
-	bh=/7toDdEpBhsQBqYTyTJdjzxa4ZHZpXy/zoIFE07ExQ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eDr/E2M+9GIF9DDqBgusaEpymM8xswFLPTtq8Uj3x5+d+qr0rwUc5NZ8XanR4Jxj7Y3/bQI/Zbf/zaE/ZhfYgcR4RnVAIWZpVFRipgIFT4oEHVPNtlT5y7GtLDaL1Y3cuc4SgrcnCCWiDExMUgInZGph6UqPfFypwM8nYM048pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpYq/SIj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F20FEC116C6;
-	Wed, 20 Aug 2025 19:57:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755719844;
-	bh=/7toDdEpBhsQBqYTyTJdjzxa4ZHZpXy/zoIFE07ExQ8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BpYq/SIjO/qimCxn4qbvlE0wka6mshMcGxyb0WLRSHJug0/GgX4ZHUfnuJ9+KhyBL
-	 JD+GCx3fT7NvlIwTKnJxISRbKR78JtCEux8juij0Zy3Wv/3LmLB/AZ7wu2IWbl8T1M
-	 nQSc1xKSYkpS0eeUAX9CKuYnE3PYSY8FI7Pofn19zhEu03j/B+MVs2dSAQn8vutnvX
-	 hofsbROuKU4qjNe07s3alWNWmxtUaRxXg1qJcKhHK2XCaabMFLqiK8CiApPT6gQNOO
-	 GqGJ5HYWZ9cITpvD9VGmo+xtLLevgKyOyhX6p/wdJK1ciW+z2NJ9YwQw7GNwGvH08G
-	 NY5oGp0Hy1Urg==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [RFC PATCH -next 15/16] mm/damon: the byte statistics data type in damos_stat uses unsigned long long
-Date: Wed, 20 Aug 2025 12:57:21 -0700
-Message-Id: <20250820195721.85577-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <3b5a37a7-af37-4108-a0c5-bc147bb77842@huawei.com>
-References: 
+	s=arc-20240116; t=1755720001; c=relaxed/simple;
+	bh=6L6X83vm3E3o+uPE71R0TU6u3FY3H4PuScC1hlMODBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oKePjnHkXoh8X2C1WIf8OALOlm1sIvhtQGswu2rheXOMIuU35CZkm+8DecA7dPWq8QhilWn8qiacwEJLS8MuKACMoMibjfFX+aeIjIaNTza9Ehr+VHhQNwLLQKgvz8gpdAq3Dh+69Wm9fXypuJ2VeP6+lYZEQlGHx0Yg6njj7RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KM2ME80B; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57KJxjjJ325974;
+	Wed, 20 Aug 2025 14:59:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755719985;
+	bh=FkN/MDjZtLq4YcCo9QF8yvcL89leh7oczNKEorSdyk4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=KM2ME80B+HoDnJ/8jka7ukowr1nUnLyyeHobTq2skdhavrFPCscw2/2OqfUTE9DWF
+	 KeBb3AAxLomU6ObXU6KNBc+oKrfDNxlTtL69ER3Q2o65w63dx/yqnc4vxq9Azf34c8
+	 EZqiGsBoxeb5pdcOhUyYARdaKZ2+JYMdCJ0mlU68=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57KJxj1i2283160
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 20 Aug 2025 14:59:45 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 20
+ Aug 2025 14:59:44 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 20 Aug 2025 14:59:45 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57KJxiLT1026617;
+	Wed, 20 Aug 2025 14:59:44 -0500
+Message-ID: <54018fdc-d332-415e-8747-f46d84245870@ti.com>
+Date: Wed, 20 Aug 2025 14:59:44 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] firmware: ti_sci: Add trace events
+To: Jonathan Cormier <jcormier@criticallink.com>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-trace-kernel@vger.kernel.org>
+References: <20250820-linux_master_ti_sci_trace-v1-0-2a69c0abf55e@criticallink.com>
+ <20250820-linux_master_ti_sci_trace-v1-1-2a69c0abf55e@criticallink.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250820-linux_master_ti_sci_trace-v1-1-2a69c0abf55e@criticallink.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, 20 Aug 2025 17:54:32 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
-
-> Hi SJ,
+On 8/20/25 1:10 PM, Jonathan Cormier wrote:
+> Add TI sci trace events to help to debug and measure the speed of the
+> communication channel. The xfer_begin and xfer_end calls can be used
+> to time how long a transfer takes. The rx_callback and msg_dump trace
+> events help track the data that gets returned.
 > 
-> 在 2025/8/14 1:10, SeongJae Park 写道:
-> > On Wed, 13 Aug 2025 13:07:05 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
-> >
-> >> For 32-bit systems, damos_stat now uses unsigned long long for byte
-> >> statistics data to avoid integer overflow risks inherent in the
-> >> previous design.
-> > I suggested using the core-layer address unit on stat, and ask users to
-> > multiply the addr_unit value to stat values if they want bytes value.  If we
-> > agree on it, I think this patch wouldn't really be required.
+> Based on tracing done in ARM SCMI
 > 
-> Thank you for the guidance, I agree with your perspective. However, this patch doesn't actually belong in the addr_unit series, my apologies
-> for the confusion. It is actually intended to address potential overflow issues
-> in statistical data on 32-bit systems, and it is not directly related to addr_unit.
-> This patch has been dropped from the v2 series.
+> Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
+> ---
+>   MAINTAINERS                     |  1 +
+>   drivers/firmware/Makefile       |  3 ++
+>   drivers/firmware/ti_sci.c       | 11 ++++++
+>   drivers/firmware/ti_sci_trace.h | 87 +++++++++++++++++++++++++++++++++++++++++
+>   4 files changed, 102 insertions(+)
 > 
-> After introducing addr_unit, if it is set to a larger value, it can help mitigate
-> the overflow issue. However, under the default setting of addr_unit=1, statistical
-> data may still overflow after a sufficiently long runtime, for example, when sz_tried
-> exceeds 4GB.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fad6cb025a1918beec113b576cf28b76151745ef..a6fac706feceedfc5039ec07de954ac35a9af848 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -24631,6 +24631,7 @@ F:	drivers/pmdomain/ti/ti_sci_pm_domains.c
+>   F:	include/dt-bindings/soc/ti,sci_pm_domain.h
+>   F:	include/linux/soc/ti/ti_sci_inta_msi.h
+>   F:	include/linux/soc/ti/ti_sci_protocol.h
+> +F:	include/trace/events/ti_sci.h
+>   
+>   TEXAS INSTRUMENTS' TMP117 TEMPERATURE SENSOR DRIVER
+>   M:	Puranjay Mohan <puranjay@kernel.org>
+> diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+> index 4ddec2820c96fa9be012e89dac3038968bb67039..a055c53bdfa9e5c64adb4e20a9ca6c6661d80297 100644
+> --- a/drivers/firmware/Makefile
+> +++ b/drivers/firmware/Makefile
+> @@ -2,6 +2,9 @@
+>   #
+>   # Makefile for the linux kernel.
+>   #
+> +
+> +ccflags-y += -I$(src)			# needed for trace events
+> +
+>   obj-$(CONFIG_ARM_SCPI_PROTOCOL)	+= arm_scpi.o
+>   obj-$(CONFIG_ARM_SDE_INTERFACE)	+= arm_sdei.o
+>   obj-$(CONFIG_DMI)		+= dmi_scan.o
+> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+> index ae5fd1936ad322e5e3a94897cc042f6548f919e6..87b1330305939bb6b19bbdaa594b17b266092a34 100644
+> --- a/drivers/firmware/ti_sci.c
+> +++ b/drivers/firmware/ti_sci.c
+> @@ -127,6 +127,9 @@ struct ti_sci_info {
+>   #define cl_to_ti_sci_info(c)	container_of(c, struct ti_sci_info, cl)
+>   #define handle_to_ti_sci_info(h) container_of(h, struct ti_sci_info, handle)
+>   
+> +#define CREATE_TRACE_POINTS
+> +#include "ti_sci_trace.h"
+> +
+>   #ifdef CONFIG_DEBUG_FS
+>   
+>   /**
+> @@ -269,6 +272,9 @@ static void ti_sci_rx_callback(struct mbox_client *cl, void *m)
+>   		return;
+>   	}
+>   
+> +	trace_ti_sci_rx_callback(hdr, 0);
+> +	trace_ti_sci_msg_dump(hdr, xfer);
+> +
 
-Thank you for clarifying this!  My opinion is that, since we use core-layer
-address unit for DAMOS stats, as long as users set appropriate addr_unit, I
-think the overflow wouldn't really happen in real problematic ways?
+You could instead put these in the same ti_sci_do_xfer() as the other
+trace additions, after the completion, xfer->xfer_buf will contain
+the response "hdr" message. Keeps all the tracing in one spot, and
+if you are going for timing info you'll want to take into account
+the completion scheduling/polling.
 
-For example, if addr_unit is 2**10 (=1024) and the scheme has tried to 4 *
-2**30 bytes (4 GiB) of region, the sz_tried value will be 4 * 2**20, so far
-from overflowing.
+Andrew
 
-I think still the chance to overflow is higher than 64bit, but maybe the user
-space tools can monitor and handle the overflow...?  Maybe we can discuss
-further, but let's focus on the essential part for now.
-
+>   	ti_sci_dump_header_dbg(dev, hdr);
+>   	/* Take a copy to the rx buffer.. */
+>   	memcpy(xfer->xfer_buf, mbox_msg->buf, xfer->rx_len);
+> @@ -402,6 +408,9 @@ static inline int ti_sci_do_xfer(struct ti_sci_info *info,
+>   	int timeout;
+>   	struct device *dev = info->dev;
+>   	bool done_state = true;
+> +	struct ti_sci_msg_hdr *hdr = (struct ti_sci_msg_hdr *)xfer->tx_message.buf;
+> +
+> +	trace_ti_sci_xfer_begin(hdr, 0);
+>   
+>   	ret = mbox_send_message(info->chan_tx, &xfer->tx_message);
+>   	if (ret < 0)
+> @@ -437,6 +446,8 @@ static inline int ti_sci_do_xfer(struct ti_sci_info *info,
+>   	 */
+>   	mbox_client_txdone(info->chan_tx, ret);
+>   
+> +	trace_ti_sci_xfer_end(hdr, ret);
+> +
+>   	return ret;
+>   }
+>   
+> diff --git a/drivers/firmware/ti_sci_trace.h b/drivers/firmware/ti_sci_trace.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..7f99c41ea08aec6cf64d601576cad29b14c6ad5b
+> --- /dev/null
+> +++ b/drivers/firmware/ti_sci_trace.h
+> @@ -0,0 +1,87 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM ti_sci
+> +
+> +#if !defined(_TRACE_TI_SCI_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_TI_SCI_H
+> +
+> +#include <linux/tracepoint.h>
+> +
+> +
+> +DECLARE_EVENT_CLASS(ti_sci_hdr_event_class,
+> +	TP_PROTO(struct ti_sci_msg_hdr *hdr, int status),
+> +	TP_ARGS(hdr, status),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(u16, type)
+> +		__field(u8, host)
+> +		__field(u8, seq)
+> +		__field(u32, flags)
+> +		__field(int, status)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->type = hdr->type;
+> +		__entry->host = hdr->host;
+> +		__entry->seq = hdr->seq;
+> +		__entry->flags = hdr->flags;
+> +		__entry->status = status;
+> +	),
+> +
+> +	TP_printk("type=%04X host=%02X seq=%02X flags=%08X status=%d",
+> +		__entry->type, __entry->host, __entry->seq, __entry->flags, __entry->status)
+> +);
+> +
+> +DEFINE_EVENT(ti_sci_hdr_event_class,
+> +	ti_sci_xfer_begin,
+> +	TP_PROTO(struct ti_sci_msg_hdr *hdr, int status),
+> +	TP_ARGS(hdr, status)
+> +);
+> +
+> +DEFINE_EVENT(ti_sci_hdr_event_class,
+> +	ti_sci_rx_callback,
+> +	TP_PROTO(struct ti_sci_msg_hdr *hdr, int status),
+> +	TP_ARGS(hdr, status)
+> +);
+> +
+> +DEFINE_EVENT(ti_sci_hdr_event_class,
+> +	ti_sci_xfer_end,
+> +	TP_PROTO(struct ti_sci_msg_hdr *hdr, int status),
+> +	TP_ARGS(hdr, status)
+> +);
+> +
+> +
+> +TRACE_EVENT(ti_sci_msg_dump,
+> +	TP_PROTO(struct ti_sci_msg_hdr *hdr, struct ti_sci_xfer *xfer),
+> +	TP_ARGS(hdr, xfer),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(u16, type)
+> +		__field(u8, host)
+> +		__field(u8, seq)
+> +		__field(u32, flags)
+> +		__field(size_t, len)
+> +		__dynamic_array(unsigned char, cmd, xfer->rx_len)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->type = hdr->type;
+> +		__entry->host = hdr->host;
+> +		__entry->seq = hdr->seq;
+> +		__entry->flags = hdr->flags;
+> +		__entry->len = xfer->rx_len;
+> +		memcpy(__get_dynamic_array(cmd), xfer->xfer_buf, __entry->len);
+> +	),
+> +
+> +	TP_printk("type=%04X host=%02X seq=%02X flags=%08X data=%s",
+> +		__entry->type, __entry->host, __entry->seq, __entry->flags,
+> +		__print_hex_str(__get_dynamic_array(cmd), __entry->len))
+> +);
+> +#endif /* _TRACE_TI_SCI_H */
+> +
+> +/* This part must be outside protection */
+> +#undef TRACE_INCLUDE_PATH
+> +#define TRACE_INCLUDE_PATH .
+> +#undef TRACE_INCLUDE_FILE
+> +#define TRACE_INCLUDE_FILE ti_sci_trace
+> +#include <trace/define_trace.h>
 > 
-> Besides, please allow me to mention one point in advance: if addr is extended for
-> use in modules(e.g. DAMON_RECLAIM, LRU_SORT) in the future, the term "bytes" in
-> module_param_named(bytes_##try_name...), although multiplied by addr would yield
-> the actual byte count, might cause confusion due to its seemingly direct naming.
 
-Thank you for heasdup!  I agree it could be confusing, but I have no real good
-idea at the moment, sorry.  Let's revisit after the essential part work is
-done.
-
-> 
-> Overall, this patch isn’t critically important at the moment, nor does it offer a
-> sufficiently robust solution, but I’d still appreciate hearing your perspective on
-> the matter — I’m all ears.
-
-Thank you again for headsup of the remaining issues.  Yes, let's keep eyes and
-revisit those later.
-
-
-Thanks,
-SJ
 
