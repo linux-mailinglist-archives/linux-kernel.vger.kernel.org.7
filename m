@@ -1,190 +1,381 @@
-Return-Path: <linux-kernel+bounces-778380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48817B2E4C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:16:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC31AB2E4C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80F46A04E19
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:16:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF3E75A3AC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4522A279351;
-	Wed, 20 Aug 2025 18:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18B225EFBF;
+	Wed, 20 Aug 2025 18:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UqB5wRkH"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kVwmuNsw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A962749EA
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 18:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4F024DCE8
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 18:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755713798; cv=none; b=EQxRz7lwlXgNac4nu3NTZyQvTg3Tlo1vVMUyfFN5xKcF4w+7so6NjehUSojG53c3Tl9EJOyYMX9eSlknGRgs8BNdBSlFA55QXm1A/9mFsPiSvMWY1GO4cRFJjHCjwSFZr/2dHGCkfhqfg/xDvL9BBUggtTmXGem+7xleOS7OzcQ=
+	t=1755713849; cv=none; b=rmdaOLT9PvWQnaQs+aWupyIgQNdzGv/pLAsaI9avf+mvvtk4vYHCMAKD7lNrB2ICOq08GNHHhkCvZncqTr+XUWheUJy4b8zKKrB1LPx+54927WQQXKwgztbvFWsUVahqzqHRE1LlSOLH3w2eeC7HZOLKWJ6MlY0lwQCSM39R7LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755713798; c=relaxed/simple;
-	bh=CbcXRxEjqlY+FIZilCkgQEsHL1NlhDQHnuKavFYRcZ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IJ4a1LljSOo3OwUCRXPgp/xXEVbujnEicAMQhI9tv3bLzZUF/q8aAuyYBZ+wJ8Nj8GvE23Z6Pv+41IyiJAf+d5tCq3dCSRL9QhAg9ayR2qTrgEocLM5E3q9VcjuP6uJ1riJdLN9F7TRKKo8gZQtfUL9FwSBmV6/Cx0JYGJZsfeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UqB5wRkH; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7e8704b7a3dso11114685a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755713795; x=1756318595; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZzjBhj3K6a6cnfNlIDVsAZiz2XcZgs11336NDc4gm7Y=;
-        b=UqB5wRkHia+NqpOh+zIASw1yYnnfGVjh+ST0s/FMyLvS1Sg5ot2B+aP0zGoJhSwtHj
-         O6hQv1WMP9PpcIK58db0Xpy/NoMqsxTk+uokvh7Uu/qFgGtzhb1KqUflm9J7wgikET9B
-         C3GQ2/vtbEOjNpqdAiPkgLT0HC9DHqYTbV3w+8mPHJdIyz6E4RTs/GQ0MP7grfXKLqB/
-         3bCigxHFxX++ySkpC7dv981a6IOR3SLi1uTHVeugsSiVX9HpA+H2yBQR9PlOfOVsuWbZ
-         Wq4lJebYPqKSx8F9QviBz2TeJNr/+dlkQOhK341399StoY5NaHwshE2UML7+Az4AsNU2
-         LnUg==
+	s=arc-20240116; t=1755713849; c=relaxed/simple;
+	bh=wIJ7lZ1d6yxKebG3gjmd5iF2qkByG75ZQtl0f9ycVVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KG2e0OvRyWTUdkkGMIcQLWEfXAVrsrPtDoVKlbKZoDQcFrK2+TiqpUM8uahpGLq1hbCc7biVdgUWaJgKrBBY1aCDM2AqV+Ui/PII+8zU5jGXaJNbXPbuXT82fMBcsTwPVRYuOEm80hRbAgz4ML2eUiRjz6QJAOHqbRFB+Va9cRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kVwmuNsw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K9rLWM025141
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 18:17:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	u9C4HcHZFJD3vmjoUygj7UtzPAmRgrML/pdAAaTHg3Q=; b=kVwmuNswf+oEjk7V
+	v8mDqF+5C2cFqzM2C3MSDZ+OQrUGXDFv+43oe/dQEMdXOgurMXe6VcS00cUXAybt
+	akbmXc94WNBDbR49dPAl9NKf0gn9FFoKlxdXLfEv1SmD/uKCFC2OJu4AMa9xT56g
+	up7J8m/km2BPvDhVPXd1cms1FgEyt17qRqlzUv7PfTGevMfTcs7YZarS2E/6zqeT
+	S4ITKxoUM9w5WZjaNyG6tXe2Bh8XZDZiHETRTAvzQzG05OECDB2xi4NRf23s4LQw
+	Fl+U9kZ29zfFq+YP3x7MKcD2ixA8MNSG+5ZY2tIje/eVX3jjGTEXFxOIk+CDwaCl
+	YPpIOQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52aary3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 18:17:27 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-245fb4c8789so1508065ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:17:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755713795; x=1756318595;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZzjBhj3K6a6cnfNlIDVsAZiz2XcZgs11336NDc4gm7Y=;
-        b=JBs80c8mCmzwBcdIwJicfF9LRWny+CqXA1WZsp8VeXL01DjZawc+BRnfBs+nMHIqEV
-         yvNOKUr01I6LEzRQwUmAOPL9cydhn3SYvihLHqvat+EOeBrxcxzE4gZ8Mz+lwbX512+r
-         bYeZTmq5uWu51X+tLGKsihV0sxZ4hz4+1EhlkeRBCkTESA663gdghlV0NFrPqhq51z6T
-         iVbyKbiPABd2fJBPZbsWM8jNAWaNfZkTXOkzo/ob571js1swbuyTe0/ptC0wSWHTnkFV
-         pn4b27QsPXyy8XBa0U6aUtHbx2CgYRDDyOozR3NOmwBG4HUIbva6I2uY9TEZ3N5DCQIX
-         PqPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNeY6As4DQ86R3/cM4bu8LA/BJDhkybBJAFNmS31Z8DzoQqz4R0KBh+cIiGLqqgGsYxcvpfiS4GYJ5HM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxkcWKokS/0pPIU6t4grng1tGoaf5zeXjCwVYtCw/5I4W3oHd3
-	qoKFv1voapODLZhsFBGenI1tLIaBH+Ks4/0FK6A5CYLsSnATU/Ntoz8IZ+yMoDtV6o4FcwDe37U
-	Hn6GtUSKgt763SdUjxXxnShDZ9DX+nrCYdYXmN0Yl
-X-Gm-Gg: ASbGncv+vKmHYOb1NRqQb3PqjJ3OVzHgi1AFu10ubrLCIzSt+l9q1TK4X9EpjvWEfZf
-	KF70Buvu/UtOLKFxFu/6L8B440XcqkFlBTz5iiv/ykHfm1pClLkzoAfaa/mOUtdsQZKsJmrzwv2
-	nFjhKalUyVvsU/DLK1p3ilCcmgn01I2oSeulmXZComitq7ZGfs2+xQxPztAlorw/TgMKDq6eaNo
-	u7Zgwgsj17gnCe6004sk54qUsHqlUg/Sqzx
-X-Google-Smtp-Source: AGHT+IGVzgSbWk+BJqCL9u53n+H+daMu/OLvXaZ1ieD3LIK62515U+KXfB96Vi9fq/Z0Zof8fIVvjCx2Tb0+S2B1kfk=
-X-Received: by 2002:a05:620a:318f:b0:7e8:2cb:b9a3 with SMTP id
- af79cd13be357-7e9fcb597f0mr372651285a.66.1755713793140; Wed, 20 Aug 2025
- 11:16:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755713846; x=1756318646;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u9C4HcHZFJD3vmjoUygj7UtzPAmRgrML/pdAAaTHg3Q=;
+        b=Wuicc4YIVuQzebh+sxoiNErB3hciyR+SHd5lNf/cK+ScuilzVmQmRFrkyZqTMu7s4N
+         XtrOQgwrcCau5pcaViaVkRFWSEQLqgp9tBtA+ZwZFvemqQAopwl/xOUWdEJD62XdsGsl
+         WQF2WEl29x4Q3mOnEANRXPQitM0J+NvZh9J+SdPZ7i/7QdGIlW85UDsoXjBTXnMlV48I
+         WGSUv21fDLE/HLjxONMIMj3KjOwd7XNDNykxIa/TJYv9dvbon/hT+GkvH3c0GCfmbFa4
+         2AVG9J6BMk+sgXPf/bCzvEgV4/nQ5+NV/hsmvJagBr+HdTYYdCJxMstQ9aahNYt1Gt19
+         d0zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSETUOQmGkRs8hZXoG7qb4WCSoHuEt6rEgkvVCUwJ98H4NzZjKE4jkTpbKLBV7hVuttQTmW7t2q0g6Ibw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Uz0z/K0qvdKO9cttd/vXC1f31XGm6TAv+zXiZECg5djYy2mc
+	SKqyUvXrGpWfKdlOHzfFxOQajeLk6Yy+9tFqdbUSiKTPePDPCcLWZAAjZWWlx6CtSUHCzve9Mfv
+	5HJgoqHo/nAYYXHr2xPVLCSfEIwF09BYcFt3r3OwtSbJqXALgcJTnyYbcUW1jypxIskA=
+X-Gm-Gg: ASbGncumzV8pK58H3iUCNfILcZ6PizsWX6M4pf6pCFCIcly7x16lcCX7PRvETpIOw3i
+	cbTpE8y1oiveUtK3ziwrZL/Gu8X7L70GuYyRTPM2m+ElWC+us0YOt2N0tkUtXwMPpaBP0kU8xXL
+	kbrGo4cARP2sF+fvCFSJoYLGTaOKasVx3QoGm/6IQx2nF2s/XKBdbw96V9zHNrTST2S/Phx1W3+
+	oFDCnPcI3QGp48mtahmdbcUUD3YdUgHh5heNlXncqM9+NMtz1y7g+NLPxngoBf3JHexVXOFSuiF
+	lR9kImjWUs3mF55vO0lrn9itZxDXEQ1Th4ENcn+8gT0jw+vOQDfdRoqy0/RY/aUc7mcEyCnXLVD
+	gtEOJRqgpC37EZOjx9xmyxw==
+X-Received: by 2002:a05:6a20:939f:b0:240:356:f06e with SMTP id adf61e73a8af0-2431b548d5emr5936058637.0.1755713845994;
+        Wed, 20 Aug 2025 11:17:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG7kNMYod7lUaGEFx3dQzs4iGueuU+k5ArmIHT2LqamjvyXxSYWC8c5WozSF+SqY3xVBlkjcQ==
+X-Received: by 2002:a05:6a20:939f:b0:240:356:f06e with SMTP id adf61e73a8af0-2431b548d5emr5936005637.0.1755713845242;
+        Wed, 20 Aug 2025 11:17:25 -0700 (PDT)
+Received: from [10.134.71.99] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4763fe7335sm2831365a12.14.2025.08.20.11.17.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 11:17:24 -0700 (PDT)
+Message-ID: <4a5cab2f-1d04-4824-85b5-2f94725a0d32@oss.qualcomm.com>
+Date: Wed, 20 Aug 2025 11:17:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820180325.580882-1-syoshida@redhat.com>
-In-Reply-To: <20250820180325.580882-1-syoshida@redhat.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 20 Aug 2025 11:16:21 -0700
-X-Gm-Features: Ac12FXz1kZbK0EN8u1kjmIuwmJRixs0T0M4rVtV_MhHPG88matHAstO3pjOQ8kM
-Message-ID: <CANn89iJQsEXYR9wWoztv1SnoQcaRxKyyx7X7j_VDfvdJi4cfhw@mail.gmail.com>
-Subject: Re: [PATCH net] hsr: add length check before setting network header
-To: Shigeru Yoshida <syoshida@redhat.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	george.mccollister@gmail.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 11/13] drm/msm/dpu: support SSPP assignment for
+ quad-pipe case
+To: Jun Nie <jun.nie@linaro.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250819-v6-16-rc2-quad-pipe-upstream-v15-0-2c7a85089db8@linaro.org>
+ <20250819-v6-16-rc2-quad-pipe-upstream-v15-11-2c7a85089db8@linaro.org>
+Content-Language: en-US
+From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+In-Reply-To: <20250819-v6-16-rc2-quad-pipe-upstream-v15-11-2c7a85089db8@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: AV7ebyT3iO2yf1uzjsT1yl1UJ69Aj0jP
+X-Authority-Analysis: v=2.4 cv=B83gEOtM c=1 sm=1 tr=0 ts=68a61137 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=sWKEhP36mHoA:10 a=KKAkSRfTAAAA:8
+ a=EUspDBNiAAAA:8 a=6Bcxc3Uyk3af_q7fPysA:9 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: AV7ebyT3iO2yf1uzjsT1yl1UJ69Aj0jP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX6ofQcIWR13/5
+ goYwMV4ecHBOyJJEbTrwJAbBjTfFImp8EkLb+KuyJpDBlFD1U6mI4bMtYr7W7rULXwxIPT82YCt
+ y0P3Ykg5s2i+wtuwFIor6OD8YoDk/eCRRMRfOjeqsNvFQTEGJxXiN68KQNPCji5vkAZnDI3SEqq
+ GByO4yDWbGh3siEfZEJPLSrlVfJqU5EvVu8i0ldurLWyPUdkNQykO0fLfe0LMMELDSZZodApsgE
+ C1UGhCXMYt/KxRTASsSBs20Vp37VZD9pFWqc77MLFmLjbKgRlCqHuL3csULzVEdZEuu8BuBNF7s
+ NwJant3dbOmglQD2PJLfuLkrC/cu3pQcu6Ti4Hz7EqzfzkCC0kuYBAdkqNXO5nHrMqUTc9FeEms
+ /dFpnMivqkY4KBD0nZmRLyFRWxBfoA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 clxscore=1015 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On Wed, Aug 20, 2025 at 11:04=E2=80=AFAM Shigeru Yoshida <syoshida@redhat.c=
-om> wrote:
->
-> syzbot reported an uninitialized value issue in hsr_get_node() [1].
-> If the packet length is insufficient, it can lead to the issue when
-> accessing HSR header.
->
-> Add validation to ensure sufficient packet length before setting
-> network header in HSR frame handling to prevent the issue.
->
-> [1]
-> BUG: KMSAN: uninit-value in hsr_get_node+0xab0/0xad0 net/hsr/hsr_framereg=
-.c:250
->  hsr_get_node+0xab0/0xad0 net/hsr/hsr_framereg.c:250
->  fill_frame_info net/hsr/hsr_forward.c:577 [inline]
->  hsr_forward_skb+0x330/0x30e0 net/hsr/hsr_forward.c:615
->  hsr_handle_frame+0xa20/0xb50 net/hsr/hsr_slave.c:69
->  __netif_receive_skb_core+0x1cff/0x6190 net/core/dev.c:5432
->  __netif_receive_skb_one_core net/core/dev.c:5536 [inline]
->  __netif_receive_skb+0xca/0xa00 net/core/dev.c:5652
->  netif_receive_skb_internal net/core/dev.c:5738 [inline]
->  netif_receive_skb+0x58/0x660 net/core/dev.c:5798
->  tun_rx_batched+0x3ee/0x980 drivers/net/tun.c:1549
->  tun_get_user+0x5566/0x69e0 drivers/net/tun.c:2002
->  tun_chr_write_iter+0x3af/0x5d0 drivers/net/tun.c:2048
->  call_write_iter include/linux/fs.h:2110 [inline]
->  new_sync_write fs/read_write.c:497 [inline]
->  vfs_write+0xb63/0x1520 fs/read_write.c:590
->  ksys_write+0x20f/0x4c0 fs/read_write.c:643
->  __do_sys_write fs/read_write.c:655 [inline]
->  __se_sys_write fs/read_write.c:652 [inline]
->  __x64_sys_write+0x93/0xe0 fs/read_write.c:652
->  x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:=
-2
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Uninit was created at:
->  __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
->  alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
->  alloc_pages+0x1bf/0x1e0 mm/mempolicy.c:2335
->  skb_page_frag_refill+0x2bf/0x7c0 net/core/sock.c:2921
->  tun_build_skb drivers/net/tun.c:1679 [inline]
->  tun_get_user+0x1258/0x69e0 drivers/net/tun.c:1819
->  tun_chr_write_iter+0x3af/0x5d0 drivers/net/tun.c:2048
->  call_write_iter include/linux/fs.h:2110 [inline]
->  new_sync_write fs/read_write.c:497 [inline]
->  vfs_write+0xb63/0x1520 fs/read_write.c:590
->  ksys_write+0x20f/0x4c0 fs/read_write.c:643
->  __do_sys_write fs/read_write.c:655 [inline]
->  __se_sys_write fs/read_write.c:652 [inline]
->  __x64_sys_write+0x93/0xe0 fs/read_write.c:652
->  x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:=
-2
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> CPU: 1 PID: 5050 Comm: syz-executor387 Not tainted 6.9.0-rc4-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 03/27/2024
->
-> Fixes: 48b491a5cc74 ("net: hsr: fix mac_len checks")
-> Reported-by: syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3Da81f2759d022496b40ab
-> Tested-by: syzbot+a81f2759d022496b40ab@syzkaller.appspotmail.com
-> Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
+
+
+On 8/18/2025 6:31 PM, Jun Nie wrote:
+> Currently, SSPPs are assigned to a maximum of two pipes. However,
+> quad-pipe usage scenarios require four pipes and involve configuring
+> two stages. In quad-pipe case, the first two pipes share a set of
+> mixer configurations and enable multi-rect mode when certain
+> conditions are met. The same applies to the subsequent two pipes.
+> 
+> Assign SSPPs to the pipes in each stage using a unified method and
+> to loop the stages accordingly.
+> 
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+
+Reviewed-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+
 > ---
->  net/hsr/hsr_slave.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/net/hsr/hsr_slave.c b/net/hsr/hsr_slave.c
-> index b87b6a6fe070..979fe4084f86 100644
-> --- a/net/hsr/hsr_slave.c
-> +++ b/net/hsr/hsr_slave.c
-> @@ -63,8 +63,12 @@ static rx_handler_result_t hsr_handle_frame(struct sk_=
-buff **pskb)
->         skb_push(skb, ETH_HLEN);
->         skb_reset_mac_header(skb);
->         if ((!hsr->prot_version && protocol =3D=3D htons(ETH_P_PRP)) ||
-> -           protocol =3D=3D htons(ETH_P_HSR))
-> +           protocol =3D=3D htons(ETH_P_HSR)) {
-> +               if (skb->len < ETH_HLEN + HSR_HLEN)
-> +                       goto finish_pass;
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 150 ++++++++++++++++++------------
+>   1 file changed, 89 insertions(+), 61 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> index d3db843d324efcda5477a7eac73a8872a55e95e5..99c902dfa7e0256028d294113a3e9bad0e1a0069 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> @@ -957,6 +957,23 @@ static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
+>   		dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth);
+>   }
+>   
+> +static bool dpu_plane_get_single_pipe_in_stage(struct dpu_plane_state *pstate,
+> +					       struct dpu_sw_pipe **single_pipe,
+> +					       struct dpu_sw_pipe_cfg **single_pipe_cfg,
+> +					       int stage_index)
+> +{
+> +	int pipe_idx;
 > +
->                 skb_set_network_header(skb, ETH_HLEN + HSR_HLEN);
-> +       }
->         skb_reset_mac_len(skb);
->
->         /* Only the frames received over the interlink port will assign a
-> --
-> 2.50.1
->
+> +	pipe_idx = stage_index * PIPES_PER_STAGE;
+> +	if (drm_rect_width(&pstate->pipe_cfg[pipe_idx].src_rect) != 0 &&
+> +	    drm_rect_width(&pstate->pipe_cfg[pipe_idx + 1].src_rect) == 0) {
+> +		*single_pipe = &pstate->pipe[pipe_idx];
+> +		*single_pipe_cfg = &pstate->pipe_cfg[pipe_idx];
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+>   
+>   static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
+>   				       struct drm_atomic_state *state,
+> @@ -1022,17 +1039,20 @@ static bool dpu_plane_try_multirect_parallel(struct dpu_sw_pipe *pipe, struct dp
+>   static int dpu_plane_try_multirect_shared(struct dpu_plane_state *pstate,
+>   					  struct dpu_plane_state *prev_adjacent_pstate,
+>   					  const struct msm_format *fmt,
+> -					  uint32_t max_linewidth)
+> +					  uint32_t max_linewidth, int stage_index)
+>   {
+> -	struct dpu_sw_pipe *pipe = &pstate->pipe[0];
+> -	struct dpu_sw_pipe *r_pipe = &pstate->pipe[1];
+> -	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg[0];
+> -	struct dpu_sw_pipe *prev_pipe = &prev_adjacent_pstate->pipe[0];
+> -	struct dpu_sw_pipe_cfg *prev_pipe_cfg = &prev_adjacent_pstate->pipe_cfg[0];
+> +	struct dpu_sw_pipe *pipe, *prev_pipe;
+> +	struct dpu_sw_pipe_cfg *pipe_cfg, *prev_pipe_cfg;
+>   	const struct msm_format *prev_fmt = msm_framebuffer_format(prev_adjacent_pstate->base.fb);
+>   	u16 max_tile_height = 1;
+>   
+> -	if (prev_adjacent_pstate->pipe[1].sspp != NULL ||
+> +	if (!dpu_plane_get_single_pipe_in_stage(pstate, &pipe,
+> +						&pipe_cfg, stage_index))
+> +		return false;
+> +
+> +	if (!dpu_plane_get_single_pipe_in_stage(prev_adjacent_pstate,
+> +						&prev_pipe, &prev_pipe_cfg,
+> +						stage_index) ||
+>   	    prev_pipe->multirect_mode != DPU_SSPP_MULTIRECT_NONE)
+>   		return false;
+>   
+> @@ -1047,11 +1067,6 @@ static int dpu_plane_try_multirect_shared(struct dpu_plane_state *pstate,
+>   	if (MSM_FORMAT_IS_UBWC(prev_fmt))
+>   		max_tile_height = max(max_tile_height, prev_fmt->tile_height);
+>   
+> -	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> -	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> -
+> -	r_pipe->sspp = NULL;
+> -
+>   	if (dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth) &&
+>   	    dpu_plane_is_parallel_capable(prev_pipe_cfg, prev_fmt, max_linewidth) &&
+>   	    (pipe_cfg->dst_rect.x1 >= prev_pipe_cfg->dst_rect.x2 ||
+> @@ -1180,36 +1195,69 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
+>   	return 0;
+>   }
+>   
+> +static int dpu_plane_assign_resource_in_stage(struct dpu_sw_pipe *pipe,
+> +					      struct dpu_sw_pipe_cfg *pipe_cfg,
+> +					      struct drm_plane_state *plane_state,
+> +					      struct dpu_global_state *global_state,
+> +					      struct drm_crtc *crtc,
+> +					      struct dpu_rm_sspp_requirements *reqs)
+> +{
+> +	struct drm_plane *plane = plane_state->plane;
+> +	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
+> +	struct dpu_sw_pipe *r_pipe = pipe + 1;
+> +	struct dpu_sw_pipe_cfg *r_pipe_cfg = pipe_cfg + 1;
+> +
+> +	if (drm_rect_width(&pipe_cfg->src_rect) == 0)
+> +		return 0;
+> +
+> +	pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, reqs);
+> +	if (!pipe->sspp)
+> +		return -ENODEV;
+> +	pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> +	pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> +
+> +	if (drm_rect_width(&r_pipe_cfg->src_rect) == 0)
+> +		return 0;
+> +
+> +	if (dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
+> +					      pipe->sspp,
+> +					      msm_framebuffer_format(plane_state->fb),
+> +					      dpu_kms->catalog->caps->max_linewidth))
+> +		return 0;
+> +
+> +	r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, reqs);
+> +	if (!r_pipe->sspp)
+> +		return -ENODEV;
+> +	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> +	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> +
+> +	return 0;
+> +}
+> +
+>   static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+>   					      struct dpu_global_state *global_state,
+>   					      struct drm_atomic_state *state,
+>   					      struct drm_plane_state *plane_state,
+> -					      struct drm_plane_state *prev_adjacent_plane_state)
+> +					      struct drm_plane_state **prev_adjacent_plane_state)
+>   {
+>   	const struct drm_crtc_state *crtc_state = NULL;
+>   	struct drm_plane *plane = plane_state->plane;
+>   	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
+>   	struct dpu_rm_sspp_requirements reqs;
+> -	struct dpu_plane_state *pstate, *prev_adjacent_pstate;
+> +	struct dpu_plane_state *pstate, *prev_adjacent_pstate[STAGES_PER_PLANE];
+>   	struct dpu_sw_pipe *pipe;
+> -	struct dpu_sw_pipe *r_pipe;
+>   	struct dpu_sw_pipe_cfg *pipe_cfg;
+> -	struct dpu_sw_pipe_cfg *r_pipe_cfg;
+>   	const struct msm_format *fmt;
+> -	int i;
+> +	int i, ret;
+>   
+>   	if (plane_state->crtc)
+>   		crtc_state = drm_atomic_get_new_crtc_state(state,
+>   							   plane_state->crtc);
+>   
+>   	pstate = to_dpu_plane_state(plane_state);
+> -	prev_adjacent_pstate = prev_adjacent_plane_state ?
+> -		to_dpu_plane_state(prev_adjacent_plane_state) : NULL;
+> -
+> -	pipe = &pstate->pipe[0];
+> -	r_pipe = &pstate->pipe[1];
+> -	pipe_cfg = &pstate->pipe_cfg[0];
+> -	r_pipe_cfg = &pstate->pipe_cfg[1];
+> +	for (i = 0; i < STAGES_PER_PLANE; i++)
+> +		prev_adjacent_pstate[i] = prev_adjacent_plane_state[i] ?
+> +			to_dpu_plane_state(prev_adjacent_plane_state[i]) : NULL;
+>   
+>   	for (i = 0; i < PIPES_PER_PLANE; i++)
+>   		pstate->pipe[i].sspp = NULL;
+> @@ -1224,42 +1272,24 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+>   
+>   	reqs.rot90 = drm_rotation_90_or_270(plane_state->rotation);
+>   
+> -	if (drm_rect_width(&r_pipe_cfg->src_rect) == 0) {
+> -		if (!prev_adjacent_pstate ||
+> -		    !dpu_plane_try_multirect_shared(pstate, prev_adjacent_pstate, fmt,
+> -						    dpu_kms->catalog->caps->max_linewidth)) {
+> -			pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+> -			if (!pipe->sspp)
+> -				return -ENODEV;
+> -
+> -			r_pipe->sspp = NULL;
+> +	for (i = 0; i < STAGES_PER_PLANE; i++) {
+> +		if (prev_adjacent_pstate[i] &&
+> +		    dpu_plane_try_multirect_shared(pstate, prev_adjacent_pstate[i], fmt,
+> +						   dpu_kms->catalog->caps->max_linewidth,
+> +						   i))
+> +			continue;
+>   
+> -			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> -			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> +		if (dpu_plane_get_single_pipe_in_stage(pstate, &pipe, &pipe_cfg, i))
+> +			prev_adjacent_plane_state[i] = plane_state;
+>   
+> -			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> -			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> -		}
+> -	} else {
+> -		pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+> -		if (!pipe->sspp)
+> -			return -ENODEV;
+> -
+> -		if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
+> -						      pipe->sspp,
+> -						      msm_framebuffer_format(plane_state->fb),
+> -						      dpu_kms->catalog->caps->max_linewidth)) {
+> -			/* multirect is not possible, use two SSPP blocks */
+> -			r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+> -			if (!r_pipe->sspp)
+> -				return -ENODEV;
+> -
+> -			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> -			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> -
+> -			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> -			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> -		}
+> +		pipe = &pstate->pipe[i * PIPES_PER_STAGE];
+> +		pipe_cfg = &pstate->pipe_cfg[i * PIPES_PER_STAGE];
+> +		ret = dpu_plane_assign_resource_in_stage(pipe, pipe_cfg,
+> +							 plane_state,
+> +							 global_state,
+> +							 crtc, &reqs);
+> +		if (ret)
+> +			return ret;
+>   	}
+>   
+>   	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
+> @@ -1272,7 +1302,7 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
+>   			       unsigned int num_planes)
+>   {
+>   	unsigned int i;
+> -	struct drm_plane_state *prev_adjacent_plane_state = NULL;
+> +	struct drm_plane_state *prev_adjacent_plane_state[STAGES_PER_PLANE] = { NULL };
+>   
+>   	for (i = 0; i < num_planes; i++) {
+>   		struct drm_plane_state *plane_state = states[i];
+> @@ -1286,8 +1316,6 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
+>   							     prev_adjacent_plane_state);
+>   		if (ret)
+>   			break;
+> -
+> -		prev_adjacent_plane_state = plane_state;
+>   	}
+>   
+>   	return 0;
+> 
 
-You probably have missed a more correct fix :
-
-https://www.spinics.net/lists/netdev/msg1116106.html
 
