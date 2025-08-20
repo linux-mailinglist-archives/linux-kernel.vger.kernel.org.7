@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-778085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CFC4B2E126
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:31:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A6CB2E158
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A2E86065C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:26:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489B14E26DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DA027990B;
-	Wed, 20 Aug 2025 15:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F6A2C17B6;
+	Wed, 20 Aug 2025 15:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAR6BJ08"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="OyliFDlN"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA76213E9C;
-	Wed, 20 Aug 2025 15:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6D12BEC28
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755703341; cv=none; b=ZDnUlS44MMN1uVUysLoDekH2e+S/nNwtKuZ81mLpv4Z9Or7AbG7Pmg/F19qNwo6N+VOkuU4NrkOMPm6xwL5QQxR650aubdT2tlGXkSKESDmSHbl9MHGzQ9IZ9DP8dP5qnUGM8b18R98pyVNrTM7b/yanzWtb+vl2my1hZTFpe4Y=
+	t=1755703410; cv=none; b=Xeog8I3jfaTw6qjJmFwWPmMXTagaDQvtOrG6+JhbQsywcKBhjrcK3y1ymyxhH/pOy0nTKkp2Q1NzfHqrqpND71k6LVU4neIXNI3XXgcfA9BorPRYT3+KpMXmK+UdYG/0z+gTRuy3qBQ86Zbv9tqweLBl+ySxfqDr0aG3FXYYEm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755703341; c=relaxed/simple;
-	bh=WicMk5bXj+8CW5HOYykWjDmuIMEIuDhQq/0pN4w5DuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7ImfCFLFGSuh+auuEy+zjOUOLOEnNNUB6j9+s1/7uFftjl0SxSPTwNw1eodVW5BvKJAl/9xZYKmYMXsF5p027x8NtKqDbVH1YRxi4GXdZ8+rsjLqRxjT0kbsOo67Q1Lm6NKfdaSGy3yY5Sdrb5txn1Z4xaVvaqR05J0hclwDC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAR6BJ08; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A16DC4CEEB;
-	Wed, 20 Aug 2025 15:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755703340;
-	bh=WicMk5bXj+8CW5HOYykWjDmuIMEIuDhQq/0pN4w5DuY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lAR6BJ08Zr0VfKheoNHRPcNGFxdMvD43/8ZbF0hdD0tq1psDcjK9qp01/oJBJ2YKM
-	 MSdcFY7VSFUVIAbkxzuRflPHJusr9vEXwKPUGmWBSY/HO0nW3GdTExdIy7WBWFsBZ1
-	 UnEmGnfRXbjb88jK+I7AsBPdN4+ekwso7eJq7RTpPVqIsjm7s+j9/NuSKJr5o7UNot
-	 7SdAA1E3TDElUXqFcf7PYZqBy/ojrK7mm1qPqBxUtqdj6G5rnkm3p3Nvom+GAiv7rn
-	 09iszIwgdl2g5u7itHrTvol8vNQ29NyeGfWS4/P40Uc7DBZ18ZN3UdTk7Jt/m6qEJ4
-	 oqRbH/1e5JBDQ==
-Date: Wed, 20 Aug 2025 17:22:18 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Charan Teja Kalla <quic_charante@quicinc.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>, 
-	Jared Kangas <jkangas@redhat.com>, Mattijs Korpershoek <mkorpershoek@kernel.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v5 2/2] dma-buf: heaps: Introduce a new heap for reserved
- memory
-Message-ID: <20250820-gainful-cuttlefish-of-pleasure-b3ecc0@houat>
-References: <20250617-dma-buf-ecc-heap-v5-0-0abdc5863a4f@kernel.org>
- <20250617-dma-buf-ecc-heap-v5-2-0abdc5863a4f@kernel.org>
- <a5526631-15fc-479f-8ac8-015231357080@quicinc.com>
+	s=arc-20240116; t=1755703410; c=relaxed/simple;
+	bh=gr71oIJIZMTZu2HvFc7RWbu1QBD6asBm+eblDBZOttk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lAvZdeNlj4FVJph8XYeb9MozEdm2Ed7tqYwhZ2tUhyV6ZJEFAkbN7hl4LvDQvP05Nqxyd95UZ3EHAzUHfuje1Q8Jup/+swedPhOegASlTOd/IU+1p4l1QwULrZdZ4Io71e46PRE9vadGcBEIdr7zvOmJn3shciEhJxsA3iYtKnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=OyliFDlN; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-323266cdf64so51829a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:23:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755703408; x=1756308208; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fgfeAIl9y/jXqZZohjgzAmcbebe2tB8QsVyXyo5QN9E=;
+        b=OyliFDlN1JTvZ3Ro0Yky/EnzLT6IJ2d+njkMGnpZGQQfy3dO7hNyRqu9vahv528RuS
+         3yv0s0G2rIkGICCQLqsCD2VOgGAwY9pqVt4rh+IbxQ4UMHnHyDR650l4lIQNfsVdPrEc
+         NPK+6Hzx5TAIn7oieqc9Gub166rribkBMqVkazb7Op6B1tOBT8g1ayxJTSeADeyErRx0
+         PRq+Gxt7uzyUAbIReV/x9PzSlGc9hY5KtAUEyuq9HmmqIvEVox85GFB/MfpGDtdfqcne
+         9o1GdMw2+trEn/JgdrD8HIuNC26FYoQutups1SL4vusHZUcV3aRXMo9d2qiXbM6pGfK6
+         8rYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755703408; x=1756308208;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fgfeAIl9y/jXqZZohjgzAmcbebe2tB8QsVyXyo5QN9E=;
+        b=Ejdta6zkd2fzpp4B2wtNUMRONq3oVu+WLHCM1qzL6og08yvU3iAAqkdZ2+an4qS1Jw
+         qvRXbpp87aGtmipxAKtQcJ/9SXMIPzluD2BQs5z9pVGcad7DZ47j7RcQRNpMm9D75+6T
+         GyUMUb4ygcJZk0dVtQEkDhvFuWfhq/flra79WGVwlbgzO3IHyDFNRIbkCz4bEYwdJMsM
+         OrZTC16T+Afrbi5QlJ7ekPn6WWhoG9FQ9MeZSto15uZn3mpW82b8JcksqA1IKf/Ojlsa
+         gMHGJnJJPnk8bYdFUH9fFvpgtDQ84wY9lx9P0FKkQXmeB2pkqEN9YwALASQ5rPSVq8xU
+         BDtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfU7dWMIV+xsYnB55W1/r2v0CLUEIs84QrzdwClAyojVTMNgrsyiIY81gyItqJnSMc8T3icgKUj1x+zzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLdn0GAZWjbrKYy/0pnwbGTweeZbcybMTh2+2KrqYW3/CAb2FZ
+	n5E7O0+O9ay9fWvfFm0OUJMx1nQeXABRfNUIgnmAj9nszdeVg3mm9E9Rv5DiWnckkoQ25UU2pFD
+	tBSec
+X-Gm-Gg: ASbGncsvi3nlXqHkOqBfUwAzFKQOPRStnPZFj+87DNZUREKyyNiaoc8cNwRiLJhSEKy
+	xMsMPcd4YPNzYZ2TkF5iNmlqF8/aqN55/YanfFJX+IlgF3qEdLjjn/kLsGzgQOL7YKVFeMaU1Pb
+	m4pf+JMVdJxdvCXWXfXECX58/cOO+/TQutgBzGLNAiWAD5crZzGWt057KNhb867CsHbVVmY0U74
+	HCYar3xlupeVh0JATu9ECbOVyJOJ/R8jjVXFscyG+xLD1X/85VCtf6UFEjMBWVgyg7IYnsvvEO0
+	Vz9/x8l5sC8O/4vnJiJh80Z+XKVVHR4ZhqLp0YTFKemYhIewoN260WGazr+mPO5aIB7b054iAmi
+	tPd4hq0PcDVjKPQYaLFrMH30gLYW6xoJDdkNwIh960bezjfKEy04AxY4Loa5b5w==
+X-Google-Smtp-Source: AGHT+IHm9VcX0JB5QQASYW7fbLTywDvuuwEyBtgVN17jvgGI1TvIKfWIoHfTmY/OqRH50W5c11Od6Q==
+X-Received: by 2002:a17:90b:58cd:b0:321:74d8:b95 with SMTP id 98e67ed59e1d1-324e143ee97mr4972876a91.19.1755703407577;
+        Wed, 20 Aug 2025 08:23:27 -0700 (PDT)
+Received: from anup-ubuntu-vm.localdomain ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e26259b6sm2638689a91.17.2025.08.20.08.23.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 08:23:26 -0700 (PDT)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Sunil V L <sunilvl@ventanamicro.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH] RISC-V: Define pgprot_dmacoherent() for non-coherent devices
+Date: Wed, 20 Aug 2025 20:53:16 +0530
+Message-ID: <20250820152316.1012757-1-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="4hxaerdxh2nrqase"
-Content-Disposition: inline
-In-Reply-To: <a5526631-15fc-479f-8ac8-015231357080@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
+The pgprot_dmacoherent() is used when allocating memory for
+non-coherent devices and by default pgprot_dmacoherent() is
+same as pgprot_noncached() unless architecture overrides it.
 
---4hxaerdxh2nrqase
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 2/2] dma-buf: heaps: Introduce a new heap for reserved
- memory
-MIME-Version: 1.0
+Currently, there is no pgprot_dmacoherent() definition for
+RISC-V hence non-coherent device memory is being mapped as
+IO thereby making CPU access to such memory slow.
 
-Hi,
+Define pgprot_dmacoherent() to be same as pgprot_writecombine()
+for RISC-V so that CPU access non-coherent device memory as
+NOCACHE which is better than accessing it as IO.
 
-On Fri, Aug 08, 2025 at 03:46:21PM +0530, Charan Teja Kalla wrote:
-> On 6/17/2025 5:55 PM, Maxime Ripard wrote:
-> > +static void carveout_heap_dma_buf_release(struct dma_buf *buf)
-> > +{
-> > +	struct carveout_heap_buffer_priv *buffer_priv =3D buf->priv;
-> > +	struct carveout_heap_priv *heap_priv =3D buffer_priv->heap;
-> > +	unsigned long len =3D buffer_priv->num_pages * PAGE_SIZE;
-> > +
-> > +	gen_pool_free(heap_priv->pool, buffer_priv->paddr, len);
->=20
-> Just checking If clearing of the memory is missed before releasing it to
-> the free pool. If not, isn't it a leak of data when the heap is being
-> used by the multiple apps.
->=20
-> BTW, thanks for these patches.
+Fixes: ff689fd21cb1 ("riscv: add RISC-V Svpbmt extension support")
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+---
+ arch/riscv/include/asm/pgtable.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks for the review. Note that we've since moved to another approach
-here:
-https://lore.kernel.org/r/20250721-dma-buf-ecc-heap-v7-0-031836e1a942@kerne=
-l.org
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index 91697fbf1f90..00d8bdaf1e8d 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -653,6 +653,8 @@ static inline pgprot_t pgprot_writecombine(pgprot_t _prot)
+ 	return __pgprot(prot);
+ }
+ 
++#define pgprot_dmacoherent pgprot_writecombine
++
+ /*
+  * Both Svade and Svadu control the hardware behavior when the PTE A/D bits need to be set. By
+  * default the M-mode firmware enables the hardware updating scheme when only Svadu is present in
+-- 
+2.43.0
 
-Maxime
-
---4hxaerdxh2nrqase
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaKXoKQAKCRAnX84Zoj2+
-dow2AYC3Ylr7sSSAO15OugjV/WG7eVzYYLltaBeuKPZRasmbb0lVu2m4UhfgAtLW
-tSOmswsBfRnsiVEOeHk1VckfBWFThgfDpJg1QkDZWytCn9JugXgGANgTiDRqLdjJ
-WGr85+dNFg==
-=pEPY
------END PGP SIGNATURE-----
-
---4hxaerdxh2nrqase--
 
