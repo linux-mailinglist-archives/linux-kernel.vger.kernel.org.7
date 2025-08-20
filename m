@@ -1,132 +1,194 @@
-Return-Path: <linux-kernel+bounces-777812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB7BB2DE23
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:44:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2995BB2DE29
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C9DE1887BD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E71B1889A22
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FA831E115;
-	Wed, 20 Aug 2025 13:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A7031E115;
+	Wed, 20 Aug 2025 13:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfRIqEa4"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRQjkXhh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61687246787;
-	Wed, 20 Aug 2025 13:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581922236FC;
+	Wed, 20 Aug 2025 13:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755697126; cv=none; b=V2MVhzL3BdcNusWxECGjCS8aJ0RKIwXDCSYf3yP3BflFfuAGyY2wT3x/MZKX5hCYkz5o7AM6EPF+g0GWFuN7h4UV5zjxPl7Ei8uph4WIavdWjw4V4n9Psos5FIKqk/jKRuLp+9fMzgY51nfLzi6ANSlIuSJv9gMYcGh3ps6KauM=
+	t=1755697241; cv=none; b=V0CBjQz5XT2Gs26/96jNtLGZK1/GEI7WoEAjzQMuKOOAxH7ivGoZ+mEi7b5sESk0AMmSUVKHHpKqdQA1YpOQwTq+KM8dFevExJ3aeP+4HVVeGUVg6KPXq9AzJga+cYLxzBIM5dj8wWtRI+nrE+D9Rd9AB6HwEZORkMljVVTGf0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755697126; c=relaxed/simple;
-	bh=CsI4RjI3cQ1Yb060kCDcQBEjcZPg5lYbY/6QwHlCdxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tM8sbhakrin47KtWPQTTmTxLUtCYY5Dd91EIhADNfXDqb2lVxeRBKY3mNUxd7dIGg2zy+Hy+kMVzGWGjkbOCumzP29nzHxkU5glfD2ap7+8bcVpw2tE4p34FZMQMxYwCdG54BJR1bSdl7V8rB5nLamdH6sfFLEoB651wRXrw988=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kfRIqEa4; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b9e415a68fso5476434f8f.2;
-        Wed, 20 Aug 2025 06:38:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755697121; x=1756301921; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BnszY7qdLJPaLDhbOf5AahqefmZN6BjfGVR11anVoas=;
-        b=kfRIqEa467FKmqRFz9pd5TBLW2BMUdm+cxWQ6hfOGnc/kC6n+0zp46bqUMl5Es8a2a
-         pL3MorBSxI6vnS2Z28wp1Am1RAwy9Q8A7ADL4KxDJVir7knpF4IvC7s23JmZzBj2YWIt
-         2MhPnYwo7nwqW6N5l5UicuYnL1Z3mV3qJSSCv0eqsVqyJOlxMFim+vhomNZj2OoissJS
-         wNmTzbH4WTzCuwD+Aq6y1f5JiaWpAM7KdVnhL2Ppd2557vOJNdel3mgEAO7qHQCxIUk+
-         GLoGhgQeva2gmeo2qkBG0phicPE8N68AAwVD4mICSnD4gB+r6fE95w1vRKUBIcXLipFz
-         5ynw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755697121; x=1756301921;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BnszY7qdLJPaLDhbOf5AahqefmZN6BjfGVR11anVoas=;
-        b=nxupB6MoscMMQG1rZLrmF3XqvlVohfbzh+hi5oxfMvCmQM2hN59qPOucbxcuxv/j9N
-         G+ZdepmKAHbzx590yJPxT1eWSwqkTsbUpbr2l9my8UhQHuezZPPrMA9SysDVRhS/4pju
-         qp5ktOJZYICipHbQ8c+YNz3HgctcNB/UolKcUxOnfO8ttgxEaoqsMApql4yss4188bXt
-         t0Jq6VJ1qRSdAAd0FpjkTsdL2ayumDczjH+XIqXOzVqrAXDMXYslhmxTccaWccMEHj4R
-         lU4rjIwhXNe0DZ82TH5hyukT4aTD9gIhQBe1cyxijn8CZVnoobKDqgCMGQji3ZydEizR
-         L0dg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0mo0OBklvq2uemoh6zSjCFv0NCgy1zhu49r6Q8X3QJDOrHcterW1IIJEq+Jnf5O+kq+dpXeEkrg==@vger.kernel.org, AJvYcCWgk7V5JfrqQTKaV0FOt6VMrZbWjWf+gyKvNZNLpGDqXSAuUh50YpNhu21wonaOn6SUFjB/PMSOBgBkuiKN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV8PM94WGycW/3CdCDXOArsCNQwsQ8jtFQteZCL8AiIMJedBav
-	Mbcd3EEcLaL9Q17T7NQ13qqlUjZK8t2eCfgLUnJQ4mUxEU/yF0unFjvN
-X-Gm-Gg: ASbGnctUoc6B0JO+4TAYTjWkpv8INtG8+hQDhRWLo1Ik8UCaw0Lcg3/eEPbZZYuAPn0
-	CZIWFT83SHj2EcdHIvqn0i7uh0Rzlf/J8V2Ebk2VLgmgx3jibiDBkvxTmp7ngvVB99aFnkjSi9e
-	ItbddrpOuglCQf+a5WSK1BwiWEtNsk2Q2bP6qWl9D7dY2j2EHCQtLyEj5NglD+7XEKCMrTv5YHr
-	4lxFoMyZ4no32//C7mgOLp6usEYFELNZ/6ZR8xqKX5rioskl6Aldes/cVIbU9OyOU0hcwYYUBRm
-	ZLJsVQbATpEFcb62qBzA8CI/pD6R91ORjAfYZZ0qIjO4dL5qMy3OZP4ZaFf31xw4lrp7hgD6EvT
-	gsXDIQwbXJJKSl+/Ae/0tteeuG9HBSS7h+2mTvtH0R86aFOT2pbjOk8k=
-X-Google-Smtp-Source: AGHT+IGwjO1/Hhvi0RBOBXEAD7D44EX50p2Cyzh5mwqFRLIy6PGXowsI2dZ2cPUfLqoWpDaxPu5fLg==
-X-Received: by 2002:a05:6000:2012:b0:3b7:76e8:ba1e with SMTP id ffacd0b85a97d-3c32c24986cmr2398670f8f.11.1755697121369;
-        Wed, 20 Aug 2025 06:38:41 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5f7e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c07496f432sm7700133f8f.6.2025.08.20.06.38.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 06:38:40 -0700 (PDT)
-Message-ID: <fb85866c-3890-41d2-9d5c-27549c4b7aa3@gmail.com>
-Date: Wed, 20 Aug 2025 14:39:51 +0100
+	s=arc-20240116; t=1755697241; c=relaxed/simple;
+	bh=WcrzywipklE0yDDKiMLTLSeT+WnrVQNTiiufe2sMZp0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=jfrXTOzm7II4ZAi37sxuzDrD5+yhLS4EnWlRtxHEHaTAsw7Iy7NTaA+uSfkyDK4ptdtw9xhdrOyXcllcnzmp0TfWkHr9Rd2mlbpmslyXQTHbx+yMxrL74Nv5734LplBx1Q6eXSRgA+34CQoKm4Zz+oW8nuFKsqYenKRpKX+rJf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IRQjkXhh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4383C4CEEB;
+	Wed, 20 Aug 2025 13:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755697240;
+	bh=WcrzywipklE0yDDKiMLTLSeT+WnrVQNTiiufe2sMZp0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=IRQjkXhhv15ElXiggW7PGOe7cjkZxEkm37zFnYqrjkQPZb2iiu+v4kPTKluqbuM8d
+	 Dr5bQsCvL5dWLOL0tFIqPqY60V4xCzGGM0Kd4MrzfCcElnDJeE+ThYXO8ESc3jUj6f
+	 SOjfPwDAcmBRqzKeGJ5j5JBzg11F8zVFPJcwHFFxLmBI9rLOD9ES+FQaQwTKBlBQK7
+	 HrdQJEX9pGsPfukW1bgIailaCYMt+Qkam5PVRzphFmTnca6DHAFrMU8qT3h2csq9G3
+	 pNqcNLKcARLHgkHX7qddYC6/tchTn7czIa+T1+DTek0k1PJj+MH89U1C87JblZSJNq
+	 JcFpqAC5EPjkQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 00/23][pull request] Queue configs and large
- buffer providers
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Willem de Bruijn <willemb@google.com>, Paolo Abeni <pabeni@redhat.com>,
- andrew+netdev@lunn.ch, horms@kernel.org, davem@davemloft.net,
- sdf@fomichev.me, almasrymina@google.com, dw@davidwei.uk,
- michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <cover.1755499375.git.asml.silence@gmail.com>
- <20250819193126.2a4af62b@kernel.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250819193126.2a4af62b@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 20 Aug 2025 15:40:36 +0200
+Message-Id: <DC7AQ7LH1EA0.2BFROWRN54A4@kernel.org>
+Subject: Re: [PATCH 1/4] rust: dma: implement DataDirection
+Cc: "Alice Ryhl" <aliceryhl@google.com>, <akpm@linux-foundation.org>,
+ <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <lossin@kernel.org>,
+ <a.hindborg@kernel.org>, <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>,
+ <acourbot@nvidia.com>, <jgg@ziepe.ca>, <lyude@redhat.com>,
+ <robin.murphy@arm.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250815171058.299270-1-dakr@kernel.org>
+ <20250815171058.299270-2-dakr@kernel.org> <aKLzrp0m00J6CCYz@google.com>
+ <DC5INEG2DXU5.DM4JIICEQ2PC@kernel.org> <aKMa7YzO-PwEv9AT@google.com>
+ <DC5KK67M752R.N9PX4LUG2F68@kernel.org>
+ <CAH5fLgi6OZaqjnDScDrJ3YjN2a8mJuPiO5MLPUqUWo62WkvvrA@mail.gmail.com>
+ <DC5Q80UUHSUV.360VLIC6DYZ78@kernel.org>
+ <CAH5fLgjymw6Mr8qv8NDFA8hz+nfh3-B4XcZ_N-UAmJrc3Ug_QQ@mail.gmail.com>
+ <DC5UWIXHVAGI.1TTU2K9WIC1E9@kernel.org>
+ <99CFF9D2-962E-4322-BCFD-273485DBAF62@collabora.com>
+In-Reply-To: <99CFF9D2-962E-4322-BCFD-273485DBAF62@collabora.com>
 
-On 8/20/25 03:31, Jakub Kicinski wrote:
-> On Mon, 18 Aug 2025 14:57:16 +0100 Pavel Begunkov wrote:
->> Jakub Kicinski (20):
-> 
-> I think we need to revisit how we operate.
-> When we started the ZC work w/ io-uring I suggested a permanent shared
-> branch. That's perhaps an overkill. What I did not expect is that you
-> will not even CC netdev@ on changes to io_uring/zcrx.*
-> 
-> I don't mean to assert any sort of ownership of that code, but you're
-> not meeting basic collaboration standards for the kernel. This needs
-> to change first.
+On Wed Aug 20, 2025 at 3:17 PM CEST, Daniel Almeida wrote:
+>
+>
+>> On 18 Aug 2025, at 18:03, Danilo Krummrich <dakr@kernel.org> wrote:
+>>=20
+>> On Mon Aug 18, 2025 at 8:47 PM CEST, Alice Ryhl wrote:
+>>> with no warnings and build-failure if out-of-bounds.
+>>=20
+>> +/// DMA data direction.
+>> +///
+>> +/// Corresponds to the C [`enum dma_data_direction`].
+>> +///
+>> +/// [`enum dma_data_direction`]: srctree/include/linux/dma-direction.h
+>> +#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+>> +#[repr(u32)]
+>> +pub enum DataDirection {
+>> +    /// The DMA mapping is for bidirectional data transfer.
+>> +    ///
+>> +    /// This is used when the buffer can be both read from and written =
+to by the device.
+>> +    /// The cache for the corresponding memory region is both flushed a=
+nd invalidated.
+>> +    Bidirectional =3D Self::const_cast(bindings::dma_data_direction_DMA=
+_BIDIRECTIONAL),
+>> +
+>> +    /// The DMA mapping is for data transfer from memory to the device =
+(write).
+>> +    ///
+>> +    /// The CPU has prepared data in the buffer, and the device will re=
+ad it.
+>> +    /// The cache for the corresponding memory region is flushed.
+>> +    ToDevice =3D Self::const_cast(bindings::dma_data_direction_DMA_TO_D=
+EVICE),
+>> +
+>> +    /// The DMA mapping is for data transfer from the device to memory =
+(read).
+>> +    ///
+>> +    /// The device will write data into the buffer for the CPU to read.
+>> +    /// The cache for the corresponding memory region is invalidated be=
+fore CPU access.
+>> +    FromDevice =3D Self::const_cast(bindings::dma_data_direction_DMA_FR=
+OM_DEVICE),
+>> +
+>> +    /// The DMA mapping is not for data transfer.
+>> +    ///
+>> +    /// This is primarily for debugging purposes. With this direction, =
+the DMA mapping API
+>> +    /// will not perform any cache coherency operations.
+>> +    None =3D Self::const_cast(bindings::dma_data_direction_DMA_NONE),
+>> +}
+>> +
+>> +impl DataDirection {
+>> +    /// Casts the bindgen-generated enum type to a `u32` at compile tim=
+e.
+>> +    ///
+>> +    /// This function will cause a compile-time error if the underlying=
+ value of the
+>> +    /// C enum is out of bounds for `u32`.
+>> +    const fn const_cast(val: bindings::dma_data_direction) -> u32 {
+>
+> This should be its own generic helper for similar enums, IMHO
 
-You're throwing quite allegations. Basic collaboration standards don't
-include spamming people with unrelated changes via an already busy list.
-I cc'ed netdev on patches that meaningfully change how it interacts
-(incl indirectly) with netdev and/or might be of interest, which is
-beyond of the usual standard expected of a project using infrastructure
-provided by a subsystem. There are pieces that don't touch netdev, like
-how io_uring pins pages, accounts memory, sets up rings, etc. In the
-very same way generic io_uring patches are not normally posted to
-netdev, and netdev patches are not redirected to mm because there
-are kmalloc calls, even though, it's not even the standard used here.
+In general, I agree, but it may not be exactly straight forward (considerin=
+g
+that it still needs to work from const context).
 
-If you have some way you want to work, I'd appreciate a clear
-indication of that, because that message you mentioned was answered
-and I've never heard any objection, or anything else really.
+The function relies on the fact that both the argument and return type are
+numeric primitives, which need to fit into an i128. We could probably defin=
+e a
+marker trait for such types, etc.
 
--- 
-Pavel Begunkov
+Yet, I don't know how we could do the casts from one generic type I to anot=
+her
+generic type O. I think we'd need to implement traits for that as well. How=
+ever,
+this would require the unstable const_trait_impl feature.
+
+Hence, working this out (if even possible currently) and improving existing=
+ enum
+abstractions should be done independent from this series.
+
+>> +        // CAST: The C standard allows compilers to choose different in=
+teger types for enums.
+>> +        // To safely check the value, we cast it to a wide signed integ=
+er type (`i128`)
+>> +        // which can hold any standard C integer enum type without trun=
+cation.
+>> +        let wide_val =3D val as i128;
+>> +
+>> +        // Check if the value is outside the valid range for the target=
+ type `u32`.
+>> +        // CAST: `u32::MAX` is cast to `i128` to match the type of `wid=
+e_val` for the comparison.
+>> +        if wide_val < 0 || wide_val > u32::MAX as i128 {
+>> +            // Trigger a compile-time error in a const context.
+>> +            panic!("C enum value is out of bounds for the target type `=
+u32`.");
+>> +        }
+>> +
+>> +        // CAST: This cast is valid because the check above guarantees =
+that `wide_val`
+>> +        // is within the representable range of `u32`.
+>> +        wide_val as u32
+>> +    }
+>> +}
+>> +
+>> +impl From<DataDirection> for bindings::dma_data_direction {
+>> +    /// Returns the raw representation of [`enum dma_data_direction`].
+>> +    fn from(direction: DataDirection) -> Self {
+>> +        // CAST: `direction as u32` gets the underlying representation =
+of our `#[repr(u32)]` enum.
+>> +        // The subsequent cast to `Self` (the bindgen type) assumes the=
+ C enum is compatible
+>> +        // with the enum variants of `DataDirection`, which is a valid =
+assumption given our
+>> +        // compile-time checks.
+>> +        direction as u32 as Self
+>> +    }
+>> +}
 
 
