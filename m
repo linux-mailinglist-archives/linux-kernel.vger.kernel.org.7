@@ -1,153 +1,209 @@
-Return-Path: <linux-kernel+bounces-777043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD7EB2D472
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:04:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4ADCB2D477
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4D94E06F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:02:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7781BC7BF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC0D179A3;
-	Wed, 20 Aug 2025 07:02:32 +0000 (UTC)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AC32D24A9;
+	Wed, 20 Aug 2025 07:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzzzrcQB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2912B158DAC;
-	Wed, 20 Aug 2025 07:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F86535336A;
+	Wed, 20 Aug 2025 07:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755673351; cv=none; b=FxKnHyoV1gtMVdFVA7HjSWJZjgzZElpSpeOLMy/eea14zn9e960ygVXEbtXmciKONoAXbtJhWjZLl1067AQN+4Kg/AhIQoQes9mwWnvuq+HDEsEmN4J6fYBXrv0safGR/X8XbpHs7JO84T2RldOgZXbf6siCU2R0tGeMggcwlDo=
+	t=1755673521; cv=none; b=p2zcj2Pxdyoz7Jv1w4tD7yIwTweIY4+UPf7p7rfpa7Ky6jyGZ9KjXNTck4Qp+t5Rx9mWiH+dorPC8cN/ELmtGS3eU1aAA/lMsUIR3K+mJB+GrhQvlRUlApXYjXg3j5xaeb89dOETKteYk2mhbDeBd9rF5LTeFmFepf5JJIcoY68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755673351; c=relaxed/simple;
-	bh=jVqQhjeddwNoB1/ZHfH1bxrD8cV5PpPIbyK4ZcpRwsQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bDQf2k1DnPjnUS4rUATNIVG740wbFJ5i6jIH5zTPd+D36Yo5SuIGW8qWbSWw3iOK/yT+XAV2efAZ3FWazq28QDA3xzKNCPr705/t0MqsH7JxbnDhklFQqDzfePx0TTI2ihWQLvpoQZYkFL/H7pBZLX/qRzcIBEjGtsXSxyJb0ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-50f88ee8ac3so1894549137.1;
-        Wed, 20 Aug 2025 00:02:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755673349; x=1756278149;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=85tJujt3Cd6/zX3fsN1kUuMkB+QsEeF2UMzbEd7Xnu0=;
-        b=Yico8VhqVDgOPtrENBiL0R6dF+AecV3HKVawGsZAXm9tGQgI64oLQVs7setZJ+c+Fj
-         hCGfaEXkS3B7Ju6F8wT3pUpoLp1vpKyPz4mMGwBfBHqUus1QOOcudUNAyk6dsZSghmtm
-         qNyrVvR9f3LPN4B4CzGFFAELTBeYDDqFGbye1aLAik7VtAl0gz733TO0Bsqkegm6V7ja
-         Lxzif4Y6LplIIdxJP6m1Ri3Tu6aKId8shW4GecJPSsSxa0R9klL4IOSo/OT2/uh3tXrt
-         S2AQJGRNsSnDw5UNabcQNGzYgO64JHL3B14VVVm6yExIoLBjQPM93CdDQExGyVYCki3n
-         xsrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbsMq78ASFTwNSixBPw4EAjfKvnDknqmeTLOG+4gAdfONz3x11P22KgcC7q7QkttU6DKohZO8Kc3+r+Ig=@vger.kernel.org, AJvYcCWw7GJk7ncZ3NbwbyZ/BJMlDmTDN2eCZRkQ1tiKLJihg7trars2Q8O6HfN/y1hTRILYomvQKAdrayUJRA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSSlw/tu7hvPG2LyVSblGJWdN3os8XEMVwD/LukQ9dRmjKxa8Y
-	dRPW/oP6Hh9sDM6BsEsHu4en9JvFph9bROVxjRX8d6w4A8pXYMIrvKzrHCxKVDIv
-X-Gm-Gg: ASbGncuoJmpEkYFebQ66op0YAckxXm9FuLvbrkoWI6Stvhk3aOjOhbTjKnZEj3N/CEy
-	6hgZKXgkbnlqtFYFiR7C/pCJ2n3gc/qXMDlNHlZ5Zd0r+Z6mTrLEAd/7l6kBPdKEiZBkVitc1ln
-	+VPDLWm2lbmulyFHd4uMTlRRbjo4Hv9i9llrkAhbNghZynhROk9wO6yWk2tFsxDC+6nnpyii18g
-	G1Z6o4loYZpwrx/7dXjsdV1cRIvhmHGEVsSWGoiIsRxCtuHfqQrsaPG/mAG4vEuiNk5GXlqdJ9N
-	iUCKXYfrTO213GkAEihKAIX3w8lR2Es9OhXjRShb8KI4A6KyH3FgN9whNuYCAkxg9mMxU3vrCSQ
-	Ver9EXEpCk603Y2cUjmzEYRfPN7wXD21XHGC/GRv2eI9EKjhOgTapCPHx9FZ5
-X-Google-Smtp-Source: AGHT+IECgH62KqW/3+98eOWyRkVfxJEhH3syADkoP94pPkNqLHSKeBgZB1pz81uXyla+MwJGOZN3LA==
-X-Received: by 2002:a05:6102:5111:b0:4e7:db33:5980 with SMTP id ada2fe7eead31-51a4f53cd8fmr552839137.11.1755673348812;
-        Wed, 20 Aug 2025 00:02:28 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-890277e3798sm2713458241.7.2025.08.20.00.02.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 00:02:28 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-890190c7912so1475146241.2;
-        Wed, 20 Aug 2025 00:02:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW+ezRuhwjSTF994z5BiuXSeb1kf/W3AKEjmAAv4IIW1HUJSk3wv85lF/BKMmQt2Fa/5agB9rMsCC/moBI=@vger.kernel.org, AJvYcCWU60Fc8b0wPw1JiChHGKvS7EPJ3AVyooV4cXSP+5hprERK8/SISbgiJkK1mws+1YdGMdcZSwKq/Ym0Qw==@vger.kernel.org
-X-Received: by 2002:a05:6102:160c:b0:4e5:acea:2dec with SMTP id
- ada2fe7eead31-51a4ee317c2mr493455137.7.1755673348317; Wed, 20 Aug 2025
- 00:02:28 -0700 (PDT)
+	s=arc-20240116; t=1755673521; c=relaxed/simple;
+	bh=KEYfh4PJvrgBa95LZ3pjvfb1K6WI8Uw2nKvoJM+W9wA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Km9Kv/z9ReXN3StHTnxsi5Cxz1RMPzXpicEH31IZl9bn4o2e+kyQCR86XNZQukftu7b55Bw6rCVlNMlzSPY4Vz06pzu8uLoOVwACmik+U0WniI1UDmAPpDlLQ2bHP7a6eHr+Dahu1COzzWQgxrLvCQEpXoAdnoenMzJU9+2Ksww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzzzrcQB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90982C116D0;
+	Wed, 20 Aug 2025 07:05:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755673518;
+	bh=KEYfh4PJvrgBa95LZ3pjvfb1K6WI8Uw2nKvoJM+W9wA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CzzzrcQBbIqpX8uzZUPojwM27IwtbuODyEFkaXtqm3CvsTzQjS/cTMWmRwqoQK1Cm
+	 Vzd3d05YKv5t1XAfzguWakulffRfdLLlaYtQ0mVYcSuO91zJO/+mVuCJc+Rgvt+oZb
+	 2i/2/u8PVZ2sDgaVRvCA7GpUdQ7QRarjTHJlccMBcZRIsbLUSmWir5m7XoTjpOEE7c
+	 0cmD11R7vghvZt4KE/a+Pq1ladn/8SaaT9o6loaMQ28YmaJZeKB2JGD0htPn2sNFW6
+	 QEiQXzhUDVPzr5WpSwE63n7eMPb6vSOYlxgIm+13Xfj0u2zor4rwpr7j4D5XxIMKmR
+	 Cbq6MmMlXwZ+Q==
+Message-ID: <d07a4397-1648-4264-8a30-74a2ea3da165@kernel.org>
+Date: Wed, 20 Aug 2025 16:02:31 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820130227.5661da82@canb.auug.org.au>
-In-Reply-To: <20250820130227.5661da82@canb.auug.org.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 20 Aug 2025 09:02:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWj6dQqmdFYuHPEPL0pxefZ8m9kA5Dq_ZA+YRw4vLvreQ@mail.gmail.com>
-X-Gm-Features: Ac12FXz1IMAhVxBalWq_PYPKJ7-EuWxsMXwLZzxpmE8VkWIbqwB7yZCpfW31JVI
-Message-ID: <CAMuHMdWj6dQqmdFYuHPEPL0pxefZ8m9kA5Dq_ZA+YRw4vLvreQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the pinctrl-renesas tree with the
- pinctrl tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3 1/8] block: check for valid bio while splitting
+To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
+ hch@lst.de, martin.petersen@oracle.com, djwong@kernel.org,
+ linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
+ Keith Busch <kbusch@kernel.org>
+References: <20250819164922.640964-1-kbusch@meta.com>
+ <20250819164922.640964-2-kbusch@meta.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250819164922.640964-2-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Stephen,
-
-On Wed, 20 Aug 2025 at 05:02, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> After merging the pinctrl-renesas tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/pinctrl/renesas/pinctrl-rzt2h.c:161:14: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
->   161 |         func = pinmux_generic_get_function(pctldev, func_selector);
->       |              ^
->
-> Caused by commit
->
->   90f2896d7dbb ("pinctrl: renesas: Add support for RZ/T2H")
->
-> interacting with commit
->
->   afe1af86ff05 ("pinctrl: constify pinmux_generic_get_function()")
->
-> from the pinctrl tree.
-
-Thanks for your report!
-
-> I have applied the following merge fix patch.
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 20 Aug 2025 12:42:30 +1000
-> Subject: [PATCH] fix up for "pinctrl: renesas: Add support for RZ/T2H"
->
-> interacting with commit
->
->   afe1af86ff05 ("pinctrl: constify pinmux_generic_get_function()")
->
-> from the pinctrl tree.
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
-> --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-> @@ -151,7 +151,7 @@ static int rzt2h_pinctrl_set_mux(struct pinctrl_dev *pctldev,
->                                  unsigned int group_selector)
+On 8/20/25 1:49 AM, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> We're already iterating every segment, so check these for a valid IO at
+> the same time.
+> 
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+>  block/blk-map.c        |  2 +-
+>  block/blk-merge.c      | 20 ++++++++++++++++----
+>  include/linux/bio.h    |  4 ++--
+>  include/linux/blkdev.h | 13 +++++++++++++
+>  4 files changed, 32 insertions(+), 7 deletions(-)
+> 
+> diff --git a/block/blk-map.c b/block/blk-map.c
+> index 23e5d5ebe59ec..c5da9d37deee9 100644
+> --- a/block/blk-map.c
+> +++ b/block/blk-map.c
+> @@ -443,7 +443,7 @@ int blk_rq_append_bio(struct request *rq, struct bio *bio)
+>  	int ret;
+>  
+>  	/* check that the data layout matches the hardware restrictions */
+> -	ret = bio_split_rw_at(bio, lim, &nr_segs, max_bytes);
+> +	ret = bio_split_drv_at(bio, lim, &nr_segs, max_bytes);
+>  	if (ret) {
+>  		/* if we would have to split the bio, copy instead */
+>  		if (ret > 0)
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 70d704615be52..a0d8364983000 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -279,25 +279,29 @@ static unsigned int bio_split_alignment(struct bio *bio,
+>  }
+>  
+>  /**
+> - * bio_split_rw_at - check if and where to split a read/write bio
+> + * bio_split_io_at - check if and where to split a read/write bio
+>   * @bio:  [in] bio to be split
+>   * @lim:  [in] queue limits to split based on
+>   * @segs: [out] number of segments in the bio with the first half of the sectors
+>   * @max_bytes: [in] maximum number of bytes per bio
+> + * @len_align: [in] length alignment for each vector
+>   *
+>   * Find out if @bio needs to be split to fit the queue limits in @lim and a
+>   * maximum size of @max_bytes.  Returns a negative error number if @bio can't be
+>   * split, 0 if the bio doesn't have to be split, or a positive sector offset if
+>   * @bio needs to be split.
+>   */
+> -int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
+> -		unsigned *segs, unsigned max_bytes)
+> +int bio_split_io_at(struct bio *bio, const struct queue_limits *lim,
+> +		unsigned *segs, unsigned max_bytes, unsigned len_align)
 >  {
->         struct rzt2h_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-> -       struct function_desc *func;
-> +       const struct function_desc *func;
->         struct group_desc *group;
->         const unsigned int *pins;
->         unsigned int i;
+>  	struct bio_vec bv, bvprv, *bvprvp = NULL;
+>  	struct bvec_iter iter;
+>  	unsigned nsegs = 0, bytes = 0;
+>  
+>  	bio_for_each_bvec(bv, bio, iter) {
+> +		if (bv.bv_offset & lim->dma_alignment || bv.bv_len & len_align)
 
-I will fold this fix into commit 90f2896d7dbb ("pinctrl: renesas:
-Add support for RZ/T2H"), as it does not depend on commit afe1af86ff05
-("pinctrl: constify pinmux_generic_get_function()").
+Shouldn't this be:
 
-Gr{oetje,eeting}s,
+		if (bv.bv_offset & len_align || bv.bv_len & len_align)
 
-                        Geert
+?
+
+> +			return -EINVAL;
+> +
+>  		/*
+>  		 * If the queue doesn't support SG gaps and adding this
+>  		 * offset would create a gap, disallow it.
+> @@ -339,8 +343,16 @@ int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
+>  	 * Individual bvecs might not be logical block aligned. Round down the
+>  	 * split size so that each bio is properly block size aligned, even if
+>  	 * we do not use the full hardware limits.
+> +	 *
+> +	 * Misuse may submit a bio that can't be split into a valid io. There
+> +	 * may either be too many discontiguous vectors for the max segments
+> +	 * limit, or contain virtual boundary gaps without having a valid block
+> +	 * sized split. Catch that condition by checking for a zero byte
+> +	 * result.
+>  	 */
+>  	bytes = ALIGN_DOWN(bytes, bio_split_alignment(bio, lim));
+> +	if (!bytes)
+> +		return -EINVAL;
+>  
+>  	/*
+>  	 * Bio splitting may cause subtle trouble such as hang when doing sync
+> @@ -350,7 +362,7 @@ int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
+>  	bio_clear_polled(bio);
+>  	return bytes >> SECTOR_SHIFT;
+>  }
+> -EXPORT_SYMBOL_GPL(bio_split_rw_at);
+> +EXPORT_SYMBOL_GPL(bio_split_io_at);
+>  
+>  struct bio *bio_split_rw(struct bio *bio, const struct queue_limits *lim,
+>  		unsigned *nr_segs)
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index 46ffac5caab78..519a1d59805f8 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -322,8 +322,8 @@ static inline void bio_next_folio(struct folio_iter *fi, struct bio *bio)
+>  void bio_trim(struct bio *bio, sector_t offset, sector_t size);
+>  extern struct bio *bio_split(struct bio *bio, int sectors,
+>  			     gfp_t gfp, struct bio_set *bs);
+> -int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
+> -		unsigned *segs, unsigned max_bytes);
+> +int bio_split_io_at(struct bio *bio, const struct queue_limits *lim,
+> +		unsigned *segs, unsigned max_bytes, unsigned len_align);
+>  
+>  /**
+>   * bio_next_split - get next @sectors from a bio, splitting if necessary
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 95886b404b16b..7f83ad2df5425 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -1869,6 +1869,19 @@ bdev_atomic_write_unit_max_bytes(struct block_device *bdev)
+>  	return queue_atomic_write_unit_max_bytes(bdev_get_queue(bdev));
+>  }
+>  
+> +static inline int bio_split_rw_at(struct bio *bio,
+> +		const struct queue_limits *lim,
+> +		unsigned *segs, unsigned max_bytes)
+> +{
+> +	return bio_split_io_at(bio, lim, segs, max_bytes, lim->dma_alignment);
+> +}
+> +
+> +static inline int bio_split_drv_at(struct bio *bio,
+> +		const struct queue_limits *lim,
+> +		unsigned *segs, unsigned max_bytes)
+> +{
+> +	return bio_split_io_at(bio, lim, segs, max_bytes, 0);
+> +}
+>  #define DEFINE_IO_COMP_BATCH(name)	struct io_comp_batch name = { }
+>  
+>  #endif /* _LINUX_BLKDEV_H */
+
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Damien Le Moal
+Western Digital Research
 
