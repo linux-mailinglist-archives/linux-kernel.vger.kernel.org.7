@@ -1,165 +1,130 @@
-Return-Path: <linux-kernel+bounces-778696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B02B2E90E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 105A6B2E910
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB3F1BA905F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:55:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB8C31793CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492B02E1C44;
-	Wed, 20 Aug 2025 23:55:26 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC452E2281;
+	Wed, 20 Aug 2025 23:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mpKC7u12"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E15C2E1755;
-	Wed, 20 Aug 2025 23:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7236F20AF67
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 23:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755734125; cv=none; b=X34yLdtNu2siL8/cFpecaNlLGokV/4PMhZp7eImRpZnZuycrL991XEQ8ki5RDZHGOtC8dQcLs/OEC0mtyMmHkrToxPo3RwUN0HsFexSz3T3b49J8FkqZUn/joozMiQ+eTIa/9moB/PiO1xo0kWTN3c2T0KMD9MWuIg4SByE2DYs=
+	t=1755734175; cv=none; b=bbnInJ6q8DH7t9IluC+LfV5+MyFaOGjU6YNK9319+evzL+PCNn7jME4IvZ7p+VLeidbpiJDxSUAaG+M5MMShTnFFTdTljspGFB75XuwNLmQ/tzYMJaw1NTw9YnQhDG4Qj7tMVf7J4jkqGsa/hZspxAepn+HLa8LGpZj5rCseVHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755734125; c=relaxed/simple;
-	bh=4FQEkCWqdY78+jwxdtb56YU9bypzV4vfhgUnjjYSSUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HqER8CocOMl056TCBMLhT40YXnso2RV790KIaWDIWzPkgKCRaTRZSB6ivuU4sEQijocHwoHzAO39IBzUdwZ0rr/aGZ7dW3HkysemQskapnzoJmTbRgr7nAJKqXyyARaFx8uVLVTJrfBEJSp2HCLVwarP8ah8LdXj8blzHAQuys0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id D3F1E1A01C7;
-	Wed, 20 Aug 2025 23:55:21 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 1CED42000E;
-	Wed, 20 Aug 2025 23:55:20 +0000 (UTC)
-Date: Wed, 20 Aug 2025 19:55:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
- Sasha Levin <sashal@kernel.org>
-Subject: [PATCH] fgraph: Copy args in intermediate storage with entry
-Message-ID: <20250820195522.51d4a268@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755734175; c=relaxed/simple;
+	bh=z+AOkpF/yO6AtuBejxpf/9uQGEK+mqZlahXWOFtOEnY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mJeC53NeJzgWFXqdjzLe2ETJfKGbPM7KwmB/xlC7Mo5KZnDLLyFNqDVPF5k56BGchVT51BxtmAYagT+PGJ5AkcFoj9FKGjt8f/ffWb8svfgoF/rKmGnj5JsZjD1uRm8Ey6FvxQz1NxAcHNwYpmRyBej6ebddYXrIy7T6/y/p3e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mpKC7u12; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b29b715106so87901cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755734173; x=1756338973; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BWLf9Ffl8Lgjnm4H3/4VJgmHdaGpuVsmKnK8xjeBnZY=;
+        b=mpKC7u125pzwdyiUD64PzDO7vCSaX5SxR4l0d4NZy7pMpbhi/UB7bX8tC5z05xYWEv
+         wOYeACcSxFOqbrIuruv4rfyV8gonf/HQCgkvg3nXrnCHDpuLv36Al8uYzdHqkf4PKAmo
+         pt0zYKdFWuCa3RPY9k8tPDelEb3PUHnfSlpcyRDdhR1Z/tWDFgj+sT1p/Ml+d5NEOp+m
+         HPRF6Nv7/fhD7CMsAY++kf/6C5DW0ohpK2TcN7dq3/1WTucuG4W1Baw0CjGUNS+zt+h4
+         Lxo7oc0iv1wQHuNah+wB1UChl5ocT81kXv5ICrz3C5AlHYn+DOPSnyANmFN8UdAnduM2
+         QDpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755734173; x=1756338973;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BWLf9Ffl8Lgjnm4H3/4VJgmHdaGpuVsmKnK8xjeBnZY=;
+        b=TmmLaI8H/P5RtvQ6DN74rrc5nO7GQJ7vITwv6xYNWMxExNVejgjEujtuwCqPCCCN+P
+         v4zAH7+wSIOzGMDeBdNDxti6I7GiVIjOZ2NlripSMkVyC7b5/45BUSGSwDLiVpvD5p9p
+         1K69ECr37g/8Wm9VfoXDosUZdXnwnF3De8QdWE7y0iV9aXaplKYlTMr0rI+M8w+yRrbh
+         muaS9YsnZTc1NrtFZblVRjOvgX9hpQZzmMT+AOCqzboyr7gP3hsnwMwo116BhyWpsQoW
+         E5SYNKq11bbgYr8nM8ki9SZlALoxRcty1PDHKR0n9HRBmoiMOih3ug/sw+5wYPAznFGz
+         qK9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWQW1psW2Kv20+6qtk89CAUzXW0OE53yCm/RREIiHxoXa2+Aa82gB/ZjigUORMXtJx5qENvxdPO0vy1PIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8zOn2tRin4jsJyD11uQ1UCo6ZNgR6CR8AUH2TAzZwTOtA4Z5N
+	FrulWvtRMhtC4NvgToyPLbbmT7iOKu06sdoKuxA4mdBCzszxPpovmX8x1vTWbkFuN0sMbbKEV3+
+	tfTVOcxDIOXAI/c/RH3uAFnYt8gKiKnn6KWsewgNs
+X-Gm-Gg: ASbGncvZZa9z/npFM11L8mzhIRz4ViVsprf3jJ5xXh0VYVw952l9xdOj/X1wIREBTvD
+	01W70L7m6WCJbMkEtJwDah1msZqrk+2vvs2NhQLcdzlxOKVXzT7SOEhIyj0Rqc0ldQtWVgBeyV+
+	COYjQqz9GALKXiqHJeUN2o5rDoODOYUY6SihuWS4CqIDbe5OVyeBHKtI9z1rWkqzg3DGBSchYib
+	fPEGbPKD0lGOlaauVN7HMA=
+X-Google-Smtp-Source: AGHT+IErfm7yT7BCKqe17sShglHdYpqJIMTG3Y4aNX1t1u/ZKhg8vLO6UDcBNhy14F6ojhVjQYxhN/ouE9gCg8dt1rk=
+X-Received: by 2002:a05:622a:594:b0:4a6:f577:19bc with SMTP id
+ d75a77b69052e-4b29f797447mr1131141cf.18.1755734172886; Wed, 20 Aug 2025
+ 16:56:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: oodrmk36m89xpuof3z9rsndmopu9xeyz
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 1CED42000E
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX192FjGdpQpdRtBDmIXFSErr+fWyHu8ou3Q=
-X-HE-Tag: 1755734120-889586
-X-HE-Meta: U2FsdGVkX1/6Hum9duZFAPDU4iRpI/5qMWBIySOLhPQiISnDYl6+GXNWgN/iFnwg1R+nGJIuRAnhg4m2/ZVP4iKwMJK/iRIaQ9UEyVfiImcro5/HBBt+46TeRUCX1Iw0RdurRHuDpCe7zPXFhalyCikmosxffrgjOTfg6tSW0C13+9W31n3DzFKjoHQii2am35vITHtYxAO3+7okxIliOHyMD5iZSqGnf07GFnHNWlQ1yE8BorHRyNhGZLvmbKxQVd8F3mNrM+4Xu+afCgq2K/QhIcZweH/zJrTfyp6qfycjn7PklUq2h9pNoPVbJjvpBu5VcWdLqMn1RnzDFdI1ZRNIj8xXEg/sZPyhKpTIJLOPGl/XL7ay+WPOpkgn1mUSoCl+R0dHhc/xJtve0n/gCg==
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+ <20250818170136.209169-13-roman.gushchin@linux.dev> <CAJuCfpHUDSJ_yLEqtfmU0rykUGYM6tXR+rgVv1i3QjJz+2JU1A@mail.gmail.com>
+ <87tt23vt8u.fsf@linux.dev> <87cy8qx50g.fsf@linux.dev>
+In-Reply-To: <87cy8qx50g.fsf@linux.dev>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 20 Aug 2025 16:56:01 -0700
+X-Gm-Features: Ac12FXwHFX4DgL6ZNVWka_tcMoj1Wu2SMzrvjJmRsLac3uNbaTN5z0M9dFMR-KA
+Message-ID: <CAJuCfpGGAEh0pnbp8jA+0LgdT5k5qtGthJQopHZz9vzXZ8KQ1w@mail.gmail.com>
+Subject: Re: [PATCH v1 12/14] sched: psi: implement psi trigger handling using bpf
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: linux-mm@kvack.org, bpf@vger.kernel.org, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, 
+	David Rientjes <rientjes@google.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Song Liu <song@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Tue, Aug 19, 2025 at 4:31=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
+x.dev> wrote:
+>
+> Roman Gushchin <roman.gushchin@linux.dev> writes:
+>
+> > Suren Baghdasaryan <surenb@google.com> writes:
+> >
+> >> On Mon, Aug 18, 2025 at 10:02=E2=80=AFAM Roman Gushchin
+> >> <roman.gushchin@linux.dev> wrote:
+> >
+> >>
+> >>> +
+> >>> +       /* Cgroup Id */
+> >>> +       u64 cgroup_id;
+> >>
+> >> This cgroup_id field is weird. It's not initialized and not used here,
+> >> then it gets initialized in the next patch and used in the last patch
+> >> from a selftest. This is quite confusing. Also logically I don't think
+> >> a cgroup attribute really belongs to psi_trigger... Can we at least
+> >> move it into bpf_psi where it might fit a bit better?
+> >
+> > I can't move it to bpf_psi, because a single bpf_psi might own multiple
+> > triggers with different cgroup_id's.
+> > For sure I can move it to the next patch, if it's preferred.
+> >
+> > If you really don't like it here, other option is to replace it with
+> > a new bpf helper (kfunc) which calculates the cgroup_id by walking the
+> > trigger->group->cgroup->cgroup_id path each time.
+>
+> Actually there is no easy path from psi_group to cgroup, so there is
+> no such option available, unfortunately. Or we need a back-link from
+> the psi_group to cgroup.
 
-The output of the function graph tracer has two ways to display its
-entries. One way for leaf functions with no events recorded within them,
-and the other is for functions with events recorded inside it. As function
-graph has an entry and exit event, to simplify the output of leaf
-functions it combines the two, where as non leaf functions are separate:
-
- 2)               |              invoke_rcu_core() {
- 2)               |                raise_softirq() {
- 2)   0.391 us    |                  __raise_softirq_irqoff();
- 2)   1.191 us    |                }
- 2)   2.086 us    |              }
-
-The __raise_softirq_irqoff() function above is really two events that were
-merged into one. Otherwise it would have looked like:
-
- 2)               |              invoke_rcu_core() {
- 2)               |                raise_softirq() {
- 2)               |                  __raise_softirq_irqoff() {
- 2)   0.391 us    |                  }
- 2)   1.191 us    |                }
- 2)   2.086 us    |              }
-
-In order to do this merge, the reading of the trace output file needs to
-look at the next event before printing. But since the pointer to the event
-is on the ring buffer, it needs to save the entry event before it looks at
-the next event as the next event goes out of focus as soon as a new event
-is read from the ring buffer. After it reads the next event, it will print
-the entry event with either the '{' (non leaf) or ';' and timestamps (leaf).
-
-The iterator used to read the trace file has storage for this event. The
-problem happens when the function graph tracer has arguments attached to
-the entry event as the entry now has a variable length "args" field. This
-field only gets set when funcargs option is used. But the args are not
-recorded in this temp data and garbage could be printed. The entry field
-is copied via:
-
-  data->ent = *curr;
-
-Where "curr" is the entry field. But this method only saves the non
-variable length fields from the structure.
-
-Add a helper structure to the iterator data that adds the max args size to
-the data storage in the iterator. Then simply copy the entire entry into
-this storage (with size protection).
-
-Reported-by: Sasha Levin <sashal@kernel.org>
-Closes: https://lore.kernel.org/all/aJaxRVKverIjF4a6@lappy/
-Fixes: ff5c9c576e75 ("ftrace: Add support for function argument to graph tracer")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_functions_graph.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 66e1a527cf1a..a7f4b9a47a71 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -27,14 +27,21 @@ struct fgraph_cpu_data {
- 	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
- };
- 
-+struct fgraph_ent_args {
-+	struct ftrace_graph_ent_entry	ent;
-+	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
-+	unsigned long			args[FTRACE_REGS_MAX_ARGS];
-+};
-+
- struct fgraph_data {
- 	struct fgraph_cpu_data __percpu *cpu_data;
- 
- 	/* Place to preserve last processed entry. */
- 	union {
--		struct ftrace_graph_ent_entry	ent;
-+		struct fgraph_ent_args		ent;
-+		/* TODO allow retaddr to have args */
- 		struct fgraph_retaddr_ent_entry	rent;
--	} ent;
-+	};
- 	struct ftrace_graph_ret_entry	ret;
- 	int				failed;
- 	int				cpu;
-@@ -627,10 +634,13 @@ get_return_for_leaf(struct trace_iterator *iter,
- 			 * Save current and next entries for later reference
- 			 * if the output fails.
- 			 */
--			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT))
--				data->ent.rent = *(struct fgraph_retaddr_ent_entry *)curr;
--			else
--				data->ent.ent = *curr;
-+			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
-+				data->rent = *(struct fgraph_retaddr_ent_entry *)curr;
-+			} else {
-+				int size = min((int)sizeof(data->ent), (int)iter->ent_size);
-+
-+				memcpy(&data->ent, curr, size);
-+			}
- 			/*
- 			 * If the next event is not a return type, then
- 			 * we only care about what type it is. Otherwise we can
--- 
-2.50.1
-
+Ok, I obviously missed some important relations between these
+structures. Let me digest it some more before commenting further.
 
