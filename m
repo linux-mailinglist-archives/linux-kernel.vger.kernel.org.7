@@ -1,123 +1,116 @@
-Return-Path: <linux-kernel+bounces-777665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E02B2DC78
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 700A7B2DC7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629813A24D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205743B3783
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A6E3093AF;
-	Wed, 20 Aug 2025 12:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC063093CB;
+	Wed, 20 Aug 2025 12:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZGnbz35"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iatrAwy7"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392E62F3C20;
-	Wed, 20 Aug 2025 12:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD801305E37;
+	Wed, 20 Aug 2025 12:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755692854; cv=none; b=HTk3UsHPfcZ7bOK8QsUQh2Ngfe0Rr1Ob9LgEfBluooZThfSTAwtkInLbIHFipcVTT1pGAb1YwEtK4UOrniNAPiqb1G+nC131rwN6eDsk44MfnpcIBfhumVIu9o6GsiCBKPmG1MloFEdkaAF+I2blk8zjLOGs/tvUf4FlIaRGMwo=
+	t=1755692866; cv=none; b=ofpjMSD2HNyyfmfBTiLmgYPs9OiZY//cdZacyLWrYlkf9VWMogn0uyrafxomWJGbsC+NlvFqX75/LoqCPcVtgFFAW2HHmQN9TVGaE+ed94K3iax0mOHSfzCzqdzYnAas/fgrC6/aRXKwNO7q81loqb0bc7fY9GqMuBadfgRcOqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755692854; c=relaxed/simple;
-	bh=JozVgzE5OpdNK0U/lRsP7Vb02zfKR4iqBk4vRlL9sJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LWhYkHhcGktqH46I+3ocoG9ALrWU+WL7p04pO/41NDESS2SohW/BHZFq6o4RKt+Ufwt5Xz2KBmQMfCf/ujHdN55ppfg/mRIVSuark4jkAXw/ULyCPB8HDQY/Y3/fk6wXujZrN08x801sSuKnx1kVfP1i01mLa4Y1zbhNYdMzwj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZGnbz35; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1755692866; c=relaxed/simple;
+	bh=fozkKZ+7TYpGVtVQqcJ9yue6BIaaRtrQLet9kli0FTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HzoCTbCJhsE6d73cYzj7G1Vs4SGvBWecvr2GBpRj8ZhsNGmeXvSo/LQR8K9jRBu5z5xnKZGxslUB36Lzd239Ry4RWAzE8oj25UnmlAofWEYQN3TnPVRg6+RtXz8cergshgR/pyDhNMgUoJrbsdzIauzE/2lKEYIBzp1qgDDmWzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iatrAwy7; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b05fe23so40020775e9.1;
-        Wed, 20 Aug 2025 05:27:31 -0700 (PDT)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4756244423so1250789a12.1;
+        Wed, 20 Aug 2025 05:27:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755692850; x=1756297650; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ETWd0Uz8dmq2q1FPGS8zdhheeQpSbWBvfVF/jZk52Rs=;
-        b=bZGnbz35sCsAhX5JY31h87aEPomVxY1UaX66dDr58CbXG4WLJObPdFWy8/GtGg4HDS
-         CXTgytshuYr5JfUsdQmtQw+Taji4iLOI0xUI13/r0Jhj/7ZKl9T8659idszIhtSBc74N
-         XP/IAEZvyKMMz+4mkwZ3NxCq7zBnH9aJAzCswJsT0oHYwcP0ls6q6FYBJ3p7tdmE2qWd
-         q8MJCLGrg/pgmmVQz4Yvac2iswRQcwL2gz9Rmkz+P19ofyRo7ZLc2HkVbLXCnVi9TI/e
-         +YvV6xsNOP/3BE16JqLK1EnKPZFuPyqw00IKh31n/Mf/OeaXJru0QLiNm2svuXrgxaQp
-         l50Q==
+        d=gmail.com; s=20230601; t=1755692863; x=1756297663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dS/Qz4iPQ/6vsa3rpI9isTAuo5vfnUUc5hPRAtnu9g8=;
+        b=iatrAwy71yX/gHN5GjXXmzyAFW9GG2RKv92UYTVaa064HGFyy9W3PQxkSu7BLzVQeP
+         Qo2PsJld/hxVn7fqVUr60rJV1vCRDlfTu8qJhXMc3gV8RpMxDHuQI+LY3y3suSEZZ396
+         6lSss2N2LbYyeguGmLLmoj+2HWfP1TE7gBvXqLkKxbcVADNZ+Hy/qGgD4sS+76ZC2Icn
+         E2RE59FOviscuZkWHOLMD2H3hmgyF6ACJ6mOrHh70VPKtEuMZVlyRqPdgNsm4l2ITIL6
+         tvmFEV1qNvPxanPN6Hx4dWtstTEcY+MiCgTjK/wRvw6kokhrCNJ6CblKeO+UTd+wuqbS
+         hMeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755692850; x=1756297650;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ETWd0Uz8dmq2q1FPGS8zdhheeQpSbWBvfVF/jZk52Rs=;
-        b=f8j0gwFu8PLZ6BZWmJ1pAiCPRHgradBbAPzkN4gSExk3iNI1ic/IC93gFfiBSoMtYb
-         fFztKcVYW64yWNJcwZifjFYYIkIYaw+Tk/nibLipTn9M1ybYD8WYk9fBs96EAtxioYF1
-         tboXhxI/Jb/xg1Ms7fYn5l6Sg3kw1+k/FCx+9NCB2nvkDyCcjyX66V3bzTFZuOcq2cxq
-         wH+jRyTvC/iarfVZThEpSIo7ZuE7Je7yjtsGUZIvpTh56wEoM/6tauW2i990Znj2yROo
-         f+PWgu/RO7oj14o8JjCw/g/thx6w9WFtN/nM3lul5Fs8IY85W7i/DZyg84YLHGs0Psov
-         XlWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxDdKbthRJVmbN/2ciXsdIIbtpyFcXmO3rMqergdEmSVXU2/hMUX5r/r1kMmHyo8JUxgaz/o5thbrEK1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHICf2t9Utxd3DSdi3HZ7ZX9KGv0zZbOfHRnA+twE2NAa4Ot0M
-	BXGdSvKLKvxfu/F2voicKXyuNeq0N3pUm7CCzjoXE+urPvsAd23XmlWw
-X-Gm-Gg: ASbGncu3+y+xRCjJt+7CbmvxteWpetnYcyQmO5kW+8k9vfICWyFLoPp7FjKdQPER/Dk
-	vm1JU82P6eN/27YZI8JDFJsp+WGam9yBy0DIMzv1Qw5F0CykJRkNWvMLnctKEcrMjq7Oc4a4GTM
-	+Z6L/GvVHKwl6eXSdpm2BRpo2zecPGpGpUCuKQv0RI0TpaiRY2W2mVxhauV/PmH9xndnkD2gQNi
-	kH8g33wp7K5SokhQwN55nTTExcAbkUzLoU0zfMd6saoj5OtLibwtN36TAn0UuRO90ZINYX+xatB
-	bS5FFmUFtHNOELHtuPbUs2hM6mPUJY23ZAmEMOsp+gOx03wfFM1u0cBYdHkx4bh+EAa5zcGDpVm
-	w+b6hyYh4nCTkO7eF/4yHv1cmM8zitU5yBw==
-X-Google-Smtp-Source: AGHT+IH0PuOuR2aoV4+cA5Zj9PRupwltnu5jmvMpiaGyaN9CYcbxj/L5Iag7R5MYzOdHAh/XjQHAvA==
-X-Received: by 2002:a05:600c:1d14:b0:445:1984:247d with SMTP id 5b1f17b1804b1-45b4adeb610mr11415615e9.7.1755692850383;
-        Wed, 20 Aug 2025 05:27:30 -0700 (PDT)
-Received: from localhost ([45.10.155.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47cac162sm33996535e9.20.2025.08.20.05.27.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 05:27:30 -0700 (PDT)
-Message-ID: <bb28ffa4-d91d-479a-9293-fa3aa52c57e5@gmail.com>
-Date: Wed, 20 Aug 2025 14:27:12 +0200
+        d=1e100.net; s=20230601; t=1755692863; x=1756297663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dS/Qz4iPQ/6vsa3rpI9isTAuo5vfnUUc5hPRAtnu9g8=;
+        b=Q7qlrZcfoSTQhTfOt0jcRK8VxheaPVwSQdagH3oC8po+xgVlVn35uzQvwFWqmbmPim
+         fp0CH55cjwdtzZHV7dgddIp50znt9ugGFj9z+CuVxlHC9mEjevGGVkVi5NRfeGcWRb/6
+         VQSNzkwiGh0DdVFIZ7F4iohWzPcT4+2bSGW3i2JOrAQt+kbNg8g5NA0PtuThSMa2uQSR
+         4N4jTm203UVJeBTpy8yNjQBMKsLML2tGUsVNPWABUZFV+uZ9K417PtSIjlpWVTstfSBO
+         gvhVZoB2uls/lUDFcTqOI0FrnTr66Hy42/1DCFRBEz9+OaRhuRiNSYEZJ+YQaJa35WrO
+         csDg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Wrtvf0uNXwVkIBbkf946TYO38V6L7LH94iA1LETzm3bYR1+cltgndy4mpaX1jRJxzVOLXBmKg5ws2VY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS7h+vvf5dx7R7gX/DjhG0lZGdCNY+7ueX+pbYLEmTET2aJqV/
+	usytjtgc7wkXAKmazoILikgknO8SRl0XKojcWAa7SAg84kX/l6ErhGxe
+X-Gm-Gg: ASbGnctWoXhh0Wp3bH2VxbLfXhpn3KNOsveX+oOv052DR/aw6HoUPJA14yU8ZWk2ETw
+	JQHFzUS2JOsZaCPRKWdZQeiV+cjjwISYVpFXrSkQ04e8yRepoPRHrWXnLIiQlP049xWIAYl/Iog
+	o956Ax5rlq46Lv5CWyYqAtE8r8ZlPu81lkwzns0f1WYwrQIdSYoE97+EArVX5GrKeBgKG+WHb6C
+	8myCYdo7xBosaZA8Zel4r3kDDVYZC+yDmhNdkfntuCSOHMLD8RfrontWRyRpvx7CeAZRWhkKud7
+	crVTaIcN3TkC9rqun9gb80QD84iIMpkru+6vH/8M/EVptGkP5CbQYoBkxEQtFjy5cDDcoMCP+Kp
+	Z113NHV4/pzN6ANZJifS47vxEuiv76dADJQ==
+X-Google-Smtp-Source: AGHT+IFuCwF1+L+JyamxJlydbb7ZqbPnkIJic9UgO8fWBqUJFoxgkpvrESkqezbmIhEtaDPhbD7EfQ==
+X-Received: by 2002:a17:902:f691:b0:23f:f68b:fa0b with SMTP id d9443c01a7336-245ef22dc84mr27967745ad.37.1755692862794;
+        Wed, 20 Aug 2025 05:27:42 -0700 (PDT)
+Received: from OSC.. ([106.222.231.87])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed336002sm25949565ad.5.2025.08.20.05.27.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 05:27:42 -0700 (PDT)
+From: Pavan Bobba <opensource206@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pavan Bobba <opensource206@gmail.com>
+Subject: [PATCH] Documentation: warning fix
+Date: Wed, 20 Aug 2025 17:57:37 +0530
+Message-ID: <20250820122737.13501-1-opensource206@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 2/5] net: gro: only merge packets with
- incrementing or fixed outer ids
-To: Jakub Kicinski <kuba@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, shenjian15@huawei.com,
- salil.mehta@huawei.com, shaojijie@huawei.com, andrew+netdev@lunn.ch,
- saeedm@nvidia.com, tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org,
- ecree.xilinx@gmail.com, dsahern@kernel.org, ncardwell@google.com,
- kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me, ahmed.zaki@intel.com,
- aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
- linux-kernel@vger.kernel.org, linux-net-drivers@amd.com
-References: <20250819063223.5239-1-richardbgobert@gmail.com>
- <20250819063223.5239-3-richardbgobert@gmail.com>
- <willemdebruijn.kernel.a8507becb441@gmail.com>
- <20250819173005.6b560779@kernel.org>
-From: Richard Gobert <richardbgobert@gmail.com>
-In-Reply-To: <20250819173005.6b560779@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Jakub Kicinski wrote:
-> On Tue, 19 Aug 2025 10:46:01 -0400 Willem de Bruijn wrote:
->> It's a bit unclear what the meaning of inner and outer are in the
->> unencapsulated (i.e., normal) case. In my intuition outer only exists
->> if encapsulated, but it seems you reason the other way around: inner
->> is absent unless encapsulated. 
-> 
-> +1, whether the header in unencapsulted packet is inner or outer
-> is always a source of unnecessary confusion. I would have also
-> preferred your suggestion on v1 to use _ENCAP in the name.
+This fix is to mitigate below warning while generating documentation
 
-Yeah, I guess that was the source of confusion. IMO, it makes more sense that
-INNER is absent unless encapsulated since that seems to be the convention in
-the rest of the network stack. (e.g. inner_network_header for both skb and
-napi_gro_cb is only relevant for encapsulation)
+WARNING: ./include/linux/fs.h:3287 function parameter 'name' not described in 'name_contains_dotdot'
+Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+---
+ include/linux/fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I could rename the OUTER variant to simply SKB_GSO_TCP_FIXEDID so that it's
-clearer that it's the default (resembling network_header). WDYT?
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..1c87f9861ce2 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3281,7 +3281,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
+ 
+ /**
+  * name_contains_dotdot - check if a file name contains ".." path components
+- *
++ * @name: file name to check
+  * Search for ".." surrounded by either '/' or start/end of string.
+  */
+ static inline bool name_contains_dotdot(const char *name)
+-- 
+2.43.0
 
 
