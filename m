@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-777479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D980B2D9EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:19:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B94B2D9F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DA2F4E289D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:19:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3941BA6769
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F8A2749C2;
-	Wed, 20 Aug 2025 10:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b="CBAjhmSF"
-Received: from mx10.didiglobal.com (mx10.didiglobal.com [111.202.70.125])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 7DC602D9EE0
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.125
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A358E2E0937;
+	Wed, 20 Aug 2025 10:20:02 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B7B2DEA9D
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755685162; cv=none; b=n6ONTaMVdyvDt5HLA5DT7QHEZTyRqNVw5mBAt4wgnDlGUDSNL5UWkUGo0mBP7hhsEZ4W63E7nQBucWuhdFVwubxZAIhAnrAJ3kFV1meQVqzoxhhpw9mP7HAjmX83VKYEB6j13XJN6A9xriJZGroBuf8QGd3OZUZNvWPhgJl/sRA=
+	t=1755685202; cv=none; b=GDyTnuzypaCA8i8fpZ3lKXHaxR3P2BdP+6hQG7m2a669oCyP6UneKkcAH0lzsHhfsYdb9xoZrg0qWcaHgkxV189owQRrH19+0gpzk9Gt/s/H0/aEMMxyecEe28jLrwo1zCMbs9dnRMyE1rULRsVeaVWHfg1jllLDOPYWVx5wXvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755685162; c=relaxed/simple;
-	bh=8R57zviloCLKjnwcDGUINGdKeCAknIoYrQGHcRS6u7o=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=O072wIkM+ItG3OxAXLpJIUYxT2ZAaBUQbHaMwi8nsZDsGdkJbITmlY5sAcySqQ6PGVEsuBCWgG5Q9oisLohWfivXzMVBBMtAehYmUGT8KDnNkif56lPoY9lQKXuzw+osBAyLfJac5sI8nSQ/7Hb5v8ZqrbUA2SKedF0LUcaCvSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b=CBAjhmSF; arc=none smtp.client-ip=111.202.70.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
-Received: from mail.didiglobal.com (unknown [10.79.65.19])
-	by mx10.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id C586418080F17A;
-	Wed, 20 Aug 2025 18:18:03 +0800 (CST)
-Received: from didi-ThinkCentre-M930t-N000 (10.79.71.102) by
- BJ02-ACTMBX-01.didichuxing.com (10.79.65.19) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.10; Wed, 20 Aug 2025 18:18:54 +0800
-Date: Wed, 20 Aug 2025 18:18:46 +0800
-X-MD-Sfrom: tiozhang@didiglobal.com
-X-MD-SrcIP: 10.79.65.19
-From: Tio Zhang <tiozhang@didiglobal.com>
-To: <akpm@linux-foundation.org>
-CC: <linux-kernel@vger.kernel.org>, <tiozhang@didiglobal.com>,
-	<zyhtheonly@gmail.com>, <zyhtheonly@yeah.net>
-Subject: [PATCH] fork: remove #ifdef CONFIG_LOCKDEP in copy_process()
-Message-ID: <20250820101826.GA2484@didi-ThinkCentre-M930t-N000>
-Mail-Followup-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	zyhtheonly@gmail.com, zyhtheonly@yeah.net
+	s=arc-20240116; t=1755685202; c=relaxed/simple;
+	bh=ixt4MI8sNyddrirHCmjXmC66O0F6v4cBEiLL8VcL9OQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JWTU8IDc2DI40pex1/a57j/ohJTnAom7QnNWe1NhFaSR67dzdoDKroJv9MehWE5HzYJNq6BC/W74b4XdTOYgkv8eFWjHLe3vAz96ODgKJduiK/MfYZF4oyiuvXX1j6yNYGvoLQwZjdkL7rocShlo4tf9W6gdKWzq4Q/KD1VhzY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c6Mqk1B1zztT9v;
+	Wed, 20 Aug 2025 18:18:58 +0800 (CST)
+Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1B2AD180485;
+	Wed, 20 Aug 2025 18:19:57 +0800 (CST)
+Received: from [10.174.176.250] (10.174.176.250) by
+ dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 20 Aug 2025 18:19:56 +0800
+Message-ID: <3a894ee7-0d07-496a-bbb8-abcc431b849b@huawei.com>
+Date: Wed, 20 Aug 2025 18:19:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: BJ03-PUBMBX-01.didichuxing.com (10.79.71.11) To
- BJ02-ACTMBX-01.didichuxing.com (10.79.65.19)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=didiglobal.com;
-	s=2025; t=1755685095;
-	bh=jmDRQ7mALkgnPpAzC0uNEbUjI56GDSMJ8bcTnl4R62M=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type;
-	b=CBAjhmSFFW7Qvn+IJtDg6ae6heVIu6o5AwfbLfZc0p7APFBrsNRrBV4BEiCJYQEQE
-	 E2l3KceQmdbmbfIePRdPlSZzBjJV7+2YT+boss92eYYRr2i5KlI0kRshGqByBlWIU8
-	 ghWZrifIMrdlIyS2Rg2Yo4dXkXGipu99chkv1BuM=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH -next 00/16] mm/damon: support ARM32 with LPAE
+To: SeongJae Park <sj@kernel.org>
+CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
+References: <20250814160429.67476-1-sj@kernel.org>
+From: Quanmin Yan <yanquanmin1@huawei.com>
+In-Reply-To: <20250814160429.67476-1-sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf200018.china.huawei.com (7.185.36.31)
 
-lockdep_init_task() is defined as an empty when
-CONFIG_LOCKDEP is not set.
-So the #ifdef here is redundant, remove it.
+Hi SJ,
 
-Signed-off-by: Tio Zhang <tiozhang@didiglobal.com>
----
- kernel/fork.c | 2 --
- 1 file changed, 2 deletions(-)
+在 2025/8/15 0:04, SeongJae Park 写道:
+> On Thu, 14 Aug 2025 22:07:12 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+>
+>> Hi SJ,
+>>
+>> Thank you for your detailed suggestions on the patch series. Please allow me
+>> some time to thoroughly review each of your recommendations.
+> No worry, please take your time :)
+>
+>> I haven’t responded
+>> to every point immediately because I’d like to first attempt updating the patches
+>> accordingly. If I encounter any questions or issues during the process, I’ll promptly
+>> reach out to discuss them with you, very appreciate your patience and guidance.
+> Sounds good.
+>
+>> By the way, this patch series is based on linux-next(commit:2674d1eadaa2).
+> Thank you for sharing this.  From the next time, please use mm-new[1] as a
+> baseline for DAMON patches if there is no reason to not do so.
+>
+> [1] https://origin.kernel.org/doc/html/latest/mm/damon/maintainer-profile.html#scm-trees
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index af673856499d..e06cfaa85a84 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2124,9 +2124,7 @@ __latent_entropy struct task_struct *copy_process(
- 
- 	p->pagefault_disabled = 0;
- 
--#ifdef CONFIG_LOCKDEP
- 	lockdep_init_task(p);
--#endif
- 
- 	p->blocked_on = NULL; /* not blocked yet */
- 
--- 
-2.39.3 (Apple Git-145)
+I've prepared the v2 patch set based on the mm-new branch[1]. Your valuable
+feedback would be greatly appreciated!
+
+[1] https://lore.kernel.org/all/20250820080623.3799131-1-yanquanmin1@huawei.com/
+
+Thanks,
+Quanmin Yan
 
 
