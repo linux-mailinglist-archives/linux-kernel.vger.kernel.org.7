@@ -1,355 +1,168 @@
-Return-Path: <linux-kernel+bounces-778512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF878B2E6B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:36:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DACB2E6B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA691C83273
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1D6C7A894B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618D92D3EDE;
-	Wed, 20 Aug 2025 20:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7882D249E;
+	Wed, 20 Aug 2025 20:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="dpcSH9U/"
-Received: from mail-244106.protonmail.ch (mail-244106.protonmail.ch [109.224.244.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEf1V7sy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FC62D29D0;
-	Wed, 20 Aug 2025 20:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B02C2D23B1;
+	Wed, 20 Aug 2025 20:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755722124; cv=none; b=tn8WV5kUSzrynzGtlS2p678JTCxtjaEFYuBaenqwj/IZse8xL4cJjUBiomFe8E6ONeKCeXev7GkNeeTjxTSG0IUeRU646NeCYVy+Sxe0Fex4rnPVUu2SK+JzHClDbIkj+MxoB+tkzcYqOmOh3N4FBxHk+grDO+ucjPeUaBXoDRk=
+	t=1755722138; cv=none; b=lDiPN6Kcbok6cgKQcRkmuzb/H+S4CcoSiDEc82wZimaPo5toW5FkUnt3Qe/lw/Jxv8G7vhmVmIFZPQ2yTKQm/wIzfBcZdTopeoxi82oXDsYWhWFywA+/C0plcw19ifprTBFne6pqHg2MsxyIulXXU3ij93mmbH57mL9PktN9Hq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755722124; c=relaxed/simple;
-	bh=zqKw/iK+mXcLGVcYoXTnWF6VdBOwD6+8CyXnwiNjxrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=is2u32UbhCIELU28PpuWP1U99ky85VW9AySh9F4RckDoU27f9AVKtxDm3MopDt0tIka46tg33vQUFa9SEp2q4zHk7B76LAmMhrdwHWq49ItEdsppgB2w8fYtOVtg+ZtFZy+5pPk72KWw1P/50UshvQ7QdDanY1qcMnyWmyO/mQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=dpcSH9U/; arc=none smtp.client-ip=109.224.244.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
-	s=protonmail3; t=1755722119; x=1755981319;
-	bh=Vf+Yl+PCEmKpTjghg2al6tvWDZrFdR8RNA+YgPHTR1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=dpcSH9U/AolnV0hmRVsipVK3U3Mp6W7GGhc43jsviJm53AvmjXzsY26cge3x6R7U1
-	 qXGjhEa8c8pedHLLR7Qukj52nhoA4U7J5x1buZsAdqgb55HoojI5A8WHNv8x4scbay
-	 Xasxy38a5ns4w4AXNMs14/H/Jauk1nM7S6TEtRyChl9PsDGHLKr0rxYVjHChp2v5t6
-	 kpkrTlvqdKet/reOwbFN5ieQQ3BcjKcoTUDvy1mTDnvOTxoIXygqyrDzecF5mrV0dG
-	 boiNu+m9RpA++IUkTI5bVD27wMpwIlmgMYJqiI9vNDni3PijqQ7w3vHCpmAwT/Nj5G
-	 GMUc1PZynzFmA==
-X-Pm-Submission-Id: 4c6dVs5Mw1z2ScP7
-Date: Wed, 20 Aug 2025 20:35:14 +0000
-From: Elle Rhumsaa <elle@weathered-steel.dev>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Drew Fustini <fustini@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v14 2/7] rust: pwm: Add Kconfig and basic data structures
-Message-ID: <aKYxgo0IGGguv5jn@archiso>
-References: <20250820-rust-next-pwm-working-fan-for-sending-v14-0-df2191621429@samsung.com>
- <CGME20250820083542eucas1p221dacb3b69524b0dd6f7abf870adbe04@eucas1p2.samsung.com>
- <20250820-rust-next-pwm-working-fan-for-sending-v14-2-df2191621429@samsung.com>
+	s=arc-20240116; t=1755722138; c=relaxed/simple;
+	bh=TsKHYxNZLLNav2fl4VlSgG/S6ch3wqYz+Pns7R4RxD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=bifK8bw6dhbx1J04zuuUJWH+27dDw0/j3Bd1DuM0ekzcrxmtPhqabsLzWznr6UTTbwx76OE7f8F9Munqxf6t0uOAROmFehntRnyFiMCxPIF5/L2SOD+ov/CMdcccuokxrKwCtz77q4JGATKifVH6U5LdahvU1roS4eAeXhdrDc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEf1V7sy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B738C4CEE7;
+	Wed, 20 Aug 2025 20:35:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755722137;
+	bh=TsKHYxNZLLNav2fl4VlSgG/S6ch3wqYz+Pns7R4RxD0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=tEf1V7syOSrPzXUXLULwOAU4Rkjql9oMaQBC6Gwq3yNFOJOO7Bj+g0HBiN9WpMFRL
+	 WgxoS9fajMm8VOQLwWG7B+45FaorAbW6VNVcePZS/+B+6rgCHP1U8iuj/pIJe8Wzq+
+	 ih69AN7Cci3vJwwNBroHTt7UJtHl+ehko9DMi/4quqvF7WgTS/dvOZlBB4syFmHLBI
+	 JurFBvSQ+UMEchxxzU5ESUlqSPONBknCwg+Ij1+MguCl48xEXEVTsRJPbQRLtj0Li8
+	 yC1NVsKWKZD6ZycoK8wPPlAeImllbbJOMW3PVD5r8OuoOmdr1QGxgi+eUtAQQzvGav
+	 D0xctMv3Yel8w==
+Date: Wed, 20 Aug 2025 15:35:36 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
+	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] PCI: imx6: Add a method to handle CLKREQ#
+ override active low
+Message-ID: <20250820203536.GA639059@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250820-rust-next-pwm-working-fan-for-sending-v14-2-df2191621429@samsung.com>
+In-Reply-To: <20250820081048.2279057-3-hongxing.zhu@nxp.com>
 
-On Wed, Aug 20, 2025 at 10:35:37AM +0200, Michal Wilczynski wrote:
-> Introduce the foundational support for PWM abstractions in Rust.
+On Wed, Aug 20, 2025 at 04:10:48PM +0800, Richard Zhu wrote:
+> The CLKREQ# is an open drain, active low signal that is driven low by
+> the card to request reference clock.
 > 
-> This commit adds the `RUST_PWM_ABSTRACTIONS` Kconfig option to enable
-> the feature, along with the necessary build-system support and C
-> helpers.
+> Since the reference clock may be required by i.MX PCIe host too. To make
+> sure this clock is available even when the CLKREQ# isn't driven low by
+> the card(e.x no card connected), force CLKREQ# override active low for
+> i.MX PCIe host during initialization.
 > 
-> It also introduces the first set of safe wrappers for the PWM
-> subsystem, covering the basic data carrying C structs and enums:
-> - `Polarity`: A safe wrapper for `enum pwm_polarity`.
-> - `Waveform`: A wrapper for `struct pwm_waveform`.
-> - `Args`: A wrapper for `struct pwm_args`.
-> - `State`: A wrapper for `struct pwm_state`.
+> The CLKREQ# override can be cleared safely when supports-clkreq is
+> present and PCIe link is up later. Because the CLKREQ# would be driven
+> low by the card in this case.
 > 
-> These types provide memory safe, idiomatic Rust representations of the
-> core PWM data structures and form the building blocks for the
-> abstractions that will follow.
-> 
-> Tested-by: Drew Fustini <fustini@kernel.org>
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
 > ---
->  MAINTAINERS                     |   8 +++
->  drivers/pwm/Kconfig             |  13 +++++
->  rust/bindings/bindings_helper.h |   1 +
->  rust/helpers/helpers.c          |   1 +
->  rust/helpers/pwm.c              |  20 +++++++
->  rust/kernel/lib.rs              |   2 +
->  rust/kernel/pwm.rs              | 123 ++++++++++++++++++++++++++++++++++++++++
->  7 files changed, 168 insertions(+)
+>  drivers/pci/controller/dwc/pci-imx6.c | 35 +++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fe168477caa45799dfe07de2f54de6d6a1ce0615..5d7c0676c1d00a02b3d7db2de88b039c08c99c6e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20387,6 +20387,14 @@ F:	include/linux/pwm.h
->  F:	include/linux/pwm_backlight.h
->  K:	pwm_(config|apply_might_sleep|apply_atomic|ops)
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 80e48746bbaf6..a73632b47e2d3 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -52,6 +52,8 @@
+>  #define IMX95_PCIE_REF_CLKEN			BIT(23)
+>  #define IMX95_PCIE_PHY_CR_PARA_SEL		BIT(9)
+>  #define IMX95_PCIE_SS_RW_REG_1			0xf4
+> +#define IMX95_PCIE_CLKREQ_OVERRIDE_EN		BIT(8)
+> +#define IMX95_PCIE_CLKREQ_OVERRIDE_VAL		BIT(9)
+>  #define IMX95_PCIE_SYS_AUX_PWR_DET		BIT(31)
 >  
-> +PWM SUBSYSTEM BINDINGS [RUST]
-> +M:	Michal Wilczynski <m.wilczynski@samsung.com>
-> +L:	linux-pwm@vger.kernel.org
-> +L:	rust-for-linux@vger.kernel.org
-> +S:	Maintained
-> +F:	rust/helpers/pwm.c
-> +F:	rust/kernel/pwm.rs
-> +
->  PXA GPIO DRIVER
->  M:	Robert Jarzmik <robert.jarzmik@free.fr>
->  L:	linux-gpio@vger.kernel.org
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index f00ce973dddf651287168b44228574f4d5c28dc0..2b608f4378138775ee3ba4d53f682952e1914118 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -800,4 +800,17 @@ config PWM_XILINX
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called pwm-xilinx.
+>  #define IMX95_PE0_GEN_CTRL_1			0x1050
+> @@ -136,6 +138,7 @@ struct imx_pcie_drvdata {
+>  	int (*enable_ref_clk)(struct imx_pcie *pcie, bool enable);
+>  	int (*core_reset)(struct imx_pcie *pcie, bool assert);
+>  	int (*wait_pll_lock)(struct imx_pcie *pcie);
+> +	void (*clr_clkreq_override)(struct imx_pcie *pcie);
+>  	const struct dw_pcie_host_ops *ops;
+>  };
 >  
-> + config RUST_PWM_ABSTRACTIONS
-> +	bool "Rust PWM abstractions support"
-> +	depends on RUST
-> +	depends on PWM=y
-> +	help
-> +	  This option enables the safe Rust abstraction layer for the PWM
-> +	  subsystem. It provides idiomatic wrappers and traits necessary for
-> +	  writing PWM controller drivers in Rust.
-> +
-> +	  The abstractions handle resource management (like memory and reference
-> +	  counting) and provide safe interfaces to the underlying C core,
-> +	  allowing driver logic to be written in safe Rust.
-> +
->  endif
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index 84d60635e8a9baef1f1a1b2752dc0fa044f8542f..7a06ee5781eadc9f21ccd456b574a9cb152cd58c 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -66,6 +66,7 @@
->  #include <linux/pm_opp.h>
->  #include <linux/poll.h>
->  #include <linux/property.h>
-> +#include <linux/pwm.h>
->  #include <linux/refcount.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/sched.h>
-> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> index 7cf7fe95e41dd51717050648d6160bebebdf4b26..861052ffffaff60e9c2e8109e55f3b6158ff2281 100644
-> --- a/rust/helpers/helpers.c
-> +++ b/rust/helpers/helpers.c
-> @@ -35,6 +35,7 @@
->  #include "platform.c"
->  #include "poll.c"
->  #include "property.c"
-> +#include "pwm.c"
->  #include "rbtree.c"
->  #include "rcu.c"
->  #include "refcount.c"
-> diff --git a/rust/helpers/pwm.c b/rust/helpers/pwm.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..d75c588863685d3990b525bb1b84aa4bc35ac397
-> --- /dev/null
-> +++ b/rust/helpers/pwm.c
-> @@ -0,0 +1,20 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2025 Samsung Electronics Co., Ltd.
-> +// Author: Michal Wilczynski <m.wilczynski@samsung.com>
-> +
-> +#include <linux/pwm.h>
-> +
-> +struct device *rust_helper_pwmchip_parent(const struct pwm_chip *chip)
+> @@ -149,6 +152,7 @@ struct imx_pcie {
+>  	struct gpio_desc	*reset_gpiod;
+>  	struct clk_bulk_data	*clks;
+>  	int			num_clks;
+> +	bool			supports_clkreq;
+>  	struct regmap		*iomuxc_gpr;
+>  	u16			msi_ctrl;
+>  	u32			controller_id;
+> @@ -267,6 +271,13 @@ static int imx95_pcie_init_phy(struct imx_pcie *imx_pcie)
+>  			   IMX95_PCIE_REF_CLKEN,
+>  			   IMX95_PCIE_REF_CLKEN);
+>  
+> +	/* Force CLKREQ# low by override */
+> +	regmap_update_bits(imx_pcie->iomuxc_gpr,
+> +			   IMX95_PCIE_SS_RW_REG_1,
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN |
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL,
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN |
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL);
+>  	return 0;
+>  }
+>  
+> @@ -1298,6 +1309,18 @@ static void imx_pcie_host_exit(struct dw_pcie_rp *pp)
+>  		regulator_disable(imx_pcie->vpcie);
+>  }
+>  
+> +static void imx8mm_pcie_clr_clkreq_override(struct imx_pcie *imx_pcie)
 > +{
-> +	return pwmchip_parent(chip);
+> +	imx8mm_pcie_enable_ref_clk(imx_pcie, false);
 > +}
 > +
-> +void *rust_helper_pwmchip_get_drvdata(struct pwm_chip *chip)
+> +static void imx95_pcie_clr_clkreq_override(struct imx_pcie *imx_pcie)
 > +{
-> +	return pwmchip_get_drvdata(chip);
+> +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN |
+> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL, 0);
 > +}
 > +
-> +void rust_helper_pwmchip_set_drvdata(struct pwm_chip *chip, void *data)
-> +{
-> +	pwmchip_set_drvdata(chip, data);
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index ed53169e795c0badf548025a57f946fa18bc73e3..e339b552f9650803b1efa1eb8ecc6fe9d2c56563 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -117,6 +117,8 @@
->  pub mod seq_file;
->  pub mod sizes;
->  mod static_assert;
-> +#[cfg(CONFIG_RUST_PWM_ABSTRACTIONS)]
-> +pub mod pwm;
->  #[doc(hidden)]
->  pub mod std_vendor;
->  pub mod str;
-> diff --git a/rust/kernel/pwm.rs b/rust/kernel/pwm.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..57675a3dfca12033355670deb210ca66f8469334
-> --- /dev/null
-> +++ b/rust/kernel/pwm.rs
-> @@ -0,0 +1,123 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2025 Samsung Electronics Co., Ltd.
-> +// Author: Michal Wilczynski <m.wilczynski@samsung.com>
+>  static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> @@ -1322,6 +1345,12 @@ static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
+>  		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+>  		dw_pcie_dbi_ro_wr_dis(pci);
+>  	}
 > +
-> +//! PWM subsystem abstractions.
-> +//!
-> +//! C header: [`include/linux/pwm.h`](srctree/include/linux/pwm.h).
-> +
-> +use crate::{
-> +    bindings,
-> +    prelude::*,
-> +    types::Opaque,
-> +};
-> +use core::convert::TryFrom;
-> +
-> +/// PWM polarity. Mirrors [`enum pwm_polarity`](srctree/include/linux/pwm.h).
-> +#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-> +pub enum Polarity {
-> +    /// Normal polarity (duty cycle defines the high period of the signal).
-> +    Normal,
-> +
-> +    /// Inversed polarity (duty cycle defines the low period of the signal).
-> +    Inversed,
-> +}
-> +
-> +impl TryFrom<bindings::pwm_polarity> for Polarity {
-> +    type Error = Error;
-> +
-> +    fn try_from(polarity: bindings::pwm_polarity) -> Result<Self, Error> {
-> +        match polarity {
-> +            bindings::pwm_polarity_PWM_POLARITY_NORMAL => Ok(Polarity::Normal),
-> +            bindings::pwm_polarity_PWM_POLARITY_INVERSED => Ok(Polarity::Inversed),
-> +            _ => Err(EINVAL),
-> +        }
-> +    }
-> +}
-> +
-> +impl From<Polarity> for bindings::pwm_polarity {
-> +    fn from(polarity: Polarity) -> Self {
-> +        match polarity {
-> +            Polarity::Normal => bindings::pwm_polarity_PWM_POLARITY_NORMAL,
-> +            Polarity::Inversed => bindings::pwm_polarity_PWM_POLARITY_INVERSED,
-> +        }
-> +    }
-> +}
-> +
-> +/// Represents a PWM waveform configuration.
-> +/// Mirrors struct [`struct pwm_waveform`](srctree/include/linux/pwm.h).
-> +#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
-> +pub struct Waveform {
-> +    /// Total duration of one complete PWM cycle, in nanoseconds.
-> +    pub period_length_ns: u64,
-> +
-> +    /// Duty-cycle active time, in nanoseconds.
-> +    ///
-> +    /// For a typical normal polarity configuration (active-high) this is the
-> +    /// high time of the signal.
-> +    pub duty_length_ns: u64,
-> +
-> +    /// Duty-cycle start offset, in nanoseconds.
-> +    ///
-> +    /// Delay from the beginning of the period to the first active edge.
-> +    /// In most simple PWM setups this is `0`, so the duty cycle starts
-> +    /// immediately at each period’s start.
-> +    pub duty_offset_ns: u64,
-> +}
-> +
-> +impl From<bindings::pwm_waveform> for Waveform {
-> +    fn from(wf: bindings::pwm_waveform) -> Self {
-> +        Waveform {
-> +            period_length_ns: wf.period_length_ns,
-> +            duty_length_ns: wf.duty_length_ns,
-> +            duty_offset_ns: wf.duty_offset_ns,
-> +        }
-> +    }
-> +}
-> +
-> +impl From<Waveform> for bindings::pwm_waveform {
-> +    fn from(wf: Waveform) -> Self {
-> +        bindings::pwm_waveform {
-> +            period_length_ns: wf.period_length_ns,
-> +            duty_length_ns: wf.duty_length_ns,
-> +            duty_offset_ns: wf.duty_offset_ns,
-> +        }
-> +    }
-> +}
-> +
-> +/// Wrapper for board-dependent PWM arguments [`struct pwm_args`](srctree/include/linux/pwm.h).
-> +#[repr(transparent)]
-> +pub struct Args(bindings::pwm_args);
-> +
-> +impl Args {
-> +    /// Creates a `Args` wrapper by taking ownership of a C `pwm_args` value.
-> +    pub(crate) fn from_c(c_args: bindings::pwm_args) -> Self {
-> +        Args(c_args)
-> +    }
-> +
-> +    /// Returns the period of the PWM signal in nanoseconds.
-> +    pub fn period(&self) -> u64 {
-> +        self.0.period
-> +    }
-> +
-> +    /// Returns the polarity of the PWM signal.
-> +    pub fn polarity(&self) -> Result<Polarity, Error> {
-> +        Polarity::try_from(self.0.polarity)
-> +    }
-> +}
-> +
-> +/// Wrapper for PWM state [`struct pwm_state`](srctree/include/linux/pwm.h).
-> +#[repr(transparent)]
-> +pub struct State(bindings::pwm_state);
-> +
-> +impl State {
-> +    /// Creates a `State` wrapper by taking ownership of a C `pwm_state` value.
-> +    pub(crate) fn from_c(c_state: bindings::pwm_state) -> Self {
-> +        State(c_state)
-> +    }
-> +
-> +    /// Returns `true` if the PWM signal is enabled.
-> +    pub fn enabled(&self) -> bool {
-> +        self.0.enabled
-> +    }
-> +}
-> 
-> -- 
-> 2.34.1
+> +	/* Clear CLKREQ# override if supports_clkreq is true and link is up */
+> +	if (dw_pcie_link_up(pci) && imx_pcie->supports_clkreq) {
+> +		if (imx_pcie->drvdata->clr_clkreq_override)
+> +			imx_pcie->drvdata->clr_clkreq_override(imx_pcie);
 
-Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+It seems racy to clear the override when the link is up.
+
+Since it sounds like the i.MX host requires refclock all the time, why
+not keep the override permanently?
+
+Obviously it must be ok to keep the override for a while, because
+there is some interval between the link coming up and the call of
+.clr_clkreq_override().
+
+Would something bad happen if we *never* called
+.clr_clkreq_override()?
+
+Bjorn
 
