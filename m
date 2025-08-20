@@ -1,226 +1,177 @@
-Return-Path: <linux-kernel+bounces-777026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8F4B2D437
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:46:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABAABB2D43A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E2A1C231B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:46:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C93EC1777F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993762C3251;
-	Wed, 20 Aug 2025 06:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14980253355;
+	Wed, 20 Aug 2025 06:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqdvX2OB"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="kATAWw3H"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686542C234C;
-	Wed, 20 Aug 2025 06:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007CB256D;
+	Wed, 20 Aug 2025 06:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755672344; cv=none; b=Na+d7644hpAKaR/7uZCZ4q18MiQ9kiuW6jtJiknEVta5YSkUuBC3mPTlYJz2CZxp1gZiRpIu6/hfTKNKpe6Hny7ip/XlcVxOWoth1RQLRzzwt/DeUV0RGJao2OBPISwI7fXLZJSGTQ4wL1UJPjTS5adCptOT11Mn3tOWgqnCjxE=
+	t=1755672410; cv=none; b=jXijLIwTQw+NtQL6c9qO34zMHL7aNeS0TthAS7lNTKcD1I0RPqDGIUvCDMK6ht+43vOt2h4zz01LjA5EjAZ39zeAAC51c3YgDz3gX3zzWMlkTZm4ZQdwR2a3Z2c+PkWQTsZXCAAjTg7gRSAWdC5EtlJyybra0R7zDnVplS6MXmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755672344; c=relaxed/simple;
-	bh=nR2Hrc41c8xWrHe2oOf5LZz68hESHYJ8vCJDWjKNb0k=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=VepXuCBZuiP+r1LuIft6sgq6ADnehsLLZWOKA7Jfq/0O1Gi6p9wdy4JjA0NLs1KHAOajK6eXzEw0N6azEFCLSN+zDodzGbMLwiSSrHpVSIClAqnG56uc6qUq/tem3Q+GfZvk+txoCLCNWJUwfT2UnFSCGa8VdYlxn77qEw0fjoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LqdvX2OB; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e2eb20a64so6631513b3a.3;
-        Tue, 19 Aug 2025 23:45:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755672341; x=1756277141; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MPiJLSCgC1DMhujN/OzW2TN7b5V4r8bSTL9sA1is1v8=;
-        b=LqdvX2OBaGYWJOBtiJPE5gOPOiiKWiPSYVKSddEyNdMZ9DB3rVuO46YSSi4G1rTwZ2
-         SrPgiIaFlxPYPwMMrdOz1k9pE1Afu9St/552d1ObayAe3Ykuj/bBQHl55dR6d4e0Oxl4
-         /qqTGRSkfIby1PfcS27nGcuH3Wp98IJOOS4no587JadaFgZySxE/XUsLhtiNUUobyKyy
-         ytG+As2bS5x4LXURIEEjHnNtbksvbfNZL/vCNkIrwPeo72xIGryOms/4vxkUULIT3UoV
-         TeVSOHoh1sMifTtgEdQpsqKqWjC4/3pbx0mwoyzZ40VDxOnxt0TKO9bxwuu1wmIPqJcp
-         a83A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755672341; x=1756277141;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MPiJLSCgC1DMhujN/OzW2TN7b5V4r8bSTL9sA1is1v8=;
-        b=WzZmLjXeBiKJdRx/adPXlYJ0YZq3lZCyBG2VFEfw6kDJLsVwt5IIxboxyvQ9KXMDi/
-         DnIlarqE1YNkHyl2pGInYH2R79N5+v8Wo1xzPNKrNS7icuE90p5YdKQx1wfDhD3q9cER
-         xD9BFNyBSYLDcQmPIP6ON3m6ft8WQBDQysXsU9le/ELnrou0tH5Md1gq227Z6AfWI4l0
-         FCMctyPGh34FcUK9+PAh3j4oOF3BwMCHGI6yLiD6SlxTIMrF7xVLndLa0jF2YvMx2zVT
-         ShjUM425yRF7ynK/KUBdnBQI2yuYIE9go3Pjy32ExbL24LlxuJtguZneBsGh8AVeW4Bb
-         Hcdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVkV6HV/CPxxk7gpwQWi52FAC7OLZ+M/XUggGNKWlSpAwTLxCcO8nBQLrVpskMTUcg5w+DW56gU2MVL9IurSM=@vger.kernel.org, AJvYcCXtPdt4hq9jXNpi7nxJfRzZVMRSCw2pxb7xS1P6OCldY59Vp9yM3ByYlS8RF4qkPsO/Im7v2ZVr3RnsiMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJM1IYFNxLObwBwzh/13dYKAxG5JoTYv9t48X4JbtCK8iyZF31
-	QQfUG7xBELSpME7C52XbMBCFqTm/YqRN+Pvh2N8IrNXI/vp1iU1NkTVF
-X-Gm-Gg: ASbGncvDIhhQMh9zyVAm4afxrP0kFbOdn1tsBQ5JwHBHiEdNGZZ2fohckzPB6GVP+jM
-	o8pacKDEGxNCipbCsrzsLAC/+wpDmdYsTMweqFHAbhTSlRDVyoBQeCcIOUAAlQ9yrq2V54AkQt4
-	dxrnPIvLQYPa+KBHWMU5/CHHYFapcuQ8j0QWrBSKa6voc+GwEE75m6vwI99vChlnbH2DGiPSKdd
-	iu9o1qauRyVa84LcX7ow2HXTdh8He6gZbzfCg6aKivn2MF1lzmZmXNLAzU7uWZWdD+zwFhkQlcX
-	iKPhEHfL8rWvHCx3PstFBXD/ZQxonzVpVmxRkWdngsRSNs3AeDrScgypMEbOxGD1QmDqH8M1mm4
-	m+wdKRKvuGII9PjrNDodVZtBFWH33hE5XobHBJYZPx398wPk9SDm+yQzWhXErKc732zaY6buni2
-	p7
-X-Google-Smtp-Source: AGHT+IFJzA1JUDQ4vIWdw9Z344y34xguQUz4Ttl7I3nyfCY3WaAqxvcI6hzA1WTQgnrT+yFtxqydhw==
-X-Received: by 2002:a05:6a00:3cce:b0:75f:9622:4ec4 with SMTP id d2e1a72fcca58-76e8dd29291mr2186855b3a.20.1755672341410;
-        Tue, 19 Aug 2025 23:45:41 -0700 (PDT)
-Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7f0b4f34sm4162323b3a.92.2025.08.19.23.45.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 23:45:40 -0700 (PDT)
-Date: Wed, 20 Aug 2025 15:45:35 +0900 (JST)
-Message-Id: <20250820.154535.2021779027770226518.fujita.tomonori@gmail.com>
-To: daniel.almeida@collabora.com
-Cc: fujita.tomonori@gmail.com, a.hindborg@kernel.org,
- alex.gaynor@gmail.com, ojeda@kernel.org, aliceryhl@google.com,
- anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
- dakr@kernel.org, frederic@kernel.org, gary@garyguo.net,
- jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org,
- lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org,
- tglx@linutronix.de, tmgross@umich.edu, acourbot@nvidia.com, me@kloenk.dev
-Subject: Re: [PATCH v2 2/2] rust: Add read_poll_timeout functions
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <F512B17D-5C07-4C10-9710-E2467D21BA80@collabora.com>
-References: <20250817044724.3528968-1-fujita.tomonori@gmail.com>
-	<20250817044724.3528968-3-fujita.tomonori@gmail.com>
-	<F512B17D-5C07-4C10-9710-E2467D21BA80@collabora.com>
+	s=arc-20240116; t=1755672410; c=relaxed/simple;
+	bh=ldNndaQoO/UHByOrYRw96gyaFlCZhoYjJ+xlgbyY9tk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AIXcmL0toSbtSZ7DNPGGVmjMioIRxEunBl/JszfA8WpHm9vHTPDDxzfP1S9SF2JBByvnzV3rJNZ1jkQ7Bo1g88t+yaujTo1IGcVf04YjBa06bQmqF8yF9sB9OxpBy4aOtgp1ZFFi/9S1WPIGl4rXf5Vs73A4xtNb4hOReOikrok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=kATAWw3H; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K1oBoM012409;
+	Tue, 19 Aug 2025 23:46:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=mgvPjbKHPHmqG3f6LOUqpIF
+	jvu1YeBJXr3u8s7i319M=; b=kATAWw3HyB+bJ5cs3f+c0VPwJ1SMHcZWsfInWVp
+	Z6+PxT/hwA7cwyKD4rtBMD4+g3p86fAEqG43BVWG9N7aO/fDhzJ2J5cBBLQhGwUJ
+	PIAfAGTeL+d1+bcunAMti1KVMuAC7YWlrA7/Eo9cZ83U0Gqt4JVKGwRXAsupSIk9
+	bsQPRvu2+rQkGV6US7S5lcJ6KVscUftWSnotJ4HDCx3eFFCqaHSpLgNKe8V2Kguf
+	WvHvVRYoDF410Bl11HEDvSND4QrINrW6+5J7OYvTYFrV9YcQt36WmIqIWyyZS+m8
+	Ao5dK8EfnOwsWB7hyBGzrqepUiT1cBc2wX67Izsdc/ArZKg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48n51urgbk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Aug 2025 23:46:39 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 19 Aug 2025 23:46:43 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 19 Aug 2025 23:46:42 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id 1DE183F70B5;
+	Tue, 19 Aug 2025 23:46:33 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hariprasad Kelam <hkelam@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya
+	<gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        Subbaraya Sundeep
+	<sbhatta@marvell.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Subject: [net-next Patch] Octeontx2-af: Broadcast XON on all channels
+Date: Wed, 20 Aug 2025 12:16:25 +0530
+Message-ID: <20250820064625.1464361-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: aIF4cOFPENb5x4stqJ4qKuTj_Bu-EPtX
+X-Proofpoint-GUID: aIF4cOFPENb5x4stqJ4qKuTj_Bu-EPtX
+X-Authority-Analysis: v=2.4 cv=I9E8hNgg c=1 sm=1 tr=0 ts=68a56f4f cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=Zm5e-TsFn6k_I1Zn3SQA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDA1NyBTYWx0ZWRfX5xFSkjaHru68 v9UdCAn5UB2zn66qoUbsImFwYVB2SrsQXPfwWudzQsdznhOL7hFuBBEAikjsYNQRpdOVqRWj+XO 8QZZ9Etffv5+Fax3QCl0eS/0GVCEIcgOuiXn7/VIgEW9hdYeNiHUKv9qifvu/XP5zVp03q0R+AI
+ 8D4Gy4yH73wmBCf7GQL8odJyqwa2K8gqcZoXlibzbpeUqEX6EZCRK3fphvm00yU86QmgTaDQIWI UWE0w1gtXHO6Rguqtc2GA24aifLnCMI9z/FhO5oAs9nj188vEGTC+rquudzjlP98Br7AonSm2Mf C9B2qrUgxQ7fR/9zi885f4uosHHSHPa8r9+4grTtpDU7+ekCFBfRynxoHQ0cwL2v+9XoCvikS4o
+ Um6GLql0EjKGqVGBQe2YNiVqDvZykq34Sn68+TpXpG+3l+46KZiNq2lqtYnootPrmAY84WJR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_03,2025-08-14_01,2025-03-28_01
 
-On Tue, 19 Aug 2025 15:30:51 -0300
-Daniel Almeida <daniel.almeida@collabora.com> wrote:
+The NIX block receives traffic from multiple channels, including:
 
-> Thanks for working on this. Definitely going to be needed by a lot of drivers.
-> 
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+MAC block (RPM)
+Loopback module (LBK)
+CPT block
 
-Thanks!
+                     RPM
+                      |
+                -----------------
+       LBK   --|     NIX         |
+                -----------------
+                     |
+                    CPT
 
-> How is the atomic version going to look like? The same, except for
-> might_sleep() and without the sleep_delta argument?
+Due to a hardware errata,  CN10k and earlier Octeon silicon series,
+the hardware may incorrectly assert XOFF on certain channels during
+reset. As a workaround, a write operation to the NIX_AF_RX_CHANX_CFG
+register can be performed to broadcast XON signals on the affected
+channels
 
-If we follow the C implementation, it will be different; C's
-read_poll_atomic doesn't use ktime to calculate a timeout.
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.c  |  3 +++
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.h  |  1 +
+ .../net/ethernet/marvell/octeontx2/af/rvu_nix.c  | 16 ++++++++++++++++
+ 3 files changed, 20 insertions(+)
 
-It would look like the following. I think that the read_poll_timeout
-patchset is almost complete so I'll send the
-read_poll_timeout_atomic() patchset shortly.
-
-diff --git a/rust/kernel/io/poll.rs b/rust/kernel/io/poll.rs
-index e6325725d5a3..dc4f1ecdf31f 100644
---- a/rust/kernel/io/poll.rs
-+++ b/rust/kernel/io/poll.rs
-@@ -8,7 +8,10 @@
-     error::{code::*, Result},
-     processor::cpu_relax,
-     task::might_sleep,
--    time::{delay::fsleep, Delta, Instant, Monotonic},
-+    time::{
-+        delay::{fsleep, udelay},
-+        Delta, Instant, Monotonic,
-+    },
- };
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+index c6bb3aaa8e0d..2d78e08f985f 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+@@ -1164,6 +1164,9 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+ 	rvu_program_channels(rvu);
+ 	cgx_start_linkup(rvu);
  
- /// Polls periodically until a condition is met or a timeout is reached.
-@@ -94,3 +97,86 @@ pub fn read_poll_timeout<Op, Cond, T>(
-         cpu_relax();
-     }
++	rvu_block_bcast_xon(rvu, BLKADDR_NIX0);
++	rvu_block_bcast_xon(rvu, BLKADDR_NIX1);
++
+ 	err = rvu_mcs_init(rvu);
+ 	if (err) {
+ 		dev_err(rvu->dev, "%s: Failed to initialize mcs\n", __func__);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+index 7ee1fdeb5295..1692033b46b0 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+@@ -1017,6 +1017,7 @@ int rvu_nix_mcast_update_mcam_entry(struct rvu *rvu, u16 pcifunc,
+ void rvu_nix_flr_free_bpids(struct rvu *rvu, u16 pcifunc);
+ int rvu_alloc_cint_qint_mem(struct rvu *rvu, struct rvu_pfvf *pfvf,
+ 			    int blkaddr, int nixlf);
++void rvu_block_bcast_xon(struct rvu *rvu, int blkaddr);
+ /* NPC APIs */
+ void rvu_npc_freemem(struct rvu *rvu);
+ int rvu_npc_get_pkind(struct rvu *rvu, u16 pf);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+index 60db1f616cc8..828316211b24 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+@@ -6616,3 +6616,19 @@ int rvu_mbox_handler_nix_mcast_grp_update(struct rvu *rvu,
+ 
+ 	return ret;
  }
 +
-+/// Polls periodically until a condition is met or a timeout is reached.
-+///
-+/// The function repeatedly executes the given operation `op` closure and
-+/// checks its result using the condition closure `cond`.
-+///
-+/// If `cond` returns `true`, the function returns successfully with the result of `op`.
-+/// Otherwise, it performs a busy wait for a duration specified by `delay_delta`
-+/// before executing `op` again.
-+///
-+/// This process continues until either `cond` returns `true` or the timeout,
-+/// specified by `timeout_delta`, is reached. If `timeout_delta` is `None`,
-+/// polling continues indefinitely until `cond` evaluates to `true` or an error occurs.
-+///
-+/// # Examples
-+///
-+/// ```no_run
-+/// use kernel::io::{Io, poll::read_poll_timeout_atomic};
-+/// use kernel::time::Delta;
-+///
-+/// const HW_READY: u16 = 0x01;
-+///
-+/// fn wait_for_hardware<const SIZE: usize>(io: &Io<SIZE>) -> Result<()> {
-+///     match read_poll_timeout_atomic(
-+///         // The `op` closure reads the value of a specific status register.
-+///         || io.try_read16(0x1000),
-+///         // The `cond` closure takes a reference to the value returned by `op`
-+///         // and checks whether the hardware is ready.
-+///         |val: &u16| *val == HW_READY,
-+///         Delta::from_micros(50),
-+///         Delta::from_micros(300),
-+///     ) {
-+///         Ok(_) => {
-+///             // The hardware is ready. The returned value of the `op` closure
-+///             // isn't used.
-+///             Ok(())
-+///         }
-+///         Err(e) => Err(e),
-+///     }
-+/// }
-+/// ```
-+pub fn read_poll_timeout_atomic<Op, Cond, T>(
-+    mut op: Op,
-+    mut cond: Cond,
-+    delay_delta: Delta,
-+    timeout_delta: Delta,
-+) -> Result<T>
-+where
-+    Op: FnMut() -> Result<T>,
-+    Cond: FnMut(&T) -> bool,
++/* On CN10k and older series of silicons, hardware may incorrectly
++ * assert XOFF on certain channels. Issue a write on NIX_AF_RX_CHANX_CFG
++ * to broadcacst XON on the same.
++ */
++void rvu_block_bcast_xon(struct rvu *rvu, int blkaddr)
 +{
-+    let mut left_ns = timeout_delta.as_nanos();
-+    let delay_ns = delay_delta.as_nanos();
++	struct rvu_block *block = &rvu->hw->block[blkaddr];
++	u64 cfg;
 +
-+    let timeout_is_zero = timeout_delta.is_zero();
++	if (!block->implemented || is_cn20k(rvu->pdev))
++		return;
 +
-+    loop {
-+        let val = op()?;
-+        if cond(&val) {
-+            // Unlike the C version, we immediately return.
-+            // We know the condition is met so we don't need to check again.
-+            return Ok(val);
-+        }
-+
-+        if !timeout_is_zero && left_ns < 0 {
-+            // Unlike the C version, we immediately return.
-+            // We have just called `op()` so we don't need to call it again.
-+            return Err(ETIMEDOUT);
-+        }
-+
-+        if !delay_delta.is_zero() {
-+            udelay(delay_delta);
-+            if !timeout_is_zero {
-+                left_ns -= delay_ns;
-+            }
-+        }
-+
-+        cpu_relax();
-+        if !timeout_is_zero {
-+            left_ns -= 1;
-+        }
-+    }
++	cfg = rvu_read64(rvu, blkaddr, NIX_AF_RX_CHANX_CFG(0));
++	rvu_write64(rvu, blkaddr, NIX_AF_RX_CHANX_CFG(0), cfg);
 +}
 -- 
-2.43.0
+2.34.1
 
 
