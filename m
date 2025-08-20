@@ -1,258 +1,112 @@
-Return-Path: <linux-kernel+bounces-777069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2818BB2D4BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:20:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C4FB2D4C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B8D1C40335
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:20:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888C91677C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85782D47E4;
-	Wed, 20 Aug 2025 07:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8150F2D3EC2;
+	Wed, 20 Aug 2025 07:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hk3lms1V"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vLL8HIzX"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563C419258E;
-	Wed, 20 Aug 2025 07:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5A04315F
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 07:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755674404; cv=none; b=CJidN8DI9rGKcJhtYJ5ruzkj76Z48YZXOATqEHNZcgW9dcxWum1S0K14pywkUeok9fJaQqCtNwVXJcDtRx7lL3IV1b03oDHjjqDZfgTg8O6R9EaymYTO7MDUTgBlXjN+NxpNniJVxkg0r5dJfsmt7EzPxd49PjpJVGJYVnZMXZM=
+	t=1755674464; cv=none; b=Edk9ihLEPlxMYL6r+s/i/Hu86rEMIERL6bCuXAfYep37MRRN9+/Ynt3f7R5Z1hhiS6ACvpz5jGruZBUJX0QHP5GRT2UmMDCN2bx6fERbdRUV0Q+3JtCNQ2kybZ78ts+eXc0UAcXBjxeQZShcBgyTmJeldhq/Jm2zwkMCZE7xMO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755674404; c=relaxed/simple;
-	bh=32xCHnNnem5BD5OsWkgZ3cstrS/qgPJdiiZB3UXndjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JtVGyHg6Z//RgRJkGSst6fVGFabNdCnu01+EB9RGtbogEXjr+w6hePMY41g+kKQAcsrFCGNCb/HAD+kklzmbO1J2t59TwFmbLogzZ+gdaBKD9H5KQWiVB4DF8nM2pgQZ3oAaIFlkJOVUfYXPOzwpQg2vS+DORJr+XT3XqPxXDzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hk3lms1V; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K1pDoM011480;
-	Wed, 20 Aug 2025 07:19:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R36951E5bXwxhf0whoyxbWPcOJ612cTFYjtpSUf4t3Q=; b=hk3lms1VmxrNJq9/
-	7QSU2TdAiMi5YgXCqw5vZ+Eb4QNV82/7VrX8iisMFqF+uNwa1wbmyyRLlBTKmkZO
-	SBuaDa6acypcLco42w51YgNZ+iieOgcYHmgeN21XldrfYNm3+rALvkX+yWiB5LP2
-	NAR52It6oSpQBxR8XGYS80f2fhDBBGkkyoe9KqfQIRg+qyGf2TVWCSgRYQI4HN9s
-	/topwR938pTElhfhZosB4mYiC0EM/4X16ziJGgM+9ZKg1kEZyKkYNQGUS2CmpkCk
-	54wyERcEYEwuFoZCVaCwUB+MiVkbWuHTU6Lf58xqPTvFg1+a3pKiML6QER+o+ng1
-	qbnwpA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52bgsg6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Aug 2025 07:19:57 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57K7Jvnn008494
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Aug 2025 07:19:57 GMT
-Received: from [10.217.216.168] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 20 Aug
- 2025 00:19:51 -0700
-Message-ID: <a1252539-d35f-443b-9e0a-3316f9ff932a@quicinc.com>
-Date: Wed, 20 Aug 2025 12:49:48 +0530
+	s=arc-20240116; t=1755674464; c=relaxed/simple;
+	bh=ktoR6uVr+iqN83IhJ5uhhx0UJXCbOVpaCx9WSC2wCOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ISAzhAFzt9FXPvERotMOk701O5KP0pyfItoscQYABzb7ihwWR2cXgqEhuyKJIxTvv4fZX3wmf5VNBy23WSxAlN5d4c1nC9QbipRq99WURuBx936Aad0Gw5kSGmV6fTBbialxbIZFIPE631eiz4cvbDZwnh1owC/3YaaKzRGgWJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vLL8HIzX; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-333f8f22292so44843721fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:21:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755674460; x=1756279260; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ktoR6uVr+iqN83IhJ5uhhx0UJXCbOVpaCx9WSC2wCOs=;
+        b=vLL8HIzX0IbolcB0LP120fsumz8k5r5HIZpnewyRQI5bdxhm3GPBdh6F9k6UwlETMi
+         VWihylKcCJnTXNxuc6HzCUZ9wR+6Uv0QNYvcMst/GDr8q4XlKl75y7lhlmnT5Ss20E/0
+         j/jWW6+Z/58ISvdy0Uf4W0Ekc6mTz6c/L4kqVPnKlvZ4eabu8un06rEWKCkmKp5ZbgAj
+         w3hAziL9sns5CqJ0qd0vPEM2QP2Yvw/zmXg0WA8C15YA7E5isp13diL6lIiby/75ztIu
+         Vr/8IFXBY1h6cDb6K/ahDxyWKnH7SJC6/qeKyzlJcb4Y9z/T162AwRwt1w+SHOaO4235
+         4+cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755674460; x=1756279260;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ktoR6uVr+iqN83IhJ5uhhx0UJXCbOVpaCx9WSC2wCOs=;
+        b=xCN+o/Fsb6AxiK60nyJyZlb6GioXQyHkBzEZUrrtiOjLy1BcOEOVcQC2W4V5WOwyVB
+         tAOcpxKNagajK6vjieuwkPBPxKtGxPG8h/bl8g1G7lA6i2mCNibewnJXzax7Lbfr6Xg4
+         0MLqB93MBcn8/d8g69oDfEMbGEnSQdAp4CBZ5u4mjakwNBScwYmKNsM/KMN9CxjceBVa
+         I8dkBNe7GTZNz48X5yV2rDBmZ1KoosSSdnPiHEB1WesQMHQWQRxuqwANWeZ+301WdaTh
+         4g2vec5l3qOfNzv6jd4OnXNNwSnZBTCUC32XJFbkqR0k4I1csXO7O6eBICO42laWHi3T
+         BTCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgD1zG8Ki3q8Um9ewctjJs1+c571GX4tTOe4lrUchralr/drJIQK/x7g1bgBvDdGOUuJEHc4eEsH0fpRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6uriKX5bSxOb3LDnyraf0qc/g6vP2H/nRRbGoYJQCXdaYwuAS
+	LMF3AbR/MNysTFDpgWdbfxmmO/DrWFVk7kL+hLaCUNv8Z9iyAdxQPwh6V2ak5CsbmuBOi1xfUpn
+	u5ETk7f6QR7ua5iWw7gn5IoFr8ThYzDIU2O0QdQRxYQ==
+X-Gm-Gg: ASbGnctyAEYvduxo0QITUZFL/bhCf5WKRuPUj1vl0hCKvCkqfubQkdsnca+1xA0wn9D
+	Bz7/5GM7MQH3L0cvsx3WllQ5xDyLeXjam10Lw9yZ7fw7fW9rRhllGift2eJOQF4tncM28x+1oMy
+	sB75ojMP16s3m3vl1rsLreuW9BVbwiSb1raPz7WxfrN2GHBFDwx+scOGkAGlB+iU4N0GeBcBXRP
+	X+IeRs=
+X-Google-Smtp-Source: AGHT+IEhSxjZCfw4a8mb40d3FzcM6vUrSgKvHtgC3xcWemUkmbdkdCwfNVxjfPSijs9xEWS2bBLeXc6JSAQOzBY5S3c=
+X-Received: by 2002:a05:651c:4104:10b0:333:ad65:c524 with SMTP id
+ 38308e7fff4ca-3353bc145a5mr4014551fa.1.1755674460071; Wed, 20 Aug 2025
+ 00:21:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 4/4] arm64: dts: qcom: sm8550: Remove SDR104/SDR50
- broken capabilities
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Ulf
- Hansson" <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
-        <quic_rampraka@quicinc.com>, <quic_pragalla@quicinc.com>,
-        <quic_sayalil@quicinc.com>, <quic_nitirawa@quicinc.com>,
-        <quic_bhaskarv@quicinc.com>, <kernel@oss.qualcomm.com>
-References: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
- <20250801084518.2259767-5-quic_sartgarg@quicinc.com>
- <69f2807c-9a28-4b31-97cc-2756f0ab9fd4@kernel.org>
- <c7e36755-9255-4209-9d53-20077bd1d3ba@quicinc.com>
- <8b023e56-435b-43df-8b15-c562a494e06f@kernel.org>
- <ab5d3811-9fbf-4749-9463-4457fbf50023@quicinc.com>
- <4091c488-996c-4318-82ad-c054a9ef5a22@oss.qualcomm.com>
- <a93fb5bf-1fd5-4e00-8338-b8608a9ba8fa@kernel.org>
- <f2f13082-20d6-4f22-8dfb-f11b01cd6706@oss.qualcomm.com>
- <dda9a2ef-5b86-4883-8347-b5ccf25e8d5d@quicinc.com>
- <0257f893-fed8-4ee9-ad4e-cdcdad8b5c85@linaro.org>
-Content-Language: en-US
-From: Sarthak Garg <quic_sartgarg@quicinc.com>
-In-Reply-To: <0257f893-fed8-4ee9-ad4e-cdcdad8b5c85@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX/SSfp9ufxGMc
- S3WSNGZXCY//MHpOW8vXZfRcuPbh9Hn4Poh3uWWT2GDDiBuhr4BYUNItFTMBfDPilx17MDSayki
- m0OFYyHBsFnCVY0ptlWn/Lh7cddp1ebUHWNypyNm3x3+1C0YevD84+L9zKpgcSvgktAsvvbj6ni
- Xwl8gc9lIRT4UDo/Fp/7qsRuixBq/48NttlCHMUQ0Rubs/l/hIL8QLX49SAtn5m1Rt9Y46fjY5I
- qWL/UcZZXOuncwsmPE6JIaZdbtfFJ/ZA3y9pV185KqfJlR6PEDndsOvogoZ/GAvyq+mXnM7asrH
- 8GyO21Dfu5/pfoxypzVQd3rtKkpaiBcu3yuE6EE5T56Lq97ayYw9LHcYjnGlSRO6hyr7rsNoF9D
- Qfq6L1GU/A5I4BWeOtPN1sCpnM+dAw==
-X-Authority-Analysis: v=2.4 cv=cr3CU14i c=1 sm=1 tr=0 ts=68a5771d cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=6UoUdjYcmRBRTNJ1P8gA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: _pIDF-p2Y2SePbethL3iG5U3Dkskyj5X
-X-Proofpoint-ORIG-GUID: _pIDF-p2Y2SePbethL3iG5U3Dkskyj5X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_03,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 lowpriorityscore=0 bulkscore=0 adultscore=0 phishscore=0
- malwarescore=0 suspectscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+References: <20250818103931.1100084-1-richard@nod.at>
+In-Reply-To: <20250818103931.1100084-1-richard@nod.at>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 20 Aug 2025 09:20:48 +0200
+X-Gm-Features: Ac12FXwVe2yaYSWObSiIPH5gEnk6wo-BPXw1jBAn3u10wAfLmNVzja2ouijgdDo
+Message-ID: <CACRpkdYYTe0YArbheo3msd6r+CNrt9oSZWNjkiwb=ZNWfJ1dkQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: ftrace: Implement HAVE_FUNCTION_GRAPH_FREGS
+To: Richard Weinberger <richard@nod.at>
+Cc: linux@armlinux.org.uk, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mark.rutland@arm.com, ardb@kernel.org, ebiggers@kernel.org, nathan@kernel.org, 
+	dave@vasilevsky.ca, ruanjinjie@huawei.com, liuyuntao12@huawei.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Donglin Peng <pengdonglin@sangfor.com.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 18, 2025 at 12:40=E2=80=AFPM Richard Weinberger <richard@nod.at=
+> wrote:
 
-
-On 8/19/2025 7:00 PM, Neil Armstrong wrote:
-> On 14/08/2025 09:15, Sarthak Garg wrote:
->>
->>
->> On 8/13/2025 5:37 PM, Konrad Dybcio wrote:
->>> On 8/13/25 1:56 PM, Krzysztof Kozlowski wrote:
->>>> On 13/08/2025 13:21, Konrad Dybcio wrote:
->>>>> On 8/13/25 1:08 PM, Sarthak Garg wrote:
->>>>>>
->>>>>>
->>>>>> On 8/5/2025 2:55 PM, Krzysztof Kozlowski wrote:
->>>>>>> On 05/08/2025 11:19, Sarthak Garg wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 8/1/2025 2:32 PM, Krzysztof Kozlowski wrote:
->>>>>>>>> On 01/08/2025 10:45, Sarthak Garg wrote:
->>>>>>>>>> The kernel now handles level shifter limitations affecting SD 
->>>>>>>>>> card
->>>>>>>>>> modes, making it unnecessary to explicitly disable SDR104 and 
->>>>>>>>>> SDR50
->>>>>>>>>> capabilities in the device tree.
->>>>>>>>>>
->>>>>>>>>> However, due to board-specific hardware constraints 
->>>>>>>>>> particularly related
->>>>>>>>>> to level shifter in this case the maximum frequency for SD 
->>>>>>>>>> High-Speed
->>>>>>>>>> (HS) mode must be limited to 37.5 MHz to ensure reliable 
->>>>>>>>>> operation of SD
->>>>>>>>>> card in HS mode. This is achieved using the 
->>>>>>>>>> max-sd-hs-frequency property
->>>>>>>>>> in the board DTS.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
->>>>>>>>>> ---
->>>>>>>>>>     
->>>>>>>>>> arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 1 +
->>>>>>>>>>     
->>>>>>>>>> arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 1 +
->>>>>>>>>>     
->>>>>>>>>> arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 1 +
->>>>>>>>>>     
->>>>>>>>>> arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 
->>>>>>>>>> 3 ---
->>>>>>>>>>     4 files changed, 3 insertions(+), 3 deletions(-)
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> This will break MMC for all of the users and nothing in commit 
->>>>>>>>> msg or
->>>>>>>>> cover letter explains that or mentions merging strategy.
->>>>>>>>>
->>>>>>>>> Exactly this case is covered by your internal guideline, no? 
->>>>>>>>> Please read it.
->>>>>>>>>
->>>>>>>>> Best regards,
->>>>>>>>> Krzysztof
->>>>>>>>
->>>>>>>> Just to make sure I’m addressing the right concern — are you 
->>>>>>>> primarily
->>>>>>>> worried about the introduction of the max-sd-hs-frequency 
->>>>>>>> property in
->>>>>>>> the board DTS files, or about the removal of the sdhci-caps-mask
->>>>>>>> from the common sm8550.dtsi?
->>>>>>>
->>>>>>>
->>>>>>> Apply this patch and test MMC. Does it work? No. Was it working? 
->>>>>>> Yes.
->>>>>>>
->>>>>>>
->>>>>>> Best regards,
->>>>>>> Krzysztof
->>>>>>
->>>>>>
->>>>>> You're absolutely right to raise the concern about potential 
->>>>>> breakage.
->>>>>> After conducting additional testing across multiple boards, I’ve 
->>>>>> confirmed that the removal of SDR104/SDR50 broken capabilities 
->>>>>> does indeed affect V1 SM8550 devices.
->>>>>
->>>>> v1 is a prototype revision, please forget it exists, we most 
->>>>> definitely
->>>>> do not support it upstream
->>>>
->>>>
->>>> You should double check. SM8450 (not v1!) needed it, so either it was
->>>> copied to SM8550 (v2!) by mistake or was also needed.
->>>
->>> I believe that the speed capabilities are indeed restricted on 
->>> 8550-final
->>> and that's why this patchset exists in the first place
->>>
->>> Konrad
->>
->> Hi Krzysztof, Konrad,
->>
->> Konrad is right — this patch series addresses limitations seen on
->> SM8550-final silicon.
->>
->> SDR50 mode: The tuning support introduced in this series helps ensure
->> reliable operation.
->> SDR104 mode: limitations are resolved in SM8550 v2.
-> 
-> I guess the state is the same for SM8650, it also requires the 
-> max-sd-hs-frequency.
-> 
-> I guess all boards with a level-shifter on board would need such 
-> limitation,
-> including most of the HDK boards (SM8450 included)
-> 
-> Neil
+> Enable support for ftrace's funcgraph-retval feature by capturing r0-r3
+> and fp.
+> Since ARM does not provide its own __arch_ftrace_regs structure,
+> we instead populate pt_regs with the registers required by ftrace.
 >
+> Cc: Donglin Peng <pengdonglin@sangfor.com.cn>
+> Signed-off-by: Richard Weinberger <richard@nod.at>
 
-Yes, that makes sense Neil — all boards with a level-shifter on board
-would likely need this limitation, including SM8450, SM8550, and SM8650.
+LGTM
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
->>
->> But still to avoid regressions, *I’ll like to retain sdhci-caps-mask in
->> sm8550.dtsi for now and revisit its removal for future targets after
->> thorough validation and testing from the beginning.*
->>
->> Konrad suggested placing max-sd-hs-frequency in the SoC dtsi.
->> Krzysztof, could you please share your thoughts on this approach?
->>
->> Best regards,
->> Sarthak Garg
-> 
+Can you put this patch into Russell's patch tracker?
+https://www.armlinux.org.uk/developer/patches/
+
+Yours,
+Linus Walleij
 
