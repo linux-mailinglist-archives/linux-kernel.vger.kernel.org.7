@@ -1,171 +1,157 @@
-Return-Path: <linux-kernel+bounces-778348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D1FB2E47F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:57:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EEFBB2E491
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CACE97B6E07
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:55:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B45C5E4602
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE67274661;
-	Wed, 20 Aug 2025 17:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51160273D84;
+	Wed, 20 Aug 2025 17:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B/v0STli"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKhvLx61"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91ED82737E8
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED4924DCE8;
+	Wed, 20 Aug 2025 17:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755712595; cv=none; b=haS59o//jxos/yI5lShW/+smOhnKBogQEcW6K4IE9X7fxxibwrniyWV/k0QDpxZnFjcSdP4H1NK8ueYfUXpU/T/OBWc3aVAczx/mykRFPy/7TSIBHd1DsWz17D7mZGefM8uckGi6qp3Ik6m9e0fRoB51id0Fw8prCNgnO6cRjo4=
+	t=1755712663; cv=none; b=f5tcPswx4EoK04u44inaO6o5Y1XBCs8pjCVT47aQhHlfEpkFyIFnVlQL9NcTE5vtbVHVEBBwEsQtS8V/Cx15CwCX8dy0bXNzwHlnSVGnEPAFJ9EA+nhNKOYMKXiqeeMgD4xwl4/Ni2v/s4hIFVG0dRjAC6o20grKdQ54BHKebPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755712595; c=relaxed/simple;
-	bh=QOcH2g5W2VgD9rWQLuw9eVTUp02n6Q21h3gU4HYGuQY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=GTFVYxLPzklvM9tO8iaOJKBYmeZP3pnLagfp5Y1hSz65t3JRRYLDafo9kCn1VVRMVoMkh4Vtzefl0hAykt1ki8RwMH8O71qj5Xk6rwCOZLAHnh09RewTzndVrdsP6v7ygq/12XT/8B7s6XyeN0cWwns6GhJI4B0ichC+/fpKSk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B/v0STli; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b9a342e8ffso128313f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:56:33 -0700 (PDT)
+	s=arc-20240116; t=1755712663; c=relaxed/simple;
+	bh=YgOyd1md4yh3PvGF0lWJK+9ZhKIDFB441+Lc7xSmBuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZGp4DY6GhH2ntpr/ZldQD1lPNpKsV0jRY3yVF5mKMp9mbH46MrTFe37c3k+wYaidWy5jIXJ4G23ihWDz4u9dwFq7qSMtp8y0Zhcke4hmwULu8toxlhZzR6/rwVs2Q6hK2Dfo9B8Jk+BryIgBNj04HvKmrwO3c4Qk6XMpdcBb8Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKhvLx61; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b0d224dso765655e9.3;
+        Wed, 20 Aug 2025 10:57:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755712592; x=1756317392; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1755712660; x=1756317460; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gRaTNaGpOa5Z+hRu1yAnzsNeyy2LG4LK/xZpmXNSsoc=;
-        b=B/v0STliWwFwkeILjSqJBTwi1Nz89yvFPHBm4eS+eRnaokpNhOJJ1ZxBwA9BfDw1CM
-         GAPq4J6ls+UzCV1yCFIpvSsubXk5XMGBW8hle5Nudp3hH58dbilLkoJGAeQ4hYbrIgK5
-         GpN+2/atjzqAUdWGbf7YMFpMgnRObYnXyLfHzU98YC6YeLg9l8DIpLGTsejkmyss/ZOY
-         xzWlRwlwQ35AJMDUl1kZ9CsqjSn+YmVTWXDO8wzsmC3c2J1dcY3knCjmg15c489w4Muf
-         lxwTeugOzTi2JqVf8ecK2x4ddnNsTYlak82eLlYP+FHgp2kh+n1pMj5z5rnhdjQYV9iO
-         SJFw==
+        bh=MNRyeTj6JP2zchDiFIJuoMZDsJl1Picm6cQPtxKj9O8=;
+        b=nKhvLx617L4HNBrcyQHv3zapQ8IH0UYAnsNP35GosiTNazq3sanXj2xSv0c2nCQvEa
+         lHOoDcWuUQmofkDAKNmuyxA46lCKQwPU3uLQUosJw3DpVKPgqIfNOHI1qWzPmIxKS1Y4
+         ijaBnmumJyAqeZkmRLknM6tC8++2BOYps8U5QSbTkphJutLMlMvuxKiiwde3nBILSDWd
+         BaNkFTPP6fblHcpYSt6p7ewjcuTjZUCtGTpQe7hOlkuee55IjFRlPCKlm+lwSwLoXNeQ
+         tPNT0VXYL2hgUo7KZXr2HjpRYHKkXt1NMf88NLDXJ0J1TbHY4xWds7jz5EuqxLDAcecJ
+         OnpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755712592; x=1756317392;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gRaTNaGpOa5Z+hRu1yAnzsNeyy2LG4LK/xZpmXNSsoc=;
-        b=JgvZAU8I92Qbac7zTggb6pbO4G66HiTeiprXh77riUw4PasoPCkU2c7MddXpXUvSdL
-         Cna/+3qokrgls4Z7LtihH/WVaB26ki7tAOxNVYEVJvKDiWQTd2UzMjNu80xnnj/GiNjM
-         wfNlWDEc1ZIK2cc4cZXiar2NCWct8u5yjjiq8Sz1RaDmuuhwFpyz8EJ8u6XnNjl8uQmX
-         14gDSKSuKxvkvo5tzBgwCU0eUY/RTWgttu+IU4QTHsar/rB3N6/T5IBpxWKtrLmwM13j
-         B/423Iusf4XhBJ2PIJ46KyIMwEfB1CB5y+CGLzgM6l6+Swl+ggj0yME5ti3jXxBwBe1O
-         ttpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZb0R44CZt+HkQPoqgFeMI0rlhcTIc1fDzYNtJ5HgAt3Ft15cUdPJMtoR82mm/RvJUhlB/hUo6frTagKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwdJvs3cZ0VBTCsvMNmsYCFKCc9T1F1v9BqgLdLrW9uImVPjlt
-	TadcTJrlXo4hn3ExAszFZw1QOppEpgqdwnqbtOEZWjUmpZGOvOU06Rd0Kbuk0JVclUU=
-X-Gm-Gg: ASbGnctQRzbCxbEkv6WIu4RR8raQ0p8VnuPbz71hrbKtUNBi0dm7xk4Z/pi/WGty8hm
-	uEHMoPMCEL0Szl9vmReQhkRIpbLRdixebb87vd7WqyDnm5x5twL27M/UTlGlRmIl346iyaqRiFJ
-	OBWireYRLCazNGS7CCOocCBVEY/3NR7xPorErT0WFKonAbN2aRIgrCGyZq/tZ50wNaxsfXyFeZs
-	nI+tW2uUcSS+VY8fABozf5jJ4TINcIKQwJvMB4B4GrG3/DjNy24QQpoSSdUa9S46iJyOPoDLLaZ
-	DQN4bCLslLc5mbltElB/Vz7LC6E+X08kwhyt9PUMe6Tk2CfIXDy/7vmlO0obV+nvJN+PuigjR4R
-	cRgJ2l3c8oV3Byt5zpSVEjLTxvI0=
-X-Google-Smtp-Source: AGHT+IEnJcBD8HXQkToDE4iC/mSJ7mzWcSv6cC9qg3LBD8IqH8NeDDcwZslRIYizdVu0Cq/R4HhLFA==
-X-Received: by 2002:a05:6000:25c2:b0:3c2:e033:3994 with SMTP id ffacd0b85a97d-3c45fe7ccd1mr371009f8f.26.1755712591851;
-        Wed, 20 Aug 2025 10:56:31 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:3a9b:1de2:5440:9326])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c07496f432sm8454409f8f.6.2025.08.20.10.56.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 10:56:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755712660; x=1756317460;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MNRyeTj6JP2zchDiFIJuoMZDsJl1Picm6cQPtxKj9O8=;
+        b=ew73abhY8yuppELxzQcLntbjziZ42cSSq6gT807ZNFxD7umKqkUd84y7LfW5o0NlD5
+         U7jedZ8dziv8JT8iC7tzQm75tP0gxMmGmwtsSGafs1sK800Owux/rMkLqaz7dledCn61
+         kLLRzFiH9LDHRrSBg5ksgzoI/fhAkfh9qEGxahDtHmuWrcOsLWK92TZTkXo5YC51Ftja
+         xZ1Osi0pacIhFlvEFahJ6FRNSWJrkivvt0vth76mRAkAekdUMsaC/PyCE49/jKWcNEww
+         6Ly3EnKtKo8fq4sXpdMnqggBDcJfGNwnEgDdOjgw/2tefTZY1jCjoCIqYshDBI1Srzu4
+         zFFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjydz2yaKFW8lqTF8hw4U1Udq5msQjTMXS1H7tLMKR/OsalGWdS3QdXMZYyziPWQXfzjDQrdpdVd0Mog==@vger.kernel.org, AJvYcCXvFGgPnsLYCV7B+geJd/XcyMgUgHhq31RrKHA5daOsHvppkLoxhVRLV/BNAqDPaEwyrWFy8AH3mqXPpTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWykIujbuOXmxR3gOD6OU0UBpewZV+r+CGHn1O/hr1JEE5f/Nq
+	5a6byRJQ+GttJ+zR5Mpzh2GV/BQ8lgDRTrepBoBXx95iEGFif3ARE7jS
+X-Gm-Gg: ASbGncuzYKt/eetifQI3kU8vCGc5wUidfMixxezeV4EWDgt4aJEiOOddEzRlYV0F0Qh
+	4lKZxLQmKuL3U3bEUObO6cWXVYTPJidMVnGL7k2J1rRsrBhl1XOytxLQfSOojT7k/tllLYAZ3Fh
+	cbcw6rpgV02n4/gFAgJEZ4zXUPE5r0fatlVnGAqonhwuMczXnDEM2BpK4iGpiWI4WTA1VqGygOo
+	Tl9QGAlDCHG0t9bBTbqKREbHbbTBHbDuyzhno47QLxR3gcebF+ao746nhr2WGQx1gq9LkNwn+hN
+	dVUfM95Qt4Kqz0HxCjA8O63hqXzw40cJdUX4NTYWUlHDmgUQbLgcFhsgUxBCj888bwleac0JvHo
+	j2ucADfbiPZVWx7e7SvB+6BvdDsnAUWoci4d9cdZYF5yK6RHDgSUacLJmS3BbfYNE
+X-Google-Smtp-Source: AGHT+IGO9cP1IoD1trDUUw+EfjPUt69BwvZtgepLa76EO/eu7DfLC5c6gd+ECukky3h1zGOw8/4dVw==
+X-Received: by 2002:a05:600c:1c9d:b0:45b:43cc:e559 with SMTP id 5b1f17b1804b1-45b4bdb5f70mr10581205e9.36.1755712659923;
+        Wed, 20 Aug 2025 10:57:39 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c1aa3sm8147073f8f.32.2025.08.20.10.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 10:57:39 -0700 (PDT)
+Date: Wed, 20 Aug 2025 18:57:38 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Don Brace <don.brace@microchip.com>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, "open list:HEWLETT-PACKARD SMART ARRAY RAID
+ DRIVER (hpsa)" <storagedev@microchip.com>, "open list:HEWLETT-PACKARD SMART
+ ARRAY RAID DRIVER (hpsa)" <linux-scsi@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/6] scsi: hpsa: use min()/min_t() to improve code
+Message-ID: <20250820185738.098a49f9@pumpkin>
+In-Reply-To: <deee5abe-1992-426d-a62d-51249014bdc9@vivo.com>
+References: <20250815121609.384914-1-rongqianfeng@vivo.com>
+	<20250815121609.384914-3-rongqianfeng@vivo.com>
+	<20250820130237.111cc3a7@pumpkin>
+	<deee5abe-1992-426d-a62d-51249014bdc9@vivo.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 18:56:30 +0100
-Message-Id: <DC7G65CXCQRB.3NGHI539I09CP@linaro.org>
-Cc: "Vinod Koul" <vkoul@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>,
- "Takashi Iwai" <tiwai@suse.com>, "Srinivas Kandagatla" <srini@kernel.org>,
- "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>,
- "Patrick Lai" <plai@qti.qualcomm.com>, "Annemarie Porter"
- <annemari@quicinc.com>, <linux-sound@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>, <kernel@oss.qualcomm.com>,
- "Ekansh Gupta" <ekansh.gupta@oss.qualcomm.com>, "Pierre-Louis Bossart"
- <pierre-louis.bossart@linux.dev>
-Subject: Re: [PATCH RFC 2/2] ASoC: qcom: qdsp6/audioreach: add support for
- offloading raw opus playback
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>
-X-Mailer: aerc 0.20.0
-References: <20250616-opus_codec_rfc_v1-v1-0-1f70b0a41a70@linaro.org>
- <20250616-opus_codec_rfc_v1-v1-2-1f70b0a41a70@linaro.org>
- <c4d934c1-0218-4147-882f-279795bcd1f4@oss.qualcomm.com>
-In-Reply-To: <c4d934c1-0218-4147-882f-279795bcd1f4@oss.qualcomm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed Jun 18, 2025 at 1:34 PM BST, Srinivas Kandagatla wrote:
->
->
-> On 6/16/25 4:26 PM, Alexey Klimov wrote:
->> Add support for OPUS module, OPUS format ID, media format payload struct
->> and make it all recognizable by audioreach compress playback path.
->>=20
->> At this moment this only supports raw or plain OPUS packets not
->> encapsulated in container (for instance OGG container). For this usecase
->> each OPUS packet needs to be prepended with 4-bytes long length field
->> which is expected to be done by userspace applications. This is
->> Qualcomm DSP specific requirement.
->> > This patch is based on earlier work done by
->> Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->
-> Thanks for picking this up Alexey,
->
-> Same, co-dev by should be good attribute for such things.
+On Wed, 20 Aug 2025 20:50:08 +0800
+Qianfeng Rong <rongqianfeng@vivo.com> wrote:
 
-Thanks. I'll update it for the next version.
+> =E5=9C=A8 2025/8/20 20:02, David Laight =E5=86=99=E9=81=93:
+> > [You don't often get email from david.laight.linux@gmail.com. Learn why=
+ this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> >
+> > On Fri, 15 Aug 2025 20:16:04 +0800
+> > Qianfeng Rong <rongqianfeng@vivo.com> wrote:
+> > =20
+> >> Use min()/min_t() to reduce the code in complete_scsi_command() and
+> >> hpsa_vpd_page_supported(), and improve readability.
+> >>
+> >> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> >> ---
+> >>   drivers/scsi/hpsa.c | 11 +++--------
+> >>   1 file changed, 3 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+> >> index c73a71ac3c29..95dfcbac997f 100644
+> >> --- a/drivers/scsi/hpsa.c
+> >> +++ b/drivers/scsi/hpsa.c
+> >> @@ -2662,10 +2662,8 @@ static void complete_scsi_command(struct Comman=
+dList *cp)
+> >>        case CMD_TARGET_STATUS:
+> >>                cmd->result |=3D ei->ScsiStatus;
+> >>                /* copy the sense data */
+> >> -             if (SCSI_SENSE_BUFFERSIZE < sizeof(ei->SenseInfo))
+> >> -                     sense_data_size =3D SCSI_SENSE_BUFFERSIZE;
+> >> -             else
+> >> -                     sense_data_size =3D sizeof(ei->SenseInfo);
+> >> +             sense_data_size =3D min_t(unsigned long, SCSI_SENSE_BUFF=
+ERSIZE,
+> >> +                                     sizeof(ei->SenseInfo)); =20
+> > Why min_t() ?
+> > A plain min() should be fine.
+> > If it isn't you should really need to justify why the type of one param=
+eter
+> > can't be changes before using min_t().
 
->> Cc: Annemarie Porter <annemari@quicinc.com>
->> Cc: Srinivas Kandagatla <srini@kernel.org>
->> Cc: Vinod Koul <vkoul@kernel.org>
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->> ---
->>  sound/soc/qcom/qdsp6/audioreach.c | 33 ++++++++++++++++++++++++++++++++=
-+
->>  sound/soc/qcom/qdsp6/audioreach.h | 17 +++++++++++++++++
->>  sound/soc/qcom/qdsp6/q6apm-dai.c  |  3 ++-
->>  sound/soc/qcom/qdsp6/q6apm.c      |  3 +++
->>  4 files changed, 55 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/sound/soc/qcom/qdsp6/audioreach.c b/sound/soc/qcom/qdsp6/au=
-dioreach.c
->> index 4ebaaf736fb98a5a8a58d06416b3ace2504856e1..09e3a4da945d61b6915bf8b6=
-f382c25ae94c5888 100644
->> --- a/sound/soc/qcom/qdsp6/audioreach.c
->> +++ b/sound/soc/qcom/qdsp6/audioreach.c
->> @@ -859,6 +859,7 @@ static int audioreach_set_compr_media_format(struct =
-media_format *media_fmt_hdr,
->>  	struct payload_media_fmt_aac_t *aac_cfg;
->>  	struct payload_media_fmt_pcm *mp3_cfg;
->>  	struct payload_media_fmt_flac_t *flac_cfg;
->> +	struct payload_media_fmt_opus_t *opus_cfg;
->> =20
->>  	switch (mcfg->fmt) {
->>  	case SND_AUDIOCODEC_MP3:
->> @@ -901,6 +902,38 @@ static int audioreach_set_compr_media_format(struct=
- media_format *media_fmt_hdr,
->>  		flac_cfg->min_frame_size =3D mcfg->codec.options.flac_d.min_frame_siz=
-e;
->>  		flac_cfg->max_frame_size =3D mcfg->codec.options.flac_d.max_frame_siz=
-e;
->>  		break;
->> +	case SND_AUDIOCODEC_OPUS_RAW:
->> +		media_fmt_hdr->data_format =3D DATA_FORMAT_RAW_COMPRESSED;
->> +		media_fmt_hdr->fmt_id =3D MEDIA_FMT_ID_OPUS;
->> +		media_fmt_hdr->payload_size =3D sizeof(struct payload_media_fmt_opus_=
-t);
->
-> maybe sizeof(*opus_cfg)?
+> SCSI_SENSE_BUFFERSIZE is a macro definition and is generally of type int.
+> The return type of sizeof(ei->SenseInfo) is size_t, so I used min_t()
+> here.=C2=A0 However, as you mentioned, min() can also be used.=C2=A0 Do I=
+ need to
+> send v2?
 
-Ack.
+The thing to remember is that min_t(type, a, b) is just min((type)a, (type)=
+b))
+and you really would never write the latter.
 
-Best regards,
-Alexey
+	David
+
+>=20
+> Best regards,
+> Qianfeng
+
 
