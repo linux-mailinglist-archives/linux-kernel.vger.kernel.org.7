@@ -1,93 +1,148 @@
-Return-Path: <linux-kernel+bounces-776980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6325AB2D3B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:40:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98ECB2D3A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1542616E77F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F51B3B253D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0462BD582;
-	Wed, 20 Aug 2025 05:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAEF2BE05A;
+	Wed, 20 Aug 2025 05:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XZGhbgJA"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W01UszXN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820BD22D4C3;
-	Wed, 20 Aug 2025 05:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3FF2BD582
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 05:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755668423; cv=none; b=P/14dfOHWDNQIcPHVdK4Rc6xTXj/5ENgisSlArOGPye+E6VHpRgFFJV8Y/bs0Qvsxa7ZcmuFxClTx+IOKzm+rKLq7NMRv/dQU9Ozi1kDyQDtFTSMEddxFttWtnsC72X3WxZ3HpCfLqPSFEU1JuBRQ/qlEgAlETV455EiVhYAkcI=
+	t=1755668221; cv=none; b=FsNc2vQZt+eRmKX18d3PkAtod+aV1rwVHN0W/F5ACjGz4m334PR9oF5iLuQ8UAof9xLaA/N1F8ciWmbhNDsDNdHByUzOEd3U2PYTZJJZYskaZecR50NMSIiaD50rbqPspyiuM0UTBEf5stK5HTCHSgpsQCHgJ+AIa1OGLAwfJAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755668423; c=relaxed/simple;
-	bh=ILaNbJn5HNYKVnX5VFPhvmllfQaHUS+n+I/U4jSWibA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HFheiY6C1febQTV0lYFvVd5F4L7FXR/R9j0mvAk39Jz65pGx5xYYX46M+dWyy80DeUpWZbsCO96K96UuyeoRgHkEWh/xXPtL8jyPs95q/ew6ysGxRUaYEOJ9yc9s5a0G8uJat9eOUhx7Gta8PX7bf2akJpqvk4CQDfPxRG9EJYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XZGhbgJA; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755668418; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=G5p+r4JljAf2GgtlwI0TDUe77jYdbD2CY8bO7sSENRI=;
-	b=XZGhbgJAXAP3R9eOUKz8O52YOV95BKcEUhc16FJTdfN6AftoCQAREZBWcvBOdu3oHaWvCcCkc1zn5fjBzkgqtAM8GESSKJ4Q8MDV6WehQNSzPZGMEnfHVP6zZ6wMBD5v1awKeZJ8dyz61ad8iwxLACEmef72hAwrmvqzZ/2SLag=
-Received: from 30.221.144.123(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WmAN9rA_1755668098 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 20 Aug 2025 13:34:58 +0800
-Message-ID: <e1d33394-c6c9-4f0e-a180-af743772a1e3@linux.alibaba.com>
+	s=arc-20240116; t=1755668221; c=relaxed/simple;
+	bh=F/EXbDYN33rSnWuQBnMKU/qdlX588EbU/XQytA5yhPc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-type; b=TBPx9oHtLrEEA4Jk9/2xhMR7Z/upW4UPAg/82kBf+XXNaSw45leq0cYZh0l1ZErCQwPBqADa2X922TV3kJduZCOF9liZ1itBzf5WGlc/Fge6osjYQCSSwXXO4DQYDNEUd+lkSKP4uFnV2zZssFQ0h/V9yQiXUppClu3wKzX4shI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W01UszXN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755668218;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VcfWxvd2gMUp9MiHd8sOWfFMV/Om7sFRA8QIIlclSZk=;
+	b=W01UszXNauMN1m1cWZg8+etojgzpa06PXRRfwUZWKBmaZ5ATGrN8D15yHP7YeYcaP9kO5q
+	hK2aoGQCxI7YeHjTA7kOPDWoTTxYwRFwDHFz1RKS9d9ukfdcBz/zixIQjVtTSm98UqQhg6
+	iHQ+x581MH+syp8YMk2qbSz64xszSJc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-kDHKpYH-PcCG6_xA3bDyRQ-1; Wed,
+ 20 Aug 2025 01:36:50 -0400
+X-MC-Unique: kDHKpYH-PcCG6_xA3bDyRQ-1
+X-Mimecast-MFC-AGG-ID: kDHKpYH-PcCG6_xA3bDyRQ_1755668205
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 26AEB1800346;
+	Wed, 20 Aug 2025 05:36:45 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (unknown [10.72.112.99])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B28D119560B0;
+	Wed, 20 Aug 2025 05:36:34 +0000 (UTC)
+From: Baoquan He <bhe@redhat.com>
+To: linux-mm@kvack.org
+Cc: ryabinin.a.a@gmail.com,
+	andreyknvl@gmail.com,
+	glider@google.com,
+	dvyukov@google.com,
+	vincenzo.frascino@arm.com,
+	akpm@linux-foundation.org,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	kexec@lists.infradead.org,
+	sj@kernel.org,
+	lorenzo.stoakes@oracle.com,
+	elver@google.com,
+	snovitoll@gmail.com,
+	christophe.leroy@csgroup.eu,
+	Baoquan He <bhe@redhat.com>,
+	Chris Zankel <chris@zankel.net>,
+	Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH v3 10/12] arch/xtensa: don't initialize kasan if it's disabled
 Date: Wed, 20 Aug 2025 13:34:57 +0800
+Message-ID: <20250820053459.164825-11-bhe@redhat.com>
+In-Reply-To: <20250820053459.164825-1-bhe@redhat.com>
+References: <20250820053459.164825-1-bhe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: remove unnecessary NULL check in
- ocfs2_grab_folios()
-To: Dan Carpenter <dan.carpenter@linaro.org>, Mark Fasheh <mark@fasheh.com>,
- akpm <akpm@linux-foundation.org>
-Cc: Joel Becker <jlbec@evilplan.org>, ocfs2-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <aKRG39hyvDJcN2G7@stanley.mountain>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <aKRG39hyvDJcN2G7@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+And also add code to enable kasan_flag_enabled, this is for later
+usage.
 
+Here call jump_label_init() early in setup_arch() so that later
+kasan_init() can enable static key kasan_flag_enabled. Put
+jump_label_init() beofre parse_early_param() as other architectures
+do.
 
-On 2025/8/19 17:41, Dan Carpenter wrote:
-> Smatch complains that checking "folios" for NULL doesn't make sense
-> because it has already been dereferenced at this point.  Really passing a
-> NULL "folios" pointer to ocfs2_grab_folios() doesn't make sense, and
-> fortunately none of the callers do that.  Delete the unnecessary NULL
-> check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Cc: Chris Zankel <chris@zankel.net>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+---
+ arch/xtensa/kernel/setup.c  | 1 +
+ arch/xtensa/mm/kasan_init.c | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
-Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> ---
->  fs/ocfs2/alloc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-> index 821cb7874685..162711cc5b20 100644
-> --- a/fs/ocfs2/alloc.c
-> +++ b/fs/ocfs2/alloc.c
-> @@ -6928,8 +6928,7 @@ static int ocfs2_grab_folios(struct inode *inode, loff_t start, loff_t end,
->  
->  out:
->  	if (ret != 0) {
-> -		if (folios)
-> -			ocfs2_unlock_and_free_folios(folios, numfolios);
-> +		ocfs2_unlock_and_free_folios(folios, numfolios);
->  		numfolios = 0;
->  	}
->  
+diff --git a/arch/xtensa/kernel/setup.c b/arch/xtensa/kernel/setup.c
+index f72e280363be..aabeb23f41fa 100644
+--- a/arch/xtensa/kernel/setup.c
++++ b/arch/xtensa/kernel/setup.c
+@@ -352,6 +352,7 @@ void __init setup_arch(char **cmdline_p)
+ 	mem_reserve(__pa(_SecondaryResetVector_text_start),
+ 		    __pa(_SecondaryResetVector_text_end));
+ #endif
++	jump_label_init();
+ 	parse_early_param();
+ 	bootmem_init();
+ 	kasan_init();
+diff --git a/arch/xtensa/mm/kasan_init.c b/arch/xtensa/mm/kasan_init.c
+index f39c4d83173a..4a7b77f47225 100644
+--- a/arch/xtensa/mm/kasan_init.c
++++ b/arch/xtensa/mm/kasan_init.c
+@@ -70,6 +70,9 @@ void __init kasan_init(void)
+ {
+ 	int i;
+ 
++	if (kasan_arg_disabled)
++		return;
++
+ 	BUILD_BUG_ON(KASAN_SHADOW_OFFSET != KASAN_SHADOW_START -
+ 		     (KASAN_START_VADDR >> KASAN_SHADOW_SCALE_SHIFT));
+ 	BUILD_BUG_ON(VMALLOC_START < KASAN_START_VADDR);
+@@ -92,6 +95,9 @@ void __init kasan_init(void)
+ 	local_flush_tlb_all();
+ 	memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+ 
++	/* KASAN is now initialized, enable it. */
++	static_branch_enable(&kasan_flag_enabled);
++
+ 	/* At this point kasan is fully initialized. Enable error messages. */
+ 	current->kasan_depth = 0;
+ 	pr_info("KernelAddressSanitizer initialized\n");
+-- 
+2.41.0
 
 
