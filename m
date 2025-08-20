@@ -1,90 +1,152 @@
-Return-Path: <linux-kernel+bounces-776842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A785B2D200
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:36:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A59FAB2D201
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6E7B5E7191
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:34:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C448068663E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6D6277CB4;
-	Wed, 20 Aug 2025 02:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7162773C9;
+	Wed, 20 Aug 2025 02:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="nLeBJWY2"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fF0G5qNJ"
+Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E80E3C38;
-	Wed, 20 Aug 2025 02:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01117FBAC;
+	Wed, 20 Aug 2025 02:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755657245; cv=none; b=jK4BVIYRoqtg7CQ1dm5fgODj/S1CovdDHcm898klTCq5S/qlkCgZ7aaaM8nbelc1ASJjFJYxC5c1SEC0dT0l7leu0qWvczu6sRlMbcX6L7sn/a1j/xeHVewy8g+YOufuc5hBqKy1i1rbCMt+tSojNiS6hs75sHIQXe8KImF5M94=
+	t=1755657266; cv=none; b=YNXNSrPLqf1PHuqLpXLK296qSB14y8Wb39HoE91J6J8ODjlnPkkSyd6PbppfQGr/POFZ2O/f9yeNSw2PsxIDGiktUFL/4L4LjeoOaikgi9j6mQcZTeoiytuc68cmE5xWRWwHzsX2Kc8+E+fS1ZXGfo/MGwq3VNfiF9gM6eFr8do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755657245; c=relaxed/simple;
-	bh=+X3h4TnrVhf6EHsT3P84o1wsToV8YCq72tvSy02zTAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Su1cJeSLQJgU70rwY0GTYkjsIPSh228vhzGD7BvMPSi0Qkbf0QLOwsTrp6x1SoHIezrSkclHcwZX+xlWT40Jr/DdYD+EQIWo4gooLWdUYw2kEdLeUlYBdsmRwbhXtK44mcVSOgr/20sWd92oTT6HdhOwWMpzIoi1oEvRqd23P1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=nLeBJWY2; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=y1ZAIG759HT4OXoQdw5pPQnndkLX5MKjmdQRlmFJ9Ug=; b=nLeBJWY2LIS6dPbKblx48IwiFj
-	5Fb9t/36mXHImYnz2DwyCnokR2F2dlwQlhpnum5C5bwMxAQp7sYaiMcygVNQ6n51/0kTWIe3fDsJE
-	lOcEligUlSnNvBfBI3wXkTbRWALB0UcXWJijZrQhfsNMxND+PTVry/lpkTlQdBraLBsXqlqYCIauB
-	8rH1zWBQjUOtH7bT+OkVNue0Cn5yj0Rl5I4j07m2h1Y2NhH+fQ+QUPGmf+pBKEFKLVPee07D5+4wp
-	0rP/IhOsurafEX+y8TeSxTVDxLUjH2ktR/4+adw4T2pe2SpCo5POnxZSWGh3KWzby1D0gi/oLa5z9
-	Y60jVL4Q==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uoYOm-00FgcB-0i;
-	Wed, 20 Aug 2025 10:33:57 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 20 Aug 2025 10:33:56 +0800
-Date: Wed, 20 Aug 2025 10:33:56 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Lee Jones <lee@kernel.org>
-Cc: Qunqin Zhao <zhaoqunqin@loongson.cn>, jarkko@kernel.org,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	davem@davemloft.net, linux-crypto@vger.kernel.org,
-	peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	Yinggang Gu <guyinggang@loongson.cn>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: Re: [PATCH v12 2/4] crypto: loongson - add Loongson RNG driver
- support
-Message-ID: <aKU0FKgqRxTn_Zws@gondor.apana.org.au>
-References: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
- <20250705072045.1067-3-zhaoqunqin@loongson.cn>
- <20250819125518.GF7508@google.com>
+	s=arc-20240116; t=1755657266; c=relaxed/simple;
+	bh=C40iIuQKKe9JZhkYXU9PE+o7vHAU/PHNTf1JtgxJ6hs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QM50biAtgeezFHYbC9akvzyOo7D0bCNCrXqt64YLHkPo3+ZkLPoTw9EpqIl7cLWorouA7VMG3U0dGxQOw9dQ6G/sPYDRQ/61dV1OxcxueLb5/dDsphh8CBVnpRzS6jWsZ0UYL4ZMjy4XAW4LCnyWhD9j96+BImymJHA7VPpM2CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fF0G5qNJ; arc=none smtp.client-ip=209.85.128.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-71e6eb6494eso37958207b3.3;
+        Tue, 19 Aug 2025 19:34:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755657263; x=1756262063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/O+Vi9Pj3DACHxJMyQKxj44yEBD25gKvGbsKrHL2Xao=;
+        b=fF0G5qNJcrw08IYJ9yFw+2848wia/1oy4ALukLQqfgGi8hAenwA7OO03BYYBDzu9DT
+         l+7GN0fjwx6J0VH1xWsAsndX+neYN9q4R4fFtN9IC/XjzaT6KiF20Bgoii3KUyfTqvHS
+         dd/NsCYweSEGMJMTC6goNBfeFHdvFGrpyJYMyfkdkxgCOaopJ5Q7u8xjLw+VayUZpTUX
+         HoL+0yd3sGiDLoxnou0Ihn6svR6kuqqxmIt7demTsnpdhhporyrWhYCa29Vprm0MGvL0
+         rL/Zkc6Wvrvoe7+n5fRXvwYLXuJLr4R++sk6J53C0iPgJSsQKazS/oqgP0+fNgXSFmf9
+         MbJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755657263; x=1756262063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/O+Vi9Pj3DACHxJMyQKxj44yEBD25gKvGbsKrHL2Xao=;
+        b=dOKUBfQRs+l/N1Sx5lG/PDLU3S3gP+YG5IGPmS+TFHx4XLkMKejrNvb0HfwEORZyN4
+         2y5zixGiCSFQhkcVqnh5NCvOtpaa/6sLQvRdBFap89/1/rSIJufM1+OifhHxUHlj+rla
+         8aya6i2WduW5twceB+X22FX35tI9SV3qfUJZRBetO7Ul9MAvfDvGP03LkGGcX9Km1PY3
+         8X6G/OnQSKwqvZ5iicZbTtH1IhwDdfALJfBmnxdbta4P+pJBd7ZZyJcReppFd0gTDsFE
+         wYg9NxUIvYFfeoRUBWJv2WVXoTmq0OPNoJep6DpEc/KbEgw3Ou8qQP91B0eu4oeg+Umu
+         fHeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUk0+RiAozk5EBnP4djUFHlqO+6h5IByajjOFpnkwvFg5mMHBMBxjsCPqXInFnhth1Txhl7gObqlURnL8zM@vger.kernel.org, AJvYcCXBRO47xOC34xDiqRTs3IiWfv5MK80mmzFHlJSPJ9kS9+6S9LckE+b+pl02UfWZoLLg/zY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNPwbGYgdsipjHnSr0hC3R33xmHzko6K30BvbQvhxdrJtXTw1y
+	OZ3gL0ybNCNXZN6R5rhQhTHVnAhGojuJcWI2zEFvOnGXCDr8duREJ+25U3zxGj+a6bl5cVJQU00
+	bcE+uJu39FB6bFWl8ubDdenVUHCSrbkQ=
+X-Gm-Gg: ASbGncutAlenz8FBU4L8ayI5gDebTn1BodbFIiJdGNeAo+L23qFYzyDGpiQEBlKWNcQ
+	3zibrAGoUwCu7vTk7o+XsqdfQg3sOIQQinuGdMGGgZInpcE4n4zk3pHrENSKhJofDd2fPut5c7D
+	0FZxYSWVZDJQ4J7TSaruD7tECYY68aua+yMJhqD3p1cf95AO+BkW/B8TBRhqatjcJ+21oFB0i3D
+	iCpkVk=
+X-Google-Smtp-Source: AGHT+IGZYiTWjxYhSjSPiaaMKiQp7ymBwE17bO70ijts3XfwHqcUWucdDfAdqCwhlNrikWJeMVGQHsvfqK2wvzHvV0s=
+X-Received: by 2002:a05:690c:4:b0:71c:3fde:31b6 with SMTP id
+ 00721157ae682-71fb3222e1bmr16814237b3.34.1755657263455; Tue, 19 Aug 2025
+ 19:34:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819125518.GF7508@google.com>
+References: <20250819015832.11435-1-dongml2@chinatelecom.cn>
+ <20250819015832.11435-3-dongml2@chinatelecom.cn> <20250819124008.GI4067720@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250819124008.GI4067720@noisy.programming.kicks-ass.net>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Wed, 20 Aug 2025 10:34:12 +0800
+X-Gm-Features: Ac12FXzeJifKg5LlkIVeR2FnDxbMmcLFl2bl8TWaM5KwTB3Amdhho41QamBj_Q4
+Message-ID: <CADxym3Z1w0tseWGDPM00FRtL=5ckMioo51Yna1oACW72Haaxxg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] sched: make migrate_enable/migrate_disable inline
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, ast@kernel.org, daniel@iogearbox.net, 
+	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
+	simona.vetter@ffwll.ch, tzimmermann@suse.de, jani.nikula@intel.com, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 01:55:18PM +0100, Lee Jones wrote:
+On Tue, Aug 19, 2025 at 8:40=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
 >
-> This depends on the first patch in the series.
-> 
-> Does this one have an Ack?
+> On Tue, Aug 19, 2025 at 09:58:31AM +0800, Menglong Dong wrote:
+>
+> > The "struct rq" is not available in include/linux/sched.h, so we can't
+> > access the "runqueues" with this_cpu_ptr(), as the compilation will fai=
+l
+> > in this_cpu_ptr() -> raw_cpu_ptr() -> __verify_pcpu_ptr():
+> >   typeof((ptr) + 0)
+> >
+> > So we introduce the this_rq_raw() and access the runqueues with
+> > arch_raw_cpu_ptr() directly.
+>
+> ^ That, wants to be a comment near here:
+>
+> > @@ -2312,4 +2315,78 @@ static __always_inline void alloc_tag_restore(st=
+ruct alloc_tag *tag, struct allo
+> >  #define alloc_tag_restore(_tag, _old)                do {} while (0)
+> >  #endif
+> >
+> > +#ifndef COMPILE_OFFSETS
+> > +
+> > +extern void __migrate_enable(void);
+> > +
+> > +struct rq;
+> > +DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+> > +
+> > +#ifdef CONFIG_SMP
+> > +#define this_rq_raw() arch_raw_cpu_ptr(&runqueues)
+> > +#else
+> > +#define this_rq_raw() PERCPU_PTR(&runqueues)
+> > +#endif
+>
+> Because that arch_ thing really is weird.
 
-I thought I had acked it already.
+OK! I'll comment on this part.
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+>
+> > +     (*(unsigned int *)((void *)this_rq_raw() + RQ_nr_pinned))--;
+> > +     (*(unsigned int *)((void *)this_rq_raw() + RQ_nr_pinned))++;
+>
+> And since you did a macro anyway, why not fold that magic in there,
+> instead of duplicating it?
+>
+> #define __this_rq_raw()  ((void *)arch_raw_cpu_ptr(&runqueues))
+> #define this_rq_pinned() (*(unsigned int *)(__this_rq_raw() + RQ_nr_pinne=
+d))
+>
+>         this_rq_pinned()--;
+>         this_rq_pinned()++;
+>
+> is nicer, no?
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Yeah, much better!
 
