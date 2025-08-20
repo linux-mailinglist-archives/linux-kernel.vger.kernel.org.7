@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-777770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E387B2DD93
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:18:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C74B2DDA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFD8D1C808BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:18:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFFFF177D0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D6331DD8F;
-	Wed, 20 Aug 2025 13:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ENwthEb+"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B662C27EFEF;
+	Wed, 20 Aug 2025 13:19:16 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E47F17BEBF;
-	Wed, 20 Aug 2025 13:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9F017BEBF;
+	Wed, 20 Aug 2025 13:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755695896; cv=none; b=omWgzDg6218xhtbvSqK+3RRIAdHo3rkxYgD1vbmJyNlSn7JvY5C5eNC80WbtlqGeq2aH29ci6uYyAgOSD8fNeuzfQKg2Q6+psU5ejwHEMmZXBk1nEAu7YD6xPCN57KU4cIXQj932oMn3ryh9vJlDJHmv4j4FMVdqIAV3DtKSAtI=
+	t=1755695956; cv=none; b=t8isyBIsF0H0GDLVOY+BxJ4g+LiDCQVlFRWk1HvfwQBIM5w5mfQ+d1qMGFXIT2ZQlvPnygT/3DdAY1iZ7x/WO5f5vKi8a8tlLt9342tyR2X2Js+s1TmVqWRSzEmH3XjDOmRUdUlPxQGA5bxur9eBzugaW/ceH3Xf1/inLaJ7NFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755695896; c=relaxed/simple;
-	bh=DOeocE2TSMK2zhBIMAISf0bA1p+4iSO7xk5SPu2tIfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Doj94pHRqjC/H+u/+WvnzhYhYnRJZzTWNcvxh5XTCFjhKN9GnT57E8J0BAw4tYUmI5I3M8tcb6sFcYZRbovi46/vrDSYCAuarUwwGQ166r6h2+IU433DvPr+hAndKQQ04iJh2SppphJ/8pOS47F8ex/KCKJjRt7alfiXmf3ihM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ENwthEb+; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8EE3714003B9;
-	Wed, 20 Aug 2025 09:18:13 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Wed, 20 Aug 2025 09:18:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1755695893; x=1755782293; bh=dzEYBhueTWc89/MISWU3UFuCYVd1T4k9Kq6
-	zJAOupw0=; b=ENwthEb+Ky21vZLrX+qnv+f6AyHsIx3sG86siSeLtTHUVMBax0t
-	F8LjXTrl6bDCwwkpazNZ1JKKI8SUZfUdNRJQTYAB6zwsMzCxcsyjC2rfilufvjJm
-	fHeFGSgxSoLbr4Hv4hvFxdxN9my4gqkHxG8mHZLLoiXw+Yo7Lg0dyOTqSIXZ/apW
-	5lOzUhGnEstpFRCgGnhwNFkxOEQ7f4wue0v29runO6+kn2HMc6y8BUxk/rqwgkXJ
-	616kKKbNb+2n8TMJ7Cl52mtSsn1K2cWoPbv971dmy+sHg6cv3Wq9+ezIROl1ukYW
-	150wojWK9rXge+VNLyR5fzzopoHYCqV7npg==
-X-ME-Sender: <xms:FculaCYGrrWPF0axijoXPinf3zDEc23SrYUvRpMwO2-YuvP5dgLb4w>
-    <xme:FculaNAdgcf33lpjBApqpzPojukmSZwNBvB8-ClHh9iWZgawiGXRqjlknLbOU6PhI
-    2eZLay7Xo5c95g>
-X-ME-Received: <xmr:FculaKmM61xFbleSxj4UZnpMkvqtc-1v_Vd-iHYpfmWnjhGXUPLIvTr6zhBR>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheekgeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcuufgt
-    hhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhephefhtdejvdeiffefudduvdffgeetieeigeeugfduffdvffdtfeehieejtdfhjeek
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhgpdhn
-    sggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrhhghh
-    hoshhhsegtihhstghordgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrihgughgvsehlihhsthhsrdhlihhnuhig
-    qdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrhhinhhmohihpghgsehhoh
-    htmhgrihhlrdgtohhmpdhrtghpthhtohepphgsrhhishhsvghtsegtihhstghordgtohhm
-    pdhrtghpthhtoheprhgriihorhessghlrggtkhifrghllhdrohhrgh
-X-ME-Proxy: <xmx:FculaOx3A_6SA5pGhBWbRiMK4Rv60ltL88f9wjl8fyvvfTSvU-KhVw>
-    <xmx:FculaEQ1se9V8cAT_kw_d2MzpUhDW8u0-7FP4MopGEVwFX1JJczLRQ>
-    <xmx:FculaG9UPX8vb_kM0Zr0onUtfO7JIAFIGY4uZPGw6PHKxS2dNiAjPw>
-    <xmx:FculaCurBEBKqQ2g7j75PTVVDoj8tlOEatuaO6tpPTfNfJRH0kBslA>
-    <xmx:FculaMqjobtMGghfqMasYWhjjWBzFWAVbdBa_9J9KjRWlAEW__FgvqKB>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 20 Aug 2025 09:18:12 -0400 (EDT)
-Date: Wed, 20 Aug 2025 16:18:10 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: Mrinmoy Ghosh <mrghosh@cisco.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	bridge@lists.linux-foundation.org,
-	Mrinmoy Ghosh <mrinmoy_g@hotmail.com>,
-	Patrice Brissette <pbrisset@cisco.com>, razor@blackwall.org
-Subject: Re: [PATCH] net: bridge: vxlan: Protocol field in bridge fdb
-Message-ID: <aKXLEiY8gd0sNGrW@shredder>
-References: <20250818175258.275997-1-mrghosh@cisco.com>
+	s=arc-20240116; t=1755695956; c=relaxed/simple;
+	bh=dfzDTv8oEKCetBlFcR94doiE/batysYuRwZOX+17Q5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nVrexmHh0d9NCAC66QQb0G27rKYtAvyEKjAeOpuSdCuu97e4o3QQPu9/TkCSBrSc6dPG9pV4uSCJEiAEsixkD2M/OXuRjQpOFBREUhA0oDgWsm0Sg/e5kpa+R9BIRMhfJMrJLjMoGjLvQwExsVqxQlGwEu/XNuJRT0tv+88sJtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 3C6C5140487;
+	Wed, 20 Aug 2025 13:19:13 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 9B4FC31;
+	Wed, 20 Aug 2025 13:19:11 +0000 (UTC)
+Date: Wed, 20 Aug 2025 09:19:13 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Tengda Wu <wutengda@huaweicloud.com>
+Subject: [PATCH] ftrace: Also allocate and copy hash for reading of filter
+ files
+Message-ID: <20250820091913.146b77ea@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818175258.275997-1-mrghosh@cisco.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: s76bgtiotga8our5impfewimqikqqh5w
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 9B4FC31
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/UPIdFSIrzdxQAXDSFXnKIVexJaJ/8nus=
+X-HE-Tag: 1755695951-379636
+X-HE-Meta: U2FsdGVkX1+2yvrsJ42/FUxcZJiIC59X7Js69TfH+ECb7sbf+ZKmaf3HEZRpjPSgo73byNe251sY6Y4Bb0X91gtnkH7coHsWWmIwdNgi9/3TcClfkO3sMfmXT8rAbSV23p2yPL2gMNhjyD8GWdVqZLQBJsPQQZMqKQPF2K03SIgHEmKKrsxnwb0otmJNDZHarpfJAVWw/GtLD/hiItpeb6h4zjWUGOAKcHfVbUQiqw9q8ROiQ+LssHALjSkAOTE/7kP6rR24NaeJVzn0dFfwsBFsetib+8cYLvxGJfRAhgHZ1RdU54jDXZ5GwQJSF0AAUXEIHqi7vcNaxY7242zQMPgj5ewHjTy1NOWeNxTP8Ve5D3LTl+j9AmMoqOLbcVhXRhUdYqbpi/ImHCOaMIkaEFLAT17wTZhI0HB7cysyYMg=
 
-+ Nik
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Please use scripts/get_maintainer.pl when submitting a patch.
+Currently the reader of set_ftrace_filter and set_ftrace_notrace just adds
+the pointer to the global tracer hash to its iterator. Unlike the writer
+that allocates a copy of the hash, the reader keeps the pointer to the
+filter hashes. This is problematic because this pointer is static across
+function calls that release the locks that can update the global tracer
+hashes. This can cause UAF and similar bugs.
 
-On Mon, Aug 18, 2025 at 05:52:58PM +0000, Mrinmoy Ghosh wrote:
-> This is to add optional "protocol" field for bridge fdb entries.
-> The introduction of the 'protocol' field in the bridge FDB for EVPN Multihome, addresses the need to distinguish between MAC addresses learned via the control plane and those learned via the data plane with data plane aging. Specifically:
-> * A MAC address in an EVPN Multihome environment can be learned either through the control plane (static MAC) or the data plane (dynamic MAC with aging).
-> * The 'protocol' field uses values such as 'HW' for data plane dynamic MACs and 'ZEBRA' for control plane static MACs.
-> * This distinction allows the application to manage the MAC address state machine effectively during transitions, which can occur due to traffic hashing between EVPN Multihome peers or mobility of MAC addresses across EVPN peers.
-> * By identifying the source of the MAC learning (control plane vs. data plane), the system can handle MAC aging and mobility more accurately, ensuring synchronization between control and data planes and improving stability and reliability in MAC route handling.
-> 
-> This mechanism supports the complex state transitions and synchronization required in EVPN Multihome scenarios, where MAC addresses may move or be learned differently depending on network events and traffic patterns.
+Allocate and copy the hash for reading the filter files like it is done
+for the writers. This not only fixes UAF bugs, but also makes the code a
+bit simpler as it doesn't have to differentiate when to free the
+iterator's hash between writers and readers.
 
-[...]
+Cc: stable@vger.kernel.org
+Fixes: c20489dad156 ("ftrace: Assign iter->hash to filter or notrace hashes on seq read")
+Closes: https://lore.kernel.org/all/20250813023044.2121943-1-wutengda@huaweicloud.com/
+Reported-by: Tengda Wu <wutengda@huaweicloud.com>
+Tested-by: Tengda Wu <wutengda@huaweicloud.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/ftrace.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-> Signed-off-by: Mrinmoy Ghosh <mrghosh@cisco.com>
-> Co-authored-by: Mrinmoy Ghosh <mrinmoy_g@hotmail.com>
-> Co-authored-by: Patrice Brissette <pbrisset@cisco.com>
-> ---
->  drivers/net/vxlan/vxlan_core.c      | 132 ++++++++++++++--------------
->  drivers/net/vxlan/vxlan_private.h   |  21 +++--
->  drivers/net/vxlan/vxlan_vnifilter.c |  11 +--
->  net/bridge/br.c                     |   4 +-
->  net/bridge/br_fdb.c                 |  52 ++++++++---
->  net/bridge/br_private.h             |   5 +-
->  6 files changed, 127 insertions(+), 98 deletions(-)
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 00b76d450a89..f992a5eb878e 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -4661,13 +4661,14 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
+ 	        } else {
+ 			iter->hash = alloc_and_copy_ftrace_hash(size_bits, hash);
+ 		}
++	} else {
++		iter->hash = alloc_and_copy_ftrace_hash(hash->size_bits, hash);
++	}
+ 
+-		if (!iter->hash) {
+-			trace_parser_put(&iter->parser);
+-			goto out_unlock;
+-		}
+-	} else
+-		iter->hash = hash;
++	if (!iter->hash) {
++		trace_parser_put(&iter->parser);
++		goto out_unlock;
++	}
+ 
+ 	ret = 0;
+ 
+@@ -6543,9 +6544,6 @@ int ftrace_regex_release(struct inode *inode, struct file *file)
+ 		ftrace_hash_move_and_update_ops(iter->ops, orig_hash,
+ 						      iter->hash, filter_hash);
+ 		mutex_unlock(&ftrace_lock);
+-	} else {
+-		/* For read only, the hash is the ops hash */
+-		iter->hash = NULL;
+ 	}
+ 
+ 	mutex_unlock(&iter->ops->func_hash->regex_lock);
+-- 
+2.50.1
 
-Please read these two documents and make changes accordingly before
-submitting a new version:
-
-https://docs.kernel.org/process/submitting-patches.html
-https://docs.kernel.org/process/maintainer-netdev.html
-
-At the very least the patch should be split to a bridge patch and a
-VXLAN patch. I will provide more comments later this week.
-
-Thanks
 
