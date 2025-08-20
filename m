@@ -1,220 +1,330 @@
-Return-Path: <linux-kernel+bounces-777560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF33B2DAE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE97BB2DAE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70B51890079
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:25:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E99D18806C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7FE2E424D;
-	Wed, 20 Aug 2025 11:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DC72E427B;
+	Wed, 20 Aug 2025 11:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pUvlE7I6"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2078.outbound.protection.outlook.com [40.107.100.78])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="deKVPfql"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ED02DCC03;
-	Wed, 20 Aug 2025 11:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755689092; cv=fail; b=oZ6BpYmKFdr6MOwmCjSK5I3ECTmNH/zjqQx7/8fpaRqeAazcTSSqRtFgdidgXDx+QxWrwoSj2PnyqD6ch4QkRwOnmNRtO//GnBUxJ8m4r/mKbb6e39p6PtotBb5FAfA3gLTX5b2QoTiydsXl27pnPr+RP1z2r+oj9a5uMxq4lBs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755689092; c=relaxed/simple;
-	bh=dm8a5fpq9aykBvG20B3P2JQBKH9VuG6WGE0hDWyUG54=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=O1HbOLefjD51csnnxYHWLPNqmiZpYzajkW6Nah05+Cxa++R1Td0ohe+sMdySYpi0BKPVXR+VUWNdjWXiwWXch0ZAtT4HR9HGw6N4J9wiV6MYq6IJTzbV8yI12elf7Vjg0RHXBJq+0kP7CR1qpozw6oLQ1CDZMA5RKV3/fRj4Qqg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pUvlE7I6; arc=fail smtp.client-ip=40.107.100.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lOBuCSawDfKUMjXa64bMPThvkJo95AacwHkRu/QTUg4x9hOCwgcwZr/rJH9WZl9RqEWTynVmH7VzchF38cYOJ7x9XCIPQs22o/LGhN5+kNv9sZRaXqrLJBHUjUD31xyX23G3jbkadYoCvhgjwfUW4mPWQe1dUBFnvEPIpP4QI65sBUkE2XLtkBMM5+3KkVd9jEpo9NF87bVuTpPlPnES9tdX73/3WTvgxi9WKlNy9LsHogG9/+HP5fiU8ShLUc66REAYTjS1UKBHdVH7PyRmSMczizJ01h9BuHwAUWfXrRjAM0EgqeBQ1VM9LzM+vMZKlyy1oqUS7Lnyi7dbRtgt0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dm8a5fpq9aykBvG20B3P2JQBKH9VuG6WGE0hDWyUG54=;
- b=Hk8UAlEYRQ8izX07tSTe18ndToD03j92xqq64bzLKZvYHfFVGpDt09zQx/L3IB17NRS15P+lg7pINXHHvxGloG62b869opS9Phd3TG3qETsvGSLAaqQocgHZfPkSPlQd5DlvXADuaDIUe2WwA+wlinbkX/GcC8kb2ZLBLPfxb9zA68QA7b0hHUc05Le2kN7FnBCovMPSh4ffsERh0r/GWoP40dUpbl3/40NM9Ek3XBXlIa5qo7mNWXUG4yPlPidEWiyyE5jiQQxWees7fzjdU58lt7Umecai2ua34xk5I5WbFlL4XIBvYxTi+lU99v0ehBvHXyokM+X521H6J5vshw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dm8a5fpq9aykBvG20B3P2JQBKH9VuG6WGE0hDWyUG54=;
- b=pUvlE7I67TjQ6OBT7IFIKzlgnqdacRdUq6ZxyhuFf5uCpOZ+fxrGeFV0Pi97pz35J2Ge42HRUg3sRH8wtBEKZegGPvepom64P1Lw0z8iJa0Dpt0hyxxR5jIH5BXMg7ZmR5p+rp7S3ULFAmrkxDA45Z8U+7IQ+tcU5tcvcDrfew8=
-Received: from IA1PR12MB7736.namprd12.prod.outlook.com (2603:10b6:208:420::15)
- by IA0PPF64A94D5DF.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bd0) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
- 2025 11:24:47 +0000
-Received: from IA1PR12MB7736.namprd12.prod.outlook.com
- ([fe80::af21:b877:699d:43b0]) by IA1PR12MB7736.namprd12.prod.outlook.com
- ([fe80::af21:b877:699d:43b0%5]) with mapi id 15.20.9031.023; Wed, 20 Aug 2025
- 11:24:47 +0000
-From: "Erim, Salih" <Salih.Erim@amd.com>
-To: Sean Anderson <sean.anderson@linux.dev>, Jonathan Cameron
-	<jic23@kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"O'Griofa, Conall" <conall.ogriofa@amd.com>, "Erim, Salih"
-	<Salih.Erim@amd.com>
-CC: Andy Shevchenko <andy@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, David Lechner
-	<dlechner@baylibre.com>, Manish Narani <manish.narani@xilinx.com>,
-	=?utf-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>
-Subject: RE: [PATCH] iio: xilinx-ams: Fix AMS_ALARM_THR_DIRECT_MASK
-Thread-Topic: [PATCH] iio: xilinx-ams: Fix AMS_ALARM_THR_DIRECT_MASK
-Thread-Index: AQHb9SAh4AVkjW3DPEmAeYY0TWIEwLRrn3ag
-Date: Wed, 20 Aug 2025 11:24:47 +0000
-Message-ID:
- <IA1PR12MB7736715664F30AF3D2C7F48B9F33A@IA1PR12MB7736.namprd12.prod.outlook.com>
-References: <20250715003058.2035656-1-sean.anderson@linux.dev>
-In-Reply-To: <20250715003058.2035656-1-sean.anderson@linux.dev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_ActionId=21b629ad-bf11-4051-aded-fabda6d6ae8c;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_ContentBits=0;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_Enabled=true;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_Method=Privileged;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_Name=Third
- Party_New;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_SetDate=2025-08-20T11:24:42Z;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_Tag=10,
- 0, 1, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR12MB7736:EE_|IA0PPF64A94D5DF:EE_
-x-ms-office365-filtering-correlation-id: 9386c32d-409d-4e7f-d479-08dddfdc2b7f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bkxCbjNxSmlkZHhyV3hPT29RSnpnTHIwM281M3dnQ1BINE5wWi9PODg2c3RK?=
- =?utf-8?B?VWk5WUJFOE5wdmt1d2ZKZUNIREpKUEt1YVpBZ2Q4eWJNNVNyQnZtU1drY2lW?=
- =?utf-8?B?UlpUTEdtNGhocFgrclNtY0JEdURYcjQwRzR3ZVhzdCtaTEhYUmZKWGFOOE5M?=
- =?utf-8?B?djVvdy9Geit5aTBSdFlmd3JTOWJuWjFuQzhoWnNVNHRyd1NIOUJRSFBVMHds?=
- =?utf-8?B?V1lOTEhPaDV5dytMV3ZrRS9UQzM0RHROUzNOOFJ4dnZWYUdmd0JUOUVmMjZP?=
- =?utf-8?B?MENXeUo0dkpDQXd5MVN2YUlDZHMyK24rRHFSUm9PL3IyWWtwUCs1U2FJL1k4?=
- =?utf-8?B?SThrSmhDQ0dmRHQvbUxTM2FBNGIvYXBJVHV0dnBwU3I0OVlqS29GQmVDMEhH?=
- =?utf-8?B?MWMraytjUDBiZTc1Wm1lMGtpVWxNWklWSStaT3FKN1NTMEY1cTR1Y2gvLzVw?=
- =?utf-8?B?ZmZoRUw3eGtmZHc0cjQwNlJ5TmIrRkh1RlpqUGZJZ3BSSzE1SVRDcHV3WkNR?=
- =?utf-8?B?YmM0S0lWQVVYaUhJNnVzbDVHS0tUay8xYzB2cVdkTWRUL1ExdUJxWm5RTDY4?=
- =?utf-8?B?WVVncC91Q0o3amRaaGxyaEY0NW96bEkyT0pFRkMyN1VSbDA2SDNIQ1Y2MzR0?=
- =?utf-8?B?N0xiWGZsSnh3WVNXYW9pTVhIZmxUOHBLcHF1Y1RNT1ZIRzNIODV1V2d2c0dp?=
- =?utf-8?B?dnJjKzhtRFhXMVJWOHZGeEsyQS8xWC9tQWNWOStiNzlDbWdUV2RmdjF0dkVi?=
- =?utf-8?B?Zmpxem11eEVxS2J5ZTNmeUZyQUNaaVNCN3oxaXRUMktEN0hyNFJzZjFkTENW?=
- =?utf-8?B?MzJKUTlWMjBxNHRQUjdtWnA1dGFPWWlhS2FQTlQzQnl3QVd6dGhseG1NT1Vp?=
- =?utf-8?B?c1dCTHRzYW5tSkdYNEVsQXdjTEM5bVZCS2FIUVFiUkxjVlpOYWhDSmV0Y3Iy?=
- =?utf-8?B?ZkNuYU1KZG1RZjhqcU95RXNhbE4yejVRRjlUb2xBNE5JRS9UQUoxSlhRLzh3?=
- =?utf-8?B?Yi9MbFZiUDJ4U1FNbjdnQVVXUUo3djlnU2NwRUpuekw2WHZuc1dUS0FWWGtt?=
- =?utf-8?B?bTB5Sll3S0dYVkZHV1o4QVRXWWhteXdOTk8yU0Y0OEVpVDJOM3FNTms0bE5k?=
- =?utf-8?B?amw3UVZyeXo4UGI1blhiUXFxNjV6M1gveE9JM1hZaFY1aEVCaVUvZVliVDUy?=
- =?utf-8?B?QWpHVHlrbkpVZFM2MUNzQkNHR2c5K0ZvemMxaFZTVXd2LzFyVVhNMFdIWkpm?=
- =?utf-8?B?blg3dkt6UUxWc2sycXhXUnJHL1hiUWJVdmh5eTZtUHcweS9randXZEFJaTBZ?=
- =?utf-8?B?MFhMUG9yRWVZbWMvRVJJWGo4MmgrVWk2NHhLQm5DUzVRTDhCRU0ralc2OGs2?=
- =?utf-8?B?ejBOMisyOGtaS1BtSTdrWEhFM2FzN01YbTlrcnFxbVV3cEZ4QW9OTjB2d1Zo?=
- =?utf-8?B?U3BPVVpPM20yQnVTVnhuTjNFZjU3cGprNmQ4enVCbnNXL2RxN3BSUnpxUUFh?=
- =?utf-8?B?WkdjVnFNZm1QUy82ZVVNTVdNR2VlMGVWaC9Pek9VRE1XdDl2WTdBeW1rblU1?=
- =?utf-8?B?bFVIWWNHUHBxazZVY2xVcFNnWWpOWUdsbVVndlFKZWdZNFNEWTVycVdqdE04?=
- =?utf-8?B?VTVYVTdDMFZSZmx5RmJib3ZuRXN1MjB5d2JIL0tNVkFhYVZ0TzNUT2lycXp6?=
- =?utf-8?B?dW5hSEp4NzdxTWFaTG1vVXBHL0hQZ2lwV1h6WWFDdmRHeG1qejBwU1ZTbnRH?=
- =?utf-8?B?WGtTSTlZcGFOMzhxcDhSSVN3SlVsbjJyVm5wU2hrL3FHVXI1a3EvbER0UDlT?=
- =?utf-8?B?RVVZaHA5MVdxTytxQmZBSndRd0REZmZKZ21GdEVoQkJIYTI4RTVEUUNqRy9a?=
- =?utf-8?B?OU1CY3FpWUZQWjZ1VmIrUVE3YWtoUnFzVVFEM1VId0s3eDhhSGJiWGQrdGhW?=
- =?utf-8?B?ZnBGUVdRUUhPN0pZZGIwbWlhSDZScFdMUnNnNHJkZ3FOU2pteEVDTlhjblI0?=
- =?utf-8?B?Q0JNbFRGQWFBPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB7736.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MkpXK2Jhcnc5Rzd0VnRXQlZDeXBxcFVSQXBLT0xQM29NUHFKQ0tPcXhQcWRL?=
- =?utf-8?B?UHc3SkZPWWh3VHJ6eFg5TG93QkhrVHdCaklvSUQ4b2hGUlc4Q0lsY1JwM1p1?=
- =?utf-8?B?YTQ1cHhvMjVBaXEyUGRjSjZDck9JRnRhWUZoUXZUTkd6NEx3VEF0a0tMTjZF?=
- =?utf-8?B?OHM2dGszYkY0cEdWYjVkWE5pUkRiQlgyb2VCOTE1aEZtZHRyMU01WmZjUlZV?=
- =?utf-8?B?ZE51SnBMUFpsZU5CTDRSdkJDQ2dQZHZ6ZFR1RUg1T1BOYW40Qm10LzY2WW1k?=
- =?utf-8?B?aWZZK2pKeFFyeDBVbC9FNFYrVnhsc0c1dHh6RzJqYWRDNGFGcEVib1BWNUhw?=
- =?utf-8?B?TVpOTjRxMzlJaFllNHV5NjFyTHpCR2pacm5JS0xJYnM3SHVZcWpXayt6a2Fh?=
- =?utf-8?B?OCt0ODFMcnpxVzJISFk4RWJ5cFJ2M0pXcjY5cTF2YTBEMW93Y2haZ0laQmtY?=
- =?utf-8?B?aHdwYmxaZDBJUVI5ODRhNFBGZjNkcGRVV2NPbW1NZ2hkZlo5S25DMUphd1Iy?=
- =?utf-8?B?WHVyQnoweWRCN1Q1L2dsK0dZTFZYTTFlV29mTVZxY05nYVovS2dEQ0xFN1Nl?=
- =?utf-8?B?WTc4dnE5RnNvZ0RCU0JFUC9QckpMTE4zLzIyTmRLdVprbVI2Ni9aUDBNcEtu?=
- =?utf-8?B?aTNoWmhXVG5wNWRoQVAxL1hGMzFnelhZVk83d3dGZmExeFU1Zm5yL2RqQlg4?=
- =?utf-8?B?UFAwa1Z2ZGQzTHVXSDZWYi9TMjcvVTFmc0doTW4yQVJ5M1ZKV3hZeU8vQkZy?=
- =?utf-8?B?SzRBNUxXOE80ZjZOb294WmRzckp4WU9Sb2VtTWZwRGhDeHFNcTU0M3hyOFVQ?=
- =?utf-8?B?U0FKbU9Qa3l4R0lHKzRXVWZySGhIOEVkNFUxa3NEUjVsL2N4WVFrSlZSNDVB?=
- =?utf-8?B?YTRxekpjRVcvcThOaXNBRDl1MjNYYkRDWStJbVR4aDYvNHIzK0V0eWJ1NUJR?=
- =?utf-8?B?WndIYStIV2FJL1B3aSs1L2VIK1ZkNGZpem5iaWNrdkprdTJOcHJmem9TckUv?=
- =?utf-8?B?TWdicFRHQ2FZTDZ6VnZjK2Z4RDgzZGt3MVFacEN5a0t6QWhHWWdMSjFtcEpO?=
- =?utf-8?B?TEJUTEFrUmwrRjNyNDIxWlhZbnc2N0FhYkNiTkljU0NsREtRcVdHbkZQYUJw?=
- =?utf-8?B?NjVMbFdRaDhJSzhzeGQ3aGNoZzFQVlhtYzlJbVR4bk1xZ3VscjNGZkhxenN5?=
- =?utf-8?B?c3lvMHNWRWt1and6WXJaSmxnMjE5WHE2Y2pVb0hzeXlTcDlJWUUxaE8zeFEr?=
- =?utf-8?B?U3hOQXR1V1p5b1ZJS09jbGNGT0U2T0RHUXZ4VndleUhyTjE3K2txTUJlSVNP?=
- =?utf-8?B?dGhpbWVSRWdwRzFTeFhITU5LZERiUllKcnVyNWI1ZVZmTTZ3ODk3Lzh3MFRC?=
- =?utf-8?B?cDEwUlVJZ0h1WHJBSFNJbTljTEtoS1NBUTRuSDJacHNVbDBFbGJLVlRSZTFK?=
- =?utf-8?B?UWpvdnJHZHN3WHNiRkFrbUZrNld3UmpwcVAxVW0xL3JxTzd6T1RUUmRjdTlW?=
- =?utf-8?B?bDNRSXVWLytkZUFHU1NUeW53QTBQdmhFdWlZQVhiL2RndnlJdEdlcUtMOHFp?=
- =?utf-8?B?MWlVcXNIVTJYVUlsZ3pBeWttNFF5bTRsRXJzdTh0UFhoR2RWRmpEV1ZUSGJU?=
- =?utf-8?B?dmhnOUkwQWtBaFlpV3JSUFEyTk9ORG1FVzV0Q0pYWm8yQmdiaUthbGtHVUww?=
- =?utf-8?B?MDVvMjh0Tm55Sjkyc015TVJuUGVmbmFYalR4V2Jmb2RDUW43MkZibC8vd25o?=
- =?utf-8?B?VGtER2JRZ1E3V0ZjeFdGVW40ekdhVXBNaDEvUzRUcXRrMVVoUG1PZm54amhG?=
- =?utf-8?B?bGgzRzFuUFE4NkdRb2t0cTdOOXRaU0NQZnY4a2UzUUJaM21lVVRycGZlYnBP?=
- =?utf-8?B?aGtLeldWZE5VS0pRQ1NSM3pZTUkzTXNYYlNuYlFrTjhWSzlNL2puRlkvdWFR?=
- =?utf-8?B?cklHSkp3OEdKNDJCT1k2bHRteTJ1NTd5U0k4ZVhYWkMyWFNsMlAxaHU2bEgw?=
- =?utf-8?B?UjNwZzJiLzNEQy9vR1RHQk4ydEUvNHpmb05KMkxpcHhwVEUyS2hFME1iblRx?=
- =?utf-8?B?WWFWV29nRTZmVmprVy9menZsQjZWendrNitLYTZLOFpRREl4SnFqWExHNTVw?=
- =?utf-8?Q?jIIE=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78E92DE711
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755689128; cv=none; b=oKAn+Oan8tavsZILaPRCMC0VMFWzEN6GmJBWHFxvbyxSTkJfRx+rTtU8bCP1nLoleNC7FaZnzH8l1Os/3s8bmw95Jll9bQWYiquvslT+7c3aITH6u95TYSQsPF4IQJiHyVoR8ufdAGM4jgR0sl86Pjyr71foDso1Lx7I6A60sd4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755689128; c=relaxed/simple;
+	bh=Dh1+UR+680GmsGGxUKQtBHFQnBCR6qxR71IDUROcn6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jWsnp4+A4jytEf+zmPvXAE1blB5Gd5khekKTQrFv1v8HTPlfu3KKcfu5bGneLpYeOglDCYNits5OtU3ANQMLiPpoYvPIrKkxp367V5dZk43skl0Mbn93QXwGAWG18tpupiHp8/5lsGxxFkQA5O1/ERRc9U3t7E2w0GvwbD4Y0ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=deKVPfql; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KA3jUq006326
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:25:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=pM3IqereRYgkro22T8SG9mTJ
+	LbTJvmRyFErAXFuHomc=; b=deKVPfqlLNdOJrVI6aCZh1L26hLIpF8gcwwC9Qz+
+	lOXkzdJYZ6zMe27WebkL/uZOy1/7IAYyR4VO6yiBUYEFTgvTQMi0NB4yPsy69VRc
+	wwz+HJnyMC+WmcmYZJZWW9R5iuJTxJRNRTTJRl3fBCFNfz97cCqlz6prbv/epetS
+	DN6L9R+Etzrth5KJqP3SoUbYIoI9W9olRSEq2S3htNqkOAb/MipAz7XUJeJ2ez/k
+	eXCtKSbUdckGiUuMta1kaW1pgivmSkmuk65dR6MFwWet5N41vQLyYyda1LwzmjLk
+	vuAmGJxbr17EgZOZ3kDoglBWPUgu400DHNmNwX8cKk3Q5A==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5291gsp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:25:25 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70d7c7e972eso6318056d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:25:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755689125; x=1756293925;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pM3IqereRYgkro22T8SG9mTJLbTJvmRyFErAXFuHomc=;
+        b=B241A4VWtfbLwhDGFhYZIRyb1jiJ5EQ4Cf1oBwKGFH1WdyF25KdLQbnc8LDSENY0xd
+         Phn/NQu18ytzOxmAjCxt2XAAgee93mfLzfTDKsV/saOH0RJLHQbhsAMDO7QmvMhtA7rm
+         20JMGde4fcbpHpWOF4dVbwmnOTAGCMoF/UbNat7nlDs3ufNFVZDxc3GxE3/6W/iOtNsA
+         plgIxaJAQR6EbCxxTXIInywVdcRZDIiLxpzSJyFoIPq7xON+8v7o8BdnYpIwuSd+6Sn7
+         2t03NHPHsQPIEFwWaWxNZDADuDwrCC0tm/TEqQNpDPPU8yRuz+lvsruhaeMWS0GrQrNb
+         /vIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpBlkfOhWZmnEmElQU9mzAqJPlY20PykddyzxmpFg21ETsIPBR/EVXf/OTPKZ1vt1CXyU2WLEIA4FMwaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl/OG2OBHZnmyFCesVTEFcZav9+3wGoQb6oN2QyJ9pV2VkBAvn
+	qEKs6/CV+E1b/pIYfU0py1Vwa03OK2SjJiK+B2Co9IrhUAiAn4589Lk2jz219dPfmU4YNXuLVG0
+	EcRBGQDaUC/zn+xQoX3fRS/PoGHcj64wVRqJiYLz50k2WGOp8FEaJCdg2FkUZoc5myVA=
+X-Gm-Gg: ASbGncunLALvwHy1EvMZBCB5bVYnuo6C4xn3ErMfcCTOLcO0MvY2Q+lb9xXABn4vn8B
+	kBWHjwYhKxn0bVfwrqClmXrIvBzXwHeA17QA+z/QmPwrv3Q9sRbWgIpKpq+QH5q50kGz3tb4t4n
+	1v7IjsqNtXoMO42BnvCaTAC1OhCXbWLc+XaMxG8vqdW5isdM3hTnP5zvtrLkTL5Nf5NGQ5X0VHC
+	ka0elmCt1aSsNN2LMKOJaAEhF3/EDIOyNWs3bNzweZM10OXPe31xL4KRlw6qx0uNBdwuoggm5EQ
+	1Q015Ou26YMw/LolWJSBbCYMhp33DHOFJZ5D3u+THonqs1jw2sF3igz7Zp+xTUbUoA2BkEnh3Vn
+	Lslq3jLAWBlJQlIK8dBkuJC+fORBDAnoZxwY1eYTKMu0CQ3HXzlnu
+X-Received: by 2002:a05:6214:2304:b0:707:4d17:e280 with SMTP id 6a1803df08f44-70d76fe844cmr28308646d6.28.1755689124584;
+        Wed, 20 Aug 2025 04:25:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFo3x0vG5bWavr75XQbzze8op4sOboUWHZRciWylwkkn+WCE6mKciGuth4WwgeOOu0+W+czaQ==
+X-Received: by 2002:a05:6214:2304:b0:707:4d17:e280 with SMTP id 6a1803df08f44-70d76fe844cmr28307826d6.28.1755689123788;
+        Wed, 20 Aug 2025 04:25:23 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3f3568sm2520633e87.117.2025.08.20.04.25.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 04:25:21 -0700 (PDT)
+Date: Wed, 20 Aug 2025 14:25:19 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, fange.zhang@oss.qualcomm.com,
+        yongxing.mou@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, quic_lliu6@quicinc.com
+Subject: Re: [PATCH v3 06/14] phy: qcom: qmp-usbc: Add QCS615 DP PHY
+ configuration and init data
+Message-ID: <bx3cumx7ej7taour6zhqufrzjdxuhvlx23ga3vmvokrlekayem@e5rfjbcwle2r>
+References: <20250820-add-displayport-support-for-qcs615-platform-v3-0-a43bd25ec39c@oss.qualcomm.com>
+ <20250820-add-displayport-support-for-qcs615-platform-v3-6-a43bd25ec39c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB7736.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9386c32d-409d-4e7f-d479-08dddfdc2b7f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2025 11:24:47.1793
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 80V1Pi2BE/CdJye/cHNWK9P1sROofn2ljnRbT+VS5g9M/V6LLEFS8umUCGEwlzdw
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF64A94D5DF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820-add-displayport-support-for-qcs615-platform-v3-6-a43bd25ec39c@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=Aui3HO9P c=1 sm=1 tr=0 ts=68a5b0a5 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=w_ydXb1fH3eDB4nJsVwA:9 a=CjuIK1q_8ugA:10
+ a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-ORIG-GUID: 3TNcm-GnIKckKOaZ1aVik72wlCIDP4RK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX8luP7e92yI1q
+ cTB89A3LOaS3+tJG3X2jUPBsapaMF7ZEqH8hdbV4wRQwlJnueoNidfxrnULhsxhykEaWv+BPckX
+ qxJheT6WqpX1DMZqYvvOCHOI9RPT04/2qrrbUINsf7l6igMhWtCj694Ts2Wvoxg8XiPweIu5GRH
+ lrVJEy47Draak3d3iFN+u7I3Y74P1XkWIBDvGy4Wu3vI1zmYmZg+Nahk9i1KNvGfUbzXQxOhX16
+ /VmElXTT1b5Z1z4w9mvby+/3QrWfQxxWfsAL98T60WRPEMZ9rVrEVHqeWn7ieU+JXHldlqv9EyK
+ 4Q0oqRIpD5cbIqopNXCmvmgbKsO6p1WchuJrPOfgXbr0PBfmeDQk3UT213DAeIwQ6oSSRDeLsHC
+ 9L+283pYghUPGs8SyId9VMPBhP3PWA==
+X-Proofpoint-GUID: 3TNcm-GnIKckKOaZ1aVik72wlCIDP4RK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_03,2025-08-20_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
+ definitions=main-2508200013
 
-SGkgU2VhbiwNCg0KVGhhbmtzIGZvciBpdC4NCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0t
-LQ0KPiBGcm9tOiBTZWFuIEFuZGVyc29uIDxzZWFuLmFuZGVyc29uQGxpbnV4LmRldj4NCj4gU2Vu
-dDogVHVlc2RheSwgSnVseSAxNSwgMjAyNSAxOjMxIEFNDQo+IFRvOiBBbmFuZCBBc2hvayBEdW1i
-cmUgPGFuYW5kLmFzaG9rLmR1bWJyZUB4aWxpbnguY29tPjsgSm9uYXRoYW4gQ2FtZXJvbg0KPiA8
-amljMjNAa2VybmVsLm9yZz47IGxpbnV4LWlpb0B2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IEFuZHkg
-U2hldmNoZW5rbyA8YW5keUBrZXJuZWwub3JnPjsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
-ZzsgU2ltZWssDQo+IE1pY2hhbCA8bWljaGFsLnNpbWVrQGFtZC5jb20+OyBsaW51eC1hcm0ta2Vy
-bmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IERhdmlkDQo+IExlY2huZXIgPGRsZWNobmVyQGJheWxp
-YnJlLmNvbT47IE1hbmlzaCBOYXJhbmkgPG1hbmlzaC5uYXJhbmlAeGlsaW54LmNvbT47DQo+IE51
-bm8gU8OhIDxudW5vLnNhQGFuYWxvZy5jb20+OyBTZWFuIEFuZGVyc29uIDxzZWFuLmFuZGVyc29u
-QGxpbnV4LmRldj4NCj4gU3ViamVjdDogW1BBVENIXSBpaW86IHhpbGlueC1hbXM6IEZpeCBBTVNf
-QUxBUk1fVEhSX0RJUkVDVF9NQVNLDQo+IA0KPiBDYXV0aW9uOiBUaGlzIG1lc3NhZ2Ugb3JpZ2lu
-YXRlZCBmcm9tIGFuIEV4dGVybmFsIFNvdXJjZS4gVXNlIHByb3BlciBjYXV0aW9uDQo+IHdoZW4g
-b3BlbmluZyBhdHRhY2htZW50cywgY2xpY2tpbmcgbGlua3MsIG9yIHJlc3BvbmRpbmcuDQo+IA0K
-PiANCj4gQU1TX0FMQVJNX1RIUl9ESVJFQ1RfTUFTSyBzaG91bGQgYmUgYml0IDAsIG5vdCBiaXQg
-MS4gVGhpcyB3b3VsZCBjYXVzZQ0KPiBoeXN0ZXJlc2lzIHRvIGJlIGVuYWJsZWQgd2l0aCBhIGxv
-d2VyIHRocmVzaG9sZCBvZiAtMjhDLiBUaGUgdGVtcGVyYXR1cmUgYWxhcm0NCj4gd291bGQgbmV2
-ZXIgZGVhc3NlcnQgZXZlbiBpZiB0aGUgdGVtcGVyYXR1cmUgZHJvcHBlZCBiZWxvdyB0aGUgdXBw
-ZXIgdGhyZXNob2xkLg0KPiANCj4gRml4ZXM6IGQ1YzcwNjI3YTc5NCAoImlpbzogYWRjOiBBZGQg
-WGlsaW54IEFNUyBkcml2ZXIiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBTZWFuIEFuZGVyc29uIDxzZWFu
-LmFuZGVyc29uQGxpbnV4LmRldj4NCj4gLS0tDQo+IA0KPiAgZHJpdmVycy9paW8vYWRjL3hpbGlu
-eC1hbXMuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxl
-dGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaWlvL2FkYy94aWxpbngtYW1zLmMg
-Yi9kcml2ZXJzL2lpby9hZGMveGlsaW54LWFtcy5jIGluZGV4DQo+IDc2ZGQwMzQzZjVmNy4uNTUy
-MTkwZGQwZTZlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2lpby9hZGMveGlsaW54LWFtcy5jDQo+
-ICsrKyBiL2RyaXZlcnMvaWlvL2FkYy94aWxpbngtYW1zLmMNCj4gQEAgLTExOCw3ICsxMTgsNyBA
-QA0KPiAgI2RlZmluZSBBTVNfQUxBUk1fVEhSRVNIT0xEX09GRl8xMCAgICAgMHgxMA0KPiAgI2Rl
-ZmluZSBBTVNfQUxBUk1fVEhSRVNIT0xEX09GRl8yMCAgICAgMHgyMA0KPiANCj4gLSNkZWZpbmUg
-QU1TX0FMQVJNX1RIUl9ESVJFQ1RfTUFTSyAgICAgIEJJVCgxKQ0KPiArI2RlZmluZSBBTVNfQUxB
-Uk1fVEhSX0RJUkVDVF9NQVNLICAgICAgQklUKDApDQo+ICAjZGVmaW5lIEFNU19BTEFSTV9USFJf
-TUlOICAgICAgICAgICAgICAweDAwMDANCj4gICNkZWZpbmUgQU1TX0FMQVJNX1RIUl9NQVggICAg
-ICAgICAgICAgIChCSVQoMTYpIC0gMSkNCj4gDQo+IC0tDQo+IDIuMzUuMS4xMzIwLmdjNDUyNjk1
-Mzg3LmRpcnR5DQo+IA0KDQoNClRlc3RlZC1ieTogRXJpbSwgU2FsaWggPFNhbGloLkVyaW1AYW1k
-LmNvbT4NCkFja2VkLWJ5OiBFcmltLCBTYWxpaCA8U2FsaWguRXJpbUBhbWQuY29tPg0KDQo=
+On Wed, Aug 20, 2025 at 05:34:48PM +0800, Xiangxu Yin wrote:
+> Introduce QCS615 hardware-specific configuration for DP PHY mode,
+> including register offsets, initialization tables, voltage swing
+> and pre-emphasis settings.
+
+This will trigger unused warnings. Please squash this into the patch
+adding compat string to the driver.
+
+> 
+> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 139 +++++++++++++++++++++++++++++++
+>  1 file changed, 139 insertions(+)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+> index 6b0e86ec43ded3d850f68f248a74c39f74ecb5bb..61128d606238321d1b573655b3b987226aa2d594 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+> @@ -284,6 +284,86 @@ static const struct qmp_phy_init_tbl qcm2290_usb3_pcs_tbl[] = {
+>  	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RX_SIGDET_LVL, 0x88),
+>  };
+>  
+> +static const struct qmp_phy_init_tbl qcs615_qmp_dp_serdes_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SVS_MODE_CLK_SEL, 0x01),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SYSCLK_EN_SEL, 0x37),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_SELECT, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SYS_CLK_CTRL, 0x06),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x3f),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_ENABLE1, 0x0e),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_BG_CTRL, 0x0f),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SYSCLK_BUF_ENABLE, 0x06),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_SELECT, 0x30),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_PLL_IVCO, 0x0f),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_PLL_CCTRL_MODE0, 0x28),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_PLL_RCTRL_MODE0, 0x16),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CP_CTRL_MODE0, 0x0b),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_INTEGLOOP_GAIN0_MODE0, 0x40),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_INTEGLOOP_GAIN1_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_MAP, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_BG_TIMER, 0x08),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CORECLK_DIV, 0x05),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_CTRL, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE1_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE2_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_CTRL, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CORE_CLK_EN, 0x0f),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CMN_CONFIG, 0x02),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl qcs615_qmp_dp_serdes_tbl_rbr[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_HSCLK_SEL, 0x2c),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DEC_START_MODE0, 0x69),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START1_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START2_MODE0, 0x80),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START3_MODE0, 0x07),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP1_MODE0, 0xbf),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP2_MODE0, 0x21),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP3_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_LANE_MODE_1, 0xc6),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl qcs615_qmp_dp_serdes_tbl_hbr[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_HSCLK_SEL, 0x24),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DEC_START_MODE0, 0x69),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START1_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START2_MODE0, 0x80),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START3_MODE0, 0x07),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP1_MODE0, 0x3f),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP2_MODE0, 0x38),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP3_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_LANE_MODE_1, 0xc4),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl qcs615_qmp_dp_serdes_tbl_hbr2[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_HSCLK_SEL, 0x20),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DEC_START_MODE0, 0x8c),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START1_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START2_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START3_MODE0, 0x0a),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP1_MODE0, 0x7f),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP2_MODE0, 0x70),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP3_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_LANE_MODE_1, 0xc4),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl qcs615_qmp_dp_tx_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_TRANSCEIVER_BIAS_EN, 0x1a),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_VMODE_CTRL1, 0x40),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_PRE_STALL_LDO_BOOST_EN, 0x30),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_INTERFACE_SELECT, 0x3d),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_CLKBUF_ENABLE, 0x0f),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_RESET_TSYNC_EN, 0x03),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_TRAN_DRVR_EMP_EN, 0x03),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_PARRATE_REC_DETECT_IDLE_EN, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_TX_INTERFACE_MODE, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_TX_EMP_POST1_LVL, 0x2b),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_TX_DRV_LVL, 0x2f),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_TX_BAND, 0x4),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_RES_CODE_LANE_OFFSET_TX, 0x12),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_RES_CODE_LANE_OFFSET_RX, 0x12),
+> +};
+> +
+>  enum qmp_phy_usbc_type {
+>  	QMP_PHY_USBC_USB3_ONLY,
+>  	QMP_PHY_USBC_USB3_DP,
+> @@ -449,6 +529,34 @@ static const struct qmp_usbc_offsets qmp_usbc_offsets_v3_qcm2290 = {
+>  	.rx2		= 0x800,
+>  };
+>  
+> +static const struct qmp_usbc_offsets qmp_usbc_usb3dp_offsets_qcs615 = {
+> +	.serdes		= 0x0,
+> +	.pcs		= 0xc00,
+> +	.pcs_misc	= 0xa00,
+> +	.tx		= 0x200,
+> +	.rx		= 0x400,
+> +	.tx2		= 0x600,
+> +	.rx2		= 0x800,
+> +	.dp_serdes	= 0x1c00,
+> +	.dp_txa		= 0x1400,
+> +	.dp_txb		= 0x1800,
+> +	.dp_dp_phy	= 0x1000,
+> +};
+> +
+> +static const u8 qmp_dp_pre_emphasis_hbr2_rbr[4][4] = {
+> +	{0x00, 0x0b, 0x12, 0xff},
+> +	{0x00, 0x0a, 0x12, 0xff},
+> +	{0x00, 0x0c, 0xff, 0xff},
+> +	{0xff, 0xff, 0xff, 0xff}
+> +};
+> +
+> +static const u8 qmp_dp_voltage_swing_hbr2_rbr[4][4] = {
+> +	{0x07, 0x0f, 0x14, 0xff},
+> +	{0x11, 0x1d, 0x1f, 0xff},
+> +	{0x18, 0x1f, 0xff, 0xff},
+> +	{0xff, 0xff, 0xff, 0xff}
+> +};
+> +
+>  static const struct qmp_phy_cfg msm8998_usb3phy_cfg = {
+>  	.offsets		= &qmp_usbc_offsets_v3_qcm2290,
+>  	.type			= QMP_PHY_USBC_USB3_ONLY,
+> @@ -500,6 +608,37 @@ static const struct qmp_phy_cfg sdm660_usb3phy_cfg = {
+>  	.regs			= qmp_v3_usb3phy_regs_layout_qcm2290,
+>  };
+>  
+> +static const struct qmp_phy_cfg qcs615_usb3dp_phy_cfg = {
+> +	.offsets		= &qmp_usbc_usb3dp_offsets_qcs615,
+> +	.type			= QMP_PHY_USBC_USB3_DP,
+> +
+> +	.serdes_tbl		= qcm2290_usb3_serdes_tbl,
+> +	.serdes_tbl_num		= ARRAY_SIZE(qcm2290_usb3_serdes_tbl),
+> +	.tx_tbl			= qcm2290_usb3_tx_tbl,
+> +	.tx_tbl_num		= ARRAY_SIZE(qcm2290_usb3_tx_tbl),
+> +	.rx_tbl			= qcm2290_usb3_rx_tbl,
+> +	.rx_tbl_num		= ARRAY_SIZE(qcm2290_usb3_rx_tbl),
+> +	.pcs_tbl		= qcm2290_usb3_pcs_tbl,
+> +	.pcs_tbl_num		= ARRAY_SIZE(qcm2290_usb3_pcs_tbl),
+> +
+> +	.regs			= qmp_v3_usb3phy_regs_layout_qcm2290,
+> +
+> +	.dp_serdes_tbl		= qcs615_qmp_dp_serdes_tbl,
+> +	.dp_serdes_tbl_num	= ARRAY_SIZE(qcs615_qmp_dp_serdes_tbl),
+> +	.dp_tx_tbl		= qcs615_qmp_dp_tx_tbl,
+> +	.dp_tx_tbl_num		= ARRAY_SIZE(qcs615_qmp_dp_tx_tbl),
+> +
+> +	.serdes_tbl_rbr		= qcs615_qmp_dp_serdes_tbl_rbr,
+> +	.serdes_tbl_rbr_num	= ARRAY_SIZE(qcs615_qmp_dp_serdes_tbl_rbr),
+> +	.serdes_tbl_hbr		= qcs615_qmp_dp_serdes_tbl_hbr,
+> +	.serdes_tbl_hbr_num	= ARRAY_SIZE(qcs615_qmp_dp_serdes_tbl_hbr),
+> +	.serdes_tbl_hbr2	= qcs615_qmp_dp_serdes_tbl_hbr2,
+> +	.serdes_tbl_hbr2_num	= ARRAY_SIZE(qcs615_qmp_dp_serdes_tbl_hbr2),
+> +
+> +	.swing_tbl		= &qmp_dp_voltage_swing_hbr2_rbr,
+> +	.pre_emphasis_tbl	= &qmp_dp_pre_emphasis_hbr2_rbr,
+> +};
+> +
+>  static int qmp_usbc_com_init(struct phy *phy)
+>  {
+>  	struct qmp_usbc *qmp = phy_get_drvdata(phy);
+> 
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
