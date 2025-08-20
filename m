@@ -1,101 +1,96 @@
-Return-Path: <linux-kernel+bounces-778051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A08B2E0C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:22:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31342B2E120
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DFBD1C84993
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:17:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC6A3AC9D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF510338F35;
-	Wed, 20 Aug 2025 15:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDC533A037;
+	Wed, 20 Aug 2025 15:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JHGps4hO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSKpfRXP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C52338F29;
-	Wed, 20 Aug 2025 15:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B83B322C98;
+	Wed, 20 Aug 2025 15:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755702418; cv=none; b=rLJ+RrrCZzs6gphaVasKufN5QnKKhRkBNDbArZ7xlM/qjTBnritp7GqjsdT3b16d7ayO05dkmTRxeX+/LYo2je/eupUQbHenelfzj+HLrrPcKsNtPRq/GWf75avrLlXaswVDVzC1GvmCMV9Fb0iB9gsWJXVrKYHVLSd1zeK7eFQ=
+	t=1755702487; cv=none; b=LoFNO72E7bZeViQUwclLYoE4sSZdifmYEz5TzRjRLwY6ECGZhwaWmNMamEYvlygdDxtviUgdvHwxqQOphcwKeIdy859rI42xkup0gRBz+gtPJIMRSvyEd06aHPKfvbjsErQ36K/t7Zw+sU6AxWqa03nnyporbCsmi1AfG6bwJ9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755702418; c=relaxed/simple;
-	bh=l8NLF1lhQ9QsOYxcGmVmRIxtmN2oRyQvwPzcqOC8N3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVWOOcpJaLeN+Zz5J6ND00a0zmvl4KOq7EEkcCjKA+hfmKupGBZYxn/UXPrzv2EERTNBI4HFhwdbWeUPWPE6tRk8sE48snY489rrYOd5FCnICo3O8J66UqgOVWutv22D+ANTgDgbYs+YcVUV5eAybFVC7hcGNPftiVGia3vV2zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JHGps4hO; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755702417; x=1787238417;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=l8NLF1lhQ9QsOYxcGmVmRIxtmN2oRyQvwPzcqOC8N3c=;
-  b=JHGps4hOTC/FIMTJBOL8luYVzkv4tMfPCWwvK84ADda2zeFgh2HWS604
-   Wis45+ZmRqC3FiV4KutRnrsSGmZl1l0PAdlL8vTLrXdPTYorfnOV1UQhM
-   mGK6Ot3xhRP235GfThAUggBLRU5Z+SJmpPofI6r1+TmzXAh1O76DvPNeu
-   lJo6fMGu1s/gZVPnzYIaBVtkb+yuGaMBW/4yOKd16GXTz4qIP3i4prrV9
-   JPgNTpkrdn2oeHrBbANdd2x0ZiKlYvDoh33Y0eCcd6Lmyyote/nItpxNk
-   jXKkH8w0klJvCPuWANaoX3d2RcSf9mmDIeX5G7Lcz32hds8rDfc7aiM9j
-   Q==;
-X-CSE-ConnectionGUID: lAgs/3UlSpitwf1wrupRsA==
-X-CSE-MsgGUID: 0r1sHtbRTHSPqjc8zY884g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="83394591"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="83394591"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 08:06:56 -0700
-X-CSE-ConnectionGUID: tstZB47DSwW4KIkXKjGxfQ==
-X-CSE-MsgGUID: 5CJJ42bcRGO5Fmg0n7GiIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="168506052"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 08:06:53 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uokOp-00000006y11-00LH;
-	Wed, 20 Aug 2025 18:06:51 +0300
-Date: Wed, 20 Aug 2025 18:06:50 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Cc: hansg@kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com,
-	andy@kernel.org, gregkh@linuxfoundation.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org, dan.carpenter@linaro.org
-Subject: Re: [PATCH] staging: media: atomisp: return early on
- hmm_bo_device_init() failure
-Message-ID: <aKXkimJkYrHUCbz1@smile.fi.intel.com>
-References: <20250815173755.33254-1-abdelrahmanfekry375@gmail.com>
+	s=arc-20240116; t=1755702487; c=relaxed/simple;
+	bh=GE5St3AH2vAEE6STTTMAkSYjbxbjNa8r7LP67c+65Rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rkJ06ifUk4cWDKB6x6Z5Mvdu7h3deBIGeYzBHaF7ObBf8Tro9RPnV5jDE/9pfCPKr8U3SJcRtY+C6iaEJ2X3SfJGH0AmQEmySeRnTE6LWJuJzl7SumrPWb27+CUtdfmAlop9tIdlOlhwo76Wj8Zqu4ZaeBmu+1oTIWBpEJKYgP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSKpfRXP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3371C4CEE7;
+	Wed, 20 Aug 2025 15:08:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755702485;
+	bh=GE5St3AH2vAEE6STTTMAkSYjbxbjNa8r7LP67c+65Rs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hSKpfRXPUGlpTZrlVQrjnXJH8PWAP6t4O5O7bDR4HtpdRypy2rRnLy1c+APIKnZLw
+	 K+TZ+RwmgaEQZ2Jmy7gwLlwt8kfQtSffTFtNvTHK+mM+H/BRDJxh3iUG+8OogWbbOA
+	 0hxsetcw8z1kbPQ96nnhfnQn4w6zQKKoA34hh/R8DafmcUcjxmVa+eI2ZB6+r9GIdN
+	 CuyLtb/rf0V8LD/fWq+5bfh3bJThlOtPjuSsZvBabZY+aVufFYNb5ajSrX/uMlLrV2
+	 w5fH2XBVYiXs6zTlenyqd5PXyhuifLKMmACT5Z7P+JGuxRJuiGdLCSilS7esnGGfon
+	 unWFVW2CI6wRg==
+Date: Wed, 20 Aug 2025 08:08:04 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: syzbot ci <syzbot+ci77a5caa9fce14315@syzkaller.appspotmail.com>,
+ abhishektamboli9@gmail.com, andrew@lunn.ch, ayush.sawal@chelsio.com,
+ coreteam@netfilter.org, davem@davemloft.net, dsahern@kernel.org,
+ edumazet@google.com, fw@strlen.de, gregkh@linuxfoundation.org,
+ herbert@gondor.apana.org.au, horms@kernel.org, kadlec@netfilter.org,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, mhal@rbox.co,
+ netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com,
+ pablo@netfilter.org, sdf@fomichev.me, steffen.klassert@secunet.com,
+ syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot ci] Re: net: Convert to skb_dstref_steal and
+ skb_dstref_restore
+Message-ID: <20250820080804.30910230@kernel.org>
+In-Reply-To: <CANp29Y4g6kzpsjis4=rUjhfg=BPMiR9Jk68z=NT0MeDyJS7CaQ@mail.gmail.com>
+References: <20250818154032.3173645-1-sdf@fomichev.me>
+	<68a49b30.050a0220.e29e5.00c8.GAE@google.com>
+	<20250819175842.7edaf8a5@kernel.org>
+	<CANp29Y4g6kzpsjis4=rUjhfg=BPMiR9Jk68z=NT0MeDyJS7CaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815173755.33254-1-abdelrahmanfekry375@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 08:37:55PM +0300, Abdelrahman Fekry wrote:
-> hmm_init() would continue execution even if hmm_bo_device_init() failed,
-> potentially leading to bad behaviour when calling hmm_alloc().
+On Wed, 20 Aug 2025 12:45:52 +0200 Aleksandr Nogikh wrote:
+> > Could we do something about this Tested-by: tag?
+> > Since the syzbot CI reports are sent in reply to a series patchwork and
+> > other tooling will think that syzbot is sending it's Tested-by tag for
+> > this series.
+> >
+> > In some cases we know that the issues found are unrelated, or rather
+> > expect them to be fixed separately.  
 > 
-> - returns the error immediately if hmm_bo_device_init() fails.
+> FWIW if you notice the reported issues that are completely unrelated,
+> please let me know.
+> 
+> > Could we perhaps indent the tag with a couple of spaces? Not 100% sure
+> > but I _think_ most tools will match the tags only from start of line.  
+> 
+> Sure, that sounds like a very simple solution.
+> I've adjusted the email template - now there are several leading
+> whitespaces on the tag line. I hope it will help (otherwise we'll see
+> what else can be done).
 
-Acked-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Looks like we have received a report with your adjustment in place for:
+https://lore.kernel.org/all/20250820092925.2115372-1-jackzxcui1989@163.com/
+I can confirm that it fixes the tag propagation for our tooling. 
+Thank you!
 
