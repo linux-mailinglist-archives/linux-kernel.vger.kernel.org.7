@@ -1,79 +1,44 @@
-Return-Path: <linux-kernel+bounces-777628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A88B2DBF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:03:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B67B2DC17
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35825C37A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:03:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0162D72513B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF9D2E62DD;
-	Wed, 20 Aug 2025 12:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjWCACoP"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4411C2E7185;
+	Wed, 20 Aug 2025 12:08:47 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E899A183CC3;
-	Wed, 20 Aug 2025 12:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D263527877B;
+	Wed, 20 Aug 2025 12:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755691414; cv=none; b=MjLPPAYqEoooqHCUQm8UFJE7Oude/d9vFLQjgpjyd3pfJUmmwzhw8Il+pwzCOC2Qs32FgmAWTDhZD/esibOjUIIvbVeTJk5G7Z+e6XQwTwbE8vjeHRs9msbNZDgAcF5umepomA/3PGptLgRlF1VB16+VY2p8Cic0Hc0HEciY0/s=
+	t=1755691726; cv=none; b=DaMoF4rhhbgl4kMH+6OzEWBix+tpsOjJYsoy72ChRXHUdtCZOnTRZ79PmoaR/2dDgk2W9Ni+uxYVpvzK4Vrpe2LtgYkCYpNegJYmwmZ5Mya70dAs8pThseZ9FFeyWUsuGiQZwJJcRu2OTrsLJPojPdoek4sFtgXaWEqb8wGPq3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755691414; c=relaxed/simple;
-	bh=eHKn8iJucqxAbzpJgDpV7nmtzEYpKn6TT9ECvMVGXLY=;
+	s=arc-20240116; t=1755691726; c=relaxed/simple;
+	bh=s0lv2UXp8yblsgF0Qbsw03+rd1UZg+LE/tfgGXntx+Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LZ1MpysMPL2iuxeZVl1OHmkXqa3Yzjy94RTxh0Y5IiwxWeR2Cg0Xl8g51p1wDfcKzF8RokwJa6i+i5bucMXvOaT7nf2RBxD+tI+MLcZzofszSPvQJhmHOFWDm/FwJ65M4+qNz7mpuzreJpWNBfI7jh6bbwrFYpvgTXfHAA3klYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjWCACoP; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a28ff47a0so19179595e9.0;
-        Wed, 20 Aug 2025 05:03:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755691410; x=1756296210; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XXaBuqHwa15yy/eu+VvjkdKQuH18mHpFGGi+XGcVeWI=;
-        b=hjWCACoPnoVX+m3eaCW7wFjEyv6RNDZVf9YF8wb6ijWbnmxQK/tWL65rKo9YpT3zuO
-         e18T+7qeg0xULyq7D9CoFPccg/70quBpeHut1k4bSKX446V3AO8tgwCTNxFPAYvVPp5M
-         utRnnKW0gdyOTg9S+Tej8ot44dGZTFRdetIV9cQZhxDan8XN99HnAwQy6OQk81ist2kk
-         NRXcrd1yONR8XJ660Kmxg/i3oMxft37KDcykseyuqusuyCo0RQ0aYEV8SSSWs3i0d1xo
-         5Cjla3ZautvG+4NznKs04Ik49HioI3YrEtKmY686/VjhUrpVVadA6DQFPNN5vUuN8lYu
-         F2+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755691410; x=1756296210;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XXaBuqHwa15yy/eu+VvjkdKQuH18mHpFGGi+XGcVeWI=;
-        b=SRuPULcVSVBe81L5RngBUbO1/QlPfMcbUJVupFCncAiEzc3X2etKgcRGGm7oyZayKb
-         ljnihYdM1/ExFDvLfULNPkPSPE0GAKnizaP6kBqsqW8LT66U11TQ49J1NMOXCW/GU9Ux
-         IBFCeVVNH05tIavoq+XsrOXKSBw6Z+tlj8n/i4I1b9kQt3Pui+zx9FMq7vuYUEQOBPa4
-         kqJl5nbtQk1UwgYgUISa/xgHpCi3CS0lxO+ZvsFj70v1XchEc7PEt51QxUjMUedXPXfA
-         7mgRWTTi0z68NLyEhnB7TOnMLHV6t94fz41wy7A8YOtvu9cABBPSmCX7C0pW90TuKG4r
-         R5PA==
-X-Forwarded-Encrypted: i=1; AJvYcCVODFH6e37MSLlCq6crMqPe9CIUuJmil+9eTA+/0xfo9HHePIf6LBB2EFaRPPFDfe5UVyhLBZ6kX8b5iEgC@vger.kernel.org, AJvYcCVveJcWc0M4onUIAoIXPJ1c7z4OE5Q8MhzakBiJzOd8wTZ9N3Ql2Q0f3b/qUMUPn1iZOFg5TSyVjg==@vger.kernel.org, AJvYcCXyrU3QlycofZeC3660IUBp01Svgcpy+daih4XcoTqa+0vD6UTX6bO8GuJRZcg8j1si2sdktPvh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQNE6bJ/xGYnqCYtEXcQRUluUvG6xD7m6GF320n+3S97VJ749K
-	olPfmlocVAy0kELkZQf7b2M82tP2s9GshEgFaK7piEIv/5YzawG1VEpW
-X-Gm-Gg: ASbGncthDAJNndgFuDc+WRCqd8QLp5PN4Sclj68dEYfoct+w/eaHUABtX+tcZeaIoR8
-	jaYfrwuY9xn52xGNlSp+H2QzmoRyAmMQMOBn5ahgryifJQ2uy3LksmIlSdAsci06sv1adeO7k8j
-	dBB/BWrVIOn/dzXRB9319aL9Uxp9Awnyzgdy8+lkRLZ3lbMgRMvGYRCahCZxFfYYh/PqZlDr0LW
-	e/r6r0nBs4USRM6hVD4fALvNUHVG8fn8Faz7IIFPzxUkzk7hN2eLc5aF/92C4TQOaBx+2/BzkVs
-	XStr7zn4/wizvUWFyVBQMRB2Ls34tT0YzEYFeUY42BRhm9LpjAlyQxhlDtbiL9pMB/MtPabTjyX
-	TtFRoJFXD61rUzPqW78mLFFTa6Aoa3Rk2qDhWhJHe+5fBtKKD2WfgNtI=
-X-Google-Smtp-Source: AGHT+IFTqtLUCF0kRl8LCEKNbCKLBDF/eqiXvH/D0EJIMMk9eWA4xaRr/DXUkSzDP9Cz88lsFbLCqg==
-X-Received: by 2002:a05:600c:1906:b0:459:da89:b06 with SMTP id 5b1f17b1804b1-45b479e2772mr28957305e9.16.1755691409965;
-        Wed, 20 Aug 2025 05:03:29 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5f7e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c07487978bsm7339533f8f.7.2025.08.20.05.03.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 05:03:29 -0700 (PDT)
-Message-ID: <d55e4a81-e4da-47c5-95ab-03132c1c5553@gmail.com>
-Date: Wed, 20 Aug 2025 13:04:40 +0100
+	 In-Reply-To:Content-Type; b=qJhXgfjpNzen2uafZlk2NalZNY0NICxm/J9Z0mdII9SM98JgNbHpFwrxz1EZo20vCOi18gW4KWnXGgpmBAiWQwM58fTZEjU30icXQSlIlRODLA7IbNum6geG0vixpBERoG4hL4hrOTLkgKxCa0Kk72HLxaz9X6sxQai8eEX5jA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6QGK2fHmzKHMZj;
+	Wed, 20 Aug 2025 20:08:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id CA5DF1A0E87;
+	Wed, 20 Aug 2025 20:08:40 +0800 (CST)
+Received: from [10.174.178.209] (unknown [10.174.178.209])
+	by APP4 (Coremail) with SMTP id gCh0CgDnrxDEuqVoOGlLEQ--.60351S3;
+	Wed, 20 Aug 2025 20:08:38 +0800 (CST)
+Message-ID: <f0447b4b-3068-4943-a2a8-782308311cfe@huaweicloud.com>
+Date: Wed, 20 Aug 2025 20:08:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,72 +46,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 05/23] net: clarify the meaning of
- netdev_config members
-To: Mina Almasry <almasrymina@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
- Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>,
- Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org,
- davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk,
- michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <cover.1755499375.git.asml.silence@gmail.com>
- <8669b80579316a12d5b1eb652edb475db2f535e7.1755499376.git.asml.silence@gmail.com>
- <CAHS8izMO=6oHN4w9XiL0yw7x86LF8iw-LhMA4qZe2rXOu0Cmbg@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izMO=6oHN4w9XiL0yw7x86LF8iw-LhMA4qZe2rXOu0Cmbg@mail.gmail.com>
+Subject: Re: [PATCH v4] smb: client: Fix mount deadlock by avoiding super
+ block iteration in DFS reconnect
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: sfrench@samba.org, pc@manguebit.org, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+ chengzhihao1@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20250815031618.3758759-1-wangzhaolong@huaweicloud.com>
+ <aKQKsS1Vv8joDjo8@stanley.mountain>
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+In-Reply-To: <aKQKsS1Vv8joDjo8@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDnrxDEuqVoOGlLEQ--.60351S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF4UAr1UtrW7Aw47AFy3CFg_yoW8trWrpF
+	yFkrsrKF4DZr17u3W8Zw1xu3W7tw48G3W5GF1Yqw17ta98Gr92kF4kKr1FgF4xC39Y9a42
+	qF4DKFWfKFyjyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-On 8/19/25 02:46, Mina Almasry wrote:
-> On Mon, Aug 18, 2025 at 6:56 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> From: Jakub Kicinski <kuba@kernel.org>
->>
->> hds_thresh and hds_config are both inside struct netdev_config
->> but have quite different semantics. hds_config is the user config
->> with ternary semantics (on/off/unset). hds_thresh is a straight
->> up value, populated by the driver at init and only modified by
->> user space. We don't expect the drivers to have to pick a special
->> hds_thresh value based on other configuration.
->>
->> The two approaches have different advantages and downsides.
->> hds_thresh ("direct value") gives core easy access to current
->> device settings, but there's no way to express whether the value
->> comes from the user. It also requires the initialization by
->> the driver.
->>
->> hds_config ("user config values") tells us what user wanted, but
->> doesn't give us the current value in the core.
->>
->> Try to explain this a bit in the comments, so at we make a conscious
->> choice for new values which semantics we expect.
->>
->> Move the init inside ethtool_ringparam_get_cfg() to reflect the semantics.
->> Commit 216a61d33c07 ("net: ethtool: fix ethtool_ringparam_get_cfg()
->> returns a hds_thresh value always as 0.") added the setting for the
->> benefit of netdevsim which doesn't touch the value at all on get.
->> Again, this is just to clarify the intention, shouldn't cause any
->> functional change.
->>
+
+
+
+
+> On Fri, Aug 15, 2025 at 11:16:18AM +0800, Wang Zhaolong wrote:
+>> diff --git a/fs/smb/client/dfs.c b/fs/smb/client/dfs.c
+>> index f65a8a90ba27..37d83aade843 100644
+>> --- a/fs/smb/client/dfs.c
+>> +++ b/fs/smb/client/dfs.c
+>> @@ -429,11 +429,11 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon)
+>>   				       tcon, tcon->ses->local_nls);
+>>   		goto out;
+>>   	}
+>>   
+>>   	sb = cifs_get_dfs_tcon_super(tcon);
+>> -	if (!IS_ERR(sb))
+>> +	if (!IS_ERR_OR_NULL(sb))
+>>   		cifs_sb = CIFS_SB(sb);
+>>   
 > 
-> TBH I can't say that moving the init to before
-> dev->ethtool_ops->get_ringparam(dev, param, kparam, extack) made me
-> understand semantics better. 
+> This is a bad or incomplete fix.  When functions return BOTH error
+> pointers and NULL it MEANS something.  The NULL return in this case
+> is a special kind of success.
+> 
+> For example, if you look up a file, then the an error means the
+> lookup failed because we're not allowed to have filenames '/' so that's
+> -EINVAL or maybe there was an allocation failure so that's -ENOMEM or
+> maybe you don't have access to the directory so it's -EPERM.  The NULL
+> would mean that the lookup succeeded fine, but the file was not found.
+> 
+> Another common use case is "get the LED functions so I can blink
+> them".  -EPROBE_DEFER means the LED subsystem isn't ready yet, but NULL
+> means the administrator has deliberately disabled it.  It's not an error
+> it's deliberate.
+> 
+> It needs to be documented what the NULL returns *means*.  The documentation
+> is missing here.
+> 
+> See my blog for more details.
+> https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
+> 
+> regards,
+> dan carpenter
 
-I agree, it didn't do it for me either ...
 
-> If you do a respin, maybe a comment above
-> the kparam->hds_thresh to say what you mean would help the next reader
-> understand.
+Hi Dan,
 
-... and since the move doesn't have a strong semantical meaning, I
-can't think of a good comment to put on top of the assignment.
-hds_thresh is already described in struct netdev_config and it
-seems like a better place for such stuff. Thoughts?
+Thank you for your valuable feedback and the insightful blog post. You're
+absolutely right - mixing error pointers and NULL without clear semantics
+is problematic.
 
--- 
-Pavel Begunkov
+I've just posted a v5 patch [1] that takes a completely different approach:
+
+- Removes cifs_get_dfs_tcon_super() entirely (no more ERR_PTR/NULL confusion)
+- Directly updates DFS mount prepaths without searching through superblocks
+- Eliminates the deadlock by avoiding iterate_supers_type() completely
+
+Thank you again for catching this issue - it led me to a much better
+solution.
+
+[1] https://lore.kernel.org/all/20250820113435.2319994-1-wangzhaolong@huaweicloud.com/
+
+Best regards,
+Wang Zhaolong
 
 
