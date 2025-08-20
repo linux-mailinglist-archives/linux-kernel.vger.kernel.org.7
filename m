@@ -1,208 +1,195 @@
-Return-Path: <linux-kernel+bounces-777309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 956D1B2D817
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:26:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95752B2D8E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A1A1C44AE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:20:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39004685295
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EAA2DE70D;
-	Wed, 20 Aug 2025 09:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1902E0B6A;
+	Wed, 20 Aug 2025 09:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OypSmZ26"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2065.outbound.protection.outlook.com [40.107.94.65])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lFFJzAqJ"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57C22DAFA9;
-	Wed, 20 Aug 2025 09:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681090; cv=fail; b=JM13AixGXNfC5UUjjRl4EoKBWfQNDYQ8LZHIyjVF7mnwMWGA6oBadPum3/HXnf4/cK1DyjAl0dv2/5fFEuYho29dTz0tU5ygtryZq6E4y9X5Kejezns3eFQ7HQRG806a7dos1D6ERn7Kvye31UqMf6kdPnT6oXWe3U5XXVP7AV0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681090; c=relaxed/simple;
-	bh=FU5RRIzVtUriuewq9D99hGg1WXNUhlwakc14s8ylpuU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kUcikBCLSFLEJP1khR2vU7FnFgLe/rkNwnz9qApMuajuwr26J7FgJf5y9VV95g/MzeiNZVbQIqpTaehaQzfqaot89w6Y0A2eS++P9JtLh8rBMBHaWz0tVD/ZuNgVpR3yfyWONFakuGsvcn1XIdz+Tr3p/Yotx1KIU43/USLjIoE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OypSmZ26; arc=fail smtp.client-ip=40.107.94.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iDsuM7ikREanJjnDNtj56LFXR0Uur2FIs7uX+LrlDeph6LNnvm2wq0xQkHlBj2oVMU5Qa5tqZMO27MOD14MRcb5rd0AUfCzivLQcwbeCPWJecf2n0QMT5Ft7bYLdL2OVx+hrG5X512kQOrHNqfy997YqNy6UPnfhyRIhwVxSGlyw688nZbj8NqeFEU3wKGgBT7z0YRx4+Rfwc5GJwM4kKzxLs6HOAHSJukUFpIDD0/Duln9RWXFm+hZRcZBYi4wxBtckNV6Qs8fVdvFoAwNADuVcMaic8/OKZNx7VhXZTfngujM87jABf01f9xMpBxKO5bz92IlWPoTIH0PCdafYgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FU5RRIzVtUriuewq9D99hGg1WXNUhlwakc14s8ylpuU=;
- b=FbE+yYpGDLPGd7BVKT2kpfYA1GQ6sz60PYUhP78CpzYrCYkXyKd29PqkmQHPNrtxrrRR7IjqShf47ZOvZF7w18YUV+mJHWnwRI87kLqS6AXJKWEOLX5Ft0Ycag36k+VBxLuhxTzxnvgNsFlrEbs5tQorXIjSzKj0b0Q1HQXSq2mQIqgDTpfipQnyDdOnCLU2Wu81IJJN2qagyaTG4/XI1K5LT+96RFNRHecx8VIaOjEIy0UEz4Qg4+uKL/ySM73yJbMh3zAd4TNgkLWsD5E6FDA54/a5dK/3HluAaOnXH0j76ePupZpjnzIWIeWAUcmzL57O4741LQxFUADNgTvFqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FU5RRIzVtUriuewq9D99hGg1WXNUhlwakc14s8ylpuU=;
- b=OypSmZ260KJPbfsWt89X3eLoKTD7fie2xs3cAep7GCOWWC6/13siM7YFIM8ggg4BgSGsx0UbuTtTKoVF4sv5bzKfI+MxvZYlWt+dkhoR7Krwmqf3FZFeOlZ4rs2Ln2OP+KBSIeGuchuSfyHSKhwxWMJyRtM1juaponNgCC/b7k0=
-Received: from IA1PR12MB7736.namprd12.prod.outlook.com (2603:10b6:208:420::15)
- by IA0PR12MB8349.namprd12.prod.outlook.com (2603:10b6:208:407::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Wed, 20 Aug
- 2025 09:10:53 +0000
-Received: from IA1PR12MB7736.namprd12.prod.outlook.com
- ([fe80::af21:b877:699d:43b0]) by IA1PR12MB7736.namprd12.prod.outlook.com
- ([fe80::af21:b877:699d:43b0%5]) with mapi id 15.20.9031.023; Wed, 20 Aug 2025
- 09:10:52 +0000
-From: "Erim, Salih" <Salih.Erim@amd.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "O'Griofa, Conall"
-	<conall.ogriofa@amd.com>, "jic23@kernel.org" <jic23@kernel.org>
-CC: "dlechner@baylibre.com" <dlechner@baylibre.com>, "nuno.sa@analog.com"
-	<nuno.sa@analog.com>, "andy@kernel.org" <andy@kernel.org>, "Simek, Michal"
-	<michal.simek@amd.com>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: RE: [PATCH] MAINTAINERS: Update xilinx-ams driver maintainers
-Thread-Topic: [PATCH] MAINTAINERS: Update xilinx-ams driver maintainers
-Thread-Index: AQHcERqvcBHG1EuWpUKnQp2WApQG/rRrEEmAgAAxEWA=
-Date: Wed, 20 Aug 2025 09:10:52 +0000
-Message-ID:
- <IA1PR12MB7736460C9ACC449D58F992559F33A@IA1PR12MB7736.namprd12.prod.outlook.com>
-References: <20250819150448.1979170-1-salih.erim@amd.com>
- <6048713c-9be8-4078-b612-b67c7bd39103@kernel.org>
-In-Reply-To: <6048713c-9be8-4078-b612-b67c7bd39103@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-08-20T09:06:57.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR12MB7736:EE_|IA0PR12MB8349:EE_
-x-ms-office365-filtering-correlation-id: 44fcb3a2-0046-4760-7e86-08dddfc97694
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?VkdZWTljUU1laURwYk5hd3NydUtWeU5RVmVjV3N3Y2NPVWllc1JWWkhER2wy?=
- =?utf-8?B?bFRCN1llN1hoTGVnRkxzUUx1S2hvUitXc2NPUiswUmdEM1F6cVNQcEwxOG1t?=
- =?utf-8?B?TXpEYk5USVB6M2NSN2FnMCtlTUx6d0RkVlFZQ04zS05rSjIxNE1HL0VKYzdy?=
- =?utf-8?B?NXQ3dklKN1dPVzR2dmdEMlUxU0lseHV1M0hpWjlHc1BsWkJCY2lqQXlHblNV?=
- =?utf-8?B?SGtzVC8zMXA0SDZBbUZ3SVZlOGszQ0R0cmx2TEFGNWlYcmszY0dMT3JVOHZ3?=
- =?utf-8?B?WHZ3RktsdXhUUnY1OFMrOWc1QkRWYVhuT3hNSERoL3MwZmQ5NFN5UGNSWW5T?=
- =?utf-8?B?T09xRkZGc0JTNmtLUnB4a1A4VHRsUkJqK2pzTG9GZCtlZFlUUjhLaG9mRXFI?=
- =?utf-8?B?Rnh1bVhGdlVLV3pqNCtFK1lOUFF1NTQzOGxEbXJ3VHd6VEZQbW5PemFkckJa?=
- =?utf-8?B?QmNGc1FGbEwvZ2hQQ1dlaU9yTk5xMW1mMndTRWI2akNFck9pak1qdTdiL09n?=
- =?utf-8?B?UVJvb0FkOExrYnUzRWFFVlliK2luZEZRbHJZbkxRMldxdkZXUU9hOW1nU3Rl?=
- =?utf-8?B?aFhuZ0U4ZjYwWkYwOU9WNVBZcnpGa1N6T092eG04V2NVYXY1b2QwelZvVTZm?=
- =?utf-8?B?RUxUc29nQ1JsTlp2NStOTnJXeit1SVhTQ2x3eENKa0dxWnBzb21uYjg0ZGxo?=
- =?utf-8?B?QTN6emUwUG5qS0VKenF2TkF5cHN5QzVWRllZbW1DK2FBaU9UbnhMTU12bEE5?=
- =?utf-8?B?RkJBdHFOS2VvcWdIL3FJWndacHMrVVFjS3NhVDZHdHBzR0VFb1FRMGZ0cm1q?=
- =?utf-8?B?VEM0cXh1c3F0T1Q1K2ozOERuYmtORllxeGQvMmtDZzI1U3Z3di9lZDJPVGpl?=
- =?utf-8?B?K0RkdVNrSjhkL1hldEJJMTNOQ3NKMFlRYkNDbzdhczlIOUM1WVJXUXhtYlkz?=
- =?utf-8?B?V2ZiTnY0OXYxN2RPcXdCNXc4eHNFZnJNWW9KQm5uY1h3NEs0VUpTMFJldkcw?=
- =?utf-8?B?akFnN2dFRnlKb0poMXg3cEtGdmZpNE5RNE5XMHdLV2V3cklLT0c4WG5wNVBi?=
- =?utf-8?B?WG0rMHRaa0NLelptSlZWN1Rxc082cTBJSHczVWFlT1JjdlJsbzcza05pWmZU?=
- =?utf-8?B?THN2Nlg2aXF5L04xRDFrUXhBdXEweXdIOVUvNDBQOTl2MHE1T3BNWVZIUFNB?=
- =?utf-8?B?dzNxZUt0VGU4a0VCS1lPVHhjVE9FZ2Q2Wm56TjFtZmY0bTV0SVFSamlGZXh0?=
- =?utf-8?B?QnlJNzJiR0JoNjVxYTdFWlRSdDdKZmNEZHNVQlhNZ2J1cEEzeW5vMUxmOXJG?=
- =?utf-8?B?UkpZUjRjTjlUMlhERlNNdlF6L1BBandLVUkrdUI5d0p6ODBpTlpHT2dWTlFY?=
- =?utf-8?B?ekdiL0dza0FFVzdONUtTM1NadnR4OXlXb3FXOFA4MXpYRklOQUJPY2dUM1RE?=
- =?utf-8?B?WnIrVGlWdGlycnNWcjczQndHYXI1VWMvNjhtU0x6SnY1dG5qR2pTVHN2Zzg1?=
- =?utf-8?B?Y2tkcTErQnoyWTZ4S3BsM1k2R2tOQmNOOGx0SllJWFBYTjBwTUk2UU1WRjhG?=
- =?utf-8?B?eTM3L1hBRnJNcFJsdnVIUE5rRlFMMmluU1dRQW9KZ0dlNGRyQ0NxMzhnelIz?=
- =?utf-8?B?d3o3ZTBwMGVWNERyTTloR2IyOEpQZkxMVDZXVkNaZUtYUE1NWlNURlpkZ1NX?=
- =?utf-8?B?UDY0VndxY2x2RWlQajNNd05BRVA4b2x5ci9QRzZ5dFlRaUNqQ2dBd1h2MzdD?=
- =?utf-8?B?QVdBc05rbFVkUEtBUFJ4eDB4eTdEQmxGNnZ4WFZOY0M1bHl4N3VGN0I1djc5?=
- =?utf-8?B?aDA5U1J5d25Mb2NSSEN0RHpFNU9Sb2VDbVE4ejlsTFV5U3kzWE40Wm5lYWVW?=
- =?utf-8?B?dFNVdWJDWU02MW90bmtSTkttK0cyM2RrNlYrRi9OMGRCNEtLZHhxZjBObUs3?=
- =?utf-8?B?RU8rYnlYaTduS2lZSmZQbW1QMW9MV2VGV1M5MUdyNjBidWZDajQxdFd0TEtr?=
- =?utf-8?Q?gqtN/sCLgVbDx/kychTmJDn8Rwp8qM=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB7736.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WElETzZ1QUtnaEhRVVV0RkFIcFVVb1BiTlI2bGkzZUNPRm1tNnNMUUJTRkdX?=
- =?utf-8?B?TmlIbllTY2RhZzZPUjBPRnAzYzZRaHY4RjROSmQ2U09ka2h5c0dhVmNta2Vm?=
- =?utf-8?B?cnh6YnZ0V2ZOVlVLdHVibnEraEJ2dm95L29vS0lxR1BLWEJWVjlua1JWZjIy?=
- =?utf-8?B?RFdhNU1od093YkZTU3lUbG9IeStaZ2NJS25QNFhLZGFrMDNSVm03MkxMbG45?=
- =?utf-8?B?Ujc4MzB5NEJDL2ExdWhpODZobG5rNXl1ZlFHMjB2TURHV2wyekF1eTFhUkhW?=
- =?utf-8?B?MUM3cThEQk0za1VBeHlrQnBvSm1JRnR3cUFsTVQyQkhrZUU4ejZmY2dpZ1h0?=
- =?utf-8?B?NDJxQ1hMYTZqTnZzNW1sczRHUngwRHAxQitYZ3lrdjMxL3VtdzZrSUY3YnpX?=
- =?utf-8?B?c09nelI2K2dQQnMydENQVTI2dDZEL1J5NEU5U3YvS0gzSXdNU0FlWkR6ZWV0?=
- =?utf-8?B?Mk5nNEh2NFUwdXZxUFBENENleURqMWh2dlRSMXd3cEw1VG91dDhlNmVvVmZX?=
- =?utf-8?B?VFd3ekxRV2xqQ0RSb1JlQkRsai9wdGZ6eUNiMU1YblJFeUdyUkh1VGMzTWpY?=
- =?utf-8?B?ZXV4a1dwL3hJb043eDNOQkg1OFdVZUl2WEJYREFqRWpLVzZhMFdFZW5nMmZX?=
- =?utf-8?B?YVU5aEZ4TzBGZWsvTWNsMFJGQmovY1hmQ2VpejNETjFsbUxYYmVkRy9sd3dW?=
- =?utf-8?B?OVJ4c0l6YjlCcjZULy9wc2s4MG5nRnJiSHVkaEJrSEdWUEpVOEJjb0dTbU5q?=
- =?utf-8?B?dXZNL3lMWWZQQmZudjA0K2MrVHdJRVNQZ0VpclZOWFhGSHVhL2MvdGhxLzRh?=
- =?utf-8?B?eTNtT0JLUkpjTlFqNUNJZjhCNVlJMkhxdHU0c2RoQ25NdWg0YjZ4M3p0bVFk?=
- =?utf-8?B?ZmtlUlRMaUt0UFVkMzZPa1NodHpESnA5bmxaVGVPQVhNcDRSRStWSVpPMWFl?=
- =?utf-8?B?aWRzcGFCMFRUQXZ4bnAxOGM1OWJTUi9jUkNxeTlkTkRKVmpyb3pmeTAvYy9B?=
- =?utf-8?B?dTFiMmxIZkhSMmJYbFlQbHdPWnkzdnNXYkpMdE5ac0V5OW9relRGTWZ5Smsw?=
- =?utf-8?B?UE83Y0FEMnBNeEtwNnRieUFBaVdmRXRvbVlHN0VYRzlFQW54eThzZDlpTFRs?=
- =?utf-8?B?UUkzK1hTcEUyd0Z2RXhTYkhyeEVLbHl0SldYNDMzMk9Sd0YvNXZnejNQL1hk?=
- =?utf-8?B?a3BVOVc0Nm5naGNkbzcxOUdTQkFCVkxHNWdTVDBpTG5IeTBzRzNVRTRaY2to?=
- =?utf-8?B?Q0xYZ3VFU2ZVUXA4Z1MySzFEZko1cG1zMkQzL3VWZVJ3Ym5jdVpmVXgzZ09D?=
- =?utf-8?B?czZVMitDT3pKNTA4SHJodzBUS3VIbTJKeFZjUU45MlRCZm5qM29IWkxtc2lJ?=
- =?utf-8?B?ZzFpb0JlZjdFekFkeUI2MjRwaUo5NkgwaFh2K1dBMzJ4UkY4VlVPb1YzZThE?=
- =?utf-8?B?SjlQbFRpbk5YNnJpSTlFeVZPRlJpR1FJWUR6d3FrQ2FRalkyOC9veGZpVUdt?=
- =?utf-8?B?QmhKanFhclIxTEhEWlFidU5iWXdCUXhxbEk4VVhKbjQxYjh0WU9QdGpUY0c2?=
- =?utf-8?B?ckZnbTBHRk1ndTNMWWp3QWNVK0d6YU5mM1FsWU4vbGVrZTJwdktRelBaYk9E?=
- =?utf-8?B?c013RmhrcDhPTnNZOElKWEhsT2dIV2lhQ2h5eUNkNlRCbHg5MGw3YjJkS204?=
- =?utf-8?B?K1FnTFNUemV0aFFtZk11T1V5dlZPUHB2Z3oveXBVS2FRS251UGs1MG40NGFT?=
- =?utf-8?B?WElkNzlEZWlIa21QS0cvNXJZdFJLbmdvcksvRFZUNC9DaGtvMXZVSHhoUzAr?=
- =?utf-8?B?amVuUlJ2R0V0bUpYNkZERjg3UUtwKzBNMEE0TGFFL1BCZ3pIRERYNWpwaHZq?=
- =?utf-8?B?MEFkbUVsbkxPOVRyVG1KeWpnVXBwL3ZpRXo2aGN6c1hNSzQ1M1lVcFJMd3B0?=
- =?utf-8?B?aUtwUjVSMkh0YmZqUnNYckRpUmN2ZWhORHpvZzNNaFNEREJTOW91a0hMVXR5?=
- =?utf-8?B?ODJUbVVNVXNnbllaSUZZU2RwbFBjVW51TGo4S0F5UzZjbllFY3NLcEc5T0Fy?=
- =?utf-8?B?dHIxU2JSTC9oNUlXRWtvdUJ3WTJ3STBKQzBNc09YY2VBckxVWFNlTkVpci9Q?=
- =?utf-8?Q?7uz0=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894BD275865;
+	Wed, 20 Aug 2025 09:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755682676; cv=none; b=q6fkUfeBJI8DBYZ1zNKtMBPASzx5dBXMuzClTFuwMsg3biPwbF5+ve0j+kXG3r8uDLXszOgME9Z42Wf2n8FSRyJjvRL1ZXcdR4MyWJNKaTSgdObMaiI3ga+m/1xljyRbvK2qBHXJUKfi84jtedKGQ7tko4TCFgnd9TdBRza6uuA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755682676; c=relaxed/simple;
+	bh=CKxYqhRhl4loo1ox1nG7a5Etf7YvcbqwFYZAD9TfdcY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IE7zabzECYL8k/RvW6djOJ4ySpZiDoJc+tn/7kXkfJ2HxODAPPJACuYoSqgm02c4zBWYmGJD3ZhTvycbrZ+2V17ku/6pB5as8l/nXSsH4RPLYR5K9HAe3OPyB1y1Y7m6DYOdvH2f6d9bqPDW69H6Vy1OSD/j6Y3ohmt2EA8t65M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lFFJzAqJ; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57K9bkMC3104749;
+	Wed, 20 Aug 2025 04:37:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755682666;
+	bh=v7KuCJOEXfogdf9zmemvwzD6OZ4YodlPBPiR1Btfx+o=;
+	h=From:To:CC:Subject:Date;
+	b=lFFJzAqJwmmYIxrMvD90JBBc4Gwe0FOSHgg6E5e2F+egwsEAP1z6T6rGq27LMllyE
+	 63/DCQ6f4eUHh+eqd1wwDln/ibEhAhwqqNLWssYfKYI6TiVBvZb20N8Ef8DL/XFjzF
+	 XUJ7V6vPj+hILdfoWCuAiqo1WYZqn1GOOy5Vakyk=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57K9bkEQ1959779
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 20 Aug 2025 04:37:46 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 20
+ Aug 2025 04:37:46 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 20 Aug 2025 04:37:46 -0500
+Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57K9bi27307955;
+	Wed, 20 Aug 2025 04:37:45 -0500
+From: T Pratham <t-pratham@ti.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller"
+	<davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: T Pratham <t-pratham@ti.com>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kamlesh
+ Gurudasani <kamlesh@ti.com>,
+        Manorit Chawdhry <m-chawdhry@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>, Vishal
+ Mahaveer <vishalm@ti.com>,
+        Kavitha Malarvizhi <k-malarvizhi@ti.com>
+Subject: [PATCH v7 0/2] Add support for Texas Instruments DTHEv2 Crypto Engine
+Date: Wed, 20 Aug 2025 14:42:25 +0530
+Message-ID: <20250820092710.3510788-1-t-pratham@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB7736.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44fcb3a2-0046-4760-7e86-08dddfc97694
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2025 09:10:52.7233
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lb9Ot08JUz42ZG3Tbi3M0ZV43hGZqlJAZUGYBif06KhlAwS4IIc8/tlxPOR2shiE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8349
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KSGkgS3J6eXN6dG9mLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206
-IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4NCj4gU2VudDogV2VkbmVzZGF5
-LCBBdWd1c3QgMjAsIDIwMjUgNzoxMSBBTQ0KPiBUbzogRXJpbSwgU2FsaWggPFNhbGloLkVyaW1A
-YW1kLmNvbT47IE8nR3Jpb2ZhLCBDb25hbGwNCj4gPGNvbmFsbC5vZ3Jpb2ZhQGFtZC5jb20+OyBq
-aWMyM0BrZXJuZWwub3JnDQo+IENjOiBkbGVjaG5lckBiYXlsaWJyZS5jb207IG51bm8uc2FAYW5h
-bG9nLmNvbTsgYW5keUBrZXJuZWwub3JnOyBTaW1laywNCj4gTWljaGFsIDxtaWNoYWwuc2ltZWtA
-YW1kLmNvbT47IGxpbnV4LWlpb0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS0NCj4ga2VybmVs
-QGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGRl
-dmljZXRyZWVAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIE1BSU5UQUlO
-RVJTOiBVcGRhdGUgeGlsaW54LWFtcyBkcml2ZXIgbWFpbnRhaW5lcnMNCj4NCj4gQ2F1dGlvbjog
-VGhpcyBtZXNzYWdlIG9yaWdpbmF0ZWQgZnJvbSBhbiBFeHRlcm5hbCBTb3VyY2UuIFVzZSBwcm9w
-ZXIgY2F1dGlvbg0KPiB3aGVuIG9wZW5pbmcgYXR0YWNobWVudHMsIGNsaWNraW5nIGxpbmtzLCBv
-ciByZXNwb25kaW5nLg0KPg0KPg0KPiBPbiAxOS8wOC8yMDI1IDE3OjA0LCBTYWxpaCBFcmltIHdy
-b3RlOg0KPiA+IFJlbW92ZXMgQW5hbmQgQXNob2sgZnJvbSBtYWludGFpbmVycyBhbmQgYWRkcyBT
-YWxpaCBhbmQgQ29uYWxsIGFzIG5ldw0KPiA+IG1haW50YWluZXJzLg0KPg0KPiBXZSBzZWUgdGhh
-dCBmcm9tIHRoZSBkaWZmLiBEb24ndCB3cml0ZSB3aGF0IGlzIG9idmlvdXMuIEV4cGxhaW4gd2hh
-dCBpcyBub3Qgb2J2aW91czoNCj4gd2h5IHlvdSBhcmUgZG9pbmcgdGhpcy4NCg0KQXMgTWljaGFs
-IGV4cGxhaW5lZCwgQW5hbmQgbGVmdCBBTUQgd2hpbGUgYWdvLiBNZSBhbmQgQ29uYWxsIGNvbnRp
-bnVlIHRvIG1haW50YWluIHRoZSBkcml2ZXIuDQoNClRoYW5rcyBmb3Igd2FybmluZywgSSB3aWxs
-IGJlIGNhcmVmdWwgYWJvdXQgZnV0dXJlIGNvbW1lbnRzIGFuZCBjb21tdW5pY2F0aW9ucy4NCg0K
-UmVnYXJkcywNClNhbGloLg0K
+Data Transform and Hashing Engine (DTHE) v2 is a new cryptography engine
+introduced i TI AM62L SoC. DTHEv2 consists of multiple crypto IPs[1] (such
+as AES Engine, hashing engine, TRNG, etc.) which can be used for
+offloading cryptographic operations off of the CPU. The primary benefit
+of DTHEv2 is enhanced side-channel attack resistance, with AES and PKE
+engine being DPA and EMA resistant. These side-channel resistances are
+the underlying requirement for various certifications like SESIP, PSA,
+and IEC62443 (lvl 3+). Thus, DTHEv2 provides critical security benefits
+for embedded systems that require protection against passive physical
+attacks.
+
+The AES Engine of DTHEv2 supports multiple AES modes (ECB, CBC, CTR,
+CFB, f8), several protocols (GCM, CCM, XTS) and authentication modes
+(CBC-MAC and f9). The hashing engine supports MD5, SHA1, and SHA2 (224,
+256, 384, 512) algorithms along with HMAC. This patch series introduces
+basic driver support for DTHEv2 engine, beginning with suporting AES-ECB
+and AES-CBC algorithms. Other algorithms are planned to be added
+gradually in phases after initial suppport is added.
+
+The driver is tested using full kernel crypto selftests (CRYPTO_SELFTESTS)
+which all pass successfully [2].
+
+Signed-off-by: T Pratham <t-pratham@ti.com>
+---
+[1]: Section 14.6.3 (DMA Control Registers -> DMASS_DTHE)
+Link: https://www.ti.com/lit/ug/sprujb4/sprujb4.pdf
+
+[2]: DTHEv2 AES-ECB and AES-CBC kernel self-tests logs
+Link: https://gist.github.com/Pratham-T/aaa499cf50d20310cb27266a645bfd60
+
+Change log:
+v7:
+ - Dropped redundant crypto_engine_stop() calls.
+ - Corrected Reviewed-by tag.
+v6:
+ - Reworded the cover letter and commit messages to name DTHEv2 as a
+   crypto engine instead of crypto accelerator.
+ - Reworded the cover letter completely to emphasise more on the utility
+   of DTHEv2 as better resistance against physical attacks
+ - Reworded DTHEv2 description (help text) in KConfig
+ - Added dma_terminate_sync calls to ensure DMA requests are removed in
+   case when completion times-out.
+ - Some rearrangement of fields between dthe_tfm_ctx and dthe_aes_req_ctx
+   struct, so that per tfm members are correctly placed in tfm_ctx and per
+   request members are in req_ctx. Subsequently setkey, encrypt and
+   decrypt functions are also changed.
+ - Removed exit_tfm function which was useless and not required.
+ - Removed unnecessary zeroing of tfm_ctx object in init_tfm.
+ - Corrected return value in dthe_aes_run function.
+ - Reduced cra_priority of DTHEv2 algorithms.
+v5:
+ - Simplified tfm ctx struct
+ - Set cra_reqsize instead of using crypto_skcipher_set_reqsize()
+ - Move setting sysconfig and irqenable registers to dthe_aes_run
+v4:
+ - Corrected dt-bindings example indentation
+ - Simplified dt-bindings example, removing the node surrounding crypto
+ - Fixed typo in dthev2-common.h header guard
+ - Removed unused ctx field in dev_data struct
+ - Moved per-op data into request context
+v3:
+ - Corrected dt-bindings reg length is too long error
+ - Converted AES driver code to use crypto_engine APIs for using
+   internal crypto queue instead of mutex.
+ - Removed calls to skcipher_request_complete in paths not returning
+   -EINPROGRESS before.
+ - Added missing KConfig import, which was accidentally removed in v2.
+
+v2:
+ - Corrected dt-bindings syntax errors and other review comments in v1.
+ - Completely changed driver code structure, splitting code into
+   multiple files
+
+Link to previous versions:
+v6: https://lore.kernel.org/all/20250819065844.3337101-1-t-pratham@ti.com/
+v5: https://lore.kernel.org/all/20250603124217.957116-1-t-pratham@ti.com/
+v4: https://lore.kernel.org/all/20250508101723.846210-2-t-pratham@ti.com/
+v3: https://lore.kernel.org/all/20250502121253.456974-2-t-pratham@ti.com/
+v2: https://lore.kernel.org/all/20250411091321.2925308-1-t-pratham@ti.com/
+v1: https://lore.kernel.org/all/20250206-dthe-v2-aes-v1-0-1e86cf683928@ti.com/
+---
+
+T Pratham (2):
+  dt-bindings: crypto: Add binding for TI DTHE V2
+  crypto: ti: Add driver for DTHE V2 AES Engine (ECB, CBC)
+
+ .../bindings/crypto/ti,am62l-dthev2.yaml      |  50 +++
+ MAINTAINERS                                   |   7 +
+ drivers/crypto/Kconfig                        |   1 +
+ drivers/crypto/Makefile                       |   1 +
+ drivers/crypto/ti/Kconfig                     |  14 +
+ drivers/crypto/ti/Makefile                    |   3 +
+ drivers/crypto/ti/dthev2-aes.c                | 411 ++++++++++++++++++
+ drivers/crypto/ti/dthev2-common.c             | 217 +++++++++
+ drivers/crypto/ti/dthev2-common.h             | 101 +++++
+ 9 files changed, 805 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/ti,am62l-dthev2.yaml
+ create mode 100644 drivers/crypto/ti/Kconfig
+ create mode 100644 drivers/crypto/ti/Makefile
+ create mode 100644 drivers/crypto/ti/dthev2-aes.c
+ create mode 100644 drivers/crypto/ti/dthev2-common.c
+ create mode 100644 drivers/crypto/ti/dthev2-common.h
+
+-- 
+2.43.0
+
 
