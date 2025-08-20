@@ -1,125 +1,79 @@
-Return-Path: <linux-kernel+bounces-777895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE63B2DED8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F84DB2DEF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 590E67B8C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED58C627912
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4DC26C3BD;
-	Wed, 20 Aug 2025 14:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF33266B67;
+	Wed, 20 Aug 2025 14:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lhSQxCBd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="eSVkGv7u"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0827255E53;
-	Wed, 20 Aug 2025 14:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53322652A6;
+	Wed, 20 Aug 2025 14:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755699195; cv=none; b=IgHwBdS4KnGT8mpLn/k1aR/ikod6Ol0saVX/HkEOOb9dl/IFNhotEmcMi4HdFv78HA4RfGbjVUdeUoFFodkBJa2sLtaLHRb3WYYdtoKLFBokrQpKHDUQj2UG67uUmu6XsdFOUnzkpD44bSkbcNc3VDX2aT208zXf+psel6K49Rg=
+	t=1755699301; cv=none; b=gXQL9MzoGtaeJGrhaYegmyA1ay+84Z9zUF2w2XoO7zYQjJMkA7dWvCihGxI4WyZKRSHKlurh+ZKgC5yxMLGOqIBE6SPU/iF8hJB83bAyMYLr6b0zAlk5Rz+2B1eRLCQeGbjqTqePvTqjCCRJ4ZW0TTRZ9rkh4zMawnGZq+eUJfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755699195; c=relaxed/simple;
-	bh=VfORanwWK0N2IhGqM8/NSiG1djWcKbLvF+xLsE3bUv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GalfCSn0oGQcxkqZ6s3eGq0iV/MoYgiGwxIhAuDwG4emGCJ7RDYjMGx5X1NB7lbQq1vdF0DtJ9bxtMc4WNzbBbyksUb6wkm5PGYxNVT0MaYTf4+TbONams0eruFPOJ9CUo51wSCiKT6e50b4ra7ck+U0JDTImm/v2vkGkzf0NlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lhSQxCBd; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755699194; x=1787235194;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VfORanwWK0N2IhGqM8/NSiG1djWcKbLvF+xLsE3bUv0=;
-  b=lhSQxCBdJ3COdJ/bYPnndOtQeI7PMnea21xkKLz44eMnNhXMO97KzCxZ
-   MDgZtS5UtvTJrvk9LlMxcNS587eNNie0YwYJbdcPKp20A3KhS7Dgjjxkf
-   NoUiPIdoxL8Vx/z0Qg0ddbX2+or9EEI6HJLH229qhmre6tZpmLT4i2Y6a
-   sfJlJeOU8JEk1nQEM3cJ1Yrf5I3gQVqnF8ZofmcRXowLVCvwTe7jRDTdA
-   do0YiJyhqorEsiITavYSlF1Jf9aHRGmjq4LZU7hA8zhA5TqUMRtk2S4z5
-   wjJP9BQwVXZmRFZPmo9CVMrMQHxr7cbQ7Hi9PdeZFPuQVllxUKufLIvmR
-   Q==;
-X-CSE-ConnectionGUID: QibCzH58QB2Mfc4f7niEIQ==
-X-CSE-MsgGUID: 1K+00CdPRNOe54wSaVqUtg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61781622"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="61781622"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:13:13 -0700
-X-CSE-ConnectionGUID: TSwpvnkqSheNUQkwfrIe3Q==
-X-CSE-MsgGUID: 6XH5irdqTRyaRUjP2zyWfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="199006074"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:13:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uojYp-00000006xCa-26br;
-	Wed, 20 Aug 2025 17:13:07 +0300
-Date: Wed, 20 Aug 2025 17:13:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Ioana Risteiu <Ioana.Risteiu@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ramona Nechita <ramona.nechita@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] iio: adc: extract setup function without backend
-Message-ID: <aKXX8-ZrIgl9DeSs@smile.fi.intel.com>
-References: <20250820120247.3012-1-Ioana.Risteiu@analog.com>
- <20250820120247.3012-4-Ioana.Risteiu@analog.com>
+	s=arc-20240116; t=1755699301; c=relaxed/simple;
+	bh=rsxTjOzuGU8tq+hKC0tKVJ79OHi9uwuvxvDedKZGGQE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J/ULX1z19oRhrg+81V/Q2B8wI8eLko3l79wtKWe7vJZm1M/x/Da9RZh8WxBsURY8d9aHi1YbNAvjTEfibjFe8lBITQ4+mDoMiO52pS6EO+ivgv7VLg1wdSap3CiLlJHuYG1+6Pn6LypgOoVLigWtujEU/I6S7ENATno7KHC3Vj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=eSVkGv7u; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from debian.intra.ispras.ru (unknown [10.10.165.10])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 351C84028386;
+	Wed, 20 Aug 2025 14:14:54 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 351C84028386
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1755699294;
+	bh=hgIX1iBclvwy7FW6szHuMilFwoBi/0i8pZrvYUbLHzc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eSVkGv7uCfcBeOIIEXL28EyHjt2swwYsTcCM4+dx7cbHbCg0miJe9bjEqEHzlb37J
+	 FDUmWjl+T/k6E5OMhZGaDVo6G1W01Jc5TIN3IKyIoVLv7nssgD+qwOUEyBzBMBgIKX
+	 AgbsvOKIXPalAafkhmSi4/YVBIdUDRzCXptPWVUE=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Zong-Zhe Yang <kevin_yang@realtek.com>,
+	Po-Hao Huang <phhuang@realtek.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH rtw-next 0/2] a couple of fixes for rtw89
+Date: Wed, 20 Aug 2025 17:13:44 +0300
+Message-ID: <20250820141441.106156-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820120247.3012-4-Ioana.Risteiu@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 03:02:44PM +0300, Ioana Risteiu wrote:
-> Refactor probe function by moving the initialization specific to
-> communication without iio-backend into a separate setup function.
-> 
-> The purpose of this modification is better code organization. No
-> functional changes intended.
+Here goes a couple of (random) fixes for issues with rtw89 driver observed
+when tinkering with it on my side.
 
-...
+Fedor Pchelkin (2):
+  wifi: rtw89: fix use-after-free in rtw89_core_tx_kick_off_and_wait()
+  wifi: rtw89: fix lockdep assertion in ser_state_run()
 
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "request IRQ %d failed\n",
-> +					st->spi->irq);
-
-Something went wrong with the indentation.
-
-...
-
-> +	ret = ad7779_setup_without_backend(st, indio_dev);
-
->  
-
-Now we have redundant blank line here, please remove it.
-
->  	if (ret)
->  		return ret;
+ drivers/net/wireless/realtek/rtw89/core.c | 15 ++++++++---
+ drivers/net/wireless/realtek/rtw89/core.h | 32 ++++++++++++++---------
+ drivers/net/wireless/realtek/rtw89/pci.c  |  6 +++--
+ drivers/net/wireless/realtek/rtw89/ser.c  |  3 +--
+ 4 files changed, 37 insertions(+), 19 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.50.1
 
 
