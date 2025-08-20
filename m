@@ -1,279 +1,126 @@
-Return-Path: <linux-kernel+bounces-778108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48098B2E17B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:51:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA52B2E12D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3581C27E37
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:47:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52E006067B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F56322544;
-	Wed, 20 Aug 2025 15:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F90321F4A;
+	Wed, 20 Aug 2025 15:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b="NeGOE3b0";
-	dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b="kKzPkAUt"
-Received: from mx0b-003cac01.pphosted.com (mx0b-003cac01.pphosted.com [205.220.173.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E0KS97i/"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9259F320CC9
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.173.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755704796; cv=fail; b=IgDbbBJIjVUrGTN0kc9snQSG0i+O+hfAauhNjKRXO0qv+Kpngl73QOk3FnAFBFSZiGMxbJo/F9PEhNKKIiHR/dwcC6cQTuSn9Gm7YI3DeLL7QMVl/bN/dNE2auGC688LFSdirqWpDpqvUvxQy96rRprojQmtvPN7LR/BJb4i2Dk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755704796; c=relaxed/simple;
-	bh=Z63IA2Z8uRjmYitTbDj6DikMeBMGYwyuQiDRg9MrMzE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RuomtR5LeTFsLAVeNNJQ88FZpImqiKh9MNDSHOMAJIcgIzp75mU0v8jvPI88rUV8neTxjdD2DdO4SkVJqSJKkqTl9Q4VaiMwYru+hZDSHa+yLNoOVWRyPZMn+VRaN9XlOhwi6wDTbZSqQ+3CbMFBXphcyl8OXTpaIdmPkjlKlHA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com; spf=pass smtp.mailfrom=keysight.com; dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b=NeGOE3b0; dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b=kKzPkAUt; arc=fail smtp.client-ip=205.220.173.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=keysight.com
-Received: from pps.filterd (m0187216.ppops.net [127.0.0.1])
-	by mx0b-003cac01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K19d6W018860;
-	Wed, 20 Aug 2025 08:24:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=ppfeb2020; bh=
-	h6iv8UygnuLgWbWQZVo93SGtrFDogvtAIBqK4obhnT4=; b=NeGOE3b0zGGh65Kk
-	YmXNX3T+Yr+fdXnbH2ZSWBdRgYqtHzwTF7UlX7coyEZw9+66fUJ+jCYKLdgVREbP
-	sh2gFEaCmCR63XLcVwcuX+LqKXPqEr4oQ8DDSG4em6cr7vLj5R+Z636PZebEgA5y
-	OeP/BFzkdgWD7XpEjbq5ntjeCgIDdy5yZ2f+KWI0assg7nkMaW897FjG7UR158bD
-	lEUU6IbkX+AqAitWoyS6/gVubpCVwhKbB/p7Z7kAZrHQojGOtR3prHYGLPBMblD+
-	AAnyDX6YMrTrFfyVEGkDSmczLV1bcciwRJ/3TChFKx/vfkkxIqCpvgMNsKVid6/D
-	/vWvxQ==
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
-	by mx0b-003cac01.pphosted.com (PPS) with ESMTPS id 48n3c4hyfn-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Aug 2025 08:24:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FN/X9lJOwFBexkqDOYTpbMrXU2AP/L+DQMvgLKT6oh06dU0hWl7Ez+4/PLAriEokfem8SBcIk+7S8UAlbEMxNBC0m6UrmzN3wK+UEH6b/R94A/B+LRHv5OCqwfPiwDXHS3/HQwxLpqHMxX9gVFVZ1CBqIQvRYBa3kHchaU/4wXKC4xOBCE27J1yg1GD1H649JlBCyzcBd1rfASzHTHhe7lx4RyQB2m1f7/Foqc0z8J9SoG/b/Q3rmRX/nFmY36c/RM05GPlfaJnKRmTx6s5m0I93TatrzxhN1GaS/Bjan57UmvjRFZgULf11TMt9PsleJ8dA9ScJZjMjryVFPuMpvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h6iv8UygnuLgWbWQZVo93SGtrFDogvtAIBqK4obhnT4=;
- b=Gwdp260TUfawMrmqjvx91KNMrLFHm2AfTPPJ+gE0lYpsqswi7kCWBsp0WCdUCLu43PEnN02oWjkrRx8WOgKrq+ces4IRpspgraXlouhTn5rnupfjcAKFDoDAR0XDtNR2uVeq0UtJQtnssPrErz8dWKu0mAwuNeYTT2m4v394pKy/u4K+LwGXlKgdNrEGnsG2fJJeldpahM323L5D+CPKh/1mgZ2F7DSwVFNNsutB0/t11pl1iNBlOB90cA0h+6Ieli6/7QBzwmsY/TY1JDzxho6gYNSrHQhQLHEWw4og4fVlL4cET2/OoHN30jBZwWXcXDx3mRj+NdF+GP0/z0ynPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=keysight.com; dmarc=pass action=none header.from=keysight.com;
- dkim=pass header.d=keysight.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h6iv8UygnuLgWbWQZVo93SGtrFDogvtAIBqK4obhnT4=;
- b=kKzPkAUticr1g4tHe2Gdm40z5iMWti8mdi5yDSWS4hXzpAfnWLHGAp7Wd0t/oUqHZIEw+CV6nPuI8QQhhox6eA0MJYnkbZS4xiq9ah+PxzRpJgUncEJ+E5tf2DFnCRNxg/MynnQYWZ8sFyqmKP267gh/zvPjN5qJ5+5Cefy2Ke8=
-Received: from PH7PR17MB6130.namprd17.prod.outlook.com (2603:10b6:510:1f5::17)
- by PH8PR17MB6810.namprd17.prod.outlook.com (2603:10b6:510:23b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
- 2025 15:24:24 +0000
-Received: from PH7PR17MB6130.namprd17.prod.outlook.com
- ([fe80::54bb:3a4f:5f80:a51e]) by PH7PR17MB6130.namprd17.prod.outlook.com
- ([fe80::54bb:3a4f:5f80:a51e%5]) with mapi id 15.20.9031.023; Wed, 20 Aug 2025
- 15:24:24 +0000
-From: John Ripple <john.ripple@keysight.com>
-To: dianders@chromium.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
-        rfoss@kernel.org, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        simona@ffwll.ch
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, John Ripple <john.ripple@keysight.com>
-Subject: [PATCH 2/2] drm/bridge: ti-sn65dsi86: break probe dependency loop
-Date: Wed, 20 Aug 2025 09:24:07 -0600
-Message-ID: <20250820152407.2788495-2-john.ripple@keysight.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250820152407.2788495-1-john.ripple@keysight.com>
-References: <20250820152407.2788495-1-john.ripple@keysight.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CY5PR15CA0097.namprd15.prod.outlook.com
- (2603:10b6:930:7::19) To PH7PR17MB6130.namprd17.prod.outlook.com
- (2603:10b6:510:1f5::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77B02E8B73
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755703522; cv=none; b=i41paM5MY2H02gqW7ZmgdmnWfFjB3gwzmHw9FA0h0OZvtksUa6/jdcIjQVn0sYlMu8nPV1tL6UjWmWq5hC7zR7uC3IusNxHmSKOQXyACSXFqRoGF0/bmcHzDsDNjp1i0vngvauKAytYLiZo5GbVZCJvv3VdX1XYKMXI8fkaMW9A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755703522; c=relaxed/simple;
+	bh=Qav1M3tyQmglESrqnGWfLbt/rScnOPtiQBAqrwQENEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ml5NxPaUq0trb8rrVsvPbehIFdQaSmmJGfLkmJx8K2hzBR5EtEK0Pjn9IWQSB+Hmjd4vgC2Oylt261r6GeQUHtWZUrUvZzpL9G0rIklQhrHwrho0LvhzNA30vrCxJ6J6txzGgAqZ9tvZzHVWnvYg3aLGILKobX5uqbPuMWJUqeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=E0KS97i/; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32326e8005bso43241a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:25:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755703518; x=1756308318; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QkmFWE7tq6b3ya/7cYC7Eh1qJoGwKmH4XG/rocLbBXU=;
+        b=E0KS97i/cHDzXzamI/E3NW34BfVgyEXAvHzsHP5VModzMXqudWzAmYp1zH1zChtVVo
+         StrbHyN2wJZ+cipFcxCZ1TR+w4uRH/HRhGg8cEdcqFjBtQifw7ua2+JsF0McNlwOLnBa
+         mAM1fQNAe1GbZKhUxDdg4IhdUBN3HAcpYgqI8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755703518; x=1756308318;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QkmFWE7tq6b3ya/7cYC7Eh1qJoGwKmH4XG/rocLbBXU=;
+        b=QDEahwTbcN+c7Pv5rtzfK/vW1yEUnCrKxatQFBF/b6qk6CItlu35pfLTTvTLiB1hk9
+         bwp2MXR3N6qpDqfBqesvbFau6N6YeVECAVAIEcd0wQpcBYLkaau2QNalWXnjHf1PD+3n
+         4ot1ZDAO+tpQQ5rg2Lkavzw26nrtKM5wZB3OnaEMzt0SQoT8dMzjlqv7l+ohWM85YkuP
+         nNbgTwaOpVPvDThul+e3Xas+7lrYEMmOsItRbZJCbcfVNAlb8WHMosT7UolTe7E+dqfL
+         bU82dgMO+cdM6v6vyUUED4EkNHIV8sqYcElJy4ZFDf0x6Mids/RpyUZmB4F+p4TthEWs
+         dUWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUm+x4g9N1T/F6p7v6FzQrkcJX3CLpeK//BHRgW7Z/rAk2HAANqZ2xvldaoXIGc3KI+bk7DBeJbu6kYHvg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBJrsIs9dFuRbsdy+PQ8iCvH5+3t55o9+g4ekW1zuBqh3pUHlO
+	TWMWgfa2LMuOTKpHWOajs8SXtPCX4zN5bKv1W201IorDaT/QZ48myixZmJ51iP+x2hjHtSMczHU
+	KZHiI3w==
+X-Gm-Gg: ASbGncu+2FiYwhzfT27to+3bQbegIGkO9zbaoHVmVhoH0KanKjmm7IjGrSTr46dmb9/
+	yml/7PdaJHGyPKUYwMfpnBXLqDeHs9xUzM6rGIkjZ+oaovNhEBhXsUl4OfnGsW7TISizo1AA1/Q
+	ypeYbP8BmKDAVzjsrvi1TPaRLZoeJRF+7CLUXnftoWtNvWdlj8OHpUvLhz8Z5Q5WbjRoLC2AP+o
+	RZIWr3nYhkRLTNCbDMUcaC+sYsDH9G77sdGujJ//gZO2Nj1eRIApZLQoltvJSJLZxB3WxdksFko
+	xj/tn1RFwlt0nvl+PLt3YC1hfLmEjwq58ADCYtBCxNkjOnSEwEE5eRDbpv4KqGS0ZoZ4d802Oh4
+	oSqoRr9gDRtYV5oqgqOs2ooiy6Zg7h1IT0RsvBIhzCMGhwx6YthJUYz40Kgn1SzxmQWsGP+8w
+X-Google-Smtp-Source: AGHT+IFVtk9qfBu0B36Gz6Cb7LH4T2HllhOULDmi0DOqQi0871wc8EvWLakhIrj9BCj3X5aYsqxe2Q==
+X-Received: by 2002:a17:90b:3945:b0:321:1a89:f692 with SMTP id 98e67ed59e1d1-324e1319f93mr4526743a91.8.1755703517731;
+        Wed, 20 Aug 2025 08:25:17 -0700 (PDT)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com. [209.85.216.43])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e250e52dsm2655047a91.6.2025.08.20.08.25.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 08:25:15 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32326e20aadso48640a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:25:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXRgi7NdAyTgQWZGESSz+sKWNb41Yg1b8BWRnJWUTHsD+4qrJpmjUaVFljOAo+AdNX0I/TzjA5U6964JpM=@vger.kernel.org
+X-Received: by 2002:a17:902:ccd2:b0:245:f7f3:6759 with SMTP id
+ d9443c01a7336-245f7f36a54mr17614605ad.50.1755703515111; Wed, 20 Aug 2025
+ 08:25:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR17MB6130:EE_|PH8PR17MB6810:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63584d21-84bd-439a-515a-08dddffda4dc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Q7Jf7jdu1KvPGp+8PRSzdn01aBGm+HWnNX8neQHV+vXOFy+RS1Ocy1AoO1Ou?=
- =?us-ascii?Q?/lyKOmyuq3FlbHw/2OuOQWkYwcXfPZJmV1E6mIANUYGOixq+Mxp66WlCrZun?=
- =?us-ascii?Q?LolqXmebHHxQoc8u/dMDFNKogdBbNerxcZx52mmlV8IOtBkk7okFYpa37FsH?=
- =?us-ascii?Q?unHF2PCg1gFcI0r95EikdwsEEButEh9pREVGuG9J7crIuRZeC9YZcez1nL0J?=
- =?us-ascii?Q?xnNUa6cM2pq4Bn1U+8GXP+1gBzuRLG2g41KTiY9BFHqbUmM2p63+eMFYzTJe?=
- =?us-ascii?Q?MfmkjkBlpr1jHOSY6CYaDYDVkCPTpl+Ex9abIYKZcxw5K3OsmjYn1wq7PkMC?=
- =?us-ascii?Q?+2hR7QDcOV52c9w6Ehkr+T9Fc0hol1CwDDCOu5Sw43UiwZLdIR8RmvKiscSd?=
- =?us-ascii?Q?H7G8EcUq1U6goNPLkqWxoHScgxcPwgk3sRKvutfQByjwEqMgB9yecnVQgAOQ?=
- =?us-ascii?Q?7BYyl4KJXxloU/F7+42RRLa/bnrgNyQ0FvjFDIi7WrGNL1LlommNZ6cEV3rm?=
- =?us-ascii?Q?bYd5l5FThD6Lgf7w2d0rba4YEc+nH4lgKDpAR3PVU96+A3DUIVJJ/aGh8JKs?=
- =?us-ascii?Q?8gAjGCLlXI9W3FRaf9r0pgKNq0TWMVcQNGBoFTTm20wcTPJS7RNXdFI5LGUa?=
- =?us-ascii?Q?DMVIcCMXGt414rSlguvbBvUrscyZJLS12+Vzyb4axqM4WkIJ3fXDa6/wyOgW?=
- =?us-ascii?Q?GJr5/4ODSiDh6oH33UWzHkgABBSMSZJaXwOA2w9pyJLtuLE1uehevo+Sodq2?=
- =?us-ascii?Q?CApnm4rPFN9ZRJYEc/lckVWISlaXI3dyhAckAN4SvE89tw2MWD9eIWIw/YOr?=
- =?us-ascii?Q?OpwPWu9bsnFY63Sq8L0IG5eGLQJ0Hd7SjfLNc1stwtCAMs1+UqsiMIx3wrRy?=
- =?us-ascii?Q?d2VT0+VSOaOlMVPcwMKCEu5PmMYdScqgPHsFpk72yRXQfXZmVFk9QZw4mi90?=
- =?us-ascii?Q?SDayQptJwBW7vdtQQx+yY1+PKES/6Ip++MUB+ogj6qLSxw7KYvzJgW5fWOtn?=
- =?us-ascii?Q?tKj6EUAAM/g9AziooM2+VUaENH8zSE9GUtZqSOksBoe4dWFo/PkteUjz3pGH?=
- =?us-ascii?Q?9nYw2jQ2L3ym+ETmWdaJFKOGOC8eIaBK+7g2hYu9Ezvaz1pyanKYOx7P5p8a?=
- =?us-ascii?Q?h/NOOyEvzloBSJk8NpkJZGVN5fAQj9JAcwlwGN4jz/rmufj6mvJx9ftkQ0Xu?=
- =?us-ascii?Q?Av+v8bSX7/nCbf4MtGfH/7O/+xhogcCgW9JuTTmAuL6RAv5/61mbtfkcHRDI?=
- =?us-ascii?Q?P34cuFDN0bnGPkPeUZorsbkzDM/+ffKu+zCDQOzAMCrUt027/u8h1oB3mJw4?=
- =?us-ascii?Q?UF1SYB31qjzylxpScwu8TK75FFX5IyLQbwregjDO2mmG4a/+4u5gcyMyXvLt?=
- =?us-ascii?Q?zFrFJlXOrCdjle8e4TIB/yRGV1wV6FlbQtC8Ud7Ttp3Kovfbv+EZEAqDixLs?=
- =?us-ascii?Q?hg2bNfRQfoQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR17MB6130.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?jeWCCfVSGc34Sckw3VrYOkdb2vrIyeUXihr6TS70BWGaLFogoN+Q4c11UA+V?=
- =?us-ascii?Q?Yu5vp8Id2sojMBdH34mO4WTPwklKPvQCZsUalUWk2T8HTCHBq48Gs41s8ZUb?=
- =?us-ascii?Q?NcudDUcQSti4vH5EQTsJK/mCk+XjNzDntIaX7esd4c5GoQ/L0VwowJKashW8?=
- =?us-ascii?Q?/SqlsROGsEoBsrmfU6BRzbz/c5T219aqMiFqS3s0pkKAHj86CFfGPNHLeMUv?=
- =?us-ascii?Q?RxGI+l10QzZng/KVU6qNsqH0/Fe3b2gStpuTwndhbDCCnyumBBIpZzY10dfz?=
- =?us-ascii?Q?oWxNHjpyHHhyH3H+AxNMDrgLWsx9u53aqKsAdnPWAdZ+gbkmI8jpwyTHm7T0?=
- =?us-ascii?Q?GyKKBm9qvKVGYwN82g1RGYII7KxVHyvWqBmIIkWhsZOqV1AuY+05hZR1TkA/?=
- =?us-ascii?Q?66BNSq+c36jHdqfNzTkVaNHMDDUf4cKT+fJm7hVP74wUtXlWsCV91NZikmBb?=
- =?us-ascii?Q?kk98r+8mVA9XXlThxbtWYFigxh/hhBDUyAma8nAq2uPDX6c5dBHxxyjlWqZO?=
- =?us-ascii?Q?bvH9rlRz4Xb96sHHwF6WswWjI4SymbG3kQSvLnEHvMkx+eCvhRagk6LKv2D5?=
- =?us-ascii?Q?V4MRXK3Aq67cojG/C8pR+2iETqoItCS6s8qdK2PFRtJ7qwD4xDDNightLa2/?=
- =?us-ascii?Q?GDJ+46+HbSOBl3u1ckyZOowlcpXzAhC98Tr2X5fsYE0+0yGDMy0o666qsB6T?=
- =?us-ascii?Q?3qfiXg9mLfhI3/A6wkZ5Xsx82wpF97fqJK6peq5V7XehXp6TEeZwE84ZvOAU?=
- =?us-ascii?Q?QBVkBx4K1O2cKprJ6K78lqZv/0eoYRRxswbShgRzTJx48H1ssg+tbvDktsGv?=
- =?us-ascii?Q?tjR78ind18t850niARAJGwy8ysyT29wjAPq1WRhC8IP3DU0V/Ub03u3XGbFi?=
- =?us-ascii?Q?nJ98NtvMhB9+isymLcfWyD3EN+f6qeocURKQpfL1Bw/aipWRqq+i04TMH4zg?=
- =?us-ascii?Q?1StswDa/HNsvJj0p7vVsTzpKqNs6cVZo4SSz7Vixv9Ugv49Ahy5dXPogrI5B?=
- =?us-ascii?Q?rKVqjkMgzhqUX6sL8SaRsAcl29GjA2wAephOvuDzIsRkBt+qOGptODCEG4fT?=
- =?us-ascii?Q?a0ItLFcbmfVbodgy28HhPfTDAzjqcHnqIdjhrE3gbXqkeSlUdSQBGOjvrWzv?=
- =?us-ascii?Q?lJeB+wf7vFaobMSN+pkALB+71uSPRYNhb+XKXPLkD0cLa5ZBb9/25HyZhfEP?=
- =?us-ascii?Q?3ahQBHv63POjX5l7lsQWStM1qSplgVxtYLeaGIyvp7pRHxHcbxP7onO47Dl5?=
- =?us-ascii?Q?+YctBJcEv2fc6Fdcpcg+J04EkYve5RV9Akn8UfGjhrYAPta9I5Yj7F8UIzCh?=
- =?us-ascii?Q?sXKUUOeMcds/5fgiSKot+kgoR4b6mnTw/xJWyLw2MdEChGbcmQ1066kdtlJ+?=
- =?us-ascii?Q?g1NCRi9NTXlPhqSRXd62pbl5IkMArBZ7wY68uoY8FGnBt2B3Baynx0TtzYts?=
- =?us-ascii?Q?PcnFXVURYpDqTQakfpcmpKThKfkp4trcGUUpDNqH9iLp4l1qahp96o/foc+h?=
- =?us-ascii?Q?zZo+1YyyrDSPV4p1ueCGlX+kuSszd5QBOR6Ni7VSzUS3LBVCOa5K8dPZ+TWe?=
- =?us-ascii?Q?Uf0TpXeMGpNnMKtILdighyEuXrbDxMJ8IWCzGT1WwtUX8Ro9tOwNELeoPrLM?=
- =?us-ascii?Q?Kg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Rmg/ZJrDpKzIHbOBdwCLbgQ4A/X9z71XT/d6IQlN+ZkCdlR9STb0chmtDyM6sfWWO1rlIi5qJpTjIkpEKzLMV7BW81CBs6K1RMWza0vaoXfnVrfWzBIhusLpKiE3VOIPphjGkHLcgx/4Blzbq3Mxu9uccAPv0zBiGFOMUh1kAPl2TfX80ln+v2mlxsAZecFl9C1sdggUY08CW+Jig1Y+hl7ir8lcHz7pozNhpS7Iuq7MiIDJiuAnorIgYBnJ4wSkXc5iByiawGt4bqAP5E1befEFqQkfMqz1nt8PCiz9IgWHoAr7GHaKIZnGlzWDbZUOvd81dXIsWPwM6LELNIC5uRuaKVXzqrYMJUuY9SZARNvznMba7MzBahRnmHTwl6FaUs0zLksfPMpiYuVHuaKJev1k86Lpe9cXInCT4q1FiaUZc0UlVslN1gI085T+RZ7txhh4HZF50+cre6dw8FgoWh0/ihHv3jnHgAHO8KTAH3BAj3eBkNssAZfh62w/FxxDtCJlDLncjtyC1PX36FI5Z30jxjO+di5oLFep9Ghf4kHLhaou6YDDwFKR9GMrMXIp+Z4hM3woj3h0O2H5rqTIYf5uo566Ypzuk2038TpO09MUEbUnJAJTQUOw78EZtTZd
-X-OriginatorOrg: keysight.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63584d21-84bd-439a-515a-08dddffda4dc
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR17MB6130.namprd17.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 15:24:24.4231
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 63545f27-3232-4d74-a44d-cdd457063402
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 55nEBoxiwJYrhnKt77JtzwIvOZpc0A1k42V80BeEVpuR4D7muzgfrc6qiXUL2sXTs/SGVrhQclquomaifaL+yAcFCBkPCENmu0jmg9gWX6Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR17MB6810
-X-Authority-Analysis: v=2.4 cv=EoyLbScA c=1 sm=1 tr=0 ts=68a5e8b3 cx=c_pps
- a=+wTz3zXVXQH4ZUjsIrltNg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10 a=vu2TTH8h0NUA:10 a=F6MVbVVLAAAA:8
- a=6f5zNMVFbdseIpmfuNgA:9 a=6mxfPxaA-CAxv1z-Kq-J:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: _fdoLb1pxbVBLXckUPTEdgkZeUIUzULa
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMyBTYWx0ZWRfXxEHCuOQKhpK+
- aCULG7+58q8ItQNHt9QxNPi1Fm9jhD94bWbUFYiiMkEK987LKPdoFKDUDRmvcPx/XFly6mdVk7t
- PpzF/2mruKJFdlV4tcAPaDrwmZWCiMxiT2yhtaaPzFQ/4Z1H3wEB+wTLWIw/L9KYsUGWCkP0p/H
- cuiwlbtu03XqYn4Ocq2mxGLzcvEwL1WN6URumz0tw6Cwk5LD4Ii6sdFHcvuFwjQuVX5eTg82zQj
- dkob03U5gabMLZxnAHm3WJrnoZ24Fh1yEPgBEHJuHKw07wk9JMhPql3GYpPxJN7PkGLUeVayayO
- BEfxESPm+yqhlRqCuRXTCu/C/FVQRSFRSPRN2fwGozogQpn549IK2Lak5UwgWbYWSpunXxBXVbS
- KXhm+njF9FaOC/rAmBFaMOBvPXkhqA==
-X-Proofpoint-ORIG-GUID: _fdoLb1pxbVBLXckUPTEdgkZeUIUzULa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_04,2025-08-20_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 spamscore=0 adultscore=0 impostorscore=0
- clxscore=1015 lowpriorityscore=0 phishscore=0 bulkscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190223
+References: <20250812082135.3351172-1-fshao@chromium.org> <20250812082135.3351172-3-fshao@chromium.org>
+In-Reply-To: <20250812082135.3351172-3-fshao@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 20 Aug 2025 08:25:01 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=X4y10ejoYKkK+sd4YbtqqaYgXYNf1YAKdK6NodcH=EAw@mail.gmail.com>
+X-Gm-Features: Ac12FXxDFSB6mln8t-OwH89VVYymkhP85lC13PmFNjLgZsgGO3Gu1KDH09QT8WQ
+Message-ID: <CAD=FV=X4y10ejoYKkK+sd4YbtqqaYgXYNf1YAKdK6NodcH=EAw@mail.gmail.com>
+Subject: Re: [PATCH v8 2/2] drm/bridge: anx7625: register content protect property
+To: Fei Shao <fshao@chromium.org>
+Cc: Hubert Mazur <hmazur@google.com>, Sean Paul <seanpaul@chromium.org>, 
+	Hsin-Yi Wang <hsinyi@chromium.org>, Xin Ji <xji@analogixsemi.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The commit c3b75d4734cb ("drm/bridge: sn65dsi86: Register and attach our
-DSI device at probe") was intended to prevent probe ordering issues and
-created the ti_sn_attach_host function.
+Hi,
 
-In practice, I found the following when using the nwl-dsi driver:
- - ti_sn_bridge_probe happens and it adds the i2c bridge. Then
-   ti_sn_attach_host runs (in the ti_sn_bridge_probe function) and fails to
-   find the dsi host which then returns to ti_sn_bridge_probe and removes
-   the i2c bridge because of the failure.
- - The nwl_dsi_probe then runs and adds dsi host to the host list and then
-   looks for the i2c bridge, which is now gone, so it fails. This loop
-   continues for the entire boot sequence.
+On Tue, Aug 12, 2025 at 1:23=E2=80=AFAM Fei Shao <fshao@chromium.org> wrote=
+:
+>
+> From: Hsin-Yi Wang <hsinyi@chromium.org>
+>
+> Set the `support_hdcp` bit to enable the connector to register content
+> protection during initialization.
+>
+> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> Signed-off-by: Fei Shao <fshao@chromium.org>
+> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+> ---
+>
+> Changes in v8:
+> - rebase on top of next-20250731
+>
+>  drivers/gpu/drm/bridge/analogix/anx7625.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Looking at the other drivers (like simple-bridge.c) they end the probe
-function after attaching the bridge with no option to remove the bridge in
-the probe. Moving the ti_sn_attach_host to the ti_sn_bridge_attach function
-follows the format of other drivers and ensures the i2c bridge won't be
-removed while probing is still occurring fixing the dependency loop.
+Pushed to drm-misc-next:
 
-Signed-off-by: John Ripple <john.ripple@keysight.com>
----
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index 75f9be347b41..58dfb0f39cea 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -815,6 +815,7 @@ static int ti_sn_bridge_attach(struct drm_bridge *bridge,
- {
- 	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
- 	int ret;
-+	struct auxiliary_device *adev = pdata->bridge_aux;
- 
- 	pdata->aux.drm_dev = bridge->dev;
- 	ret = drm_dp_aux_register(&pdata->aux);
-@@ -823,6 +824,12 @@ static int ti_sn_bridge_attach(struct drm_bridge *bridge,
- 		return ret;
- 	}
- 
-+	ret = ti_sn_attach_host(adev, pdata);
-+	if (ret) {
-+		dev_err_probe(&adev->dev, ret, "failed to attach dsi host\n");
-+		goto err_remove_bridge;
-+	}
-+
- 	/*
- 	 * Attach the next bridge.
- 	 * We never want the next bridge to *also* create a connector.
-@@ -849,6 +856,9 @@ static int ti_sn_bridge_attach(struct drm_bridge *bridge,
- err_initted_aux:
- 	drm_dp_aux_unregister(&pdata->aux);
- 	return ret;
-+err_remove_bridge:
-+	drm_bridge_remove(&pdata->bridge);
-+	return ret;
- }
- 
- static void ti_sn_bridge_detach(struct drm_bridge *bridge)
-@@ -1574,17 +1584,7 @@ static int ti_sn_bridge_probe(struct auxiliary_device *adev,
- 
- 	drm_bridge_add(&pdata->bridge);
- 
--	ret = ti_sn_attach_host(adev, pdata);
--	if (ret) {
--		dev_err_probe(&adev->dev, ret, "failed to attach dsi host\n");
--		goto err_remove_bridge;
--	}
--
- 	return 0;
--
--err_remove_bridge:
--	drm_bridge_remove(&pdata->bridge);
--	return ret;
- }
- 
- static void ti_sn_bridge_remove(struct auxiliary_device *adev)
+[2/2] drm/bridge: anx7625: register content protect property
+      commit: 043d9c6928b010be7902a01b5cdfa7d754535b1a
 
