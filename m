@@ -1,108 +1,83 @@
-Return-Path: <linux-kernel+bounces-777326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE50EB2D83D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:32:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21264B2D83B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038651C42B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:24:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DB401B60855
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D737C2E426A;
-	Wed, 20 Aug 2025 09:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC6A2E54BA;
+	Wed, 20 Aug 2025 09:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7NQfVHE"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="v1T+Fmk+";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="B0SWB/hI"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7F12E3AF3
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FAF2E54B1
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681498; cv=none; b=rkrgU5+TXNPHeyMPwcgdFn3K1TmvQMLHGcZJRJ4Vqb13+y6QYBuQ5PRk6pZ1W7L3gjK/+kyZQ9FYkeEZWX4NtoGrVAe8VoBlnrqKb1I7mCJsX0tCT9RSbWM/kyHPWs2VuBTTMQMPUrVrqobXGy1e/N39S+XRtmo0CbccVmGZUs8=
+	t=1755681505; cv=none; b=GLhMcLYELWT3B+2bHCer5coztAWfBj6vev/MFWAflBIvM15j3BaUMeX5SgrroW93gbZ/eqOaMlzgfWyKyDamq02rI1xnqPi1Zeb2KCNOHr5iTpFNzjsH7o9PRQWFVSExS9ml2L7ecJmcujCmvjLomZZuqp1oVtyRVdOBFi0S5iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681498; c=relaxed/simple;
-	bh=/Vffl83wUI87E7o1oTDqOUkPoi70Eqk1k59wxwse63o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uSRHodsFtFYQl7eiTEjyDqdBomX6t7xGBZnJxJKq7GKSvCeOgAoEBT8fGKgDniyluWYe0i2Sf2qfPHWgWUJRNwic2Y83vwg9a5rsGLAUy3N2Ikg3DkjhdW6bDerB/lAf3UDg3NeeCHCnm4RD6MSjAsDLm5ci9AUlyHd/ZLQB72U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7NQfVHE; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e2e89bebaso4613972b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:18:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755681496; x=1756286296; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VmJ7RIhD+Czj/7A+VwyBpCQYzPH3KIKkRyweRy7AzmE=;
-        b=g7NQfVHEDol/fnN4K6qhR5eOwtS7OrcYOMolm3qi2RN5DYz/j1PvxDNDlKZmBtmbyl
-         5HWe+yqw1dcgTnwzT01KteptttSkOaa2LlJVNRAZX92wouSlC6G4G5aO1uNMr3ka46Dd
-         HvAQm58F1YxFyVFY0K0bFSycqzYXGR3AkGG3FQdz29BgdlHbUwmEx3hdP0I2b0CAdHJO
-         DqKFs087YQpB644XIvYXm7rZWnEhdskcxRqxPZfFcX5WGTXOR1pg1LdilBmqXrwLzwKO
-         uvZ3bH8J5G6fgQC0VGVE9zCwBwHpPborxzh+hHnVrak956KCCUwL/iHJcZtFZMN3l4Wz
-         LHzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755681496; x=1756286296;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VmJ7RIhD+Czj/7A+VwyBpCQYzPH3KIKkRyweRy7AzmE=;
-        b=cLBM0eXWmZC5dvy1iM4t7QnEGO5w/47pCWV2O/m/9SG9Vu/lcWbl6NvCrv6nypmfJb
-         5udO8WF3Kk35Tq2an4U+D3FVYG55FXEwq4BzVGVEkZx1GOy70EOQ3XHoAIulvHGH5qop
-         CHnmN5QOgK68Nu9SsbxpbyIH36K69Qnt2vKVy3VTKTeJ/8IzkassOY4GDbnkMEOi43UK
-         x4hA6IiZcEoodo0LvknCGZFF/0k1Yv7yrCQParFlCGbYhV5eQNL4NTl6tt72vGPzhgYc
-         czNO6Ux0Vhg4N8mDsRnHF8rJoz8CaywpkhAFQ71t27U42MGflQGW8wh0upDUBOfICo0E
-         ZFZw==
-X-Gm-Message-State: AOJu0YxeC9WAObNnRQjAuQxQxkHcsEKrFe3DTfqiTTc0Ix2d+l2aVtQp
-	1HA9MJRoD3KZmAEc3fTGNaTgP13mPgfVZc4bb88pHz10t98h8SaVv93658mII+Jtc6tdrw==
-X-Gm-Gg: ASbGncsdRnV/rrV3jNaM6mgCb+0L1rVtMFjaoyPFncWXblNv9OX53Yd186AVpL+U6JZ
-	LiOMPQlXLpkBlDDG63SGm73LIp2YjHxm/0pSyoAKGQdgDX41SnYuPDr4uHNtvg9XSw9IJdf9hzR
-	9mZxLOS5AoDQkBAoeVWlkH1x61brI1XHgnzGpnyh4ilpjrnKU2ydIQz+a0Mfjy3A3fm8D6ctZYo
-	qlhNEXxAycJxM6aFp9+o60IQt9R8jTbgfDxpLOOHha3gg601oliQd2pv+mT+JeDy+x5075TIFA6
-	NuXjBXNBIJldiEA8uzyS5bHahibYNIuCg6uhkV79tmLjtQuYzP29blj1kYKPZpM03ZKARi6VcpL
-	yZhRiSdH0e6OGS/7qov6kxKzEYpzbOMjsIlYHqaD4l4npWOmnholU4sFhrsbf0fgdwNA2JaW23C
-	Vo/INwp6DUrQ==
-X-Google-Smtp-Source: AGHT+IEXkDOfQYg0NvfjHWusyyJCUZTfFWw+TXCd+fdhRd8DEqQUld5w5tVgIFeRFHJkBH3gi/CKag==
-X-Received: by 2002:a05:6a00:3c8a:b0:76e:885a:c33b with SMTP id d2e1a72fcca58-76e8ddc3dddmr2755576b3a.25.1755681496154;
-        Wed, 20 Aug 2025 02:18:16 -0700 (PDT)
-Received: from localhost.localdomain ([114.242.33.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7ccfa8d1sm4847120b3a.0.2025.08.20.02.18.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 02:18:15 -0700 (PDT)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: pmladek@suse.com,
-	akpm@linux-foundation.org,
-	Jinchao Wang <wangjinchao600@gmail.com>,
-	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Li Huafei <lihuafei1@huawei.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Thorsten Blum <thorsten.blum@linux.dev>
+	s=arc-20240116; t=1755681505; c=relaxed/simple;
+	bh=hErX9rqKzyQ48FraVCIgbkPgDRD9b6iHUvuOoIywuv0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XH8ozDOaFmbjQgR+iulNkxy0VDdNXUbCZBdAvtVjBjUz15/PxtG/DKbzoUPwdnuSPIoV5rkaeNYFeCjs3/ROP/2uxzB7ift3zekb8f9moagfoxvsTWnsF/A6lkPjfplgpd/K0/7gI+whxiXfDkzjUv04eobYGZUWe1AEHiBXPEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=v1T+Fmk+; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=B0SWB/hI; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1755681499; x=1756286299;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=FRyhRFkMbqSc15zT+4bIDmxfwF/9e4IBdudaDc/b6pk=;
+	b=v1T+Fmk+rYHVKkagsqWXrJhbI+15dYTV2cYUAtuFtG+DxQjxcF+Elx3g6owxjkHee6POKqZTz3nCF
+	 PHBd8I8iMud/cNhpcqYTwFiukA9v6EZX4ZqJijvKJTfO88mdC9YgdTkjOAPO0hhx0afuysyBPsnpWD
+	 P/IwdapxIXPvjTB0z54i6aiWonPNHtxTQQn+yCt8tzwm/vJ4Zed+GsWNPxLG4VUYmqa4jxoIOOnqfB
+	 iKJSMmH4jtdKjED7G1Ts6DMw2QPrxEmzdopQoy01F3y7hpX7vRsfUN5XLVk0kovMfdUq8baVJ1uGvL
+	 Pkbh1tg90JpFwGSklzHjGYCqRKavOyg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1755681499; x=1756286299;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=FRyhRFkMbqSc15zT+4bIDmxfwF/9e4IBdudaDc/b6pk=;
+	b=B0SWB/hIXek0qGZv2HrpW7HW5kE0HhZPpB0MaKZtCUkdnrdM5TFfLjGA1Fbl6b2hQ/E5msI8JZFBT
+	 eywUvoBAQ==
+X-HalOne-ID: 9b35c4ba-7da6-11f0-9cad-f3c0f7fef5ee
+Received: from localhost.localdomain (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
+	by mailrelay4.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id 9b35c4ba-7da6-11f0-9cad-f3c0f7fef5ee;
+	Wed, 20 Aug 2025 09:18:18 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: rust-for-linux@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
-	feng.tang@linux.alibaba.com,
-	joel.granados@kernel.org,
-	john.ogness@linutronix.de,
-	namcao@linutronix.de,
-	sravankumarlpu@gmail.com,
-	Will Deacon <will@kernel.org>
-Subject: [PATCH 9/9] watchdog: skip checks when panic is in progress
-Date: Wed, 20 Aug 2025 17:14:54 +0800
-Message-ID: <20250820091702.512524-10-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250820091702.512524-9-wangjinchao600@gmail.com>
-References: <20250820091702.512524-1-wangjinchao600@gmail.com>
- <20250820091702.512524-2-wangjinchao600@gmail.com>
- <20250820091702.512524-3-wangjinchao600@gmail.com>
- <20250820091702.512524-4-wangjinchao600@gmail.com>
- <20250820091702.512524-5-wangjinchao600@gmail.com>
- <20250820091702.512524-6-wangjinchao600@gmail.com>
- <20250820091702.512524-7-wangjinchao600@gmail.com>
- <20250820091702.512524-8-wangjinchao600@gmail.com>
- <20250820091702.512524-9-wangjinchao600@gmail.com>
+	Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Nhat Pham <nphamcs@gmail.com>,
+	linux-mm@kvack.org,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH] rust: zpool: add abstraction for zpool drivers
+Date: Wed, 20 Aug 2025 11:15:43 +0200
+Message-Id: <20250820091543.4165305-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,61 +86,364 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Both watchdog_buddy_check_hardlockup() and
-watchdog_overflow_callback() may trigger
-during a panic. This can lead to recursive
-panic handling.
+Zpool is a common frontend for memory storage pool implementations.
+These pools are typically used to store compressed memory objects,
+e. g. for Zswap, the lightweight compressed cache for swap pages.
 
-Add panic_in_progress() checks so watchdog
-activity is skipped once a panic has begun.
+This patch provides the interface to use Zpool in Rust kernel code,
+thus enabling Rust implementations of Zpool allocators for Zswap.
 
-This prevents recursive panic and keeps the
-panic path more reliable.
-
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- kernel/watchdog_buddy.c | 5 +++++
- kernel/watchdog_perf.c  | 3 +++
- 2 files changed, 8 insertions(+)
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/zpool.c            |   6 +
+ rust/kernel/alloc.rs            |   5 +
+ rust/kernel/lib.rs              |   2 +
+ rust/kernel/zpool.rs            | 269 ++++++++++++++++++++++++++++++++
+ 6 files changed, 284 insertions(+)
+ create mode 100644 rust/helpers/zpool.c
+ create mode 100644 rust/kernel/zpool.rs
 
-diff --git a/kernel/watchdog_buddy.c b/kernel/watchdog_buddy.c
-index ee754d767c21..79a85623028c 100644
---- a/kernel/watchdog_buddy.c
-+++ b/kernel/watchdog_buddy.c
-@@ -93,6 +93,11 @@ void watchdog_buddy_check_hardlockup(int hrtimer_interrupts)
- 	 */
- 	if (hrtimer_interrupts % 3 != 0)
- 		return;
-+	/*
-+	 * pass the buddy check if a panic is in process
-+	 */
-+	if (panic_in_progress())
-+		return;
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 84d60635e8a9..f0c4c454882b 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -75,6 +75,7 @@
+ #include <linux/wait.h>
+ #include <linux/workqueue.h>
+ #include <linux/xarray.h>
++#include <linux/zpool.h>
+ #include <trace/events/rust_sample.h>
  
- 	/* check for a hardlockup on the next CPU */
- 	next_cpu = watchdog_next_cpu(smp_processor_id());
-diff --git a/kernel/watchdog_perf.c b/kernel/watchdog_perf.c
-index 9c58f5b4381d..7641de750ca5 100644
---- a/kernel/watchdog_perf.c
-+++ b/kernel/watchdog_perf.c
-@@ -12,6 +12,7 @@
+ #if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index 7cf7fe95e41d..e1a7556cc700 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -51,3 +51,4 @@
+ #include "wait.c"
+ #include "workqueue.c"
+ #include "xarray.c"
++#include "zpool.c"
+diff --git a/rust/helpers/zpool.c b/rust/helpers/zpool.c
+new file mode 100644
+index 000000000000..71ba173f917a
+--- /dev/null
++++ b/rust/helpers/zpool.c
+@@ -0,0 +1,6 @@
++#include <linux/zpool.h>
++
++void rust_helper_zpool_register_driver(struct zpool_driver *driver)
++{
++	zpool_register_driver(driver);
++}
+diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+index b39c279236f5..0fec5337908c 100644
+--- a/rust/kernel/alloc.rs
++++ b/rust/kernel/alloc.rs
+@@ -41,6 +41,11 @@
+ pub struct Flags(u32);
  
- #define pr_fmt(fmt) "NMI watchdog: " fmt
+ impl Flags {
++    /// Create from the raw representation
++    pub fn new(f: u32) -> Self {
++        Self(f)
++    }
++
+     /// Get the raw representation of this flag.
+     pub(crate) fn as_raw(self) -> u32 {
+         self.0
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index ed53169e795c..165d52feeea4 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -129,6 +129,8 @@
+ pub mod uaccess;
+ pub mod workqueue;
+ pub mod xarray;
++#[cfg(CONFIG_ZPOOL)]
++pub mod zpool;
  
-+#include <linux/panic.h>
- #include <linux/nmi.h>
- #include <linux/atomic.h>
- #include <linux/module.h>
-@@ -110,6 +111,8 @@ static void watchdog_overflow_callback(struct perf_event *event,
- 
- 	if (!watchdog_check_timestamp())
- 		return;
-+	if (panic_in_progress())
-+		return;
- 
- 	watchdog_hardlockup_check(smp_processor_id(), regs);
- }
+ #[doc(hidden)]
+ pub use bindings;
+diff --git a/rust/kernel/zpool.rs b/rust/kernel/zpool.rs
+new file mode 100644
+index 000000000000..91926c2e99e8
+--- /dev/null
++++ b/rust/kernel/zpool.rs
+@@ -0,0 +1,269 @@
++use crate::{
++    bindings,
++    error::Result,
++    kernel::alloc::Flags,
++    str::CStr,
++    types::{ForeignOwnable, Opaque},
++};
++use core::ffi::{c_int, c_uchar, c_void};
++use core::ptr::null_mut;
++use kernel::alloc::NumaNode;
++use kernel::ThisModule;
++
++/// zpool API
++pub trait Zpool {
++    /// Opaque Rust representation of `struct zpool`.
++    type Pool: ForeignOwnable;
++
++    /// Create a pool.
++    fn create(name: *const c_uchar, gfp: Flags) -> Result<Self::Pool>;
++
++    /// Destroy the pool.
++    fn destroy(pool: Self::Pool);
++
++    /// Allocate an object of size `size` using GFP flags `gfp` from the pool `pool`, wuth the
++    /// preferred NUMA node `nid`. If the allocation is successful, an opaque handle is returned.
++    fn malloc(
++        pool: <Self::Pool as ForeignOwnable>::BorrowedMut<'_>,
++        size: usize,
++        gfp: Flags,
++        nid: NumaNode,
++    ) -> Result<usize>;
++
++    /// Free a previously allocated from the `pool` object, represented by `handle`.
++    fn free(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, handle: usize);
++
++    /// Make all the necessary preparations for the caller to be able to read from the object
++    /// represented by `handle` and return a valid pointer to the `handle` memory to be read.
++    fn read_begin(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, handle: usize)
++        -> *mut c_void;
++
++    /// Finish reading from a previously allocated `handle`. `handle_mem` must be the pointer
++    /// previously returned by `read_begin`.
++    fn read_end(
++        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
++        handle: usize,
++        handle_mem: *mut c_void,
++    );
++
++    /// Write to the object represented by a previously allocated `handle`. `handle_mem` points
++    /// to the memory to copy data from, and `mem_len` defines the length of the data block to
++    /// be copied.
++    fn write(
++        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
++        handle: usize,
++        handle_mem: *mut c_void,
++        mem_len: usize,
++    );
++
++    /// Get the number of pages used by the `pool`.
++    fn total_pages(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>) -> u64;
++}
++
++/// Zpool driver registration trait.
++pub trait Registration {
++    /// Register a zpool driver.
++    fn register(&self, name: &'static CStr, module: &'static ThisModule) -> Result;
++
++    /// Pool creation callback.
++    extern "C" fn _create(name: *const c_uchar, gfp: u32) -> *mut c_void;
++
++    /// Pool destruction callback.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that `pool` is a valid pointer to `struct zpool`.
++    unsafe extern "C" fn _destroy(pool: *mut c_void);
++
++    /// Callback for object allocation in the pool.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that `pool` is a valid pointer to `struct zpool` and that `handle`
++    /// is a valid pointer to usize.
++    unsafe extern "C" fn _malloc(
++        pool: *mut c_void,
++        size: usize,
++        gfp: u32,
++        handle: *mut usize,
++        nid: c_int,
++    ) -> c_int;
++
++    /// Callback for object release.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that `pool` is a valid pointer to `struct zpool`.
++    unsafe extern "C" fn _free(pool: *mut c_void, handle: usize);
++
++    /// Callback to prepare the object for reading.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that `pool` is a valid pointer to `struct zpool`.
++    unsafe extern "C" fn _obj_read_begin(
++        pool: *mut c_void,
++        handle: usize,
++        local_copy: *mut c_void,
++    ) -> *mut c_void;
++
++    /// Callback to signal the end of reading from an object.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that `pool` is a valid pointer to `struct zpool`.
++    unsafe extern "C" fn _obj_read_end(pool: *mut c_void, handle: usize, handle_mem: *mut c_void);
++
++    /// Callback for writing to an object.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that `pool` is a valid pointer to `struct zpool`.
++    unsafe extern "C" fn _obj_write(
++        pool: *mut c_void,
++        handle: usize,
++        handle_mem: *mut c_void,
++        mem_len: usize,
++    );
++
++    /// Callback to return the number of pages in the pool.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that `pool` is a valid pointer to `struct zpool`.
++    unsafe extern "C" fn _total_pages(pool: *mut c_void) -> u64;
++}
++
++/// Zpool driver structure.
++pub struct ZpoolDriver<T: Zpool> {
++    inner: Opaque<bindings::zpool_driver>,
++
++    /// Zpool callback functions that a zpool driver must provide
++    pub callbacks: T,
++}
++
++impl<T: Zpool> Clone for ZpoolDriver<T> {
++    fn clone(&self) -> Self {
++        todo!()
++    }
++}
++
++// SAFETY: zpool driver must ensure that ZpoolDriver's `callbacks` are thread safe
++unsafe impl<T: Zpool> Sync for ZpoolDriver<T> {}
++
++impl<T: Zpool> ZpoolDriver<T> {
++    /// create an instance of a zpool driver
++    pub const fn new(t: T) -> Self {
++        Self {
++            inner: Opaque::uninit(),
++            callbacks: t,
++        }
++    }
++}
++
++impl<T: Zpool> Registration for ZpoolDriver<T> {
++    extern "C" fn _create(name: *const c_uchar, gfp: u32) -> *mut c_void {
++        let pool = T::create(name, Flags::new(gfp));
++        match pool {
++            Err(_) => null_mut(),
++            Ok(p) => T::Pool::into_foreign(p),
++        }
++    }
++    unsafe extern "C" fn _destroy(pool: *mut c_void) {
++        // SAFETY: The pointer originates from an `into_foreign` call.
++        T::destroy(unsafe { T::Pool::from_foreign(pool) })
++    }
++    unsafe extern "C" fn _malloc(
++        pool: *mut c_void,
++        size: usize,
++        gfp: u32,
++        handle: *mut usize,
++        nid: c_int,
++    ) -> c_int {
++        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
++        // `from_foreign`, then that happens in `_destroy` which will not be called during this
++        // method.
++        let pool = unsafe { T::Pool::borrow_mut(pool) };
++        let real_nid = match nid {
++            bindings::NUMA_NO_NODE => Ok(NumaNode::NO_NODE),
++            _ => NumaNode::new(nid),
++        };
++        if real_nid.is_err() {
++            return -(bindings::EINVAL as i32);
++        }
++
++        let result = T::malloc(pool, size, Flags::new(gfp), real_nid.unwrap());
++        match result {
++            Err(_) => -(bindings::ENOMEM as i32),
++            Ok(h) => {
++                // SAFETY: handle is guaranteed to be a valid pointer by zpool
++                unsafe { *handle = h };
++                0
++            }
++        }
++    }
++    unsafe extern "C" fn _free(pool: *mut c_void, handle: usize) {
++        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
++        // `from_foreign`, then that happens in `_destroy` which will not be called during this
++        // method.
++        let pool = unsafe { T::Pool::borrow(pool) };
++        T::free(pool, handle)
++    }
++    unsafe extern "C" fn _obj_read_begin(
++        pool: *mut c_void,
++        handle: usize,
++        _local_copy: *mut c_void,
++    ) -> *mut c_void {
++        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
++        // `from_foreign`, then that happens in `_destroy` which will not be called during this
++        // method.
++        let pool = unsafe { T::Pool::borrow(pool) };
++        T::read_begin(pool, handle)
++    }
++    unsafe extern "C" fn _obj_read_end(pool: *mut c_void, handle: usize, handle_mem: *mut c_void) {
++        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
++        // `from_foreign`, then that happens in `_destroy` which will not be called during this
++        // method.
++        let pool = unsafe { T::Pool::borrow(pool) };
++        T::read_end(pool, handle, handle_mem)
++    }
++    unsafe extern "C" fn _obj_write(
++        pool: *mut c_void,
++        handle: usize,
++        handle_mem: *mut c_void,
++        mem_len: usize,
++    ) {
++        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
++        // `from_foreign`, then that happens in `_destroy` which will not be called during this
++        // method.
++        let pool = unsafe { T::Pool::borrow(pool) };
++        T::write(pool, handle, handle_mem, mem_len);
++    }
++    unsafe extern "C" fn _total_pages(pool: *mut c_void) -> u64 {
++        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
++        // `from_foreign`, then that happens in `_destroy` which will not be called during this
++        // method.
++        let pool = unsafe { T::Pool::borrow(pool) };
++        T::total_pages(pool)
++    }
++
++    fn register(&self, name: &'static CStr, module: &'static ThisModule) -> Result {
++        // SAFETY: `ZpoolDriver::new()` ensures that `self.inner` is a valid pointer
++        unsafe {
++            (*(self.inner.get())).create = Some(Self::_create);
++            (*(self.inner.get())).destroy = Some(Self::_destroy);
++            (*(self.inner.get())).malloc = Some(Self::_malloc);
++            (*(self.inner.get())).free = Some(Self::_free);
++            (*(self.inner.get())).obj_read_begin = Some(Self::_obj_read_begin);
++            (*(self.inner.get())).obj_read_end = Some(Self::_obj_read_end);
++            (*(self.inner.get())).obj_write = Some(Self::_obj_write);
++            (*(self.inner.get())).total_pages = Some(Self::_total_pages);
++
++            (*(self.inner.get())).owner = module.0;
++            (*(self.inner.get())).type_ = name.as_char_ptr().cast_mut();
++
++            bindings::zpool_register_driver(self.inner.get());
++        }
++        Ok(())
++    }
++}
 -- 
-2.43.0
+2.39.2
 
 
