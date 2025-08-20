@@ -1,123 +1,76 @@
-Return-Path: <linux-kernel+bounces-777764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C91B2DD88
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:17:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E22CB2DD89
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2C8516C8CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:16:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8B91C80CC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E14131DD82;
-	Wed, 20 Aug 2025 13:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EYiAiewG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA1631CA72;
+	Wed, 20 Aug 2025 13:16:36 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DA127EFEF;
-	Wed, 20 Aug 2025 13:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D203131B12D;
+	Wed, 20 Aug 2025 13:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755695763; cv=none; b=KoVdUNwH5LRDL7BigK2jh6xQ4Tpc54U3/ziCdzriqPskOEnNZbktYUneQvr7+SXmY8c7SLA/OkTd6hiDZ3mmx2RMUpSPmQ+eMJ912fDCMxaVhaIfTPjde6aDsDFKhMYF9iFwNhFd6bWGxFXR9Jc3aeJGLBijPrJ2it2dvzxr/Mc=
+	t=1755695795; cv=none; b=KiTTVIPMvVqfpmwhVX8jOrkJP0Wq0IsyyXgFMcYXnFA6VjdwmTjbNinhWZ7CTye3IzbEq/Nciam+cOiT93TZNbl1UI1zORXa5d1mzd/pcp5zDr2WVt1XU4tJ3EFwg02OKGwGflqNkFr9AM5/f9ypBCZ+AZSwiDjtecHZsp0+q2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755695763; c=relaxed/simple;
-	bh=pgzucyFJ2qwXfAUzKmlcRJ+TSy5kl0B/JmsPMeXJz7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MAFlRL1OFVt+Nert1CyGWC5E/FwnauxdOMfw06FEUCrv4vxCZtzVz5CmpdQHmse4s5DKrWs4CWxPmZ+xSs35pGS1nKVVIT0cIXdLazlGIRwCZ2uHgF/xTOr56JEBCR5ab6PPJeG/4jJQw4Y++0UupkCkqxNtpmRr1wLOnV97xNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EYiAiewG; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755695762; x=1787231762;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pgzucyFJ2qwXfAUzKmlcRJ+TSy5kl0B/JmsPMeXJz7s=;
-  b=EYiAiewGkzexA8iXs7VHi1S2FbsfV4VACe3e/Dh2smCQ8Fr4xhKNoN4u
-   KIvm1sH6q24ywtQ74xTULX9A7EwwqSA65iyIYKG9etGr+0WCu9/vnzFo3
-   zhzpKYh7g76Pom0nDIB+TFpjjcn99sC9bNXtaWEgMBQetOjOLhylB2LiS
-   mmYo5hCbggjf7T6/i4nDIXfv0EDwO8kC+d1rIT/eFV2fEWWvSQZjXWAJx
-   kYSgpR1KhccxxqqA4AwVWa2LKXlhjb/8zC1N1dOmtPHR7qhVZoMxjCpuN
-   yV5yDN6hgwYOdrhj6s5fm+Q5L8y/FTyJyRUi31TnrNxNka+WLVq4cjX8g
-   w==;
-X-CSE-ConnectionGUID: Vt7O+nmLSoOCloQkTchdEQ==
-X-CSE-MsgGUID: hGCNdI3MQA+qj2amFBeGZQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58033075"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="58033075"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:16:01 -0700
-X-CSE-ConnectionGUID: nXos2A7pSY+ZWgL5o2Ycgw==
-X-CSE-MsgGUID: zbIaFEhvQgyTqSx/pia1Zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="198990833"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:15:57 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uoifS-00000006rTY-3FiQ;
-	Wed, 20 Aug 2025 16:15:54 +0300
-Date: Wed, 20 Aug 2025 16:15:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Kees Cook <kees@kernel.org>, Anish Kumar <yesanishhere@gmail.com>,
-	Mukesh Ojha <quic_mojha@quicinc.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Dmitry Rokosov <ddrokosov@salutedevices.com>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/21] leds: gpio: make legacy gpiolib interface optional
-Message-ID: <aKXKihAqhzx2SRZa@smile.fi.intel.com>
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-11-arnd@kernel.org>
- <20250819121907.GA7508@google.com>
- <e9252384-a55c-4a91-9c61-06e05a0b2ce4@app.fastmail.com>
- <20250820071656.GJ7508@google.com>
- <9fb37e55-0c86-4ac6-acd3-b8c1bc722b3f@app.fastmail.com>
- <aKXKWQaUjzWtR5zn@smile.fi.intel.com>
+	s=arc-20240116; t=1755695795; c=relaxed/simple;
+	bh=H5D1rOxmchWqymov15BmFrsjqnt9z8B3XgXN6wOCWQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bVr8PolCH43oH5z4stno5ez+Pq/p9oAIDgata7M6ph5wZp6f2kKd1VTmU7KYTZMwoReJzj61eVF2MkPXKVAwEgQMX7KHq/AYWQI+oTlfNonXQkW63sPxe9YFXwMeHnIyoNTbLsQrila1AHbTLIZOo5B/ZJyfF77wmMF3IUASpGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 02B84117DC5;
+	Wed, 20 Aug 2025 13:16:26 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 2F6292002D;
+	Wed, 20 Aug 2025 13:16:25 +0000 (UTC)
+Date: Wed, 20 Aug 2025 09:16:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tengda Wu <wutengda@huaweicloud.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next 2/2] ftrace: Fix potential use-after-free for
+ set_ftrace_{notrace,filter} files
+Message-ID: <20250820091626.6c60f9cd@gandalf.local.home>
+In-Reply-To: <354f6b41-83d1-4496-aec8-764c205990e1@huaweicloud.com>
+References: <20250813023044.2121943-1-wutengda@huaweicloud.com>
+	<20250813023044.2121943-3-wutengda@huaweicloud.com>
+	<20250819210538.29ae29cb@gandalf.local.home>
+	<354f6b41-83d1-4496-aec8-764c205990e1@huaweicloud.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKXKWQaUjzWtR5zn@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: cn9mxagn75siag7mbhmotjjdbq4nmymu
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 2F6292002D
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/Qc0WNTcVOiFeULQQgPOWa8heXJAeXQXM=
+X-HE-Tag: 1755695785-615699
+X-HE-Meta: U2FsdGVkX19DthW2DY4viAo1etjl5WWt8RrM8iMpq5t4gR0jzY4Q9cM8TOSG4F4E2fUaXNyWKAu1pMp2a+N/Zb0rHAZSi8DXzEyzEBPm6CqZ/sCIPEX7pbFNI7JfMVd+ucKwzJTzpfu1FUUr1v7gPdZdPQDGxvKJVbN26VjKK2vi29YMlGgzvHoXrNx4f4vK/PFSU2yKVLKHc6xYyJbB6x+opghaR//vZNSn/wQJBFhxMXUO/7Xf5udQ+Eo81mFtqsFrfd/VN5EMw5+Z/aMhfQwHG0uOpTiPGdiSpIG9/MsXOSZoBSrggKb6csJWQc7QUUfhZlzHvw0vrsxZghazSLQiY9s04O2CdGSTrbzo6RHqbrtIQ/N3kQ==
 
-On Wed, Aug 20, 2025 at 04:15:05PM +0300, Andy Shevchenko wrote:
-> On Wed, Aug 20, 2025 at 02:00:56PM +0200, Arnd Bergmann wrote:
-> > On Wed, Aug 20, 2025, at 09:16, Lee Jones wrote:
-> > > On Tue, 19 Aug 2025, Arnd Bergmann wrote:
-> > >
-> > > Sounds like we're between a rock and a hard place with this.
-> > 
-> > I don't think either variant is that bad to be honest, as it
-> > gets us a long way towards removing the legacy interface from
-> > default builds without having to update or remove the holdouts
-> > immediately. It's mainly led-gpio and gpio-keys that need
-> > a change like this.
-> 
-> And I believe Dmitry is working on gpio-keys this cycle to get rid of legacy
-> GPIO APIs.
+On Wed, 20 Aug 2025 16:34:46 +0800
+Tengda Wu <wutengda@huaweicloud.com> wrote:
 
-I just realize that this might be odd, I meant Dmitry Torokhov in this context.
+> Agreed. That is a much cleaner solution. I just tested this code and it
+> worked perfectly. Looking forward to getting it into the mainline soon.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks, I'll also add a Tested-by tag for you too then.
 
-
+-- Steve
 
