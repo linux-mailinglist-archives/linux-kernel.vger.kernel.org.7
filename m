@@ -1,176 +1,141 @@
-Return-Path: <linux-kernel+bounces-777466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF01BB2D9CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:11:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2D6B2D9D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC5DB1BA5355
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:08:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7DB918850F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143C82DFA24;
-	Wed, 20 Aug 2025 10:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHgpOoyd"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F0F1DE8AE;
-	Wed, 20 Aug 2025 10:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BABB2DECC0;
+	Wed, 20 Aug 2025 10:09:00 +0000 (UTC)
+Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C232D3A6C;
+	Wed, 20 Aug 2025 10:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755684489; cv=none; b=UzZTiiefe/5D/ljOkY4kzVjnYYaGUZXZ7mgcGiDq8vGz0s9f8C34ch171BSQ9q6ZM+nsTNApvtY/76MLdhdf7aCdgbXUGB66U1np8OX/fOyJNfMilLH6HoesyVT/mWrU32LFbacJboeakgcWztKayqnR1sgwrCAMXBRmUmdkNp0=
+	t=1755684540; cv=none; b=fPLOlp0L6mt3mkFO0MLKy8jKo+Ntvq23LW/dgU6bGCjwvYKYSAiLybeximnlft9nuvtrBQOPL7uL2J1KUBjcqG8gN3JZ4XeMt2E8q7KfyJ1chfjUsiFCCP8iVJCZ69Rk7+0yaN9/4g070e7m1UG8LBRJNs1fz1UKI52u21Z+8sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755684489; c=relaxed/simple;
-	bh=FZnH7IVXDZSkh1fg/9whT2XBdr3e/mxUBPm+5ecoQyI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C8Uq5Yj0nDOSm5n5sQ6Z7lnx7S0f7hS3PyYwxP6nJnsmQmmF9b/MPDKq8hOpCok702ZrpJqg+GjbSVyUoFYjRMJ5apsKJ9uzK3mcOyUIIwKzGb6jIGsR88qdoHkWp0AnmzjBYeIjjzwmvAl9Bu40miBE9lWlkGi+GgXEBjs+lMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CHgpOoyd; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7a0442bso924457166b.2;
-        Wed, 20 Aug 2025 03:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755684486; x=1756289286; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A10HCd2pA3OduNKpWYQq6d5rqpa6dB0B0oPBvZ95Xzs=;
-        b=CHgpOoydrLpE5a1cehubKiafAW2TqTK/wrul1s8YXv8twCx0QSn9avu0iCR3P7f6X0
-         o3mK1p/31lR/UfKk+zUq6mYkm9N4GWW8mwu5w+FJBKBg6UeXX7kGGBQ0ocr1Nc4rqe67
-         8m9hehY1fO40Cb3JZ/pKj6DkpvyUzLXRAnF8f+cy8Ub+d5GmQUrZbW0QgmfnNlclCsVQ
-         7a7vsYRE3xHEeFDVedHcQAJAZlW0qVYAHpPJ1bX5WqqEat+okRqTlNcxHx+MM8xGXl5M
-         p9FZurPyGtgg0hQUlxVVhHw1JwS61J3lMO+fRyD1nUV8XdmixW2fFiaYbPgKyL4eaACB
-         ZWhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755684486; x=1756289286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A10HCd2pA3OduNKpWYQq6d5rqpa6dB0B0oPBvZ95Xzs=;
-        b=FZFf7Gm62AaMjaFa+03/wWNf4fmKNmJukDhju01vnAOiLXFxrx0IcwJswhcDoMHtxc
-         7BlGyVytzCmBMWoIgNy+PXOt2fIAV+sBMVEBTFT/JDu8oryV+y8V6Eks0E+dAp1v6lO9
-         yPnThcH+KP9xdUyY3krj1sVi1/cKAUUVPyNIAwpPWt5wlPvUCJ5miqlrtpytwocHlXpo
-         T8VAlGlgLDQBvKB9urE5grD7tORYtZ7r3KWNbmFsla/Yj0KBOKxO4uuJlVVTJ6yST5TE
-         8gy+tcP2ops4byV/cbRCqyEKTMhQwAi5AD66bmARv75MTi3+itqv9F4ldv5MpZZW/6MM
-         m8eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+efLYSiLfBers5B5mcxUQItEIj1+Q+DHtpGfO6LZyxg80RG/D5W/N+9crLAWbLW1D5anfi0qR+vdg1pcQ@vger.kernel.org, AJvYcCWahQ0LpwdgUYeb1OR3tOsGNG0uOBZZPl6fpcEkFeg089Lxe2IXJ6tiC3Sau7EdUsJwJTXEPsU94Rmy@vger.kernel.org, AJvYcCWrQFHA7JuaZyhz4K05LP70zh2tdwTIEPft8CViNOdDw+KxKlKcA4tUiOdw+osSaMbw9U0iCYzT5ApP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR+KTdguQQCO3sa0InB1u9Lea3nfZpIY7FQ1sJtuBRAUZ5OJ10
-	DgDiw8q11z7eSgSuSsScorLSy+RQj50J250KroRxa6gldX2DpQbvV3osPyznJVQXn2ZgQsMCVjn
-	Ens2udLqrpS9wG/8TEed+xcalHFnHdiE=
-X-Gm-Gg: ASbGncv6JYPScPgKXCdgxLU+gL3zq3fkpt6IHh/2WgCG7bSpRdE4tkaxF0oQxyEf78w
-	pPMQWOVf0SnQQiwjeW+7H81om7HKHzbPkK4j/MqKp4aHJbxfuD9oyET/8Od/OPTr76/taVyAnk0
-	htQ7lxSTqSVQOJ3NjRZcf1Ewet1DYuckdJj4lS0iaotewMA7Xni1MVRV8lidJcAKnXT8RYFyelQ
-	FUIQBvg+A==
-X-Google-Smtp-Source: AGHT+IF0+R0Fi3FH4hzy3g1t0qDqEyKVt5uDOei3+hJK+Y1205usJSF6wJdnHtvCy70VrmskKGSfuhi8jaApX0uDUCk=
-X-Received: by 2002:a17:906:6a22:b0:afa:17ef:be34 with SMTP id
- a640c23a62f3a-afdf005d188mr176046466b.5.1755684485775; Wed, 20 Aug 2025
- 03:08:05 -0700 (PDT)
+	s=arc-20240116; t=1755684540; c=relaxed/simple;
+	bh=o8NWUJZ+hrkCB63F5Md5d9S5crljdWtUTKQFkgVZAjE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y7NswZdnQ16hEmAp+xTw0vCYZ+okMXPSPNvoojVEvA2baZMfWwU1u9j3BGnjlykomPgQyURu9XZEdD/A0ET9IcRArhD5woRpnVj4iJenRhT5SqsjV8lqnLnyAQ8LuaXGWYKCTWdOe5Sf9Ice9fy0PgCGzrRtjyLGrB7HIyAgjxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
+Received: from unknown (HELO kinkan3-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 20 Aug 2025 19:07:46 +0900
+Received: from mail.mfilter.local (mail-arc01.css.socionext.com [10.213.46.36])
+	by kinkan3-ex.css.socionext.com (Postfix) with ESMTP id 887EC2069E70;
+	Wed, 20 Aug 2025 19:07:46 +0900 (JST)
+Received: from iyokan3.css.socionext.com ([172.31.9.53]) by m-FILTER with ESMTP; Wed, 20 Aug 2025 19:07:46 +0900
+Received: from [192.168.1.135] (css-vcsa.css.socionext.com [10.213.44.70])
+	by iyokan3.css.socionext.com (Postfix) with ESMTP id DD9E710A014;
+	Wed, 20 Aug 2025 19:07:45 +0900 (JST)
+Message-ID: <f659afe0-6506-470b-be7e-99bd5ab03299@socionext.com>
+Date: Wed, 20 Aug 2025 19:07:44 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819-upstream-changes-v7-0-88a33aa78f6a@watter.com> <20250819-upstream-changes-v7-4-88a33aa78f6a@watter.com>
-In-Reply-To: <20250819-upstream-changes-v7-4-88a33aa78f6a@watter.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 20 Aug 2025 13:07:28 +0300
-X-Gm-Features: Ac12FXwFK3zS39o8cYKu54pIrc-2L6sdZoLIj6cAUWdmikwm-1-fDBi4WslIDiQ
-Message-ID: <CAHp75VfrRJmB-Q6TM+Tiy79_q63=cOvyrePMQwi6ZbvDNUPezQ@mail.gmail.com>
-Subject: Re: [PATCH v7 4/5] iio: mcp9600: Recognize chip id for mcp9601
-To: Ben Collins <bcollins@watter.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andrew Hepp <andrew.hepp@ahepp.dev>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] i2c: designware: Fix clock issue when PM is
+ disabled
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, ito.kohei@socionext.com,
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250724042211.2160339-1-hayashi.kunihiko@socionext.com>
+ <20250724042211.2160339-2-hayashi.kunihiko@socionext.com>
+ <wnoawxh7umtbq2b73f4qpbbbe76b5eluz62g3csmq7k4uw2hnm@exggtdzkeyur>
+Content-Language: en-US
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+In-Reply-To: <wnoawxh7umtbq2b73f4qpbbbe76b5eluz62g3csmq7k4uw2hnm@exggtdzkeyur>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 20, 2025 at 2:45=E2=80=AFAM Ben Collins <bcollins@watter.com> w=
-rote:
->
-> The current driver works with mcp9601, but emits a warning because it
-> does not recognize the chip id.
->
-> MCP9601 is a superset of MCP9600. The drivers works without changes
-> on this chipset.
->
-> However, the 9601 chip supports open/closed-circuit detection if wired
-> properly, so we'll need to be able to differentiate between them.
->
-> Moved "struct mcp9600_data" up in the file since a later patch will
-> need it and chip_info before the declerations.
+Hi Andi,
 
-declarations
+Thank you for your comment.
 
-...
+On 2025/08/20 7:06, Andi Shyti wrote:
+> Hi Kunihiko,
+> 
+> On Thu, Jul 24, 2025 at 01:22:10PM +0900, Kunihiko Hayashi wrote:
+>> When removing the driver, enable the clocks once by calling
+>> pm_runtime_get_sync(), and call pm_runtime_put_sync() to disable
+>> the clocks.
+> 
+> can we rephrase this to something like:
+> 
+>    When the driver is removed, the clocks are first enabled by
+>    calling pm_runtime_get_sync(), and then disabled with
+>    pm_runtime_put_sync().
+> 
+> Does it work?
 
-> +struct mcp9600_data {
-> +       struct i2c_client *client;
-> +};
-> +
->  #define MCP9600_CHANNELS(hj_num_ev, hj_ev_spec_off, cj_num_ev, cj_ev_spe=
-c_off) \
->         {                                                                =
-      \
->                 {                                                        =
-      \
-> @@ -123,10 +133,6 @@ static const struct iio_chan_spec mcp9600_channels[]=
-[2] =3D {
->         MCP9600_CHANNELS(2, 0, 2, 0), /* Alerts: 1 2 3 4 */
->  };
->
-> -struct mcp9600_data {
-> -       struct i2c_client *client;
-> -};
-> -
+Yes, your description is better.
 
-It's not obvious why this piece of change is needed. AFAICS it's a stray ch=
-ange.
+> 
+>> If CONFIG_PM=y, clocks for this controller are disabled when it's in
+>> the idle state. So the clocks are properly disabled when the driver
+>> exits.
+>>
+>> Othewise, the clocks are always enabled and the PM functions have
+>> no effect. Therefore, the driver exits without disabling the clocks.
+>>
+>>      # cat /sys/kernel/debug/clk/clk-pclk/clk_enable_count
+>>      18
+>>      # echo 1214a000.i2c > /sys/bus/platform/drivers/i2c_designware/bind
+>>      # cat /sys/kernel/debug/clk/clk-pclk/clk_enable_count
+>>      20
+>>      # echo 1214a000.i2c >
+> /sys/bus/platform/drivers/i2c_designware/unbind
+>>      # cat /sys/kernel/debug/clk/clk-pclk/clk_enable_count
+>>      20
+>>
+>> To ensure that the clocks can be disabled correctly even without
+>> CONFIG_PM=y, should add the following fixes:
+>>
+>> - Replace with pm_runtime_put_noidle(), which only decrements the
+> runtime
+>>    PM usage count.
+>> - Call i2c_dw_prepare_clk(false) to explicitly disable the clocks.
+>>
+>> Fixes: 7272194ed391f ("i2c-designware: add minimal support for runtime
+> PM")
+> 
+> This commit doesn't look quite right to me, although it's quite
+> difficult to find the culprit, as the clk api's have changed a
+> lot over time.
+> 
+> Do you think this is better:
+> 
+> Fixes: b33af11de236 ("i2c: designware: Do not require clock when SSCN and
+> FFCN are provided")
 
-...
+Surely, the code that handles PM and clocks has changed some time,
+so it's difficult to identify the commit with "Fixes" tag.
+I think the first commit that called pm_runtime_put_sync() was the cause.
 
->  static int mcp9600_probe(struct i2c_client *client)
->  {
-> +       const struct mcp_chip_info *chip_info =3D i2c_get_match_data(clie=
-nt);
+> It doesn't matter much as it won't apply in any of the two
+> versions> 
+> The Fixes tag should be added in both the patches, but there is
+> no need to resend, I will apply them once we agree on the commit
+> message.
 
->         struct iio_dev *indio_dev;
->         struct mcp9600_data *data;
-> -       int ret, ch_sel;
-> +       int ch_sel, dev_id, ret;
+Okay, I agree with you.
 
-It's hard to maintain and prone to subtle errors if we split
-assignment and check, so please move assignment here.
+Thank you,
 
-       chip_info =3D i2c_get_match_data(client);
-
-> +       if (!chip_info)
-> +               return dev_err_probe(&client->dev, -EINVAL,
-
-In such cases we usually use ENODEV.
-
-> +                                    "No chip-info found for device\n");
-
-...
-
-> +               return dev_err_probe(&client->dev, dev_id,
-> +                                    "Failed to read device ID\n");
-
-With
-
-  struct device *dev =3D &client->dev;
-
-at the top of the function this and other statements become neater and
-easier to follow. In particular, I believe this one may become a one
-liner after the change.
-
---=20
-With Best Regards,
-Andy Shevchenko
+---
+Best Regards
+Kunihiko Hayashi
 
