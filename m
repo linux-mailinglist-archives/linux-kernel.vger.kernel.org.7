@@ -1,179 +1,140 @@
-Return-Path: <linux-kernel+bounces-777218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24769B2D6F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:45:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C16B2D6F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9D83B2433
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31BD18894F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38002D949B;
-	Wed, 20 Aug 2025 08:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8B52D8DC2;
+	Wed, 20 Aug 2025 08:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="csS1OKvD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Pq2jeBlG"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DE22D6E73
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAB8272E7A
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755679428; cv=none; b=Cj+q6AT0ImZ6WuJJt/W7CykhdHEvyl+xt+m0nUJmlym9+mmOUooiSbOfjRb4LEaAVJoLoRM1swFOul1PAcaCnePqbUtnwulVWwsCv4lAa3FCCbYwm7bVFLhm3N7llDtzbuBx0tXYBuJzxB1idKUqBmWFVajMTn0mU5I7PJqLd7Q=
+	t=1755679443; cv=none; b=k6H42CT/q7qQqyk48CkVAPqP0h1CyKdBpFObEt0KeB0cUpIsE+OLmj6R1p56JD9grwvtQ923N4BSngcmPz9fRXZl10QI4cEaNre4FoqjNwHRT4KpnIWHIUMldpeSJ82dDvwZYKS1H277fkCVglsNXsUz3Cs0hfiRjBipLHSY6O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755679428; c=relaxed/simple;
-	bh=G1h8efYazpeQ8uAE6JYn8rZ/ip62/Dzz0UAYoe4kl3o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WIMPvvVCd5pxfGnxjhsNeW3JM0k27Cz1JJSgkRMeFFOOl3LpyQapiaz447chCFrx1B0n88h3BnOhAeI10PFTykl+CfkvK4O3KLJ1KnIyJ0K8l2wSSj+14scYsHBZJZOBesVtpVZn893Y+Mr0QnBi7+IE+R6R8taZ0UQZIlt7T54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=csS1OKvD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755679425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NkjQJxuaLz1Ic3cd/+1JftzXHv9RBnWzcArcLhUMO/o=;
-	b=csS1OKvDcUOEZlbedKQYiYkQaQ8UE9WWQTGjj9C70HhhRxMRFBFLvUFDYG/1GpD7E+YFXa
-	Mt9unaMuK5hdLY/kVgILXx/M9TsE+FM9tvjgKC4GnppQHHK7RVPmW4NeMS+cTDCvysV/XS
-	TRpLiAWZbOII0I6+0FYEzBxohdG/MUs=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-480-63eSMpjYM9mhJsVeixqgfA-1; Wed, 20 Aug 2025 04:43:43 -0400
-X-MC-Unique: 63eSMpjYM9mhJsVeixqgfA-1
-X-Mimecast-MFC-AGG-ID: 63eSMpjYM9mhJsVeixqgfA_1755679423
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e87031ae4dso681615585a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:43:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755679423; x=1756284223;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NkjQJxuaLz1Ic3cd/+1JftzXHv9RBnWzcArcLhUMO/o=;
-        b=eks2+Q21OoKdqUtpuThfwR9T+GxDahDk9Fx9BN9aooRLqEp7OGgJzl0AcjM2S468kk
-         ScqxMVTu024hOxOPBg2oKAZoymLBvchpw/WnnkMY7VO3gt1j1BSgg6rj70xUBrBJiXtE
-         VAGx81K//JmK2YIaxfYRKZfL7iy9i36K3/O6uNKkskGWIPEeNBjgR34+CAICwj1r162X
-         yKGeGNRDQcLGiEZQhrL4/ebzCf9ZBhUqYTo6yQ1UBT9eJL1MwVjOr01B2k/iKmSht6Gq
-         p4912fvjeAOAmje3GqB72ufOWwmJmZAf0CFSpX8vwIWWA4L9vHwlZUboeUM6Q2EDloYR
-         Pt6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU5r7ZYUdHv+hxt7sMhiIMBwtfwb5XJquqwrJGH3B5TpNGvR1Gb1YUJQPObzwJQY+sHG+XNw2Q3K4YDmlU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH7KtioZGInfM3+82tl8ZWoBu3vdxwax5dWme5LH+WajKSIPd2
-	wt4hILiB6SVyNt97wLv9NCpFUIGuKQyGGlSpJq/oi7i7jqFgGMpOwUO4PSYbua1IhoeTCXl5kVy
-	G7MNqGnLIJ6BTYsLNIpWX2/yD7l0zdfAeozyzSp37sT8qXXvGTGMQ18oV0BU8ou73Mw==
-X-Gm-Gg: ASbGncvFQF54ISBTeKeFH1bgSDpSIuu0om4rpbVD+2P3xLTZyUPnuig/TTNVYLxR7+7
-	adVUtksDQSpDNNcENnnZXbt0ltEIKih/gJNs9wZrS3QeRb5uEJ+bjM7t2C+aX5ya+vORVzunJlK
-	DTZ7Iag/Y30sazKpOwHp1bhLkVKkCy8h/we0FDqF26ilL2SO6Tn4dExFyx6x9KaGO9gd+ol2t4L
-	Wk5hELPUZjZbnyl7LEt4VYiozhu5WSK151ZP/Z3hHiRXBRapjUgdHatAXUJTwIyIeVqLfJWTssp
-	qdYIe7qb6JfJcm7cUUZkoyXmx7jX7DRTe8GHsJfHW2E21ej9sCvwRqVarNXwtLQmnUDQsmcyDbQ
-	raRbgFtXx5egjD0TBfUxfjuGM
-X-Received: by 2002:a05:620a:4103:b0:7e8:1853:a40f with SMTP id af79cd13be357-7e9fcb9ab96mr221992985a.58.1755679423098;
-        Wed, 20 Aug 2025 01:43:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcoibAu0ez0AiJEUPxp6IDr+/DFJY4gh7kJ5dH42mKPNrIBGsLREMZKf1PQxsGhsziHZAIkQ==
-X-Received: by 2002:a05:620a:4103:b0:7e8:1853:a40f with SMTP id af79cd13be357-7e9fcb9ab96mr221990585a.58.1755679422684;
-        Wed, 20 Aug 2025 01:43:42 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba902f4edsm83427236d6.14.2025.08.20.01.43.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 01:43:41 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Adam Li <adamli@os.amperecomputing.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org
-Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, cl@linux.com, frederic@kernel.org,
- linux-kernel@vger.kernel.org, patches@amperecomputing.com
-Subject: Re: [PATCH] sched/nohz: Fix NOHZ imbalance by adding options for
- ILB CPU
-In-Reply-To: <7438bb3a-96d6-485a-9ecc-63829db74b39@os.amperecomputing.com>
-References: <20250819025720.14794-1-adamli@os.amperecomputing.com>
- <xhsmhtt23h0nw.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <7438bb3a-96d6-485a-9ecc-63829db74b39@os.amperecomputing.com>
-Date: Wed, 20 Aug 2025 10:43:38 +0200
-Message-ID: <xhsmho6sagz7p.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1755679443; c=relaxed/simple;
+	bh=kSWBiN/GA12YV+qcjFwKA/cHTBbv2Wy0xFRnPWQK9Ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G8OJ0Vw6iVCdXPIkAr6gMJm9QIGk+OQa+XaVI6Ar/2e/LHIsi+JOzqdTXLWVIjuJ7X7nTVnFoChAnhIdjLFymHnCdJB3Dcc7Hg3SfEkIk6MsPze8GEyuzAAmftnFemDnfYLYmlicpuLwbIUG7OY6VnQbwXGLwuLwduFu2u/QDD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Pq2jeBlG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755679438;
+	bh=kSWBiN/GA12YV+qcjFwKA/cHTBbv2Wy0xFRnPWQK9Ko=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Pq2jeBlGW0CUvs+Xm9i6FNFZMCKVKAGxdCNJTRWPhjlDz2XzOAEkVYZrovKo74nQ1
+	 xY3TT6SIBwsT8FhK7O0aNYjjxAPayV/shBwz+KiY2o4PvR8vjExgytjQYpGhaOHS0K
+	 vHl+WJqvvdd1G6KOf2+tOBGGubh6qoNDFNAgYtxfPachR3YpFyvy+CDeqfC5hflwRJ
+	 sdhW0WqHAoCAzSHEABAkuQiWqDTLSShIKnWLu+E1SRWzeS57apkZ39Tw6U1yzjPW+G
+	 ZArhB/JOqskFgGBMrBjKEOgPjgR+jyVUZxs2g2UrvTM8oXYcrkArqMk9ON/GZ7ihqo
+	 4Xat9acOqDz5Q==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6DCB017E0488;
+	Wed, 20 Aug 2025 10:43:58 +0200 (CEST)
+Date: Wed, 20 Aug 2025 10:43:53 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panthor: always set fence errors on CS_FAULT
+Message-ID: <20250820104353.5cc8035d@fedora>
+In-Reply-To: <CAPaKu7TTR4prUqt=AL2Lh=od9B_RqQpH+5redvFb3FY749Ebgg@mail.gmail.com>
+References: <20250618145550.1901618-1-olvaffe@gmail.com>
+	<20250623083241.02127feb@fedora>
+	<CAPaKu7TTR4prUqt=AL2Lh=od9B_RqQpH+5redvFb3FY749Ebgg@mail.gmail.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 20/08/25 11:35, Adam Li wrote:
-> On 8/19/2025 10:00 PM, Valentin Schneider wrote:
->>
->> I'm not understanding why, in the scenarios outlined above, more NOHZ idle
->> balancing is a good thing.
->>
->> Considering only housekeeping CPUs, they're all covered by wakeup, periodic
->> and idle balancing (on top of NOHZ idle balancing when relevant). So if
->> find_new_ilb() never finds a NOHZ-idle CPU, then that means your HK CPUs
->> are either always busy or never stopping the tick when going idle, IOW they
->> always have some work to do within a jiffy boundary.
->> > Am I missing something?
->>
->
-> I agree with your description about the housekeeping CPUs. In the worst case,
-> the system only has one housekeeping CPU and this housekeeping CPU is so busy
-> that:
-> 1) This housekeeping CPU is unlikely idle;
-> 2) and this housekeeping CPU is unlikely in 'nohz.idle_cpus_mask' because tick
-> is not stopped.
-> Therefore find_new_ilb() may very likely return -1. *No* CPU can be selected
-> to do NOHZ idle load balancing.
->
-> This patch tries to fix the imbalance of NOHZ idle CPUs (CPUs in nohz.idle_cpus_mask).
-> Here is more background:
->
-> When running llama on arm64 server, some CPUs *keep* idle while others
-> are 100% busy. All CPUs are in 'nohz_full=' cpu list, and CONFIG_NO_HZ_FULL
-> is set.
->
+On Tue, 8 Jul 2025 14:40:06 -0700
+Chia-I Wu <olvaffe@gmail.com> wrote:
 
-I assume you mean all but one CPU is in 'nohz_full=' since you need at
-least one housekeeping CPU. But in that case this becomes a slightly
-different problem, since no CPU in 'nohz_full' will be in
+> On Sun, Jun 22, 2025 at 11:32=E2=80=AFPM Boris Brezillon
+> <boris.brezillon@collabora.com> wrote:
+> >
+> > On Wed, 18 Jun 2025 07:55:49 -0700
+> > Chia-I Wu <olvaffe@gmail.com> wrote:
+> > =20
+> > > It is unclear why fence errors were set only for CS_INHERIT_FAULT.
+> > > Downstream driver also does not treat CS_INHERIT_FAULT specially.
+> > > Remove the check.
+> > >
+> > > Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/panthor/panthor_sched.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/dr=
+m/panthor/panthor_sched.c
+> > > index a2248f692a030..1a3b1c49f7d7b 100644
+> > > --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> > > +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> > > @@ -1399,7 +1399,7 @@ cs_slot_process_fault_event_locked(struct panth=
+or_device *ptdev,
+> > >       fault =3D cs_iface->output->fault;
+> > >       info =3D cs_iface->output->fault_info;
+> > >
+> > > -     if (queue && CS_EXCEPTION_TYPE(fault) =3D=3D DRM_PANTHOR_EXCEPT=
+ION_CS_INHERIT_FAULT) {
+> > > +     if (queue) {
+> > >               u64 cs_extract =3D queue->iface.output->extract;
+> > >               struct panthor_job *job;
+> > > =20
+> >
+> > Now that I look at the code, I think we should record the error when
+> > the ERROR_BARRIER is executed instead of flagging all in-flight jobs as
+> > faulty. One option would be to re-use the profiling buffer by adding an
+> > error field to panthor_job_profiling_data, but we're going to lose 4
+> > bytes per slot because of the 64-bit alignment we want for timestamps,
+> > so maybe just create a separate buffers with N entries of:
+> >
+> > struct panthor_job_status {
+> >    u32 error;
+> > }; =20
+> The current error path uses cs_extract to mark exactly the offending
+> job faulty.  Innocent in-flight jobs do not seem to be affected.
 
-  housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)
+My bad, I thought the faulty CS was automatically entering the recovery
+substate (fetching all instructions and ignoring RUN_xxx ones), but it
+turns out CS instruction fetching is stalled until the fault is
+acknowledged, so we're good.
 
-> The problem is caused by two issues:
-> 1) Some idle CPUs cannot be added to 'nohz.idle_cpus_mask',
-> this bug is fixed by another patch:
-> https://lore.kernel.org/all/20250815065115.289337-2-adamli@os.amperecomputing.com/
->
-> 2) Even if the idle CPUs are in 'nohz.idle_cpus_mask', *no* CPU can be selected to
-> do NOHZ idle load balancing because conditions in find_new_ilb() is too strict.
-> This patch tries to solve this issue.
->
-> Hope this information helps.
->
+>=20
+> I looked into emitting LOAD/STORE after SYNC_ADD64 to copy the error
+> to panthor_job_status.  Other than the extra instrs and storage,
+> because group_sync_upd_work can be called before LOAD/STORE, it will
+> need to check both panthor_job_status and panthor_syncobj_64b.  That
+> will be a bit ugly as well.
 
-I hadn't seen that patch; that cclist is quite small, you'll want to add
-the scheduler people to our next submission.
+Nah, I think you're right, I just had a wrong recollection of how
+recovery mode works. The patch is
 
-So IIUC:
-- Pretty much all your CPUs are NOHZ_FULL
-- When they go idle they remain so for a while despite work being available
-
-My first question would be: is NOHZ_FULL really right for your workload?
-It's mainly designed to be used with always-running userspace tasks,
-generally affined to a CPU by the system administrator.
-Here AIUI you're relying on the scheduler load balancing to distribute work
-to the NOHZ_FULL CPUs, so you're going to be penalized a lot by the
-NOHZ_FULL context switch overheads. What's the point? Wouldn't you have
-less overhead with just NOHZ_IDLE?
-
-As for the actual balancing, yeah if you have idle NOHZ_FULL CPUs they
-won't do the periodic balance; the residual 1Hz remote tick doesn't do that
-either. But they should still do the newidle balance to pull work before
-going tickless idle, and wakeup balance should help as well, albeit that
-also depends on your topology.
-
-Could you share your system topology and your actual nohz_full cmdline?
-
-> Thanks,
-> -adam
->
->
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
 
