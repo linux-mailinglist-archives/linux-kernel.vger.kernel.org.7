@@ -1,212 +1,182 @@
-Return-Path: <linux-kernel+bounces-776712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABC6B2D0BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:40:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1103FB2D0BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EE79627E24
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:40:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0EB1684E7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8039718BC3B;
-	Wed, 20 Aug 2025 00:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB9B189902;
+	Wed, 20 Aug 2025 00:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="FT4XviGM"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023125.outbound.protection.outlook.com [40.107.44.125])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="udAcKlV+"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B97B3C17;
-	Wed, 20 Aug 2025 00:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.125
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755650409; cv=fail; b=FO/pAOh+4uFLR6CjwxwOPc9iu2ME8B2YGhps0uQvWY4dhLbihmsyyg81nyza52SKRPBTZIZ6Ukrdm9x95tOY6dIVwpi16ucHugYxtlqquc4ognA5tC07kANz2Uo25gXqVn3LVjOVGh4bAhwJ0E8QG9Cst2nAIeKEQu5JFqY2jIs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755650409; c=relaxed/simple;
-	bh=mij/PjU9/nDnqVP8NMBR2OE4sFNq2urXCY096UlQJwA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZuTYlFoRxFH9CT92lvrSeFIC7046g2IMc+IseJbw3tbEfG7J7b4jXi7Re1SaMxvqaQ1NN2XLLRSA1C8WjHOnvJGGjKDwkTZyOJyhX+vDinb2sSIx1qGg12QlchNuRHxkKcGkDnFuRgyRkCtNTP3Zb5Jo50/hwDumvnJjWoJq9Fw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=FT4XviGM; arc=fail smtp.client-ip=40.107.44.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f83Powfupznr/ftG6ahdhfKNmZO25YhForW1fW0HJcngTRcIc5EsRvO98F6x+4RZfSeed7e9N34Rr6rsteTT8ngIQoZRnIc+hohAv6eJI31Vf02NcVfCTE8hMAH7TG5/Q+x2tPpQQdhr4V3VpxTKpprkYRPW38qxLPHS9l/H2ky9+xL7zxlZmTnfbeAzVFXceEhtksE3BOekkdxMJIC/3omQzFdRIVcxoQdr7/6wFKAPzXW+nT4FEnQlvstonSo/DDvqrpZm3Yz+IAVdWJM3RB40MYaftVpKLz8zyHZnP4M7SNbOm3s4xf2gX9ql9mrvAoEf1WW6HiQjdhxCOcfLTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mij/PjU9/nDnqVP8NMBR2OE4sFNq2urXCY096UlQJwA=;
- b=SkUgqqp+4wdHzSB5CXaaujl4w5xmvk0bUMFgbLKS3NtPEROfsb2AD+G4qKw8osPJVX4omQyZiWlve/qtIKLVYEIcfZjLXg4oEK+0twMrcI0/kzUDrAUe+hXUR4FL5U5/zDLit6300E5TzttCpCm9BWgj5iKdtIdHdWMuFwpZQA0N9SCl1Z4Qkw0dCWNbGCQ3UcitS7eEqONQV4KOUKu1sXSkqdPV2jSFeY0G3gRYDzscqEVfm6RQH3VRccYAEYNQ9k5TB1oovLps4hglxZU1vxBl1MgTzdOqhuDv55wc5RG8WId8chwBSFNI0DfO/cxeYbpvTuPOi3QFvGgYG6rirA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mij/PjU9/nDnqVP8NMBR2OE4sFNq2urXCY096UlQJwA=;
- b=FT4XviGMNxtshNB0IorZvKtpqdOfREUhXSmDFJcE4cyBQwSurFAkwkZE2CSm+C6GIVnGTnQrOxy0dhrctc0fwO7nnmkTXucFW0f7Yr3ANyCihlw16ajlZ6luLcoTUEWss8gYkB1WDRmUw5ACb4jr52l2QqWaZeQwWGnvOrStBbZ+eR+i+N7QuAH1zLT+eLbUlfU5JlpMA8MO6OcAynRY0bVsMeF8UDRGI3SBS9+ejzpyJP1VvnJO9/3k1WJOV1DPXPLsEg/WkgAdklMtnH6HawBiLCLD00/Gm9b0LvjysxjaqH0poH2FSNmHYBoKUTLjv9I+uCptxtwjqDmAAlE4ow==
-Received: from SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12)
- by TYZPR06MB4977.apcprd06.prod.outlook.com (2603:1096:400:1cf::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Wed, 20 Aug
- 2025 00:40:02 +0000
-Received: from SEYPR06MB5134.apcprd06.prod.outlook.com
- ([fe80::6b58:6014:be6e:2f28]) by SEYPR06MB5134.apcprd06.prod.outlook.com
- ([fe80::6b58:6014:be6e:2f28%7]) with mapi id 15.20.9052.012; Wed, 20 Aug 2025
- 00:40:02 +0000
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
-	<andrew@codeconstruct.com.au>, Simon Horman <horms@kernel.org>, Heiner
- Kallweit <hkallweit1@gmail.com>, =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?=
-	<u.kleine-koenig@baylibre.com>, Po-Yu Chuang <ratbert@faraday-tech.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "taoren@meta.com" <taoren@meta.com>
-Subject:
- =?utf-8?B?5Zue6KaGOiBbbmV0LW5leHQgdjIgMC80XSBBZGQgQVNUMjYwMCBSR01JSSBk?=
- =?utf-8?Q?elay_into_ftgmac100?=
-Thread-Topic: [net-next v2 0/4] Add AST2600 RGMII delay into ftgmac100
-Thread-Index: AQHcDhRZKIdVUppPdkiWsIaFr0P96LRqtipg
-Date: Wed, 20 Aug 2025 00:40:02 +0000
-Message-ID:
- <SEYPR06MB513431EE31303E834E05704B9D33A@SEYPR06MB5134.apcprd06.prod.outlook.com>
-References: <20250813063301.338851-1-jacky_chou@aspeedtech.com>
- <a9ef3c51-fe35-4949-a041-81af59314522@lunn.ch>
-In-Reply-To: <a9ef3c51-fe35-4949-a041-81af59314522@lunn.ch>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEYPR06MB5134:EE_|TYZPR06MB4977:EE_
-x-ms-office365-filtering-correlation-id: c805108e-2d98-4cdc-04ab-08dddf8219b7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|1800799024|7416014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?YzI1bk5BaTJEYkMrT3ptYW9FZlNxRVZ6WHlFcEpHd3BUZFFaQ1VIQ2sxcHls?=
- =?utf-8?B?WVVFQlVSSjN1eFkrb1ZtSFVPVjlTS1R3YVFqWXh2eE5aTE03MWhtSStJWEVJ?=
- =?utf-8?B?Vy8wREhCOEs5MkFFakZpd1oydk9ZQ2dicE5wZWtBdnp0VXZ2NnVuYVA3dkow?=
- =?utf-8?B?Y1htZy8waTMxUjU2a0tvSkxXVy9Sc29jMXNCeXpMRXBIeDQ5alRXbFZEUThH?=
- =?utf-8?B?Rmo2blhkbE1ReW5SeDYvb3V5Sk8vd1FKN0dOeU5wMmhtSlFSK2ZwekdpR1No?=
- =?utf-8?B?V1FESVl5dVBMWXJXamRFZTRoa2ZTMCt2MEdMcmMwS1dzdGMyVjBZaFNZOHBv?=
- =?utf-8?B?emRVTDdmcEUraFhseWZ1L2RWNkt3UnJMdC8wcHBLUHJNVWo5T2w4czJPZmhQ?=
- =?utf-8?B?NGo0Rno3YmUzR25VM2w2SzZFQzdRZlVOMTJwY1pOT000VFlvc0dkL2hJM0Rw?=
- =?utf-8?B?T3ZvQjIwRmp4TXFERjVHL2N1bDNJa1ZsMmlkRG02NnF5eVM0S3VjbEVaaUp4?=
- =?utf-8?B?aFErWHE4MEF6SDVzR3BXVldvT3Jkck1MQUl6LzBqdTh5Y2poRExEaEZIN3BE?=
- =?utf-8?B?TlZpQlJyenh2Y1BXalZVUG1ubldMaXJuVVRKL1FFTmRhaXhQUndET3pnLzBL?=
- =?utf-8?B?TTFadGtjVEtSOG5yTW9JSHRPdjRsb2M1MEtidXgvWkswem9sTmdzcTFhS1Nx?=
- =?utf-8?B?UHh6eWNHU0phQVdDUWg3OFA4WjRWell1TngxaEhyQmxMVEk3b2R4Qkdqc0lj?=
- =?utf-8?B?bGVoemtaeDc5ZjFneUJoeW1LQzN2QlFmaTJOeVVHUFhET2xDMlJMWjI4YlQz?=
- =?utf-8?B?T1FwOXVHZHZXdjRnMCtob3NiRmR6R2t2ZmViSVdRWWkraDIyY2wwTHdnRG1S?=
- =?utf-8?B?SXhqckd6QlhYVHpMQm9LS2xkcHQyUEZYa0xPUi81cnNxMFNxYXM2bVBRczIy?=
- =?utf-8?B?ajNzUTJnSmNBWGQrSmFxTlJhZUhJd3JCZGl6d3A4VXFDQmQ3UlVsNEMvOXNo?=
- =?utf-8?B?N2VJZjY1QVFpMmRHNDlvdWZCbktTR095V1FMWXpndnZIOHVvam5aalFxLzhI?=
- =?utf-8?B?Ni94Y1I1QnNBazVMV09sS2xodVQ5aUEzemhRUWxGYXJBd0xRd3ZkR0dENjk0?=
- =?utf-8?B?UENzcVpqUTh3bTRYNjFLT3djUFRrUEVnWjJPbisyWC9YT3pUdmoyUS9FMkJX?=
- =?utf-8?B?b2FrUWFNRzdQTjhjckxzbCsvWUNPZE1pQlhEN3QyMm5jUGVCdFNyZTV4bERj?=
- =?utf-8?B?STBFdDYwZ1FzWE9wN1ZzenhVcTQ2T3hKa1VhU00wUFBlZnJCaTBhUFJvTEN0?=
- =?utf-8?B?c2ZUUXVUNW5Sd0o4dkN3eHc3ajVZS0gvbzNzZjJUY0tZakhLU1JPZEhqZUlP?=
- =?utf-8?B?ZVk5R05OSHRzeEpIb21pdy9iS3N6dk9FazZ3K2xKR3FDTTJab0V1dGdNM0JZ?=
- =?utf-8?B?NDJHQ1poamtSa0Jtb1ZoNWRMeXc4U2hON2tDSVpIMHpsR0VOU3R4VjJNYTU0?=
- =?utf-8?B?cWxNOTZDWEZsQjZZVnlNUDFQKzB4eEs2eGx1TGp5VEJwS25UUEJPaHdYdjNB?=
- =?utf-8?B?YzJIdDVlUGpCMi91cXREWFkzL3R4bFNmbzJ2RDdUanllMy9wcWlqdnhUSEFB?=
- =?utf-8?B?cjZ4V241L3plTXRjb2crcHREN204cnVHd1VaSGZoTEQ2VFp3cTMzZWlhaXAy?=
- =?utf-8?B?aHk3WG00Z3N2N2x3UlJoa1N2TXQrTkNvRTZjKzNmdlRCL2xHRThFUG0yYjAr?=
- =?utf-8?B?bE9Wb3lncklMYkEvbkhBRTMwTTE4RTY4N0tCYUY1MGZZSzdVRWVneUpLTzJO?=
- =?utf-8?B?ZDRVVFVrN3pPWDJ5bGZyZnNDUWUxRkZKTWdOZ1gwdDdSaUhINUI4dVM5YkFI?=
- =?utf-8?B?T2J1Ky9FK3J6M29VU1p2UlcxNURpMG02QzVXdmlnREx4ZzBxa0dzMUtFMzcw?=
- =?utf-8?B?NFNQK1dLSm4yclRZNFRKNHJtZGc4aTBma3d5OWZNVUVndGZySVBlT2Y5R2Uz?=
- =?utf-8?B?cVh4Yk13U3NnPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5134.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?QTRQT0srelA1dk4yUjFoVUNVVUlQZTFlWmdOMVRoVGNidEdTd2pMalFRbFQx?=
- =?utf-8?B?OGV0NWt4a1N0UFFCTlczemFlN1ZCc1BPd3drNmVLRjBIMittQWRXMVpGOXpk?=
- =?utf-8?B?UmR1cStJN2R3YnQrZUxKcEhCRXoyeWhxWHFTdnd1N1dZZWFubFlxbHJERnRz?=
- =?utf-8?B?T2JqcEtnamdIUEhLWXBxUVo1V3RNejVkYkVpNHBuMk8vS2dvWlVzWDdFcjBB?=
- =?utf-8?B?a0d6ZDJWNHdCUmx5YkMyMEpwbHNkUU5IeVFYWUtGL2s2ODVmYnZHWVJreVVE?=
- =?utf-8?B?N2VnUFhNMjlzMEk5a0ovSk1ZZUluNlJzYW1OL1NLQ3JzbWJ6dHNzQWE1eGRa?=
- =?utf-8?B?Tm0reW9qY1FHTlVxRlgzYklldGVEdDMxL0RDeW4raDNJcHpFOGNMVktyZktH?=
- =?utf-8?B?a1ExZzB4a0JtKzNSTktHRHk5YzE4Y2dUeXkzbGRTOXhTOGN5bWZPbWtKekd3?=
- =?utf-8?B?OFN6bUtNdzcvRUxNYnpIbzk2b29wQXh3TlVpWENnaVVUVFJDRWJPdVpxei9J?=
- =?utf-8?B?UWpTVjlxZi81aTkrWU9jWmY1TUcxd2VUS1g3UURLWVR5bFlmV0FnWmZXNE83?=
- =?utf-8?B?Kzl3Z3BvMmZLTS9vV1VMZlhKTWFta1IrSlk3U0ZUZENKbVd5T2VoSEpWRSty?=
- =?utf-8?B?anZrK0ppby9zSlBFUC9YQjN6UG5vdDB2Ymp3QzloNmVNNkF2dXNzN1JjRkZJ?=
- =?utf-8?B?ck1qMG5vUWtjSVZKMWxWVC9pbmc0N1ErK0NEdlovSkRlZ1lzU0Y5a0ttOEEw?=
- =?utf-8?B?STBnQVdRc2VxWFhDaWxqQkVWa0ZPVWdLT3FkVllMNi90Z2JJcElmanNZQ1Uy?=
- =?utf-8?B?QjFMcXlieng2cU95aHR5VWxvYnJIdlJ5RzhTSFRhUzFJZmpIdkZ0ZUJHdVNR?=
- =?utf-8?B?WFdTTCttcXl5ajVwbzhscjNHenAra0h0SmdUZXJyUjJJaG0xNUlPZ0Nmc0Zv?=
- =?utf-8?B?d3AzVjA5UUJKQVlzK0xtYmVTdHVYWVZYWXNLeVRPd3NNbnVSbWM1cE1YR0Vs?=
- =?utf-8?B?NlpDOVFMZnFKR1owTHYrenRTUE53dlRRRC9mRFpVNDZHV3Z4SVdlSmZ2cWkw?=
- =?utf-8?B?cGZNWUk5SXFxNy94Z3FnM01VRUt6ZEo5SFN3QjF3THlQQzFXanZucmYzMzdv?=
- =?utf-8?B?Y00yRWNoa29GODkwMjF3bkRQc3N2aEFFUU16Qng0U041eUZJckxzMkNoLzNj?=
- =?utf-8?B?Tkd4TG5OY3M1U0diOE1yZ1o1QlU4SWRtMmRYVUNSZHlCUDROVURvdnBSWmND?=
- =?utf-8?B?UmxlVTZjaGt3M0RReG40OWxiekdxc2NyTE1qTm9CcDl4MkV4blprZWJGZmdt?=
- =?utf-8?B?cVdDYUxVYmUxc0dOYzFKVnozNnJQdWl2TGpSN2ZJaU9LeUx1clZtb3NGL0wx?=
- =?utf-8?B?aGxPbE5jSks2NmRoOFBYU3NwdjBZTEEwQldkM0VDZStHQitEOHF6RWJEMXZ5?=
- =?utf-8?B?MlZZd1ZBTEU1S1JHbkw3blNza0hoUlp0bWZETHJhT3dZY09veFNqSGswaWRa?=
- =?utf-8?B?OFIzSGc2RUpKNTNUOENtNThXWXFIb21IZ3doK1hRUE05WFQvMElQZGJTTkEx?=
- =?utf-8?B?dkN1anRSdkhWQzZpNDNCcER4TkhmeEtQSzRKRFFSaDhvOE5hY1RPcVhkY3Ey?=
- =?utf-8?B?MXhsckxDazAvaDAxQUxrZVZrdU9GYTBSN000U09ocmdvSWZYVkFHOWx4MEt2?=
- =?utf-8?B?aXNwQ0FQSjZtTll2ZWZmejAzVjZQM3c3SzNTVXJYL1dMZmZCVkxuRVBaRkNa?=
- =?utf-8?B?aklmcjVRM09EZlZDYnZwQVJqUUlJQmF6QXpKWlJzb2MzNVR2Sm9MblVVYXRk?=
- =?utf-8?B?MkdTQjZ6R3d2Y3phQXNzQXVKNG9UYnpqUW53SWNibVBRVFRhWWRuQUhFS214?=
- =?utf-8?B?a01VQzU1ODE2QUxGNWwxZE5QU3lmQTVlYThwS0lvaGNHaXpZd0VuT2E0aW01?=
- =?utf-8?B?Y3RpVThhN01JdWpSMXJRNmU2SWppTlQ0MVF6M0E0U0xSejBJZWtyNGdneVRm?=
- =?utf-8?B?Q1RmK0hQV0x3RTZHaVBmVVFQTVNNQXZZeVY3YlFmeWFMcWh0VUkzVlNZMUVH?=
- =?utf-8?B?ZTBlRzU5VjlSS2s1aG80aXZycVhyU0lKSitjdzJqVTl1TnR6ZHdVM3RKSnZX?=
- =?utf-8?Q?q/QPSebH3ouw+RU/XU44jLHEA?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F268353377
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755650473; cv=none; b=nEeuuNN8u5wImdmTAfzYIV4Iv1pbAzv611edOT5yLjVCWplDOS9wS7JFipM6eAwKfJY2s/lxaFZwX0F4deZcLvkK/y+BWCYSAbaP+/GG4UI1NnBcyfLzO71yu69VpqWfsPa5HfV9EJ2KS3VXgmBYeaHlcLwEzf5IuAZxI7Z63H4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755650473; c=relaxed/simple;
+	bh=8UIjtrsY+An8yPv79UD6v3zTCgrBcxRINzOnoGLp1+k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d16luK7pn5n+F3cQcG6YSTRKLghNIZ16Vg33RkEgjh/CDe5eY62srcwKVqABl/z8KI2D6vl/jJXhj5FVg6+8A0HsGrhAO18eBBgyeq1xsxAb/eBX89Id/hN3+22W4xIQ9N6cpkpVpS8sY1Bxop0ZxGeJ67fNVeDgxHrtU7ZdITg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=udAcKlV+; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-618076f9545so2349a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:41:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755650470; x=1756255270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6IqLuyaFxXi+2wRaiu2PfqA4zWY/UYXAdYs60oenvXQ=;
+        b=udAcKlV+eRuYPPFOHVwkwF7ZO009hbJ4Roqg1IBiPnLChHaKKqtSbcjVVKJiN16Ten
+         05P9iqoYXmSuw78XC27YpV+DWFa6Have0H/DpnJoSujngUVVHHyIjoS85Ap0gKuTGJr1
+         LuNkYqcmLK9EvnZZk7Fb2SRpKnlIbxdFuJmbb/J7H5bUYvWX74ktbpaQ3lCLoeiz885L
+         p8N9OiEVGCDaI8k2XYpSLz0hgu0udgg1BXVp1775ky8JC2gpyzsar5gC8O37Hzj2Nzok
+         FD+HWBtTYNorI+xfKWTvq+D6KJHQMghWAaH+9pRCxLpj6yR6+t41M5TBr5hZ6BrCMVv4
+         1vPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755650470; x=1756255270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6IqLuyaFxXi+2wRaiu2PfqA4zWY/UYXAdYs60oenvXQ=;
+        b=wZFPxTqGseuTRoOrMy/qb5godBVGBji6BR9y74XKOZaFUlU3DzDUDYYk1Dq5VIaasH
+         6Whq8nLzLlDY1UGyJPxm/znqYUfGVVFPqrZYqVv7F9ioZV8no/vcSxnauhCh+fBsCMrZ
+         xhC85faDfhQskv06neLWfoplsKSGHvrwcO0ECoMuM7QermeiUlVRXKKJHjOebgMBQtwW
+         mvWWvbnIrzNkyTi8hORE4kXRDeT1z4ewiL6LlwPp8aqb02mpL+8zS1SfonCAHNultlTf
+         3fBQQ26RX143UxpgXikdkF56MCCQVK4cB3MaYohwqMp1CiMUvXBedv3O8Dn/xCodD3AW
+         PrPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqr9ejLvGgKwqaRaL0IDbyP1ELminC27W3iYznEq9xPASziOBs5qLgNuAB1VulYbG/pV8p2xF79uBcclI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqb99i403iMpueiNYKghfobbMakRc1/G8CVOjAW5rsgI9O+ZrF
+	3EDs+bRM6Bo+G1DfncAchzyfsC/1eNSQ3y5ptwqmLEeHyXUdaSwRHGlK7hgWaUjXrK6hgK1nWvY
+	z4KCprIx0hmX3hfI3NxbXuyzhCJ3Xu/JrxRGm3Z3O
+X-Gm-Gg: ASbGncuAIOjUr3NtrdFLLDIeh419CQ4Oc5otpMThssJjaTQQs08jPzqN+9pIVAGrPO+
+	VXnPtEkKm6iuF1pOlcnBEV6GBtR0U35My+l+ryWfBc0Khht6VOJLgd7tvbTWDUpQFWs+EyIgRmY
+	LJq5etVurONWUr6MdjcvgBHpMXXpqvoxwz1BzQz3AUHFUzVzy/mimWudAY+QoWG6743310x3JFu
+	fk0ZY3lLYBfmIKCsMBO54btnLq3qV7cJORk3M1eOe96GXmJS86xUNTSyw==
+X-Google-Smtp-Source: AGHT+IGeDw8BD2i3CVxmFhBT3dNw+UjlmwBqZXmTObhC4KJScHjZ6oX3e0H86dfL6pkupQ3dIUBlVzUM7JewSU6nLnA=
+X-Received: by 2002:a05:6402:21da:b0:61a:590c:481c with SMTP id
+ 4fb4d7f45d1cf-61a98aacf9fmr58868a12.6.1755650470324; Tue, 19 Aug 2025
+ 17:41:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5134.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c805108e-2d98-4cdc-04ab-08dddf8219b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2025 00:40:02.6431
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yh/HFQPJeAX0yi7BnSGgepGGpzMK41lE+bQp86lDdrtp/yjhaLKZzjUt0KSzGYpTZjkrgB57Y5SAUAituwub5Tuo81vtpI7Hvp4M/45G9S0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB4977
+References: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
+ <20250819-debugfs-rust-v10-5-86e20f3cf3bb@google.com> <DC6U02DZSX1W.1SXD7XQTNHXQL@kernel.org>
+In-Reply-To: <DC6U02DZSX1W.1SXD7XQTNHXQL@kernel.org>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Tue, 19 Aug 2025 17:40:57 -0700
+X-Gm-Features: Ac12FXzGHB9IaGuvsxmIZN7J-bxVIRvmhlD1GhpuPHArH-kEahMOeHvtf74s9Q8
+Message-ID: <CAGSQo02f6FOZ6fujzUhJEbysDpuASJf+4NBfqj0NGHKy7GQ7Yw@mail.gmail.com>
+Subject: Re: [PATCH v10 5/7] samples: rust: Add debugfs sample driver
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>, 
+	Dirk Beheme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgQW5kcmV3LA0KDQpUaGFuayB5b3UgZm9yIHlvdXIgcmVwbHkuDQoNCj4gPiBUaGlzIHBhdGNo
-IHNlcmllcyBhZGRzIHN1cHBvcnQgZm9yIGNvbmZpZ3VyaW5nIFJHTUlJIGludGVybmFsIGRlbGF5
-cw0KPiA+IGZvciB0aGUgQXNwZWVkIEFTVDI2MDAgRlRHTUFDMTAwIEV0aGVybmV0IE1BQ3MuDQo+
-IA0KPiBTbyBpIHRoaW5rIHlvdSBhcmUgZG9pbmcgdGhpbmdzIGluIHRoZSB3cm9uZyBvcmRlci4g
-WW91IGZpcnN0IG5lZWQgdG8gc29ydCBvdXQgdGhlDQo+IG1lc3Mgb2YgbW9zdCwgaWYgbm90IGFs
-bCwgQVNUMjYwMCBoYXZlIHRoZSB3cm9uZyBwaHktbW9kZSwgYmVjYXVzZSB0aGUNCj4gUkdNSUkg
-ZGVsYXkgY29uZmlndXJhdGlvbiBpcyBoaWRkZW4sIGFuZCBzZXQgd3JvbmdseS4NCj4gDQo+IFBs
-ZWFzZSBmaXggdGhhdCBmaXJzdC4NCj4gDQoNClRoZSBSR01JSSBkZWxheSBpcyBjb25maWd1cmVk
-IGluIFUtYm9vdCBzdGFnZSwgYW5kIGl0IGlzIG5vdCBjaGFuZ2VkIHdoZW4gYm9vdGluZyB0bw0K
-TGludXguIEkgd2FudCB0byBrbm93IHdoZXRoZXIgdGhlIGZpcnN0IHRoaW5nIHRvIGNvcnJlY3Qg
-aGVyZSBpcyB3aGV0aGVyIHRoZSBwaHktbW9kZQ0KaW4gYXNwZWVkLWFzdDI2MDAtZXZiLmR0cyBp
-cyByZ21paS1pZC4gT3VyIEFTVDI2MDAgRVZCLCB0aGVyZSBpcyBubyBkZWxheSBvbiBib2FyZCwN
-CnNvLCBJIG5lZWQgdG8gY2hhbmdlIHRoZSBwaHktbW9kZSB0byAicmdtaWktaWQiIHRvIG1lZXQg
-dGhlIFJHTUlJIHVzYWdlIGZpcnN0Pw0KDQo+IFRoZW4gY29uc2lkZXIgaG93IHlvdSBjYW4gYWRk
-IGZpbmUgdHVuaW5nIG9mIHRoZSBkZWxheXMuIE1heWJlIHRoYXQgbmVlZHMgdG8NCj4gd2FpdCBm
-b3IgQVNUMjcwMC4NCg0KQ3VycmVudGx5LCBvbiBBU1QyNzAwLCB3ZSB1c2UgdGhlICJyZ21paS1p
-ZCIgaW4gb3VyIFNESy9naXQgYXMgcGVyIHlvdXIgc3VnZ2VzdGlvbi4NCkFuZCB3ZSB3aWxsIGFk
-ZCB0aGUgdHgvcngtaW50ZXJuYWwtZGVsYXktcHMgcHJvcGVydGllcyBpbiB0aGUgZnRnbWFjMTAw
-IGRyaXZlciB0bw0Kc3VwcG9ydCBmaW5lIHR1bmluZyBvZiB0aGVzZSBkZWxheXMuDQoNClRoYW5r
-cywNCkphY2t5DQoNCg==
+On Tue, Aug 19, 2025 at 5:34=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On Wed Aug 20, 2025 at 12:53 AM CEST, Matthew Maurer wrote:
+> > Adds a new sample driver that demonstrates the debugfs APIs.
+> >
+> > The driver creates a directory in debugfs and populates it with a few
+> > files:
+> > - A read-only file that displays a fwnode property.
+> > - A read-write file that exposes an atomic counter.
+> > - A read-write file that exposes a custom struct.
+> >
+> > This sample serves as a basic example of how to use the `debugfs::Dir`
+> > and `debugfs::File` APIs to create and manage debugfs entries.
+> >
+> > Signed-off-by: Matthew Maurer <mmaurer@google.com>
+>
+> This is a great example, thanks! I really like how the API turned out.
+>
+> When it comes to the newly added Scope API - and I assume this does not c=
+ome at
+> a surprise - I have some concerns.
+
+Yes, I expected this to be the case, but inspired by some of the
+comments about wanting to just create files off fields and forget
+about them, I wanted to take one more crack at it.
+
+>
+> But first, thanks a lot for posting the socinfo driver in both variants, =
+with
+> and without the Scope API.
+>
+> I had a brief look at both of those and I can see why you want this.
+>
+> With the Scope thing you can indeed write things a bit more compressed (I=
+ think
+> in the patches the differences looks quite a bit bigger than it actually =
+is,
+> because the scope-based one uses quite some code from the file-based one)=
+.
+>
+> I think the downsides are mainly:
+>
+>   - The degree of complexity added for a rather specific use-case, that i=
+s also
+>     perfectly representable with the file-based API.
+I don't *think* this is just for this use case - if I just wanted to
+improve the DebugFS use case, I'd mostly be looking at additional code
+for `pin-init` (adding an `Option` placement + a few ergonomic
+improvements to `pin_init` would slim off a large chunk of the code).
+The idea here was that a file might not always directly correspond to
+a field in a data structure, and the `File` API forces it to be one.
+We could decide that forcing every file to be a data structure field
+is a good idea, but I'm not certain it is.
+>
+>   - It makes it convinient to expose multiple fields grouped under the sa=
+me lock
+>     as separate files, which design wise we shouln't encourage for the re=
+asons
+>     we discussed in v8.
+It's still pretty convenient to do this with `File`. I don't know how
+common it'll be in kernel code, but in userspace Rust, `Arc<Mutex<T>>`
+is a very common primitive. I would be unsurprised to see someone use
+this pattern to expose separate fields as separate files if we go with
+the `File` API.
+>
+> I think for the sake of getting this series merged, which I would really =
+love to
+> see, I think we should focus on the file-based API first. Once we got thi=
+s
+> landed I think we can still revisit the Scope idea and have some more dis=
+cussion
+> about it.
+
+This is why I put the scope API and sample as patches on the end chain
+of the series - it is possible to merge only the `File`-based API if
+that's what we want to do first, and consider the rest later.
+
+>
+> I will have a more detailed look tomorrow (at least for the patches 1-5).
+>
+> Thanks again for working on this!
+>
+> - Danilo
 
