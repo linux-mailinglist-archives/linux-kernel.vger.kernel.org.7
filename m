@@ -1,104 +1,107 @@
-Return-Path: <linux-kernel+bounces-777801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85875B2DE09
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E895B2DE03
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 218471BA55C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3035C170D22
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36049322C96;
-	Wed, 20 Aug 2025 13:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34669327782;
+	Wed, 20 Aug 2025 13:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="yPojbQbw"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Lxm4LncN"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5798320CC9
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C413218CD;
+	Wed, 20 Aug 2025 13:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755696815; cv=none; b=I+Ycc5RFdTGONVnt0KGvZeHrtVP7tvA32QfYmMlGQoQj7pSlhhUOxJXp3wbaYGBNl5sQJkHavVawTH52Dn08c3P2Z/ISBHdcUH0YpyyYhfsDs99FnF9BemPgFzGidx6cphrQd9N1mc3yLpTJcZBpJVuhoq42T2F9vpPrPs0Mpyc=
+	t=1755696827; cv=none; b=t1D/El1YK3ZnXyD+LEVPXeXhD/xoH5ycZv5L4tUv4NV+90RDtH4rhTO7Zpoi0ORkSzkU7t6BGEAdbK0tt9d9/VAM+oJJsrw3zMR/YMMQqIKqxTHMxX3+ijGSs18eWjIbwqFtWFPraXV44dEg0itR/c9OcVQB77366VxuMA73vN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755696815; c=relaxed/simple;
-	bh=s5nq5zhQ1y3HYWSGGKoVP69NbrF8fp/t313EOBKu9Zk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s/b1lK0kH3SPdrnyNJNQ5M74cE3xKHL58340EIj+++Kt7AtuIJTusa0i2SzcoMNMWzZcwD/9PS/GEBowXeVZm/2R7l8FQdWVyFunvnCeWGM75uWJn2epmLIj3pwIasZS6Ov9BNfK4SOOHXX6TOFjCx/h7IBUn/r5IXw+Dlb8ArI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=yPojbQbw; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id E95624E40C46;
-	Wed, 20 Aug 2025 13:33:30 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A47C8606A0;
-	Wed, 20 Aug 2025 13:33:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 17D291C22D8CE;
-	Wed, 20 Aug 2025 15:33:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1755696810; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=1exOsN2tUfvocnLM2bOw6co3KUlzDpgtNbjqhHK9TTc=;
-	b=yPojbQbwJyVy2nNadP5X8pNRptPTv47RllAZPCpvUUZe5YVYDfPTyIuxVn4pQ3ZkanVCwa
-	qcarx/gh8edE5vmXw+oQU5I828eGX0Fcoos0A+szBkWjBM/n0ZMSFRPy6yO7BFRY9WKOUY
-	IALWXvcn3GwCG7SLTsmfYdckAqGORVxkfef3Dj3R+9OF1jfechoUzFma9hni00JM+qVApP
-	j9IzEFn3DeeX/gVTwZx/lc8w7ly+/Ts3BKGNqDwPF1IiGwKnQo4qc5/3NP8yFVwBpGmD2K
-	2eyjZwrQXs/b4oSClmTAhw0AEnpnll46wbe/I5NioFczn7Xfw7wPsLJtgkNVNA==
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	"Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: thomas.petazzoni@bootlin.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH net] net: pse-pd: pd692x0: Skip power budget configuration when undefined
-Date: Wed, 20 Aug 2025 15:33:21 +0200
-Message-ID: <20250820133321.841054-1-kory.maincent@bootlin.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755696827; c=relaxed/simple;
+	bh=SaNvr16XH7ej2OcXCQ1iRpF9atHKPorFp7MQLGCnfjs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aO6cvDOn2adYCDiiic0Cg2hJbRBRatnDgUeRrDEypXOvKFw3FgrsrVDDnQnKh6IS/cwOTyRWDb5nTwEn//TMstZHOsqFvLJqVlNVdkWMEF3Uu5M89PnfG6kSqeVSNx6XMbfvIynXN66zsWqDuYv1di5xW5WJiCFV/zlLTnqW5yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Lxm4LncN; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755696823;
+	bh=SaNvr16XH7ej2OcXCQ1iRpF9atHKPorFp7MQLGCnfjs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Lxm4LncNaa+hg66D90Mv8uIt9ZS7bBKPXRKwixPiMamgBj+MlLq+GKRCnrEYXF9Zv
+	 K4O8DdzbWKptMKtRuyiZ7EjsNS+tf+n0ANEkVcr48rZMtt9G2/ZUuyMAODBbMVdyBw
+	 9bzbx38MYoYqDzZapd6D4Ah7dii3KOWJuwKjEUI3aMzYlk25d25qqAE1IrG9Ul4qH5
+	 TXn6ihImAU13F73fbOTBpViQKDeYQ4FPOQnMtp/BplzrTCOV6E3whfMybGMIr7MfJf
+	 gq8sWrk4z7VK/CpH34VO45pG1rc5YU/B4oCTJxS9gCfQwCIAY3vykR2iEeXME3lepv
+	 5LhB/otf/pKvQ==
+Received: from localhost-live.home (2a01cb0892f2d600C8F85CF092d4af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 99DDF17E02B0;
+	Wed, 20 Aug 2025 15:33:42 +0200 (CEST)
+Message-ID: <ff583d9675181e2e6f39169a55da8958014f0ea5.camel@collabora.com>
+Subject: Re: [PATCH 5/9] dt-bindings: sound: Convert MT8183 DA7219 sound
+ card bindings to YAML
+From: Julien Massot <julien.massot@collabora.com>
+To: Rob Herring <robh@kernel.org>
+Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,  Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>,  Ikjoon Jang
+ <ikjn@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu
+ Tsai	 <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, Eugen Hristev
+	 <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown	 <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>, Sean
+ Wang	 <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Date: Wed, 20 Aug 2025 15:33:41 +0200
+In-Reply-To: <20250801172821.GA3111733-robh@kernel.org>
+References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
+	 <20250801-mtk-dtb-warnings-v1-5-6ba4e432427b@collabora.com>
+	 <20250801172821.GA3111733-robh@kernel.org>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-If the power supply's power budget is not defined in the device tree,
-the current code still requests power and configures the PSE manager
-with a 0W power limit, which is undesirable behavior.
+On Fri, 2025-08-01 at 12:28 -0500, Rob Herring wrote:
+> On Fri, Aug 01, 2025 at 01:18:07PM +0200, Julien Massot wrote:
+> > Convert the Device Tree binding for MT8183-based boards using the
+> > DA7219 headset codec and optional MAX98357, RT1015 or RT1015P speaker
+> > amplifiers from the legacy .txt format to YAML schema.
+> >=20
+> > This improves binding validation and removes DT schema warnings
+> > for boards using these audio components.
+> >=20
+> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> > ---
+> > =C2=A0.../bindings/sound/mt8183-da7219-max98357.txt=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 21 ----------
+> > =C2=A0.../devicetree/bindings/sound/mt8183-da7219.yaml=C2=A0=C2=A0 | 49=
+ ++++++++++++++++++++++
+>=20
+> mediatek,mt8183_da7219.yaml
+>=20
+Ok, Fixed in v2.
 
-Skip power budget configuration entirely when the budget is zero,
-avoiding unnecessary power requests and preventing invalid 0W limits
-from being set on the PSE manager.
-
-Fixes: 359754013e6a ("net: pse-pd: pd692x0: Add support for PSE PI priority feature")
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
- drivers/net/pse-pd/pd692x0.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-index 395f6c662175..f4e91ba64a66 100644
---- a/drivers/net/pse-pd/pd692x0.c
-+++ b/drivers/net/pse-pd/pd692x0.c
-@@ -1041,6 +1041,10 @@ pd692x0_configure_managers(struct pd692x0_priv *priv, int nmanagers)
- 		int pw_budget;
- 
- 		pw_budget = regulator_get_unclaimed_power_budget(supply);
-+		if (!pw_budget)
-+			/* Do nothing if no power budget */
-+			continue;
-+
- 		/* Max power budget per manager */
- 		if (pw_budget > 6000000)
- 			pw_budget = 6000000;
--- 
-2.43.0
-
+Thanks,
+Julien
 
