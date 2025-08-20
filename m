@@ -1,185 +1,129 @@
-Return-Path: <linux-kernel+bounces-777262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916DAB2D78D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:09:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04333B2D787
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47D771BA1441
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A378C4E72B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966A22D9EE2;
-	Wed, 20 Aug 2025 09:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B224E2DA769;
+	Wed, 20 Aug 2025 09:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vCbsK1rK"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IK7edZBw"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C55F18991E
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E85B18991E
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680774; cv=none; b=MMHvIrqw8gCjUIaqOU9xGAVgn14IoIXmRzM/HnO+CKsk07UECXnNKWDmjEL7uewNo0GPNfQhfgdqEho4iY1zyx86wapc/PmzzU8jCPpQMoqMPPZ0N3JYhazrlzGY/si+B73DF903IJwJHoH7qE95PpCdCjDvCyzkpjE25/zFxSc=
+	t=1755680864; cv=none; b=VAqYfcZNAsNIGoGWdwmLAtpJNO3flJLU4Y2dPFEra4rJQtOcsmSyUa5YUEYoPkI+TzObfhbXlbC9/0F8WxrghFu1BModb3IO1pnvBf//s+U9GdzQrADLtU646ZCRh9CUklAwhEmaNAyZDPqodKbFooGayc/Wg3WctFWofc1TvQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680774; c=relaxed/simple;
-	bh=5OYOK7aQpU1X9yOebdZcroKWtUh/mD/yMUMLCZyq9vg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Xw/xwiSTJgImZy3rlOJ5S0D12w1ZPvqFekcN95VO4T9oww4KSAc8gywsQpYRt7zI4DO6qDfiUODAPknxR/1ViepUGF3C9PDPr1qAgKWjre68HluoHjI0IkGvjSyfN7iQOXdrfxvDy1s4dow93eRDaSw6rI3/+/Cgiz6JPV6nyCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vCbsK1rK; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7a16441so970310366b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:06:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755680770; x=1756285570; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SjfjAF0ihm6dUzVTEeGzkjgU2zdiQsd0XmXwmmZheMI=;
-        b=vCbsK1rKGVPcLmRRef7Cv4N0WOSaJ4wjrzcDf+nm5Fa2Ms4rDEQ3KXE46tp7XdcxaA
-         njj0O16g2I7sMjYHr8DEuzVYMsXKCSAKS9BgimhI5IyPbqdxeRf1YiV7v2S9qc0j5LYf
-         NdxL6JT/2Jq6FryNXM3HsQuMognyvFPPv8Xvy9zXp5E0wgBwApFO5o9drIIEYCARN3gq
-         JPxByj/JIv29HQ8Qoe5OYhF0WHfj8ZklZRZ3C3gBMZO/MSJtHztDqvWlWDc0euAsZZFC
-         7N8A+rN7b1Gt6xKpsw1fkoIpc6ZZXehijsjhN71XBFYt9iv2fUQhfO7/GKIF0sCl30Xb
-         VIdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755680770; x=1756285570;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SjfjAF0ihm6dUzVTEeGzkjgU2zdiQsd0XmXwmmZheMI=;
-        b=U8b792sHM+4A2fg4l7uEfyp9W8XFXODNKPP4/2NxqUxxaIvbfD2jAzgG/M0kGRkvDW
-         qisnJROS9EHX7ItuHgbCtNd/UJrq0u8+tQB6XCAy9ioeL7eXPFhMMJB8Nnwybl6/ZVcD
-         f8gUfLsLvuD/RKpphoitEoQ/RnMmrZfUbGSiE/s/oO1Wd8snKiZQ9CLEq+t2ZXROqhF6
-         seyb/FU3PvOgyudDz/AROt21A0bx12lzYiMbiTOtXCfmae0OZ3lQV32oyrxsBNll2U3g
-         iC7LWw5CCVpJFHv5qnI68e0kzzFi9X6o2YvIP90JmMTMAB41QiVrVQW9LUjJvikNhvqW
-         5OIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfCpMNuxwP60D6TNw13iWtHBsYAfwgD7Qo+R4FlhItfxizlA2M//npaHrJ/5ZOcOSx6Sc6OZz0aJJt4Ls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOF45UJPsz3VApQeXxRQaYKcO8D8zVsODIi2J6inFGgOSYyKFV
-	Og+OXgXVtckfVQu+mhYbgXAmSeJqJXh3lQN5QQHWrraYHhZRvZHr32y1orLTW6k5qKU=
-X-Gm-Gg: ASbGnctb3KpvqdU7HcjjWydkJutIKz0LQr28yRJVFGkrlIDVU6strvDSmc39t9xrf7x
-	91X0QLD/QKSiAHMhNeL0eeTwPJddqbcdgxVZ0Cn4dNOsbJUwKdwmBpdErdQ/Nmip2TfaRgge4uf
-	QeLoi5wyVM4MVtyd/8CcbGwmH3nhO1mUbcqmxnG83i8RYAqu0rchMrrFXg5OBU0PX1PxcwlFMG5
-	yHmYCwib1fUdZvfMoGrzjcCSKDbt0OJHOL1fsJ3YxpMCLQ8bNYuzS1oX8nS7FkBvyvG+mtFUQRA
-	2echgSjjyuLhJrlQEXhNauuO8AJT58X12mU7xeoI9SnFj8DgSkRAntqVTaXO5SsHySrq9vRobfF
-	qN/8wQwzoqPIaZg==
-X-Google-Smtp-Source: AGHT+IFxKjSoye5KytJcBeIh7RVVNTxX96Tia/JazwrfrrvBChFGTf0ixNRMCRYvTWwly37g85A8Cg==
-X-Received: by 2002:a17:907:3f27:b0:ade:3eb6:3c6 with SMTP id a640c23a62f3a-afdf009b921mr174055766b.15.1755680769642;
-        Wed, 20 Aug 2025 02:06:09 -0700 (PDT)
-Received: from localhost ([195.52.61.108])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-afded537f98sm141907366b.104.2025.08.20.02.06.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 02:06:08 -0700 (PDT)
+	s=arc-20240116; t=1755680864; c=relaxed/simple;
+	bh=//QsdE7OPpcCMYDo8ixRe1OSOVosgH95wSSfFKANKKQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tr4mhv8wBx1aN24IfHmu4GEt7OIsarxfOfF49mBbteK6Votu140wOTMGH9Eu9FeIc+cbZUQS5ASz/toDIBtxOTe+S5A47Wuz85e4OHoevdZB0R2yPpDD/0+nc5PGWB9Na3tCMpNUpYJowsOqqqldphgPNaf510Z7bGi0uddOQU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IK7edZBw; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755680853; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=LaVLdCXndmYsJn6b1HROP2zqjNIw7pnHQe3ZO2d5Rxg=;
+	b=IK7edZBwW1WP0nEEEKPpPan9g6A7MV8V9EdSRmoA5h97az5wPfFuMSQlhQY/975aTFMh+ha5YWIeGMaBaHx4ws7yc9YCzsPngkISX9rYrZsSoJb6uVu4LCmMVFeGi+VielhoM6IjAsqQ3hup+SYy89VArXP1bIHZ2dl3wa6xCCs=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmBXj3i_1755680852 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 20 Aug 2025 17:07:32 +0800
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+To: akpm@linux-foundation.org,
+	hughd@google.com,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com
+Cc: ziy@nvidia.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 00/11] add shmem mTHP collapse support
+Date: Wed, 20 Aug 2025 17:07:11 +0800
+Message-ID: <cover.1755677674.git.baolin.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=0c51fa388eb9b21910f63f4f00a3738371207d9954d178cc4d914d32c9d6;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Wed, 20 Aug 2025 11:06:03 +0200
-Message-Id: <DC74W02T8Y9U.Y7IH9HBIP2J3@baylibre.com>
-Cc: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <kernel@pengutronix.de>
-Subject: Re: [PATCH 5/7] can: m_can: fix CAN state in system PM
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Marc Kleine-Budde" <mkl@pengutronix.de>, "Chandrasekar Ramakrishnan"
- <rcsekar@samsung.com>, "Vincent Mailhol" <mailhol.vincent@wanadoo.fr>,
- "Patrik Flykt" <patrik.flykt@linux.intel.com>, "Dong Aisheng"
- <b29396@freescale.com>, "Fengguang Wu" <fengguang.wu@intel.com>, "Varka
- Bhadram" <varkabhadram@gmail.com>, "Wu Bo" <wubo.oduw@gmail.com>, "Philipp
- Zabel" <p.zabel@pengutronix.de>
-X-Mailer: aerc 0.20.1
-References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de> <20250812-m_can-fix-state-handling-v1-5-b739e06c0a3b@pengutronix.de>
-In-Reply-To: <20250812-m_can-fix-state-handling-v1-5-b739e06c0a3b@pengutronix.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
---0c51fa388eb9b21910f63f4f00a3738371207d9954d178cc4d914d32c9d6
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Based on mm/mm-new from today.
 
-On Tue Aug 12, 2025 at 7:36 PM CEST, Marc Kleine-Budde wrote:
-> A suspend/resume cycle on a down interface results in the interface
-> coming up in Error Active state. A suspend/resume cycle on an Up
-> interface will always result in Error Active state, regardless of the
-> actual CAN state.
->
-> During suspend, only set running interfaces to CAN_STATE_SLEEPING.
-> During resume only touch the CAN state of running interfaces. For
-> wakeup sources, set the CAN state depending on the Protocol Status
-> Regitser (PSR), for non wakeup source interfaces m_can_start() will do
-> the same.
->
-> Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+This is a follow-up patchset for mTHP collapse to support shmem (or file pages)
+mTHP collapse, which is based on Nico's patchset [1].
 
-Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
+The strategy for shmem/file mTHP collapse follows the anonymous mTHP collapse,
+which is, quoting from Nico:
 
-> ---
->  drivers/net/can/m_can/m_can.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.=
-c
-> index 310a907cbb7e..149f3a8b5f7e 100644
-> --- a/drivers/net/can/m_can/m_can.c
-> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -2507,12 +2507,11 @@ int m_can_class_suspend(struct device *dev)
->  		}
-> =20
->  		m_can_clk_stop(cdev);
-> +		cdev->can.state =3D CAN_STATE_SLEEPING;
->  	}
-> =20
->  	pinctrl_pm_select_sleep_state(dev);
-> =20
-> -	cdev->can.state =3D CAN_STATE_SLEEPING;
-> -
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(m_can_class_suspend);
-> @@ -2525,14 +2524,14 @@ int m_can_class_resume(struct device *dev)
-> =20
->  	pinctrl_pm_select_default_state(dev);
-> =20
-> -	cdev->can.state =3D CAN_STATE_ERROR_ACTIVE;
-> -
->  	if (netif_running(ndev)) {
->  		ret =3D m_can_clk_start(cdev);
->  		if (ret)
->  			return ret;
-> =20
->  		if (cdev->pm_wake_source) {
-> +			u32 reg_psr;
-> +
->  			/* Restore active interrupts but disable coalescing as
->  			 * we may have missed important waterlevel interrupts
->  			 * between suspend and resume. Timers are already
-> @@ -2544,6 +2543,9 @@ int m_can_class_resume(struct device *dev)
->  			if (cdev->ops->init)
->  				ret =3D cdev->ops->init(cdev);
-> =20
-> +			reg_psr =3D m_can_read(cdev, M_CAN_PSR);
-> +			cdev->can.state =3D m_can_can_state_get_by_psr(reg_psr);
-> +
->  			m_can_write(cdev, M_CAN_IE, cdev->active_interrupts);
->  		} else {
->  			ret  =3D m_can_start(ndev);
+"while scanning PMD ranges for potential collapse candidates, keep
+track of pages in KHUGEPAGED_MIN_MTHP_ORDER chunks via a bitmap. Each bit
+represents a utilized region of order KHUGEPAGED_MIN_MTHP_ORDER PTEs.
 
+After the scan is complete, we will perform binary recursion on the bitmap
+to determine which mTHP size would be most efficient to collapse to. The
+'max_ptes_none' will be scaled by the attempted collapse order to determine
+how full a THP must be to be eligible.
+"
 
---0c51fa388eb9b21910f63f4f00a3738371207d9954d178cc4d914d32c9d6
-Content-Type: application/pgp-signature; name="signature.asc"
+Moreover, to facilitate the scanning of shmem/file folios, extend the
+'cc->mthp_bitmap_temp' bitmap to record whether each index within the
+PMD range corresponds to a present page, and then this temp bitmap is used
+to determine whether each chunk should be marked as present for mTHP
+collapse.
 
------BEGIN PGP SIGNATURE-----
+Currently, the collapse_pte_mapped_thp() does not build the mapping for mTHP.
+Cause we still expect to establish the mTHP mapping via refault under the
+control of fault_around. So collapse_pte_mapped_thp() remains responsible
+only for building the mapping for PMD-sized THP, which is reasonable and
+makes life easier.
 
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaKWP+xsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlPK
-rAD/ZSbJc+wMxk6zan0X4q5gFEj/m0jpJ+28LkUqxHC8ek4A/RkYzI+CFxIzI82T
-LXnkxkyj4ImZ4YZ01SYKgwfmuwYN
-=jIe8
------END PGP SIGNATURE-----
+In addition, I have added mTHP collapse selftests, and now all khugepaged
+test cases can pass.
 
---0c51fa388eb9b21910f63f4f00a3738371207d9954d178cc4d914d32c9d6--
+[1] https://lore.kernel.org/all/20250819134205.622806-1-npache@redhat.com/
+
+Baolin Wang (11):
+  mm: khugepaged: add khugepaged_max_ptes_none check in collapse_file()
+  mm: khugepaged: generalize collapse_file for mTHP support
+  mm: khugepaged: add an order check for THP statistics
+  mm: khugepaged: add shmem/file mTHP collapse support
+  mm: shmem: kick khugepaged for enabling none-PMD-sized shmem mTHPs
+  mm: khugepaged: allow khugepaged to check all shmem/file large orders
+  mm: khugepaged: skip large folios that don't need to be collapsed
+  selftests:mm: extend the check_huge() to support mTHP check
+  selftests: mm: move gather_after_split_folio_orders() into vm_util.c
+    file
+  selftests: mm: implement the mTHP hugepage check helper
+  selftests: mm: add mTHP collapse test cases
+
+ include/linux/shmem_fs.h                      |   4 +-
+ mm/khugepaged.c                               | 177 +++++++++++++----
+ mm/shmem.c                                    |  10 +-
+ tools/testing/selftests/mm/khugepaged.c       | 162 ++++++++++++----
+ tools/testing/selftests/mm/run_vmtests.sh     |   4 +
+ .../selftests/mm/split_huge_page_test.c       | 135 +------------
+ tools/testing/selftests/mm/uffd-common.c      |   4 +-
+ tools/testing/selftests/mm/vm_util.c          | 179 +++++++++++++++++-
+ tools/testing/selftests/mm/vm_util.h          |   6 +-
+ 9 files changed, 455 insertions(+), 226 deletions(-)
+
+-- 
+2.43.5
+
 
