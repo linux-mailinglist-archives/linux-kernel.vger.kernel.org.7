@@ -1,178 +1,115 @@
-Return-Path: <linux-kernel+bounces-777255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A51B2D76D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:02:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94434B2D76F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF135166966
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:59:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93586169E23
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E4F2DBF5B;
-	Wed, 20 Aug 2025 08:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BBD2DA773;
+	Wed, 20 Aug 2025 09:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="gxyLZuwX"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012055.outbound.protection.outlook.com [40.107.75.55])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="G7IsIJv7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6152D9EC8;
-	Wed, 20 Aug 2025 08:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680340; cv=fail; b=X2DAEgA+NBjrhrSpFM9GtADfANo8/YON1NOcpeAxkZJ9gCgjQOch19NFh73ZtIa301hWkPDCCWrGtYDoad8Nf5cN1HtjqDewKB9sZqUGE9WB9EZrLVdelZM8mBYYgrYc84AVy4aMSKF1iGPe1AmF4Od17Qr3/PTdiZB1hN6Zkwg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680340; c=relaxed/simple;
-	bh=sXR+qHHHf9JeNpovALy1VcizE1+Oy0A/BHvnz0Q7gX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=VcvhT8QSWI5SlgVbbcp9rAM/zmiT0QVy9nlQx7fBLWARupSIMzx4yFW1JLHgGtJfLF2PaZYFmSlS77eeGsUfTNiRO/leOeAbe97r7s5sn+naDnaaYnyaSfQdlD0PkDayhwIA9JvNuTzSt+k6yxQiBJ+E/DN/nPVrN6+yVr8UunA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=gxyLZuwX; arc=fail smtp.client-ip=40.107.75.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fevVKNdSXBwO1q012vSMH+zXMQqLCdgpla5/2iFYdPNWsj0rSWI+VVXFHsZEWSxXJpk6oIpynKXI8p2GpXww/d3twz9BhR131FlPq2f+kZO1oONFt9QFsrsX8dsf0GvSbXJQ7DbTo8rV/5/QnS+gnXPNSaP03H5kEbX6wWNR/6NJaMRC0iEoAjBZNyk0sXDIau3pDPAPaZK+jOLbWmPsxnOdByC+BEOVnipL9dNjh82EOdEF7sogYdne2EiL6f83uk1qbKH6L+PCPXSV7uPRInRgLvCmWaPc19K0L6EpOuseh/dsyxcWTq+WmUFFyqHKThNtmUvcyauOOak4V9F5Xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9qbPK8sMeB/TSejKDsxHVuGOhOjx5KiG1wNUimIwriI=;
- b=HJk4S7NoEtDD8RL01SqiKZ46pp2SgiGDmcJ0Wsl7eYW9Dy9q/DvJ5jE92c4dp2o30IemGKTpMSTjN+xouaV3z8C3WjGsumE6FnfuCfApeqyl3c0witFml+piVN76wIeIey2mHA0cdw5tDAOTJq/52fNkZ199ATPF+6duFoASa4vNVd5E5i5QFDiJoF+ufzcGs5CbXmhXsN0wLALnMQZ14LecwNQu09GF+LXyn8ttl7ReWQaw/lBB4yYLDg95bfcgsPkClIqZUOKbAtsL1gbqEA9puxSCElcwHpQ0SWSIYN0u0VK+w/PODElgJeUWPjg+K19A1JBmvtUxs+SdYjxEzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9qbPK8sMeB/TSejKDsxHVuGOhOjx5KiG1wNUimIwriI=;
- b=gxyLZuwX4vb4i7fSHi2TCT+mtdlriWvSBDzEjQTglJL7eXsNEV8zfzX7tiEiDJQDx94gBpAWpSY/RDEdea+8SLnuFius4KcHyWNJkNWI1RTZogHATjq0f2JNuOAu6k1qQUlbuY7oyAbE3LcLy79gTWy2KP6nq0ZuX+sxV2FLhn2HkgIiXi/LPLvk1eNnW9hQ9Kr06s67dj/+e/1llrb9F+qX4WhRoDnMNg76cnQWLZZxMkfWdSxBa0mwSQbnGkKGKh2dD3OpK4AC2DYBYOAZgMyFJmA6rFagHwlv0kOT7EK0jvAVYVvLyLgH0VabLGOtbQ/Pi+ZKnj9W2mf6dbV/fA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by SEYPR06MB5230.apcprd06.prod.outlook.com (2603:1096:101:87::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 20 Aug
- 2025 08:58:51 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9052.012; Wed, 20 Aug 2025
- 08:58:51 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: stf_xl@wp.pl
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] wifi: rt2x00: Remove the use of dev_err_probe()
-Date: Wed, 20 Aug 2025 16:58:43 +0800
-Message-Id: <20250820085843.397945-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0129.apcprd02.prod.outlook.com
- (2603:1096:4:188::19) To KL1PR06MB6020.apcprd06.prod.outlook.com
- (2603:1096:820:d8::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED68D25F998;
+	Wed, 20 Aug 2025 09:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755680409; cv=none; b=seMd+I9kDCyXhSmpHg+U7CzREF7KW9qgblWzUfI1AbeMctfH3qfrMfWHSxo+QsGrFLoGBlMzaVWydAJlIMbd4iVGQuR65waQPCvrcpyFyROmPq0dJGv3xC3agonqeXX9Xq48Eh2h1utYJFTLYxz9KbEYoAfb2WtYY0uGZB6aLoE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755680409; c=relaxed/simple;
+	bh=txs/vM6W8Yv/7EZjG/Md1COukCyt+gv82O8XJ50xA90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jwr6xd+/1Y6KE8DntwDDBCeEDoSauSn9m0E1qqzOeFGPApzH4XJbkG+ODakAdYdR0x1yZFg9yfYh3tnx+4wrGFU9Up1eoD5fhGb+GoOdXMSke50tISAkqLow5uWpfM37M6notNUlswsQPQGeSaR0ut+UsmOaClc0RQGBpNmJKGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=G7IsIJv7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4D80240E027E;
+	Wed, 20 Aug 2025 09:00:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3IOq7lNCDxO3; Wed, 20 Aug 2025 09:00:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755680399; bh=beySYSjjYv/3HXXkq0/rNq324ZfG9YsZxFSqt79VFc8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G7IsIJv7HnX79b+e7Aw9+b5OBqD0o5IwHBtS1HSpOYaDVE0aMMilWv9FCQWdvwdyj
+	 7dF1juRVqxwd/HTD1ar5ANctaUc8CPwfONMs7R24YcMC8aOl1fPMR8yn5Lm0kaQApI
+	 QsK5iC3E/YtCm61EtNNFJplRYVWhBqmjLVYI3y2IwXyRqlUy91rhMufU0pxkVJ3AkU
+	 0sHIxl6HcT6IErBT2GfC8ruALpqxFNkP96ZIYNBNVVG+g/3aaonX5vjCTlMmvU432l
+	 xaUdqeO3JXTWcOibyhPxpmHk4KY8X2VtQVLfQ/r/OHcToprspYU+ya82OrymJo4nGr
+	 lGGHqT2+Dqx3dSzsKgka2kjftCGserjXFqY4NeCC6v6x7/NY6O8bkZtRxdFjw8PAtf
+	 8lcCRC25NM7vGhDjif8GOmal5hqIiSJcIlKZXwq37PTYwD3rhJlZ2biEMcHnWptWfd
+	 R5qln9p7YVr/Nfw3V36jogBQu4qo/vllkcjum+H2m+x8JOSwal2ApdRUT7yr7LwrM5
+	 WQkGCkVZYsm1nL9DiqB1zgGBmDeZQDLaJuEM++LT/3JFRAwbb+GLRo8iRpsm4GY94G
+	 NMsZpNXpFxXcl7nwTnlAKzuiPO5POQ+gKYOmF9g10Pr4xFn7BFqUBHLPqtrvOrGjQ7
+	 4jZKD5ZDlkO358JoPbKhGVTM=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8729240E0232;
+	Wed, 20 Aug 2025 08:59:40 +0000 (UTC)
+Date: Wed, 20 Aug 2025 10:59:35 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Naveen N Rao <naveen@kernel.org>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
+	Sairaj Kodilkar <sarunkod@amd.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	"Xin Li (Intel)" <xin@zytor.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [PATCH v3 0/4] x86/cpu/topology: Work around the nuances of
+ virtualization on AMD/Hygon
+Message-ID: <20250820085935.GBaKWOd5Wk3plH0h1l@fat_crate.local>
+References: <20250818060435.2452-1-kprateek.nayak@amd.com>
+ <20250819113447.GJaKRhVx6lBPUc6NMz@fat_crate.local>
+ <mcclyouhgeqzkhljovu7euzvowyqrtf5q4madh3f32yeb7ubnk@xdtbsvi2m7en>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SEYPR06MB5230:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63ac221d-b19d-4792-92d9-08dddfc7c8ae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DgNHPQu22wAUgM9+G+W67qAMlywRz/PzqafPyFHOx3uLY+e+njxZEXLR0eSv?=
- =?us-ascii?Q?IkCj0p2SdjglzGbqDWCqR5Ra/vs2O1xsh6Q9Am2UuEW8+hdvNnxs+UEDyPfZ?=
- =?us-ascii?Q?Phd8OplWTb/2UDfLIz4mON8YLd8Tnq2k8PnV0Rj4M4UhkAxluaZvLgHGMsFk?=
- =?us-ascii?Q?0riKQ7mFuE7FK/XseLHDJF4vM0vT5ixucqIsX7dVAjCZqOmqm/V5hsxJScdl?=
- =?us-ascii?Q?hXHt4VdOQc6EjKOi+H6hBYXLcoXTindqoytjTv9bCOul/Xi7P2TDcWVCs7ej?=
- =?us-ascii?Q?Fsh8SkDe1Vud1olKkxkfBIIoDlo2gBTEe4fl9GtDH4oK7+0nbfBQ5wBy59D4?=
- =?us-ascii?Q?TgEfj7/3dFhnpbwEonGT9VxiS4X5OWXaPFujVbpjyJbuPeO8k8W3TMJS27aB?=
- =?us-ascii?Q?EaAEOUqBGhIAznGVYqQBZJ21xsEIKHeiaFlQ4oEjAuNvyd1hc5oPaEw605zi?=
- =?us-ascii?Q?Tln16YWdj0N9+/WsCzn5xpKHPlSsmEy8iTsnD+RFovwOhXSFkmjcaZC1yuAB?=
- =?us-ascii?Q?zDkQ7exXPu1AXabVJuE05fg1+i9yat3QkTunx4bfULerDcni/HjKD81Ftcf9?=
- =?us-ascii?Q?795KwClvG/b4JrZMC4TCTWN+MfjtPrukLYzo/c0XwD3dQ0haBSGfBwcSKtme?=
- =?us-ascii?Q?M0tyANnhiWiflNG94o7XGuo2EyzbT1dVlV/V2uNLuZ8dg8u/OHpIbavHeTeP?=
- =?us-ascii?Q?OdXiXrujbN+k3o7XMx5qoTJHxModT+oCQ2kYUcV0vFLgK8Iuu/DdCyF/nir+?=
- =?us-ascii?Q?cqgXBpVLRN+8Fd3KJAWqhx+z0LjRmv2dqUE4sotkJEHDAoQKxKGOzpoDnPtK?=
- =?us-ascii?Q?Qz0UoeMIdtCYztEcZETMO5somu2yCUbT3pLDek9I+4Vssw/f/kjdcvouOahH?=
- =?us-ascii?Q?J8/RX2/SMZwPwtVmtLgu3meGLfOx7WpuRrZikQUHLZ1GK8KNYosXN2Kq+5Jo?=
- =?us-ascii?Q?vBIXXqNeQw3aZT8O7i4Y6kUwFdI1yEXIzDargjgGS/ZzVrWUAyqMXXzKATKA?=
- =?us-ascii?Q?FjrDHordSYhTc2zNM5hhHToHfm75TJYKMNxvef/K400m0RrYvMFDNyotkh9v?=
- =?us-ascii?Q?nWHK+HYIEFD9TXgKPAa9+IpwpPJsUSLcBo2hIFPmwl8yw//ynvGrSyJJ5n/w?=
- =?us-ascii?Q?p9Lxb8WlmzwkVIxA00r0SLmKude5jRFOq+nxM5A/anQqSksVRYDw+IX6r+3D?=
- =?us-ascii?Q?dwRrJmLzmjFNXbVe+cVzCORhxVNdjtOlEgEWiUYVEN7y7IRDMg6FTjn7KYCr?=
- =?us-ascii?Q?pdbIR1+wWpUHIKKfSTKY2iNMsL4RkccVlMeyUw40PiJwkZyWT0frQeqpWHRH?=
- =?us-ascii?Q?Zrd5AZz9FOjGbb0kej8U0Ssm4U4VadhFKf4MvZI87JhfTRSbswfYtifWTMfg?=
- =?us-ascii?Q?wKzPkp9ycuuoHKdiCuYASUPSVNCbct+qskliuIcKCCtG22M652rWKA4U+mq3?=
- =?us-ascii?Q?XqkBT0xPt9HJvF1qESzlDx5UF8blrL3Mo2zhSupiqzCFnz0z8rObBA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yrxSLafz/Ad4TWnOYZTXcWzvsiVes8I7E3TyPxJsLrRyeUSqTd5+NvpotBai?=
- =?us-ascii?Q?K0mrbccJ+KYlk8C0uvd3SdHU3kGnY3MqUBkoV1TYNEZ4GDE5vGUxgY2rql/J?=
- =?us-ascii?Q?OLUwjAuj6Qpap69gCLRVR3WDxD/fl4elVB8X77YxroMxev7rCCb3SJGDwI39?=
- =?us-ascii?Q?wT1LpAotyPH06W49n8XwYGT2wRNCahNra758Yt1xrbj927f3OlxPstPvR1O5?=
- =?us-ascii?Q?YD/UqrUIa6WtFqdAGsmHzyY4oMRqfNfLu5UqL28zCSSRNTUiCtJwNpvkC0C7?=
- =?us-ascii?Q?GP81Z0sSvcODiCcTYwWm0g2r/HFfzlDy5aN5F17Dxtc8K7YMz7hMj4r5LkdW?=
- =?us-ascii?Q?SoD87oj8GyBgT38ebPdC93wWXIqrNZs6GfImHzASaLMtL5D2uwOGUrlc2vej?=
- =?us-ascii?Q?xv2hKGzoa9zqU3AKuMzRUcXpFFIUIQXs8S1CEWmLKS5ysO9SkDsuoZqrtkD+?=
- =?us-ascii?Q?Q3ytxDicflcdyUlwyP93+p1ZaygHpSj5bxA4Q/nZztX9nIhnOe9METj40y/Y?=
- =?us-ascii?Q?Pw/bbEzkV9gmbnRoGpj694r0CjF7f84N7wsagKN16iq06/LqYwQFBsib+pyP?=
- =?us-ascii?Q?y0tDpV2joR+dY/kvk++gATrQbXF/3wbF4XYblAEyQGv05dYkvMGxK8mg2+9T?=
- =?us-ascii?Q?y9fckg5iwSlD3KCTPLD1tAUT2EPpoT1/PHcv+NiJY6TiGXSgxgGCRMhOGEVb?=
- =?us-ascii?Q?49faMpy/hp6BXn6mBQUcR1EpHshZrcNjEZfPy8UoTfDBzvDZIz0vzKQz/mrW?=
- =?us-ascii?Q?v38oJ7/+MqQfCDwdlFbZHWD6viRtUymXLRHZb//bVkcu+EtxXV6310AcKRhD?=
- =?us-ascii?Q?il6u+KMrF9L9akf0sUMEspPpmqzxHLFp5pCT+45gq/6YE8BOSCe0q7z++vc5?=
- =?us-ascii?Q?hlMUv6u18x/3UQK3VqCaDWJkhxRD/F1AjYLOytiLIgE2fPM3OPwf67VT2GKb?=
- =?us-ascii?Q?tSWkPQ8AZsOKlRpiN0R32COcxTsbjarde2gJdnRHD0sBaw4PX9ezWk6U+I4G?=
- =?us-ascii?Q?h2ZH54uT/bUZYXYUNxUcbs9oeXSztVgQromXQB/D13bz7g4N7Bmwmqg1mjzO?=
- =?us-ascii?Q?j4db01TMpRHgxoTyTkqoQlhokHjhZFVmRGlpYTcQlnwbmHeY3WiL3UfzcdEb?=
- =?us-ascii?Q?7HZMkoCtEEzPhax5p/xZmz/uOD7AaKxP6vynXcwL5Ukdp80++UAXB/MMydIP?=
- =?us-ascii?Q?OThsGv7eHDuQEVb/+K55G0Vw9RQSAnSR1vXmO/3lq/5rkmTS8pyFOQilWqap?=
- =?us-ascii?Q?CUOP0oMwm01DtA4TEpgN1+7DE6as+qI8E/IrzxhSGdUuIKjWRWjMiGVCp6hd?=
- =?us-ascii?Q?tLZ+zZdgieylvJn9dq+zfvylg83a5gMpW/d5RK8zchy0G0VoOw6Z4HARAFNP?=
- =?us-ascii?Q?mH3J22SDYfwxO7qMozhppqu867MZBf8ymHAifb9gN8bTpaBWfkkHKiC+0ny6?=
- =?us-ascii?Q?QDYhmAUSVOwjsi8DDRmNANpInxTmfo7SOKWF8qneVvRdPwe6ZuzdGLKGmR3O?=
- =?us-ascii?Q?jIzjyEkvrkY+OHBvmnjHJrApEZn/0fwYu8OYEa2QvERHSNUIcUyRnz1wcBvi?=
- =?us-ascii?Q?eU4vY3W7WVCEDgVtmO1FWRoivvRxieV3BAOEqjPm?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63ac221d-b19d-4792-92d9-08dddfc7c8ae
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 08:58:51.6564
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZFKvYb1DobYtTv/0BhOqMaFxb4qBFbyR4KR/vNI0tlPg+smbjrx8WUirdnL5ytTNR7LIA5y9WEINRyBBjJ+0YA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5230
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <mcclyouhgeqzkhljovu7euzvowyqrtf5q4madh3f32yeb7ubnk@xdtbsvi2m7en>
 
-The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-Therefore, remove the useless call to dev_err_probe(), and just
-return the value instead.
+On Wed, Aug 20, 2025 at 01:41:28PM +0530, Naveen N Rao wrote:
+> That suggests use of leaf 0xb for the initial x2APIC ID especially 
+> during early init.  I'm not sure why leaf 0x8000001e was preferred over 
+> leaf 0xb in commit c749ce393b8f ("x86/cpu: Use common topology code for 
+> AMD") though.
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/net/wireless/ralink/rt2x00/rt2800soc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Well, I see parse_topology_amd() calling cpu_parse_topology_ext() if you have
+TOPOEXT - which all AMD hw does - which then does cpu_parse_topology_ext() and
+that one tries 0x80000026 and then falls back to 0xb and *only* *then* to
+0x8000001e.
 
-diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-index 8f510a84e7f1..e5c99fc6509b 100644
---- a/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-+++ b/drivers/net/wireless/ralink/rt2x00/rt2800soc.c
-@@ -289,7 +289,7 @@ static int rt2x00soc_probe(struct platform_device *pdev, const struct rt2x00_ops
- 
- 	hw = ieee80211_alloc_hw(sizeof(struct rt2x00_dev), ops->hw);
- 	if (!hw)
--		return dev_err_probe(&pdev->dev, -ENOMEM, "Failed to allocate hardware");
-+		return -ENOMEM;
- 
- 	platform_set_drvdata(pdev, hw);
- 
+So, it looks like it DTRT to me...
+
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
