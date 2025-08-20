@@ -1,183 +1,111 @@
-Return-Path: <linux-kernel+bounces-777546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F8DB2DAC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:20:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F04B2DAB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 723293B881D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:17:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 381A37B4516
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A882E11B8;
-	Wed, 20 Aug 2025 11:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E812E3AE2;
+	Wed, 20 Aug 2025 11:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZlUDij/K"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Ci+1gREv"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C7D2153EA;
-	Wed, 20 Aug 2025 11:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755688626; cv=none; b=hQGsf1XEXDWSEIpReCNS2I7L4LMhlLCQ1GDAbzPRJl/RQPrfJ6fbb4KvClfVvONDvCf74uTwDuJVqlDcERkJt8uD1CMuThEfFlK0SAm4GG8hl3WFOX2V/OojQXu0yVWJ2k+JGvKOtL+aimKoRJ8PHDuYybhFWT6ygoeRk+jz1cA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755688626; c=relaxed/simple;
-	bh=OtQzCNcg827yKF1AZRHjHdNrIDUyBLx2+HLvYXYZWdk=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72102DCF58;
+	Wed, 20 Aug 2025 11:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755688731; cv=pass; b=fra4OXZVhCho14iWMtkwZwee2UrfKrsq2gp+fNIRd6N8raEn/oMkHkQyHI5/8SxsJ8jq7kE3Tw1UM0ZadYfuBP7Vgxizui6SbDlXh7cJtRZTYTp/8DvEj7KkSUSX6zyVI6VKx5FRDTufy4dKdAMUySYNYp7J2nDgMueNt7Qsmzw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755688731; c=relaxed/simple;
+	bh=gh4JMVoWx2g9QVgzTZ1UfSG+u2iBWGemYGCyImRUOKc=;
 	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=VNxpufLGmfGAjqmljLwHoeFP9eKGjokcC6xnBPbvuI+p28CZp7oj1bwpU3HSTHM/+vGOKcmyn75ZeGrldMDNIVIzdnobXgY+b1FFCt4gsYcjkTvwo1lM7xliN11zC9lN7n+/apJEbYOWNIJzX3IRzhdXZQ9nsZxBNu7XoKXPWF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZlUDij/K; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e87067b15aso751501085a.3;
-        Wed, 20 Aug 2025 04:17:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755688623; x=1756293423; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rNEGZw2y8apXm4uq52cCtCGx6Q4fZehAG68JnZ4REmI=;
-        b=ZlUDij/KY8ZPEltLOANc/K4X5Z27hhEh8s/ysLWd0ilPlsDJUHWTZdhTSwhptLo8bl
-         lrfrPsL5luhQilez4xQr1xGxP5MJ+Qd8HrC6V0TG/p7UMwY210kedalz0D4ILDNizxwt
-         r+xrRv+zl+meimr7ThlCG7oNC8zNrhaAUKgSO7/6+VGJtfTXVQrG+oas+iAyfXUdpEXJ
-         S+6R6zFdd0kTg2qzFyZsgUB2bvRt4llEjQfw5nAo1fXOCbSZG8swm2+NoV0IbnGwD6OH
-         ipbI7NfzfgboJydzesqfSwdvgcMCX/OClJDWGf9jGn1RA0EYO54M4qWjRjtKsVJVYGOQ
-         5kHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755688623; x=1756293423;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rNEGZw2y8apXm4uq52cCtCGx6Q4fZehAG68JnZ4REmI=;
-        b=nuUEWu+jg8QHZmrmdcQSf2iBIUthRSqfoE0837DaxVkM2BllLKw7Px5j/d0ut6BrQr
-         +Y+GOHm9Ad850puIaI4lL0PJ2YECcK3/lgvcxyyAneif641Ca3a/xWbTaeGnW1Ze4V+C
-         6kKhcv4l0wiytMtXEK3QT8x27LjMmv9wAZ/D7+8APxYsblKip1tm8PgwAD8UloL4PUbr
-         plLm8c1+tZzXhslml9WVkjvuROJR8mIhO4HXF1OPBmGEMwchn4Yo4SgZ6gBxK8s4rNph
-         dSsdAZ0h1FiqMJjBD7EtYv8lL5RFD+lc4NGdhwsJMSqMbE3awF6ttwzgTB4za2PO3YqH
-         8yOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQceLxy4oL2pMXjBKcoSSQuz4gLm5YMeivtdhmAer3leenKVVb0u4Ul4EsY3xhhG0lBsZr/nXxYkGa+KY=@vger.kernel.org, AJvYcCVimcfC4r4m4woUFHGTmt388uiHf3vpvZYRWvTgWukFHfecObUIieYXia0ISnitYMS829JhbVWp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze3lZQGC50Qvoyy8jGVAUQPGlqoIxuTDmPkbuoLc3wdJMZM9fs
-	RnSuEz+vmrlKvPs7irIIkMVQYh5FBD6DmiN1DQCzhT1Cy1zOQNNPM6nM
-X-Gm-Gg: ASbGncsVAkGO5V6n9bobuGFBXvDjf7m9ZP33IT0Tz+OWYHUiO+5R3UV0ZZu/+ulPEKA
-	HEHIbrO5rafuTo2YJhJ9C3HYwg1C0jNrmFrtAIcofaOENHftoOAB/QgdgidVY94aYBPbNrH2n8e
-	XCq0gCmrBkPvOFMOf3wJYWcLFf0ZSJqigGg9d5hZo3S7YaJYiGU4CyGyxIIzNeLYu/ZvrldrY9L
-	CIw1OL/0dbB1inSs+g1de2oRGGDJOhGomojcTzVApxnXOGafWdIxVtf/LkWwHWhyCR5zgmCO//V
-	zHNvIqrCadkNvDKDFL8eJBJQ/TRNF8cSJxL7R4uOdS+SOMT1w+L+2YJBAOcgqS+j8QpqBDNYcXx
-	Ui3xw+5wn1lYFa+2/K4SmIDnvAXFsMzWdluHPNQv5U8qT3ovQbWqxYaNST7yiNrnY1rnGRg==
-X-Google-Smtp-Source: AGHT+IHjyyRgQLmlOx9za8Eph26gHmfEwR25z915Rl8D5Zzlq8HGc1E8iUboqZ4NL+Eo2rlLAnjcpA==
-X-Received: by 2002:a05:620a:4607:b0:7e9:f820:2b83 with SMTP id af79cd13be357-7e9fcb6c355mr275475385a.68.1755688623016;
-        Wed, 20 Aug 2025 04:17:03 -0700 (PDT)
-Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70ba9300f0asm85023846d6.36.2025.08.20.04.17.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 04:17:02 -0700 (PDT)
-Date: Wed, 20 Aug 2025 07:17:02 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Xin Zhao <jackzxcui1989@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- edumazet@google.com, 
- ferenc@fejes.dev
-Cc: davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <willemdebruijn.kernel.795154e3cfd@gmail.com>
-In-Reply-To: <20250820071914.2029093-1-jackzxcui1989@163.com>
-References: <20250820071914.2029093-1-jackzxcui1989@163.com>
-Subject: Re: [PATCH net-next v4] net: af_packet: Use hrtimer to do the retire
- operation
+	 MIME-Version:Content-Type; b=n8CB41UFZRKN1Up8aDYz761+yGdGu9qfruIpevTmGHYhUaBwXc0yy4+exSgOSQDnR4MWOpusbGNy5AfFMSmoogA/1ywIIOvm9dXbKXRThIRw1JypGQ1gqdLv4SPMXdVLKEPenYnZcizbYTh67i4OBPmey92/UvtoVfMocV6bXSk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Ci+1gREv; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755688691; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MDoaSJ5MgzobSjosdP9fpEfA6II5Slqm7R3BM+7UTFKrkfe539jOafletTRLKxBcNQD2HNnPaYFliHLXQFJKB0ef3Wvz5B8qVrbk1C9c7tC8BcwtiEcUZiR2+B0cuXm+Q3+Lj9J2URg5JZknwej4oNVcEI9JlodUsyqYpJzAFmM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755688691; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Tln7FpGzb6hM5a2Y6c1iMqDX53JGUcU2Cq7EbnEbdno=; 
+	b=Uuz+L0hvM3P9VjgsY7xGlmO4axlUpFR/SYYASQ35os4vswhAFDtQ7Q2kBiYdpPFPqqryNdXW7d6fHA2HYFafuv9KRcD9807LekS6btih+SeuzOgBl/bVFutM0Qqim3WyFcxFd/qyjLFo6S+pjiv4HgGQzGifetbzREedGwoD0wY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755688691;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=Tln7FpGzb6hM5a2Y6c1iMqDX53JGUcU2Cq7EbnEbdno=;
+	b=Ci+1gREvG+DwWma+t9QNxApmObHsHCFrQa2Olv/9IDr9ISX661oPPFttzFFOz+yl
+	jiz5j03xVX+0P+J0nuO7iBmKKq4GaqkKNURB1pDAjcUgmIKUD/lgxi119cK7iJxXdy+
+	ntJEDLqijT2SLkxVNyg44OKagmGzkkE730ugJXRA=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1755688689152183.7487823630272; Wed, 20 Aug 2025 04:18:09 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Wed, 20 Aug 2025 04:18:09 -0700 (PDT)
+Date: Wed, 20 Aug 2025 15:18:09 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Alejandro Colomar" <alx@kernel.org>,
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
+	"Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Jan Kara" <jack@suse.cz>,
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
+	"linux-man" <linux-man@vger.kernel.org>,
+	"linux-api" <linux-api@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"David Howells" <dhowells@redhat.com>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <198c7335dba.d74f2e4174912.2623547306023456362@zohomail.com>
+In-Reply-To: <2025-08-12.1755009210-quick-best-oranges-coats-BNJpCV@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+ <20250809-new-mount-api-v3-8-f61405c80f34@cyphar.com>
+ <1989db97e30.b71849c573511.8013418925525314426@zohomail.com> <2025-08-12.1755009210-quick-best-oranges-coats-BNJpCV@cyphar.com>
+Subject: Re: [PATCH v3 08/12] man/man2/move_mount.2: document "new" mount
+ API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr0801122771423f3748bc7f61e1a7cc360000d64f8919ecb0ec0828783973dc22df6f86a68cd109d6a5d5b9:zu080112274a76baa063a7b02b2b81fa3f0000c46fc46491f547e719d9515a2cb4a06be1ad67f4e14f6fac4a:rf0801122c61455fb55853888d67840f080000c977eb60d6801d08e08b75bfeb8549a36767e5d9f8114056a0e5efb69309:ZohoMail
 
-Xin Zhao wrote:
-> On Tue, 2025-08-19 at 22:18 +0800, Willem wrote:
-> 
-> > > -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-> > > +static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc,
-> > > +					     bool start, bool callback)
-> > >  {
-> > > -	mod_timer(&pkc->retire_blk_timer,
-> > > -			jiffies + pkc->tov_in_jiffies);
-> > > +	unsigned long flags;
-> > > +
-> > > +	local_irq_save(flags);
-> > 
-> > The two environments that can race are the timer callback running in
-> > softirq context or the open_block from tpacket_rcv in process context.
-> > 
-> > So worst case the process context path needs to disable bh?
-> > 
-> > As you pointed out, the accesses to the hrtimer fields are already
-> > protected, by the caller holding sk.sk_receive_queue.lock.
-> > 
-> > So it should be sufficient to just test hrtimer_is_queued inside that
-> > critical section before calling hrtimer_start?
-> > 
-> > Side-note: tpacket_rcv calls spin_lock, not spin_lock_bh. But if the
-> > same lock can also be taken in softirq context, the process context
-> > caller should use the _bh variant. This is not new with your patch.
-> > Classical timers also run in softirq context. I may be overlooking
-> > something, will need to take a closer look at that.
-> > 
-> > In any case, I don't think local_irq_save is needed. 
-> 
-> Indeed, there is no need to use local_irq_save. The use case I referenced from
-> perf_mux_hrtimer_restart is different from ours. Our timer callback does not run in
-> hard interrupt context, so it is unnecessary to use local_irq_save. I will make this
-> change in PATCH v6.
-> 
-> 
-> 
-> On Wed, 2025-08-20 at 4:21 +0800, Willem wrote:
->  
-> > > So worst case the process context path needs to disable bh?
-> > > 
-> > > As you pointed out, the accesses to the hrtimer fields are already
-> > > protected, by the caller holding sk.sk_receive_queue.lock.
-> > > 
-> > > So it should be sufficient to just test hrtimer_is_queued inside that
-> > > critical section before calling hrtimer_start?
-> > > 
-> > > Side-note: tpacket_rcv calls spin_lock, not spin_lock_bh. But if the
-> > > same lock can also be taken in softirq context, the process context
-> > > caller should use the _bh variant. This is not new with your patch.
-> > > Classical timers also run in softirq context. I may be overlooking
-> > > something, will need to take a closer look at that.
-> > > 
-> > > In any case, I don't think local_irq_save is needed. 
-> > 
-> > 
-> > 
-> > 
-> > I meant prb_open_block
-> > 
-> > tpacket_rcv runs in softirq context (from __netif_receive_skb_core)
-> > or with bottom halves disabled (from __dev_queue_xmit, or if rx uses
-> > napi_threaded).
-> > 
-> > That is likely why the spin_lock_bh variant is not explicitly needed.
-> 
-> Before I saw your reply, I was almost considering replacing spin_lock with
-> spin_lock_bh in our project before calling packet_current_rx_frame in
-> tpacket_rcv. I just couldn't understand why we haven't encountered any
-> deadlocks or RCU issues due to not properly adding _bh in our project until
-> I saw your reply.
-> I truly admire your ability to identify all the scenarios that use the
-> tpacket_rcv function in such a short amount of time. For me, finding all the
-> instances where tpacket_rcv is assigned to prot_hook.func for proxy calls is
-> a painful and lengthy task. Even if I manage to find them, I would still
-> worry about missing some.
+ ---- On Tue, 12 Aug 2025 18:36:53 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
+ > > "Filesystem root" can be understood as "root of superblock".
+ > > So, please, change this to "root directory" or something.
+ > 
+ > Maybe I should borrow the "root mount" terminology from pivot_root(2)?
 
-Thanks. I also reasoned backwards. If there had been a problem,
-lockdep would have reported it long ago.
+I don't like this. For me "root mount" is initial root mount, i. e. initramfs.
+It is not what you mean here.
+
+ > I didn't like using "rootfs" as
+ > shorthand in a man-page.
+
+I agree.
+
+What you mean by "filesystem root" here? "Thing, which is changed by chroot(2)", right?
+Then, please, write "root directory" (or "root"), this is standard term for that thing.
+Or you can just write "/".
+
+--
+Askar Safin
+https://types.pl/@safinaskar
+
 
