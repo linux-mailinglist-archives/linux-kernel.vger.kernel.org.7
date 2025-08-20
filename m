@@ -1,260 +1,101 @@
-Return-Path: <linux-kernel+bounces-776913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7DDB2D2E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:23:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6928B2D2EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE27C2A60FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62ECB62843D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805F0242D6E;
-	Wed, 20 Aug 2025 04:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C125244693;
+	Wed, 20 Aug 2025 04:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="ds/ef7GW"
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mail.toshiba header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.b="Sqk71vEa"
+Received: from mo-csw.securemx.jp (mo-csw1802.securemx.jp [210.130.202.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D6E146A72;
-	Wed, 20 Aug 2025 04:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9AB241664;
+	Wed, 20 Aug 2025 04:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.130.202.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755663768; cv=none; b=YYLx29k4R2+bfn7/y/oqRR/xssFLw+Ik9/H+JdwwkijAMgHGrOFnSAhduf+7xPvPrR0li/LrBPPVTO6hGhSUXoyG9tsOg2dZl09XkH9hX4X+eCj7CMGk/LJpyq6UqdZeij4wbUr37SZSrZW2xnylMrWTDOTzDHfsxZvjjuaKNZ4=
+	t=1755663797; cv=none; b=MQkDMBBy7Wej+n3/fwtnkyFpNbHqQWd2RyWDt0vQc6gyIUfKiMz7pab7Ps8BvnBkqQCni6Jq7rHAqNqKob16+MUccV4wO+SCX2c/jpuaDBF+tece8ryUzDRpSHan638+GyD/dJXeh4ipYn6yT/zN1GdeRcXx5KDUZcXjtcKpmZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755663768; c=relaxed/simple;
-	bh=POKrwrXMUFGbyMgq6x00LUl9LtKZOLm12oosPS0CXn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VG67GZttd1BFnwou09lnlIo00TkUfnFHujQYAeGqygmTSf0XKdnBE2fxlDHBFSsPNaazX8pPMstgRTblmNiq9rwEWEw4Gpm1LxQsCWB1gKMw9WX8shONEcjL9sV+3goazIJ4vbiTJgdm6QTl5a34BDfaDIGHnCf82Rub60ynOb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=ds/ef7GW; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
-	s=protonmail3; t=1755663756; x=1755922956;
-	bh=hrRdoxvoknyaJIODsfEwrN/7kQbq3dgh98L2KyJklXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=ds/ef7GWMVdZAyvEkcFAOoezcFwimBYjF1DV5/c7CVqJng2qe+mHiXmV27Kym3NdZ
-	 eXrkNmpUsnlE9iQoDYHW7yEs+pWZ1o93urVUynlFosp8PNRIaIB7COGm80Y+1qnVoU
-	 XiI/KHzTsgGwWxLCK1Vu2mOuSkjnw1vjbzZJgUcF5UMIzgeAonDkBxLmOScrta1lNL
-	 S+p6jqi3PyIicxO5alBSMVwNWooKvq5VtuA8hmdgeT7R5tel/JOjjja4EgfOjrdNhn
-	 gESGfVplwj19p9OZKhOPePbY17ODfgLL7QKthGTAeCvv19MNyoa2tEYhj/purnfNBf
-	 Q9vesOZ1VZSDg==
-X-Pm-Submission-Id: 4c6CwV17lFz1DDs1
-Date: Wed, 20 Aug 2025 04:22:31 +0000
-From: Elle Rhumsaa <elle@weathered-steel.dev>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	kernel@collabora.com, linux-media@vger.kernel.org
-Subject: Re: [PATCH 6/7] rust: v4l2: add basic ioctl support
-Message-ID: <aKVNh8HRe5ADbiSZ@archiso>
-References: <20250818-v4l2-v1-0-6887e772aac2@collabora.com>
- <20250818-v4l2-v1-6-6887e772aac2@collabora.com>
+	s=arc-20240116; t=1755663797; c=relaxed/simple;
+	bh=1sLVmJEVELm+3EaQx5S5Fb5yqH/hy5nMB0COk6qZdDw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=dAOzoUPvdx2X3TnSuILA87C8td28+v9RDu+/CKK044FcAm8ge3Cd/b9A8BIxVAqxVynBxasaqSbxP7bWi0/8NQEWNcv/a7AqV7rp+ZtUd+CwEvXxxQe5U9rZ5ffPdEybXfhcl4DxLLg5Zk9uVJtWAZeyl4DPs8lLqwaS7Mum91Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.toshiba; spf=pass smtp.mailfrom=mail.toshiba; dkim=pass (2048-bit key) header.d=mail.toshiba header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.b=Sqk71vEa; arc=none smtp.client-ip=210.130.202.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.toshiba
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.toshiba
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:Cc:
+	Subject:Date:Message-Id;i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key1.smx;t=
+	1755663782;x=1756873382;bh=1sLVmJEVELm+3EaQx5S5Fb5yqH/hy5nMB0COk6qZdDw=;b=Sqk
+	71vEahlIjYAB6jJU5K3fqbBg04X8dM6fUUDTP8Z5/VeP1PJZj2sE91UgTdiX+szGZTCl+/MzTG9+U
+	Q71klbwyazhPx5Wm3d+xka7xt1WeEC5fvSLN/pY/pHi60aWl67BcIjQ4vrMTQiuT9T6T7NUbFCLAl
+	dQQ6AtwgeNadcluUj+YNNZSeBTdXJ2dSSZcjG9KeCfl6m+aLkuSaXnFoeNKlASr8Rh7yvByFAZNnd
+	j82fOw26SyrKfNMph6f0RkTqc+vLsSwEZrvoFGxEc4W4XC34sRxtFNWmvqDph8ReZYsRSeaWKrbXN
+	gJlRrdgoiMwNKH47Wizlfmvz08ggS1A==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 57K4N2KP2103061; Wed, 20 Aug 2025 13:23:02 +0900
+X-Iguazu-Qid: 2yAbaKzOl4H8PZRSai
+X-Iguazu-QSIG: v=2; s=0; t=1755663781; q=2yAbaKzOl4H8PZRSai; m=AQ2Y70863fIkF40ki8y3XRx/yrNIO1xMVjEI7bcmleU=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1800) id 57K4Mx7T1451794
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 20 Aug 2025 13:23:00 +0900
+From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+Subject: [PATCH] MAINTAINERS: Update Nobuhiro Iwamatsu's email address
+Date: Wed, 20 Aug 2025 13:22:47 +0900
+X-TSB-HOP2: ON
+Message-Id: <1755663767-1612-1-git-send-email-nobuhiro.iwamatsu.x90@mail.toshiba>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818-v4l2-v1-6-6887e772aac2@collabora.com>
 
-On Mon, Aug 18, 2025 at 02:49:52AM -0300, Daniel Almeida wrote:
-> Most of the v4l2 API is implemented through ioctl(), so adding support
-> for them is essential in order to be able to write v4l2 drivers.
-> 
-> Hook up ioctl support by filling up an instance of v4l2_ioctl_ops. For
-> now, we only support the most basic v4l2 ioctl: VIDIOC_QUERYCAPS. This
-> is used by userspace to retrieve information about the device, and is
-> considered enough to implement a simple v4l2 sample Rust driver.
-> 
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
-> ---
->  rust/kernel/media/v4l2/file.rs  |  1 -
->  rust/kernel/media/v4l2/ioctl.rs | 92 +++++++++++++++++++++++++++++++++++++++++
->  rust/kernel/media/v4l2/mod.rs   |  3 ++
->  rust/kernel/media/v4l2/video.rs | 13 +++++-
->  4 files changed, 107 insertions(+), 2 deletions(-)
-> 
-> diff --git a/rust/kernel/media/v4l2/file.rs b/rust/kernel/media/v4l2/file.rs
-> index 37b34f8e6f251fafde5f7e6b4bd654519d8247a5..8817051268323866f41fd56a0c7e8fa4b7537858 100644
-> --- a/rust/kernel/media/v4l2/file.rs
-> +++ b/rust/kernel/media/v4l2/file.rs
-> @@ -50,7 +50,6 @@ impl<T: DriverFile> File<T> {
->      ///
->      /// - `ptr` must be a valid pointer to a `struct v4l2_file`.
->      /// - `ptr` must be valid for 'a.
-> -    #[expect(dead_code)]
->      pub(super) unsafe fn from_raw<'a>(ptr: *mut bindings::v4l2_fh) -> &'a File<T> {
->          // SAFETY: `ptr` is a valid pointer to a `struct v4l2_file` as per the
->          // safety requirements of this function.
-> diff --git a/rust/kernel/media/v4l2/ioctl.rs b/rust/kernel/media/v4l2/ioctl.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..e8d20d4cb70f5722c0109ea5bad36041355fc7a1
-> --- /dev/null
-> +++ b/rust/kernel/media/v4l2/ioctl.rs
-> @@ -0,0 +1,92 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// SPDX-copyrightText: Copyright (C) 2025 Collabora Ltd.
-> +
-> +//! V4L2 device node ioctl support.
-> +//!
-> +//! Most of the V4L2 API is implemented through the ioctl system call. This
-> +//! module provides support for ioctl operations on V4L2 device nodes.
-> +
-> +use core::{marker::PhantomData, mem::MaybeUninit};
-> +
-> +use crate::{
-> +    media::v4l2::{
-> +        self,
-> +        video::{self, Driver},
-> +    },
-> +    prelude::*,
-> +};
-> +
-> +/// The vtable for the ioctls of a registered Rust [`video::Device`].
-> +///
-> +/// # Invariants
-> +///
-> +/// - All the callbacks in [`IoctlVtable`] are called after the underlying
-> +///   [`video::Device`] has been registered.
-> +pub(super) struct IoctlVtable<T: Driver>(PhantomData<T>);
-> +
-> +impl<T: Driver> IoctlVtable<T> {
-> +    /// # Safety
-> +    ///
-> +    /// This should only be called from the ioctl callbacks and the returned
-> +    /// reference should not outlive the callback itself.
-> +    unsafe fn data<'a>(file: *mut bindings::file) -> &'a <T as Driver>::Data
-> +    where
-> +        T: 'a,
-> +    {
-> +        // SAFETY: This was set during the video device registration process.
-> +        let vdev = unsafe { bindings::video_devdata(file) };
-> +
-> +        // SAFETY: `video_device` is a valid pointer to a `struct video_device`
-> +        // returned by `bindings::video_devdata` and it is valid while the
-> +        // reference is alive.
-> +        unsafe { video::Device::<T>::from_raw(vdev) }
-> +    }
-> +
-> +    /// # Safety
-> +    ///
-> +    /// This should only be used as the `videoc_querycap` callback.
-> +    unsafe extern "C" fn vidioc_querycap_callback(
-> +        file: *mut bindings::file,
-> +        _fh: *mut c_void,
-> +        cap: *mut bindings::v4l2_capability,
-> +    ) -> core::ffi::c_int {
-> +        // SAFETY: this is being called from an ioctl callback and the returned
-> +        // reference does not outlive it.
-> +        let data = unsafe { Self::data(file) };
-> +
-> +        // SAFETY: the fact that this is being called from an ioctl callback means that:
-> +        //
-> +        // - the video device has been registered.
-> +        // - `open()` has been called (as you cannot call ioctl() on a file that
-> +        // has not been previously opened).
-> +        // - as a result from the statement above, a valid `v4l2_fh` was
-> +        // installed in `bindings::file::private_data`, which we then convert
-> +        // into `File<T>` here.
-> +        // - `ptr` is valid for 'a, i.e.: for the scope of this function.
-> +        let file = unsafe { v4l2::file::File::<T::File>::from_raw((*file).private_data.cast()) };
-> +
-> +        // SAFETY: the safety requirements ensure that `cap` is a valid pointer
-> +        // to a `struct v4l2_capability`, which fulfills the requirements of the
-> +        // `Capabilities::from_raw`.
-> +        let cap = unsafe { v4l2::caps::Capabilities::from_raw(cap) };
-> +
-> +        match T::querycap(file, data, cap) {
-> +            Ok(()) => 0,
-> +            Err(err) => err.to_errno(),
-> +        }
-> +    }
-> +
-> +    const VTABLE: bindings::v4l2_ioctl_ops = bindings::v4l2_ioctl_ops {
-> +        vidioc_querycap: if T::HAS_QUERYCAP {
-> +            Some(Self::vidioc_querycap_callback)
-> +        } else {
-> +            None
-> +        },
-> +        // SAFETY: All zeros is a valid value for `bindings::v4l2_ioctl_ops`.
-> +        ..unsafe { MaybeUninit::zeroed().assume_init() }
-> +    };
-> +
-> +    pub(super) const fn build() -> &'static bindings::v4l2_ioctl_ops {
-> +        &Self::VTABLE
-> +    }
-> +}
-> diff --git a/rust/kernel/media/v4l2/mod.rs b/rust/kernel/media/v4l2/mod.rs
-> index 1d8241f8a2230954371965bb91b20e726f144dce..4caa9fdc1ff3ed2bd6145cc653b49a84873ecac2 100644
-> --- a/rust/kernel/media/v4l2/mod.rs
-> +++ b/rust/kernel/media/v4l2/mod.rs
-> @@ -15,3 +15,6 @@
->  pub mod caps;
->  /// Support for Video for Linux 2 (V4L2) file handles.
->  pub mod file;
-> +
-> +/// Support for Video for Linux 2 (V4L2) ioctls.
-> +pub mod ioctl;
-> diff --git a/rust/kernel/media/v4l2/video.rs b/rust/kernel/media/v4l2/video.rs
-> index c0ac99a8234d2f7a8effd4701b9f7440236540c8..2390a93a39925dbff3f809bc65adfac1d881309c 100644
-> --- a/rust/kernel/media/v4l2/video.rs
-> +++ b/rust/kernel/media/v4l2/video.rs
-> @@ -19,7 +19,7 @@
->  
->  use crate::{
->      alloc,
-> -    error::to_result,
-> +    error::{to_result, VTABLE_DEFAULT_ERROR},
->      media::v4l2::{self, caps::DeviceCaps, file::DriverFile, video},
->      prelude::*,
->      types::{ARef, AlwaysRefCounted, Opaque},
-> @@ -143,6 +143,7 @@ unsafe impl<T: Driver> Sync for Device<T> {}
->  
->  /// The interface that must be implemented by structs that would otherwise embed
->  /// a C [`struct video_device`](srctree/include/media/v4l2-dev.h).
-> +#[vtable]
->  pub trait Driver: v4l2::device::Driver {
->      /// The type of the driver's private data.
->      type Data;
-> @@ -161,6 +162,15 @@ pub trait Driver: v4l2::device::Driver {
->  
->      /// The capabilities offered by this device node.
->      const CAPS: DeviceCaps;
-> +
-> +    /// Driver implementation for the `querycap` ioctl.
-> +    fn querycap(
-> +        _file: &v4l2::file::File<<Self as Driver>::File>,
-> +        _data: &<Self as Driver>::Data,
-> +        _cap: &mut v4l2::caps::Capabilities,
-> +    ) -> Result {
-> +        build_error!(VTABLE_DEFAULT_ERROR)
-> +    }
->  }
->  
->  struct DeviceOptions<'a, T: Driver> {
-> @@ -184,6 +194,7 @@ fn into_raw(self) -> bindings::video_device {
->              release: Some(Device::<T>::release_callback),
->              fops: super::file::FileVtable::<T::File>::build(),
->              device_caps: T::CAPS.as_raw(),
-> +            ioctl_ops: super::ioctl::IoctlVtable::<T>::build(),
->              // SAFETY: All zeros is valid for the rest of the fields in this C
->              // type.
->              ..unsafe { MaybeUninit::zeroed().assume_init() }
-> 
-> -- 
-> 2.50.1
+The company's email address has been changed, so update my email
+address in MAINTAINERS and .mailmap files.
 
-Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+Signed-off-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+---
+ .mailmap    | 1 +
+ MAINTAINERS | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/.mailmap b/.mailmap
+index 4bb3a7f253b9b..328b04f82dac7 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -585,6 +585,7 @@ Nikolay Aleksandrov <razor@blackwall.org> <nikolay@redhat.com>
+ Nikolay Aleksandrov <razor@blackwall.org> <nikolay@cumulusnetworks.com>
+ Nikolay Aleksandrov <razor@blackwall.org> <nikolay@nvidia.com>
+ Nikolay Aleksandrov <razor@blackwall.org> <nikolay@isovalent.com>
++Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba> <nobuhiro 1.iwamatsu@toshiba.co.jp>
+ Odelu Kukatla <quic_okukatla@quicinc.com> <okukatla@codeaurora.org>
+ Oleksandr Natalenko <oleksandr@natalenko.name> <oleksandr@redhat.com>
+ Oleksij Rempel <linux@rempel-privat.de> <bug-track@fisher-privat.net>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c0b444e5fd5ad..47d059d5878a9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3431,7 +3431,7 @@ F:	Documentation/devicetree/bindings/arm/ti/nspire.yaml
+ F:	arch/arm/boot/dts/nspire/
+ 
+ ARM/TOSHIBA VISCONTI ARCHITECTURE
+-M:	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
++M:	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iwamatsu/linux-visconti.git
+-- 
+2.50.0
+
+
 
