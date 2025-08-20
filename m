@@ -1,91 +1,75 @@
-Return-Path: <linux-kernel+bounces-777489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89B7B2DA15
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:32:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14A0CB2DA1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B00B77AF7FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D06C687B88
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E66E2E2857;
-	Wed, 20 Aug 2025 10:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4702E2DE6;
+	Wed, 20 Aug 2025 10:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJD13cvV"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="JkAjfh70"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC49E2E2EE4;
-	Wed, 20 Aug 2025 10:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755685859; cv=none; b=gwZlcNkaOCIdw8bqDgtnQctFQqpNNyH5gk4q1J7NM9adfIU0rdMYBXbTbz0Xs6sCiI/4zanJv+MogTd7OI/0HOqbUEYeZuvs1J31ngQ+TncnlIIdZVb2HTd1AIUZxjedhOLbOLyiqimWmUsb4fS7ImgWuQQ2VBmKLKkkYTa3EcU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755685859; c=relaxed/simple;
-	bh=6gndtw2P/WjxutJ+7wqpUMzzDX+XxfO19UIaHAlQWyE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F4aOfdRfpM0kz16VxdUGmwlgRAC5aQHb+WPK3YI28hXizP33w6MpY5txOD4FKw5owb+nNjUAgQQkkuyttRKvy//ClURqloaov6c/6Wq9dIVarcCvxBdTgDfK5jujtPzUmNfjByT1/bYkcWo2xTyUAVsF70ab+H9MV3Xm3bG1m5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJD13cvV; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9d41baedeso3342780f8f.0;
-        Wed, 20 Aug 2025 03:30:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755685856; x=1756290656; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BbbmjgSMod8UWJ7SiBMBQoey946xxpLzuXiTRaYhclM=;
-        b=LJD13cvVjWnpLD/BcBv4VHXpDvdBiCTBorysJgKIoXERJPjHeoRM9417q8I6Xk5Yn9
-         xGnBVFOTYK9+wFVtspRm0QS9AzPkQMb8ZyKizA3a4hD00BT7XEblWWu83KsUWaSrXxFO
-         3V5xWMvP4DUfj//yUI6+RV482348kHAQhblf3VyUdvhlnsYKLuiSCHwmlMZFftVdsi/8
-         /eQOq8ya6fK6LH2sLiJHV3+ox/Xfjmv7jsEIphWefMFzqQiRav1/BieXX2e6rzjY+IVn
-         7HgKCbHTGVRmsr0lw/gVWHZj7PBkJB5joj8/+/kEaZWMEfKNZsjKeqFjIMVA5D6EJ6vj
-         Amjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755685856; x=1756290656;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BbbmjgSMod8UWJ7SiBMBQoey946xxpLzuXiTRaYhclM=;
-        b=TLUdKr7rMdjojDmpnUDuU4Z1m+AIn5qsrfeQitXRH8QccT4e8vVdw5l2lREt2UH4Ez
-         nksbTfek/2CVnY9+gHdiH3qQHWruDi90e5tSKaHbM03ulru6uFMpS9QtJtE5Itz8qdeK
-         h5YD01BoyLVhdhDNo61qh7WCPs3CTwcchl9dG9NqZ413onJ0OgnlDDpSQWYd3Dj00+FQ
-         q2+hIIg3R9dhYdtNHZE0gpX/jpXUEG1jAgdUW8y2JQUF0MGuSH26fdhTIpyVloR3BFbF
-         596BxCwQ/GWrtzPqkrAoYoUOcCesIlm0SNwYVYmOMP/3sAmOtEM1yn8mmiI0Q3BoBjgK
-         vdzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPwNknCA7vcVxMDCUL02Zp3ATfgcGxenudq5vDatiN+O6K5B9RR/7PSWuxHwVlXLf82xMbgKqOLvlqjAoR@vger.kernel.org, AJvYcCWO7XQsg2/RgjS9U7q6MyiQpuoYDEy86lvCc5mS8q+p8rkGwi76x7VVjcTCGC2nmtqgdh+akca5EiU=@vger.kernel.org, AJvYcCWuMzTjEE7RJKJvt0Xq2oCwi7ZsTUCFaR9O6WFCQSIxCYnNg/29zl9+8dCGvMmY65wfE/4mcthNWPF/p6ddhcherL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxBpPdv/FvrGEiIRMqUtGj7JK2izpeQUxYuQuYKLUhmYuZWuzJ
-	U8O/mjGCXSw5KjhGbEgMDCgzk5fm/xIGPFpibxrfAnn7G3Iz4VbtH+SN/udM2w==
-X-Gm-Gg: ASbGncut893qvRYG6uBFCxEqWi+gu39YASmt7XvV84u90XP0b+onIhlj95Dsq74L9ea
-	zYjzap7njAr+GCdlXk0OPrJJIRZmgrZzUP0sfKsAK03xinq/t3lfGrm7HRz6Gggpoop5bWbNtBq
-	0Ur4GqeT7TpxMlg3hxA3B4n3Z1gFvacIrXbtmN4xI676q+2SXrorHfKXRbp7G33T3bGO5DWsFsX
-	vIk9L412WpUxkbt/7SC8bO9eTYdomstqKcpHz21HgFmst+vGuukgGNhAcC9pCVdKB21LUR6lba9
-	Ha5olWNR/r1eAZc5tKZENaKrrwxLajmw37p00Fpuqddj59GLTUVASujS3zKZenfyCUWzACl+ySM
-	IaBF0rqXUsEk8gXxwA28e9Wmsop4LSWa45MdCAQYHlA57niLk/5wJseWCtf/qVTqUKJmNX4deaQ
-	==
-X-Google-Smtp-Source: AGHT+IEVftALDM3YC/sDg6+i/niVwWvzzbeMrUAScggR3/+40jJoXk1gGHmnEij6ccI/R6xCql2K7g==
-X-Received: by 2002:a5d:64cb:0:b0:3b7:9c28:f856 with SMTP id ffacd0b85a97d-3c32fe1a17dmr1498439f8f.48.1755685855711;
-        Wed, 20 Aug 2025 03:30:55 -0700 (PDT)
-Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0777892f8sm7077119f8f.53.2025.08.20.03.30.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 03:30:55 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1916920322;
+	Wed, 20 Aug 2025 10:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755685992; cv=pass; b=bYQXJji9Xs2vcEvh8OXHNhR8xhdQnNVwxRF2b+CPLgsP3sSU/MtBK3GPUVTeVdOE3tGLC5hlFMqTktaxws7e2p7JypLpNFQqSsuq8QALiCfstY4eKXcKpdNXa2A6Txdm6sleg2i0rHQxHvVF4y9o2F6m2vBxperWqsezagb26/w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755685992; c=relaxed/simple;
+	bh=5ZXYNlQDxRW1XjNmzcCuzVo2OKG6231JW8+6jCO9WXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G7mgqdFul1mOQG/z/WQg+OWD8OuP3HJhDCE+vVJjCzxzaInzo5S9LmpI8dH093hUEHl0V8j2B2jeXxnNivyUZOZxvHdSVBizIyBytjr8qIGWzKIdJcnYEuvUxzoSqUnMajgXlt1cdKMNUMY7c8j7LHm7y3mmoNzyglsX3GjdOVY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=JkAjfh70; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755685960; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OAvv+zFCpb/jM/M2C29e+J2X1pekKnt31HFBRH1I5gYpSYu0oKkTnDOQgeb+OCtgvry1tn53oSeGUwBU2No3oJH113NyXWP8bBSu1+inlx4Al+1M9HgG1kc8X2uTccqCxomlXe2DguVrboiJrYoAXA/huManVE1nu7TXkWu4jpU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755685960; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=L/DY3w/dkX1JEnee89D1ni0qXzrMnWvJW71C4ROFh5o=; 
+	b=TsQgr9Wbhsj/oWpPS6Td2/xjWI122Pq4MgNQr+xN7PRnHvoPlhBAKFXU1aOrA86N0C462qrAPoeN9B7oJbcVCgDLLJelDlrrw0kFM1EhfS62QgpNzfyNEbHruysnQEJOLMmSpxVbUGa6HDCp6weCYr3BzSEISeeeUueaIcKwRrE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755685960;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=L/DY3w/dkX1JEnee89D1ni0qXzrMnWvJW71C4ROFh5o=;
+	b=JkAjfh70HrHYkkYUzhqeOdM0OOhRk/E0lFcuJpnw841ib36p1ylUrbCiBVmFSwA0
+	mMDpwGw/IOR1D4glHoclGINZylSvTLqeQx16KQY5PReb+iAhjfrjtV6EwhvQCfu8Unv
+	A2xxiqnMXji9JLcsGXhsabGf5Ll5sm4lnC0NX73M=
+Received: by mx.zohomail.com with SMTPS id 1755685957040941.9859599941752;
+	Wed, 20 Aug 2025 03:32:37 -0700 (PDT)
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	jose.abreu@synopsys.com,
+	nelson.costa@synopsys.com,
+	shawn.wen@rock-chips.com,
+	nicolas.dufresne@collabora.com,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: kernel@collabora.com,
+	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2] clk: renesas: r9a09g047: Add GPT clocks and resets
-Date: Wed, 20 Aug 2025 11:30:51 +0100
-Message-ID: <20250820103053.93382-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v1 1/2] MAINTAINERS: Update Synopsys HDMI RX driver entry
+Date: Wed, 20 Aug 2025 13:30:58 +0300
+Message-ID: <20250820103059.342850-1-dmitry.osipenko@collabora.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,50 +77,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Shreeya no longer works at Collabora, set Dmitry as maintainer of
+the Synopsys HDMI RX driver.
 
-Add clock and reset entries for the Renesas RZ/G3E GPT{0,1} IPs.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
-v1->v2:
- * Dropped the series as according to the clock system diagram and clock
-   list sheets, gpt_[01]_pclk_sfr and gpt_[01]_clks_gpt are really the
-   same clocks.
- * Dropped R9A09G047_GPT_1_CLKS_GPT macro
- * Replaced DEF_MOD_PARENT->DEF_MOD for module clks.
----
- drivers/clk/renesas/r9a09g047-cpg.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
-index 4e8881e0006b..afd09b95fb74 100644
---- a/drivers/clk/renesas/r9a09g047-cpg.c
-+++ b/drivers/clk/renesas/r9a09g047-cpg.c
-@@ -198,6 +198,10 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
- 						BUS_MSTOP_NONE),
- 	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
- 						BUS_MSTOP(3, BIT(5))),
-+	DEF_MOD("gpt_0_pclk_sfr",		CLK_PLLCLN_DIV8, 3, 1, 1, 17,
-+						BUS_MSTOP(6, BIT(11))),
-+	DEF_MOD("gpt_1_pclk_sfr",		CLK_PLLCLN_DIV8, 3, 2, 1, 18,
-+						BUS_MSTOP(6, BIT(12))),
- 	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13,
- 						BUS_MSTOP(1, BIT(0))),
- 	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14,
-@@ -322,6 +326,10 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
- 	DEF_RST(3, 6, 1, 7),		/* ICU_0_PRESETN_I */
- 	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
- 	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
-+	DEF_RST(5, 9, 2, 10),		/* GPT_0_RST_P_REG */
-+	DEF_RST(5, 10, 2, 11),		/* GPT_0_RST_S_REG */
-+	DEF_RST(5, 11, 2, 12),		/* GPT_1_RST_P_REG */
-+	DEF_RST(5, 12, 2, 13),		/* GPT_1_RST_S_REG */
- 	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
- 	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
- 	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e913c1edd1fd..e1db3cc859eb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24535,7 +24535,7 @@ F:	drivers/net/pcs/pcs-xpcs.h
+ F:	include/linux/pcs/pcs-xpcs.h
+ 
+ SYNOPSYS DESIGNWARE HDMI RX CONTROLLER DRIVER
+-M:	Shreeya Patel <shreeya.patel@collabora.com>
++M:	Dmitry Osipenko <dmitry.osipenko@collabora.com>
+ L:	linux-media@vger.kernel.org
+ L:	kernel@collabora.com
+ S:	Maintained
 -- 
-2.43.0
+2.50.1
 
 
