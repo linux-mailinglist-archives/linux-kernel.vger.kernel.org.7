@@ -1,114 +1,171 @@
-Return-Path: <linux-kernel+bounces-777202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896F2B2D6AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E7BB2D6B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255C14E4EC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:35:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D280684DA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B4F2D879F;
-	Wed, 20 Aug 2025 08:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QeXNjW1g"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EBC2D9780;
+	Wed, 20 Aug 2025 08:34:56 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5D02DA769;
-	Wed, 20 Aug 2025 08:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AA727280B;
+	Wed, 20 Aug 2025 08:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755678872; cv=none; b=qpBxsgP6PsK2TJFhCyV3GxnZcgYSFQFOSi6/fKc8e3MgJ8BRhMmmLZsNPHcDWfPZBlDW5vWBNn9CkMY0jxiSj8HQH83M06nKoT/+3g2pOydbiETQj+Yy0W8KNkiNGTYvgftJiQzsHTBK0ujrN4WfZGE5RxdnMnHuTvZ1X4JMjlQ=
+	t=1755678896; cv=none; b=TEJ6Tol3ZtIwigmel2hjcIgt93FyYFHlPj70JP9oXeXP8sgwqJkB7ANmM2CvpucihGjxmenoE2/lvPJOX5pgWIutTe+wk8NJEe3XMaZZx8+jJpjc3Pc4/lM5xnjtFg+onXSQjGKfC1Lddrxk3qDGT4nwlRyutHpPVkhW7cOHMY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755678872; c=relaxed/simple;
-	bh=+RHqySFbfhv8ZIPc+OLu0zUIEfW5E7dLbQ/D4r26FoU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dcodw2T9JuG3/EUqLZbUcZzw0p1VpohWrplnRa0WuLlJrcGe98nfy1uCMmw25KwVOdgwvXreizgwkDtwL3o3CgjBm85YeCV/VI2GylM9eE55jGeuyIKv3oBDF0cOtK9XvosbiWcS182gJgA75su4XGj/ugbjvmJMsFenQLErAgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QeXNjW1g; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57K8YQOS3154246;
-	Wed, 20 Aug 2025 03:34:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755678866;
-	bh=GY39GJdCPvM3cH171BB9k5yHQ1eCoIKMtZb6pSuuJdI=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=QeXNjW1g28W063AuPqO/PMaJfq6Cc1uTF8IvAGPIT2dxrAXz6EsiwmaFrGOOdR++j
-	 btuC2c0D9+vPciRmH1Q/k4YUVLZv1sb2M/qDbliT9AW/1Ma1WoxKxoK/CZqsvwld/o
-	 09EfoctzcVddNnMqitcrW+oamC316hWSGH1pLdAc=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57K8YPSr1920213
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 20 Aug 2025 03:34:25 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 20
- Aug 2025 03:34:25 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 20 Aug 2025 03:34:25 -0500
-Received: from localhost (ula0502350.dhcp.ti.com [172.24.233.249])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57K8YOBM228618;
-	Wed, 20 Aug 2025 03:34:25 -0500
-From: Paresh Bhagat <p-bhagat@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH 4/4] cpufreq: ti: Add support for AM62D2
-Date: Wed, 20 Aug 2025 14:03:31 +0530
-Message-ID: <20250820083331.3412378-5-p-bhagat@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250820083331.3412378-1-p-bhagat@ti.com>
-References: <20250820083331.3412378-1-p-bhagat@ti.com>
+	s=arc-20240116; t=1755678896; c=relaxed/simple;
+	bh=PDzWpGekjg3I5j8s5iVqM3/yznjCATGcph6FgJxmSxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rkjghywl/KE4iqbZzHpxIoJ+AUOtoVM25aG0vVuodgsUjNoTyGv6pDMkms3V/HTIKh3GWt62/k5rNOU5bpsrfQJiDYkKu5xW8Q15ayeRfDPiJs8AHPb+QpZwjExzBncYKq8kgqIGCQ59hsr0yQQAqZvL1fFEXMEjepwG0u1kGXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c6KWb0k8czYQvFp;
+	Wed, 20 Aug 2025 16:34:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id A9F941A1C4E;
+	Wed, 20 Aug 2025 16:34:49 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP3 (Coremail) with SMTP id _Ch0CgD3u9amiKVou6_pEA--.53613S2;
+	Wed, 20 Aug 2025 16:34:47 +0800 (CST)
+Message-ID: <354f6b41-83d1-4496-aec8-764c205990e1@huaweicloud.com>
+Date: Wed, 20 Aug 2025 16:34:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 2/2] ftrace: Fix potential use-after-free for
+ set_ftrace_{notrace,filter} files
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250813023044.2121943-1-wutengda@huaweicloud.com>
+ <20250813023044.2121943-3-wutengda@huaweicloud.com>
+ <20250819210538.29ae29cb@gandalf.local.home>
+Content-Language: en-US
+From: Tengda Wu <wutengda@huaweicloud.com>
+In-Reply-To: <20250819210538.29ae29cb@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgD3u9amiKVou6_pEA--.53613S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw1kXF4UJr4rGF1fJFy7Wrg_yoW5Zr1xpF
+	Waqr4DKr1kCFsYywnFgr10k34UCw4FyFy8GF1kJ34fZr9xXr1a93yIvrWrWr4DKr97XrWa
+	vr42vw1qk34UZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7IJmUUUUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-Add support for TI K3 AM62D2 SoC to read speed and revision values
-from hardware and pass to OPP layer. AM62D shares the same configuations
-as AM62A so use existing am62a7_soc_data.
 
-Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
----
- drivers/cpufreq/ti-cpufreq.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index 5a5147277cd0..9a912d309315 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -310,6 +310,7 @@ static const struct soc_device_attribute k3_cpufreq_soc[] = {
- 	{ .family = "AM62X", .revision = "SR1.0" },
- 	{ .family = "AM62AX", .revision = "SR1.0" },
- 	{ .family = "AM62PX", .revision = "SR1.0" },
-+	{ .family = "AM62DX", .revision = "SR1.0" },
- 	{ /* sentinel */ }
- };
- 
-@@ -457,6 +458,7 @@ static const struct of_device_id ti_cpufreq_of_match[]  __maybe_unused = {
- 	{ .compatible = "ti,omap36xx", .data = &omap36xx_soc_data, },
- 	{ .compatible = "ti,am625", .data = &am625_soc_data, },
- 	{ .compatible = "ti,am62a7", .data = &am62a7_soc_data, },
-+	{ .compatible = "ti,am62d2", .data = &am62a7_soc_data, },
- 	{ .compatible = "ti,am62p5", .data = &am62p5_soc_data, },
- 	/* legacy */
- 	{ .compatible = "ti,omap3430", .data = &omap34xx_soc_data, },
--- 
-2.34.1
+On 2025/8/20 9:05, Steven Rostedt wrote:
+> On Wed, 13 Aug 2025 02:30:44 +0000
+> Tengda Wu <wutengda@huaweicloud.com> wrote:
+> 
+> 
+>> Since the reader's hash is always tied to its file descriptor (fd),
+>> the writer cannot directly manage the reader's hash. To fix this,
+>> introduce a refcount for ftrace_hash, initialized to 1. The count
+>> is incremented only when a reader opens it, and decremented when
+>> either a reader or writer releases it, thereby controlling the timing
+>> of ftrace_hash deallocation.
+> 
+> Hmm, I think the code that the first patch touches is the issue here too.
+> 
+> Instead of doing all these extra hacks, we should simply copy the hash for
+> read too.
+> 
+> That is, the real fix for both patches is this:
+> 
+> -- Steve
+> 
+> From: Steven Rostedt <rostedt@goodmis.org>
+> Subject: [PATCH] ftrace: Also allocate hash for reading of filter files
+> 
+> Currently the reader of set_ftrace_filter and set_ftrace_notrace just adds
+> the pointer to the global tracer hash to its iterator. Unlike the writer
+> that allocates a copy of the hash, the reader keeps the pointer to the
+> filter hashes. This is problematic because this pointer is static across
+> function calls that release the locks that can update the global tracer
+> hashes. This can cause UAF and similar bugs.
+> 
+> Allocate the hash for reading the filter files like it is done for the
+> writers. This not only fixes UAF bugs, but also makes the code a bit
+> simpler as it doesn't have to differentiate when to free the iterator's
+> hash between writers and readers.
+
+Agreed. That is a much cleaner solution. I just tested this code and it
+worked perfectly. Looking forward to getting it into the mainline soon.
+
+-- Tengda
+
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: c20489dad156 ("ftrace: Assign iter->hash to filter or notrace hashes on seq read")
+> Closes: https://lore.kernel.org/all/20250813023044.2121943-1-wutengda@huaweicloud.com/
+> Reported-by: Tengda Wu <wutengda@huaweicloud.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/ftrace.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 00b76d450a89..f992a5eb878e 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -4661,13 +4661,14 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
+>  	        } else {
+>  			iter->hash = alloc_and_copy_ftrace_hash(size_bits, hash);
+>  		}
+> +	} else {
+> +		iter->hash = alloc_and_copy_ftrace_hash(hash->size_bits, hash);
+> +	}
+>  
+> -		if (!iter->hash) {
+> -			trace_parser_put(&iter->parser);
+> -			goto out_unlock;
+> -		}
+> -	} else
+> -		iter->hash = hash;
+> +	if (!iter->hash) {
+> +		trace_parser_put(&iter->parser);
+> +		goto out_unlock;
+> +	}
+>  
+>  	ret = 0;
+>  
+> @@ -6543,9 +6544,6 @@ int ftrace_regex_release(struct inode *inode, struct file *file)
+>  		ftrace_hash_move_and_update_ops(iter->ops, orig_hash,
+>  						      iter->hash, filter_hash);
+>  		mutex_unlock(&ftrace_lock);
+> -	} else {
+> -		/* For read only, the hash is the ops hash */
+> -		iter->hash = NULL;
+>  	}
+>  
+>  	mutex_unlock(&iter->ops->func_hash->regex_lock);
 
 
