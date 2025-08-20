@@ -1,99 +1,96 @@
-Return-Path: <linux-kernel+bounces-777319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE0BB2D81D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:27:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE907B2D820
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D74E1746DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A6F73B256B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3B52E2DCF;
-	Wed, 20 Aug 2025 09:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F162E2EEB;
+	Wed, 20 Aug 2025 09:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioY+3ni0"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B02ASpJp"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD452E2DD6
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F5D2E2EE0
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681460; cv=none; b=fRPslCT6tNGFI5KnHNsbRdDMpuhOiatpTkKOSyhxqeWUwvrrzaQtA7aJGSA6ynIv9xpsbJusGqcjIlA9cQlqPF68YPMjeM8iKF+4topswhGeVfaroJVbv2AmBvOAZZ53HkzCk5yppXvCRV538UejXa5bbEfvMMDBFMRQQgefkzA=
+	t=1755681466; cv=none; b=dP2cDUYps++8mO3RKCuXH2UPWJarm6rKBZQ9F0iLpYqSW4Uqs6khkBAIF1OzgCR9aw74x/fYzHln+i5zjbapUTz3VRC4GactyIDi7MXfHA+m2Y9ExCgnUmm1lLCzPEqIHTa1rxo6hz7eRt/N7XLZ1qQzoaFWrZrBjZJ0CyGeB0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681460; c=relaxed/simple;
-	bh=IF8wekhGVT3wOnvLrH/B71RsTpK4H/zuMWiB62N8ow4=;
+	s=arc-20240116; t=1755681466; c=relaxed/simple;
+	bh=e8vRsU16uY0O6zYApO8WUWA0ENkGlCUP9UYkrvI4Et4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d2JL3ZPdQWzwABhVFq9pwRCGgB3GvlL0Zy4GgINjaWisaRMhFtDGgeSYaPXPFQLnh1isSWMCyZ0hwU0WR6le7hQqGdX1FtmrjlpsGAJoDiLHdvD/skCMOOwKHdni/+NqSWXra6OKqnxtWhzGNjcUmYb+B8coDx2FSWk14xSLjQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ioY+3ni0; arc=none smtp.client-ip=209.85.210.180
+	 MIME-Version; b=YUBrRO9UQNI7k81Qvwh01s6VYeAKNlRPsPBYesJFkw+GfWrj+9wnBC03xRgV2p7MajV62ATNHwwHLizXqhkmbc84Hb9AaKU25IMuND9qhN9tLIR7FUBKT9OvzGr/xTxzB85JtpTe40+cOHkdDdaRxEMJWowDgTIk4KK3b0UaKuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B02ASpJp; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76e2e89bebaso4613605b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:17:38 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-76e2e60433eso4715695b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:17:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755681458; x=1756286258; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755681464; x=1756286264; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I9ncaQRD3E1PN8zy1g7oC/l30LY0E5NllfF6WnxDxg8=;
-        b=ioY+3ni042cV1Fm5+Fk770rc4ZPqHqissniLiI0wJub/VVk8kBM9I0JRfi0PberIIW
-         fVVqD+EwWf5rD5V5lO0+i/D/JGE4Js/TnzJUwi+tJyquN4uSnceQf9vGXU0xQbm4JE/4
-         Zz1JSHMvEHZH3TvIpKgDLQGvbTv3jI/8b6c/zt8aIG5GC/3VUgguZG4FKw1S9RFHz/Ib
-         GE4WPxTirkeptJt6H7s05+sur6iKVfoXbLK6UB4g5eP1YxYPCw8BKLgFGHVDNuQt2P3t
-         rkpS5GIpX3oRZ/i8oUOwjy7xZi58Y1bPqLqFIdNsW7w7WXoGBb54WrbwWixEsHCa7a5v
-         lbWA==
+        bh=QJXFg3LbFuaJYryQ6LaEEyZ4K22AwpWjfjuyIZLhVnc=;
+        b=B02ASpJpVVatFlqvJE1TJjeUIJ/BHQJR6trGNsXDhffSIV9vFJVp2V2+kLm1xMwAQN
+         Y12F7G+suhzlXAKTtx5mhxOduzhYGZ8+mZuNlKH5nGv15P73FIWwXF7bDWzOeQByFTbH
+         ekHiXZ57hTo5N5DZrzoK3Bdil8PGpyo+H9YtYWR/exdGkHgsiKeVMMVJZlWJ59SySiFG
+         mXPqyxclGw9uKTAa6gjL6gEN9FR3vBHFIiPO8ri6G7r6j8vo11MDXmgAfqMefQ1zXh/+
+         gPj1gSo22myU4lnjakSqM8ZtU8dSWBGqgZ9JtVAAWJ3nINSbYTT3Xh3ros5tPjc4+15J
+         xRJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755681458; x=1756286258;
+        d=1e100.net; s=20230601; t=1755681464; x=1756286264;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I9ncaQRD3E1PN8zy1g7oC/l30LY0E5NllfF6WnxDxg8=;
-        b=rIcLFOiILX2KzztI74tg3mzdq7uJAj6J0TPNCK43YUKIXc/athW/jz7HoKo6EDGgBR
-         l6K1LVxtxPrqK+F5NuFfwnorvz1Kb0MxsyNa0/09p8FnM7VWjK4I0cRmUBHO+D6kuqog
-         7Xmxvms115OA/GbITo5Ks9KvsR7HO1fbgWU1moZR1m44mu5hlJa7yNyTyaovCfGR2k/q
-         fQS2Uz1r9aCbu1276cY65EgAnQHXr0FkOh8CENL0TF088pRFOPWqcM0QA/dxTLSTIIgK
-         gTW4OQ0e7S87gmMNH49ujQHw22Wy8fU+lQCH/ngWxZ/zKH231Tc5wvRkHPp+eTR07Hox
-         jMiA==
-X-Gm-Message-State: AOJu0Yzsl2PskEF+83zOx/xXjTquA0n5k4NxOJUhlALkLUUW2Nku8f2h
-	9bQck9WRiNVyCnux998jE2/tcfWPnU45+31Jie7CwBksKm09oKTkONFh
-X-Gm-Gg: ASbGncvXyv/pE2RkwxqbA55jaC+m5UrD86dZR2niSlr3SS/k9TI8MHFvi9ZGnVfREjS
-	bH1Eveqbnr2p6EuQlBHNlcBc33riJR9wvuQzAQiCPk7SWPjEBBDODymtO7EnSDFsRtv40nFci1o
-	ekQj5+qJ2Lyfogaq0P+nbNJWCvA8DUT+eqcR9QHRxsn7nYdqhZxMw36AWc9Yh/yYFPrRoLc+zjV
-	p4aNQVTPka/F5BxOLr2RJ5k80t+N+VumCU0sYT0WfIpZPhvY0pMVX98j//ZFlBj5TdYZ+YszpPE
-	822/xMJPlCe8nsfmeJHTVTQPq8pIykcUvEhGT9/0pE5YWv/vJmc1yRj3G2r24i6jRqUXJxXC1hD
-	78S/jvVLcIC/rCfFjoWH7VeuRuhvi9X/pB3+DLiaeG6s2WBZ50ZPcU9m89xNOKeUUr/hVj6m1zg
-	6E/LR4
-X-Google-Smtp-Source: AGHT+IFHtCSYgqJrUWxhPdCX9Zi2FF1HyQPUrI8Q9X/CV07c8sMtfj7DH4mkXmliTRAFReISyuxB/Q==
-X-Received: by 2002:a05:6a20:7283:b0:240:5f9:6359 with SMTP id adf61e73a8af0-2431b9a84bcmr3935623637.34.1755681458236;
-        Wed, 20 Aug 2025 02:17:38 -0700 (PDT)
+        bh=QJXFg3LbFuaJYryQ6LaEEyZ4K22AwpWjfjuyIZLhVnc=;
+        b=TqOOKZD/UV2jYj5O7ufmz2WbmaJN0QhtGlSfhEbedWz7l3IUDGKDz4LGWLNni0RLY7
+         mOYPfnwwiG8mfNtQD7RDHQ14+Ad4wJCmUwdQ4dwkIXmFmJNGEDzK+l5xg1XTmWuDQt60
+         1nUDhGfmAgWZqcUWvBw5n6k5kRWmwb6CwLe+I+NqRhIhvaStBKClqJKfohNqVJn/d85C
+         UqPxbzXTMgFNbTkXBRx7PbOhfu4GE9Ca7+dusdqIBVH7O/lScqah+YQtEqJElUAVXwQf
+         K4HNirYDWVrPALMDiuusWOYYVPdWCGoDTfLLczVelY3O4P7TorNCFDXV0GM2rnPdZblP
+         ozwg==
+X-Gm-Message-State: AOJu0YywQAmW6sJvewiAmQkjPX3cJ0MVZyerlYEs1NZMKt+4OVEmU/kL
+	Svx+HjnicytGrnG5MWiMSY/UY9JlARjemJfm0rIFtvyMIQYnKeMBqWmp
+X-Gm-Gg: ASbGnctowBL1XKE4w/SH9XhpEqGaj+CgEeGbTOYNzkAYMxogkiExdS5jEVh3cgyEsd3
+	JDyp5dPRL1qjs9TuVnhFFV3XIAdZE5y6O7hyRrdGWFiuBwiUhU9j5DO6Lv39hMXeZcDbF4oG+L0
+	kS6aiPCnbMQ4sE24bR+ZxJw07L7MK21nharHhlsGqHRxIc6tXMwxqpn1vQ3H8AchB9JSpaquyTF
+	J8o89ql/+NLH5tLxNU5Q9t5XDhHPSMNUuHzmoxcFz8Rl7oSXiOtM0s2ZXJ7kjUzw8jd4b0mirZZ
+	dpjQW2kQa0foqJKBqC7HuCA/5kybIZCczn7CtVuQcfHmN0gpit6rdsTl+jDTwln7JE6xtVefiBd
+	irssC1KjOm/iJGYREeGOOyKMuSR065fOkQYOOfDD1bV7L/JvVsk/SqrQ5X3duAi+UFL9fRh9gXh
+	U=
+X-Google-Smtp-Source: AGHT+IGsUHNfKID6TgeghxyRTy1TNoKo1uMHKcdNmaDlhNhx8glXGDIKaIcIYTS2lNZWYl+67UGNiQ==
+X-Received: by 2002:a05:6a20:6a04:b0:21f:a6c9:34d with SMTP id adf61e73a8af0-2431b7f0d26mr3689795637.1.1755681464015;
+        Wed, 20 Aug 2025 02:17:44 -0700 (PDT)
 Received: from localhost.localdomain ([114.242.33.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7ccfa8d1sm4847120b3a.0.2025.08.20.02.17.34
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7ccfa8d1sm4847120b3a.0.2025.08.20.02.17.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 02:17:37 -0700 (PDT)
+        Wed, 20 Aug 2025 02:17:43 -0700 (PDT)
 From: Jinchao Wang <wangjinchao600@gmail.com>
 To: pmladek@suse.com,
 	akpm@linux-foundation.org,
-	Baoquan He <bhe@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	feng.tang@linux.alibaba.com,
-	joel.granados@kernel.org,
-	john.ogness@linutronix.de,
-	wangjinchao600@gmail.com,
-	namcao@linutronix.de,
-	sravankumarlpu@gmail.com,
-	kexec@lists.infradead.org
-Subject: [PATCH 3/9] crash_core: use panic_try_start() in crash_kexec()
-Date: Wed, 20 Aug 2025 17:14:48 +0800
-Message-ID: <20250820091702.512524-4-wangjinchao600@gmail.com>
+	Feng Tang <feng.tang@linux.alibaba.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Joel Granados <joel.granados@kernel.org>,
+	Jinchao Wang <wangjinchao600@gmail.com>,
+	Nam Cao <namcao@linutronix.de>,
+	Sravan Kumar Gundu <sravankumarlpu@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 4/9] panic: use panic_try_start() in nmi_panic()
+Date: Wed, 20 Aug 2025 17:14:49 +0800
+Message-ID: <20250820091702.512524-5-wangjinchao600@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250820091702.512524-3-wangjinchao600@gmail.com>
+In-Reply-To: <20250820091702.512524-4-wangjinchao600@gmail.com>
 References: <20250820091702.512524-1-wangjinchao600@gmail.com>
  <20250820091702.512524-2-wangjinchao600@gmail.com>
  <20250820091702.512524-3-wangjinchao600@gmail.com>
+ <20250820091702.512524-4-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,58 +99,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-crash_kexec() had its own code to exclude
-parallel execution by setting panic_cpu.
-This is already handled by panic_try_start().
+nmi_panic() duplicated the logic to claim
+panic_cpu with atomic_try_cmpxchg. This is
+already wrapped in panic_try_start().
 
-Switch to panic_try_start() to remove the
-duplication and keep the logic consistent.
+Replace the open-coded logic with
+panic_try_start(), and use
+panic_on_other_cpu() for the fallback path.
+
+This removes duplication and keeps panic
+handling code consistent.
 
 Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 ---
- kernel/crash_core.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ kernel/panic.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-index a4ef79591eb2..bb38bbaf3a26 100644
---- a/kernel/crash_core.c
-+++ b/kernel/crash_core.c
-@@ -4,6 +4,7 @@
-  * Copyright (C) 2002-2004 Eric Biederman  <ebiederm@xmission.com>
+diff --git a/kernel/panic.c b/kernel/panic.c
+index eacb0c972110..cd86d37d124c 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -355,15 +355,9 @@ EXPORT_SYMBOL(panic_on_other_cpu);
   */
- 
-+#include "linux/panic.h"
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/buildid.h>
-@@ -143,17 +144,7 @@ STACK_FRAME_NON_STANDARD(__crash_kexec);
- 
- __bpf_kfunc void crash_kexec(struct pt_regs *regs)
+ void nmi_panic(struct pt_regs *regs, const char *msg)
  {
 -	int old_cpu, this_cpu;
 -
--	/*
--	 * Only one CPU is allowed to execute the crash_kexec() code as with
--	 * panic().  Otherwise parallel calls of panic() and crash_kexec()
--	 * may stop each other.  To exclude them, we use panic_cpu here too.
--	 */
 -	old_cpu = PANIC_CPU_INVALID;
 -	this_cpu = raw_smp_processor_id();
 -
--	if (atomic_try_cmpxchg(&panic_cpu, &old_cpu, this_cpu)) {
-+	if (panic_try_start()) {
- 		/* This is the 1st CPU which comes here, so go ahead. */
- 		__crash_kexec(regs);
- 
-@@ -161,7 +152,7 @@ __bpf_kfunc void crash_kexec(struct pt_regs *regs)
- 		 * Reset panic_cpu to allow another panic()/crash_kexec()
- 		 * call.
- 		 */
--		atomic_set(&panic_cpu, PANIC_CPU_INVALID);
-+		panic_reset();
- 	}
+-	/* atomic_try_cmpxchg updates old_cpu on failure */
+-	if (atomic_try_cmpxchg(&panic_cpu, &old_cpu, this_cpu))
++	if (panic_try_start())
+ 		panic("%s", msg);
+-	else if (old_cpu != this_cpu)
++	else if (panic_on_other_cpu())
+ 		nmi_panic_self_stop(regs);
  }
- 
+ EXPORT_SYMBOL(nmi_panic);
 -- 
 2.43.0
 
