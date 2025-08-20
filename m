@@ -1,93 +1,145 @@
-Return-Path: <linux-kernel+bounces-777808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8BEDB2DE19
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:42:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8467B2DE17
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 857D63B5DA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:37:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A1B05C3E2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BBA322A0C;
-	Wed, 20 Aug 2025 13:35:19 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9953203B8;
+	Wed, 20 Aug 2025 13:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iI7gEdaA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6605772617;
-	Wed, 20 Aug 2025 13:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB87320397
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755696919; cv=none; b=Q1ExHGWVyuAyff9kMZMetGZ9dXzLB7HBnbIDVYNHvt5e7eY/ttjVpBRzXCmY4goCXVxdttA0He3m2MDUs8fhzGhggEmTvcGRfxVjZn8hXJNsSOGuJ/po+IVZj1OHVkGN2gsB1jcFKtRw2KfujjpzzqI45UYVhBDtKGG27HcsRAE=
+	t=1755696974; cv=none; b=Bw3Exw48UorLgL8F7PK6IwX1bN4n9C1M12YqixPi0hlQzxI172cOK7Xut6iZpH6yoAEed/1rYSXnKbs+eQfxPicT1cdhzAl1vVMhlUSt2HY7uY8mBWpk4lHgEVAhxqFnWQzd2RZVeIBnJqjiPbAEgxDKHzTd2ImyRtVzbdEdUz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755696919; c=relaxed/simple;
-	bh=6ELQVz1pCGrjhQgs+Cr+aXgY3t+o6KTC0x0kgzj1D9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VV3p04PZG37iZOdA9byfzKMdQmDhtiqb3WH1CybTaz9W2iBvS3eHIKdRUQC3CrzA9ZN9fYbgreDAHFJODTMJNGrHKxX8dF1glJlwSboXiA9R9Xb/8NrVt26hKh047aQzSoQcGH8J5fabnexz93Ttb6k97cZ43rka6cPSuakP65c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 8AABB59476;
-	Wed, 20 Aug 2025 13:35:15 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 405C020018;
-	Wed, 20 Aug 2025 13:35:13 +0000 (UTC)
-Date: Wed, 20 Aug 2025 09:35:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Bibo Mao <maobibo@loongson.cn>, LKML <linux-kernel@vger.kernel.org>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Paolo Bonzini <pbonzini@redhat.com>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] LoongArch: KVM: Move kvm_iocsr tracepoint out of
- generic code
-Message-ID: <20250820093515.17afe135@gandalf.local.home>
-In-Reply-To: <CAAhV-H5y8Tckih4jd3C8Q-M6OZiw2szCYuxLQfBXehpWSvrstA@mail.gmail.com>
-References: <20250722094734.4920545b@gandalf.local.home>
-	<2c2f5036-c3ae-3904-e940-8a8b71a65957@loongson.cn>
-	<20250723214659.064b5d4a@gandalf.local.home>
-	<15e46f69-f270-0520-1ad4-874448439d2b@loongson.cn>
-	<CAAhV-H4TGus35B6ONdkSOMwWw+H6NRmHStV-Xu7vUYYrkDGfUQ@mail.gmail.com>
-	<20250819202715.6f1cf0d6@gandalf.local.home>
-	<CAAhV-H5y8Tckih4jd3C8Q-M6OZiw2szCYuxLQfBXehpWSvrstA@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755696974; c=relaxed/simple;
+	bh=0WbeVggTn3zfkRyQvVt7Frs2qIi1OG0DUl+B7d1w/qQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LlD/xHEX9qQVdFtjYb2g8zZIuqpOo10pv+rQtjmPAWL63RknAc6bwQJRjI58YGa6b94chpCi2i17Lrtl68xPwAk4mXs/gNaxgspVNkDEE6s5ktQNLUuKqWrL2mCsK0i0/zsLWzRhv9WVsQOzttqkpbcU3UZshB6WtAKy8RY69a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iI7gEdaA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755696971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Su/OHazANarelKIlAJ/fg6d4xixyDxFKScYwQAQvY7I=;
+	b=iI7gEdaAXDh5yqpg+qNc1chwx8K7FOp+NjdBIuOhjALPPH49STi2xXEnsAXFubMTF3/L2s
+	/1Z8afUWNSEuvAAtimAngwklbV56/Sub7eDKMYBxSoyyszQSadkluubNR+VKn4Lzqtc0R7
+	jvoUU7ztJ1QaicWKK4wgOHbcK6RfiJA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-347-cerMHnjiOS2Tes0Va8V6QQ-1; Wed,
+ 20 Aug 2025 09:36:07 -0400
+X-MC-Unique: cerMHnjiOS2Tes0Va8V6QQ-1
+X-Mimecast-MFC-AGG-ID: cerMHnjiOS2Tes0Va8V6QQ_1755696966
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5749D18004A7;
+	Wed, 20 Aug 2025 13:36:05 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.99])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A8F8419A4C9C;
+	Wed, 20 Aug 2025 13:36:02 +0000 (UTC)
+Date: Wed, 20 Aug 2025 21:35:57 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: pmladek@suse.com, akpm@linux-foundation.org,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	linux-kernel@vger.kernel.org, feng.tang@linux.alibaba.com,
+	joel.granados@kernel.org, john.ogness@linutronix.de,
+	namcao@linutronix.de, sravankumarlpu@gmail.com,
+	kexec@lists.infradead.org
+Subject: Re: [PATCH 3/9] crash_core: use panic_try_start() in crash_kexec()
+Message-ID: <aKXPPQ93H/KkxgZh@MiWiFi-R3L-srv>
+References: <20250820091702.512524-1-wangjinchao600@gmail.com>
+ <20250820091702.512524-2-wangjinchao600@gmail.com>
+ <20250820091702.512524-3-wangjinchao600@gmail.com>
+ <20250820091702.512524-4-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 9k4eh3oijqqgwyg3ppxk7whhmtf5pw8y
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 405C020018
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18nofUHrM87h1aA5I0GIXVNjvJt8sQYOls=
-X-HE-Tag: 1755696913-536970
-X-HE-Meta: U2FsdGVkX188CoBRITJc9sfrnjFJZAnQdfzvrGwI+DU2SR+8FpnwMpMY9Dva2BYtul0r8pAB7T3yfQGJdYFpl447Xnu+V9Cq2uh3G3yDIL70vxUEj+nGXp6og8B0PAdNjFvch7xTDKms7ipP6oJ1u5YO/7LvtcLsH/IM+pRmIcq7Ia1NrLkZ5DPMg0GTrkVZez1+2TvcfaqCQ1SnDMSU0aZb0+B2z4hh39OzbS+la0dtt8QVxLTEo3Y1r+6BGvkz/gQdLfC15IdkUoCmo50gnbHoZ1Vg5Dv+O6Y4qsMOF+DUS1SoG4YNpWfUbl8sRAAyTQbsa9TTeLn47+CqBQBTSd06zUo65A3C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820091702.512524-4-wangjinchao600@gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, 20 Aug 2025 11:03:05 +0800
-Huacai Chen <chenhuacai@kernel.org> wrote:
-
-> > Did this fall through the cracks?  
-> I don't know what this means, but I think you are pinging.
-
-Sorry for the colloquialism, it's not actually the same as a ping. A ping
-is for something that had no response. This is more about the patch was
-acknowledged but did not go further. "Falling through the cracks" is like
-picking a bunch of things up with a bucket that has a crack in it. Some of
-those things may "fall through the crack" and not be processed.
+On 08/20/25 at 05:14pm, Jinchao Wang wrote:
+> crash_kexec() had its own code to exclude
+> parallel execution by setting panic_cpu.
+> This is already handled by panic_try_start().
 > 
-> This patch appears after I sent the KVM PR for 6.17, and it isn't a
-> bugfix, so it will go to 6.18.
+> Switch to panic_try_start() to remove the
+> duplication and keep the logic consistent.
+> 
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> ---
+>  kernel/crash_core.c | 15 +++------------
+>  1 file changed, 3 insertions(+), 12 deletions(-)
+> 
+> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+> index a4ef79591eb2..bb38bbaf3a26 100644
+> --- a/kernel/crash_core.c
+> +++ b/kernel/crash_core.c
+> @@ -4,6 +4,7 @@
+>   * Copyright (C) 2002-2004 Eric Biederman  <ebiederm@xmission.com>
+>   */
+>  
+> +#include "linux/panic.h"
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>  
+>  #include <linux/buildid.h>
+> @@ -143,17 +144,7 @@ STACK_FRAME_NON_STANDARD(__crash_kexec);
+>  
+>  __bpf_kfunc void crash_kexec(struct pt_regs *regs)
+>  {
+> -	int old_cpu, this_cpu;
+> -
+> -	/*
+> -	 * Only one CPU is allowed to execute the crash_kexec() code as with
+> -	 * panic().  Otherwise parallel calls of panic() and crash_kexec()
+> -	 * may stop each other.  To exclude them, we use panic_cpu here too.
+> -	 */
+> -	old_cpu = PANIC_CPU_INVALID;
+> -	this_cpu = raw_smp_processor_id();
+> -
+> -	if (atomic_try_cmpxchg(&panic_cpu, &old_cpu, this_cpu)) {
+> +	if (panic_try_start()) {
 
-Well, it will start causing warnings soon because it wastes memory. But
-that will likely begin in 6.18 so we are OK, as long as it gets into
-linux-next before the warning trigger does.
+Seriously, where can I find this panic_try_start() and the
+panic_reset()? 
 
--- Steve
+>  		/* This is the 1st CPU which comes here, so go ahead. */
+>  		__crash_kexec(regs);
+>  
+> @@ -161,7 +152,7 @@ __bpf_kfunc void crash_kexec(struct pt_regs *regs)
+>  		 * Reset panic_cpu to allow another panic()/crash_kexec()
+>  		 * call.
+>  		 */
+> -		atomic_set(&panic_cpu, PANIC_CPU_INVALID);
+> +		panic_reset();
+>  	}
+>  }
+>  
+> -- 
+> 2.43.0
+> 
+
 
