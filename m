@@ -1,130 +1,118 @@
-Return-Path: <linux-kernel+bounces-778371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905D4B2E4B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 327FAB2E4B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7114616CB47
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:10:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E9616E6BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EF02749FE;
-	Wed, 20 Aug 2025 18:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF042749EA;
+	Wed, 20 Aug 2025 18:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="vN7BqWPk";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="Ayfww1fJ";
-	dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="mWPhf268";
-	dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="R3yaKArO"
-Received: from sender5.mail.selcloud.ru (sender5.mail.selcloud.ru [5.8.75.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USAUCJTw"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0BC224B01;
-	Wed, 20 Aug 2025 18:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A68224B01;
+	Wed, 20 Aug 2025 18:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755713416; cv=none; b=ujzHmbS/uMkSVZ2b7rHOiMmyoiNU8dcScT/r9XzSIgo/CVnobdg3EFAYoyrYtYN4pCH7XTJEY6ZgK769uDilJnzYAa09JIaGOcRvvFvuz0flDtFSIQz16xujqxUNifyx76xs7uYArh0wJcKh+lm9Br7ArHzv2ntiOE3MccY6+6I=
+	t=1755713422; cv=none; b=oHNsByRrzpWg1A98R3FkntmDBiFv5JUpyA5B6UhL1INWmg5RDCsk8073DhT2TRmMYHLoK3W54e+9Y/sYbuTiyqNpT2b/PC4JCq0u+8VXdJPiw4KkUFQLde0KadbEYShh2bpVu5ftT1PTl9zkt2wxoY/4bfTcn0Za8pzT60eEI0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755713416; c=relaxed/simple;
-	bh=Ayu8NTMNqrACA/xWxZ9Oto1UwmA+ZaYxsWy+CYL2YA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pEiV+WUkwbdYBO4DZNVFERNMSOsh9FTUKl3xkZB5/CaFgO/8eXFc/v/9sK73iqyGUIjsblFN/Nokr7o8jzU54S1nQF4feDQGDipluDi2gxkAFKZMsDbsjAbD2g+XA//xpnDKwuI9JMG4PF4HR5M77q/hPHDx0j7470Hjr8MqmKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=vN7BqWPk; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=Ayfww1fJ; dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=mWPhf268; dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=R3yaKArO; arc=none smtp.client-ip=5.8.75.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	List-id:List-Unsubscribe:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3rZCFHEhQF0ILx7kruo0lq1GV94urTRbu8oNzrO/itA=; t=1755713412; x=1755886212;
-	 b=vN7BqWPkD7ep4x3/xblLyMnENV3CkeC4cpsKJvhDylcg9WcTmQTUHiIn3o60RVtlPXpb8Y1Iwq
-	UMRGq+fXdX4c+TOHLjmv4vXzd6FReaMXz/hcY96THKPEZ+TYk8mlljriaCMBLKGv6DZDou16LeQSX
-	1+o6zw6MzL3wIn/hHoYU=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
-	 s=selcloud; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:List-id:
-	List-Unsubscribe:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Help:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3rZCFHEhQF0ILx7kruo0lq1GV94urTRbu8oNzrO/itA=; t=1755713412; x=1755886212;
-	 b=Ayfww1fJA+DNW2vBCsvN6bFEKkwccegpLUtbgtZq0sFhxsVfGBiww7Dlygrzym+YKzS1QUy8s6
-	FKeXXeLzFEtX7W1vdYyp/NJ33oBouQWTV7QFcU0fOV1NIA2rhcbU50EiKVwrD8mv2PDwdUxhIHJ8h
-	e60+rl/t2I4EUN0CTfbo=;
-Precedence: bulk
-X-Issuen: 1147648
-X-User: 95634118
-X-Postmaster-Msgtype: 3849
-Feedback-ID: 1147648:15965:3849:samotpravil
-X-From: foxido.dev
-X-from-id: 15965
-X-MSG-TYPE: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-X-blist-id: 3849
-X-Gungo: 20250819.223726
-X-SMTPUID: mlgnr59
-DKIM-Signature: v=1; a=rsa-sha256; s=202508r; d=foxido.dev; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1755713403; bh=3rZCFHEhQF0ILx7kruo0lq1
-	GV94urTRbu8oNzrO/itA=; b=mWPhf268VPlZpOVGoiDw3VtPsHbUM2SGHmfaCeprlLIIa4jMlC
-	XZwM8WYTSmnuXMexEkozbkD+MjRXdTi6iHYxeTyarPbg45qvZzhtoshb2MIvSWa4wJfGAY8We7p
-	FU78ygzrJVwLbLI2zeS+T27F4J4ISFHZc1g3OcqRfRRvrYMc7HDidvtuX2YRqUwNdvgcMR6PmkF
-	LiuKpc5++2czqCLV7pz63b7bpMg3Oi7cIT2rwBCyj8nRectoZgcslL41gywxyltXYO9n9pYnrkn
-	nuVGUDHXptvXCMG8abGRuro7Z5EbZKidKEn0w7SVkwWAkkNuogpbd77WCo1Sr3+0jBg==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202508e; d=foxido.dev; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1755713403; bh=3rZCFHEhQF0ILx7kruo0lq1
-	GV94urTRbu8oNzrO/itA=; b=R3yaKArOaOKR9WsEbmWJVz16engZrPoYQgfJN7STA3LzPvQu6/
-	SQoXLa/59svznPBb5HxxOW2tAUn7TIScFAAA==;
-Message-ID: <42588e0f-b510-42e0-b4d4-e1e8860d90a2@foxido.dev>
-Date: Wed, 20 Aug 2025 21:10:03 +0300
+	s=arc-20240116; t=1755713422; c=relaxed/simple;
+	bh=FJxphuTyUVocXd/pa2H2+aAq89f2FJJnAgj6E0GIPc4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nwj76xVwLriWgdp5V06sOMQnwEj3JQU5yyiEEEeCogaj5nckr1I0MaxvwdYrepNdU0699orZWBwMBDY14NRugPIKthuwSHl0gXHhXp8IpTqQ4XqOiRJM7HmUkN3t52p5v1mCHaNiU9uA9amwTUuFI0z9WabP1rcf4aM9YhdP5Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=USAUCJTw; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2445824dc27so1246705ad.3;
+        Wed, 20 Aug 2025 11:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755713419; x=1756318219; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rBEVB9H4EoZDoSSlySK1aiGBE2ClU4D49thMvdHYEzI=;
+        b=USAUCJTwqQynuxPbtnGLh17T2qQkVV7D/g/2uiGL0s5greRShryMjy3jofq0NOdwM0
+         CTFHfhottFpL3LRw6LyRCHquD227qKWKmF72jFdnNS/C8LeNLpSuIpDLPSZ23ZR818qV
+         V9pyPyXnqaQzu4rP2nNsow79hZNugIOhE69aUSjk/ZXLiW3vv0rKVcyk/rtATLEe1BiK
+         oSdnAbnhdA1+nlE2MObTme1GbUh0m+3ONrYNrGK/J7CPlOtgZx0tGSnqtZ9P0Ztslu1u
+         BCKlPZuQmJz+foZouJPPdmOe7i2YVKvn+8SGgwWGCCb21D3xzm4/UtHnITE8al5oEz0U
+         SKbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755713419; x=1756318219;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rBEVB9H4EoZDoSSlySK1aiGBE2ClU4D49thMvdHYEzI=;
+        b=joSWU4IorEVsbgh3ov2GgalQPKZ0MiEjn9Qs8OCZUoBgiUlzUQBvCGBKmrmTZlivPU
+         QPkHLXw4Y9NK++mjadlMWL1ic+Kz3WINGsfd5byKzJ+MoAi87zzuGcHNuEVfgDv2i6PS
+         zIAE8WkvdjBEigzDd2HuGLeu2tU2YbSkn9/ujesLxKt7Aebbv3bxWAAbXY5ixvpgtqpC
+         dWWj//BNktR9a2BuBohdz9kLpwiDu93IIE3mZNQug0TcGkaW61Ol6+h0p6EhDry/X0MR
+         60tBnkpvZcdWrnjk3rKzvF91QZOmqWwiaEnnLO9iQEfoPXxKytXciuD5mc+WAUwudKXR
+         1vng==
+X-Forwarded-Encrypted: i=1; AJvYcCUaD8W7r3Cy8WsbkW5VjhI6xAG6MneaxSIRUjYg/dd79NucICVdIwXvswYojFj7b4wUY5pUmBaUFiajOQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl5CYEAo3BcHqTxCqioBtQGPnQh3lDpkbbMUbLLwFnjoIU/ONt
+	99l9zhnXHc1BCQDihKP03Hpj9P6HYwKgyUFKdYj3s/l7ti70Nl2tdBtxbj6hNbRU
+X-Gm-Gg: ASbGnctymyvnu7EyJrBHW+r5cyBJ9QncvOHnFeAxaq81WBgygZXOSSKeTXDOtYRDPfS
+	svT4DloITVCizjdVvlTrrEfxXspcnzGV6L5esYQ1yDK6t/p36kJWl4OV0w1p0pKTv7Xjk3nsdeR
+	+K5/VEKSuKzbxWaTIVEc70wwrOWj2mxs/Yt8zq+GoiBtnUEv9CczcB7lcvovFzVHznR1kF+uJ+O
+	5oxJg/ewDkztRP7uY42JBa603LXDn5N7O5XeGMErXvMxa+69w2Y96q2SPcWjMuw/tvAWKLL9MDK
+	s2+IIxW9wirodKKBR0qODN6/2+dL+PUp9MJbGfFkfXQiTLA4T8Z+kcJ97gGe9xnwcuAv0mZ4PZs
+	wWBicMPGnxVE=
+X-Google-Smtp-Source: AGHT+IEpkl493kQ0YKFiRGAgQWELm5+0QmGeW3PSVaUEBDhf3NGLVGC8IEpypNw0+gCfcyWn/od7/Q==
+X-Received: by 2002:a17:902:e811:b0:23f:f68b:fa1d with SMTP id d9443c01a7336-245ef217714mr54934255ad.39.1755713419280;
+        Wed, 20 Aug 2025 11:10:19 -0700 (PDT)
+Received: from lt.. ([101.0.62.84])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4f7b77sm32776715ad.117.2025.08.20.11.10.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 11:10:18 -0700 (PDT)
+From: eisantosh95@gmail.com
+To: devicetree@vger.kernel.org
+Cc: robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	linux-kernel@vger.kernel.org,
+	Santosh Mahto <eisantosh95@gmail.com>
+Subject: [PATCH] docs: devicetree: fix typo in writing-schema.rst
+Date: Wed, 20 Aug 2025 23:40:13 +0530
+Message-Id: <20250820181013.17817-1-eisantosh95@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] platform/x86: Add WMI driver for Redmibook keyboard.
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Armin Wolf <w_armin@gmx.de>, linux-input@vger.kernel.org,
- Hans de Goede <hansg@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- platform-driver-x86@vger.kernel.org
-References: <20250813153137.18355-1-foxido@foxido.dev>
- <0ed8cf19-09cc-52cd-bc55-bf3f5d9e0c33@linux.intel.com>
-Content-Language: en-US
-From: Gladyshev Ilya <foxido@foxido.dev>
-In-Reply-To: <0ed8cf19-09cc-52cd-bc55-bf3f5d9e0c33@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-[resend because I forgot to Cc mailing list... sorry]
+From: Santosh Mahto <eisantosh95@gmail.com>
 
+Fixes a spelling mistake in writing-schema.rst:
+"interpretted" → "interpreted"
 
-On 8/19/25 13:22, Ilpo Järvinen wrote:
- >> +
- >> +    payload = get_unaligned_le32(obj->buffer.pointer);
- >> +    struct key_entry *entry = 
-sparse_keymap_entry_from_scancode(data->input_dev, payload);
- >
- > Please only define variables at the beginning of some block (in this 
-case,
- > at the beginning of the function).
- >
- > The only exception to this rule are cleanup.h related variables which may
- > have to be defined mid-function to ensure the correct teardown order of
- > the auto variables.
+Signed-off-by: Santosh Mahto <eisantosh95@gmail.com>
+---
+ Documentation/devicetree/bindings/writing-schema.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Oh, sorry, was blinded by a same mistake on another line in a hurry... 
-Fixed in v6 [1].
-
-By the way, shouldn't it be some checkpatch.pl warning in the ideal 
-world? Just sounds like a "why not" task to do in my spare time, so I'd 
-like to clarify in advance)
-
-[1] -- 
-https://lore.kernel.org/platform-driver-x86/20250820174140.41410-1-foxido@foxido.dev/
-
+diff --git a/Documentation/devicetree/bindings/writing-schema.rst b/Documentation/devicetree/bindings/writing-schema.rst
+index 470d1521fa174..fcd4726f8df4c 100644
+--- a/Documentation/devicetree/bindings/writing-schema.rst
++++ b/Documentation/devicetree/bindings/writing-schema.rst
+@@ -53,7 +53,7 @@ description
+   The default without any indicators is flowed, plain scalar style where single
+   line breaks and leading whitespace are stripped. Paragraphs are delimited by
+   blank lines (i.e. double line break). This style cannot contain ": " in it as
+-  it will be interpretted as a key. Any " #" sequence will be interpretted as
++  it will be interpreted as a key. Any " #" sequence will be interpreted as
+   a comment. There's other restrictions on characters as well. Most
+   restrictions are on what the first character can be.
+ 
 -- 
-Gladyshev Ilya
+2.34.1
+
 
