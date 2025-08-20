@@ -1,153 +1,125 @@
-Return-Path: <linux-kernel+bounces-777849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1ACB2DE7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:58:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C53B2DE72
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B799E172960
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:55:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 133723AB6D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEF11EB5E1;
-	Wed, 20 Aug 2025 13:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AE120E011;
+	Wed, 20 Aug 2025 13:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="luK0T24I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RdJCO9FG"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K1k+mqGo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0111E9B37
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6977C1FECAD;
+	Wed, 20 Aug 2025 13:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755698145; cv=none; b=BsqCuHL8z/1b2Hm8gLJpe5QbSvVfmmErS2Zswc++piRPtgAL42IdThLlKm3sCwwujrCTwvEa1nGk3GKNGFBLY4QOzx2Vu3dsnYTgAZ2/gjkNr+2f4C3tz4oVBOzhO+m3ADaX0Qt/MPcqifPRMnlpBxTOq2/fdFaDNQaidPT5AXY=
+	t=1755698180; cv=none; b=gDzMIF3EuQHa5kN179Lh2ImfRX5iaT4MmKsPG7Ra/Q9z+dlMTK8FnHcZddqwobNIr6lWcUKGhCWt3LPg0+f129qIAcuR2vOPtsr6sH98UbedSkvT0nBuZNVDbAm5KLjmBlOjs1f/D6v3qu7ZrYF+4vyHxiCPuRhTx2vPto2xPdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755698145; c=relaxed/simple;
-	bh=rLBJ4js3PcrnHyZMZb2wko0u44OW6C3b/1LbOOIWi3Q=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=FXs1KnSPApax/xqVJkm98jFh3ljbon/CHbLrPhGkm93Zs2uaGQoUrJdemdyNEPvpJ649sxae7aBS9cfSxGu8LUP0nV2XC7iiJFAHHWo7xgZR/e2P9U6axqMpoFTScD1D9hjuAPS/aFetQGbZMWgAYuL9x9R/W49PCQSXudtTtjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=luK0T24I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RdJCO9FG; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id D62E714003B5;
-	Wed, 20 Aug 2025 09:55:41 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 20 Aug 2025 09:55:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1755698141;
-	 x=1755784541; bh=fuL07DRJO79zA2iBNSloCcbrQR7X9zT3dVlz/w8Hr0A=; b=
-	luK0T24IvqvWu4t0RgdNcMaVI4vQICLNzlHEqzGzR71KZDaSFf2eKG+/3zHHSSzl
-	IW0oTNCdyo+oAoM8v0F1QLs0Boyj2Cyd2ZInaMh/Rzw7No4AZcp3hEeaNc1n/tny
-	nnEkJMCNKKaKEARW6qUE+38UCODGXOmWr3s99LULlbTriPf+zDNqlndsbv6fpCBF
-	zCaCCDZA0Ftkm3iXuiLDkIatM1a9n0s1uwGpYaATuYEzd5hHfjPu3u17Yj1Nehzz
-	ZavT95XQBwtw1p5sM1WWkE0jpJXdwL5ihtvbXUEC2zLt21zUKMJwu5TZDkB+7NFq
-	ZFEzVC1A/qO+wYt5rMz5Fw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755698141; x=
-	1755784541; bh=fuL07DRJO79zA2iBNSloCcbrQR7X9zT3dVlz/w8Hr0A=; b=R
-	dJCO9FGdE/G1X8z8Ffy6zaMhgDAbwWpVCLbIgc1QRVT/sCG4aQxQKHq2NkLa2F64
-	Hi/Xe01bDoTi2v0DAp1hezu5v510QE7VRl7APF9UhJFvsrDTJGUgyh1iZ8M9OuZ/
-	wbPv1CouOsXUZpGvZw7ja1RIWJ23gkrXey91M1VTtPYiCc+7TJ68pIX7u/yImIAm
-	qKgy36XINDSjsMgNQmulCznFKlGq0+KHDUc7pdutzPgLoa6jU99sjJqcrgwv+qnj
-	o2p/FTYEuO9F8BWcRaU63Bnkrz9wQLXy1nxhINQyb/QiDxCy4jwX2R3EHcnmkT/f
-	JSp9zjAGb+i8vN80mzHVg==
-X-ME-Sender: <xms:3dOlaC12QBmR8HOZbmnydAT7i3OzhAwDPz-DIbIDOI2rQJC_UrV-Dw>
-    <xme:3dOlaFHbEOq8RNK6O0eLthVhVepbV-UjAMxvWtSwdtySdiWV9dZ3s1q0QyEkG3dMK
-    _ki7ofR_qjByp67pBU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheekheegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopegtrhhishhtihgrnhdrmhgrrhhushhsihesrghrmhdrtghomhdprh
-    gtphhtthhopehsuhguvggvphdrhhholhhlrgesrghrmhdrtghomhdprhgtphhtthhopehf
-    vghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopehshhgrfihnghhuoheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehl
-    ihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepihhmgieslhhishhtsh
-    drlhhinhhugidruggvvhdprhgtphhtthhopehpvghnghdrfhgrnhesnhigphdrtghomhdp
-    rhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoh
-    epshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggv
-X-ME-Proxy: <xmx:3dOlaMgm8Rx40rQo-fHuLR_nYeJRhd-Z074yzDQqUEJiqxXwq-HExQ>
-    <xmx:3dOlaEv1X7VS52qV4C7Qck3weUhbeXo4JOYwp0H8FH78-52p3dZ0iQ>
-    <xmx:3dOlaPtY2f3hhBovMMn94Vq0LQx22CJWQFa8eq2w8GDJspbgK7fJWw>
-    <xmx:3dOlaJGoLgRoyRePbEX6yKtRuxeH5adOa9bHNDp8ShHnNGL2l4yK5A>
-    <xmx:3dOlaP7lRSGUGWmvzpFeTgZvAUkILUMg5UPaiGKMsKqP4IUuQVFHKV-I>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2F60F700068; Wed, 20 Aug 2025 09:55:41 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1755698180; c=relaxed/simple;
+	bh=Z7G/14If/9CK+UBZzzYPV1MmXUnSBLj4Fxu7EHPGP+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4jq2i4XY5ZpBUcrBjGJA8SB7HiS2PlHg8dxOio+oP2pufbvnmsQGVZqDuynh1GxVwxrw0CflI9INp3Y79frqQVltJnDmMBfh+Ok5k/eXsEd1eExUTBTOIksVo96ogv7mVQTdIkn1zzbHPViucNQbCM9LsSyE2muEgdHv5mpVFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K1k+mqGo; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755698179; x=1787234179;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Z7G/14If/9CK+UBZzzYPV1MmXUnSBLj4Fxu7EHPGP+g=;
+  b=K1k+mqGoGNdeyNBqi3cLB5E/QyEs6y5IS1f1Zi8xUoxEoWfZw/e/pt65
+   Ngt6KroO9POyPwg7t1BLeIDKA/l1ksW88SJiFuOOz5WJRYsGTtShnZwq6
+   GBA7X1ZfFAFxNwORQhC2LyvQQhP+uZtKDzW9hKDqn/KabohwswOJMv/BX
+   gNKdgYtYmCvWpsbxbkVv+Hz0KPmZt73AK07jmwCaZcMV4gXviE8ZAofur
+   FGw3eyyQcPj8Zo1HF0zxzTBN3V8j7BrDHBHdtgLfwCKykcJ2pM6qKTVyR
+   W+YJBk+LVmvk3zzNmOJsnej2PHBUxAqHn+P699L6XNyNzVHNbcXrnNpHO
+   A==;
+X-CSE-ConnectionGUID: WRhHSB/eSAKZcVkWSADCgg==
+X-CSE-MsgGUID: Knk3w1WXRpywFjSWcwpXZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="80557129"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="80557129"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:56:18 -0700
+X-CSE-ConnectionGUID: JJ5OOMrQRs+MEc4bgOwlWw==
+X-CSE-MsgGUID: U8f7/K0RQny2Vb4X74yvRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="173387942"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:56:15 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uojIS-00000006wyS-4AbF;
+	Wed, 20 Aug 2025 16:56:12 +0300
+Date: Wed, 20 Aug 2025 16:56:12 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] iio: magnetometer: add support for Infineon
+ TLV493D 3D Magentic sensor
+Message-ID: <aKXT_HOrY1XUlsLu@smile.fi.intel.com>
+References: <20250814-tlv493d-sensor-v6_16-rc5-v4-0-81b82805aae0@gmail.com>
+ <20250814-tlv493d-sensor-v6_16-rc5-v4-1-81b82805aae0@gmail.com>
+ <20250816140448.37f38d0f@jic23-huawei>
+ <aKVTJXe50zf07ipR@dixit>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A6YapAphagno
-Date: Wed, 20 Aug 2025 15:55:20 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Peng Fan" <peng.fan@nxp.com>, "Shawn Guo" <shawnguo@kernel.org>,
- "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Fabio Estevam" <festevam@gmail.com>, "Sudeep Holla" <sudeep.holla@arm.com>,
- "Cristian Marussi" <cristian.marussi@arm.com>
-Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Message-Id: <2ff85fec-b571-4423-9161-674f88a32e18@app.fastmail.com>
-In-Reply-To: <20250807-imx9-sm-v1-1-3489e41a6fda@nxp.com>
-References: <20250807-imx9-sm-v1-0-3489e41a6fda@nxp.com>
- <20250807-imx9-sm-v1-1-3489e41a6fda@nxp.com>
-Subject: Re: [PATCH 1/3] firmware: imx: Add stub functions for SCMI MISC API
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKVTJXe50zf07ipR@dixit>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Aug 7, 2025, at 03:47, Peng Fan wrote:
-> To ensure successful builds when CONFIG_IMX_SCMI_MISC_DRV is not enabled,
-> this patch adds static inline stub implementations for the following
-> functions:
->
->   - scmi_imx_misc_ctrl_get()
->   - scmi_imx_misc_ctrl_set()
->
-> These stubs return -EOPNOTSUPP to indicate that the functionality is not
-> supported in the current configuration. This avoids potential build or
-> link errors in code that conditionally calls these functions based on
-> feature availability.
->
-> Fixes: 540c830212ed ("firmware: imx: remove duplicate scmi_imx_misc_ctrl_get()")
-> Fixes: 0b4f8a68b292 ("firmware: imx: Add i.MX95 MISC driver")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
+On Wed, Aug 20, 2025 at 10:16:29AM +0530, Dixit Parmar wrote:
+> On Sat, Aug 16, 2025 at 02:04:48PM +0100, Jonathan Cameron wrote:
 
-I don't think this does what you describe, at least not reliably:
- 
-> +#if IS_ENABLED(CONFIG_IMX_SCMI_MISC_DRV)
->  int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val);
->  int scmi_imx_misc_ctrl_set(u32 id, u32 val);
-> +#else
-> +static inline int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
+...
 
-When a caller of this function is in a built-in driver but the
-IMX_SCMI_MISC_DRV code is in a loadable module, you still
-get a link failure, see 514b2262ade4 ("firmware: arm_scmi:
-Fix i.MX build dependency") for an example.
+> > > +	TLV493D_AXIS_X,
+> > > +	TLV493D_AXIS_Y,
+> > > +	TLV493D_AXIS_Z,
+> > > +	TLV493D_TEMPERATURE
+> > As below.
+> > 
+> > > +};
+> > > +
+> > > +enum tlv493d_op_mode {
+> > > +	TLV493D_OP_MODE_POWERDOWN,
+> > > +	TLV493D_OP_MODE_FAST,
+> > > +	TLV493D_OP_MODE_LOWPOWER,
+> > > +	TLV493D_OP_MODE_ULTRA_LOWPOWER,
+> > > +	TLV493D_OP_MODE_MASTERCONTROLLED
+> > This is not a terminating entry, so would typically have a trailing comma.
+> Isn't the last entry in the enum list is termintating entry and it should
+> not have trailing comma?
 
-As you still need the correct Kconfig dependencies, I
-think your patch here is not helpful.
+No, it's not semantically. (Yes, it's terminating the list syntactically)
 
-     Arnd
+> > > +};
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
