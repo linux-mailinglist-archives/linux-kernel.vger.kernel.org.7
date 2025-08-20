@@ -1,758 +1,226 @@
-Return-Path: <linux-kernel+bounces-777754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A9BB2DD6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B177AB2DD71
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AC04A02700
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:11:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F123A3731
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8460331B118;
-	Wed, 20 Aug 2025 13:11:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B8631B135;
+	Wed, 20 Aug 2025 13:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Q8V8kCGi"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2080.outbound.protection.outlook.com [40.107.223.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E320831CA79
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755695459; cv=none; b=MgI1PFjRFqr7FrWESU80im8zi1OQrCBLxNPe6bAtCGkS0cLV7QAn9/jP859DnoQxcxOgKF3YMqy6I82N393NeR6M6FzuQOOfdT1q04yGwYj4hVwiFEkzEFKLwiaXDpmDDkX5URKwI+8YW1Kg/C7ADOXRefjnNj1k9zTTFVTWEB8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755695459; c=relaxed/simple;
-	bh=wzCaosy5wTU8L9M/ah55a7Zibed1O7czX2KhUmUEP8M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BhL5RcYgCZb5bhbh/tf1L+JrVVhnV2CUdmK9+Zu7yEzMib382aR3hX8+ZNVGqNEeOwD1xi/qnHxpBjUZzIt/BfYoYgVTdanNofuh9hmVjRA7d4TT9fB0nD4KQ73vWY6m027vlvur9Mj3oUJz2NpSllprsaQxcXf0lxVHkjOxpAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uoiaA-0007YI-9h; Wed, 20 Aug 2025 15:10:26 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uoia8-001Fnf-2S;
-	Wed, 20 Aug 2025 15:10:24 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uoia8-003atl-26;
-	Wed, 20 Aug 2025 15:10:24 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Lukasz Majewski <lukma@denx.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Divya.Koppera@microchip.com,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Stanislav Fomichev <sdf@fomichev.me>
-Subject: [PATCH net-next v3 3/3] Documentation: net: add flow control guide and document ethtool API
-Date: Wed, 20 Aug 2025 15:10:23 +0200
-Message-Id: <20250820131023.855661-4-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250820131023.855661-1-o.rempel@pengutronix.de>
-References: <20250820131023.855661-1-o.rempel@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628E73093CB;
+	Wed, 20 Aug 2025 13:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755695520; cv=fail; b=VjGObirwsgbKfpmSFKe8Q9eWuXOZbuJrXgpG44EATTrOFSObxmEiu1Ilg9+6IH+2hAxZV40t9uN/ncAYfY3ZT/ghEwlNyfapOHFHYJt6ow92Di5AzwjEvhqSXFRn8mAOy/gwKB8d9uL3tGdCPSNY+6Ia/DwcIOZin3xzSv3sV4A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755695520; c=relaxed/simple;
+	bh=hBlTHcHcheWHku2jVxDaCfGpHfdItGosuQuY17KYBCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hfuRXNi6SEzPgSrppqJnykxQLcr3RKJRuwSHSS5EBMvWwbv4EcE/nXvrmzT1wkDnzH9V0Q8F8Mg6PamApIFATiAN/AtJMlWEQM+cpi5SBqOzA598QpKip/qrFcYKfIgOaKggUTDkRKvWEqsHbiQRExJpRGXqmzp07JfRSxjRBjg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Q8V8kCGi; arc=fail smtp.client-ip=40.107.223.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uBKLMfRVpxpGoNv4E4RjARnEK4itPG41M1ruKMiwXbGthq1OnoJ2MzMclKsWShvZClYh19UaQdlHDnh0SmLTMpP1IcOO8lzDW2eZzea2oiNCYLQSTmUZc9ZW1umTi9fHHFGCACBDnVi1FWZUKir05s5xpPn82HyZ0lPMBqYY+XKKMxDD/TG5B/Vl8j/P8VgAr49dbvMthcX4D6GZP6AOahThvuMbyUojsUPchyUO1umhDOPNr9n9lhrAP9QPsdHCduMFi03fU1qEuBon/1wGnz/PCey/OuFIlZyPwfEntNbKGuFOZcuN4D+SAXSSW9vyk6akJEr1ozdLaXJnVOlNGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7rOdbunPn0S0VYOYrCOw48s/STZrEfsQJBRdv+YuXVs=;
+ b=hxDE4wJZ/WAea822Pu9DXoOZYDImx1lz41rVwHW/Bfho3h5QfM9rNEb1WiKtHFcscYMHRkhdb24G1G09WvfOmVWhgnveYJAyLZAcP6eXy2uw7TQh09SXbqxJaaWjyygXeACM1nadbOwX+DJQjo6JQeQSsXCnsgO43w1nFslvpFwN4+spnNEe0FBoLyYwHQRMnYbJtRq9TxyJt7LAqYsBsg7Yn1oI2i1lHhHIBkkU/wwM+Z7K+KDquzk8YyWItu/B8Ec/L3t2b030obteYvgTqTIfu88ZgsmK9dvO2o56WKt7y+2qF7jQuiwFDcpTFLOWgCzXzAgDbeGbpRScz2qgSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7rOdbunPn0S0VYOYrCOw48s/STZrEfsQJBRdv+YuXVs=;
+ b=Q8V8kCGit1MvlPwG3IE9UaQnrBx3SddEAvwmbACazkj9D81M82edf4NC8PqiBds98TX19zXVGn3Qr+/QTJcRg1wLmZvJr66SDjYtPY+QN78b0WAaA8k5oFbwRUqcIgLAku97Mja7Tuh5g4jCjY2T8uqhY2u12qOpETXjdPPQsKs=
+Received: from CH3P220CA0012.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1e8::32)
+ by DS7PR12MB8202.namprd12.prod.outlook.com (2603:10b6:8:e1::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
+ 2025 13:11:55 +0000
+Received: from CH1PEPF0000AD7D.namprd04.prod.outlook.com
+ (2603:10b6:610:1e8:cafe::c7) by CH3P220CA0012.outlook.office365.com
+ (2603:10b6:610:1e8::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.14 via Frontend Transport; Wed,
+ 20 Aug 2025 13:11:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000AD7D.mail.protection.outlook.com (10.167.244.86) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Wed, 20 Aug 2025 13:11:54 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Aug
+ 2025 08:11:54 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Wed, 20 Aug
+ 2025 06:11:54 -0700
+Received: from [10.252.207.152] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 20 Aug 2025 08:11:51 -0500
+Message-ID: <6652929c-1e14-451f-afce-c5b4c2b7af9d@amd.com>
+Date: Wed, 20 Aug 2025 18:41:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 8/8] KVM: SVM: Enable Secure TSC for SNP guests
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Thomas Lendacky <thomas.lendacky@amd.com>,
+	Michael Roth <michael.roth@amd.com>, Borislav Petkov <bp@alien8.de>, Vaishali
+ Thakkar <vaishali.thakkar@suse.com>, Kai Huang <kai.huang@intel.com>,
+	<David.Kaplan@amd.com>
+References: <20250819234833.3080255-1-seanjc@google.com>
+ <20250819234833.3080255-9-seanjc@google.com>
+ <c3e638e9-631f-47af-b0d2-06cea949ec1e@amd.com> <aKXHNDiKys9y8Xdw@google.com>
+Content-Language: en-US
+From: "Nikunj A. Dadhania" <nikunj@amd.com>
+In-Reply-To: <aKXHNDiKys9y8Xdw@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7D:EE_|DS7PR12MB8202:EE_
+X-MS-Office365-Filtering-Correlation-Id: eafade8b-ad08-4efe-3c31-08dddfeb22c6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QVNIZU1pUXRRVVAxSXE2MVFNQzczWlRZbFQ1eEhqRldZdjhLQWxRMFNoYlF0?=
+ =?utf-8?B?Wk5MQ29ZQjkyb053WFBCYW1JQ3l3U1ZNU0NFRmZKM0JBQjhhTXliY3dyUmxY?=
+ =?utf-8?B?aGczQ1IrcHppUDVkak9obVB1QlJMejVEY1p5Z1hxUjJ6aENoU05Pemc4eEVa?=
+ =?utf-8?B?SXdXSmZWLzc3eHhMWlB6K09IOGpGNnZiRXFJeTVOMjQxZWJpbm9CU1IrOGUr?=
+ =?utf-8?B?R2tDRG5GL0EwazdoeTlVZ1JXTXZDRzhYRnFjTUlwcFVvQ2hXL3hKNW5WL0li?=
+ =?utf-8?B?VGh3ckxid0xTQldVU3JXaWVaSkZoVmR4czduLzY2c2lBMWZ0ZEhjZ2p1cCs4?=
+ =?utf-8?B?aG85b25mVkhLZy9oN0l5T3hOa1NPY0pVenRrVHEwOFVjQWN6bUoyY3hDcFZ5?=
+ =?utf-8?B?bllJOERQUFpEV3RzVFdOdkFmME0zUElMZ2lFQmZSczJueFI0a1FTZUl1TG5v?=
+ =?utf-8?B?Q0s2Y0xOTzhVVGFXVDNVTVM4NGJJWFVTenpqanNaUVptOFVud0MvZWN2WFBR?=
+ =?utf-8?B?MGViZVBBTlJmV1Y4SkY2bnJSREdXQ3FBVDRuQ0JCVHNibngrZ3Z0S21scXpa?=
+ =?utf-8?B?NkRwNFQwYjczVHVPUllyc1ozY2dhNG9tZldmbUxNMHJjcGJoVWRKNFVRNTd2?=
+ =?utf-8?B?VlpKRzFzaDZCcHRCVnpjSSsyS3JPb2FlQnVMNUdKUlpsRHZQUkVWL1VPSVd6?=
+ =?utf-8?B?SUMwdHdFUWlya1ZXbHpuZ2o0cTNmMnRHVW14ZHRKaUF4dmhFaDdvdHlTRXBa?=
+ =?utf-8?B?bktsZFl6cHdENlNvRmtGd3hMTURtclVHT3c1R21iSHVhMGtIMEpFcFpOZXM2?=
+ =?utf-8?B?L040Ynh1akcvR01ySkttejUvOUdLVGQxdEZqcnhHWDJ4d24vcG4xYytJMmNG?=
+ =?utf-8?B?MzlIcGgxSjN6SmhNRDczWXcwN0tXVmREaGx4UFRKcWxDMFhRbnVvcjRwN1Qz?=
+ =?utf-8?B?c1UxZDhpTURHSjRIM1VzR29hOFp3M2ZXR2ZBN01Td24wN25sV1ZkWEhXemVE?=
+ =?utf-8?B?N3pUNjI1UDN5OE5xOTZHY2pxTEtpV3hPYzFIYXltdTdwRjlNWHplblB0R0Zp?=
+ =?utf-8?B?NnNnSWFhZE1MTU1HditXblRVRmdnR0VMNDZ2Qitua0hJZnVtR1ZYVDNFMnRN?=
+ =?utf-8?B?cmNBd1oyQTZ3VEhOMFpwY09ncklVVEV0N1E4NUNYeVdNWXhBWk84VFp2bXdi?=
+ =?utf-8?B?NE53UktOSFA5M1RMU0VjRjVIM2xIWjh3OEMwb2svbnF3RFYvZTUxYjk1QnRF?=
+ =?utf-8?B?Wm9IRUNTaHhhd1B5U3YrNmJiTmFxeExqckwxSGp0N3BmejdYbzRNQ0NVWUF1?=
+ =?utf-8?B?TkpVUmR6d09GTld4UjR6WXo1WHZERFNRNGVsdGRFWXFnaTIyVGRWYUtUYlpH?=
+ =?utf-8?B?dnlIcEtheXN3NzRLY3ozUW1YOUdqcE1LYU13d1ZkMU1mTEtGRkx0MXJaZ1BC?=
+ =?utf-8?B?SW9TNWYzUjgwZngrVjBlVzVIN2dibkRLbkdaT1BwR1lQTUtGSHZoQWNRUmNk?=
+ =?utf-8?B?OENwUTlBYVY2clRES0FWeXFZTjVQN015ZlBZNXRuMm9DdG1nS1JlUTRseW1C?=
+ =?utf-8?B?WWFzVFlKVy9oSXFHRWVqNGhzd2VzcXYzZzBrVEhrdVRFcTVvYmNUQXRLdHJ6?=
+ =?utf-8?B?NTBqNUNjR2FwYzdQcUNuWVVXbUNRVjkxWW41ZTFicGhsWFVEWk8zNXlYVXRB?=
+ =?utf-8?B?ejdBL3dLS0cwb0ZvL0lMNkhFZVJuZXk4bE9tSURMQmlvdGdyNVZMUkxaMHJ1?=
+ =?utf-8?B?WWJyVytsb2hKRTdCcG4yRzNKOWhqMkRpMjE2Kzc2Q3FCWGc3QVJ4T1NuMlZa?=
+ =?utf-8?B?VVhWWUhnMGR2eXNWMFpabUpERDhlWFdRYTRISlJJQjdQV2M4TG0wckQzVTVw?=
+ =?utf-8?B?dkRoUE9qK3dpN3E5cjJ4ZmFRWFp4ZGVLOTFJMHZySHMwa0Z5MSt3NmVRY1E4?=
+ =?utf-8?B?NmpGeHJQd1Y5V2ZSdTBvUXowakxFWmttcXBkSGVEeDZ1VkRXcmp6cERvYjJ0?=
+ =?utf-8?B?aWtrbWt1TXpvUDJDVTA1UnlDa1lXZ2RiU0tCVmhETnI1bzJYOWdIUmN4dktK?=
+ =?utf-8?B?OTZMcnVVVldrbWNMOEV4eWhoNWpQcUoveldpQT09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 13:11:54.9668
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: eafade8b-ad08-4efe-3c31-08dddfeb22c6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8202
 
-Introduce a new document, flow_control.rst, to provide a comprehensive
-guide on Ethernet Flow Control in Linux. The guide explains how flow
-control works, how autonegotiation resolves pause capabilities, and how
-to configure it using ethtool and Netlink.
 
-In parallel, document the pause and pause-stat attributes in the
-ethtool.yaml netlink spec. This enables the ynl tool to generate
-kernel-doc comments for the corresponding enums in the UAPI header,
-making the C interface self-documenting.
 
-Finally, replace the legacy flow control section in phy.rst with a
-reference to the new document and add pointers in the relevant C source
-files.
+On 8/20/2025 6:31 PM, Sean Christopherson wrote:
+> On Wed, Aug 20, 2025, Nikunj A. Dadhania wrote:
+>>
+>>
+>> On 8/20/2025 5:18 AM, Sean Christopherson wrote:
+>>> From: Nikunj A Dadhania <nikunj@amd.com>
+>>>
+>>> @@ -2195,6 +2206,12 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
+>>>  
+>>>  	start.gctx_paddr = __psp_pa(sev->snp_context);
+>>>  	start.policy = params.policy;
+>>> +
+>>> +	if (snp_is_secure_tsc_enabled(kvm)) {
+>>> +		WARN_ON_ONCE(!kvm->arch.default_tsc_khz);
+>>
+>> Any particular reason to drop the the following change: 
+>>
+>> +		if (WARN_ON(!kvm->arch.default_tsc_khz)) {
+>> +			rc = -EINVAL;
+>> +			goto e_free_context;
+>> +		}
+> 
+> Based on this conversation[*], both Kai and I expected KVM to let firmware deal
+> with the should-be-impossible situation.
+> 
+>   On Tue, Jul 8, 2025 at 9:15 PM Nikunj A. Dadhania <nikunj@amd.com> wrote:
+>   > On 7/8/2025 8:04 PM, Sean Christopherson wrote:
+>   > > On Tue, Jul 08, 2025, Kai Huang wrote:
+>   > >>>> Even some bug results in the default_tsc_khz being 0, will the
+>   > >>>> SNP_LAUNCH_START command catch this and return error?
+>   > >>>
+>   > >>> No, that is an invalid configuration, desired_tsc_khz is set to 0 when
+>   > >>> SecureTSC is disabled. If SecureTSC is enabled, desired_tsc_khz should
+>   > >>> have correct value.
+>   > >>
+>   > >> So it's an invalid configuration that when Secure TSC is enabled and
+>   > >> desired_tsc_khz is 0.  Assuming the SNP_LAUNCH_START will return an error
+>   > >> if such configuration is used, wouldn't it be simpler if you remove the
+>   > >> above check and depend on the SNP_LAUNCH_START command to catch the
+>   > >> invalid configuration?
+>   > >
+>   > > Support for secure TSC should depend on tsc_khz being non-zero.  That way it'll
+>   > > be impossible for arch.default_tsc_khz to be zero at runtime.  Then KVM can WARN
+>   > > on arch.default_tsc_khz being zero during SNP_LAUNCH_START.
+>   >
+>   > Sure.
+> 
+> https://lore.kernel.org/all/c327df02-c2eb-41e7-9402-5a16aa211265@amd.com
+> 
+>>
+>> As this is an unsupported configuration as per the SEV SNP Firmware ABI Specification: 
+> 
+> Right, but what happens if KVM manages to pass in '0' for the frequency?  Does
+> SNP_LAUNCH_START fail?  
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v3:
-- add warning about half-duplex collision-based flow control on shared media
-- clarify pause autoneg vs. generic autoneg and forced mode semantics
-- document pause quanta defaults used by common MAC drivers, with time examples
-- fix vague cross-reference, point to autonegotiation resolution section
-- expand notes on PAUSE vs. PFC exclusivity
-- include generated enums (pause / pause-stat) in UAPI with kernel-doc
-changes v2:
-- remove recommendations
-- add note about autoneg resolution
----
- Documentation/netlink/specs/ethtool.yaml      |  27 ++
- Documentation/networking/flow_control.rst     | 379 ++++++++++++++++++
- Documentation/networking/index.rst            |   1 +
- Documentation/networking/phy.rst              |  12 +-
- include/linux/ethtool.h                       |  45 ++-
- .../uapi/linux/ethtool_netlink_generated.h    |  28 +-
- net/dcb/dcbnl.c                               |   2 +
- net/ethtool/pause.c                           |   4 +
- 8 files changed, 483 insertions(+), 15 deletions(-)
- create mode 100644 Documentation/networking/flow_control.rst
+SNP_LAUNCH_START succeeds, and the guest kernel starts and panics during early boot [*]
 
-diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-index 7a7594713f1f..13d8dcfa8dc5 100644
---- a/Documentation/netlink/specs/ethtool.yaml
-+++ b/Documentation/netlink/specs/ethtool.yaml
-@@ -864,7 +864,9 @@ attribute-sets:
- 
-   -
-     name: pause-stat
-+    doc: Statistics counters for link-wide PAUSE frames (IEEE 802.3 Annex 31B).
-     attr-cnt-name: __ethtool-a-pause-stat-cnt
-+    enum-name: ethtool_a_pause_stat
-     attributes:
-       -
-         name: unspec
-@@ -875,13 +877,17 @@ attribute-sets:
-         type: pad
-       -
-         name: tx-frames
-+        doc: Number of PAUSE frames transmitted.
-         type: u64
-       -
-         name: rx-frames
-+        doc: Number of PAUSE frames received.
-         type: u64
-   -
-     name: pause
-+    doc: Parameters for link-wide PAUSE (IEEE 802.3 Annex 31B).
-     attr-cnt-name: __ethtool-a-pause-cnt
-+    enum-name: ethtool_a_pause
-     attributes:
-       -
-         name: unspec
-@@ -893,19 +899,40 @@ attribute-sets:
-         nested-attributes: header
-       -
-         name: autoneg
-+        doc: |
-+          Acts as a mode selector for the driver.
-+          On GET: indicates the driver's behavior. If true, the driver will
-+          respect the negotiated outcome; if false, the driver will use a
-+          forced configuration.
-+          On SET: if true, the driver configures the PHY's advertisement based
-+          on the rx and tx attributes. If false, the driver forces the MAC
-+          into the state defined by the rx and tx attributes.
-         type: u8
-       -
-         name: rx
-+        doc: |
-+          Enable receiving PAUSE frames (pausing local TX).
-+          On GET: reflects the currently preferred configuration state.
-         type: u8
-       -
-         name: tx
-+        doc: |
-+          Enable transmitting PAUSE frames (pausing peer TX).
-+          On GET: reflects the currently preferred configuration state.
-         type: u8
-       -
-         name: stats
-+        doc: |
-+          Contains the pause statistics counters. The source of these
-+          statistics is determined by stats-src.
-         type: nest
-         nested-attributes: pause-stat
-       -
-         name: stats-src
-+        doc: |
-+          Selects the source of the MAC statistics, values from
-+          enum ethtool_mac_stats_src. This allows requesting statistics
-+          from an aggregated MAC or a specific PHY, for example.
-         type: u32
-   -
-     name: eee
-diff --git a/Documentation/networking/flow_control.rst b/Documentation/networking/flow_control.rst
-new file mode 100644
-index 000000000000..ba315a5bcb87
---- /dev/null
-+++ b/Documentation/networking/flow_control.rst
-@@ -0,0 +1,379 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. _ethernet-flow-control:
-+
-+=====================
-+Ethernet Flow Control
-+=====================
-+
-+This document is a practical guide to Ethernet Flow Control in Linux, covering
-+what it is, how it works, and how to configure it.
-+
-+What is Flow Control?
-+=====================
-+
-+Flow control is a mechanism to prevent a fast sender from overwhelming a
-+slow receiver with data, which would cause buffer overruns and dropped packets.
-+The receiver can signal the sender to temporarily stop transmitting, giving it
-+time to process its backlog.
-+
-+Standards references
-+====================
-+
-+Ethernet flow control mechanisms are specified across consolidated IEEE base
-+standards; some originated as amendments:
-+
-+- Collision-based flow control is part of CSMA/CD in **IEEE 802.3**
-+  (half-duplex).
-+- Link‑wide PAUSE is defined in **IEEE 802.3 Annex 31B**
-+  (originally **802.3x**).
-+- Priority-based Flow Control (PFC) is defined in **IEEE 802.1Q Clause 36**
-+  (originally **802.1Qbb**).
-+
-+In the remainder of this document, the consolidated clause numbers are used.
-+
-+How It Works: The Mechanisms
-+============================
-+
-+The method used for flow control depends on the link's duplex mode.
-+
-+.. note::
-+   The user-visible ``ethtool`` pause API described in this document controls
-+   **link-wide PAUSE** (IEEE 802.3 Annex 31B) only. It does not control the
-+   collision-based behavior that exists on half-duplex links.
-+
-+1. Half-Duplex: Collision-Based Flow Control
-+--------------------------------------------
-+On half-duplex links, a device cannot send and receive simultaneously, so PAUSE
-+frames are not used. Flow control is achieved by leveraging the CSMA/CD
-+(Carrier Sense Multiple Access with Collision Detection) protocol itself.
-+
-+* **How it works**: To inhibit incoming data, a receiving device can force a
-+    collision on the line. When the sending station detects this collision, it
-+    terminates its transmission, sends a "jam" signal, and then executes the
-+    "Collision backoff and retransmission" procedure as defined in IEEE 802.3,
-+    Section 4.2.3.2.5. This algorithm makes the sender wait for a random
-+    period before attempting to retransmit. By repeatedly forcing collisions,
-+    the receiver can effectively throttle the sender's transmission rate.
-+
-+.. note::
-+    While this mechanism is part of the IEEE standard, there is currently no
-+    generic kernel API to configure or control it. Drivers should not enable
-+    this feature until a standardized interface is available.
-+
-+.. warning::
-+   On shared-medium networks (e.g. 10BASE2, or twisted-pair networks using a
-+   hub rather than a switch) forcing collisions inhibits traffic **across the
-+   entire shared segment**, not just a single point-to-point link. Enabling
-+   such behavior is generally undesirable.
-+
-+2. Full-Duplex: Link-wide PAUSE (IEEE 802.3 Annex 31B)
-+------------------------------------------------------
-+On full-duplex links, devices can send and receive at the same time. Flow
-+control is achieved by sending a special **PAUSE frame**, defined by IEEE
-+802.3 Annex 31B. This mechanism pauses all traffic on the link and is therefore
-+called *link-wide PAUSE*.
-+
-+* **What it is**: A standard Ethernet frame with a globally reserved
-+    destination MAC address (``01-80-C2-00-00-01``). This address is in a range
-+    that standard IEEE 802.1D-compliant bridges do not forward. However, some
-+    unmanaged or misconfigured bridges have been reported to forward these
-+    frames, which can disrupt flow control across a network.
-+
-+* **How it works**: The frame contains a MAC Control opcode for PAUSE
-+    (``0x0001``) and a ``pause_time`` value, telling the sender how long to
-+    wait before sending more data frames. This time is specified in units of
-+    "pause quanta," where one quantum is the time it takes to transmit 512 bits.
-+    For example, one pause quantum is 51.2 microseconds on a 10 Mbit/s link,
-+    and 512 nanoseconds on a 1 Gbit/s link.
-+
-+* **Who uses it**: Any full-duplex link, from 10 Mbit/s to multi-gigabit speeds.
-+
-+3. Full-Duplex: Priority-based Flow Control (PFC) (IEEE 802.1Q Clause 36)
-+-------------------------------------------------------------------------
-+Priority-based Flow Control is an enhancement to the standard PAUSE mechanism
-+that allows flow control to be applied independently to different classes of
-+traffic, identified by their priority level.
-+
-+* **What it is**: PFC allows a receiver to pause traffic for one or more of the
-+    8 standard priority levels without stopping traffic for other priorities.
-+    This is critical in data center environments for protocols that cannot
-+    tolerate packet loss due to congestion (e.g., Fibre Channel over Ethernet
-+    or RoCE).
-+
-+* **How it works**: PFC uses a specific PAUSE frame format. It shares the same
-+    globally reserved destination MAC address (``01-80-C2-00-00-01``) as legacy
-+    PAUSE frames but uses a unique opcode (``0x0101``). The frame payload
-+    contains two key fields:
-+
-+    - **``priority_enable_vector``**: An 8-bit mask where each bit corresponds to
-+      one of the 8 priorities. If a bit is set to 1, it means the pause time
-+      for that priority is active.
-+    - **``time_vector``**: A list of eight 2-octet fields, one for each priority.
-+      Each field specifies the ``pause_time`` for its corresponding priority,
-+      measured in units of ``pause_quanta`` (the time to transmit 512 bits).
-+
-+.. note::
-+    When PFC is enabled for at least one priority on a port, the standard
-+    **link-wide PAUSE** (IEEE 802.3 Annex 31B) must be disabled for that port.
-+    The two mechanisms are mutually exclusive (IEEE 802.1Q Clause 36).
-+
-+Configuring Flow Control
-+========================
-+
-+Link-wide PAUSE and Priority-based Flow Control are configured with different
-+tools.
-+
-+Configuring Link-wide PAUSE with ``ethtool`` (IEEE 802.3 Annex 31B)
-+-------------------------------------------------------------------
-+Use ``ethtool -a <interface>`` to view and ``ethtool -A <interface>`` to change
-+the link-wide PAUSE settings.
-+
-+.. code-block:: bash
-+
-+  # View current link-wide PAUSE settings
-+  ethtool -a eth0
-+
-+  # Enable RX and TX pause, with autonegotiation
-+  ethtool -A eth0 autoneg on rx on tx on
-+
-+**Key Configuration Concepts**:
-+
-+* **Pause Autoneg vs Generic Autoneg**: ``ethtool -A ... autoneg {on,off}``
-+  controls **Pause Autoneg** (Annex 31B) only. It is independent from the
-+  **Generic link autonegotiation** configured with ``ethtool -s``. A device can
-+  have Generic autoneg **on** while Pause Autoneg is **off**, and vice versa.
-+
-+* **If Pause Autoneg is off** (``-A ... autoneg off``): the device will **not**
-+  advertise pause in the PHY. The MAC PAUSE state is **forced** according to
-+  ``rx``/``tx`` and does not depend on partner capabilities or resolution.
-+  Ensure the peer is configured complementarily for PAUSE to be effective.
-+
-+* **If generic autoneg is off** but **Pause Autoneg is on**, the pause policy
-+  is **remembered** by the kernel and applied later when Generic autoneg is
-+  enabled again.
-+
-+* **Autonegotiation Mode**: The PHY will *advertise* the ``rx`` and ``tx``
-+  capabilities. The final active state is determined by what both sides of the
-+  link agree on. See the "PHY (Physical Layer Transceiver)" section below,
-+  especially the *Resolution* subsection, for details of the negotiation rules.
-+
-+* **Forced Mode**: This mode is necessary when autonegotiation is not used or
-+  not possible. This includes links where one or both partners have
-+  autonegotiation disabled, or in setups without a PHY (e.g., direct
-+  MAC-to-MAC connections). The driver bypasses PHY advertisement and
-+  directly forces the MAC into the specified ``rx``/``tx`` state. The
-+  configuration on both sides of the link must be complementary. For
-+  example, if one side is set to ``tx on`` ``rx off``, the link partner must be
-+  set to ``tx off`` ``rx on`` for flow control to function correctly.
-+
-+Configuring PFC with ``dcb`` (IEEE 802.1Q Clause 36)
-+----------------------------------------------------
-+PFC is part of the Data Center Bridging (DCB) subsystem and is managed with the
-+``dcb`` tool (iproute2). Some deployments use ``dcbtool`` (lldpad) instead; this
-+document shows ``dcb(8)`` examples.
-+
-+**Viewing PFC Settings**:
-+
-+.. code-block:: text
-+
-+  $ dcb pfc show dev eth0
-+  pfc-cap 8 macsec-bypass off delay 4096
-+  prio-pfc 0:off 1:off 2:off 3:off 4:off 5:off 6:on 7:on
-+
-+This shows the PFC state (on/off) for each priority (0-7).
-+
-+**Changing PFC Settings**:
-+
-+.. code-block:: bash
-+
-+  # Enable PFC on priorities 6 and 7, leaving others as they are
-+  $ dcb pfc set dev eth0 prio-pfc 6:on 7:on
-+
-+  # Disable PFC for all priorities except 6 and 7
-+  $ dcb pfc set dev eth0 prio-pfc all:off 6:on 7:on
-+
-+Monitoring Flow Control
-+=======================
-+
-+The standard way to check if flow control is actively being used is to view the
-+pause-related statistics.
-+
-+**Monitoring Link-wide PAUSE**:
-+Use ``ethtool --include-statistics -a <interface>``.
-+
-+.. code-block:: text
-+
-+  $ ethtool --include-statistics -a eth0
-+  Pause parameters for eth0:
-+  ...
-+  Statistics:
-+    tx_pause_frames: 0
-+    rx_pause_frames: 0
-+
-+**Monitoring PFC**:
-+PFC statistics (sent and received frames per priority) are available
-+through the ``dcb`` tool.
-+
-+.. code-block:: text
-+
-+  $ dcb pfc show dev eth0 requests indications
-+  requests 0:0 1:0 2:0 3:1024 4:2048 5:0 6:0 7:0
-+  indications 0:0 1:0 2:0 3:512 4:4096 5:0 6:0 7:0
-+
-+The ``requests`` counters track transmitted PFC frames (TX), and the
-+``indications`` counters track received PFC frames (RX).
-+
-+Link-wide PAUSE Autonegotiation Details
-+=======================================
-+
-+The autonegotiation process for link-wide PAUSE is managed by the PHY and
-+involves advertising capabilities and resolving the outcome.
-+
-+* Terminology (link-wide PAUSE):
-+
-+    - **Symmetric pause**: both directions are paused when requested (TX+RX
-+      enabled).
-+    - **Asymmetric pause**: only one direction is paused (e.g., RX-only or
-+      TX-only).
-+
-+    In IEEE 802.3 advertisement/resolution, symmetric/asymmetric are encoded
-+    using two bits (Pause/Asym) and resolved per the standard truth tables
-+    below.
-+
-+* **Advertisement**: The PHY advertises the MAC's flow control capabilities.
-+  This is done using two bits in the advertisement register: "Symmetric
-+  Pause" (Pause) and "Asymmetric Pause" (Asym). These bits should be
-+  interpreted as a combined value, not as independent flags. The kernel
-+  converts the user's ``rx`` and ``tx`` settings into this two-bit value as
-+  follows:
-+
-+  .. code-block:: text
-+
-+    tx  rx | Pause  Asym
-+    -------+-------------
-+     0   0 |   0      0
-+     0   1 |   1      1
-+     1   0 |   0      1
-+     1   1 |   1      0
-+
-+* **Resolution**: After negotiation, the PHY reports the link partner's
-+  advertised Pause and Asym bits. The final flow control mode is determined
-+  by the combination of the local and partner advertisements, according to
-+  the IEEE 802.3 standard:
-+
-+  .. code-block:: text
-+
-+    Local Device       | Link Partner       | Result
-+    Pause  Asym        | Pause   Asym       |
-+    -------------------+--------------------+---------
-+      0      X         |  0       X         | Disabled
-+      0      1         |  1       0         | Disabled
-+      0      1         |  1       1         | TX only
-+      1      0         |  0       X         | Disabled
-+      1      X         |  1       X         | TX + RX
-+      1      1         |  0       1         | RX only
-+
-+  It is important to note that the advertised bits reflect the *current
-+  configuration* of the MAC, which may not represent its full hardware
-+  capabilities.
-+
-+Kernel Policy: "Set and Trust"
-+==============================
-+
-+The ethtool pause API is defined as a **wish policy** for
-+IEEE 802.3 link-wide PAUSE only. A user request is always accepted
-+as the preferred configuration, but it may not be possible to apply
-+it in all link states.
-+
-+Key constraints:
-+
-+- Link-wide PAUSE is not valid on half-duplex links.
-+- Link-wide PAUSE cannot be used together with Priority-based Flow Control
-+  (PFC, IEEE 802.1Q Clause 36).
-+- If autonegotiation is active and the link is currently down, the future
-+  mode is not yet known.
-+
-+Because of these constraints, the kernel stores the requested setting
-+and applies it only when the link is in a compatible state.
-+
-+Implications for userspace:
-+
-+1. Set once (the "wish"): the requested Rx/Tx PAUSE policy is
-+   remembered even if it cannot be applied immediately.
-+2. Applied conditionally: when the link comes up, the kernel enables
-+   PAUSE only if the active mode allows it.
-+
-+Component Roles in Flow Control
-+===============================
-+
-+The configuration of flow control involves several components, each with a
-+distinct role.
-+
-+The MAC (Media Access Controller)
-+---------------------------------
-+The MAC is the hardware component that actually sends and receives PAUSE
-+frames. Its capabilities define the upper limit of what the driver can support.
-+For link-wide PAUSE, MACs can vary in their support for symmetric (both
-+directions) or asymmetric (independent TX/RX) flow control.
-+
-+For PFC, the MAC must be capable of generating and interpreting the
-+priority-based PAUSE frames and managing separate pause states for each
-+traffic class.
-+
-+Many MACs also implement automatic PAUSE frame transmission based on the fill
-+level of their internal RX FIFO. This is typically configured with two
-+thresholds:
-+
-+* **FLOW_ON (High Water Mark)**: When the RX FIFO usage reaches this
-+  threshold, the MAC automatically transmits a PAUSE frame to stop the sender.
-+
-+* **FLOW_OFF (Low Water Mark)**: When the RX FIFO usage drops below this
-+  threshold, the MAC transmits a PAUSE frame with a quanta of zero to tell
-+  the sender it can resume transmission.
-+
-+The optimal values for these thresholds depend on the link's round-trip-time
-+(RTT) and the peer's internal processing latency. The high water mark must be
-+set low enough so that the MAC's RX FIFO does not overflow while waiting for
-+the peer to react to the PAUSE frame. The driver is responsible for configuring
-+sensible defaults according to the IEEE specification. User tuning should only
-+be necessary in special cases, such as on links with unusually long cable
-+lengths (e.g., long-haul fiber).
-+
-+The PHY (Physical Layer Transceiver)
-+------------------------------------
-+The PHY's role is distinct for each flow control mechanism:
-+
-+* **Link-wide PAUSE**: During the autonegotiation process, the PHY is
-+  responsible for advertising the device's flow control capabilities. See the
-+  "Link-wide PAUSE Autonegotiation Details" section for more information.
-+
-+* **Half-Duplex Collision-Based Flow Control**: The PHY is fundamental to the
-+  CSMA/CD process. It performs carrier sensing (checking if the line is idle)
-+  and collision detection, which is the mechanism leveraged to throttle the
-+  sender.
-+
-+* **Priority-based Flow Control (PFC)**: The PHY is not directly involved in
-+  negotiating PFC capabilities. Its role is to establish the physical link.
-+  PFC negotiation happens at a higher layer via the Data Center Bridging
-+  Capability Exchange Protocol (DCBX).
-+
-+User Space Interface
-+====================
-+The primary user space tools are ``ethtool`` for link-wide PAUSE and ``dcb`` for
-+PFC. They communicate with the kernel to configure the network device driver
-+and underlying hardware.
-+
-+**Link-wide PAUSE Netlink Interface (``ethtool``)**
-+
-+See the ethtool Netlink spec (``Documentation/netlink/specs/ethtool.yaml``)
-+for the authoritative definition of the Pause control and Pause statistics
-+attributes. The generated UAPI is in
-+``include/uapi/linux/ethtool_netlink_generated.h``.
-+
-+**PFC Netlink Interface (``dcb``)**
-+
-+The authoritative definitions for DCB/PFC netlink attributes and commands are in
-+``include/uapi/linux/dcbnl.h``. See also the ``dcb(8)`` manual page and the DCB
-+subsystem documentation for userspace configuration details.
-+
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index b7a4969e9bc9..243f4ceb4ab1 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -55,6 +55,7 @@ Contents:
-    eql
-    fib_trie
-    filter
-+   flow_control
-    generic-hdlc
-    generic_netlink
-    ../netlink/specs/index
-diff --git a/Documentation/networking/phy.rst b/Documentation/networking/phy.rst
-index 7f159043ad5a..a900e18a93d3 100644
---- a/Documentation/networking/phy.rst
-+++ b/Documentation/networking/phy.rst
-@@ -343,16 +343,8 @@ Some of the interface modes are described below:
- Pause frames / flow control
- ===========================
- 
--The PHY does not participate directly in flow control/pause frames except by
--making sure that the SUPPORTED_Pause and SUPPORTED_AsymPause bits are set in
--MII_ADVERTISE to indicate towards the link partner that the Ethernet MAC
--controller supports such a thing. Since flow control/pause frames generation
--involves the Ethernet MAC driver, it is recommended that this driver takes care
--of properly indicating advertisement and support for such features by setting
--the SUPPORTED_Pause and SUPPORTED_AsymPause bits accordingly. This can be done
--either before or after phy_connect() and/or as a result of implementing the
--ethtool::set_pauseparam feature.
--
-+For detailed link-wide PAUSE and PFC behavior and configuration, see
-+flow_control.rst.
- 
- Keeping Close Tabs on the PAL
- =============================
-diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
-index de5bd76a400c..d921bd602064 100644
---- a/include/linux/ethtool.h
-+++ b/include/linux/ethtool.h
-@@ -931,9 +931,48 @@ struct kernel_ethtool_ts_info {
-  * @get_pause_stats: Report pause frame statistics. Drivers must not zero
-  *	statistics which they don't report. The stats structure is initialized
-  *	to ETHTOOL_STAT_NOT_SET indicating driver does not report statistics.
-- * @get_pauseparam: Report pause parameters
-- * @set_pauseparam: Set pause parameters.  Returns a negative error code
-- *	or zero.
-+ *
-+ * @get_pauseparam: Report the configured policy for link-wide PAUSE
-+ *      (IEEE 802.3 Annex 31B). Drivers must fill struct ethtool_pauseparam
-+ *      such that:
-+ *      @autoneg:
-+ *              This refers to **Pause Autoneg** (IEEE 802.3 Annex 31B) only
-+ *              and is independent of generic link autonegotiation configured
-+ *              via ethtool -s.
-+ *              true  -> the device follows the negotiated result of pause
-+ *                       autonegotiation (Pause/Asym);
-+ *              false -> the device uses a forced MAC state independent of
-+ *                       negotiation.
-+ *      @rx_pause/@tx_pause:
-+ *              represent the desired policy (preferred configuration).
-+ *              In autoneg mode they describe what is to be advertised;
-+ *              in forced mode they describe the MAC state to apply.
-+ *
-+ *      Drivers (and/or frameworks) should persist this policy across link
-+ *      changes and reapply appropriate MAC programming when link parameters
-+ *      change.
-+ *
-+ * @set_pauseparam: Apply a policy for link-wide PAUSE (IEEE 802.3 Annex 31B).
-+ *      If @autoneg is true:
-+ *              Arrange for pause advertisement (Pause/Asym) based on
-+ *              @rx_pause/@tx_pause and program the MAC to follow the
-+ *              negotiated result (which may be symmetric, asymmetric, or off
-+ *              depending on the link partner).
-+ *      If @autoneg is false:
-+ *              Do not rely on autonegotiation; force the MAC RX/TX pause
-+ *              state directly per @rx_pause/@tx_pause.
-+ *
-+ *      Implementations that integrate with PHYLIB/PHYLINK should cooperate
-+ *      with those frameworks for advertisement and resolution; MAC drivers are
-+ *      still responsible for applying the required MAC state.
-+ *
-+ *      Return: 0 on success or a negative errno. Return -EOPNOTSUPP if
-+ *      link-wide PAUSE is unsupported. If only symmetric pause is supported,
-+ *      reject unsupported asymmetric requests with -EINVAL (or document any
-+ *      coercion policy).
-+ *
-+ *      See also: Documentation/networking/flow_control.rst
-+ *
-  * @self_test: Run specified self-tests
-  * @get_strings: Return a set of strings that describe the requested objects
-  * @set_phys_id: Identify the physical devices, e.g. by flashing an LED
-diff --git a/include/uapi/linux/ethtool_netlink_generated.h b/include/uapi/linux/ethtool_netlink_generated.h
-index 46de09954042..0af7b90101c1 100644
---- a/include/uapi/linux/ethtool_netlink_generated.h
-+++ b/include/uapi/linux/ethtool_netlink_generated.h
-@@ -384,7 +384,13 @@ enum {
- 	ETHTOOL_A_COALESCE_MAX = (__ETHTOOL_A_COALESCE_CNT - 1)
- };
- 
--enum {
-+/**
-+ * enum ethtool_pause_stat - Statistics counters for link-wide PAUSE frames
-+ *   (IEEE 802.3 Annex 31B).
-+ * @ETHTOOL_A_PAUSE_STAT_TX_FRAMES: Number of PAUSE frames transmitted.
-+ * @ETHTOOL_A_PAUSE_STAT_RX_FRAMES: Number of PAUSE frames received.
-+ */
-+enum ethtool_a_pause_stat {
- 	ETHTOOL_A_PAUSE_STAT_UNSPEC,
- 	ETHTOOL_A_PAUSE_STAT_PAD,
- 	ETHTOOL_A_PAUSE_STAT_TX_FRAMES,
-@@ -394,7 +400,25 @@ enum {
- 	ETHTOOL_A_PAUSE_STAT_MAX = (__ETHTOOL_A_PAUSE_STAT_CNT - 1)
- };
- 
--enum {
-+/**
-+ * enum ethtool_pause - Parameters for link-wide PAUSE (IEEE 802.3 Annex 31B).
-+ * @ETHTOOL_A_PAUSE_AUTONEG: Acts as a mode selector for the driver. On GET:
-+ *   indicates the driver's behavior. If true, the driver will respect the
-+ *   negotiated outcome; if false, the driver will use a forced configuration.
-+ *   On SET: if true, the driver configures the PHY's advertisement based on
-+ *   the rx and tx attributes. If false, the driver forces the MAC into the
-+ *   state defined by the rx and tx attributes.
-+ * @ETHTOOL_A_PAUSE_RX: Enable receiving PAUSE frames (pausing local TX). On
-+ *   GET: reflects the currently preferred configuration state.
-+ * @ETHTOOL_A_PAUSE_TX: Enable transmitting PAUSE frames (pausing peer TX). On
-+ *   GET: reflects the currently preferred configuration state.
-+ * @ETHTOOL_A_PAUSE_STATS: Contains the pause statistics counters. The source
-+ *   of these statistics is determined by stats-src.
-+ * @ETHTOOL_A_PAUSE_STATS_SRC: Selects the source of the MAC statistics, values
-+ *   from enum ethtool_mac_stats_src. This allows requesting statistics from an
-+ *   aggregated MAC or a specific PHY, for example.
-+ */
-+enum ethtool_a_pause {
- 	ETHTOOL_A_PAUSE_UNSPEC,
- 	ETHTOOL_A_PAUSE_HEADER,
- 	ETHTOOL_A_PAUSE_AUTONEG,
-diff --git a/net/dcb/dcbnl.c b/net/dcb/dcbnl.c
-index 03eb1d941fca..91ee22f53774 100644
---- a/net/dcb/dcbnl.c
-+++ b/net/dcb/dcbnl.c
-@@ -27,6 +27,8 @@
-  *
-  * Priority-based Flow Control (PFC) - provides a flow control mechanism which
-  *   can work independently for each 802.1p priority.
-+ *   See Documentation/networking/flow_control.rst for a high level description
-+ *   of the user space interface for Priority-based Flow Control (PFC).
-  *
-  * Congestion Notification - provides a mechanism for end-to-end congestion
-  *   control for protocols which do not have built-in congestion management.
-diff --git a/net/ethtool/pause.c b/net/ethtool/pause.c
-index 0f9af1e66548..eacf6a4859bf 100644
---- a/net/ethtool/pause.c
-+++ b/net/ethtool/pause.c
-@@ -1,5 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0-only
- 
-+/* See Documentation/networking/flow_control.rst for a high level description of
-+ * the userspace interface.
-+ */
-+
- #include "netlink.h"
- #include "common.h"
- 
--- 
-2.39.5
+> If so, bailing from KVM doesn't seem to add any value.
+
+As firmware does not bail out, I had kept this check.
+
+RegardsNikunjhttps://lore.kernel.org/all/afcf9a0b-7450-4df7-a21b-80b56264fc15@amd.com 
 
 
