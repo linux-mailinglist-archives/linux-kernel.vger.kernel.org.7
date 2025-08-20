@@ -1,106 +1,106 @@
-Return-Path: <linux-kernel+bounces-777036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73056B2D454
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:52:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CFBB2D45A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E17E3BF456
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C1773BE63A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C452D12F5;
-	Wed, 20 Aug 2025 06:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ZVRWyZM+"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DF72D2387;
+	Wed, 20 Aug 2025 06:55:51 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ED42797AE
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567632343C0;
+	Wed, 20 Aug 2025 06:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755672770; cv=none; b=ajaUcuRjdvycgo/COzhjW78ltfvSa6X09KFvFrothZAC64zOl/Nj1RBKkAZfHIjjF46LhFa9oPXa5Q7TrV6EIueoIKZKWIHq2gIwOp/ntRBLfCxVRawfL+T7Fk/P8GA5Y+KPbBf7Vu+vqnLh+Uihwe0iJPbY1Q9UMl4NVh9vhLw=
+	t=1755672951; cv=none; b=gulusxuBs08591afIHwRTnFqSUJ9f/2g4/BbHvLbOtfuCyZrfqfp/Ej6Nb26DlnuenXwF8I5gPKecE1R3OU+n4ul0xrJIQpE6+3L+R/8EMhp6NEnNqNoq4pRDzMlfgMsf7aRgBKdDyL3eM5T1MWNP4ml/j0zNPmFWGdWQwaQ+Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755672770; c=relaxed/simple;
-	bh=8KpNSuplwGzUxo+pl/kaST7GJG3ijoRwu/q/QBQCOQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LO8u9UwQbogG+ET7ABT2t8R2v4CP6NzmK6g93SalRfFm0KCu2dHXQPxaLvGcLE6tJCQ5tCWp16CDDFFOaooKeZs+fyIjhyECcTjVlyGpEXanRXDG7GoUrhRqex3s7X0h7/4Mk7FQ8VXjWL4htNh/sPGWwe5Kh0ErtiNWUPb86T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=ZVRWyZM+; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b0fa7ed37dso6287101cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:52:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1755672768; x=1756277568; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=50jwrZQGjSslyTyuIwE+ZuameHGuXlZuSBPYcNv7KGE=;
-        b=ZVRWyZM+Bu0wsEu0yNCXSetYI+iD1L2DQAO0g2CrR+UQrKK/Y3iQnDtBMvLlPu3AKM
-         6yCcontr7PhcI6qbkfRLciQtaBFBp4xy2mISvv5zJHH7qsAyBGf3tuf8ZIkTuc+twaRa
-         JTHRpDfpLrij0ap5ioA1LZbxA+vnwXcCrWPsQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755672768; x=1756277568;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=50jwrZQGjSslyTyuIwE+ZuameHGuXlZuSBPYcNv7KGE=;
-        b=u3s0Gl/1eMNNiwuP3yVIJQjKA9Yl1b8N8Cu4mqjpaMptVLPB5rlVzuM2bVfk4H6epj
-         rZ2Q9qWEIPmpe35670NV3uUP/VlBWQo2/9egbaQjcp3u60qSbdc63scc7jMHhf1eihKn
-         onTwMNjpLYhjJDy85NsakIaGDiW8jHwntW/Cl0IyGP/PYHhtzfrExKD6yNLzaRLrmbh8
-         QYDOp/XTwXfQsf0YhnGhUYnXx8ng4fczqZpdfM+Uo/Fnr/GjyW/xhKihP36kmmlz8+dI
-         HzRyHqLOwwbqmWIUngY8mo+GcKnN2WVmobhxPl9sET2p+qyk0diPDimuZxvsldSk33IZ
-         sHrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXA63rtNTCOPovxjFem0ieLy0niOo8fnDH0sN+f78ckOoPo4gamdsGyS3VvojNpNDPHUgSXgzx6QptP/r8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwixVaWkvZ7zclb7f6tP2Y7ht3nQm+m1tGNKRqr4EedGmViDx0U
-	G0b223ODfk1tWHgnnDkXOVC9IqVcEeDsDbrQBXiHztORQCeB9L+eH701shrfQYMvWBJ2bGzieOo
-	mISQgokywbJty4CXPOWsnjjje26NJ4l3ItKr8SqJplw==
-X-Gm-Gg: ASbGncufGt/SYF9fFhnS0W4gBfhov5rfEhj62Xv/EZZy2ZsOf4A3XgB8bJn2LtzNkFp
-	MOdVW5GYavqhZptHKFKkmrc9BQ7fUJ/Ug712yM/0zaSYu7vo5YCaX4/juT1qAOH7jxORVvV9/An
-	CiGUyZLoVZAg1+jkvmImB5iUkD/YiJS13mapP4dM23Af7aCnZvfqO+UOPG8E8TR+aHK7gZ1dCCk
-	VxYt2NBRQ==
-X-Google-Smtp-Source: AGHT+IHMMLFegyAHtkHM39XKsIT7CwuHtFQVVR0IPD+S1rOAm1yFvIpYjEgCtH8dZpenVWW8VUPUG0GfQjanDxMFd38=
-X-Received: by 2002:a05:622a:146:b0:4b0:769e:42e8 with SMTP id
- d75a77b69052e-4b291245817mr17863531cf.29.1755672767783; Tue, 19 Aug 2025
- 23:52:47 -0700 (PDT)
+	s=arc-20240116; t=1755672951; c=relaxed/simple;
+	bh=9qDlSaoz+L6S1w1FP84KDoNHJgTm4ExxvS1BAhiYUaM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WbvxDJrIApS7Yt+puuCmEFpknq9LOniAMKARUAieA2tkrie3wOhj8EXnfcDC9OZA+NbQP7Td3pyTJReSH+o1Spxkh1IeInTy75B7j2E00xnYgEOsBo9uNv3RXKUkSmJ5hIcnjPDtB+MXb27tKV0qqpSYldpUfNmuIJrYberC3Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c6HDC5jZPz2CgDH;
+	Wed, 20 Aug 2025 14:51:23 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 81130140279;
+	Wed, 20 Aug 2025 14:55:46 +0800 (CST)
+Received: from huawei.com (10.175.104.170) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 20 Aug
+ 2025 14:55:45 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <jiri@resnulli.us>,
+	<wangliang74@huawei.com>, <idosch@nvidia.com>, <rrendec@redhat.com>,
+	<menglong8.dong@gmail.com>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next] net: vxlan: remove unused argument of vxlan_mdb_remote_fini()
+Date: Wed, 20 Aug 2025 14:56:16 +0800
+Message-ID: <20250820065616.2903359-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJfpegsz3fScMWh4BVuzax1ovVN5qEm1yr8g=XEU0DnsHbXCvQ@mail.gmail.com>
- <20250820021143.1069-1-luochunsheng@ustc.edu> <20250820052043.GJ7942@frogsfrogsfrogs>
-In-Reply-To: <20250820052043.GJ7942@frogsfrogsfrogs>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 20 Aug 2025 08:52:35 +0200
-X-Gm-Features: Ac12FXw2UXnjG3CcysEUnSzytZykEIInMtM4kPoHI69C9Q7SHuaQEOwDwiyPNBY
-Message-ID: <CAJfpegtXUekKPaCxEG29SWAK0CTz-fdGvH=_1G5rcK9=eHt6wQ@mail.gmail.com>
-Subject: Re: [PATCH] fuse: clarify extending writes handling
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Chunsheng Luo <luochunsheng@ustc.edu>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On Wed, 20 Aug 2025 at 07:20, Darrick J. Wong <djwong@kernel.org> wrote:
+The argument 'vxlan' is unused, when commit a3a48de5eade ("vxlan: mdb: Add
+MDB control path support") add function vxlan_mdb_remote_fini(). Just
+remove it.
 
-> I don't understand the current behavior at all -- why do the callers of
-> fuse_writeback_range pass an @end parameter when it ignores @end in
-> favor of LLONG_MAX?  And why is it necessary to flush to EOF at all?
-> fallocate and copy_file_range both take i_rwsem, so what could they be
-> racing with?  Or am I missing something here?
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+---
+ drivers/net/vxlan/vxlan_mdb.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-commit 59bda8ecee2f ("fuse: flush extending writes")
+diff --git a/drivers/net/vxlan/vxlan_mdb.c b/drivers/net/vxlan/vxlan_mdb.c
+index 816ab1aa0526..e8fa9364d661 100644
+--- a/drivers/net/vxlan/vxlan_mdb.c
++++ b/drivers/net/vxlan/vxlan_mdb.c
+@@ -740,8 +740,7 @@ static int vxlan_mdb_remote_init(const struct vxlan_mdb_config *cfg,
+ 	return 0;
+ }
+ 
+-static void vxlan_mdb_remote_fini(struct vxlan_dev *vxlan,
+-				  struct vxlan_mdb_remote *remote)
++static void vxlan_mdb_remote_fini(struct vxlan_mdb_remote *remote)
+ {
+ 	WARN_ON_ONCE(!hlist_empty(&remote->src_list));
+ 	vxlan_mdb_remote_rdst_fini(rtnl_dereference(remote->rd));
+@@ -1159,7 +1158,7 @@ static int vxlan_mdb_remote_add(const struct vxlan_mdb_config *cfg,
+ 	return 0;
+ 
+ err_remote_fini:
+-	vxlan_mdb_remote_fini(cfg->vxlan, remote);
++	vxlan_mdb_remote_fini(remote);
+ err_free_remote:
+ 	kfree(remote);
+ 	return err;
+@@ -1172,7 +1171,7 @@ static void vxlan_mdb_remote_del(struct vxlan_dev *vxlan,
+ 	vxlan_mdb_remote_notify(vxlan, mdb_entry, remote, RTM_DELMDB);
+ 	list_del_rcu(&remote->list);
+ 	vxlan_mdb_remote_srcs_del(vxlan, &mdb_entry->key, remote);
+-	vxlan_mdb_remote_fini(vxlan, remote);
++	vxlan_mdb_remote_fini(remote);
+ 	kfree_rcu(remote, rcu);
+ }
+ 
+-- 
+2.33.0
 
-The issue AFAICS is that if writes beyond the range end are not
-flushed, then EOF on backing file could be below range end (if pending
-writes create a hole), hence copy_file_range() will stop copying at
-the start of that hole.
-
-So this patch is incorrect, since not flushing copy_file_range input
-file could result in a short copy.
-
-Thanks,
-Miklos
 
