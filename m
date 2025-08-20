@@ -1,215 +1,188 @@
-Return-Path: <linux-kernel+bounces-778044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F345EB2E115
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F319B2E0CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF24FA2842B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:15:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A4221BA3361
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF9C322A30;
-	Wed, 20 Aug 2025 15:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B235225742C;
+	Wed, 20 Aug 2025 15:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nJh1zVD7"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013040.outbound.protection.outlook.com [40.107.159.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9XT9FFn"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BF82773DA;
-	Wed, 20 Aug 2025 15:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755702258; cv=fail; b=eXQWSlhzhsb4Ps9Cmpl+s7XbUhPCV98q38Bc7O/EbDv2fkXxKqfUPCOdDNuPqltNlsWONaWbFhF5JVw3RS9LsNqezbK+1CEJyqIDZnCJJWWpggmHWhN3k8jGqksRlJoshS/33Xczi8sxlTqMg6+CNgKQqL6qNaTXSG/ZY3aLXCw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755702258; c=relaxed/simple;
-	bh=GF8kmL/+CpKP42KOuETl7QXlmCDZmjTF+kw8rPZzMdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mYxvBDWuVMjGVvGMAbm56Zr2TMC2PwaQ/FYB3Li8YasOalb9rmJveXnCsPdLNXG1NQoykzAgjPIP16nAqPHeAsMBC9NiPsyumnt9ryeJj3S6ZhoZanx4+SQMXy2Pc23seP2VeUSrcxde+ZQNePc9t076BzkRGIhqwHv1eQAJYT4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nJh1zVD7; arc=fail smtp.client-ip=40.107.159.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OA0ybhQdslisgcP3aapG5j9icUzfEcWPZHoFRrQpmFzXe1xrPQ51MGhTTm9kqBljx5mLPJBHvMZiKE3jO3OS7Z7DO6NQPpO/03xcJGUTL6JbGOD2g6K6fvxb8yGrWMYw+hYkI/v2el7abKrlkbY62M4MwappoHH14Vv3oZDjJUA9evGvhEDUMCd6iR97g6YZkYneCGy/2Aea8NOdv7/zYULc1dJ+aiOwOEVZXkBfEs1CvFSQxhijP65/9g1syRloywQg4ME+zk8Fzl65W5n0ypYUGiMqzHCvOIw5V2nLlxD1tqoAlpGwAOixV+LZqLdjtvFrVLt1y8Ad84tMh4AwBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uAVtJCz9hj861a0/av5zeX8q9iPSvyX3Uw11B7ltlqU=;
- b=FpsY34C+CfQKWGLzIS01NEx+Cx6P7coYpUNiqBnOlo8lcMjXpiGVzLPYTqfnxg+A/y5rReb2KZciRPJzDWQTsRyv+1cdJP8BMBNW2pQRiZcut7FCUOFZawMrQXf0zuoDkNQ03XAejqi5ctVj1Ccy/o+y015viJ7+9hZ+TLg0Asjhuxw+aux1k9VPF2Z9EFfuNtnMFJVn/ImO2/TYKLWiUpQLyq38ZFdv3dtEau9PtNyak5tHNM6LMjdpVyJLm5OBWaB2oQGUJ3mXhpf+EYFldbXwJt49Zi4EhhpKQ1qgBiydQHiCP9wck4x2v//qLT6CbQVhofbyPDD7Fl6SeMwTfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uAVtJCz9hj861a0/av5zeX8q9iPSvyX3Uw11B7ltlqU=;
- b=nJh1zVD7DYo36ZCr4XWPwfGnKm6Vm/aQSl0IIBnXQB/t5QRksqowNtBF4e+jR6p03zY2cpvyKKOfZOzesnpK44Q+EK+sfmjyU7PiSm+vy3QD0ACzo1r7R+pCvqZS6dXa8zQJhm+N/smxtvPXzN+6aJ9RzwO9eAJJxhwgfyPWUBJ3NP6K6EEM9j1sjSopwSxkWtDdYn+sE5YijL4HrKYv60pNGu0N38GXehzUTdatHuW9TNmJFFpuwRwDBIGwZZ/co6kSWyq+8dD3h2DFg5cOluxVHeMeHZynxQpH9lo7tB4xyOLxofJhPVG+mpcpAnn/XqLURG3dqVOWQS3qY7PnxA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AM9PR04MB8698.eurprd04.prod.outlook.com (2603:10a6:20b:43d::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.12; Wed, 20 Aug
- 2025 15:04:12 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.9052.012; Wed, 20 Aug 2025
- 15:04:12 +0000
-Date: Wed, 20 Aug 2025 11:04:04 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, lpieralisi@kernel.org, kwilczynski@kernel.org,
-	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, bhelgaas@google.com, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] PCI: imx6: Enable the vpcie3v3aux regulator when
- fetch it
-Message-ID: <aKXj5IT9yEWYn6BG@lizhi-Precision-Tower-5810>
-References: <20250820022328.2143374-1-hongxing.zhu@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820022328.2143374-1-hongxing.zhu@nxp.com>
-X-ClientProxiedBy: PH8PR02CA0054.namprd02.prod.outlook.com
- (2603:10b6:510:2da::14) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D1633EAFA
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755702567; cv=none; b=G21w5eziX0SSCxBrsiZQd7XObs/EV7rauGAJzGxf6DqPUaMWVTIM3ahzqt2lbyZ1T9+Ym8mdR239wVi+EMNW4c2Eaab68nxMb2K7ZQY+0fNTqY4ONphPCZj57VV/4MOHce7r5xHm21DX/oOsBhQQcps8Vmr2D8mzbjID4UXAkTI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755702567; c=relaxed/simple;
+	bh=OSjYCM+QZePSiWEWA+QZ0XnfyYn14Pe1yajip1omtRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tLU6/QKGYIBGVV8Ukt1uCWNYo8i366RiCtigqtqHyvySHvyI4QxlrK9t6rhIFl8go3GxQLYVzXnvbgb4EykYyO3bj8aC+QLGTqq9FkfKtdgkrGe4as4ZARTYz0ibRhn8UOUhCgH7amclJsAc2SVS1wY65Wv3OWN+sKM370E8lzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D9XT9FFn; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445818eb6eso49693405ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:09:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755702565; x=1756307365; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dSgIm4/H7Yu+PP0A4Akgz8hg8ykeT23+87+VAQDW1aE=;
+        b=D9XT9FFnpPryNJQkZDWDfGzkYOtOOGG8aM2XrAEuooCUbBdUJFsJaX9/D/TRMa69ho
+         BBpH8YMl+TC5HqitObEhZiduJBCUAtwEfPTb4X/GI6jzirpO2/pvJOKXrSfaEk03y7AS
+         2dsBefHLyDgFy3/LoxPWPbqvy9vCsQhVDJzkOy+hNvn0KlQVoHJVyMr4DlymROTYLM2K
+         jqPI2gFP5kMUmm1YEs9E/Kvdh8V4WubbEE5ttq9V4JFwiOJOoLoXGOz5xrvjkzOmjaGw
+         SuVb9aM8zO7U/2ET7hRHSbvUca7IwRerurdfwvAJFuo4EYhIWlv3A0NWAESbnA3QCnqo
+         dR7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755702565; x=1756307365;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dSgIm4/H7Yu+PP0A4Akgz8hg8ykeT23+87+VAQDW1aE=;
+        b=hDGK1w1fciOXYFsGsE0AtH+3bVmt6y6CnJWUu6W+FBxYAWcjohvPl7xhtZHu+mCETB
+         kwznB6dolNg9g689g8VZ4Ey82wHEsUyfFA4JbCAoQcR1v8do7rdIoOc/gf+Aq7xyog/s
+         qSw9Oiamk+pvbtp1f0pAU2NMi++df53AYQ8TkIIhimRImTP2vxA/6BAtov7/RkC2pk+M
+         OYJymPov55jfkK6h+7r/4OX/TDjnzii6noq4+TpzMCkhwdwEaEKbLUUXcHkSKGxcTF9c
+         pvIuemQ8s5BtjeNrsE02IML6ne70yqQreIYzbc09nYUWpgPGugiiPuTPNDyFm/KXTdou
+         CD/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUd7q+xgJYrPico9xajS3WemELoNSumCQ9dir+l3uxcaOP+FkwTZb+2Bga76k6ZDT1Itx2EVbnqohcYLRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydU2H5tLprv23S0fPHpVOSYHE2XYUUwggnK3xtm+4Nj4uWVMTW
+	NNb6H8a1hkeK0H6l8/vDwr4fOGJLF3wmEmAHCyB66760C3v2pxWUtgac
+X-Gm-Gg: ASbGncu0aiq3dR94werQDfJggLzQqpd3zrMMlS/11lApMnQOsbhWSdVdoBJVKECcb/n
+	vSN++G4+iU3SGj4C0dBLPDqZREiLoL12f7MPphR8d1D29lOHQ1jxriZ2PfPq2JVFwDVi77sPApf
+	W3QXQCSvbjI9xeF6YCe9JrX7f97C3TESByREOYNN/rMGBWvlouZOiHiNvIy2SgcCiuIB/jAMdzq
+	av4IA9DpZ/dvjRIOAOcDbcgnCzyK/9O0kw3h9WpNHWvX7UFdvK4598mIT3+oR1yI3D/xAenpjQU
+	REO/PI9oy7BeuIa07JfN9++hIgqGorqDct+JCBsJrl7HT6bmpI5w/9LtORKRXM3S9XUzicEqrO5
+	RjwBLan7i+2SDvNdPsQ==
+X-Google-Smtp-Source: AGHT+IFeesZgKogpEkYmKt7j1jigdbSSubJrkxWpbElJ8Gev87fyWh8qORnnDmjou3DFP1PVwDj13g==
+X-Received: by 2002:a17:902:ce83:b0:243:3da:17bb with SMTP id d9443c01a7336-245ef228930mr46362245ad.32.1755702564482;
+        Wed, 20 Aug 2025 08:09:24 -0700 (PDT)
+Received: from Terra ([2001:df0:b240:b5e:abe3:8cfd:3fd8:5d8e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c7494sm29526165ad.99.2025.08.20.08.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 08:09:24 -0700 (PDT)
+From: Athul Raj Kollareth <krathul3152@gmail.com>
+To: michal.wajdeczko@intel.com
+Cc: airlied@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	krathul3152@gmail.com,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	simona@ffwll.ch,
+	skhan@linuxfoundation.org,
+	tzimmermann@suse.de
+Subject: [PATCH v4] drm: Replace the deprecated DRM_* logging macros in gem helper files
+Date: Wed, 20 Aug 2025 20:34:25 +0530
+Message-ID: <20250820150829.4312-2-krathul3152@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <a5d58430-1ae7-4b7e-8275-dad09a5c8cae@intel.com>
+References: <a5d58430-1ae7-4b7e-8275-dad09a5c8cae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM9PR04MB8698:EE_
-X-MS-Office365-Filtering-Correlation-Id: d754a8f0-ae0e-4f81-8e47-08dddffad1ff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|1800799024|366016|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tDCwi+vQ/nmON968S5WTZli85IO9Tm0IycjBHxrcwt2RCvC8jB8x39se1sN9?=
- =?us-ascii?Q?cF4RkPN48SxGO1WfuZ1rCbAZmcPO9dOYl/JtIPtz8/hUkkzcManTQTsTh6Ox?=
- =?us-ascii?Q?dZ2uGxj2i+GxgzUi2aUmjg7r51J43MxH1QIGtTBehieEm9lmoKaSTuyW2+JW?=
- =?us-ascii?Q?KOVp30YGnaKljhTOyJJ96Pqqf+1hz2Z2reHDRUeo6dDK0ue237wdDx73wtaw?=
- =?us-ascii?Q?7uNnd1xP4m4KeqaMZ8djnzHNuQjtOkLBTyYRyv+kLOII2wDgX3yT8iY01W7d?=
- =?us-ascii?Q?I41A/T99ipxtE5rRkVzlJTWJIrHD1d5trtpyKbPhMGug2iC1XAA/LK/0Cu12?=
- =?us-ascii?Q?2IazKo4UpuBs36VcX2CwMa1ajwKsAKz5RIBqeq2cCTIVn0Dk24oKnYxQxZc8?=
- =?us-ascii?Q?vupO24hW/2fKgIjuB0O6wPMyfXb34J1K1bas+ebqJUni0jHStvMo0xx1Vg0H?=
- =?us-ascii?Q?bcf10DELlSWdrzaIRT2IyMGdKuwkibURpD5eCFjWVXhQ2PMbmi6cml5wg70w?=
- =?us-ascii?Q?GnBio3Vb/OA5mDa5q5kKGjxob0xulA/diY/Vc/Qdk21u6x22LjpV2bUucdk+?=
- =?us-ascii?Q?5jK76fZNdyJqBwW8zfmc6KUxvhhJWIQ4q7ceUVoNT8fqqrUcyvMa2F8MwiRW?=
- =?us-ascii?Q?oazLQ2SjzoxsgnMafI3I7q88WoIRQ2DP/M3FPiyEqYfQpKtG5in+EmKZKFfC?=
- =?us-ascii?Q?9YFVhMylAF9h7swqDgP5qUNQOdQPrp56cgr0WoKSVoCjeuyZCh7I8hSpbhRu?=
- =?us-ascii?Q?krdehmwFDD6EgnH1EJV7HsxOgJ9aZqCOGj+hGIGLuf3VpQe/8JN7on24CZr0?=
- =?us-ascii?Q?HhzWY+w2+Yiak0sxOPN/jjFHRic10R22oi91xGKwYq3u4w8EDc+si8dJsTxy?=
- =?us-ascii?Q?hQJlO4uoQjCJ/RfZIgOr0j7KCROoaegoawFWbrBhf8T7kfcgkc8kg1SwXiZV?=
- =?us-ascii?Q?4ZXj7JPNeDMrnuwmiqBCJvmyipPQLjmeqItU85KUD+CcutHNN5ArDPckI3yL?=
- =?us-ascii?Q?yMqm1D3Nayk9cv4djGVW5wlOVl1XY4THX2waaNX7UmXDFHxTErWlaq9m9sD1?=
- =?us-ascii?Q?jRenR8SGTBTPxqryFKz159hb+uJ1oNLvjBSxtLgH1xjCXx7YBvoVtpCl0jco?=
- =?us-ascii?Q?OM4Db8OBtjwIIjk34FuXCW7gDMpU+o8Kbgm+ddVB1RVuVFCd6bn9bMZWNN/n?=
- =?us-ascii?Q?b4cjyzWNjAVb2epDk9lrjWtVtXPkP5XR14GhTSkE5jSopEnOvXa24uyj/wWw?=
- =?us-ascii?Q?p4tltCjWqvEOYEwyWrTiRSCso4NgeTbCNFSSN9La7rj/bB26S+gtjQCRqS/k?=
- =?us-ascii?Q?LPGzwqrwSrE+6BuFHhkESBzZF5OWfnEMDcybEAEW3g6oEOxH4pZggjBpMw4T?=
- =?us-ascii?Q?lzXecbPZzPeGHWwBOxHbIov1T5PU4jsHRTOuvVTuG7AsCMUCDqp5j46E1J0Z?=
- =?us-ascii?Q?cFhW2aPSQ51f4SYD1qjQflnz1iCvHSbHvXubk3WM2d5LoePEmQ9shH+rTyVo?=
- =?us-ascii?Q?ylSWeB7E/VGWMuo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ebxpT22WMxFxo40mUYaj2KMvcubWtgODm0LKeXlSHh8bi/cLaIVaGEls1qVy?=
- =?us-ascii?Q?ksQKyDhK7+BcSvEwQd+8FYArnhwodsJGpBHkWkV89J3m7jadxuhlBFE+i5jT?=
- =?us-ascii?Q?oBEjnHjgGFlG8F9YpdATpsWfarOohaApt96RhoGqWE+v/T5cCxXDOlPycfRk?=
- =?us-ascii?Q?rrFrIjfzx4AgY1VTISoFXEQFiCb2CQioR9OFmBKACSpZRbNG7yuXm3n6lOGv?=
- =?us-ascii?Q?AkvKvWF3OW77qUJ1hyC6WyM1SCDu6JvBuL5iVhBDhN/n7hB2i3skhw/Rtmmn?=
- =?us-ascii?Q?ATLkzcpVCCvhWZRprTeAl99pXvqU7N3hBseOmkSAoLXFJbifyTbEyhllb/tb?=
- =?us-ascii?Q?ohOQTGvF4XlsFFBmjsdpI7hobzxEz2aZuvyuuQGbqUFeM0JD9AHqVDd7YahZ?=
- =?us-ascii?Q?ioXYTDZ4fPZtrKEpvRVAXJrOdDgCsK/yTuyJMXsfekvHXCmP47quIO4dLc2L?=
- =?us-ascii?Q?NSiezIOlTrESZDiORYE6CRm4/NQANSfeuq5VJLdddzpZL2fB8L1A7DplrrQb?=
- =?us-ascii?Q?vwKMj+q9e4uu2PCwWjhnDZP35YfjEdjfPgqPh/rPqutdqjsjdHFMQSgJZMkE?=
- =?us-ascii?Q?MroKo5ml4ZGU6+VZKaP3OFJDj7Un+uUCqbRQa/WlM88wHrxj5Bg09ro0lk11?=
- =?us-ascii?Q?/MMfl5bHdMgluw7IN2FUwPrBZhu4iTYctMPgGpczK5xagZu325dH0ZfmzNuq?=
- =?us-ascii?Q?DfienzMmO+DNWytf48knRk/hGQm3MDjkuRMlOwPOF6iEdJczbpqUMNsoVPGK?=
- =?us-ascii?Q?25mqynbx3zVSSv1aBAIlGQQjfQ9GSwRv3MDXz9xwFDxCoTTv57wbRQPfsUDm?=
- =?us-ascii?Q?chnpYm6/eUQF9u0CGEIuEygJSyyldNlnF3GTLdH+wCaTrb3OqOG1E2e9vVXu?=
- =?us-ascii?Q?ZLmqkv/KUl/biwVD11qxw/UKwAt1RJ7SEXLjdPhbBKNDWSwO1l+NTLdo23Ry?=
- =?us-ascii?Q?AO1D4QysR1JUYnuuyja4J2sVx6JDXvcVMYpz2Wru+KKvVRomJIE1FtxZKpKJ?=
- =?us-ascii?Q?QhfC7nNL/A49nz0Aeypm3qmQMk8lwm8QGAYNPhzGrmae7mrH7ZFzkB7Jym+K?=
- =?us-ascii?Q?sjK/Fk78Sjg6lRa2xsVz8oM76WS4RVhQgMZNF1dOgbxU3/0/cRBPXU5/hEfs?=
- =?us-ascii?Q?ufllzqAKWWPtFrgUkZy0zqm2mO6BHXM1UGzr+wEk99BZPqbA6V6GO3tN9lu9?=
- =?us-ascii?Q?nni/ewauZLw7FmLxPf+Klda+2ngsFyitpP5aLAqHGdSzVU2QYXzbZQFyTnam?=
- =?us-ascii?Q?kFDaMt/L/V3C08tgWnQVguLtbUjz2JVmSN9PdvaQrd1UI/AR4hfJ8o0hnqgS?=
- =?us-ascii?Q?sC40JVV5MCeIQhbSpAgnDO10cgrzgFijOOy8/wvWW7sZl6EbHD2zu2O9cPQa?=
- =?us-ascii?Q?S7SQ5RmsE3gwRd21p/UV11i5COvverHCjBaSR4xIE2LItyXxU7v1QxaT+tT7?=
- =?us-ascii?Q?N+IGr5oZO3q//pw4mouDHwRo6TcxlblK0VdBT+X6+lBBJiv9+0z5ZlWy/GQl?=
- =?us-ascii?Q?cHccvAEJM3m1Xk7RkBrZLFqHWwjif7zGghpz7C/SviZrAALHMkC8dz6ukygq?=
- =?us-ascii?Q?+10MlPH5GZnQqI8Jq2IEi0p2ZXjEr2DdBMjpCawc?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d754a8f0-ae0e-4f81-8e47-08dddffad1ff
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 15:04:12.6164
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: g5vGT8RWPOOZDn94xEeFvYAlEWdp3OKxicG15r1QhiWmmZc/J0L3wLdo/arHiZKNBbU25IhzGN89RWOq0tLiww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8698
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 10:23:28AM +0800, Richard Zhu wrote:
-> Refer to PCIe CEM r6.0, sec 2.3 WAKE# Signal, WAKE# signal is only
-> asserted by the Add-in Card when all its functions are in D3Cold state
-> and at least one of its functions is enabled for wakeup generation. The
-> 3.3V auxiliary power (+3.3Vaux) must be present and used for wakeup
-> process.
->
-> When the 3.3V auxiliary power is present, fetch this auxiliary regulator
-> at probe time and keep it enabled for the entire PCIe controller
-> lifecycle. This ensures support for outbound wake-up mechanism such as
-> WAKE# signaling.
->
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Replace the DRM_* logging macros used in gem helper files with the
+appropriate ones specified in /include/drm/drm_print.h.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Athul Raj Kollareth <krathul3152@gmail.com>
+---
+Changes in v4:
+    - Some codestyle corrections.
+    - Remove OOM error logging in drm_gem_init().
 
-> ---
-> v5 changes:
-> - Use the vpcie3v3aux property instead of adding a duplicated one.
-> - Move the comments from the code changes into the description of
->   commit.
->
-> v4 changes:
-> Move the dt-binding to snps,dw-pcie-common.yaml.
->
-> v3 changes:
-> Add a new vaux power supply used to specify the regulator powered up the
-> WAKE# circuit on the connector when WAKE# is supported.
->
-> v2 changes:
-> Update the commit message, and add reviewed-by from Frank.
-> https://patchwork.kernel.org/project/linux-pci/patch/20250619072438.125921-1-hongxing.zhu@nxp.com/
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 5a38cfaf989b1..5067da14bc053 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1739,6 +1739,10 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  	pci->max_link_speed = 1;
->  	of_property_read_u32(node, "fsl,max-link-speed", &pci->max_link_speed);
->
-> +	ret = devm_regulator_get_enable_optional(&pdev->dev, "vpcie3v3aux");
-> +	if (ret < 0 && ret != -ENODEV)
-> +		return dev_err_probe(dev, ret, "failed to enable pcie3v3vaux");
-> +
->  	imx_pcie->vpcie = devm_regulator_get_optional(&pdev->dev, "vpcie");
->  	if (IS_ERR(imx_pcie->vpcie)) {
->  		if (PTR_ERR(imx_pcie->vpcie) != -ENODEV)
-> --
-> 2.37.1
->
+Changes in v3:
+    - Revert all changes to drm_gem_objects_lookup()
+    - Use drm_device as suggested in the discussion [1]. 
+
+Changes in v2:
+    - Change drm_gem_objects_lookup() to take a drm_device* argument.
+    - Make appropriate changes to all calls of drm_gem_objects_lookup().
+---
+ drivers/gpu/drm/drm_gem.c            | 13 +++++++------
+ drivers/gpu/drm/drm_gem_dma_helper.c |  2 +-
+ 2 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 4a89b6acb6af..dc3d6cfa692b 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -102,7 +102,6 @@ drm_gem_init(struct drm_device *dev)
+ 	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
+ 					  GFP_KERNEL);
+ 	if (!vma_offset_manager) {
+-		DRM_ERROR("out of memory\n");
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -783,9 +782,10 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
+ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+ 			   int count, struct drm_gem_object ***objs_out)
+ {
+-	int ret;
+-	u32 *handles;
++	struct drm_device *dev = filp->minor->dev;
+ 	struct drm_gem_object **objs;
++	u32 *handles;
++	int ret;
+ 
+ 	if (!count)
+ 		return 0;
+@@ -805,7 +805,7 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+ 
+ 	if (copy_from_user(handles, bo_handles, count * sizeof(u32))) {
+ 		ret = -EFAULT;
+-		DRM_DEBUG("Failed to copy in GEM handles\n");
++		drm_dbg_core(dev, "Failed to copy in GEM handles\n");
+ 		goto out;
+ 	}
+ 
+@@ -853,12 +853,13 @@ EXPORT_SYMBOL(drm_gem_object_lookup);
+ long drm_gem_dma_resv_wait(struct drm_file *filep, u32 handle,
+ 				    bool wait_all, unsigned long timeout)
+ {
+-	long ret;
++	struct drm_device *dev = filep->minor->dev;
+ 	struct drm_gem_object *obj;
++	long ret;
+ 
+ 	obj = drm_gem_object_lookup(filep, handle);
+ 	if (!obj) {
+-		DRM_DEBUG("Failed to look up GEM BO %d\n", handle);
++		drm_dbg_core(dev, "Failed to look up GEM BO %d\n", handle);
+ 		return -EINVAL;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
+index 4f0320df858f..a507cf517015 100644
+--- a/drivers/gpu/drm/drm_gem_dma_helper.c
++++ b/drivers/gpu/drm/drm_gem_dma_helper.c
+@@ -582,7 +582,7 @@ drm_gem_dma_prime_import_sg_table_vmap(struct drm_device *dev,
+ 
+ 	ret = dma_buf_vmap_unlocked(attach->dmabuf, &map);
+ 	if (ret) {
+-		DRM_ERROR("Failed to vmap PRIME buffer\n");
++		drm_err(dev, "Failed to vmap PRIME buffer\n");
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-- 
+2.50.1
+
 
