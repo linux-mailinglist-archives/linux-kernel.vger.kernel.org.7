@@ -1,169 +1,114 @@
-Return-Path: <linux-kernel+bounces-777967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA75B2DFD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:47:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F02BB2DFC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DE3F1C8016E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:46:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 653FD7AC21B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552B031DDB3;
-	Wed, 20 Aug 2025 14:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBA0304BCE;
+	Wed, 20 Aug 2025 14:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSuGATo1"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RFfv9dEn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BD8311C12;
-	Wed, 20 Aug 2025 14:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F01527EFFF;
+	Wed, 20 Aug 2025 14:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755701152; cv=none; b=qbiBOXmqBKa/MpM2NCk45tNPidJiasNcMIlV4r/GNS3T18LW4VBO12+r3YQq8Vld8bXXYIaGw/uObRYgx3NGzmoseLOmJfob5xLKHwL5tSb51j/VbCKCZ2unHrXae8Zn5mfuW3RHMWuS+Lpr7a87aL/o3r/B/iBvP30EiHLpj4w=
+	t=1755701118; cv=none; b=L3WGQnW8gjXwEyNy22/3DLesQynTkGPikaBR9NBKdDcfk0T6ILGHVMswsvzSNKI2wBuoW1uVXI4kheQuvhTEpKM8oZMAYE09Xzk0GUPU/v7fpsWoooaXir+LqbkkXujkqx+zNOW1r16TIkOCJ53C4TgalF3Hvj+EC8dazvKZOWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755701152; c=relaxed/simple;
-	bh=32jsBZAt7/seCXlG3NMg0xKf/4W31H8CQQqSNif1kJs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X9mIkM2exE5Q0qMT1ZXON6kDHNEZzQjpubsN7NL4zdSi1Vfx8mY9/1gTKhaGvuI0CGZGnz4gB8muPacJ73OrybjHUMvAByzqqjaGhfV0v1BhWsgp2iE5QOQ1IoGaUsmyD+HhM4TqjKEwyp/KbipHU7PNkFgX1Gr56mj6Ki7p0x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSuGATo1; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24458242b33so62343005ad.3;
-        Wed, 20 Aug 2025 07:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755701150; x=1756305950; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sj0uvyFtjxj3kU3YkRCj5peBIKCXo4rrvGtrTbINrTM=;
-        b=mSuGATo1FxtvrlTCCxjhXcGaSdJ13c2ifGpI7ejp3hYie6T4ZeKVqO6br9IGIylq8w
-         ji6W3ycoaOAAf/63ssdbcACoFHj1HtlQZOefw769Fub3HCPsFPQpXAqnfUNK81sEso22
-         d8Mg0L/M5gX3V7kLYAbaIVQ0BK4f0SkQeT9CuEwp5nb4OZ8nKy9x/JVKuhNy2WsMNmOW
-         QrAOgTlgiLiiDin9DaliJUnAiMej7Up1JBvoWUSpXIwwebgbqK+1JAl0qzrEzftK5zoy
-         cccyQ9QA4F0pDst7tVWK68bd5Y3ngyVNZAYWz8Za+fZRA/qhk7Ka3IpjWoFRmuatkIb6
-         k7gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755701150; x=1756305950;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sj0uvyFtjxj3kU3YkRCj5peBIKCXo4rrvGtrTbINrTM=;
-        b=T2Bs0CgeIAFB6XINO9kexrljowtgjSaS4K19XUo6bTcke7S8xBVxF4fMtHhgExpa/o
-         p8CKMKWehb0HmaTc5eG5FKuDYcOvdoDyxGde/pqgaWjSgtWDDugJi9vDxDEaNne6CVoV
-         JTELU+thAnR1gLs9QhcojPxk+ybPb2BFBDzWQTj8C7a2kEXCnrZijlb7htkRmMobm+9K
-         +TszYHgWNnHMbtI4ZHoURLMeEA11cyzdFMPZQIixavXhoHiL+ZgGuoLnOj8rkPsZe1PJ
-         uhIOuTx/ETXVID5WcMJRRELMXTB6yNgZxngm+IvNkWnMvatcqq42JKdPuW63dL+gc0N3
-         uXtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXWAjjcpvILZMM7tdlzbCQdyrvAe6c18NOXqddzkdIs/rKGIxBloiVev52Mv+Fw29oo71WU7Cxc678NWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnFVSf4ID/9sXlkNRkjVgRco8gioxPpXDRpMnRoDEV1cwnQ9Xp
-	IicGZ/47DPyNL1pqcqv78/uD7uhT3nL5S/s8/v+aR+vo7pqS8/8Tjb2v
-X-Gm-Gg: ASbGncuz9veR4G7G0NBoxCEnI3ShTslk63Y0pReToCjDCShtnq2NQsVu+NGy659UYEf
-	9mFjaaW0WUmoWLhWWFdMNn+sf3w89GLK97SP0uO0c9jq98URCUvckE/2r+iQ6aQMXrqzSAhsLHv
-	KePiS85bhlgoMcvHdFeeg8ZvteWf1fUzUooEWFj0DQ7TpU3VZo1jsVPvvFvclfZ4BUpxZZ5Jwx3
-	ROXN+V7BaYrxokR1zqzX9b4mcWmyI41glPF9xvLSkIkj9w9yuohMEIcLNUmpUH13FgwYzjaJSy+
-	s/OqXv7m1DrFIcdk+pHL6qMSu7+guZ3PT/P7q34/0fpJBtDpAqAWX0clveRfVs5ZlVUhRwjr28O
-	1mED+nEsIGdRLJa8UokKDb6WsHI5cQ3BPuL3xTRg8VzNG7g==
-X-Google-Smtp-Source: AGHT+IFf4nawKbppV/T2UrrYKSAoEMOU6EWRZOkdqaZfIPVJm9V1DlFyQNJjQdkRi1Ve51HdiRHQTA==
-X-Received: by 2002:a17:903:240c:b0:242:b315:dda7 with SMTP id d9443c01a7336-245ef10f5a4mr40819575ad.3.1755701150608;
-        Wed, 20 Aug 2025 07:45:50 -0700 (PDT)
-Received: from localhost.localdomain ([202.83.40.77])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed379e92sm29197515ad.65.2025.08.20.07.45.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 07:45:50 -0700 (PDT)
-From: Abinash Singh <abinashsinghlalotra@gmail.com>
-To: martin.petersen@oracle.com,
-	James.Bottomley@HansenPartnership.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bvanassche@acm.org,
-	abinashsinghlalotra@gmail.com,
-	dlemoal@kernel.org
-Subject: [PATCH v8 2/2] scsi: sd: make sd_revalidate_disk() return void
-Date: Wed, 20 Aug 2025 20:15:10 +0530
-Message-ID: <20250820144511.15329-3-abinashsinghlalotra@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250820144511.15329-1-abinashsinghlalotra@gmail.com>
-References: <20250820144511.15329-1-abinashsinghlalotra@gmail.com>
+	s=arc-20240116; t=1755701118; c=relaxed/simple;
+	bh=odjo2XZQ6XrWahDC2Msd54vDnQEkIOtAcoMfk6YB34M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tiRbdgEH584qfjhrMSDFtS+Jd51a5Fuk7fI54Wo+0Yi6c6nS2SLgsyQ5VbacTbQYZMM9tdjedSvuKlNHYm/DvhL1kTY2WS6mGYbnXlMZOU7CwAWVxUk12VORem5f/2P35wgWIKBHVmzkwnuug5PKMpfbkXN9JFYZizpOHkd62wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RFfv9dEn; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755701117; x=1787237117;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=odjo2XZQ6XrWahDC2Msd54vDnQEkIOtAcoMfk6YB34M=;
+  b=RFfv9dEnps9asHSIvqqXWEUK4TSh6d58tm6vXaWz1yFyd8XT5Ovnz1PN
+   ROgQftrx2SYKVHYNMaE5QCrGKWeFl5fMFGVW4vXwRPk2hV7ebuUqaKcKU
+   QVRNwuREdu5Vvp8ZVXcAXm88vG0J9mOSd1ldFhexrWolkrSWO7HaleshM
+   no544p6LnNPrOae5eQs4Vx8Rb3N1X0eStjP8SBJnSrUb2YhD6MuFjMu1+
+   8upskwEhieigH1DVvjVfCrIk3PcXWx4bRJqRjaSgyQR8shTL2oxduBnpf
+   MCq63ZYA6oaBgozG/TBhFHritJ1WCKgwXSHJR1VskDIpAJ38ijw09X+rI
+   A==;
+X-CSE-ConnectionGUID: 8GcAI/roQ/+EXdvX3bDyLQ==
+X-CSE-MsgGUID: vQhhxP4yRD+BHh9LNWtyHw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="69066925"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="69066925"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:45:17 -0700
+X-CSE-ConnectionGUID: EwMB1xU4QhanClp+V84E9Q==
+X-CSE-MsgGUID: qh0RcRk8S+KpeabvXOKvIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="173495822"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:45:15 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uok3s-00000006xfb-1srv;
+	Wed, 20 Aug 2025 17:45:12 +0300
+Date: Wed, 20 Aug 2025 17:45:12 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Andrew Davis <afd@ti.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] iio: health: afe4403: Do not store dev pointer in
+ device struct
+Message-ID: <aKXfeOi2y55L1c7A@smile.fi.intel.com>
+References: <20250813225840.576305-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813225840.576305-1-afd@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The sd_revalidate_disk() function currently returns 0 for
-both success and memory allocation failure.Since none of its
-callers use the return value, this return code is both unnecessary
-and potentially misleading.
+On Wed, Aug 13, 2025 at 05:58:35PM -0500, Andrew Davis wrote:
+> The device *dev is only used in probe(), so no need to store it
+> in the device local data struct. In all the places in probe()
+> we did use that, just use a new local variable for the same.
 
-Change the return type of sd_revalidate_disk() from int to void
-and remove all return value handling. This makes the function
-semantics clearer and avoids confusion about unused return codes.
+...
 
-Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
----
- drivers/scsi/sd.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+> -		afe->trig = devm_iio_trigger_alloc(afe->dev,
+> +		afe->trig = devm_iio_trigger_alloc(dev,
+>  						   "%s-dev%d",
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 453a27322517..2ad6a0b28822 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -106,7 +106,7 @@ static void sd_config_discard(struct scsi_disk *sdkp, struct queue_limits *lim,
- 		unsigned int mode);
- static void sd_config_write_same(struct scsi_disk *sdkp,
- 		struct queue_limits *lim);
--static int  sd_revalidate_disk(struct gendisk *);
-+static void  sd_revalidate_disk(struct gendisk *);
- static void sd_unlock_native_capacity(struct gendisk *disk);
- static void sd_shutdown(struct device *);
- static void scsi_disk_release(struct device *cdev);
-@@ -3691,7 +3691,7 @@ static void sd_read_block_zero(struct scsi_disk *sdkp)
-  *	performs disk spin up, read_capacity, etc.
-  *	@disk: struct gendisk we care about
-  **/
--static int sd_revalidate_disk(struct gendisk *disk)
-+static void sd_revalidate_disk(struct gendisk *disk)
- {
- 	struct scsi_disk *sdkp = scsi_disk(disk);
- 	struct scsi_device *sdp = sdkp->device;
-@@ -3699,7 +3699,7 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 	struct queue_limits *lim = NULL;
- 	unsigned char *buffer = NULL;
- 	unsigned int dev_max;
--	int err = 0;
-+	int err;
- 
- 	SCSI_LOG_HLQUEUE(3, sd_printk(KERN_INFO, sdkp,
- 				      "sd_revalidate_disk\n"));
-@@ -3709,13 +3709,13 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 	 * of the other niceties.
- 	 */
- 	if (!scsi_device_online(sdp))
--		goto out;
-+		return;
- 
- 	lim = kmalloc(sizeof(*lim), GFP_KERNEL);
- 	if (!lim) {
- 		sd_printk(KERN_WARNING, sdkp,
- 			"sd_revalidate_disk: Disk limit allocation failure.\n");
--		goto out;
-+		return;
- 	}
- 
- 	buffer = kmalloc(SD_BUF_SIZE, GFP_KERNEL);
-@@ -3829,7 +3829,6 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 	kfree(buffer);
- 	kfree(lim);
- 
--	return err;
- }
- 
- /**
+It can be made one line less, but it's already applied...
+
+>  						   indio_dev->name,
+>  						   iio_device_id(indio_dev));
+>  		if (!afe->trig) {
+> -			dev_err(afe->dev, "Unable to allocate IIO trigger\n");
+> +			dev_err(dev, "Unable to allocate IIO trigger\n");
+>  			return -ENOMEM;
+>  		}
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
