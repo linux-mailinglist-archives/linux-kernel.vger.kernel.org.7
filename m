@@ -1,85 +1,71 @@
-Return-Path: <linux-kernel+bounces-777197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D3FB2D679
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:32:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E03BB2D68C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC346582A76
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:32:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07917586BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26F7296BDD;
-	Wed, 20 Aug 2025 08:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEBC2D879E;
+	Wed, 20 Aug 2025 08:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNoWRyfi"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Km6Cim3A"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C026626A0C7;
-	Wed, 20 Aug 2025 08:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF36231826;
+	Wed, 20 Aug 2025 08:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755678735; cv=none; b=H85sq86uCSH7Y24Ig6P56Yu/GMjv31RhkpumEnDwWaHVa0QveExZBOM0oDE75nCylJoJ+EfGOOSyqaeLIKbS/Rcu8GDd6/7lTB1aAjuVM3gRDqSsIEeuamr0L2AKquJJvkrtwyiEdVK959wU2xlA6LGKGGTmcRfFaykOyV1HH6c=
+	t=1755678854; cv=none; b=EG/P6eNkabzACrgYYT7yopnh4sBnTapfuiCpZYZd1yfhDzGqHo6yI/fANCDfjCTza/I2hRz0E2DZy1iZRgy+ltBUWt79Yr3raEnD4IrKtZCgUfMY+ESFRTsUHoQyg1AF9dGgQyy2IEnjuxLQyTNSnvcTw1HR5uFoaq/AwXzSC00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755678735; c=relaxed/simple;
-	bh=je5AHg/youKOa+xhCXnHlhnCi4E0rhPm8H3bXUt+7zk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pk1ClwMxlbjVFshIQkLiX8W2JwcPDyJMLs7q83YDRq1b64HWFzho0cEhQleHW1qTXKCB1rNMXPrsAW28xQJhT2/q/4MwBycaP4uZl/1iNlyauhqdgLEbnDXaPAOcQhvnxeQ0pjO6uTISHQWUAXcewZVGdtcDMgi5vi3ytizLjH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNoWRyfi; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24458317464so69930855ad.3;
-        Wed, 20 Aug 2025 01:32:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755678733; x=1756283533; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=moqMZqhapfuLQfkSPWKxhFFyVYs5GkMX6FHp/4+cuAI=;
-        b=eNoWRyfibnNbzoDuDFVZua820uSMEty6JHDEN6wc5xFZpgl/Vp3bnNCJf+hQidkhmb
-         avwyAE+NA/YLXaLX+74rhC8zx6cbUXuRC0YwNKX6dzJzOsiqNlnwZfYY954pTpJI2IXI
-         jnWqWRYHt/cJ4CqTbu1p22Z2zYPx6yIDq38Rw5aiVtUQIXHLzTRmeaJy2PKeriFnSYfP
-         R7vfbXkVgrUNnyijSLW2GQdIXU4jPYjKWI4E3xSENTaIpwbw3eEzvwhzjR+IXjZa6xyj
-         DXGCo+ToCpWkNiKsn1p/YtHozImPhuNMOLDt0TbdJkt8URBSVXa4UX5QprULnezRjgI4
-         PY7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755678733; x=1756283533;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=moqMZqhapfuLQfkSPWKxhFFyVYs5GkMX6FHp/4+cuAI=;
-        b=caANVg6YzYv1TaNY1mtQ83ivFymdXSVPRkQyAMtdkKeWIFIWdGQPlPEmhEkJDrKUP0
-         8uEUbbXKeHdzmlBABzHO4qVnWFHV4wnKh9c4IKNCzOSrS143TLKDIvfcwHQO+GwKHtFK
-         FxPESP7LQYxUyMo/Yr5qQUGwnmXNFhQcS0rZvMW9R6dT8cxOJOlks8LRZ6umqFqre9Nd
-         zcG9qQultxgEYkir+GlJv4IH7Cz3ZKdtJ/BN5lgt3WyBB8ZCk1PqJ07YuF1LwJp5yzP/
-         z6otVaRjDQJzzmFwJpFuaFcuHBH60STv7luuQWsRzaDiBsLRjlM0oIuXD7zzZ2ctK4/c
-         QCWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxZj7OFNJWXjhZVUNQYZ4rrTER/4hQq6A/XLlP/y1Vp/8ClMvTKxfhKwmsd2OUzIyFYTnNdv9/0YOuzDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKe/RXtR+ijsn3xvqdUVX4bv0z7EUQEJWmDzWBk8N+a8uWc4GT
-	SJJ0+jbUWfJm6HXI78P2p+zGZnkcX/MQXr5d6CYmhDOTKmNSzfwK/k1x
-X-Gm-Gg: ASbGncvyDJa7fHlQvxuuG0rOJLNJ6Fm1VPyQHB/0/yNu5ZNyrCLzaTZ3wn/mkCtOb5q
-	qoIelGJMR4WPdUYHqkAz219Vu5UrubPD1+o8aD46BMXq1PjHFZ7EA9/1O/aShAoFQOPrLWnHkfi
-	QN7CyWkYJKZ2exdBcdbf2nKj+/t3a0w+QCIKjCSA+JS+OXryilgWGlU3PcU+RtZuBoRaYZjQzSP
-	cYyosT+544nw6keZ8ORSblIPMZN0okZAlHuqdkK//EcMHzbnKKSghfrSOn/SDBaVxIjcoT9Pccm
-	npMiJyDApVkrDSyjXO8llBX1Mz+GQvTYI1cD+nSnPZ6kuFJSNH/1l/5ZFmMBQlHejftu0DS/yGj
-	Y2xmN/BlCND9M8Sdcump4VJ8hbZ42AipwCw==
-X-Google-Smtp-Source: AGHT+IE2eim4SIHkVMULUQJNkHWHvKzqxFkEJGI7jhLDjeXXZOKI9yfyCC35GGikBxqq7/MV7DAhcw==
-X-Received: by 2002:a17:903:198c:b0:240:483:dc0b with SMTP id d9443c01a7336-245ef2716d7mr22178055ad.52.1755678732771;
-        Wed, 20 Aug 2025 01:32:12 -0700 (PDT)
-Received: from OSC.. ([106.222.231.87])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c7588sm19491085ad.101.2025.08.20.01.32.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 01:32:12 -0700 (PDT)
-From: Pavan Bobba <opensource206@gmail.com>
-To: shuah@kernel.org,
-	cvam0000@gmail.com
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pavan Bobba <opensource206@gmail.com>
-Subject: [PATCH] kselftests:grammer correction
-Date: Wed, 20 Aug 2025 14:02:04 +0530
-Message-ID: <20250820083204.10428-1-opensource206@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755678854; c=relaxed/simple;
+	bh=CH4BeaS478hobY3clDlX9i4IzgiW+s/PwZ/7muoC3Zc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MVqlnBrkJkdqJh9mB9dqUSqyYZLur9YfvpUfv+tnfSb9Fz7chwGLtjA/viiqXZFlV9mF9wylaKBoM1fmNg/Lxgi1ANiu6JWn7H3HtRIhvGLdsUA7wBKpZT0S5L4VTlqPOne2a7CywM8EZ6BVwQKIs2M2shqF+XZA5ph39nFsLWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Km6Cim3A; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57K8Xx3P3154182;
+	Wed, 20 Aug 2025 03:33:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755678839;
+	bh=PnhKc8g8H0kWfIoMnf2P/Giz7+/dSwkw4FZNG9iIes4=;
+	h=From:To:CC:Subject:Date;
+	b=Km6Cim3AdlaexZ7iEUPrWAEzfAlC2vTcPFUXnEtQxEPhDIeOnGIX+p6pz12dSSZVP
+	 1S0M7KomD0YNN8QAhXAa9pWf3iQx0pi150ccUvRPHBWvZVPp//s+hfrJROI7lHkLC8
+	 3pKoqCCYADtvK/YfpVxmuWJmhUau51AhX3Yi8cV4=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57K8XxC91919840
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 20 Aug 2025 03:33:59 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 20
+ Aug 2025 03:33:59 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 20 Aug 2025 03:33:59 -0500
+Received: from localhost (ula0502350.dhcp.ti.com [172.24.233.249])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57K8Xvku4133408;
+	Wed, 20 Aug 2025 03:33:58 -0500
+From: Paresh Bhagat <p-bhagat@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH 0/4] Add cpufreq and USB support for AM62D2
+Date: Wed, 20 Aug 2025 14:03:27 +0530
+Message-ID: <20250820083331.3412378-1-p-bhagat@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,28 +73,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-corrected a minor grammer mistake
+This patch series introduces following changes:
 
-Signed-off-by: Pavan Bobba <opensource206@gmail.com>
----
- tools/testing/selftests/acct/acct_syscall.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* Patch 1 fixes the register length in main_pmx/padconfig for AM62D
+ and AM62A.
 
-diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
-index 87c044fb9293..ee2894e4f7bc 100644
---- a/tools/testing/selftests/acct/acct_syscall.c
-+++ b/tools/testing/selftests/acct/acct_syscall.c
-@@ -22,7 +22,7 @@ int main(void)
- 	ksft_print_header();
- 	ksft_set_plan(1);
- 
--	// Check if test is run a root
-+	// Check if test is run as root
- 	if (geteuid()) {
- 		ksft_exit_skip("This test needs root to run!\n");
- 		return 1;
+* Patch 2 enables USB support for AM62D2-EVM by adding pinmux and device
+ tree nodes.
+
+* Patch 3 adds AM62D2 SoC to cpufreq-dt-platdev blacklist so that
+ cpufreq is handled by the ti-cpufreq driver instead of the
+ generic cpufreq-dt driver.
+
+* Patch 4 extends ti-cpufreq to register AM62D2 SoC support by
+ reusing the am62a7_soc_data.
+
+Boot Logs-
+https://gist.github.com/paresh-bhagat12/e29d33c3fd92ff17580edf1441ece9f9
+
+Tech Ref Manual-https://www.ti.com/lit/pdf/sprujd4
+Schematics Link-https://www.ti.com/lit/zip/sprcal5
+
+Paresh Bhagat (3):
+  arm64: dts: ti: k3-am62d2-evm: Enable USB support
+  cpufreq: dt-platdev: Blacklist ti,am62d2 SoC
+  cpufreq: ti: Add support for AM62D2
+
+Vibhore Vardhan (1):
+  arm64: dts: ti: k3-am62a-main: Fix pinctrl properties
+
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi |  2 +-
+ arch/arm64/boot/dts/ti/k3-am62d2-evm.dts  | 21 +++++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c      |  1 +
+ drivers/cpufreq/ti-cpufreq.c              |  2 ++
+ 4 files changed, 25 insertions(+), 1 deletion(-)
+
 -- 
-2.43.0
+2.34.1
 
 
