@@ -1,391 +1,114 @@
-Return-Path: <linux-kernel+bounces-777177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7585B2D643
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:28:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0CFB2D631
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460294E26CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:23:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CA202A3145
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7212522B1;
-	Wed, 20 Aug 2025 08:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B52D2D8785;
+	Wed, 20 Aug 2025 08:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="NJqXD+FH"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012054.outbound.protection.outlook.com [52.101.126.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SggKk/fj"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6822D9780
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755678124; cv=fail; b=TD1aGArSXTT9ckE5I3MmYq5qaPJ7gBGBeP/LBNdjEdANfM7q3+0GmU5BRe6Xeido0IXs2jNyYwrBXkOOYPIa/B8YDD+y6yCf+kq68oPwAUQwbKVib1TvOBNkC1Dwwv3GszD1q7ybOJhzSx20trqsRwTmgb3236uk+uh7A2ECy1Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755678124; c=relaxed/simple;
-	bh=rm093EVHElx+RjPrAiyBJcz0VkFA+/x8UpPPhe6ko1U=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=r6Nfkxj7KWTsk5vMD8HPypKnlCBbHX74uu2FFwwBIRYM60Nbp/1e2qx9drZ2Hvqz20Sbe+EejlhR4U+zoFKOq9HIW0RvAYxBjvLZhZHL2HqFhlyoqwyP94tw3MGIP3TCrtYaoX5mf2JSriBmvw1YvJJbobzPjdHwKcK8Vbvd6p4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=NJqXD+FH; arc=fail smtp.client-ip=52.101.126.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lQfIiu8eQXiusjP/ahfubHwywB7uB5yir1NmxTMuKBgbwLu27jYNc36OuYNTbFiSsRJSbcMJdHyiCk7nY+NTgk5HnA11WMNgCNlnps+pCL1N3ohcnq/Md1yqrGwOoFYdvx+3960vmlCn1KERIiBr8kd1LkgTo8KZqSGSA5JJQQCWMXorUCnhbj8E7WRdNbQpOgw28wJLgD1uKva5+MSjPhvKMVQu0O89dDPLl4M9jLryJUB+bjSenxmP3hrH5mYtv+WH7W9o/R09Qqfl5EerwfdbapVbwjtqxSPC5CsD+4x5DthlfyetVl6Yu8SwUvaJFUFyQPeqedR0/KakD55zsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cpfUdXSIGI8pUTfZ9/F2e9aFyu6/vAMmN+j0/cjbsP0=;
- b=G7aDC9hmQWgSBFSBhk7AOL55a53Sox5q2VGb6aBzKJyAXSURguNSJZ6VkAHjCE1P9jr5gHcWTKeJL7AFRWcg9NbHNhtOqw63KjBFeY+LYmg02tkGwaW4BZxVbFTE5Z2lChMlY+3MaNYxEV57d1DPuR/svGLfAETPJICfo37s8AAPIeA2t4SXHVaCkuBFTgS4bp1eOU2gjz+jQLlt0AGmm59lxFmlKGue7zNHW6+XpSbXeYQCa3Qi7EMsIpSwrkXdk/i1aEJDHbOgmrZu1HdOQ7ReF7auYkLLgTKNQ8Fg7d+GASMTxX9WHPSVtlF+ds2zgNn0ewss/LqEgVMyCtd7Zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cpfUdXSIGI8pUTfZ9/F2e9aFyu6/vAMmN+j0/cjbsP0=;
- b=NJqXD+FHWMbEmbXGP/oZfFiITEhKK+som6QZ2XFyxV5IiVVahXyM17Ovg7P1S56Kas+7cRoeMNMJDs40DPvaxpMvCkKS4CaVUzXJURuSlL41lqQ48eyamQao/FEGI+QnIofUbia/VcMqnOB6eZeqa31s9AYPwrGDuhodAjhJFN91ycxgos4RojyIGrXr/52sdhom4/l2aWe4XQ8kwweokug7LZ7iCMhVs005t7sKBZdHQnfX88/9QQafDLBkD8zRG9WQlkF2C49W6+dIjFWD68BEowD+3WAGodsa9l3RmT5kQ5js0q2zO7LfMw4AaHxNiUaVkgVp9IeIPaVdPCcWjg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TY0PR06MB5579.apcprd06.prod.outlook.com (2603:1096:400:32f::14)
- by SEYPR06MB5985.apcprd06.prod.outlook.com (2603:1096:101:de::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 20 Aug
- 2025 08:21:57 +0000
-Received: from TY0PR06MB5579.apcprd06.prod.outlook.com
- ([fe80::4f2:e048:7c93:f263]) by TY0PR06MB5579.apcprd06.prod.outlook.com
- ([fe80::4f2:e048:7c93:f263%5]) with mapi id 15.20.9031.023; Wed, 20 Aug 2025
- 08:21:57 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net (open list:F2FS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH v2] f2fs: Use allocate_section_policy to control write priority in multi-devices setups
-Date: Wed, 20 Aug 2025 16:21:40 +0800
-Message-Id: <20250820082142.388237-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0207.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:385::20) To TY0PR06MB5579.apcprd06.prod.outlook.com
- (2603:1096:400:32f::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F491E9B08;
+	Wed, 20 Aug 2025 08:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755678243; cv=none; b=EoLTgwxuoHsWls6sLukB3s/jrk8+IAFgi7E//9MuV+oDdNhaGs9D4rarPGawURROmO03uj7BG7ULk9/DqqnGPVrDrA5OGVfbiAH/0NzPGEKyUU4Q9VWMx5RqTBGgjpf4CAXxr6nwggfO/G9AqX65CFzF9kvD/dw5+ycjJvZU78s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755678243; c=relaxed/simple;
+	bh=je5AHg/youKOa+xhCXnHlhnCi4E0rhPm8H3bXUt+7zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EzlD5vV38M8CqlIUlpvhYd2ChjXIID3Nxq+od3UyUfd5zs3WFLt87ryOYytImUpbtaGVhDyGMAZ2wDgMi6/oNq2Rwc8wwlHjVi+yyGRjpMbEKAmBFB3uwztsPuqHMboimjref08K6ehiZfuzJ30oyDMqO0OIOSJrveb8SRLQqVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SggKk/fj; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-24458298aedso52940515ad.3;
+        Wed, 20 Aug 2025 01:24:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755678241; x=1756283041; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=moqMZqhapfuLQfkSPWKxhFFyVYs5GkMX6FHp/4+cuAI=;
+        b=SggKk/fjFabo/QTIPd0UKllDvdj/oV57ozlvOFITmnJuQAFgzqcEXu8kOchbTNb+7g
+         GJY4MDPb31cg/bkoNB8R33m4pmUrjk8D4oN/AY2BjyFuScJxKPiMuiglVDOT9x7UNpk0
+         irpMi/3w8lC8LRr8eMzPUojT9+yAts1OHRtD2X4e8uJVQ8By00jXT9mKCQ6URFcUWb0a
+         pu4XrnF9ad4i1t5G0Pwdxjp24WR1JBpeFRQojW9vazyEOAxD2dXfIeix5dq60X4Vwgme
+         W1onoI2UUKpDollO4dUCdGLERQK5kRTZ+AxZJV0uClPClAmQE4DkhN47SjlpFkgQdwBc
+         WsKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755678241; x=1756283041;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=moqMZqhapfuLQfkSPWKxhFFyVYs5GkMX6FHp/4+cuAI=;
+        b=FKWm4LIohOzvRboK6kwt5XMU2xvGsfNQ15OIo276LO05790qb+Z3JU9tFB1rEXcp8s
+         egnbF//49BdpH5m5SzQqZmg9QY3U8SgWyuCVFlSq5aBbBelTI+bjLTSG/NHtJdbuy6ZP
+         tqGpTgIn73gOqh0S2fesVaWQQ1rktobpNRMbP+I/03LW0LFs2nDJ5gV/5ZAQLLuxbiaq
+         H+M3oH0KclSlDHcXyI1hUTXZ5azpNY4cCeVtZ4c0sgq1YeQEJBj7v23DLHjVKbJzKTj6
+         FQSgpgBbZbP5TLWUaafu/KD7s3PbsJ2VspiT7V4Yel/VV7/rAuoOeHrCJrliNRy4s11y
+         Ktqg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4OFjFvJbZgZyMwCPl0SYG1EucD1w6d/1MFIsHKGAwWhmkme2mkeqGzKA8DwW5T6nEGrZBkR/+9Beukn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaH4CLIaTJb9LDf6fW+fOU2ym9WgsV5NtsMo63F+n++FTks2Dw
+	GvQ0spF04pDZySC7X3IhHsGCfOqW6xxIeWUTlqYIN88jt/Hvnvcvtg98XUvJfQ==
+X-Gm-Gg: ASbGnctWsexeQ8Ilt+LIqhqHqxb/m9AXChYySOxktxa5uyH04SogURd5FIQ6I+xIRDo
+	YRSzKJXMI1nu76gjDKFkmZ8eIGBOr5mmC3wJtGf/SeQ3l11DdsSfVZtpoiLL321FZKev/n49ygW
+	GHiPUp/iDJBlmB4fTAA9f0ffApjlWaZDTuyCd7/Xsvf54PRdEBTsuZJOa8LoMPyn9Z0+elc2jY3
+	kGqQEXZrtc7oKL5ZxlZv/LyAK4hLBY1CQuxvQOJIEpI/nAB9TjyF1czMXiX87Gd4bEun+2Ha74c
+	WwNVagVh2Zvd2NKt4fVrLYXDgHuiuuJ8xj+bsDBLeTisqBv8z9FXBo4SCL4GMefDXnUZ9cEf4/M
+	8Eig3krNB32sM9nrIjSqMbw808TEbrflOwg==
+X-Google-Smtp-Source: AGHT+IFlm5s61pgSdw7v9rOpaowRSsn5eGN3T4tyYsqmKoKZaVsdZZhOhfRaA34jPoNlKINg6a7Y6w==
+X-Received: by 2002:a17:903:230c:b0:242:9bc4:f1c8 with SMTP id d9443c01a7336-245ef2a3372mr22000055ad.55.1755678241177;
+        Wed, 20 Aug 2025 01:24:01 -0700 (PDT)
+Received: from OSC.. ([106.222.231.87])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed33d2a3sm19443145ad.12.2025.08.20.01.23.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 01:24:00 -0700 (PDT)
+From: Pavan Bobba <opensource206@gmail.com>
+To: shuah@kernel.org,
+	cvam0000@gmail.com
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pavan Bobba <opensource206@gmail.com>
+Subject: [PATCH] grammer correction
+Date: Wed, 20 Aug 2025 13:53:50 +0530
+Message-ID: <20250820082350.10180-1-opensource206@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY0PR06MB5579:EE_|SEYPR06MB5985:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96f6e33c-060f-43aa-ada5-08dddfc2a07c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SyKDQEzbJvOhyusbkUwDNLCx/YN6872p8fU58Xohcga+32diMaR5H7xunVPq?=
- =?us-ascii?Q?ADQqTedOrsLLYvXy/etfLhALpWxuMUSKX3Z9Wb6g8FR5DiFm3fIHwhJ7QaKy?=
- =?us-ascii?Q?Db8smNsIUV4KrysIQHOXCZkpT/Y31e6/UX3eDAZ5dGPWohCUyYAOdqjb3mDT?=
- =?us-ascii?Q?e4rY0CF++Y4OJ5YIQcyqeliO3IRpBaAP/wjtoMX+cYJixcvaWKo7baNGT0Zo?=
- =?us-ascii?Q?o3+Gb/uiqqbn9JzxQGC13c+zZ0xrIX09U0vkWKSTcLaLkkGWCUqHCFRenqG0?=
- =?us-ascii?Q?ytGp2i5zVwec66XeIVmVoCGod5Rj835YX9NqRG7f7rqt7vhPv5plDbpLfv7q?=
- =?us-ascii?Q?CUVccP2zBKkQFxnAv7TWYpnbaGLprRGy9yspnxKFHPBdrXlp/0A6LtN3wYub?=
- =?us-ascii?Q?Iif5FkvXTKNvDFebJgeShRxGj8ij6GDGzhwAh3sY+gFSqucDDyklHE4Jq77w?=
- =?us-ascii?Q?yBSoE3IG/IWwVKqP7Cg7EsN3AX9tqrk82KJFNgvrmkh6rLuo59db7fhldAym?=
- =?us-ascii?Q?SC6aZIDT/uEjkZqfHfYAI5/Q7gObo+7+Z0k/cJZ+7o3xlweN1BVxxk2chS9A?=
- =?us-ascii?Q?v2UK/vr/g1cbglgMNeT4GsFHT6mI2T5+5PlFGih8vqO4p1+x9wxnSUmfKIXV?=
- =?us-ascii?Q?X7TUPqCouLqSnnv3lP1hN8dRAMKVAi7puaNIOuDSRPakTqk9uDbrizcKpzbV?=
- =?us-ascii?Q?H7Qd8BjXCAc55mn2e8HaqTJtCjmDPooCHJt7PsfPTQx48KYIo9QL2YDL6yen?=
- =?us-ascii?Q?jcrO6vcsY9bckCQ+fdhO3Fx+P9W2IQn/5bIZRcqBLgxgCwNie0STzqwYmCZt?=
- =?us-ascii?Q?NpWPW9Z5TrMxGcB2D3pp5b3782AbVa8oFnl0LJEzGNKp/SE4wMqYKn30rPUQ?=
- =?us-ascii?Q?F0ejbcyoGc9G3HrdSM+ew2H6naksAWQMRTKo3rAnn3YytPGCBfN3duCdbxVE?=
- =?us-ascii?Q?GKSOTr70Jy6tBHkaKdqcsqj/T+uE3mqhZ+OSMAjS0HLfwMZRGJ0Yaz1+gjbM?=
- =?us-ascii?Q?0x3PzL4aglxi/XiSOMYaWl1JNqhj3GbPaWeT9YRzgRugW/WvzbWISZOzqC3B?=
- =?us-ascii?Q?mTi/5P4ZVhkZ6EYLD1VsIGBArSFaNUVPHv0A2/JdKxRKeqkvTsjnPJOkIqDo?=
- =?us-ascii?Q?Jxh2idujuQBv2dDcsaOhLMIsD7dOC/NkZcP9RMXf88KwDzgoCSxD2eT8EkMC?=
- =?us-ascii?Q?BN8sFWtZA6LEeyEGz1Ctdjk0ce5YaJdnLkI6VtjUXAk7+hcSMdETFrozdcbg?=
- =?us-ascii?Q?9Mnu6D1kwJeE55UE9vi7PBrLSF0Jt6ClapL6xlZgHnWbs23nfC1P05D6bFqn?=
- =?us-ascii?Q?xi5fKvT5GdztqLYtCninIWHWPTIYFAvEUjNMSsfRxBgzXDvzrgdUG+TY29ST?=
- =?us-ascii?Q?21Jr6mjr4BN2QcKbgW+itfkby0dbjIR5sLO0K09vfBsK8TbsYD/4UsPT+G5B?=
- =?us-ascii?Q?TS30EupwVkV1jPIh8g7YaCBKXf+5UOF67yLdQpW0guloMHhIpv/ytQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY0PR06MB5579.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JBYwnhBBMe1/lILijUt/VHnKrbJpmTHazxEwUAZUyghaaV1HAVkshl6WU3AG?=
- =?us-ascii?Q?X7siB+qngVTUiXhPmlTDwo69ZlchpN0PeaT6By6DNG66edQ1RyE291PYpc0h?=
- =?us-ascii?Q?Pnl+eXrU8cHCv7d+HS0Fj5VV/anj22GDMtMAWX9NwAtomQDpVd7lp8Pc45aj?=
- =?us-ascii?Q?DN6V4BDzTP9I3YNbHsT8cE5TKkSGXW1QPU43cN8u33AmRZoom/5ZZ/n5csfU?=
- =?us-ascii?Q?D+PC/TPi8Jo3aQPbB3/1dIdKfXMDyQHI/FVM+aXrM6vyCQK2mBwmWAJBrjL9?=
- =?us-ascii?Q?YSd2y6yYbHqu3gbmrbrfX66l+sts4ob6xeHhDn5ZwzSw25Rfnwnb3hlr8dJm?=
- =?us-ascii?Q?oC1qMtvbAn4QJZHFBUt8fSJuPwdtOoSudptZ4AyQMjRfIstQYSq5QExPBjum?=
- =?us-ascii?Q?ZacZShMe6mJ324E7uPAuoFDEjAAWZeFDQEDtRDJ1m+6IH5MC8xBoolEbYPXX?=
- =?us-ascii?Q?S4pnb5adoJrg7+ZQiOFVaEmO+VZkHyT8/de2b6TUTa4U0qegoK3K8YGyoqGu?=
- =?us-ascii?Q?xYLyAugykAsvFdcD4s2afaupASku54RPe8p9MBAqVLdP36wBGh4kcoyepkGL?=
- =?us-ascii?Q?dzDXdasGibhcOP48L6fqN/caS7/dUB9aOeprRrwZNb/LOe3NVuzNhk3e5jPB?=
- =?us-ascii?Q?ENbT3PxGAC2PUo2wowlW7ZzFUdJ2z9H7Ay1hGOOjBEzVP9mAdoB+1cAAaYF3?=
- =?us-ascii?Q?cd/dnuhShYcMccpUXalg6urdBRIa5ovR54kclowyiZXX/aOcNf2D19j3rRs6?=
- =?us-ascii?Q?ajmimRpdUcJySu9dn157j2MjGQJVtVQRH8IaCUJCZT+daDj/B++30kS9se6U?=
- =?us-ascii?Q?Ajif+X9k6pUaUpke1zl8LQbswShTAN3dMAoxxS2xE7SxR/2x/rrg9gcWmptn?=
- =?us-ascii?Q?UNlS9cWK/sF+T83rrR7AYCQqrffHo4c6b57dhTUmxdtAFEkJqN9Dt0JKz6jt?=
- =?us-ascii?Q?5H0T98ifRjSZLcTR7DneGKV8ZK3e/8/h4pOo8lPBI8zeEXC+X137Hfj+tllJ?=
- =?us-ascii?Q?tLl0PlHt+LIIHIRXM3hl9UW6jajaBpw6bHRBzYByszJTh5MxW+3a9PrOLV/M?=
- =?us-ascii?Q?bMggJhfL+PRM9/obLjZp0jo66HLWunVJnmm8A33tcC2s4uvOtGctGleCK0KW?=
- =?us-ascii?Q?4os4tx/sD+Tigyo4kknF2LQbBEY7cW3HYPX/podukQu5NI0k09jPdSGHrgQV?=
- =?us-ascii?Q?SFsU0MnHAaQLN1lUrNbNiWVrtV3IXXRxjG3Uw2FqYkZ7qGb0c7empils6qoR?=
- =?us-ascii?Q?GiCCn+Mqk2due355e3Dg8DQPIZlNbBLZLZSZ+3SHcVdzUW7XX7Zm6Zo67pP7?=
- =?us-ascii?Q?UAQw5hbEy42e32b2FRB8Uaqn7+sHR9Na/HACsDAl8JKp7QKjTZn0jgMmLjWy?=
- =?us-ascii?Q?P+LiEmwNpgi1vNLme5vOBjl8x44+NFK7q0/m3ozAlbomq4GdQe/rUQCoKc/i?=
- =?us-ascii?Q?0/qCGNSheuuqH83QIag+27aqAhTMzfsc8K1Joijk27SeWMLYjtPsChHCbEWZ?=
- =?us-ascii?Q?8zb13EeSZZ2TcoJi7mwFHx3zUzICAfElwXb7qbv/ZPI1dF2Yzb6EcLGaue+8?=
- =?us-ascii?Q?I1aEVNV4i5wEAmv79ExhIFrsLB4kA+Ui3DyoE74w?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96f6e33c-060f-43aa-ada5-08dddfc2a07c
-X-MS-Exchange-CrossTenant-AuthSource: TY0PR06MB5579.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 08:21:56.8500
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SmsxkL+2F23fH0C4jaMfwPiIj56iseUSaY5zZpab7SJ9nPrI7Qnkac/KVf7iP4aEyWnP3MC56cnm+2aZ+Y+eng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5985
+Content-Transfer-Encoding: 8bit
 
-Introduces two new sys nodes: allocate_section_hint and
-allocate_section_policy. The allocate_section_hint identifies the boundary
-between devices, measured in sections; it defaults to the end of the device
-for single storage setups, and the end of the first device for multiple
-storage setups. The allocate_section_policy determines the write strategy,
-with a default value of 0 for normal sequential write strategy. A value of
-1 prioritizes writes before the allocate_section_hint, while a value of 2
-prioritizes writes after it.
+corrected a minor grammer mistake
 
-This strategy addresses the issue where, despite F2FS supporting multiple
-devices, SOC vendors lack multi-devices support (currently only supporting
-zoned devices). As a workaround, multiple storage devices are mapped to a
-single dm device. Both this workaround and the F2FS multi-devices solution
-may require prioritizing writing to certain devices, such as a device with
-better performance or when switching is needed due to performance
-degradation near a device's end. For scenarios with more than two devices,
-sort them at mount time to utilize this feature.
-
-When using this feature with a single storage device, it has almost no
-impact. However, for configurations where multiple storage devices are
-mapped to the same dm device using F2FS, utilizing this feature can provide
-some optimization benefits. Therefore, I believe it should not be limited
-to just multi-devices usage.
-
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+Signed-off-by: Pavan Bobba <opensource206@gmail.com>
 ---
-Changes in v2:
-	- Updated the feature naming to better reflect its actual functionality.
-	- Appended patch description to clarify whether the usage should be
-	limited to multi-devices.
-	- Improved the code style.
-	- Fixed typo.
----
- Documentation/ABI/testing/sysfs-fs-f2fs | 22 ++++++++++++++++++++++
- fs/f2fs/f2fs.h                          |  8 ++++++++
- fs/f2fs/gc.c                            |  5 +++++
- fs/f2fs/segment.c                       | 18 +++++++++++++++++-
- fs/f2fs/super.c                         |  4 ++++
- fs/f2fs/sysfs.c                         | 18 ++++++++++++++++++
- 6 files changed, 74 insertions(+), 1 deletion(-)
+ tools/testing/selftests/acct/acct_syscall.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index ee3acc8c2cb8..b590809869ca 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -911,3 +911,25 @@ Description:	Used to adjust the BG_GC priority when pending IO, with a default v
- 		bggc_io_aware = 1   skip background GC if there is pending read IO
- 		bggc_io_aware = 2   don't aware IO for background GC
- 		==================  ======================================================
-+
-+What:		/sys/fs/f2fs/<disk>/allocate_section_hint
-+Date:		August 2025
-+Contact:	"Liao Yuanhong" <liaoyuanhong@vivo.com>
-+Description:	Indicates the hint section between the first device and others in multi-devices
-+		setup. It defaults to the end of the first device in sections. For a single storage
-+		device, it defaults to the total number of sections. It can be manually set to match
-+		scenarios where multi-devices are mapped to the same dm device.
-+
-+What:		/sys/fs/f2fs/<disk>/allocate_section_policy
-+Date:		August 2025
-+Contact:	"Liao Yuanhong" <liaoyuanhong@vivo.com>
-+Description:	Controls write priority in multi-devices setups. A value of 0 means normal writing.
-+		A value of 1 prioritizes writing to devices before the allocate_section_hint. A value of 2
-+		prioritizes writing to devices after the allocate_section_hint. The default is 0.
-+
-+		===========================  ==========================================================
-+		value					     description
-+		allocate_section_policy = 0  Normal writing
-+		allocate_section_policy = 1  Prioritize writing to section before allocate_section_hint
-+		allocate_section_policy = 2  Prioritize writing to section after allocate_section_hint
-+		===========================  ==========================================================
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d6a49de1b7e9..5ce9bf6be462 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -162,6 +162,12 @@ enum bggc_io_aware_policy {
- 	AWARE_NONE,			/* don't aware IO for background GC */
- };
+diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
+index 87c044fb9293..ee2894e4f7bc 100644
+--- a/tools/testing/selftests/acct/acct_syscall.c
++++ b/tools/testing/selftests/acct/acct_syscall.c
+@@ -22,7 +22,7 @@ int main(void)
+ 	ksft_print_header();
+ 	ksft_set_plan(1);
  
-+enum device_allocation_policy {
-+	ALLOCATE_FORWARD_NOHINT,
-+	ALLOCATE_FORWARD_WITHIN_HINT,
-+	ALLOCATE_FORWARD_FROM_HINT,
-+};
-+
- /*
-  * An implementation of an rwsem that is explicitly unfair to readers. This
-  * prevents priority inversion when a low-priority reader acquires the read lock
-@@ -1850,6 +1856,8 @@ struct f2fs_sb_info {
- 	bool aligned_blksize;			/* all devices has the same logical blksize */
- 	unsigned int first_seq_zone_segno;	/* first segno in sequential zone */
- 	unsigned int bggc_io_aware;		/* For adjust the BG_GC priority when pending IO */
-+	unsigned int allocate_section_hint;	/* the boundary position between devices */
-+	unsigned int allocate_section_policy;	/* determine the section writing priority */
- 
- 	/* For write statistics */
- 	u64 sectors_written_start;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 098e9f71421e..b57b8fd64747 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -2182,6 +2182,8 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
- 	SM_I(sbi)->segment_count = (int)SM_I(sbi)->segment_count + segs;
- 	MAIN_SEGS(sbi) = (int)MAIN_SEGS(sbi) + segs;
- 	MAIN_SECS(sbi) += secs;
-+	if (sbi->allocate_section_hint > MAIN_SECS(sbi))
-+		sbi->allocate_section_hint = MAIN_SECS(sbi);
- 	FREE_I(sbi)->free_sections = (int)FREE_I(sbi)->free_sections + secs;
- 	FREE_I(sbi)->free_segments = (int)FREE_I(sbi)->free_segments + segs;
- 	F2FS_CKPT(sbi)->user_block_count = cpu_to_le64(user_block_count + blks);
-@@ -2189,6 +2191,9 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
- 	if (f2fs_is_multi_device(sbi)) {
- 		int last_dev = sbi->s_ndevs - 1;
- 
-+		sbi->allocate_section_hint = FDEV(0).total_segments /
-+					SEGS_PER_SEC(sbi);
-+
- 		FDEV(last_dev).total_segments =
- 				(int)FDEV(last_dev).total_segments + segs;
- 		FDEV(last_dev).end_blk =
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 04b0a3c1804d..e0f6589c6a1c 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2807,6 +2807,10 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 	}
- #endif
- 
-+	if (sbi->allocate_section_policy == ALLOCATE_FORWARD_FROM_HINT &&
-+		hint < sbi->allocate_section_hint)
-+		hint = sbi->allocate_section_hint;
-+
- find_other_zone:
- 	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
- 
-@@ -2828,13 +2832,25 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- #endif
- 
- 	if (secno >= MAIN_SECS(sbi)) {
--		secno = find_first_zero_bit(free_i->free_secmap,
-+		if (sbi->allocate_section_policy == ALLOCATE_FORWARD_FROM_HINT) {
-+			secno = find_next_zero_bit(free_i->free_secmap,
-+							MAIN_SECS(sbi), sbi->allocate_section_hint);
-+			if (secno >= MAIN_SECS(sbi))
-+				secno = find_first_zero_bit(free_i->free_secmap,
-+								MAIN_SECS(sbi));
-+		} else {
-+			secno = find_first_zero_bit(free_i->free_secmap,
- 							MAIN_SECS(sbi));
-+		}
- 		if (secno >= MAIN_SECS(sbi)) {
- 			ret = -ENOSPC;
- 			f2fs_bug_on(sbi, !pinning);
- 			goto out_unlock;
- 		}
-+	} else if (sbi->allocate_section_policy == ALLOCATE_FORWARD_WITHIN_HINT &&
-+				secno >= sbi->allocate_section_hint) {
-+		secno = find_first_zero_bit(free_i->free_secmap,
-+							MAIN_SECS(sbi));
- 	}
- 	segno = GET_SEG_FROM_SEC(sbi, secno);
- 	zoneno = GET_ZONE_FROM_SEC(sbi, secno);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 5aa9d650512d..fa38a3e6b9cd 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3942,6 +3942,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 	segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
- 	secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
- 	total_sections = le32_to_cpu(raw_super->section_count);
-+	sbi->allocate_section_hint = total_sections;
- 
- 	/* blocks_per_seg should be 512, given the above check */
- 	blocks_per_seg = BIT(le32_to_cpu(raw_super->log_blocks_per_seg));
-@@ -4713,6 +4714,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 	logical_blksize = bdev_logical_block_size(sbi->sb->s_bdev);
- 	sbi->aligned_blksize = true;
- 	sbi->bggc_io_aware = AWARE_ALL_IO;
-+	sbi->allocate_section_policy = ALLOCATE_FORWARD_NOHINT;
- #ifdef CONFIG_BLK_DEV_ZONED
- 	sbi->max_open_zones = UINT_MAX;
- 	sbi->blkzone_alloc_policy = BLKZONE_ALLOC_PRIOR_SEQ;
-@@ -4744,6 +4746,8 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 					SEGS_TO_BLKS(sbi,
- 					FDEV(i).total_segments) - 1 +
- 					le32_to_cpu(raw_super->segment0_blkaddr);
-+				sbi->allocate_section_hint = FDEV(i).total_segments /
-+							SEGS_PER_SEC(sbi);
- 			} else {
- 				FDEV(i).start_blk = FDEV(i - 1).end_blk + 1;
- 				FDEV(i).end_blk = FDEV(i).start_blk +
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 1ffaf9e74ce9..81b99c2a02a9 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -889,6 +889,20 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
- 	}
- 
-+	if (!strcmp(a->attr.name, "allocate_section_hint")) {
-+		if (t < 0 || t > MAIN_SECS(sbi))
-+			return -EINVAL;
-+		sbi->allocate_section_hint = t;
-+		return count;
-+	}
-+
-+	if (!strcmp(a->attr.name, "allocate_section_policy")) {
-+		if (t < ALLOCATE_FORWARD_NOHINT || t > ALLOCATE_FORWARD_FROM_HINT)
-+			return -EINVAL;
-+		sbi->allocate_section_policy = t;
-+		return count;
-+	}
-+
- 	*ui = (unsigned int)t;
- 
- 	return count;
-@@ -1161,6 +1175,8 @@ F2FS_SBI_GENERAL_RW_ATTR(max_victim_search);
- F2FS_SBI_GENERAL_RW_ATTR(migration_granularity);
- F2FS_SBI_GENERAL_RW_ATTR(migration_window_granularity);
- F2FS_SBI_GENERAL_RW_ATTR(dir_level);
-+F2FS_SBI_GENERAL_RW_ATTR(allocate_section_hint);
-+F2FS_SBI_GENERAL_RW_ATTR(allocate_section_policy);
- #ifdef CONFIG_F2FS_IOSTAT
- F2FS_SBI_GENERAL_RW_ATTR(iostat_enable);
- F2FS_SBI_GENERAL_RW_ATTR(iostat_period_ms);
-@@ -1398,6 +1414,8 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(max_read_extent_count),
- 	ATTR_LIST(carve_out),
- 	ATTR_LIST(reserved_pin_section),
-+	ATTR_LIST(allocate_section_hint),
-+	ATTR_LIST(allocate_section_policy),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(f2fs);
+-	// Check if test is run a root
++	// Check if test is run as root
+ 	if (geteuid()) {
+ 		ksft_exit_skip("This test needs root to run!\n");
+ 		return 1;
 -- 
-2.34.1
+2.43.0
 
 
