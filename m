@@ -1,274 +1,137 @@
-Return-Path: <linux-kernel+bounces-778147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B89B2E1E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:08:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3875DB2E1E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3481C84BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3DF41C861D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FC9327782;
-	Wed, 20 Aug 2025 16:01:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1597D322DDB;
-	Wed, 20 Aug 2025 16:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4993E17C91;
+	Wed, 20 Aug 2025 16:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ihpJ2PAR"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C66260587
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755705696; cv=none; b=XZH57Ixr1iLiZo5o50+aEHBe4prQzZJuwYv/vis/5HIE/qSw2hG41L6MMScpSLkvNpOejXX2J+gHZeIP0NZzl9eMrmrEHq/jTfEFsqRxqCMX9n8w5qPah7poS7YLi/PQoPWuRgMyW4Y8jQnJZUetcvFoZ5tYYfdv5LsvCrO541c=
+	t=1755705764; cv=none; b=KKEz1wl+LCE7L72LufRlb5erch2Fr/sAEPSkxOz5Y3pChDR6w8VA2TQsd+J81SxRCVA3ex5xYyvt6owVnmOPKTvsNn8BTTCfvYML/2cJSueHOs9dIMN9ygDlOjnCDaQ2/RMoxI6bUTd6rPGTWJekBEKjye5KEROfwNDgc4c8e0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755705696; c=relaxed/simple;
-	bh=ykO46B63pWVRs9lbEGpBnkeMdathCK7vioAEBA9AWbI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NXIeqDc3HBPyNsihIq6ABv3xdsa3UjIyN1QOyMB81aP1oWhgL379yX5URHjVtr5ZBoBYT9JYAH34lVhA5VCgCq21ZG21eIpO7LC93X36LMDgqTMkzFm7ULRxlFkOSpT731BCWXtbVUHfBW5MylKwm9Jao+9SZlSDL85zxjySrJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C10B51424;
-	Wed, 20 Aug 2025 09:01:24 -0700 (PDT)
-Received: from [10.57.90.209] (unknown [10.57.90.209])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE9AB3F63F;
-	Wed, 20 Aug 2025 09:01:26 -0700 (PDT)
-Message-ID: <5b5455eb-e649-4b20-8aad-6d7f5576a84a@arm.com>
-Date: Wed, 20 Aug 2025 18:01:24 +0200
+	s=arc-20240116; t=1755705764; c=relaxed/simple;
+	bh=GIQsyqAA7KbSio7V6MwXo7AkPyVrGnF06m/u06KzO4s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uuS2Mc1J/tYW2RGI8q5DKunv3t9nv3B/YQv6tLy80IidWxu6kvdD/MgTXXCHOLHH2mkKKov5fxJFHcHBY0L5wbXmZWla3G8/6y2z9b1hYwJcs6xNTFjgtjQ2XgmKc8voJNNewIHAv6zqWy3iPihiL55o/P+o8BO5i0juNALuHsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ihpJ2PAR; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b066b5eso164235e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:02:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755705760; x=1756310560; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hFrQIxLngvx6cPoyl+3HiPXkKAcRKG4at7HfM1T1v04=;
+        b=ihpJ2PARCf+Vrvw+DcLCA+cBrSf8ECPo8AX08OXI4x9OdfUWG8VxXDYew3qaO3fZyC
+         YgkDK6Jqs7oOihZU/WAbqLyDU8YzQwFp8Pptld3gsW+1V6rzabZzKlnyikhGiI76c9BS
+         roz8dfQ7xYW/q5Y+uFmd7JYFs2AEWjNvg3MP29yayW4WHcKc2qM2RctZ353J4QiFXUC1
+         /8RGMFr5jlnozPjKIItI9cz7cBzV+26BnM4Z/fQHiZtjxsWkILNAcjLi/T8BeLB0QVr2
+         CCGBXCLaGUiGsfZeFG+XlPjdSaIxfj5F2lTcm8ETufJCqSuMZnuP11TgtAfcXUUZQYSM
+         3heQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755705760; x=1756310560;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hFrQIxLngvx6cPoyl+3HiPXkKAcRKG4at7HfM1T1v04=;
+        b=HFTdnWwOIKvK2GK2mrQKjMFUg1iSZY9nMehwlyF3kv5soLxgQZ1dfnKfREd7J1uphL
+         L6p+LmiwkKen97BbJkLP94Y0LpZ7qkqGtB0o/0CHb7YLloTqm8iYWZhjlXvd7WzpwNFt
+         OJyvwkgYGvtnPAuLhdaC990YCHHIOWlAat4JmVKI8bB5WIp9sUhJl7opqP/YOSYvsZdO
+         dPhiHpihyCO2/eJHahmxlcCWOvged006yglx8thpwKXBs1Xxd7FnPdizHvmU9sa3lOFe
+         GawnSwt5MBGbOlJPpAJQKOBKESs6mLBC2VUpPg2tHXcqdDxzeTzpFY1tCiGySml37+Gm
+         /K/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUesJyZmDGkDU1z6HB7ubCMYXpn8F+ufpY//VBurzRk0Up1TqhnU/wNeN1kh3V4C7diRYUA4bPnV2keoIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyImL1VxdD08DadWwSDgT6cfPHp7p2r8NWrHwlbqNKfN+fZEAmK
+	iTVJTLjoTw19nBjRC2OU/9CwKj+aQUQkGWH+x6oNNYHZnn3JQ+1E1Wl5T0aMDl5dEeU=
+X-Gm-Gg: ASbGncuGB4uX9msw74GT/zlcz68n+vSiv5yDhuL5pQyR3G/g8WgSykmlbTHVZ2AlFGv
+	jYEIIE89E6GEzgytm3gFpgrkxKCxertcOco7zffnFSXkbtbHpbiFc4E0o4toOdN8xHo/M9Puj2/
+	vIEYG48f2mY3L+KsXc7fLB5pDk3lQZqBFARE4fJ+ZwCGuhM02vBdzIWgrJsgLvo6tEeGSn+nvkw
+	1n20Rr1qh6z3BKERkpDZERcA7u4jZH7huv8yVxcQv9wXDJPPzmZPCl168QT3d6oMv/0lYqW+J44
+	gHWf7FIgGPa/4tMwitzp6i+86CKeW26XX83USoONWr2lPTXKto7+4y1JfFvnooeK/vVb+ioBXlh
+	Qco+hucIKXOJ6JzOrAcilUnhFQs0RGYa6GA0kQ0GVFu1E9oY=
+X-Google-Smtp-Source: AGHT+IGANc4/e9vgpi4rR0BoyZfY8fpTBcggyerY3hNWLCE2/SXzKZymk+WZAYmHYykbkMkpQOVu4A==
+X-Received: by 2002:a05:600c:c8a:b0:458:bbed:a812 with SMTP id 5b1f17b1804b1-45b47a029c0mr31757095e9.17.1755705759825;
+        Wed, 20 Aug 2025 09:02:39 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:f5f2:96b:fcb7:af4b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c074d43956sm8364628f8f.19.2025.08.20.09.02.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 09:02:39 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: [PATCH v2 0/4] remoteproc: qcom_q6v5: Misc fixes to prepare for
+ reusing the "lite" ADSP FW
+Date: Wed, 20 Aug 2025 18:02:32 +0200
+Message-Id: <20250820-rproc-qcom-q6v5-fixes-v2-0-910b1a3aff71@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v5 00/18] pkeys-based page table hardening
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-To: linux-hardening@vger.kernel.org,
- Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Andy Lutomirski <luto@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
- Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@chromium.org>,
- Joey Gouly <joey.gouly@arm.com>, Kees Cook <kees@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Marc Zyngier <maz@kernel.org>,
- Mark Brown <broonie@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Maxwell Bland <mbland@motorola.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Pierre Langlois <pierre.langlois@arm.com>,
- Quentin Perret <qperret@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-mm@kvack.org, x86@kernel.org
-References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
- <4a828975-d412-4a4b-975e-4702572315da@arm.com>
-Content-Language: en-GB
-In-Reply-To: <4a828975-d412-4a4b-975e-4702572315da@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJjxpWgC/3WNwQ6CMBBEf4Xs2TVtFWk5+R+GAykLbKIUtqbRE
+ P7dSuLR45vJm1khkjBFqIsVhBJHDlMGcyjAj+00EHKXGYwypbL6jDJL8Lj48MDlkkrs+UURnbW
+ m7cpKK1dBdmehvcjqrck8cnwGee83SX/T36L7s5g0KuzIGe1sb06+ut55aiUcgwzQbNv2AVAVl
+ 8a7AAAA
+X-Change-ID: 20250814-rproc-qcom-q6v5-fixes-9882ad571097
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
 
-On 20/08/2025 17:53, Kevin Brodsky wrote:
-> On 15/08/2025 10:54, Kevin Brodsky wrote:
->> [...]
->>
->> Performance
->> ===========
->>
->> No arm64 hardware currently implements POE. To estimate the performance
->> impact of kpkeys_hardened_pgtables, a mock implementation of kpkeys has
->> been used, replacing accesses to the POR_EL1 register with accesses to
->> another system register that is otherwise unused (CONTEXTIDR_EL1), and
->> leaving everything else unchanged. Most of the kpkeys overhead is
->> expected to originate from the barrier (ISB) that is required after
->> writing to POR_EL1, and from setting the POIndex (pkey) in page tables;
->> both of these are done exactly in the same way in the mock
->> implementation.
-> It turns out this wasn't the case regarding the pkey setting - because
-> patch 6 gates set_memory_pkey() on system_supports_poe() and not
-> arch_kpkeys_enabled(), the mock implementation turned set_memory_pkey()
-> into a no-op. Many thanks to Rick Edgecombe for highlighting that the
-> overheads were suspiciously low for some benchmarks!
->
->> The original implementation of kpkeys_hardened_pgtables is very
->> inefficient when many PTEs are changed at once, as the kpkeys level is
->> switched twice for every PTE (two ISBs per PTE). Patch 18 introduces
->> an optimisation that makes use of the lazy_mmu mode to batch those
->> switches: 1. switch to KPKEYS_LVL_PGTABLES on arch_enter_lazy_mmu_mode(),
->> 2. skip any kpkeys switch while in that section, and 3. restore the
->> kpkeys level on arch_leave_lazy_mmu_mode(). When that last function
->> already issues an ISB (when updating kernel page tables), we get a
->> further optimisation as we can skip the ISB when restoring the kpkeys
->> level.
->>
->> Both implementations (without and with batching) were evaluated on an
->> Amazon EC2 M7g instance (Graviton3), using a variety of benchmarks that
->> involve heavy page table manipulations. The results shown below are
->> relative to the baseline for this series, which is 6.17-rc1. The
->> branches used for all three sets of results (baseline, with/without
->> batching) are available in a repository, see next section.
->>
->> Caveat: these numbers should be seen as a lower bound for the overhead
->> of a real POE-based protection. The hardware checks added by POE are
->> however not expected to incur significant extra overhead.
->>
->> Reading example: for the fix_size_alloc_test benchmark, using 1 page per
->> iteration (no hugepage), kpkeys_hardened_pgtables incurs 17.35% overhead
->> without batching, and 14.62% overhead with batching. Both results are
->> considered statistically significant (95% confidence interval),
->> indicated by "(R)".
->>
->> +-------------------+----------------------------------+------------------+---------------+
->> | Benchmark         | Result Class                     | Without batching | With batching |
->> +===================+==================================+==================+===============+
->> | mmtests/kernbench | real time                        |            0.30% |         0.11% |
->> |                   | system time                      |        (R) 3.97% |     (R) 2.17% |
->> |                   | user time                        |            0.12% |         0.02% |
->> +-------------------+----------------------------------+------------------+---------------+
->> | micromm/fork      | fork: h:0                        |      (R) 217.31% |        -0.97% |
->> |                   | fork: h:1                        |      (R) 275.25% |     (R) 2.25% |
->> +-------------------+----------------------------------+------------------+---------------+
->> | micromm/munmap    | munmap: h:0                      |       (R) 15.57% |        -1.95% |
->> |                   | munmap: h:1                      |      (R) 169.53% |     (R) 6.53% |
->> +-------------------+----------------------------------+------------------+---------------+
->> | micromm/vmalloc   | fix_size_alloc_test: p:1, h:0    |       (R) 17.35% |    (R) 14.62% |
->> |                   | fix_size_alloc_test: p:4, h:0    |       (R) 37.54% |     (R) 9.35% |
->> |                   | fix_size_alloc_test: p:16, h:0   |       (R) 66.08% |     (R) 3.15% |
->> |                   | fix_size_alloc_test: p:64, h:0   |       (R) 82.94% |        -0.39% |
->> |                   | fix_size_alloc_test: p:256, h:0  |       (R) 87.85% |        -1.67% |
->> |                   | fix_size_alloc_test: p:16, h:1   |       (R) 50.31% |         3.00% |
->> |                   | fix_size_alloc_test: p:64, h:1   |       (R) 59.73% |         2.23% |
->> |                   | fix_size_alloc_test: p:256, h:1  |       (R) 62.14% |         1.51% |
->> |                   | random_size_alloc_test: p:1, h:0 |       (R) 77.82% |        -0.21% |
->> |                   | vm_map_ram_test: p:1, h:0        |       (R) 30.66% |    (R) 27.30% |
->> +-------------------+----------------------------------+------------------+---------------+
-> These numbers therefore correspond to set_memory_pkey() being a no-op,
-> in other words they represent the overhead of switching the pkey
-> register only.
->
-> I have amended the mock implementation so that set_memory_pkey() is run
-> as it would on a real POE implementation (i.e. actually setting the PTE
-> bits). Here are the new results, representing the overhead of both pkey
-> register switching and setting the pkey of page table pages (PTPs) on
-> alloc/free:
->
-> +-------------------+----------------------------------+------------------+---------------+
-> | Benchmark         | Result Class                     | Without
-> batching | With batching |
-> +===================+==================================+==================+===============+
-> | mmtests/kernbench | real time                        |           
-> 0.32% |         0.35% |
-> |                   | system time                      |        (R)
-> 4.18% |     (R) 3.18% |
-> |                   | user time                        |           
-> 0.08% |         0.20% |
-> +-------------------+----------------------------------+------------------+---------------+
-> | micromm/fork      | fork: h:0                        |      (R)
-> 221.39% |     (R) 3.35% |
-> |                   | fork: h:1                        |      (R)
-> 282.89% |     (R) 6.99% |
-> +-------------------+----------------------------------+------------------+---------------+
-> | micromm/munmap    | munmap: h:0                      |       (R)
-> 17.37% |        -0.28% |
-> |                   | munmap: h:1                      |      (R)
-> 172.61% |     (R) 8.08% |
-> +-------------------+----------------------------------+------------------+---------------+
-> | micromm/vmalloc   | fix_size_alloc_test: p:1, h:0    |       (R)
-> 15.54% |    (R) 12.57% |
-> |                   | fix_size_alloc_test: p:4, h:0    |       (R)
-> 39.18% |     (R) 9.13% |
-> |                   | fix_size_alloc_test: p:16, h:0   |       (R)
-> 65.81% |         2.97% |
-> |                   | fix_size_alloc_test: p:64, h:0   |       (R)
-> 83.39% |        -0.49% |
-> |                   | fix_size_alloc_test: p:256, h:0  |       (R)
-> 87.85% |    (I) -2.04% |
-> |                   | fix_size_alloc_test: p:16, h:1   |       (R)
-> 51.21% |         3.77% |
-> |                   | fix_size_alloc_test: p:64, h:1   |       (R)
-> 60.02% |         0.99% |
-> |                   | fix_size_alloc_test: p:256, h:1  |       (R)
-> 63.82% |         1.16% |
-> |                   | random_size_alloc_test: p:1, h:0 |       (R)
-> 77.79% |        -0.51% |
-> |                   | vm_map_ram_test: p:1, h:0        |       (R)
-> 30.67% |    (R) 27.09% |
-> +-------------------+----------------------------------+------------------+---------------+
+On X1E, the boot firmware already loads a "lite" ADSP firmware that
+provides essential functionality such as charging, battery status and USB-C
+detection. Only the audio functionality is missing. Since the full ADSP
+firmware is device-specific and needs to be manually copied by the user, it
+would be useful if we could provide the basic functionality even without
+having the full firmware present.
 
-Apologies, Thunderbird helpfully decided to wrap around that table...
-Here's the unmangled table:
+I have a working prototype for this that I will post soon. To keep that
+series smaller, this series contains some misc fixes for minor issues
+I noticed while working on this feature. The issues are present even
+without my additional patches, so the fixes can be picked up independently.
 
-+-------------------+----------------------------------+------------------+---------------+
-| Benchmark         | Result Class                     | Without batching | With batching |
-+===================+==================================+==================+===============+
-| mmtests/kernbench | real time                        |            0.32% |         0.35% |
-|                   | system time                      |        (R) 4.18% |     (R) 3.18% |
-|                   | user time                        |            0.08% |         0.20% |
-+-------------------+----------------------------------+------------------+---------------+
-| micromm/fork      | fork: h:0                        |      (R) 221.39% |     (R) 3.35% |
-|                   | fork: h:1                        |      (R) 282.89% |     (R) 6.99% |
-+-------------------+----------------------------------+------------------+---------------+
-| micromm/munmap    | munmap: h:0                      |       (R) 17.37% |        -0.28% |
-|                   | munmap: h:1                      |      (R) 172.61% |     (R) 8.08% |
-+-------------------+----------------------------------+------------------+---------------+
-| micromm/vmalloc   | fix_size_alloc_test: p:1, h:0    |       (R) 15.54% |    (R) 12.57% |
-|                   | fix_size_alloc_test: p:4, h:0    |       (R) 39.18% |     (R) 9.13% |
-|                   | fix_size_alloc_test: p:16, h:0   |       (R) 65.81% |         2.97% |
-|                   | fix_size_alloc_test: p:64, h:0   |       (R) 83.39% |        -0.49% |
-|                   | fix_size_alloc_test: p:256, h:0  |       (R) 87.85% |    (I) -2.04% |
-|                   | fix_size_alloc_test: p:16, h:1   |       (R) 51.21% |         3.77% |
-|                   | fix_size_alloc_test: p:64, h:1   |       (R) 60.02% |         0.99% |
-|                   | fix_size_alloc_test: p:256, h:1  |       (R) 63.82% |         1.16% |
-|                   | random_size_alloc_test: p:1, h:0 |       (R) 77.79% |        -0.51% |
-|                   | vm_map_ram_test: p:1, h:0        |       (R) 30.67% |    (R) 27.09% |
-+-------------------+----------------------------------+------------------+---------------+
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+Changes in v2:
+- Split up PATCH 3/3 and remove the redundant assignment to "ret" in a
+  separate patch (Dmitry)
+- Add review tags from Dmitry
+- Link to v1: https://lore.kernel.org/r/20250819-rproc-qcom-q6v5-fixes-v1-0-de92198f23c7@linaro.org
 
-> Those results are overall very similar to the original ones.
-> micromm/fork is however clearly impacted - around 4% additional overhead
-> from set_memory_pkey(); it makes sense considering that forking requires
-> duplicating (and therefore allocating) a full set of page tables.
-> kernbench is also a fork-heavy workload and it gets a 1% hit in system
-> time (with batching).
->
-> It seems fair to conclude that, on arm64, setting the pkey whenever a
-> PTP is allocated/freed is not particularly expensive. The situation may
-> well be different on x86 as Rick pointed out, and it may also change on
-> newer arm64 systems as I noted further down. Allocating/freeing PTPs in
-> bulk should help if setting the pkey in the pgtable ctor/dtor proves too
-> expensive.
->
-> - Kevin
->
->> Benchmarks:
->> - mmtests/kernbench: running kernbench (kernel build) [4].
->> - micromm/{fork,munmap}: from David Hildenbrand's benchmark suite. A
->>   1 GB mapping is created and then fork/unmap is called. The mapping is
->>   created using either page-sized (h:0) or hugepage folios (h:1); in all
->>   cases the memory is PTE-mapped.
->> - micromm/vmalloc: from test_vmalloc.ko, varying the number of pages
->>   (p:) and whether huge pages are used (h:).
->>
->> On a "real-world" and fork-heavy workload like kernbench, the estimated
->> overhead of kpkeys_hardened_pgtables is reasonable: 4% system time
->> overhead without batching, and about half that figure (2.2%) with
->> batching. The real time overhead is negligible.
->>
->> Microbenchmarks show large overheads without batching, which increase
->> with the number of pages being manipulated. Batching drastically reduces
->> that overhead, almost negating it for micromm/fork. Because all PTEs in
->> the mapping are modified in the same lazy_mmu section, the kpkeys level
->> is changed just twice regardless of the mapping size; as a result the
->> relative overhead actually decreases as the size increases for
->> fix_size_alloc_test.
->>
->> Note: the performance impact of set_memory_pkey() is likely to be
->> relatively low on arm64 because the linear mapping uses PTE-level
->> descriptors only. This means that set_memory_pkey() simply changes the
->> attributes of some PTE descriptors. However, some systems may be able to
->> use higher-level descriptors in the future [5], meaning that
->> set_memory_pkey() may have to split mappings. Allocating page tables
->> from a contiguous cache of pages could help minimise the overhead, as
->> proposed for x86 in [1].
->>
->> [...]
+---
+Stephan Gerhold (4):
+      remoteproc: qcom_q6v5: Avoid disabling handover IRQ twice
+      remoteproc: qcom_q6v5: Avoid handling handover twice
+      remoteproc: qcom_q6v5_pas: Shutdown lite ADSP DTB on X1E
+      remoteproc: qcom_q6v5_pas: Drop redundant assignment to ret
+
+ drivers/remoteproc/qcom_q6v5.c     | 8 +++++---
+ drivers/remoteproc/qcom_q6v5_pas.c | 8 +++++++-
+ 2 files changed, 12 insertions(+), 4 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250814-rproc-qcom-q6v5-fixes-9882ad571097
+
+Best regards,
+-- 
+Stephan Gerhold <stephan.gerhold@linaro.org>
+
 
