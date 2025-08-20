@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-777144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3018FB2D5D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:14:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF71B2D1BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C0017EA34
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:14:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D5EC52474B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2C92D8362;
-	Wed, 20 Aug 2025 08:14:07 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3488127C154;
+	Wed, 20 Aug 2025 02:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dJYs5NyH"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884F72D8762
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CAA27B35D
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755677646; cv=none; b=hlpLRV3Jd4rtJ8nnMiGPrkf+Dg7HkP2HJ+RWfQUWIZKzPaQuvVnIQbZtHpkuIVwK+4JAg3e+sOfa3ZA98ghcVZFWBzrkEPubj6WaMMNfciD1CMgh/HRBNYDmUHI7i7DO/kLStpVcbDwFaVFvE0gN6N7DWsW8j6p2EdJTIa3ybiI=
+	t=1755655491; cv=none; b=rAjG7ci4/f9oQ76JEZjFtM/nmtABlzT09nTF2outWa1H/b8bhNjWrMK5eREXHw3KQ5WPlzSL3O9DdXATxjTDEnxAzhZmJ4vX/r9c12wx0q6B3ZSF+GAsV6hB/zWbGlf2JvRLyF/srJZEDyZu4LcIb9LiKvL3neHdt9/jz+V0Gww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755677646; c=relaxed/simple;
-	bh=eKuLTiUrmLv8e/vRObGoxRu1VKsLAAlmJ6yv2fO3pqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RiVWvtK44fxO0rkLnNpAwg6edI6goThDDPHCLLDRsH7SdJpDRmKchrcSEhdPOIZkDrRC1vbVJFdtC/a9zbCSRS4ByuwJzhS7SAtXzmSeQY78Tq8IO6HmizENoKCkxdhyraqH59zKYEC+iSAKf9WMzjpeJihJ2JSrREEwCh1Ywrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1755677633-086e232956252630001-xx1T2L
-Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx1.zhaoxin.com with ESMTP id yeIMTAfFGpFlv0E2 (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 20 Aug 2025 16:13:53 +0800 (CST)
-X-Barracuda-Envelope-From: EwanHai-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXSHMBX1.zhaoxin.com
- (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 20 Aug
- 2025 16:13:53 +0800
-Received: from ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f]) by
- ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f%7]) with mapi id
- 15.01.2507.044; Wed, 20 Aug 2025 16:13:53 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from [192.168.31.91] (10.28.24.128) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 20 Aug
- 2025 10:03:53 +0800
-Message-ID: <b7a6b660-942c-46d7-ad8c-b60be6790512@zhaoxin.com>
-Date: Wed, 20 Aug 2025 10:03:11 +0800
+	s=arc-20240116; t=1755655491; c=relaxed/simple;
+	bh=zEpVahfh535VfqbCsd1GZhquq+XM/4DWjCgCN7dt7yM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KB0A/ETyG8YQIq7I/qll8BNEIruRpY5wNeXVTuod53Y8X6BDfnUqD4Vdl5EtG9yOarivQUgQNLV1FQj4icB6q2JB157Ld0P4Brck0qBbyqm/HA8OLGBY5Q6xJjMdqeMVib3Tt6TpvoXIGTq0qKggVtaRCXyCNlFaHk17/c0TVd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dJYs5NyH; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32326e69f1dso6338324a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 19:04:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755655489; x=1756260289; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OVU8t8SEuGg2Ydf4TYKXUzr0Gv6gJe9s60zdvfLEhYg=;
+        b=dJYs5NyHxS03Ygxh0L2H2MNFT896tcRDXIrQT/8C1+FcaYLVKrz419/IilI7Oah9uQ
+         k2wCRNmUObuDEt5MZT6PlN1Df3BskVzgeYV7JSifK3H0SfHIQU8Ap3hYVkIYcXmjmjLy
+         MHmXRIpwp1MNJi43Ard5hwZrW+09nJb9ZyQHs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755655489; x=1756260289;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OVU8t8SEuGg2Ydf4TYKXUzr0Gv6gJe9s60zdvfLEhYg=;
+        b=o+eOjPaPShRHBr1G//rOoXiQU7go5SXZA7Ku9+Q0TpKwpvzLDqfHnCpeXJIDc5tshH
+         OfVzJG177n4ljedPHh9k3+bHMtYPhMpWW8WiOrehe1M878Sy9wX/2H1cfAG24dRhiwBV
+         XUl+pZYqIugUZHd8wx+g4TrWcUrhO0m7qW6TtNsMbSkc221ieWhXoDmB+uX7ShMABlA6
+         ppwpnVtqbzFmQISMjcFCft9v6d1ZOn6Lyvpm+M28BfSqC8hN5O1PftfU4pm1MTjd+WHI
+         8g1NJI5ApVY03SH1oydofGVkvaetEWFsqaRjbrt/3LGeas0km5TiZZbMTUXY/o8HLCsX
+         AWOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlYvSZIts9i73DwmeUX/hRSngQOTsRfZuynO9eZ5FeqzNBSvy0g+rCXhq0Yk7HKayf18uhpywpvw4T1vo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaRNpU5bR3SsGa1WkHwBzaUx4/FEK/rqUlo2YvLHaFUOF8jG3g
+	NcbF1HT+fRhaT6rWrrvheVH4QndZNYj9Uj+U3gJsPME1dwHg+sJz+96xxPgJeLa3pQ==
+X-Gm-Gg: ASbGncsubACo31FtueZlDMhrRa1Q2GRW6l40OCHY8+O3wTRoR33mpffPlu1aOWkHOJ+
+	vE2Ui1qwXz++Z4rFolJdEALXA2uYM5Ss5IpPBouI0Yki4wnM2jz9kUX6yL6ivMOZ65K4aMFYbaH
+	fO2LkpS1Q3ths1At3856nS9HiohB29c9VntgU3ofmCCmbEqGtdriatWKNT7E9dvx/Ima/UkwpkK
+	sYrAQgi6jNqE4S9+Am7uJ3I154hXXUWip84jUnRMx5fQwvgjNNgXhphRGTnbLUi/ppMOrmRK3/j
+	gJeJzoWgbuozAtAsrQG1uvIq7aP2R2bBnzA7sdPkz8zX5JDCBOIYQ0tcM/zkW5RCG9NY2t6H6GC
+	aww6R355cIv4HL9CRYFy35SkNSA==
+X-Google-Smtp-Source: AGHT+IHxv8AzQbZlnNl7yEBNhn//58P8cBNzw6MHuveKMqkiuqUA2DnZVcHCsQ6yHpB+x73iCeJGzA==
+X-Received: by 2002:a17:90b:3945:b0:321:81a7:775 with SMTP id 98e67ed59e1d1-324e142a186mr1457487a91.25.1755655489508;
+        Tue, 19 Aug 2025 19:04:49 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:3ff5:e488:6024:dadb])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324d335c4f1sm1601815a91.11.2025.08.19.19.04.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 19:04:48 -0700 (PDT)
+Date: Wed, 20 Aug 2025 11:04:44 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Pavel Machek <pavel@kernel.org>, Tomasz Figa <tfiga@chromium.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PM: dpm: add module param to backtrace all CPUs
+Message-ID: <afspavnfnnhyttvxmcgdl76jwpawqp7v7g7dd5bnjfc3vv3hg7@g3zey3r3zqc4>
+References: <20250731030125.3817484-1-senozhatsky@chromium.org>
+ <CAJZ5v0jAdsyHKsfRtW+Crh_aDY_uryvNekTBivcdPVGAL4UyPQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] KVM: x86: allow CPUID 0xC000_0000 to proceed on
- Zhaoxin CPUs
-To: Sean Christopherson <seanjc@google.com>, <pbonzini@redhat.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>
-X-ASG-Orig-Subj: Re: [PATCH v2] KVM: x86: allow CPUID 0xC000_0000 to proceed on
- Zhaoxin CPUs
-CC: <x86@kernel.org>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<ewanhai@zhaoxin.com>, <cobechen@zhaoxin.com>, <leoliu@zhaoxin.com>,
-	<lyleli@zhaoxin.com>
-References: <20250818083034.93935-1-ewanhai-oc@zhaoxin.com>
- <175564446520.3064288.7316885414458356151.b4-ty@google.com>
-Content-Language: en-US
-From: Ewan Hai <ewanhai-oc@zhaoxin.com>
-In-Reply-To: <175564446520.3064288.7316885414458356151.b4-ty@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
- zxbjmbx1.zhaoxin.com (10.29.252.163)
-X-Moderation-Data: 8/20/2025 4:13:52 PM
-X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
-X-Barracuda-Start-Time: 1755677633
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 507
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.145999
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0jAdsyHKsfRtW+Crh_aDY_uryvNekTBivcdPVGAL4UyPQ@mail.gmail.com>
 
-On 8/20/25 7:11 AM, Sean Christopherson wrote:
+On (25/08/19 21:35), Rafael J. Wysocki wrote:
+> On Thu, Jul 31, 2025 at 5:01 AM Sergey Senozhatsky
+> <senozhatsky@chromium.org> wrote:
+> >
+> > Add dpm_all_cpu_backtrace module parameter which controls
+> > all CPU backtrace dump before DPM panics the system.
 > 
-> On Mon, 18 Aug 2025 04:30:34 -0400, Ewan Hai wrote:
->> Bypass the Centaur-only filter for the CPUID signature leaf so that
->> processing continues when the CPU vendor is Zhaoxin.
-> 
-> Applied to kvm-x86 misc, thanks!
+> This is exclusively about the DPM watchdog, so the module parameter
+> name should reflect that.
 
-Thank you for your suggestions!
+I thought dpm in dpm_all_cpu_backtrace explains that.  Should
+I rename it so something like dpm_watchdog_all_cpu_backtrace?
+Any better suggestions?
 
-> 
-> [1/1] KVM: x86: allow CPUID 0xC000_0000 to proceed on Zhaoxin CPUs
->       https://github.com/kvm-x86/linux/commit/1f0654dc75b8
-> 
-> --
-> https://github.com/kvm-x86/linux/tree/next
+> Also, it is not quite clear which module this is going to belong to,
+> so a comment with this information would be helpful.
 
+Ack, I'll add MODULE_PARM_DESC().
 
