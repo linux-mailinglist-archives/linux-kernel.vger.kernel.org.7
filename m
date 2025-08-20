@@ -1,223 +1,256 @@
-Return-Path: <linux-kernel+bounces-777704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6EEB2DCF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3D9B2DCFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9512C188B99B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:43:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CD301BA4675
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20373176EB;
-	Wed, 20 Aug 2025 12:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1648D315763;
+	Wed, 20 Aug 2025 12:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P/zkyWrt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OE5BZSAX"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA74B308F05;
-	Wed, 20 Aug 2025 12:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2760138FA3
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755693785; cv=none; b=IFTH6o1v1geWKNHsVdg+XGpIpyhSvaSsKiH9JY5TG0C5kLRCbC4P84pQcQSZdg0zT32fbDQoz4yusCAHoXxWEL2pN2lpakT39lD+/ABSK8Oy6J7QW/AkGB7gBWD1/2a1rhUtP1Mf8ndpUJNqvZYZjdCoiEEx2kJqR+ErCZDdS3A=
+	t=1755693934; cv=none; b=kkJl//yUUXAMZOjLqBd8xqhTBQAeuYcX/+vZN9j7lgzXXkhxWbxQScl7xEJVGcrNoU+BK9dJlnDdughL/RY3bvd9hTLtXB4rn/seneRQX7ZMG1LR5sOk4Oa2WwMQnxY32cYDbEyl7/pT9zPh/GjO86NOwkDR5Ae/7t1e+8bV/Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755693785; c=relaxed/simple;
-	bh=BzKWieJAdNGNUkpmpGd/ntRvTjTdJS0+m011390ExCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HEUyC5sBhXULL11efJUZZ5RlqPDObMwID/+sz3sQiAC6d8lxevZMaWyZzwEDn0I4JsY/6L8AT29EJDGu6v1bc8oRaYeSXK69G/+k6+mhwfRcM2rFNyEM1NaJokIgsty2jekLMdU0bZ5CRv57ivHER4a62/kZy/RLSRQdjLSDUoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P/zkyWrt; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755693784; x=1787229784;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=BzKWieJAdNGNUkpmpGd/ntRvTjTdJS0+m011390ExCc=;
-  b=P/zkyWrtzmjvAoRLgQnSlr5EhCIlRMDpw+sqaOaAJv3WrbqKb0gImnwv
-   js6RYqZr9c3fE50Dy2QtqTvf0ycIXoZszPUFAavMnOSNjcpzo5GzLbbeC
-   eckqSejMAAS6wTqlgCuA2ggSXlYDZveQg0KKSK1rEFZnDtVhqVPyH0sLN
-   Bv2P0MoVOlK7toxyfIGjRYuj9depdNtyu718dgxZeAWFROBYUIM+k6Zr8
-   JGjCNma9Fl1FCMEEyUtADJrvqnwM2kNFBJJ1OrmRVNPPwOjxBwdbrUIT1
-   Z2hZip9Zn55BIqOISgKm/8np6lCizeQ58HCU3lKc0sIm2vUjGbusa4SbJ
-   g==;
-X-CSE-ConnectionGUID: DlRH0tI9T/WKqyJIcUmMSg==
-X-CSE-MsgGUID: KpwGK1hwR+KhyPAhPVPI7w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="45531989"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="45531989"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 05:43:03 -0700
-X-CSE-ConnectionGUID: avHaKPYLQB2V2AL5YBS26A==
-X-CSE-MsgGUID: LJuPOidESgya4geRW5fmCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="168463890"
-Received: from ettammin-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.19])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 05:42:59 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 2A4DA12024B;
-	Wed, 20 Aug 2025 15:42:57 +0300 (EEST)
-Date: Wed, 20 Aug 2025 15:42:57 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: "Du, Bin" <bin.du@amd.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com, Svetoslav.Stoilov@amd.com
-Subject: Re: [PATCH v2 8/8] Documentation: add documentation of AMD isp 4
- driver
-Message-ID: <aKXC0Q4IiKmkjoSH@kekkonen.localdomain>
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <20250618091959.68293-9-Bin.Du@amd.com>
- <20250805113719.GF24627@pendragon.ideasonboard.com>
- <e614b565-81e0-49c0-93dc-af1936462728@amd.com>
+	s=arc-20240116; t=1755693934; c=relaxed/simple;
+	bh=XGZNUyGClMBZ53/9M+WiiYZ3hnA8W8MXcf7Y6tflI0U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ut69S++k+fh2P/pHA4Ryvx9Icuw2xUWsbiZiuN49LubnyQKhyQGf1oU6SYbO6RAY2pR3Z4X11eeHLLO/EIM+8exwygboTP8KEwJhfi/zVIfgH5e8QAqaxDpSLK7JSgTsRk3Bp97Cz+xi4bJzy7lJ0q8B/AVaBF2mwqsjNUp4GYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OE5BZSAX; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-244580523a0so57149055ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 05:45:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755693931; x=1756298731; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+gRhe9SO61ZZX3zSeOGc3YYqkcNZ6w6+wJsLaFnopq8=;
+        b=OE5BZSAX++GGBYdUglCKCN9aiZTz/BOimihiEiz6UqZxqXIpP3P0iPTNXkcCGPtecN
+         fD0YnTMq1IfRCNY1koLNdTmOR9rOVispxsotIX5llgnihL+yG4fRu5Z4uA9fp2LROz/J
+         zODym8rqWAY0HvWueQlfDSYqlGrJSa1N51GHwF1k9GK+4vE6ZSzpmIBLqr6PQWkrSC/J
+         DMuSOD8xhMcOQVnOIDsTmhjID7h4OURd9erX+S50qxJiy9oWjXFIJ49U9rroOoanQKoy
+         iCc2B2uaouXBcceMkWIaZd4q+kOzwwNU200drxKaXONhd2YgaUbW8pzA1NLdqwBdCK9t
+         3TWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755693931; x=1756298731;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+gRhe9SO61ZZX3zSeOGc3YYqkcNZ6w6+wJsLaFnopq8=;
+        b=Uvs2S+KWYC/1kKzfmK95YVmyU8JKTHzJWsdpkJTLCp0HVEDvvId6af8xBuupODkypq
+         RskEfU3X4mDKTrY0oK0dJF2q12YyDayf+Iva0tVeNC3QQk2NCkWJMUEv0leZRbQNasmN
+         tz94BASey2Es1hAXUDAk6sb1Q/nJisL9I+Zk6SM9dZnMHwddqfNrTkfC5UWCUlfngb85
+         4gnCS2NxzCOVCESBrYCJEFUqzCPYyOqAHLEUBFu3OXDSu5+dWQmjgwM2RTbFOoHlXJ8f
+         sv4m4blm4ovkp06T3ohG+1Hm6uQelwuT6xilJoLA7zSsd8SRJ+CK5hF9LlmReC6UeqPs
+         n3Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsZPryprOe2cW1UE8F2wal3D3kedR3UPXa6zmHnDNjDkPyL3wzmxkjGaMnTg12uU9g86YNFSh8jABKn6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCESU3rIwlmyWU69391ECEt8ntJakFQToEyoLKESMtoY8n8GNC
+	LFRApTF4T8lHD6G5L1SrZ6vGmR8tVAOEWLnXLsdDdQKPV2q2Wx245h60jDzno+TRBUc0a91Y6qA
+	Oc9rJevuRPciFDZiv7pcMY9EnGz8uS26KwoDAclO5dQ==
+X-Gm-Gg: ASbGncsUtMBjSTjJ0b/LadfnxSqYMrcgUgodHx1L+Wb9DN6Bc/Y0w14pQPtQmYFqcgd
+	MhgZ+jRoZ6Foxa62339MlZVuoPdBlZif82D1290axIRScmPEfQ/KhKRr0ZLSxbt4z9xMZvbFEqQ
+	M+xORIPZn1FrR9X2P0USqQJuzXXysbawGRwSeD/Ni3ccyn4k3NcPjZawD9+pn/D/V/Nc4k9nrIV
+	+1aiaI07dp3Xc/vd5kgs6LU7TyH+6Oim78wspTIsDn+EQYX250=
+X-Google-Smtp-Source: AGHT+IEo6AZMHBNfNm+wGuts2E1fjpomh+rCZIxZABpTnRUGW4TVydP8e55fzi6K1vdQKBnAE9C73PQOIe+rJ5ddIZo=
+X-Received: by 2002:a17:902:ebd1:b0:234:9375:e07c with SMTP id
+ d9443c01a7336-245ef2716c0mr38415775ad.46.1755693931471; Wed, 20 Aug 2025
+ 05:45:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e614b565-81e0-49c0-93dc-af1936462728@amd.com>
+References: <20250819122820.553053307@linuxfoundation.org>
+In-Reply-To: <20250819122820.553053307@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 20 Aug 2025 18:15:19 +0530
+X-Gm-Features: Ac12FXzNj44omXAfHJgi9bZ51uoRtB8H1kwROfJrlwowrwNPU6U7fIeg-6nxe0Q
+Message-ID: <CA+G9fYuQ_eHhoWsVdQpbmOSS-e_5BQzpar8Sjvtps41fUbknzA@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/438] 6.12.43-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org, LTP List <ltp@lists.linux.it>, 
+	Jan Kara <jack@suse.cz>, linux-ext4 <linux-ext4@vger.kernel.org>, Jann Horn <jannh@google.com>, 
+	Jan Stancek <jstancek@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Bin,
+On Tue, 19 Aug 2025 at 18:01, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.43 release.
+> There are 438 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 21 Aug 2025 12:27:16 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.43-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On Tue, Aug 12, 2025 at 09:36:04AM +0800, Du, Bin wrote:
-> Many thanks Laurent Pinchart for the review.
-> 
-> On 8/5/2025 7:37 PM, Laurent Pinchart wrote:
-> > On Wed, Jun 18, 2025 at 05:19:59PM +0800, Bin Du wrote:
-> > > Add documentation for AMD isp 4 and describe the main components
-> > > 
-> > > Signed-off-by: Bin Du <Bin.Du@amd.com>
-> > > Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> > > ---
-> > >   Documentation/admin-guide/media/amdisp4-1.rst | 64 +++++++++++++++++++
-> > >   Documentation/admin-guide/media/amdisp4.dot   |  8 +++
-> > >   MAINTAINERS                                   |  2 +
-> > >   3 files changed, 74 insertions(+)
-> > >   create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
-> > >   create mode 100644 Documentation/admin-guide/media/amdisp4.dot
-> > > 
-> > > diff --git a/Documentation/admin-guide/media/amdisp4-1.rst b/Documentation/admin-guide/media/amdisp4-1.rst
-> > > new file mode 100644
-> > > index 000000000000..417b15af689a
-> > > --- /dev/null
-> > > +++ b/Documentation/admin-guide/media/amdisp4-1.rst
-> > > @@ -0,0 +1,64 @@
-> > > +.. SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +.. include:: <isonum.txt>
-> > > +
-> > > +====================================
-> > > +AMD Image Signal Processor (amdisp4)
-> > > +====================================
-> > > +
-> > > +Introduction
-> > > +============
-> > > +
-> > > +This file documents the driver for the AMD ISP4 that is part of
-> > > +AMD Ryzen AI Max 385 SoC.
-> > > +
-> > > +The driver is located under drivers/media/platform/amd/isp4 and uses
-> > > +the Media-Controller API.
-> > > +
-> > > +Topology
-> > > +========
-> > > +
-> > > +.. _amdisp4_topology_graph:
-> > > +
-> > > +.. kernel-figure:: amdisp4.dot
-> > > +     :alt:   Diagram of the media pipeline topology
-> > > +     :align: center
-> > > +
-> > > +
-> > > +
-> > > +The driver has 1 sub-device:
-> > > +
-> > > +- isp: used to resize and process bayer raw frames in to yuv.
-> > > +
-> > > +The driver has 1 video device:
-> > > +
-> > > +- <capture video device: capture device for retrieving images.
-> > > +
-> > > +
-> > > +  - ISP4 Image Signal Processing Subdevice Node
-> > > +-----------------------------------------------
-> > > +
-> > > +The isp4 is represented as a single V4L2 subdev, the sub-device does not
-> > > +provide interface to the user space.
-> > 
-> > Doesn't it ? The driver sets the V4L2_SUBDEV_FL_HAS_DEVNODE flag for the
-> > subdev, and calls v4l2_device_register_subdev_nodes().
-> > 
-> 
-> We have exported subdev device to user space during the testing with
-> libcamera sample pipeline.
-> 
-> > As far as I understand, the camera is exposed by the firmware with a
-> > webcam-like interface. We need to better understand your plans with this
-> > driver. If everything is handled by the firmware, why are the sensor and
-> > subdev exposed to userspace ? Why can't you expose a single video
-> > capture device, with a media device, and handle everything behind the
-> > scene ? I assume there may be more features coming later. Please
-> > document the plan, we can't provide feedback on the architecture
-> > otherwise.
-> > 
-> 
-> Currently, isp fw is controlling the sensor to update just the exposure and
-> gain, since the 3A algorithms run on ISP HW rather than on x86. In a future
-> version, we plan to introduce raw output support in the ISP driver, allowing
-> users to choose between AMD’s 3A running on ISP hardware or a custom 3A
-> running on x86. If the user opts for the x86-based 3A, the firmware will
-> relinquish control of the sensor, and hands over full control to the x86
-> system.
+As we discussed from the last time LTP syscalls epoll_ctl04 is a known issue
+on the Linus master and Linux next.
 
-There are a few problems I see with this approach.
+* ltp-syscalls
+  - epoll_ctl04
 
-Camera sensors are separate devices from the ISP and they're expected to be
-controlled by the respective camera sensor drivers and these drivers only.
-The firmware contains the camera control algorithms as well as tuning; this
-is something that's better located outside of it.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-The complex camera system comprising of a camera sensor, an ISP and a
-microcontroller within you have is right now semi-integrated to the SoC and
-I think it needs to be either fully unintegrated (the ISPs we currently
-support) or fully integrated (e.g. UVC webcams).
+1)
+The bisection results pointing to
 
-There are two options that I can see here, in descending order of
-preference:
+First bad commit,
+eventpoll: Fix semi-unbounded recursion
+commit f2e467a48287c868818085aa35389a224d226732 upstream.
 
-1. Control the ISP processing blocks from the AMD ISP driver, via a
-   documented UAPI. This includes setting processing block parameters and
-   being able to obtain statistics from the ISP. This is aligned with the
-   other currently supported ISP drivers.
-   
-   This option could include support for the CSI-2 receiver only, with the
-   processing taking place in SoftISP. Fully supported ISP would of course
-   be preferred.
-   
-   Right now I don't have an opinion on whether or not this needs to
-   include libcamera support, but the ISP driver wouldn't be of much use
-   without that anyway.
+2)
+A patch has been proposed to update the LTP test case to align with
+recent changes in the Linux kernel code.
 
-2. Move sensor control to firmware and make the AMD ISP driver expose an
-   interface that looks like a webcam, akin to the UVC driver. In this case
-   there's also no use for the sensor driver you've posted earlier.
-   Overall, the ISP/sensor combination will probably be limited to use as a
-   webcam in this case.
+[LTP] [PATCH] syscalls/epoll_ctl04: add ELOOP to expected errnos
+- https://lore.kernel.org/ltp/39ee7abdee12e22074b40d46775d69d37725b932.1754386027.git.jstancek@redhat.com/
+- https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.12.y/v6.12.41-808-ge80021fb2304/ltp-syscalls/epoll_ctl04/
 
--- 
-Kind regards,
+## Build
+* kernel: 6.12.43-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* git commit: e80021fb2304b3e1f96e7b9a132e69d2c1d022f1
+* git describe: v6.12.41-808-ge80021fb2304
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12.41-808-ge80021fb2304
 
-Sakari Ailus
+## Test Regressions (compared to v6.12.41-370-g3566c7a6291d)
+* ltp-syscalls
+  - epoll_ctl04
+
+## Metric Regressions (compared to v6.12.41-370-g3566c7a6291d)
+
+## Test Fixes (compared to v6.12.41-370-g3566c7a6291d)
+
+## Metric Fixes (compared to v6.12.41-370-g3566c7a6291d)
+
+## Test result summary
+total: 284700, pass: 268768, fail: 4803, skip: 10936, xfail: 193
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 137 passed, 2 failed
+* arm64: 57 total, 56 passed, 1 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 40 passed, 0 failed
+* riscv: 25 total, 22 passed, 3 failed
+* s390: 22 total, 21 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 48 passed, 1 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-fpu
+* kselftest-futex
+* kselftest-intel_pstate
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* modules
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
