@@ -1,157 +1,198 @@
-Return-Path: <linux-kernel+bounces-777455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9949AB2D99A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:06:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF28B2D99C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497A64E31D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:03:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 871FA3A8825
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1274D2DEA6E;
-	Wed, 20 Aug 2025 10:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0742DEA71;
+	Wed, 20 Aug 2025 10:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="XpX6swS5"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CAE2749C2;
-	Wed, 20 Aug 2025 10:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bsfUOjvQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3172749C2;
+	Wed, 20 Aug 2025 10:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755684177; cv=none; b=daxdxKHTUL0Id1i4S1ERiRTk1iQfYkCXutOryGHGsVL5qvgmC0qCK2FvQmHsKpOz+5JsXDO1g9oyzW96WCBsCvJ44qQH0oKuyTiNe21jwmgMK9VVIol2FZBs8jQ6sjK3RPH6UFcZay6Nj7GSiJ8Eq1Unq8BJrv7OTrxO8gszcew=
+	t=1755684232; cv=none; b=W2LfWYcR+fVQUB5WJEfzDSPXNqLc8gIII/rAlHMSWWi0fm3bqRoJ2AYYpi9smZVt6pp6vwGL2lROtOXX0YBFlulblV7A7x3GqXSv4CcDDQ1v3zvB5gehUp1IRkO8B+VcuO61F6ejM883BUKOnYqhvvPM7RrhDZHZvXENFAzKjuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755684177; c=relaxed/simple;
-	bh=uOLdn98nph0SHH7/Fh81kl0juaKt3zGyYf9fGFwqE5c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=qVTIXTa2wf8vp95Sg/a+JviZRnybCgsjXv1N2gGkC+3wiDuzztRJGbkNlykNA8CP+HHBMhW6/R2pGz9OVf9uvkgHW2St7mCoo3CxvyVHzSfMQAXGx5eoDVMjTb7hTSIuExznyCSlqqLtn5IoeWXkAIi/dmusdoGAOix/F/HfoRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=XpX6swS5 reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=c1GcRaJaSlDd1sKDSBrDckSBfJtDd1CdljMeWqShdhg=; b=X
-	pX6swS5sZzlusLV7PDUu7L5rstDnvUIWlrVA0hKe1xStws2Yz6H2Pr2VIlk6fO7U
-	FX+bnOr5ew+I8Q7J8T1vpkpZ47zhwjOPZ575i160xa/BEzFSWuj6vkvHQBfsAlok
-	BAFCmTG5p2oVbIHeM9QLlBu1a88sJI9xFrTlHk0Eq8=
-Received: from 00107082$163.com ( [111.35.190.191] ) by
- ajax-webmail-wmsvr-40-102 (Coremail) ; Wed, 20 Aug 2025 18:02:05 +0800
- (CST)
-Date: Wed, 20 Aug 2025 18:02:05 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Bart Van Assche" <bvanassche@acm.org>, phil@philpotter.co.uk
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Subject: Re: [BUG] general protection fault when connecting an old mp3/usb
- device
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <2899b7cb-106b-48dc-890f-9cc80f1d1f8b@acm.org>
-References: <20250818095008.6473-1-00107082@163.com>
- <2899b7cb-106b-48dc-890f-9cc80f1d1f8b@acm.org>
-X-NTES-SC: AL_Qu2eB/qTu0kp4yGeZ+kZnEYQheY4XMKyuPkg1YJXOp80tCTy8AwCWm9ABnT24s6gLBGJoAi8VBdk1NRoba9TVY4SPsGuJt3AeFckwlKPGDVo
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1755684232; c=relaxed/simple;
+	bh=t+N6FOaqwslvw/sqlK5GRz1Qw4D7Ojh68kYHPj6SUz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IARvpkpScQab65Qa+nHS2R082nww3s25oiHj+M/oEcS8/VAcyUUiOBlrzOmjN480xzEXidf4ee9yBCok6PIbeciQwd/km3rmDSuri41NWfHk3ti0hM9177kjFoy+z/J/7GDg64s3P08LzKM7uVno/BLmEodvX1lzvivlKWQG7fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bsfUOjvQ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755684230; x=1787220230;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=t+N6FOaqwslvw/sqlK5GRz1Qw4D7Ojh68kYHPj6SUz4=;
+  b=bsfUOjvQ15VMoFFOGRu8k2fqss0tCvo+BxTQ69tfRDqIDsjlOnQSB2TP
+   Yi2bATkaH9MUBZPNMhpkBkjVgxfxT5GUtbSsBz8O3QxXybTDlmKkU2Pz2
+   VoQmZI6fRBem/r0fguUftNjTyzJmC8SjOX0airH5FbRrFyYKTkIXxNX8x
+   rXS5SEfHbG/n2h2f6d6t7GegPmBhV2kb/1OTH3z75MOVKw4GFmLoKmxNu
+   GWI+UVZoWosxSmn0cTcsos3SIHmJ4mnYIdC14OjLGMCUyV1XnqGoPGpZq
+   g6ySnU+t5P3a3Oku8LGtJLcW26PsOiQwY9iSChGtvj+1H2n4mXOGjBEEj
+   w==;
+X-CSE-ConnectionGUID: y7/RdyGUSBeJ4Atu4Z1A2g==
+X-CSE-MsgGUID: XcuKFfgMQhWpx526TlXRcw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57898456"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="57898456"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 03:03:48 -0700
+X-CSE-ConnectionGUID: XgoySa6TQTm1c7DTODe3YA==
+X-CSE-MsgGUID: fkuPTpbIQFyFVbMFxODluw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="167994273"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 03:03:44 -0700
+Message-ID: <20641696-242d-4fb6-a3c1-1a8e7cf83b18@linux.intel.com>
+Date: Wed, 20 Aug 2025 18:03:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7c8215f8.87f8.198c6edb9f0.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZigvCgB3dJ8enaVofTQeAA--.2999W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hyvqmilkNj6IQAEsR
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
+To: Vishal Annapurve <vannapurve@google.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: Nikolay Borisov <nik.borisov@suse.com>, Jianxiong Gao <jxgao@google.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Dionna Glaze <dionnaglaze@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ jgross@suse.com, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com,
+ Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, jiewen.yao@intel.com
+References: <CAMGD6P1Q9tK89AjaPXAVvVNKtD77-zkDr0Kmrm29+e=i+R+33w@mail.gmail.com>
+ <0dc2b8d2-6e1d-4530-898b-3cb4220b5d42@linux.intel.com>
+ <4acfa729-e0ad-4dc7-8958-ececfae8ab80@suse.com> <aIDzBOmjzveLjhmk@google.com>
+ <550a730d-07db-46d7-ac1a-b5b7a09042a6@linux.intel.com>
+ <aIeX0GQh1Q_4N597@google.com>
+ <ad616489-1546-4f6a-9242-a719952e19b6@linux.intel.com>
+ <CAGtprH9EL0=Cxu7f8tD6rEvnpC7uLAw6jKijHdFUQYvbyJgkzA@mail.gmail.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <CAGtprH9EL0=Cxu7f8tD6rEvnpC7uLAw6jKijHdFUQYvbyJgkzA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Cj5QaGlsbGlwLCBpcyB0aGlzIGJlaGF2aW9yIHBlcmhhcHMgaW50cm9kdWNlZCBieSBjb21taXQg
-NWVjOWQyNmI3OGM0Cj4oImNkcm9tOiBDYWxsIGNkcm9tX21yd19leGl0IGZyb20gY2Ryb21fcmVs
-ZWFzZSBmdW5jdGlvbiIpPyBQbGVhc2UgZG8KCkkgbWFuYWdlIHRvIHJlcHJvZHVjZSB0aGlzLCBi
-dXQgSXQgdHVybnMgb3V0IHRoaXMgaXMgbm90IGFib3V0IG15IG9sZCBtcDMgZGV2aWNlLCBidXQg
-YWJvdXQgbXkgcGhvbmU6Ckp1c3QgY29ubmVjdC11bW91bnQtZGlzY25uZWN0LCBhbmQgcmVwZWF0
-LCBhZnRlciBzZXZlcmFsIHJvdW5kcywgYW4gZXJyb3IgbG9nIHdvdWxkIHNob3cgdXAuCihJIHNo
-b3VsZCBwYXkgYXR0ZW50aW9uIHRvIHRoZSBVU0IgUHJvZHVjdCAgbmFtZSBpbiBsb2cuLi4uLi4K
-SXQgaXMganVzdCB0aGF0IEkgY2hlY2sgdGhlIGxvZyBvbmx5IHdoZW4gSSBoYXZlIHRyb3VibGUg
-IGNvbm5lY3RpbmcgbXkgbXAzIGRldmljZSwgYW5kIGFzc3VtaW5nIHRoZSBsb2cgaXMgYWJvdXQg
-bXkgbXAzIGRldmljZS4pCgpCdXQgSSBjYW5ub3QgcmVwcm9kdWNlIHRoZSBhZGRyZXNzIHBhdHRl
-cm4gMHgyZTJlMmYyZTJlMmYyZTJlLCB0aGlzIHRpbWUgYWxsIEkgZ290IGlzIE5VTEw6CltUdWUg
-QXVnIDI2IDAwOjE1OjAwIDIwMjVdIHVzYiAxLTU6IFVTQiBkaXNjb25uZWN0LCBkZXZpY2UgbnVt
-YmVyIDk0CltUdWUgQXVnIDI2IDAwOjE1OjAxIDIwMjVdIHVzYiAxLTU6IG5ldyBoaWdoLXNwZWVk
-IFVTQiBkZXZpY2UgbnVtYmVyIDk1IHVzaW5nIHhoY2lfaGNkCltUdWUgQXVnIDI2IDAwOjE1OjA0
-IDIwMjVdIHVzYiAxLTU6IG5ldyBoaWdoLXNwZWVkIFVTQiBkZXZpY2UgbnVtYmVyIDk2IHVzaW5n
-IHhoY2lfaGNkCltUdWUgQXVnIDI2IDAwOjE1OjA0IDIwMjVdIHVzYiAxLTU6IE5ldyBVU0IgZGV2
-aWNlIGZvdW5kLCBpZFZlbmRvcj0xMmQxLCBpZFByb2R1Y3Q9MTA4MiwgYmNkRGV2aWNlPSAzLjE4
-CltUdWUgQXVnIDI2IDAwOjE1OjA0IDIwMjVdIHVzYiAxLTU6IE5ldyBVU0IgZGV2aWNlIHN0cmlu
-Z3M6IE1mcj0xLCBQcm9kdWN0PTIsIFNlcmlhbE51bWJlcj0zCltUdWUgQXVnIDI2IDAwOjE1OjA0
-IDIwMjVdIHVzYiAxLTU6IFByb2R1Y3Q6IEFUVS1BTDEwCltUdWUgQXVnIDI2IDAwOjE1OjA0IDIw
-MjVdIHVzYiAxLTU6IE1hbnVmYWN0dXJlcjogSFVBV0VJCltUdWUgQXVnIDI2IDAwOjE1OjA0IDIw
-MjVdIHVzYiAxLTU6IFNlcmlhbE51bWJlcjogVFBFOVgxODkxNUMwMjMwOApbVHVlIEF1ZyAyNiAw
-MDoxNTowNCAyMDI1XSB1c2Itc3RvcmFnZSAxLTU6MS4xOiBVU0IgTWFzcyBTdG9yYWdlIGRldmlj
-ZSBkZXRlY3RlZApbVHVlIEF1ZyAyNiAwMDoxNTowNCAyMDI1XSBzY3NpIGhvc3QyOiB1c2Itc3Rv
-cmFnZSAxLTU6MS4xCltUdWUgQXVnIDI2IDAwOjE1OjA1IDIwMjVdIHNjc2kgMjowOjA6MDogQ0Qt
-Uk9NICAgICAgICAgICAgTGludXggICAgRmlsZS1DRCBHYWRnZXQgICAwMzE4IFBROiAwIEFOU0k6
-IDIKW1R1ZSBBdWcgMjYgMDA6MTU6MDUgMjAyNV0gc3IgMjowOjA6MDogUG93ZXItb24gb3IgZGV2
-aWNlIHJlc2V0IG9jY3VycmVkCltUdWUgQXVnIDI2IDAwOjE1OjA1IDIwMjVdIHNyIDI6MDowOjA6
-IFtzcjBdIHNjc2kzLW1tYyBkcml2ZTogMHgvMHggY2FkZHkKW1R1ZSBBdWcgMjYgMDA6MTU6MDUg
-MjAyNV0gc3IgMjowOjA6MDogQXR0YWNoZWQgc2NzaSBDRC1ST00gc3IwCltUdWUgQXVnIDI2IDAw
-OjE1OjA1IDIwMjVdIHNyIDI6MDowOjA6IEF0dGFjaGVkIHNjc2kgZ2VuZXJpYyBzZzAgdHlwZSA1
-CltUdWUgQXVnIDI2IDAwOjE1OjA1IDIwMjVdIC9kZXYvc3IwOiBDYW4ndCBvcGVuIGJsb2NrZGV2
-CltUdWUgQXVnIDI2IDAwOjE1OjA1IDIwMjVdIElTTyA5NjYwIEV4dGVuc2lvbnM6IE1pY3Jvc29m
-dCBKb2xpZXQgTGV2ZWwgMQpbVHVlIEF1ZyAyNiAwMDoxNTowNSAyMDI1XSBJU09GUzogY2hhbmdp
-bmcgdG8gc2Vjb25kYXJ5IHJvb3QKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gdXNiIDEtNTog
-VVNCIGRpc2Nvbm5lY3QsIGRldmljZSBudW1iZXIgOTYKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAy
-NV0gQlVHOiBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlLCBhZGRyZXNzOiAwMDAwMDAw
-MDAwMDAwMjYwCltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdICNQRjogc3VwZXJ2aXNvciByZWFk
-IGFjY2VzcyBpbiBrZXJuZWwgbW9kZQpbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSAjUEY6IGVy
-cm9yX2NvZGUoMHgwMDAwKSAtIG5vdC1wcmVzZW50IHBhZ2UKW1R1ZSBBdWcgMjYgMDA6MTU6MDYg
-MjAyNV0gUEdEIDAgUDREIDAgCltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdIE9vcHM6IE9vcHM6
-IDAwMDAgWyM0XSBTTVAgTk9QVEkKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gQ1BVOiAwIFVJ
-RDogMCBQSUQ6IDg4NjI5NSBDb21tOiB1bW91bnQgVGFpbnRlZDogRyAgICAgIEQgICAgICAgICAg
-ICAgNi4xNi4wLWxpbmFuLTAgIzUwIFBSRUVNUFQodm9sdW50YXJ5KSAKW1R1ZSBBdWcgMjYgMDA6
-MTU6MDYgMjAyNV0gVGFpbnRlZDogW0RdPURJRQpbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSBI
-YXJkd2FyZSBuYW1lOiBBY2VyIFM0MC01My9MaWx5X1RMLCBCSU9TIFYxLjAxIDA4LzI4LzIwMjAK
-W1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gUklQOiAwMDEwOnNjc2lfYmxvY2tfd2hlbl9wcm9j
-ZXNzaW5nX2Vycm9ycysweDI3LzB4ZjAgW3Njc2lfbW9kXQpbVHVlIEF1ZyAyNiAwMDoxNTowNiAy
-MDI1XSBDb2RlOiA5MCA5MCA5MCBmMyAwZiAxZSBmYSAwZiAxZiA0NCAwMCAwMCA1NSA1MyA0OCA4
-MyBlYyAzMCA2NSA0OCA4YiAxZCA2MSBiMSAxMyBmMCA0OCA4OSA1YyAyNCAyOCA0OCA4OSBmYiBl
-OCAyYyA3MyBjZCBlZSA0OCA4YiAxMyA8OGI+IDgyIDYwIDAyIDAwIDAwIDgzIGU4IDA1IDgzIGY4
-IDAyIDc2IDA5IGY2IDgyIDIwIDAyIDAwIDAwIDEwIDc0CltUdWUgQXVnIDI2IDAwOjE1OjA2IDIw
-MjVdIFJTUDogMDAxODpmZmZmYWZmMzA5ZDQ3YzcwIEVGTEFHUzogMDAwMTAyNDYKW1R1ZSBBdWcg
-MjYgMDA6MTU6MDYgMjAyNV0gUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogZmZmZjkyMDYwMTYx
-MzAwMCBSQ1g6IDAwMDAwMDAwMDAwMDAwMDAKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gUkRY
-OiAwMDAwMDAwMDAwMDAwMDAwIFJTSTogZmZmZmFmZjMwOWQ0N2Q0MCBSREk6IGZmZmY5MjA2MDE2
-MTMwMDAKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gUkJQOiBmZmZmOTIwNjAxNjEzMDAwIFIw
-ODogZmZmZmFmZjMwOWQ0N2RiNCBSMDk6IDAwMDAwMDAwMDAwMDAwMDQKW1R1ZSBBdWcgMjYgMDA6
-MTU6MDYgMjAyNV0gUjEwOiBmZmZmYWZmMzA5ZDQ3ZGI0IFIxMTogZmZmZmZmZmZiMDZkZmY4MCBS
-MTI6IGZmZmZhZmYzMDlkNDdjYzAKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gUjEzOiBmZmZm
-OTIwNTU1NzdkNDAwIFIxNDogMDAwMDAwMDAwMDAwMDAwMCBSMTU6IGZmZmZhZmYzMDlkNDdkNDAK
-W1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gRlM6ICAwMDAwN2Y1ZmIxZDJlODQwKDAwMDApIEdT
-OmZmZmY5MjA5MmZiNjAwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMApbVHVlIEF1ZyAy
-NiAwMDoxNTowNiAyMDI1XSBDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAw
-MDgwMDUwMDMzCltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdIENSMjogMDAwMDAwMDAwMDAwMDI2
-MCBDUjM6IDAwMDAwMDAxNWViN2MwMDQgQ1I0OiAwMDAwMDAwMDAwZjcyZWYwCltUdWUgQXVnIDI2
-IDAwOjE1OjA2IDIwMjVdIFBLUlU6IDU1NTU1NTU0CltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVd
-IENhbGwgVHJhY2U6CltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdICA8VEFTSz4KW1R1ZSBBdWcg
-MjYgMDA6MTU6MDYgMjAyNV0gIHNyX2RvX2lvY3RsKzB4NWIvMHgxYzAgW3NyX21vZF0KW1R1ZSBB
-dWcgMjYgMDA6MTU6MDYgMjAyNV0gIHNyX3BhY2tldCsweDJjLzB4NTAgW3NyX21vZF0KW1R1ZSBB
-dWcgMjYgMDA6MTU6MDYgMjAyNV0gIGNkcm9tX2dldF9kaXNjX2luZm8rMHg2MC8weGUwIFtjZHJv
-bV0KW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gIGNkcm9tX21yd19leGl0KzB4MjkvMHhiMCBb
-Y2Ryb21dCltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdICA/IHhhX2Rlc3Ryb3krMHhhYS8weDEy
-MApbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSAgdW5yZWdpc3Rlcl9jZHJvbSsweDc2LzB4YzAg
-W2Nkcm9tXQpbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSAgc3JfZnJlZV9kaXNrKzB4NDQvMHg1
-MCBbc3JfbW9kXQpbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSAgZGlza19yZWxlYXNlKzB4YjAv
-MHhlMApbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSAgZGV2aWNlX3JlbGVhc2UrMHgzNy8weDkw
-CltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdICBrb2JqZWN0X3B1dCsweDhlLzB4MWQwCltUdWUg
-QXVnIDI2IDAwOjE1OjA2IDIwMjVdICBibGtkZXZfcmVsZWFzZSsweDExLzB4MjAKW1R1ZSBBdWcg
-MjYgMDA6MTU6MDYgMjAyNV0gIF9fZnB1dCsweGUzLzB4MmEwCltUdWUgQXVnIDI2IDAwOjE1OjA2
-IDIwMjVdICB0YXNrX3dvcmtfcnVuKzB4NTkvMHg5MApbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1
-XSAgZXhpdF90b191c2VyX21vZGVfbG9vcCsweGQ2LzB4ZTAKW1R1ZSBBdWcgMjYgMDA6MTU6MDYg
-MjAyNV0gIGRvX3N5c2NhbGxfNjQrMHgxYzEvMHgxZTAKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAy
-NV0gIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDc2LzB4N2UKW1R1ZSBBdWcgMjYg
-MDA6MTU6MDYgMjAyNV0gUklQOiAwMDMzOjB4N2Y1ZmIxZjVhYjM3CgoKQW5kIGFmdGVyIEkgdXBn
-cmFkZSB0byA2LjE3LXJjMSwgaXQgY291bGQgbm90IGJlIHJlcHJvZHVjZWQgKCBJIG1hbmFnZWQg
-dG8gdGVzdCAxMCsgcm91bmRzIG9mIGNvbm5lY3QvdW1vdW50L2Rpc2Nvbm5lY3QgY3ljbGUpClNv
-IEkgdGhpbmsgY29tbWl0IDVlYzlkMjZiNzhjNCBkb2VzIGZpeCBteSBwcm9ibGVtLgoKVGhhbmtz
-CkRhdmlkCgo+QmFydC4K
+
+
+On 8/20/2025 11:07 AM, Vishal Annapurve wrote:
+> On Wed, Jul 30, 2025 at 12:34 AM Binbin Wu <binbin.wu@linux.intel.com> wrote:
+>>
+>>
+>> On 7/28/2025 11:33 PM, Sean Christopherson wrote:
+>>> +Jiewen
+>> Jiewen is out of the office until August 4th.
+> Hi Jiewen, can we get some help in deciding the next steps here?
+
+Please see below.
+
+>
+>>> Summary, with the questions at the end.
+>>>
+>>> Recent upstream kernels running in GCE SNP/TDX VMs fail to probe the TPM due to
+>>> the TPM driver's ioremap (with UC) failing because the kernel has already mapped
+>>> the range using a cachaeable mapping (WB).
+>>>
+>>>    ioremap error for 0xfed40000-0xfed45000, requested 0x2, got 0x0
+>>>    tpm_tis MSFT0101:00: probe with driver tpm_tis failed with error -12
+>>>
+>>> The "guilty" commit is 8e690b817e38 ("x86/kvm: Override default caching mode for
+>>> SEV-SNP and TDX"), which as the subject suggests, forces the kernel's MTRR memtype
+>>> to WB.  With SNP and TDX, the virtual MTRR state is (a) controlled by the VMM and
+>>> thus is untrusted, and (b) _should_ be irrelevant because no known hypervisor
+>>> actually honors the memtypes programmed into the virtual MTRRs.
+>>>
+>>> It turns out that the kernel has been relying on the MTRRs to force the TPM TIS
+>>> region (and potentially other regions) to be UC, so that the kernel ACPI driver's
+>>> attempts to map of SystemMemory entries as cacheable get forced to UC.  With MTRRs
+>>> forced WB, x86_acpi_os_ioremap() succeeds in creating a WB mapping, which in turn
+>>> causes the ioremap infrastructure to reject the TPM driver's UC mapping.
+>>>
+>>> IIUC, the TPM entry(s) in the ACPI tables for GCE VMs are derived (built?) from
+>>> EDK2's TPM ASL.  And (again, IIUC), this code in SecurityPkg/Tcg/Tcg2Acpi/Tpm.asl[1]
+>>>
+>>>         //
+>>>         // Operational region for TPM access
+>>>         //
+>>>         OperationRegion (TPMR, SystemMemory, 0xfed40000, 0x5000)
+>>>
+>>> generates the problematic SystemMemory entry that triggers the ACPI driver's
+>>> auto-mapping logic.
+>>>
+>>> QEMU-based VMs don't suffer the same fate, as QEMU intentionally[2] doesn't use
+>>> EDK2's AML for the TPM, and QEMU doesn't define a SystemMemory entry, just a
+>>> Memory32Fixed entry.
+>>>
+>>> Presumably this an EDK2 bug?  If it's not an EDK2 bug, then how is the kernel's
+>>> ACPI driver supposed to know that some ranges of SystemMemory must be mapped UC?
+
+Checked with Jiewen offline.
+
+He didn't think there was an existing interface to tell the OS to map a
+OperationRegion of SystemMemory as UC via the ACPI table. He thought the
+OS/ACPI driver still needed to rely on MTRRs for the hint before there was an
+alternative way.
+
+
+>> According to the ACPI spec 6.6, an operation region of SystemMemory has no
+>> interface to specify the cacheable attribute.
+>>
+>> One solution could be using MTRRs to communicate the memory attribute of legacy
+>> PCI hole to the kernel. But during the PUCK meeting last week, Sean mentioned
+>> that "long-term, firmware should not be using MTRRs to communicate anything to
+>> the kernel." So this solution is not preferred.
+>>
+>> If not MTRRs, there should be an alternative way to do the job.
+>> 1. ACPI table
+>>      According to the ACPI spec, neither operation region nor 32-Bit Fixed Memory
+>>      Range Descriptor can specify the cacheable attribute.
+>>      "Address Space Resource Descriptors" could be used to describe a memory range
+>>      and the they can specify the cacheable attribute via "Type Specific Flags".
+>>      One of the Address Space Resource Descriptors could be added to the ACPI
+>>      table as a hint when the kernel do the mapping for operation region.
+>>      (There is "System Physical Address (SPA) Range Structure", which also can
+>>      specify the cacheable attribute. But it's should be used for NVDIMMs.)
+>> 2. EFI memory map descriptor
+>>      EFI memory descriptor can specify the cacheable attribute. Firmware can add
+>>      a EFI memory descriptor for the TPM TIS device as a hint when the kernel do
+>>      the mapping for operation region.
+>>
+>> Operation region of SystemMemory is still needed if a "Control Method" of APCI
+>> needs to access a field, e.g., the method _STA. Checking another descriptor for
+>> cacheable attribute, either "Address Space Resource Descriptor" or "EFI memory
+>> map descriptor" during the ACPI code doing the mapping for operation region
+>> makes the code complicated.
+>>
+>> Another thing is if long-term firmware should not be using MTRRs to to
+>> communicate anything to the kernel. It seems it's safer to use ioremap() instead
+>> of ioremap_cache() for MMIO resource when the kernel do the mapping for the
+>> operation region access?
+>>
+> Would it work if instead of doubling down on declaring the low memory
+> above TOLUD as WB, guest kernel reserves the range as uncacheable by
+> default i.e. effectively simulating a ioremap before ACPI tries to map
+> the memory as WB?
+
+It seems as hacky as this patch set?
+
 
