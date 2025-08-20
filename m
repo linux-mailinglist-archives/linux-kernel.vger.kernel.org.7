@@ -1,201 +1,185 @@
-Return-Path: <linux-kernel+bounces-778115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DAAB2E186
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:54:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79406B2E187
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15C861C4466B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:49:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8EBC584402
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CE5322552;
-	Wed, 20 Aug 2025 15:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A69322741;
+	Wed, 20 Aug 2025 15:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Juo0qmgF"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jjcB5c87"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1019322544
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C603F320CCC
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755704940; cv=none; b=iXc+84qb29d+LOrkeq2vcYHsoLE/6hVzXPrYqkYCZq7SiYR0jUFLa3CNZoFZ8rIsDJDJv2EQtJ2ZYgbZbfD3PdKtQ1cYR8SmgLHRV5Hn6/LM7ccSh14bwFWVtewgdqLrpFP1Qbd8zWlaqJo3W0rMNald8aij2bciQZivIk5FWtQ=
+	t=1755704987; cv=none; b=KWu22zoRqHjFVhcyq6qLzm9sBxOoixFVaQxCutWG3wA5FsFLAnu7ky6/ZpCIuL8yBk6YLkZZv54JwjN8PZvquI+EUCzcM7jAJdtk6vJfMCNb+8tLwZHB8l0+5PYebP8kXTJqYzYOG7JoQP4y4Y4fcCtkBG3RWj6ipvobAlXNT5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755704940; c=relaxed/simple;
-	bh=Hz2c0QipImHNIT9RINImWk+xubu9D/S0+Gn4csaJFqI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OP+LYTjmOhnEwDdGs+FTrM4GWK4xrFqS7P41T2yWf4lEhZD03cbqpr3Kdix38DT5fEOwKXkKSiBDwm7lISBqYCIW2AGH6S1rv3XvZulO1Pp6TM67Ovf7A8Js50UGrTOL6e570xBfUbWeobjT2AqXpFVOaB8iknuM++cDwC04S58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Juo0qmgF; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d60504db9so55010107b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:48:58 -0700 (PDT)
+	s=arc-20240116; t=1755704987; c=relaxed/simple;
+	bh=cSj9TEAGDAwKpnOFUoGQVT7Q/M3530peytn4UFe5Z+8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rEZD+jabmA1B6/mo36gz3/IoNhqfcWBSZLAoxYnoGtBgdfBhR0QOTfpArhbXucplI40AzemGiVVYKjb+j2SX/eSKt1uQyV3/ZXe9Is+Ina7XJRfIF8mEd67VTnCOjnLYcwdLt4nfugyENyrOJo1atTPK4uzX8wo6JpBwJxCcqIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jjcB5c87; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61a8b640e34so91231a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:49:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755704937; x=1756309737; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1755704984; x=1756309784; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YapFlZLhDO6WeQ4sTaP804rPtqfECGySrXHAqDQV/uc=;
-        b=Juo0qmgFbNy0IxE299iwXDyY1p1poydmdLLiQtQF9P4jY09AyOot0sbjLfZcaGMM0A
-         A4X+/4shG3xQiI1ZLZ5iNLXmyQmha2N5kVIpXlULdn8bmSRs2ZkbSU3D7AiGa2Vd8faV
-         5P8a9Ml3F8L0+kVm4t/MAvDpfIwVf1wXn2sa8goxJfimeHJhE2QuBhWJaUBMImpjLClW
-         tHbaCSllMLtzJqph/ustxrm3KFGAlV4WuuuITulvSSF8DUv35iWYbL70b9ajHtAXeA9g
-         AqAK14xxdCL4OCjVKOgaT+MXY41l0A/irOAjj50MuplASYWV+n3GJhMI1cMYHx5yMiiS
-         kt0Q==
+        bh=QwTo+n9iwb6eQLcMTMNvUsVJ2caoKtYPecozCLXntmM=;
+        b=jjcB5c87D8Q2o3FcDurqhSybs9MmaGW8tjY+DgKqHbEXawpuf0BIzWDtot2AiipSnq
+         pvikh4H91RnxY/LYWjqmiOZXYCZmYliC7X4NiHlfYeR5xENDY02/Dao7XzG2rSZHZuvU
+         StpW/vJKv8GBd0J+NJ5RWF9OFrrwXSLdM915jHtUY3PkVLSOCI+gePTzLN04nr9F5GiM
+         0og6xlFFU94frHzg1j1mCKFeBNpdpZ1geSLM7YUZ8L1aRuqFcxSKhZ/OvXEUiLfbBxhp
+         aNzLzn0jsBQke7JKwSBFejscnG91rbl5OQ2rTgeXuFlAUvjM+WrQISiVcmCTNDvUpyIz
+         PGwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755704937; x=1756309737;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755704984; x=1756309784;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YapFlZLhDO6WeQ4sTaP804rPtqfECGySrXHAqDQV/uc=;
-        b=n0vGSH5vBt+495gcaEbs057Sav4XortfgSav0g4WwgjrNpIIJVYCLp+j+7oZL0IkdI
-         AQjIb1fPHcqxy0qdcqRKemDZyb+PnwGhE+r00Q/wjNxLNO80VmCiJB81vExEMzOBqaz0
-         kadE0H4gjEH/RyIEDatbPVkqiQGo2GTlp0v2HVb+/RkJxTDNL5FUQRwBP/+EMIN1EvFq
-         PC8oY4kwqQ2lA+EEn0h0PXJKPjTTiwg/xDira+7dl+u8dN25aK4khsDIhvGejWMtgO+p
-         yuvB9V9DKROYz2i19+a+35Coqaz4t9b+leH76dOsfX/PoDc4Nc0dWeHXf8WFBCU4GeZr
-         VmvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaShEvjr09l1uYExPmC1B0G6qM2Q7P5s127Orolq/tn8T5j9rK+ZPKdUyNFblzZnuw+zi3EfN0EyyoZR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXtzKV3Qio6NNlFB+Co/tQE2fIXG78Qik111IMvmFBwtU78uqj
-	X/zKRsc0W31270aVr5tHxXwLz5P5zGC+UdeJ8WwxT7FE3D30FD3K0fnb
-X-Gm-Gg: ASbGnctqNxj26KH5TfRQuzKmX8dY342S+3wG8hZDo3q6BFJ9CQ/c49dKhGtNb8xfuQx
-	YujelWZ+lbPTUjA7TBTMeSC+7UsUPQmgY9wOOEWE410Wma/L4pQ9yTpGMeDW0AUk9fxJyAnB22i
-	ti5A6Tb7wZQVK7nhdX75a0YfvTp3ga5Cb3PEDujetRWDPHVBHup9O+qGhqzsd4e4mTY0eC49AsH
-	e29FpiLPKxQJdQVQzeiQfBRHng2xySPYQcQsm6qy1qvrykaU/3DROLrVmHw+HjUUfYKbvGJP77Y
-	gFKVVHqHxC9jpPqbNKPgdCYHrywYNLJFvqNNWopMf2lpOZnMiGHltJ34ysfRcB+5g7dXvSEpRlb
-	5QKbyuymQw9dWaRJG21UqRA==
-X-Google-Smtp-Source: AGHT+IFnBectO9j5CKIBEIOyjSzsK1xF+OQVRcvut6PzymCeGy0chKH+uklouHbhduerRNsx19yK+g==
-X-Received: by 2002:a05:690c:6e13:b0:71f:9a36:d33a with SMTP id 00721157ae682-71fb322d649mr33501547b3.44.1755704937493;
-        Wed, 20 Aug 2025 08:48:57 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:4d::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71e6e068f64sm37561437b3.40.2025.08.20.08.48.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 08:48:57 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Chris Mason <clm@fb.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH] mm/page_alloc: Occasionally relinquish zone lock in batch freeing
-Date: Wed, 20 Aug 2025 08:48:54 -0700
-Message-ID: <20250820154855.2002698-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250819224111.e710eab683b7c7f941c7d1a7@linux-foundation.org>
-References: 
+        bh=QwTo+n9iwb6eQLcMTMNvUsVJ2caoKtYPecozCLXntmM=;
+        b=a63M3spueV91nYrfWbCHPTOo2ikkzEFdTNdKGLXOBwJTBVWDZ7cI0PIhX2Nl1LnBF2
+         j0EnqEkAIomr3c9HcDZ4zL3aZwko0AFMFzf06JGL5usY4hL4XraqTqEz3s/bF2brp0Pt
+         aZeQnumW+mSuKT78aP80MgjXI8Eovx23SkYgQBRSIuvWMbLquLNbMlnIXV1kywsqeKCi
+         6XeP6O4AjAzh8BMKCVhZO2+/LBlvamY2tbZb6TJkH3q8SqYiI4ZaQU8Ucm6onmcQa3Lc
+         HVL1jj+ZoxJ3/tmceP6AG0TGSlcYLjGwlx7cYvzGkYoQkF3o4YKKUESgu3C/ap7405n1
+         zRBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdS4Oc3cFsz1KwqYKs+JDDWLCw81bdoqYU6i+lCRHtigguE3F0McxzASGY0siyipuBXMKtKkU25fmR8Cg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/GkygianbvyaJKT0qviCIB07tPacHmZYcgf+fc5gX9CMlCPMf
+	xy62rhofs/yd3KexXCrV7Oz7nPKyRnsg3YCVxUS145IwWEvreflkIcPiOlBQxPkqSjplKPxTMfh
+	5sv+ipTCpV36w3Jp3Myz6YPwZJ/45qqNQcvnxkxVyjlFRKKT6VWjyGwAR7Qc=
+X-Gm-Gg: ASbGncty2TrjPGXsg0mffS73jKNPj3aV1DnFf5Tw9TfZ4U5ig0kOPFvlA3MCAXO6Nnv
+	UD3lmorEDNEKZsrn2KzrLsagYSYZRPMDGaDIXHObQ0QOYr5z7bQU/XzA4JRhakG2vZrEk3zqa2p
+	99395lHgWh4vf0g6Znt40qVDW5AXOSrSiEaJh2I3J/oR4BVS1GOq4ZLWJ4t5YEEShOIwNAznCGk
+	FNMMie4e4bl5un5u0wdH2fgxnp1RattFJqV0k3tFDf37OYYcHLumy0=
+X-Google-Smtp-Source: AGHT+IG0ZqOUdyH4lo/ZKmY/36GuMPjIVrplHbH7L8St+eNufeCVziT1yQjnDxHQSBAzqkkqfE0Z9fvDjMwp5Ehw4VQ=
+X-Received: by 2002:a05:6402:3806:b0:61a:3236:22b5 with SMTP id
+ 4fb4d7f45d1cf-61a97824c9cmr3021802a12.25.1755704983876; Wed, 20 Aug 2025
+ 08:49:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250808200250.2016584-1-jpiecuch@google.com> <20250811083609.GB1613200@noisy.programming.kicks-ass.net>
+ <CABCx4RDTq6x5=dqiROM6GYU21heaCYwOkerUxvf9ENaEM3+BtQ@mail.gmail.com>
+ <20250814145308.GB4067720@noisy.programming.kicks-ass.net> <CABCx4RC2e09tUYC+B025MC0oHMrifJdax=n=8Q8mLmuF=bW4MA@mail.gmail.com>
+In-Reply-To: <CABCx4RC2e09tUYC+B025MC0oHMrifJdax=n=8Q8mLmuF=bW4MA@mail.gmail.com>
+From: Kuba Piecuch <jpiecuch@google.com>
+Date: Wed, 20 Aug 2025 17:49:32 +0200
+X-Gm-Features: Ac12FXwWoB3L0g3j2l18D_XaooNZpSj_q1dpIcOdAh1nx-vl7t9usZ1Mrb90HgA
+Message-ID: <CABCx4RDbxy+htBEF=cNGyv3ZYJ6bJrF735fmPdO5bW3YDNaFKA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] sched: add ability to throttle sched_yield()
+ calls to reduce contention
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	joshdon@google.com, linux-kernel@vger.kernel.org, 
+	david.laight.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 19 Aug 2025 22:41:11 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+On Tue, Aug 19, 2025 at 4:08=E2=80=AFPM Kuba Piecuch <jpiecuch@google.com> =
+wrote:
+>
+> On Thu, Aug 14, 2025 at 4:53=E2=80=AFPM Peter Zijlstra <peterz@infradead.=
+org> wrote:
+> >
+> > On Mon, Aug 11, 2025 at 03:35:35PM +0200, Kuba Piecuch wrote:
+> > > On Mon, Aug 11, 2025 at 10:36=E2=80=AFAM Peter Zijlstra <peterz@infra=
+dead.org> wrote:
+> > > >
+> > > > On Fri, Aug 08, 2025 at 08:02:47PM +0000, Kuba Piecuch wrote:
+> > > > > Problem statement
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > >
+> > > > > Calls to sched_yield() can touch data shared with other threads.
+> > > > > Because of this, userspace threads could generate high levels of =
+contention
+> > > > > by calling sched_yield() in a tight loop from multiple cores.
+> > > > >
+> > > > > For example, if cputimer is enabled for a process (e.g. through
+> > > > > setitimer(ITIMER_PROF, ...)), all threads of that process
+> > > > > will do an atomic add on the per-process field
+> > > > > p->signal->cputimer->cputime_atomic.sum_exec_runtime inside
+> > > > > account_group_exec_runtime(), which is called inside update_curr(=
+).
+> > > > >
+> > > > > Currently, calling sched_yield() will always call update_curr() a=
+t least
+> > > > > once in schedule(), and potentially one more time in yield_task_f=
+air().
+> > > > > Thus, userspace threads can generate quite a lot of contention fo=
+r the
+> > > > > cacheline containing cputime_atomic.sum_exec_runtime if multiple =
+threads of
+> > > > > a process call sched_yield() in a tight loop.
+> > > > >
+> > > > > At Google, we suspect that this contention led to a full machine =
+lockup in
+> > > > > at least one instance, with ~50% of CPU cycles spent in the atomi=
+c add
+> > > > > inside account_group_exec_runtime() according to
+> > > > > `perf record -a -e cycles`.
+> > > >
+> > > > I've gotta ask, WTH is your userspace calling yield() so much?
+> > >
+> > > The code calling sched_yield() was in the wait loop for a spinlock. I=
+t
+> > > would repeatedly yield until the compare-and-swap instruction succeed=
+ed
+> > > in acquiring the lock. This code runs in the SIGPROF handler.
+> >
+> > Well, then don't do that... userspace spinlocks are terrible, and
+> > bashing yield like that isn't helpful either.
+> >
+> > Throttling yield seems like entirely the wrong thing to do. Yes, yield(=
+)
+> > is poorly defined (strictly speaking UB for anything not FIFO/RR) but
+> > making it actively worse doesn't seem helpful.
+> >
+> > The whole itimer thing is not scalable -- blaming that on yield seems
+> > hardly fair.
+> >
+> > Why not use timer_create(), with CLOCK_THREAD_CPUTIME_ID and
+> > SIGEV_SIGNAL instead?
+>
+> I agree that there are userspace changes we can make to reduce contention
+> and prevent future lockups. What that doesn't address is the potential fo=
+r
+> userspace to trigger kernel lockups, maliciously or unintentionally, via
+> spamming yield(). This patch series introduces a way to reduce contention
+> and risk of userspace-induced lockups regardless of userspace behavior
+> -- that's the value proposition.
 
-Hello Andrew, thank you again for your input : -)
+At a more basic level, we need to agree that there's a kernel issue here
+that should be resolved: userspace potentially being able to trigger a hard
+lockup via suboptimal/inappropriate use of syscalls.
 
-> On Mon, 18 Aug 2025 11:58:03 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
-> 
-> > While testing workloads with high sustained memory pressure on large machines
-> > (1TB memory, 316 CPUs), we saw an unexpectedly high number of softlockups.
-> > Further investigation showed that the lock in free_pcppages_bulk was being held
-> > for a long time, even being held while 2k+ pages were being freed.
-> 
-> It would be interesting to share some of those softlockup traces.
+Not long ago, there was a similar issue involving getrusage() [1]: a
+process with many threads was causing hard lockups when the threads were
+calling getrusage() too frequently.  You could've said "don't call
+getrusage() so much", but that would be addressing a symptom, not the
+cause.
 
-Unfortunately it has been a long time since these softlockups have been detected
-on our fleet, so the records of them have disappeared : -(
+Granted, the fix in that case [2] was more elegant and less hacky than
+what I'm proposing here, but there are alternative approaches that we can
+pursue. We just need to agree that there's a problem in the kernel that
+needs to be solved.
 
-What I do have is an example trace of a rcu stall warning:
-
-[ 4512.591979] rcu: INFO: rcu_sched self-detected stall on CPU
-[ 4512.604370] rcu: 	20-....: (9312 ticks this GP) idle=a654/1/0x4000000000000000 softirq=309340/309344 fqs=5426
-[ 4512.626401] rcu: 	         hardirqs   softirqs   csw/system
-[ 4512.638793] rcu: 	 number:        0        145            0
-[ 4512.651177] rcu: 	cputime:       30      10410          174   ==> 10558(ms)
-[ 4512.666657] rcu: 	(t=21077 jiffies g=783665 q=1242213 ncpus=316)
-
-And here is the trace that accompanies it:
-
-[ 4512.666815] RIP: 0010:free_unref_folios+0x47d/0xd80
-[ 4512.666818] Code: 00 00 31 ff 40 80 ce 01 41 88 76 18 e9 a8 fe ff ff 40 84 ff 0f 84 d6 00 00 00 39 f0 0f 4c f0 4c 89 ff 4c 89 f2 e8 13 f2 fe ff <49> f7 87 88 05 00 00 04 00 00 00 0f 84 00 ff ff ff 49 8b 47 20 49
-[ 4512.666820] RSP: 0018:ffffc900a62f3878 EFLAGS: 00000206
-[ 4512.666822] RAX: 000000000005ae80 RBX: 000000000000087a RCX: 0000000000000001
-[ 4512.666824] RDX: 000000000000007d RSI: 0000000000000282 RDI: ffff89404c8ba310
-[ 4512.666825] RBP: 0000000000000001 R08: ffff89404c8b9d80 R09: 0000000000000001
-[ 4512.666826] R10: 0000000000000010 R11: 00000000000130de R12: ffff89404c8b9d80
-[ 4512.666827] R13: ffffea01cf3c0000 R14: ffff893d3ac5aec0 R15: ffff89404c8b9d80
-[ 4512.666833]  ? free_unref_folios+0x47d/0xd80
-[ 4512.666836]  free_pages_and_swap_cache+0xcd/0x1a0
-[ 4512.666847]  tlb_finish_mmu+0x11c/0x350
-[ 4512.666850]  vms_clear_ptes+0xf9/0x120
-[ 4512.666855]  __mmap_region+0x29a/0xc00
-[ 4512.666867]  do_mmap+0x34e/0x910
-[ 4512.666873]  vm_mmap_pgoff+0xbb/0x200
-[ 4512.666877]  ? hrtimer_interrupt+0x337/0x5c0
-[ 4512.666879]  ? sched_clock+0x5/0x10
-[ 4512.666882]  ? sched_clock_cpu+0xc/0x170
-[ 4512.666885]  ? irqtime_account_irq+0x2b/0xa0
-[ 4512.666888]  do_syscall_64+0x68/0x130
-[ 4512.666892]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-[ 4512.666896] RIP: 0033:0x7f1afe9257e2
-
-> We have this CONFIG_PCP_BATCH_SCALE_MAX which appears to exist to
-> address precisely this issue.  But only about half of the
-> free_pcppages_bulk() callers actually honor it.
-
-I see. I think this makes sense, and I also agree that there should probably be
-some guardrails from the callers of this function, especially since free
-pcppages bulk is unaware of how the pcp lock is acquired / freed.
-
-Functions like drain_zone_pages, which explicitly enforce this by setting
-"to_drain" to be min(pcp->batch, pcp->count) seem like a smart way to do this.
-
-> So perhaps the fix is to fix the callers which forgot to implement this?
-> 
-> - decay_pcp_high() tried to implement CONFIG_PCP_BATCH_SCALE_MAX, but
->   that code hurts my brain.
-
-To be honest, I don't fully understand decay_pcp_high() as well : -)
-From what I can tell, it seems like CONFIG_PCP_BATCH_SCALE_MAX doesn't directly
-pass in a value that limits how many pages are freed at once for the bulk
-freer, but rather tunes the parameters pcp->high. (Except for drain_pages_zone,
-which you have pointed out below).
-
-> - drain_pages_zone() implements it but, regrettably, doesn't use it
->   to periodically release pcp->lock.  Room for improvement there.
-
-From what I can see, it seems like drain_pages_zone() does release pcp->lock
-every pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX (simplified pseudocode below)
-
-do {
-	spin_lock(&pcp->lock);
-	to_drain = min(count, pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX);
-	free_pcppages_bulk(zone, to_drain, ...);
-	spin_unlock(&pcp->lock);
-} while (count);
-
-Although, the concern you raised earlier of whether another thread can
-reasonably grab pcp->lock during the short check between the unlock and lock
-is still valid here (which means the concern is also relieved if the machine is
-x86, arm64, or any other arch that defaults spin locks to be queued).
-
-With all of this said, I think adding the periodic unlocking / locking of the
-zone lock within free_pcppages_bulk still makes sense; if the caller enforces
-count to be <= pcp->batch, then the check is essentially a no-op; otherwise, we
-create some locking safety, whihc would protect it in case there are any new
-callers in the future, which forget to add the check as well.
-
-Thank you for your thoughtful review, Andrew. I hope you have a great day!
-Joshua
-
-Sent using hkml (https://github.com/sjp38/hackermail)
+[1]: https://lore.kernel.org/all/20240117192534.1327608-1-dylanbhatch@googl=
+e.com/
+[2]: https://lore.kernel.org/all/20240122155023.GA26169@redhat.com/
 
