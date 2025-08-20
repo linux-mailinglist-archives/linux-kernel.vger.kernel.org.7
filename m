@@ -1,150 +1,162 @@
-Return-Path: <linux-kernel+bounces-778646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A296B2E868
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:01:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D958CB2E870
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25068A28371
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:01:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DF5D1C87E71
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E682C11CB;
-	Wed, 20 Aug 2025 23:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81ED2C11CB;
+	Wed, 20 Aug 2025 23:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8tAijK0"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vPtDcdCP"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FA9B663;
-	Wed, 20 Aug 2025 23:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842D22652A4
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 23:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755730853; cv=none; b=i/eE6FVM67UnE1rTmp6fh/5+Lt75N/4op9fX/85kamu+1PjllhFkUvrXlQFRSCX2sqI2iv6TvPWcShGbbz9NeJH4KWJVgBeidxoG6GEZbEhpGtY4e/OQDy85vB+mx7EsK6E1pwBxeyh13muIsz+SdG23ecR64QZUt+H5wqv5I9g=
+	t=1755731157; cv=none; b=aUyhyNT1GkJRetvYCLIfZQ1m8G6mGGP9z0KAj4Q//2HQDn7B8kd/oszG87paFjLtk9kQPAKgQ7MbP7Kb6LJZTSDQF75wq9XL7d1RIG2PibrLRZC1njfwm1qwDe3y1PMMir3wK6efZeYVY0AxoWPQzLRGxn96+Gq2bBiKxyjja0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755730853; c=relaxed/simple;
-	bh=bMfyf9iVf/cf+1o6utDBJC5HItQLR/IqvY5qn8OOD0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LSsE7G4+rvOKznErNm30X0kGirpI1WrVv3NIMLcoCiMKTj4UbWGCBPEO4AMkYxtLcq5WY1lxA6zwC5SFDmMUE26b0cpcLBMoHAV+lA/Yo+dQWYAjMefQCDesG05OzUsVGJrfDzEq8Z/aMpsI8zQUgXG6hL03IOMbtnoRPwvho3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8tAijK0; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32326e20aadso524617a91.2;
-        Wed, 20 Aug 2025 16:00:52 -0700 (PDT)
+	s=arc-20240116; t=1755731157; c=relaxed/simple;
+	bh=1Sl6INGac/LBs/iz+Ar1IPe2mXXgPDv3iAnJ0mNH/XE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n3mxNwHvb/sWwWEuXrWqRjTYp2beMX7p8TIc6hoPDaTKc4kCcxOLau4ELNL0SpKBT+5R2gIk2j3YZvp3R2Iiv42kimEvRBtCzezllpia7kim6pFa6hEo5M0Mwj+MXWKPDWzOZl5bSEJ345YvcrkGoNRbIOEmItQznnLi/TcU054=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vPtDcdCP; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-246013de800so24015ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:05:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755730851; x=1756335651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yy3TEEW6DyAgwAJ9w2TLPrA9qanabyqXypgQkM1LVG8=;
-        b=N8tAijK0sdNbCve1hPW8vzFbeZSm/bAJIAAgxgxd+HP0+9VdGgs2Wnp8xFXYyi8SLD
-         i3kQ5yUTkNbQmbxMb2RPQKhcJwSQJO7vDEJttwv0qsXFXQJM7Tw+kOL0gkhcTeRn9atq
-         h8Mb5eYKFsCZrhGpOKIZg04ZhqsJ80N1KsLlwrSBSYs8MYyQ4nLMK2vMqDnLyla4asvw
-         0pEod4ab0dJxwgksc1pbpLDRMdGKUnKD3TN+gtCOPJFhfle8xJGIM5MFAok0F7nPLUn1
-         J0vvpS0/fMqfmlnNghFghUakG7VsIxOfm9KLbtm41iCuCeoNFCRUVLq2dB48xtoHomQX
-         CudA==
+        d=google.com; s=20230601; t=1755731154; x=1756335954; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EvRXBj16l2lFtX1Fgv2CXPi4lSLryaOac8dNXUMfY34=;
+        b=vPtDcdCPkmNo5h+YatmmW+uauseQbAuXdCE8xpTbeNEfC/CgHyGokCtYAG/pC9mt6U
+         OscLuj0WWiAmwPCUocHeYAPVTvfy23AO6iGbbiK5HuZJLeVRtjtN7kKgTCdY4HepuWWU
+         p/fGtJYb4kVNfrvZopNLiZVmmDpX2feBqDp6DEhWxaVctIPV9iLQTxF+F3Gszg2g4owv
+         YYVACoix12E44Z0TDmEOkmDusAnp5cU7Mfu2YJ2aJ8sCHZKufWRHsI0nQ7hUA5ajrEqp
+         UquDvmt9zJd/FSYVZ4YqWgejSbLcezegOTc3v31phVeyeIcTCBi5Pat0Q3eLTFwDUh21
+         1KQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755730851; x=1756335651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yy3TEEW6DyAgwAJ9w2TLPrA9qanabyqXypgQkM1LVG8=;
-        b=EkSEtsw5KOC2WPinZ5rdwaQBD3V+fwyvSyjjmrCIqz8y952X6SQ1cm76NYcDmGjLC9
-         OGrqATIOgknEET7CAxBSX32Jql9HasRxfP4LOWsrsrhi+LeTOBOLpgRhFXcxiL52PaSD
-         ZDzKfDNOl4vLSteNAe2jjMmc7kx+hFLgFpsWSr0uHI8a/kPLVz53CfJjzqyQNUKh41Db
-         61XberD0qoMwwGoUQJOEE0YgtEEErEJP9xrCN11Y9/UwzQZdyBarU1yRTTQSTL+HnCz0
-         w7im0svwg2zXMmicAOozw5IIb7nq2mub4w4HPuvVROSCo5JF3gTSEF5MaI9mTDEuvojW
-         mW8w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3kghWQqYYImtw26cHXH10mxnzdLT37FODI/366r+e30YWfaOytXMbs2RJZkDFl1HSkMg=@vger.kernel.org, AJvYcCXH6C8SPuLM6jw17Ha5vBP0Z0VkUsiIv97H8SgDL4R21sMgl+bDF1WVCcwzOyzIceaAylOyT+wZpshGylV1@vger.kernel.org, AJvYcCXlQDGWssLCZZVjyy3ZRwd1fHL1SGWqLcEpoRbkrQzu/fEm4C51agWD8HMPiiIba2WSu7QZhaVEU9XpAQekdajJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxwBjMslQml+a4gfeHbg1NAbnq+z37Sx2k93bOXzI82bnmzZaN
-	fPW5sBQ00mitWXEMq8HtjiP0CKBQInsYKwHJqUG6aM1J7ZGuyoTaBz/PIkDL7qF0N4IF6nsNa3Y
-	XBWQAPTKOd4dD4hq8ctBygyZBPoTZgro=
-X-Gm-Gg: ASbGncvc7ehmT6A1ClumGQGlmOq80mDdqDBLAgw0QPCeiRkbGS7MVFAAPPGpLWa7Rmv
-	rdWJKYN/wxmu2qI/QYCuhKPzuzoC4qVr6K0LhDgDNh3tLZONsZPuBCIme7yUIv+dWuYe8sqVuAj
-	qS9BHJKukqDw0/vsTphjmZKbCTT5uVklkaJD7MCImbRm9DwYkJqfXbc/YmY+y7q86kCZCWAoO1P
-	BazSmU3UtCIe0oHtjqF/SA2JseVINiYcA==
-X-Google-Smtp-Source: AGHT+IGzxLNjy0xPzf8DTHy1HiLkiKCaSnhujZsN9KWtZwpW8eiuq/zIzw6FfF2QvgpAlwGfy1pRHWxJ+Pu5W6pqz24=
-X-Received: by 2002:a17:90b:48d2:b0:31f:20d4:9966 with SMTP id
- 98e67ed59e1d1-324ed12f411mr748453a91.17.1755730851512; Wed, 20 Aug 2025
- 16:00:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755731154; x=1756335954;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EvRXBj16l2lFtX1Fgv2CXPi4lSLryaOac8dNXUMfY34=;
+        b=SHVJ5v1qStDsJnwVcXaA8Wvvpc4fhc5cDOzcc5ZScz22MKN+8LRw31pd27z65Vzhj0
+         c/wPcKoRZIWq95v4XS1cwsVYUgqZzDi7Z78LZ2Ur3Uj2KYAgboTuAnX4QmHTkGbxdW5n
+         vq1k2Q4QPXiwP6npd8ce2qOAZ/gToyI4evCFRY2gqbsHL2W8O5kGD2B81ZmhP4Vkjqz2
+         ObxP1rhzaI+KFWv8uwJUMVTENKCGIf4f1o7saGL/y+ApIB9WW8F6KNXrZxNMVvPTeNM3
+         j5/nLWRcCaQzUyTQMt69Qk2OSXDyOuGlGzQ/lP17h2xunFK3MgLnJADypD1RDCLTVyw+
+         dR9A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4tzSp+uR5rbw3wwMxDmjX3UBT9lfSqgnazJ1gx4Ed5+nFOCBQIX/16J3G7rv32ok666bESkvBja0HEtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR8ZTuMlDb4JwcfeJa62zviU9HuyRu1hjCn6dlHLWGCA/e1sY8
+	UJJFFpjsXQd33ZwqrnxxeLlOr3jgatj5BCIPn/cAGzJdMDRvqKRXSlgdbP53vpDF4Q==
+X-Gm-Gg: ASbGncuiO5FV/Q/OwzAvasNmOBt7pZMneALMyrwvCNOQ6EwCH6UpXrRg4IYfLBM/fh6
+	SrvNgwVNLtUey4PXWmjLSs4m6kXTfONmVZTG52hBW31/gXLCvUDbCqW14GN4BiILGfAd/bidSXy
+	ngunpvxCIvpVmi4KjujsnymooYURayV9aOhSJ83fNnJPsgDaEBdWmAIeOMQ6bdr8r27id1+Sav/
+	ExpzgEGBVaMfSIannW9Qknp5EAo8SrrMXrYdbOm9elQJCy3hX5AfikyBHhMW/5s2eARa9+nIEB8
+	KY1M67wqhiBexqCeCIUCETX/FAvuy6QsyggJAJYv0wm+Ql/3jbbZcOnRvJ4y7LkKzVWV7gquBjy
+	VVwNS49/I+5FO2ncZEX7hnRJ89+BnMDjrSgMuzfo0BJI8A3/44uX/V08oy9fpaDR5lyXmCN/rAq
+	SR2Gql3Us=
+X-Google-Smtp-Source: AGHT+IFvkzWLi+5u8K5l7RVeBnffe0urg17dz2IANRHLwSGsPtlIsg6h/lQqrYlNKOX+8CuI2OtkaQ==
+X-Received: by 2002:a17:903:1a08:b0:240:2939:361c with SMTP id d9443c01a7336-245ff98e26fmr752685ad.4.1755731153531;
+        Wed, 20 Aug 2025 16:05:53 -0700 (PDT)
+Received: from google.com (3.32.125.34.bc.googleusercontent.com. [34.125.32.3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4cc26dsm36830535ad.75.2025.08.20.16.05.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 16:05:52 -0700 (PDT)
+Date: Wed, 20 Aug 2025 23:05:47 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Matt Atwood <matthew.s.atwood@intel.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org,
+	"open list:INTEL DRM XE DRIVER (Lunar Lake and newer)" <intel-xe@lists.freedesktop.org>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] drm/xe: replace basename() with portable strrchr()
+Message-ID: <aKZUy_XZxHKLQUAS@google.com>
+References: <20250820201612.2549797-1-cmllamas@google.com>
+ <peqczm4644mskitmvsq5b2t4r4rs3beei7li3p7uw2nhjne6h6@a3mztccaxfey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806092458.111972-1-phoenix500526@163.com>
- <20250806092458.111972-3-phoenix500526@163.com> <f5d8d886-1de3-4521-917a-e98b645b987e@linux.dev>
- <30d8fcac.2669.19882763de2.Coremail.phoenix500526@163.com>
- <e7ba3f7f-38b8-4c06-8aff-ef1fb8d04d86@linux.dev> <310495cd.19eb.19893314d03.Coremail.phoenix500526@163.com>
- <0f6d16c1-0e85-4709-9846-3a993a9f041b@linux.dev> <65e51538.57aa.1989d162bb8.Coremail.phoenix500526@163.com>
- <2559a8cd-b439-43fc-96e4-d5f2941ca4d8@linux.dev> <3fbb9319.20c8.198a1410186.Coremail.phoenix500526@163.com>
- <6c444d7d-524d-4bc8-bda6-0440af621ebe@linux.dev> <46f4c341.1dea.198b845a4b0.Coremail.phoenix500526@163.com>
- <7495eeb9-777b-4b9e-8312-c6654268d6ec@linux.dev>
-In-Reply-To: <7495eeb9-777b-4b9e-8312-c6654268d6ec@linux.dev>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 20 Aug 2025 16:00:35 -0700
-X-Gm-Features: Ac12FXwHBBpnEOB-6GW2sDAuquK0ygspyIoOWqSdoaWGhvsu8UGlxD4KfsvRK0c
-Message-ID: <CAEf4Bzbpu9PM6GHV6ewE_hJJ7=94Rn1ZYq5QWVnpoH6_LRQDCw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] selftests/bpf: Force -O2 for USDT selftests to
- cover SIB handling logic
-To: Yonghong Song <yonghong.song@linux.dev>
-Cc: =?UTF-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>, ast@kernel.org, 
-	daniel@iogearbox.net, andrii@kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <peqczm4644mskitmvsq5b2t4r4rs3beei7li3p7uw2nhjne6h6@a3mztccaxfey>
 
-On Mon, Aug 18, 2025 at 10:35=E2=80=AFAM Yonghong Song <yonghong.song@linux=
-.dev> wrote:
->
->
->
-> On 8/17/25 6:43 AM, =E8=B5=B5=E4=BD=B3=E7=82=9C wrote:
-> >
-> >
-> >
-> >
-> >
-> >
-> > Hi, Yonghong. I've already filed an issue[1] in GCC  community.
-> >
-> >
-> > Accroding to the discussion, it's not a gcc bug but may be a systemtap =
-bug.
-> > I don't know how to report this bug to systemtap, but I found that the
-> > libbpf/usdt have the same problem. I've filed an issue in libbpf/usdt r=
-epo[2].
-> >
-> > I also have some ideas about it. I wrote it down in the issue[2] commen=
-t.
-> > May be we can discuss there.
-> >
-> > [1]. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D121569
-> > [2]. https://github.com/libbpf/usdt/issues/13
->
-> Thanks for filing an issue on gcc and getting some feedback/suggestions
-> from gcc community.
->
-> Currently, libbpf/usdt does not suport format like '-1@ti(%rip)'. If we d=
-o
+On Wed, Aug 20, 2025 at 04:15:47PM -0500, Lucas De Marchi wrote:
+> On Wed, Aug 20, 2025 at 08:16:11PM +0000, Carlos Llamas wrote:
+> > Commit b0a2ee5567ab ("drm/xe: prepare xe_gen_wa_oob to be multi-use")
+> > introduced a call to basename(). The GNU version of this function is not
+> > portable and fails to build with alternative libc implementations like
+> > musl or bionic. This causes the following build error:
+> > 
+> >  drivers/gpu/drm/xe/xe_gen_wa_oob.c:130:12: error: assignment to ‘const char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+> >    130 |         fn = basename(fn);
+> >        |            ^
+> > 
+> > While a POSIX version of basename() could be used, it would require a
+> > separate header plus the behavior differs from GNU version in that it
+> > might modify its argument. Not great.
+> > 
+> > Instead replace basename() with a strrchr() based implementation which
+> > provides the same functionality and avoid portability issues.
+> > 
+> > Fixes: b0a2ee5567ab ("drm/xe: prepare xe_gen_wa_oob to be multi-use")
+> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> > ---
+> > drivers/gpu/drm/xe/xe_gen_wa_oob.c | 4 +++-
+> > 1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> > index 6581cb0f0e59..0a94a045bcea 100644
+> > --- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> > +++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> > @@ -125,9 +125,11 @@ static int parse(FILE *input, FILE *csource, FILE *cheader, char *prefix)
+> > 
+> > static int fn_to_prefix(const char *fn, char *prefix, size_t size)
+> > {
+> > +	const char *base;
+> > 	size_t len;
+> > 
+> > -	fn = basename(fn);
+> > +	base = strrchr(fn, '/');
+> > +	fn = base ? base + 1 : fn;
+> 
+> I think just a xbasename() helper like we've added in kmod would be
+> preferred:
+> https://github.com/kmod-project/kmod/commit/11eb9bc67c319900ab00523997323a97d2d08ad2
+> 
+> Alternativelly add it somewhere that can be shared across the userspace
+> tools in the kernel tree to fix the mess that we have here:
+> 
+> 	git grep basename -- tools/**.c
+> 
 
-Exactly, it doesn't. I haven't yet ran into a case where real-world
-applications would use such an argument format, so there was no
-incentive in trying to support it.
+This sounds like a nice idea. However, there is no "centralized" shared
+includes/ across the userspace tools that I'm aware of?
 
-Was this issue discovered as part of testing on some real world
-application, or it's mostly through testing on synthetic cases?
+> Some dup the arg simply to be able to use the libgen.h version, some use
+> one or the other on purpose, etc etc.
+> 
 
-> intend to implement this. libbpf/usdt can reject that if 'ti' is a
-> static variable. libbpf can provide some hints about how to make it
-> work (see above [1] and [2]). Then, it would be user's reponsibility to
-> change code so libbpf can support it.
->
-> >
-> >
-> >
+Yeah, and I can force the POSIX version if you prefer. I just personally
+think the strrchr() alternative ends up being simpler.
 
-[...]
+--
+Carlos Llamas
 
