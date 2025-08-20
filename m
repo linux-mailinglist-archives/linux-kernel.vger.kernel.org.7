@@ -1,153 +1,80 @@
-Return-Path: <linux-kernel+bounces-777130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E79B2D5C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:12:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC124B2D5B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C10118957D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:10:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8F51782F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429A42D837E;
-	Wed, 20 Aug 2025 08:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0ED2D8DA4;
+	Wed, 20 Aug 2025 08:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTvKw6Iu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knRq30y8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEEE286D55;
-	Wed, 20 Aug 2025 08:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C783D286D55;
+	Wed, 20 Aug 2025 08:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755677401; cv=none; b=XW1UgBkH65Z5+NuTR1aY3eFZipDNjpTSbMwrOLPwQ9UcX3Wl9AD+3wK03aphK9rxeUZ5QMFiOhxrXAZ2pIPIrYBjBCWxh106mb/pWlKpkEYefqu95vWqvqG3dLROTb9mxem7O0T5etWD80d/ATF9GMfIgujlWQ2zPGhRB32ZVss=
+	t=1755677410; cv=none; b=NuoVi4zdqRm4qczdjIpnnDaFbuj01rAaJE42Iw2/fwrmuHStfWv4BnlbdrlBP6KSSX3v2IaLPpQVtNR5RMdVijsQ9MQlk5mwlOU/p8pMHCXcpF6CraFcPzLb1YAk956LWnqYIBIFYWYR3Qviw8GUCwL+K7zJeGVgOv7FPd2z52A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755677401; c=relaxed/simple;
-	bh=ZwBIaVwfHe/T7WlfARZdRvpXDhB+IehKv0D+1cs2k44=;
+	s=arc-20240116; t=1755677410; c=relaxed/simple;
+	bh=rMAGOw8W70aPMqJ4oYe4yG8AyBcRn52d6Z3l0h2p0l8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CuIXxql9sSlCT9it/V37qUlGadiyCZKorEAK5gHDcN+48zsS9kQz8k4yefRDaQvG8qwc3rrptZBDrRGN7cjvJkzX+rPGVpSDEDgrYyAfJSdcrHqaOHX2OGb3B8L0umoN36UCZpPAAJYSsYduDvfWPP+mQ2BaSb3Vz/E9xrajqDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTvKw6Iu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 762BDC113D0;
-	Wed, 20 Aug 2025 08:09:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=s/EMKWF4dLZg2XXzMRvLCCdWC2okvGH6ypaRbAufOvr+67KvVKTjwj2Xcbud4STSh9QRtarPQKehOTbDgcPZZ6fns2P7/ty3/zxKMBYYiA0vV/fQ3XdY9Iz1/2fPFj6bsHIiRbWSJ74+Zilk6GAHVT7l1akardZOpY6iNJ2MyHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knRq30y8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46E55C4CEEB;
+	Wed, 20 Aug 2025 08:10:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755677401;
-	bh=ZwBIaVwfHe/T7WlfARZdRvpXDhB+IehKv0D+1cs2k44=;
+	s=k20201202; t=1755677410;
+	bh=rMAGOw8W70aPMqJ4oYe4yG8AyBcRn52d6Z3l0h2p0l8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nTvKw6IuGKUCM074ZO6HCTXEBhK8E5DzlI1NkU+TKjtyZQ9NfmN5Jc00uTv6/kKXa
-	 hWwxb3f4bADolcJPjWJGnr7BlVGitV9WGRgHoVDov0n0e81rrltgT7ztXG6CCOadAR
-	 A/9LHOmnMv4XoTm46Wi6wryYMO+yr1ndcmZ7Z4+cM94l/e5t+Tfq4j7t3XSGLaYVJe
-	 hdsr2Cqlnz6j/nkCAU/SqzZhmd/08f79LP5yPzmavyUjM0kJD/Dz7lE6I9jr9jrSuU
-	 BqR8XE6QJRoOvke2raPIVYoNu93YDKztyJOOABw4QkrKbpYxFS6kv6Yy/F9OwC7Q8C
-	 AdL744Lg9k08Q==
-Date: Wed, 20 Aug 2025 11:09:53 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Evangelos Petrongonas <epetron@amazon.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Alexander Graf <graf@amazon.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org,
-	linux-mm@kvack.org, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nh-open-source@amazon.com
-Subject: Re: [PATCH v2 2/2] efi: Support booting with kexec handover (KHO)
-Message-ID: <aKWC0c3kliee8gtu@kernel.org>
-References: <cover.1755643201.git.epetron@amazon.de>
- <9e80381d4fafc71d6e0c64d69a8b3ac9c8949865.1755643201.git.epetron@amazon.de>
+	b=knRq30y8schxAtCBl9yankxHIXIaBa1fsZbg8BApQ/N2jeFgA0l3frjaQ0q3rljNl
+	 HUgGU6Kz5FvpfsnjI305F6BxCN3uGWJ1QqTJn9hcCD8OaZWKA/3Na5gZsWBNeehKRS
+	 MzsJQF9oq5j10wd0q80of9TchxMV4f2ohN2O2goKP1jIgWKtHQYjXzBJPJgZFCG88s
+	 9hkw+cfcbIXzJ3lnfrYp8g0tpFHVo0E4Z3R2RrtDMmGF/LbvVeqDSoKZWPqilJDZ1S
+	 EwJ4wuqBNbriuM4io1/zDVm3bhWLKkr7wXg3h0yQsdrnNrUakRFB/lLxS6TQMY9Frf
+	 Yqt2cVeaXOmRg==
+Date: Wed, 20 Aug 2025 10:10:08 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/13] soc: amlogic: clk-measure: Remove the msr_data
+ from clk-measure
+Message-ID: <20250820-amber-gecko-of-economy-cce4b4@kuoka>
+References: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
+ <20250815-add-more-socs-to-support-clk_measure-v1-2-59f04ba67457@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9e80381d4fafc71d6e0c64d69a8b3ac9c8949865.1755643201.git.epetron@amazon.de>
+In-Reply-To: <20250815-add-more-socs-to-support-clk_measure-v1-2-59f04ba67457@amlogic.com>
 
-On Tue, Aug 19, 2025 at 11:22:46PM +0000, Evangelos Petrongonas wrote:
-> When KHO (Kexec HandOver) is enabled, it sets up scratch memory regions
-> early during device tree scanning. After kexec, the new kernel
-> exclusively uses this region for memory allocations during boot up to
-> the initialization of the page allocator
-> 
-> However, when booting with EFI, EFI's reserve_regions() uses
-> memblock_remove(0, PHYS_ADDR_MAX) to clear all memory regions before
-> rebuilding them from EFI data. This destroys KHO scratch regions and
-> their flags, thus causing a kernel panic, as there are no scratch
-> memory regions.
-> 
-> Instead of wholesale removal, iterate through memory regions and only
-> remove non-KHO ones. This preserves KHO scratch regions, which are
-> good known memory, while still allowing EFI to rebuild its memory map.
-> 
-> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
-> ---
-> Changes in v2:
-> 	- Replaced the for loop with for_each_mem_region
-> 	- Fixed comment indentation
-> 	- Amended commit message to specify that scratch regions
-> 	are known good regions
-> 
->  drivers/firmware/efi/efi-init.c | 28 ++++++++++++++++++++++++----
->  1 file changed, 24 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/firmware/efi/efi-init.c b/drivers/firmware/efi/efi-init.c
-> index a00e07b853f2..99f7eecc320f 100644
-> --- a/drivers/firmware/efi/efi-init.c
-> +++ b/drivers/firmware/efi/efi-init.c
-> @@ -12,6 +12,7 @@
->  #include <linux/efi.h>
->  #include <linux/fwnode.h>
->  #include <linux/init.h>
-> +#include <linux/kexec_handover.h>
->  #include <linux/memblock.h>
->  #include <linux/mm_types.h>
->  #include <linux/of.h>
-> @@ -164,12 +165,31 @@ static __init void reserve_regions(void)
->  		pr_info("Processing EFI memory map:\n");
->  
->  	/*
-> -	 * Discard memblocks discovered so far: if there are any at this
-> -	 * point, they originate from memory nodes in the DT, and UEFI
-> -	 * uses its own memory map instead.
-> +	 * Discard memblocks discovered so far except for KHO scratch
-> +	 * regions. Most memblocks at this point originate from memory nodes
-> +	 * in the DT and UEFI uses its own memory map instead. However, if
-> +	 * KHO is enabled, scratch regions must be preserved.
+On Fri, Aug 15, 2025 at 04:37:28PM +0800, Chuan Liu wrote:
+>  static const struct of_device_id meson_msr_match_table[] = {
+>  	{
+>  		.compatible = "amlogic,meson-gx-clk-measure",
+> -		.data = &clk_msr_gx_data,
 
-I'd add that KHO scratch regions are good know memory here as well. With
-that
+NAK, actual ABI break.
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
->  	 */
->  	memblock_dump_all();
-> -	memblock_remove(0, PHYS_ADDR_MAX);
-> +
-> +	if (is_kho_boot()) {
-> +		struct memblock_region *r;
-> +
-> +		/* Remove all non-KHO regions */
-> +		for_each_mem_region(r) {
-> +			if (!memblock_is_kho_scratch(r)) {
-> +				memblock_remove(r->base, r->size);
-> +				r--;
-> +			}
-> +		}
-> +	} else {
-> +		/*
-> +		 * KHO is disabled. Discard memblocks discovered so far:
-> +		 * if there are any at this point, they originate from memory
-> +		 * nodes in the DT, and UEFI uses its own memory map instead.
-> +		 */
-> +		memblock_remove(0, PHYS_ADDR_MAX);
-> +	}
->  
->  	for_each_efi_memory_desc(md) {
->  		paddr = md->phys_addr;
-> -- 
-> 2.47.3
-
--- 
-Sincerely yours,
-Mike.
+>  	},
+>  	{
+>  		.compatible = "amlogic,meson8-clk-measure",
+> -		.data = &clk_msr_m8_data,
+>  	},
 
