@@ -1,55 +1,52 @@
-Return-Path: <linux-kernel+bounces-777944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F7B1B2DF70
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:33:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 225EBB2DF6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 330A51C86808
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:28:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 237CE68170E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DEB2E3AE9;
-	Wed, 20 Aug 2025 14:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61483203B8;
+	Wed, 20 Aug 2025 14:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="iCk+uVwJ"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tcaeBTVp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E40274B42;
-	Wed, 20 Aug 2025 14:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409EB27A45C;
+	Wed, 20 Aug 2025 14:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755699949; cv=none; b=RWaTV7dgXgLfA3CZarfCEkh+aYUDCH4i9FeIkj+JM0DJ38c++gutbe1R3YGGDcyEYamnIWN+n1eocxBtTPQGHnpciHRxePRxHL27oh/MUENTmffG4uA924xe52lCrjcLENEgpHN1EzYeUjRapiG8yO5TdIMRXEVncEZVxKSjd3c=
+	t=1755699886; cv=none; b=K0Nk/uxd9YK1ro6rw8vbnjSpIKtRfizDTRXvi8pkwJ6Gg1jwibV42V06zh307m9/HHuTu2Z/ClqBwTVV3YKGP/EsvtrSIqWNT8h6M99LETpt5Kys0n/9SUr53geS6DvlE9FehHrEB/eRypiI23ousijNtkhatrGoSMuL95VjifQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755699949; c=relaxed/simple;
-	bh=p7l3ijfCEWwQJ+xrSJN3btKzJvTlfULqoMFEd7FhHC8=;
+	s=arc-20240116; t=1755699886; c=relaxed/simple;
+	bh=qLy7Mfk1fO5OlX68MtQ114jWdx58MPhXCI22IADztoA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kpYWrQQXNmD6kn40lvI2aQzI1KO9EGiBSD2+HMKaIsNbvFZU+QsVEedtoJ/Oh084ksS8npPjdWdfMGld7ipolEl9PWMPEAMiwQiFQAiRTrNIyCbjonuBB57/a3lKITpVGeZ6+0xMx0ruBixhHLbPvBVec6UtLyavpoEZRRcHwYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=iCk+uVwJ; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 2CFB622F3F;
-	Wed, 20 Aug 2025 16:25:46 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id O9dk9dUKxJOp; Wed, 20 Aug 2025 16:25:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755699945; bh=p7l3ijfCEWwQJ+xrSJN3btKzJvTlfULqoMFEd7FhHC8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=iCk+uVwJYTF4ISiDamqdwpqzqX7vkHGAnhzS5CMSgiLXeY9+81MtY1V/JNYeP28RO
-	 rTEt0uHL5SWoRmizqEWGxaXZxORRECP5WYkQGBFS0HVHls34xdw433PQf7YPf9HpIx
-	 f9/2b9a3krShWojFWAnwfVCAOpudAAKkpPGAinIopMhNTsbVtdW0xs+fBtgBg9LCoW
-	 iSAEy5AdLPHig/KD6LfSMqonXvPjX8SM2Hf46OqJ8HMWuKhF+1BaCbQGzRJp5lRCve
-	 6WOZnaQ5qyxOcJ9GMNeDEU+rzSrhv1GHXLsAs5c9vji5tLZM5UBBHDmiaUx/WzKItE
-	 Pt4jRvOyq4E8Q==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Wed, 20 Aug 2025 19:54:26 +0530
-Subject: [PATCH v5 1/2] dt-bindings: display: panel: document Synaptics
- TDDI panel
+	 In-Reply-To:To:Cc; b=DfyUbrim96kCiDsEyNDUvEnmxCHorw3/7ZjrzIqEEnCCCnYDTwP3TZFDrK132gQLkn2V8GccsNl42G0lbl9Wufd66l+SB+eQ8LSWJg6+t0WKoDmxwnGRAdHNBrGsb0OuoAj20WGHuun6E5LMzxf+kxGjoknvXuFYV4ARrSirsAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tcaeBTVp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C7A8EC116B1;
+	Wed, 20 Aug 2025 14:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755699885;
+	bh=qLy7Mfk1fO5OlX68MtQ114jWdx58MPhXCI22IADztoA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=tcaeBTVp5C98gOu0P3njLmdAeJrejGHqMPFDXq1hpQML0wTcRjym3zgxL+8p42piY
+	 tahDyF4Vqw5ai1FeBu48tM3hNRHNaAqt0BpcXa8Ic90khYh9sUzc1ceeKzmSTxW9Ma
+	 Ue1/CGvuCvgXDzfGo+K2Ju1so7vstOG+fE3BAqE9Lk4OYi9KW5wOcG/YhKk7sUm0qL
+	 tWKaqRar92LpNgptFpZGHsq+lNE4IDsaT5hNBbYUO2MAjhbkysD/HwHy8GQw5K7u+X
+	 O1XPHGl606mF2BBYFtNMz+gdudlygRjRi6znz6msm0nrVVzVWAiOQQ+OpqO30Q606h
+	 +F5moe+PuYexA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDB5CA0EFC;
+	Wed, 20 Aug 2025 14:24:45 +0000 (UTC)
+From: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Date: Wed, 20 Aug 2025 14:24:26 +0000
+Subject: [PATCH v5 8/9] iio: imu: inv_icm45600: add I3C driver for
+ inv_icm45600 driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,139 +55,167 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-panel-synaptics-tddi-v5-1-d4e3fd4987c6@disroot.org>
-References: <20250820-panel-synaptics-tddi-v5-0-d4e3fd4987c6@disroot.org>
-In-Reply-To: <20250820-panel-synaptics-tddi-v5-0-d4e3fd4987c6@disroot.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755699927; l=3076;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=p7l3ijfCEWwQJ+xrSJN3btKzJvTlfULqoMFEd7FhHC8=;
- b=jV7L/GzC3cvQmWimQ20MbHPJ9c2wUl8vEhWIAIDffxMypnsbk18glDZrGRaCgJHVMfyIFd2sW
- ESDcD4juD2fAntkPqRsbfQwGBOoA3u39wKN24DRvl0P3pLlRV1S3stj
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+Message-Id: <20250820-add_newport_driver-v5-8-2fc9f13dddee@tdk.com>
+References: <20250820-add_newport_driver-v5-0-2fc9f13dddee@tdk.com>
+In-Reply-To: <20250820-add_newport_driver-v5-0-2fc9f13dddee@tdk.com>
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, Remi Buisson <remi.buisson@tdk.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755699883; l=4440;
+ i=remi.buisson@tdk.com; s=20250411; h=from:subject:message-id;
+ bh=buF0oQQr9kLsJS6bFDnI6ITH4jX267a+LRmeoFoV7CA=;
+ b=eZSt+bc7HdLTTtf361vUV4of9OxS4Vp8je+yW0lqvlN6Q8Hoh7cFskPicaZiLjmp1t4aBTO+B
+ xIKhFcDk7moD9KNhitUNCKwYv3UcAHLDd/eeABKwCsOoJa+lVsf/TTz
+X-Developer-Key: i=remi.buisson@tdk.com; a=ed25519;
+ pk=yDVMi4C7RpXN4dififo42A7fDDt3THYzoZoNq9lUZuo=
+X-Endpoint-Received: by B4 Relay for remi.buisson@tdk.com/20250411 with
+ auth_id=372
+X-Original-From: Remi Buisson <remi.buisson@tdk.com>
+Reply-To: remi.buisson@tdk.com
 
-Document the Synaptics TDDI (Touch/Display Integration) panel hardware.
-Along with the MIPI-DSI panel, these devices also have an in-built LED
-backlight device and a touchscreen, all packed together in a single chip.
+From: Remi Buisson <remi.buisson@tdk.com>
 
-Also, add compatibles for supported panels - TD4101 and TD4300. Both
-have the '-panel' suffix so as to remove any ambiguity between the panel
-and touchscreen chips.
+Add I3C driver for InvenSense ICM-45600 devices.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
 ---
- .../display/panel/synaptics,td4300-panel.yaml      | 89 ++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
+ drivers/iio/imu/inv_icm45600/Kconfig            | 21 +++++++
+ drivers/iio/imu/inv_icm45600/Makefile           |  3 +
+ drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c | 77 +++++++++++++++++++++++++
+ 3 files changed, 101 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/synaptics,td4300-panel.yaml b/Documentation/devicetree/bindings/display/panel/synaptics,td4300-panel.yaml
+diff --git a/drivers/iio/imu/inv_icm45600/Kconfig b/drivers/iio/imu/inv_icm45600/Kconfig
+index 01399d136a7ea3aa92a3a18ea455c95c0a6578b3..dc133402f6d75f8c050100e8475404e00993818b 100644
+--- a/drivers/iio/imu/inv_icm45600/Kconfig
++++ b/drivers/iio/imu/inv_icm45600/Kconfig
+@@ -47,3 +47,24 @@ config INV_ICM45600_SPI
+ 
+ 	  This driver can be built as a module. The module will be called
+ 	  inv-icm45600-spi.
++
++config INV_ICM45600_I3C
++	tristate "InvenSense ICM-456xx I3C driver"
++	depends on I3C
++	select INV_ICM45600
++	select REGMAP_I3C
++	help
++	  This driver supports the InvenSense ICM-456xx motion tracking
++	  devices over I3C.
++	  Supported devices:
++	  - ICM-45605
++	  - ICM-45606
++	  - ICM-45608
++	  - ICM-45634
++	  - ICM-45686
++	  - ICM-45687
++	  - ICM-45688-P
++	  - ICM-45689
++
++	  This driver can be built as a module. The module will be called
++	  inv-icm45600-i3c.
+diff --git a/drivers/iio/imu/inv_icm45600/Makefile b/drivers/iio/imu/inv_icm45600/Makefile
+index 3692636d393a109a0ad68e955e1cad59005e9128..c98b8365b467de6abe9873e7ba3c0aca77f464e3 100644
+--- a/drivers/iio/imu/inv_icm45600/Makefile
++++ b/drivers/iio/imu/inv_icm45600/Makefile
+@@ -11,3 +11,6 @@ inv-icm45600-i2c-y += inv_icm45600_i2c.o
+ 
+ obj-$(CONFIG_INV_ICM45600_SPI) += inv-icm45600-spi.o
+ inv-icm45600-spi-y += inv_icm45600_spi.o
++
++obj-$(CONFIG_INV_ICM45600_I3C) += inv-icm45600-i3c.o
++inv-icm45600-i3c-y += inv_icm45600_i3c.o
+diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
 new file mode 100644
-index 0000000000000000000000000000000000000000..152d94367130e9d80a885fe87a2da53db88e3393
+index 0000000000000000000000000000000000000000..e58de9c8a8b59682bec30d6de293a1adda8618e6
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/synaptics,td4300-panel.yaml
-@@ -0,0 +1,89 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/panel/synaptics,td4300-panel.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
+@@ -0,0 +1,77 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/* Copyright (C) 2025 InvenSense, Inc. */
 +
-+title: Synaptics TDDI Display Panel Controller
++#include <linux/err.h>
++#include <linux/i3c/device.h>
++#include <linux/i3c/master.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
 +
-+maintainers:
-+  - Kaustabh Chakraborty <kauschluss@disroot.org>
++#include "inv_icm45600.h"
 +
-+allOf:
-+  - $ref: panel-common.yaml#
++static const struct regmap_config inv_icm45600_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++};
 +
-+properties:
-+  compatible:
-+    enum:
-+      - syna,td4101-panel
-+      - syna,td4300-panel
++static const struct i3c_device_id inv_icm45600_i3c_ids[] = {
++	I3C_DEVICE_EXTRA_INFO(0x0235, 0x0000, 0x0011, (void *)NULL),
++	I3C_DEVICE_EXTRA_INFO(0x0235, 0x0000, 0x0084, (void *)NULL),
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(i3c, inv_icm45600_i3c_ids);
 +
-+  reg:
-+    maxItems: 1
++static const struct inv_icm45600_chip_info *i3c_chip_info[] = {
++	&inv_icm45605_chip_info,
++	&inv_icm45606_chip_info,
++	&inv_icm45608_chip_info,
++	&inv_icm45634_chip_info,
++	&inv_icm45686_chip_info,
++	&inv_icm45687_chip_info,
++	&inv_icm45688p_chip_info,
++	&inv_icm45689_chip_info,
++};
 +
-+  vio-supply:
-+    description: core I/O voltage supply
++static int inv_icm45600_i3c_probe(struct i3c_device *i3cdev)
++{
++	int ret;
++	unsigned int whoami;
++	struct regmap *regmap;
++	const int nb_chip = ARRAY_SIZE(i3c_chip_info);
++	int chip;
 +
-+  vsn-supply:
-+    description: negative voltage supply for analog circuits
++	regmap = devm_regmap_init_i3c(i3cdev, &inv_icm45600_regmap_config);
++	if (IS_ERR(regmap))
++		return dev_err_probe(&i3cdev->dev, PTR_ERR(regmap),
++					"Failed to register i3c regmap %ld\n", PTR_ERR(regmap));
 +
-+  vsp-supply:
-+    description: positive voltage supply for analog circuits
++	ret = regmap_read(regmap, INV_ICM45600_REG_WHOAMI, &whoami);
++	if (ret)
++		return dev_err_probe(&i3cdev->dev, ret, "Failed to read part id %d\n", whoami);
 +
-+  backlight-gpios:
-+    maxItems: 1
-+    description: backlight enable GPIO
++	for (chip = 0; chip < nb_chip; chip++) {
++		if (whoami == i3c_chip_info[chip]->whoami)
++			break;
++	}
 +
-+  reset-gpios: true
-+  width-mm: true
-+  height-mm: true
-+  panel-timing: true
++	if (chip == nb_chip)
++		dev_err_probe(&i3cdev->dev, -ENODEV, "Failed to match part id %d\n", whoami);
 +
-+required:
-+  - compatible
-+  - reg
-+  - width-mm
-+  - height-mm
-+  - panel-timing
++	return inv_icm45600_core_probe(regmap, i3c_chip_info[chip], false, NULL);
++}
 +
-+additionalProperties: false
++static struct i3c_driver inv_icm45600_driver = {
++	.driver = {
++		.name = "inv_icm45600_i3c",
++		.pm = pm_sleep_ptr(&inv_icm45600_pm_ops),
++	},
++	.probe = inv_icm45600_i3c_probe,
++	.id_table = inv_icm45600_i3c_ids,
++};
++module_i3c_driver(inv_icm45600_driver);
 +
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    dsi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        panel@0 {
-+            compatible = "syna,td4300-panel";
-+            reg = <0>;
-+
-+            vio-supply = <&panel_vio_reg>;
-+            vsn-supply = <&panel_vsn_reg>;
-+            vsp-supply = <&panel_vsp_reg>;
-+
-+            backlight-gpios = <&gpd3 5 GPIO_ACTIVE_LOW>;
-+            reset-gpios = <&gpd3 4 GPIO_ACTIVE_LOW>;
-+
-+            width-mm = <68>;
-+            height-mm = <121>;
-+
-+            panel-timing {
-+                clock-frequency = <144389520>;
-+
-+                hactive = <1080>;
-+                hsync-len = <4>;
-+                hfront-porch = <120>;
-+                hback-porch = <32>;
-+
-+                vactive = <1920>;
-+                vsync-len = <2>;
-+                vfront-porch = <21>;
-+                vback-porch = <4>;
-+            };
-+        };
-+    };
-+
-+...
++MODULE_AUTHOR("Remi Buisson <remi.buisson@tdk.com>");
++MODULE_DESCRIPTION("InvenSense ICM-456xx i3c driver");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("IIO_ICM45600");
 
 -- 
-2.50.0
+2.34.1
+
 
 
