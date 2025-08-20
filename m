@@ -1,169 +1,238 @@
-Return-Path: <linux-kernel+bounces-777023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83502B2D433
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:45:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C1EB2D434
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7837C6245A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:44:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B8DE14E34F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183AF2C15A5;
-	Wed, 20 Aug 2025 06:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E054E2222A0;
+	Wed, 20 Aug 2025 06:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mO9ugBqA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BQXJa2Dk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD8C2C21C0;
-	Wed, 20 Aug 2025 06:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419D42EB10
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755672268; cv=none; b=dbaQx9C+PL6b1UCaXYkI6Iw9K+nPFQxyzBdSKz+bfFe9537l4jCELpWJjR/LcYTm2rssOFtqXxGSWGr+JIc2PZPXttOOdPEHYJuxjdKcOWiK3t1EHWGJNSRPhv2Q58Gd/HLT03OnEMH4VOqDvUvnqDuEDywiktbzX01YXenbsck=
+	t=1755672339; cv=none; b=kNmQmKdX8Z/dtVx3S5qV9iEI/TZTkHu8S7F+mDQK2REnrLney83vqrXdL6OHCdbfm95ocXUq0CeClpT759H6j2wT7GW0oTm11DYfBlkMe1DCcmIq6ONOlbUaxYG/a9LszCdo/rHf5YDasMrWnUmGkWtaw49kXfK2tp/kBJWt/+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755672268; c=relaxed/simple;
-	bh=3s3RN6kaKBn/o13lq3zXVrOJU86q/ebvShuuqfEW+y4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KqHW3Q69ioyQqx/PWZcpLd8lTQH5e09nePPpjQWEkjIa923Sgi+Cv3U7Uwt0skVjLh6/T75wQQ4UHcwG/dZAQ+sFUY/I8ceIcXpZE5mRLu9GkWKqJtMBXrlRVJ9kyxQ98DLKjd2gsduM5rd2lhaGeKBtMPcQj1ESRKCkFcIftKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mO9ugBqA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA05C4CEEB;
-	Wed, 20 Aug 2025 06:44:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755672267;
-	bh=3s3RN6kaKBn/o13lq3zXVrOJU86q/ebvShuuqfEW+y4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mO9ugBqA3U392iHDJAhjhGZEW+1ei7vLekvou037cBPJi66636ovmSj72NfBYEVew
-	 M5NqwNcFei3VSX93QTMn41A1OBsI8vq3/auwcA/ArR7BLo9g8MNIlwT+eVRdVW8vuh
-	 EW6ot3fKz45g+S4nILhODGFPq+f0CXRahy0alQjB7arXiVNWh1isveU9FAGRjpcxNr
-	 U+Px7cBNo78a2UCo0uLPRRd04H6ZjiTvdj41JdgXAbrSIzc7Ls1Tta4AqdVMbeeJPc
-	 1VstkED8f9E9CBK0syYXWuBnJlNZZYjixgz1URULv8iajPcYtLC4KloavsXkxWx1IY
-	 KeXL+w4qomceQ==
-Message-ID: <1b517073-cadb-41e4-b470-54a6ad93dd59@kernel.org>
-Date: Wed, 20 Aug 2025 08:44:21 +0200
+	s=arc-20240116; t=1755672339; c=relaxed/simple;
+	bh=Aks18XLnFJDywmToiC/hQRBj84tcW/vcMhMm0McgHP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ns3xO28jhPWWWdx399d0IyDPvuZ22QDJZHSGEW99SuLcL2fg8zmmtySbqDLl8J7zQ4NV1J/uRzqoNdBuCJQazt6/4iKx9watDd+MGKa/4ToNCJgecFF7gX/izRLiPp56NwSydOD0wgVTkpRMS6zxEsOSqrUTsVb7ZYp+/HQ0B48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BQXJa2Dk; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755672337; x=1787208337;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Aks18XLnFJDywmToiC/hQRBj84tcW/vcMhMm0McgHP4=;
+  b=BQXJa2DklheG1XobGiKPr7yfHJ1llIMtWEnmthEuG2o5XuQJhnZd4722
+   +r4ginOFQaGSEUGnmO/3zhl+ytz6YfJNcrajthLUsCrcqJyHsMf2/LpAV
+   AY3egFRSJco4Dh4wUl+GSItpo1Wcq7yRfeZICZT95j5RScDfm2Pv26g8J
+   wGhpaYcSwhYgj4WUe5SxR+V93cgCBi3CsHjQpLZIG072iwUGi+hQrrmiG
+   j2EfKJZV870QQCCUxmxMz5CHCiKoRlFTzHNT4iNEyO9IBiMJffcigLMXk
+   eZ0wdtzvwUQ9FXwwpTLG3b716xUuWMi4WvKmGukpY/i5jjsGwaUlbnav0
+   Q==;
+X-CSE-ConnectionGUID: SWn3ATIRQFK8n+iioay2LA==
+X-CSE-MsgGUID: Oe8TXaosTuC5XDZSAeO4xw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61745333"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="61745333"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2025 23:45:36 -0700
+X-CSE-ConnectionGUID: oZu6t+lTTiuD65z9o2thYw==
+X-CSE-MsgGUID: BZwrqRZbQTWCzxT/CDtEsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="168851444"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 19 Aug 2025 23:45:32 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uocZd-000IJH-2r;
+	Wed, 20 Aug 2025 06:45:29 +0000
+Date: Wed, 20 Aug 2025 14:44:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yunhui Cui <cuiyunhui@bytedance.com>, yury.norov@gmail.com,
+	linux@rasmusvillemoes.dk, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dennis@kernel.org, tj@kernel.org, cl@gentwo.org, linux-mm@kvack.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Yunhui Cui <cuiyunhui@bytedance.com>
+Subject: Re: [PATCH 2/2] riscv: introduce percpu.h into include/asm
+Message-ID: <202508201452.ciEgfhNO-lkp@intel.com>
+References: <20250819135007.85646-3-cuiyunhui@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI TMDS181
- and SN65DP159 bindings
-To: Mike Looijmans <mike.looijmans@topic.nl>, Conor Dooley <conor@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
- Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250812145256.135645-1-mike.looijmans@topic.nl>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.3b7d4319-e208-470d-9ada-585343a64822@emailsignatures365.codetwo.com>
- <20250812145256.135645-2-mike.looijmans@topic.nl>
- <20250812-designing-tyke-db85527b373d@spud>
- <f4ec7690-322e-493a-b346-7b9560ac0616@topic.nl>
- <9fba4917-a24f-4fee-8f1a-7509a0bc542e@kernel.org>
- <2d694c9c-704e-4353-8b57-de83eb5a7f96@topic.nl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <2d694c9c-704e-4353-8b57-de83eb5a7f96@topic.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819135007.85646-3-cuiyunhui@bytedance.com>
 
-On 19/08/2025 10:26, Mike Looijmans wrote:
-> On 19-08-2025 09:51, Krzysztof Kozlowski wrote:
->> On 19/08/2025 09:46, Mike Looijmans wrote:
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    enum:
->>>>> +      - ti,tmds181
->>>>> +      - ti,sn65dp159
->>>> The driver contains:
->>>> +	{ .compatible = "ti,tmds181", },
->>>> +	{ .compatible = "ti,sn65dp159", },
->>>> +	{}
->>>> so why is a fallback compatible not suitable here?
->>> I don't understand the question. The two are slightly different chips,
->> Your driver says they are compatible. No one said the same, but compatible.
->>
->>> so it makes sense to describe that in the DT.
->> Compatible devices should use fallback. There is plenty of examples (90%
->> of all binding files?) including example-schema describing this.
-> 
-> Please help me out here, I'm happy to oblige, but I don't understand 
-> what you're asking.
-> 
-> To the best of my knowledge "fallback" compatible is when you write 
-> something like this in the device-tree:
->     compatible = "st,m25p80", "jedec,spi-nor";
-> Which means that we can use the "jedec,spi-nor" driver if there's no 
-> specific match for "st,m25p80", correct?
+Hi Yunhui,
 
-Yes.
+kernel test robot noticed the following build warnings:
 
-> 
-> I don't understand how that relates to your request, this is the first 
-> time I ever got this particular feedback. Looking at say the 
-> ti,sn65dsi83 driver, it does the same thing (supports the ti,sn65dsi83 
-> and ti,sn65dsi84).
-> 
-> Please explain or point me somewhere where I can find this?
-I already pointed out to example-schema.
+[auto build test WARNING on linus/master]
+[also build test WARNING on dennis-percpu/for-next v6.17-rc2 next-20250819]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Also, e.g. first file in iio/adc:
-adi,ad4000.yaml
+url:    https://github.com/intel-lab-lkp/linux/commits/Yunhui-Cui/riscv-remove-irqflags-h-inclusion-in-asm-bitops-h/20250819-215256
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250819135007.85646-3-cuiyunhui%40bytedance.com
+patch subject: [PATCH 2/2] riscv: introduce percpu.h into include/asm
+config: riscv-randconfig-002-20250820 (https://download.01.org/0day-ci/archive/20250820/202508201452.ciEgfhNO-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250820/202508201452.ciEgfhNO-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508201452.ciEgfhNO-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from arch/riscv/kernel/asm-offsets.c:8:
+   In file included from include/linux/mm.h:7:
+   In file included from include/linux/gfp.h:7:
+   In file included from include/linux/mmzone.h:22:
+   In file included from include/linux/mm_types.h:19:
+   In file included from include/linux/workqueue.h:9:
+>> include/linux/alloc_tag.h:219:2: warning: implicit conversion from 'typeof (tag->counters->calls)' (aka 'unsigned long long') to 'unsigned long' changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]
+     219 |         this_cpu_dec(tag->counters->calls);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:512:28: note: expanded from macro 'this_cpu_dec'
+     512 | #define this_cpu_dec(pcp)               this_cpu_sub(pcp, 1)
+         |                                         ^~~~~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:510:51: note: expanded from macro 'this_cpu_sub'
+     510 | #define this_cpu_sub(pcp, val)          this_cpu_add(pcp, -(typeof(pcp))(val))
+         |                                         ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:501:70: note: expanded from macro 'this_cpu_add'
+     501 | #define this_cpu_add(pcp, val)          __pcpu_size_call(this_cpu_add_, pcp, val)
+         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+   include/linux/percpu-defs.h:372:29: note: expanded from macro '__pcpu_size_call'
+     372 |                 case 8: stem##8(variable, __VA_ARGS__);break;           \
+         |                         ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+   arch/riscv/include/asm/percpu.h:96:78: note: expanded from macro 'this_cpu_add_8'
+      96 | #define this_cpu_add_8(pcp, val)        _pcp_protect(__percpu_add_amo_case_64, pcp, val)
+         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+   arch/riscv/include/asm/percpu.h:72:26: note: expanded from macro '_pcp_protect'
+      72 |         op(raw_cpu_ptr(&(pcp)), __VA_ARGS__);                           \
+         |         ~~                      ^~~~~~~~~~~
+   1 warning generated.
+--
+   In file included from arch/riscv/errata/sifive/errata.c:7:
+   In file included from include/linux/memory.h:19:
+   In file included from include/linux/node.h:18:
+   In file included from include/linux/device.h:16:
+   In file included from include/linux/energy_model.h:7:
+   In file included from include/linux/kobject.h:20:
+   In file included from include/linux/sysfs.h:16:
+   In file included from include/linux/kernfs.h:12:
+   In file included from include/linux/idr.h:15:
+   In file included from include/linux/radix-tree.h:16:
+   In file included from include/linux/percpu.h:5:
+>> include/linux/alloc_tag.h:219:2: warning: implicit conversion from 'typeof (tag->counters->calls)' (aka 'unsigned long long') to 'unsigned long' changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]
+     219 |         this_cpu_dec(tag->counters->calls);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:512:28: note: expanded from macro 'this_cpu_dec'
+     512 | #define this_cpu_dec(pcp)               this_cpu_sub(pcp, 1)
+         |                                         ^~~~~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:510:51: note: expanded from macro 'this_cpu_sub'
+     510 | #define this_cpu_sub(pcp, val)          this_cpu_add(pcp, -(typeof(pcp))(val))
+         |                                         ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:501:70: note: expanded from macro 'this_cpu_add'
+     501 | #define this_cpu_add(pcp, val)          __pcpu_size_call(this_cpu_add_, pcp, val)
+         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+   include/linux/percpu-defs.h:372:29: note: expanded from macro '__pcpu_size_call'
+     372 |                 case 8: stem##8(variable, __VA_ARGS__);break;           \
+         |                         ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+   arch/riscv/include/asm/percpu.h:96:78: note: expanded from macro 'this_cpu_add_8'
+      96 | #define this_cpu_add_8(pcp, val)        _pcp_protect(__percpu_add_amo_case_64, pcp, val)
+         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+   arch/riscv/include/asm/percpu.h:72:26: note: expanded from macro '_pcp_protect'
+      72 |         op(raw_cpu_ptr(&(pcp)), __VA_ARGS__);                           \
+         |         ~~                      ^~~~~~~~~~~
+   arch/riscv/errata/sifive/errata.c:29:14: warning: result of comparison of constant 9223372036854775815 with expression of type 'unsigned long' is always true [-Wtautological-constant-out-of-range-compare]
+      29 |         if (arch_id != 0x8000000000000007 ||
+         |             ~~~~~~~ ^  ~~~~~~~~~~~~~~~~~~
+   arch/riscv/errata/sifive/errata.c:42:14: warning: result of comparison of constant 9223372036854775815 with expression of type 'unsigned long' is always true [-Wtautological-constant-out-of-range-compare]
+      42 |         if (arch_id != 0x8000000000000007 && arch_id != 0x1)
+         |             ~~~~~~~ ^  ~~~~~~~~~~~~~~~~~~
+   3 warnings generated.
+--
+   In file included from arch/riscv/kernel/asm-offsets.c:8:
+   In file included from include/linux/mm.h:7:
+   In file included from include/linux/gfp.h:7:
+   In file included from include/linux/mmzone.h:22:
+   In file included from include/linux/mm_types.h:19:
+   In file included from include/linux/workqueue.h:9:
+>> include/linux/alloc_tag.h:219:2: warning: implicit conversion from 'typeof (tag->counters->calls)' (aka 'unsigned long long') to 'unsigned long' changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]
+     219 |         this_cpu_dec(tag->counters->calls);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:512:28: note: expanded from macro 'this_cpu_dec'
+     512 | #define this_cpu_dec(pcp)               this_cpu_sub(pcp, 1)
+         |                                         ^~~~~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:510:51: note: expanded from macro 'this_cpu_sub'
+     510 | #define this_cpu_sub(pcp, val)          this_cpu_add(pcp, -(typeof(pcp))(val))
+         |                                         ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:501:70: note: expanded from macro 'this_cpu_add'
+     501 | #define this_cpu_add(pcp, val)          __pcpu_size_call(this_cpu_add_, pcp, val)
+         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+   include/linux/percpu-defs.h:372:29: note: expanded from macro '__pcpu_size_call'
+     372 |                 case 8: stem##8(variable, __VA_ARGS__);break;           \
+         |                         ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+   arch/riscv/include/asm/percpu.h:96:78: note: expanded from macro 'this_cpu_add_8'
+      96 | #define this_cpu_add_8(pcp, val)        _pcp_protect(__percpu_add_amo_case_64, pcp, val)
+         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+   arch/riscv/include/asm/percpu.h:72:26: note: expanded from macro '_pcp_protect'
+      72 |         op(raw_cpu_ptr(&(pcp)), __VA_ARGS__);                           \
+         |         ~~                      ^~~~~~~~~~~
+   1 warning generated.
 
 
-Best regards,
-Krzysztof
+vim +219 include/linux/alloc_tag.h
+
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  202  
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  203  static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes)
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  204  {
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  205  	struct alloc_tag *tag;
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  206  
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  207  	alloc_tag_sub_check(ref);
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  208  	if (!ref || !ref->ct)
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  209  		return;
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  210  
+239d6c96d86f8a Suren Baghdasaryan 2024-03-21  211  	if (is_codetag_empty(ref)) {
+239d6c96d86f8a Suren Baghdasaryan 2024-03-21  212  		ref->ct = NULL;
+239d6c96d86f8a Suren Baghdasaryan 2024-03-21  213  		return;
+239d6c96d86f8a Suren Baghdasaryan 2024-03-21  214  	}
+239d6c96d86f8a Suren Baghdasaryan 2024-03-21  215  
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  216  	tag = ct_to_alloc_tag(ref->ct);
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  217  
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  218  	this_cpu_sub(tag->counters->bytes, bytes);
+22d407b164ff79 Suren Baghdasaryan 2024-03-21 @219  	this_cpu_dec(tag->counters->calls);
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  220  
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  221  	ref->ct = NULL;
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  222  }
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  223  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
