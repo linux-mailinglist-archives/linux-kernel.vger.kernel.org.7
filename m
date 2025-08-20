@@ -1,334 +1,188 @@
-Return-Path: <linux-kernel+bounces-777001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EEE3B2D3EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:14:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D07B2D3F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B1071C417B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:14:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D27B16FA66
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6082BE63F;
-	Wed, 20 Aug 2025 06:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694C7267B89;
+	Wed, 20 Aug 2025 06:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="NPJdafik"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010033.outbound.protection.outlook.com [52.101.228.33])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GG5buEa9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0801A1F4606;
-	Wed, 20 Aug 2025 06:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755670460; cv=fail; b=dFNIIboG/5UsOl2KpXM+tW3JZP2xxyI4mzZRydH995SpzrizNE8Rdbbw3zfnplit7biBMDUhob45Q6KAKKoP9pFX3ILsxeoo/HYi+1DHhLBA5EcFKcwk2r52afpkUtunmwTQUBGAqC/gk+TwZ11W1pzk3zvEnxxXgyR9AoFCjDk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755670460; c=relaxed/simple;
-	bh=YCqLBHT//KxXILB/EJOR0B9jXhMKGQ2a9AmK/+7XP3A=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=p3wSyM9nWQS3MT6wYYKQ/jlRX5V3+n9C6ktmh41q9X4twUX2OiQ41ksfS9tmCO4fRwdzTIzd/r7oKVhoK0db4biVrB0nW9fbTHHonR/oHrVoxzFG4H7SV+uK5EhimWWignqMuxdOAc59/wJAOPIJ1b0FabzLyqt8QvOd3VcenJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=NPJdafik; arc=fail smtp.client-ip=52.101.228.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T5ZgpGe5w6MdkWTRPf32Ik+UclXk65kekcDvF1XercLuEinxu8nEf7sVVS3S7IMYAvVer9OzZ19HZgstZojHg+YKCv0onR6eEoghTF36He0QIDEik6V9Nf38Pj+0Yo6eFC4LYCpz5MIqFzQnMw9mtZU1snj3dHYxZnmIAhVvq8/BFvsbhX9EQjqQncvxCnmX22c/XE6eWpeBKEyOx17H0XqEVpkezFMYsuwn/fWbiBtwBS9K4vvayD3xkRnzf+NnAjgf+eKmP+4KMBp+4mfPyhxNsp+IqK669WOEP+MwacNepgxBTPTnQWdW2NWCu9e0DrF3/PTLwst9W5yJnJE0yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DTK+6mULbUrrWHs1K99cEUHQpJO8D+cUp4q7g9Qu3+s=;
- b=Ma8xgh8J12gj0uJfftbHsFiMxRsttZAWVucIQvwwVCJPyDHAmAAnZLOYa1RgeqWxvFzT6n+SWEyzCTHPrVp9kVREBMTBRaymdjzhiw60RGogeCcH8psh5VG0pjS37hgC36XMmzNHfDh+jaBz21aq3DcG/9FNiNvtG6dlMWCjf8jxHF6RM/VWxFBXhRx76ojPo3h15zgzgYqdWP495UKYju6Ydg2Nfj2vt/81CBUTWFNmaE7EK+Ku4X/N8/Jm243d+AkG1LyVwt6ps/wX7mPb22tecp2UlUXlu29CjUajsbQ5U/pAPER3NN6JEOChyCXj1wdw7Et/QvHL6k4qHhycXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DTK+6mULbUrrWHs1K99cEUHQpJO8D+cUp4q7g9Qu3+s=;
- b=NPJdafikx7/4Udhw/yRbKLgIwhDK7m2pJC9oCi5e3kTGHx+pF6J87ku7/BVTzAAsqbuD6AvFEIalehy4saKtHgmvfkOBrcqpDbmRy7OfjWQi6EuxuKFHOZJlVR3b5bWNATb7Dj5oC+MxD2aJa9JaaK/nQkG2MJzO/86m6y5KKms=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TY4PR01MB15046.jpnprd01.prod.outlook.com (2603:1096:405:280::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 20 Aug
- 2025 06:14:13 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%7]) with mapi id 15.20.9052.012; Wed, 20 Aug 2025
- 06:14:13 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, "oe-kbuild@lists.linux.dev"
-	<oe-kbuild@lists.linux.dev>, biju.das.au <biju.das.au@gmail.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-CC: "lkp@intel.com" <lkp@intel.com>, "oe-kbuild-all@lists.linux.dev"
-	<oe-kbuild-all@lists.linux.dev>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 2/4] clk: renesas: rzv2h: Add support for parent mod
- clocks
-Thread-Topic: [PATCH 2/4] clk: renesas: rzv2h: Add support for parent mod
- clocks
-Thread-Index: AQHcDRnDguIrfslfREyvEDEISi1yTLRlFs2AgAYBbYA=
-Date: Wed, 20 Aug 2025 06:14:13 +0000
-Message-ID:
- <TY3PR01MB113460C30E29F6BE3F52EA85E8633A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250814124832.76266-3-biju.das.jz@bp.renesas.com>
- <202508160958.ounSAlER-lkp@intel.com>
-In-Reply-To: <202508160958.ounSAlER-lkp@intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY4PR01MB15046:EE_
-x-ms-office365-filtering-correlation-id: 5dffaeff-6ef2-4d9b-6e8b-08dddfb0c8bc
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?tj6/KprS0pcRanMMHDHv/psRZG4S276AAtMzHrWS31VjvIbR0CmvygEJbCxZ?=
- =?us-ascii?Q?QeGbTcSXqH/Ixe1LsyJySRovhvhEUehjEQSlmaTD8AFATp/g8FcH4hB0P+Cx?=
- =?us-ascii?Q?s+DMfHDZqZxQSEBslpt8bdZNP7gAn2XexVlQbmgKniKEAgLhnnOTLS+CQUYw?=
- =?us-ascii?Q?R+K6gMm8g/o4awBwUnNq+/wK3WimjJ0GENCOzt50Ho/cyWzkfKJnVk9QsJr2?=
- =?us-ascii?Q?vzEkGa8ChQtErjnZWybCy63Q45STDjOqnzWwdox1hhTL/LcFioGnlJOpSQFJ?=
- =?us-ascii?Q?BiKhF2TSrPRwc9NRoyyyNeE7F6oNslMZLU44IjRVj1h/7ANrJweV8kmXQxGT?=
- =?us-ascii?Q?LwasAOJYUnUbhDr6BMIfZP9eQ+P4G3Y4s5AdCz4ASQZB3hb9i1CZGZ0uxpL7?=
- =?us-ascii?Q?cSe4Ep6vNJt22mZyAzkJkCI7jiv/q1ytBDLf2UD2lUxQL6yIT8VUQ0hm1hSP?=
- =?us-ascii?Q?NfSwcogA06ljJiaka6X8TY4Jyn9+dBhgvwHK037BszuV5Zfb/RgzEvEtvgpW?=
- =?us-ascii?Q?JxVdPY/qLyqcgWM6UScZfVVMnq38X6VUd/Rbawl8GgQoZ88+TE9/eyIVsO4d?=
- =?us-ascii?Q?1RNOPBce7JfZDL5Zy0bMeOQ3AJ4eASF+jrFQEcta8XcoXhQrginW5I67C6r6?=
- =?us-ascii?Q?Ey6VorTIApjiksolQ7FJNk8Wf4qGEb4M/YzBFpcJX1PTrMI3Icyvsz5jheUh?=
- =?us-ascii?Q?Md13r7mncVY+d2hcaHtX0+CDncwYXCnsFnqsPV2bSKk5/SbDqMP7GJ6B1TrN?=
- =?us-ascii?Q?gbwDJroq+xVYkTlvVSXf0Es5X9QLM1ViAHFLNfIMTGZow0ZjGNjeXA61McC5?=
- =?us-ascii?Q?YOQ8pLujBCiL6A+IY82W18KIlJmlEJbtz6V+ARW99WGJqrQe60hbGokidB31?=
- =?us-ascii?Q?ctZl1/ILPTupCZU03t6SSmp+YOws2dp8vEh5j3Xyt4OrFlbPr2nYUEys9Ki3?=
- =?us-ascii?Q?L76KfmPDHTfRz6GAin7bxghN+EbiPWlBf1SOGq98Pcj88N0cFP6+dmeJvK8J?=
- =?us-ascii?Q?Dru9LSAa5aEhOPA32SuyODVdblK9H1Dso7TiY4RtdN6nZYDpWCHJSF9RjWor?=
- =?us-ascii?Q?LaqncNbX8XbcYMpZA1uYjHVX8YQzX7f2ow7me0qZrEKyVuyRoYC3GEQ2zhWK?=
- =?us-ascii?Q?klyt93DpPQL6I2/1iNhQgjlGzRytEBirWrt5gIpjByLg+RUUtRvSpJE9swNS?=
- =?us-ascii?Q?tsUos5jn2Efm089ygqcbsOLv/RZX9wD5r6PmpAud6/TqO6LNWfDfIx/00tqh?=
- =?us-ascii?Q?lViRygyINzT/DXizrJJKVRcl9+ielSGVW5/3qDKM7cGErIyJNvHswT2Qida4?=
- =?us-ascii?Q?pQnv48/CtRo4tAeiNt+BF9fS/6JY2xImzGPhejs/1NKR0g8KixagYY04gSsC?=
- =?us-ascii?Q?yQbzCXtkQhZ5gJ7N+UUeNZRfb98APcf9Ne1rQ89Kl/ISPNGk3e0+cUJYTsGk?=
- =?us-ascii?Q?5C3x+GAa0EeOp81A86AaqkoN0DX414qC?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?DvzRRjXOWJ+5bX13BTMCeFATkrdUsBTHfKp1yL9EQu7IpwYvTFVZqv3hDaSg?=
- =?us-ascii?Q?QJJLsAPBjKKBIknx/eUu80NAt6xB0I+o7A8CD+c6CubDT8fjDujHmZifrn2L?=
- =?us-ascii?Q?0ypaDe2dwqzmFgj2jnri+85k789GhhmquJYXDktkpl8ZkNhpiZslM2BVVjwZ?=
- =?us-ascii?Q?qW5eRD4QJBxQGeVqkAmmZOPT+RhN+fduJr0Dw9Oh9SNpI2EBVnE6H+m0j/mI?=
- =?us-ascii?Q?+fwoFCZxJ5/VHuQcqTkVTYywZMbgUCvdD9g0Nz2jjo1xzkLm+Ac8T2wfPxAx?=
- =?us-ascii?Q?Njh4JcOD771kiCiFP22m86KaUpvNLhpY7p5z93O3IF8Q64d6KMoWgA7DdKCw?=
- =?us-ascii?Q?AA7uEXceJKu3mdeEjrhYdeMxOCiLtGF5MS+QKioNcD9vjSe/DT2wkrg9MdFK?=
- =?us-ascii?Q?tmWRASA2moJlHOcrGpSJSj4vgo0qpAF/IJkDukbmjXhC9JKe0C7k4iwk8ebt?=
- =?us-ascii?Q?ApPSwdWDucXz7dvI0dw8mPg0D6r2SYvGZe7ktXzgZCKpYNj1HQnb3qSUinWC?=
- =?us-ascii?Q?wwNpAKKMREu60fwv5ZhUuIDdY4D9zWGS8ap9bJYre9GrijBCRftmoBBsGVQ3?=
- =?us-ascii?Q?Ih6Fy8VhM6eZmNnKSgW4CS+IBWBtVd8H+yuLCxoHwCKf33A7hKnxy9UVQN+y?=
- =?us-ascii?Q?3sLXDlATjzhlUwZ4p+O/HBbl5/AE72VeHiDh9YVTyH4XfsSJfChkYgMa8WBU?=
- =?us-ascii?Q?DoKMRGOwt2EBJRG6tQnf1eRz+0pN2zVO1AebJbWTgpRdrzMnX8uLny7Ni4Db?=
- =?us-ascii?Q?tafRmwql68qU04CyrBld3DsQSYAszPxjci2lXYjx4GdOHNMNKBCLq7q3qAbS?=
- =?us-ascii?Q?kd8JgD1poo8u3f2LARFmK1ZgKUpkZBZ/izgELi5TNMT+1Zra/zuYrQFD0xdW?=
- =?us-ascii?Q?2G2er4MQTaSRtGA+xR+1eUUQRvIPkqTvAM4W++gjBfuWerVniidQjzxGzB1l?=
- =?us-ascii?Q?Pu8rhx4CHFPJfuc4LTmTabAiw9WUr03MptyPJXC40exowBnmimikLnJqi2AY?=
- =?us-ascii?Q?XQhWXLxecHzzs0ORlhJgVNgcDuvU/zrHZeKkBq7khJbQFtuu1ekqa2ZObtq5?=
- =?us-ascii?Q?Lhvje/r7eKboN8A9bNoB6M2HrooYBmEUl4Q68bs8bCSIrotLXORgPznSuz+E?=
- =?us-ascii?Q?H6sBo6eafQrYM7cWpps5g25rkFEF7t9LoRyRtD59Htwiky68KCb+3nCxJuFG?=
- =?us-ascii?Q?RfYyYTYIyxxCwDFq5/Eyj3KwbPHbXyV1KE6twCL020miK3EuagHR7jPfo/iQ?=
- =?us-ascii?Q?mb89btUeTJXd70DHkJPOPZEsvGI/tJ36SJ58iTsx5L/QccoGjGNUvR8BmZ+3?=
- =?us-ascii?Q?q/11ZWk1vr220MiwomtKPhS9VcWEVYQY/09ahf7IKMnOgqiVu+e3J7MH4UAR?=
- =?us-ascii?Q?43zmZYD9jzGgMS9muorQNJpR49xFL+B3ugX4E0OvT9EYGyWpTNGwXsUJbNhv?=
- =?us-ascii?Q?qwT0QaVJOMAz6mbj2YP597dTnYky/R1qKfkLtklitbOAZiSUY3iWn49S0nwl?=
- =?us-ascii?Q?qofKzLevZh/hBUbNXyVKhC9e8PCxmhBrI9Q6d6fe/gEEoLlUSf6FR0oeVxpB?=
- =?us-ascii?Q?RUU2E7HXEKT/eywTYT+VEioO9lOAnF5peC+euOsqiSp8rq5Wnu4gEbXNW7eR?=
- =?us-ascii?Q?LA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A776E555
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755670618; cv=none; b=iuSpl5LYQ3erhiQUIGJSgM/L/8msHMgK6uD+++ZQQZxPkv7PQqXrXKbK5i2ub/P8ZFoTHRqN+BMMfqDTF6zEcM77VzlKnqx5cjbpZwPLqO+jcpxqa1ZnUdGdom+CWUE7M0M9iFSQ5i3PSNBLhpEs9o6rndiB+DIo/uVGW3DeDbI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755670618; c=relaxed/simple;
+	bh=BkNEtWfHC0W481jdirYIhyOmkfVe/vp4DlWZgEyrPcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uhB3I1hX9hpb9x1vwH6oBG9AzchE081iOTZl3K1byXX7Q9/QXxm0tjoJ/9G4F6yJ48NExrD32YbFHgq2E5TDr9hajUFHoCQ+ljqhKtVPwWLhzHd5fXdagd/HXHt+qKe8Xjsi3jscybTEEsEs76p8BBGEhGLgmDojMFWc6wJOR8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GG5buEa9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K1ocp5008766
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:16:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zo+qBFSuOCOdT4196vaFitQ277UyoAlgWb0yHJHAlaY=; b=GG5buEa9LEnTmScR
+	pHefOJkgG5kNp36UZ+Bu4OR5AavLXm2tVsKFDlurPDgcHmpNNoJEgBiRu5T0exaE
+	TK8tc+EDTmo1O62xXCyeZ5cwzsrUVO8GI0RJ+GS1MIZgOYuv0WfvnfG+F42ctT7N
+	5OCNa9Vs/tkI588n7pD8jpAR+C9UaLhs9N6y4Aup5R9DidI7OuI3+t4GMFdUFay6
+	Ru1APe1uTqzv71Qj9G9lJgk00kvYA8gFRP8kOiGxeriwnkW/EQvESROxmf0Q58ke
+	AfhqOV+GY4aibLmLu3J3L1RwRZDEoJT6uEvdHo+EV8d+OHEnEbfx5UKaMPEU4UVh
+	Knqlgg==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52a0m1h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:16:56 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b47538030bfso1658577a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:16:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755670616; x=1756275416;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zo+qBFSuOCOdT4196vaFitQ277UyoAlgWb0yHJHAlaY=;
+        b=CC8Map4cwVjzn+n6vWjCSFY89zPeYt0fr2W7WKLOePZUplSh0fkQhb0QK5dCBFmiIC
+         GRvZd9yUKd9Lo3kDOHWiepjczDGOChKJ4sOvtcvCt71jPG42T+xLm5o+JBmuvQ37D1G5
+         EBBJeg+Gmir+rmuhqIsJwqIrVSFWpuUjtycUyjBdpLvtIkWr7VyIx3RY2bFTsZ2MhnDi
+         xPvre8Z2CpzCFUZD0oc7iBckKybJJC2YXVIT8mbpCvAg6f14J2s7Ut/f1fHztiIB4DgL
+         Qs8NG7L+zW1YAsi6L/xjP5AIdVfagPaXPgOI2dvMn3tCyR5kl0GPZKErkCen+OIxget7
+         5pVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuiLQXry9SpM5ikvZrJTxd7e0iivv/BgHlbgjZmtxBSsSaIcYHpfb0bab65OUes8wY5Jm23zU2+UqJiYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybJH2pbJqqyPXHIT77ihdc6B/8Lh4VPLdX+bxLP6lXbrqkaa5J
+	PB2Syh083SApaz4nRr1MPD+exltnFtq7tbOByo/8SZT6qnIaSHpkjOl1YMDV00FUcY3oBWy5Dnj
+	FzGT2tsb1MIt0Z6G7maxzlytLkZqVCYuy2q5ihBQAyqzS7iMRrIfHaaWGjW7f2K0vehg=
+X-Gm-Gg: ASbGnctlj9EL2p06rPKi/8XNl+CwhqUjehtescy0nSYVpPArIaz1AWBnmZhE5cJ/l87
+	zj4Y1kbkUk0xV2VEemfHU3WZv3zZqE5PKr6t8F7ezZdY7FPyh1/Sc0TkGYU5Tb06txfF3dV/oTo
+	h69VFkLwdYq9SeuiZY7kqo+X0jT8I9M3GF/3dYbEcKQcFcNs99FWqINt+x8GMOrHUiyb/tboVcX
+	PD7ekwau1nl7WTiQStwE9stEMeFDlprOtqkXNSB1A/fvCSqDGLGhMy5Umexwu4a3DDU1OBFVVg9
+	B7nQvlwdWDhft+9lCugPjNza/ziZgXEv9/tNYIvAKc/RRsBHzARJ9QflB/dh+TjIDaRmaJL0gUN
+	uptd3qSvnkMp6s4qBpbNaaPoB3K42dzYW
+X-Received: by 2002:a05:6300:210d:b0:23f:f659:a0ef with SMTP id adf61e73a8af0-2431b884c06mr2689101637.25.1755670615717;
+        Tue, 19 Aug 2025 23:16:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGkuHrM5J+SA+TshY0ZVvPXqmiE0Q5IAuZ5MDZKibUhiwTCZup0o87PAGsuKT1kaJi+7h4VLw==
+X-Received: by 2002:a05:6300:210d:b0:23f:f659:a0ef with SMTP id adf61e73a8af0-2431b884c06mr2689069637.25.1755670615271;
+        Tue, 19 Aug 2025 23:16:55 -0700 (PDT)
+Received: from [10.133.33.73] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4763fbe626sm1356125a12.6.2025.08.19.23.16.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 23:16:54 -0700 (PDT)
+Message-ID: <45bad7a0-119a-4375-887d-28aed2b0ee20@oss.qualcomm.com>
+Date: Wed, 20 Aug 2025 14:16:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5dffaeff-6ef2-4d9b-6e8b-08dddfb0c8bc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2025 06:14:13.1194
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IthuegWSk69SXDmsxfpsZ5H0pXA2bTLEmKtuxhLhGygqJpDhfLJg/gOLYNaOAH3K4ehMtBK7tbk9VW0KkVFD3ztZDwVhHhVgfmtpNofAch4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB15046
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: arm: qcom: Add Coresight Interconnect
+ TNOC
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: James Clark <james.clark@linaro.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Mike Leach <mike.leach@linaro.org>, coresight@lists.linaro.org,
+        kernel@oss.qualcomm.com
+References: <20250819-itnoc-v2-0-2d0e6be44e2f@oss.qualcomm.com>
+ <20250819-itnoc-v2-1-2d0e6be44e2f@oss.qualcomm.com>
+ <175560674472.26193.14154235220441518996.robh@kernel.org>
+Content-Language: en-US
+From: yuanfang zhang <yuanfang.zhang@oss.qualcomm.com>
+In-Reply-To: <175560674472.26193.14154235220441518996.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=feD0C0QF c=1 sm=1 tr=0 ts=68a56858 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=voM4FWlXAAAA:8 a=EUspDBNiAAAA:8
+ a=SdGosrV6Qt3YffhYJa8A:9 a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+ a=IC2XNlieTeVoXbcui8wp:22
+X-Proofpoint-ORIG-GUID: 0j0NRB1DUc5uBD_Nq7H6KgYjUE9ZS-WP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX51gI8XuOQ6IF
+ X0hPBEEIh6D5d3G6SNkS+2j0ZO3RLMKR77xaJEDWZ9zGf6wfsLKFdaNzyIyNcgnPq+LiQB3vJKb
+ FEzGadUTS4FXByAXfLe+dCd2IKnyn99Hl6+L2LSOnTe685kwUM2brLBH7V+qy2H6re6uzXQfFgB
+ hocV3HNwkvT2KZPYdtREZQ592siuQYaLfuf8eVJN5e8sm+ULz04sNBV1OYDZf7sQd9yBp6JLrKL
+ 4TxwZs2H9r5GYHxS+zD4MGSSPD1k4Jv5YIEn+KEjozt5+Q8OHZ/JwkPCK3MpgNm9muiF8iWOOgF
+ hD4PChPtpQ4hgLTq7J8A5w/4/lpski4xdQl0b8chJf5mFEi4bG96MgGHGCq3wUk6La7YI+qjwXN
+ uAl97KyfbW8ULNg8/IyRJLQT+O5g2A==
+X-Proofpoint-GUID: 0j0NRB1DUc5uBD_Nq7H6KgYjUE9ZS-WP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 impostorscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-Hi Dan Carpenter,
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: 16 August 2025 11:28
-> Subject: Re: [PATCH 2/4] clk: renesas: rzv2h: Add support for parent mod =
-clocks
->=20
-> Hi Biju,
->=20
-> kernel test robot noticed the following build warnings:
->=20
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->=20
-> url:    https://github.com/intel-lab-lkp/linux/commits/Biju/clk-renesas-r=
-zv2h-Refactor-
-> rzv2h_cpg_fixed_mod_status_clk_register/20250814-205111
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-dri=
-vers.git renesas-clk
-> patch link:    https://lore.kernel.org/r/20250814124832.76266-3-biju.das.=
-jz%40bp.renesas.com
-> patch subject: [PATCH 2/4] clk: renesas: rzv2h: Add support for parent mo=
-d clocks
-> config: hexagon-randconfig-r072-20250815 (https://download.01.org/0day-
-> ci/archive/20250816/202508160958.ounSAlER-lkp@intel.com/config)
-> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project
-> 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
->=20
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of the same patch/commit),
-> kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202508160958.ounSAlER-lkp@intel.com/
->=20
-> New smatch warnings:
-> drivers/clk/renesas/rzv2h-cpg.c:875 rzv2h_cpg_register_mod_clk() warn: pa=
-ssing zero to 'PTR_ERR'
->=20
-> vim +/PTR_ERR +875 drivers/clk/renesas/rzv2h-cpg.c
->=20
-> dd22e56217495e Lad Prabhakar 2024-07-29  770  static void __init dd22e562=
-17495e Lad Prabhakar 2024-07-
-> 29  771  rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
-> dd22e56217495e Lad Prabhakar 2024-07-29  772  			   struct rzv2h_cpg_priv=
- *priv)
-> dd22e56217495e Lad Prabhakar 2024-07-29  773  {
-> dd22e56217495e Lad Prabhakar 2024-07-29  774  	struct mod_clock *clock =
-=3D NULL;
-> dd22e56217495e Lad Prabhakar 2024-07-29  775  	struct device *dev =3D pri=
-v->dev;
-> dd22e56217495e Lad Prabhakar 2024-07-29  776  	struct clk_init_data init;
-> dd22e56217495e Lad Prabhakar 2024-07-29  777  	struct clk *parent, *clk;
-> dd22e56217495e Lad Prabhakar 2024-07-29  778  	const char *parent_name;
-> dd22e56217495e Lad Prabhakar 2024-07-29  779  	unsigned int id;
-> dd22e56217495e Lad Prabhakar 2024-07-29  780  	int ret;
-> dd22e56217495e Lad Prabhakar 2024-07-29  781
-> dd22e56217495e Lad Prabhakar 2024-07-29  782  	id =3D GET_MOD_CLK_ID(priv=
-->num_core_clks, mod-
-> >on_index, mod->on_bit);
-> dd22e56217495e Lad Prabhakar 2024-07-29  783  	WARN_DEBUG(id >=3D priv->n=
-um_core_clks + priv-
-> >num_mod_clks);
-> dd22e56217495e Lad Prabhakar 2024-07-29  784  	WARN_DEBUG(mod->parent >=
-=3D priv->num_core_clks + priv-
-> >num_mod_clks);
-> dd22e56217495e Lad Prabhakar 2024-07-29  785  	WARN_DEBUG(PTR_ERR(priv->c=
-lks[id]) !=3D -ENOENT);
-> dd22e56217495e Lad Prabhakar 2024-07-29  786
-> dd22e56217495e Lad Prabhakar 2024-07-29  787  	parent =3D priv->clks[mod-=
->parent];
-> dd22e56217495e Lad Prabhakar 2024-07-29  788  	if (IS_ERR(parent)) {
-> dd22e56217495e Lad Prabhakar 2024-07-29  789  		clk =3D parent;
-> dd22e56217495e Lad Prabhakar 2024-07-29  790  		goto fail;
-> dd22e56217495e Lad Prabhakar 2024-07-29  791  	}
-> dd22e56217495e Lad Prabhakar 2024-07-29  792
-> dd22e56217495e Lad Prabhakar 2024-07-29  793  	clock =3D devm_kzalloc(dev=
-, sizeof(*clock), GFP_KERNEL);
-> dd22e56217495e Lad Prabhakar 2024-07-29  794  	if (!clock) {
-> dd22e56217495e Lad Prabhakar 2024-07-29  795  		clk =3D ERR_PTR(-ENOMEM);
-> dd22e56217495e Lad Prabhakar 2024-07-29  796  		goto fail;
-> dd22e56217495e Lad Prabhakar 2024-07-29  797  	}
-> dd22e56217495e Lad Prabhakar 2024-07-29  798
-> dd22e56217495e Lad Prabhakar 2024-07-29  799  	init.name =3D mod->name;
-> dd22e56217495e Lad Prabhakar 2024-07-29  800  	init.ops =3D &rzv2h_mod_cl=
-ock_ops;
-> dd22e56217495e Lad Prabhakar 2024-07-29  801  	init.flags =3D CLK_SET_RAT=
-E_PARENT;
-> dd22e56217495e Lad Prabhakar 2024-07-29  802  	if (mod->critical)
-> dd22e56217495e Lad Prabhakar 2024-07-29  803  		init.flags |=3D CLK_IS_CR=
-ITICAL;
-> dd22e56217495e Lad Prabhakar 2024-07-29  804
-> dd22e56217495e Lad Prabhakar 2024-07-29  805  	parent_name =3D __clk_get_=
-name(parent);
-> dd22e56217495e Lad Prabhakar 2024-07-29  806  	init.parent_names =3D &par=
-ent_name;
-> dd22e56217495e Lad Prabhakar 2024-07-29  807  	init.num_parents =3D 1;
-> dd22e56217495e Lad Prabhakar 2024-07-29  808
-> dd22e56217495e Lad Prabhakar 2024-07-29  809  	clock->on_index =3D mod->o=
-n_index;
-> dd22e56217495e Lad Prabhakar 2024-07-29  810  	clock->on_bit =3D mod->on_=
-bit;
-> dd22e56217495e Lad Prabhakar 2024-07-29  811  	clock->mon_index =3D mod->=
-mon_index;
-> dd22e56217495e Lad Prabhakar 2024-07-29  812  	clock->mon_bit =3D mod->mo=
-n_bit;
-> 03108a2614ecab Lad Prabhakar 2024-12-02  813  	clock->no_pm =3D mod->no_p=
-m;
-> 899e7ede4c19c6 Lad Prabhakar 2025-05-09  814  	clock->ext_clk_mux_index =
-=3D mod->ext_clk_mux_index;
-> dd22e56217495e Lad Prabhakar 2024-07-29  815  	clock->priv =3D priv;
-> dd22e56217495e Lad Prabhakar 2024-07-29  816  	clock->hw.init =3D &init;
-> 9b6e63a777ea5f Biju Das      2024-12-13  817  	clock->mstop_data =3D mod-=
->mstop_data;
-> dd22e56217495e Lad Prabhakar 2024-07-29  818
-> dd22e56217495e Lad Prabhakar 2024-07-29  819  	ret =3D devm_clk_hw_regist=
-er(dev, &clock->hw);
-> dd22e56217495e Lad Prabhakar 2024-07-29  820  	if (ret) {
-> dd22e56217495e Lad Prabhakar 2024-07-29  821  		clk =3D ERR_PTR(ret);
-> dd22e56217495e Lad Prabhakar 2024-07-29  822  		goto fail;
-> dd22e56217495e Lad Prabhakar 2024-07-29  823  	}
-> dd22e56217495e Lad Prabhakar 2024-07-29  824
-> dd22e56217495e Lad Prabhakar 2024-07-29  825  	priv->clks[id] =3D clock->=
-hw.clk;
-> 18610e6bf54faa Biju Das      2025-08-14  826  	if (mod->child_name) {
-> 18610e6bf54faa Biju Das      2025-08-14  827  		WARN_DEBUG(mod->child >=
-=3D priv->num_core_clks);
-> 18610e6bf54faa Biju Das      2025-08-14  828  		WARN_DEBUG(PTR_ERR(priv->=
-clks[mod->child]) !=3D -
-> ENOENT);
-> 18610e6bf54faa Biju Das      2025-08-14  829
-> 18610e6bf54faa Biju Das      2025-08-14  830  		clk =3D rzv2h_cpg_mod_sta=
-tus_clk_register(priv,
-> mod->child_name, mod->name, 1, 1,
-> 18610e6bf54faa Biju Das      2025-08-14  831
-> 	FIXED_MOD_CONF_PACK(mod->mon_index,
-> 18610e6bf54faa Biju Das      2025-08-14  832
-> mod->mon_bit));
-> 18610e6bf54faa Biju Das      2025-08-14  833  		if (IS_ERR_OR_NULL(clk))
-> 18610e6bf54faa Biju Das      2025-08-14  834  			goto fail;
->=20
-> This isn't how IS_ERR_OR_NULL() is supposed to work...  :(  The NULL shou=
-ld be treated like success, it
-> shouldn't print an error message, unless it's something like:
 
-OK.
->=20
-> 	WARN_ON_ONCE(!clk); // rzv2h_cpg_mod_status_clk_register() is buggy
->=20
-> I have written a blog about how how IS_ERR_OR_NULL() is supposed to work:
-> https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and=
--null/
+On 8/19/2025 8:32 PM, Rob Herring (Arm) wrote:
+> 
+> On Tue, 19 Aug 2025 03:27:43 -0700, Yuanfang Zhang wrote:
+>> Add device tree binding for Qualcomm Coresight Interconnect Trace
+>> Network On Chip (ITNOC). This TNOC acts as a CoreSight
+>> graph link that forwards trace data from a subsystem to the
+>> Aggregator TNOC, without aggregation or ATID functionality.
+>>
+>> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+>> ---
+>>  .../bindings/arm/qcom,coresight-itnoc.yaml         | 96 ++++++++++++++++++++++
+>>  1 file changed, 96 insertions(+)
+>>
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> 
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819-itnoc-v2-1-2d0e6be44e2f@oss.qualcomm.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
 
-Thanks for the link. Will take care next time.
 
-I would like to drop this patch as Geert provided some
-feedback to remodel the clocks[1].
+Below is my dtschema and yamllint version, They should already be the latest version.
+Name: dtschema
+Version: 2025.8
 
-[1] https://lore.kernel.org/all/CAMuHMdXJBL_uJ=3D2v0aKJaSf45070yP=3DZ_kPe-9=
-uSyE1P0QeiJQ@mail.gmail.com/
+Name: yamllint
+Version: 1.37.1
 
-Cheers,
-Biju
+I ran below 'make dt_binding_check', don't get any error/warnings.
+make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
+
+
 
