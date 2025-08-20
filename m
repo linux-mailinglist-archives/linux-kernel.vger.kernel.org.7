@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-778235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1AAB2E2ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:05:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F17FB2E2DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BEB0A07EF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:03:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8D0189E529
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4463E3375AE;
-	Wed, 20 Aug 2025 17:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588F5334390;
+	Wed, 20 Aug 2025 17:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHIHIadG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nO2FsqLm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FB92E8B98;
-	Wed, 20 Aug 2025 17:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9DE23E33D;
+	Wed, 20 Aug 2025 17:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755709388; cv=none; b=p0BmN8MuptR/Txd/ap0QXqheLw/LDXCv5l2/XXKbOJRxgDycBoIYAkBgu3t2Q0fNGcoNt1DMGTl0OqEwobi1N2h38EOmQ6EXkAZnaepvOJS8Ew7GOVkE8ZN1IHs932OjA4wD8ErQrmtlv6Eoe/en/nYdHd/g4Bv1LVP/AdAuIxc=
+	t=1755709394; cv=none; b=QEM0/Ftprjp/qeRJnXqLsjVGsQGGOe4IpC0vej9GV9cx5yDcdLkj6t8teXxaM3DKkt8NXf9/ydUQDViW7Sx+WKSR5JG1Ujd9weP5Sf0oJZLE8vT3yiloPNl3f84n8f4kC804Ft2gpOBFhYsgi4E8JecicsnBDap2kYyYxifcGuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755709388; c=relaxed/simple;
-	bh=5ZHmymgOYeWXL2v8PEhC2ET76mFW+CcsvLg+ooMQLO0=;
+	s=arc-20240116; t=1755709394; c=relaxed/simple;
+	bh=8h5swraijlkugF4NxQe+E8fB0bxjOHS1fwKTn+gkooY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hKRcBGJPzl2vrXEjsTavKAcNrmsfFXdqytRcvGNviOzhD2X0zOcgSIQU/a8HtZSMHIeAWXdb6nSEt493w3+dTrGFbtIsq6NQNzRBJT3TaJoCYqBuwiRoqc4a2BbnTo7vOX9dfX7tscf243KUkpi5Y94FxES96wwOg6cgMMf/6Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHIHIadG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC58C113CF;
-	Wed, 20 Aug 2025 17:03:03 +0000 (UTC)
+	 MIME-Version:Content-Type; b=N25Z9JdXJrRY519krOAdM5+jGGSzdwhaNXFcw5Wh9aoG6BBxPo78AHMHHGobMaU5tyCInqlO5zHTJxi32KPohOo1aBPhVdy/dl+3/nIoQtYr61bfz8AnCjwr1lI6jlw62+9uacELMl9/bebzvTKhAMbq8fYqNqfPj+TU24vKCHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nO2FsqLm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FA18C113CF;
+	Wed, 20 Aug 2025 17:03:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755709388;
-	bh=5ZHmymgOYeWXL2v8PEhC2ET76mFW+CcsvLg+ooMQLO0=;
+	s=k20201202; t=1755709394;
+	bh=8h5swraijlkugF4NxQe+E8fB0bxjOHS1fwKTn+gkooY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RHIHIadGNrUp2md1QHmXNK/JDVWUQ8OxoVvOtyK6h+OiCILwXeuAkMpbBup0R0I7F
-	 mCrGfLPcjd89D/Qoa5Eebk7oe+CUw2r6gVZi+UwR08LlkZEuHgYlu3C6f3EmtX/I36
-	 4L4SkW5Aq3wTK73soPUZyMHz9MgOuWfl4t1GqMrR2pOhOrk3mlES/Lw8tNhDBSHyQS
-	 JRbzBcHoodVvl4gQg4uIRV6/Nva7eSMPasd8TAMsXx5LY7c8ixvmUxrWdBtr+a0nAL
-	 f+7D47+SH0v3HoLZKnpXokk3RXgO221DT8cRl3XWPRIgSuEHEtcyrQp1VQUzKMZk9Q
-	 NSDiyi3AUVG+A==
+	b=nO2FsqLmDAAbCYg9zp0td9LFAODit7CNnYis/Xj5s0d4JdrlAZRqyDSkulhaIhAC5
+	 wO8M5G7uG8nObAjX30ESnFHxvBdLyik+O+EOuL4FOjtwC9qW5ZBbZ376hoIytyr92S
+	 sLEVJsCse4zbrdAKwW2/bOry1REwG3h5EMN2PXL6j8NEO9kfaXP52PirZmFQbCLGon
+	 w5/OwqVAFpF3ApHeDlIz9xChP0IQ4hTFfqNguySHvgpkGIpjpmJuBEo5hFUMrO1rcE
+	 iqahtLl4BAFg9kccYauO4n9FLQYfT7txuVx0fNY+YvawUR3tS+HvkBXs7d4PtbzHhf
+	 iX1bUf0N9ItEA==
 From: Vinod Koul <vkoul@kernel.org>
 To: Kishon Vijay Abraham I <kishon@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
  Neil Armstrong <neil.armstrong@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-In-Reply-To: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
-References: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v4 0/6] arm64: qcom: allow up to 4 lanes for
- the Type-C DisplayPort Altmode
-Message-Id: <175570938300.66459.13600812398405419297.b4-ty@kernel.org>
-Date: Wed, 20 Aug 2025 22:33:03 +0530
+ Prabhakar <prabhakar.csengg@gmail.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250808215209.3692744-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250808215209.3692744-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 0/5] Add USB2 PHY support for RZ/T2H and RZ/N2H SoCs
+Message-Id: <175570938875.66459.17504688667907589630.b4-ty@kernel.org>
+Date: Wed, 20 Aug 2025 22:33:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,28 +70,37 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Thu, 07 Aug 2025 18:33:18 +0200, Konrad Dybcio wrote:
-> Register a typec mux in order to change the PHY mode on the Type-C
-> mux events depending on the mode and the svid when in Altmode setup.
+On Fri, 08 Aug 2025 22:52:04 +0100, Prabhakar wrote:
+> This patch series adds support for the USB2 PHY on the Renesas RZ/T2H
+> and RZ/N2H SoCs. The USB2 PHY driver has been updated to handle
+> differences in clocking, reset handling, and register configurations
+> specific to these SoCs.
 > 
-> The DisplayPort phy should be left enabled if is still powered on
-> by the DRM DisplayPort controller, so bail out until the DisplayPort
-> PHY is not powered off.
+> v1->v2:
+> - Added Acked-by from Conor for the DT bindings.
+> - Renamed drvdata to phy_data.
+> - Updated commit message to clarify the change.
+> - Dropped local phy_data variable in probe, using channel->phy_data
+>   directly.
+> - Included the necessary header files.
+> - Simplified device/host detection in rcar_gen3_check_id() as suggested
+>   by Geert.
+> - Added Reviewed-by from Neil.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch
-      commit: 3bad7fe22796a420c6e16b591c37ed1bd6cc2a30
-[2/6] phy: qcom: qmp-combo: Rename 'mode' to 'phy_mode'
-      commit: 5daf1bbc73e249075373e030e7221f46c175e04b
-[3/6] phy: qcom: qmp-combo: store DP phy power state
-      commit: 86390472554b2e8fb4cba16a139cade94be58f72
-[4/6] phy: qcom: qmp-combo: introduce QMPPHY_MODE
-      commit: dd331112c0adaebbc8fc767fc805da4a641576db
-[5/6] phy: qcom: qmp-combo: register a typec mux to change the QMPPHY_MODE
-      commit: 896277138c1344cf9f5c415298f048ee29da274d
+[1/5] dt-bindings: phy: renesas,usb2-phy: Add RZ/T2H and RZ/N2H support
+      commit: ab9c8aeb2d208381a7c948ea2f753cbe8a451502
+[2/5] phy: renesas: rcar-gen3-usb2: store drvdata pointer in channel
+      commit: f75806d26318c08ddb79652cce89086e4da17257
+[3/5] phy: renesas: rcar-gen3-usb2: Allow SoC-specific OBINT bits via phy_data
+      commit: 4b7aa47e4c2c921b9511389bf42a4e30d64373e6
+[4/5] phy: renesas: rcar-gen3-usb2: Add support for RZ/T2H SoC
+      commit: b725741f1c21e8507a58ae86c5a80ca383f96852
+[5/5] phy: renesas: rcar-gen3-usb2: Move debug print after register value is updated
+      commit: 5f54134428b48261151c725c64b40be54e373345
 
 Best regards,
 -- 
