@@ -1,152 +1,143 @@
-Return-Path: <linux-kernel+bounces-777894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FC0B2DED7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:13:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D20B2DEF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6D887BF6CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074FD1C481D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EB32749D6;
-	Wed, 20 Aug 2025 14:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E3E26D4CE;
+	Wed, 20 Aug 2025 14:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6HT4GkD"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="geqLh41w"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDAD26A1C9
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502CD265606;
+	Wed, 20 Aug 2025 14:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755699166; cv=none; b=IBsT3M5zgImZ9r+AG4YZHU0iZmtwVsJnC164lS7VSKlAYMXZfqZ3OBpzphpZYaiNRx79XAGRdKgkAHVTkgi+9JUomdfKi0hYCw+cmS1GGUgWdw8BXRCy0+cz8R12rTGHtN2HGpy0vwjFuLcg8xe/RSDvMzuZVQMTEA4qCQboJFY=
+	t=1755699162; cv=none; b=cjGrdqAazEiYPrrw0OrxdjLHgwtY9IEJDF7biLEJz1234vvpg9stv1tHp1LkiSukWoI0O2qHHOI53DEfBWPZWEbE//kJcELDzXcam96BYQZ1RUkd9gGJxwpcIxtIrYr8KRsJAxsIKBU4gRnvSuYUK3qBz440WrmbwBt5o/f7oYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755699166; c=relaxed/simple;
-	bh=H/RTJDY9eM1acY1XItQorh6/fncB7JYm4MnQAbwNEWM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vqykr8Bi+bPcoTjQfLIte5eUOyyeOpcupP7hvijwPbc3SxinhDOoga5VwmjL0iQkzn8JHdP+IuzNirAxU8pNjJ74SH2hbMQwflG6Jxxh/xQKdbBhm0hRoPJsU+GyZuHi6vQyHV5tbTIxIAjmeuZKfGERwnS/Qr76xw6Dlf3z6Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N6HT4GkD; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7aecf92so87783166b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 07:12:41 -0700 (PDT)
+	s=arc-20240116; t=1755699162; c=relaxed/simple;
+	bh=QKVHsbJgMvYCfZTkrepG838ks7bP5x79WQnW+dpnBJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pNCqce6rMGzqUq3xG4e2CEjf/1fkydFbmgf35TNbbdGX+2iNnGzA3B76Cq3gTeSMVqNZOJc5K4eh/SNcNFCK1pOJQ1D19+pjKRuC+7sOTONSOLpl61gYHnGLcWMoY0jxraciW/xtWX9k1pSHvcnqyvZR+KgIMpjWLQ3wdlrcwwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=geqLh41w; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so4148502b3a.0;
+        Wed, 20 Aug 2025 07:12:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755699160; x=1756303960; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6DicCiRUfEBKSVE+lWissFYluUrOy+BhCrrkg8D9e0s=;
-        b=N6HT4GkDW6x50HId1dhpzKCUm2ciomRMESX0PQAX1wpKK6kHNPJ4PaZtuD1Cfy+tcH
-         D0CyHuBKDVu3ODxVb4agi8canKH6mpO67BbyJl8+l9OEmcJ9RUG7kYymw8dKlj4N6VZU
-         pJyD9RvmjPUHVQB+woJIIRI8FzUctB/SyfXGG0asbKTTi3GaG62mqi24elFON58BtK4h
-         S9hJS7pZskzCQ3kaIBssM9Lartj2QkAoLPJnEBaNRiCBSn1UYQasfPAj6+CGZ9dTfKNi
-         B/jfKPvLRlon+wTEDXjHUQLsFKi1CYG9GM9LEOJzW0noAa0nd2X0fT5iBZYFGqgIIqlT
-         Nkxg==
+        d=gmail.com; s=20230601; t=1755699159; x=1756303959; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LAdkblPFT1J8wXUecZhIFUXb1WENrCb/QAfzdezG4no=;
+        b=geqLh41wUoO+EUzzkdy6gIdn+piM0xSoLZC/xHyIelz70ZTsrSmVTtbRjdU07+AIWS
+         /3U9z9wFwKWV7x8jg36JsmkQzKwASV9V5h8jAn7ln8aDqjHns2NrmI0RkMjbObYc2egY
+         yN/Wjv/Nyh7bEYBu+OMiq17MlC5Gs1AxPLOOr90gkNYsi3CJivQpAjia2lKHHEISdOLS
+         rVOFDR63OAKhPFniNtoquE2Tldo/k4Ca9TAW5FpVzmOl2S1Wb+F+KfDFCXeh30maxYYY
+         iJtGfRXHBS/lBanK96p+s0zGHEiD/rYvJAvNK+GQASLkTop20QiGuDMI9JHs1byRfBuG
+         wVaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755699160; x=1756303960;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6DicCiRUfEBKSVE+lWissFYluUrOy+BhCrrkg8D9e0s=;
-        b=wW0H6DlZSAlneR6h7hGeAFwhFjN/atPVC1W1Q6X7g62ByeHxzPFf7aLqZ70lgxdWec
-         r3hdXTBSSXiQDd7AT9ONbjyqvvTNvqk+/tRpf3LyfZF9K9mqyzHp1oyW2H1aybFNAc0s
-         hAeSS5VUleip1jh4Z4+pPU+bBI31uHVbWK4OZty7ElncmIedZGf0fvQ6AcSILG2Cs+BL
-         3igxWDlzu2UOV8OTj5yI8F4W89Cn2nc9/9sj4SudiIUre8WGq3HybGJsE7sTwJtOLTb+
-         ETd1Y6zcI/oebJJ43LrAULy4d6BFs+FEfLdPA0ySnQmvUSu9TeFOPVYwr/uKX2RkyHbc
-         5GJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpMQBnjCHVesRH32/x3cW4Gcm/G5Y9Bh7ClKjPSuUpqTUgFC37gHduODFC6pfVzLnKFlI43gC5QrT6bUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzmCUiB8eNmd40Yq/wBSdIvfqGoeEd2WcMEbgmZjl00lsL005i
-	ATqdZXVpIM+JwameDbXhZSAJNRdQYXlolHX3uVzQ8aGcimDsLmCyLUfC+8NUu7KZ3hY=
-X-Gm-Gg: ASbGncvG2ofm3OnRICaFXJowBpI3POpXRk1rgjdS40fwaYbgIvOqXZPRjpgfO50Cw3n
-	U/0dtDra+96wpupBCv80qZxWm0Oq1fHBxsAHwJW6FwOTan/c4INJXZT3kK9lTaUdJ+OzPL/XmMz
-	nHUafvLadVKJj6yiN9UtR4PJg5jFM4bhHXH+TZbWNBK9pgwX9djN+Mtg4nEfHyc0xD7KOXIgknp
-	clPdZRzTTz0cth3THxdWXQvUqdAzXA8QL8X2R6rD+xfZZZi+s5K9HB7S2VGI5ECgVuSY4+b+sGo
-	dD0LR45rxRQTqVIWbGIX+WYbywt5/x/Yrj8pJVlii4OyWASUzp5W9IKmklSkz5Q06Wu91+WHXKT
-	5gasd7E5Koi0r5bjkmqaij3plF12ldUEaLA==
-X-Google-Smtp-Source: AGHT+IFqzeaOsHYkCFi/BajZxPmhBjlCcFnmT90BtcmwpVY7GgK8f0nIWHXUb+iwDk/ynDENIjdTXg==
-X-Received: by 2002:a17:907:72ce:b0:afc:ebfd:c285 with SMTP id a640c23a62f3a-afdf0099fbemr145741866b.1.1755699159726;
+        d=1e100.net; s=20230601; t=1755699159; x=1756303959;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LAdkblPFT1J8wXUecZhIFUXb1WENrCb/QAfzdezG4no=;
+        b=CkrtE7DJECC5gi1EYzmEkEKxo8ZQMAAf8FVcTFXktNicpJ7kOiXxsx09i6JZ4z4Y5w
+         rOQy6Iv3eTgR8P9y3WZ6L45l+BoCAbBNFleQ7BQJKI9J+sNCMJaEUeQizB1jelHYBGQN
+         kaLW1B38dJ9bIdcbK7nVEPqbhnlNBATVkZMYGU5WP2nxYoMGP7EUKupiFNA8sS7v+OqZ
+         vimU4YgsmdnNV8/nF/ClgI90s8zn6SsFRjoiWFySLq2MNbsGkM2uoRRB78KWEG0bsmWN
+         9JRHXFszAB4Uin0zzEYPgS6jrnzB9V9Fly2A7bUAWyEX/K7zLhR3RK6LJEGkI6SAeBGy
+         djzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJhk2zAt4bZBNuhrsRwY3ABWMY3FzEQBOvbV7+p8MrFZRblTJpvsCciSwnQKL0Sldvm3lzP5ae7cI5bloS@vger.kernel.org, AJvYcCXMhrpyjbowXgptB7/cOJwMujGL7fOHAHAjLyh/7kJc9D/eY2Ng9bJukWcWaIxt2zLRSqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm473o4Binhk5RhPE+U/QUp/urMnnr4V+7KCJQ1CdrDJJT7RRg
+	UQ38MxOV+eMdC5eXLITRs7ggQUu6dbpYVmkxYE6qV9Xf5Etqx4CiC9AL
+X-Gm-Gg: ASbGncuA/ljxye/ZU51F5H64XNbPGmBYyf5LJYBLCyyNuwzn6cqIV3jfuIIB5Uisz6z
+	dSydxnXrWUxrYLNvn/FZEWWrnyNhPRmTm4+Wa+h2Jyg9WGXMdlKqgSk8wkrZSqNZ0DD4xYMAoJQ
+	eY6t1fiKJcwhnmyUALeVb/v96wsHjqf3gkLDrF4Ac63x70Itpd130YaPgZ7h6RrFJ2fbaVTq3ue
+	7Eehn0g5pPntevAidXMDV8IAEgf7spWbQtHyJ4ytVv5EfKha3W51FTNS5y5PtjLz1DbDw4oK23B
+	KtWRElCRDPxNWEoolGqz5xDdmffcyOP4xRm/GM/AZlFhIrGD2v7My86d89amn4Kr4NX9zcANxJT
+	zEiOoW6nvonD6GachwsYT5g==
+X-Google-Smtp-Source: AGHT+IFSW/3dEhFGF+UkXPQhTiff9IsSfuIBE8GYjm9egl0BNtdmpt217YyBG6eXz3nmvXD/eCxZuA==
+X-Received: by 2002:a05:6a20:4303:b0:243:78a:829c with SMTP id adf61e73a8af0-2431b970450mr4807135637.53.1755699159256;
         Wed, 20 Aug 2025 07:12:39 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded4796ddsm186181866b.55.2025.08.20.07.12.38
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e254e59esm2472861a91.17.2025.08.20.07.12.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 20 Aug 2025 07:12:38 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] arm64: dts: qcom: sm8750-mtp: Add speaker Soundwire port mapping
-Date: Wed, 20 Aug 2025 16:12:34 +0200
-Message-ID: <20250820141233.216713-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+Date: Wed, 20 Aug 2025 10:12:36 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Juergen Gross <jgross@suse.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kvm: x86: simplify kvm_vector_to_index()
+Message-ID: <aKXX1ITCwcVPrKNM@yury>
+References: <20250720015846.433956-1-yury.norov@gmail.com>
+ <175564479298.3067605.13013988646799363997.b4-ty@google.com>
+ <aKXQ0Z4T0RzVnjI8@yury>
+ <2927ccc7-07f2-47c9-a902-e66114ea8020@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1495; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=H/RTJDY9eM1acY1XItQorh6/fncB7JYm4MnQAbwNEWM=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBopdfRWuX0u0X8hZ2BPrL0udyUeXVspH2Ux0Uuh
- flmJ8NRBGmJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKXX0QAKCRDBN2bmhouD
- 16q9D/9uVUFTPBjlyNVgd54pqVKud6L/UpgtrUwAaKJpF3y3vYUQoVMQUNLyz23vUue0om/LiEp
- nMKrCDF4tDiQiuNEHkmidSRPzXnNsyZXkjxgZ9dizGmQ3/sQQ35s0iaUyvTwuLXZazKa+Ritlab
- tAhL/Jk/smDckQ1X9zIFfzLtbzdyjhmw8ZpLUZRqnt8mIqsd7HrQqGjzOEp0hYmza8mCAbmpfn8
- sWrzclE3RtCureai1hRCNWpjwHWpUFpeaa3J4lY+1x38f/Q/aKaVJtOrrsc6ioX13UKxaQU7P6H
- v+8VcUUG3ETqNhij49+9BFSsh8w0sfK42JkKZbXikJyCUw5MM8pLlv25n3znZhOKkDABM85layq
- YXk5QW/Ka/EGhoTFS8OCaha/Az7OQFD0UNQLkmDEPnKU2O6YGSgtZBveQV1UI3pzfmihfHKwtXo
- fv8PwzHkO1hrbUFLo9PJ0gc3GarUYo3qiQrHQceFg+jA9nRX6rpV2sM8ZeEgvyovYRPbj4429TF
- /Z4BORZBp0euajixvfqCEeywBi0F+Extfxd2LFAW1NHk0mapHFs7f6+3DYvPWHtgFjvwd71A++s
- tkwwa4LFtcxoAlw74kw9d55lYGq+y6P9HSzuz7MoMyNxpTAwiUr4usrGNG6F9TFZPgTLwR8/q3y w5HsiS9EGRYcGjQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2927ccc7-07f2-47c9-a902-e66114ea8020@suse.com>
 
-Add appropriate mappings of Soundwire ports of WSA883x speaker
-to correctly map the Speaker ports to the WSA macro ports.
+On Wed, Aug 20, 2025 at 04:01:22PM +0200, Juergen Gross wrote:
+> On 20.08.25 15:42, Yury Norov wrote:
+> > On Tue, Aug 19, 2025 at 04:12:11PM -0700, Sean Christopherson wrote:
+> > > On Sat, 19 Jul 2025 21:58:45 -0400, Yury Norov wrote:
+> > > > Use find_nth_bit() and make the function almost a one-liner.
+> > > 
+> > > Applied to kvm-x86 misc, thanks!
+> > > 
+> > > P.S. I'm amazed you could decipher the intent of the code.  Even with your
+> > >       patch, it took me 10+ minutes to understand the "logic".
+> > 
+> > Thanks Sean. :)
+> > 
+> > > [1/1] kvm: x86: simplify kvm_vector_to_index()
+> > >        https://github.com/kvm-x86/linux/commit/cc63f918a215
+> 
+> Is this really correct?
+> 
+> The original code has:
+> 
+> 	for (i = 0; i <= mod; i++)
+> 
+> (note the "<=").
+> 
+> So it will find the (mod + 1)th bit set, so shouldn't it use
+> 
+> 	idx = find_nth_bit(bitmap, bitmap_size, (vector % dest_vcpus) + 1);
+> 
+> instead?
+> 
+> My remark assumes that find_nth_bit(bitmap, bitmap_size, 1) will return the
+> same value as find_first_bit(bitmap, bitmap_size).
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8750-mtp.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+find_nth_bit indexes those bits starting from 0, so 
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-index 75cfbb510be5..946ba53fe63a 100644
---- a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-@@ -938,6 +938,13 @@ left_spkr: speaker@0,1 {
- 		sound-name-prefix = "SpkrLeft";
- 		#thermal-sensor-cells = <0>;
- 		vdd-supply = <&vreg_l15b_1p8>;
-+		/*
-+		 * WSA8835 Port 1 (DAC)     <=> SWR0 Port 1 (SPKR_L)
-+		 * WSA8835 Port 2 (COMP)    <=> SWR0 Port 2 (SPKR_L_COMP)
-+		 * WSA8835 Port 3 (BOOST)   <=> SWR0 Port 3 (SPKR_L_BOOST)
-+		 * WSA8835 Port 4 (VISENSE) <=> SWR0 Port 10 (SPKR_L_VI)
-+		 */
-+		qcom,port-mapping = <1 2 3 10>;
- 	};
- 
- 	/* WSA883x, right/back speaker */
-@@ -951,6 +958,13 @@ right_spkr: speaker@0,2 {
- 		sound-name-prefix = "SpkrRight";
- 		#thermal-sensor-cells = <0>;
- 		vdd-supply = <&vreg_l15b_1p8>;
-+		/*
-+		 * WSA8835 Port 1 (DAC)     <=> SWR0 Port 4 (SPKR_R)
-+		 * WSA8835 Port 2 (COMP)    <=> SWR0 Port 5 (SPKR_R_COMP)
-+		 * WSA8835 Port 3 (BOOST)   <=> SWR0 Port 6 (SPKR_R_BOOST)
-+		 * WSA8835 Port 4 (VISENSE) <=> SWR0 Port 11 (SPKR_R_VI)
-+		 */
-+		qcom,port-mapping = <4 5 6 11>;
- 	};
- };
- 
--- 
-2.48.1
+find_nth_bit(bitmap, nbits, 0) == find_first_bit(bitmap, nbits)
+find_nth_bit(bitmap, nbits, 1) == find_next_bit(bitmap, nbits,
+                                        find_first_bit(bitmap, nbits))
 
+And so on. Check test_find_nth_bit() for the examples.
+
+Also, bitmap_size has a different meaning, so let's refer 'nbits'
+instead.
 
