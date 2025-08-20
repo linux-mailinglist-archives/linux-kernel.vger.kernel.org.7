@@ -1,83 +1,95 @@
-Return-Path: <linux-kernel+bounces-777223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE48B2D6FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:49:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22238B2D70D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20942566077
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 405AD5E2117
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641E72D9EC9;
-	Wed, 20 Aug 2025 08:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327892D97AF;
+	Wed, 20 Aug 2025 08:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="26+t9Dfq"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2073.outbound.protection.outlook.com [40.107.223.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RSFpIQsF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MqBip1ht";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RSFpIQsF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MqBip1ht"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DBE27602C;
-	Wed, 20 Aug 2025 08:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755679709; cv=fail; b=W0SqJ5+CcWazhi0rNRCygMW/ZBxBX46jlU7X0XmUC1HR28rit482WWxbRUNPY38DanQ+74ZsQ+uOyqhSVVXcBpnMPyv/yAx2ad7RzVMTzaWPgf3TE4v0JEjes10c26latnzo5y9MW1DA1sHBpVAcdCfeaJGW0D8t2Qh73GhfYyE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755679709; c=relaxed/simple;
-	bh=RGrw1t9Vuz3kpObjQa8TWiw1P2xg/dBXTC8smhoYg7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RSJURe4aAFNbHOgwR2ZtWNyUYEwnNh7Rq+f2eTBeEc8q02jSVTuuOZnOcO19QcQg5OIfaY8nLZzZ9lnFOgxVX6y/AC3YTtOem+7Gt615nNxCQf9jsJ57kz9664hy+wuTcLHPckbygzEUuhSbD0j6V45dxocbWFUBbjcAnOn1F2A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=26+t9Dfq; arc=fail smtp.client-ip=40.107.223.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mFwIXjnWGPSD5XhJxy5GStkIj7ThTwmn0NWLmKaoYRg7b1YMsF+GOuKrKFWl3JBh+A5u7VkgY0kAcUz6nhubp1iRRnUxeqk/gWANqrAVztKLMqCuwEeZniZHK/4DFItz/uM1xDd3JDMph1dmEQ5tgQEam79mQeBmgeFXy3yQUUpLVrsUtwMMOQMJtGhahkglD1L7LF3Y9gtVWH6mNmfwq7Uov+fVwnytrYKdITX6lOU7X2xSVtW9qbPmJ4Z5YuPutAuC+/A+8YSZgRC/e4LoPrAHAJqAHibJ5lY5VCfL4+jje7vhoE3MjqxzsjfGVQUy15DeJlmT7/PlnAijETIVUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qJJFbytIS6V7LZ6gtkYEbC6tAkZ6cwPeIpbym1nnb80=;
- b=AG2CKxa35uuVNO0gY1o5BYDzbNAo5VzDjWJptRKzh2FtgO+U7E3rCBSIMulKKQXtdUeZCgChcQD9G5xdmt54UQ2M5Co34RKhBTnrs5RYcjE9izdaR4dJMLeR0kfWxtKoQ4z/93DG0hRHO43vlLvMUw4R16l2DtlnXrDn8TVeiMm0JMH5Tkzh2cFIPBOcn1kgYNBjy01gMt7W1K6EtkiDaRET+1fl8oI6oZtfaNqJAEJrYrVzBlXIVRSb8sOgteKJAGfpx+3grqMEAudZTIZs8CsZmo4T/mZI/e7pR9H+Svf15AwoSqq4qkoIG88AKvNmwrcjmQu8S/LjEajJbk+S8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qJJFbytIS6V7LZ6gtkYEbC6tAkZ6cwPeIpbym1nnb80=;
- b=26+t9Dfqo8AEESBNojA284kblfbCcDFR2R/VT0A+WWDjBcg0DfcI+yDkxn/i1An1jmPrT5ICHWaChYqaHiX77N29CCPwgSsHyGvVkxUWQJftbV1B8fj0HGfL5looEETvsz7RiB1ZfckTW5qoDGa9eIOZm1HtRnJgzMwIKfxyTKk=
-Received: from SA0PR11CA0178.namprd11.prod.outlook.com (2603:10b6:806:1bb::33)
- by CY3PR12MB9629.namprd12.prod.outlook.com (2603:10b6:930:101::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.23; Wed, 20 Aug
- 2025 08:48:23 +0000
-Received: from SA2PEPF00003F68.namprd04.prod.outlook.com
- (2603:10b6:806:1bb:cafe::9c) by SA0PR11CA0178.outlook.office365.com
- (2603:10b6:806:1bb::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.25 via Frontend Transport; Wed,
- 20 Aug 2025 08:48:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SA2PEPF00003F68.mail.protection.outlook.com (10.167.248.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Wed, 20 Aug 2025 08:48:23 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Aug
- 2025 03:48:22 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Aug
- 2025 03:48:22 -0500
-Received: from [10.252.207.152] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 20 Aug 2025 03:48:19 -0500
-Message-ID: <afcf9a0b-7450-4df7-a21b-80b56264fc15@amd.com>
-Date: Wed, 20 Aug 2025 14:18:18 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B4A2D6E5B
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755679729; cv=none; b=opMDXcZXShin85uaOraJcV5g335n/OWvXct0idaw9cYv6z9jDWj+ea+87fGbX+t564ECBCEw3Iz5wckwjQf5af3iFbEZGdZQ7sSob0pTPcxw6U429W83qij3vBowODbcqzAp7PZkiDMjqmlh94rWh9CxZQZqZ1KV5dnmNWOoAis=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755679729; c=relaxed/simple;
+	bh=/rr636n/miCKuzWEofeV9kBUrc/D8LKJaMfzwjxtXAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BjMhbDym8KrelTrRdzykA7+HIvy5TQgP7IHRZotIeKxlmFjD40N4XyhOiRXPq0MlM+IW9PJxRYhyXecoZ59Dv8VzfKB8cN6G3Gzvzdn2gYpdBV0+rvEQZ0zqmhh+N159QEpk2oLckpRPSLoI4mhlNjq7hZJP15mcBL4af+AR1lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RSFpIQsF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MqBip1ht; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RSFpIQsF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MqBip1ht; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3BCFB216D6;
+	Wed, 20 Aug 2025 08:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755679725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fd77WKL9jHBDsPvLjV20YwqyEI3wtdt7O4Mx5/gQPZ8=;
+	b=RSFpIQsF4DFZWa/IMx0dSShvU3+l3qxchdVu34E1hPjIqFISyE1N3UXwjiatjp0b1lxo+L
+	bMCO3cB4AokQcDWPu0rNC2QSILN/gmlZBG8x+Ztx74FLpkckk43DP210P5hyl2r6mGbpJo
+	ZtHM39G9tRRtR56D+e60BmbNNtg9JSg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755679725;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fd77WKL9jHBDsPvLjV20YwqyEI3wtdt7O4Mx5/gQPZ8=;
+	b=MqBip1htOH8GDeUnT8AmXRXvoqiDJrRCQFmQLi4TV/Sip5Cx8VpzXUUt6JjBq9yHLXHg8r
+	4i7ch+D3LVtJI0AQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RSFpIQsF;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MqBip1ht
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755679725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fd77WKL9jHBDsPvLjV20YwqyEI3wtdt7O4Mx5/gQPZ8=;
+	b=RSFpIQsF4DFZWa/IMx0dSShvU3+l3qxchdVu34E1hPjIqFISyE1N3UXwjiatjp0b1lxo+L
+	bMCO3cB4AokQcDWPu0rNC2QSILN/gmlZBG8x+Ztx74FLpkckk43DP210P5hyl2r6mGbpJo
+	ZtHM39G9tRRtR56D+e60BmbNNtg9JSg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755679725;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fd77WKL9jHBDsPvLjV20YwqyEI3wtdt7O4Mx5/gQPZ8=;
+	b=MqBip1htOH8GDeUnT8AmXRXvoqiDJrRCQFmQLi4TV/Sip5Cx8VpzXUUt6JjBq9yHLXHg8r
+	4i7ch+D3LVtJI0AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB6D11368B;
+	Wed, 20 Aug 2025 08:48:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id x57kM+yLpWh2cQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 20 Aug 2025 08:48:44 +0000
+Message-ID: <6d6c7fce-9d60-46b1-a075-d23ce648a8e1@suse.de>
+Date: Wed, 20 Aug 2025 10:48:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,152 +97,260 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 0/8] KVM: SVM: Enable Secure TSC for SEV-SNP
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
-	<pbonzini@redhat.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Thomas Lendacky
-	<thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>, "Borislav
- Petkov" <bp@alien8.de>, Vaishali Thakkar <vaishali.thakkar@suse.com>, "Ketan
- Chaturvedi" <Ketan.Chaturvedi@amd.com>, Kai Huang <kai.huang@intel.com>
-References: <20250819234833.3080255-1-seanjc@google.com>
+Subject: Re: [PATCH v2] drm: Replace the deprecated DRM_* logging macros in
+ gem helper files
+To: Michal Wajdeczko <michal.wajdeczko@intel.com>,
+ Athul Raj Kollareth <krathul3152@gmail.com>
+Cc: airlied@gmail.com, dri-devel@lists.freedesktop.org,
+ linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, simona@ffwll.ch,
+ skhan@linuxfoundation.org
+References: <f94151b4-893a-4758-a118-153076a20d3c@suse.de>
+ <20250818192247.58322-1-krathul3152@gmail.com>
+ <90f79bba-bee6-47ea-9881-9ae37eae42e0@intel.com>
 Content-Language: en-US
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <20250819234833.3080255-1-seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F68:EE_|CY3PR12MB9629:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40228313-f40d-416b-748c-08dddfc65229
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YXpWc2VhK2FJZUZtbS9rS2hXbnFDQ3VpVDlXSUIwT1l1aW9UdnVIbnBpMGQr?=
- =?utf-8?B?ak1NbHk3QUcxdXpXeFVUSjlZUml6ZE1hVW9PKzJ3c3RsbmtVSFpnU0RpTnVi?=
- =?utf-8?B?QTc1ai82UDFWV0JmSEhTR2w0RjdCd3BDRXp4OFhmSmpYeFVrUHhQd3RMYkpa?=
- =?utf-8?B?SUI5OGtQWFlQelNDRlFmczNZRU50MXlMZjJVdkJlV2YwSjM3eldsTktmSWpN?=
- =?utf-8?B?UzFiTUdHYTc0Ull0aTB0SmkzYnV3N05xRjJxZXNJQ0dBVHVSWDBCcFBGdkxj?=
- =?utf-8?B?V3FOdGFwOHNPRUN3Q3ZtS3RlbDZYM3grOTVOck5EeWNpR2pWejhzd0E5Y0Uz?=
- =?utf-8?B?S2ZId0VKQ2tkd1JZd0h2Mnp2QUZKbnhWR1NySndLUE90ZXRuWWttcFFLK3Bh?=
- =?utf-8?B?ZE95OWJXSjQwK2Y2ZGp3alNXSHhlbkU1anBwaTl0ay9nRXpmQ0xOY2dEZ2cz?=
- =?utf-8?B?eUZiUkt3NkVtR1RoM3VBWjk0QSszQlNOTUF0eitrc09QbytsOXFCZk9RSXZM?=
- =?utf-8?B?UnBXVmJDMWlsc2hRMlZoaWJiZTlsS0FKRzJpNHkwRlpYbXdyQVd4cUE1YURT?=
- =?utf-8?B?eG9YSitsMTJhMTF0S01IRWpPM01TM2dGcVhiZTh0NjBOSnAzTGVramZDa2Nn?=
- =?utf-8?B?NlB6cFRvanF2SURLTWZjb3VYVGJTenI4UlhQOWZEdzgvQTFXOHVFWHFOZzQw?=
- =?utf-8?B?YnI2dDlUZ1o3OG1CWmFTRWM3NzFCMUdNMmZpcGVjT09hN3FjVlFSUDZ0K1hq?=
- =?utf-8?B?NjUvQllPbWRFdUttMWdwTEVWakFoQ3hISU0yNzMxTWcxSmJ4SU1UMk44S2ty?=
- =?utf-8?B?U2l3M3YzVEJwMVZvc1dSMTFHdmZ4V0pxZmZpM1cwZThWR1FEQk5QRFMxMFFi?=
- =?utf-8?B?Wit5UjVuVXo5RWRiT0ZLK3pTcVc4OTVhLzV4N2lxaFlaZGFLdjdySWxXUTR1?=
- =?utf-8?B?K2pnbTZiRnE4U09wMGpPRVROQ1JJL1ZmT2FBK1dhWDRpVTMvMjUwT0kwempT?=
- =?utf-8?B?YytwRGhVVjVrQmpZeHZTMElwL2JlOFhTWm0rekgxRG9oSENHOVorbkdDYmQ0?=
- =?utf-8?B?Vm1HWEd0azYwaTFZQjJJbDNqbUlFYktjeFBHQ1VQZHZmNjd0anJrc2wyVmQ1?=
- =?utf-8?B?QS93VGYyS3paMGMwTzNOWWljR2RtT05NOHVMOVVNRlFzL2tBeXg3VDY3eTBP?=
- =?utf-8?B?RG1rL1BBVHRlMXZjVnBWYTRZUC80Y0FpaUk4dlpRTHJRWjZ2TXY2dkpqNXdw?=
- =?utf-8?B?MHpnUE45NW1mY3FZTHhCaFpWaHE2N3kvcG5jM0wvUWpuOHJVaWFDcCtzT0c2?=
- =?utf-8?B?UmZSeHFEbVJYV0pSOTFuUE9URWVMaDJ5TVVTRHFoUjBudnkxYWttMjlUbUQz?=
- =?utf-8?B?YXdFSTNqLzgzZU44c2VvaHRzTnhvdDZjUFdwWHFrTXd2S1pSRVdRMWdZd3B2?=
- =?utf-8?B?MFF4QXhPQURMbTF3VUlISTJNb29NbVFMQW4xMFY0UFlCN2dQM0h0Zm1VSmN1?=
- =?utf-8?B?enR3VnVLZ09oNGdtditESlR2VG9Za2c1dEtwUnIycXpmSjk2SnVNU1BEMm9N?=
- =?utf-8?B?QUFabzNESWdBZEw0TnJtZFFZd09kTXVCV3JrQ3N2R2ZNL1hxbkJBK2JkS0RI?=
- =?utf-8?B?S2dwd2Ntc0I2T2kybEI1dEpOdVdMMC9yWS8xMm9HV2p4TEFSdEg0SnRLV2k4?=
- =?utf-8?B?bXl4OXpZNTVjWG9GTXBWY0J6N1BIanRvM0NPaGRzdERYZkkxVHlTY0NhcThi?=
- =?utf-8?B?SzBHV0VkbkxnSHBpTVpxWXd6ajd3YnpvRnVrajdORHY1TnYwQmNQcUpsOWM2?=
- =?utf-8?B?NWo0c3ZZKzVFN2JHTFVNbXp6QW1KMSszaGtlNmlOUG5uRWNxdFBTd1hWSjFL?=
- =?utf-8?B?a242a3Jxa0JjdFVSYmtrMEE1Y0JiM0JZdUFuMmdXbFlVMWt5VzcyZGdpTXpM?=
- =?utf-8?B?aDUrWmJpSFMxNTdINitwODJSanNaRzFocnMzRXlKQXpEdVBvU0g4bHFwZ0pQ?=
- =?utf-8?B?Uzd5Yk5iZyszQUpSUEtYYVJ6UE5RZVlCdHIxVllWRlRpMzh4Ujc1NldUTElE?=
- =?utf-8?Q?aWbIou?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 08:48:23.0762
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40228313-f40d-416b-748c-08dddfc65229
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F68.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9629
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <90f79bba-bee6-47ea-9881-9ae37eae42e0@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[intel.com,gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,lists.freedesktop.org,lists.linux.dev,vger.kernel.org,linux.intel.com,kernel.org,ffwll.ch,linuxfoundation.org];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 3BCFB216D6
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+
+Hi
+
+Am 18.08.25 um 21:42 schrieb Michal Wajdeczko:
+>
+> On 8/18/2025 9:20 PM, Athul Raj Kollareth wrote:
+>> Replace the DRM_* logging macros used in gem helper files with the appropriate
+>> ones specified in /include/drm/drm_print.h.
+>>
+>> Signed-off-by: Athul Raj Kollareth <krathul3152@gmail.com>
+>> ---
+>> Changes in v2:
+>>      - Change drm_gem_objects_lookup() to take a drm_device* argument.
+>>      - Make appropriate changes to all calls of drm_gem_objects_lookup().
+>> ---
+>>   drivers/accel/rocket/rocket_job.c       |  4 ++--
+>>   drivers/gpu/drm/drm_gem.c               | 12 +++++++-----
+>>   drivers/gpu/drm/drm_gem_dma_helper.c    |  2 +-
+>>   drivers/gpu/drm/panfrost/panfrost_drv.c |  2 +-
+>>   drivers/gpu/drm/v3d/v3d_submit.c        |  2 +-
+>>   drivers/gpu/drm/vc4/vc4_gem.c           |  2 +-
+>>   include/drm/drm_gem.h                   |  5 +++--
+>>   7 files changed, 16 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/accel/rocket/rocket_job.c b/drivers/accel/rocket/rocket_job.c
+>> index 5d4afd692306..db7c50c9ab90 100644
+>> --- a/drivers/accel/rocket/rocket_job.c
+>> +++ b/drivers/accel/rocket/rocket_job.c
+>> @@ -560,14 +560,14 @@ static int rocket_ioctl_submit_job(struct drm_device *dev, struct drm_file *file
+>>   	if (ret)
+>>   		goto out_cleanup_job;
+>>   
+>> -	ret = drm_gem_objects_lookup(file, u64_to_user_ptr(job->in_bo_handles),
+>> +	ret = drm_gem_objects_lookup(dev, file, u64_to_user_ptr(job->in_bo_handles),
+>>   				     job->in_bo_handle_count, &rjob->in_bos);
+>>   	if (ret)
+>>   		goto out_cleanup_job;
+>>   
+>>   	rjob->in_bo_count = job->in_bo_handle_count;
+>>   
+>> -	ret = drm_gem_objects_lookup(file, u64_to_user_ptr(job->out_bo_handles),
+>> +	ret = drm_gem_objects_lookup(dev, file, u64_to_user_ptr(job->out_bo_handles),
+>>   				     job->out_bo_handle_count, &rjob->out_bos);
+>>   	if (ret)
+>>   		goto out_cleanup_job;
+>> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+>> index 4a89b6acb6af..ee1e5ded6dd6 100644
+>> --- a/drivers/gpu/drm/drm_gem.c
+>> +++ b/drivers/gpu/drm/drm_gem.c
+>> @@ -102,7 +102,7 @@ drm_gem_init(struct drm_device *dev)
+>>   	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
+>>   					  GFP_KERNEL);
+>>   	if (!vma_offset_manager) {
+>> -		DRM_ERROR("out of memory\n");
+>> +		drm_err(dev, "out of memory\n");
+>>   		return -ENOMEM;
+>>   	}
+>>   
+>> @@ -764,6 +764,7 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
+>>   
+>>   /**
+>>    * drm_gem_objects_lookup - look up GEM objects from an array of handles
+>> + * @dev: corresponding drm_device
+>>    * @filp: DRM file private date
+>>    * @bo_handles: user pointer to array of userspace handle
+>>    * @count: size of handle array
+>> @@ -780,8 +781,9 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
+>>    * failure. 0 is returned on success.
+>>    *
+>>    */
+>> -int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+>> -			   int count, struct drm_gem_object ***objs_out)
+>> +int drm_gem_objects_lookup(struct drm_device *dev, struct drm_file *filp,
+>> +			   void __user *bo_handles, int count,
+>> +			   struct drm_gem_object ***objs_out)
+>>   {
+> can't we just use:
+>
+> 	struct drm_device *dev = filp->minor->dev;
+
+That's even better. Thanks for pointing to this.
+
+Best regards
+Thomas
+
+>
+>>   	int ret;
+>>   	u32 *handles;
+>> @@ -805,7 +807,7 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+>>   
+>>   	if (copy_from_user(handles, bo_handles, count * sizeof(u32))) {
+>>   		ret = -EFAULT;
+>> -		DRM_DEBUG("Failed to copy in GEM handles\n");
+>> +		drm_dbg_core(dev, "Failed to copy in GEM handles\n");
+>>   		goto out;
+>>   	}
+>>   
+>> @@ -858,7 +860,7 @@ long drm_gem_dma_resv_wait(struct drm_file *filep, u32 handle,
+>>   
+>>   	obj = drm_gem_object_lookup(filep, handle);
+>>   	if (!obj) {
+>> -		DRM_DEBUG("Failed to look up GEM BO %d\n", handle);
+>> +		drm_dbg_core(NULL, "Failed to look up GEM BO %d\n", handle);
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
+>> index 4f0320df858f..a507cf517015 100644
+>> --- a/drivers/gpu/drm/drm_gem_dma_helper.c
+>> +++ b/drivers/gpu/drm/drm_gem_dma_helper.c
+>> @@ -582,7 +582,7 @@ drm_gem_dma_prime_import_sg_table_vmap(struct drm_device *dev,
+>>   
+>>   	ret = dma_buf_vmap_unlocked(attach->dmabuf, &map);
+>>   	if (ret) {
+>> -		DRM_ERROR("Failed to vmap PRIME buffer\n");
+>> +		drm_err(dev, "Failed to vmap PRIME buffer\n");
+>>   		return ERR_PTR(ret);
+>>   	}
+>>   
+>> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> index 1ea6c509a5d5..3ffd9d5a9056 100644
+>> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> @@ -188,7 +188,7 @@ panfrost_lookup_bos(struct drm_device *dev,
+>>   	if (!job->bo_count)
+>>   		return 0;
+>>   
+>> -	ret = drm_gem_objects_lookup(file_priv,
+>> +	ret = drm_gem_objects_lookup(dev, file_priv,
+>>   				     (void __user *)(uintptr_t)args->bo_handles,
+>>   				     job->bo_count, &job->bos);
+>>   	if (ret)
+>> diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_submit.c
+>> index 5171ffe9012d..a3ac8e6a4a72 100644
+>> --- a/drivers/gpu/drm/v3d/v3d_submit.c
+>> +++ b/drivers/gpu/drm/v3d/v3d_submit.c
+>> @@ -79,7 +79,7 @@ v3d_lookup_bos(struct drm_device *dev,
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> -	return drm_gem_objects_lookup(file_priv,
+>> +	return drm_gem_objects_lookup(dev, file_priv,
+>>   				      (void __user *)(uintptr_t)bo_handles,
+>>   				      job->bo_count, &job->bo);
+>>   }
+>> diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
+>> index 255e5817618e..6ce65611231b 100644
+>> --- a/drivers/gpu/drm/vc4/vc4_gem.c
+>> +++ b/drivers/gpu/drm/vc4/vc4_gem.c
+>> @@ -692,7 +692,7 @@ vc4_cl_lookup_bos(struct drm_device *dev,
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> -	ret = drm_gem_objects_lookup(file_priv, u64_to_user_ptr(args->bo_handles),
+>> +	ret = drm_gem_objects_lookup(dev, file_priv, u64_to_user_ptr(args->bo_handles),
+>>   				     exec->bo_count, &exec->bo);
+>>   
+>>   	if (ret)
+>> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+>> index d3a7b43e2c63..03cb03f46524 100644
+>> --- a/include/drm/drm_gem.h
+>> +++ b/include/drm/drm_gem.h
+>> @@ -544,8 +544,9 @@ void drm_gem_unlock(struct drm_gem_object *obj);
+>>   int drm_gem_vmap(struct drm_gem_object *obj, struct iosys_map *map);
+>>   void drm_gem_vunmap(struct drm_gem_object *obj, struct iosys_map *map);
+>>   
+>> -int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+>> -			   int count, struct drm_gem_object ***objs_out);
+>> +int drm_gem_objects_lookup(struct drm_device *dev, struct drm_file *filp,
+>> +			   void __user *bo_handles, int count,
+>> +			   struct drm_gem_object ***objs_out);
+>>   struct drm_gem_object *drm_gem_object_lookup(struct drm_file *filp, u32 handle);
+>>   long drm_gem_dma_resv_wait(struct drm_file *filep, u32 handle,
+>>   				    bool wait_all, unsigned long timeout);
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
-
-On 8/20/2025 5:18 AM, Sean Christopherson wrote:
-> This is a combination of Nikunk's series to enable secure TSC support and to
-                       
-                          *Nikunj's 😊 (close though!)
-
-> fix the GHCB version issues, along with some code refactorings to move SEV+
-> setup code into sev.c (we've managed to grow something like 4 flows that all
-> do more or less the same thing).
-> 
-> Note, I haven't tested SNP functionality in any way.
-
-Tested SNP with and without Secure TSC, guest works as expected.
-
-> 
-> v11:
->  - Shuffle code around so that snp_is_secure_tsc_enabled() doesn't need to
->    be exposed outside of sev.c.
->  - Explicitly modify the intercept for MSR_AMD64_GUEST_TSC_FREQ (paranoia is
->    cheap in this case).
->  - Trim the changelog for the GHCB version enforcement patch.
-
->  - Continue on with snp_launch_start() if default_tsc_khz is '0'.  AFAICT,
->    continuing on doesn't put the host at (any moer) risk. [Kai]
-
-If I hack default_tsc_khz  as '0', SNP guest kernel with SecureTSC spits out
-couple of warnings and finally panics:
- 
- Persistent clock returned invalid value
- ------------[ cut here ]------------
- Missing cycle counter and fallback timer; RNG entropy collection will consequently suffer.
- WARNING: CPU: 0 PID: 0 at drivers/char/random.c:931 random_init+0xe7/0xf0
- RIP: 0010:random_init+0xe7/0xf0
- Call Trace:
-  <TASK>
-  start_kernel+0x5e9/0xb80
-  x86_64_start_reservations+0x18/0x30
-  x86_64_start_kernel+0xf5/0x140
-  common_startup_64+0x13e/0x141
-  </TASK>
-
-...
-
- WARNING: CPU: 0 PID: 0 at arch/x86/kernel/tsc.c:1464 determine_cpu_tsc_frequencies+0x118/0x120
- CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G        W           6.17.0-rc2-stsc+ #1063 PREEMPT(voluntary)
- RIP: 0010:determine_cpu_tsc_frequencies+0x118/0x120
- Call Trace:
-  <TASK>
-  tsc_init+0x2ba/0x430
-  x86_late_time_init+0x29/0x40
-  start_kernel+0x70b/0xb80
-  x86_64_start_reservations+0x18/0x30
-  x86_64_start_kernel+0xf5/0x140
-  common_startup_64+0x13e/0x141
-  </TASK>
-
-...
-
- Oops: divide error: 0000 [#1] SMP NOPTI
- CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G        W           6.17.0-rc2-stsc+ #1063 PREEMPT(voluntary)
- Tainted: [W]=WARN
- Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 02/02/2022
- RIP: 0010:pit_hpet_ptimer_calibrate_cpu+0x1be/0x410
- Call Trace:
-  <TASK>
-  determine_cpu_tsc_frequencies+0xc1/0x120
-  tsc_init+0x2ba/0x430
-  x86_late_time_init+0x29/0x40
-  start_kernel+0x70b/0xb80
-  x86_64_start_reservations+0x18/0x30
-  x86_64_start_kernel+0xf5/0x140
-  common_startup_64+0x13e/0x141
-  </TASK>
-
-Regards,
-Nikunj
 
