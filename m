@@ -1,115 +1,157 @@
-Return-Path: <linux-kernel+bounces-777419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB96B2D935
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:52:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF69B2D92F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83DB1C4431E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:47:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E16723A8B4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7B727A91F;
-	Wed, 20 Aug 2025 09:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2A12E040F;
+	Wed, 20 Aug 2025 09:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1aMRGgh"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NlKIlU90"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024FB2E040D;
-	Wed, 20 Aug 2025 09:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A20A2E2F10
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755682856; cv=none; b=SxA0lwWC0uxFpFJpfnaZLyd7/urjOx6lrNO7x92u/5YdBIxdfxNVBWzKXWmfDXvVxunh0of1RuzfAiCoGVd9GL+ZMuXQNREsVjZU4BJwyjfynYZoBcKRkQOZFS8qLMquwuIXux9/yHqe+VFL3fN9joUiJgJNNEqaiUcwodhbMtw=
+	t=1755682858; cv=none; b=bgEyRcDKwDvcULLUTTA0RXhD2hUHcEEF7EeH8wVFmE1IdtFQa2MiIHlQtT1CsvM/H7i6oO6l5/MulzVfAov/+QYUhPLcrlt8j1A/gp+ksBngnD0bsOZs60s3Sry2wS4zXfoYYJuClRCZ+g8qe8tSbI3c9hXghnWqyd3iwYogqzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755682856; c=relaxed/simple;
-	bh=xMPa+8Qn4mu18QhDnLh2TBRIN1AH7lNj6illVJiSw0s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U93iUv0UGa0HhQ38+AskA5drKccky/JMpIfRgpN1qemUvYLACNHacq1h9AYGHER8IEs88MUNRVJmfB2B7a0S6S/D2hBkNEUECZ+SW8Ew3/BQ0+uww8sA/JN/jrPvSoMr/oDjii2Nv3xvQbx6K44s3C+YJyLAzDJjXC45iRwcG6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1aMRGgh; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61aa702c9ebso70206a12.3;
-        Wed, 20 Aug 2025 02:40:54 -0700 (PDT)
+	s=arc-20240116; t=1755682858; c=relaxed/simple;
+	bh=pTVx/c7v7MNwSE85DS5ROcGDXqyxeTPbAbsaxq9a8VE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FLCxNVoPXfDGwfI0tmq2+gj/THYO8LywhVv/8gSjOMHA9M0PUM9c2XjHNkVtZ1iuBOEwYWdX4rWbgKYt56/Ay0QbHV63hkIJqf8TF+fwidNUBo694TNks9h1qnWOO5td5SewMX3B18Q5zbjsbd/9MUdihKMQKjfQ7yaooyH/RVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NlKIlU90; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b004954so45530605e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:40:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755682853; x=1756287653; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iaU4VZUJUriIOWDjZuxPqvHN376Nc6Yxil/qOWrIx5I=;
-        b=h1aMRGghhe9veuWnsV7JYp6jPhZuwXlAYgMIB0mTzu8FxZufCVmauOH6bNY8L/5ATp
-         n8gqaRvj4DYU7vgHaMqS5/wo3msVe6SUvEacJm+44QMedS/TkNR0CCh6o66L863FCoAv
-         OgCe4/+U9/BU6Mnre/ZRyv3JrPKYYR4Fj0ybqhgOdMNRx5RYifhG5+zDh3W1hNJlZCmO
-         +fMJaFZhD5J/KYjdtR5CJ9CEBAk7DFr5RKY810M4jY288nI97Y6mPxSlcLRdgbZ4ltPX
-         HpItiWNgdl/rXpvVfTmxOOXH1QtID58sQx+4AKf0CXBTSDopHiF2PaIKPWMYZJRr66b4
-         gmcQ==
+        d=tuxon.dev; s=google; t=1755682855; x=1756287655; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yzzsV1XvsxlzkLd9loB0EUOGKZo196ybFa4QKb2RzLU=;
+        b=NlKIlU90l1/TjezKDMR4DpoIMk273lERZ+uJotAYJJ402Hts/SYKrdiMs4fCVgo3Fs
+         wuB0cUQzBGc1dWGuibrZ74pgLUe3sbs3zlpa701WVLmklzADGCymtY9o3JV4x1+fCb8z
+         XEVWpuNyt3AYRhGZN0d1DEOML/h8kC5qRrAz5YS6oo2mt+ppZ8vdikWlInILBn0oVhM9
+         qO4J9sjUyqvZ/7NGm7tgumN0SAo+2XAlHapN0JcOIoLL6hue47fIlqGsXoKfK1/vn9dr
+         p+vYajI1KHlh56xjEt5UuAJ1BT1TihVvGqKH3bdQMz7BJQ8aQfjli4sJLJJbgHAtXZ1c
+         YTOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755682853; x=1756287653;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iaU4VZUJUriIOWDjZuxPqvHN376Nc6Yxil/qOWrIx5I=;
-        b=BCbZJ01CVgnhTT+mSSJlPHNvFbPNH7mA2/9ScyrVpcfGmw6kwyuuatwdAGzpZkl3ZP
-         K6fwbHPj5lIRMfb5mDRsrzYSbs2MazfjyGjXVH5WF4I3w3OGJ5aqxuOkxnO3FXyArq5I
-         zj/KXYM6+6imqyPxH2ldDrTpVOQqxR3XyclxlhJ+i+zqcs8wv7/ZtNPzqUicFohlNWNi
-         krfPKb+a/W0H1crKiee3TlEXyfXSyIIqpKHytWY0nAhNhSI85HdvZA7hhbYdTCmulK2g
-         kTIggzrjxyqlAlq8d7sScOmkKDWpTGojRDVrcABEcbeSGt8qHKVrkN+8neE9PEmZ8ESd
-         UYeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFXFOMoCQo0hC/Mvsqs6F6X/WGObzwGmaby3y3fIXR/XJRyIIEjaSxsBDiLSX3J0L+9AntBH8A3RR5/BY=@vger.kernel.org, AJvYcCWewfuawHpX/F2G1HSPUegxCRmH91Z7PgXEJi84LQHgo34Zp/e3FWJroSaeaOljqRDBicE8MrmZtyFWUaEjbt3f@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYx9ENQKmt/oXnmzrXzS+3UZNHUOIUu7a6jcMAO5xdIQF85jym
-	X2DY4at8zdfFjF7oVmD8q0lUubtZ6jfXeC/skJqQCO1akU5v6VbwN2f6CC4hXI2Zi2c=
-X-Gm-Gg: ASbGncuC8mxLupwANF++ZdFYzyBL6iCeUQI41A6bEpjNd7AYfFqbyObRB8Sn8n7dHh0
-	1HJFxKBoOIV/NHa2KfXUpKPgcqk8mAU4We3o5uhcMIJtLCnrNJRMaMtRq86TRdC0sn45sjoZzyR
-	112DclRpSdfX73lOQlkAfX4PZ/XzEjv4bsJR5mHuL9TXkyGZGbh0sXsYeQLki7m/EqbtRLcMqQD
-	NxhDNHCzc5V49FvfdgFWwbiXejACs0XBi49QSoSLWwjjr5TEDONOQ7XWorRiyBRFwf+bWr5QoZU
-	27tR2+bv7C7YlwFres5Zwqg4PJjdo4ximGrHbnWLZbbOe5Jptc6v9uG/8qucL8ua+niXP6L7yQn
-	c3agPEgAz4BKyl/GRUduAceTonPAFQxyClCKmKitOKWM+zt8pldGBTvpnTLq3T0HPF7AIjVjSnt
-	DBVN8=
-X-Google-Smtp-Source: AGHT+IF+jHeg1blhzus397KbMO6fpg4RfqSldoscVcwuKg6PL2oN6QYbuUXPW8t4wlcCO5RFZ0LvkA==
-X-Received: by 2002:a17:907:1c91:b0:af9:6e4a:3b2c with SMTP id a640c23a62f3a-afdf0200d09mr189014966b.43.1755682853046;
-        Wed, 20 Aug 2025 02:40:53 -0700 (PDT)
-Received: from localhost.localdomain (user-46-112-72-61.play-internet.pl. [46.112.72.61])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded315e39sm147081466b.48.2025.08.20.02.40.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 02:40:52 -0700 (PDT)
-From: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
-To: skhan@linuxfoundation.org,
-	linux-kselftest@vger.kernel.org
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
-Subject: [PATCH] selftests/ftrace: fix spelling mistake
-Date: Wed, 20 Aug 2025 11:40:48 +0200
-Message-Id: <20250820094048.140823-1-kubik.bartlomiej@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1755682855; x=1756287655;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yzzsV1XvsxlzkLd9loB0EUOGKZo196ybFa4QKb2RzLU=;
+        b=r3mmBbxOfF1sT2b9leAJKJLHehsqWmhccVL++FKKrAWVFB2g31dl0lHOQ+2zzmuapP
+         ZynOpkxqCQ3cSdRZPlWzgROKhRZ+QljINrbUJfYtQf0FXDWxwUoE49XzzszxRCU6vnfG
+         UGZAVq4r6FnemrsWJOXE5j0eyFYcBLEo0ZKnnwhArSkRBwtBQehgxeTs5qG5JiBloSjh
+         YUIiJMr/QJjsKla9aPrD44B1VlUG9gHkjPTQtS35fB9+Jj6gvzcli4mIzB1IXuhA1gHc
+         mhwssFKxIanzo4WIiOYcBtw04rTHqWEryHWMnrjhd3fha8BQLlCrq3QOCuk97FYx9+v8
+         SPIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjcmjW1QjOk9xl+wZzBNB6g5Zl40AfSTJhlz0WQrqsVL5fMHxg2YezaMHrILhqSeADJuCwifJKjhzoySk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFX2fKpJHxs0gce1tQM++UbpYPlh1NSCrY7r4ATVuxSJt1+S9K
+	Vi5MMPDIEeH1X0cMbBaSocG57bZbrbLfBmoe5ulIN6AljsHHOO7vY5vrBcx6odhlmKs=
+X-Gm-Gg: ASbGncu2KevE2HvFGlk7F2M6KnOYFWngt2rzlrhYfQEcnIi/qPAsAIcl++kkeR/wV5J
+	+KjoWanMOq/x2D4nsjj7jIcXkMvCs2W1x63hnArd8doI7h9npbJ6ySueJWuEHBd4ZP8hoErgqNc
+	rexyGGdqrBRhX0J4cx8qon+2rL54G5Xv8r5wFACxaINmx0oe3qkvEkcryS/gjsbyz9HVZE73m4P
+	XPRPGVCRd574ow8axg211UH/j8ppYsUTc+wvrBkrcCpOn1ImMQA1ySaTxO83zBDyQDNB/H8N5pl
+	EGJeJFzDAyEujo/Z3ZTNJrfpg32yyFsmoqQMUyR0rngydv2hlmjcTeI7MInKis7UF5VuLHvQWrL
+	QempJTmlRLv7Ge7d4ryeqFCDtTgoDrJTMAwovxEWeDUB6hq6F3ufXtB153F75KUWLFBTEZIhMXt
+	/N5Q==
+X-Google-Smtp-Source: AGHT+IEeghXw0m6JDZS1d5MhVcQIQaVDe3djwuj01U6mfo4wAkk3Pv0FB0hXUATB2KRJRFAtHH/lOg==
+X-Received: by 2002:a05:600c:4584:b0:455:f59e:fd9b with SMTP id 5b1f17b1804b1-45b479f3a13mr15577625e9.24.1755682854663;
+        Wed, 20 Aug 2025 02:40:54 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:620a:8b00:70df:79b5:b54c:4e1a? ([2a02:2f04:620a:8b00:70df:79b5:b54c:4e1a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c4bd0asm24800545e9.14.2025.08.20.02.40.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 02:40:54 -0700 (PDT)
+Message-ID: <31361b5c-32de-4618-bb89-f550f03b47d1@tuxon.dev>
+Date: Wed, 20 Aug 2025 12:40:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] dt-bindings: phy: renesas,usb2-phy: Mark resets as
+ required for RZ/G3S
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, biju.das.jz@bp.renesas.com,
+ krzk+dt@kernel.org, geert+renesas@glider.be, kishon@kernel.org,
+ linux-phy@lists.infradead.org, yoshihiro.shimoda.uh@renesas.com,
+ conor+dt@kernel.org, magnus.damm@gmail.com, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, p.zabel@pengutronix.de, vkoul@kernel.org
+References: <20250819054212.486426-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250819054212.486426-2-claudiu.beznea.uj@bp.renesas.com>
+ <175558495459.3265640.2032619822487575179.robh@kernel.org>
+ <20250819133744.GA87211-robh@kernel.org>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20250819133744.GA87211-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fix spelling mistake in return string.
+Hi, Rob,
 
-Signed-off-by: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
----
- .../selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc  | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 8/19/25 16:37, Rob Herring wrote:
+> On Tue, Aug 19, 2025 at 01:29:17AM -0500, Rob Herring (Arm) wrote:
+>>
+>> On Tue, 19 Aug 2025 08:42:06 +0300, Claudiu wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> The reset lines are mandatory for the Renesas RZ/G3S platform and must be
+>>> explicitly defined in device tree.
+>>>
+>>> Fixes: f3c849855114 ("dt-bindings: phy: renesas,usb2-phy: Document RZ/G3S phy bindings")
+>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>> ---
+>>>
+>>> Changes in v5:
+>>> - none
+>>>
+>>> Changes in v4:
+>>> - none
+>>>
+>>> Changes in v3:
+>>> - collected tags
+>>> - rebased on top of latest version of renesas,usb2-phy.yaml;
+>>>    Conor, Geert: I kept your tags; please let me know if you consider it
+>>>    otherwise
+>>>
+>>> Changes in v2:
+>>> - none; this patch is new
+>>>
+>>>   Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>
+>> My bot found errors running 'make dt_binding_check' on your patch:
+>>
+>> yamllint warnings/errors:
+>>
+>> dtschema/dtc warnings/errors:
+>>
+>>
+>> doc reference errors (make refcheckdocs):
+>>
+>> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250819054212.486426-2-claudiu.beznea.uj@bp.renesas.com
+> 
+> No issue here. The QCom folks have broken "make dt_binding_check" in
+> linux-next...
 
-diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
-index aee22289536b..d2a7da7bc87d 100644
---- a/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
-+++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
-@@ -102,7 +102,7 @@ clear_trace
- 
- cnt=`cnt_trace`
- if [ $cnt -ne 0 ]; then
--    fail "Tracing is still happeing"
-+    fail "Tracing is still happening"
- fi
- 
- echo "!$func:traceoff" >> set_ftrace_filter
--- 
-2.39.5
+Is patch 3/7 in this series still good? I can't find any issue with it locally.
 
+Thank you,
+Claudiu
 
