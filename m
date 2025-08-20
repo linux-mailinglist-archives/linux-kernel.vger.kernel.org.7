@@ -1,148 +1,135 @@
-Return-Path: <linux-kernel+bounces-776821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8A0B2D1CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B01FB2D1D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D6CD3AC12B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFDE31C24B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685962144C9;
-	Wed, 20 Aug 2025 02:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bw0QihFG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3348C21CC49;
+	Wed, 20 Aug 2025 02:17:55 +0000 (UTC)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9D1B67A;
-	Wed, 20 Aug 2025 02:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA32202F8B;
+	Wed, 20 Aug 2025 02:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755656180; cv=none; b=Lx69lxdB22atsyfKBXWUGirKndgToIeElaIRflbHcwkLNKFhQmPffnHSBrKbsbOzmHd4vtSbnr/yqo3tsKIMLyiTQSj97SF0wx+3QiE3ARivpD/nCoc9KLZktQqUgIPn1zFX/802d11MItMcwTSzjUixxZXQCK4LfYREavRNKvI=
+	t=1755656274; cv=none; b=GvAZINxQnfbyEy+4QwDW3aOQOAG9FbkpQfM7hFGeA9LcZOAd18peMnFP48gClxZxGaER75t2Nr0kUVBOeRKBilch/OQyTGjiAhPBxNzrYo1oOf+CSj33irRhPzFs8x+MaudBiMpv5vvYnJEQOIPuwXu9Yb87EI4tKKbPv54s5eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755656180; c=relaxed/simple;
-	bh=CXv4CUbdg2DJqLAJ9Zvm3lBEiYdY4MTBMhMaeE8cmSQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jXOMMOum5htPtc5SZcQw36GPnIf43Et/IMDlPo30xHA/uEouJWPpAHTIpk1+MJq5gK0rqf1sX+lomeFGXxMSvDv6eSODkm99GH+uj5geeMyNoaav5rN8+gCA3R1tDpcWhjMgqqwaHQCr4oxfa2t+N2tL6sZhy6tVwkyAGsVFTAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bw0QihFG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4A515C4CEF1;
-	Wed, 20 Aug 2025 02:16:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755656180;
-	bh=CXv4CUbdg2DJqLAJ9Zvm3lBEiYdY4MTBMhMaeE8cmSQ=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=bw0QihFGr6t0ZHZs+1qTSymuJh2ay6y0vgdnjAc62DSXLk27mQE5ndJmH9dixpwQR
-	 YKMzkv0Bl/n9P0nKYtkPZkkUYs2xVTJq/eVwQWshy2TFByuwea125q6bG3X7jm5bSJ
-	 qtuaITCZ1YmNGKYXujUj5H8RUClUTjkjJNLxbLFMiavrrUnz6SkF3qgMUbhe1szWMd
-	 AvhXcUfwExV1wdxmm9CugeXgr90naBBVId7A66AwicsSUoUNPoDB5kzuxCnAaby1De
-	 kPOy5ie6KygHlH2KnUHJohIclNvj3JqJz75wgT90CtPTwimU9eSsytVQhm/WeXRUz4
-	 bttoMre77L/JA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B85ACA0EE6;
-	Wed, 20 Aug 2025 02:16:20 +0000 (UTC)
-From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
-Date: Wed, 20 Aug 2025 10:16:17 +0800
-Subject: [PATCH v2] Bluetooth: hci_event: Disconnect device when BIG sync
- is lost
+	s=arc-20240116; t=1755656274; c=relaxed/simple;
+	bh=CtjNduMpa6vBd17voRHpTk9aBOQS+GxxSurGRGrOvL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U9+Y0ZPHTClBnZ2fcpWc4pV/7+3Zm1P4SYH9GsbB9UIenOIOO7Vp45557vl+VqArdQ1nHx6Nr+ZlnlkI4bLlia7lSTnSyJKhGgmK2D/ESOwFSGUJuri3e9vPiYrQmT2Dq34fqrBRiHgpHvUj27TnrIFbUb/xSIkGHyfnXq2D4Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip3t1755656213t5f3e686c
+X-QQ-Originating-IP: Ak+PhEWaVg7vGtjuhuEht2sFkVHdkBKroE3obuaqw14=
+Received: from [IPV6:240f:10b:7440:1:74a0:7bf7 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 20 Aug 2025 10:16:51 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 737961017978575348
+Message-ID: <1D03D9D55EB70125+5dd53657-8d25-44b8-9098-d50ed83422b2@radxa.com>
+Date: Wed, 20 Aug 2025 11:16:50 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: dts: rockchip: update pinctrl names for
+ Radxa E52C
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <ABB74D9D1E3774F3+5a8c0d7d-fb7f-47c0-8308-e2b69f0628c1@radxa.com>
+ <20250819150038.874297-1-amadeus@jmu.edu.cn>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <20250819150038.874297-1-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-bis_dev_disconnect-v2-1-a0e1436690e2@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAPEvpWgC/32NQQ6CMBBFr0JmbQ2tIMjKexhCynSASaQ1LWk0p
- He3cgCX7yX//R0CeaYAXbGDp8iBnc2gTgXgou1Mgk1mUKWqy1bexMhhMBQHwwGdtYSbuEhtlCa
- jmhEhD1+eJn4f0UefeeGwOf85PqL82b+5KIUUum2wrkqasLre9fp0M+MZ3Qp9SukLtE/4K7YAA
- AA=
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Johan Hedberg <johan.hedberg@gmail.com>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, 
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yang Li <yang.li@amlogic.com>
-X-Mailer: b4 0.13-dev-f0463
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755656178; l=2319;
- i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
- bh=v14Qp3rsVxau4kHADKxPc6IBwqZ+pK1qDr/sjGiTwJQ=;
- b=PbVSVKUqHK+OIDyPFHfbzDAtggCC20YCrbJ3NFjGGlzduPhzJMmQPI5m9OUvpaMuF/s6H1rBY
- 7KB4QfLVQ1OAYAVKfg7I+ceanRlIx+zgDHmbVhJ7gYjIBZM/lnaZHPg
-X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
- pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
-X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
- auth_id=180
-X-Original-From: Yang Li <yang.li@amlogic.com>
-Reply-To: yang.li@amlogic.com
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Obs4Jap+oQoElEGq0Lc5JCw+Xektz5mLbP5RVRl29pHgLbh1bR4O+EAw
+	xU974t2idpKBM+kVij2aqJ/iWYAMBjYxPeN3V2KLggL2w6O2XlwlTcddob/stHHSCEXq5bh
+	2wN4zpH1H6P3o6fITDklD+nvaKOVgkN8YxpgeZBLE0a1+NzHwg/gkNEwm61Ps2xiDRgJjqb
+	qLfeIU3P/2tpdDrcosS1w0xSRJ+8nN4hXcflwwYZ++gWIGpDuAha54+ap2cl03MJ1dcsA8p
+	rxoCnwelsNGFQilUTUf/+ca/RliHQcfaOgp+oiAhrNI+3FYO93f4KmCV3d/aPnozgeJVTeu
+	V5CH4lInD2sooD8SOiJ1ANmNVG9x6e/+ZjtLgy7ZaTv6FXnyf35kooFzWi1QXO5QmiOrgiN
+	PL/+v690/6Gt0f0v9Py22m1D5MBx1JiEPcipnkompcC9jsbBwNHk3B8jDJ7zqI7MaeoMImh
+	luETTpH0rKjLrdLhcyFIjYjxFZe7Y1/x4KRwzgWKC4Z5TqY8avChRaaNhBYPyNOZu8p8yho
+	CutfioZntOrOPnwMZ8cRi1LVCv3R63N5El0WUq43Zq/QQ0HgAsvzo+SIe7TGX6Iwn3mq6Ei
+	XWhCF6QoBFb6qNQek4Wj3KxeoxChMV77kfk9sooMfafgNwGxnDpxS3SItmziTmR+wFCNrUs
+	ewIHMmMPzETGW0f1X7FlQn8HwLCnlAAEJ3xuhBRi/IsLkqSonW0xtfHib7imOa7OZqvpqM4
+	LWzHthfKuMx9QYwpjANiuPGqbn5pzIeQh5BYD5nPT3nukVTPWeFBAiWvldzHTO3r4I+VH6x
+	VjERtqJDBkt7zLbGfaeSwnrxFeebE+cLaaL9LQQtsaLKqLT+R+daZGuGdA/a0dqvIJQIjJ2
+	QxwYl7lvrWGi2gwOW+7JYUJQ9QxKS+f5/QrWVkR8z8hIozMlH2IT76tu5PfZBmi1dXTUuVm
+	dXedPW6PMK/gWLSk3LxFUAYYibmDz6ruwwmVpyCbQGWfqxU0ThM01PBwLuOCn1vlH/FRM+K
+	A84NmXUjTz6AgGfEjxEHXnzmldcFg=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-From: Yang Li <yang.li@amlogic.com>
+Hi Chukun,
 
-When a BIG sync is lost, the device should be set to "disconnected".
-This ensures symmetry with the ISO path setup, where the device is
-marked as "connected" once the path is established. Without this
-change, the device state remains inconsistent and may lead to a
-memory leak.
+On 8/20/25 00:00, Chukun Pan wrote:
+> Hi,
+> 
+>> "The name of a node should be somewhat generic".
+>>
+>>    https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst?plain=1#L193
+> 
+> Usually we use the name on the schematic. For example, the patch for e24c:
 
-Fixes: b2a5f2e1c127 ("Bluetooth: hci_event: Add support for handling LE BIG Sync Lost event")
-Signed-off-by: Yang Li <yang.li@amlogic.com>
----
-Changes in v2:
-- Add BIS_LINK handling to device disconnect
-- Link to v1: https://lore.kernel.org/r/20250819-bis_dev_disconnect-v1-1-a87c540efc46@amlogic.com
----
- net/bluetooth/hci_event.c | 5 +++++
- net/bluetooth/mgmt.c      | 4 +++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index 1686680a38c8..59aae893e0ed 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -6998,6 +6998,7 @@ static void hci_le_big_sync_lost_evt(struct hci_dev *hdev, void *data,
- {
- 	struct hci_evt_le_big_sync_lost *ev = data;
- 	struct hci_conn *bis, *conn;
-+	bool mgmt_conn;
- 
- 	bt_dev_dbg(hdev, "big handle 0x%2.2x", ev->handle);
- 
-@@ -7016,6 +7017,10 @@ static void hci_le_big_sync_lost_evt(struct hci_dev *hdev, void *data,
- 	while ((bis = hci_conn_hash_lookup_big_state(hdev, ev->handle,
- 						     BT_CONNECTED,
- 						     HCI_ROLE_SLAVE))) {
-+		mgmt_conn = test_and_clear_bit(HCI_CONN_MGMT_CONNECTED, &bis->flags);
-+		mgmt_device_disconnected(hdev, &bis->dst, bis->type, bis->dst_type,
-+					 ev->reason, mgmt_conn);
-+
- 		clear_bit(HCI_CONN_BIG_SYNC, &bis->flags);
- 		hci_disconn_cfm(bis, ev->reason);
- 		hci_conn_del(bis);
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 3166f5fb876b..90e37ff2c85d 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -9705,7 +9705,9 @@ void mgmt_device_disconnected(struct hci_dev *hdev, bdaddr_t *bdaddr,
- 	if (!mgmt_connected)
- 		return;
- 
--	if (link_type != ACL_LINK && link_type != LE_LINK)
-+	if (link_type != ACL_LINK &&
-+	    link_type != LE_LINK  &&
-+	    link_type != BIS_LINK)
- 		return;
- 
- 	bacpy(&ev.addr.bdaddr, bdaddr);
-
----
-base-commit: c921e5d14590381e6db7e451488b7b9ddc67a32c
-change-id: 20250819-bis_dev_disconnect-31ad2aed27bc
+I don't mind using names that match the schematic, as long as the device 
+tree maintainer doesn't object.
 
 Best regards,
--- 
-Yang Li <yang.li@amlogic.com>
 
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+> https://lore.kernel.org/lkml/20250727144409.327740-4-jonas@kwiboo.se/
+> 
+> ```
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&gpio0_a0_user>;
+> ```
+> 
+> If this is incorrect, I will abandon the pinctrl changes for
+> the user key and power LED.
+> 
+>>> -		vcc_5v0_pwren_h: regulator-5v0-1 {
+>>> -		usb_otg_pwren_h: regulator-5v0-0 {
+> 
+> But I don't think the above is correct.
+> 
+>>    https://lore.kernel.org/all/20241216113052.15696-1-naoki@radxa.com/T/#u
+>>
+>> (I don't understand why this only applies to me...)
+> 
+> I don't know this. I thought the nodenames of pinctrl and regulator
+> were a bit weird, so I changed the pinctrl's.
+> 
+> Thanks,
+> Chukun
+> 
+> --
+> 2.25.1
+> 
+> 
+> 
 
 
