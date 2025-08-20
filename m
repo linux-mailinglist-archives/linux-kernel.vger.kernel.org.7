@@ -1,342 +1,142 @@
-Return-Path: <linux-kernel+bounces-778114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3844B2E185
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DD5B2E148
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A97741BC66D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8E7188BA36
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A4931DD8D;
-	Wed, 20 Aug 2025 15:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA17126E70D;
+	Wed, 20 Aug 2025 15:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKPOZ26/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v9S/Gp4+"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E47332274E;
-	Wed, 20 Aug 2025 15:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88DB224AEF
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755704928; cv=none; b=nvYcV6zxszCj0e5F1waYSrPqvzbp4K5b+aMRI0rfIIaSO/Wx15vOeX7lHTEQ+CDXM+XtuqKEGrBzrdLnFRo2vemnF9Y+adI6TkU6h8K7VLrpcZdx1at2Q/qb+qsUBJEKE9zntl44Hh2YH4zKwy9guP0NTyK9t3EMt+7U44pBC38=
+	t=1755703893; cv=none; b=QUWZ+BDaAbnGjyctmP5RxKFtH/GNEVo+gc5+0mjBFGV1U3SKcML2MhwN5o4MTVk2whoT59vWFPwEBwhOVArRHaE0GyImT/dKkDZXY/VRpU2DG1AW5pYh3ywY6sFDnZteUCW/MLmj7t1Zn6hdckcnGM/FUwrabDR2bYa9k7ogy3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755704928; c=relaxed/simple;
-	bh=rq3CZA4VGSUKbwkFapgCSXvkYDvqT5nxUvNcLVO3jc0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M40j554XiAEajAF9bEpUG4xoucctlXmKek2QToeQIyElgQJIduMvzcR32/NEl9nkPfKkj6coLMJpa0F0CueSSWSrjbfXnLYsR6UAhFzd4NGfS3zSCanwxsw1tOumPNc15Xhio0Ikhj/TXOD0xWgAxG4hf82GVXnKLqucICbVT1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKPOZ26/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57C04C4CEEB;
-	Wed, 20 Aug 2025 15:48:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755704925;
-	bh=rq3CZA4VGSUKbwkFapgCSXvkYDvqT5nxUvNcLVO3jc0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kKPOZ26/3xjUICdvVUcrO0VhwN+sV8a91wxW1394DpOaca/X3AC0/9a6Fw6KS+qvr
-	 v2a+LZOszdnkb/782uMMQtDav2IucFID7I0SPEf1I9qs57c0jaSlgoDdJBj7Gov8UW
-	 rfp8Db7MyZNHDWAwG9KJ8AGhEEb6e9bZIsQL6KvCwNNVXxJaPHQHj/XXXrGkkILzXY
-	 4IKiIZRgbkyeHdYXi850Teb1m9R/M1zQZFC1NmmKJYnY9I4adpqF3LmN+Vr2Tq0nnX
-	 mjDrvPqCPEBNjeEaxDzzDyywvwho5LvgqsWBJPgRWr9hPWViwiaCSF6Iao/NG2aa8u
-	 h5o2mrjS8RSMA==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH 2/2] i2c: designware: Implement atomic transfer suppot
-Date: Wed, 20 Aug 2025 23:31:25 +0800
-Message-ID: <20250820153125.22002-3-jszhang@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250820153125.22002-1-jszhang@kernel.org>
-References: <20250820153125.22002-1-jszhang@kernel.org>
+	s=arc-20240116; t=1755703893; c=relaxed/simple;
+	bh=s+R8aVv1kQPKJL48rz1eQ6eILA63+WLcaOOcmA0QxjM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=U2E+RSwbajdv1jbqNZdDizunmaC+NSy/wlj80dPKveI5tS0mzy8HXAWOViRP5JlidRA6vpAazOaunSKJ01aUQMqpw3W9xSJPltFu4B/BweGen7LumCq+NhskLkqEOG7HkDvK7ykauQZioCNzo+n+iSszn+1UQfj0PROrKR7KmIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v9S/Gp4+; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32326e46a20so71064a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:31:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755703891; x=1756308691; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o9QzEQYSWbERMpwFDE3tIp6dRHsbQYsz0nj171HoUNo=;
+        b=v9S/Gp4+jy8zr9N1Jbet5dXmud8y/zebX5xGzUoeaJs3sMSpTHrSa/OtPPee2+EeYS
+         e9Iz8Nzz9kduFck4W6jYt5NBJnuYHjhNpAXD57827Vcmuj+86g9tPc+lfcaLIcQs5z+1
+         O1CG7WHC+ofI8BR92Tin9NZ/EdGJw2HOnix58ifHR1dtHJM4rsFV6CMIaRoKOWCEdAAH
+         DJ8551IoPhu0GzO/ZQ+vzGze42Xni084aB6+LDVJ+1YkHGZ1Em0rEGNs4StkOhSCCFPm
+         OAxybSExIAOMdsWjCDatYmQwuisoQ1SIzdOas9XdcNQsz2iBqBKPVbfnTsRGBYp0R7+D
+         cIZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755703891; x=1756308691;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o9QzEQYSWbERMpwFDE3tIp6dRHsbQYsz0nj171HoUNo=;
+        b=Z7OOXk8aAXmAEkAmUktQGbg72YTEtDCKcV13g3CAk6h+CQuvf5D6FfaFqUVKCx/snZ
+         g5ZY3oQxQrD3EIosk+fUpMYxO3TuFjDfRF7xOu3tXoBi6KbUQ+FdbObQAaEt5+0SWZX3
+         ZHTIKH8xi4OgZwaDgwgoc5PISzW03gXqpw5WLwl84BWAm1GnaLf1/IggWZgOXGOz7RXp
+         KQ4oC4LQVzli5ozesB7Xc7BpbnHYuh7fKD1BXxTupBPClPqo8Pfubx4GYPqIESAs2HYE
+         5pblva34jAZw9/QFF5gTVaufhhdCUVnJObrv1+Nf5fAH2zt3Tcd/WpxqrNcoKVKQVOMs
+         oY3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXS3baczf32MmCDSJWInlVIhVSRWtTD5W7tfXKQpgRa4DQSCsGM3tWHsb446s80NXJgvch/XO2GWe9vw3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDGXMSH5WlGlWDQYG45auwWEuCXLcOPBoSu1ytQpCzFaeqlu2u
+	cItsT+WccgqAgQrR6Ic3kYIqJ4dhQLjVxqr7KZneWAtRjUufU7zDtULyL7YbIL/0pPrxJ+PIm6e
+	0fDE5Bg==
+X-Google-Smtp-Source: AGHT+IGnry6UQD9dbJDbiib0HiTkV2PQuZkHfqGug22iyfAeQKMVe3qfW45SYnYvoCN5T+mHnTS+yLo7nLU=
+X-Received: from pjbqn7.prod.google.com ([2002:a17:90b:3d47:b0:31f:d6:9cf])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:ec88:b0:312:1d2d:18df
+ with SMTP id 98e67ed59e1d1-324e143bff2mr4826196a91.23.1755703891209; Wed, 20
+ Aug 2025 08:31:31 -0700 (PDT)
+Date: Wed, 20 Aug 2025 08:31:29 -0700
+In-Reply-To: <dd58cf15476bac97b28997526faf9ff078d08b21.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
+ <d432b8b7cfc413001c743805787990fe0860e780.camel@intel.com>
+ <sjhioktjzegjmyuaisde7ui7lsrhnolx6yjmikhhwlxxfba5bh@ss6igliiimas>
+ <c2a62badf190717a251d269a6905872b01e8e340.camel@intel.com>
+ <aJqgosNUjrCfH_WN@google.com> <f38f55de6f4d454d0288eb7f04c8c621fb7b9508.camel@intel.com>
+ <d21a66fe-d2ce-46cc-b89e-b60b03eae3da@intel.com> <6bd46f35c7e9c027c8a4c713df7dc73e1d923f5b.camel@intel.com>
+ <rxtpzxy2junchgekpjxirkiuu7h4x4xwwrblzn4u5atf6yits3@artdh2hzqa34> <dd58cf15476bac97b28997526faf9ff078d08b21.camel@intel.com>
+Message-ID: <aKXqUf9QBpLOeB3Q@google.com>
+Subject: Re: [PATCHv2 00/12] TDX: Enable Dynamic PAMT
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: "kas@kernel.org" <kas@kernel.org>, Chao Gao <chao.gao@intel.com>, 
+	Dave Hansen <dave.hansen@intel.com>, "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
+	Kai Huang <kai.huang@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	Yan Y Zhao <yan.y.zhao@intel.com>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-Rework the read and write code paths in the driver to support operation
-in atomic contexts. To achieve this, the driver must not rely on IRQs
-or perform any scheduling, e.g., via a sleep or schedule routine.
+On Fri, Aug 15, 2025, Rick P Edgecombe wrote:
+> On Thu, 2025-08-14 at 11:55 +0100, Kiryl Shutsemau wrote:
+> > > > > (similar pattern on the unmapping)
+> > > > > 
+> > > > > So it will only be valid contention if two threads try to fault in the >
+> > > > > > *same* 2MB
+> > > > > DPAMT region *and* lose that race around 1-3, but invalid contention if
+> > > > > > > threads try
+> > > > > to execute 2-4 at the same time for any different 2MB regions.
+> > > > > 
+> > > > > Let me go verify.
+> 
+> It lost the race only once over a couple runs. So it seems mostly invalid
+> contention.
+> 
+> > > 
+> > > Note that in absence of the global lock here, concurrent PAMT.ADD would
+> > > also trigger some cache bouncing during pamt_walk() on taking shared
+> > > lock on 1G PAMT entry and exclusive lock on 2M entries in the same
+> > > cache (4 PAMT_2M entries per cache line). This is hidden by the global
+> > > lock.
+> > > 
+> > > You would not recover full contention time by removing the global lock.
+> 
+> Hmm, yea. Another consideration is that performance sensitive users will
+> probably be using huge pages, in which case 4k PAMT will be mostly skipped.
+> 
+> But man, the number and complexity of the locks is getting a bit high across the
+> whole stack. I don't have any easy ideas.
 
-Implement atomic, sleep-free, and IRQ-less operation. This increases
-complexity but is necessary for atomic I2C transfers required by some
-hardware configurations, e.g., to trigger reboots on an external PMIC chip.
+FWIW, I'm not concerned about bouncing cachelines, I'm concerned about the cost
+of the SEAMCALLs.  The latency due to bouncing a cache line due to "false"
+contention is probably in the noise compared to waiting thousands of cycles for
+other SEAMCALLs to complete.
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- drivers/i2c/busses/i2c-designware-common.c | 38 +++++++---
- drivers/i2c/busses/i2c-designware-core.h   |  5 +-
- drivers/i2c/busses/i2c-designware-master.c | 80 +++++++++++++++++++---
- 3 files changed, 100 insertions(+), 23 deletions(-)
+That's also my concern with tying PAMT management to S-EPT population.  E.g. if
+a use case triggers a decent amount S-EPT churn, then dynamic PAMT support will
+exacerbate the S-EPT overhead.
 
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index b4e38bc0f876..0b24ac0357ad 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -532,15 +532,23 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
- 			 * 25us) to ensure the I2C ENABLE bit is already set
- 			 * as described in the DesignWare I2C databook.
- 			 */
--			fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz));
-+			if (dev->atomic)
-+				udelay(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz));
-+			else
-+				fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz));
- 			/* Set ENABLE bit before setting ABORT */
- 			enable |= DW_IC_ENABLE_ENABLE;
- 		}
- 
- 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
--		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
--					       !(enable & DW_IC_ENABLE_ABORT), 10,
--					       100);
-+		if (dev->atomic)
-+			ret = regmap_read_poll_timeout_atomic(dev->map, DW_IC_ENABLE, enable,
-+							      !(enable & DW_IC_ENABLE_ABORT), 10,
-+							      100);
-+		else
-+			ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
-+						       !(enable & DW_IC_ENABLE_ABORT), 10,
-+						       100);
- 		if (ret)
- 			dev_err(dev->dev, "timeout while trying to abort current transfer\n");
- 	}
-@@ -560,7 +568,10 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
- 		 * transfer supported by the driver (for 400kHz this is
- 		 * 25us) as described in the DesignWare I2C databook.
- 		 */
--		usleep_range(25, 250);
-+		if (dev->atomic)
-+			udelay(25);
-+		else
-+			usleep_range(25, 250);
- 	} while (timeout--);
- 
- 	dev_warn(dev->dev, "timeout in disabling adapter\n");
-@@ -607,7 +618,7 @@ int i2c_dw_acquire_lock(struct dw_i2c_dev *dev)
- {
- 	int ret;
- 
--	if (!dev->acquire_lock)
-+	if (dev->atomic || !dev->acquire_lock)
- 		return 0;
- 
- 	ret = dev->acquire_lock();
-@@ -621,7 +632,7 @@ int i2c_dw_acquire_lock(struct dw_i2c_dev *dev)
- 
- void i2c_dw_release_lock(struct dw_i2c_dev *dev)
- {
--	if (dev->release_lock)
-+	if (!dev->atomic && dev->release_lock)
- 		dev->release_lock();
- }
- 
-@@ -633,11 +644,18 @@ int i2c_dw_wait_bus_not_busy(struct dw_i2c_dev *dev)
- 	unsigned int status;
- 	int ret;
- 
--	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
--				       !(status & DW_IC_STATUS_ACTIVITY),
--				       1100, 20000);
-+	if (dev->atomic)
-+		ret = regmap_read_poll_timeout_atomic(dev->map, DW_IC_STATUS, status,
-+						      !(status & DW_IC_STATUS_ACTIVITY),
-+						      1100, 20000);
-+	else
-+		ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-+					       !(status & DW_IC_STATUS_ACTIVITY),
-+					       1100, 20000);
- 	if (ret) {
- 		dev_warn(dev->dev, "timeout waiting for bus ready\n");
-+		if (dev->atomic)
-+			return ret;
- 
- 		i2c_recover_bus(&dev->adapter);
- 
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index 347843b4f5dd..7384ec5a7ab7 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -299,6 +299,7 @@ struct dw_i2c_dev {
- 	void			(*release_lock)(void);
- 	int			semaphore_idx;
- 	bool			shared_with_punit;
-+	bool			atomic;
- 	int			(*init)(struct dw_i2c_dev *dev);
- 	int			(*set_sda_hold_time)(struct dw_i2c_dev *dev);
- 	int			mode;
-@@ -365,7 +366,7 @@ static inline void __i2c_dw_disable_nowait(struct dw_i2c_dev *dev)
- static inline void __i2c_dw_write_intr_mask(struct dw_i2c_dev *dev,
- 					    unsigned int intr_mask)
- {
--	unsigned int val = dev->flags & ACCESS_POLLING ? 0 : intr_mask;
-+	unsigned int val = (dev->atomic || dev->flags & ACCESS_POLLING) ? 0 : intr_mask;
- 
- 	regmap_write(dev->map, DW_IC_INTR_MASK, val);
- 	dev->sw_mask = intr_mask;
-@@ -374,7 +375,7 @@ static inline void __i2c_dw_write_intr_mask(struct dw_i2c_dev *dev,
- static inline void __i2c_dw_read_intr_mask(struct dw_i2c_dev *dev,
- 					   unsigned int *intr_mask)
- {
--	if (!(dev->flags & ACCESS_POLLING))
-+	if (!(dev->flags & ACCESS_POLLING) && !dev->atomic)
- 		regmap_read(dev->map, DW_IC_INTR_MASK, intr_mask);
- 	else
- 		*intr_mask = dev->sw_mask;
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index cbd88ffa5610..333ec9bacae4 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -312,9 +312,14 @@ static bool i2c_dw_is_controller_active(struct dw_i2c_dev *dev)
- 	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
- 		return false;
- 
--	return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
--				       !(status & DW_IC_STATUS_MASTER_ACTIVITY),
--				       1100, 20000) != 0;
-+	if (dev->atomic)
-+		return regmap_read_poll_timeout_atomic(dev->map, DW_IC_STATUS, status,
-+						       !(status & DW_IC_STATUS_MASTER_ACTIVITY),
-+						       1100, 20000) != 0;
-+	else
-+		return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-+					       !(status & DW_IC_STATUS_MASTER_ACTIVITY),
-+					       1100, 20000) != 0;
- }
- 
- static int i2c_dw_check_stopbit(struct dw_i2c_dev *dev)
-@@ -654,7 +659,7 @@ static u32 i2c_dw_read_clear_intrbits(struct dw_i2c_dev *dev)
- 	 *
- 	 * The raw version might be useful for debugging purposes.
- 	 */
--	if (!(dev->flags & ACCESS_POLLING)) {
-+	if (!(dev->flags & ACCESS_POLLING) && !dev->atomic) {
- 		regmap_read(dev->map, DW_IC_INTR_STAT, &stat);
- 	} else {
- 		regmap_read(dev->map, DW_IC_RAW_INTR_STAT, &stat);
-@@ -801,11 +806,32 @@ static int i2c_dw_wait_transfer(struct dw_i2c_dev *dev)
- 	return ret ? 0 : -ETIMEDOUT;
- }
- 
-+static int i2c_dw_wait_transfer_atomic(struct dw_i2c_dev *dev)
-+{
-+	ktime_t timeout = ktime_add_us(ktime_get(), jiffies_to_usecs(dev->adapter.timeout));
-+	unsigned int stat;
-+	int ret;
-+
-+	do {
-+		ret = try_wait_for_completion(&dev->cmd_complete);
-+		if (ret)
-+			break;
-+
-+		stat = i2c_dw_read_clear_intrbits(dev);
-+		if (stat)
-+			i2c_dw_process_transfer(dev, stat);
-+		else
-+			udelay(15);
-+	} while (ktime_compare(ktime_get(), timeout) < 0);
-+
-+	return ret ? 0 : -ETIMEDOUT;
-+}
-+
- /*
-  * Prepare controller for a transaction and call i2c_dw_xfer_msg.
-  */
- static int
--i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
-+i2c_dw_xfer_core(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- {
- 	struct dw_i2c_dev *dev = i2c_get_adapdata(adap);
- 	int ret;
-@@ -816,13 +842,19 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 
- 	switch (dev->flags & MODEL_MASK) {
- 	case MODEL_AMD_NAVI_GPU:
-+		if (dev->atomic) {
-+			ret = -EOPNOTSUPP;
-+			goto done_nolock;
-+		}
-+
- 		ret = amd_i2c_dw_xfer_quirk(adap, msgs, num);
- 		goto done_nolock;
- 	default:
- 		break;
- 	}
- 
--	reinit_completion(&dev->cmd_complete);
-+	if (!dev->atomic)
-+		reinit_completion(&dev->cmd_complete);
- 	dev->msgs = msgs;
- 	dev->msgs_num = num;
- 	dev->cmd_err = 0;
-@@ -845,12 +877,18 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 	i2c_dw_xfer_init(dev);
- 
- 	/* Wait for tx to complete */
--	ret = i2c_dw_wait_transfer(dev);
-+	if (dev->atomic)
-+		ret = i2c_dw_wait_transfer_atomic(dev);
-+	else
-+		ret = i2c_dw_wait_transfer(dev);
-+
- 	if (ret) {
- 		dev_err(dev->dev, "controller timed out\n");
--		/* i2c_dw_init_master() implicitly disables the adapter */
--		i2c_recover_bus(&dev->adapter);
--		i2c_dw_init_master(dev);
-+		if (!dev->atomic) {
-+			/* i2c_dw_init_master() implicitly disables the adapter */
-+			i2c_recover_bus(&dev->adapter);
-+			i2c_dw_init_master(dev);
-+		}
- 		goto done;
- 	}
- 
-@@ -907,7 +945,25 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 	return ret;
- }
- 
--static const struct i2c_algorithm i2c_dw_algo = {
-+static int
-+i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
-+{
-+	struct dw_i2c_dev *dev = i2c_get_adapdata(adap);
-+
-+	dev->atomic = false;
-+	return i2c_dw_xfer_core(adap, msgs, num);
-+}
-+
-+static int
-+i2c_dw_xfer_atomic(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
-+{
-+	struct dw_i2c_dev *dev = i2c_get_adapdata(adap);
-+
-+	dev->atomic = true;
-+	return i2c_dw_xfer_core(adap, msgs, num);
-+}
-+
-+static struct i2c_algorithm i2c_dw_algo = {
- 	.xfer = i2c_dw_xfer,
- 	.functionality = i2c_dw_func,
- };
-@@ -1048,6 +1104,8 @@ int i2c_dw_probe_master(struct dw_i2c_dev *dev)
- 			  "Synopsys DesignWare I2C adapter");
- 	adap->retries = 3;
- 	adap->algo = &i2c_dw_algo;
-+	if (!dev->acquire_lock)
-+		i2c_dw_algo.xfer_atomic = i2c_dw_xfer_atomic,
- 	adap->quirks = &i2c_dw_quirks;
- 	adap->dev.parent = dev->dev;
- 	i2c_set_adapdata(adap, dev);
--- 
-2.50.1
+But IIUC, that's a limitation of the TDX-Module design, i.e. there's no way to
+hand it a pool of PAMT pages to manage.  And I suppose if a use case is churning
+S-EPT, then it's probably going to be sad no matter what.  So, as long as the KVM
+side of things isn't completely awful, I can live with on-demand PAMT management.
 
+As for the global lock, I don't really care what we go with for initial support,
+just so long as there's clear line of sight to an elegant solution _if_ we need
+shard the lock.
 
