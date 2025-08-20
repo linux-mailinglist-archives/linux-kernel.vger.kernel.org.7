@@ -1,139 +1,123 @@
-Return-Path: <linux-kernel+bounces-777485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3F8B2DA04
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:30:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B758B2DA0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21751C4622A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741F71C462FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCE32E22B0;
-	Wed, 20 Aug 2025 10:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C34A2E2DFE;
+	Wed, 20 Aug 2025 10:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mek/xkFR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XjdDVwN2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1B81D5170;
-	Wed, 20 Aug 2025 10:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F3B2DCC03
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755685819; cv=none; b=itmME0eOZECrHLsTEinIgNfPaqgLd1BibNA2Domxh/k7dTxh93utAClokTbANl3mJKuFOgUV8nf1TvrT+0TxNoMsImXyCf4s7EVeK67XQYA3lcUoNoJDo3e/5/4rzmspdoM6hdO/uZ3CUi1PlcigqDGHwcF7tsU9ttUasyDuhmE=
+	t=1755685854; cv=none; b=Xn1d7ybCnGDtW0bdVMeF47Ixcsm7iW/NnPw8FqDrkUuYjesnXOi5D8+4dbYKINRG5kO4ioNsmA777IYxdN+ol7BvTsYa1rKRVJAABaTDZ0De4vGrS77iRyiltcqjgibu3OY6vk8s/dH8Qcn7Za8NIweGd3W5ALSUnXlEBdQoJMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755685819; c=relaxed/simple;
-	bh=P/oQpoiWxChiJCM1oIYIzsoGt24WyUjDZ+cuYN5z6pQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=BqbrEAQogl/gGm6snemvRR7bUcqoF5KDVyApkSwLgCI53UJj2OsmuO8Zyee0iCjlpq8FOx/1EZCxMu6xhzZorPZPg3XPJ1hyrZj0GLrTZTmhIqdC8DMNxNy7twHHZbWjAWgF6QVk4xDZfnPcN2onbnMbA3HGjIQWpwrBQfgusmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mek/xkFR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F143EC4CEEB;
-	Wed, 20 Aug 2025 10:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755685817;
-	bh=P/oQpoiWxChiJCM1oIYIzsoGt24WyUjDZ+cuYN5z6pQ=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=mek/xkFRir8nUYuV8F1j/oqDG1hgTdyrxPmeVdti2LpLwZlLCLmps8ZfTGdeBJacW
-	 C11ZNiZGRh0uV4rvkOKwRgUwCVhNEr6M+jiqHhJ23E+4JqvpPGo0heqw0kovLgc9Wg
-	 FB81vfneu0FRe+UaDiuywgLJ1sqh7S7db58E1Uv6aXIoTMtFaDLJdTHc9xN+Go7w0o
-	 MRvrGPm/LqbmgzlIO0TVyugmmfEXUXo21xyy7aEb54oGvV5OsQgrC61JF8fN/+KYIb
-	 dsbJ1EUGNHIQFM5vQsbcIOM7TEXlaxMXZeiNT3urYcbmLFELs4CkYjQAY0QKFAeiVK
-	 DtuZeYy1aosKg==
+	s=arc-20240116; t=1755685854; c=relaxed/simple;
+	bh=cqsbuIFj9PniccXai5k9E6X4bWeT/KOS9vofF/O5M7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i2uO0PffKq0X/Phu8Yu6RqteVfFHe+JBsWiXHQNs42P5AzrEabls1JRGkdWnX1hDj6eUvH3NFBSYctZ6E399I/wZQkboMaFwoLQDzvbx6NSmZVFACgXZidIznKi62+BdBTuRSnHk+DUv/efOKQE/8J7yiWu8z+LpC3JCqbAJLBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XjdDVwN2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EEE2840E0163;
+	Wed, 20 Aug 2025 10:30:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Ww3LEJNfKeUk; Wed, 20 Aug 2025 10:30:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755685846; bh=k1hpsehjhy0ShJnJy02/6eNVagci2nZ1Mnfzm8tgclY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XjdDVwN2ICJb/csOYQQgJ7WZr1gg+TH7zj/74lZ2+0YID9ZBKi0wkoA7U2z9xNFgC
+	 ClxrvwKdahf+FyqwHGNyfx2RTl14tFfX54vQyd2X6L7ITJd6epKePI7Stzqlz5iplQ
+	 +uqLoVW7iP2/a3fDP1m1Bp3EF3H4UpGwSL2GH0H2+4gIoH3Zh3P0J5Kxg/T2lhkmNE
+	 cNv7NT1zuhASkIOpW3JVG9ohag6GlWFLj6awKxfKURlBbrbkCHGV5dPiY2Xvelfb3i
+	 gT/OooLfjM99low1GWX8ayP8M6s2mj9ugOIeREKOmGKz/WDnB6sCtXcnB6BjiZiCdH
+	 5kOHHviRwpDvxTbOElep8GhFjwU8CdWRT7f0LX2yeDTVKU8Eqv8HjNkL/wT2a6d+2c
+	 O+hw+IsxF38GRW2G1qaDNC1woWPxOjhbkTUlGT146gHd+MxY66T9udK8edUUcKVIm5
+	 eddliv7sWXRGt02cBYbstZ5TtmOflbdR6pCCng/GcD0mqmtbC0gmriQh6WVfxw+4Mv
+	 8TwoQ5u+gbDEwZIW/bv65SCmwUaovtqHCqcbFsd9bu3c3BecKCJ2z/b6Ha4byaHh0K
+	 Rj7OFZObqTuxPgQAeWDBY7eR2yyT5Iriqx3ss59u7TxNj4Ik7Ak1uBX1lEwjRZZQj6
+	 P9OJEGfwgWXCZuqu7OpTgDVU=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7B51E40E0206;
+	Wed, 20 Aug 2025 10:30:28 +0000 (UTC)
+Date: Wed, 20 Aug 2025 12:30:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Marcos Del Sol Vives <marcos@orca.pet>
+Cc: "Ahmed S. Darwish" <darwi@linutronix.de>, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
+	Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	David Kaplan <david.kaplan@amd.com>, Kees Cook <kees@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Oleg Nesterov <oleg@redhat.com>, "Xin Li (Intel)" <xin@zytor.com>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Subject: Re: [PATCH] x86: add hintable NOPs emulation
+Message-ID: <20250820103027.GHaKWjw_eVAbFEe8se@fat_crate.local>
+References: <20250820013452.495481-1-marcos@orca.pet>
+ <aKWR8e6VUEZEgbkw@lx-t490>
+ <2cd7b099-095d-405c-a7d9-b0f1f72184c2@orca.pet>
+ <20250820094347.GDaKWY02hR3AAoT7la@fat_crate.local>
+ <be242e65-b056-4e12-93e7-9a297aaf231a@orca.pet>
+ <20250820095556.GEaKWbrMh24T7jTfBg@fat_crate.local>
+ <3db7d599-c2a7-4bec-94b1-4872649dde8d@orca.pet>
+ <20250820100812.GFaKWejCFMSAS6QIfS@fat_crate.local>
+ <ddfe73ac-177a-431f-8e6e-807ff0746213@orca.pet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 12:30:14 +0200
-Message-Id: <DC76OGHHB0NH.2150TC0DHRN8A@kernel.org>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: linux-next: manual merge of the drm tree with the
- drm-misc-fixes tree
-Cc: "Dave Airlie" <airlied@redhat.com>, "Simona Vetter"
- <simona.vetter@ffwll.ch>, "Beata Michalska" <beata.michalska@arm.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "DRI" <dri-devel@lists.freedesktop.org>,
- "Intel Graphics" <intel-gfx@lists.freedesktop.org>, "Linux Kernel Mailing
- List" <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
- <linux-next@vger.kernel.org>
-References: <20250820112144.43714c90@canb.auug.org.au>
-In-Reply-To: <20250820112144.43714c90@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ddfe73ac-177a-431f-8e6e-807ff0746213@orca.pet>
 
-On Wed Aug 20, 2025 at 3:21 AM CEST, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the drm tree got a conflict in:
->
->   drivers/gpu/drm/nova/file.rs
->
-> between commit:
->
->   db2e7bcee11c ("drm: nova-drm: fix 32-bit arm build")
->
-> from the drm-misc-fixes tree and commit:
->
->   94febfb5bcfb ("rust: drm: Drop the use of Opaque for ioctl arguments")
->
-> from the drm tree.
->
-> I fixed it up (I think - see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
->
-> --=20
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc drivers/gpu/drm/nova/file.rs
-> index 4fe62cf98a23,7e7d4e2de2fb..000000000000
-> --- a/drivers/gpu/drm/nova/file.rs
-> +++ b/drivers/gpu/drm/nova/file.rs
-> @@@ -39,8 -36,7 +36,8 @@@ impl File=20
->               _ =3D> return Err(EINVAL),
->           };
->  =20
->  -        getparam.value =3D value;
->  +        #[allow(clippy::useless_conversion)]
-> -         getparam.set_value(value.into());
-> ++        getparam.value =3D value.into();
->  =20
->           Ok(0)
->       }
+On Wed, Aug 20, 2025 at 12:21:40PM +0200, Marcos Del Sol Vives wrote:
+> Would a simple:
+> 
+> > pr_warn_once("Your processor does not correctly handle hintable NOPs.\n");
+> > pr_warn_once("The kernel will emulate them, but the performance will be impacted!\n");
+> 
+> work for you, then? With no thread information, as that might make the user
+> think there is only once binary impacted.
 
-I think this resolution doesn't compile, since attributes on expressions ar=
-e
-behind an unstable feature flag.
+I don't mind if you make the warning message as helpful as possible and even
+dump current->comm and whatever else is needed to help the user address the
+issue.
 
-I assume your config does not have CONFIG_DRM_NOVA=3D{y,m}.
+What I mind is flooding dmesg unnecessarily with the same stanzas over and
+over again.
 
-The resolution in [1] is the one I came up with in the drm-tip tree.
+If the user can do something about it, then she should be able to find out
+also which executables need to be recompiled.
 
-I should probably have given you a head-up on this conflict, sorry for that=
-.
+Thx.
 
-[1]
+-- 
+Regards/Gruss,
+    Boris.
 
-diff --cc drivers/gpu/drm/nova/file.rs
-index 4fe62cf98a23,7e7d4e2de2fb..90b9d2d0ec4a
---- a/drivers/gpu/drm/nova/file.rs
-+++ b/drivers/gpu/drm/nova/file.rs
-@@@ -39,8 -36,7 +36,7 @@@ impl File
-              _ =3D> return Err(EINVAL),
-          };
-
--         #[allow(clippy::useless_conversion)]
--         getparam.set_value(value.into());
- -        getparam.value =3D value;
-++        getparam.value =3D Into::<u64>::into(value);
-
-          Ok(0)
-      }
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
