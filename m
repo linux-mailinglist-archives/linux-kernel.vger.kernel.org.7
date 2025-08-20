@@ -1,109 +1,157 @@
-Return-Path: <linux-kernel+bounces-777454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA0EB2D983
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:04:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9949AB2D99A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702E85C5722
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:02:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497A64E31D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A612E03FA;
-	Wed, 20 Aug 2025 10:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1274D2DEA6E;
+	Wed, 20 Aug 2025 10:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B6zW90U6"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7B42DCF63
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="XpX6swS5"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CAE2749C2;
+	Wed, 20 Aug 2025 10:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755684127; cv=none; b=dnKMKIr8fOPaGIkjjZfe2YZInf1NDkE4cvY2+t5MvlSYAvSo8Up7Ga3xWOm8B04FCmwLsIxCAtuo54TP/ba4zXdT7CWxp2Zt4obvnRURMZQVhItFeD6Kj23YOl6aJWWN6u1C0oPUpJh15Edox2bqJk2aXr8eBLxAfpAGGKGOqvg=
+	t=1755684177; cv=none; b=daxdxKHTUL0Id1i4S1ERiRTk1iQfYkCXutOryGHGsVL5qvgmC0qCK2FvQmHsKpOz+5JsXDO1g9oyzW96WCBsCvJ44qQH0oKuyTiNe21jwmgMK9VVIol2FZBs8jQ6sjK3RPH6UFcZay6Nj7GSiJ8Eq1Unq8BJrv7OTrxO8gszcew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755684127; c=relaxed/simple;
-	bh=EghTE8Su2wFNb2wdtd4lL0HzIsRAjeS4B7EszInp8NE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RGRxBKOAwgyMNILxHueUCTWCitDgcI2VmBjfwF+YMXtcxHNAavYj5gQhPsBoPwZMp943jystPF+Xb3WPd146mfw/Gr+cAooLtyQu1Js6xtw6XnpsLEHW1+4DIduNZusgQ8iwhx5sfaW1hCfTd4QtW8cX/6H7es0bVF7KHvoAuL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B6zW90U6; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b0c5366so29522845e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 03:02:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755684124; x=1756288924; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pmKl7AjHxkBuQuyGuqlxx6fNULDA0e2THQiTh0AAAP8=;
-        b=B6zW90U6cnZLa6ehjXWwd+/Qy8TDCC722KOfiLcR/hJ4mNgTIjwbBdeyHnvNtwAyZs
-         UCL2SK0GP98XdSe190f03Ir5akRh4EN3poJoJDpluCYAaaVjZBBMCo3kBv6aTkhpP3l0
-         y1A0YMl8cRG0ft9PN31xE1YYIh0mo+Ddedoqe83v+y8wd3SCa5YwqEWrLz5IV2JfF5CC
-         yn1KWr5ghR5j5frFLBal2TO5Q2a51mLzaz8xS4RcxIVeL8OJ44QcV6sd0aeB1ijZzGj7
-         0nc5DkPlB3r/SvQQOFK3eEtPz2K21IhUaQHL7qn4QPCkjLYdQFVy6fU6nUs/j7ogFgTW
-         ptxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755684124; x=1756288924;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pmKl7AjHxkBuQuyGuqlxx6fNULDA0e2THQiTh0AAAP8=;
-        b=psdorJr40uTCM7VHEDn+GueewedIYqX5ZFtSPDgPg5oIqI8f/y0QC5XQQKY6rpc3b0
-         J6f/fPDucM38hstHLefb4sfnF+BBzewXLEN05+SUdJHdZ2XNmh9l4p9me7u5+xg9BUyU
-         3qUhN/XJEZERMdgAcuD2GM0orkNI73oNTyfh1nresbvQRSiOZ0XIOOU0cvK/CNPpS8NX
-         yfOESfS12gd4Cd/B4A5yGCPq0tbHzsLXSCUW8hyzVW57epoCp/Qq0YW3rh7ryJRPeA7A
-         eTAc5kLmcUIKBZPOLc59gbInkG9HtuGZPKrcMUQGQAjN7UY77vuz05XaydUK2CSleyy9
-         kCkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbxsLc7QqfWyrYCWzAq/3btTnp8y4/TfPUylSUcQRchSDMct4VXQiS1fkb2dTqpm6HCi4mYW9Uej8uqRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb/W4GpuaSbv6WDuqw3349rjxEAj1LJB9uvScQMoSks7EtyS3/
-	NtqXz+6DzhMlZRmvzZtP7nHhHvJKJrZbUvAaaf1qnPETmnZpoqTusERDrh8NObP6lLA/ooNzOTh
-	UemjdllSkze9Yp14bPQ==
-X-Google-Smtp-Source: AGHT+IHeALkRz3Zj+iokcWQaLB6L1xFUH2I9sMR2ETzQnsbNqXkbGU/GtzFELzc07d5ahDJazaxqo/s2yy0QlCw=
-X-Received: from wmbes27.prod.google.com ([2002:a05:600c:811b:b0:456:2003:32a5])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:468c:b0:456:8eb:a36a with SMTP id 5b1f17b1804b1-45b479b77fdmr13646495e9.13.1755684124107;
- Wed, 20 Aug 2025 03:02:04 -0700 (PDT)
-Date: Wed, 20 Aug 2025 10:02:03 +0000
-In-Reply-To: <20250817044724.3528968-3-fujita.tomonori@gmail.com>
+	s=arc-20240116; t=1755684177; c=relaxed/simple;
+	bh=uOLdn98nph0SHH7/Fh81kl0juaKt3zGyYf9fGFwqE5c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=qVTIXTa2wf8vp95Sg/a+JviZRnybCgsjXv1N2gGkC+3wiDuzztRJGbkNlykNA8CP+HHBMhW6/R2pGz9OVf9uvkgHW2St7mCoo3CxvyVHzSfMQAXGx5eoDVMjTb7hTSIuExznyCSlqqLtn5IoeWXkAIi/dmusdoGAOix/F/HfoRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=XpX6swS5 reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=c1GcRaJaSlDd1sKDSBrDckSBfJtDd1CdljMeWqShdhg=; b=X
+	pX6swS5sZzlusLV7PDUu7L5rstDnvUIWlrVA0hKe1xStws2Yz6H2Pr2VIlk6fO7U
+	FX+bnOr5ew+I8Q7J8T1vpkpZ47zhwjOPZ575i160xa/BEzFSWuj6vkvHQBfsAlok
+	BAFCmTG5p2oVbIHeM9QLlBu1a88sJI9xFrTlHk0Eq8=
+Received: from 00107082$163.com ( [111.35.190.191] ) by
+ ajax-webmail-wmsvr-40-102 (Coremail) ; Wed, 20 Aug 2025 18:02:05 +0800
+ (CST)
+Date: Wed, 20 Aug 2025 18:02:05 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Bart Van Assche" <bvanassche@acm.org>, phil@philpotter.co.uk
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Subject: Re: [BUG] general protection fault when connecting an old mp3/usb
+ device
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <2899b7cb-106b-48dc-890f-9cc80f1d1f8b@acm.org>
+References: <20250818095008.6473-1-00107082@163.com>
+ <2899b7cb-106b-48dc-890f-9cc80f1d1f8b@acm.org>
+X-NTES-SC: AL_Qu2eB/qTu0kp4yGeZ+kZnEYQheY4XMKyuPkg1YJXOp80tCTy8AwCWm9ABnT24s6gLBGJoAi8VBdk1NRoba9TVY4SPsGuJt3AeFckwlKPGDVo
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250817044724.3528968-1-fujita.tomonori@gmail.com> <20250817044724.3528968-3-fujita.tomonori@gmail.com>
-Message-ID: <aKWdG6ad5e_B_flD@google.com>
-Subject: Re: [PATCH v2 2/2] rust: Add read_poll_timeout functions
-From: Alice Ryhl <aliceryhl@google.com>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org, 
-	anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
-	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
-	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
-	tmgross@umich.edu, acourbot@nvidia.com, daniel.almeida@collabora.com, 
-	Fiona Behrens <me@kloenk.dev>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Message-ID: <7c8215f8.87f8.198c6edb9f0.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZigvCgB3dJ8enaVofTQeAA--.2999W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hyvqmilkNj6IQAEsR
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Sun, Aug 17, 2025 at 01:47:23PM +0900, FUJITA Tomonori wrote:
-> Add read_poll_timeout function which poll periodically until a
-> condition is met or a timeout is reached.
-> 
-> The C's read_poll_timeout (include/linux/iopoll.h) is a complicated
-> macro and a simple wrapper for Rust doesn't work. So this implements
-> the same functionality in Rust.
-> 
-> The C version uses usleep_range() while the Rust version uses
-> fsleep(), which uses the best sleep method so it works with spans that
-> usleep_range() doesn't work nicely with.
-> 
-> The sleep_before_read argument isn't supported since there is no user
-> for now. It's rarely used in the C version.
-> 
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Reviewed-by: Fiona Behrens <me@kloenk.dev>
-> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Cj5QaGlsbGlwLCBpcyB0aGlzIGJlaGF2aW9yIHBlcmhhcHMgaW50cm9kdWNlZCBieSBjb21taXQg
+NWVjOWQyNmI3OGM0Cj4oImNkcm9tOiBDYWxsIGNkcm9tX21yd19leGl0IGZyb20gY2Ryb21fcmVs
+ZWFzZSBmdW5jdGlvbiIpPyBQbGVhc2UgZG8KCkkgbWFuYWdlIHRvIHJlcHJvZHVjZSB0aGlzLCBi
+dXQgSXQgdHVybnMgb3V0IHRoaXMgaXMgbm90IGFib3V0IG15IG9sZCBtcDMgZGV2aWNlLCBidXQg
+YWJvdXQgbXkgcGhvbmU6Ckp1c3QgY29ubmVjdC11bW91bnQtZGlzY25uZWN0LCBhbmQgcmVwZWF0
+LCBhZnRlciBzZXZlcmFsIHJvdW5kcywgYW4gZXJyb3IgbG9nIHdvdWxkIHNob3cgdXAuCihJIHNo
+b3VsZCBwYXkgYXR0ZW50aW9uIHRvIHRoZSBVU0IgUHJvZHVjdCAgbmFtZSBpbiBsb2cuLi4uLi4K
+SXQgaXMganVzdCB0aGF0IEkgY2hlY2sgdGhlIGxvZyBvbmx5IHdoZW4gSSBoYXZlIHRyb3VibGUg
+IGNvbm5lY3RpbmcgbXkgbXAzIGRldmljZSwgYW5kIGFzc3VtaW5nIHRoZSBsb2cgaXMgYWJvdXQg
+bXkgbXAzIGRldmljZS4pCgpCdXQgSSBjYW5ub3QgcmVwcm9kdWNlIHRoZSBhZGRyZXNzIHBhdHRl
+cm4gMHgyZTJlMmYyZTJlMmYyZTJlLCB0aGlzIHRpbWUgYWxsIEkgZ290IGlzIE5VTEw6CltUdWUg
+QXVnIDI2IDAwOjE1OjAwIDIwMjVdIHVzYiAxLTU6IFVTQiBkaXNjb25uZWN0LCBkZXZpY2UgbnVt
+YmVyIDk0CltUdWUgQXVnIDI2IDAwOjE1OjAxIDIwMjVdIHVzYiAxLTU6IG5ldyBoaWdoLXNwZWVk
+IFVTQiBkZXZpY2UgbnVtYmVyIDk1IHVzaW5nIHhoY2lfaGNkCltUdWUgQXVnIDI2IDAwOjE1OjA0
+IDIwMjVdIHVzYiAxLTU6IG5ldyBoaWdoLXNwZWVkIFVTQiBkZXZpY2UgbnVtYmVyIDk2IHVzaW5n
+IHhoY2lfaGNkCltUdWUgQXVnIDI2IDAwOjE1OjA0IDIwMjVdIHVzYiAxLTU6IE5ldyBVU0IgZGV2
+aWNlIGZvdW5kLCBpZFZlbmRvcj0xMmQxLCBpZFByb2R1Y3Q9MTA4MiwgYmNkRGV2aWNlPSAzLjE4
+CltUdWUgQXVnIDI2IDAwOjE1OjA0IDIwMjVdIHVzYiAxLTU6IE5ldyBVU0IgZGV2aWNlIHN0cmlu
+Z3M6IE1mcj0xLCBQcm9kdWN0PTIsIFNlcmlhbE51bWJlcj0zCltUdWUgQXVnIDI2IDAwOjE1OjA0
+IDIwMjVdIHVzYiAxLTU6IFByb2R1Y3Q6IEFUVS1BTDEwCltUdWUgQXVnIDI2IDAwOjE1OjA0IDIw
+MjVdIHVzYiAxLTU6IE1hbnVmYWN0dXJlcjogSFVBV0VJCltUdWUgQXVnIDI2IDAwOjE1OjA0IDIw
+MjVdIHVzYiAxLTU6IFNlcmlhbE51bWJlcjogVFBFOVgxODkxNUMwMjMwOApbVHVlIEF1ZyAyNiAw
+MDoxNTowNCAyMDI1XSB1c2Itc3RvcmFnZSAxLTU6MS4xOiBVU0IgTWFzcyBTdG9yYWdlIGRldmlj
+ZSBkZXRlY3RlZApbVHVlIEF1ZyAyNiAwMDoxNTowNCAyMDI1XSBzY3NpIGhvc3QyOiB1c2Itc3Rv
+cmFnZSAxLTU6MS4xCltUdWUgQXVnIDI2IDAwOjE1OjA1IDIwMjVdIHNjc2kgMjowOjA6MDogQ0Qt
+Uk9NICAgICAgICAgICAgTGludXggICAgRmlsZS1DRCBHYWRnZXQgICAwMzE4IFBROiAwIEFOU0k6
+IDIKW1R1ZSBBdWcgMjYgMDA6MTU6MDUgMjAyNV0gc3IgMjowOjA6MDogUG93ZXItb24gb3IgZGV2
+aWNlIHJlc2V0IG9jY3VycmVkCltUdWUgQXVnIDI2IDAwOjE1OjA1IDIwMjVdIHNyIDI6MDowOjA6
+IFtzcjBdIHNjc2kzLW1tYyBkcml2ZTogMHgvMHggY2FkZHkKW1R1ZSBBdWcgMjYgMDA6MTU6MDUg
+MjAyNV0gc3IgMjowOjA6MDogQXR0YWNoZWQgc2NzaSBDRC1ST00gc3IwCltUdWUgQXVnIDI2IDAw
+OjE1OjA1IDIwMjVdIHNyIDI6MDowOjA6IEF0dGFjaGVkIHNjc2kgZ2VuZXJpYyBzZzAgdHlwZSA1
+CltUdWUgQXVnIDI2IDAwOjE1OjA1IDIwMjVdIC9kZXYvc3IwOiBDYW4ndCBvcGVuIGJsb2NrZGV2
+CltUdWUgQXVnIDI2IDAwOjE1OjA1IDIwMjVdIElTTyA5NjYwIEV4dGVuc2lvbnM6IE1pY3Jvc29m
+dCBKb2xpZXQgTGV2ZWwgMQpbVHVlIEF1ZyAyNiAwMDoxNTowNSAyMDI1XSBJU09GUzogY2hhbmdp
+bmcgdG8gc2Vjb25kYXJ5IHJvb3QKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gdXNiIDEtNTog
+VVNCIGRpc2Nvbm5lY3QsIGRldmljZSBudW1iZXIgOTYKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAy
+NV0gQlVHOiBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlLCBhZGRyZXNzOiAwMDAwMDAw
+MDAwMDAwMjYwCltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdICNQRjogc3VwZXJ2aXNvciByZWFk
+IGFjY2VzcyBpbiBrZXJuZWwgbW9kZQpbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSAjUEY6IGVy
+cm9yX2NvZGUoMHgwMDAwKSAtIG5vdC1wcmVzZW50IHBhZ2UKW1R1ZSBBdWcgMjYgMDA6MTU6MDYg
+MjAyNV0gUEdEIDAgUDREIDAgCltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdIE9vcHM6IE9vcHM6
+IDAwMDAgWyM0XSBTTVAgTk9QVEkKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gQ1BVOiAwIFVJ
+RDogMCBQSUQ6IDg4NjI5NSBDb21tOiB1bW91bnQgVGFpbnRlZDogRyAgICAgIEQgICAgICAgICAg
+ICAgNi4xNi4wLWxpbmFuLTAgIzUwIFBSRUVNUFQodm9sdW50YXJ5KSAKW1R1ZSBBdWcgMjYgMDA6
+MTU6MDYgMjAyNV0gVGFpbnRlZDogW0RdPURJRQpbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSBI
+YXJkd2FyZSBuYW1lOiBBY2VyIFM0MC01My9MaWx5X1RMLCBCSU9TIFYxLjAxIDA4LzI4LzIwMjAK
+W1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gUklQOiAwMDEwOnNjc2lfYmxvY2tfd2hlbl9wcm9j
+ZXNzaW5nX2Vycm9ycysweDI3LzB4ZjAgW3Njc2lfbW9kXQpbVHVlIEF1ZyAyNiAwMDoxNTowNiAy
+MDI1XSBDb2RlOiA5MCA5MCA5MCBmMyAwZiAxZSBmYSAwZiAxZiA0NCAwMCAwMCA1NSA1MyA0OCA4
+MyBlYyAzMCA2NSA0OCA4YiAxZCA2MSBiMSAxMyBmMCA0OCA4OSA1YyAyNCAyOCA0OCA4OSBmYiBl
+OCAyYyA3MyBjZCBlZSA0OCA4YiAxMyA8OGI+IDgyIDYwIDAyIDAwIDAwIDgzIGU4IDA1IDgzIGY4
+IDAyIDc2IDA5IGY2IDgyIDIwIDAyIDAwIDAwIDEwIDc0CltUdWUgQXVnIDI2IDAwOjE1OjA2IDIw
+MjVdIFJTUDogMDAxODpmZmZmYWZmMzA5ZDQ3YzcwIEVGTEFHUzogMDAwMTAyNDYKW1R1ZSBBdWcg
+MjYgMDA6MTU6MDYgMjAyNV0gUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogZmZmZjkyMDYwMTYx
+MzAwMCBSQ1g6IDAwMDAwMDAwMDAwMDAwMDAKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gUkRY
+OiAwMDAwMDAwMDAwMDAwMDAwIFJTSTogZmZmZmFmZjMwOWQ0N2Q0MCBSREk6IGZmZmY5MjA2MDE2
+MTMwMDAKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gUkJQOiBmZmZmOTIwNjAxNjEzMDAwIFIw
+ODogZmZmZmFmZjMwOWQ0N2RiNCBSMDk6IDAwMDAwMDAwMDAwMDAwMDQKW1R1ZSBBdWcgMjYgMDA6
+MTU6MDYgMjAyNV0gUjEwOiBmZmZmYWZmMzA5ZDQ3ZGI0IFIxMTogZmZmZmZmZmZiMDZkZmY4MCBS
+MTI6IGZmZmZhZmYzMDlkNDdjYzAKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gUjEzOiBmZmZm
+OTIwNTU1NzdkNDAwIFIxNDogMDAwMDAwMDAwMDAwMDAwMCBSMTU6IGZmZmZhZmYzMDlkNDdkNDAK
+W1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gRlM6ICAwMDAwN2Y1ZmIxZDJlODQwKDAwMDApIEdT
+OmZmZmY5MjA5MmZiNjAwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMApbVHVlIEF1ZyAy
+NiAwMDoxNTowNiAyMDI1XSBDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAw
+MDgwMDUwMDMzCltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdIENSMjogMDAwMDAwMDAwMDAwMDI2
+MCBDUjM6IDAwMDAwMDAxNWViN2MwMDQgQ1I0OiAwMDAwMDAwMDAwZjcyZWYwCltUdWUgQXVnIDI2
+IDAwOjE1OjA2IDIwMjVdIFBLUlU6IDU1NTU1NTU0CltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVd
+IENhbGwgVHJhY2U6CltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdICA8VEFTSz4KW1R1ZSBBdWcg
+MjYgMDA6MTU6MDYgMjAyNV0gIHNyX2RvX2lvY3RsKzB4NWIvMHgxYzAgW3NyX21vZF0KW1R1ZSBB
+dWcgMjYgMDA6MTU6MDYgMjAyNV0gIHNyX3BhY2tldCsweDJjLzB4NTAgW3NyX21vZF0KW1R1ZSBB
+dWcgMjYgMDA6MTU6MDYgMjAyNV0gIGNkcm9tX2dldF9kaXNjX2luZm8rMHg2MC8weGUwIFtjZHJv
+bV0KW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAyNV0gIGNkcm9tX21yd19leGl0KzB4MjkvMHhiMCBb
+Y2Ryb21dCltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdICA/IHhhX2Rlc3Ryb3krMHhhYS8weDEy
+MApbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSAgdW5yZWdpc3Rlcl9jZHJvbSsweDc2LzB4YzAg
+W2Nkcm9tXQpbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSAgc3JfZnJlZV9kaXNrKzB4NDQvMHg1
+MCBbc3JfbW9kXQpbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSAgZGlza19yZWxlYXNlKzB4YjAv
+MHhlMApbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1XSAgZGV2aWNlX3JlbGVhc2UrMHgzNy8weDkw
+CltUdWUgQXVnIDI2IDAwOjE1OjA2IDIwMjVdICBrb2JqZWN0X3B1dCsweDhlLzB4MWQwCltUdWUg
+QXVnIDI2IDAwOjE1OjA2IDIwMjVdICBibGtkZXZfcmVsZWFzZSsweDExLzB4MjAKW1R1ZSBBdWcg
+MjYgMDA6MTU6MDYgMjAyNV0gIF9fZnB1dCsweGUzLzB4MmEwCltUdWUgQXVnIDI2IDAwOjE1OjA2
+IDIwMjVdICB0YXNrX3dvcmtfcnVuKzB4NTkvMHg5MApbVHVlIEF1ZyAyNiAwMDoxNTowNiAyMDI1
+XSAgZXhpdF90b191c2VyX21vZGVfbG9vcCsweGQ2LzB4ZTAKW1R1ZSBBdWcgMjYgMDA6MTU6MDYg
+MjAyNV0gIGRvX3N5c2NhbGxfNjQrMHgxYzEvMHgxZTAKW1R1ZSBBdWcgMjYgMDA6MTU6MDYgMjAy
+NV0gIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDc2LzB4N2UKW1R1ZSBBdWcgMjYg
+MDA6MTU6MDYgMjAyNV0gUklQOiAwMDMzOjB4N2Y1ZmIxZjVhYjM3CgoKQW5kIGFmdGVyIEkgdXBn
+cmFkZSB0byA2LjE3LXJjMSwgaXQgY291bGQgbm90IGJlIHJlcHJvZHVjZWQgKCBJIG1hbmFnZWQg
+dG8gdGVzdCAxMCsgcm91bmRzIG9mIGNvbm5lY3QvdW1vdW50L2Rpc2Nvbm5lY3QgY3ljbGUpClNv
+IEkgdGhpbmsgY29tbWl0IDVlYzlkMjZiNzhjNCBkb2VzIGZpeCBteSBwcm9ibGVtLgoKVGhhbmtz
+CkRhdmlkCgo+QmFydC4K
 
