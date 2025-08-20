@@ -1,220 +1,166 @@
-Return-Path: <linux-kernel+bounces-778103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133DCB2E167
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:44:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298E1B2E162
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6651BC5C21
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:41:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823BE1BC3208
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F43B2D6E61;
-	Wed, 20 Aug 2025 15:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A249F2C21E8;
+	Wed, 20 Aug 2025 15:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VJrhIgTx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="CELdqXIV"
+Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424182D24BC
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E392DECBB;
+	Wed, 20 Aug 2025 15:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755704471; cv=none; b=V94Lmd7h4nrhahX76ekVQuh67FYdikE8QD8OC5AVUvKiINfH/FzIdvycfZnO1Zfu0AjxHpi3i5HC7zdnmm4wPvFnst/qyZBXuTr2FCk/Tx59APjdv48n1GTxxUL4/QVT4tQbSTR8NDQZOZcq0csOc42CchrJTqAk3FTy2GSzpig=
+	t=1755704457; cv=none; b=JPxBC9JwC3/H1rlTa852GMXicLP1k7+QEOWBAU3u+qNF5tkPUssJP9DjvfY+DxLQW9mPT4k8o3Me4afV1rsDXZmdpb8NGrv9UJIA1drzz+vHQAl6cOE5VgeVHse6s8guoqQBu9j/rv+m/pn1lyLK2FfhoboFF8N+2+aGbMXvXRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755704471; c=relaxed/simple;
-	bh=1cTJ5YS37dXXDca+7HZLxXlAjhXuuTwagT2XyBDXiAU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l/QT7DGoJdKKvN+h9mv6mfNMpE0rurJfPti0bZgaU+ktnUJXbBZF8c5eBuMlyyxj3if3Cojx3JwZRZIOPLYEbeX9BpT/MO5ODHAWt6dkJ98tsxjTnUJGNwDiqmYa+hPRHGQEyYlWLmybPzeLBOg4ugjjkeoznc7tVkWR1nCjaHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VJrhIgTx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755704469;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UYSofwZAlBuy0oyzsu8d75QQkZFfweO09q+8sQkHcvo=;
-	b=VJrhIgTxaKnHGn6SuA3yMtKCSbV3OFEFjot6akqx56EB5kZdI3V+PSe/o2gPejjtQssWrx
-	JV8OXESnhrXsAktm4G2Bk94sIXl6sTXEHpLeKIcXYyaBUmk1qB1dGvs2F/dLEsYWjaHAXJ
-	6lpAcCVXamLUWpmwAKB6+GO16gjR2Jw=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-612-m2JOoliIPaWWNvXKvFSLfw-1; Wed, 20 Aug 2025 11:41:08 -0400
-X-MC-Unique: m2JOoliIPaWWNvXKvFSLfw-1
-X-Mimecast-MFC-AGG-ID: m2JOoliIPaWWNvXKvFSLfw_1755704467
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-71e7d652a65so50176817b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:41:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755704467; x=1756309267;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UYSofwZAlBuy0oyzsu8d75QQkZFfweO09q+8sQkHcvo=;
-        b=iLtJL+jSLphuABXCK8eOWxexV4MYigSriB655abNdfXSmKt2AdQ6Fwfo2X5wi3tYuf
-         hJZu+DYDO+fd/MS4mm6f1+mdPoGiVAdApDGxt6JKY7qWKrDn0e/n7D1m8GUzrsV1ugI5
-         Xr1OaWMquDNGp0RbwEYYKgcpH+7YPVXUS91FSOjAnzg2hXMGmWWxHSJzSa6hU1/EmWwt
-         bVk0GUvoKmuGrckZefxtg8JqMUsO5aqDS7e/iXAtGbqJbWEGsor5/0Iqz31IzLjzVlQF
-         YlluybRKza/cq62l85Rn8iLHf2moLhcg4O0bg3qXjFG+p7v5a2CpuXfZ79mu3lsCmlZu
-         qu+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWbSe4NyMHKGVixwJBHLhWF72q3npeJ8XvbrfFzxv//5Sbw28sxKMAtTliA9Jv+SiaR4TKvdFxNT1E0Kaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4TMlm0g/U2UUu76SmIYxkDzYXx1ptsFOE0I8mD045hhmPR62d
-	1sC2xaHNISAyaLisb1fmm/GCWBIuFs7O7vGho2MO+CvtRSTOnpo7/KNv3xqvFBuLVUyUg0tYcOR
-	KI4CnBM5TaxtSWcFiu7PWu6Bu+WY2Kv5jgBIl/I/o+5q2Urmg7xL1tI224su8rVVIBzfznem0lH
-	ON/SKEDAaHptuqwwfSUDkdiDZg6amFM5hd7AV6B4ml
-X-Gm-Gg: ASbGncvHgR0//29j6cM4pT86Lh2grfRn7uKPypx4K9HfJU9loCJAfED4aRjKdEEeHgH
-	uNCeDhkdXg7s/1vEL+SB2/xCD9FIbfqdArNk7rNgsPKDpDubi7lc1RZqxdOP+KOxDbLPSvq2xM+
-	dlzvxBtB3UdlRcTr92uXT4VaY=
-X-Received: by 2002:a05:6902:4a84:b0:e94:25a2:f8f5 with SMTP id 3f1490d57ef6-e94f6539a69mr3281675276.3.1755704467453;
-        Wed, 20 Aug 2025 08:41:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOTBrpkhP4lXt+J3rPPABO3gkD8lKSX5VfjJLDUErExXxnxu+nUSNzUqoP1cAU7FTl4VV3oeWsS3Y6s5hhVS4=
-X-Received: by 2002:a05:6902:4a84:b0:e94:25a2:f8f5 with SMTP id
- 3f1490d57ef6-e94f6539a69mr3281610276.3.1755704466967; Wed, 20 Aug 2025
- 08:41:06 -0700 (PDT)
+	s=arc-20240116; t=1755704457; c=relaxed/simple;
+	bh=yPQP9xdUUp1NC+xPWPtOPfUaY+fSaRi9v5dh68y2WMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qiTyhTJbwuSv5Tp+1cpOnvXf4SHLPEeyBMYJrHetH8okgYuIChWlwDZJBdjwIIiNvufCUSKcdW0p3td4q6/Jx7SzGYdSIMJ5fYrvJd71d8kq9cC9W/X/2JbH7qbRA7yO3KIPyd9JUAlAqceJBQRavbc/AjdAKi7gYUmU5yqZISA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=CELdqXIV; arc=none smtp.client-ip=158.69.130.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1755704447;
+	bh=yPQP9xdUUp1NC+xPWPtOPfUaY+fSaRi9v5dh68y2WMc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CELdqXIVZMAhgjQeKZUVklBBaisPw93K7CNRgICRezMzZ51dofeJ207eSZ2d/cTuh
+	 9F3a59/ol4xN8pfDNH6rVAdXqD0m3dwXcmREgRy5Z6J6YUznhmbB702nUnnWubqEZP
+	 XvStRYFrOIQDVdF3H+8xdL6FsP06pLUkVPn4w/VrR/ebzPNujUBWw6VnNlqSh+0SXe
+	 XJPHOnwlUHMKaYgr+m42kyHw6VWBT7/xA3+hEeVjNp5/5DfKY97NpkeG5FMHDQyHR7
+	 XbAmY9H224kxvJG4TJu4kMyhekHm1T1HKzx9yabCDfjgSPq23VRLRsBJBbx3+ziPHs
+	 IsRGp/fa9O1Qg==
+Received: from [172.16.0.63] (192-222-132-26.qc.cable.ebox.net [192.222.132.26])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4c6Vz34zxlz2G0;
+	Wed, 20 Aug 2025 11:40:47 -0400 (EDT)
+Message-ID: <92cf18ee-e1ee-43ed-91e2-35e35cf97af8@efficios.com>
+Date: Wed, 20 Aug 2025 11:40:47 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819134205.622806-1-npache@redhat.com> <20250819134205.622806-4-npache@redhat.com>
- <cd4dd743-679f-4c55-9635-6d32e6fa5ff7@lucifer.local>
-In-Reply-To: <cd4dd743-679f-4c55-9635-6d32e6fa5ff7@lucifer.local>
-From: Nico Pache <npache@redhat.com>
-Date: Wed, 20 Aug 2025 09:40:40 -0600
-X-Gm-Features: Ac12FXzD1K71b8kZ8iPzUj6lIyXHh5PjcoNqYYPU597Q2ZwJYp0jVWP2zrGYIjI
-Message-ID: <CAA1CXcDORXqm4JoHn4ZSEhT3ajsuY2MAPwefMXk3+YMXcpvqkw@mail.gmail.com>
-Subject: Re: [PATCH v10 03/13] khugepaged: generalize hugepage_vma_revalidate
- for mTHP support
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
-	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com, 
-	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
-	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
-	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
-	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
-	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
-	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
-	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
-	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Linux)
+Subject: Re: [PATCH] rseq/selftests: Use weak symbol reference, not
+ definition, to link with glibc
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Sean Christopherson <seanjc@google.com>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Kienan Stewart <kstewart@efficios.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Florian Weimer <fweimer@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
+References: <20250819222945.3052711-1-seanjc@google.com>
+ <62f49015-e1af-43ed-8499-507a49032662@efficios.com>
+From: Michael Jeanson <mjeanson@efficios.com>
+Content-Language: fr
+Autocrypt: addr=mjeanson@efficios.com; keydata=
+ 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 IZHa
+In-Reply-To: <62f49015-e1af-43ed-8499-507a49032662@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 20, 2025 at 7:25=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Tue, Aug 19, 2025 at 07:41:55AM -0600, Nico Pache wrote:
-> > For khugepaged to support different mTHP orders, we must generalize thi=
-s
-> > to check if the PMD is not shared by another VMA and the order is enabl=
-ed.
-> >
-> > To ensure madvise_collapse can support working on mTHP orders without t=
-he
-> > PMD order enabled, we need to convert hugepage_vma_revalidate to take a
-> > bitmap of orders.
-> >
-> > No functional change in this patch.
-> >
-> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > Acked-by: David Hildenbrand <david@redhat.com>
-> > Co-developed-by: Dev Jain <dev.jain@arm.com>
-> > Signed-off-by: Dev Jain <dev.jain@arm.com>
-> > Signed-off-by: Nico Pache <npache@redhat.com>
->
-> LGTM (modulo nit/query below) so:
->
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Thanks :)
->
-> > ---
-> >  mm/khugepaged.c | 13 ++++++++-----
-> >  1 file changed, 8 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > index b7b98aebb670..2d192ec961d2 100644
-> > --- a/mm/khugepaged.c
-> > +++ b/mm/khugepaged.c
-> > @@ -917,7 +917,7 @@ static int collapse_find_target_node(struct collaps=
-e_control *cc)
-> >  static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long=
- address,
-> >                                  bool expect_anon,
-> >                                  struct vm_area_struct **vmap,
-> > -                                struct collapse_control *cc)
-> > +                                struct collapse_control *cc, unsigned =
-long orders)
-> >  {
-> >       struct vm_area_struct *vma;
-> >       enum tva_type type =3D cc->is_khugepaged ? TVA_KHUGEPAGED :
-> > @@ -930,9 +930,10 @@ static int hugepage_vma_revalidate(struct mm_struc=
-t *mm, unsigned long address,
-> >       if (!vma)
-> >               return SCAN_VMA_NULL;
-> >
-> > +     /* Always check the PMD order to insure its not shared by another=
- VMA */
->
-> NIT: ensure not insure.
-ack, ill fix that!
->
-> >       if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
-> >               return SCAN_ADDRESS_RANGE;
-> > -     if (!thp_vma_allowable_order(vma, vma->vm_flags, type, PMD_ORDER)=
-)
-> > +     if (!thp_vma_allowable_orders(vma, vma->vm_flags, type, orders))
-> >               return SCAN_VMA_CHECK;
-> >       /*
-> >        * Anon VMA expected, the address may be unmapped then
-> > @@ -1134,7 +1135,8 @@ static int collapse_huge_page(struct mm_struct *m=
-m, unsigned long address,
-> >               goto out_nolock;
-> >
-> >       mmap_read_lock(mm);
-> > -     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc);
-> > +     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc,
-> > +                                      BIT(HPAGE_PMD_ORDER));
->
-> Shouldn't this be PMD order? Seems equivalent.
-Yeah i'm actually not sure why we have both... they seem to be the
-same thing, but perhaps there is some reason for having two...
->
-> >       if (result !=3D SCAN_SUCCEED) {
-> >               mmap_read_unlock(mm);
-> >               goto out_nolock;
-> > @@ -1168,7 +1170,8 @@ static int collapse_huge_page(struct mm_struct *m=
-m, unsigned long address,
-> >        * mmap_lock.
-> >        */
-> >       mmap_write_lock(mm);
-> > -     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc);
-> > +     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc,
-> > +                                      BIT(HPAGE_PMD_ORDER));
-> >       if (result !=3D SCAN_SUCCEED)
-> >               goto out_up_write;
-> >       /* check if the pmd is still valid */
-> > @@ -2807,7 +2810,7 @@ int madvise_collapse(struct vm_area_struct *vma, =
-unsigned long start,
-> >                       mmap_read_lock(mm);
-> >                       mmap_locked =3D true;
-> >                       result =3D hugepage_vma_revalidate(mm, addr, fals=
-e, &vma,
-> > -                                                      cc);
-> > +                                                      cc, BIT(HPAGE_PM=
-D_ORDER));
-> >                       if (result  !=3D SCAN_SUCCEED) {
-> >                               last_fail =3D result;
-> >                               goto out_nolock;
-> > --
-> > 2.50.1
-> >
->
+On 2025-08-20 08:55, Mathieu Desnoyers wrote:
+> 
+> Michael, can you try it out ?
+
+Will do.
+
+> 
+> Kienan, we may want to add a configuration forcing "-fno-common" to our
+> CI, this problematic pattern may be hiding other issues elsewhere. I'm
+> thinking of LTTng-UST tracepoint headers and libside headers.
+
+AFAIK, -fno-common has been the default since GCC 10 so it's already 
+well tested in CI, there are a few fixes from around 2020 in LTTng 
+related to this.
+
+> 
+> Sean, do you want to contribute the fix to librseq as well ?
+
+Librseq currently doesn't have the weak symbols like the selftests so 
+the fix doesn't really apply.
+
+> 
+> Thanks everyone for looking into this. I'll be back from vacation next
+> week and will resume normal operations. :-)
+> 
+> Mathieu
+> 
+>>     */
+>> -__weak ptrdiff_t __rseq_offset;
+>> -__weak unsigned int __rseq_size;
+>> -__weak unsigned int __rseq_flags;
+>> +extern __weak ptrdiff_t __rseq_offset;
+>> +extern __weak unsigned int __rseq_size;
+>> +extern __weak unsigned int __rseq_flags;
+>>    
+>>    static const ptrdiff_t *libc_rseq_offset_p = &__rseq_offset;
+>>    static const unsigned int *libc_rseq_size_p = &__rseq_size;
+>> @@ -209,7 +209,7 @@ void rseq_init(void)
+>>    	 * libc not having registered a restartable sequence.  Try to find the
+>>    	 * symbols if that's the case.
+>>    	 */
+>> -	if (!*libc_rseq_size_p) {
+>> +	if (!libc_rseq_size_p || !*libc_rseq_size_p) {
+>>    		libc_rseq_offset_p = dlsym(RTLD_NEXT, "__rseq_offset");
+>>    		libc_rseq_size_p = dlsym(RTLD_NEXT, "__rseq_size");
+>>    		libc_rseq_flags_p = dlsym(RTLD_NEXT, "__rseq_flags");
+>>
+>> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> 
+> 
 
 
