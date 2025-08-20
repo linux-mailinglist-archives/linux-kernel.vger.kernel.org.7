@@ -1,114 +1,120 @@
-Return-Path: <linux-kernel+bounces-777348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4937CB2D867
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:36:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74961B2D846
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378561C476B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8951BA00071
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3552DAFBA;
-	Wed, 20 Aug 2025 09:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvT7Hya3"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE9B2DAFA5;
+	Wed, 20 Aug 2025 09:26:46 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FF31B4233;
-	Wed, 20 Aug 2025 09:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF31220322;
+	Wed, 20 Aug 2025 09:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681941; cv=none; b=kSI4UWbabvsaevLyhCXtrQ/p1omN3lbGvHK+u4xJMZ9vr7LRNljO0ejiKUfWOXiTwyr90Qa5UPwn02W7nMRPJ/iumAwC9s2LtNC6wHp1asVI+IPKZ0wxLARSDVWBUEFN20LmUdWM9xNvvebVWd8RJ7CWFMERMzSpPcF2ABH3tpA=
+	t=1755682005; cv=none; b=Y3y8ptUcdMj1rlrK7nAJ0SANrpfiCukWq+LOdE58NSFCOdnCIxgikNP9m8EhI/tLvUaVEhVUPRrtMI2xajHYlJna33pEKcofTvGNH9uhhnTGc2hF+L4YzBH6KlFyUUc68SG7vwGXnr4fDTa1wWasIRLMsy7kiT2usUmP2r+qvP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681941; c=relaxed/simple;
-	bh=je5AHg/youKOa+xhCXnHlhnCi4E0rhPm8H3bXUt+7zk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WpXP8zbL5tc2QVTTSavkpCRTnC2718HU6yrlemzvOMIm7mA+NW2xiJnxTE7pLREg14PAUB2in/tgFYiNn3aX99Rs0ULOs49PnmcVGjibykgWZrUIJpEHVqvJ5K9eWa54ee9ePI48dCvPNxOUDfRILmtqrKMtxyxBMhsFzeIuCiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvT7Hya3; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32372c05c5dso2694707a91.0;
-        Wed, 20 Aug 2025 02:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755681938; x=1756286738; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=moqMZqhapfuLQfkSPWKxhFFyVYs5GkMX6FHp/4+cuAI=;
-        b=CvT7Hya3j68rWwf3Pplp22TEXEw5oAZE9wWfGywrYxAGb6A+JSiKoguZrVZ0rlQrG0
-         L4bC+VAaC+k6EJ2XGD80snxLdYUqi9EH4fH8vEI1U13cGuOfDnPLzpm2vbDE2TRHX2dl
-         bb2MyDpJnUUDSjUX9zdusMcoVK6+WnlZ5b5sDap1RczzhAZ5aluqK2AwT97K4vrpm3U4
-         N6ejKA35MJIdg77401a0gECB622YPfbOQGhAU//L+V9g8Vos3vGArQhI9NITFA2wskyq
-         gQqyz/JY/UsJmHIaci/C1TRKDSPP/0j2A4XkKDlth8ptC+qKCR2lmtez+TJBkUz2yCgw
-         mSFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755681938; x=1756286738;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=moqMZqhapfuLQfkSPWKxhFFyVYs5GkMX6FHp/4+cuAI=;
-        b=noH0yAYOWZJcQSLJuderCA/43ddvfT2Sk3jESEkwb9zzmnJ8uDIQyaZ7/jzWA1auPx
-         qSAQREPJM/tVntPEayDxcoZ3mUMp9UncZJylWk1JAvRVf4LT7suF3IDnIH2SBrnRxBdt
-         Anud/+VlsG8CZKYF7YmVmZ8HOojiWeQo4mRhiYdOMD4KqydRoekofLn5qNWZzAFI4stH
-         ejyBk+cuqcG6AS3nQ0UlTnp070zVmMS5l8kZX86In4hqByfFswLpgYLaeDczthoSXJ6u
-         PVXuc/wYsCKaHzfYpEQMmqKt0cbO8uYg/lbMhAu6AvTQu6JAwr0CMYfOPDdV8TifENpM
-         58xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfGQLCiWhSG3JOi04JWgUCrP2aurQdTN0XNpUdxwHS/v2jqepfCF16X26HaSpQrEjxpk5xBGO7ktj8KzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8h6tHL51W8MM3VXxn3h77ALV9DVHGnXl4q98fKW/SfZMnNBQy
-	x9KPibBaTSxZ8mQXzJu3gHzKOHbAu649BeEx5QneYKYDfqa9W0pIQjm5
-X-Gm-Gg: ASbGncs60CstZtJRH3GVi8efeJRLxcO/YjqElw15+d2wqhd9UZqgypFQZEHZIQC1sal
-	q5Fs98Zt0EUUZSX32jlOS+EcuWdI11NjYy5hUxgUJDt//RWHdbfp/zYrG1wMM2/B3LlboDcLH0B
-	TAl0SXHfUzdgidkdk7b4sN5TrKhnhA+HnsvaZhUsLHT1cV2rY83KHSwBxgUTdLhK2UmtZoDsK/i
-	Vrx7aUvAyzMVyQF1SLK9VMTZx8qi96KFzxwTrl1Khen+oEnmILD2rUm2uemi5ZBdD2QVZGMtlIU
-	ICRsQzJruIFXjtGKRDNV3dzB2XWsTRh0NrvRx4Dv/yYxAm4ie+bvXfXxIngS6nD6TSEvA6/QXLL
-	uHEDm/xJTMkQXDoyV2DhAYVYdiKrDgTJAcw==
-X-Google-Smtp-Source: AGHT+IHfofIsMiWoNimXexXoDKvhKGpCqUQtCSn9RIsIQgxCsfV79DHB65P82HThv2L137MX9dVq+w==
-X-Received: by 2002:a17:90b:3c12:b0:323:7e80:8817 with SMTP id 98e67ed59e1d1-324e14239d9mr2854023a91.36.1755681938297;
-        Wed, 20 Aug 2025 02:25:38 -0700 (PDT)
-Received: from OSC.. ([106.222.231.87])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e252f8c8sm1752044a91.11.2025.08.20.02.25.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 02:25:38 -0700 (PDT)
-From: Pavan Bobba <opensource206@gmail.com>
-To: shuah@kernel.org,
-	cvam0000@gmail.com
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pavan Bobba <opensource206@gmail.com>
-Subject: [PATCH] kselftests:grammer correction
-Date: Wed, 20 Aug 2025 14:55:33 +0530
-Message-ID: <20250820092533.10985-1-opensource206@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755682005; c=relaxed/simple;
+	bh=2uU5ZrZ3dDyK5rPaTauckpsLKjSNLSaN7NEv0euQgVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dyYWJm+RKtomDa9EU/qiKBu5RinqiTQJGQeG196/gAkMCKGsY+e5kg4GuOxn5Nff4JML6LzYt/InKHVBnDwAyYQ3A0Ieymvu6yiZ5U+otvAyApE1NmbVaiqh4Bi3AtpFhRd8Ri3X9CI0+tfoiYW15CV/30QVj5Ejko6SpJ10LPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: c4a19ca47da711f0b29709d653e92f7d-20250820
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:fd378d40-514e-4215-996f-0aeebd413e45,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-5
+X-CID-INFO: VERSION:1.1.45,REQID:fd378d40-514e-4215-996f-0aeebd413e45,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:336d5cb5b5924752fdd99b4725ca7b31,BulkI
+	D:250820145207GW1MRF9C,BulkQuantity:3,Recheck:0,SF:17|19|24|44|64|66|78|80
+	|81|82|83|102|841,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,B
+	ulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:
+	0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: c4a19ca47da711f0b29709d653e92f7d-20250820
+X-User: duanchenghao@kylinos.cn
+Received: from localhost [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <duanchenghao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 382454535; Wed, 20 Aug 2025 17:26:36 +0800
+Date: Wed, 20 Aug 2025 17:26:28 +0800
+From: Chenghao Duan <duanchenghao@kylinos.cn>
+To: Pu Lehui <pulehui@huawei.com>
+Cc: ast@kernel.org, bjorn@kernel.org, puranjay@kernel.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+	haoluo@google.com, jolsa@kernel.org, alex@ghiti.fr,
+	bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: bpf: Fix uninitialized symbol 'retval_off'
+Message-ID: <20250820092628.GA1289807@chenghao-pc>
+References: <20250820062520.846720-1-duanchenghao@kylinos.cn>
+ <8b836b6e-103a-41c2-b111-0417d8db4dce@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8b836b6e-103a-41c2-b111-0417d8db4dce@huawei.com>
 
-corrected a minor grammer mistake
+On Wed, Aug 20, 2025 at 02:52:01PM +0800, Pu Lehui wrote:
+> 
+> 
+> On 2025/8/20 14:25, Chenghao Duan wrote:
+> > In __arch_prepare_bpf_trampoline(), retval_off is only meaningful when
+> > save_ret is true, so the current logic is correct. However, in the
+> 
+> lgtm, and same for `ip_off`, pls patch it together.
 
-Signed-off-by: Pavan Bobba <opensource206@gmail.com>
----
- tools/testing/selftests/acct/acct_syscall.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I also checked at the time that ip_off is only initialized and assigned
+when flags & BPF_TRAMP_F_IP_ARG is true. However, I noticed that the use
+of ip_off also requires this condition, so the compiler did not issue a
+warning.
 
-diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
-index 87c044fb9293..ee2894e4f7bc 100644
---- a/tools/testing/selftests/acct/acct_syscall.c
-+++ b/tools/testing/selftests/acct/acct_syscall.c
-@@ -22,7 +22,7 @@ int main(void)
- 	ksft_print_header();
- 	ksft_set_plan(1);
- 
--	// Check if test is run a root
-+	// Check if test is run as root
- 	if (geteuid()) {
- 		ksft_exit_skip("This test needs root to run!\n");
- 		return 1;
--- 
-2.43.0
+Chenghao
 
+> 
+> > original logic, retval_off is only initialized under certain
+> > conditions, which may cause a build warning.
+> > 
+> > So initialize retval_off unconditionally to fix it.
+> > 
+> > Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> > ---
+> >   arch/riscv/net/bpf_jit_comp64.c | 5 ++---
+> >   1 file changed, 2 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
+> > index 10e01ff06312..49bbda8372b0 100644
+> > --- a/arch/riscv/net/bpf_jit_comp64.c
+> > +++ b/arch/riscv/net/bpf_jit_comp64.c
+> > @@ -1079,10 +1079,9 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im,
+> >   	stack_size += 16;
+> >   	save_ret = flags & (BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_RET_FENTRY_RET);
+> > -	if (save_ret) {
+> > +	if (save_ret)
+> >   		stack_size += 16; /* Save both A5 (BPF R0) and A0 */
+> > -		retval_off = stack_size;
+> > -	}
+> > +	retval_off = stack_size;
+> >   	stack_size += nr_arg_slots * 8;
+> >   	args_off = stack_size;
 
