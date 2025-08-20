@@ -1,139 +1,151 @@
-Return-Path: <linux-kernel+bounces-778543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A16EB2E727
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:06:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E28B2E72C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5671894BA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4804918927D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78ABC2D8764;
-	Wed, 20 Aug 2025 21:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30102D9ED8;
+	Wed, 20 Aug 2025 21:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nv9ys9uW"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3oP929V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326AE36CE0E
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3282D6E73;
+	Wed, 20 Aug 2025 21:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755723981; cv=none; b=o4N4moNnqqXVOHbNKj3ld5XxYQqREFVAXr/X7VN2ma/z6jRultbh4x8Ru6omosSRqkT83Lj3UmAL9NVLL4aBKuHE0FDlSQV3pPbY9UovwH3GBSgZK9kfftxzK1YA6k9qMx2N4tK1kGpb0159P+QqyZI2dQMjtk9gaoTOk5PJmP0=
+	t=1755724022; cv=none; b=tzm9/zdJHaMb9bWzwFJmnmFQ0H9UKo5NgDKso7vrFeEtv3aHVAXtW/FjJgRM8cjc4ve9YQm4dzKX4/ANpGBW06QAbCpUtkuIOgmQKy9H82uWfcjOmgoZ0kjr9V7tnjWmmyvNxVjXg0ySvvA5fMN8HXjD19waDX9dF6xyXndXjec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755723981; c=relaxed/simple;
-	bh=t2+IyDUqxUTNWPEKnD5gcR4XWY6akacYiTQ4GvoabX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dNvxEXE8wP0ZonoF0EFVh22eoX3QFSVIpoNDrWDb8IXT99pp4bMP6OyBzFb+qgq2IdKB8RKVtfINsxhNVO46PHuFB2B3XduSaq/1CcTubJ2+5lksrlYmqOkjfZn18K6/jc1pspL72IdURBDrrebA86fjyLuDo56Bua0GWdw3yko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nv9ys9uW; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Aug 2025 14:06:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755723968;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x5nnquroIbMQvlMv47A2Web6GvDOkaVsT4QY8ArCPIE=;
-	b=nv9ys9uWgQm2a+GMpXf6T75wGLjEAhLKwr7XgWO7MIB9CWfN2fodejGugNNSgz1I3dXDqN
-	9TrqWVh/wJbZXqa1yhxEY4vptm/oADUqgvnIhd+rwaEd0Vt/ADPr3axKZYb/M8MmIwK9OK
-	tQ9kU52NGGSTGuis2NiC7H4W5p4151M=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: linux-mm@kvack.org, bpf@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@suse.com>, David Rientjes <rientjes@google.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Song Liu <song@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 00/14] mm: BPF OOM
-Message-ID: <h2bmsuk7iq7i6hphp7vbaxndawwgjz42mhfntlcc2yt4u6but6@7xlre5c56xlq>
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1755724022; c=relaxed/simple;
+	bh=jEpv9dsCIXbIBynicqQ0dP6JZ4BCvS3IdZffu8Qg+1c=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CsChmeb0xLG3NTvq+wsp93KbIQjNyeDub+btos4t6S0cr0nVRIUGVuuKbpIUjvJEV4X81NTtzGWcTdQSZC5/uLW3Ia5FuEPTsQ3NIFcHim4vXeoJUqtsHWlq18f/OMHNUByx8wsMS6gaLthTdSG9CxHzQ0+Aa77oufy0rKn8qqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3oP929V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D48BC4CEE7;
+	Wed, 20 Aug 2025 21:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755724021;
+	bh=jEpv9dsCIXbIBynicqQ0dP6JZ4BCvS3IdZffu8Qg+1c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=G3oP929VN3mOReD4gapeeAz0APdZitM87mRHUoIrjvMqRBGT36c6TO0Q3kssDHFAI
+	 OJQ6I2iZQ16iz7g5jbqvGFUnvGCB6RNF+N4zksRA/la3qiQGoqikYBAuXnmZxkQlnS
+	 056xF1PYZfrDayO79EvbOieHqwirJwJNMvvLRdjhkwRtThNRthQM1qf3pcYoFpmH9K
+	 X1rmyjauvh1/DXMkzV8qGancHdH8Di01ZfckFRu9YhrBYsgEYc0JaDURG+2yTTjL/G
+	 G9LWDRv76Q+x6xkbK5f7FmrxjEplH2dIE0GkpS0DBjKMFauFuVCdmctRXf6do+E3Ee
+	 f4K1/rxpexnqA==
+Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uoq1C-009V23-Nf;
+	Wed, 20 Aug 2025 22:06:51 +0100
+Date: Wed, 20 Aug 2025 22:06:49 +0100
+Message-ID: <87o6s9k8ie.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 2/6] KVM: arm64: Manage GCS access and registers for guests
+In-Reply-To: <20250820-arm64-gcs-v15-2-5e334da18b84@kernel.org>
+References: <20250820-arm64-gcs-v15-0-5e334da18b84@kernel.org>
+	<20250820-arm64-gcs-v15-2-5e334da18b84@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818170136.209169-1-roman.gushchin@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 86.149.246.145
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Aug 18, 2025 at 10:01:22AM -0700, Roman Gushchin wrote:
-> This patchset adds an ability to customize the out of memory
-> handling using bpf.
+On Wed, 20 Aug 2025 15:14:42 +0100,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> It focuses on two parts:
-> 1) OOM handling policy,
-> 2) PSI-based OOM invocation.
-> 
-> The idea to use bpf for customizing the OOM handling is not new, but
-> unlike the previous proposal [1], which augmented the existing task
-> ranking policy, this one tries to be as generic as possible and
-> leverage the full power of the modern bpf.
-> 
-> It provides a generic interface which is called before the existing OOM
-> killer code and allows implementing any policy, e.g. picking a victim
-> task or memory cgroup or potentially even releasing memory in other
-> ways, e.g. deleting tmpfs files (the last one might require some
-> additional but relatively simple changes).
+> GCS introduces a number of system registers for EL1 and EL0, on systems
 
-The releasing memory part is really interesting and useful. I can see
-much more reliable and targetted oom reaping with this approach.
+and EL2.
+
+> with GCS we need to context switch them and expose them to VMMs to allow
+> guests to use GCS.
+> 
+> In order to allow guests to use GCS we also need to configure
+> HCRX_EL2.GCSEn, if this is not set GCS instructions will be noops and
+> CHKFEAT will report GCS as disabled.  Also enable fine grained traps for
+> access to the GCS registers by guests which do not have the feature
+> enabled.
+
+I don't see any FGT configuration in this patch. As far as I can tell,
+the FGU generation already takes care of that particular case.
 
 > 
-> The past attempt to implement memory-cgroup aware policy [2] showed
-> that there are multiple opinions on what the best policy is.  As it's
-> highly workload-dependent and specific to a concrete way of organizing
-> workloads, the structure of the cgroup tree etc,
+> In order to allow userspace to control availability of the feature to
+> guests we enable writability for only ID_AA64PFR1_EL1.GCS, this is a
+> deliberately conservative choice to avoid errors due to oversights.
+> Further fields should be made writable in future.
 
-and user space policies like Google has very clear priorities among
-concurrently running workloads while many other users do not.
+I'm not sure what you mean by that. Making the feature field writable
+is only allowable if we have some level of support (and otherwise we
+should prevent both the feature being exposed, and the field being
+writable).
 
-> a customizable
-> bpf-based implementation is preferable over a in-kernel implementation
-> with a dozen on sysctls.
+So future fields being writable will only happen when the features are
+fully supported, and only then.
 
-+1
+Please clarify, or drop this altogether.
 
-> 
-> The second part is related to the fundamental question on when to
-> declare the OOM event. It's a trade-off between the risk of
-> unnecessary OOM kills and associated work losses and the risk of
-> infinite trashing and effective soft lockups.  In the last few years
-> several PSI-based userspace solutions were developed (e.g. OOMd [3] or
-> systemd-OOMd [4]
+>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/include/asm/kvm_emulate.h       |  3 +++
+>  arch/arm64/include/asm/kvm_host.h          | 14 ++++++++++++++
+>  arch/arm64/include/asm/vncr_mapping.h      |  2 ++
+>  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 31 ++++++++++++++++++++++++++++++
+>  arch/arm64/kvm/hyp/vhe/sysreg-sr.c         | 10 ++++++++++
+>  arch/arm64/kvm/sys_regs.c                  | 31 +++++++++++++++++++++++++++++-
+>  6 files changed, 90 insertions(+), 1 deletion(-)
+>
 
-and Android's LMKD (https://source.android.com/docs/core/perf/lmkd) uses
-PSI too.
+[...]
 
-> ). The common idea was to use userspace daemons to
-> implement custom OOM logic as well as rely on PSI monitoring to avoid
-> stalls. In this scenario the userspace daemon was supposed to handle
-> the majority of OOMs, while the in-kernel OOM killer worked as the
-> last resort measure to guarantee that the system would never deadlock
-> on the memory. But this approach creates additional infrastructure
-> churn: userspace OOM daemon is a separate entity which needs to be
-> deployed, updated, monitored. A completely different pipeline needs to
-> be built to monitor both types of OOM events and collect associated
-> logs. A userspace daemon is more restricted in terms on what data is
-> available to it. Implementing a daemon which can work reliably under a
-> heavy memory pressure in the system is also tricky.
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 82ffb3b3b3cf..592cb5d6497a 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -138,6 +138,8 @@ static bool get_el2_to_el1_mapping(unsigned int reg,
+>  		MAPPED_EL2_SYSREG(PIR_EL2,     PIR_EL1,     NULL	     );
+>  		MAPPED_EL2_SYSREG(PIRE0_EL2,   PIRE0_EL1,   NULL	     );
+>  		MAPPED_EL2_SYSREG(POR_EL2,     POR_EL1,     NULL	     );
+> +		MAPPED_EL2_SYSREG(GCSCR_EL2,   GCSCR_EL1,   NULL             );
+> +		MAPPED_EL2_SYSREG(GCSPR_EL2,   GCSPR_EL1,   NULL             );
 
-Thanks for raising this and it is really challenging on very aggressive
-overcommitted system. The userspace oom-killer needs cpu (or scheduling)
-and memory guarantees as it needs to run and collect stats to decide who
-to kill. Even with that, it can still get stuck in some global kernel
-locks (I remember at Google I have seen their userspace oom-killer which
-was a thread in borglet stuck on cgroup mutex or kernfs lock or
-something). Anyways I see a lot of potential of this BPF based
-oom-killer.
+How is the state accessed when loaded on the CPU? You seem to be
+missing accessors for these two registers, affecting both EL1 and EL2
+in the guest.
 
-Orthogonally I am wondering if we can enable actions other than killing.
-For example some workloads might prefer to get frozen or migrated away
-instead of being killed.
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
