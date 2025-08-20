@@ -1,147 +1,271 @@
-Return-Path: <linux-kernel+bounces-778578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A80B2E796
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:38:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E65B2E798
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C614C1BC0C69
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1FB1BC06E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760F3322DDB;
-	Wed, 20 Aug 2025 21:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8603314A2;
+	Wed, 20 Aug 2025 21:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GKrYbgKZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihRul78N"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795C225D536
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A16C25D536;
+	Wed, 20 Aug 2025 21:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755725880; cv=none; b=H3iem+w5gsQo0amfeIGTNnzMHQUTpPvI+d0FlS43HCnqI3ijf1i/dsgA1fQZO35fNAdiq8ttte9XybrDdWSxwGRHmHo8EYzKKiACsFtsps1B3hk0KIuZTdpTlmcVNPSeGQwSyM+VPNddNGT2IJBE9ebpLtUGVY366+lmxkrU1FY=
+	t=1755725934; cv=none; b=MC1qGlxAfU2XtcegJ2vsRQ27n3/jWkZZdxfvFbsHLNC0JNWxz3bYqZ/7o0qvBMWxjpP9gvXzqysybPEwM9u1ffacdPpAC98nrb5vKCfynppDNqTcaoqVJ5Bj+vW0gKqJzGVaCmW1/2yz/TdedKDw8MCZNtNskS5rjuiq9avWkYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755725880; c=relaxed/simple;
-	bh=2XAVN17x/ljDZycLnUtSUk+s7J0HqvUnoLtn9DBOjgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DU5RuoGWrvfGwNvmtiTvFmJAboPitPHkottHBSDzdYCHxcK17jSUpieHaXjK0ac3K9mBAJa/89y9QmcB1+UzF7rSFMpZh4Gmn6znsLlHJyt1RDZvbgxjgd9cNSHjBs0sFCBFsSa9jOW84zyYCx4tu4jLAqU75mp0cB2iCYBSoV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GKrYbgKZ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755725879; x=1787261879;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2XAVN17x/ljDZycLnUtSUk+s7J0HqvUnoLtn9DBOjgQ=;
-  b=GKrYbgKZucjGObo0OK3buNd7Ss06fdnSg3QipslvTewzxlUf+rCsonKd
-   7HI2YwWPYxUjSDq5RcQoTZo/JoFiHfhj0c0ZIZoudFQHMjb0mGttnwHvG
-   7awfHC6v6nGgml+W1JpbmipSo03B/Nk52/GbuPfD2lPooFw8XP/pzAD/n
-   nFl7JSMaOQ22rqqdJdxdWGTEHMvjJYg4UVnqeven2oAHYVbdAxqxVXvKA
-   tECXoxfVbHwiPLEhAAQWrSDEu5nUPKC9vm3f5t94uL8ulQInsK2P/2VV4
-   DdnTvIU+DnNkSk79Y7WugHoybsQLvocl5uWSY5wozJ/DpUDIEL/CJvQnn
-   Q==;
-X-CSE-ConnectionGUID: YpqKpMZVS4mz8/l+ab10vw==
-X-CSE-MsgGUID: y5UAECWRRE6MeicRNLY3bg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57209093"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="57209093"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 14:37:58 -0700
-X-CSE-ConnectionGUID: oRGVq2H2SgGYpU4HyiZw5g==
-X-CSE-MsgGUID: WkiV1YR3Tu6C0/9WcgMaPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="167446445"
-Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.108.83]) ([10.125.108.83])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 14:37:58 -0700
-Message-ID: <e97983fd-b6ee-403a-87c7-53ff37468551@intel.com>
-Date: Wed, 20 Aug 2025 14:37:57 -0700
+	s=arc-20240116; t=1755725934; c=relaxed/simple;
+	bh=5zB6co7OtPQZxKOOl7Xwh/DrlpKaV1X5kz7WVukfGIA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZaQQ1aSvPpyUELCY7m5Ccs0fwOe3g6YI9n9IMvgQEg/5Ls2uWFb1QRVhHshpXIyt4NptJyds6JRBffVIkKLn5Kv6+IL6rRwLFgTSBPAMUbpy+Ow8lhTfTS0bD09qngRn+yGur+hSidaFKpEdgA8ZHpY5Gw9pSSC+Vq85UFF7BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihRul78N; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb79db329so48918766b.2;
+        Wed, 20 Aug 2025 14:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755725931; x=1756330731; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T9db3IZVe2NPrY1qxMzZWeMQAIN9TwhFbWzhqQDFk+I=;
+        b=ihRul78NYsEXvuxT174LjapxZsfsXCvvUzGXiRdNjnfbdFtfIZOA2i6D5eQA+Dlz4i
+         0Gqt+rXekC+v6VM6hxcQR14Y+c/JRUu/yeENpu1QbeZTx1r9V16aNAwRmom8+r5a/nfb
+         J4RQfXsT8kgicRNMOgyUdgakfdKQUAL4WW632a/+xNmfivdm5jxbsdIQAnH5OeKG3SGu
+         bpdrM2Ivx2iudMYvU6wL7NJkzCyS1PquV3kvrgwFNnDP+mpxT3q/8tGBmiZjdYHOnbiS
+         3nqOt2ulYrthfZzUEom4WUnhKv1aG9I/2BXrCdwLgnz7+MEfKOR4rbMbzrPVx0wi4c75
+         CHEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755725931; x=1756330731;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T9db3IZVe2NPrY1qxMzZWeMQAIN9TwhFbWzhqQDFk+I=;
+        b=ANpomgFIg5Jt7PyDIdbhQj2kpZ7GoKBcZ+fbpS0Jf9MuY2Kuz9hMrBitqe+mCKvucH
+         /SnDZXJVrBFYk7yrLy8qMv1usYt4i34HO5It1OwzpH5ETFcM2BtlFSb8+qx6T5besCg8
+         KYscOrczL4wtkScWIeOiJLwQgyLU69Yaug3Sb8m4IfJtzZR4uaUUf0Hi2LbRZzSg7ozf
+         8M8CWCHdL7HkxW1xRI2ekG/mFm3MEr8XqgF+GyxLlV/gcMiDHk5oU+epgnK2gS2f2mc3
+         QUukZsiahjc7yhM3vryPEdD9XOUpKuasPV+Fh3kdPsYx4F/RVJ43mmUrzEf4ocu6IHj9
+         9zLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEZytAIR8dQb4Lan/7+ReDcuPuQnv91CQUW8TCQ9Y6ivhPW6vmdXt+dEQDWMwP/BwdIe4=@vger.kernel.org, AJvYcCWu5fkI7NLzdvaWivNcwREi3u+vAkKDbcxXxLffP++sdFkikx7R7u2dnK8xbAdwmN9C73YQ0V7UFp/y7vFi@vger.kernel.org, AJvYcCWwJQHOvlzdhGVjgUrp5EsQ6YLcqk7AkwrlVB7fUmzur7Y2HACVv/asHs8f9JgrWkvkCKpCF4fqOAvNunKA+gZbfVwx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8tQ5p4pRZl71kHgImBxHqmrvL74itQENYM7jPDNyJ0a+eZDXm
+	ctQmK6hzFMxxQX9aFeQs50Kh69v99VQuyav8odYQnnc8a+OqGYysq9BfLa6cRg==
+X-Gm-Gg: ASbGncte94s52zeia7GHgjc7ApoKpOVosL6YUKi9wFjx6k8W0FmHRvbFzdN3VEKwJkS
+	A2c7wAs9NDfwBlovuQfhvzJuQgk7B74z9/l37Q/I/6yfwrrWj6Ag5TngGP0PPnyahpsSjie17P1
+	+oBXn/DVn4gtB4keFKxmD5HEFcFDClhQptRZBPgzTN7+rxZsqgoMGnt6qhZELxauCOMb57oItRi
+	ARgV6hl1IPE4Dm1vkMtVETTtIweKN1HGyYLOzNtGfywcrXo96isdt2DUU9+XOP8STe3jH2f63KQ
+	06GoSwcp8BlZMiRgIumEU5pC+jP+n4Ju5lDBPw+rJQfnGCyy86Tu2MQUvY1ct9xEwzKbTT/dvZS
+	QRu1uNAb80h2rhTw2RRL9
+X-Google-Smtp-Source: AGHT+IHv2tN3lf/+uVvnmsWct88OLvnhlFhSuRf3igKrUi9lHYG6i6bh9uTyL8+JAj4DoVKt9av5yA==
+X-Received: by 2002:a17:906:7313:b0:ae3:5185:541a with SMTP id a640c23a62f3a-afe07c177acmr25088866b.54.1755725930517;
+        Wed, 20 Aug 2025 14:38:50 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded47933dsm253096366b.65.2025.08.20.14.38.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 14:38:50 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 20 Aug 2025 23:38:48 +0200
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>, rick.p.edgecombe@intel.com
+Subject: Re: [PATCHv6 perf/core 10/22] uprobes/x86: Add support to optimize
+ uprobes
+Message-ID: <aKZAaE0ktR2_Ae9c@krava>
+References: <20250720112133.244369-1-jolsa@kernel.org>
+ <20250720112133.244369-11-jolsa@kernel.org>
+ <20250819191515.GM3289052@noisy.programming.kicks-ass.net>
+ <20250820123033.GL3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86: Make x86@kernel.org a list and not a maintainer
-To: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>, x86@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <20250820152054.165811ea@gandalf.local.home>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250820152054.165811ea@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820123033.GL3245006@noisy.programming.kicks-ass.net>
 
-On 8/20/25 12:20, Steven Rostedt wrote:
+On Wed, Aug 20, 2025 at 02:30:33PM +0200, Peter Zijlstra wrote:
+> On Tue, Aug 19, 2025 at 09:15:15PM +0200, Peter Zijlstra wrote:
+> > On Sun, Jul 20, 2025 at 01:21:20PM +0200, Jiri Olsa wrote:
 > 
-> In the MAINTAINERS file, x86@kernel.org is listed as both:
+> > > +void arch_uprobe_optimize(struct arch_uprobe *auprobe, unsigned long vaddr)
+> > > +{
+> > > +	struct mm_struct *mm = current->mm;
+> > > +	uprobe_opcode_t insn[5];
+> > > +
+> > > +	/*
+> > > +	 * Do not optimize if shadow stack is enabled, the return address hijack
+> > > +	 * code in arch_uretprobe_hijack_return_addr updates wrong frame when
+> > > +	 * the entry uprobe is optimized and the shadow stack crashes the app.
+> > > +	 */
+> > > +	if (shstk_is_enabled())
+> > > +		return;
+> > 
+> > Kernel should be able to fix up userspace shadow stack just fine.
+> > 
+> > > +	if (!should_optimize(auprobe))
+> > > +		return;
+> > > +
+> > > +	mmap_write_lock(mm);
+> > > +
+> > > +	/*
+> > > +	 * Check if some other thread already optimized the uprobe for us,
+> > > +	 * if it's the case just go away silently.
+> > > +	 */
+> > > +	if (copy_from_vaddr(mm, vaddr, &insn, 5))
+> > > +		goto unlock;
+> > > +	if (!is_swbp_insn((uprobe_opcode_t*) &insn))
+> > > +		goto unlock;
+> > > +
+> > > +	/*
+> > > +	 * If we fail to optimize the uprobe we set the fail bit so the
+> > > +	 * above should_optimize will fail from now on.
+> > > +	 */
+> > > +	if (__arch_uprobe_optimize(auprobe, mm, vaddr))
+> > > +		set_bit(ARCH_UPROBE_FLAG_OPTIMIZE_FAIL, &auprobe->flags);
+> > > +
+> > > +unlock:
+> > > +	mmap_write_unlock(mm);
+> > > +}
 > 
->  M: x86@kernel.org
+> Something a little like this should do I suppose...
 > 
-> and
-> 
->  L: x86@kernel.org
-> 
-> The MAINTAINERS document starts with:
-> 
->         M: *Mail* patches to: FullName <address@domain>
-> 	[..]
->         L: *Mailing list* that is relevant to this area
+> --- a/arch/x86/include/asm/shstk.h
+> +++ b/arch/x86/include/asm/shstk.h
+> @@ -23,6 +23,8 @@ int setup_signal_shadow_stack(struct ksi
+>  int restore_signal_shadow_stack(void);
+>  int shstk_update_last_frame(unsigned long val);
+>  bool shstk_is_enabled(void);
+> +int shstk_pop(u64 *val);
+> +int shstk_push(u64 val);
+>  #else
+>  static inline long shstk_prctl(struct task_struct *task, int option,
+>  			       unsigned long arg2) { return -EINVAL; }
+> @@ -35,6 +37,8 @@ static inline int setup_signal_shadow_st
+>  static inline int restore_signal_shadow_stack(void) { return 0; }
+>  static inline int shstk_update_last_frame(unsigned long val) { return 0; }
+>  static inline bool shstk_is_enabled(void) { return false; }
+> +static inline int shstk_pop(u64 *val) { return -ENOTSUPP; }
+> +static inline int shstk_push(u64 val) { return -ENOTSUPP; }
+>  #endif /* CONFIG_X86_USER_SHADOW_STACK */
+>  
+>  #endif /* __ASSEMBLER__ */
+> --- a/arch/x86/kernel/shstk.c
+> +++ b/arch/x86/kernel/shstk.c
+> @@ -246,6 +246,46 @@ static unsigned long get_user_shstk_addr
+>  	return ssp;
+>  }
+>  
+> +int shstk_pop(u64 *val)
+> +{
+> +	int ret = 0;
+> +	u64 ssp;
+> +
+> +	if (!features_enabled(ARCH_SHSTK_SHSTK))
+> +		return -ENOTSUPP;
+> +
+> +	fpregs_lock_and_load();
+> +
+> +	rdmsrq(MSR_IA32_PL3_SSP, ssp);
+> +	if (val && get_user(*val, (__user u64 *)ssp))
+> +	    ret = -EFAULT;
+> +	ssp += SS_FRAME_SIZE;
+> +	wrmsrq(MSR_IA32_PL3_SSP, ssp);
+> +
+> +	fpregs_unlock();
+> +
+> +	return ret;
+> +}
+> +
+> +int shstk_push(u64 val)
+> +{
+> +	u64 ssp;
+> +	int ret;
+> +
+> +	if (!features_enabled(ARCH_SHSTK_SHSTK))
+> +		return -ENOTSUPP;
+> +
+> +	fpregs_lock_and_load();
+> +
+> +	rdmsrq(MSR_IA32_PL3_SSP, ssp);
+> +	ssp -= SS_FRAME_SIZE;
+> +	wrmsrq(MSR_IA32_PL3_SSP, ssp);
+> +	ret = write_user_shstk_64((__user void *)ssp, val);
+> +	fpregs_unlock();
+> +
+> +	return ret;
+> +}
+> +
+>  #define SHSTK_DATA_BIT BIT(63)
+>  
+>  static int put_shstk_data(u64 __user *addr, u64 data)
+> --- a/arch/x86/kernel/uprobes.c
+> +++ b/arch/x86/kernel/uprobes.c
+> @@ -804,7 +804,7 @@ SYSCALL_DEFINE0(uprobe)
+>  {
+>  	struct pt_regs *regs = task_pt_regs(current);
+>  	struct uprobe_syscall_args args;
+> -	unsigned long ip, sp;
+> +	unsigned long ip, sp, sret;
+>  	int err;
+>  
+>  	/* Allow execution only from uprobe trampolines. */
+> @@ -831,6 +831,9 @@ SYSCALL_DEFINE0(uprobe)
+>  
+>  	sp = regs->sp;
+>  
+> +	if (shstk_pop(&sret) == 0 && sret != args.retaddr)
+> +		goto sigill;
+> +
+>  	handle_syscall_uprobe(regs, regs->ip);
+>  
+>  	/*
+> @@ -855,6 +858,9 @@ SYSCALL_DEFINE0(uprobe)
+>  	if (args.retaddr - 5 != regs->ip)
+>  		args.retaddr = regs->ip;
+>  
+> +	if (shstk_push(args.retaddr) == -EFAULT)
+> +		goto sigill;
+> +
+>  	regs->ip = ip;
+>  
+>  	err = copy_to_user((void __user *)regs->sp, &args, sizeof(args));
+> @@ -1124,14 +1130,6 @@ void arch_uprobe_optimize(struct arch_up
+>  	struct mm_struct *mm = current->mm;
+>  	uprobe_opcode_t insn[5];
+>  
+> -	/*
+> -	 * Do not optimize if shadow stack is enabled, the return address hijack
+> -	 * code in arch_uretprobe_hijack_return_addr updates wrong frame when
+> -	 * the entry uprobe is optimized and the shadow stack crashes the app.
+> -	 */
+> -	if (shstk_is_enabled())
+> -		return;
+> -
 
-Yeah, it's not a person, but it's also not a list that folks can
-subscribe to. So there really isn't a good fit for it. I've never heard
-of it causing any problems, so my inclination would be to just leave it
-as-is.
+nice, we will need to adjust selftests for that, there's shadow stack part
+in prog_tests/uprobe_syscall.c that expects non optimized uprobe after enabling
+shadow stack.. I'll run it and send the change
+
+thanks,
+jirka
 
