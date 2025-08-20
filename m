@@ -1,140 +1,124 @@
-Return-Path: <linux-kernel+bounces-778438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E00B2E5C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:44:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AA9B2E5C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4453FA22A9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:44:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3481C88406
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869E0285CBA;
-	Wed, 20 Aug 2025 19:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8862857FC;
+	Wed, 20 Aug 2025 19:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HABbqDGw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKFvubFJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA461CCEE0;
-	Wed, 20 Aug 2025 19:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D580725A325;
+	Wed, 20 Aug 2025 19:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755719048; cv=none; b=b+nAC5sLq84O4QuOF4Azya4fuKxjydi+O4p3UrS/1H7et0p0kJBbdgXDb6jLr7SxMMzW4V+o/jK4J8EXaWR0UGzCPn5p6Q4uNCt6JPdCdixhm8TxP+qsxWkVDdGatUUXr6qbfe6VsZu41Zhk742xWifRqqxNZCPDjT4NodmxYfs=
+	t=1755719094; cv=none; b=R+BrNHmnXnJSd+t/kjXLwCRV8fv9CKetoKvCFBeNWuDFI4KpX8xcVNbnoX4gTf6hzwlbu5nB+zM10uSzhuxnPXzgApiTaCGWM5MObVWI6zR0zfoic7GHaMoItQN46kZdp1e72eEAgBduGgUUOXNliqkb4srheLXAhdy9iMF+VPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755719048; c=relaxed/simple;
-	bh=wVbhnBpFX/Zq7DTszd7msln2BrK2tuah8OGziBFa8D0=;
+	s=arc-20240116; t=1755719094; c=relaxed/simple;
+	bh=Zvb+Vfh+eSxi8V3LzfMzob6KCrLVAFgE71unoyyC+Ww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3hFWt/yO6YcPO11QJzzdQBCBGvRvNt1rjmu5RLTC0RJDW0TQ0BFKwzZ9sHOEYKYUpTC9DZep9AcW0fPjyXgiaNGlo3XmA/8gsKTkzW6oYSjz0mdzsRF9wyjJz4zeMzx9v49rOVHi6OPuifE0GGwGl6WSiSC83hjLQ7fn5AcqI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HABbqDGw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E335CC4CEE7;
-	Wed, 20 Aug 2025 19:44:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Re7Ejne1ZGa0FqC/Ebs/a49pQG4NcM/DwySH/liLToyQpbfQhx5jyMFcIKV37eECenbnGpSxdvZYEJ3fMlwEPTHYvwxG17CU5IoOK8Hy4QtrfIXrq5IUKjN32PU9jxtED7N/4MKJSafwFVl/PXNQcJhrJVYV3gxNru+6pu6fxPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKFvubFJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DFEC4CEE7;
+	Wed, 20 Aug 2025 19:44:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755719048;
-	bh=wVbhnBpFX/Zq7DTszd7msln2BrK2tuah8OGziBFa8D0=;
+	s=k20201202; t=1755719094;
+	bh=Zvb+Vfh+eSxi8V3LzfMzob6KCrLVAFgE71unoyyC+Ww=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HABbqDGwDkSdAJsSfXinddrrkvWyvb0hWN2fdrq4tUI56ouUNEgvZya04aSIbQbFv
-	 q+f4QoTIKOCLxFDXxH7Z2t7eHQFBIyegvhSxOG5BEDAQAJL4bFQr4n+RyfUClN4Fwa
-	 Qno9HlO2ZbdaL6TJbkPuL/6kuKCfyRryZnaxgcZh2A7l27UTzpuni5/yn4t1e4AVSL
-	 l/JhZLrguBpPk9qJB2nKVnO61Gl8O7YY+sUm+YL/L5VklhjSFWBMBox1CMIsoG1/CT
-	 EhOCWGNJfNte7n9qrCl1JxazLRjw6GTscM16O3vC1+kuGz/O86pffD0iD9BH56JESM
-	 +Gs6UOSHxZDVQ==
-Date: Wed, 20 Aug 2025 20:44:02 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] dt-bindings: thermal: tegra: add Tegra114
- soctherm header
-Message-ID: <20250820-spinning-arrogance-31b71d969bb8@spud>
-References: <20250820114231.150441-1-clamor95@gmail.com>
- <20250820114231.150441-5-clamor95@gmail.com>
+	b=cKFvubFJvIzab1gqKBT2fd1UkMlrjZrfmL5T3963UqcwOioUazgGebAsKSjyzjPNR
+	 fLaN1NsWBtXt47P7MbeboT4AgkaWpDHOBsmk1gw9NeFAHrl/fOF8ZVYxe7hKnpMrYj
+	 /HZT2h7WrayxTYLadOXUfgrGnGOqxKFAIEoVwf5WWeDkUqShaMVbw1NoxfdI0zfx3C
+	 2p0+RALCB+Wb6hlhFZkt9aZbgc7KlbwYPHrs05fB6oYb+KkDGkb0rXJK8X9mhBXtkx
+	 89ktvRM3LGU0YBGAeSLAW1PcsviPE4HcMqCfMe2TMNB63n4Jl9SwWQFjwJRZyupfSK
+	 2VLYiKn5UTacA==
+Date: Wed, 20 Aug 2025 09:44:53 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] softirq: Provide a handshake for canceling tasklets via
+ polling on PREEMPT_RT
+Message-ID: <aKYltdkLBRZJF0Ok@slm.duckdns.org>
+References: <20250812143930.22RBn5BW@linutronix.de>
+ <20250812145359.QMcaYh9g@linutronix.de>
+ <aJuYStGVBjyfVmZM@slm.duckdns.org>
+ <20250813063311.33m0TDKl@linutronix.de>
+ <aJzT7rqwkRQrLGqo@slm.duckdns.org>
+ <20250818125242.vJ4wGk20@linutronix.de>
+ <aKNlshZmWsHVXBo0@slm.duckdns.org>
+ <20250819150105.DYeV89fa@linutronix.de>
+ <20250820103657.vDuDuLx6@linutronix.de>
+ <20250820105518.Yf36NzJd@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i9diGKFZwHGtBgg2"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250820114231.150441-5-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250820105518.Yf36NzJd@linutronix.de>
 
+Hello,
 
---i9diGKFZwHGtBgg2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 20, 2025 at 12:55:18PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-08-20 12:36:59 [+0200], To Tejun Heo wrote:
+> > Subject: [PATCH] workqueue: Provide a handshake for canceling BH workers
+> …
+> > This will flush all BH-work items assigned to that pool.
+> 
+> We need to flush all items because the inserted wq_barrier is at the
+> end of the queue. So if the cb_lock is dropped after
+> worker->current_func(work) then we will live lock. Just tested, I
+> somehow assumed it polls on worker.
 
-On Wed, Aug 20, 2025 at 02:42:29PM +0300, Svyatoslav Ryhel wrote:
-> This adds header for the Tegra114 SOCTHERM device tree node.
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../dt-bindings/thermal/tegra114-soctherm.h   | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 include/dt-bindings/thermal/tegra114-soctherm.h
->=20
-> diff --git a/include/dt-bindings/thermal/tegra114-soctherm.h b/include/dt=
--bindings/thermal/tegra114-soctherm.h
-> new file mode 100644
-> index 000000000000..b605e53284fe
-> --- /dev/null
-> +++ b/include/dt-bindings/thermal/tegra114-soctherm.h
-> @@ -0,0 +1,20 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * This header provides constants for binding nvidia,tegra114-soctherm.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_THERMAL_TEGRA114_SOCTHERM_H
-> +#define _DT_BINDINGS_THERMAL_TEGRA114_SOCTHERM_H
-> +
-> +#define TEGRA114_SOCTHERM_SENSOR_CPU 0
-> +#define TEGRA114_SOCTHERM_SENSOR_MEM 1
-> +#define TEGRA114_SOCTHERM_SENSOR_GPU 2
-> +#define TEGRA114_SOCTHERM_SENSOR_PLLX 3
+Is flushing all a problem tho? I think the main focus is keeping the
+semantics matching on RT, right?
 
-> +#define TEGRA114_SOCTHERM_SENSOR_NUM 4
+...
+> -	if (from_cancel) {
+> +	if (from_cancel && !IS_ENABLED(CONFIG_PREEMPT_RT)) {
+>  		unsigned long data = *work_data_bits(work);
+>  
+>  		if (!WARN_ON_ONCE(data & WORK_STRUCT_PWQ) &&
+>  		    (data & WORK_OFFQ_BH)) {
+> -			/*
+> -			 * On RT, prevent a live lock when %current preempted
+> -			 * soft interrupt processing or prevents ksoftirqd from
+> -			 * running by keeping flipping BH. If the BH work item
+> -			 * runs on a different CPU then this has no effect other
+> -			 * than doing the BH disable/enable dance for nothing.
+> -			 * This is copied from
+> -			 * kernel/softirq.c::tasklet_unlock_spin_wait().
+> -			 */
+>  			while (!try_wait_for_completion(&barr.done)) {
+> -				if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
+> -					local_bh_disable();
+> -					local_bh_enable();
+> -				} else {
+> -					cpu_relax();
+> -				}
+> +				cpu_relax();
 
-Why is this "NUM" sensor not in the driver?
-hint: if this is the number of sensors, remove it from the binding ;)
+I'm most likely missing something about RT but wouldn't the above still lead
+to deadlocks if the caller is non-hardirq but higher priority thread?
 
-> +
-> +#define TEGRA_SOCTHERM_THROT_LEVEL_NONE 0
-> +#define TEGRA_SOCTHERM_THROT_LEVEL_LOW  1
-> +#define TEGRA_SOCTHERM_THROT_LEVEL_MED  2
-> +#define TEGRA_SOCTHERM_THROT_LEVEL_HIGH 3
-> +
-> +#endif
-> --=20
-> 2.48.1
->=20
+Thanks.
 
---i9diGKFZwHGtBgg2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKYlggAKCRB4tDGHoIJi
-0rwHAQCrTuKbYeJomxSTYcBj4MJ14GO3+TBM2PC7h0zSsEvNGwEAuuUnNdesVDmX
-Lbx6jgEug+wxC0uVQey13cfvJK8cIAc=
-=y4RN
------END PGP SIGNATURE-----
-
---i9diGKFZwHGtBgg2--
+-- 
+tejun
 
