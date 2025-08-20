@@ -1,110 +1,142 @@
-Return-Path: <linux-kernel+bounces-777055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D495B2D489
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:12:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1577B2D491
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EB2E6259D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:12:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C056216F2F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329172D320D;
-	Wed, 20 Aug 2025 07:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Uj7RxlJ8"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83A3277C80;
-	Wed, 20 Aug 2025 07:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9252D3226;
+	Wed, 20 Aug 2025 07:12:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66602D24AA;
+	Wed, 20 Aug 2025 07:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755673916; cv=none; b=X6yvGSMc0SvW90TL8r1umCtRc0LfpOVXLkX9iIfV6x0HuPOdCvmQbpff9QOScImEKd+8W5hEKqUJBUyow59BclywcwHJ56i/Zw/wjWXMWMYIZYkzebt59JAa5a+ahzBLhziZR9mWgk/WpJK6zvEdLost3GwZBDj9RldPUrcHfdk=
+	t=1755673978; cv=none; b=rpEZDgwW1IziA517i4UjyrBrLk4KYwagA65/ZsrjQ/vxxBCZqGq+0HLNRDsxNHZML6gCT78AzPM9QUVaBihargep5MIogw7bB+03cy5IXmyW/9rBGZa1iQleC1kjYDWVoJAvIRPBwbQfEclMv3P63gO+0oc/8d5YWoADRk4fckI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755673916; c=relaxed/simple;
-	bh=0My0nruW+wtQVHOpDq41hwdibx0GRaDbU/OUIU5WwkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fqN9YNcu2LqwsnszSr/tnk8/4DhyXM8hQN5MFRSrhqXcF9qMUZItMudkADLflhiaK0Of9cyxbxyRAYGmASVhM19jaqjWd2bzTs7y8a0rYFQrrslUbVnI1KSqYzgk1BArwDo1MVS9ReYuvG/UnL2qmfNc3oJJ6CEtafXrLFcr8pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Uj7RxlJ8; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6450510391E95;
-	Wed, 20 Aug 2025 09:11:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1755673911; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=QWK6fDo3fD5ZpwL3KEaiHhSHjSMwZsvwVvTIf4mXTrg=;
-	b=Uj7RxlJ8PBL5nl/xumb/vuyXx4TQIMmoXYBDODvake4VDdt1wI23NFsi1RePhzWGMKeyUV
-	CWO1q5iIuoxQID5edJ4pSd3IjZQkUjYTumhEORBwKZpITLBFQX/6LkKWh6eYmdCvtFz8i9
-	C/rKtPqhHrU4Fw0zCc6QWmp7dVG0ZM87AYcYYCa4ZcjRsPQPcKvUfTciry4zBnYNTwR3r2
-	OIgFAFRkF1vvA/Gq2Sek0lkHH8wyj3mCsd0UHbtj6WVkfl2KceWPahed3R7W7j03WfsnuU
-	5ZD/zu4WE1Be0Zeisw1JE9ld2Xh2yBIoGreU/pErLMoVQB4GrXfJ3un0nm9C0g==
-Date: Wed, 20 Aug 2025 09:11:42 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org
-Subject: Re: [PATCH 6.12 000/438] 6.12.43-rc2 review
-Message-ID: <aKV1LlA1wbzXaSWq@duo.ucw.cz>
-References: <20250819122820.553053307@linuxfoundation.org>
+	s=arc-20240116; t=1755673978; c=relaxed/simple;
+	bh=q++EH1ekCMN6XQhAXOaorrC/5hzw0/AVKNcS9jhKlvQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MwnsWLTM/pie2GwFYuXx7W9s/7BatDGmljOS9mZwjbFFWsmoc2OZVjAIgGNWGxVBxNgrc/WvCpcVbiG2xS+ycxQP2hLcupyRKvAwHB52Qj4gY3ipotjTsJSY0VxJ/aFEYQ1OuDRDz+438W17X9bJ4ngcoJ59MUi3T3kUxWYm7SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3F94106F;
+	Wed, 20 Aug 2025 00:12:40 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 19E3F3F58B;
+	Wed, 20 Aug 2025 00:12:44 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: ryabinin.a.a@gmail.com,
+	glider@google.com,
+	andreyknvl@gmail.com,
+	dvyukov@google.com,
+	vincenzo.frascino@arm.com,
+	corbet@lwn.net,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	akpm@linux-foundation.org,
+	scott@os.amperecomputing.com,
+	jhubbard@nvidia.com,
+	pankaj.gupta@amd.com,
+	leitao@debian.org,
+	kaleshsingh@google.com,
+	maz@kernel.org,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	james.morse@arm.com,
+	ardb@kernel.org,
+	hardevsinh.palaniya@siliconsignals.io,
+	david@redhat.com,
+	yang@os.amperecomputing.com
+Cc: kasan-dev@googlegroups.com,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v5 0/2] introduce kasan.write_only option in hw-tags
+Date: Wed, 20 Aug 2025 08:12:41 +0100
+Message-Id: <20250820071243.1567338-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MW6hhxMXnlKkMv/8"
-Content-Disposition: inline
-In-Reply-To: <20250819122820.553053307@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+
+Hardware tag based KASAN is implemented using the Memory Tagging Extension
+(MTE) feature.
+
+MTE is built on top of the ARMv8.0 virtual address tagging TBI
+(Top Byte Ignore) feature and allows software to access a 4-bit
+allocation tag for each 16-byte granule in the physical address space.
+A logical tag is derived from bits 59-56 of the virtual
+address used for the memory access. A CPU with MTE enabled will compare
+the logical tag against the allocation tag and potentially raise an
+tag check fault on mismatch, subject to system registers configuration.
+
+Since ARMv8.9, FEAT_MTE_STORE_ONLY can be used to restrict raise of tag
+check fault on store operation only.
+
+Using this feature (FEAT_MTE_STORE_ONLY), introduce KASAN write-only mode
+which restricts KASAN check write (store) operation only.
+This mode omits KASAN check for read (fetch/load) operation.
+Therefore, it might be used not only debugging purpose but also in
+normal environment.
+
+This patch is based on v6.17-rc1.
+
+Patch History
+=============
+from v4 to v5:
+  - fix wrong allocation
+  - add small comments
+  - https://lore.kernel.org/all/20250818075051.996764-1-yeoreum.yun@arm.com/
+
+from v3 to v4:
+  - fix wrong condition
+  - https://lore.kernel.org/all/20250816110018.4055617-1-yeoreum.yun@arm.com/
+
+from v2 to v3:
+  - change MET_STORE_ONLY feature as BOOT_CPU_FEATURE
+  - change store_only to write_only
+  - move write_only setup into the place other option's setup place
+  - change static key of kasan_flag_write_only to static boolean.
+  - change macro KUNIT_EXPECT_KASAN_SUCCESS to KUNIT_EXPECT_KASAN_FAIL_READ.
+  - https://lore.kernel.org/all/20250813175335.3980268-1-yeoreum.yun@arm.com/
+
+from v1 to v2:
+  - change cryptic name -- stonly to store_only
+  - remove some TCF check with store which can make memory courruption.
+  - https://lore.kernel.org/all/20250811173626.1878783-1-yeoreum.yun@arm.com/
 
 
---MW6hhxMXnlKkMv/8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeoreum Yun (2):
+  kasan/hw-tags: introduce kasan.write_only option
+  kasan: apply write-only mode in kasan kunit testcases
 
-Hi!
-
-> This is the start of the stable review cycle for the 6.12.43 release.
-> There are 438 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.12.y
-
-6.15, 6.16 seem to be okay, too.
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
+ Documentation/dev-tools/kasan.rst  |   3 +
+ arch/arm64/include/asm/memory.h    |   1 +
+ arch/arm64/include/asm/mte-kasan.h |   6 +
+ arch/arm64/kernel/cpufeature.c     |   2 +-
+ arch/arm64/kernel/mte.c            |  18 +++
+ mm/kasan/hw_tags.c                 |  70 ++++++++-
+ mm/kasan/kasan.h                   |   7 +
+ mm/kasan/kasan_test_c.c            | 237 ++++++++++++++++++++---------
+ 8 files changed, 266 insertions(+), 78 deletions(-)
 
 
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
---MW6hhxMXnlKkMv/8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaKV1LgAKCRAw5/Bqldv6
-8o7nAJ4xtK4HN6/iP1hiAOqmKPh5qFqaXgCgu5Wvk9riKfJdn2bxz9K5F1EIgjw=
-=3Cp9
------END PGP SIGNATURE-----
-
---MW6hhxMXnlKkMv/8--
 
