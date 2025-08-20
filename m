@@ -1,55 +1,64 @@
-Return-Path: <linux-kernel+bounces-778234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE21B2E2EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:05:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1AAB2E2ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4EDA0619C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BEB0A07EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26CE334382;
-	Wed, 20 Aug 2025 17:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4463E3375AE;
+	Wed, 20 Aug 2025 17:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGR4Kexb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHIHIadG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C56E335BB1
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FB92E8B98;
+	Wed, 20 Aug 2025 17:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755709383; cv=none; b=rhyTzI6Et+DKALOtGwPpA0Gi5WSHOpwC38poFhwVRl7ZxcZ49XU2LPU9iK2tu7TF9oQAfQ1q8F0Fsm0g8N6g6uoLrHPEYqZvz/pnF8rrnb1p6t3bnW3T7WAgXdR3To1dFqa0paYg9s2WDpO5jBvVI3vdz7PX7FBPqVe3vOBhJBE=
+	t=1755709388; cv=none; b=p0BmN8MuptR/Txd/ap0QXqheLw/LDXCv5l2/XXKbOJRxgDycBoIYAkBgu3t2Q0fNGcoNt1DMGTl0OqEwobi1N2h38EOmQ6EXkAZnaepvOJS8Ew7GOVkE8ZN1IHs932OjA4wD8ErQrmtlv6Eoe/en/nYdHd/g4Bv1LVP/AdAuIxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755709383; c=relaxed/simple;
-	bh=SdAZlbYllqKMy/tSyr57ludQpWHmOjbfIk0uPZ7oZ1U=;
+	s=arc-20240116; t=1755709388; c=relaxed/simple;
+	bh=5ZHmymgOYeWXL2v8PEhC2ET76mFW+CcsvLg+ooMQLO0=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ParjOlZ4cW2058yd2hvuZwv36KfE3z2f5ZKcn9Mhz4nipVskkIlL5kXS1sjxVwbQe/b3dX6fl1WigXe31iMss1pS15jG+lgozuIMJUzi0YU6uql1ZaqPYV7jOF9qh0sfjpr0FC5JrkgH17efW2KHd6VLOqSzUSwKnnwQOF6nuZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGR4Kexb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 404CBC113CF;
-	Wed, 20 Aug 2025 17:02:59 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hKRcBGJPzl2vrXEjsTavKAcNrmsfFXdqytRcvGNviOzhD2X0zOcgSIQU/a8HtZSMHIeAWXdb6nSEt493w3+dTrGFbtIsq6NQNzRBJT3TaJoCYqBuwiRoqc4a2BbnTo7vOX9dfX7tscf243KUkpi5Y94FxES96wwOg6cgMMf/6Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHIHIadG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC58C113CF;
+	Wed, 20 Aug 2025 17:03:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755709382;
-	bh=SdAZlbYllqKMy/tSyr57ludQpWHmOjbfIk0uPZ7oZ1U=;
+	s=k20201202; t=1755709388;
+	bh=5ZHmymgOYeWXL2v8PEhC2ET76mFW+CcsvLg+ooMQLO0=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YGR4Kexb2xFARGCmFQe3PJsORfVP72Cp0pmXbqH7lj7YL0H7uHY2uIUOe6LPehI0K
-	 4NMDEBpG9LWwrQ7Amm89wPXBYyrWX6T3y7oak5MxavCws0azcd43kv6ZA+GZyzPURG
-	 XSvP1X/yaZwkq50nc7x9kTOPqgkFh30bfUykLKQ0/wEwisRy/Jha98n4AS54MieU+O
-	 IJVb4JNo056cE6zG+UQdTQrIuqQuqljl0yoCxOrnHKyf6879aG9821uO2/OvVheAQg
-	 FwHni0aMIzRWucS1dTvgRRXcb+g6u95JW5U0MdlI4dBm0LwhmnlXYBJaGVgyVmtXTd
-	 A1LY6+ydE5BWg==
+	b=RHIHIadGNrUp2md1QHmXNK/JDVWUQ8OxoVvOtyK6h+OiCILwXeuAkMpbBup0R0I7F
+	 mCrGfLPcjd89D/Qoa5Eebk7oe+CUw2r6gVZi+UwR08LlkZEuHgYlu3C6f3EmtX/I36
+	 4L4SkW5Aq3wTK73soPUZyMHz9MgOuWfl4t1GqMrR2pOhOrk3mlES/Lw8tNhDBSHyQS
+	 JRbzBcHoodVvl4gQg4uIRV6/Nva7eSMPasd8TAMsXx5LY7c8ixvmUxrWdBtr+a0nAL
+	 f+7D47+SH0v3HoLZKnpXokk3RXgO221DT8cRl3XWPRIgSuEHEtcyrQp1VQUzKMZk9Q
+	 NSDiyi3AUVG+A==
 From: Vinod Koul <vkoul@kernel.org>
-To: kishon@kernel.org, heiko@sntech.de, Chen Ni <nichen@iscas.ac.cn>
-Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250814013943.2905307-1-nichen@iscas.ac.cn>
-References: <20250814013943.2905307-1-nichen@iscas.ac.cn>
-Subject: Re: (subset) [PATCH] phy: rockchip: naneng-combphy: Convert comma
- to semicolon
-Message-Id: <175570937971.66459.9785527061700801116.b4-ty@kernel.org>
-Date: Wed, 20 Aug 2025 22:32:59 +0530
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+In-Reply-To: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
+References: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v4 0/6] arm64: qcom: allow up to 4 lanes for
+ the Type-C DisplayPort Altmode
+Message-Id: <175570938300.66459.13600812398405419297.b4-ty@kernel.org>
+Date: Wed, 20 Aug 2025 22:33:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,23 +70,28 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Thu, 14 Aug 2025 09:39:43 +0800, Chen Ni wrote:
-> Replace comma between expressions with semicolons.
+On Thu, 07 Aug 2025 18:33:18 +0200, Konrad Dybcio wrote:
+> Register a typec mux in order to change the PHY mode on the Type-C
+> mux events depending on the mode and the svid when in Altmode setup.
 > 
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
-> 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
+> The DisplayPort phy should be left enabled if is still powered on
+> by the DRM DisplayPort controller, so bail out until the DisplayPort
+> PHY is not powered off.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] phy: rockchip: naneng-combphy: Convert comma to semicolon
-      commit: a8f9de937dbf7bdabda72bd0c51e201e550129c2
+[1/6] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch
+      commit: 3bad7fe22796a420c6e16b591c37ed1bd6cc2a30
+[2/6] phy: qcom: qmp-combo: Rename 'mode' to 'phy_mode'
+      commit: 5daf1bbc73e249075373e030e7221f46c175e04b
+[3/6] phy: qcom: qmp-combo: store DP phy power state
+      commit: 86390472554b2e8fb4cba16a139cade94be58f72
+[4/6] phy: qcom: qmp-combo: introduce QMPPHY_MODE
+      commit: dd331112c0adaebbc8fc767fc805da4a641576db
+[5/6] phy: qcom: qmp-combo: register a typec mux to change the QMPPHY_MODE
+      commit: 896277138c1344cf9f5c415298f048ee29da274d
 
 Best regards,
 -- 
