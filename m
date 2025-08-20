@@ -1,154 +1,232 @@
-Return-Path: <linux-kernel+bounces-777028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36833B2D43E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:48:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0517B2D44B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 715E61C403C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:49:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE98F5A3809
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EDF2C11E2;
-	Wed, 20 Aug 2025 06:48:43 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AF32C08D5;
+	Wed, 20 Aug 2025 06:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UtEHQMRl"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E351F30A9;
-	Wed, 20 Aug 2025 06:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5807521B9FD
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755672522; cv=none; b=mxi4UIKmoNj1TX1SpYF+u8c9Dpo0Fo5FBmouNSAqjIAO9Kw42eNzCnTRL8avJtfGGqhyi0+bsm7jVZve4PFCwOiTBi6ctgLMSOFB72wUnwJ2Pe/SoaM2Ki6xTuNvT0EaZVqvSX3+wjcoV4eioG5rzqWWRTw5IpmLURmbYlpShb0=
+	t=1755672626; cv=none; b=D+27hWAcgBAYd2N380TeIW3uHP7mkS1P4nISN7cAhdtbjVevVt6Iifb73M/AIblCUVpWO4xIWxykrI4sl4ATQiutTa9HeXRy0NERIQ5iBgKTrWu5N3OfJTiSlI151h19epOIAnVUbhYobaXstFhMv+lnWtX6/uug8p6ZkLEMXOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755672522; c=relaxed/simple;
-	bh=49DBKkptDFzzA2ZrfYvNanOnxBOu5JYgjj8zU6d4Jvg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RvhI7qsKUTI5N4gbA0yg+m7UXiDb7eGE/TiaVSj+ZLRXWpsgQ8duMqyVjO4Iyst/5ouHRVipEMEf5oeKykDdbWoOKXvAgO/IQiL4PzrqWSnYf2bLqdqPis/XzPtL3nQsSUKBpPFam8g9gm6yuN1/Yrw0J8wl0Nk5XjgH5zW9heU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [127.0.0.2] (unknown [114.241.87.235])
-	by APP-03 (Coremail) with SMTP id rQCowABHoYKbb6Vozu+wDQ--.65205S7;
-	Wed, 20 Aug 2025 14:47:58 +0800 (CST)
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-Date: Wed, 20 Aug 2025 14:47:54 +0800
-Subject: [PATCH net-next v6 5/5] riscv: dts: spacemit: Add Ethernet support
- for Jupiter
+	s=arc-20240116; t=1755672626; c=relaxed/simple;
+	bh=wQ8qM95j2gviU1QGJ8rgqDjbocACb6XZzCLsLaODwvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kjbTPtek0Jyd8P6KwH0Uj3YiPwVBm6wJS/4eILSbswvy2OQhHbXcj35AIxMXTF65W4fCdSRGK8dArPYP4uJNxDGY/js+zrkQQodxHiLdMj+bIT1Kbw5mt0na3E3kVYK3wlmo1BrVv81UycsgSmhCtDP6G0Br53ET2TRoOG7LaZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UtEHQMRl; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 941A125EFA;
+	Wed, 20 Aug 2025 08:50:20 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 9fau3ZIC3Npm; Wed, 20 Aug 2025 08:50:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1755672619; bh=wQ8qM95j2gviU1QGJ8rgqDjbocACb6XZzCLsLaODwvY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=UtEHQMRlQ8rFrMqm+LHFQT49TgwWd3va36RPDXBR7xncfCUX10XX4FyWdzKwgt6Lb
+	 18LHJZDgky6OaiFfnAxm1KsLWsuTLYCJMqN1Ka2i+xv/shW19/KB2f390u4GIJGm08
+	 S77rKKia+72cEmXCIQZkGcrFoWlHBTUuOsqEnUuzaoSCIxwMZJe4e714jmv/SOZ6Ft
+	 CRrDb7oKPNGVKhCnefHSoPsp2KvbmCz034WIhxcsZRQBKwu138knkFNElpCtGtkJA0
+	 y5o7Ly4URMwyHxBOe9gDM4SraJtw3I2FDSFgZMEOfpCiYDQ5FnuiKYyLRC223Miyak
+	 7qjAWxmVGmABw==
+Date: Wed, 20 Aug 2025 06:50:04 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Youling Tang <youling.tang@linux.dev>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
+	kexec@lists.infradead.org, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH v2 2/5] LoongArch: Add kexec_file support
+Message-ID: <aKVwHOM9KNEpUZF4@pie>
+References: <20250820055700.24344-1-youling.tang@linux.dev>
+ <20250820055700.24344-3-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-net-k1-emac-v6-5-c1e28f2b8be5@iscas.ac.cn>
-References: <20250820-net-k1-emac-v6-0-c1e28f2b8be5@iscas.ac.cn>
-In-Reply-To: <20250820-net-k1-emac-v6-0-c1e28f2b8be5@iscas.ac.cn>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- Vivian Wang <wangruikang@iscas.ac.cn>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: Vivian Wang <uwu@dram.page>, 
- Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
- Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-CM-TRANSID:rQCowABHoYKbb6Vozu+wDQ--.65205S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw43Gw1ftrWfAF43Cr45Jrb_yoW8WrW7pa
-	y3CFsaqFZrCr1fKw43Zr9F9r13Ga95GrWkC3y3uF1rJ3yIvFZ0vw1rtw17tr1DGrW5X34Y
-	vr10yFyxurnFkw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0pRQJ5wUUUUU=
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820055700.24344-3-youling.tang@linux.dev>
 
-Milk-V Jupiter uses an RGMII PHY for each port and uses GPIO for PHY
-reset.
+On Wed, Aug 20, 2025 at 01:56:57PM +0800, Youling Tang wrote:
+> From: Youling Tang <tangyouling@kylinos.cn>
+> 
+> This patch adds support for kexec_file on LoongArch.
+> 
+> The efi_kexec_load() as two parts:
+> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
+> - the second part loads other segments (eg: initrd, cmdline)
+> 
+> This initrd will be passed to the second kernel via the command line
+> 'initrd=start,size'.
+> 
+> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images are supported,
+> but ELF format is not supported.
+> 
+> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+> ---
+>  arch/loongarch/Kconfig                     |   9 ++
+>  arch/loongarch/include/asm/image.h         |  17 +++
+>  arch/loongarch/include/asm/kexec.h         |  12 +++
+>  arch/loongarch/kernel/Makefile             |   1 +
+>  arch/loongarch/kernel/kexec_efi.c          | 111 +++++++++++++++++++
+>  arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
+>  arch/loongarch/kernel/machine_kexec_file.c | 117 +++++++++++++++++++++
+>  7 files changed, 289 insertions(+), 11 deletions(-)
+>  create mode 100644 arch/loongarch/kernel/kexec_efi.c
+>  create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
 
-Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
----
- arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts | 46 +++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+...
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts b/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
-index 4483192141049caa201c093fb206b6134a064f42..c5933555c06b66f40e61fe2b9c159ba0770c2fa1 100644
---- a/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
-@@ -20,6 +20,52 @@ chosen {
- 	};
- };
- 
-+&eth0 {
-+	phy-handle = <&rgmii0>;
-+	phy-mode = "rgmii-id";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&gmac0_cfg>;
-+	rx-internal-delay-ps = <0>;
-+	tx-internal-delay-ps = <0>;
-+	status = "okay";
-+
-+	mdio-bus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		reset-gpios = <&gpio K1_GPIO(110) GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <10000>;
-+		reset-post-delay-us = <100000>;
-+
-+		rgmii0: phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
-+&eth1 {
-+	phy-handle = <&rgmii1>;
-+	phy-mode = "rgmii-id";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&gmac1_cfg>;
-+	rx-internal-delay-ps = <0>;
-+	tx-internal-delay-ps = <250>;
-+	status = "okay";
-+
-+	mdio-bus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		reset-gpios = <&gpio K1_GPIO(115) GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <10000>;
-+		reset-post-delay-us = <100000>;
-+
-+		rgmii1: phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_2_cfg>;
+> diff --git a/arch/loongarch/include/asm/image.h b/arch/loongarch/include/asm/image.h
+> index 1f090736e71d..655d5836c4e8 100644
+> --- a/arch/loongarch/include/asm/image.h
+> +++ b/arch/loongarch/include/asm/image.h
+> @@ -36,5 +36,22 @@ struct loongarch_image_header {
+>  	uint32_t pe_header;
+>  };
+>  
+> +static const uint8_t loongarch_image_pe_sig[2] = {'M', 'Z'};
+> +
+> +/**
+> + * loongarch_header_check_pe_sig - Helper to check the loongarch image header.
+> + *
+> + * Returns non-zero if 'MZ' signature is found.
+> + */
+> +
+> +static inline int loongarch_header_check_pe_sig(const struct loongarch_image_header *h)
+> +{
+> +	if (!h)
+> +		return 0;
+> +
+> +	return (h->pe_sig[0] == loongarch_image_pe_sig[0]
+> +		&& h->pe_sig[1] == loongarch_image_pe_sig[1]);
+> +}
 
--- 
-2.50.1
+This check is still too weak and doesn't improve comparing to v1.
 
+> This could be simplified with a memcmp(). Also, this check isn't
+> strict enough: PE files for any architectures, and even legacy MS-DOS
+> COM executables all start with "MZ".
+
+I've pointed this out in my previous reply[1].
+
+>  #endif /* __ASSEMBLY__ */
+>  #endif /* __ASM_IMAGE_H */
+
+...
+
+> diff --git a/arch/loongarch/kernel/kexec_efi.c b/arch/loongarch/kernel/kexec_efi.c
+> new file mode 100644
+> index 000000000000..7741f1139a12
+> --- /dev/null
+> +++ b/arch/loongarch/kernel/kexec_efi.c
+
+...
+
+> +static void *efi_kexec_load(struct kimage *image,
+> +				char *kernel, unsigned long kernel_len,
+> +				char *initrd, unsigned long initrd_len,
+> +				char *cmdline, unsigned long cmdline_len)
+> +{
+> +	struct loongarch_image_header *h;
+> +	struct kexec_buf kbuf;
+> +	unsigned long text_offset, kernel_segment_number;
+> +	struct kexec_segment *kernel_segment;
+> +	int ret;
+> +
+> +	h = (struct loongarch_image_header *)kernel;
+> +	if (!h->image_size)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	/* Load the kernel */
+> +	kbuf.image = image;
+> +	kbuf.buf_max = ULONG_MAX;
+> +	kbuf.top_down = false;
+> +
+> +	kbuf.buffer = kernel;
+> +	kbuf.bufsz = kernel_len;
+> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+> +	kbuf.memsz = le64_to_cpu(h->image_size);
+> +	text_offset = le64_to_cpu(h->text_offset);
+> +	kbuf.buf_min = text_offset;
+> +	kbuf.buf_align = SZ_2M;
+> +
+> +	kernel_segment_number = image->nr_segments;
+> +
+> +	/*
+> +	 * The location of the kernel segment may make it impossible to satisfy
+> +	 * the other segment requirements, so we try repeatedly to find a
+> +	 * location that will work.
+> +	 */
+> +	while ((ret = kexec_add_buffer(&kbuf)) == 0) {
+> +		/* Try to load additional data */
+> +		kernel_segment = &image->segment[kernel_segment_number];
+> +		ret = load_other_segments(image, kernel_segment->mem,
+> +					  kernel_segment->memsz, initrd,
+> +					  initrd_len, cmdline, cmdline_len);
+> +		if (!ret)
+> +			break;
+> +
+> +		/*
+> +		 * We couldn't find space for the other segments; erase the
+> +		 * kernel segment and try the next available hole.
+> +		 */
+> +		image->nr_segments -= 1;
+> +		kbuf.buf_min = kernel_segment->mem + kernel_segment->memsz;
+> +		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+> +	}
+> +
+> +	if (ret) {
+> +		pr_err("Could not find any suitable kernel location!");
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	kernel_segment = &image->segment[kernel_segment_number];
+> +
+> +	/* Make sure the second kernel jumps to the correct "kernel_entry". */
+> +	image->start = kernel_segment->mem + h->kernel_entry - text_offset;
+
+And this still assumes the loaded, secondary kernel is relocatable,
+with neither extra check nor comment explaining its limitation.
+
+Please see my previous reply[2] that explains why loading a
+non-relocatble kernel with kexec_file API is reasonable.
+
+> +	kexec_dprintk("Loaded kernel at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+> +		      kernel_segment->mem, kbuf.bufsz,
+> +		      kernel_segment->memsz);
+> +
+> +	return NULL;
+> +}
+> +
+> +const struct kexec_file_ops kexec_efi_ops = {
+> +	.probe = efi_kexec_probe,
+> +	.load = efi_kexec_load,
+> +};
+
+Thanks,
+Yao Zi
+
+[1]: https://lore.kernel.org/all/aJojDiHWi8cgvA2W@pie/
+[2]: https://lore.kernel.org/all/aJwFa8x5BQMouB1y@pie/
 
