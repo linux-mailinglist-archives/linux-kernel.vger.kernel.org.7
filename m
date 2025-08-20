@@ -1,93 +1,64 @@
-Return-Path: <linux-kernel+bounces-776911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD1CB2D2E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:09:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F384B2D2E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ADEF72305C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:09:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26F21C25CF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE6C246766;
-	Wed, 20 Aug 2025 04:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C70243367;
+	Wed, 20 Aug 2025 04:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qJ/cKPFg"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="deC3mSIO"
+Received: from mail-43172.protonmail.ch (mail-43172.protonmail.ch [185.70.43.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CAB23B61A
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B2B19597F
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755662936; cv=none; b=VkLzPC/qJnjL+sQ3CkBgxW9gXZO/j66IGaoZTHOsYsRNZM52dUaLC8WiXA/RyyzN19Dz8MznBT520k21pLS2dFkHyhWv8+2gXYX2mO85bYrAgtfvFXVY6fFF13VPobAsz6gXC2OjIwXxOTUkjWXBZ+On614sZAaLWqh7Fc2mOG0=
+	t=1755663431; cv=none; b=Is+UluALbaY6DaAYAUGB/D0IKzth8B4C4g7t7jroV0DSlTsaQsCR3U58EycpID2rfWx5oP44+FZrSI9z6kIEhl4+DFTcPnEkbFoaF4C+OA3GxRD1vHzzwgoAu9wAY9Ug0aUyqFjHMb4mwDvCpolNRibwXxZhn6fhVPWBCev5bX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755662936; c=relaxed/simple;
-	bh=cZveZFpGt+kr4tv2eYJJ27WLY1j1jY8DTi+7Kle+qvw=;
+	s=arc-20240116; t=1755663431; c=relaxed/simple;
+	bh=JIH47MdqPvT9I9EEq+FwIgb0VXneBD7CEQavuMrQeDI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFTZH4Hp8jGpMfDPrZs4nRcl0xsNSnE09lr7/wQbh0shHLkc2OP4lQkWztkGLTYkG21xxCg1B340EPZm+Dlw6brSB2FRIrhtJV6Z4E2VebtINouaBdkO8CeV3uM5pOQzAj4h52nJqfWs5Qs8jzxTCSqgbGfLKoQ48jX0qXqB5n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qJ/cKPFg; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e2e629fc4so6128647b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 21:08:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755662934; x=1756267734; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPsQnvqMxASRCLEED9v2AlwRctOJ3ys4veuU6QCCD08=;
-        b=qJ/cKPFgpAXS9ZiWLtrN8INgphQIH1VdvCzxui+0j0qRopuKCQf0gD4ZLRUNjm5CK3
-         vfnOKvdn1YA90LV6pvFOmlukMkTxL30aFW1AR1nlS7NQ6+MQp6TC0kiJdKjO8NL3PfTd
-         wDFCuqhLZTHeMQsJ0DUMjte9QC0CbCR7id0nmy7xNxQGYmUCdbcfE/N+fcptAswBy1qO
-         NDK6BlyTS7BQdSoUA2eEXgAd4ruL18R4eQX8/DPHxopJWjJbIlq/40z5BcWuiWYyC3UA
-         wZBInK8ovPjghbp2rrlBgWmtULMjD2uTBVgRffjd/5erKnLcLobXQftI5mtcrknICdPZ
-         sypA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755662934; x=1756267734;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cPsQnvqMxASRCLEED9v2AlwRctOJ3ys4veuU6QCCD08=;
-        b=c00sAyw9tyYAa9o8HqNYnhF4ZFqs1pF7BFjF8cgDr9HuqhHAqjaljgArZToggtajyr
-         mAkbZsMtDiq06UYR8u8pfxmlHoqP8xIFOTg8vlJm1PqA4tK8fr8D5LN32Hiz4XXNgD9b
-         2vjiRqniUIdsC86DmxAypvKNH1wqBeoFIfvqW+2WfASC0anqngvsyT+aKrqYHC8PANP2
-         HVFnCPsNJmPXAheo/7eOH6ROHLmhh899SrFr66C6qpw8HGqBQzpk+wcz6s0nbJJlaDE5
-         yCt0QzJhb03xtnbpF/oJi7912VXG4262jOXQq54wr/tPaauWQGRSkqt4HZRJXBFA7u2p
-         RLwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWp2KTyXgoZl+cKdWoVpZowhfPgmI52MrkpAspKZ/WBKpB8Q68JUlo28iZgIXpaD/cs8665qe5UsW+yAK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHl+9IXaeEGi0pk0kljnQdxnXR7dplR2l2rPr6oGZ10luLHkoZ
-	TG2+AyVi3JI9hmX06XRmaX0H5ww4RQIw/UFOG7ovFOKKpqHxMw9RKKmnxU5WmZ4LChg=
-X-Gm-Gg: ASbGnct3C0eEDLC4ToIbnMGrsCS95bM4I/295DrhMINk45w0xZzf0+OGrpM8mJ/3jZz
-	uDbrDoyFxCxyDoVeyoVhneB34/avmRNqnWI3wkeZmAVe3HvNM6rAc3tucgbvZHHmT6F/4NLULnC
-	mbhuUlW5KOCQlIT0pwj0PI4OPLX1obeCYc8ipxdXGKAzaGzErA6ZLOcTdy9meTAY7vxXCLTOJlz
-	RAFL268Ov6iFebXPk5QpxsVG6dRZTogNJybtHe6JuF2mkC8k8Zdvv32HW817+L2Uu0IoZLtzJzq
-	5ocvFfMohIMabu+zU+pqbQVY78niE1FbXbPaNQ9zdOJGKkRLG8+7RgoS8NJWzAN/LihQsK1Bs8x
-	Mjd7Tf/NqcHLoamWfzwmw0ewO
-X-Google-Smtp-Source: AGHT+IFu5A5bISXV8FB/K461gR7zbA9roHVXBQ8EWpE6xiSbYT5Vb03ik3iZvJ80WNqy9YA5A69QJg==
-X-Received: by 2002:a05:6a00:3e0f:b0:76b:ef0e:4912 with SMTP id d2e1a72fcca58-76e8dd0a9b6mr1753204b3a.20.1755662933893;
-        Tue, 19 Aug 2025 21:08:53 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e82d18cecsm3264977b3a.95.2025.08.19.21.08.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 21:08:53 -0700 (PDT)
-Date: Wed, 20 Aug 2025 09:38:51 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Shankari Anand <shankari.ak0208@gmail.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=tM+GU4ta9hYYfSFqFWJe2ETlCH2m3m/QsSmjd77+dSiMo87QL+9r9qTo7Rzx6E4tAh1Hqi/OHBawxMMfxX+0aymXLrR4cKqcztIZYouRB+HdvyfqlV0JM8MDPomzEnUDpbdQwZ4mUvoY6gCRU1XXGJFKsY3/YlJRjdu/A6n+NUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=deC3mSIO; arc=none smtp.client-ip=185.70.43.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
+	s=protonmail3; t=1755663425; x=1755922625;
+	bh=zBrxqwoHz+wPqifOnreinrV4oT0KPaen2rp6avZbmhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=deC3mSIOLMUh/iiTOUkS04wh9+p7qcuDqwh5Sif/SR5zE0dUHOdMvkBTFx3T5M3uD
+	 ajPlA5nbMXj/CYacWRBX0t+TezrwuLglL0hU/3QW4zBOvuG8el1ArpPweuY52za8Ac
+	 izmXDZDADoaZfGUsFjPcyZXmbqzxmwKmnvDJP754NjOTFBMttwa5tJw5jx4kwIenYJ
+	 YnfAtKwTqRXMmR/GbhbxRtJ8d/nAwFlGU8LqPG4LN114Nb8KQAjgUUUqeZctrFpzyg
+	 JkzzZFKjGUSQKcTPFiv1C/sAh6jZNhuH8HnDBl9q4cxifiFkfGr5QLryJ2a1CV90j9
+	 ejfeeSxnyyjqg==
+X-Pm-Submission-Id: 4c6Cp66l3kz2ScPM
+Date: Wed, 20 Aug 2025 04:14:59 +0000
+From: Elle Rhumsaa <elle@weathered-steel.dev>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
 	Benno Lossin <lossin@kernel.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] rust: opp: update ARef and AlwaysRefCounted imports
- from sync::aref
-Message-ID: <20250820040851.nn3ysfyurc4ukqg3@vireshk-i7>
-References: <20250815174521.1413560-1-shankari.ak0208@gmail.com>
+	Danilo Krummrich <dakr@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	kernel@collabora.com, linux-media@vger.kernel.org
+Subject: Re: [PATCH 5/7] rust: v4l2: add device capabilities
+Message-ID: <aKVLw_ouLWezuWJF@archiso>
+References: <20250818-v4l2-v1-0-6887e772aac2@collabora.com>
+ <20250818-v4l2-v1-5-6887e772aac2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,21 +67,280 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815174521.1413560-1-shankari.ak0208@gmail.com>
+In-Reply-To: <20250818-v4l2-v1-5-6887e772aac2@collabora.com>
 
-On 15-08-25, 23:15, Shankari Anand wrote:
-> Update call sites in `opp.rs` to import ARef and
-> AlwaysRefCounted from sync::aref instead of types.
+On Mon, Aug 18, 2025 at 02:49:51AM -0300, Daniel Almeida wrote:
+> All v4l2 devices must expose a given set of capabilities to the v4l2
+> core and to userspace. Add support for that in v4l2::caps. This will be
+> used by the next patch in order to add support for VIDIOC_QUERYCAP.
 > 
-> This aligns with the ongoing effort to move ARef and
-> AlwaysRefCounted to sync.
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> ---
+>  rust/kernel/media/v4l2/caps.rs  | 193 ++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/media/v4l2/mod.rs   |   2 +
+>  rust/kernel/media/v4l2/video.rs |   6 +-
+>  3 files changed, 200 insertions(+), 1 deletion(-)
 > 
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1173
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+> diff --git a/rust/kernel/media/v4l2/caps.rs b/rust/kernel/media/v4l2/caps.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..4b0164c58d13e83e728091228fae025dbce59bc8
+> --- /dev/null
+> +++ b/rust/kernel/media/v4l2/caps.rs
+> @@ -0,0 +1,193 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-copyrightText: Copyright (C) 2025 Collabora Ltd.
+> +
+> +use crate::{prelude::*, str::CStr, types::Opaque};
+> +use core::cmp::min;
+> +
+> +/// A wrapper over `struct v4l2_capability`.
+> +///
+> +/// # Invariants
+> +///
+> +/// - `self.0` is a valid instance of `struct v4l2_capability`.
+> +/// - All strings in `struct v4l2_capability` are valid C strings.
+> +///
+> +/// TODO: This type would benefit from an #[derive(accessor)] macro to automate
+> +/// the boilerplate below.
+> +#[repr(transparent)]
+> +pub struct Capabilities(Opaque<bindings::v4l2_capability>);
+> +
+> +impl Capabilities {
+> +    /// Returns the raw pointer to the `struct v4l2_capability`.
+> +    pub fn as_raw(&self) -> *const bindings::v4l2_capability {
+> +        self.0.get()
+> +    }
+> +
+> +    /// Converts a raw pointer to a `Capabilities` reference.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// - `ptr` must be a valid pointer to a `struct v4l2_capability` that must
+> +    ///   remain valid for the lifetime 'a.
+> +    /// - the returned reference must obey Rust's reference rules.
+> +    pub unsafe fn from_raw<'a>(ptr: *mut bindings::v4l2_capability) -> &'a mut Self {
+> +        // SAFETY: `ptr` is a valid pointer to a `struct v4l2_capability` as per the
+> +        // safety requirements of this function.
+> +        unsafe { &mut *(ptr.cast::<Self>()) }
+> +    }
+> +
+> +    fn inner(&self) -> &bindings::v4l2_capability {
+> +        // SAFETY: safe as per the invariants of `Capabilities`
+> +        unsafe { &*self.0.get() }
+> +    }
+> +
+> +    fn inner_mut(&mut self) -> &mut bindings::v4l2_capability {
+> +        // SAFETY: safe as per the invariants of `Capabilities`
+> +        unsafe { &mut *self.0.get() }
+> +    }
+> +
+> +    /// Returns the `driver` field.
+> +    pub fn driver(&self) -> &CStr {
+> +        // SAFETY: safe as per the invariants of `Capabilities`
+> +        unsafe { CStr::from_bytes_with_nul_unchecked(&self.inner().driver) }
+> +    }
+> +
+> +    /// Sets the `driver` field.
+> +    pub fn set_driver(&mut self, name: &CStr) -> Result {
+> +        if name.len_with_nul() > self.inner().driver.len() {
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        let cap = self.inner_mut();
+> +        let src = name.to_bytes_with_nul();
+> +        let n = min(src.len(), cap.driver.len());
+> +        cap.driver[..n].copy_from_slice(&src[..n]);
+> +
+> +        Ok(())
+> +    }
+> +
+> +    /// Returns the `card` field.
+> +    pub fn card(&self) -> &CStr {
+> +        // SAFETY: safe as per the invariants of `Capabilities`
+> +        unsafe { CStr::from_bytes_with_nul_unchecked(&self.inner().card) }
+> +    }
+> +
+> +    /// Sets the `card` field.
+> +    pub fn set_card(&mut self, card: &CStr) -> Result {
+> +        if card.len_with_nul() > self.inner().card.len() {
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        let cap = self.inner_mut();
+> +        let src = card.to_bytes_with_nul();
+> +        let n = min(src.len(), cap.card.len());
+> +        cap.card[..n].copy_from_slice(&src[..n]);
+> +
+> +        Ok(())
+> +    }
+> +
+> +    /// Returns the `bus_info` field.
+> +    pub fn bus_info(&self) -> &CStr {
+> +        // SAFETY: safe as per the invariants of `Capabilities`
+> +        unsafe { CStr::from_bytes_with_nul_unchecked(&self.inner().bus_info) }
+> +    }
+> +
+> +    /// Sets the `bus_info` field.
+> +    pub fn set_bus_info(&mut self, info: &CStr) -> Result {
+> +        if info.len_with_nul() > self.inner().bus_info.len() {
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        let cap = self.inner_mut();
+> +        let src = info.to_bytes_with_nul();
+> +        let n = min(src.len(), cap.bus_info.len());
+> +        cap.bus_info[..n].copy_from_slice(&src[..n]);
+> +
+> +        Ok(())
+> +    }
+> +
+> +    /// Returns the `version` field.
+> +    pub fn version(&self) -> u32 {
+> +        self.inner().version
+> +    }
+> +
+> +    /// Sets the `version` field.
+> +    pub fn set_version(&mut self, v: u32) {
+> +        self.inner_mut().version = v;
+> +    }
+> +
+> +    /// Returns the `capabilities` field.
+> +    pub fn capabilities(&self) -> u32 {
+> +        self.inner().capabilities
+> +    }
+> +
+> +    /// Sets the `capabilities` field.
+> +    pub fn set_capabilities(&mut self, caps: u32) {
+> +        self.inner_mut().capabilities = caps;
+> +    }
+> +
+> +    /// Returns the `device_caps` field.
+> +    pub fn device_caps(&self) -> Option<DeviceCaps> {
+> +        if self.inner().device_caps == 0 {
+> +            None
+> +        } else {
+> +            Some(DeviceCaps(self.inner().device_caps))
+> +        }
+> +    }
+> +
+> +    /// Sets the `device_caps` field.
+> +    pub fn set_device_caps(&mut self, caps: DeviceCaps) {
+> +        self.inner_mut().device_caps = caps.as_raw();
+> +    }
+> +}
+> +
+> +/// Device capabilities.
+> +///
+> +/// They can be combined with the operators `|`, `&`, and `!`.
+> +///
+> +/// Values can be used from the [`device_caps`] module.
+> +#[derive(Clone, Copy, PartialEq)]
+> +pub struct DeviceCaps(u32);
+> +
+> +impl DeviceCaps {
+> +    /// Get the raw representation of the device capabilties.
+> +    pub(crate) fn as_raw(self) -> u32 {
+> +        self.0
+> +    }
+> +
+> +    /// Check whether `cap` is contained in `self`.
+> +    pub fn contains(self, cap: DeviceCaps) -> bool {
+> +        (self & cap) == cap
+> +    }
+> +}
+> +
+> +impl core::ops::BitOr for DeviceCaps {
+> +    type Output = Self;
+> +    fn bitor(self, rhs: Self) -> Self::Output {
+> +        Self(self.0 | rhs.0)
+> +    }
+> +}
+> +
+> +impl core::ops::BitAnd for DeviceCaps {
+> +    type Output = Self;
+> +    fn bitand(self, rhs: Self) -> Self::Output {
+> +        Self(self.0 & rhs.0)
+> +    }
+> +}
+> +
+> +impl core::ops::Not for DeviceCaps {
+> +    type Output = Self;
+> +    fn not(self) -> Self::Output {
+> +        Self(!self.0)
+> +    }
+> +}
+> +
+> +/// Device capabilities.
+> +pub mod device_caps {
+> +    use super::DeviceCaps;
+> +
+> +    /// The device is a video capture device.
+> +    pub const VIDEO_CAPTURE: DeviceCaps = DeviceCaps(bindings::V4L2_CAP_VIDEO_CAPTURE);
+> +
+> +    /// The device is a video output device.
+> +    pub const VIDEO_OUTPUT: DeviceCaps = DeviceCaps(bindings::V4L2_CAP_VIDEO_OUTPUT);
+> +}
 
-Applied. Thanks.
+These can probably be implemented as associated constants:
 
--- 
-viresh
+```rust
+impl DeviceCaps {
+    pub const VIDEO_CAPTURE: Self = Self(bindings::V4L2_CAP_VIDEO_CAPTURE);
+    pub const VIDEO_OUTPUT: Self = Self(bindings::V4L2_CAP_VIDEO_OUTPUT);
+```
+
+That would allow for a slightly more ergonomic usage:
+
+```rust
+let _ = DeviceCaps::VIDEO_CAPTURE;
+```
+
+> diff --git a/rust/kernel/media/v4l2/mod.rs b/rust/kernel/media/v4l2/mod.rs
+> index 1195c18f1336891c4b9b194d4e7e5cd40989ace9..1d8241f8a2230954371965bb91b20e726f144dce 100644
+> --- a/rust/kernel/media/v4l2/mod.rs
+> +++ b/rust/kernel/media/v4l2/mod.rs
+> @@ -11,5 +11,7 @@
+>  /// Support for Video for Linux 2 (V4L2) video devices.
+>  pub mod video;
+>  
+> +/// Support for Video for Linux 2 device capabilities.
+> +pub mod caps;
+>  /// Support for Video for Linux 2 (V4L2) file handles.
+>  pub mod file;
+> diff --git a/rust/kernel/media/v4l2/video.rs b/rust/kernel/media/v4l2/video.rs
+> index 7ef2111c32ca55a2bced8325cd883b28204dc3ee..c0ac99a8234d2f7a8effd4701b9f7440236540c8 100644
+> --- a/rust/kernel/media/v4l2/video.rs
+> +++ b/rust/kernel/media/v4l2/video.rs
+> @@ -20,7 +20,7 @@
+>  use crate::{
+>      alloc,
+>      error::to_result,
+> -    media::v4l2::{self, file::DriverFile, video},
+> +    media::v4l2::{self, caps::DeviceCaps, file::DriverFile, video},
+>      prelude::*,
+>      types::{ARef, AlwaysRefCounted, Opaque},
+>  };
+> @@ -158,6 +158,9 @@ pub trait Driver: v4l2::device::Driver {
+>  
+>      /// The name to use when registering the device node.
+>      const NAME: &'static CStr;
+> +
+> +    /// The capabilities offered by this device node.
+> +    const CAPS: DeviceCaps;
+>  }
+>  
+>  struct DeviceOptions<'a, T: Driver> {
+> @@ -180,6 +183,7 @@ fn into_raw(self) -> bindings::video_device {
+>              vfl_dir: T::DIRECTION as c_uint,
+>              release: Some(Device::<T>::release_callback),
+>              fops: super::file::FileVtable::<T::File>::build(),
+> +            device_caps: T::CAPS.as_raw(),
+>              // SAFETY: All zeros is valid for the rest of the fields in this C
+>              // type.
+>              ..unsafe { MaybeUninit::zeroed().assume_init() }
+> 
+> -- 
+> 2.50.1
+
+Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
 
