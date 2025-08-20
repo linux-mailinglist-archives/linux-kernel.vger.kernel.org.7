@@ -1,183 +1,176 @@
-Return-Path: <linux-kernel+bounces-776739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D462FB2D103
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:07:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D24B2D0E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D244E0061
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:07:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75F947A5942
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BDC1FBEB6;
-	Wed, 20 Aug 2025 01:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECBD19DF4A;
+	Wed, 20 Aug 2025 01:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="sgpRAyWw"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+YW9mQ3"
+Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A815E1EB5E1;
-	Wed, 20 Aug 2025 01:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF2DEACD;
+	Wed, 20 Aug 2025 01:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755651957; cv=none; b=LwMoodRPr1mDGvisxhCKOUEUbYIE6Ra8FZFPAPIcnvZ4+hJ7iX2gqrBdTfCkT5qtGHxfTj6yKRx1s9gogMibyw+P45+4/XSKAASxfe1iMeXtrmdcUHpMHnBAVeal4ifesF9gqFy5BVmDNT7V6LC9jEGCH4ZbonqpDVtvGIFvBVo=
+	t=1755651855; cv=none; b=aDzUL8qt4QetKFzo4aotnuCCc11JI2yYP1xwjMh+inKODR+SByQLlaGXE13yTEqa6b9JheYBvuMh9bHIGKgR6vMIncG8SdgMXN6wGTPrRNsPVY5iZPVmd9vDhQbJA7xN6VjHzDWNN/Db9s9sRnmfg/a1wOYnIKUFoP6z7SEXZ0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755651957; c=relaxed/simple;
-	bh=cK+Yhbyrxz6cRQ4ja5MMJn+1dAtSfifLO4P/ZHRpVvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M9hDo8ZY4vVtAyRm+5q6rZxxZHdbHQxnHWycQiRxmDcs+35uSLlLf+JlzgzDt7nLnX/DHtYW36ODnjdY12cpI88V2SB9y0XJTJlNgl4UAU36kuGtj2HVuCXhgO6vwSHfI3MvvoMqXwl5JbQNTCvmEuJTo7GErTRed2Jt5VgBxbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=sgpRAyWw; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57JLCHQM028221;
-	Wed, 20 Aug 2025 01:04:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=9L4mK
-	jeGA5OyWK8/K1NWQvE53M9E3W4TNz8fycuQ5CQ=; b=sgpRAyWwR+4TxZS77Pv5L
-	tgfjsj36FrQShtOvaWE1EKMDedetv9gjtQb2i/mDPxzLObU9kSms/jiMJPoHxgyc
-	/gj6FAco0ZyI8fwy+IlkiFbctnFoEXApIwVg38Y6P7DBLLLkNpH8LkOq2bsS8ARJ
-	IMMkNpLqo/ZKVsQmoDRu37awClhkyxdLpqznfi8WePpokF7EMaNfdqs8HcWGQfsZ
-	NjBHTmb6YEhhdgTdsHgBj1btzELw5YvMemlqmBAnguxDeOkRT09yUwKlGTR2a7zD
-	g40KsVeOUhbo84S4FRxPjZ48XJbOY5mR+fs1UmNHZJEI4afelYI5AviWgvMQgJvG
-	g==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48n0tt08bp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 20 Aug 2025 01:04:47 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57JNWIUI007267;
-	Wed, 20 Aug 2025 01:04:47 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48my3q29v9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 20 Aug 2025 01:04:46 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57K14NdK011685;
-	Wed, 20 Aug 2025 01:04:45 GMT
-Received: from localhost.localdomain (ca-dev60.us.oracle.com [10.129.136.27])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48my3q29gw-9;
-	Wed, 20 Aug 2025 01:04:45 +0000
-From: Anthony Yznaga <anthony.yznaga@oracle.com>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, andreyknvl@gmail.com, arnd@arndb.de,
-        bp@alien8.de, brauner@kernel.org, bsegall@google.com, corbet@lwn.net,
-        dave.hansen@linux.intel.com, david@redhat.com,
-        dietmar.eggemann@arm.com, ebiederm@xmission.com, hpa@zytor.com,
-        jakub.wartak@mailbox.org, jannh@google.com, juri.lelli@redhat.com,
-        khalid@kernel.org, liam.howlett@oracle.com, linyongting@bytedance.com,
-        lorenzo.stoakes@oracle.com, luto@kernel.org, markhemm@googlemail.com,
-        maz@kernel.org, mhiramat@kernel.org, mgorman@suse.de, mhocko@suse.com,
-        mingo@redhat.com, muchun.song@linux.dev, neilb@suse.de,
-        osalvador@suse.de, pcc@google.com, peterz@infradead.org,
-        pfalcato@suse.de, rostedt@goodmis.org, rppt@kernel.org,
-        shakeel.butt@linux.dev, surenb@google.com, tglx@linutronix.de,
-        vasily.averin@linux.dev, vbabka@suse.cz, vincent.guittot@linaro.org,
-        viro@zeniv.linux.org.uk, vschneid@redhat.com, willy@infradead.org,
-        x86@kernel.org, xhao@linux.alibaba.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: [PATCH v3 08/22] mm/mshare: flush all TLBs when updating PTEs in an mshare range
-Date: Tue, 19 Aug 2025 18:04:01 -0700
-Message-ID: <20250820010415.699353-9-anthony.yznaga@oracle.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250820010415.699353-1-anthony.yznaga@oracle.com>
-References: <20250820010415.699353-1-anthony.yznaga@oracle.com>
+	s=arc-20240116; t=1755651855; c=relaxed/simple;
+	bh=CaKKkh153u9GLBk0kCqBuDIf3yq1IIvzlzXYnFY/Tt4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VmhkUE8QPVZFCDEJnRyBjAvr8r90/dd6utvCZiZzuvA5aMG4tFU/O/blouAzQDkXCD0a1TbhhR79bhS65DFk/IjHqX7TvfYaemG3KSQimIjd5Oenej3R7P9I4/GS21qON54A3wppsmiCxzH44bsl0LDC3/tfwH9UI7eo3flG6sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+YW9mQ3; arc=none smtp.client-ip=209.85.128.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-71d601859f5so48093837b3.0;
+        Tue, 19 Aug 2025 18:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755651853; x=1756256653; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pdjS7sR1ZSNNMgzu0GMB7zE1WJRP3IJ5P2CpnU3zZJ8=;
+        b=f+YW9mQ33rtoTb1KgI/QVice7+EqNSUaEdyCMu85h3mrrZ9wmZVXVUKwnPY9dzBDJT
+         7FFW6XJ5XodmTzneQis6TkwdLX9SrdEooUujBZH2viHrieoIyMVkfn7/JEcM0PHFEP5U
+         QTQ1EhZ0ymUDgf0NP+JJSvu2aOJL10ULiT0fj63Yc2vepCTJOSRWr1kIcfGyPYtf0hRK
+         lPEBWHdn8Igzx/DcNhu6VLc06RMBGXXUTYLXTQaVoaz+LiBQ+65C/U3l5Ppg/t590VAk
+         eyfr7DLAiSxdLze1s7ou2VeKSHrGb18WsYOOr9uT5Y5Ic1zqCbLeq1qSj83jDi0MsMdr
+         JBrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755651853; x=1756256653;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pdjS7sR1ZSNNMgzu0GMB7zE1WJRP3IJ5P2CpnU3zZJ8=;
+        b=Ew9yRFqXt7wPFvS8zFjrJaKLCAo1Pe6Gumr6L0xHLikba5bQehcmuRyS3NHokq0vKZ
+         LY+hQAylvpukqKbqolPsYT2braUr4RssZLrejvxmtyLPq/GRPFPuE9YlWSymaOEMcuYx
+         HF2KGmiQ4FbsCQaT1S3cAArkT13tETgg0+sh5BhpiisXev/4V1xPaJJC7cj7gAmkNrrC
+         y6Jvm3ZvObevg58eEU4Uc9HA8U4PFCi56Fws7BYlDXOnbhPv1lzurqyT8px/iteDlHlJ
+         eSbgIQQG/CMY3V4+V1irqvmuuoaBcxWN3132Td/5KSETsw6JtLo8h9k6jpwyCgJjnSY/
+         4xSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+GRy+D14JQO35iWH3Hrjr52wCyayPmhfY8FcqdnuPtbj3wJyUs0ukFNZbA+Y182JtQG8=@vger.kernel.org, AJvYcCV39jyxcHDUOw0Yz3gjgiu4C1qgXbD2NdytolumgZaFRMJh9DcEui5phE5Qg1Vbb/QDmHLB@vger.kernel.org, AJvYcCW9g33rJmd/c7r5Ow7pb2uW1Aa8Dj8qQu2RwJQjtAQ8YvCC+c2HnIZEypFe577Ye0bniYJLyPLazJeIdg9+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXgO+nEprZWyaGouLskTT3FNB6ClbGemC0q7KcwDPJQQ5vjztd
+	X9/QK3id4YwU5k1wURHiGj1O8UOzhBhhFnZ1Ovgbedu1DVD9nX/EzGDXLbGCle0R0odCzSFti+L
+	Ep4VcTiAUX1I7jOw5HUKYzpLZm2vMSnM=
+X-Gm-Gg: ASbGncuGuYYEPjP8v0LZGKlTorK7ibzSIq9vgsCeefWIBpVjxk93CKGJXjC0Ce/cj7W
+	SqyDWxqveOo/8J1yWSvf3Lj4gs9t1z9Z9jxTkQxQF6FIT9IwePvxjECk23F613fsyo9JAmEDBBy
+	e8tMJtHdzGcBhcVxkwV0tVJwajVIbBQNV27P5G6QjZYLIcub/SfTyF64d3iIJG5TAfndRWQeVzL
+	v48vfY=
+X-Google-Smtp-Source: AGHT+IEMwYXVMOnJAFhWv4+HfLt5EYfC8NnPxDufSKJt173KemP5IdIFX3eF9JUl7VJn5OQaf9D174oFfK6Zklou4no=
+X-Received: by 2002:a05:690c:6489:b0:71e:6f7d:ae11 with SMTP id
+ 00721157ae682-71fb3246ff4mr16023037b3.40.1755651852895; Tue, 19 Aug 2025
+ 18:04:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-19_04,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2508200007
-X-Authority-Analysis: v=2.4 cv=YvRWh4YX c=1 sm=1 tr=0 ts=68a51f2f cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=2OwXVqhp2XgA:10 a=yPCof4ZbAAAA:8 a=0InV0jWQfKTt0iU26UwA:9
- a=UhEZJTgQB8St2RibIkdl:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=QOGEsqRv6VhmHaoFNykA:22
-X-Proofpoint-GUID: tBA8mk8grAxjezx5ksHcHYHuEzgvJI8t
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NiBTYWx0ZWRfXzCjnlAcKDkxl
- M/W3GCTi3Cck0tQGb9R4qooCLskGa3VkpOpP1pf05OmPWvaJ4/I3KFOr2i+jRYpiUjl9h2+I7Zm
- r+MHQ41Jz7B3jRarYNRwg1IS1+nXFLIinc7PIhYtdbe8cvHEXjrMrbNdaHNXdHc31hYsW0MVJJP
- aYitiektuIMWnkwGeXWhA2XJYGQ1OW47P3nMNmgGH+93OqRxBzEZEMjKx6Z17oOiLCRSX891ssA
- fVkubZUw/W3QdfS064dz2uCg5T34F/+oC4JjhtEKFsd3pklDXl3GTfV79URq/kRGVpfpQgl/A8R
- Vxv7SsSsXg7ynDPsmQ3t9pHRH5fI+tcrfSK0jLh3Un6YRPiyhs1vrU/5En5Q2lE1bqoPSqWlv+8
- Oa6w1RHw3jA0PIujvZ5D7VWqENudvw==
-X-Proofpoint-ORIG-GUID: tBA8mk8grAxjezx5ksHcHYHuEzgvJI8t
+References: <20250819093424.1011645-1-dongml2@chinatelecom.cn>
+ <20250819093424.1011645-2-dongml2@chinatelecom.cn> <38a57013-6c0d-4a98-a887-54ff2133817d@paulmck-laptop>
+In-Reply-To: <38a57013-6c0d-4a98-a887-54ff2133817d@paulmck-laptop>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Wed, 20 Aug 2025 09:04:02 +0800
+X-Gm-Features: Ac12FXxBVxHMkYxZlDnkhaNzK9Ra4teZ7i9WcRPeUDauIaA_Ui6nQsVUELnI6tM
+Message-ID: <CADxym3bWd6RJvpPXxYDiFuVisK4W=70_2hQzdwzygwdin78_uA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 1/7] rcu: add rcu_read_lock_dont_migrate()
+To: paulmck@kernel.org
+Cc: ast@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org, 
+	joelagnelf@nvidia.com, josh@joshtriplett.org, boqun.feng@gmail.com, 
+	urezki@gmail.com, rostedt@goodmis.org, mathieu.desnoyers@efficios.com, 
+	jiangshanlai@gmail.com, qiang.zhang@linux.dev, daniel@iogearbox.net, 
+	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
+	rcu@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Unlike the mm of a task, an mshare host mm is not updated on context
-switch. In particular this means that mm_cpumask is never updated
-which results in TLB flushes for updates to mshare PTEs only being
-done on the local CPU. To ensure entries are flushed for non-local
-TLBs, set up an mmu notifier on the mshare mm and use the
-.arch_invalidate_secondary_tlbs callback to flush all TLBs.
-arch_invalidate_secondary_tlbs guarantees that TLB entries will be
-flushed before pages are freed when unmapping pages in an mshare region.
+On Tue, Aug 19, 2025 at 10:58=E2=80=AFPM Paul E. McKenney <paulmck@kernel.o=
+rg> wrote:
+>
+> On Tue, Aug 19, 2025 at 05:34:18PM +0800, Menglong Dong wrote:
+> > migrate_disable() is called to disable migration in the kernel, and it =
+is
+> > often used together with rcu_read_lock().
+> >
+> > However, with PREEMPT_RCU disabled, it's unnecessary, as rcu_read_lock(=
+)
+> > will always disable preemption, which will also disable migration.
+> >
+> > Introduce rcu_read_lock_dont_migrate() and rcu_read_unlock_migrate(),
+> > which will do the migration enable and disable only when !PREEMPT_RCU.
+> >
+> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+>
+> This works, but could be made much more compact with no performance
+> degradation.  Please see below.
+>
+>                                                 Thanx, Paul
+>
+> > ---
+> > v2:
+> > - introduce rcu_read_lock_dont_migrate() instead of rcu_migrate_disable=
+()
+> > ---
+> >  include/linux/rcupdate.h | 24 ++++++++++++++++++++++++
+> >  1 file changed, 24 insertions(+)
+> >
+> > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> > index 120536f4c6eb..8918b911911f 100644
+> > --- a/include/linux/rcupdate.h
+> > +++ b/include/linux/rcupdate.h
+> > @@ -962,6 +962,30 @@ static inline notrace void rcu_read_unlock_sched_n=
+otrace(void)
+> >       preempt_enable_notrace();
+> >  }
+> >
+> > +#ifdef CONFIG_PREEMPT_RCU
+> > +static __always_inline void rcu_read_lock_dont_migrate(void)
+> > +{
+>
+> Why not use IS_ENABLED(CONFIG_PREEMPT_RCU) to collapse the two sets of
+> definitions together?
 
-Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
----
- mm/mshare.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Yeah, that's a good idea, which makes the code much simpler.
 
-diff --git a/mm/mshare.c b/mm/mshare.c
-index e0dc42602f7f..be7cae739225 100644
---- a/mm/mshare.c
-+++ b/mm/mshare.c
-@@ -16,8 +16,10 @@
- #include <linux/fs.h>
- #include <linux/fs_context.h>
- #include <linux/mman.h>
-+#include <linux/mmu_notifier.h>
- #include <uapi/linux/magic.h>
- #include <linux/falloc.h>
-+#include <asm/tlbflush.h>
- 
- const unsigned long mshare_align = P4D_SIZE;
- const unsigned long mshare_base = mshare_align;
-@@ -30,6 +32,7 @@ struct mshare_data {
- 	unsigned long start;
- 	unsigned long size;
- 	unsigned long flags;
-+	struct mmu_notifier mn;
- };
- 
- static inline bool mshare_is_initialized(struct mshare_data *m_data)
-@@ -37,6 +40,16 @@ static inline bool mshare_is_initialized(struct mshare_data *m_data)
- 	return test_bit(MSHARE_INITIALIZED, &m_data->flags);
- }
- 
-+static void mshare_invalidate_tlbs(struct mmu_notifier *mn, struct mm_struct *mm,
-+				   unsigned long start, unsigned long end)
-+{
-+	flush_tlb_all();
-+}
-+
-+static const struct mmu_notifier_ops mshare_mmu_ops = {
-+	.arch_invalidate_secondary_tlbs = mshare_invalidate_tlbs,
-+};
-+
- static int mshare_vm_op_split(struct vm_area_struct *vma, unsigned long addr)
- {
- 	return -EINVAL;
-@@ -238,6 +251,10 @@ msharefs_fill_mm(struct inode *inode)
- 		goto err_free;
- 	m_data->mm = mm;
- 	m_data->start = mshare_base;
-+	m_data->mn.ops = &mshare_mmu_ops;
-+	ret = mmu_notifier_register(&m_data->mn, mm);
-+	if (ret)
-+		goto err_free;
- 
- 	refcount_set(&m_data->ref, 1);
- 	inode->i_private = m_data;
--- 
-2.47.1
+Thanks!
+Menglong Dong
 
+>
+> > +     migrate_disable();
+> > +     rcu_read_lock();
+> > +}
+> > +
+> > +static inline void rcu_read_unlock_migrate(void)
+> > +{
+> > +     rcu_read_unlock();
+> > +     migrate_enable();
+> > +}
+> > +#else
+> > +static __always_inline void rcu_read_lock_dont_migrate(void)
+> > +{
+> > +     rcu_read_lock();
+> > +}
+> > +
+> > +static inline void rcu_read_unlock_migrate(void)
+> > +{
+> > +     rcu_read_unlock();
+> > +}
+> > +#endif
+> > +
+> >  /**
+> >   * RCU_INIT_POINTER() - initialize an RCU protected pointer
+> >   * @p: The pointer to be initialized.
+> > --
+> > 2.50.1
+> >
 
