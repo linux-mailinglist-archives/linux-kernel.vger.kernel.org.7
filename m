@@ -1,97 +1,114 @@
-Return-Path: <linux-kernel+bounces-776954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84429B2D370
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:21:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7994B2D372
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 856C35E3EBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6E855E476C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64610283FF1;
-	Wed, 20 Aug 2025 05:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B7828466C;
+	Wed, 20 Aug 2025 05:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9MlNIAI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jsHeSpfi"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD94E42A8C;
-	Wed, 20 Aug 2025 05:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6950542A8C;
+	Wed, 20 Aug 2025 05:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755667245; cv=none; b=H2tSkzZMGpxDXJ7Wu+QdTFuy/Vi95tmYHxqh+tyNSelvraK9dIQakVRG6n1bPGUs9Fu9RjhMoRjlOu+Q6ra1o/BRBh55IDI1z7KUFmk4Uz2EyrGh708ZepHlh6Bq0/ik8halK3y1nNP05BHyAxuU7cjeHkO+CoUAklXSl61Pjzo=
+	t=1755667251; cv=none; b=msAkqMqWs3xbXUHl6RSSGsdar5ptaTYqf2Li4q1mEm//en8r8btXDmRvVBVYHO5YbIjanskFnV7o2kI6SrPm9Lkrlwol6AdbAUg6+Wumez1ROXLqm7D8jE+U/PqWNb0pwyYSWunk3jT6ZRoMyEuFGNLQFXWsKwUKqoQ6UgYfbD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755667245; c=relaxed/simple;
-	bh=xsYzyo01FebGnDxxfqBHAy+cxw9XljjmiKymC0b4Agk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pf2FTJfXUtfWVe2XNeZazmkwqUA62n7Aaq3UnRN2Ob1qzpvIz2TVuHWPnZo+KZ3sGDD/SQh/yRGTHFE6s8HhyDcrpZMcmtZq+lA+8NQ6jLneAhgBZICtZswyf817WSaZp1Zypivab4XWxIg/Lse3A3LkeVqwF0O/O6ANu+ksfiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9MlNIAI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EE4CC4CEEB;
-	Wed, 20 Aug 2025 05:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755667245;
-	bh=xsYzyo01FebGnDxxfqBHAy+cxw9XljjmiKymC0b4Agk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q9MlNIAIaB1X/8UqXSthhxTu7vHDHg1QnhuA82Wu+mSIcpMcJFHBMvX8cOlOAOHOu
-	 yHPaFlMNK0UaiCp20Tdlwm4PHDIRh3x3kaeHlHFpmvWAWQME37lTbozlUjiQeuLBBT
-	 eUlNQvq3eFexyvTBki9bUUuU+kNfybcIhGGIMXpfbv9gYxF5MAABXQL0YLDsXPFcYh
-	 WvWRSb7yMu/xvbHeRHJWch7ENoFBGN57/uyfKfoFsyW1iKrkimtRSCf3TX75JGRKhN
-	 ih8VZqjL+/fwVeF63N7OSF9n1rDARKIRl5Vyz+VCnwQypC1VaffIHwca1GJCfPh6Bo
-	 xkm4SXhqiFCZA==
-Date: Tue, 19 Aug 2025 22:20:43 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Chunsheng Luo <luochunsheng@ustc.edu>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fuse: clarify extending writes handling
-Message-ID: <20250820052043.GJ7942@frogsfrogsfrogs>
-References: <CAJfpegsz3fScMWh4BVuzax1ovVN5qEm1yr8g=XEU0DnsHbXCvQ@mail.gmail.com>
- <20250820021143.1069-1-luochunsheng@ustc.edu>
+	s=arc-20240116; t=1755667251; c=relaxed/simple;
+	bh=e7sGOYXv4pBHEJEh84R+NEKRrUcl59Rnj2qZC5guILs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WZ60hGHoYxCkPIT3I0sO9R2VyWvol13SDN7CUrJsrdOqqqgRg+/IAQzoq9P5M3gms/+08dgqzIjfLjp2thWBcICvK6ITsN0juvfl677soKNklhxPHRF7T50Sv3E5tjpO1Ol/+VTrVcII/Mexf+iLTCcvipRYLmnw+pInbhTZwko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jsHeSpfi; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61a94bd82a5so1410673a12.1;
+        Tue, 19 Aug 2025 22:20:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755667248; x=1756272048; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o323kJRY5rGGcUtY2fkwlyKrvR96I0AXwLWEB+2JTS4=;
+        b=jsHeSpfi/vAuEQBwQbrM6oNMNXwJGQ2jl/NTCxTBdFDiyNKiSXVXayb98CJ5SqEe73
+         DESTo5BK8HD5lGV4LaRGAAZVvfKMbbTwAnX2+BG39z63K5sz/o3tIKdARYP303tz6mST
+         IEXL/9R0r/a8gDt1l/cG3+SPtOYggjpxx3xTdqjV51I/zrlRpjyugy96DdDgzH00Ff1x
+         7iqSusxLMh70L6mXS8HGC655xc//nUjILUCg8EV5WSY9TqDHkRBYL+LhUMa8O58uCycK
+         9ZNeHN0JceW18uE73fb5iFb62FLwobcOlHgPL4MQNdOIyoXq3R/uwQP6HBTQZCzTVd9G
+         KnDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755667248; x=1756272048;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o323kJRY5rGGcUtY2fkwlyKrvR96I0AXwLWEB+2JTS4=;
+        b=t7NbAhOObe6OCIiM6DLbOd9UUu3l5vkftT4WjKE/28b7/mSLMEQ3ZZ6rDrde0k4P0P
+         p0PioaNzi8POOnv4ohD/8BVFh5GdDzFkYeYY7wnMxg0MM9odatD3sdi1UMwqRkTN1Phr
+         IlkoGaayJba/tBO6c33IPNABmbaya82fisHc5wxTIJYGt8YRAViZ4kZO8iFMm8E5vGCE
+         JRmBzDV3laQHyF28jJR8fWsw8HVPGT3XRS2iZaLIFaX0bD0s7lI3HX1qtZ+mdGGGp8yp
+         3TE1/nlMh+n5nUN/n7Ya1yS+SdV88YYCX/fFNWgGLOEn/P4XFGxrXzwhMQ7dkYJz6MCk
+         D5gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEkFMjcp5EiftuwfPRigmjV7szPGPnBVUJovT/E2Ljfk65ADN9GTTudVeQ7umVAmJAcC/kSz8ckLWge79E2RRh@vger.kernel.org, AJvYcCWnw4WSJhu0k8IZ431iUtCQs53ddwmYElWXxKjgR6tTgiZfTpzb7Mmwx72QaeNNOzLSXM126cmunoy18OM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzetOP+w+y82Wpaudrg6JLV/9h5vbRBg4C1nwTpotuNAl0z9W4P
+	0bC+RF/kcmn7BvGTCDlTyCN3Zftg6XgXn2IbNFRgo1mttvqJd87xqd6cz0xjiTx2L5I=
+X-Gm-Gg: ASbGnctV1vCuOSLUo/BWnpoFJghnvsrbcAy1r5lqbJuTSGJUEvwXbctv9NA183RXmK+
+	szhmS4i3GTeaDwUJBfiAZoH1fgs5FXGvX/nLzLwLYIcHJuCk6ht3vqWcUF2OQt/dFtGcTIdoi1i
+	ya+TKKhGVKgrp/TLMa2efzOqryHIbc6p4ZfLPPr5xbKWRk0DYgpIbbd+SyurewvtSckFQnYfq4O
+	BrcUxg9PUZvgHouI0jSzNj5flLwA+SueH6Tj8biyBHV9rDhtLCshl1PsNzYaLvf4aVXOyyBxZnE
+	nAQBI1cLSR1Q34Mxe8qTPkMfp2c7YZIVMArtRmQYktFnVd1GOd8rPTHNsbbTBc5RESdJYIYWH5u
+	kJZ7rCBcXa0BnBoLcC8+E4MUzAe9vaT0miQyaJ7uZCeC9mAI4VJ/uSOpYM7dAFuE5PQ==
+X-Google-Smtp-Source: AGHT+IE8hW86398A6QfrTbp+PmyKyKF50B5zls28U5WgglVUukHsdsOBPXPzXd5fnCYPaY9NQg9tvg==
+X-Received: by 2002:a05:6402:5247:b0:615:6482:7498 with SMTP id 4fb4d7f45d1cf-61a9786a5cbmr1403779a12.31.1755667247727;
+        Tue, 19 Aug 2025 22:20:47 -0700 (PDT)
+Received: from linuxlab.zamel.local ([178.216.139.125])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a758c0e6fsm2927655a12.57.2025.08.19.22.20.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 22:20:47 -0700 (PDT)
+From: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
+To: skhan@linuxfoundation.org,
+	linux-kselftest@vger.kernel.org
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
+Subject: [PATCH] selftests/ftrace: Split worlds in return string
+Date: Wed, 20 Aug 2025 07:20:44 +0200
+Message-Id: <20250820052044.130115-1-kubik.bartlomiej@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820021143.1069-1-luochunsheng@ustc.edu>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 10:11:43AM +0800, Chunsheng Luo wrote:
-> Tue, 19 Aug 2025 16:07:19 Miklos Szeredi wrote:
-> 
-> >>
-> >> Only flush extending writes (up to LLONG_MAX) for files with upcoming
-> >> write operations, and Fix confusing 'end' parameter usage.
-> >
-> > Patch looks correct, but it changes behavior on input file of
-> > copy_file_range(), which is not explained here.
-> 
-> Thank you for your review.
-> 
-> For the copy_file_range input file, since it only involves read operations,
-> I think it is not necessary to flush to LLONG_MAX. Therefore, for the input file, 
-> flushing to the end is sufficient.
-> 
-> If you think my understanding is correct, I can resend a revised version of
-> the patch to update the commit log and include a clear explanation regarding
-> the behavior changes in 'fuse_copy_file_range' and 'fuse_file_fallocate' operations.
+Split concatenated words in return string.
 
-I don't understand the current behavior at all -- why do the callers of
-fuse_writeback_range pass an @end parameter when it ignores @end in
-favor of LLONG_MAX?  And why is it necessary to flush to EOF at all?
-fallocate and copy_file_range both take i_rwsem, so what could they be
-racing with?  Or am I missing something here?
+Signed-off-by: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
+---
+ tools/testing/selftests/ftrace/test.d/event/event-no-pid.tc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-fuse-iomap flushes and unmaps only the given file range, and afaict
-that's just fine ... but there is this pesky generic/551 failure I keep
-seeing, so I might actually be missing some subtlety. :)
+diff --git a/tools/testing/selftests/ftrace/test.d/event/event-no-pid.tc b/tools/testing/selftests/ftrace/test.d/event/event-no-pid.tc
+index 9933ed24f901..47fd615a4542 100644
+--- a/tools/testing/selftests/ftrace/test.d/event/event-no-pid.tc
++++ b/tools/testing/selftests/ftrace/test.d/event/event-no-pid.tc
+@@ -110,7 +110,7 @@ fi
+ 
+ cnt=`count_pid $child`
+ if [ $cnt -ne 0 ]; then
+-    fail "Child of filtered out taskhas events"
++    fail "Child of filtered out task has events"
+ fi
+ 
+ cnt=`count_no_pid $mypid`
+-- 
+2.39.5
 
---D
-
-> Thanks
-> Chunsheng Luo
-> 
 
