@@ -1,201 +1,102 @@
-Return-Path: <linux-kernel+bounces-777548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B280B2DAC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:21:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBB8B2DAC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086697278D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8EAE5E0374
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70BF2E339B;
-	Wed, 20 Aug 2025 11:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070812E370C;
+	Wed, 20 Aug 2025 11:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j+c6f9wv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrcproSX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113FA23909F;
-	Wed, 20 Aug 2025 11:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC362E2EF3;
+	Wed, 20 Aug 2025 11:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755688709; cv=none; b=kRVcwlJe9EDCuw9qVFuEvpHLLtHJ/Xo+9Ctkth8M+rMeJ2MDU4EQTNNdYfLS2x5D8/B1r7GRk2Aiu2aNKrBYDqHDrFvMtZPcGoBAeygbfkpouk24sNztWZ07wQeOf+Gf3G4jGqqWaHfIas+HQppz+Iu87rjMyyD6rVz9uVvv9nU=
+	t=1755688775; cv=none; b=l6njFnGxTzfH0H/zei2GA6g5Ie49tpGMq6hpinX7e0GtWCCRhrvm159ibCpEuMJIiBdS+aTJd+nN5FMMaaDOO2uYh74EujK543unmoWpBaFv3xvMCfa4QywBRg5xYfPiBOnzvzegw/RXfBP3ZIsQuqPvaYXjznv0KPXCXsp+ybU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755688709; c=relaxed/simple;
-	bh=NvKhqfHAjC7nxN4srjgB/PPxA3etfbhzLv69VOVPOKA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=OvdWTeOFpWmkFuOHoQK4lyiPDyTFq8nZZF4EH3UNsTdDpZR/Og8+9fpciM/xFZkIGwgWmYiXxPiGi35P7Snr+B1oY1jd90vUDdVQpj7iiQThqxdoTciEYH9NoOdZH37aVVY9qkHE7+gkiVNuHpvBy0Cw8ynFs4Vwl1feYcF96LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j+c6f9wv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D925C4CEEB;
-	Wed, 20 Aug 2025 11:18:25 +0000 (UTC)
+	s=arc-20240116; t=1755688775; c=relaxed/simple;
+	bh=HZ1UmbfBEdSuruy4sfEDaCmVWP8/cDwiG6wdSg1+g6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AyB/m8DrdDwIGHyIXTLycwn2zxL+OIajM40jeG6P04pHRegqH2F/66onpBw9/zZ7Qiyxa+kaLGBhHypW8qD4btGisShH1ksChBKlpIFx1V6ayv0pPXuScBC3zpPTILyKvmTnrg+fIwUTAtrZ0Xd/iTKC74FfgAdKf9pVfkhOKMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrcproSX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E78C4CEEB;
+	Wed, 20 Aug 2025 11:19:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755688708;
-	bh=NvKhqfHAjC7nxN4srjgB/PPxA3etfbhzLv69VOVPOKA=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=j+c6f9wvQwsckWE4213N/FIFio0R3U3278n1yw8riaV8XMnaYGLGdoxefVtOkrFMS
-	 vXn/Q+ukin9JH+3jKvILqVQeba6kwSB5woWp05xEtWysf1puQDnonLq8Ct4dReKyCa
-	 nRSmhZPVT0Z95FeeARd++Wv1WPPLU/W1CFZWUehCJBdOgYEgExzjFcTKr036SNgPUn
-	 TuH6ck7UUMIzZsj0CdxgCrnEw2XRcxk8cyt98gEuzFGIGO9CMIeHqKwRIw8Ug1BTeK
-	 7dd4MBMzVvWabZP1rtovHfDU4+lR0aUpzFuFt3xneVd93sgcKYE1YzzxAOkxTCYsLZ
-	 2oqRJ+TxWEzqQ==
+	s=k20201202; t=1755688773;
+	bh=HZ1UmbfBEdSuruy4sfEDaCmVWP8/cDwiG6wdSg1+g6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WrcproSXywr6Ysf2KoE6zgJO5GtNfhpm1e7Pc1fBcsC6SaqO66+i6axs02MPeUdz+
+	 yccubA/57ZBo7JudBGZe6RCRRosxbbTo41NOQZrQyNQoGCLHCDHWRSq8lV52s9Wfl0
+	 micvfZLpjrQglH4it7F6PirI0nIfXkr184im+Y4HHDj0BCvFBYxn8bGwhLTVxVsp4C
+	 Fw+myoHg6KK9VDZ35dTVWYicxmjKw2A7FzUsRkXKOsmtcAtbYRE7si7Lpf8fdUY5WT
+	 OyhYpRVGDOLiQ/IpPh6EHRY8TeYs2TVHTgyqLcFfgvUcc1jN7JZOCxTxYSsS2oEs7P
+	 bakg5naWMP9Gg==
+Date: Wed, 20 Aug 2025 12:19:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.15 000/509] 6.15.11-rc2 review
+Message-ID: <c6232128-6bc5-4f84-af15-43e2fce6d619@sirena.org.uk>
+References: <20250819122834.836683687@linuxfoundation.org>
+ <bb8ebf36-fb7c-470c-89e7-e6607460c973@sirena.org.uk>
+ <2025082058-imprint-capital-e12c@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 13:18:23 +0200
-Message-Id: <DC77PBXCZP32.1FJ6BGM9YV27H@kernel.org>
-Subject: Re: [PATCH] rust: zpool: add abstraction for zpool drivers
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- "Uladzislau Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
- Roy Baron" <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor Gross"
- <tmgross@umich.edu>, "Johannes Weiner" <hannes@cmpxchg.org>, "Yosry Ahmed"
- <yosry.ahmed@linux.dev>, "Nhat Pham" <nphamcs@gmail.com>,
- <linux-mm@kvack.org>
-To: "Vitaly Wool" <vitaly.wool@konsulko.se>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250820091543.4165305-1-vitaly.wool@konsulko.se>
- <DC76DSYUY978.3NR8S2K13I9RX@kernel.org>
- <C642BA32-4EA5-4843-9625-5DBF40A42C6C@konsulko.se>
-In-Reply-To: <C642BA32-4EA5-4843-9625-5DBF40A42C6C@konsulko.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gCIrQor9P1IRuS2f"
+Content-Disposition: inline
+In-Reply-To: <2025082058-imprint-capital-e12c@gregkh>
+X-Cookie: Semper Fi, dude.
 
-On Wed Aug 20, 2025 at 12:44 PM CEST, Vitaly Wool wrote:
->> On Aug 20, 2025, at 12:16=E2=80=AFPM, Danilo Krummrich <dakr@kernel.org>=
- wrote:
->>> +/// zpool API
->>=20
->> It would be nice to have some more documentation on this trait, includin=
-g a
->> doc-test illustrating some example usage.
->>=20
->>> +pub trait Zpool {
->>> +    /// Opaque Rust representation of `struct zpool`.
->>> +    type Pool: ForeignOwnable;
->>=20
->> Something that embedds a struct zpool, such as struct zswap_pool? If so,=
- isn't
->> this type simply Self?
->
-> I think ForeignOwnable provides a good representation of 'struct zpool=E2=
-=80=99 and it=E2=80=99s convenient to borrow it, as done later in the patch=
-.
 
-ForeignOwnable is not a representation for a specific type, but rather some=
-thing
-that originates from the Rust side and is owned by the C side. But that's n=
-ot
-the case here.
+--gCIrQor9P1IRuS2f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Regarding the "convenient to borrow" part, why can't Zpool::create() return
-Result<Self> and e.g. malloc be defined as
+On Wed, Aug 20, 2025 at 01:14:14PM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Aug 20, 2025 at 11:57:57AM +0100, Mark Brown wrote:
 
-	fn malloc(
-	   &self,
-	   size: usize,
-	   gfp: Flags,
-	   nid: NumaNode,
-	) -> Result<usize>;
+> > # first bad commit: [3b03bb96f7485981aa3c59b26b4d3a1c700ba9f3] eventpoll: Fix semi-unbounded recursion
 
-i.e. why does it need to be ForeignOwnable in the semantic sense of the tra=
-it?
+> I thought the LTP test was going to be fixed, what happened to that?
 
->>> +    /// Make all the necessary preparations for the caller to be able =
-to read from the object
->>> +    /// represented by `handle` and return a valid pointer to the `han=
-dle` memory to be read.
->>> +    fn read_begin(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, =
-handle: usize)
->>> +        -> *mut c_void;
->>=20
->> Why does this return a raw pointer? I think this needs a proper type
->> representation.
->
-> The zpool API wants a raw pointer here so I decided not to overcomplicate=
- it. I thought of using NonNull<[u8]> but it doesn=E2=80=99t seem to be a g=
-ood fit. We=E2=80=99re basically returning a pointer to a place in memory w=
-hich is guaranteed to be allocated and owned by us, but it is a raw pointer=
- at the end of the day. What would you recommend here instead?
+I have no recollection of being looped into that discussion so this is
+still exactly the same LTP image as I was running before.  Do you have
+any references, is this something that's in a released LTP?
 
-I don't know the exact semantics behind read_begin(), but we should at leas=
-t
-encapsulate the pointer into a new type and restrict its lifetime to the
-validity of the encapsulated pointer, such that it can't be used in the wro=
-ng
-way.
+--gCIrQor9P1IRuS2f
+Content-Type: application/pgp-signature; name="signature.asc"
 
-More general, if we don't cover such things and use raw pointers for conven=
-ience
-instead, we may not provide enough of a benefit compared to what we can do =
-in
-a C API.
+-----BEGIN PGP SIGNATURE-----
 
->>> +
->>> +    /// Finish reading from a previously allocated `handle`. `handle_m=
-em` must be the pointer
->>> +    /// previously returned by `read_begin`.
->>> +    fn read_end(
->>> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
->>> +        handle: usize,
->>> +        handle_mem: *mut c_void,
->>> +    );
->>=20
->> Same here...
->>=20
->>> +
->>> +    /// Write to the object represented by a previously allocated `han=
-dle`. `handle_mem` points
->>> +    /// to the memory to copy data from, and `mem_len` defines the len=
-gth of the data block to
->>> +    /// be copied.
->>> +    fn write(
->>> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
->>> +        handle: usize,
->>> +        handle_mem: *mut c_void,
->>=20
->> ...and here.
->>=20
->>> +        mem_len: usize,
->>> +    );
->>> +
->>> +    /// Get the number of pages used by the `pool`.
->>> +    fn total_pages(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>)=
- -> u64;
->>> +}
->>> +
->>> +/// Zpool driver registration trait.
->>> +pub trait Registration {
->>=20
->> I think you should use the kernel::driver::Registration instead, it's
->> specifically for the purpose you defined this trait and ZpoolDriver for.
->>=20
->> As for the C callbacks, they should go into the Adapter type (which impl=
-ements
->> kernel::driver::RegistrationOps) directly, they don't need to be in a tr=
-ait.
->>=20
->> This way a new Zpool Registration is created with:
->>=20
->> driver::Registration<zpool::Adapter>::new()
->>=20
->> This also allows you to take advantage of the module_driver!() macro to =
-provide
->> your own module_zpool_driver!() macro.
->
-> There was once a problem with that but I don=E2=80=99t remember what the =
-problem was :) I=E2=80=99ll try that one more time, thanks.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmilrz4ACgkQJNaLcl1U
+h9Dx0gf/QipnVFFXAiaLAFpy9ZbGypIH+R0dVvTCdvnTBwp+XTfm8HlEBa3n1S6H
+H65VjvKAnKh/7fjjDJPh2Ed2HTgqT1N9gw7iL5nX4nz3GpCCz+mG4gDQLJss/CXh
+9WW8DHci2tMmnYUrKyYj3dwzId3tzRSFPTYL79w1LMFOyAzqFQXfwB9FT8/YIusS
+u5qKDX8vroEFkJYFkEl/YlULHJfF26RRrF2/wYtnP9XWVITybktwYspDxAtd0pHT
+g2AtrC68Oaza2uhW2wuVozwLMEyjVULijkUoTF2Z36rwhjwUCsmM4HvwEPHRTe0e
+YTx4B0RIRPgEwJeWuBmYAW+ZOm74oQ==
+=Kvcl
+-----END PGP SIGNATURE-----
 
-I'm pretty sure this should work out well (just like it does for driver
-registrations such as PCI, platform, auxiliary, I2C, etc.). However, if you=
- run
-into issues, please let me know, I'm happy to help out resolving them.
+--gCIrQor9P1IRuS2f--
 
