@@ -1,150 +1,167 @@
-Return-Path: <linux-kernel+bounces-777182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB80B2D62E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:24:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7933FB2D659
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A8CD7A7634
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:23:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2A84E6AD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25992D8DB9;
-	Wed, 20 Aug 2025 08:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4102522B1;
+	Wed, 20 Aug 2025 08:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbnMh56e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fd/wt1GC"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8B32D8DC0;
-	Wed, 20 Aug 2025 08:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4103626CE12
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755678265; cv=none; b=BTchOfRxi+raqRIFYbnoBFkATM/PnsjYibc1oHSf93NUDN5d8kwW9n1Ak4Sp4iHnen1zsO87X5hjE0tBonGXBLwmUcj6l6kx617BX/jQyhhMW+MTvk/PFLzOyQ+dnRJ4gz5cl31+JgQptp0rjAHnjowioek6wfk3gtvCdZRb7Q8=
+	t=1755678359; cv=none; b=sgCrfonj/8hW272jyPnRAKUZmvvTCK7eiFlxZGTyQX/WZ/sXlcrzmAHm1oMi1cmjnSe4JNjpxxalSPlX369skbO/L3AH7N/8mh3mrRzMw7Wg4OmI2qoQxj6eeUXgchHUdVHs4WITKeCmkQ3a4wkpaBwYgcvWTSVlqpX96HbOyac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755678265; c=relaxed/simple;
-	bh=/UL8r/IY6NvhVlFJ56nhpLYKbxUYOgISlF8+SOKUMgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Klk1hMav25xfd/ZKTB9PXWreqq+tTSql0l+JZ7HFI5ZvETctPNxk89ORpVHt44mR8MUa8IjBdbIqJ2HNEV7H3FYb3JAS5Cxz79mHShYIjdHJ+5oq5VNqF0MoTkX+qhBS0SQmihlsopV/MGc9786YsC6A7fqIIkXOn8CKMkHQKSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbnMh56e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1F1EC4CEEB;
-	Wed, 20 Aug 2025 08:24:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755678264;
-	bh=/UL8r/IY6NvhVlFJ56nhpLYKbxUYOgISlF8+SOKUMgE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sbnMh56e8KeY51vJlnHAVZISzBdTJN0LpMnDGP01/N6PsJeiRuOBNdJEqqYBftNed
-	 20t8gDewYmYyxKTsvLyzMfsjnofAq089lYNh6nQ3CR2ft1qPJ8g50tWqP1VlSpFaN8
-	 hv208x2hK9MsoaUUDNxpuFCOtTSxBEZpRDl9IVRq6pqYaurwMixBNn2Dap3BCak86G
-	 vpEYt8K90dH4mn3ZqO2q+XO3FMm5rrL3hNEPk5m6utPgeCIDPZJAVSSSHH/h38EM+M
-	 FHsjOO+A9NXCwMNea9+PBpOZpICrX0MeAfBs9XeemKoTu+mXQefKikv7CjZW5vKpIZ
-	 xiWbnB6p6lCCQ==
-Date: Wed, 20 Aug 2025 11:24:17 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Evangelos Petrongonas <epetron@amazon.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Alexander Graf <graf@amazon.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org,
-	linux-mm@kvack.org, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nh-open-source@amazon.com
-Subject: Re: [PATCH v2 1/2] kexec: introduce is_kho_boot()
-Message-ID: <aKWGMbueQBaB5Wsi@kernel.org>
-References: <cover.1755643201.git.epetron@amazon.de>
- <7043f4da31390c58bb7721a3774c30998997df44.1755643201.git.epetron@amazon.de>
+	s=arc-20240116; t=1755678359; c=relaxed/simple;
+	bh=bgl3HkIMW7jTPZzwpbGVR+t4E1BtBWuzf9DJGL4AiFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TzBN5TYGVHDCXgWmoL5q5V39o08v0yc4taKFS3ftym2p0n6DS2CVH8yOWMmAQCx9o+21osZqMkkPtQfrPwYiz7oz+67XjRQcMMzn47QtlZquBRtAQ+67gVg/8MOjQyq+ZxrlWqhx9iQlb87GxpBzxn3uN/BxPnFiq7Cd3tHAZ3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fd/wt1GC; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1755678335; x=1756283135; i=markus.elfring@web.de;
+	bh=bgl3HkIMW7jTPZzwpbGVR+t4E1BtBWuzf9DJGL4AiFM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=fd/wt1GCBMzf+10/UiQ6rNtcq8tnHAVQFOG1WsX9pAJHZl1Q3P1gJkBfkQZM2del
+	 0a2x3h7Xa4/wLOiZyyBhTL4Ndki16jAqUvgKO0/VsPlgUDzW57uAGCCDzW5AbegqI
+	 FkB3EBX8SmT5N+EMSmf73G0uKNzyWH4c3r+dW2iTaDaFHI+LHAjRC57LwtO/hxGu6
+	 Up7L1mcQ62x8VRtsfZEni4REYDDwOwgnucEZWgRBV+dDh8xu/c8onJAzC/Wd819vp
+	 ztOgYP8KEPZy7vzNBHvdMFyRayhPduOtl6ucXoFrd44Z+UqVllkbsXb5TSyK5SDXD
+	 GNH38efdPC11M4UBEg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.226]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBRn-1uILmc1yNR-00feTB; Wed, 20
+ Aug 2025 10:25:35 +0200
+Message-ID: <568d8b25-8cb5-48f8-850e-0298e3fc456a@web.de>
+Date: Wed, 20 Aug 2025 10:25:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7043f4da31390c58bb7721a3774c30998997df44.1755643201.git.epetron@amazon.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] iommu/riscv: prevent NULL deref in iova_to_phys
+To: XianLiang Huang <huangxianliang@lanxincomputing.com>,
+ iommu@lists.linux.dev, linux-riscv@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
+ <joro@8bytes.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
+ <robin.murphy@arm.com>, Tomasz Jeznach <tjeznach@rivosinc.com>,
+ Will Deacon <will@kernel.org>
+References: <20250820072248.312-1-huangxianliang@lanxincomputing.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250820072248.312-1-huangxianliang@lanxincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fXaK7bGqvBByaoI3ghEUvLpw3Q0ZctNEkLDdwSBlrtDPV/7aUmX
+ MH71RlbOR+iJ+zGIEnrx/4/s6Q2XsJpsHZFY9hvIv0ihpTd4RVz6tmXTtymo0PT6WI+lQcK
+ 9JChPfNAGSXQjv0c11I5ReDabbjL93EJsynPSl+V52XMxOaIpCfNe73TOA1zz/MBxivBHWv
+ lJNbvywlut7+ARFLSM0HQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:N+h8Jf5Zvqc=;TgajJXDoI8eSFd7NYlIHFbUzMQl
+ 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
+ 1qvkmFY=
 
-On Tue, Aug 19, 2025 at 11:22:45PM +0000, Evangelos Petrongonas wrote:
-> During early initialisation, after a kexec, other components, like EFI
-> need to know if a KHO enabled kexec is performed. The `kho_is_enabled`
-> function is not enough as in the early stages, it only reflects
-> whether the cmdline has KHO enabled, not if an actual KHO FDT exists.
-> 
-> Extend the KHO API with `is_kho_boot()` to provide a way for components
-> to check if a KHO enabled kexec is performed.
-> 
-> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
-> ---
->  include/linux/kexec_handover.h |  6 ++++++
->  kernel/kexec_handover.c        | 20 ++++++++++++++++++++
->  2 files changed, 26 insertions(+)
-> 
-> diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
-> index 348844cffb13..559d13a3bc44 100644
-> --- a/include/linux/kexec_handover.h
-> +++ b/include/linux/kexec_handover.h
-> @@ -40,6 +40,7 @@ struct kho_serialization;
->  
->  #ifdef CONFIG_KEXEC_HANDOVER
->  bool kho_is_enabled(void);
-> +bool is_kho_boot(void);
->  
->  int kho_preserve_folio(struct folio *folio);
->  int kho_preserve_phys(phys_addr_t phys, size_t size);
-> @@ -60,6 +61,11 @@ static inline bool kho_is_enabled(void)
->  	return false;
->  }
->  
-> +static inline bool is_kho_boot(void)
-> +{
-> +	return false;
-> +}
-> +
->  static inline int kho_preserve_folio(struct folio *folio)
->  {
->  	return -EOPNOTSUPP;
-> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> index 69b953551677..a1a4e76e0ff1 100644
-> --- a/kernel/kexec_handover.c
-> +++ b/kernel/kexec_handover.c
-> @@ -925,6 +925,26 @@ static const void *kho_get_fdt(void)
->  	return kho_in.fdt_phys ? phys_to_virt(kho_in.fdt_phys) : NULL;
->  }
->  
-> +/**
-> + * is_kho_boot - check if current kernel was booted via KHO-enabled
-> + * kexec
-> + *
-> + * This function checks if the current kernel was loaded through a kexec
-> + * operation with KHO enabled, by verifying both that KHO is enabled via
-> + * cmdline AND that a valid KHO FDT was passed.
-> + *
-> + * Note: This function returns reliable results only after
-> + * kho_populate() has been called during early boot. Before that,
-> + * it may return false even if KHO data is present.
-> + *
-> + * Return: true if booted via KHO-enabled kexec, false otherwise
-> + */
-> +bool is_kho_boot(void)
-> +{
-> +	return !!kho_get_fdt() && kho_enable;
+=E2=80=A6> ---
+> Changes
+> v4:
+> - Change the summary as Markus recommends
+>=20
+> v3:
+> - Remove redundant pte validation in riscv_iommu_iova_to_phys
+> - Improve subject line to emphasize prevention
+=E2=80=A6
 
-Let's drop '&& kho_enable' and presume that a kernel that booted with KHO
-FDT goes through KHO revival.
+Does anything hinder you to integrate repeated patch review ideas better
+into your contributions?
 
-With that change feel free to add
+Repetition:
+https://lore.kernel.org/lkml/effb29be-6d14-47e5-ab71-454119467750@web.de/
+https://lkml.org/lkml/2025/8/7/282
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-> +}
-> +EXPORT_SYMBOL_GPL(is_kho_boot);
-> +
->  /**
->   * kho_retrieve_subtree - retrieve a preserved sub FDT by its name.
->   * @name: the name of the sub FDT passed to kho_add_subtree().
-> -- 
-> 2.47.3
-
--- 
-Sincerely yours,
-Mike.
+Regards,
+Markus
 
