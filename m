@@ -1,190 +1,226 @@
-Return-Path: <linux-kernel+bounces-777211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37624B2D6DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:41:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEF1B2D6DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F176D1BC46E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:37:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA3403A56BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F134C2DC345;
-	Wed, 20 Aug 2025 08:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FD42D879E;
+	Wed, 20 Aug 2025 08:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qY7l5EVB"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IzdfKpyE"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEB52DA77D
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F57231826
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755678953; cv=none; b=OT7IIKTPmdFC/ctvCz4/A7vODV/GynUmhxapoqxF43XUUtlYMtKhbW20tm4wiItYoYeob4A2vX3s9UCYIOzVopodXiBS4tbGhnVDz0zRbS5NiqS66CHYCMpfcZk5a8r8igm5JrxbIob0pdR4sUOIe94/t9fDB0NYowZw6PBKugM=
+	t=1755678979; cv=none; b=kaDaRsSUvPqIKxLJmB2M9aFf76E+ulmXYL5nXv5jm3MWyFcEuPbdqB8DL8tjFDu+dGi9MG1mKyxrYkDKB6gM123u0ct9NndtgOBNtVgz65+me3iNb6JEYACJ2qocX0XHsm07psHzBQn3P4YQUD3fOh9jfzwgKCBIEJoPV6x/RU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755678953; c=relaxed/simple;
-	bh=OWGxcklWWo0vv0ZQ8Q6Q56zQqcy4rZKZZq9hhvEnZuk=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=IUt4fMQ8KlFicdWnrMu5iTQWK92gDl//ObC9xUQZqDUTcQbmLqSHi+cqEVoaMDxSNuRldoa8z8hJv4s0zMut+gOvqYYIsejRgK5VuwuxydniLujkLgzm0BV0LGIH/5zcyjORNpkaR5ERSpOfURAXE08EoaMOSe+4ZXr0F+gZtJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qY7l5EVB; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250820083549euoutp02722f8dfb0957e571fdc2ecf2070b405c~dbLPNp7B-1391613916euoutp024
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:35:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250820083549euoutp02722f8dfb0957e571fdc2ecf2070b405c~dbLPNp7B-1391613916euoutp024
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755678949;
-	bh=nmhVn6OSCj5podj8kRrzheU5aifoU9hBWKaGqoQKYps=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=qY7l5EVBSyoTibkDSZAgEC/OSZ0t389E3cN1WBsvKWtJvVobjH96hpDJDC3Q28xAo
-	 zXLo4V0seVWxrKZoK+ZM0bzh6DM03tEj3a/DxsTBOgZQ2ya2NbXlZrOCNMI6tpr6WK
-	 Rn/47mfmbmvFVFd9hNtTm3tO2Qxgl3rT1V2INDLw=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250820083548eucas1p2a40775d53dfd9f8608671cc20003fd7d~dbLOs73AC2603926039eucas1p2h;
-	Wed, 20 Aug 2025 08:35:48 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250820083547eusmtip28b019eaa1665ca84eb4f519f74035d0a~dbLNo2aZL3003530035eusmtip2L;
-	Wed, 20 Aug 2025 08:35:47 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Wed, 20 Aug 2025 10:35:42 +0200
-Subject: [PATCH v14 7/7] riscv: dts: thead: Add PWM fan and thermal control
+	s=arc-20240116; t=1755678979; c=relaxed/simple;
+	bh=+qSVbXUS/clmIdfv3OXHciTtkLmQKmbi6XRnW5pvU3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m5L2J6MAWz+KqMGlkkDfJBmSgG5bfXJUyMtqPTyd4BqkQpJ9/53BRAtpO4heqat2ZFLvWVhq9nU3gS5wT/Q6McbFThbZ2a1APoLReydaa6/A3mUznC0OjdP+ZUgJnPa5ygtnapfZmOYwlJWrEqZGSEtnu5KsKQIVKOKmFMNtn2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IzdfKpyE; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b9a342e8ffso425670f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755678976; x=1756283776; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YAr6jehsKiHEOUhuldij9V65ueaJsFRa/9UyVncK9fg=;
+        b=IzdfKpyEBOYk1Vpro1pk4mjX1StKeqYl5RURFsPu+nyW2sHQWJxL3qgkOYv0PpIReh
+         0wRlgtqdasHieIBPCR7jNRIiHNyRFOzHYWYqEQ6NmDJ2pTCsb9AOZFTJrRfuj3ZGJdMq
+         Rjup9nZGwXhparjpCmTLce9nBm29YepRBN7nVDJlyODZUYeXNH5djPXfe18mEsBK065K
+         a1J8o88MI0iCX0HbRqBtzJc8ivwwVU2915u5ujE1jCtimjfxMptgc0DOlVyYay4ElDBK
+         IbffjBHoX89beIcOazhzcVma57/vuOjCqCsLyuvDvl6uDVfIn/cIB6di327gu/GaRy1g
+         WX/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755678976; x=1756283776;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YAr6jehsKiHEOUhuldij9V65ueaJsFRa/9UyVncK9fg=;
+        b=IOl+b/xS9uT56DmE12bS2E27ixsjm02rfuLAv9FGgVk1tWohEMWCC89OG+56CefJKX
+         7noqw8dONPN1IRbbPzpyTZrWI8syYDgYlxWUE/YC9gIi4iqbblZC/+5Vp+qHPEXbSCiS
+         0JZkh1NSsZn3kFq2IkKqZQhBXNdcgjcX+ta6qfQVXUwCuWVtKTVeugC86TGxUwMXw57/
+         RFFGPd15rQjyzN+QkYv/T/5hD5QS5rTqRDp3mLBm6geeBk169tdsJAtX6hgmfP3uk3zj
+         q7bhZYgYaK0GB+f+HFWEykYcugiYz0aYvL+pmNgKoCd3ZLTbHm31HXIjyS0p8V4Zoy2j
+         u/Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUL9PT5yFqRaGUi4vHTdNX6Ev/386VWyohVDqNdUZW52EuEwuuAraHBuprbz3Ji8ndiMebO2v3Es+GS5O0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0H7XDxbqK4em6dTZcXijc8vZ1vORMBqW81/ksD4sw8dp0v97k
+	wW9pGcKAHY+4t/pvuDcuBP9t0twd+yysVYoSHyoXpcXOgsJXeKAcAMljQ19fn+QYKMM=
+X-Gm-Gg: ASbGncuM2p5bnqUSj34WkXXNYftMZDIfwzMak68/FYwOwD+dmn73ELUD8VmMPTDCbrl
+	LAxRbfFWMlnQOUHQGW1n37ArGKdxC1V+ZC/kgoM3pcbmRJX2bZ+HkHkeF89hPKVQ0VF73/fs5Tg
+	okqzQgFRkuRYDemb2CeHpcXz36Ix5oXFeGJYKznAXkFQraDNeqNLuQ/5mH86gi89ozXMpgb2+by
+	mdWGCdqBD5hnzeL40ZIwZLLh672PbA24s45sEZQGf+rr56FPv/toL9mU1StyuBS1ZXSHlZrUo0Q
+	+pD3qFG36nxctdgpuAGi5B7F5GrLM5jH7FApgHJrsjA7GrrG+/QgfKxmDxhLPhFZOIA8s1P+8fL
+	nEjzAnAwLJyHCKYKzLd+T/iF9HRaEOxwHFSE=
+X-Google-Smtp-Source: AGHT+IGi+nraIikmoF7WftFp0em6MhyjlDmSPu86zOKlpKavPilVFf76gYO+pgNSjEXMVIEPdoHeBA==
+X-Received: by 2002:a05:6000:2c0d:b0:3b7:775d:e923 with SMTP id ffacd0b85a97d-3c12a803871mr4177431f8f.4.1755678975484;
+        Wed, 20 Aug 2025 01:36:15 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:8a2d:c0da:b2f2:1f41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4976bc73sm16131425e9.6.2025.08.20.01.36.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 01:36:15 -0700 (PDT)
+Date: Wed, 20 Aug 2025 10:36:10 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 09/11] remoteproc: pas: Extend parse_fw callback to
+ parse resource table
+Message-ID: <aKWI-izL5BooL61p@linaro.org>
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-10-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-rust-next-pwm-working-fan-for-sending-v14-7-df2191621429@samsung.com>
-In-Reply-To: <20250820-rust-next-pwm-working-fan-for-sending-v14-0-df2191621429@samsung.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,  Miguel Ojeda
-	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,  Boqun Feng
-	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,  Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,  Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,  Michal
-	Wilczynski <m.wilczynski@samsung.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
-	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Paul Walmsley
-	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>,  Marek Szyprowski
-	<m.szyprowski@samsung.com>,  Benno Lossin <lossin@kernel.org>,  Michael
-	Turquette <mturquette@baylibre.com>,  Drew Fustini <fustini@kernel.org>, 
-	Daniel Almeida <daniel.almeida@collabora.com>,  Benno Lossin
-	<lossin@kernel.org>, Drew Fustini <fustini@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20250820083548eucas1p2a40775d53dfd9f8608671cc20003fd7d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250820083548eucas1p2a40775d53dfd9f8608671cc20003fd7d
-X-EPHeader: CA
-X-CMS-RootMailID: 20250820083548eucas1p2a40775d53dfd9f8608671cc20003fd7d
-References: <20250820-rust-next-pwm-working-fan-for-sending-v14-0-df2191621429@samsung.com>
-	<CGME20250820083548eucas1p2a40775d53dfd9f8608671cc20003fd7d@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819165447.4149674-10-mukesh.ojha@oss.qualcomm.com>
 
-Add Device Tree nodes to enable a PWM controlled fan and it's associated
-thermal management for the Lichee Pi 4A board.
+On Tue, Aug 19, 2025 at 10:24:44PM +0530, Mukesh Ojha wrote:
+> Extend parse_fw callback to include SMC call to get resource
+> table from TrustZone to leverage resource table parse and
+> mapping and unmapping code reuse from the framework.
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pas.c  | 33 +++++++++++++++++++++++++++--
+>  drivers/soc/qcom/mdt_loader.c       |  1 -
+>  include/linux/soc/qcom/mdt_loader.h |  2 ++
+>  3 files changed, 33 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 09cada92dfd5..1e0f09bf1ef2 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -408,6 +408,35 @@ static void *qcom_pas_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is
+>  	return pas->mem_region + offset;
+>  }
+>  
+> +static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	struct qcom_pas *pas = rproc->priv;
+> +	size_t output_rt_size = MAX_RSCTABLE_SIZE;
+> +	void *output_rt;
+> +	int ret;
+> +
+> +	ret = qcom_register_dump_segments(rproc, fw);
+> +	if (ret) {
+> +		dev_err(pas->dev, "Error in registering dump segments\n");
+> +		return ret;
+> +	}
+> +
+> +	if (!rproc->has_iommu)
+> +		return ret;
+> +
+> +	ret = qcom_scm_pas_get_rsc_table(pas->pas_id, NULL, 0, &output_rt, &output_rt_size);
 
-This enables temperature-controlled active cooling for the Lichee Pi 4A
-board based on SoC temperature.
+In PATCH 07/11 you have support for "static" resources that can be part
+of the firmware binary, but then you never make use of it. Like in the
+iris patch you just give in NULL, 0 for input_rt, even though,
+(presumably?) the remoteproc framework has support for parsing the
+resource table from the ELF firmware image.
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
-Tested-by: Drew Fustini <fustini@kernel.org>
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 67 +++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+I would suggest adding a comment here justifying this and perhaps
+something to the commit message. I do see value in having the
+qcom_scm_pas_get_rsc_table() properly defined with input RT support, but
+it's not obvious from the description of your patches that this is
+effectively dead code right now(?).
 
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-index 4020c727f09e8e2286fdc7fecd79dbd8eba69556..c58c2085ca92a3234f1350500cedae4157f0c35f 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-@@ -28,9 +28,76 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <1000>;
-+			thermal-sensors = <&pvt 0>;
-+
-+			trips {
-+				fan_config0: fan-trip0 {
-+					temperature = <39000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config1: fan-trip1 {
-+					temperature = <50000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config2: fan-trip2 {
-+					temperature = <60000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map-active-0 {
-+					cooling-device = <&fan 1 1>;
-+					trip = <&fan_config0>;
-+				};
-+
-+				map-active-1 {
-+					cooling-device = <&fan 2 2>;
-+					trip = <&fan_config1>;
-+				};
-+
-+				map-active-2 {
-+					cooling-device = <&fan 3 3>;
-+					trip = <&fan_config2>;
-+				};
-+			};
-+		};
-+	};
-+
-+	fan: pwm-fan {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&fan_pins>;
-+		compatible = "pwm-fan";
-+		#cooling-cells = <2>;
-+		pwms = <&pwm 1 10000000 0>;
-+		cooling-levels = <0 66 196 255>;
-+	};
-+
- };
- 
- &padctrl0_apsys {
-+	fan_pins: fan-0 {
-+		pwm1-pins {
-+			pins = "GPIO3_3"; /* PWM1 */
-+			function = "pwm";
-+			bias-disable;
-+			drive-strength = <25>;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
- 	uart0_pins: uart0-0 {
- 		tx-pins {
- 			pins = "UART0_TXD";
+> +	if (ret) {
+> +		dev_err(pas->dev, "error %d getting resource_table\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	rproc->cached_table = output_rt;
+> +	rproc->table_ptr = rproc->cached_table;
+> +	rproc->table_sz = output_rt_size;
+> +
+> +	return ret;
+> +}
+> +
+>  static unsigned long qcom_pas_panic(struct rproc *rproc)
+>  {
+>  	struct qcom_pas *pas = rproc->priv;
+> @@ -420,7 +449,7 @@ static const struct rproc_ops qcom_pas_ops = {
+>  	.start = qcom_pas_start,
+>  	.stop = qcom_pas_stop,
+>  	.da_to_va = qcom_pas_da_to_va,
+> -	.parse_fw = qcom_register_dump_segments,
+> +	.parse_fw = qcom_pas_parse_firmware,
+>  	.load = qcom_pas_load,
+>  	.panic = qcom_pas_panic,
+>  };
+> @@ -430,7 +459,7 @@ static const struct rproc_ops qcom_pas_minidump_ops = {
+>  	.start = qcom_pas_start,
+>  	.stop = qcom_pas_stop,
+>  	.da_to_va = qcom_pas_da_to_va,
+> -	.parse_fw = qcom_register_dump_segments,
+> +	.parse_fw = qcom_pas_parse_firmware,
+>  	.load = qcom_pas_load,
+>  	.panic = qcom_pas_panic,
+>  	.coredump = qcom_pas_minidump,
+> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> index ea7034c4b996..8456cca3f3e0 100644
+> --- a/drivers/soc/qcom/mdt_loader.c
+> +++ b/drivers/soc/qcom/mdt_loader.c
+> @@ -22,7 +22,6 @@
+>  #include <linux/slab.h>
+>  #include <linux/soc/qcom/mdt_loader.h>
+>  
+> -#define MAX_RSCTABLE_SIZE	SZ_16K;
 
--- 
-2.34.1
+I'm confused why there is a semicolon here suddenly. Did you edit this
+patch by hand?
 
+Applying: remoteproc: pas: Extend parse_fw callback to parse resource table
+Patch failed at 0009 remoteproc: pas: Extend parse_fw callback to parse resource table
+error: patch failed: drivers/soc/qcom/mdt_loader.c:22
+error: drivers/soc/qcom/mdt_loader.c: patch does not apply
+
+>  #define RSC_TABLE_HASH_BITS	     5  // 32 buckets
+>  
+>  DEFINE_HASHTABLE(qcom_pas_rsc_table_map, RSC_TABLE_HASH_BITS);
+> diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
+> index 62f239f64dfb..92ad862e733e 100644
+> --- a/include/linux/soc/qcom/mdt_loader.h
+> +++ b/include/linux/soc/qcom/mdt_loader.h
+> @@ -8,6 +8,8 @@
+>  #define QCOM_MDT_TYPE_HASH	(2 << 24)
+>  #define QCOM_MDT_RELOCATABLE	BIT(27)
+>  
+> +#define MAX_RSCTABLE_SIZE	SZ_16K
+> +
+>  struct device;
+>  struct firmware;
+>  struct qcom_scm_pas_ctx;
+
+You added this define yourself in PATCH 08/11, so just add it in the
+right place directly. Make sure you scroll through your patch set before
+sending to make sure all changes are in the right commit. :-)
+
+Thanks,
+Stephan
 
