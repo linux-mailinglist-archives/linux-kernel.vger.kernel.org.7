@@ -1,143 +1,80 @@
-Return-Path: <linux-kernel+bounces-776704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B927AB2D0AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:28:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E4CB2D0B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472E31896C20
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C29DB3BFD20
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BA614B06C;
-	Wed, 20 Aug 2025 00:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD91194A45;
+	Wed, 20 Aug 2025 00:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPpeoQhs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCPBjuAg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6292113A86C
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911CB288A2;
+	Wed, 20 Aug 2025 00:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755649699; cv=none; b=QGJC5/BFZavpn4WxF3qU/DTHOI+1h/JomAEWN+qUNfzTOdmREsFweQi97vShmC/nVZpNmpsiF60mtgOYfEiqC44feQyBJYBu3K2bMoUFgRyglUPws/hVOwK67oxI7IQvfgEEg63xJFTW7sL0VV/egkdg+yQnuPu14SR4M3cnzos=
+	t=1755649807; cv=none; b=PkBu0DhN6J2b+j3IhO09dQU3D6tUfPGQ0pJ5B3ZTix5byEzmRAHats1S2LGArLOZhKfvEla127THUP8V1czqqI8bv+vV/5PF3Wjp3uhyMVZLD/HUfGM2pAz44XjSfkuGYlgudpwQpH0U1h/iZDQXUQyQRn3ITshlptUF6a18qD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755649699; c=relaxed/simple;
-	bh=J8F633pZRCLhIZA3XlxoeqroVq8KLBv0j3OmRyAnJ7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwQtTddzigse8qt/+lnkvR1Na4D8meEEzJPz1QwN8JC89vapN3l7+WEEpSKoRS93d68dYUaNmk3cZY8/HOqtMKrZ0vWvw0ehlDnSZKgVEB8WfZmjDBwsU8l5tfePO4RjIWdlq0vaxmJMGEeRQJ6xuPHl4LMDDBI6YLrcJ36tEak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPpeoQhs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED46C4CEF1;
-	Wed, 20 Aug 2025 00:28:18 +0000 (UTC)
+	s=arc-20240116; t=1755649807; c=relaxed/simple;
+	bh=gmn55X6D6PL4NZSWpbJzNZPW5Gc6cW8EIPufeWs4ygs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IOaSi2XkwmXRh1AVkcv3OfGLFbewJTKywtcJEcY3dqi75hXOxt+NgVtyfc9hOD57WwEy44/JbWpHvba17wZCvcOEMFE88qnWEQgN7fSNf4wWjUFUjIpOBDV2vqkZ1JFDSsUhmwnWxVGyI255vHa5qzNTMu4vScJdzccIIJJRAMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCPBjuAg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 519B5C4CEF1;
+	Wed, 20 Aug 2025 00:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755649698;
-	bh=J8F633pZRCLhIZA3XlxoeqroVq8KLBv0j3OmRyAnJ7Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uPpeoQhsmSmn5dCKgaGDPDRfR8TDcskOKgmw2e4fIETURMq7lS+oyB62oXyAJjWEc
-	 7ikNRisk8qXWUCRjiCIE0F9mbABvvkTF8Tmw18wkhv3TC+YfoNQ8Lz60wmzjAO3B7d
-	 EOFrFeLrehHwkT80nBijyrUf60SfFkduP6wBg17ApjUvSsubpOmix9yGGqjz4gz/yN
-	 WZnrJo0jr2ZdS42JUaOnlMnvaiWZYJRurJb30WH3huqfba2+0L/sK5uhZZ5heewHR1
-	 byycMAo+AxYUIf3TgtzfgpQYigNKRTXfLPWra1OJ9DjpT9qKOPR9eVndUuaZhQnO9q
-	 RKtECRKzzJJ6w==
-Date: Tue, 19 Aug 2025 14:28:17 -1000
-From: 'Tejun Heo' <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: liuwenfang <liuwenfang@honor.com>, 'David Vernet' <void@manifault.com>,
-	'Andrea Righi' <arighi@nvidia.com>,
-	'Changwoo Min' <changwoo@igalia.com>,
-	'Ingo Molnar' <mingo@redhat.com>,
-	'Juri Lelli' <juri.lelli@redhat.com>,
-	'Vincent Guittot' <vincent.guittot@linaro.org>,
-	'Dietmar Eggemann' <dietmar.eggemann@arm.com>,
-	'Steven Rostedt' <rostedt@goodmis.org>,
-	'Ben Segall' <bsegall@google.com>, 'Mel Gorman' <mgorman@suse.de>,
-	'Valentin Schneider' <vschneid@redhat.com>,
-	"'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>
-Subject: Re: [PATCH v4 2/3] sched_ext: Fix cpu_released while RT task and SCX
- task are scheduled concurrently
-Message-ID: <aKUWoePcNPcnJT1D@slm.duckdns.org>
-References: <fca528bb34394de3a7e87a873fadd9df@honor.com>
- <aFmwHzO2AKFXO_YS@slm.duckdns.org>
- <ced96acd54644325b77c2d8f9fcda658@honor.com>
- <aHltRzhQjwPsGovj@slm.duckdns.org>
- <0144ab66963248cf8587c47bf900aabb@honor.com>
- <814bebd2ad844b08993836fd8e7274b8@honor.com>
- <228ebd9e6ed3437996dffe15735a9caa@honor.com>
- <8d64c74118c6440f81bcf5a4ac6b9f00@honor.com>
- <20250819074736.GD3245006@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1755649807;
+	bh=gmn55X6D6PL4NZSWpbJzNZPW5Gc6cW8EIPufeWs4ygs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VCPBjuAgsUjc2Lmp9/8/7X1vzCvJSJYowNhtzOysoDtK+vRP1zOtyyho+rQIQ5MIG
+	 c4qMNZrJZcczo2Bc88cwkx/UY0Yas4iwWgIKuVQBtgCkVzs5/N+sxXx7hkhhQ6Bu5m
+	 2zwC9C4CV33Yb5mRK1ztCi4GWBKjlhbcU+CjQTjtbX5cXthoEVPI/gHVi6KL9CyK7b
+	 hWfSpGZcCb7LPXjozUMEdg0OSHsTIeXYaibd+IjIvHpDVGh3ms8J0jhzo9X75Dt3nY
+	 KQLFbUA0J9h9rAQaOY7w1+OBpbn/USUDiM3S7fMM8KymNGmprB2V86QGMgU4JHPyqU
+	 Li2wgkUvtgrBg==
+Date: Tue, 19 Aug 2025 17:30:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Richard Gobert <richardbgobert@gmail.com>, netdev@vger.kernel.org,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ horms@kernel.org, corbet@lwn.net, shenjian15@huawei.com,
+ salil.mehta@huawei.com, shaojijie@huawei.com, andrew+netdev@lunn.ch,
+ saeedm@nvidia.com, tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org,
+ ecree.xilinx@gmail.com, dsahern@kernel.org, ncardwell@google.com,
+ kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me, ahmed.zaki@intel.com,
+ aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
+ linux-kernel@vger.kernel.org, linux-net-drivers@amd.com
+Subject: Re: [PATCH net-next v2 2/5] net: gro: only merge packets with
+ incrementing or fixed outer ids
+Message-ID: <20250819173005.6b560779@kernel.org>
+In-Reply-To: <willemdebruijn.kernel.a8507becb441@gmail.com>
+References: <20250819063223.5239-1-richardbgobert@gmail.com>
+	<20250819063223.5239-3-richardbgobert@gmail.com>
+	<willemdebruijn.kernel.a8507becb441@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819074736.GD3245006@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello, Peter.
+On Tue, 19 Aug 2025 10:46:01 -0400 Willem de Bruijn wrote:
+> It's a bit unclear what the meaning of inner and outer are in the
+> unencapsulated (i.e., normal) case. In my intuition outer only exists
+> if encapsulated, but it seems you reason the other way around: inner
+> is absent unless encapsulated. 
 
-(cc'ing Joel for the @rf addition to pick_task())
-
-On Tue, Aug 19, 2025 at 09:47:36AM +0200, Peter Zijlstra wrote:
-...
-> You're now asking for a 3rd call out to do something like:
-> 
->   ->balance() -- ready a task for pick
->   ->pick() -- picks a random other task
->   ->put_prev() -- oops, our task didn't get picked, stick it back
-> 
-> Which is bloody ludicrous. So no. We're not doing this.
-> 
-> Why can't pick DTRT ?
-
-This is unfortunate, but, given how things are set up right now, I think we
-probably need the last one. Taking a step back and also considering the
-proposed @rf addition to pick():
-
-- The reason why SCX needs to do most of its dispatch operations in
-  balance() is because the kernel side doesn't know which tasks are going to
-  execute on which CPU until the task is actually picked for execution, so
-  all picking must be preceded by balance() where tasks can be moved across
-  rqs.
-
-- There's a gap between balance() and pick_task() where a successful return
-  from balance() doesn't guarantee that the corresponding pick() would be
-  called. This seems intentional to guarantee that no matter what happens
-  during balance(), pick_task() of the highest priority class with a pending
-  task is guaranteed to get the CPU.
-
-  This guarantee changes if we add @rf to pick_task() and let it unlock and
-  relock. A higher priority task may get queued while the rq lock is
-  released and then the lower priority pick_task() may still return a task
-  of its own. This should be resolvable although it may not be completely
-  trivial. We need to shift clear_tsk_need_resched() before pick_task()'s
-  and then make wakeup_preempt() would probalby need more complications to
-  guarantee that resched_curr() is not skipped while scheduling is taking
-  place.
-
-- SCX's ops.cpu_acquire() and .cpu_release() are to tell the BPF scheduler
-  that a CPU is available for running SCX tasks or not. We want to tell the
-  BPF side that a CPU became available before its ops.dispatch() is called -
-  ie. before balance(). So, IIUC, this is where the problem is. Because
-  there's a gap between balance() and pick_task(), the CPU might get taken
-  by a higher priority sched class inbetween. If that happens, we need to
-  tell the BPF scheduler that it lost the CPU. However, if the previous task
-  wasn't a SCX one, there's currently no place to tell so.
-
-  IOW, SCX needs to invoke ops.cpu_released() when a CPU is taken between
-  its balance() and pick_task(); however, that can happen when both prev and
-  next tasks are !SCX tasks, so it needs something which is always called.
-
-If @rf is added to pick_task() so that we can merge balance() into
-pick_task(), that'd be simplify these. SCX wouldn't need balance index
-boosting and can handle cpu_acquire/release() within pick_task(). What do
-you think?
-
-Thanks.
-
--- 
-tejun
++1, whether the header in unencapsulted packet is inner or outer
+is always a source of unnecessary confusion. I would have also
+preferred your suggestion on v1 to use _ENCAP in the name.
 
