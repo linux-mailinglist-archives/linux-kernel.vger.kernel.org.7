@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-778161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC22DB2E214
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:15:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B33B2E213
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44381620DF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:10:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A076A1888ED4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B625322A06;
-	Wed, 20 Aug 2025 16:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066FA322A2A;
+	Wed, 20 Aug 2025 16:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="i5Y24KXK"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFFD322765;
-	Wed, 20 Aug 2025 16:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7AiuSJH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1BF31CA72;
+	Wed, 20 Aug 2025 16:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755706210; cv=none; b=Cb6fFdrxMcGbjxrCYmpXbwgLVoGwpDmDILmMjmqcY+azDnRfHSUpKNYo1SElCeClXTL/+ScZbmLwsMWZ0A7+GlcIGah/fCxsTM/+sbLBZ3hHDjXLqa2zzI3uMkUF7uD7CB70snUYoflBla7QbHtBTXZGErZpOOOgudjZy49xup8=
+	t=1755706271; cv=none; b=lqJVy16j/M4ndx1UopZpIWngbkecc9R5YjTLXYp9Fh9oQ7cW7CRgQ2UMQCmVIUteQPn1+1PFkuyjIVoLRUpX9qomOhH0XWs30lQ6jhxc7GTv75cgCDDvIOwoiu7HdYERSxAgQV93xj1oiSP9U59D/f03hAyC//MrKJJTbZUyQ10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755706210; c=relaxed/simple;
-	bh=NTou8EmjTbUR8n6aiqTmtX7rT7XqprHS+AiGXm1HlU4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A66wu4KpIvDRBnyG3fByzWXLmgySmlYNmtwjjnlRRmtaTjxEJdnF5lJSPWZNJcY+x53dhFM2wUREnZk0x8LXtEKHVI/hpQjakga9NwqXZFU9s5CvUNReT53DCYF+taPxqkb2fVY4XqjS2DRYjEHpg0I3GEOZWscTNw/22Wm5Gxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=i5Y24KXK; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=0w
-	lj+lHSrPL3rr7FK3/SFmDrvWcbFBtlQDjjoWbFa/E=; b=i5Y24KXKBdHS/H8mlS
-	YxM52iacLuBbcjo7ve9PGKqwJlwi2eBe4ThNhbN/KZ3Jfm1zcWYYO6HRQTblVtMJ
-	lyDckqMbj5+G60e+pfotfrg07m/C7TSisCMi8CwmI9uZwaxLpJXOn6wHoovfOXKG
-	dI/mtcg1F6jylBcfJIa5onDuA=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wAXjAhK86Vo_3zUDA--.17615S2;
-	Thu, 21 Aug 2025 00:09:46 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: bhelgaas@google.com,
-	helgaas@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Hans Zhang <18255117159@163.com>
-Subject: [PATCH] PCI: Replace msleep(2) with usleep_range() for precise delay
-Date: Thu, 21 Aug 2025 00:09:44 +0800
-Message-Id: <20250820160944.489061-1-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1755706271; c=relaxed/simple;
+	bh=kILSVk3z9gI+nFGfR1y5ThbvAl+I3YUQHPIyOglHZhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uyUvmYG+2VtyVKNMK6quHRw1/8G+FnZCh8Z/dEZdIAU6TP9BQ6exQmtO8+LLWy/wj7A1L8ZUtBMo7E/qYIQDSkSOkxYRzDLtGUpVVrE4qnSWx6K0obcp9G5SS9w7l563X1ONNRHUcNnX3lekWr1QYofnYMCrHq4a7hNOkufXqeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7AiuSJH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EAE9C4CEE7;
+	Wed, 20 Aug 2025 16:11:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755706269;
+	bh=kILSVk3z9gI+nFGfR1y5ThbvAl+I3YUQHPIyOglHZhk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X7AiuSJHOQJiqlv8uD9FBGgeBFTKKvDcdvlq6x5IWBb0UlDJhj+vzIHW/5y2C3mn6
+	 EyOvm0QWPGDdv2EW8cRjyzcyD0YIaDSKiOoS/OZIECJflmbbpbAeo/6IVCY0xapsMn
+	 xU41tdoZvlQ2Q9Z99eMMr1zm74Lzh3miB8pgDLoWG070z2+enR8ycjy08wLrLSKtWD
+	 PJX2zlPNEpbf2O3ScCCW9wHsY78289YB9c1goxC9QoKdK5bRz+xkbOgKLNnKs3LRvN
+	 QqDp8MrA5hLfpCzIRhOWuoFtUa9uQHSZBwc0aU3WDoqI+4lNUBmWcDbmqZ5o4u68pc
+	 eel+KA9tJ81xQ==
+Date: Wed, 20 Aug 2025 09:11:04 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Kees Cook <kees@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, patches@lists.linux.dev,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 07/10] riscv: Remove version check for LTO_CLANG selects
+Message-ID: <20250820161104.GA3805667@ax162>
+References: <20250818-bump-min-llvm-ver-15-v1-0-c8b1d0f955e0@kernel.org>
+ <20250818-bump-min-llvm-ver-15-v1-7-c8b1d0f955e0@kernel.org>
+ <8078e385-e08e-40a5-b6df-31c0b5be8f43@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAXjAhK86Vo_3zUDA--.17615S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGr48WrW5AF1DWr47Aw4DCFg_yoW5Cr4Upa
-	yrCw1jyF1rJrnxXrs8Ja1xCrn8CFnrZrW8Zayku345ua4a9w4xKr4SkFW5Xr13Zr4kA34Y
-	q3WYyr43ZF48Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRJCzXUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhuvo2il7UG7hgAAsx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8078e385-e08e-40a5-b6df-31c0b5be8f43@ghiti.fr>
 
-The msleep(2) may sleep up to 20ms due to timer granularity, which can
-cause unnecessary delays. According to PCI spec v3.0 7.6.4.2, the minimum
-Trst is 1ms and we doubled that to 2ms to meet the requirement. Using
-usleep_range(2000, 2001) provides a more precise delay of exactly 2ms.
+On Wed, Aug 20, 2025 at 09:23:08AM +0200, Alexandre Ghiti wrote:
+> Hi Nathan,
+> 
+> On 8/18/25 20:57, Nathan Chancellor wrote:
+> > Now that the minimum supported version of LLVM for building the kernel
+> > has been bumped to 15.0.0, there is no need to check the LLD version
+> > before selecting ARCH_SUPPORTS_LTO_CLANG{,_THIN} because it will always
+> > be true.
+> > 
+> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> > ---
+> > Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> > Cc: Alexandre Ghiti <alex@ghiti.fr>
+> > Cc: linux-riscv@lists.infradead.org
+> > 
+> > Small note, this will conflict with
+> > https://lore.kernel.org/20250710-riscv-restrict-lto-to-medany-v1-1-b1dac9871ecf@kernel.org/
+> > but I think it is simple enough to deal with.
+> 
+> FYI, I'll send this patch for some 6.17-rcX.
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
-Dear maintainers,
+Thanks, that would help.
 
-During the development process, I often check whether the file encoding meets the
-basic rules. A warning appears when checking the following files:
+> I found another bunch of LLD_VERSION check in this file that could be
+> removed:
 
-./scripts/checkpatch.pl --no-tree --show-types --ignore EMAIL_SUBJECT,FILE_PATH_CHANGES,\
-GERRIT_CHANGE_ID,UNDOCUMENTED_DT_STRING,TYPO_SPELLING -f drivers/pci/pci.c
+Huh, I am very surprised that I missed those :/ thanks a lot for
+catching that!
 
-WARNING:MSLEEP: msleep < 20ms can sleep for up to 20ms; see function description of msleep().
-#4914: FILE: drivers/pci/pci.c:4914:
-+	msleep(2);
+> https://elixir.bootlin.com/linux/v6.17-rc2/source/arch/riscv/Kconfig#L253
 
+I have added a patch removing CONFIG_RISCV_USE_LINKER_RELAXATION.
 
-In addition, I also found that the following documents all have similar problems.
-Here, I'll first submit a patch to ask everyone. If it's necessary, I'll continue
-to submit related patches later. If not, please ignore it.
+> https://elixir.bootlin.com/linux/v6.17-rc2/source/arch/riscv/Kconfig#L262
 
-WARNING:MSLEEP: msleep < 20ms can sleep for up to 20ms; see function description of msleep().
-#4630: FILE: drivers/pci/pci.c:4630:
-+		msleep(1);
+I don't think this one can be currently cleaned up since it won't always
+be either true or false.
 
-WARNING:MSLEEP: msleep < 20ms can sleep for up to 20ms; see function description of msleep().
-#342: FILE: drivers/pci/controller/pcie-rcar-host.c:342:
-+		msleep(1);
+> https://elixir.bootlin.com/linux/v6.17-rc2/source/arch/riscv/Kconfig#L630
+> https://elixir.bootlin.com/linux/v6.17-rc2/source/arch/riscv/Kconfig#L731
+> https://elixir.bootlin.com/linux/v6.17-rc2/source/arch/riscv/Kconfig#L746
+> https://elixir.bootlin.com/linux/v6.17-rc2/source/arch/riscv/Kconfig#L781
+> https://elixir.bootlin.com/linux/v6.17-rc2/source/arch/riscv/Kconfig#L804
 
-WARNING:MSLEEP: msleep < 20ms can sleep for up to 20ms; see function description of msleep().
-#1368: FILE: drivers/pci/controller/pcie-brcmstb.c:1368:
-+		msleep(5);
+I have added a patch converting those version checks to just LD_IS_LLD.
 
-WARNING:MSLEEP: msleep < 20ms can sleep for up to 20ms; see function description of msleep().
-#42: FILE: drivers/pci/controller/pcie-rcar.c:42:
-+		msleep(5);
-
-WARNING:MSLEEP: msleep < 20ms can sleep for up to 20ms; see function description of msleep().
-#106: FILE: drivers/pci/hotplug/pciehp_hpc.c:106:
-+		msleep(10);
-WARNING:MSLEEP: msleep < 20ms can sleep for up to 20ms; see function description of msleep().
-#286: FILE: drivers/pci/hotplug/pciehp_hpc.c:286:
-+		msleep(10);
-
-WARNING:MSLEEP: msleep < 20ms can sleep for up to 20ms; see function description of msleep().
-#138: FILE: drivers/pci/pcie/dpc.c:138:
-+		msleep(10);
-
-WARNING:MSLEEP: msleep < 20ms can sleep for up to 20ms; see function description of msleep().
-#3970: FILE: drivers/pci/quirks.c:3970:
-+		msleep(10);
----
- drivers/pci/pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index b0f4d98036cd..ffe491635144 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4967,7 +4967,7 @@ void pci_reset_secondary_bus(struct pci_dev *dev)
- 	 * PCI spec v3.0 7.6.4.2 requires minimum Trst of 1ms.  Double
- 	 * this to 2ms to ensure that we meet the minimum requirement.
- 	 */
--	msleep(2);
-+	usleep_range(2000, 2001);
- 
- 	ctrl &= ~PCI_BRIDGE_CTL_BUS_RESET;
- 	pci_write_config_word(dev, PCI_BRIDGE_CONTROL, ctrl);
-
-base-commit: b19a97d57c15643494ac8bfaaa35e3ee472d41da
--- 
-2.25.1
-
+Cheers,
+Nathan
 
