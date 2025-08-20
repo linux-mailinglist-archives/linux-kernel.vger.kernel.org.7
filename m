@@ -1,85 +1,78 @@
-Return-Path: <linux-kernel+bounces-778669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83A4B2E8A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:31:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C95FB2E8AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9A51CC17EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:31:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F2FA2279D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620352E0406;
-	Wed, 20 Aug 2025 23:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3652DF3CC;
+	Wed, 20 Aug 2025 23:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTGAR2B0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DBpP3sYJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB75F1AE844;
-	Wed, 20 Aug 2025 23:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A956D2DE70D
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 23:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755732676; cv=none; b=au4SZdA/48ySuw2V311+eqxVol2P5PljBT67ueEikkI1cyQ1t1A0sVhuTmdC3bQC4i7If14cU0c1+bfhKSnNhIQNd8PvP66eizpdyC/ZZ7iKiLNirujYNR/pfCoGpcUuBE06s+/WN3Xeqn/oRqNvYGh4C7QB4ja92tuLojHV0m8=
+	t=1755732701; cv=none; b=BSoqvw4eK485eptPIHZHEL0tApLZOHma2ZYQSV5gEXK72smAGbT9Xz+WnDDd0A+AYoobbaRGexG8sCCyRBJMCHjE62D+0jxXdPH1JXUQQjoHHsI2/PkoxV1t+IwZ1HePLPvWF2ZSErdZOxe9Eq04S7TB7AKgERSAFq7+oPbhBcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755732676; c=relaxed/simple;
-	bh=MgbLi8u1LJ+D+gsr4XATFyi/fLkzNuL/+IC/S7VdwM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dRWN+AUhr8vgoUH2RsxbLsgg6w7/lKLhdx1Oxer2Shdj9LLDVZw8yHcIhTZxBhISQSk5vct/l05KsqEtdPIripNGMLkQ+W+E7Esn4ArdRqRJv4lxujObnZeMC6GoehAbyiFwoirgSR4OWTsYlBpG/r4dPRiYjOIONySPxjZYtV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTGAR2B0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317A7C4CEE7;
-	Wed, 20 Aug 2025 23:31:16 +0000 (UTC)
+	s=arc-20240116; t=1755732701; c=relaxed/simple;
+	bh=P6MX5K6eWZ+SNe3ZdbVdxwjmztbwPA8uRk7OZiOLNzs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OCX8k0WtS6K1gzHOHkdQ2zicll0ar8a7b/0hovPn6xuG1K9iUR7hMtXbWKlTSrh4QiDKlQa4fWFzFh7jzhCkjyiqdzb0VN1KN1MRpssW8s6pbahL5L4773XvFztq7fZzx+ZxZvQyv8gRspm1/l2Jt6nqXCRk4h5WPuYD+kIJXvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DBpP3sYJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 852CFC4CEE7;
+	Wed, 20 Aug 2025 23:31:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755732676;
-	bh=MgbLi8u1LJ+D+gsr4XATFyi/fLkzNuL/+IC/S7VdwM0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iTGAR2B0tWoGD2F0k/zVOvR5+983nQUFSpgisrtipvySGR0hVjeyl+PR+n89+wLpm
-	 YO28j//80UZcZtSg4I9IhSWjLlP5X6OQQKg5n2XFoHoovQ+ZdKT2JO/nqv7OVbM5q8
-	 u5MpvVbJWo05mAEwbjVl+xu+ixykmSKJCgB4SeJZ0tUs/tnK5UpZar8e1t2WUl/WXA
-	 eiMxpNEpF+xG+72gnwMj/zOyDkV6x9bn53YHnFCtr61FW2gSBN7dmGdh1ezETJQUlg
-	 55dP58PU64WUv0ZxSXaIDUKZoB7gMWEsgf0W1bspmGGNKzgwGXceS0ljOYfyIAUevg
-	 cRyuRHO2SkYXQ==
-Date: Wed, 20 Aug 2025 18:31:15 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Lizhi Hou <lizhi.hou@amd.com>
-Cc: lpieralisi@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] of: dynamic: Fix memleak when of_pci_add_properties()
- failed
-Message-ID: <175572873285.1571546.13547404345424444866.robh@kernel.org>
-References: <20250818152221.3685724-1-lizhi.hou@amd.com>
+	s=k20201202; t=1755732701;
+	bh=P6MX5K6eWZ+SNe3ZdbVdxwjmztbwPA8uRk7OZiOLNzs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=DBpP3sYJ+iP++810QUFwMf8U0PtJrqXLDIBfyjAgQHNeNJ00nVgcELDIfcAHcl/xS
+	 szoLHPs6Da5baUCA5v5piNu2mXlrsA89N2PTn+J3VvXYTwEmTgenupAvcbm0ZfQ9XS
+	 eohdrcOsQQ8Siw+2nR8pZe5+l9UAOSCHua2thLhZmhwR3ozxX8TS53gPuTgB3d8ugB
+	 XlKQHpkK55JAGZGWZkfaEQxWzhlDelPtU3AEris4TzB/uQ1iHj8RN7YM0qe2zvAhj8
+	 rIb5jiKZ6Ej08jzg4lB1AsasIFzk3EXXChl3ElQlrfOpeG2sM0n67HgS+T7OQ0DLtC
+	 p1fBDoHUBqtFA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F98383BF4E;
+	Wed, 20 Aug 2025 23:31:52 +0000 (UTC)
+Subject: Re: [GIT PULL] bootconfig: Fixes for v6.17-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250821082026.9fbbfeaf2952437514b29dc8@kernel.org>
+References: <20250821082026.9fbbfeaf2952437514b29dc8@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250821082026.9fbbfeaf2952437514b29dc8@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git bootconfig-fixes-v6.17-rc2
+X-PR-Tracked-Commit-Id: 729dc340a4ed1267774fc8518284e976e2210bdc
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 43f981b7a72bd39358b876f801ffee463536dea5
+Message-Id: <175573271091.413930.2378941071825154393.pr-tracker-bot@kernel.org>
+Date: Wed, 20 Aug 2025 23:31:50 +0000
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ben Hutchings <benh@debian.org>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818152221.3685724-1-lizhi.hou@amd.com>
 
+The pull request you sent on Thu, 21 Aug 2025 08:20:26 +0900:
 
-On Mon, 18 Aug 2025 08:22:21 -0700, Lizhi Hou wrote:
-> When of_pci_add_properties() failed, of_changeset_destroy() is called to
-> free the changeset. And of_changeset_destroy() puts device tree node in
-> each entry but does not free property in the entry. This leads to memory
-> leak in the failure case.
-> 
-> In of_changeset_add_prop_helper(), add the property to the device tree node
-> deadprops list. Thus, the property will also be freed along with device
-> tree node.
-> 
-> Fixes: b544fc2b8606 ("of: dynamic: Add interfaces for creating device node dynamically")
-> Reported-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Closes: https://lore.kernel.org/all/aJms+YT8TnpzpCY8@lpieralisi/
-> Tested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> ---
->  drivers/of/dynamic.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git bootconfig-fixes-v6.17-rc2
 
-Applied, thanks!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/43f981b7a72bd39358b876f801ffee463536dea5
 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
