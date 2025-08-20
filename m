@@ -1,142 +1,291 @@
-Return-Path: <linux-kernel+bounces-777127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FAA3B2D5A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB67B2D5B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B67951B6325F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5CB728317
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DB62D8370;
-	Wed, 20 Aug 2025 08:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9084D2D8DB1;
+	Wed, 20 Aug 2025 08:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l75ryk7F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Xixm2oi8"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB541286D55;
-	Wed, 20 Aug 2025 08:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AD1286D55;
+	Wed, 20 Aug 2025 08:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755677333; cv=none; b=XaZQOU+glMJETS0SvPhC2la/IOPKtNyHegyiRg4c9AMF7hJtIbQEQLwpBmJT9fGqoqd/OxR/HVf6SIn1rJNBGn9yQX8CxWYKatZwpF7sAy4x19a6yni37IWbLihf4IgUKf1N7wafFJoqhGKtyqFCQ2j10gmwNiuJWLGOekWhWTc=
+	t=1755677383; cv=none; b=MDWIBRcBnKvMIaeyxCeCrQJLo1Z5///qwXekUjwNDvmmy6ELie0/6mtUGeZPvhlk3JSJpWPaPyCUGFZNFQ0kyel19nDPdr3wfg4LQWseC29k/3UctYYxywZeVIFCjx8rbQ/9Z3x0Zz5awskbjkiEc6D0JIdWECC6ioKz621xt2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755677333; c=relaxed/simple;
-	bh=czkdxE5TB5R/9a6En1K+Wcou33QtXIlLqEcTWW6eYhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OI8hygCY42F3AoTyBj+vdGn9SzpoGuQf8Hwb9xSAAE3yrmgbPnE1T6v4Y7EstSYaeieXMmwGRoG24rfL4TkWXX9FWER8FWNqf/feAWvXDwjbDoUrDHEO7lnlVZ5mv30AVOXMrou2OcwL4TA7Nw1HbVTDtqxVElanY1NpgKEDtPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l75ryk7F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE166C113D0;
-	Wed, 20 Aug 2025 08:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755677333;
-	bh=czkdxE5TB5R/9a6En1K+Wcou33QtXIlLqEcTWW6eYhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l75ryk7FJcY8fynfRbmLJ0xqNdDiqe1NKSK3eyPIx3uh04Y+WiWqvnUaH+RCPQe/K
-	 KrmHnYKB6GYJyaAQdz/XmwhbT9PyfYVwMqvt9J5kyTnoHn1EUcrY1DWE4TalHL2VRc
-	 GLN2VdVwy93bf2IAQNJCexlrTUQIpCMXA8iFJK8NeeuzOn8VSxNejZIt/6LoOMhopk
-	 dNj+Ork5Y2pVAn1RSnW7vFdVJkhZQLBF1LSCrd8Hje4F4SUaj3K9rZ6H8/RIyiCfQk
-	 5IBxCNUNKqCdciHp8VC+cAVAhNY+TgUHoZ9VoeUQqh4GzyULVYUSEGjgx6ySt9k3SP
-	 A9y6GW7r5Q3dg==
-Date: Wed, 20 Aug 2025 10:08:50 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/13] dt-bindings: soc: amlogic: Add clk-measure related
- properties
-Message-ID: <20250820-robust-didactic-panda-d374be@kuoka>
-References: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
- <20250815-add-more-socs-to-support-clk_measure-v1-1-59f04ba67457@amlogic.com>
+	s=arc-20240116; t=1755677383; c=relaxed/simple;
+	bh=QtPa4Xm8uTmy+B5vWLRgRCy9n5XjZIkEIBssgZ3jQWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ti1LuwTdLcGeG08oYP+3KhP6+E7oOPQEclQAfeFb7lqtuV/zGVXIgZgYsPt883eJ2b7N5VgZerJ+WOVMIwx5P8uU2Eya2VCrYwLFWEEBrTTMAu9xmp9n1WWeZLtl1LPalwXRjnNYZmSHYhG8bIVWtX+LzLs074wtY+8/sn8RcZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Xixm2oi8; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57JNmmLo017631;
+	Wed, 20 Aug 2025 08:09:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=XyEp7P
+	B6Crc5O/n3hDpRBdclhiXWepi7f2DlP7ISOnE=; b=Xixm2oi8D/e/+wAITPeDp3
+	TALHrRG4EBVti1e3wM1Z6LnCfvINBVfhRGmgOPkipNfgbFhBD0MWSeZRRuGZ/NN+
+	NKDq98HPciL4Zozeql4srzji2nvV3CzcZ3UlmCS5mUo4axD1CO9niYr/utY3r3nU
+	R/k9YIllh44h9uoNOFLeppTj5ZpJGLc7EDb+zLBQQ5R2NO8ZqfzYF65N+NeIflzl
+	gTcYt/B8t87ieiFU691ZjDHQqARPeaX+Fy6nA8Cm30nsgWe9R3Iis8b6CyGL5Xlw
+	ovWuvSCaaobgeWwxqiRAGHpZnDDJ13JX7jkAK7240Uso3SZWpw/1sppbNb+XqHPQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vhrww-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Aug 2025 08:09:13 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57K89CuX005377;
+	Wed, 20 Aug 2025 08:09:12 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vhrwp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Aug 2025 08:09:12 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57K4xm2t015619;
+	Wed, 20 Aug 2025 08:09:11 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48my422cjr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Aug 2025 08:09:11 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57K899B961342160
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 20 Aug 2025 08:09:09 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A734720043;
+	Wed, 20 Aug 2025 08:09:09 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 407A620040;
+	Wed, 20 Aug 2025 08:09:08 +0000 (GMT)
+Received: from [9.111.5.117] (unknown [9.111.5.117])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 20 Aug 2025 08:09:08 +0000 (GMT)
+Message-ID: <295ae4dd-4734-42a0-be63-2d322f00c799@linux.ibm.com>
+Date: Wed, 20 Aug 2025 10:09:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250815-add-more-socs-to-support-clk_measure-v1-1-59f04ba67457@amlogic.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/19] perf: Introduce positive capability for raw events
+To: Robin Murphy <robin.murphy@arm.com>, peterz@infradead.org,
+        mingo@redhat.com, will@kernel.org, mark.rutland@arm.com,
+        acme@kernel.org, namhyung@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+        linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
+        linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
+        iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
+        linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+References: <cover.1755096883.git.robin.murphy@arm.com>
+ <542787fd188ea15ef41c53d557989c962ed44771.1755096883.git.robin.murphy@arm.com>
+ <67a0d778-6e2c-4955-a7ce-56a10043ae8d@arm.com>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <67a0d778-6e2c-4955-a7ce-56a10043ae8d@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: rc1CmpHVUr4PjN6HeVNNaTAKVoWbVX32
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfX4xTzLYCTQsxG
+ AGD1we0J4ezItB0ejTfm7DJNuDAARyH4VivdukTDV+G2c134zt0WbxSJSEE76uDxTym3DRzLeZX
+ mOf6bUkLRc8HI2z83HLeSrLnCDaUzt6ctsGigqq+Yny6dHl56O82/ysxGcmIZx9UyZO+hyMZvb/
+ ecuWa/hbBYOZ6yeacF65qy/00k1eAjO++Mj45cxXjqV85T1khiwKHAStutPkN05LIcWmzIOI2N6
+ JcZUW/XH3ZbwPgzY20enHnuM+rxpiC2AXWamVYRgBgnxytZoHYJTbh5BurqPVICmyND/IQHxcAh
+ w3J7un0oPnbnMNdQ3B2TA6VUHKYY82ln4UWEvFzI/Jn0XaQRTQr//JuEseTSCgQIqbo5FGoTW85
+ ypKOH5UDXA9ip20lItNjpe1wLNO1nQ==
+X-Proofpoint-GUID: GZ2wu60A03msHy_JXXsuf0f5WSTi9QT-
+X-Authority-Analysis: v=2.4 cv=KPwDzFFo c=1 sm=1 tr=0 ts=68a582a9 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7CQSdrXTAAAA:8 a=gUTjnckvcJroK4elFEgA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
+ a=DXsff8QfwkrTrK3sU8N1:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_03,2025-08-20_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 spamscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
+ bulkscore=0 priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190222
 
-On Fri, Aug 15, 2025 at 04:37:27PM +0800, Chuan Liu wrote:
-> Add three properties to clk-measure: 'clkmsr-indices', 'clkmsr-names',
-> and 'clkmsr-reg-v2' for describing measurable channels and register
-> offsets in DT.
+On 8/19/25 15:15, Robin Murphy wrote:
+> On 13/08/2025 6:01 pm, Robin Murphy wrote:
+>> Only a handful of CPU PMUs accept PERF_TYPE_{RAW,HARDWARE,HW_CACHE}
+>> events without registering themselves as PERF_TYPE_RAW in the first
+>> place. Add an explicit opt-in for these special cases, so that we can
+>> make life easier for every other driver (and probably also speed up the
+>> slow-path search) by having perf_try_init_event() do the basic type
+>> checking to cover the majority of cases.
+>>
+>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>> ---
+>>
+>> A further possibility is to automatically add the cap to PERF_TYPE_RAW
+>> PMUs in perf_pmu_register() to have a single point-of-use condition; I'm
+>> undecided...
+>> ---
+>>   arch/s390/kernel/perf_cpum_cf.c    |  1 +
+>>   arch/s390/kernel/perf_pai_crypto.c |  2 +-
+>>   arch/s390/kernel/perf_pai_ext.c    |  2 +-
+>>   arch/x86/events/core.c             |  2 +-
+>>   drivers/perf/arm_pmu.c             |  1 +
+>>   include/linux/perf_event.h         |  1 +
+>>   kernel/events/core.c               | 15 +++++++++++++++
+>>   7 files changed, 21 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+>> index 1a94e0944bc5..782ab755ddd4 100644
+>> --- a/arch/s390/kernel/perf_cpum_cf.c
+>> +++ b/arch/s390/kernel/perf_cpum_cf.c
+>> @@ -1054,6 +1054,7 @@ static void cpumf_pmu_del(struct perf_event *event, int flags)
+>>   /* Performance monitoring unit for s390x */
+>>   static struct pmu cpumf_pmu = {
+>>       .task_ctx_nr  = perf_sw_context,
+>> +    .capabilities = PERF_PMU_CAP_RAW_EVENTS,
+>>       .pmu_enable   = cpumf_pmu_enable,
+>>       .pmu_disable  = cpumf_pmu_disable,
+>>       .event_init   = cpumf_pmu_event_init,
+>> diff --git a/arch/s390/kernel/perf_pai_crypto.c b/arch/s390/kernel/perf_pai_crypto.c
+>> index a64b6b056a21..b5b6d8b5d943 100644
+>> --- a/arch/s390/kernel/perf_pai_crypto.c
+>> +++ b/arch/s390/kernel/perf_pai_crypto.c
+>> @@ -569,7 +569,7 @@ static const struct attribute_group *paicrypt_attr_groups[] = {
+>>   /* Performance monitoring unit for mapped counters */
+>>   static struct pmu paicrypt = {
+>>       .task_ctx_nr  = perf_hw_context,
+>> -    .capabilities = PERF_PMU_CAP_SAMPLING,
+>> +    .capabilities = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
+>>       .event_init   = paicrypt_event_init,
+>>       .add          = paicrypt_add,
+>>       .del          = paicrypt_del,
+>> diff --git a/arch/s390/kernel/perf_pai_ext.c b/arch/s390/kernel/perf_pai_ext.c
+>> index 1261f80c6d52..bcd28c38da70 100644
+>> --- a/arch/s390/kernel/perf_pai_ext.c
+>> +++ b/arch/s390/kernel/perf_pai_ext.c
+>> @@ -595,7 +595,7 @@ static const struct attribute_group *paiext_attr_groups[] = {
+>>   /* Performance monitoring unit for mapped counters */
+>>   static struct pmu paiext = {
+>>       .task_ctx_nr  = perf_hw_context,
+>> -    .capabilities = PERF_PMU_CAP_SAMPLING,
+>> +    .capabilities = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
+>>       .event_init   = paiext_event_init,
+>>       .add          = paiext_add,
+>>       .del          = paiext_del,
+>> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+>> index 789dfca2fa67..764728bb80ae 100644
+>> --- a/arch/x86/events/core.c
+>> +++ b/arch/x86/events/core.c
+>> @@ -2697,7 +2697,7 @@ static bool x86_pmu_filter(struct pmu *pmu, int cpu)
+>>   }
+>>     static struct pmu pmu = {
+>> -    .capabilities        = PERF_PMU_CAP_SAMPLING,
+>> +    .capabilities        = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
+>>         .pmu_enable        = x86_pmu_enable,
+>>       .pmu_disable        = x86_pmu_disable,
+>> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+>> index 72d8f38d0aa5..bc772a3bf411 100644
+>> --- a/drivers/perf/arm_pmu.c
+>> +++ b/drivers/perf/arm_pmu.c
+>> @@ -877,6 +877,7 @@ struct arm_pmu *armpmu_alloc(void)
+>>            * specific PMU.
+>>            */
+>>           .capabilities    = PERF_PMU_CAP_SAMPLING |
+>> +                  PERF_PMU_CAP_RAW_EVENTS |
+>>                     PERF_PMU_CAP_EXTENDED_REGS |
+>>                     PERF_PMU_CAP_EXTENDED_HW_TYPE,
+>>       };
+>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+>> index 183b7c48b329..c6ad036c0037 100644
+>> --- a/include/linux/perf_event.h
+>> +++ b/include/linux/perf_event.h
+>> @@ -305,6 +305,7 @@ struct perf_event_pmu_context;
+>>   #define PERF_PMU_CAP_EXTENDED_HW_TYPE    0x0100
+>>   #define PERF_PMU_CAP_AUX_PAUSE        0x0200
+>>   #define PERF_PMU_CAP_AUX_PREFER_LARGE    0x0400
+>> +#define PERF_PMU_CAP_RAW_EVENTS        0x0800
+>>     /**
+>>    * pmu::scope
+>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index 71b2a6730705..2ecee76d2ae2 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -12556,11 +12556,26 @@ static inline bool has_extended_regs(struct perf_event *event)
+>>              (event->attr.sample_regs_intr & PERF_REG_EXTENDED_MASK);
+>>   }
+>>   +static bool is_raw_pmu(const struct pmu *pmu)
+>> +{
+>> +    return pmu->type == PERF_TYPE_RAW ||
+>> +           pmu->capabilities & PERF_PMU_CAP_RAW_EVENTS;
+>> +}
+>> +
+>>   static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+>>   {
+>>       struct perf_event_context *ctx = NULL;
+>>       int ret;
+>>   +    /*
+>> +     * Before touching anything, we can safely skip:
+>> +     * - any event for a specific PMU which is not this one
+>> +     * - any common event if this PMU doesn't support them
+>> +     */
+>> +    if (event->attr.type != pmu->type &&
+>> +        (event->attr.type >= PERF_TYPE_MAX || is_raw_pmu(pmu)))
 > 
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> ---
->  .../soc/amlogic/amlogic,meson-gx-clk-measure.yaml  | 54 +++++++++++++++++++++-
->  1 file changed, 53 insertions(+), 1 deletion(-)
+> Ah, that should be "!is_raw_pmu(pmu)" there (although it's not entirely the cause of the LKP report on the final patch.)
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-> index 39d4637c2d08..1c9d37eef5f0 100644
-> --- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-> +++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-clk-measure.yaml
-> @@ -6,7 +6,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Amlogic Internal Clock Measurer
->  
-> -description:
-> +description: |
+> Thanks,
+> Robin.
+> 
+>> +        return -ENOENT;
+>> +
+>>       if (!try_module_get(pmu->module))
+>>           return -ENODEV;
+>>   
+> 
+> 
 
-Why?
+Hi Robin,
 
->    The Amlogic SoCs contains an IP to measure the internal clocks.
->    The precision is multiple of MHz, useful to debug the clock states.
->  
-> @@ -28,15 +28,67 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  clkmsr-indices:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: |
+what is the intention of that patch?
+Can you explain that a bit more.
 
-Why | ?
+Thanks.
 
-> +      Supported channel IDs for clk-measure.
-> +    minItems: 1
-> +    maxItems: 256
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
 
-Nothing - neither this nor commit msg - explains why you need it and
-what this is.
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
 
-> +
-> +  clkmsr-names:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-> +    description: |
-> +      The channel ID names supported by clk-measure correspond one-to-one with
-> +      the IDs specified in 'clkmsr-indices'.
-> +
-> +      Therefore, the defined 'clkmsr-indices' and 'clkmsr-names' must have
-> +      matching counts and maintain strict correspondence.
-> +    minItems: 1
-> +    maxItems: 256
-> +
-> +  clkmsr-reg-v2:
-> +    type: boolean
-> +    description: |
-> +      Specify whether the register address offset for clk-measure corresponds
-> +      to version V2.
+Geschäftsführung: David Faller
 
-No, compatible defines this.
-
-> +
->  required:
->    - compatible
->    - reg
-> +  - clkmsr-indices
-> +  - clkmsr-names
-
-That's ABI break. Again, nothing explains it.
-
-Best regards,
-Krzysztof
-
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
