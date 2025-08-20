@@ -1,351 +1,153 @@
-Return-Path: <linux-kernel+bounces-777041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D00AB2D464
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:01:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD7EB2D472
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F34637ACA4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4D94E06F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9C92C21C5;
-	Wed, 20 Aug 2025 07:01:27 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC0D179A3;
+	Wed, 20 Aug 2025 07:02:32 +0000 (UTC)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEF1179A3;
-	Wed, 20 Aug 2025 07:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2912B158DAC;
+	Wed, 20 Aug 2025 07:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755673287; cv=none; b=qsoFHJu5EATrTShMaIkMj31yT4cOQfVZWNw9Jj8sHBM0936SImtX0yyvuE/Wv/JjI4m4KWQ4m4yPpkdAwcFl4l75OS2jogTZEHpIwLZt5/4f1fjVE+NC0gWSHK4f+2cITyPagg2YLirNOkNnWFda0QKbMmYqeZRUw9dNg3PJOKo=
+	t=1755673351; cv=none; b=FxKnHyoV1gtMVdFVA7HjSWJZjgzZElpSpeOLMy/eea14zn9e960ygVXEbtXmciKONoAXbtJhWjZLl1067AQN+4Kg/AhIQoQes9mwWnvuq+HDEsEmN4J6fYBXrv0safGR/X8XbpHs7JO84T2RldOgZXbf6siCU2R0tGeMggcwlDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755673287; c=relaxed/simple;
-	bh=/tYmo8JEk9hrANABqjMWLCeoK3N07c3bevddqxrtCkM=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=bF0jOCYZxTwNIdo7+Hl+Q5+lQBmpa86ZD/8OeGKpr4fMFJLNFIHEdypRs8sFnEp9SF2pzvCfvL9YSCgZlzuzt1JTQ783DyvqE3vwSsoF7ldOEyh86B2O7eNQctDmOS5xv9XsYioQ6s6+O+pDQPvlCO3NZrAIAoPFmuAl0pd7Q/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c6HRf1PDMz14MVf;
-	Wed, 20 Aug 2025 15:01:18 +0800 (CST)
-Received: from kwepemk500010.china.huawei.com (unknown [7.202.194.95])
-	by mail.maildlp.com (Postfix) with ESMTPS id E676F180495;
-	Wed, 20 Aug 2025 15:01:21 +0800 (CST)
-Received: from [10.67.120.153] (10.67.120.153) by
- kwepemk500010.china.huawei.com (7.202.194.95) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 20 Aug 2025 15:01:21 +0800
-Subject: Re: [PATCH 1/6] crypto: hisilicon - re-enable address prefetch after
- device resuming
-To: Chenghai Huang <huangchenghai2@huawei.com>, <herbert@gondor.apana.org.au>,
-	<davem@davemloft.net>
-References: <20250816102834.828655-1-huangchenghai2@huawei.com>
- <20250816102834.828655-2-huangchenghai2@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<liulongfang@huawei.com>, <shenyang39@huawei.com>,
-	<linwenkai6@hisilicon.com>, <wangzhou1@hisilicon.com>
-From: Weili Qian <qianweili@huawei.com>
-Message-ID: <bf8c34d6-72b3-e0ad-62f0-9e5e8be3c132@huawei.com>
-Date: Wed, 20 Aug 2025 15:01:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1755673351; c=relaxed/simple;
+	bh=jVqQhjeddwNoB1/ZHfH1bxrD8cV5PpPIbyK4ZcpRwsQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bDQf2k1DnPjnUS4rUATNIVG740wbFJ5i6jIH5zTPd+D36Yo5SuIGW8qWbSWw3iOK/yT+XAV2efAZ3FWazq28QDA3xzKNCPr705/t0MqsH7JxbnDhklFQqDzfePx0TTI2ihWQLvpoQZYkFL/H7pBZLX/qRzcIBEjGtsXSxyJb0ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-50f88ee8ac3so1894549137.1;
+        Wed, 20 Aug 2025 00:02:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755673349; x=1756278149;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=85tJujt3Cd6/zX3fsN1kUuMkB+QsEeF2UMzbEd7Xnu0=;
+        b=Yico8VhqVDgOPtrENBiL0R6dF+AecV3HKVawGsZAXm9tGQgI64oLQVs7setZJ+c+Fj
+         hCGfaEXkS3B7Ju6F8wT3pUpoLp1vpKyPz4mMGwBfBHqUus1QOOcudUNAyk6dsZSghmtm
+         qNyrVvR9f3LPN4B4CzGFFAELTBeYDDqFGbye1aLAik7VtAl0gz733TO0Bsqkegm6V7ja
+         Lxzif4Y6LplIIdxJP6m1Ri3Tu6aKId8shW4GecJPSsSxa0R9klL4IOSo/OT2/uh3tXrt
+         S2AQJGRNsSnDw5UNabcQNGzYgO64JHL3B14VVVm6yExIoLBjQPM93CdDQExGyVYCki3n
+         xsrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbsMq78ASFTwNSixBPw4EAjfKvnDknqmeTLOG+4gAdfONz3x11P22KgcC7q7QkttU6DKohZO8Kc3+r+Ig=@vger.kernel.org, AJvYcCWw7GJk7ncZ3NbwbyZ/BJMlDmTDN2eCZRkQ1tiKLJihg7trars2Q8O6HfN/y1hTRILYomvQKAdrayUJRA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSSlw/tu7hvPG2LyVSblGJWdN3os8XEMVwD/LukQ9dRmjKxa8Y
+	dRPW/oP6Hh9sDM6BsEsHu4en9JvFph9bROVxjRX8d6w4A8pXYMIrvKzrHCxKVDIv
+X-Gm-Gg: ASbGncuoJmpEkYFebQ66op0YAckxXm9FuLvbrkoWI6Stvhk3aOjOhbTjKnZEj3N/CEy
+	6hgZKXgkbnlqtFYFiR7C/pCJ2n3gc/qXMDlNHlZ5Zd0r+Z6mTrLEAd/7l6kBPdKEiZBkVitc1ln
+	+VPDLWm2lbmulyFHd4uMTlRRbjo4Hv9i9llrkAhbNghZynhROk9wO6yWk2tFsxDC+6nnpyii18g
+	G1Z6o4loYZpwrx/7dXjsdV1cRIvhmHGEVsSWGoiIsRxCtuHfqQrsaPG/mAG4vEuiNk5GXlqdJ9N
+	iUCKXYfrTO213GkAEihKAIX3w8lR2Es9OhXjRShb8KI4A6KyH3FgN9whNuYCAkxg9mMxU3vrCSQ
+	Ver9EXEpCk603Y2cUjmzEYRfPN7wXD21XHGC/GRv2eI9EKjhOgTapCPHx9FZ5
+X-Google-Smtp-Source: AGHT+IECgH62KqW/3+98eOWyRkVfxJEhH3syADkoP94pPkNqLHSKeBgZB1pz81uXyla+MwJGOZN3LA==
+X-Received: by 2002:a05:6102:5111:b0:4e7:db33:5980 with SMTP id ada2fe7eead31-51a4f53cd8fmr552839137.11.1755673348812;
+        Wed, 20 Aug 2025 00:02:28 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-890277e3798sm2713458241.7.2025.08.20.00.02.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 00:02:28 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-890190c7912so1475146241.2;
+        Wed, 20 Aug 2025 00:02:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW+ezRuhwjSTF994z5BiuXSeb1kf/W3AKEjmAAv4IIW1HUJSk3wv85lF/BKMmQt2Fa/5agB9rMsCC/moBI=@vger.kernel.org, AJvYcCWU60Fc8b0wPw1JiChHGKvS7EPJ3AVyooV4cXSP+5hprERK8/SISbgiJkK1mws+1YdGMdcZSwKq/Ym0Qw==@vger.kernel.org
+X-Received: by 2002:a05:6102:160c:b0:4e5:acea:2dec with SMTP id
+ ada2fe7eead31-51a4ee317c2mr493455137.7.1755673348317; Wed, 20 Aug 2025
+ 00:02:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250816102834.828655-2-huangchenghai2@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk500010.china.huawei.com (7.202.194.95)
+References: <20250820130227.5661da82@canb.auug.org.au>
+In-Reply-To: <20250820130227.5661da82@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Aug 2025 09:02:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWj6dQqmdFYuHPEPL0pxefZ8m9kA5Dq_ZA+YRw4vLvreQ@mail.gmail.com>
+X-Gm-Features: Ac12FXz1IMAhVxBalWq_PYPKJ7-EuWxsMXwLZzxpmE8VkWIbqwB7yZCpfW31JVI
+Message-ID: <CAMuHMdWj6dQqmdFYuHPEPL0pxefZ8m9kA5Dq_ZA+YRw4vLvreQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the pinctrl-renesas tree with the
+ pinctrl tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Stephen,
 
+On Wed, 20 Aug 2025 at 05:02, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> After merging the pinctrl-renesas tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/pinctrl/renesas/pinctrl-rzt2h.c:161:14: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+>   161 |         func = pinmux_generic_get_function(pctldev, func_selector);
+>       |              ^
+>
+> Caused by commit
+>
+>   90f2896d7dbb ("pinctrl: renesas: Add support for RZ/T2H")
+>
+> interacting with commit
+>
+>   afe1af86ff05 ("pinctrl: constify pinmux_generic_get_function()")
+>
+> from the pinctrl tree.
 
-On 2025/8/16 18:28, Chenghai Huang wrote:
-> When the device resumes from a suspended state, it will revert to its
-> initial state and requires re-enabling. Currently, the address prefetch
-> function is not re-enabled after device resuming. Move the address prefetch
-> enable to the initialization process. In this way, the address prefetch
-> can be enabled when the device resumes by calling the initialization
-> process.
-> 
-> Fixes: 607c191b371d ("crypto: hisilicon - support runtime PM for accelerator device")
-> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
-> ---
->  drivers/crypto/hisilicon/hpre/hpre_main.c | 86 +++++++++++------------
->  drivers/crypto/hisilicon/qm.c             |  3 -
->  drivers/crypto/hisilicon/sec2/sec_main.c  | 80 ++++++++++-----------
->  drivers/crypto/hisilicon/zip/zip_main.c   |  2 +-
->  4 files changed, 84 insertions(+), 87 deletions(-)
-> 
-> diff --git a/drivers/crypto/hisilicon/hpre/hpre_main.c b/drivers/crypto/hisilicon/hpre/hpre_main.c
-> index f5b47e5ff48a..dbe8f62f556b 100644
-> --- a/drivers/crypto/hisilicon/hpre/hpre_main.c
-> +++ b/drivers/crypto/hisilicon/hpre/hpre_main.c
-> @@ -466,6 +466,47 @@ struct hisi_qp *hpre_create_qp(u8 type)
->  	return NULL;
->  }
->  
-> +static void hpre_close_sva_prefetch(struct hisi_qm *qm)
-> +{
-> +	u32 val;
-> +	int ret;
-> +
-> +	if (!test_bit(QM_SUPPORT_SVA_PREFETCH, &qm->caps))
-> +		return;
-> +
-> +	val = readl_relaxed(qm->io_base + HPRE_PREFETCH_CFG);
-> +	val |= HPRE_PREFETCH_DISABLE;
-> +	writel(val, qm->io_base + HPRE_PREFETCH_CFG);
-> +
-> +	ret = readl_relaxed_poll_timeout(qm->io_base + HPRE_SVA_PREFTCH_DFX,
-> +					 val, !(val & HPRE_SVA_DISABLE_READY),
-> +					 HPRE_REG_RD_INTVRL_US,
-> +					 HPRE_REG_RD_TMOUT_US);
-> +	if (ret)
-> +		pci_err(qm->pdev, "failed to close sva prefetch\n");
-> +}
-> +
-> +static void hpre_open_sva_prefetch(struct hisi_qm *qm)
-> +{
-> +	u32 val;
-> +	int ret;
-> +
-> +	if (!test_bit(QM_SUPPORT_SVA_PREFETCH, &qm->caps))
-> +		return;
-> +
-> +	/* Enable prefetch */
-> +	val = readl_relaxed(qm->io_base + HPRE_PREFETCH_CFG);
-> +	val &= HPRE_PREFETCH_ENABLE;
-> +	writel(val, qm->io_base + HPRE_PREFETCH_CFG);
-> +
-> +	ret = readl_relaxed_poll_timeout(qm->io_base + HPRE_PREFETCH_CFG,
-> +					 val, !(val & HPRE_PREFETCH_DISABLE),
-> +					 HPRE_REG_RD_INTVRL_US,
-> +					 HPRE_REG_RD_TMOUT_US);
-> +	if (ret)
-> +		pci_err(qm->pdev, "failed to open sva prefetch\n");
-> +}
-> +
->  static void hpre_config_pasid(struct hisi_qm *qm)
+Thanks for your report!
+
+> I have applied the following merge fix patch.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 20 Aug 2025 12:42:30 +1000
+> Subject: [PATCH] fix up for "pinctrl: renesas: Add support for RZ/T2H"
+>
+> interacting with commit
+>
+>   afe1af86ff05 ("pinctrl: constify pinmux_generic_get_function()")
+>
+> from the pinctrl tree.
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+> --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> @@ -151,7 +151,7 @@ static int rzt2h_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+>                                  unsigned int group_selector)
 >  {
->  	u32 val1, val2;
-> @@ -484,6 +525,8 @@ static void hpre_config_pasid(struct hisi_qm *qm)
->  	}
->  	writel_relaxed(val1, qm->io_base + HPRE_DATA_RUSER_CFG);
->  	writel_relaxed(val2, qm->io_base + HPRE_DATA_WUSER_CFG);
-> +
-> +	hpre_open_sva_prefetch(qm);
+>         struct rzt2h_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+> -       struct function_desc *func;
+> +       const struct function_desc *func;
+>         struct group_desc *group;
+>         const unsigned int *pins;
+>         unsigned int i;
 
-For compatibility considerations, address prefetch enablement relies on the device's capability
-configuration rather than the chip version. The function should be called before the version check.
+I will fold this fix into commit 90f2896d7dbb ("pinctrl: renesas:
+Add support for RZ/T2H"), as it does not depend on commit afe1af86ff05
+("pinctrl: constify pinmux_generic_get_function()").
 
-Thanks,
-Weili
+Gr{oetje,eeting}s,
 
->  }
->  
->  static int hpre_cfg_by_dsm(struct hisi_qm *qm)
-> @@ -563,47 +606,6 @@ static void disable_flr_of_bme(struct hisi_qm *qm)
->  	writel(PEH_AXUSER_CFG_ENABLE, qm->io_base + QM_PEH_AXUSER_CFG_ENABLE);
->  }
->  
-> -static void hpre_open_sva_prefetch(struct hisi_qm *qm)
-> -{
-> -	u32 val;
-> -	int ret;
-> -
-> -	if (!test_bit(QM_SUPPORT_SVA_PREFETCH, &qm->caps))
-> -		return;
-> -
-> -	/* Enable prefetch */
-> -	val = readl_relaxed(qm->io_base + HPRE_PREFETCH_CFG);
-> -	val &= HPRE_PREFETCH_ENABLE;
-> -	writel(val, qm->io_base + HPRE_PREFETCH_CFG);
-> -
-> -	ret = readl_relaxed_poll_timeout(qm->io_base + HPRE_PREFETCH_CFG,
-> -					 val, !(val & HPRE_PREFETCH_DISABLE),
-> -					 HPRE_REG_RD_INTVRL_US,
-> -					 HPRE_REG_RD_TMOUT_US);
-> -	if (ret)
-> -		pci_err(qm->pdev, "failed to open sva prefetch\n");
-> -}
-> -
-> -static void hpre_close_sva_prefetch(struct hisi_qm *qm)
-> -{
-> -	u32 val;
-> -	int ret;
-> -
-> -	if (!test_bit(QM_SUPPORT_SVA_PREFETCH, &qm->caps))
-> -		return;
-> -
-> -	val = readl_relaxed(qm->io_base + HPRE_PREFETCH_CFG);
-> -	val |= HPRE_PREFETCH_DISABLE;
-> -	writel(val, qm->io_base + HPRE_PREFETCH_CFG);
-> -
-> -	ret = readl_relaxed_poll_timeout(qm->io_base + HPRE_SVA_PREFTCH_DFX,
-> -					 val, !(val & HPRE_SVA_DISABLE_READY),
-> -					 HPRE_REG_RD_INTVRL_US,
-> -					 HPRE_REG_RD_TMOUT_US);
-> -	if (ret)
-> -		pci_err(qm->pdev, "failed to close sva prefetch\n");
-> -}
-> -
->  static void hpre_enable_clock_gate(struct hisi_qm *qm)
->  {
->  	unsigned long offset;
-> @@ -1450,8 +1452,6 @@ static int hpre_pf_probe_init(struct hpre *hpre)
->  	if (ret)
->  		return ret;
->  
-> -	hpre_open_sva_prefetch(qm);
-> -
->  	hisi_qm_dev_err_init(qm);
->  	ret = hpre_show_last_regs_init(qm);
->  	if (ret)
-> diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
-> index 2e4ee7ecfdfb..a5cc0ccd94f1 100644
-> --- a/drivers/crypto/hisilicon/qm.c
-> +++ b/drivers/crypto/hisilicon/qm.c
-> @@ -4447,9 +4447,6 @@ static void qm_restart_prepare(struct hisi_qm *qm)
->  {
->  	u32 value;
->  
-> -	if (qm->err_ini->open_sva_prefetch)
-> -		qm->err_ini->open_sva_prefetch(qm);
-> -
->  	if (qm->ver >= QM_HW_V3)
->  		return;
->  
-> diff --git a/drivers/crypto/hisilicon/sec2/sec_main.c b/drivers/crypto/hisilicon/sec2/sec_main.c
-> index 72cf48d1f3ab..ddb20f380b54 100644
-> --- a/drivers/crypto/hisilicon/sec2/sec_main.c
-> +++ b/drivers/crypto/hisilicon/sec2/sec_main.c
-> @@ -464,6 +464,45 @@ static void sec_set_endian(struct hisi_qm *qm)
->  	writel_relaxed(reg, qm->io_base + SEC_CONTROL_REG);
->  }
->  
-> +static void sec_close_sva_prefetch(struct hisi_qm *qm)
-> +{
-> +	u32 val;
-> +	int ret;
-> +
-> +	if (!test_bit(QM_SUPPORT_SVA_PREFETCH, &qm->caps))
-> +		return;
-> +
-> +	val = readl_relaxed(qm->io_base + SEC_PREFETCH_CFG);
-> +	val |= SEC_PREFETCH_DISABLE;
-> +	writel(val, qm->io_base + SEC_PREFETCH_CFG);
-> +
-> +	ret = readl_relaxed_poll_timeout(qm->io_base + SEC_SVA_TRANS,
-> +					 val, !(val & SEC_SVA_DISABLE_READY),
-> +					 SEC_DELAY_10_US, SEC_POLL_TIMEOUT_US);
-> +	if (ret)
-> +		pci_err(qm->pdev, "failed to close sva prefetch\n");
-> +}
-> +
-> +static void sec_open_sva_prefetch(struct hisi_qm *qm)
-> +{
-> +	u32 val;
-> +	int ret;
-> +
-> +	if (!test_bit(QM_SUPPORT_SVA_PREFETCH, &qm->caps))
-> +		return;
-> +
-> +	/* Enable prefetch */
-> +	val = readl_relaxed(qm->io_base + SEC_PREFETCH_CFG);
-> +	val &= SEC_PREFETCH_ENABLE;
-> +	writel(val, qm->io_base + SEC_PREFETCH_CFG);
-> +
-> +	ret = readl_relaxed_poll_timeout(qm->io_base + SEC_PREFETCH_CFG,
-> +					 val, !(val & SEC_PREFETCH_DISABLE),
-> +					 SEC_DELAY_10_US, SEC_POLL_TIMEOUT_US);
-> +	if (ret)
-> +		pci_err(qm->pdev, "failed to open sva prefetch\n");
-> +}
-> +
->  static void sec_engine_sva_config(struct hisi_qm *qm)
->  {
->  	u32 reg;
-> @@ -497,45 +536,7 @@ static void sec_engine_sva_config(struct hisi_qm *qm)
->  		writel_relaxed(reg, qm->io_base +
->  				SEC_INTERFACE_USER_CTRL1_REG);
->  	}
-> -}
-> -
-> -static void sec_open_sva_prefetch(struct hisi_qm *qm)
-> -{
-> -	u32 val;
-> -	int ret;
-> -
-> -	if (!test_bit(QM_SUPPORT_SVA_PREFETCH, &qm->caps))
-> -		return;
-> -
-> -	/* Enable prefetch */
-> -	val = readl_relaxed(qm->io_base + SEC_PREFETCH_CFG);
-> -	val &= SEC_PREFETCH_ENABLE;
-> -	writel(val, qm->io_base + SEC_PREFETCH_CFG);
-> -
-> -	ret = readl_relaxed_poll_timeout(qm->io_base + SEC_PREFETCH_CFG,
-> -					 val, !(val & SEC_PREFETCH_DISABLE),
-> -					 SEC_DELAY_10_US, SEC_POLL_TIMEOUT_US);
-> -	if (ret)
-> -		pci_err(qm->pdev, "failed to open sva prefetch\n");
-> -}
-> -
-> -static void sec_close_sva_prefetch(struct hisi_qm *qm)
-> -{
-> -	u32 val;
-> -	int ret;
-> -
-> -	if (!test_bit(QM_SUPPORT_SVA_PREFETCH, &qm->caps))
-> -		return;
-> -
-> -	val = readl_relaxed(qm->io_base + SEC_PREFETCH_CFG);
-> -	val |= SEC_PREFETCH_DISABLE;
-> -	writel(val, qm->io_base + SEC_PREFETCH_CFG);
-> -
-> -	ret = readl_relaxed_poll_timeout(qm->io_base + SEC_SVA_TRANS,
-> -					 val, !(val & SEC_SVA_DISABLE_READY),
-> -					 SEC_DELAY_10_US, SEC_POLL_TIMEOUT_US);
-> -	if (ret)
-> -		pci_err(qm->pdev, "failed to close sva prefetch\n");
-> +	sec_open_sva_prefetch(qm);
->  }
->  
->  static void sec_enable_clock_gate(struct hisi_qm *qm)
-> @@ -1152,7 +1153,6 @@ static int sec_pf_probe_init(struct sec_dev *sec)
->  	if (ret)
->  		return ret;
->  
-> -	sec_open_sva_prefetch(qm);
->  	hisi_qm_dev_err_init(qm);
->  	sec_debug_regs_clear(qm);
->  	ret = sec_show_last_regs_init(qm);
-> diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-> index d8ba23b7cc7d..96687c78a8dc 100644
-> --- a/drivers/crypto/hisilicon/zip/zip_main.c
-> +++ b/drivers/crypto/hisilicon/zip/zip_main.c
-> @@ -565,6 +565,7 @@ static int hisi_zip_set_user_domain_and_cache(struct hisi_qm *qm)
->  		writel(AXUSER_BASE, base + HZIP_DATA_WUSER_32_63);
->  		writel(AXUSER_BASE, base + HZIP_SGL_RUSER_32_63);
->  	}
-> +	hisi_zip_open_sva_prefetch(qm);
->  
->  	/* let's open all compression/decompression cores */
->  
-> @@ -1255,7 +1256,6 @@ static int hisi_zip_pf_probe_init(struct hisi_zip *hisi_zip)
->  	if (ret)
->  		return ret;
->  
-> -	hisi_zip_open_sva_prefetch(qm);
->  	hisi_qm_dev_err_init(qm);
->  	hisi_zip_debug_regs_clear(qm);
->  
-> 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
