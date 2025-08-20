@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-777930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17987B2DF59
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:31:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB33B2DF3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2ED04E7A4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:24:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C01B625E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11FB275AFF;
-	Wed, 20 Aug 2025 14:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3D12749D6;
+	Wed, 20 Aug 2025 14:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="B+ldflq8"
-Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2136.outbound.protection.outlook.com [40.107.115.136])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="VPf6ZYD7"
+Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2112.outbound.protection.outlook.com [40.107.115.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC2D224AFC
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB32C27280B
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755699884; cv=fail; b=mAcNadtAGSnsAgnrmEvb5h3Zztl6VQLzthyhPKgDz7f763F4QvWYw+IfPtu1VEyNUOFVObwMtSzQAbwENNY9RU43pNPo70yCHQ2lJLzv20qC/cXQCUPL7yneMPlJ7fICh0tancSmwCKjvWqfS3xHGzRFR5CNXMoDmr+gXTUB52E=
+	t=1755699931; cv=fail; b=CfgyxL2O1hypwRBlAgUA6tbBzlF1dIra0UTmHsXmKdplhsWbVzTSTUji1/Ye8oXSbG59j41aSXglKL4nBKhUgwJHxs5WsyAvnIYp5iMvKPaChButvWJsfxERPlwIECDjYSVaZkiOqA/ITxepnQr5jLeIvKbm/Hu5ETTNYjnEB6g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755699884; c=relaxed/simple;
-	bh=RaH9/lbOvzB2rwFHS3N8Cz2FhJSuaHBBmC3tfbAbkLk=;
+	s=arc-20240116; t=1755699931; c=relaxed/simple;
+	bh=SZQibLh3FuX8QMtUv2UFH3Xnx93Gl+yT434JxiF+aUg=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oM0MuLZfgdDlme4PfD9bajfwlSnBSjVMlU4tlVqoS21D0u/xz1pQAf9z0dgDwjHh9x4Oi4mErLp4C1nHo46j+pMfdcQsAkvuMGkd1GOjNos6uaGIX2sGgSbzFmtIIW4Al5ysldkYyOTHGvg2iWXyDAHXu283Er6HwuesKSp1B08=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=B+ldflq8; arc=fail smtp.client-ip=40.107.115.136
+	 Content-Type:MIME-Version; b=aJX8Q/ODPdx7kaTxpJN+VCbzJz7/eRciayHKqeezY2F8fbHCKADKHLNfDy+1mWj3uPXywPSwCJd0O0G9rxQPYEvO7Peffu83dnlV9uP+6tCsHGsluG36MUwCqEKtjMLeZRnVk7V1H1ZMdjgJFSVAlTNThBa9xUJddMnTL2gu/uE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=VPf6ZYD7; arc=fail smtp.client-ip=40.107.115.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AEMOcEJG/AsETtqYWh+P5SfEqvYRDMdd+nWnCC5G9/vgecG6K5cZnGax2s+HdtaUXpc5paU5Dh1tJRdgMc7BIeqd0k5M/es3uFNnzmPqBqgB8Y914lUfKW4G33XXt8N1Qze2Agu/eV3umykWfY71qEWbVTY9i5atpJfA3xadT3f5Csb2823vSaByHGkCl9AnTQF7bM5RSParXPe3O+bz58C2K5sFWey0N/ZVVJQ/Z7RJM2l8nWikIGr9DNlVt4zybnSWbmx7ST5VeUBMh3tGWYHepcY4RL2MzfhQhUaRvAQYzpUMMDlxFZ9mLj9s8UnJ1OfJqqYGdfBdOzCOmbCzMg==
+ b=sZ9w3MEcpqeOH+KgW79oExHXhx147FuR1YTBymBv0cYHii/D9hZ3BTjwug9Cae6sfQnKSZYp5C2sPoA+ivh2l7YVyq7DAXcYNbYjYfD1pmdzr/oFlLUsd1MDW3SJKasDoJmLh/OJZ2Yk2cWQyWDculan9E9Owrmh7yE+ks///bjIQSMmmHdcInIaZbKOkfiPZztI+CoLK9klhgPt+1lsD5vEFp/XSh+DYKPWhTIcJ3b1ie/NGPCgqSb6UKJ9EoxZQ+DZQ3IQgjnV0SfrZvwy1gFmsn3aOsSv5Mo+OwFp2rEHXxYlsSJ1oHPxucIfMcj1DWRMzLusprOp4bNLUvVX+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1e/aAAlSyl7BTYjNnFxJ7AGPHBKAaLevqOuAwj/SHrg=;
- b=oknq9w+Xna6rJ2aStjLEKm+B4GgS7NwJ6S0sdDlTLN3WbLiVDjkB4aNk420TmLCH0SavvNtMu368MxljgAKJkDtBxEljtToLIkFVDQvwa9vo9TlGu+qT75Bo+CjmD+SVQYXSgfeCFfdCKiS18bG6GMHtWw57d4Qyc2vLzdobIXkcsh1ZML1Zsjs0fGM+ZAXQclWXVr8iAQWKJ1xto7u81WT+BD0zGREFXYv//2Pj3c6DXm78/GlX5NpQolLub6mnspkRf6pVIrVjL8zRrFyHdvxTfPZJ4+giZNMQL5dE3ejSaR5fu/uUZ1BOTpO7VU6EOYZfhIZBmUe5OFFZQJC+uw==
+ bh=oFE6GUzkYyWTGwSaEkaoFd7wREz3OdVVAUIErwXP9Yc=;
+ b=FlpUu05yYbz4qoxOBWofoqCoa1lQW4dimb3sqUSgGA5z1xlpP897hVqF2tkJOk0Ec8UCa4JdcNxgUI1mZjHOYRzak5Rb/DtkSovG1zai1Ag03j8hqAPg0YOAU1fja/RCs6X3H3yLTt/8+JHl5aZK+gGUHjKk9UfRVWqC4u4dmm+ZxXtXMzo4z1vpOD6gbJ8M43MjMrAL6+KXaAZmNoZY+h65/X+LUF/bh/5+gAFg+m5YL7J/TPLNmSMyXDIMeNjmzPjppJ7+ZIjgFadYT20irGCEwqQOV3aa8umPxpmA2XeDzZ7zwQps+OrjuQ8lGV/3PTsfm+AYNCPghGYPp44ltw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
  dkim=pass header.d=efficios.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1e/aAAlSyl7BTYjNnFxJ7AGPHBKAaLevqOuAwj/SHrg=;
- b=B+ldflq88As7yUGI0Ub+UtCOLaiFQQsECQS2NB6+9U4VJTIkm/u5LpqiuwBwFBZoAjMn9NxigAqkIcdrn9MXk9m2yZlvXGdJKCMSRQ/C9KYkZYjp5xL8yvz3vBiXhQxeY93L6Wi7SE39D5auK1L2TFyza7qvSwSkTAjwDNpu9GdBa8fCEX4wX/JtDYkKf6MZKwLFoH3iJD1RN1HTXmZg5oN6Khed7BIpykRad+Ucv9bnX+LVGPDL9cbBFgerlUvR5vhpzFJrv1+Aal0w1fXUvJLq3CLv/DLDPYGagq5Vhv+yMhe28fpYlYXzd98iou1map6KGbK+1LMOdskGTHWIIg==
+ bh=oFE6GUzkYyWTGwSaEkaoFd7wREz3OdVVAUIErwXP9Yc=;
+ b=VPf6ZYD7Z5B9DUqs3tEDZgExlZabb1wc2rwH6VvTDVwYZ25kKs2EYXPko09vcnKTHNF04iEjnz/T3CQpJ6EOzkM5/GEpBXIKiIVyhGbPxQXplcyDccrqD0uGwHrS+PreDk9xQJr+56r6qGjM7VCgvfXtWXqh5Bd3Z3NIA7/TrtDv4mTxJSS4aoyKz4dWGcfiTklsqEA/xwnXnYP5SpfF8uvgTVLJPxZRiIZWckcq6Crz3Yhd4FPkFKfrv2MOH0/ApEGKSbf4y4gWiZVWtlsPVwMgpnHKhWD+dFEVyb0y7LaU8RhEpQ8uXeaymrKPWB4oGr59KrTWCSzBCDol6NmoOw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=efficios.com;
 Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
  by YT1PPF6D21D4F3B.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b08::549) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
- 2025 14:24:32 +0000
+ 2025 14:25:24 +0000
 Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.013; Wed, 20 Aug 2025
- 14:24:32 +0000
-Message-ID: <61551e6e-fc51-4b1f-b2a2-2014a7d37901@efficios.com>
-Date: Wed, 20 Aug 2025 10:24:31 -0400
+ 14:25:23 +0000
+Message-ID: <d0ef5bd8-6a01-4350-87a1-0acdfdf38cc4@efficios.com>
+Date: Wed, 20 Aug 2025 10:25:22 -0400
 User-Agent: Mozilla Thunderbird
-Subject: Re: [patch 02/11] rseq: Condense the inline stubs
+Subject: Re: [patch 03/11] rseq: Rename rseq_syscall() to
+ rseq_debug_syscall_exit()
 To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
  Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
  <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
  Wei Liu <wei.liu@kernel.org>, Jens Axboe <axboe@kernel.dk>
 References: <20250813155941.014821755@linutronix.de>
- <20250813162823.909295085@linutronix.de>
+ <20250813162823.972744605@linutronix.de>
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Content-Language: en-US
-In-Reply-To: <20250813162823.909295085@linutronix.de>
+In-Reply-To: <20250813162823.972744605@linutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: YQXPR0101CA0005.CANPRD01.PROD.OUTLOOK.COM
@@ -83,174 +84,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PPF6D21D4F3B:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2af8f18e-8a65-4113-b80a-08dddff54800
+X-MS-Office365-Filtering-Correlation-Id: ae29fe36-9396-4ed8-9de2-08dddff56678
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aC9JMkhubCswL2xpQVlGK3J6RXhERFZ5ZlVDS1dUMjlvUEhndkNwWTEvaU1G?=
- =?utf-8?B?REhtREx0L29JVytNUkg5eWtPdUJ0elR0djRjQmhsd0x6NUdSVzIxSnFJU1Q1?=
- =?utf-8?B?WElRcHBEOVJBWm1CdkxscjUzcGxCQTJIdGRYNzhhVUt5OUN6QVYxRVgzRDVU?=
- =?utf-8?B?ZzlOQWxDOW5NZkhCL0J2anh1a3g1THl0U01sY3dKbU0xS3NhaGk0bzM1YnE4?=
- =?utf-8?B?dmhrS3NoSFBDM0NpdjdHdVpmQVVQWmlRaWRFMUV6Z0RZQ01lQXd1SkZ5MmJ2?=
- =?utf-8?B?Y3MwRFhjTFJXbTdKNUE3NU5EanZyK2pjK3NSOVQ1RmF2MktqRUltaXEzRDZT?=
- =?utf-8?B?MEUybVhmREd4NmdHT0NoRVVvbWp2ZWtqdlYzcldiNVNvRmpid3RrZHdUMTVQ?=
- =?utf-8?B?Y2lsTWxETkZ1Unp1cUhyUWtzWjlLcDhlUE9lTU91TStMcnJJRUkrR2tDN0JX?=
- =?utf-8?B?OVk4VHJMd0dpb3o2dDdLcUh1VkVtcWNMbVZnOVJKM24xSTNDVTNSVHBDYU44?=
- =?utf-8?B?M3dmUWZvRmgyNnl5LzZJa1lPeXJZcFZYV0JvNEQxeXNZWHE1Y2NPdlJsYXRl?=
- =?utf-8?B?R3hrSnhYcDFaTk40MjlPTVVCck8rT3pkUks4aEVYMkFSd0lEbTUzc25TcWo5?=
- =?utf-8?B?a1dJSzJEYzVHdkVadGpaUkxiWXBzMXNBdXVPTVcrQ0JsUTNTVWZybUE0bGsr?=
- =?utf-8?B?SGRiK00yZGhLc2x5aGhsK2tPWDBraXhNSEEwbEZyakFIRiszZkUxazAzdmtI?=
- =?utf-8?B?RzMzV2tyb2tpZHMyaHJKUHd2M083d2RHTGpjSkhHcDZxcFh6c0xIeEMxQ0V2?=
- =?utf-8?B?Um5acHgzN3Bud09PT0ZZZmwvZFplSTU3QmFxQXlUeWc5VXpvTmhqcEQ3alNM?=
- =?utf-8?B?TUJEUElKV2lSc1d3MkZFVWNvZHpLZWpUWVJYNGRoMkkyN3hIMFNiZ3VTTG5x?=
- =?utf-8?B?MjBqSEZpUFBQN0Myc3Y2QU1wVEgrZWljUTk4SnovbHArOW1kdjY2U1NoeVc2?=
- =?utf-8?B?ODJOMi8zaFRSL3JJZmR6QXgva3pQUklPS3ozZkFCOVlBaWphVTYzRVhiRkVN?=
- =?utf-8?B?SUZDZENZVWR4MlBYMy9aZis5b0tsa2dmK004WXhkRkEwQy95ZXRYamcvdGp6?=
- =?utf-8?B?YjJpb2puN2JzMVBxcVZXSmpjYytyREZTMWM2OUorVGZZUEtZcGxNVWxhRmhO?=
- =?utf-8?B?QmdsczZITHU3RHdIRGtHK2FNa01aTzhJdExjcXZMZEJjbmRXWlZ3YmhYWEVK?=
- =?utf-8?B?bWlINU5rc0U1dEkzcm51M2MzdnFkdENsdTlZemdtbXlFUllhS1ZDOG1KNVBi?=
- =?utf-8?B?cGs0eUxCb0dIcGsveUFjYzhmS2ZRQ0haNWFDTFdtQ0xjdmRVbUtvc2FINlo5?=
- =?utf-8?B?OGkzTXpHVndvaHM3VVNDbHA4T01rQVd4Qll5M0x6RHFibElEUGx4ekdVV1Ay?=
- =?utf-8?B?S3lCanJDRWJzajg0WUxBL05QZW9TNHkxWDg1c3h0TGZIRDZmNnNTTWJlU0d2?=
- =?utf-8?B?dm9aUG1kVnBwODF6Yjd0Nmh1ODEyTUNNWmg1bEFiWWtOczBFSXp5WlE0dDdD?=
- =?utf-8?B?akd4MEpWR3pseVZTNjVhSUlZc2MxY1pHUHA4WmozSEFyQUlBcUs5UktlQmJj?=
- =?utf-8?B?WW50d0xYdEpPWG1EaEZXM1hlMjJtYkEwM3J0YjA0R0J6aHNrd1I0SEJYYmNK?=
- =?utf-8?B?QlpmZ0ljQzRvdmNBRVptOUcrV3hjZ0JBdkRBNTN4SnFQZDREaEd1MVNLRXUx?=
- =?utf-8?B?cExDcVBYZ3B4Y3JCSzIrQWkwYmczYlg4MFcrbmdnM2g1aThIOThIT1EyeHhi?=
- =?utf-8?Q?LYhvB7BAAmC+h1qEKOHKD5GTPEOX32RDH/4zQ=3D?=
+	=?utf-8?B?WDlYRDIxWEJ1YmdhQVZQRmRhLzI2TllsdW5oeWZYNEl6NGI5V2l6YUd2QkxP?=
+ =?utf-8?B?OHRpeFRTNGRlbjMzMGdaaitlRWdzQ0N6VFg4T3M2eHR4UGErTU9JU1N0OVZB?=
+ =?utf-8?B?Uk9FYmpvYzV2M1VtZWkzdCt6V3VkOEp0VTFXV1dtdU41UW05aGJ1TTI1b2JS?=
+ =?utf-8?B?OTR0ZVhsdVNHSHZFQVBTM1FTem54SjlRU0oxTVpnSkJTTWUwelVybU5lV1By?=
+ =?utf-8?B?UzlNNFUyWWo4d0laNjBrV1IvbTQ5MTBOeFQ0d1daQ3JRMGJMdERkMEVsODNl?=
+ =?utf-8?B?VHFUQW0zWlBFdjJqbEkzbGtGNmQ2NitSUHg4V0lCamVMZDdXY2piYmhJdWht?=
+ =?utf-8?B?N3NtNHlXdCtwK0tmTXlML0ZqUTlCZW1HOGgwVEFUcjRpaHNiQVptSG5veXhq?=
+ =?utf-8?B?TVhJcFZBZFZFYU5KUHBjdkk4NjVaLzI0Y1VvZjNwd3BVVUlCdGZtOUplWm5G?=
+ =?utf-8?B?VjlGc0RkUTJwRkQ3MGdLV3EyL0ZNcExsbkV1WjlSc1RPTEpJNDVZNTY0TmV3?=
+ =?utf-8?B?NEM1cXNFNkUxdDVxK2xYMS81dTJLOTAveWdMS0VFdUVacTF2YTUwbFZ1TEht?=
+ =?utf-8?B?VG4rTnFyeVlVTlk2QW5sYTA0RjdqUkJMMEFVUmVTUGVncmhDRkVVWVJIditX?=
+ =?utf-8?B?cGhCL2c2L0pHWHYzV3M4M2Jhei9paTFDTEVpOFpsV25aMzVyMUdaRHZPMFU4?=
+ =?utf-8?B?NTljUFhNMWd3V0VvL3Bsb0F3QW5IYmVoM0E5aEhRQXBndHA4THNxUFA4RThQ?=
+ =?utf-8?B?eStRd0FjcHB4NytWd3o0alFoWFh2NWZmSFJXS05Eb0FCbzEwckF0VTRYdXNK?=
+ =?utf-8?B?L0M3T0dWdktFcVVxY3FZTDcreVJMeDBSbklsMUhqZFpaOUhWdFhRTlFaVlNS?=
+ =?utf-8?B?YnVlNmF0aGFGSGprS2NNUlBrVytPTG1pN0FaejdYNk51R0VkRGgwdjkvVC9k?=
+ =?utf-8?B?bU9yaHBhL1NteWwvZFFrdlF1RW9LT2pRUDFld3dHbXJLMU5BRVkwUEx0ZUgr?=
+ =?utf-8?B?Mk9SK2x6SHlGTjgxS1hlenBEUUpSNFFkTUVEUnlGM1VuVkVGMEpHRlFZb2Y5?=
+ =?utf-8?B?d0ZZUWUvVjBQOEpTTGdhd3RNNEtuOUN5bTBsUXcwVThvUmhvTTRpUHB4NkND?=
+ =?utf-8?B?bWI0Z1VxVGhRbEZZeVVON2E4aWo0c0NLVFdrS2k5dEkrL01vMVhud1pyUVFG?=
+ =?utf-8?B?SitJMHpCSExXMWh6WEdWR09nRVoxU0RvQzdCNXdTaklZK2lGSWFKeVNxZ1c1?=
+ =?utf-8?B?M0llaFh1T2R3RnpKUnBTazFZeEVQVEp2RDFtUFVxeFJHclN0UUFBYm9CUW9h?=
+ =?utf-8?B?VTV4T1NxNmpsWElmMmFCdmlKRjZWTHdKRDZvdXV2dVdtWHErVlk4a1ZOV1E1?=
+ =?utf-8?B?aGZsRXZ4T21VU1hwUFp2OWFSK2ZZS1NiU2hqRDh2c1hPS0JOTExwNkllVWpz?=
+ =?utf-8?B?RTl3bVh5eTNkczZnYmtjSVU1SHBCV2lZZDRxOHdvcGZtM2V4bXB5cU82STIx?=
+ =?utf-8?B?NkFxd3M4NU1uS1NwY2hqV2dPWnF4MmtTdVBUeTBTT0RlYm53NVhXVVEwZGQ2?=
+ =?utf-8?B?REsvMC9jT1psRnBpM3RpZWx0VjJpYWpOUTJnVUVOQW9FRzNxYUZNTmZsL0RW?=
+ =?utf-8?B?Ni9kNVdyUi8xWURwaU4vUHc5bVRiU1lseU04VXZ4TWpGRmpTakljcG4rZmZM?=
+ =?utf-8?B?L3U3bURFeVkvUVVXd1ZYazA5WWVEaG5ULzhsUTFNR00xWWVTRWUyUURMWTFC?=
+ =?utf-8?B?YU1tRnRXcTVJT0hZUFlwclJKTHErRk43bkdJMHZ2aDRDWXMzNDBMRmtJTVRs?=
+ =?utf-8?Q?pYZzx6bhlGEzzfFq1ivxDerQuDYoGXVeIPMCM=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eTFYb0laSnZxM0xFSXNZaDBwMVlvOHMybG5oemUvNndZaE5sLzhZWmMyUW1G?=
- =?utf-8?B?a3kwaHYydCs0MXJwdDZpd0pzejlqRW5EUFkreWgvQjNINW9aY1AzTnYwTW4z?=
- =?utf-8?B?VFBxN3FiTi9ZRWZpdi9ORUZJTE9zSmJ2eG1rcmRtV3VCdjlLZjNOS2RuOWQw?=
- =?utf-8?B?OWl6ZGVGTDd6YlRRTW9MbGdBN2tuaVRHb0lFQ3lPWFJ1Y2lHKzA3dVNGRHFP?=
- =?utf-8?B?dFB1Qlk3eUkrYVZYQnVDaytGdFJWL1dhN0JMbG9uWXNkMEZ3L2c2ZXBWdFBp?=
- =?utf-8?B?VWFMbTRld0tCL1E4RU00Sk9nTnM4aWxQRFNlSVBQK05ubmY3a1NReEhwdUc4?=
- =?utf-8?B?akRyRkV6UUV3a1BMajRwWXN4cWpZUkhnQ2ZSM1VPbUlqNUNhTm02b2ROcFNp?=
- =?utf-8?B?ZlFtbDRaUzRCUWNaR09Ncy9iV2VCOS8xSXY3UG53Ky9ENGI0V1hrWU03d3lw?=
- =?utf-8?B?WXg0VDNKVDhwbmlOTVZ0c3hmalFSUThoRkdZeHFHZCtwTmFhNWZmR2l0SGxR?=
- =?utf-8?B?QWJJaFBYd1orcERYQ3phMi9waXpKcHhrZFgyUUc3b1EvZWpXN0hxMzI4K0lh?=
- =?utf-8?B?d20rc2dsU09FdGdnQ1RURjVoeG9VZElXczBqWFdtd0ZoQ0dXbGJyYTVua05a?=
- =?utf-8?B?NzdmWlV3cDd6MStQSEI3UXRySEFQSm5oeGpKWUxlZCtqTGM1OHk0TTdpclJv?=
- =?utf-8?B?bzE3VWoxeVlQUm9lQUN4a0llaS9OQUlVT1dodWljejBKUDEzdW9Vam9rd3hB?=
- =?utf-8?B?cUl0Y1Vrc0xld2ZlTlZ1aXlhNjlYTk5QTzVwclovRWtVVVVPdEh0dFRzWjBs?=
- =?utf-8?B?Z2JvdXUvSG1aNW5NYmVxVmh1cGtWTElWNDIyS0xZV2c3dGlVcjl5NWxvWFdk?=
- =?utf-8?B?RXNnKzRMZUtUNEhucTREc1g2MFFRSGp5SG0yZTUrUkV1L3VkWjE5K3NUSnNh?=
- =?utf-8?B?RHdIb0V0OWhEOWlrWTFKU3VWcXRvZnBqcURPaWdhVWZvZDJOY3NXYzlUa3JM?=
- =?utf-8?B?N0lpTDliajNSZ21DNDRySWJlODB5RU9zc1NBTGI3SGUyUW0wYm12VmpqVXBJ?=
- =?utf-8?B?dXJ3bDRRQW93bWZDa1h2OGZ1NGZjMm9vZ3JVcU9EVVc4RkI0MSt5OG0wQnBs?=
- =?utf-8?B?NHdjOVZQSHdMaGJIcVdLN1RhdExEMTN0RUYzMW45NVFleW53aFhMVnBWM1ZN?=
- =?utf-8?B?ZHl2UlZYUWt5TXJPUTR0S1ppNW5NYkFzWlhIelFCeGlyV3RFMVBtald1WUJQ?=
- =?utf-8?B?dS9UdGNFQy9na21DSElER2FyekpVSDJHNjREaG5TUVBuUjdIK3o1ck5MWkt6?=
- =?utf-8?B?dnZLaFBBNVFVc3F6TmFNZlp6RDREYlIvWm9sVndLc0VSNGpzL0ZQNERxSEVH?=
- =?utf-8?B?YkJXeUZyTHBYcUdwWWo2cmY2R1pwTVc4U01pYnc2eEJKb1Q5QmtnU0JSdXBz?=
- =?utf-8?B?eGJ4YldLbVJTaS9FUGw2S1VJekk0VTBpRElKeWN3U1grOU5tRFVkb0VtbkQ1?=
- =?utf-8?B?SEZwemFWNXVhTk9pZXRyajBmMlBER1JoZ253M3RkNVc2N25QV09CbzR2NmEr?=
- =?utf-8?B?RWMxM29oUmJVM2xGQzNwbXJqc0Qyc0RMNjUrUFo3N0FRVmdWblZRZVZObGJB?=
- =?utf-8?B?WlovUnhOT0ZvSUtETDdHY1J1UStRak00TzlPNk1Md243UkNkY25pVFVTbGl0?=
- =?utf-8?B?WXJVU0o0ZjRzMnArdGVsT3hEbTNDck9Wci9SUVRndVZQdnJEb3dGTkxNQ0Ft?=
- =?utf-8?B?UnFjWmFJSXl3bTdRWTN0T1VITFMrTXBhN0NmdVN1L3BPdEh1VXZLUngxOGE3?=
- =?utf-8?B?d2NhN3loRUZRZlBxeFN0N0hnK2IvcGt1bllXVktVSUk4NWtVaWZoN1FST3dJ?=
- =?utf-8?B?ZXRoTzZtWjI4TWFaeGl4WURUMmhVQXBYbGt5UnVpZGxIMEJwSVdoYXlNZjRF?=
- =?utf-8?B?Q3N5b3c4UGRaSHFwSWI0VVdHOXh4bE1Oei84Q2wzTmJYd1QvVk5PaU1raHhY?=
- =?utf-8?B?LzRFK2xNdHVtK0lFZ3kzNmhMM1ZoUGtzSmxTNE5GM1ljUjB5Um9TNnNsQzJG?=
- =?utf-8?B?M0VDNE1QVG1CZ1J2S0p1MW9kaDFQOFA3c0hNQ0dzMDNUMGR2Vit6MXh6bmlT?=
- =?utf-8?B?WE4xR3Z3RXRiR2c1TFBMQmc5QXJUNm5KTU1ubUJaM2RlclY3K0tLcThYMWtX?=
- =?utf-8?Q?KSeDYkbLIBiXmCnxKm05d10=3D?=
+	=?utf-8?B?ZjFTUnV2REJreGZJVUgvcUJQNVp2TjlaSXMxTWYzWkVFQlp4MFNKRXZDczA1?=
+ =?utf-8?B?TEYvMjlNOXQxM21DY01JWXg2NHkreGpWbmdwOGRGeWorYnlScmZVVEtPWVBl?=
+ =?utf-8?B?ajlLcmVWVTRKVEFBcklzVFBHYXR4bGJXWmRaVk5WSWZrUjB4bzBzbWR1K1dm?=
+ =?utf-8?B?MGFHV242Z2duS01OL0RjRTRobVJ4VEM0KzNXUlRlUDBRRGFrckZqeXI1clh3?=
+ =?utf-8?B?aTNUT0cxYUlKRGplOXF2VnV0LzNKVjVXTTFLVTBOSzZJN1JJVGtFUUVIaHBT?=
+ =?utf-8?B?MjBCNTRCV0VrRC81MldWdXZoUng3ejJNSndrQk1Ia3NKOEVQMlF4dHRRVWVO?=
+ =?utf-8?B?blVhRlRpb3FvSVZBby9Eb00xajJLT2NrOGxOcGxpSk5zWlFuRlRnRGg0UTFE?=
+ =?utf-8?B?M0w5ZVRQaXZtQjFaa3VDaE92ZVk1eDlXUEMwZEJEbVErRVRUUHlvUHFtVmtW?=
+ =?utf-8?B?QjNJSDNuODdqMHAzYW90MWplUk9SNDB5ZklSdjkwZ1VYanRUcEpNYkVpZkh3?=
+ =?utf-8?B?ZFZJSUJ3c056R1VaRTM3SmE4ZnIzbXpOVEsrWXZIOXplcUtuZlhEUXFhYk14?=
+ =?utf-8?B?R2RMVm5mbGJ3dEdRVWxnT1VTYVE3SitTYW5UY0VEUXJJWDZQYUpaVUFGZ3Bp?=
+ =?utf-8?B?NDcvdGlYcExDTHNUUFZNMWpsVVUydkQ5VjN0RjRTTnNuaCt4TnloK2N6cUd5?=
+ =?utf-8?B?Z3J2Y2cxVjVSMFdwcUlLV2FQeTFiRGx5cjlOTVliT0RUazBteFM3V0dXbW91?=
+ =?utf-8?B?V1VEaEY5VzZvbFFrQnhlbS9QQXBObU9UUW1IWXBSWkpkZEVMemQzOWRKN25k?=
+ =?utf-8?B?OUVYY2s1VnNPaXc4WVlTc29XNWpwVFltaWxOS0k2MDFrOGRiVTR1a1NTQ3Ju?=
+ =?utf-8?B?L2ZCVHc2V2d5MzRKdTMzT1hJMWF1RThJbkJIazlLa2dLUXRNRWhNbkdxQVd1?=
+ =?utf-8?B?YTFCdlFOZXJ1Z1lSdWxHKzh4Qk44Y0p6bXhhSFd5OVJ0MXRCSEJObkZHbzZI?=
+ =?utf-8?B?L3RuQWZaQmFnNm1rNGhRczBGWGZmdzR0dkZlTkVseUw3dDkvSEZESkhreHJW?=
+ =?utf-8?B?YXVxcnVFV0tNK2ZuOElZQy9VUmJEYTA0RFVsWmxHTy9mUEJEajMrRWxmL1NX?=
+ =?utf-8?B?UmNQdmxxYlM5cnluelRuYkpEU01pTjU0cE01eDN3VWdKN1Iwa3FtM3IwcE10?=
+ =?utf-8?B?OW1wbFc0cGt6dWVxWHkyNFVqU1JJaDZPbDJidTdhbjJjSUwvenN3ZmNXbVEw?=
+ =?utf-8?B?Vi85VzhONitRNytBWkF3NDlmOHdPUTBEcEIxSWx3cmkrSDFBR3ZhOTRmazlF?=
+ =?utf-8?B?SDQvcUprMjEveWhSMDFMbURyT0ZYdDRPVXdLRmxRQUZPM3RNSlFORnZYOTJT?=
+ =?utf-8?B?ek9XNkdzeWtrNU5ISml6YjByMVZOVGhEbGN1NXdncTV5ZzN5aGVDK2g5Tkp1?=
+ =?utf-8?B?TkZ0Y214dEhRUHNKVkJ3STJIS3poNnpSR0YrdjQxZTRwaU5EdDY0MncvSFBX?=
+ =?utf-8?B?ODNtd3IxZEVZWUtaV21TbHVLbUNRMkRnbnpMc2VTT0d5dGFVSFozU3M0cUtF?=
+ =?utf-8?B?K1dmZHJGbW5aWTh1RjY1ZmJ1emFGbm1GcXFIWUFJQVBlK3VLZm5Ocy9EZXkx?=
+ =?utf-8?B?bnJTTWh4NzRrTG1IUTg5US80QnU0Y0VYUHJXWVZBNG9TQzlkSVExeEtMV0xI?=
+ =?utf-8?B?NCtZTnVLK0F4bW9QRUVlUUlZZlYyaHJNRFArWUtPWUpTQXBIUXMwd3M2cW1i?=
+ =?utf-8?B?SkxVRGVPaFVXU3p1cWJYajRLcUlFMDQ2U2N1akc0YzFlb0YwR3oxQUJRUTNT?=
+ =?utf-8?B?QnF6WE9CbGtYQm1SWWE3MmVLdThQU1lxdVFhU002b3JNelVra0ExK1Q4Sm5u?=
+ =?utf-8?B?YlNabkxYSlJuYzRKWTNHQU5RVEhNVVRPemExSXg0d0xsMTIrek1uWWRwb0JQ?=
+ =?utf-8?B?eEkxYnVVQVJvdG05bTBWMGJtRjlTR1pKY2wvcHVlZmExL1N5Z21MQndJQ2Ew?=
+ =?utf-8?B?TzkrWnF4em5wZ0Y4V0xBVTNrV2Y2U3ZZc3k1NzBoTWIyT2dCblVJNFVrSkdP?=
+ =?utf-8?B?WDdSbm43KzlvSFBYb3l1YW9ScldhL2dGUlZzSTcycjhiU3F0R1Rsa251Z01D?=
+ =?utf-8?B?d2xydTMzb0E2bjVLdDd2QThGZWo0K3Rld1BXa2Y5eVRSb2xUL1djSjRxWkZl?=
+ =?utf-8?Q?ngjZ90WqTVCuRs0nO1B2RIg=3D?=
 X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2af8f18e-8a65-4113-b80a-08dddff54800
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae29fe36-9396-4ed8-9de2-08dddff56678
 X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 14:24:32.6269
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 14:25:23.7132
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1RdZ46Mn3PZfvjHlAMwvxLGI/ujxprBOrLHOHpsA6plqzujMYGwH84Y5od0gLP05rTvGwheVjGValt0tyrqMT9PEJyy86/7jnXx1WEoxRng=
+X-MS-Exchange-CrossTenant-UserPrincipalName: CzSyC8eqlnEZM7A64CiPRLkryqgH80UoLwNxTfuZH+jTDlnsdyjv/y2NkI95Okmp1iZ3aIy8UxWjs+zQIEjR7qDsRgWgnl5n0buSEE0U7A4=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PPF6D21D4F3B
 
 On 2025-08-13 12:29, Thomas Gleixner wrote:
-> Scrolling over tons of pointless
-> 
-> {
-> }
-> 
-> lines to find the actual code is annoying at best.
+> rseq_syscall() is a debug function, which is invoked before the syscall
+> exit work is handled. Name it so it's clear what it does.
 > 
 > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
 Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
 > Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 > Cc: "Paul E. McKenney" <paulmck@kernel.org>
 > Cc: Boqun Feng <boqun.feng@gmail.com>
 > ---
->   include/linux/rseq.h |   47 ++++++++++++-----------------------------------
->   1 file changed, 12 insertions(+), 35 deletions(-)
+>   include/linux/entry-common.h |    2 +-
+>   include/linux/rseq.h         |    4 ++--
+>   kernel/rseq.c                |    5 +++--
+>   3 files changed, 6 insertions(+), 5 deletions(-)
 > 
+> --- a/include/linux/entry-common.h
+> +++ b/include/linux/entry-common.h
+> @@ -162,7 +162,7 @@ static __always_inline void syscall_exit
+>   			local_irq_enable();
+>   	}
+>   
+> -	rseq_syscall(regs);
+> +	rseq_debug_syscall_exit(regs);
+>   
+>   	/*
+>   	 * Do one-time syscall specific work. If these work items are
 > --- a/include/linux/rseq.h
 > +++ b/include/linux/rseq.h
-> @@ -101,44 +101,21 @@ static inline void rseq_execve(struct ta
->   	t->rseq_event_mask = 0;
->   }
->   
-> -#else
-> -
-> -static inline void rseq_set_notify_resume(struct task_struct *t)
-> -{
-> -}
-> -static inline void rseq_handle_notify_resume(struct ksignal *ksig,
-> -					     struct pt_regs *regs)
-> -{
-> -}
-> -static inline void rseq_signal_deliver(struct ksignal *ksig,
-> -				       struct pt_regs *regs)
-> -{
-> -}
-> -static inline void rseq_preempt(struct task_struct *t)
-> -{
-> -}
-> -static inline void rseq_migrate(struct task_struct *t)
-> -{
-> -}
-> -static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags)
-> -{
-> -}
-> -static inline void rseq_execve(struct task_struct *t)
-> -{
-> -}
-> +#else /* CONFIG_RSEQ */
-> +static inline void rseq_set_notify_resume(struct task_struct *t) { }
-> +static inline void rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs) { }
-> +static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs *regs) { }
-> +static inline void rseq_preempt(struct task_struct *t) { }
-> +static inline void rseq_migrate(struct task_struct *t) { }
-> +static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags) { }
-> +static inline void rseq_execve(struct task_struct *t) { }
->   static inline void rseq_exit_to_user_mode(void) { }
-> -#endif
-> +#endif  /* !CONFIG_RSEQ */
+> @@ -113,9 +113,9 @@ static inline void rseq_exit_to_user_mod
+>   #endif  /* !CONFIG_RSEQ */
 >   
 >   #ifdef CONFIG_DEBUG_RSEQ
-> -
->   void rseq_syscall(struct pt_regs *regs);
-> -
-> -#else
-> -
-> -static inline void rseq_syscall(struct pt_regs *regs)
-> -{
-> -}
-> -
-> -#endif
-> +#else /* CONFIG_DEBUG_RSEQ */
-> +static inline void rseq_syscall(struct pt_regs *regs) { }
-> +#endif /* !CONFIG_DEBUG_RSEQ */
+> -void rseq_syscall(struct pt_regs *regs);
+> +void rseq_debug_syscall_exit(struct pt_regs *regs);
+>   #else /* CONFIG_DEBUG_RSEQ */
+> -static inline void rseq_syscall(struct pt_regs *regs) { }
+> +static inline void rseq_debug_syscall_exit(struct pt_regs *regs) { }
+>   #endif /* !CONFIG_DEBUG_RSEQ */
 >   
 >   #endif /* _LINUX_RSEQ_H */
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -427,7 +427,8 @@ void __rseq_handle_notify_resume(struct
+>   	 * this invocation was invoked inside a critical section, then it
+>   	 * will either end up in this code again or a possible violation of
+>   	 * a syscall inside a critical region can only be detected by the
+> -	 * debug code in rseq_syscall() in a debug enabled kernel.
+> +	 * debug code in rseq_debug_syscall_exit() in a debug enabled
+> +	 * kernel.
+>   	 */
+>   	if (regs) {
+>   		/*
+> @@ -476,7 +477,7 @@ void __rseq_handle_notify_resume(struct
+>    * Terminate the process if a syscall is issued within a restartable
+>    * sequence.
+>    */
+> -void rseq_syscall(struct pt_regs *regs)
+> +void rseq_debug_syscall_exit(struct pt_regs *regs)
+>   {
+>   	unsigned long ip = instruction_pointer(regs);
+>   	struct task_struct *t = current;
 > 
 
 
