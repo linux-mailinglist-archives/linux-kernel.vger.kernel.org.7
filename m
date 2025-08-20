@@ -1,152 +1,88 @@
-Return-Path: <linux-kernel+bounces-776843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59FAB2D201
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:37:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D92B2D247
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C448068663E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:34:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D553C1C2302F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7162773C9;
-	Wed, 20 Aug 2025 02:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AFA253355;
+	Wed, 20 Aug 2025 03:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fF0G5qNJ"
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="WcOh3ZWS"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01117FBAC;
-	Wed, 20 Aug 2025 02:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF8A2185AA;
+	Wed, 20 Aug 2025 03:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755657266; cv=none; b=YNXNSrPLqf1PHuqLpXLK296qSB14y8Wb39HoE91J6J8ODjlnPkkSyd6PbppfQGr/POFZ2O/f9yeNSw2PsxIDGiktUFL/4L4LjeoOaikgi9j6mQcZTeoiytuc68cmE5xWRWwHzsX2Kc8+E+fS1ZXGfo/MGwq3VNfiF9gM6eFr8do=
+	t=1755659302; cv=none; b=OJJ1dczB/6auE4nEWt6oHM5FfUrmMDiifW9zUB6miaBeKl/9uHpESq5AaOVCKk/fo19tuaWz1QNjen/qMSJ+QhWW0AJYCmaCRSyiaPihRmNhDuPfyLXRoqnAxZEGyztvUxt9Tl56SaF4in7AoJKSsZkah6VxNZbPCJU/QD/p5Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755657266; c=relaxed/simple;
-	bh=C40iIuQKKe9JZhkYXU9PE+o7vHAU/PHNTf1JtgxJ6hs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QM50biAtgeezFHYbC9akvzyOo7D0bCNCrXqt64YLHkPo3+ZkLPoTw9EpqIl7cLWorouA7VMG3U0dGxQOw9dQ6G/sPYDRQ/61dV1OxcxueLb5/dDsphh8CBVnpRzS6jWsZ0UYL4ZMjy4XAW4LCnyWhD9j96+BImymJHA7VPpM2CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fF0G5qNJ; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-71e6eb6494eso37958207b3.3;
-        Tue, 19 Aug 2025 19:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755657263; x=1756262063; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/O+Vi9Pj3DACHxJMyQKxj44yEBD25gKvGbsKrHL2Xao=;
-        b=fF0G5qNJcrw08IYJ9yFw+2848wia/1oy4ALukLQqfgGi8hAenwA7OO03BYYBDzu9DT
-         l+7GN0fjwx6J0VH1xWsAsndX+neYN9q4R4fFtN9IC/XjzaT6KiF20Bgoii3KUyfTqvHS
-         dd/NsCYweSEGMJMTC6goNBfeFHdvFGrpyJYMyfkdkxgCOaopJ5Q7u8xjLw+VayUZpTUX
-         HoL+0yd3sGiDLoxnou0Ihn6svR6kuqqxmIt7demTsnpdhhporyrWhYCa29Vprm0MGvL0
-         rL/Zkc6Wvrvoe7+n5fRXvwYLXuJLr4R++sk6J53C0iPgJSsQKazS/oqgP0+fNgXSFmf9
-         MbJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755657263; x=1756262063;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/O+Vi9Pj3DACHxJMyQKxj44yEBD25gKvGbsKrHL2Xao=;
-        b=dOKUBfQRs+l/N1Sx5lG/PDLU3S3gP+YG5IGPmS+TFHx4XLkMKejrNvb0HfwEORZyN4
-         2y5zixGiCSFQhkcVqnh5NCvOtpaa/6sLQvRdBFap89/1/rSIJufM1+OifhHxUHlj+rla
-         8aya6i2WduW5twceB+X22FX35tI9SV3qfUJZRBetO7Ul9MAvfDvGP03LkGGcX9Km1PY3
-         8X6G/OnQSKwqvZ5iicZbTtH1IhwDdfALJfBmnxdbta4P+pJBd7ZZyJcReppFd0gTDsFE
-         wYg9NxUIvYFfeoRUBWJv2WVXoTmq0OPNoJep6DpEc/KbEgw3Ou8qQP91B0eu4oeg+Umu
-         fHeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUk0+RiAozk5EBnP4djUFHlqO+6h5IByajjOFpnkwvFg5mMHBMBxjsCPqXInFnhth1Txhl7gObqlURnL8zM@vger.kernel.org, AJvYcCXBRO47xOC34xDiqRTs3IiWfv5MK80mmzFHlJSPJ9kS9+6S9LckE+b+pl02UfWZoLLg/zY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNPwbGYgdsipjHnSr0hC3R33xmHzko6K30BvbQvhxdrJtXTw1y
-	OZ3gL0ybNCNXZN6R5rhQhTHVnAhGojuJcWI2zEFvOnGXCDr8duREJ+25U3zxGj+a6bl5cVJQU00
-	bcE+uJu39FB6bFWl8ubDdenVUHCSrbkQ=
-X-Gm-Gg: ASbGncutAlenz8FBU4L8ayI5gDebTn1BodbFIiJdGNeAo+L23qFYzyDGpiQEBlKWNcQ
-	3zibrAGoUwCu7vTk7o+XsqdfQg3sOIQQinuGdMGGgZInpcE4n4zk3pHrENSKhJofDd2fPut5c7D
-	0FZxYSWVZDJQ4J7TSaruD7tECYY68aua+yMJhqD3p1cf95AO+BkW/B8TBRhqatjcJ+21oFB0i3D
-	iCpkVk=
-X-Google-Smtp-Source: AGHT+IGZYiTWjxYhSjSPiaaMKiQp7ymBwE17bO70ijts3XfwHqcUWucdDfAdqCwhlNrikWJeMVGQHsvfqK2wvzHvV0s=
-X-Received: by 2002:a05:690c:4:b0:71c:3fde:31b6 with SMTP id
- 00721157ae682-71fb3222e1bmr16814237b3.34.1755657263455; Tue, 19 Aug 2025
- 19:34:23 -0700 (PDT)
+	s=arc-20240116; t=1755659302; c=relaxed/simple;
+	bh=ZXSSwhiLothcw42T8WV/C2Hk6BN4vEWGCis46vc1PUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHz44hXRPHh9EED1tpscf6mPXV4jrDrImpvAdfv/JPKYQ1F7PC08sTDocMrt23ThP2ZqmccIaytz3DsrkWAA36N3Wz0KFfgttwrygxF4I7pV1cizxdIrxsABB0Y54oZEzNeFOUS+NU93pWIJd0jRfuWXK1H4qCaFhkOnl9r8aDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=WcOh3ZWS; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=xhgXz+NGz9dE9bo3AgVhV+r8lEFLGIj0GKiYKAiGm04=;
+	b=WcOh3ZWSv2Xk56vJhMpz6KCwCHurEduYoLeL7PSDayXg+xQrZ93ge37SGl8rre
+	qbREsrJMJ1iAf4gfl0pxJaV1UcCM62QN2AYFMzqJ7gIp7iWsybmOZFIKrUn6JFfe
+	Z4mUlqrF450rsSaU6hCZ39ffVes2sW4EiuAnLV1kfqA/U=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgAn5W6VNKVobNX3Ag--.59759S3;
+	Wed, 20 Aug 2025 10:36:07 +0800 (CST)
+Date: Wed, 20 Aug 2025 10:36:04 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Christoph Stoidner <c.stoidner@phytec.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+Subject: Re: [PATCH v3] arm64: dts: freescale: imx93-phycore-som: Delay the
+ phy reset by a gpio
+Message-ID: <aKU0lPi485xA5SS9@dragon>
+References: <20250524112315.695376-1-c.stoidner@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819015832.11435-1-dongml2@chinatelecom.cn>
- <20250819015832.11435-3-dongml2@chinatelecom.cn> <20250819124008.GI4067720@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250819124008.GI4067720@noisy.programming.kicks-ass.net>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 20 Aug 2025 10:34:12 +0800
-X-Gm-Features: Ac12FXzeJifKg5LlkIVeR2FnDxbMmcLFl2bl8TWaM5KwTB3Amdhho41QamBj_Q4
-Message-ID: <CADxym3Z1w0tseWGDPM00FRtL=5ckMioo51Yna1oACW72Haaxxg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] sched: make migrate_enable/migrate_disable inline
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, ast@kernel.org, daniel@iogearbox.net, 
-	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
-	simona.vetter@ffwll.ch, tzimmermann@suse.de, jani.nikula@intel.com, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250524112315.695376-1-c.stoidner@phytec.de>
+X-CM-TRANSID:M88vCgAn5W6VNKVobNX3Ag--.59759S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GF13Gr47JrWDuryDKry3urg_yoWxuwb_ua
+	y8K3ZFkw42yrZYgF4fKF42gr43uaykGFyrXr4rJw4fXryrXa4DWFn5Arn3Zr98X3yS9ry3
+	WF909a4xursrWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUb7PEDUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNhe1G2ilNJffuAAA3G
 
-On Tue, Aug 19, 2025 at 8:40=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Tue, Aug 19, 2025 at 09:58:31AM +0800, Menglong Dong wrote:
->
-> > The "struct rq" is not available in include/linux/sched.h, so we can't
-> > access the "runqueues" with this_cpu_ptr(), as the compilation will fai=
-l
-> > in this_cpu_ptr() -> raw_cpu_ptr() -> __verify_pcpu_ptr():
-> >   typeof((ptr) + 0)
-> >
-> > So we introduce the this_rq_raw() and access the runqueues with
-> > arch_raw_cpu_ptr() directly.
->
-> ^ That, wants to be a comment near here:
->
-> > @@ -2312,4 +2315,78 @@ static __always_inline void alloc_tag_restore(st=
-ruct alloc_tag *tag, struct allo
-> >  #define alloc_tag_restore(_tag, _old)                do {} while (0)
-> >  #endif
-> >
-> > +#ifndef COMPILE_OFFSETS
-> > +
-> > +extern void __migrate_enable(void);
-> > +
-> > +struct rq;
-> > +DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
-> > +
-> > +#ifdef CONFIG_SMP
-> > +#define this_rq_raw() arch_raw_cpu_ptr(&runqueues)
-> > +#else
-> > +#define this_rq_raw() PERCPU_PTR(&runqueues)
-> > +#endif
->
-> Because that arch_ thing really is weird.
+On Sat, May 24, 2025 at 01:23:15PM +0200, Christoph Stoidner wrote:
+> According to the datasheet the phy needs to be held in reset until the
+> reference clock got stable. Even though no issue was observed, fix this
+> as the software should always comply with the specification.
+> 
+> Use gpio4 23, which is connected to the phy reset pin. On the same pin
+> RX_ER was used before, but this signal is optional and can be dropped.
+> 
+> Note: This comes into effect with the phyCOREs SOM hardware revision 4.
+> In revisions before, this gpio is not connected, and the phy reset is
+> managed with the global hardware reset circuit.
+> 
+> Signed-off-by: Christoph Stoidner <c.stoidner@phytec.de>
 
-OK! I'll comment on this part.
+Applied, thanks!
 
->
-> > +     (*(unsigned int *)((void *)this_rq_raw() + RQ_nr_pinned))--;
-> > +     (*(unsigned int *)((void *)this_rq_raw() + RQ_nr_pinned))++;
->
-> And since you did a macro anyway, why not fold that magic in there,
-> instead of duplicating it?
->
-> #define __this_rq_raw()  ((void *)arch_raw_cpu_ptr(&runqueues))
-> #define this_rq_pinned() (*(unsigned int *)(__this_rq_raw() + RQ_nr_pinne=
-d))
->
->         this_rq_pinned()--;
->         this_rq_pinned()++;
->
-> is nicer, no?
-
-Yeah, much better!
 
