@@ -1,83 +1,95 @@
-Return-Path: <linux-kernel+bounces-777120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B3D0B2D580
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:01:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE86FB2D53A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E839F7A6A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:59:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B5F3B4FA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0797A2D94A2;
-	Wed, 20 Aug 2025 08:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222862D8779;
+	Wed, 20 Aug 2025 07:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="GF/79iEc"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZuZap0J"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFFB2AE84;
-	Wed, 20 Aug 2025 08:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3772C11D2;
+	Wed, 20 Aug 2025 07:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755676857; cv=none; b=N76KuVS+/6MOwv5XFpXTHqgQwIamoSdTru/qK92a+mh20jNlCExVLGEqd4idNlNrkwDNzdA7aFpoK5iIvoxWaCKhIdw9Vc6jIfl0uuMbInGgjyjAZxKp7NLEN8svZA0oUWOZCiZDrnI96BQwK2sUYQ5H9cv75V2Dx0TjPaZxsps=
+	t=1755676512; cv=none; b=AZhraoF4Y1Kam9uJcCcPYjaXUl8Fu/ZI3+PZ/aYnNXDrcsWc1ExGX8mKIYCLqSXV3/fyQkJ43Ja3MsfC3mrltjVP26778byivYQfXmX3vNoKodfwdZwWZimT9nT8Qi+v4LZ48EGqeL4ztdyJp/UvfETKzTi1mTQeI6ya27fz3y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755676857; c=relaxed/simple;
-	bh=8fQkQlxrDLqyzLSA+sNcGFzYd7z3mBw/UF9gi+GN8/A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lbaxea8A1gIyKf4Aa7TK+gzmcKRCBnR/e72w/z0X3ygj4zuTklOme/Kei0ohykRjadhtZP1aaiCPSVdc1yAAtsorOzARG724EVl5DZoZ+UudBf/QVpaaTB+qr/o9slpoca9MFpXkZqy6yqIgKtaXg6Y0PWyViMh/BHpMiZ2KWXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=GF/79iEc; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K7bE32012597;
-	Wed, 20 Aug 2025 10:00:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	wI/LAwmYZM5Ag3o07cPg4Pzi8Iz1OSE6DoE2ArK/y40=; b=GF/79iEcql/pW2eJ
-	Xguf05F/gINYYsHyZjKAMfCzMRZUHoKIAVLu5TE9zU465K1+rAxla4O9vy6TLC5s
-	IiDVcmsyZIVa87MlpFDw5pbzFy7IRmE/0g3/SLAYc4GksW79lhG47EurFSYQxlPB
-	DVBvVYwv5rlVFzDmdpLsQ4fcVcPKq3s5g+GPBbMSX1hA7hzGL8Y/K90JsFCmlvIp
-	cWPsPBHrrKZM1SYhmFbLFLyJggMVDhwNTXWN0sNyb6jAUBaXtCK+n7VtC84aChy2
-	nkQQPp9O6i38dkbpLVo2MG66wMU9REjhIHCBUVGFl2+wK5evV54X+r9hxMXnTiCs
-	OIMgsA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48n70d8yey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Aug 2025 10:00:28 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0B07740047;
-	Wed, 20 Aug 2025 09:58:54 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 91E4E44C785;
-	Wed, 20 Aug 2025 09:57:33 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Aug
- 2025 09:57:33 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>,
-        <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <linus.walleij@linaro.org>, <corbet@lwn.net>, <p.zabel@pengutronix.de>,
-        <shradha.t@samsung.com>, <mayank.rana@oss.qualcomm.com>,
-        <namcao@linutronix.de>, <qiang.yu@oss.qualcomm.com>,
-        <thippeswamy.havalige@amd.com>, <inochiama@gmail.com>,
-        <quic_schintav@quicinc.com>
-CC: <johan+linaro@kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>
-Subject: [PATCH v13 11/11] arm64: dts: st: Enable PCIe on the stm32mp257f-ev1 board
-Date: Wed, 20 Aug 2025 09:54:11 +0200
-Message-ID: <20250820075411.1178729-12-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250820075411.1178729-1-christian.bruel@foss.st.com>
-References: <20250820075411.1178729-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1755676512; c=relaxed/simple;
+	bh=VdwHp1cVW3JJbMGk3GTN4Wjx33tASXxNmcasDDtBGbM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XLN5xbag+9XlB7ksMzPhnsv661wE1Z4DS3d3bXOj70BjdP7MX5UdO6XEjMvnNcXY0ij1TVfqbMDPkgfmdpcPR4h94Yi+Jx4Eis3meiQ84E0Bp+IPmhFFH8Wn1ATDExCkalvJCdHwGQbsgW87WXJF2JEa4WpDarPL9WifhZiWROw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZuZap0J; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso2455585b3a.1;
+        Wed, 20 Aug 2025 00:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755676510; x=1756281310; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+QlqxA9yJwKQntXrevSHLQB085fz1+wBzdCPMXjOqo0=;
+        b=ZZuZap0JxDWljnWc8eiPMjfkcKTJq5ybFawzTFlfAjI0wbo0KH2UtgFECHVRYVGRWP
+         f/Hx9eRFYWpO1wSu7qHLuyaOJrBKfZpxGUj6/YWNXRM450h+RSYu9NhXyT1Ms75TcW5b
+         S0BKGfGsDSzQf0eoHNzjwucJ6W6mzhv+A1YwVGGSoda/AP7lY0LRMSvAjtWtjcDhkzk4
+         uaTrawS82JphxCd4z/s930pHFOS9CqsZ5amgD5hzD7BI3KTNpnn57mOpBTWbxx1AJbVV
+         HrQc78hNr7g618mtHg79PoqezognCPoxa7WOcOHkzZf6cUKsALWZ3rBnFa+C4DSQNm3Z
+         s5mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755676510; x=1756281310;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+QlqxA9yJwKQntXrevSHLQB085fz1+wBzdCPMXjOqo0=;
+        b=lcIujXCUrV84aeA24fclwRkSVLEusCJI2RRqynSS04qIKw5/Iyaj8tWV6/vcl0Dyj4
+         UIRIRkEI8pQqUMUIsii3HleL4KxDodU+dJGa+RbDqO5qMEVKE+jJxvIsA3DsJB/sLHs1
+         TWrOliwjx5SKrWAkJDKIwp7i/OrMAaDDLMbrokqosiUA7RwqcYPFsDlPSQtVx5RpVjC8
+         JB/Ggdb8U5XDPfWIJENqcmAOm/X0ZyERa6231zQxyaYZvPkOAIe9wcyw6XAiaKTnvCA3
+         P8E0pUlTCdl3hUAYQEP1mn1EDkbH9wyRKwT64ouPU2ysH/je32r3LmCdyEhMIPSzCd5E
+         yxkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWd+KgohMXVw+7W/sHTm5ncPuoeVfhyIvIrX/xlm/OPhX7jcnl/w6HZzyDwoJvy/jAAINAjs/UcT4V0j443@vger.kernel.org, AJvYcCXp7/Kq5EqC5x/Q7I+fW+MnKx/75AoON+usJlZ+yct9kEGgPG87mpUoPEby/u6J4cLMwraELh3LgpjR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNVp1A8qclgwulOxkY1IWYnpi8mDoEDBgwYmB+6QuoaAd9qeIy
+	w0Tt5QX3qvt6XpPCNtOGpDZJyv7B4wTSSECR7Q1kaODaCr5L3gtjFpp0VCKFe8KX
+X-Gm-Gg: ASbGncvt1pp0PEDdHmd5CuBHYnu2ZjPPJm4cW7HRqUMmEPyZREuhIqI1uV9fDPrepq6
+	qa62Vwpv3b1WF32y0vtinJ/h59UUb0m92zQa9QGuR4/fI6GViau9kQpg0A5Ywd3G/AN+0LAqLSl
+	02OlYdEhWUI+w8rVN8BZ7fXMgajSpUHb+Vq0uHdWO+Uqis2SpXSMwjE3hhmPFvmFbeW2wXg+KCz
+	LkZuMVWiVhw9/WhJulCYyJe0OdaNCQntHjcIUKRa3WXW++Fqgl8Cb9BXGYgAc0j8j8tHYfklzcg
+	5VFmkPrlKnV64ucsNWMnat8KShzhkmpkFPiKuisMsDLn4zrT8O16agKRTdV/EwsDYhtqgIxLubN
+	70UUBKwHxYAglOGjEWn0y2u5fnuo3bA==
+X-Google-Smtp-Source: AGHT+IFQSy73ADA0FxknrDmL8iS2pZVf4I3yv6kLCooF68iRno7GVZ7Nw9Vbqv6tf2mUtaJgNVDMyg==
+X-Received: by 2002:a05:6a00:440d:b0:76e:99fc:db8d with SMTP id d2e1a72fcca58-76e99fcdd21mr342750b3a.3.1755676509800;
+        Wed, 20 Aug 2025 00:55:09 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([45.32.227.231])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d137344sm4605225b3a.42.2025.08.20.00.55.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 00:55:09 -0700 (PDT)
+From: David Yang <mmyangfl@gmail.com>
+To: netdev@vger.kernel.org
+Cc: David Yang <mmyangfl@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [net-next v5 0/3] net: dsa: yt921x: Add support for Motorcomm YT921x
+Date: Wed, 20 Aug 2025 15:54:13 +0800
+Message-ID: <20250820075420.1601068-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,54 +97,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_03,2025-08-20_01,2025-03-28_01
 
-Add PCIe RC and EP support on stm32mp257f-ev1 board.
-Default to RC mode.
+Motorcomm YT921x is a series of ethernet switches developed by Shanghai
+Motorcomm Electronic Technology, including:
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+  - YT9215S / YT9215RB / YT9215SC: 5 GbE phys
+  - YT9213NB / YT9214NB: 2 GbE phys
+  - YT9218N / YT9218MB: 8 GbE phys
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 836b1958ce65..b20bff82da80 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -265,6 +265,27 @@ scmi_vdd_sdcard: regulator@23 {
- 	};
- };
- 
-+&pcie_ep {
-+	pinctrl-names = "default", "init";
-+	pinctrl-0 = <&pcie_pins_a>;
-+	pinctrl-1 = <&pcie_init_pins_a>;
-+	reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+	status = "disabled";
-+};
-+
-+&pcie_rc {
-+	pinctrl-names = "default", "init", "sleep";
-+	pinctrl-0 = <&pcie_pins_a>;
-+	pinctrl-1 = <&pcie_init_pins_a>;
-+	pinctrl-2 = <&pcie_sleep_pins_a>;
-+	status = "okay";
-+
-+	pcie@0,0 {
-+		 reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+		 wake-gpios = <&gpioh 5 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-+	};
-+};
-+
- &sdmmc1 {
- 	pinctrl-names = "default", "opendrain", "sleep";
- 	pinctrl-0 = <&sdmmc1_b4_pins_a>;
+and up to 2 serdes interfaces.
+
+This patch adds basic support for a working DSA switch.
+
+v4: https://lore.kernel.org/r/20250818162445.1317670-1-mmyangfl@gmail.com
+  - remove switchid from dt binding
+  - remove hsr from tag driver
+  - use ratelimited log in tag driver
+v3: https://lore.kernel.org/r/20250816052323.360788-1-mmyangfl@gmail.com
+  - fix words and warnings in dt binding
+  - remove unnecessary dev_warn_ratelimited and u64_from_u32
+  - remove lag and mst
+  - check for mdio results and fix a unlocked write in conduit_state_change
+v2: https://lore.kernel.org/r/20250814065032.3766988-1-mmyangfl@gmail.com
+  - fix words in dt binding
+  - add support for lag and mst
+v1: https://lore.kernel.org/r/20250808173808.273774-1-mmyangfl@gmail.com
+  - fix coding style
+  - add dt binding
+  - add support for fdb, vlan and bridge
+
+David Yang (3):
+  dt-bindings: net: dsa: yt921x: Add Motorcomm YT921x switch support
+  net: dsa: tag_yt921x: add support for Motorcomm YT921x tags
+  net: dsa: yt921x: Add support for Motorcomm YT921x
+
+ .../bindings/net/dsa/motorcomm,yt921x.yaml    |  150 +
+ drivers/net/dsa/Kconfig                       |    7 +
+ drivers/net/dsa/Makefile                      |    1 +
+ drivers/net/dsa/yt921x.c                      | 3584 +++++++++++++++++
+ include/net/dsa.h                             |    2 +
+ net/dsa/Kconfig                               |    6 +
+ net/dsa/Makefile                              |    1 +
+ net/dsa/tag_yt921x.c                          |  126 +
+ 8 files changed, 3877 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+ create mode 100644 drivers/net/dsa/yt921x.c
+ create mode 100644 net/dsa/tag_yt921x.c
+
 -- 
-2.34.1
+2.50.1
 
 
