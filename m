@@ -1,86 +1,84 @@
-Return-Path: <linux-kernel+bounces-778590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB38AB2E7AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:48:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB603B2E7B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1EF189D092
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:49:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2281BC51D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C448334377;
-	Wed, 20 Aug 2025 21:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AEC334394;
+	Wed, 20 Aug 2025 21:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tPJzIadq"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j89Fnpan"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B9C2BE7A6
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2DC2BE7A6;
+	Wed, 20 Aug 2025 21:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755726518; cv=none; b=NrecmDYTYYJxN2Egb5phVWzRrwn28mfdV2N7R//YMpaCwQIrZtseQU6/an4FdHuHwfUrO670Fz1CIAEBvqdNnHRA0SlL9lvOSpwNA4/yHmfRFgLR8ZtQSdj3m7juIzimhlwRROyGG/d/BiMM/wyioFhAPGOI5pXEMz4YjZCkYG8=
+	t=1755726530; cv=none; b=R/Dh+eW0Z/edLRdZPFjeb43lhDLQfjkV0XYf5POWkDNSHwYsOi9rv4uVxIgzDJKyNVgDaL/aP5GpaBNG4/Kb5kD3zcT3b/jhaDiC+yJgRINAEkFSbbB46zmpthvZj9sbD/kPG3pwQSJQrK+a9HCkSDy1MQdzWKPMprUlkb0Hh4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755726518; c=relaxed/simple;
-	bh=q/QeIx6onVjFe+oNDyOLR9t+BFR9BZgAJwuj2NXMEgo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KFHsxmSip5dRtqvmvJ3y30I9vXczFWpmOSSwDI0+0bHW/MpoWr5PW3iIMxLdB7iPJhIPHw1Iy0/wDNxcinYktnIkUvBpD4YeAefdUaCumXbxwboQToJHL8bFlSo/9T9KqbIPTZKDVA95jb4eaqhIJ7WAHWCmn+XHFXIRnrOdd5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tPJzIadq; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755726514;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zj8PrTi1yTrpnWppwAghhrVhgoHUOMCkGMyMIPT8YMc=;
-	b=tPJzIadqtj4OI8I5+AcPZCV5VWQ+89oSVnuPbZZumrjeGurwqJva7JwqOtt0q0LAKdtqOH
-	0i5CHkXa8rUS5fSHUzmIJrqkMYvv/Rz8JR+O15V40daBmju0VZ1iBFs2vNuNgB1lFcVG0a
-	NERCP0Hs3LVVc7s2YTFTN90b0kh0NBs=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
+	s=arc-20240116; t=1755726530; c=relaxed/simple;
+	bh=qH0h2tOn9Z19DroXvhL+6bNfSaAXjcN9VS5tRg0Hhts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bXd91Ow675LFLn/ZH8KCwCiolmULXohl9rCu7IJGAOJTxbZfSqQKywkr5KFAhJkzLl0V/DO6lEUgJn+MLZY4skTbrY0Tj6hZ153xkgknuY1JJctub9U6zqGaoaM+KMQP6qZy+oA3GjuoSTdnQBpJXKd4r+DaJDm+XVHNUu2MfiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j89Fnpan; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC316C4CEE7;
+	Wed, 20 Aug 2025 21:48:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755726530;
+	bh=qH0h2tOn9Z19DroXvhL+6bNfSaAXjcN9VS5tRg0Hhts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j89FnpanDGUpCQhqKL0sA8eFdMyZUuFd4zOfGXPKiw0fFva48x/mlXMIspFoQiGW6
+	 q1tBeAlELDzdagBz+mRyPprvisMN/4cx4x0mpc6eoQU8SY3NtBXV4FHn8ur6leSRSY
+	 SAW0RRCEJmpyDumzp1d48fkRrdU7nZFAsvpM6kPt5xyEqSpvS7xRhv7yCjHh4AfUAa
+	 hK1/CSHgM7cLjSU80dc0kLE/67kO/DOdSvyTzTCRyUTCRZY2p3Upoci/n2FlM4Mwf/
+	 mtfZsng6ETDVqZYbuioxPQs8CG6L3NzDUqxt8Ige0yZ4HEnymC1PA7/j7Bkx6BWloP
+	 DRhG/dsrQtjlA==
+Date: Wed, 20 Aug 2025 16:48:49 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
 	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing: probes: Replace strcpy() with memcpy() in __trace_probe_log_err()
-Date: Wed, 20 Aug 2025 23:47:18 +0200
-Message-ID: <20250820214717.778243-3-thorsten.blum@linux.dev>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: extcon: rt8973a: Convert DT bindings to YAML
+Message-ID: <175572652839.1377855.2943403733213575519.robh@kernel.org>
+References: <20250817-rt8973a-dt-bindings-yaml-v1-1-150eb4599dc9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250817-rt8973a-dt-bindings-yaml-v1-1-150eb4599dc9@gmail.com>
 
-strcpy() is deprecated; use memcpy() instead.
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- kernel/trace/trace_probe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sun, 17 Aug 2025 10:52:04 +0200, Artur Weber wrote:
+> Convert the device tree bindings for Richtek RT8973A MUIC to the YAML
+> format. No functional changes.
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> I've added Chanwoo Choi as the binding maintainer as he is listed
+> as the author of the driver for this device; I can change this if
+> needed.
+> ---
+>  .../devicetree/bindings/extcon/extcon-rt8973a.txt  | 23 ----------
+>  .../bindings/extcon/richtek,rt8973a-muic.yaml      | 49 ++++++++++++++++++++++
+>  2 files changed, 49 insertions(+), 23 deletions(-)
+> 
 
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 5cbdc423afeb..d3ba5869d32c 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -214,7 +214,7 @@ void __trace_probe_log_err(int offset, int err_type)
- 	p = command;
- 	for (i = 0; i < trace_probe_log.argc; i++) {
- 		len = strlen(trace_probe_log.argv[i]);
--		strcpy(p, trace_probe_log.argv[i]);
-+		memcpy(p, trace_probe_log.argv[i], len);
- 		p[len] = ' ';
- 		p += len + 1;
- 	}
--- 
-2.50.1
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
