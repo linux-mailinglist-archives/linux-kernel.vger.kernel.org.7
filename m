@@ -1,80 +1,102 @@
-Return-Path: <linux-kernel+bounces-777748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D99CB2DD5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD1FB2DD5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C4D1669BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:07:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34D90177CF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2887731AF2D;
-	Wed, 20 Aug 2025 13:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C4F31AF38;
+	Wed, 20 Aug 2025 13:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eRgyYHls"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="CU2fgwUW"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AF2311C14;
-	Wed, 20 Aug 2025 13:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5097242D9E;
+	Wed, 20 Aug 2025 13:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755695271; cv=none; b=gV2S+DbHB5os+LTOi9hsmSmbamME0dntxXjqlD1o0nAITaFZezac/pb1LNK4m29saGtCPz3KEmVEHw1KajTeLXPXqbwr++bhv+EGUMf/qltOYvteyDEDpZwSANa5l63/okLr2xYQpXwgSJmG5guk+tSDTdICtHabg6kOE5Wdrno=
+	t=1755695320; cv=none; b=bxWWKQZIHf6DiLwpi7l2bW59tNOxSBIcd0Knmcsf5A5lDk209gw8SXGxPj09tKlrS54TGIOiosvPv8ifxtow+3FvpSiHnKHbAqyp2qmg2MevFxOcrWdedEZKlseCkHqnhTvAKITKyOKEXDMNf5qANBgFWk8nLg+dROldAkzzQeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755695271; c=relaxed/simple;
-	bh=6nKp9OvM0U/PQRaCIknwXCchajckybqXNIeJit8niKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EkUa2SCJFDDy0GRbIpf2UIv004/yYw1Z49v41mzcVATOilLFLAUqKwLa5ldUhH2PhS9SeBT37CSKSoKFWGC6pQED7E3wSvwrVllt65WVUD6id6W0ND6mmfwVHzzugVsvD6huAU9C9Tf4EOqPVkPkmmjoZ+5sUFgOHCwEqCwHUSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eRgyYHls; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755695270; x=1787231270;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=6nKp9OvM0U/PQRaCIknwXCchajckybqXNIeJit8niKQ=;
-  b=eRgyYHlsRXo8lUwNPk1jQ4XMpNEiUv6qO5ObE0heQZopWmxVsLnT8tk0
-   FL0/8+hGjEdYT5p7kahVWS9iFFLOUIyYIThJ43Vp2gaEwX3m1I8RP5SfQ
-   /iPl9ZPBs8p5rPekh92kB4doPtYGUUV2I/SiMnnITbfjO2X7CDGVj7g5A
-   4hr5pY81vP2LOJYbFDzU9N7r1UJGhZ4bldhn0eWcHL8hfOLvNNnzeu9n1
-   dFskNpnmMAxzs1YB02uEl/+IQ3CK4Uhghy7XvxzgZlHprJZpsrUjezC9T
-   1tSl/qf2/GVZqgZXk5IRhJQfFDk0Bgf2k9gGP+27L4jkNzfuGEHa0zsfZ
-   A==;
-X-CSE-ConnectionGUID: saWzepcfR5KWIFadb0AMSw==
-X-CSE-MsgGUID: gXyNqGG5SGaIQJBl3fsW6A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="80552354"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="80552354"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:07:49 -0700
-X-CSE-ConnectionGUID: DPltBdiPTy620o+AQugqkQ==
-X-CSE-MsgGUID: KigNau3YQdii6MUjwXm2mA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="168039808"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:07:47 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uoiXY-00000006rMw-3Kjk;
-	Wed, 20 Aug 2025 16:07:44 +0300
-Date: Wed, 20 Aug 2025 16:07:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH] staging: media: atomisp: Whitespaces style cleanup in
- gdc.c
-Message-ID: <aKXIoFpHUjSdCbHY@smile.fi.intel.com>
-References: <20250820124519.2287171-1-abarnas@google.com>
+	s=arc-20240116; t=1755695320; c=relaxed/simple;
+	bh=tYLXLwBiTvj3SVfvw7xo/j++DN4t6QK+4GQmepz/7aw=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=QuCG6kPdmnU6rMdlxOGVYoRgJr3y9V2VQ8UpI7y8IBCdJbHZkKrs5GJ/9g4704fqxHrbaoK/U5Y4zhX9PHHiu8QCTU2A1V8kaErctOifCiEHzJo6CaBA2eZ7IUFnaDrGBTkeEuRuFwPa9dKpWSdXlrn2ZBgp1cNWhab+gLru19I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=CU2fgwUW; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Kjyyibg+wnsB9xvjdEV1H8HvE9Jnw2qmWLH9c5mLoEg=; b=CU2fgwUW+jWZmeRnhjwoWTpuFM
+	ABZ7xClo+oMu9gFyv3so9YBfaiwHpECY8HzfCgyBGmWYNrdnTiJwgkOs9DQ8G2KC/fUMKMoYIOGhj
+	RE187O8Y4wl0BRCg6uu8SWDRJOo/ZLk+GUFImIfQuVJuJm8DX22f9G7XRsl5XRhtm1UeEpOa0hYNE
+	8k+ZSCX4fk/rnyD0goX1zuBsLgT/raxu/nDlaqqXmN/gwP0MGkb6TSQ5B2F6DrlRJJF8N8gvpRqdg
+	rUUHOc17XgFUG9//riERJikPBR/qwT8OrwEbhj2x9XkgiJLpWphsPYtGnzvXff/sFaWh6iw6vlyy+
+	nfyhragw==;
+Received: from [122.175.9.182] (port=64641 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1uoiYC-0000000GE8f-2wAe;
+	Wed, 20 Aug 2025 09:08:24 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id 5878E1781A82;
+	Wed, 20 Aug 2025 18:38:18 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id 32FE417823F4;
+	Wed, 20 Aug 2025 18:38:18 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ygfb58BmiwQo; Wed, 20 Aug 2025 18:38:18 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id D5D421781A82;
+	Wed, 20 Aug 2025 18:38:17 +0530 (IST)
+Date: Wed, 20 Aug 2025 18:38:17 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: kuba <kuba@kernel.org>
+Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
+	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	pabeni <pabeni@redhat.com>, robh <robh@kernel.org>, 
+	krzk+dt <krzk+dt@kernel.org>, conor+dt <conor+dt@kernel.org>, 
+	ssantosh <ssantosh@kernel.org>, 
+	richardcochran <richardcochran@gmail.com>, 
+	m-malladi <m-malladi@ti.com>, s hauer <s.hauer@pengutronix.de>, 
+	afd <afd@ti.com>, jacob e keller <jacob.e.keller@intel.com>, 
+	horms <horms@kernel.org>, johan <johan@kernel.org>, 
+	m-karicheri2 <m-karicheri2@ti.com>, s-anna <s-anna@ti.com>, 
+	glaroque <glaroque@baylibre.com>, 
+	saikrishnag <saikrishnag@marvell.com>, 
+	kory maincent <kory.maincent@bootlin.com>, 
+	diogo ivo <diogo.ivo@siemens.com>, 
+	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
+	basharath <basharath@couthit.com>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	ALOK TIWARI <alok.a.tiwari@oracle.com>, 
+	Bastien Curutchet <bastien.curutchet@bootlin.com>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
+	mohan <mohan@couthit.com>
+Message-ID: <1714979234.207867.1755695297667.JavaMail.zimbra@couthit.local>
+In-Reply-To: <20250818084020.378678a7@kernel.org>
+References: <20250812110723.4116929-1-parvathi@couthit.com> <20250812133534.4119053-5-parvathi@couthit.com> <20250815115956.0f36ae06@kernel.org> <1969814282.190581.1755522577590.JavaMail.zimbra@couthit.local> <20250818084020.378678a7@kernel.org>
+Subject: Re: [PATCH net-next v13 4/5] net: ti: prueth: Adds link detection,
+ RX and TX support.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,43 +104,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250820124519.2287171-1-abarnas@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: prueth: Adds link detection, RX and TX support.
+Thread-Index: rWG3COPtPBb60rDF6O1ULILOZDFtmA==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Wed, Aug 20, 2025 at 12:45:19PM +0000, Adrian Barnaś wrote:
-> NFC: This patch cleans up coding style whitespace issues
-> in drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc.c
+Hi,
+
+> On Mon, 18 Aug 2025 18:39:37 +0530 (IST) Parvathi Pudi wrote:
+>> +       if (num_rx_packets < budget && napi_complete_done(napi, num_rx_packets))
+>>                 enable_irq(emac->rx_irq);
+>> -       }
+>>  
+>>         return num_rx_packets;
+>>  }
+>> 
+>> We will address this in the next version.
 > 
-> Fixes include:
->  - removal of unnecessary line breaks
->  - correcting spacing around operators
->  - correcting spaces between types and names
+> Ideally:
+> 
+>	if (num_rx < budget && napi_complete_done()) {
+>		enable_irq();
+>		return num_rx;
+>	}
+> 
+> 	return budget;
 
-...
+However, if num_rx < budget and if napi_complete_done() is false, then
+instead of returning the num_rx the above code will return budget.
 
-> -static inline void gdc_reg_store(
-> -    const gdc_ID_t		ID,
-> -    const unsigned int	reg,
-> -    const hrt_data		value);
-> +static inline void gdc_reg_store(const gdc_ID_t ID, const unsigned int reg,
-> +				 const hrt_data value);
-
-Can you rather refactor code to get rid of the forward declaration?
-
-...
-
-> +static inline void gdc_reg_store(const gdc_ID_t ID, const unsigned int	reg,
-
-This still is wrong, shouldn't be any tabs here.
-
-> +				 const hrt_data value)
-
--- 
-With Best Regards,
-Andy Shevchenko
+So, unless I am missing something, the previous logic seems correct to me.
+Please let me know otherwise.
 
 
+Thanks and Regards,
+Parvathi.
 
