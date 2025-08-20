@@ -1,167 +1,115 @@
-Return-Path: <linux-kernel+bounces-777417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE278B2D911
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB96B2D935
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80A6FB60D5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:44:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83DB1C4431E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327F22E285C;
-	Wed, 20 Aug 2025 09:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7B727A91F;
+	Wed, 20 Aug 2025 09:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FPTTjmI2"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1aMRGgh"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEE52DECBA
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024FB2E040D;
+	Wed, 20 Aug 2025 09:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755682840; cv=none; b=WmgpH+o301/ForC2KYppDAQw6pbTunWMLsdF0Qt356QRXxj2Mq0M0FdNOKerho8vVcj7Kvkq5ewSjDtCFNjqTAzoT+EfjB37ocsdo+Ud5N3q7XZblSZbSaperTOBBJ4IuazfKfxeq/NYJg8E0LSMktV5F2azxHbQjYT7qj2HqxA=
+	t=1755682856; cv=none; b=SxA0lwWC0uxFpFJpfnaZLyd7/urjOx6lrNO7x92u/5YdBIxdfxNVBWzKXWmfDXvVxunh0of1RuzfAiCoGVd9GL+ZMuXQNREsVjZU4BJwyjfynYZoBcKRkQOZFS8qLMquwuIXux9/yHqe+VFL3fN9joUiJgJNNEqaiUcwodhbMtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755682840; c=relaxed/simple;
-	bh=jseJB8mxRO8twsWpgM50wcB2CH10FcIVLbrukEtfdPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XnMz/3mtM/cxhQxJQ8bF60hxZDJao1tq+jcO3TP4SdpFuPnwK4ZAuzOsHlSgJAWgY0BE3PKhYVNOswliCcuht5KJnRGwGtgZDpFxHH/SteSkYIaekUa/9vHwWttyi+BP8OaQOTZlUHFYazSjCIgNtxJM5Q95yYRuTyYQMrGgPXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FPTTjmI2; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-618b62dbb21so9074258a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:40:35 -0700 (PDT)
+	s=arc-20240116; t=1755682856; c=relaxed/simple;
+	bh=xMPa+8Qn4mu18QhDnLh2TBRIN1AH7lNj6illVJiSw0s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U93iUv0UGa0HhQ38+AskA5drKccky/JMpIfRgpN1qemUvYLACNHacq1h9AYGHER8IEs88MUNRVJmfB2B7a0S6S/D2hBkNEUECZ+SW8Ew3/BQ0+uww8sA/JN/jrPvSoMr/oDjii2Nv3xvQbx6K44s3C+YJyLAzDJjXC45iRwcG6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1aMRGgh; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61aa702c9ebso70206a12.3;
+        Wed, 20 Aug 2025 02:40:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755682834; x=1756287634; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NM0fyXJdFVsVnU/yS6K0gQI6XozNG1TCaWkFW+vAlK8=;
-        b=FPTTjmI2m1Xomt7ZjDRJeFiH49jk8C86vS+VuzKkE6mL1E6wiF6vLMIos6Nhj1a9Vm
-         Fsl8OZjzNrochKnp+7JVlmy9j8mFj8SKlFcPR9mFcCK8u5ta+RcNDBXYJbAcZEy4lSJW
-         sXB7ULiB4Okj3DVDrPxHoO61qBgDj0BkBHwRNmlzV/VykAQWCGOUpEJqNrzCHwX5p7Lx
-         YIUn2lO0lwOXV4aVXTk+l7MwJj1kOZOpqWLd3E7It7KQP73sOp2IusL+yGQFRFaqTUpj
-         zE8fmPxRwEreDgcXddsa+btihZAWHN6D2OjZLETrz6ZBjH21IDvODIauQkRuI5T64rAk
-         oRhw==
+        d=gmail.com; s=20230601; t=1755682853; x=1756287653; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iaU4VZUJUriIOWDjZuxPqvHN376Nc6Yxil/qOWrIx5I=;
+        b=h1aMRGghhe9veuWnsV7JYp6jPhZuwXlAYgMIB0mTzu8FxZufCVmauOH6bNY8L/5ATp
+         n8gqaRvj4DYU7vgHaMqS5/wo3msVe6SUvEacJm+44QMedS/TkNR0CCh6o66L863FCoAv
+         OgCe4/+U9/BU6Mnre/ZRyv3JrPKYYR4Fj0ybqhgOdMNRx5RYifhG5+zDh3W1hNJlZCmO
+         +fMJaFZhD5J/KYjdtR5CJ9CEBAk7DFr5RKY810M4jY288nI97Y6mPxSlcLRdgbZ4ltPX
+         HpItiWNgdl/rXpvVfTmxOOXH1QtID58sQx+4AKf0CXBTSDopHiF2PaIKPWMYZJRr66b4
+         gmcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755682834; x=1756287634;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NM0fyXJdFVsVnU/yS6K0gQI6XozNG1TCaWkFW+vAlK8=;
-        b=qxtUUsoO0P6ySphm+tOmdc7Kc1Ay2D/BBxjfy97rEfFtpg6ix18U2wJqc3JpI1P+XX
-         nUtXW75QPVzuXDZoNn4MI/i/HpQ/XRUAdIvOG7SAmuYKgtrhZ0WcUuY9sQ+Cbdrmqmy3
-         eT4MdAttS2RR03mz/4C3cqmWDBZRK6l+xLc71/aIVaKwWGj2utpJOAf1sOKuqyljEF9Y
-         hQBXS47PaRNnUAl0QMrZZllm47G1fR6nmS2m92rws/Vh0jAw/+G/XHR48kKkhuUjHi1u
-         CylK8s+1VENF6RqwL07T3F84V4Kfdc/nz7lMha7BiK2ZG9K9tEpcmTwJsWH2Q9LoYd8y
-         jWZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrcTuEYhWL21LNxOxAsMf3PnE3PR0c7aJHneVKyWUJIRfx9N1Z4CwB+F8y1BJpIdLfkx8i83/8pHyJzLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq1tjBPOpq+fiXpvJM10aTIpGmetRNYmvbYOAnL5F2cDkpnKmN
-	hV5hzNyOBgfiuUM+JC+uIXu4NWRwlqewMAaM0PbQFlUV2FJCMwHtx+CcjaCTb9Oln0Q=
-X-Gm-Gg: ASbGnctnLVaue8rMx3dqeHunRL5smCvKYtd0bv/BNMxf++XeLJuL9dGdYTuk9s6lDy8
-	FKIuemChGW8Pt31PUusIvthQ6EjhYQBjnthR/egQF+fVvR2TPmR+K6piPPom4o6RbF3TmWR7cYW
-	3Mw4Kxcs0Cw/wclBFDcENdZ3eK2Yx2mD7hIWI8HZpWPPCF96x8PFa9RqmJWquE/EpxgzGoxx4+u
-	pdmPB5rig9pV02ARvIqyARIx79wFEBKhIdFevsQkWVmEQypaLUAHDU1BDEVwnG7R3s0VLTOHG6m
-	NHqACoq+ZS4gbzEk7b930odlOjDIB+nPTT8inFGm7d6660lC4bUsJffnqu35cuJ5J799fVaMSI3
-	gyrbgLkRfG5NpAYMpVqDN5AzwFA==
-X-Google-Smtp-Source: AGHT+IEL5yizeK4oP3hcKNDpDCbogCgeCUIgrsK+feZZ6+ybN7ZuuNRbKKwxk5Z77sh2bbe8+uaS7Q==
-X-Received: by 2002:a17:907:3c8b:b0:ad8:9645:798c with SMTP id a640c23a62f3a-afdf0209598mr168513766b.51.1755682834470;
-        Wed, 20 Aug 2025 02:40:34 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded478a14sm148404966b.76.2025.08.20.02.40.33
+        d=1e100.net; s=20230601; t=1755682853; x=1756287653;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iaU4VZUJUriIOWDjZuxPqvHN376Nc6Yxil/qOWrIx5I=;
+        b=BCbZJ01CVgnhTT+mSSJlPHNvFbPNH7mA2/9ScyrVpcfGmw6kwyuuatwdAGzpZkl3ZP
+         K6fwbHPj5lIRMfb5mDRsrzYSbs2MazfjyGjXVH5WF4I3w3OGJ5aqxuOkxnO3FXyArq5I
+         zj/KXYM6+6imqyPxH2ldDrTpVOQqxR3XyclxlhJ+i+zqcs8wv7/ZtNPzqUicFohlNWNi
+         krfPKb+a/W0H1crKiee3TlEXyfXSyIIqpKHytWY0nAhNhSI85HdvZA7hhbYdTCmulK2g
+         kTIggzrjxyqlAlq8d7sScOmkKDWpTGojRDVrcABEcbeSGt8qHKVrkN+8neE9PEmZ8ESd
+         UYeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFXFOMoCQo0hC/Mvsqs6F6X/WGObzwGmaby3y3fIXR/XJRyIIEjaSxsBDiLSX3J0L+9AntBH8A3RR5/BY=@vger.kernel.org, AJvYcCWewfuawHpX/F2G1HSPUegxCRmH91Z7PgXEJi84LQHgo34Zp/e3FWJroSaeaOljqRDBicE8MrmZtyFWUaEjbt3f@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYx9ENQKmt/oXnmzrXzS+3UZNHUOIUu7a6jcMAO5xdIQF85jym
+	X2DY4at8zdfFjF7oVmD8q0lUubtZ6jfXeC/skJqQCO1akU5v6VbwN2f6CC4hXI2Zi2c=
+X-Gm-Gg: ASbGncuC8mxLupwANF++ZdFYzyBL6iCeUQI41A6bEpjNd7AYfFqbyObRB8Sn8n7dHh0
+	1HJFxKBoOIV/NHa2KfXUpKPgcqk8mAU4We3o5uhcMIJtLCnrNJRMaMtRq86TRdC0sn45sjoZzyR
+	112DclRpSdfX73lOQlkAfX4PZ/XzEjv4bsJR5mHuL9TXkyGZGbh0sXsYeQLki7m/EqbtRLcMqQD
+	NxhDNHCzc5V49FvfdgFWwbiXejACs0XBi49QSoSLWwjjr5TEDONOQ7XWorRiyBRFwf+bWr5QoZU
+	27tR2+bv7C7YlwFres5Zwqg4PJjdo4ximGrHbnWLZbbOe5Jptc6v9uG/8qucL8ua+niXP6L7yQn
+	c3agPEgAz4BKyl/GRUduAceTonPAFQxyClCKmKitOKWM+zt8pldGBTvpnTLq3T0HPF7AIjVjSnt
+	DBVN8=
+X-Google-Smtp-Source: AGHT+IF+jHeg1blhzus397KbMO6fpg4RfqSldoscVcwuKg6PL2oN6QYbuUXPW8t4wlcCO5RFZ0LvkA==
+X-Received: by 2002:a17:907:1c91:b0:af9:6e4a:3b2c with SMTP id a640c23a62f3a-afdf0200d09mr189014966b.43.1755682853046;
+        Wed, 20 Aug 2025 02:40:53 -0700 (PDT)
+Received: from localhost.localdomain (user-46-112-72-61.play-internet.pl. [46.112.72.61])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded315e39sm147081466b.48.2025.08.20.02.40.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 02:40:34 -0700 (PDT)
-Date: Wed, 20 Aug 2025 11:40:32 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Lance Yang <lance.yang@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-	paulmck@kernel.org, john.ogness@linutronix.de,
-	kernel test robot <lkp@intel.com>,
-	Feng Tang <feng.tang@linux.alibaba.com>
-Subject: [PATCH v2] panic: Clean up message about deprecated 'panic_print'
- parameter
-Message-ID: <aKWYELPjbhC7R8NO@pathway.suse.cz>
-References: <aKRJKZHgcxyNF3y7@pathway.suse.cz>
- <202508200907.PsZ3geub-lkp@intel.com>
- <ae9bb2ea-c6e5-4a4b-ae25-aea1d6fe084d@linux.dev>
- <33a897b4-7d9a-4641-9c7a-07c19bb9cb6f@linux.dev>
- <7a34da58-874d-4271-9dbb-7991468d58ff@linux.dev>
- <aKWWcPOf9qPIoCe4@pathway.suse.cz>
+        Wed, 20 Aug 2025 02:40:52 -0700 (PDT)
+From: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
+To: skhan@linuxfoundation.org,
+	linux-kselftest@vger.kernel.org
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
+Subject: [PATCH] selftests/ftrace: fix spelling mistake
+Date: Wed, 20 Aug 2025 11:40:48 +0200
+Message-Id: <20250820094048.140823-1-kubik.bartlomiej@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKWWcPOf9qPIoCe4@pathway.suse.cz>
+Content-Transfer-Encoding: 8bit
 
-Remove duplication of the message about deprecated 'panic_print'
-parameter.
+Fix spelling mistake in return string.
 
-Also make the wording more direct. Make it clear that the new
-parameters already exist and should be used instead.
-
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
 ---
-Changes since v1:
+ .../selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  - fixed compilation with CONFIG_SYSCTL disabled (kernel test
-    robot <lkp@intel.com>)
-
-Thanks Lance Yang <lance.yang@linux.dev> for debugging the compilation
-error reported by the test robot.
-
- kernel/panic.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 12a10e17ab4a..24bca263f896 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -77,6 +77,11 @@ ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
+diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
+index aee22289536b..d2a7da7bc87d 100644
+--- a/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
++++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
+@@ -102,7 +102,7 @@ clear_trace
  
- EXPORT_SYMBOL(panic_notifier_list);
+ cnt=`cnt_trace`
+ if [ $cnt -ne 0 ]; then
+-    fail "Tracing is still happeing"
++    fail "Tracing is still happening"
+ fi
  
-+static void panic_print_deprecated(void)
-+{
-+	pr_info_once("Kernel: The 'panic_print' parameter is now deprecated. Please use 'panic_sys_info' and 'panic_console_replay' instead.\n");
-+}
-+
- #ifdef CONFIG_SYSCTL
- 
- /*
-@@ -125,7 +130,7 @@ static int proc_taint(const struct ctl_table *table, int write,
- static int sysctl_panic_print_handler(const struct ctl_table *table, int write,
- 			   void *buffer, size_t *lenp, loff_t *ppos)
- {
--	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
-+	panic_print_deprecated();
- 	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
- }
- 
-@@ -944,13 +949,13 @@ core_param(panic_console_replay, panic_console_replay, bool, 0644);
- 
- static int panic_print_set(const char *val, const struct kernel_param *kp)
- {
--	pr_info_once("Kernel: 'panic_print' parameter will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
-+	panic_print_deprecated();
- 	return  param_set_ulong(val, kp);
- }
- 
- static int panic_print_get(char *val, const struct kernel_param *kp)
- {
--	pr_info_once("Kernel: 'panic_print' parameter will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
-+	panic_print_deprecated();
- 	return  param_get_ulong(val, kp);
- }
- 
+ echo "!$func:traceoff" >> set_ftrace_filter
 -- 
-2.50.1
+2.39.5
 
 
