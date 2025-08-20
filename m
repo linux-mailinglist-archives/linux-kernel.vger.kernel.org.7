@@ -1,122 +1,193 @@
-Return-Path: <linux-kernel+bounces-778600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9CBB2E7C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1AEB2E7E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AAC31CC200A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:59:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64291CC16D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1B733472F;
-	Wed, 20 Aug 2025 21:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA851FBE80;
+	Wed, 20 Aug 2025 22:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKdj3UTR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X44mG8TC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8699E24677C;
-	Wed, 20 Aug 2025 21:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD58C179A3;
+	Wed, 20 Aug 2025 22:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755727125; cv=none; b=uYqmhpaqNOAa9K9ys+QrkCmNX2fdOyAedZEcezLBcC+IRh2geLASGSW49l31MQ9hKMXsGd2nSUCDJh1uQQ5P+VsZt2wJ/oF/EDmUWYDKfasmYKmEyIh6wVocrR2kdhYl/CHfCWq8QRSKaPWkWEKx58b9a8Tl7SP66490yvrXrFA=
+	t=1755727337; cv=none; b=bQBGQsDwbJMjmYtPB3SwXj7PtyKNGEoLz6VWImOIrExp7OU9Ugud1ZvyLtVO0NmgO6eheYVmFqPjebT2vtHmh042qJRLPctubnN3DXKEmxfGoLVKwHiWsBPm+DdR7Dd/rvKoRwbG6jfPC0NdZO6HN7szq8Tik9LFfiVm64Lu5Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755727125; c=relaxed/simple;
-	bh=BWCN+arTsW28B+WK1cfvN4ijd4eox2d2e4EsnPw7MFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iPiwY5f7dNlJMH1zOhi0pli3UHmk+hzdipEdYCU8t5Dv/0drraNNJNH2vB1dKpPXdIXfDUO2fWGFY4qZXMRUTFkHkHR1EQUf812rv6g3flozYRAMdjoOsuFnp5NaLEK1jZGP2UpZtXjZKVkvzMO/sQGOxy0ZPgLSywqoVjmQgbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKdj3UTR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D591EC4CEE7;
-	Wed, 20 Aug 2025 21:58:44 +0000 (UTC)
+	s=arc-20240116; t=1755727337; c=relaxed/simple;
+	bh=qpzq8xFh8O6Sfd7kFjk7FbKEkmABy8wjXxb1oqoY7tI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QsqzkgbRK8VBos50GRAqz+ezhtbEB0qTcd5RDLu6zDXh3d7qK9FwLF5KCTbpRZ4BZ7pexbAxqv3aQfHnf9oBBbKji4pgkzxnTwmoEPoq43xf13WVudw1CDTuBluOV9FPWEYBrm/b9bYFFkc9REkjDYJtZctE/a1pJh06F3R13N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X44mG8TC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61231C4CEE7;
+	Wed, 20 Aug 2025 22:02:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755727125;
-	bh=BWCN+arTsW28B+WK1cfvN4ijd4eox2d2e4EsnPw7MFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IKdj3UTR3m5FxxRMpGC18rmUS1Sq3wCQzCZxHXkZTa+EJaMA1gn1STH3YHR96QEju
-	 xX4+HD8ZJEj/LT4lR4CtLO0c324sgWpuLtRkb/poQwjqxiIoGD+7io5AW9E0nKmYfe
-	 VVyQM0xxcEgdH+5WAjEWPHbF3vlM+x6RLm5maXPvtgpjwK6vniXddJCu/QBKGZJ6Qq
-	 A5K6UT2uYcxGfBZEksWu45W4p1EOZGL6YnxgCh1NOwQIHe2YXW/woHFRjvMg92heW0
-	 3PjRcpd4yvF/I4vzqFRE1fvZkXgd1ZGrxc44BAqxqidzxg7h/ZFrBz+SFfg5nBmP7V
-	 VNsrrkYAYp8zg==
-Date: Wed, 20 Aug 2025 16:58:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	conor+dt@kernel.org, peter.ujfalusi@gmail.com, krzk+dt@kernel.org,
-	lee@kernel.org, shuah@kernel.org
-Subject: Re: [PATCH v5] mfd: dt-bindings: ti,twl6040: convert to DT schema
-Message-ID: <175572712295.1429558.12540417914156224115.robh@kernel.org>
-References: <20250817215234.50904-1-jihed.chaibi.dev@gmail.com>
+	s=k20201202; t=1755727337;
+	bh=qpzq8xFh8O6Sfd7kFjk7FbKEkmABy8wjXxb1oqoY7tI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=X44mG8TCXKK5v+P1T8NFCEeTLrc+6wn3VP87ZC8S3yaCZgtyj/JJW1cdiFVMevpOR
+	 xoPp+AYCEthoV9/9T/EE6O3/DlVrM2DJiCwxpZjhaT/PKkwNOYRPn+hsSv6gKqqk8R
+	 THzOB/8edGNO+Krn+REkTz5qNsIu/LEzMXTbKu1hsZhU3dwB20Bg6JqGdoEPYZqhmz
+	 Ke5ocy23JyUtOwGSMD7vd+v36QNEKW26ZXbck6uHzEPqaNaTJSUFHCH6geUQJTh4KS
+	 ErXQmnB2FrGYukkGW2oXFHsT34lLGC7ws1wBNwGz6s+clfw3lFVBUK7uVJcng6FOQb
+	 OoQ6KWnyrqGww==
+Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uoqsm-009Vp5-4r;
+	Wed, 20 Aug 2025 23:02:12 +0100
+Date: Wed, 20 Aug 2025 23:02:11 +0100
+Message-ID: <87ms7tk5y4.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 4/6] KVM: arm64: Set PSTATE.EXLOCK when entering an exception
+In-Reply-To: <20250820-arm64-gcs-v15-4-5e334da18b84@kernel.org>
+References: <20250820-arm64-gcs-v15-0-5e334da18b84@kernel.org>
+	<20250820-arm64-gcs-v15-4-5e334da18b84@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250817215234.50904-1-jihed.chaibi.dev@gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 86.149.246.145
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Wed, 20 Aug 2025 15:14:44 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> As per DDI 0487 RWTXBY we need to manage PSTATE.EXLOCK when entering an
 
-On Sun, 17 Aug 2025 23:52:34 +0200, Jihed Chaibi wrote:
-> Convert the legacy TXT binding for the TWL6040 MFD to the modern YAML
-> DT schema format. This adds formal validation and improves documentation
-> for the TWL6040/TWL6041 audio codec, which provides audio, vibra, and GPO
-> functionality on OMAP4+ platforms.
+Nit: please use an underscore between the type of a statement and its
+"name", as it makes it a bit more readable (R_WTXBY).
+
+> exception, when the exception is entered from a lower EL the bit is cleared
+> while if entering from the same EL it is set to GCSCR_ELx.EXLOCKEN.
+> Implement this behaviour in enter_exception64().
 > 
-> Key changes:
-> 
->  - Dropped usage of the 'twl6040,audpwron-gpio' property from the schema
->    as it is not used by the driver.
->  - Retained 'clocks' and 'clock-names' as flexible (1-2 items) to match
->    the original binding's "and/or" phrasing, which allows clk32k, mclk,
->    or both.
->  - Updated node name to 'audio-codec@4b' to follow generic naming
->    conventions per the Device Tree specification.
->  - Replaced raw interrupt values with standard defines for clarity.
-> 
-> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
-> Changes in v5:
->  - Add missing changelogs
+>  arch/arm64/include/uapi/asm/ptrace.h |  1 +
+>  arch/arm64/kvm/hyp/exception.c       | 37 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 38 insertions(+)
 > 
-> Changes in v4:
->  - Retained 'clocks' and 'clock-names' as flexible (1-2 items) to match
->    the original binding's "and/or" phrasing, which sould allow either
->    clk32k, mclk, or both.
->  - Updated node name to 'audio-codec@4b' to follow generic naming
->    conventions per the Device Tree specification.
->  - Replaced raw interrupt values with standard defines for clarity.
->  - Added clock properties to the example.
-> 
-> Changes in v3:
->  - Drop usage of The unused 'twl6040,audpwron-gpio' property from the
->    schema as it is not used by the driver.
->  - This patch was originally part of a larger series but has been
->    sent separately per maintainer feedback.
->    v2 (origial patch series) link:
->    https://lore.kernel.org/all/20250814132129.138943-3-jihed.chaibi.dev@gmail.com
-> 
-> Changes in v2:
->  - Renamed twl6040,audpwron-gpio to ti,audpwron-gpio for consistency
->    with TI naming, this fixes the dt_binding_check vendor name  error.
->  - Minor description clarifications for improved readability.
-> 
-> Changes in v1:
->  - Initial conversion of twl6040.txt to YAML format.
->  - v1 link :
->    https://lore.kernel.org/all/20250811224739.53869-3-jihed.chaibi.dev@gmail.com/
-> ---
->  .../devicetree/bindings/mfd/ti,twl6040.yaml   | 154 ++++++++++++++++++
->  .../devicetree/bindings/mfd/twl6040.txt       |  67 --------
->  2 files changed, 154 insertions(+), 67 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
->  delete mode 100644 Documentation/devicetree/bindings/mfd/twl6040.txt
+> diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
+> index 0f39ba4f3efd..f2fb029fb61a 100644
+> --- a/arch/arm64/include/uapi/asm/ptrace.h
+> +++ b/arch/arm64/include/uapi/asm/ptrace.h
+> @@ -56,6 +56,7 @@
+>  #define PSR_C_BIT	0x20000000
+>  #define PSR_Z_BIT	0x40000000
+>  #define PSR_N_BIT	0x80000000
+> +#define PSR_EXLOCK_BIT 0x400000000
+>  
+>  #define PSR_BTYPE_SHIFT		10
+>  
+> diff --git a/arch/arm64/kvm/hyp/exception.c b/arch/arm64/kvm/hyp/exception.c
+> index 95d186e0bf54..46e1d0c3038c 100644
+> --- a/arch/arm64/kvm/hyp/exception.c
+> +++ b/arch/arm64/kvm/hyp/exception.c
+> @@ -73,6 +73,38 @@ static void __vcpu_write_spsr_und(struct kvm_vcpu *vcpu, u64 val)
+>  		vcpu->arch.ctxt.spsr_und = val;
+>  }
+>  
+> +static unsigned long enter_exception64_gcs(struct kvm_vcpu *vcpu,
+> +					   unsigned long mode,
+> +					   unsigned long target_mode)
+
+A more appropriate name would be compute_exlock().
+
+> +{
+> +	u64 gcscr;
+> +
+> +	if (!kvm_has_gcs(kern_hyp_va(vcpu->kvm)))
+> +		return 0;
+> +
+> +	/* GCS can't be enabled for 32 bit */
+> +	if (mode & PSR_MODE32_BIT)
+> +		return 0;
+> +
+> +	/* When taking an exception to a higher EL EXLOCK is cleared. */
+> +	if ((mode | PSR_MODE_THREAD_BIT) != target_mode)
+> +		return 0;
+> +
+> +	/*
+> +	 * When taking an exception to the same EL EXLOCK is set to
+> +	 * the effective value of GCSR_ELx.EXLOCKEN.
+> +	 */
+> +	if (vcpu_is_el2(vcpu))
+> +		gcscr = __vcpu_read_sys_reg(vcpu, GCSCR_EL2);
+> +	else
+> +		gcscr = __vcpu_read_sys_reg(vcpu, GCSCR_EL1);
+> +
+> +	if (gcscr & GCSCR_ELx_EXLOCKEN)
+> +		return PSR_EXLOCK_BIT;
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * This performs the exception entry at a given EL (@target_mode), stashing PC
+>   * and PSTATE into ELR and SPSR respectively, and compute the new PC/PSTATE.
+> @@ -162,6 +194,11 @@ static void enter_exception64(struct kvm_vcpu *vcpu, unsigned long target_mode,
+>  	// PSTATE.BTYPE is set to zero upon any exception to AArch64
+>  	// See ARM DDI 0487E.a, pages D1-2293 to D1-2294.
+>  
+> +	// PSTATE.EXLOCK is set to 0 upon any exception to a higher
+> +	// EL, or to GCSCR_ELx.EXLOCKEN for an exception to the same
+> +	// exception level.  See ARM DDI 0487 RWTXBY, D.1.3.2 in K.a.
+> +	new |= enter_exception64_gcs(vcpu, mode, target_mode);
+> +
+>  	new |= PSR_D_BIT;
+>  	new |= PSR_A_BIT;
+>  	new |= PSR_I_BIT;
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+But that's not the only case where we have to deal with EXLOCK, is it?
+What of ERET and its PAuth variants? R_TYTWB says:
 
+<quote>
+If in AArch64 state, any of the following situations can cause an
+illegal exception return:
+
+[...]
+
+- If the Effective value of GCSCR_ELx.EXLOCKEN is 1 and PSTATE.EXLOCK
+  is 0, the execution of an exception return instruction to return to
+  the current Exception level ELx.
+</quote>
+
+My reading of the spec is that this needs handling.
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
