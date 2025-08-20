@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-778041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25DB7B2E0BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:22:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6B9B2E0AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C63A27E84
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:14:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D6A7B643BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA5E32277E;
-	Wed, 20 Aug 2025 15:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240E4334367;
+	Wed, 20 Aug 2025 15:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Dl1SiI3u"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DQweiP4g"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B9C322758
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA60334365
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755702210; cv=none; b=jkQvOOeasN2sBDYaXZku+JG857VACqM2QF15YNRtQtV7k2mM/oJq5eZAz8K972un1AMx3io1sOBmELaffZO7AiEkeXwLfGPMJ4EfAxg+BgeEeUaHeXPWKTxu/8e6R4FkSi1PbN4B31cQN1BT2ko05X0iVNsoHwpK0+5zy8J4EUU=
+	t=1755702215; cv=none; b=CP9yxY6xrqVWFxYqUTTlYLhQxbvfY/J08UAXloOt+oQpOcDUEICaEa4uZKVL6il629ZSY1OyWXARRrB7Fj9nifqL2I3+ybu8s0Ah//Orc1QyemoMFmcyIX+SNX7k3gdml00CZZjnk80S5jC84Adg3N5Gx4ZwabkT0OApQ57wpaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755702210; c=relaxed/simple;
-	bh=8Mr0tio44r+dJjJIN2VKzAkfGUftUtYKPI/egC5gViQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IF0Jm30A6IsZ0j08JC/81XMMLw3SwiBnu3HdVMfdFYqYIBRDGva8XvAaqEiN0tmnO7vN8A8g36TqDNX3ss7AM6WAcOD/U+YYsBYXukkvelZm2VtjPGwfJutIFm/5HrkoaMEevenOahxvvbjtGKjKLva6w4OHAvz+aiOyBI541wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Dl1SiI3u; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b70abdfso9305723a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:03:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755702207; x=1756307007; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fdxbwdm478L0zqoazN7KpullU/D4AnCbXZQkeiEdPmc=;
-        b=Dl1SiI3uS92MJD+Pj868HHbVYVebdnnNVq7C3g6K6r2dyRQFunPSL8XLMzSxX0/aWv
-         t/pdr6npz1RdakdB3EFEbQRrx5yIUtLBsUlamTMWubsEnZtc8Rdd7Cqhpf9Amqr9m+Gf
-         yFuhsm5oQdbM+fJm23RaH+ctgD0q9Q9pZVFgBLi7ZJAHFbywyO87BH7UQkOXqVEdYlQW
-         s4LUgcFhd+IKBJOAtpEivEgQQ21zd741Iwsyz7Q6GX41GztWJ6PphP4/rIwJEzsg84qc
-         Ma79NFQGhw07GPwoYZxkys7Xe9QcRv8Al8Ee/Slp7bSyRxJ8BqUpRt5PI+NslqVTxBZl
-         z/OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755702207; x=1756307007;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fdxbwdm478L0zqoazN7KpullU/D4AnCbXZQkeiEdPmc=;
-        b=FOtj/MQXl5J2EsuzEnyzuJ6nKO4Sv+ZnN9yPcfhT5RKOWr9Gvk9G1nVjOsY5RKomjw
-         +wdgZZ2dBmxPDXgbKwlUpUoDzhArTdu4jnmP4GOVyxEZqLO0Wjl+it//5WqPhKz1A1nk
-         mwvyTTrmRxqyL3athHB9PjpocoIX3M2gKTRiz9FaYiO7QC49hPXfLhHgN2C/yMwl7YVA
-         3ENhUlNAmTHvlXFc/GFIYKIGUAPXP6LC3mSW+QGZI6HEBl05PaC4uoNBckMAn3kQuBWv
-         OrVkQvTVF5dfPwnwJipqtjtV7PeoJlJ9F75EQhIdrfqy8f1bUPGrdvT4DOKrAeuYHi3/
-         WEkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnumcY8sIsJoe5dWy1oHtVXY7SgqbysCwhq/1NSZ20PY8iwkjPQOLAyK5+B7rnIIZ02HOKLB2XyScY4VU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6ngYkMyOEfKBnEnskAlQMC1rqat4Dq2e5S9I8k+sGOH83SkQb
-	xK8K4lQeNabkhPq6vAcecG0l/UZeagRx/h7TZCm/x0OhWR96QkvQuB12sd9zzo8LXpw=
-X-Gm-Gg: ASbGncvAZEFOoWM4gBC3cijwuTLT7n6bHUv+OOmgB6A0l5fvgg+80Rp7EvVs0tV/Wn9
-	2DB2Zp5/D4d81GUdOBs2hQ8btyifAjvfoYnc1OgeMjLXUBOCyMX/mibEfibdK9Rc5bQ+jIKWTbs
-	Q7x9NUeJwbrbIH8t50j9aeEbh947/8YBloUGXtA1jLH59YOcESPpEyhFZTkWULSsDS/rMXfWpFf
-	No9KGkZIXC2b5mgToHDMRC+cKJT4dtvYTqk83LBAZQ7Y92rivgfa/55KTDdOpLF93SW7BPg8tdN
-	kZYuQFdlcLvEczqlux0e8ACoDOp1NvzSFo1l2vjaKYDshQVoQouEnAO3LAzO5pQWaj53a3KXr4B
-	wtc233XShmjfrgVEMxco/7b9uTw==
-X-Google-Smtp-Source: AGHT+IERfCeojuiZGaaBeud++WOySgMRV/LbfgcXF7j062uDmGhunKjky7xHcyj74+ty+at1+JCgYQ==
-X-Received: by 2002:a05:6402:4405:b0:609:9115:60f1 with SMTP id 4fb4d7f45d1cf-61a9759a18bmr3333840a12.16.1755702206715;
-        Wed, 20 Aug 2025 08:03:26 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a75777beesm3589743a12.26.2025.08.20.08.03.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 08:03:25 -0700 (PDT)
-Date: Wed, 20 Aug 2025 17:03:23 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
-Subject: Re: [PATCH v2 1/3] printk: nbcon: Export console_is_usable
-Message-ID: <aKXju6tnHAjp1I5F@pathway.suse.cz>
-References: <20250811-nbcon-kgdboc-v2-0-c7c72bcdeaf6@suse.com>
- <20250811-nbcon-kgdboc-v2-1-c7c72bcdeaf6@suse.com>
+	s=arc-20240116; t=1755702215; c=relaxed/simple;
+	bh=PcW1KNcPW+hWokoucPIYlF4L2HxPdllxak/MzbEoTcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XDHFhKnTprfg96jNapkaz3LElfYgEtIrpXTwhmZPPUoLUAOzsx4bDvop+Gm56JvuDonJke06ifsBnM7jqml6W9GhDlq7SR/EriZLkrvzg6rZ6q5Pw411JaQwF4FDINQCjBO0a5Dix/MOU88s7XK8QKdE6bbTjeS1WOKNxCiSK1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DQweiP4g; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755702213; x=1787238213;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=PcW1KNcPW+hWokoucPIYlF4L2HxPdllxak/MzbEoTcQ=;
+  b=DQweiP4gtWp9GdexHtFIHqsYU1MWwzbKXVA14CXOVOeq+CvJyYTHNEOZ
+   4kZG0kylb/7yqhjI3kEGL9Ua/UDUTlzUKRx1/MTyHxKuDOXV5FznHxuhi
+   UcbgTHFLNVPx9Zk9aXvS9aCIA70mFhVBNi+xClEK/fEZ/QZu14oVkFx+h
+   GOGf0JIotqoRp4HbD72Tr1nc44MdAFsqfrJAWoUFeVSYg2glDFIfAvPdq
+   qtv4iNFsfl4VJ6s59wFBjHnTGS9p6T/QjqU0gJ0TU6hU6RzUBkGsUkyKm
+   UfI/aLtS9vGMFfjme7X2cTj3oH7LNDQF0nLLGbJxoJLRhaXgesvBvrtvs
+   w==;
+X-CSE-ConnectionGUID: e8doe3swRmOZvGq6A5Rc3Q==
+X-CSE-MsgGUID: H/lI8r+OTd6Q/yIEvks8vQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="75552567"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="75552567"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 08:03:33 -0700
+X-CSE-ConnectionGUID: hN9tjZPjSiSM+9ehxugYIA==
+X-CSE-MsgGUID: pfV8cZ4oSjiRcxPNXcxzMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="173405726"
+Received: from bvivekan-mobl2.gar.corp.intel.com (HELO [10.247.119.205]) ([10.247.119.205])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 08:03:30 -0700
+Message-ID: <7350db53-d5e6-4b3e-8686-3749353725a0@intel.com>
+Date: Wed, 20 Aug 2025 08:03:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811-nbcon-kgdboc-v2-1-c7c72bcdeaf6@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pds_fwctl: Remove the use of dev_err_probe()
+To: Liao Yuanhong <liaoyuanhong@vivo.com>,
+ Brett Creeley <brett.creeley@amd.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Saeed Mahameed <saeedm@nvidia.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ "open list:FWCTL PDS DRIVER" <linux-kernel@vger.kernel.org>
+References: <20250820124011.474224-1-liaoyuanhong@vivo.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250820124011.474224-1-liaoyuanhong@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon 2025-08-11 10:32:45, Marcos Paulo de Souza wrote:
-> The helper will be used on KDB code in the next commits.
+
+
+On 8/20/25 5:40 AM, Liao Yuanhong wrote:
+> Logging messages that show some type of "out of memory" error are generally
+> unnecessary as there is a generic message and a stack dump done by the
+> memory subsystem. These messages generally increase kernel size without
+> much added value[1].
 > 
-> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
+> remove the useless call to dev_err_probe(), and just return the value
+> instead.
+> 
+> [1]: https://lore.kernel.org/lkml/1402419340.30479.18.camel@joe-AO725/
+> 
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 > ---
->  include/linux/console.h  | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  kernel/printk/internal.h | 41 -----------------------------------------
->  2 files changed, 44 insertions(+), 41 deletions(-)
+>  drivers/fwctl/pds/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/console.h b/include/linux/console.h
-> index 8f10d0a85bb4536e4b0dda4e8ccbdf87978bbb4a..67af483574727c00eea1d5a1eacc994755c92607 100644
-> --- a/include/linux/console.h
-> +++ b/include/linux/console.h
-> @@ -612,6 +654,8 @@ static inline bool nbcon_can_proceed(struct nbcon_write_context *wctxt) { return
->  static inline bool nbcon_enter_unsafe(struct nbcon_write_context *wctxt) { return false; }
->  static inline bool nbcon_exit_unsafe(struct nbcon_write_context *wctxt) { return false; }
->  static inline void nbcon_reacquire_nobuf(struct nbcon_write_context *wctxt) { }
-> +static inline bool console_is_usable(struct console *con, short flags,
-> +				     bool use_atomic) { return false; }
-
-The patch should also remove the duplicated definition in
-kernel/printk/internal.h.
-
->  #endif
+> diff --git a/drivers/fwctl/pds/main.c b/drivers/fwctl/pds/main.c
+> index 9b9d1f6b5556..8dd659aee256 100644
+> --- a/drivers/fwctl/pds/main.c
+> +++ b/drivers/fwctl/pds/main.c
+> @@ -481,7 +481,7 @@ static int pdsfc_probe(struct auxiliary_device *adev,
+>  	pdsfc = fwctl_alloc_device(&padev->vf_pdev->dev, &pdsfc_ops,
+>  				   struct pdsfc_dev, fwctl);
+>  	if (!pdsfc)
+> -		return dev_err_probe(dev, -ENOMEM, "Failed to allocate fwctl device struct\n");
+> +		return -ENOMEM;
+>  	pdsfc->padev = padev;
 >  
->  extern int console_set_on_cmdline;
+>  	err = pdsfc_identify(pdsfc);
 
-Otherwise, it looks good.
-
-Best Regards,
-Petr
 
