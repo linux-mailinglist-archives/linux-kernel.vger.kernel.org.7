@@ -1,65 +1,57 @@
-Return-Path: <linux-kernel+bounces-776774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D195DB2D15A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:22:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1305B2D162
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D0971C4356D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:22:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912553ADCD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDDA1CBEB9;
-	Wed, 20 Aug 2025 01:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BB8214A78;
+	Wed, 20 Aug 2025 01:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/AKtw8R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btWcXV4w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4A71BFE00;
-	Wed, 20 Aug 2025 01:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C493C38;
+	Wed, 20 Aug 2025 01:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755652929; cv=none; b=Ow3Lptj4lUujscvDfWYMF11S1ofj/zgBU3PDqMLRHsOXRZ4KLKBcQNXwj/+pS3Q9nHBsZGmJEL7a9ToeV1DNBdgWkw2hytKX/CX0vK7hxykSThdLDuLk/nh3vX0rhrx1QQ6GgStjev4g8rNWd45gWg5sCQ3MLFuE7rbTdAf5DCg=
+	t=1755653202; cv=none; b=K7sL8IEZvcWf1Pu0X8AWh/Uyl+b3kpca6IuggLnlUXBNBYndy5uOZPwRNxP0AJy4seCxRldgS/2pd/AiGOBB4hz1GvFgml3ue1k/OIr3sm0UymKx1FeyPLgITh/zxsURCKrNeKuaMZtsJRgGPAaG/pWeLu4nDKazdTOXWDqEMD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755652929; c=relaxed/simple;
-	bh=giJrwNr4gTNI+BHt14QArf7z8KvI8kFYYAqwhT6nAzc=;
+	s=arc-20240116; t=1755653202; c=relaxed/simple;
+	bh=Gm41ua+tCecjQYsWzxJcFbyZCUuP0m6rVjsAj7MYVNk=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hFaQvIoHewMK84SD5UUuMkGY7lbiBAe2gsB1ro3Fr3IiXCZAURQ13yveHZQ5jjy4k0LsIsC+YGc3fDTgW5qsvH+827az/iTQ9eCwEloRTl7GCWTCn6gverR3PalLg5F8oVzhOuN7st9vVo/3trHa0ftYTWWpYeaA+mCIbN0bGFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/AKtw8R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB17FC113CF;
-	Wed, 20 Aug 2025 01:22:08 +0000 (UTC)
+	 MIME-Version:Content-Type; b=GQaInBKxE9mlclgnHw1XoGrDBZWyNARznuTK72DQ9yWhoAnUqHgI+mq5n0PJhUD7jyOcFs6h//PY20h0OXE4GfvI7m9cvcXqR2NnpMOHb1uXhRowj8S57p/l5yTOegNd5+HWXSXGzOigvi6edEimdBB1lWI6eTiwpGb/l9J8RnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btWcXV4w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D384FC4CEF1;
+	Wed, 20 Aug 2025 01:26:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755652929;
-	bh=giJrwNr4gTNI+BHt14QArf7z8KvI8kFYYAqwhT6nAzc=;
+	s=k20201202; t=1755653202;
+	bh=Gm41ua+tCecjQYsWzxJcFbyZCUuP0m6rVjsAj7MYVNk=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=H/AKtw8RMqpy1JosLZEooNgULsO4wBZsWKirV3sTpu1SUB2bXcRfWL680obJWgZL2
-	 AyX7yUuQmp9vkp8MoF7VGXbza+fcDlaEm5p3EZovW9zmudPrjyGHouiATXHPu+gzu0
-	 e0fpta8hr+QKHjiGrwIuvKMFZVktAABjw1hXwGIXXaG1hQSTdfUfTTHd0EXKD1hvB/
-	 q/DbOERoiBF3qlZMa/h3Cg11HLD7szlcYO8lHJ+bihAfzFQWVVjlIIfxMmJqMknj0e
-	 BiuD7Ffl90P1nV82+pNwmGSinDFwuMfrPbwchulcA9nyCKIFPiUQMdVKrqYeWQyN8s
-	 1ZEURTQMJupow==
-Date: Tue, 19 Aug 2025 18:22:07 -0700
+	b=btWcXV4wLASLDnh6i7rslctNy9EdcRW7+NInbgeC3V8gpEgO8/3rb4nAOWs334VYc
+	 iQDQ7F//sj7FD8ci4AK/lFAq3pKdL5zU69N9hrwLfKBgVpcF8a7i4253XNcgZA58/r
+	 pipaNsQZfKUvOIC7jTd7PL2QsptO7TYlkYZu03s7BSZGl6fem5eVl9D++vTv8hcJII
+	 iLpUnJiwA3db1FxP8PiGXmlkRaCuUnvp235nKZqUAkMK8SZo70H9oIxqMs5e96KqxF
+	 ZEhDXI/rFl4zAnsbhYLC/51FffwK//X+drCUs3fofKZ40ifP9NJh6ZhFNXFBl4yfY0
+	 ylxIjzOQIiVtA==
+Date: Tue, 19 Aug 2025 18:26:41 -0700
 From: Jakub Kicinski <kuba@kernel.org>
-To: Rohan G Thomas via B4 Relay
- <devnull+rohan.g.thomas.altera.com@kernel.org>
-Cc: rohan.g.thomas@altera.com, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Serge Semin
- <fancer.lancer@gmail.com>, Romain Gantois <romain.gantois@bootlin.com>,
- Jose Abreu <Jose.Abreu@synopsys.com>, Ong Boon Leong
- <boon.leong.ong@intel.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
- Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next v2 3/3] net: stmmac: Set CIC bit only for TX
- queues with COE
-Message-ID: <20250819182207.5d7b2faa@kernel.org>
-In-Reply-To: <20250816-xgmac-minor-fixes-v2-3-699552cf8a7f@altera.com>
-References: <20250816-xgmac-minor-fixes-v2-0-699552cf8a7f@altera.com>
-	<20250816-xgmac-minor-fixes-v2-3-699552cf8a7f@altera.com>
+To: tsbogend@alpha.franken.de
+Cc: Aleksander Jan Bajkowski <olek2@wp.pl>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ john@phrozen.org, devicetree@vger.kernel.org, netdev@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2 0/2] mips: lantiq: fix ethernet support
+Message-ID: <20250819182641.1b7ff210@kernel.org>
+In-Reply-To: <20250817131022.3796476-1-olek2@wp.pl>
+References: <20250817131022.3796476-1-olek2@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,10 +61,13 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sat, 16 Aug 2025 00:55:25 +0800 Rohan G Thomas via B4 Relay wrote:
-> +	bool csum = !priv->plat->tx_queues_cfg[queue].coe_unsupported;
+On Sun, 17 Aug 2025 14:49:05 +0200 Aleksander Jan Bajkowski wrote:
+> This series fixes broken Ethernet in the upstream danube dts. The
+> driver doesn't attach due to missing burst length property. OpenWRT
+> has its own dts, which is correct, so the problem has only been
+> spotted now. Other dts inconsistencies with bindings have been
+> fixed as well.
 
-Hopefully the slight pointer chasing here doesn't impact performance?
-XDP itself doesn't support checksum so perhaps we could always pass
-false?
+Hi Thomas, Aleksander tagged these for net, are you okay with us taking
+them via the networking tree? Looks like these are half DTS changes.
 
