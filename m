@@ -1,119 +1,380 @@
-Return-Path: <linux-kernel+bounces-778627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7FEB2E831
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:30:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D048BB2E833
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91001C81875
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:31:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7885C7AB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169DD2773CC;
-	Wed, 20 Aug 2025 22:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FFB26B97D;
+	Wed, 20 Aug 2025 22:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNgPr9Tb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y+m6NGiw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="beJbbedK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DB820E6;
-	Wed, 20 Aug 2025 22:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC731D86DC;
+	Wed, 20 Aug 2025 22:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755729035; cv=none; b=Ad+ECnwNKvczcnwQ6oemJDpu+LWsyFuy4kTE0bccZfMrA903A3+2VK35iIlz7DFGNhCaRbKAGXVqG/MHsWz8NhiofAEG0ARtK8i4QD69NrhRRmfdidh+N/hWX9PQQ2Ph7/LXyMIXevffIslAxY2McMgoWBnUf32mzPkYZGyZ47A=
+	t=1755729075; cv=none; b=uRESeepWjAypNatkIHPJqNAjavr2kVhuL2O7UgrVTDlpP4Zr6xyxiaAoVZFhvUM8/XuqUqfbQhSWUb5p75E/alyeBAKjeTQZzfqdaS0Y253L2cdo6Gos96XBbimhNEf6AGv4ZHlSMN17iQHg1896D9jGXDFmBQMiWdpDJ53gUMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755729035; c=relaxed/simple;
-	bh=tGAdZc0KS9L/r5jqwEnengTd6HhtdTELMF/rxwYJ2II=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AwEAZn4yzanK5oJb6hMcib9lK9cwp1C//Mv9ZRRW62H1NeKfLt5hy6t5QtwSOsOMP/perzp3vVBrowOGu+8T/Doa3XhbhlRi/WvRjW5A8G2uC2Zd+uFoPZWarq363DdMl5f5fJl6VgG/uR/DSzXCsnweFEMkDTOaqo8g7QhD/3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNgPr9Tb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC465C4CEE7;
-	Wed, 20 Aug 2025 22:30:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755729034;
-	bh=tGAdZc0KS9L/r5jqwEnengTd6HhtdTELMF/rxwYJ2II=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sNgPr9TbvOuO5FT4aQkcoymboru/M7IsHTWgI1aK4LDgWZI7NitjiK0FrvWzFfN+X
-	 Zg0OdRE3DHIXKd70iaf+hy4nUl1Kh+sN8EljRSxUT8AVWLfPaMVYG71L5XQSw2GOII
-	 LTGTzaJVN7NBgbltGqtdI1VGJIjAA3Kuzv0pHVtn1DPXYVgDl6eAKWMR/mA+znrCMK
-	 6udb3AAC0WS3qlNA//gTe/b0e1xoRc3M+ebRSa3LrX3ZQxDaOsX2rskr/QJKxwdUci
-	 uxKvytdKrGAdCzX+MpLbOZys9fgWsVuiKZQbX5ZLuDFsLJG41k/yOPVOxxJiMJDAP9
-	 0ct0cxFuydFFw==
-Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uorKC-009WCr-U7;
-	Wed, 20 Aug 2025 23:30:33 +0100
-Date: Wed, 20 Aug 2025 23:30:31 +0100
-Message-ID: <87frdlk4mw.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Subject: Re: [PATCH v15 0/6] KVM: arm64: Provide guest support for GCS
-In-Reply-To: <20250820-arm64-gcs-v15-0-5e334da18b84@kernel.org>
-References: <20250820-arm64-gcs-v15-0-5e334da18b84@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1755729075; c=relaxed/simple;
+	bh=eBN6CmGu/BlA46l7oAyCvP0wJsOgebWNxZ9xk/aRIEs=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Mab9KWPe1ikxnFz3sCcVipGMOtvpxq47mMWJSqsPtqoK/P7WkPMl2NW01l+pU/ilnsRwH8zDxfL8AZirVotrJfpSGH5UmN4G5SWXsVBveMoCwjl0LU2/lV/Fa4vvMhjaf/djxY2H/FbWs4ohfTHhgO9B9dwaJ3Mkf8iKHgQJ1tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y+m6NGiw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=beJbbedK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 20 Aug 2025 22:31:07 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755729069;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=l3iRSH+zOB5/NqxJtUwVrpa4XBiV8Dl1voex2EWu8Yw=;
+	b=y+m6NGiwoG2I7ujQBx78dUnWR/eTyvGMs3YH5b3ZA4eRrXJp7Q7wwETk6vhUggIj8yznqD
+	KYMcqi5ZKRMvgBsI/yGi7cyg0frPwnooUEtkjUyP8XVwhbcliEh8yQljzZf1glpdXU6kIU
+	m//KBG0sGvtYMvikjsOKXWJXhZnUZ5v5xlPdCruuOPHDDobuQ+ZjhLLHGf5qfE9qRnF2dl
+	U8vKZq4MhKczsxGj5surBw6W1rMpCwyKMxCJlq6MsVGhY/XBMLbgnlNDW1+zJsq+3UGAoX
+	42aRLYvlguKm28ebEBKaKP8Qn64tvmXeITUfdKdN3w3cSMr78wrVdQEmyYbNrg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755729069;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=l3iRSH+zOB5/NqxJtUwVrpa4XBiV8Dl1voex2EWu8Yw=;
+	b=beJbbedKTSLSixg+Fxb6ii4xbAXf2By+42U6BoHjkCKHPG53yYJrkjbARSTizmfmmf5cFM
+	FjCcOdSAf3QqOXBw==
+From: "tip-bot2 for Sohil Mehta" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/microcode] x86/microcode/intel: Refresh the revisions that
+ determine old_microcode
+Cc: Sohil Mehta <sohil.mehta@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 86.149.246.145
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, thiago.bauermann@linaro.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Message-ID: <175572906735.1420.8346253834412468730.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 20 Aug 2025 15:14:40 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> The arm64 Guarded Control Stack (GCS) feature provides support for
-> hardware protected stacks of return addresses, intended to provide
-> hardening against return oriented programming (ROP) attacks and to make
-> it easier to gather call stacks for applications such as profiling.
-> 
-> When GCS is active a secondary stack called the Guarded Control Stack is
-> maintained, protected with a memory attribute which means that it can
-> only be written with specific GCS operations.  The current GCS pointer
-> can not be directly written to by userspace.  When a BL is executed the
-> value stored in LR is also pushed onto the GCS, and when a RET is
-> executed the top of the GCS is popped and compared to LR with a fault
-> being raised if the values do not match.  GCS operations may only be
-> performed on GCS pages, a data abort is generated if they are not.
-> 
-> The combination of hardware enforcement and lack of extra instructions
-> in the function entry and exit paths should result in something which
-> has less overhead and is more difficult to attack than a purely software
-> implementation like clang's shadow stacks.
-> 
-> This series implements support for managing GCS for KVM guests, it also
-> includes a fix for S1PIE which has also been sent separately as this
-> feature is a dependency for GCS.  It is based on:
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/gcs
->
+The following commit has been merged into the x86/microcode branch of tip:
 
-Is this cover letter accurate? I don't see any PIE-related patch, and
-you indicate this being rebased on 6.17-rc1...
+Commit-ID:     952df63ef426b21d6da14bb48748f12b0ae2fe36
+Gitweb:        https://git.kernel.org/tip/952df63ef426b21d6da14bb48748f12b0ae=
+2fe36
+Author:        Sohil Mehta <sohil.mehta@intel.com>
+AuthorDate:    Mon, 18 Aug 2025 12:01:36 -07:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Wed, 20 Aug 2025 15:11:48 -07:00
 
-	M.
+x86/microcode/intel: Refresh the revisions that determine old_microcode
 
--- 
-Jazz isn't dead. It just smells funny.
+Update the minimum expected revisions of Intel microcode based on the
+microcode-20250512 (May 2025) release.
+
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lore.kernel.org/all/20250818190137.3525414-2-sohil.mehta%40inte=
+l.com
+---
+ arch/x86/kernel/cpu/microcode/intel-ucode-defs.h | 86 ++++++++-------
+ 1 file changed, 48 insertions(+), 38 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h b/arch/x86/kern=
+el/cpu/microcode/intel-ucode-defs.h
+index cb6e601..2d48e65 100644
+--- a/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
++++ b/arch/x86/kernel/cpu/microcode/intel-ucode-defs.h
+@@ -67,9 +67,8 @@
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x55, .steppings =3D 0x0008, .driver_data =3D 0x1000=
+191 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x55, .steppings =3D 0x0010, .driver_data =3D 0x2007=
+006 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x55, .steppings =3D 0x0020, .driver_data =3D 0x3000=
+010 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x55, .steppings =3D 0x0040, .driver_data =3D 0x4003=
+605 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x55, .steppings =3D 0x0080, .driver_data =3D 0x5003=
+707 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x55, .steppings =3D 0x0800, .driver_data =3D 0x7002=
+904 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x55, .steppings =3D 0x0080, .driver_data =3D 0x5003=
+901 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x55, .steppings =3D 0x0800, .driver_data =3D 0x7002=
+b01 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x56, .steppings =3D 0x0004, .driver_data =3D 0x1c },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x56, .steppings =3D 0x0008, .driver_data =3D 0x7000=
+01c },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x56, .steppings =3D 0x0010, .driver_data =3D 0xf000=
+01a },
+@@ -81,51 +80,62 @@
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x5f, .steppings =3D 0x0002, .driver_data =3D 0x3e },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x66, .steppings =3D 0x0008, .driver_data =3D 0x2a },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x6a, .steppings =3D 0x0020, .driver_data =3D 0xc000=
+2f0 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x6a, .steppings =3D 0x0040, .driver_data =3D 0xd000=
+3e7 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x6c, .steppings =3D 0x0002, .driver_data =3D 0x1000=
+2b0 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x6a, .steppings =3D 0x0040, .driver_data =3D 0xd000=
+404 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x6c, .steppings =3D 0x0002, .driver_data =3D 0x1000=
+2d0 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x7a, .steppings =3D 0x0002, .driver_data =3D 0x42 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x7a, .steppings =3D 0x0100, .driver_data =3D 0x24 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x7e, .steppings =3D 0x0020, .driver_data =3D 0xc6 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x7a, .steppings =3D 0x0100, .driver_data =3D 0x26 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x7e, .steppings =3D 0x0020, .driver_data =3D 0xca },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8a, .steppings =3D 0x0002, .driver_data =3D 0x33 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8c, .steppings =3D 0x0002, .driver_data =3D 0xb8 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8c, .steppings =3D 0x0004, .driver_data =3D 0x38 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8d, .steppings =3D 0x0002, .driver_data =3D 0x52 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8c, .steppings =3D 0x0002, .driver_data =3D 0xbc },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8c, .steppings =3D 0x0004, .driver_data =3D 0x3c },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8d, .steppings =3D 0x0002, .driver_data =3D 0x56 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8e, .steppings =3D 0x0200, .driver_data =3D 0xf6 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8e, .steppings =3D 0x0400, .driver_data =3D 0xf6 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8e, .steppings =3D 0x0800, .driver_data =3D 0xf6 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8e, .steppings =3D 0x1000, .driver_data =3D 0xfc },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8f, .steppings =3D 0x0100, .driver_data =3D 0x2c00=
+0390 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8f, .steppings =3D 0x0080, .driver_data =3D 0x2b00=
+0603 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8f, .steppings =3D 0x0040, .driver_data =3D 0x2c00=
+0390 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8f, .steppings =3D 0x0020, .driver_data =3D 0x2c00=
+0390 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8f, .steppings =3D 0x0010, .driver_data =3D 0x2c00=
+0390 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8e, .steppings =3D 0x1000, .driver_data =3D 0x100 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8f, .steppings =3D 0x0010, .driver_data =3D 0x2c00=
+03f7 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8f, .steppings =3D 0x0020, .driver_data =3D 0x2c00=
+03f7 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8f, .steppings =3D 0x0040, .driver_data =3D 0x2c00=
+03f7 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8f, .steppings =3D 0x0080, .driver_data =3D 0x2b00=
+0639 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x8f, .steppings =3D 0x0100, .driver_data =3D 0x2c00=
+03f7 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x96, .steppings =3D 0x0002, .driver_data =3D 0x1a },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x97, .steppings =3D 0x0004, .driver_data =3D 0x37 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x97, .steppings =3D 0x0020, .driver_data =3D 0x37 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xbf, .steppings =3D 0x0004, .driver_data =3D 0x37 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xbf, .steppings =3D 0x0020, .driver_data =3D 0x37 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9a, .steppings =3D 0x0008, .driver_data =3D 0x435 =
+},
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9a, .steppings =3D 0x0010, .driver_data =3D 0x435 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x97, .steppings =3D 0x0004, .driver_data =3D 0x3a },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x97, .steppings =3D 0x0020, .driver_data =3D 0x3a },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9a, .steppings =3D 0x0008, .driver_data =3D 0x437 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9a, .steppings =3D 0x0010, .driver_data =3D 0x437 =
+},
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9c, .steppings =3D 0x0001, .driver_data =3D 0x2400=
+0026 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9e, .steppings =3D 0x0200, .driver_data =3D 0xf8 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9e, .steppings =3D 0x0400, .driver_data =3D 0xf8 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9e, .steppings =3D 0x0400, .driver_data =3D 0xfa },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9e, .steppings =3D 0x0800, .driver_data =3D 0xf6 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9e, .steppings =3D 0x1000, .driver_data =3D 0xf8 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9e, .steppings =3D 0x2000, .driver_data =3D 0x100 =
+},
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa5, .steppings =3D 0x0004, .driver_data =3D 0xfc },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa5, .steppings =3D 0x0008, .driver_data =3D 0xfc },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa5, .steppings =3D 0x0020, .driver_data =3D 0xfc },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa6, .steppings =3D 0x0001, .driver_data =3D 0xfe },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa6, .steppings =3D 0x0002, .driver_data =3D 0xfc },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa7, .steppings =3D 0x0002, .driver_data =3D 0x62 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xaa, .steppings =3D 0x0010, .driver_data =3D 0x20 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xb7, .steppings =3D 0x0002, .driver_data =3D 0x12b =
+},
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xba, .steppings =3D 0x0004, .driver_data =3D 0x4123=
+ },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xba, .steppings =3D 0x0008, .driver_data =3D 0x4123=
+ },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xba, .steppings =3D 0x0100, .driver_data =3D 0x4123=
+ },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xbe, .steppings =3D 0x0001, .driver_data =3D 0x1a },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xcf, .steppings =3D 0x0004, .driver_data =3D 0x2100=
+0283 },
+-{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xcf, .steppings =3D 0x0002, .driver_data =3D 0x2100=
+0283 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0x9e, .steppings =3D 0x2000, .driver_data =3D 0x104 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa5, .steppings =3D 0x0004, .driver_data =3D 0x100 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa5, .steppings =3D 0x0008, .driver_data =3D 0x100 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa5, .steppings =3D 0x0020, .driver_data =3D 0x100 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa6, .steppings =3D 0x0001, .driver_data =3D 0x102 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa6, .steppings =3D 0x0002, .driver_data =3D 0x100 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xa7, .steppings =3D 0x0002, .driver_data =3D 0x64 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xaa, .steppings =3D 0x0010, .driver_data =3D 0x24 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xad, .steppings =3D 0x0002, .driver_data =3D 0xa000=
+0d1 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xaf, .steppings =3D 0x0008, .driver_data =3D 0x3000=
+341 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xb5, .steppings =3D 0x0001, .driver_data =3D 0xa },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xb7, .steppings =3D 0x0002, .driver_data =3D 0x12f =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xb7, .steppings =3D 0x0010, .driver_data =3D 0x12f =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xba, .steppings =3D 0x0004, .driver_data =3D 0x4128=
+ },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xba, .steppings =3D 0x0008, .driver_data =3D 0x4128=
+ },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xba, .steppings =3D 0x0100, .driver_data =3D 0x4128=
+ },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xbd, .steppings =3D 0x0002, .driver_data =3D 0x11f =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xbe, .steppings =3D 0x0001, .driver_data =3D 0x1d },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xbf, .steppings =3D 0x0004, .driver_data =3D 0x3a },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xbf, .steppings =3D 0x0020, .driver_data =3D 0x3a },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xbf, .steppings =3D 0x0040, .driver_data =3D 0x3a },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xbf, .steppings =3D 0x0080, .driver_data =3D 0x3a },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xc5, .steppings =3D 0x0004, .driver_data =3D 0x118 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xc6, .steppings =3D 0x0004, .driver_data =3D 0x118 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xc6, .steppings =3D 0x0010, .driver_data =3D 0x118 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xca, .steppings =3D 0x0004, .driver_data =3D 0x118 =
+},
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xcf, .steppings =3D 0x0002, .driver_data =3D 0x2100=
+02a9 },
++{ .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0x6,  .model =3D 0xcf, .steppings =3D 0x0004, .driver_data =3D 0x2100=
+02a9 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0xf,  .model =3D 0x00, .steppings =3D 0x0080, .driver_data =3D 0x12 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0xf,  .model =3D 0x00, .steppings =3D 0x0400, .driver_data =3D 0x15 },
+ { .flags =3D X86_CPU_ID_FLAG_ENTRY_VALID, .vendor =3D X86_VENDOR_INTEL, .fam=
+ily =3D 0xf,  .model =3D 0x01, .steppings =3D 0x0004, .driver_data =3D 0x2e },
 
