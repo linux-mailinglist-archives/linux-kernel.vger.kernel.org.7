@@ -1,171 +1,293 @@
-Return-Path: <linux-kernel+bounces-777258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA58B2D771
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:03:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA9BB2D778
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E20C161E91
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:01:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED21188B899
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636E01F4192;
-	Wed, 20 Aug 2025 09:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077C52DAFCA;
+	Wed, 20 Aug 2025 09:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="C3o1rd4Y"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="l1ceEV87"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2083.outbound.protection.outlook.com [40.107.94.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49E9242D9F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680461; cv=none; b=d3ujYXnN8MPrd80POItOatnnS4UJz4SGPieuOb+yo45uS/vIt8clgPSSAUrhDQdLOCm3j2Mr/lRPbWk/WKSAPL3M3NRSnFet6WxcN2iQf96il5mXjHDIFWwIdfLoBf9aeweWhDEOVfi8I6j85XsDMNyQ+Y/nqz6UDwinL5vOfNo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680461; c=relaxed/simple;
-	bh=6LsHJgo+tKRzzkgQLAaAT5JkHxEvAMEFQZX1rXQC0Ns=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=uMnQYWYmSOq8KnPMtV2JmdzPis4VtblrWLJLnhE78TON8kI2h5HFgnKn2GeNtni2m2/OSSZecLUVAOlMYk6qH6pHekj7ocL+p5CbkL1Kb2L8cQEmZ33ariVo+YMf3xEG7PMr3hTsKvxr+BaBrwxqXta2/WdKXmKi+I2hvq9n2iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=C3o1rd4Y; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb73394b4so928966166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755680457; x=1756285257; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z03jrGTI9dQg5eIa9TV41Lj6FCs5xJJf0R8hPNlQSBk=;
-        b=C3o1rd4Y7aIewY1z+SPmXxdxgpgllaurCQR867mgGOizTDzY6Wp6nq839aWnq7FV0d
-         afQDCRzAoYeCHxLxDST80r1U3M3bjLeNEYFLofzdiLFxupdZHsHz+cIr23zZOyLQRKQc
-         yN7f2uTt68MYgpoN/BB6pD+7qpludD1W/8O3koiZXCrSdfRGCS6VfSA0Rxb7S9s+0I2q
-         Dpb16ykqFznOQ2axpo1ZpvR2aYiITqgvPlEJTNr+PmNwOHZUCgwSUE8wHFrolQ7Zut16
-         frjP2/aQkMwoBzRMrNyDADezl8yRuB5DZaAkBx47Jr5t7EW5kVxd9rhCMZadP9vLeXbu
-         Nj3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755680457; x=1756285257;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z03jrGTI9dQg5eIa9TV41Lj6FCs5xJJf0R8hPNlQSBk=;
-        b=s1Cn1vFgUGeK2gYW0fOoCA2zJs3bKeSqktfICthndpBiZVy1Y73Tq7+QHjreGve9oT
-         2zCAloh/rEuYb4RE+z3Z7GkOs09MfNUg6UPEu7gmZXlYXjQ+yBGGYBlNcmZhQiSVFWZz
-         AQq6nnAjKWxuFRaCmdLfRji8MkrR0rpMLbPpx9KSYUtXffd7/CAzkBkTh+GGRODnkdrA
-         0O0rLVM2zdZb1TO9NMkcn/MFQce5adVCwqFva08TgING7k6Y+p08qkpT5XHx5V2wzE9y
-         YYTQOtHt5S0+IXE21Kt7zLRdasnLHau+MLYqz9XR5+EExvQtpc855aYlHTgpzeILGt+I
-         +PWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGdeG+A/qIqrRGLnDFNISoQ6rETaFDrHruQIE2bobs4gdAEDGWhLIfMOmYGBcv60jZoWn4sKzFVIQ9/xs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1uxmlr7imaCMqZw7jxPe9uuV+mm6MfF0dVBOG9xFmZusmAUHM
-	PdtygclmJX+SgKh8UlbrjjRvHBACuxkUymKxeg7AvDo4blOy+6j/ZBR8MKGEaEND5TE=
-X-Gm-Gg: ASbGncvM9jI2DK74BHPENhAymKaZ6VA+wYHh6DbrJVWjk+mdAAFp1I1vzIs/sSj83wd
-	PT67INjB8zV3kefHINO91qyruZdRJbFZ5y2VwsfcRgivozwDUh8H8XbJw//5Rw1hdWdNjNBO0ON
-	XbOaqd/sKD3eqEpRyHp1I6U1gHEA/6CNoXFd8iYmAC8zJr+QoniR/jiIMrmJYc2FY3J+qMEXfkO
-	3pA17Zt/s0dTtP2PLC3vSm7bsRD2yFOPNwB2LJwbhIBIFNEKxVOfJpgRgwtgbztGidc0RiqS6w1
-	qTgrsDmaSmZlrY4RvHd2mC8iO3DmuemxqM7IER1dW0Mc8iDQExIt+UIYpJay4VKV8AUA4N0Ld4L
-	bwYHaFYPJ0EmoL5ER2F+s55Wv
-X-Google-Smtp-Source: AGHT+IG9lWtoWnwYr1sV2dIFklr/LGgYFqW/ehAo3u/KuYgzO3cIlB5RIbib+Cneh8aXl5/QiU4ngg==
-X-Received: by 2002:a17:907:3da6:b0:afa:12c6:26f with SMTP id a640c23a62f3a-afdf00ae024mr169702466b.26.1755680456809;
-        Wed, 20 Aug 2025 02:00:56 -0700 (PDT)
-Received: from localhost ([195.52.61.108])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-61a92678f45sm1528575a12.18.2025.08.20.02.00.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 02:00:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65413227563;
+	Wed, 20 Aug 2025 09:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755680469; cv=fail; b=AA1ZrckgLXb965T0ZgrNfnng7UHhHJ2knB0Tl+PjgV/r1ppaVfguJm3psACeUyvu4tHrH4pIJUWKQ8fYqkBSaOpgHlgGzdGjXEQCep1VO77ccMVZGi0+mml/Df4UkZhUKEi8rrDTiYwkBZrZT6ObhaTRewOQVOfix0l0Aqbv+ZQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755680469; c=relaxed/simple;
+	bh=Gim44vDGdVJ8pLZx42eZYAJVmVNTLd42vBtZJTITOpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gn4YhZ4MWYrMA8ohq/jIkoXc9zdD4moecMINZNEJlNnMnQcMBhZc2nrC1pf5Emqal9b5LYm7RgfnBG8yrTDx+0QkyY9uXdkwf+9Q1SFqNrn3j9dZPTWBg4HTPt0fP4+ApS6vMwWfOR2tqje/ZxXFYLTA4QcLwgD1d8yAOYNTl+g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=l1ceEV87; arc=fail smtp.client-ip=40.107.94.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VQRIO2B9wOwN5KTSdlGM3Z3F9gz3A1SHWt/HlVNbY8OfDpn/eAaZ+vF5rTnQty8XmyhLRR86ZpvM+obbRKamHMCFc/u+fFZDjkJeyCT0ZIxgLPLzjqo70Rj/Cki7TXFEHYAikjBbigbY3NOISttCt+Jy13UNFv/M355OOMKqN/L7xj/E3yTskJaZTcGNRZefO4jvoBJTZ1sHjj+zfT2ocDaO2aroZszfK0x+t1aOzpZsn+H/Jx5CTRymLmFFURZT79q1mox4lAOMxIT7ucLKIOd/8emLmQAMP8fdz5DHnzFtpkG/jkTdww8nyfioKbBgIGUEFlyY8C1ELWNhnXx+IQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p9PniNIsBFPI9uyFkByCKrFbl4ZIy0NNAq6yXea4cik=;
+ b=udJaqFVg73qaSnU38rjcIG33I9SLM+3eajjU0cOEVqXLqdIIe7auglDwzMgeEtsdIhwbRsnGLBnHuMCWrWnPifKNox/g7lHirObeOVXzP91Mlies8MfxuiHPOsb+XDCpMBtxty+TyDpOX+9aOyiIU+/8rwDEboGFhrjtdHrTUQQ/V+0FpP/MYTztft5e3OGwVapx0erfPJHYw+keKLepnQtoBwcHBb8euyAcywBns7bHph02W1e2Od8qH0jxMuCFZTEDOt02+zA7hbLVABWhopWWXB+TifHGtIIoVXSRrVWAMyvcgQVZ/LnY8F2gQsXrgiNcFf/U/wzLhzGvuJoNwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p9PniNIsBFPI9uyFkByCKrFbl4ZIy0NNAq6yXea4cik=;
+ b=l1ceEV87JEksPmhMf980dsJoik23vJc4TlP20K5h1zOULu8n5+cmcHUQi3VWcO1ndw587R/i+ARBMlnWinGnYEkTikrxYGMD4pBHevw4hveQaTOUTMkVZ0HKUNUCP8QHj+BqXbnootjTRqE7isWJIEvlINvK0VinON6V19e53W4=
+Received: from SJ2PR07CA0006.namprd07.prod.outlook.com (2603:10b6:a03:505::18)
+ by DS7PR12MB9501.namprd12.prod.outlook.com (2603:10b6:8:250::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
+ 2025 09:01:01 +0000
+Received: from SJ5PEPF000001EC.namprd05.prod.outlook.com
+ (2603:10b6:a03:505:cafe::e2) by SJ2PR07CA0006.outlook.office365.com
+ (2603:10b6:a03:505::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.14 via Frontend Transport; Wed,
+ 20 Aug 2025 09:01:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001EC.mail.protection.outlook.com (10.167.242.200) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Wed, 20 Aug 2025 09:01:01 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Aug
+ 2025 04:01:00 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Aug
+ 2025 04:01:00 -0500
+Received: from [10.252.207.152] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 20 Aug 2025 04:00:57 -0500
+Message-ID: <25b39485-4c3e-4bd2-8cbc-f4ae67fcd82b@amd.com>
+Date: Wed, 20 Aug 2025 14:30:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=1ae8ba6f514b4cd88d5798840df4bf4af76203035298ca9776addea44178;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Wed, 20 Aug 2025 11:00:51 +0200
-Message-Id: <DC74S0QJQ0JV.39VRZ1Y5JSEWS@baylibre.com>
-Cc: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <kernel@pengutronix.de>
-Subject: Re: [PATCH 4/7] can: m_can: m_can_chip_config(): bring up interface
- in correct state
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Marc Kleine-Budde" <mkl@pengutronix.de>, "Chandrasekar Ramakrishnan"
- <rcsekar@samsung.com>, "Vincent Mailhol" <mailhol.vincent@wanadoo.fr>,
- "Patrik Flykt" <patrik.flykt@linux.intel.com>, "Dong Aisheng"
- <b29396@freescale.com>, "Fengguang Wu" <fengguang.wu@intel.com>, "Varka
- Bhadram" <varkabhadram@gmail.com>, "Wu Bo" <wubo.oduw@gmail.com>, "Philipp
- Zabel" <p.zabel@pengutronix.de>
-X-Mailer: aerc 0.20.1
-References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de> <20250812-m_can-fix-state-handling-v1-4-b739e06c0a3b@pengutronix.de>
-In-Reply-To: <20250812-m_can-fix-state-handling-v1-4-b739e06c0a3b@pengutronix.de>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 4/8] KVM: SVM: Move SEV-ES VMSA allocation to a
+ dedicated sev_vcpu_create() helper
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+	<pbonzini@redhat.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Thomas Lendacky
+	<thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>, "Borislav
+ Petkov" <bp@alien8.de>, Vaishali Thakkar <vaishali.thakkar@suse.com>, "Ketan
+ Chaturvedi" <Ketan.Chaturvedi@amd.com>, Kai Huang <kai.huang@intel.com>
+References: <20250819234833.3080255-1-seanjc@google.com>
+ <20250819234833.3080255-5-seanjc@google.com>
+Content-Language: en-US
+From: "Nikunj A. Dadhania" <nikunj@amd.com>
+In-Reply-To: <20250819234833.3080255-5-seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EC:EE_|DS7PR12MB9501:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3477bf2d-eb27-472e-3f9d-08dddfc8164b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R2NLek0yMHVvQ1QzTW1kTjFxYzY5SlplOEVZVkhxaTJmYkZhYzRDbFhvcy85?=
+ =?utf-8?B?SWdaVUc1dTZaTE5USkh2eE53OTltUnR4U3l4bDV2VU5rcCtwUVlSdWhwcUlk?=
+ =?utf-8?B?RzhhU1RUbTRvTkcyajZFTXo5emtLTEViZUNYbndEWWJYeG9ZbVJpREhsOExp?=
+ =?utf-8?B?Q3hRZ3R2UE1oelM2RkR6eS9HLytRd0tlVWovcUw5bFpPZm12WDBBNjBUdzVP?=
+ =?utf-8?B?bnhObXBnTlVPU2FHYWVxODV6TVUyUjRsV1JzTWVqR0RFWFFXNHF0SnBtdjFJ?=
+ =?utf-8?B?NjNpcjJmNnlzZFRRbzhLcXlpZnMyVUVEYnZFZmRjSHM1WEJJS0F0SDFUM1dW?=
+ =?utf-8?B?U203enlWRXB1Q1I3M2J6dk1wTkYxM0F6UmtEMGt2VHl1dlpNeHRWVTZwYnZY?=
+ =?utf-8?B?d01UVFRuZE9zVEd3MGZ5NHprZmw5U0hFQ2tOOW15MTRodkJ0TmJXUWNIcVhT?=
+ =?utf-8?B?dnZ1RVdtT3Q1M2xCenhwMmlzajNDY290Tm1zdUp0amRxTFZQWUwvMEVUeXJG?=
+ =?utf-8?B?Z3VYQWNGaURrUFVIWUdhcC9XWmJSeE1CMTFCRk1tOG5ESVZySGp5QmhMWnN2?=
+ =?utf-8?B?NFRnQm1GTmFubkVheE01bUN1RnFNTVFZZkltcEVLRlA1aGpWaTZVTHJrZ05U?=
+ =?utf-8?B?TitJR2EvRkQ5ZHBKaFlmRUZvNFRUc1dTaTJxU1VqS1NNQlpVYk1zVy9KbHdW?=
+ =?utf-8?B?Tlo1RW1RY2wxaXdEZXdJSklyckFCaWw4RDh3aXpTYld1U2laVE9qVThvK1hQ?=
+ =?utf-8?B?NVZQYURkVzEwaHI4Sk8wU0NJalVWejRRN0swSVJ1QlNUT1BxVUt1clhPbnp1?=
+ =?utf-8?B?WmpQTXpYSDdCQUt6bjJQWU9LUVhCbkdLdGlIUCtJa0lWbC9wUHpUTEs3KzZq?=
+ =?utf-8?B?NEZud1pFcG1IWWVGK3NKNUZEcUNRRzYvSkFVTjBuMVl5ZHM1V3B3RG55Rk9D?=
+ =?utf-8?B?cVRDZkxxYVlTVmdacVVZTXI3ZU9Kam9VNnlLdk9zZGdTdHJDQ0pad3dqRXFj?=
+ =?utf-8?B?TXRhSiszdHRHUDFOeFlXYVYvZU1mTkg3ZFdqRkFENXBXVVVKTUZ4Y3lGVmE4?=
+ =?utf-8?B?RjdqNDFwNHFYaGtGeTZVbDk4ejdhTWRuMmkzSUFveUx2MXZYQjZUWHBxMVVr?=
+ =?utf-8?B?V29RVUZORWZQeU1FS200c1MzUzBQQWRTME5FeDhDVnVoaXJzaE9FZSs0SEp0?=
+ =?utf-8?B?VTdYVmZKbFFzUFhIeFFydDRURTFTSy8yNVhBZk9hdWNGQ3FWNTVUNytQOEIy?=
+ =?utf-8?B?Zjg4MkhwMVN1eklqUnJvVmNkSHg3d0ZUZ20yc0NNd1F6ejVEMUl5UHZ2YjFJ?=
+ =?utf-8?B?djFUeTlxdE9PMTJWamNmWUNzQW05cnl3TFV5SzJnSGhzcGFwQm12ejNqeDRx?=
+ =?utf-8?B?TXVJandpSEt1MElhUzlLdVhkVHFlUjlTMFM0R29RMm5xdzFmWUxmaVpHZHUy?=
+ =?utf-8?B?aFBGMElIVkFBN1BGRW1Bd2hQb0tqMXMvV2J3YWJTSEpuWmErL3dYMVVWV2Vu?=
+ =?utf-8?B?OWJ2RGVWRlpjaVZJSTdrZ1lMc0xFM1VnWWFTeEFXaUlvK21FUEIyVHM3Yk43?=
+ =?utf-8?B?NnhwbjVKODg2TXBUNG4xQXdvZFJmN01QU3I3K0JRV052ZEpMaTBQM2xuSnh0?=
+ =?utf-8?B?ZjlkanRaSFpJcUo4dGxjb1hHdUlnM2lxZGRKS2UxMGRiMDJYQWQyeWxxN21m?=
+ =?utf-8?B?eEF6bytNUDkxK3MrZkF3M25COFk5VXlnUFRHMEFXYVFaR0tMb1NmbE16MDha?=
+ =?utf-8?B?VUwxZW81am94VUZjT1huVTBaRTkrU2JpZ1J1Q3BmYlhEUzY3ZmJnZG4yZDl5?=
+ =?utf-8?B?dGo2SkI1bzk5RExxYjd2ZEE2TnBiSCtHZEJCbTdua0Q1TWU2L1BKUTBjUFJW?=
+ =?utf-8?B?Q2RrSTRmUXJYRnpvckdSeW9XUzRqdVVqUE5mVVFYcWxra09WNFNSaThpNS9B?=
+ =?utf-8?B?QmtrSnJVM2NHRTFMeXZtRVJoMHE0UUxPQ2J0VnpsZWNPSzVLZUZ1eWQvQUhE?=
+ =?utf-8?B?ZVNwVXhSVFk5ZjVIQmdTSDVSTWtpMXFMREZleE5RUDlQTzlXeEIvTFRYT3ll?=
+ =?utf-8?Q?Wm7P1g?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 09:01:01.5625
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3477bf2d-eb27-472e-3f9d-08dddfc8164b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001EC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9501
 
---1ae8ba6f514b4cd88d5798840df4bf4af76203035298ca9776addea44178
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi,
 
-On Tue Aug 12, 2025 at 7:36 PM CEST, Marc Kleine-Budde wrote:
-> In some SoCs (observed on the STM32MP15) the M_CAN IP core keeps the
-> CAN state and CAN error counters over an internal reset cycle. An
-> external reset is not always possible, due to the shared reset with
-> the other CAN core. This caused the core not always be in Error Active
-> state when bringing up the controller.
->
-> Instead of always setting the CAN state to Error Active in
-> m_can_chip_config(), fix this by reading and decoding the Protocol
-> Status Regitser (PSR) and set the CAN state accordingly.
->
-> Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+On 8/20/2025 5:18 AM, Sean Christopherson wrote:
+> Add a dedicated sev_vcpu_create() helper to allocate the VMSA page for
+> SEV-ES+ vCPUs, and to allow for consolidating a variety of related SEV+
+> code in the near future.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Reviewed-by: Nikunj A Dadhania <nikunj@amd.com>
+
 > ---
->  drivers/net/can/m_can/m_can.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.=
-c
-> index b485d2f3d971..310a907cbb7e 100644
-> --- a/drivers/net/can/m_can/m_can.c
-> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -1607,6 +1607,7 @@ static int m_can_chip_config(struct net_device *dev=
-)
->  static int m_can_start(struct net_device *dev)
+>  arch/x86/kvm/svm/sev.c | 20 ++++++++++++++++++++
+>  arch/x86/kvm/svm/svm.c | 25 +++++++------------------
+>  arch/x86/kvm/svm/svm.h |  2 ++
+>  3 files changed, 29 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index e88dce598785..c17cc4eb0fe1 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -4561,6 +4561,26 @@ void sev_init_vmcb(struct vcpu_svm *svm)
+>  		sev_es_init_vmcb(svm);
+>  }
+>  
+> +int sev_vcpu_create(struct kvm_vcpu *vcpu)
+> +{
+> +	struct vcpu_svm *svm = to_svm(vcpu);
+> +	struct page *vmsa_page;
+> +
+> +	if (!sev_es_guest(vcpu->kvm))
+> +		return 0;
+> +
+> +	/*
+> +	 * SEV-ES guests require a separate (from the VMCB) VMSA page used to
+> +	 * contain the encrypted register state of the guest.
+> +	 */
+> +	vmsa_page = snp_safe_alloc_page();
+> +	if (!vmsa_page)
+> +		return -ENOMEM;
+> +
+> +	svm->sev_es.vmsa = page_address(vmsa_page);
+> +	return 0;
+> +}
+> +
+>  void sev_es_vcpu_reset(struct vcpu_svm *svm)
 >  {
->  	struct m_can_classdev *cdev =3D netdev_priv(dev);
-> +	u32 reg_psr;
->  	int ret;
-> =20
->  	/* basic m_can configuration */
-> @@ -1617,7 +1618,8 @@ static int m_can_start(struct net_device *dev)
->  	netdev_queue_set_dql_min_limit(netdev_get_tx_queue(cdev->net, 0),
->  				       cdev->tx_max_coalesced_frames);
-> =20
-> -	cdev->can.state =3D CAN_STATE_ERROR_ACTIVE;
-> +	reg_psr =3D m_can_read(cdev, M_CAN_PSR);
-> +	cdev->can.state =3D m_can_can_state_get_by_psr(reg_psr);
+>  	struct kvm_vcpu *vcpu = &svm->vcpu;
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index d9931c6c4bc6..3d4c14e0244f 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -1275,7 +1275,6 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
+>  {
+>  	struct vcpu_svm *svm;
+>  	struct page *vmcb01_page;
+> -	struct page *vmsa_page = NULL;
+>  	int err;
+>  
+>  	BUILD_BUG_ON(offsetof(struct vcpu_svm, vcpu) != 0);
+> @@ -1286,24 +1285,18 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
+>  	if (!vmcb01_page)
+>  		goto out;
+>  
+> -	if (sev_es_guest(vcpu->kvm)) {
+> -		/*
+> -		 * SEV-ES guests require a separate VMSA page used to contain
+> -		 * the encrypted register state of the guest.
+> -		 */
+> -		vmsa_page = snp_safe_alloc_page();
+> -		if (!vmsa_page)
+> -			goto error_free_vmcb_page;
+> -	}
+> +	err = sev_vcpu_create(vcpu);
+> +	if (err)
+> +		goto error_free_vmcb_page;
+>  
+>  	err = avic_init_vcpu(svm);
+>  	if (err)
+> -		goto error_free_vmsa_page;
+> +		goto error_free_sev;
+>  
+>  	svm->msrpm = svm_vcpu_alloc_msrpm();
+>  	if (!svm->msrpm) {
+>  		err = -ENOMEM;
+> -		goto error_free_vmsa_page;
+> +		goto error_free_sev;
+>  	}
+>  
+>  	svm->x2avic_msrs_intercepted = true;
+> @@ -1312,16 +1305,12 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
+>  	svm->vmcb01.pa = __sme_set(page_to_pfn(vmcb01_page) << PAGE_SHIFT);
+>  	svm_switch_vmcb(svm, &svm->vmcb01);
+>  
+> -	if (vmsa_page)
+> -		svm->sev_es.vmsa = page_address(vmsa_page);
+> -
+>  	svm->guest_state_loaded = false;
+>  
+>  	return 0;
+>  
+> -error_free_vmsa_page:
+> -	if (vmsa_page)
+> -		__free_page(vmsa_page);
+> +error_free_sev:
+> +	sev_free_vcpu(vcpu);
+>  error_free_vmcb_page:
+>  	__free_page(vmcb01_page);
+>  out:
+> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> index 58b9d168e0c8..cf2569b5451a 100644
+> --- a/arch/x86/kvm/svm/svm.h
+> +++ b/arch/x86/kvm/svm/svm.h
+> @@ -854,6 +854,7 @@ static inline struct page *snp_safe_alloc_page(void)
+>  	return snp_safe_alloc_page_node(numa_node_id(), GFP_KERNEL_ACCOUNT);
+>  }
+>  
+> +int sev_vcpu_create(struct kvm_vcpu *vcpu);
+>  void sev_free_vcpu(struct kvm_vcpu *vcpu);
+>  void sev_vm_destroy(struct kvm *kvm);
+>  void __init sev_set_cpu_caps(void);
+> @@ -880,6 +881,7 @@ static inline struct page *snp_safe_alloc_page(void)
+>  	return snp_safe_alloc_page_node(numa_node_id(), GFP_KERNEL_ACCOUNT);
+>  }
+>  
+> +static inline int sev_vcpu_create(struct kvm_vcpu *vcpu) { return 0; }
+>  static inline void sev_free_vcpu(struct kvm_vcpu *vcpu) {}
+>  static inline void sev_vm_destroy(struct kvm *kvm) {}
+>  static inline void __init sev_set_cpu_caps(void) {}
 
-Previous patch makes sense for use here. But how is the state set back
-in operation after mcan was in an error state? Maybe I missed the path
-back to CAN_STATE_ERROR_ACTIVE somewhere?
-
-Also CAN_STATE_ERROR_ACTIVE is set in resume() as well, should that also
-read the PSR instead?
-
-Ans lastly I don't like the function name, because of the repeated can,
-maybe something like m_can_error_state_by_psr()?
-
-Best
-Markus
-
---1ae8ba6f514b4cd88d5798840df4bf4af76203035298ca9776addea44178
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaKWOwxsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlP6
-nwEAwBNdmo8OtjsHcGA99xPO0er3RbS+3Oyc+GRhL/z5xWsA/0witQtPQ8gixhSd
-rBh2n6W27uhBmAylY9izs2Wem9MJ
-=luNr
------END PGP SIGNATURE-----
-
---1ae8ba6f514b4cd88d5798840df4bf4af76203035298ca9776addea44178--
 
