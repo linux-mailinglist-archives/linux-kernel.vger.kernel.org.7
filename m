@@ -1,152 +1,127 @@
-Return-Path: <linux-kernel+bounces-778291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527DBB2E3E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:30:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50541B2E3D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82231662C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:25:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0AEA257B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E238933A010;
-	Wed, 20 Aug 2025 17:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B024E343202;
+	Wed, 20 Aug 2025 17:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fDpsQa9e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QnXxuBq9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995BF225413
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E361E342C85;
+	Wed, 20 Aug 2025 17:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755710386; cv=none; b=W9Az/e7LsNqs7I2hUC7hfoJ9BfvQVKZtCir4Nd3MSa6JLHnRIAyqOXd2QY15OKw9HsGuKhkr9DLHcktXxGeZbl5la+tt5xL1hpgeIWVitawPInk38+4QHKTloiVgwvjv2Xthkd4R3troy5A1Kef3sXpNJxxBiuZ+lsl7LQ500Oo=
+	t=1755710368; cv=none; b=H1LvVraPqYu2nNpujmpuTdDHa4/nI7ETczM9zcu9/YJhTsq0wIMtsGFYSAyNpmAKk+wGI9yHJTWZPjJGEpOuVbU8Mzo8AhGiBdbeI2tWRU4X4otHNDAUzDAg2vVXmY93dd345QmF2d1vCH7A3h2mdsQStH+4o9N3hNMseW2cZXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755710386; c=relaxed/simple;
-	bh=GxHr6/54rgcy6sAclCD5AO7ktqqANCdjdS8twJwHCMA=;
+	s=arc-20240116; t=1755710368; c=relaxed/simple;
+	bh=ZqeFO6HvfjccxgbJRn37HsDogI883Z0ye1Ok5+j3EBg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LtgHCDw1YPhZ6igYpqwuBAMtqay6aqBk4i6PSBfPzp/NjiZVfsneZnTj9YX2qkqeYHWpJu7uSJGSZWYE5EC83gvZuT474CT1b7+B6upPv7ggTPmSFKv05jepr4utIKBgU0x2rEo2PWWgNQDdZpiDGD1Rt4LkY98QaXuYZmAXBjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fDpsQa9e; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755710385; x=1787246385;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GxHr6/54rgcy6sAclCD5AO7ktqqANCdjdS8twJwHCMA=;
-  b=fDpsQa9eXVW3VUKag2sEKTeHkQJUYbP+sJO26cTNdygg9yv2PSm668ZS
-   pEGSj0wFF13DBljeGm0IZbdiIj6A4jXr685Cgf69OJitnwKhVycI3sz/X
-   lzzRitpiNyi29foD5g6Uk4OERwXVAMs5BcMxg99RPdgMBR2T0/7qdRSHI
-   2apcDGhrma00TnfuFZyg40kzxGrT5ARuGMTTAtG8TTvcR6gtVw8rn/jkf
-   7n9nMq4EdJ+q9WgGgxakeeI5nQraY1pgxtTeSFcEbykSwWyTZ7xK5EEbv
-   LwU0/T/WQVhjT+PH+BE+PXG0fM51QyhfAq0cOq1vWPJTbYMx/ruy6U1lw
-   A==;
-X-CSE-ConnectionGUID: nxPccekISSSCHe7PGCTWJA==
-X-CSE-MsgGUID: TVAnzsmzSxaYQuYsqQ4X3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="83406122"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="83406122"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 10:19:44 -0700
-X-CSE-ConnectionGUID: id3NsaM5RTK6EUgGk1bUSw==
-X-CSE-MsgGUID: F/GOHyWPSxGZCqOCHmhCXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="167798899"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 20 Aug 2025 10:19:40 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uomTK-000JXL-03;
-	Wed, 20 Aug 2025 17:19:38 +0000
-Date: Thu, 21 Aug 2025 01:18:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yunhui Cui <cuiyunhui@bytedance.com>, yury.norov@gmail.com,
-	linux@rasmusvillemoes.dk, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dennis@kernel.org, tj@kernel.org, cl@gentwo.org, linux-mm@kvack.org
-Cc: oe-kbuild-all@lists.linux.dev, Yunhui Cui <cuiyunhui@bytedance.com>
-Subject: Re: [PATCH 2/2] riscv: introduce percpu.h into include/asm
-Message-ID: <202508210101.WySkXlSZ-lkp@intel.com>
-References: <20250819135007.85646-3-cuiyunhui@bytedance.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X8qfKrbNAKc1TLWebdR/aAlg7v//NXqAEt2/A0pk2EXbSer5BJZwnFItC6WxwT0d2nRGjhOoK5dMyggdlZzKfVRGGwWNp3m+nLL8XDidu1mLf7NjSNjjZXS6z4NSYr82/8HWIXH+zdqeO3M7hU+V0Y8gbdv7fcancYI+IcREmpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QnXxuBq9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A08C113CF;
+	Wed, 20 Aug 2025 17:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755710367;
+	bh=ZqeFO6HvfjccxgbJRn37HsDogI883Z0ye1Ok5+j3EBg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QnXxuBq9DaMzoURintPzzDLWm6OGJtRPK5y6jTbj4z7Fe4QFIOGeMAm6xTyXlFlwz
+	 I1zl0A27O5+l30TpOLpjgTLLT3IBhtn/oy3JXr6IOY17PGFSGAekC+hsYinNTrGBFk
+	 iyi5XmYQfJfrXsrIMIx9mSXEVhtw5EJDcwvNR9/iaD0lQqiT+VhTajCOQjYaWm06jB
+	 stPgfsAYA4tGBt+YkC71Gl8cggC5pcFKWJugxR6MwEfnWn+gBwjqX7RUh22ZwkEEu2
+	 EFSJB4JzO4GLVaUVXC0doDoVm3oCa3OAU1BRy4BTWD+deENzt+8LIf/iP/tmJ3OedF
+	 fG0lE3alkNn6Q==
+Date: Wed, 20 Aug 2025 18:19:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+	andrew-ct.chen@mediatek.com,
+	angelogioacchino.delregno@collabora.com, chunkuang.hu@kernel.org,
+	ck.hu@mediatek.com, conor+dt@kernel.org, davem@davemloft.net,
+	dmitry.torokhov@gmail.com, edumazet@google.com,
+	flora.fu@mediatek.com, houlong.wei@mediatek.com, jeesw@melfas.com,
+	jmassot@collabora.com, kernel@collabora.com, krzk+dt@kernel.org,
+	kuba@kernel.org, kyrie.wu@mediatek.corp-partner.google.com,
+	lgirdwood@gmail.com, linus.walleij@linaro.org,
+	louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com,
+	matthias.bgg@gmail.com, mchehab@kernel.org,
+	minghsiu.tsai@mediatek.com, mripard@kernel.org,
+	p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
+	sean.wang@kernel.org, simona@ffwll.ch,
+	support.opensource@diasemi.com, tiffany.lin@mediatek.com,
+	tzimmermann@suse.de, yunfei.dong@mediatek.com,
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v1 00/14] MediaTek dt-bindings sanitization (MT8173)
+Message-ID: <9401aab0-1168-4570-a0a1-1310f37142eb@sirena.org.uk>
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/IS/CsiIsaaXgGuH"
+Content-Disposition: inline
+In-Reply-To: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+X-Cookie: Semper Fi, dude.
+
+
+--/IS/CsiIsaaXgGuH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250819135007.85646-3-cuiyunhui@bytedance.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yunhui,
+On Wed, Aug 20, 2025 at 02:12:48PM -0300, Ariel D'Alessandro wrote:
+> This patch series continues the effort to address Device Tree validation
+> warnings for MediaTek platforms, with a focus on MT8173. It follows the i=
+nitial
+> cleanup series by Angelo (https://www.spinics.net/lists/kernel/msg5780177=
+=2Ehtml)
+>=20
+> Similarly to the ongoing MT8183 work done by Julien Massot, this patchset
+> eliminates several of the remaining warnings by improving or converting DT
+> bindings to YAML, adding missing properties, and updating device tree fil=
+es
+> accordingly.
 
-kernel test robot noticed the following build errors:
+Same question as for that series, what's the story with
+interdependencies between the patches?
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on dennis-percpu/for-next v6.17-rc2 next-20250820]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yunhui-Cui/riscv-remove-irqflags-h-inclusion-in-asm-bitops-h/20250819-215256
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250819135007.85646-3-cuiyunhui%40bytedance.com
-patch subject: [PATCH 2/2] riscv: introduce percpu.h into include/asm
-config: riscv-allnoconfig (https://download.01.org/0day-ci/archive/20250821/202508210101.WySkXlSZ-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250821/202508210101.WySkXlSZ-lkp@intel.com/reproduce)
+--/IS/CsiIsaaXgGuH
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508210101.WySkXlSZ-lkp@intel.com/
+-----BEGIN PGP SIGNATURE-----
 
-All errors (new ones prefixed by >>):
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmimA5MACgkQJNaLcl1U
+h9CEfgf+Pr+Af7Z3trY1Qt1ap+qEJ57HkG6lF3iW60MvmprIVByI7krLMLxXZ09K
+ggagUaBYGNe98N0oE1w0BjSlrjQxJkAkDTBS7pWP1kc001DinfldPd7bCVwY+3i/
+59SETB3Wqun/8fKWU717tHGGGXQ0ruQ7y7dJbZNRCNIo8od7RIBHM2ev88Q8q6H9
+wqdaDwKYMej3vW+Icx/xuH+VELI62AlrJ6W6XGDofU3hpvWHCvMN8GPcJnieHnZi
+2iOYaasf79REJsNyLC6UqGXE1LBDcN3GkZDxou/yZ2kzh5h7obsGMg11oQS3/iI6
+kvVcUoGo80bkRQrHEqntaPQqVwSecQ==
+=rN98
+-----END PGP SIGNATURE-----
 
-   In file included from include/linux/atomic.h:80,
-                    from include/linux/cpumask.h:14,
-                    from include/linux/smp.h:13,
-                    from include/linux/lockdep.h:14,
-                    from include/linux/spinlock.h:63,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/mm.h:7,
-                    from mm/slub.c:13:
-   mm/slub.c: In function '__update_cpu_freelist_fast':
->> include/linux/atomic/atomic-arch-fallback.h:414:30: error: implicit declaration of function 'arch_cmpxchg128_local'; did you mean 'arch_cmpxchg64_local'? [-Wimplicit-function-declaration]
-     414 | #define raw_cmpxchg128_local arch_cmpxchg128_local
-         |                              ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/atomic/atomic-instrumented.h:5005:9: note: in expansion of macro 'raw_cmpxchg128_local'
-    5005 |         raw_cmpxchg128_local(__ai_ptr, __VA_ARGS__); \
-         |         ^~~~~~~~~~~~~~~~~~~~
-   arch/riscv/include/asm/percpu.h:131:17: note: in expansion of macro 'cmpxchg128_local'
-     131 |         ret__ = cmpxchg128_local(ptr__, old__, new__);                  \
-         |                 ^~~~~~~~~~~~~~~~
-   include/asm-generic/percpu.h:108:17: note: in expansion of macro 'this_cpu_cmpxchg128'
-     108 |         __val = _cmpxchg(pcp, __old, nval);                             \
-         |                 ^~~~~~~~
-   include/asm-generic/percpu.h:527:9: note: in expansion of macro '__cpu_fallback_try_cmpxchg'
-     527 |         __cpu_fallback_try_cmpxchg(pcp, ovalp, nval, this_cpu_cmpxchg128)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   mm/slab.h:24:41: note: in expansion of macro 'this_cpu_try_cmpxchg128'
-      24 | #define this_cpu_try_cmpxchg_freelist   this_cpu_try_cmpxchg128
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~~
-   mm/slub.c:3638:16: note: in expansion of macro 'this_cpu_try_cmpxchg_freelist'
-    3638 |         return this_cpu_try_cmpxchg_freelist(s->cpu_slab->freelist_tid.full,
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +414 include/linux/atomic/atomic-arch-fallback.h
-
-9257959a6e5b4f Mark Rutland 2023-06-05  413  
-9257959a6e5b4f Mark Rutland 2023-06-05 @414  #define raw_cmpxchg128_local arch_cmpxchg128_local
-e6ce9d741163af Uros Bizjak  2023-04-05  415  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--/IS/CsiIsaaXgGuH--
 
