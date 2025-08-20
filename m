@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-778618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79309B2E80E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:20:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49B8B2E81E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A33B4E453A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3223D680612
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E28215F4A;
-	Wed, 20 Aug 2025 22:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C2727E1D0;
+	Wed, 20 Aug 2025 22:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvsougiK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udK2mbzA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D76027E1D0;
-	Wed, 20 Aug 2025 22:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC59C22579E;
+	Wed, 20 Aug 2025 22:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755728445; cv=none; b=pFPpysp1DmiMcB8NQTCQiNJkvKrKCbAos1NNtQ7Mdvd5SnXOLMzCp1q7Bg9ezlMuQuB/9ScBmyaCvJn20jJzKL1F87nhFayPZi6UmMkxrJemLDqyGPauIi3A7IEewShhO9DOCzfWOPyuuF2ffKOAEeMobutONtLNZXVBf16/Cmc=
+	t=1755728585; cv=none; b=GBo8oNAlCSVhKRKZNDJwZLHsJUSZuIkjmSOIBrjvfkUYLTZZU1fqbQTOUMsgfgPw+fd4OtCOrdPNxQvd7xR34hREvbvYsrMVfa/6Em3fdy3edBQFGsyw1XwC3IvjF1BrQ8ZjSV94u5/epANGN9AlZKfoxE4P4gCEbw5N+BfwmPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755728445; c=relaxed/simple;
-	bh=wsUPldU04Nc0Tm1FqMCC1+DGwqczRsoyIsHWywBiPgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J84OWHcsmDuqS3oxo6CGXJ2dQBVVKsKxntUhPHqCWygCI2mRrby9Wvitzca2VIo7SFIni7vAy9pxiHAlQPWk3KyOGOGK/gKjMSZbZc784VUx8/RX8yl70dsRDK9LyIy8/HksthC7vOrTERQc1WEkH8Fcay6LJS0naS9oKPmmSHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LvsougiK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2FA6C4CEE7;
-	Wed, 20 Aug 2025 22:20:44 +0000 (UTC)
+	s=arc-20240116; t=1755728585; c=relaxed/simple;
+	bh=0Hc+hko8FrAVekC8D7wSPp0TYD0KKnzwUrEEEtQlhss=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZDOyyeYWDNzV2qtCtOpJzSqI5Ve6d0s11KEXN3sHx5IYoUQzEeSczSEl8dBIk/ckPosOou+JFzO/02hwxdCpI1sN0XHDo7QwPn73OjuIqRiP1lVlUpF5uRHeoWJNCXxQjwp5ZIk+30JXrMQrgIqCT8PMUhDpDGNAANttM/5jKW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udK2mbzA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C15DC4CEED;
+	Wed, 20 Aug 2025 22:23:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755728444;
-	bh=wsUPldU04Nc0Tm1FqMCC1+DGwqczRsoyIsHWywBiPgc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LvsougiKOoa5TSf6WheDqGzlEMw00QFrCBKPtwUf2Tj9Nc4GtcSPwAfQpiNWBbMHc
-	 E8qH/k7/hsk/RF3qbvoavwyuL17GbLlrCyU+7YzdQ61EHOGWKCtUybMhI0bsvL8o7m
-	 T91q85AUiTZeiZmnEq7pMcS+5rSRcAWpFhJtqRXT/mYz/Bi7zGNGC/AuraNoQMnBTq
-	 FyYxpl8DPOnWIemaxZnlpHuT/AhTETzjwLko+J71Bzr3wODLBVMkYOW5eRfZLOecGt
-	 jlBK0S8hxOvvtj+JVF+fqiPZPbm97dPvagupwd9+f5tVqJ8iAGC5ffci5EJC8V27rT
-	 vJlROA+aDptSA==
-Date: Wed, 20 Aug 2025 17:20:44 -0500
-From: Rob Herring <robh@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hector Martin <marcan@marcan.st>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v2 3/9] dt-bindings: iommu: apple,sart: Add Apple A11
-Message-ID: <20250820222044.GA1513864-robh@kernel.org>
-References: <20250818-t8015-nvme-v2-0-65648cd189e0@gmail.com>
- <20250818-t8015-nvme-v2-3-65648cd189e0@gmail.com>
+	s=k20201202; t=1755728585;
+	bh=0Hc+hko8FrAVekC8D7wSPp0TYD0KKnzwUrEEEtQlhss=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=udK2mbzAU+s690sSPA6XyE6lYsAdDFYHRihpYv1DVf0JRR9xVx5w8fsm0tuMskO/E
+	 HKA1KLmxnYLKX1h3fLRGekAuL3qGChKObdbmBv3+tGXf3BSwC0grnEuyWVPdEz+6CW
+	 YcleCkwqNssHpsbJpyfDKX3E9p/tEtFflJQlkj7mcY6GGVF3D7E5wRHV9f1FBJPVEF
+	 /n4/iXFInEnYS8weecgEFBSruLLmYTkCavSgdUcj3pXHbeCSGm5IqZ6BQF+qbcc2Ky
+	 XgvgiieJ01HlBslka2sY/OCzDoA3PNE16qxbEM4gQcnG0ntz4q23O8uR5DbgKXw+GF
+	 c5zGm1wTdxgpw==
+From: SeongJae Park <sj@kernel.org>
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com
+Subject: Re: [RFC PATCH mm-next v2 00/12] mm/damon: support ARM32 with LPAE
+Date: Wed, 20 Aug 2025 15:23:02 -0700
+Message-Id: <20250820222302.88000-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250820080623.3799131-1-yanquanmin1@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818-t8015-nvme-v2-3-65648cd189e0@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 18, 2025 at 04:42:56PM +0800, Nick Chan wrote:
-> Add bindings for SARTv0 as found on Apple A11 SoC.
-> 
-> Reviewed-by: Sven Peter <sven@kernel.org>
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
->  Documentation/devicetree/bindings/iommu/apple,sart.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/apple,sart.yaml b/Documentation/devicetree/bindings/iommu/apple,sart.yaml
-> index e87c1520fea60a2de549aa8a469fcded52e3b6e3..95d55ec688779bd52b8aef316a4c1ba7b7449574 100644
-> --- a/Documentation/devicetree/bindings/iommu/apple,sart.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/apple,sart.yaml
-> @@ -29,6 +29,7 @@ description:
->  properties:
->    compatible:
->      oneOf:
-> +      - const: apple,t8015-sart
+On Wed, 20 Aug 2025 16:06:10 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
 
-Actually I take back my ack, move this to the existing 'enum' down 
-below. With that change, you can keep the ack.
+> Previously, DAMON's physical address space monitoring only supported
+> memory ranges below 4GB on LPAE-enabled systems. This was due to
+> the use of 'unsigned long' in 'struct damon_addr_range', which is
+> 32-bit on ARM32 even with LPAE enabled[1].
+> 
+> To add DAMON support for ARM32 with LPAE enabled, a new core layer
+> parameter called 'addr_unit' was introduced[2]. Operations set layer
+> can translate a core layer address to the real address by multiplying
+> the parameter value to the core layer address. Support of the parameter
+> is up to each operations layer implementation, though. For example,
+> operations set implementations for virtual address space can simply
+> ignore the parameter. Add the support on paddr, which is the DAMON
+> operations set implementation for the physical address space, as we have
+> a clear use case for that.
+> 
+> [1]https://lore.kernel.org/all/20250408075553.959388-1-zuoze1@huawei.com/
+> [2]https://lore.kernel.org/all/20250416042551.158131-1-sj@kernel.org/
+> 
+> Changes in v2:
 
->        - items:
->            - const: apple,t8112-sart
->            - const: apple,t6000-sart
+It would be nice if you can also add the link to the previous version, e.g.,
+like the revisions history of
+https://lore.kernel.org/20250819193404.46680-1-sj@kernel.org
+
+> - set DAMOS_PAGEOUT, DAMOS_LRU_[DE]PRIO, DAMOS_MIGRATE_{HOT,COLD} and
+>   DAMOS_STAT stat in core address unit.
+> - pass ctx->min_region value to replace the original synchronization.
+> - drop the DAMOS stats type changes, keep them as 'unsigned long' type.
+> - separate add addr_unit support for DAMON_RECLAIM and LRU_SORT from
+>   this patch series.
+
+Thank you for continuing this work!
+
 > 
-> -- 
-> 2.50.1
-> 
+> Quanmin Yan (2):
+>   mm/damon: add damon_ctx->min_region
+>   mm/damon/core: prevent unnecessary overflow in
+>     damos_set_effective_quota()
+
+I left a few comments.  In essense, let's rename min_region to min_sz_region,
+and separate the last fix from this series.
+
+Other than above, looks good overall.  I think you can drop RFC tag from the
+next version.
+
+
+Thanks,
+SJ
+
+[...]
 
