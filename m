@@ -1,144 +1,86 @@
-Return-Path: <linux-kernel+bounces-778584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA2EB2E7A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:42:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97359B2E7A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF6E1CC10D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:41:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A030AA6330
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517533314DC;
-	Wed, 20 Aug 2025 21:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FX745Hq3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2DA3314A5;
+	Wed, 20 Aug 2025 21:41:08 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A830F2DC32D;
-	Wed, 20 Aug 2025 21:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75372765C9
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755726057; cv=none; b=qhm9rw3x4VJQwJ5JTRz6tHxCLMj6w7imTvyKrD4ESK6C5e8y8OIu7DFwVK3+R+f2HtqgVKcaOgpcoTIMtAVDFNFnBCDQ6UkRLSzHqEchmwEfeVW1iZ5cKuGKeiAsqP5tiCUiu0esOwo3uwSwuJ1eMGPEstCauW8sc9vcKrXNxy4=
+	t=1755726068; cv=none; b=bPj8eo8Fu7dzEu5snZlzy+HQhk92HnMqWFxQf3Di2jd9Ng7HQtswNwqAXajKsGDg04TQubrpVCD8c3ectYaUy9JkoF+DWiHpzti3bggy2EwZQEf1MrT9zGMx6Nts3wpOF2om71GmelRhoUmHj+YvYYVk8rZg8/bldo6uodvSRSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755726057; c=relaxed/simple;
-	bh=oDw28D3aQR3jAC01L4+9zN4szMeSl06K1tKTSdrq4S0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MkwiNCnFIPKHVFGmBi+DdwzkCMEz8fbj5EGJjmLAMPU7EU5t4/1vtlurNszfuHsP7zDbqi2IxqLdV8QcG9NarKUFxHaTAIs8JoodbAJ5TtZTIaRmtfw0KzIhpOpmkN+yztDcq1lk2MTax3IScj7MlzIgcZ9IHhmFd8h7x2iPOHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FX745Hq3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0D01C4CEE7;
-	Wed, 20 Aug 2025 21:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755726057;
-	bh=oDw28D3aQR3jAC01L4+9zN4szMeSl06K1tKTSdrq4S0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FX745Hq3KtdkB/ELuwWOlr2iNlgKMhYw3sGGNvb0FiRHN2vutcQ8wm6BavhTsB7oT
-	 KSdVoxl5kzGZprTp4raN/7nzFhjrDQk9eyuSKiz1NXqYGDmWEnRgjGLKnqjOWJt46E
-	 wH+TfX1qycAHsep5zCaa58XnTdwrDMcqVPG9oB2MJlrY5Per6j1E7oPYb0+8tdFyv9
-	 oEjyzXKNwO7pquE36QIGh1mGfWqn4SgSHYuJDE36qTuWBHvE5Btl692KsM0KZU9Mog
-	 CBylXhe9Y7q+9/9l/l/wNe8LkXJu4HNEPlmHlE2yjwoSV0W3rRk5zY+pR7pUXVTPNO
-	 2DFKlIg+kbMgA==
-Date: Wed, 20 Aug 2025 18:40:53 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCHSET v5 00/12] perf annotate: Support --code-with-type on
- TUI
-Message-ID: <aKZA5bE1ibDMJpuw@x1>
-References: <20250816031635.25318-1-namhyung@kernel.org>
+	s=arc-20240116; t=1755726068; c=relaxed/simple;
+	bh=kl5KF1g7TcqLHhja+Q2NYapGPEBXXCGdvVH6XxCqVYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RdDadAA8TNVko/tA3VZaUZJjlDeccbl6Rrpl/aO5txjc99IR65e4pvH8aMXzj87bDvsiMR8ZY+ezci4bkIao7ri422TCrBseBRBBVslqKAaZFmHma84MHww/i+TMV+AmsxMOxUUjufLlO4jqfvFGyNCjEKwIwKzhgQDVnncS9Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id ABF461163A9;
+	Wed, 20 Aug 2025 21:41:03 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 5E2CF20019;
+	Wed, 20 Aug 2025 21:41:01 +0000 (UTC)
+Date: Wed, 20 Aug 2025 17:41:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>, "H. Peter
+ Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] x86: Make x86@kernel.org a list and not a maintainer
+Message-ID: <20250820174103.3b3eef1e@gandalf.local.home>
+In-Reply-To: <e97983fd-b6ee-403a-87c7-53ff37468551@intel.com>
+References: <20250820152054.165811ea@gandalf.local.home>
+	<e97983fd-b6ee-403a-87c7-53ff37468551@intel.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250816031635.25318-1-namhyung@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 8ty6fwdeqn44mpfpqudt43chw7afdtop
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 5E2CF20019
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/0Z5ga12rGd9+K90rKiWvDuewRABuycHM=
+X-HE-Tag: 1755726061-828463
+X-HE-Meta: U2FsdGVkX1/8yRYdufd5HGk9ceOmUWr0/F7272WSdQ5DGFyqsXQJIUgNaj3MGcPN62GDivfT5qc6Pflnqb4Qa6ma9sDzGyXJyoUXY4swFAuWw+pCTp+HJAFWRscgEPrenXBLTTwQPYxpa+p1m0OdSm2coonM4RTlzanOCX3LoknfGZQ9Yxt4wet9MPj5+RRJau+WsGbJ9EhYWVebcTH7C1D0uDlds3zlz5yyhBBIjUh/+YuNuailEMnRDDdHj87NFs9GyMQOnjZ8G2J1C7Rc8r31asOnjXuK7oPkmq9EPLd8nem6OWsE6qv1fQHQ1dU0Nh5WXPHW28F01O+z1uXUWD0K484JC0pIgd1aFuIRZz6QTaN+Fob/25Dvy0+gafV70t+OqRdAFgM=
 
-On Fri, Aug 15, 2025 at 08:16:23PM -0700, Namhyung Kim wrote:
-> 
-> Hello,
-> 
-> The --code-with-type option is to show normal annotate output with type
-> information.  It was supported only on --stdio, but this change adds it
-> to TUI as well.
-> 
-> Arnaldo, please tell me if you still don't like the
-> __hist_entry__tui_annotate() but I don't have a better idea for now.
+On Wed, 20 Aug 2025 14:37:57 -0700
+Dave Hansen <dave.hansen@intel.com> wrote:
 
-Not a problem, I tested everything, all seems to work as advertised.
+> > The MAINTAINERS document starts with:
+> > 
+> >         M: *Mail* patches to: FullName <address@domain>
+> > 	[..]
+> >         L: *Mailing list* that is relevant to this area  
+> 
+> Yeah, it's not a person, but it's also not a list that folks can
+> subscribe to. So there really isn't a good fit for it. I've never heard
+> of it causing any problems, so my inclination would be to just leave it
+> as-is.
 
-The minor suggestions I made I can do while merging, if you don't mind
-and agree with them.
+My complaint is that it's listed as both 'L' and 'M'. It should at least be
+consistent.
 
-Please let me know.
+Should it become a list?
 
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-- Arnaldo
- 
-> v5 changes)
->  * use a copy of hist entry for perf top  (Ian)
->  * split disasm_line__write() change  (Ian)
->  * constify annotation_write_ops parameter  (Ian)
->  * update printed length calculation  (Ian)
->  * remove annotation_print_data.start
->  * add a hashmap to skip duplicate processing
-> 
-> v4 changes)
->  * add dso__debuginfo() helper  (Ian)
-> 
-> v3 changes)
->  * hide stack operation and stack canary by default
-> 
-> v2 changes)
->  * use 'T' key to toggle data type display  (Arnaldo)
->  * display '[Type]' in the title line when it's enabled  (Arnaldo)
->  * show warning when debug info is not available  (Arnaldo)
->  * fix a typo  (Arnaldo)
-> 
-> Actually the command line option sets the default behavior and users can
-> change it by pressing 'T' key in the TUI annotate browser.
-> 
-> The code is also available at 'perf/annotate-code-type-tui-v5' branch at
-> https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
-> 
-> Thanks,
-> Namhyung
-> 
-> 
-> Namhyung Kim (12):
->   perf annotate: Rename to __hist_entry__tui_annotate()
->   perf annotate: Remove annotation_print_data.start
->   perf annotate: Remove __annotation_line__write()
->   perf annotate: Pass annotation_print_data to annotation_line__write()
->   perf annotate: Simplify width calculation in annotation_line__write()
->   perf annotate: Return printed number from disasm_line__write()
->   perf annotate: Add --code-with-type support for TUI
->   perf annotate: Add 'T' hot key to toggle data type display
->   perf annotate: Show warning when debuginfo is not available
->   perf annotate: Hide data-type for stack operation and canary
->   perf annotate: Add dso__debuginfo() helper
->   perf annotate: Use a hashmap to save type data
-> 
->  tools/perf/Documentation/perf-annotate.txt |   1 -
->  tools/perf/builtin-annotate.c              |   5 -
->  tools/perf/ui/browsers/annotate.c          | 117 ++++++++++++--
->  tools/perf/ui/browsers/hists.c             |   2 +-
->  tools/perf/util/annotate.c                 | 178 +++++++++++++++------
->  tools/perf/util/annotate.h                 |  29 ++--
->  tools/perf/util/dso.h                      |  21 +++
->  tools/perf/util/hist.h                     |  12 +-
->  8 files changed, 273 insertions(+), 92 deletions(-)
-> 
-> -- 
-> 2.50.1
+-- Steve
 
