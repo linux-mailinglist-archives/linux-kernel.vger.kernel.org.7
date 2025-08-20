@@ -1,319 +1,232 @@
-Return-Path: <linux-kernel+bounces-777634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECB7B2DC0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:05:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11622B2DC01
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D518E1889CDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 515FB1C23BAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57754302CA3;
-	Wed, 20 Aug 2025 12:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D902E7631;
+	Wed, 20 Aug 2025 12:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="sA9hxJPx"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S335+IH8"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8482E8889;
-	Wed, 20 Aug 2025 12:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963E62F0C6A
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755691434; cv=none; b=gQ9xFbMu7pVb3uawF8Aw/ydxWjQeMAD3n/quuyF/8ditUAwAQkbb6hzm1Hlp0k44WDRQjJfJVsUf7K6W1XMR9UdS+17hEC0kQ9sI00goaFpFcfzAz104+BBdFl8NdkuyLmMvAtm/fRTrmLSaajJrnVoxgw7R5MVEsE/N/iItZg8=
+	t=1755691427; cv=none; b=V2HZDJcfA6KJm3x6JVuVfR2yIL2gF7DDi1VYC89DRIFnIj4DdcSAPEzDXZgXEK2VczqpwhWbc4eZWeuoIfKBnC0zTZUEfGyqQh8KkIq25FOc24TNPAW+tf0HdFpoafq6p0h9oX6UTvTaSrxjzzrqFZkPk0NKoQkmXYPiVYkjloU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755691434; c=relaxed/simple;
-	bh=Ksl/P0FewlvtlAM4h8GRfzNWfnApy8twRnod3sBzruo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WJekBwBZ6UhZmCcs2MqPWoztQU+0ZRyQMhSXu731xBm6JXrzYZqGx346fxbAgBqOYKR7UBQWg1JY5FR/vK6bryGhClJi8lgKJpv2tG1sfHfoDU0QWrMLBnm5u8C5z/dZz5OkYWMUgRRqtUzu9kCp8vcSo0VXEB5mnwh9TFy+yWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=sA9hxJPx; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KAeT6E009192;
-	Wed, 20 Aug 2025 08:03:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=szKwJ
-	DHvtugDHsPzhtNq0i+ZtQ0tz1Z1J3+jkQRTVn0=; b=sA9hxJPx3OTi6QXz/RiAt
-	4wBhjxWlgmGEzbLNzprFuFVc2nUSpW3FB/IoBnQPoPW5/zHgM62j0rQ1ANLOQ0vn
-	MSC5QCz6D5Eh7k1zEdacXYlp5hjrPA8uTn6M4YFbZ+Vh6FlDBnVnY7NK+aKaKH/F
-	/64KadhfJpiejZKYPmZPC1cULSuChMIh7THFpR3oBVUwZ+7LEyFJpVkm9HSOGPyY
-	VH3TXZ+8p+df1wCJ3lSioMaQ+hlvO9kvlkIR/NTvYZBDW5rMovTwQEOh+Gncv+EL
-	uWEhNF04RnWxQs+BX3C2qLCPLWMBlTNj700G0IcQhlTuSHdy663zfIcrgKfGku44
-	A==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48n0tdufhq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Aug 2025 08:03:37 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 57KC3aqH037366
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 20 Aug 2025 08:03:36 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 20 Aug 2025 08:03:36 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 20 Aug 2025 08:03:36 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Wed, 20 Aug 2025 08:03:36 -0400
-Received: from IRISTEIU-L01.ad.analog.com (IRISTEIU-L01.ad.analog.com [10.48.65.173])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57KC31n4020092;
-	Wed, 20 Aug 2025 08:03:29 -0400
-From: Ioana Risteiu <Ioana.Risteiu@analog.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich
-	<Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        "David
- Lechner" <dlechner@baylibre.com>,
-        =?UTF-8?q?Nuno=20S=C3=A1?=
-	<nuno.sa@analog.com>,
-        Andy Shevchenko <andy@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Ramona Nechita <ramona.nechita@analog.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Ioana Risteiu <Ioana.Risteiu@analog.com>
-Subject: [PATCH v4 4/4] iio: adc: update ad7779 to use IIO backend
-Date: Wed, 20 Aug 2025 15:02:45 +0300
-Message-ID: <20250820120247.3012-5-Ioana.Risteiu@analog.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250820120247.3012-1-Ioana.Risteiu@analog.com>
-References: <20250820120247.3012-1-Ioana.Risteiu@analog.com>
+	s=arc-20240116; t=1755691427; c=relaxed/simple;
+	bh=vlwreu9O+be4DJm+hSQtGoS2HuItPDgbl6GwoQIhAyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bhn21FnXa0zUm98e/ZgO7Vj6c6dna87b/Ccp+AoBwtpgqf4+otU8tKtTCcb7IsPmAj41mX7WoA4/hi+xRt+Ob2xlvtu9hRlUQASG7t/i9Li1md0/XMpWL956y5gT30KIrAeKlHIHM2pIxSNwhj6xVwALJXc8QoYxCPaAlEp8JF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S335+IH8; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b9d41bfa35so5022800f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 05:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755691424; x=1756296224; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m+QUP/qCQ9S9KCnUtcQ8czQ4I1MjpJ0iqHa7qQn/S40=;
+        b=S335+IH8/UVj156SIeqrQeE9lboNxIsyzK2SLl3tzUvR+qEJkYr+45gMxtevNakLXw
+         LyXOpG86Vyq1lG0ShZxHzH6bmPlXrFGYNwKzvnk/tyjqWtzr9f8wAU1+i3uIq0Icx/Qc
+         Y+w/EyiU5FT9Ht3xwyi4XK0ohnde/ZNfLxBIcIqvK/IqrntSG9I0toUwkX62ROSi35fQ
+         TRgp0E8FdxNhdhfAtpkhEZ/j+Wnh6OY3Uwk+sJlBFfSiHALILVmCZ+WT/AoG7jM6IczH
+         7GbDr0ZOlmY0ww0m4MRrzOSOKXVvYmtdD1mt/j0v42UJ88U/rMKnA1aJOgORjThurDd4
+         B4Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755691424; x=1756296224;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m+QUP/qCQ9S9KCnUtcQ8czQ4I1MjpJ0iqHa7qQn/S40=;
+        b=bwEFWqKLm3Klfwm1SMvUygGHEIBidc8hZTVr0GsHd261B7EORvXslGcHSGE56pdrVs
+         +ppPAx+MkAhxOAUySYntvlGuTh5T81lbm0z6BCldwZ0b53itiJoQufmYFEQ2zwd99Xxy
+         /mUXeFhTnyTMJiFMoNwoACEZS5pS8NztjR421JF3/MlAInCJsEpI/GxoYIfxTvNhsrE4
+         HT8YHSblrfktg8waolwtlrwuYB3MY2W7liWwOYhJpbv6oczkHxXCJ76ZFh9URMvSyf4R
+         IMJ0M1VXZaCKVb8WavAaDnOeTUdyzY7lRJLq8WxX9i2lI+LaPR0EL4xpsMdN3a8Zjn8q
+         p8yw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsg+aO4/H6ySCTOLx8PJOgbC4kXHV4ZitQDA1pW3tAlAOtddlNwOJSvxIMiN48aWpXXxSc05lhMRv6iQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbB9zX0KSnXfOHjKJUsPXFTo98TTgoX+a2GO/TFJSYNAGvSrq+
+	QHoHUKLmR23qtO3zbr8A7olHvMrXbCaGNxacrU1w8SNwgEgjzMEX9dFWk2geG3po0As=
+X-Gm-Gg: ASbGncskCKSs1o2MbU0p/vdANt9KawzFA2Bmm/gmalPDsxT2JmRmmZ4UZMH4aCbUMTA
+	UyG5m7oAAQxClqJa7T41lmHF/9UllXC3bkGOj8l+5YgIT5bXAx2NZLuATEM2b8g4rbUX39sokJd
+	spVyJSKzRjUGYF7tGh5Drt+KKIypyQFlTupFYIXaimlzHAqp4s8gkgFiJMzPw3c4tNkFvgQ0XZg
+	+fVDvIDZSZqNUA9FnVYbjZL0qf4HPL4McdALE+9sHAehS2rYKINzbscsvoHY9SYo3N78kJdt+Td
+	EqkZuWM9qosSQk4iZpyIUd3dUoTdz0QFhD+walIpN+fogZwZpyWThnnc+3b6mZziN90aX7b8mxp
+	ccA/o936pYYmEcbSHB7nL5+asrKkxTwekDe5+txoAMnPWvjUhW42BepYDAlxDg7o=
+X-Google-Smtp-Source: AGHT+IErFEbEeDb8woWTaPOJfb3Qgt2FDT/URzIxfoRjH6UkOY7I+WGlkun1wq88CPFRriZlOSAS2A==
+X-Received: by 2002:a05:6000:26cd:b0:3b7:93c3:7d49 with SMTP id ffacd0b85a97d-3c32e22a3c5mr1832987f8f.39.1755691423737;
+        Wed, 20 Aug 2025 05:03:43 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c07487a009sm7460791f8f.11.2025.08.20.05.03.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 05:03:42 -0700 (PDT)
+Message-ID: <fd9eadb2-a209-4b52-a269-4e45c884bbc1@linaro.org>
+Date: Wed, 20 Aug 2025 13:03:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/11] firmware: qcom_scm: Add a prep version of
+ auth_and_reset function
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-4-mukesh.ojha@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250819165447.4149674-4-mukesh.ojha@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NSBTYWx0ZWRfX0B6s+v+BXogx
- u4PCRGjlJMqip62mE7N/4AUl3x9rqeoqeVjhZHMrGKVdj/mZBto2vFnFz0auUJOqzYkpffuqZjf
- Ire7Py9W9FH/0BtRnNTGHSjGsVMhySNADIAdT+xSe7NSJ+iMnq0GeZLjgRTPmNEUTfbvrIxTeyA
- j/XbYPC/jXbZ7wTeC5tWNkRQwnAfHttMLlST8yV3lzjIIPMKu6YVOWVi4gwW/MRaSA16mLI04v2
- IuH9uX7AsrNMWbkoDIuw4ChovZ7T5bLGDIIg2o8FA5ArYHWKdIABirDRZbbNxuO5IwYhXq9MTZu
- gNwvNc/+RASmRs5aaHUcg86v90EVA3jr6gK9gF1H2Zg9yPV0sFvIv19HnhrbCSvpDms6ajlIfuu
- 3iz4SOspI9OiItlAt0s0274dFe1d2g==
-X-Proofpoint-ORIG-GUID: hiXJFulbev_dI0BC2Put3c1GCiTAzDcB
-X-Authority-Analysis: v=2.4 cv=BoHEAYX5 c=1 sm=1 tr=0 ts=68a5b999 cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=2OwXVqhp2XgA:10 a=gAnH3GRIAAAA:8 a=VjRcvFoKhyOr0kwuT1sA:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: hiXJFulbev_dI0BC2Put3c1GCiTAzDcB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_03,2025-08-20_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 phishscore=0 spamscore=0 impostorscore=0
- malwarescore=0 bulkscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
- definitions=main-2508190195
 
-Add a new functionality to ad7779 driver that streams data through data
-output interface using IIO backend interface.
+On 19/08/2025 17:54, Mukesh Ojha wrote:
+> Qualcomm SoCs running with QHEE (Qualcomm Hypervisor Execution
+> Environment—a library present in the Gunyah hypervisor) utilize the
+> Peripheral Authentication Service (PAS) from TrustZone (TZ) firmware to
+> securely authenticate and reset remote processors via a sequence of SMC
+> calls such as qcom_scm_pas_init_image(), qcom_scm_pas_mem_setup(), and
+> qcom_scm_pas_auth_and_reset().
+> 
+> For memory passed to Qualcomm TrustZone, it must either be part of a
+> pool registered with TZ or be directly registered via SHMbridge SMC
+> calls.
+> 
+> When QHEE is present, PAS SMC calls from Linux running at EL1 are
+> trapped by QHEE (running at EL2), which then creates or retrieves memory
+> from the SHMbridge for both metadata and remoteproc carveout memory
+> before passing them to TZ. However, when the SoC runs with a
+> non-QHEE-based hypervisor, Linux must create the SHM bridge for both
+> metadata (before it is passed to TZ in qcom_scm_pas_init_image()) and
+> for remoteproc memory (before the call is made to TZ in
+> qcom_scm_pas_auth_and_reset()).
+> 
+> For auth_and_reset() call, first it need to register remoteproc carveout
+> memory with TZ via SHMbridge SMC call and then it can trigger
+> auth_and_reset SMC call and once the call returns, remoteproc carveout
+> memory can be deregisterd with TZ.
+> 
+> Add qcom_scm_pas_prepare_and_auth_reset() function which does prepare
+> the SHMbridge over carveout memory and call auth_and_reset SMC call.
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+>   drivers/firmware/qcom/qcom_scm.c       | 46 ++++++++++++++++++++++++++
+>   include/linux/firmware/qcom/qcom_scm.h |  2 ++
+>   2 files changed, 48 insertions(+)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 33187d4f4aef..9a5b34f5bacb 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -759,6 +759,52 @@ int qcom_scm_pas_auth_and_reset(u32 peripheral)
+>   }
+>   EXPORT_SYMBOL_GPL(qcom_scm_pas_auth_and_reset);
+>   
+> +/**
+> + * qcom_scm_pas_prepare_and_auth_reset() - Prepare, authenticate, and reset the remote processor
+> + *
+> + * @ctx:	Context saved during call to qcom_scm_pas_ctx_init()
+> + *
+> + * This function performs the necessary steps to prepare a PAS subsystem,
+> + * authenticate it using the provided metadata, and initiate a reset sequence.
+> + *
+> + * It is typically used when Linux is in control setting up the IOMMU hardware
 
-Signed-off-by: Ioana Risteiu <Ioana.Risteiu@analog.com>
----
-changes in v4:
- - grouped includes in alphabetical order
- - reordered fields in struct ad7779_state
- - modified logic of setting the number of lanes 
- - validating devicetree value
- drivers/iio/adc/ad7779.c | 116 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 115 insertions(+), 1 deletion(-)
+Is there a non-typical case ?
 
-diff --git a/drivers/iio/adc/ad7779.c b/drivers/iio/adc/ad7779.c
-index f7e681c0e8c0..adca490061c9 100644
---- a/drivers/iio/adc/ad7779.c
-+++ b/drivers/iio/adc/ad7779.c
-@@ -25,6 +25,7 @@
- #include <linux/units.h>
- 
- #include <linux/iio/iio.h>
-+#include <linux/iio/backend.h>
- #include <linux/iio/buffer.h>
- #include <linux/iio/sysfs.h>
- #include <linux/iio/trigger.h>
-@@ -116,6 +117,12 @@
- #define AD7779_CRC8_POLY			0x07
- DECLARE_CRC8_TABLE(ad7779_crc8_table);
- 
-+enum ad7779_data_lines {
-+	AD7779_1LINE = 1,
-+	AD7779_2LINES = 2,
-+	AD7779_4LINES = 4,
-+};
-+
- enum ad7779_filter {
- 	AD7779_SINC3,
- 	AD7779_SINC5,
-@@ -145,6 +152,7 @@ struct ad7779_state {
- 	struct completion completion;
- 	unsigned int sampling_freq;
- 	enum ad7779_filter filter_enabled;
-+	struct iio_backend *back;
- 	/*
- 	 * DMA (thus cache coherency maintenance) requires the
- 	 * transfer buffers to live in their own cache lines.
-@@ -630,12 +638,38 @@ static int ad7779_reset(struct iio_dev *indio_dev, struct gpio_desc *reset_gpio)
- 	return ret;
- }
- 
-+static int ad7779_update_scan_mode(struct iio_dev *indio_dev,
-+				   const unsigned long *scan_mask)
-+{
-+	struct ad7779_state *st = iio_priv(indio_dev);
-+	unsigned int c;
-+	int ret;
-+
-+	for (c = 0; c < AD7779_NUM_CHANNELS; c++) {
-+		if (test_bit(c, scan_mask))
-+			ret = iio_backend_chan_enable(st->back, c);
-+		else
-+			ret = iio_backend_chan_disable(st->back, c);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct iio_info ad7779_info = {
- 	.read_raw = ad7779_read_raw,
- 	.write_raw = ad7779_write_raw,
- 	.debugfs_reg_access = &ad7779_reg_access,
- };
- 
-+static const struct iio_info ad7779_info_data = {
-+	.read_raw = ad7779_read_raw,
-+	.write_raw = ad7779_write_raw,
-+	.debugfs_reg_access = &ad7779_reg_access,
-+	.update_scan_mode = &ad7779_update_scan_mode,
-+};
-+
- static const struct iio_enum ad7779_filter_enum = {
- 	.items = ad7779_filter_type,
- 	.num_items = ARRAY_SIZE(ad7779_filter_type),
-@@ -752,6 +786,49 @@ static int ad7779_conf(struct ad7779_state *st, struct gpio_desc *start_gpio)
- 	return 0;
- }
- 
-+static int ad7779_set_data_lines(struct iio_dev *indio_dev,
-+				 unsigned int num_lanes)
-+{
-+	struct ad7779_state *st = iio_priv(indio_dev);
-+	int ret = -EINVAL;
-+
-+	if (num_lanes != AD7779_1LINE &&
-+		num_lanes != AD7779_2LINES &&
-+		num_lanes != AD7779_4LINES)
-+		return ret;
-+
-+	ret = ad7779_set_sampling_frequency(st, num_lanes * AD7779_DEFAULT_SAMPLING_1LINE);
-+	if (ret)
-+		return ret;
-+
-+	ret = iio_backend_num_lanes_set(st->back, num_lanes);
-+	if (ret)
-+		return ret;
-+
-+	return ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
-+				    AD7779_DOUT_FORMAT_MSK,
-+				    FIELD_PREP(AD7779_DOUT_FORMAT_MSK, 2 - ilog2(num_lanes)));
-+}
-+
-+static int ad7779_setup_channels(struct iio_dev *indio_dev, const struct ad7779_state *st)
-+{
-+	struct iio_chan_spec *channels;
-+	struct device *dev = &st->spi->dev;
-+
-+	channels = devm_kmemdup_array(dev, st->chip_info->channels,
-+					ARRAY_SIZE(ad7779_channels),
-+					sizeof(*channels), GFP_KERNEL);
-+	if (!channels)
-+		return -ENOMEM;
-+
-+	for (int i = 0; i < ARRAY_SIZE(ad7779_channels); i++)
-+		channels[i].scan_type.endianness = IIO_CPU;
-+
-+	indio_dev->channels = channels;
-+
-+	return 0;
-+}
-+
- static int ad7779_setup_without_backend(struct ad7779_state *st, struct iio_dev *indio_dev)
- {
- 	int ret;
-@@ -796,6 +873,39 @@ static int ad7779_setup_without_backend(struct ad7779_state *st, struct iio_dev
- 				    FIELD_PREP(AD7779_DCLK_CLK_DIV_MSK, 7));
- }
- 
-+static int ad7779_setup_backend(struct ad7779_state *st, struct iio_dev *indio_dev)
-+{
-+	struct device *dev = &st->spi->dev;
-+	int ret = -EINVAL;
-+	int num_lanes;
-+
-+	indio_dev->info = &ad7779_info_data;
-+
-+	ret = ad7779_setup_channels(indio_dev, st);
-+	if (ret)
-+		return ret;
-+
-+	st->back = devm_iio_backend_get(dev, NULL);
-+	if (IS_ERR(st->back))
-+		return dev_err_probe(dev, PTR_ERR(st->back),
-+				     "failed to get iio backend");
-+
-+	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_iio_backend_enable(dev, st->back);
-+	if (ret)
-+		return ret;
-+
-+	num_lanes = 4;
-+	ret = device_property_read_u32(dev, "adi,num-lanes", &num_lanes);
-+	if (ret && ret != -EINVAL)
-+		return ret;
-+
-+	return ad7779_set_data_lines(indio_dev, num_lanes);
-+}
-+
- static int ad7779_probe(struct spi_device *spi)
- {
- 	struct iio_dev *indio_dev;
-@@ -848,7 +958,10 @@ static int ad7779_probe(struct spi_device *spi)
- 	indio_dev->modes = INDIO_DIRECT_MODE;
- 	indio_dev->num_channels = ARRAY_SIZE(ad7779_channels);
- 
--	ret = ad7779_setup_without_backend(st, indio_dev);
-+	if (device_property_present(dev, "io-backends"))
-+		ret = ad7779_setup_backend(st, indio_dev);
-+	else
-+		ret = ad7779_setup_without_backend(st, indio_dev);
- 
- 	if (ret)
- 		return ret;
-@@ -943,3 +1056,4 @@ module_spi_driver(ad7779_driver);
- MODULE_AUTHOR("Ramona Alexandra Nechita <ramona.nechita@analog.com>");
- MODULE_DESCRIPTION("Analog Devices AD7779 ADC");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("IIO_BACKEND");
--- 
-2.47.2
+"This function is used"
+> + * for remote subsystem during secure firmware loading processes. The preparation
+> + * step sets up shmbridge over the firmware memory before TrustZone access the
+
+shmbridge -> "a shmbridge"
+"access" -> "accesses"
+
+> + * firmware memory region for authentication. The authentication step verifies
+> + * the integrity and authenticity of the firmware or configuration using secure
+> + * metadata. Finally, the reset step ensures the subsystem starts in a clean and
+> + * sane state.
+> + *
+> + * Return: 0 on success, negative errno on failure.
+> + */
+> +int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_ctx *ctx)
+> +{
+> +	u64 handle;
+> +	int ret;
+> +
+> +	if (!ctx->has_iommu)
+> +		return qcom_scm_pas_auth_and_reset(ctx->peripheral);
+> +
+> +	/*
+> +	 * When Linux running at EL1, Gunyah(EL2) traps auth_and_reset call and creates
+> +	 * shmbridge on subsystem memory region before it passes the call to TrustZone
+> +	 * to authenticate it while when Linux runs at EL2, it needs to create shmbridge
+> +	 * before this call goes to TrustZone.
+> +	 */
+
+If Linux is running at EL1, Gunyah running at EL2 traps the 
+auth_and_reset call, creates a shmbridge in "subsystem memory ? bod: 
+which subsystem do you mean here" and then passes the call to TrustZone. 
+If Linux is running at EL2 then Linux needs to create the shmbridge 
+before calling into TrustZone.
+
+> +	ret = qcom_tzmem_shm_bridge_create(ctx->mem_phys, ctx->mem_size, &handle);
+> +	if (ret) {
+> +		dev_err(__scm->dev, "Failed to create shmbridge ret=%d %u\n",
+> +			ret, ctx->peripheral);
+> +		return ret;
+> +	}
+> +
+> +	ret = qcom_scm_pas_auth_and_reset(ctx->peripheral);
+> +	qcom_tzmem_shm_bridge_delete(handle);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_scm_pas_prepare_and_auth_reset);
+> +
+>   /**
+>    * qcom_scm_pas_shutdown() - Shut down the remote processor
+>    * @peripheral: peripheral id
+> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+> index b7eb206561a9..a31006fe49a9 100644
+> --- a/include/linux/firmware/qcom/qcom_scm.h
+> +++ b/include/linux/firmware/qcom/qcom_scm.h
+> @@ -79,6 +79,7 @@ struct qcom_scm_pas_ctx {
+>   	size_t mem_size;
+>   	struct qcom_scm_pas_metadata *metadata;
+>   	bool save_mdt_ctx;
+> +	bool has_iommu;
+>   };
+>   
+>   void *qcom_scm_pas_ctx_init(struct device *dev, u32 peripheral, phys_addr_t mem_phys,
+> @@ -87,6 +88,7 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+>   			    struct qcom_scm_pas_metadata *ctx);
+>   void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx);
+>   int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr, phys_addr_t size);
+> +int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_ctx *ctx);
+>   int qcom_scm_pas_auth_and_reset(u32 peripheral);
+>   int qcom_scm_pas_shutdown(u32 peripheral);
+>   bool qcom_scm_pas_supported(u32 peripheral);
 
 
