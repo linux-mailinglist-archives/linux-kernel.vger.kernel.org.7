@@ -1,89 +1,99 @@
-Return-Path: <linux-kernel+bounces-777075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7146EB2D4C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:24:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575BFB2D4C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 289BD587F1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:24:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DD5B5881A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F002D3EDE;
-	Wed, 20 Aug 2025 07:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUFrXy35"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A352D47E6;
+	Wed, 20 Aug 2025 07:24:43 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D78EAD7;
-	Wed, 20 Aug 2025 07:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012EDEAD7;
+	Wed, 20 Aug 2025 07:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755674640; cv=none; b=OEk6j0bPIYqYoQknsH4WLdbXIt1nwIP6DElVGsf+xvA9pqD/NsQx7ohOl/a++yEmqOOHwuM7S4lXZBbZebSUfCOURUa0An0Ncspfg0JBfXT2d8h8kwav/pxIcKf4ybaRNasrGbJMwkRbNCQZ+KuoMt14WlXfUL/u3yVJFHmkzk4=
+	t=1755674683; cv=none; b=T3Kyspd+C9VGZvuLONWv9jsOuZcWS6jK4nJ8bAp0ibNSPg1LWLG9uIcblBne2u5OqFg9iAWXbpE0FIHUSr6wp/GPIFRivqfxo2Umi5TrNcinPoSZlqp1AM7MjWLPFrbUwSRnJMMrRBVSKK8xjNKA1gWTpmn90VdNuqbpOYcD/Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755674640; c=relaxed/simple;
-	bh=sT4U1XmZfH9P7OH1pmLpJvEWn3qCYgy4cEt5uI2cVx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=POlVsfAI3nUMsVY6CzjrS5g4IOWcuKw3ucJdQEryI6aZyipsnf9x4PfKKvRSunj5MIDig2jRRa6EyuFF2bh7/XjilibY4pu7ETuu7lFxB4Kc75WwgS0MpNNpW+1KkuMOLx6W3Flft+ZcJjie6/AEkPQQyzEMStE8J9R5Gq3cKH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pUFrXy35; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EEABC4CEEB;
-	Wed, 20 Aug 2025 07:23:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755674638;
-	bh=sT4U1XmZfH9P7OH1pmLpJvEWn3qCYgy4cEt5uI2cVx8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pUFrXy35c1Su73hdxBEJWHBuyqfzxvlCKHisAV/OkdOsPAimdpaBbI+45LjfpsVdN
-	 0+3nHAQOm0URZjYjyqoXUWtXwwh5ZpT1/yACTCalY8iAHl7pim6nP6JdqBwqzBG/xa
-	 brIuVyG6SR44JaaNXpDAtUwDjTmJE5dPfufoH7M3nABRAWMA9FzUSqzadEKRNgOdqF
-	 rU0Cd4u5OmrlW6i/hoqbV9f6eagFc8pzYGN2JB8TpIPrU/d2dlACtCjMcNYO0ryNTE
-	 7UcY46sWdDblSDsW44mqTPFSnKET0/YoXgvmPj8mh4S1ZUYKpVNDvcAj/yYGBXuU7/
-	 z9NxERHO8qCQQ==
-Date: Wed, 20 Aug 2025 09:23:56 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: hans.zhang@cixtech.com
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mpillai@cadence.com, fugang.duan@cixtech.com, 
-	guoyin.chen@cixtech.com, peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 10/15] dt-bindings: PCI: Add CIX Sky1 PCIe Root
- Complex bindings
-Message-ID: <20250820-acoustic-tomato-salamander-bfe740@kuoka>
-References: <20250819115239.4170604-1-hans.zhang@cixtech.com>
- <20250819115239.4170604-11-hans.zhang@cixtech.com>
+	s=arc-20240116; t=1755674683; c=relaxed/simple;
+	bh=NJLvfWJIhK5n3OEmDVKLqMMudAo1Ym/HIep8M8aRWsA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o0KpFxT3CLW/f/Nz64BROcuBxvjlrSNGUcQCdcmnUzlsd4pTa2z/ZXVhkMeaBd6yc68gKqmpJYDlEp0nmVSZD39YLEOy491TSHSlxWOV5BdfuuJtI+ANqeyhw9NN5XNXHzYshFOxUuB6WrdsO6uTXqMnRQZsqlTcw6GWNr4BcJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c6HsV1PWqz2CgGr;
+	Wed, 20 Aug 2025 15:20:14 +0800 (CST)
+Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
+	by mail.maildlp.com (Postfix) with ESMTPS id E4D2C140279;
+	Wed, 20 Aug 2025 15:24:36 +0800 (CST)
+Received: from huawei.com (10.90.31.46) by dggpemf500015.china.huawei.com
+ (7.185.36.143) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 20 Aug
+ 2025 15:24:36 +0800
+From: Longfang Liu <liulongfang@huawei.com>
+To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
+	<shameerkolothum@gmail.com>, <jonathan.cameron@huawei.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
+Subject: [PATCH v8 0/3] update live migration configuration region
+Date: Wed, 20 Aug 2025 15:24:32 +0800
+Message-ID: <20250820072435.2854502-1-liulongfang@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250819115239.4170604-11-hans.zhang@cixtech.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500015.china.huawei.com (7.185.36.143)
 
-On Tue, Aug 19, 2025 at 07:52:34PM +0800, hans.zhang@cixtech.com wrote:
-> From: Hans Zhang <hans.zhang@cixtech.com>
-> 
-> Document the bindings for CIX Sky1 PCIe Controller configured in
-> root complex mode with five root port.
-> 
-> Supports 4 INTx, MSI and MSI-x interrupts from the ARM GICv3 controller.
-> 
-> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
-> ---
-> Changes for v8:
-> - Fixed the error issue of DT binding. (Rob and Krzysztof)
-> - The rcsu register is split into two parts: rcsu_strap and rcsu_status.
-> ---
->  .../bindings/pci/cix,sky1-pcie-host.yaml      | 83 +++++++++++++++++++
->  1 file changed, 83 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+On the new hardware platform, the configuration register space
+of the live migration function is set on the PF, while on the
+old platform, this part is placed on the VF.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Change v7 -> v8
+	Resolve hardware compatibility issues.
 
-Best regards,
-Krzysztof
+Change v6 -> v7
+	Update the comment of the live migration configuration scheme.
+
+Change v5 -> v6
+	Update VF device properties
+
+Change v4 -> v5
+	Remove BAR length alignment
+
+Change v3 -> v4
+	Rebase on kernel 6.15
+
+Change v2 -> v3
+	Put the changes of Pre_Copy into another bugfix patchset.
+
+Change v1 -> v2
+	Delete the vf_qm_state read operation in Pre_Copy
+
+Longfang Liu (3):
+  hisi_acc_vfio_pci: update BAR space size
+  crypto: hisilicon - qm updates BAR configuration
+  hisi_acc_vfio_pci: adapt to new migration configuration
+
+ drivers/crypto/hisilicon/qm.c                 |  27 +++
+ .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 205 ++++++++++++------
+ .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    |  13 ++
+ include/linux/hisi_acc_qm.h                   |   3 +
+ 4 files changed, 187 insertions(+), 61 deletions(-)
+
+-- 
+2.33.0
 
 
