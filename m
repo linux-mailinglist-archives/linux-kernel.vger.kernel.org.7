@@ -1,93 +1,154 @@
-Return-Path: <linux-kernel+bounces-777337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA46B2D847
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B771DB2D86C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3001C459ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:27:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6721C4534E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32052E2678;
-	Wed, 20 Aug 2025 09:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C77E2E2831;
+	Wed, 20 Aug 2025 09:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VFcTqMEB"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJt+39o+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32692E1742;
-	Wed, 20 Aug 2025 09:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575DC2E22A9;
+	Wed, 20 Aug 2025 09:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681765; cv=none; b=gENFaoAdanvfGDYCb0+RSJGEWjSynzTzdKZXT3SsSX//XrPQfhQBJA9eUyhIHBEtLiZtAteoA7WVVhwVeS+VAhiaEY8VoZpcOm1rPNgx3CCyS6/Ns4lz5guNthFtnILM4WSlY9PQNFBr79/gSgbrqfvIt23sC2olzKte7USL//k=
+	t=1755681765; cv=none; b=XYxF+B97Z2QOa8pQonLFzROZqnN8OlGU5vD2ITUUnYlW/2+J7Fh9yYuwWj2pIobS4vVq5NCaNnDHAPB+0gI3IwiU4VwZDVR7JyVX49njNrFqn8hWyvtr1TK5DEqN4TIKw87q+G3qa23MygavkuX086vIXECUrY3hx4ityMCz7eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755681765; c=relaxed/simple;
-	bh=yUCt1pPaMx7JVZBQZQbvE7z+7ajLYmKvOlONA/NhJV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MxQBuoxI12wO/b0D9tlpD5RbpqhW5RwscDvTb/NduOmAbCKnsU4TNpAeNkzICiG0+U6dbhy3UsrAZUQj1Lx3HqmxtFfk+RiKhV6hjIaI6cFR14V2/XSXeGUKpKAU8I9OPG8zFO/oas82aIEMDbRGBddO1AYeROecivvx6xLu9T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VFcTqMEB; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755681753; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=YGgNtPnkWs24Cm5tQaMk9u0G5NYAGMzfPYAnpUK7BCE=;
-	b=VFcTqMEBUKg16CarMORmCUvc0TckKrbN7LYdpujoCAbcuq03Za4SWI9TF6zd6hGZ1FMzmKuheep7M17X2mIFp2Z8yb+Keo4HsRW2+324rtYZVlgYN+6Uj/cF35QTU1FbuGX1TgsXcuHI2RcoOepCDQ0eeKLN2Q/H2YmvXHD8sos=
-Received: from 30.74.144.118(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmBG0pZ_1755681750 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 20 Aug 2025 17:22:30 +0800
-Message-ID: <a81b7fd3-c466-45c9-9374-361b780ce09b@linux.alibaba.com>
-Date: Wed, 20 Aug 2025 17:22:30 +0800
+	bh=eJ6WjgKVIsIOpyGHdORuYVWkUx9KS1agfZtjGvIXQfI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kD1BQ8oAqNnY7Ic0K0l9yHBLTF9ccsinfgTPJG95vjAZ6flk0PcuYEgfzXIFIDfZGr6gJi93HYAvP6OxkGdBPUMBNx3KL7X1YDTFVWLqkEGnauQpiInw6S65sstAToZ+hrJfFmsddvsBi9tpr3CTr9UreIkGdGEBCbaIX/YCj8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJt+39o+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D037CC113D0;
+	Wed, 20 Aug 2025 09:22:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755681764;
+	bh=eJ6WjgKVIsIOpyGHdORuYVWkUx9KS1agfZtjGvIXQfI=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=nJt+39o+SEWLX9UKy60e4bd30oOCM4NFAM/2GxSQDWiStm9v7FtKgwBqXS9D2PCLS
+	 NlOiGdUNpp7I6oBXrXhY+Lpjr61f2mG0uISoztei9YIqByI8qb8A6AUPiW1vNOveA+
+	 kc7wmwttUj1I7bd2685oQwQbDN84aLcZR+F2OeSD31sPJlw1WdsBXfFGSdh9yioqrg
+	 5oB6jMIE6FyPM+WqKtplyfrAaCBx7JCwsxysX1UixX8YZETpNv6wnCKtWRNtqME/4a
+	 wqhelVPkJOfnuMThueMuf5tvF7fyfPREmJJmgI/4fyQOvTTu7QecowiCYkWBTh8PN7
+	 UQhXeJjPjSEnA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C61CA0EED;
+	Wed, 20 Aug 2025 09:22:44 +0000 (UTC)
+From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+Date: Wed, 20 Aug 2025 17:22:42 +0800
+Subject: [PATCH] libbpf: add documentation to version and error API
+ functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] selftests/mm: add check_after_split_folio_orders()
- helper.
-To: Zi Yan <ziy@nvidia.com>, Wei Yang <richard.weiyang@gmail.com>,
- wang lian <lianux.mm@gmail.com>, David Hildenbrand <david@redhat.com>,
- linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250818184622.1521620-1-ziy@nvidia.com>
- <20250818184622.1521620-5-ziy@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250818184622.1521620-5-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250820-libbpf-doc-1-v1-1-13841f25a134@uniontech.com>
+X-B4-Tracking: v=1; b=H4sIAOGTpWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyMD3ZzMpKSCNN2U/GRdQ10DkyQDU9M0gzRLc3MloJaCotS0zAqwcdG
+ xtbUAPRJMcF4AAAA=
+X-Change-ID: 20250820-libbpf-doc-1-04b055f0f977
+To: Andrii Nakryiko <andrii@kernel.org>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ niecheng1@uniontech.com, guanwentao@uniontech.com, zhanjun@uniontech.com, 
+ yt.xyxx@gmail.com, Cryolitia PukNgae <cryolitia@uniontech.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755681763; l=1980;
+ i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
+ bh=HqKLuwaahaE8X4oGAqmIDONf3wOJcCZcDPM6er4Q6CA=;
+ b=0bW0OAnjBtipT/YwZfM4duneD+8q120OUp8cSpQzdLcmOJMiwfT5AOVOgCxEigeXOxBG86m7X
+ Hyt2KCsq0ULCukJESeDbbYtyGLx7v6rbAgfb40kpGMkJwg4fhDAHLj/
+X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
+ pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
+X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
+ auth_id=474
+X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Reply-To: cryolitia@uniontech.com
+
+From: Cryolitia PukNgae <cryolitia@uniontech.com>
+
+This adds documentation for the following API functions:
+- libbpf_major_version()
+- libbpf_minor_version()
+- libbpf_version_string()
+- libbpf_strerror()
+
+Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+---
+ tools/lib/bpf/libbpf.h | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+index 455a957cb702cab53266ea948fec061f3b65c9ee..3b809cd08f01ce1576ac822fb89cfd589b9f0d44 100644
+--- a/tools/lib/bpf/libbpf.h
++++ b/tools/lib/bpf/libbpf.h
+@@ -24,8 +24,25 @@
+ extern "C" {
+ #endif
+ 
++/**
++ * @brief **libbpf_major_version()** provides the major version of libbpf.
++ * @return An integer, the major version number
++ */
+ LIBBPF_API __u32 libbpf_major_version(void);
++
++/**
++ * @brief **libbpf_minor_version()** provides the minor version of libbpf.
++ * @return An integer, the minor version number
++ */
+ LIBBPF_API __u32 libbpf_minor_version(void);
++
++/**
++ * @brief **libbpf_version_string()** provides the version of libbpf in a
++ * human-readable form, e.g., "v1.7".
++ * @return Pointer to a static string containing the version
++ *
++ * The format is *not* a part of a stable API and may change in the future.
++ */
+ LIBBPF_API const char *libbpf_version_string(void);
+ 
+ enum libbpf_errno {
+@@ -49,6 +66,14 @@ enum libbpf_errno {
+ 	__LIBBPF_ERRNO__END,
+ };
+ 
++/**
++ * @brief **libbpf_strerror()** converts the provided error code into a
++ * human-readable string.
++ * @param err The error code to convert
++ * @param buf Pointer to a buffer where the error message will be stored
++ * @param size The number of bytes in the buffer
++ * @return 0, on success; negative error code, otherwise
++ */
+ LIBBPF_API int libbpf_strerror(int err, char *buf, size_t size);
+ 
+ /**
+
+---
+base-commit: b19a97d57c15643494ac8bfaaa35e3ee472d41da
+change-id: 20250820-libbpf-doc-1-04b055f0f977
+
+Best regards,
+-- 
+Cryolitia PukNgae <cryolitia@uniontech.com>
 
 
-
-On 2025/8/19 02:46, Zi Yan wrote:
-> The helper gathers a folio order statistics of folios within a virtual
-> address range and checks it against a given order list. It aims to provide
-> a more precise folio order check instead of just checking the existence of
-> PMD folios.
-> 
-> The helper will be used the upcoming commit.
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
-
-I tested this patch, and it works for me.
-Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
-By the way, I moved gather_after_split_folio_orders() to the vm_util.c 
-file as a helper for mTHP collapse checks in my patchset[1]. I'm not 
-sure whether you need to move gather_after_split_folio_orders() to 
-vm_util.c in this patch, or if I should move it in my patchset.
-
-[1] 
-https://lore.kernel.org/all/955e0b9682b1746c528a043f0ca530b54ee22536.1755677674.git.baolin.wang@linux.alibaba.com/
 
