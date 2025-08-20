@@ -1,275 +1,130 @@
-Return-Path: <linux-kernel+bounces-778532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F67B2E6FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:51:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3469AB2E702
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51DE17BC3FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDFF9A26610
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C4D2D6E65;
-	Wed, 20 Aug 2025 20:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BFC2D6E53;
+	Wed, 20 Aug 2025 20:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yKQD1N/H"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DbnHXcLt"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999502D3739;
-	Wed, 20 Aug 2025 20:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755723045; cv=fail; b=hhzeWml/f2gL25DCY3H3vFbv6MBrwxjcWRB53tkyitZNowT0daadQG5FZG40uIIT26MGCNyi41LNGGazHZEY7sR65Vup5Ngw5KK4BQ0QDzJFlwtE+eXw+TRhj/hC8u0sUUM5C9egY0qmEjQbLe7oWyytx8w0TKLTJFnepyLj9js=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755723045; c=relaxed/simple;
-	bh=t7aj6QSNTobeQGKqx/cphviByEwJDJ74eVRzVirhpf0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hJ9Ut83ZtlLz8pTYgOk+usCFHe5st/7QMrqpmFjRuLVA8ssW/HiM181msA4nOknhRAa9yMWo9gjkAGlu3KBrIv5gfe/pXv7BXOYQ9s1cC0/i48pVldR4n+qu8a/usnHnBTAAC2KAlqm0LG+1IHIoMLI6LOOTAz9wOvJjNhADbuE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yKQD1N/H; arc=fail smtp.client-ip=40.107.236.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yfLP5ypNjQMLbAzStNJgQ0JN2e8f1SOtEMsId02qBx32J1krQrzTsyWvzaNYYStJefqzTqfpAK8+5CsmUXKYWu3XmrRgdusjAo8M2Ww2D+fEf6KRRlCYL8BMX0nQI/fu8lrQ6zmRRm4RhVsmznfRb+5ynGRo7zSS5OqCrf7aQVj+aO17WOyKdhXWVCDqvSQ4sYqnIsnqojJDDdwhMK/KFZFfGLDPwKwo6KTpKrG+P9BnrGARyKUJAozOCFpan23Mik8QsGAeQHF2e2AE6YvPV5fCcj9rwHwW++XMTeJb3kRbqINWsQVVlq8P3JGsEOBvGFa+Fb9yZJDxClgMREZ7YQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2IQtzLshUQphNTW7bWPasReC3PCAxvBVaq18tF634tE=;
- b=eBVqTUT6u9l52gcFlYD9ngFLoyXnKccqC4wQCN7qBSQC1rBG7GpHfsQmMxhaqeJ2KEeik3PQ2tEbUEwy3p/hbq4p+xCEis5jJ59HxLd8YMPaZcfbOYrHzytpG0XkrT6XDUzWLY2jA+mtA4b7xvoMzoZr9LJLbL/BHyHDqGYv6tIIJ5UQCnB+h+jRSVb+PF/x+50TNHkPrUgdUgoK2bxzLHvpRaDuUoCdtkG6Kcj5BOgAfUiE6zufZpExKhR8bfoNADLU5/uNRV8lsr6BrLikA1IgZg1H7z852MbKkxAq3zooCc/ybvg59F+nkYa3qdjz4f8F1sEhlI4/mQkbF56prA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2IQtzLshUQphNTW7bWPasReC3PCAxvBVaq18tF634tE=;
- b=yKQD1N/HzRbqh8+OSe2ak2hzUJptJycNumXadrVQ+ETqS3HJfTnYPaiPnK1O4mLaM08EY1MKQm7AKMsrq7cG3QxP2/GE7HJe8DcF29anDOnAS9lBXh8FWWTYpEM7k+7xUY+/0EM/C3omBWboRnPODrZEPkraZY7/qGxs1mldEjg=
-Received: from SJ0PR03CA0073.namprd03.prod.outlook.com (2603:10b6:a03:331::18)
- by CH3PR12MB9313.namprd12.prod.outlook.com (2603:10b6:610:1ca::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.25; Wed, 20 Aug
- 2025 20:50:37 +0000
-Received: from MWH0EPF000A6732.namprd04.prod.outlook.com
- (2603:10b6:a03:331:cafe::e2) by SJ0PR03CA0073.outlook.office365.com
- (2603:10b6:a03:331::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.14 via Frontend Transport; Wed,
- 20 Aug 2025 20:50:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000A6732.mail.protection.outlook.com (10.167.249.24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Wed, 20 Aug 2025 20:50:37 +0000
-Received: from purico-ed09host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Aug
- 2025 15:50:35 -0500
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <corbet@lwn.net>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<thomas.lendacky@amd.com>, <herbert@gondor.apana.org>
-CC: <akpm@linux-foundation.org>, <rostedt@goodmis.org>, <paulmck@kernel.org>,
-	<michael.roth@amd.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-Subject: [PATCH v9 2/2] KVM: SEV: Add SEV-SNP CipherTextHiding support
-Date: Wed, 20 Aug 2025 20:50:25 +0000
-Message-ID: <95abc49edfde36d4fb791570ea2a4be6ad95fd0d.1755721927.git.ashish.kalra@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1755721927.git.ashish.kalra@amd.com>
-References: <cover.1755721927.git.ashish.kalra@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2811E1E19
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 20:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755723107; cv=none; b=aS3qzZcTXUjBXjsWNIDk0KVJJ5fJP0RUBzWlKVOrRTBc+Hl0Q6HSJ+dlPz8vPMFw15jymkAJognaodSIkaIkaMNYzTXz21/wZ6Mo6YjFc+8K+FDPMWEYIF+2neuiUs6eaN+jVqWIunnXaj/+EPfq7ov/gRLoi/ZIo6MtASF9Wbg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755723107; c=relaxed/simple;
+	bh=4Me4vXB6ODQcABCgWDh4HsPJQbjccLI/Pb+fgV8C0mw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qLzIaDb7cm1g0qQrx3HrDMORsLBJAAho678OxZJN+NreOs/irEoMgpneLt2uFWGXoyYz2Jvw7qP0yuRI2tW7qNKO2CoT52Vn+sd9ulFlMnXky5r7uXfMcZPpWPacw4ikMh33DDM3uB1hjqkUN4LArFk1WIqDoj3v74k42Cxy1HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DbnHXcLt; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-53b17552198so122841e0c.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755723105; x=1756327905; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uHKTS5mcdAuJ/6so1Fu8wdD7ErgBomd6S6kgDOCUXZU=;
+        b=DbnHXcLtN6GDsWB/mdLpf3DnLrSfDzNaD5zFsYrdRJ+ITVbeP8RUBsyosznM2FdoNp
+         yJ8xHkPzlb6f5qMF3TZy22gZSqCZZHZ64V1+qDQJozkqtWlfww9nIejuo6YxKd9vntU6
+         I4TNGAoOTG0mOVXkMOy+ifxe0SqdOMv2mKEZ39YyD0WXyNhaESnzRaM3x4YTFqw7bCeQ
+         kjGU215ShHofDx++MTo0YYBQixXans1Bqr1zYd5bKB3A43jrbYuHobPhQ1YHWMBda4V+
+         35EX5leB17OhozBRBlYtgq1mg6NIxZbq3W6MVR3wgP7ED/zyDzWC4sUpmVZJ79i0aRQp
+         /Xvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755723105; x=1756327905;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uHKTS5mcdAuJ/6so1Fu8wdD7ErgBomd6S6kgDOCUXZU=;
+        b=vEvegKO+s5vz9r6AwxH17IA7mfceNZWmRwREAkO0tuN4m56vQL4FfLbxVDnaOg5cVp
+         cQvstRAuNws/eMfVZFR2W4Olj6puDiimkJ3hqakCp+PT6ktctTYXtUAvp+2ggF6SQZKQ
+         NLf6jMhJnOrEmHXZcJpK7BpksQneFUB8T3oIn52RfvERFnNdg2X8+RKIjO4DSXMT+7vN
+         Rd24KBbMj0xi0GIHQgYhC+GWGp9cIH1P/lxxG/3sJINNgIlFueqYwGqnclY5Rg4uMtYq
+         SodxgxYJb/Z870k24SjHI0AEMAb44/75nORy5ykJ49HTB/pGzNh2AlXx4BBHMsXr5yTu
+         wq5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ7LdJ7ARAMOGjjQtePIkbRyrhSsbmcYyxhTPb8r+BLzz1IxCirWONJHe9aMfg94Ab/uvLX9HgUwtXypo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzosvzjo/DXmS7gqvsa3CwYG9odrpd5Y/UzHLJMxPMq6L9IkeYE
+	9N5r4pz9nXwqVwsCPzs5PbV+XtnGFW/IcF/TCrgPHhaJFm0QAxg+C09H/JAtzTt8s6+R/HREnSz
+	LZwaPv2rde190SwK2/DwkrujhjSAiYmiOL5kO59gq
+X-Gm-Gg: ASbGncuD2Krac4WPFATOFKgzaO4v3+YNKggEOFP8aB+1s7dqy4em/Q7b4QBlA1J6xsX
+	fd8fLRT1kG3pGQKEaWpu3rAHM3qjPk52Jfj6BJLPcPw5lcoHFLwz7qDo799R878h5FhGcigDHFs
+	4A7O1SUEPffpQ/UtqN1/xiD9fGUkBF1pibcHXQewCVQeYceavCsG0oyP5+Ritx5/anesx4YQyjc
+	hrOSSSKCXhb7qIJVMDWoNAL3ovJ39sPzV0BWLD1krPgKoa6zuPhXg==
+X-Google-Smtp-Source: AGHT+IHRt+LiqU1bNcACp//Ntxm7XH/cxrv2iwBUVZFZyViML7tnEwhsGDdj5amh54hAAvisyGyWPi6lYlAI10NScTE=
+X-Received: by 2002:a05:6122:508:b0:535:e789:6ccc with SMTP id
+ 71dfb90a1353d-53c6d48927dmr1310532e0c.3.1755723104602; Wed, 20 Aug 2025
+ 13:51:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6732:EE_|CH3PR12MB9313:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9cbf6a85-d941-43fe-05aa-08dde02b3749
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sBBl3h0mSwzWS9eEg9nXkvsOGE27U9GKnofLzN/HZZyYXammljpLIsjATWlF?=
- =?us-ascii?Q?iY+AzpCiEGDnjkeO+jnq0lUsePBakAN/kAuCiJVOGLwNyaaCXTI3/Ws3ySom?=
- =?us-ascii?Q?8zw6bLtQcn1/EjmF3fyk44TkmkC6+bke16SzAeXxuJeFCpeQ6+dbVFbxl3h8?=
- =?us-ascii?Q?Zyz80bU95fvh3cAVjaBZ27OgPdjOimLpYkOz5gKqVuup+FUVNJnRwv0QyJ5d?=
- =?us-ascii?Q?SM1iY1EXwm46zaQVuzfsykkqjgqbSAASyxyKA4GSBYt+xqqpJNzrdATkeQeC?=
- =?us-ascii?Q?5eHtc2dqtib8k6HLIIgCDGiY1eTWZSLcrmXjenhUBTzrfGacYB2L+EM0LXk9?=
- =?us-ascii?Q?ZM4CC8S1048xJQDMTFTBPP88sIpvBWlVaJqect7vNUNy9HcKOwN9BgkmdCDL?=
- =?us-ascii?Q?C3Pzjmn2z/zDIAbgw3BSkMnA6D3vnTNqcc9B6rB+3yNNSRLGQCK1tFRfupCF?=
- =?us-ascii?Q?XUBRm6j5fsrFT1zXwQzuBFomfiKv/bG4xxmpdElOcLaBgeZ+u5jR/RWKRhzM?=
- =?us-ascii?Q?+xhcoSnHO7RdA03jFvxHzUwOSTYn0tYrAqsstoiu+OhsX0Q9B9uru6MXvVYl?=
- =?us-ascii?Q?cXUe5i6kLiKVShhAejCp69/JcgA1QW9PykiuPyzPZNVyGtA2ko5B2/gZMW7T?=
- =?us-ascii?Q?eemk8LVcxJyoenuDtCKy/Cse0q4ocQow30EtX8LOWNceD33TQ+EdxqVqFfC0?=
- =?us-ascii?Q?gtUxDNgD19TEbyOscNqSOEBBfQCxJeCP8VxJ2KBxagPquyb0g9YsBoVSYJqF?=
- =?us-ascii?Q?BwtNa0r2Mb3Cb1phJjMwPms/Je9a4x6jhTXFkUWb25deo5xpU29YZUVKaR6m?=
- =?us-ascii?Q?lM6bhP3c8iswETHuMflDMvsjK7XaYnDd3KdleE8SghsgZoP7vwDdS29T14kO?=
- =?us-ascii?Q?u6XeMdGykrfQST47zEdjR7Cr79mhGUnoAFvCSwkLbAug/cxBFf83vrLEpcGG?=
- =?us-ascii?Q?CqErFFmZcuEXAyBdZMGk6ldYb7K1XIs8+4f59ex0ljKuYq1DdrMtOS8DfCCQ?=
- =?us-ascii?Q?dKH4R4uxo08xy+vzaC4L4VwBXMy0dA4qtepUC5TBA9azOBNFf5kLIAawyIN4?=
- =?us-ascii?Q?1rDBUWm9o+oQn5FM8Jw9bPcpNntSYUXDbiEXiEIgBCGRvW/xGqtcrP9deWgk?=
- =?us-ascii?Q?G++DvW5exbAjYOIKjfgjBbQiBGqx8yWALwtp7WydTjEQRxMwK+Qcm66H2LEP?=
- =?us-ascii?Q?1z9OaAvw3IcX+V2BO3i0d2nWLm6cxlbREhQWrGIHwWjUvbtaJQXdrtrgWfe6?=
- =?us-ascii?Q?Rr5MXO4TdbEHnu+x6tlcCmICVO5zX0Lq0zxYAjc/J+Gq1fYjDXhOvCAV0vbI?=
- =?us-ascii?Q?gkyz5/zD+bikZibBv2YXIrp4mvXjgi5vFSOebzUMNO8kP+6ChgjlySQ+xsSY?=
- =?us-ascii?Q?v7qUEZvOkBDin/owqWLZzOito10oBE9xQ1q83x+U1eYo4aTnD/NGgdBxAfpm?=
- =?us-ascii?Q?PrUhkmcrpp2FFYlUkxPFVfcAt43e7HNpDtJiKqOcpVncxyZHi3yWUhmdFn8Y?=
- =?us-ascii?Q?QMVeLy59PzmCFe1yMg/YcuC3UmXO9ErZPQMlkG+epOOn7rmti35492D6gQ?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 20:50:37.0869
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cbf6a85-d941-43fe-05aa-08dde02b3749
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6732.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9313
+References: <20250820192805.565568-1-robh@kernel.org>
+In-Reply-To: <20250820192805.565568-1-robh@kernel.org>
+From: Saravana Kannan <saravanak@google.com>
+Date: Wed, 20 Aug 2025 13:51:07 -0700
+X-Gm-Features: Ac12FXyG4JVALbMlbPqBRPkY6bhe0gsfl2f_OZ4G16pEP24JNqN5iaa6770dUhI
+Message-ID: <CAGETcx_DqgEt0e8ZGikTyLWS+2vaTfz=m3BnZJROgGNcp6CwWA@mail.gmail.com>
+Subject: Re: [PATCH] of: reserved_mem: Add missing IORESOURCE_MEM flag on resources
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Patrice CHOTARD <patrice.chotard@foss.st.com>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Iuliana Prodan <iuliana.prodan@nxp.com>, Daniel Baluta <daniel.baluta@gmail.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ashish Kalra <ashish.kalra@amd.com>
+On Wed, Aug 20, 2025 at 12:29=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org=
+> wrote:
+>
+> Commit f4fcfdda2fd8 ('of: reserved_mem: Add functions to parse
+> "memory-region"') failed to set IORESOURCE_MEM flag on the resources.
+> The result is functions such as devm_ioremap_resource_wc() will fail.
+> Add the missing flag.
+>
+> Fixes: f4fcfdda2fd8 ('of: reserved_mem: Add functions to parse "memory-re=
+gion"')
+> Reported-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> Reported-by: Daniel Baluta <daniel.baluta@gmail.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Ciphertext hiding prevents host accesses from reading the ciphertext of
-SNP guest private memory. Instead of reading ciphertext, the host reads
-will see constant default values (0xff).
+Reviewed-by: Saravana Kannan <saravanak@google.com>
 
-The SEV ASID space is split into SEV and SEV-ES/SEV-SNP ASID ranges.
-Enabling ciphertext hiding further splits the SEV-ES/SEV-SNP ASID space
-into separate ASID ranges for SEV-ES and SEV-SNP guests.
+-Saravana
 
-Add a new off-by-default kvm-amd module parameter to enable ciphertext
-hiding and allow the admin to configure the SEV-ES and SEV-SNP ASID
-ranges. Simply cap the maximum SEV-SNP ASID as appropriate, i.e. don't
-reject loading KVM or disable ciphertest hiding for a too-big value, as
-KVM's general approach for module params is to sanitize inputs based on
-hardware/kernel support, not burn the world down. This also allows the
-admin to use -1u to assign all SEV-ES/SNP ASIDs to SNP without needing
-dedicated handling in KVM.
-
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-Co-developed-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- .../admin-guide/kernel-parameters.txt         | 19 +++++++++++
- arch/x86/kvm/svm/sev.c                        | 32 ++++++++++++++++++-
- 2 files changed, 50 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 729728280438..fd59d129ad8a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2957,6 +2957,25 @@
- 			(enabled). Disable by KVM if hardware lacks support
- 			for NPT.
- 
-+	kvm-amd.ciphertext_hiding_asids=
-+			[KVM,AMD] Ciphertext hiding prevents disallowed accesses
-+			to SNP private memory from reading ciphertext.  Instead,
-+			reads will see constant default values (0xff).
-+
-+			If ciphertext hiding is enabled, the joint SEV-ES and SEV-SNP
-+			ASID space is paritioned into separate SEV-ES and SEV-SNP
-+			ASID ranges, with the SEV-SNP ASID range starting at 1.
-+			For SEV-ES/SEV-SNP guests the maximum ASID is MIN_SEV_ASID-1,
-+			where MIN_SEV_ASID value is discovered by CPUID
-+			Fn8000_001F[EDX].
-+
-+			A non-zero value enables SEV-SNP ciphertext hiding and
-+			adjusts the ASID ranges for SEV-ES and SEV-SNP guests.
-+			KVM caps the number of SEV-SNP ASIDs at the maximum
-+			possible value, e.g. specifying -1u will assign all
-+			joint SEV-ES and SEV-SNP ASIDs to SEV-SNP and make
-+			SEV-ES unusable.
-+
- 	kvm-arm.mode=
- 			[KVM,ARM,EARLY] Select one of KVM/arm64's modes of
- 			operation.
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index cd9ce100627e..5cad79ad1002 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -59,6 +59,9 @@ static bool sev_es_debug_swap_enabled = true;
- module_param_named(debug_swap, sev_es_debug_swap_enabled, bool, 0444);
- static u64 sev_supported_vmsa_features;
- 
-+static unsigned int nr_ciphertext_hiding_asids;
-+module_param_named(ciphertext_hiding_asids, nr_ciphertext_hiding_asids, uint, 0444);
-+
- #define AP_RESET_HOLD_NONE		0
- #define AP_RESET_HOLD_NAE_EVENT		1
- #define AP_RESET_HOLD_MSR_PROTO		2
-@@ -201,6 +204,9 @@ static int sev_asid_new(struct kvm_sev_info *sev, unsigned long vm_type)
- 	/*
- 	 * The min ASID can end up larger than the max if basic SEV support is
- 	 * effectively disabled by disallowing use of ASIDs for SEV guests.
-+	 * Similarly for SEV-ES guests the min ASID can end up larger than the
-+	 * max when ciphertext hiding is enabled, effectively disabling SEV-ES
-+	 * support.
- 	 */
- 	if (min_asid > max_asid)
- 		return -ENOTTY;
-@@ -3064,10 +3070,32 @@ void __init sev_hardware_setup(void)
- out:
- 	if (sev_enabled) {
- 		init_args.probe = true;
-+
-+		if (sev_is_snp_ciphertext_hiding_supported())
-+			init_args.max_snp_asid = min(nr_ciphertext_hiding_asids,
-+						     min_sev_asid - 1);
-+
- 		if (sev_platform_init(&init_args))
- 			sev_supported = sev_es_supported = sev_snp_supported = false;
- 		else if (sev_snp_supported)
- 			sev_snp_supported = is_sev_snp_initialized();
-+
-+		if (sev_snp_supported)
-+			nr_ciphertext_hiding_asids = init_args.max_snp_asid;
-+
-+		/*
-+		 * If ciphertext hiding is enabled, the joint SEV-ES/SEV-SNP
-+		 * ASID range is partitioned into separate SEV-ES and SEV-SNP
-+		 * ASID ranges, with the SEV-SNP range being [1..max_snp_asid]
-+		 * and the SEV-ES range being [max_snp_asid..max_sev_es_asid].
-+		 * Note, SEV-ES may effectively be disabled if all ASIDs from
-+		 * the joint range are assigned to SEV-SNP.
-+		 */
-+		if (nr_ciphertext_hiding_asids) {
-+			max_snp_asid = nr_ciphertext_hiding_asids;
-+			min_sev_es_asid = max_snp_asid + 1;
-+			pr_info("SEV-SNP ciphertext hiding enabled\n");
-+		}
- 	}
- 
- 	if (boot_cpu_has(X86_FEATURE_SEV))
-@@ -3078,7 +3106,9 @@ void __init sev_hardware_setup(void)
- 			min_sev_asid, max_sev_asid);
- 	if (boot_cpu_has(X86_FEATURE_SEV_ES))
- 		pr_info("SEV-ES %s (ASIDs %u - %u)\n",
--			str_enabled_disabled(sev_es_supported),
-+			sev_es_supported ? min_sev_es_asid <= max_sev_es_asid ? "enabled" :
-+										"unusable" :
-+										"disabled",
- 			min_sev_es_asid, max_sev_es_asid);
- 	if (boot_cpu_has(X86_FEATURE_SEV_SNP))
- 		pr_info("SEV-SNP %s (ASIDs %u - %u)\n",
--- 
-2.34.1
-
+> ---
+>  drivers/of/of_reserved_mem.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+> index 77016c0cc296..d3b7c4ae429c 100644
+> --- a/drivers/of/of_reserved_mem.c
+> +++ b/drivers/of/of_reserved_mem.c
+> @@ -771,6 +771,7 @@ int of_reserved_mem_region_to_resource(const struct d=
+evice_node *np,
+>                 return -EINVAL;
+>
+>         resource_set_range(res, rmem->base, rmem->size);
+> +       res->flags =3D IORESOURCE_MEM;
+>         res->name =3D rmem->name;
+>         return 0;
+>  }
+> --
+> 2.50.1
+>
 
