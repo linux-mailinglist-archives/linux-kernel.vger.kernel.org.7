@@ -1,151 +1,146 @@
-Return-Path: <linux-kernel+bounces-778693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255DCB2E905
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:50:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F14B2E90B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCAB9725B9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:50:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3678A7A6067
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4302DBF51;
-	Wed, 20 Aug 2025 23:50:40 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8AD2E1749;
+	Wed, 20 Aug 2025 23:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fcqu24aE"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC862727E3
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 23:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21122E0939;
+	Wed, 20 Aug 2025 23:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755733840; cv=none; b=Tz1q/jkuVNxUXFen7R2ER+F59ymvnFi7KI9WJIhdPCSv0A4keGu011eDC14t38YRn1xqCqZ/MPOb/yD1X9o+tSmxXzIOyqt91angkaujy5C//fHhL9RdUAkLb4WZ6J3ZnZwCzZDNSekBBaXg4N6JuKbpyHaPkE3FEsndgpnO96o=
+	t=1755733991; cv=none; b=jfv9Gr+jexrpgStPx6Y5R/W0r/2LSkQyR8IBTm277fqDpXm03IINf8JBHETg1ZtxGRLamZp5j/V8L1UHRdw4nRxt5kCJjlqanp3nFp4CCLNcqacagOYLGRK295TtqPiXsOOXENoiDPijM7eiDUcQoTwGwfupHlVbqkimd3dkq9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755733840; c=relaxed/simple;
-	bh=+3KoXlNx3WrWJ/5JsMCHdKN2i6P9n/O4aCtS23ojPU8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nGzYKMpd3tyLAxask6TuK9gsqybEz7AGObTWNKRWbqtegjdlPbTsCnds47pMmyxTwJRYcsOa8ZN7UhOnRFsryivGVpR+nW9VJPqCR9B1ib3Zg5uDTEOnWV6+tH47qevC7YdbpYKhRfZLcp6ShuTuaWt0fMUomSxRju/7hasy+W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-88432dc61d9so90092839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:50:36 -0700 (PDT)
+	s=arc-20240116; t=1755733991; c=relaxed/simple;
+	bh=lkZhE+qJJqo4/9WGe2KQdl21djGJ/OVTnSNmbs7LToE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d0n0VLiD00/FBmlPYLikFx/ldSIQVrS+Tb3GEnjyPWKFSfb7pD1YdxC4WkFlNYdFiGvic/gRfiU8OHJB8lLiy9KAi9Dc9sFhxK6wHt2AV37dVpkDOcPA6dskj116UdHO/ADQZzHui+7R9TrgXi9qwSaAebK8kulGE+kZdi8p0Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fcqu24aE; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b47052620a6so1106277a12.1;
+        Wed, 20 Aug 2025 16:53:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755733989; x=1756338789; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lEIR/kzy6wy9KbvYVdpPt5IxnAmvBoijUDq7bSPssBE=;
+        b=Fcqu24aEdIt/bbDbFB/zSkkuucwBAVQkgnVu6/Wwl3TfUoZaK3adXoVMAoJSFBryh5
+         io4lr6eYD9UF5RxVPNYD7uRhdl8XqfXX+kARtsAUSLfIM8ICKBwSUkcx3vBipl31BP+a
+         mVixl/4odcvQP4EOG1lEuJPWi+fqv7R9NekyezMtMXykN3nBAtNh2CVt+CAfmn+njOSs
+         PwfpZsbvUl89hyGSkHtNbOfVm+/YDsKzynRpOGMbI6vUo4foNuBZzZu3ihlbi3nn90Rt
+         KHiC1QHm9KWGXWjllplVUXfGHLrG78MbVIpd7cwNiZTtVSvk22DP1Lkevqg+xRSnK76w
+         WgUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755733836; x=1756338636;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1755733989; x=1756338789;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D086v0Rs3v+RLCz3bkRMPpZaf+JhG94433lHZdw/Rts=;
-        b=hSj1+hWqQ3dtO0JVcEN/pWiIodMuiXTWJRLp2bjRDhOVVioFppyAHb/Aon+ry8J9my
-         WEvRDhYw1nxvps0xTn9xVdUpkxTPryIa/B64vB8dg4XUlGfViRR7luWyaK3WTYUPmh4B
-         0bEj2hPv9YX7uNd3SEQPgCrFmrPDicLPq1hzsNsBq2xBHVVcbleckJcF7QZwUYUCARUj
-         ajgxU8PZ1I4rM+88AWhmV0HLuiIGnyRzTYxDnL74mqmi+eXWbuyfCCeQpz0WYTE9OuRs
-         V2ckQFstT6NLUqp+vvxuluJx/N2rZ0bdgeHocc8pw7QbHiiBS9YC3DZixFgi5sdrHdsM
-         wYcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtbil7OuFPYph5CcNV4u9VpEyQJ/R7TWQG01nXjf8XH41n3y5MZ6yDsVfPepuDAJyTzqQxWnRa5rrrD84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc0MCSLw1d9hekLKGW0JYBWFKP+ffBCZU9j9LWTCpqs4SVOjCk
-	WWhYQmIKPPY1CFV/+E5v4WzletNAL1B6dMaNiqHczzgb9oPVafm4o1bL/pqAJwbsrdhdPHenK/A
-	ZhiOgmpyjwygSlbswoopMruI68OjmnPWe4R1n3R91GjybNN8+D5bdl2F35QM=
-X-Google-Smtp-Source: AGHT+IEol/67olrEtfvGrg4UJl8gG4giFewisK5YgIL16sHEbuUOlPsTM4sjoEl1wJKuqaDR6qQEVAU25iyh8ZzTgJ+xBBS2bSV9
+        bh=lEIR/kzy6wy9KbvYVdpPt5IxnAmvBoijUDq7bSPssBE=;
+        b=V9uLbXrstRe7Lkojn62IJVwZ1TPMRuj9BtkRNcK08mA4EkbSLB78TqZJ4cGAtg8shD
+         vqSFMc8pxBi/nL1st9dEbtSrT3s+OdDM4xm8DvZCq0SyALICbzm3llVOHNZOUed3B4o6
+         Lt0q9/Nov1DWkwqhgIyWoHgonC928l5yoQjBZoxZ3MimCMzL+3ACTiO7FB546JRl7XPa
+         o4Tqf240OKbmD4hkVUiREvNl7eH8JfwrKLgZRluPwgllUj8E8xy/NagP3sB1+chNSwCJ
+         qGLehzsSel89Vkj42h2RX/nqO2IfqNTmFOTdshN8ZSfn84P5OdY9xauW+dHGAD/1V4A3
+         NY8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWovk57rlyxyBCiLKSp8mcLcBAZ1es5JatpiziVo5EaE2Ar6GNk/PoISK/J/+2A7+jIajAKzlC1UGA=@vger.kernel.org, AJvYcCXCpUwkwVfEtcn1gCSJ96cBvC8A/UdicCBdNlrHtiIhtAtY0iF160Zh2xgXE5ZKRIUcpetJXXeAuWgHz2SZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyF1FEa5k+pqiBiGhyRzxJ4boj1DvwzQIuqE6zL0DKByuNLyzn
+	NZEjnaaT3R2hfxG6zMle20VQdskTTX2oTf1yxvLP71xaMv4Om0kb8qxae0l2Jw==
+X-Gm-Gg: ASbGnctq5CL55kbfe12GPl4IG3Z8w1gk5JCx4o9PSNrpD5TV0d61A2vnlU1MJqtvxsQ
+	t9WH54FrI4w6Oqaiu9F9PgZbZqquZDjY8Oeth2N0BxS4kkbzxK3Udn9c6kZKQjR3n9ZVdTCGh1j
+	MkAPKj1ZN+DzuRUkaIRdXOpmvuGQezClzTTXtXTSuiUZhrE+ryl3ih3rDl6+4KCqC0+zYBBss87
+	XpmmibZo4AAI3YlCLK8kMAtigpwPBUbIlcWwX2zmTETNrURqohAJQhjlTV1h9xLRMja43vUiNCf
+	f0UXp3rMu444HaKiWNQ5/jvGjT+0QwGdMdVueRL/JJHWViSY/ONiU8kiULyk4SSzpZ+t1+OPkAp
+	5sL/hF4SoFNsIzQabvlGvl2gJLhzzLfLdWykqPntAqxrYDJsoB/NhX1DQYaYDlux+jLe/
+X-Google-Smtp-Source: AGHT+IGicx+inoO1VpDAFyKYA+INlShC3n1LYEMIyd6/GtrfjdKf1bXm6bP6w65A3Qo6WeIUN23fCA==
+X-Received: by 2002:a17:90b:314c:b0:315:9624:37db with SMTP id 98e67ed59e1d1-324ef0abdd0mr384183a91.3.1755733988904;
+        Wed, 20 Aug 2025 16:53:08 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324f16ccf62sm163319a91.0.2025.08.20.16.53.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 16:53:08 -0700 (PDT)
+Message-ID: <526d1aee-d401-4f04-8ddc-122f1fef7905@gmail.com>
+Date: Thu, 21 Aug 2025 08:53:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e89:b0:3e5:6313:4562 with SMTP id
- e9e14a558f8ab-3e6d69d9a48mr7400695ab.14.1755733835907; Wed, 20 Aug 2025
- 16:50:35 -0700 (PDT)
-Date: Wed, 20 Aug 2025 16:50:35 -0700
-In-Reply-To: <684c0d76.050a0220.be214.029f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a65f4b.050a0220.3d78fd.000f.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] kernel BUG in gfs2_jindex_free (2)
-From: syzbot <syzbot+150563285f78ac3e9bd4@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250817154544.78d61029@foz.lan>
+ <b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
+ <87y0rg7e35.fsf@trenco.lwn.net>
+ <16b48826-6634-4ec9-86a0-7ddb59ce3bed@gmail.com>
+ <20250819030239.41a2e97f@foz.lan>
+ <142b209d-613a-4659-a0f7-27efa8c6be85@gmail.com>
+ <20250819153200.3c2b2ff6@foz.lan>
+ <08c3a7eb-0425-4709-a3ea-6d1d726fd3c8@gmail.com>
+ <20250820091530.068c4b62@foz.lan>
+ <3990f1c5-2108-44fe-913f-97ae3bb1ff42@gmail.com>
+ <xik6a2kb3mge5xh2mbdtc4p3ikbr4mnjlkk4ujc4sfztb3iqnr@tc76jva4smpm>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <xik6a2kb3mge5xh2mbdtc4p3ikbr4mnjlkk4ujc4sfztb3iqnr@tc76jva4smpm>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+Hi,
 
-HEAD commit:    5303936d609e Add linux-next specific files for 20250820
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16775442580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4602df3fd8f406ec
-dashboard link: https://syzkaller.appspot.com/bug?extid=150563285f78ac3e9bd4
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e597a2580000
+Commenting on your observation quoted below.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/57c3527e418a/disk-5303936d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7f1e146ea30f/vmlinux-5303936d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/55bebb5dd947/bzImage-5303936d.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/5e2270ee146f/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=159c16f0580000)
+On Wed, 20 Aug 2025 18:48:10 +0200, Mauro Carvalho Chehab wrote:
+[...]
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+150563285f78ac3e9bd4@syzkaller.appspotmail.com
+> If you want a more comprehensive answer:
+> 
+> LaTeX is highly dependent lots of packages, including fonts. The
+> reason why you can't reproduce the font issues with Docker
+> (I wasn't able to reproduce with Docker here as well) is
+> probably due to either packaging differences between the
+> two containers, due to different environment technologies
+> or even due to the way Docker and LXC handles OS virtualization.
+> 
 
-------------[ cut here ]------------
-kernel BUG at fs/gfs2/super.c:76!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 0 UID: 0 PID: 7296 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:gfs2_jindex_free+0x43e/0x440 fs/gfs2/super.c:76
-Code: cc cc cc cc cc 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c ea fd ff ff e8 22 e7 25 fe e9 e0 fd ff ff e8 88 e4 7f 07 e8 b3 1f c2 fd 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00
-RSP: 0018:ffffc9000b737a40 EFLAGS: 00010293
-RAX: ffffffff83fda7cd RBX: dead000000000122 RCX: ffff88802c6c9e00
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: 00000000ffffffff
-RBP: ffffc9000b737b00 R08: ffff888078520de7 R09: 1ffff1100f0a41bc
-R10: dffffc0000000000 R11: ffffed100f0a41bd R12: ffff8880785208b0
-R13: dffffc0000000000 R14: ffff888033122800 R15: ffff888033122878
-FS:  0000000000000000(0000) GS:ffff888125a05000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff329e51000 CR3: 0000000030646000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- gfs2_put_super+0x8af/0x950 fs/gfs2/super.c:636
- generic_shutdown_super+0x132/0x2c0 fs/super.c:643
- kill_block_super+0x44/0x90 fs/super.c:1723
- deactivate_locked_super+0xbc/0x130 fs/super.c:474
- cleanup_mnt+0x425/0x4c0 fs/namespace.c:1375
- task_work_run+0x1d1/0x260 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0x6b5/0x2300 kernel/exit.c:961
- do_group_exit+0x21c/0x2d0 kernel/exit.c:1102
- __do_sys_exit_group kernel/exit.c:1113 [inline]
- __se_sys_exit_group kernel/exit.c:1111 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1111
- x64_sys_call+0x21f7/0x2200 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fed18f8ebe9
-Code: Unable to access opcode bytes at 0x7fed18f8ebbf.
-RSP: 002b:00007ffc2c3ee178 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00007fed19011c2a RCX: 00007fed18f8ebe9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: 0000000000000005 R08: 00007ffc2c3ebf17 R09: 00007ffc2c3ef3d0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc2c3ef3d0
-R13: 00007fed19011c05 R14: 0000000000053df0 R15: 00007ffc2c3ef410
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:gfs2_jindex_free+0x43e/0x440 fs/gfs2/super.c:76
-Code: cc cc cc cc cc 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c ea fd ff ff e8 22 e7 25 fe e9 e0 fd ff ff e8 88 e4 7f 07 e8 b3 1f c2 fd 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00
-RSP: 0018:ffffc9000b737a40 EFLAGS: 00010293
-RAX: ffffffff83fda7cd RBX: dead000000000122 RCX: ffff88802c6c9e00
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: 00000000ffffffff
-RBP: ffffc9000b737b00 R08: ffff888078520de7 R09: 1ffff1100f0a41bc
-R10: dffffc0000000000 R11: ffffed100f0a41bd R12: ffff8880785208b0
-R13: dffffc0000000000 R14: ffff888033122800 R15: ffff888033122878
-FS:  0000000000000000(0000) GS:ffff888125b05000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fece4332000 CR3: 00000000584a4000 CR4: 00000000003526f0
+I'm not saying there is no difference between Docker and LXC.
 
+Can you fill in ???? cells in the table below ?
+Docker column is my observation of "FROM ubuntu:plucky" podman runs.
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ "make SPHINXDIRS=gpu pdfdocs" under Ubuntu Plucky
+
+    --------------- --------- ----------
+    SVG --> PDF     Docker    LXC
+    --------------- --------- ----------
+    imagemagick     FAIL      FAIL
+    inkscape        SUCCESS   ????
+    imagemagick [*] FAIL      ????
+    --------------- --------- ----------
+
+[*] after installing both inkscape and imagemagick, remove inkscape
+    with all its dependencies kept.
+
+Do you see any difference between Docker and LXC columns in the table?
+I'm all ears.
+
+Regards,
+Akira
+
 
