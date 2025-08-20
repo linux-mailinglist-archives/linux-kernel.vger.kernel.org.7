@@ -1,151 +1,110 @@
-Return-Path: <linux-kernel+bounces-778544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E28B2E72C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:07:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC307B2E72F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4804918927D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:07:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 642F21893AAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30102D9ED8;
-	Wed, 20 Aug 2025 21:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFA2304BD5;
+	Wed, 20 Aug 2025 21:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3oP929V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oihkB/d6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3282D6E73;
-	Wed, 20 Aug 2025 21:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755D425DB06;
+	Wed, 20 Aug 2025 21:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755724022; cv=none; b=tzm9/zdJHaMb9bWzwFJmnmFQ0H9UKo5NgDKso7vrFeEtv3aHVAXtW/FjJgRM8cjc4ve9YQm4dzKX4/ANpGBW06QAbCpUtkuIOgmQKy9H82uWfcjOmgoZ0kjr9V7tnjWmmyvNxVjXg0ySvvA5fMN8HXjD19waDX9dF6xyXndXjec=
+	t=1755724084; cv=none; b=MZ126m2B3jGpDLc0tsmNbJDOfWDrydfqU9qBJjU7+Iv6tCa7TbZ/GfElJ+jon9p5aSTSohC+HRiFgcyLP1StUjkbqPGbdy7CECQAGn4Yt/Ou+aIJz2FRAhWzeWjqW8fslRj1pdtv2SMCTRPJneQw5eD8LzRnRfeYR6C6283g0a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755724022; c=relaxed/simple;
-	bh=jEpv9dsCIXbIBynicqQ0dP6JZ4BCvS3IdZffu8Qg+1c=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CsChmeb0xLG3NTvq+wsp93KbIQjNyeDub+btos4t6S0cr0nVRIUGVuuKbpIUjvJEV4X81NTtzGWcTdQSZC5/uLW3Ia5FuEPTsQ3NIFcHim4vXeoJUqtsHWlq18f/OMHNUByx8wsMS6gaLthTdSG9CxHzQ0+Aa77oufy0rKn8qqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3oP929V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D48BC4CEE7;
-	Wed, 20 Aug 2025 21:07:01 +0000 (UTC)
+	s=arc-20240116; t=1755724084; c=relaxed/simple;
+	bh=rkoobUseBl3ZPCzxbYJUmI8ZVFYkuSdLZI+boJGT8UU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZ3vkb8/F21W8uMJrikTFYuWh7ABgvYzw+mYJzNx9KLXs0iBOlFmetK2Pz3aQSkCA6Q0TXEiH5WFlyxX4RZWLiu56X4DC4IvMXo5zsjxGv0uYqlAbaxQQHi4H7BHET92mqFj4QjyDYupdrTlAj8fJiFXG1Cl1zQ0kZxAPrvHO9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oihkB/d6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D80C6C4CEE7;
+	Wed, 20 Aug 2025 21:08:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755724021;
-	bh=jEpv9dsCIXbIBynicqQ0dP6JZ4BCvS3IdZffu8Qg+1c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=G3oP929VN3mOReD4gapeeAz0APdZitM87mRHUoIrjvMqRBGT36c6TO0Q3kssDHFAI
-	 OJQ6I2iZQ16iz7g5jbqvGFUnvGCB6RNF+N4zksRA/la3qiQGoqikYBAuXnmZxkQlnS
-	 056xF1PYZfrDayO79EvbOieHqwirJwJNMvvLRdjhkwRtThNRthQM1qf3pcYoFpmH9K
-	 X1rmyjauvh1/DXMkzV8qGancHdH8Di01ZfckFRu9YhrBYsgEYc0JaDURG+2yTTjL/G
-	 G9LWDRv76Q+x6xkbK5f7FmrxjEplH2dIE0GkpS0DBjKMFauFuVCdmctRXf6do+E3Ee
-	 f4K1/rxpexnqA==
-Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uoq1C-009V23-Nf;
-	Wed, 20 Aug 2025 22:06:51 +0100
-Date: Wed, 20 Aug 2025 22:06:49 +0100
-Message-ID: <87o6s9k8ie.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v15 2/6] KVM: arm64: Manage GCS access and registers for guests
-In-Reply-To: <20250820-arm64-gcs-v15-2-5e334da18b84@kernel.org>
-References: <20250820-arm64-gcs-v15-0-5e334da18b84@kernel.org>
-	<20250820-arm64-gcs-v15-2-5e334da18b84@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1755724084;
+	bh=rkoobUseBl3ZPCzxbYJUmI8ZVFYkuSdLZI+boJGT8UU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oihkB/d6bpuibPKO7CVwMQ1R8sWllUitiVtdBsUS035RrAaBSORoBP936GmEIOsbu
+	 OjULfbVu+pQfvp8jTOoJyz0e6MVlvFM9oi6QWxgpuJQgtivFicURpKEfobLF0866nf
+	 qbhhahV5cBcAWDgxDq6/d/tMq50+hvWGhmleVCS+7nvUo0ye0IyNyQVIulpizy/mLO
+	 VqV7qeC0YV7tWXSDwSsP7Jin6VG+A++3DMHUBQl3UzhNhwcoLc2ETx3SgG+7ihvuCc
+	 wECvB67E1XPAUPi9vquTOpqkaDk6gSIg8erCwUnLSE0K8Rla8SQpyYWiKFqjWS6IJe
+	 XJxwBTnEKC6uA==
+Date: Wed, 20 Aug 2025 16:08:03 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	freedreno@lists.freedesktop.org,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Simona Vetter <simona@ffwll.ch>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Mahadevan <quic_mahap@quicinc.com>,
+	Kuogee Hsieh <quic_khsieh@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>
+Subject: Re: [PATCH v6 5/6] dt-bindings: display/msm: add stream pixel clock
+ bindings for MST
+Message-ID: <175572408273.1071685.13722769967964549822.robh@kernel.org>
+References: <20250815-dp_mst_bindings-v6-0-e715bbbb5386@oss.qualcomm.com>
+ <20250815-dp_mst_bindings-v6-5-e715bbbb5386@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 86.149.246.145
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815-dp_mst_bindings-v6-5-e715bbbb5386@oss.qualcomm.com>
 
-On Wed, 20 Aug 2025 15:14:42 +0100,
-Mark Brown <broonie@kernel.org> wrote:
+
+On Fri, 15 Aug 2025 17:30:32 +0300, Dmitry Baryshkov wrote:
+> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 > 
-> GCS introduces a number of system registers for EL1 and EL0, on systems
-
-and EL2.
-
-> with GCS we need to context switch them and expose them to VMMs to allow
-> guests to use GCS.
+> On a vast majority of Qualcomm chipsets DisplayPort controller can
+> support several MST streams (up to 4x). To support MST these chipsets
+> use up to 4 stream pixel clocks for the DisplayPort controller. Expand
+> corresponding clock bindings for these platforms and fix example
+> schema files to follow updated bindings.
 > 
-> In order to allow guests to use GCS we also need to configure
-> HCRX_EL2.GCSEn, if this is not set GCS instructions will be noops and
-> CHKFEAT will report GCS as disabled.  Also enable fine grained traps for
-> access to the GCS registers by guests which do not have the feature
-> enabled.
-
-I don't see any FGT configuration in this patch. As far as I can tell,
-the FGU generation already takes care of that particular case.
-
+> Note: On chipsets that do support MST, the number of streams supported
+> can vary between controllers. For example, SA8775P supports 4 MST
+> streams on mdss_dp0 but only 2 streams on mdss_dp1.
 > 
-> In order to allow userspace to control availability of the feature to
-> guests we enable writability for only ID_AA64PFR1_EL1.GCS, this is a
-> deliberately conservative choice to avoid errors due to oversights.
-> Further fields should be made writable in future.
-
-I'm not sure what you mean by that. Making the feature field writable
-is only allowable if we have some level of support (and otherwise we
-should prevent both the feature being exposed, and the field being
-writable).
-
-So future fields being writable will only happen when the features are
-fully supported, and only then.
-
-Please clarify, or drop this altogether.
-
->
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->  arch/arm64/include/asm/kvm_emulate.h       |  3 +++
->  arch/arm64/include/asm/kvm_host.h          | 14 ++++++++++++++
->  arch/arm64/include/asm/vncr_mapping.h      |  2 ++
->  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 31 ++++++++++++++++++++++++++++++
->  arch/arm64/kvm/hyp/vhe/sysreg-sr.c         | 10 ++++++++++
->  arch/arm64/kvm/sys_regs.c                  | 31 +++++++++++++++++++++++++++++-
->  6 files changed, 90 insertions(+), 1 deletion(-)
->
+>  .../bindings/display/msm/dp-controller.yaml        | 63 +++++++++++++++++++++-
+>  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 20 +++++--
+>  .../bindings/display/msm/qcom,sar2130p-mdss.yaml   | 10 ++--
+>  .../bindings/display/msm/qcom,sm8750-mdss.yaml     | 10 ++--
+>  .../bindings/display/msm/qcom,x1e80100-mdss.yaml   | 10 ++--
+>  5 files changed, 99 insertions(+), 14 deletions(-)
+> 
 
-[...]
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 82ffb3b3b3cf..592cb5d6497a 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -138,6 +138,8 @@ static bool get_el2_to_el1_mapping(unsigned int reg,
->  		MAPPED_EL2_SYSREG(PIR_EL2,     PIR_EL1,     NULL	     );
->  		MAPPED_EL2_SYSREG(PIRE0_EL2,   PIRE0_EL1,   NULL	     );
->  		MAPPED_EL2_SYSREG(POR_EL2,     POR_EL1,     NULL	     );
-> +		MAPPED_EL2_SYSREG(GCSCR_EL2,   GCSCR_EL1,   NULL             );
-> +		MAPPED_EL2_SYSREG(GCSPR_EL2,   GCSPR_EL1,   NULL             );
-
-How is the state accessed when loaded on the CPU? You seem to be
-missing accessors for these two registers, affecting both EL1 and EL2
-in the guest.
-
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
 
