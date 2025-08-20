@@ -1,146 +1,165 @@
-Return-Path: <linux-kernel+bounces-778695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F14B2E90B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:53:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B02B2E90E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3678A7A6067
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:51:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB3F1BA905F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8AD2E1749;
-	Wed, 20 Aug 2025 23:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fcqu24aE"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492B02E1C44;
+	Wed, 20 Aug 2025 23:55:26 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21122E0939;
-	Wed, 20 Aug 2025 23:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E15C2E1755;
+	Wed, 20 Aug 2025 23:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755733991; cv=none; b=jfv9Gr+jexrpgStPx6Y5R/W0r/2LSkQyR8IBTm277fqDpXm03IINf8JBHETg1ZtxGRLamZp5j/V8L1UHRdw4nRxt5kCJjlqanp3nFp4CCLNcqacagOYLGRK295TtqPiXsOOXENoiDPijM7eiDUcQoTwGwfupHlVbqkimd3dkq9c=
+	t=1755734125; cv=none; b=X34yLdtNu2siL8/cFpecaNlLGokV/4PMhZp7eImRpZnZuycrL991XEQ8ki5RDZHGOtC8dQcLs/OEC0mtyMmHkrToxPo3RwUN0HsFexSz3T3b49J8FkqZUn/joozMiQ+eTIa/9moB/PiO1xo0kWTN3c2T0KMD9MWuIg4SByE2DYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755733991; c=relaxed/simple;
-	bh=lkZhE+qJJqo4/9WGe2KQdl21djGJ/OVTnSNmbs7LToE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d0n0VLiD00/FBmlPYLikFx/ldSIQVrS+Tb3GEnjyPWKFSfb7pD1YdxC4WkFlNYdFiGvic/gRfiU8OHJB8lLiy9KAi9Dc9sFhxK6wHt2AV37dVpkDOcPA6dskj116UdHO/ADQZzHui+7R9TrgXi9qwSaAebK8kulGE+kZdi8p0Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fcqu24aE; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b47052620a6so1106277a12.1;
-        Wed, 20 Aug 2025 16:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755733989; x=1756338789; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lEIR/kzy6wy9KbvYVdpPt5IxnAmvBoijUDq7bSPssBE=;
-        b=Fcqu24aEdIt/bbDbFB/zSkkuucwBAVQkgnVu6/Wwl3TfUoZaK3adXoVMAoJSFBryh5
-         io4lr6eYD9UF5RxVPNYD7uRhdl8XqfXX+kARtsAUSLfIM8ICKBwSUkcx3vBipl31BP+a
-         mVixl/4odcvQP4EOG1lEuJPWi+fqv7R9NekyezMtMXykN3nBAtNh2CVt+CAfmn+njOSs
-         PwfpZsbvUl89hyGSkHtNbOfVm+/YDsKzynRpOGMbI6vUo4foNuBZzZu3ihlbi3nn90Rt
-         KHiC1QHm9KWGXWjllplVUXfGHLrG78MbVIpd7cwNiZTtVSvk22DP1Lkevqg+xRSnK76w
-         WgUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755733989; x=1756338789;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lEIR/kzy6wy9KbvYVdpPt5IxnAmvBoijUDq7bSPssBE=;
-        b=V9uLbXrstRe7Lkojn62IJVwZ1TPMRuj9BtkRNcK08mA4EkbSLB78TqZJ4cGAtg8shD
-         vqSFMc8pxBi/nL1st9dEbtSrT3s+OdDM4xm8DvZCq0SyALICbzm3llVOHNZOUed3B4o6
-         Lt0q9/Nov1DWkwqhgIyWoHgonC928l5yoQjBZoxZ3MimCMzL+3ACTiO7FB546JRl7XPa
-         o4Tqf240OKbmD4hkVUiREvNl7eH8JfwrKLgZRluPwgllUj8E8xy/NagP3sB1+chNSwCJ
-         qGLehzsSel89Vkj42h2RX/nqO2IfqNTmFOTdshN8ZSfn84P5OdY9xauW+dHGAD/1V4A3
-         NY8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWovk57rlyxyBCiLKSp8mcLcBAZ1es5JatpiziVo5EaE2Ar6GNk/PoISK/J/+2A7+jIajAKzlC1UGA=@vger.kernel.org, AJvYcCXCpUwkwVfEtcn1gCSJ96cBvC8A/UdicCBdNlrHtiIhtAtY0iF160Zh2xgXE5ZKRIUcpetJXXeAuWgHz2SZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyF1FEa5k+pqiBiGhyRzxJ4boj1DvwzQIuqE6zL0DKByuNLyzn
-	NZEjnaaT3R2hfxG6zMle20VQdskTTX2oTf1yxvLP71xaMv4Om0kb8qxae0l2Jw==
-X-Gm-Gg: ASbGnctq5CL55kbfe12GPl4IG3Z8w1gk5JCx4o9PSNrpD5TV0d61A2vnlU1MJqtvxsQ
-	t9WH54FrI4w6Oqaiu9F9PgZbZqquZDjY8Oeth2N0BxS4kkbzxK3Udn9c6kZKQjR3n9ZVdTCGh1j
-	MkAPKj1ZN+DzuRUkaIRdXOpmvuGQezClzTTXtXTSuiUZhrE+ryl3ih3rDl6+4KCqC0+zYBBss87
-	XpmmibZo4AAI3YlCLK8kMAtigpwPBUbIlcWwX2zmTETNrURqohAJQhjlTV1h9xLRMja43vUiNCf
-	f0UXp3rMu444HaKiWNQ5/jvGjT+0QwGdMdVueRL/JJHWViSY/ONiU8kiULyk4SSzpZ+t1+OPkAp
-	5sL/hF4SoFNsIzQabvlGvl2gJLhzzLfLdWykqPntAqxrYDJsoB/NhX1DQYaYDlux+jLe/
-X-Google-Smtp-Source: AGHT+IGicx+inoO1VpDAFyKYA+INlShC3n1LYEMIyd6/GtrfjdKf1bXm6bP6w65A3Qo6WeIUN23fCA==
-X-Received: by 2002:a17:90b:314c:b0:315:9624:37db with SMTP id 98e67ed59e1d1-324ef0abdd0mr384183a91.3.1755733988904;
-        Wed, 20 Aug 2025 16:53:08 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324f16ccf62sm163319a91.0.2025.08.20.16.53.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 16:53:08 -0700 (PDT)
-Message-ID: <526d1aee-d401-4f04-8ddc-122f1fef7905@gmail.com>
-Date: Thu, 21 Aug 2025 08:53:04 +0900
+	s=arc-20240116; t=1755734125; c=relaxed/simple;
+	bh=4FQEkCWqdY78+jwxdtb56YU9bypzV4vfhgUnjjYSSUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HqER8CocOMl056TCBMLhT40YXnso2RV790KIaWDIWzPkgKCRaTRZSB6ivuU4sEQijocHwoHzAO39IBzUdwZ0rr/aGZ7dW3HkysemQskapnzoJmTbRgr7nAJKqXyyARaFx8uVLVTJrfBEJSp2HCLVwarP8ah8LdXj8blzHAQuys0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id D3F1E1A01C7;
+	Wed, 20 Aug 2025 23:55:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 1CED42000E;
+	Wed, 20 Aug 2025 23:55:20 +0000 (UTC)
+Date: Wed, 20 Aug 2025 19:55:22 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Sasha Levin <sashal@kernel.org>
+Subject: [PATCH] fgraph: Copy args in intermediate storage with entry
+Message-ID: <20250820195522.51d4a268@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250817154544.78d61029@foz.lan>
- <b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
- <87y0rg7e35.fsf@trenco.lwn.net>
- <16b48826-6634-4ec9-86a0-7ddb59ce3bed@gmail.com>
- <20250819030239.41a2e97f@foz.lan>
- <142b209d-613a-4659-a0f7-27efa8c6be85@gmail.com>
- <20250819153200.3c2b2ff6@foz.lan>
- <08c3a7eb-0425-4709-a3ea-6d1d726fd3c8@gmail.com>
- <20250820091530.068c4b62@foz.lan>
- <3990f1c5-2108-44fe-913f-97ae3bb1ff42@gmail.com>
- <xik6a2kb3mge5xh2mbdtc4p3ikbr4mnjlkk4ujc4sfztb3iqnr@tc76jva4smpm>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <xik6a2kb3mge5xh2mbdtc4p3ikbr4mnjlkk4ujc4sfztb3iqnr@tc76jva4smpm>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: oodrmk36m89xpuof3z9rsndmopu9xeyz
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 1CED42000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX192FjGdpQpdRtBDmIXFSErr+fWyHu8ou3Q=
+X-HE-Tag: 1755734120-889586
+X-HE-Meta: U2FsdGVkX1/6Hum9duZFAPDU4iRpI/5qMWBIySOLhPQiISnDYl6+GXNWgN/iFnwg1R+nGJIuRAnhg4m2/ZVP4iKwMJK/iRIaQ9UEyVfiImcro5/HBBt+46TeRUCX1Iw0RdurRHuDpCe7zPXFhalyCikmosxffrgjOTfg6tSW0C13+9W31n3DzFKjoHQii2am35vITHtYxAO3+7okxIliOHyMD5iZSqGnf07GFnHNWlQ1yE8BorHRyNhGZLvmbKxQVd8F3mNrM+4Xu+afCgq2K/QhIcZweH/zJrTfyp6qfycjn7PklUq2h9pNoPVbJjvpBu5VcWdLqMn1RnzDFdI1ZRNIj8xXEg/sZPyhKpTIJLOPGl/XL7ay+WPOpkgn1mUSoCl+R0dHhc/xJtve0n/gCg==
 
-Hi,
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Commenting on your observation quoted below.
+The output of the function graph tracer has two ways to display its
+entries. One way for leaf functions with no events recorded within them,
+and the other is for functions with events recorded inside it. As function
+graph has an entry and exit event, to simplify the output of leaf
+functions it combines the two, where as non leaf functions are separate:
 
-On Wed, 20 Aug 2025 18:48:10 +0200, Mauro Carvalho Chehab wrote:
-[...]
+ 2)               |              invoke_rcu_core() {
+ 2)               |                raise_softirq() {
+ 2)   0.391 us    |                  __raise_softirq_irqoff();
+ 2)   1.191 us    |                }
+ 2)   2.086 us    |              }
 
-> If you want a more comprehensive answer:
-> 
-> LaTeX is highly dependent lots of packages, including fonts. The
-> reason why you can't reproduce the font issues with Docker
-> (I wasn't able to reproduce with Docker here as well) is
-> probably due to either packaging differences between the
-> two containers, due to different environment technologies
-> or even due to the way Docker and LXC handles OS virtualization.
-> 
+The __raise_softirq_irqoff() function above is really two events that were
+merged into one. Otherwise it would have looked like:
 
-I'm not saying there is no difference between Docker and LXC.
+ 2)               |              invoke_rcu_core() {
+ 2)               |                raise_softirq() {
+ 2)               |                  __raise_softirq_irqoff() {
+ 2)   0.391 us    |                  }
+ 2)   1.191 us    |                }
+ 2)   2.086 us    |              }
 
-Can you fill in ???? cells in the table below ?
-Docker column is my observation of "FROM ubuntu:plucky" podman runs.
+In order to do this merge, the reading of the trace output file needs to
+look at the next event before printing. But since the pointer to the event
+is on the ring buffer, it needs to save the entry event before it looks at
+the next event as the next event goes out of focus as soon as a new event
+is read from the ring buffer. After it reads the next event, it will print
+the entry event with either the '{' (non leaf) or ';' and timestamps (leaf).
 
- "make SPHINXDIRS=gpu pdfdocs" under Ubuntu Plucky
+The iterator used to read the trace file has storage for this event. The
+problem happens when the function graph tracer has arguments attached to
+the entry event as the entry now has a variable length "args" field. This
+field only gets set when funcargs option is used. But the args are not
+recorded in this temp data and garbage could be printed. The entry field
+is copied via:
 
-    --------------- --------- ----------
-    SVG --> PDF     Docker    LXC
-    --------------- --------- ----------
-    imagemagick     FAIL      FAIL
-    inkscape        SUCCESS   ????
-    imagemagick [*] FAIL      ????
-    --------------- --------- ----------
+  data->ent = *curr;
 
-[*] after installing both inkscape and imagemagick, remove inkscape
-    with all its dependencies kept.
+Where "curr" is the entry field. But this method only saves the non
+variable length fields from the structure.
 
-Do you see any difference between Docker and LXC columns in the table?
-I'm all ears.
+Add a helper structure to the iterator data that adds the max args size to
+the data storage in the iterator. Then simply copy the entire entry into
+this storage (with size protection).
 
-Regards,
-Akira
+Reported-by: Sasha Levin <sashal@kernel.org>
+Closes: https://lore.kernel.org/all/aJaxRVKverIjF4a6@lappy/
+Fixes: ff5c9c576e75 ("ftrace: Add support for function argument to graph tracer")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_functions_graph.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 66e1a527cf1a..a7f4b9a47a71 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -27,14 +27,21 @@ struct fgraph_cpu_data {
+ 	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
+ };
+ 
++struct fgraph_ent_args {
++	struct ftrace_graph_ent_entry	ent;
++	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
++	unsigned long			args[FTRACE_REGS_MAX_ARGS];
++};
++
+ struct fgraph_data {
+ 	struct fgraph_cpu_data __percpu *cpu_data;
+ 
+ 	/* Place to preserve last processed entry. */
+ 	union {
+-		struct ftrace_graph_ent_entry	ent;
++		struct fgraph_ent_args		ent;
++		/* TODO allow retaddr to have args */
+ 		struct fgraph_retaddr_ent_entry	rent;
+-	} ent;
++	};
+ 	struct ftrace_graph_ret_entry	ret;
+ 	int				failed;
+ 	int				cpu;
+@@ -627,10 +634,13 @@ get_return_for_leaf(struct trace_iterator *iter,
+ 			 * Save current and next entries for later reference
+ 			 * if the output fails.
+ 			 */
+-			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT))
+-				data->ent.rent = *(struct fgraph_retaddr_ent_entry *)curr;
+-			else
+-				data->ent.ent = *curr;
++			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
++				data->rent = *(struct fgraph_retaddr_ent_entry *)curr;
++			} else {
++				int size = min((int)sizeof(data->ent), (int)iter->ent_size);
++
++				memcpy(&data->ent, curr, size);
++			}
+ 			/*
+ 			 * If the next event is not a return type, then
+ 			 * we only care about what type it is. Otherwise we can
+-- 
+2.50.1
 
 
