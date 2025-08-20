@@ -1,139 +1,105 @@
-Return-Path: <linux-kernel+bounces-776935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FC6B2D32A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:49:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1809B2D32B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1771882B38
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:49:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C01732A1C2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CFA2580ED;
-	Wed, 20 Aug 2025 04:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1415A258ECC;
+	Wed, 20 Aug 2025 04:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOrzfHuo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Zpk1tVh7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0170F220F38
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE481220F38;
+	Wed, 20 Aug 2025 04:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755665374; cv=none; b=BxzCmgQ18pvjk6eHVi7s36hNcutUUBzxpViAId+mjg7roOp68HQlIAZxX9k4LY2L9muLCUhbzGqyO+eItF3plIIXX+NEpTOZ1/sisy4aE6EEY6QF90FcxmAyQJqOa1ho7i3qnUbByVdeGd24OU4o2VGLwgfWs8p5AlfM2gHrJaU=
+	t=1755665411; cv=none; b=Z5RsCItDOoY0EHno4dJHnqFawGEAXuZCic7Wi0Y/E1SrkIm6amDXzLS6yF83x/fJ6ltvhFELvRfzZNYz5X4jj8CnqMWCMULFoWiNuscB9AYKKHkU9u8I6XfCyFT9S6r5q/wb+W5HbQ2cWS+/6b2NRsGCZjXrx/4IIMrpf0i8+Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755665374; c=relaxed/simple;
-	bh=P4OZPdJzjtMd9WS2zQ1ChyG8f5e6hQg5Pc1tc9hQJyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PL15gKov1aMJce0K8NLIpxQVUTeyM3j6DeMySOUPmyrqEjbTUDo55fIWcpOa4/zaTW9pSDs5wSBWJbwGWzYj+yPpZGKgCik6j8nK7iKa5LRnFYKvTs9LKcDsWhuklGoAVX5bBO1H+4WMbeXIfJnQS6+d28DjZSs6XlxYRfy/kaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOrzfHuo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E92DC2BC86
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:49:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755665373;
-	bh=P4OZPdJzjtMd9WS2zQ1ChyG8f5e6hQg5Pc1tc9hQJyc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QOrzfHuoxKtlOSwqlv+bO5TZbkjL2fOmmPykviKXKLcMVLJVK0QmzaMreKsN1Ui/O
-	 ULwduBlATxd9LryNI8x+8m8CyXz/oIp7mgygYXkSKHYHldCEAtXrTnM6CHCQ58/8Yg
-	 tyr75d4llJJHTyKuPHSxVaY3B2bEK/Z6Lxx8kxXGzZVzXvcOzKK5AjrsoJ+97Wr3RG
-	 pbWLl58UzaeF3qFyH1LNpaeQE0drthQn3jobMhx8kpIPvMvSyesCQgECwthMSBL9VZ
-	 uDTPXMks2eCxc2DCjXhB4azIWM4ju7nnOzQnS1EdxNsxQIs/h4G+m8Wk1byHemQJyk
-	 svCGGgderZCwQ==
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so47355e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 21:49:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVfeyS0Aqxbfye8YgIQzxrcnlHn3JvtKuIXx63N0s9IYJbyiYav63Ey6bFbU8RiBGdhjy2kO1mwYuSzK/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/ONrIWWkh0SOEqFG7hcoxPbNif8u3EOQ7XMt0BpZ33a/TOIF/
-	T8RWxjvBt5wSaaxGUoCjz1684Y0witTxL/iZqwcwuNuOKD+TCnzq72HcT83K93FNnDV4TtdCT3y
-	NDrHnSSsi2Q9elVdJXGfzB9yNSMTKXem4iLVmaYqX
-X-Google-Smtp-Source: AGHT+IFCBaA1civFtdIb6102WgW1wwKDHrQ40ZAiA8MIqsnpCc72+2FUaZhCf8KxfJEP3xFxhcGRE4HbOsCbAWY3ri0=
-X-Received: by 2002:a05:600c:c106:b0:459:efb0:6687 with SMTP id
- 5b1f17b1804b1-45b4777c108mr750575e9.6.1755665372081; Tue, 19 Aug 2025
- 21:49:32 -0700 (PDT)
+	s=arc-20240116; t=1755665411; c=relaxed/simple;
+	bh=DgjVa+2zk/oz9hFTFZiWDmSJ2URUVj5e/H5qYb+e0G8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pp+mQkqUDpjWa+6Wt3HG1++MmYN9byY7jPgznI7A3rAoDANZamMqbNaS3h8WDyqa7ONtrz4yUDYp/4Nucdw2Zl5oOX1F+k9TXFh8/M7QnV2dfhdo1/kO8WQSrTafj4scGCj7mHJ27GJruKqggVL+89+lKxNHw9DfSa5gmksXNGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Zpk1tVh7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755665405;
+	bh=ls7FmdiCkPKpK9KA7FfDV95qC63O6lo0Xe3852SwmaI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Zpk1tVh7N/e+hJCs2XKhq85uS+YM+caZXp/pLXbyHnvH32d/JrdM6p+D2oSZofqqs
+	 M1ecMNJ+qdOp9MSm1qgznUBIFF8A+Ldb61bDuCsPSXV24Ib8p+PY5CCJVs7ERI1XaN
+	 +Tv/8oZBjpfmhe0siowheaOlc4U1gP2U/WB2uTaujV5LQut0rGQkYwhIMgtEjFDpYA
+	 ROSngrID0SuEKYLoo2NdUMT/t56t4d9DOQKUX7XNqdBziPq/uCVys0M+fITmz9GnBb
+	 P/wWCqgUXXtBIqCpwRukQ1VUiee0xZb3f9HlD/e3ohWoERFRTM+z8Ox+l5YR301syK
+	 cbYIkKXAAfTuw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6DXD4Rskz4wbc;
+	Wed, 20 Aug 2025 14:50:04 +1000 (AEST)
+Date: Wed, 20 Aug 2025 14:50:03 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: wangzijie <wangzijie1@honor.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the mm-hotfixes tree
+Message-ID: <20250820145003.7d82d475@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819193404.46680-1-sj@kernel.org> <CAGsJ_4ygTv1tCJeuF43NhRR4E0kiMLpk6i8c+UHoUMt6LXykww@mail.gmail.com>
-In-Reply-To: <CAGsJ_4ygTv1tCJeuF43NhRR4E0kiMLpk6i8c+UHoUMt6LXykww@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 19 Aug 2025 21:49:20 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuPNjZc39xHx4NEiymzO29HkLfk9dFYXSu1vZ3tu9VeDvA@mail.gmail.com>
-X-Gm-Features: Ac12FXwEsBGmmhpKRLWis8jHILZsWH0UuSzOgykLKT2AqKDYJihra3lilyoboK4
-Message-ID: <CAF8kJuPNjZc39xHx4NEiymzO29HkLfk9dFYXSu1vZ3tu9VeDvA@mail.gmail.com>
-Subject: Re: [PATCH v4] mm/zswap: store <PAGE_SIZE compression failed page as-is
-To: Barry Song <21cnbao@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Andrew Morton <akpm@linux-foundation.org>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Takero Funaki <flintglass@gmail.com>, 
-	David Hildenbrand <david@redhat.com>, Baoquan He <bhe@redhat.com>, Kairui Song <kasong@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/gP+pN0J=Nsr_RsgBbzkJCKL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/gP+pN0J=Nsr_RsgBbzkJCKL
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 6:13=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> [...]
-> > +
-> > +       /*
-> > +        * If a page cannot be compressed into a size smaller than PAGE=
-_SIZE,
-> > +        * save the content as is without a compression, to keep the LR=
-U order
-> > +        * of writebacks.  If writeback is disabled, reject the page si=
-nce it
-> > +        * only adds metadata overhead.  swap_writeout() will put the p=
-age back
-> > +        * to the active LRU list in the case.
-> > +        */
-> > +       if (comp_ret || !dlen) {
-> > +               zswap_crypto_compress_fail++;
-> > +               dlen =3D PAGE_SIZE;
-> > +       }
->
-> I=E2=80=99m not entirely sure about this. As long as we pass 2*PAGE_SIZE =
-as
-> dst_buf, any error returned by crypto drivers should indicate a bug in
-> the driver that needs to be fixed.
+Hi all,
 
-That is what I have in mind for that counter, if that counter is not
-zero it is something with the crypto has gone wrong. If we are sure
-that it can never fail, maybe we shouldn't check the error return?
+In commit
 
-> There have also been attempts to unify crypto drivers so they consistentl=
-y
-> return -ENOSPC when the destination buffer would overflow. If that has
-> been achieved, we might be able to reduce the buffer from 2*PAGE_SIZE to
-> just PAGE_SIZE in zswap. There was a long discussion on this here:
-> https://lore.kernel.org/linux-mm/Z7dnPh4tPxLO1UEo@google.com/
->
-> I=E2=80=99m not sure of the current status =E2=80=94 do all crypto driver=
-s now return a
-> consistent -ENOSPC when the compressed size exceeds PAGE_SIZE? From
-> what I recall during that discussion, most drivers already behaved this
-> way, but Sergey Senozhatsky pointed out one or two exceptions.
->
-> Let=E2=80=99s sync with Herbert: have we reached the stage where all driv=
-ers
-> reliably return -ENOSPC when dst_buf is PAGE_SIZE but the compressed
-> size would exceed it?
+  c450c8ffc9fd ("proc: fix missing pde_set_flags() for net proc files")
 
-I agree -ENOSPC should treat the compression ratio the same too low.
-However, is the crypto library able to return any error other than
--ENOSPC? I am tempted to do something like BUG_ON() or WARN_ONCE() if
-other errors we think are never possible. However even the BUG_ON and
-WARN are discouraged in the kernel so we should handle the error. The
-one error is we can log it and monitor it to make sure it never
-happens.
+Fixes tag
 
-If we are absolutely sure the other error should not happen. We should
-remove the free form error from the interface to reflect that. Make
-the function should just return bool success or failure as a buffer
-too small.
+  Fixes: ff7ec8dc1b64 ("proc: use the same treatment to check proc_lseek as=
+ ones for proc_read_iter et.al)
 
-Chris
+has these problem(s):
+
+  - Subject has leading but no trailing quotes
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gP+pN0J=Nsr_RsgBbzkJCKL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmilU/sACgkQAVBC80lX
+0GxDyAf+O+t5BrxTZMssYcCi5S7p1skP1b/msRXpHCKlSa0hIRueMo+0A1Q/jV69
+z7r9QzkIMr/aj29Cyey3mOrXsAsqlDmHaiYcyCwydgcK7149BLn1oztzghbiWEc3
+7nwWt64bGFRCRj3gi4COdWRf5SN12ABqrHyAJUH17njubDAZc6Bdg5iQ2r6ueI2M
+WZ1b9ej1pjo+Vkwg/d57M8jBXO+iQ3uy1PA993TiGIgDv0tM5RmiEAFjNgcoL9a9
+0li/zpzcMGyFbOdMSlw3oLcj+yxkHG+7u1vB5+8Qps5f1nwMe8VzbPPmPzG+VF4+
+KRXvqU3pgoBdslNFLmMYWfNQgAocNQ==
+=CNQX
+-----END PGP SIGNATURE-----
+
+--Sig_/gP+pN0J=Nsr_RsgBbzkJCKL--
 
