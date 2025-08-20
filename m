@@ -1,104 +1,78 @@
-Return-Path: <linux-kernel+bounces-778594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB9D7B2E7B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:50:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95692B2E7BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3E94AA0D7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:50:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DFAE16790C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352B7334393;
-	Wed, 20 Aug 2025 21:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5B127B34A;
+	Wed, 20 Aug 2025 21:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b4AyeJjX"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNoSs+gQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813E2334368;
-	Wed, 20 Aug 2025 21:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B30334376
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755726650; cv=none; b=L3uZll/fLU5drc+6m7vBNORm2AvL/I7uxcsPAyWhuUU/Rc2OhNieNVt3JgzdDjS/aJ197+pQo0Yu+BKFS0h+p8Y6HOvGlcWVJowP/Xi7wLIVAYIiN4xdg860Fo6N1h+uwBFUoxWCr8M+IGNxXinnfrbiG3DgaRxP36QYajIPrL8=
+	t=1755726665; cv=none; b=dWqr7BBFrOfoi360QggZXsDnq5u/ecCOovwT0tMt3VfrN2k5bvrWw6ugTX3LsyQwo9zu1PCarrnfSC8IPn6b+1WeDn7gnBvOv0nFucRNUeEASFmtOcyTGpFaEBmJwlnY7OCx9e5oaP0kJayt7btMQyb5Ln/SzGBcQVuLofzHRvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755726650; c=relaxed/simple;
-	bh=6Px1qLZaP5KkAkXcAjlGmPZyKVVrTH3RDECaYDCm2NM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JKU+wNuDsnlErTXuf6Mspw3j7K5s9b/e0n62AC1UfuHmQflxLEXMpIEG7PvlzezEFDRLHkYj2Cbd0T1lyt2naRplmuol34PV7lyybSeKLI3K/sInTfHBGjD7g4I4kO2xSt0g3qyFQWjfcOJfxZKlBuMTGNOWtIDK/I7MSoQiroA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=b4AyeJjX; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755726642;
-	bh=SECfTSRCICH50662hUdET1xmry6PhtZFKPVYRiGJPA0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=b4AyeJjXA72D3c7SJF28Z64/VeZvf2IbNMt3Mix6EevL3VwPiY7smGIq1+70fb7Jn
-	 L3csSOYXr5bZ/qAzMxqLAG7IXJU4+dXNLLB1ouTdt6vTw3L3LQx5dzombnCD0O8Pgq
-	 lgPUqT7VHvHVbh7MOFyK/cx6SppPwH1bwIw9SWcH0wrBeV0NOQlF4AHWXXxR5/WVZ4
-	 hzc2CbzQE1fCLJOLPKzWzRaWzu0ztKDMgjyjNEOpH0bQU8FMIBLtHTcFEtYAdWIQXc
-	 DyxpCz2/qQtL7QAwixLffvET+Eb5g6IRh7niFrMSdLIdB3kcvwbK8C4al+MN0EnK4X
-	 cZwznT/sEX/Ew==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6g9t3qcnz4w2J;
-	Thu, 21 Aug 2025 07:50:41 +1000 (AEST)
-Date: Thu, 21 Aug 2025 07:50:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Joanne Koong <joannelkoong@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the fuse tree
-Message-ID: <20250821075041.576dfc6a@canb.auug.org.au>
+	s=arc-20240116; t=1755726665; c=relaxed/simple;
+	bh=iNwtBYePNA83SA5pocE4fjOSvyILpdaCkYud2gMR2lc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=onJeXM8QM2XqdMEDumK3NdDQtiLl0dnOZ4D0sk1JNWDh6qzt/eDV+TQEnFUwpxVkwYAGktB55vRDzWH/tqkcEKL5eiOy/Kz9Fznq0ZpIKQctk5AxKLVWTx708zP03sUlCXUyTEJDUV9TZrb+FiGWa3XfJJl30MAZ9LZb8pfhG0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNoSs+gQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A885AC4CEED;
+	Wed, 20 Aug 2025 21:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755726665;
+	bh=iNwtBYePNA83SA5pocE4fjOSvyILpdaCkYud2gMR2lc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZNoSs+gQ9tEFIzJZ8Vl1TiQSfqBduFjlvUC1EdpzqPHY3j+ANOKNJBQK9Q7g2V7ZG
+	 2GPnCPbYuDdUzvCUo8/EXN0C6DTd3nKWLlBgER/Sw4/UceqZChM1x74kooLTMwxA9x
+	 ok0HeWLDoknz3R6+PVfRp8v9uzg/LdwuobC4IU+NcIvNgBjc2Nm/52qVONq1Q6IYG2
+	 YblDxZ+GgwR94GCedT0MzPVy7O0ITBl5tHKRqOv6AB29G9RXgCOmwg9fPiLZTFfKPs
+	 Ri4JhocvjbhmB9rLECeIOor3hX6EFDAUOTswGKJTl4AbYAlinV34I8POQN0IZb6+YX
+	 qVtO8f+V62ueQ==
+Date: Wed, 20 Aug 2025 15:51:02 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	tytso@mit.edu, nilay@linux.ibm.com, martin.petersen@oracle.com,
+	djwong@kernel.org, mcgrof@infradead.org
+Subject: Re: [RFC PATCH] nvme: add an opt-in to use AWUPF
+Message-ID: <aKZDRrfUTxJoFA1m@kbusch-mbp>
+References: <20250820150220.1923826-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/DXD06fxoE7xO=ya6/ruezp_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820150220.1923826-1-john.g.garry@oracle.com>
 
---Sig_/DXD06fxoE7xO=ya6/ruezp_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 20, 2025 at 03:02:20PM +0000, John Garry wrote:
+> It would be preferred to stop honouring AWUPF altogether, but this may
+> needlessly disable atomic write support for many "good" devices which
+> only specify AWUPF. Currently all validation of controller-related
+> atomics limits is dropped.
 
-Hi all,
+These "good" devices that only report AWUPF, is there some set of
+characteristics that generally applies to all of them? I tried to list
+out conditions for when I think the value could be counted on here:
 
-In commit
+  https://lore.kernel.org/linux-nvme/aGvuRS8VmC0JXAR3@kbusch-mbp/
 
-  1c9f99647c40 ("fuse: reflect cached blocksize if blocksize was changed")
-
-Fixes tag
-
-  Fixes: 542ede096e48 ("fuse: keep inode->i_blkbits constant)
-
-has these problem(s):
-
-  - Subject has leading but no trailing quotes
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/DXD06fxoE7xO=ya6/ruezp_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmimQzEACgkQAVBC80lX
-0GzyFggAnpwvN2RUXF17N/lPXCJF03q/coByroYb8ZqL1NKKqcxSMFXGrVmiQ10P
-oxhhcAv7BA9Mq1RH+7qcli1HLntyPdwc0kfmTQaUu1CK5lTyFa28hDp9NzNRxX4Q
-8EEBneUNNwDtv8J3UIeW2h5jDUd82LrJK37J3abu/CXO7AJObD9zvomXluOyk3N4
-jeEMp40IBjkA6Oe5GbWwo9JnoqnTEJSZSxGU6k+3UhQZlbF3rMy+VJwMhdR+ktRC
-0CzvPERwolmzGv+7vDUnRx2S3nznS3STlovqX1hr3PuI8Zt8/xKA4wQWfpZwT0A5
-be9sLb1xctdswiVjxGRmYatuOOYHzQ==
-=2rbZ
------END PGP SIGNATURE-----
-
---Sig_/DXD06fxoE7xO=ya6/ruezp_--
+I just don't know if you know of any devices where that criteria doesn't
+git. If not, maybe we can work with that without introducing more user
+knobs.
 
