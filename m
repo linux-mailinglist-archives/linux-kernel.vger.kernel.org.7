@@ -1,185 +1,214 @@
-Return-Path: <linux-kernel+bounces-777522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D714EB2DA7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:03:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7AC5B2DA80
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 001DC17DA14
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:03:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467DA72739F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E343F2D7818;
-	Wed, 20 Aug 2025 11:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65572E337A;
+	Wed, 20 Aug 2025 11:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kcoiVQ/J"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="R9BK4qiR"
+Received: from 11.mo534.mail-out.ovh.net (11.mo534.mail-out.ovh.net [46.105.33.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780042836AF
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BE82E1C61
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.33.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755687801; cv=none; b=jzARSPpSxwWTGsDfTgMqV0BUaOcUIQiwtHWGeXNqjL5ovSTOjtlNMkUyPFxzyevUNdRTg2evEuXfpQQFp2reJtYeMod3QLOLVueUty6LCx6KwB7zwU9qb50VyC+cne6dQpR17uXCoPqdrzbkpLjuef/ebp8Zq1YHBN7MoEbVUNs=
+	t=1755687900; cv=none; b=s1atNq5T9IsRiRACyPvZh7cbvQjwKrllMbA2nZESzLtgdvMfPAeu42ygifkpE9Pry2CGNLzmtFOAjQCoOl0N4m9a/iNxhPdS2t5zLd7kDQBp81NOf+e72LClj3V4mkQArtOYNIWK8HxIXOfC1Jk3bMRbiKjn98nLV1P/bdDZGAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755687801; c=relaxed/simple;
-	bh=u3stZJZozj1Ykm8shsxVmP+agbKEMYkuhg6zzlZscwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ed/qjy4Set8ujKYaen/XyE6D6G5ka8ULI/Lf6ixKyXZIfqidy9vcIFR3ARv8k9BEnU2CrbaNUa11dz6NSlyYtd/57/A7T4IANrWBU5nX4gqwas/2FZkn4WwHZBylVQZvRqShQ1ZJd6Q7M0br3tmpvVZzJJDJOdXStG8cJa5OIcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kcoiVQ/J; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1ac7c066so4886855e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:03:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755687798; x=1756292598; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jkwhUABhPBNZeZgOhl20sSl/xqev4urG4lq3t9jsKjE=;
-        b=kcoiVQ/Jr6XEtOCKhNAre08GZOrIVtYDbNkBfak8MU0Ms2Lhbft7lBrZTjZielEdku
-         qGO1IYQYNEC4IujhCN9+XxOOvStMx7D1NfVIjkPKVS/dz4H3MWpZZiPudMZgubGGdwzv
-         8yljkqZ4FbTMvONAFg1QRuCDWxI3F+HPL52EvIH+HUr4fEv4gm45efKkwjc6U245xC1L
-         T5w2rtRhfUkRu5qktPiLXzu/PRt/FNndjbRYY7zip9Jd3zoGxU7Q9mGo6voyFha1jGW9
-         Fitb2siNiGUABwf+gGz0++2JyIAviX36u7LiT08J8eetwegYwJ9/N+btP2GEQKFjdJXB
-         62vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755687798; x=1756292598;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jkwhUABhPBNZeZgOhl20sSl/xqev4urG4lq3t9jsKjE=;
-        b=n3n2XJiFisSFNRB3AkGVraDkWY/9jHWiA6hetD7GL1AgWg846PXicXXQ+4N0joLP5t
-         KcmRPT91/PR0+2nQRqN7h1ZMO1ZhTAGQXt33rg/rf9P2pearC4JUyhOB1NgM1o6GGvTa
-         Feop5tefzzt/cjYndkqgoa6NBPoBTNPgwN7fHJFAx7N+2Go6a7XfLLx4WLIszflXFBWK
-         Xqc7x4ta5uvCfsxjmphGWjC/SdC7Glwjwfqhemo44+GEvrAPtNkCbbn14VgvfScUWhwC
-         ekLW0UjtUgL2p7EkJtga5GSYoU++vDpGPR8fHV2GEDJ87lUrT+G3aphkpnFnq7otKfUi
-         uTOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMHQJKqueFoYOn8xmJbVux7PfYDXS1lquWoWoyxqlufEJ/2FKeqiptdR582u8IK7NOO2nVyzNF9c1GzBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtaZ3m3gZrtOIXHtj9YYZmbotMgEFTpvRbkxWG1p62AF0p7yzL
-	o/BN5hXuzcmDogcGWbcVLMy16xhzOFMR2PPa/p019qEPe+Xr93P8e0g9uLU+lo/vz3c=
-X-Gm-Gg: ASbGncsnjO7hge0PYgAdBihM36BoPXt6oCrDX4vPLFWQ7aNeGmVS5JtvReHcAuaO4BK
-	KGEVQyk875fhpEFtkQrjKS9lslx65iHa2eiBuWtHle5HzI/gzVd9NT9tjOZqp7ekItUskMoyRyS
-	Q3wFLYHPYmxS7hNikvYxzs4qvXvSxMms/1j58LV2UhreduUoLD40ICJ6/73ogdN5ThL3/1CeaPe
-	4dxGtv+ayZVwVijpPMBTS9Tg3p96Ix/X8n6yiRHJb/VIeXSH5xj3yAJDY1HDXqPmP70C8SUvV2G
-	wk5siiVuSYYC3pBHfbHvT6il73JP9SF93MEcNvH3pWfCpRL673M7s4EDqJEyltU8WwqDyQgBvit
-	yucMASamz1qcOdO1z7IXtlZKxrnHm2IKt8aTEjonvGQjAiDHV/iVZ6P6iEkrqcq4=
-X-Google-Smtp-Source: AGHT+IGWRDOeJaAPpLWfekSMtMXpy4Qbpyr5pWYSFND6wauYCuulJRLUbo01wH9DLbqwq7ctNEf/Hw==
-X-Received: by 2002:a05:600c:1d24:b0:45b:47e1:ef7b with SMTP id 5b1f17b1804b1-45b4b3b2723mr5193455e9.17.1755687797808;
-        Wed, 20 Aug 2025 04:03:17 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c90cc4sm29805385e9.16.2025.08.20.04.03.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 04:03:17 -0700 (PDT)
-Message-ID: <660c2594-9a93-450e-9a2e-17ef6b4c696d@linaro.org>
-Date: Wed, 20 Aug 2025 12:03:16 +0100
+	s=arc-20240116; t=1755687900; c=relaxed/simple;
+	bh=R63ct+bA5ilQOtHmxLr8yi6FWr6QLYf0GYVKw/4NnoM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mzyqv07JCtHGlwfsol5FIvU2Dc/92U0efrsNURYdqKv/q6uTlgxZWCIFsDZD7CI9+BfkN3z8XS7pmIb/xS/ROpYfIZaIE/uouFgWFYmNOHBTYLVOmE0ndiohF14fwmI7edyhqZ21sEYir7g5lYFghowOeBNuCKY9pd5mQXmIQts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=R9BK4qiR; arc=none smtp.client-ip=46.105.33.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net [79.137.60.37])
+	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4c6Nrk5T2Qz6Fx7;
+	Wed, 20 Aug 2025 11:04:54 +0000 (UTC)
+Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net. [127.0.0.1])
+        by director4.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <bp@alien8.de>; Wed, 20 Aug 2025 11:04:54 +0000 (UTC)
+Received: from mta7.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.109.249.47])
+	by director4.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c6Nrk41d0z1xpD;
+	Wed, 20 Aug 2025 11:04:54 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.7])
+	by mta7.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id F0665B832C3;
+	Wed, 20 Aug 2025 11:04:52 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-103G0054b37c7ea-705c-45f7-9aa5-f05d190495c8,
+                    616188B862BD6F9D24C783D7A018D61FF224AB69) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:147.156.42.5
+From: Marcos Del Sol Vives <marcos@orca.pet>
+To: linux-kernel@vger.kernel.org
+Cc: marcos@orca.pet,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kees Cook <kees@kernel.org>,
+	"Xin Li (Intel)" <xin@zytor.com>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Subject: [PATCH v2] x86: add hintable NOPs emulation
+Date: Wed, 20 Aug 2025 13:04:35 +0200
+Message-Id: <20250820110437.560107-1-marcos@orca.pet>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] Peripheral Image Loader support for Qualcomm
- SoCs running Linux host at EL2
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 12382084229308372660
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheekvddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepofgrrhgtohhsucffvghlucfuohhlucggihhvvghsuceomhgrrhgtohhssehorhgtrgdrphgvtheqnecuggftrfgrthhtvghrnhepuefgheehhffgleeuvddufeffudeuudefjedufeevlefhudejhfffkeduieetkedvnecuffhomhgrihhnpeguvggsihgrnhdrohhrghdpkhgvrhhnvghlrdhorhhgnecukfhppeduvdejrddtrddtrddupddugeejrdduheeirdegvddrheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepuddvpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepshhnohhvihhtohhllhesghhmrghilhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoh
+ epuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrghrtghoshesohhrtggrrdhpvghtpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
+DKIM-Signature: a=rsa-sha256; bh=x+EFp2j9Izu5YN/IrY97Y+OpAvYO4kxK63uYmJvI9PA=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755687895;
+ v=1;
+ b=R9BK4qiRZWgyGNPaQRDLY0L7S2K4sM0LZ/2CmhEJjn/ZGQZIIA+aNFlWB2jvloxBmYBhNaIc
+ eUNVJaRPfDtbpqjUwi8XZgUpi6hKovP5na3X0wnNtXSSOa/+9RO7rbBS+QM2cIvag/khpZQ7U8i
+ M6RXvBG+uA+oWYPD6+SZjrp6rXeKXTxwdJlJZeWXlotKo8lQJV8aGuwvsbjxUeRiq6mJ4ad4wjM
+ oVP6jYkyoSJxP7ScK22m62XwID1oWFJTKCoYyQ9dIcS0xczfbXNFjUx7VcPtZaE4c+lcDegkSbW
+ RfySsaoP+f0RuPdasSwHHB6UhuPIxY62DJfwPkExmwVLw==
 
-On 19/08/2025 17:54, Mukesh Ojha wrote:
-> This is a further continuation with a new approach to the topic
-> discussed in [1] regarding the enablement of Secure Peripheral Image
-> Loader support on Qualcomm SoCs when Linux runs at EL2.
-> 
-> A few months ago, we also discussed the challenges at Linaro Connect
-> 2025 [2] related to enabling remoteproc when Linux is running at EL2.
-> 
-> [1]
-> https://lore.kernel.org/lkml/20241004212359.2263502-1-quic_mojha@quicinc.com/
-> 
-> [2]
-> https://resources.linaro.org/en/resource/sF8jXifdb9V1mUefdbfafa
-> 
-> Below, is the summary of the discussion.
+Hintable NOPs are a series of instructions introduced by Intel with the
+Pentium Pro (i686), and described in US patent US5701442A.
 
-Which tree does this apply to exactly ?
+These instructions were reserved to allow backwards-compatible changes
+in the instruction set possible, by having old processors treat them as
+variable-length NOPs, while having other semantics in modern processors.
 
-git-log-graph linux-stable/master
-* c17b750b3ad9f - (tag: v6.17-rc2, linux-stable/master, 
-linux-stable/HEAD) Linux 6.17-rc2 (3 days ago)
-*   8d561baae505b - Merge tag 'x86_urgent_for_v6.17_rc2' of 
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (3 days ago)
+Some modern uses are:
+ - Multi-byte/long NOPs
+ - Indirect Branch Tracking (ENDBR32)
+ - Shadow Stack (part of CET)
 
-b4 shazam 
-20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com
+Some processors advertising i686 compatibility lack full support for
+them, which may cause #UD to be incorrectly triggered, crashing software
+that uses then with an unexpected SIGILL.
 
-b4 shazam 20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com 
+One such software is sudo in Debian bookworm, which is compiled with
+GCC -fcf-protection=branch and contains ENDBR32 instructions. It crashes
+on my Vortex86DX3 processor and VIA C3 Nehalem processors [1].
 
-Grabbing thread from 
-lore.kernel.org/all/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-Analyzing 18 messages in the thread
-Analyzing 0 code-review messages
-Checking attestation on all messages, may take a moment...
+This patch is a much simplified version of my previous patch for x86
+instruction emulation [2], that only emulates hintable NOPs.
+
+When #UD is raised, it checks if the opcode corresponds to a hintable NOP
+in user space. If true, it warns the user via the dmesg and advances the
+instruction pointer, thus emulating its expected NOP behaviour.
+
+[1]: https://lists.debian.org/debian-devel/2023/10/msg00118.html
+[2]: https://lore.kernel.org/all/20210626130313.1283485-1-marcos@orca.pet/
+
+Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>
 ---
-   ✓ [PATCH v2 1/11] firmware: qcom_scm: Introduce PAS context 
-initialization helper
-   ✓ [PATCH v2 2/11] soc: qcom: mdtloader: Add context aware 
-qcom_mdt_pas_load() helper
-   ✓ [PATCH v2 3/11] firmware: qcom_scm: Add a prep version of 
-auth_and_reset function
-   ✓ [PATCH v2 4/11] firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
-   ✓ [PATCH v2 5/11] firmware: qcom_scm: Add shmbridge support to 
-pas_init/release function
-   ✓ [PATCH v2 6/11] remoteproc: Move resource table data structure to 
-its own header
-   ✓ [PATCH v2 7/11] firmware: qcom_scm: Add 
-qcom_scm_pas_get_rsc_table() to get resource table
-   ✓ [PATCH v2 8/11] soc: qcom: mdt_loader: Add helper functions to map 
-and unmap resources
-   ✓ [PATCH v2 9/11] remoteproc: pas: Extend parse_fw callback to parse 
-resource table
-   ✓ [PATCH v2 10/11] remoteproc: qcom: pas: Enable Secure PAS support 
-with IOMMU managed by Linux
-   ✓ [PATCH v2 11/11] media: iris: Enable Secure PAS support with IOMMU 
-managed by Linux
-   ---
-   ✓ Signed: DKIM/qualcomm.com (From: mukesh.ojha@oss.qualcomm.com)
----
-Total patches: 11
----
-Applying: firmware: qcom_scm: Introduce PAS context initialization helper
-Applying: soc: qcom: mdtloader: Add context aware qcom_mdt_pas_load() helper
-Patch failed at 0002 soc: qcom: mdtloader: Add context aware 
-qcom_mdt_pas_load() helper
-error: patch failed: drivers/remoteproc/qcom_q6v5_pas.c:235
-error: drivers/remoteproc/qcom_q6v5_pas.c: patch does not apply
-error: patch failed: drivers/soc/qcom/mdt_loader.c:302
-error: drivers/soc/qcom/mdt_loader.c: patch does not apply
-error: patch failed: include/linux/soc/qcom/mdt_loader.h:10
-error: include/linux/soc/qcom/mdt_loader.h: patch does not apply
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-hint: When you have resolved this problem, run "git am --continue".
-hint: If you prefer to skip this patch, run "git am --skip" instead.
-hint: To restore the original branch and stop patching, run "git am 
---abort".
-hint: Disable this message with "git config set advice.mergeConflict false"
+ arch/x86/Kconfig        | 29 +++++++++++++++++++++++++++++
+ arch/x86/kernel/traps.c | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
 
----
-bod
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 58d890fe2100..a6daebdc2573 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1286,6 +1286,35 @@ config X86_IOPL_IOPERM
+ 	  ability to disable interrupts from user space which would be
+ 	  granted if the hardware IOPL mechanism would be used.
+ 
++config X86_HNOP_EMU
++	bool "Hintable NOPs emulation"
++	depends on X86_32
++	default y
++	help
++	  Hintable NOPs are a series of instructions introduced by Intel with
++	  the Pentium Pro (i686), and described in US patent US5701442A.
++
++	  These instructions were reserved to allow backwards-compatible
++	  changes in the instruction set possible, by having old processors
++	  treat them as variable-length NOPs, while having other semantics in
++	  modern processors.
++
++	  Some modern uses are:
++	   - Multi-byte/long NOPs
++	   - Indirect Branch Tracking (ENDBR32)
++	   - Shadow Stack (part of CET)
++
++	  Some processors advertising i686 compatibility (such as Cyrix MII,
++	  VIA C3 Nehalem or DM&P Vortex86DX3) lack full support for them,
++	  which may cause SIGILL to be incorrectly raised in user space when
++	  a hintable NOP is encountered.
++
++	  Say Y here if you want the kernel to emulate them, allowing programs
++	  that make use of them to run transparently on such processors.
++
++	  This emulation has no performance penalty for processors that
++	  properly support them, so if unsure, enable it.
++
+ config TOSHIBA
+ 	tristate "Toshiba Laptop support"
+ 	depends on X86_32
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 36354b470590..22b51c4186e7 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -295,12 +295,45 @@ DEFINE_IDTENTRY(exc_overflow)
+ 	do_error_trap(regs, 0, "overflow", X86_TRAP_OF, SIGSEGV, 0, NULL);
+ }
+ 
++static bool handle_hnop(struct pt_regs *regs)
++{
++	unsigned char buf[MAX_INSN_SIZE];
++	unsigned long nr_copied;
++	struct insn insn;
++
++	if (!IS_ENABLED(CONFIG_X86_HNOP_EMU))
++		return false;
++
++	nr_copied = insn_fetch_from_user(regs, buf);
++	if (nr_copied <= 0)
++		return false;
++
++	if (!insn_decode_from_regs(&insn, regs, buf, nr_copied))
++		return false;
++
++	/* Hintable NOPs cover 0F 18 to 0F 1F */
++	if (insn.opcode.bytes[0] != 0x0F ||
++	    insn.opcode.bytes[1] < 0x18 || insn.opcode.bytes[1] > 0x1F)
++		return false;
++
++	pr_warn_once("%s[%d] uses hintable NOPs that your processor does not support.\n"
++		     "The kernel is emulating them; the performance of this "
++		     "and other executables using them will be impacted.\n",
++		     current->comm, task_pid_nr(current));
++
++	regs->ip += insn.length;
++	return true;
++}
++
+ #ifdef CONFIG_X86_F00F_BUG
+ void handle_invalid_op(struct pt_regs *regs)
+ #else
+ static inline void handle_invalid_op(struct pt_regs *regs)
+ #endif
+ {
++	if (user_mode(regs) && handle_hnop(regs))
++		return;
++
+ 	do_error_trap(regs, 0, "invalid opcode", X86_TRAP_UD, SIGILL,
+ 		      ILL_ILLOPN, error_get_trap_addr(regs));
+ }
+-- 
+2.34.1
+
 
