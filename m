@@ -1,237 +1,210 @@
-Return-Path: <linux-kernel+bounces-777929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF9FB2DF54
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:30:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99DD7B2DF53
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07A85E3A4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:24:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9713D1C83DEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CFE26E6E3;
-	Wed, 20 Aug 2025 14:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED002E0409;
+	Wed, 20 Aug 2025 14:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xSAtgG48"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkzHMx6c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA2D26F45A
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F8426FA5B;
+	Wed, 20 Aug 2025 14:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755699863; cv=none; b=EKK5ja+GY7DYArTCxt13Zb+izhFTZBf8aXX/EeXFdJsEhNpIYzpJEngFaQnuEz+LOlCvlObV6s7Ruvf5Ge+qbxGnL/CZoSLgPFkKDpdCtUP0Y8FBYWOE8ReDW4xFfgp8P0NSX4ZceVXm7fQYwiOCg8ODM7hV6+prHCkSlZFeRSI=
+	t=1755699885; cv=none; b=Q2p/IaUATwONqOQ5DZZbf4ytux/oB/3PmNoLdFCN/j+5/TDkRX//FEw/tWVUu0uz6iOAsjDS5cbFxKDteDjvcgvwLoNMuXwZaJ9508omqMGCJokT8f7Ce/1GccImBO04x6iFVP1rCYO7vZz90IPmfz6eKDcmKOGI6Hf7L02mdV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755699863; c=relaxed/simple;
-	bh=sFi3nf9189XWLnFEh/REiiOkLpKIbqzYdFnw+OHRV5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WfScBYaf/1rC4G0aATi6oVn4RiAracEaNBx+OaiP4SlOvmC2C/pH3uicUuEiadMJ47CIrXZgHaGQT4DbREc4sw9qptpKqx8oZThujAODz7UKuMtXFX5XvjlQsENVUscIS9NinLDTOJbZzZYCFbNj45oGGGSIxDpWA6hp4CZQEHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xSAtgG48; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3bb30c72433so2282917f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 07:24:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755699859; x=1756304659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6J3bLH3lxnU1wq9lp33HkB5R033P8bBP3qGJYX3dOFU=;
-        b=xSAtgG48PKBy95ArEEWEcxVz4ZURUxS7CUoYlLh1gSHkslwCFuYyWTK+MW6WLGeO9I
-         YaCOjhORGwWWYqNK/PA9v24IVQr2T/vNaeRf66G3eiDZoGjNGzi6MxNeVHWKL78BAMjn
-         3fMbuqR302CJg4kVX5bX7LxQE9DYbbqTeJeLYnIMdoj8MT2T0/8672Y+jxL3JLHyS5ZW
-         G6MtBlqs2dR5yFyZemlH/MMopDXZWAylKgf9ukfIHoS1O9FJbv7WLV8ZiAYlii86qTIX
-         SKh9xuavjf12jmU3+XOgpQt0TIFu8JigmTS+B4JcwEqWntFpidDUrG70iOuvC2v0KZ3H
-         tP3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755699859; x=1756304659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6J3bLH3lxnU1wq9lp33HkB5R033P8bBP3qGJYX3dOFU=;
-        b=oA0rBmpIDeU0VIFnTurrOiYST7wdQwmib2Ceo79U7q1nhGNymLgvmUVo9wCvXFeQdf
-         P7p1MF1/0PixeTuBMQlCJGOMLFHT0XhRwwknp1JxJfVO0JLSpcuKs3AqjUFkr+MQy005
-         wM63Tc+2rZLKRZ9RbopRLlXnC5dTNLejAYWYYQlfPRUUvmQq2STp9EnJ74YCXF5yEbJI
-         +arEzxoYCUuRjOXIUv+sFpZUYxYhia3pyLp76zM6ihYemhDCz9ULZhOBfkEZSAYhQKdb
-         pKXbnaqQnTYuuCkKZtkhFHlLDnk4q6uxoyhkUYqlyHzbs9DRAOahCbC628weU0hdmU4j
-         eRLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFpgndjapscFCMN4t2NZtwgFwtUuDIxfduUsl1LCZ3TiMcVSYqZ8eCQqmDVYryGu5EYXjw543HUZq01ZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCgs7m2Qckf1gELh1yrwb503N6bE6lL+lUVVWey4WQD17BxjaB
-	7XaO3Uys92ywaflCkOAiYyDR6GZsj29Jd6EEmETWZ26d8XOA+nl7cJWIQ7GOGF02OKc=
-X-Gm-Gg: ASbGnctk8/Ug929MUml/aZ3fnCPwmplxKWeiYO5eQrnSLadq5vEnf3iYMx+yg4v2g1/
-	o8f5CQqz1qb4J5MJRABKlQw9LOwsX7PEW5vYvCeqLr9LAtsInC+Ro6SYIonOucD7B5kT9Py6hkG
-	jMEX52DAUMjrD70xrkjUUHnVGx7hbTGj/q0u/bIAGLv3/SUuk/bA+RpM6VgO/maTBm814QuoTJi
-	tNoj/j4zzn4r5cxjxOov5BEWSugUKw7mLys+Z4g7i74gRq5rOvloXk2HFqk4s84byyVjX/yq1FZ
-	90r6qjONc2x8TD4JMzXEGaMOOOStUGMGh4l56mzlD/MHR43JWRv0cx/VKTaNGdqOYJs4eORwEoL
-	DN/tAxqyj0dXpHcGsUP0EK1bXe5I=
-X-Google-Smtp-Source: AGHT+IFnea2n21+kS1N+9kldwzmLDXovzHwkQ2dtRizVAVyYeiR3u+rellXeEys1h8pnuViATD2x5w==
-X-Received: by 2002:a05:6000:4007:b0:3b7:94c3:2786 with SMTP id ffacd0b85a97d-3c32e2294d9mr2203490f8f.34.1755699858694;
-        Wed, 20 Aug 2025 07:24:18 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c3a8980ed5sm2231742f8f.16.2025.08.20.07.24.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 07:24:18 -0700 (PDT)
-Date: Wed, 20 Aug 2025 17:24:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: Juno-r2 WARNING kernel time clockevents.c cev_delta2ns
- clockevents_config.part
-Message-ID: <aKXajiHqhhkFeV4a@stanley.mountain>
-References: <CA+G9fYsYVuEpL5KnYdq4ciRmpnUMQqkNQHmy7y5XvUm48kjxyA@mail.gmail.com>
+	s=arc-20240116; t=1755699885; c=relaxed/simple;
+	bh=FaJBnayLLeeHXIkZMFvhM3bi2xMW6chEyzv8fyYvAg8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=updku0G2KoLmh1Y+CHJWAuZgdU8sx2Fcu8zZ77MptsGg/zNarBTBf4hKyGqZuipBQw7EnT9Gng2Riiych7yzOsDHD5vPCo8ma9D/XMF36hBlBu1leUHyGtkGdtVW3IaINVJ/ocujv5+/9p3YqnQQgQ0xi44OFE4PKLRUBYmSpGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkzHMx6c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 432B3C4CEEB;
+	Wed, 20 Aug 2025 14:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755699885;
+	bh=FaJBnayLLeeHXIkZMFvhM3bi2xMW6chEyzv8fyYvAg8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=gkzHMx6cFHuLRvblLm58t+avG3WRcHpshRCdxGdkKbS6fEANab1ESqzND3bdcC6nF
+	 xzggHbCcVUCpbz22NMyZPzQmpyBNMzF05IyrR2iFT2DrFFXXpIniBCDfcMjqc7QsYg
+	 KtROLFjq9l4xKC2Lr0Z5PZNLewVkW9LbSidWa0us/9wkCRNPVfs+d+86YJ8M6fj9ZS
+	 If8x0Y6TxMpQQLnw5pnhmMRTxRvuPrZoqBMen90l9PaLVdseo5OuKCS0caGGLL9+M8
+	 +8+8ifdFiLX7txBMNIRQ/wlkI6qytfqQDok2gNzkZyQRgNMHRVZX8bpf48xMca4VjZ
+	 dA8YZr5hKn8sA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F9CCA0EED;
+	Wed, 20 Aug 2025 14:24:45 +0000 (UTC)
+From: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Subject: [PATCH v5 0/9] iio: imu: new inv_icm45600 driver
+Date: Wed, 20 Aug 2025 14:24:18 +0000
+Message-Id: <20250820-add_newport_driver-v5-0-2fc9f13dddee@tdk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYsYVuEpL5KnYdq4ciRmpnUMQqkNQHmy7y5XvUm48kjxyA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJLapWgC/33NTW7CMBCG4asgrzGaGfwTd9V7oAol9gQsRIKcy
+ LRCuXudbIAq6vIdaZ7vIQZOkQfxsXmIxDkOse9K6O1G+HPdnVjGUFoQkAaFKOsQjh3fb30ajyH
+ FzElqcr7VjUWuK1Eeb4nb+L2gh6/S5ziMffpZNjLO13+5jBIkaqgIDTSA7nMMl53vr2LGMj0Bi
+ 7AKUAGa1ppQoSJu6R3YvwJ2FdgXwBtwjoG8Nn8A9QTKwCqgCqCUUY0xAM6+ANM0/QK98Gj1dQE
+ AAA==
+X-Change-ID: 20250411-add_newport_driver-529cf5b71ea8
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, Remi Buisson <remi.buisson@tdk.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755699883; l=6453;
+ i=remi.buisson@tdk.com; s=20250411; h=from:subject:message-id;
+ bh=FaJBnayLLeeHXIkZMFvhM3bi2xMW6chEyzv8fyYvAg8=;
+ b=R0vZ7Y3wJaWHzjP29xah7pfLZ6dcKw0HI4Ac2msXQYpB3/uNeqWGKENXA0npWdES4bG8QbWcp
+ JaKg8GZsoVhAwgJkZoQ9gY/N7/Zgb0yHdm6pwtU5xhBkpFF19HKaMa7
+X-Developer-Key: i=remi.buisson@tdk.com; a=ed25519;
+ pk=yDVMi4C7RpXN4dififo42A7fDDt3THYzoZoNq9lUZuo=
+X-Endpoint-Received: by B4 Relay for remi.buisson@tdk.com/20250411 with
+ auth_id=372
+X-Original-From: Remi Buisson <remi.buisson@tdk.com>
+Reply-To: remi.buisson@tdk.com
 
-Hi Sudeep,
+This series add a new driver for managing InvenSense ICM-456xx 6-axis IMUs.
+This next generation of chips includes new generations of 3-axis gyroscope
+and 3-axis accelerometer, support of I3C in addition to I2C and SPI, and
+intelligent MotionTracking features like pedometer, tilt detection, and
+tap detection.
 
-Could we revert commit 1fa3ed04ac55 ("arm64: dts: arm: Drop the
-clock-frequency property from timer nodes")?  We're still getting this
-warning on our Juno systems (with admittedly ancient firmware).
+This series is delivering a driver supporting gyroscope, accelerometer and
+temperature data, with polling and buffering using hwfifo and watermark,
+on I2C, SPI and I3C busses.
 
-regards,
-dan carpenter
+Gyroscope and accelerometer sensors are completely independent and can have
+different ODRs. Since there is only a single FIFO a specific value is used to
+mark invalid data. For keeping the device standard we are de-multiplexing data
+from the FIFO to 2 IIO devices with 2 buffers, 1 for the accelerometer and 1
+for the gyroscope. This architecture also enables to easily turn each sensor
+on/off without impacting the other. The device interrupt is used to read the
+FIFO and launch parsing of accelerometer and gyroscope data. This driver
+relies on the common Invensense timestamping mechanism to handle correctly
+FIFO watermark and dynamic changes of settings.
 
-On Tue, Jun 10, 2025 at 12:48:18PM +0530, Naresh Kamboju wrote:
-> Regression while booting Juno-r2 with the Linux next-20250606
-> the following kernel warnings found.
-> 
-> This boot warning was reproduced with juno-r2.dtb and juno-r2-scmi.dtb.
-> 
-> Regressions found on Juno-r2
-> - boot warning
-> 
-> Regression Analysis:
-> - New regression? Yes
-> - Reproducibility? Yes
-> 
-> First seen on the next-20250606
-> Good: next-20250512
-> Bad:  next-20250606
-> 
-> The suspected patch that found between tags is,
-> 
-> # git show next-20250512..next-20250513 --
-> arch/arm64/boot/dts/arm/juno-base.dtsi
-> commit 1fa3ed04ac55134063e3cd465b41aeb26715e52a
-> Author: Sudeep Holla <sudeep.holla@arm.com>
-> Date:   Mon May 12 11:11:32 2025 +0100
-> 
->     arm64: dts: arm: Drop the clock-frequency property from timer nodes
-> 
->     Drop the clock-frequency property from the timer nodes, since it must be
->     configured by the boot/secure firmware.
-> 
->     Cc: Liviu Dudau <liviu.dudau@arm.com>
->     Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
->     Cc: Mark Rutland <mark.rutland@arm.com>
->     Message-Id: <20250512101132.1743920-1-sudeep.holla@arm.com>
->     Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi
-> b/arch/arm64/boot/dts/arm/juno-base.dtsi
-> index 055764d0b9e5..9ccb80821bdb 100644
-> --- a/arch/arm64/boot/dts/arm/juno-base.dtsi
-> +++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
-> @@ -10,7 +10,6 @@ / {
->         memtimer: timer@2a810000 {
->                 compatible = "arm,armv7-timer-mem";
->                 reg = <0x0 0x2a810000 0x0 0x10000>;
-> -               clock-frequency = <50000000>;
->                 #address-cells = <1>;
->                 #size-cells = <1>;
->                 ranges = <0 0x0 0x2a820000 0x20000>;
-> 
-> 
-> Boot regression: Juno-r2 WARNING kernel time clockevents.c
-> cev_delta2ns clockevents_config.part
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Boot warning
-> [    0.000000] timer_sp804: timer clock not found: -517
-> [    0.000000] timer_sp804: arm,sp804 clock not found: -2
-> [    0.000000] Failed to initialize
-> '/bus@8000000/motherboard-bus@8000000/iofpga-bus@300000000/timer@110000':
-> -22
-> [    0.000000] timer_sp804: timer clock not found: -517
-> [    0.000000] timer_sp804: arm,sp804 clock not found: -2
-> [    0.000000] Failed to initialize
-> '/bus@8000000/motherboard-bus@8000000/iofpga-bus@300000000/timer@120000':
-> -22
-> [    0.000000] arch_timer: frequency not available
-> [    0.000000] ------------[ cut here ]------------
-> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/time/clockevents.c:38
-> cev_delta2ns (kernel/time/clockevents.c:38 (discriminator 1))
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted
-> 6.15.0-next-20250605 #1 PREEMPT
-> [    0.000000] Hardware name: ARM Juno development board (r2) (DT)
-> [    0.000000] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    0.000000] pc : cev_delta2ns (kernel/time/clockevents.c:38
-> (discriminator 1))
-> [    0.000000] lr : clockevents_config.part.0 (kernel/time/clockevents.c:499)
-> [    0.000000] sp : ffff800082923cd0
-> [    0.000000] x29: ffff800082923cd0 x28: 0000000000000400 x27: ffff800081650000
-> [    0.000000] x26: ffff80008292fcc0 x25: ffff800082425888 x24: ffff8000829343c0
-> [    0.000000] x23: ffff800083210000 x22: 000000000000000b x21: ffff8000823cf178
-> [    0.000000] x20: ffff800082433880 x19: ffff00080021e240 x18: 0000000000000000
-> [    0.000000] x17: ffff00080021a400 x16: ffff00080021a200 x15: 0000000000000100
-> [    0.000000] x14: fffffdffe0008a00 x13: ffff800080000000 x12: 0000000000000000
-> [    0.000000] x11: 0000000000000068 x10: 0000000000000100 x9 : ffff8000801b50f8
-> [    0.000000] x8 : 000000001dcd6500 x7 : 000000003b9aca00 x6 : 0000000000000020
-> [    0.000000] x5 : 0000000000000020 x4 : 0000000000000000 x3 : 0000000f00000000
-> [    0.000000] x2 : 0000000000000000 x1 : ffff00080021e240 x0 : 000000000000000f
-> [    0.000000] Call trace:
-> [    0.000000] cev_delta2ns (kernel/time/clockevents.c:38 (discriminator 1)) (P)
-> [    0.000000] clockevents_config_and_register (kernel/time/clockevents.c:519)
-> [    0.000000] arch_timer_mem_frame_register
-> (drivers/clocksource/arm_arch_timer.c:1319
-> drivers/clocksource/arm_arch_timer.c:1580)
-> [    0.000000] arch_timer_mem_of_init
-> (drivers/clocksource/arm_arch_timer.c:1653)
-> [    0.000000] timer_probe (drivers/clocksource/timer-probe.c:31)
-> [    0.000000] time_init (arch/arm64/kernel/time.c:62)
-> [    0.000000] start_kernel (init/main.c:1014)
-> [    0.000000] __primary_switched (arch/arm64/kernel/head.S:247)
-> [    0.000000] ---[ end trace 0000000000000000 ]---
-> [    0.000000] arch_timer: cp15 and mmio timer(s) running at 50.00MHz
-> (phys/phys).
-> 
-> ## Source
-> * Kernel version: 6.15.0-next-20250513 to 6.15.0-next-20250606
-> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-> * Git sha: 4f27f06ec12190c7c62c722e99ab6243dea81a94
-> * Toolchain: gcc-13
-> 
-> ## Boot details
-> * Boot lava log: https://lkft.validation.linaro.org/scheduler/job/8309469#L622
-> * Boot log: https://qa-reports.linaro.org/api/testruns/28679128/log_file/
-> * Boot warning:
-> https://regressions.linaro.org/lkft/linux-next-master/next-20250605/log-parser-boot/exception-warning-cpu-pid-at-kerneltimeclockevents-cev_delta2ns/
-> * Build link:  https://storage.tuxsuite.com/public/linaro/lkft/builds/2y4wgEvmeoVH3Vr528M4YN2OBXY/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2y4wgEvmeoVH3Vr528M4YN2OBXY/config
-> 
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+The structure of the driver is quite similar to the inv_icm42600 driver,
+however there are significant reasons for adding a different driver for
+inv_icm45600, such as:
+- A completely different register map.
+- Different FIFO management, based on number of samples instead of bytes.
+- Different indirect register access mechanism.
+
+Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
+---
+Changes in v5:
+- Simplified device tree, removed interrupts from mandatory param list
+- Allocated regmap_bulk_read/write buffers to dma-capable memory (for indirect reg accesses)
+- Use min/max to simplify code
+- Reordered some code/include/prototypes to the patch they belong
+- Updated to latest iio_push_to_buffers_with_ts API
+- Fix build warning with clang 18.1.8
+- Fixed some alignements
+- Avoiding irq_type silly assignation
+- Simplified fwnode_irq_get_byname error management
+- Re-ordered suspend/resume process to match + comments
+- Reverted VDDIO init to make it work without PM
+- Avoid PM underflow on VDDIO when removing inv_icm456000 module, by checking suspend state
+- Link to v4: https://lore.kernel.org/r/20250814-add_newport_driver-v4-0-4464b6600972@tdk.com
+
+Changes in v4:
+- Introduce gyro and accel in different patches.
+- Move IRQ probe to next patch.
+- Allocate fifo memory instead of static definition.
+- Rework VDDIO management to avoid underflow.
+- Rework suspend/resume using force suspend/resume API.
+- Use helper min, clamp and sizeof instead of custom implementation.
+- Re-scoping some variables, using reverse xmas tree for declarations.
+- Fix formatting: end of list, end of file, spaces, alignments.
+- Use dev_err_probe for I3C errors.
+- Factorizing default config code.
+- Link to v3: https://lore.kernel.org/r/20250717-add_newport_driver-v3-0-c6099e02c562@tdk.com
+
+Changes in v3:
+- Macros renamed and added to the patch using it.
+- Using unsigned for sensor configuration parameters.
+- Using sizeof instead of raw values.
+- Using fsleep instead of usleep.
+- Simplified dt-bindings examples, setting supplies as mandatory
+- Fix bad or useless casts.
+- Partially aligned power management following 20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com
+- Fix "uninitialized symbols" warnings.
+- Link to v2: https://lore.kernel.org/r/20250710-add_newport_driver-v2-0-bf76d8142ef2@tdk.com
+
+Changes in v2:
+- Reworked patches order and content to ease review and make sure everything compiles
+- Reworked gyro and accel FSR as 2D arrays
+- Moved temperature processed sensor to core module
+- Use latest API to claim/release device
+- Implemented chip_info structure instead of relying on an enum
+- Removed power-mode ABI, only relying on ODR to switch power_mode
+- Reworked regulator control to use devm_ API where relevant
+- Reworked inv_icm45600_state.buffer as a union to avoid casts, using getter/setter instead of memcpy
+- Fixed dt-binding error and moved patch at the beginning of the patch-set
+- Reworked macros to use FIELD_PREP inline instead of inside the header
+- Fixed comment's grammar
+- Removed extra blank lines
+- Reordered part numbers alphanumerically
+- Removed useless default/error fallbacks
+- Typed accel, gyro and timestamp data when parsing FIFO
+- Fixed I2C module return code
+- Use Linux types instead of C standard
+- Reviewed headers inclusion to remove useless #include and to add missing ones
+- Link to v1: https://lore.kernel.org/r/20250411-add_newport_driver-v1-0-15082160b019@tdk.com
+
+---
+Remi Buisson (9):
+      dt-bindings: iio: imu: Add inv_icm45600
+      iio: imu: inv_icm45600: add new inv_icm45600 driver
+      iio: imu: inv_icm45600: add buffer support in iio devices
+      iio: imu: inv_icm45600: add IMU IIO gyroscope device
+      iio: imu: inv_icm45600: add IMU IIO accelerometer device
+      iio: imu: inv_icm45600: add I2C driver for inv_icm45600 driver
+      iio: imu: inv_icm45600: add SPI driver for inv_icm45600 driver
+      iio: imu: inv_icm45600: add I3C driver for inv_icm45600 driver
+      MAINTAINERS: add entry for inv_icm45600 6-axis imu sensor
+
+ .../bindings/iio/imu/invensense,icm45600.yaml      |  90 ++
+ MAINTAINERS                                        |   8 +
+ drivers/iio/imu/Kconfig                            |   1 +
+ drivers/iio/imu/Makefile                           |   1 +
+ drivers/iio/imu/inv_icm45600/Kconfig               |  70 ++
+ drivers/iio/imu/inv_icm45600/Makefile              |  16 +
+ drivers/iio/imu/inv_icm45600/inv_icm45600.h        | 380 ++++++++
+ drivers/iio/imu/inv_icm45600/inv_icm45600_accel.c  | 781 +++++++++++++++++
+ drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c | 566 ++++++++++++
+ drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.h | 101 +++
+ drivers/iio/imu/inv_icm45600/inv_icm45600_core.c   | 969 +++++++++++++++++++++
+ drivers/iio/imu/inv_icm45600/inv_icm45600_gyro.c   | 792 +++++++++++++++++
+ drivers/iio/imu/inv_icm45600/inv_icm45600_i2c.c    |  98 +++
+ drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c    |  77 ++
+ drivers/iio/imu/inv_icm45600/inv_icm45600_spi.c    | 106 +++
+ 15 files changed, 4056 insertions(+)
+---
+base-commit: f8f559752d573a051a984adda8d2d1464f92f954
+change-id: 20250411-add_newport_driver-529cf5b71ea8
+
+Best regards,
+-- 
+Remi Buisson <remi.buisson@tdk.com>
+
+
 
