@@ -1,73 +1,87 @@
-Return-Path: <linux-kernel+bounces-776775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1305B2D162
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:26:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AF4B2D167
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912553ADCD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:26:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0517C1BC6B6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BB8214A78;
-	Wed, 20 Aug 2025 01:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BEE1DBB13;
+	Wed, 20 Aug 2025 01:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btWcXV4w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="NEoVU50w"
+Received: from mail3-162.sinamail.sina.com.cn (mail3-162.sinamail.sina.com.cn [202.108.3.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C493C38;
-	Wed, 20 Aug 2025 01:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421CF213E90
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755653202; cv=none; b=K7sL8IEZvcWf1Pu0X8AWh/Uyl+b3kpca6IuggLnlUXBNBYndy5uOZPwRNxP0AJy4seCxRldgS/2pd/AiGOBB4hz1GvFgml3ue1k/OIr3sm0UymKx1FeyPLgITh/zxsURCKrNeKuaMZtsJRgGPAaG/pWeLu4nDKazdTOXWDqEMD4=
+	t=1755653402; cv=none; b=B6xFsI0C0L2iVIjK3LiGkA8CFl7xE5VVJLvBOXc1E3uk/XkjCMm1u3t9T0t35uH1v91WvQthL2XknWQ7Kxt8Nbprvtlv2Y4DVL89gcKSwyLfZh2ojPEqnfk0shkMdpIHEh71HQRXeFGb9wZ6rZ2X/mAyV0pvt0ScrGVOT0wfLTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755653202; c=relaxed/simple;
-	bh=Gm41ua+tCecjQYsWzxJcFbyZCUuP0m6rVjsAj7MYVNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GQaInBKxE9mlclgnHw1XoGrDBZWyNARznuTK72DQ9yWhoAnUqHgI+mq5n0PJhUD7jyOcFs6h//PY20h0OXE4GfvI7m9cvcXqR2NnpMOHb1uXhRowj8S57p/l5yTOegNd5+HWXSXGzOigvi6edEimdBB1lWI6eTiwpGb/l9J8RnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btWcXV4w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D384FC4CEF1;
-	Wed, 20 Aug 2025 01:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755653202;
-	bh=Gm41ua+tCecjQYsWzxJcFbyZCUuP0m6rVjsAj7MYVNk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=btWcXV4wLASLDnh6i7rslctNy9EdcRW7+NInbgeC3V8gpEgO8/3rb4nAOWs334VYc
-	 iQDQ7F//sj7FD8ci4AK/lFAq3pKdL5zU69N9hrwLfKBgVpcF8a7i4253XNcgZA58/r
-	 pipaNsQZfKUvOIC7jTd7PL2QsptO7TYlkYZu03s7BSZGl6fem5eVl9D++vTv8hcJII
-	 iLpUnJiwA3db1FxP8PiGXmlkRaCuUnvp235nKZqUAkMK8SZo70H9oIxqMs5e96KqxF
-	 ZEhDXI/rFl4zAnsbhYLC/51FffwK//X+drCUs3fofKZ40ifP9NJh6ZhFNXFBl4yfY0
-	 ylxIjzOQIiVtA==
-Date: Tue, 19 Aug 2025 18:26:41 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: tsbogend@alpha.franken.de
-Cc: Aleksander Jan Bajkowski <olek2@wp.pl>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- john@phrozen.org, devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2 0/2] mips: lantiq: fix ethernet support
-Message-ID: <20250819182641.1b7ff210@kernel.org>
-In-Reply-To: <20250817131022.3796476-1-olek2@wp.pl>
-References: <20250817131022.3796476-1-olek2@wp.pl>
+	s=arc-20240116; t=1755653402; c=relaxed/simple;
+	bh=B7x9YJ2q7eYQKW40cQTMVihS5X2CsrLGTxTrSmXzj+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t20DxSa17fEiUKuYjOGGdsRF/fC6J/Hh7l/wAsnBYmic/BZIaMsG5Pieda5l7OQXa4M4pDtSoOfDmcX15pWhElrL2ZyI7dOjM7jRiDBhkVAfAoH2SPnDrlumeAfDfE1YKoOeCU6rVM1qjwzYDObsRkmQuoCZ0NjB4iP3ETCML38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=NEoVU50w; arc=none smtp.client-ip=202.108.3.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755653397;
+	bh=IDafkYWgS7KusKN99KHqr7eNp5lhr4MsE3lDHCQLm5I=;
+	h=From:Subject:Date:Message-ID;
+	b=NEoVU50w6dOmGIw6VDutc8vKcAK4SSnkd27k1tFwVFDhZUUfxpcqWoGFcmAlnV5Ij
+	 kOzMY4rF6Hqd2pa5reBp1SSqSbMv96Gf/uHj//02dw7dCBeHAHCsSZUekn6bMwNkKF
+	 TKNLHRRe0DGzy3L0sYmxbcET/gF15IPzO3oiUkJM=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68A524E600007DD3; Wed, 20 Aug 2025 09:29:13 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 894876291954
+X-SMAIL-UIID: 7B0216A86C964D598B3BEA84EA01C3B9-20250820-092913-1
+From: Hillf Danton <hdanton@sina.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Chris Mason <clm@fb.com>,
+	Michal Hocko <mhocko@suse.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: Occasionally relinquish zone lock in batch freeing
+Date: Wed, 20 Aug 2025 09:29:00 +0800
+Message-ID: <20250820012901.5083-1-hdanton@sina.com>
+In-Reply-To: <20250818185804.21044-1-joshua.hahnjy@gmail.com>
+References: <20250818185804.21044-1-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun, 17 Aug 2025 14:49:05 +0200 Aleksander Jan Bajkowski wrote:
-> This series fixes broken Ethernet in the upstream danube dts. The
-> driver doesn't attach due to missing burst length property. OpenWRT
-> has its own dts, which is correct, so the problem has only been
-> spotted now. Other dts inconsistencies with bindings have been
-> fixed as well.
-
-Hi Thomas, Aleksander tagged these for net, are you okay with us taking
-them via the networking tree? Looks like these are half DTS changes.
+On Mon, 18 Aug 2025 11:58:03 -0700 Joshua Hahn wrote:
+> 
+> While testing workloads with high sustained memory pressure on large machines
+> (1TB memory, 316 CPUs), we saw an unexpectedly high number of softlockups.
+> Further investigation showed that the lock in free_pcppages_bulk was being held
+> for a long time, even being held while 2k+ pages were being freed.
+> 
+> Instead of holding the lock for the entirety of the freeing, check to see if
+> the zone lock is contended every pcp->batch pages. If there is contention,
+> relinquish the lock so that other processors have a change to grab the lock
+> and perform critical work.
+> 
+Instead of the unlock/lock game, simply return with the rest left to workqueue
+in case of lock contension. But workqueue is still unable to kill soft lockup
+if the number of contending CPUs is large enough.
 
