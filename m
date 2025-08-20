@@ -1,179 +1,228 @@
-Return-Path: <linux-kernel+bounces-778180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75B9B2E243
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:27:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DEE3B2E245
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521AB189FDB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:27:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498655E2A6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1339232A3FA;
-	Wed, 20 Aug 2025 16:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC3932A3D4;
+	Wed, 20 Aug 2025 16:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cySH4xMt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LHgcLitz"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2041.outbound.protection.outlook.com [40.107.93.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDD12869E;
-	Wed, 20 Aug 2025 16:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755707245; cv=none; b=pz9nymdyrGDtzA+hh3Blk4cNslOEMsB94JeH9y5KzRE7AeJ/RdW++7uTZPJAWvUFpDJielHlomm+QCgCAD7XIYTRP3wTaai4tITAHlYiK13ouMAjYQCi+OpXtkc4SFQIBNLe9oQc06FncCqoBjy3rVkJ22xGse/e3CVVKLRIUiQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755707245; c=relaxed/simple;
-	bh=6b0KLUQmQqEXc+dre+tvQYRy/Qs3uwqYitS62zeXa3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvA/9R3XD9MkOSnRGHyityCeuBclrl2Gh6AqLvzo0K1uNh6TDb1SCQzYxDuccoseznTYPK5SkeF9lKDBph9DwfKBCcB7eK1OXAKd044nowF8DWhdc49GBx70yj+I9I5leoY8NjkW1qlPh3rXBK19BEnxShmyWVjp11gFa9HsJAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cySH4xMt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E417FC113CF;
-	Wed, 20 Aug 2025 16:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755707245;
-	bh=6b0KLUQmQqEXc+dre+tvQYRy/Qs3uwqYitS62zeXa3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cySH4xMtjGxHrDny/M0+6aZHAZ5pW2iDZqp19u4pVNLv2AgPVT/v+WT7sGMHByOGJ
-	 /BQ2dhHH8JWotA4bNrX8uJ1uGe3Wa1VWjZPinMYhRcNNHiIRgZuhSK98ghczmTrFGO
-	 jn/Xq6O0EHAzQor25Elsiy3yh1a+RuZ/VNHXTUSb4P+RdvhoUmccbiN6yHBCVi80et
-	 fMvSoif7REFgdclhPGwcsr0g64hTEc9nRvfhFH3aXTo4aLujwg3MW6lGZiCBfZKrfy
-	 LKWSBAGJtdu6nDzP7dl8f0TvIyBcQg7Lt0GwpVjgfFeSy0A2R2ckz6o2sUXGv9SLjt
-	 KJfH0YAOmX7Nw==
-Date: Wed, 20 Aug 2025 09:27:24 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Chunsheng Luo <luochunsheng@ustc.edu>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fuse: clarify extending writes handling
-Message-ID: <20250820162724.GL7942@frogsfrogsfrogs>
-References: <CAJfpegsz3fScMWh4BVuzax1ovVN5qEm1yr8g=XEU0DnsHbXCvQ@mail.gmail.com>
- <20250820021143.1069-1-luochunsheng@ustc.edu>
- <20250820052043.GJ7942@frogsfrogsfrogs>
- <CAJfpegtXUekKPaCxEG29SWAK0CTz-fdGvH=_1G5rcK9=eHt6wQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B746D32A3FA
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755707266; cv=fail; b=L0+M/6KYWh5BfoB40Pv/5G+70YuB8KD2EbJ3KwbAEyNVP/Vscfgzf4QwnBYrjJdXBzsuHQaiWcewsGNf32eYJ9ZWgt6F4G9hH7ncUaLoT1KfR5uuqyVekbQPU+MP6qkKlnFzJyfUed5nfiYD8Q7bS2hfOniq52h+zYGP5hvJlg8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755707266; c=relaxed/simple;
+	bh=Vv20lLFJbgyjrcnrxvwkVoUoBrnJ0XfdOzQ2rUxQFkc=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hgBKM1wfc7Xmzk20lEW+CxyzyIQs0yhuRgE+sSBey7DnnNkOLG5CcOzHsJaEOIVNsU1ZFeWIZ/opw3hZItl1FZw87XHz+hYBJd2OpfnrTAi9MUPqEcsyIUqNOou4/qsyLQCImN44pQ0ygzZ5e00/AQGxu6aZW5MaTxUdoPgqrKw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LHgcLitz; arc=fail smtp.client-ip=40.107.93.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DesATU+3gfDY2F75C13haul80TAlMK+mfbPfdQwyzmHQe8pxWTKH+CgCytOBIDMNOf96RZ57Mm0AOxR30XGSkRnS4Vt2snDiwaka5GLtp023bojjeV9+b8gyQNbdyX2QNWgcu1nZYmwO9EZ8Jp3bAwHOoygwrBOHR3oJGLlbhB6iDJ0OJ+S35jAQGt87VC+YYwrP5ouCxgi7yaE7qZo+d3m8179U6oGEPjKsEHe41q7YXwbiM5kOG0oXdSpGra9S+0xxSsYrdfG1hMQ+dt7P6wtbemVoRN29Pj/Lf1RujXNNt4/2J5yyqN3fFG6xgUk7Bruc1LV7DjSV6WkJ4/nHoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5ieraqIcNhhoQUlpdnELGCdyGLe0KkaRnICZKYSJhXI=;
+ b=NumLZAf2UESEmHtLSUkpSs65UDUR4atim6m+mIPETOzA4zlT3XkTqPCoyh9y+TVAgxXcw8eOa2NgFdBC2tBNAIWBdPs6st1XcmChTLolruKzU2wcLCqS1eXhrR9oYY8teoPcrkflFbsjNY85mGIvbYYa+TXyG8eOz44XkF2cIDUo1ntqJwg9wsMpw7xFAWrhIFagbpQIDEfAS7Xr+rEEK2RWJV98J6cMbRRYnE05oq+gbBbT9hZpinYRyC1Qf/tZzNwEpBy/LZF7Jh5TFsumdO4mj3lKInrwMG/GuBokoUfxMRjcCMRWLd8hMF0il+Pnw+KTtjl8sVEny3ol0x9AnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5ieraqIcNhhoQUlpdnELGCdyGLe0KkaRnICZKYSJhXI=;
+ b=LHgcLitz4gcCyeQAgeWlRyVX3elIDXX3hmNLEYpH3tnHM4uhskSInF9R3JiyeEuIDcJMQWucrqByBnjotBLxgWeYunAYDCcfm1yZUBvBR4VCncnuFkUp+F/RnNOB/tT638AOM5x3IOXinT+gi/xBfNCpy/zUKygGMEQ1/x4DT4M=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH0PR12MB7982.namprd12.prod.outlook.com (2603:10b6:510:28d::5)
+ by IA1PR12MB6235.namprd12.prod.outlook.com (2603:10b6:208:3e5::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
+ 2025 16:27:39 +0000
+Received: from PH0PR12MB7982.namprd12.prod.outlook.com
+ ([fe80::bfd5:ffcf:f153:636a]) by PH0PR12MB7982.namprd12.prod.outlook.com
+ ([fe80::bfd5:ffcf:f153:636a%5]) with mapi id 15.20.9031.024; Wed, 20 Aug 2025
+ 16:27:39 +0000
+Message-ID: <3c22983c-6aa7-44ef-a368-17ff9d96fb9a@amd.com>
+Date: Wed, 20 Aug 2025 09:27:37 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pds_fwctl: Remove the use of dev_err_probe()
+To: Dave Jiang <dave.jiang@intel.com>, Liao Yuanhong <liaoyuanhong@vivo.com>,
+ Brett Creeley <brett.creeley@amd.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Saeed Mahameed <saeedm@nvidia.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ "open list:FWCTL PDS DRIVER" <linux-kernel@vger.kernel.org>
+References: <20250820124011.474224-1-liaoyuanhong@vivo.com>
+ <7350db53-d5e6-4b3e-8686-3749353725a0@intel.com>
+Content-Language: en-US
+From: Brett Creeley <bcreeley@amd.com>
+In-Reply-To: <7350db53-d5e6-4b3e-8686-3749353725a0@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR03CA0026.namprd03.prod.outlook.com
+ (2603:10b6:a03:1e0::36) To PH0PR12MB7982.namprd12.prod.outlook.com
+ (2603:10b6:510:28d::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtXUekKPaCxEG29SWAK0CTz-fdGvH=_1G5rcK9=eHt6wQ@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR12MB7982:EE_|IA1PR12MB6235:EE_
+X-MS-Office365-Filtering-Correlation-Id: 65cf0f09-feed-4bfa-3922-08dde0067aaa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dU5ZcWFUYjNuREZDVzRrVlRqUS9RcHFUVkxOZXN6eW0xcERadHAxd2lwdFpB?=
+ =?utf-8?B?d1pseXpQNFRBeTJTUHdSTFRONmFmVWdSZ21scDJCTEJWcm5RdG9xV2NlZDVo?=
+ =?utf-8?B?ZG82S2VveG5FZS96a0R6dEY0WVdubVZUdkhhYkNPSGhZOFo2TitlcUlYMGUz?=
+ =?utf-8?B?eEgyZC9kVHBZaThyaWt4b3R3ZVEwV3h4b0pQNmNtZVlnWndaNlcvMVp2NndC?=
+ =?utf-8?B?SzVYWVhxc0JOZDBFWFBjYkl0MnlHaW5FdWZpTFBXMTcwK05JRGVOQm9QUnN1?=
+ =?utf-8?B?dXpkT3ZWSlRMbXNkcHNwUnlEYnpxVDFjQWk0MytBTXd3Ny84cWNBTzY1WVVi?=
+ =?utf-8?B?MjN4ODhaalljZVV1RHpMeFpLSHg5dm80aFlVSk9Cd25XSG5kemloRUJmOGJ2?=
+ =?utf-8?B?NzlZQlhyMmV0eHNvL0FrOS8rSklQTG8yVGU5Z01jelRud0VEWlh0cXB5TTJG?=
+ =?utf-8?B?dVNuK1dQeGwxWjM0UHR3aUZTREVyVzdLS1YyLyt3bndiUVhnTVBXeEpwZnRn?=
+ =?utf-8?B?OUVwRXQzZEdJQW02V29COWdNbWNFcHlRa1NEZ3hzY3FEYlhBdXNoOElTYVBo?=
+ =?utf-8?B?OWg2cXFjMi93WDU0UWNsMktXZDl6WS9wSGtTWStJMzF4Lyt6Z0djZlc3dWgx?=
+ =?utf-8?B?ZjdPUHdHbnF4eTF2SWVEVkxtNFRyNzgxYXFBWlo1VFdXZGYyMVJxMnlPSVlk?=
+ =?utf-8?B?cVBoSXVvVWVCSXUzOWVxQU9XNHpWOEw0b2RKTHVobS9CV1gwYXlnTFR1dzhX?=
+ =?utf-8?B?RmlBRDdlUms4NUxZVXkrTzlrN3hIUjhnVlVOcW1wK1o3UFdyQmlUQ1U5amRt?=
+ =?utf-8?B?YnBTRndoaUtOTEx5QjRvakcrRkp5M2liY0VmVmNVTDQ5VTlSamRuWEhlSjFz?=
+ =?utf-8?B?RGlkMGszTmp5VER6WXJFb1FESGNQN1FJL296QmhRaUlib2lVWnhGMFIreStL?=
+ =?utf-8?B?azd6Qit5Y0s4SkdpWWY0bEtxZ0NyQlBVN2JDSkZqR2NWdUNlK0VLSi9vNmtX?=
+ =?utf-8?B?Tk13eDVFRGF3a1Y2NkxJekRyS0pETTRFZ2t2UE11bEZFcHY0aWdoOTZWMk94?=
+ =?utf-8?B?NXBaekU4OWhVRmdoeVI0REdUdEJTcFVmQ0czbUtMcFIxN0VsMGUvWWhtYlRW?=
+ =?utf-8?B?eElkTW50VFNzeU1PSFlTRlFnSnNtTlBtVUNyNE1MK2ZPRUdrUVRFd2NHUzhZ?=
+ =?utf-8?B?NkdkanozUnpkMVg2VjI4U1RtSWtGdVNqaENsTmxSUjhUVzdOTW8rWGZqNXha?=
+ =?utf-8?B?VFVNU3RXd2VyUEdMUURiNlBQeStIc04zc0dPc29KQ3lrcmZnaDd1azBiL2Fx?=
+ =?utf-8?B?L045dWNXY2RxTmFwaU94ZXlSMWk0WE9NSE03Y2NORUNuRjJ0S3RBb2VWSW93?=
+ =?utf-8?B?Z3lJTldxVXhKVG5zTTViV3lWOThQakxLeTJrZVA2WVYzblZMaFJUSytTQTNQ?=
+ =?utf-8?B?bjFFWWp5NUVvZjV3U05MWHJRcGZMUERFTTFjSjNCWVk5VW1HdWYrZ2F4YSs1?=
+ =?utf-8?B?Nnh4SU92a2RSQzRFeXZabGJwTitqYnNjdHQ1ZkhHcW9ra3AxeG4xbStQektp?=
+ =?utf-8?B?Nlo3NjNVS1JUZTEyRVVacFViQi9NUnU2bXB2QnFIT2xOeXBsZDZQOTQ1Z0RH?=
+ =?utf-8?B?UmtQV0lxTFp2N05BdzFKeG9YMERrc21BSlRUTzJYT21qL2x2cTk5S0h6bW9m?=
+ =?utf-8?B?amlEdjJremRtakprQktPVXpmWExVM2tTUnlEZTVkZTlUcG1tZWFXR1RLMWJo?=
+ =?utf-8?B?RFBrOFFYdlNsOEpsME1KdkVldythOEhWbVBUSkF2Y3RDK1FQNk45SHQycFlt?=
+ =?utf-8?B?WFQwRFVIN1MrVkhWRDA2Qzdaanp2WEhtckg3bUJhc2hMenh0SlozTnozcUhJ?=
+ =?utf-8?B?ZGt3YXYxNGlkeWM2aWxsQTRhdExqbkk1NkhJYUYzd3kwTFhqMWhGRDI0T1Bs?=
+ =?utf-8?Q?orZkGNWAaz0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB7982.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SmNGVlYwdGk0ckZNRHVhMDlJWW43QnNwbGxveTkvcTVDWWlxZCtiVkd0SWZV?=
+ =?utf-8?B?eHA3dDNtS056UWJWUmthS2ZHcU56SFFIWVpLcjFlOVRlR2N6ZGN4aktqWnVz?=
+ =?utf-8?B?R3IveGNKTUxUVmplNGtWSEVXai9LOU1tejN4WFB4TVZwWkNCa2N2TDVMUkww?=
+ =?utf-8?B?QkVCa1F5T2Jkdm9ONUZubjR4T09JdlUzWEF0Z2x2d2I1UnRGQkRtU2hVZDBE?=
+ =?utf-8?B?dTBEaUVKb2JMOGJJUUxGS0dMOGEwU2p2MCtjbFkvZW54clRsR0R6bUZZUWY0?=
+ =?utf-8?B?UDRiR3FWUlhielVSWnVabGNnZTZyaWdrd1owVElaRlNNZFNCUW1SMWo3UEJ5?=
+ =?utf-8?B?NUxUZDF0dFpERWNrK1dscit2TWU1bXpSa0J2YWJpdmE5RkZRTDBaZEFxNU5G?=
+ =?utf-8?B?QU5qOTg2Q3lNUi9wNGRTSk5FOFpsUS84S1ZXdDIrUncyNFpJM1ZiTUVpMk5j?=
+ =?utf-8?B?M2ZzbzVSZ0tLL2NrS3h0WEQ3QXZjdkQ0UzRNYUxxakFUL0l6T3ZXc3hONktv?=
+ =?utf-8?B?RXl6SUI3a3lyRjkyd09HRVh4Qy96RGprOHljdXRPNlNJRFRJQWg4NkJIQWwv?=
+ =?utf-8?B?Z1JYL0hZakx4TUVtNlFaOFQ2dzBRd2RCR2lFTHpLWHMzU3ZXeERhdFhFTGFV?=
+ =?utf-8?B?WEZLb0x5RXp5WTQzQXpLNTBrV0JJYlFjMm1CNFhLYlg4Z2huR2U4Mk52cTZq?=
+ =?utf-8?B?cTk4OFcwdWZTTmd0QmVrNk5VNVloMTBCODZYbzJtclRoTFdHeWJOdVB1WmQ5?=
+ =?utf-8?B?Q3hVNXNLWkMydVJ4SGtjNEM3VWZremNCaDIxdm9xQlc3bTlZbnNWZnpDZWtk?=
+ =?utf-8?B?d3E4OTR4SFJVV1YzMmZyVmdEanhzR0wrSXIxaGM0dkc0Wk00Y3pTeW8rTUhk?=
+ =?utf-8?B?YmhWZWJqZEo5MTJ3djRVTkdqNDZNZGFEOXlvZ1VsY0NZSDR0a1VROUd6eHpv?=
+ =?utf-8?B?dVBMeTdrSUI4eVdjMEhZWFp0OTNyeTlZeGQvbWpBY0NZYmhlWlg5MGc1Ujlm?=
+ =?utf-8?B?dHNiTW0vZ1dlTlViQ2RXbmk4TXptajBmYjFieUs1WXVkdHIzWmhGOEtVck5p?=
+ =?utf-8?B?UXJlQXhacXZNTEs2eWJFTy9VdHpudDFNekVRNnhzdDdTY25GQ040VnJwUk91?=
+ =?utf-8?B?dHFTNS9zMkJyd0FMUFlheC96TkY4eWNDbEhmU2w2RUJwcFVNZEZHcGlZblJn?=
+ =?utf-8?B?R1BEZUZWVG5kUFVXaE9raDBOdElqS2ZpcEprTWNZS3B4MVE0bEoxVm5BbUQr?=
+ =?utf-8?B?VlV4MmNXbzlwaEc4S2pLYkREaVEzYjRkYlVvLzZSdzhpQjM5TUVrU0I0TDM2?=
+ =?utf-8?B?N0NBQUFOdjkxWS9teDVGbmI3S0Y5enN5dWkyVFZCQkZWSW9IZEhCVVVHaENN?=
+ =?utf-8?B?ZDdQaWJiSTdiZFIzUlRhUkRCckNEZWhFazVFMVY2WUxmNFlLWlQvZER1U0FE?=
+ =?utf-8?B?SjRsN3VzUFFxMzRyWlphOW1lVVZDWTVCVUgwK09iUjczR3ByTTQ5Q2F5ank5?=
+ =?utf-8?B?YWhTUmp0azhuRU1oNlZ3bmJtajJDQTF3NkpvZTZtVHUrVGZPSXVZWVRSUEFG?=
+ =?utf-8?B?R25UOVczL05BSzRqdDUzZG11K25SWFdkbVdGd0NoOGR0TGdlcWFvSTVxRGJn?=
+ =?utf-8?B?YjZvSmw0Ym11cjBXck1mOEtrdDhJbStYV2p3MndiV2d1clJHaHNpekZ5OGxq?=
+ =?utf-8?B?NzlmNmFrYWJqd0ZkMkdZaFRTZk95SW9jM25iblM0dUZudHloQmZIWEFaVXJs?=
+ =?utf-8?B?ck1neUM5dUZOZHV6ZG1iZm1HUk9FRVJNRHhkVUdhVGVSQ3BaREFPTkxCenlj?=
+ =?utf-8?B?VlVTZVFsaUdrVUdwM2ZnYjJWWGNTWkNDazZJUkdPTFJTUzROUTNlbU55NWI2?=
+ =?utf-8?B?L0hGY0pqUGV2cmhCbHloN0ZDaGhnbnB2VFNIOUU1ZEpid0xtamszTkxMV3Y0?=
+ =?utf-8?B?bEtqTzNMQzdEMjRPVk5HbnJveVVWUVU4cXpJVHZKOW1FYzVPelJLd3BjRDhm?=
+ =?utf-8?B?WlVuUFh3dElEaE1HVjdKalRzTHdrV3BIbTRESUxIVjB4c0RCdWF1MG1HQXBD?=
+ =?utf-8?B?aFFjU1EzazdzVmNRM2FqeWYrQVRTUUNnK3NiUERvYVNNUVN2by9SM2JSYWJJ?=
+ =?utf-8?Q?gIL0CXfNhAICJoiDhfbj8Kfmt?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65cf0f09-feed-4bfa-3922-08dde0067aaa
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7982.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 16:27:39.1157
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 00tCEhCyo5fLpVGWeunaJOBLWa/95OHONMlmLC45Fz43ET5CQUbHwbeKChZdpDqVXEl++r8qkUhbx+tjqIwIUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6235
 
-On Wed, Aug 20, 2025 at 08:52:35AM +0200, Miklos Szeredi wrote:
-> On Wed, 20 Aug 2025 at 07:20, Darrick J. Wong <djwong@kernel.org> wrote:
+
+
+On 8/20/2025 8:03 AM, Dave Jiang wrote:
+> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
 > 
-> > I don't understand the current behavior at all -- why do the callers of
-> > fuse_writeback_range pass an @end parameter when it ignores @end in
-> > favor of LLONG_MAX?  And why is it necessary to flush to EOF at all?
-> > fallocate and copy_file_range both take i_rwsem, so what could they be
-> > racing with?  Or am I missing something here?
 > 
-> commit 59bda8ecee2f ("fuse: flush extending writes")
+> On 8/20/25 5:40 AM, Liao Yuanhong wrote:
+>> Logging messages that show some type of "out of memory" error are generally
+>> unnecessary as there is a generic message and a stack dump done by the
+>> memory subsystem. These messages generally increase kernel size without
+>> much added value[1].
+>>
+>> The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
+>> remove the useless call to dev_err_probe(), and just return the value
+>> instead.
+>>
+>> [1]: https://lore.kernel.org/lkml/1402419340.30479.18.camel@joe-AO725/
+>>
+>> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 > 
-> The issue AFAICS is that if writes beyond the range end are not
-> flushed, then EOF on backing file could be below range end (if pending
-> writes create a hole), hence copy_file_range() will stop copying at
-> the start of that hole.
-> 
-> So this patch is incorrect, since not flushing copy_file_range input
-> file could result in a short copy.
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+>> ---
+>>   drivers/fwctl/pds/main.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/fwctl/pds/main.c b/drivers/fwctl/pds/main.c
+>> index 9b9d1f6b5556..8dd659aee256 100644
+>> --- a/drivers/fwctl/pds/main.c
+>> +++ b/drivers/fwctl/pds/main.c
+>> @@ -481,7 +481,7 @@ static int pdsfc_probe(struct auxiliary_device *adev,
+>>        pdsfc = fwctl_alloc_device(&padev->vf_pdev->dev, &pdsfc_ops,
+>>                                   struct pdsfc_dev, fwctl);
+>>        if (!pdsfc)
+>> -             return dev_err_probe(dev, -ENOMEM, "Failed to allocate fwctl device struct\n");
+>> +             return -ENOMEM;
 
-<nod> As far as Mr. Luo's patch is concerned, I agree that a strict "no
-behavior changes" patch should have changed the inode_in writeback_range
-call to:
+With dev_err_probe() ignoring -ENOMEM, this is a no-op, so this change 
+makes sense.
 
-	err = fuse_writeback_range(inode_in, pos_in, LLONG_MAX);
+In general we like to have messages like this so the failure path is 
+immediately obvious.
 
-Though if all callsites are going to pass LLONG_MAX in as @end, then
-why not eliminate the parameter entirely?
+However, in this case it is unnecessary because there are specific 
+errors in all of the other possible probe failures.
 
-What I'm (still) wondering is why was it necessary to flush the source
-and destination ranges between (pos + len - 1) and LLONG_MAX?  But let's
-see, what did 59bda8ecee2f have to say?
+Thanks for the patch.
 
-| fuse: flush extending writes
-|
-| Callers of fuse_writeback_range() assume that the file is ready for
-| modification by the server in the supplied byte range after the call
-| returns.
+Reviewed-by: Brett Creeley <brett.creeley@amd.com>
 
-Ok, so far so good.
-
-| If there's a write that extends the file beyond the end of the supplied
-| range, then the file needs to be extended to at least the end of the range,
-| but currently that's not done.
-|
-| There are at least two cases where this can cause problems:
-|
-|  - copy_file_range() will return short count if the file is not extended
-|    up to end of the source range.
-
-That suggests to me
-
-filemap_write_and_wait_range(inode_in, pos_in, pos_in + pos_len - 1)
-
-but I don't see why we need to flush more bytes than that?  The server's
-CFR implementation has all the bytes it needs to read the source data.
-
-Hum.  But what if CFR is actually reflink?  I guess you'd want to
-buffer-copy the unaligned head and tail regions, and reflink the
-allocation units in the middle, but I still don't see why the fuse
-server needs more of the source file than (pos, pos + len - 1)?
-
-|  - FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE will not extend the file,
-|    hence the region may not be fully allocated.
-
-Hrm, ZERO | KEEP_SIZE is supposed to allow preallocation of blocks
-beyond EOF, or at least that's what XFS does:
-
-$ truncate -s 10m /mnt/test
-$ xfs_io -c 'fzero -k 100m 64k' /mnt/test
-$ filefrag -v /mnt/test
-Filesystem type is: 58465342
-File size of /mnt/test is 10485760 (2560 blocks of 4096 bytes)
- ext:     logical_offset:        physical_offset: length:   expected: flags:
-   0:    25600..   25615:         24..        39:     16:      25600: last,unwritten,eof
-/mnt/test: 1 extent found
-
-as does ext4:
-
-$ truncate -s 10m /mnt/test
-$ xfs_io -c 'fzero -k 100m 64k' /mnt/test
-$ filefrag -v /mnt/test
-Filesystem type is: ef53
-File size of /mnt/test is 10485760 (2560 blocks of 4096 bytes)
- ext:     logical_offset:        physical_offset: length:   expected: flags:
-   0:    25600..   25615:      33808..     33823:     16:      25600: last,unwritten,eof
-/mnt/test: 1 extent found
-
-(Notice that the 10M file has one extent starting at 100M)
-
-I can see why you'd want to flush the target range in case the fuse
-server has a better trick up its sleeve to zero the already-written
-region that isn't the punch-and-realloc behavior that xfs and ext4 have.
-But here too I don't see why the fuse server would need more than the
-target region.
-
-Though I think for both cases we end up flushing more than the target
-region, because the page cache rounds start down and end up to PAGE_SIZE
-boundaries.
-
-| Fix by flushing writes from the start of the range up to the end of the
-| file.  This could be optimized if the writes are non-extending, etc, but
-| it's probably not worth the trouble.
-
-<shrug> Was there a bug report associated with this commit?  I couldn't
-find the any hits on the subject line in lore.  Was this simply a big
-hammer that solved whatever corruption problems were occuring?  Or
-something found in code inspection?
-
-<confused>
-
---D
-
-> Thanks,
-> Miklos
+>>        pdsfc->padev = padev;
+>>
+>>        err = pdsfc_identify(pdsfc);
 > 
 
