@@ -1,136 +1,135 @@
-Return-Path: <linux-kernel+bounces-777742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C679B2DD4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:06:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1DBB2DD4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51C3F3B111D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:02:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A5E5C7DC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A2C31A053;
-	Wed, 20 Aug 2025 13:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425AE302CA4;
+	Wed, 20 Aug 2025 13:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lBCRXboM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KRppZq+b"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D800E42AA3;
-	Wed, 20 Aug 2025 13:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE1C1DFFC
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755694935; cv=none; b=eScUhI0KUra3I+9X6vZoxhxfjGc3yIcL8Rmvo8GAlvuI2klNoByZc39VLBLFQ4KzOozCjzSzr8C5PAQ3vL/8N1zACqw0mrNE/U3Z6MO5p8n+Dhs1Z6fRKz/RPRqY2A2t+4RQI5Oxskg4FSoPnUjhd2Tm+u8DD3Xw+eKFHjQAsSs=
+	t=1755694996; cv=none; b=PZiadFZPDv1TumQ2rjaGFGtS2eAnNZiyT8ywQjWW4wgaYJQZM35pKqYYi9BKXSM4m9r4U8fkbLaqkTvFVMjZWpriiQuQszjOSZbWS1zhtTDO649s9ZsT2MCdS+3hvFrAHPRQy7uLDAP6vq5SMFS3fOsj71s6rM0XUVcKwwz5T00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755694935; c=relaxed/simple;
-	bh=hEN3aJohbGZNLa8VDJV2dbOoTdBqI5P9kVlUzDzaFVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hpW5mXFsloy8pKZw4+MRATIg9dXT16asDK0sAHq+ijWFJW8/9BXUmV53wxu1DDf4DC4AdEQP3vx7iRQoiP8FfV9+36a9Wv++nf8bpKwlWUu4wwYFqujo9zIljxRYp8H4BU3Tlf61GQkwCVShHcf+ZJ+I0f5FB2g0g0vS0qwtjLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lBCRXboM; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755694934; x=1787230934;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=hEN3aJohbGZNLa8VDJV2dbOoTdBqI5P9kVlUzDzaFVM=;
-  b=lBCRXboMSgqP/ZzTwLfgFxYqdcxJirdPwYBl/7VxBcjF18fqtCDY5C+M
-   H/CdfASBgjealwgbRyEHnWXesthN4Q8irxM5VK4GGF3Nd4Aut93gdTzxa
-   ARaPgXCv2PpTbI2499jVZmJlkeMWebGSNH5zAQoNqhyfcwMVEqzfiFEcE
-   4Yjqh248bCtURxTlkXDdJG/7vR9c9Z9bHQvlr+UNVWLvAX+c/sBrUoMMT
-   xSDBpP+wnhpFkEQhUpD+GDPPH3guGJ0g7WN7jlwaYu1AMoql7YM45h5kn
-   pnaIcqPaUrtiLZyb+mv+JTu9Holg4Sc9oHMgqmu0hvwDSQ/YK6hAG62W5
-   g==;
-X-CSE-ConnectionGUID: vv5B9x77SqCp1eAPe7q4gw==
-X-CSE-MsgGUID: eDiZta2ARoSYP8lz4rqqwQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61773200"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="61773200"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:02:13 -0700
-X-CSE-ConnectionGUID: 5VUgcoWeRr+Mf7IaCM3Mvw==
-X-CSE-MsgGUID: lxwRfl03R2WJwBynJJLGvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="205280230"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:02:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uoiS6-00000006rI9-3YwG;
-	Wed, 20 Aug 2025 16:02:06 +0300
-Date: Wed, 20 Aug 2025 16:02:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Ben Collins <bcollins@watter.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Hepp <andrew.hepp@ahepp.dev>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/5] iio: mcp9600: Recognize chip id for mcp9601
-Message-ID: <aKXHTqlQmDFjx8Ra@smile.fi.intel.com>
-References: <20250819-upstream-changes-v7-0-88a33aa78f6a@watter.com>
- <20250819-upstream-changes-v7-4-88a33aa78f6a@watter.com>
- <CAHp75VfrRJmB-Q6TM+Tiy79_q63=cOvyrePMQwi6ZbvDNUPezQ@mail.gmail.com>
- <00D2ACBD-DE50-4132-8DF2-46DD97DBCE3B@watter.com>
+	s=arc-20240116; t=1755694996; c=relaxed/simple;
+	bh=ou3ZKDpar22z4Oo2WKPAdf/6zQC0VvNL1qqpdsnqSrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=frLb/s8EG07JO6DE5ybY9mDD71CnHxnTfHyuv5bAz72pNOQXAuNwJAHxKmRzZvbPl6wjbHPiXNqXI/FMiF+qzX1+Y230RznOXHh8HdbeWiPoCtvWZxjdFeO3+sKmu+obS3IdqsGeYhLE5/L2lrTYi7K38PV7VLdh1G3TdTzacgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KRppZq+b; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9CE7E43960;
+	Wed, 20 Aug 2025 13:03:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755694990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rt+0HzlN0GaJY1va0P0oiYStG3sAxyTGjMfwBuvnESY=;
+	b=KRppZq+bBuap94XWSmAOhDA3aclBmjsNIEqRm59WtPolG/xPd78QgqhUFgPaxmkhTI5t+m
+	3X5+2ti0WeFuEDJ01GYN/EZExEPgbw3WXuzcTsK6ePb3EKOuQRcCVYu45ZkS3gpavIZ4Ds
+	jnIrsIUWLodzZ9mMnWSI7FpijLjEb0WCi2APzDW2hIjqpq6msOw1Rsc5dP6ctb10HaCOP4
+	in9JuXK+vOUHek9nlDFXksOjG0Bpuzk51zAi6Q3dD+waCV7gCSd+iLqNjethPBnoWgx+tL
+	0jHHsljZi7RhIDnYMXhJGORvLh02VVEO2JmKsa3qpGYY2+w1LswmKWfXW1CEFA==
+Date: Wed, 20 Aug 2025 15:03:07 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH v7 2/3] drm/bridge: add list of removed refcounted
+ bridges
+Message-ID: <20250820150307.358e164c@booty>
+In-Reply-To: <ecfsac5tok6bu7n6ctzt5j7n6vtiumn47iwmff4pid57kdsunz@wqxdxgsaibcw>
+References: <20250819-drm-bridge-debugfs-removed-v7-0-970702579978@bootlin.com>
+	<20250819-drm-bridge-debugfs-removed-v7-2-970702579978@bootlin.com>
+	<ecfsac5tok6bu7n6ctzt5j7n6vtiumn47iwmff4pid57kdsunz@wqxdxgsaibcw>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <00D2ACBD-DE50-4132-8DF2-46DD97DBCE3B@watter.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheekgeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrr
+ hhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Wed, Aug 20, 2025 at 07:11:08AM -0400, Ben Collins wrote:
-> > On Aug 20, 2025, at 6:07 AM, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > On Wed, Aug 20, 2025 at 2:45 AM Ben Collins <bcollins@watter.com> wrote:
+Hi Maxime,
 
-...
+On Tue, 19 Aug 2025 13:15:30 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
 
-> >> +struct mcp9600_data {
-> >> +       struct i2c_client *client;
-> >> +};
-> >> +
-> >> #define MCP9600_CHANNELS(hj_num_ev, hj_ev_spec_off, cj_num_ev, cj_ev_spec_off) \
-> >>        {                                                                      \
-> >>                {                                                              \
-> >> @@ -123,10 +133,6 @@ static const struct iio_chan_spec mcp9600_channels[][2] = {
-> >>        MCP9600_CHANNELS(2, 0, 2, 0), /* Alerts: 1 2 3 4 */
-> >> };
-> >> 
-> >> -struct mcp9600_data {
-> >> -       struct i2c_client *client;
-> >> -};
-> >> -
-> > 
-> > It's not obvious why this piece of change is needed. AFAICS it's a stray change.
+> > @@ -197,15 +197,22 @@
+> >   * driver.
+> >   */
+> >  
+> > +/* Protect bridge_list and bridge_removed_list */
+> >  static DEFINE_MUTEX(bridge_lock);
+> >  static LIST_HEAD(bridge_list);
+> > +static LIST_HEAD(bridge_removed_list);  
 > 
-> The explanation is in the changelog above. A follow up patch needs both struct
-> declarations to be where I added one and moved mcp9600_data to. It’s just ordering
-> so I don’t later have to forward declare new functions for filter_type, which make
-> use of these structs, but need to be in the iio_chan_spec mcp9600_channels[]
-> declaration.
+> I'm not super fond of "removed" here, it's ambiguous, especially since
+> the bridge wouldn't be considered as removed after the last put.
 > 
-> I guess I could move mcp9600_data in that series, but I had this in here before
-> I split that series out, and it seemed simple enough to leave in.
+> lingering maybe?
 
-The usual thing is to avoid changes that are not used. In this series this move
-is not used, put it to the patch which actually needs it.
+Sure, will rename.
+
+> > @@ -288,10 +296,13 @@ void *__devm_drm_bridge_alloc(struct device *dev, size_t size, size_t offset,
+> >  EXPORT_SYMBOL(__devm_drm_bridge_alloc);
+> >  
+> >  /**
+> > - * drm_bridge_add - add the given bridge to the global bridge list
+> > + * drm_bridge_add - publish a bridge
+> >   *
+> >   * @bridge: bridge control structure
+> >   *
+> > + * Add the given bridge to the global list of "published" bridges, where
+> > + * they can be found by users via of_drm_find_bridge().  
+> 
+> It's quite a change in semantics, at least in the doc. I believe it
+> should be a separate patch, since it's really more about updating the
+> drm_bridge_add / drm_bridge_remove doc than collecting the
+> removed-but-not-freed bridges.
+> 
+> Also, I'm not sure if it's more obvious here. The quotes around publish
+> kind of it to that too. Maybe using register / registration would make
+> it more obvious?
+
+OK, I'll reword using register/registration and definitely move to a
+separate patch.
+
+Thanks for reviewing.
+
+Luca
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
