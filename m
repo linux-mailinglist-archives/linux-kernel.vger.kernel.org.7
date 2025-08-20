@@ -1,96 +1,192 @@
-Return-Path: <linux-kernel+bounces-778053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31342B2E120
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:31:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C432B2E0CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC6A3AC9D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:17:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6091C5624A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDC533A037;
-	Wed, 20 Aug 2025 15:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C36327790;
+	Wed, 20 Aug 2025 15:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSKpfRXP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="frL5AAR+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B83B322C98;
-	Wed, 20 Aug 2025 15:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788C22E8B81;
+	Wed, 20 Aug 2025 15:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755702487; cv=none; b=LoFNO72E7bZeViQUwclLYoE4sSZdifmYEz5TzRjRLwY6ECGZhwaWmNMamEYvlygdDxtviUgdvHwxqQOphcwKeIdy859rI42xkup0gRBz+gtPJIMRSvyEd06aHPKfvbjsErQ36K/t7Zw+sU6AxWqa03nnyporbCsmi1AfG6bwJ9I=
+	t=1755702559; cv=none; b=diLfxqVIsbDlthqsvNr/GiW6spNXvYezUISrqHd0TnOZHA9aLvm7qfLEZlFd+5JOCxvsinA5WWLTyAf0DWiKMzs2YIzzH+Bk+WtR4nPNxH21A9AtlHnc40HISaW6cVnXc5jraPkCyZd+AWN9RPDuIbuUkYS9f1V0t/wzo7Nm6Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755702487; c=relaxed/simple;
-	bh=GE5St3AH2vAEE6STTTMAkSYjbxbjNa8r7LP67c+65Rs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rkJ06ifUk4cWDKB6x6Z5Mvdu7h3deBIGeYzBHaF7ObBf8Tro9RPnV5jDE/9pfCPKr8U3SJcRtY+C6iaEJ2X3SfJGH0AmQEmySeRnTE6LWJuJzl7SumrPWb27+CUtdfmAlop9tIdlOlhwo76Wj8Zqu4ZaeBmu+1oTIWBpEJKYgP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSKpfRXP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3371C4CEE7;
-	Wed, 20 Aug 2025 15:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755702485;
-	bh=GE5St3AH2vAEE6STTTMAkSYjbxbjNa8r7LP67c+65Rs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hSKpfRXPUGlpTZrlVQrjnXJH8PWAP6t4O5O7bDR4HtpdRypy2rRnLy1c+APIKnZLw
-	 K+TZ+RwmgaEQZ2Jmy7gwLlwt8kfQtSffTFtNvTHK+mM+H/BRDJxh3iUG+8OogWbbOA
-	 0hxsetcw8z1kbPQ96nnhfnQn4w6zQKKoA34hh/R8DafmcUcjxmVa+eI2ZB6+r9GIdN
-	 CuyLtb/rf0V8LD/fWq+5bfh3bJThlOtPjuSsZvBabZY+aVufFYNb5ajSrX/uMlLrV2
-	 w5fH2XBVYiXs6zTlenyqd5PXyhuifLKMmACT5Z7P+JGuxRJuiGdLCSilS7esnGGfon
-	 unWFVW2CI6wRg==
-Date: Wed, 20 Aug 2025 08:08:04 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Aleksandr Nogikh <nogikh@google.com>
-Cc: syzbot ci <syzbot+ci77a5caa9fce14315@syzkaller.appspotmail.com>,
- abhishektamboli9@gmail.com, andrew@lunn.ch, ayush.sawal@chelsio.com,
- coreteam@netfilter.org, davem@davemloft.net, dsahern@kernel.org,
- edumazet@google.com, fw@strlen.de, gregkh@linuxfoundation.org,
- herbert@gondor.apana.org.au, horms@kernel.org, kadlec@netfilter.org,
- linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, mhal@rbox.co,
- netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com,
- pablo@netfilter.org, sdf@fomichev.me, steffen.klassert@secunet.com,
- syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot ci] Re: net: Convert to skb_dstref_steal and
- skb_dstref_restore
-Message-ID: <20250820080804.30910230@kernel.org>
-In-Reply-To: <CANp29Y4g6kzpsjis4=rUjhfg=BPMiR9Jk68z=NT0MeDyJS7CaQ@mail.gmail.com>
-References: <20250818154032.3173645-1-sdf@fomichev.me>
-	<68a49b30.050a0220.e29e5.00c8.GAE@google.com>
-	<20250819175842.7edaf8a5@kernel.org>
-	<CANp29Y4g6kzpsjis4=rUjhfg=BPMiR9Jk68z=NT0MeDyJS7CaQ@mail.gmail.com>
+	s=arc-20240116; t=1755702559; c=relaxed/simple;
+	bh=LCVLvmXp8GhH3jfjnnZtTRaXTBMo68xWvBNThq4DNP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FvJO/h63u8YIbLRm/gvST4ZAqYblq4hdR5XJmM2RzDdeABXTUCOIqqgX7gYGD4sJmCUP7ZtPtjkAmT0Fleut6zz4bCle7qPkoSKLsjlz5kHNfSVrXuUPk7GRQq+S3FmimKagCf/iVRh1k6iZ0XS0M+zYw8FnlzTcRb3eA6DysyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=frL5AAR+; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755702558; x=1787238558;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LCVLvmXp8GhH3jfjnnZtTRaXTBMo68xWvBNThq4DNP4=;
+  b=frL5AAR+s+aRJLkL0iBGQkDXtPXBDUhR/bYIRdeUIxxsA7YWmFawkEAf
+   0hr6zVl2e/aXE4lcUlo8KCpmDvb1BT3bsi5K8xQjb7SZsmWDJYc2Mn77T
+   CbCco1zDY2NgbmAnsv4OwwUyykBtv3XQHrp8Qf90wO6Encvl0KKa4Cjng
+   9E/+3MeFQe6sZsfLDZDnbPlqYaBqDn8AzDCqkmPhNzoxOVzsQxfrZ6i1t
+   ivMjY4VIwZyuL/8ZazXx0hf5cUcDgBJFAbUOYJyQBXuZhK7RxAw4UO18d
+   AbJS20R7vxn6QnCwP41tf1OmddJui4dgb5HNvRoWuIAtry3IX+72Du4+z
+   A==;
+X-CSE-ConnectionGUID: LHint3cfSp6ALG7SrObX0w==
+X-CSE-MsgGUID: EjLuyg6SRXa7dietz8ZNhg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58070150"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="58070150"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 08:09:16 -0700
+X-CSE-ConnectionGUID: ciJw3CfvQ0+BVu5at19++w==
+X-CSE-MsgGUID: xUJPfrHHRIy4TBi8Oy473A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="168067907"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 08:09:12 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uokR3-00000006y2m-3mq9;
+	Wed, 20 Aug 2025 18:09:09 +0300
+Date: Wed, 20 Aug 2025 18:09:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: cryolitia@uniontech.com
+Cc: Alex Lanzano <lanzano.alex@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Yao Zi <ziyao@disroot.org>,
+	WangYuli <wangyuli@uniontech.com>, Jun Zhan <zhanjun@uniontech.com>,
+	Niecheng1@uniontech.com
+Subject: Re: [PATCH v2] iio: imu: bmi270: Match PNP ID found on newer GPD
+ firmware
+Message-ID: <aKXlFZmIaefBPlw0@smile.fi.intel.com>
+References: <20250815-bmi270-gpd-acpi-v2-1-8e1db68d36d1@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250815-bmi270-gpd-acpi-v2-1-8e1db68d36d1@uniontech.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, 20 Aug 2025 12:45:52 +0200 Aleksandr Nogikh wrote:
-> > Could we do something about this Tested-by: tag?
-> > Since the syzbot CI reports are sent in reply to a series patchwork and
-> > other tooling will think that syzbot is sending it's Tested-by tag for
-> > this series.
-> >
-> > In some cases we know that the issues found are unrelated, or rather
-> > expect them to be fixed separately.  
+On Fri, Aug 15, 2025 at 06:43:26PM +0800, Cryolitia PukNgae via B4 Relay wrote:
+> From: Cryolitia PukNgae <cryolitia@uniontech.com>
 > 
-> FWIW if you notice the reported issues that are completely unrelated,
-> please let me know.
+> GPD devices originally used BMI160 sensors with the "BMI0160" PNP ID.
+> When they switched to BMI260 sensors in newer hardware, they reused
+> the existing Windows driver which accepts both "BMI0160" and "BMI0260"
+> IDs. Consequently, they kept "BMI0160" in DSDT tables for new BMI260
+> devices, causing driver mismatches in Linux.
 > 
-> > Could we perhaps indent the tag with a couple of spaces? Not 100% sure
-> > but I _think_ most tools will match the tags only from start of line.  
+> 1. GPD updated BIOS v0.40+[1] for newer devices to report "BMI0260" for
+> BMI260 sensors to avoid loading bmi160 driver on Linux. While this
+> isn't Bosch's VID;
+> 2. Bosch's official Windows driver uses "BMI0260" as a compatible ID
+> 3. We're seeing real devices shipping with "BMI0260" in DSDT
 > 
-> Sure, that sounds like a very simple solution.
-> I've adjusted the email template - now there are several leading
-> whitespaces on the tag line. I hope it will help (otherwise we'll see
-> what else can be done).
+> The DSDT excerpt of GPD G1619-04 with BIOS v0.40:
+> 
+> Scope (_SB.I2CC)
+> {
+>     Device (BMA2)
+>     {
+>         Name (_ADR, Zero)  // _ADR: Address
+>         Name (_HID, "BMI0260")  // _HID: Hardware ID
+>         Name (_CID, "BMI0260")  // _CID: Compatible ID
+>         Name (_DDN, "Accelerometer")  // _DDN: DOS Device Name
+>         Name (_UID, One)  // _UID: Unique ID
+>         Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+>         {
+>             Name (RBUF, ResourceTemplate ()
+>             {
+>                 I2cSerialBusV2 (0x0069, ControllerInitiated, 0x00061A80,
+>                     AddressingMode7Bit, "\\_SB.I2CC",
+>                     0x00, ResourceConsumer, , Exclusive,
+>                     )
+>             })
+>             Return (RBUF) /* \_SB_.I2CC.BMA2._CRS.RBUF */
+>         }
 
-Looks like we have received a report with your adjustment in place for:
-https://lore.kernel.org/all/20250820092925.2115372-1-jackzxcui1989@163.com/
-I can confirm that it fixes the tag propagation for our tooling. 
-Thank you!
+Everything from this line...
+
+>         OperationRegion (CMS2, SystemIO, 0x72, 0x02)
+>         Field (CMS2, ByteAcc, NoLock, Preserve)
+>         {
+>             IND2,   8,
+>             DAT2,   8
+>         }
+> 
+>         IndexField (IND2, DAT2, ByteAcc, NoLock, Preserve)
+>         {
+>             Offset (0x74),
+>             BACS,   32
+>         }
+> 
+>         Method (ROMS, 0, NotSerialized)
+>         {
+>             Name (RBUF, Package (0x03)
+>             {
+>                 "0 -1 0",
+>                 "-1 0 0",
+>                 "0 0 -1"
+>             })
+>             Return (RBUF) /* \_SB_.I2CC.BMA2.ROMS.RBUF */
+>         }
+> 
+>         Method (CALS, 1, NotSerialized)
+>         {
+>             Local0 = Arg0
+>             If (((Local0 == Zero) || (Local0 == Ones)))
+>             {
+>                 Return (Local0)
+>             }
+>             Else
+>             {
+>                 BACS = Local0
+>             }
+>         }
+
+>         Method (_STA, 0, NotSerialized)  // _STA: Status
+>         {
+>             Return (0x0F)
+>         }
+
+...till this line is a noise.
+
+>     }
+> }
+
+> 1. http://download.softwincn.com/WIN%20Max%202024/Max2-7840-BIOS-V0.41.zip
+> 
+
+Make it a Link tag.
+
+Link: http://download.softwincn.com/WIN%20Max%202024/Max2-7840-BIOS-V0.41.zip #1
+Signed-of-by: ...
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
