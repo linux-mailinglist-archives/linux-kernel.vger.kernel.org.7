@@ -1,160 +1,112 @@
-Return-Path: <linux-kernel+bounces-778638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E00EB2E855
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:50:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B24EB2E858
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA39A3A9E69
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EAB8189AB0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF4A2D9488;
-	Wed, 20 Aug 2025 22:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D662D9EDF;
+	Wed, 20 Aug 2025 22:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nB9asYOT"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UB9hHzzT"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F183018FDAB
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 22:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548A0284894
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 22:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755730203; cv=none; b=ZxmznhoiwgylooDr8FZDT22oR4357Df1JLqwpEKX6Eg9NdcrjNtms/25hVywN7D5hvHmQ+xggJdPpjZPNQbZlB6XyzXHr1EhMltGJq+smG84xRnselxprNwmHpBgnE80/WD6F0S6mRwiiJxhjxsdrMKEbqhj+gJRT4dt17v1zZE=
+	t=1755730310; cv=none; b=Uz1Un5//IfQn+EHGA1zsT6WWCY6ExK5yUT7evhYtBODp7fVo/xCv4R4bShfH/lq6NiaTZINdhTE5ain2tbwAAjbNyrsbyUmSiTXnVRCQlwwlYAA3Qrmeldg936Wi9uqIr6bQ8WjntLYeDfTpurmwaDRduHQon3xpTxQbtTavnI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755730203; c=relaxed/simple;
-	bh=eCL8GsLf3uYEog+ER630EOsJ52icnZjOcTqvUQPw3lY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oQ/jqta+6edhDyFy99lqdwsKXwSIdBL1xmEp6yBLVS98LIPU0vKxUKDYFOm3yjiKhhUe5zs66lSe0LmRH5krd03UG6YIiXcHzB+oTnYZoWhrew7+Uu0CRZFPhebFiMYbYvgG9SZjvETLEC2MTXYc5Am0JWgnpsQVcrGbzdjAMT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nB9asYOT; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755730200;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UsdDNWT0aPaFWkXNVMSJrwjwzzlXY8/IesqRJaJrUFg=;
-	b=nB9asYOTay3SplClMlGUjqJrUlNm40iBpD5ePjlHlcko7ltyfZdyC8gCY3jD40zA+3I/ZU
-	UINeNtc0dBEbM/WktZuxCAHr4Af/b1uEbFb0lAqxvpNyZU8B1+B1tmnxpcRHvi2ZRfyOR/
-	NZWzYbGQCeZ/LrkD4Df+fjs3Ag8mOic=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: linux-mm@kvack.org,  bpf@vger.kernel.org,  Suren Baghdasaryan
- <surenb@google.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Michal Hocko
- <mhocko@suse.com>,  David Rientjes <rientjes@google.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
- Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 10/14] bpf: selftests: bpf OOM handler test
-In-Reply-To: <CAP01T75_ArZiy9AB6TwNZCxKJKw+2yg58xz1ubTGZr4ynVt+Mg@mail.gmail.com>
-	(Kumar Kartikeya Dwivedi's message of "Wed, 20 Aug 2025 11:33:42
-	+0200")
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
-	<20250818170136.209169-11-roman.gushchin@linux.dev>
-	<CAP01T75_ArZiy9AB6TwNZCxKJKw+2yg58xz1ubTGZr4ynVt+Mg@mail.gmail.com>
-Date: Wed, 20 Aug 2025 15:49:53 -0700
-Message-ID: <878qjdobfy.fsf@linux.dev>
+	s=arc-20240116; t=1755730310; c=relaxed/simple;
+	bh=qvvuIz19HGC1hOLci1Y9hd0AIbbn37AkPmcNmEkMdTo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Siymb3XVW8dLrH5lrkeGRya1QoPAPIa/mn7YyeCo5gAtnk+5dbvLpgRmcCZKYUChf5uLo849BExKG53WrN9mqAp2Tx+9ZZNvVchAnTGDIp6pR7JGmrSHpHYySA2uFUcU21+ZJ4Jzh4/+xhpsA0I6o815e7C4oOcPBAXZWebylX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UB9hHzzT; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b29b715106so73341cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:51:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755730308; x=1756335108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qvvuIz19HGC1hOLci1Y9hd0AIbbn37AkPmcNmEkMdTo=;
+        b=UB9hHzzTaJmPUi9zCbIdPAVON+3+3T9QmJROyC2PQ3nrMT0+s0tIeoR64I/Mgblrc9
+         GDojHAMA40aN+MwVZ5g9shjRDRjsRLdm4eawKMVlcFuSI4WdpjxfopegIF2ROhT760oW
+         yOXiGhJwyOWTSi5rehdZOdxANknsr9sOVBbu+nW4kF8ZPNlzlt7NXhv4YLYOy93w/G1D
+         /nwt35FAp2ViXSrWDwAGMSVTq5WY0N2x2cuFvGn/Vj0MbGptFJ+tkxWfgvTwDVsOqSAL
+         JgYrc7tVllqK0d1p/YqgD0QsfUIE0jwpN+0EySRaqq0dH105aERjRXbHlM76+Hl6RIg1
+         cZGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755730308; x=1756335108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qvvuIz19HGC1hOLci1Y9hd0AIbbn37AkPmcNmEkMdTo=;
+        b=cl8dOnosvL7DpKvPnIAx7vpxFgKjwORZiWmvDRE6QE59Bm259HCqUPQZ9fCQDnr/bg
+         TRKY7gM0SKp5rR0I9/mBvu2cPIn3HvsEWa/5aV8Eh1ehlbfzhTVZP9CiweoQErhpFYA8
+         4d9z/48kz89udZZEth4H8Y85HqV1AjY9O1+/ohjgXT4Dm8+EPvI7pCKDKcnpBozrtPxn
+         BVo/dMfIQoxm5a54N0X8a9yib+jSfzWivYAmBJ4QjRfxA7zdEZEhOiBGaHwwdDPSifCs
+         vFevWXEVAf6MWuqF2i5Vk2pn4sHCDrB0RQFRW0b5ITsSFJy9Ia/hEahbdKJp9N1eDuj8
+         AiEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWa9JjzAmq5czdCqGxFQp/SaiyaBnVGJYFr3NSBzYflpEWVcOF6xAE3QH0Lu+gMKmQ+A5m32OxNhX/kQ4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw26Wo3WwPc2rTAnnvKjOaU/MkfTnZwMhUiqUNB8cgUf12KQbm0
+	AHMfPjCn+4AI/3GTVAHj7jXTDapz28+FoG11K2zuPm0pDjt5rOOYJ/IT8VAZKJB68NWGApLnsFr
+	EfaqOpkhMcunoV7B17lCxpOC1EsI59RuYjP05Y71X
+X-Gm-Gg: ASbGncsdiu0k5ApRtplhtqpoHSB/hwbl7awZIbcYDd101hZkxYfntqh0aHQxl4HxFlb
+	r1YZwBLX22q48jIve1lSqPalioNrJi0XcVgi/8tsitPI+KfYnrz+ZkxS6Bn7Bg46nw6iyz/tc/6
+	GQn5mpLqzh+KTy+g6ygN09boNbnDgcEKfpUmkmCvR9duvHBDWG6VeZKSNb0O4nFxzG3fVaUv3k6
+	GCxELEolIXxt2x60HbMGHOniX/hqeYBqKo6QG50VCl7vUCHhebDAI4=
+X-Google-Smtp-Source: AGHT+IFnucqctbq+X2MkFIfcQxZd9U9ajSEePzBmifl2qKpLWyoa80CJHDHVTlJtgs6cetttll6Fnn+54EACtnz3c6w=
+X-Received: by 2002:a05:622a:241:b0:4a8:eb0:c528 with SMTP id
+ d75a77b69052e-4b29fa23c6cmr537741cf.15.1755730307790; Wed, 20 Aug 2025
+ 15:51:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+References: <20250820171214.3597901-1-dtatulea@nvidia.com> <20250820171214.3597901-8-dtatulea@nvidia.com>
+In-Reply-To: <20250820171214.3597901-8-dtatulea@nvidia.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 20 Aug 2025 15:51:29 -0700
+X-Gm-Features: Ac12FXxgjSFgx5660hALKbajeFHBX9DsXuvcIjQ739CmkZy1azdx8SzH1hWqlKI
+Message-ID: <CAHS8izNRcVcAfBBaDwZvPYrs4cK2NYqyXOq5+6sbsbSfpgc7Xw@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 6/7] net: devmem: pre-read requested rx queues
+ during bind
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: asml.silence@gmail.com, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, cratiu@nvidia.com, parav@nvidia.com, 
+	netdev@vger.kernel.org, sdf@meta.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Kumar Kartikeya Dwivedi <memxor@gmail.com> writes:
-
-> On Mon, 18 Aug 2025 at 19:02, Roman Gushchin <roman.gushchin@linux.dev> wrote:
->>
->> Implement a pseudo-realistic test for the OOM handling
->> functionality.
->>
->> The OOM handling policy which is implemented in bpf is to
->> kill all tasks belonging to the biggest leaf cgroup, which
->> doesn't contain unkillable tasks (tasks with oom_score_adj
->> set to -1000). Pagecache size is excluded from the accounting.
->>
->> The test creates a hierarchy of memory cgroups, causes an
->> OOM at the top level, checks that the expected process will be
->> killed and checks memcg's oom statistics.
->>
->> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
->> ---
->>  [...]
->> +
->> +/*
->> + * Find the largest leaf cgroup (ignoring page cache) without unkillable tasks
->> + * and kill all belonging tasks.
->> + */
->> +SEC("struct_ops.s/handle_out_of_memory")
->> +int BPF_PROG(test_out_of_memory, struct oom_control *oc)
->> +{
->> +       struct task_struct *task;
->> +       struct mem_cgroup *root_memcg = oc->memcg;
->> +       struct mem_cgroup *memcg, *victim = NULL;
->> +       struct cgroup_subsys_state *css_pos;
->> +       unsigned long usage, max_usage = 0;
->> +       unsigned long pagecache = 0;
->> +       int ret = 0;
->> +
->> +       if (root_memcg)
->> +               root_memcg = bpf_get_mem_cgroup(&root_memcg->css);
->> +       else
->> +               root_memcg = bpf_get_root_mem_cgroup();
->> +
->> +       if (!root_memcg)
->> +               return 0;
->> +
->> +       bpf_rcu_read_lock();
->> +       bpf_for_each(css, css_pos, &root_memcg->css, BPF_CGROUP_ITER_DESCENDANTS_POST) {
->> +               if (css_pos->cgroup->nr_descendants + css_pos->cgroup->nr_dying_descendants)
->> +                       continue;
->> +
->> +               memcg = bpf_get_mem_cgroup(css_pos);
->> +               if (!memcg)
->> +                       continue;
->> +
->> +               usage = bpf_mem_cgroup_usage(memcg);
->> +               pagecache = bpf_mem_cgroup_page_state(memcg, NR_FILE_PAGES);
->> +
->> +               if (usage > pagecache)
->> +                       usage -= pagecache;
->> +               else
->> +                       usage = 0;
->> +
->> +               if ((usage > max_usage) && mem_cgroup_killable(memcg)) {
->> +                       max_usage = usage;
->> +                       if (victim)
->> +                               bpf_put_mem_cgroup(victim);
->> +                       victim = bpf_get_mem_cgroup(&memcg->css);
->> +               }
->> +
->> +               bpf_put_mem_cgroup(memcg);
->> +       }
->> +       bpf_rcu_read_unlock();
->> +
->> +       if (!victim)
->> +               goto exit;
->> +
->> +       bpf_for_each(css_task, task, &victim->css, CSS_TASK_ITER_PROCS) {
->> +               struct task_struct *t = bpf_task_acquire(task);
->> +
->> +               if (t) {
->> +                       if (!bpf_task_is_oom_victim(task))
->> +                               bpf_oom_kill_process(oc, task, "bpf oom test");
+On Wed, Aug 20, 2025 at 10:14=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.co=
+m> wrote:
 >
-> Is there a scenario where we want to invoke bpf_oom_kill_process when
-> the task is not an oom victim?
+> Instead of reading the requested rx queues after binding the buffer,
+> read the rx queues in advance in a bitmap and iterate over them when
+> needed.
+>
+> This is a preparation for fetching the DMA device for each queue.
+>
+> This patch has no functional changes besides adding an extra
+> rq index bounds check.
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
 
-Not really, but...
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 
-> Would it be better to subsume this check in the kfunc itself?
-
-bpf_task_is_oom_victim() is useful by itself, because if we see
-a task which is about to be killed, we can likely simple bail out.
-Let me adjust the test to reflect it.
+--=20
+Thanks,
+Mina
 
