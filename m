@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-777271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9798EB2D790
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:09:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD5E7B2D7A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FE457B6945
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:07:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B011C22933
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C952DEA98;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE7B2DFA2D;
 	Wed, 20 Aug 2025 09:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VLG7Bm+i"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DTVN/8Dn"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451D82DCBF1;
-	Wed, 20 Aug 2025 09:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E12DCF75
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680870; cv=none; b=RlaY3tyZHTT7yiT3oFQMyF561IeE1zieGDuDQX5VHk2gFEpP50bnKaKDE8A9QwZYRp++Kk5b9t0ThLUPeWs/Qdh6+TCCxiJZYl6atw89gbacYosZGvYN3g/93q59Fl9Q/Q3Qox0hPWn1+x+3oOZ2IP8B8/uFbMxiWF4JlxsX60g=
+	t=1755680871; cv=none; b=kFiBAjkSTO2qx1o8hMi4SQWdN+wNfBfFG5F0cAOCA9g1YXtxEJwzx6IEAVpBEOq2RN9S4DaQ5gekaGshKqur/1VLsr3pYGtVF3o7Aw7BvW3kRNcit4aUKEJOamSNXmSdi2njoIkPDCLh1PU5Jk0JJTlfZTZ4a5ptPWn05tC31hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680870; c=relaxed/simple;
-	bh=A8dPjprWxoNsWRX3HoLPc5JeriXwc19V907JzeqIlaQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ar6O4/VC6ONzXOk2vfxKlOjTVUkX661ZGjZ7Qyo6ArDEHK61O4KbvbGB4dlEIlfQQu/I8u4yO6kaqzviDawr1h0fKY0ZdYoXYIQ3Ib/UpY3AdrdxONqqgKpkSCrCLwO39ohFAjI5gXGUbY9quWX1Don8i19EM7a2OeMPugQXt/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VLG7Bm+i; arc=none smtp.client-ip=185.246.85.4
+	s=arc-20240116; t=1755680871; c=relaxed/simple;
+	bh=a0QWFpdloHAbd+dm1DvOmKtG4IUalmOMMoLeNd1sdyc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YZmHWMDmB0VcHcuB4XAN/Id4DX9eDOpSv3IlFE6+N+aHc+KFFGeMkazUBTb5iT5yQYQMF2+hQg3vp0tlcW/odndRhW2AvoMCEwzVc4/Ym/DN/5avEpRSOF7wsr3icK9FMhj7B7xsUBv3HoP3n5njPSKHHinVqakxVsRs0nGpEGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DTVN/8Dn; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 6032A4E40C45;
-	Wed, 20 Aug 2025 09:07:45 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 09288C6B3B9;
+	Wed, 20 Aug 2025 09:07:33 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2D85F606A0;
-	Wed, 20 Aug 2025 09:07:45 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4B2771C22D33A;
-	Wed, 20 Aug 2025 11:07:37 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A254E606A0;
+	Wed, 20 Aug 2025 09:07:46 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9BCCA1C22D3CC;
+	Wed, 20 Aug 2025 11:07:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1755680864; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=e3lpIExcXw2eYOSrRQDqVTlQbJZKW/vqui2JHO+zjlo=;
-	b=VLG7Bm+iD2mjewn5yLbOMvAPsCh9eO3HmF9bmEbBblBoxyAKJLQGBx73Df6h/7v78TlVb0
-	fGrJiG/7gZzPFRH4/VpReLxGfEb9P04vqpMp1eWQpJ1kx0KPxYDqU6uaHJVU41iPv1a0II
-	ivXHjkN7IlbJJVt/q3tacERT7lVLoYybWOm8lh4ZqYlYYJ16g9hm8r0L4YJP3MpZJw/b+s
-	LXWVbnYJg0qYnCDwSntd0Eb7MIv4NRJww+mzAl5Af/mOe3/AupfL4El4MlT+rprntZuEZr
-	eYfoYldXbJJbtOa2T5lDuIYGBjTHI3MQVT+cU6vqtrRdaeV0PwzZNNAkv4MyFw==
+	t=1755680865; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=d2nlQytmRPz+rrqLknu+wIj3RHowV5aTGQHOfNp9su8=;
+	b=DTVN/8DnNMNUMQFBvjwKmDgMFoiLxoRbVqc0bdemiN7j6b5l4csIhDkPEU0McvQDsePRg6
+	aYca1SL6PRAe5VfP+E8Vi+XmI3HVJtN5ad6KTyvpgx4t6id7C3d1LXFqOOdk22Ha+GKTsC
+	zmP419D2dPu1jSf1HuFLUrU5o5ewQPuxtnZwbxBSNzCEz7WzhGsejuvrhs26tW9d8davDo
+	fhMm8KGEMvMW7vkik33JnMMvslZjgsurEbh0vHl86N5EkN3IixbAD2J8V+qvXM701q+ktw
+	aK3/zBANobg+r7AATeHiwHR3MgUWpQgBJGc4mIRibfvfdMo5NHHmxnvYFQQ73A==
 From: Kory Maincent <kory.maincent@bootlin.com>
-Subject: [PATCH ethtool v3 0/3] Add support for PSE priority feature and
- PSE event monitoring
-Date: Wed, 20 Aug 2025 11:07:31 +0200
-Message-Id: <20250820-b4-feature_poe_pw_budget-v3-0-c3d57362c086@bootlin.com>
+Date: Wed, 20 Aug 2025 11:07:32 +0200
+Subject: [PATCH ethtool v3 1/3] update UAPI header copies
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,11 +57,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAFOQpWgC/33NQQ7CIBAF0Ks0rMVQSlt05T2MaQoMLUktDVDUN
- L27hI1xoYtZ/Pz8Nxvy4Ax4dC425CAab+ycQnUokBz7eQBsVMqIEspKShgWDGvow+qgW2y6Ryd
- WNUDApAfgDWVa1jVK88WBNs9MXxGEMVg7oVsqRuODda/8Mpa5TnpNGkp+67HEBBOhRKuoOEmuL
- 8LaMJn5KO09s5F+KF5WfyiaKdCN0FK2hH9T+76/AZKrqqkWAQAA
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250820-b4-feature_poe_pw_budget-v3-1-c3d57362c086@bootlin.com>
+References: <20250820-b4-feature_poe_pw_budget-v3-0-c3d57362c086@bootlin.com>
+In-Reply-To: <20250820-b4-feature_poe_pw_budget-v3-0-c3d57362c086@bootlin.com>
 To: Oleksij Rempel <o.rempel@pengutronix.de>, 
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
@@ -75,48 +74,232 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-Add support for PSE (Power Sourcing Equipment) priority management and
-event monitoring capabilities.
+Update to kernel commit c04fdca8a98a.
 
 Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 ---
-Changes in v3:
-- Change event loop limit to not ignore events that could be out of scope.
-- Fix incorrect attribute usage.
-- Improve documentation.
-- Link to v2: https://lore.kernel.org/r/20250813-b4-feature_poe_pw_budget-v2-0-0bef6bfcc708@bootlin.com
-
-Changes in v2:
-- Split the second patch in two to separate the PSE priority feature and
-  the PSE event feature support.
-- Regenerate the "update UAPI header copies" patch.
-- Link to v1: https://lore.kernel.org/r/20250620-b4-feature_poe_pw_budget-v1-0-0bdb7d2b9c8f@bootlin.com
-
----
-Kory Maincent (3):
-      update UAPI header copies
-      ethtool: pse-pd: Add PSE priority support
-      ethtool: pse-pd: Add PSE event monitoring support
-
- ethtool.8.in                           | 31 ++++++++++++
- ethtool.c                              |  1 +
- netlink/monitor.c                      |  9 +++-
- netlink/netlink.h                      |  1 +
- netlink/pse-pd.c                       | 89 ++++++++++++++++++++++++++++++++++
  uapi/linux/ethtool.h                   |  4 +-
  uapi/linux/ethtool_netlink.h           |  2 -
- uapi/linux/ethtool_netlink_generated.h | 83 +++++++++++++++++++++++++++++++
+ uapi/linux/ethtool_netlink_generated.h | 83 ++++++++++++++++++++++++++++++++++
  uapi/linux/if_link.h                   |  2 +
  uapi/linux/neighbour.h                 |  5 ++
- 10 files changed, 222 insertions(+), 5 deletions(-)
----
-base-commit: 755f5d758e7a365d13140a130a748283b67f756e
-change-id: 20241204-b4-feature_poe_pw_budget-0aee8624fc55
+ 5 files changed, 92 insertions(+), 4 deletions(-)
 
-Best regards,
+diff --git a/uapi/linux/ethtool.h b/uapi/linux/ethtool.h
+index 253df22..4a4b77b 100644
+--- a/uapi/linux/ethtool.h
++++ b/uapi/linux/ethtool.h
+@@ -2312,7 +2312,7 @@ enum {
+ 	IPV6_USER_FLOW	= 0x0e, /* spec only (usr_ip6_spec; nfc only) */
+ 	IPV4_FLOW	= 0x10, /* hash only */
+ 	IPV6_FLOW	= 0x11, /* hash only */
+-	ETHER_FLOW	= 0x12, /* spec only (ether_spec) */
++	ETHER_FLOW	= 0x12, /* hash or spec (ether_spec) */
+ 
+ 	/* Used for GTP-U IPv4 and IPv6.
+ 	 * The format of GTP packets only includes
+@@ -2369,7 +2369,7 @@ enum {
+ /* Flag to enable RSS spreading of traffic matching rule (nfc only) */
+ #define	FLOW_RSS	0x20000000
+ 
+-/* L3-L4 network traffic flow hash options */
++/* L2-L4 network traffic flow hash options */
+ #define	RXH_L2DA	(1 << 1)
+ #define	RXH_VLAN	(1 << 2)
+ #define	RXH_L3_PROTO	(1 << 3)
+diff --git a/uapi/linux/ethtool_netlink.h b/uapi/linux/ethtool_netlink.h
+index 0e9520f..041e768 100644
+--- a/uapi/linux/ethtool_netlink.h
++++ b/uapi/linux/ethtool_netlink.h
+@@ -208,6 +208,4 @@ enum {
+ 	ETHTOOL_A_STATS_PHY_MAX = (__ETHTOOL_A_STATS_PHY_CNT - 1)
+ };
+ 
+-#define ETHTOOL_MCGRP_MONITOR_NAME "monitor"
+-
+ #endif /* _LINUX_ETHTOOL_NETLINK_H_ */
+diff --git a/uapi/linux/ethtool_netlink_generated.h b/uapi/linux/ethtool_netlink_generated.h
+index fcc2986..98d12b0 100644
+--- a/uapi/linux/ethtool_netlink_generated.h
++++ b/uapi/linux/ethtool_netlink_generated.h
+@@ -49,6 +49,34 @@ enum hwtstamp_source {
+ 	HWTSTAMP_SOURCE_PHYLIB,
+ };
+ 
++/**
++ * enum ethtool_pse_event - PSE event list for the PSE controller
++ * @ETHTOOL_PSE_EVENT_OVER_CURRENT: PSE output current is too high
++ * @ETHTOOL_PSE_EVENT_OVER_TEMP: PSE in over temperature state
++ * @ETHTOOL_C33_PSE_EVENT_DETECTION: detection process occur on the PSE. IEEE
++ *   802.3-2022 33.2.5 and 145.2.6 PSE detection of PDs. IEEE 802.3-202
++ *   30.9.1.1.5 aPSEPowerDetectionStatus
++ * @ETHTOOL_C33_PSE_EVENT_CLASSIFICATION: classification process occur on the
++ *   PSE. IEEE 802.3-2022 33.2.6 and 145.2.8 classification of PDs mutual
++ *   identification. IEEE 802.3-2022 30.9.1.1.8 aPSEPowerClassification.
++ * @ETHTOOL_C33_PSE_EVENT_DISCONNECTION: PD has been disconnected on the PSE.
++ *   IEEE 802.3-2022 33.3.8 and 145.3.9 PD Maintain Power Signature. IEEE
++ *   802.3-2022 33.5.1.2.9 MPS Absent. IEEE 802.3-2022 30.9.1.1.20
++ *   aPSEMPSAbsentCounter.
++ * @ETHTOOL_PSE_EVENT_OVER_BUDGET: PSE turned off due to over budget situation
++ * @ETHTOOL_PSE_EVENT_SW_PW_CONTROL_ERROR: PSE faced an error managing the
++ *   power control from software
++ */
++enum ethtool_pse_event {
++	ETHTOOL_PSE_EVENT_OVER_CURRENT = 1,
++	ETHTOOL_PSE_EVENT_OVER_TEMP = 2,
++	ETHTOOL_C33_PSE_EVENT_DETECTION = 4,
++	ETHTOOL_C33_PSE_EVENT_CLASSIFICATION = 8,
++	ETHTOOL_C33_PSE_EVENT_DISCONNECTION = 16,
++	ETHTOOL_PSE_EVENT_OVER_BUDGET = 32,
++	ETHTOOL_PSE_EVENT_SW_PW_CONTROL_ERROR = 64,
++};
++
+ enum {
+ 	ETHTOOL_A_HEADER_UNSPEC,
+ 	ETHTOOL_A_HEADER_DEV_INDEX,
+@@ -642,11 +670,47 @@ enum {
+ 	ETHTOOL_A_C33_PSE_EXT_SUBSTATE,
+ 	ETHTOOL_A_C33_PSE_AVAIL_PW_LIMIT,
+ 	ETHTOOL_A_C33_PSE_PW_LIMIT_RANGES,
++	ETHTOOL_A_PSE_PW_D_ID,
++	ETHTOOL_A_PSE_PRIO_MAX,
++	ETHTOOL_A_PSE_PRIO,
+ 
+ 	__ETHTOOL_A_PSE_CNT,
+ 	ETHTOOL_A_PSE_MAX = (__ETHTOOL_A_PSE_CNT - 1)
+ };
+ 
++enum {
++	ETHTOOL_A_FLOW_ETHER = 1,
++	ETHTOOL_A_FLOW_IP4,
++	ETHTOOL_A_FLOW_IP6,
++	ETHTOOL_A_FLOW_TCP4,
++	ETHTOOL_A_FLOW_TCP6,
++	ETHTOOL_A_FLOW_UDP4,
++	ETHTOOL_A_FLOW_UDP6,
++	ETHTOOL_A_FLOW_SCTP4,
++	ETHTOOL_A_FLOW_SCTP6,
++	ETHTOOL_A_FLOW_AH4,
++	ETHTOOL_A_FLOW_AH6,
++	ETHTOOL_A_FLOW_ESP4,
++	ETHTOOL_A_FLOW_ESP6,
++	ETHTOOL_A_FLOW_AH_ESP4,
++	ETHTOOL_A_FLOW_AH_ESP6,
++	ETHTOOL_A_FLOW_GTPU4,
++	ETHTOOL_A_FLOW_GTPU6,
++	ETHTOOL_A_FLOW_GTPC4,
++	ETHTOOL_A_FLOW_GTPC6,
++	ETHTOOL_A_FLOW_GTPC_TEID4,
++	ETHTOOL_A_FLOW_GTPC_TEID6,
++	ETHTOOL_A_FLOW_GTPU_EH4,
++	ETHTOOL_A_FLOW_GTPU_EH6,
++	ETHTOOL_A_FLOW_GTPU_UL4,
++	ETHTOOL_A_FLOW_GTPU_UL6,
++	ETHTOOL_A_FLOW_GTPU_DL4,
++	ETHTOOL_A_FLOW_GTPU_DL6,
++
++	__ETHTOOL_A_FLOW_CNT,
++	ETHTOOL_A_FLOW_MAX = (__ETHTOOL_A_FLOW_CNT - 1)
++};
++
+ enum {
+ 	ETHTOOL_A_RSS_UNSPEC,
+ 	ETHTOOL_A_RSS_HEADER,
+@@ -656,6 +720,7 @@ enum {
+ 	ETHTOOL_A_RSS_HKEY,
+ 	ETHTOOL_A_RSS_INPUT_XFRM,
+ 	ETHTOOL_A_RSS_START_CONTEXT,
++	ETHTOOL_A_RSS_FLOW_HASH,
+ 
+ 	__ETHTOOL_A_RSS_CNT,
+ 	ETHTOOL_A_RSS_MAX = (__ETHTOOL_A_RSS_CNT - 1)
+@@ -718,6 +783,14 @@ enum {
+ 	ETHTOOL_A_TSCONFIG_MAX = (__ETHTOOL_A_TSCONFIG_CNT - 1)
+ };
+ 
++enum {
++	ETHTOOL_A_PSE_NTF_HEADER = 1,
++	ETHTOOL_A_PSE_NTF_EVENTS,
++
++	__ETHTOOL_A_PSE_NTF_CNT,
++	ETHTOOL_A_PSE_NTF_MAX = (__ETHTOOL_A_PSE_NTF_CNT - 1)
++};
++
+ enum {
+ 	ETHTOOL_MSG_USER_NONE = 0,
+ 	ETHTOOL_MSG_STRSET_GET = 1,
+@@ -767,6 +840,9 @@ enum {
+ 	ETHTOOL_MSG_PHY_GET,
+ 	ETHTOOL_MSG_TSCONFIG_GET,
+ 	ETHTOOL_MSG_TSCONFIG_SET,
++	ETHTOOL_MSG_RSS_SET,
++	ETHTOOL_MSG_RSS_CREATE_ACT,
++	ETHTOOL_MSG_RSS_DELETE_ACT,
+ 
+ 	__ETHTOOL_MSG_USER_CNT,
+ 	ETHTOOL_MSG_USER_MAX = (__ETHTOOL_MSG_USER_CNT - 1)
+@@ -822,9 +898,16 @@ enum {
+ 	ETHTOOL_MSG_PHY_NTF,
+ 	ETHTOOL_MSG_TSCONFIG_GET_REPLY,
+ 	ETHTOOL_MSG_TSCONFIG_SET_REPLY,
++	ETHTOOL_MSG_PSE_NTF,
++	ETHTOOL_MSG_RSS_NTF,
++	ETHTOOL_MSG_RSS_CREATE_ACT_REPLY,
++	ETHTOOL_MSG_RSS_CREATE_NTF,
++	ETHTOOL_MSG_RSS_DELETE_NTF,
+ 
+ 	__ETHTOOL_MSG_KERNEL_CNT,
+ 	ETHTOOL_MSG_KERNEL_MAX = (__ETHTOOL_MSG_KERNEL_CNT - 1)
+ };
+ 
++#define ETHTOOL_MCGRP_MONITOR_NAME	"monitor"
++
+ #endif /* _LINUX_ETHTOOL_NETLINK_GENERATED_H */
+diff --git a/uapi/linux/if_link.h b/uapi/linux/if_link.h
+index bb94d88..b450757 100644
+--- a/uapi/linux/if_link.h
++++ b/uapi/linux/if_link.h
+@@ -1396,6 +1396,7 @@ enum {
+ 	IFLA_VXLAN_LOCALBYPASS,
+ 	IFLA_VXLAN_LABEL_POLICY, /* IPv6 flow label policy; ifla_vxlan_label_policy */
+ 	IFLA_VXLAN_RESERVED_BITS,
++	IFLA_VXLAN_MC_ROUTE,
+ 	__IFLA_VXLAN_MAX
+ };
+ #define IFLA_VXLAN_MAX	(__IFLA_VXLAN_MAX - 1)
+@@ -1532,6 +1533,7 @@ enum {
+ 	IFLA_BOND_MISSED_MAX,
+ 	IFLA_BOND_NS_IP6_TARGET,
+ 	IFLA_BOND_COUPLED_CONTROL,
++	IFLA_BOND_BROADCAST_NEIGH,
+ 	__IFLA_BOND_MAX,
+ };
+ 
+diff --git a/uapi/linux/neighbour.h b/uapi/linux/neighbour.h
+index 5e67a7e..1401f57 100644
+--- a/uapi/linux/neighbour.h
++++ b/uapi/linux/neighbour.h
+@@ -54,6 +54,7 @@ enum {
+ /* Extended flags under NDA_FLAGS_EXT: */
+ #define NTF_EXT_MANAGED		(1 << 0)
+ #define NTF_EXT_LOCKED		(1 << 1)
++#define NTF_EXT_EXT_VALIDATED	(1 << 2)
+ 
+ /*
+  *	Neighbor Cache Entry States.
+@@ -92,6 +93,10 @@ enum {
+  * bridge in response to a host trying to communicate via a locked bridge port
+  * with MAB enabled. Their purpose is to notify user space that a host requires
+  * authentication.
++ *
++ * NTF_EXT_EXT_VALIDATED flagged neighbor entries were externally validated by
++ * a user space control plane. The kernel will not remove or invalidate them,
++ * but it can probe them and notify user space when they become reachable.
+  */
+ 
+ struct nda_cacheinfo {
+
 -- 
-Köry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+2.43.0
 
 
