@@ -1,414 +1,261 @@
-Return-Path: <linux-kernel+bounces-777945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C64B2DF5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:31:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17987B2DF59
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E4B5C4388
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:28:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2ED04E7A4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74475301476;
-	Wed, 20 Aug 2025 14:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11FB275AFF;
+	Wed, 20 Aug 2025 14:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="RBFhHt9L"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="B+ldflq8"
+Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2136.outbound.protection.outlook.com [40.107.115.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855F0274B42;
-	Wed, 20 Aug 2025 14:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755699960; cv=none; b=Tink04PhC6vb6aju84r/adpskbVd5VHENuu2QGLxxIbrvnAgccjHOhkN2WKLYrZz28GyrHs8VM7qKVodtiI8XM+HqfWybDN7s3cjRsVK1Y2K/CG/ynrvkUX+W7ndVz9dXKeA+XbLQS2xREBU6YXQaaA85gtH6FYVWH5HoSMD3jw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755699960; c=relaxed/simple;
-	bh=niewyNFO3B7i2JcXH68hJMKd1s1pwKuphRHlg0MHxM0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CpS3XiQU2+L0NEhOHrTOwYUWNecPllE16bVpr2sYiLXDeWCjAyNMHLN6UNDiMG1XB0sUsw2w7xcqgoUW9b3yOrZWRwY55AEudfl34A0txKA5UjJpdXB02ezQJ0mpU+GxihrXwIGHe2AXsfvpVWiRGIuBbr4B8GDeqls/TAUa3ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=RBFhHt9L; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id B22EA22C2E;
-	Wed, 20 Aug 2025 16:25:56 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id JkRV2ZD435HD; Wed, 20 Aug 2025 16:25:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1755699955; bh=niewyNFO3B7i2JcXH68hJMKd1s1pwKuphRHlg0MHxM0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=RBFhHt9LhnhIRW4Oqh0GLpC/nLPqLyNOAwxxLfsuzHgnvY6b1RMBgS03SGAP3djEJ
-	 y5Tii8IZdobk4qMGGfNpnJfEvkOJmnHBcvCoPMn2uSkdh7Ry7Jdlkrl0pWuBjMr9Ms
-	 mTkKYFNJov9Cgp1lOHdxu+aK2ZBhCkPmb7GgKzE9/xQLxrDeep2QLt1asmUAVPZZjZ
-	 34CHeZZsfs9Q+r9o75Wn8sAPgUoUXAxn4f5Ols/ibEGkpia0WZcw19QPZzXMrDIoMc
-	 IcXt28kXBWOV2JGTZMamC0eJjLFB6rlrS0AfoRJjaM1qv6Q8NwhrUZGOtywsb4cchw
-	 TW4Kn1f+VE53A==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Wed, 20 Aug 2025 19:54:27 +0530
-Subject: [PATCH v5 2/2] drm: panel: add support for Synaptics TDDI series
- DSI panels
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC2D224AFC
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.136
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755699884; cv=fail; b=mAcNadtAGSnsAgnrmEvb5h3Zztl6VQLzthyhPKgDz7f763F4QvWYw+IfPtu1VEyNUOFVObwMtSzQAbwENNY9RU43pNPo70yCHQ2lJLzv20qC/cXQCUPL7yneMPlJ7fICh0tancSmwCKjvWqfS3xHGzRFR5CNXMoDmr+gXTUB52E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755699884; c=relaxed/simple;
+	bh=RaH9/lbOvzB2rwFHS3N8Cz2FhJSuaHBBmC3tfbAbkLk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oM0MuLZfgdDlme4PfD9bajfwlSnBSjVMlU4tlVqoS21D0u/xz1pQAf9z0dgDwjHh9x4Oi4mErLp4C1nHo46j+pMfdcQsAkvuMGkd1GOjNos6uaGIX2sGgSbzFmtIIW4Al5ysldkYyOTHGvg2iWXyDAHXu283Er6HwuesKSp1B08=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=B+ldflq8; arc=fail smtp.client-ip=40.107.115.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AEMOcEJG/AsETtqYWh+P5SfEqvYRDMdd+nWnCC5G9/vgecG6K5cZnGax2s+HdtaUXpc5paU5Dh1tJRdgMc7BIeqd0k5M/es3uFNnzmPqBqgB8Y914lUfKW4G33XXt8N1Qze2Agu/eV3umykWfY71qEWbVTY9i5atpJfA3xadT3f5Csb2823vSaByHGkCl9AnTQF7bM5RSParXPe3O+bz58C2K5sFWey0N/ZVVJQ/Z7RJM2l8nWikIGr9DNlVt4zybnSWbmx7ST5VeUBMh3tGWYHepcY4RL2MzfhQhUaRvAQYzpUMMDlxFZ9mLj9s8UnJ1OfJqqYGdfBdOzCOmbCzMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1e/aAAlSyl7BTYjNnFxJ7AGPHBKAaLevqOuAwj/SHrg=;
+ b=oknq9w+Xna6rJ2aStjLEKm+B4GgS7NwJ6S0sdDlTLN3WbLiVDjkB4aNk420TmLCH0SavvNtMu368MxljgAKJkDtBxEljtToLIkFVDQvwa9vo9TlGu+qT75Bo+CjmD+SVQYXSgfeCFfdCKiS18bG6GMHtWw57d4Qyc2vLzdobIXkcsh1ZML1Zsjs0fGM+ZAXQclWXVr8iAQWKJ1xto7u81WT+BD0zGREFXYv//2Pj3c6DXm78/GlX5NpQolLub6mnspkRf6pVIrVjL8zRrFyHdvxTfPZJ4+giZNMQL5dE3ejSaR5fu/uUZ1BOTpO7VU6EOYZfhIZBmUe5OFFZQJC+uw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1e/aAAlSyl7BTYjNnFxJ7AGPHBKAaLevqOuAwj/SHrg=;
+ b=B+ldflq88As7yUGI0Ub+UtCOLaiFQQsECQS2NB6+9U4VJTIkm/u5LpqiuwBwFBZoAjMn9NxigAqkIcdrn9MXk9m2yZlvXGdJKCMSRQ/C9KYkZYjp5xL8yvz3vBiXhQxeY93L6Wi7SE39D5auK1L2TFyza7qvSwSkTAjwDNpu9GdBa8fCEX4wX/JtDYkKf6MZKwLFoH3iJD1RN1HTXmZg5oN6Khed7BIpykRad+Ucv9bnX+LVGPDL9cbBFgerlUvR5vhpzFJrv1+Aal0w1fXUvJLq3CLv/DLDPYGagq5Vhv+yMhe28fpYlYXzd98iou1map6KGbK+1LMOdskGTHWIIg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT1PPF6D21D4F3B.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b08::549) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
+ 2025 14:24:32 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.013; Wed, 20 Aug 2025
+ 14:24:32 +0000
+Message-ID: <61551e6e-fc51-4b1f-b2a2-2014a7d37901@efficios.com>
+Date: Wed, 20 Aug 2025 10:24:31 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch 02/11] rseq: Condense the inline stubs
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Wei Liu <wei.liu@kernel.org>, Jens Axboe <axboe@kernel.dk>
+References: <20250813155941.014821755@linutronix.de>
+ <20250813162823.909295085@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250813162823.909295085@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQXPR0101CA0005.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00:15::18) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-panel-synaptics-tddi-v5-2-d4e3fd4987c6@disroot.org>
-References: <20250820-panel-synaptics-tddi-v5-0-d4e3fd4987c6@disroot.org>
-In-Reply-To: <20250820-panel-synaptics-tddi-v5-0-d4e3fd4987c6@disroot.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755699927; l=10512;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=niewyNFO3B7i2JcXH68hJMKd1s1pwKuphRHlg0MHxM0=;
- b=5ciuu99MyoEpQpX8ubNvqPo1G+4jA3Ey1P/MLQB6PjurIox11CQXHrWubr60wN0tU55dA6Y+U
- YnZE6Kc0TMRBoGV5uI5vK0M7Arq38F5HUaozW1v7G8JHZUTskN1ysTr
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PPF6D21D4F3B:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2af8f18e-8a65-4113-b80a-08dddff54800
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aC9JMkhubCswL2xpQVlGK3J6RXhERFZ5ZlVDS1dUMjlvUEhndkNwWTEvaU1G?=
+ =?utf-8?B?REhtREx0L29JVytNUkg5eWtPdUJ0elR0djRjQmhsd0x6NUdSVzIxSnFJU1Q1?=
+ =?utf-8?B?WElRcHBEOVJBWm1CdkxscjUzcGxCQTJIdGRYNzhhVUt5OUN6QVYxRVgzRDVU?=
+ =?utf-8?B?ZzlOQWxDOW5NZkhCL0J2anh1a3g1THl0U01sY3dKbU0xS3NhaGk0bzM1YnE4?=
+ =?utf-8?B?dmhrS3NoSFBDM0NpdjdHdVpmQVVQWmlRaWRFMUV6Z0RZQ01lQXd1SkZ5MmJ2?=
+ =?utf-8?B?Y3MwRFhjTFJXbTdKNUE3NU5EanZyK2pjK3NSOVQ1RmF2MktqRUltaXEzRDZT?=
+ =?utf-8?B?MEUybVhmREd4NmdHT0NoRVVvbWp2ZWtqdlYzcldiNVNvRmpid3RrZHdUMTVQ?=
+ =?utf-8?B?Y2lsTWxETkZ1Unp1cUhyUWtzWjlLcDhlUE9lTU91TStMcnJJRUkrR2tDN0JX?=
+ =?utf-8?B?OVk4VHJMd0dpb3o2dDdLcUh1VkVtcWNMbVZnOVJKM24xSTNDVTNSVHBDYU44?=
+ =?utf-8?B?M3dmUWZvRmgyNnl5LzZJa1lPeXJZcFZYV0JvNEQxeXNZWHE1Y2NPdlJsYXRl?=
+ =?utf-8?B?R3hrSnhYcDFaTk40MjlPTVVCck8rT3pkUks4aEVYMkFSd0lEbTUzc25TcWo5?=
+ =?utf-8?B?a1dJSzJEYzVHdkVadGpaUkxiWXBzMXNBdXVPTVcrQ0JsUTNTVWZybUE0bGsr?=
+ =?utf-8?B?SGRiK00yZGhLc2x5aGhsK2tPWDBraXhNSEEwbEZyakFIRiszZkUxazAzdmtI?=
+ =?utf-8?B?RzMzV2tyb2tpZHMyaHJKUHd2M083d2RHTGpjSkhHcDZxcFh6c0xIeEMxQ0V2?=
+ =?utf-8?B?Um5acHgzN3Bud09PT0ZZZmwvZFplSTU3QmFxQXlUeWc5VXpvTmhqcEQ3alNM?=
+ =?utf-8?B?TUJEUElKV2lSc1d3MkZFVWNvZHpLZWpUWVJYNGRoMkkyN3hIMFNiZ3VTTG5x?=
+ =?utf-8?B?MjBqSEZpUFBQN0Myc3Y2QU1wVEgrZWljUTk4SnovbHArOW1kdjY2U1NoeVc2?=
+ =?utf-8?B?ODJOMi8zaFRSL3JJZmR6QXgva3pQUklPS3ozZkFCOVlBaWphVTYzRVhiRkVN?=
+ =?utf-8?B?SUZDZENZVWR4MlBYMy9aZis5b0tsa2dmK004WXhkRkEwQy95ZXRYamcvdGp6?=
+ =?utf-8?B?YjJpb2puN2JzMVBxcVZXSmpjYytyREZTMWM2OUorVGZZUEtZcGxNVWxhRmhO?=
+ =?utf-8?B?QmdsczZITHU3RHdIRGtHK2FNa01aTzhJdExjcXZMZEJjbmRXWlZ3YmhYWEVK?=
+ =?utf-8?B?bWlINU5rc0U1dEkzcm51M2MzdnFkdENsdTlZemdtbXlFUllhS1ZDOG1KNVBi?=
+ =?utf-8?B?cGs0eUxCb0dIcGsveUFjYzhmS2ZRQ0haNWFDTFdtQ0xjdmRVbUtvc2FINlo5?=
+ =?utf-8?B?OGkzTXpHVndvaHM3VVNDbHA4T01rQVd4Qll5M0x6RHFibElEUGx4ekdVV1Ay?=
+ =?utf-8?B?S3lCanJDRWJzajg0WUxBL05QZW9TNHkxWDg1c3h0TGZIRDZmNnNTTWJlU0d2?=
+ =?utf-8?B?dm9aUG1kVnBwODF6Yjd0Nmh1ODEyTUNNWmg1bEFiWWtOczBFSXp5WlE0dDdD?=
+ =?utf-8?B?akd4MEpWR3pseVZTNjVhSUlZc2MxY1pHUHA4WmozSEFyQUlBcUs5UktlQmJj?=
+ =?utf-8?B?WW50d0xYdEpPWG1EaEZXM1hlMjJtYkEwM3J0YjA0R0J6aHNrd1I0SEJYYmNK?=
+ =?utf-8?B?QlpmZ0ljQzRvdmNBRVptOUcrV3hjZ0JBdkRBNTN4SnFQZDREaEd1MVNLRXUx?=
+ =?utf-8?B?cExDcVBYZ3B4Y3JCSzIrQWkwYmczYlg4MFcrbmdnM2g1aThIOThIT1EyeHhi?=
+ =?utf-8?Q?LYhvB7BAAmC+h1qEKOHKD5GTPEOX32RDH/4zQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eTFYb0laSnZxM0xFSXNZaDBwMVlvOHMybG5oemUvNndZaE5sLzhZWmMyUW1G?=
+ =?utf-8?B?a3kwaHYydCs0MXJwdDZpd0pzejlqRW5EUFkreWgvQjNINW9aY1AzTnYwTW4z?=
+ =?utf-8?B?VFBxN3FiTi9ZRWZpdi9ORUZJTE9zSmJ2eG1rcmRtV3VCdjlLZjNOS2RuOWQw?=
+ =?utf-8?B?OWl6ZGVGTDd6YlRRTW9MbGdBN2tuaVRHb0lFQ3lPWFJ1Y2lHKzA3dVNGRHFP?=
+ =?utf-8?B?dFB1Qlk3eUkrYVZYQnVDaytGdFJWL1dhN0JMbG9uWXNkMEZ3L2c2ZXBWdFBp?=
+ =?utf-8?B?VWFMbTRld0tCL1E4RU00Sk9nTnM4aWxQRFNlSVBQK05ubmY3a1NReEhwdUc4?=
+ =?utf-8?B?akRyRkV6UUV3a1BMajRwWXN4cWpZUkhnQ2ZSM1VPbUlqNUNhTm02b2ROcFNp?=
+ =?utf-8?B?ZlFtbDRaUzRCUWNaR09Ncy9iV2VCOS8xSXY3UG53Ky9ENGI0V1hrWU03d3lw?=
+ =?utf-8?B?WXg0VDNKVDhwbmlOTVZ0c3hmalFSUThoRkdZeHFHZCtwTmFhNWZmR2l0SGxR?=
+ =?utf-8?B?QWJJaFBYd1orcERYQ3phMi9waXpKcHhrZFgyUUc3b1EvZWpXN0hxMzI4K0lh?=
+ =?utf-8?B?d20rc2dsU09FdGdnQ1RURjVoeG9VZElXczBqWFdtd0ZoQ0dXbGJyYTVua05a?=
+ =?utf-8?B?NzdmWlV3cDd6MStQSEI3UXRySEFQSm5oeGpKWUxlZCtqTGM1OHk0TTdpclJv?=
+ =?utf-8?B?bzE3VWoxeVlQUm9lQUN4a0llaS9OQUlVT1dodWljejBKUDEzdW9Vam9rd3hB?=
+ =?utf-8?B?cUl0Y1Vrc0xld2ZlTlZ1aXlhNjlYTk5QTzVwclovRWtVVVVPdEh0dFRzWjBs?=
+ =?utf-8?B?Z2JvdXUvSG1aNW5NYmVxVmh1cGtWTElWNDIyS0xZV2c3dGlVcjl5NWxvWFdk?=
+ =?utf-8?B?RXNnKzRMZUtUNEhucTREc1g2MFFRSGp5SG0yZTUrUkV1L3VkWjE5K3NUSnNh?=
+ =?utf-8?B?RHdIb0V0OWhEOWlrWTFKU3VWcXRvZnBqcURPaWdhVWZvZDJOY3NXYzlUa3JM?=
+ =?utf-8?B?N0lpTDliajNSZ21DNDRySWJlODB5RU9zc1NBTGI3SGUyUW0wYm12VmpqVXBJ?=
+ =?utf-8?B?dXJ3bDRRQW93bWZDa1h2OGZ1NGZjMm9vZ3JVcU9EVVc4RkI0MSt5OG0wQnBs?=
+ =?utf-8?B?NHdjOVZQSHdMaGJIcVdLN1RhdExEMTN0RUYzMW45NVFleW53aFhMVnBWM1ZN?=
+ =?utf-8?B?ZHl2UlZYUWt5TXJPUTR0S1ppNW5NYkFzWlhIelFCeGlyV3RFMVBtald1WUJQ?=
+ =?utf-8?B?dS9UdGNFQy9na21DSElER2FyekpVSDJHNjREaG5TUVBuUjdIK3o1ck5MWkt6?=
+ =?utf-8?B?dnZLaFBBNVFVc3F6TmFNZlp6RDREYlIvWm9sVndLc0VSNGpzL0ZQNERxSEVH?=
+ =?utf-8?B?YkJXeUZyTHBYcUdwWWo2cmY2R1pwTVc4U01pYnc2eEJKb1Q5QmtnU0JSdXBz?=
+ =?utf-8?B?eGJ4YldLbVJTaS9FUGw2S1VJekk0VTBpRElKeWN3U1grOU5tRFVkb0VtbkQ1?=
+ =?utf-8?B?SEZwemFWNXVhTk9pZXRyajBmMlBER1JoZ253M3RkNVc2N25QV09CbzR2NmEr?=
+ =?utf-8?B?RWMxM29oUmJVM2xGQzNwbXJqc0Qyc0RMNjUrUFo3N0FRVmdWblZRZVZObGJB?=
+ =?utf-8?B?WlovUnhOT0ZvSUtETDdHY1J1UStRak00TzlPNk1Md243UkNkY25pVFVTbGl0?=
+ =?utf-8?B?WXJVU0o0ZjRzMnArdGVsT3hEbTNDck9Wci9SUVRndVZQdnJEb3dGTkxNQ0Ft?=
+ =?utf-8?B?UnFjWmFJSXl3bTdRWTN0T1VITFMrTXBhN0NmdVN1L3BPdEh1VXZLUngxOGE3?=
+ =?utf-8?B?d2NhN3loRUZRZlBxeFN0N0hnK2IvcGt1bllXVktVSUk4NWtVaWZoN1FST3dJ?=
+ =?utf-8?B?ZXRoTzZtWjI4TWFaeGl4WURUMmhVQXBYbGt5UnVpZGxIMEJwSVdoYXlNZjRF?=
+ =?utf-8?B?Q3N5b3c4UGRaSHFwSWI0VVdHOXh4bE1Oei84Q2wzTmJYd1QvVk5PaU1raHhY?=
+ =?utf-8?B?LzRFK2xNdHVtK0lFZ3kzNmhMM1ZoUGtzSmxTNE5GM1ljUjB5Um9TNnNsQzJG?=
+ =?utf-8?B?M0VDNE1QVG1CZ1J2S0p1MW9kaDFQOFA3c0hNQ0dzMDNUMGR2Vit6MXh6bmlT?=
+ =?utf-8?B?WE4xR3Z3RXRiR2c1TFBMQmc5QXJUNm5KTU1ubUJaM2RlclY3K0tLcThYMWtX?=
+ =?utf-8?Q?KSeDYkbLIBiXmCnxKm05d10=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2af8f18e-8a65-4113-b80a-08dddff54800
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 14:24:32.6269
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1RdZ46Mn3PZfvjHlAMwvxLGI/ujxprBOrLHOHpsA6plqzujMYGwH84Y5od0gLP05rTvGwheVjGValt0tyrqMT9PEJyy86/7jnXx1WEoxRng=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PPF6D21D4F3B
 
-Synaptics TDDI (Touch/Display Integration) panels utilize a single chip
-for display and touch controllers. Implement a simple device driver for
-such panels, along with its built-in LED backlight controller, and add
-support for TD4101 and TD4300 panels in the driver.
+On 2025-08-13 12:29, Thomas Gleixner wrote:
+> Scrolling over tons of pointless
+> 
+> {
+> }
+> 
+> lines to find the actual code is annoying at best.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- drivers/gpu/drm/panel/Kconfig                |  11 ++
- drivers/gpu/drm/panel/Makefile               |   1 +
- drivers/gpu/drm/panel/panel-synaptics-tddi.c | 276 +++++++++++++++++++++++++++
- 3 files changed, 288 insertions(+)
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 407c5f6a268b2ec66e5d0eddae26b3368e4cb2cb..98708979ab45281628620bbe803fe8b597eb812d 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -1045,6 +1045,17 @@ config DRM_PANEL_SYNAPTICS_R63353
- 	  Say Y if you want to enable support for panels based on the
- 	  Synaptics R63353 controller.
- 
-+config DRM_PANEL_SYNAPTICS_TDDI
-+	tristate "Synaptics TDDI display panels"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y if you want to enable support for the Synaptics TDDI display
-+	  panels. There are multiple MIPI DSI panels manufactured under the TDDI
-+	  namesake, with varying resolutions and data lanes. They also have a
-+	  built-in LED backlight and a touch controller.
-+
- config DRM_PANEL_TDO_TL070WSH30
- 	tristate "TDO TL070WSH30 DSI panel"
- 	depends on OF
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 3615a761b44f9de0b4a653be157d8e0bcbc8f6b7..2535e1c9df76451d1c66d7d211ac9bfbf18dc80e 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -100,6 +100,7 @@ obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7703) += panel-sitronix-st7703.o
- obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7789V) += panel-sitronix-st7789v.o
- obj-$(CONFIG_DRM_PANEL_SUMMIT) += panel-summit.o
- obj-$(CONFIG_DRM_PANEL_SYNAPTICS_R63353) += panel-synaptics-r63353.o
-+obj-$(CONFIG_DRM_PANEL_SYNAPTICS_TDDI) += panel-synaptics-tddi.o
- obj-$(CONFIG_DRM_PANEL_SONY_ACX565AKM) += panel-sony-acx565akm.o
- obj-$(CONFIG_DRM_PANEL_SONY_TD4353_JDI) += panel-sony-td4353-jdi.o
- obj-$(CONFIG_DRM_PANEL_SONY_TULIP_TRULY_NT35521) += panel-sony-tulip-truly-nt35521.o
-diff --git a/drivers/gpu/drm/panel/panel-synaptics-tddi.c b/drivers/gpu/drm/panel/panel-synaptics-tddi.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..a4b3cbdebb6ca4062c02c6e7ac184f3ec245926a
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-synaptics-tddi.c
-@@ -0,0 +1,276 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Synaptics TDDI display panel driver.
-+ *
-+ * Copyright (C) 2025 Kaustabh Chakraborty <kauschluss@disroot.org>
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+
-+#include <video/mipi_display.h>
-+
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+#include <drm/drm_probe_helper.h>
-+
-+struct tddi_panel_data {
-+	u8 lanes;
-+	/* wait timings for panel enable */
-+	u8 delay_ms_sleep_exit;
-+	u8 delay_ms_display_on;
-+	/* wait timings for panel disable */
-+	u8 delay_ms_display_off;
-+	u8 delay_ms_sleep_enter;
-+};
-+
-+struct tddi_ctx {
-+	struct drm_panel panel;
-+	struct mipi_dsi_device *dsi;
-+	struct drm_display_mode mode;
-+	struct backlight_device *backlight;
-+	const struct tddi_panel_data *data;
-+	struct regulator_bulk_data *supplies;
-+	struct gpio_desc *reset_gpio;
-+	struct gpio_desc *backlight_gpio;
-+};
-+
-+static const struct regulator_bulk_data tddi_supplies[] = {
-+	{ .supply = "vio" },
-+	{ .supply = "vsn" },
-+	{ .supply = "vsp" },
-+};
-+
-+static inline struct tddi_ctx *to_tddi_ctx(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct tddi_ctx, panel);
-+}
-+
-+static int tddi_update_status(struct backlight_device *backlight)
-+{
-+	struct tddi_ctx *ctx = bl_get_data(backlight);
-+	struct mipi_dsi_multi_context dsi = { .dsi = ctx->dsi };
-+	u8 brightness = backlight_get_brightness(backlight);
-+
-+	if (!ctx->panel.enabled)
-+		return 0;
-+
-+	mipi_dsi_dcs_set_display_brightness_multi(&dsi, brightness);
-+
-+	return dsi.accum_err;
-+}
-+
-+static int tddi_prepare(struct drm_panel *panel)
-+{
-+	struct tddi_ctx *ctx = to_tddi_ctx(panel);
-+	struct device *dev = &ctx->dsi->dev;
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(tddi_supplies), ctx->supplies);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable regulators: %d\n", ret);
-+		return ret;
-+	}
-+
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+	usleep_range(5000, 6000);
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+	usleep_range(5000, 6000);
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+	usleep_range(10000, 11000);
-+
-+	gpiod_set_value_cansleep(ctx->backlight_gpio, 0);
-+	usleep_range(5000, 6000);
-+
-+	return 0;
-+}
-+
-+static int tddi_unprepare(struct drm_panel *panel)
-+{
-+	struct tddi_ctx *ctx = to_tddi_ctx(panel);
-+
-+	gpiod_set_value_cansleep(ctx->backlight_gpio, 1);
-+	usleep_range(5000, 6000);
-+
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+	usleep_range(5000, 6000);
-+
-+	regulator_bulk_disable(ARRAY_SIZE(tddi_supplies), ctx->supplies);
-+
-+	return 0;
-+}
-+
-+static int tddi_enable(struct drm_panel *panel)
-+{
-+	struct tddi_ctx *ctx = to_tddi_ctx(panel);
-+	struct mipi_dsi_multi_context dsi = { .dsi = ctx->dsi };
-+	u8 brightness = ctx->backlight->props.brightness;
-+
-+	mipi_dsi_dcs_write_seq_multi(&dsi, MIPI_DCS_WRITE_POWER_SAVE, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x0c);
-+
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi);
-+	mipi_dsi_msleep(&dsi, ctx->data->delay_ms_sleep_exit);
-+
-+	/* sync the panel with the backlight's brightness level */
-+	mipi_dsi_dcs_set_display_brightness_multi(&dsi, brightness);
-+
-+	mipi_dsi_dcs_set_display_on_multi(&dsi);
-+	mipi_dsi_msleep(&dsi, ctx->data->delay_ms_display_on);
-+
-+	return dsi.accum_err;
-+};
-+
-+static int tddi_disable(struct drm_panel *panel)
-+{
-+	struct tddi_ctx *ctx = to_tddi_ctx(panel);
-+	struct mipi_dsi_multi_context dsi = { .dsi = ctx->dsi };
-+
-+	mipi_dsi_dcs_set_display_off_multi(&dsi);
-+	mipi_dsi_msleep(&dsi, ctx->data->delay_ms_display_off);
-+
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi);
-+	mipi_dsi_msleep(&dsi, ctx->data->delay_ms_sleep_enter);
-+
-+	return dsi.accum_err;
-+}
-+
-+static int tddi_get_modes(struct drm_panel *panel,
-+			  struct drm_connector *connector)
-+{
-+	struct tddi_ctx *ctx = to_tddi_ctx(panel);
-+
-+	return drm_connector_helper_get_modes_fixed(connector, &ctx->mode);
-+}
-+
-+static const struct backlight_ops tddi_bl_ops = {
-+	.update_status = tddi_update_status,
-+};
-+
-+static const struct backlight_properties tddi_bl_props = {
-+	.type = BACKLIGHT_PLATFORM,
-+	.brightness = 255,
-+	.max_brightness = 255,
-+};
-+
-+static const struct drm_panel_funcs tddi_drm_panel_funcs = {
-+	.prepare = tddi_prepare,
-+	.unprepare = tddi_unprepare,
-+	.enable = tddi_enable,
-+	.disable = tddi_disable,
-+	.get_modes = tddi_get_modes,
-+};
-+
-+static int tddi_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct tddi_ctx *ctx;
-+	int ret;
-+
-+	ctx = devm_drm_panel_alloc(dev, struct tddi_ctx, panel,
-+				   &tddi_drm_panel_funcs, DRM_MODE_CONNECTOR_DSI);
-+	if (IS_ERR(ctx))
-+		return PTR_ERR(ctx);
-+
-+	ctx->data = of_device_get_match_data(dev);
-+
-+	ctx->dsi = dsi;
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+
-+	ret = devm_regulator_bulk_get_const(dev, ARRAY_SIZE(tddi_supplies),
-+					    tddi_supplies, &ctx->supplies);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to get regulators\n");
-+
-+	ctx->backlight_gpio = devm_gpiod_get_optional(dev, "backlight", GPIOD_ASIS);
-+	if (IS_ERR(ctx->backlight_gpio))
-+		return dev_err_probe(dev, PTR_ERR(ctx->backlight_gpio),
-+				     "failed to get backlight-gpios\n");
-+
-+	ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_ASIS);
-+	if (IS_ERR(ctx->reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
-+				     "failed to get reset-gpios\n");
-+
-+	ret = of_get_drm_panel_display_mode(dev->of_node, &ctx->mode, NULL);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to get panel timings\n");
-+
-+	ctx->backlight = devm_backlight_device_register(dev, dev_name(dev), dev,
-+							ctx, &tddi_bl_ops,
-+							&tddi_bl_props);
-+	if (IS_ERR(ctx->backlight))
-+		return dev_err_probe(dev, PTR_ERR(ctx->backlight),
-+				     "failed to register backlight device");
-+
-+	dsi->lanes = ctx->data->lanes;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+			  MIPI_DSI_MODE_VIDEO_NO_HFP;
-+
-+	ctx->panel.prepare_prev_first = true;
-+	drm_panel_add(&ctx->panel);
-+
-+	ret = devm_mipi_dsi_attach(dev, dsi);
-+	if (ret < 0) {
-+		drm_panel_remove(&ctx->panel);
-+		return dev_err_probe(dev, ret, "failed to attach to DSI host\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static void tddi_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct tddi_ctx *ctx = mipi_dsi_get_drvdata(dsi);
-+
-+	drm_panel_remove(&ctx->panel);
-+}
-+
-+static const struct tddi_panel_data td4101_panel_data = {
-+	.lanes = 2,
-+	/* wait timings for panel enable */
-+	.delay_ms_sleep_exit = 100,
-+	.delay_ms_display_on = 0,
-+	/* wait timings for panel disable */
-+	.delay_ms_display_off = 20,
-+	.delay_ms_sleep_enter = 90,
-+};
-+
-+static const struct tddi_panel_data td4300_panel_data = {
-+	.lanes = 4,
-+	/* wait timings for panel enable */
-+	.delay_ms_sleep_exit = 100,
-+	.delay_ms_display_on = 0,
-+	/* wait timings for panel disable */
-+	.delay_ms_display_off = 0,
-+	.delay_ms_sleep_enter = 0,
-+};
-+
-+static const struct of_device_id tddi_of_device_id[] = {
-+	{
-+		.compatible = "syna,td4101-panel",
-+		.data = &td4101_panel_data,
-+	}, {
-+		.compatible = "syna,td4300-panel",
-+		.data = &td4300_panel_data,
-+	}, { }
-+};
-+MODULE_DEVICE_TABLE(of, tddi_of_device_id);
-+
-+static struct mipi_dsi_driver tddi_dsi_driver = {
-+	.probe = tddi_probe,
-+	.remove = tddi_remove,
-+	.driver = {
-+		.name = "panel-synaptics-tddi",
-+		.of_match_table = tddi_of_device_id,
-+	},
-+};
-+module_mipi_dsi_driver(tddi_dsi_driver);
-+
-+MODULE_AUTHOR("Kaustabh Chakraborty <kauschluss@disroot.org>");
-+MODULE_DESCRIPTION("Synaptics TDDI Display Panel Driver");
-+MODULE_LICENSE("GPL");
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> ---
+>   include/linux/rseq.h |   47 ++++++++++++-----------------------------------
+>   1 file changed, 12 insertions(+), 35 deletions(-)
+> 
+> --- a/include/linux/rseq.h
+> +++ b/include/linux/rseq.h
+> @@ -101,44 +101,21 @@ static inline void rseq_execve(struct ta
+>   	t->rseq_event_mask = 0;
+>   }
+>   
+> -#else
+> -
+> -static inline void rseq_set_notify_resume(struct task_struct *t)
+> -{
+> -}
+> -static inline void rseq_handle_notify_resume(struct ksignal *ksig,
+> -					     struct pt_regs *regs)
+> -{
+> -}
+> -static inline void rseq_signal_deliver(struct ksignal *ksig,
+> -				       struct pt_regs *regs)
+> -{
+> -}
+> -static inline void rseq_preempt(struct task_struct *t)
+> -{
+> -}
+> -static inline void rseq_migrate(struct task_struct *t)
+> -{
+> -}
+> -static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags)
+> -{
+> -}
+> -static inline void rseq_execve(struct task_struct *t)
+> -{
+> -}
+> +#else /* CONFIG_RSEQ */
+> +static inline void rseq_set_notify_resume(struct task_struct *t) { }
+> +static inline void rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs) { }
+> +static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs *regs) { }
+> +static inline void rseq_preempt(struct task_struct *t) { }
+> +static inline void rseq_migrate(struct task_struct *t) { }
+> +static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags) { }
+> +static inline void rseq_execve(struct task_struct *t) { }
+>   static inline void rseq_exit_to_user_mode(void) { }
+> -#endif
+> +#endif  /* !CONFIG_RSEQ */
+>   
+>   #ifdef CONFIG_DEBUG_RSEQ
+> -
+>   void rseq_syscall(struct pt_regs *regs);
+> -
+> -#else
+> -
+> -static inline void rseq_syscall(struct pt_regs *regs)
+> -{
+> -}
+> -
+> -#endif
+> +#else /* CONFIG_DEBUG_RSEQ */
+> +static inline void rseq_syscall(struct pt_regs *regs) { }
+> +#endif /* !CONFIG_DEBUG_RSEQ */
+>   
+>   #endif /* _LINUX_RSEQ_H */
+> 
+
 
 -- 
-2.50.0
-
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
