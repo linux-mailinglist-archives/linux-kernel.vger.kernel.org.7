@@ -1,218 +1,151 @@
-Return-Path: <linux-kernel+bounces-777494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94531B2DA29
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:37:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95F9B2DA31
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40AE43B6DDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A0F1C4689B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265232E2DDC;
-	Wed, 20 Aug 2025 10:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12B02E2DF6;
+	Wed, 20 Aug 2025 10:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n1keIyXP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b8KVD0rv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="O8I9Ir9g"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ED224339D
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27952E2DE3
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755686222; cv=none; b=eVqfZmrj31M+MFjIaItfRzDkt0ZKZODPRYRnfsQFf2zEay/Boh6Z16uThRIbWMzAhRE+NyOrTHLm15zYZOQ1cMQ7u/5YCIokB1jn2gKR60rp50oZWgWwyOVkalo90DKtJOhK83ZVJMOAA24JTtUnrPGl25scHtEmPOcgLYemBsA=
+	t=1755686275; cv=none; b=TND0Ceg2W3+vZYbkqAlaN2cFV8I1oMfyJiuZ+xiH7kcHlAic2XXtiYRxbr8MDya35TRTu8o4jRaBsMxmw9PeqsQdbvkQeHPFUfpP1rqShKJDKRFUtZrTdtmoIZjwMjD15u0R0biZsy3FccqXsuzTCg7lc+rUdzUElIvpdxrILoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755686222; c=relaxed/simple;
-	bh=kv3W/G1ARmOcJJTz/9sGIEr4fqmIvswblhhL9o40NPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h5Z32HiXW7ptSwGehindOxZEG4DPvMK4JJ5Pa3yor1hK1aSHC4gAzFCUZ838D4DF6hkSPK6pKHmiYWkg79UOTe0+yNkgJYYXXWTNXvsIbiN9llNK60KVjZ8Vx3LtC5H4WySZuXzRvu+pR3CCHWxbgjOeePwNG83xm/N/qUal9xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n1keIyXP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b8KVD0rv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 20 Aug 2025 12:36:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755686219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yUAcx2/jO8NfEFGgnI4HZ0vELTMmQeqDK1jIGQqE9hE=;
-	b=n1keIyXP4kJDwb2X6G/j4BoY+EWoUdgKQs1UzgEhRMjD6wnbIahKcscOgTiZX2Nyn/kOa6
-	gaUdCDRguSYujJ/m5vSsEC+f+s8dAlgveIMUAVxHFEMFPe6eXfLltqWSLNzAuzs00bDrLb
-	HFQDBp+xpGYdOJlAyKIlkXGq34aBdhH9fD1vvvbBEa4XN3FuStiROsw9CxMOG9I6hscytY
-	gymqdKy3MYyQlWaWt/rPbv5Ha6s8l5xBYEuO4Wyi7DM6+jh2g/e0f++8zxZRDkJpNxn+UI
-	+4L9NVp43rdlixKlD3hFF1b7slcVE95iqb9Vp3fINhlXKwS4M4v8jNsrNf+FYA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755686219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yUAcx2/jO8NfEFGgnI4HZ0vELTMmQeqDK1jIGQqE9hE=;
-	b=b8KVD0rvSA6QxdRuN7k4RM6lpdvanrn106bPzO9cPmxBCEKD1olS2bTNpxPg7fis0/4TyQ
-	IX4tZoltKy+L31Dw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] softirq: Provide a handshake for canceling tasklets via
- polling on PREEMPT_RT
-Message-ID: <20250820103657.vDuDuLx6@linutronix.de>
-References: <20250812143930.22RBn5BW@linutronix.de>
- <20250812145359.QMcaYh9g@linutronix.de>
- <aJuYStGVBjyfVmZM@slm.duckdns.org>
- <20250813063311.33m0TDKl@linutronix.de>
- <aJzT7rqwkRQrLGqo@slm.duckdns.org>
- <20250818125242.vJ4wGk20@linutronix.de>
- <aKNlshZmWsHVXBo0@slm.duckdns.org>
- <20250819150105.DYeV89fa@linutronix.de>
+	s=arc-20240116; t=1755686275; c=relaxed/simple;
+	bh=3CpKgxRpCYawooW49w6wb+ri8TL4dLwEPi6doAWrbfs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=KdoqWEDZ2AM9pyoN8vK6mOEGVa6DUu+4JAvuLswaagwPaAJjrjMfAjOteWm2jMAB9drFPvBFX/1XUhrSOcK2Bj3S/ETyezyS1/XS5QfvTknto0ZecBAJ6XKKPbTTUEtAKo6vTvF8svzjsrTxIac6nZtF5XhLb9XXYV3etivvD24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=O8I9Ir9g; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250819150105.DYeV89fa@linutronix.de>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1755686270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LR7oamsLXiIEp2PWmQM+Y8/7Bo4DrxhgzvH8C2oVFno=;
+	b=O8I9Ir9gH5qd+hA7zlVyuHursR2TU0TquTG3CH6W8Da655CBQGQf8IJ2gZBBp4lhxqSmnU
+	kgaViDUqKxtRmX+ltQ/vfSkdZAPaJEOymgYqztV0eySs+IwF32Lh03GE00qA6oSYtEzXtp
+	KBqrHFG5g3PjXCWryY/KuaEnheFpVCgB5mcQlyMDDSLOvNIilKorJQ67Scmr1ouP6ShJVF
+	mn/zsHP5dzEjvz2wKEa8fRSTh4gI8D/b5P08Sqvxk1nV6jc82QP1VPYZnTUZyhonA9tGBm
+	YDHIDf9NkD5srFSy0dckRleBON/Y5c1BPvqTQ9vQWpVa7gUnlq7en9Et5hCBJg==
+Content-Type: multipart/signed;
+ boundary=1d9ff9570717d375168b9ca28d86c87a4db6edce1af1be67cd4ffe114401;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 20 Aug 2025 12:37:38 +0200
+Message-Id: <DC76U4GVR0O2.1HXLEPCF8BG02@cknow.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc: "Lee Jones" <lee@kernel.org>, "Pavel Machek" <pavel@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Jacek Anaszewski"
+ <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: leds: Clearly mark label property as
+ deprecated
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+References: <20250815104805.405009-1-didi.debian@cknow.org>
+ <b30905fa-6bd1-47dd-8371-f609d418387b@kernel.org>
+ <DC2ZLORG11W0.1CS78L6F2OV4Q@cknow.org>
+ <20250820-hairy-economic-wildebeest-ba25a1@kuoka>
+In-Reply-To: <20250820-hairy-economic-wildebeest-ba25a1@kuoka>
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-08-19 17:01:07 [+0200], To Tejun Heo wrote:
-> Okay. Then let me repost the tasklet patch and make one for workqueue to
-> stay in sync.
-> I do hope that we end up with a requirement that any kind of teardown
-> does not happen from an atomic context ;)
+--1d9ff9570717d375168b9ca28d86c87a4db6edce1af1be67cd4ffe114401
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-That would be 
+On Wed Aug 20, 2025 at 10:14 AM CEST, Krzysztof Kozlowski wrote:
+> On Fri, Aug 15, 2025 at 02:06:49PM +0200, Diederik de Haas wrote:
+>> On Fri Aug 15, 2025 at 1:00 PM CEST, Krzysztof Kozlowski wrote:
+>> > On 15/08/2025 12:47, Diederik de Haas wrote:
+>> >> The text description already mentioned the label property was
+>> >> deprecated, but using the 'deprecated' property makes is clearer and
+>> >> more explicit.
+>> >>=20
+>> >> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+>> >> ---
+>> >>  Documentation/devicetree/bindings/leds/common.yaml | 1 +
+>> >>  1 file changed, 1 insertion(+)
+>> >>=20
+>> >
+>> > Please first read previous discussions:
+>>=20
+>> [I reversed the order of the links so the oldest is first]
+>>=20
+>> > https://lore.kernel.org/all/20221122111124.6828-1-cniedermaier@dh-elec=
+tronics.com/
+>>=20
+>> Rob: "They ['function' and 'label'] serve 2 different purposes."
+>>=20
+>> > https://lore.kernel.org/all/20240509110545.49889-1-linux@fw-web.de/
+>>=20
+>> Krzysztof: "I don't think there was conclusion to make it deprecated on
+>> last attempt"
+>>=20
+>> I agree.
+>> What I don't understand: Why wasn't the text updated to correct the
+>> incorrect statement about deprecation (that's how I interpret it now)?
+>> Or some other conclusion being made and that that will be reflected in
+>> the text and/or a deprecated property.
+>>=20
+>> Otherwise the confusion remains and then it's just a matter of time
+>> before a 4th person comes along proposing the same patch.
+>> And possibly even more harmful: people use it incorrectly.
+>
+> Whatever change you want to do here, I expect to address one way or
+> another these previous discussions. If the code is confusing, refine the
+> description. But not in a way which ignored previous feedbacks.
 
-------------->8-------------
+I'm not going to make a change.
 
-Subject: [PATCH] workqueue: Provide a handshake for canceling BH workers
+I thought I would be making (more) explicit what the binding says.
+Apparently I read/interpreted it incorrectly. What I described above is
+how I currently interpret the *confusion* text/discussion. Is that
+correct? I have no idea. That I'm at least the 3rd person proposing this
+change indicates I'm not the only one who is confused.
 
-While a BH work item is canceled, the core code spins until it
-determines that the item completed. On PREEMPT_RT the spinning relies on
-a lock in local_bh_disable() to avoid a live lock if the canceling
-thread has higher priority than the BH-worker and preempts it. This lock
-ensures that the BH-worker makes progress by PI-boosting it.
+IMO it's up to a/the maintainer to make a decision and that should then
+be reflected in the binding, which should fix any confusion.
 
-This lock in local_bh_disable() is a central per-CPU BKL and about to be
-removed.
+I hadn't looked at the code yet, but *I*IUC the code should follow the
+binding, not the other way around. That's how I have interpreted
+(mostly your) comments related to various binding patches ever since I
+started actively following upstream(ing) work. Which (again) may be an
+incorrect interpretation.
 
-To provide the required synchronisation add a per pool lock. The lock is
-acquired by the bh_worker at the begin while the individual callbacks
-are invoked. To enforce progress in case of interruption, __flush_work()
-needs to acquire the lock.
-This will flush all BH-work items assigned to that pool.
+Regards,
+  Diederik
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/workqueue.c | 51 ++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 42 insertions(+), 9 deletions(-)
+--1d9ff9570717d375168b9ca28d86c87a4db6edce1af1be67cd4ffe114401
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index c6b79b3675c31..94e226f637992 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -222,7 +222,9 @@ struct worker_pool {
- 	struct workqueue_attrs	*attrs;		/* I: worker attributes */
- 	struct hlist_node	hash_node;	/* PL: unbound_pool_hash node */
- 	int			refcnt;		/* PL: refcnt for unbound pools */
--
-+#ifdef CONFIG_PREEMPT_RT
-+	spinlock_t		cb_lock;	/* BH worker cancel lock */
-+#endif
- 	/*
- 	 * Destruction of pool is RCU protected to allow dereferences
- 	 * from get_work_pool().
-@@ -3078,6 +3080,31 @@ __acquires(&pool->lock)
- 		goto restart;
- }
- 
-+#ifdef CONFIG_PREEMPT_RT
-+static void worker_lock_callback(struct worker_pool *pool)
-+{
-+	spin_lock(&pool->cb_lock);
-+}
-+
-+static void worker_unlock_callback(struct worker_pool *pool)
-+{
-+	spin_unlock(&pool->cb_lock);
-+}
-+
-+static void workqueue_callback_cancel_wait_running(struct worker_pool *pool)
-+{
-+	spin_lock(&pool->cb_lock);
-+	spin_unlock(&pool->cb_lock);
-+}
-+
-+#else
-+
-+static void worker_lock_callback(struct worker_pool *pool) { }
-+static void worker_unlock_callback(struct worker_pool *pool) { }
-+static void workqueue_callback_cancel_wait_running(struct worker_pool *pool) { }
-+
-+#endif
-+
- /**
-  * manage_workers - manage worker pool
-  * @worker: self
-@@ -3557,6 +3584,7 @@ static void bh_worker(struct worker *worker)
- 	int nr_restarts = BH_WORKER_RESTARTS;
- 	unsigned long end = jiffies + BH_WORKER_JIFFIES;
- 
-+	worker_lock_callback(pool);
- 	raw_spin_lock_irq(&pool->lock);
- 	worker_leave_idle(worker);
- 
-@@ -3585,6 +3613,7 @@ static void bh_worker(struct worker *worker)
- 	worker_enter_idle(worker);
- 	kick_pool(pool);
- 	raw_spin_unlock_irq(&pool->lock);
-+	worker_unlock_callback(pool);
- }
- 
- /*
-@@ -4222,17 +4251,18 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
- 		    (data & WORK_OFFQ_BH)) {
- 			/*
- 			 * On RT, prevent a live lock when %current preempted
--			 * soft interrupt processing or prevents ksoftirqd from
--			 * running by keeping flipping BH. If the BH work item
--			 * runs on a different CPU then this has no effect other
--			 * than doing the BH disable/enable dance for nothing.
--			 * This is copied from
--			 * kernel/softirq.c::tasklet_unlock_spin_wait().
-+			 * soft interrupt processing by blocking on lock which
-+			 * is owned by the thread invoking the callback.
- 			 */
- 			while (!try_wait_for_completion(&barr.done)) {
- 				if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
--					local_bh_disable();
--					local_bh_enable();
-+					struct worker_pool *pool;
-+
-+					mutex_lock(&wq_pool_mutex);
-+					pool = get_work_pool(work);
-+					if (pool)
-+						workqueue_callback_cancel_wait_running(pool);
-+					mutex_unlock(&wq_pool_mutex);
- 				} else {
- 					cpu_relax();
- 				}
-@@ -4782,6 +4812,9 @@ static int init_worker_pool(struct worker_pool *pool)
- 	ida_init(&pool->worker_ida);
- 	INIT_HLIST_NODE(&pool->hash_node);
- 	pool->refcnt = 1;
-+#ifdef CONFIG_PREEMPT_RT
-+	spin_lock_init(&pool->cb_lock);
-+#endif
- 
- 	/* shouldn't fail above this point */
- 	pool->attrs = alloc_workqueue_attrs();
--- 
-2.50.1
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaKWldwAKCRDXblvOeH7b
+btBmAQD1JHjz6wVqq6gTPmRfqgFiNxJqJCcz46DN0b+ZxQsbxAEArC+y6rxDn6tN
+msQRrdwHK3Ic9gU5uPGEpj5/vERYRwU=
+=tljW
+-----END PGP SIGNATURE-----
+
+--1d9ff9570717d375168b9ca28d86c87a4db6edce1af1be67cd4ffe114401--
 
