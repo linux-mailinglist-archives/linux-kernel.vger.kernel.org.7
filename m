@@ -1,122 +1,158 @@
-Return-Path: <linux-kernel+bounces-778293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35896B2E3E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:31:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 307E4B2E2FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1A46601778
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:26:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2E31BC2857
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A60B33EAFA;
-	Wed, 20 Aug 2025 17:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F7D327798;
+	Wed, 20 Aug 2025 17:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bues.ch header.i=@bues.ch header.b="P3Ix/CG+"
-Received: from mail.bues.ch (bues.ch [116.203.120.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V8JHUcri"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD13D33A02C;
-	Wed, 20 Aug 2025 17:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.120.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F82B33438D;
+	Wed, 20 Aug 2025 17:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755710401; cv=none; b=Ecx8UWHICNocnjoDGDUf1fD6EWIpgF1hqy0te//2vBSkaS6DWsJvzX9trUzBK1jyk1lU+Q4OnoxWftXpqHDIisWslz9WDogNiDsSxyOwOU4h9XLBXrEdn49oLHOT+vUbeFVMhaT6/YFjty7ME+5+EiEd8ZZ9ktOvUlDNhIYoFqw=
+	t=1755709763; cv=none; b=sTwRbvOPTgfvbkN00302h9dOKYR4iXlh08qOIzhbITWJnc6OPRagVTGjSPfXCDMc4gOBBjk9qMUkMPNmPzX4pZL48XWKcHjdPehZtYQ9wN849Ulk6c/vQVLn/0ZHJ8ri/xLNeS7QPSw9/SBpHM5YJ64aEOGI/DebQLVz6LyVnTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755710401; c=relaxed/simple;
-	bh=qj64TOB/5TJyA+F8gnbV+C+TIwj10ue6VgL1vNx3FS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rn/MqYEF2SmmFEsn0fjiU6XS/h3QWvqVB3M/mCbVSb4FZI9HU8ESjACD9njoWaUZqEfmXNb3lcrckPtHVZV7jpb4eiEC3/XiO9QsK3qA/eLvc56jmryWnqTwolxJYORRTnCLQwlUB037rK1SFiLqGRwuuRsKFAtv1c9JDto0CZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bues.ch; spf=pass smtp.mailfrom=bues.ch; dkim=pass (2048-bit key) header.d=bues.ch header.i=@bues.ch header.b=P3Ix/CG+; arc=none smtp.client-ip=116.203.120.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bues.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bues.ch
-Date: Wed, 20 Aug 2025 19:08:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bues.ch; s=main;
-	t=1755709874;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qj64TOB/5TJyA+F8gnbV+C+TIwj10ue6VgL1vNx3FS4=;
-	b=P3Ix/CG+bKZ8eCztNYX9NEzGOCjh+CB2q4tOL5YeBo77KZbDF0nesLo0UQkBq2PFEdFptx
-	7zlWS/a5OZIIYrA9U+JcHkT43UikkDhSYnSB5jfzuS9+q9jKViYj2mvgRdrDWhnGcra5pT
-	KuQd5+auScDpYTQDxekTeZa5BMSI+AbEW7T+4VMCptcEueWSKxPvLL8UFLBuYL2B03wtvy
-	8TAI/XLQ7J22VTHzPPKYoEF0YeuAXIREtK4oFPeF6yPj9IjVK3WlXoZsxWFLukuQFm5Ndf
-	mnTOs5b2AV7Zp7BfC5xJ7ze8LCo5AjtqhYaY+Wxx94n2KcOQHdczTnwR1g9K3g==
-From: Michael =?UTF-8?B?QsO8c2No?= <mb@bues.ch>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Doug Berger <opendmb@gmail.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Michael Buesch <m@bues.ch>, Hoan Tran
- <hoan@os.amperecomputing.com>, Andy Shevchenko <andy@kernel.org>, Daniel
- Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>,
- Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar
- <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik
- <robert.jarzmik@free.fr>, Kunihiko Hayashi
- <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>,
- Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Srinivas Neeli
- <srinivas.neeli@amd.com>, Michal Simek <michal.simek@amd.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
- linux@ew.tq-group.com
-Subject: Re: [PATCH 03/16] gpio: bt8xx: Use modern PM macros
-Message-ID: <20250820190842.4e3c07ec@barney>
-In-Reply-To: <20250820154037.22228-4-jszhang@kernel.org>
-References: <20250820154037.22228-1-jszhang@kernel.org>
- <20250820154037.22228-4-jszhang@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755709763; c=relaxed/simple;
+	bh=onCZhWEZv0sN7Coawqrn23/OzfNd3gropWTNiiami5c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gcBeMT9Stl3qVE/EmYn6AiZk9WNuC4ONUNNuKny5UTO2Qc5H3R/B371SEiWb1FycXWJ8SoPCBSPY3HKhVu3A+fMYKi3EIh/7XWMlaWmf4s5Zaug2O417R9xqCLAc8zBPN9VGxf8cD1stK3OfQThdrEd79To5C2hC49rGDDCcxcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V8JHUcri; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a15fd04d9so8213295e9.1;
+        Wed, 20 Aug 2025 10:09:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755709760; x=1756314560; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MPScU1ItNsuVBAeO87+rFDAEOXNN+q4yVoKKRyKs/Y8=;
+        b=V8JHUcriW90da/vU6KZXDlJ9GE0hjG6J4p1pjE37Co1JvPN3pEHQAE0fviNjZeCeyk
+         bk59hEEBdm1fHvYT46T6H0tuYZEe12hUKat2AxUzi+SinCDQg8akEylCo0k5FfGl7+C5
+         Y9UhF+NKImQiWxinDopKSj+fe29babNSf9R5iOJY20vLs3qHEeB7u3C8DcdatAhflCfj
+         eJu3tvwG8eNX5Kf9tgvqJ7U6JlzCtF1f2k7gH4MEa1jSHE/yz16Zx+PvLP1PMbVzT2XL
+         Tos345Q73M8Na50BwLAlMt/ONEpFimK2Y+d5I45izw9HgutLeyg43d2C+hPPDsCAvABG
+         JXHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755709760; x=1756314560;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MPScU1ItNsuVBAeO87+rFDAEOXNN+q4yVoKKRyKs/Y8=;
+        b=mRHbkj3vSeObU5lzlSrxG48DcUryg+cEGTd7CN3CMuzJEKOO3/0Jb6hE+4o9gFwYn3
+         V3Uww6CsRcZl5ltT0yVxYnEAhKjDqEs0FG0mG0pjaGnpQ3gaEaE1/IVqxYJB2721Unpq
+         Ng+AgRRJF8UlxHUrOeWNlk2Sk7T2CEQf3LDExd6dUWZFi2+aq28+H0pCEqbQyASqaidG
+         hrJP2NClDrWZWdjP3wsmvJJNe9N6pz8yzvptZI6SoWVm472PNidu7/WUSq18eETRNru0
+         JkAJYq/ciDbpnTo3yhUG71FvsVRYAdnxm7EKqGXa4KAHuuO6orvPVNKWu+0IjrHGduut
+         liCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/YKyzLx3/eva2UVJMb/ZpPvmY1bWI49l9orb3w+2Gzc7WgR02e3idXiSxJab8eTPARhPR4Ms6FOQozRY=@vger.kernel.org, AJvYcCWKA5v0PSlhRG7OXhNmD63K3Z83vGv3+3kwUhYnIeMQEZim//LIIVFICdgxwW+EfHcEYAc1Pzl9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuVpXdznGYQHP4RzsVriLr38I6dgAsrRBmhhQThtd5Lco2zzW6
+	GiNs5FIEHh6e8nukksFB9OYquUesmGfAhCsfQnldZvePcD4mKOXtUFLp
+X-Gm-Gg: ASbGncu90X3Y/Zs3W3s2t7RJQphBDK/AmnHm7vuhUlc5HcvT0fdR6/DmtUh/Q9vbB6C
+	2aC3JR8RVWXwEWnD/leLEquXSJFPYnsisD7jK53zAjmiO8MwrtgLSIYhfJEdOaQ2CRZUab+f2Zl
+	oWMV9aEaqc7emrMEfWb/2Q6/QsUnSn3qVQyR++OXmSZ9Bn7wklD2xb/s7zL+XlfQLNEbPlNNj8A
+	Ut/XDyYpp9f21ZPTkGqFu/j63Spf8rIlUWrrlAbiCwu+PSNRA6iegLsX/R40Lp2/nyq34FvSecs
+	Nb08iB+ZIVqjI0vhoOCQIP4r1JT65EPQa37OjaEzQuGplnaUY65RNp252MDjqhxDb5MrnEEkLHf
+	XIgcnxmE98jBCO0tsuLRcPkxff7G11hotS+Q7IlZ0RE+IFWIFg4oqL260
+X-Google-Smtp-Source: AGHT+IGMp/og93GJnnQsP8vZ8w4JEv8g3mF3aEsNkXrBBZYqPOCbIxmFaI1dS0QKUMPOwONj0CxqSQ==
+X-Received: by 2002:a05:600c:64c8:b0:45b:47e1:f603 with SMTP id 5b1f17b1804b1-45b4c6449dfmr2721875e9.18.1755709759349;
+        Wed, 20 Aug 2025 10:09:19 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:9b1:f84b:89f6:b00e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c605e8sm38532445e9.20.2025.08.20.10.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 10:09:18 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	stable@kernel.org
+Subject: [PATCH net-next v2] net: pcs: rzn1-miic: Correct MODCTRL register offset
+Date: Wed, 20 Aug 2025 18:09:13 +0100
+Message-ID: <20250820170913.2037049-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/jlj+UyB8B0l7lUKjchj3xEt";
- protocol="application/pgp-signature"; micalg=pgp-sha512
+Content-Transfer-Encoding: 8bit
 
---Sig_/jlj+UyB8B0l7lUKjchj3xEt
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Wed, 20 Aug 2025 23:40:24 +0800
-Jisheng Zhang <jszhang@kernel.org> wrote:
+Correct the Mode Control Register (MODCTRL) offset for RZ/N MIIC.
+According to the R-IN Engine and Ethernet Peripherals Manual (Rev.1.30)
+[0], Table 10.1 "Ethernet Accessory Register List", MODCTRL is at offset
+0x8, not 0x20 as previously defined.
 
-> Use the modern PM macros for the suspend and resume functions to be
-> automatically dropped by the compiler when CONFIG_PM or
-> CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
->=20
-> This has the advantage of always compiling these functions in,
-> independently of any Kconfig option. Thanks to that, bugs and other
-> regressions are subsequently easier to catch.
->=20
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Offset 0x20 actually maps to the Port Trigger Control Register (PTCTRL),
+which controls PTP_MODE[3:0] and RGMII_CLKSEL[4]. Using this incorrect
+definition prevented the driver from configuring the SW_MODE[4:0] bits
+in MODCTRL, which control the internal connection of Ethernet ports. As
+a result, the MIIC could not be switched into the correct mode, leading
+to link setup failures and non-functional Ethernet ports on affected
+systems.
 
-Acked-by: Michael B=C3=BCsch <m@bues.ch>
+[0] https://www.renesas.com/en/document/mah/rzn1d-group-rzn1s-group-rzn1l-group-users-manual-r-engine-and-ethernet-peripherals?r=1054571
 
---=20
-Michael B=C3=BCsch
-https://bues.ch/
+Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
+Cc: stable@kernel.org
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+v1->v2:
+- Used correct subject prefix
+- Updated commit message to clarify the issue.
 
---Sig_/jlj+UyB8B0l7lUKjchj3xEt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Hi All,
 
------BEGIN PGP SIGNATURE-----
+I've just build-tested this patch and found this issue while working
+on a similar IP on the Renesas RZ/T2H SoC where the MODCTRL register
+offset is also at offset 0x8.
 
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmimARsACgkQ9TK+HZCN
-iw53uxAAytnVanFnDDU72bYeydk9D/FlxnSQVlQplGz9Sv9WyFxKGYqow2qKqyDK
-AWlZAd4aMCkopCnzU53auLsQ47ye5gWiWtNpCysbLDY7U/iL6+cdKAvgJJBaf1fI
-hXEfKAvUQq8bjhSxfhxsbVa09xZGG7UEUhE5/dzRdsr4oK2F90PfaHwqMyiYibmf
-7kKpf3XYrBJTn7WAsIetWOx2NKglt8GWVpPCg9AqY2r6QbfAfKeqBi/qPEGRurFb
-zf0qtLTxoYUUyJti5aH0ClYQ0kZdB5HvOY3mIX4cP0ncLEE+kIoyHCtJjV02jgcA
-N2fza9GRVEG0adwvSP+iehkbQgKJpl5QifdS59uHmchgyV3ZorBLtrlKoeeVNohr
-DhbkJlrWH5qr9cmH2+mNE344zODtaL+nE5hg8Vc7hC7Mx0K4SrKebHNKlce//7bM
-RCkxTbZdQ4R2Q2nP/Q6cQlwps86kiveI3zRQYPldRNBzHZSGS7cTDRKGkTJoh3F6
-flGSi32S7a0v7jfJAY+hM8HKgyeMGu9FZawZVwmGBS6wQIbtLL+cDFjMW1HND5eJ
-bEQ5UOeRpFaLh4Czw7fvLPNVUFajyynwur5gFuBJns01Amdp5XlFf5I3c87x1IyU
-2vgv+kA/wr+dPwpJ5b2ZobRzUbBrsoYm1yOauIhH28EayNHHGII=
-=hcGT
------END PGP SIGNATURE-----
+Cheers, Prabhakar
+---
+ drivers/net/pcs/pcs-rzn1-miic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---Sig_/jlj+UyB8B0l7lUKjchj3xEt--
+diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
+index d79bb9b06cd2..ce73d9474d5b 100644
+--- a/drivers/net/pcs/pcs-rzn1-miic.c
++++ b/drivers/net/pcs/pcs-rzn1-miic.c
+@@ -19,7 +19,7 @@
+ #define MIIC_PRCMD			0x0
+ #define MIIC_ESID_CODE			0x4
+ 
+-#define MIIC_MODCTRL			0x20
++#define MIIC_MODCTRL			0x8
+ #define MIIC_MODCTRL_SW_MODE		GENMASK(4, 0)
+ 
+ #define MIIC_CONVCTRL(port)		(0x100 + (port) * 4)
+-- 
+2.51.0
+
 
