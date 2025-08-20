@@ -1,331 +1,211 @@
-Return-Path: <linux-kernel+bounces-776723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D59AB2D0D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:53:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E5DB2D0D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0AF524D2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 095DB3A4C49
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC2519539F;
-	Wed, 20 Aug 2025 00:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XE7oQhcE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D141199237;
+	Wed, 20 Aug 2025 00:57:02 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665C918C91F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E05C18E025;
+	Wed, 20 Aug 2025 00:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755651174; cv=none; b=OFyJh8uNG4LtBelqr3cPP9B73PloXi2Kp5bvBaVacCM4B1mkFCsKYgFjvbx3g43Sj2sBRo9CgiBWgfhcx+8j8o1ADjPmdhYg+3PI3xYY8mczbdC+C/ArqUwJNwUek/8jo/godKfA/ULMnyeRVo79RS5X7U5DXjaLUl4OZunS/r4=
+	t=1755651421; cv=none; b=qJI4vs4i2vvGuwkJn9rJFGvLoetxN5LFZBH+CFiym7sEcRPkxgiM+54Qp/M6dV3DJLH6X9n4lWP+AyriwACjI/zDfidPfrmpLinyOShZ4pPmYrE336U4dX9kED7hy7IR/U24U9r2IBIgzqh20d7HOEGMp4TnC9rF2T+JtsMSIbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755651174; c=relaxed/simple;
-	bh=gyxDw6RJLZ4nHOW//7O/dOWyMikXlHhdl9FS8tozaIA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tzmfFM+bqxER/A4wP3/ndSMQtgObZh2arZ9zpYvP64MAt4hDR2+qK/RZRa/U4F2sUFIKcWdqv1gnsHydQHobCKqIJeYusQIdWFfRz9PbRHi9Lr/1wj7qkbpRatQz8l2y2tXSXZkxHFh1DCSe84MZhz/Gf3R15zP+SQ1qEScW+BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XE7oQhcE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D39C4AF0B
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:52:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755651173;
-	bh=gyxDw6RJLZ4nHOW//7O/dOWyMikXlHhdl9FS8tozaIA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XE7oQhcEh14/9LRdxfeo8vG2f3N8WNF/IBLtdZST5PUMjsW50RkIefAPXy0MER1lS
-	 8aHmvBknBQaXz1xZ93bEhCk0zuFrji4S5DlZh6YjDet2ARQh4Gp6R5wGT71f0oBDYN
-	 D7KaTVRxOpm9aHKXbYD2JbM+YRCaCTCAOplwIfc7a0K1UBrDrfj/TcweN9T5qs3RGX
-	 +mIpbprlsbvB8Xx+y7Jt+FJgl6zcHzHKCAVMFMCCeMjrY6wBtArtDvoXIJbZFT2rbN
-	 thVyBSb+7lnhWTGMvo3XRyzMEM80OM9SQ8pj0Y7qfG6OQtECBOIMwbvJK9C7iq1M6f
-	 6fhu4w+O7bl0A==
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-459fc675d11so16565e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:52:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXIiTRl3Be8YJ9ophOh/nuzHKNCsm2/9ZGU41iOQLnO1MU8IQVnmGPbMTafn7wSGovTJpuC7sIjAX84NR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs96C+62QG6sIFJKZw4dYwnGq/mdv+HphoZVEmb2gYF/8PzLkw
-	z+8VBhX8ilec4MI3TTl5JQ+g72o30wdSssLN4xcvNwX39qSNdlb0WjVkOvFunwTp1bvSY175dWo
-	EiXT9GSLF8VZxVPVa6suOCsvYVjvfuOdhQ0xASM28
-X-Google-Smtp-Source: AGHT+IFQ0lLQ7LStOuv6ZrlcBR1b2jECtuFF2XmQzgGif7AkQw7+tIT3lA4q2BnzLBkSF3gaXH8SoEg9aL563Wg43Lc=
-X-Received: by 2002:a05:600c:35c2:b0:45a:207a:eb7c with SMTP id
- 5b1f17b1804b1-45b476d7e09mr701005e9.0.1755651172251; Tue, 19 Aug 2025
- 17:52:52 -0700 (PDT)
+	s=arc-20240116; t=1755651421; c=relaxed/simple;
+	bh=0HQCK7/5CZQFcRFDH6/1REzuymgJzXwhlRrUXL382Xk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=n75k3rE/8ci5WzQIxioBcXq1qG4vFZ24wP1HZIQ4fjWqTGbICCeQZGvxJ/gMrhJe0lZ3hVaL4h8iv19xU1Sfn1yLD3X2h34/FKTIMLgWiJtflI4je2HxG/A/z9QGFUGyCbyn0huXpAQWx3vFkdU0uzQgudJioEwaE8Imrbznw9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c67MD4NyNzYQtxB;
+	Wed, 20 Aug 2025 08:56:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2F9A81A09D6;
+	Wed, 20 Aug 2025 08:56:55 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAXkxNVHaVoUe0VEQ--.47546S3;
+	Wed, 20 Aug 2025 08:56:54 +0800 (CST)
+Subject: Re: [PATCH v2 1/2] blk-mq: fix elevator depth_updated method
+To: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, bvanassche@acm.org, ming.lei@redhat.com, hare@suse.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250819012917.523272-1-yukuai1@huaweicloud.com>
+ <20250819012917.523272-2-yukuai1@huaweicloud.com>
+ <f0abcc02-48c6-4d09-86d6-5ca8b968dcde@linux.ibm.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <0206ea4f-4efd-b7d0-088a-9257d06dcffb@huaweicloud.com>
+Date: Wed, 20 Aug 2025 08:56:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716202006.3640584-1-youngjun.park@lge.com>
- <20250716202006.3640584-2-youngjun.park@lge.com> <jrkh2jy2pkoxgsxgsstpmijyhbzzyige6ubltvmvwl6fwkp3s7@kzc24pj2tcko>
- <aH+apAbBCmkMGPlO@yjaykim-PowerEdge-T330> <aH/baxIgrBI3Z1Hl@yjaykim-PowerEdge-T330>
- <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
- <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com>
- <aKC+EU3I/qm6TcjG@yjaykim-PowerEdge-T330> <CAF8kJuNuNuxxTbtkCb3Opsjfy-or7E+0AwPDi7L-EgqoraQ3Qg@mail.gmail.com>
- <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330>
-In-Reply-To: <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 19 Aug 2025 17:52:39 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
-X-Gm-Features: Ac12FXx_nPLaGsHvIhpZPPFVTK0BSLVMR7dAaEP08V7iOUT0TsBblzZbq7PhYug
-Message-ID: <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-To: YoungJun Park <youngjun.park@lge.com>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
-	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
-	bhe@redhat.com, baohua@kernel.org, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, 
-	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Kairui Song <ryncsn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f0abcc02-48c6-4d09-86d6-5ca8b968dcde@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXkxNVHaVoUe0VEQ--.47546S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrW8Gr43tFWrJw18Xw4xWFg_yoW7Jw1fpr
+	ZxtanIkr1rtr47uF1Yy343Xr4rt39akry2yFsxtw1rtryq9Fs3XF1rGF1xXFWIvrZ5CF4x
+	Jr10qa9rXr1IqFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue, Aug 19, 2025 at 3:13=E2=80=AFAM YoungJun Park <youngjun.park@lge.co=
-m> wrote:
->
-> On Sat, Aug 16, 2025 at 12:15:43PM -0700, Chris Li wrote:
->
-> At first, Thank you for detailed and fast feedback!
->
-> > I have not questioned the approach you can achieve with your goal. The
-> > real question is, is this the best approach to consider to merge into
->
-> Yes, I believe this could be the best approach.
-> I have compared several possible approaches before making this proposal. =
-These
-> are the alternatives I reviewed in the RFC:
-> (https://lore.kernel.org/linux-mm/20250612103743.3385842-1-youngjun.park@=
-lge.com/)
-> The part I mentions are as belows
->
-> > Evaluated Alternatives
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > 1. **Per-cgroup dedicated swap devices**
-> >    - Previously proposed upstream [1]
-> >    - Challenges in managing global vs per-cgroup swap state
-> >    - Difficult to integrate with existing memory.limit / swap.max seman=
-tics
-> > 2. **Multi-backend swap device with cgroup-aware routing**
-> >    - Considered sort of layering violation (block device cgroup awarene=
-ss)
-> >    - Swap devices are commonly meant to be physical block devices.
-> >    - Similar idea mentioned in [2]
-> > 3. **Per-cgroup swap device enable/disable with swap usage contorl**
-> >    - Expand swap.max with zswap.writeback usage
-> >    - Discussed in context of zswap writeback [3]
-> >    - Cannot express arbitrary priority orderings
-> >      (e.g. swap priority A-B-C on cgroup C-A-B impossible)
-> >    - Less flexible than per-device priority approach
-> > 4. **Per-namespace swap priority configuration**
-> >    - In short, make swap namespace for swap device priority
-> >    - Overly complex for our use case
-> >    - Cgroups are the natural scope for this mechanism
->
-> In my view, the `swap.tier` proposal aligns quite well with alternative (=
-3) that
-> I reviewed. That approach keeps the global priority assignment while addi=
-ng
+Hi,
 
-Not the same as option 3. swap.tier has one level in direction for the
-tier class. It does not directly operate on swap files. That level of
-indirection allows swap files to rotate within the same tier. I expect
-it to have very few tires so all the swap tires can fit a simple
-bitmask, e.g. one 32 bit integer per cgroup is good enough. Assume we
-allow 31 tiers. We can have less than 32 swap files, 31 tiers should
-be more than enough.
+在 2025/08/19 20:20, Nilay Shroff 写道:
+> 
+> 
+> On 8/19/25 6:59 AM, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Current depth_updated has some problems:
+>>
+>> 1) depth_updated() will be called for each hctx, while all elevators
+>> will update async_depth for the disk level, this is not related to hctx;
+>> 2) In blk_mq_update_nr_requests(), if previous hctx update succeed and
+>> this hctx update failed, q->nr_requests will not be updated, while
+>> async_depth is already updated with new nr_reqeuests in previous
+>> depth_updated();
+>> 3) All elevators are using q->nr_requests to calculate async_depth now,
+>> however, q->nr_requests is still the old value when depth_updated() is
+>> called from blk_mq_update_nr_requests();
+>>
+>> Fix those problems by:
+>>
+>> - pass in request_queue instead of hctx;
+>> - move depth_updated() after q->nr_requests is updated in
+>>    blk_mq_update_nr_requests();
+>> - add depth_updated() call in blk_mq_init_sched();
+>> - remove init_hctx() method for mq-deadline and bfq that is useless now;
+>>
+>> Fixes: 77f1e0a52d26 ("bfq: update internal depth state when queue depth changes")
+>> Fixes: 39823b47bbd4 ("block/mq-deadline: Fix the tag reservation code")
+>> Fixes: 42e6c6ce03fd ("lib/sbitmap: convert shallow_depth from one word to the whole sbitmap")
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   block/bfq-iosched.c   | 21 ++++-----------------
+>>   block/blk-mq-sched.c  |  3 +++
+>>   block/blk-mq-sched.h  | 11 +++++++++++
+>>   block/blk-mq.c        | 23 ++++++++++++-----------
+>>   block/elevator.h      |  2 +-
+>>   block/kyber-iosched.c | 10 ++++------
+>>   block/mq-deadline.c   | 15 ++-------------
+>>   7 files changed, 37 insertions(+), 48 deletions(-)
+>>
+>> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+>> index 50e51047e1fe..c0c398998aa1 100644
+>> --- a/block/bfq-iosched.c
+>> +++ b/block/bfq-iosched.c
+>> @@ -7109,9 +7109,10 @@ void bfq_put_async_queues(struct bfq_data *bfqd, struct bfq_group *bfqg)
+>>    * See the comments on bfq_limit_depth for the purpose of
+>>    * the depths set in the function. Return minimum shallow depth we'll use.
+>>    */
+>> -static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
+>> +static void bfq_depth_updated(struct request_queue *q)
+>>   {
+>> -	unsigned int nr_requests = bfqd->queue->nr_requests;
+>> +	struct bfq_data *bfqd = q->elevator->elevator_data;
+>> +	unsigned int nr_requests = q->nr_requests;
+>>   
+>>   	/*
+>>   	 * In-word depths if no bfq_queue is being weight-raised:
+>> @@ -7143,21 +7144,8 @@ static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
+>>   	bfqd->async_depths[1][0] = max((nr_requests * 3) >> 4, 1U);
+>>   	/* no more than ~37% of tags for sync writes (~20% extra tags) */
+>>   	bfqd->async_depths[1][1] = max((nr_requests * 6) >> 4, 1U);
+>> -}
+>> -
+>> -static void bfq_depth_updated(struct blk_mq_hw_ctx *hctx)
+>> -{
+>> -	struct bfq_data *bfqd = hctx->queue->elevator->elevator_data;
+>> -	struct blk_mq_tags *tags = hctx->sched_tags;
+>>   
+>> -	bfq_update_depths(bfqd, &tags->bitmap_tags);
+>> -	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 1);
+>> -}
+>> -
+>> -static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
+>> -{
+>> -	bfq_depth_updated(hctx);
+>> -	return 0;
+>> +	blk_mq_set_min_shallow_depth(q, 1);
+>>   }
+>>   
+>>   static void bfq_exit_queue(struct elevator_queue *e)
+>> @@ -7628,7 +7616,6 @@ static struct elevator_type iosched_bfq_mq = {
+>>   		.request_merged		= bfq_request_merged,
+>>   		.has_work		= bfq_has_work,
+>>   		.depth_updated		= bfq_depth_updated,
+>> -		.init_hctx		= bfq_init_hctx,
+>>   		.init_sched		= bfq_init_queue,
+>>   		.exit_sched		= bfq_exit_queue,
+>>   	},
+>> diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+>> index e2ce4a28e6c9..bf7dd97422ec 100644
+>> --- a/block/blk-mq-sched.c
+>> +++ b/block/blk-mq-sched.c
+>> @@ -585,6 +585,9 @@ int blk_mq_init_sched(struct request_queue *q, struct elevator_type *e,
+>>   			}
+>>   		}
+>>   	}
+>> +
+>> +	if (e->ops.depth_updated)
+>> +		e->ops.depth_updated(q);
+>>   	return 0;
+>>   
+> 
+> Overall changes look good. That said, I think it might be cleaner to structure
+> it this way:
+> 
+> elevator_switch -> blk_mq_init_sched ->init_sched ==> sets async_depth
+> blk_mq_update_nr_requests ->depth_updated ==> updates async_depth
+> 
+> This way, we don’t need to call ->depth_updated from blk_mq_init_sched.
 
-> inclusion/exclusion semantics at the cgroup level. The reason I decided n=
-ot to
-> go with it is because it lacks flexibility =E2=80=94 it cannot express ar=
-bitrary
-> ordering. As noted above, it is impossible to represent arbitrary orderin=
-gs,
-> which is why I chose a per-device priority strategy instead.
+Just to be sure, you mean calling the depth_updated method directly
+inside the init_sched() method? This is indeed cleaner, each elevator
+has to use this method to initialize async_dpeth.
+> 
+> In summary:
+> - Avoid calling ->depth_updated during blk_mq_init_sched
+> - Set async_depth when the elevator is initialized (via ->init_sched)
+> - Update async_depth when nr_requests is modified through sysfs (via ->depth_updated)
+> 
+> Thanks,
+> --Nilay
+> .
+> 
 
-As said, arbitrary orders violate the swap entry LRU orders. You still
-haven't given me a detailed technical reason why you need arbitrary
-orders other than "I want a pony".
+Thanks,
+Kuai
 
-> > the main line Linux kernel. Merging into the main line kernel has a
-> > very high bar. How is it compared to other alternative approaches in
-> > terms of technical merit and complexity trade offs.
->
-> Since you seem most concerned about complexity, I have been thinking more=
- about
-> this point.
->
-> 1. **Conceptual complexity**
->    The idea is simply to add a swap priority list per cgroup. This is
->    straightforward to understand. The more complicated part is NUMA prior=
-ity
->    handling =E2=80=94 but if that turns out to be too complex, we can dro=
-p it entirely
->    or adjust its semantics to reduce the complexity.
-
-The swap priority list is a list. The swap tiers is just a set less
-than32 total tiers. Can be expressed in one integer bitmask.
-
-> 2. **Implementation complexity**
->    Could you clarify from which perspective you see implementation comple=
-xity as
->    problematic? I would like to know more specifically what part worries =
-you.
-
-Your 4 patch series total lines of code? I expect the swap tiers can
-be much shorter, because it does not deal with arbitrate orders.
-
-> The `swap.tier` concept also requires mapping priorities to tiers, creati=
-ng
-> per-cgroup tier objects, and so forth. That means a number of supporting
-> structures are needed as well. While I agree it is conceptually well-defi=
-ned,
-> I don=E2=80=99t necessarily find it simpler than the per-device priority =
-model.
-
-You haven't embraced the swap.tiers ideas to the full extent. I do see
-it can be simpler if you follow my suggestion. You are imaging a
-version using swap file priority data struct to implement the swap
-tiers. That is not what I have in mind. The tiers can be just one
-integer to represent the set of tiers it enrolls and the default. If
-you follow my suggestion and the design you will have a simpler series
-in the end.
-
-> > Why would I trade a cleaner less complex approach for a more complex
-> > approach with technical deficiency not able to address (inverting swap
-> > entry LRU ordering)?
->
-> Could you elaborate on what exactly you mean by =E2=80=9Cinverting swap e=
-ntry LRU order=E2=80=9D?
-> Do you mean that because of per-cgroup priority differences, entries on t=
-he
-> global swap LRU list could become inconsistent when viewed from different
-> cgroups?
-
-Exactly.
-
->If that is the case, could you explain more concretely what problems
-> such inconsistencies would cause? That would help me understand the conce=
-rn
-
-The problem is that you pollute your fast tier with very cold swap
-entry data, that is to your disadvantage, because you will need to
-swap back more from the slower tier.
-
-e.g. you have two pages. Swap entry A will get 2 swap faults, the swap
-entry B will get 20 swap faults in the next 2 hours. B is hotter than
-A. Let's say you have to store them one in zswap and the other in hdd.
-Which one should you store in faster zswap? Obvious swap entry B.
-
-It will cause more problems when you flush the data to the lower tier.
-You want to flush the coldest data first. Please read about the
-history of zswap write back and what LRU problem it encountered. The
-most recent zswap storing the incompressible pages series in the mail
-list precisely driven by preserving the swap entry LRU order reason.
-
-You really should consider the effect on swap entry LRU ordering
-before you design the per cgroup swap priority.
-
-> > From the swap file point of view, when it needs to flush some data to
-> > the lower tiers, it is very hard if possible for swap file to maintain
-> > per cgroup LRU order within a swap file.
->
-> Could you explain in more detail why the flush operation is difficult in =
-that
-> case? I would like to understand what the concrete difficulty is.
->
-> > It is much easier if all the swap entries in a swap file are in the
-> > same LRU order tier.
->
-> This is related to the same question above =E2=80=94 I would appreciate a=
- more
-> detailed explanation because it is not yet clear to me. Why is it easy?
-
-Because I don't need to alter the list ording. When it enumerates the
-same list of swap files, it just needs to check if the current swap
-file is excluded by the swap.tiers integer bitmask. Each swap file can
-cache a bit which tier it is belonging to, for example.
-
->
-> > The swap.tiers idea is not a compromise, it is a straight win. Can you
-> > describe what per cgroup per swap file can do while swap.tiers can
-> > not?
->
-> I mentioned already on this mail: what swap tiers cannot do is arbitrary
-> ordering. If ordering is fixed globally by tiers, some workloads that wan=
-t to
-> consume slower swap devices first (and reserve faster devices as a safety
-> backend to minimize swap failures) cannot be expressed. This kind of poli=
-cy
-> requires arbitrary ordering flexibility, which is possible with per-devic=
-e
-> priorities but not with fixed tiers.
-
-Let's say you have fast tier A and slow tier B.
-
-Option 1) All swap entries go through the fast tier A first. As time
-goes on, the colder swap entry will move to the end of the tier A LRU,
-because there is no swap fault happening to those colder entries. If
-you run out of space of  A, then you flush the end of the A to B. If
-the swap fault does happen in the relative short period of time, it
-will serve by the faster tier of A.
-
-That is a win compared to your proposal you want directly to go to B,
-with more swap faults will be served by B compared to option 1).
-
-option 2) Just disable fast tier A in the beginning, only use B until
-B is full. At some point B is full, you want to enable fast tier A.
-Then it should move the head LRU from B into A. That way it still
-maintains the LRU order.
-
-option 1) seems better than 2) because it serves more swap faults from
-faster tier A.
-
-> And vswap possible usage: if we must consider vswap (assume we can select=
- it
-> like an individual swap device), where should it be mapped in the tier mo=
-del?
-> (see https://lore.kernel.org/linux-mm/CAMgjq7BA_2-5iCvS-vp9ZEoG=3D1DwHWYu=
-VZOuH8DWH9wzdoC00g@mail.gmail.com/)
-
-The swap tires do not depend on vswap, you don't need to worry about that n=
-ow.
-
-> In my opinion, it cannot be mapped purely by service speed.
-> There are indeed situations where tiering by service speed is beneficial,
-> but I also believe priority-based ordering can capture the same intention
-> while also covering exceptional use cases.
-
-The above two options should be able to cover what you want.
-
-> So, I see the per-device priority approach as more general: it can repres=
-ent
-> tier-based usage, but also more flexible policies that tiers alone cannot=
- cover.
-
-Not worth while to break the swap entry LRU order. We can do it in a
-way keeping the LRU order. You will be serving the more swap fault
-from the fast tier which is an overall win.
-
-> > It obviously will introduce new complexity. I want to understand the
-> > reason to justify the additional complexity before I consider such an
-> > approach.
->
-> I think that any new concept adds complexity, whether it is =E2=80=9Cswap=
-.tier=E2=80=9D or
-> per-device priority. If you could clarify more precisely what kind of
-> complexity you are most concerned about, I would be happy to give my deta=
-iled
-> thoughts in that direction.
-
-I see no real justification to break the swap entry LRU order yet.
-Will my solution 1) or 2) work for you in your example?
-
-The per cgroup swap tiers integer bitmask is simpler than maintaining
-a per cgroup order list. It might be the same complexity in your mind,
-I do see swap tiers as the simpler one.
-
-Chris
 
