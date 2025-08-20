@@ -1,363 +1,176 @@
-Return-Path: <linux-kernel+bounces-777595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54B0B2DB65
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:43:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC52B2DB2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2766A5E7CDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:42:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E009D166A98
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6453A2E3399;
-	Wed, 20 Aug 2025 11:42:51 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD692E7F3D;
+	Wed, 20 Aug 2025 11:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WoFAPO5E"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45AD22157E;
-	Wed, 20 Aug 2025 11:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EED22E7179;
+	Wed, 20 Aug 2025 11:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690170; cv=none; b=jGlh+bf7Y4w0aeVDMFgjTxQjxL9ZsfsujfigA14SvBlasEnoBcLzuYJxqXRolDohiaWlSQUuCwRd5JNGMq+xTFhHLMDfnDYAjHvpBy3Xt1/1D0A0YrmMPRhXkFWoaeC2+YTRCk/HmNLDMfGZl1nSwKhgsKRjelYXsBmJGWa9pXg=
+	t=1755689689; cv=none; b=uQnzfyhkZ18iPwM4qRDU0ERsBl1CBzs8R56m4HzGtspIAlMdzSmzdY8Te1nmfTrr05HKoFf7KletKuIINHlr9/uN65mYuViq0TScm9j+o69I8UHURVzSIc8nqWfq/htkMVPls22Zl5o5YYh9f6x0M0Yfx4dfZeg74HmEyRqCBUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690170; c=relaxed/simple;
-	bh=08hWmsnpKuPHGc0W2ptimoNLac3qMRxZ2PynpHYBnZQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MPwQiNyfq8/xTm0ZRzlonGbSBCEca1qC6cUbWrf9kyqoM//V21xsnCDZxgekTvIiU8BQZYEsGkzgjvX3H2uJs+8XX5aR60sLXvKP7/albfoBW222To6iM5yGNGa+COzej565LxweUJPpovMq/ABxOfjIkgYtq0x0Scfanj2jxWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6PhP18SYzKHN2T;
-	Wed, 20 Aug 2025 19:42:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 97A4C1A0CC8;
-	Wed, 20 Aug 2025 19:42:44 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDXUxSytKVo4ltJEQ--.58853S4;
-	Wed, 20 Aug 2025 19:42:44 +0800 (CST)
-From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-To: sfrench@samba.org,
-	pc@manguebit.org
-Cc: linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org,
-	chengzhihao1@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH V5] smb: client: Fix mount deadlock by avoiding super block iteration in DFS reconnect
-Date: Wed, 20 Aug 2025 19:34:35 +0800
-Message-Id: <20250820113435.2319994-1-wangzhaolong@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1755689689; c=relaxed/simple;
+	bh=MNBcc/OA0QprSnUR9adFiAWbzK6BWeNTvC9da61Vglk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qUb796fUwNQ2LgowdMPzGtZPK2M4+eZWkfB6ypr3lTNjKkJZw0f1KD1BlK54gndrgMrGUkwMDoEcpUxSL1F5Q3GxRFy/55lI9CZie77hkzObgONUuLO4ORmLdpapoftKOlnL1VwgVff0TMNSRlCbI+FrquuR0f3oLH4mwgz8eSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WoFAPO5E; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755689689; x=1787225689;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=MNBcc/OA0QprSnUR9adFiAWbzK6BWeNTvC9da61Vglk=;
+  b=WoFAPO5EW31MWIJB/wdeDmbeKf1Gckotjyx31/KT48E8F32R6/J7kKeU
+   nFrq58c1d0nBDU+iMD8MyalwbwE9vNYBDoNHXmKxpzF4xl7lNvc+FlQHm
+   55RTvE40mPN5g+Pw02Ru625Uv+Vc5wPsuBJsnihH7ZnZoS3g5BiwEwYbW
+   32C/rxJjeRkur3Zd/Y8BPG4ESbk6WbSMvYnUhDI+epaIGNuiSo0hPlT1B
+   VwFFYd4oM5nwtZJlippeELTd9hXU20wPGszSf+jbKTxwthOHOGyJBWjG6
+   +PdRvwKHK1v8UKefAYQMaq5ipd6CLIeO+vGerCyoNvXkCnECKMrWcE4G1
+   Q==;
+X-CSE-ConnectionGUID: oaDtI25+QUiYYnabW9c1zA==
+X-CSE-MsgGUID: csjKt0aMTGm3TiYZRRmyoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61590964"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="61590964"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 04:34:48 -0700
+X-CSE-ConnectionGUID: OZwi1ARoR22vDhP0Kzzw0g==
+X-CSE-MsgGUID: /f3T65c+Q66CElPl5MASkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="168016625"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 04:34:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uoh5X-00000006pjt-0FPL;
+	Wed, 20 Aug 2025 14:34:43 +0300
+Date: Wed, 20 Aug 2025 14:34:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Marcos Del Sol Vives <marcos@orca.pet>,
+	Michael Walle <mwalle@kernel.org>
+Cc: William Breathitt Gray <wbg@kernel.org>, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2] gpio: vortex: add new GPIO device driver
+Message-ID: <aKWy0lWrsiz7yaCw@smile.fi.intel.com>
+References: <20250709091542.968968-1-marcos@orca.pet>
+ <aHD40TD8MLug0C6b@black.fi.intel.com>
+ <99b67e0f-783a-4ac0-971f-07cf1544a651@orca.pet>
+ <aHElavFTptu0q4Kj@smile.fi.intel.com>
+ <a36a853d-5f32-409e-8add-c60b7f5d2fa9@orca.pet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXUxSytKVo4ltJEQ--.58853S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFy3XrWUuF4fWrWktFyxZrb_yoWfCr1DpF
-	yYyrWSqr48Grn8Wwn7JFWkuw1Fvr1kAa4Ykrn3uas7Xa9rZ3yIqFWqkF1UuF93t3ykt3sr
-	WF4qq3yIka18ua7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
+In-Reply-To: <a36a853d-5f32-409e-8add-c60b7f5d2fa9@orca.pet>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-An AA deadlock occurs when network interruption during mount triggers
-DFS reconnection logic that calls iterate_supers_type().
+On Tue, Aug 19, 2025 at 10:17:14PM +0200, Marcos Del Sol Vives wrote:
+> El 11/07/2025 a las 16:53, Andy Shevchenko escribió:
 
-The detailed call process is as follows:
+...
 
-      mount.cifs
--------------------------
-path_mount
-  do_new_mount
-    vfs_get_tree
-      smb3_get_tree
-        cifs_smb3_do_mount
-          sget
-            alloc_super
-              down_write_nested(&s->s_umount, ..);  // Hold lock
-          cifs_root_iget
-            cifs_get_inode_info
-              smb2_query_path_info
-                smb2_compound_op
-                  SMB2_open_init
-                    smb2_plain_req_init
-                      smb2_reconnect           // Trigger reconnection
-                        cifs_tree_connect
-                          cifs_get_dfs_tcon_super
-                            __cifs_get_super
-                              iterate_supers_type
-                                down_read(&sb->s_umount); // Deadlock
-    do_new_mount_fc
-      up_write(&sb->s_umount);  // Release lock
+> >> Again, I am not an expert on the Linux kernel, but I did not see any code
+> >> or examples using neither gpio-mmio nor gpio-regmap for I/O-mapped registers.
+> > 
+> > $ git grep -lw '\.io_port[[:space:]]\+= true,'
+> > drivers/counter/104-quad-8.c
+> > drivers/gpio/gpio-104-dio-48e.c
+> > drivers/gpio/gpio-104-idi-48.c
+> > drivers/gpio/gpio-104-idio-16.c
+> > drivers/gpio/gpio-exar.c
+> > drivers/gpio/gpio-gpio-mm.c
+> > drivers/gpio/gpio-pci-idio-16.c
+> > drivers/gpio/gpio-pcie-idio-24.c
+> > drivers/gpio/gpio-ws16c48.c
+> > drivers/iio/addac/stx104.c
+> > drivers/iio/dac/cio-dac.c
+> > 
+> > Take a look.
+> 
+> I've already made a third version of the patch, using gpio-regmap this time.
+> This time I'm also using a Southbridge driver that pulls it as a platform
+> device, much like the rdc321x-southbridge.c does. It's not yet ready for
+> merging, but it's available for now at
+> https://github.com/socram8888/linux/tree/vortex-gpio
+> 
+> I have found a small issue though regarding gpio-regmap, and before making
+> a third version of the patch, I'd prefer to know the way to approach it.
+> 
+> The Vortex86 SoCs require the direction of the GPIO pin to be set before
+> writing the pin's value. Otherwise, writes to the data ports are ignored.
+> 
+> Currently gpio-regmap does it in the opposite order:
 
-During mount phase, if reconnection is triggered, the foreground mount
-process may enter smb2_reconnect prior to the reconnect worker being
-scheduled, leading to a deadlock when subsequent DFS tree connect
-attempts reacquire the s_umount lock.
+Which is correct for the proper HW, the Vortex86 HW is broken, but...
 
-The issue stems from cifs_get_dfs_tcon_super() using iterate_supers_type()
-which reacquires the s_umount lock that's already held by the mount
-process.
+> > static int gpio_regmap_direction_output(struct gpio_chip *chip,
+> > 					unsigned int offset, int value)
+> > {
+> >	gpio_regmap_set(chip, offset, value);
+> >
+> > 	return gpio_regmap_set_direction(chip, offset, true);
+> > }
+> 
+> (I have also noticed that it does not properly check the return value of
+> gpio_regmap_set, but that's another thing)
+> 
+> So there are IMO three different approaches:
+> 
+> 1. Add a boolean flag that allows changing the behaviour. If set, invert
+> the order of operations. Else do as before.
+> 2. Same, but with a "flags" bitfield, in case more flags need to be added
+> in the future.
+> 3. Do an additional "gpio_regmap_set" after setting the direction. This
+> means no new fields need to be added to the structures but causes an extra
+> write that may not be needed on other drivers.
 
-However, after commit a091d9711bde ("smb:client: smb: client: Add reverse
-mapping from tcon to superblocks"), we have a more direct way to access
-associated superblocks through tcon->cifs_sb_list, which was originally
-introduced to update I/O sizes after reconnection.
+...if you want to still support this configuration which is prone to glitches
+on the lines with who knows what the possible issues will come with that, you
+may modify gpio-regmap on your needs. TBH, I have no preferences on the
+approach, but it would be nice if others can share their opinions (I would ask
+the author of gpio-regmap first (Cc'ed).
 
-This patch leverages the existing tcon->cifs_sb_list infrastructure to
-directly update DFS mount prepaths without needing to search through all
-superblocks.
+> >> IRQ is only available for the first two ports out of the five available.
+> > Would  it be a problem to support them?
+> 
+> I cannot test that on my platform: as mentioned before, only ports 0 and 1
+> have IRQs, and in my mini PC I only have two pins available, and they're
+> both on port 4. 
+> 
+> Any code I'd write would be completely untested and IMHO sounds like a
+> terrible idea to have such code merged.
 
-The key changes are:
-- Add update_tcon_super_prepaths() to update all related superblocks
-- Remove now-unused cifs_get_dfs_tcon_super() and related callback code
-- Update tree_connect_dfs_target() to use the new direct approach
+I see... But what I meant is to support in terms of gpio-regmap. I think you
+can still test the code that you have hardware for.
 
-Fixes: 3ae872de4107 ("smb: client: fix shared DFS root mounts with different prefixes")
-Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
----
 
-V5:
- - Extract update logic into update_tcon_super_prepaths() function
- - Add error logging for prepath update failures
- - Leverage existing tcon->cifs_sb_list infrastructure instead of iterate_supers_type()
- - Remove now-unused cifs_get_dfs_tcon_super() and related callback code
-
-V4:
- - Perform a null pointer check on the return value of cifs_get_dfs_tcon_super()
-   to prevent NULL ptr dereference with DFS multiuser mount
-
-V3:
- - Adjust the trace diagram for the super_lock_shared() section to align with
-   the latest mainline call flow.
-
-V2:
- - Adjust the trace diagram in the commit message to indicate when the lock
-   is released
-
- fs/smb/client/cifsproto.h |  2 --
- fs/smb/client/dfs.c       | 32 +++++++++++------
- fs/smb/client/misc.c      | 76 ---------------------------------------
- 3 files changed, 21 insertions(+), 89 deletions(-)
-
-diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index c34c533b2efa..6b55582b427a 100644
---- a/fs/smb/client/cifsproto.h
-+++ b/fs/smb/client/cifsproto.h
-@@ -677,12 +677,10 @@ void extract_unc_hostname(const char *unc, const char **h, size_t *len);
- int copy_path_name(char *dst, const char *src);
- int smb2_parse_query_directory(struct cifs_tcon *tcon, struct kvec *rsp_iov,
- 			       int resp_buftype,
- 			       struct cifs_search_info *srch_inf);
- 
--struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon);
--void cifs_put_tcp_super(struct super_block *sb);
- int cifs_update_super_prepath(struct cifs_sb_info *cifs_sb, char *prefix);
- char *extract_hostname(const char *unc);
- char *extract_sharename(const char *unc);
- int parse_reparse_point(struct reparse_data_buffer *buf,
- 			u32 plen, struct cifs_sb_info *cifs_sb,
-diff --git a/fs/smb/client/dfs.c b/fs/smb/client/dfs.c
-index f65a8a90ba27..cb0532e3868f 100644
---- a/fs/smb/client/dfs.c
-+++ b/fs/smb/client/dfs.c
-@@ -331,13 +331,30 @@ static int target_share_matches_server(struct TCP_Server_Info *server, char *sha
- 	}
- 	cifs_server_unlock(server);
- 	return rc;
- }
- 
-+static int update_tcon_super_prepaths(struct cifs_tcon *tcon, const char *prefix)
-+{
-+	struct cifs_sb_info *cifs_sb;
-+	int rc = 0;
-+
-+	spin_lock(&tcon->sb_list_lock);
-+	list_for_each_entry(cifs_sb, &tcon->cifs_sb_list, tcon_sb_link) {
-+		rc = cifs_update_super_prepath(cifs_sb, (char *)prefix);
-+		if (rc) {
-+			cifs_dbg(VFS, "Failed to update prepath for superblock: %d\n", rc);
-+			break;
-+		}
-+	}
-+	spin_unlock(&tcon->sb_list_lock);
-+
-+	return rc;
-+}
-+
- static int tree_connect_dfs_target(const unsigned int xid,
- 				   struct cifs_tcon *tcon,
--				   struct cifs_sb_info *cifs_sb,
- 				   char *tree, bool islink,
- 				   struct dfs_cache_tgt_list *tl)
- {
- 	const struct smb_version_operations *ops = tcon->ses->server->ops;
- 	struct TCP_Server_Info *server = tcon->ses->server;
-@@ -370,12 +387,12 @@ static int tree_connect_dfs_target(const unsigned int xid,
- 
- 		dfs_cache_noreq_update_tgthint(server->leaf_fullpath + 1, tit);
- 		scnprintf(tree, MAX_TREE_SIZE, "\\%s", share);
- 		rc = ops->tree_connect(xid, tcon->ses, tree,
- 				       tcon, tcon->ses->local_nls);
--		if (islink && !rc && cifs_sb)
--			rc = cifs_update_super_prepath(cifs_sb, prefix);
-+		if (islink && !rc && READ_ONCE(tcon->origin_fullpath))
-+			rc = update_tcon_super_prepaths(tcon, prefix);
- 		break;
- 	}
- 
- 	kfree(share);
- 	kfree(prefix);
-@@ -387,12 +404,10 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon)
- {
- 	int rc;
- 	struct TCP_Server_Info *server = tcon->ses->server;
- 	const struct smb_version_operations *ops = server->ops;
- 	DFS_CACHE_TGT_LIST(tl);
--	struct cifs_sb_info *cifs_sb = NULL;
--	struct super_block *sb = NULL;
- 	struct dfs_info3_param ref = {0};
- 	char *tree;
- 
- 	/* only send once per connect */
- 	spin_lock(&tcon->tc_lock);
-@@ -428,29 +443,24 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon)
- 		rc = ops->tree_connect(xid, tcon->ses, tree,
- 				       tcon, tcon->ses->local_nls);
- 		goto out;
- 	}
- 
--	sb = cifs_get_dfs_tcon_super(tcon);
--	if (!IS_ERR(sb))
--		cifs_sb = CIFS_SB(sb);
--
- 	/* Tree connect to last share in @tcon->tree_name if no DFS referral */
- 	if (!server->leaf_fullpath ||
- 	    dfs_cache_noreq_find(server->leaf_fullpath + 1, &ref, &tl)) {
- 		rc = ops->tree_connect(xid, tcon->ses, tcon->tree_name,
- 				       tcon, tcon->ses->local_nls);
- 		goto out;
- 	}
- 
--	rc = tree_connect_dfs_target(xid, tcon, cifs_sb, tree, ref.server_type == DFS_TYPE_LINK,
-+	rc = tree_connect_dfs_target(xid, tcon, tree, ref.server_type == DFS_TYPE_LINK,
- 				     &tl);
- 	free_dfs_info_param(&ref);
- 
- out:
- 	kfree(tree);
--	cifs_put_tcp_super(sb);
- 
- 	if (rc) {
- 		spin_lock(&tcon->tc_lock);
- 		if (tcon->status == TID_IN_TCON)
- 			tcon->status = TID_NEED_TCON;
-diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
-index da23cc12a52c..3eedcca0d7f9 100644
---- a/fs/smb/client/misc.c
-+++ b/fs/smb/client/misc.c
-@@ -1108,86 +1108,10 @@ int copy_path_name(char *dst, const char *src)
- 	/* we count the trailing nul */
- 	name_len++;
- 	return name_len;
- }
- 
--struct super_cb_data {
--	void *data;
--	struct super_block *sb;
--};
--
--static void tcon_super_cb(struct super_block *sb, void *arg)
--{
--	struct super_cb_data *sd = arg;
--	struct cifs_sb_info *cifs_sb;
--	struct cifs_tcon *t1 = sd->data, *t2;
--
--	if (sd->sb)
--		return;
--
--	cifs_sb = CIFS_SB(sb);
--	t2 = cifs_sb_master_tcon(cifs_sb);
--
--	spin_lock(&t2->tc_lock);
--	if ((t1->ses == t2->ses ||
--	     t1->ses->dfs_root_ses == t2->ses->dfs_root_ses) &&
--	    t1->ses->server == t2->ses->server &&
--	    t2->origin_fullpath &&
--	    dfs_src_pathname_equal(t2->origin_fullpath, t1->origin_fullpath))
--		sd->sb = sb;
--	spin_unlock(&t2->tc_lock);
--}
--
--static struct super_block *__cifs_get_super(void (*f)(struct super_block *, void *),
--					    void *data)
--{
--	struct super_cb_data sd = {
--		.data = data,
--		.sb = NULL,
--	};
--	struct file_system_type **fs_type = (struct file_system_type *[]) {
--		&cifs_fs_type, &smb3_fs_type, NULL,
--	};
--
--	for (; *fs_type; fs_type++) {
--		iterate_supers_type(*fs_type, f, &sd);
--		if (sd.sb) {
--			/*
--			 * Grab an active reference in order to prevent automounts (DFS links)
--			 * of expiring and then freeing up our cifs superblock pointer while
--			 * we're doing failover.
--			 */
--			cifs_sb_active(sd.sb);
--			return sd.sb;
--		}
--	}
--	pr_warn_once("%s: could not find dfs superblock\n", __func__);
--	return ERR_PTR(-EINVAL);
--}
--
--static void __cifs_put_super(struct super_block *sb)
--{
--	if (!IS_ERR_OR_NULL(sb))
--		cifs_sb_deactive(sb);
--}
--
--struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon)
--{
--	spin_lock(&tcon->tc_lock);
--	if (!tcon->origin_fullpath) {
--		spin_unlock(&tcon->tc_lock);
--		return ERR_PTR(-ENOENT);
--	}
--	spin_unlock(&tcon->tc_lock);
--	return __cifs_get_super(tcon_super_cb, tcon);
--}
--
--void cifs_put_tcp_super(struct super_block *sb)
--{
--	__cifs_put_super(sb);
--}
--
- #ifdef CONFIG_CIFS_DFS_UPCALL
- int match_target_ip(struct TCP_Server_Info *server,
- 		    const char *host, size_t hostlen,
- 		    bool *result)
- {
 -- 
-2.39.2
+With Best Regards,
+Andy Shevchenko
+
 
 
