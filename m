@@ -1,107 +1,122 @@
-Return-Path: <linux-kernel+bounces-777050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0887B2D481
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:08:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780A0B2D485
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3284E0ADC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:07:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E29A01C40490
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995252D24BB;
-	Wed, 20 Aug 2025 07:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211442D3231;
+	Wed, 20 Aug 2025 07:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qOANscv1"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aa0TXD15"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AAD2741C9;
-	Wed, 20 Aug 2025 07:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0E12BCF46;
+	Wed, 20 Aug 2025 07:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755673644; cv=none; b=O+7I71+u4Ip+xIvUkObixmjQ0iYDXtnD9G16SA/hG+p1eg6Z1WT67f9StsE5TQDN/rw1S+JPCgDPtxnnulhGyfu+n0JA/QTec2KWPbFwuNV/kZnrSiC5rizGX0mkriA2ToWDaBB6oc+PFGfK97/RQaoREvNTEc8bIOISmFwqxOQ=
+	t=1755673807; cv=none; b=i5sxsYAa/uc24WGyQr6Cy6UiZJLIKkZQCJygMtn1T6gNLNzKeROppZDWZisHkF9LCU8AqPsDvQly++9+h5Z+cGnTGw9CvLOmHmBA7NoyqVHf3LM/mJcJxCoDdC5g46YCQyN/tRD6xJ4oFXRC8SgaWAY2LEfELezEugcLaFCZ8n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755673644; c=relaxed/simple;
-	bh=TaxiWtPTfGrDpen8ZIb7nub1gevfpQeg6ZsLJqzRkGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=He7ssd/R4FK4snTbtmvX/rLFI0kfU5hBUjnyvB86DkfX859v7OxVVvShCx38YXCMvXOOrFmoevI6juXVEv2S7LQmQGfjUDueqAq2qI8HEDkgzorYYw/E0XwOeBtfhjQaSFCIUpXyhhtn9E7aaeuW7xVLrgsETkYCVkzuqNLp4SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qOANscv1; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9gqSLsf7BauWawgwunyMy7IZ4Wk/6a60Zsc0No/utek=; b=qOANscv1FJSCGdxlMcXpamTMiZ
-	l6KJfKE/btOiven+e+uzW0i7q7ZrfstLB+YcWjdR1YTbhF8NM85lx+qgTZFkXvL7q9smTvSD2hI7b
-	XJGalGbRRvoXeJOhJQNTP9qjCeVeCSfPZ+XaP0xWDDanoaGr+Ix8nD04/B6/oqIrFsYjRN1ikreCt
-	pJZW6zuOFdn+U416EI/im1W77WyBh0YlrUCS+of62h1pHyUZhv9Mx4s7wHMmCHzuPpALym6gZLBWi
-	nOfbxl2kkWv85HN+szXLeZS8qE0kM1Qqv2/oL7W8ptwk/d0i/ClyMxT4FoOC9lFbji6zFeGRbuxnK
-	fJsklpfQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59824)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uocuY-0004Kg-01;
-	Wed, 20 Aug 2025 08:07:06 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uocuS-0004JX-2Z;
-	Wed, 20 Aug 2025 08:07:00 +0100
-Date: Wed, 20 Aug 2025 08:07:00 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
-Subject: Re: [PATCH net-next v1 0/3] stmmac: stop silently dropping bad
- checksum packets
-Message-ID: <aKV0FF4FFARJNvZu@shell.armlinux.org.uk>
-References: <20250818090217.2789521-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1755673807; c=relaxed/simple;
+	bh=oX3qTwyzTlmvZuMYmlAwJ5/Jlf/5idOrkvJS2GRaUKA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hOfv2d9uqJGR+HH3AI2ssPtXAFROzU+NiCmSWvNdYctPJWbQh8zvEk3kEaE+TQ3RTuYgdwuLOA/Tee4R8T2SMZfKTlAEoDis4k2fJwKmzFle7BiFlTy2banHgUHAZl50mEqThs7wd4A2ZEpfJ74522VdT3HBVWDIuooPJIu2/4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aa0TXD15; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BF00C4CEEB;
+	Wed, 20 Aug 2025 07:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755673805;
+	bh=oX3qTwyzTlmvZuMYmlAwJ5/Jlf/5idOrkvJS2GRaUKA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aa0TXD15F4zX5V8delnWEBcvkXxcuvCD2ONZkpywc74GZ0hhX7AJOgTANlKi/lNA8
+	 6+IKq8lF/7+BxJbd7DdwnK5Tur9uuFqqP/jH5jKmxU9mNgyfvSSwrD0rKdh8rBWxM1
+	 o8NSTTIqXgFkWEjrXSiuBPivYXFLHLyjUi5wf9Cdv47I9X9AndoNS7zfwcF8GpLKyG
+	 PpbOJQkFNKA7jOyxHJjREDtxzzcw7QqCFYQhYDJr/hLrcAtG28ApP87tNFjGlMJbSc
+	 yueIqNt50nld6VEBfEziV+jicBh3KPg8HvIGAkGuGXIq7YdU/zck+Z7eumO+x6RCml
+	 ZdQFiirCLVBcQ==
+Message-ID: <e2520739-e4c2-49e7-a5b1-3b205c79ef21@kernel.org>
+Date: Wed, 20 Aug 2025 16:07:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818090217.2789521-1-o.rempel@pengutronix.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3 3/8] block: align the bio after building it
+To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
+ hch@lst.de, martin.petersen@oracle.com, djwong@kernel.org,
+ linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
+ Keith Busch <kbusch@kernel.org>
+References: <20250819164922.640964-1-kbusch@meta.com>
+ <20250819164922.640964-4-kbusch@meta.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250819164922.640964-4-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 18, 2025 at 11:02:14AM +0200, Oleksij Rempel wrote:
-> Hi all,
+On 8/20/25 1:49 AM, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> this series reworks how stmmac handles receive checksum offload
-> (CoE) errors on dwmac4.
+> Instead of ensuring each vector is block size aligned while constructing
+> the bio, just ensure the entire size is aligned after it's built. This
+> makes getting bio pages more flexible to accepting device valid io
+> vectors that would otherwise get rejected by alignment checks.
 > 
-> At present, when CoE is enabled, the hardware silently discards any
-> frame that fails checksum validation. These packets never reach the
-> driver and are not accounted in the generic drop statistics. They are
-> only visible in the stmmac-specific counters as "payload error" or
-> "header error" packets, which makes it harder to debug or monitor
-> network issues.
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
 
-FYI, there are counters at 0x214 and 0x228 that indicate header
-problems, including checksum failures. There are also counters
-at 0x234, 0x23c, 0x244 that count udp, tcp and icmp checksum
-errors.
+[...]
 
-So, the hardware does keep statistics. Maybe we should make use
-of those rather than the approach in this series?
+> +/*
+> + * Aligns the bio size to the len_align_mask, releasing any excessive bio vecs
+> + * that  __bio_iov_iter_get_pages may have inserted and reverts that length for
+> + * the next iteration.
+> + */
+> +static int bio_align(struct bio *bio, struct iov_iter *iter,
+> +			    unsigned len_align_mask)
+> +{
+> +	size_t nbytes = bio->bi_iter.bi_size & len_align_mask;
+> +
+> +	if (!nbytes)
+> +		return 0;
+> +
+> +	iov_iter_revert(iter, nbytes);
+> +	bio->bi_iter.bi_size -= nbytes;
+> +	while (nbytes) {
+> +		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
+> +
+> +		if (nbytes < bv->bv_len) {
+> +			bv->bv_len -= nbytes;
+> +			nbytes = 0;
+
+Nit: remove the "nbytes = 0" and do a break here ?
+
+> +		} else {
+> +			bio_release_page(bio, bv->bv_page);
+> +			bio->bi_vcnt--;
+> +			nbytes -= bv->bv_len;
+> +		}
+> +	}
+> +
+> +	if (!bio->bi_iter.bi_size)
+> +		return -EFAULT;
+> +	return 0;
+> +}
+> +
+
+
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Damien Le Moal
+Western Digital Research
 
