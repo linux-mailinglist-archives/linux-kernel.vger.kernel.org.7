@@ -1,145 +1,158 @@
-Return-Path: <linux-kernel+bounces-777124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DADB2D59E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:06:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1249B2D5A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB61E1889258
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:06:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E8A617414D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506702D6E6D;
-	Wed, 20 Aug 2025 08:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bEKilXbG"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF70626CE12;
-	Wed, 20 Aug 2025 08:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513FB2C11D2;
+	Wed, 20 Aug 2025 08:06:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E7328466F
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755677183; cv=none; b=LiCf6PPAjddGrZfIZkK0etyDHOzOEA/UYU+9j82l4WRxoY7v/WPg+dLaocLoLCojjgChgunquFma2YK/KPrzwuoJkp93VXsmqR+gn81pf4EXtc5opQ0cefLiNiRQ3mBAGuDffEGfpPC54yHvOtia3tMa9Gcu1Oc5JSuHGuoC42s=
+	t=1755677189; cv=none; b=KO4E7xwS0pc+Aq6IttYxuJtpLYWOTyf9rmPG5yXPk05cCYBusXKfuLwXLYQVcHGF/CNS/oBZnCzpwtCudtCoeJP8Efu3SZgnFmYnqAY/dXd1jUQ4hBbbpOja6NtmLzu+tZT06Ix69SjnmJLHjdL7UBwv8zv8LLnKPH2A1+fRplg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755677183; c=relaxed/simple;
-	bh=LACSANs/cXxhNwNx9i9bL5RfMtRv89Vo0GjAwicriWU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HYDV4LAdKsFUppsSugNR0Y5KVol8lqBz8zJ3X7auM/BCeWYsqscv+ebB6IOeCGt8RiBdsf4IDgCuc3HKNvb0Vsw6yQlcRKWJX1rTcrHVLCAf0nUSn6EmNJUNmM+sp8CjtKg1lJuUEEVrb8P5L6aeQrq5TunQg2z4te+naSxVdvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bEKilXbG; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=kX
-	qtCea7zQ8Uhu8Ugt8mlqxt6yqXT08SO/KkM9oJF/o=; b=bEKilXbGOuflwEl7fW
-	xCrn1viykPnPkej+hg3jFKUhLuu9rHt7ExxWN1/UWmJiD5991RHzL28D7XYmRVxN
-	cMGka7b6QOjOUaa2Y+KzE5gnLP3yXLH3RYYSnfAxyaAAwWMInVBCTpuQN2wdRQC8
-	ca9pO4dTCKbQb5+1TUsFV/Zk4=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wD3DhScgaVo_nyKDA--.32905S2;
-	Wed, 20 Aug 2025 16:04:45 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	will@kernel.org,
-	boqun.feng@gmail.com,
-	longman@redhat.com,
-	bigeasy@linutronix.de,
-	clrkwllms@kernel.org
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH] sched/cgroup: Lock optimize for cgroup cpu throttle
-Date: Wed, 20 Aug 2025 16:04:44 +0800
-Message-Id: <20250820080444.2060410-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755677189; c=relaxed/simple;
+	bh=TSEWfehoPdM3gmaj9QZJ0UPUmwRx/M938OT2evtPpS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dLpZZrZsECicpu0WPSPcxZBMrrUGz/RGNWc0b3rlI6a7MT1zOPs1ox+MMKL2/Hnm0Wnho3s+yw5G+/Y6MAXkMi2ZLbfjScmHdpKP1hx2yPtvDj6fXMOWlktqT9uwuMG1OUZrmccrp8kQBfVjK4s3Jkwq8RDDnrofnUIE5TF0uhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uodpj-0007v7-DH; Wed, 20 Aug 2025 10:06:11 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uodpi-001DLk-0F;
+	Wed, 20 Aug 2025 10:06:10 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uodph-005rZz-36;
+	Wed, 20 Aug 2025 10:06:09 +0200
+Date: Wed, 20 Aug 2025 10:06:09 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Lukasz Majewski <lukma@denx.de>, Jonathan Corbet <corbet@lwn.net>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+	Divya.Koppera@microchip.com
+Subject: Re: [PATCH net-next v2 1/1] Documentation: networking: add detailed
+ guide on Ethernet flow control configuration
+Message-ID: <aKWB8QA8fTwrZhFb@pengutronix.de>
+References: <20250814075342.212732-1-o.rempel@pengutronix.de>
+ <36bdd275-25bb-4b53-a14d-39677da468cc@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3DhScgaVo_nyKDA--.32905S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXFy8Xr1xCw4ruFWDAw4Utwb_yoW5CF47pF
-	ZYqrWakan8tFn7tr1xGa1vq3y8X395t3y5GFn5Gr45C3yYqrySvrs3Ka15ua4kCws3C3Wj
-	vrWYvr93Ca4DZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jF_M3UUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiJR6vCmileuyrDAAAsi
+In-Reply-To: <36bdd275-25bb-4b53-a14d-39677da468cc@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, 19 Aug 2025 13:28:52 +0200 Valentin wrote:
-
-> What about using task_work_add() and throttling the task on its way to
-> userland? The callback will be invoked without any locks held.
-
-
-> > In addition to the information in my previous response to Sebastian, I would
-> > like to add the following point as a reason for my self-recommendation (to
-> > explore my patch for solving the cgroup performance issue in RT-Linux):
-> > RT-Linux is a system that places a high emphasis on real-time performance.
-> > The fact that regular tasks are also included in cgroup groups and throttled
-> > suggests that they are relatively low-priority tasks that are not expected to
-> > interfere with high-priority tasks. Therefore, is it not a bit too late to
-> > impose limits only after returning to user mode?
+On Tue, Aug 19, 2025 at 02:48:22PM +0200, Andrew Lunn wrote:
+> > +2. Half-Duplex: Collision-Based Flow Control
+> > +--------------------------------------------
+> > +On half-duplex links, a device cannot send and receive simultaneously, so PAUSE
+> > +frames are not used. Flow control is achieved by leveraging the CSMA/CD
+> > +(Carrier Sense Multiple Access with Collision Detection) protocol itself.
+> > +
+> > +* **How it works**: To inhibit incoming data, a receiving device can force a
+> > +    collision on the line. When the sending station detects this collision, it
+> > +    terminates its transmission, sends a "jam" signal, and then executes the
+> > +    "Collision backoff and retransmission" procedure as defined in IEEE 802.3,
+> > +    Section 4.2.3.2.5. This algorithm makes the sender wait for a random
+> > +    period before attempting to retransmit. By repeatedly forcing collisions,
+> > +    the receiver can effectively throttle the sender's transmission rate.
+> > +
+> > +.. note::
+> > +    While this mechanism is part of the IEEE standard, there is currently no
+> > +    generic kernel API to configure or control it. Drivers should not enable
+> > +    this feature until a standardized interface is available.
 > 
-> Throttling is purely a CFS construct, and does not affect RT or DL
-> tasks (outside of the lock contention issues we're trying to fix :-)). If
-> an RT or DL task needs to run, it'll just preempt the CFS tasks, it won't
-> wait for any throttle or other mechanism.
-
-
-Dear Valentin,
-
-Indeed, as you mentioned, delaying the throttle time does not affect the execution
-of high-priority tasks when they want to run.
-
-I should actually mark this as an RFC PATCH.
-On one hand, it allows others using the rt-linux system who are troubled by issues
-related to cgroup locking and limits to temporarily bypass these problems with my
-patch.
-On the other hand, I look forward experts may review the patch to see if there are
-any serious or obvious issues that I may have overlooked, or if there are areas
-for further improvement.
-
-
-On Tue, 19 Aug 2025 15:06:56 +0200 Sebastian wrote:
-
-> > Dear Sebastian,
-> > 
-> > I believe what you mentioned is related to the same issue that Valentin
-> > brought up later, which is the current solution of "delaying CPU throttling
-> > through the task_work mechanism until returning to user mode."
-> > My colleagues and I indeed noticed this from the beginning. However, on our
-> > 6.1.134 RT-Linux system, we have tried new versions of this solution one by
-> > one, but they have all failed during basic script tests, so none have reached
-> > the stage of being used in our project. I see that this modification has been
-> > promoted in the community for more than two years, yet it remains in a state
-> > that doesn't work well (on our 6.1.134 RT-Linux system). I wonder if the
-> > changes require too many considerations or if this modification simply isn't
-> > suitable for running on RT-Linux. Our project cannot afford to wait, and
-> > there are many performance issues in RT-Linux.
+> Interesting. I did not know about this.
 > 
-> You are free to use the patch.
-> Based on your description I assume that the patch Valentin referenced
-> will solve your problem. If not, it will be interesting to know why it
-> is not working. Otherwise you keep maintaining your patch.
+> I wounder if we want phylib and phylink to return -EOPNOTSUPP in the
+> general code, if the current link is 1/2 duplex?
 
-Dear Sebastian,
+Rejecting ethtool -A calls in half-duplex mode would cause problems. At
+request time we often don’t know what the final link will be (autoneg,
+fixed link, link flapping, etc.). On top of that, PAUSE conflicts not
+only with half-duplex, but also with PFC.
 
-I am currently carefully reviewing the existing patches and applying them to our
-current project version of rt-linux 6.1.134 to see if I can reproduce the previously
-encountered issues. I will provide feedback on any problems as soon as possible.
+A cleaner model is to treat ethtool pause config as a wish specifically
+for 802.3x PAUSE. Phylib/phylink store this wish and apply it
+automatically when the negotiated link is compatible (full-duplex
+without PFC). If the link is not compatible (half-duplex, PFC), the wish
+is ignored.
 
+So the user always sets their preference once, the kernel enforces it
+when possible, and status queries (ethtool -a) show the actual active
+state. This avoids races and keeps semantics simple and predictable.
 
-Thanks
-Xin Zhao
+> > +Additionally, some MACs provide a way to configure the `pause_time` value
+> > +(quanta) sent in PAUSE frames. This value's duration depends on the link
+> > +speed. As there is currently no generic kernel interface to configure this,
+> > +drivers often set it to a default or maximum value, which may not be optimal
+> > +for all use cases.
+> 
+> The Mellanox driver has something in this space. It is a long time ago
+> that i reviewed the patches. I don't remember if it is a pause_time
+> you can configure, or the maximum number of pause frames you can send
+> before giving up and just letting the buffers overflow. I also don't
+> remember what API is used, if it is something custom, or generic. It
+> is a bit of a niche thing, so maybe it is not worth researching and
+> mentioning.
 
+I did some digging. A number of drivers simply hard-code the pause
+quanta to the maximum value for all link modes:
+
+stmmac: #define PAUSE_TIME 0xffff
+lan78xx: pause_time_quanta = 65535
+smsc95xx / smsc75xx: flow = 0xFFFF0002
+FEC: FEC_ENET_OPD_V  = 0xFFF0
+
+If we translate quanta into real time:
+1 Gbps -> 1 quanta = 512 ns -> max val ~ 33.6 ms
+100 Mbps -> 1 quanta = 5.12 µs -> max val ~ 335 ms
+10 Mbps -> 1 quanta = 51.2 µs -> max val ~ 3.3 s
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
