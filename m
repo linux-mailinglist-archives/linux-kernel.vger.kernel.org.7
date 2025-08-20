@@ -1,167 +1,114 @@
-Return-Path: <linux-kernel+bounces-777183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7933FB2D659
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:29:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646B0B2D634
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2A84E6AD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:26:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE9F97B484D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4102522B1;
-	Wed, 20 Aug 2025 08:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998DD2D8785;
+	Wed, 20 Aug 2025 08:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fd/wt1GC"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHp/af4T"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4103626CE12
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B401C2C11CF;
+	Wed, 20 Aug 2025 08:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755678359; cv=none; b=sgCrfonj/8hW272jyPnRAKUZmvvTCK7eiFlxZGTyQX/WZ/sXlcrzmAHm1oMi1cmjnSe4JNjpxxalSPlX369skbO/L3AH7N/8mh3mrRzMw7Wg4OmI2qoQxj6eeUXgchHUdVHs4WITKeCmkQ3a4wkpaBwYgcvWTSVlqpX96HbOyac=
+	t=1755678401; cv=none; b=rFEy2tWolEYsq60EnjhM2xpw+4JQ6gtohUzqkiW8Ov+ax2gKu2E2cGRm7yrtEwtH3Il5rCzCNriGMMkkhLxhAzKdgwTN85+FKc2YVZgbucdFDCpU5dnaomWcCGp4BldPjnpW7fjaKvVnWE3TKIMIRUkOAvBGIkQbEY4w1/805nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755678359; c=relaxed/simple;
-	bh=bgl3HkIMW7jTPZzwpbGVR+t4E1BtBWuzf9DJGL4AiFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TzBN5TYGVHDCXgWmoL5q5V39o08v0yc4taKFS3ftym2p0n6DS2CVH8yOWMmAQCx9o+21osZqMkkPtQfrPwYiz7oz+67XjRQcMMzn47QtlZquBRtAQ+67gVg/8MOjQyq+ZxrlWqhx9iQlb87GxpBzxn3uN/BxPnFiq7Cd3tHAZ3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fd/wt1GC; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1755678335; x=1756283135; i=markus.elfring@web.de;
-	bh=bgl3HkIMW7jTPZzwpbGVR+t4E1BtBWuzf9DJGL4AiFM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=fd/wt1GCBMzf+10/UiQ6rNtcq8tnHAVQFOG1WsX9pAJHZl1Q3P1gJkBfkQZM2del
-	 0a2x3h7Xa4/wLOiZyyBhTL4Ndki16jAqUvgKO0/VsPlgUDzW57uAGCCDzW5AbegqI
-	 FkB3EBX8SmT5N+EMSmf73G0uKNzyWH4c3r+dW2iTaDaFHI+LHAjRC57LwtO/hxGu6
-	 Up7L1mcQ62x8VRtsfZEni4REYDDwOwgnucEZWgRBV+dDh8xu/c8onJAzC/Wd819vp
-	 ztOgYP8KEPZy7vzNBHvdMFyRayhPduOtl6ucXoFrd44Z+UqVllkbsXb5TSyK5SDXD
-	 GNH38efdPC11M4UBEg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.226]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBRn-1uILmc1yNR-00feTB; Wed, 20
- Aug 2025 10:25:35 +0200
-Message-ID: <568d8b25-8cb5-48f8-850e-0298e3fc456a@web.de>
-Date: Wed, 20 Aug 2025 10:25:33 +0200
+	s=arc-20240116; t=1755678401; c=relaxed/simple;
+	bh=je5AHg/youKOa+xhCXnHlhnCi4E0rhPm8H3bXUt+7zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FHtgl89P0XZpLyo9ytK2iSFJ7eb20GVUkGDT214yEw2uAkscsICSBhcAkMsFkahixL5y1c6P27bB2iy4lBi2VWgAET4DEuJqStsKxw+XN/1gungGLD49GO3d5/R0wzFAgDEv3xZwylGkZHU3FxYGFGJPuh+OM0PcRpwfYzPb0gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHp/af4T; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e1fc69f86so536818b3a.0;
+        Wed, 20 Aug 2025 01:26:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755678398; x=1756283198; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=moqMZqhapfuLQfkSPWKxhFFyVYs5GkMX6FHp/4+cuAI=;
+        b=lHp/af4TDJDx7hgsCrsG/qCU5D9TFODj31mJkVIGJ3GkHmJ6F1nzhMvQulblXBy0f6
+         4msr6qKEW2a3FmPRpy6aWH/7bVOq/Ehv5w0NER5lfdjuw97JKJsgck1ytBm0nHgYrQlK
+         mFMMRYrBXYwLwuzp1hINgcgTRBlq3Hson+m2DDx1hloYPBrBaVG8CJi9d5LhJ72hZ9vY
+         /4MmCm1oykbsXE7u4lcL2fiPO2WUMOQg4i3UdUsa82dkKDinzG2jJWknVK+apOxIyb8e
+         0rPpyUSmS6KX1tJ4HkWsEAhF4ld/pHUJbDyeYUQhcZtnvLR3Cw9BAfyFZ50dAN2t5cPd
+         TgtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755678398; x=1756283198;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=moqMZqhapfuLQfkSPWKxhFFyVYs5GkMX6FHp/4+cuAI=;
+        b=cBvWtaseOmSUni1M+qJ0WyjcrbbiK7o6Nct1CXEho0GJ/DgjqgVinS2JY44K26VbLA
+         ZzECoNLO3Rv+OhucxKSknm9jx9+5dYbEzfk+s58kN7hAvEapTZiaqbOodpqcY58s8vxH
+         N4cFnso0KHbopIBGmc7qqI53eMNfR2LLYXdVsPmDuIHNR1cDf8GPd2EXAA0SD0jkMxlv
+         3hBNFP5XS/5mI41jyX+SbqjnVVmSKIjw3kwLNYzOIj0Dvg4gVguhu9c3z9DxYTHTCqFl
+         pcIkptZfE5qnB3pv5ADd8dca8pe7iYlIItxkNO3g1y0cN6BulB4TOD1oCPJErRjXYYlo
+         Y3kg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqaNjESvDpDK3S0VgMml8/hTF+iAs+lmgKnW2wZCHYY9DoyGT3AZ4twISdhDi3XjFtK8VMWl4LXIwUNWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrfI1mqg0MAcAtwi8iY8332sNvpxksxwiACRqP5xyWHaXYF4A/
+	6bZCxHGY7U989ey3Zst9gOkTEIgtc1Sal2AeCofDyCRQiyLmFag9PYr3
+X-Gm-Gg: ASbGncvwwsJTIm2OO2tuNSpTtkW0o+pJa342+sGAd1mYRW7U81RpsEKS408BV9ZxOLQ
+	2X7HY9Gbjic0xEzKAieFSHa2imhFxsw7J0d3sXC1Z3V/29wny3+nnzprks/Ow6d3gxTPOfraORc
+	rTqDdOeMvRygHa6xaZWPd/vz9aAvqnQrQGe7SguSNhs4xm41j2oC8P10WGsZrxs5lW06OQ152EB
+	ilYlpVfQbO6i+Mpf7KmqSyLM71h8UHUBDAf+YnRqdhc0YxP7Nq7nvyMwRuSp5X1yYxoyjbEgTIY
+	vo8l9lU7NV6ib9+8idHcbajTwQY2AQHtGt5MmM8anErIDmIeLB/p225Ql+pLe79w9EksZGzpWml
+	VAns4/KnnKlYPf7fMJ2iwEOi38/6vlFXIKHABxdJ8v2mp
+X-Google-Smtp-Source: AGHT+IE18FvJ7No6QPK7ovxobzfmMas2xC//+TYO0cz2t0SD0MgX11pvHmxuexiStSi2EWnCQjQg0Q==
+X-Received: by 2002:a05:6a20:3ca2:b0:240:7ed:4018 with SMTP id adf61e73a8af0-2431b8f31femr3366912637.15.1755678397819;
+        Wed, 20 Aug 2025 01:26:37 -0700 (PDT)
+Received: from OSC.. ([106.222.231.87])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e250eb93sm1567217a91.4.2025.08.20.01.26.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 01:26:37 -0700 (PDT)
+From: Pavan Bobba <opensource206@gmail.com>
+To: shuah@kernel.org,
+	cvam0000@gmail.com
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pavan Bobba <opensource206@gmail.com>
+Subject: [PATCH] grammer correction
+Date: Wed, 20 Aug 2025 13:56:32 +0530
+Message-ID: <20250820082632.10259-1-opensource206@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] iommu/riscv: prevent NULL deref in iova_to_phys
-To: XianLiang Huang <huangxianliang@lanxincomputing.com>,
- iommu@lists.linux.dev, linux-riscv@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
- <joro@8bytes.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
- <robin.murphy@arm.com>, Tomasz Jeznach <tjeznach@rivosinc.com>,
- Will Deacon <will@kernel.org>
-References: <20250820072248.312-1-huangxianliang@lanxincomputing.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250820072248.312-1-huangxianliang@lanxincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:fXaK7bGqvBByaoI3ghEUvLpw3Q0ZctNEkLDdwSBlrtDPV/7aUmX
- MH71RlbOR+iJ+zGIEnrx/4/s6Q2XsJpsHZFY9hvIv0ihpTd4RVz6tmXTtymo0PT6WI+lQcK
- 9JChPfNAGSXQjv0c11I5ReDabbjL93EJsynPSl+V52XMxOaIpCfNe73TOA1zz/MBxivBHWv
- lJNbvywlut7+ARFLSM0HQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:N+h8Jf5Zvqc=;TgajJXDoI8eSFd7NYlIHFbUzMQl
- 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
- 1qvkmFY=
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6> ---
-> Changes
-> v4:
-> - Change the summary as Markus recommends
->=20
-> v3:
-> - Remove redundant pte validation in riscv_iommu_iova_to_phys
-> - Improve subject line to emphasize prevention
-=E2=80=A6
+corrected a minor grammer mistake
 
-Does anything hinder you to integrate repeated patch review ideas better
-into your contributions?
+Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+---
+ tools/testing/selftests/acct/acct_syscall.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Repetition:
-https://lore.kernel.org/lkml/effb29be-6d14-47e5-ab71-454119467750@web.de/
-https://lkml.org/lkml/2025/8/7/282
+diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
+index 87c044fb9293..ee2894e4f7bc 100644
+--- a/tools/testing/selftests/acct/acct_syscall.c
++++ b/tools/testing/selftests/acct/acct_syscall.c
+@@ -22,7 +22,7 @@ int main(void)
+ 	ksft_print_header();
+ 	ksft_set_plan(1);
+ 
+-	// Check if test is run a root
++	// Check if test is run as root
+ 	if (geteuid()) {
+ 		ksft_exit_skip("This test needs root to run!\n");
+ 		return 1;
+-- 
+2.43.0
 
-Regards,
-Markus
 
