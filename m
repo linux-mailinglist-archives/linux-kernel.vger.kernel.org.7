@@ -1,94 +1,105 @@
-Return-Path: <linux-kernel+bounces-777480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B94B2D9F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:22:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59610B2D9F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3941BA6769
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:20:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CFF44E41B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A358E2E0937;
-	Wed, 20 Aug 2025 10:20:02 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73FD2DFF33;
+	Wed, 20 Aug 2025 10:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GKUD28Sd"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B7B2DEA9D
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF33724339D
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755685202; cv=none; b=GDyTnuzypaCA8i8fpZ3lKXHaxR3P2BdP+6hQG7m2a669oCyP6UneKkcAH0lzsHhfsYdb9xoZrg0qWcaHgkxV189owQRrH19+0gpzk9Gt/s/H0/aEMMxyecEe28jLrwo1zCMbs9dnRMyE1rULRsVeaVWHfg1jllLDOPYWVx5wXvY=
+	t=1755685332; cv=none; b=d/zk/5uY99qDBfbqLoLHyogRcFuOhR44Lt0GvuFLjjy4/MaW/Ya/hhbG2WNL03eO95BK62Ybfs6eZjxHLz9jiGlkovEQTdwRuysgLmKZml0ONC4ujCMxQtLv0qRAfLqnqOvYpifNvV0+5jsxWlEWd0r0+Oz6JNXZOSJi7RyOdSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755685202; c=relaxed/simple;
-	bh=ixt4MI8sNyddrirHCmjXmC66O0F6v4cBEiLL8VcL9OQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JWTU8IDc2DI40pex1/a57j/ohJTnAom7QnNWe1NhFaSR67dzdoDKroJv9MehWE5HzYJNq6BC/W74b4XdTOYgkv8eFWjHLe3vAz96ODgKJduiK/MfYZF4oyiuvXX1j6yNYGvoLQwZjdkL7rocShlo4tf9W6gdKWzq4Q/KD1VhzY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c6Mqk1B1zztT9v;
-	Wed, 20 Aug 2025 18:18:58 +0800 (CST)
-Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1B2AD180485;
-	Wed, 20 Aug 2025 18:19:57 +0800 (CST)
-Received: from [10.174.176.250] (10.174.176.250) by
- dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 20 Aug 2025 18:19:56 +0800
-Message-ID: <3a894ee7-0d07-496a-bbb8-abcc431b849b@huawei.com>
-Date: Wed, 20 Aug 2025 18:19:55 +0800
+	s=arc-20240116; t=1755685332; c=relaxed/simple;
+	bh=yPmx2NpBFo/eQiaZItuCSTDGjoPBXIBBgjdLKtn25ks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T9WhXs5HdOj6cSzBjddelRrUf9MRiY0pVzkgBwl004vXSWplh4pzVu+TKSFtBNN2ibYm1DXnSljLJhgD8P8Ggej2ibnkbak2cxP3RINWQnpi6U0VtbttobMpapEsigqDsdSjgLk+0Vwsoaf2FBiPIbc/VFaweDbyehq28BmHky4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GKUD28Sd; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755685317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=v1LgTQHA3Xhf/L11p5n5Wj5Gb0sAQMkBeBHPrqYHHMk=;
+	b=GKUD28SdH7tZnCYITZ7dAjfgQ/NJhfPXbPhoZ0lyVgFro/MgASXLI91gcJwHhNYuklJj56
+	6unNyZMaYhvJm+sF5EdqmpO38Ec7CTvug2Jc84wB6LcNk1qRoANcUphg6VT2ODvQ/hJpUy
+	yX3kj6wzWNV6PV9bHRfw1Vnf7FZnkx0=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dw-xdata: Use str_write_read() in dw_xdata_start() and dw_xdata_perf()
+Date: Wed, 20 Aug 2025 12:21:09 +0200
+Message-ID: <20250820102108.760382-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH -next 00/16] mm/damon: support ARM32 with LPAE
-To: SeongJae Park <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
-References: <20250814160429.67476-1-sj@kernel.org>
-From: Quanmin Yan <yanquanmin1@huawei.com>
-In-Reply-To: <20250814160429.67476-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf200018.china.huawei.com (7.185.36.31)
+X-Migadu-Flow: FLOW_OUT
 
-Hi SJ,
+Remove hard-coded strings by using the str_write_read() helper function
+and silence the following two Coccinelle/coccicheck warnings reported by
+string_choices.cocci:
 
-在 2025/8/15 0:04, SeongJae Park 写道:
-> On Thu, 14 Aug 2025 22:07:12 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
->
->> Hi SJ,
->>
->> Thank you for your detailed suggestions on the patch series. Please allow me
->> some time to thoroughly review each of your recommendations.
-> No worry, please take your time :)
->
->> I haven’t responded
->> to every point immediately because I’d like to first attempt updating the patches
->> accordingly. If I encounter any questions or issues during the process, I’ll promptly
->> reach out to discuss them with you, very appreciate your patience and guidance.
-> Sounds good.
->
->> By the way, this patch series is based on linux-next(commit:2674d1eadaa2).
-> Thank you for sharing this.  From the next time, please use mm-new[1] as a
-> baseline for DAMON patches if there is no reason to not do so.
->
-> [1] https://origin.kernel.org/doc/html/latest/mm/damon/maintainer-profile.html#scm-trees
+  opportunity for str_write_read(write)
+  opportunity for str_write_read(write)
 
-I've prepared the v2 patch set based on the mm-new branch[1]. Your valuable
-feedback would be greatly appreciated!
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/misc/dw-xdata-pcie.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[1] https://lore.kernel.org/all/20250820080623.3799131-1-yanquanmin1@huawei.com/
-
-Thanks,
-Quanmin Yan
+diff --git a/drivers/misc/dw-xdata-pcie.c b/drivers/misc/dw-xdata-pcie.c
+index efd0ca8cc925..a604c0e9c038 100644
+--- a/drivers/misc/dw-xdata-pcie.c
++++ b/drivers/misc/dw-xdata-pcie.c
+@@ -16,6 +16,7 @@
+ #include <linux/mutex.h>
+ #include <linux/delay.h>
+ #include <linux/pci.h>
++#include <linux/string_choices.h>
+ 
+ #define DW_XDATA_DRIVER_NAME		"dw-xdata-pcie"
+ 
+@@ -132,7 +133,7 @@ static void dw_xdata_start(struct dw_xdata *dw, bool write)
+ 
+ 	if (!(status & STATUS_DONE))
+ 		dev_dbg(dev, "xData: started %s direction\n",
+-			write ? "write" : "read");
++			str_write_read(write));
+ }
+ 
+ static void dw_xdata_perf_meas(struct dw_xdata *dw, u64 *data, bool write)
+@@ -195,7 +196,7 @@ static void dw_xdata_perf(struct dw_xdata *dw, u64 *rate, bool write)
+ 	mutex_unlock(&dw->mutex);
+ 
+ 	dev_dbg(dev, "xData: time=%llu us, %s=%llu MB/s\n",
+-		diff, write ? "write" : "read", *rate);
++		diff, str_write_read(write), *rate);
+ }
+ 
+ static struct dw_xdata *misc_dev_to_dw(struct miscdevice *misc_dev)
+-- 
+2.50.1
 
 
