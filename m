@@ -1,126 +1,111 @@
-Return-Path: <linux-kernel+bounces-776710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BBDB2D0BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BFBB2D0C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C276B17785D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:34:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63AB958524F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C884170A37;
-	Wed, 20 Aug 2025 00:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905AD188713;
+	Wed, 20 Aug 2025 00:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="joIF5yeQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="H2rqgFEj"
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968B035336C;
-	Wed, 20 Aug 2025 00:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09E9353377;
+	Wed, 20 Aug 2025 00:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755650054; cv=none; b=BreVpqnCQEQR/fACrwBxvUoQqkJ4CHL+uga8ijcdUmvhZJKgu4LmjIcC7Uj9shfCI3TGc9aGuuLhrOXIDCsSWHLSb/HumA/WZOXqyRzkxuzSAnD+FGTN0oH/sJa7a/Xcie3kqqJAhUaqglASw54C+uE1qgbJAfcUmnBN7jjYytA=
+	t=1755650654; cv=none; b=pVEAPBjQp6HOX0vFCAFol+8wYNOcJwa5OP/s9/gQnF02Kx/LN7cUIhJRNmLBaLvjnY8NCdA368J8ZhJxv9RMN4d2EgP0lhJ97zwB/Z+yds9AWRERgTWzcU5WNyACPPKPQeIhHj/4ITrGp8XWYn8yZyyYIDa/yce1YoSB3+s4lWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755650054; c=relaxed/simple;
-	bh=JAI+oYkdbTIFn8JsqjU/opW6sYv/yyl6y9q76TmwkxQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=W/MYuxV/GQKUKlDPHNkcPUeBQryED0bpmiG7K1NwkK7PtzBuG284Zct55+XNQD4gX9t36Q/TXExysWa6Z9UcTRWL7hTZ/FdqaxNOSgZsgkpfDDAvPgKiqhCk/72gSvZWAZtEJTg4N//RMZvHFeW/IkzofLI0+8dq6niya3m1AlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=joIF5yeQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24FFFC4CEF1;
-	Wed, 20 Aug 2025 00:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755650054;
-	bh=JAI+oYkdbTIFn8JsqjU/opW6sYv/yyl6y9q76TmwkxQ=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=joIF5yeQMxdAwvFbojfpO5WzAKLrlTIFhUXiHjKaZwUIXQzvvrELiXa2mcFqvaQ19
-	 acpb04faE+MKfSIgNl+zM01YV7MplxCAQLMxjFhcVimrkRM0cBYHwJV9zdXCeg3AAd
-	 LfdJG4zchqLMGvIJsGldZXtW9mVJZNjs8XOXoXja7R3j2PUAca+0IYRaWJmJ1w07fx
-	 4pGSviBW6kIpNZ/I5TesMvZ58jrih8zZ7+WTv3TNsVKjrJY0vkcjYJoDiFQlp0HdPf
-	 6Hk6QobI1kDRXcz2lySI09f3VIyou8/WhH64VM6XtsCwcOUO0q6mQvcSdX+5gm29wS
-	 weHGuvofWRQwA==
+	s=arc-20240116; t=1755650654; c=relaxed/simple;
+	bh=Xx1BE2PQOSOIzLk3YWuwBpi4uqq6uqo8cDPkm/P4Mf4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NTvHgShUHGcZwWXbdoP4ofvkSsrXK78ken0EvkF4OWgSQuHe5U9WmfKiCiHYHxX8gsyJ75Rv8mzmRc4ms9O8pD8v4/s+il2EqPtlOb/2w+r45HsK5EtgoS/UWOCfYhOXKX8UNsUdi9u1Z2lVYxFyEXJt7rdFqYYodfbaA27c9DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=H2rqgFEj; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
+	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Xx1BE2PQOSOIzLk3YWuwBpi4uqq6uqo8cDPkm/P4Mf4=; b=H2rqgFEjQO7oCvrlzT+9wFMP5d
+	OWExBlgeTtgDgkCWRxQCgQRhtE3M2rp3baI/TPB2CCoU4bwEO5CePkBNEWLnXDqHvOB7VamavusTh
+	kH2jxFdjIsCNFNfRdAmuhcW/pG25Zm7lQuSMeoG6W9jsmNIS+jlkTcLJHcZ10zyzQY6cknWZkYUIK
+	EBBmvKpJnIal0/gMTzr4Mpl9b08X8DV4E574v6POmh0GNgdAd5niHFfMAIKx/H2rGxHQ/Y03p4OyT
+	SiZRMvGkvTo+gs3bs96dYLZdTu0pRtGR/jS8caqqN0YLVW3qcRaKUwGRgCjyL1QCHcYlHKZ+EETo7
+	tCL5Ku3w==;
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@surriel.com>)
+	id 1uoWoa-000000003pk-4Ao9;
+	Tue, 19 Aug 2025 20:36:33 -0400
+Message-ID: <7d39aa331ca881c2c77b6e02587dda726dfdd755.camel@surriel.com>
+Subject: Re: [PATCH] docs: sysctl: add a few more top-level /proc/sys entries
+From: Rik van Riel <riel@surriel.com>
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Date: Tue, 19 Aug 2025 20:36:32 -0400
+In-Reply-To: <20250819075456.113623-1-rdunlap@infradead.org>
+References: <20250819075456.113623-1-rdunlap@infradead.org>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 02:34:09 +0200
-Message-Id: <DC6U02DZSX1W.1SXD7XQTNHXQL@kernel.org>
-Subject: Re: [PATCH v10 5/7] samples: rust: Add debugfs sample driver
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>, "Dirk Beheme"
- <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-To: "Matthew Maurer" <mmaurer@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
- <20250819-debugfs-rust-v10-5-86e20f3cf3bb@google.com>
-In-Reply-To: <20250819-debugfs-rust-v10-5-86e20f3cf3bb@google.com>
+MIME-Version: 1.0
 
-On Wed Aug 20, 2025 at 12:53 AM CEST, Matthew Maurer wrote:
-> Adds a new sample driver that demonstrates the debugfs APIs.
->
-> The driver creates a directory in debugfs and populates it with a few
-> files:
-> - A read-only file that displays a fwnode property.
-> - A read-write file that exposes an atomic counter.
-> - A read-write file that exposes a custom struct.
->
-> This sample serves as a basic example of how to use the `debugfs::Dir`
-> and `debugfs::File` APIs to create and manage debugfs entries.
->
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
+On Tue, 2025-08-19 at 00:54 -0700, Randy Dunlap wrote:
+> Add a few missing directories under /proc/sys.
+> Fix punctuation and doubled words.
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Rik van Riel <riel@surriel.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-doc@vger.kernel.org
+>=20
+Thanks for adding those.
 
-This is a great example, thanks! I really like how the API turned out.
+FWIW, I don't know what those fips files under
+/proc/sys/crypto do, either :)
 
-When it comes to the newly added Scope API - and I assume this does not com=
-e at
-a surprise - I have some concerns.
+Reviewed-by: Rik van Riel <riel@surriel.com>
 
-But first, thanks a lot for posting the socinfo driver in both variants, wi=
-th
-and without the Scope API.
-
-I had a brief look at both of those and I can see why you want this.
-
-With the Scope thing you can indeed write things a bit more compressed (I t=
-hink
-in the patches the differences looks quite a bit bigger than it actually is=
-,
-because the scope-based one uses quite some code from the file-based one).
-
-I think the downsides are mainly:
-
-  - The degree of complexity added for a rather specific use-case, that is =
-also
-    perfectly representable with the file-based API.
-
-  - It makes it convinient to expose multiple fields grouped under the same=
- lock
-    as separate files, which design wise we shouln't encourage for the reas=
-ons
-    we discussed in v8.
-
-I think for the sake of getting this series merged, which I would really lo=
-ve to
-see, I think we should focus on the file-based API first. Once we got this
-landed I think we can still revisit the Scope idea and have some more discu=
-ssion
-about it.
-
-I will have a more detailed look tomorrow (at least for the patches 1-5).
-
-Thanks again for working on this!
-
-- Danilo
+--=20
+All Rights Reversed.
 
