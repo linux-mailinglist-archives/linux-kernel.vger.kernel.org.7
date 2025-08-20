@@ -1,186 +1,394 @@
-Return-Path: <linux-kernel+bounces-777886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A139B2DEE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:16:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6052BB2DEC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3556A1C433C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 191D26270CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4060C26529B;
-	Wed, 20 Aug 2025 14:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F221265CCB;
+	Wed, 20 Aug 2025 14:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uUXR33tq"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f95pVk7Y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8861F26FA5B;
-	Wed, 20 Aug 2025 14:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4825725F798;
+	Wed, 20 Aug 2025 14:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755698949; cv=none; b=r3pC3CAr+Qn2j79Wd7OCB6PursU5hb4VRRbKl3ppuPOIf5KClFBySjZYBClFhoNG7e1/hlBpaDDQ4jFZwNQWMDMULzpz93G7ExsA+QYWalshHGPmy3yrOKFJO/WCxMzb/EHqXbT/sngCFjVLabnQK89TSgJRtebtpDKN19z5LJY=
+	t=1755698927; cv=none; b=bjgBAGL9Wrn7OhhpxZOgrAawIBi5qS7e4EhUSRZkc+96GXwHEp16VM/9vEMwANCQJqETgjwnqtv03Ed8g8IbxfUNZgxzeLFoCD8UjP9jwTwKZhb0B5IReCuyoquyQ1VFd1XHqLpjcqcQPFbTILPt5kO9MnKcKGAw3WOME65pLRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755698949; c=relaxed/simple;
-	bh=g8KSnjw4Ck2JxcfN5+vo6c/ojSXjlUFQbHOQplOuqc8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=I5fCkYMCRfFZ8Eo+TqYke6XKzQVb4gejEvdzZiLeZ9ANEUE5cJnWSaMDorJ8Tbxp7T7F8CK5fxncp3M/hBxrsDdfskoxO7eJQsSMGUYQAxmdM4iF/1M31K0sml2Pa2e84rqqG363u32mGywGtHaChTaH/Y9rRsmDoy1QzmCtESk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uUXR33tq; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1755698928; x=1756303728; i=markus.elfring@web.de;
-	bh=ByLJAhTWUgqF+nGIUsOp5gmmTr+wHhVv6eR+4UUhWig=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=uUXR33tqVuLVGMBE+xaDMVHgpjt5UYjArs0URqRkaqs3RhsoWq/KZijLuluAAGuz
-	 CjcIDNKk6x3tDqZv8hV1HCvjX6LFo2KuvzPvlDRIADQAb/LXSaPIHU3beSHqCndnV
-	 5yXgTdJ55IQscGyGYZjYY/j38AtAkib++w2eTXP/b72jPbIYujK1xEewtzuKTTdcT
-	 a1ycwDdxubG90BAFstFtlTQKqV1bcDtx+uf5JcY3kp0JBm42bm8MU6Bw1l+Wp3uXk
-	 BmzRilwD3imvnvrgDfj6cPoBrJfN+tY3II+26RvHZD8OtS1r/A7dglQ9F4F2eqitT
-	 hZ1Pk4eOaNJvAcxwBw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.226]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mt8gP-1uYrTF22S9-00sasF; Wed, 20
- Aug 2025 16:08:48 +0200
-Message-ID: <d02c9ad2-ea89-4e82-80ad-6d8359f154a1@web.de>
-Date: Wed, 20 Aug 2025 16:08:31 +0200
+	s=arc-20240116; t=1755698927; c=relaxed/simple;
+	bh=JT5fbIVV1PlEoEDLWiwgYr8s80d/+idcn0bSCX/C5nY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d6RwudUWcwCxUP72n9rVg30vtHAxN77ZCdI+7ghA+iupKmSU2OMJEHVQjHjATB35458hLoA2bw6nYC2j6mpNbBHz1pIIUWQYCVMJE0HE707/MCWiEaVNDzha96PC3Blern9DiIvvgTX6E+uNcSr8elUDhc3mRUVzLXxQsQDMNk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f95pVk7Y; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755698925; x=1787234925;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JT5fbIVV1PlEoEDLWiwgYr8s80d/+idcn0bSCX/C5nY=;
+  b=f95pVk7Y+6jRPU2SGazMPWXDusuHPwOz5a76D/cbEoa/QY90e/xX0wGf
+   0D8PkmYOtzBBUVzv7nC1hXvSMue4fVVay6E6jux4/gimzXRAjm19/z/PG
+   gzi25B1K2sSLdi/GFlc2sFN6Uokc3bilnZghcawpaWJN6wkf7wIQAmyLv
+   nxBuVv/EW+ujlm2NaacPQ3wmgPITeIVqD/NlxEg0GkIGCOKuaaqyQNVCg
+   w4kdGrJbX/BQ5ATlPQrVP7PR/u0gY3yQs4W5tB3wY6bJbYXt+ns8AtmQY
+   2m50bVXf+AacDZDXOw7pnWCqYCQ7YAg6R3GD1frVK3drCy1kHVtF9KoEb
+   g==;
+X-CSE-ConnectionGUID: G6bRY8WsT2upuifvneCUng==
+X-CSE-MsgGUID: K33i+kYDRn65r5zJ10pbXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="56993727"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="56993727"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:08:44 -0700
+X-CSE-ConnectionGUID: SeH5IhflSRCaaeLwBTO8Vg==
+X-CSE-MsgGUID: giXJZ4SGTdGwXKJkP5U4mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="205298112"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:08:42 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uojUU-00000006x8G-2L6R;
+	Wed, 20 Aug 2025 17:08:38 +0300
+Date: Wed, 20 Aug 2025 17:08:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] iio: magnetometer: add support for Infineon
+ TLV493D 3D Magentic sensor
+Message-ID: <aKXW5pGiN18DyIZ7@smile.fi.intel.com>
+References: <20250814-tlv493d-sensor-v6_16-rc5-v4-0-81b82805aae0@gmail.com>
+ <20250814-tlv493d-sensor-v6_16-rc5-v4-1-81b82805aae0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kory Maincent <kory.maincent@bootlin.com>, netdev@vger.kernel.org,
- Jakub Kicinski <kuba@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20250820132708.837255-1-kory.maincent@bootlin.com>
-Subject: Re: [PATCH net] net: pse-pd: pd692x0: Fix power budget leak in
- manager setup error path
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250820132708.837255-1-kory.maincent@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lBG2nQqrP2Uc9DgvosKWjyhJpuCkWsUnzw8HnRsVtt1VXx24NYL
- GOC0tgxisyBXLE0SijUa8dg1JIyX8PYbCBVwB9IxcQCd7pb4VlZSIhe667MYhRxh2BhrNA6
- hdqWNHDBnssz6gfB9Ty8Q6duv3pB3vfyNSbJ1nxZ8uuOCjByM4ud7bdK033EVVK5MY0jY+b
- FREFJW8Pp6Oqz9j1Xgsrg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jGaLJwtiFKI=;Gykr+nKJp2wWNF7yNjne5XJUEWz
- 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
- mXrmDj7WnPdHWhAPeOh
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250814-tlv493d-sensor-v6_16-rc5-v4-1-81b82805aae0@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-=E2=80=A6
-> +++ b/drivers/net/pse-pd/pd692x0.c
-=E2=80=A6
-> @@ -1185,31 +1217,27 @@ static int pd692x0_setup_pi_matrix(struct pse_co=
-ntroller_dev *pcdev)
-=E2=80=A6
-> +	pd692x0_of_put_managers(priv, manager, nmanagers);
-> +	return 0;
+On Thu, Aug 14, 2025 at 08:23:43AM +0530, Dixit Parmar wrote:
+> The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
+> applications includes joysticks, control elements (white goods,
+> multifunction knops), or electric meters (anti tampering) and any
+> other application that requires accurate angular measurements at
+> low power consumptions.
+> 
+> The Sensor is configured over I2C, and as part of Sensor measurement
+> data it provides 3-Axis magnetic fields and temperature core measurement.
+> 
+> The driver supports raw value read and buffered input via external trigger
+> to allow streaming values with the same sensing timestamp.
+> 
+> While the sensor has an interrupt pin multiplexed with an I2C SCL pin.
+> But for bus configurations interrupt(INT) is not recommended, unless timing
+> constraints between I2C data transfers and interrupt pulses are monitored
+> and aligned.
+> 
+> The Sensor's I2C register map and mode information is described in product
+> User Manual [1].
 
-How do you think about to apply the following code variant?
+> --- a/drivers/iio/magnetometer/Makefile
+> +++ b/drivers/iio/magnetometer/Makefile
+> @@ -23,6 +23,8 @@ st_magn-$(CONFIG_IIO_BUFFER) += st_magn_buffer.o
+>  obj-$(CONFIG_IIO_ST_MAGN_I2C_3AXIS) += st_magn_i2c.o
+>  obj-$(CONFIG_IIO_ST_MAGN_SPI_3AXIS) += st_magn_spi.o
+>  
+> +obj-$(CONFIG_INFINEON_TLV493D)		+= tlv493d.o
+> +
+>  obj-$(CONFIG_SENSORS_HMC5843)		+= hmc5843_core.o
+>  obj-$(CONFIG_SENSORS_HMC5843_I2C)	+= hmc5843_i2c.o
+>  obj-$(CONFIG_SENSORS_HMC5843_SPI)	+= hmc5843_spi.o
 
-	ret =3D 0;
-	goto put_managers;
+I haven't got the ordering rules here and in Kconfig. Can it be alphabetical?
+
+...
+
+> +enum tlv493d_channels {
+> +	TLV493D_AXIS_X,
+> +	TLV493D_AXIS_Y,
+> +	TLV493D_AXIS_Z,
+> +	TLV493D_TEMPERATURE
+> +};
+> +
+> +enum tlv493d_op_mode {
+> +	TLV493D_OP_MODE_POWERDOWN,
+> +	TLV493D_OP_MODE_FAST,
+> +	TLV493D_OP_MODE_LOWPOWER,
+> +	TLV493D_OP_MODE_ULTRA_LOWPOWER,
+> +	TLV493D_OP_MODE_MASTERCONTROLLED
+> +};
+
++ trailing commas in both cases as discussed in the other email.
+
+...
+
+> +static const u32 tlv493d_sample_rate_us[] = {
+> +	[TLV493D_OP_MODE_POWERDOWN] = 0,
+> +	[TLV493D_OP_MODE_FAST] = 305,
+> +	[TLV493D_OP_MODE_LOWPOWER] = 10000,
+> +	[TLV493D_OP_MODE_ULTRA_LOWPOWER] = 100000,
+
+Perhaps
+	10 * USEC_PER_MSEC
+	100 * USEC_PER_MSEC
+
+respectively?
+
+> +	[TLV493D_OP_MODE_MASTERCONTROLLED] = 305
+
++ Trailing comma.
+
+> +};
+
+...
+
+> +static s16 tlv493d_get_channel_data(u8 *b, enum tlv493d_channels ch)
+> +{
+> +	u16 val;
+> +
+> +	switch (ch) {
+> +	case TLV493D_AXIS_X:
+> +		val = FIELD_GET(TLV493D_BX_MAG_X_AXIS_MSB, b[TLV493D_RD_REG_BX]) << 4 |
+> +			FIELD_GET(TLV493D_BX2_MAG_X_AXIS_LSB, b[TLV493D_RD_REG_BX2]) >> 4;
+
+Wrong indentation, make both 'F':s to be in the same column.
+
+> +		break;
+> +	case TLV493D_AXIS_Y:
+> +		val = FIELD_GET(TLV493D_BY_MAG_Y_AXIS_MSB, b[TLV493D_RD_REG_BY]) << 4 |
+> +			FIELD_GET(TLV493D_BX2_MAG_Y_AXIS_LSB, b[TLV493D_RD_REG_BX2]);
+> +		break;
+> +	case TLV493D_AXIS_Z:
+> +		val = FIELD_GET(TLV493D_BZ_MAG_Z_AXIS_MSB, b[TLV493D_RD_REG_BZ]) << 4 |
+> +			FIELD_GET(TLV493D_BZ2_MAG_Z_AXIS_LSB, b[TLV493D_RD_REG_BZ2]);
+> +		break;
+> +	case TLV493D_TEMPERATURE:
+> +		val = FIELD_GET(TLV493D_TEMP_TEMP_MSB, b[TLV493D_RD_REG_TEMP]) << 8 |
+> +			FIELD_GET(TLV493D_TEMP2_TEMP_LSB, b[TLV493D_RD_REG_TEMP2]);
+> +		break;
+> +	}
+
+Ditto for all of the above.
+
+> +	return sign_extend32(val, 11);
+> +}
+
+...
+
+> +static int tlv493d_get_measurements(struct tlv493d_data *data, s16 *x, s16 *y,
+> +				s16 *z, s16 *t)
+
+Indentation issue. Please, check fully the code for such issues.
+
+> +{
+> +	u8 buff[7] = {};
+> +	int err, ret;
+> +	struct device *dev = &data->client->dev;
+> +	u32 sleep_us = tlv493d_sample_rate_us[data->mode];
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/*
+> +	 * Poll until data is valid,
+> +	 * For a valid data TLV493D_TEMP_CHANNEL bit of TLV493D_RD_REG_TEMP should be set to 0.
+> +	 * The sampling time depends on the sensor mode. poll 3x the time of the sampling time.
+> +	 */
+> +	ret = read_poll_timeout(i2c_master_recv, err, err ||
+> +			FIELD_GET(TLV493D_TEMP_CHANNEL, buff[TLV493D_RD_REG_TEMP]) == 0,
+
+Please, resplit logically, i.e leave the condition on the single line.
+Also to make it shorter you can use '!' instead of ' == 0'.
+
+> +			sleep_us, 3 * sleep_us, false, data->client, buff,
+> +			ARRAY_SIZE(buff));
+> +	if (ret) {
+> +		dev_err(dev, "i2c read poll timeout, error:%d\n", ret);
+> +		goto out_put_autosuspend;
+> +	}
+> +	if (err < 0) {
+> +		dev_err(dev, "i2c read data failed, error:%d\n", err);
+> +		ret = err;
+> +		goto out_put_autosuspend;
+> +	}
+> +
+> +	*x = tlv493d_get_channel_data(buff, TLV493D_AXIS_X);
+> +	*y = tlv493d_get_channel_data(buff, TLV493D_AXIS_Y);
+> +	*z = tlv493d_get_channel_data(buff, TLV493D_AXIS_Z);
+> +	*t = tlv493d_get_channel_data(buff, TLV493D_TEMPERATURE);
+> +
+> +out_put_autosuspend:
+> +	pm_runtime_put_autosuspend(dev);
+> +	return ret;
+> +}
+
+...
+
+> +	s16 x, y, z, t;
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = tlv493d_get_measurements(data, &x, &y, &z, &t);
+> +		if (ret)
+> +			return ret;
+> +
+> +		/* Return raw values for requested channel */
+> +		switch (chan->address) {
+> +		case TLV493D_AXIS_X:
+> +			*val = x;
+> +			return IIO_VAL_INT;
+> +		case TLV493D_AXIS_Y:
+> +			*val = y;
+> +			return IIO_VAL_INT;
+> +		case TLV493D_AXIS_Z:
+> +			*val = z;
+> +			return IIO_VAL_INT;
+> +		case TLV493D_TEMPERATURE:
+> +			*val = t;
+> +			return IIO_VAL_INT;
+> +		default:
+> +			return -EINVAL;
+> +		}
+
+Just wondering if you have tested for negative coordinates, does it propagate
+correctly?
+
+> +	case IIO_CHAN_INFO_SCALE:
+> +		switch (chan->type) {
+> +		case IIO_MAGN:
+> +			/*
+> +			 * Magnetic field scale: 0.0098 mTesla (i.e. 9.8 µT)
+> +			 * Magnetic field in Gauss: mT * 10 = 0.098.
+> +			 */
+> +			*val = 98;
+> +			*val2 = 1000;
+> +			return IIO_VAL_FRACTIONAL;
+> +		case IIO_TEMP:
+> +			/*
+> +			 * Temperature scale: 1.1 °C per LSB, expressed as 1100 m°C
+> +			 * Returned as integer for IIO core to apply:
+> +			 * temp = (raw + offset) * scale
+> +			 */
+> +			*val = 1100;
+> +			return IIO_VAL_INT;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	case IIO_CHAN_INFO_OFFSET:
+> +		switch (chan->type) {
+> +		case IIO_TEMP:
+> +			/*
+> +			 * Temperature offset includes sensor-specific raw offset
+> +			 * plus compensation for +25°C bias in formula.
+> +			 * offset = -raw_offset + (25000 / 1100)
+> +			 * -340 + 22.72 = -317.28
+> +			 */
+> +			*val = -31728;
+> +			*val2 = 100;
+> +			return IIO_VAL_FRACTIONAL;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+
+...
+
+> +static irqreturn_t tlv493d_trigger_handler(int irq, void *ptr)
+> +{
+> +	int ret;
+> +	s16 x, y, z, t;
+> +	struct iio_poll_func *pf = ptr;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct tlv493d_data *data = iio_priv(indio_dev);
+> +	struct device *dev = &data->client->dev;
+> +	struct {
+> +		s16 channels[3];
+> +		s16 temperature;
+> +		aligned_s64 timestamp;
+> +	} scan;
+> +
+> +	ret = tlv493d_get_measurements(data, &x, &y, &z, &t);
+> +	if (ret) {
+> +		dev_err(dev, "failed to read sensor data\n");
+> +		goto out_trigger_notify;
+> +	}
+> +
+> +	scan.channels[0] = x;
+> +	scan.channels[1] = y;
+> +	scan.channels[2] = z;
+> +	scan.temperature = t;
+> +	iio_push_to_buffers_with_ts(indio_dev, &scan, sizeof(scan),
+> +				pf->timestamp);
+
+Interestingly that you have used 100 limit and suddenly don't do it here
+and maybe elsewhere. Why inconsistent style? Please, go through the whole
+file and make sure the style is consistent in all of the aspects:
+- C style used
+- comments style (one-line and multi-line)
+- indentation
+- etc.
+
+> +out_trigger_notify:
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+...
+
+> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> +				iio_pollfunc_store_time,
+> +				tlv493d_trigger_handler,
+> +				NULL);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "iio triggered buffer setup failed\n");
+> +
+> +	ret = pm_runtime_set_active(dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret < 0)
+> +		return ret;
+
+For each of 'ret < 0' please double check that this is indeed required.
+Otherwise, use common style for all standard cases, i.e.
+
+	if (ret)
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-> =20
-> -		for (j =3D 0; j < manager[i].nports; j++)
-> -			of_node_put(manager[i].port_node[j]);
-> -		of_node_put(manager[i].node);
-> -	}
-> +err_managers_req_pw:
-
-free_pw_budget:
-
-
-> +	pd692x0_managers_free_pw_budget(priv);
-> +err_of_managers:
-
-put_managers:
-
-
-> +	pd692x0_of_put_managers(priv, manager, nmanagers);
->  	return ret;
->  }
-=E2=80=A6
-
-
-Regards,
-Markus
 
