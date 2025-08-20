@@ -1,120 +1,105 @@
-Return-Path: <linux-kernel+bounces-776860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B70B2D242
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:04:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05900B2D244
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72495680331
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B49A4621929
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006BF2343B6;
-	Wed, 20 Aug 2025 03:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA55F23643E;
+	Wed, 20 Aug 2025 03:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="x1BkXOIm"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="PO/0gJEu"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3DC2C859;
-	Wed, 20 Aug 2025 03:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2C91C3BFC;
+	Wed, 20 Aug 2025 03:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755659016; cv=none; b=n/VpTOLiscgO/ZpcKnsNlhowYYmi6owrLI/PtfE6S/FSycjyxRnoF0Q6Y4ebQ7n1fA/84iHng1r2lyAj1cGS7q+ECEZtmJlAP0eJl9k22a095m2DJzMPMmZIAbWesbR7YBXcZXt565rD/Z7uP4QsmZLWvv3d97y9zDpurPXhZbw=
+	t=1755659217; cv=none; b=jAeLCF3x9lVGmbXWA6JAEP3QDjMjOLYZ1sqQonKI74Lwx3jkQszEgYFkdGyscJ44hoPzeSc/R4lzMR7DjrIeMRm5zKKWBbLBOBThSkyh0IRKMi83DCwpBd+GsSsss7AVdGtFzUEL/6w8bAts2YbeW5LL1RrpuhzUKaLTknn9MXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755659016; c=relaxed/simple;
-	bh=pwG7+up/AaR3CHTWrmgAoo7R1642PpG4lENEDoKEt94=;
+	s=arc-20240116; t=1755659217; c=relaxed/simple;
+	bh=DPt7Pi+L7phcHIMxqL+fgF1oO1Wovx0g/uTdqllSL6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UEjb+Sv7skcm4L1OK4boxGm1tFPLNxL63AOa46+LcXqrWjUjbeqKDTmuoUhaT/dQ8M2yNmhJTlbjS5AayKSC0bAnCtCe+6BvVZv28lL9nljGdHyILPQV4l1IpAwAkfqqGjbcmwnvWvLt2jBtH91NeXE2tivbQV/IBz2KtPHuueg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=x1BkXOIm; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=T8l7eksCnZgf3owz6oDBmv8SoF3MjbglvYRg9j+ht9A=; b=x1BkXOImnRYA4i7tLz8JrCRgKC
-	kQWymUFMvYEMPrzzhlio2BlNKYqr9nPG6KVXcmxMtL2D1zYEkolO9WFabFiMJY2HJolkWWmBQn418
-	M9ZvZWNsBXvX3cLYhQl0Ej93hUqXYWt1me7Ynq4Kv6GqFgMRMCDkdRicm3dQpHq92Zw0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uoZ6Y-005GlX-N7; Wed, 20 Aug 2025 05:03:14 +0200
-Date: Wed, 20 Aug 2025 05:03:14 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk <roan@protonic.nl>
-Subject: Re: [PATCH net-next v2 1/5] ethtool: introduce core UAPI and driver
- API for PHY MSE diagnostics
-Message-ID: <489b2959-3374-4766-a982-9e7c26077899@lunn.ch>
-References: <20250815063509.743796-1-o.rempel@pengutronix.de>
- <20250815063509.743796-2-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUxPpgubuN9R/+Hbm6VOCgG9p6aWsvzy51GgGF364j+Ub1ch7NhleU0Ic0sgYDmleey4XCXqk3DNfF8+0O+XeOY1J3cvnIVnCU75BvShNEv3Jo87vekv88TpUV0muMimKC2UUs6P+6zSZsyj4pVjOYaUmUsjUf3WyxysOYiMVbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=PO/0gJEu; arc=none smtp.client-ip=1.95.21.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=2RofOJEfn1P9mwF+4wr1q1ngNmkqmQURn9mwJjYoVRs=;
+	b=PO/0gJEuI/g09HqkDHc1OzLiqd/rrnJawcn/rOV2MiA/sZyBeblvSORzIOo8D5
+	VgAZPcKtlkgBTaDTE+Ip/bs06N0QDUbe5e0d385HyKmJDogo5U1lXOlLH4rQH2iQ
+	6deyueT9LN2/p8m33dLryWar/O0t4qWTmjHIED9SygDxo=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDnBYuVO6Vodyb4Ag--.56412S3;
+	Wed, 20 Aug 2025 11:05:59 +0800 (CST)
+Date: Wed, 20 Aug 2025 11:05:57 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>
+Subject: Re: [PATCH v2] ARM: dts: imx6-karo: Replace license text comment
+ with SPDX identifier
+Message-ID: <aKU7leerEAZHf4Qr@dragon>
+References: <20250703-karo-dts-lic-v2-1-329f4c55913e@prolan.hu>
+ <0fdab5ac-604b-46fd-bd25-cfa7afd06f98@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250815063509.743796-2-o.rempel@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0fdab5ac-604b-46fd-bd25-cfa7afd06f98@prolan.hu>
+X-CM-TRANSID:M88vCgDnBYuVO6Vodyb4Ag--.56412S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKr15Kr1xCrWfGry5WrW5GFg_yoWDKrgE9F
+	4xuwsxCw15KF4I9F4fGryavasrKFy8XF47XwsYvF9xZ3ZrGryDXFs5WwnYvrn8W3yfZ3Zr
+	CFy5X34DCwnFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU86wZ3UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNxh43WilO5j6owAA39
 
-> Channel-to-pair mapping is normally straightforward, but in some cases
-> (e.g. 100BASE-TX with MDI-X resolution unknown) the mapping is ambiguous.
-> If hardware does not expose MDI-X status, the exact pair cannot be
-> determined. To avoid returning misleading per-channel data in this case,
-> a LINK selector is defined for aggregate MSE measurements.
+On Thu, Aug 07, 2025 at 04:46:26PM +0200, CsÛk·s Bence wrote:
+> Hi,
+> 
+> On 2025. 07. 03. 11:09, Bence CsÛk·s wrote:
+> > Replace verbatim license text with a `SPDX-License-Identifier`
+> > 
+> > The comment header mis-attributes this license to be "X11", but the
+> > license text does not include the last line "Except as contained in this
+> > notice, the name of the X Consortium shall not be used in advertising or
+> > otherwise to promote the sale, use or other dealings in this Software
+> > without prior written authorization from the X Consortium.". Therefore,
+> > this license is actually equivalent to the SPDX "MIT" license (confirmed
+> > by text diffing).
+> > 
+> > Cc: Lothar Waﬂmann <LW@KARO-electronics.de>
+> > Acked-By: Lothar Waﬂmann <LW@KARO-electronics.de>
+> > Signed-off-by: Bence CsÛk·s <csokas.bence@prolan.hu>
+> > ---
+> > Changes in v2:
+> > - fix message tags and typos
+> > - collect Lothar's Ack
+> 
+> So, what do you think, is this patch acceptable now this way?
 
-This is the same with cable test. The API just labels the pairs using
+Hmm, I applied it [1], didn't I?
 
-        ETHTOOL_A_CABLE_PAIR_A,
-        ETHTOOL_A_CABLE_PAIR_B,
-        ETHTOOL_A_CABLE_PAIR_C,
-        ETHTOOL_A_CABLE_PAIR_D,
+Shawn
 
-It does not take into account MDI-X or anything.
+https://lore.kernel.org/all/aGuOO36kkTWtM2yy@dragon/
 
-> @@ -1174,6 +1246,60 @@ struct phy_driver {
->  	/** @get_sqi_max: Get the maximum signal quality indication */
->  	int (*get_sqi_max)(struct phy_device *dev);
->  
-> +	/**
-> +	 * get_mse_config - Get configuration and scale of MSE measurement
-> +	 * @dev:    PHY device
-> +	 * @config: Output (filled on success)
-> +	 *
-> +	 * Fill @config with the PHY's MSE configuration for the current
-> +	 * link mode: scale limits (max_average_mse, max_peak_mse), update
-> +	 * interval (refresh_rate_ps), sample length (num_symbols) and the
-> +	 * capability bitmask (supported_caps).
-> +	 *
-> +	 * Implementations may defer configuration until hardware has
-> +	 * converged; in that case they should return -EAGAIN and allow the
-> +	 * caller to retry later.
-> +	 *
-> +	 * Return:
-> +	 *  * 0              - success, @config is valid
-> +	 *  * -EOPNOTSUPP    - MSE configuration not implemented by the PHY
-> +	 *		       or not supported in the current link mode
-> +	 *  * -ENETDOWN      - link is down and configuration is not
-> +	 *		       available in that state
-
-This seems a bit odd. phylib knows the state of the link. If it is
-down, why would it even ask? 
-
-	Andrew
 
