@@ -1,209 +1,151 @@
-Return-Path: <linux-kernel+bounces-777048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4ADCB2D477
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:05:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C79DB2D469
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7781BC7BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:05:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18DCE1C23693
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AC32D24A9;
-	Wed, 20 Aug 2025 07:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B0C2D248E;
+	Wed, 20 Aug 2025 07:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzzzrcQB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ayql48Ud"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F86535336A;
-	Wed, 20 Aug 2025 07:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C720F158DAC
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 07:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755673521; cv=none; b=p2zcj2Pxdyoz7Jv1w4tD7yIwTweIY4+UPf7p7rfpa7Ky6jyGZ9KjXNTck4Qp+t5Rx9mWiH+dorPC8cN/ELmtGS3eU1aAA/lMsUIR3K+mJB+GrhQvlRUlApXYjXg3j5xaeb89dOETKteYk2mhbDeBd9rF5LTeFmFepf5JJIcoY68=
+	t=1755673373; cv=none; b=SF5BAFZkybqkBDgEcmfDC2ApJ7Gbe7l8QETZQfzr2HHrb4ok+D4+XfeX/T2J0ocRMRVAc5V2n4rKXWOpLw7ADogkNY5ZPydHQ8/hZlF5hY7WnQ7aFFfYiOh9SYedwIAgCYdZqO07yb5vYW+LPC1P7um0zwM03UrvofYBzMwMmyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755673521; c=relaxed/simple;
-	bh=KEYfh4PJvrgBa95LZ3pjvfb1K6WI8Uw2nKvoJM+W9wA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Km9Kv/z9ReXN3StHTnxsi5Cxz1RMPzXpicEH31IZl9bn4o2e+kyQCR86XNZQukftu7b55Bw6rCVlNMlzSPY4Vz06pzu8uLoOVwACmik+U0WniI1UDmAPpDlLQ2bHP7a6eHr+Dahu1COzzWQgxrLvCQEpXoAdnoenMzJU9+2Ksww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzzzrcQB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90982C116D0;
-	Wed, 20 Aug 2025 07:05:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755673518;
-	bh=KEYfh4PJvrgBa95LZ3pjvfb1K6WI8Uw2nKvoJM+W9wA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CzzzrcQBbIqpX8uzZUPojwM27IwtbuODyEFkaXtqm3CvsTzQjS/cTMWmRwqoQK1Cm
-	 Vzd3d05YKv5t1XAfzguWakulffRfdLLlaYtQ0mVYcSuO91zJO/+mVuCJc+Rgvt+oZb
-	 2i/2/u8PVZ2sDgaVRvCA7GpUdQ7QRarjTHJlccMBcZRIsbLUSmWir5m7XoTjpOEE7c
-	 0cmD11R7vghvZt4KE/a+Pq1ladn/8SaaT9o6loaMQ28YmaJZeKB2JGD0htPn2sNFW6
-	 QEiQXzhUDVPzr5WpSwE63n7eMPb6vSOYlxgIm+13Xfj0u2zor4rwpr7j4D5XxIMKmR
-	 Cbq6MmMlXwZ+Q==
-Message-ID: <d07a4397-1648-4264-8a30-74a2ea3da165@kernel.org>
-Date: Wed, 20 Aug 2025 16:02:31 +0900
+	s=arc-20240116; t=1755673373; c=relaxed/simple;
+	bh=x6AMMrfKmpsnt80qI/jaePh0x1MxD2M+8h0kme5S3Q4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=poWekvLUSUTJVHOr5PoUFLtBPVvZHDj5uphm+xcInFljYFvJWj2ABB2wK3dlqBRbY5EnYp1aEXQ3Zxb90DQkBu1XVAoqOnxJND9Ef3kd/nW6qPuXscD/sJIiGU43Jf3V0OD22j8VWtz6jMlfbOxWo0y7ac1F79M9qCVprwtKCxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ayql48Ud; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb78d5e13so94695066b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755673370; x=1756278170; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kz8t+h/h/0n0QXBXq+nhgUGC9ql7IeTr95ekPgWAy9w=;
+        b=Ayql48UdW5wMucRBLmRuaPoWOcyrK3nFUzVxt5MGg968ELMyZ/66J8ndjJX3duik0h
+         Uju8Dhu6Y5pNuiNePl/8/il0ijnKn5yq/ZycqHRKcyHxOvVDZ7UwGRLm7kQGJJLurEdg
+         bWZkpnoo2HkWGGSbBnC5Urro5z9U2GotEz2O1kBeSdkKyiLcwG56A5gCt2wtlNGuUryV
+         bux0ILtS4LZn8xl+udlfZFWTuN77m3mV1ldvbfMR3QjqYbFto92THAnYjyA5wyDMp5wh
+         uWTK4FLC6kjUd9MWoKEV9USSY5KmWfZPtv5lsJM9PkwlQ/7plWhLplI+8YhuMR10mSBb
+         dvvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755673370; x=1756278170;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kz8t+h/h/0n0QXBXq+nhgUGC9ql7IeTr95ekPgWAy9w=;
+        b=SQ8VvtGvsq8cQcHUH5Bk/dgp3qoZ4i/TfdAyk31VHLdPvap8Ovwh/fKYBg2aiwRV6N
+         we/PldFHOvr1lK8QhTaQEAnwy1yO0/z8+M5mUkOsfSeix8ldf5BplgYknmR+DF+xs0RD
+         LIU6RTmVBuN87FyKmfrKXzk399C4Z02ddwAXpKBKwwTObCcNSMa+gSOztu3axcaGkbmI
+         zb06x2vmtx6bpNmIn8soot6Y5yKTQxSnxaGHWEudiAIEdO2ErS0Ohk3eoRvz3WCydM0E
+         8nYo6IEVRKrgtmzLdmHLxAy1E+X9KoGIv28kYblToP99Yaj32ZtLNum2N+6LO7XGMrQJ
+         y6Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7fpySQGJqLJNRMBC6QQvm+RXQdyfq3pB1SVhlKs+Pyhk1LnuRXfmmwyeLEOmL1htcVxxQ8k6osO1j75E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6+Cghr2WUU3BXkN/CJ9hcMOfQp8sCR4F/DuOtUTLFLVcMSmLl
+	G0GOhykqzilaUncXiOLpCmWPHg8lh0dhMH84s1gVU6o3yTfGhrQfWWupoUHN/LNSGWM=
+X-Gm-Gg: ASbGncuK8TlTasqTQVzs2SU1DjZrfFLvtdaBbJ8Rkr6Qdu1ul7uraYkywY+H/A5JA0e
+	DM+J3amyxH4avwi1lJ+f4nsoIcQPh0iJx8Z4VegwFrVQHTdziXbVlCOU7g8KaPUSr5ohBDn4k/1
+	/+/uk9XbGveRFbNLPXZz6r+vNCK+YerJitM2xWsZFNMk6vtmVnTzg/wECYaDcl97TwNNsAPB/8d
+	rrCz4bgh92yg9ls4u/6Em14nHl9lptgWfehi7F586KemOi/KZzVVMA2EMfCx+wbvF3q8jf1AX4q
+	XFiGaBsZLAfFRIWcIo4io1raIxbFMHBUsaSpGCmRuN2moFAFSw3K57Gy0W+NZ5lVnD4JLOoe8EU
+	BW4+rjnaWiUy8AMtM10z90uDuIzsoJSDzqFhyLQ10cWf3tJRR3A==
+X-Google-Smtp-Source: AGHT+IEUJtY9T7M3w+t6NgODZP2UMBO1bB6yUNgABbdBlZ++2gMxl+ZFtQKIgu4nmM7A4aFMOc3sVQ==
+X-Received: by 2002:a17:907:6094:b0:af9:3d0a:f383 with SMTP id a640c23a62f3a-afdf019afd1mr77479066b.6.1755673370012;
+        Wed, 20 Aug 2025 00:02:50 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afdf6ff14f8sm37756466b.67.2025.08.20.00.02.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 00:02:49 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/3] dt-bindings: display: Few cleanups
+Date: Wed, 20 Aug 2025 09:02:39 +0200
+Message-Id: <20250820-dt-bindings-display-v1-0-d5b2555df51f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv3 1/8] block: check for valid bio while splitting
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
- hch@lst.de, martin.petersen@oracle.com, djwong@kernel.org,
- linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
- Keith Busch <kbusch@kernel.org>
-References: <20250819164922.640964-1-kbusch@meta.com>
- <20250819164922.640964-2-kbusch@meta.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250819164922.640964-2-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA9zpWgC/x3M3QpAQBBA4VfRXJta6ye8ilwsM5jS0o5E8u42l
+ 9/FOQ8oB2GFNnkg8Ckqm4/I0gTGxfmZUSgarLGlqa1BOnAQT+JnRRLdV3dj01QuK/KxrhxBLPf
+ Ak1z/tevf9wMZuMYIZQAAAA==
+X-Change-ID: 20250820-dt-bindings-display-996a143c86ad
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ "H. Nikolaus Schaller" <hns@goldelico.com>, Arnaud Vrac <avrac@freebox.fr>, 
+ Pierre-Hugues Husson <phhusson@freebox.fr>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=871;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=x6AMMrfKmpsnt80qI/jaePh0x1MxD2M+8h0kme5S3Q4=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBopXMRGm342NsJMwTGBeIUU3aEDsSSJNSmaCf3z
+ 2hb1+uhE/aJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKVzEQAKCRDBN2bmhouD
+ 18bZD/91yp/iNgPOT/8uepdf/zbiG/DGKC1+o61nNJG7BV5sIXxSsdSZ1foiLkHXibtjcNRwQ/s
+ x+wbb+LGT8rwNihSQTbClhlnGpXKGOb5kIJQ9z3T+PIKGYN6CIV3o4p6hfvnGiiew5aADThPKJ9
+ 8NFQigShv/pzBXx/7yRzb4UyRxhkvfSjxBXf76ppaLwyvUh3Tcf5awj8aHfTVb9kR2jVBM21gAD
+ SRTfGiqhC9yWvPJP16o9c3sdHOf8Pak2qnpJyfXj8yXGv3+EpcwZ4oJj55lq0mjIBoTlHaedT8L
+ CwM/STq7YsVkiQHD2Yd6bln07WWyUdQtXiVUbm/JBKJgSAyysh1/E7VRbp17BQ2yvsl8AuRzi1X
+ qVjHurkILLCLqiOGWuyYBYbr+Oddhxx3w3ZDR47yvJGMmXlHwfzTab5U5IW8OfiXHiSgAP0STuS
+ zfMQFCqSeskPBGzRZm3FMVw6Cmlt4kZSgBff7JbYb6rD7dQZF1Z185+7beNhzP7mkFdtVplBT6B
+ ueg1Uhz/o51bOZgNc3s2Jf/nBPRDEFwXdw5iSS63VO+LfPJsFJmg98MoUMEpkCbz4oMfag2Ig6Z
+ Tl/wWTVLi9tC3Z4XuYkUHpUtHbUGghMGsxPnlZ+gCDNEYcdQN30wBgZOxKPet6HCgmghz8FDqla
+ d+DIIriSdXsoRwg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On 8/20/25 1:49 AM, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> We're already iterating every segment, so check these for a valid IO at
-> the same time.
-> 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->  block/blk-map.c        |  2 +-
->  block/blk-merge.c      | 20 ++++++++++++++++----
->  include/linux/bio.h    |  4 ++--
->  include/linux/blkdev.h | 13 +++++++++++++
->  4 files changed, 32 insertions(+), 7 deletions(-)
-> 
-> diff --git a/block/blk-map.c b/block/blk-map.c
-> index 23e5d5ebe59ec..c5da9d37deee9 100644
-> --- a/block/blk-map.c
-> +++ b/block/blk-map.c
-> @@ -443,7 +443,7 @@ int blk_rq_append_bio(struct request *rq, struct bio *bio)
->  	int ret;
->  
->  	/* check that the data layout matches the hardware restrictions */
-> -	ret = bio_split_rw_at(bio, lim, &nr_segs, max_bytes);
-> +	ret = bio_split_drv_at(bio, lim, &nr_segs, max_bytes);
->  	if (ret) {
->  		/* if we would have to split the bio, copy instead */
->  		if (ret > 0)
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index 70d704615be52..a0d8364983000 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -279,25 +279,29 @@ static unsigned int bio_split_alignment(struct bio *bio,
->  }
->  
->  /**
-> - * bio_split_rw_at - check if and where to split a read/write bio
-> + * bio_split_io_at - check if and where to split a read/write bio
->   * @bio:  [in] bio to be split
->   * @lim:  [in] queue limits to split based on
->   * @segs: [out] number of segments in the bio with the first half of the sectors
->   * @max_bytes: [in] maximum number of bytes per bio
-> + * @len_align: [in] length alignment for each vector
->   *
->   * Find out if @bio needs to be split to fit the queue limits in @lim and a
->   * maximum size of @max_bytes.  Returns a negative error number if @bio can't be
->   * split, 0 if the bio doesn't have to be split, or a positive sector offset if
->   * @bio needs to be split.
->   */
-> -int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
-> -		unsigned *segs, unsigned max_bytes)
-> +int bio_split_io_at(struct bio *bio, const struct queue_limits *lim,
-> +		unsigned *segs, unsigned max_bytes, unsigned len_align)
->  {
->  	struct bio_vec bv, bvprv, *bvprvp = NULL;
->  	struct bvec_iter iter;
->  	unsigned nsegs = 0, bytes = 0;
->  
->  	bio_for_each_bvec(bv, bio, iter) {
-> +		if (bv.bv_offset & lim->dma_alignment || bv.bv_len & len_align)
+Few minor issues fixed.
+Rob, can you take them directly? Display bindings are pretty often not
+picked up.
 
-Shouldn't this be:
+Best regards,
+Krzysztof
 
-		if (bv.bv_offset & len_align || bv.bv_len & len_align)
+---
+Krzysztof Kozlowski (3):
+      dt-bindings: display: ingenic,jz4780-hdmi: Add missing clock-names
+      dt-bindings: display: ti,tdp158: Add missing reg constraint
+      dt-bindings: display: rockchip,dw-mipi-ds: Narrow clocks for rockchip,rk3288-mipi-dsi
 
-?
+ .../devicetree/bindings/display/bridge/ingenic,jz4780-hdmi.yaml        | 3 +++
+ Documentation/devicetree/bindings/display/bridge/ti,tdp158.yaml        | 1 +
+ .../devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml     | 2 ++
+ 3 files changed, 6 insertions(+)
+---
+base-commit: c2a1a5ede4717e6f12d49fe5177a66d40cbf4847
+change-id: 20250820-dt-bindings-display-996a143c86ad
 
-> +			return -EINVAL;
-> +
->  		/*
->  		 * If the queue doesn't support SG gaps and adding this
->  		 * offset would create a gap, disallow it.
-> @@ -339,8 +343,16 @@ int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
->  	 * Individual bvecs might not be logical block aligned. Round down the
->  	 * split size so that each bio is properly block size aligned, even if
->  	 * we do not use the full hardware limits.
-> +	 *
-> +	 * Misuse may submit a bio that can't be split into a valid io. There
-> +	 * may either be too many discontiguous vectors for the max segments
-> +	 * limit, or contain virtual boundary gaps without having a valid block
-> +	 * sized split. Catch that condition by checking for a zero byte
-> +	 * result.
->  	 */
->  	bytes = ALIGN_DOWN(bytes, bio_split_alignment(bio, lim));
-> +	if (!bytes)
-> +		return -EINVAL;
->  
->  	/*
->  	 * Bio splitting may cause subtle trouble such as hang when doing sync
-> @@ -350,7 +362,7 @@ int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
->  	bio_clear_polled(bio);
->  	return bytes >> SECTOR_SHIFT;
->  }
-> -EXPORT_SYMBOL_GPL(bio_split_rw_at);
-> +EXPORT_SYMBOL_GPL(bio_split_io_at);
->  
->  struct bio *bio_split_rw(struct bio *bio, const struct queue_limits *lim,
->  		unsigned *nr_segs)
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 46ffac5caab78..519a1d59805f8 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -322,8 +322,8 @@ static inline void bio_next_folio(struct folio_iter *fi, struct bio *bio)
->  void bio_trim(struct bio *bio, sector_t offset, sector_t size);
->  extern struct bio *bio_split(struct bio *bio, int sectors,
->  			     gfp_t gfp, struct bio_set *bs);
-> -int bio_split_rw_at(struct bio *bio, const struct queue_limits *lim,
-> -		unsigned *segs, unsigned max_bytes);
-> +int bio_split_io_at(struct bio *bio, const struct queue_limits *lim,
-> +		unsigned *segs, unsigned max_bytes, unsigned len_align);
->  
->  /**
->   * bio_next_split - get next @sectors from a bio, splitting if necessary
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index 95886b404b16b..7f83ad2df5425 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -1869,6 +1869,19 @@ bdev_atomic_write_unit_max_bytes(struct block_device *bdev)
->  	return queue_atomic_write_unit_max_bytes(bdev_get_queue(bdev));
->  }
->  
-> +static inline int bio_split_rw_at(struct bio *bio,
-> +		const struct queue_limits *lim,
-> +		unsigned *segs, unsigned max_bytes)
-> +{
-> +	return bio_split_io_at(bio, lim, segs, max_bytes, lim->dma_alignment);
-> +}
-> +
-> +static inline int bio_split_drv_at(struct bio *bio,
-> +		const struct queue_limits *lim,
-> +		unsigned *segs, unsigned max_bytes)
-> +{
-> +	return bio_split_io_at(bio, lim, segs, max_bytes, 0);
-> +}
->  #define DEFINE_IO_COMP_BATCH(name)	struct io_comp_batch name = { }
->  
->  #endif /* _LINUX_BLKDEV_H */
-
-
+Best regards,
 -- 
-Damien Le Moal
-Western Digital Research
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
