@@ -1,163 +1,203 @@
-Return-Path: <linux-kernel+bounces-777912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363C8B2DF10
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:22:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3097AB2DF22
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C67F166665
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:18:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C455623517
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E3E2749C6;
-	Wed, 20 Aug 2025 14:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C5A1DDC07;
+	Wed, 20 Aug 2025 14:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M8iRmPd9"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X1aDnEjR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5A72749D6
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC3918C031;
+	Wed, 20 Aug 2025 14:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755699476; cv=none; b=fRniP8z6jBwzAOkuy5WiBQI93DHAKuXSXtyz/9Q8QB3IGaSDn+2ACTdmz4D6GzjJXCb+BgfVrHi6xLPJVHRH/E4j3zsCNBa3TVIknjkBALKstITuHu8jV3O7h6WbTfEuHFZuMdDNZfV2eZBIshowuaYACvm9IPm2Z1nVsQnJqUU=
+	t=1755699493; cv=none; b=bAzqiOzCIi6qwsoSvwHXUMOOpR1fdeMnw6GXBns7hbo2WBZeDmDDcAewdc23nUOF98MLQICjN22dTg+oj7UXrU0VFpYJAANzR6THQCSlygInsVfAIOKzMz8igIGi1OaSHev83++oWztzYaqCpdW22WfTmc4cnaAPP6OuqSbe4jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755699476; c=relaxed/simple;
-	bh=/izB6gBIA3K/m3qcFUJBSak3FLjzHZUWp+/J02pD0ac=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aGF3LSR3xNkrXkSB2MPUVTRe1ehGZ0JRyYeOF+Xl96oGktFVkp84XMGKvQBPBUZBl2z7vC+iPnTHwp4SF0KF1zzAOjt4Sp0SdmpKUm/ZAxm0knbhy+M18DeLPpss3h4vXSc6AITFCHSauo7mGa3OAJUJfzX47K1iqhzZddZxcbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M8iRmPd9; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-618adbeff22so713264a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 07:17:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755699472; x=1756304272; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=URpbi4pDupU0ar37Ye27L+XUpBCcJFcEEzJPkVZbTwU=;
-        b=M8iRmPd9XszNlUoEXrBZVD41GxSBPYo79ra6ztA3dHWLh37GQl6wxsciITtLCV8VdA
-         SbDBG6J6mSBXLky/TfKlEPQdof8yk6cYC3WO0emBBC1aEUwaun8S00Tn5i+6EMb4NjY/
-         s4qAFtyp0VcCcMNePIFmuP58TAPKjMgBLKVkrqhDzZduR8qbdzM1Ns+AJMYlwANqwb7D
-         jGzI7rOBvtNGSoXXEWo9J1BSfC+n86MN1uLOQp3lscz77iusXQaSkEPzfYfnEKiMrQky
-         sPR670NLV32wC8eBq+4NVYoIdFZ8h9173vANg3eB9L6NkYNytmv0QF/QUbz39k70cdQt
-         ZSVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755699472; x=1756304272;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=URpbi4pDupU0ar37Ye27L+XUpBCcJFcEEzJPkVZbTwU=;
-        b=hdBYY3bOJJWR6PXYEFYhGZVcFBgQM0HWoUgWYLpeKd7ShzdrVFC4z7czInlbpRDR44
-         P8Y4P7PxCb7+bOMxE/7DcvIHPrVn8WWtUUUvPfvLantt2WO4gdrs6g2OUuv+dhq1HDXl
-         tFW7MihUm07c18PM8pLIwq68vZ925LSREVxe7i8oqaYHOe/88S/v3nn5hOXjvn1aEy7U
-         H/S0AZXlfHY2eEVVFJxNtdz0dcnOrg0hjqc41DH64ejSv+osPWZylV8Ym3TrlukEJBQA
-         Wv05/J0AojWKHl0MilaX9jLTjDLQwOGLfm+p/EOqEvf/GSknYjCzqzBZXgw7BtY2QlRD
-         gvag==
-X-Forwarded-Encrypted: i=1; AJvYcCUai/dQfpu/8eyj+a0BJUkeff5XPTbuH97LcWEqLADYJ5BJszOIiXVmxo3PQ9Dy6e5lC9l66fQ3s8ag68A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3NxXLMN2ohpXEXP9dHAhDHLtmtKJz012pJcMx1SkjwWkkBMML
-	H7Kvnd6yizP/fAzYclFilLdZVdKAcg5TQoLj2kS5O654kPfZ7ze5JVL6Ca/xLY0o7ZRkMqQY4RP
-	5o1DW
-X-Gm-Gg: ASbGncvvIl9aGhbIQdauQkAj/CQ1PmkFFfiLq2SW6ub/5TfrqeACjkYowFZrerBNHAg
-	rRH2Ttcjr19L2IhemtTjbRrm3AzzKjvLxYjdROTMa4Ki0QM4+Pb8Xidzo9giFxY2/o0AHAXUDxX
-	ukMivZUvdCt97whXn3aw1guEjV7wOvdCrB8RC29KnCd/tYMeQYdJRXEoOi8ecxFRto+/ewfL5mJ
-	o4U7iDbPYo3g6V1JClNoFvr+Z9Y+ZSzkbdn5V5fIzwolun4rFRRkD2fheL8iNfvzz9FbV73+Lvc
-	n2TtGBZeSTcs2LVaiM83YVZAb1Ht4AzLqQbh8vY1d8YjnBx777pFCT71HR9Lo1zAX5yAXlTrvGK
-	+gCTem9wuybSGLpJouRAURRMG4H1Dpi7beVCbPpU=
-X-Google-Smtp-Source: AGHT+IES/Jpr2bblhYPYlVvqT4FUQdP5A1r73/aT+walwE4It2pGENTB8ZRS/pZIeQZcjJUqlIBmrw==
-X-Received: by 2002:a05:6402:3553:b0:618:227b:8848 with SMTP id 4fb4d7f45d1cf-61a978521f9mr1217721a12.7.1755699472423;
-        Wed, 20 Aug 2025 07:17:52 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded4796f3sm186541066b.61.2025.08.20.07.17.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 07:17:51 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 20 Aug 2025 16:17:38 +0200
-Subject: [PATCH v2 3/3] dt-bindings: display: rockchip,dw-mipi-dsi: Narrow
- clocks for rockchip,rk3288-mipi-dsi
+	s=arc-20240116; t=1755699493; c=relaxed/simple;
+	bh=MequawHGbH8y9CuIP03AIdFN2olF7rn3Pf0V+3e0akU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRD2q2Z+cKkPu9DreCdocpfSF8ii9WoQ3ObUdu+fPWZhXcpunaio/o8PB+QeFUQziQACC7qb+AHlVW90jDwuljNGLzFACwvwtQ9jhstDIZd8Gorpi7CqIS0fVooyZZccHR5SKhy1+41y9A4pKJS6fPK32TbVt6XFzWuNDfarwSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X1aDnEjR; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755699493; x=1787235493;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MequawHGbH8y9CuIP03AIdFN2olF7rn3Pf0V+3e0akU=;
+  b=X1aDnEjR2sye5FT0jy3ieNfuT0iDuswr0SrRGvNaq1w6biKW6FC3qFXJ
+   SchDLpkWrYXWkgB0VaX2s/U+oiFI0f8LicIYRhoYt3rordJpmADti4dGL
+   wA5ZdIPH5er14TGEWuIjN4VYAVNIiLds5sz2ycybYOwyvtcu95bknNa8H
+   aJmE+xR132I7yKOwIh7i5MKx6eWzG6vEAQVVjccWs1COh4hnUfKaGWd0a
+   EPiExQzbPbwv85Y6vm6gaeojHEHB4XrScKtvT1MHEnPqztzZg2esWovA5
+   4VYTcCs5xWUBj8ogA0cMzgtccf0Cl+3Aiz2yb4G3wy2Z/8JImoSgkcuFc
+   g==;
+X-CSE-ConnectionGUID: Dgc9qBfzQzOgEkXhcUhbrw==
+X-CSE-MsgGUID: 3ZmKyzwVSJmLT7qVgjLteA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="69412045"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="69412045"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:18:12 -0700
+X-CSE-ConnectionGUID: 3EIpFeO2QCKVP73XKK9jVg==
+X-CSE-MsgGUID: FjAFMUfHSjqyKjJNlazMEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="172366765"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:18:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uojdd-00000006xGt-40Rt;
+	Wed, 20 Aug 2025 17:18:05 +0300
+Date: Wed, 20 Aug 2025 17:18:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ioana Risteiu <Ioana.Risteiu@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ramona Nechita <ramona.nechita@analog.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] iio: adc: update ad7779 to use IIO backend
+Message-ID: <aKXZHVpcenaOkvrv@smile.fi.intel.com>
+References: <20250820120247.3012-1-Ioana.Risteiu@analog.com>
+ <20250820120247.3012-5-Ioana.Risteiu@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-dt-bindings-display-v2-3-91e2ccba3d4e@linaro.org>
-References: <20250820-dt-bindings-display-v2-0-91e2ccba3d4e@linaro.org>
-In-Reply-To: <20250820-dt-bindings-display-v2-0-91e2ccba3d4e@linaro.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- "H. Nikolaus Schaller" <hns@goldelico.com>, Arnaud Vrac <avrac@freebox.fr>, 
- Pierre-Hugues Husson <phhusson@freebox.fr>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1104;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=/izB6gBIA3K/m3qcFUJBSak3FLjzHZUWp+/J02pD0ac=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBopdkHcAbOwcQtqQgqj7ZYeVzJwPpe0IzMwnRAd
- uYCfwZnO0CJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKXZBwAKCRDBN2bmhouD
- 1wg0D/9GLhAD7MQiXQ7UofV+rdMNcDfh8bSRGHzYgh0CW1ZfMD8B+RvKKD4E95jNLL9hAuECz0v
- ovPUq9BoXz/WW6WfgIobTk3angg8dY30rG59XdQGmsdxouZ8s7Hbn94Or3nan3LLC0CChJqBAPA
- 5fSzIQMsm1rZ6cfIP/ZF22ZEHF11eMcK/bRE3Jg6+6aZbFhVQ94X0AWHhY3OezSwClM148lwnLW
- oiPop0xxBGVJqNegBJFeL3HbnVHj47geT53xq5Cg5FW7wD18sjwX1r4RutWrR2rs1E+W2W93L8P
- 6zlsOQBGAG2dH4kd2NkeVGbnembzaE9TAe9eb5p3QhEafEJVo8N3E29cGqQMtr1+cu2NWckPgVq
- HuLtBwuUaYsrSKbbPc8yrLiJPcvuSKycZtoI8EoH45A/slz+8NYm+K14kDejdLFt7vRC6Y4z8yG
- Ef59nXFgGEj1IssG80ofef1C2dm8c7i6WfQvH7pMj6oiBuqGfsu7yoPTw8TIStF6jGTJMYfVc8r
- 6bzMS5NlISJSmvIbMphzbZ6Rs3n6ZqyMKZzOglCbIxEYm1h1DlGO10auQm10ib6/zVrfA/pfSIa
- w1yzKXXO8Syn+jtNF1y5a44WKVMe+xSKydRTpiFZP+1+J+nToDDVLKFJwR9J8Qzh+s5FQhs9Nwl
- veFTqiQi3OAnk7Q==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820120247.3012-5-Ioana.Risteiu@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The binding allows in top-level from one to four clocks and each variant
-narrows the choice, but rockchip,rk3288-mipi-dsi missed the minItems.
+On Wed, Aug 20, 2025 at 03:02:45PM +0300, Ioana Risteiu wrote:
+> Add a new functionality to ad7779 driver that streams data through data
+> output interface using IIO backend interface.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+...
 
----
+> +static int ad7779_set_data_lines(struct iio_dev *indio_dev,
+> +				 unsigned int num_lanes)
+> +{
+> +	struct ad7779_state *st = iio_priv(indio_dev);
 
-Changes in v2:
-1. Fix subject typo
-2. Rb tag
----
- .../devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml      | 2 ++
- 1 file changed, 2 insertions(+)
+> +	int ret = -EINVAL;
 
-diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml
-index 0881e82deb1105e4f92843380c0183569f688f08..c59df3c1a3f78ae0d345dc725f4dfb3eedb3de22 100644
---- a/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml
-@@ -97,9 +97,11 @@ allOf:
-     then:
-       properties:
-         clocks:
-+          minItems: 2
-           maxItems: 2
- 
-         clock-names:
-+          minItems: 2
-           maxItems: 2
- 
-   - if:
+In general the split assignment is easier to maintain and less prone to subtle
+errors. In this case it's even worse as it's not needed...
+
+> +	if (num_lanes != AD7779_1LINE &&
+> +		num_lanes != AD7779_2LINES &&
+> +		num_lanes != AD7779_4LINES)
+> +		return ret;
+
+...just return the error code directly here.
+
+> +	ret = ad7779_set_sampling_frequency(st, num_lanes * AD7779_DEFAULT_SAMPLING_1LINE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = iio_backend_num_lanes_set(st->back, num_lanes);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
+> +				    AD7779_DOUT_FORMAT_MSK,
+> +				    FIELD_PREP(AD7779_DOUT_FORMAT_MSK, 2 - ilog2(num_lanes)));
+> +}
+
+...
+
+> +static int ad7779_setup_channels(struct iio_dev *indio_dev, const struct ad7779_state *st)
+> +{
+> +	struct iio_chan_spec *channels;
+> +	struct device *dev = &st->spi->dev;
+> +
+> +	channels = devm_kmemdup_array(dev, st->chip_info->channels,
+> +					ARRAY_SIZE(ad7779_channels),
+> +					sizeof(*channels), GFP_KERNEL);
+
+Indentation...
+
+> +	if (!channels)
+> +		return -ENOMEM;
+> +
+> +	for (int i = 0; i < ARRAY_SIZE(ad7779_channels); i++)
+
+Why signed iterator?
+
+> +		channels[i].scan_type.endianness = IIO_CPU;
+> +
+> +	indio_dev->channels = channels;
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int ad7779_setup_backend(struct ad7779_state *st, struct iio_dev *indio_dev)
+> +{
+> +	struct device *dev = &st->spi->dev;
+
+> +	int ret = -EINVAL;
+
+Why?!
+
+> +	int num_lanes;
+
+Can it be negatie?
+
+> +	indio_dev->info = &ad7779_info_data;
+> +
+> +	ret = ad7779_setup_channels(indio_dev, st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->back = devm_iio_backend_get(dev, NULL);
+> +	if (IS_ERR(st->back))
+> +		return dev_err_probe(dev, PTR_ERR(st->back),
+> +				     "failed to get iio backend");
+> +
+> +	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_iio_backend_enable(dev, st->back);
+> +	if (ret)
+> +		return ret;
+> +
+> +	num_lanes = 4;
+> +	ret = device_property_read_u32(dev, "adi,num-lanes", &num_lanes);
+> +	if (ret && ret != -EINVAL)
+> +		return ret;
+> +
+> +	return ad7779_set_data_lines(indio_dev, num_lanes);
+> +}
 
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
