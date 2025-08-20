@@ -1,152 +1,114 @@
-Return-Path: <linux-kernel+bounces-777349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9308EB2D844
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:33:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4937CB2D867
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C080727AD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:29:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378561C476B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B6C2DC35A;
-	Wed, 20 Aug 2025 09:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3552DAFBA;
+	Wed, 20 Aug 2025 09:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fbjyb493"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvT7Hya3"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B87C23A9AD;
-	Wed, 20 Aug 2025 09:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FF31B4233;
+	Wed, 20 Aug 2025 09:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681943; cv=none; b=UBQU8Y2YCq68KOU/8HgVixOPpCro2TcH8lZPwuSUy1AFk/35vDUD1IL/StpyISXZRFiRy1puTcG1GLbNxRr+OEQcBO3vmjLeKe6r2p5d/RgDX7frgBGus/5S/kQbAR404gYagjuXXVqLFj4C8/WyUa/vS6vfqqJxtFxCOY22heE=
+	t=1755681941; cv=none; b=kSI4UWbabvsaevLyhCXtrQ/p1omN3lbGvHK+u4xJMZ9vr7LRNljO0ejiKUfWOXiTwyr90Qa5UPwn02W7nMRPJ/iumAwC9s2LtNC6wHp1asVI+IPKZ0wxLARSDVWBUEFN20LmUdWM9xNvvebVWd8RJ7CWFMERMzSpPcF2ABH3tpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681943; c=relaxed/simple;
-	bh=FQDOmH3hqx2lJBQXg/eBAyjvvUxL+CHcLyrtVGjwuSQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lfK3NHgsELXyz36x6AtyH4864c3WuJbp4GlkaD9M05GoFH+ZD0vgzgYDnzSP2irkYLmBpIk97YzGd8TZuGVuS4mAuRtDSyWreQnETMC5ZpB4xQNqr+qUYOJetP+LGJgHvFVqi3Pr7l7N9kbHoH5G8AUbPeE2I4erSyvCHj4hwBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fbjyb493; arc=none smtp.client-ip=209.85.208.65
+	s=arc-20240116; t=1755681941; c=relaxed/simple;
+	bh=je5AHg/youKOa+xhCXnHlhnCi4E0rhPm8H3bXUt+7zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WpXP8zbL5tc2QVTTSavkpCRTnC2718HU6yrlemzvOMIm7mA+NW2xiJnxTE7pLREg14PAUB2in/tgFYiNn3aX99Rs0ULOs49PnmcVGjibykgWZrUIJpEHVqvJ5K9eWa54ee9ePI48dCvPNxOUDfRILmtqrKMtxyxBMhsFzeIuCiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvT7Hya3; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-6188b794743so9707079a12.3;
-        Wed, 20 Aug 2025 02:25:41 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32372c05c5dso2694707a91.0;
+        Wed, 20 Aug 2025 02:25:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755681940; x=1756286740; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TXaugHPMoplpDsoBjFEcdde60xwXGr2k9rLptADyPcg=;
-        b=Fbjyb493jAmHzpWd/p1cLSoWqrhOeNA7vUZqspymbiTyQvTV+KNPKoPvEVWOosqQvY
-         oLC+r3YToGeuUomhdI/wyCMXuszj6Nei3ToHO7cCuQn8RLA9eSvHldz9PAMXdBI1liZN
-         MUm3VUW+gt8v+I1WehbUwjeVH27v2v+haMiirihqXR9xm/KQyy07vfu4kHIS7iU4tVut
-         zYCwPafQlr/1YUyTVYADXpTqhiZtLkt84bzPkL5PlGmyXPqya1M/irEkidHGI1YRxUvi
-         Q+vb2fGSIW6/T4HRwP0meiGiJxVN3rW0ykD9DzSW5VHxO7r8ykpZV8FwTUV8FUbyQI5U
-         z/Rg==
+        d=gmail.com; s=20230601; t=1755681938; x=1756286738; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=moqMZqhapfuLQfkSPWKxhFFyVYs5GkMX6FHp/4+cuAI=;
+        b=CvT7Hya3j68rWwf3Pplp22TEXEw5oAZE9wWfGywrYxAGb6A+JSiKoguZrVZ0rlQrG0
+         L4bC+VAaC+k6EJ2XGD80snxLdYUqi9EH4fH8vEI1U13cGuOfDnPLzpm2vbDE2TRHX2dl
+         bb2MyDpJnUUDSjUX9zdusMcoVK6+WnlZ5b5sDap1RczzhAZ5aluqK2AwT97K4vrpm3U4
+         N6ejKA35MJIdg77401a0gECB622YPfbOQGhAU//L+V9g8Vos3vGArQhI9NITFA2wskyq
+         gQqyz/JY/UsJmHIaci/C1TRKDSPP/0j2A4XkKDlth8ptC+qKCR2lmtez+TJBkUz2yCgw
+         mSFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755681940; x=1756286740;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1755681938; x=1756286738;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TXaugHPMoplpDsoBjFEcdde60xwXGr2k9rLptADyPcg=;
-        b=UASfAsos2fcwvlV9MALNP+Yos0CChZBGlhPHNtlJ3JxESirI72VkJIM5cRdwLL57qs
-         qCrfNmQXspbYP0nXuoENBMnG6z5RSZF04/gQgN8ytC7Rnr3ll/a2kcIfwwGXNorIZcjE
-         Q2ro+3BxCX0rvt0+pW7gAuirbt2JVG7TrKhPjcKt7tcSsHMcWZHYkoW8QHtb+nWq2Co/
-         EQ4glXFdRoLO+CjrTDCrXxWay2+e7C9VVafBXKK9vlbFkfDNntRiloSls3rdoIFIVuXw
-         GmAI2gZ/WLnlPVIW+FJQU5L/XRndEZBVXVri75dLqFqUcGu6sYUSBlSnGxmjQeOsHxeQ
-         chtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxOzhG5VjgwKs528EwjjjHs/yVxY6zfrh2hLQZBrlccRGwjwO+68xq1NMMqvsXH4t9Qi9YUfmxG0Swkz4j@vger.kernel.org, AJvYcCVNrz/r1S8TWre04VBA1uFPQfmbXlppyp8J/kFV4OdibswZFF7kLADEmMIGupHy4Pi5j4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZfZ98BV+RFiT8NR4z562UPYFAvPpiObazlCats98aPM2iKVx1
-	86wzrkVJZcJC1vTYTBjbxaQVsgSfck8+kp5iV9mZAcp6z6OH1oFfCiVoumQKHVA/Nr9NC8UgEq8
-	cdUdhtjKKLbbCucYXeTs/4EE1F5K1pRE=
-X-Gm-Gg: ASbGncuWQm+fsPpRc4qgZN9tDlMKMrMjP4P0ZxtmUeLgkzR+GyIQLOJkSv6qsARSUxV
-	f8BN8rnBQEdYJvh5prjHeJZOgr6+VbP/EhNb9BE3hoWRhEBaCSLG2wBJPjBPMB2JLRCMCOHYbyn
-	674omr3nP+vrPqS7gTMABipVSMnA9lS6+k7UqWB4xTyPLvY+yylNlfaZsSAXKQ8M7pfZh1E1jOI
-	lZeDNWTktJ+vg+W4bNN
-X-Google-Smtp-Source: AGHT+IH5r/oUOPIaZVKzeJ3UawFBydND2m/Zr4Z8FjLc2Sf4IdgmOgYNeZoUcGG6NZupv1UlJJ+OmXXFf9P7zfIG2lQ=
-X-Received: by 2002:a05:6402:42d3:b0:61a:8966:ced6 with SMTP id
- 4fb4d7f45d1cf-61a9782505bmr1832376a12.35.1755681939804; Wed, 20 Aug 2025
- 02:25:39 -0700 (PDT)
+        bh=moqMZqhapfuLQfkSPWKxhFFyVYs5GkMX6FHp/4+cuAI=;
+        b=noH0yAYOWZJcQSLJuderCA/43ddvfT2Sk3jESEkwb9zzmnJ8uDIQyaZ7/jzWA1auPx
+         qSAQREPJM/tVntPEayDxcoZ3mUMp9UncZJylWk1JAvRVf4LT7suF3IDnIH2SBrnRxBdt
+         Anud/+VlsG8CZKYF7YmVmZ8HOojiWeQo4mRhiYdOMD4KqydRoekofLn5qNWZzAFI4stH
+         ejyBk+cuqcG6AS3nQ0UlTnp070zVmMS5l8kZX86In4hqByfFswLpgYLaeDczthoSXJ6u
+         PVXuc/wYsCKaHzfYpEQMmqKt0cbO8uYg/lbMhAu6AvTQu6JAwr0CMYfOPDdV8TifENpM
+         58xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfGQLCiWhSG3JOi04JWgUCrP2aurQdTN0XNpUdxwHS/v2jqepfCF16X26HaSpQrEjxpk5xBGO7ktj8KzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8h6tHL51W8MM3VXxn3h77ALV9DVHGnXl4q98fKW/SfZMnNBQy
+	x9KPibBaTSxZ8mQXzJu3gHzKOHbAu649BeEx5QneYKYDfqa9W0pIQjm5
+X-Gm-Gg: ASbGncs60CstZtJRH3GVi8efeJRLxcO/YjqElw15+d2wqhd9UZqgypFQZEHZIQC1sal
+	q5Fs98Zt0EUUZSX32jlOS+EcuWdI11NjYy5hUxgUJDt//RWHdbfp/zYrG1wMM2/B3LlboDcLH0B
+	TAl0SXHfUzdgidkdk7b4sN5TrKhnhA+HnsvaZhUsLHT1cV2rY83KHSwBxgUTdLhK2UmtZoDsK/i
+	Vrx7aUvAyzMVyQF1SLK9VMTZx8qi96KFzxwTrl1Khen+oEnmILD2rUm2uemi5ZBdD2QVZGMtlIU
+	ICRsQzJruIFXjtGKRDNV3dzB2XWsTRh0NrvRx4Dv/yYxAm4ie+bvXfXxIngS6nD6TSEvA6/QXLL
+	uHEDm/xJTMkQXDoyV2DhAYVYdiKrDgTJAcw==
+X-Google-Smtp-Source: AGHT+IHfofIsMiWoNimXexXoDKvhKGpCqUQtCSn9RIsIQgxCsfV79DHB65P82HThv2L137MX9dVq+w==
+X-Received: by 2002:a17:90b:3c12:b0:323:7e80:8817 with SMTP id 98e67ed59e1d1-324e14239d9mr2854023a91.36.1755681938297;
+        Wed, 20 Aug 2025 02:25:38 -0700 (PDT)
+Received: from OSC.. ([106.222.231.87])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e252f8c8sm1752044a91.11.2025.08.20.02.25.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 02:25:38 -0700 (PDT)
+From: Pavan Bobba <opensource206@gmail.com>
+To: shuah@kernel.org,
+	cvam0000@gmail.com
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pavan Bobba <opensource206@gmail.com>
+Subject: [PATCH] kselftests:grammer correction
+Date: Wed, 20 Aug 2025 14:55:33 +0530
+Message-ID: <20250820092533.10985-1-opensource206@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818170136.209169-1-roman.gushchin@linux.dev> <20250818170136.209169-6-roman.gushchin@linux.dev>
-In-Reply-To: <20250818170136.209169-6-roman.gushchin@linux.dev>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Wed, 20 Aug 2025 11:25:02 +0200
-X-Gm-Features: Ac12FXxpl9gi1KUaEwzxMMmXIWzdn3euZF0dat5BG2FZFZDhN6aQnB8C060Jz44
-Message-ID: <CAP01T772oh8t05Pth2eWFzfSGVWDuW6kujRVSYQEreqZy==nOQ@mail.gmail.com>
-Subject: Re: [PATCH v1 05/14] mm: introduce bpf_get_root_mem_cgroup() bpf kfunc
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: linux-mm@kvack.org, bpf@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, 
-	David Rientjes <rientjes@google.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 18 Aug 2025 at 19:02, Roman Gushchin <roman.gushchin@linux.dev> wrote:
->
-> Introduce a bpf kfunc to get a trusted pointer to the root memory
-> cgroup. It's very handy to traverse the full memcg tree, e.g.
-> for handling a system-wide OOM.
->
-> It's possible to obtain this pointer by traversing the memcg tree
-> up from any known memcg, but it's sub-optimal and makes bpf programs
-> more complex and less efficient.
->
-> bpf_get_root_mem_cgroup() has a KF_ACQUIRE | KF_RET_NULL semantics,
-> however in reality it's not necessarily to bump the corresponding
-> reference counter - root memory cgroup is immortal, reference counting
-> is skipped, see css_get(). Once set, root_mem_cgroup is always a valid
-> memcg pointer. It's safe to call bpf_put_mem_cgroup() for the pointer
-> obtained with bpf_get_root_mem_cgroup(), it's effectively a no-op.
->
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> ---
->  mm/bpf_memcontrol.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/mm/bpf_memcontrol.c b/mm/bpf_memcontrol.c
-> index 66f2a359af7e..a8faa561bcba 100644
-> --- a/mm/bpf_memcontrol.c
-> +++ b/mm/bpf_memcontrol.c
-> @@ -10,6 +10,20 @@
->
->  __bpf_kfunc_start_defs();
->
-> +/**
-> + * bpf_get_root_mem_cgroup - Returns a pointer to the root memory cgroup
-> + *
-> + * The function has KF_ACQUIRE semantics, even though the root memory
-> + * cgroup is never destroyed after being created and doesn't require
-> + * reference counting. And it's perfectly safe to pass it to
-> + * bpf_put_mem_cgroup()
-> + */
-> +__bpf_kfunc struct mem_cgroup *bpf_get_root_mem_cgroup(void)
-> +{
-> +       /* css_get() is not needed */
-> +       return root_mem_cgroup;
-> +}
-> +
->  /**
->   * bpf_get_mem_cgroup - Get a reference to a memory cgroup
->   * @css: pointer to the css structure
-> @@ -122,6 +136,7 @@ __bpf_kfunc void bpf_mem_cgroup_flush_stats(struct mem_cgroup *memcg)
->  __bpf_kfunc_end_defs();
->
->  BTF_KFUNCS_START(bpf_memcontrol_kfuncs)
-> +BTF_ID_FLAGS(func, bpf_get_root_mem_cgroup, KF_ACQUIRE | KF_RET_NULL)
+corrected a minor grammer mistake
 
-Same suggestion here (re: trusted args).
+Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+---
+ tools/testing/selftests/acct/acct_syscall.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  BTF_ID_FLAGS(func, bpf_get_mem_cgroup, KF_ACQUIRE | KF_RET_NULL)
->  BTF_ID_FLAGS(func, bpf_put_mem_cgroup, KF_RELEASE)
->
-> --
-> 2.50.1
->
+diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
+index 87c044fb9293..ee2894e4f7bc 100644
+--- a/tools/testing/selftests/acct/acct_syscall.c
++++ b/tools/testing/selftests/acct/acct_syscall.c
+@@ -22,7 +22,7 @@ int main(void)
+ 	ksft_print_header();
+ 	ksft_set_plan(1);
+ 
+-	// Check if test is run a root
++	// Check if test is run as root
+ 	if (geteuid()) {
+ 		ksft_exit_skip("This test needs root to run!\n");
+ 		return 1;
+-- 
+2.43.0
+
 
