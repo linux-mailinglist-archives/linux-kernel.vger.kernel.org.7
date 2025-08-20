@@ -1,108 +1,128 @@
-Return-Path: <linux-kernel+bounces-776693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B86B2D091
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EBA3B2D094
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D9B1B632AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB551B676FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D8D353377;
-	Wed, 20 Aug 2025 00:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GOcR5Cjp"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F838219E8;
+	Wed, 20 Aug 2025 00:14:03 +0000 (UTC)
+Received: from ring0.de (ring0.de [152.53.19.228])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F23910F2
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0A44A1E;
+	Wed, 20 Aug 2025 00:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=152.53.19.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755648304; cv=none; b=XqoC01BKp9YzqthGI0ozZn2JT/NVgrXKlc2bV1X/qf01fhBmfTB8wroXFzI8qCmV0ugH5JiLWW3lA5tADL9oZOHpJ+sw2WRW/tH+AchbvcpTgBnV8UNvCj5QSNXB/FPoIgG9fpYfYkXU4hR6/090b+tBPVYd1EBpFKWN0ywt030=
+	t=1755648843; cv=none; b=kBeW3tgHJAInRzmgNC+pq5xRuRy8ZBa/JVu6zceSaWJnb6O4Vceytc1/md1sXUmliopkN1KH5g83VJxM1aSNbH/UsUq5lqAtacpbHCaNyHNV1+eT7NXmI7TvjFCsF+0TyEB7V2v4hMBY5fiNuUnpCznRBjsYUCL8Pp3sy7LcxGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755648304; c=relaxed/simple;
-	bh=Tfo/19RHyW++txmc1kMnAys7+aIQLnpLmNAqGrRJIgY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=K59wBPIjIwtsqdgleB17mF6hvPRvAjpygNFJD97j6ZJgYbv+ZXwpxAJYomNab+tS8JoNFvt7jc87Icec2ZbKi03lSSphULnrmOKv7g+Fx82FzToTETPZYZ6K7xFkDql2fOiZVrazV0VXwUYz1YIi7lk7Yuh58nLmMUpIUnnbZK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GOcR5Cjp; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e2eac3650so12836336b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:05:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755648303; x=1756253103; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V9wXsk4jqFDa9XGwh3suMWyZDPKqbXwjavw0fzoWkQ8=;
-        b=GOcR5Cjp4UvbAlbbMNvW7LsVP1Y/bCXJMcJDrTQt8Sas7Zh0+b3ARyzehbIqvD3nV7
-         /yTXZDO32zOb1VvH87lwS2whyv1MlMkPoQTM2rs4PsEhAzyoxYoyY2WFqv2Fj23+093D
-         PK3jpv4A4/wSKvTa+3JJJKtGyfkKwU2qq1nCcUa7tqOILH8IG3aOJ0b4uskgvMigbyNF
-         KYiBS6jUSX7YsXUMVnSNG2E+nS6b4kQTluX1X1O4SXE/B8PwMsQAoLv4Rei64GrjryFN
-         RpKA7BVMtlUnUxtTg5hBe1HZbNMn8ZhXvEdwjgbKUjrPiks9NEgRCPFV4PkqxamVl/7S
-         Q7zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755648303; x=1756253103;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V9wXsk4jqFDa9XGwh3suMWyZDPKqbXwjavw0fzoWkQ8=;
-        b=SrIc/lmNp0vbOo1Fs14ihM+zqCrHR2dwIbjFd6u9qAPCHUIm5CIWUjmofGQ7zsNS8n
-         /TWZL6zm4vo6hvDOQFI2xe5+E6xEpRSfDlmiDZYVfmwKuO06w5+GlsL74YrIqsXvI+PI
-         ItzxJhJLOoIIwpGh5c3kHOL/uPSuY/aIeeXUPqg3ursIc5jVuXUrvdJXncRUzq05/Raa
-         2tU9QS7Nrxiabelir+1iCX8AGSC1sOgu08w9LklufmCl8IK2iMNBsKs7ZnVjSvajef1r
-         YkT2PO5r7hCOLZ4h0oTy6UgLVq9W/GcWIx24VulS2uAaDobbugq/a32Gb5F6Q53cblAy
-         co6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWXq2SwpH2/SEVeSQQ/pzimlDAU/aK8W77WL9F5/bDP0SqXq45PA2z0iR3wllK5kBLAJPGMytEdz+CEKLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9G9kcNRT0v/8FhC/SM+lfuOMhNkaRAAOdn099tk4vDv59pCMD
-	rst7YpD2/KuT7owPalLXJFIZ57GORtQRAMX1mETEkAd/0WuwBDSISQFYba5+oSwqgvd8zaRQwG5
-	o2xJfyw==
-X-Google-Smtp-Source: AGHT+IEgp2iZQpjhp0IVG/RwRNaEA6kfEIJ5+nTH0IRpQP2O/sqcsBBrA4cu+AlVBTYSA0EfMFq00gIPM7c=
-X-Received: from pjj13.prod.google.com ([2002:a17:90b:554d:b0:31f:b2f:aeed])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3394:b0:240:aa15:70ac
- with SMTP id adf61e73a8af0-2431b7decdfmr1666131637.16.1755648302882; Tue, 19
- Aug 2025 17:05:02 -0700 (PDT)
-Date: Tue, 19 Aug 2025 17:05:01 -0700
-In-Reply-To: <20250819075919.GAaKQu135vlUGjqe80@fat_crate.local>
+	s=arc-20240116; t=1755648843; c=relaxed/simple;
+	bh=gJaHiADsO/QRPphzLO0hDvFSeItdJMuHJblV73GwIg0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bpuZN2Qcn/VjuWejn6e//7mAzmpXkrCofCMqjz8kr0zTZlBFnbpL+cHzo5RgkWrup5ra6E3/zFeU91DqYzHGoNacBjEA9HNV685j6CCKDq1dglxrTN6Xi18B1zFbCF+XzcNz64EGrSvpLh/+r6ByLSWJvzR7x3rP+21vOq4rHLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=ring0.de; arc=none smtp.client-ip=152.53.19.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ring0.de
+From: Sebastian Reichel <sre@kernel.org>
+Authentication-Results: ring0.de;
+	auth=pass smtp.mailfrom=sre@ring0.de
+Subject: [PATCH 0/2] media: ov02c10: fix orientation on Thinkpad T14s Gen6
+ (Snapdragon)
+Date: Wed, 20 Aug 2025 02:13:18 +0200
+Message-Id: <20250820-ov02c10-fix-v1-0-3fcca2cfbfbf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1752869333.git.ashish.kalra@amd.com> <20250811203025.25121-1-Ashish.Kalra@amd.com>
- <aKBDyHxaaUYnzwBz@gondor.apana.org.au> <f2fc55bb-3fc4-4c45-8f0a-4995e8bf5890@amd.com>
- <51f0c677-1f9f-4059-9166-82fb2ed0ecbb@amd.com> <20250819075919.GAaKQu135vlUGjqe80@fat_crate.local>
-Message-ID: <aKURLcxv6uLnNxI2@google.com>
-Subject: Re: [PATCH v7 0/7] Add SEV-SNP CipherTextHiding feature support
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Kim Phillips <kim.phillips@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Neeraj.Upadhyay@amd.com, aik@amd.com, 
-	akpm@linux-foundation.org, ardb@kernel.org, arnd@arndb.de, corbet@lwn.net, 
-	dave.hansen@linux.intel.com, davem@davemloft.net, hpa@zytor.com, 
-	john.allen@amd.com, kvm@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, michael.roth@amd.com, 
-	mingo@redhat.com, nikunj@amd.com, paulmck@kernel.org, pbonzini@redhat.com, 
-	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB4TpWgC/32MSw6DIBQAr2Leuhh4gp+uvEfjQuFVSRsw0JA2x
+ rsXXTddziQzG0QKliJciw0CJRutdxnEpQC9jG4mZk1mQI6Kt6JhPnHUgrO7fTNdt8grMUolR8j
+ FGijr83YbMi82vnz4nPMkDvv7kwTjTBthJqxV10jqg3UzLw3BsUn4J8WcdoZkW+GktZL9g4KjZ
+ +nDDMO+71//QCg44gAAAA==
+X-Change-ID: 20250817-ov02c10-fix-c682031a454a
+To: Hans de Goede <hansg@kernel.org>, Bryan O'Donoghue <bod@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, 
+ Hans Verkuil <hverkuil@kernel.org>
+Cc: Frederic Stuyk <fstuyk@runbox.com>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1133; i=sre@kernel.org;
+ h=from:subject:message-id; bh=gJaHiADsO/QRPphzLO0hDvFSeItdJMuHJblV73GwIg0=;
+ b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBopRM3LmpoItMXAKgpQjaLtKxZ6vSmumqUw0u5C
+ qycylY+e1eJAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCaKUTNwAKCRDY7tfzyDv6
+ mpFqD/9WcDKMRuJx4wghlFgpQTnGr2/xMRQD5lR62a774+7aOkeDgeB1S4wW6OtD54fvTmFW3Tb
+ Dbhw3lhWz5Itgp1o1s0/qPMw7S77oSVmnIGtaFiOUMjlw35l9IqQx3czoyMp51TfnHl90a63//z
+ Au8QxDYPEDUVxdt2SDjw+lQjl8367yIikgx4o8NcnKrMzaLciZTauevaYimmpE0a9xH4tPx23Wf
+ J60f7J14YjAqW4qpqddBy0ofgPw35w31YYT8/3O3E5jp+Dqd/ZqE5zRga7n8bGf++cHC9i6Gh5o
+ 4+BfKFDDOUq1hNw/xwwCoaTlAxr3RkqQA6QpE0qA5Ok4fdaIxBNy9kccAjnpu9R51bcNghf0ICN
+ nDg/EKsDLNfr1Bt9X7EQ8brL79j0kskdtEuZ2lCSKvP6CGpNDK5rUXDuiJe6kfKo69hh/Z/kS1A
+ mRq2O7io12syU5cXqcTuho+hzrF2rKvFE5MxCftfdjiJnQVG/4u2Qg98Mj7wsI1MapdtkBkZlLR
+ ga7bhXM/DzzChxH4exHYx9Cv3hd+No4FbFcbYb34WheEgkksVF/yFbn/qx00aydBuE+InMASbTV
+ PFbTxLoJXLV/94rXuv5dfFzlfaFDjqhK8kcrkQ6Lliz6jaxa5P8kO3ynwTnCulDBih7JKPHTCYT
+ qpRNXadwDA7PI/Q==
+X-Developer-Key: i=sre@kernel.org; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+X-Rspamd-Server: antispam
+X-Rspamd-Queue-Id: 9ADDAE31F7
+X-Spamd-Result: default: False [-1.30 / 15.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	FORGED_SENDER(0.30)[sre@kernel.org,sre@ring0.de];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:39351, ipnet:193.32.248.0/24, country:SE];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[runbox.com,vger.kernel.org,kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	IS_LOCAL_DOMAIN_E(0.00)[ring0.de];
+	FROM_NEQ_ENVFROM(0.00)[sre@kernel.org,sre@ring0.de];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,runbox.com]
+X-Rspamd-Action: no action
+X-Spamd-Bar: -
 
-On Tue, Aug 19, 2025, Borislav Petkov wrote:
-> On Mon, Aug 18, 2025 at 02:38:38PM -0500, Kim Phillips wrote:
-> > I have pending comments on patch 7:
-> 
-> If you're so hell-bent on doing your improvements on-top or aside of them, you
-> take his patch, add your stuff ontop or rewrite it, test it and then you send
-> it out and say why yours is better.
-> 
-> Then the maintainer decides.
-> 
-> There's no need to debate ad absurdum - you simply offer your idea and the
-> maintainer decides which one is better. As it has always been done.
+When testing the camera patches for Snapdragon X1E I noticed the
+image is upside-down on my T14s Gen6. After some investigation
+it looks like issues with the sensor driver have recently been
+reported, but not yet been fixed. It seems sensible to do this
+ASAP (while the driver is not yet used much) to avoid potential
+regressions when changing the VFLIP default.
 
-Or, the maintainer says "huh!?" and goes with option C.
+P.S.: I accidentally sent this from my private mail address first
+and apparently the server address was listed by spamhaus.org (whole
+subnet). It does not look like anything came through due to this,
+so I'm resending as v1 from my kernel.org account. Sorry if anyone
+received multiple copies now :)
 
-Why take a string in the first place?  Just use '-1' as "max/auto".
+Signed-off-by: Sebastian Reichel <sre@kernel.org>
+---
+Sebastian Reichel (2):
+      media: ov02c10: Fix default vertical flip
+      media: ov02c10: Support hflip and vflip
+
+ drivers/media/i2c/ov02c10.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250817-ov02c10-fix-c682031a454a
+
+Best regards,
+-- 
+Sebastian Reichel <sre@kernel.org>
+
 
