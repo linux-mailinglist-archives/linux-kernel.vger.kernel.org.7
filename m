@@ -1,105 +1,107 @@
-Return-Path: <linux-kernel+bounces-777049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922DCB2D47B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:06:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0887B2D481
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B131B1BC7CAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3284E0ADC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8EB2D24A1;
-	Wed, 20 Aug 2025 07:06:15 +0000 (UTC)
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995252D24BB;
+	Wed, 20 Aug 2025 07:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qOANscv1"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE7017C91;
-	Wed, 20 Aug 2025 07:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AAD2741C9;
+	Wed, 20 Aug 2025 07:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755673574; cv=none; b=Cw6xlxQJk2B10HQT2lvYVGDFBXDEa4++MxnGDeqnhh1tkN1uMmGLigFAAcAfmXBM9/oikz+KdGMb8J8Re7X6wbbb+TaQYEbGaYQ7C1yR5tIlG7dGb26FHD9gtVL5kjajPT5GbdQ1ICMmf4jododnnuy8WwrsE9QfXmn/VZqQ8O4=
+	t=1755673644; cv=none; b=O+7I71+u4Ip+xIvUkObixmjQ0iYDXtnD9G16SA/hG+p1eg6Z1WT67f9StsE5TQDN/rw1S+JPCgDPtxnnulhGyfu+n0JA/QTec2KWPbFwuNV/kZnrSiC5rizGX0mkriA2ToWDaBB6oc+PFGfK97/RQaoREvNTEc8bIOISmFwqxOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755673574; c=relaxed/simple;
-	bh=9wFNG1kfWSvROICd4hU7+JSUDR1jmTent6pNDYObpTQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
-	 References:In-Reply-To; b=qnyOST9dTWeefpGtqOiw8hk5A9dKi5ulLMskLGeu8cjNH/7T4JDM3saph/mFuVENN7Drl08Q/wziDS0FQ3j+jFPlEGeYQNWmXtqnmFLdeIrgSKLOpLHtX/Pky7Kc0C9QFDbalC9VvffDOQoa0OBPPyE50DlEyrXzQEc0/JHfi2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4320:1000:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 2A439619;
-	Wed, 20 Aug 2025 09:06:04 +0200 (CEST)
+	s=arc-20240116; t=1755673644; c=relaxed/simple;
+	bh=TaxiWtPTfGrDpen8ZIb7nub1gevfpQeg6ZsLJqzRkGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=He7ssd/R4FK4snTbtmvX/rLFI0kfU5hBUjnyvB86DkfX859v7OxVVvShCx38YXCMvXOOrFmoevI6juXVEv2S7LQmQGfjUDueqAq2qI8HEDkgzorYYw/E0XwOeBtfhjQaSFCIUpXyhhtn9E7aaeuW7xVLrgsETkYCVkzuqNLp4SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qOANscv1; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9gqSLsf7BauWawgwunyMy7IZ4Wk/6a60Zsc0No/utek=; b=qOANscv1FJSCGdxlMcXpamTMiZ
+	l6KJfKE/btOiven+e+uzW0i7q7ZrfstLB+YcWjdR1YTbhF8NM85lx+qgTZFkXvL7q9smTvSD2hI7b
+	XJGalGbRRvoXeJOhJQNTP9qjCeVeCSfPZ+XaP0xWDDanoaGr+Ix8nD04/B6/oqIrFsYjRN1ikreCt
+	pJZW6zuOFdn+U416EI/im1W77WyBh0YlrUCS+of62h1pHyUZhv9Mx4s7wHMmCHzuPpALym6gZLBWi
+	nOfbxl2kkWv85HN+szXLeZS8qE0kM1Qqv2/oL7W8ptwk/d0i/ClyMxT4FoOC9lFbji6zFeGRbuxnK
+	fJsklpfQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59824)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uocuY-0004Kg-01;
+	Wed, 20 Aug 2025 08:07:06 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uocuS-0004JX-2Z;
+	Wed, 20 Aug 2025 08:07:00 +0100
+Date: Wed, 20 Aug 2025 08:07:00 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
+Subject: Re: [PATCH net-next v1 0/3] stmmac: stop silently dropping bad
+ checksum packets
+Message-ID: <aKV0FF4FFARJNvZu@shell.armlinux.org.uk>
+References: <20250818090217.2789521-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 09:06:03 +0200
-Message-Id: <DC72C4R6NXKI.MF84P0PHWROB@kernel.org>
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Julien Panis" <jpanis@baylibre.com>, "Dmitry
- Torokhov" <dmitry.torokhov@gmail.com>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Jon Cormier" <jcormier@criticallink.com>
-Subject: Re: [PATCH 0/3] Powerbutton driver and powerdown request for
- TPS65224 PMIC
-X-Mailer: aerc 0.20.0
-References: <20250520-linux-stable-tps6594-pwrbutton-v1-0-0cc5c6e0415c@criticallink.com> <DC6D9ESWXGKO.1NS287IU5YJSZ@kernel.org> <DC6DBZ4HHGOF.11HI37DX56PH0@kernel.org> <CADL8D3Y0hRgJ6P59YvUKYzYBADjCXr7kevHNUDoqZXT41Ka2Yw@mail.gmail.com>
-In-Reply-To: <CADL8D3Y0hRgJ6P59YvUKYzYBADjCXr7kevHNUDoqZXT41Ka2Yw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818090217.2789521-1-o.rempel@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi,
+On Mon, Aug 18, 2025 at 11:02:14AM +0200, Oleksij Rempel wrote:
+> Hi all,
+> 
+> this series reworks how stmmac handles receive checksum offload
+> (CoE) errors on dwmac4.
+> 
+> At present, when CoE is enabled, the hardware silently discards any
+> frame that fails checksum validation. These packets never reach the
+> driver and are not accounted in the generic drop statistics. They are
+> only visible in the stmmac-specific counters as "payload error" or
+> "header error" packets, which makes it harder to debug or monitor
+> network issues.
 
-On Tue Aug 19, 2025 at 6:22 PM CEST, Jon Cormier wrote:
-> On Tue, Aug 19, 2025 at 7:30=E2=80=AFAM Michael Walle <mwalle@kernel.org>=
- wrote:
->>
->> On Tue Aug 19, 2025 at 1:27 PM CEST, Michael Walle wrote:
->> > Hi Job,
->> >
->> > > The following patches were created to get the tps65224 PMIC
->> > > powerbutton driver and power off request working on the
->> > > MitySOM-AM62PX. The patches are as follows:
->> >
->> > Are there any news on this series? Do you plan to post a new
->> > version soon, or do you want me to take over? I'd like to get
->> > support for this into the kernel :)
->>
->> FWIW, jsava@criticallink.com is bouncing.
-> Yeah sorry, Job has gone back to school, he was on an internship.
->
-> I'm not entirely sure how best to move forward with this change.
-> There have been several suggestions thrown out and I'm a little lost
-> on what's best/easiest.
->
-> If you want to take over and add us as co authors that would be
-> greatly appreciated.  I can get his personal email if that makes
-> sense.  I'm not sure how the kernel normally deals with short term
-> emails (interns).
+FYI, there are counters at 0x214 and 0x228 that indicate header
+problems, including checksum failures. There are also counters
+at 0x234, 0x23c, 0x244 that count udp, tcp and icmp checksum
+errors.
 
-I've asked around and Krzysztof said I should replace the mail with
-his new address - or if I can't find it, use the old one. So yes,
-you could ask him for his new (or private) address and if he's fine
-with having that mentioned in the commit message.
+So, the hardware does keep statistics. Maybe we should make use
+of those rather than the approach in this series?
 
-> Note we are currently using the driver as is, on an Android prototype
-> and for some reason Android isn't able to detect the power button
-> hold, and open the power menu. Single push works fine to turn off the
-> screen.  I haven't looked into it yet, to see if this is an Android
-> issue or if we are using the POWER key events wrong. Just thought I'd
-> mention it.
-
-Thanks, FWIW I'm using it with (normal) linux and it's working fine.
-I'll double check if the press and release event is actually working.
-
--michael
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
