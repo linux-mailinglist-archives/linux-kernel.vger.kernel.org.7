@@ -1,120 +1,133 @@
-Return-Path: <linux-kernel+bounces-777520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297B8B2DA68
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:58:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8AEB2DA66
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10057726B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:58:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6541726A24
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21652E2EEF;
-	Wed, 20 Aug 2025 10:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A712C2E2DFC;
+	Wed, 20 Aug 2025 10:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="Pt60TgNB"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vja5s3Zt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49AC26E175
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E5F19F464;
+	Wed, 20 Aug 2025 10:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755687503; cv=none; b=T6yy1KlVDxzPnz6cY9qGakGSKmC5Wz+Ca03ch3erQ35pc7NPMGAKJPR4yFTIsbd37u2wB2QBzdCKyWcvuQ8t3dLJNckTZ7m5PzgtRCDKtqsQo4elgK8B7f99Foei+ixNvg8eY/GTsGjU5jZqlnIA6+Zxip1wndfgyY+0hjQiQgQ=
+	t=1755687485; cv=none; b=XKgsgiwWeaYYy/WAudQOVJTkCcUQpztO55z1zgTboOL5inFS4u7hDt9iYTBRUhmSu+btVGuvvzkbq3IEwECUtWg4T9vfJSzw+aaamW5theZViZUoHxTNnp6nQ8ZEWmBFglYvaPu1HkoyZ1rHSQDb1BkrLwpILUWkojMtiAihDBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755687503; c=relaxed/simple;
-	bh=mtlpc6Oc+bVnprxHO+2QT0a74MUtF4l1ORTauJCNdSI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dj04pwlp3BDxTkAvHkvhUCuSXqR4nGEd3p+0Bv8ndw/DTHde8GRQHJlqc/lf+Kt6Y/puch/DYVeLc70Ao/5KkH1WzIupFNuVMpczu4Z2yGx0ax/w+oC39TFpREdy1h3ZGAp4QMId2fZjXb4wz+QDRcVvBk/RcT53JwE3U0aAxJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=Pt60TgNB; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445806e03cso61887595ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 03:58:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1755687501; x=1756292301; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oIY9o+m++demIvDBObElDKuuFPYxQeni8PVpK/3jLZU=;
-        b=Pt60TgNBs4Zb/fJqrI3XuwXKPY5f83eedsdPLNt0qfTth0owgN0EmZNIRK34UO9rD0
-         KEusiXfAPrEN1IT9Bo5iDnEcuigPb49ndhBvuIzvabnJiEz2vUHfyVcSx5s+JbrlBomw
-         r8ol7QJokS0bBzd0/i0WOkIEu8H3u6ZiBfC8E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755687501; x=1756292301;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oIY9o+m++demIvDBObElDKuuFPYxQeni8PVpK/3jLZU=;
-        b=DK3pIrg1vMLkGnoHLEQ9kMJMxf0djBuNN+oRx8SZi6+XeeRgmK36IYxh7vCHOuGZuY
-         XOAwQP9Lg2N5tdwCft8NjAkHbv4TwI816ihlgDLeXAet7wvoULeqScNcfOd9j053wIpv
-         RwiyRa2efLGLOnl7sX+a1gSQYJpeUReb4dwn3Cu8S5vmn9bRzIOQRrHrn9aelLlYTjJe
-         rYybFjyqjaKw0Y9W7OpWdBNBApPMG6RBMib/UpWH1ZHm/3TbkjBI17YlYzQF+R2EUIbM
-         +1u8kQYR5wfyuYy+zs/55/YFljldV1+k2JelrevcIb2AU6VNu0+bsW4jhFNRDko5jDrr
-         i0QA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQod1zFq3PSZH4xLNX4vZ4CbK9knyv8XzuXRXFC+IZKWFjZF/DbTteZ+gyvsUqHPXx/+Dd5Lf7h1tfp0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy/K/+1ct49ZvkaUMS4Z+4lEhn1jChbVuVT93equ5LvYaAT5e/
-	/dq789ie+4+MCbsPx7RC/DL1jD+eH7bQ/Ivfj6mTwqUO+LDEMH7WM6E5gxHA8H4uFH8=
-X-Gm-Gg: ASbGnctn0issxLDQnKVHeTvMI/4foHvHUOyVof0Lad0MjUQ0I31UAE91l022jNT8j4X
-	c205S6PC9L7rzx/SdtQEKGUJRl58bMKQ+iJno21SbJ9eoEb8PdnVmEug8PZfWupHD7WTzfpWf+4
-	vsiEyFSKNiFozBHW/XpqYP/J/eRIZiD9A11NSI1OLxfftn+W43BZCYVmvB4k7z6zRa9gMxTplFE
-	sK0YED9ZdQwKNs62xp6gTT8VE+Rq2eO0UV++k0M4urKJlk5XDKTAEmF49ZqZ1khKNkQa/aDSmZV
-	r+JM1WYl3gS+rbvlf9C3sZbi5n1wmxUxq5USReTai9AH6yQPUe9QVq4NctDjJw5RI7HpET0AQC3
-	YmhW955MUb9nZ7eQbxpu4OZdtiYmTDJTAtmukv8Ywk7QQRcD2NGiBhnwN8ZYB0EKFQLt5
-X-Google-Smtp-Source: AGHT+IEQsLcQ+eFDszAlGFwsAowRxUaCxUv86qiKlXCfj7VzA6LxtPPB0hvfbvTQ1V8Am1CNcEPsjg==
-X-Received: by 2002:a17:903:1b07:b0:240:38f8:ed05 with SMTP id d9443c01a7336-245ef226760mr31487095ad.36.1755687500953;
-        Wed, 20 Aug 2025 03:58:20 -0700 (PDT)
-Received: from furiosa-sungho.sungho.kim.office.furiosa.vpn ([221.149.27.193])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4f6a84sm23212435ad.118.2025.08.20.03.58.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 03:58:19 -0700 (PDT)
-From: Sungho Kim <sungho.kim@furiosa.ai>
-To: bhelgaas@google.com
-Cc: logang@deltatee.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sungho Kim <sungho.kim@furiosa.ai>
-Subject: [PATCH] PCI: p2pdma: Fix incorrect pointer usage in devm_kfree() call
-Date: Wed, 20 Aug 2025 19:57:14 +0900
-Message-ID: <20250820105714.2939896-1-sungho.kim@furiosa.ai>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1755687485; c=relaxed/simple;
+	bh=4NXtbsIF7zkWSWd9a3AKJkxNkmMkiT2u3m4nyMY6uWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mpITagu88pqRdE+t78Uv0KbstEO39BNaxAJ0JqVP3wK2etABn4EBUg/Vye/AVBU4MvDzpAeJIZFH2T6i/rp9NMLubbDrWo1Z8mjsWfI0c357lwrzWmWFSm71rd3v11/XFSGFaRnA0GKTuBwO918nUi9My9EIC0kCRANmn/SoeeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vja5s3Zt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0590C4CEEB;
+	Wed, 20 Aug 2025 10:58:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755687484;
+	bh=4NXtbsIF7zkWSWd9a3AKJkxNkmMkiT2u3m4nyMY6uWc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vja5s3ZtAW9nZ+lVGVRpb1nQ4zjrPUukx2cV0WX7QX+0ywkV0E1LT7WMzjldY/oD/
+	 07GzkdUhgTJOQfM7Kb9a4+nZ9XbbjlRt1aMT3AMt8bqlsoclstqN4ZsAJiJrqKojyM
+	 hwx5YT8qoBR9ETmvVfEQyMYkmm/WJ+PIU6if5IKCEF+30BneLXyGijUOfiaWTjv12k
+	 odo9sw+9k59IskPsktvcs1HWUZIYpKxZIrAd95wClia1fd971/k5swQj3sadqGOguf
+	 pE3u7cG3gfSBd14nSuKL+XtARGOVADFgsd51V9kECGml3+KCFdo6r0cLj3WhFzKafc
+	 3CyQEJ70EjTmw==
+Date: Wed, 20 Aug 2025 11:57:57 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.15 000/509] 6.15.11-rc2 review
+Message-ID: <bb8ebf36-fb7c-470c-89e7-e6607460c973@sirena.org.uk>
+References: <20250819122834.836683687@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="H4CAt+Juhodk0/59"
+Content-Disposition: inline
+In-Reply-To: <20250819122834.836683687@linuxfoundation.org>
+X-Cookie: What UNIVERSE is this, please??
 
-The error handling path in the P2P DMA resource setup function contains
-a bug in its `pgmap_free` label.
 
-Memory is allocated for the `p2p_pgmap` struct, and the pointer is stored
-in the `p2p_pgmap` variable. However, the error path attempts to call
-devm_kfree() using the `pgmap` variable, which is a pointer to a member
-field within the `p2p_pgmap` struct, not the base pointer of the allocation.
+--H4CAt+Juhodk0/59
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch corrects the bug by passing the correct base pointer,
-`p2p_pgmap`, to the devm_kfree() function.
+On Tue, Aug 19, 2025 at 02:31:36PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.11 release.
+> There are 509 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Signed-off-by: Sungho Kim <sungho.kim@furiosa.ai>
----
- drivers/pci/p2pdma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm still seeing failures in the LTP epoll04 test which bisect to
+"eventpoll: Fix semi-unbounded recursion":
 
-diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-index da5657a02..1cb5e423e 100644
---- a/drivers/pci/p2pdma.c
-+++ b/drivers/pci/p2pdma.c
-@@ -360,7 +360,7 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
- pages_free:
- 	devm_memunmap_pages(&pdev->dev, pgmap);
- pgmap_free:
--	devm_kfree(&pdev->dev, pgmap);
-+	devm_kfree(&pdev->dev, p2p_pgmap);
- 	return error;
- }
- EXPORT_SYMBOL_GPL(pci_p2pdma_add_resource);
--- 
-2.48.1
+# bad: [cf068471031d89c4d7ce04f477ba69a043736a58] Linux 6.15.11-rc2
+# good: [cb1830ee48ef7b444b20dd66493b0719ababd2b1] Linux 6.15.10
+git bisect start 'cf068471031d89c4d7ce04f477ba69a043736a58' 'cb1830ee48ef7b444b20dd66493b0719ababd2b1'
+# test job: [cf068471031d89c4d7ce04f477ba69a043736a58] https://lava.sirena.org.uk/scheduler/job/1696008
+# bad: [cf068471031d89c4d7ce04f477ba69a043736a58] Linux 6.15.11-rc2
+git bisect bad cf068471031d89c4d7ce04f477ba69a043736a58
+# test job: [ed147e6b0b6f77ab37b64cae52c324bb4d30ffd6] https://lava.sirena.org.uk/scheduler/job/1696635
+# bad: [ed147e6b0b6f77ab37b64cae52c324bb4d30ffd6] wifi: mt76: mt7915: mcu: re-init MCU before loading FW patch
+git bisect bad ed147e6b0b6f77ab37b64cae52c324bb4d30ffd6
+# test job: [f228799b3622c5e7dee0ca367ede5c5116dd2749] https://lava.sirena.org.uk/scheduler/job/1697068
+# bad: [f228799b3622c5e7dee0ca367ede5c5116dd2749] usb: typec: tcpm/tcpci_maxim: fix irq wake usage
+git bisect bad f228799b3622c5e7dee0ca367ede5c5116dd2749
+# test job: [379a9a450eccaea2781063475865a759609c42d7] https://lava.sirena.org.uk/scheduler/job/1697316
+# bad: [379a9a450eccaea2781063475865a759609c42d7] net: ti: icssg-prueth: Fix emac link speed handling
+git bisect bad 379a9a450eccaea2781063475865a759609c42d7
+# test job: [22919356643e8d2fae162c80fd41d3a18b699ba1] https://lava.sirena.org.uk/scheduler/job/1697640
+# good: [22919356643e8d2fae162c80fd41d3a18b699ba1] NFSD: detect mismatch of file handle and delegation stateid in OPEN op
+git bisect good 22919356643e8d2fae162c80fd41d3a18b699ba1
+# test job: [289acd66730cee0a50eadea70d09c796eb985fb3] https://lava.sirena.org.uk/scheduler/job/1697768
+# bad: [289acd66730cee0a50eadea70d09c796eb985fb3] ACPI: processor: perflib: Fix initial _PPC limit application
+git bisect bad 289acd66730cee0a50eadea70d09c796eb985fb3
+# test job: [acda7f7119d35afceb774736a2dee8453745403e] https://lava.sirena.org.uk/scheduler/job/1697900
+# good: [acda7f7119d35afceb774736a2dee8453745403e] sunvdc: Balance device refcount in vdc_port_mpgroup_check
+git bisect good acda7f7119d35afceb774736a2dee8453745403e
+# test job: [9a521a568272528a4bf9a9bed5a4ead00045c7e6] https://lava.sirena.org.uk/scheduler/job/1698135
+# good: [9a521a568272528a4bf9a9bed5a4ead00045c7e6] fscrypt: Don't use problematic non-inline crypto engines
+git bisect good 9a521a568272528a4bf9a9bed5a4ead00045c7e6
+# test job: [3b03bb96f7485981aa3c59b26b4d3a1c700ba9f3] https://lava.sirena.org.uk/scheduler/job/1698312
+# bad: [3b03bb96f7485981aa3c59b26b4d3a1c700ba9f3] eventpoll: Fix semi-unbounded recursion
+git bisect bad 3b03bb96f7485981aa3c59b26b4d3a1c700ba9f3
+# test job: [222c3853173605105bf3a4dda135a655ef894fc0] https://lava.sirena.org.uk/scheduler/job/1698459
+# good: [222c3853173605105bf3a4dda135a655ef894fc0] fs: Prevent file descriptor table allocations exceeding INT_MAX
+git bisect good 222c3853173605105bf3a4dda135a655ef894fc0
+# first bad commit: [3b03bb96f7485981aa3c59b26b4d3a1c700ba9f3] eventpoll: Fix semi-unbounded recursion
 
+--H4CAt+Juhodk0/59
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmilqjUACgkQJNaLcl1U
+h9DuFAf/c7petUxB4P+0ecqrsblDOFTNLxTddsTY809ZWMJCvW6iQ4xZdCVyQby7
+mMSc8O7MHzQYOrJEbo6au+peOZD9U4Z0jp7QU6SMzBgcBAS/ruz7YQin3AS+62+1
+D1d1GWAoE6F7rt1uNyJHYbepGME8LHUFYLuuy1KyfL7TBrqTkXA85A9j0/5pWsyu
+0GJeDZZE+AunNpxo0LK7i+9Bu0GPe8RzhSEknmzSp4fSSN4JPGfr9mkVegjUFzjX
+cgFjyc61xIzyEZm3gqHpFCnK+ryE1WtTUFH9atVA0HINIp9VnjSw+pAicfXdf1xd
+Qtykc+/zT90wCIL9vKpPfoAe3QLdcw==
+=LIOo
+-----END PGP SIGNATURE-----
+
+--H4CAt+Juhodk0/59--
 
