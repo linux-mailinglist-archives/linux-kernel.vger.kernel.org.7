@@ -1,141 +1,117 @@
-Return-Path: <linux-kernel+bounces-777818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CD2B2DE2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:46:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01726B2DE47
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F523BFC18
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:44:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54305170786
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740F92E282E;
-	Wed, 20 Aug 2025 13:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+niXZTa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28031E1C3F;
+	Wed, 20 Aug 2025 13:45:12 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB07226165
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9781917F1
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755697448; cv=none; b=Im/WFaEpVCKm2JTKk6HgJj/pmZB6b9apku8axaEoXRMfiparVmTc4F6693u3B4Wmv5RYDx55WdRNaFfrgXsjKYrOigGq/lsUZq1U1EOm6iaatWV2N0ovN9vjyHOmLl2PJ0Eud0GIux7GbZfEz5yGp5pSqBakymO7HwzYKfLW3Gs=
+	t=1755697512; cv=none; b=ksZjTvZMoGZXUt6rSv1JDLTZR76UUTRPs116qXa/hkuTqy1HboLYbvh10Zpdi/3sQV8dcSuT0VKpYBW7DaPv24ysbfJ5yVAVWXJa4IojUeAYag96xz0sExDJ3mDtLIFcUb9Lbd55Wr3+dPQDMeO6JIE0aZLfqCtg6dRuUTb42RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755697448; c=relaxed/simple;
-	bh=ccW4DJ+w5B0tvFfy06eJzbjKks79ZjN2ZpCdAnZH4Ak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jur05/ugBXkg1Ild8pWH0WeG+aUGrxoMzVQySZFovd048i9UPaO4PKqwbG+CgLQ2WhCjcK/AZBFuPdg3wfUeItSXOVbKFeTWmXWTq07yJHW5WIa+pTFBdejJnCV4K4FmZVuyRMu73hGqPYmJAhI1ii1cw0AcKKJN35Hk9HHMIRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+niXZTa; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755697448; x=1787233448;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ccW4DJ+w5B0tvFfy06eJzbjKks79ZjN2ZpCdAnZH4Ak=;
-  b=n+niXZTaP8gHIc5QcLpemeHcez9QOY6oX143hodzDE2oAllgKuos39xG
-   usVqmk99mjLUFF4xAdX35RUjZgFYIYsH1EfuCJLCSj6LlhcA6nMlO3ZlY
-   PvIwSdZtZbQSjm3fwsLRkgFK0uA83gMmDhH2UZkU891xPDXFra64By/GN
-   N/DFV+NRNX2D7ZLo7JoVO3wr17FEcVTEfniwdbEKMhuPZeX+JRwWdguuA
-   pYJsmxNiJTkkVI1dGuhghk0wucPYA0dDogrMZsIYAJ3y8OaZQx0XX6LBN
-   RNQwSe8dxw07NU9/P4mNEry9UcEumZMrffE4FcVse/pUHcD1m/NOqDei1
-   g==;
-X-CSE-ConnectionGUID: beA6xsTjQcCywFI6/h+utg==
-X-CSE-MsgGUID: xS/9L6vDTUK+F22b2+yvzA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="75413024"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="75413024"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:44:07 -0700
-X-CSE-ConnectionGUID: 4QaIxjvgQ0aK7kjMmX1XtQ==
-X-CSE-MsgGUID: q2Qzs15iR/Wyot4b2RKPmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="168481230"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:44:00 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uoj6a-00000006wmS-3DCw;
-	Wed, 20 Aug 2025 16:43:56 +0300
-Date: Wed, 20 Aug 2025 16:43:56 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Hui Pu <Hui.Pu@gehealthcare.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 1/9] list: add list_last_entry_or_null()
-Message-ID: <aKXRHAyfPHPpZmMs@smile.fi.intel.com>
-References: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
- <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-1-888912b0be13@bootlin.com>
- <aJJ9ttmL7wiw41fY@smile.fi.intel.com>
- <20250814183609.3788a6df@booty>
+	s=arc-20240116; t=1755697512; c=relaxed/simple;
+	bh=08Hd+yNsCCGzxTw3cPdVNbHlNgVxJeDhZzkwxMc9q5U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=q27pvl4y3IhOaX9NX5lMgCQYD7WD48CzbF+lhXR8QMdUrwi6rtU2rNmfsd/bZbmCT0J4xNk0SKduEwbEynwFOn1vfCmHXIJn9jProlIVF7ZNr0/3qU72kgbuUFTgYwUX85nkkSBlAHqfIPVJvyAh8R/E7J8Lafxhir3LCo5Ep7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [114.241.87.235])
+	by APP-01 (Coremail) with SMTP id qwCowABHN6tT0aVogOTBDQ--.24665S2;
+	Wed, 20 Aug 2025 21:44:52 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: [PATCH 0/6] riscv: Add helpers use_alternative_{likely,unlikely}
+Date: Wed, 20 Aug 2025 21:44:44 +0800
+Message-Id: <20250820-riscv-altn-helper-wip-v1-0-c3c626c1f7e6@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814183609.3788a6df@booty>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEzRpWgC/yXMQQrCMBCF4auUWTuSpMRKryJdxDi1A20aJzEKp
+ Xc32OX34P0bJBKmBH2zgVDhxGuo0KcG/OTCk5Af1WCUsepqFAonX9DNOeBEcyTBD0dUyo2ts9b
+ 4toP6jUIjf//d23BY6PWu+XyMcHeJ0K/LwrlvyuWsOxSvYdj3H9RSMLCUAAAA
+X-Change-ID: 20250820-riscv-altn-helper-wip-00af3a552c37
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Yury Norov <yury.norov@gmail.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Vivian Wang <wangruikang@iscas.ac.cn>, Vivian Wang <uwu@dram.page>, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Ayd=C4=B1n_Mercan?= <aydin@mercan.dev>
+X-Mailer: b4 0.14.2
+X-CM-TRANSID:qwCowABHN6tT0aVogOTBDQ--.24665S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF1Uuw4UGF17Aw48Jw1kKrg_yoW8WFy5pF
+	43Gr9xZFyrGFyfKFZIvr1jqr1Y9rZ3Kw1aqFnIgrykJw4avryUZr1qkryrAFyYqFykZ34I
+	kr1rZw1rGF1DC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Thu, Aug 14, 2025 at 06:36:09PM +0200, Luca Ceresoli wrote:
-> On Wed, 6 Aug 2025 00:55:02 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > On Fri, Aug 01, 2025 at 07:05:23PM +0200, Luca Ceresoli wrote:
-> > > Add an equivalent of list_first_entry_or_null() to obtain the last element
-> > > of a list.  
-> > 
-> > Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Thanks Andy!
-> 
-> However I'm not sure when and where this should be applied.
-> 
-> Except for this one patch, all patches in the series are for
-> drm-misc-next. Also, patch 1 is currently not needed by any other
-> series AFAIK.
-> 
-> Based on the above, is it correct to assume that the whole series can
-> be applied on drm-misc-next? (when other patches will have a
-> R-by/Ack-by of course)
-> 
-> Also, is Andy's A-by enough to apply this patch?
+There are about a dozen uses of asm goto in arch/riscv just to select
+between two code paths with the alternative mechanism. Introduce helpers
+similar to arm64's alternative_has_cap_{likely,unlikely} for this, and
+convert the existing code to use it.
 
-The list.h is common for many, I think going via DRM with my Ack is enough
-based on the Git history of my changes in this file. But if you want more
-reliable source, get an Ack from Andrew Morton.
+I did not use the name alternative_has_cap_{likely,unlikely} since riscv
+alternatives are not all CPU capabilities.
 
+In each case, I have tried to preserve the existing logic while picking
+between "likely" and "unlikely".
+
+These patches are also available at:
+
+https://github.com/dramforever/linux/tree/riscv/altn-helper/v1
+
+---
+Vivian Wang (6):
+      riscv: Introduce use_alternative_{likely,unlikely}
+      riscv: pgtable: Convert to use_alternative_unlikely
+      riscv: checksum: Convert to use_alternative_likely
+      riscv: hweight: Convert to use_alternative_likely
+      riscv: bitops: Convert to use_alternative_likely
+      riscv: cmpxchg: Convert to use_alternative_likely
+
+ arch/riscv/include/asm/alternative-macros.h |  73 ++++++++++++++++
+ arch/riscv/include/asm/arch_hweight.h       |  42 ++++------
+ arch/riscv/include/asm/bitops.h             | 112 +++++++++++--------------
+ arch/riscv/include/asm/checksum.h           |  13 +--
+ arch/riscv/include/asm/cmpxchg.h            | 125 ++++++++++++++--------------
+ arch/riscv/include/asm/pgtable.h            |  15 ++--
+ arch/riscv/lib/csum.c                       |  65 ++++++---------
+ arch/riscv/mm/pgtable.c                     |  22 +++--
+ 8 files changed, 247 insertions(+), 220 deletions(-)
+---
+base-commit: 062b3e4a1f880f104a8d4b90b767788786aa7b78
+change-id: 20250820-riscv-altn-helper-wip-00af3a552c37
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Vivian "dramforever" Wang
 
 
