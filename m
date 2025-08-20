@@ -1,143 +1,102 @@
-Return-Path: <linux-kernel+bounces-776789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86E7B2D17F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:37:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A07B2D182
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0F0F7AA921
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:36:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFCD51C42578
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFE1239E7E;
-	Wed, 20 Aug 2025 01:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DA12522B5;
+	Wed, 20 Aug 2025 01:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Qy7gN1Rn"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5D5286A1;
-	Wed, 20 Aug 2025 01:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="HAEHZleU"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43D8239E7E;
+	Wed, 20 Aug 2025 01:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755653845; cv=none; b=mbyf6vjIUs+Y5J6zTe4F1Jxm23+uB9lSnPEcZEZH1a5Rn8W2U6wePKvVH2X95YVXtcpMJoABfk5nlZj2aF355IUcZZ8y9RJpD2eNVUGypx1jVhGEF76J9ablxGoBHKNcIo+4mxdqutCkMJoQLFfCpWz5TWwtFxv5jP1XYjNkorw=
+	t=1755653936; cv=none; b=ONhmbX989dlBFInkTijOZeHE0n7G/nM7QmYZbya2gsPlctxrBJAY3hTR5u7sjVSDfDhDQKVUlsadMv/ZfPse7Fhg7R+biHYj795KBBB2Jhhiu14ux2/4OJNO5ByVhv6iZFjcTcK+MpaoMXSafms3yViTy8nrUYZ2btdf2x1JbL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755653845; c=relaxed/simple;
-	bh=3l4AP6P6W7OPXFwMyEvTL+p2EFVDIgZx0+8ievLaaMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sPewquXNyLEPLD+Be/6Z/orGr6eAqV6cSHYJEWIowgaqy9VYH642ZUhe3rIFeSYRjk4SEspo8xD6hDyHNP0gAYfyN+pMTSM8QWkdGy+Hpqcdaid+kmkAXI5UQnJZkldwM4Uo6+Y+TMgJilxvtLK54VBIKMVx421gRaZaUe28xFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Qy7gN1Rn; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755653840;
-	bh=e3ZdJN5i39kNXj8YoePBj3K0UUTsdY/fW4tO1Z88j40=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Qy7gN1RnV7srLB0MQrsfkcT/EGp+Yuugi/PeR1z7bjbSbyr/fShnxeQY8makxpCjY
-	 10hTVd9sC8gVVVr4XRqHOsO87nfau5dwfo+8M+NJElGc4ApXQUSZo/KfN+xi/9of58
-	 pVokcXCMfYoQPmcZN9U5FWtt6vZIQcaiKos7Sq0qNORZLfeAOB129rNz79YaPdbZfI
-	 /eeFm0fdtLiUE8Ek7/wzvHZ48OXVCX9j9ANLYjqBIMMlKlIieP5YSLgRg8xoQhvorj
-	 RPXKzzHjnGrJKj5rYsO4+du/vVWOGm5hvKN3ad3hDcRQ2+Ad31sJJb1p54QMmMfBrM
-	 GMdC81ZHp7mrQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c68Fr4fSbz4w2K;
-	Wed, 20 Aug 2025 11:37:20 +1000 (AEST)
-Date: Wed, 20 Aug 2025 11:37:20 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Liao Yuanhong <liaoyuanhong@vivo.com>, Miguel
- Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: linux-next: manual merge of the input tree with Linus' tree
-Message-ID: <20250820113720.25631f7f@canb.auug.org.au>
+	s=arc-20240116; t=1755653936; c=relaxed/simple;
+	bh=TAW7flq3odbpxOKxdegduWOQsDnkI26xnJjpizE46E8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=ThY870gRRjqz5hvKmAJ5bMX3/E/U+0rGuNUihXVQZJHfy+iQyJo1FjTnJVzdd/frO1mY4DX5BA6WganM4RO8egVF9df1s47mF92I03y/+Qxtov05QLpN8EEHXY82uO3dMuXGj4fVg1x9XOVbH3KCc9wDPEPRP0AreG8cp9gnOp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=HAEHZleU reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=X8n9XOhTr/5EqrhTQUQKFTnJVTGCwvmFcxw+kiU580Q=; b=H
+	AEHZleUijo5bYPESCGarRZNzKU0FiEaqZQHUN19wiecE3iu4qwiO142rEPvkFg3c
+	H+2XPdb/+rNs9d49QMA7U2XkP0LUt3R2HibiOhhVRTDm6nCF9xgtv8bx0k2r0NEi
+	IEKhnx+gXyplKgfgkRGZogKYBa5Z6+pdyHyUTvAyJ4=
+Received: from 00107082$163.com ( [111.35.190.191] ) by
+ ajax-webmail-wmsvr-40-144 (Coremail) ; Wed, 20 Aug 2025 09:38:29 +0800
+ (CST)
+Date: Wed, 20 Aug 2025 09:38:29 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Bart Van Assche" <bvanassche@acm.org>
+Cc: phil@philpotter.co.uk, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Subject: Re: [BUG] general protection fault when connecting an old mp3/usb
+ device
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <2899b7cb-106b-48dc-890f-9cc80f1d1f8b@acm.org>
+References: <20250818095008.6473-1-00107082@163.com>
+ <2899b7cb-106b-48dc-890f-9cc80f1d1f8b@acm.org>
+X-NTES-SC: AL_Qu2eB/qevEEr7yOZZOkZnEYQheY4XMKyuPkg1YJXOp80tSbq/wsCW3BGO3/32cORCxGSvxeoVCJCxP9YUYNATrxSw802TTnFI3x3woSVGliG
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/mDAmEmg6WSH.YxSEqrGq6tk";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Message-ID: <35a7ef9b.1401.198c520ab44.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:kCgvCgC3FuEWJ6Vot3UdAA--.6184W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxyuqmikxnzFMwADso
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
---Sig_/mDAmEmg6WSH.YxSEqrGq6tk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the input tree got a conflict in:
-
-  include/linux/sprintf.h
-
-between commit:
-
-  0dec7201788b ("sprintf.h requires stdarg.h")
-
-from Linus' tree (v6.16) and commit:
-
-  be06b53d3af0 ("lib/vsprintf: include stdarg.h from sprintf.h to provide v=
-a_list")
-
-from the input tree.
-
-This only happens because the input tree is still based on v6.16-rc1.
-
-I fixed it up (I applied the following merge fix patch) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 20 Aug 2025 11:31:19 +1000
-Subject: [PATCH] input: remove second addition of <linux/stdarg.h>
-
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/sprintf.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/include/linux/sprintf.h b/include/linux/sprintf.h
-index 8cb32b777d0b..e57a6d6fbd93 100644
---- a/include/linux/sprintf.h
-+++ b/include/linux/sprintf.h
-@@ -5,7 +5,6 @@
- #include <linux/compiler_attributes.h>
- #include <linux/stdarg.h>
- #include <linux/types.h>
--#include <linux/stdarg.h>
-=20
- int num_to_str(char *buf, int size, unsigned long long num, unsigned int w=
-idth);
-=20
---=20
-2.50.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/mDAmEmg6WSH.YxSEqrGq6tk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmilJtAACgkQAVBC80lX
-0Gz9mwgAgThqKBwxHdNjKleF6d+Mz3+7htjrWjlXxnHkaWWowkiSERkixSximbPV
-1MYFjAEuCanguPQTTP+la6qKLIvT8npBP8JYtivND+3LKs7BFAKlAMBDASid5pVn
-itOUtC/45abf5+Thaif+OeRGJimS/J/N+3HP0HmxRk/w0tOyYPyVBohmjWI8R/gA
-guhouqJF3tMi2C3yXDAQn/PinIxe82MwleBJ/9HDgtPxz1Ya5+mMsDisLrxlruwO
-SSiDaVkAQBkQPN5Q1oJ0GBbpjqT9C7VpwTKZ9U6K5BYwe6cqsgoFDIeoQCmkCC2W
-0gLkJ3cVk4k4WLaqDVoHa4i8o4w9RQ==
-=GKKT
------END PGP SIGNATURE-----
-
---Sig_/mDAmEmg6WSH.YxSEqrGq6tk--
+CkF0IDIwMjUtMDgtMjAgMDM6MjA6NTEsICJCYXJ0IFZhbiBBc3NjaGUiIDxidmFuYXNzY2hlQGFj
+bS5vcmc+IHdyb3RlOgo+T24gOC8xOC8yNSAyOjUwIEFNLCBEYXZpZCBXYW5nIHdyb3RlOgo+PiBb
+U2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSBPb3BzOiBnZW5lcmFsIHByb3RlY3Rpb24gZmF1bHQs
+IHByb2JhYmx5IGZvciBub24tY2Fub25pY2FsIGFkZHJlc3MgMHgyZTJlMmYyZTJlMmYzMDhlOiAw
+MDAwIFsjMV0gU01QIE5PUFRJCj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdIENhbGwgVHJh
+Y2U6Cj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdICA8VEFTSz4KPj4gW1NhdCBBdWcgMjMg
+MDM6NTY6MDkgMjAyNV0gIHNyX2RvX2lvY3RsKzB4NWIvMHgxYzAgW3NyX21vZF0KPj4gW1NhdCBB
+dWcgMjMgMDM6NTY6MDkgMjAyNV0gIHNyX3BhY2tldCsweDJjLzB4NTAgW3NyX21vZF0KPj4gW1Nh
+dCBBdWcgMjMgMDM6NTY6MDkgMjAyNV0gIGNkcm9tX2dldF9kaXNjX2luZm8rMHg2MC8weGUwIFtj
+ZHJvbV0KPj4gW1NhdCBBdWcgMjMgMDM6NTY6MDkgMjAyNV0gIGNkcm9tX21yd19leGl0KzB4Mjkv
+MHhiMCBbY2Ryb21dCj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdICA/IHhhX2Rlc3Ryb3kr
+MHhhYS8weDEyMAo+PiBbU2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSAgdW5yZWdpc3Rlcl9jZHJv
+bSsweDc2LzB4YzAgW2Nkcm9tXQo+PiBbU2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSAgc3JfZnJl
+ZV9kaXNrKzB4NDQvMHg1MCBbc3JfbW9kXQo+PiBbU2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSAg
+ZGlza19yZWxlYXNlKzB4YjAvMHhlMAo+PiBbU2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSAgZGV2
+aWNlX3JlbGVhc2UrMHgzNy8weDkwCj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdICBrb2Jq
+ZWN0X3B1dCsweDhlLzB4MWQwCj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdICBibGtkZXZf
+cmVsZWFzZSsweDExLzB4MjAKPj4gW1NhdCBBdWcgMjMgMDM6NTY6MDkgMjAyNV0gIF9fZnB1dCsw
+eGUzLzB4MmEwCj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdICB0YXNrX3dvcmtfcnVuKzB4
+NTkvMHg5MAo+PiBbU2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSAgZXhpdF90b191c2VyX21vZGVf
+bG9vcCsweGQ2LzB4ZTAKPj4gW1NhdCBBdWcgMjMgMDM6NTY6MDkgMjAyNV0gIGRvX3N5c2NhbGxf
+NjQrMHgxYzEvMHgxZTAKPj4gW1NhdCBBdWcgMjMgMDM6NTY6MDkgMjAyNV0gIGVudHJ5X1NZU0NB
+TExfNjRfYWZ0ZXJfaHdmcmFtZSsweDc2LzB4N2UKPgo+UGhpbGxpcCwgaXMgdGhpcyBiZWhhdmlv
+ciBwZXJoYXBzIGludHJvZHVjZWQgYnkgY29tbWl0IDVlYzlkMjZiNzhjNAo+KCJjZHJvbTogQ2Fs
+bCBjZHJvbV9tcndfZXhpdCBmcm9tIGNkcm9tX3JlbGVhc2UgZnVuY3Rpb24iKT8gUGxlYXNlIGRv
+CgpJIGNhdWdodCB0aGlzIG9uIDYuMTYuMCB3aGljaCBkb2VzIG5vdCBoYXZlIHRoaXMgY29tbWl0
+LCBhbmQgb24gdGhlIGNvbnRyYXJ5LCBiYXNlCm9uIHRoZSBjb21taXQgbWVzc2FnZSwgdGhpcyBj
+b21taXQgbWF5IGhlbHAgaW4gdGhlIHBvc2l0aXZlIGRpcmVjdGlvbi4KCkkgd2lsbCB0cnkgdG8g
+ZmlndXJlIG91dCBhIHByb2NlZHVyZSB0byByZXByb2R1Y2UgdGhpcyBvbiBteSBsYXB0b3AsIGFu
+ZCBpZiB0aGF0IHBvc3NpYmxlLApJIHdpbGwgdXBncmFkZSBteSBsYXB0b3AgdG8gNi4xNy1yYzEg
+dG8gZ2l2ZSBpdCBhIHRyaWFsLgpBbmQgdXBkYXRlIGxhdGVyLgoKVGhhbmtzCkRhdmlkIAoKPm5v
+dCBjYWxsIGNvZGUgdGhhdCBpbnZva2VzIGlvY3RscyBmcm9tIHRoZSBkaXNrX3JlbGVhc2UoKSBj
+YWxsYmFjay4KPgo+VGhhbmtzLAo+Cj5CYXJ0Lgo=
 
