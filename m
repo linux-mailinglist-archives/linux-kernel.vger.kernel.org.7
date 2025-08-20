@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-777279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E31AB2D7A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:12:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C308B2D79D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9A57248DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:11:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A39627B7DB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341762DAFCA;
-	Wed, 20 Aug 2025 09:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A74B2E1758;
+	Wed, 20 Aug 2025 09:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WP/FONVh"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ue2WAyMS"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20702E11CA
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CCE2E03FE
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680877; cv=none; b=SWXeT52evo0cYtNnVnpeqrhZiiRUvhZ9jI2LCnpdgDGspsYhCGnEm3iA4dE7CcDevKe4fTwVwo1eYdO+9AzOawQU6YlbfbXhDMKE/cBEqxFtiXo8MjHNKtJe93MTWqGmcl0n//Eeq613WM3PyG45Igm3iHWLEXEbWiBhr6EuaSs=
+	t=1755680875; cv=none; b=PokoFeG5U8iYc3oph9c7eXxrFI/+VRG+z55yjWNMT+6z65azDbmo0Yk67Wl6l/20xJVJ4ak74aeGfmvbNLEazFhZBJ/IRoQKRxBywlzb4k58nrn7sJClFRoUItzPsAb26Roy8SIF4M+nobA2qOOsAFANkFy18zlUsEguIWuprpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680877; c=relaxed/simple;
-	bh=rPzHol3DMM50Pu4NcflGe271pqw0z138WV8LSF/u8eg=;
+	s=arc-20240116; t=1755680875; c=relaxed/simple;
+	bh=O/EL/GABzezzJnhdCns5+dqaFA0xQGxrWt+V6vBqbzA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M2oSgyeJS25mVHQ5+cF7+LKmCFIMiQnGXRwtgrAc+FHQM25CBQI1VAzkTb2w7x4Sq7S88VNwW9XlF2fb0d3knESLnGXNk5PcLtqG8fH6DM0pFUphFtCuERET3GzVDJsTvQggTevgN98JtJk1Xl3OG6o/xtUjwLXWPcKz4SMvZjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WP/FONVh; arc=none smtp.client-ip=115.124.30.99
+	 MIME-Version; b=H53a63bD+1+syGEApE5OGBRQCsTKbcCzZqFw3JPhkH6CTP1d4G6PEA86aFnzT/sYRgkXreLuXhShCx2J8f6wJKiDjgj3+VUkR4EvCLInJRQV9akYncqscNdqcfV5xlIOSeAP4QceM3LAipBtvj4tZOUyUae+vxAZ7Nh5RMtWgPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ue2WAyMS; arc=none smtp.client-ip=115.124.30.113
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1755680867; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=GLHMQ2aL75uW7dMd2UVF2Rmlbf3qVWCe706KFetc4TE=;
-	b=WP/FONVhaX27AJQtkCiGuAeLGZTBE7MMz7YSvBUg8GZNzoeDGV0C0fOwyzFtvHoUHRjD6zadfmggCK8ObWyEoajz+WnkwPpUKliSa0hy3OCZmLpObETMX/U/CX+Az2D+kUxw2juRg1xfFpppIPz/kgaVY/2NS5fX4xX54AwK1hg=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmBY58f_1755680865 cluster:ay36)
+	t=1755680869; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=k0BMZl4FO1A/3YqzLq6Cu8hUlXulJA4evFI5qXofcb4=;
+	b=Ue2WAyMSnWxBSuqN+JfaZ3fR+nRVSxhymHNuwfUPg3Y0xfupfZefzVJp3+u6fo6WWROGqs9/Gix4DR6PvTO73u0X1KB1lfl3jVcUDvyiKZPULh1r18dFJxT/S1u/SqiRNkIZnMWvW/QCkap+S++bgPzC0ykghd8ONFQ1FJ2Gk+s=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmBYU.i_1755680866 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Wed, 20 Aug 2025 17:07:46 +0800
+          Wed, 20 Aug 2025 17:07:47 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	hughd@google.com,
@@ -52,9 +52,9 @@ Cc: ziy@nvidia.com,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 09/11] selftests: mm: move gather_after_split_folio_orders() into vm_util.c file
-Date: Wed, 20 Aug 2025 17:07:20 +0800
-Message-ID: <955e0b9682b1746c528a043f0ca530b54ee22536.1755677674.git.baolin.wang@linux.alibaba.com>
+Subject: [RFC PATCH 10/11] selftests: mm: implement the mTHP hugepage check helper
+Date: Wed, 20 Aug 2025 17:07:21 +0800
+Message-ID: <85ad632e5ac5844a4e8a6266bcd647932e4d0b11.1755677674.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1755677674.git.baolin.wang@linux.alibaba.com>
 References: <cover.1755677674.git.baolin.wang@linux.alibaba.com>
@@ -66,310 +66,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move gather_after_split_folio_orders() to vm_util.c as a helper function
-in preparation for implementing checks for mTHP collapse. While we are
-at it, rename this function to indicate that it is not only used for
-large folio splits.
-
-No functional changes.
+Implement the mTHP hugepage check helper.
 
 Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 ---
- .../selftests/mm/split_huge_page_test.c       | 125 +-----------------
- tools/testing/selftests/mm/vm_util.c          | 123 +++++++++++++++++
- tools/testing/selftests/mm/vm_util.h          |   2 +
- 3 files changed, 126 insertions(+), 124 deletions(-)
+ tools/testing/selftests/mm/vm_util.c | 52 +++++++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-index cbf190598988..77cf510f18e0 100644
---- a/tools/testing/selftests/mm/split_huge_page_test.c
-+++ b/tools/testing/selftests/mm/split_huge_page_test.c
-@@ -104,129 +104,6 @@ static bool is_backed_by_folio(char *vaddr, int order, int pagemap_fd,
- 	return false;
- }
- 
--static int vaddr_pageflags_get(char *vaddr, int pagemap_fd, int kpageflags_fd,
--		uint64_t *flags)
--{
--	unsigned long pfn;
--
--	pfn = pagemap_get_pfn(pagemap_fd, vaddr);
--
--	/* non-present PFN */
--	if (pfn == -1UL)
--		return 1;
--
--	if (pageflags_get(pfn, kpageflags_fd, flags))
--		return -1;
--
--	return 0;
--}
--
--/*
-- * gather_after_split_folio_orders - scan through [vaddr_start, len) and record
-- * folio orders
-- *
-- * @vaddr_start: start vaddr
-- * @len: range length
-- * @pagemap_fd: file descriptor to /proc/<pid>/pagemap
-- * @kpageflags_fd: file descriptor to /proc/kpageflags
-- * @orders: output folio order array
-- * @nr_orders: folio order array size
-- *
-- * gather_after_split_folio_orders() scan through [vaddr_start, len) and check
-- * all folios within the range and record their orders. All order-0 pages will
-- * be recorded. Non-present vaddr is skipped.
-- *
-- * NOTE: the function is used to check folio orders after a split is performed,
-- * so it assumes [vaddr_start, len) fully maps to after-split folios within that
-- * range.
-- *
-- * Return: 0 - no error, -1 - unhandled cases
-- */
--static int gather_after_split_folio_orders(char *vaddr_start, size_t len,
--		int pagemap_fd, int kpageflags_fd, int orders[], int nr_orders)
--{
--	uint64_t page_flags = 0;
--	int cur_order = -1;
--	char *vaddr;
--
--	if (pagemap_fd == -1 || kpageflags_fd == -1)
--		return -1;
--	if (!orders)
--		return -1;
--	if (nr_orders <= 0)
--		return -1;
--
--	for (vaddr = vaddr_start; vaddr < vaddr_start + len;) {
--		char *next_folio_vaddr;
--		int status;
--
--		status = vaddr_pageflags_get(vaddr, pagemap_fd, kpageflags_fd,
--					&page_flags);
--		if (status < 0)
--			return -1;
--
--		/* skip non present vaddr */
--		if (status == 1) {
--			vaddr += psize();
--			continue;
--		}
--
--		/* all order-0 pages with possible false postive (non folio) */
--		if (!(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
--			orders[0]++;
--			vaddr += psize();
--			continue;
--		}
--
--		/* skip non thp compound pages */
--		if (!(page_flags & KPF_THP)) {
--			vaddr += psize();
--			continue;
--		}
--
--		/* vpn points to part of a THP at this point */
--		if (page_flags & KPF_COMPOUND_HEAD)
--			cur_order = 1;
--		else {
--			vaddr += psize();
--			continue;
--		}
--
--		next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
--
--		if (next_folio_vaddr >= vaddr_start + len)
--			break;
--
--		while ((status = vaddr_pageflags_get(next_folio_vaddr,
--						     pagemap_fd, kpageflags_fd,
--						     &page_flags)) >= 0) {
--			/*
--			 * non present vaddr, next compound head page, or
--			 * order-0 page
--			 */
--			if (status == 1 ||
--			    (page_flags & KPF_COMPOUND_HEAD) ||
--			    !(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
--				if (cur_order < nr_orders) {
--					orders[cur_order]++;
--					cur_order = -1;
--					vaddr = next_folio_vaddr;
--				}
--				break;
--			}
--
--			cur_order++;
--			next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
--		}
--
--		if (status < 0)
--			return status;
--	}
--	if (cur_order > 0 && cur_order < nr_orders)
--		orders[cur_order]++;
--	return 0;
--}
--
- static int check_after_split_folio_orders(char *vaddr_start, size_t len,
- 		int pagemap_fd, int kpageflags_fd, int orders[], int nr_orders)
- {
-@@ -240,7 +117,7 @@ static int check_after_split_folio_orders(char *vaddr_start, size_t len,
- 		ksft_exit_fail_msg("Cannot allocate memory for vaddr_orders");
- 
- 	memset(vaddr_orders, 0, sizeof(int) * nr_orders);
--	status = gather_after_split_folio_orders(vaddr_start, len, pagemap_fd,
-+	status = gather_folio_orders(vaddr_start, len, pagemap_fd,
- 				     kpageflags_fd, vaddr_orders, nr_orders);
- 	if (status)
- 		ksft_exit_fail_msg("gather folio info failed\n");
 diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
-index 6058d80c63ef..853c8a4caa1d 100644
+index 853c8a4caa1d..d0f8aa66b988 100644
 --- a/tools/testing/selftests/mm/vm_util.c
 +++ b/tools/testing/selftests/mm/vm_util.c
-@@ -195,6 +195,129 @@ unsigned long rss_anon(void)
- 	return rss_anon;
+@@ -16,6 +16,10 @@
+ #define SMAP_FILE_PATH "/proc/self/smaps"
+ #define STATUS_FILE_PATH "/proc/self/status"
+ #define MAX_LINE_LENGTH 500
++#define PAGEMAP_PATH "/proc/self/pagemap"
++#define KPAGEFLAGS_PATH "/proc/kpageflags"
++#define GET_ORDER(nr_pages)    (31 - __builtin_clz(nr_pages))
++#define NR_ORDERS 20
+ 
+ unsigned int __page_size;
+ unsigned int __page_shift;
+@@ -353,7 +357,7 @@ char *__get_smap_entry(void *addr, const char *pattern, char *buf, size_t len)
+ 	return entry;
  }
  
-+static int vaddr_pageflags_get(char *vaddr, int pagemap_fd, int kpageflags_fd,
-+		uint64_t *flags)
-+{
-+	unsigned long pfn;
-+
-+	pfn = pagemap_get_pfn(pagemap_fd, vaddr);
-+
-+	/* non-present PFN */
-+	if (pfn == -1UL)
-+		return 1;
-+
-+	if (pageflags_get(pfn, kpageflags_fd, flags))
-+		return -1;
-+
-+	return 0;
-+}
-+
-+/*
-+ * gather_folio_orders - scan through [vaddr_start, len) and record
-+ * folio orders
-+ *
-+ * @vaddr_start: start vaddr
-+ * @len: range length
-+ * @pagemap_fd: file descriptor to /proc/<pid>/pagemap
-+ * @kpageflags_fd: file descriptor to /proc/kpageflags
-+ * @orders: output folio order array
-+ * @nr_orders: folio order array size
-+ *
-+ * gather_after_split_folio_orders() scan through [vaddr_start, len) and check
-+ * all folios within the range and record their orders. All order-0 pages will
-+ * be recorded. Non-present vaddr is skipped.
-+ *
-+ * NOTE: the function is used to check folio orders after a split is performed,
-+ * so it assumes [vaddr_start, len) fully maps to after-split folios within that
-+ * range.
-+ *
-+ * Return: 0 - no error, -1 - unhandled cases
-+ */
-+int gather_folio_orders(char *vaddr_start, size_t len,
-+		int pagemap_fd, int kpageflags_fd, int orders[], int nr_orders)
-+{
-+	uint64_t page_flags = 0;
-+	int cur_order = -1;
-+	char *vaddr;
-+
-+	if (pagemap_fd == -1 || kpageflags_fd == -1)
-+		return -1;
-+	if (!orders)
-+		return -1;
-+	if (nr_orders <= 0)
-+		return -1;
-+
-+	for (vaddr = vaddr_start; vaddr < vaddr_start + len;) {
-+		char *next_folio_vaddr;
-+		int status;
-+
-+		status = vaddr_pageflags_get(vaddr, pagemap_fd, kpageflags_fd,
-+				&page_flags);
-+		if (status < 0)
-+			return -1;
-+
-+		/* skip non present vaddr */
-+		if (status == 1) {
-+			vaddr += psize();
-+			continue;
-+		}
-+
-+		/* all order-0 pages with possible false postive (non folio) */
-+		if (!(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
-+			orders[0]++;
-+			vaddr += psize();
-+			continue;
-+		}
-+
-+		/* skip non thp compound pages */
-+		if (!(page_flags & KPF_THP)) {
-+			vaddr += psize();
-+			continue;
-+		}
-+
-+		/* vpn points to part of a THP at this point */
-+		if (page_flags & KPF_COMPOUND_HEAD)
-+			cur_order = 1;
-+		else {
-+			vaddr += psize();
-+			continue;
-+		}
-+
-+		next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
-+
-+		if (next_folio_vaddr >= vaddr_start + len)
-+			break;
-+
-+		while ((status = vaddr_pageflags_get(next_folio_vaddr,
-+						     pagemap_fd, kpageflags_fd,
-+						     &page_flags)) >= 0) {
-+			/*
-+			 * non present vaddr, next compound head page, or
-+			 * order-0 page
-+			 */
-+			if (status == 1 ||
-+			    (page_flags & KPF_COMPOUND_HEAD) ||
-+			    !(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
-+				if (cur_order < nr_orders) {
-+					orders[cur_order]++;
-+					cur_order = -1;
-+					vaddr = next_folio_vaddr;
-+				}
-+				break;
-+			}
-+
-+			cur_order++;
-+			next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
-+		}
-+
-+		if (status < 0)
-+			return status;
-+	}
-+	if (cur_order > 0 && cur_order < nr_orders)
-+		orders[cur_order]++;
-+	return 0;
-+}
-+
- char *__get_smap_entry(void *addr, const char *pattern, char *buf, size_t len)
+-bool __check_huge(void *addr, char *pattern, int nr_hpages,
++static bool __check_pmd_huge(void *addr, char *pattern, int nr_hpages,
+ 		  uint64_t hpage_size)
  {
- 	int ret;
-diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
-index a1cd446e5140..197a9b69cbba 100644
---- a/tools/testing/selftests/mm/vm_util.h
-+++ b/tools/testing/selftests/mm/vm_util.h
-@@ -89,6 +89,8 @@ int64_t allocate_transhuge(void *ptr, int pagemap_fd);
- unsigned long default_huge_page_size(void);
- int detect_hugetlb_page_sizes(size_t sizes[], int max);
- int pageflags_get(unsigned long pfn, int kpageflags_fd, uint64_t *flags);
-+int gather_folio_orders(char *vaddr_start, size_t len,
-+		int pagemap_fd, int kpageflags_fd, int orders[], int nr_orders);
+ 	char buffer[MAX_LINE_LENGTH];
+@@ -371,19 +375,59 @@ bool __check_huge(void *addr, char *pattern, int nr_hpages,
+ 	return thp == (nr_hpages * (hpage_size >> 10));
+ }
  
- int uffd_register(int uffd, void *addr, uint64_t len,
- 		  bool miss, bool wp, bool minor);
++static bool check_large_folios(void *addr, unsigned long size, int nr_hpages, uint64_t hpage_size)
++{
++	int pagesize = getpagesize();
++	int order = GET_ORDER(hpage_size / pagesize);
++	int pagemap_fd, kpageflags_fd;
++	int orders[NR_ORDERS], status;
++	bool ret = false;
++
++	memset(orders, 0, sizeof(int) * NR_ORDERS);
++
++	pagemap_fd = open(PAGEMAP_PATH, O_RDONLY);
++	if (pagemap_fd == -1)
++		ksft_exit_fail_msg("read pagemap fail\n");
++
++	kpageflags_fd = open(KPAGEFLAGS_PATH, O_RDONLY);
++	if (kpageflags_fd == -1) {
++		close(pagemap_fd);
++		ksft_exit_fail_msg("read kpageflags fail\n");
++	}
++
++	status = gather_folio_orders(addr, size, pagemap_fd,
++				kpageflags_fd, orders, NR_ORDERS);
++	if (status)
++		goto out;
++
++	if (orders[order] == nr_hpages)
++		ret = true;
++
++out:
++	close(pagemap_fd);
++	close(kpageflags_fd);
++	return ret;
++}
++
+ bool check_huge_anon(void *addr, unsigned long size, int nr_hpages, uint64_t hpage_size)
+ {
+-	return __check_huge(addr, "AnonHugePages: ", nr_hpages, hpage_size);
++	if (hpage_size == read_pmd_pagesize())
++		return __check_pmd_huge(addr, "AnonHugePages: ", nr_hpages, hpage_size);
++
++	return check_large_folios(addr, size, nr_hpages, hpage_size);
+ }
+ 
+ bool check_huge_file(void *addr, int nr_hpages, uint64_t hpage_size)
+ {
+-	return __check_huge(addr, "FilePmdMapped:", nr_hpages, hpage_size);
++	return __check_pmd_huge(addr, "FilePmdMapped:", nr_hpages, hpage_size);
+ }
+ 
+ bool check_huge_shmem(void *addr, unsigned long size, int nr_hpages, uint64_t hpage_size)
+ {
+-	return __check_huge(addr, "ShmemPmdMapped:", nr_hpages, hpage_size);
++	if (hpage_size == read_pmd_pagesize())
++		return __check_pmd_huge(addr, "ShmemPmdMapped:", nr_hpages, hpage_size);
++
++	return check_large_folios(addr, size, nr_hpages, hpage_size);
+ }
+ 
+ int64_t allocate_transhuge(void *ptr, int pagemap_fd)
 -- 
 2.43.5
 
