@@ -1,194 +1,113 @@
-Return-Path: <linux-kernel+bounces-777814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2995BB2DE29
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:45:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D63B2DE2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E71B1889A22
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:41:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CFFA188D704
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A7031E115;
-	Wed, 20 Aug 2025 13:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBD03203AF;
+	Wed, 20 Aug 2025 13:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRQjkXhh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbt4OfuY"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581922236FC;
-	Wed, 20 Aug 2025 13:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2F531DDB3;
+	Wed, 20 Aug 2025 13:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755697241; cv=none; b=V0CBjQz5XT2Gs26/96jNtLGZK1/GEI7WoEAjzQMuKOOAxH7ivGoZ+mEi7b5sESk0AMmSUVKHHpKqdQA1YpOQwTq+KM8dFevExJ3aeP+4HVVeGUVg6KPXq9AzJga+cYLxzBIM5dj8wWtRI+nrE+D9Rd9AB6HwEZORkMljVVTGf0U=
+	t=1755697367; cv=none; b=gAL1xLtU9pNvB8KsRrZYotWAGV6OYLX/LUSzwJseU4y38ORZqbpDSQ1OAs3jdksdXbw1k//HvkmHjR8G2azAaIirSilZiV9WqO97SbOuMif/ZDWcxsBLV8U8t3KvUjjK4jiutSp+d/EYJZ9OYslvN+by9T76YNm9iSFWVtCGxgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755697241; c=relaxed/simple;
-	bh=WcrzywipklE0yDDKiMLTLSeT+WnrVQNTiiufe2sMZp0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=jfrXTOzm7II4ZAi37sxuzDrD5+yhLS4EnWlRtxHEHaTAsw7Iy7NTaA+uSfkyDK4ptdtw9xhdrOyXcllcnzmp0TfWkHr9Rd2mlbpmslyXQTHbx+yMxrL74Nv5734LplBx1Q6eXSRgA+34CQoKm4Zz+oW8nuFKsqYenKRpKX+rJf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IRQjkXhh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4383C4CEEB;
-	Wed, 20 Aug 2025 13:40:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755697240;
-	bh=WcrzywipklE0yDDKiMLTLSeT+WnrVQNTiiufe2sMZp0=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=IRQjkXhhv15ElXiggW7PGOe7cjkZxEkm37zFnYqrjkQPZb2iiu+v4kPTKluqbuM8d
-	 Dr5bQsCvL5dWLOL0tFIqPqY60V4xCzGGM0Kd4MrzfCcElnDJeE+ThYXO8ESc3jUj6f
-	 SOjfPwDAcmBRqzKeGJ5j5JBzg11F8zVFPJcwHFFxLmBI9rLOD9ES+FQaQwTKBlBQK7
-	 HrdQJEX9pGsPfukW1bgIailaCYMt+Qkam5PVRzphFmTnca6DHAFrMU8qT3h2csq9G3
-	 pNqcNLKcARLHgkHX7qddYC6/tchTn7czIa+T1+DTek0k1PJj+MH89U1C87JblZSJNq
-	 JcFpqAC5EPjkQ==
+	s=arc-20240116; t=1755697367; c=relaxed/simple;
+	bh=BJpR4+2dEY058fz/TysSP2l5ClOOJ/4EjTupVVdTWu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JV1YFG9bvydsDW4qGKUtaxFgCUXGS6KDjaA5Y3fTzPl/Nha8srX2nUCfS1gEMCMpGxJv3mOidBwcPvhRNwsF4mrfIBLNFgkZhfEZCtXuXmBCIL2tTVJ9STZPtlc072WrrNqnM1A7TAyy5gE1CJSaHifhzF+HUWhJm2efwsKipe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jbt4OfuY; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24456ce0b96so10499795ad.0;
+        Wed, 20 Aug 2025 06:42:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755697365; x=1756302165; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W4HJMfkk7KfG7pCM/eCrer46W2j/6fCWLFDAIs6olyc=;
+        b=jbt4OfuYHMmUwkNJGLWncG1dNeTrkieiWuhPsUOIoVOCCUrceqdZK16RaaWPAkqb3F
+         2pXgN3C3auC4r4jF5N3WNeSordeP0JZnETY5l0ZsPbtHIsobvX2qIGx+aWPA5+s3NTgD
+         gNRNOuzpS2WXOVsRkAk9rPWB40ZKZJgR5A+dKh1UTGMsG6mzZPJGmB5NtP/IDJHIdQIC
+         c+SUlhJBF8SA/c0LG28+8Q09R/AbZLEPfo7w1ddAVmYNP34Y4eSDQojHQC0zOgsuOu2L
+         5KaBBYkaKTgaWITO1/g02UDPzUtKVX8TaErYrEdRrj4rEhSfxj0dbzRULCH8wCToYy35
+         pC6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755697365; x=1756302165;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W4HJMfkk7KfG7pCM/eCrer46W2j/6fCWLFDAIs6olyc=;
+        b=SI/grFNKY5R945P3pHfJmUVGlLowXOWQKazaVuYol29hbxKPbp2uI4xl3Nylce/Qs7
+         /rRLnhl3vGZ6+ULcIp7yzasAvxOXETjPwfE/HU7VKSgORzzBmSLpGYWCU5ocQ1IyJOUi
+         APxAqRdm6uJLQx1tlqMSTemPgGKSCUiE0fWKa+E64OHmeyYkuCG57vvVQXK97B/vbiLb
+         yQQyXG/ZQu8vQqpQ38WRGrFtOC4uTqWM5ZY6lHL8acPly488I9PvbEfnxnF4okBCKgEf
+         u8Q8yd39cvDixGb1AZ8DL2cR40+J3IN1HFiUWk9KzDJxoXSav2Pmph0qJoQ/qGrmtyED
+         OSyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUog+oPIJhEoN8X7ECWD11flLDErUD0/FZxRtbSANyHmJtd8r9kE5o7tA5rbg4m8C6xOy6XtdopZevg+24t@vger.kernel.org, AJvYcCWcMJJT239OJkxT/rFLqXSzuJ8bQZTz8vQdz39NwU8KjwMWNtpolUlOoBLIw/oCgsI1RAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy57EsHqgxUMkrG3wnMfqTdV2uSuF6QTwEuEsyshSsMCxr5XG41
+	EEA9/kBPb7ZflIARcCAgRE8RB3U0goXmLYsOwywA/gZ2Qtjh4g7/eynz
+X-Gm-Gg: ASbGncu7W4txZKAXbLVuOcilgi8HDLahHUBcQzEXoxkjuvLW3GCAjh9MUiGTLTtvIK3
+	CchLMUsniofz4JwYBunSpJ5eYgcZJgDBvPo1jER6nGdllgwJ0JFfIt9ghaMGws+KfGN9TuIsSnX
+	IUV81Ng6hW67Jkv9WvW+3hkdCTyrnj8aUQj7KyoVAwzkzxMV9fif9Thzyqtk6JLgT4hNNAqoLXG
+	d9B6lRn9Xmq1b3AHaPIpX+08advmsRclxOESgGQ1g58IoPDAF1+v0AkQ5aA7LGPIVp+hW/EFr/P
+	TduzezeMMtMvNPyhNthdrhp3nGMOyxrN191UfnxQvB4ux+TfTkZ4bXehgt3oKyiAXtXgFdbYjTy
+	3iOlVV3LI4QbRerE2RWmPCA==
+X-Google-Smtp-Source: AGHT+IHA7rXRRnhAmz8+D15MEbDYIgERNhxCNCWamJeiXomnEmGMJVe5kcblPFlrGXqwHCCeV8gqjw==
+X-Received: by 2002:a17:902:ccc4:b0:245:f860:80b1 with SMTP id d9443c01a7336-245f8608e29mr13810195ad.11.1755697364554;
+        Wed, 20 Aug 2025 06:42:44 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed377843sm27689175ad.57.2025.08.20.06.42.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 06:42:43 -0700 (PDT)
+Date: Wed, 20 Aug 2025 09:42:41 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kvm: x86: simplify kvm_vector_to_index()
+Message-ID: <aKXQ0Z4T0RzVnjI8@yury>
+References: <20250720015846.433956-1-yury.norov@gmail.com>
+ <175564479298.3067605.13013988646799363997.b4-ty@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 15:40:36 +0200
-Message-Id: <DC7AQ7LH1EA0.2BFROWRN54A4@kernel.org>
-Subject: Re: [PATCH 1/4] rust: dma: implement DataDirection
-Cc: "Alice Ryhl" <aliceryhl@google.com>, <akpm@linux-foundation.org>,
- <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
- <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <lossin@kernel.org>,
- <a.hindborg@kernel.org>, <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>,
- <acourbot@nvidia.com>, <jgg@ziepe.ca>, <lyude@redhat.com>,
- <robin.murphy@arm.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250815171058.299270-1-dakr@kernel.org>
- <20250815171058.299270-2-dakr@kernel.org> <aKLzrp0m00J6CCYz@google.com>
- <DC5INEG2DXU5.DM4JIICEQ2PC@kernel.org> <aKMa7YzO-PwEv9AT@google.com>
- <DC5KK67M752R.N9PX4LUG2F68@kernel.org>
- <CAH5fLgi6OZaqjnDScDrJ3YjN2a8mJuPiO5MLPUqUWo62WkvvrA@mail.gmail.com>
- <DC5Q80UUHSUV.360VLIC6DYZ78@kernel.org>
- <CAH5fLgjymw6Mr8qv8NDFA8hz+nfh3-B4XcZ_N-UAmJrc3Ug_QQ@mail.gmail.com>
- <DC5UWIXHVAGI.1TTU2K9WIC1E9@kernel.org>
- <99CFF9D2-962E-4322-BCFD-273485DBAF62@collabora.com>
-In-Reply-To: <99CFF9D2-962E-4322-BCFD-273485DBAF62@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <175564479298.3067605.13013988646799363997.b4-ty@google.com>
 
-On Wed Aug 20, 2025 at 3:17 PM CEST, Daniel Almeida wrote:
->
->
->> On 18 Aug 2025, at 18:03, Danilo Krummrich <dakr@kernel.org> wrote:
->>=20
->> On Mon Aug 18, 2025 at 8:47 PM CEST, Alice Ryhl wrote:
->>> with no warnings and build-failure if out-of-bounds.
->>=20
->> +/// DMA data direction.
->> +///
->> +/// Corresponds to the C [`enum dma_data_direction`].
->> +///
->> +/// [`enum dma_data_direction`]: srctree/include/linux/dma-direction.h
->> +#[derive(Copy, Clone, PartialEq, Eq, Debug)]
->> +#[repr(u32)]
->> +pub enum DataDirection {
->> +    /// The DMA mapping is for bidirectional data transfer.
->> +    ///
->> +    /// This is used when the buffer can be both read from and written =
-to by the device.
->> +    /// The cache for the corresponding memory region is both flushed a=
-nd invalidated.
->> +    Bidirectional =3D Self::const_cast(bindings::dma_data_direction_DMA=
-_BIDIRECTIONAL),
->> +
->> +    /// The DMA mapping is for data transfer from memory to the device =
-(write).
->> +    ///
->> +    /// The CPU has prepared data in the buffer, and the device will re=
-ad it.
->> +    /// The cache for the corresponding memory region is flushed.
->> +    ToDevice =3D Self::const_cast(bindings::dma_data_direction_DMA_TO_D=
-EVICE),
->> +
->> +    /// The DMA mapping is for data transfer from the device to memory =
-(read).
->> +    ///
->> +    /// The device will write data into the buffer for the CPU to read.
->> +    /// The cache for the corresponding memory region is invalidated be=
-fore CPU access.
->> +    FromDevice =3D Self::const_cast(bindings::dma_data_direction_DMA_FR=
-OM_DEVICE),
->> +
->> +    /// The DMA mapping is not for data transfer.
->> +    ///
->> +    /// This is primarily for debugging purposes. With this direction, =
-the DMA mapping API
->> +    /// will not perform any cache coherency operations.
->> +    None =3D Self::const_cast(bindings::dma_data_direction_DMA_NONE),
->> +}
->> +
->> +impl DataDirection {
->> +    /// Casts the bindgen-generated enum type to a `u32` at compile tim=
-e.
->> +    ///
->> +    /// This function will cause a compile-time error if the underlying=
- value of the
->> +    /// C enum is out of bounds for `u32`.
->> +    const fn const_cast(val: bindings::dma_data_direction) -> u32 {
->
-> This should be its own generic helper for similar enums, IMHO
+On Tue, Aug 19, 2025 at 04:12:11PM -0700, Sean Christopherson wrote:
+> On Sat, 19 Jul 2025 21:58:45 -0400, Yury Norov wrote:
+> > Use find_nth_bit() and make the function almost a one-liner.
+> 
+> Applied to kvm-x86 misc, thanks!
+> 
+> P.S. I'm amazed you could decipher the intent of the code.  Even with your
+>      patch, it took me 10+ minutes to understand the "logic".
 
-In general, I agree, but it may not be exactly straight forward (considerin=
-g
-that it still needs to work from const context).
+Thanks Sean. :)
 
-The function relies on the fact that both the argument and return type are
-numeric primitives, which need to fit into an i128. We could probably defin=
-e a
-marker trait for such types, etc.
-
-Yet, I don't know how we could do the casts from one generic type I to anot=
-her
-generic type O. I think we'd need to implement traits for that as well. How=
-ever,
-this would require the unstable const_trait_impl feature.
-
-Hence, working this out (if even possible currently) and improving existing=
- enum
-abstractions should be done independent from this series.
-
->> +        // CAST: The C standard allows compilers to choose different in=
-teger types for enums.
->> +        // To safely check the value, we cast it to a wide signed integ=
-er type (`i128`)
->> +        // which can hold any standard C integer enum type without trun=
-cation.
->> +        let wide_val =3D val as i128;
->> +
->> +        // Check if the value is outside the valid range for the target=
- type `u32`.
->> +        // CAST: `u32::MAX` is cast to `i128` to match the type of `wid=
-e_val` for the comparison.
->> +        if wide_val < 0 || wide_val > u32::MAX as i128 {
->> +            // Trigger a compile-time error in a const context.
->> +            panic!("C enum value is out of bounds for the target type `=
-u32`.");
->> +        }
->> +
->> +        // CAST: This cast is valid because the check above guarantees =
-that `wide_val`
->> +        // is within the representable range of `u32`.
->> +        wide_val as u32
->> +    }
->> +}
->> +
->> +impl From<DataDirection> for bindings::dma_data_direction {
->> +    /// Returns the raw representation of [`enum dma_data_direction`].
->> +    fn from(direction: DataDirection) -> Self {
->> +        // CAST: `direction as u32` gets the underlying representation =
-of our `#[repr(u32)]` enum.
->> +        // The subsequent cast to `Self` (the bindgen type) assumes the=
- C enum is compatible
->> +        // with the enum variants of `DataDirection`, which is a valid =
-assumption given our
->> +        // compile-time checks.
->> +        direction as u32 as Self
->> +    }
->> +}
-
+> [1/1] kvm: x86: simplify kvm_vector_to_index()
+>       https://github.com/kvm-x86/linux/commit/cc63f918a215
+> 
+> --
+> https://github.com/kvm-x86/linux/tree/next
 
