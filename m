@@ -1,166 +1,182 @@
-Return-Path: <linux-kernel+bounces-777586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F209B2DB3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:39:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E129B2DB3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE66560DD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:36:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B32A583F33
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D3E2E5414;
-	Wed, 20 Aug 2025 11:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668402E6117;
+	Wed, 20 Aug 2025 11:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6TSXgnj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KnMhlgGI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4672D372A;
-	Wed, 20 Aug 2025 11:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE50323C516;
+	Wed, 20 Aug 2025 11:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755689756; cv=none; b=CjHYXWb7bQeDtriSg2lrUaQB5L7GRBuWa4B2No6aycYr2gfkdNfZQnKKYinTZy/2+zfB2JAylsbCoPc4UmDq73mVt1wggeryrlKIqQ8Gy+MLcw4Y0Oc8P2sMAEsKkNAdYlGiuFF+JXfUSj5sTumPmx86B0WY1QR8LlvDRwaUXxo=
+	t=1755689789; cv=none; b=k0YzdNPSqMOONFagwMjCIo1W6NSZf9rSHst3vS2dv8ph9faikym2e8QqjrEwZhsHfqpzuzB/anw188qvN7u0A60hqh/xpqCLVl1pX0w7EB7zYTaeHbL09YGxfTTBCDBWXQ1cTfzbcVt0sBxtv8O4sq60PkZMR2KZ9heEodnh4/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755689756; c=relaxed/simple;
-	bh=aL/Gb7jMTCPt9Wn//aIlu4oVuntmLeGbABS2BL/rpQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qfUHW1SDdP4DsfSFnpigVxxSS4k42rVQZK3SHF21M8PodCi4JnSyT0ndjsLVfPKpVWbuW1SkpsD+StZbZFV+YS1tO7+Fenl8ACWuWa3Wl5xvsQyd0z3ox3PggFwU2BYjRnbRAs+fYy6Rj7kqtMDE1WTLZKqqRvSdH1KgIoF+9+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6TSXgnj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0F99C116B1;
-	Wed, 20 Aug 2025 11:35:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755689755;
-	bh=aL/Gb7jMTCPt9Wn//aIlu4oVuntmLeGbABS2BL/rpQc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F6TSXgnjncEQ8738OOqFwQkHtQ6e5721OuIf0sTlwotYiZolMEJ2dXMtzKo7c9cz6
-	 WmjmJIqil7An17/4kH5dVPanjJxkgrjo2VDfGqANQ5UFSTalxM0XWGz/wb6stQKRyS
-	 FUJ6FeMIGHvFUJsB7rMrVbbPy46f+UEIiew47P+rfy/MOb3wmD12N+vNDCJAe9pwP+
-	 yC0c9Ck4rIuyg7w3DwMz3BashFp/bPjM2CBcw5Sda1WINk+PPzH10zWz81KyIisE6V
-	 S9JQ8T92Azt3kEj2Hl9NNzLgEKYekL5WA9ep2vnFM62u2Lah5RnUaS0TMwANAlVX42
-	 5kMWW5dC/hIwA==
-Message-ID: <2e16f923-5dad-4c8d-80d7-667dbece92c9@kernel.org>
-Date: Wed, 20 Aug 2025 13:35:48 +0200
+	s=arc-20240116; t=1755689789; c=relaxed/simple;
+	bh=kveYH6xJ4b/PAXcjC6mUdes0JktzbMNXLCx/30WespA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bACJiru0ne6eOJNooAdr9iYwA+kF8TvnbeucyrBqhkZTrPdfvnTA38mKZ+gEFK7YFl09mfsOVobc4sE/tJQcp6B78qb7Uh5g6AffRkwcUiPRy+0TpEVLjbLl1zrwKgAXrEuldE7QnZiq2cDARN8f9AKUw0IA8Dzz3aF61ouDtNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KnMhlgGI; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755689788; x=1787225788;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=kveYH6xJ4b/PAXcjC6mUdes0JktzbMNXLCx/30WespA=;
+  b=KnMhlgGIaKxh8E0h04rTy5S9fq6pZDJF5YJuR1Syp8r9O+K7qPZxueyy
+   VtavCp0LhpkZV/M3R5oaqKEZymdGTNVOTjXHWwbynhuHHeVOk8KH5UmPP
+   feEWm5H6nZ/1jmkaV0ITszlS1pkycpwE0QejdeQvq2kBsRSChK6lYa4U2
+   lr1wus5OeffAiXjA6Ds+raVDIV0208fYjvNtwAEX53QpbfpUjKK570c0B
+   yA815f/gjZ+M3s5YqCeZbaS7tbtgmWZcJXMtsglZuoF+RiGmzHyDsZxP9
+   TlCck/Y05wA84iTKYQrQTunDQ5KmtZYSg0AuFcq/SyvsiXcu2YLz+Q1uT
+   A==;
+X-CSE-ConnectionGUID: ai3UNU82Q2WxL+2zXuhTZQ==
+X-CSE-MsgGUID: GASXws5uSpGw2TJKdF28gA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58018496"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="58018496"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 04:36:28 -0700
+X-CSE-ConnectionGUID: VyJyJYMbQYuS3662x5/ZtQ==
+X-CSE-MsgGUID: d0RZ+HQbRXmjsJ2nBZOSiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="167612315"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.83])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 04:36:23 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 20 Aug 2025 14:36:19 +0300 (EEST)
+To: Gerd Bayer <gbayer@linux.ibm.com>
+cc: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org, 
+    kwilczynski@kernel.org, bhelgaas@google.com, helgaas@kernel.org, 
+    jingoohan1@gmail.com, mani@kernel.org, robh@kernel.org, 
+    schnelle@linux.ibm.com, Lukas Wunner <lukas@wunner.de>, arnd@kernel.org, 
+    geert@linux-m68k.org, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 1/6] PCI: Clean up __pci_find_next_cap_ttl()
+ readability
+In-Reply-To: <353d1dc7e3c4e9b5f127ac9177a863d8a8cde39f.camel@linux.ibm.com>
+Message-ID: <fb7c14c5-0aaf-6f90-caac-71d6ce6f25ae@linux.intel.com>
+References: <20250813144529.303548-1-18255117159@163.com>  <20250813144529.303548-2-18255117159@163.com> <353d1dc7e3c4e9b5f127ac9177a863d8a8cde39f.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI TMDS181
- and SN65DP159 bindings
-To: Mike Looijmans <mike.looijmans@topic.nl>, Conor Dooley <conor@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
- Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250812145256.135645-1-mike.looijmans@topic.nl>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.3b7d4319-e208-470d-9ada-585343a64822@emailsignatures365.codetwo.com>
- <20250812145256.135645-2-mike.looijmans@topic.nl>
- <20250812-designing-tyke-db85527b373d@spud>
- <f4ec7690-322e-493a-b346-7b9560ac0616@topic.nl>
- <9fba4917-a24f-4fee-8f1a-7509a0bc542e@kernel.org>
- <2d694c9c-704e-4353-8b57-de83eb5a7f96@topic.nl>
- <1b517073-cadb-41e4-b470-54a6ad93dd59@kernel.org>
- <3a4448a5-a01f-4d4e-a890-56eb9357abd3@topic.nl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <3a4448a5-a01f-4d4e-a890-56eb9357abd3@topic.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 20/08/2025 11:37, Mike Looijmans wrote:
+On Wed, 20 Aug 2025, Gerd Bayer wrote:
+
+> On Wed, 2025-08-13 at 22:45 +0800, Hans Zhang wrote:
+> > Refactor the __pci_find_next_cap_ttl() to improve code clarity:
+> > - Replace magic number 0x40 with PCI_STD_HEADER_SIZEOF.
+> > - Use ALIGN_DOWN() for position alignment instead of manual bitmask.
+> > - Extract PCI capability fields via FIELD_GET() with standardized masks.
+> > - Add necessary headers (linux/align.h).
+> > 
+> > No functional changes intended.
+> > 
+> > Signed-off-by: Hans Zhang <18255117159@163.com>
+> > Acked-by: Manivannan Sadhasivam <mani@kernel.org>
+> > ---
+> >  drivers/pci/pci.c             | 9 +++++----
+> >  include/uapi/linux/pci_regs.h | 3 +++
+> >  2 files changed, 8 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index b0f4d98036cd..40a5c87d9a6b 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -9,6 +9,7 @@
+> >   */
+> >  
+> >  #include <linux/acpi.h>
+> > +#include <linux/align.h>
+> >  #include <linux/kernel.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/dmi.h>
+> > @@ -432,17 +433,17 @@ static u8 __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
+> >  	pci_bus_read_config_byte(bus, devfn, pos, &pos);
+> >  
+> >  	while ((*ttl)--) {
+> > -		if (pos < 0x40)
+> > +		if (pos < PCI_STD_HEADER_SIZEOF)
+> >  			break;
+> > -		pos &= ~3;
+> > +		pos = ALIGN_DOWN(pos, 4);
+> >  		pci_bus_read_config_word(bus, devfn, pos, &ent);
+> >  
+> > -		id = ent & 0xff;
+> > +		id = FIELD_GET(PCI_CAP_ID_MASK, ent);
+> >  		if (id == 0xff)
+> >  			break;
+> >  		if (id == cap)
+> >  			return pos;
+> > -		pos = (ent >> 8);
+> > +		pos = FIELD_GET(PCI_CAP_LIST_NEXT_MASK, ent);
+> >  	}
+> >  	return 0;
+> >  }
+> > diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> > index f5b17745de60..1bba99b46227 100644
+> > --- a/include/uapi/linux/pci_regs.h
+> > +++ b/include/uapi/linux/pci_regs.h
+> > @@ -207,6 +207,9 @@
+> >  
+> >  /* Capability lists */
+> >  
+> > +#define PCI_CAP_ID_MASK		0x00ff	/* Capability ID mask */
+> > +#define PCI_CAP_LIST_NEXT_MASK	0xff00	/* Next Capability Pointer mask */
+> > +
+> >  #define PCI_CAP_LIST_ID		0	/* Capability ID */
+> >  #define  PCI_CAP_ID_PM		0x01	/* Power Management */
+> >  #define  PCI_CAP_ID_AGP		0x02	/* Accelerated Graphics Port */
 > 
-> Met vriendelijke groet / kind regards,
+> Hi Hans,
 > 
-> Mike Looijmans
-> System Expert
+> I like your approach to replace the magic numbers here. If you went
+> further to replace the single pci_bus_read_config_word() with two
+> single-byte reads at the appropriate places - for CAP_ID and
+> CAP_LIST_NEXT - you could even go with the already existing offset
+> defines PCI_CAP_LIST_ID and PCI_CAP_LIST_NEXT from pci_regs.h.
+>
+> But that might be a more intricate change and involves more HW accesses
+> than what it's worth.
+
+Hi,
+
+As you noted, it'll be less efficient so it's undesirable to split the 
+read.
+
+It's somewhat problematic that some of the defines in 
+include/uapi/linux/pci_regs.h cannot be easily used efficiently with 
+multi-byte reads leading to use of literals in code.
+
+IMO, adding the multi-byte masks like this Hans' change is IMO the correct 
+way to address it.
+
+> So feel free to add my
+> Reviewed-by: Gerd Bayer <gbayer@linux.ibm.com>
 > 
+> Thanks,
+> Gerd
 > 
-> TOPIC Embedded Products B.V.
-> Materiaalweg 4, 5681 RJ Best
-> The Netherlands
-> 
-> T: +31 (0) 499 33 69 69
-> E: mike.looijmans@topic.nl
-> W: www.topic.nl
 
-Please fix your email client not to attach such top signature.
+-- 
+ i.
 
-...
-
->>
->> Also, e.g. first file in iio/adc:
->> adi,ad4000.yaml
->>
-> I think I get it. Instead of having compatibles "a" and "b" the driver only 
-> supports "a" in its match table, and the devicetree entry must be either 
-> compatible="a"; or compatible="b","a". Using compatible="b"; would be disallowed.
-> 
-> I actually planned (I have implemented it locally already for v3) for the 
-> driver to check the chip type and complain if it doesn't match the devicetree. 
-> If the wrong device is there, the most likely cause is that the input and 
-> output buses got mixed up. That would also justify having separate 
-
-I don't understand why. I don't get what is input and output bus.
-
-Either devices are compatible or not.
-
-If you can check which device you have via registers, then usually they
-are compatible.
-
-Best regards,
-Krzysztof
 
