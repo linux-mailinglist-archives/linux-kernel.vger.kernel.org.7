@@ -1,170 +1,97 @@
-Return-Path: <linux-kernel+bounces-777649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB42B2DC34
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:15:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF72B2DC35
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1398D5C6895
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B9D1C44C0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406082EE61E;
-	Wed, 20 Aug 2025 12:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50432F1FC8;
+	Wed, 20 Aug 2025 12:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnRHkb4F"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X185EkT0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964DF2E11B8;
-	Wed, 20 Aug 2025 12:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8806A2EFDAA;
+	Wed, 20 Aug 2025 12:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755691991; cv=none; b=GaIRjit4NHuYGFGi+VHvDIZry2t/DlJhootNx/h0bNc1kO+SFiTeAskkVTxECaAC2tit33BupmDEurCWB7H3d++760tzgyEMzSeQceLCYIsJrS4sDaUv8jESjW2DrBrbxOxUH2QpZRm2/Vo/6Erq/jl6newrKs2j7Kc+qtGQxhM=
+	t=1755692102; cv=none; b=LE+1Q/sEdmTPSRLbi4Sqng4fXCDdcbGv2s4605IykvsPMaFvsaqwNM3yoolzhlf2PuzA9K/zaw0soNirPnEDKs5PKAWsYEg4qy64xIg9KSJQCvQfT1cBCHyr5YiF4NzhMYhEFOHvZWC3NORsJ59k1S+r1bc4YRgssdS7ZnnOa5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755691991; c=relaxed/simple;
-	bh=c92iWyVwQj+arCHVqYiotxgaquc5VivpQtnPYYTsW3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YlWRAkeWHNH7kmMtQ8/b6+xHHhFPjC08FjPnBidPaClWzuOmAhXSBKt50HG97Yb6/Llxg7FviAJCtKXhd6+iHb2ivolK229FuN9QCkIGGztgshEGM3pXC14xUvuJJnk5Ui9uEB0wJm8eGCQEzv2riHItZOQeWeBttMFItGSi2RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnRHkb4F; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b49f7aaf5so3595395e9.2;
-        Wed, 20 Aug 2025 05:13:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755691985; x=1756296785; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3fF3VtgPJPt8GcyHffEJ4GYfZjXgpyLMvEqUzDnMYQ0=;
-        b=EnRHkb4FyrwwrkwUyye3u5HSaAOqIVdAGTv6tD6r63xwDJQPPZorkLpaqtfG8PLngz
-         7sFjhbx3KUJvw03BXL2vsycaeVbUkiJ7CapPqons9FzI1DoNX6LmEAxgedyMs9lq9Up3
-         +7f/8Y5Vy/P7pGQnBfn13MfJsplI65XJgCRKnw5egDPv5YcrsRcV9SVYpOsnbMebc04h
-         pJ1U/fkYVDpahtvBxVCSZALHJA3QHLPY5ZLvOE9y3E7QbhPveGLCYR6a/U2qIYBmBM62
-         pPeoImTPwXL7Im4/6wZAkLFlQO52bczKYeB9g3V6gzUvDH7dV9SpNxhGpbMOzanG9ghQ
-         MLaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755691985; x=1756296785;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3fF3VtgPJPt8GcyHffEJ4GYfZjXgpyLMvEqUzDnMYQ0=;
-        b=Igr8o8/oLlauWZ8tP5D674JkQI+e3iRNJk6Sr0XSIjB3eTlH9IwoqzNJa1iH0mmMxl
-         yOlppww0xNjzCjORcbOEC5oxfl4mSTcwyafPKEyioxRIRgOfz/ywG1XuAdIEa4Lj8RAi
-         RXikaffirQ9PSpklnh9z9rWimXd7NX3fLS8CdTbvqsDxXY1fHtEGoNScC3hb5PER/N3E
-         KHxY1X8qjoirMl6TbdpbaB21x/LNhIyiJiC6fV84h6h0CX1pauVEvm2Xv6YoAJVmRlAh
-         h243Cz4ZQsRYaQgZPt+YdlEqQi1i6qsMdUgRjFaVxzTBapUrCzYGOo/lJG7JJ5/H7gLY
-         Tw0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUQoVaUclfuI7MpBN3EwTWds8uhONl2hFjvq9wtHCFfYZsBccEfVVKVf3tAoOFQLy9E6f7kYKB2YPV/qIo=@vger.kernel.org, AJvYcCV96ASvK9pgKNrkG5/QEjR/wXOVd26DtgJvLnYo5oS4rS5i6p7HaF/b0HTffNf8763A1+eFMA5Z9p5z0g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2UekwCNs2bRBQTFSNvo5QGOTedGZnW0ukcA/8Vx90S7y6Ez0M
-	3MGSHUwFKgrbPLkuNVY76DQM5Gl/hIgSmpw0MBLBa08Pq0lY92QVTXNt
-X-Gm-Gg: ASbGnctvVUAyH9M1Le8az+M1I8hqGdbYQn8Z6jVzaTN8+rqUysJ4HT1/1bHxGXEZS17
-	W9QYrWP9IGFWqkJfQTdiigfK/ITneFM6hOG1CysF3YGqfVMWxZllA7GHn3cRQhswWP4RX7rzEqH
-	cWXa2VsEZbK6lweZYFyEcVAARpZnjPXOZdy8RMTaJc5MUs4ip2YG6E62VZ4K2AMCfts4kS/tP/Y
-	fqIWJNPdbvBF+/x7ehibzIH8xfMK7vB2V2duB4YYxgnJ2VRMPnM2Uitf76qkU3NZnwI+Klkn4QX
-	M/FKxj5KoUSJiitRCZcheOoRlS+AJ33FdECCKUodl1BXQVxkWMR+43UW8Sap71GFwpcptshRysn
-	Jg9ZOhr5YAsTdzFUbPxjItORjHY/EEPbJLPwEmMXvjlpg0YrmXNMtVuH5FzgxdXOf
-X-Google-Smtp-Source: AGHT+IF0uauUU/Y5F8dRa0cKTUduI6d1QMmDMV7wjD2DoamyTD4JTtPN3rLrDT46JbeDmAJXGLePYQ==
-X-Received: by 2002:a05:600c:630d:b0:459:df07:6db7 with SMTP id 5b1f17b1804b1-45b4bb22bbdmr989365e9.6.1755691984707;
-        Wed, 20 Aug 2025 05:13:04 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c29c9dsm32478005e9.4.2025.08.20.05.13.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 05:13:04 -0700 (PDT)
-Date: Wed, 20 Aug 2025 13:13:03 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru
- <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org (open list:BROCADE
- BFA FC SCSI DRIVER), linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH 1/6] scsi: bfa: use min_t() to improve code
-Message-ID: <20250820131303.1fa8e046@pumpkin>
-In-Reply-To: <20250815121609.384914-2-rongqianfeng@vivo.com>
-References: <20250815121609.384914-1-rongqianfeng@vivo.com>
-	<20250815121609.384914-2-rongqianfeng@vivo.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1755692102; c=relaxed/simple;
+	bh=Y5P6hAA9P3PR1/js+DABIneTp1HWBxbLcQeHF0ycIN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmJKFNgWS4O9+Ji1NvT9Gk9Fhu7tTxW5f3OLR1aJHrQr2hjvu7KPY6f3l70nhwDxDr8nCgsIUnrzdME8LcbvKMakT2aZcbce4Za361Z7dVRJMpak67F9LWUcA3nXf9L6GD7Wd2aiaOGt8hYIgpZsMiBK3CfcSHcHudvPv6OxdFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=X185EkT0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=23JiI9Gumsb/rLx4cuVULAx/qkeZ5t8+893/fbaahsA=; b=X185EkT0rWuh6auczvYqCm1Sk6
+	aOK4BsPPzEBb5mULL84/PKIqjOCJSRGE1PNIEC+cT3a3IecUMSQQLriOQboXNUzVi9V2JhJwbY7xt
+	0j0WJmZWBjUB2xYlu176+q623lX+ow5OFIsQI/vpH4funOwGxcrdzvaOy+Yj8w8xjUXs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uohiR-005JoT-1m; Wed, 20 Aug 2025 14:14:55 +0200
+Date: Wed, 20 Aug 2025 14:14:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Mateusz Koza <mateusz.koza@grinn-global.com>
+Cc: angelogioacchino.delregno@collabora.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	marcin.czarnecki@grinn-global.com, b.bilas@grinn-global.com
+Subject: Re: [PATCH v3 1/4] arm64: dts: mediatek: mt8390-genio-700-evk: Add
+ Grinn GenioSBC-700
+Message-ID: <d72ae17f-f634-4148-9c89-d5a7ed4f6b21@lunn.ch>
+References: <20250820120905.993189-1-mateusz.koza@grinn-global.com>
+ <20250820120905.993189-2-mateusz.koza@grinn-global.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820120905.993189-2-mateusz.koza@grinn-global.com>
 
-On Fri, 15 Aug 2025 20:16:03 +0800
-Qianfeng Rong <rongqianfeng@vivo.com> wrote:
+> +&eth {
+> +	phy-mode = "rgmii-id";
+> +	phy-handle = <&ethernet_phy0>;
+> +	snps,reset-active-low;
+> +	snps,reset-delays-us = <0 11000 200000>;
+> +	mediatek,tx-delay-ps = <30>;
+> +	pinctrl-names = "default", "sleep";
+> +	pinctrl-0 = <&eth_default_pins>;
+> +	pinctrl-1 = <&eth_sleep_pins>;
+> +	mediatek,mac-wol;
+> +	snps,reset-gpio = <&pio 147 GPIO_ACTIVE_LOW>;
+> +	status = "okay";
+> +};
+> +
+> +&eth_mdio {
+> +	ethernet_phy0: ethernet-phy@3 {
+> +		reg = <3>;
+> +		compatible = "ethernet-phy-ieee802.3-c22";
+> +		eee-broken-1000t;
+> +		interrupts-extended = <&pio 148 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +};
 
-> Use min_t() to reduce the code in bfa_fcs_rport_update() and
-> bfa_sgpg_mfree(), and improve readability.
-> 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
->  drivers/scsi/bfa/bfa_fcs_rport.c | 8 +++-----
->  drivers/scsi/bfa/bfa_svc.c       | 5 +----
->  2 files changed, 4 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/scsi/bfa/bfa_fcs_rport.c b/drivers/scsi/bfa/bfa_fcs_rport.c
-> index d4bde9bbe75b..77dc7aaf5985 100644
-> --- a/drivers/scsi/bfa/bfa_fcs_rport.c
-> +++ b/drivers/scsi/bfa/bfa_fcs_rport.c
-> @@ -11,7 +11,6 @@
->  /*
->   *  rport.c Remote port implementation.
->   */
-> -
->  #include "bfad_drv.h"
->  #include "bfad_im.h"
->  #include "bfa_fcs.h"
-> @@ -2555,10 +2554,9 @@ bfa_fcs_rport_update(struct bfa_fcs_rport_s *rport, struct fc_logi_s *plogi)
->  	 * - MAX receive frame size
->  	 */
->  	rport->cisc = plogi->csp.cisc;
-> -	if (be16_to_cpu(plogi->class3.rxsz) < be16_to_cpu(plogi->csp.rxsz))
-> -		rport->maxfrsize = be16_to_cpu(plogi->class3.rxsz);
-> -	else
-> -		rport->maxfrsize = be16_to_cpu(plogi->csp.rxsz);
-> +	rport->maxfrsize = min_t(typeof(rport->maxfrsize),
-> +				 be16_to_cpu(plogi->class3.rxsz),
-> +				 be16_to_cpu(plogi->csp.rxsz));
+Thanks for fixing the phy-mode.
 
-I think I want to nak that one.
-If you are going to use min_t() the type has to be one than includes
-all possible values of both arguments.
-Using the type of the result is just plain wrong.
-There is also pretty much no point casting the values to char/short types
-unless you need the implicit masking.
-The values are immediately promoted to 'signed int' before the comparison.
-I also think that min() will accept an 'unsigned char/short' variable
-for a comparison against a 'signed int'.
+For these two nodes only:
 
-So, all in all, min() should be fine.
-Avoiding the extra be16_to_cpu() is probably a gain.
-The compiler may not always know the value doesn't change.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-	David
-
->  
->  	bfa_trc(port->fcs, be16_to_cpu(plogi->csp.bbcred));
->  	bfa_trc(port->fcs, port->fabric->bb_credit);
-> diff --git a/drivers/scsi/bfa/bfa_svc.c b/drivers/scsi/bfa/bfa_svc.c
-> index df33afaaa673..2570793aae7f 100644
-> --- a/drivers/scsi/bfa/bfa_svc.c
-> +++ b/drivers/scsi/bfa/bfa_svc.c
-> @@ -5202,10 +5202,7 @@ bfa_sgpg_mfree(struct bfa_s *bfa, struct list_head *sgpg_q, int nsgpg)
->  	 */
->  	do {
->  		wqe = bfa_q_first(&mod->sgpg_wait_q);
-> -		if (mod->free_sgpgs < wqe->nsgpg)
-> -			nsgpg = mod->free_sgpgs;
-> -		else
-> -			nsgpg = wqe->nsgpg;
-> +		nsgpg = min_t(int, mod->free_sgpgs, wqe->nsgpg);
->  		bfa_sgpg_malloc(bfa, &wqe->sgpg_q, nsgpg);
->  		wqe->nsgpg -= nsgpg;
->  		if (wqe->nsgpg == 0) {
-
+    Andrew
 
