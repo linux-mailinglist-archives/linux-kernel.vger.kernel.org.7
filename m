@@ -1,146 +1,287 @@
-Return-Path: <linux-kernel+bounces-778205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EB3B2E292
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:43:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B06B2E293
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B6203B472C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:41:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D35DBA01F5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D7632C33D;
-	Wed, 20 Aug 2025 16:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E7B33436B;
+	Wed, 20 Aug 2025 16:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MTOcRBUu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QfRnUX81"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F55C221269
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD9532778D;
+	Wed, 20 Aug 2025 16:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755708078; cv=none; b=UYgLw7myqTc8pTCYum8hn7meQKkPY0j5PoL6OSgNRKrTc9GCtcob5U/oUY+991jOFiYJVzTH9cfpw24SKzqLLiSaBWsBwcTFtzXtDi3oZSUdICG8ySqs+dWmhOqIwGnrylLLNqUprJzSHPcgQVdDOhgDIy6VRH9O5Nlv2kavrnI=
+	t=1755708080; cv=none; b=VxhKxIzRGJxfbf+jipvqO61IE0V/RLjGvVlQf42EAlAXbOPoHt5MBezWbX7yj8ONnQZAQFh0yK1CpLcEkTFSQ666K09wXfQHzTyBA0DXPyYcFHPGE99aFMynZRG2jh4WcUGYbmYlYB3k/7zUJCFinrpyDHA+SGyp6Oq9NCHggUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755708078; c=relaxed/simple;
-	bh=vKql35OATtk8MbG3vFukwVxdKhHputtvBpkYeZ8ibFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=t9Hmu81s5qE+gmfH/8ED/vEc9YezXiIk1ze5AQvrXr3zTGRD1ONGSm04yfPd1GXjmqw2K5XAaGSI0KLvmOv2tDgbkz3cZ0N2c5HHeFE0P5g5ce37EAa/WcnnaebUAuM0icELZK7TvK2yQ39UPiRhwpB+DNLQ0hrWX7BGObE0xI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MTOcRBUu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755708073;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=v0g2AW/d1eHPKArJ+UolZeDF1nJGsBfr4pi8OMdYORM=;
-	b=MTOcRBUua6qlLOvFLGVdE7zFKhHhIZ12lh/S+zYRe9wUTrSZoY+6pe4erscjB9oYVW0nL1
-	3fbxNU8TC6SxNWEOQQ9UQ9CbGwuU6GURdxOW/PKjmr8Suqpj8iy/VhpPUxIMlK8K/PltpD
-	fCa1iqyls/a5VY4TyKVKl5zaKI4UsdI=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-297-MfGAqoiEMkyvwlVbsoW0YQ-1; Wed,
- 20 Aug 2025 12:41:09 -0400
-X-MC-Unique: MfGAqoiEMkyvwlVbsoW0YQ-1
-X-Mimecast-MFC-AGG-ID: MfGAqoiEMkyvwlVbsoW0YQ_1755708068
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49CCB1956079;
-	Wed, 20 Aug 2025 16:41:08 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.95])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2A7723000198;
-	Wed, 20 Aug 2025 16:41:05 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 20 Aug 2025 18:39:49 +0200 (CEST)
-Date: Wed, 20 Aug 2025 18:39:46 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fork: kill the pointless lower_32_bits() in
- create_io_thread(), kernel_thread(), and user_mode_thread()
-Message-ID: <20250820163946.GA18549@redhat.com>
+	s=arc-20240116; t=1755708080; c=relaxed/simple;
+	bh=JfLH27fhb0J7+H3Mq4Hh41L22bQCERGm4XSi44L7slU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hcgQ0HmGTEZtje53+R9u4Q7cm4Pl2/7TYWiFGYNRvTrvyT/MYg3knepemZEcqFCRWYNbUtPlkORJedk01Fzs5u6VVUCHEbR6caI7KLwM8ZR2IFwA2G7hHC+HmumaESV39Kub120SfNChGcpUvnlhm3d8krLigxhfaj9hkrfxB/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QfRnUX81; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755708078; x=1787244078;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JfLH27fhb0J7+H3Mq4Hh41L22bQCERGm4XSi44L7slU=;
+  b=QfRnUX81V9432B5FMkmrDsMXxPBTXlwaaMRoF6rWqEBvYXKN+4WLV5RS
+   JRR2jTyzCowxQe9ikvIZmOv+WbnYbmEOhSguRXCLHSpbjHeCZTcQmoEyP
+   dQxbjamLW1HEbPjX32F4s54IrD3opWC9qvmEHGDr5XqeSdajPmhkhkCZb
+   C6INPsqdL4ZAYDz//xi1feMugbdx6ebPciS69WNy88A0m7Pwl5e7YPMZt
+   NH4S/P4sRE0YT/HuZcxUPFnca0vpKJ3S1qc58YgWzKd0C7dvyNjHJcp7a
+   JNEeCWCMM9uBo2vexxVHjgUqKgT2zSo4TVkXSYgmU2+fbRnaah4K7TtF/
+   w==;
+X-CSE-ConnectionGUID: DsvferQvSxmmV92ceWT5bQ==
+X-CSE-MsgGUID: jldZr/pNQ1e6sbUZTh/Knw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="75432732"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="75432732"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 09:41:18 -0700
+X-CSE-ConnectionGUID: Rd7XMDQWS52xzZO6igV5zQ==
+X-CSE-MsgGUID: 5OSf6dKUST+fNJrSaYnvyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="172435842"
+Received: from bvivekan-mobl2.gar.corp.intel.com (HELO [10.247.119.205]) ([10.247.119.205])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 09:41:12 -0700
+Message-ID: <c22affa9-1dad-4a66-8db8-8e268806e0a1@intel.com>
+Date: Wed, 20 Aug 2025 09:41:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 13/20] cxl/mem: Refactor cxl pmem region
+ auto-assembling
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+ <CGME20250730121239epcas5p37956b2999f61e17e8dbfbde7972cef35@epcas5p3.samsung.com>
+ <20250730121209.303202-14-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250730121209.303202-14-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Unlike sys_clone(), these helpers have only in kernel users which should
-pass the correct "flags" argument. lower_32_bits(flags) just adds the
-unnecessary confusion and doesn't allow to use the CLONE_ flags which
-don't fit into 32 bits.
 
-create_io_thread() looks especially confusing because:
 
-	- "flags" is a compile-time constant, so lower_32_bits() simply
-	  has no effect
+On 7/30/25 5:12 AM, Neeraj Kumar wrote:
+> In 84ec985944ef3, devm_cxl_add_nvdimm() sequence was changed and called
+> before devm_cxl_add_endpoint(). It's because cxl pmem region auto-assembly
+> used to get called at last in cxl_endpoint_port_probe(), which requires
+> cxl_nvd presence.
+> 
+> For cxl region persistency, region creation happens during nvdimm_probe
+> which need the completion of endpoint probe.
+> 
+> In order to accommodate both cxl pmem region auto-assembly and cxl region
+> persistency, refactored following
+> 
+> 1. Re-Sequence devm_cxl_add_nvdimm() after devm_cxl_add_endpoint(). This
+>    will be called only after successful completion of endpoint probe.
+> 
+> 2. Moved cxl pmem region auto-assembly from cxl_endpoint_port_probe() to
+>    cxl_mem_probe() after devm_cxl_add_nvdimm(). It gurantees both the
+>    completion of endpoint probe and cxl_nvd presence before its call.
 
-	- .exit_signal = (lower_32_bits(flags) & CSIGNAL) is harmless but
-	  doesn't look right, copy_process(CLONE_THREAD) will ignore this
-	  argument anyway.
+So there are a few issues with doing this. If cxl_endpoint_port_probe() fails, you won't know that while running in cxl_mem_probe(). So you may need to do something similar to here [1] in order to make the probe synchronous with the add endpoint and make sure that the port driver attached successfully. Specifically see changes to devm_cxl_add_memdev().
 
-None of these helpers actually need CLONE_UNTRACED or "& ~CSIGNAL", but
-their presence does not add any confusion and improves code clarity.
+Also, in endpoint port probe you are holding the device lock and therefore is protected from port removals (endpoint and parents) while you are trying to scan for regions. That is not the case on the memdev probe side if you aren't holding that port lock.
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- kernel/fork.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/commit/?h=for-6.18/cxl-probe-order&id=88aec5ea7a24da00dc92c7778df4851fe4fd3ec6
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index af673856499d..0e8805d88ca6 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2539,11 +2539,9 @@ struct task_struct * __init fork_idle(int cpu)
- struct task_struct *create_io_thread(int (*fn)(void *), void *arg, int node)
- {
- 	unsigned long flags = CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|
--				CLONE_IO;
-+			      CLONE_IO|CLONE_VM|CLONE_UNTRACED;
- 	struct kernel_clone_args args = {
--		.flags		= ((lower_32_bits(flags) | CLONE_VM |
--				    CLONE_UNTRACED) & ~CSIGNAL),
--		.exit_signal	= (lower_32_bits(flags) & CSIGNAL),
-+		.flags		= flags,
- 		.fn		= fn,
- 		.fn_arg		= arg,
- 		.io_thread	= 1,
-@@ -2655,9 +2653,8 @@ pid_t kernel_thread(int (*fn)(void *), void *arg, const char *name,
- 		    unsigned long flags)
- {
- 	struct kernel_clone_args args = {
--		.flags		= ((lower_32_bits(flags) | CLONE_VM |
--				    CLONE_UNTRACED) & ~CSIGNAL),
--		.exit_signal	= (lower_32_bits(flags) & CSIGNAL),
-+		.flags		= ((flags | CLONE_VM | CLONE_UNTRACED) & ~CSIGNAL),
-+		.exit_signal	= (flags & CSIGNAL),
- 		.fn		= fn,
- 		.fn_arg		= arg,
- 		.name		= name,
-@@ -2673,9 +2670,8 @@ pid_t kernel_thread(int (*fn)(void *), void *arg, const char *name,
- pid_t user_mode_thread(int (*fn)(void *), void *arg, unsigned long flags)
- {
- 	struct kernel_clone_args args = {
--		.flags		= ((lower_32_bits(flags) | CLONE_VM |
--				    CLONE_UNTRACED) & ~CSIGNAL),
--		.exit_signal	= (lower_32_bits(flags) & CSIGNAL),
-+		.flags		= ((flags | CLONE_VM | CLONE_UNTRACED) & ~CSIGNAL),
-+		.exit_signal	= (flags & CSIGNAL),
- 		.fn		= fn,
- 		.fn_arg		= arg,
- 	};
--- 
-2.25.1.362.g51ebf55
+DJ
 
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/cxl/core/region.c | 33 +++++++++++++++++++++++++++++++++
+>  drivers/cxl/cxl.h         |  4 ++++
+>  drivers/cxl/mem.c         | 24 +++++++++++++++---------
+>  drivers/cxl/port.c        | 39 +--------------------------------------
+>  4 files changed, 53 insertions(+), 47 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index e9bf42d91689..eef501f3384c 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3497,6 +3497,39 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_add_to_region, "CXL");
+>  
+> +static int discover_region(struct device *dev, void *unused)
+> +{
+> +	struct cxl_endpoint_decoder *cxled;
+> +	int rc;
+> +
+> +	if (!is_endpoint_decoder(dev))
+> +		return 0;
+> +
+> +	cxled = to_cxl_endpoint_decoder(dev);
+> +	if ((cxled->cxld.flags & CXL_DECODER_F_ENABLE) == 0)
+> +		return 0;
+> +
+> +	if (cxled->state != CXL_DECODER_STATE_AUTO)
+> +		return 0;
+> +
+> +	/*
+> +	 * Region enumeration is opportunistic, if this add-event fails,
+> +	 * continue to the next endpoint decoder.
+> +	 */
+> +	rc = cxl_add_to_region(cxled);
+> +	if (rc)
+> +		dev_dbg(dev, "failed to add to region: %#llx-%#llx\n",
+> +			cxled->cxld.hpa_range.start, cxled->cxld.hpa_range.end);
+> +
+> +	return 0;
+> +}
+> +
+> +void cxl_region_discovery(struct cxl_port *port)
+> +{
+> +	device_for_each_child(&port->dev, NULL, discover_region);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_region_discovery, "CXL");
+> +
+>  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa)
+>  {
+>  	struct cxl_region_ref *iter;
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index b7111e3568d0..6edcec95e9ba 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -864,6 +864,7 @@ struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
+>  int cxl_add_to_region(struct cxl_endpoint_decoder *cxled);
+>  struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
+>  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa);
+> +void cxl_region_discovery(struct cxl_port *port);
+>  #else
+>  static inline bool is_cxl_pmem_region(struct device *dev)
+>  {
+> @@ -886,6 +887,9 @@ static inline u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint,
+>  {
+>  	return 0;
+>  }
+> +static inline void cxl_region_discovery(struct cxl_port *port)
+> +{
+> +}
+>  #endif
+>  
+>  void cxl_endpoint_parse_cdat(struct cxl_port *port);
+> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> index 6e6777b7bafb..54501616ff09 100644
+> --- a/drivers/cxl/mem.c
+> +++ b/drivers/cxl/mem.c
+> @@ -152,15 +152,6 @@ static int cxl_mem_probe(struct device *dev)
+>  		return -ENXIO;
+>  	}
+>  
+> -	if (cxl_pmem_size(cxlds) && IS_ENABLED(CONFIG_CXL_PMEM)) {
+> -		rc = devm_cxl_add_nvdimm(parent_port, cxlmd);
+> -		if (rc) {
+> -			if (rc == -ENODEV)
+> -				dev_info(dev, "PMEM disabled by platform\n");
+> -			return rc;
+> -		}
+> -	}
+> -
+>  	if (dport->rch)
+>  		endpoint_parent = parent_port->uport_dev;
+>  	else
+> @@ -184,6 +175,21 @@ static int cxl_mem_probe(struct device *dev)
+>  	if (rc)
+>  		dev_dbg(dev, "CXL memdev EDAC registration failed rc=%d\n", rc);
+>  
+> +	if (cxl_pmem_size(cxlds) && IS_ENABLED(CONFIG_CXL_PMEM)) {
+> +		rc = devm_cxl_add_nvdimm(parent_port, cxlmd);
+> +		if (rc) {
+> +			if (rc == -ENODEV)
+> +				dev_info(dev, "PMEM disabled by platform\n");
+> +			return rc;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Now that all endpoint decoders are successfully enumerated, try to
+> +	 * assemble region autodiscovery from committed decoders.
+> +	 */
+> +	cxl_region_discovery(cxlmd->endpoint);
+> +
+>  	/*
+>  	 * The kernel may be operating out of CXL memory on this device,
+>  	 * there is no spec defined way to determine whether this device
+> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
+> index fe4b593331da..090ae3577f32 100644
+> --- a/drivers/cxl/port.c
+> +++ b/drivers/cxl/port.c
+> @@ -30,33 +30,6 @@ static void schedule_detach(void *cxlmd)
+>  	schedule_cxl_memdev_detach(cxlmd);
+>  }
+>  
+> -static int discover_region(struct device *dev, void *unused)
+> -{
+> -	struct cxl_endpoint_decoder *cxled;
+> -	int rc;
+> -
+> -	if (!is_endpoint_decoder(dev))
+> -		return 0;
+> -
+> -	cxled = to_cxl_endpoint_decoder(dev);
+> -	if ((cxled->cxld.flags & CXL_DECODER_F_ENABLE) == 0)
+> -		return 0;
+> -
+> -	if (cxled->state != CXL_DECODER_STATE_AUTO)
+> -		return 0;
+> -
+> -	/*
+> -	 * Region enumeration is opportunistic, if this add-event fails,
+> -	 * continue to the next endpoint decoder.
+> -	 */
+> -	rc = cxl_add_to_region(cxled);
+> -	if (rc)
+> -		dev_dbg(dev, "failed to add to region: %#llx-%#llx\n",
+> -			cxled->cxld.hpa_range.start, cxled->cxld.hpa_range.end);
+> -
+> -	return 0;
+> -}
+> -
+>  static int cxl_switch_port_probe(struct cxl_port *port)
+>  {
+>  	struct cxl_hdm *cxlhdm;
+> @@ -121,17 +94,7 @@ static int cxl_endpoint_port_probe(struct cxl_port *port)
+>  	if (rc)
+>  		return rc;
+>  
+> -	rc = devm_cxl_enumerate_decoders(cxlhdm, &info);
+> -	if (rc)
+> -		return rc;
+> -
+> -	/*
+> -	 * Now that all endpoint decoders are successfully enumerated, try to
+> -	 * assemble regions from committed decoders
+> -	 */
+> -	device_for_each_child(&port->dev, NULL, discover_region);
+> -
+> -	return 0;
+> +	return devm_cxl_enumerate_decoders(cxlhdm, &info);
+>  }
+>  
+>  static int cxl_port_probe(struct device *dev)
 
 
