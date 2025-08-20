@@ -1,91 +1,111 @@
-Return-Path: <linux-kernel+bounces-778049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98EB0B2E0C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:23:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC15CB2E08C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1359604E5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:16:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 419B3B64DDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CF433768C;
-	Wed, 20 Aug 2025 15:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD143322DDB;
+	Wed, 20 Aug 2025 15:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="PRwfcjL2"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CI0YlpwQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D26233768D;
-	Wed, 20 Aug 2025 15:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3FB322C9C;
+	Wed, 20 Aug 2025 15:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755702357; cv=none; b=Iqoq74wwVgPgX+IzHfg+oalB5j9d0NaPZ4wMo5ov+t/oM117YECVxIdY3/xaWknN5vDr6YPPlAnBkYeZ2eBM0EOmc/gUfLhdvrUwbgCMY9ijklorBc36/6Cfp1LP8K106oHMOVdkbb1Pl5dPHXKdcCo/h6dyAYAkApl8z35Q3bU=
+	t=1755702347; cv=none; b=T69FfC/QNsvxxjMKgHPpKN68hDtsh5EiRbVqf5z5qvD9v4i6z6MoY3JxejhucXpAZLa8cEfwkq7kek3WGEfRlwFofaHpnv7xddOC5E7Cag5xj09UZgHi7t4zD2ZcRJl+9XO4reHOdmCTomwYHIr9K+xJF/5bW2aM5Gh4tCwm6tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755702357; c=relaxed/simple;
-	bh=FfkoZlnzoZkKlxWkhG0YyxxMSaXAsMovbbjPCCgd1Cg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=RSknHAH6AkqMfulGOJ/ii4pGOjeOfPkQcz92BHPoPvfVyNpuZyyS9nWSubspR7oWH3CI8NlwX24gGpJSeYBZjBaKGVX895vCdeZdQEjQk5S3fO/ilthlrx5reN11L3hcatI/a2VI2a0/4a7y4CC8V006pk/0WfbFocZicwyFcJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=PRwfcjL2; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57KF4uPf3773383
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 20 Aug 2025 08:04:56 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57KF4uPf3773383
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1755702297;
-	bh=FfkoZlnzoZkKlxWkhG0YyxxMSaXAsMovbbjPCCgd1Cg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=PRwfcjL2kI/UMcRa4Wd7k5IA3UAsKH+P7wZvlLBk8/c52ZoSJlffLHYzpu9nmSSeA
-	 QxlcOq3URm687lveTpzJ6NImuZ7S0QKctTxKl8Rk9NobJuFNeCSip2HK2VnXwQArYE
-	 x5b/XX/uyPvrRPrgcFG+345Zhn5PPXaiy4QNZ2iu++G3JF1Y9Ms5vCBKTNJJycHAAB
-	 rpZjMD2F33ITENU3jnYHFbscU9Py2c5/ZaQCasCeYkP1h87Y5LBHiaZxN/uYeJln0S
-	 psKElp9WMbRUeM0fuD+jiktdMVxrC72u9kN0xtbh1kvGQLy5jZuNzLB2Xlb/ooqxLW
-	 T9Mm3NfWNMk+g==
-Date: Wed, 20 Aug 2025 08:04:52 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-CC: "Alan J . Wylie" <alan@wylie.me.uk>, Josh Poimboeuf <jpoimboe@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-        stable@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
-        x86@kernel.org
-Subject: Re: [PATCH] x86: XOP prefix instructions decoder support
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250820100004.15a49b907b334e821f0a0e73@kernel.org>
-References: <175386161199.564247.597496379413236944.stgit@devnote2> <20250817093240.527825424989e5e2337b5775@kernel.org> <F5D549B0-F8F7-467A-8F8D-7ED5EE4369D3@zytor.com> <20250820100004.15a49b907b334e821f0a0e73@kernel.org>
-Message-ID: <7B59AB4E-F084-43FA-B21B-292319D30501@zytor.com>
+	s=arc-20240116; t=1755702347; c=relaxed/simple;
+	bh=GBFRnaGUe0PtLf2WRCVyGSnESVeBAJmHfroHsv5eb5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X18FW9xrDzLuJC5WLN36aqMxj3CyB5MRz0DP4d1208Mw4Vw4piaW7JJTIpbaCUMfs1QuZ3/AHphKXJYfdJ09rmcPHsevaAFGUFmZKImERDoJxTeBkH/0xswIjU4EVVXxLvSFQoi5bZchGld/xXmwh791G1Q/lVFbsVlo2iVzfUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CI0YlpwQ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755702346; x=1787238346;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GBFRnaGUe0PtLf2WRCVyGSnESVeBAJmHfroHsv5eb5Q=;
+  b=CI0YlpwQn6b/WIayG5YvXHBwaiQ9OsN6WVqA+86eEm1/GRnoFdqHtN+D
+   hAP3vW39DTxtz+5c1veGJEIGGibhJCQ8BpIegkMFqNdAJqbGknivw1cDP
+   UrL7MeUCDUTyN5cdJn/J2r2xrGylOnx+D4/TGcPzD/tsGwUvTp/1eqD3d
+   BFktg3WNaypB5poPeWGPFpET89cU6R7MguUIhcex7VYbaVy5BXzNaEadF
+   Emlgp1vyssmjOyHzk2N8EvgDGmkn6prK8yG17jdxwCRKWwleLxK3yBF26
+   kwg6Ead/oxESUc0SHUV733JlURZXaanksfpqm3GYWWsY74g6SK6yBgvc1
+   Q==;
+X-CSE-ConnectionGUID: Uv3SestNTm6U/dDdm+MC5Q==
+X-CSE-MsgGUID: Kmkrit4rQmGLQEidFvWtrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57925092"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="57925092"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 08:05:45 -0700
+X-CSE-ConnectionGUID: tCKJADDiT1ChV/wxhc0O7A==
+X-CSE-MsgGUID: SsxXlSxFQPGDOsN+0QbjWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="167658465"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 08:05:42 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uokNf-00000006xzl-3mCl;
+	Wed, 20 Aug 2025 18:05:39 +0300
+Date: Wed, 20 Aug 2025 18:05:39 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH] media: atomisp: use kmalloc_array() for array space
+ allocation
+Message-ID: <aKXkQ0WXaG-hMgEW@smile.fi.intel.com>
+References: <20250817092942.95053-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250817092942.95053-1-rongqianfeng@vivo.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On August 19, 2025 6:00:04 PM PDT, Masami Hiramatsu <mhiramat@kernel=2Eorg>=
- wrote:
->On Sat, 16 Aug 2025 18:36:17 -0700
->"H=2E Peter Anvin" <hpa@zytor=2Ecom> wrote:
->
->> The easiest way to think of XOP is as a VEX3 supporting a different set=
- of map numbers (VEX3 supports maps 0-31, XOP maps are 8-31 but separate); =
-however, the encoding format is the same=2E=20
->
->Hmm, OK=2E We need to enable VEX3 support too=2E What about the opcode?
->Most of the opcode are the same, or different instructions?
->
->Thank you,
->
->
+On Sun, Aug 17, 2025 at 05:29:39PM +0800, Qianfeng Rong wrote:
+> Replace kmalloc(count * sizeof) with kmalloc_array() for safer memory
+> allocation and overflow prevention.
 
-Different, that's the whole point =2E=2E=2E
+...
+
+> -	descr->in_info = kmalloc(descr->num_stage *
+> -				 sizeof(struct ia_css_frame_info),
+> -				 GFP_KERNEL);
+> +	descr->in_info = kmalloc_array(descr->num_stage,
+> +				       sizeof(struct ia_css_frame_info),
+> +				       GFP_KERNEL);
+
+At the same time it would be nice to use sizeof(*...) variants instead of using
+type-based.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
