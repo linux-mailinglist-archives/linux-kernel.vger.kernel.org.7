@@ -1,102 +1,443 @@
-Return-Path: <linux-kernel+bounces-777446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D2BB2D95E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:55:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D10BBB2D95A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D04977A964E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:54:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE90B7A7F0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D36A1B4233;
-	Wed, 20 Aug 2025 09:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CE72D23A8;
+	Wed, 20 Aug 2025 09:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="SCzCHqQO"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fL10Nmq+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2004927781D;
-	Wed, 20 Aug 2025 09:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755683744; cv=pass; b=DMIcahWzgnuvp3Vrz5e7xus3aaRfI3H58iouPYawdZ+TkRQnOXaRHco8L3LJaPGHU0pqcQxjI1iS+rJcISQnvGSyGYnXI8/OvgcxXHVQwwh6MsaCaopt9G/wc209Rh3G8QN50TpCLrCMqx4n+PuUFIPnt7LpuDkORKxJIq8ORf0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755683744; c=relaxed/simple;
-	bh=IKpQmKnl94o09xHTfN0Qj4qrIjMXgULlD1i7dOwaeqQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=ntom1PhbT4JmGSfAWFEsVzTnTpo/tkYV6YBDjEEDwOa0mtJKZ0aAPUnPYTYalB+L3nKOFBVOh5+9NoHTiCGqiX5UJ3hO7YlEZWD81Khxbgds3jFwo4/tlwQTKe6Eehlb8e2Khxdx+YlR6VtoWaxRyeH0lTpR+uiTIk4ACmWmmIY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=SCzCHqQO; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755683714; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FF7XtyYZ1iC1yi/0BToMG1xTw7ue//z0f1Nvxmf+q5/EZ+BjTNnJaaWHWFbsD+Z7Rtli8CR0icjj87BiBZ6RvRYMm3aqfgl2vqGnnb5naMWk1WMQEEnGSGjV580fEQcq73b3p6zzItsxbxSOOjb8sL4PxDuu91Mu+27GYIxXJ8o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755683714; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=BUPX1b+b29tEGwDxGtup37O9TfSUrxsSkkD/2ccJ4RQ=; 
-	b=HTlwjIB7O1lKFyuMn4BDWXBxcTTa8ofQkSpV7fESlsBQhU9GxY+oYdhCBCJkeURd3A7jq7VVeKc3fTk8hNilDHXSjXOPGxMp9vnCR4aX+Bto4k1E0QP81fWC5nZZn+OTwR71hYk9IZVVR61EQnJDDUEVxef51Wx3A2U0JLJMKJo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755683714;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=BUPX1b+b29tEGwDxGtup37O9TfSUrxsSkkD/2ccJ4RQ=;
-	b=SCzCHqQO/eOp9SQ7wF1v79eZ23Z9t5uCIVtz3wpGnLTmPinoLn0oElvc4vu7rAPw
-	KPFq1DLa3l6mN2VsibDdJJD79imFIhguGRp4lZWTBUE64/rooO33HG6pWCOz2it8bPo
-	pq3PjriF625OJQwOAPudxnhdwG/tD3ogz/WpYj9c=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1755683712335934.369788539951; Wed, 20 Aug 2025 02:55:12 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Wed, 20 Aug 2025 02:55:12 -0700 (PDT)
-Date: Wed, 20 Aug 2025 13:55:12 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198c6e76d3e.113f774e874302.5490092759974557634@zohomail.com>
-In-Reply-To: <2025-08-12.1755007445-rural-feudal-spacebar-forehead-28QkCN@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
- <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com> <2025-08-12.1755007445-rural-feudal-spacebar-forehead-28QkCN@cyphar.com>
-Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641B9221FC7
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755683724; cv=none; b=U6zW9EyExREiKuIM8bcbnsMTQTsVWVGuoURYBPHpbUAQDjRVvj/RKwLp5ZyMUDieh7jajSnZsMQByb9yPuXRC/7ficIL2kjpBQgHlniM04IkNEaKl2NTGHmLrs6jW972HuldgJZoS3bu2NJsm93tv1JWIu0VJAjX58bTLgRPrXM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755683724; c=relaxed/simple;
+	bh=7OybFKP0A7WOVheMBQ4Rw/f+l84WxBXi6lqFu4ZyDQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bHN4oE0E3zwAn//lFWLthmD//x27qgwsPByK0yWWma1EYfrIOHVwY+BmZ75nKNUCqwXVkmlrzq6q5tTcKA7LGUVILW6qrq1aL6IunMqshXqhSJ7VBnePKSw4qzaaTQleGvK/U87wcSd+T5r5kbpSVV28ZdCSKBJEK2GT9W1lCh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fL10Nmq+; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755683722; x=1787219722;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7OybFKP0A7WOVheMBQ4Rw/f+l84WxBXi6lqFu4ZyDQk=;
+  b=fL10Nmq+PT3jelx1+zWNoi5pRJxhA8HHcD5pViRbQuAWK2lhzx4HP538
+   iXTA+PBaUzxvX8jRT9xspGsCVnhGP2LWDGsk2KFpclf4gAkqUvert5J3S
+   mRY4n+FObp5zGVZhdVL/5yniB8q7S4jWrmR0hgWIUZba6H+uangRO5epN
+   lmj4O3chppcfAeo3uO1O/7glTu62zXnv9U412qbt7YOmngCLIwYwZLeDB
+   4wSdUVXSYUWhrP+yMHRIYZ2xCEnMP1I7RKtSMuWsSxrURJoYkG/rdkFoh
+   87o62Cs6UHeLbp46BnRnkhPGbbDKGqEl9Gi2AfnjK4tdXsengKeUYfwu4
+   Q==;
+X-CSE-ConnectionGUID: yzuWL4abRIGEzC+9JxSrbw==
+X-CSE-MsgGUID: 4pvwxD66S0GREczTHxUxmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58094231"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="58094231"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 02:55:22 -0700
+X-CSE-ConnectionGUID: Go8Xg8VOQ+G+m1e76rhpOA==
+X-CSE-MsgGUID: eSF8A/lfT62SjMdOFcihwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="172504036"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.36]) ([10.124.240.36])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 02:55:18 -0700
+Message-ID: <0ed1d942-5c7a-4cb3-b28b-2177e172f2e8@linux.intel.com>
+Date: Wed, 20 Aug 2025 17:55:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227545c51e94901738994e1f5e2000047135d7af27e819aaa01fe2a47021fcd9af6db3fa45b746c76:zu08011227107231d3fae46b62a6258fc10000e8860ecb7f121ef78d2f53533e95725069394e9c0054f229bb:rf0801122caa7c5d6c6320fed86a2713960000dcd6057744201fc24466520d20ac336f526c27f94dab53187a27f20c08a3:ZohoMail
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 06/17] perf: Support SIMD registers
+To: kan.liang@linux.intel.com, peterz@infradead.org, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, irogers@google.com, adrian.hunter@intel.com,
+ jolsa@kernel.org, alexander.shishkin@linux.intel.com,
+ linux-kernel@vger.kernel.org
+Cc: ak@linux.intel.com, zide.chen@intel.com, mark.rutland@arm.com,
+ broonie@kernel.org, ravi.bangoria@amd.com, eranian@google.com
+References: <20250815213435.1702022-1-kan.liang@linux.intel.com>
+ <20250815213435.1702022-7-kan.liang@linux.intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250815213435.1702022-7-kan.liang@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
- ---- On Tue, 12 Aug 2025 18:33:04 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
- >   Unlike open_tree(2) with OPEN_TREE_CLONE, fsmount() can only be called
- >   once in the lifetime of a filesystem context.
 
-Weird. open_tree doesn't get filesystem context as argument at all.
-I suggest just this:
+On 8/16/2025 5:34 AM, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+>
+> The users may be interested in the SIMD registers in a sample while
+> profiling. The current sample_regs_XXX doesn't have enough space for all
+> SIMD registers.
+>
+> Add sets of the sample_simd_{pred,vec}_reg_* in the
+> struct perf_event_attr to define a set of SIMD registers to dump on
+> samples.
+> The current X86 supports the XMM registers in sample_regs_XXX. To
+> utilize the new SIMD registers configuration method, the
+> sample_simd_regs_enabled should always be set. If so, the XMM space in
+> the sample_regs_XXX is reserved for other usage.
+>
+> The SIMD registers are wider than 64. A new output format is introduced.
+> The number and width of SIMD registers will be dumped first, following
+> the register values. The number and width are the same as the user's
+> configuration now. If, for some reason (e.g., ARM) they are different,
+> an ARCH-specific perf_output_sample_simd_regs can be implemented later
+> separately.
+> Add a new ABI, PERF_SAMPLE_REGS_ABI_SIMD, to indicate the new format.
+> The enum perf_sample_regs_abi becomes a bitmap now. There should be no
+> impact on the existing tool, since the version and bitmap are the same
+> for 1 and 2.
+>
+> Add three new __weak functions to retrieve the number of available
+> registers, validate the configuration of the SIMD registers, and
+> retrieve the SIMD registers. The ARCH-specific functions will be
+> implemented in the following patches.
+>
+> Add a new flag PERF_PMU_CAP_SIMD_REGS to indicate that the PMU has the
+> capability to support SIMD registers dumping. Error out if the
+> sample_simd_{pred,vec}_reg_* mistakenly set for a PMU that doesn't have
+> the capability.
+>
+> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+>  include/linux/perf_event.h      |  13 ++++
+>  include/linux/perf_regs.h       |   9 +++
+>  include/uapi/linux/perf_event.h |  47 +++++++++++++--
+>  kernel/events/core.c            | 101 +++++++++++++++++++++++++++++++-
+>  4 files changed, 162 insertions(+), 8 deletions(-)
+>
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 444b162f3f92..205361b7de2e 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -305,6 +305,7 @@ struct perf_event_pmu_context;
+>  #define PERF_PMU_CAP_EXTENDED_HW_TYPE	0x0100
+>  #define PERF_PMU_CAP_AUX_PAUSE		0x0200
+>  #define PERF_PMU_CAP_AUX_PREFER_LARGE	0x0400
+> +#define PERF_PMU_CAP_SIMD_REGS		0x0800
+>  
+>  /**
+>   * pmu::scope
+> @@ -1526,6 +1527,18 @@ perf_event__output_id_sample(struct perf_event *event,
+>  extern void
+>  perf_log_lost_samples(struct perf_event *event, u64 lost);
+>  
+> +static inline bool event_has_simd_regs(struct perf_event *event)
+> +{
+> +	struct perf_event_attr *attr = &event->attr;
+> +
+> +	return attr->sample_simd_regs_enabled != 0 ||
+> +	       attr->sample_simd_pred_reg_intr != 0 ||
+> +	       attr->sample_simd_pred_reg_user != 0 ||
+> +	       attr->sample_simd_vec_reg_qwords != 0 ||
+> +	       attr->sample_simd_vec_reg_intr != 0 ||
+> +	       attr->sample_simd_vec_reg_user != 0;
+> +}
+> +
+>  static inline bool event_has_extended_regs(struct perf_event *event)
+>  {
+>  	struct perf_event_attr *attr = &event->attr;
+> diff --git a/include/linux/perf_regs.h b/include/linux/perf_regs.h
+> index f632c5725f16..0172682b18fd 100644
+> --- a/include/linux/perf_regs.h
+> +++ b/include/linux/perf_regs.h
+> @@ -9,6 +9,15 @@ struct perf_regs {
+>  	struct pt_regs	*regs;
+>  };
+>  
+> +int perf_simd_reg_validate(u16 vec_qwords, u64 vec_mask,
+> +			   u16 pred_qwords, u32 pred_mask);
+> +u64 perf_simd_reg_value(struct pt_regs *regs, int idx,
+> +			u16 qwords_idx, bool pred);
+> +void perf_simd_reg_check(struct pt_regs *regs,
+> +			 u64 mask, u16 *nr_vectors, u16 *vec_qwords,
+> +			 u16 pred_mask, u16 *nr_pred, u16 *pred_qwords);
+> +
+> +
+>  #ifdef CONFIG_HAVE_PERF_REGS
+>  #include <asm/perf_regs.h>
+>  
+> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> index 78a362b80027..2e9b16acbed6 100644
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -313,9 +313,10 @@ enum {
+>   * Values to determine ABI of the registers dump.
+>   */
+>  enum perf_sample_regs_abi {
+> -	PERF_SAMPLE_REGS_ABI_NONE		= 0,
+> -	PERF_SAMPLE_REGS_ABI_32			= 1,
+> -	PERF_SAMPLE_REGS_ABI_64			= 2,
+> +	PERF_SAMPLE_REGS_ABI_NONE		= 0x00,
+> +	PERF_SAMPLE_REGS_ABI_32			= 0x01,
+> +	PERF_SAMPLE_REGS_ABI_64			= 0x02,
+> +	PERF_SAMPLE_REGS_ABI_SIMD		= 0x04,
 
-  fsmount() can only be called
-  once in the lifetime of a filesystem context.
+Better change the definition to bitmap format, so it clearly indicates the
+ABI is a bitmap format.
 
---
-Askar Safin
-https://types.pl/@safinaskar
+enum perf_sample_regs_abi {
+    PERF_SAMPLE_REGS_ABI_NONE        = 0,
+    PERF_SAMPLE_REGS_ABI_32            = 1 << 0,
+    PERF_SAMPLE_REGS_ABI_64            = 1 << 1,
+    PERF_SAMPLE_REGS_ABI_SIMD        = 1 << 2,
+};
 
+
+
+>  };
+>  
+>  /*
+> @@ -382,6 +383,7 @@ enum perf_event_read_format {
+>  #define PERF_ATTR_SIZE_VER6			120	/* Add: aux_sample_size */
+>  #define PERF_ATTR_SIZE_VER7			128	/* Add: sig_data */
+>  #define PERF_ATTR_SIZE_VER8			136	/* Add: config3 */
+> +#define PERF_ATTR_SIZE_VER9			168	/* Add: sample_simd_{pred,vec}_reg_* */
+>  
+>  /*
+>   * 'struct perf_event_attr' contains various attributes that define
+> @@ -543,6 +545,25 @@ struct perf_event_attr {
+>  	__u64	sig_data;
+>  
+>  	__u64	config3; /* extension of config2 */
+> +
+> +
+> +	/*
+> +	 * Defines set of SIMD registers to dump on samples.
+> +	 * The sample_simd_regs_enabled !=0 implies the
+> +	 * set of SIMD registers is used to config all SIMD registers.
+> +	 * If !sample_simd_regs_enabled, sample_regs_XXX may be used to
+> +	 * config some SIMD registers on X86.
+> +	 */
+> +	union {
+> +		__u16 sample_simd_regs_enabled;
+> +		__u16 sample_simd_pred_reg_qwords;
+> +	};
+> +	__u32 sample_simd_pred_reg_intr;
+> +	__u32 sample_simd_pred_reg_user;
+> +	__u16 sample_simd_vec_reg_qwords;
+> +	__u64 sample_simd_vec_reg_intr;
+> +	__u64 sample_simd_vec_reg_user;
+> +	__u32 __reserved_4;
+>  };
+>  
+>  /*
+> @@ -1016,7 +1037,15 @@ enum perf_event_type {
+>  	 *      } && PERF_SAMPLE_BRANCH_STACK
+>  	 *
+>  	 *	{ u64			abi; # enum perf_sample_regs_abi
+> -	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_USER
+> +	 *	  u64			regs[weight(mask)];
+> +	 *	  struct {
+> +	 *		u16 nr_vectors;
+> +	 *		u16 vector_qwords;
+> +	 *		u16 nr_pred;
+> +	 *		u16 pred_qwords;
+> +	 *		u64 data[nr_vectors * vector_qwords + nr_pred * pred_qwords];
+> +	 *	  } && (abi & PERF_SAMPLE_REGS_ABI_SIMD)
+> +	 *	} && PERF_SAMPLE_REGS_USER
+>  	 *
+>  	 *	{ u64			size;
+>  	 *	  char			data[size];
+> @@ -1043,7 +1072,15 @@ enum perf_event_type {
+>  	 *	{ u64			data_src; } && PERF_SAMPLE_DATA_SRC
+>  	 *	{ u64			transaction; } && PERF_SAMPLE_TRANSACTION
+>  	 *	{ u64			abi; # enum perf_sample_regs_abi
+> -	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
+> +	 *	  u64			regs[weight(mask)];
+> +	 *	  struct {
+> +	 *		u16 nr_vectors;
+> +	 *		u16 vector_qwords;
+> +	 *		u16 nr_pred;
+> +	 *		u16 pred_qwords;
+> +	 *		u64 data[nr_vectors * vector_qwords + nr_pred * pred_qwords];
+> +	 *	  } && (abi & PERF_SAMPLE_REGS_ABI_SIMD)
+> +	 *	} && PERF_SAMPLE_REGS_INTR
+>  	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
+>  	 *	{ u64			cgroup;} && PERF_SAMPLE_CGROUP
+>  	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 95a7b6f5af09..dd8cf3c7fb7a 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -7408,6 +7408,47 @@ perf_output_sample_regs(struct perf_output_handle *handle,
+>  	}
+>  }
+>  
+> +static void
+> +perf_output_sample_simd_regs(struct perf_output_handle *handle,
+> +			     struct perf_event *event,
+> +			     struct pt_regs *regs,
+> +			     u64 mask, u16 pred_mask)
+> +{
+> +	u16 pred_qwords = event->attr.sample_simd_pred_reg_qwords;
+> +	u16 vec_qwords = event->attr.sample_simd_vec_reg_qwords;
+> +	u16 nr_pred = hweight16(pred_mask);
+> +	u16 nr_vectors = hweight64(mask);
+> +	int bit;
+> +	u64 val;
+> +	u16 i;
+> +
+> +	/* Get the number of available regs */
+> +	perf_simd_reg_check(regs, mask, &nr_vectors, &vec_qwords,
+> +			    pred_mask, &nr_pred, &pred_qwords);
+> +
+> +	perf_output_put(handle, nr_vectors);
+> +	perf_output_put(handle, vec_qwords);
+> +	perf_output_put(handle, nr_pred);
+> +	perf_output_put(handle, pred_qwords);
+> +
+> +	if (nr_vectors) {
+> +		for_each_set_bit(bit, (unsigned long *)&mask, sizeof(mask) * BITS_PER_BYTE) {
+> +			for (i = 0; i < vec_qwords; i++) {
+> +				val = perf_simd_reg_value(regs, bit, i, false);
+> +				perf_output_put(handle, val);
+> +			}
+> +		}
+> +	}
+> +	if (nr_pred) {
+> +		for_each_set_bit(bit, (unsigned long *)&pred_mask, sizeof(pred_mask) * BITS_PER_BYTE) {
+> +			for (i = 0; i < pred_qwords; i++) {
+> +				val = perf_simd_reg_value(regs, bit, i, true);
+> +				perf_output_put(handle, val);
+> +			}
+> +		}
+> +	}
+> +}
+> +
+>  static void perf_sample_regs_user(struct perf_regs *regs_user,
+>  				  struct pt_regs *regs)
+>  {
+> @@ -7429,6 +7470,25 @@ static void perf_sample_regs_intr(struct perf_regs *regs_intr,
+>  	regs_intr->abi  = perf_reg_abi(current);
+>  }
+>  
+> +int __weak perf_simd_reg_validate(u16 vec_qwords, u64 vec_mask,
+> +				  u16 pred_qwords, u32 pred_mask)
+> +{
+> +	return vec_qwords || vec_mask || pred_qwords || pred_mask ? -ENOSYS : 0;
+> +}
+> +
+> +u64 __weak perf_simd_reg_value(struct pt_regs *regs, int idx,
+> +			       u16 qwords_idx, bool pred)
+> +{
+> +	return 0;
+> +}
+> +
+> +void __weak perf_simd_reg_check(struct pt_regs *regs,
+> +				u64 mask, u16 *nr_vectors, u16 *vec_qwords,
+> +				u16 pred_mask, u16 *nr_pred, u16 *pred_qwords)
+> +{
+> +	*nr_vectors = 0;
+> +	*nr_pred = 0;
+> +}
+>  
+>  /*
+>   * Get remaining task size from user stack pointer.
+> @@ -7961,10 +8021,17 @@ void perf_output_sample(struct perf_output_handle *handle,
+>  		perf_output_put(handle, abi);
+>  
+>  		if (abi) {
+> -			u64 mask = event->attr.sample_regs_user;
+> +			struct perf_event_attr *attr = &event->attr;
+> +			u64 mask = attr->sample_regs_user;
+>  			perf_output_sample_regs(handle,
+>  						data->regs_user.regs,
+>  						mask);
+> +			if (abi & PERF_SAMPLE_REGS_ABI_SIMD) {
+> +				perf_output_sample_simd_regs(handle, event,
+> +							     data->regs_user.regs,
+> +							     attr->sample_simd_vec_reg_user,
+> +							     attr->sample_simd_pred_reg_user);
+> +			}
+>  		}
+>  	}
+>  
+> @@ -7992,11 +8059,18 @@ void perf_output_sample(struct perf_output_handle *handle,
+>  		perf_output_put(handle, abi);
+>  
+>  		if (abi) {
+> -			u64 mask = event->attr.sample_regs_intr;
+> +			struct perf_event_attr *attr = &event->attr;
+> +			u64 mask = attr->sample_regs_intr;
+>  
+>  			perf_output_sample_regs(handle,
+>  						data->regs_intr.regs,
+>  						mask);
+> +			if (abi & PERF_SAMPLE_REGS_ABI_SIMD) {
+> +				perf_output_sample_simd_regs(handle, event,
+> +							     data->regs_intr.regs,
+> +							     attr->sample_simd_vec_reg_intr,
+> +							     attr->sample_simd_pred_reg_intr);
+> +			}
+>  		}
+>  	}
+>  
+> @@ -12560,6 +12634,12 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+>  	if (ret)
+>  		goto err_pmu;
+>  
+> +	if (!(pmu->capabilities & PERF_PMU_CAP_SIMD_REGS) &&
+> +	    event_has_simd_regs(event)) {
+> +		ret = -EOPNOTSUPP;
+> +		goto err_destroy;
+> +	}
+> +
+>  	if (!(pmu->capabilities & PERF_PMU_CAP_EXTENDED_REGS) &&
+>  	    event_has_extended_regs(event)) {
+>  		ret = -EOPNOTSUPP;
+> @@ -13101,6 +13181,12 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+>  		ret = perf_reg_validate(attr->sample_regs_user);
+>  		if (ret)
+>  			return ret;
+> +		ret = perf_simd_reg_validate(attr->sample_simd_vec_reg_qwords,
+> +					     attr->sample_simd_vec_reg_user,
+> +					     attr->sample_simd_pred_reg_qwords,
+> +					     attr->sample_simd_pred_reg_user);
+> +		if (ret)
+> +			return ret;
+>  	}
+>  
+>  	if (attr->sample_type & PERF_SAMPLE_STACK_USER) {
+> @@ -13121,8 +13207,17 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+>  	if (!attr->sample_max_stack)
+>  		attr->sample_max_stack = sysctl_perf_event_max_stack;
+>  
+> -	if (attr->sample_type & PERF_SAMPLE_REGS_INTR)
+> +	if (attr->sample_type & PERF_SAMPLE_REGS_INTR) {
+>  		ret = perf_reg_validate(attr->sample_regs_intr);
+> +		if (ret)
+> +			return ret;
+> +		ret = perf_simd_reg_validate(attr->sample_simd_vec_reg_qwords,
+> +					     attr->sample_simd_vec_reg_intr,
+> +					     attr->sample_simd_pred_reg_qwords,
+> +					     attr->sample_simd_pred_reg_intr);
+> +		if (ret)
+> +			return ret;
+> +	}
+>  
+>  #ifndef CONFIG_CGROUP_PERF
+>  	if (attr->sample_type & PERF_SAMPLE_CGROUP)
 
