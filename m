@@ -1,119 +1,140 @@
-Return-Path: <linux-kernel+bounces-778446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2C9B2E5D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A9CB2E5D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00B787A17BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:47:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 869BC7A6441
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6C78F49;
-	Wed, 20 Aug 2025 19:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DD727FB3A;
+	Wed, 20 Aug 2025 19:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8jPfogK"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uVa9a26W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1004526E6F8;
-	Wed, 20 Aug 2025 19:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E583326A09F;
+	Wed, 20 Aug 2025 19:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755719283; cv=none; b=WWLzRUbXI5Pru8VF6QsPWKtKbQhEVNgc0Qk6M/mvSSp9EdA9ipStVGuS4n2OGG0JNIef6CT9H1UAXeCIKM1zUbOhDBmYhesa27tZcLsYLMISEg3z6EJqiotj6FVcb1lHxQ0lHjAOPMEXMGApWCZu2wJVCzn20RNtJm3JbiPvvQQ=
+	t=1755719310; cv=none; b=LQi5UXs56Eka+OeILuH8sgE4ji1qijgV13NHYC7wW4pzKDcvWlJ6FGy++KlcWj9I/mKa4m8U31WOqWeebe9PGs9Zna5Zug9LbXSfUCri6OCnxwNQKGgXuaZAV+4qdN4l5cOKeM681v7L7+hNE/xy2QaczLU1Tbu/o2yOPVkp+wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755719283; c=relaxed/simple;
-	bh=7qIOJgBGxwOndXtDf/YRbfMmSwGo+zEFbUIAXg/RPq0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gC/kFUNUw1gi2ilBylg9C7Nds+tEZDBXOWt/WUZntxTlOHqin5KqAF3AOzTMG8KabW2xkglWz7VZHxnkIFSEYlNxgqJFQVDSjvz05Ag91EoqX2NRO/gIWYrGo3CRBmqqnZZ07w+DbZF+GDHCO27wzDruEkylB6f2k7lErZMaS1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8jPfogK; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3e666f35fb3so1158565ab.3;
-        Wed, 20 Aug 2025 12:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755719281; x=1756324081; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KY6KYGcofy9B+TK2ypLM7wptypx5fcgkdu8vnUtAJYk=;
-        b=b8jPfogKEFWhdRLA3A4H2n7ZRtDgCYUrl1E/riqOA2EzAVAQZRbwVjiAqnGdYxxMA2
-         YI7JqOkov958OtMF2QMI5UxiYlkHjGUaih9MYEdX9px6bP/Yrjtoqat9ieN2MkxROwUq
-         sMTrc2yUv26OvXF1m+vcOxdbImzBY72cVVhvWRhvhFNIwoOwmKGgOGReI7DFrgrpGFvJ
-         cLUb3ijpwzFQny49E9iigQCWtA4S/6nY+aLrhmZcahD9GJnofJ6h9IIF1OrUZe9BlmRQ
-         B9oUfaCLFMD+SnqhWNgWe+bYxz0w3TvGXirZge233fRoOsK0UuZGMi+8XJSoHEO3BbZI
-         OeYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755719281; x=1756324081;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KY6KYGcofy9B+TK2ypLM7wptypx5fcgkdu8vnUtAJYk=;
-        b=eJuIq7fDWVYk6PikF1E/mIhUsihdOGTMX9OxGeDl9XEYPWxwdxNB3QwVp/WnYslr5y
-         XMo7Lnh1KE0jXbsGu5Gv0hbrXpEModRyebDewROxouE8Octp4ab02B3N8x3Ee9oh0H8z
-         QHHWfwpULLK/J0DbFR4WGo0mzjH4Ou+ZxypZDQQpDOrQLhSojviRte01zXzxkhqVLqNN
-         s1WUsKHecKu4pTHlrbQuNzj+k70nt9M97FRdWBuqX9rVhEwJdtHtKf8EoTdQDjwK/JkM
-         fjLbcrpZu6LcIYzEGmt5+Dg1pX7dHUMLIcLXGHv+EbR6GRlbzJQ2FrtzoH3C2JsioG5F
-         lmjg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/2UOCTR2NXVlPQfa2GgfiUM82ouo5Z7cbs8S2FMcF1wGgZdZC+re5bO2J6x6q5kNmRyINw/HlAupZFGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd3od0zsuMrNHl75kqKS/O6O1wdmyOxey37XEyTeBtBFR015cK
-	yEyg35evnvjaD82/8uSyaswDP1na35nnHBRnU/k2uV9wNjysEL9lfDFOQ09BSaFB
-X-Gm-Gg: ASbGnctb0NxXUxU9oEAAzPKFzvq5OjkLd602jvzZ/slCAPR4aQNE4l7EIjhP3Xbsd+l
-	sq52b8xJUtD8XpvuvyaSqCuIY39jgvxH15vv91q6GREZGnZbFiq3otd437yQhCiI3WjOOojGwIZ
-	LsMjZSEM8LuQQj1YCNeQMeASbVUg9W1LL5zyr5tnO56oCx/+c3tu0io4SSeI/R1fBcgN8u72Ku8
-	Bi0m0mnLMlN1SGIqXvISjXqgHO689FGaf4MZgXRBUFMBOUF0GRoudvv6rP9St355sQDaRa2eeAQ
-	ZMejno0L/DFQaI29xomx3p57X4o6tbOEAaGp/WQGQ/a8ttaYle5ysLrnmK/7uRDs+FqXPvqODBI
-	6riRi+6mnaMoR/+izPCO/B4cYfYvNWlALRUulFWDzYwpVc5uRCJfLxUTFV7bUWUFtbIcirnDgiv
-	vOKXBM/5uWCQ==
-X-Google-Smtp-Source: AGHT+IGnW1O/nM4BGcR/+kr2nJncspBQAwK6G1rqHmHSmC9/Rsvt/wGgSsHf0jD2r7w0bTGdk7DNzg==
-X-Received: by 2002:a05:6e02:1a42:b0:3e5:3d13:5d8f with SMTP id e9e14a558f8ab-3e67ca08998mr70705235ab.9.1755719280796;
-        Wed, 20 Aug 2025 12:48:00 -0700 (PDT)
-Received: from fedora (pool-99-240-65-82.cpe.net.cable.rogers.com. [99.240.65.82])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50c94998c35sm4249485173.66.2025.08.20.12.48.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 12:48:00 -0700 (PDT)
-From: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-To: Shuah Khan <skhan@linuxfoundation.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Subject: [PATCH v2] Documentation: conf.py: remove repeated word in comment
-Date: Wed, 20 Aug 2025 15:47:15 -0400
-Message-ID: <20250820194714.130513-2-albinbabuvarghese20@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755719310; c=relaxed/simple;
+	bh=ZAdsCPJer5cp70aNhszFdULfEcYeJDeg4An1kUlxQno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XFt0Hqu+tRzQFUco7paNqJ1ve0V65eQCW/+2XUNwW7L3Et6am5ssuvUhQKYf5/bvktNBfdDJ6OdsvgF7JOgbWHJhelqQVDkROkzJJ92Yc4W3SDk78mWbTM2X1se/xv17RZrwmGW/Dg9GrV/268JTsSonW9hXWgf214XcRX7xM1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uVa9a26W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1396CC4CEE7;
+	Wed, 20 Aug 2025 19:48:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755719309;
+	bh=ZAdsCPJer5cp70aNhszFdULfEcYeJDeg4An1kUlxQno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uVa9a26WlpOd2lExJFNhW8+6lwgSbRgExkhkldbI0j4xzDmMulzGbeeGY6QqW1fkc
+	 5I+GOYGIT80lsYnM86pUsgDPyrDe8Wxqbm65JRjPrDfaIncSDwgtY/Y6TC1DROvb2F
+	 hmIyFjb6NKBu+6fJBmPjZSQVj9R1J5LCEogNn1DGtGIAAt+SIKqG1oqlnddN5O6EJ4
+	 //ea56WkFOEwm2khUhByKpGg2AVMm7Q5zTuymgE4qk+O9GZV5QpTICjhzLU6cwD299
+	 nvQaVGRCkzZrMwnHZDEOTyBjTFkVd4ACMTQs4P+rbb4dtD+KsqB1r0PUXfJcslaDcP
+	 P3ADJFHe9jCDQ==
+Date: Wed, 20 Aug 2025 20:48:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Diederik de Haas <didi.debian@cknow.org>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v2 3/3] dt-bindings: thermal: rockchip: tighten grf
+ requirements
+Message-ID: <20250820-await-chomp-9812902c0f74@spud>
+References: <20250820-thermal-rockchip-grf-warning-v2-0-c7e2d35017b8@kernel.org>
+ <20250820-thermal-rockchip-grf-warning-v2-3-c7e2d35017b8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Q0FCgrQS2OQS+FoE"
+Content-Disposition: inline
+In-Reply-To: <20250820-thermal-rockchip-grf-warning-v2-3-c7e2d35017b8@kernel.org>
 
-Remove a repeated "are" from a comment in conf.py
 
-[v2] Resent with full recipient list. No changes from v1.
+--Q0FCgrQS2OQS+FoE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, Albin
+On Wed, Aug 20, 2025 at 07:40:49PM +0200, Sebastian Reichel wrote:
+> Instead of having an optional rockchip,grf property, forbid using it on
+> platforms without registers in a GRF being needed for thermal monitoring
+> and make it mandatory on the platforms actually needing it.
 
-Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
----
- Documentation/conf.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I am assuming that "needing it" means that it was actually mandatory but
+the binding was just missing the required required entry. If so
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index 700516238d3f..55299665753a 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -224,7 +224,7 @@ author = "The kernel development community"
- # |version| and |release|, also used in various other places throughout the
- # built documents.
- #
--# In a normal build, version and release are are set to KERNELVERSION and
-+# In a normal build, version and release are set to KERNELVERSION and
- # KERNELRELEASE, respectively, from the Makefile via Sphinx command line
- # arguments.
- #
--- 
-2.50.1
+>=20
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  .../devicetree/bindings/thermal/rockchip-thermal.yaml     | 15 +++++++++=
+++++++
+>  1 file changed, 15 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/thermal/rockchip-thermal.y=
+aml b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
+> index 573f447cc26ed7100638277598b0e745d436fd01..9fa5c4c49d76e3a689f317978=
+75124e7fb30d3df 100644
+> --- a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
+> @@ -119,6 +119,21 @@ required:
+>    - resets
+> =20
+>  allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - rockchip,px30-tsadc
+> +              - rockchip,rk3366-tsadc
+> +              - rockchip,rk3399-tsadc
+> +              - rockchip,rk3568-tsadc
+> +    then:
+> +      required:
+> +        - rockchip,grf
+> +    else:
+> +      properties:
+> +        rockchip,grf: false
+>    - if:
+>        not:
+>          properties:
+>=20
+> --=20
+> 2.50.1
+>=20
 
+--Q0FCgrQS2OQS+FoE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKYmhwAKCRB4tDGHoIJi
+0lk7AP9pdXnawAo7vHzgRoCDQLvEYOnbJv5NOJbb8mHXjbf0lAEAsFcbnQidHn69
+nDsAJTevUWIbM9hHfimNJ3pk9is+lg8=
+=v71N
+-----END PGP SIGNATURE-----
+
+--Q0FCgrQS2OQS+FoE--
 
