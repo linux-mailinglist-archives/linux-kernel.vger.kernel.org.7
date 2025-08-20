@@ -1,148 +1,156 @@
-Return-Path: <linux-kernel+bounces-777312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB72B2D7F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:23:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D45B2D826
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E6BF4E481C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A481BA1901
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA272DD60E;
-	Wed, 20 Aug 2025 09:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3A72DAFA5;
+	Wed, 20 Aug 2025 09:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yyKg6JpT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VDBG/WqT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kh0fgA1t"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3824D2DCF70
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38211E9B1A
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681270; cv=none; b=jm//C4zDe9w6FlvWnOK434+Pbg0isL75BRWCmIXz0lKm2ofmkofVjD4d38OBSAe02mFOsgVG2pEjC07DEwiOTvHjtJV+ynzXKbIm0dBTy9IHruKjrOHpnvhPixfIHPsdNVFXYuulfp6RaSLA8CXq3igOQ/e6cFR74bz9guaWAs0=
+	t=1755681438; cv=none; b=niPwffj/s7GSRAksQCbwJcbtR0i7myhGBNINqTAmOvMcX3r+QxkWQS7zfpDBbJuSCMVmDkV/9LO6/YWgQ2ABzd9gwNHz2cNdQP2oK/2jJZtz6vvZs6p6Fqr6+sNzdhbOIkLGr3XyM9W9UrywfX9zCE9Bm6o8W9nTXyobtHt0Vm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681270; c=relaxed/simple;
-	bh=/aHrcK7fqDa4LqZc5qfbI68TVz++H+mC0NhMVvHbFGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nhSDImOIbZxJIPf0oZuAPAogb2qh9Ts9ePH+El4pJ+KigtywDwH+9wde2+SpJ+Mf68DE01AiOyp/upWfs7IvH3U+6NJPBUDkGbxiyKil0bQ2LsdXFtKI9tOi9R/+KUZDKrE/u6FFO3xgYnvtVhfylEwkrLQus/zg/aws5Y4VQCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yyKg6JpT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VDBG/WqT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 20 Aug 2025 11:14:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755681267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r+cul7dWLXQ4JCWu12EbN+AslJkIvxuCed3HuYkZuLs=;
-	b=yyKg6JpTK+0uAdAQw+TZXGDcoLbKVYCYoUaL2vrTJ1K9gbOEUgJ/i1affhJv/ZFJTTlA1j
-	xAowJqrzVGJVR7CIh7DBHL5a/kuCb6SlAr1hDLjbreXDQLs7gNmytoKfboCUyDGxEnZtG6
-	d9YgMCOOBSgbH420/eF922qzQIeGcCpM02hDvndjIy2DeKpW6FFlzXXgwpZre0qzhED7XI
-	PazDhjL1oMCs/HwnQSFw9Sv+KQ6FyZjGuPjnUOerAqeGIqjHh9hMb3oyxbY/PZJixBzugR
-	lEJuEA+AVZpUZQuagNaieWluqwkSb/gVbnPRSQ9xVrsQChMRd7EjjEDNr/u3XQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755681267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r+cul7dWLXQ4JCWu12EbN+AslJkIvxuCed3HuYkZuLs=;
-	b=VDBG/WqTZRhAk/rJb+ZGS5bcBtiCBSYIVNabUAHQDHxhbCs5dyhL2SO6+B7uBP1szvcTYD
-	XkuOYvPmOUzfy1CA==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: Marcos Del Sol Vives <marcos@orca.pet>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
-	Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	David Kaplan <david.kaplan@amd.com>, Kees Cook <kees@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Oleg Nesterov <oleg@redhat.com>, "Xin Li (Intel)" <xin@zytor.com>,
-	Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-Message-ID: <aKWR8e6VUEZEgbkw@lx-t490>
-References: <20250820013452.495481-1-marcos@orca.pet>
+	s=arc-20240116; t=1755681438; c=relaxed/simple;
+	bh=J4N31BiNSaIZU4tXgGrc88Ztvr27PFZyKdQ8EQFdz2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Dma/cd8XBqTV0erpg0BzqSS44bZScLN1kChDkBZHoST6itlg/sX2dkxvgtBI2R0lgPwdAvmOrnIso//za/5UsjN57ZDMMCWgIwlpgux5vBbT+TXSpwqcQmS2396USTSxvexoiksdPeAIT7kqZc01rSBmmBMvOmLlEvNCvshi3F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kh0fgA1t; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e563b25c4so2470728b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:17:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755681435; x=1756286235; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=39cuczpygL/G/6AohQYcSCveWURyMSXomv0UnOGyLJM=;
+        b=kh0fgA1t9Tp6b9WMLKZ+5tltRwyug0GQOWN5XBNQ2oWg42z2wn5Zx9qY+yt5fhqGFY
+         Sr8lnVW1sDCa95dJx3NO9YoXbXnZjHQ+SNDVbM6w3qi5kgjzum15hLD9YPiq4XlzKmc4
+         CibqGuki13H83AUqjy9WGsgVvMd+wmNsrSqkdVJ7vFsVB36VhPwfwOxkXJ+oNA6UZcb0
+         I+EaE48kPnJcUTCqH9eic//nSAJOcdNS34tUQp5MSLgh6WwbiRSATe+2hjZwq54QTF/m
+         jXJk7U8Xk55+xOfPT/d0H5V8RKHEmamLfe7KH+QlRAe9ydQdREsOXkm/k1rGD+6ZxhxW
+         tYRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755681435; x=1756286235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=39cuczpygL/G/6AohQYcSCveWURyMSXomv0UnOGyLJM=;
+        b=t4sgHFdrVFpeSNi5fDkR7cCbZIHFUGGqPXo1DnLvsE/tvXu1f+BM81ov2i2bIPmVn9
+         /2T4JgdZ5TAlSNgQV92kbF3kd5CXWKA8dS4tR6rwBlCNkVu2AciRCdTHxef9iA07Ka2+
+         cjtHs4Uii9ScxzpK76dCFOs9/FcvFzynHOKf8kiFl2kKD/JZBpR47AWhsv9eUBqq803C
+         MQKEmcsFZ3fj4D06ujGt8yr7GKoL5J+o9nL4vrojOPVpjwYZ14vZR0MQSYHQcETNtad5
+         PrfT1i0HO9JzYiVba8n73jMqGnu4exIpCss70I2ciAaR5mVD7dgq7I9+MQr3mBmn+7W1
+         qzGw==
+X-Gm-Message-State: AOJu0YyK4QX1YOLMjBTodu8H2Lm+sr2yxqQgiFqtGO2Gv+tW7UvkP8Fm
+	DA5EFt4Jo+7z/TLUAsZO/eAJ807/YoQoZTz00Ik0pQub14s60FtXsZG3RSBu1iICCiI=
+X-Gm-Gg: ASbGnct6h7aBkuuZxV2JZCDk3Ajw2YQ81pCXwbBdYXT0BZyaP9Ez8RJeBob0si4xWyl
+	oOpjFDjitY0/UMDFFP80xookJC9NUjE0SFCA6vN7KfC7w6DaHyTQLc4/Hy8JJJMorx0hDKoDWw9
+	hmVzotG3cphzT+xG9RBeu3mh4+9KF2Pa3QcqU4E+AKYwgY31Fg/pE7tBlTAhV9PEIK8BJezCFvj
+	Dyt1kB7co2t0rFD7HGTc49T06bXcUEVqO4GEFyP4S/NbTjIDKvPa7SPE4xjVDvR01k3+6EzkePb
+	b2nr0hhCoxp35wKSOe2qMGZI8XTs4OCjJjej+Vmzt9mBgrxCeH9Im8eHSXldUoEB7PX7peQMwVU
+	+AVdTboywxcynq8G7iZVAm7EjTXw4vEMHbEBq5awVMVIZaJCPn81Un/E0oilTA40G/GRoEmqPiO
+	8=
+X-Google-Smtp-Source: AGHT+IGimp2Vfkx5FLbA9GKV47qNjrS8KlSlVbSxe19ozZmYK/78Ib6/Yn0clNU/3c8fvaaQDGC57g==
+X-Received: by 2002:a05:6a20:1590:b0:21f:5c9d:498b with SMTP id adf61e73a8af0-2431b993263mr3403647637.28.1755681435076;
+        Wed, 20 Aug 2025 02:17:15 -0700 (PDT)
+Received: from localhost.localdomain ([114.242.33.243])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7ccfa8d1sm4847120b3a.0.2025.08.20.02.17.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 02:17:14 -0700 (PDT)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: pmladek@suse.com,
+	akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	feng.tang@linux.alibaba.com,
+	joel.granados@kernel.org,
+	john.ogness@linutronix.de,
+	wangjinchao600@gmail.com,
+	namcao@linutronix.de,
+	sravankumarlpu@gmail.com
+Subject: [PATCH 0/9] panic: introduce panic status function family
+Date: Wed, 20 Aug 2025 17:14:45 +0800
+Message-ID: <20250820091702.512524-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820013452.495481-1-marcos@orca.pet>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Marcos,
+This series introduces a family of helper functions
+to manage panic state and updates existing code to
+use them.
 
-On Wed, 20 Aug 2025, Marcos Del Sol Vives wrote:
-...
->
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -499,6 +499,10 @@ struct thread_struct {
->
->  	unsigned int		iopl_warn:1;
->
-> +#ifdef CONFIG_X86_HNOP_EMU
-> +	unsigned int		hnop_warn:1;
-> +#endif
-> +
-...
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -178,6 +178,9 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
->  	p->thread.io_bitmap = NULL;
->  	clear_tsk_thread_flag(p, TIF_IO_BITMAP);
->  	p->thread.iopl_warn = 0;
-> +#ifdef CONFIG_X86_HNOP_EMU
-> +	p->thread.hnop_warn = 0;
-> +#endif
-...
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> +
-> +	if (!t->hnop_warn) {
-> +		pr_warn_ratelimited("%s[%d] emulating hintable NOP, ip:%lx\n",
-> +		       current->comm, task_pid_nr(current), regs->ip);
-> +		t->hnop_warn = 1;
-> +	}
+Before this series, panic state helpers were
+scattered and inconsistent. For example,
+panic_in_progress() was defined in printk/printk.c,
+not in panic.c or panic.h. As a result, developers
+had to look in unexpected places to understand or
+re-use panic state logic. Other checks were open-
+coded, duplicating logic across panic, crash, and
+watchdog paths.
 
-Can we please remove all this 'hnop_warn' trickery?  Removing it will
-simplifiy the code and avoid complicating 'thread_struct' further.
+The new helpers centralize the functionality in
+panic.c/panic.h:
+  - panic_try_start()
+  - panic_reset()
+  - panic_in_progress()
+  - panic_on_this_cpu()
+  - panic_on_other_cpu()
 
-It's just the kernel doing its normal job.
+Patches 1–8 add the helpers and convert panic/crash
+and printk/nbcon code to use them.
 
-And if the system is full of binaries with hintable NOPs, ratelimiting
-will not save you much.  I got hit recently by a 'ratelimited'
-correctible error PCI subsystem warning, and it still overflows the log
-buffers of my Thinkpad laptop, in just 4 to 5 days :(
+Patch 9 fixes a bug in the watchdog subsystem by
+skipping checks when a panic is in progress, avoiding
+interference with the panic CPU.
 
->
-> static inline void handle_invalid_op(struct pt_regs *regs)
-> {
-> +#ifdef CONFIG_X86_HNOP_EMU
-> +	if (user_mode(regs) && handle_hnop(regs))
-> +		return;
-> +#endif
-> +
->
+Together, this makes panic state handling simpler,
+more discoverable, and more robust.
 
-CPP conditionals within C function code are ugly.  Please do instead:
 
-    static bool handle_hnop(struct pt_regs *regs)
-    {
-	if (!IS_ENABLED(CONFIG_X86_HNOP_EMU))
-		return false;
-	...
-    }
+Jinchao Wang (9):
+  panic: Introduce helper functions for panic state
+  fbdev: Use panic_in_progress() helper
+  crash_core: use panic_try_start() in crash_kexec()
+  panic: use panic_try_start() in nmi_panic()
+  panic: use panic_try_start() in vpanic()
+  printk/nbcon: use panic_on_this_cpu() helper
+  panic/printk: replace this_cpu_in_panic() with panic_on_this_cpu()
+  panic/printk: replace other_cpu_in_panic() with panic_on_other_cpu()
+  watchdog: skip checks when panic is in progress
 
-Thanks for your contribution!
+ drivers/video/fbdev/core/fbcon.c  |  9 +---
+ include/linux/panic.h             |  6 +++
+ include/linux/printk.h            |  2 -
+ kernel/crash_core.c               | 15 ++-----
+ kernel/panic.c                    | 71 +++++++++++++++++++++++++------
+ kernel/printk/internal.h          |  1 -
+ kernel/printk/nbcon.c             | 14 +++---
+ kernel/printk/printk.c            | 37 +++-------------
+ kernel/printk/printk_ringbuffer.c |  2 +-
+ kernel/watchdog_buddy.c           |  5 +++
+ kernel/watchdog_perf.c            |  3 ++
+ lib/dump_stack.c                  |  2 +-
+ 12 files changed, 89 insertions(+), 78 deletions(-)
 
---
-Ahmed S. Darwish
-Linutronix GmbH
+-- 
+2.43.0
+
 
