@@ -1,217 +1,187 @@
-Return-Path: <linux-kernel+bounces-778250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57AAB2E312
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:13:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943C0B2E343
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530F8A21A78
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C785B1884488
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D47B334729;
-	Wed, 20 Aug 2025 17:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD14933768E;
+	Wed, 20 Aug 2025 17:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BBKiNEge"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="iXdiIBjc"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0833326D7B;
-	Wed, 20 Aug 2025 17:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755709974; cv=none; b=GdBNtGhm54Q1cA5R2GGJbW7c0L7kN50ybh4TJsNs/0XuJ7FV4T6oApg3parOLtnDhrkZ9pOl9mSaz8qJDR3L5nioLr0jlsfsFqZ5KdU6UnMhR+9XLosz/OAaKq4SQR0zkdH98NH4KooGEf67mwlznuYEqJAUE1DU+C2Kurpoo94=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755709974; c=relaxed/simple;
-	bh=IUQCrjs8m4Ns2oVel2RgzZr7Q4fBAMYsIrt1ZEBwx7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gjtZcUuOoMKI0/uNlA6mGSk0JsI2WgxstTNKpEgtYhvGcH9q7lKm7n5V5EpKQQtMG2aQ7GhnPUfKOpddITQBfEnsSU5TIOwqvufhqTr40hMSgQa1YU4phFFRnuhrB5kbK0/8jKIGCigQNU25SCs3WdusKAdSb0qqu96okmpyOuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BBKiNEge; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=anYBpTxYy91S8Bgh2DpMeL5weuTxz6TOM+GO3HCRBd0=; b=BBKiNEgeQhJ4xEn0/QNOwePLQr
-	cFJr/WHypUBYPiGigloL77/E7c1oPba6PvzO4vnyJZNjKQAU78y6BqNCnjebKL3i9KEAs2Nj8OLCv
-	qbOXWsch2+BJ9bVaXDMMS3sEdRNVx3Oq8HMDQvnoURsAhXDP6Of8dxRd1AH4hxKqm0Ska0uDM7pGj
-	njCXcs5A1huGOzF8BI1Xua+wuLL9uOatvf1dDFIH2ozbk8H2xR8y/ZlF7DZ843ObEKlciSTaaENvB
-	czJwlQM64cUQA83SnhsfSRmVluDShhEgF5aEae6HB0XpTMi/wPAHwkkYBhlZS2KZkyYOannJKlsJf
-	NDnCBtSw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uomMY-00000009ipb-1fMy;
-	Wed, 20 Aug 2025 17:12:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5A5203002ED; Wed, 20 Aug 2025 19:12:37 +0200 (CEST)
-Date: Wed, 20 Aug 2025 19:12:37 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "jolsa@kernel.org" <jolsa@kernel.org>,
-	"songliubraving@fb.com" <songliubraving@fb.com>,
-	"alan.maguire@oracle.com" <alan.maguire@oracle.com>,
-	"mhiramat@kernel.org" <mhiramat@kernel.org>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@kernel.org" <mingo@kernel.org>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"David.Laight@aculab.com" <David.Laight@aculab.com>,
-	"yhs@fb.com" <yhs@fb.com>, "oleg@redhat.com" <oleg@redhat.com>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"thomas@t-8ch.de" <thomas@t-8ch.de>,
-	"haoluo@google.com" <haoluo@google.com>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCHv6 perf/core 10/22] uprobes/x86: Add support to optimize
- uprobes
-Message-ID: <20250820171237.GL4067720@noisy.programming.kicks-ass.net>
-References: <20250720112133.244369-1-jolsa@kernel.org>
- <20250720112133.244369-11-jolsa@kernel.org>
- <20250819191515.GM3289052@noisy.programming.kicks-ass.net>
- <20250820123033.GL3245006@noisy.programming.kicks-ass.net>
- <9ece46a40ae89925312398780c3bc3518f229aff.camel@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59CC321447;
+	Wed, 20 Aug 2025 17:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755710099; cv=pass; b=o1rfIMjzfadph5ExeuHI9ZPdidbD53FDeKG7v9P8DXGXl7d35oe1A0Y0Zt2Ieh1vBCWyrXt7h+Cnhen2rPqBKW25i6GRW8x0l6rX4aKnzq5gRwI3NIhuSOWDlF9yf3GL+GtFyioO98F41XNpkOlsoovdMYAnQMbe0lopUvQ08mg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755710099; c=relaxed/simple;
+	bh=sV4kV/mfpkuY2wa8iKDdxtO5llhW9IcZK2g3plBieoY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gZR5TxkYcQgjUGvd43QUMtqcDgNWQc4RYVFsrJFwsflk7sde8eqSlsEv4NFA3RNjKsmA0ri1SEcP8o5BhsYCS2WBcpjoNbncWT8AaDKQN+bdUEHNDdlWgG1nh0eWcRHZnVkTEXSIlnIwmqQT7NKj+fXxJbRIgkcbvuqJnz6jlCs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=iXdiIBjc; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755710040; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Tim5F0HvYU373WHcbS+AW8itdXClm69OGGAsV1A46kh652ncp3eSt6GC0leBhqQH405N+NPRTuGFjKQEUvPvcrXmcjPYge5C/9fszUGPrpZ5XGJoWwPlyg6Izx+fS2Si8WlHPNLOTPyqgUchpe4WQwKCX0+b+lLw//3TM164iRw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755710040; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=DaMNOnKm2AnfZhbaigAUu68c7YdBR4a87CV7XaTyqjQ=; 
+	b=NO+n+dEsIpuIEW/n/h9GYA9kEKtT860Sym3jjxLtnbWPN+LQVmltK9yAjn4BT/NP9BeIqZ29j6cMMWzQ8cVuRxHQsn+gkG6m06E2i3FvJET1GwFmdYbpD/1QAJ/EvgPsXeR8DaWuwm6GggX8aaDWOJ1UsDCWYze9LFtBPVar8h4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755710040;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=DaMNOnKm2AnfZhbaigAUu68c7YdBR4a87CV7XaTyqjQ=;
+	b=iXdiIBjcdK3P7kvXuElLIVC112o9r1eEOb6UZAwC74zp+49vHMbc2ihpozoDyC7T
+	X+KKEt/amBhjUN4d6/KrsnmQM8X6JXL/Fxoc1teeoq21qpT+5zcDfZ1qpXkTHyX+0Oa
+	tsnKB3Yni2Qt7wENZUUvI7IQ/xdgh6kf7HnAjcUQ=
+Received: by mx.zohomail.com with SMTPS id 1755710039628806.7841478498982;
+	Wed, 20 Aug 2025 10:13:59 -0700 (PDT)
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+To: airlied@gmail.com,
+	amergnat@baylibre.com,
+	andrew+netdev@lunn.ch,
+	andrew-ct.chen@mediatek.com,
+	angelogioacchino.delregno@collabora.com,
+	ariel.dalessandro@collabora.com,
+	broonie@kernel.org,
+	chunkuang.hu@kernel.org,
+	ck.hu@mediatek.com,
+	conor+dt@kernel.org,
+	davem@davemloft.net,
+	dmitry.torokhov@gmail.com,
+	edumazet@google.com,
+	flora.fu@mediatek.com,
+	houlong.wei@mediatek.com,
+	jeesw@melfas.com,
+	jmassot@collabora.com,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	kuba@kernel.org,
+	kyrie.wu@mediatek.corp-partner.google.com,
+	lgirdwood@gmail.com,
+	linus.walleij@linaro.org,
+	louisalexis.eyraud@collabora.com,
+	maarten.lankhorst@linux.intel.com,
+	matthias.bgg@gmail.com,
+	mchehab@kernel.org,
+	minghsiu.tsai@mediatek.com,
+	mripard@kernel.org,
+	p.zabel@pengutronix.de,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	sean.wang@kernel.org,
+	simona@ffwll.ch,
+	support.opensource@diasemi.com,
+	tiffany.lin@mediatek.com,
+	tzimmermann@suse.de,
+	yunfei.dong@mediatek.com
+Cc: devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-sound@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v1 00/14] MediaTek dt-bindings sanitization (MT8173)
+Date: Wed, 20 Aug 2025 14:12:48 -0300
+Message-ID: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ece46a40ae89925312398780c3bc3518f229aff.camel@intel.com>
+X-ZohoMailClient: External
 
-On Wed, Aug 20, 2025 at 03:58:14PM +0000, Edgecombe, Rick P wrote:
-> I'm not sure we should optimize for shadow stack yet. Unless it's easy to think
-> about... (below)
-> 
-> On Wed, 2025-08-20 at 14:30 +0200, Peter Zijlstra wrote:
-> > --- a/arch/x86/include/asm/shstk.h
-> > +++ b/arch/x86/include/asm/shstk.h
-> > @@ -23,6 +23,8 @@ int setup_signal_shadow_stack(struct ksi
-> >  int restore_signal_shadow_stack(void);
-> >  int shstk_update_last_frame(unsigned long val);
-> >  bool shstk_is_enabled(void);
-> > +int shstk_pop(u64 *val);
-> > +int shstk_push(u64 val);
-> >  #else
-> >  static inline long shstk_prctl(struct task_struct *task, int option,
-> >  			       unsigned long arg2) { return -EINVAL; }
-> > @@ -35,6 +37,8 @@ static inline int setup_signal_shadow_st
-> >  static inline int restore_signal_shadow_stack(void) { return 0; }
-> >  static inline int shstk_update_last_frame(unsigned long val) { return 0; }
-> >  static inline bool shstk_is_enabled(void) { return false; }
-> > +static inline int shstk_pop(u64 *val) { return -ENOTSUPP; }
-> > +static inline int shstk_push(u64 val) { return -ENOTSUPP; }
-> >  #endif /* CONFIG_X86_USER_SHADOW_STACK */
-> >  
-> >  #endif /* __ASSEMBLER__ */
-> > --- a/arch/x86/kernel/shstk.c
-> > +++ b/arch/x86/kernel/shstk.c
-> > @@ -246,6 +246,46 @@ static unsigned long get_user_shstk_addr
-> >  	return ssp;
-> >  }
-> >  
-> > +int shstk_pop(u64 *val)
-> > +{
-> > +	int ret = 0;
-> > +	u64 ssp;
-> > +
-> > +	if (!features_enabled(ARCH_SHSTK_SHSTK))
-> > +		return -ENOTSUPP;
-> > +
-> > +	fpregs_lock_and_load();
-> > +
-> > +	rdmsrq(MSR_IA32_PL3_SSP, ssp);
-> > +	if (val && get_user(*val, (__user u64 *)ssp))
-> > +	    ret = -EFAULT;
-> > +	ssp += SS_FRAME_SIZE;
-> > +	wrmsrq(MSR_IA32_PL3_SSP, ssp);
-> > +
-> > +	fpregs_unlock();
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +int shstk_push(u64 val)
-> > +{
-> > +	u64 ssp;
-> > +	int ret;
-> > +
-> > +	if (!features_enabled(ARCH_SHSTK_SHSTK))
-> > +		return -ENOTSUPP;
-> > +
-> > +	fpregs_lock_and_load();
-> > +
-> > +	rdmsrq(MSR_IA32_PL3_SSP, ssp);
-> > +	ssp -= SS_FRAME_SIZE;
-> > +	wrmsrq(MSR_IA32_PL3_SSP, ssp);
-> > +	ret = write_user_shstk_64((__user void *)ssp, val);
-> 
-> Should we role back ssp if there is a fault?
+This patch series continues the effort to address Device Tree validation
+warnings for MediaTek platforms, with a focus on MT8173. It follows the initial
+cleanup series by Angelo (https://www.spinics.net/lists/kernel/msg5780177.html)
 
-Ah, probably. And same with pop I suppose, don't adjust ssp if we can't
-read it etc.
+Similarly to the ongoing MT8183 work done by Julien Massot, this patchset
+eliminates several of the remaining warnings by improving or converting DT
+bindings to YAML, adding missing properties, and updating device tree files
+accordingly.
 
-> > +	fpregs_unlock();
-> > +
-> > +	return ret;
-> > +}
-> > +
-> >  #define SHSTK_DATA_BIT BIT(63)
-> >  
-> >  static int put_shstk_data(u64 __user *addr, u64 data)
-> > --- a/arch/x86/kernel/uprobes.c
-> > +++ b/arch/x86/kernel/uprobes.c
-> > @@ -804,7 +804,7 @@ SYSCALL_DEFINE0(uprobe)
-> >  {
-> >  	struct pt_regs *regs = task_pt_regs(current);
-> >  	struct uprobe_syscall_args args;
-> > -	unsigned long ip, sp;
-> > +	unsigned long ip, sp, sret;
-> >  	int err;
-> >  
-> >  	/* Allow execution only from uprobe trampolines. */
-> > @@ -831,6 +831,9 @@ SYSCALL_DEFINE0(uprobe)
-> >  
-> >  	sp = regs->sp;
-> >  
-> > +	if (shstk_pop(&sret) == 0 && sret != args.retaddr)
-> > +		goto sigill;
-> > +
-> >  	handle_syscall_uprobe(regs, regs->ip);
-> >  
-> >  	/*
-> > @@ -855,6 +858,9 @@ SYSCALL_DEFINE0(uprobe)
-> >  	if (args.retaddr - 5 != regs->ip)
-> >  		args.retaddr = regs->ip;
-> >  
-> > +	if (shstk_push(args.retaddr) == -EFAULT)
-> > +		goto sigill;
-> > +
-> 
-> Are we effectively allowing arbitrary shadow stack push here? 
+Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
 
-Yeah, why not? Userspace shadow stacks does not, and cannot, protect
-from the kernel being funneh. It fully relies on the kernel being
-trusted. So the kernel doing a shstk_{pop,push}() to make things line up
-properly shouldn't be a problem.
+Ariel D'Alessandro (14):
+  media: dt-bindings: Convert MediaTek mt8173-mdp bindings to YAML
+  media: dt-bindings: Convert MediaTek mt8173-vpu bindings to YAML
+  dt-bindings: arm: mediatek: mmsys: Add assigned-clocks/rates
+    properties
+  net: dt-bindings: Convert Marvell 8897/8997 bindings to YAML
+  sound: dt-bindings: Convert MediaTek RT5650 codecs bindings to YAML
+  dt-bindings: display: mediatek,od: Add mediatek,gce-client-reg
+    property
+  dt-bindings: display: mediatek,ufoe: Add mediatek,gce-client-reg
+    property
+  arm64: dts: mediatek: mt8173: Fix mt8173-pinctrl node names
+  dt-bindings: pinctrl: mediatek,mt65xx-pinctrl: Allow gpio-line-names
+  regulator: dt-bindings: Convert Dialog Semiconductor DA9211 Regulators
+    to YAML
+  arm64: dts: mediatek: mt8173-elm: Drop unused bank supply
+  dt-bindings: soc: mediatek: pwrap: Add power-domains property
+  dt-bindings: input/touchscreen: Convert MELFAS MIP4 Touchscreen to
+    YAML
+  dt-bindings: media: mediatek,jpeg: Fix jpeg encoder/decoder ranges
 
-> I see we need to be in in_uprobe_trampoline(), but there is no mmap
-> lock taken, so it's a racy check.
+ .../bindings/arm/mediatek/mediatek,mmsys.yaml |   9 +
+ .../display/mediatek/mediatek,od.yaml         |  10 +
+ .../display/mediatek/mediatek,ufoe.yaml       |  11 +
+ .../input/touchscreen/melfas,mip4_ts.yaml     |  55 +++++
+ .../input/touchscreen/melfas_mip4.txt         |  20 --
+ .../bindings/media/mediatek,mt8173-mdp.yaml   | 174 +++++++++++++++
+ .../bindings/media/mediatek,mt8173-vpu.yaml   |  76 +++++++
+ .../media/mediatek,mt8195-jpegdec.yaml        |  31 +--
+ .../media/mediatek,mt8195-jpegenc.yaml        |  15 +-
+ .../bindings/media/mediatek-mdp.txt           |  95 --------
+ .../bindings/media/mediatek-vpu.txt           |  31 ---
+ .../bindings/net/marvell,sd8897-bt.yaml       |  91 ++++++++
+ .../bindings/net/marvell-bt-8xxx.txt          |  83 -------
+ .../pinctrl/mediatek,mt65xx-pinctrl.yaml      |   2 +
+ .../devicetree/bindings/regulator/da9211.txt  | 205 ------------------
+ .../bindings/regulator/dlg,da9211.yaml        | 104 +++++++++
+ .../bindings/soc/mediatek/mediatek,pwrap.yaml |  15 ++
+ .../sound/mediatek,mt8173-rt5650.yaml         |  73 +++++++
+ .../bindings/sound/mt8173-rt5650.txt          |  31 ---
+ .../boot/dts/mediatek/mt8173-elm-hana.dtsi    |   2 +-
+ arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  |  31 ++-
+ arch/arm64/boot/dts/mediatek/mt8173-evb.dts   |  14 +-
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi      |  14 +-
+ 23 files changed, 672 insertions(+), 520 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
+ create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8173-vpu.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/mediatek-mdp.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/mediatek-vpu.txt
+ create mode 100644 Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml
+ delete mode 100644 Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt
+ delete mode 100644 Documentation/devicetree/bindings/regulator/da9211.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/dlg,da9211.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/mt8173-rt5650.txt
 
-Racy how? Isn't this more or less equivalent to what a normal CALL
-instruction would do?
-
-> I'm questioning if the security posture tweak is worth thinking about for
-> whatever the level of intersection of uprobes usage and shadow stack is today.
-
-I have no idea how much code is built with shadow stack enabled today;
-but I see no point in not supporting uprobes on it. The whole of
-userspace shadow stacks only ever protects from userspace attacking
-other userspace -- and that protection isn't changed by this.
+-- 
+2.50.1
 
 
