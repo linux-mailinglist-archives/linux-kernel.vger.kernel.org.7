@@ -1,121 +1,290 @@
-Return-Path: <linux-kernel+bounces-776918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F79B2D2F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:29:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CCBB2D2EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6390A7240FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:29:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185581C27E84
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A06E24418E;
-	Wed, 20 Aug 2025 04:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AE1246782;
+	Wed, 20 Aug 2025 04:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFYs9N5x"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="lY2GCTmk"
+Received: from mail-244108.protonmail.ch (mail-244108.protonmail.ch [109.224.244.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3428C23B61A;
-	Wed, 20 Aug 2025 04:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBDE23E33D;
+	Wed, 20 Aug 2025 04:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755664182; cv=none; b=kzYnvHCotvqNdz7zgPTacw2cUFoklN7KOnl/CzB+Jt3IGHdLw02TZSkrcxOGwIrLyb0vMBTq+Ui9YWEQeFWcKF+ZzJf2y2ecvZiqu8AmBqarbYQVmeW0W0pqvlx8/79Dl7SC6NHXFdzfOJmDymWkMSH/K1G5nmVuOsDAGaWCaOg=
+	t=1755663897; cv=none; b=CbekAq6cxyG8qPA33HRgLS929zt3sdnJwT0fWkiUKkWGEW2S5N6ygAsq+W/ncHZ1cfb4nyGW1YgN/PhZYGjqJA35nYhDtnT7DOMtV6tBlg4nv86I4708rF+Am7/mQmFAK9Gqd88QIY2ppqhx3i+gqMdgE9D2qfgf7kZV511FOq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755664182; c=relaxed/simple;
-	bh=LS6eu4y80ZkjO8n1yQxxcyxmL2M70DHTrJlqAImuvkM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=up1p9xGiWhSOGOShI0/dUE6FAkc8uICjnNxRTettLUUG+iqDGTmH3NlVWLecbxT+1nbrsjkypf4HSHKxVjgRVKChek+BRgrZdV8eFg+xgDnsQu8jUF4kshqNWmYtwNOfIKsd1Fn0NShVIhrEHKGJTZGDhufzEUb7ZqpuhjoLO48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFYs9N5x; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e34c4ce54so549013b3a.0;
-        Tue, 19 Aug 2025 21:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755664180; x=1756268980; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zYdMpU8vMjvK2DOSIHRQXqU5/Lf0GAx2OK6XP3SZnEs=;
-        b=gFYs9N5x/JXx95yx7npH7Pahpph5WtxMPJwSbtU1U5t3245rVeO3YkkwyIwHK8D6/h
-         fa7grlGiDkGicB1UjvZlQHcReLcUK19na1Vbubh3ulwSuT1DH9shNM24hban5OcXtp9t
-         DncFTUtA25Yelnj+Hi5eZSkuZWrdjTo7RaYTCEONeWmhkI6i5s/Y9Nnw081nkrDYyp0y
-         8jY8PWfw6fURTspV6kijW7lRgDFV7CfnLamrXhHRzvCN3O8eEVEhJMXq5ty9gXnflzRr
-         fzm6BEkpfPgMhaGRvr5pYRpG91Rz5b+cQHgz7EOT9+V3LpSDK82AbghYkEHWNoOJGOf3
-         aEpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755664180; x=1756268980;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zYdMpU8vMjvK2DOSIHRQXqU5/Lf0GAx2OK6XP3SZnEs=;
-        b=Y66HiZlKarPl/o9J3CVlzBK6KsvD61kBB4I2Ta2Pn7Md/hVq6pMzFeZLR6HlO778R5
-         mUKGAtjd6Sy5Wnz/EUlW/LH8qFKb1eHTcwgKpR5IiGHHNt76/oYBzLJJZjA1U3l0u5hf
-         /kpCZqvHeNCtc04Pt6eUjEwjTnyfrLYoo9r/cQSOhq5D5NyuIHqAJIkoMKQ+Ih1vNl3h
-         VRfCpqhkotcSq+50ttRDVn42N8z5EjjshYKqrh1eV2METEMI72ZI2HFeIj4QJA4zjJOQ
-         rTCir2zw/guNbqV4zXktbdXdPnYMijrxwQ6o60rgghTNQeBOA5YVZShinNsDiBOnnvSB
-         uAOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwFVd27d9K2rRXd4R5CjyyeQ+gM+q57L+fKsFjx77Jc6TGdsfZUIOXjsGjR0NxEVUzltrb7CqiYU0=@vger.kernel.org, AJvYcCV3BY4f5KswDYdY6YVMNa7keAqeicLW23tUZh9LzS0eEzPItiLjtEaX/cM63Q1g7hz16DjpBUvrRWZl/gBE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZfisqTVxWNB+l/u5jZxrMDObZ2KiRGvVEhsxayFnP1F416HEs
-	Qc/HzovRdL8tyAbHiTQyTcE48n0n/Ix8PgsOEXBYbSohamHvi9UopIKS/D7+7gdQjqY=
-X-Gm-Gg: ASbGncsVc/WUo6Srd150W+vikoXeCC3ofSPqSoglzYcmsCuWhsQwBLgPTT3cfrDNEI0
-	qmvHCjkq7FGErmBvggbe1NrRdcAMnedgTDLpTZm6oCJLxMdVSkTXe2mj93hQBpUBn/nog6brF0p
-	CuxbRCzCTyMgt/UUYxVeylhgnr3T6WoZX9yPhpIxaWrC5LKT67j4qpjF7iqPZpeOJKFt+A1IHLi
-	q4KugD3BWT5dK6kwiEqFSW7f5SoMRc0mZIyfUe4VgEMYKUDc3RzIXxcTT6kR0mMcrDDXppluHwr
-	zeye1k5lCnkZRN8sm6WTdOjKo2E5fu1ChJbrquYRgCAy+5XzQuDaVfBznegNNdx4xuSuE6qHDD+
-	sdM0/1zDif2NoGgBMhsjdF6XXVVd7Cp1Bm2Tk0vAnDKylh1tWPA==
-X-Google-Smtp-Source: AGHT+IHF+rjqgbLfRW+bQuDEElr4xApCdVU0xbOq6N+xH763334TwG5tSwmdgIyqdHYlkb8aoiMetA==
-X-Received: by 2002:a05:6a00:14c5:b0:736:5969:2b6f with SMTP id d2e1a72fcca58-76e8d6163f6mr2099243b3a.6.1755664180252;
-        Tue, 19 Aug 2025 21:29:40 -0700 (PDT)
-Received: from localhost.localdomain ([202.164.136.133])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d5513fcsm3939537b3a.111.2025.08.19.21.29.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 21:29:39 -0700 (PDT)
-Received: (nullmailer pid 63721 invoked by uid 1000);
-	Wed, 20 Aug 2025 04:28:12 -0000
-From: Kathara Sasikumar <katharasasikumar007@gmail.com>
-To: skhan@linuxfoundation.org
-Cc: corbet@lwn.net, alexander.deucher@amd.com, christian.koenig@amd.com, linux-doc@vger.kernel.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, Kathara Sasikumar <katharasasikumar007@gmail.com>
-Subject: [PATCH] ktest: fix typo in comment
-Date: Wed, 20 Aug 2025 04:24:45 +0000
-Message-ID: <20250820042444.63439-2-katharasasikumar007@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1755663897; c=relaxed/simple;
+	bh=86INfeqOfumVZ1BamH5eEpxeWtBAse6F5jxR+VSqTKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MpWy93R4iyd6/3otHJa6qdkJ88RI5vB5OXfs6r+DOkeA0JYU5PkAZ+Q+E8jKyrEilzCr1RZm5S6GY1wUSqhfMVZFgCIpooqs66dCVQenEiJ723VCT20P3v/wX/0JSuwId89JpQlNEALUfKo6rnWOulhureSfo6CW+TKbKPMZ5+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=lY2GCTmk; arc=none smtp.client-ip=109.224.244.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
+	s=protonmail3; t=1755663892; x=1755923092;
+	bh=kKgqwZvsNzF2JctvkwujV6LyTG531m1YAQmuNypBdos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=lY2GCTmknx+UB3Ztg5WpZwoXyn8WZChzrFFy428DfD1UwTql5KDlUxK/SG3I95ECI
+	 ajdzy/Fh79hGBmjcS9S4FtxBmHLk988OTaDlb9DKksK/PhdxOKTCZh0Uy/QEsqbGSn
+	 VZdhn+fM8WjngXkS2ba7Sfhg8zhveoVkX8Pxn01fv0ah+vc5zJNaWbW+QQOLx7O8LW
+	 MK85lAKqbiQX4yDtW3CCbsE1D7JAMRCBeGTn5zOGVkLwmOoP2vui81h2oh6kxAVMvm
+	 OoSrjDjCrhLUryB+zY2Cs/IsoILRE+AcmrHhSZcM6Aidq5HNlZdZGrFGkYXGb52FCA
+	 ocLgFA49dQWrA==
+X-Pm-Submission-Id: 4c6Cz659Tdz2ScCj
+Date: Wed, 20 Aug 2025 04:24:47 +0000
+From: Elle Rhumsaa <elle@weathered-steel.dev>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	kernel@collabora.com, linux-media@vger.kernel.org
+Subject: Re: [PATCH 7/7] rust: samples: add the v4l2 sample driver
+Message-ID: <aKVOD-N1lEeHVjQs@archiso>
+References: <20250818-v4l2-v1-0-6887e772aac2@collabora.com>
+ <20250818-v4l2-v1-7-6887e772aac2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818-v4l2-v1-7-6887e772aac2@collabora.com>
 
-Correct the spelling of "usefull" to "useful" in xapic_ipi_test comment.
+On Mon, Aug 18, 2025 at 02:49:53AM -0300, Daniel Almeida wrote:
+> This driver is the only user of the v4l2 abstractions at the moment. It
+> serves as a means to validate the abstractions by proving that the
+> device is actually registered as /dev/videoX, and it can be opened and
+> queried by v4l2-ctl, while also serving as a display of the current v4l2
+> support in Rust, as well as a blueprint for more elaborate Rust v4l2
+> drivers in the future.
+> 
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> ---
+>  MAINTAINERS                      |   1 +
+>  samples/rust/Kconfig             |  11 +++
+>  samples/rust/Makefile            |   1 +
+>  samples/rust/rust_driver_v4l2.rs | 145 +++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 158 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6fc5d57950e474d73d5d65271a0394efc5a8960b..14521bc0585503992da582f2cee361666985e39f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15440,6 +15440,7 @@ L:	linux-media@vger.kernel.org
+>  L:	rust-for-linux@vger.kernel.org
+>  S:	Supported
+>  F:	rust/media
+> +F:	sample/rust/rust_driver_v4l2.rs
+>  
+>  MEDIATEK BLUETOOTH DRIVER
+>  M:	Sean Wang <sean.wang@mediatek.com>
+> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> index 7f7371a004ee0a8f67dca99c836596709a70c4fa..64422acf1e9da9d05f904e14fd423b3b4aef173a 100644
+> --- a/samples/rust/Kconfig
+> +++ b/samples/rust/Kconfig
+> @@ -105,6 +105,17 @@ config SAMPLE_RUST_DRIVER_AUXILIARY
+>  
+>  	  If unsure, say N.
+>  
+> +config SAMPLE_RUST_DRIVER_V4L2
+> +	tristate "Video4Linux2 driver"
+> +	depends on MEDIA_SUPPORT && VIDEO_DEV
+> +	help
+> +	  This option builds the Rust V4L2 driver sample.
+> +
+> +	  To compile this as a module, choose M here:
+> +	  the module will be called rust_driver_v4l2.
+> +
+> +	  If unsure, say N.
+> +
+>  config SAMPLE_RUST_HOSTPROGS
+>  	bool "Host programs"
+>  	help
+> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> index bd2faad63b4f3befe7d1ed5139fe25c7a8b6d7f6..57e21f0373938bb70b4cb400ea550010895b4c94 100644
+> --- a/samples/rust/Makefile
+> +++ b/samples/rust/Makefile
+> @@ -9,6 +9,7 @@ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
+>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_AUXILIARY)	+= rust_driver_auxiliary.o
+> +obj-$(CONFIG_SAMPLE_RUST_DRIVER_V4L2)		+= rust_driver_v4l2.o
+>  obj-$(CONFIG_SAMPLE_RUST_CONFIGFS)		+= rust_configfs.o
+>  
+>  rust_print-y := rust_print_main.o rust_print_events.o
+> diff --git a/samples/rust/rust_driver_v4l2.rs b/samples/rust/rust_driver_v4l2.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..a3ef98a613f2fed9e8589f0761ce7e43029c02b6
+> --- /dev/null
+> +++ b/samples/rust/rust_driver_v4l2.rs
+> @@ -0,0 +1,145 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-copyrightText: Copyright (C) 2025 Collabora Ltd.
+> +
+> +//! Rust V4L2 sample driver.
+> +//!
+> +//! This sample demonstrates how to:
+> +//! - Register a V4L2 device (struct v4l2_device),
+> +//! - Register a video node (struct video_device) using the Rust V4L2
+> +//!   abstractions,
+> +//! - Implement support for a V4L2 ioctl in a driver.
+> +//!
+> +//! It implements only `VIDIOC_QUERYCAP` and minimal open/close handling.
+> +
+> +use kernel::{
+> +    c_str,
+> +    device::Core,
+> +    media::v4l2::{
+> +        self,
+> +        caps::{self, DeviceCaps},
+> +        video,
+> +    },
+> +    of, platform,
+> +    prelude::*,
+> +    types::ARef,
+> +    ThisModule,
+> +};
+> +
+> +/// The private data associated with the V4L2 device.
+> +#[pin_data]
+> +struct Data {}
+> +
+> +/// The private data associated with a V4L2 device node, i.e. `struct
+> +/// video_device`.
+> +#[pin_data]
+> +struct VideoData {}
+> +
+> +/// The private data associated with a V4L2 file, i.e. `struct v4l2_fh`.
+> +#[pin_data]
+> +struct File {}
+> +
+> +impl v4l2::file::DriverFile for File {
+> +    type Driver = SampleDriver;
+> +
+> +    const MODULE: &'static ThisModule = &THIS_MODULE;
+> +
+> +    fn open(_vdev: &v4l2::video::Device<Self::Driver>) -> impl PinInit<Self, Error> {
+> +        try_pin_init!(Self {})
+> +    }
+> +}
+> +
+> +struct SampleDriver {
+> +    _pdev: ARef<platform::Device>,
+> +    _v4l2_reg: v4l2::device::Registration<Self>,
+> +    video_reg: video::Registration<Self>,
+> +}
+> +
+> +impl v4l2::device::Driver for SampleDriver {
+> +    type Data = Data;
+> +}
+> +
+> +#[vtable]
+> +impl video::Driver for SampleDriver {
+> +    type Data = VideoData;
+> +    type File = File;
+> +
+> +    const NODE_TYPE: video::NodeType = video::NodeType::Video;
+> +    const DIRECTION: video::Direction = video::Direction::Rx;
+> +    const NAME: &'static CStr = c_str!("rv4l2");
+> +    const CAPS: DeviceCaps = caps::device_caps::VIDEO_CAPTURE;
+> +
+> +    fn querycap(
+> +        _file: &v4l2::file::File<Self::File>,
+> +        _data: &<Self as video::Driver>::Data,
+> +        cap: &mut caps::Capabilities,
+> +    ) -> Result {
+> +        cap.set_driver(c_str!("rv4l2"))?;
+> +        cap.set_card(c_str!("rv4l2"))?;
+> +        cap.set_bus_info(c_str!("platform:rv4l2"))?;
+> +
+> +        cap.set_device_caps(Self::CAPS);
+> +        Ok(())
+> +    }
+> +}
+> +
+> +kernel::of_device_table!(
+> +    OF_TABLE,
+> +    MODULE_OF_TABLE,
+> +    <SampleDriver as platform::Driver>::IdInfo,
+> +    [(of::DeviceId::new(c_str!("test, rust-v4l2")), ())]
+> +);
+> +
+> +impl platform::Driver for SampleDriver {
+> +    type IdInfo = ();
+> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
+> +
+> +    fn probe(
+> +        pdev: &platform::Device<Core>,
+> +        _info: Option<&Self::IdInfo>,
+> +    ) -> Result<Pin<KBox<Self>>> {
+> +        let dev = pdev.as_ref();
+> +
+> +        let v4l2_reg =
+> +            v4l2::device::Registration::<Self>::new(dev, try_pin_init!(Data {}), GFP_KERNEL)?;
+> +
+> +        let video_reg = video::Registration::<Self>::new(
+> +            v4l2_reg.device(),
+> +            try_pin_init!(VideoData {}),
+> +            GFP_KERNEL,
+> +        )?;
+> +
+> +        let this = KBox::new(
+> +            Self {
+> +                _pdev: pdev.into(),
+> +                _v4l2_reg: v4l2_reg,
+> +                video_reg,
+> +            },
+> +            GFP_KERNEL,
+> +        )?;
+> +
+> +        dev_info!(
+> +            dev,
+> +            "Registered /dev/video{}\n",
+> +            this.video_reg.device().num()
+> +        );
+> +        Ok(this.into())
+> +    }
+> +
+> +    fn unbind(pdev: &platform::Device<Core>, _this: Pin<&Self>) {
+> +        dev_info!(pdev.as_ref(), "Unbinding Rust V4L2 sample driver\n");
+> +    }
+> +}
+> +
+> +impl Drop for SampleDriver {
+> +    fn drop(&mut self) {
+> +        dev_dbg!(self._pdev.as_ref(), "Rust V4L2 sample driver removed\n");
+> +    }
+> +}
+> +
+> +kernel::module_platform_driver! {
+> +    type: SampleDriver,
+> +    name: "rust_driver_v4l2",
+> +    authors: ["Daniel Almeida"],
+> +    description: "Rust V4L2 sample video driver",
+> +    license: "GPL v2",
+> +}
+> 
+> -- 
+> 2.50.1
 
-Signed-off-by: Kathara Sasikumar <katharasasikumar007@gmail.com>
----
-Hi,
-
-Submitted as part of LFX Linux Kernel Mentorship (LKMP) task.
-Thank you for your time and review.
-
-Thanks,
-Kathara
-
- tools/testing/selftests/kvm/x86/xapic_ipi_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/kvm/x86/xapic_ipi_test.c b/tools/testing/selftests/kvm/x86/xapic_ipi_test.c
-index 35cb9de54a82..d7abf9a91b65 100644
---- a/tools/testing/selftests/kvm/x86/xapic_ipi_test.c
-+++ b/tools/testing/selftests/kvm/x86/xapic_ipi_test.c
-@@ -17,7 +17,7 @@
-  * amongst the available numa nodes on the machine.
-  *
-  * Migration is a command line option. When used on non-numa machines will 
-- * exit with error. Test is still usefull on non-numa for testing IPIs.
-+ * exit with error. Test is still useful on non-numa for testing IPIs.
-  */
- #include <getopt.h>
- #include <pthread.h>
--- 
-2.47.2
-
+Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
 
