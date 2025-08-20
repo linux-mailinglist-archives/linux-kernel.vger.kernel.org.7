@@ -1,124 +1,196 @@
-Return-Path: <linux-kernel+bounces-778538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9AC6B2E714
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:59:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B2CB2E712
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A92E14E0423
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:59:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC12A26387
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E7A3054CF;
-	Wed, 20 Aug 2025 20:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B700D2E3AE1;
+	Wed, 20 Aug 2025 20:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aUBNLUPQ"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZzoXi1uk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43E7308F11;
-	Wed, 20 Aug 2025 20:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124E5258CDC;
+	Wed, 20 Aug 2025 20:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755723529; cv=none; b=Z7t/PHNWgObzIRPVXjUp4/o6ZkS7PKVbnSQAW9g7apWInQz8qN4nf14ClKJ7MHBXn0duNKDS3wcFySm6CVS+LAINwODP2ZUwRBdAuqphnDj077De0Lig71l3XQil4A3Nm0xDc/E1KpgEmXYVAgI93UG6r0mqyduHpWeaQoQMWWY=
+	t=1755723521; cv=none; b=ljUdY/raL2v7HR3v0p2unmvvzyHvh50K51SrDc467Ip1gU5nMmIvhX+skjYKCHgT5FRzkChmS/chaJer986idLTPmsDGB+EEp9dP7aKvW52PYxj3mK8/2kMjUxWLL5SucC74jV+qnCbvGjp7J2Exd2G65T7uozHU5tsB5soZcB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755723529; c=relaxed/simple;
-	bh=C9ibzsekJnVBSXwleQs+67Y4Xjy6ucyIUtUkncTGaZA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IpXGswqoQYS8SB1KmWlk98SspAZFj1nX03kZGRuOlrAZq0ubDckCo6+vjAUvYIH1EJcHJ0UZ9lh8q7W8nLO6imZyyfNhggnZxFcLkiZcmZV2WPRFWp16leuu9Utm4JKTYznl1XTtzRQRvO0lwe2i1tQs2ZrLX6Au7P2PVOlfN+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aUBNLUPQ; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9a342e8ffso226394f8f.0;
-        Wed, 20 Aug 2025 13:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755723526; x=1756328326; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=t6Edp73bQQiSNyixqQ0B5YIyV1/7MLtaSk5DDgGwemI=;
-        b=aUBNLUPQQDggL7mFsaq9XOrPklfqBmo5yuethBp25HWujuE4Rnj5TeCWsI0JU9yAIU
-         2cwjHRl3o+c+bIf3Se2rqjfkbhnK72UACG8uzt1oSuDaJQXi4BqyboG/SrjCyHcOuRmS
-         FCSt3Ozs1NcCI6C3V2h9qIfhetSMjZ/XcOrKNncndGOHScgDfQHdbgsHqGaZxTaE5zmp
-         O8gR7YT39pTmDHmt27QlzHqphttAJ4IOqggPOyZ2xS2vF4zynja9YO2A3guRkvwFmMcT
-         /7F47EFruXhhTy477F/RPdPurVyIn7mhJnk2nlNSOUBtsI63x3J3xlJne0z1cXIrEYRM
-         T/yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755723526; x=1756328326;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t6Edp73bQQiSNyixqQ0B5YIyV1/7MLtaSk5DDgGwemI=;
-        b=tivdoumtPwZayLqOQzaMsnRjjjRzxElgReLS5kj8Sujau05URrulCbob+tU+zlDwKN
-         h15WBZr4jCzwFYArkoYa9KDzWTWDQbQW31+c7Ndb5rPXBDzFrD6Q2+8PDlticsB7dtsd
-         9IeyyptSyjAU73GEh6KIiwkHgyzAKsoFa70C6aerU+PznG4/iODJUycOu2amQFE5eQDr
-         /21Sb/03G6dQ5eVWa7SK+4m63DnVDQ4fyJ2Io+EWmBuvp06sjwK4N2QERd5SW4jXjCBz
-         lmFzYzuON0FcZuSQL2rMggBWkbNOVOSP9gi3XKCqtoftI0xs+DSe4A13MPfhwcyfFrTS
-         2tSg==
-X-Gm-Message-State: AOJu0Yyp63MM94RlyJlQfzCKuWMfToxQ0NTaRCPiA1KItgJTJgGVMYZY
-	B26GIZZnYgv3IfTO/QsKQw1A/pxTIHjXDnmvuG9K1k+0ZLHLS6Wcn4VfXkAXF99S1M4=
-X-Gm-Gg: ASbGncu3WE6tRIIhsDCBMkSYsgjRrRUsNRmSw+DgJLUKvVveNHWZe1ta3oHO1foZUxU
-	BbrN5xIthpH3Lk3McLRliWry7yD440w5DcXDGsvIhK/LkeQFrCgLGROzRPJUfaMd9R+xz3i6pcu
-	a7q21l/Q5KrCPZmrM3YS5k05xEwOsIz0rt7aaermEfosq3X//zRUGz5nxOQEdgW/77pxad/4PQw
-	sP+VGEQoN9mhPyT1U5jXbvwXFvBekO/Q6cv3VNn7MApP2oQV8gCVrW7UC7PrfprUq3RTM22xXuR
-	i2qwySg+4JfN2xBnZBi2fPqlbOUIOUsG8j69zmJ4msnhqSGusiRpbxslhJ8iM5cAmxzBGBicepN
-	WsY80hGk9xfT0ALL0PyxfgRdgD/jkG4A5
-X-Google-Smtp-Source: AGHT+IEEMvxpVzbgukpXq+PGYJJ5lV3rWBOBws9imBFzkyPoncfpZFKpE3Fffh0jmdp7St/8AngReQ==
-X-Received: by 2002:a05:6000:2411:b0:3c4:516:bf62 with SMTP id ffacd0b85a97d-3c45e6322cdmr653237f8f.6.1755723525705;
-        Wed, 20 Aug 2025 13:58:45 -0700 (PDT)
-Received: from moktar-desktop.. ([102.31.181.245])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4976bc73sm45779575e9.6.2025.08.20.13.58.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 13:58:45 -0700 (PDT)
-From: Moktar SELLAMI <smokthar925@gmail.com>
-To: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Moktar SELLAMI <smokthar925@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: [PATCH] selftests/powerpc/pmu/tm: fix typos in tm-trap
-Date: Wed, 20 Aug 2025 21:58:16 +0100
-Message-Id: <20250820205816.23146-1-smokthar925@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755723521; c=relaxed/simple;
+	bh=poaWP6dzopbmjIrDsPn4oWiiKrVjTMwMGwjEelXVxvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wk8EoZAeb2rVIl27UptLcK5HntmIwRzVRl5uq+ulgORQJ6+vnDkyx7SpLr9xvsgm3lZNybx3eG6IY1Ek8Cj8QZsUVRl9+9Pk4dJmvQuq7un8tGTjOQOb2cgooqpbOlKq4lKdBoxoVykl8Lc14lEni0sizbCbrNrYPKWjLItnWy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZzoXi1uk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 781C5C4CEED;
+	Wed, 20 Aug 2025 20:58:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755723519;
+	bh=poaWP6dzopbmjIrDsPn4oWiiKrVjTMwMGwjEelXVxvs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZzoXi1ukjWxn/kPSMPSabKqTD/h3ORlnKugYDnw8W+X0mC3ENIdPlYM0h9uAD4I1B
+	 o1kpUOQNGfNvqkSJJw1GPgSmPFkpuOjprBrlgNqRaY/6/UqUnZRZUKnlqMtsmzlqR4
+	 yaDXk++QJ70HPkimtjS9bvncrrCWzFPCfaBW0WFHk6k73Qj32SmVnoulEFWSpg07Ng
+	 Z2OEbempQlar7Qx4cy99Bt6ZPRtlbof5xW30wWrl6Vsjn2qOwfKKoeYvAW0LGg8lXQ
+	 XNqcZ/HTDIi1IJDrdMXdVfjvHKDzdnpWiB03g+lnnIuxlcRcQyoq+dHVb24wtfzBff
+	 IGCZjspLHrLtg==
+Date: Wed, 20 Aug 2025 15:58:38 -0500
+From: Rob Herring <robh@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: jic23@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/5] dt-bindings: iio: adc: add ade9000
+Message-ID: <20250820205838.GA986565-robh@kernel.org>
+References: <20250815095713.9830-1-antoniu.miclaus@analog.com>
+ <20250815095713.9830-4-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250815095713.9830-4-antoniu.miclaus@analog.com>
 
-Fix spelling mistakes:
-tmp_trap.c:94 te -> the
-tmp_trap.c:96 tread -> treated
+On Fri, Aug 15, 2025 at 09:56:36AM +0000, Antoniu Miclaus wrote:
+> Add devicetree bindings support for ade9000.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v4:
+>  - improve description formatting (remove unnecessary pipe symbols)
+>  - move $ref to end and remove allOf section for cleaner structure
+>  .../bindings/iio/adc/adi,ade9000.yaml         | 108 ++++++++++++++++++
+>  1 file changed, 108 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
+> new file mode 100644
+> index 000000000000..bd374c0d57d4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
+> @@ -0,0 +1,108 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright 2025 Analog Devices Inc.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ade9000.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices ADE9000 High Performance, Polyphase Energy Metering driver
+> +
+> +maintainers:
+> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
+> +
+> +description: |
+> +  The ADE9000 s a highly accurate, fully integrated, multiphase energy and power
+> +  quality monitoring device. Superior analog performance and a digital signal
+> +  processing (DSP) core enable accurate energy monitoring over a wide dynamic
+> +  range. An integrated high end reference ensures low drift over temperature
+> +  with a combined drift of less than ±25 ppm/°C maximum for the entire channel
+> +  including a programmable gain amplifier (PGA) and an analog-to- digital
+> +  converter (ADC).
+> +
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ADE9000.pdf
+> +
+> +$ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ade9000
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 20000000
+> +
+> +  interrupts:
+> +    maxItems: 3
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: irq0
+> +      - const: irq1
+> +      - const: dready
+> +
+> +  reset-gpios:
+> +    description:
+> +      Must be the device tree identifier of the RESET pin. As the line is
+> +      active low, it should be marked GPIO_ACTIVE_LOW.
+> +    maxItems: 1
+> +
+> +  vdd-supply: true
+> +
+> +  vref-supply: true
+> +
+> +  clocks:
+> +    description: External clock source when not using crystal
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: clkin
+> +
+> +  "#clock-cells":
+> +    description:
+> +      ADE9000 can provide clock output via CLKOUT pin with external buffer.
+> +    const: 0
+> +
+> +  clock-output-names:
+> +    items:
+> +      - const: clkout
 
-reported by: codespell
+No point in having this if there is only 1 possible value. Unless you 
+have some need, just drop this.
 
-Signed-off-by: Moktar SELLAMI <smokthar925@gmail.com>
----
- tools/testing/selftests/powerpc/tm/tm-trap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/powerpc/tm/tm-trap.c b/tools/testing/selftests/powerpc/tm/tm-trap.c
-index 97cb74768e30..298bd09c55bb 100644
---- a/tools/testing/selftests/powerpc/tm/tm-trap.c
-+++ b/tools/testing/selftests/powerpc/tm/tm-trap.c
-@@ -91,9 +91,9 @@ void trap_signal_handler(int signo, siginfo_t *si, void *uc)
- 			 * LE endianness does in effect nothing, instruction (2)
- 			 * is then executed again as 'trap', generating a second
- 			 * trap event (note that in that case 'trap' is caught
--			 * not in transacional mode). On te other hand, if after
-+			 * not in transacional mode). On the other hand, if after
- 			 * the return from the signal handler the endianness in-
--			 * advertently flipped, instruction (1) is tread as a
-+			 * advertently flipped, instruction (1) is treated as a
- 			 * branch instruction, i.e. b .+8, hence instruction (3)
- 			 * and (4) are executed (tbegin.; trap;) and we get sim-
- 			 * ilaly on the trap signal handler, but now in TM mode.
--- 
-2.34.1
-
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reset-gpios
+> +  - interrupts
+> +  - interrupt-names
+> +  - vdd-supply
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    spi {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      adc@0 {
+> +          compatible = "adi,ade9000";
+> +          reg = <0>;
+> +          spi-max-frequency = <7000000>;
+> +
+> +          #clock-cells = <0>;
+> +          reset-gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
+> +          interrupts = <2 IRQ_TYPE_EDGE_FALLING>, <3 IRQ_TYPE_EDGE_FALLING>, <4 IRQ_TYPE_EDGE_FALLING>;
+> +          interrupt-names = "irq0", "irq1", "dready";
+> +          interrupt-parent = <&gpio>;
+> +          /* Optional: external clock instead of crystal */
+> +          /* clocks = <&ext_clock_24576khz>; */
+> +          /* clock-names = "clkin"; */
+> +          clock-output-names = "clkout";
+> +          vdd-supply = <&vdd_reg>;
+> +      };
+> +    };
+> -- 
+> 2.43.0
+> 
 
