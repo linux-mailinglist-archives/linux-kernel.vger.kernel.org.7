@@ -1,108 +1,163 @@
-Return-Path: <linux-kernel+bounces-777616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46053B2DBCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95516B2DBD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5C4F7215B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2113F1BC5D13
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0032C2E613B;
-	Wed, 20 Aug 2025 11:54:02 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C769A2E62A8;
+	Wed, 20 Aug 2025 11:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KOLvFsqS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7EB1ACED7;
-	Wed, 20 Aug 2025 11:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67C72E3AE1
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690841; cv=none; b=AlLCcSAD/1QZCH/i1YsqF5DZWikjxM56GoXsi9CMapZtvFIwhxRw9MLIdHvTCpSU1+KnpLM1O+/04QA5T44+AMf0DtlJb0U5Hnr0yUA9PWj58rKC/9gEJ2HhQXMvp21KfdLGD/kse8xBSGeOC1Z2jKfvel5hMyhlGIn4S5DIGJE=
+	t=1755690881; cv=none; b=mKexWmdruhMJJZ592MdtXey/neJkdpCOnn7bkybfArQZJdn6cr8FD72yJnjYnn4FnZZoJmwSHrsA87ByRfazhJ1uQq1vguwLw5UdSbh4hOg2TaZWSD3A7mM0kVnAkXWNhRvPvBA8a0a+LI4xUR+vBX0zDwigF0WS9IMnMZPm1Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690841; c=relaxed/simple;
-	bh=QB2MQQNMFoetjcWtVJa01/TbjbCGv33M0NSGAkUVdDY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jdz1BJqUuMhFK1ndMiJcvHaH84UItnDgoWIBJdOXsVykrBmJpeYU9un8Hr5+3wVKCutSN79ifozjTEjisOw3uwh7ephzPrSB4KvFwVQEjGe0QaO4D8pFooNHCamdtA4gEg4BLDELQUeh+/JCRpkZ80gAkq2NWxXync8oPwGVQaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-53b175498beso2038322e0c.3;
-        Wed, 20 Aug 2025 04:53:58 -0700 (PDT)
+	s=arc-20240116; t=1755690881; c=relaxed/simple;
+	bh=M/VdAQD2mntfC5YT7fKZskj7YLan77QmBL4eeQs5/Ck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHVrNrWkGKhWzZ04crz2D7A8lsBg2xkcoKZWrwJKk3ny3GhKT+wJHNe2yBz3xHZCGBhEYCib/wIV6xFFkcBd3pvtDUFAGWIR+K0OqCdDZ85B4VrnUdzRV5Zv+SQUJv5Hwmn/GNhrGhiiMEs5/yh26SPI54TuRv/37f9J4x68W9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KOLvFsqS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K9xaI1021351
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:54:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=9hkspx9x0UaL3XQk/V0/oUor
+	TUc0YPNibxHdtYC5rCg=; b=KOLvFsqSgDRvsUk8dBZIPg6ItXH5vgGC7fNxsrUo
+	xlW01//Kqxv1Gog3ctPhAH9GDcrbgIGG5Zx0wQnw56uxBXAzIcsaSuEHiHnG5HsJ
+	l5YqdlENf/QYmpaFeEKJP6uAMaTfksmoELauVW56uNPob+E44G3vsiwwxTle+XDS
+	UNSsMkqOKKzPXnO13e11oeJhukfA7IB6FgDofPMopPNJFxXJt9tLAU5CUj5kbA9W
+	99dkVgLlRwlODq4ZunV+1ueYlUFis/tXABZjwUzM2cBftWPS/O/HsF8+SVjdsKr4
+	hGkxOlS9rL0kWUNVsTzXGHZDlQAFwCqeSALOcCEot5AQsg==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5291k9s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:54:39 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70d7c7e972fso5956466d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:54:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755690838; x=1756295638;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m3cC7wTIi41/+V4NnXvdgtBZ4b3AkkW1EoT+UJ7kYNI=;
-        b=jb5c2RRAUAiMdPfW1mQCsh7t9Hhu3zAPnYd5lIZ+aZfKUTnpEAhqMVy/6Idf2qvo+U
-         htONKwsPzUAyTRN0Y+Sn/XCck8c5Zwf3HUia0ShVu7nhsmDMjdCCU+wXM7fZnRDHCaIp
-         iOYqBfGL8hVPZSRFFS7MJ5pBVwIyNVzkZshWfVM8Dq9K7SQMSQyfiRXbLivmrXrIrxCV
-         JWIhPzY3rpfw3MNeBqbqmgpYW5jQBv4Siu4IXCGP0AerUJbT4k9TQGdnSV64bkO2X3DL
-         FF/50JelLcPFHEbEmKGQP+n+PgWCWrdj9x1iyVv7fNqWlgOzDAHPpccWB/4+HO+8Cf8S
-         jdPg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0capFRkvrRYQaMzUfMSmaoCUWtW4TXSVYl3EghOaT440sSHmbPGvup2bB7CCDWxikEmj+Zn89vHHc@vger.kernel.org, AJvYcCVNb6p7rTgIjBTAvHMbh9cfsB8kWTwPq3IMoaNMQSPt9qBuit5UYnaILgd7oOahfX6hj6xxwuJoFtYCd3/HLQopu4E=@vger.kernel.org, AJvYcCWx4FKcAPGxVvAliakvlvp5LjTTE8mNuXOBWTDlTcm1zhzyRrklLtCvTZ0YGMoR64x1npgCqh+3Pj0z3ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR2hYS4jT9VokknkP64QxxR6mhAJsqQguhkLz7zalU3muydomX
-	hkVl3ra1ogV5H9yFtrOMOXnF0buEiWLYVh306/qn19Ky2G6lPJiF4WnTN/2ywvk6
-X-Gm-Gg: ASbGncs8PD7AgLn8YHjOtGbIeWq2J1j9iPIvXrSl/gLP5Cej3MJy2ZkEOJN81yykcxF
-	K1kPe98dfWbYuFmI7s/COPphNHVAPj/0OB6XsgohHZ4TxX6f3hsMmWzuysLIUPXJs8xEq/ZS9KO
-	Atq8BBcDBsE2CiZaAlDYsB6NDFOntRMdkuCLZ7qtNlTLyqyn4cEVZtuMpvvueUuPeptR7Huak2U
-	ShZPmBtb0e4sos2O2gC04Gip1yrkKzcFGbVF2BnGIQZZa+d7hJlcHQVjZ1HqSXlC3pop5ovT9p6
-	pSsLRDROl/EXZu7bcVCrF0pC14bgk8yU15yceILKeA/JmwOLIt/5LolykJ9j+y6iP0w2VjkLC4P
-	C6Kt30RgTSHpKnZhtSG36LDausHJ15FW1fRuAXz5yGQhFoVM5fqDZM3eFGG4y
-X-Google-Smtp-Source: AGHT+IHMJyUY1FE8eduW+KGDPzAoJndiJKgiMe2Q9+9Q34rmkDoRgfPsZ5ToKmlm1zIOjhnzBBZBWA==
-X-Received: by 2002:a05:6122:319f:b0:539:3b3c:617a with SMTP id 71dfb90a1353d-53c6d60edacmr747604e0c.8.1755690837665;
-        Wed, 20 Aug 2025 04:53:57 -0700 (PDT)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2beff365sm3141144e0c.23.2025.08.20.04.53.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 04:53:57 -0700 (PDT)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-50f88cd722bso1909834137.1;
-        Wed, 20 Aug 2025 04:53:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV2XVIVI6ERWjLAIyFhAD9TqTQ0/rg93LwfViwYDxMm4nKjAtT4RVw0vzjvkuEd8HgddilPzpxH2xQpIPM=@vger.kernel.org, AJvYcCWvCaUBAJXjD0UV06ig8Mw0ozFrYai/wlDqSFWKtIKYvRfgGSySLGVj+fQ2moCouM1BazgT5uBnq8MCqmG4k/dBkic=@vger.kernel.org, AJvYcCXXM/CyBpNRWP5hjcLbNDr+YCrMHGS55XmWZ3zSnEDleBCmy83nSGYwbDMOf1G6JS2vLc00oNHY2LZ+@vger.kernel.org
-X-Received: by 2002:a05:6102:290e:b0:518:9c6a:2c03 with SMTP id
- ada2fe7eead31-51a52a18e04mr605179137.30.1755690836961; Wed, 20 Aug 2025
- 04:53:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755690877; x=1756295677;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9hkspx9x0UaL3XQk/V0/oUorTUc0YPNibxHdtYC5rCg=;
+        b=LHXyIdnGc25lfoPCo/s8kiqkZw2OFpGitqWjcs58032G1qyNeUGlr7MwM7R2r7624u
+         /L/g97hmbKz6vH3nNPqKsjx1rYG8CD07vRaPa/Ae0bmBexbVMlkvcPUaNpaMJHEGwK9x
+         oUWHnsCumxipL01ko5KF3xO8HB76NltJcdA6O0b5CpU6D5lqDoYHlPUh1kO0dPDXnPfu
+         x/FQnwFg5wt8Sc4caaJRha/KN2FpslnCCuwY/fTWPSZlgUzrYETUg1gQ6qei/PA9w7s3
+         n1vjHltvNoQKw+84K0bd7iNr9I/LZBpGyX1fKoZvb/VeRZS9X7VX0OR8fYXACfekceSi
+         mdEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxo6i4CuiAb4TCbcFvyd+CjMfv9v72Gt1MGq1D8Y6v+UvrbXEBW2O04eA2s2qQV7JX7eaMuyuj1oCE7co=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3eU3W3ScP6RbVvOOZNdZQIhwPdU1qUkmsx6RexOG9Jdn5xBc9
+	8XDbcA/KIsq5rqibovLetjrIilXE9+MkQD+8K+dsO9NqaayjmTf6cWGSAAUCat7/6HKeaMQsdVJ
+	3vYBTKbxrCOxVpC0+fQoPxb74ngs3VpwLWlxGMDRyiB0EJroKjAM7M//LhrCFUcxLCZAnAl+oEv
+	Y=
+X-Gm-Gg: ASbGncuriTEFpOT5rgzMIhysm+UgnJk1Ok8gRE6EV7ZSQwuwVH9B0PY+4GwH4k9fr+/
+	bFqQqLEJrRPem4NjJt286bnNrwIT/GinIly7pH0tXpA+ppWCdbf0Woq/8YH5T4aYhEQFR2AEM8x
+	CJBAb83Rb7W38USY5PYl3DJ5nIF9dAjSAWaO2iw5rJeHS6fTINd2GERlfrr62mSwSKUZimFwqeb
+	FXp2ubGVWmI4T86dMKJRiH8cYKlyDr/TKafgakGdeV82/mFaMCstrOWxaw7sGNQlt/CJqnIJvhN
+	amHgVQJ3BP4488SNIg8MFyy1e00aUHj1kRLLOzSTVTmEqkqqAauodQ3mpnpJsrHld7OIpaOFYD6
+	emdu8jGKOW4raEq1b0gdD8MjqKqQUQDExZDUXejyWM7V83GvwUrjY
+X-Received: by 2002:a05:6214:e49:b0:70b:b06f:3d47 with SMTP id 6a1803df08f44-70d76f5825bmr26193636d6.1.1755690877290;
+        Wed, 20 Aug 2025 04:54:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHGgrTO8nnUT/lmte63CyExWcCFiml5AC0BmNDDeEox0FxHid6Ngno7F0JmrK609jC1RUQXsg==
+X-Received: by 2002:a05:6214:e49:b0:70b:b06f:3d47 with SMTP id 6a1803df08f44-70d76f5825bmr26193296d6.1.1755690876730;
+        Wed, 20 Aug 2025 04:54:36 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3340a41e251sm29376871fa.11.2025.08.20.04.54.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 04:54:35 -0700 (PDT)
+Date: Wed, 20 Aug 2025 14:54:34 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Nitin Rawat <quic_nitirawa@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, mani@kernel.org, andersson@kernel.org,
+        konradybcio@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 2/2] phy: qcom-qmp-ufs: Add regulator loads for SM8650
+ and SM8750
+Message-ID: <ukxv7donvkulgci2dwrokuflzxzeyh4kohoyja2vywropntxnb@qepcssbe4wpc>
+References: <20250819222832.8471-1-quic_nitirawa@quicinc.com>
+ <20250819222832.8471-3-quic_nitirawa@quicinc.com>
+ <ger4kizeltjwalfuwu4dpfjiskrv2okgo5c7d6n3pb24yaxgfo@nkcndblyx3il>
+ <b453b8ff-a460-4ccd-9019-aed746a7d52d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820104808.94562-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250820104808.94562-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 20 Aug 2025 13:53:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWeB2z6eax8gm2oO_X35Qm0+cg8NjoFutWMdfHKW-1DBQ@mail.gmail.com>
-X-Gm-Features: Ac12FXy_1UNUF7-0Y5wL5N-u8MrFdhGcL9qUsuwrmyT27ZsRX-Q_yUiNcVYzW1o
-Message-ID: <CAMuHMdWeB2z6eax8gm2oO_X35Qm0+cg8NjoFutWMdfHKW-1DBQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: host: renesas_sdhi: Replace magic number '0xff' in renesas_sdhi_set_clock()
-To: Biju <biju.das.au@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-mmc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b453b8ff-a460-4ccd-9019-aed746a7d52d@quicinc.com>
+X-Proofpoint-GUID: 6gjZJ68UJG2v0hgo83DtJ6KHGM5GHPRV
+X-Proofpoint-ORIG-GUID: 6gjZJ68UJG2v0hgo83DtJ6KHGM5GHPRV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX04yMhciEKnVn
+ QYyg91Tcfl2IGRtTT9fexlVNBqzSZHySnBxOJ2n+3VvtVLkUMz/+zXM0w0pMwtYu/nMejPP4tEC
+ 1XTHDViMTOx1Y3xVFNKEw1MCmlGopRXfVyWReMm8c+QY78S1vl6LTF1L8HSGpCPclqRC5H3IBhw
+ lSR7hOLcJbrauWxT36ODtb1IQxp9liHRbRtemYF6B/b+P9f9e2z64XZEUmrwBG0Loq6e03OU9Wu
+ MRAc20G9fuZBM29EOKPh79hkD3OiM2JlRuP9OrTuDznSXLHqe281850ZqzeSOqWu/i/IZgO7UIk
+ KyVfI8U5L9WmYZ0YusXmcBQNvHOX8F69vXVtDFZzSBlQCICPHCER7xuVOgnzwan+AfzOybvKuu+
+ IqqQXwliq5gB9jTi7JvnyGvVm8OQAw==
+X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a5b77f cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=jOqwWQH_q4CvC3V4_bsA:9 a=CjuIK1q_8ugA:10
+ a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_03,2025-08-20_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On Wed, 20 Aug 2025 at 12:48, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> Replace the magic number '0xff' with CLK_CTL_DIV_MASK macro for finding
-> actual clock in renesas_sdhi_set_clock().
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+On Wed, Aug 20, 2025 at 12:07:57PM +0530, Nitin Rawat wrote:
+> 
+> 
+> On 8/20/2025 6:19 AM, Dmitry Baryshkov wrote:
+> > On Wed, Aug 20, 2025 at 03:58:26AM +0530, Nitin Rawat wrote:
+> > > Add regulator load voting support for SM8650 and SM8750 platforms by
+> > > introducing dedicated regulator bulk data arrays with their load
+> > > values.
+> > > 
+> > > The load requirements are:
+> > > - SM8650: vdda-phy (205mA), vdda-pll (17.5mA)
+> > > - SM8750: vdda-phy (213mA), vdda-pll (18.3mA)
+> > > 
+> > > This ensures stable operation and proper power management for these
+> > > platforms where regulators are shared between the QMP USB PHY and
+> > > other IP blocks by setting appropriate regulator load currents during PHY
+> > > operations.
+> > > 
+> > > Configurations without specific load requirements will continue to work
+> > > unchanged, as init_load_uA remains zero-initialized when .init_load_uA
+> > > is not provided.
+> > 
+> > Can we please get configuration for the rest of the platforms?
+> 
+> Hi Dmitry,
+> 
+> If you're okay with it, can I merge the configuration for the remaining
+> platforms in the next patch series after I complete testing on all remaining
+> platforms.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
+You don't need to test, finding MSM8996 or 98 might be troublesome. Just
+fill in the values from the hardware documentation.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+With best wishes
+Dmitry
 
