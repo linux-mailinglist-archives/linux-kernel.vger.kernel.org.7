@@ -1,101 +1,97 @@
-Return-Path: <linux-kernel+bounces-778501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC0B2B2E691
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:29:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2F9B2E693
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B3121BA6CC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:28:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B66A1188DCD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8D1299AB3;
-	Wed, 20 Aug 2025 20:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1527929A31D;
+	Wed, 20 Aug 2025 20:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sJ3houIp"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqIL5ITc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F3019007D;
-	Wed, 20 Aug 2025 20:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1E819007D;
+	Wed, 20 Aug 2025 20:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755721671; cv=none; b=RdS2czNr8Fc3+E21VkhTrF0UyA3Wp7Jbqytzz1FYcYPQoh8uqPrHN1flchnuBMAvv0IoXAatHOf7lyOAvXWBUkYAsYr3LuF4o27k/Rl37YdXi0vXY0t6k0xXrHj5AfdNT9SaxqiQuPgwyRom/ehvUfYM194ymlXHHWlr01rcbR4=
+	t=1755721712; cv=none; b=JW8eE2dQVJ4z++44b77BkGZqgTdw3WelLNwilIVkk9CBMHvsqWH8d2DxNiFJDhxHY4d7LuaXzWijjJNukLY/TCt0KEWBfK9CFpepxCA8P+yvTi9hrSl+Pr2FbhTcuHlQDxebjimtbx9e/V4Xygcnz1sK45xJ7suVvsxc9ik8J7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755721671; c=relaxed/simple;
-	bh=fbZVErr+jrSnq2ES8rilg3sKhbTRz45P1lCsOuC6IEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NbCNPo0I8f8OoTbOm50uJosw2DeEcH5oRf4RR4MR/C1lZj/guIxYmP5Vt8aWUsbg+6SwvSHzaiD+HJ1nZgr7/nDYDbPqGwEAcw7vKNZ4aH5oNlmYACCq1GMbh5Zb1MjJ2ncw3XZ71S8V6orw2KZVj1iXbP9s+zlj3UonrO8YQS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sJ3houIp; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=FUb1tLLRzQ1GoNSXB0kGRoR7feLn3tR7Ad06LpJWUTQ=; b=sJ3houIpoYJPiWJu8FTR2WO0ze
-	ZeTj/gvUh7NlGPM5LtBOeOBea6gsSKHI+A4F0dAxKHBng6Bh+vG67q59eBPiEqUCw2SEZ+2GJmlON
-	Vhui37v0wDf55hGgTxM694W0jTiQEhmWC/8uwCCH03sfbyMiGaOqB84rUhSLEd07EIIr6I8EAlAYI
-	yRVPXMZ8AtAmC8q4y1n/opH1FUbHf+4dcU324ALM6IyS0rKarRE+V4cstgdQ2cIH7q6JAOlVBFLxN
-	PKFPT0MkHA0OGR7MG85ZWBqWAegGIYKVQLY+ci8AvvkZs69pNMUFKQovqtJOkIiDhVhnpACtlIP9t
-	8EqgVH2g==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uopPQ-0000000Epoy-2v3P;
-	Wed, 20 Aug 2025 20:27:48 +0000
-Message-ID: <4d76d8e2-cc00-40d0-851a-fea29b228438@infradead.org>
-Date: Wed, 20 Aug 2025 13:27:47 -0700
+	s=arc-20240116; t=1755721712; c=relaxed/simple;
+	bh=C1ll2EQlPEA5XO+Evquc8cSLPIUfEm2wj77bw4FhA8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=cde+83h3wPsyZT/Vu1+SgOqy+JUtHkRJ5qYB5L0ziNnhJ6oPcKSrzkHbkP6dbE1H/sa0fVchy/JLtAHSSgjbWt88SCglJpFJmg61fqrXfqAB92Edgv2xM2lK1IrflUiT26M6j7r5+Q0Q+DwHAWOvq8Dvhu65P/ylrRuOx9Qh7+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqIL5ITc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E636BC4CEE7;
+	Wed, 20 Aug 2025 20:28:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755721712;
+	bh=C1ll2EQlPEA5XO+Evquc8cSLPIUfEm2wj77bw4FhA8w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=NqIL5ITc6S9dFHM9U9B2aZJFz9D8sXA43XwdnSd51EeWfHhThyqrlXkCxXRXBWqhE
+	 MYCCLFMbPrVBUdEAeDXA/kybKeyGOtTYXYviSwub/4OX2YIKh5ASP0M4ieWGc9Nrgm
+	 cvwNB2h5yOoDc6yQ9lw22Q04db/KtLFHn3lPUSLB2OrokoiOelCsKMFCx3FrX2BtpO
+	 GOPI7oB3t7AgF1p+ASat3DKrh03hwMh4p7ULrNHdopYJNQcNPuXcta5NnWKovgmtmQ
+	 mdGviL+2NHHC9gMvHEbY7qTif6d84QYyLWmaV2thkNugBDcpEh+dfHHrXgufHNu/3g
+	 SY9VkGjcPGMJw==
+Date: Wed, 20 Aug 2025 15:28:30 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sungho Kim <sungho.kim@furiosa.ai>
+Cc: bhelgaas@google.com, logang@deltatee.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: p2pdma: Fix incorrect pointer usage in devm_kfree()
+ call
+Message-ID: <20250820202830.GA638988@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] tracing: Add a tracepoint verification check at
- build time
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <20250820174752.684086778@kernel.org>
- <20250820174828.080947631@kernel.org>
- <88b25b9d-911a-4419-b1a6-e6ae38d499ba@infradead.org>
- <20250820161914.73bf78ea@gandalf.local.home>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250820161914.73bf78ea@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820105714.2939896-1-sungho.kim@furiosa.ai>
 
-
-
-On 8/20/25 1:19 PM, Steven Rostedt wrote:
-> On Wed, 20 Aug 2025 13:12:22 -0700
-> Randy Dunlap <rdunlap@infradead.org> wrote:
+On Wed, Aug 20, 2025 at 07:57:14PM +0900, Sungho Kim wrote:
+> The error handling path in the P2P DMA resource setup function contains
+> a bug in its `pgmap_free` label.
 > 
->> On 8/20/25 10:47 AM, Steven Rostedt wrote:
->>> +/**
->>> + * for_each_shdr_str - iterator that reads strings that are in an ELF section.
->>> + * @len: "int" to hold the length of the current string
->>> + * @ehdr: A pointer to the ehdr of the ELF file
->>> + * @sec: The section that has the strings to iterater on  
->>
->>                                                 iterate> + *
+> Memory is allocated for the `p2p_pgmap` struct, and the pointer is stored
+> in the `p2p_pgmap` variable. However, the error path attempts to call
+> devm_kfree() using the `pgmap` variable, which is a pointer to a member
+> field within the `p2p_pgmap` struct, not the base pointer of the allocation.
 > 
-> Hmm, "to iterate on" sounds better to me. :-/
+> This patch corrects the bug by passing the correct base pointer,
+> `p2p_pgmap`, to the devm_kfree() function.
+> 
+> Signed-off-by: Sungho Kim <sungho.kim@furiosa.ai>
 
-Sure, I just meant s/iterater/iterate/
+Applied to pci/p2pdma for v6.18, thanks!
 
--- 
-~Randy
-
+> ---
+>  drivers/pci/p2pdma.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index da5657a02..1cb5e423e 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -360,7 +360,7 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+>  pages_free:
+>  	devm_memunmap_pages(&pdev->dev, pgmap);
+>  pgmap_free:
+> -	devm_kfree(&pdev->dev, pgmap);
+> +	devm_kfree(&pdev->dev, p2p_pgmap);
+>  	return error;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_p2pdma_add_resource);
+> -- 
+> 2.48.1
+> 
 
