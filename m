@@ -1,165 +1,303 @@
-Return-Path: <linux-kernel+bounces-777330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C8FB2D810
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:25:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13064B2D82E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2900A7BC945
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F391646F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FBD25A645;
-	Wed, 20 Aug 2025 09:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2242DCC1B;
+	Wed, 20 Aug 2025 09:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAAWiZLL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iz4D121v"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBAC2D6E72;
-	Wed, 20 Aug 2025 09:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68511265631;
+	Wed, 20 Aug 2025 09:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681620; cv=none; b=GtbctfdXdS5G5BDYGKY6Z5/GNFg/NRUVu41kpiQlg83OA4/0ESh4kbBwp3oyJ60+ANlSmP7TccuG7hTZ5Vwq2Nz4ma+O2otLFc1z6mr3ODTLIV+EzOEQ61R98nQujSpImikREVJASsz+TrsKfaRKv4JEFGQ0qb5X8wxfgIOaVeo=
+	t=1755681710; cv=none; b=qAJqAzmnl0mOQRHfWqC2WR3JOU9IDf3TUi34adpjttWQbU/1oekWW49W+rC67i52sOYSd4BRoyOjuaK6GxdTyxqvQgzKf1vtuLe41AgiewSuL/j6iIBw1X6Esh52Cu0drbYsyMfiqaY4KsMDC8BGz4ZahQcw3vf2HoobJJO0VlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681620; c=relaxed/simple;
-	bh=Nl938A6iJK6CdtuEzfY9cpcmFgz8OpuOP7GsG6dKCOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FWon9u9vaYQWAkGSP93RL3BKZ/+ramtkbR9PVHotx5//1KW+r2tE58mkpQurWeBIK/FjfZnA0xoYxH70oUou20pfxokfxWSeteD+PAvfkJgtU9u2GZGGEAJZkEYPPuS8mOc3b9veGixoIsYfASwh6Q5kdztmFLne2QhybMTK/Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAAWiZLL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD27C4CEEB;
-	Wed, 20 Aug 2025 09:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755681618;
-	bh=Nl938A6iJK6CdtuEzfY9cpcmFgz8OpuOP7GsG6dKCOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CAAWiZLLuG/fhxkWeWfHkjBqB++AaNSHLweBGuZodrxUvH6ox+e8OM0FPBmAY3Mi9
-	 y+ay84T0sxd8wwQITOrIXvJDTFKw9B8XYisORKO3SD1y/EkzzjxCSmVw09zFFZC0/I
-	 eOpcYMILUzpCDnMmkZibCZgn1BHxlZQvnlcO4zAhC0TJ2kP7aixdHG5qfCSU2WIERw
-	 QXalWSW7YLhZ32iJ0PlLCtpfOeCZRXKahYZDfvx5v94NhCpEE6IWHqap81IQ5eLkmf
-	 +MfpktHllLg4AMAfHb1QPf7ZTqkXAXU+c+c4bsc3BkGQlskl/nKWWLUtG9msgTAISB
-	 liz+11mSpVgWw==
-Date: Wed, 20 Aug 2025 12:20:10 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Bill Wendling <morbo@google.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 1/4] mm/mm_init: use deferred_init_memmap_chunk() in
- deferred_grow_zone()
-Message-ID: <aKWTSq-JcTviuGlU@kernel.org>
-References: <20250818064615.505641-1-rppt@kernel.org>
- <20250818064615.505641-2-rppt@kernel.org>
- <20250819095223.ckjdsii4gc6u4nec@master>
- <aKRX9iIe8h9fFi9v@kernel.org>
- <20250819235158.mgei7l4yraheech4@master>
+	s=arc-20240116; t=1755681710; c=relaxed/simple;
+	bh=Auxv6Cc8iHZK7osvNCNmNlwZVaJ2fyakM3jecZ5zCGc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NRztla+aBy2DRRWEZcF8pkynuczQSRTEW6AQ6iozGO/S9OfSDQEOMWQeg2JuPI3gOUQfmPo4FpV10ZPPtzjZbGUzHvpBeG1lbhffOA9VIzUCQ9Ypp6Ixf/KO6SBl1j5aSdazpQEK5+VjXwI0G3iCB66zupwsFHqofOXfYTihfmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iz4D121v; arc=none smtp.client-ip=209.85.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-618b62dbb21so9047686a12.2;
+        Wed, 20 Aug 2025 02:21:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755681706; x=1756286506; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=S4lyKlFc5v1BTxRNLlaeXyBr7nmibh9oA3mYYzwZ4Lw=;
+        b=Iz4D121vVqsSXCo7rl9baJ9n+G+BVieQGeurAxwJNqip+9WPgHI8kfeP3WCk9XQg4U
+         51WIHWZT5eKqeS4PEsBRHkGsSysUWQHmv5lryzoxURDjIA64YEPo7MElCmBhFzG4QTiZ
+         iDFtIzdsD74//2c+v2Hkl10BRnqecDlGwqpS5fobjAoUJoe95iy3xnUl9jMaMEcjWuPN
+         LgMccZc3h4OoboxRqylYHDdNZ16m3s1kdIx2XQUEt1E6xKCd4gNqgdXhpWYWLdGSafpj
+         EWBvRHA+xYW+U8Hjg84vtvOwAjHttfSB0juJ73/xfC9X5/U63L1iYD2Ya0QyvbacKztS
+         37HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755681706; x=1756286506;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S4lyKlFc5v1BTxRNLlaeXyBr7nmibh9oA3mYYzwZ4Lw=;
+        b=QcuWGocgwAEgHALaSwNHGTUyI0U0063iYJA8f3YRyCpGv1GoTFw4tOlWAn+rxqSK1W
+         u/NCmi1IPnFAZ2Esmm73+54BU4kDvOaXWoPQMou4kSzriR/Ez/34oBJuaO8d6WOosfcD
+         6z76hYCjfhsvYIiAFqdLcx/E+WmDbZaBLuOGIV4nNnCbl/mgjM+Jlp/Q7Hy8nQdSJN7S
+         cXYYMfyNqEGV0kivNnK0YhsbQMJSUMBInFG3i9bIdRxzuxzdMgxuNTfuCXmsWeRce0z3
+         k0gxbLhGwxBKfb03G/QHRCmM0OBhYe8F/driTK18F++TI5qRWakiLgNu+d7bM4MBQ5rb
+         j6KA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqDOT0dlnRWnKTQEOVfYQKuymRuVhz27+sY6JMNyjNaMrTWeJoFZBZBZXU8w/IMwBEYuo=@vger.kernel.org, AJvYcCXukMX9MgDfSCGpAfhjUFwHpB5/Govr6FXyvcMyb+WBASna8WtNYqux6n4pTlWEBVCIAA5nN7D81krT0SYp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6bxM64mfS+018GOm6rE0R/52rIbmoRQCFsa2O+9JF9tN3vThK
+	/S2deQ/NmMbKxQ3EBQDrhfaYwgCytLBPujdvGVmg96AnUPbB0uYRwsAW0lx6LrFZsG7LFQLYgMs
+	AFiXVRvaKG1yJ21VbjpEZJwG8R6gtcg0=
+X-Gm-Gg: ASbGnctpfaLzjPl/ymeNcOX549jsR1bor9ukLT1V1OiUhHBX0ItYGXX1/g3gwJf94Jn
+	XCc63AKqr/5Vr//MnJfW9IXtgl8wHO4vBNJwqsWoHHPcH/EWCc+GA00CeQ/0Yor/T1z2Dm+RBW5
+	zIFlKtmY/89bBVmt6kOyK3DowXIE8Y4/yMOVw4ewjLiLc5Zaq5ZMyuMA2IMV0j+SAC89qt6FuqH
+	XtPs7vcrg==
+X-Google-Smtp-Source: AGHT+IG7xFTR4UZZQ4LFfHSulkCxAXFm3BGoaxsisWYUoJ1W6e9lz+bYlaZjjlP5HNP2olIECE2JZ2EVwHUYHLksKFk=
+X-Received: by 2002:a05:6402:254e:b0:615:a3f9:7be5 with SMTP id
+ 4fb4d7f45d1cf-61a9782b6bbmr1710180a12.25.1755681706290; Wed, 20 Aug 2025
+ 02:21:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819235158.mgei7l4yraheech4@master>
+References: <20250818170136.209169-1-roman.gushchin@linux.dev> <20250818170136.209169-5-roman.gushchin@linux.dev>
+In-Reply-To: <20250818170136.209169-5-roman.gushchin@linux.dev>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Wed, 20 Aug 2025 11:21:10 +0200
+X-Gm-Features: Ac12FXwos2sMHUp8zbWnk19WXsIHgjajQlczEbHOuQC7H311cCFHvdp7izscD3c
+Message-ID: <CAP01T77yTb69hhi0CtDp9afVzO3T0fyPqhBF7By-iYYy__uOjA@mail.gmail.com>
+Subject: Re: [PATCH v1 04/14] mm: introduce bpf kfuncs to deal with memcg pointers
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: linux-mm@kvack.org, bpf@vger.kernel.org, 
+	Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, 
+	David Rientjes <rientjes@google.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 19, 2025 at 11:51:58PM +0000, Wei Yang wrote:
-> On Tue, Aug 19, 2025 at 01:54:46PM +0300, Mike Rapoport wrote:
-> >On Tue, Aug 19, 2025 at 09:52:23AM +0000, Wei Yang wrote:
-> >> Hi, Mike
-> >> 
-> >> After going through the code again, I have some trivial thoughts to discuss
-> >> with you. If not right, please let me know.
-> >> 
-> >> On Mon, Aug 18, 2025 at 09:46:12AM +0300, Mike Rapoport wrote:
-> >> 
-> >> In the file above this line, there is a compare between first_deferred_pfn and
-> >> its original value after grab pgdat_resize_lock.
-> >
-> >Do you mean this one:
-> >
-> >	if (first_deferred_pfn != pgdat->first_deferred_pfn) {
-> >		pgdat_resize_unlock(pgdat, &flags);
-> >		return true;
-> >	}
-> > 
-> 
-> Yes.
-> 
-> I am thinking something like this:
-> 
->  	if (first_deferred_pfn != pgdat->first_deferred_pfn || 
-> 	    first_deferred_pfn == ULONG_MAX)
-> 
-> This means
-> 
->   * someone else has grow zone before we grab the lock
->   * or the whole zone has already been initialized
+On Mon, 18 Aug 2025 at 19:02, Roman Gushchin <roman.gushchin@linux.dev> wrote:
+>
+> To effectively operate with memory cgroups in bpf there is a need
+> to convert css pointers to memcg pointers. A simple container_of
+> cast which is used in the kernel code can't be used in bpf because
+> from the verifier's point of view that's a out-of-bounds memory access.
+>
+> Introduce helper get/put kfuncs which can be used to get
+> a refcounted memcg pointer from the css pointer:
+>   - bpf_get_mem_cgroup,
+>   - bpf_put_mem_cgroup.
+>
+> bpf_get_mem_cgroup() can take both memcg's css and the corresponding
+> cgroup's "self" css. It allows it to be used with the existing cgroup
+> iterator which iterates over cgroup tree, not memcg tree.
+>
+> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+> ---
+>  include/linux/memcontrol.h |   2 +
+>  mm/Makefile                |   1 +
+>  mm/bpf_memcontrol.c        | 151 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 154 insertions(+)
+>  create mode 100644 mm/bpf_memcontrol.c
+>
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 87b6688f124a..785a064000cd 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -932,6 +932,8 @@ static inline void mod_memcg_page_state(struct page *page,
+>         rcu_read_unlock();
+>  }
+>
+> +unsigned long memcg_events(struct mem_cgroup *memcg, int event);
+> +unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap);
+>  unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx);
+>  unsigned long lruvec_page_state(struct lruvec *lruvec, enum node_stat_item idx);
+>  unsigned long lruvec_page_state_local(struct lruvec *lruvec,
+> diff --git a/mm/Makefile b/mm/Makefile
+> index a714aba03759..c397af904a87 100644
+> --- a/mm/Makefile
+> +++ b/mm/Makefile
+> @@ -107,6 +107,7 @@ obj-$(CONFIG_MEMCG) += swap_cgroup.o
+>  endif
+>  ifdef CONFIG_BPF_SYSCALL
+>  obj-y += bpf_oom.o
+> +obj-$(CONFIG_MEMCG) += bpf_memcontrol.o
+>  endif
+>  obj-$(CONFIG_CGROUP_HUGETLB) += hugetlb_cgroup.o
+>  obj-$(CONFIG_GUP_TEST) += gup_test.o
+> diff --git a/mm/bpf_memcontrol.c b/mm/bpf_memcontrol.c
+> new file mode 100644
+> index 000000000000..66f2a359af7e
+> --- /dev/null
+> +++ b/mm/bpf_memcontrol.c
+> @@ -0,0 +1,151 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Memory Controller-related BPF kfuncs and auxiliary code
+> + *
+> + * Author: Roman Gushchin <roman.gushchin@linux.dev>
+> + */
+> +
+> +#include <linux/memcontrol.h>
+> +#include <linux/bpf.h>
+> +
+> +__bpf_kfunc_start_defs();
+> +
+> +/**
+> + * bpf_get_mem_cgroup - Get a reference to a memory cgroup
+> + * @css: pointer to the css structure
+> + *
+> + * Returns a pointer to a mem_cgroup structure after bumping
+> + * the corresponding css's reference counter.
+> + *
+> + * It's fine to pass a css which belongs to any cgroup controller,
+> + * e.g. unified hierarchy's main css.
+> + *
+> + * Implements KF_ACQUIRE semantics.
+> + */
+> +__bpf_kfunc struct mem_cgroup *
+> +bpf_get_mem_cgroup(struct cgroup_subsys_state *css)
+> +{
+> +       struct mem_cgroup *memcg = NULL;
+> +       bool rcu_unlock = false;
+> +
+> +       if (!root_mem_cgroup)
+> +               return NULL;
+> +
+> +       if (root_mem_cgroup->css.ss != css->ss) {
+> +               struct cgroup *cgroup = css->cgroup;
+> +               int ssid = root_mem_cgroup->css.ss->id;
+> +
+> +               rcu_read_lock();
+> +               rcu_unlock = true;
+> +               css = rcu_dereference_raw(cgroup->subsys[ssid]);
+> +       }
+> +
+> +       if (css && css_tryget(css))
+> +               memcg = container_of(css, struct mem_cgroup, css);
+> +
+> +       if (rcu_unlock)
+> +               rcu_read_unlock();
+> +
+> +       return memcg;
+> +}
+> +
+> +/**
+> + * bpf_put_mem_cgroup - Put a reference to a memory cgroup
+> + * @memcg: memory cgroup to release
+> + *
+> + * Releases a previously acquired memcg reference.
+> + * Implements KF_RELEASE semantics.
+> + */
+> +__bpf_kfunc void bpf_put_mem_cgroup(struct mem_cgroup *memcg)
+> +{
+> +       css_put(&memcg->css);
+> +}
+> +
+> +/**
+> + * bpf_mem_cgroup_events - Read memory cgroup's event counter
+> + * @memcg: memory cgroup
+> + * @event: event idx
+> + *
+> + * Allows to read memory cgroup event counters.
+> + */
+> +__bpf_kfunc unsigned long bpf_mem_cgroup_events(struct mem_cgroup *memcg, int event)
+> +{
+> +
+> +       if (event < 0 || event >= NR_VM_EVENT_ITEMS)
+> +               return (unsigned long)-1;
+> +
+> +       return memcg_events(memcg, event);
+> +}
+> +
+> +/**
+> + * bpf_mem_cgroup_usage - Read memory cgroup's usage
+> + * @memcg: memory cgroup
+> + *
+> + * Returns current memory cgroup size in bytes.
+> + */
+> +__bpf_kfunc unsigned long bpf_mem_cgroup_usage(struct mem_cgroup *memcg)
+> +{
+> +       return page_counter_read(&memcg->memory);
+> +}
+> +
+> +/**
+> + * bpf_mem_cgroup_events - Read memory cgroup's page state counter
+> + * @memcg: memory cgroup
+> + * @event: event idx
+> + *
+> + * Allows to read memory cgroup statistics.
+> + */
+> +__bpf_kfunc unsigned long bpf_mem_cgroup_page_state(struct mem_cgroup *memcg, int idx)
+> +{
+> +       if (idx < 0 || idx >= MEMCG_NR_STAT)
+> +               return (unsigned long)-1;
+> +
+> +       return memcg_page_state(memcg, idx);
+> +}
+> +
+> +/**
+> + * bpf_mem_cgroup_flush_stats - Flush memory cgroup's statistics
+> + * @memcg: memory cgroup
+> + *
+> + * Propagate memory cgroup's statistics up the cgroup tree.
+> + *
+> + * Note, that this function uses the rate-limited version of
+> + * mem_cgroup_flush_stats() to avoid hurting the system-wide
+> + * performance. So bpf_mem_cgroup_flush_stats() guarantees only
+> + * that statistics is not stale beyond 2*FLUSH_TIME.
+> + */
+> +__bpf_kfunc void bpf_mem_cgroup_flush_stats(struct mem_cgroup *memcg)
+> +{
+> +       mem_cgroup_flush_stats_ratelimited(memcg);
+> +}
+> +
+> +__bpf_kfunc_end_defs();
+> +
+> +BTF_KFUNCS_START(bpf_memcontrol_kfuncs)
+> +BTF_ID_FLAGS(func, bpf_get_mem_cgroup, KF_ACQUIRE | KF_RET_NULL)
 
-deferred_grow_zone() can be called only before deferred_init_memmap(), so
-it's very unlikely that a zone will be completely initialized here. We
-start with at least one section with each deferred zone and every call to
-deferred_grow_zone() adds a section.
+I think you could set KF_TRUSTED_ARGS for this as well.
 
-And even if that was a case and first_deferred_pfn is ULONG_MAX, the loop
-below will end immediately, so I don't think additional condition here
-would be helpful.
- 
-> >> I am thinking to compare first_deferred_pfn with ULONG_MAX, as it compared in
-> >> deferred_init_memmap(). This indicate this zone has already been initialized
-> >> totally.
-> >
-> >It may be another CPU ran deferred_grow_zone() and won the race for resize
-> >lock. Then pgdat->first_deferred_pfn will be larger than
-> >first_deferred_pfn, but still not entire zone would be initialized.
-> > 
-> >> Current code guard this by spfn < zone_end_pfn(zone). Maybe a check ahead
-> >> would be more clear?
-> >
-> >Not sure I follow you here. The check that we don't pass zone_end_pfn is
-> >inside the loop for every section we initialize.
-> > 
-> 
-> In case the zone has been initialized totally, first_deferred_pfn = ULONG_MAX.
-> 
-> Then we come to the loop with initial state:
-> 
->     spfn = ULONG_MAX
->     epfn = 0 (which is wrap around)
-> 
-> And loop condition check (spfn < zone_end_pfn(zone)) is false, so the loop is
-> skipped. This is how we handle a fully initialized zone now.
-> 
-> Would this be a little un-common?
-
-Why? The important thing is (spfn < zone_end_pfn(zone)) is false, and I
-think that's good enough.
- 
-> >> > 
-> >> >-	/* If the zone is empty somebody else may have cleared out the zone */
-> >> >-	if (!deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn,
-> >> >-						 first_deferred_pfn)) {
-> >> >-		pgdat->first_deferred_pfn = ULONG_MAX;
-> >> >-		pgdat_resize_unlock(pgdat, &flags);
-> >> >-		/* Retry only once. */
-> >> >-		return first_deferred_pfn != ULONG_MAX;
-> >> >+	/*
-> >> >+	 * Initialize at least nr_pages_needed in section chunks.
-> >> >+	 * If a section has less free memory than nr_pages_needed, the next
-> >> >+	 * section will be also initalized.
-> 
-> Nit, one typo here. s/initalized/initialized/
-
-Thanks, will fix.
- 
--- 
-Sincerely yours,
-Mike.
+> +BTF_ID_FLAGS(func, bpf_put_mem_cgroup, KF_RELEASE)
+> +
+> +BTF_ID_FLAGS(func, bpf_mem_cgroup_events, KF_TRUSTED_ARGS)
+> +BTF_ID_FLAGS(func, bpf_mem_cgroup_usage, KF_TRUSTED_ARGS)
+> +BTF_ID_FLAGS(func, bpf_mem_cgroup_page_state, KF_TRUSTED_ARGS)
+> +BTF_ID_FLAGS(func, bpf_mem_cgroup_flush_stats, KF_TRUSTED_ARGS)
+> +
+> +BTF_KFUNCS_END(bpf_memcontrol_kfuncs)
+> +
+> +static const struct btf_kfunc_id_set bpf_memcontrol_kfunc_set = {
+> +       .owner          = THIS_MODULE,
+> +       .set            = &bpf_memcontrol_kfuncs,
+> +};
+> +
+> +static int __init bpf_memcontrol_init(void)
+> +{
+> +       int err;
+> +
+> +       err = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
+> +                                       &bpf_memcontrol_kfunc_set);
+> +       if (err)
+> +               pr_warn("error while registering bpf memcontrol kfuncs: %d", err);
+> +
+> +       return err;
+> +}
+> +late_initcall(bpf_memcontrol_init);
+> --
+> 2.50.1
+>
 
