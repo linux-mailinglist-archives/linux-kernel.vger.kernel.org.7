@@ -1,59 +1,64 @@
-Return-Path: <linux-kernel+bounces-777140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C04EB2D5C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:13:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11872B2D5D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3FD27B7D4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:11:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CC601B66136
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACCD2D9493;
-	Wed, 20 Aug 2025 08:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irknLw6H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B9F2D8DDC;
+	Wed, 20 Aug 2025 08:12:06 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948D82D8DB5;
-	Wed, 20 Aug 2025 08:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D9B2D838A;
+	Wed, 20 Aug 2025 08:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755677510; cv=none; b=giBpr3Ff6PZ6ZCYoiBQDXlUkR9WKgMEsgrf2I0rv15KiE99X9in0cAcTKp0443fldrKENiHQgvKtf6QCyC1+maM15jDPvO5B3ez6GtNER/XaCot8xpmMC0hNqwjbxGEyslU0MfZaPDwbd+7dOdt+UD+2e+JXxFhlSkqWycdTcdY=
+	t=1755677526; cv=none; b=ZoEs2Y5ugaNMNbh6H85YK0eEn7JgZiUDWAcVURmnEoJqQn3Zl9FniSNDZj1oeR/NL+lShBYg2OsGL5T6FJ+36bGVp3DlWWWpht46tn84qjn/2fe3EUwEU4ywpfdSMogjvEYIe4L7sErbJcqICZ0ZtjKV3Ao2OD5BZyPmE8t5mmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755677510; c=relaxed/simple;
-	bh=7I4mVhsZ4PWXlRPOcS5Vrjm3MfJ24J5kXv7MZGrueVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CpsdFw4/ya5oBeobiqG+wsMQZ3ad26eFnXK1binyl4F60PCbRn2AKZUn529m2rs9SH499RXQ7bJ9dEtbzcCijajMZ0wIipDJ7J7lQEAccypgP03BG6AM3llPNjhAev8bBFoBCrSapKpUs2zT/m9WEzRL9p4ULl9VQaJibRXyiRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irknLw6H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AFF1C4CEEB;
-	Wed, 20 Aug 2025 08:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755677510;
-	bh=7I4mVhsZ4PWXlRPOcS5Vrjm3MfJ24J5kXv7MZGrueVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=irknLw6HuwAWuSpoOl4fh1JZJBvojr+SJx27gy2XXvH8vp2SQIp76Ei5+15Uy5T2D
-	 KcPgbPBIE8FZUoO7HKg3AvRJ3cxZxkCOI613d9KsFLgVtFHDJQHuJI0Lfbaxzp4NMf
-	 ZAi6JN0SXueuU1bc+rBwyxTCaA+n3OjaK4qYM8vh+7zUyX9CDxhd4FKa8d24rsZ9Rv
-	 hzLmnsGPqVl+wbDH1wOunRjDUkKFMc4yzsOEsqsoXa5UG4SKyzBBXlbM7/oyp8C6Y2
-	 56QCSbLzZWluN7V3mb0+MWTOC89SCsJkyR8JerWMjfkDJgeI62goisrSn6PNUbELzl
-	 oD8hK5UNiamWw==
-Date: Wed, 20 Aug 2025 10:11:47 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/13] arm64: dts: amlogic: Unify the compatible property
- for clk-measure
-Message-ID: <20250820-sweet-herring-of-luck-9c3431@kuoka>
-References: <20250815-add-more-socs-to-support-clk_measure-v1-0-59f04ba67457@amlogic.com>
- <20250815-add-more-socs-to-support-clk_measure-v1-8-59f04ba67457@amlogic.com>
+	s=arc-20240116; t=1755677526; c=relaxed/simple;
+	bh=5ffBfXfkWnxBLysk65/GWI3ham98Fz2RAzunURzEpHM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=e1um4uDicAC9MhzQat0Z+p8IZxWng8+tCNHKjJ7Gs2hzD3m3SQXzgOpxM2kNofUqoeTboa96i6hqsy3MBu7MW76SzVtJqq+AwnJn3EqFcTQSMDCvmL4ZJPEWN+6z7E6sLLk1GGW57zzwqK8vqRqVO1Tm6kDaBdGAX/cLVafjeKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 183792CE348;
+	Wed, 20 Aug 2025 10:11:55 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id XVIhD7bjm513; Wed, 20 Aug 2025 10:11:54 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id A84F02CE374;
+	Wed, 20 Aug 2025 10:11:54 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ObgVaPfNnbRa; Wed, 20 Aug 2025 10:11:54 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 7C0032CE348;
+	Wed, 20 Aug 2025 10:11:54 +0200 (CEST)
+Date: Wed, 20 Aug 2025 10:11:54 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Russell King <linux@armlinux.org.uk>, Steven Rostedt <rostedt@goodmis.org>, 
+	mhiramat <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	ardb@kernel.org, Eric Biggers <ebiggers@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, dave@vasilevsky.ca, 
+	ruanjinjie@huawei.com, liuyuntao12@huawei.com, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, 
+	Donglin Peng <pengdonglin@sangfor.com.cn>
+Message-ID: <1672011332.146872.1755677514318.JavaMail.zimbra@nod.at>
+In-Reply-To: <CACRpkdYYTe0YArbheo3msd6r+CNrt9oSZWNjkiwb=ZNWfJ1dkQ@mail.gmail.com>
+References: <20250818103931.1100084-1-richard@nod.at> <CACRpkdYYTe0YArbheo3msd6r+CNrt9oSZWNjkiwb=ZNWfJ1dkQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: ftrace: Implement HAVE_FUNCTION_GRAPH_FREGS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,40 +66,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250815-add-more-socs-to-support-clk_measure-v1-8-59f04ba67457@amlogic.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF141 (Linux)/8.8.12_GA_3809)
+Thread-Topic: ftrace: Implement HAVE_FUNCTION_GRAPH_FREGS
+Thread-Index: CVXhU17DidlkWtQ6Ka0vacHBgIlQ2A==
 
-On Fri, Aug 15, 2025 at 04:37:34PM +0800, Chuan Liu wrote:
-> The clk-measure IPs across Amlogic SoCs have minimal differences, so
-> they can be managed with a unified compatible property.
-> 
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> ---
->  arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi       | 2 +-
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi        | 2 +-
->  arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 2 +-
->  arch/arm64/boot/dts/amlogic/meson-gx.dtsi         | 2 +-
->  arch/arm64/boot/dts/amlogic/meson-s4.dtsi         | 2 +-
->  arch/arm64/boot/dts/amlogic/meson-sm1.dtsi        | 1 -
->  6 files changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-> index ab9ebabce171..570cac451d63 100644
-> --- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-> @@ -761,7 +761,7 @@ internal_ephy: ethernet_phy@8 {
->  			};
->  
->  			clk_msr: clock-measure@48000 {
-> -				compatible = "amlogic,c3-clk-measure";
-> +				compatible = "amlogic,clk-measure";
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Linus Walleij" <linus.walleij@linaro.org>
+> Can you put this patch into Russell's patch tracker?
+> https://www.armlinux.org.uk/developer/patches/
 
-NAK
+So far I had no success doing so.
+Whenever I add the patch, I get back to the patch add form without
+an error message or such.
 
-Don't ever send such broken code. You just affect all users without any
-valid reason. This patchset is horrible.
-
-Best regards,
-Krzysztof
-
+Thanks,
+//richard
 
