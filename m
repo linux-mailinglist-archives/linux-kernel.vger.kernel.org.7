@@ -1,135 +1,174 @@
-Return-Path: <linux-kernel+bounces-778568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FCE3B2E77C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:29:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6AE7B2E77E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17E921CC3C1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:29:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8943567D63
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33484320CC9;
-	Wed, 20 Aug 2025 21:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F852DCF77;
+	Wed, 20 Aug 2025 21:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hO63XzgC"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4JhaskC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB942E284D;
-	Wed, 20 Aug 2025 21:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F5E27145F;
+	Wed, 20 Aug 2025 21:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755725351; cv=none; b=rDKuq3MhlVoPp7fJybq1VbXcHzYGm4HCtkPJ23dzKj/tRAte8ui/mjGrO/hge/8UPRjWPtfxWJtE34j2bsLSrsW+Vgc3cSyJtaW1aPNRvDavX1MurV0OLuRdZ8fZYmb8UOtXSOY98FN85pTWZEIQztNONjpNvAScGInkxWpQVxI=
+	t=1755725433; cv=none; b=YR+uzpo+cQIDcyGhbUTk1ClF4X7FzQTxBtvBuUJA+xCQMlbpgvD/EcYLLRLpjqraU7fOIaGSlckwFio9dPlpUlfPLwnLA+cyzQlETuPJK7W3M6U+5ZogFbfoh4aopLoE1dH/UnyGVCgvsu1Zcjwo8VxYj08yqW13rRSBmY0ltdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755725351; c=relaxed/simple;
-	bh=iDEm04LqcclqpzgpmsLa0BU1ZOAs2RvvsY1NDBw8fMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZPJWpUE+4kNuaBELOWYr5x1V81LvdVzqO8kM0Z7OKtz8UGqxbRJRx5KO4AqdvtlY34sQAdMamlt9YCpljrsBBSenRDJz4kBlq8jEiozYzvrZQWQg/+BeoTa4wMRjgn6QeNtr7idbWvQxFALmhSVgYbkrnt7pKv7WwldI31oJ3F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hO63XzgC; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755725344;
-	bh=ZYmXWe6TcU4XRK0rHRezXUd3ygqj/SvPg85mvqxwbno=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hO63XzgC0HOe8rl8zT08VZ7dALn59sl2OnyOyafAsISSLgOwtWY1PFsGTEgP1dyzP
-	 CkwhTXKPMThwTpHSifkSE8DIGBQFarmFGdHNfpLNF/A9f9HqrxriIMveE+o5Wk9yFY
-	 wRib2ypijgkjZB/FqisHr1pM7cozTelxoe5VgBG9+OOAf32e9d9M+7dXF2jWvCMidx
-	 BSi1+ZTjpCQYNeP/2yif3JcUEJMFF6aeiCrUHpTYKELVjtf6kyB8vG4pMHEWppc+0p
-	 93QhEO1yVBmCyIuN2nliKpcSMjVE0/gXPbePc4fR0LeHGNYYUup7enqbtj8ZBfgGtd
-	 mVBJ7dPtQ/o7A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6fhw0V9Qz4wbr;
-	Thu, 21 Aug 2025 07:29:04 +1000 (AEST)
-Date: Thu, 21 Aug 2025 07:29:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Danilo Krummrich" <dakr@kernel.org>
-Cc: "Dave Airlie" <airlied@redhat.com>, "Simona Vetter"
- <simona.vetter@ffwll.ch>, "Beata Michalska" <beata.michalska@arm.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "DRI" <dri-devel@lists.freedesktop.org>,
- "Intel Graphics" <intel-gfx@lists.freedesktop.org>, "Linux Kernel Mailing
- List" <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the drm tree with the
- drm-misc-fixes tree
-Message-ID: <20250821072902.7a230ab9@canb.auug.org.au>
-In-Reply-To: <DC76OGHHB0NH.2150TC0DHRN8A@kernel.org>
-References: <20250820112144.43714c90@canb.auug.org.au>
-	<DC76OGHHB0NH.2150TC0DHRN8A@kernel.org>
+	s=arc-20240116; t=1755725433; c=relaxed/simple;
+	bh=5meq2Pl7uGd23u+zcu4m9slFz7snYlrh8f0aomwmB/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cknr2MVZDOdgvtQ0GEKukZOq0ib5JJmSjcccSWri4Mmx3kIv+Iz8dfvQQ8GAsPp+FQSOTwWN/00gsy9d8qhsvbsb7UcKPZuzR/Jk2j4MQOmS2yR14dQmvUV2f7b4VvFuwbKOeaZU3nyp5LEv+V3t2mq11/tFsCueesU/mizGSAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4JhaskC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB044C4CEE7;
+	Wed, 20 Aug 2025 21:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755725433;
+	bh=5meq2Pl7uGd23u+zcu4m9slFz7snYlrh8f0aomwmB/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F4JhaskCIA+5pVjLeSK/TaY5OWlIiLMotsTw5FXxr21SJi/znxgsLXTfPFUxm3ISI
+	 eSqY/BcyE+N6g560aXbJFaTwyMVAs7B7GYePw0lK6W8IuaWGUSKueqjuTMWSSJMJu4
+	 iiubvaDm8EGFQ1eu1OHWCd3G8pSnXKQUvPEKldWpqmDhPPn3qU4Iw7EmA01eJNe/bJ
+	 xSbQaBNLpYzbwO3RwIsggAHDDk01QFubsJXgiH30FMR70X0zI/oisdUdIj0IZnSdEi
+	 l+v8w0iFbgfYpKGBvT0LUSeIbLgoGEpcp2p/0suI9iXi0scYk2WI5UZSXuedp4y07G
+	 m5Pwvjzl2AtAw==
+Date: Wed, 20 Aug 2025 18:30:29 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 10/12] perf annotate: Hide data-type for stack
+ operation and canary
+Message-ID: <aKY-deTOzHz6n0ZQ@x1>
+References: <20250816031635.25318-1-namhyung@kernel.org>
+ <20250816031635.25318-11-namhyung@kernel.org>
+ <aKY-Ed1ZjOgRi8As@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/achTr6dFbFgspk_=FCvdvd8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKY-Ed1ZjOgRi8As@x1>
 
---Sig_/achTr6dFbFgspk_=FCvdvd8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 20, 2025 at 06:28:53PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Aug 15, 2025 at 08:16:33PM -0700, Namhyung Kim wrote:
+> > It's mostly unnecessary to print when it has no actual type information
+> > like in the stack operations and canary.  Let's have them if -v option
+> > is given.
+> 
+> In the main 'report' TUI the 'V' key is wired to bumping the verbose
+> level, wiring it up in the annotation view seems in order :-)
 
-Hi Danilo,
+So using just 'perf top', then pressing 'V' and then going into the
+annotation gets the verbose level needed to show these stack operations
+in the annotate view :-)
 
-On Wed, 20 Aug 2025 12:30:14 +0200 "Danilo Krummrich" <dakr@kernel.org> wro=
-te:
->
-> I think this resolution doesn't compile, since attributes on expressions =
-are
-> behind an unstable feature flag.
->=20
-> I assume your config does not have CONFIG_DRM_NOVA=3D{y,m}.
->=20
-> The resolution in [1] is the one I came up with in the drm-tip tree.
->=20
-> I should probably have given you a head-up on this conflict, sorry for th=
-at.
->=20
-> [1]
->=20
-> diff --cc drivers/gpu/drm/nova/file.rs
-> index 4fe62cf98a23,7e7d4e2de2fb..90b9d2d0ec4a
-> --- a/drivers/gpu/drm/nova/file.rs
-> +++ b/drivers/gpu/drm/nova/file.rs
-> @@@ -39,8 -36,7 +36,7 @@@ impl File
->               _ =3D> return Err(EINVAL),
->           };
->=20
-> -         #[allow(clippy::useless_conversion)]
-> -         getparam.set_value(value.into());
->  -        getparam.value =3D value;
-> ++        getparam.value =3D Into::<u64>::into(value);
->=20
->           Ok(0)
->       }
->=20
-
-Thanks for that.  I will use that resolution from now on.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/achTr6dFbFgspk_=FCvdvd8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmimPh8ACgkQAVBC80lX
-0GzG3ggAhpCg4N/adzC9Wll12L8Giz65Otl8iwmjWFPSa6HvK/PYP6J2ykru9JUd
-+Mgrefu37HrzrOswLuc/bhVKVZW2RrTAlTWNqcI8Nf3v7TVJADPz6utotStzxB8P
-cs1S5WdrGySUpiSslV5IyFoBJg6ajfykGXuRn4uYxHCI0gjW0DIwwi9XycAHo9Qw
-mtYQQE37HhF1A+gswTCJdG2kTKid4Gsdu2xrQk2AWDW7qjvpGQUFuP47Wg4wNHc+
-4NU4pbkZnHNkYTGn1j303ua/x39yUu8l2BI0sXNS84YPDxQmWDCv9ESQaBVLhI/z
-VecuxeVm8hce5qiV+GuBFGZG4Pxg4g==
-=QFON
------END PGP SIGNATURE-----
-
---Sig_/achTr6dFbFgspk_=FCvdvd8--
+- Arnaldo
+  
+> > Before:
+> >   $ perf annotate --code-with-type
+> >   ...
+> >          : 0    0xd640 <_dl_relocate_object>:
+> >     0.00 :      0:       endbr64
+> >     0.00 :      4:       pushq   %rbp           # data-type: (stack operation)
+> >     0.00 :      5:       movq    %rsp, %rbp
+> >     0.00 :      8:       pushq   %r15           # data-type: (stack operation)
+> >     0.00 :      a:       pushq   %r14           # data-type: (stack operation)
+> >     0.00 :      c:       pushq   %r13           # data-type: (stack operation)
+> >     0.00 :      e:       pushq   %r12           # data-type: (stack operation)
+> >     0.00 :     10:       pushq   %rbx           # data-type: (stack operation)
+> >     0.00 :     11:       subq    $0xf8, %rsp
+> >     ...
+> >     0.00 :     d4:       testl   %eax, %eax
+> >     0.00 :     d6:       jne     0xf424
+> >     0.00 :     dc:       movq    0xf0(%r14), %rbx               # data-type: struct link_map +0xf0
+> >     0.00 :     e3:       testq   %rbx, %rbx
+> >     0.00 :     e6:       jne     0xf2dd
+> >     0.00 :     ec:       cmpq    $0, 0xf8(%r14)         # data-type: struct link_map +0xf8
+> >     ...
+> > 
+> > After:
+> >          : 0    0xd640 <_dl_relocate_object>:
+> >     0.00 :      0:       endbr64
+> >     0.00 :      4:       pushq   %rbp
+> >     0.00 :      5:       movq    %rsp, %rbp
+> >     0.00 :      8:       pushq   %r15
+> >     0.00 :      a:       pushq   %r14
+> >     0.00 :      c:       pushq   %r13
+> >     0.00 :      e:       pushq   %r12
+> >     0.00 :     10:       pushq   %rbx
+> >     0.00 :     11:       subq    $0xf8, %rsp
+> >     ...
+> >     0.00 :     d4:       testl   %eax, %eax
+> >     0.00 :     d6:       jne     0xf424
+> >     0.00 :     dc:       movq    0xf0(%r14), %rbx               # data-type: struct link_map +0xf0
+> >     0.00 :     e3:       testq   %rbx, %rbx
+> >     0.00 :     e6:       jne     0xf2dd
+> >     0.00 :     ec:       cmpq    $0, 0xf8(%r14)         # data-type: struct link_map +0xf8
+> >     ...
+> > 
+> > Reviewed-by: Ian Rogers <irogers@google.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/util/annotate.c | 15 +++++++++++++--
+> >  1 file changed, 13 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> > index 99e976d254493de2..ea68b32da7ce584a 100644
+> > --- a/tools/perf/util/annotate.c
+> > +++ b/tools/perf/util/annotate.c
+> > @@ -765,6 +765,17 @@ __hist_entry__get_data_type(struct hist_entry *he, struct arch *arch,
+> >  			    struct debuginfo *dbg, struct disasm_line *dl,
+> >  			    int *type_offset);
+> >  
+> > +static bool needs_type_info(struct annotated_data_type *data_type)
+> > +{
+> > +	if (data_type == NULL || data_type == NO_TYPE)
+> > +		return false;
+> > +
+> > +	if (verbose)
+> > +		return true;
+> > +
+> > +	return (data_type != &stackop_type) && (data_type != &canary_type);
+> > +}
+> > +
+> >  static int
+> >  annotation_line__print(struct annotation_line *al, struct annotation_print_data *apd,
+> >  		       struct annotation_options *opts, int printed,
+> > @@ -844,7 +855,7 @@ annotation_line__print(struct annotation_line *al, struct annotation_print_data
+> >  
+> >  			data_type = __hist_entry__get_data_type(apd->he, apd->arch,
+> >  								apd->dbg, dl, &offset);
+> > -			if (data_type && data_type != NO_TYPE) {
+> > +			if (needs_type_info(data_type)) {
+> >  				char buf[4096];
+> >  
+> >  				printf("\t\t# data-type: %s",
+> > @@ -1958,7 +1969,7 @@ static int disasm_line__snprint_type_info(struct disasm_line *dl,
+> >  		return 1;
+> >  
+> >  	data_type = __hist_entry__get_data_type(apd->he, apd->arch, apd->dbg, dl, &offset);
+> > -	if (data_type == NULL || data_type == NO_TYPE)
+> > +	if (!needs_type_info(data_type))
+> >  		return 1;
+> >  
+> >  	printed = scnprintf(buf, len, "\t\t# data-type: %s", data_type->self.type_name);
+> > -- 
+> > 2.50.1
+> > 
 
