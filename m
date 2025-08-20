@@ -1,134 +1,101 @@
-Return-Path: <linux-kernel+bounces-778482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFF2B2E64B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:16:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1066BB2E652
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB714724065
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:16:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D151C84853
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00F0284B33;
-	Wed, 20 Aug 2025 20:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VvxKEhwB"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEB428C01E;
+	Wed, 20 Aug 2025 20:19:22 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A871BFE00
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 20:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271CE2877DC;
+	Wed, 20 Aug 2025 20:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755720978; cv=none; b=rgi76mCaAyBaLoUToX2xlhrTm0nkSjnPx45A8g/nH6O6Md3KjTo7VLqqgIl0IjNTnDUXGwjxsDT/ndgze8YbnuTM4lYHLq7aTxJhOhNJJkwIGJfjHZk+WNMFAVPD2oLhAB2IiKg37LTHLBR6kgSjUHv2th4BSCISnUD0fbAtl7Q=
+	t=1755721162; cv=none; b=i5xulo/L9Utd6vIWoL1nFqBuNQrMoHrdXZb/lr4f5B58TDVE1JdH/yGppDoEwKNPWidQq7PjDII9R3kY2sD/J0wKZ/WEtgSyN9+j+CbeFAvAjvaaQ7tIgCZmZOX2XAn54HOg+aCcEb1ew9zMLcJ9xQ8Bq6uZdeOt/AMtC5cNRVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755720978; c=relaxed/simple;
-	bh=NXTQLJ2I52qsungriptDmy8ITF/2iw/NLcw++Py2c24=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=snYQfFgGP8MrTmi3sStU36l3MMWPtWbAzuvletcm7iSz1/Kl3DDcIV2ZJMmin7GSbRjaZFGif3Nibatc00nR2HLspH/odCxOHopjnIRw4cV2xMUpl9Exub+xB33ZhLAOrT+cd0cSy4nsq8+J8ztVGIvcmz3ngsDDMcuKNGV5p1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VvxKEhwB; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2eb6d2baso783822b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:16:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755720976; x=1756325776; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qIpEd04LLhW7wC7d9HjCp8cUc68SFaxpbzBA9V+sYjc=;
-        b=VvxKEhwBuv3UaTpPo5Iy/MGfALMUd8MmN7VX5NkqHSAMLJjqtWVox5e++X23I33+OS
-         jbiJ0lT7fP7mnZb5AE+jOlquFNHh4dcMpdpU8Gjp3rlyHZr2KxXpeHI1+rmma/Xm5VQi
-         i4UvCyNw0KxurcP6tvxzh1zjChYyrvV2DJzbCY1ixBmElGsdfoV86SFR05xrxbFw7Ovu
-         hjht4c3ZATsEYEFmW2g5EXfoIJ73P8NkzeP3hlEWj2D/N9LnCrVx/cJye8ozBfYdjIH/
-         kCLQ7swEPC7eHN+5zm1LVSy2lcHkihyzIE9OjxXKzs45+e5NeTYT1+DEtQZEnyzDUTRQ
-         DThQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755720976; x=1756325776;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qIpEd04LLhW7wC7d9HjCp8cUc68SFaxpbzBA9V+sYjc=;
-        b=HNy6D+NTZdbMMU3MpJA6mVbrYuPCX1oyfI5wbBGntExyFLtGKc+jY0adDlf14pzXX8
-         Fc8AC4F6D1GXgeHDsSQjR8PChwnk6lDTNHkmFedD/j3eiUqt/nYSKDSGQeEZfDr7JmIv
-         EyFW99kDaNmWbZGkWnUBVOjLEjVYXiMjbnfW4NHS8cZJTReOf7l2Va42A7VYkwHXf7rA
-         gTYNZR5kwBxa9BU3880wjUHU7fkXEbkae1r3vx33DPsxX3KWITwqdX6lV1vWLAehX6tU
-         ubySnHOsW0gNGNt9qKZEGPRzFR/qCZDVFWb5WUM1+BtY4KlT5cRC/RG5u+IIUpbnCGxF
-         U9Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCXw0/dTLsy6Z40UkMUmteEEH7CQE31IivQJ8+B4ZADxrtzHZtOXYDORUlArLRo7WcgWngb44bWIH2GNJUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywyXtaMthJxDFceQol6F3Pn0A6BThh+xKpGX8GfS36LnDbfh12
-	ieIsffzGnCUCSB2B42QZymjo/MVBRIj+vm+owlSItmsFoeV97legYFATia0J8EUhG3akXkQDLXf
-	hlBDmFwGQlqYksQ==
-X-Google-Smtp-Source: AGHT+IE7GwfmR2D95ArpXhAM3e3FihMKCVaV4jn2nhnJyETg8rpRDPNgsDsY/10SNk9YeSB+51j2Lgd5YnxM/A==
-X-Received: from pfbjw5.prod.google.com ([2002:a05:6a00:9285:b0:76b:de2b:6796])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:1813:b0:76b:d746:733a with SMTP id d2e1a72fcca58-76e8dd85d39mr5837029b3a.21.1755720976156;
- Wed, 20 Aug 2025 13:16:16 -0700 (PDT)
-Date: Wed, 20 Aug 2025 20:16:11 +0000
+	s=arc-20240116; t=1755721162; c=relaxed/simple;
+	bh=FxfYt1RwXHnaAJ6Ugd+62CsLM+l/HaMfWmYFXkl+UKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HPRAnBRFQXVmhChPdeT6ZAyQUOnHLyHG8zKuvKW4gqQPsiOQVutfb1ch/i/AKS8vx5xBG5VAlbiyqsZJ9OZPtXlielu/6xjRsmJRnvIarztka+yoUI0FM8Wywh4/iqbx1Y8Xv0DrP0NBbCQdrvUhKFjr2LO2M/UruKe+QBatHjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 94D0CC0132;
+	Wed, 20 Aug 2025 20:19:15 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 61A0020027;
+	Wed, 20 Aug 2025 20:19:12 +0000 (UTC)
+Date: Wed, 20 Aug 2025 16:19:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada
+ <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas
+ Schier <nicolas.schier@linux.dev>, Nick Desaulniers
+ <nick.desaulniers+lkml@gmail.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v6 2/3] tracing: Add a tracepoint verification check at
+ build time
+Message-ID: <20250820161914.73bf78ea@gandalf.local.home>
+In-Reply-To: <88b25b9d-911a-4419-b1a6-e6ae38d499ba@infradead.org>
+References: <20250820174752.684086778@kernel.org>
+	<20250820174828.080947631@kernel.org>
+	<88b25b9d-911a-4419-b1a6-e6ae38d499ba@infradead.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.rc1.193.gad69d77794-goog
-Message-ID: <20250820201612.2549797-1-cmllamas@google.com>
-Subject: [PATCH] drm/xe: replace basename() with portable strrchr()
-From: Carlos Llamas <cmllamas@google.com>
-To: Lucas De Marchi <lucas.demarchi@intel.com>, 
-	"=?UTF-8?q?Thomas=20Hellstr=C3=B6m?=" <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matt Atwood <matthew.s.atwood@intel.com>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Carlos Llamas <cmllamas@google.com>, 
-	"open list:INTEL DRM XE DRIVER (Lunar Lake and newer)" <intel-xe@lists.freedesktop.org>, 
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 61A0020027
+X-Stat-Signature: tsmjxphye7d1carte4xh9p9j63nketyn
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/9sMJ3IiG4FSW0wxNXZ/Kn9oU82qkDAjI=
+X-HE-Tag: 1755721152-565517
+X-HE-Meta: U2FsdGVkX19oFt3CBo23lBChdVH8dJj02O7xSgxI6g/LjV0vK8AjbS3CQ5ZP7DYYdL8ovPonhJhCjy1y+gHipNWQDDxfjkm/k/1wYHT1/FuYSUw2hNeW9/HOi51CiLasJKKj3Nt4YNm6qMBUl2wtrYopvJYnkynxvWDm65RBNDrKoobpdkOX3TSXTm/eaGUHTbW6p31Hpm1rdpB8KYtNDwZ+77D0xVzVxUnZ/Pmeo7o78FNMF/QPWcCHc94xj+/Qh8stswOQ7NNk7LwKWsmcNGntcfvNzEhpeIXOaAmfaPga8Fq2L2oVSK2hNSlEW7UWSC7b39CzjrLS+9LM/p5vKvvMJRLqD4BdUN08SZPiyM+76SJEIuDn5t2eDXL4js6+t6Z72hOr6qf2KwhAN3TYpA==
 
-Commit b0a2ee5567ab ("drm/xe: prepare xe_gen_wa_oob to be multi-use")
-introduced a call to basename(). The GNU version of this function is not
-portable and fails to build with alternative libc implementations like
-musl or bionic. This causes the following build error:
+On Wed, 20 Aug 2025 13:12:22 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-  drivers/gpu/drm/xe/xe_gen_wa_oob.c:130:12: error: assignment to =E2=80=98=
-const char *=E2=80=99 from =E2=80=98int=E2=80=99 makes pointer from integer=
- without a cast [-Wint-conversion]
-    130 |         fn =3D basename(fn);
-        |            ^
+> On 8/20/25 10:47 AM, Steven Rostedt wrote:
+> > +/**
+> > + * for_each_shdr_str - iterator that reads strings that are in an ELF section.
+> > + * @len: "int" to hold the length of the current string
+> > + * @ehdr: A pointer to the ehdr of the ELF file
+> > + * @sec: The section that has the strings to iterater on  
+> 
+>                                                 iterate> + *
 
-While a POSIX version of basename() could be used, it would require a
-separate header plus the behavior differs from GNU version in that it
-might modify its argument. Not great.
+Hmm, "to iterate on" sounds better to me. :-/
 
-Instead replace basename() with a strrchr() based implementation which
-provides the same functionality and avoid portability issues.
+> > + * This is a for loop that iterates over all the nul terminated strings
+> > + * that are in a given ELF section. The variable "str" will hold
+> > + * the current string for each iteration and the passed in @len will
+> > + * contain theh strlen() of that string.  
+> 
+>               the
 
-Fixes: b0a2ee5567ab ("drm/xe: prepare xe_gen_wa_oob to be multi-use")
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- drivers/gpu/drm/xe/xe_gen_wa_oob.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Oops! Thanks.
 
-diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe_gen=
-_wa_oob.c
-index 6581cb0f0e59..0a94a045bcea 100644
---- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-+++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-@@ -125,9 +125,11 @@ static int parse(FILE *input, FILE *csource, FILE *che=
-ader, char *prefix)
-=20
- static int fn_to_prefix(const char *fn, char *prefix, size_t size)
- {
-+	const char *base;
- 	size_t len;
-=20
--	fn =3D basename(fn);
-+	base =3D strrchr(fn, '/');
-+	fn =3D base ? base + 1 : fn;
- 	len =3D strlen(fn);
-=20
- 	if (len > size - 1)
---=20
-2.51.0.rc1.193.gad69d77794-goog
+-- Steve
+
+> 
+> > + */  
+> 
 
 
