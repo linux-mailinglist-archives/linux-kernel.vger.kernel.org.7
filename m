@@ -1,107 +1,109 @@
-Return-Path: <linux-kernel+bounces-777803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E895B2DE03
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:39:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03AAB2DE0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3035C170D22
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:36:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4702F5802D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34669327782;
-	Wed, 20 Aug 2025 13:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Lxm4LncN"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5F43218C0;
+	Wed, 20 Aug 2025 13:34:28 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C413218CD;
-	Wed, 20 Aug 2025 13:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15C32E2289;
+	Wed, 20 Aug 2025 13:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755696827; cv=none; b=t1D/El1YK3ZnXyD+LEVPXeXhD/xoH5ycZv5L4tUv4NV+90RDtH4rhTO7Zpoi0ORkSzkU7t6BGEAdbK0tt9d9/VAM+oJJsrw3zMR/YMMQqIKqxTHMxX3+ijGSs18eWjIbwqFtWFPraXV44dEg0itR/c9OcVQB77366VxuMA73vN0=
+	t=1755696867; cv=none; b=RplfNLjsvQ1VJqFRXs5dmwtdApkD1u+HkTek1wmwIPSUSZEPCkdY2bADsRAJNlTzY0ZJtRoioGAt1aX/doSN4vadrLf6I0AjcTVlLavsTq0k2KNv/hgwGfiAH2ZRba+HaLDSG/g3uIwst/uN3INQPint2urxYEDB6N38Wt84VEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755696827; c=relaxed/simple;
-	bh=SaNvr16XH7ej2OcXCQ1iRpF9atHKPorFp7MQLGCnfjs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aO6cvDOn2adYCDiiic0Cg2hJbRBRatnDgUeRrDEypXOvKFw3FgrsrVDDnQnKh6IS/cwOTyRWDb5nTwEn//TMstZHOsqFvLJqVlNVdkWMEF3Uu5M89PnfG6kSqeVSNx6XMbfvIynXN66zsWqDuYv1di5xW5WJiCFV/zlLTnqW5yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Lxm4LncN; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755696823;
-	bh=SaNvr16XH7ej2OcXCQ1iRpF9atHKPorFp7MQLGCnfjs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Lxm4LncNaa+hg66D90Mv8uIt9ZS7bBKPXRKwixPiMamgBj+MlLq+GKRCnrEYXF9Zv
-	 K4O8DdzbWKptMKtRuyiZ7EjsNS+tf+n0ANEkVcr48rZMtt9G2/ZUuyMAODBbMVdyBw
-	 9bzbx38MYoYqDzZapd6D4Ah7dii3KOWJuwKjEUI3aMzYlk25d25qqAE1IrG9Ul4qH5
-	 TXn6ihImAU13F73fbOTBpViQKDeYQ4FPOQnMtp/BplzrTCOV6E3whfMybGMIr7MfJf
-	 gq8sWrk4z7VK/CpH34VO45pG1rc5YU/B4oCTJxS9gCfQwCIAY3vykR2iEeXME3lepv
-	 5LhB/otf/pKvQ==
-Received: from localhost-live.home (2a01cb0892f2d600C8F85CF092d4af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 99DDF17E02B0;
-	Wed, 20 Aug 2025 15:33:42 +0200 (CEST)
-Message-ID: <ff583d9675181e2e6f39169a55da8958014f0ea5.camel@collabora.com>
-Subject: Re: [PATCH 5/9] dt-bindings: sound: Convert MT8183 DA7219 sound
- card bindings to YAML
-From: Julien Massot <julien.massot@collabora.com>
-To: Rob Herring <robh@kernel.org>
-Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Ikjoon Jang
- <ikjn@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu
- Tsai	 <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, Eugen Hristev
-	 <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown	 <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>, Sean
- Wang	 <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Wed, 20 Aug 2025 15:33:41 +0200
-In-Reply-To: <20250801172821.GA3111733-robh@kernel.org>
-References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
-	 <20250801-mtk-dtb-warnings-v1-5-6ba4e432427b@collabora.com>
-	 <20250801172821.GA3111733-robh@kernel.org>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1755696867; c=relaxed/simple;
+	bh=ecZ0orGxNAgtua+CAh5Rd3BWa+JxFXceOTCpgTfcjVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lv46VY/3X4lVE2Tk+FSe3HXDUxaGFpE7Nuih1It3cJ34oOca+joo0sY5sQjApL/VcGlK6Tqx3W1UGTgIKR2kY9EBhi53cBcee3UkpMPyzqul6ep7cTEVneQnHA5zburbQhqKkyCrD7r3TiXXAChKKhr0Rmm84mtFnxJutszwzR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uoixE-000000000Yt-239I;
+	Wed, 20 Aug 2025 13:34:16 +0000
+Date: Wed, 20 Aug 2025 14:34:07 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Xu Liang <lxu@maxlinear.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/3] net: phy: mxl-86110: add basic support
+ for led_brightness_set op
+Message-ID: <aKXOzyAg728qcylz@pidgin.makrotopia.org>
+References: <a63f1487c3d36fc150fa3a920cd3ab19feb9b9f9.1755691622.git.daniel@makrotopia.org>
+ <73c364ee-2712-4b95-a05b-886c3e4c4e15@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <73c364ee-2712-4b95-a05b-886c3e4c4e15@lunn.ch>
 
-On Fri, 2025-08-01 at 12:28 -0500, Rob Herring wrote:
-> On Fri, Aug 01, 2025 at 01:18:07PM +0200, Julien Massot wrote:
-> > Convert the Device Tree binding for MT8183-based boards using the
-> > DA7219 headset codec and optional MAX98357, RT1015 or RT1015P speaker
-> > amplifiers from the legacy .txt format to YAML schema.
-> >=20
-> > This improves binding validation and removes DT schema warnings
-> > for boards using these audio components.
-> >=20
-> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
-> > ---
-> > =C2=A0.../bindings/sound/mt8183-da7219-max98357.txt=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 21 ----------
-> > =C2=A0.../devicetree/bindings/sound/mt8183-da7219.yaml=C2=A0=C2=A0 | 49=
- ++++++++++++++++++++++
->=20
-> mediatek,mt8183_da7219.yaml
->=20
-Ok, Fixed in v2.
+On Wed, Aug 20, 2025 at 02:34:48PM +0200, Andrew Lunn wrote:
+> > +# define MXL86110_COM_EXT_LED_GEN_CFG_LFM(x)		({ typeof(x) _x = (x); \
+> > +							  GENMASK(1 + (3 * (_x)), \
+> > +								 3 * (_x)); })
+> 
+> > +static int mxl86110_led_brightness_set(struct phy_device *phydev,
+> > +				       u8 index, enum led_brightness value)
+> > +{
+> > +	u16 mask, set;
+> > +	int ret;
+> > +
+> > +	if (index >= MXL86110_MAX_LEDS)
+> > +		return -EINVAL;
+> > +
+> > +	/* force manual control */
+> > +	set = MXL86110_COM_EXT_LED_GEN_CFG_LFE(index);
+> > +	/* clear previous force mode */
+> > +	mask = MXL86110_COM_EXT_LED_GEN_CFG_LFM(index);
+> > +
+> > +	/* force LED to be permanently on */
+> > +	if (value != LED_OFF)
+> > +		set |= MXL86110_COM_EXT_LED_GEN_CFG_LFME(index);
+> 
+> That is particularly complex. We know index is a u8, so why not
+> GENMASK_U8(1 + 3 * index, 3 * index)? But set is a u16, so
+> GENMASK_U16() would also be valid.
 
-Thanks,
-Julien
+I chose this construct to avoid reusing the macro parameter as gcc would
+rightously complain about that potentially having unexpected side-effects.
+
+Eg.
+
+#define FOO(a) ((a)+(a))
+
+Now with var=10, when calling FOO(var++) the result will be 21 and
+var will be equal to 12, which isn't intuitive without seeing the
+macro definition.
+
+Also using GENMASK_TYPE would not avoid the problem of macro
+parameter reuse.
+
+However, I agree that the macro itself is also weirdly complex and
+confusing (but at the same time also very common, a quick grep reveals
+hundreds of occurances of that pattern in Linux sources), so maybe we
+should introduce some generic helpers for this (quite common) use-case?
+I can do that, but I certainly can't take care of migrating all the
+existing uses of this pattern to switch to the new helper.
+
 
