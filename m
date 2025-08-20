@@ -1,53 +1,39 @@
-Return-Path: <linux-kernel+bounces-778146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0426B2E1E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:09:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B89B2E1E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C599DA2316C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:02:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3481C84BB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BEC322DB7;
-	Wed, 20 Aug 2025 16:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="gbuHnsjF"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FE4322C83;
-	Wed, 20 Aug 2025 16:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FC9327782;
+	Wed, 20 Aug 2025 16:01:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1597D322DDB;
+	Wed, 20 Aug 2025 16:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755705686; cv=none; b=VRJv+X6M8Ys+F7Z2Ggjnzev/XRjBbikAofRJjKD+jaZY+EQ0SClHqCTW+WQCtRB/mJn/Fq54RZccxwjgQkn/DsCKNUpt50EzaPRC/4AVhLw5u7VKKKg5M9Q36goqBx5veZDlFdTw1fyEkTzgQpv2jijTL6aJO0UyvhVHZA4qqlU=
+	t=1755705696; cv=none; b=XZH57Ixr1iLiZo5o50+aEHBe4prQzZJuwYv/vis/5HIE/qSw2hG41L6MMScpSLkvNpOejXX2J+gHZeIP0NZzl9eMrmrEHq/jTfEFsqRxqCMX9n8w5qPah7poS7YLi/PQoPWuRgMyW4Y8jQnJZUetcvFoZ5tYYfdv5LsvCrO541c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755705686; c=relaxed/simple;
-	bh=8v0RJ2QOOaP4eaVcwYiXttb1R9YRa4mFZ9d2cbb7KUs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k/L/hcsvUkJswXJX2l/D3RH+nUMhe47rNhjyo6TzQzBEf9IR12QxGD4gVxZwvQyr8aALpDSVWZfscOGjfS/zZELiMrwfWWNUD0y42xbkElzXsinjM1SMrd2T01v4ad6wqVpypDJsdgqQhMXj3ghU/SN/Qe4L0fv4nwWMsgWKDcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=gbuHnsjF; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PXFf5NUrRE2hsZJwNZ1X7sNIcwtonfdPr1NAIWbXTFw=; b=gbuHnsjFOu30aTkmxGx2nKoGdS
-	gt2KI7yBZ0e0PUpa1kw50TUf+4bNNdH4/xP1tZC8Y+vYGC8gsjzFPz0eFi/D123Z0/2NgA9DZWqRg
-	EYAK7uHqrnz79VE07rjkoCYBNUvC6H+SLLK/8riL3UQsKX7y/mlVEx1ki6vdMrXexFUIX7hL9wyGt
-	qoMjktUmrdI3t6FcaEnTx5H5Acgqr8bD1B+ieMkJ9oBrq2mlWX8xaROX+/Hlvsvb66NLVn2bIWin8
-	Ubv/MtgGaGOdMobhe2jQSyO6ePpPEQhFHwaDRtjjZw4GNhBPH1o50sLNLqrtUa3xF0Sf3LDhh6m6H
-	DouWcxYg==;
-Received: from [189.6.13.79] (helo=[192.168.31.42])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uolFA-00Gqnm-Gp; Wed, 20 Aug 2025 18:00:56 +0200
-Message-ID: <e3b1f1bb-eeee-4887-a0f9-d6aa1f725ff4@igalia.com>
-Date: Wed, 20 Aug 2025 13:00:49 -0300
+	s=arc-20240116; t=1755705696; c=relaxed/simple;
+	bh=ykO46B63pWVRs9lbEGpBnkeMdathCK7vioAEBA9AWbI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NXIeqDc3HBPyNsihIq6ABv3xdsa3UjIyN1QOyMB81aP1oWhgL379yX5URHjVtr5ZBoBYT9JYAH34lVhA5VCgCq21ZG21eIpO7LC93X36LMDgqTMkzFm7ULRxlFkOSpT731BCWXtbVUHfBW5MylKwm9Jao+9SZlSDL85zxjySrJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C10B51424;
+	Wed, 20 Aug 2025 09:01:24 -0700 (PDT)
+Received: from [10.57.90.209] (unknown [10.57.90.209])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE9AB3F63F;
+	Wed, 20 Aug 2025 09:01:26 -0700 (PDT)
+Message-ID: <5b5455eb-e649-4b20-8aad-6d7f5576a84a@arm.com>
+Date: Wed, 20 Aug 2025 18:01:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,98 +41,234 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drm/amd/display: fix leak of probed modes
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
- Alex Deucher <alexander.deucher@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-Cc: Harry Wentland <harry.wentland@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Hans de Goede <hansg@kernel.org>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org, stable@vger.kernel.org
-References: <20250819184636.232641-1-pchelkin@ispras.ru>
- <20250819184636.232641-3-pchelkin@ispras.ru>
-Content-Language: en-US
-From: Melissa Wen <mwen@igalia.com>
-In-Reply-To: <20250819184636.232641-3-pchelkin@ispras.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [RFC PATCH v5 00/18] pkeys-based page table hardening
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: linux-hardening@vger.kernel.org,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Andy Lutomirski <luto@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
+ Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@chromium.org>,
+ Joey Gouly <joey.gouly@arm.com>, Kees Cook <kees@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Maxwell Bland <mbland@motorola.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Pierre Langlois <pierre.langlois@arm.com>,
+ Quentin Perret <qperret@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-mm@kvack.org, x86@kernel.org
+References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+ <4a828975-d412-4a4b-975e-4702572315da@arm.com>
+Content-Language: en-GB
+In-Reply-To: <4a828975-d412-4a4b-975e-4702572315da@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-
-On 19/08/2025 15:46, Fedor Pchelkin wrote:
-> amdgpu_dm_connector_ddc_get_modes() reinitializes a connector's probed
-> modes list without cleaning it up. First time it is called during the
-> driver's initialization phase, then via drm_mode_getconnector() ioctl.
-> The leaks observed with Kmemleak are as following:
+On 20/08/2025 17:53, Kevin Brodsky wrote:
+> On 15/08/2025 10:54, Kevin Brodsky wrote:
+>> [...]
+>>
+>> Performance
+>> ===========
+>>
+>> No arm64 hardware currently implements POE. To estimate the performance
+>> impact of kpkeys_hardened_pgtables, a mock implementation of kpkeys has
+>> been used, replacing accesses to the POR_EL1 register with accesses to
+>> another system register that is otherwise unused (CONTEXTIDR_EL1), and
+>> leaving everything else unchanged. Most of the kpkeys overhead is
+>> expected to originate from the barrier (ISB) that is required after
+>> writing to POR_EL1, and from setting the POIndex (pkey) in page tables;
+>> both of these are done exactly in the same way in the mock
+>> implementation.
+> It turns out this wasn't the case regarding the pkey setting - because
+> patch 6 gates set_memory_pkey() on system_supports_poe() and not
+> arch_kpkeys_enabled(), the mock implementation turned set_memory_pkey()
+> into a no-op. Many thanks to Rick Edgecombe for highlighting that the
+> overheads were suspiciously low for some benchmarks!
 >
-> unreferenced object 0xffff88812f91b200 (size 128):
->    comm "(udev-worker)", pid 388, jiffies 4294695475
->    hex dump (first 32 bytes):
->      ac dd 07 00 80 02 70 0b 90 0b e0 0b 00 00 e0 01  ......p.........
->      0b 07 10 07 5c 07 00 00 0a 00 00 00 00 00 00 00  ....\...........
->    backtrace (crc 89db554f):
->      __kmalloc_cache_noprof+0x3a3/0x490
->      drm_mode_duplicate+0x8e/0x2b0
->      amdgpu_dm_create_common_mode+0x40/0x150 [amdgpu]
->      amdgpu_dm_connector_add_common_modes+0x336/0x488 [amdgpu]
->      amdgpu_dm_connector_get_modes+0x428/0x8a0 [amdgpu]
->      amdgpu_dm_initialize_drm_device+0x1389/0x17b4 [amdgpu]
->      amdgpu_dm_init.cold+0x157b/0x1a1e [amdgpu]
->      dm_hw_init+0x3f/0x110 [amdgpu]
->      amdgpu_device_ip_init+0xcf4/0x1180 [amdgpu]
->      amdgpu_device_init.cold+0xb84/0x1863 [amdgpu]
->      amdgpu_driver_load_kms+0x15/0x90 [amdgpu]
->      amdgpu_pci_probe+0x391/0xce0 [amdgpu]
->      local_pci_probe+0xd9/0x190
->      pci_call_probe+0x183/0x540
->      pci_device_probe+0x171/0x2c0
->      really_probe+0x1e1/0x890
+>> The original implementation of kpkeys_hardened_pgtables is very
+>> inefficient when many PTEs are changed at once, as the kpkeys level is
+>> switched twice for every PTE (two ISBs per PTE). Patch 18 introduces
+>> an optimisation that makes use of the lazy_mmu mode to batch those
+>> switches: 1. switch to KPKEYS_LVL_PGTABLES on arch_enter_lazy_mmu_mode(),
+>> 2. skip any kpkeys switch while in that section, and 3. restore the
+>> kpkeys level on arch_leave_lazy_mmu_mode(). When that last function
+>> already issues an ISB (when updating kernel page tables), we get a
+>> further optimisation as we can skip the ISB when restoring the kpkeys
+>> level.
+>>
+>> Both implementations (without and with batching) were evaluated on an
+>> Amazon EC2 M7g instance (Graviton3), using a variety of benchmarks that
+>> involve heavy page table manipulations. The results shown below are
+>> relative to the baseline for this series, which is 6.17-rc1. The
+>> branches used for all three sets of results (baseline, with/without
+>> batching) are available in a repository, see next section.
+>>
+>> Caveat: these numbers should be seen as a lower bound for the overhead
+>> of a real POE-based protection. The hardware checks added by POE are
+>> however not expected to incur significant extra overhead.
+>>
+>> Reading example: for the fix_size_alloc_test benchmark, using 1 page per
+>> iteration (no hugepage), kpkeys_hardened_pgtables incurs 17.35% overhead
+>> without batching, and 14.62% overhead with batching. Both results are
+>> considered statistically significant (95% confidence interval),
+>> indicated by "(R)".
+>>
+>> +-------------------+----------------------------------+------------------+---------------+
+>> | Benchmark         | Result Class                     | Without batching | With batching |
+>> +===================+==================================+==================+===============+
+>> | mmtests/kernbench | real time                        |            0.30% |         0.11% |
+>> |                   | system time                      |        (R) 3.97% |     (R) 2.17% |
+>> |                   | user time                        |            0.12% |         0.02% |
+>> +-------------------+----------------------------------+------------------+---------------+
+>> | micromm/fork      | fork: h:0                        |      (R) 217.31% |        -0.97% |
+>> |                   | fork: h:1                        |      (R) 275.25% |     (R) 2.25% |
+>> +-------------------+----------------------------------+------------------+---------------+
+>> | micromm/munmap    | munmap: h:0                      |       (R) 15.57% |        -1.95% |
+>> |                   | munmap: h:1                      |      (R) 169.53% |     (R) 6.53% |
+>> +-------------------+----------------------------------+------------------+---------------+
+>> | micromm/vmalloc   | fix_size_alloc_test: p:1, h:0    |       (R) 17.35% |    (R) 14.62% |
+>> |                   | fix_size_alloc_test: p:4, h:0    |       (R) 37.54% |     (R) 9.35% |
+>> |                   | fix_size_alloc_test: p:16, h:0   |       (R) 66.08% |     (R) 3.15% |
+>> |                   | fix_size_alloc_test: p:64, h:0   |       (R) 82.94% |        -0.39% |
+>> |                   | fix_size_alloc_test: p:256, h:0  |       (R) 87.85% |        -1.67% |
+>> |                   | fix_size_alloc_test: p:16, h:1   |       (R) 50.31% |         3.00% |
+>> |                   | fix_size_alloc_test: p:64, h:1   |       (R) 59.73% |         2.23% |
+>> |                   | fix_size_alloc_test: p:256, h:1  |       (R) 62.14% |         1.51% |
+>> |                   | random_size_alloc_test: p:1, h:0 |       (R) 77.82% |        -0.21% |
+>> |                   | vm_map_ram_test: p:1, h:0        |       (R) 30.66% |    (R) 27.30% |
+>> +-------------------+----------------------------------+------------------+---------------+
+> These numbers therefore correspond to set_memory_pkey() being a no-op,
+> in other words they represent the overhead of switching the pkey
+> register only.
 >
-> Found by Linux Verification Center (linuxtesting.org).
+> I have amended the mock implementation so that set_memory_pkey() is run
+> as it would on a real POE implementation (i.e. actually setting the PTE
+> bits). Here are the new results, representing the overhead of both pkey
+> register switching and setting the pkey of page table pages (PTPs) on
+> alloc/free:
 >
-> Fixes: acc96ae0d127 ("drm/amd/display: set panel orientation before drm_dev_register")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-> ---
->   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 3 +++
->   1 file changed, 3 insertions(+)
+> +-------------------+----------------------------------+------------------+---------------+
+> | Benchmark         | Result Class                     | Without
+> batching | With batching |
+> +===================+==================================+==================+===============+
+> | mmtests/kernbench | real time                        |           
+> 0.32% |         0.35% |
+> |                   | system time                      |        (R)
+> 4.18% |     (R) 3.18% |
+> |                   | user time                        |           
+> 0.08% |         0.20% |
+> +-------------------+----------------------------------+------------------+---------------+
+> | micromm/fork      | fork: h:0                        |      (R)
+> 221.39% |     (R) 3.35% |
+> |                   | fork: h:1                        |      (R)
+> 282.89% |     (R) 6.99% |
+> +-------------------+----------------------------------+------------------+---------------+
+> | micromm/munmap    | munmap: h:0                      |       (R)
+> 17.37% |        -0.28% |
+> |                   | munmap: h:1                      |      (R)
+> 172.61% |     (R) 8.08% |
+> +-------------------+----------------------------------+------------------+---------------+
+> | micromm/vmalloc   | fix_size_alloc_test: p:1, h:0    |       (R)
+> 15.54% |    (R) 12.57% |
+> |                   | fix_size_alloc_test: p:4, h:0    |       (R)
+> 39.18% |     (R) 9.13% |
+> |                   | fix_size_alloc_test: p:16, h:0   |       (R)
+> 65.81% |         2.97% |
+> |                   | fix_size_alloc_test: p:64, h:0   |       (R)
+> 83.39% |        -0.49% |
+> |                   | fix_size_alloc_test: p:256, h:0  |       (R)
+> 87.85% |    (I) -2.04% |
+> |                   | fix_size_alloc_test: p:16, h:1   |       (R)
+> 51.21% |         3.77% |
+> |                   | fix_size_alloc_test: p:64, h:1   |       (R)
+> 60.02% |         0.99% |
+> |                   | fix_size_alloc_test: p:256, h:1  |       (R)
+> 63.82% |         1.16% |
+> |                   | random_size_alloc_test: p:1, h:0 |       (R)
+> 77.79% |        -0.51% |
+> |                   | vm_map_ram_test: p:1, h:0        |       (R)
+> 30.67% |    (R) 27.09% |
+> +-------------------+----------------------------------+------------------+---------------+
+
+Apologies, Thunderbird helpfully decided to wrap around that table...
+Here's the unmangled table:
+
++-------------------+----------------------------------+------------------+---------------+
+| Benchmark         | Result Class                     | Without batching | With batching |
++===================+==================================+==================+===============+
+| mmtests/kernbench | real time                        |            0.32% |         0.35% |
+|                   | system time                      |        (R) 4.18% |     (R) 3.18% |
+|                   | user time                        |            0.08% |         0.20% |
++-------------------+----------------------------------+------------------+---------------+
+| micromm/fork      | fork: h:0                        |      (R) 221.39% |     (R) 3.35% |
+|                   | fork: h:1                        |      (R) 282.89% |     (R) 6.99% |
++-------------------+----------------------------------+------------------+---------------+
+| micromm/munmap    | munmap: h:0                      |       (R) 17.37% |        -0.28% |
+|                   | munmap: h:1                      |      (R) 172.61% |     (R) 8.08% |
++-------------------+----------------------------------+------------------+---------------+
+| micromm/vmalloc   | fix_size_alloc_test: p:1, h:0    |       (R) 15.54% |    (R) 12.57% |
+|                   | fix_size_alloc_test: p:4, h:0    |       (R) 39.18% |     (R) 9.13% |
+|                   | fix_size_alloc_test: p:16, h:0   |       (R) 65.81% |         2.97% |
+|                   | fix_size_alloc_test: p:64, h:0   |       (R) 83.39% |        -0.49% |
+|                   | fix_size_alloc_test: p:256, h:0  |       (R) 87.85% |    (I) -2.04% |
+|                   | fix_size_alloc_test: p:16, h:1   |       (R) 51.21% |         3.77% |
+|                   | fix_size_alloc_test: p:64, h:1   |       (R) 60.02% |         0.99% |
+|                   | fix_size_alloc_test: p:256, h:1  |       (R) 63.82% |         1.16% |
+|                   | random_size_alloc_test: p:1, h:0 |       (R) 77.79% |        -0.51% |
+|                   | vm_map_ram_test: p:1, h:0        |       (R) 30.67% |    (R) 27.09% |
++-------------------+----------------------------------+------------------+---------------+
+
+> Those results are overall very similar to the original ones.
+> micromm/fork is however clearly impacted - around 4% additional overhead
+> from set_memory_pkey(); it makes sense considering that forking requires
+> duplicating (and therefore allocating) a full set of page tables.
+> kernbench is also a fork-heavy workload and it gets a 1% hit in system
+> time (with batching).
 >
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index cd0e2976e268..7ec1f9afc081 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -8227,9 +8227,12 @@ static void amdgpu_dm_connector_ddc_get_modes(struct drm_connector *connector,
->   {
->   	struct amdgpu_dm_connector *amdgpu_dm_connector =
->   			to_amdgpu_dm_connector(connector);
-> +	struct drm_display_mode *mode, *t;
->   
->   	if (drm_edid) {
->   		/* empty probed_modes */
-> +		list_for_each_entry_safe(mode, t, &connector->probed_modes, head)
-> +			drm_mode_remove(connector, mode);
->   		INIT_LIST_HEAD(&connector->probed_modes);
->   		amdgpu_dm_connector->num_modes =
->   				drm_edid_connector_add_modes(connector);
-
-What if you update the connector with the drm_edid data and skip the 
-INIT_LIST_HEAD instead?
-
-Something like:
-
-if (drm_edid) {
-    drm_edid_connector_update(connector, drm_edid);
-    amdgpu_drm_connector->num_modes = 
-drm_edid_connector_add_modes(connector);
-[...]
-}
-
-Isn't it enough?
-
-Melissa
-
-
+> It seems fair to conclude that, on arm64, setting the pkey whenever a
+> PTP is allocated/freed is not particularly expensive. The situation may
+> well be different on x86 as Rick pointed out, and it may also change on
+> newer arm64 systems as I noted further down. Allocating/freeing PTPs in
+> bulk should help if setting the pkey in the pgtable ctor/dtor proves too
+> expensive.
+>
+> - Kevin
+>
+>> Benchmarks:
+>> - mmtests/kernbench: running kernbench (kernel build) [4].
+>> - micromm/{fork,munmap}: from David Hildenbrand's benchmark suite. A
+>>   1 GB mapping is created and then fork/unmap is called. The mapping is
+>>   created using either page-sized (h:0) or hugepage folios (h:1); in all
+>>   cases the memory is PTE-mapped.
+>> - micromm/vmalloc: from test_vmalloc.ko, varying the number of pages
+>>   (p:) and whether huge pages are used (h:).
+>>
+>> On a "real-world" and fork-heavy workload like kernbench, the estimated
+>> overhead of kpkeys_hardened_pgtables is reasonable: 4% system time
+>> overhead without batching, and about half that figure (2.2%) with
+>> batching. The real time overhead is negligible.
+>>
+>> Microbenchmarks show large overheads without batching, which increase
+>> with the number of pages being manipulated. Batching drastically reduces
+>> that overhead, almost negating it for micromm/fork. Because all PTEs in
+>> the mapping are modified in the same lazy_mmu section, the kpkeys level
+>> is changed just twice regardless of the mapping size; as a result the
+>> relative overhead actually decreases as the size increases for
+>> fix_size_alloc_test.
+>>
+>> Note: the performance impact of set_memory_pkey() is likely to be
+>> relatively low on arm64 because the linear mapping uses PTE-level
+>> descriptors only. This means that set_memory_pkey() simply changes the
+>> attributes of some PTE descriptors. However, some systems may be able to
+>> use higher-level descriptors in the future [5], meaning that
+>> set_memory_pkey() may have to split mappings. Allocating page tables
+>> from a contiguous cache of pages could help minimise the overhead, as
+>> proposed for x86 in [1].
+>>
+>> [...]
 
