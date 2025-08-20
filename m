@@ -1,199 +1,179 @@
-Return-Path: <linux-kernel+bounces-778640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F80B2E85A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:53:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BB6B2E85C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFD3E188B357
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4967188B3D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2A82D979A;
-	Wed, 20 Aug 2025 22:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7933E2DAFCF;
+	Wed, 20 Aug 2025 22:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IQnlKpaf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gl4lgZFL"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC6A2BE7B4
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 22:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAF12BE7B4;
+	Wed, 20 Aug 2025 22:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755730390; cv=none; b=rBbY3fggk+h8/49AHl2tUgev1QQH5/RFPv6CttKIN43uE3sAXnK6ZTkdvXtgp6F5/KoYGw0kX22/IwOWJnzDGZ1zP2+CzysLcnFjpmFxzc9PnyMSkYUSBWZ7wvkxhV+SH4S+suVi2dJZSE3MH2eIfE/zhcRc6OMlo1rwRA42rB4=
+	t=1755730454; cv=none; b=GGGvQrvuw28SOWYkv3kssEii58/61csq+NctZNDpDretb6HtgkN1+638eg3Tp98yl9mlFTUSqq8QusJm8l3MSj7ZgF1Xl26vVQtB6ISTVYRZjcprm+6Rj7nyc8obXXFgKgXwwKHZO7D0GVhI6WZ1c/4FV7ueawejpsGeP2Df0fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755730390; c=relaxed/simple;
-	bh=xDRP95yA4J3OJjOVL49YPRpnANZi0tgCgOIZTfJwTVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4IK3DRav2/hSdAb4/Dt8lQZ8pH26jTWpxezfahicy7jxpEB+wtIpAl+MQlj2tPT7EzMbqNCrVj/EwDlfOMiEtXxl7SdURLVWIkG9Va3K9GdGYylrZPEJwG5OCSNRHuJVggJJP1JKZYlgqJwaU+1xjbLaFz8+6ONjR2mptmLxc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IQnlKpaf; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755730388; x=1787266388;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xDRP95yA4J3OJjOVL49YPRpnANZi0tgCgOIZTfJwTVw=;
-  b=IQnlKpafNTFDw9D/L1+jjTlITT0RKp8a4VizwLWR6pbw4ANgiimOObTm
-   9WMMna/qQKX9OmDXt1GnEL5XvcIeG07ajAsXAKO3Aa6rFxrWYHWJHMi6t
-   g7Z67o97sUfalyGmWnAbzSQRi+1JaBjILAL31UmUlCIhCDmd0o7OfJUmr
-   uBkSQNORq1ey+zZ7QgrLbo/1tYlT5refklp7wz5aPYJd7RDYgXsQlHSCL
-   YcCkXQ0F+rKkUjlkFCMxDoj1M7g3Toh15vF0Ktirqd12ZeRagpqkGI0Xw
-   f1xZqDuCYOlx2xz5RIykmS61MePgwWJILUQxGc4tNkJx5CLROqRdb7S/s
-   Q==;
-X-CSE-ConnectionGUID: X+obE+4aQp6UAXhKWZMYVw==
-X-CSE-MsgGUID: 3UopeFlCRJST38oCVVca0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58079339"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="58079339"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 15:53:05 -0700
-X-CSE-ConnectionGUID: xft/3dHuSQ2BVAfciI/AKw==
-X-CSE-MsgGUID: mT6JVZh0TluWdr+Zal7KOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="172674938"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 20 Aug 2025 15:53:02 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uorfv-000Jip-1I;
-	Wed, 20 Aug 2025 22:52:59 +0000
-Date: Thu, 21 Aug 2025 06:52:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org,
-	david@redhat.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	gaoxiang17 <gaoxiang17@xiaomi.com>
-Subject: Re: [PATCH v2 1/1] mm/cma: add 'available count' and 'total count'
- to trace_cma_alloc_start
-Message-ID: <202508210642.kUloVYxD-lkp@intel.com>
-References: <d30f91137e3a296152463ea65474e1ca56f4eda3.1755654367.git.gaoxiang17@xiaomi.com>
+	s=arc-20240116; t=1755730454; c=relaxed/simple;
+	bh=nxwUi+vma0gxF8jaxzpDP96ejlHXfqlhgoCKUq98E+A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cefHX90kP48RIkfLOofVXu8f3C9yWI37PLNwEmkbXTeoxTMc0/tAoWb5ks8qRAifLIQQAA1vA5cCbDpjzCkOch+BYIDrNVHYnBC1w7FTOwjHFkVHnTw5tXaGVHp8PBPKVSMJVgmgXSEcIiygUwFvi1qBb63pLDdR9ZUAIJ6Nb7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gl4lgZFL; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24458195495so2347255ad.2;
+        Wed, 20 Aug 2025 15:54:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755730452; x=1756335252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+v+ZtPegRwXYIddqayc8WLX+z8QS5ISVjLMRUJjSTvY=;
+        b=Gl4lgZFLd8UZJLLzdgsc7Lm9oSD9cB2Nq1TMfGgf0VYsDli+ioPZ9GePdnkzgxpYN+
+         KQpPsTM24kviqo2lWZnnvw6djFl6914vsnZ6ibNjHJBv4K5+3JdF2bT9ebwBpuYvJ8DL
+         luCJ7tM+otHos3/ZIYzOljeex3CCHEX7ta/ypp+cTQeDc81LF8br6x3jw9GqjUTPsdbW
+         UarDWnCxU+XWoNq+9/UO/1pcq2UzJPSTJyt2K8OQzeLZ+zqDoIPq1iixoDf/kWjD42Hm
+         q4n3c0uV0JmcYaSf4A3lO19QriqqGjc3HN8APeaXq6gijOHkdLlk47xRYUeTyF7so2Vt
+         VEWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755730452; x=1756335252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+v+ZtPegRwXYIddqayc8WLX+z8QS5ISVjLMRUJjSTvY=;
+        b=dJ8Z5rmLeq9ggBLEcslqPB2uRCdlMpp5ElgVE/XmzkWryyUuvWCTjTn4MFzM1MsY2N
+         bcwvttNzcWLjw8rCmSBQnH5XQ+a0utu2a49FyKsuFYecWBEzXHaYzszisj0ItVG+JwTE
+         OlJ7VYQYcIPhcUeRVTeZ9lzwnB1vahXN04GKflCUGgmNENyJFtIq6wIARMHuNCvnd+ck
+         afasYG/oAZu9d/RN7mt80XnwBeLWjNUpdvYrqiiOjJOc4HG3+C6yAw8FBQAF6QLQcv47
+         KlPaGfIIYyn/TNeOywicQx4CMcUJh6rBAyM4xBS6+pE1/kQ/hNajDovsFHtv+x2rRkLK
+         01Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdO2mwOfxkfgOmOoAafvQeQRk6sq2BC3pzaXsuf1/8BkSty5x/TUzgzMZ/7w69GgwMmBlcoQLmGcEelyOCpNVi@vger.kernel.org, AJvYcCUyFEWEHFs5mFaQHFlKgcrIrnYFUrkkHwCcwOKJW0krhvOBCPl/TWE4TVENUFKB0iNTKie9Bz3a@vger.kernel.org, AJvYcCWU1VBGOd42PwdN97lA1ZCiZAi+bCTj1x6T0MIAedFDfP6J7WqntDnCsg5dJR/c0CRDu4PgU1J/M2NmBHG2@vger.kernel.org, AJvYcCX++T3zdAyDA8fI0oqldnw+eyLsZcNE2nviMY8WXChY+iApo9WNkTIi2tIRW3E2ExBGvok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbBmo9drmYq2F3dNnJxXEypGSQf7HQOjFbDELuHU1SDerAX853
+	Xsv2d35qBYF1Qpkx6mtolb0E03eIkVaOIbTT3OCVgWG6HtXxZ0s8OhiFImTph0LvlVsplsaykgJ
+	WwvO3OJp4VsSiWqC3e30uNq2oBdN9Pq4=
+X-Gm-Gg: ASbGnctenCypYglXvIBLM9TjVQ/QyGKnCAEN2dHHw8LeWxn0lTqHAVke9h51LN2q2Fg
+	GdR2ZnvAz6uxq5dRPi/xMC9ZyKysEWn8an2e8BkLMylW48yx+JkVGUhXE9NcQHWMV3kPhB+f4cG
+	PWCsbEc57zMuPZGh/sjsZ/m4ak0zu1zrZllQ6dBNXDtAiWT6fE2dGNWqVfPGIOiG6rLrevl8slG
+	asU/bgA7rOtUYpnxHwDUK9kdRpT1m1/80cCQowSKfDc
+X-Google-Smtp-Source: AGHT+IHsYq1/G3bkWo2LTB+Wjq6BjQc3MS0ahLPsXURmjYsCiKDmAvwNrGYkktwC5RFWrRVV25fqel2mh6B7rbrx6mk=
+X-Received: by 2002:a17:902:f68b:b0:240:2145:e51f with SMTP id
+ d9443c01a7336-245febe11dcmr6286575ad.3.1755730452431; Wed, 20 Aug 2025
+ 15:54:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d30f91137e3a296152463ea65474e1ca56f4eda3.1755654367.git.gaoxiang17@xiaomi.com>
+References: <20250819033956.59164-1-dongml2@chinatelecom.cn> <20250819033956.59164-4-dongml2@chinatelecom.cn>
+In-Reply-To: <20250819033956.59164-4-dongml2@chinatelecom.cn>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 20 Aug 2025 15:53:56 -0700
+X-Gm-Features: Ac12FXx-fO5PKvBgzD_sLr5b2q6BW5ewlWVsvn9PgVglGjlHt1qy_PlT4iHOnWc
+Message-ID: <CAEf4BzZOC6Zyo9sikPJH+0Xz=aCbx=dBM_RksYZMaZM4ndR+OA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 3/3] selftests/bpf: add benchmark testing for kprobe-multi-all
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, 
+	shuah@kernel.org, davem@davemloft.net, kuba@kernel.org, hawk@kernel.org, 
+	nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com, 
+	justinstitt@google.com, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Xiang,
+On Mon, Aug 18, 2025 at 8:40=E2=80=AFPM Menglong Dong <menglong8.dong@gmail=
+.com> wrote:
+>
+> For now, the benchmark for kprobe-multi is single, which means there is
+> only 1 function is hooked during testing. Add the testing
+> "kprobe-multi-all", which will hook all the kernel functions during
+> the benchmark. And the "kretprobe-multi-all" is added too.
+>
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+>  tools/testing/selftests/bpf/bench.c           |  4 ++
+>  .../selftests/bpf/benchs/bench_trigger.c      | 54 +++++++++++++++++++
+>  .../selftests/bpf/benchs/run_bench_trigger.sh |  4 +-
+>  .../selftests/bpf/progs/trigger_bench.c       | 12 +++++
+>  tools/testing/selftests/bpf/trace_helpers.c   |  3 ++
+>  5 files changed, 75 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftest=
+s/bpf/bench.c
+> index ddd73d06a1eb..29dbf937818a 100644
+> --- a/tools/testing/selftests/bpf/bench.c
+> +++ b/tools/testing/selftests/bpf/bench.c
+> @@ -510,6 +510,8 @@ extern const struct bench bench_trig_kretprobe;
+>  extern const struct bench bench_trig_kprobe_multi;
+>  extern const struct bench bench_trig_kretprobe_multi;
+>  extern const struct bench bench_trig_fentry;
+> +extern const struct bench bench_trig_kprobe_multi_all;
+> +extern const struct bench bench_trig_kretprobe_multi_all;
+>  extern const struct bench bench_trig_fexit;
+>  extern const struct bench bench_trig_fmodret;
+>  extern const struct bench bench_trig_tp;
+> @@ -578,6 +580,8 @@ static const struct bench *benchs[] =3D {
+>         &bench_trig_kprobe_multi,
+>         &bench_trig_kretprobe_multi,
+>         &bench_trig_fentry,
+> +       &bench_trig_kprobe_multi_all,
+> +       &bench_trig_kretprobe_multi_all,
+>         &bench_trig_fexit,
+>         &bench_trig_fmodret,
+>         &bench_trig_tp,
+> diff --git a/tools/testing/selftests/bpf/benchs/bench_trigger.c b/tools/t=
+esting/selftests/bpf/benchs/bench_trigger.c
+> index 82327657846e..c6634a64a7c0 100644
+> --- a/tools/testing/selftests/bpf/benchs/bench_trigger.c
+> +++ b/tools/testing/selftests/bpf/benchs/bench_trigger.c
+> @@ -226,6 +226,58 @@ static void trigger_fentry_setup(void)
+>         attach_bpf(ctx.skel->progs.bench_trigger_fentry);
+>  }
+>
+> +static void attach_ksyms_all(struct bpf_program *empty, bool kretprobe)
+> +{
+> +       LIBBPF_OPTS(bpf_kprobe_multi_opts, opts);
+> +       char **syms =3D NULL;
+> +       size_t cnt =3D 0;
+> +
+> +       if (bpf_get_ksyms(&syms, &cnt, true)) {
+> +               printf("failed to get ksyms\n");
 
-kernel test robot noticed the following build errors:
+we seem to be using fprintf(stderr, "...") for emitting errors like
+this (at least in some benchmarks, and it makes sense to me). Do the
+same?
 
-[auto build test ERROR on akpm-mm/mm-everything]
+> +               exit(1);
+> +       }
+> +
+> +       printf("found %zu ksyms\n", cnt);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiang-Gao/mm-cma-add-available-count-and-total-count-to-trace_cma_alloc_start/20250820-105438
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/d30f91137e3a296152463ea65474e1ca56f4eda3.1755654367.git.gaoxiang17%40xiaomi.com
-patch subject: [PATCH v2 1/1] mm/cma: add 'available count' and 'total count' to trace_cma_alloc_start
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20250821/202508210642.kUloVYxD-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250821/202508210642.kUloVYxD-lkp@intel.com/reproduce)
+stray debug output?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508210642.kUloVYxD-lkp@intel.com/
+> +       opts.syms =3D (const char **) syms;
+> +       opts.cnt =3D cnt;
+> +       opts.retprobe =3D kretprobe;
+> +       /* attach empty to all the kernel functions except bpf_get_numa_n=
+ode_id. */
+> +       if (!bpf_program__attach_kprobe_multi_opts(empty, NULL, &opts)) {
+> +               printf("failed to attach bpf_program__attach_kprobe_multi=
+_opts to all\n");
+> +               exit(1);
+> +       }
+> +}
+> +
 
-All errors (new ones prefixed by >>):
-
-   In file included from mm/cma.c:31:
-   In file included from include/trace/events/cma.h:138:
-   In file included from include/trace/define_trace.h:132:
-   In file included from include/trace/trace_events.h:468:
->> include/trace/events/cma.h:56:12: error: no member named 'count' in 'struct trace_event_raw_cma_alloc_start'
-      56 |                 __entry->count = request_count;
-         |                 ~~~~~~~  ^
-   include/trace/stages/stage6_event_callback.h:133:33: note: expanded from macro 'TP_fast_assign'
-     133 | #define TP_fast_assign(args...) args
-         |                                 ^~~~
-   include/trace/trace_events.h:44:16: note: expanded from macro 'TRACE_EVENT'
-      44 |                              PARAMS(assign),                   \
-         |                                     ^~~~~~
-   include/linux/tracepoint.h:139:25: note: expanded from macro 'PARAMS'
-     139 | #define PARAMS(args...) args
-         |                         ^~~~
-   include/trace/trace_events.h:435:16: note: expanded from macro 'DECLARE_EVENT_CLASS'
-     435 |                       PARAMS(assign), PARAMS(print))                    \
-         |                              ^~~~~~
-   include/linux/tracepoint.h:139:25: note: expanded from macro 'PARAMS'
-     139 | #define PARAMS(args...) args
-         |                         ^~~~
-   include/trace/trace_events.h:427:4: note: expanded from macro '\
-   __DECLARE_EVENT_CLASS'
-     427 |         { assign; }                                                     \
-         |           ^~~~~~
-   In file included from mm/cma.c:31:
-   In file included from include/trace/events/cma.h:138:
-   In file included from include/trace/define_trace.h:133:
-   In file included from include/trace/perf.h:110:
->> include/trace/events/cma.h:56:12: error: no member named 'count' in 'struct trace_event_raw_cma_alloc_start'
-      56 |                 __entry->count = request_count;
-         |                 ~~~~~~~  ^
-   include/trace/stages/stage6_event_callback.h:133:33: note: expanded from macro 'TP_fast_assign'
-     133 | #define TP_fast_assign(args...) args
-         |                                 ^~~~
-   include/trace/trace_events.h:44:16: note: expanded from macro 'TRACE_EVENT'
-      44 |                              PARAMS(assign),                   \
-         |                                     ^~~~~~
-   include/linux/tracepoint.h:139:25: note: expanded from macro 'PARAMS'
-     139 | #define PARAMS(args...) args
-         |                         ^~~~
-   include/trace/perf.h:67:16: note: expanded from macro 'DECLARE_EVENT_CLASS'
-      67 |                       PARAMS(assign), PARAMS(print))                    \
-         |                              ^~~~~~
-   include/linux/tracepoint.h:139:25: note: expanded from macro 'PARAMS'
-     139 | #define PARAMS(args...) args
-         |                         ^~~~
-   include/trace/perf.h:51:4: note: expanded from macro '\
-   __DECLARE_EVENT_CLASS'
-      51 |         { assign; }                                                     \
-         |           ^~~~~~
-   2 errors generated.
-
-
-vim +56 include/trace/events/cma.h
-
-    40	
-    41		TP_PROTO(const char *name, unsigned long request_count, unsigned long available_count,
-    42			unsigned long total_count, unsigned int align),
-    43	
-    44		TP_ARGS(name, request_count, available_count, total_count, align),
-    45	
-    46		TP_STRUCT__entry(
-    47			__string(name, name)
-    48			__field(unsigned long, request_count)
-    49			__field(unsigned long, available_count)
-    50			__field(unsigned long, total_count)
-    51			__field(unsigned int, align)
-    52		),
-    53	
-    54		TP_fast_assign(
-    55			__assign_str(name);
-  > 56			__entry->count = request_count;
-    57			__entry->available_count = available_count;
-    58			__entry->total_count = total_count;
-    59			__entry->align = align;
-    60		),
-    61	
-    62		TP_printk("name=%s count=%lu request_count=%lu total_count=%lu align=%u",
-    63			  __get_str(name),
-    64			  __entry->request_count,
-    65			  __entry->available_count,
-    66			  __entry->total_count,
-    67			  __entry->align)
-    68	);
-    69	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[...]
 
