@@ -1,188 +1,157 @@
-Return-Path: <linux-kernel+bounces-777253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E265CB2D767
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:01:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD66CB2D769
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D4321BA737B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13EB1C20DD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523BF2DCBF4;
-	Wed, 20 Aug 2025 08:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED772DA76A;
+	Wed, 20 Aug 2025 08:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="OjvuN6b/"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013058.outbound.protection.outlook.com [40.107.44.58])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JdeMVuSl"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF85D2DC327;
-	Wed, 20 Aug 2025 08:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680291; cv=fail; b=BHHFRoFaQBVJj/cfzNhQoHtDaxo2L6g3WgpM7HHUrpBCmEy23Ne3guEBSVQSHJOMoZIjkXQDKBb0Z+7HusIa+WhIuFic8uNkCT61cCpiGepXmTI4FlGeTOwPVjYW7gdRNxgymyR7chpRJtP7ohRH/jFna55sqPHg017a3GfOztw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680291; c=relaxed/simple;
-	bh=oNo5IN42N2b3TDB3n1mIY3ZK4QgKz7ccBp+nhPO9nHI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Vglx/0wu6p2FwZFHgd/odkjwldmvfbHSkkGhXLcvDOce2lvMwXnyKyYDfn/J10H8DjihyvCcWx/yTUxOUKNRmP6Q4s28kpFKJJBsbkydp0ckHm6tOIGtZrPwHdTLuNuoHhRgcptaSM16NgAWKdMCctGWjeo6SZqr7X/XWbdhCrs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=OjvuN6b/; arc=fail smtp.client-ip=40.107.44.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hql2wZGaMe9qCqdLmt2IUhxi0sOMNOP7hKzM6PPgi0rI+0WXVeoAJk+LiVs5XSLMw9YnjpC30io/Kg6PN3KuP+B8I6y5wQMi44rJS1Vk9paRQZwkiFtto1bIPYImZcEgn1BUx8K2sdDcdgCl2G6jaTLkN84x/KOjqGj7hgDZdEl9U8PBWSNXjCFE65558hePuFF/3panfbqd7qB8zGQLGtYcK44hpUERyGA+xj+qvwg+CAQnvdWt1jTcNc6biywGEZQR6IGlXi0mV+3Fsz+D5F0NJ+6b+z6CZHzp9GpisH/B/dE2QBn4QykLCdZ/zujlU91wa0RoEBFTiZbh1czQhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9HpDExpdrHtNHippJS0aqqJYZBwj09KsbAWuS2g/RC8=;
- b=ZUUV4vR8BkN6p9FzsqR0KAlOGWXEmoOtghx7JAx9xhRWkH9q5j6UMNZtoFCgHc1pj9pzHKga3aHjjjMvKRmBYZ4CBcMfAUa+N/AQxtE62Viw0qlj7I66GoluAt62z5UlmOqkqXd49+tsrFInrlzsrtAXYIgGB+aVYFf/DUgMkMqc/cT5wwn/SDyEpww2QbpnKD1c3PSLKDLh4/hzQqem+RYzz1kcwlEQww2KaINtGYpgaTS6+845KWnyPld16Re4zLyFx3MuwxMwWP8fi9qMi1PKfHYbSqceqJCBkEk9qaQN+rPfbNx+9w6h+vbVKchPVArdwTve5+1NQQL1NTwlPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9HpDExpdrHtNHippJS0aqqJYZBwj09KsbAWuS2g/RC8=;
- b=OjvuN6b/FsKX92uHDkxzKysdGWhcprYMGnmHS5O7Km57Zv9r5jDD/JhF1xxJU4T/YBznptN0vNS50kxn2DvGwzduMAy+2yfmu1WxHVKzWi7w3O7rRE0eJHxf3P9LW+InKW9/8IAObu0luBD6hjhkfLumGLx2Df7YagxZ0dKwxlPyc6bcoYujG7ry+LTNGHPqdksQgee56ks1IhtT19zrrptOdAexNfWLjEU+08lU3tzls5VMIJ/1aMG0G3/sGv3TcQYfGSlqxdKFc06ZS/voEo4D5CWIVLqcsKMymSVfwimoEQ4MQbxgtckh6UeGf4Cs9WRmZKYD3d1vpn6DC3W+IQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by TYZPR06MB5664.apcprd06.prod.outlook.com (2603:1096:400:284::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Wed, 20 Aug
- 2025 08:58:03 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9052.012; Wed, 20 Aug 2025
- 08:58:03 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org (open list:LANTIQ / INTEL Ethernet drivers),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH 2/2] net: dsa: Remove the use of dev_err_probe()
-Date: Wed, 20 Aug 2025 16:57:49 +0800
-Message-Id: <20250820085749.397586-3-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250820085749.397586-1-zhao.xichao@vivo.com>
-References: <20250820085749.397586-1-zhao.xichao@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0131.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::35) To KL1PR06MB6020.apcprd06.prod.outlook.com
- (2603:1096:820:d8::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0185D35962;
+	Wed, 20 Aug 2025 08:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755680328; cv=none; b=m5Uv0Xjy4kXZUtGgxq5Y/V3WLxP1x6y26u8PaqxYQf58sJFrir9stAHtq+kzz+yxqUFKQAOVkJt5VccWjy4UJyG3h0dxE3irOpl/BNwAdbcqkCWphxGdPjRdfIay2cJRMdtASFNAovpp3OqysQZ5LYMUfaGwLn9MQ4FWtn7aLLw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755680328; c=relaxed/simple;
+	bh=r0C3Mk1B5D3Cv+GP4pImhjTeqYVCdUTLE5Mmes7Xwd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r7Wnx96MZw/xuVHoHAFMdOg+kmHzdi59ZmKPVmxfmUpSTTYgcCO5UYXB0C73kQffv5mWNSFF2Iab9tBr/zSeDxa9+wafuktPCexks2BRBjVPj4t3Dhctu0hmpd0B0JJiJQtAmMle2CsAkPG0xKRTIwhjni/Hk9RUsVSgsbQQmcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JdeMVuSl; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57K8wd1W212703;
+	Wed, 20 Aug 2025 03:58:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755680319;
+	bh=JFLgPoqrC3YAfSg6/noYnK5qJLb/uF0fn468QJqqtzY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=JdeMVuSlb23fPfXRJaibQ2wu0t7ytqpcXFHWmERcN8I5Hy9iVn9ouVSv4AKGGNm4f
+	 7sNgkHrn4fBqQsTQNNPyQHCNZLJ5SUKIAV7VpUv/Mr/OPZPbUUv+hxpax2xE9Ejbcd
+	 eROhwJgJAsz2mVT3ixvL08sn5SpE1FY14yrYT2F0=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57K8wdvX1674115
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 20 Aug 2025 03:58:39 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 20
+ Aug 2025 03:58:39 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 20 Aug 2025 03:58:39 -0500
+Received: from [10.24.69.191] (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57K8wZTf257008;
+	Wed, 20 Aug 2025 03:58:36 -0500
+Message-ID: <d1d70f62-fb3d-4af5-936e-b59491ee1c34@ti.com>
+Date: Wed, 20 Aug 2025 14:28:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|TYZPR06MB5664:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf9b1f07-2150-4469-d5c7-08dddfc7aba2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7tNILvXAYccnhHQ0wtkBh8TwIpCwEjqQJ/ynnoxFoVA3P3z5afYZnUj9eOWU?=
- =?us-ascii?Q?k9GChu9sjIsrhOKcm8XYS7YTIdAxIkTW/FWFm7IwuWE08eiStOxa7d66CXH6?=
- =?us-ascii?Q?cqqGP6Nk/MGMEDdTq7GvYukSa73ak78wMazx0TEGCOx+SN9uq9TQiNDQJSc4?=
- =?us-ascii?Q?DlDajvfBXYqB4lZG4LSBLKNoulQlxf4H8dnWf++5ZJf9wJXzGg744GmFKZIy?=
- =?us-ascii?Q?XpVTF6md3herydvb6KiTJ2FQibfYhbR34JDFPXunyeY5PcsIcRMjqHTPyMPU?=
- =?us-ascii?Q?rEo5yNG9iO6KZcsVeBU4y/q8NItSgzi/3wK1VmQB8HKLO4Jrwv/VXU/nX0ba?=
- =?us-ascii?Q?ZdIs/6if2ljgUljp8GQ7nLDjxMamT6jfdWcb71RcXQbdJT71PueXOivCV8rS?=
- =?us-ascii?Q?CRSaiETCd22i+kcPPimlHKjd4Btsd3hm8fFE83BA4NmsJGD7//pixj/8TcH/?=
- =?us-ascii?Q?AgPB0TaIXtcbpceT2pWgvpuSumGeWe4w24QMB7PMEMt9KKZQLSU5VwwsHdc9?=
- =?us-ascii?Q?b8tLp3oycKIOhiom71W5t9EupJrJjDp0tlYR9COYmeCzcRGqw4oic9UZ+Fqi?=
- =?us-ascii?Q?XxEhraZC/rnKQCrlNXfiqGJ1yOE2T+lmyy9dcubZFU+BjXxABpvj4qFnpWjO?=
- =?us-ascii?Q?ODajXMxt2qA5I8Mkk9zIIG+3sOi7WImHYfN7a06OtDewZ6WKUkV9uDT1N4oF?=
- =?us-ascii?Q?wIjamXANTBCYbo6NX4XvKaJuM60MC8LTJCxE5UyUwm0ox3BL/yKvLaqc6Knl?=
- =?us-ascii?Q?ocO8tbMt4G6RuLMqWwOrPXGIT62dW6o/PHCf1itFrdKgTzg0j1LK2nAqcS7y?=
- =?us-ascii?Q?QoaLij5Ka8grLZZM88BL2ZKKdb6e/cgu0bTtzJG63Cj5sY3oewEH2CJj5+yo?=
- =?us-ascii?Q?OggZViUNGi9VpA3mlOEYhVxi0V6CYGysKsvIN8GDw3ghac+MTVaZ/7u9Czcc?=
- =?us-ascii?Q?WFBOda4U+KLsSD5sER+Ib/1Gt67UH7i2mvdZebTJyVyclkDZXzDlZEG3pVe1?=
- =?us-ascii?Q?vRxPh/pbrLNTZy9G6k4gpy/TFohRcQdA0Sv+mQPrz+K7TgqM3L1QTSbInZhG?=
- =?us-ascii?Q?qWpd/tJ+g+Z0b00+CJ3N0UogTFRIzQCXCfJkewIqGYDbGTSTKVL+9PhbAel2?=
- =?us-ascii?Q?oGtixfOwyEApWOrXCsTTLq/OiWjfOi5cSTl/ij8VfJq+8kIGTp8XBuee/Qou?=
- =?us-ascii?Q?KTQPuPPnD7BC8p/q1v6fonFF0NcT1/0OS2iYbYUiVQbGWWSNk6vVPopGm0kG?=
- =?us-ascii?Q?0WcJvjZpM9ZrGaHYIDpWNzP4nbfE2esC3Ci0qWzREsoXYWJZbIgFx1Neidhy?=
- =?us-ascii?Q?TxK65EUx6ot5TaObjlB6nPaJiu5PjFmOvkLFavoKG0CAvXRN0h+OVK7HMUN0?=
- =?us-ascii?Q?12vLVqtivoVvxGHr3ilEDAur/ZtJoab59vtQ/iePEy+/DjTTtXhhpZDqHTu5?=
- =?us-ascii?Q?J6Yc3GuA0bdgUuSA/KHow4x8K8hqyhlnBLX4i+13cXXXoiS0EsVXww=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5Tka94ohCdZjiQg+CJz7YJMwGIrmKkQ+upw9TEUnFX4Q38JoZ18FBuEa963k?=
- =?us-ascii?Q?tYOVRe0dGQGAhN7Q2G5l+LT0MyivHNasEyVtj2NK7bL/z0kyGJBwAFElBpE7?=
- =?us-ascii?Q?+WEQo9riqs7Eh7Lb3d2zI5M73DBZCa/U0sgru95ZVkOP0miH0pE94cKu9M5T?=
- =?us-ascii?Q?OxP8hbTEybKs3UEY+P97i0QFBz+57/0325yFyGjYsQocDZv95mvIkY45JVLi?=
- =?us-ascii?Q?Q9JuNg/R6nn9QODqkDpdnVwAceMGRoK8Y9KM/UVBAtJWm9IHuVu0BY+JwjB1?=
- =?us-ascii?Q?qk4EHHVoNDDjoFk37gK910YdCnDXsCx0MczQvtjPx0afmCPN60kFPUzj+aoi?=
- =?us-ascii?Q?9zcgINT7cypuU+kBO3Zb+HoO/i66E6vhY71g54DSh2SLygvsKPLWpEWlLhRD?=
- =?us-ascii?Q?GQ6VGBxcJqGlct0moMSwApmEfP2L9oY1/XdtpAD1750zmOUhxcz077iFBC8X?=
- =?us-ascii?Q?XFx4J+VbeQxaL9LriQHJ1yAJlfEhytHXo7vbuNnJKB+PQO9OGpZjoqnIaJVr?=
- =?us-ascii?Q?PPCgEcLz/ZuCBUx3S+033WLsa3OBQuTjAhoPod/DV9GlKcLJT6CIK1iPGy/+?=
- =?us-ascii?Q?xbrksMVa9V2jmtF2AfU/KR0x34SWi7r4PQ4IgUV/Oorng3d8HcJ93oIu83WW?=
- =?us-ascii?Q?ksJQOHnSbT5yFkDAOhZmli+SON9LKB7cJNDcKqDk9GzCY8OeOD9UpwdxA3on?=
- =?us-ascii?Q?tGfDpRupazmVUwmQWHHf58PugntaMkWaRsJRBLyWq4S81lAmuMaIgLd0VxHq?=
- =?us-ascii?Q?Z7e9KfG7nVe3/sQ5gdE1cKJbuII53a8bCWnObb5jPTt0u1/uzeJHbUYORq8z?=
- =?us-ascii?Q?LLkcVs8J7TNi7S/h/q6B04trzgUD1zMQCIxQsZhSSOcu9Uh7AxIis2WdW3bA?=
- =?us-ascii?Q?RobD0Cyi4EAf3ULvXLFdCXvziJCkB1dvXe6g70Ey4J9+sE136AbeHjLoWWLZ?=
- =?us-ascii?Q?bQqgZS9PKKJJFrAzoirAKT+0EYfv2uL/r9eSu5lFmZynD6M47L2Ptlqk5Snw?=
- =?us-ascii?Q?UFL4bqzt2gO2EWDY+MZCpvRKT+/zKNnvpUII15maVVCq8fh2PB8rzefqfG3k?=
- =?us-ascii?Q?0PvlrXC3UoJxHbdCZE4vk6LyMDFiV7bG/IM9RJECczNom+b6CgS2+CWjLjm/?=
- =?us-ascii?Q?+OKq4CViQVqo9Na2EOLoNeWm3pzJkurmCZRkNopwGX/H2sHvpjzO5zqFlHDb?=
- =?us-ascii?Q?ySAwVBe1V1o58ftWdcG1ftsk9hr4h0CydNzQBxMJEtSvtRbsOp57INz4ZXn8?=
- =?us-ascii?Q?jLGBU4grNMwl8OWk8RTg9/ByVZGyRoE9Nk0hL+9oGbivy6jinkuncmm86/aA?=
- =?us-ascii?Q?72ymQ3tuyO4K3dQiqUl5uIghqnZQSPTElFSbTMn9OmsOfH65P8/XbOBs2TqS?=
- =?us-ascii?Q?+4wBqRu1lrWmWgpvoXrz8iB0eLWPnim6gNw8kht7AK3Hstv01tTU+SXQNhXJ?=
- =?us-ascii?Q?o2pODmM0uyWznAoywpcNKyO8NtJ8k4XzXs+G2Y+a7a61IlR6W7oilGkA7MUa?=
- =?us-ascii?Q?oxIgGKTz7ahLGmWF0VkpgYQqP+5qKljubFDqGx8qNz540bA6MAGS9c4XnpKn?=
- =?us-ascii?Q?WYpHJvZEWozES4OB+S7yg0Pq5O6VgqLNxlqjif2B?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf9b1f07-2150-4469-d5c7-08dddfc7aba2
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 08:58:02.9596
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BJjpFwaYAlcCrTcc1Jp0UrjGaUxtZtwQ7CxoySAFUpDfZfNRTp45K8zZDHUpI/tJauNaNhYWR05yPl//IF3qiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5664
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] crypto: ti: Add driver for DTHE V2 AES Engine
+ (ECB, CBC)
+To: Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        Kamlesh
+ Gurudasani <kamlesh@ti.com>,
+        Manorit Chawdhry <m-chawdhry@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>, Vishal
+ Mahaveer <vishalm@ti.com>,
+        Kavitha Malarvizhi <k-malarvizhi@ti.com>
+References: <20250819065844.3337101-1-t-pratham@ti.com>
+ <20250819065844.3337101-3-t-pratham@ti.com>
+ <e40d056b-731d-4e33-9347-20c0a7665ede@gmail.com>
+Content-Language: en-US
+From: T Pratham <t-pratham@ti.com>
+In-Reply-To: <e40d056b-731d-4e33-9347-20c0a7665ede@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-Therefore, remove the useless call to dev_err_probe(), and just
-return the value instead.
+On 19/08/25 15:26, Ovidiu Panait wrote:
+> Hi,
+> 
+> On 8/19/25 9:12 AM, T Pratham wrote:
+>> Add support for ECB and CBC modes in the AES Engine of the DTHE V2
+>> hardware cryptography engine.
+>>
+>> Signed-off-by: T Pratham <t-pratham@ti.com>
+>> ---
+>>  MAINTAINERS                       |   1 +
+>>  drivers/crypto/Kconfig            |   1 +
+>>  drivers/crypto/Makefile           |   1 +
+>>  drivers/crypto/ti/Kconfig         |  14 +
+>>  drivers/crypto/ti/Makefile        |   3 +
+>>  drivers/crypto/ti/dthev2-aes.c    | 411 ++++++++++++++++++++++++++++++
+>>  drivers/crypto/ti/dthev2-common.c | 220 ++++++++++++++++
+>>  drivers/crypto/ti/dthev2-common.h | 101 ++++++++
+>>  8 files changed, 752 insertions(+)
+>>  create mode 100644 drivers/crypto/ti/Kconfig
+>>  create mode 100644 drivers/crypto/ti/Makefile
+>>  create mode 100644 drivers/crypto/ti/dthev2-aes.c
+>>  create mode 100644 drivers/crypto/ti/dthev2-common.c
+>>  create mode 100644 drivers/crypto/ti/dthev2-common.h
+>>
+> 
+> [...]
+> 
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/net/dsa/lantiq_gswip.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+[...]
 
-diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
-index 6eb3140d4044..ba080b71944c 100644
---- a/drivers/net/dsa/lantiq_gswip.c
-+++ b/drivers/net/dsa/lantiq_gswip.c
-@@ -1935,8 +1935,7 @@ static int gswip_gphy_fw_load(struct gswip_priv *priv, struct gswip_gphy_fw *gph
- 		memcpy(fw_addr, fw->data, fw->size);
- 	} else {
- 		release_firmware(fw);
--		return dev_err_probe(dev, -ENOMEM,
--				     "failed to alloc firmware memory\n");
-+		return -ENOMEM;
- 	}
- 
- 	release_firmware(fw);
--- 
-2.34.1
+>> +
+>> +probe_reg_err:
+>> +	crypto_engine_stop(dev_data->engine);
+>> +probe_engine_start_err:
+>> +	crypto_engine_exit(dev_data->engine);
+> 
+> crypto_engine_exit() calls crypto_engine_stop() internally, so there is
+> no need to call both functions here. Just use crypto_engine_exit().
+> 
+> /**
+>  * crypto_engine_exit - free the resources of hardware engine when exit
+>  * @engine: the hardware engine need to be freed
+>  */
+> void crypto_engine_exit(struct crypto_engine *engine)
+> {
+> 	int ret;
+> 
+> 	ret = crypto_engine_stop(engine);
+> 	if (ret)
+> 		return;
+> 
+> 	kthread_destroy_worker(engine->kworker);
+> }
+> 
+
+Thanks for this insight! Will correct this.
+
+[...]
+
+> 
+> Ovidiu
+
+Regards
+T Pratham
 
 
