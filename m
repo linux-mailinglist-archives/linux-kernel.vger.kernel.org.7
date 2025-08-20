@@ -1,133 +1,141 @@
-Return-Path: <linux-kernel+bounces-777815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA53B2DE1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:42:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25CD2B2DE2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 612057B548C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F523BFC18
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36B3320397;
-	Wed, 20 Aug 2025 13:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740F92E282E;
+	Wed, 20 Aug 2025 13:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zd0xfn8+"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+niXZTa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D424279354;
-	Wed, 20 Aug 2025 13:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB07226165
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755697338; cv=none; b=h1dJOlqUJ0Rs8bxcx/2t1A8DZ6D94spRpjuRIgpZ+TI/xjvt3jcF5Qf8ioEDpme+HA3xDMvgWofeh7ISzt5v2FKQWypMD+klwJjMkdUcLC+rcuBlEkXbnU9MqZFALzZz6uDX42JxcU7IKMTIoCxAytiDgFw4EJ+MECPyb1mP7k4=
+	t=1755697448; cv=none; b=Im/WFaEpVCKm2JTKk6HgJj/pmZB6b9apku8axaEoXRMfiparVmTc4F6693u3B4Wmv5RYDx55WdRNaFfrgXsjKYrOigGq/lsUZq1U1EOm6iaatWV2N0ovN9vjyHOmLl2PJ0Eud0GIux7GbZfEz5yGp5pSqBakymO7HwzYKfLW3Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755697338; c=relaxed/simple;
-	bh=GwzwwgyfcwqqHuSy6ePWprhgFwNZ7jn3wGiJU2BpbWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mtrVJAZpjylLzrb9xrWIdTj8Tw0FAsbuIV/jKDOoao7O87e1T+4/wevlmW8sgLiYa/eCNH+14MRcBk6eeWUFVzr7+Y1pde+3O1hPLs4figXMAcuWoAaUzPojL5ZdpAZHNEb1CoyuokycZr7VR+40m7GakPB3rkU1IVYcX8FZOYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zd0xfn8+; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b004a31so45025515e9.0;
-        Wed, 20 Aug 2025 06:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755697335; x=1756302135; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D//IkqSgYiDNhWtOIHFgRl44HO3wESqHykekTe6D+/U=;
-        b=Zd0xfn8+9QqQlABfg85uqQ2DpDP1wCo4aQzHoPCa/lFiSbSGJU0Kg01iXqimJ3yaiJ
-         sAGDXdJjCplmTtGsI+K3HU2TWf7XWrn1BYLqLwh4eljHOiBETgDDtfof4oNoKGEOvqn5
-         AdIblZJhp8x/ii//9+lwKa7FYkCZgZ3oBzEdo0d4q66Va84hS8tBpENRIlL9YHNN1qDJ
-         VxDFZNEPc53/l7DfCAne1ioyFbu7YySFsJo7+9+Mortz0t/Ia9VhVcYshqTaaJ0emHYG
-         oTPYa+yNluMgzTvJ6Z6xecmqBHGrVMykvPvrbWpWi91v88qs0Su007nIlqB3Xe1dHQMI
-         MsWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755697335; x=1756302135;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D//IkqSgYiDNhWtOIHFgRl44HO3wESqHykekTe6D+/U=;
-        b=ML1Dr8YfKUgox2PuGyO59tujG/K74r0QKQY3swcHjl2ANA5YBycbBNQkGdXwuPU8Zk
-         neJjHBcrG8lyzDbGmCY/ihOQpJbmAxZrusU7qcJBXsK9hbzarNRLv87uyOtcj0vFmx8Z
-         2WtDHZX0s3sQjQ0WSavg7fP5GiEllJmt0Yxuk23A7fooU3GYccB01mEaHub94QlF4ZZ7
-         5Y/OrY2uyTwSZ/nw6ArwJqcTMAnrXokVjiqN6/n4FIXfVtl5yQ4jDoTcnyUDZaxIDZsj
-         6Sjmz2pqpMOU4cdYnpT+WPj6l0Duy7qJSZa5DllOOcQc6PidhG20eX54zyQJwH2h/IcO
-         31sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrSu0ySLFC50MBGgj0/DYB7yQ4BdJCHgBCq7IUHGKQldZsTacFJzPdP4Yl53FCeBUbFFf0m16L@vger.kernel.org, AJvYcCVAZruHy0n73tiFBGNFe0D8kokzgseR1M5qIBXUYHkcxXgA9GO24r0x1pnQQHrq2GXl2p5SQriNw+RjEaFZ@vger.kernel.org, AJvYcCWptn4x4iiF145FM4oP+FhB2WyF4s4zl5fDzRfuRuP8iWLW2fE1bbukqKx+JVmlTcNuGd4lAZGCWg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMcv2eV+Z3JNH+FsnCD10JgVV7CkZTo9CLJEjIZazm2wQal7PF
-	HPzkT+xbGbLOiUXx6xYGl23OuKpxpS7A2NUeiky3qWBKp21J1BTSDo8a
-X-Gm-Gg: ASbGncvfVjOBqrMtLuJWUFrV3pPVPSHWtueqkq8yDugepVSIYOv4dLCaQfoZb7S5/ho
-	W4M3kwEe8IK0MB2RdzmaJvdS77e5Y9PTUjWU3jWCqQRzZeY/ZwZYdgLNEIaXz1xDWmOotr4tZnj
-	orckjcAh7rGQRsvlfxAI41IRrPrltvX/q339hkriwhb1xxLmI+padqtBKdCaMnkynqQWp/fzXW2
-	mGth3zB7fhGg4ul/hjMl1LStXcDSYSnF8q9o+1Bj8hoTuHKDyXkErSRpLFrSFpIpigWXekGtHBm
-	b2rbT+ib/qMXCZioxQrosiqlnnuQYjzVgtDTVHg0+OKEch9JkqtG0Re3O1gNrscpFkd19/IFpdS
-	pneCKX4+xCCViPqnyrI88si0Mtad3EUsPmCejn6pEZH8g6w+w1fa1R7KFHkodBjac8w==
-X-Google-Smtp-Source: AGHT+IEPrLhd+G8QilOq2hZbXfX8bnPCYF3Vhwwz/ytgqwVqzAjC4BEqxfxFhrefUqHnTGOBgbr9OA==
-X-Received: by 2002:a05:600c:4744:b0:45a:236a:23ba with SMTP id 5b1f17b1804b1-45b479e4b91mr18847345e9.22.1755697334538;
-        Wed, 20 Aug 2025 06:42:14 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5f7e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c3c85efc57sm1815616f8f.40.2025.08.20.06.42.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 06:42:13 -0700 (PDT)
-Message-ID: <55e8116d-7bff-4116-a5cf-d96cf95e02d8@gmail.com>
-Date: Wed, 20 Aug 2025 14:43:25 +0100
+	s=arc-20240116; t=1755697448; c=relaxed/simple;
+	bh=ccW4DJ+w5B0tvFfy06eJzbjKks79ZjN2ZpCdAnZH4Ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jur05/ugBXkg1Ild8pWH0WeG+aUGrxoMzVQySZFovd048i9UPaO4PKqwbG+CgLQ2WhCjcK/AZBFuPdg3wfUeItSXOVbKFeTWmXWTq07yJHW5WIa+pTFBdejJnCV4K4FmZVuyRMu73hGqPYmJAhI1ii1cw0AcKKJN35Hk9HHMIRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+niXZTa; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755697448; x=1787233448;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ccW4DJ+w5B0tvFfy06eJzbjKks79ZjN2ZpCdAnZH4Ak=;
+  b=n+niXZTaP8gHIc5QcLpemeHcez9QOY6oX143hodzDE2oAllgKuos39xG
+   usVqmk99mjLUFF4xAdX35RUjZgFYIYsH1EfuCJLCSj6LlhcA6nMlO3ZlY
+   PvIwSdZtZbQSjm3fwsLRkgFK0uA83gMmDhH2UZkU891xPDXFra64By/GN
+   N/DFV+NRNX2D7ZLo7JoVO3wr17FEcVTEfniwdbEKMhuPZeX+JRwWdguuA
+   pYJsmxNiJTkkVI1dGuhghk0wucPYA0dDogrMZsIYAJ3y8OaZQx0XX6LBN
+   RNQwSe8dxw07NU9/P4mNEry9UcEumZMrffE4FcVse/pUHcD1m/NOqDei1
+   g==;
+X-CSE-ConnectionGUID: beA6xsTjQcCywFI6/h+utg==
+X-CSE-MsgGUID: xS/9L6vDTUK+F22b2+yvzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="75413024"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="75413024"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:44:07 -0700
+X-CSE-ConnectionGUID: 4QaIxjvgQ0aK7kjMmX1XtQ==
+X-CSE-MsgGUID: q2Qzs15iR/Wyot4b2RKPmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="168481230"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:44:00 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uoj6a-00000006wmS-3DCw;
+	Wed, 20 Aug 2025 16:43:56 +0300
+Date: Wed, 20 Aug 2025 16:43:56 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Hui Pu <Hui.Pu@gehealthcare.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Zijun Hu <quic_zijuhu@quicinc.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 1/9] list: add list_last_entry_or_null()
+Message-ID: <aKXRHAyfPHPpZmMs@smile.fi.intel.com>
+References: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
+ <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-1-888912b0be13@bootlin.com>
+ <aJJ9ttmL7wiw41fY@smile.fi.intel.com>
+ <20250814183609.3788a6df@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 07/23] eth: bnxt: read the page size from the
- adapter struct
-To: Mina Almasry <almasrymina@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
- Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>,
- Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org,
- davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk,
- michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <cover.1755499375.git.asml.silence@gmail.com>
- <43a256bdc70e9a0201f25e60305516aed6b1e97c.1755499376.git.asml.silence@gmail.com>
- <CAHS8izNq8wKXwiZs8SeuYhsknR=wAwWPEnBOxUgcMhCoObQ=xA@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izNq8wKXwiZs8SeuYhsknR=wAwWPEnBOxUgcMhCoObQ=xA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814183609.3788a6df@booty>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 8/19/25 20:37, Mina Almasry wrote:
-> On Mon, Aug 18, 2025 at 6:56 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> From: Jakub Kicinski <kuba@kernel.org>
->>
->> Switch from using a constant to storing the BNXT_RX_PAGE_SIZE
->> inside struct bnxt. This will allow configuring the page size
->> at runtime in subsequent patches.
->>
->> The MSS size calculation for older chip continues to use the constant.
->> I'm intending to support the configuration only on more recent HW,
->> looks like on older chips setting this per queue won't work,
->> and that's the ultimate goal.
->>
->> This patch should not change the current behavior as value
->> read from the struct will always be BNXT_RX_PAGE_SIZE at this stage.
->>
->> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+On Thu, Aug 14, 2025 at 06:36:09PM +0200, Luca Ceresoli wrote:
+> On Wed, 6 Aug 2025 00:55:02 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 > 
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
+> > On Fri, Aug 01, 2025 at 07:05:23PM +0200, Luca Ceresoli wrote:
+> > > Add an equivalent of list_first_entry_or_null() to obtain the last element
+> > > of a list.  
+> > 
+> > Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> nit: AFAIU BNXT_RX_PAGE_SIZE should be unused after this? You could
-> delete the definition in bnxt.h if so.
+> Thanks Andy!
+> 
+> However I'm not sure when and where this should be applied.
+> 
+> Except for this one patch, all patches in the series are for
+> drm-misc-next. Also, patch 1 is currently not needed by any other
+> series AFAIK.
+> 
+> Based on the above, is it correct to assume that the whole series can
+> be applied on drm-misc-next? (when other patches will have a
+> R-by/Ack-by of course)
+> 
+> Also, is Andy's A-by enough to apply this patch?
 
-Still used in a couple of places, notably as the minimum and/or
-default size
+The list.h is common for many, I think going via DRM with my Ack is enough
+based on the Git history of my changes in this file. But if you want more
+reliable source, get an Ack from Andrew Morton.
 
 -- 
-Pavel Begunkov
+With Best Regards,
+Andy Shevchenko
+
 
 
