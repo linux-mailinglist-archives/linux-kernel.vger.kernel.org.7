@@ -1,93 +1,151 @@
-Return-Path: <linux-kernel+bounces-776854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF51B2D22A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:59:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 522E8B2D238
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ACED1C22984
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:59:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB443AE04C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A6E2185AA;
-	Wed, 20 Aug 2025 02:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43242218AAB;
+	Wed, 20 Aug 2025 03:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FL7h+52J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NC7lm3Ks"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46826239E61
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25DB35950;
+	Wed, 20 Aug 2025 03:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755658729; cv=none; b=VZZyivAMv0MRp15QevxruENUjxppxzfOqniMumEMNDWDEPB1OywhfGsBZCRIiMl9uv6Kzs822GxB+Bgw0v3mMofzSzYbvmvWxeKHTltHQLxrE2tjm+k63Mmw+Q2/mnaPIzf4F/eTlpG2pSk3I5FOcI/huqATZ6VnZDaGW6naIxw=
+	t=1755658957; cv=none; b=bDVrYEEQ2wdRVAbPUUyTbC5+W93x3j8auLsMaKJTmL9x+aeVtmkoWOQZX5CJdbTth97XrS3+tWmQesVlBC4vsaNAi8kmpr86PSOAWLANHEvBfOTA0M21A0YF6cNdtM5Y7IdQxTl8R1AdqzL2zYcMb+oHhFiLcEH58FkiRsFPSWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755658729; c=relaxed/simple;
-	bh=2Zi9h4GXmdMyUs8RyLnCYmlY8a0oIBkL4KA959j2gjo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gFMET+AtVXyCettnV9y/DgNyNBM9bjTbCEWuzMKcehkDD+jRVhTZW68fm4E4Wk8M67rRRPhJ7+LCidR1PhMEFfF1jFMjJO8ac2PfvmDzgubcEC3hhPB2DMccasb6Xwuqi8XwOyPrT0zK1ZZLJRYRGdoChFBMtLbaJsL9cBZ8S5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FL7h+52J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A55C4CEF1;
-	Wed, 20 Aug 2025 02:58:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755658729;
-	bh=2Zi9h4GXmdMyUs8RyLnCYmlY8a0oIBkL4KA959j2gjo=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=FL7h+52JMJbqB1HctPVzM90ZX4dyBeRKSrm5HyNlhiMlx7IkLEMx5tU8fYNFdzweI
-	 lOxPeS7ncH2vLnr3Qj11YVDetYkoChvw9H4ih+Cqwv3frQoBof2zZdI7xmspsT1GI+
-	 aBLbgtIE6Fuhyh9tahOy/BgoiraQh4YxKENV1AL81rT7VH+pyHwKLu2vIUz0lTOhT0
-	 W6JTmP3L9apxoIoE2qXdaDfOFsE4zyZoAiXYi+LT6gpCYlNVTEPx+8RLzx5HTtd2Mn
-	 FYxAMFilbrtmB/MUWbkUBKB9FbopHdNEO5OUp2Yr6dvtk/cdiG1Twf1IEgdXEUctQa
-	 iKj4Sbv/FHskA==
-Message-ID: <cd82a673-aa43-46bc-be67-6924500376ef@kernel.org>
-Date: Wed, 20 Aug 2025 10:58:46 +0800
+	s=arc-20240116; t=1755658957; c=relaxed/simple;
+	bh=wxQVXK9ZJF4PMmTKJQgZm7YglTM/3VwNJ70Tmu8wa3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SpqTo6Yqo2mVL2/Xa15YS9tlaMvd0L+UD6ez3G8cnHazDBDQ+qk03b2bEb4mLwjEYOwnDNy30ZsVbjogvwAAEOjzBvyD3hQ8rq+9C9K/wHujrumrQZXvykpklDoZExgirpFmWnaaWcvOHIZ3V0sTM0RuoyPJxnjaoxjhOKWXJKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NC7lm3Ks; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755658949;
+	bh=1nsjwKQQ0Lw6pW3celcJxL10KCyGqm6LrUnBhcOLnQw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NC7lm3KsQkelq8VI7bNrYYjhcTTpceQwpvNpNw5GAG3ONAI4VVKsxd+ujb7OXfp9D
+	 jA6RU/21w+6bXRxv/E93EHCVV12hkfYwt/ULih/HlV+Rv42zlXh9DeedCa5JKiPmQg
+	 eh4ht2+ElEHd0JLOog4AroX3seDGbe/jlex6+2POiP2m/fu+b31vT9m7Hzejs/xwwx
+	 AdmXXM8s3jM60SA1p1G9YUs4kYtnjg3bMECFPtpK3BcJ5xf8+8tl2n4QXSAym3B33i
+	 WZ9VEQqmrm6AXQHxS+jnbUWUITc8j7e7XDnjPRMTmJJX0XZPCzxxl27OfjtakUNeuE
+	 RW2D+5REcIBrQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6B841vf2z4wbr;
+	Wed, 20 Aug 2025 13:02:27 +1000 (AEST)
+Date: Wed, 20 Aug 2025 13:02:27 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij
+ <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Thierry Bultel
+ <thierry.bultel.yh@bp.renesas.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the pinctrl-renesas tree with the
+ pinctrl tree
+Message-ID: <20250820130227.5661da82@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] f2fs: fix CURSEG_HOT_DATA left space check
-To: "mason.zhang" <masonzhang.linuxer@gmail.com>
-References: <20250806123236.4389-1-masonzhang.linuxer@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250806123236.4389-1-masonzhang.linuxer@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/Kr_koCORC7iCpCJjM7mLbFf";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 8/6/25 20:32, mason.zhang wrote:
-> This fix combines the space check for data_blocks and dent_blocks when
-> verifying HOT_DATA segment capacity, preventing potential insufficient
-> space issues during checkpoint.
-> 
-> Fixes: bf34c93d2645 ("f2fs: check curseg space before foreground GC")
-> Signed-off-by: mason.zhang <masonzhang.linuxer@gmail.com>
+--Sig_/Kr_koCORC7iCpCJjM7mLbFf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It breaks f2fs/005 of xfstests, can you please take a look?
+Hi all,
 
-Thanks,
+After merging the pinctrl-renesas tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> ---
->  fs/f2fs/segment.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index db619fd2f51a..d8dae0049b6a 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -649,7 +649,7 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
->  				get_ckpt_valid_blocks(sbi, segno, true);
->  	}
->  
-> -	if (dent_blocks > left_blocks)
-> +	if (dent_blocks + data_blocks > left_blocks)
->  		return false;
->  	return true;
->  }
+drivers/pinctrl/renesas/pinctrl-rzt2h.c:161:14: error: assignment discards =
+'const' qualifier from pointer target type [-Werror=3Ddiscarded-qualifiers]
+  161 |         func =3D pinmux_generic_get_function(pctldev, func_selector=
+);
+      |              ^
 
+Caused by commit
+
+  90f2896d7dbb ("pinctrl: renesas: Add support for RZ/T2H")
+
+interacting with commit
+
+  afe1af86ff05 ("pinctrl: constify pinmux_generic_get_function()")
+
+from the pinctrl tree.
+
+I have applied the following merge fix patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 20 Aug 2025 12:42:30 +1000
+Subject: [PATCH] fix up for "pinctrl: renesas: Add support for RZ/T2H"
+
+interacting with commit
+
+  afe1af86ff05 ("pinctrl: constify pinmux_generic_get_function()")
+
+from the pinctrl tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/pinctrl/renesas/pinctrl-rzt2h.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzt2h.c b/drivers/pinctrl/rene=
+sas/pinctrl-rzt2h.c
+index a070fc447d96..3872638f5ebb 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+@@ -151,7 +151,7 @@ static int rzt2h_pinctrl_set_mux(struct pinctrl_dev *pc=
+tldev,
+ 				 unsigned int group_selector)
+ {
+ 	struct rzt2h_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctldev);
+-	struct function_desc *func;
++	const struct function_desc *func;
+ 	struct group_desc *group;
+ 	const unsigned int *pins;
+ 	unsigned int i;
+--=20
+2.50.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Kr_koCORC7iCpCJjM7mLbFf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmilOsMACgkQAVBC80lX
+0GxYzQf+NfCgedX4ysDRfGvEU9/6IkDkO6eUuozk9BVT4oGc3ywnCbmREaSpUpmP
+lhZ/NbilZ8ZoGwzw9ECrDdWe+yv/u3TAkF88AU4adp1Yneuf64TuA00D+q/8N2hg
+Gh+lb0++vRR7H6mGUE4pI7b9JIF7abZoe21ty7stIPxDSizcE3De3iDg68ehp8SI
+0IaAWWK5yYjOvxNyEiTz200tIfT7uL6MWUyLC17k00RVmf3eoJ8gpS48DPSIrrOU
+XPGmxYRB1HLbqfNmU7sjnE4IV5JvBT3IN1ALx4Smsf9OMo+UpaUoG1v783Qr8qDo
+xULCBTpH9hB3i1o+y9PbTxulKU2rIw==
+=IBJM
+-----END PGP SIGNATURE-----
+
+--Sig_/Kr_koCORC7iCpCJjM7mLbFf--
 
