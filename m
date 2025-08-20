@@ -1,181 +1,117 @@
-Return-Path: <linux-kernel+bounces-778636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF86B2E850
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:48:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1602B2E851
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D9A7B4F07
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:46:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6E35C2C61
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722512DCBF1;
-	Wed, 20 Aug 2025 22:47:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004852D9780;
+	Wed, 20 Aug 2025 22:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RjWsvsE7"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA2B2DC355;
-	Wed, 20 Aug 2025 22:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03B918FDAB
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 22:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755730071; cv=none; b=pI8Fn9D0lo4KxwmvMxbHSCl6kMhUKCzXF5/Gp0at8bcTOBjSW8wo/QT16GQPseL1qf+vWUSLSFgSjouyrj1ijTFl1nyJD8v6MxgRs4npcNbrA+DMQkNaf7lOwJQVEnusT81xMmgx75vJ8jJr8gtEftKajaDHxMYG1HXerCnkG60=
+	t=1755730151; cv=none; b=Y6Rb5CZrKgHfF0Fkb2Qk1I6QV/Y1bsCaABcVoKltttvkmhyLwGTK1lLaQZYqaI3c6H20nWzIzRwysanvcANMi3+F72ovSpfrnWxZ/MqShMO8vLkOBKkmyPEBBiTFeRlzUpRJqMB/cnvIr5UHbBqNp02tEslVPUhzzzcOzzFv3cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755730071; c=relaxed/simple;
-	bh=VA4mP2VLRQz6yfgaKC1bMAw560ME6HO37gLDWWtCaXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AJJrxoDsdkTUx++LypFbFpbGiUlfLGZ2UCq2U8gXtEnJze4GjmvbisKQBsdELF6kv5+1+HkNVC5wojyMV+cRQhHtXJVQVuzYTBXFUPxQprnV1t4owZk21+/uSYuvGHeL88tcuQw8TaBPu+qwqq89nm5Yjya2HnQeNzWz6XXAW2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 13F431A01A2;
-	Wed, 20 Aug 2025 22:47:45 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 6CA042000F;
-	Wed, 20 Aug 2025 22:47:40 +0000 (UTC)
-Date: Wed, 20 Aug 2025 18:47:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
- <luto@kernel.org>, Borislav Petkov <bp@alien8.de>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Daniel Gomez <da.gomez@samsung.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Liam
- R. Howlett" <Liam.Howlett@oracle.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen
- <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, Yann
- Ylavic <ylavic.dev@gmail.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-modules@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v3 8/8] x86/ftrace: enable EXECMEM_ROX_CACHE for ftrace
- allocations
-Message-ID: <20250820184743.0302a8b5@gandalf.local.home>
-In-Reply-To: <20250713071730.4117334-9-rppt@kernel.org>
-References: <20250713071730.4117334-1-rppt@kernel.org>
-	<20250713071730.4117334-9-rppt@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755730151; c=relaxed/simple;
+	bh=D5XMdSUaoflvoWDHrYNuRLgXNYvL1UIYdqWuCZ7I1zU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UNGPJCETwtCJFzb14dF3iDuj7yNFQyRxrGKGbS8fybWEJON7PELiRucaN7j0huHV/jgZcnnYlJvYclBpxkWXygeRkBm+hEN2UnMXjTbqNZshEceA27C9sWFrmG7s5nbFkB0lzMyUV0VTwVb5lLxm8gpM1MFUGsFEkr/Pg4qU5uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RjWsvsE7; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b29b715106so72591cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755730149; x=1756334949; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D5XMdSUaoflvoWDHrYNuRLgXNYvL1UIYdqWuCZ7I1zU=;
+        b=RjWsvsE7yb7wZZOS/zb5AFBNhs+5wwj8zWWE2NKlv2O7E/0i7v7mhpVn57H5Go734U
+         hqdTSnEUH/GOjEac7hFqWp8BACQEoal9V+BChJdjq87iUcHEAIP7giE/n8+4o6gzsxfd
+         dY5OQXF5W8vmsDbpcIhwBMWnpw9298jIZIAwVTLwG28u9JPn0+Yf/S1WRPrhUTxa24tB
+         EwTt7Ki06qK0wz2Sgejhg3ncPD5GzgmpXhvvjVA38b2/i7EV7RtbXBzyVzXQXoyZhIsC
+         6fC0K6zP4YNAFrBi6mM5QP7xaxCGcsPtSi873/1N0karPz5cNcTvWIcOaRp+VCQvhXha
+         ULRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755730149; x=1756334949;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D5XMdSUaoflvoWDHrYNuRLgXNYvL1UIYdqWuCZ7I1zU=;
+        b=IrQGyLwc32cwcB7sReiiqlkQrYj+BPXqmBqiyQ7hbMWxUuLDYG4z6USWRCKYmWEdJn
+         2h0G9Hnf0jkNTUESkMtzVU/St85brZu1lrExt8yiu5jb6QbKhZwinP26wM9NnDxrCd2y
+         OgauEDwbtFbNIivijB+3L5aVtgvkkSsf4sNq9tzdv5ESscuHAHYsCu4zldLfrTgrQeHJ
+         g7QlCHqLTuoWwnd8tLeSnc89GmOn0zCky+291QcVmlIa/NaMKjE4fEG1kq23hQkcB5eu
+         G5jss3wkcLNTL6AjWO81HGjpz9Dlm+0YzxK5nTY15RfNf7RU8BPsys+s0kxqpXuEPAHy
+         ohxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyiYRHdBugxx0l5cvVnpxYrIw9CMHfPhqzBphYhu08uRPTmOH5nPK9uL9A+npcW3TA+97lTgluD87H3+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGx1CtKjceYvep5FD2G2+TJ/uM2Nm6KOXPKKRKrPPjupRvndws
+	rK1f+UKgAdD03JeM2XVZ4OxUU1DEtSce+U2B2+1mLzOVgED7yFboWqpjGhZfkjscyC4oMv8CSF7
+	tAOC1fJfshDiWwYwJIYAVREpnHiME2CzwBi1bBfF3
+X-Gm-Gg: ASbGncsz77qKGzo6yC25P6xc6m5zmrlWsXhlNf6R8vdiuEafUxYolOyGLsWNAD8YxDZ
+	0kxe47oovKxLAdeY+qRnzMAsk9HHLX2w0sgMYBriUpSCYDHnz3T/2iqBVdc1mekgzwjPuhNTXQ6
+	cCRjXDLhASAeV5mY4ZmPaECGX99vSp+1V4G/RPEsYTw6nYWVkcsgYDOi9eqiO4RXLL/BlXVD91u
+	hrpMKmtZMLIlKSRhirHTtSSeBq1iOD6UJk2Qu8iHi9D
+X-Google-Smtp-Source: AGHT+IESA+eP6kM9nwktT60dNHPMQb0J22hBZaWkw6tfpY+brU5rfimYiJQUSNMYeIZIN8n5YRzXVvto0cY6pqWxHH8=
+X-Received: by 2002:a05:622a:c2:b0:4a5:9b0f:a150 with SMTP id
+ d75a77b69052e-4b29f790b96mr833291cf.16.1755730148497; Wed, 20 Aug 2025
+ 15:49:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6CA042000F
-X-Stat-Signature: 4rys4zzq3grmk4iz8njd9hcrd1n9a5xk
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18niudp8MzlJSk2CKpi7L3PVVfh56aRSjY=
-X-HE-Tag: 1755730060-24004
-X-HE-Meta: U2FsdGVkX185NYSqNdNBNsPuTnEliAO8Pc9z/2zyL0/XZrgDjC2inAGrNVdtT8LaunP4GdSwgzUzAn0ieYTKYrkbJp3U73834SFXYZuN7MPquEyZfj5HnY3VvzSvP8qywLdkkudYQ2iBDo0rKKZ2Z2PvVVo77G5u3qQ6vh4roaJGnq6fG7h4qIt/EcJN4NcwslrDJloAhoMhNTWc/+k0jLFaIT+RUaSQCiHki1SfKSCtJUP9PaWU881E2pAAQo9VoCuEnfmObDwj9kkkLrT0pvuxR9LGxQr4OXtwTYzRILsya/suHDdPWf24wawtOurEPMWbSml/gm4JHnwobNCY2fmluAzlK6zAAAAIwM1AP2VVrDDmRRbVbJ9Nx+QY3dxvRvS3KddU+q5e3ucoNss1rQ==
+References: <20250820171214.3597901-1-dtatulea@nvidia.com> <20250820171214.3597901-3-dtatulea@nvidia.com>
+In-Reply-To: <20250820171214.3597901-3-dtatulea@nvidia.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 20 Aug 2025 15:48:32 -0700
+X-Gm-Features: Ac12FXxVnl6sM0_WZDKM6qKI7HAYHIkAelNoq7Ld4ak_A5zT0VD-rswwR056X4M
+Message-ID: <CAHS8izNto5Na=jAyXhvm0ocL4mA0pUXmXMcn4bwnNvQbA81hzg@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 1/7] queue_api: add support for fetching per
+ queue DMA dev
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: asml.silence@gmail.com, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, cratiu@nvidia.com, parav@nvidia.com, 
+	netdev@vger.kernel.org, sdf@meta.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 13 Jul 2025 10:17:30 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
+On Wed, Aug 20, 2025 at 10:13=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.co=
+m> wrote:
+>
+> For zerocopy (io_uring, devmem), there is an assumption that the
+> parent device can do DMA. However that is not always the case:
+> - Scalable Function netdevs [1] have the DMA device in the grandparent.
+> - For Multi-PF netdevs [2] queues can be associated to different DMA
+> devices.
+>
+> This patch introduces the a queue based interface for allowing drivers
+> to expose a different DMA device for zerocopy.
+>
+> [1] Documentation/networking/device_drivers/ethernet/mellanox/mlx5/switch=
+dev.rst
+> [2] Documentation/networking/multi-pf-netdev.rst
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> For the most part ftrace uses text poking and can handle ROX memory.
-> The only place that requires writable memory is create_trampoline() that
-> updates the allocated memory and in the end makes it ROX.
-> 
-> Use execmem_alloc_rw() in x86::ftrace::alloc_tramp() and enable ROX cache
-> for EXECMEM_FTRACE when configuration and CPU features allow that.
-> 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 
-The "ftrace=function" kernel command line started crashing with v6.17-rc1,
-and I bisected it down to this commit:
-
- 5d79c2be5081 ("x86/ftrace: enable EXECMEM_ROX_CACHE for ftrace allocations")
-
-On boot I hit this:
-
-[    0.159269] BUG: kernel NULL pointer dereference, address: 000000000000001c
-[    0.160254] #PF: supervisor read access in kernel mode
-[    0.160975] #PF: error_code(0x0000) - not-present page
-[    0.161697] PGD 0 P4D 0
-[    0.162055] Oops: Oops: 0000 [#1] SMP PTI
-[    0.162619] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.17.0-rc2-test-00006-g48d06e78b7cb-dirty #9 PREEMPT(undef)
-[    0.164141] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[    0.165439] RIP: 0010:kmem_cache_alloc_noprof (mm/slub.c:4237) 
-[ 0.166186] Code: 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 55 48 89 e5 41 57 41 56 41 55 41 54 49 89 fc 53 48 83 e4 f0 48 83 ec 20 8b 05 c9 b6 7e 01 <44> 8b 77 1c 65 4c 8b 2d b5 ea 20 02 4c 89 6c 24 18 41 89 f5 21 f0
-All code
-========
-   0:	90                   	nop
-   1:	90                   	nop
-   2:	90                   	nop
-   3:	f3 0f 1e fa          	endbr64
-   7:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-   c:	55                   	push   %rbp
-   d:	48 89 e5             	mov    %rsp,%rbp
-  10:	41 57                	push   %r15
-  12:	41 56                	push   %r14
-  14:	41 55                	push   %r13
-  16:	41 54                	push   %r12
-  18:	49 89 fc             	mov    %rdi,%r12
-  1b:	53                   	push   %rbx
-  1c:	48 83 e4 f0          	and    $0xfffffffffffffff0,%rsp
-  20:	48 83 ec 20          	sub    $0x20,%rsp
-  24:	8b 05 c9 b6 7e 01    	mov    0x17eb6c9(%rip),%eax        # 0x17eb6f3
-  2a:*	44 8b 77 1c          	mov    0x1c(%rdi),%r14d		<-- trapping instruction
-  2e:	65 4c 8b 2d b5 ea 20 	mov    %gs:0x220eab5(%rip),%r13        # 0x220eaeb
-  35:	02 
-  36:	4c 89 6c 24 18       	mov    %r13,0x18(%rsp)
-  3b:	41 89 f5             	mov    %esi,%r13d
-  3e:	21 f0                	and    %esi,%eax
-
-Code starting with the faulting instruction
-===========================================
-   0:	44 8b 77 1c          	mov    0x1c(%rdi),%r14d
-   4:	65 4c 8b 2d b5 ea 20 	mov    %gs:0x220eab5(%rip),%r13        # 0x220eac1
-   b:	02 
-   c:	4c 89 6c 24 18       	mov    %r13,0x18(%rsp)
-  11:	41 89 f5             	mov    %esi,%r13d
-  14:	21 f0                	and    %esi,%eax
-[    0.168811] RSP: 0000:ffffffffb2e03b30 EFLAGS: 00010086
-[    0.169545] RAX: 0000000001fff33f RBX: 0000000000000000 RCX: 0000000000000000
-[    0.170544] RDX: 0000000000002800 RSI: 0000000000002800 RDI: 0000000000000000
-[    0.171554] RBP: ffffffffb2e03b80 R08: 0000000000000004 R09: ffffffffb2e03c90
-[    0.172549] R10: ffffffffb2e03c90 R11: 0000000000000000 R12: 0000000000000000
-[    0.173544] R13: ffffffffb2e03c90 R14: ffffffffb2e03c90 R15: 0000000000000001
-[    0.174542] FS:  0000000000000000(0000) GS:ffff9d2808114000(0000) knlGS:0000000000000000
-[    0.175684] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.176486] CR2: 000000000000001c CR3: 000000007264c001 CR4: 00000000000200b0
-[    0.177483] Call Trace:
-[    0.177828]  <TASK>
-[    0.178123] mas_alloc_nodes (lib/maple_tree.c:176 (discriminator 2) lib/maple_tree.c:1255 (discriminator 2)) 
-[    0.178692] mas_store_gfp (lib/maple_tree.c:5468) 
-[    0.179223] execmem_cache_add_locked (mm/execmem.c:207) 
-[    0.179870] execmem_alloc (mm/execmem.c:213 mm/execmem.c:313 mm/execmem.c:335 mm/execmem.c:475) 
-[    0.180397] ? ftrace_caller (arch/x86/kernel/ftrace_64.S:169) 
-[    0.180922] ? __pfx_ftrace_caller (arch/x86/kernel/ftrace_64.S:158) 
-[    0.181517] execmem_alloc_rw (mm/execmem.c:487) 
-[    0.182052] arch_ftrace_update_trampoline (arch/x86/kernel/ftrace.c:266 arch/x86/kernel/ftrace.c:344 arch/x86/kernel/ftrace.c:474) 
-[    0.182778] ? ftrace_caller_op_ptr (arch/x86/kernel/ftrace_64.S:182) 
-[    0.183388] ftrace_update_trampoline (kernel/trace/ftrace.c:7947) 
-[    0.184024] __register_ftrace_function (kernel/trace/ftrace.c:368) 
-[    0.184682] ftrace_startup (kernel/trace/ftrace.c:3048) 
-[    0.185205] ? __pfx_function_trace_call (kernel/trace/trace_functions.c:210) 
-[    0.185877] register_ftrace_function_nolock (kernel/trace/ftrace.c:8717) 
-[    0.186595] register_ftrace_function (kernel/trace/ftrace.c:8745) 
-[    0.187254] ? __pfx_function_trace_call (kernel/trace/trace_functions.c:210) 
-[    0.187924] function_trace_init (kernel/trace/trace_functions.c:170) 
-[    0.188499] tracing_set_tracer (kernel/trace/trace.c:5916 kernel/trace/trace.c:6349) 
-[    0.189088] register_tracer (kernel/trace/trace.c:2391) 
-[    0.189642] early_trace_init (kernel/trace/trace.c:11075 kernel/trace/trace.c:11149) 
-[    0.190204] start_kernel (init/main.c:970) 
-[    0.190732] x86_64_start_reservations (arch/x86/kernel/head64.c:307) 
-[    0.191381] x86_64_start_kernel (??:?) 
-[    0.191955] common_startup_64 (arch/x86/kernel/head_64.S:419) 
-[    0.192534]  </TASK>
-[    0.192839] Modules linked in:
-[    0.193267] CR2: 000000000000001c
-[    0.193730] ---[ end trace 0000000000000000 ]---
-
-
--- Steve
+--=20
+Thanks,
+Mina
 
