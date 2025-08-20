@@ -1,169 +1,136 @@
-Return-Path: <linux-kernel+bounces-777740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75175B2DD3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:03:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C679B2DD4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9BA1C80747
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:02:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51C3F3B111D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C348331A05A;
-	Wed, 20 Aug 2025 13:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A2C31A053;
+	Wed, 20 Aug 2025 13:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wW2AcJZy"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lBCRXboM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9300E302CA4
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D800E42AA3;
+	Wed, 20 Aug 2025 13:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755694905; cv=none; b=iKe9la1Cn0rI3qcOX+MHPAv3bURwW6eZgBe3pb36COuOyrAO/9TBlkuJF4Uh+7NYuj/1bMCvHzY04GLwDqUkSTfH1IQkL6yYDY4W/+XLqSX777n+TVfb+j8c9V8oTxb75zYWyoAAYafaI8pErvT/BjjjBHr9vC/4U97cDPBXNBM=
+	t=1755694935; cv=none; b=eScUhI0KUra3I+9X6vZoxhxfjGc3yIcL8Rmvo8GAlvuI2klNoByZc39VLBLFQ4KzOozCjzSzr8C5PAQ3vL/8N1zACqw0mrNE/U3Z6MO5p8n+Dhs1Z6fRKz/RPRqY2A2t+4RQI5Oxskg4FSoPnUjhd2Tm+u8DD3Xw+eKFHjQAsSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755694905; c=relaxed/simple;
-	bh=wKs6154q1CuWduyMYGk1ExrTS3G/asrXXyz4KcM+ZXE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BzyOLh1vIoviQ6XNwbFMpsb/DXR2ntpM8Dc61mmW4eioG81w9OGYv5ufU7MH44xHbgH6t6rUcWGaTHgjKJZpmSalaYFwPOR35qZaA3SVW+quP7R4SS7+sk6R6MucEjAcrQdMGFCgtR+cC6MxHLs9mse5FSTfkMh6aZqU/q6AJzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wW2AcJZy; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24457f59889so70539785ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:01:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755694903; x=1756299703; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UaJOMLSIELpvDEO7epSv+22yc1sPRzaMaQRGyQr0AeE=;
-        b=wW2AcJZywjYn2/D9QUY2C8b5aGe38lTRF6hP9WWTGXkXlqziPYscFqcpKoD8OzSRBo
-         OspDyeFvbA5TUdQZ0Xfp9nZEf6v98cMcpF+YJx2MKpiaRxbJuVhcQBEN95Kns2QazEvZ
-         u34YiLRCc2DBX3MBj1uLXIJi6k03QwvHtxm/wA2XjxesvI6Pjv2LqALJJa9L1Natwk5B
-         AtOpkFcE/kWy61HMoBIP/ZvKle+g7Gd5ptKIEEvFSQk9mv0q/wNznmOV46kQqAVD7sP8
-         XNpYWUk/45OO88glS/5Ky3iOyXcXw/wC4MOYo+nXZHzA7LVVHSC0HysjMylT4DKTCL2u
-         c2+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755694903; x=1756299703;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UaJOMLSIELpvDEO7epSv+22yc1sPRzaMaQRGyQr0AeE=;
-        b=RYKJ25/hN79lTKLT9SkU6aH4P+95F7cNNXUwifbOUi86rILUZYlgg1I099Ee95aTNJ
-         ECuuM11uzZw12ZI6IQzz87rO2xiLTGv3Si1y6mK6TY2D9G+BbH529oZ2nyZpJDydFfK/
-         pcTqUF6KTeM0MxOFQzPPd8tbquHsCZMs7gCrCLPVpw2gAiFdgH2FNI6M15idx38Itlmt
-         4gIwND/f6D6a4N7GcpN/h5iNa168vMCPKWGhrwp0NxDFcDdfemQ4lmqbS5iU+MKTrzxo
-         iypELqoYOmDPBJQvOWd4G/NGlBCpnoRvipA5PHUAjDhV/g2aeekAtHbgaKlIN311F1ZH
-         4Ukg==
-X-Forwarded-Encrypted: i=1; AJvYcCWb6TxhPZaWsjV9jkicX6QpNZuA83bEzP6IeCa2KR5bBh6rYk/emhSyoAIatvjwixAzUroJx2Rc14G2Krc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywof5XMhbGDvG6pUSj6RI0Y/52ZH8DzJs342tqd/lJ0giweK7t9
-	Ia1Ab8TRyhpj5jXMn1BrYsXxqKdoKShW2y8/lJW3GVeqxhT8YogXig/Bmar13BzjNQmB5EEPNOD
-	zHySuzA==
-X-Google-Smtp-Source: AGHT+IEwOh08V7OwFaToRvymHqAkp1iuuPWnLNS6JSQCMW6zILVjkhJt5JbRAqseXO9ZLDriDY4AFd/fiY8=
-X-Received: from pjbok13.prod.google.com ([2002:a17:90b:1d4d:b0:321:c2a7:cbce])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ef01:b0:243:3b1:47cb
- with SMTP id d9443c01a7336-245ef1045a8mr33382985ad.6.1755694902882; Wed, 20
- Aug 2025 06:01:42 -0700 (PDT)
-Date: Wed, 20 Aug 2025 06:01:40 -0700
-In-Reply-To: <c3e638e9-631f-47af-b0d2-06cea949ec1e@amd.com>
+	s=arc-20240116; t=1755694935; c=relaxed/simple;
+	bh=hEN3aJohbGZNLa8VDJV2dbOoTdBqI5P9kVlUzDzaFVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hpW5mXFsloy8pKZw4+MRATIg9dXT16asDK0sAHq+ijWFJW8/9BXUmV53wxu1DDf4DC4AdEQP3vx7iRQoiP8FfV9+36a9Wv++nf8bpKwlWUu4wwYFqujo9zIljxRYp8H4BU3Tlf61GQkwCVShHcf+ZJ+I0f5FB2g0g0vS0qwtjLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lBCRXboM; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755694934; x=1787230934;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=hEN3aJohbGZNLa8VDJV2dbOoTdBqI5P9kVlUzDzaFVM=;
+  b=lBCRXboMSgqP/ZzTwLfgFxYqdcxJirdPwYBl/7VxBcjF18fqtCDY5C+M
+   H/CdfASBgjealwgbRyEHnWXesthN4Q8irxM5VK4GGF3Nd4Aut93gdTzxa
+   ARaPgXCv2PpTbI2499jVZmJlkeMWebGSNH5zAQoNqhyfcwMVEqzfiFEcE
+   4Yjqh248bCtURxTlkXDdJG/7vR9c9Z9bHQvlr+UNVWLvAX+c/sBrUoMMT
+   xSDBpP+wnhpFkEQhUpD+GDPPH3guGJ0g7WN7jlwaYu1AMoql7YM45h5kn
+   pnaIcqPaUrtiLZyb+mv+JTu9Holg4Sc9oHMgqmu0hvwDSQ/YK6hAG62W5
+   g==;
+X-CSE-ConnectionGUID: vv5B9x77SqCp1eAPe7q4gw==
+X-CSE-MsgGUID: eDiZta2ARoSYP8lz4rqqwQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61773200"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="61773200"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:02:13 -0700
+X-CSE-ConnectionGUID: 5VUgcoWeRr+Mf7IaCM3Mvw==
+X-CSE-MsgGUID: lxwRfl03R2WJwBynJJLGvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="205280230"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:02:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uoiS6-00000006rI9-3YwG;
+	Wed, 20 Aug 2025 16:02:06 +0300
+Date: Wed, 20 Aug 2025 16:02:06 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ben Collins <bcollins@watter.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Hepp <andrew.hepp@ahepp.dev>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 4/5] iio: mcp9600: Recognize chip id for mcp9601
+Message-ID: <aKXHTqlQmDFjx8Ra@smile.fi.intel.com>
+References: <20250819-upstream-changes-v7-0-88a33aa78f6a@watter.com>
+ <20250819-upstream-changes-v7-4-88a33aa78f6a@watter.com>
+ <CAHp75VfrRJmB-Q6TM+Tiy79_q63=cOvyrePMQwi6ZbvDNUPezQ@mail.gmail.com>
+ <00D2ACBD-DE50-4132-8DF2-46DD97DBCE3B@watter.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250819234833.3080255-1-seanjc@google.com> <20250819234833.3080255-9-seanjc@google.com>
- <c3e638e9-631f-47af-b0d2-06cea949ec1e@amd.com>
-Message-ID: <aKXHNDiKys9y8Xdw@google.com>
-Subject: Re: [PATCH v11 8/8] KVM: SVM: Enable Secure TSC for SNP guests
-From: Sean Christopherson <seanjc@google.com>
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Lendacky <thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>, 
-	Borislav Petkov <bp@alien8.de>, Vaishali Thakkar <vaishali.thakkar@suse.com>, 
-	Kai Huang <kai.huang@intel.com>, David.Kaplan@amd.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <00D2ACBD-DE50-4132-8DF2-46DD97DBCE3B@watter.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Aug 20, 2025, Nikunj A. Dadhania wrote:
->=20
->=20
-> On 8/20/2025 5:18 AM, Sean Christopherson wrote:
-> > From: Nikunj A Dadhania <nikunj@amd.com>
-> >=20
-> > @@ -2195,6 +2206,12 @@ static int snp_launch_start(struct kvm *kvm, str=
-uct kvm_sev_cmd *argp)
-> > =20
-> >  	start.gctx_paddr =3D __psp_pa(sev->snp_context);
-> >  	start.policy =3D params.policy;
-> > +
-> > +	if (snp_is_secure_tsc_enabled(kvm)) {
-> > +		WARN_ON_ONCE(!kvm->arch.default_tsc_khz);
->=20
-> Any particular reason to drop the the following change:=20
->=20
-> +		if (WARN_ON(!kvm->arch.default_tsc_khz)) {
-> +			rc =3D -EINVAL;
-> +			goto e_free_context;
-> +		}
+On Wed, Aug 20, 2025 at 07:11:08AM -0400, Ben Collins wrote:
+> > On Aug 20, 2025, at 6:07 AM, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > On Wed, Aug 20, 2025 at 2:45 AM Ben Collins <bcollins@watter.com> wrote:
 
-Based on this conversation[*], both Kai and I expected KVM to let firmware =
-deal
-with the should-be-impossible situation.
+...
 
-  On Tue, Jul 8, 2025 at 9:15=E2=80=AFPM Nikunj A. Dadhania <nikunj@amd.com=
-> wrote:
-  > On 7/8/2025 8:04 PM, Sean Christopherson wrote:
-  > > On Tue, Jul 08, 2025, Kai Huang wrote:
-  > >>>> Even some bug results in the default_tsc_khz being 0, will the
-  > >>>> SNP_LAUNCH_START command catch this and return error?
-  > >>>
-  > >>> No, that is an invalid configuration, desired_tsc_khz is set to 0 w=
-hen
-  > >>> SecureTSC is disabled. If SecureTSC is enabled, desired_tsc_khz sho=
-uld
-  > >>> have correct value.
-  > >>
-  > >> So it's an invalid configuration that when Secure TSC is enabled and
-  > >> desired_tsc_khz is 0.  Assuming the SNP_LAUNCH_START will return an =
-error
-  > >> if such configuration is used, wouldn't it be simpler if you remove =
-the
-  > >> above check and depend on the SNP_LAUNCH_START command to catch the
-  > >> invalid configuration?
-  > >
-  > > Support for secure TSC should depend on tsc_khz being non-zero.  That=
- way it'll
-  > > be impossible for arch.default_tsc_khz to be zero at runtime.  Then K=
-VM can WARN
-  > > on arch.default_tsc_khz being zero during SNP_LAUNCH_START.
-  >
-  > Sure.
+> >> +struct mcp9600_data {
+> >> +       struct i2c_client *client;
+> >> +};
+> >> +
+> >> #define MCP9600_CHANNELS(hj_num_ev, hj_ev_spec_off, cj_num_ev, cj_ev_spec_off) \
+> >>        {                                                                      \
+> >>                {                                                              \
+> >> @@ -123,10 +133,6 @@ static const struct iio_chan_spec mcp9600_channels[][2] = {
+> >>        MCP9600_CHANNELS(2, 0, 2, 0), /* Alerts: 1 2 3 4 */
+> >> };
+> >> 
+> >> -struct mcp9600_data {
+> >> -       struct i2c_client *client;
+> >> -};
+> >> -
+> > 
+> > It's not obvious why this piece of change is needed. AFAICS it's a stray change.
+> 
+> The explanation is in the changelog above. A follow up patch needs both struct
+> declarations to be where I added one and moved mcp9600_data to. It’s just ordering
+> so I don’t later have to forward declare new functions for filter_type, which make
+> use of these structs, but need to be in the iio_chan_spec mcp9600_channels[]
+> declaration.
+> 
+> I guess I could move mcp9600_data in that series, but I had this in here before
+> I split that series out, and it seemed simple enough to leave in.
 
-https://lore.kernel.org/all/c327df02-c2eb-41e7-9402-5a16aa211265@amd.com
+The usual thing is to avoid changes that are not used. In this series this move
+is not used, put it to the patch which actually needs it.
 
->=20
-> As this is an unsupported configuration as per the SEV SNP Firmware ABI S=
-pecification:=20
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Right, but what happens if KVM manages to pass in '0' for the frequency?  D=
-oes
-SNP_LAUNCH_START fail?  If so, bailing from KVM doesn't seem to add any val=
-ue.
 
->=20
-> 8.16 SNP_LAUNCH_START
->=20
-> DESIRED_TSC_FREQ
-> Hypervisor-desired mean TSC frequency in KHz of the guest. This field has=
- no
-> effect if guests do not enable Secure TSC in the VMSA. The hypervisor sho=
-uld
-> set this field to 0h if it *does not support Secure TSC* for this guest.
->=20
-> > +		start.desired_tsc_khz =3D kvm->arch.default_tsc_khz;
-> > +	}
-> > +
-> Regards,Nikunj
 
