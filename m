@@ -1,325 +1,365 @@
-Return-Path: <linux-kernel+bounces-776944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137F9B2D34D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:16:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54AA7B2D353
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34945A307D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:16:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B115F7AC0F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EAC283153;
-	Wed, 20 Aug 2025 05:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28237283FE5;
+	Wed, 20 Aug 2025 05:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XJo4aGMT"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M0sOVeku"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5775B35336E
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 05:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F7642A8C;
+	Wed, 20 Aug 2025 05:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755666959; cv=none; b=XM7yZc5PgjxB6fO+JkXZdOoTqKmGVCd862XDZi/WIxezHBKg7KxNhIjjCSGe5TBfdKk4PX1GXVlwTS2ibjHQOtVqpxFXV/MtlVIfBU7TO0VSVIe/kZnaIG+QS3gniVGZxeYmHqxiSEVpgRiaQvgPZ3pqyCYXFnnBRUsfKpV2jz0=
+	t=1755667068; cv=none; b=qg46vYfSq7dJp94TQrp1ixhNYcqn0eXgnH8FDcMj3wJPLC/xkxNSMthbdAjf6wcgxCz5/57Dot/QPaaVqefE2rUJnYa/e+toqGZAxphfWB+shx8pXl7mii3a3bEKIXkF9RmeHM4vEbyM+k7Vo3+TnlPFA8lwQJBcFoMn3X93RYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755666959; c=relaxed/simple;
-	bh=gmB0hK4PnEhQzKkPj/vuuOgut+a03Fj//iRvNLatQEo=;
+	s=arc-20240116; t=1755667068; c=relaxed/simple;
+	bh=tqoGCLP9+74vKW90EcH+OlYlZbNmYCR/9Hf+PoUBcMk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HPtXpFhIXoFibCvkXWk9FXHOsNy0HRIhhnVenC7BTnQMVwoNCKIyVzCl9g7qaJkmbrKl0hfpzHS8MJ9t7nTpfkfsp2z9EdQNAFAG5rQjWwDq3yj3LQWtTagUbvUdW7lcpTKydgMjKZDBk8khKRBeZXoVWMxoGelIZv9jtisPwZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XJo4aGMT; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70d7c7e9731so593816d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 22:15:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=Kxn0DUpwowobu4anxsResGQK0Bdl2cJS8CrpCZZjb9e/9wEHVdSqifGF3qpTc27Cb496X94sFSDieTVzMF+p29YqfhsNkTbX7xb3D90g4Vp6oG926fu+yo6ZdThOiUp9qPV172QbMf/pQvGHV538IjiikIg6bLRR86QaNuKXKQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M0sOVeku; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3bb30c72433so2044772f8f.3;
+        Tue, 19 Aug 2025 22:17:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755666956; x=1756271756; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755667065; x=1756271865; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YMOc0zAG5IHElycDwN0z3G1Bp9v6la9CFRr7DqTKuhw=;
-        b=XJo4aGMTKN3jOvzFBbPrJHi+gEmku1jeLYLbZM0B6HfwLHdc2pNhHnTOroJ4STAHqj
-         5Ng8n491T7qUu/G0aR5HgMdE/alwhxHbdFdqSpcWyR5OUzBm+XsHKgGMQPA4iTt419su
-         zsxFVuoDWWcrBzqLrCVLHBT8ZnJheqG09hXEM=
+        bh=f6SOzmjVM7Uou5d5GhXQPVmrV/BigkiuvFiYvv6bbPU=;
+        b=M0sOVekuFR/5d7ySRavbOsyiChxSC34wCXqQ0jN7zdZZTOz3atc+NWQ8++LImJ+v1D
+         t59pyd3fxo8F0SFpWEVSKdEzzfGn0GtZ8el2iwIDOiiDfycxM2UkQLguK390BfBXj8eH
+         z4eTs3B7lJQTym6LvT/VAoAY2t0cRfbSX/G59pfUpvmTlnDDhrM00G4c7MAYo5AgRKxH
+         Bmag1dCJWmwaD76/ZnlcdqaJIL0LbxBIfNCxk0pcOVjKcx8Ovh9jK6KNBzjJ1MM6Pg4g
+         5YIh9FhN0VmqZ1Jk4pI41radcXpC1lo/OObFCx4cPUArl5Xz+1mAb6xboi8KsY3SlqEQ
+         FR3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755666956; x=1756271756;
+        d=1e100.net; s=20230601; t=1755667065; x=1756271865;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YMOc0zAG5IHElycDwN0z3G1Bp9v6la9CFRr7DqTKuhw=;
-        b=AC25S4Txh1ZBhy7P0kUQvVe5L1hpFsZ/R1iluoqV6gB/S/no+XDt31beROK2hSuLQU
-         H+yCT6hec8n2jd497IFGsjJkE2NnskmzviV3pP8N0ikURreFrEavyP6FnHq5QEtNJJ8l
-         wHZIal5k6vB6BnT1cWXRSuSfkUKnviP9pDv74xJxic8FDUUxNUcV+zDeetMyOvKK4Kdm
-         rUXV/1Oufyyr4JdabomRoHae0t8p5mcA4Dzeco9XO9KrKAHInDXism9MUme23WIXA/j2
-         hraOlAAnzDTCvda1rwBcpRIwVm6spwRlqlvAClTGHCdU8cYZRaZGgMpQNXHcpJ6Zc3V1
-         XQNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyxS2I+Iya3MHi4rip9ZLgJNyP/NplW0cjwvi7KeTMEF2mOTw+2/HwQCyYzd3FyP8srgG78P8OAVK97Rw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy781kNwMA9zPkVK+/J5Z+A3pMP77sjMrdAybDURjdk5AFERIul
-	NmO2K43K0OgKuk7XaMKQ3iDIF6FIlRwfmAcW6H8GaXiBLMvpJJFICrfHVqnhU/sFPJFbBKr1i1l
-	g/bkWpQ==
-X-Gm-Gg: ASbGncvrd3yoD9bf6Yb7ud8FdmrfzWusjP3SnmyyNTdCQBGaq7RE4QUrO8do2izLIqR
-	k1jqNCek4Syvfw8ZY1mrzC/pTifBZgbhAK+vohTkN/TRF+fm8/GSwdr24aKI+n6NBrLrJVXKwkd
-	jDlH/UJJUTaypS9PimOSprzxEn8aOqUvb5hhueA+bxm0llTeJ8ue3/28ztCWWQjUYF2VyQzN7CM
-	+Cf+nctP7cNnIO/ZBg13ekH9AdUoN6WZwvZ23z6FhggOGt6yQwNZk+9qt/bFvdm0RfMly+jOUTi
-	khApCT0C6uhl/lTu/DzbQAYP0pR+cy1JPEvY2bVWjuT+ZEXYqr9CwhLbPjp4I7t7+XiR7IZG8Vf
-	wAEnNXErXtCoEdyGiAEwV8xHYx3jb8q1GjsvNiBgp1Yt39r8a2O8wSEOWVmG5cg==
-X-Google-Smtp-Source: AGHT+IHaTpj6duXWE2L8KZAqnv1qdM798Fil0kLeYC6/Syiwt2Xmx0TZwCB0cSwPzLZxT4tHuRuNOQ==
-X-Received: by 2002:a05:6214:226b:b0:709:9991:158a with SMTP id 6a1803df08f44-70d770bd3e7mr15769276d6.43.1755666955888;
-        Tue, 19 Aug 2025 22:15:55 -0700 (PDT)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com. [209.85.160.182])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba92fa157sm83152796d6.47.2025.08.19.22.15.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 22:15:54 -0700 (PDT)
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b0bf08551cso140441cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 22:15:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXElO1gRwCrmMw+A1sG9QCfrbcv2ZrgXTZGYhfLMfaw2vYTH02bT94l9u6HZ0LrG17P4DZOqsqYE2zwnVs=@vger.kernel.org
-X-Received: by 2002:ac8:7d0c:0:b0:4a6:f525:e35a with SMTP id
- d75a77b69052e-4b292f95907mr2439661cf.9.1755666954079; Tue, 19 Aug 2025
- 22:15:54 -0700 (PDT)
+        bh=f6SOzmjVM7Uou5d5GhXQPVmrV/BigkiuvFiYvv6bbPU=;
+        b=wzBjGkc3CnZhO8QHk3ceMb/S9f9FhYdGSEt72bpc23SqdAqNf1/XwGg9WkEXzxblQv
+         lPpf0zcCLtCwFAjbxeKYIsbRhBSG+8GDghl5MXI22QEAjRwaHKiLiAo6CQVB/j7r3xX8
+         CeyDfRItIqvVW3o08tUvzN7E1FpkRRqdOuaQG+oScqv5SJNNrAsg8VL7tndbdLMnlIGY
+         6qu47arNEW2APfQ6QKAgqL8t7hzong+Bwmh8dYbFD2dS5BZN8WPZ7gZ2vp4vvtG8lLZr
+         py4Fl8DgqlfklAVZdBKHVty77NDroTSUh9SSZwyGsNGAbQODpy/+kmONYpLU/JqgCVGn
+         0/hA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+96z5illGC8j2cTI8QcM/Qo012RM2RkU/FOciWLDNXQOLkMjj+v1PQK4sq7O6ND0Bn4TrZMBRNwgEbLA=@vger.kernel.org, AJvYcCWP54glqZyu3+vW1TpvODb+zxC6tpIswkaWxJ/zLXJXkPszB4yuicvQspV2HHcm8nBkzjLsWjmHyso=@vger.kernel.org, AJvYcCX+OGZAc06ksxiBsHsCdtrQayHJhzLt3+kyPAHYAUga3uZMzQE7BHYN7zM1efdubJbvaFR0t4tRb3nv@vger.kernel.org, AJvYcCXOK3AfheUkts/Z2osrl4pVN/ls9gQTZjxEzPHN6CX//g6Nsvz7WyXYQJqC4hDjbSuJDmU7V+JNo2g8AEag@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVGpZHKV/HLRze38fhT89lrr+TEGWhBvKkekwj63rCitsTzGs4
+	AmroHnbdhcoChuKmYki4/JZcGmrtoajCTMux64vY3UiOxQPVVtHkBtvD1KP2Z8csy8oNnEL7dQI
+	vaG2lFZPdOpvFG3bJ00A1uoOiJNw4PCs=
+X-Gm-Gg: ASbGncvFL5VhccHEfo8rtX7J80EgTTxb8VCdKvMoN/WmIbz+Q9miHCEoFyKgDhrJ3j7
+	EKvQzklw9s1IdYkHKafqnojEev1CqyO49eJoqv1yPHsqhld8GwFbk8LQrkMtLocpX5YuPV4qEBL
+	ihefdyzFQRqkzpPcGQ846C4/PX5knG2eJ2a1DfcOuUFwISwsZ3uQHEKFhM0dEYM1bo5TKRDuuHC
+	u/lEYdu
+X-Google-Smtp-Source: AGHT+IEGBynKUW5kzhZO24yk05tzZRHHWrhvqyD0weWRBI66L9VHzGYiVaSzAQefZH65TvGdRC7EG3EKihr0MSjt4QY=
+X-Received: by 2002:a05:6000:2511:b0:3b7:9613:adef with SMTP id
+ ffacd0b85a97d-3c32ecce06fmr770158f8f.55.1755667064316; Tue, 19 Aug 2025
+ 22:17:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814083144.191554-1-wenst@chromium.org> <CAC=S1nhz_ESY4VrgWs=dVinLtdOamh6to3EgD1w1Kx=4YBOD9A@mail.gmail.com>
- <CAGXv+5Hke6aEYdyc096_aeS9KHiOzcNqirB-rFT2odepaYhayQ@mail.gmail.com> <CAC=S1nheT46K+jkmtq4EJxOVO=nwasan0LCJwv-HTEK6P6DgxA@mail.gmail.com>
-In-Reply-To: <CAC=S1nheT46K+jkmtq4EJxOVO=nwasan0LCJwv-HTEK6P6DgxA@mail.gmail.com>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Wed, 20 Aug 2025 14:15:35 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CRZaCvaw5fQxgWBgBjnK6Y05p6kHJ2hrHGtLY47Ymsog@mail.gmail.com>
-X-Gm-Features: Ac12FXy8CAi4s4o72NAJVVqc3RW7R9QsaD5heHRhqLT1YoNyBEvsC2eFaSQEZVc
-Message-ID: <CAAFQd5CRZaCvaw5fQxgWBgBjnK6Y05p6kHJ2hrHGtLY47Ymsog@mail.gmail.com>
-Subject: Re: [PATCH] media: mediatek: vcodec: Use spinlock for context list
- protection lock
-To: Fei Shao <fshao@chromium.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Yunfei Dong <yunfei.dong@mediatek.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20250714082252.9028-1-clamor95@gmail.com> <20250714082252.9028-4-clamor95@gmail.com>
+ <3738425.aeNJFYEL58@senjougahara>
+In-Reply-To: <3738425.aeNJFYEL58@senjougahara>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 20 Aug 2025 08:17:32 +0300
+X-Gm-Features: Ac12FXzJct9E7QGLJCka8bZCp2fLJgvViCVpA1zkwKIjCNi6ihC2ticyeIzSuHQ
+Message-ID: <CAPVz0n1gqBTXE2MmwGCNGJWot5VDDqpHecAr+HgSy_=MJ8rb5w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] thermal: tegra: soctherm-fuse: parametrize
+ configuration further
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 6:52=E2=80=AFPM Fei Shao <fshao@chromium.org> wrote=
-:
+=D1=81=D1=80, 20 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 07:3=
+5 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> On Thu, Aug 14, 2025 at 5:06=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org>=
- wrote:
-> >
-> > On Thu, Aug 14, 2025 at 4:59=E2=80=AFPM Fei Shao <fshao@chromium.org> w=
-rote:
-> > >
-> > > On Thu, Aug 14, 2025 at 4:38=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.=
-org> wrote:
-> > > >
-> > > > Previously a mutex was added to protect the encoder and decoder con=
-text
-> > > > lists from unexpected changes originating from the SCP IP block, ca=
-using
-> > > > the context pointer to go invalid, resulting in a NULL pointer
-> > > > dereference in the IPI handler.
-> > > >
-> > > > Turns out on the MT8173, the VPU IPI handler is called from hard IR=
-Q
-> > > > context. This causes a big warning from the scheduler. This was fir=
-st
-> > > > reported downstream on the ChromeOS kernels, but is also reproducib=
-le
-> > > > on mainline using Fluster with the FFmpeg v4l2m2m decoders. Even th=
-ough
-> > > > the actual capture format is not supported, the affected code paths
-> > > > are triggered.
-> > > >
-> > > > Since this lock just protects the context list and operations on it=
- are
-> > > > very fast, it should be OK to switch to a spinlock.
-> > > >
-> > > > Fixes: 6467cda18c9f ("media: mediatek: vcodec: adding lock to prote=
-ct decoder context list")
-> > > > Fixes: afaaf3a0f647 ("media: mediatek: vcodec: adding lock to prote=
-ct encoder context list")
-> > > > Cc: Yunfei Dong <yunfei.dong@mediatek.com>
-> > > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > > ---
-> > > >  .../mediatek/vcodec/common/mtk_vcodec_fw_vpu.c       | 10 ++++++--=
---
-> > > >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c     | 12 +++++++-=
-----
-> > > >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h     |  2 +-
-> > > >  .../platform/mediatek/vcodec/decoder/vdec_vpu_if.c   |  4 ++--
-> > > >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c     | 12 +++++++-=
-----
-> > > >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h     |  2 +-
-> > > >  .../platform/mediatek/vcodec/encoder/venc_vpu_if.c   |  4 ++--
-> > > >  7 files changed, 26 insertions(+), 20 deletions(-)
-> > > >
-> > >
-> > > [...]
-> > >
-> > > > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vp=
-u_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > > index 145958206e38..e9b5cac9c63b 100644
-> > > > --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > > +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > > @@ -77,14 +77,14 @@ static bool vpu_dec_check_ap_inst(struct mtk_vc=
-odec_dec_dev *dec_dev, struct vde
-> > > >         struct mtk_vcodec_dec_ctx *ctx;
-> > > >         int ret =3D false;
-> > > >
-> > > > -       mutex_lock(&dec_dev->dev_ctx_lock);
-> > > > +       spin_lock(&dec_dev->dev_ctx_lock);
-> > >
-> > > Do you mean spin_lock_irqsave()?
-> >
-> > This function is only called from the handler below (outside the diff
-> > context), which itself is called from hard IRQ context. This is mention=
-ed
-> > in the comment above the handler.
+> On Monday, July 14, 2025 5:22=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > Prepare soctherm fuse calibration for Tegra114 support.
 >
-> I see. I only searched here but didn't check the full source.
-> Leaving a comment would be clearer if a revision is made, but it's not
-> worth resending just for that alone.
+> Please describe the changes that are needed for Tegra114 in the commit
+> message.
+>
 
-Hmm, I feel like this could make it easy to introduce further locking
-bugs in the future, because someone may just decide to call this
-function from a different context. Also having the _irqsave variants
-consistently used for the lock make it clear that it's used to
-synchronize with an IRQ handler regardless of which place in the code
-one looks at.
+All changes are mostly related to different calibration register layout.
 
-My recommendation would be to still amend the patch to do that.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  drivers/thermal/tegra/soctherm-fuse.c     | 33 ++++++++++++++++-------
+> >  drivers/thermal/tegra/soctherm.h          | 13 ++++++++-
+> >  drivers/thermal/tegra/tegra124-soctherm.c |  8 ++++++
+> >  drivers/thermal/tegra/tegra132-soctherm.c |  8 ++++++
+> >  drivers/thermal/tegra/tegra210-soctherm.c |  8 ++++++
+> >  5 files changed, 59 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/thermal/tegra/soctherm-fuse.c
+> > b/drivers/thermal/tegra/soctherm-fuse.c index 190f95280e0b..3b808c4521b=
+8
+> > 100644
+> > --- a/drivers/thermal/tegra/soctherm-fuse.c
+> > +++ b/drivers/thermal/tegra/soctherm-fuse.c
+> > @@ -9,15 +9,10 @@
+> >
+> >  #include "soctherm.h"
+> >
+> > -#define NOMINAL_CALIB_FT                     105
+> > -#define NOMINAL_CALIB_CP                     25
+> > -
+> >  #define FUSE_TSENSOR_CALIB_CP_TS_BASE_MASK   0x1fff
+> >  #define FUSE_TSENSOR_CALIB_FT_TS_BASE_MASK   (0x1fff << 13)
+> >  #define FUSE_TSENSOR_CALIB_FT_TS_BASE_SHIFT  13
+> >
+> > -#define FUSE_TSENSOR_COMMON                  0x180
+> > -
+> >  /*
+> >   * Tegra210: Layout of bits in FUSE_TSENSOR_COMMON:
+> >   *    3                   2                   1                   0
+> > @@ -44,6 +39,13 @@
+> >   * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+> >   * |---------------------------------------------------| SHIFT_CP  |
+> >   * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+> > + *
+> > + * Tegra11x: Layout of bits in FUSE_TSENSOR_COMMON aka FUSE_VSENSOR_CA=
+LIB:
+>
+> Let's just call it Tegra114. I see 'Tegra12x' is used above. You can chan=
+ge
+> that to 'Tegra124/Tegra132' while at it. The 'NNx' numbering is something
+> leaking from (old) downstream code that we're trying to avoid.
+>
+> > + *    3                   2                   1                   0
+> > + *  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+> > + * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+> > + * | SHFT_FT |       BASE_FT       | SHIFT_CP  |      BASE_CP      |
+> > + * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+> >   */
+>
+> Based on these diagrams, the size of e.g. SHIFT_FT has not changed betwee=
+n the
+> chip generations. I checked old downstream code, where
+>
+>   #define FUSE_SHIFT_FT_BITS      5
+>
+> Below, we have
+>
+>   shifted_ft =3D sign_extend32(shifted_ft, 4);
+>
+> However, sign_extend32 calculates as '31 - x' whereas the downstream code=
+ does
+> '32 - x'. So it appears to me that the size hasn't changed between the ch=
+ips
+> and hence we don't need the added parameterization? Same might apply to o=
+ther
+> fields in the calibration data.
+>
 
+It seems you are correct regarding FUSE_SHIFT_FT_BITS and
+FUSE_SHIFT_CP_BITS I will adjust that. Thank you
+
+> >
+> >  #define CALIB_COEFFICIENT 1000000LL
+> > @@ -77,7 +79,7 @@ int tegra_calc_shared_calib(const struct
+> > tegra_soctherm_fuse *tfuse, s32 shifted_cp, shifted_ft;
+> >       int err;
+> >
+> > -     err =3D tegra_fuse_readl(FUSE_TSENSOR_COMMON, &val);
+> > +     err =3D tegra_fuse_readl(tfuse->fuse_common_reg, &val);
+> >       if (err)
+> >               return err;
+> >
+> > @@ -88,7 +90,7 @@ int tegra_calc_shared_calib(const struct
+> > tegra_soctherm_fuse *tfuse,
+> >
+> >       shifted_ft =3D (val & tfuse->fuse_shift_ft_mask) >>
+> >                    tfuse->fuse_shift_ft_shift;
+> > -     shifted_ft =3D sign_extend32(shifted_ft, 4);
+> > +     shifted_ft =3D sign_extend32(shifted_ft, tfuse->fuse_shift_ft_bit=
+s);
+> >
+> >       if (tfuse->fuse_spare_realignment) {
+> >               err =3D tegra_fuse_readl(tfuse->fuse_spare_realignment, &=
+val);
+> > @@ -96,10 +98,21 @@ int tegra_calc_shared_calib(const struct
+> > tegra_soctherm_fuse *tfuse, return err;
+> >       }
+> >
+> > -     shifted_cp =3D sign_extend32(val, 5);
+> > +     shifted_cp =3D (val & tfuse->fuse_shift_cp_mask) >>
+> > +                  tfuse->fuse_shift_cp_shift;
+> > +     shifted_cp =3D sign_extend32(val, tfuse->fuse_shift_cp_bits);
+> >
+> > -     shared->actual_temp_cp =3D 2 * NOMINAL_CALIB_CP + shifted_cp;
+> > -     shared->actual_temp_ft =3D 2 * NOMINAL_CALIB_FT + shifted_ft;
+> > +     shared->actual_temp_cp =3D 2 * tfuse->nominal_calib_cp + shifted_=
+cp;
+> > +     shared->actual_temp_ft =3D 2 * tfuse->nominal_calib_ft + shifted_=
+ft;
+> > +
+> > +     /*
+> > +      * Tegra114 provides fuse thermal corrections in 0.5C while expec=
+ted
+> > +      * precision should be 1C
+> > +      */
 >
-> Reviewed-by: Fei Shao <fshao@chromium.org>
+> If Tegra114 is lower precision, should this say it provides corrections i=
+n 1C
+> while newer chips are 0.5C?
 >
+
+lower_precision is an action not a statement (took that from
+downstream iirc). Comment is correct, T114 provides output in 0.5C
+while newer gens in 1C
+
+> > +     if (tfuse->lower_precision) {
+> > +             shared->actual_temp_cp /=3D 2;
+> > +             shared->actual_temp_ft /=3D 2;
+> > +     }
+> >
+> >       return 0;
+> >  }
+> > diff --git a/drivers/thermal/tegra/soctherm.h
+> > b/drivers/thermal/tegra/soctherm.h index 70501e73d586..6c0e0cc594a5 100=
+644
+> > --- a/drivers/thermal/tegra/soctherm.h
+> > +++ b/drivers/thermal/tegra/soctherm.h
+> > @@ -56,6 +56,13 @@
+> >  #define SENSOR_TEMP2_MEM_TEMP_MASK           (0xffff << 16)
+> >  #define SENSOR_TEMP2_PLLX_TEMP_MASK          0xffff
+> >
+> > +#define NOMINAL_CALIB_FT                     105
+> > +#define T114X_CALIB_FT                               90
+> > +#define NOMINAL_CALIB_CP                     25
 >
-> On Thu, Aug 14, 2025 at 5:06=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org>=
- wrote:
+> I would either just hardcode these values in the chip-specific files, or
+>
+> #define TEGRA114_NOMINAL_CALIB_FT ...
+> #define TEGRA124_NOMINAL_CALIB_FT ...
+> #define TEGRA114_NOMINAL_CALIB_CP ...
+>
+> > +
+> > +#define FUSE_VSENSOR_CALIB                   0x08c
+> > +#define FUSE_TSENSOR_COMMON                  0x180
+> > +
+> >  /**
+> >   * struct tegra_tsensor_group - SOC_THERM sensor group data
+> >   * @name: short name of the temperature sensor group
+> > @@ -109,9 +116,13 @@ struct tsensor_group_thermtrips {
 > >
-> > On Thu, Aug 14, 2025 at 4:59=E2=80=AFPM Fei Shao <fshao@chromium.org> w=
-rote:
-> > >
-> > > On Thu, Aug 14, 2025 at 4:38=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.=
-org> wrote:
-> > > >
-> > > > Previously a mutex was added to protect the encoder and decoder con=
-text
-> > > > lists from unexpected changes originating from the SCP IP block, ca=
-using
-> > > > the context pointer to go invalid, resulting in a NULL pointer
-> > > > dereference in the IPI handler.
-> > > >
-> > > > Turns out on the MT8173, the VPU IPI handler is called from hard IR=
-Q
-> > > > context. This causes a big warning from the scheduler. This was fir=
-st
-> > > > reported downstream on the ChromeOS kernels, but is also reproducib=
-le
-> > > > on mainline using Fluster with the FFmpeg v4l2m2m decoders. Even th=
-ough
-> > > > the actual capture format is not supported, the affected code paths
-> > > > are triggered.
-> > > >
-> > > > Since this lock just protects the context list and operations on it=
- are
-> > > > very fast, it should be OK to switch to a spinlock.
-> > > >
-> > > > Fixes: 6467cda18c9f ("media: mediatek: vcodec: adding lock to prote=
-ct decoder context list")
-> > > > Fixes: afaaf3a0f647 ("media: mediatek: vcodec: adding lock to prote=
-ct encoder context list")
-> > > > Cc: Yunfei Dong <yunfei.dong@mediatek.com>
-> > > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > > ---
-> > > >  .../mediatek/vcodec/common/mtk_vcodec_fw_vpu.c       | 10 ++++++--=
---
-> > > >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c     | 12 +++++++-=
-----
-> > > >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h     |  2 +-
-> > > >  .../platform/mediatek/vcodec/decoder/vdec_vpu_if.c   |  4 ++--
-> > > >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c     | 12 +++++++-=
-----
-> > > >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h     |  2 +-
-> > > >  .../platform/mediatek/vcodec/encoder/venc_vpu_if.c   |  4 ++--
-> > > >  7 files changed, 26 insertions(+), 20 deletions(-)
-> > > >
-> > >
-> > > [...]
-> > >
-> > > > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vp=
-u_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > > index 145958206e38..e9b5cac9c63b 100644
-> > > > --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > > +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > > @@ -77,14 +77,14 @@ static bool vpu_dec_check_ap_inst(struct mtk_vc=
-odec_dec_dev *dec_dev, struct vde
-> > > >         struct mtk_vcodec_dec_ctx *ctx;
-> > > >         int ret =3D false;
-> > > >
-> > > > -       mutex_lock(&dec_dev->dev_ctx_lock);
-> > > > +       spin_lock(&dec_dev->dev_ctx_lock);
-> > >
-> > > Do you mean spin_lock_irqsave()?
+> >  struct tegra_soctherm_fuse {
+> >       u32 fuse_base_cp_mask, fuse_base_cp_shift;
+> > +     u32 fuse_shift_cp_mask, fuse_shift_cp_shift;
+> >       u32 fuse_base_ft_mask, fuse_base_ft_shift;
+> >       u32 fuse_shift_ft_mask, fuse_shift_ft_shift;
+> > -     u32 fuse_spare_realignment;
+> > +     u32 fuse_shift_cp_bits, fuse_shift_ft_bits;
+> > +     u32 fuse_common_reg, fuse_spare_realignment;
+> > +     u32 nominal_calib_cp, nominal_calib_ft;
+> > +     bool lower_precision;
+> >  };
 > >
-> > This function is only called from the handler below (outside the diff
-> > context), which itself is called from hard IRQ context. This is mention=
-ed
-> > in the comment above the handler.
+> >  struct tsensor_shared_calib {
+> > diff --git a/drivers/thermal/tegra/tegra124-soctherm.c
+> > b/drivers/thermal/tegra/tegra124-soctherm.c index
+> > 20ad27f4d1a1..dd4dd7e9014d 100644
+> > --- a/drivers/thermal/tegra/tegra124-soctherm.c
+> > +++ b/drivers/thermal/tegra/tegra124-soctherm.c
+> > @@ -200,11 +200,19 @@ static const struct tegra_tsensor tegra124_tsenso=
+rs[]
+> > =3D { static const struct tegra_soctherm_fuse tegra124_soctherm_fuse =
+=3D {
+> > .fuse_base_cp_mask =3D 0x3ff,
+> >       .fuse_base_cp_shift =3D 0,
+> > +     .fuse_shift_cp_mask =3D 0x1f,
+> > +     .fuse_shift_cp_shift =3D 0,
+> >       .fuse_base_ft_mask =3D 0x7ff << 10,
+> >       .fuse_base_ft_shift =3D 10,
+> >       .fuse_shift_ft_mask =3D 0x1f << 21,
+> >       .fuse_shift_ft_shift =3D 21,
+> > +     .fuse_shift_cp_bits =3D 5,
+> > +     .fuse_shift_ft_bits =3D 4,
+> > +     .fuse_common_reg =3D FUSE_TSENSOR_COMMON,
+> >       .fuse_spare_realignment =3D 0x1fc,
+> > +     .nominal_calib_cp =3D NOMINAL_CALIB_CP,
+> > +     .nominal_calib_ft =3D NOMINAL_CALIB_FT,
+> > +     .lower_precision =3D false,
+> >  };
 > >
-> > > >         list_for_each_entry(ctx, &dec_dev->ctx_list, list) {
-> > > >                 if (!IS_ERR_OR_NULL(ctx) && ctx->vpu_inst =3D=3D vp=
-u) {
-> > > >                         ret =3D true;
-> > > >                         break;
-> > > >                 }
-> > > >         }
-> > > > -       mutex_unlock(&dec_dev->dev_ctx_lock);
-> > > > +       spin_unlock(&dec_dev->dev_ctx_lock);
-> > > >
-> > > >         return ret;
-> > > >  }
-> > >
-> > > [...]
-> > >
-> > > > diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc_vp=
-u_if.c b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > > > index 51bb7ee141b9..79a91283da78 100644
-> > > > --- a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > > > +++ b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > > > @@ -47,14 +47,14 @@ static bool vpu_enc_check_ap_inst(struct mtk_vc=
-odec_enc_dev *enc_dev, struct ven
-> > > >         struct mtk_vcodec_enc_ctx *ctx;
-> > > >         int ret =3D false;
-> > > >
-> > > > -       mutex_lock(&enc_dev->dev_ctx_lock);
-> > > > +       spin_lock(&enc_dev->dev_ctx_lock);
-> > >
-> > > Also here.
+> >  const struct tegra_soctherm_soc tegra124_soctherm =3D {
+> > diff --git a/drivers/thermal/tegra/tegra132-soctherm.c
+> > b/drivers/thermal/tegra/tegra132-soctherm.c index
+> > b76308fdad9e..926836426688 100644
+> > --- a/drivers/thermal/tegra/tegra132-soctherm.c
+> > +++ b/drivers/thermal/tegra/tegra132-soctherm.c
+> > @@ -200,11 +200,19 @@ static struct tegra_tsensor tegra132_tsensors[] =
+=3D {
+> >  static const struct tegra_soctherm_fuse tegra132_soctherm_fuse =3D {
+> >       .fuse_base_cp_mask =3D 0x3ff,
+> >       .fuse_base_cp_shift =3D 0,
+> > +     .fuse_shift_cp_mask =3D 0x1f,
+> > +     .fuse_shift_cp_shift =3D 0,
+> >       .fuse_base_ft_mask =3D 0x7ff << 10,
+> >       .fuse_base_ft_shift =3D 10,
+> >       .fuse_shift_ft_mask =3D 0x1f << 21,
+> >       .fuse_shift_ft_shift =3D 21,
+> > +     .fuse_shift_cp_bits =3D 5,
+> > +     .fuse_shift_ft_bits =3D 4,
+> > +     .fuse_common_reg =3D FUSE_TSENSOR_COMMON,
+> >       .fuse_spare_realignment =3D 0x1fc,
+> > +     .nominal_calib_cp =3D NOMINAL_CALIB_CP,
+> > +     .nominal_calib_ft =3D NOMINAL_CALIB_FT,
+> > +     .lower_precision =3D false,
+> >  };
 > >
-> > Same reasoning applies here as well.
+> >  const struct tegra_soctherm_soc tegra132_soctherm =3D {
+> > diff --git a/drivers/thermal/tegra/tegra210-soctherm.c
+> > b/drivers/thermal/tegra/tegra210-soctherm.c index
+> > d0ff793f18c5..2877a7b43f2a 100644
+> > --- a/drivers/thermal/tegra/tegra210-soctherm.c
+> > +++ b/drivers/thermal/tegra/tegra210-soctherm.c
+> > @@ -201,11 +201,19 @@ static const struct tegra_tsensor tegra210_tsenso=
+rs[]
+> > =3D { static const struct tegra_soctherm_fuse tegra210_soctherm_fuse =
+=3D {
+> > .fuse_base_cp_mask =3D 0x3ff << 11,
+> >       .fuse_base_cp_shift =3D 11,
+> > +     .fuse_shift_cp_mask =3D 0x1f,
+> > +     .fuse_shift_cp_shift =3D 0,
+> >       .fuse_base_ft_mask =3D 0x7ff << 21,
+> >       .fuse_base_ft_shift =3D 21,
+> >       .fuse_shift_ft_mask =3D 0x1f << 6,
+> >       .fuse_shift_ft_shift =3D 6,
+> > +     .fuse_shift_cp_bits =3D 5,
+> > +     .fuse_shift_ft_bits =3D 4,
+> > +     .fuse_common_reg =3D FUSE_TSENSOR_COMMON,
+> >       .fuse_spare_realignment =3D 0,
+> > +     .nominal_calib_cp =3D NOMINAL_CALIB_CP,
+> > +     .nominal_calib_ft =3D NOMINAL_CALIB_FT,
+> > +     .lower_precision =3D false,
+> >  };
 > >
-> > ChenYu
-> >
-> > > Regards,
-> > > Fei
-> > >
-> > > >         list_for_each_entry(ctx, &enc_dev->ctx_list, list) {
-> > > >                 if (!IS_ERR_OR_NULL(ctx) && ctx->vpu_inst =3D=3D vp=
-u) {
-> > > >                         ret =3D true;
-> > > >                         break;
-> > > >                 }
-> > > >         }
-> > > > -       mutex_unlock(&enc_dev->dev_ctx_lock);
-> > > > +       spin_unlock(&enc_dev->dev_ctx_lock);
-> > > >
-> > > >         return ret;
-> > > >  }
-> > > > --
-> > > > 2.51.0.rc1.163.g2494970778-goog
-> > > >
-> > > >
+> >  static struct tsensor_group_thermtrips tegra210_tsensor_thermtrips[] =
+=3D {
 >
 
