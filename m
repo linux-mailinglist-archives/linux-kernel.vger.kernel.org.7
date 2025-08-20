@@ -1,127 +1,85 @@
-Return-Path: <linux-kernel+bounces-778621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E02B2E81D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9E1B2E81F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2CF58707F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:24:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0527C1897867
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D712868A9;
-	Wed, 20 Aug 2025 22:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FA129B233;
+	Wed, 20 Aug 2025 22:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0LHqwsB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RaXF3bix"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2284155A30;
-	Wed, 20 Aug 2025 22:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8CC27E1D0;
+	Wed, 20 Aug 2025 22:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755728667; cv=none; b=gZl0A0mjWsA1pwtozyH7cg8557X/WyerRJxqu1SBoUohgj2MPvTyAI9fFJOfXEnGuHZ1+5nTSuhUSbtKPji0FZhND5a9b/433GPZfDORLByZ2axPth0Wl6fPO7xrcieadJMK2yh4hLcBi/A0QaSHgKxQtlO4QsM0MUfODDR8Kro=
+	t=1755728686; cv=none; b=b/bmHldTx7gp8y//qRpv8HEQfjPjKi37y48Y2av1ez7CoY+kh0a/10ig+VhbJS8zS3I4sNggTRGCLwYbd6MVob/p/iX7dkbnECXuim0rfNVdLvHt0UzpW/FkKE1IDra2sbmUSteMnZCzndni4HEkNTicavC0b6QMYkNbtoOVFRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755728667; c=relaxed/simple;
-	bh=ysNe3rGWwElNFQFScxZngEi0VfXeoQjX5AlbYef/6wk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T8u0hebVoBHlWTlCDDDCuQwYIVbuSPZDJ+X9BhIimhfkSlIIyzDYOSzipoyPFBn329O7oCIHPSxqfqz19ERcld22M08GPpsX+eVTUi8Qn3qTM7Fwbp/NWTNDbEC2ucZq3wIJ+1siPqq6MIRhTf7wDE0TNymcwNZoVy9NGNm7A2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0LHqwsB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 346C4C4CEE7;
-	Wed, 20 Aug 2025 22:24:27 +0000 (UTC)
+	s=arc-20240116; t=1755728686; c=relaxed/simple;
+	bh=r0FZZzrkYMRC61kJQyjIVLnotSFQk8CEf6SU3rv4psQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMIYYZnKmelRKAJSuDHaA9Nz9ajqLj+P12r8ZC9+jPO6B+4jGVfaErkQol8MU9B1goayNqcgu9GcSNknnQCTxo8FL/3gr2ZgXv0xEW+n2HbYCiRiGXmt87PSLVb4lGM8YTWfV57wOOGIkMc9x/XVRhyY8/MNsbjKqwXazNgVAXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RaXF3bix; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E21C4CEE7;
+	Wed, 20 Aug 2025 22:24:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755728667;
-	bh=ysNe3rGWwElNFQFScxZngEi0VfXeoQjX5AlbYef/6wk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=E0LHqwsB/FLhEq23DaO6O76nUZpFqFY5BwK9BXZi06/G/EzcYm081Mx6tA99iCfDS
-	 eOCG+JnnXDq13atuzO5CYJqlEDjZcJPBgcDgXNuSpxl4GFINUKHRU59cXTCoWSa2g1
-	 zTGQbt/gpVGni5/XJ6N2eHClmVLY94gnyl1QoV7/Drc/es+LQ2BEj6q5aNOj0D/EGj
-	 ugqr+4JHh6jdnCxol72zTj/IpkmB9/B/BHiMu0wXj0YzE4f3x5FilwetESXcJ+esEJ
-	 LVDGcT9VcITtewtQAX0hhlsonOF/6/UiX+afEspBp/YTqZygiPQ/CTIQbI78cLfpnO
-	 H2KYQEt+MC+IA==
-Received: from host86-149-246-145.range86-149.btcentralplus.com ([86.149.246.145] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uorEH-009W7G-8x;
-	Wed, 20 Aug 2025 23:24:25 +0100
-Date: Wed, 20 Aug 2025 23:24:24 +0100
-Message-ID: <87ikihk4x3.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v15 1/6] arm64/gcs: Ensure FGTs for EL1 GCS instructions are disabled
-In-Reply-To: <20250820-arm64-gcs-v15-1-5e334da18b84@kernel.org>
-References: <20250820-arm64-gcs-v15-0-5e334da18b84@kernel.org>
-	<20250820-arm64-gcs-v15-1-5e334da18b84@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1755728686;
+	bh=r0FZZzrkYMRC61kJQyjIVLnotSFQk8CEf6SU3rv4psQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RaXF3bixgE8jHi2EtWyJBBAMqT6XJzFeNTwD4IOg8L5vgGZAMvYL5+aHpmSri5UFO
+	 QdmgO+l6/XXroAbrhuixzZ1jQT9nodFkzhY/hlYtoby5KBCb/uzx6QTUU1taKhRJZ1
+	 APCOFtPm75cqXCNedcn0A8fMuL3iLEU8ZynDf1yynIuTNc2hNntkSHjqSQiPKxYpmV
+	 dCcPaQcUWhquDug1xk0kYOTZeXNtdRpjLNxxi1CKkN8gZm6b7I+ZYtSXdrB2gosZUk
+	 kC3X8ZEuhr/+NJCX7+gQ/YDFPipZWDDNeOUt7n3CmntLyXM7wfWFrGZqOuBuw8O+2x
+	 YNO20IPwYZgew==
+Date: Wed, 20 Aug 2025 17:24:45 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: dt: writing-bindings: Document node name ABI and
+ simple-mfd
+Message-ID: <175572868343.1564032.6590237767039466297.robh@kernel.org>
+References: <20250818132534.120217-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 86.149.246.145
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818132534.120217-2-krzysztof.kozlowski@linaro.org>
 
-On Wed, 20 Aug 2025 15:14:41 +0100,
-Mark Brown <broonie@kernel.org> wrote:
+
+On Mon, 18 Aug 2025 15:25:35 +0200, Krzysztof Kozlowski wrote:
+> Document established Devicetree bindings maintainers review practice:
 > 
-> The initial EL2 setup for GCS did not include disabling of EL1 usage of
-> GCS instructions, also disable these traps.  This is the first disabling
-> of instruction traps, use x2 to store the value to be written.
-
-Written where?
-
+> 1. Device node names should not be treated as an ABI, unless for
+>    children of a device when documented.
+>    There were many patches posted using of_find_node_by_name() or
+>    of_node_name_eq() for accessing siblings or completely different
+>    nodes.  These cases were introducing undocumented ABI, so they are
+>    discouraged.
 > 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> 2. 'simple-mfd' means children do not depend on parent device resources.
+>    'simple-bus' is so simple, that even 'reg' properties are not
+>    applicable.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  arch/arm64/include/asm/el2_setup.h | 4 ++++
->  1 file changed, 4 insertions(+)
+>  Documentation/devicetree/bindings/writing-bindings.rst | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-> index 46033027510c..0ac14ea4dbc8 100644
-> --- a/arch/arm64/include/asm/el2_setup.h
-> +++ b/arch/arm64/include/asm/el2_setup.h
-> @@ -355,6 +355,10 @@
->  
->  .Lskip_gce_fgt_\@:
->  
-> +	orr	x2, x2, #HFGITR_EL2_nGCSEPP_MASK
 
-What is x2 set to before this?
+Applied, thanks!
 
-> +	orr	x2, x2, #HFGITR_EL2_nGCSSTR_EL1_MASK
-> +	orr	x2, x2, #HFGITR_EL2_nGCSPUSHM_EL1_MASK
-> +
->  .Lset_fgt_\@:
->  	msr_s	SYS_HFGRTR_EL2, x0
->  	msr_s	SYS_HFGWTR_EL2, x0
-
-Followed by:
-
-	msr_s	SYS_HFGITR_EL2, xzr
-
-Puzzled.
-
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
 
