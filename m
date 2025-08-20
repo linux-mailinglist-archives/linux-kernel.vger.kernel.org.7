@@ -1,115 +1,99 @@
-Return-Path: <linux-kernel+bounces-778478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473A4B2E637
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:11:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05931B2E643
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D911CC0034
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:11:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 771DF3B7B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5596286425;
-	Wed, 20 Aug 2025 20:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EEB277026;
+	Wed, 20 Aug 2025 20:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xf9fChm1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XOa5qIBJ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B57248F77;
-	Wed, 20 Aug 2025 20:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A6D27B35D;
+	Wed, 20 Aug 2025 20:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755720686; cv=none; b=V+eiUySmUvBXaaIUnzIzCXVHjR3VNnWdGptLmW7Oh7rqVXBaRRk3eQ/y0uhu2T0j/ujRdki0Mey99pDLcEUPgOAx5SSNlRPdpNRr+p57pxgi9xZdEzxPRt5vbXS6B36+QSMf4mowl92rUXyYL3WNATUZqILAZrMtTuQ8aG2EJdA=
+	t=1755720748; cv=none; b=tV8gtya3TCG1MnSUkQOpUIjlJhlGu6wjuKE87+RhSXgGwjWa9hBX5DiyiK4xuQcCqG5VD7C2XY3niZ1kJnhqwTk9dAD6ldYV5A7qgB4sjhNVffGALM5s+yDGzF9k+3JihPODMValNPkXDuM1sc47G4W/Kqw4K/+AQmSQLxJCVlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755720686; c=relaxed/simple;
-	bh=XlLru7y5MSGajiGaryGBmyIhYBKNRiyhFMJDtDYqXFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZYl42/OgX+bdN82yiD8trVesmt9KkTBol09DkEw2TDRpYB+DTXhj3NliyrBLMxQ/eDX1yjwXCNyJ5uD1/okd2EnSgVs8vh4DxYTn1+c9f3LfIwZE8rzE12iHESPOcfrlCHYTB+6HjyVSZ5AHx7hA/S+Q4vv/12BvizYjcvcCJu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xf9fChm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C27C4CEED;
-	Wed, 20 Aug 2025 20:11:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755720685;
-	bh=XlLru7y5MSGajiGaryGBmyIhYBKNRiyhFMJDtDYqXFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xf9fChm1DfBhhD6/sVTENIG8BYm7MZpXmgK/5QplNuwnilKKFigI+BP9K6R9BmxQk
-	 gTQoKOycIb9pOSX8gcP71ISf8Ol5LoxWyj/TrSAfsvjHP6a6chiD6jL4Tx6QvA66d9
-	 gxaXaAnqRTsVtgZ1maHx+Lscce0GN2SIyKazv9VpagLMrBni8f/W4laSqt4QQ+Of4j
-	 1Lsujyp5LzZj2MnBa7EVHERxAszofGNPunMPexh73UZxjb6Hx7MbAWK5eu8rpiWlYA
-	 onjUSlE7odwo9uGgMAqYW3cqhIeVHZd0dynhkAIbuuW0uiEIcV3wCwIeSxt19NdJ/g
-	 g0JIRpBFSd7pA==
-Date: Wed, 20 Aug 2025 21:11:20 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
-Message-ID: <20250820-onyx-salad-c5c96f6bd480@spud>
-References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
- <20250820171812.402519-7-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1755720748; c=relaxed/simple;
+	bh=zqcGJSspxf5zinFHLK4gHoVtE4aWtBICsxsjObTEl5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oRjGlw5Pd9dxvB+/Kc9Z7vQHlYnQldNb82Cfq6VQ00Yxdic5Gv5gtROzf6jE5kzl8z3CHMmghSXW25mxsiBpOhl0IEIt+m/aUfCadpBwxUcpR8nBFMOk8Aecim5SUJpSJ8t7VvDAQYFF9BKVP6wFOJLuAR3BJAfK2egLkiC84/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XOa5qIBJ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=W63MMTMvmB6dl+5eT7CKL9PFuVf8rs2QgB8pzsAzX9c=; b=XOa5qIBJdl6XTEe/8bgT4qMTos
+	EKVXS392npmS7iFDjpxCNXng7NCyyB8fvbGTOQmU3PbVL65tdZ0rvNmpgeaW30dxdUUsqsFdJOb5b
+	NfT7fd+6dMOApjUSdxjzI5GXyIV/56KojG7wkJUMYpmIE56p1FG3R+FoNhAQ6r2lBZ/7bhF3wJFDn
+	oZKmke2+o79yG5/VEPIILBVnYlcdlmtGShCId9Ce3HQA/IFINsqFu0meMDMEOyAx0RmBUaK4uh2ia
+	NvU0NNTn1Ki2gd3/yvNgtCtFZ76fWNEaG1FLm9RnXYm/kwsfqg0zu7gR0SUdyOgmHQHNYmIt3hOYA
+	gDyT5Ang==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uopAV-0000000EoWf-0mFq;
+	Wed, 20 Aug 2025 20:12:23 +0000
+Message-ID: <88b25b9d-911a-4419-b1a6-e6ae38d499ba@infradead.org>
+Date: Wed, 20 Aug 2025 13:12:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p836dbU6yWGHxN/q"
-Content-Disposition: inline
-In-Reply-To: <20250820171812.402519-7-biju.das.jz@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] tracing: Add a tracepoint verification check at
+ build time
+To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20250820174752.684086778@kernel.org>
+ <20250820174828.080947631@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250820174828.080947631@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---p836dbU6yWGHxN/q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 06:17:53PM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> Document the Renesas RZ/G3E USB3.2 Gen2 Host Controller (a.k.a USB3HOST).
-> The USB3HOST is compliant with the Universal Serial Bus 3.2 Specification
-> Revision 1.0.
->  - Supports 1 downstream USB receptacles
->      - Number of SSP Gen2 or SS ports: 1
->      - Number of HS or FS or LS ports: 1
->  - Supports Super Speed Plus Gen2x1 (10 Gbps), Super Speed (5 Gbps),
->    High Speed (480 Mbps), Full Speed (12Mbps), and Low Speed (1.5 Mbps).
->  - Supports all transfer-types: Control, Bulk, Interrupt, Isochronous, and
->    these split-transactions.
->  - Supports Power Control and Over Current Detection.
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 8/20/25 10:47 AM, Steven Rostedt wrote:
+> +/**
+> + * for_each_shdr_str - iterator that reads strings that are in an ELF section.
+> + * @len: "int" to hold the length of the current string
+> + * @ehdr: A pointer to the ehdr of the ELF file
+> + * @sec: The section that has the strings to iterater on
 
-> +---
-> +$id: http://devicetree.org/schemas/usb/renesas,rzg3e-xhci.yaml#
+                                                iterate> + *
+> + * This is a for loop that iterates over all the nul terminated strings
+> + * that are in a given ELF section. The variable "str" will hold
+> + * the current string for each iteration and the passed in @len will
+> + * contain theh strlen() of that string.
 
-> +    const: renesas,r9a09g047-xhci
+              the
 
-How come these don't match? I don't understand your naming scheme at
-all, so idk which is even correct!
+> + */
 
---p836dbU6yWGHxN/q
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+~Randy
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKYr6AAKCRB4tDGHoIJi
-0omXAP0Wsz5yJ7xc5QAkTaaz6vWUAs8TZPxd7tTHdA5Iob7KbwEAj5sntbfoCFhw
-9lpgPTDzmod7xdfet+P+7XWxZk+NSAI=
-=bTnM
------END PGP SIGNATURE-----
-
---p836dbU6yWGHxN/q--
 
