@@ -1,127 +1,169 @@
-Return-Path: <linux-kernel+bounces-777024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D312B2D431
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:44:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83502B2D433
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B9F058840D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:44:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7837C6245A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890F92C11E2;
-	Wed, 20 Aug 2025 06:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183AF2C15A5;
+	Wed, 20 Aug 2025 06:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ir/XRj+l"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mO9ugBqA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A114280325
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD8C2C21C0;
+	Wed, 20 Aug 2025 06:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755672294; cv=none; b=I3vjdSDPwbMV9Z5Rg1YZali3tbna9d2+kShk8gMwyWlHo2l7Zkxi/BpNguyM0rzL4vhQTDc+boYXFbgzLLdfBF8csK7rJml3bkAIUdXOKaRwguH+FWZ9hpnzxlCCUbgJUUzpHfCr4HZ2+gjRylG67CSFT6Cnzb0y81QJnCT1mfw=
+	t=1755672268; cv=none; b=dbaQx9C+PL6b1UCaXYkI6Iw9K+nPFQxyzBdSKz+bfFe9537l4jCELpWJjR/LcYTm2rssOFtqXxGSWGr+JIc2PZPXttOOdPEHYJuxjdKcOWiK3t1EHWGJNSRPhv2Q58Gd/HLT03OnEMH4VOqDvUvnqDuEDywiktbzX01YXenbsck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755672294; c=relaxed/simple;
-	bh=XxAiAdPjAqjFYBsF4crlxMLuqhWcBn41XRHdA5KQdTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f9jSDsRdi2qYRZvZwk25TU+nkxOOM2OlcdHJzC+Rr+Iu9T/DHn/bo/oY6/ns9XzCAwyZApwiBPbB4Mcp43BcjPEd2qBaD5csnrluoV8QNzQG15+x27ZEWy0olUtfd2h5V5YIr2ftMZA6URrO8fyfp0O6lQfohPkLKPfkeLIVAAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ir/XRj+l; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e94f573e4f5so474261276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755672291; x=1756277091; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MFZtmVxFhnecSgkfjhLHB+6EKVJkLrQoIKfKXYcuIYU=;
-        b=ir/XRj+lrRXUx6mTXOqiTkJ2oJHu/bMcqRe4t/JcEXbL9VqaDanPUsJ9F58L92L6zb
-         hfMq7NBuOISfUDu2ImnFNdEV44fKzyFHOutscTEqHgsFJeTmqXgwOIgFxKfUc3h7BSH5
-         t9Ol+kEyy6KXna7XKxFCxigjo4DIQuN0gRGxkLqSsBQmeo5qlJSGude188L2RX8TQhab
-         hhbmfDzsCnQawQ5no9VuqsUpgaQtCqIJ8vzE2He6+e9zHdtf/bcH0AoZgDwgiZUckAhL
-         MvkUaEOArTJ0z6cv+HgMANgGR2Yq4IdX3QIsEgrEpKOoBim49pFKgb6tqOSHxT85gzC3
-         2R/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755672291; x=1756277091;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MFZtmVxFhnecSgkfjhLHB+6EKVJkLrQoIKfKXYcuIYU=;
-        b=Y9S4T2533c6/6EwPO6lfA7KpLbEmfkiphP+e26w77rwYNC1SXxqSe0zOVF0kuZt1wY
-         E9QNxGCt6VP/H9ywxKEHRD/ssQN1izeusoV25HQ/p87xaGMXmRm3owE6RM0f5E+lHKyd
-         5DYptOl+ycdfthtMQzdOHmuFhrpsXyrT7JRSrkwn496ZKSsue5+67EHlBG9bmrpM6NUa
-         rnUiYxq0Y4hUXzFAwe9Yk08w1+F5W482OF/gs+xTbUEapDeEVFWGFepfN3mzo0Xmw8uc
-         NtUbmjaRR9O53CuUbzoeV0l1+tZYW1wUa6O17FNcVIaQ4f9batPgy2r7HYgyjNSpowyk
-         MD1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVk1VHdgJFuZRpC9BpXpBd14B3PdRhb9WDWuitFcWbQhwLxH8tufTzKg8UqAo2d1FH1zaP4SY8Yo4zXgkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzmctQpMZkucix7GfzhwRefQbB4hffBMzMCT3CZDzT5ZW45uFz
-	9G1cSeH4K5HIJrQmV6t1EMCjOYwiooYLVgEiZ60BpdCBnjKwgLASyMk0Ugh7uhDU98KhyVneKfJ
-	mA6F+SR8jloE3939WWnyoIZAhxNvR3gfT0J/OtqWc+Q==
-X-Gm-Gg: ASbGncvUCaQhC+y5nB+sHRYSQ/jY4IFheC/oCw5w9hAQ2ycSrsYvWHIDE+UxAzpgkv4
-	4iRjyRdHOmqxtmbs2MXIGYpaCbbr1yqURTiAGHQ2gPDsJfMArbLCqCiX/0xqgy/RKlAmUbwacxO
-	ZwAMd+DhVC8M+sYbFdpP6QYy5qcXAhTi+QEnqkkXYuYhkrhYikRsQw0POkfq+jdu24Rq2Gj0LDa
-	j5YU174+xpu/UUoKseeeZfgYY1IkgnIN2ugPIFL
-X-Google-Smtp-Source: AGHT+IF9n3TPs24mXP/KjwmQUhHu+FJWEtosq1oYeVveVi3oASW8NolDlEZsKCpZBM4rHvLc1LSctNmuAv5MtuhmB68=
-X-Received: by 2002:a05:6902:2011:b0:e94:e1e3:85fb with SMTP id
- 3f1490d57ef6-e94f66442c8mr2236785276.52.1755672291534; Tue, 19 Aug 2025
- 23:44:51 -0700 (PDT)
+	s=arc-20240116; t=1755672268; c=relaxed/simple;
+	bh=3s3RN6kaKBn/o13lq3zXVrOJU86q/ebvShuuqfEW+y4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KqHW3Q69ioyQqx/PWZcpLd8lTQH5e09nePPpjQWEkjIa923Sgi+Cv3U7Uwt0skVjLh6/T75wQQ4UHcwG/dZAQ+sFUY/I8ceIcXpZE5mRLu9GkWKqJtMBXrlRVJ9kyxQ98DLKjd2gsduM5rd2lhaGeKBtMPcQj1ESRKCkFcIftKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mO9ugBqA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA05C4CEEB;
+	Wed, 20 Aug 2025 06:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755672267;
+	bh=3s3RN6kaKBn/o13lq3zXVrOJU86q/ebvShuuqfEW+y4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mO9ugBqA3U392iHDJAhjhGZEW+1ei7vLekvou037cBPJi66636ovmSj72NfBYEVew
+	 M5NqwNcFei3VSX93QTMn41A1OBsI8vq3/auwcA/ArR7BLo9g8MNIlwT+eVRdVW8vuh
+	 EW6ot3fKz45g+S4nILhODGFPq+f0CXRahy0alQjB7arXiVNWh1isveU9FAGRjpcxNr
+	 U+Px7cBNo78a2UCo0uLPRRd04H6ZjiTvdj41JdgXAbrSIzc7Ls1Tta4AqdVMbeeJPc
+	 1VstkED8f9E9CBK0syYXWuBnJlNZZYjixgz1URULv8iajPcYtLC4KloavsXkxWx1IY
+	 KeXL+w4qomceQ==
+Message-ID: <1b517073-cadb-41e4-b470-54a6ad93dd59@kernel.org>
+Date: Wed, 20 Aug 2025 08:44:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755285161.git.jan.kiszka@siemens.com> <8b4aeccbc005087ead1c261745877ccdb7dbb9d5.1755285161.git.jan.kiszka@siemens.com>
-In-Reply-To: <8b4aeccbc005087ead1c261745877ccdb7dbb9d5.1755285161.git.jan.kiszka@siemens.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Wed, 20 Aug 2025 09:44:15 +0300
-X-Gm-Features: Ac12FXyD7fthuXlBjIwxGPCDwZnQfOaQn3pELvXYWoyyAX9kG_dNCA-jpkTCXA4
-Message-ID: <CAC_iWjLzxfSXMAuQe87f4LE=yqQ60ddZ9WX94fagzbcepscLjw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] efi: stmm: Drop unneeded null pointer check
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Masahisa Kojima <masahisa.kojima@linaro.org>, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sumit Garg <sumit.garg@linaro.org>, Jens Wiklander <jens.wiklander@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI TMDS181
+ and SN65DP159 bindings
+To: Mike Looijmans <mike.looijmans@topic.nl>, Conor Dooley <conor@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
+ Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250812145256.135645-1-mike.looijmans@topic.nl>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.3b7d4319-e208-470d-9ada-585343a64822@emailsignatures365.codetwo.com>
+ <20250812145256.135645-2-mike.looijmans@topic.nl>
+ <20250812-designing-tyke-db85527b373d@spud>
+ <f4ec7690-322e-493a-b346-7b9560ac0616@topic.nl>
+ <9fba4917-a24f-4fee-8f1a-7509a0bc542e@kernel.org>
+ <2d694c9c-704e-4353-8b57-de83eb5a7f96@topic.nl>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <2d694c9c-704e-4353-8b57-de83eb5a7f96@topic.nl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Jan
+On 19/08/2025 10:26, Mike Looijmans wrote:
+> On 19-08-2025 09:51, Krzysztof Kozlowski wrote:
+>> On 19/08/2025 09:46, Mike Looijmans wrote:
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    enum:
+>>>>> +      - ti,tmds181
+>>>>> +      - ti,sn65dp159
+>>>> The driver contains:
+>>>> +	{ .compatible = "ti,tmds181", },
+>>>> +	{ .compatible = "ti,sn65dp159", },
+>>>> +	{}
+>>>> so why is a fallback compatible not suitable here?
+>>> I don't understand the question. The two are slightly different chips,
+>> Your driver says they are compatible. No one said the same, but compatible.
+>>
+>>> so it makes sense to describe that in the DT.
+>> Compatible devices should use fallback. There is plenty of examples (90%
+>> of all binding files?) including example-schema describing this.
+> 
+> Please help me out here, I'm happy to oblige, but I don't understand 
+> what you're asking.
+> 
+> To the best of my knowledge "fallback" compatible is when you write 
+> something like this in the device-tree:
+>     compatible = "st,m25p80", "jedec,spi-nor";
+> Which means that we can use the "jedec,spi-nor" driver if there's no 
+> specific match for "st,m25p80", correct?
 
-On Fri, 15 Aug 2025 at 22:12, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->
-> From: Jan Kiszka <jan.kiszka@siemens.com>
->
-> The API documenation of setup_mm_hdr does not mention that dptr can be
-> NULL, this is a local function, and no caller passes NULL. So drop the
-> unneeded check.
->
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  drivers/firmware/efi/stmm/tee_stmm_efi.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/firmware/efi/stmm/tee_stmm_efi.c b/drivers/firmware/efi/stmm/tee_stmm_efi.c
-> index bf992b42be70..ff41667b1005 100644
-> --- a/drivers/firmware/efi/stmm/tee_stmm_efi.c
-> +++ b/drivers/firmware/efi/stmm/tee_stmm_efi.c
-> @@ -191,8 +191,7 @@ static void *setup_mm_hdr(u8 **dptr, size_t *nr_pages, size_t payload_size,
->
->         var_hdr = (struct smm_variable_communicate_header *)mm_hdr->data;
->         var_hdr->function = func;
-> -       if (dptr)
-> -               *dptr = comm_buf;
-> +       *dptr = comm_buf;
+Yes.
 
-I think this is ok, eventually tee_mm_communicate() will check for a
-NULL ptr and return EFI_INVALID_PARAMETER;
+> 
+> I don't understand how that relates to your request, this is the first 
+> time I ever got this particular feedback. Looking at say the 
+> ti,sn65dsi83 driver, it does the same thing (supports the ti,sn65dsi83 
+> and ti,sn65dsi84).
+> 
+> Please explain or point me somewhere where I can find this?
+I already pointed out to example-schema.
 
-Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Also, e.g. first file in iio/adc:
+adi,ad4000.yaml
 
->         *ret = EFI_SUCCESS;
->
->         return var_hdr->data;
-> --
-> 2.43.0
->
+
+Best regards,
+Krzysztof
 
