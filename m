@@ -1,121 +1,160 @@
-Return-Path: <linux-kernel+bounces-777175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12AABB2D62D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:24:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83AD6B2D626
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB41B2A5082
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:22:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56CAC18938D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEF22D9497;
-	Wed, 20 Aug 2025 08:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3A42D8789;
+	Wed, 20 Aug 2025 08:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oD4rECWn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9Wh1RsO"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAA52D838A;
-	Wed, 20 Aug 2025 08:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0652C1E9B08;
+	Wed, 20 Aug 2025 08:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755678050; cv=none; b=U5m2kRtXq4zQ5c2q87+9lLo3Nl920DmXWiUE/G7k35W0ebtwYpCFiDCQUC+hA6Uia5npieVNyaL2MQj5cdQSooak+3nSNbYdaKPuCDodSc7CfZslhNjLq7tDaT4MDBSw4bljiSTk/QGgeeN9pnTy+fh7qkon4haLUlwd89n+S0M=
+	t=1755677941; cv=none; b=X3Ra8AaiiG+42Ez309CwPPMixZENr0U/p8kJf73PONQ6qd/FBTsRaoOGjs5zoemZ6Qsu/VwU3nOKvWW81dQU39/uFagwAZWWp4bCmZvHWLIoQH5p/KcjaapC7QAz9ULXtdr83qTaG8XUuq908g7IOzqdsE09sy8ebYnnVLMu/YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755678050; c=relaxed/simple;
-	bh=F2is9zfwLMGTq7xfkgAalDyZte6T3DvSchJ62PdSzbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XnLb5S05BWft18M888qxZvg7qY37gsCSECp8yi0VCmbt/QWEMlx5GDr9gcnGMOS6coDnoIg9/IvjY/vEd9R+eetuhdoTC6XOJuGCC+HSVWveX66KPI7RamD7YvKcTJWUHASwiqLqNtOT9lq7IosuF8SRNAj/UlmAWIQuZY0MgxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oD4rECWn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 477B1C4CEEB;
-	Wed, 20 Aug 2025 08:20:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755678050;
-	bh=F2is9zfwLMGTq7xfkgAalDyZte6T3DvSchJ62PdSzbE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oD4rECWnKxGis9qi02Vw4EZJJf6aHsdLFojZnMJh7ZquqKdZ0wuyZgD6pAwCRLWGK
-	 VhvMM83b+X4a15JnGeQLjSFRIBakJbjp0WPVbTfhnCIexW76mS4jbaRroP7CgIKzCz
-	 Ycuo36/5Plzwz0if77Dd3AG6UGjI86yEE+D7ctWWpIiplNP16CZqCedYPYwnHLOZ8T
-	 qOV9TOkmxnXpDJQf+HQyg9npiG7OMbMeSNY8q25t4qgZWiuscep7LvoVnNM/BJvWFy
-	 KHdPN4SYvY3V56XaGzPRd+pa/2h9bGQxp2sQng3TXHvuew4n4Dii7cmHpXr8IjFYmJ
-	 HyGfv75T5Ixcg==
-Date: Wed, 20 Aug 2025 11:20:42 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Evangelos Petrongonas <epetron@amazon.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Alexander Graf <graf@amazon.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org,
-	linux-mm@kvack.org, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nh-open-source@amazon.com
-Subject: Re: [PATCH v2 0/2] efi: Fix EFI boot with kexec handover (KHO)
-Message-ID: <aKWFWsk0mPPQFDyk@kernel.org>
-References: <cover.1755643201.git.epetron@amazon.de>
+	s=arc-20240116; t=1755677941; c=relaxed/simple;
+	bh=fK2DuSyV4LqHa2BTm2YQxEWab71xsSNOPn0cGrQrG24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NhPcbvCyEkhOtdmuYmVn546nrNowRY5FUL/ObZgJSIVN/E+K63EsHx1PC4Nlmtu+n+BO58CDC47OmAR96BA/hSCTXDASpvz6d90QTwhpbwzq7PcHrvYGnDBLvsN50HfoIV8KW5dAkx49Vri8tSWU1SR+x7viMpswkm5ORUBGzf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g9Wh1RsO; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47174beccfso5227711a12.2;
+        Wed, 20 Aug 2025 01:18:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755677939; x=1756282739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wUn65ndWyyECy779FroH88LwpGWaBPZvfehi8phsszk=;
+        b=g9Wh1RsOc9PkXPmu3u25+KzRfl5316bpZUP7ZvffoomCJmoPRXheapVeQBeKYGs7hZ
+         sdcpuryKn7nrUnsN/WaksGubt9BYWHgfVdjqaeVKetCX7BpLZDFDWah8ZzQDNvUzvHjz
+         W8k+1Gy/u9/dVC5sn1nc+QPwT56FZjpWh0I7BGP3JWAQeczOkLDLIB8w4V41F5+6EZvR
+         cleK2On5TPwmVImmeUss4YqLr/iWbPS3iNAorAUDYkOV0pXGJM8sW4CrCbfMfUF66I2j
+         PFgqZhP+zON0RiQXEpm18KxwPaZIMpAG0xGsr4Q/D8zLLbFeQFrkitckfOWcA72qj2kT
+         V+OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755677939; x=1756282739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wUn65ndWyyECy779FroH88LwpGWaBPZvfehi8phsszk=;
+        b=ebYRjT1g7TMYQITbNEZ0iNyWtR/sypBltJPiSY5kLodoy/hBxpcF2Ry7jlYRyG+5Dm
+         zRTjiIFNu6mEcgGpKx5qESHVw7gASvGrBF8y7zkDNor4rFqyZMrMTdDVd55gkFAmOYby
+         yDI70yM8x/QMYh7weQTDCRxPmPBp4367zXtidjEKmfpPO6BlNoQIkUny7kJHvjM031uZ
+         tRm6dIlUuLGAkRuNiJtPpgbX1RoiIyNlm83UmN859i9NOSIU7AKbquDwpk3Z6XeKYpz+
+         WOmXWeLtE2zDr2ujSkcWrlbsisxRJyA3kZhiAPB8x3ejzypp+FCXDvJ7YatVzdwpM6ks
+         S1eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUd72fmddij14aUsL51Awty35YJJnAAZnG83qb1x53iE72ZrnxNUKVvPyJ+gws7PKRiN+ofP4MCRUhE9Siq+Axr2fs=@vger.kernel.org, AJvYcCUdt1licW5rxdXyduoqJauj/e1oCiWQpvreOjV/+P6hgJVc8IahPJ4E1eKSZrgYTbZXn7Gmsw58zkNIw141@vger.kernel.org, AJvYcCWWVQlsxk1EYITlBVwVtgHk2LQUjaAKzEQ5tzw9dekU3e1ccGaryHEb4rISQEGVmg/LkmTYpDEgeXqrykLBhhDp4g==@vger.kernel.org, AJvYcCXV+oITgJ2BP0ZPjecT8eyE6LD2+1cNEw2/3Dn50FoghzreIiwJZrkwax48TxJeCbFr1QTJC2g8n2dPAhNB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM2yVrDP32tyMRBpRYBya4NXJbBUsQHTsyW3m1gAuLgAnp7InL
+	RaHGf0XFUuP0jjkL+ZpTk+aRcOtGjHD7zAuiBgUauAdzOMyBTqJJ0zmx5q275a9uyasnzQGwm6B
+	KxrP11E5QR2F7hPlQ/xP2MPtG91BOhbM=
+X-Gm-Gg: ASbGncsXa5l3WtXkFmLedLdyovP5Ke4UQCRV4lpYMkgwibkqN5QK2uMFrcOMOk9dVda
+	mfCqyxARY5XwpOxa8DDhNAUO9lYACVnHwB9ZFIHdzdRN9oV4PXeh2gJXUoCTgdmPMizLzMmRhF1
+	lVtRtLjJg4sGOf2VVnppVwY8HTAvXdvBzcectoB2a/lYH8nSWT//WpL5XQHTmJaPAyRDYtIFVm9
+	TOY
+X-Google-Smtp-Source: AGHT+IHyS319ZtbgIK5QZ2TPQXhA0Y58me3odjKXWmlmqSDihLpOV/ytvp3iwfpabPjgDac+00Icnjn6G+Cpo8Pj+bM=
+X-Received: by 2002:a17:903:18c:b0:240:96a:b81d with SMTP id
+ d9443c01a7336-245ef0bf2bcmr23609915ad.5.1755677939214; Wed, 20 Aug 2025
+ 01:18:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1755643201.git.epetron@amazon.de>
+References: <20250819213831.1368296-1-robh@kernel.org>
+In-Reply-To: <20250819213831.1368296-1-robh@kernel.org>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Wed, 20 Aug 2025 11:21:09 +0300
+X-Gm-Features: Ac12FXwDgSq5YSRmZRgmCG7R1pa20x6uPGQw-yiLKpdR5FfgZLxMT4en9AePre4
+Message-ID: <CAEnQRZDga2cX=YPY5Z9NDyro94bxFjK9k5Xm5Vt2vVzf4ysKyA@mail.gmail.com>
+Subject: Re: [PATCH v5] remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Patrice Chotard <patrice.chotard@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, 
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	Iuliana Prodan <iuliana.prodan@nxp.com>, Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, 
+	Aisheng Dong <aisheng.dong@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 11:22:44PM +0000, Evangelos Petrongonas wrote:
-> This patch series fixes a kernel panic that occurs when booting with
-> both EFI and KHO (Kexec HandOver) enabled.
-> 
-> The issue arises because EFI's `reserve_regions()` clears all memory
-> regions with `memblock_remove(0, PHYS_ADDR_MAX)` before rebuilding them
-> from EFI data. This destroys KHO scratch regions that were set up early
-> during device tree scanning, causing a panic as the kernel has no valid
-> memory regions for early allocations.
-> 
-> The first patch introduces `is_kho_boot()` to allow early boot
-> components to reliably detect if the kernel was booted via KHO-enabled
-> kexec. The existing `kho_is_enabled()` only checks the command line and
-> doesn't verify if an actual KHO FDT was passed.
-> 
-> The second patch modifies EFI's `reserve_regions()` to selectively
-> remove only non-KHO memory regions when KHO is active, preserving the
-> critical scratch regions while still allowing EFI to rebuild its memory
-> map.
-> 
-> The patchset was developed/tested on arm64.
-> 
-> On a side note, I have noticed that `kho_populate()` calls
-> `memblock_set_kho_scratch_only()`, but the `kho` cmdline option is
-> not checked until much later. Therefore, memblock will use only the
-> scratch regions that were passed from the outgoing kernel, even if the
-> incoming kernel doesn't explicitly want that. I am not sure if this is
-> done on purpose, but in any case we can discuss this in another patch,
-> as it is orthogonal to this one.
+Hi Rob,
 
-kho_populate runs earlier than we parse the command line, so there is an
-implicit assumption that we are going through KHO-enabled kexec if FDT was
-passed to the new kernel.
+This patch will break IMX RPROC support.
+<snip>
 
-I believe the best way is to document that and make it more explicit that
-kho command line parameter only affects the "out" part.
- 
-> Main Changes in v2 (smaller changes can be found in individual patches):
->     - Introduce is_kho_boot()
->     - Replaced manual loop with for_each_mem_region macro
-> 
-> Evangelos Petrongonas (2):
->   kexec: introduce is_kho_boot()
->   efi: Support booting with kexec handover (KHO)
-> 
->  drivers/firmware/efi/efi-init.c | 28 ++++++++++++++++++++++++----
->  include/linux/kexec_handover.h  |  6 ++++++
->  kernel/kexec_handover.c         | 20 ++++++++++++++++++++
->  3 files changed, 50 insertions(+), 4 deletions(-)
-> 
-> -- 
-> 2.47.3
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
 
--- 
-Sincerely yours,
-Mike.
+<snip>
+>  static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware=
+ *fw)
+<snip>
+
+> -               priv->mem[b].cpu_addr =3D devm_ioremap_wc(&pdev->dev, res=
+.start, resource_size(&res));
+> +               priv->mem[b].cpu_addr =3D devm_ioremap_resource_wc(&pdev-=
+>dev, &res);
+
+devm_ioremap_resource_wc works only for IORESOURCE_MEM resources:
+
+lib/devres.c:124
+static void __iomem *
+__devm_ioremap_resource(struct device *dev, const struct resource *res,
+
+=C2=BB       if (!res || resource_type(res) !=3D IORESOURCE_MEM) {
+=C2=BB       =C2=BB       ret =3D dev_err_probe(dev, -EINVAL, "invalid reso=
+urce
+%pR\n", res);
+=C2=BB       =C2=BB       return IOMEM_ERR_PTR(ret);
+=C2=BB       }
+
+while the devm_ioremap_wc doesn't care about this.
+
+So we cannot use devm_ioremap_resource_wc here unless you add
+IORESOURCE_MEM flags
+to  of_reserved_mem_region_to_resource as discussed here:
+
+https://lkml.org/lkml/2025/4/28/759
+
+The same issue we are already experiencing with Sound Open Firmware
+where the change was already merged
+and we have a bug already reported.
+
+How should we fix this:
+
+1) Add  res->flags =3D IORESOURCE_MEM; in  of_reserved_mem_region_to_resour=
+ce
+
+OR
+
+2) Use devm_ioremap_wc instead of devm_ioremap_resource_wc.
+
+thanks,
+Daniel.
+
+
+
+Daniel.
 
