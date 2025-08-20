@@ -1,217 +1,178 @@
-Return-Path: <linux-kernel+bounces-776900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4E7B2D2B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:48:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9660B2D2B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 05:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4BD1C41A5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:48:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49203B216D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24F61C5D57;
-	Wed, 20 Aug 2025 03:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="GpcTHbhN"
-Received: from mail-43170.protonmail.ch (mail-43170.protonmail.ch [185.70.43.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFB61FF7BC;
+	Wed, 20 Aug 2025 03:49:19 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AF61D7E31;
-	Wed, 20 Aug 2025 03:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC1935336A;
+	Wed, 20 Aug 2025 03:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755661702; cv=none; b=muy+5o771DSet/5oRMh06s/K4UvqKvvsn5maeyEqMXMn994UZv+4Kdr2kehnEFe2R/6zK69N8cAkdZQPsgHYREb1HevnNXtWr2XjNQB4a3zdbkYDIGxDpEziZNy/unq7uKdLjWePXNfaEncSrBLp9AkN3ZKRfG4UyItvfESICnw=
+	t=1755661759; cv=none; b=nN9AjXysq5c65xmw6x/82SbNoIgh+ArcFek2EaJvndLpAWoV/MSec/uTBN2UH9tr/OuExlcSw/DcEUtlaY7FlDLeD9/d4pJzHxW+Sf6zldt2gU3/IhS4UH+tAMXmKd1+GGT9w+wNwdOAsPAcVp+rT5IC/gvN5E8bIQaMUDRIUbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755661702; c=relaxed/simple;
-	bh=CZ6lWXfVYCM7xAdBsZGzRttG9D2KjVHw0YsHg56QY7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrocM6WrJhSMUdsVFoADTBrfAAT6QG+dWANcVgm/zzLKmmAqPPOvc9yHJbMJStCGeJ0MLUJKqsa0Q8S/HYn2U5SK13DlxK2/iGiFgfFTAFWBeXx7IRbJgPZOa35nYcUQC4poImqtzs25S5ZZ6dt4QNCEABJPfucaDzH2ULr72t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=GpcTHbhN; arc=none smtp.client-ip=185.70.43.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
-	s=protonmail3; t=1755661696; x=1755920896;
-	bh=qIDOe0QSvA2p3uohZj2DaxRg0Kq5ls/HnNnWTRUdDrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=GpcTHbhNWGLmNYiGuteRHZmUj5G+dd1Oq4feazckGhttqPzBF61QGT1JPM8xnbdqV
-	 yI7TaX8pdW568cSuRPacdBrmD3AC6m+lFkniTBRjyxdB2oGvwjHBdCAEMGllqxVpTt
-	 GGTVHGM1GA6nCliN7hNViwLzKZ5etZY2bCJo0lw8IPG7eNHz8WIUFxroz0XqYZX8Tk
-	 +PhbOXC0Fg9fRlg/jDK6dMpv5ta7Kr3iARTVNVKUcdZoCq0Cq7wC7a0nvGAZk4pPHB
-	 MfBr4LJicXSUjn7FsAu3B3tm7eYbhy0JJJwJgUsrUwh1B7wcyPC0YiOsy4b/AUNtfV
-	 zKDH6EGUx+huQ==
-X-Pm-Submission-Id: 4c6C8s63rSz2Sccc
-Date: Wed, 20 Aug 2025 03:48:10 +0000
-From: Elle Rhumsaa <elle@weathered-steel.dev>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] rust: pci: provide access to PCI Class, subclass,
- implementation values
-Message-ID: <aKVFVO3wbzClcLwg@archiso>
-References: <20250818013305.1089446-1-jhubbard@nvidia.com>
- <20250818013305.1089446-2-jhubbard@nvidia.com>
+	s=arc-20240116; t=1755661759; c=relaxed/simple;
+	bh=+eKUrudFVkf/oZRz1/hMMJRiLT/RFDdwQFZeLZaOkfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kQFiw4oQHmBblegJpfDj0MwTtGAl2YSPttnZLk6enL6CG7bx4y9lqlDD0HjXwvVNB7foUOhtrF1PyfGAOYhB7+C4FJ0pV6cfLtiMlx3BIKXcHJBc2Nqezte9Ma7uO5FsEef1Amal8mepHRPiuHHBAOg/BJ2i2Lxn56tPOXIS+9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [192.168.2.54] (unknown [98.97.63.12])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id C3467B4E0015;
+	Wed, 20 Aug 2025 05:49:05 +0200 (CEST)
+Message-ID: <4b516172-bd75-432a-9c96-f02fbfb68c16@freeshell.de>
+Date: Tue, 19 Aug 2025 20:49:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818013305.1089446-2-jhubbard@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] riscv: dts: starfive: jh7110: bootph-pre-ram
+ hinting needed by boot loader
+To: Hal Feng <hal.feng@starfivetech.com>, Conor Dooley <conor@kernel.org>,
+ Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+References: <20250815073739.79241-1-e@freeshell.de>
+ <20250815073739.79241-4-e@freeshell.de>
+ <ZQ2PR01MB1307CE398A5993B9E5B93357E6312@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <ZQ2PR01MB1307CE398A5993B9E5B93357E6312@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 17, 2025 at 06:33:03PM -0700, John Hubbard wrote:
-> Allow callers to write Class::STORAGE_SCSI instead of
-> bindings::PCI_CLASS_STORAGE_SCSI, for example.
-> 
-> New APIs:
->     Class::STORAGE_SCSI, Class::NETWORK_ETHERNET, etc.
->     Class::from_u32(), as_u32()
->     Class::MASK_FULL, MASK_CLASS_SUBCLASS
->     DeviceId::from_class_and_vendor()
->     Device::class_code_raw(), class_enum()
-> 
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  rust/kernel/pci.rs | 202 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 202 insertions(+)
-> 
-> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> index 887ee611b553..9caa1d342d52 100644
-> --- a/rust/kernel/pci.rs
-> +++ b/rust/kernel/pci.rs
-> @@ -23,6 +23,179 @@
->  };
->  use kernel::prelude::*;
->  
-> +macro_rules! define_all_pci_classes {
-> +    (
-> +        $($variant:ident = $binding:expr,)+
-> +    ) => {
-> +        /// Converts a PCI class constant to 24-bit format.
-> +        ///
-> +        /// Many device drivers use only the upper 16 bits (base class and subclass), but some
-> +        /// use the full 24 bits. In order to support both cases, store the class code as a 24-bit
-> +        /// value, where 16-bit values are shifted up 8 bits.
-> +        const fn to_24bit_class(val: u32) -> u32 {
-> +            if val > 0xFFFF { val } else { val << 8 }
-> +        }
-> +
-> +        /// PCI device class codes.
-> +        ///
-> +        /// Each entry contains the full 24-bit PCI class code (base class in bits 23-16, subclass
-> +        /// in bits 15-8, programming interface in bits 7-0).
-> +        ///
-> +        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-> +        #[repr(transparent)]
-> +        pub struct Class(u32);
-> +
-> +        impl Class {
-> +            $(
-> +                #[allow(missing_docs)]
-> +                pub const $variant: Self = Self(to_24bit_class($binding));
-> +            )+
-> +
-> +            /// Match the full class code.
-> +            pub const MASK_FULL: u32 = 0xffffff;
-> +
-> +            /// Match the upper 16 bits of the class code (base class and subclass only).
-> +            pub const MASK_CLASS_SUBCLASS: u32 = 0xffff00;
-> +
-> +            /// Create a `Class` from the raw class code value, or `None` if the value doesn't
-> +            /// match any known class.
-> +            pub fn from_u32(value: u32) -> Option<Self> {
-> +                match value {
-> +                    $(x if x == Self::$variant.0 => Some(Self::$variant),)+
-> +                    _ => None,
-> +                }
-> +            }
-> +
-> +            /// Get the raw 24-bit class code value.
-> +            pub const fn as_u32(self) -> u32 {
-> +                self.0
-> +            }
-> +        }
-> +    };
-> +}
-> +
-> +define_all_pci_classes! {
-> +    NOT_DEFINED                = bindings::PCI_CLASS_NOT_DEFINED,                // 0x000000
-> +
-> +    ...
-> +
-> +    OTHERS                     = bindings::PCI_CLASS_OTHERS,                     // 0xff0000
-> +}
-> +
->  /// An adapter for the registration of PCI drivers.
->  pub struct Adapter<T: Driver>(T);
->  
-> @@ -157,6 +330,23 @@ pub const fn from_class(class: u32, class_mask: u32) -> Self {
->              override_only: 0,
->          })
->      }
-> +
-> +    /// Create a new `pci::DeviceId` from a class number, mask, and specific vendor.
-> +    ///
-> +    /// This is more targeted than [`DeviceId::from_class`]: in addition to matching by Vendor, it
-> +    /// also matches the PCI Class (up to the entire 24 bits, depending on the mask).
-> +    pub const fn from_class_and_vendor(class: Class, class_mask: u32, vendor: u32) -> Self {
-> +        Self(bindings::pci_device_id {
-> +            vendor,
-> +            device: DeviceId::PCI_ANY_ID,
-> +            subvendor: DeviceId::PCI_ANY_ID,
-> +            subdevice: DeviceId::PCI_ANY_ID,
-> +            class: class.as_u32(),
-> +            class_mask,
-> +            driver_data: 0,
-> +            override_only: 0,
-> +        })
-> +    }
->  }
->  
->  // SAFETY: `DeviceId` is a `#[repr(transparent)]` wrapper of `pci_device_id` and does not add
-> @@ -410,6 +600,18 @@ pub fn resource_len(&self, bar: u32) -> Result<bindings::resource_size_t> {
->          // - by its type invariant `self.as_raw` is always a valid pointer to a `struct pci_dev`.
->          Ok(unsafe { bindings::pci_resource_len(self.as_raw(), bar.try_into()?) })
->      }
-> +
-> +    /// Returns the full 24-bit PCI class code as stored in hardware.
-> +    /// This includes base class, subclass, and programming interface.
-> +    pub fn class_code_raw(&self) -> u32 {
-> +        // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_dev`.
-> +        unsafe { (*self.as_raw()).class }
-> +    }
-> +
-> +    /// Returns the PCI class as a `Class` struct, or `None` if the class code is invalid.
-> +    pub fn class_enum(&self) -> Option<Class> {
-> +        Class::from_u32(self.class_code_raw())
-> +    }
->  }
->  
->  impl Device<device::Bound> {
-> -- 
-> 2.50.1
 
-All of the functions could probably be `#[inline]`ed, though I'm not
-sure how much it affects the `const` functions, since they're already
-evaluated at compile-time.
 
-Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+On 8/17/25 23:05, Hal Feng wrote:
+>> On 15.08.25 15:37, E Shattow wrote:
+>> Add bootph-pre-ram hinting to jh7110.dtsi:
+>>   - CPU interrupt controller(s)
+>>   - core local interrupt timer
+>>   - DDR memory controller
+>>   - oscillator
+>>   - syscrg clock-controller
+>>
+>> Signed-off-by: E Shattow <e@freeshell.de>
+>> ---
+>>  arch/riscv/boot/dts/starfive/jh7110.dtsi | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>> b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>> index 14df3d062a45..884a3526cb0f 100644
+>> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>> @@ -35,6 +35,7 @@ S7_0: cpu@0 {
+>>
+>>  			cpu0_intc: interrupt-controller {
+>>  				compatible = "riscv,cpu-intc";
+>> +				bootph-pre-ram;
+>>  				interrupt-controller;
+>>  				#interrupt-cells = <1>;
+>>  			};
+>> @@ -68,6 +69,7 @@ U74_1: cpu@1 {
+>>
+>>  			cpu1_intc: interrupt-controller {
+>>  				compatible = "riscv,cpu-intc";
+>> +				bootph-pre-ram;
+>>  				interrupt-controller;
+>>  				#interrupt-cells = <1>;
+>>  			};
+>> @@ -101,6 +103,7 @@ U74_2: cpu@2 {
+>>
+>>  			cpu2_intc: interrupt-controller {
+>>  				compatible = "riscv,cpu-intc";
+>> +				bootph-pre-ram;
+>>  				interrupt-controller;
+>>  				#interrupt-cells = <1>;
+>>  			};
+>> @@ -134,6 +137,7 @@ U74_3: cpu@3 {
+>>
+>>  			cpu3_intc: interrupt-controller {
+>>  				compatible = "riscv,cpu-intc";
+>> +				bootph-pre-ram;
+>>  				interrupt-controller;
+>>  				#interrupt-cells = <1>;
+>>  			};
+>> @@ -167,6 +171,7 @@ U74_4: cpu@4 {
+>>
+>>  			cpu4_intc: interrupt-controller {
+>>  				compatible = "riscv,cpu-intc";
+>> +				bootph-pre-ram;
+>>  				interrupt-controller;
+>>  				#interrupt-cells = <1>;
+>>  			};
+>> @@ -321,6 +326,7 @@ mclk_ext: mclk-ext-clock {
+>>
+>>  	osc: oscillator {
+>>  		compatible = "fixed-clock";
+>> +		bootph-pre-ram;
+>>  		clock-output-names = "osc";
+>>  		#clock-cells = <0>;
+>>  	};
+>> @@ -354,6 +360,7 @@ soc {
+>>  		clint: timer@2000000 {
+>>  			compatible = "starfive,jh7110-clint", "sifive,clint0";
+>>  			reg = <0x0 0x2000000 0x0 0x10000>;
+>> +			bootph-pre-ram;
+>>  			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc
+>> 7>,
+>>  					      <&cpu1_intc 3>, <&cpu1_intc 7>,
+>>  					      <&cpu2_intc 3>, <&cpu2_intc 7>,
+>> @@ -376,6 +383,7 @@ memory-controller@15700000 {
+>>  			compatible = "starfive,jh7110-dmc";
+>>  			reg = <0x0 0x15700000 0x0 0x10000>,
+>>  			      <0x0 0x13000000 0x0 0x10000>;
+>> +			bootph-pre-ram;
+>>  			clocks = <&syscrg JH7110_PLLCLK_PLL1_OUT>;
+>>  			clock-names = "pll1_out";
+>>  			resets = <&syscrg JH7110_SYSRST_DDR_AXI>, @@ -
+>> 892,6 +900,7 @@ qspi: spi@13010000 {
+>>  		syscrg: clock-controller@13020000 {
+>>  			compatible = "starfive,jh7110-syscrg";
+>>  			reg = <0x0 0x13020000 0x0 0x10000>;
+>> +			bootph-pre-ram;
+>>  			clocks = <&osc>, <&gmac1_rmii_refin>,
+>>  				 <&gmac1_rgmii_rxin>,
+>>  				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+> 
+> pllclk also needs to add bootph-pre-ram. Because it is the dependency of syscrg.
+> 
+> 		pllclk: clock-controller {
+> 			compatible = "starfive,jh7110-pll";
+> +			bootph-pre-ram;
+> 			clocks = <&osc>;
+> 			#clock-cells = <1>;
+> 		};
+> 
+> Best regards,
+> Hal
+
+What users are there for 'pllclk' at U-Boot SPL phase? There does not
+seem to be any difference in testing U-Boot and Linux with or without
+this hint for 'pllclk'.
+
+Thanks,
+
+-E
 
