@@ -1,81 +1,74 @@
-Return-Path: <linux-kernel+bounces-778110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6373AB2E17F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:52:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA24B2E178
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C861C21936
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:47:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD1C4E5D3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13371322755;
-	Wed, 20 Aug 2025 15:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ddBruz86"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9118320CC9;
+	Wed, 20 Aug 2025 15:47:00 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58040311C2D;
-	Wed, 20 Aug 2025 15:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B90F320CCC
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755704835; cv=none; b=XJAhOb+Oea+GBUVWnqciKQd9yaIqrRVqrGxWiFXWX+D70zWlc+1y9eaaQxeDX2A469PjaZ+QNwsc3yN6Ap6h7YGUw0B/GAdgNyVGmesEkAgj8ebPLbkEyeGfVJrh525pVzvqsBvRWyStcf6LGmock2goQrpmgEcobkJ4R0SrS6E=
+	t=1755704820; cv=none; b=H2Nh1p58KiT50h6raXLKyg7tXKpBpCQQhsK/Qvh4Y9XIR9l6TaleVQgRm8V3dN5ksfu4sPObeSfMo1zn7x6Y8FNnQ11jrF2XlZUMeFiI7t10BsolaUejsWopQti4AROuTFziJXsdgz6oXP7Mr/Ugm9/91RgR4j0QoyEkZKhrTZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755704835; c=relaxed/simple;
-	bh=GuWjLqYKSZ/aoYK30GW/t4+9hHnz18vrhQHyUPJL2m4=;
+	s=arc-20240116; t=1755704820; c=relaxed/simple;
+	bh=JTruldCoV4J+Ptr7PjIs0lu8HHUQJEhSB+j+XrhMtxg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QSY5rtF68+qFbmHmIycsxdj4f++7YAPQ1p1CZiWDuyncEad+M26VBH3Cn2GInOYE69h+gRXHdv8hhkwlIp4UYlWlWEuaM3XtR+db47t8TfDhVKUHxHJgY10YJUzfzzC15IlIFbdHWYyHEknUqUtU+XhphjWQYS/icOCZPNNAeLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ddBruz86; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5D04E40E0286;
-	Wed, 20 Aug 2025 15:47:10 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Nys5oPv9JVH4; Wed, 20 Aug 2025 15:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755704827; bh=CfLg1xiZMCBl5orUohLMUAUF4PljRhSWUc00xPK0J7Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ddBruz86auWNNUExgl49tNXZY8XqFLTWbKmexN99jmrGJ98pi9owTPdtoNXBDAB2/
-	 hb2JiaVMVfqJng6hK1z8D+TLqDJWSiF5W4IE+oCoSflyRw8RAj5DDSF0lDb0ufaBVy
-	 JUdui75Bi69SxD7xIHxbviPIlyy5kmycmaiXSswtjE9gqHcTBGPDS1Fc6Ve3iJ3jak
-	 C0voX3xOx67yftrVDke0BDN9YIn7u5eJjs1g4kCXipnWmTQTq2zNULba48N1uPukTo
-	 FEdrqWUHa/pMqGeiyZr9vhlppY58I9w2eyyht9uTmNS5EX0IFoWJTOJAa3oRr1KEBm
-	 2aeYosjab9zBjzhJ8S/R2+48ixmi947gBukoeD5N7D1OZU5X8qNDqVratOPMz4XKXj
-	 ehST8q7lsOIzYyfmG5mqXoZpt/iE9YcoXFtYQ3D96opv21nEHlY35lgeesKk/GBhMk
-	 u4ExgzC+168pAwkUkQzJsU3PQ+tyT9t7QJUj46JTpNnXH+DTgUxZK6T8108eGu2h8v
-	 uo983JkFbHHnUnqibBMvw23nxhgl5oEtswiRPtTifpLuzitC7oxyiUK499+xSs0Wk6
-	 BgTgqNiEd/eh66pHE6hANPyxjHuIP1yK9+VtSCuGJ5P8Nwde5LaA+X7QMClJXOqtAd
-	 +2NSukbHwkS6lFGjb6Ojx++4=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C3CD740E0163;
-	Wed, 20 Aug 2025 15:46:44 +0000 (UTC)
-Date: Wed, 20 Aug 2025 17:46:38 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org,
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
-	naveen.rao@amd.com, francescolavra.fl@gmail.com,
-	tiala@microsoft.com
-Subject: Re: [PATCH v9 07/18] x86/apic: Add support to send IPI for Secure
- AVIC
-Message-ID: <20250820154638.GOaKXt3vTcSd2320tm@fat_crate.local>
-References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
- <20250811094444.203161-8-Neeraj.Upadhyay@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fmMWZC4gZAmk8cmuYL8My1bML2MUM1irDxQzRftGf/KcaxwTs5QSzuFY6uoCUSOnZyN0y0qFr57MoV1HhYQ1m/zzlPMPLW+3Aqa0qg7ao33xgzpyk8VF+kUtDnsHs3WNoNrdit0CQ3W0niexTO2xo3ojAMW4bIdAnPYDy/2VmBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb73394b4so4239966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:46:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755704817; x=1756309617;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5+uYWrcMCXTgY9LDw0CpEJNd4/G4LXFK4CU2Fhr0lbU=;
+        b=SaZoBSLKuZO/nN1EtZ4Mt+Cga+IN/1f+Yu3c9nPtW0pJG3YBR4h4VqH1HMT25IbSCA
+         mona+EGaEhLNOqljm6HwosESq3ruasjZKAnFBaogyLVmVxjY7mf4MZQR3sCiI3ywub5Z
+         pF/bIEAusdHfzzdlXlbCZDEQJA5wSVx/EGDsxiBvy0L/b4ZOdAUh8vKwnoNp3EmM2dFX
+         5YJYBpRRIc+qzBbzW7i3mhoWcLh8xTlO7FRAuH2MACT+tRy1upZFmjFof9tlwyDzw8f3
+         PVjC1d+ARu07i2wrOaKtSNyL7e/FUHrlKZlTA35vXjkGznpZulptX42y3on8S0mkp+Cj
+         jA7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV7wg+b1WYd0Q1n1FBnRab1UdZrT4s4pi6b1RgYh2i7mDcBkD6ZsPyKbvIkL0N/4wM5FIhf7+nl2lhLYso=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3OzDOMjVBLNIKCKeYsaWPNVSkysEAvJf2quNVOWAJPh9BL8r6
+	uDrpFqurAJDSj+Fj3vGFSu6a5pfQPsWxo49r8RHzB0P8/2KEHngqDNV7
+X-Gm-Gg: ASbGncvdsHG+Qcn/xZyjLpDmdCl9qQ6mK5zPfm4hEY0ervwjqmGC4xEFNhN3WYPk6kG
+	fsq57+Wsc31/Seq7fcySP8qXOy7foJh7EBRzojWdpNQ8SlPewzjUa2eXIJtKSkS/jRbbxueYX3l
+	whsaK+AdLGLddqJtWG5jRagKR7AJtll6SqpJl14i8Yz60FuRocLN5z4QVlyfF8s61TwI4W/vRVZ
+	9w1fh19/Z3Fzbb6c8lEDQ1s9EICdiE4SiXms92G9GDzZReRBvCw5dxAefXFUEKAixGnLyOzzK9U
+	hMcIXQqd514IH+Bo54DXpV9CPcLET9zSaYlqwJkh/YsfjQ5OFBDSQOBWY2Xhpgxs4rXAvgeRHix
+	aHhrg25eLxMQQcInx02HOrGI=
+X-Google-Smtp-Source: AGHT+IGqDePInE+FdHH3PXlDYhmz7QfHMPnmOwbFEVlI4JdpGkqM0RyEB5qSwINorbSbzPMyVphfqA==
+X-Received: by 2002:a17:907:6e89:b0:afa:1453:6630 with SMTP id a640c23a62f3a-afdf01a7a53mr314562666b.32.1755704816703;
+        Wed, 20 Aug 2025 08:46:56 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:1::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded2bad79sm199429866b.9.2025.08.20.08.46.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 08:46:56 -0700 (PDT)
+Date: Wed, 20 Aug 2025 08:46:54 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jiri Bohac <jbohac@suse.cz>
+Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org, akpm@linux-foundation.org, 
+	Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>, 
+	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <dhildenb@redhat.com>, Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH v5 0/5] kdump: crashkernel reservation from CMA
+Message-ID: <airxp44zdyxskfwrhhveis7gd2vsz5m4f3ipidsghi2x55h64c@s37v5rkuoega>
+References: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,71 +77,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250811094444.203161-8-Neeraj.Upadhyay@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
 
-On Mon, Aug 11, 2025 at 03:14:33PM +0530, Neeraj Upadhyay wrote:
-> With Secure AVIC only Self-IPI is accelerated. To handle all the
-> other IPIs, add new callbacks for sending IPI. These callbacks write
-> to the IRR of the target guest vCPU's APIC backing page and issue
-> GHCB protocol MSR write event for the hypervisor to notify the
-> target vCPU about the new interrupt request.
-> 
-> For Secure AVIC GHCB APIC MSR writes, reuse GHCB msr handling code in
-	     ^^^^^^^^^^^^^^^^^^
+Hello Jiri,
 
-say what now?!
+On Thu, Jun 12, 2025 at 12:11:19PM +0200, Jiri Bohac wrote:
+> The fifth patch enables the functionality for x86 as a proof of
+> concept. There are just three things every arch needs to do:
+> - call reserve_crashkernel_cma()
+> - include the CMA-reserved ranges in the physical memory map
+> - exclude the CMA-reserved ranges from the memory available
+>   through /proc/vmcore by excluding them from the vmcoreinfo
+>   PT_LOAD ranges.
 
-> +void savic_ghcb_msr_write(u32 reg, u64 value)
+First, thank you for making this change; it’s very helpful.
+I haven’t come across anything regarding arm64 support. Is this on
+anyone’s to-do list?
 
-I guess this belongs into x2apic_savic.c.
-
-> +{
-> +	u64 msr = APIC_BASE_MSR + (reg >> 4);
-> +	struct pt_regs regs = {
-> +		.cx = msr,
-> +		.ax = lower_32_bits(value),
-> +		.dx = upper_32_bits(value)
-> +	};
-> +	struct es_em_ctxt ctxt = { .regs = &regs };
-> +	struct ghcb_state state;
-> +	enum es_result res;
-> +	struct ghcb *ghcb;
-> +
-> +	guard(irqsave)();
-> +
-> +	ghcb = __sev_get_ghcb(&state);
-> +	vc_ghcb_invalidate(ghcb);
-> +
-> +	res = sev_es_ghcb_handle_msr(ghcb, &ctxt, true);
-> +	if (res != ES_OK) {
-> +		pr_err("Secure AVIC msr (0x%llx) write returned error (%d)\n", msr, res);
-> +		/* MSR writes should never fail. Any failure is fatal error for SNP guest */
-> +		snp_abort();
-> +	}
-> +
-> +	__sev_put_ghcb(&state);
-> +}
-
-...
-
-> +static inline void self_ipi_reg_write(unsigned int vector)
-> +{
-> +	/*
-> +	 * Secure AVIC hardware accelerates guest's MSR write to SELF_IPI
-> +	 * register. It updates the IRR in the APIC backing page, evaluates
-> +	 * the new IRR for interrupt injection and continues with guest
-> +	 * code execution.
-> +	 */
-
-Why is that comment here? It is above a WRMSR write. What acceleration is it
-talking about?
-
-> +	native_apic_msr_write(APIC_SELF_IPI, vector);
-> +}
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--breno
 
