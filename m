@@ -1,128 +1,107 @@
-Return-Path: <linux-kernel+bounces-778633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EF2B2E83D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:45:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D83B2E83E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D2EA07EC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:45:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAC921CC23DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F88A2DBF45;
-	Wed, 20 Aug 2025 22:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDB02D24A8;
+	Wed, 20 Aug 2025 22:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HV5VSKFw"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YEmmwkbb"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4312D8DB1
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 22:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C53E229B2A;
+	Wed, 20 Aug 2025 22:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755729926; cv=none; b=CzOyRiEmgnJzshumwC1QeuhPMR3otGbqOGpkrf0vXnaRwgKMx6TIWZRV4rBD/31ldq3U8izC9d/Uow8Mu1CjUnmMHOtm6j2ztP3MQApp915wRm9fWjZoFvxRNQT7kcP64l8VGEn34BdUVF+xzv87QWAqxLzq2HodnbpKkOrD11E=
+	t=1755729923; cv=none; b=mL4WQJ8G9m3tWP2lOZ9bTdVoQBqjSz0Nbh+mP9KOQMGiImZP7bGbE/hVgk4VfeOfy7N1XppT5/0s/Zit2G2nEXlvqKnKOR5brUfrkVMSYxayvetGV48GTbB8shvpJgP8ARyzEz5EV83qro8im7LIEv5MxW1rFkM+YKDJUBZJ3iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755729926; c=relaxed/simple;
-	bh=1NB+1kQ7punO/zTLJ3mZAGULp1WI7Buii+7JUE/b9hg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EmKYb8APricVOBLJSOr1teiR1aB0a/oqx7MkV6yn1N6ljoSiUecRkSECG5maMrJZHjifV0WpFEeJvnBkRVo+vvc/ccoDcXM3Ie/18Fqpo/sSxaotEyAfFDO4vSnq2oYGh06Vw8Zgt8+wyNaN27gC0CxbMFrAV6QGfogH0OfxtrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HV5VSKFw; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755729912;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+DXWWj4a5hAcoBW3C/vlPFTjK0POV17XOJOPajxQapM=;
-	b=HV5VSKFwPy8UA04gdJnWB5Yp0IuZOqSxs1cY/kYt/0LylCkkoID2MktjpiHSlPrUOq+ZEf
-	2Wpg2bKI7PsH/H31yoyXyb5Rzg/kBwcNuuBbh5bRHLbgKmf6KIHBVvjnB4mXJi5jhWXPK2
-	mAmtyY+8NWUGgmXhwyTdNcQ63KWd0XI=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: linux-mm@kvack.org,  bpf@vger.kernel.org,  Suren Baghdasaryan
- <surenb@google.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Michal Hocko
- <mhocko@suse.com>,  David Rientjes <rientjes@google.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
- Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 05/14] mm: introduce bpf_get_root_mem_cgroup() bpf kfunc
-In-Reply-To: <CAP01T772oh8t05Pth2eWFzfSGVWDuW6kujRVSYQEreqZy==nOQ@mail.gmail.com>
-	(Kumar Kartikeya Dwivedi's message of "Wed, 20 Aug 2025 11:25:02
-	+0200")
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
-	<20250818170136.209169-6-roman.gushchin@linux.dev>
-	<CAP01T772oh8t05Pth2eWFzfSGVWDuW6kujRVSYQEreqZy==nOQ@mail.gmail.com>
-Date: Wed, 20 Aug 2025 15:45:07 -0700
-Message-ID: <87ms7tobnw.fsf@linux.dev>
+	s=arc-20240116; t=1755729923; c=relaxed/simple;
+	bh=dOc9PDPMBqmiptZkMu4FCamWCTbHdvtW3swVBPYcP4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M0Sxretfr5+MMWLrj6781HkqaNdsMq1XuAobUrRUNMqZITf/gzSSGQ0nHLN8sQYS5UEpokXEWVnFCXqupzmZkPAkbjGDVabU0T3q/JQeEwZfT9IAMt12thQVkyQbrkjW34YeMWhBOC8COCLDSBKJFtIDD8LLh4Qsmwi3IYeIijM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YEmmwkbb; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=z5KzQpKSCrGkNRK0A+Nuu0QJ5XEq+csvMXy8Q4LEMVg=; b=YEmmwkbbJreasT2XkCNJqiDGee
+	2J0PubICP/04xFPkYU+ZmpxqNl7SgmwCKpEnW0fhr6ONFZaqJXLFRhJtoZ9PGBp7Bcjq82RBt9dTZ
+	Sh4O5pKx24/T/fyQuCAxi1S9pWOtIrJNQw49iNThpl4nX2y8530LW+lgXl7HNGhkZS9hTUfcdJPR+
+	tiSiwckQbVMYRhaxNZzPAxSR+nxZ1TM3ry10XScmLLSENKhcyQMvs42p0AWRg3KhHpbhOvs1/Jsb5
+	693rcy+FbvNnOg57iaBZKN3krLR4gVAGtMkO+3hhRMdUPwuExLKqZRMDKS81rGz51aBzjblcB+ONN
+	AKq1R2EA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uorYQ-0000000F7RY-0GFl;
+	Wed, 20 Aug 2025 22:45:14 +0000
+Message-ID: <5dff05c1-474e-4fff-a19b-7c17b4db6173@infradead.org>
+Date: Wed, 20 Aug 2025 15:45:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/2] KVM: SEV: Add SEV-SNP CipherTextHiding support
+To: Ashish Kalra <Ashish.Kalra@amd.com>, corbet@lwn.net, seanjc@google.com,
+ pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ thomas.lendacky@amd.com, herbert@gondor.apana.org
+Cc: akpm@linux-foundation.org, rostedt@goodmis.org, paulmck@kernel.org,
+ michael.roth@amd.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <cover.1755721927.git.ashish.kalra@amd.com>
+ <95abc49edfde36d4fb791570ea2a4be6ad95fd0d.1755721927.git.ashish.kalra@amd.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <95abc49edfde36d4fb791570ea2a4be6ad95fd0d.1755721927.git.ashish.kalra@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Kumar Kartikeya Dwivedi <memxor@gmail.com> writes:
 
-> On Mon, 18 Aug 2025 at 19:02, Roman Gushchin <roman.gushchin@linux.dev> wrote:
->>
->> Introduce a bpf kfunc to get a trusted pointer to the root memory
->> cgroup. It's very handy to traverse the full memcg tree, e.g.
->> for handling a system-wide OOM.
->>
->> It's possible to obtain this pointer by traversing the memcg tree
->> up from any known memcg, but it's sub-optimal and makes bpf programs
->> more complex and less efficient.
->>
->> bpf_get_root_mem_cgroup() has a KF_ACQUIRE | KF_RET_NULL semantics,
->> however in reality it's not necessarily to bump the corresponding
->> reference counter - root memory cgroup is immortal, reference counting
->> is skipped, see css_get(). Once set, root_mem_cgroup is always a valid
->> memcg pointer. It's safe to call bpf_put_mem_cgroup() for the pointer
->> obtained with bpf_get_root_mem_cgroup(), it's effectively a no-op.
->>
->> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
->> ---
->>  mm/bpf_memcontrol.c | 15 +++++++++++++++
->>  1 file changed, 15 insertions(+)
->>
->> diff --git a/mm/bpf_memcontrol.c b/mm/bpf_memcontrol.c
->> index 66f2a359af7e..a8faa561bcba 100644
->> --- a/mm/bpf_memcontrol.c
->> +++ b/mm/bpf_memcontrol.c
->> @@ -10,6 +10,20 @@
->>
->>  __bpf_kfunc_start_defs();
->>
->> +/**
->> + * bpf_get_root_mem_cgroup - Returns a pointer to the root memory cgroup
->> + *
->> + * The function has KF_ACQUIRE semantics, even though the root memory
->> + * cgroup is never destroyed after being created and doesn't require
->> + * reference counting. And it's perfectly safe to pass it to
->> + * bpf_put_mem_cgroup()
->> + */
->> +__bpf_kfunc struct mem_cgroup *bpf_get_root_mem_cgroup(void)
->> +{
->> +       /* css_get() is not needed */
->> +       return root_mem_cgroup;
->> +}
->> +
->>  /**
->>   * bpf_get_mem_cgroup - Get a reference to a memory cgroup
->>   * @css: pointer to the css structure
->> @@ -122,6 +136,7 @@ __bpf_kfunc void bpf_mem_cgroup_flush_stats(struct mem_cgroup *memcg)
->>  __bpf_kfunc_end_defs();
->>
->>  BTF_KFUNCS_START(bpf_memcontrol_kfuncs)
->> +BTF_ID_FLAGS(func, bpf_get_root_mem_cgroup, KF_ACQUIRE | KF_RET_NULL)
->
-> Same suggestion here (re: trusted args).
 
-It's not really taking any arguments, so I don't think it's applicable:
-	struct mem_cgroup *bpf_get_root_mem_cgroup(void)
+On 8/20/25 1:50 PM, Ashish Kalra wrote:
+> @@ -3064,10 +3070,32 @@ void __init sev_hardware_setup(void)
+>  out:
+>  	if (sev_enabled) {
+>  		init_args.probe = true;
+> +
+> +		if (sev_is_snp_ciphertext_hiding_supported())
+> +			init_args.max_snp_asid = min(nr_ciphertext_hiding_asids,
+> +						     min_sev_asid - 1);
+> +
+>  		if (sev_platform_init(&init_args))
+>  			sev_supported = sev_es_supported = sev_snp_supported = false;
+>  		else if (sev_snp_supported)
+>  			sev_snp_supported = is_sev_snp_initialized();
+> +
+> +		if (sev_snp_supported)
+> +			nr_ciphertext_hiding_asids = init_args.max_snp_asid;
+> +
+> +		/*
+> +		 * If ciphertext hiding is enabled, the joint SEV-ES/SEV-SNP
+> +		 * ASID range is partitioned into separate SEV-ES and SEV-SNP
+> +		 * ASID ranges, with the SEV-SNP range being [1..max_snp_asid]
+> +		 * and the SEV-ES range being [max_snp_asid..max_sev_es_asid].
+
+		                              [max_snp_asid + 1..max_sev_es_asid]
+?
+
+> +		 * Note, SEV-ES may effectively be disabled if all ASIDs from
+> +		 * the joint range are assigned to SEV-SNP.
+> +		 */
+-- 
+~Randy
+
 
