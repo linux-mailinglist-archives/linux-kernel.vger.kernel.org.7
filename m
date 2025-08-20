@@ -1,355 +1,185 @@
-Return-Path: <linux-kernel+bounces-777261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6B12B2D788
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:08:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 916DAB2D78D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB9B31885C63
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:05:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47D771BA1441
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A2D2DC342;
-	Wed, 20 Aug 2025 09:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966A22D9EE2;
+	Wed, 20 Aug 2025 09:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rW8LlTp5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TNJr8Cbe";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="f2pomFcH";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GAlbcD52"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vCbsK1rK"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF452D375C
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C55F18991E
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680698; cv=none; b=ot+O04SeXNhOX3vQ4XjXgcpcx9D/MRe/IoWfg7ZdRajF4UKcwqlBh8SUMQUM5VKdaZ+e3UwFVsFrl7m1/tECdssrgqB8yiApyF7GXoMODHiz81qcI0ym4QtJPog9swAxjS6kZZ+xjuYczoItme9btdODIsgACvqYYMGF7RnLmFA=
+	t=1755680774; cv=none; b=MMHvIrqw8gCjUIaqOU9xGAVgn14IoIXmRzM/HnO+CKsk07UECXnNKWDmjEL7uewNo0GPNfQhfgdqEho4iY1zyx86wapc/PmzzU8jCPpQMoqMPPZ0N3JYhazrlzGY/si+B73DF903IJwJHoH7qE95PpCdCjDvCyzkpjE25/zFxSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680698; c=relaxed/simple;
-	bh=lsIvUMKikDBhwn3JuuUM/hbec5podOwUspKHJHPhHCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cAsyc2mZOJVsLpINC6jWSuhDgXYrt6NN4ptOuHA7i99cEW9FGkfGoGWRWyhYFH0XxhCV1ESQwACMONgmdj9yxyStOl4RSvGo5OyzWS8SvvVxBMZfu2aDYjuk3RbkQCnNscQqpL7MPF0h1KMDSdRCTXe1vR5Nylj37+aq8NIuvYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rW8LlTp5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TNJr8Cbe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=f2pomFcH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GAlbcD52; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 335F81F7B0;
-	Wed, 20 Aug 2025 09:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755680694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nZ//gYY6UXXsx8QcVxJZiYWNUdOZeg7R6DnSFft/9ko=;
-	b=rW8LlTp5Ius2uMmiWYqVwjeWp+YC2tYAXBljI9+eeJ0JmFnW5tylR0DNB8x8Z+4yJ9IIVO
-	YrWSReN62jrRzUiHDjSrWYOWRQB2+JDl5VBs4i+g6Zw4qGHL+O14vRKbV4F08zhuhcxJpp
-	t5aTBOq0KeGaPJUGUvCVXCQ9BI4gHIA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755680694;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nZ//gYY6UXXsx8QcVxJZiYWNUdOZeg7R6DnSFft/9ko=;
-	b=TNJr8Cbe8WiZNrEobLpZEppNUMiLfbnxJrDdSJcIB0jRWHFi9vANAh0ptiW40NQFAWno3W
-	yFzkVbCGxfWkxuAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=f2pomFcH;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=GAlbcD52
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755680693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nZ//gYY6UXXsx8QcVxJZiYWNUdOZeg7R6DnSFft/9ko=;
-	b=f2pomFcHTALt76PEmDQKAAWWh/vx1Hy6018RNVGOx9Ejrw/sfEde/Y7l1G9iaBEzw4eJlT
-	oxtNRHZsAuW9aUzJVGYruT+WHhT3ZivO5IWRIq/ytPo8Bs4tW8GyI83WpD9QOWOdqLXTmn
-	AwcmXp6jD5msYuCurUQJnTOF+EYB+ME=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755680693;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nZ//gYY6UXXsx8QcVxJZiYWNUdOZeg7R6DnSFft/9ko=;
-	b=GAlbcD52iVotZJkLmCBtrtGaL2bcOF3GBEearKbQ1jwn4JNiLKWkUYkT7SBy+B3KC4kNyA
-	e2kClt2La73YPfDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CF4271368B;
-	Wed, 20 Aug 2025 09:04:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id N/xoMbSPpWigdgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 20 Aug 2025 09:04:52 +0000
-Message-ID: <1dcb967f-4e7f-4a6b-957c-924d2dec55fc@suse.de>
-Date: Wed, 20 Aug 2025 11:04:52 +0200
+	s=arc-20240116; t=1755680774; c=relaxed/simple;
+	bh=5OYOK7aQpU1X9yOebdZcroKWtUh/mD/yMUMLCZyq9vg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Xw/xwiSTJgImZy3rlOJ5S0D12w1ZPvqFekcN95VO4T9oww4KSAc8gywsQpYRt7zI4DO6qDfiUODAPknxR/1ViepUGF3C9PDPr1qAgKWjre68HluoHjI0IkGvjSyfN7iQOXdrfxvDy1s4dow93eRDaSw6rI3/+/Cgiz6JPV6nyCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vCbsK1rK; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7a16441so970310366b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:06:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755680770; x=1756285570; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SjfjAF0ihm6dUzVTEeGzkjgU2zdiQsd0XmXwmmZheMI=;
+        b=vCbsK1rKGVPcLmRRef7Cv4N0WOSaJ4wjrzcDf+nm5Fa2Ms4rDEQ3KXE46tp7XdcxaA
+         njj0O16g2I7sMjYHr8DEuzVYMsXKCSAKS9BgimhI5IyPbqdxeRf1YiV7v2S9qc0j5LYf
+         NdxL6JT/2Jq6FryNXM3HsQuMognyvFPPv8Xvy9zXp5E0wgBwApFO5o9drIIEYCARN3gq
+         JPxByj/JIv29HQ8Qoe5OYhF0WHfj8ZklZRZ3C3gBMZO/MSJtHztDqvWlWDc0euAsZZFC
+         7N8A+rN7b1Gt6xKpsw1fkoIpc6ZZXehijsjhN71XBFYt9iv2fUQhfO7/GKIF0sCl30Xb
+         VIdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755680770; x=1756285570;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SjfjAF0ihm6dUzVTEeGzkjgU2zdiQsd0XmXwmmZheMI=;
+        b=U8b792sHM+4A2fg4l7uEfyp9W8XFXODNKPP4/2NxqUxxaIvbfD2jAzgG/M0kGRkvDW
+         qisnJROS9EHX7ItuHgbCtNd/UJrq0u8+tQB6XCAy9ioeL7eXPFhMMJB8Nnwybl6/ZVcD
+         f8gUfLsLvuD/RKpphoitEoQ/RnMmrZfUbGSiE/s/oO1Wd8snKiZQ9CLEq+t2ZXROqhF6
+         seyb/FU3PvOgyudDz/AROt21A0bx12lzYiMbiTOtXCfmae0OZ3lQV32oyrxsBNll2U3g
+         iC7LWw5CCVpJFHv5qnI68e0kzzFi9X6o2YvIP90JmMTMAB41QiVrVQW9LUjJvikNhvqW
+         5OIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfCpMNuxwP60D6TNw13iWtHBsYAfwgD7Qo+R4FlhItfxizlA2M//npaHrJ/5ZOcOSx6Sc6OZz0aJJt4Ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOF45UJPsz3VApQeXxRQaYKcO8D8zVsODIi2J6inFGgOSYyKFV
+	Og+OXgXVtckfVQu+mhYbgXAmSeJqJXh3lQN5QQHWrraYHhZRvZHr32y1orLTW6k5qKU=
+X-Gm-Gg: ASbGnctb3KpvqdU7HcjjWydkJutIKz0LQr28yRJVFGkrlIDVU6strvDSmc39t9xrf7x
+	91X0QLD/QKSiAHMhNeL0eeTwPJddqbcdgxVZ0Cn4dNOsbJUwKdwmBpdErdQ/Nmip2TfaRgge4uf
+	QeLoi5wyVM4MVtyd/8CcbGwmH3nhO1mUbcqmxnG83i8RYAqu0rchMrrFXg5OBU0PX1PxcwlFMG5
+	yHmYCwib1fUdZvfMoGrzjcCSKDbt0OJHOL1fsJ3YxpMCLQ8bNYuzS1oX8nS7FkBvyvG+mtFUQRA
+	2echgSjjyuLhJrlQEXhNauuO8AJT58X12mU7xeoI9SnFj8DgSkRAntqVTaXO5SsHySrq9vRobfF
+	qN/8wQwzoqPIaZg==
+X-Google-Smtp-Source: AGHT+IFxKjSoye5KytJcBeIh7RVVNTxX96Tia/JazwrfrrvBChFGTf0ixNRMCRYvTWwly37g85A8Cg==
+X-Received: by 2002:a17:907:3f27:b0:ade:3eb6:3c6 with SMTP id a640c23a62f3a-afdf009b921mr174055766b.15.1755680769642;
+        Wed, 20 Aug 2025 02:06:09 -0700 (PDT)
+Received: from localhost ([195.52.61.108])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-afded537f98sm141907366b.104.2025.08.20.02.06.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 02:06:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/amdgpu: Pin buffers while vmap'ing exported
- dma-buf objects
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- sumit.semwal@linaro.org, oushixiong@kylinos.cn, alexander.deucher@amd.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org
-References: <20250818151710.284982-1-tzimmermann@suse.de>
- <f31550b1-b89c-47d6-b012-99479ba12aeb@amd.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <f31550b1-b89c-47d6-b012-99479ba12aeb@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 335F81F7B0
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[amd.com,linaro.org,kylinos.cn,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email,amd.com:email,suse.de:dkim,suse.de:mid,suse.de:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=0c51fa388eb9b21910f63f4f00a3738371207d9954d178cc4d914d32c9d6;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 20 Aug 2025 11:06:03 +0200
+Message-Id: <DC74W02T8Y9U.Y7IH9HBIP2J3@baylibre.com>
+Cc: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel@pengutronix.de>
+Subject: Re: [PATCH 5/7] can: m_can: fix CAN state in system PM
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Marc Kleine-Budde" <mkl@pengutronix.de>, "Chandrasekar Ramakrishnan"
+ <rcsekar@samsung.com>, "Vincent Mailhol" <mailhol.vincent@wanadoo.fr>,
+ "Patrik Flykt" <patrik.flykt@linux.intel.com>, "Dong Aisheng"
+ <b29396@freescale.com>, "Fengguang Wu" <fengguang.wu@intel.com>, "Varka
+ Bhadram" <varkabhadram@gmail.com>, "Wu Bo" <wubo.oduw@gmail.com>, "Philipp
+ Zabel" <p.zabel@pengutronix.de>
+X-Mailer: aerc 0.20.1
+References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de> <20250812-m_can-fix-state-handling-v1-5-b739e06c0a3b@pengutronix.de>
+In-Reply-To: <20250812-m_can-fix-state-handling-v1-5-b739e06c0a3b@pengutronix.de>
 
-Hi
+--0c51fa388eb9b21910f63f4f00a3738371207d9954d178cc4d914d32c9d6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Am 18.08.25 um 17:43 schrieb Christian König:
-> On 18.08.25 17:17, Thomas Zimmermann wrote:
->> Current dma-buf vmap semantics require that the mapped buffer remains
->> in place until the corresponding vunmap has completed.
->>
->> For GEM-SHMEM, this used to be guaranteed by a pin operation while creating
->> an S/G table in import. GEM-SHMEN can now import dma-buf objects without
->> creating the S/G table, so the pin is missing. Leads to page-fault errors,
->> such as the one shown below.
->>
->> [  102.101726] BUG: unable to handle page fault for address: ffffc90127000000
->> [...]
->> [  102.157102] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
->> [...]
->> [  102.243250] Call Trace:
->> [  102.245695]  <TASK>
->> [  102.2477V95]  ? validate_chain+0x24e/0x5e0
->> [  102.251805]  ? __lock_acquire+0x568/0xae0
->> [  102.255807]  udl_render_hline+0x165/0x341 [udl]
->> [  102.260338]  ? __pfx_udl_render_hline+0x10/0x10 [udl]
->> [  102.265379]  ? local_clock_noinstr+0xb/0x100
->> [  102.269642]  ? __lock_release.isra.0+0x16c/0x2e0
->> [  102.274246]  ? mark_held_locks+0x40/0x70
->> [  102.278177]  udl_primary_plane_helper_atomic_update+0x43e/0x680 [udl]
->> [  102.284606]  ? __pfx_udl_primary_plane_helper_atomic_update+0x10/0x10 [udl]
->> [  102.291551]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
->> [  102.297208]  ? lockdep_hardirqs_on+0x88/0x130
->> [  102.301554]  ? _raw_spin_unlock_irq+0x24/0x50
->> [  102.305901]  ? wait_for_completion_timeout+0x2bb/0x3a0
->> [  102.311028]  ? drm_atomic_helper_calc_timestamping_constants+0x141/0x200
->> [  102.317714]  ? drm_atomic_helper_commit_planes+0x3b6/0x1030
->> [  102.323279]  drm_atomic_helper_commit_planes+0x3b6/0x1030
->> [  102.328664]  drm_atomic_helper_commit_tail+0x41/0xb0
->> [  102.333622]  commit_tail+0x204/0x330
->> [...]
->> [  102.529946] ---[ end trace 0000000000000000 ]---
->> [  102.651980] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
->>
->> In this stack strace, udl (based on GEM-SHMEM) imported and vmap'ed a
->> dma-buf from amdgpu. Amdgpu relocated the buffer, thereby invalidating the
->> mapping.
->>
->> Provide a custom dma-buf vmap method in amdgpu that pins the object before
->> mapping it's buffer's pages into kernel address space. Do the opposite in
->> vunmap.
->>
->> Note that dma-buf vmap differs from GEM vmap in how it handles relocation.
->> While dma-buf vmap keeps the buffer in place, GEM vmap requires the caller
->> to keep the buffer in place. Hence, this fix is in amdgpu's dma-buf code
->> instead of its GEM code.
->>
->> A discussion of various approaches to solving the problem is available
->> at [1].
->>
->> v2:
->> - only use mapable domains (Christian)
->> - try pinning to domains in prefered order
->>
->> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
->> Fixes: 660cd44659a0 ("drm/shmem-helper: Import dmabuf without mapping its sg_table")
->> Reported-by: Thomas Zimmermann <tzimmermann@suse.de>
->> Closes: https://lore.kernel.org/dri-devel/ba1bdfb8-dbf7-4372-bdcb-df7e0511c702@suse.de/
->> Cc: Shixiong Ou <oushixiong@kylinos.cn>
->> Cc: Thomas Zimmermann <tzimmermann@suse.de>
->> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
->> Cc: Maxime Ripard <mripard@kernel.org>
->> Cc: David Airlie <airlied@gmail.com>
->> Cc: Simona Vetter <simona@ffwll.ch>
->> Cc: Sumit Semwal <sumit.semwal@linaro.org>
->> Cc: "Christian König" <christian.koenig@amd.com>
->> Cc: dri-devel@lists.freedesktop.org
->> Cc: linux-media@vger.kernel.org
->> Cc: linaro-mm-sig@lists.linaro.org
->> Link: https://lore.kernel.org/dri-devel/9792c6c3-a2b8-4b2b-b5ba-fba19b153e21@suse.de/ # [1]
->> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
->> ---
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c | 41 ++++++++++++++++++++-
->>   1 file changed, 39 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
->> index 5743ebb2f1b7..471b41bd3e29 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
->> @@ -285,6 +285,43 @@ static int amdgpu_dma_buf_begin_cpu_access(struct dma_buf *dma_buf,
->>   	return ret;
->>   }
->>   
->> +static int amdgpu_dma_buf_vmap(struct dma_buf *dma_buf, struct iosys_map *map)
->> +{
->> +	struct drm_gem_object *obj = dma_buf->priv;
->> +	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
->> +	int ret;
->> +
->> +	/*
->> +	 * Pin to keep buffer in place while it's vmap'ed. The actual
->> +	 * domain is not that important as long as it's mapable. Using
->> +	 * GTT should be compatible with most use cases. VRAM and CPU
->> +	 * are the fallbacks if the buffer has already been pinned there.
->> +	 */
->> +	ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_GTT);
->> +	if (ret) {
->> +		ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_VRAM);
-> That makes even less sense :)
-
-This is intentional so that amdgpu first tries the most compatible 
-domain GTT and VRAM only as a second option.
-
+On Tue Aug 12, 2025 at 7:36 PM CEST, Marc Kleine-Budde wrote:
+> A suspend/resume cycle on a down interface results in the interface
+> coming up in Error Active state. A suspend/resume cycle on an Up
+> interface will always result in Error Active state, regardless of the
+> actual CAN state.
 >
-> The values are a mask, try this:
+> During suspend, only set running interfaces to CAN_STATE_SLEEPING.
+> During resume only touch the CAN state of running interfaces. For
+> wakeup sources, set the CAN state depending on the Protocol Status
+> Regitser (PSR), for non wakeup source interfaces m_can_start() will do
+> the same.
 >
-> ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_GTT | AMDGPU_GEM_DOMAIN_VRAM);
+> Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
-I'm aware that it's a bitmask. But IIUC 
-amdgpu_bo_placement_from_domain() [1] prefers VRAM over GTT if both are 
-given. If another importer now comes that requires the BO in GTT, it 
-would fail the pin.
+Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
 
-[1] 
-https://elixir.bootlin.com/linux/v6.16.1/source/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c#L109
-
+> ---
+>  drivers/net/can/m_can/m_can.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 >
-> Otherwise the pin code will try to move the buffer around to satisfy the contrain you given.
-
->
-> And don't use the CPU domain here, this will otherwise potentially block submission later on.
-
-Ok.
-
-Best regards
-Thomas
-
->
-> Regards,
-> Christian.
->
->> +		if (ret) {
->> +			ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_CPU);
->> +			if (ret)
->> +				return ret;
->> +		}
->> +	}
->> +	ret = drm_gem_dmabuf_vmap(dma_buf, map);
->> +	if (ret)
->> +		amdgpu_bo_unpin(bo);
->> +
->> +	return ret;
->> +}
->> +
->> +static void amdgpu_dma_buf_vunmap(struct dma_buf *dma_buf, struct iosys_map *map)
->> +{
->> +	struct drm_gem_object *obj = dma_buf->priv;
->> +	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
->> +
->> +	drm_gem_dmabuf_vunmap(dma_buf, map);
->> +	amdgpu_bo_unpin(bo);
->> +}
->> +
->>   const struct dma_buf_ops amdgpu_dmabuf_ops = {
->>   	.attach = amdgpu_dma_buf_attach,
->>   	.pin = amdgpu_dma_buf_pin,
->> @@ -294,8 +331,8 @@ const struct dma_buf_ops amdgpu_dmabuf_ops = {
->>   	.release = drm_gem_dmabuf_release,
->>   	.begin_cpu_access = amdgpu_dma_buf_begin_cpu_access,
->>   	.mmap = drm_gem_dmabuf_mmap,
->> -	.vmap = drm_gem_dmabuf_vmap,
->> -	.vunmap = drm_gem_dmabuf_vunmap,
->> +	.vmap = amdgpu_dma_buf_vmap,
->> +	.vunmap = amdgpu_dma_buf_vunmap,
->>   };
->>   
->>   /**
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.=
+c
+> index 310a907cbb7e..149f3a8b5f7e 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -2507,12 +2507,11 @@ int m_can_class_suspend(struct device *dev)
+>  		}
+> =20
+>  		m_can_clk_stop(cdev);
+> +		cdev->can.state =3D CAN_STATE_SLEEPING;
+>  	}
+> =20
+>  	pinctrl_pm_select_sleep_state(dev);
+> =20
+> -	cdev->can.state =3D CAN_STATE_SLEEPING;
+> -
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(m_can_class_suspend);
+> @@ -2525,14 +2524,14 @@ int m_can_class_resume(struct device *dev)
+> =20
+>  	pinctrl_pm_select_default_state(dev);
+> =20
+> -	cdev->can.state =3D CAN_STATE_ERROR_ACTIVE;
+> -
+>  	if (netif_running(ndev)) {
+>  		ret =3D m_can_clk_start(cdev);
+>  		if (ret)
+>  			return ret;
+> =20
+>  		if (cdev->pm_wake_source) {
+> +			u32 reg_psr;
+> +
+>  			/* Restore active interrupts but disable coalescing as
+>  			 * we may have missed important waterlevel interrupts
+>  			 * between suspend and resume. Timers are already
+> @@ -2544,6 +2543,9 @@ int m_can_class_resume(struct device *dev)
+>  			if (cdev->ops->init)
+>  				ret =3D cdev->ops->init(cdev);
+> =20
+> +			reg_psr =3D m_can_read(cdev, M_CAN_PSR);
+> +			cdev->can.state =3D m_can_can_state_get_by_psr(reg_psr);
+> +
+>  			m_can_write(cdev, M_CAN_IE, cdev->active_interrupts);
+>  		} else {
+>  			ret  =3D m_can_start(ndev);
 
 
+--0c51fa388eb9b21910f63f4f00a3738371207d9954d178cc4d914d32c9d6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaKWP+xsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlPK
+rAD/ZSbJc+wMxk6zan0X4q5gFEj/m0jpJ+28LkUqxHC8ek4A/RkYzI+CFxIzI82T
+LXnkxkyj4ImZ4YZ01SYKgwfmuwYN
+=jIe8
+-----END PGP SIGNATURE-----
+
+--0c51fa388eb9b21910f63f4f00a3738371207d9954d178cc4d914d32c9d6--
 
