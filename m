@@ -1,127 +1,134 @@
-Return-Path: <linux-kernel+bounces-778215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF4EB2E2A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F8FB2E2A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2B8E17CC0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:48:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0B7E17A92A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48805334371;
-	Wed, 20 Aug 2025 16:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1309532A3D5;
+	Wed, 20 Aug 2025 16:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eUKoJb6k"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lYNof3uN"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0AD13B58D
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9F113B58D
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755708505; cv=none; b=HraBGawCoMnJ9LMyVsekdD7q0S5nQ1oYxoW0UpJdpzp2TDMXipd2k5JJvhUpPiedTMsEKee7W4wvNI4HRj0t46HoBO5Z1S2ot3noZ2qcoyyluy1gRmcFFd/jbjjgDreqBP+ZoiClnlJ/VmXv7FjrfoAsXX1hyUhFYWBCbRBtO5I=
+	t=1755708488; cv=none; b=baJJM67WoZUTt8EU47MyvbmT92Utp/McSEgKxqZLUsZmmtg7qFzJa+thj2NJdaPDSSqHYeMnp8jZ35hi7hzjUpNJ5I9ZjoXaXjdTMp0hbneeU+oNwQ4tJ8dp8KZZRfiUeppTsuX/51MdDIcGakyuMi8SeAsjTsrmyx7w544cFwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755708505; c=relaxed/simple;
-	bh=lR/doXCxqRGhTs+btwwZ53cL3VmEiUxO4Vw/HoStQx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bmBFQeR4V0TKOkfxQ4OLAm8/ZY+48c9dDr58gmOEFDSzFSRjaGY/Oa9wiPsvTx3C43vxAmKtFI3ehqWpnkh8DtC/mKqhwTTd2r8G452s4+7ntZ5netNnlkaWkt++aofPq1o5HJ22++dDmoDfbX6/KXex0cCUv8/0Xtq8dzhszEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eUKoJb6k; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755708503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=IVkKZgDnXJP9v/D7QUFQ6eomDEjHubr4yDiPYTASo/c=;
-	b=eUKoJb6k9qY5ymdWmFly9MZ4qu8S+UhX/sNenLKsGjADBcVQJjxQblWNRDGEsfrPWUdark
-	Pxmac0W/LTwL4jkm0O1t4pcVQwFKIyonbuFGgCf7txSpORA/QmgpY02wDLRi81G00PXBn9
-	vsrze9kcWkXA45bqVHMs4laU1JJS2l8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-638-9aYsQmTAMh2XbAp3Ce-3pg-1; Wed,
- 20 Aug 2025 12:48:17 -0400
-X-MC-Unique: 9aYsQmTAMh2XbAp3Ce-3pg-1
-X-Mimecast-MFC-AGG-ID: 9aYsQmTAMh2XbAp3Ce-3pg_1755708495
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE5891800340;
-	Wed, 20 Aug 2025 16:48:14 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.95])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 31D9A180028C;
-	Wed, 20 Aug 2025 16:48:10 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 20 Aug 2025 18:46:56 +0200 (CEST)
-Date: Wed, 20 Aug 2025 18:46:51 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Mark Brown <broonie@kernel.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/process: fix the misleading comment about
- PF_USER_WORKERs in copy_thread()
-Message-ID: <20250820164651.GA18799@redhat.com>
+	s=arc-20240116; t=1755708488; c=relaxed/simple;
+	bh=RgH/5L6/kG4jZk5e39i6FIrRTIvgj6lgywSuZOJjQc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MPTxPDb4bm3IW8laI/DtO+k5iuVDYC5U5GIptPX0r0PDZHLaI8iKCxlHU8q0mKkEhGlXqcXqu9agvE+VAAHKng/CXTX5geEa1kGM5cKVo7C5AhPaa2u5nOGJ+78Pi1nrfGbHhDM0jI/VObABJ6PPcI4Vp0K1QOB1Nt96Q2qDBDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lYNof3uN; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57KGlgCv3240046;
+	Wed, 20 Aug 2025 11:47:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755708462;
+	bh=1kvOQXhZjl3Riu3Bp8W5at5u0uo3ZABQvzRMmv52jOg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=lYNof3uNzL6Q59bWj6aZOuMleWm9WqbNqSmV8L5pMTlj86O3vIbFuUIMZX0kE93li
+	 x5y/DRvN6hY9zYIQAkbNddOG7vYOFACGjzO8O7zznij3js3p7zRbHNou553XLkaP69
+	 QpeaacRHHVRqFKQTuMAbDWxFRk8psQ3TtLwnYqFs=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57KGlfQq2186756
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 20 Aug 2025 11:47:41 -0500
+Received: from lewvowa01.ent.ti.com (10.180.75.79) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 20
+ Aug 2025 11:47:41 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by lewvowa01.ent.ti.com
+ (10.180.75.79) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.55; Wed, 20 Aug
+ 2025 11:47:41 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 20 Aug 2025 11:47:41 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57KGlfsw526664;
+	Wed, 20 Aug 2025 11:47:41 -0500
+Message-ID: <9315875c-3358-4f56-b99e-a530baa8ca0e@ti.com>
+Date: Wed, 20 Aug 2025 11:47:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clocksource/drivers/arm_global_timer: Add auto-detection
+ for initial prescaler values
+To: Markus Schneider-Pargmann <msp@baylibre.com>,
+        Daniel Lezcano
+	<daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Patrice
+ Chotard" <patrice.chotard@foss.st.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Kevin Hilman <khilman@baylibre.com>
+References: <20250808-topic-am43-arm-global-timer-v6-16-v1-1-82067d327580@baylibre.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20250808-topic-am43-arm-global-timer-v6-16-v1-1-82067d327580@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The comment says "doesn't return to ret_after_fork()" but in fact it should
-say "doesn't return from ret_from_fork()".
+Hi Markus,
 
-Plus the comment lacks some important details, and even "user space thread"
-doesn't look accurate, if nothing else this doesn't match the comment about
-PF_USER_WORKER in include/linux/sched.h.
+On 8/8/25 5:35 AM, Markus Schneider-Pargmann wrote:
+> am43xx has a clock tree where the global timer clock is an indirect child
+> of the CPU clock used for frequency scaling:
+> 
+>    dpll_mpu_ck -- CPU/cpufreq
+>          |
+>          v
+>    dpll_mpu_m2_ck -- divider
+>          |
+>          v
+>    mpu_periphclk -- fixed divider by 2 used for global timer
+> 
+> When CPU frequency changes, the global timer's clock notifier rejects
+> the change because the hardcoded prescaler (1 or 2) cannot accommodate
+> the frequency range across all CPU OPPs (300, 600, 720, 800, 1000 MHz).
+> 
+> Add platform-specific prescaler auto-detection to solve this issue:
+> 
+> - am43xx: prescaler = 50 (calculated as initial_freq/GCD of all OPP
+>    freqs) This allows the timer to work across all CPU frequencies after
+>    the fixed divider by 2. Tested on am4372-idk-evm.
+> 
+> - zynq-7000: prescaler = 2 (preserves previous Kconfig default)
+> 
+> - Other platforms: prescaler = 1 (previous default)
+> 
+> The Kconfig option now defaults to 0 (auto-detection) but can still
+> override the auto-detected value when set to a non-zero value,
+> preserving existing customization workflows.
+> 
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- arch/x86/kernel/process.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+Tested-by: Judith Mendez <jm@ti.com>
 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index e932e0e53972..cc4fe540d952 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -237,14 +237,20 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
- 
- 	if (unlikely(args->fn)) {
- 		/*
--		 * A user space thread, but it doesn't return to
--		 * ret_after_fork().
-+		 * A non-PF_KTHREAD thread, but it doesn't return from
-+		 * ret_from_fork().
-+		 *
-+		 * Either a PF_USER_WORKER kernel thread, in this case
-+		 * arg->fn() must not return.
-+		 * Or a user space task created by user_mode_thread(), in
-+		 * this case arg->fn() can only return after a successful
-+		 * kernel_execve().
- 		 *
- 		 * In order to indicate that to tools like gdb,
- 		 * we reset the stack and instruction pointers.
- 		 *
- 		 * It does the same kernel frame setup to return to a kernel
--		 * function that a kernel thread does.
-+		 * function that a PF_KTHREAD thread does.
- 		 */
- 		childregs->sp = 0;
- 		childregs->ip = 0;
--- 
-2.25.1.362.g51ebf55
+
+Thanks for you patch, it also cleared the noise on my end
+on am437x board.
+
+~ Judith
+
+
 
 
 
