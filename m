@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-778609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4FFB2E803
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:18:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 775F8B2E7FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58AB658286E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:18:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 479AC4E2D2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADC52DAFA9;
-	Wed, 20 Aug 2025 22:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E48B2DC32D;
+	Wed, 20 Aug 2025 22:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5FB1aSb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jq2Bb1tm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E331A2D3749;
-	Wed, 20 Aug 2025 22:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6542DAFC1;
+	Wed, 20 Aug 2025 22:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755728264; cv=none; b=VCq15tOyN4CAs/M4xPOL6eVT6/XstBWpeLgHowYa6ASR4qOSPgNL0g4HX3lUdUyPB3WThHkGvS9j5aljj5y/w+qYJKm7ngPELwS1P+H0mbf/WB+mNcwVaHEi+vtyMSm9fL8k8w0nwMp+KJNgq8+cmvVLEIK3VrHl/90TwFt0a0Q=
+	t=1755728264; cv=none; b=WSMDNYVJDA+fLSQD5PKjij14lHmxoaClR7Xc/9cuGQjL46tdiJ+WYeEWE4QROU0Nip5JAKXaoCN1fXC95OYGAqnydjpWSa9zT12ltp3kLBMrvi8rN69CRrwT2jf+FDSzf8dMMhw9HctiOd8uMuIOJHMPqRKbiU7CwNFpZVdhuqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755728264; c=relaxed/simple;
-	bh=NIGjmvVU8M1e+ixa0lF6Va3Ega4zYBMltJN60T9Tr+s=;
+	bh=YF43KGoO2dSFOul1+BCDouHP3wCNucft3cNQlUfcKBs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PkgcC3cmJO40HthS0YUBNvsPA9qHCMbaSGgT/LptplQhzzeNkb15hlXrE8Q73MVKWog9ChCIoM8vNQvbfNa3/az/cY9Q7lQIIUS9HXpsIb7ox2gDZyISaHcphg9/SORUf87dYDbTfJSgiWP3sCdClhCVIAElL3qGQSWUI5B5YHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5FB1aSb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CF35C116C6;
-	Wed, 20 Aug 2025 22:17:41 +0000 (UTC)
+	 MIME-Version:Content-Type; b=RXETwbdD98F0phUz7IAvbfj1ber+2Av3t7BWl2AH1Td2cOnw86gUQO3nAAqWqBOhSXh1TIbDMPJnJ9hL+OfSAYCsHyixQqHvAPQEW/4+V7/+d0ksLhJzxghfxLBUVtm8Cu3JTz6wlcuMvD5CcAb4Gf9jdMDEVDbNujf51KVm3YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jq2Bb1tm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7289C4CEED;
+	Wed, 20 Aug 2025 22:17:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755728263;
-	bh=NIGjmvVU8M1e+ixa0lF6Va3Ega4zYBMltJN60T9Tr+s=;
+	s=k20201202; t=1755728264;
+	bh=YF43KGoO2dSFOul1+BCDouHP3wCNucft3cNQlUfcKBs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=S5FB1aSbCZQeLXevEo7lCKaC/6dC03HmYZWIwuPMMNp33qvb8Bf5Eiv6hEzOcdQSj
-	 bNX8FFHwxikg/eqrRxyVH4mRoIUI+XqRi3nCh+j1QAnsvlg6PXqJ0yXg6W7KkmlIty
-	 5SH13qWxCYu1c7Z5i0pu+PVRwv8FRQMrFBb7LwGY3FDxmvUvpkboUdpzuzsHx89wjZ
-	 qhtkSMQ3fy3p3v5xEwZWTFHk3vTmlK6M125u49z6X5vvAbsIc9hbJk/AKzXTFt1oWR
-	 iUcVFvpaWYxlRXCOHN3RVGCIoI8k4ORuREXLxhGszYvHe6wcOTCV4YQw51l7teuJ+Q
-	 0WuPVdGIawcbQ==
+	b=Jq2Bb1tmOuI+mk7eyUv9vuWoGzwQXYvL6zI+eMPRMTEyVXFkpylj1x5IFo115usG4
+	 dPtLMtjiR7SOMKXMjhvHiKkC0gKfUGBk9VjOeqwyYaSYeQpRTGmpqkIuhbbBkxjnJw
+	 8VybF3qjOfEzBNxny6TV00YBfiPBNLfjJVpeSoLgOp+DMrlhZe4ekuzUvQ8YEb+nvg
+	 LllDcnMw/XPTV3OXDKTvSWrmLerK35cOiiL7uAtsosnu2Q8HeWBKxC4q617UBrAGeD
+	 wHw2uPyW924A6MvEJUlJ5yAggnDy8JuGQc93o92DXzcPGxAqbyfa2tLVMgledH4b8B
+	 J8ZDGMJ/Xmkcw==
 From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, robh@kernel.org, 
- Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Cc: peter.ujfalusi@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
- devicetree@vger.kernel.org, linux-sound@vger.kernel.org, 
- linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org
-In-Reply-To: <20250819201302.80712-1-jihed.chaibi.dev@gmail.com>
-References: <20250819201302.80712-1-jihed.chaibi.dev@gmail.com>
-Subject: Re: [PATCH v4 0/2] ASoC: dt-bindings: Convert TI TWL4030 sound
- bindings to schema
-Message-Id: <175572826140.300376.10438251274472224671.b4-ty@kernel.org>
-Date: Wed, 20 Aug 2025 23:17:41 +0100
+To: Stefan Binding <sbinding@opensource.cirrus.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ patches@opensource.cirrus.com
+In-Reply-To: <20250820142209.127575-1-sbinding@opensource.cirrus.com>
+References: <20250820142209.127575-1-sbinding@opensource.cirrus.com>
+Subject: Re: [PATCH v3 0/3] ASoC: cs35l56: Fixes for CS35L63 for production
+ silicon
+Message-Id: <175572826370.300376.1566951929910497131.b4-ty@kernel.org>
+Date: Wed, 20 Aug 2025 23:17:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,15 +60,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Tue, 19 Aug 2025 22:13:00 +0200, Jihed Chaibi wrote:
-> This series converts the legacy TXT bindings for the TI TWL4030
-> sound-related modules to the modern YAML DT schema format.
+On Wed, 20 Aug 2025 15:21:59 +0100, Stefan Binding wrote:
+> Production silicon for CS36L63 has some small differences compared to
+> pre-production silicon. This requires small fixes in driver.
+> Update firmware addresses, tuning algorithm IDs and remove soundwire
+> clock workaround as no longer necessary.
 > 
-> This work was previously part of a larger series but is now being sent
-> as a focused submission for the ASoC subsystem.
-> 
-> Link to v3 discussion:
-> https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
+> No product was ever released using pre-production silicon, therefore
+> there is no need to keep support for it.
 > 
 > [...]
 
@@ -80,10 +77,12 @@ Applied to
 
 Thanks!
 
-[1/2] ASoC: dt-bindings: ti,twl4030-audio: convert to DT schema
-      commit: 04113322406b4763677922f80ba5ab44a8dae7bb
-[2/2] ASoC: dt-bindings: omap-twl4030: convert to DT schema
-      commit: c232495d28ca092d0c39b10e35d3d613bd2414ab
+[1/3] ASoC: cs35l56: Update Firmware Addresses for CS35L63 for production silicon
+      commit: f135fb24ef29335b94921077588cae445bc7f099
+[2/3] ASoC: cs35l56: Handle new algorithms IDs for CS35L63
+      commit: 8dadc11b67d4b83deff45e4889b3b5540b9c0a7f
+[3/3] ASoC: cs35l56: Remove SoundWire Clock Divider workaround for CS35L63
+      commit: 8d13d1bdb59d0a2c526869ee571ec51a3a887463
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
