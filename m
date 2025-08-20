@@ -1,102 +1,113 @@
-Return-Path: <linux-kernel+bounces-776791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A07B2D182
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:39:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558DFB2D18A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFCD51C42578
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:39:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A07622415
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DA12522B5;
-	Wed, 20 Aug 2025 01:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="HAEHZleU"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43D8239E7E;
-	Wed, 20 Aug 2025 01:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760832773D1;
+	Wed, 20 Aug 2025 01:45:23 +0000 (UTC)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAD4274661;
+	Wed, 20 Aug 2025 01:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755653936; cv=none; b=ONhmbX989dlBFInkTijOZeHE0n7G/nM7QmYZbya2gsPlctxrBJAY3hTR5u7sjVSDfDhDQKVUlsadMv/ZfPse7Fhg7R+biHYj795KBBB2Jhhiu14ux2/4OJNO5ByVhv6iZFjcTcK+MpaoMXSafms3yViTy8nrUYZ2btdf2x1JbL0=
+	t=1755654323; cv=none; b=qPDiOHgLSLyZ0xEiwc07rh+GYVmnisBDZIy50tmOCBBnwwwLnmhphxL/Z+xOD1Uy4GN7AdBQfCvMPkDQojt9wosrnrwfdqq+qlvKTDp/RB1kYhlNTMVMD6p+WX0fKem5Bi2I0o4lZ2HWNTpZbOUc+RA9sukp/L9jxRxWMs9Ypag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755653936; c=relaxed/simple;
-	bh=TAW7flq3odbpxOKxdegduWOQsDnkI26xnJjpizE46E8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=ThY870gRRjqz5hvKmAJ5bMX3/E/U+0rGuNUihXVQZJHfy+iQyJo1FjTnJVzdd/frO1mY4DX5BA6WganM4RO8egVF9df1s47mF92I03y/+Qxtov05QLpN8EEHXY82uO3dMuXGj4fVg1x9XOVbH3KCc9wDPEPRP0AreG8cp9gnOp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=HAEHZleU reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=X8n9XOhTr/5EqrhTQUQKFTnJVTGCwvmFcxw+kiU580Q=; b=H
-	AEHZleUijo5bYPESCGarRZNzKU0FiEaqZQHUN19wiecE3iu4qwiO142rEPvkFg3c
-	H+2XPdb/+rNs9d49QMA7U2XkP0LUt3R2HibiOhhVRTDm6nCF9xgtv8bx0k2r0NEi
-	IEKhnx+gXyplKgfgkRGZogKYBa5Z6+pdyHyUTvAyJ4=
-Received: from 00107082$163.com ( [111.35.190.191] ) by
- ajax-webmail-wmsvr-40-144 (Coremail) ; Wed, 20 Aug 2025 09:38:29 +0800
- (CST)
-Date: Wed, 20 Aug 2025 09:38:29 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Bart Van Assche" <bvanassche@acm.org>
-Cc: phil@philpotter.co.uk, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Subject: Re: [BUG] general protection fault when connecting an old mp3/usb
- device
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <2899b7cb-106b-48dc-890f-9cc80f1d1f8b@acm.org>
-References: <20250818095008.6473-1-00107082@163.com>
- <2899b7cb-106b-48dc-890f-9cc80f1d1f8b@acm.org>
-X-NTES-SC: AL_Qu2eB/qevEEr7yOZZOkZnEYQheY4XMKyuPkg1YJXOp80tSbq/wsCW3BGO3/32cORCxGSvxeoVCJCxP9YUYNATrxSw802TTnFI3x3woSVGliG
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1755654323; c=relaxed/simple;
+	bh=wuaetC6HYS8jrlxmZDyqgB/sWl2EQU24EWs61R7V8CQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FC4BTDDpSn0McFNCgGP+ZbY36kN0myRCY+Z9Bf0t7IcWxZ0SwQMhijoiiUnqOpbNb/+IxhfJGSLZFYGB2nJBDDfsIF9Z1R6T3+5zcwcst9DSXpCSUrS7rmY+wv6qRrl/z0eUp+nxlYnc/zR6gAUwc8N02iRnkOVIDjVqiMpkpE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz19t1755654224td6a0dcb8
+X-QQ-Originating-IP: HTig/urfuy1c10xTqU33eaHLWL43Nj039I3rn71CoV0=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 20 Aug 2025 09:43:42 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8384300150430436104
+Date: Wed, 20 Aug 2025 09:43:41 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] net: rnpgbe: Add n500/n210 chip support
+Message-ID: <78DD9702C797EEA1+20250820014341.GA1580474@nic-Precision-5820-Tower>
+References: <20250818112856.1446278-1-dong100@mucse.com>
+ <20250818112856.1446278-3-dong100@mucse.com>
+ <d4a84d76-8982-4a9d-a383-2e2d4d66550a@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <35a7ef9b.1401.198c520ab44.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:kCgvCgC3FuEWJ6Vot3UdAA--.6184W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxyuqmikxnzFMwADso
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d4a84d76-8982-4a9d-a383-2e2d4d66550a@linux.dev>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OBDSLDo3By90FrPc21Vfk7dBBPSf0XMltTOezz3bfOb9pKkyW3kXRur7
+	4cXO1IYYJc+FKN00cURPj7hPrhYgBv7gf7NNRdmKnpqzAQEDorMWUOHF6janB7UxmpXGAYm
+	WxynZj9qqo1ci3cY7t8fc/rXERfc8TChXCyeRkngkIyam8gTzoysd0DcZSNnJqOsDwwI1FK
+	zlOq5I42McGuN8ZT9gX1aZFHzMXNuom9JFI0/ykCu4++CnjEK20xKU+q1BMz4v+BicEqQU1
+	hJn6e34U9yQ0ohpy2sVU7MOUUFuWmLE4DKLcwi9kMrotZ97ofhltzE9j4iXSQah2aweyNZF
+	vc9m/zQrFuvUjyzqXECOKLWZ7sQWOo8AAmxz6GDmZOl7IRDBtry2Dk7Q8hk+0fQs229NF+Q
+	Dchg9hsMMKIxYcP0Wdk/nssuXmbuEbtmzchosLxV23lrsZ445wZweFoAQ8OWHaD0VvcHDY/
+	0V1rJTdnZVE+Liz2FDsFeX//iLUiSZehwloez/VHwa0FeMIZLOYPxAnoEWzZBDwZAisQcop
+	bcieYS/pgosjsRpD1qmsUooNvtSv1tBhOfZm0JcWd139ZYBTDxc4MqhNAqv8O93zU2iRgUr
+	VoH+62QkFlseC9Jzkr29uqcYJdcgidTb1sMhJG8EmBLLlr/z6XCYy8OJ35xG2oYdOeNuPUl
+	fWLfPdMhti4igL+CL4ZhIqa3c1i23fWS+RK/3+oENvN0QGZIjEDtCkSXFoN7rp+OZfKx4Au
+	4ysVVFU2Q/7kDjmY3wF8GkIfbBmlZImg0gXucjozTZ+EDReg6IETIU+OGcdCGAZItF368IZ
+	DAqRQ+8TxOjzzWt7bzvxHPQ1DPSPV+tvkuRo9rT5AZgSE/eEDzH6fku0x3JHACgkPY6V218
+	LBRvlCeEudvZ862Bh4ttemEPdsxjoyQwPzmOKavKLD1jZqGC2SpEWKDAD1FWXt6mXyzjXur
+	C1GgKo6RrgoE6Ri/BJAoU4uaUUbuR3b5hQGHEdDeE+AVKVKRcEuA/RPOfrIZ5uTYEPCg=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-CkF0IDIwMjUtMDgtMjAgMDM6MjA6NTEsICJCYXJ0IFZhbiBBc3NjaGUiIDxidmFuYXNzY2hlQGFj
-bS5vcmc+IHdyb3RlOgo+T24gOC8xOC8yNSAyOjUwIEFNLCBEYXZpZCBXYW5nIHdyb3RlOgo+PiBb
-U2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSBPb3BzOiBnZW5lcmFsIHByb3RlY3Rpb24gZmF1bHQs
-IHByb2JhYmx5IGZvciBub24tY2Fub25pY2FsIGFkZHJlc3MgMHgyZTJlMmYyZTJlMmYzMDhlOiAw
-MDAwIFsjMV0gU01QIE5PUFRJCj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdIENhbGwgVHJh
-Y2U6Cj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdICA8VEFTSz4KPj4gW1NhdCBBdWcgMjMg
-MDM6NTY6MDkgMjAyNV0gIHNyX2RvX2lvY3RsKzB4NWIvMHgxYzAgW3NyX21vZF0KPj4gW1NhdCBB
-dWcgMjMgMDM6NTY6MDkgMjAyNV0gIHNyX3BhY2tldCsweDJjLzB4NTAgW3NyX21vZF0KPj4gW1Nh
-dCBBdWcgMjMgMDM6NTY6MDkgMjAyNV0gIGNkcm9tX2dldF9kaXNjX2luZm8rMHg2MC8weGUwIFtj
-ZHJvbV0KPj4gW1NhdCBBdWcgMjMgMDM6NTY6MDkgMjAyNV0gIGNkcm9tX21yd19leGl0KzB4Mjkv
-MHhiMCBbY2Ryb21dCj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdICA/IHhhX2Rlc3Ryb3kr
-MHhhYS8weDEyMAo+PiBbU2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSAgdW5yZWdpc3Rlcl9jZHJv
-bSsweDc2LzB4YzAgW2Nkcm9tXQo+PiBbU2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSAgc3JfZnJl
-ZV9kaXNrKzB4NDQvMHg1MCBbc3JfbW9kXQo+PiBbU2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSAg
-ZGlza19yZWxlYXNlKzB4YjAvMHhlMAo+PiBbU2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSAgZGV2
-aWNlX3JlbGVhc2UrMHgzNy8weDkwCj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdICBrb2Jq
-ZWN0X3B1dCsweDhlLzB4MWQwCj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdICBibGtkZXZf
-cmVsZWFzZSsweDExLzB4MjAKPj4gW1NhdCBBdWcgMjMgMDM6NTY6MDkgMjAyNV0gIF9fZnB1dCsw
-eGUzLzB4MmEwCj4+IFtTYXQgQXVnIDIzIDAzOjU2OjA5IDIwMjVdICB0YXNrX3dvcmtfcnVuKzB4
-NTkvMHg5MAo+PiBbU2F0IEF1ZyAyMyAwMzo1NjowOSAyMDI1XSAgZXhpdF90b191c2VyX21vZGVf
-bG9vcCsweGQ2LzB4ZTAKPj4gW1NhdCBBdWcgMjMgMDM6NTY6MDkgMjAyNV0gIGRvX3N5c2NhbGxf
-NjQrMHgxYzEvMHgxZTAKPj4gW1NhdCBBdWcgMjMgMDM6NTY6MDkgMjAyNV0gIGVudHJ5X1NZU0NB
-TExfNjRfYWZ0ZXJfaHdmcmFtZSsweDc2LzB4N2UKPgo+UGhpbGxpcCwgaXMgdGhpcyBiZWhhdmlv
-ciBwZXJoYXBzIGludHJvZHVjZWQgYnkgY29tbWl0IDVlYzlkMjZiNzhjNAo+KCJjZHJvbTogQ2Fs
-bCBjZHJvbV9tcndfZXhpdCBmcm9tIGNkcm9tX3JlbGVhc2UgZnVuY3Rpb24iKT8gUGxlYXNlIGRv
-CgpJIGNhdWdodCB0aGlzIG9uIDYuMTYuMCB3aGljaCBkb2VzIG5vdCBoYXZlIHRoaXMgY29tbWl0
-LCBhbmQgb24gdGhlIGNvbnRyYXJ5LCBiYXNlCm9uIHRoZSBjb21taXQgbWVzc2FnZSwgdGhpcyBj
-b21taXQgbWF5IGhlbHAgaW4gdGhlIHBvc2l0aXZlIGRpcmVjdGlvbi4KCkkgd2lsbCB0cnkgdG8g
-ZmlndXJlIG91dCBhIHByb2NlZHVyZSB0byByZXByb2R1Y2UgdGhpcyBvbiBteSBsYXB0b3AsIGFu
-ZCBpZiB0aGF0IHBvc3NpYmxlLApJIHdpbGwgdXBncmFkZSBteSBsYXB0b3AgdG8gNi4xNy1yYzEg
-dG8gZ2l2ZSBpdCBhIHRyaWFsLgpBbmQgdXBkYXRlIGxhdGVyLgoKVGhhbmtzCkRhdmlkIAoKPm5v
-dCBjYWxsIGNvZGUgdGhhdCBpbnZva2VzIGlvY3RscyBmcm9tIHRoZSBkaXNrX3JlbGVhc2UoKSBj
-YWxsYmFjay4KPgo+VGhhbmtzLAo+Cj5CYXJ0Lgo=
+On Tue, Aug 19, 2025 at 02:59:09PM +0100, Vadim Fedorenko wrote:
+> On 18/08/2025 12:28, Dong Yibo wrote:
+> > Initialize n500/n210 chip bar resource map and
+> > dma, eth, mbx ... info for future use.
+> > 
+> [...]
+> 
+> > +struct mucse_hw {
+> > +	void __iomem *hw_addr;
+> > +	void __iomem *ring_msix_base;
+> > +	struct pci_dev *pdev;
+> > +	enum rnpgbe_hw_type hw_type;
+> > +	struct mucse_dma_info dma;
+> > +	struct mucse_eth_info eth;
+> > +	struct mucse_mac_info mac;
+> > +	struct mucse_mbx_info mbx;
+> > +	u32 usecstocount;
+> 
+> What is this field for? You don't use it anywhere in the patchset apart
+> from initialization. Maybe it's better to introduce it once it's used?
+> Together with the defines of values for this field...
+> 
+
+It is used to store chip frequency which is used to calculate values
+related to 'delay register' in the future. I will improve this.
+
+Thanks for your feedback.
+
 
