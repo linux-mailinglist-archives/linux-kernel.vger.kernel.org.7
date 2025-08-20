@@ -1,426 +1,117 @@
-Return-Path: <linux-kernel+bounces-778247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C910B2E308
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:11:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3530B2E30A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D579A06F83
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45CB6A213E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB24C334718;
-	Wed, 20 Aug 2025 17:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDF4334709;
+	Wed, 20 Aug 2025 17:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DZoDMZQq"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SyeacAxq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDEA36CDE5
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B02332C300;
+	Wed, 20 Aug 2025 17:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755709820; cv=none; b=dp1kFq7dXM3Kxf+2ToH/2gaDuJBKcAmQsp96IxRiUJo4zREIn9UQgohmS5tl/7nknjYHDtUZKagoNFLASjlWrHfx/pTK9On2rzVLuwwGT6f6DZmeP0Ct6N5B/o3OhlWotkyOczOniIBiLNApytnVBbj+BuDV+D3wywhKIsTKUgc=
+	t=1755709839; cv=none; b=lqmf5ie0md2vShhQ0Czb+Gn8XBNEWO8oupMI0RNaC7iSNgZoEJA4MAS/g60t5lbQ2l8YCv+98WWtwgoHjIHWOczBI7IQOpQmnhJ5s9p8HQYPjGdnpj4+BJFgFgiBVWoj/TOaeXAMdUzDLBeEeOI/LgWsSkv9z7pXJB2L1CidfAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755709820; c=relaxed/simple;
-	bh=dhBXRqsSJw/h0IlJlmUF0e8yLbJ5Wn30E33N9axnkjQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Wbk6bjFicA9s2Gx63FWcup5UKyDASk+Nrx6oeylFz5C105inpf3ij1HljSfUrwGoa5g1I/1IP8hVFNPKjRfZWY09m8qJaMKk/BfNScKL/NqfuFZtupTpq1iVS2xxtyoUtmYn6NOZg81ytxiVbN5aR6lquXT5jpCyIOEb5zCWTyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DZoDMZQq; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e8cc27f5fso126970b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755709818; x=1756314618; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5t4FcDSGXwLSgTF0EICUfOCBIN34cesCy1ccnNe/UjE=;
-        b=DZoDMZQqPwzWfr2071stHOs+HffAAAPcUQrL4a8Zr3DPt4L8NLRpLzwJJZCA7h9QFu
-         yHb18xC0Pr/3MDgpziagShcdy80g09o0lRBVR4CYhFy2h5MQXAyjJNWaJ3+oVOEn58Lf
-         +zm7iaEJD1Fz/C+9XJvgle1OF8WWFSGg3nNy0sY7Vs3PWQDnN+JBGol2C9SZQ8YsfCVW
-         mEp5rmFEN4TWTcuLKd0TPLMOeK5q9eQU7b5Dac0zevF8yQp/PWpOrim7BeoJtZJngBAr
-         kXNWGZl/IXBHqOWl1bROsY3mFkDKcJcC4lUCVGzMdJhykiFLLRCCW312utuDWlDjGkS8
-         X56g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755709818; x=1756314618;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5t4FcDSGXwLSgTF0EICUfOCBIN34cesCy1ccnNe/UjE=;
-        b=q0OjwevKJ9C6SIBWBu4pcCxmPQprKHT9ydQR6l6WoV/2+NiQMViB98dL0S4OOYXWOt
-         ZBzwWS1oQTgdR7J7FIk0buXFdl+6ZFqYM51/aBDEH78xjgMbs6avRkRctiY20KRObA0r
-         x1Wb0TgeLdDCREPzfeGgrkhSzZeNa9oP1ytrB/sNWgqVbQTFPJBlOXJ8uMNXYIfLafgN
-         O2hTLYWLgKWU0RibQaVGKEYiJ1nXsJjokqcEg2IMGJs8bH2kgQLWb3gWaTo0M9IOxh9i
-         NoscbIZV8+FXMbSwU2dd2rRoWxfUnlEwAxAr4qHnA0C+hBkZrC3bXOA/vNJBkZbuv6cg
-         oqhQ==
-X-Gm-Message-State: AOJu0Yxg6oJZqeKv4GDhZuXI8sOHT3dTHw3yc7MNp+T6vZTieCFzKIK/
-	qiVWbVBx0Ne9nyEOj7Dbtw3O110KqNm9OeQk2qzcM2nc13t4FW9/U/czXmpOgaa19tL0jQnkVR0
-	y7jIXpg==
-X-Google-Smtp-Source: AGHT+IE6TUwGBI1cmNGcUjN1t5C7h5vmven6pZhphBLAx9IXkOGEoC44GQiPmocw0Fg1uk/d51KtCCBMhOc=
-X-Received: from pjvb16.prod.google.com ([2002:a17:90a:d890:b0:31e:c1fb:dbb2])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3291:b0:222:d191:5bbd
- with SMTP id adf61e73a8af0-2431b939322mr5779179637.39.1755709818245; Wed, 20
- Aug 2025 10:10:18 -0700 (PDT)
-Date: Wed, 20 Aug 2025 10:10:16 -0700
-In-Reply-To: <20250515152621.50648-2-amit@kernel.org>
+	s=arc-20240116; t=1755709839; c=relaxed/simple;
+	bh=8yBYVlTmuSfYyKpGmWLZFO2hyNANnEjDzENZL8tfRTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKhTMofcM4pC6TXsb/R6nqtnL5U+bdf6dFJ05z1CRt2kwegLyfeclV41EjwlV8a9ZVvfPyN58gXk0vJ3Xs+0lXSgCWfVDDwNUTA8UIfe/SP77b0A7+AkLd0V95PwE1NaTaN4UJyekhq1lROCbTf6q3FyKEUBh/7ChcaUXoll/j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SyeacAxq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9FBEC4CEE7;
+	Wed, 20 Aug 2025 17:10:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755709836;
+	bh=8yBYVlTmuSfYyKpGmWLZFO2hyNANnEjDzENZL8tfRTo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SyeacAxqb/19ouF28LEr7auDF68bzFfdtqyhL+r1Bzmm+d5f3GoIOl5ete9PZ7CjC
+	 0Wu9aOwHTtAerDU0dkjO5Nb4/iZLv9qt2pOi0tV6QMwIZqFE4fMqkB6Ix3ogcj3kDP
+	 UujfUxWLrAHd2BkY/eM4tK0CULpY2Y0bSjBVl0NosHXwFW1SQhT9yYm37MiOqBC9/Y
+	 jE3dYpjFScLJPu6iJg8IP6efFpjMpAud2PkXRFY0dbJFm8s5OXLi/eOUbLQWBuplhd
+	 kNfi/dBaB3I7NyfgIax2kRWfOPXpPUDUSTYgP4K60KzmFxJqsSFPmIo2TK5DXe7Jg+
+	 mpKGefU62J/Ig==
+Date: Wed, 20 Aug 2025 16:10:30 -0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
+Cc: "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>, 
+	"joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>, "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>, 
+	"tursulin@ursulin.net" <tursulin@ursulin.net>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"simona@ffwll.ch" <simona@ffwll.ch>, "oe-lkp@lists.linux.dev" <oe-lkp@lists.linux.dev>, 
+	"lkp@intel.com" <lkp@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"oliver.sang@intel.com" <oliver.sang@intel.com>
+Subject: Re: [PATCH 2/2] drm/i915: Fix incorrect error handling in
+ shmem_pwrite()
+Message-ID: <nd2sd2vdwif242wslgkaonuvskawho36bp6j6a4caghauzx6f5@dgkaow5idqxt>
+References: <20250811093050.38930-1-chentaotao@didiglobal.com>
+ <20250811093050.38930-2-chentaotao@didiglobal.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250515152621.50648-1-amit@kernel.org> <20250515152621.50648-2-amit@kernel.org>
-Message-ID: <aKYBeIokyVC8AKHe@google.com>
-Subject: Re: [PATCH v5 1/1] x86: kvm: svm: set up ERAPS support for guests
-From: Sean Christopherson <seanjc@google.com>
-To: Amit Shah <amit@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org, 
-	linux-doc@vger.kernel.org, amit.shah@amd.com, thomas.lendacky@amd.com, 
-	bp@alien8.de, tglx@linutronix.de, peterz@infradead.org, jpoimboe@kernel.org, 
-	pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, pbonzini@redhat.com, 
-	daniel.sneddon@linux.intel.com, kai.huang@intel.com, sandipan.das@amd.com, 
-	boris.ostrovsky@oracle.com, Babu.Moger@amd.com, david.kaplan@amd.com, 
-	dwmw@amazon.co.uk, andrew.cooper3@citrix.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250811093050.38930-2-chentaotao@didiglobal.com>
 
-On Thu, May 15, 2025, Amit Shah wrote:
-> From: Amit Shah <amit.shah@amd.com>
+Hi Taotao,
+
+On Mon, Aug 11, 2025 at 09:31:00AM +0000, 陈涛涛 Taotao Chen wrote:
+> From: Taotao Chen <chentaotao@didiglobal.com>
 > 
-> AMD CPUs with the Enhanced Return Address Predictor (ERAPS) feature
-> Zen5+) obviate the need for FILL_RETURN_BUFFER sequences right after
-> VMEXITs.  The feature adds guest/host tags to entries in the RSB (a.k.a.
-> RAP).  This helps with speculation protection across the VM boundary,
-> and it also preserves host and guest entries in the RSB that can improve
-> software performance (which would otherwise be flushed due to the
-> FILL_RETURN_BUFFER sequences).  This feature also extends the size of
-> the RSB from the older standard (of 32 entries) to a new default
-> enumerated in CPUID leaf 0x80000021:EBX bits 23:16 -- which is 64
-> entries in Zen5 CPUs.
+> shmem_pwrite() currently checks for short writes before negative error
+> codes, which can overwrite real errors (e.g., -EFBIG) with -EIO.
+> Reorder the checks to return negative errors first, then handle short
+> writes.
 > 
-> In addition to flushing the RSB across VMEXIT boundaries, CPUs with
-> this feature also flush the RSB when the CR3 is updated (i.e. whenever
-> there's a context switch), to prevent one userspace process poisoning
-> the RSB that may affect another process.  The relevance of this for KVM
-> is explained below in caveat 2.
+> Fixes: 048832a3f400 ("drm/i915: Refactor shmem_pwrite() to use kiocb and write_iter")
+
+I don't think we need the Fixes: tag here, in any case we return
+an error and -EIO is somehow correct.
+
+With the Fixes removed:
+
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+
+Andi
+
+> Signed-off-by: Taotao Chen <chentaotao@didiglobal.com>
+> ---
+>  drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> The hardware feature is always-on, and the host context uses the full
-> default RSB size without any software changes necessary.  The presence
-> of this feature allows software (both in host and guest contexts) to
-> drop all RSB filling routines in favour of the hardware doing it.
-> 
-> For guests to observe and use this feature, 
-
-Guests don't necessarily "use" this feature.  It's something that's enabled by
-KVM and affects harware behavior regardless of whether or not the guest is even
-aware ERAPS is a thing.
-
-> the hypervisor needs to expose the CPUID bit, and also set a VMCB bit.
-> Without one or both of those, 
-
-No?  If there's no enabling for bare metal usage, I don't see how emulation of
-CPUID can possibly impact usage of RAP size.  The only thing that matters is the
-VMCB bit.  And nothing in this patch queries guest CPUID.
-
-Observing ERAPS _might_ cause the guest to forego certain mitigations, but KVM
-has zero visibility into whether or not such mitigations exist, if the guest will
-care about ERAPS, etc.
-
-> guests continue to use the older default RSB size and behaviour for backwards
-> compatibility.  This means the hardware RSB size is limited to 32 entries for
-> guests that do not have this feature exposed to them.
-> 
-> There are two guest/host configurations that need to be addressed before
-> allowing a guest to use this feature: nested guests, and hosts using
-> shadow paging (or when NPT is disabled):
-> 
-> 1. Nested guests: the ERAPS feature adds host/guest tagging to entries
->    in the RSB, but does not distinguish between the guest ASIDs.  To
->    prevent the case of an L2 guest poisoning the RSB to attack the L1
->    guest, the CPU exposes a new VMCB bit (FLUSH_RAP_ON_VMRUN).  The next
->    VMRUN with a VMCB that has this bit set causes the CPU to flush the
->    RSB before entering the guest context.  In this patch, we set the bit
-
-"this patch", "we".
-
->    in VMCB01 after a nested #VMEXIT to ensure the next time the L1 guest
->    runs, its RSB contents aren't polluted by the L2's contents.
->    Similarly, when an exit from L1 to the hypervisor happens, we set
->    that bit for VMCB02, so that the L1 guest's RSB contents are not
->    leaked/used in the L2 context.
-> 
-> 2. Hosts that disable NPT: the ERAPS feature also flushes the RSB
->    entries when the CR3 is updated.  When using shadow paging, CR3
->    updates within the guest do not update the CPU's CR3 register.
-
-Yes they do, just indirectly.  KVM changes the effective CR3 in reaction to the
-guest's new CR3.  If hardware doesn't flush in that situation, then it's trivially
-easy to set ERAP_CONTROL_FLUSH_RAP on writes to CR3.
-
->    In this case, do not expose the ERAPS feature to guests,
->    and the guests continue with existing mitigations to fill the RSB.
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 571c906ffcbf..0cca1865826e 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -1187,6 +1187,9 @@ void kvm_set_cpu_caps(void)
->  		F(SRSO_USER_KERNEL_NO),
->  	);
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> index 2b53aad915f5..702532eef207 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> @@ -441,12 +441,12 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
+>  	written = file->f_op->write_iter(&kiocb, &iter);
+>  	BUG_ON(written == -EIOCBQUEUED);
 >  
-> +	if (tdp_enabled)
-> +		kvm_cpu_cap_check_and_set(X86_FEATURE_ERAPS);
-
-_If_ ERAPS is conditionally enabled, then it probably makes sense to do this in
-svm_set_cpu_caps().  But I think we can just support ERAPS unconditionally.
-
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index a89c271a1951..a2b075ed4133 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -1363,6 +1363,9 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
->  	if (boot_cpu_has(X86_FEATURE_V_SPEC_CTRL))
->  		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
+> -	if (written != size)
+> -		return -EIO;
+> -
+>  	if (written < 0)
+>  		return written;
 >  
-> +	if (boot_cpu_has(X86_FEATURE_ERAPS) && npt_enabled)
-	
-Don't regurgitate the same check in multiple places.
-
-	if (kvm_cpu_cap_has(X86_FEATURE_ERAPS))
-
-
-	
-> +		vmcb_enable_extended_rap(svm->vmcb);
+> +	if (written != size)
+> +		return -EIO;
 > +
->  	if (kvm_vcpu_apicv_active(vcpu))
->  		avic_init_vmcb(svm, vmcb);
->  
-> @@ -3482,6 +3485,7 @@ static void dump_vmcb(struct kvm_vcpu *vcpu)
->  	pr_err("%-20s%016llx\n", "tsc_offset:", control->tsc_offset);
->  	pr_err("%-20s%d\n", "asid:", control->asid);
->  	pr_err("%-20s%d\n", "tlb_ctl:", control->tlb_ctl);
-> +	pr_err("%-20s%d\n", "erap_ctl:", control->erap_ctl);
->  	pr_err("%-20s%08x\n", "int_ctl:", control->int_ctl);
->  	pr_err("%-20s%08x\n", "int_vector:", control->int_vector);
->  	pr_err("%-20s%08x\n", "int_state:", control->int_state);
-> @@ -3663,6 +3667,11 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
->  
->  		trace_kvm_nested_vmexit(vcpu, KVM_ISA_SVM);
->  
-> +		if (vmcb_is_extended_rap(svm->vmcb01.ptr)) {
-> +			vmcb_set_flush_guest_rap(svm->vmcb01.ptr);
-> +			vmcb_clr_flush_guest_rap(svm->nested.vmcb02.ptr);
-> +		}
-> +
->  		vmexit = nested_svm_exit_special(svm);
->  
->  		if (vmexit == NESTED_EXIT_CONTINUE)
-> @@ -3670,6 +3679,11 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
->  
->  		if (vmexit == NESTED_EXIT_DONE)
->  			return 1;
-> +	} else {
-> +		if (vmcb_is_extended_rap(svm->vmcb01.ptr) && svm->nested.initialized) {
-> +			vmcb_set_flush_guest_rap(svm->nested.vmcb02.ptr);
-> +			vmcb_clr_flush_guest_rap(svm->vmcb01.ptr);
-> +		}
-
-Handling this in the common exit path is confusing, inefficient, and lacking.
-
-Assuming hardware doesn't automatically clear ERAP_CONTROL_FLUSH_RAP, then KVM
-should clear the flag after _any_ exit, not just exits that reach this point,
-e.g. if KVM stays in the fast path.
-
-And IIUC, ERAP_CONTROL_FLUSH_RAP needs to be done on _every_ nested transition,
-not just those that occur in direct response to a hardware #VMEXIT. So, hook
-nested_vmcb02_prepare_control() for nested VMRUN and nested_svm_vmexit() for
-nested #VMEXIT.
-
-Side topic, the changelog should call out that KVM deliberately ignores guest
-CPUID, and instead unconditionally enables the full size RAP when ERAPS is
-supported.  I.e. KVM _could_ check guest_cpu_cap_has() instead of kvm_cpu_cap_has()
-in all locations, to avoid having to flush the RAP on nested transitions when
-ERAPS isn't enumerated to the guest, but presumably using the full size RAP is
-better for overall performance.
-
-The changelog should also call out that if the full size RAP is enabled, then
-it's KVM's responsibility to flush the RAP on nested transitions irrespective
-of whether or not ERAPS is advertised to the guest.  Because if ERAPS isn't
-advertised, the the guest's mitigations will likely be insufficient.
-
->  	}
->  
->  	if (svm->vmcb->control.exit_code == SVM_EXIT_ERR) {
-> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-> index f16b068c4228..7f44f7c9b1d5 100644
-> --- a/arch/x86/kvm/svm/svm.h
-> +++ b/arch/x86/kvm/svm/svm.h
-> @@ -493,6 +493,26 @@ static inline bool svm_is_intercept(struct vcpu_svm *svm, int bit)
->  	return vmcb_is_intercept(&svm->vmcb->control, bit);
+>  	return 0;
 >  }
 >  
-> +static inline void vmcb_set_flush_guest_rap(struct vmcb *vmcb)
-> +{
-> +	vmcb->control.erap_ctl |= ERAP_CONTROL_FLUSH_RAP;
-> +}
-> +
-> +static inline void vmcb_clr_flush_guest_rap(struct vmcb *vmcb)
-> +{
-> +	vmcb->control.erap_ctl &= ~ERAP_CONTROL_FLUSH_RAP;
-> +}
-> +
-> +static inline void vmcb_enable_extended_rap(struct vmcb *vmcb)
-> +{
-> +	vmcb->control.erap_ctl |= ERAP_CONTROL_ALLOW_LARGER_RAP;
-> +}
-> +
-> +static inline bool vmcb_is_extended_rap(struct vmcb *vmcb)
-> +{
-> +	return !!(vmcb->control.erap_ctl & ERAP_CONTROL_ALLOW_LARGER_RAP);
-> +}
-
-Eh, just drop all of these wrappers.
-
-With the caveat that I'm taking a wild guess on the !npt behavior, something
-like this?
-
----
- arch/x86/include/asm/cpufeatures.h | 1 +
- arch/x86/include/asm/svm.h         | 6 +++++-
- arch/x86/kvm/cpuid.c               | 7 ++++++-
- arch/x86/kvm/svm/nested.c          | 6 ++++++
- arch/x86/kvm/svm/svm.c             | 9 +++++++++
- 5 files changed, 27 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index eb859299d514..87d9284c166a 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -466,6 +466,7 @@
- #define X86_FEATURE_GP_ON_USER_CPUID	(20*32+17) /* User CPUID faulting */
- 
- #define X86_FEATURE_PREFETCHI		(20*32+20) /* Prefetch Data/Instruction to Cache Level */
-+#define X86_FEATURE_ERAPS		(20*32+24) /* Enhanced Return Address Predictor Security */
- #define X86_FEATURE_SBPB		(20*32+27) /* Selective Branch Prediction Barrier */
- #define X86_FEATURE_IBPB_BRTYPE		(20*32+28) /* MSR_PRED_CMD[IBPB] flushes all branch type predictions */
- #define X86_FEATURE_SRSO_NO		(20*32+29) /* CPU is not affected by SRSO */
-diff --git a/arch/x86/include/asm/svm.h b/arch/x86/include/asm/svm.h
-index ffc27f676243..58a079d6c3ef 100644
---- a/arch/x86/include/asm/svm.h
-+++ b/arch/x86/include/asm/svm.h
-@@ -131,7 +131,8 @@ struct __attribute__ ((__packed__)) vmcb_control_area {
- 	u64 tsc_offset;
- 	u32 asid;
- 	u8 tlb_ctl;
--	u8 reserved_2[3];
-+	u8 erap_ctl;
-+	u8 reserved_2[2];
- 	u32 int_ctl;
- 	u32 int_vector;
- 	u32 int_state;
-@@ -182,6 +183,9 @@ struct __attribute__ ((__packed__)) vmcb_control_area {
- #define TLB_CONTROL_FLUSH_ASID 3
- #define TLB_CONTROL_FLUSH_ASID_LOCAL 7
- 
-+#define ERAP_CONTROL_FULL_SIZE_RAP BIT(0)
-+#define ERAP_CONTROL_FLUSH_RAP BIT(1)
-+
- #define V_TPR_MASK 0x0f
- 
- #define V_IRQ_SHIFT 8
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index ad6cadf09930..184a810b53e3 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -1177,6 +1177,7 @@ void kvm_set_cpu_caps(void)
- 		F(AUTOIBRS),
- 		F(PREFETCHI),
- 		EMULATED_F(NO_SMM_CTL_MSR),
-+		F(ERAPS),
- 		/* PrefetchCtlMsr */
- 		/* GpOnUserCpuid */
- 		/* EPSF */
-@@ -1760,9 +1761,13 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
- 		entry->eax = entry->ebx = entry->ecx = entry->edx = 0;
- 		break;
- 	case 0x80000021:
--		entry->ebx = entry->edx = 0;
-+		entry->edx = 0;
- 		cpuid_entry_override(entry, CPUID_8000_0021_EAX);
- 		cpuid_entry_override(entry, CPUID_8000_0021_ECX);
-+		if (kvm_cpu_cap_has(X86_FEATURE_ERAPS))
-+			entry->ebx &= GENMASK(23, 16);
-+		else
-+			entry->ebx = 0;
- 		break;
- 	/* AMD Extended Performance Monitoring and Debug */
- 	case 0x80000022: {
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index b7fd2e869998..77794fd809e1 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -861,6 +861,9 @@ static void nested_vmcb02_prepare_control(struct vcpu_svm *svm,
- 		}
- 	}
- 
-+	if (kvm_cpu_cap_has(X86_FEATURE_ERAPS))
-+		vmcb02->control.erap_ctl |= ERAP_CONTROL_FLUSH_RAP;
-+
- 	/*
- 	 * Merge guest and host intercepts - must be called with vcpu in
- 	 * guest-mode to take effect.
-@@ -1144,6 +1147,9 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
- 
- 	kvm_nested_vmexit_handle_ibrs(vcpu);
- 
-+	if (kvm_cpu_cap_has(X86_FEATURE_ERAPS))
-+		vmcb01->control.erap_ctl |= ERAP_CONTROL_FLUSH_RAP;
-+
- 	svm_switch_vmcb(svm, &svm->vmcb01);
- 
- 	/*
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 7e7821ee8ee1..501596e56d39 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -1205,6 +1205,9 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
- 		svm_clr_intercept(svm, INTERCEPT_PAUSE);
- 	}
- 
-+	if (kvm_cpu_cap_has(X86_FEATURE_ERAPS))
-+		svm->vmcb->control.erap_ctl |= ERAP_CONTROL_FULL_SIZE_RAP;
-+
- 	if (kvm_vcpu_apicv_active(vcpu))
- 		avic_init_vmcb(svm, vmcb);
- 
-@@ -2560,6 +2563,8 @@ static int cr_interception(struct kvm_vcpu *vcpu)
- 			break;
- 		case 3:
- 			err = kvm_set_cr3(vcpu, val);
-+			if (!err && nested && kvm_cpu_cap_has(X86_FEATURE_ERAPS))
-+				svm->vmcb->control.erap_ctl |= ERAP_CONTROL_FLUSH_RAP;
- 			break;
- 		case 4:
- 			err = kvm_set_cr4(vcpu, val);
-@@ -3322,6 +3327,7 @@ static void dump_vmcb(struct kvm_vcpu *vcpu)
- 	pr_err("%-20s%016llx\n", "tsc_offset:", control->tsc_offset);
- 	pr_err("%-20s%d\n", "asid:", control->asid);
- 	pr_err("%-20s%d\n", "tlb_ctl:", control->tlb_ctl);
-+	pr_err("%-20s%d\n", "erap_ctl:", control->erap_ctl);
- 	pr_err("%-20s%08x\n", "int_ctl:", control->int_ctl);
- 	pr_err("%-20s%08x\n", "int_vector:", control->int_vector);
- 	pr_err("%-20s%08x\n", "int_state:", control->int_state);
-@@ -4366,6 +4372,9 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
- 	}
- 
- 	svm->vmcb->control.tlb_ctl = TLB_CONTROL_DO_NOTHING;
-+	if (cpu_feature_enabled(X86_FEATURE_ERAPS))
-+		svm->vmcb->control.erap_ctl &= ~ERAP_CONTROL_FLUSH_RAP;
-+
- 	vmcb_mark_all_clean(svm->vmcb);
- 
- 	/* if exit due to PF check for async PF */
-
-base-commit: 91b392ada892a2e8b1c621b9493c50f6fb49880f
---
+> -- 
+> 2.34.1
 
