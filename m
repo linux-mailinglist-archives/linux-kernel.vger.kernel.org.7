@@ -1,154 +1,148 @@
-Return-Path: <linux-kernel+bounces-777626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B565FB2DBF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:02:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD10B2DBF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ACF35C56B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:01:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94721C22FC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C71A27605C;
-	Wed, 20 Aug 2025 12:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E074F2E5B0A;
+	Wed, 20 Aug 2025 12:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dOLdqIGP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="j1Nb4xRx"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ms4NMx0j"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2864936124;
-	Wed, 20 Aug 2025 12:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F853183CC3;
+	Wed, 20 Aug 2025 12:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755691306; cv=none; b=RZauxJIWP1BRa+vZBPSM6KbyrWOffDjmZLRzTsnGtYbS0bl3l8I+YTAfWzRBl/d5sZFzPRr9QvolXr+CFPsKO1JWJYCUD224TghdFZ9EX/olr8HRfPyyvZOzfWdGZWNbX2LqTaF4JxRq4quL3oFWZvmvPcxBlxF2TOw89XJRJIc=
+	t=1755691362; cv=none; b=pXAos4DI2z0Xd/3m17+4cOMEMLBcXpr205lbt5cwTME4tKjGiANbZnry3zoYdDk0t/+6Pf287UCoruvWxWjv9EpWOztOpYc9JJd8ke4AqHsvuF/e3LY5/WVNkd9vaNqGAIfyojxNOBbSRQ0VS3sOM3QsH/AUB0vLoGKgRqez1AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755691306; c=relaxed/simple;
-	bh=quoUxmTd+wIYaTcdTYZiwMlD2ipn1Yd11rXs4F9lVK0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=fdWXr5MEGH4rJOTepgVlm+WQxbagOzKLaeJ5RjGTJCz0OXWjMydO+JWnpIwIolu+gbu+hF0mKTsan+rSz67Ng9ZUluXcAlAC5Y4LgcqDa+f4AjJ4fkHMlSazRaEUGwasCaSpoYHawUMfDoVxthHKL0q0Z68IzatILe5EORyiBnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dOLdqIGP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=j1Nb4xRx; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 28461EC0C3B;
-	Wed, 20 Aug 2025 08:01:42 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 20 Aug 2025 08:01:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1755691302;
-	 x=1755777702; bh=J9FfUkmbFexfH55SqDcJNlLFwG8EstJIvFxlzLcoWrw=; b=
-	dOLdqIGPK0mi7AX99S/CO6YGJDkhlZn3q2iadfSB1AObzfYkjVAkBl1+h54NiBIU
-	Ee0ygF5EFT+VmDFUl6ZIPvu0431d6oer7S1HVFdRB6Clw2NJMxC/ZPmUX+ZFHEI+
-	WqW+UN7kuBkzLJ45fDtJBTeGVdZ6i16+y7QO5jM55XNbBhZVYfALaOd+riazhlTA
-	TCItk1m7CED0ChkCoI6dcqsYxGXWWV6lSAU1o62MzdNqZ5+uDQfL2WeAiSKTD2LE
-	iHyBUcfMLntlxJdNcnIE2n7NY4UMXhj5bS6WNbwr603ZDkVyp0HMkXaiFmc5EPS4
-	h4t7MVGGjgUo6KByMIS+EA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755691302; x=
-	1755777702; bh=J9FfUkmbFexfH55SqDcJNlLFwG8EstJIvFxlzLcoWrw=; b=j
-	1Nb4xRx6qCD65RDDOW0hPnMvnPnRlMAQH+P5uP1y2lXssDzVMTQE+/jVEWyd67zT
-	A3OPsQvDJFr2EubXkf7HQjU2xeYxUsYS4CjOzahnd6aIXqtelW39gcKGWW8sAJjM
-	P237FSDs2+PD9YzHKk1pNPhKJO9DMkh2RXHq6FZILuJs940MxCqxfhx7lMOCoBiC
-	Bc+tBBgRRLXEuQDgErTwwfEjncR3OXv/09664T3sAVqcHk0TfRZ6Ya96ntwtPqSM
-	703dhilexwEA53cLgcuc6oIs1SV9iYIRW6BvrnglY1h/2Glt8yVd6+pX+juC2HOm
-	ZQuIz9GEpT7Z0Q4oZD9vQ==
-X-ME-Sender: <xms:JbmlaL_pDTvxuVK3xsr1cQt3dqvlaO-cnBVRuV9GPfnktLbNM5haTQ>
-    <xme:JbmlaHs8-AoY5JknIQ_luvu3T2Z8NxFTKPgTfviFM3xxMUnC8egVaNhI5OlAC9ox8
-    6dINsFqGf90rUfesiM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheekfeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeipdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepjhgrvhhivg
-    hrrdgtrghrrhgrshgtohdrtghruhiisehgmhgrihhlrdgtohhmpdhrtghpthhtohephigv
-    shgrnhhishhhhhgvrhgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghrnhgusehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehguhhsthgrvhhorghrsheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvg
-    gvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghvvghlsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrgh
-X-ME-Proxy: <xmx:JbmlaH39ejBCf9iJnRYHO9SVv_ueA3UYcSUiydhMnwQKUQCYmqgrmA>
-    <xmx:JbmlaBR6VwnVjDT4VKhJN8eKKlGztnLJ1yCP45acSJsBnLrjb8U7QA>
-    <xmx:JbmlaLtwlbAZWI-XEwP5nRAjkI2QJ5np7LAyvRIgUEwGiWnrDZ8zgA>
-    <xmx:JbmlaHIH-mcGBRjCOK126WLcDSBIgdFCYGfDsJpBOK9mP0nl0xwrBg>
-    <xmx:JrmlaJgk2rEsoDGWuHjswhP8I5Q9bHlGf9Yw-d2Y6SwFsn2IJvNlCJie>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 50C6B700065; Wed, 20 Aug 2025 08:01:41 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1755691362; c=relaxed/simple;
+	bh=r9ToofhKIlGhprm7g+OOvtlUM68lKLTgnactfCPZM7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QbRY7etatTxHqtvoyLHpziCI2JV3hNyyyuANr+v8K+R0/NDNYm8hy53nwW3LoKJbXRPHXoTgpL96zT1+tmuw6J7RQyKP9jOzvNYkgekdotXPxMddZ+6xUHR+PJgSyOwu1EZtnyAZkS9bJ4gtQU/5PFjc68YaE4q6fJijdTUmR/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ms4NMx0j; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b00f23eso36038415e9.0;
+        Wed, 20 Aug 2025 05:02:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755691359; x=1756296159; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GI4cmyhGoZTapDNpDk+xp6yi7nQGTz7zZ/LLknFSC4g=;
+        b=Ms4NMx0jATLUuV3HjughrYXuo06qEY9dSbkMt1NhVqaHSHs0EqpdotgdYvZHVA0oWD
+         ndUPPjo0SKU9KVchOkYcS/XdJRBwqrkMUynbhunvFOEvLrG8VO6N594tf72Dl3QnmEMD
+         ftiQjlPtD+/94eetSMUBOfRU6wM8j4LGTcCUVHj063RE3wzh1PjWGr/VCaqb4PKZog0a
+         9/wE1JlndPC0EA4HKqXpxZEmhSSAZ1LsSdPod13iwcMo4BXPmwFwmG503Gn9sYvdVRCd
+         uTGchpniimbWh1ryi1i2Nxx5wiLafrlALKup483xehzxi5IKAzFPpovrUCL8HDs1GMbQ
+         FWSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755691359; x=1756296159;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GI4cmyhGoZTapDNpDk+xp6yi7nQGTz7zZ/LLknFSC4g=;
+        b=HhRPn03g+wXMmH5MYAcqYok+ynQjlx8Cqqi6YQGmYCkb8B+oi/rJZjtBqt+nlUcc+m
+         CwnnIxJKUl7KwD3kdcbPeqhsKQVUJy8bSIluj0FX2NLI9F80JiBuLyItK7yNYjZJNqI4
+         /irE55oJWEBk9rsiZ+IfW+rqY7eH9iBu+YnrvUjFzYUEijI839AX/2EUeOEZuahWn8Ho
+         hsKIlpH7gsCwCgf80SzHcRURAsrTMTxp9ju/8kPbSQrmiHZsFUJXBtY6Vgo2Qt13v+Wc
+         cBGYUDexU3zHFVR297+qxQzFMihojJ6oSOGyVlhb9P/rNyU11dEEj1irQai7rzKkhyts
+         Z5Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCXvtsU+pSSNwDq/0At5eEU54uYTzdeAAPRrXoZYrIumxmUOfvJ27SjACSIlvmuR138T80cJ48318KhZ6oI=@vger.kernel.org, AJvYcCXyXUlVYm2C/Cy/AIvgY70oCVWtjA0rF1/ucqWEpkzo6YJcPCU8sf8p1KQtg/X6DHRdXr5q6Fpmbsggaw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLWDF5+ShAcFpFv27TnUh0N8G+PX/CxjQSBwT5tQ+gB7/6I3PI
+	hVG25U5GAk0LFvE0XFfMt7l5pfhsSyPcirbi8Pxw9LagTuDOxZlFJGLM
+X-Gm-Gg: ASbGncvyudNf5ghGAIr299Hbuj/Pu2Xp8SwgAMB1vvCPphDkNsD3x/CmFfd6d77PTof
+	M3cPsw635JMmF+nqUFeEkNtoLiKqbRXqBmjOW2XAs8y+8tEqTbvuv3PYqOsXP8wNbXUlrUlPuNg
+	p+8ctDpHozrF9oY33tDfIMvrdBzgqcG3ojZJjB8BXF+hP80qugEj+Rg40r8DyDwO9qGcvwaB/je
+	3BH5gfZb6nimoT8EiPf+nJKustashvl05Hvxy2yoi7xKltPi0lKuwnx46cvwMkJqDNiy7N7oyya
+	qKigo+e0CWpYeK6Uft26t3SaDdYHEhb91lgcU2Rw+MSsdkfHoFuTE/Kzv10v1Gyu8PpH7btY7Gl
+	AaGCFJydS+zmAZ+hGnQQf0imQbrzfD5JOuVLsVtozsuHdzyVq2PRVHTiONl0bE8C8
+X-Google-Smtp-Source: AGHT+IEwGehcNKoWmnzN1vlUchmjm7VumJiJT2xSRDa0Ox8JxTIJFDzHyc2MWVXuJj+CImwefaPXpg==
+X-Received: by 2002:a05:6000:2913:b0:3b7:9ae1:eb9 with SMTP id ffacd0b85a97d-3c32ca06bc1mr1855975f8f.23.1755691358624;
+        Wed, 20 Aug 2025 05:02:38 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c3e673ab01sm1003635f8f.18.2025.08.20.05.02.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 05:02:38 -0700 (PDT)
+Date: Wed, 20 Aug 2025 13:02:37 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Don Brace <don.brace@microchip.com>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, storagedev@microchip.com (open
+ list:HEWLETT-PACKARD SMART ARRAY RAID DRIVER (hpsa)),
+ linux-scsi@vger.kernel.org (open list:HEWLETT-PACKARD SMART ARRAY RAID
+ DRIVER (hpsa)), linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH 2/6] scsi: hpsa: use min()/min_t() to improve code
+Message-ID: <20250820130237.111cc3a7@pumpkin>
+In-Reply-To: <20250815121609.384914-3-rongqianfeng@vivo.com>
+References: <20250815121609.384914-1-rongqianfeng@vivo.com>
+	<20250815121609.384914-3-rongqianfeng@vivo.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AXipOkXRca9w
-Date: Wed, 20 Aug 2025 14:00:56 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lee Jones" <lee@kernel.org>
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- "Pavel Machek" <pavel@kernel.org>,
- "Javier Carrasco" <javier.carrasco.cruz@gmail.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Kees Cook" <kees@kernel.org>, "Anish Kumar" <yesanishhere@gmail.com>,
- "Mukesh Ojha" <quic_mojha@quicinc.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Dmitry Rokosov" <ddrokosov@salutedevices.com>, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <9fb37e55-0c86-4ac6-acd3-b8c1bc722b3f@app.fastmail.com>
-In-Reply-To: <20250820071656.GJ7508@google.com>
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-11-arnd@kernel.org> <20250819121907.GA7508@google.com>
- <e9252384-a55c-4a91-9c61-06e05a0b2ce4@app.fastmail.com>
- <20250820071656.GJ7508@google.com>
-Subject: Re: [PATCH 10/21] leds: gpio: make legacy gpiolib interface optional
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 20, 2025, at 09:16, Lee Jones wrote:
-> On Tue, 19 Aug 2025, Arnd Bergmann wrote:
->
-> Sounds like we're between a rock and a hard place with this.
+On Fri, 15 Aug 2025 20:16:04 +0800
+Qianfeng Rong <rongqianfeng@vivo.com> wrote:
 
-I don't think either variant is that bad to be honest, as it
-gets us a long way towards removing the legacy interface from
-default builds without having to update or remove the holdouts
-immediately. It's mainly led-gpio and gpio-keys that need
-a change like this.
+> Use min()/min_t() to reduce the code in complete_scsi_command() and
+> hpsa_vpd_page_supported(), and improve readability.
+> 
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
+>  drivers/scsi/hpsa.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+> index c73a71ac3c29..95dfcbac997f 100644
+> --- a/drivers/scsi/hpsa.c
+> +++ b/drivers/scsi/hpsa.c
+> @@ -2662,10 +2662,8 @@ static void complete_scsi_command(struct CommandList *cp)
+>  	case CMD_TARGET_STATUS:
+>  		cmd->result |= ei->ScsiStatus;
+>  		/* copy the sense data */
+> -		if (SCSI_SENSE_BUFFERSIZE < sizeof(ei->SenseInfo))
+> -			sense_data_size = SCSI_SENSE_BUFFERSIZE;
+> -		else
+> -			sense_data_size = sizeof(ei->SenseInfo);
+> +		sense_data_size = min_t(unsigned long, SCSI_SENSE_BUFFERSIZE,
+> +					sizeof(ei->SenseInfo));
 
-Splitting out the entire gpio_led_platform_data handling
-into a single #ifdef function block would be a little cleaner,
-but that would in turn require changing over a couple of
-files that got converted from legacy gpio numbers to passing
-gpio descriptors or lookup tables (ppc44x/warp, x86/sel3350,
-arm/omap1), making them use device properties instead.
+Why min_t() ?
+A plain min() should be fine.
+If it isn't you should really need to justify why the type of one parameter
+can't be changes before using min_t().
 
-> Will the legacy parts be removed at some point or do you foresee us
-> supporting this forever?
+	David
 
-It's hard to predict an timeline here, there is certainly a lot of
-interest in minimizing the legacy users as much as possible and
-patches are getting written for x86 and arm, but I don't see much
-movement on the mips and sh platforms. These are also the ones
-that have been holdouts for CONFIG_LEGACY_CLK for years, and I
-hope we can eventually drop support for those boards.
+>  		if (ei->SenseLen < sense_data_size)
+>  			sense_data_size = ei->SenseLen;
+>  		memcpy(cmd->sense_buffer, ei->SenseInfo, sense_data_size);
+> @@ -3628,10 +3626,7 @@ static bool hpsa_vpd_page_supported(struct ctlr_info *h,
+>  	if (rc != 0)
+>  		goto exit_unsupported;
+>  	pages = buf[3];
+> -	if ((pages + HPSA_VPD_HEADER_SZ) <= 255)
+> -		bufsize = pages + HPSA_VPD_HEADER_SZ;
+> -	else
+> -		bufsize = 255;
+> +	bufsize = min(pages + HPSA_VPD_HEADER_SZ, 255);
+>  
+>  	/* Get the whole VPD page list */
+>  	rc = hpsa_scsi_do_inquiry(h, scsi3addr,
 
-That said, I first need to get my own act together and refresh
-my patches to drop the old arm board files so we can merge that.
-
-      Arnd
 
