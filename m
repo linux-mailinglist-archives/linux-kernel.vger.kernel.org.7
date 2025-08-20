@@ -1,313 +1,224 @@
-Return-Path: <linux-kernel+bounces-778246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0412EB2E304
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:10:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AEEB2E30C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 887F6A21F00
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:09:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B45DF16F26D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3A236CDE5;
-	Wed, 20 Aug 2025 17:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288EF334398;
+	Wed, 20 Aug 2025 17:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="RDOLHYm4"
-Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dt6BpLVU"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8466A2512E6
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD70532C300
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755709783; cv=none; b=gSzZRjc05MtpySGy/++GYtPJj0VH/1iPmlXV4+0YyREwkjkA/G3gOg3dsHGGvgUUb81MxcmqLcZzq4jsgVtQg8TX79Pg0mWfgHch0qRxMa9x4TQTqqVoBd692e+EhERuG4T047kkWM9egImuADGAeKGCrL4SUupiHQbdcBiLDP8=
+	t=1755709855; cv=none; b=Gpj4zueAQKU0yoL5rfnlh/5CMh6m/5qUlqO01WelyvXHLX5dv+b4ZvqthHrXYa4Y+QiuSGy7cuFUF69z3p/Tcr+Bv1mdMl5P/jspyGSyFk89MBjiwdCPlko/Z287U9p48lndgmyFW1MdSbhDfsvfUEp5HN877TBqvEmkFMMmJYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755709783; c=relaxed/simple;
-	bh=ZhsniYXgOVploeFkvFP3iyZ5Jfzo58OP+Ok16yKsURI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tUlc0r0WQF29C9UNrzedW8Pv+Gk1BG3lWm0D3yqqEaF4zD3NZabYgjKLSAnq8ZWZ1+7URxJbI6U5MUOgO+76wBvOhYRtSVwVjClGBUo+VHUlwHTRzYbT9mNJu8QRWX/Y/TJUaEqKEksGtq4fnO6hCpKeGehqs9Yuea4tC8OVSrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=RDOLHYm4; arc=none smtp.client-ip=133.167.8.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
-Received: from NEET (p4263080-ipxg00p01tokaisakaetozai.aichi.ocn.ne.jp [153.201.96.80])
-	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 57KH9W73002697
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 21 Aug 2025 02:09:32 +0900 (JST)
-	(envelope-from k@mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=samcRmTfudvikcoGRDCrFIqxgHWjaxJZt03gL2xwM50=;
-        c=relaxed/relaxed; d=mgml.me;
-        h=Message-ID:Date:Subject:To:From;
-        s=rs20250315; t=1755709772; v=1;
-        b=RDOLHYm4kFZ87wPTkhRbiRdSKP+gFKMhRXjtXvfODXGLMxi37nyt7bynmPmhMDSz
-         o1MTY6RXZiYpzgEHBbGAliiBlcB1R69MParc4dHj/SF+JI2qsh0dVNnFopq+/MVG
-         +zAO3StCYIMm/k6Vwq9N2FRxB8SbKPNG0XSQC7AqFUBqv/rS6hsdRs0zTj9elcu5
-         Fo0XtcYVKFQ1WSza8gjOQJ5rHXDwYyKHSYP96EggutLIG/3maqIN6xv1hsVu7mZm
-         zHdst4NbFX9dBQGkJn72Ijd9XBHn3ocY8i9MUamvfAFXnhSBZA5GEV65bIPretFW
-         V/Je7CfFjt9akMVKR84bkA==
-Message-ID: <d45e19ec-6618-450f-9c04-3b3cdbb3d3d7@mgml.me>
-Date: Thu, 21 Aug 2025 02:09:32 +0900
+	s=arc-20240116; t=1755709855; c=relaxed/simple;
+	bh=hG8SxVO+5AdfLJQh4Ugi3YNkNI9qHS2bc2aupXJCtSo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JvliyQLjBdSZudG6h/AWCWHVz86DwGJxi8nB22yAoZ3fuTxjgBpyrXir5Qid7ybj7hdCx5W2s++t3p/KLtwgYVYGXWyERKrIAPb+vipiGZ9QMmlOLx9z7hnFJiGFIhDXcEcmifv4wr6OjvG9ZHQY7SydyzVgAdv0Ur6FmCYqOYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dt6BpLVU; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d5fe46572so1492597b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:10:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755709852; x=1756314652; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=727UKZSKS9UwGe6aim6XorGjWW+I61+OozHvio/cjhs=;
+        b=dt6BpLVUopBd6rT89t63P5PgQIiF2+wrayKgd8MCrHPlBDf6QR10HjiFZK4fC40dfO
+         LbLuYG5Tz7+JrD+bFpD6Qm14XR46zYl6qVbsrgLAQDcKRz++xHavmUtnLwywDSOUnI+P
+         DBdmS8hZ3zu9U9BcTUjW5TTlT4YtNctDufasVQhs/Btj5aQTw4g0tp/UPYKB3ljQcdin
+         mTraIbTQPUso6IJBL6kSJT+noeCHYA1UesrN/6gaIHb6TJaVQmyH6dJE50rykIj6l7zJ
+         qJmUHLAvUnUmjj59A7UVyiLCz0gkili1uRBA8lMN73Qq+XZ8HPx1QN/HbxNkFGJxvmKu
+         OSIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755709852; x=1756314652;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=727UKZSKS9UwGe6aim6XorGjWW+I61+OozHvio/cjhs=;
+        b=F2NTvx7AJwG2D847Hx0l3uT4AyIn1wFql2xdwYM5Q1SIgxcm9+hJI4RJH74sh02G1v
+         0RcKJENySyCVHyaD8mT6MwET7H3+wzc0H8d06104cVrt2X6lGrXR0DxDQ6WEknHNXBIP
+         zzRlYpmXBOW4rpmdMrcEMIcdWRpslXnTdnv+uNARaDIramubsRktSkMzWPgEqTBLalvn
+         JLg/wA+zZerFhhQPoFzsWQ5pvaRmWMoeqAKT8UXICTSHT85mHF0Zgq/QN5qZwj2agU/Z
+         VRqFgKfOyNHpMGpKVTEA0APwtDqoAD/wi9rjdQOWRadFk02qbxhFTWKcisVQWaiuyUSJ
+         ZXqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLWrav1zZPRxD673RTJGb4dNLwBiyHkXYmiHpSCFmdKmwS0G21sYWEbg/rLkhWynwzja1Bdiw5S1/aqZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL47/N/23QEPbpblAD1nAz35xIxpoXJyhyqpiNgBKzSTAwrEI2
+	hsRfB/TMeBupl43SS3VlYSZvBZ3TrRBrOx0QDZYW3Tyh56uOr6SHnY4nAZNIm4OwcxSHHeNBqjF
+	4vwLbWWA7T1L1oEb2gElJSl7E4Q1aITg78hiExTgO7g==
+X-Gm-Gg: ASbGnctYLwij58jX9TNP8wguD04YL9RyTPnsdpHI0WO8WPV58nHjhUP/eadq+iAQv3B
+	kzTDEfqqna7c122tE+ulODCxJHI/h44RuknX14I5YaUxLyxfwEjcEZSEXrGWlnt7m23T/nmwB/P
+	52ObAefCArxh4/OykDYarM9ZY9pSupI3dvm4bvMyBy+FAh5FuPjzyVYpyAHL6tm7uiHSVW6Z/vd
+	Cm6U/GR
+X-Google-Smtp-Source: AGHT+IEpDwtZVI6H+GfGnTfQIwUyY5UUZdBfiqI97/jjpj/Lpw9zMkd2OWo35A3c2Mc0ZAvXui6OtqnR/RLurFK8aDA=
+X-Received: by 2002:a05:690c:4b8d:b0:71b:f419:2099 with SMTP id
+ 00721157ae682-71fc6380a74mr4423317b3.21.1755709852320; Wed, 20 Aug 2025
+ 10:10:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "yukuai (C)" <yukuai3@huawei.com>, Kenta Akagi <k@mgml.me>
-Subject: Re: [PATCH v2 1/3] md/raid1,raid10: don't broken array on failfast
- metadata write fails
-To: yukuai@kernel.org, Yu Kuai <yukuai1@huaweicloud.com>,
-        Song Liu <song@kernel.org>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
-        Guoqing Jiang <jgq516@gmail.com>
-References: <20250817172710.4892-1-k@mgml.me>
- <20250817172710.4892-2-k@mgml.me>
- <51efe62a-6190-1fd5-7f7b-b17c3d1af54b@huaweicloud.com>
- <fb752529-6802-4ef9-aeb3-9b04ba86ef5f@huaweicloud.com>
- <0164bc8e-129c-41fa-b236-9efc1b01f7b9@mgml.me>
- <e8320a2a-06f8-47b9-88ef-6c4764d96714@kernel.org>
-Content-Language: en-US
-From: Kenta Akagi <k@mgml.me>
-In-Reply-To: <e8320a2a-06f8-47b9-88ef-6c4764d96714@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20250820085609eucas1p25d7c6d67318b6c332e3f238705544b19@eucas1p2.samsung.com>
+ <20250820-apr_14_for_sending-v12-0-4213ccefbd05@samsung.com> <20250820-apr_14_for_sending-v12-2-4213ccefbd05@samsung.com>
+In-Reply-To: <20250820-apr_14_for_sending-v12-2-4213ccefbd05@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 20 Aug 2025 19:10:15 +0200
+X-Gm-Features: Ac12FXxCH2ttqXRbmi_2dmdMWE4eeauuwFrI7EIdSSvrawO-ealoi74PXSk4RH8
+Message-ID: <CAPDyKFrjHdASRUDxR+KROovV0sherhqdkOgHC9hoA6dhdMr39A@mail.gmail.com>
+Subject: Re: [PATCH v12 2/4] dt-bindings: gpu: img,powervr-rogue: Add TH1520
+ GPU support
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Drew Fustini <fustini@kernel.org>, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 20 Aug 2025 at 10:56, Michal Wilczynski
+<m.wilczynski@samsung.com> wrote:
+>
+> Rework the PowerVR Rogue GPU binding to use an explicit, per variant
+> style for defining power domain properties and add support for the
+> T-HEAD TH1520 SoC's GPU.
+>
+> To improve clarity and precision, the binding is refactored so that
+> power domain items are listed explicitly for each variant [1]. The
+> previous method relied on an implicit, positional mapping between the
+> `power-domains` and `power-domain-names` properties. This change
+> replaces the generic rules with self contained if/then blocks for each
+> GPU variant, making the relationship between power domains and their
+> names explicit and unambiguous.
+>
+> The generic if block for img,img-rogue, which previously required
+> power-domains and power-domain-names for all variants, is removed.
+> Instead, each specific GPU variant now defines its own power domain
+> requirements within a self-contained if/then block, making the schema
+> more explicit.
+>
+> This new structure is then used to add support for the
+> `thead,th1520-gpu`. While its BXM-4-64 IP has two conceptual power
+> domains, the TH1520 SoC integrates them behind a single power gate. The
+> new binding models this with a specific rule that enforces a single
+> `power-domains` entry and disallows the `power-domain-names` property.
+>
+> Link: https://lore.kernel.org/all/4d79c8dd-c5fb-442c-ac65-37e7176b0cdd@linaro.org/ [1]
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 
+Even if you already have the necessary ack, feel free to add:
 
-On 2025/08/19 0:45, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/8/18 20:48, Kenta Akagi 写道:
->> On 2025/08/18 11:48, Yu Kuai wrote:
->>> Hi,
->>>
->>> 在 2025/08/18 10:05, Yu Kuai 写道:
->>>> Hi,
->>>>
->>>> 在 2025/08/18 1:27, Kenta Akagi 写道:
->>>>> A super_write IO failure with MD_FAILFAST must not cause the array
->>>>> to fail.
->>>>>
->>>>> Because a failfast bio may fail even when the rdev is not broken,
->>>>> so IO must be retried rather than failing the array when a metadata
->>>>> write with MD_FAILFAST fails on the last rdev.
->>>> Why just last rdev? If failfast can fail when the rdev is not broken, I
->>>> feel we should retry for all the rdev.
->> Thank you for reviewing.
->>
->> The reason this retry applies only to the last rdev is that the purpose
->> of failfast is to quickly detach a faulty device and thereby minimize
->> mdev IO latency on rdev failure.
->> If md retries all rdevs, the Faulty handler will no longer act
->> quickly enough, which will always "cause long delays" [1].
->> I believe this is not the behavior users want.
->>
->> [1] https://git.kernel.org/pub/scm/utils/mdadm/mdadm.git/tree/mdadm.8.in?h=main&id=34f21b7acea8afbea9348d0f421beeeedca7a136#n784
->>
->>> BTW, I couldn't figure out the reason, why failfast is added for the
->>> meta write. I do feel just remove this flag for metadata write will fix
->>> this problem.
->> By issuing metadata writes with failfast in md, it becomes possible to
->> detect rdev failures quickly.
->> Most applications never issue IO with the REQ_FAILFAST flag set,
->> so if md issues its metadata writes without failfast,
->> rdev failures would not be detected quickly.
->> This would undermine the point of the md's failfast feature.
->> And this would also "cause long delays" [1].
->> I believe this is also not what users want.
-> 
-> Yes, this make sense. But I was thinking failfast will work on normal IO,
-> not metadata IO like updating superblock, which doesn't happen quite often
-> for user. But consider we have this behavior for such a long time, I agree
-> we'd better not change it.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Thank you for reviewing.
-
-Sorry, I forgot to mention that in my environment bitmap is enabled, so 
-super_write is called frequently.
-
-Also, what I said earlier was incorrect. md actively attaches MD_FAILFAST 
-not only for metadata writes but also for other requests.
-Therefore, the current patch is insufficient to achieve the prevent last
-rdev fails by failfast.
-
-I will submit a new patch with the fix.
-
-Thanks,
-Akagi
-
-> 
->>> Thanks,
->>> Kuai
->>>
->>>>> A metadata write with MD_FAILFAST is retried after failure as
->>>>> follows:
->>>>>
->>>>> 1. In super_written, MD_SB_NEED_REWRITE is set in sb_flags.
->>>>>
->>>>> 2. In md_super_wait, which is called by the function that
->>>>> executed md_super_write and waits for completion,
->>>>> -EAGAIN is returned because MD_SB_NEED_REWRITE is set.
->>>>>
->>>>> 3. The caller of md_super_wait (such as md_update_sb)
->>>>> receives a negative return value and then retries md_super_write.
->>>>>
->>>>> 4. The md_super_write function, which is called to perform
->>>>> the same metadata write, issues a write bio without MD_FAILFAST
->>>>> this time.
->>>>>
->>>>> When a write from super_written without MD_FAILFAST fails,
->>>>> the array may broken, and MD_BROKEN should be set.
->>>>>
->>>>> After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
->>>>> calling md_error on the last rdev in RAID1/10 always sets
->>>>> the MD_BROKEN flag on the array.
->>>>> As a result, when failfast IO fails on the last rdev, the array
->>>>> immediately becomes failed.
->>>>>
->>>>> This commit prevents MD_BROKEN from being set when a super_write with
->>>>> MD_FAILFAST fails on the last rdev, ensuring that the array does
->>>>> not become failed due to failfast IO failures.
->>>>>
->>>>> Failfast IO failures on any rdev except the last one are not retried
->>>>> and are marked as Faulty immediately. This minimizes array IO latency
->>>>> when an rdev fails.
->>>>>
->>>>> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
->>>>> Signed-off-by: Kenta Akagi <k@mgml.me>
->>>>> ---
->>>>>    drivers/md/md.c     |  9 ++++++---
->>>>>    drivers/md/md.h     |  7 ++++---
->>>>>    drivers/md/raid1.c  | 12 ++++++++++--
->>>>>    drivers/md/raid10.c | 12 ++++++++++--
->>>>>    4 files changed, 30 insertions(+), 10 deletions(-)
->>>>>
->>>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
->>>>> index ac85ec73a409..61a8188849a3 100644
->>>>> --- a/drivers/md/md.c
->>>>> +++ b/drivers/md/md.c
->>>>> @@ -999,14 +999,17 @@ static void super_written(struct bio *bio)
->>>>>        if (bio->bi_status) {
->>>>>            pr_err("md: %s gets error=%d\n", __func__,
->>>>>                   blk_status_to_errno(bio->bi_status));
->>>>> +        if (bio->bi_opf & MD_FAILFAST)
->>>>> +            set_bit(FailfastIOFailure, &rdev->flags);
->>>> I think it's better to retry the bio with the flag cleared, then all
->>>> underlying procedures can stay the same.
->> That might be a better approach. I'll check the call hierarchy and lock dependencies.
-> 
-> You might need to add a new async work to resubmit this bio.
-> 
-> Thanks,
-> Kuai
-> 
->> Thanks,
->> Akagi
->>
->>
->>>> Thanks,
->>>> Kuai
->>>>
->>>>>            md_error(mddev, rdev);
->>>>>            if (!test_bit(Faulty, &rdev->flags)
->>>>>                && (bio->bi_opf & MD_FAILFAST)) {
->>>>> +            pr_warn("md: %s: Metadata write will be repeated to %pg\n",
->>>>> +                mdname(mddev), rdev->bdev);
->>>>>                set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
->>>>> -            set_bit(LastDev, &rdev->flags);
->>>>>            }
->>>>>        } else
->>>>> -        clear_bit(LastDev, &rdev->flags);
->>>>> +        clear_bit(FailfastIOFailure, &rdev->flags);
->>>>>        bio_put(bio);
->>>>> @@ -1048,7 +1051,7 @@ void md_super_write(struct mddev *mddev, struct md_rdev *rdev,
->>>>>        if (test_bit(MD_FAILFAST_SUPPORTED, &mddev->flags) &&
->>>>>            test_bit(FailFast, &rdev->flags) &&
->>>>> -        !test_bit(LastDev, &rdev->flags))
->>>>> +        !test_bit(FailfastIOFailure, &rdev->flags))
->>>>>            bio->bi_opf |= MD_FAILFAST;
->>>>>        atomic_inc(&mddev->pending_writes);
->>>>> diff --git a/drivers/md/md.h b/drivers/md/md.h
->>>>> index 51af29a03079..cf989aca72ad 100644
->>>>> --- a/drivers/md/md.h
->>>>> +++ b/drivers/md/md.h
->>>>> @@ -281,9 +281,10 @@ enum flag_bits {
->>>>>                     * It is expects that no bad block log
->>>>>                     * is present.
->>>>>                     */
->>>>> -    LastDev,        /* Seems to be the last working dev as
->>>>> -                 * it didn't fail, so don't use FailFast
->>>>> -                 * any more for metadata
->>>>> +    FailfastIOFailure,    /* A device that failled a metadata write
->>>>> +                 * with failfast.
->>>>> +                 * error_handler must not fail the array
->>>>> +                 * if last device has this flag.
->>>>>                     */
->>>>>        CollisionCheck,        /*
->>>>>                     * check if there is collision between raid1
->>>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->>>>> index 408c26398321..fc7195e58f80 100644
->>>>> --- a/drivers/md/raid1.c
->>>>> +++ b/drivers/md/raid1.c
->>>>> @@ -1746,8 +1746,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
->>>>>     *    - recovery is interrupted.
->>>>>     *    - &mddev->degraded is bumped.
->>>>>     *
->>>>> - * @rdev is marked as &Faulty excluding case when array is failed and
->>>>> - * &mddev->fail_last_dev is off.
->>>>> + * If @rdev is marked with &FailfastIOFailure, it means that super_write
->>>>> + * failed in failfast and will be retried, so the @mddev did not fail.
->>>>> + *
->>>>> + * @rdev is marked as &Faulty excluding any cases:
->>>>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
->>>>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
->>>>>     */
->>>>>    static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>>>>    {
->>>>> @@ -1758,6 +1762,10 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>>>>        if (test_bit(In_sync, &rdev->flags) &&
->>>>>            (conf->raid_disks - mddev->degraded) == 1) {
->>>>> +        if (test_bit(FailfastIOFailure, &rdev->flags)) {
->>>>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
->>>>> +            return;
->>>>> +        }
->>>>>            set_bit(MD_BROKEN, &mddev->flags);
->>>>>            if (!mddev->fail_last_dev) {
->>>>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->>>>> index b60c30bfb6c7..ff105a0dcd05 100644
->>>>> --- a/drivers/md/raid10.c
->>>>> +++ b/drivers/md/raid10.c
->>>>> @@ -1995,8 +1995,12 @@ static int enough(struct r10conf *conf, int ignore)
->>>>>     *    - recovery is interrupted.
->>>>>     *    - &mddev->degraded is bumped.
->>>>>     *
->>>>> - * @rdev is marked as &Faulty excluding case when array is failed and
->>>>> - * &mddev->fail_last_dev is off.
->>>>> + * If @rdev is marked with &FailfastIOFailure, it means that super_write
->>>>> + * failed in failfast, so the @mddev did not fail.
->>>>> + *
->>>>> + * @rdev is marked as &Faulty excluding any cases:
->>>>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
->>>>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
->>>>>     */
->>>>>    static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
->>>>>    {
->>>>> @@ -2006,6 +2010,10 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
->>>>>        spin_lock_irqsave(&conf->device_lock, flags);
->>>>>        if (test_bit(In_sync, &rdev->flags) && !enough(conf, rdev->raid_disk)) {
->>>>> +        if (test_bit(FailfastIOFailure, &rdev->flags)) {
->>>>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
->>>>> +            return;
->>>>> +        }
->>>>>            set_bit(MD_BROKEN, &mddev->flags);
->>>>>            if (!mddev->fail_last_dev) {
->>>>>
->>>> .
->>>>
->>>
->>
-> 
-
+> ---
+>  .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 37 +++++++++++++++++-----
+>  1 file changed, 29 insertions(+), 8 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> index 4450e2e73b3ccf74d29f0e31e2e6687d7cbe5d65..c87d7bece0ecd6331fc7d1a479bbdaf68bac6e6d 100644
+> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> @@ -21,6 +21,11 @@ properties:
+>            # work with newer dts.
+>            - const: img,img-axe
+>            - const: img,img-rogue
+> +      - items:
+> +          - enum:
+> +              - thead,th1520-gpu
+> +          - const: img,img-bxm-4-64
+> +          - const: img,img-rogue
+>        - items:
+>            - enum:
+>                - ti,j721s2-gpu
+> @@ -77,14 +82,18 @@ required:
+>  additionalProperties: false
+>
+>  allOf:
+> -  # Constraints added alongside the new compatible strings that would otherwise
+> -  # create an ABI break.
+>    - if:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: img,img-rogue
+> +            const: img,img-axe-1-16m
+>      then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: Power domain A
+> +        power-domain-names:
+> +          maxItems: 1
+>        required:
+>          - power-domains
+>          - power-domain-names
+> @@ -93,13 +102,20 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: img,img-axe-1-16m
+> +            const: thead,th1520-gpu
+>      then:
+>        properties:
+> +        clocks:
+> +          minItems: 3
+> +        clock-names:
+> +          minItems: 3
+>          power-domains:
+> -          maxItems: 1
+> -        power-domain-names:
+> -          maxItems: 1
+> +          items:
+> +            - description: The single, unified power domain for the GPU on the
+> +                TH1520 SoC, integrating all internal IP power domains.
+> +        power-domain-names: false
+> +      required:
+> +        - power-domains
+>
+>    - if:
+>        properties:
+> @@ -109,9 +125,14 @@ allOf:
+>      then:
+>        properties:
+>          power-domains:
+> -          minItems: 2
+> +          items:
+> +            - description: Power domain A
+> +            - description: Power domain B
+>          power-domain-names:
+>            minItems: 2
+> +      required:
+> +        - power-domains
+> +        - power-domain-names
+>
+>    - if:
+>        properties:
+>
+> --
+> 2.34.1
+>
 
