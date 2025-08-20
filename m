@@ -1,110 +1,108 @@
-Return-Path: <linux-kernel+bounces-776692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A030EB2D08B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B86B2D091
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E577F1BC6F06
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:01:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D9B1B632AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6116042A83;
-	Wed, 20 Aug 2025 00:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D8D353377;
+	Wed, 20 Aug 2025 00:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rfu5sxaP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GOcR5Cjp"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9AB44C9F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F23910F2
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755648094; cv=none; b=M+KhFbhCbJZGn2419hPBmKQYsHrb0Gm9P7wGU2MeBV+63K9HBfKvIfmNCcpdZ146e2ttlS3GMdxKqkxAn4SvRnhwXsjwhjDvUNvKxlPyiMWNqAj6eQy83CcrQ7wgGf7Y7joGcxP0ycFxhTuRrOJCdOtfX5yn1aiahkhiJBHhpVU=
+	t=1755648304; cv=none; b=XqoC01BKp9YzqthGI0ozZn2JT/NVgrXKlc2bV1X/qf01fhBmfTB8wroXFzI8qCmV0ugH5JiLWW3lA5tADL9oZOHpJ+sw2WRW/tH+AchbvcpTgBnV8UNvCj5QSNXB/FPoIgG9fpYfYkXU4hR6/090b+tBPVYd1EBpFKWN0ywt030=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755648094; c=relaxed/simple;
-	bh=BF2nongohxL86yTybLMjEVN3XQRN/BOzcVk35AHcCzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pZDD0X4HZTEelPwhnsxgWjWIeEC+jmzZKQ7L7XTSoLOKVqT3MdfMDasTSQpregPGwmUmJfhJUOfGZv77CD4B3t4u44gr2BukdrsFtbTofg4N9Ly+B/ynDjoHKyRo6v3vMBi9KfLg5YdQ+/9jS6YASweTEosj2XS8u4EqebE0rBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rfu5sxaP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17486C4CEF1;
-	Wed, 20 Aug 2025 00:01:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755648094;
-	bh=BF2nongohxL86yTybLMjEVN3XQRN/BOzcVk35AHcCzE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rfu5sxaPNLk41Bejx8ROFIRMBhuR9rSeRYbQ0taHMw97hCpiCTUd2ayfoqhct1qpm
-	 b6ZrfvWbYX5wFgOfJwyBNflzknImgLXRNovwThoTgNfTLtvYnBC4ROi/83Ps6eqVgG
-	 ehiaHsbmxGNHAFY06tsO4DlEQCcpHb0FU8THJD3O5t0OloZrioGupdeZLbXg7FXzdW
-	 hGsdCC7GUQzQunhWBLSOeeYELF1xuul2CBEGy95Egppr1hhNbm4a//LuXYQoU79icc
-	 LUR/FwGaWM1UGJGWvz23W3ccLG89fi/yqIfxUBQoyFC/RqA8DnQmJK/pGG+eUqfN9+
-	 8Er9YtcEQPiBA==
-Date: Tue, 19 Aug 2025 17:01:32 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Darius Rad <darius@bluespec.com>,
-	Vivian Wang <wangruikang@iscas.ac.cn>,
-	Florian Weimer <fweimer@redhat.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Drew Fustini <dfustini@tenstorrent.com>
-Subject: Re: [PATCH v3] riscv: Add sysctl to control discard of vstate on
- syscall entry
-Message-ID: <aKUQXDh4u9xJx+jS@x1>
-References: <20250819-riscv_v_vstate_discard-v3-1-0af577dafdc2@kernel.org>
- <20250819-bb1be8c05ebdf7ea751323aa@orel>
+	s=arc-20240116; t=1755648304; c=relaxed/simple;
+	bh=Tfo/19RHyW++txmc1kMnAys7+aIQLnpLmNAqGrRJIgY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=K59wBPIjIwtsqdgleB17mF6hvPRvAjpygNFJD97j6ZJgYbv+ZXwpxAJYomNab+tS8JoNFvt7jc87Icec2ZbKi03lSSphULnrmOKv7g+Fx82FzToTETPZYZ6K7xFkDql2fOiZVrazV0VXwUYz1YIi7lk7Yuh58nLmMUpIUnnbZK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GOcR5Cjp; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e2eac3650so12836336b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 17:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755648303; x=1756253103; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V9wXsk4jqFDa9XGwh3suMWyZDPKqbXwjavw0fzoWkQ8=;
+        b=GOcR5Cjp4UvbAlbbMNvW7LsVP1Y/bCXJMcJDrTQt8Sas7Zh0+b3ARyzehbIqvD3nV7
+         /yTXZDO32zOb1VvH87lwS2whyv1MlMkPoQTM2rs4PsEhAzyoxYoyY2WFqv2Fj23+093D
+         PK3jpv4A4/wSKvTa+3JJJKtGyfkKwU2qq1nCcUa7tqOILH8IG3aOJ0b4uskgvMigbyNF
+         KYiBS6jUSX7YsXUMVnSNG2E+nS6b4kQTluX1X1O4SXE/B8PwMsQAoLv4Rei64GrjryFN
+         RpKA7BVMtlUnUxtTg5hBe1HZbNMn8ZhXvEdwjgbKUjrPiks9NEgRCPFV4PkqxamVl/7S
+         Q7zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755648303; x=1756253103;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V9wXsk4jqFDa9XGwh3suMWyZDPKqbXwjavw0fzoWkQ8=;
+        b=SrIc/lmNp0vbOo1Fs14ihM+zqCrHR2dwIbjFd6u9qAPCHUIm5CIWUjmofGQ7zsNS8n
+         /TWZL6zm4vo6hvDOQFI2xe5+E6xEpRSfDlmiDZYVfmwKuO06w5+GlsL74YrIqsXvI+PI
+         ItzxJhJLOoIIwpGh5c3kHOL/uPSuY/aIeeXUPqg3ursIc5jVuXUrvdJXncRUzq05/Raa
+         2tU9QS7Nrxiabelir+1iCX8AGSC1sOgu08w9LklufmCl8IK2iMNBsKs7ZnVjSvajef1r
+         YkT2PO5r7hCOLZ4h0oTy6UgLVq9W/GcWIx24VulS2uAaDobbugq/a32Gb5F6Q53cblAy
+         co6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWXq2SwpH2/SEVeSQQ/pzimlDAU/aK8W77WL9F5/bDP0SqXq45PA2z0iR3wllK5kBLAJPGMytEdz+CEKLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9G9kcNRT0v/8FhC/SM+lfuOMhNkaRAAOdn099tk4vDv59pCMD
+	rst7YpD2/KuT7owPalLXJFIZ57GORtQRAMX1mETEkAd/0WuwBDSISQFYba5+oSwqgvd8zaRQwG5
+	o2xJfyw==
+X-Google-Smtp-Source: AGHT+IEgp2iZQpjhp0IVG/RwRNaEA6kfEIJ5+nTH0IRpQP2O/sqcsBBrA4cu+AlVBTYSA0EfMFq00gIPM7c=
+X-Received: from pjj13.prod.google.com ([2002:a17:90b:554d:b0:31f:b2f:aeed])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3394:b0:240:aa15:70ac
+ with SMTP id adf61e73a8af0-2431b7decdfmr1666131637.16.1755648302882; Tue, 19
+ Aug 2025 17:05:02 -0700 (PDT)
+Date: Tue, 19 Aug 2025 17:05:01 -0700
+In-Reply-To: <20250819075919.GAaKQu135vlUGjqe80@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819-bb1be8c05ebdf7ea751323aa@orel>
+Mime-Version: 1.0
+References: <cover.1752869333.git.ashish.kalra@amd.com> <20250811203025.25121-1-Ashish.Kalra@amd.com>
+ <aKBDyHxaaUYnzwBz@gondor.apana.org.au> <f2fc55bb-3fc4-4c45-8f0a-4995e8bf5890@amd.com>
+ <51f0c677-1f9f-4059-9166-82fb2ed0ecbb@amd.com> <20250819075919.GAaKQu135vlUGjqe80@fat_crate.local>
+Message-ID: <aKURLcxv6uLnNxI2@google.com>
+Subject: Re: [PATCH v7 0/7] Add SEV-SNP CipherTextHiding feature support
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Kim Phillips <kim.phillips@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Neeraj.Upadhyay@amd.com, aik@amd.com, 
+	akpm@linux-foundation.org, ardb@kernel.org, arnd@arndb.de, corbet@lwn.net, 
+	dave.hansen@linux.intel.com, davem@davemloft.net, hpa@zytor.com, 
+	john.allen@amd.com, kvm@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, michael.roth@amd.com, 
+	mingo@redhat.com, nikunj@amd.com, paulmck@kernel.org, pbonzini@redhat.com, 
+	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	x86@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Aug 19, 2025 at 12:16:02PM -0500, Andrew Jones wrote:
-> On Tue, Aug 19, 2025 at 02:40:21AM -0700, Drew Fustini wrote:
-> > From: Drew Fustini <dfustini@tenstorrent.com>
-> > 
-> > Vector registers are always clobbered in the syscall entry path to
-> > enforce the documented ABI that vector state is not preserved across
-> > syscalls. However, this operation can be slow on some RISC-V cores.
-> > To mitigate this performance impact, add a sysctl knob to control
-> > whether vector state is discarded in the syscall entry path:
-> > 
-> > /proc/sys/abi/riscv_v_vstate_discard
-> > 
-> > Valid values are:
-> > 
-> > 0: Vector state is not intentionally clobbered when entering a syscall
-> > 1: Vector state is always clobbered when entering a syscall
-> > 
-> > The initial state is controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
+On Tue, Aug 19, 2025, Borislav Petkov wrote:
+> On Mon, Aug 18, 2025 at 02:38:38PM -0500, Kim Phillips wrote:
+> > I have pending comments on patch 7:
 > 
-> I'm in favor of the clobbering being off by default and creating a knob
-> to enable it for debug purposes, but I'm not sure we need the config. I
-> think it's reasonable for systems that need the discard behavior to add
-> a sysctl toggle to their early init. The config may complicate the
-> documentation needed for user recommendations and potentially generate
-> confusion when moving from one system to another since defaults could
-> be flipped.
+> If you're so hell-bent on doing your improvements on-top or aside of them, you
+> take his patch, add your stuff ontop or rewrite it, test it and then you send
+> it out and say why yours is better.
+> 
+> Then the maintainer decides.
+> 
+> There's no need to debate ad absurdum - you simply offer your idea and the
+> maintainer decides which one is better. As it has always been done.
 
-If I dropped CONFIG_RISCV_ISA_V_VSTATE_DISCARD, then are you thinking
-that riscv_v_vstate_discard_ctl would be initialized to 0 instead?
+Or, the maintainer says "huh!?" and goes with option C.
 
-I would be okay with that as it defaults to the clobbering being off.
-Hopefully, Palmer will chime in on whether setting the sysctl in an
-init script would be acceptable. He told me that he does want to retain
-the strict clobbering behavior on his tester machine.
-
-Thanks,
-Drew
+Why take a string in the first place?  Just use '-1' as "max/auto".
 
