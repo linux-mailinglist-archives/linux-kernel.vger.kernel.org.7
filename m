@@ -1,123 +1,108 @@
-Return-Path: <linux-kernel+bounces-777509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E24B2DA54
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:48:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B37DBB2DA56
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BF55E85E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E5265E8601
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7690B2E2DE6;
-	Wed, 20 Aug 2025 10:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A9F2E2DF2;
+	Wed, 20 Aug 2025 10:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="edcLM9Vh"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kld6MA05"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E33C1C3F0C;
-	Wed, 20 Aug 2025 10:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C0E2DCF58;
+	Wed, 20 Aug 2025 10:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755686893; cv=none; b=eth/tLAV6webGbX649ZrZD/undCbokf5BC71dJkz7xCCRHTFJZdLdEGN9eNNo5hIdVB9cMlDSUhXGp0qJM7acKv6XBFfZIzIrPUrgu0HCvLVJ1d6677BlE1zCa2Vnx126sPcuvVKOXUxoMpcxmknKOidc6Hb/S2dQO0InV5pFf4=
+	t=1755686926; cv=none; b=KjZ27eJM74c+sv+v5mV66OzADBhUxl2zlhSXvczrdaPjuOdnFQQ3+pM50obnvtifKq9siuEuYK9Jw3agQSf7H5mSMJhITcp7QfY9+UWbf+lKc7F5KZda7bBEx6KmZtpakFwDmFHqKtI+6eDGYTHnh3xiW5hF3O6l+778jtuWMV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755686893; c=relaxed/simple;
-	bh=06I8wOWj8pTVQaz3NYobbvkRZcil7PTfs2i4Ioc5Ylw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oSfNye4dcg/B2HXjSrBmFPRlq+j/jQK0GBnUEys0wA8gZGaJufMxEGb+CGNEiaseDtAmK7NiydIYuoxtCD1iKVTMyXf1Wa/x8gk1TBmckkiLay/fuaDJZxSHKNSmvxEI/k0UWgFScIiJuBjVEE0VJGtxhu+XEqnErl2gEm2n4iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=edcLM9Vh; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b9e415a68fso5323706f8f.2;
-        Wed, 20 Aug 2025 03:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755686891; x=1756291691; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ugw0ULulvqBLjZz++Jmmr98N3KajcLtn1e5l/Fm8a8A=;
-        b=edcLM9VhAMVm4EDMXyfHKQ9yyjYlcJ14E4AlAs3a/drbSl20dxtruhg7lHgSgyxqCH
-         8f9ke3jATCyH8gRCkL9mShWyAZyYkkupBZs8cjQT7102Df4ZzhRbR4oDORO5uly4837k
-         kUO+JxLBsgcyHgu01A7jQ0lXGC7dFbD6YZZc/kuPo4A7GLht8eWcXyg6mWx/dHGVVg9D
-         VuK+TgILl+eJ8qxZj96gmUj83M8JqmxyN4wUXGz9um39x4QDikU8zWnQ6dVdOSOmdH04
-         PDs5nk+uMHipyI0AteqPemnf1IlTA1wSE7fZ3coMFr8P3/F1iLhUaIrgeC2XEPWPkn48
-         EKKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755686891; x=1756291691;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ugw0ULulvqBLjZz++Jmmr98N3KajcLtn1e5l/Fm8a8A=;
-        b=k0aXxox1BEAHzMU2EjbuZbQAyU0mfHfHQjGdpKDA1yjL3kVicUbH1f2Q347P1nsHnx
-         YjaQ9iMTf067i0h5mIq49RUm6lm2Iq2bl7yzDWOEtduD+i/+sLnr3TXPxzgqaBczPbI7
-         VU2Xfd7/1zo2mMrjMNfejC6vXrzX3od+R+IHeCsNGgDyOjbL4wipHtQfEIUp6AYZ10Rr
-         XS5uUeNuXWS3eammSdgWE5BNOzkXQv/7xJngs5Ph6MDS15Xb3/zbcdCOg4CjMtDZb/KM
-         s7yvWBVLmKPIGH4AqxaVQptmWcPFAszeHL8Zb8U2yc+o6fAvgOmtblcvh377hN3OEKPz
-         12tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUG30F924qsXvC+ThmZcIS7vWG29KU3uAnFgU4+YqkXVCKcE57a7PJY97Gue7fHeBHHaRDihxKhlqjT@vger.kernel.org, AJvYcCWLpwufQIM9B3MyBUtAIl6LzufQGeR6sTWXSzbszL1kVb8hrMZouNd54/gC4yEyxrziMhBb+nALx0OObHJtcLr5yro=@vger.kernel.org, AJvYcCX4v4IG77Xg7N902HOVPh9xYiL7klShEykTOEyp55YvZCK0bL0EmjNzD1FarWZ9HwzbehkYMSqRCZuhMUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylF7rG1OPDKG5L1bPDUSzQpX25KsdCEz0UWJgTlDXuQtaqxeIq
-	HfTl5WIvOcenIhR0qb1V4vLMaJr9ZuG8r2zEA8vJyA3PjVdsWheCMSiUVyqJ2w==
-X-Gm-Gg: ASbGncuBWp0cp4d0stty0Bdwe8inf8K1KhkeAyjbRgxe1AsWMAQZ9xZSbzMfaRN8GzV
-	ZpglDLrOLt+Oo8oZgQtFhNVJMqpBVEl8h9evK7aTmsIKAwhH0MQbB/9XpzpQK2A+fhbaGmjbHS1
-	iG4vcsQcb+s2dv++mSjtDJeG0u8UopGF7LUlvHY6pgAvzLu6lOK2X2xudAVEAbqzmzjEQ7SN0TQ
-	7HVNEIDJD6YWPXf+9t12L7BtE4IGU/VhpuGB9lSTse3LvwwIRA9VHhqgAVClnuRBN6DToz54VaY
-	bKVttV/fGUNI8IBUKJ0pW3aIWO1Z+roBylviblVjoRXGwbWrqULJkw+7FavfgfjK0C/Pf4ObB7u
-	pzJ8MkuQ2nF8uQuyHAW0gKXv2AR/9o6ljz83mmunVCgTGadrGw22P85/FZtVM6KgreGsTjkbyEA
-	==
-X-Google-Smtp-Source: AGHT+IGfGsZyk96binRgObBnTsy8mAeeaClDaows7q5RSfNe0Rh2yEOdGptLJk4ECILMrHl9VE6Pcg==
-X-Received: by 2002:a05:6000:2011:b0:3b7:9c79:3293 with SMTP id ffacd0b85a97d-3c32eccde31mr1790353f8f.58.1755686890519;
-        Wed, 20 Aug 2025 03:48:10 -0700 (PDT)
-Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c431c4sm26854275e9.11.2025.08.20.03.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 03:48:10 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH] mmc: host: renesas_sdhi: Replace magic number '0xff' in renesas_sdhi_set_clock()
-Date: Wed, 20 Aug 2025 11:48:01 +0100
-Message-ID: <20250820104808.94562-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755686926; c=relaxed/simple;
+	bh=Rcrn2zbSfVwJXJIWJFcnkEOKk+hUetdUEnYG0DlQ0Xk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gkAw/A3nZDQCTyzRuJDe2BdNrlZh8I1fCCCIR1iXT7gHfmjgM69xyQdBhHGm8hdeZxHyZRf8NYjJcU1sP46HDnxYXg7yXgvVc9NXIATA5bA5HK0g/TR5rAzf/hCt0yPwSo7sRKOkWAG91wFoFSHwzbPZ1gWddjoYkk+kytJZiqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kld6MA05; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D420C4CEEB;
+	Wed, 20 Aug 2025 10:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755686926;
+	bh=Rcrn2zbSfVwJXJIWJFcnkEOKk+hUetdUEnYG0DlQ0Xk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Kld6MA05Y1qHuF3Pw7CovhV2zk4YXH8pBW3TrLBjspegU21s1Vf9F3MS43+RAOWji
+	 qHlH3DDErO4ikztse2VFZe9gUChxr4R3KGN+fMi1TmZXskdIw4ZmgyAaVPZWqeXwbF
+	 3wCrz8tA67g2+U7cFVsG5G/BV+2LeNa4V8nvRyq/dW99bkW/fUCb4nSoN9TudNnjqo
+	 GVbHTwBHoCAHA3G6DAJCVDzWXZLWm51GkbCo8cYEg0/UZSQlakScg+U9baXtxh9COo
+	 Lpq+4DBTFTunoZ+G6GgZYP0Hhw2zgRRJe2fqYduceyAF8uh8BI8kHe4qiOJdJbPro4
+	 jgFlton2OdGkQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Benno Lossin <lossin@kernel.org>, Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor
+ Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
+In-Reply-To: <DC6KO9DJG36S.TQRLQQGJKVON@kernel.org>
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
+ <2OkNj7ab-vTaPaqMj_KRpIjaKTWgOW-F9Cn-CxnR12E6Dwg4lnjr6fx1vkjnoTx0boUeReeIVDbSyVFBWlYx7g==@protonmail.internalid>
+ <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me>
+ <87o6scdchf.fsf@t14s.mail-host-address-is-not-set>
+ <aKMkvHAfDozzDjkB@mango> <DC5WOFIKX7VQ.30UNUNE37LOO5@kernel.org>
+ <aKQT92ViZSL841rT@mango> <DC69F17AFLB2.1KZ8JJUIH2CSP@kernel.org>
+ <7ORM055ehFH_Z124bk1l8YRI5whcremycMy8JsSgzMf4rRdagKSDHSloL8sz3O8FmX3k9cni7TG2_EFLyInWbw==@protonmail.internalid>
+ <aKQ5rHqxOBEI2n4w@mango>
+ <87h5y3d6u8.fsf@t14s.mail-host-address-is-not-set>
+ <oDbuKLDFs6PF4gFrtDc3Oy8hvK-WjTKIDlvLZmEoWGsnhvTlDvBN_D8ml__6pHMkBA4acut9D2evJrRNUqT7HQ==@protonmail.internalid>
+ <DC6KO9DJG36S.TQRLQQGJKVON@kernel.org>
+Date: Wed, 20 Aug 2025 12:48:38 +0200
+Message-ID: <878qjeclq1.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+"Benno Lossin" <lossin@kernel.org> writes:
 
-Replace the magic number '0xff' with CLK_CTL_DIV_MASK macro for finding
-actual clock in renesas_sdhi_set_clock().
+> On Tue Aug 19, 2025 at 11:00 AM CEST, Andreas Hindborg wrote:
+>> "Oliver Mangold" <oliver.mangold@pm.me> writes:
+>>> You mean of `Ownable`, when `OwnableMut` is removed? Yes. A good question
+>>> in that context is, what it actually means to have an `&mut Opaque<T>`
+>>> where `T` is `Unpin`. If that implies being allowed to obtain an `&mut T`,
+>>> it would we easy, I guess.
+>>
+>> You should not be able to get a `&mut T` from a `&mut Opaque<T>`.
+>> `Opaque` opts out of invariants that normally hold for rust references.
+>
+> Yes, that function mustn't exist.
+>
+>>> But what I am wondering is, if we actually want to start using `Pin`
+>>> at all. Isn't `Opaque` currently used about everywhere pinning is needed?
+>>
+>> `Opaque` is `!Unpin`, but pinning guarantees does not come into effect
+>> until we produce a `Pin<Opaque<T>>`.
+>
+> `Pin<Opaque<T>>` isn't really a thing. You still need a pointer
+> indirection, so `Pin<P>` where `P: DerefMut<Target = Opaque<T>>` so for
+> example `Pin<Box<Opaque<T>>>`.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/mmc/host/renesas_sdhi_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Right, that is what I meant, but not what I typed. Thanks for pointing
+that out :)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index a41291a28e9b..f56fa2cd208d 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -223,7 +223,7 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
- 	}
- 
- 	clock = clk & CLK_CTL_DIV_MASK;
--	if (clock != 0xff)
-+	if (clock != CLK_CTL_DIV_MASK)
- 		host->mmc->actual_clock /= (1 << (ffs(clock) + 1));
- 
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clock);
--- 
-2.43.0
+
+Best regards,
+Andreas Hindborg
+
+
 
 
