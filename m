@@ -1,128 +1,142 @@
-Return-Path: <linux-kernel+bounces-777487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8E6B2DA0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:31:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B89B7B2DA15
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0711C46643
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:31:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B00B77AF7FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178382E2DF7;
-	Wed, 20 Aug 2025 10:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E66E2E2857;
+	Wed, 20 Aug 2025 10:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVK/ePVG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJD13cvV"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699D82DCC13;
-	Wed, 20 Aug 2025 10:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC49E2E2EE4;
+	Wed, 20 Aug 2025 10:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755685854; cv=none; b=etUJ0UmQdCyZehgnn03lQAEhMdrBeZMuGZFltHJYviTyPpz+qvv/R61ohQwy5L5RumQH2cAPtHju20BZj1TIvN8Ua6J7Uba6lTQ7AyZJA5o/SdKCVVhzTx97GCWJ07DFqeLJhjXHU1k70qTD3p0npsX2Bbu+8i1Z9K2FJZ6wc0w=
+	t=1755685859; cv=none; b=gwZlcNkaOCIdw8bqDgtnQctFQqpNNyH5gk4q1J7NM9adfIU0rdMYBXbTbz0Xs6sCiI/4zanJv+MogTd7OI/0HOqbUEYeZuvs1J31ngQ+TncnlIIdZVb2HTd1AIUZxjedhOLbOLyiqimWmUsb4fS7ImgWuQQ2VBmKLKkkYTa3EcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755685854; c=relaxed/simple;
-	bh=hOH4/ZenlOQA1wAOqFm7DCMxgVchH7jk7bYstcD1698=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cdaqd7Cxrd8IqWGfvjtZ1ObnsM/+mmMNpq0uPMo0kaVJjwf+04SvdR2BHInDPFltGl3tot9l80ne6BPjqqMMHJIq4DvrPSJBLOVM79+ZFB1K3jx6QqygHdTO8u5JrY8yESBaocG1wcOG0WqoTZRR+LQXZpcy14iC6cKGwWK1ecQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVK/ePVG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D75B9C116B1;
-	Wed, 20 Aug 2025 10:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755685853;
-	bh=hOH4/ZenlOQA1wAOqFm7DCMxgVchH7jk7bYstcD1698=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NVK/ePVGH02n0F542AyCF+G/aYJCbWAzbHmVptHaoX80/sjZ54xz6SM1n5IDfCXMU
-	 dWnFj0rysAsmE+2mg8I+/0gzp/JQdNf4Qg0S0zf8SUwCWzWkxowyqoWi1fOXTC2IbK
-	 rJDw14q//f4r5+XfqOXTZ3yoxgoc/1GEvMPlKJPDdOAkGvgzXB/Y9O1c1GdJcwTVe1
-	 hPE6Q5Nve1R03Y3EGRxO+liUlHi5Dqs9p+YV1ufmZ5GgucBa4x+FwqI7RbZtpEhiBR
-	 4tT5zW4Wy9H+nmlf07668yaixJFk8b2/2QZfT1wEHYaFEdMmLcdgiwWag6BC/rY7zF
-	 aek5Y+hM26TxA==
-Message-ID: <498fadb5-1a41-4149-8685-b2a8221dd870@kernel.org>
-Date: Wed, 20 Aug 2025 12:30:49 +0200
+	s=arc-20240116; t=1755685859; c=relaxed/simple;
+	bh=6gndtw2P/WjxutJ+7wqpUMzzDX+XxfO19UIaHAlQWyE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F4aOfdRfpM0kz16VxdUGmwlgRAC5aQHb+WPK3YI28hXizP33w6MpY5txOD4FKw5owb+nNjUAgQQkkuyttRKvy//ClURqloaov6c/6Wq9dIVarcCvxBdTgDfK5jujtPzUmNfjByT1/bYkcWo2xTyUAVsF70ab+H9MV3Xm3bG1m5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJD13cvV; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9d41baedeso3342780f8f.0;
+        Wed, 20 Aug 2025 03:30:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755685856; x=1756290656; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BbbmjgSMod8UWJ7SiBMBQoey946xxpLzuXiTRaYhclM=;
+        b=LJD13cvVjWnpLD/BcBv4VHXpDvdBiCTBorysJgKIoXERJPjHeoRM9417q8I6Xk5Yn9
+         xGnBVFOTYK9+wFVtspRm0QS9AzPkQMb8ZyKizA3a4hD00BT7XEblWWu83KsUWaSrXxFO
+         3V5xWMvP4DUfj//yUI6+RV482348kHAQhblf3VyUdvhlnsYKLuiSCHwmlMZFftVdsi/8
+         /eQOq8ya6fK6LH2sLiJHV3+ox/Xfjmv7jsEIphWefMFzqQiRav1/BieXX2e6rzjY+IVn
+         7HgKCbHTGVRmsr0lw/gVWHZj7PBkJB5joj8/+/kEaZWMEfKNZsjKeqFjIMVA5D6EJ6vj
+         Amjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755685856; x=1756290656;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BbbmjgSMod8UWJ7SiBMBQoey946xxpLzuXiTRaYhclM=;
+        b=TLUdKr7rMdjojDmpnUDuU4Z1m+AIn5qsrfeQitXRH8QccT4e8vVdw5l2lREt2UH4Ez
+         nksbTfek/2CVnY9+gHdiH3qQHWruDi90e5tSKaHbM03ulru6uFMpS9QtJtE5Itz8qdeK
+         h5YD01BoyLVhdhDNo61qh7WCPs3CTwcchl9dG9NqZ413onJ0OgnlDDpSQWYd3Dj00+FQ
+         q2+hIIg3R9dhYdtNHZE0gpX/jpXUEG1jAgdUW8y2JQUF0MGuSH26fdhTIpyVloR3BFbF
+         596BxCwQ/GWrtzPqkrAoYoUOcCesIlm0SNwYVYmOMP/3sAmOtEM1yn8mmiI0Q3BoBjgK
+         vdzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPwNknCA7vcVxMDCUL02Zp3ATfgcGxenudq5vDatiN+O6K5B9RR/7PSWuxHwVlXLf82xMbgKqOLvlqjAoR@vger.kernel.org, AJvYcCWO7XQsg2/RgjS9U7q6MyiQpuoYDEy86lvCc5mS8q+p8rkGwi76x7VVjcTCGC2nmtqgdh+akca5EiU=@vger.kernel.org, AJvYcCWuMzTjEE7RJKJvt0Xq2oCwi7ZsTUCFaR9O6WFCQSIxCYnNg/29zl9+8dCGvMmY65wfE/4mcthNWPF/p6ddhcherL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxBpPdv/FvrGEiIRMqUtGj7JK2izpeQUxYuQuYKLUhmYuZWuzJ
+	U8O/mjGCXSw5KjhGbEgMDCgzk5fm/xIGPFpibxrfAnn7G3Iz4VbtH+SN/udM2w==
+X-Gm-Gg: ASbGncut893qvRYG6uBFCxEqWi+gu39YASmt7XvV84u90XP0b+onIhlj95Dsq74L9ea
+	zYjzap7njAr+GCdlXk0OPrJJIRZmgrZzUP0sfKsAK03xinq/t3lfGrm7HRz6Gggpoop5bWbNtBq
+	0Ur4GqeT7TpxMlg3hxA3B4n3Z1gFvacIrXbtmN4xI676q+2SXrorHfKXRbp7G33T3bGO5DWsFsX
+	vIk9L412WpUxkbt/7SC8bO9eTYdomstqKcpHz21HgFmst+vGuukgGNhAcC9pCVdKB21LUR6lba9
+	Ha5olWNR/r1eAZc5tKZENaKrrwxLajmw37p00Fpuqddj59GLTUVASujS3zKZenfyCUWzACl+ySM
+	IaBF0rqXUsEk8gXxwA28e9Wmsop4LSWa45MdCAQYHlA57niLk/5wJseWCtf/qVTqUKJmNX4deaQ
+	==
+X-Google-Smtp-Source: AGHT+IEVftALDM3YC/sDg6+i/niVwWvzzbeMrUAScggR3/+40jJoXk1gGHmnEij6ccI/R6xCql2K7g==
+X-Received: by 2002:a5d:64cb:0:b0:3b7:9c28:f856 with SMTP id ffacd0b85a97d-3c32fe1a17dmr1498439f8f.48.1755685855711;
+        Wed, 20 Aug 2025 03:30:55 -0700 (PDT)
+Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0777892f8sm7077119f8f.53.2025.08.20.03.30.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 03:30:55 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2] clk: renesas: r9a09g047: Add GPT clocks and resets
+Date: Wed, 20 Aug 2025 11:30:51 +0100
+Message-ID: <20250820103053.93382-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: mailbox: mediatek,mt8196-vcp-mbox:
- add mtk vcp-mbox document
-To: Jjian Zhou <jjian.zhou@mediatek.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20250820094545.23821-1-jjian.zhou@mediatek.com>
- <20250820094545.23821-2-jjian.zhou@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250820094545.23821-2-jjian.zhou@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/08/2025 11:45, Jjian Zhou wrote:
-> The MTK VCP mailbox enables the SoC to communicate with the VCP by passing
-> messages through 64 32-bit wide registers. It has 32 interrupt vectors in
-> either direction for signalling purposes.
-> 
-> This adds a binding for Mediatek VCP mailbox.
-> 
-> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
-> ---
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Where is the changelog? What happened with entire previous review?
+Add clock and reset entries for the Renesas RZ/G3E GPT{0,1} IPs.
 
-Best regards,
-Krzysztof
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v1->v2:
+ * Dropped the series as according to the clock system diagram and clock
+   list sheets, gpt_[01]_pclk_sfr and gpt_[01]_clks_gpt are really the
+   same clocks.
+ * Dropped R9A09G047_GPT_1_CLKS_GPT macro
+ * Replaced DEF_MOD_PARENT->DEF_MOD for module clks.
+---
+ drivers/clk/renesas/r9a09g047-cpg.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
+index 4e8881e0006b..afd09b95fb74 100644
+--- a/drivers/clk/renesas/r9a09g047-cpg.c
++++ b/drivers/clk/renesas/r9a09g047-cpg.c
+@@ -198,6 +198,10 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+ 						BUS_MSTOP_NONE),
+ 	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
+ 						BUS_MSTOP(3, BIT(5))),
++	DEF_MOD("gpt_0_pclk_sfr",		CLK_PLLCLN_DIV8, 3, 1, 1, 17,
++						BUS_MSTOP(6, BIT(11))),
++	DEF_MOD("gpt_1_pclk_sfr",		CLK_PLLCLN_DIV8, 3, 2, 1, 18,
++						BUS_MSTOP(6, BIT(12))),
+ 	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13,
+ 						BUS_MSTOP(1, BIT(0))),
+ 	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14,
+@@ -322,6 +326,10 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+ 	DEF_RST(3, 6, 1, 7),		/* ICU_0_PRESETN_I */
+ 	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
+ 	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
++	DEF_RST(5, 9, 2, 10),		/* GPT_0_RST_P_REG */
++	DEF_RST(5, 10, 2, 11),		/* GPT_0_RST_S_REG */
++	DEF_RST(5, 11, 2, 12),		/* GPT_1_RST_P_REG */
++	DEF_RST(5, 12, 2, 13),		/* GPT_1_RST_S_REG */
+ 	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
+ 	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
+ 	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
+-- 
+2.43.0
+
 
