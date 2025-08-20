@@ -1,156 +1,122 @@
-Return-Path: <linux-kernel+bounces-776930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5998BB2D31D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:38:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A05B2D321
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58D681C4234E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7654E0F6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA92A259CA7;
-	Wed, 20 Aug 2025 04:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DA3257848;
+	Wed, 20 Aug 2025 04:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HlZLaG0A"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdwOKaHo"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AEA246781;
-	Wed, 20 Aug 2025 04:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A8918DF89;
+	Wed, 20 Aug 2025 04:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755664643; cv=none; b=sxrRpF60RscjUp6FZywUaqgG6PH8hySXKvFfJ0vHCTg6gwuUeAxKkoEovNsVEyZdgLp99ByIiBVv5PpU1R0n9b7oK/Ewo+b/MZh1kHYGmRMB04bfW5na4WSSGL/gLGh3Deubh2PIsMUa6L6a0DrJaRkel/RrAmxFrG+cLjDumEY=
+	t=1755665009; cv=none; b=JnL2IrZcqAHr4m/YLYGOU6A+UkBshFl9Zh0RoVfPlrtEf1JSFHH+CBYb3Sp6ORycic2OCJhBErMl9H4jjp1/6Wsb1Pe9KeMbxhVSQMDe2kd23ekMRh8KIe6RYdjBy40ckQCKylcCuItK23LNRunBF1rKtcXMJ40AzMbQ4dK7Dj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755664643; c=relaxed/simple;
-	bh=Bv9VjwckBvoU5YMqYa3H6bvn7QRPMvYL90zpwo+4EkA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Csvb90CpABEBo2Ak4wIsjfFecqXsrk2b8PlOP9OJP+tpGogy6ptFytfdykJEj4iAAgp5hDkm9xsTkLHVEYjZEHfAt10KCuXc8kOgu9eb9R+/CfxMMMjXFo5+k9XUydacTuh9vBc7CIq3wpImtuWHl5sbOf9HYQQUT6q0lcgrTn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HlZLaG0A; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1755665009; c=relaxed/simple;
+	bh=PvJ8yiec2zDlFgiRqGQj2eztANgyks2Z0hPEQ6+7kU0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=A2M8pg9QHNrlLMGrK1bROCrnpr2suPgQt2XEAk0I0Jw+6jaaFaMpX66eddcd1MHXOVnCz7PW4hjt4m/hL/Pu6AIWCoPCv0xZzKJesQwSPo4c/axR3sdzDYZvpXViYOJnSyGcCeVC4d/xM9OEoSzCNVnjaURhnKVBkS1QJoreP8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GdwOKaHo; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb73394b4so901044366b.0;
-        Tue, 19 Aug 2025 21:37:21 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e43ee62b8so3157725b3a.2;
+        Tue, 19 Aug 2025 21:43:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755664640; x=1756269440; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kv/MSyHeFY0oNfqJik+K/LSo8NnFpCP0WfCa9r6wA7U=;
-        b=HlZLaG0AlUOit3PU5Kij19z//F3jLqdz2bSP5wwqWrOsCkSYN6XGD4DEHvetzGSXXM
-         gL8HEw2qWDXl0fyVnxRuPJC5eAZUuxvT4KyEXVAB4RMtFiGA201BDhE6m19DXWQ3Iog3
-         CHrkc3OG/3Hk1XfhVQ65MT+owvULZBDdvW5uYvWFIktdyaJkcrTGiV1ZbSeaz05etSTx
-         I31jDj6NpWIjdYv+lacMhH/M1TVOsUsrkKHIIUcyeRNvB17U2CkYhdVQTX0sdny0lyKy
-         64mS1XF95WMk6plFE2eqI5WzNKjYDsBtASw0qTpNyMbQeXUaB72HbkTecEvLgL9Dq55x
-         ZLmQ==
+        d=gmail.com; s=20230601; t=1755665007; x=1756269807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=95tUvmzwH+TBc1gLiYUyjOusAyAgExxDjTEKTJk9b94=;
+        b=GdwOKaHoD5Y1OLkoguIAyV/jKotU72hqqS9uaOQVbQTfvzcZZKmBNJno5Wl9jmdhQG
+         u15UvwxFKPX1MIy6xnUCEkYglNlCglQTaLpoOqqNpAu5E1s+vglQUH22iSslG5sXcZnD
+         ghKo6KVmLdGJVA7FVxfY+oNwUzbHcHfbDMkchdBx2eZve0gomjSg/7TS8/TQHQBNAnLK
+         VnoOPsBVHhrcDehXQMqcckMVwklNjxNcv76wViQ7MmQlto+Bm4+f6nV2DG0s8BGEZrc6
+         807uKtQETMbHapgSZ7T2zVcNdG0bOuZDQmXNczUthatBhzdJCdG03D8LvwF2Jhc0LIN6
+         9nWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755664640; x=1756269440;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kv/MSyHeFY0oNfqJik+K/LSo8NnFpCP0WfCa9r6wA7U=;
-        b=hpwJSMrBzTYUCQBFIFuBDV13/cDBZjlD/wSwhPamWpZVFjsw+HvRWKN3Pp4mCS+RBB
-         Cg1G93ADjEG5k4ZjCN7lRVMkn4z8nP/SmkNy+axMiPjgdeWN9lLE6U4wlsnWRG4e0ml6
-         xOWVdgWSp0Bvn1RSZ+FFkfrXz3TiWQA47A5ne7RQ1EPBFarzt3O+iK+nNMuAte/Z97t9
-         r7bGrOPLZfqj4nMHXk8HxQ+uvGh/KJkhAKCXCndXPpHOlCCYTspt4BVCU/fwhy/qXP0D
-         MNG8bkbuiP8UmmiG9ZZv0+jaLauyPJaMD0fa7zszvYbgmaMDl1tiEOLXTS4puM4jbb6F
-         ZQfA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1rT50Z3fqg/G0eT2ijaYF+zY9kuo9VQSmRFEw7s+ciAd6JFM7Z1tzNzMnkErPmvVzclGGXSvc@vger.kernel.org, AJvYcCXI/GzCddAfWvQBvOgP0GPjC+acPYVHhCoIkhPjqudnRY0+Fb1qnB4k4/tyqGPnozEWFfPAvaB1K/2CrE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb2Iv06JuervhrSwVgCv1h3nT58FOUuBJbxxASR4yt3MiZycSC
-	yvEqtoV1HS13OV8z55mJRUsNm8nvH+7K1lTPq2pHW/ksx/2b8Zr8BlTO5TlUNCcb1wGbOIG55Hs
-	EyHjoS0qOMRqKj89rnQF309Ta9i/ruaU=
-X-Gm-Gg: ASbGncvQQDdTbcrH6ndVRFOplx2wk9DRR0SC755pUJIMv7UU+vD5zbVUn3F79n5R1wo
-	xwNWJu7BSEzncwfLxQw0MqHeGWBZoOjc/9NTfpnoFTDMHCJ6P8TIE8YyhbskuGYxtgDj5V2Qeva
-	7bwCczEe1WflEsnkUdbCASxilPkxN/0ZBdkipyzpeUzox+7HIuhTB6DgYHuFUDGwcYO2FIYW2cy
-	cFBZ1HR
-X-Google-Smtp-Source: AGHT+IHI5uzGB2TjPfbW5XQCH2Ei2yg01pUDHe7XLzbyvRh1cnWqRVhpb2IRJcE7aHPdL1zfWyBLM/7TTFkzspG4xGE=
-X-Received: by 2002:a17:907:96a2:b0:afa:1ef1:342a with SMTP id
- a640c23a62f3a-afdf0091142mr137291166b.20.1755664639619; Tue, 19 Aug 2025
- 21:37:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755665007; x=1756269807;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=95tUvmzwH+TBc1gLiYUyjOusAyAgExxDjTEKTJk9b94=;
+        b=WdQR3MIrrA4y3tIIRT7dxi8wRZXSCaZcoqsy5lhQbP/IWCo4m98euy6BvFkzjZh7QB
+         8NtCugDhk1/Otawtf8zWYArjEk+Wgt5EiPz0i7+3HhHcCjv43kcuRX74BcECi2rwAlS6
+         jz1Zs8GZ3XTDfpu/nVY9N7mBkuFUNtLnsJr1jzd34gh9TaxssKxH5Z6pCWV2vZEZIheJ
+         c7BRfoWWqI/SN1gAlPNUblb1EIJwFb/fy9X88EYTSZB8iN9EV2oLylRtBgNiKYWeacvi
+         a7Hl+YwSzZF6SC5lQIMfZsjHj5JnvuLMq3vgQByhrYYT7p/7kHcsB3C4my8SDR919m+i
+         LtSA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2sqcQr8SQwJzvI7e/Hw4Q9pBzBHchxjXx23E3gf7clH55XjSJ+BoBxvEobTXimyAHqfg0FlzSHMywdPRe@vger.kernel.org, AJvYcCX4fP/xP309TFqmHjZ/sWMu56vbBNgmQKW90X97AZJcqaFfxAjtx/eN/JLMxqmIq/apVQSBC9szS1W1Ug==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOworXm79u7ljJMFG1KQr+6ahjM0HCxEEUSjnzUVf5sw8trkKS
+	vb5r33Xa7EvVRlK7/7DhmziUSAkTmbvFYFvcsnustRVoD1txZ+9pfb9L
+X-Gm-Gg: ASbGncu8/2qevqV60DZ1Lpo7nUa75MHLn0lfXhlCB95fSBi1Fo1ZEqXiqWhuQtqbBER
+	DriCY9PqJLZCiDEqGk2bDQs3cCbLcrp3n+Y6pM0O1iYAR8GuouEMpvWt90WkNypvrWUGheVtOB6
+	0gW8e7iJhawlQufw4S9poQnPXB7r/VA7zg2oNceYPNlyTrsbg7XAPUOCOw39ev0g5Ejtj7XSIuv
+	I7T++VEUPmoBz43wYmPciIwCRnFXKv8n3O1G+v7SXoJVCN2mLC5oDVAFojyEaROaMA4kRQq6aaz
+	XXqO4FAch1oiDrSzHuF64J+RhQ7TF7gS/upJ3qzLfhY2IvoorUhPN3wjZ9Z0XFahD5LgsWrK2By
+	38419n3UiJuETVGTt2EIfJ7LIwogWvfKHOhheg04Ydv9YQ/EVWQ==
+X-Google-Smtp-Source: AGHT+IH6KdHis0P5lSFfmLhaRmFKn0283pNYeC7lP4mRRz0StH3F+7AByrFjqFypIi318IJtesaQbg==
+X-Received: by 2002:a05:6a00:22d6:b0:76b:42e5:fa84 with SMTP id d2e1a72fcca58-76e8db7682emr1822188b3a.7.1755665006974;
+        Tue, 19 Aug 2025 21:43:26 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e8ea037e4sm899901b3a.31.2025.08.19.21.43.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 21:43:26 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: dtor@mail.ru
+Cc: aha310510@gmail.com,
+	bentiss@kernel.org,
+	jikos@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x0r@dv-life.ru
+Subject: Re: [PATCH] HID: axff: add cleanup allocated struct axff_device heap
+Date: Wed, 20 Aug 2025 13:43:21 +0900
+Message-Id: <20250820044321.918076-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <fv32i2ejsupm64mpadzsfudaeuzkavkazpmnn2e4ijqeobl4gs@porr2zpxn4aj>
+References: <fv32i2ejsupm64mpadzsfudaeuzkavkazpmnn2e4ijqeobl4gs@porr2zpxn4aj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2bac01100416be1edd9b44a963f872a4c25fda03.1755231426.git.jamie.bainbridge@gmail.com>
- <20250819174748.7d5869d3@kernel.org>
-In-Reply-To: <20250819174748.7d5869d3@kernel.org>
-From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
-Date: Wed, 20 Aug 2025 14:37:08 +1000
-X-Gm-Features: Ac12FXzhd_cPi-TgZ1g0Dzvxexs8t1W_7SLN1XSPQrvJGOKOy_lkF2yKjfIkARg
-Message-ID: <CAAvyFNjo4hC6_L=xdMgz1CvzpHa1Jr0JMuH7xx1WfTs9+f8f3g@mail.gmail.com>
-Subject: Re: [PATCH net] qed: Don't write past the end of GRC debug buffer
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Manish Chopra <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Ariel Elior <Ariel.Elior@cavium.com>, 
-	Michal Kalderon <Michal.Kalderon@cavium.com>, Manish Rangankar <manish.rangankar@cavium.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 20 Aug 2025 at 10:47, Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Fri, 15 Aug 2025 14:17:25 +1000 Jamie Bainbridge wrote:
-> > In the GRC dump path, "len" count of dword-sized registers are read into
-> > the previously-allocated GRC dump buffer.
->
-> How did you find the issue? Did you happen to have a stack trace?
-> It'd be great to know the call trace cause the code is hard to make
-> sense of.
+Hello Dmitry,
 
-We have a customer vmcore and a private Jira Issue with Marvell.
-I can submit a v2 with a panic backtrace. However...
+Dmitry Torokhov wrote:
+> Hi Jeongjun,
+> 
+> On Tue, Aug 19, 2025 at 12:43:02AM +0900, Jeongjun Park wrote:
+> > Currently, acrux hid driver allocates heap memory equal to
+> > sizeof(struct axff_device) to support force feedback, but there's no code
+> > to free this memory except when initialization fails. This causes the
+> > allocated memory to not be freed even if the driver is detached.
+> > 
+> > Therefore, to properly clean up and safely manage the allocated heap,
+> > must be modified to use devm_kzalloc().
+> 
+> You have not tested this, have you? The private data that is passed to
+> input_ff_create_memless() is freed by ml_ff_destroy() which is invoked
+> when input core calls input_ff_destroy() as part of input device
+> teardown. Your change introduces double-free. 
 
-> > However, the amount of data written into the GRC dump buffer is never
-> > checked against the length of the dump buffer. This can result in
-> > writing past the end of the dump buffer's kmalloc and a kernel panic.
->
-> I could be misreading but it sounds to me like you're trying to protect
-> against overflow on dump_buf, while the code is protecting against going
-> over the "feature" buf_size.
+Oops, I checked again and realized my patch was a complete mess.
 
-I double-checked based on your comment and I have selected the wrong
-buffer in the array.
+Thanks for letting me know!
 
-Like you said, it's not easy to follow.
-
-I will resubmit this if possible.
-
-Please disregard this patch for now. Sorry for the bother and thank
-you for your review!
-
-Jamie
-
-> > Resolve this by clamping the amount of data written to the length of the
-> > dump buffer, avoiding the out-of-bounds memory access and panic.
-> >
-> > Fixes: d52c89f120de8 ("qed*: Utilize FW 8.37.2.0")
-> > Signed-off-by: Jamie Bainbridge <jamie.bainbridge@gmail.com>
-> > ---
-> >  drivers/net/ethernet/qlogic/qed/qed_debug.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/net/ethernet/qlogic/qed/qed_debug.c b/drivers/net/ethernet/qlogic/qed/qed_debug.c
-> > index 9c3d3dd2f84753100d3c639505677bd53e3ca543..2e88fd79a02e220fc05caa8c27bb7d41b4b37c0d 100644
-> > --- a/drivers/net/ethernet/qlogic/qed/qed_debug.c
-> > +++ b/drivers/net/ethernet/qlogic/qed/qed_debug.c
-> > @@ -2085,6 +2085,13 @@ static u32 qed_grc_dump_addr_range(struct qed_hwfn *p_hwfn,
-> >               dev_data->pretend.split_id = split_id;
-> >       }
-> >
-> > +     /* Ensure we don't write past the end of the GRC buffer */
-> > +     u32 buf_size_bytes = p_hwfn->cdev->dbg_features[DBG_FEATURE_GRC].buf_size;
-> > +     u32 len_bytes = len * sizeof(u32);
->
-> Please don't mix code with variable declarations.
->
-> > +     if (len_bytes > buf_size_bytes)
-> > +             len = buf_size_bytes / sizeof(u32);
->
-> The way it's written it seems to be protecting from buffer being too
-> big for the feature. In which case you must take addr into account
-> and make sure dump_buf was zeroed.
-> --
-> pw-bot: cr
+Regards,
+Jeongjun Park
 
