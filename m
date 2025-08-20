@@ -1,128 +1,141 @@
-Return-Path: <linux-kernel+bounces-778172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E176CB2E23A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:24:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0EBB2E234
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95DD36876DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:18:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CAEF586453
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33463326D5E;
-	Wed, 20 Aug 2025 16:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB7332778E;
+	Wed, 20 Aug 2025 16:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a7t3TJml"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sXKhSfF6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fq4P9uoN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sXKhSfF6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fq4P9uoN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F454327796
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82C3299AB3
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 16:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755706713; cv=none; b=nREXrHnC/x3mkSz45mwS+fAMkKD8mOPGCHpy9lOxvBSv3kxvFfQxv9RviJXvDbWfEiq+KB6UBUWZ9YhWrS8fFW77kyjOG9G2WSUfCT+RHfV+tx8USCqnI3s5BLTlwGc2SbDPCM0Nuy9EL+ZSWD5LovCGToRoYVFZ7FpxgKD57t8=
+	t=1755706817; cv=none; b=TvSK12olPFsQ/6YWLD92ECwsgqqPKsJWP9Ek6WZDbHNvS5TSIeAUl069e6VTqSk5ft5mn2ZWCzn+7byh48LnmqeaMBAsY3EXiHfaZugPy6tXFBqsaVCF81aw0j5E47UNNynbKyWz8ZdeDcJIYwLeg1Yje7lz6TBsf+e99vnBI30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755706713; c=relaxed/simple;
-	bh=aryoRv5tAqznCZnbWBlEmRqJE3caNfx+OkacUf1bQXM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dZQwLLh5xIy6TH4QC35TmrqHRovdTGoE+fPPFqHbaq6MLQSVuI4lRvMHNzrOn3Gr2lRe4H7K/Ghcdukt8vf57HHKWP5gzXSRXudXl7jxqj04kRuevl6zn+ES56ZttcCcWa3M1fNW9Lu1tkZaj7d5cjxMzs+IZSOKEc3vIn6mc54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a7t3TJml; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32326779c67so97006a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:18:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755706711; x=1756311511; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LbIBXkjzpro1lSKQx3DixkUfhZO5cnnCemwVjT931F8=;
-        b=a7t3TJml2qZzGlZGJDqItorgUi5EnVdzKSjfSyRddahQsq67bi0tXTP/CcIlApUTME
-         2qbaqRj6sxS5++0GRewdz3WdcATITz6w5slbdAub0m6eeVkz0c65wwwFvse2dBa6BcJJ
-         YakpNQFFDm/NT9yyy51YI9GbO+7DzPo4/XCbjcDm/r8cvKwu4c8oxGOeaamCfHKPSRON
-         fDnw1JWh+UAkgFVUAg+26VrtNnE7IicH8WKh4bJJF0FDEvoUsPrd8r3mOJrmEB6dT7Pw
-         4kkw7IdFW99HhdRVXEi3NY4/pVzflOOQ/5B2KFMf4iCJIUsJCgR/MAKsdODtwV1Xtp5c
-         qs/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755706711; x=1756311511;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LbIBXkjzpro1lSKQx3DixkUfhZO5cnnCemwVjT931F8=;
-        b=FdSmp8iWR1pzLKaLxIBvpX2gz0m9RGy4b7zsuHRoubXo5dIvbBJM31PDCBf6AakKVO
-         /McvMiDY3ALrXUrR0VRCAjCuFbEbAMUT9xTgANH+bFZ9JyMRCLrBq7I9nF9u8abSfRQq
-         MeljQJuJrPXT/EzIfolPtwyuTb7aGnMl7DrZNH1aYnqe2PisYx/bw8uQO5E9buFqUqxP
-         yOuysezFKqsdiy2rvsIMISDpFiwAzpNmak7TnqGv6V01GWSrgcLSirsu7hZg0bX/9NTw
-         8o2zAXfUZeN8rMN4IhMeKB4jM0IS30NvxDzutRMh1TZf4Sg/deA0Uaffhv8TjWnzntJT
-         fyvg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5WOWD/HFLF2yZJKuCOUkiRB/bxzJWdTiu2/OQVjT/3O9xp0/T5cCd6eCyty/UEA/SrS4cdhF8Qo/kLg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1DipgzDabFMUTdZkMH2ka5CaZkg6n1KOSnf8xdmUkqtCiMvCk
-	TMcry8H3bQmAOwX8SoyF+7ugvUF8M+ZVVlAQF04REwts6fGo/kkpF5Rbi7LzMTc1SISojzH7//6
-	ztFia5g==
-X-Google-Smtp-Source: AGHT+IFf7xM6eNozrIlEIQuQlsTpvkezZkqf70mjUn0hYGfwmHZjVUeiPiaXieLgH9P/BZPxZ7N9paBfqZs=
-X-Received: from pjbof13.prod.google.com ([2002:a17:90b:39cd:b0:31f:6a10:6ea6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a:b0:321:abd4:b108
- with SMTP id 98e67ed59e1d1-324e1334fe2mr5783918a91.12.1755706711464; Wed, 20
- Aug 2025 09:18:31 -0700 (PDT)
-Date: Wed, 20 Aug 2025 09:18:29 -0700
-In-Reply-To: <c4adbc456e702b6e04b160efb996212fe3ee9d04.camel@kernel.org>
+	s=arc-20240116; t=1755706817; c=relaxed/simple;
+	bh=Gg9nK7hIrqe1RzuAgr/Nwv1tKB36Fv/jz8O4Bkw6xoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YublfIv4Yb0OpHRNn/C8n6KkuBz3IMUee8Lq2n2rO+m7Oj7bOQH3Id6pOBPzfQWRnKE8L2ISzcGdl7+yNyo1KREfE66AE5983n9ykykFQVj6Fqq6+xxXQjsanVukeljMFE7V4rHHqbWVCeBFiMMM5Wr9pFGGEkf6SVwrfNh+FU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sXKhSfF6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fq4P9uoN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sXKhSfF6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fq4P9uoN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from localhost (unknown [10.100.12.32])
+	by smtp-out2.suse.de (Postfix) with ESMTP id C1D7B1F83B;
+	Wed, 20 Aug 2025 16:20:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1755706813; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=of0EpYZMc60tijt952hk19vL2Z+k8maUSxNdRLvEe+I=;
+	b=sXKhSfF60sU0oyczH2gIBe1RzsaWIYhAMs8FqjfzZB1781Z0mUmc3VTrLtBHyCQXhpIQbT
+	dcYqBqdyktFou9LdN2fUP8+U7paXKyzkqKBLDU0cqU90JnlKAX+GOtOIRQWGpFMWONhV1U
+	PTM2zJ6XBSO0FolyZTcXpMRT3C1KyEg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1755706813;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=of0EpYZMc60tijt952hk19vL2Z+k8maUSxNdRLvEe+I=;
+	b=Fq4P9uoNy2MFtajWD5ryUxhCby68I3EkKpRKY0/jKmM3TEQ/6Znt+jZnyg2YdAhKRjHKiS
+	ik6VcvZ6yBAHYTCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1755706813; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=of0EpYZMc60tijt952hk19vL2Z+k8maUSxNdRLvEe+I=;
+	b=sXKhSfF60sU0oyczH2gIBe1RzsaWIYhAMs8FqjfzZB1781Z0mUmc3VTrLtBHyCQXhpIQbT
+	dcYqBqdyktFou9LdN2fUP8+U7paXKyzkqKBLDU0cqU90JnlKAX+GOtOIRQWGpFMWONhV1U
+	PTM2zJ6XBSO0FolyZTcXpMRT3C1KyEg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1755706813;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=of0EpYZMc60tijt952hk19vL2Z+k8maUSxNdRLvEe+I=;
+	b=Fq4P9uoNy2MFtajWD5ryUxhCby68I3EkKpRKY0/jKmM3TEQ/6Znt+jZnyg2YdAhKRjHKiS
+	ik6VcvZ6yBAHYTCw==
+Date: Wed, 20 Aug 2025 18:20:13 +0200
+From: Jiri Bohac <jbohac@suse.cz>
+To: Breno Leitao <leitao@debian.org>
+Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+	akpm@linux-foundation.org, Philipp Rudo <prudo@redhat.com>,
+	Donald Dutile <ddutile@redhat.com>, Pingfan Liu <piliu@redhat.com>,
+	Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org,
+	David Hildenbrand <dhildenb@redhat.com>,
+	Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH v5 0/5] kdump: crashkernel reservation from CMA
+Message-ID: <aKX1vbE5jWVUr298@dwarf.suse.cz>
+References: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
+ <airxp44zdyxskfwrhhveis7gd2vsz5m4f3ipidsghi2x55h64c@s37v5rkuoega>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250515152621.50648-1-amit@kernel.org> <20250515152621.50648-2-amit@kernel.org>
- <43bbb306-782b-401d-ac96-cc8ca550af7d@amd.com> <c4adbc456e702b6e04b160efb996212fe3ee9d04.camel@kernel.org>
-Message-ID: <aKX1VZ90_wBxMI7l@google.com>
-Subject: Re: [PATCH v5 1/1] x86: kvm: svm: set up ERAPS support for guests
-From: Sean Christopherson <seanjc@google.com>
-To: Amit Shah <amit@kernel.org>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, x86@kernel.org, linux-doc@vger.kernel.org, bp@alien8.de, 
-	tglx@linutronix.de, peterz@infradead.org, jpoimboe@kernel.org, 
-	pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, pbonzini@redhat.com, 
-	daniel.sneddon@linux.intel.com, kai.huang@intel.com, sandipan.das@amd.com, 
-	boris.ostrovsky@oracle.com, Babu.Moger@amd.com, david.kaplan@amd.com, 
-	dwmw@amazon.co.uk, andrew.cooper3@citrix.com, amit.shah@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <airxp44zdyxskfwrhhveis7gd2vsz5m4f3ipidsghi2x55h64c@s37v5rkuoega>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.982];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Wed, May 28, 2025, Amit Shah wrote:
-> On Mon, 2025-05-19 at 16:22 -0500, Tom Lendacky wrote:
-> > > +static inline void vmcb_set_flush_guest_rap(struct vmcb *vmcb)
-> > > +{
-> > > +	vmcb->control.erap_ctl |= ERAP_CONTROL_FLUSH_RAP;
-> > > +}
-> > > +
-> > > +static inline void vmcb_clr_flush_guest_rap(struct vmcb *vmcb)
-> > > +{
-> > > +	vmcb->control.erap_ctl &= ~ERAP_CONTROL_FLUSH_RAP;
-> > > +}
-> > > +
-> > > +static inline void vmcb_enable_extended_rap(struct vmcb *vmcb)
-> > 
-> > s/extended/larger/ to match the bit name ?
+Hi Breno,
+
+On Wed, Aug 20, 2025 at 08:46:54AM -0700, Breno Leitao wrote:
+> Hello Jiri,
 > 
-> I also prefer it with the "larger" name, but that is a confusing bit
-> name -- so after the last round of review, I renamed the accessor
-> functions to be "better", while leaving the bit defines match what the
-> CPU has.
-> 
-> I don't mind switching this back - anyone else have any other opinions?
+> First, thank you for making this change; it’s very helpful.
+> I haven’t come across anything regarding arm64 support. Is this on
+> anyone’s to-do list?
 
-They both suck equally?  :-)
+Yes, I plan to implement this at least for ppc64, arm64 and s390x,
+hopefully in time for 6.18.
 
-My dislike of "larger" is that it's a relative and intermediate term.  What is
-the "smaller" size?  Is there an "even larger" or "largest size"?
+Regards,
 
-"extended" doesn't help in any way, because that simply "solves" the problem of
-size ambiguity by saying absolutely nothing about the size.
+-- 
+Jiri Bohac <jbohac@suse.cz>
+SUSE Labs, Prague, Czechia
 
-I also dislike "allow", because in virtualization context, "allow" usually refers
-to what the _guest_ can do, but in this case "allow" refers to what the CPU can
-do.
-
-If we want to diverge from the APM, my vote would be for something like
-
-  ERAP_CONTROL_FULL_SIZE_RAP
 
