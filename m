@@ -1,64 +1,82 @@
-Return-Path: <linux-kernel+bounces-778573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3CDB2E792
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:36:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD29B2E799
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC96416EAF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC1D73A2920
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDB232A3D1;
-	Wed, 20 Aug 2025 21:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5809D27145F;
+	Wed, 20 Aug 2025 21:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kuttsvl2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7Efk9kM"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14FD258ECB
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDF9280309
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755725766; cv=none; b=NGiE0359L/lGfohHeAjXOjXCYv6fRA98yVHmjuX0IDS1Xiso1OqtneZwmyuPJy3cgbLRi7nzIhg07+wC7NuWXEAExyNjTwJDNDVbmrcDv0g+q2vfyPasKSnth+4iW4jRCijygrDDUHK+29yeaGayp76MSL4OgOI4UWjGHyqJupE=
+	t=1755725825; cv=none; b=bZuiOeBXTipMps/sthqKLATGrQFIEPZsbECAycgpRvaehfp+UbPglBYViFRaoN1aYEwfUdqfJQh65rmHBZric3dkuMO5U0orSpabxr65ADfDxZmy0bBQXALAwULl9v/Jm4mEo4fqLOS7sxZbvenCLl+pf049QZ6ZA11hJNDHCsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755725766; c=relaxed/simple;
-	bh=rKxr83H/QzyynOVeOiYUhVic7wrU3g/k9tfyP76rAL0=;
+	s=arc-20240116; t=1755725825; c=relaxed/simple;
+	bh=rX8NR3yzy/yYliW9X3GW6javP/DPhTWkPSo8BSYXTCk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HAqqbJQ6wSFwjwa1MTLf8iPfNS5+tkDB0vEdv7pw3R1fo3bAfPHqmRNE0ygYHWWqu0vkdBoyxDT2ReYCuT7zYOlgYxd/7DhNODpHkdTtyGc1ZMUsqtm4Ij7fKqENbTualkZyJ1hqOWLDv4XCMUYel26bXSRPC9a0hW2ddAkRbDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kuttsvl2; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755725765; x=1787261765;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rKxr83H/QzyynOVeOiYUhVic7wrU3g/k9tfyP76rAL0=;
-  b=Kuttsvl2+u8jhuI0gWNXqvvyrD0k35Baml8Ja800WCfrhfmSwoYIZrqg
-   ItEBlNqzAx0zdOGGUrB1x2cRRLPbLqUtziH/w8iAZtWEvL2LU3lWc3IV1
-   uHMC9LPmkfRY+ja8qOHuXYGNTn5Zmx3zaUnD1eR5NyEW/xIG7R9k2B0w0
-   57FZBResKRJk7Lk1Kh89GFcCHMLhNE3tJEZwjZWbv5LOvmrz/smlj9L21
-   Qv91ICweVroX/+0qfMKf3niN+RRdQtXN9gwPv4fwruDGaue+Vduu+4EdH
-   1ypjRBm/MXxXNaUztvd9uZPAlQFP8w1BQsFvVltXopKOtu+quWIA0GQQ4
-   w==;
-X-CSE-ConnectionGUID: UUaqZRvhSRWsvVtukhKwGA==
-X-CSE-MsgGUID: pZstcwLQSBG2/iuTrsRMeQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57208915"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="57208915"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 14:36:04 -0700
-X-CSE-ConnectionGUID: +YD530azQKe4k//YhQWqZg==
-X-CSE-MsgGUID: H5hhtntJTkGgWxEkbADicg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="167446059"
-Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.108.83]) ([10.125.108.83])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 14:36:04 -0700
-Message-ID: <1ede0349-320e-493e-a3fe-bc72efa4fd44@intel.com>
-Date: Wed, 20 Aug 2025 14:36:02 -0700
+	 In-Reply-To:Content-Type; b=txqixBpi82fGS4kUCSpd8wwKCzcuAybSNKBiyQL8MHaJ+GESRsevvAymVObuE9EAqmg5JZouJLF+dFsra2xjZoYE02PwoDN8e1wbONe5IRQOxs7rmwDsQPwdIAXX4mnDkpH9+0mocnkUd/YHps3XIf2Ub/L2vCV2any+GG/n62w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m7Efk9kM; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b472da8ff0eso171873a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755725823; x=1756330623; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=ekBgLzgg87ypwyRRT8CO0YxWRgDJEzo49dyFTaIPP0c=;
+        b=m7Efk9kMC4LXc4YQTT6dXpeopqRG0XGCkqvSn4p23knK/LcsTjfPijMMJQkRzwRzkj
+         fSQso9B/K2C9pVnnRmMOyP813TT07F3ei8DIfF04BOEy+KnuoUvn1TF+pmi09b56f2fv
+         +zIlU5C5+y+wTkyE66FHi7Qk+GcaZg1kwNeIuPWlBodz9pqVQP1nVMwo44qV+MeqTXa2
+         HVecp6GTWMQyOk5HxkQldTlIHxOwtHJw8Tcon7uW41ShIRrxEmfZVxVTcttHbBEbMn+a
+         DCNjrlh5SNhDZ9/xQb9uyxovulZ4w2e4BGec993KS1+fC3WbmSPdYt8raQU8KckNgISD
+         YgnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755725823; x=1756330623;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ekBgLzgg87ypwyRRT8CO0YxWRgDJEzo49dyFTaIPP0c=;
+        b=jRqyYnjr8Es7o7zPnMFjxoSWHMExycm1G6J1dt7aYg0fK9NwFKBQ/Yl0dNMD2LhAY5
+         xqfddJZMML29s1Yk0S4NseQCQPcUzl4BcGrahF/YoAIZ38IuDYKWCwdQdbBf1fyKzxfV
+         dxX3gYS21X4dYW8BdZ7IfbOvq+fcWzWrdHdlYavb9wifopdu/aEj7QtYeKs0TBK2/0Cf
+         AjXtBfm3MOa1U+WymNwpEtqgEIC44LMl5zZ+TC1rxWZizxFATptZlYxW/Lhgu+3XlAbr
+         O1yoVwncEYDVkcdG1+tORSLWTnMchz99obuHQyoYgHgGz+dO+KV+BEVPkXxrl9Zr4dY3
+         sGlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbF5wTQRiD6RfdxJCpEF5uXxGpDCq/r4Q4b/C22+trXkask5+e6Tjo9A/Kv0+yRcDbaB6uSoGY7sF4dco=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt0d7+7VFUGloo5jPhgpKn1wNH4jreVZnw4EaSNI1W2+MVZElT
+	1mraFFi6EJIqyDYc8L2d0SdplPV6zNuS9gj1MftNkwm+vS3+QsofMZj82WH9Bw==
+X-Gm-Gg: ASbGncsfAVToVPFpPB8zxa+WGHZ2k68GMDLPWIJvPKCIg22dqzBir1++947CffOyhSY
+	HsrW/wOW1fqU58rRoozOszFUoaiHH9n2Ls6YE+7gDBbPsqmyxi0f6gnXt9dfe1rpnxINag8GZHl
+	Az25nszyYgDo8O57k7sny7z7pJmpBRqxattQV61FbSQiui4S016j6KpkS4sZha6Qmmyw0gQ3PVs
+	uuBTyChyf9G4yQaofd++i/2qy78KJ7+zZ083Q3x2BB8tb4sr3Foo3ynK6g9aW44zmWIsRJTPoAV
+	QowBPCr+SJFTsvv7fQOeNRXOdfJC14hcKlIorwIVqGGhP57soX6ups7ewbhgCK2glrWZm6UW5uV
+	Pk52rH5mB7eCIeAmQQaHba8VP5JS3QceNAvuLCIcgL/b4JK1956irr2+lNmuJuelzn+0p2hOb71
+	tNp/8jnA==
+X-Google-Smtp-Source: AGHT+IFJBieLDm3tTMToXFhKXh+uAouVJTSVKHVKyBTjE532h7vmr1XNtk9PJgAufzO3Psq1wwyqXw==
+X-Received: by 2002:a17:90b:5251:b0:31e:3f7f:d4b1 with SMTP id 98e67ed59e1d1-324ed139a7fmr392487a91.24.1755725822797;
+        Wed, 20 Aug 2025 14:37:02 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e267d53asm3256418a91.26.2025.08.20.14.37.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 14:37:02 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <efe1d5b3-4288-4f44-bcb3-99326a75a473@roeck-us.net>
+Date: Wed, 20 Aug 2025 14:37:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,71 +84,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] x86: Prevent KASAN false positive warnings in
- __show_regs()
-To: Tengda Wu <wutengda@huaweicloud.com>, x86@kernel.org
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, Alexander Potapenko
- <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <20250818130715.2904264-1-wutengda@huaweicloud.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 0/6] genirq/test: Platform/architecture fixes
+To: Brian Norris <briannorris@chromium.org>, David Gow <davidgow@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ kunit-dev@googlegroups.com
+References: <20250818192800.621408-1-briannorris@chromium.org>
+ <CABVgOSkUT_yYqBvk2-+OozKEBybj-07mcRAVECNYQiw+1P67eA@mail.gmail.com>
+ <aKYEVTRhzbXvwlbD@google.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250818130715.2904264-1-wutengda@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <aKYEVTRhzbXvwlbD@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/18/25 06:07, Tengda Wu wrote:
-> When process A accesses process B's `regs` from stack memory through
-> __show_regs(), the stack of process B keeps changing during runtime.
-> This causes false positives like "stack out-of-bounds" [1] or
-> "out-of-bounds" [2] warnings when reading `regs` contents.
+On 8/20/25 10:22, Brian Norris wrote:
+> On Wed, Aug 20, 2025 at 03:00:34PM +0800, David Gow wrote:
+>> Looks like __irq_alloc_descs() is returning -ENOMEM (as
+>> irq_find_free_area() is returning 200 w/ nr_irqs == 200, and
+>> CONFIG_SPARSE_IRQ=n).
+> 
+> Thanks for the insight. I bothered compiling my own qemu just so I can
+> run m68k this time, and I can reproduce.
+> 
+> I wonder if I should make everything (CONFIG_IRQ_KUNIT_TEST) depend on
+> CONFIG_SPARSE_IRQ, since it seems like arches like m68k can't enable
+> SPARSE_IRQ, and they can't allocate new (fake) IRQs without it. That'd
+> be a tweak to patch 4.
+> 
+> Or maybe just 'depends on !M68K', since architectures with higher
+> NR_IRQS headroom may still work even without SPARSE_IRQ.
+> 
+>> But all of the other architectures I found worked okay, so this is at
+>> least an improvement.
+> 
+> Thanks for the testing.
+> 
+I applied the series to my testing branch. I'll run a full test tonight and
+report results tomorrow.
 
-Could you explain a little bit more how you know that these are false
-positives?
+Guenter
+
 
