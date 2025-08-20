@@ -1,253 +1,147 @@
-Return-Path: <linux-kernel+bounces-778577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588CCB2E795
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:37:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A80B2E796
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B6531BC1744
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:37:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C614C1BC0C69
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B911E32C335;
-	Wed, 20 Aug 2025 21:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760F3322DDB;
+	Wed, 20 Aug 2025 21:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XnulLauV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GKrYbgKZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8225327794;
-	Wed, 20 Aug 2025 21:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795C225D536
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755725842; cv=none; b=l3SANtBtlK5BXoozq07cdm+8sxJCwFCIcH/71odxczSrThxaEvX0RhOmgEnH0FAbq4/qQEQn2yoWXohHA4YIJtoEMgqHVdXBMXlCXwuT7atBo16XLof5jt2wg7BhKZRd9OcQQ5XeiK/d85h4fY0Js6jyWQG/ermUuj/Rv0V5hm8=
+	t=1755725880; cv=none; b=H3iem+w5gsQo0amfeIGTNnzMHQUTpPvI+d0FlS43HCnqI3ijf1i/dsgA1fQZO35fNAdiq8ttte9XybrDdWSxwGRHmHo8EYzKKiACsFtsps1B3hk0KIuZTdpTlmcVNPSeGQwSyM+VPNddNGT2IJBE9ebpLtUGVY366+lmxkrU1FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755725842; c=relaxed/simple;
-	bh=PmWfyQbZFpSaw3VtnXamnXZPeGHaZoPACx7Yoed08nY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fleDPMyIrcLnkVgMV2U6sWbKKoofg4uHLlpCjeS+5TRQcA4SgXGoGvttVMYXSLiG+Xh1CBDTrQ6FKA6L78X78m9FGZ38PyH4AzriUosVs5OZA589HAS5Yvmqk24EJnhIebTFXokFg+AyZL4EmN5o5zrng6jFCYu1YxInVEpFEKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XnulLauV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D319C4CEE7;
-	Wed, 20 Aug 2025 21:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755725841;
-	bh=PmWfyQbZFpSaw3VtnXamnXZPeGHaZoPACx7Yoed08nY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XnulLauV2GsKPXoj77K1b/BsjNT+0RFlbOBX2cwYBeT5DzUctVyAUX0sSwaeRA9+E
-	 nxnHy9xXmCqVEqRh7zOR8BejoITaOB7eOLUcR6oamoEh4PzCUIMdmECJN7ho+LqCr8
-	 02qa4TP87eRoMtQPIlLPrsbOFhRBdIi0dQt/p1ummsPSAE1ooeU6FicZ9Q0lQosTd5
-	 OvATKJpAtcVGbOuVBAb4JlQT0gAdDRqMrdqR+i2PF0//ISx8U6rpFjdlJ2PAP5iyXs
-	 If4iJBpMiAZ8t4yR5xUQJqKR/udmlGA22SFT/Mfx+uritGF+1smDRYnUXYEVpVUXXQ
-	 xA3Qg18duS0xA==
-Date: Wed, 20 Aug 2025 18:37:18 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 12/12] perf annotate: Use a hashmap to save type data
-Message-ID: <aKZADpgsywwnXfnF@x1>
-References: <20250816031635.25318-1-namhyung@kernel.org>
- <20250816031635.25318-13-namhyung@kernel.org>
+	s=arc-20240116; t=1755725880; c=relaxed/simple;
+	bh=2XAVN17x/ljDZycLnUtSUk+s7J0HqvUnoLtn9DBOjgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DU5RuoGWrvfGwNvmtiTvFmJAboPitPHkottHBSDzdYCHxcK17jSUpieHaXjK0ac3K9mBAJa/89y9QmcB1+UzF7rSFMpZh4Gmn6znsLlHJyt1RDZvbgxjgd9cNSHjBs0sFCBFsSa9jOW84zyYCx4tu4jLAqU75mp0cB2iCYBSoV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GKrYbgKZ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755725879; x=1787261879;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2XAVN17x/ljDZycLnUtSUk+s7J0HqvUnoLtn9DBOjgQ=;
+  b=GKrYbgKZucjGObo0OK3buNd7Ss06fdnSg3QipslvTewzxlUf+rCsonKd
+   7HI2YwWPYxUjSDq5RcQoTZo/JoFiHfhj0c0ZIZoudFQHMjb0mGttnwHvG
+   7awfHC6v6nGgml+W1JpbmipSo03B/Nk52/GbuPfD2lPooFw8XP/pzAD/n
+   nFl7JSMaOQ22rqqdJdxdWGTEHMvjJYg4UVnqeven2oAHYVbdAxqxVXvKA
+   tECXoxfVbHwiPLEhAAQWrSDEu5nUPKC9vm3f5t94uL8ulQInsK2P/2VV4
+   DdnTvIU+DnNkSk79Y7WugHoybsQLvocl5uWSY5wozJ/DpUDIEL/CJvQnn
+   Q==;
+X-CSE-ConnectionGUID: YpqKpMZVS4mz8/l+ab10vw==
+X-CSE-MsgGUID: y5UAECWRRE6MeicRNLY3bg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57209093"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="57209093"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 14:37:58 -0700
+X-CSE-ConnectionGUID: oRGVq2H2SgGYpU4HyiZw5g==
+X-CSE-MsgGUID: WkiV1YR3Tu6C0/9WcgMaPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="167446445"
+Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.108.83]) ([10.125.108.83])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 14:37:58 -0700
+Message-ID: <e97983fd-b6ee-403a-87c7-53ff37468551@intel.com>
+Date: Wed, 20 Aug 2025 14:37:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250816031635.25318-13-namhyung@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86: Make x86@kernel.org a list and not a maintainer
+To: Steven Rostedt <rostedt@goodmis.org>, LKML
+ <linux-kernel@vger.kernel.org>, x86@kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20250820152054.165811ea@gandalf.local.home>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250820152054.165811ea@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 08:16:35PM -0700, Namhyung Kim wrote:
-> It can slowdown annotation browser if objdump is processing large DWARF
-> data.  Let's add a hashmap to save the data type info for each line.
+On 8/20/25 12:20, Steven Rostedt wrote:
 > 
-> Note that this is needed for TUI only because stdio only processes each
-> line once.  TUI will display the same line whenever it refreshes the
-> screen.
+> In the MAINTAINERS file, x86@kernel.org is listed as both:
 > 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/ui/browsers/annotate.c | 34 ++++++++++++++++++++++++++++++-
->  tools/perf/util/annotate.c        | 27 ++++++++++++++++++++++--
->  tools/perf/util/annotate.h        |  2 ++
->  3 files changed, 60 insertions(+), 3 deletions(-)
+>  M: x86@kernel.org
 > 
-> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-> index 9aa3c1ba22f52789..9677a3763a290a3d 100644
-> --- a/tools/perf/ui/browsers/annotate.c
-> +++ b/tools/perf/ui/browsers/annotate.c
-> @@ -6,6 +6,7 @@
->  #include "../../util/debug.h"
->  #include "../../util/debuginfo.h"
->  #include "../../util/dso.h"
-> +#include "../../util/hashmap.h"
->  #include "../../util/hist.h"
->  #include "../../util/sort.h"
->  #include "../../util/map.h"
-> @@ -15,6 +16,7 @@
->  #include "../../util/evlist.h"
->  #include "../../util/thread.h"
->  #include <inttypes.h>
-> +#include <linux/err.h>
->  #include <linux/kernel.h>
->  #include <linux/string.h>
->  #include <linux/zalloc.h>
-> @@ -36,6 +38,7 @@ struct annotate_browser {
->  	struct hist_entry	   *he;
->  	struct debuginfo	   *dbg;
->  	struct evsel		   *evsel;
-> +	struct hashmap		   *type_hash;
->  	bool			    searching_backwards;
->  	char			    search_bf[128];
->  };
-> @@ -43,6 +46,16 @@ struct annotate_browser {
->  /* A copy of target hist_entry for perf top. */
->  static struct hist_entry annotate_he;
->  
-> +static size_t type_hash(long key, void *ctx __maybe_unused)
-> +{
-> +	return key;
-> +}
-> +
-> +static bool type_equal(long key1, long key2, void *ctx __maybe_unused)
-> +{
-> +	return key1 == key2;
-> +}
-> +
->  static inline struct annotation *browser__annotation(struct ui_browser *browser)
->  {
->  	struct map_symbol *ms = browser->priv;
-> @@ -130,6 +143,9 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
->  	if (!browser->navkeypressed)
->  		ops.width += 1;
->  
-> +	if (!IS_ERR_OR_NULL(ab->type_hash))
-> +		apd.type_hash = ab->type_hash;
-> +
->  	annotation_line__write(al, notes, &ops, &apd);
->  
->  	if (ops.current_entry)
-> @@ -1051,6 +1067,10 @@ static int annotate_browser__run(struct annotate_browser *browser,
->  			annotate_opts.code_with_type ^= 1;
->  			if (browser->dbg == NULL)
->  				browser->dbg = dso__debuginfo(map__dso(ms->map));
-> +			if (browser->type_hash == NULL) {
-> +				browser->type_hash = hashmap__new(type_hash, type_equal,
-> +								  /*ctx=*/NULL);
-> +			}
->  			annotate_browser__show(&browser->b, title, help);
->  			annotate_browser__debuginfo_warning(browser);
->  			continue;
-> @@ -1145,8 +1165,10 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
->  
->  	ui_helpline__push("Press ESC to exit");
->  
-> -	if (annotate_opts.code_with_type)
-> +	if (annotate_opts.code_with_type) {
->  		browser.dbg = dso__debuginfo(dso);
-> +		browser.type_hash = hashmap__new(type_hash, type_equal, /*ctx=*/NULL);
-> +	}
->  
->  	browser.b.width = notes->src->widths.max_line_len;
->  	browser.b.nr_entries = notes->src->nr_entries;
-> @@ -1159,6 +1181,16 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
->  	ret = annotate_browser__run(&browser, evsel, hbt);
->  
->  	debuginfo__delete(browser.dbg);
-> +
-> +	if (!IS_ERR_OR_NULL(browser.type_hash)) {
-> +		struct hashmap_entry *cur;
-> +		size_t bkt;
-> +
-> +		hashmap__for_each_entry(browser.type_hash, cur, bkt)
-> +			free(cur->pvalue);
-
-			zfree(&cur->pvalue);
-
-> +		hashmap__free(browser.type_hash);
-> +	}
-> +
->  	if (not_annotated && !notes->src->tried_source)
->  		annotated_source__purge(notes->src);
->  
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index bea3457a00632fd7..77414e04d99bb4f2 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -1954,11 +1954,17 @@ int annotation_br_cntr_entry(char **str, int br_cntr_nr,
->  	return -ENOMEM;
->  }
->  
-> +struct type_hash_entry {
-> +	struct annotated_data_type *type;
-> +	int offset;
-> +};
-> +
->  static int disasm_line__snprint_type_info(struct disasm_line *dl,
->  					  char *buf, int len,
->  					  struct annotation_print_data *apd)
->  {
-> -	struct annotated_data_type *data_type;
-> +	struct annotated_data_type *data_type = NULL;
-> +	struct type_hash_entry *entry = NULL;
->  	char member[256];
->  	int offset = 0;
->  	int printed;
-> @@ -1968,7 +1974,24 @@ static int disasm_line__snprint_type_info(struct disasm_line *dl,
->  	if (!annotate_opts.code_with_type || apd->dbg == NULL)
->  		return 1;
->  
-> -	data_type = __hist_entry__get_data_type(apd->he, apd->arch, apd->dbg, dl, &offset);
-> +	if (apd->type_hash) {
-> +		hashmap__find(apd->type_hash, dl->al.offset, &entry);
-> +		if (entry != NULL) {
-> +			data_type = entry->type;
-> +			offset = entry->offset;
-> +		}
-> +	}
-> +	if (data_type == NULL)
-> +		data_type = __hist_entry__get_data_type(apd->he, apd->arch, apd->dbg, dl, &offset);
-
-
-add space?
-
-> +	if (apd->type_hash && entry == NULL) {
-> +		entry = malloc(sizeof(*entry));
-
-Is the 'entry' variable needed anywhere else? Not, so could be declared
-here to save a line at the start of the function. Or is it used in a
-later patch outside of this scope?
-
-> +		if (entry != NULL) {
-> +			entry->type = data_type;
-> +			entry->offset = offset;
-> +			hashmap__add(apd->type_hash, dl->al.offset, entry);
-> +		}
-> +	}
-> +
->  	if (!needs_type_info(data_type))
->  		return 1;
->  
-> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-> index 86e858f5bf173152..eaf6c8aa7f473959 100644
-> --- a/tools/perf/util/annotate.h
-> +++ b/tools/perf/util/annotate.h
-> @@ -204,6 +204,8 @@ struct annotation_print_data {
->  	struct evsel *evsel;
->  	struct arch *arch;
->  	struct debuginfo *dbg;
-> +	/* save data type info keyed by al->offset */
-> +	struct hashmap *type_hash;
->  	/* It'll be set in hist_entry__annotate_printf() */
->  	int addr_fmt_width;
->  };
-> -- 
-> 2.50.1
+> and
 > 
+>  L: x86@kernel.org
+> 
+> The MAINTAINERS document starts with:
+> 
+>         M: *Mail* patches to: FullName <address@domain>
+> 	[..]
+>         L: *Mailing list* that is relevant to this area
+
+Yeah, it's not a person, but it's also not a list that folks can
+subscribe to. So there really isn't a good fit for it. I've never heard
+of it causing any problems, so my inclination would be to just leave it
+as-is.
 
