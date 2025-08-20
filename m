@@ -1,376 +1,255 @@
-Return-Path: <linux-kernel+bounces-778020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D6AB2E05E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:12:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ECADB2E07B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20CA218839B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E074DA218BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256263469E6;
-	Wed, 20 Aug 2025 14:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F23341AB5;
+	Wed, 20 Aug 2025 14:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyMoKASM"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="Et+K0mol"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011067.outbound.protection.outlook.com [52.101.70.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FA33469F0;
-	Wed, 20 Aug 2025 14:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755701968; cv=none; b=Z2zvxH5LkGNYVkNZLI7/Q0EbC8hZIGtlADw5dwBAiyWz9PH4nTdCYdrJ68lRjZQeNlvhzkEwgtCFEVYRrKvjoslH/yhh5I1myBp3wtM1eEC0g0n6h4wcA5QqbkltNm9hDOaz9RTmCt5UJVOrzqCg0a0lgEreeSr81QljHerNA64=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755701968; c=relaxed/simple;
-	bh=75MeJfcBxXyVJ1uuKMywshUfE9yrQQgMLZJ8oZLt3BQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PEGbF4DHb5VwDuRc3ow/+bNJIgytxfUvl1xjTuMR4HqBkjS1VeJqA8uGc1LkVe4f6c9ymNpYk7lcs/iaMjc7SvZJzFOPeZmOPIeu3W+Md7iiqP4eauE/mabqnitm4J+h4x19kE/3/82xFznily0xN8X1pJU7/C362zZBADDksl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyMoKASM; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-324e3a0482dso8408a91.2;
-        Wed, 20 Aug 2025 07:59:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755701966; x=1756306766; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zf6FhaKwIZpsGRJ8iywvEpIPBHixoD4pqeGRPdOAMJ8=;
-        b=TyMoKASMRBfxNcurwrwDm25haq760f5l0PyWdnes0DKRY4FDs5pqzSX6xdIqlm8R+i
-         HSzZ2ehj9e4TRIvzrbeK1Ka4IolHqutxs7c0UPTntNO8+tnlABQ+yC+vYLAURxWSS8fG
-         DMRQfSfMpPi/dSuXh5ojQtfFiQFNOvqwsv/4nci+Lx5Qwt8WhcxvYBDHrW4I37aLDHv1
-         JwmH5iSYg3F2IhjpDxt7sKXtiu2xCn+c6K4uDzH65mAAgxLvjKB1MKilGOhNptKgmHBU
-         he1EMrwTBIpbhlKa4Tq0cO9xmXyNVsxGbPPlGK9aj8sZQEEP+2MjNYyVapaWfRJJqkjr
-         V3mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755701966; x=1756306766;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zf6FhaKwIZpsGRJ8iywvEpIPBHixoD4pqeGRPdOAMJ8=;
-        b=MVAmI3S3Gct+IU+yuSNpPL4yB3W7um/gJL9dhGOHuhUscrM5oiIsAsh8ivx3dJKDQy
-         1IH863G4W25AOeVzPi34Szu95UOUdlszZrn0aOb5XSk6BaSXz5dehJl4dWICDnUY2EoY
-         /zktSyWmPIdVG9NeGirfdD3bx+uQP9syN/8cR4lc/3jfveoYAJeXQlR/aWa/cupAWg/T
-         j8dvQdYr6migIlVvfAs2pIEDqnEZFAw2APjFp5vIKeID5rfHAOWVxK67kwUhqTiiy8kT
-         PVXTuPSXL9Qn0EW5OM7Y1/OEC7EK4qQfYqN7CsbDieCdxMP9D/deA5E1Jr6Lbbh7BKvY
-         1AtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAmvvBfDiSCDA4MDB7tqJBHc5MFxEnkrbuoObk27Gdc8nGyyNd4zV0TZDP5aFfVzy7VA+qrDnMohGY@vger.kernel.org, AJvYcCVEEJbOWB/GwqaqDWED9tfhJvgixu79UgjhaAOK/XI7VvCHKQ/bZHmY+Q/gFrJEBAKWCr6Cr01nsmq8iceU@vger.kernel.org, AJvYcCWTSWfcAzN/+gfHqksd/7hworLHGvxMUQ5oYt10BOziltT0KH+W8YReZVVkbAUuTFsyqyZO5PjLxmdB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyrM0V+qScdA3dOhAJDl9cxLP3Q1yRYfM5IgSXP6erqCw12ML/
-	kDqyp2zFiJgHirFb8Pjb3eRGwpUhKWBZae9U1+TdyxjKlXcsPc+ax1Ny
-X-Gm-Gg: ASbGncscv/Y78eqcVvs7ZKGjs72UIRbO5XkWvUx1MRKxsEpTuP/NccrujRtO0hr6Alg
-	GXeUu0ZdU0Be4JJSQBXxxD2Nl9MasM6bdDzBrZWQR6iUZZujlTps72rJsm9WnLGTqa0vACOpS6Z
-	NRjeUvxnQTmDDnJAKC4HnCIG6jvD0CZBh3xUjjNA2jlCkz35fS700I8isTYV5In7hKMi2V8gZGS
-	C+VOgl6vPihdfyH4luR3j8W566hkYaCLsgyFTRq0kiaru939yjITyWceshtCTsQoMoTsjijoSWO
-	R+TPKihTPGWtHitSK1y5x1N5XE20b5EfBHefDKC1W7jCn6BCeJmmpf2KRijdJbkn9Pf1gDlkjhq
-	Y4OOeHpnuRuFPjIt0Wn0W8tzRirZkrFYbz5pzUfpl/pzFFvu65sl/87Ocbg==
-X-Google-Smtp-Source: AGHT+IE6gwzcq0H8sG3ST968DMBdN4Sg7+1cZP/DbzhRz387D/2KP4ifE4ageujdnnFwaZrjf1+ZVw==
-X-Received: by 2002:a17:90b:2e0b:b0:31e:3bbc:e9e6 with SMTP id 98e67ed59e1d1-324e1423f77mr4524742a91.19.1755701966192;
-        Wed, 20 Aug 2025 07:59:26 -0700 (PDT)
-Received: from [127.0.0.1] (aulavirtual.utp.edu.pe. [190.12.77.24])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e257809esm2606455a91.24.2025.08.20.07.59.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 07:59:25 -0700 (PDT)
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Date: Wed, 20 Aug 2025 09:57:24 -0500
-Subject: [PATCH v2 3/3] clk: samsung: exynos990: Fix PLL mux regs, add
- DPU/CMUREF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B8A326D47;
+	Wed, 20 Aug 2025 14:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755701950; cv=fail; b=S0DQCFpbR9oehwHE2ddt/IjqwULYVKevhqXyPcifXITiGZacewUdTezzyzb9+EiSXZXSu1vLt3Ww+ND036JDEOeCUResOfkJTQ+4IdUT/CMgtmn1SvEQlWbzK6n1mPspAMv8f0Twp8VW3df7D650TiQwtKgmaSDT7C2uuTjPB+U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755701950; c=relaxed/simple;
+	bh=4OUg0i+gEfuT1CD5bK6msWViyZkscXfJ7FvF49HVdHQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BTq11HJvedzhVSzVSu1ygw7WsjnKi8WUA8qsxsK9xlOFwyhx455sJh9LMru7/BaJKuH7qs8xb4Pm4qRvA9I4CMwkQ6ogY3KoqXvU+bnhrHlWMRWi6AmL4Vl7QUiqSxUSuJlZjVyHnXdRP4EkoBFOn6GswcieJn19PkUhGx5wZJ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=Et+K0mol; arc=fail smtp.client-ip=52.101.70.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ciDzTrDlur7kYs/HZ8TUoKPhJnH4g2YTUw6qWkQzXupTe48TFozDzpTB+wQTqsBOJqeAfiUKZwACdudKvPagR25Lg+XMDEDn7nuprogCgaIiIhR3RXd7ARsDm0ItVTlIhbNzMc1wn74I0dIJJbNpxSAhh9ySV4p5X/hf5m4Zl22aaGEohrNWRMjwThvFkMrCNnJD6AqzvIEZ4razV4s/QNQgViAaSvlWd5qrHffTsYiVFnR1b+svkmtaVcHSEo5eC58TL0rfuomTKBUFZOEAL5p32rIp2VhEpVsnAaHLFQ/fiFK5qcQzEccL4fhN4o5pv2C/1Ftvg0vnSCt5WkBC1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VKut68sRpIkixU13gzv2e69CT+3qCNcpj9yHBcnhYUw=;
+ b=UU2NWzbPPiVgoOwUWHzKJYiJMdkAq7FY7sEq3Z4xDZCmkuDsJePEvTdpL4DD+D4f560TABMVMGh8853zErZBxH+MVlbMwbBRayAVz/wpIB5cNB4K+Amw+o6OrJRxMEKXzuRQhsbSzzHab10+jCOpEsgGNOImdvFAllplYmB5L7VoJnUXWvBnArhdNbBHHQCuCFk1yOWRDOsQjN4BxcPeieMaTLKVjPpUC4QzEXPgf0iDV4sqPa/jGzm2Mj4p2rW++XZoaqzMIL96Cz3tT2t0X1Byvqve0l49SZLabHo131FHMrwyS5cbXtYaJso/8tEYNLP3yzlf/TYRn/NFcgquxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VKut68sRpIkixU13gzv2e69CT+3qCNcpj9yHBcnhYUw=;
+ b=Et+K0molg8NcDj2rP2aGgDAdJIZBYN8YaGoswnX+BRYD9XfGVG47sMjB9/ncTthB6Y9FXA6TRywicXV6xCL61YjULJsZTjf7GCbm+IndVn5IDVB2S87kaOffVA9TgwPZ9FWat+mgYlik0m3XbZjj+NY2MeheJAFPHdis0Naf8KJvSbsCTB1MUXyy1zgcBP0jwn7pZK6vie5gOAXo1cJF/jojPBeVYIb+a9bKRGY6GcRJwroRT/5G4sWfYnvm/0PM3IW8jqwaGyJURQWSwesbHU/eyF8VHlp9X4sLTZ7UNKHBP34CJ0Dm+6U4OD9ghRup7aOZNHxG8tGL2tc+NW/Ohw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AS4PR10MB5646.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4f1::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.19; Wed, 20 Aug
+ 2025 14:59:05 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%5]) with mapi id 15.20.9031.024; Wed, 20 Aug 2025
+ 14:59:04 +0000
+Message-ID: <50f7f2fc-2c6d-4ae1-bbce-e132b1d9c9fe@siemens.com>
+Date: Wed, 20 Aug 2025 16:59:03 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] efi: stmm: Use EFI return code of setup_mm_hdr
+To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+ Masahisa Kojima <masahisa.kojima@linaro.org>, linux-efi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@linaro.org>,
+ Jens Wiklander <jens.wiklander@linaro.org>
+References: <cover.1755285161.git.jan.kiszka@siemens.com>
+ <c53346c183ce0c3d02322726ef5808f468441a42.1755285161.git.jan.kiszka@siemens.com>
+ <CAC_iWjLMFGp3wg=59PruJQb7heds6CUcy8FMZ_cdT0b2vC5a3g@mail.gmail.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <CAC_iWjLMFGp3wg=59PruJQb7heds6CUcy8FMZ_cdT0b2vC5a3g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0154.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a2::7) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-2-v2-3-bd45e196d4c4@gmail.com>
-References: <20250820-2-v2-0-bd45e196d4c4@gmail.com>
-In-Reply-To: <20250820-2-v2-0-bd45e196d4c4@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755701949; l=12553;
- i=wachiturroxd150@gmail.com; s=20250819; h=from:subject:message-id;
- bh=75MeJfcBxXyVJ1uuKMywshUfE9yrQQgMLZJ8oZLt3BQ=;
- b=GNLgLwHOzJTaYMyZSnDeXi/AthRaY4rYpuwrZ13rHY/uV4RT8GklCA1jTQwa6h7hAHSSYfw9s
- k5x6RpduTeED2h+ug+FpeOK+DDOpypArXEKVHz12F/rO9tvrTh5rD8x
-X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
- pk=qNvcL0Ehm3chrW9jFA2JaPVgubN5mHH//uriMxR/DlI=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS4PR10MB5646:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f35c037-f412-442d-c1ae-08dddffa1b1d
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?azh6cUNGcHpOeUsyMnZ0SE9JRzcvT04xbCtESVU3aDVoaEFJZ0I5dFdjaE1r?=
+ =?utf-8?B?d0NHMFJyd0xqRTc5bG1OUXZydlJ0Vm5kZ1hxaXI4UERpdE9GbHYwZ2NHOVBp?=
+ =?utf-8?B?NEgrU041Sitac3hETVRNZ1U0dlFhNmlkRVJlSUl2dXVhQ3hTNnpucXFCa3Mz?=
+ =?utf-8?B?a2ZhSkVPYXBXUXdHeTBHaTI4ajBDRUx0N2c4bmZXNnhtWDN1RlYvdDViQTdh?=
+ =?utf-8?B?c3UvS3hCNVM2eEsvRjVhMGUrV1g4c3BLRHVyQmNxZWp4blY0Z2kwNFV1U2tU?=
+ =?utf-8?B?SmdJWklYMTdYOEpyUVRPUTA2MXVrQ1BWditJVUhGOEh3VjlseWN6V1RzcFYv?=
+ =?utf-8?B?QnZzNy9wOWc3dDdLZERpY2Qxdm02UG5tcER0dGFBNEM1OW1SVnE3QmVhdVVy?=
+ =?utf-8?B?SzZFUkdOYUtQUFVOemlYWjBMazFmSmZHR01IVTBKbTVrdnRzQW9EV25vckVm?=
+ =?utf-8?B?TU44LzlDZDhnSndiYkhCcC84TksvQTQ2RGlUSTBJcUpSNGJLQm43WkhRQkl5?=
+ =?utf-8?B?T1lMeFBkUGgrdmwzMHVqL09YMk1POWdhUzFoWXJUbVJURmdZbXpzMDhVVFA5?=
+ =?utf-8?B?dklLZmxRU3c2dVVIa01pUmREM2lydDQ1ZHNrMkp3Rk43ZEJGQ1c4cmNaWno0?=
+ =?utf-8?B?VThtSFZqUkdaT1JPVUhLTjliT01OTXlNNHF3WkE1bzhGaW0renRaTjc3MFdS?=
+ =?utf-8?B?aEgrVHNnQU5NY2ZEZWpJc1EvUDZoRUJ5bkhKRVkwTk5tNGtjOW52eitCNFBE?=
+ =?utf-8?B?eTNCV1oydCtWZkZlL0xQY2pSZ0NTbXR3VHVtR2k3SDFGTFcyemFNcExPVG5I?=
+ =?utf-8?B?ak13Qm1GMlNQTkNqMW1HMW5JUzYxbzZiU3pVTHJrMVlFWmdBTEkrRGM2Tnpp?=
+ =?utf-8?B?UzNQMHFXU1pzVmRDUDRIcVBtQjZYcFJLWEFvczc4bFc2TG45RmNQRHd4WXl4?=
+ =?utf-8?B?QXlSY3pBcGhxeTlEUWZoYjRZNHZkVmx5dVlZN2o1N2ptR3FyLzdiME45U0FG?=
+ =?utf-8?B?S0taSHNFZE5vVmRGbTNEdWdjM0xxZ0wwRHUvblNabEtudFNjRmRqSkRrN0V2?=
+ =?utf-8?B?LzFlbXlWK2crUjV1ellLbUVxVFlOMHlwdmNqUUwyQk9rWjg5SVNQZkU3Slls?=
+ =?utf-8?B?SHFNb3ZYR01YWFhwVSs2WGN6RnkzRGFDenBheWNmRkdjZm9wYXRrcEFQZ2VE?=
+ =?utf-8?B?TVBLdmRxYTFFM1ZyT1VYUmlkMExUTjNlQ2k0bjlrQUdoU2lxdkh4MmVVZmpy?=
+ =?utf-8?B?L3ZqaDdvMVhvRGpJKzZxK3pIMXZJKzBsTG44TW5hR1l3NmRUUHJLZ0dESWVQ?=
+ =?utf-8?B?MW53ejBVQ212ZW9PREFzbHhETjdqMG1IM1JJSEJRUHc4SFNGODV5Mmhld1Jt?=
+ =?utf-8?B?OGxBZG1MSXlmbTkwZGhWKzlPYjBJQ1c5Y1h0MW1hdmNmU1FqS3JxMnUzeTE5?=
+ =?utf-8?B?VjdsMXVIOW5PSngrZ0JHcmdON1E5a1JVYStHRjgvVjYzOUFPMUZVZ0FadU93?=
+ =?utf-8?B?MWVJczJYKzAvWTBRekVEZEY0dTdlcFF4alI4b3VXZ0hVMEpHcWc2NUMzK1JG?=
+ =?utf-8?B?cUxoSUl4em5WWC95NWMrRnY1azBwdG5IeG5WalN5dDNEb01EUUZGQm9EVkw0?=
+ =?utf-8?B?NTgwdDRBdDJKblYyNDhQTVlteHdvd2gyMlJlK1d2Q0lCczRQdU4ySVp1elkv?=
+ =?utf-8?B?NlBESEY0YXFQZ0c3WklMbUlBWG5LSG1tMlVGaWVpN3VneFJNZ2Y2R0hyK1RZ?=
+ =?utf-8?B?NFFqbk9Nc3lkbVdyK04rSHdwOHM5dU5KNjFUdGhHS3F4VDZzQ2xHYnNhaDZi?=
+ =?utf-8?B?VWJDVHN2NGhDN1ZTSGI1bUovdW9zMjBsQ0xEZDF5RW9wZzdmTm9OdkdENElp?=
+ =?utf-8?B?R2FpZnlyNGh3aUcrd0lzM25sNTAyMmxsZXBQL01jSWFKcmVpTnRsNTllMERC?=
+ =?utf-8?Q?yllWWjRJk64=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RDYvK0J5cHdTZVd5d0NDbjgyLzhHUzlsL0o1czlLUGppNDMxcVFwRDhoYWFq?=
+ =?utf-8?B?M2RIcW45dU1maEhKM2xPNDNHSlVSWFYyTVBVWklvc0tIZERacCtMVCtTeTZh?=
+ =?utf-8?B?ZjFVVTFuN0dKS1hWdUNvZVZkS3hvc3FpbFp6bVh0ajhON0hLQ1ZBZUdzc0xs?=
+ =?utf-8?B?SkxRb2YzVzRnZUx3ZFNlalJyNzNvTEN2Zk1vdHFWdUdvdnY2d2FEVUwwWG1X?=
+ =?utf-8?B?bTVCYWp3OWdUSFBic0FLTXg3OGQ4V2FLSExXV0VuZWcxeXVLZENpMTJqdXpF?=
+ =?utf-8?B?TklMd1RsU0Z4dmd3RGdEd29Ld0dJd0xrNTNMVVNmeGxadWV2Q1NpbmUwVFJp?=
+ =?utf-8?B?cXBIRTI4bXRwSEQ4U1NpTnhTdmQ2bE5LT0lIZVhEQTBIOFEzaE9MY3ZKRURI?=
+ =?utf-8?B?Wk5JMVdFVkl1SVViSzNCOWtWT1RZMWR4S0hibTFPY3J4MTVNWGpUa2t6d0lk?=
+ =?utf-8?B?V0tmaEZmaFpjYURZZzhjUm1HWEEzMDJnSkpKQ1JzeXowZm8rT3pQQzZiR05q?=
+ =?utf-8?B?czFSTEppOHJZSEJENkttRDNRMjkwekFXZmM1R1VTNHBVN1BPTHM3WGtPOWx5?=
+ =?utf-8?B?MmJCOStzMGlRaFVnVWc3TVMyL29FUEJnMkhtcG8vNHpKemo4ODVOdWhmUGFU?=
+ =?utf-8?B?WS9IZzd6LzJ0RjVlY0ZGbC9mcmpoYk1UeU15NmpoRHQ5ZUp3enQxTGNEbGdm?=
+ =?utf-8?B?amJQWFlqSktrUGlvaWtsdWNQanlYTDkzUWxnMTdpSHdkRE5keG5SbEdvRXVY?=
+ =?utf-8?B?dnBHMVI3YjZvTGtGNk8vckluUll1R0taZGYwOTU3ODVwR2pIQm1oSDIwaWs1?=
+ =?utf-8?B?TmxLKzFnY1RjRlFZKyszV3MyV1FZY2dBclp2ZDBsWU1BUkxmbHI2LzBrb0ZG?=
+ =?utf-8?B?TVNrUi9oQ2k3Wk15SGJSNXlmK25zRTc5bzJIY2hpdW9yT2Y4T3pQR1RJWU5T?=
+ =?utf-8?B?dlRPTkRpQnkxNVJmRXl5QUtPemlRQXVSM1NJY044Uk01OC9VNjZMMThrVXpk?=
+ =?utf-8?B?b3c0RVlRMTdYRlR6VVJvOVhYaExLOTNZSkhYc2FQWC9sZ29XYU9kYTJJd0JZ?=
+ =?utf-8?B?clRvdFBHMTZSQWFOREhsYWNUREUrSGowSDZSak1sL0dnZ3RKWk1jamdqU0RU?=
+ =?utf-8?B?YitUb0JERUZWbUZBWXBpbjE2OXhyWEFnNFVaTVl1elB6OHZlSTZtMGRGTHJh?=
+ =?utf-8?B?b21jUXpnV3pNWFNoMUhYVG11VUJVMk1JQ3JHTnlRQXNqdTJiK2xxTksvNUdW?=
+ =?utf-8?B?MitRSWNibFRSaXRnWnJPQVBpRU8yNUdteUxRSllNZ2l6RmtKUk1ib0xFSXFE?=
+ =?utf-8?B?REZNRU51dUVhKzgvMS8vb3gybTQxZnVsaWZXSVE5QlorYW9YSjRQeVpoM2lw?=
+ =?utf-8?B?cElyeGxhYkRNc3Zja096MGM5NU5VOEFpaS9DYkNnVjV5NGRjTDJWcEhzL3Vy?=
+ =?utf-8?B?YzNhNGhmUEJxSDUwVUZyangrTFZ6dlhaNjVtWG9SNmZKS2o3NXRKOCtFWFB0?=
+ =?utf-8?B?bVdDU2hyeVU0dEN0UEJLbG9aN2g2TUZFc0FRaHNOeUpGS0V4RjY2S01HdXNy?=
+ =?utf-8?B?RkxSSExpcnFrSno2SlRMdUlkRjc3aXlpUkU5UnJkYlNZcFNkd3J6NzVEYnpS?=
+ =?utf-8?B?ZG9zcURWWnJxczlZZjB1NllIOGx5RzJ3MndBMFpDR2drN3puNEZTbjR0WnUz?=
+ =?utf-8?B?eS96MFV2cFJxMmxtWGtLeTBrcmVmWG9QZWtYVXB2UHB4QWNwK2VYWHFRZ3FR?=
+ =?utf-8?B?K3E3U0wvbHB1TmdqZ3A1bjFpcngxMUhkV3R1RGpqYmJsemlPb0p4UFJzTnN6?=
+ =?utf-8?B?R3ltVTNVdTd3Rm1XQ000c1BBdjludFVGUUo2QmsrSEZFVUxUQWdYelYvcDla?=
+ =?utf-8?B?c05uV2ZBTjZCU3YyYmJqUkpVTEZiQ3FWTVNuUTZRcWFMVm1RZHFtc0tHeDd3?=
+ =?utf-8?B?N0FVczl5UlpZNlBYKzVsMXdqQWV5dWIrdjVYMTI5MXRJdE5Ld25ReUNvZkp0?=
+ =?utf-8?B?T0tzV2NVM2dUODRraTluUG41am9RS2xnRTJSV0N1enBseDVtZkt5YlkrUndz?=
+ =?utf-8?B?ZkcwOFJ3U2ZQTjdMVlVhUytVa205N2h3a2hkSDQ0dGVRcGl4K0V1VmpVTGlt?=
+ =?utf-8?B?djhUQkpWTUVyeXdZQ3NxWVhLaUVzYnBncHd4b2IvTFE1Uzh2bm4zbTh5VjFt?=
+ =?utf-8?B?eGc9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f35c037-f412-442d-c1ae-08dddffa1b1d
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 14:59:04.7956
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CBVHamX1xQ/JedMXJ6UH0//4t7jUOf5schEpBwGBnhdZJ32HuRli7/sN/57BVDETO0Rk4MapzFI8BlifhmxiHw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5646
 
-Switch PLL muxes to PLL_CON0 to correct parent selection and
-clock rates. Add DPU_BUS and CMUREF mux/div and their register
-hooks and parents.
+On 20.08.25 09:10, Ilias Apalodimas wrote:
+> Hi Jan
+> 
+> On Fri, 15 Aug 2025 at 22:12, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>>
+>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>
+>> If a too large payload_size is passed to setup_mm_hdr, callers will
+>> returned EFI_OUT_OF_RESOURCES rather than EFI_INVALID_PARAMETER that is
+>> passed down via ret. No need to fold errors here.
+> 
+> Apart from not folding the error here, the current code kind of
+> violates the EFI spec.
+> If you look at GetVariable, GetNextVariable, SetVariable, and
+> QueryVariableInfo only SetVariable is supposed to return
+> EFI_OUT_OF_RESOURCES, if there's no storage space left.
 
-Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
----
- drivers/clk/samsung/clk-exynos990.c | 121 ++++++++++++++++++++++++++++++++++++++++++++++----------------------------
- 1 file changed, 75 insertions(+), 46 deletions(-)
+And with storage space is likely meant the persistent part of it. ENOMEM
+is something different.
 
-diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
-index a55991ebb77bcb2988071fc156dbe5c9b100215f..c5f1dbaf45b6a718994c1dfa9f204cfccd74cb16 100644
---- a/drivers/clk/samsung/clk-exynos990.c
-+++ b/drivers/clk/samsung/clk-exynos990.c
-@@ -45,6 +45,7 @@
- #define PLL_CON3_PLL_SHARED3				0x024c
- #define PLL_CON0_PLL_SHARED4				0x0280
- #define PLL_CON3_PLL_SHARED4				0x028c
-+#define CLK_CON_MUX_CLKCMU_DPU_BUS			0x1000
- #define CLK_CON_MUX_MUX_CLKCMU_APM_BUS			0x1004
- #define CLK_CON_MUX_MUX_CLKCMU_AUD_CPU			0x1008
- #define CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS			0x100c
-@@ -103,6 +104,8 @@
- #define CLK_CON_MUX_MUX_CLKCMU_SSP_BUS			0x10e0
- #define CLK_CON_MUX_MUX_CLKCMU_TNR_BUS			0x10e4
- #define CLK_CON_MUX_MUX_CLKCMU_VRA_BUS			0x10e8
-+#define CLK_CON_MUX_MUX_CLK_CMU_CMUREF			0x10f0
-+#define CLK_CON_MUX_MUX_CMU_CMUREF			0x10f4
- #define CLK_CON_DIV_CLKCMU_APM_BUS			0x1800
- #define CLK_CON_DIV_CLKCMU_AUD_CPU			0x1804
- #define CLK_CON_DIV_CLKCMU_BUS0_BUS			0x1808
-@@ -162,6 +165,7 @@
- #define CLK_CON_DIV_CLKCMU_VRA_BUS			0x18e0
- #define CLK_CON_DIV_DIV_CLKCMU_DPU			0x18e8
- #define CLK_CON_DIV_DIV_CLKCMU_DPU_ALT			0x18ec
-+#define CLK_CON_DIV_DIV_CLK_CMU_CMUREF			0x18f0
- #define CLK_CON_DIV_PLL_SHARED0_DIV2			0x18f4
- #define CLK_CON_DIV_PLL_SHARED0_DIV3			0x18f8
- #define CLK_CON_DIV_PLL_SHARED0_DIV4			0x18fc
-@@ -239,13 +243,21 @@ static const unsigned long top_clk_regs[] __initconst = {
- 	PLL_LOCKTIME_PLL_SHARED2,
- 	PLL_LOCKTIME_PLL_SHARED3,
- 	PLL_LOCKTIME_PLL_SHARED4,
-+	PLL_CON0_PLL_G3D,
- 	PLL_CON3_PLL_G3D,
-+	PLL_CON0_PLL_MMC,
- 	PLL_CON3_PLL_MMC,
-+	PLL_CON0_PLL_SHARED0,
- 	PLL_CON3_PLL_SHARED0,
-+	PLL_CON0_PLL_SHARED1,
- 	PLL_CON3_PLL_SHARED1,
-+	PLL_CON0_PLL_SHARED2,
- 	PLL_CON3_PLL_SHARED2,
-+	PLL_CON0_PLL_SHARED3,
- 	PLL_CON3_PLL_SHARED3,
-+	PLL_CON0_PLL_SHARED4,
- 	PLL_CON3_PLL_SHARED4,
-+	CLK_CON_MUX_CLKCMU_DPU_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_APM_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_AUD_CPU,
- 	CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS,
-@@ -304,6 +316,8 @@ static const unsigned long top_clk_regs[] __initconst = {
- 	CLK_CON_MUX_MUX_CLKCMU_SSP_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_TNR_BUS,
- 	CLK_CON_MUX_MUX_CLKCMU_VRA_BUS,
-+	CLK_CON_MUX_MUX_CLK_CMU_CMUREF,
-+	CLK_CON_MUX_MUX_CMU_CMUREF,
- 	CLK_CON_DIV_CLKCMU_APM_BUS,
- 	CLK_CON_DIV_CLKCMU_AUD_CPU,
- 	CLK_CON_DIV_CLKCMU_BUS0_BUS,
-@@ -363,6 +377,7 @@ static const unsigned long top_clk_regs[] __initconst = {
- 	CLK_CON_DIV_CLKCMU_VRA_BUS,
- 	CLK_CON_DIV_DIV_CLKCMU_DPU,
- 	CLK_CON_DIV_DIV_CLKCMU_DPU_ALT,
-+	CLK_CON_DIV_DIV_CLK_CMU_CMUREF,
- 	CLK_CON_DIV_PLL_SHARED0_DIV2,
- 	CLK_CON_DIV_PLL_SHARED0_DIV3,
- 	CLK_CON_DIV_PLL_SHARED0_DIV4,
-@@ -434,6 +449,10 @@ static const unsigned long top_clk_regs[] __initconst = {
- };
- 
- static const struct samsung_pll_clock top_pll_clks[] __initconst = {
-+	PLL(pll_0718x, CLK_FOUT_G3D_PLL, "fout_g3d_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_G3D, PLL_CON3_PLL_G3D, NULL),
-+	PLL(pll_0732x, CLK_FOUT_MMC_PLL, "fout_mmc_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_MMC, PLL_CON3_PLL_MMC, NULL),
- 	PLL(pll_0717x, CLK_FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
- 	    PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0, NULL),
- 	PLL(pll_0717x, CLK_FOUT_SHARED1_PLL, "fout_shared1_pll", "oscclk",
-@@ -444,20 +463,18 @@ static const struct samsung_pll_clock top_pll_clks[] __initconst = {
- 	    PLL_LOCKTIME_PLL_SHARED3, PLL_CON3_PLL_SHARED3, NULL),
- 	PLL(pll_0717x, CLK_FOUT_SHARED4_PLL, "fout_shared4_pll", "oscclk",
- 	    PLL_LOCKTIME_PLL_SHARED4, PLL_CON3_PLL_SHARED4, NULL),
--	PLL(pll_0732x, CLK_FOUT_MMC_PLL, "fout_mmc_pll", "oscclk",
--	    PLL_LOCKTIME_PLL_MMC, PLL_CON3_PLL_MMC, NULL),
--	PLL(pll_0718x, CLK_FOUT_G3D_PLL, "fout_g3d_pll", "oscclk",
--	    PLL_LOCKTIME_PLL_G3D, PLL_CON3_PLL_G3D, NULL),
- };
- 
- /* Parent clock list for CMU_TOP muxes */
-+PNAME(mout_pll_g3d_p)			= { "oscclk", "fout_g3d_pll" };
-+PNAME(mout_pll_mmc_p)			= { "oscclk", "fout_mmc_pll" };
- PNAME(mout_pll_shared0_p)		= { "oscclk", "fout_shared0_pll" };
- PNAME(mout_pll_shared1_p)		= { "oscclk", "fout_shared1_pll" };
- PNAME(mout_pll_shared2_p)		= { "oscclk", "fout_shared2_pll" };
- PNAME(mout_pll_shared3_p)		= { "oscclk", "fout_shared3_pll" };
- PNAME(mout_pll_shared4_p)		= { "oscclk", "fout_shared4_pll" };
--PNAME(mout_pll_mmc_p)			= { "oscclk", "fout_mmc_pll" };
--PNAME(mout_pll_g3d_p)			= { "oscclk", "fout_g3d_pll" };
-+PNAME(mout_cmu_dpu_bus_p)		= { "dout_cmu_dpu",
-+					    "dout_cmu_dpu_alt" };
- PNAME(mout_cmu_apm_bus_p)		= { "dout_cmu_shared0_div2",
- 					    "dout_cmu_shared2_div2" };
- PNAME(mout_cmu_aud_cpu_p)		= { "dout_cmu_shared0_div2",
-@@ -507,7 +524,7 @@ PNAME(mout_cmu_cpucl0_switch_p)		= { "fout_shared4_pll",
- 					    "dout_cmu_shared0_div2",
- 					    "fout_shared2_pll",
- 					    "dout_cmu_shared0_div4" };
--PNAME(mout_cmu_cpucl1_switch_p)	= { "fout_shared4_pll",
-+PNAME(mout_cmu_cpucl1_switch_p)		= { "fout_shared4_pll",
- 					    "dout_cmu_shared0_div2",
- 					    "fout_shared2_pll",
- 					    "dout_cmu_shared0_div4" };
-@@ -577,7 +594,7 @@ PNAME(mout_cmu_hsi1_bus_p)		= { "dout_cmu_shared0_div3",
- 					    "dout_cmu_shared4_div3",
- 					    "dout_cmu_shared2_div2",
- 					    "fout_mmc_pll", "oscclk", "oscclk" };
--PNAME(mout_cmu_hsi1_mmc_card_p)	= { "oscclk", "fout_shared2_pll",
-+PNAME(mout_cmu_hsi1_mmc_card_p)		= { "oscclk", "fout_shared2_pll",
- 					    "fout_mmc_pll",
- 					    "dout_cmu_shared0_div4" };
- PNAME(mout_cmu_hsi1_pcie_p)		= { "oscclk", "fout_shared2_pll" };
-@@ -672,6 +689,12 @@ PNAME(mout_cmu_vra_bus_p)		= { "dout_cmu_shared0_div3",
- 					    "dout_cmu_shared4_div2",
- 					    "dout_cmu_shared0_div4",
- 					    "dout_cmu_shared4_div3" };
-+PNAME(mout_cmu_cmuref_p)		= { "oscclk",
-+					    "dout_cmu_clk_cmuref" };
-+PNAME(mout_cmu_clk_cmuref_p)		= { "dout_cmu_shared0_div4",
-+					    "dout_cmu_shared1_div4",
-+					    "dout_cmu_shared2_div2",
-+					    "oscclk" };
- 
- /*
-  * Register name to clock name mangling strategy used in this file
-@@ -688,20 +711,22 @@ PNAME(mout_cmu_vra_bus_p)		= { "dout_cmu_shared0_div3",
-  */
- 
- static const struct samsung_mux_clock top_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_PLL_MMC, "mout_pll_mmc", mout_pll_mmc_p,
-+	    PLL_CON0_PLL_MMC, 4, 1),
-+	MUX(CLK_MOUT_PLL_G3D, "mout_pll_g3d", mout_pll_g3d_p,
-+	    PLL_CON0_PLL_G3D, 4, 1),
- 	MUX(CLK_MOUT_PLL_SHARED0, "mout_pll_shared0", mout_pll_shared0_p,
--	    PLL_CON3_PLL_SHARED0, 4, 1),
-+	    PLL_CON0_PLL_SHARED0, 4, 1),
- 	MUX(CLK_MOUT_PLL_SHARED1, "mout_pll_shared1", mout_pll_shared1_p,
--	    PLL_CON3_PLL_SHARED1, 4, 1),
-+	    PLL_CON0_PLL_SHARED1, 4, 1),
- 	MUX(CLK_MOUT_PLL_SHARED2, "mout_pll_shared2", mout_pll_shared2_p,
--	    PLL_CON3_PLL_SHARED2, 4, 1),
-+	    PLL_CON0_PLL_SHARED2, 4, 1),
- 	MUX(CLK_MOUT_PLL_SHARED3, "mout_pll_shared3", mout_pll_shared3_p,
--	    PLL_CON3_PLL_SHARED3, 4, 1),
-+	    PLL_CON0_PLL_SHARED3, 4, 1),
- 	MUX(CLK_MOUT_PLL_SHARED4, "mout_pll_shared4", mout_pll_shared4_p,
- 	    PLL_CON0_PLL_SHARED4, 4, 1),
--	MUX(CLK_MOUT_PLL_MMC, "mout_pll_mmc", mout_pll_mmc_p,
--	    PLL_CON0_PLL_MMC, 4, 1),
--	MUX(CLK_MOUT_PLL_G3D, "mout_pll_g3d", mout_pll_g3d_p,
--	    PLL_CON0_PLL_G3D, 4, 1),
-+	MUX(CLK_MOUT_CMU_DPU_BUS, "mout_cmu_dpu_bus",
-+	    mout_cmu_dpu_bus_p, CLK_CON_MUX_CLKCMU_DPU_BUS, 0, 1),
- 	MUX(CLK_MOUT_CMU_APM_BUS, "mout_cmu_apm_bus",
- 	    mout_cmu_apm_bus_p, CLK_CON_MUX_MUX_CLKCMU_APM_BUS, 0, 1),
- 	MUX(CLK_MOUT_CMU_AUD_CPU, "mout_cmu_aud_cpu",
-@@ -830,37 +855,13 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
- 	    mout_cmu_tnr_bus_p, CLK_CON_MUX_MUX_CLKCMU_TNR_BUS, 0, 3),
- 	MUX(CLK_MOUT_CMU_VRA_BUS, "mout_cmu_vra_bus",
- 	    mout_cmu_vra_bus_p, CLK_CON_MUX_MUX_CLKCMU_VRA_BUS, 0, 2),
-+	MUX(CLK_MOUT_CMU_CMUREF, "mout_cmu_cmuref",
-+	    mout_cmu_cmuref_p, CLK_CON_MUX_MUX_CMU_CMUREF, 0, 1),
-+	MUX(CLK_MOUT_CMU_CLK_CMUREF, "mout_cmu_clk_cmuref",
-+	    mout_cmu_clk_cmuref_p, CLK_CON_MUX_MUX_CLK_CMU_CMUREF, 0, 2),
- };
- 
- static const struct samsung_div_clock top_div_clks[] __initconst = {
--	/* SHARED0 region*/
--	DIV(CLK_DOUT_CMU_SHARED0_DIV2, "dout_cmu_shared0_div2", "mout_pll_shared0",
--	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
--	DIV(CLK_DOUT_CMU_SHARED0_DIV3, "dout_cmu_shared0_div3", "mout_pll_shared0",
--	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
--	DIV(CLK_DOUT_CMU_SHARED0_DIV4, "dout_cmu_shared0_div4", "dout_cmu_shared0_div2",
--	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
--
--	/* SHARED1 region*/
--	DIV(CLK_DOUT_CMU_SHARED1_DIV2, "dout_cmu_shared1_div2", "mout_pll_shared1",
--	    CLK_CON_DIV_PLL_SHARED1_DIV2, 0, 1),
--	DIV(CLK_DOUT_CMU_SHARED1_DIV3, "dout_cmu_shared1_div3", "mout_pll_shared1",
--	    CLK_CON_DIV_PLL_SHARED1_DIV3, 0, 2),
--	DIV(CLK_DOUT_CMU_SHARED1_DIV4, "dout_cmu_shared1_div4", "dout_cmu_shared1_div2",
--	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
--
--	/* SHARED2 region */
--	DIV(CLK_DOUT_CMU_SHARED2_DIV2, "dout_cmu_shared2_div2", "mout_pll_shared2",
--	    CLK_CON_DIV_PLL_SHARED2_DIV2, 0, 1),
--
--	/* SHARED4 region*/
--	DIV(CLK_DOUT_CMU_SHARED4_DIV2, "dout_cmu_shared4_div2", "mout_pll_shared4",
--	    CLK_CON_DIV_PLL_SHARED4_DIV2, 0, 1),
--	DIV(CLK_DOUT_CMU_SHARED4_DIV3, "dout_cmu_shared4_div3", "mout_pll_shared4",
--	    CLK_CON_DIV_PLL_SHARED4_DIV3, 0, 2),
--	DIV(CLK_DOUT_CMU_SHARED4_DIV4, "dout_cmu_shared4_div4", "mout_pll_shared4",
--	    CLK_CON_DIV_PLL_SHARED4_DIV4, 0, 1),
--
- 	DIV(CLK_DOUT_CMU_APM_BUS, "dout_cmu_apm_bus", "gout_cmu_apm_bus",
- 	    CLK_CON_DIV_CLKCMU_APM_BUS, 0, 2),
- 	DIV(CLK_DOUT_CMU_AUD_CPU, "dout_cmu_aud_cpu", "gout_cmu_aud_cpu",
-@@ -887,7 +888,7 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	    CLK_CON_DIV_CLKCMU_CMU_BOOST, 0, 2),
- 	DIV(CLK_DOUT_CMU_CORE_BUS, "dout_cmu_core_bus", "gout_cmu_core_bus",
- 	    CLK_CON_DIV_CLKCMU_CORE_BUS, 0, 4),
--	DIV(CLK_DOUT_CMU_CPUCL0_DBG_BUS, "dout_cmu_cpucl0_debug",
-+	DIV(CLK_DOUT_CMU_CPUCL0_DBG_BUS, "dout_cmu_cpucl0_dbg_bus",
- 	    "gout_cmu_cpucl0_dbg_bus", CLK_CON_DIV_CLKCMU_CPUCL0_DBG_BUS,
- 	    0, 4),
- 	DIV(CLK_DOUT_CMU_CPUCL0_SWITCH, "dout_cmu_cpucl0_switch",
-@@ -972,8 +973,36 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	    CLK_CON_DIV_CLKCMU_TNR_BUS, 0, 4),
- 	DIV(CLK_DOUT_CMU_VRA_BUS, "dout_cmu_vra_bus", "gout_cmu_vra_bus",
- 	    CLK_CON_DIV_CLKCMU_VRA_BUS, 0, 4),
--	DIV(CLK_DOUT_CMU_DPU, "dout_cmu_clkcmu_dpu", "gout_cmu_dpu",
-+	DIV(CLK_DOUT_CMU_DPU, "dout_cmu_dpu", "gout_cmu_dpu",
- 	    CLK_CON_DIV_DIV_CLKCMU_DPU, 0, 3),
-+	DIV(CLK_DOUT_CMU_DPU_ALT, "dout_cmu_dpu_alt", "gout_cmu_dpu_bus",
-+	    CLK_CON_DIV_DIV_CLKCMU_DPU_ALT, 0, 4),
-+	DIV(CLK_DOUT_CMU_CLK_CMUREF, "dout_cmu_clk_cmuref", "mout_cmu_clk_cmuref",
-+	    CLK_CON_DIV_DIV_CLK_CMU_CMUREF, 0, 2),
-+	/* SHARED0 region*/
-+	DIV(CLK_DOUT_CMU_SHARED0_DIV2, "dout_cmu_shared0_div2", "mout_pll_shared0",
-+	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
-+	DIV(CLK_DOUT_CMU_SHARED0_DIV3, "dout_cmu_shared0_div3", "mout_pll_shared0",
-+	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
-+	DIV(CLK_DOUT_CMU_SHARED0_DIV4, "dout_cmu_shared0_div4", "dout_cmu_shared0_div2",
-+	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
-+	/* SHARED1 region*/
-+	DIV(CLK_DOUT_CMU_SHARED1_DIV2, "dout_cmu_shared1_div2", "mout_pll_shared1",
-+	    CLK_CON_DIV_PLL_SHARED1_DIV2, 0, 1),
-+	DIV(CLK_DOUT_CMU_SHARED1_DIV3, "dout_cmu_shared1_div3", "mout_pll_shared1",
-+	    CLK_CON_DIV_PLL_SHARED1_DIV3, 0, 2),
-+	DIV(CLK_DOUT_CMU_SHARED1_DIV4, "dout_cmu_shared1_div4", "dout_cmu_shared1_div2",
-+	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
-+	/* SHARED2 region */
-+	DIV(CLK_DOUT_CMU_SHARED2_DIV2, "dout_cmu_shared2_div2", "mout_pll_shared2",
-+	    CLK_CON_DIV_PLL_SHARED2_DIV2, 0, 1),
-+	/* SHARED4 region*/
-+	DIV(CLK_DOUT_CMU_SHARED4_DIV2, "dout_cmu_shared4_div2", "mout_pll_shared4",
-+	    CLK_CON_DIV_PLL_SHARED4_DIV2, 0, 1),
-+	DIV(CLK_DOUT_CMU_SHARED4_DIV3, "dout_cmu_shared4_div3", "mout_pll_shared4",
-+	    CLK_CON_DIV_PLL_SHARED4_DIV3, 0, 2),
-+	DIV(CLK_DOUT_CMU_SHARED4_DIV4, "dout_cmu_shared4_div4", "dout_cmu_shared4_div2",
-+	    CLK_CON_DIV_PLL_SHARED4_DIV4, 0, 1),
- };
- 
- static const struct samsung_fixed_factor_clock cmu_top_ffactor[] __initconst = {
+> 
+> Should we also change setup_mm_hdr() and return EFI_INVALID_PARAMETER
+> always? It's still not ideal, but much closer to the spec.
+
+EFI_DEVICE_ERROR? The "hardware" is has a problem by not providing us
+enough RAM. Yeah, not optimal either. But invalid parameter is clearly
+described, and nothing fits.
+
+Jan
 
 -- 
-2.49.0
-
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
