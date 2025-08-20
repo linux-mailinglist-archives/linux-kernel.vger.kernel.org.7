@@ -1,162 +1,243 @@
-Return-Path: <linux-kernel+bounces-777604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B46B2DB87
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:46:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1C6B2DB9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972B86849DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:46:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BD7A1C20754
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A5D2E2EED;
-	Wed, 20 Aug 2025 11:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3658F2E5402;
+	Wed, 20 Aug 2025 11:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="f+ArhmI1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IJrtKILM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF6F21CC71
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC751E51F1
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690388; cv=none; b=cwnvmuGdTYMErtNsjJbHw2cQMO03QKfUdkz/d58R60qWMPRkIsULI+C7XxEqZKlQlGUmpAFg7A88EzZSwde21etHnNxfVnSNuppCo72yxgHVw1Zv2XeeivroKjDFhEth/PlmO8DyeyuI8KLt4yyTxA31FeqgvVx6AfLujzQ4XzA=
+	t=1755690429; cv=none; b=VgKMV0jwvBbRFc/ThvFCBZ02/Gd7gWNpOrjetjnxAD5J5amoRwbglQyaUH8egNEQrDZLM06cd7KskKhoF/4SrjlQrdbGwMbyzWm4G1vGywKq0Ps+Ud+LstK/T1yXgJN0Bg1t1Nm2vrXy4/P04aCz0HTWMdv8Hd/K0CRWv3I+HsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690388; c=relaxed/simple;
-	bh=vGFR3vP8nyO82cAmfCuW+hvuIZljUq1p0jyyI10ddHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LyCUN2rv/rkQ3LstnQwnI7t7DHyddv1/dL8TUX0Ec8GXuFFVTSllIYNAieiiBc8RfIrn8bSLtm0ol/j7tVl/2t7TToh7kvPcOdnaODM4PrvUl6pQXDAdlDPkpv1JrIKiC6K4Nk0FSmisaQSWvbZ0/f2FvwcOg2JUYa2BkR2Xo30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=f+ArhmI1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K9vvSc025126
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:46:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=75L42tl0MI8KDN3dC/5xm80p
-	bNugX+cDtHPbn4TsTaM=; b=f+ArhmI1e80n2E11S0VAGAHBmTj7HCLAeDvtlL56
-	+k4LpOIw3P67j6da/lsVzoHX+IUnXFXe1GQ1pdLSdyzZNIWh2S5mDJMJXbxxAGx/
-	3HtprMmldnr6sfITJY7LfmQwx838XN2D+yhlDylMSYdOh4mkP0NqzRllWF8rZinS
-	Pd+IXCpQKKojyrZDd4waTrWOVWtOPAlVlIPrT1srooK9IcXftGSt+1mrG6RpfH06
-	KiNEJgkUWbMeaaUG1VzwKUp5aasgESdXV2uURKnfRWWQLhZlEze7EDRAVXH+EqM8
-	NNjCp9eOQY4JHk5n397t3haCiQQsmELZeY4aBmcrgFgfUg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52a9kkj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 11:46:25 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70a8b32a6e3so126674546d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:46:25 -0700 (PDT)
+	s=arc-20240116; t=1755690429; c=relaxed/simple;
+	bh=SXb2dxIY98FzH23JrE5Xq5s77LvtW+Hcp2+gyj2F6Z4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uRpcoTkErADOZXdhHGTAGUzyWZFbawUK1Gp6VTkGsyvQ2Nx/TJmbJZKRSE7YS2aauVn9uWQJF54DJLZXsE6zGdMykL/RCAYUzN3wD7rPlhp2RYJ5AXlzoiVKUT+umqkrnXNr87AZrsWUPaExkDN3nAi6hpip2fQgTPjj3wkfKUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IJrtKILM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755690425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OoPxwTsXBEbSnEgA9frRZsmF7p28dq9me5DsfnFcIsg=;
+	b=IJrtKILMmEsrelvlXWSUjCT2aRUO2XuU6YhoSVFAAKMg+wZhb7G1Vme9UW3fXRuf2/UkBw
+	XwsS2ZSNFPmQwu8tIdSsb+jEpXcL+XJ3e+bV/BFianqVG0r2d48mzam++SJGR14v58Jvl/
+	uabXNDU/5UxhXBZckYYhHrCLUua9fIw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-111-J8pw6pr2OTCGQAjnGraNIw-1; Wed, 20 Aug 2025 07:47:04 -0400
+X-MC-Unique: J8pw6pr2OTCGQAjnGraNIw-1
+X-Mimecast-MFC-AGG-ID: J8pw6pr2OTCGQAjnGraNIw_1755690423
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a1b0ccb6cso33420155e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:47:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755690384; x=1756295184;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=75L42tl0MI8KDN3dC/5xm80pbNugX+cDtHPbn4TsTaM=;
-        b=dJhDHSrh8Lq+hxMs7E97k2V33Hn51iCprIcmAnfCR3700JHAYndyoUTNTJk9dMQkzR
-         T476fW0gy+2ZKkPOCxJW97aRv1+QjlNEv/q1NiLdndvMcrhZOxRurwX4JRXal+ZbUAGL
-         qyt8BwiXMLhYeRTmHDi3SeUS4diFJgF0zSwokRZVDKSpmE8hwj7zuae+BkIuFoczvmc4
-         jbF75WChGGR8Z1/au4iDMWS0W78/fr7EDViSn6ra6c8yR8dub/RqAo+TFPuLpf+j8oBa
-         H0DEj0Y+DRlYQeydQehtaC8E/75qlphVg4dfXDrqX+e7DtfNMklT+4OdaQP9IzjW5LRg
-         vy2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVWrT1gl77c2ab5J9sVrHSzhqef9Ndn1gyeU5pgxugI6wZPfzaL/WurH0Sk86xY32VlZDHJ1SQrLkVKRlE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPYHU5Ro3swPTz+5NwZz4bDqEV+2XqauB4+SlWwxcDLpbb1coK
-	qTuI7q5m+y9i48NdUdmG0+HV1ZVF+WH6lMp5geO6mEIpoLeMUnHUQ+zZajUmVEQrDmia5zhD7In
-	C+FEUDoPr8U9xUgvaJka00T2+tUF0ylhn0TMGE5i235hf9qhrsmH5WH4C3gWxXEfjruY=
-X-Gm-Gg: ASbGncsGVG+HpI93KvMsu5ygMqbf7JnSdUd+0WSG8OJHJdV9jZtZJCABx+DTz6oJfYs
-	e95BeJt3TJXWDspiQbZqHPZ9pLPJ3uB2lJbfDeoZCQ5vylTpZ7yU21bqsj8AvPp5B6GANilmPFi
-	0HXK8Iw+DCD1Efjcadx/HEaFsAi99NurjdJY7GnNDE9lHACtN/tXXcSmOBAKdfpBIGT27mAi/W9
-	RvSmOCTolChtle5ghxz2ZpZKa66iBWXR+h4INlK/z9i5lRz4ZfILPodkI09ZjvbQd/FsX4zyAPE
-	a9hYBgSeSPxBBG2jvUK8vbTndf2VMCYToMQNH+HKfWAZt7IPJs55OQzkZ9F7eyrcDLNlIM7u5FZ
-	wAJX0c9ycmHSZRdfMULfc8xZK04xcf9VBPMjSJt+Bi5JUpKfeFtjr
-X-Received: by 2002:a05:6214:5194:b0:709:deb2:3dcd with SMTP id 6a1803df08f44-70d76fd4c15mr24701716d6.25.1755690384289;
-        Wed, 20 Aug 2025 04:46:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH83ZZdKQ60Ug1Lmf0IPGuUmaz4M2F4mxHsaVgPhdq8EvO/IDjNwV6zVABnr6KJ/OabGfXT+Q==
-X-Received: by 2002:a05:6214:5194:b0:709:deb2:3dcd with SMTP id 6a1803df08f44-70d76fd4c15mr24701406d6.25.1755690383793;
-        Wed, 20 Aug 2025 04:46:23 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3f3525sm2531156e87.108.2025.08.20.04.46.22
+        d=1e100.net; s=20230601; t=1755690422; x=1756295222;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OoPxwTsXBEbSnEgA9frRZsmF7p28dq9me5DsfnFcIsg=;
+        b=AvKx1fxq13mWK9IvZBdnCxp+JrIs92r/kOcH7Veurvxqv9/99DqRKPqvNuzWhpLKOh
+         QGV3otQTjrfI5LIItaHeZxIwmZoAKqFl2nR9bIwW5gPY3QRG+BWInY1ZohL1Ee8OzpUc
+         omXR39Kl4HkbxMm+q1AMHDgbgQUxwceLc+v+kggXa6lzT7zlBUJk9nZuU5iM2+Zl28BV
+         2i0bYxBdHSGpurpjdA07uFn49NuRqXtXH/AyPpC2PX9VNoWMp7rGZzRvshy/Tpb8LcWj
+         yZcPrG50Ooq3xkUDKKdLKiyNqz07NTq0u6t5pYE6DH53W/HPGCW4w1aDdjjLiLdTq5nt
+         FHOg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8fyrtAv6IyxwDyf8q7a6/io0q0obpDLIY+z1RW3V9NzOPahHea0SsNGJHHHWR9ebw4cx8STTA7VwKWlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwunT6jgAI9Q8dRGw77L6jOlxjyqouXBISxouIOhezyvCtDDdc1
+	B9L3ZuX8x1ZmUaPgIt1tH2PqRSWqf2Cz9TqGnqY6eCbQS1FWge31J60SzYB/NHgyCAMQdmF7sBt
+	b1nDMdc9kYt4KidIo6EFB8j+Xp2oL0JXgS4yM3+cRfWGfGilRT8s8s0zQbGh4wZ+PPAfvqxGdVw
+	==
+X-Gm-Gg: ASbGnctJJKPU8RYQv3ms3HpuCPSBM5pfmWhygjaoE2aUFU2MFQnYrQ9LpBCBbC4J8um
+	SMY+Mf8K+h25azRaMJw4pjmWv6Tmqs66UNi/XvkOWzzn5tvzkkpAfs9Qd70WLweKG4njhCPtvfw
+	bt/FEDDbxktm77t91sZzFiThug7D1U6MwLDvbLcBNSh05+QIfz0BvZVubo2QIo7rSw+dpmVbTFW
+	B9ptRFtwRAaxmvzIIXgTOH11RJimuFPrD+YoxjyiFFhd4GdeiNTuMrrCaj1+twh+AeTDPIA4BMv
+	IP4+NO+LTD/c1UrHZJhcMAZ8iolatA6u0Khj/nNWBwpB2l+KO2qK6Q1N2kAMUwGSpoDYZWCtDoc
+	E/bR761aylqoEs78db8qrX1cF
+X-Received: by 2002:a05:600c:4f4b:b0:45b:43cc:e559 with SMTP id 5b1f17b1804b1-45b47a1a0e8mr18207415e9.36.1755690422289;
+        Wed, 20 Aug 2025 04:47:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjzzMYK+kEyoj6K1A3QmbDYJzlk/G3tL5Zl7byq/0Ymw3Ic5lIG7/4nT/AuaGrjoKVkzbi9Q==
+X-Received: by 2002:a05:600c:4f4b:b0:45b:43cc:e559 with SMTP id 5b1f17b1804b1-45b47a1a0e8mr18207055e9.36.1755690421726;
+        Wed, 20 Aug 2025 04:47:01 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c074879864sm7593173f8f.13.2025.08.20.04.47.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 04:46:22 -0700 (PDT)
-Date: Wed, 20 Aug 2025 14:46:21 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, fange.zhang@oss.qualcomm.com,
-        yongxing.mou@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, quic_lliu6@quicinc.com
-Subject: Re: [PATCH v3 03/14] phy: qcom: qmp-usbc: Rename USB-specific ops to
- prepare for DP support
-Message-ID: <ay4ss7cwpiz6zwiwiav4ts5hwhxjpc6ogc2uirwzfcyhi2crln@3azxsu5hvyhy>
-References: <20250820-add-displayport-support-for-qcs615-platform-v3-0-a43bd25ec39c@oss.qualcomm.com>
- <20250820-add-displayport-support-for-qcs615-platform-v3-3-a43bd25ec39c@oss.qualcomm.com>
+        Wed, 20 Aug 2025 04:47:00 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Adam Li <adamli@os.amperecomputing.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org
+Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, cl@linux.com, frederic@kernel.org,
+ linux-kernel@vger.kernel.org, patches@amperecomputing.com
+Subject: Re: [PATCH] sched/nohz: Fix NOHZ imbalance by adding options for
+ ILB CPU
+In-Reply-To: <d421a5ba-95cb-42fb-a376-1e04c9d6a1ac@os.amperecomputing.com>
+References: <20250819025720.14794-1-adamli@os.amperecomputing.com>
+ <xhsmhtt23h0nw.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <7438bb3a-96d6-485a-9ecc-63829db74b39@os.amperecomputing.com>
+ <xhsmho6sagz7p.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <d421a5ba-95cb-42fb-a376-1e04c9d6a1ac@os.amperecomputing.com>
+Date: Wed, 20 Aug 2025 13:46:59 +0200
+Message-ID: <xhsmhldnegqq4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820-add-displayport-support-for-qcs615-platform-v3-3-a43bd25ec39c@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: ePt62TvJklLCrm_jeQnwlbu3KgYwaXOy
-X-Authority-Analysis: v=2.4 cv=B83gEOtM c=1 sm=1 tr=0 ts=68a5b591 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=H4SNA-w7Ihemelo7scQA:9 a=CjuIK1q_8ugA:10
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-GUID: ePt62TvJklLCrm_jeQnwlbu3KgYwaXOy
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXxjlpy4sGHZNX
- yFntgWKEXR/YnjD9VOwsJAT6PJ1UCZba2o2iPFNM2FYQYfT9wzqnYVMqZ31ICR/e7IPWFJLrUve
- 9O7fJRqvU+TGglGI0ygJuCgqBA6Wki/lhsFbN4FJwVBgw4TNgYQ2TM7FnqUVF5VQqjxr/liLzkX
- 1B+IT2Vu41jUC1ngcsicAkECCYVABC/la1mkzjFvz/7daGerz1jHa6uDUZJ1o+HK0Zi92c8PPJj
- nGfntLpQqchd0eIIHTEbQLvtLfqn3dUmUURs1sCCLXlZ6fv8ndfAvHRajdcBIIoMQaZthjaU9TE
- cNvSD2sMigJEQOcFA9SApvUkxiz5ETRDy8n0aT0BpkxhC8IGm4g/c2q3dnIGwUTIZC/+5ZgyAHw
- bfPShR2UiGe5pVlxn3NDW6pcScodjQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_03,2025-08-20_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
- lowpriorityscore=0 adultscore=0 impostorscore=0 clxscore=1015 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+Content-Type: text/plain
 
-On Wed, Aug 20, 2025 at 05:34:45PM +0800, Xiangxu Yin wrote:
-> To support following DisplayPort (DP) mode over the Type-C PHY, rename
-> USB-specific functions and ops to clearly separate them from common or
-> DP-related logic.
-> 
-> This is a preparatory cleanup to enable USB + DP dual mode.
-> 
-> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 50 ++++++++++++++++----------------
->  1 file changed, 25 insertions(+), 25 deletions(-)
-> 
+On 20/08/25 19:05, Adam Li wrote:
+> On 8/20/2025 4:43 PM, Valentin Schneider wrote:
+>> On 20/08/25 11:35, Adam Li wrote:
+>>> I agree with your description about the housekeeping CPUs. In the worst case,
+>>> the system only has one housekeeping CPU and this housekeeping CPU is so busy
+>>> that:
+>>> 1) This housekeeping CPU is unlikely idle;
+>>> 2) and this housekeeping CPU is unlikely in 'nohz.idle_cpus_mask' because tick
+>>> is not stopped.
+>>> Therefore find_new_ilb() may very likely return -1. *No* CPU can be selected
+>>> to do NOHZ idle load balancing.
+>>>
+>>> This patch tries to fix the imbalance of NOHZ idle CPUs (CPUs in nohz.idle_cpus_mask).
+>>> Here is more background:
+>>>
+>>> When running llama on arm64 server, some CPUs *keep* idle while others
+>>> are 100% busy. All CPUs are in 'nohz_full=' cpu list, and CONFIG_NO_HZ_FULL
+>>> is set.
+>>>
+>>
+>> I assume you mean all but one CPU is in 'nohz_full=' since you need at
+>> least one housekeeping CPU. But in that case this becomes a slightly
+>> different problem, since no CPU in 'nohz_full' will be in
+>>
+>>   housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)
+>>
+>
+> I ran llama workload on a system with 192 CPUs. I set "nohz_full=0-191" so all CPUs
+> are in 'nohz_full' list. In this case, kernel uses the boot CPU for housekeeping:
+>
+> Kernel message: "Housekeeping: must include one present CPU, using boot CPU:0"
+>
+> find_new_ilb() looks for qualified CPU from housekeeping CPUs. The searching
+> is likely to fail if there is only one housekeeping CPU.
+>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Right
 
+>>> The problem is caused by two issues:
+>>> 1) Some idle CPUs cannot be added to 'nohz.idle_cpus_mask',
+>>> this bug is fixed by another patch:
+>>> https://lore.kernel.org/all/20250815065115.289337-2-adamli@os.amperecomputing.com/
+>>>
+>>> 2) Even if the idle CPUs are in 'nohz.idle_cpus_mask', *no* CPU can be selected to
+>>> do NOHZ idle load balancing because conditions in find_new_ilb() is too strict.
+>>> This patch tries to solve this issue.
+>>>
+>>> Hope this information helps.
+>>>
+>>
+>> I hadn't seen that patch; that cclist is quite small, you'll want to add
+>> the scheduler people to our next submission.
+>>
+>
+> Sure. The first patch involves both 'tick' and 'scheduler' subsystem. I can resend
+> the first patch to broader reviewers if you don't mind.
+>
 
--- 
-With best wishes
-Dmitry
+I'd say resend the whole series with the right folks cc'd.
+
+>> So IIUC:
+>> - Pretty much all your CPUs are NOHZ_FULL
+>> - When they go idle they remain so for a while despite work being available
+>>
+>
+> Exactly.
+>
+>> My first question would be: is NOHZ_FULL really right for your workload?
+>> It's mainly designed to be used with always-running userspace tasks,
+>> generally affined to a CPU by the system administrator.
+>> Here AIUI you're relying on the scheduler load balancing to distribute work
+>> to the NOHZ_FULL CPUs, so you're going to be penalized a lot by the
+>> NOHZ_FULL context switch overheads. What's the point? Wouldn't you have
+>> less overhead with just NOHZ_IDLE?
+>>
+>
+> I ran the llama workload to do 'Large Language Model' reference.
+> The workload creates 'always-running userspace' threads doing math computing.
+> There is *few* sleep, wakeup and context switch. IIUC NOHZ_IDLE cannot help
+> always-running task?
+>
+
+Right, NOHZ_IDLE is really about power savings while a CPU is idle (and
+IIRC it helps some virtualization cases).
+
+> 'nohz_full' option is supposed to benefit performance by reducing kernel
+> noise I think. Could you please give more detail on
+> 'NOHZ_FULL context switch overhead'?
+>
+
+The doc briefly touches on that:
+
+  https://docs.kernel.org/timers/no_hz.html#omit-scheduling-clock-ticks-for-cpus-with-only-one-runnable-task
+
+The longer story is have a look at kernel/context_tracking.c; every
+transition into and out of the kernel to and from user or idle requires
+additional atomic operations and synchronization.
+
+It would be worth for you to quantify how much these processes
+sleep/context switch, it could be that keep the tick enabled incurs a lower
+throughput penalty than the NO_HZ_FULL overheads.
+
+>> As for the actual balancing, yeah if you have idle NOHZ_FULL CPUs they
+>> won't do the periodic balance; the residual 1Hz remote tick doesn't do that
+>> either. But they should still do the newidle balance to pull work before
+>> going tickless idle, and wakeup balance should help as well, albeit that
+>> also depends on your topology.
+>>
+>
+> I think the newidle balance and wakeup balance do not help in this case
+> because the workload has few sleep and wakeup.
+>
+
+Right. So other than the NO_HZ_FULL vs NO_HZ_IDLE considerations above, you
+could manually affine the threads of the workload. Depending on how much
+control you have over how many threads it spawn, you could either pin on
+thread per CPU, or just spawn the workload into a cpuset covering the
+NO_HZ_FULL CPUs.
+
+Having the scheduler do the balancing is bit of a precarious
+situation. Your single housekeeping CPU is pretty much going to be always
+running things, does it make sense to have it run the NOHZ idle balance
+when there are available idle NOHZ_FULL CPUs? And in the same sense, does
+it make sense to disturb an idle NOHZ_FULL CPU to get it to spread load on
+other NOHZ_FULL CPUs? Admins that manually affine their threads will
+probably say no.
+
+9b019acb72e4 ("sched/nohz: Run NOHZ idle load balancer on HK_FLAG_MISC CPUs")
+also mentions SMT being an issue.
+
+>> Could you share your system topology and your actual nohz_full cmdline?
+>>
+>
+> The system has 192 CPUs. I set "nohz_full=0-191".
+>
+> Thanks,
+> -adam
+
 
