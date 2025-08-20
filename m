@@ -1,176 +1,262 @@
-Return-Path: <linux-kernel+bounces-778630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11338B2E836
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:39:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B22B2E839
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8355C1BC7129
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9FC1A07329
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA715296BB6;
-	Wed, 20 Aug 2025 22:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D842C21EA;
+	Wed, 20 Aug 2025 22:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nkkVofOb"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UZM2lI3i"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD63D1F91C8
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 22:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE82229B18
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 22:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755729546; cv=none; b=YVmS21+lpO+/jh2SKDgwt+TgRMy+zF6xcwYh1ZTF58N1EMp7DZbRJiKui5vx3/tgGdUYGRKqHw+nSzNBwtk+a6kG0aCJ7PwUxhQNmEs2ctnZrwhWuU0k164euRddwWN8C0+V83ycTpXOOhkbOej2QwaVtkS0oI/kI45h9xN1EpE=
+	t=1755729855; cv=none; b=DTtlhvAWNJpDQEYL1cpb4/f8rEh7acqrB1PKWLi7V01SX6wpDSo0OjWeOdS8x5GyGa4QWp1fDyHxZM0cwQUU4c4WLxSljY/WMBVvhDgXXwSR227d8jKUHuNdADOQVfV+EC/13wJQl0lZIxjqen0ZnqcgCb3ZrG6bN3G9jcOSx+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755729546; c=relaxed/simple;
-	bh=OARnjVyy4CdXFldyz1GUsDlmrzCrmqGTY6HtBpp9iVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FfvUbMMxdNbrYyIBR5AuEESn83OqCp72D6zvk5xNPDPNf+Ny3TfAZOg47Co7ClAuaGpHOwX4GYwP0rFH+12TLF0xpjT6O8ofnF57+GXQXOIoPGbB0bFu1/9YTMSg1ibUfuLGpGm83lXP/ksTJfJTI3QqsqG2zZ4skehIDNsDRZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nkkVofOb; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4717ba0d5dso290105a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755729544; x=1756334344; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JJAUp0f86jBeS4uWt/dNu5JNfGORO8BSJEV2L8Fn0fw=;
-        b=nkkVofObsRr+up8WQ443yTffPqu5bkoFnJ92+Dx4iud4uscgS73nDPYl+XRvKoSD29
-         YUkxRyu4NbfoyP4ZFH12imhWVxgEbuhCyOx6iwP7QiMTDIv6njgDo6exD8lxEV32fjwx
-         VSDbC6Se7sq1YSD4Y3nnhs4RZGDHlGI3R3B8R3kVNAKQZw6H5imSzPJb3xHv6AKsUoNY
-         YSaXqJgP3jBhe0DthKFS1xxAd9SOUkLR4kJ4FWa6Evmil1nEmgqXBIZon/7hEn9xP4DP
-         drbsKfbeVALas0KIr+OUEJukT+gscXnySN/SogqyW2OJc0KsMdm9yHBmJoaNpmx0UETY
-         0wUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755729544; x=1756334344;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JJAUp0f86jBeS4uWt/dNu5JNfGORO8BSJEV2L8Fn0fw=;
-        b=fAdW+7cL5aKp3Kjv62Rtn1CJBNfwpuuXIaxqG5sdpdyLKbOGvJfo2Br5bEDl3bUFhz
-         hCj5jI/atUobyrtWa/ef+CVYutkPxw5EGMLZxuHTmnHvXWW95h+NgN7IoPDXneGS1Ogb
-         VTiotcZnIVqInePqpM/aWAUdBxozRAkrKvS0cxtO9tJhrNpIO1OleQL0UfR0UYhK37WI
-         Z+ard881sZtO5rVyH1hbz0Qsgf77ILvyTsN6iEQCT3DIFphBXndJGT2eZBBggBWe0CtT
-         O3FMxv8/ROzC/Y7gqeTJzdP9PEijWuPqXs7OTp9esw7UadbnWD+JO0oajKBrpVqGjGp4
-         AeTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKscKiQssMIteh+ckIw2zOs5unhQKm9q5zaYKwvl355Gr6E2hPJIBMBxHQs9xQmNV059MOewYqfSdxZss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtZe+MMmoMfc0W9oljyjoapGaLPchu9VvzvRhIMDEsmBdZmFpr
-	IM5uCuY+41TV8q7rdh4/d4M3ddIIDepZz72FV0tl8hl5F+l6k9N26bF/
-X-Gm-Gg: ASbGncvLqSPRUB1gFqkisXBIsGA8KNROBLj2vttpSxXxUAEYQ4AzuXOutOJnV7xOyO5
-	rvGa5nPmIOLEgT476lEptt4qgTH0XoxEzhoyEc2pjoRFf3BiHcw34nKkb0a2MWCdXrqI3bOJ9Wy
-	oVPXWERaf3CJyCzatmz1do70m9GNTMTA16zeuDsLE/AD9EdRVhj6263/Pr83exYdXoeHlIFWuS0
-	VmkoKOETbREduQAFFxKe0OrJxkGLcDbrICTP8q2MixbY7QWMYKG8AduRbsE9r2tX3JRWYUuE6S9
-	pJcAkwpxydNhigSgbVploob08ZW4QGeJkgwFh9zYTxWDc+hHHoMuYqYqNN9d70yT+G0P7VZawzw
-	nKGT+PEp25CVwecHmlJ7fvs0P2KQNsRn+bdyKMVeUXh0=
-X-Google-Smtp-Source: AGHT+IHpteoZV/YEAVlSStTaxwqQKN/L3bbOeivrQziXxVnHiek/V0RyadSpB97WmgxYnLZEVc2G4w==
-X-Received: by 2002:a17:903:1a8b:b0:243:a32:1f0d with SMTP id d9443c01a7336-24602e40e54mr2053785ad.18.1755729543830;
-        Wed, 20 Aug 2025 15:39:03 -0700 (PDT)
-Received: from xiao.mioffice.cn ([43.224.245.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245f6f982f3sm19739555ad.23.2025.08.20.15.39.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 15:39:03 -0700 (PDT)
-From: Xiang Gao <gxxa03070307@gmail.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com
-Cc: lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	gaoxiang17 <gaoxiang17@xiaomi.com>
-Subject: [PATCH v3 1/1] mm/cma: add 'available count' and 'total count' to trace_cma_alloc_start
-Date: Thu, 21 Aug 2025 06:38:55 +0800
-Message-Id: <8a79284879c529f467478552825154b018076e95.1755729178.git.gaoxiang17@xiaomi.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1755729178.git.gaoxiang17@xiaomi.com>
-References: <cover.1755729178.git.gaoxiang17@xiaomi.com>
+	s=arc-20240116; t=1755729855; c=relaxed/simple;
+	bh=W9bu/CNCb4kof607lr+BIx990sVUjgia0BWsqRfCEL0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NqKMvywXocCnMskfttLNL2oJaHI0nLPQfiYqQ4N+hFWUD+fpyeNCba5I1y2/va7uuVL2hN5jySyeWjilqVOdmtET2cXr1fSeyx2Yw2/VuuD17/djU3rOuO3O1l7MByj7xfN+YXee7YmNXYE9zCjZgZr6HjsDwLPzmUzROu8PbFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UZM2lI3i; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755729839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HIBMbsV17r3lKNlQBpoJQUHEqmYE5Up+KV862pg9Yp4=;
+	b=UZM2lI3i6LGEVcl88gfvKWNdhERvfxCPdeyXhhcpp6sf9wz0lyTEz9gchUtQJBcJHZUwHq
+	b4dUlPv4LO2OSlHxptKoAQ0+m2qa6C4s1kbKKuqAy6vX+C48KlC5vBDZZ7spT/8Jloygxc
+	IouxqrgwYt1sJWqrmzXRJUbgYy4+aYE=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: linux-mm@kvack.org,  bpf@vger.kernel.org,  Suren Baghdasaryan
+ <surenb@google.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Michal Hocko
+ <mhocko@suse.com>,  David Rientjes <rientjes@google.com>,  Matt Bobrowski
+ <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
+ Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 04/14] mm: introduce bpf kfuncs to deal with memcg
+ pointers
+In-Reply-To: <CAP01T77yTb69hhi0CtDp9afVzO3T0fyPqhBF7By-iYYy__uOjA@mail.gmail.com>
+	(Kumar Kartikeya Dwivedi's message of "Wed, 20 Aug 2025 11:21:10
+	+0200")
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+	<20250818170136.209169-5-roman.gushchin@linux.dev>
+	<CAP01T77yTb69hhi0CtDp9afVzO3T0fyPqhBF7By-iYYy__uOjA@mail.gmail.com>
+Date: Wed, 20 Aug 2025 15:43:50 -0700
+Message-ID: <87y0rdobq1.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-From: gaoxiang17 <gaoxiang17@xiaomi.com>
+Kumar Kartikeya Dwivedi <memxor@gmail.com> writes:
 
-This makes cma info more intuitive during debugging.
+> On Mon, 18 Aug 2025 at 19:02, Roman Gushchin <roman.gushchin@linux.dev> wrote:
+>>
+>> To effectively operate with memory cgroups in bpf there is a need
+>> to convert css pointers to memcg pointers. A simple container_of
+>> cast which is used in the kernel code can't be used in bpf because
+>> from the verifier's point of view that's a out-of-bounds memory access.
+>>
+>> Introduce helper get/put kfuncs which can be used to get
+>> a refcounted memcg pointer from the css pointer:
+>>   - bpf_get_mem_cgroup,
+>>   - bpf_put_mem_cgroup.
+>>
+>> bpf_get_mem_cgroup() can take both memcg's css and the corresponding
+>> cgroup's "self" css. It allows it to be used with the existing cgroup
+>> iterator which iterates over cgroup tree, not memcg tree.
+>>
+>> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+>> ---
+>>  include/linux/memcontrol.h |   2 +
+>>  mm/Makefile                |   1 +
+>>  mm/bpf_memcontrol.c        | 151 +++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 154 insertions(+)
+>>  create mode 100644 mm/bpf_memcontrol.c
+>>
+>> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+>> index 87b6688f124a..785a064000cd 100644
+>> --- a/include/linux/memcontrol.h
+>> +++ b/include/linux/memcontrol.h
+>> @@ -932,6 +932,8 @@ static inline void mod_memcg_page_state(struct page *page,
+>>         rcu_read_unlock();
+>>  }
+>>
+>> +unsigned long memcg_events(struct mem_cgroup *memcg, int event);
+>> +unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap);
+>>  unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx);
+>>  unsigned long lruvec_page_state(struct lruvec *lruvec, enum node_stat_item idx);
+>>  unsigned long lruvec_page_state_local(struct lruvec *lruvec,
+>> diff --git a/mm/Makefile b/mm/Makefile
+>> index a714aba03759..c397af904a87 100644
+>> --- a/mm/Makefile
+>> +++ b/mm/Makefile
+>> @@ -107,6 +107,7 @@ obj-$(CONFIG_MEMCG) += swap_cgroup.o
+>>  endif
+>>  ifdef CONFIG_BPF_SYSCALL
+>>  obj-y += bpf_oom.o
+>> +obj-$(CONFIG_MEMCG) += bpf_memcontrol.o
+>>  endif
+>>  obj-$(CONFIG_CGROUP_HUGETLB) += hugetlb_cgroup.o
+>>  obj-$(CONFIG_GUP_TEST) += gup_test.o
+>> diff --git a/mm/bpf_memcontrol.c b/mm/bpf_memcontrol.c
+>> new file mode 100644
+>> index 000000000000..66f2a359af7e
+>> --- /dev/null
+>> +++ b/mm/bpf_memcontrol.c
+>> @@ -0,0 +1,151 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + * Memory Controller-related BPF kfuncs and auxiliary code
+>> + *
+>> + * Author: Roman Gushchin <roman.gushchin@linux.dev>
+>> + */
+>> +
+>> +#include <linux/memcontrol.h>
+>> +#include <linux/bpf.h>
+>> +
+>> +__bpf_kfunc_start_defs();
+>> +
+>> +/**
+>> + * bpf_get_mem_cgroup - Get a reference to a memory cgroup
+>> + * @css: pointer to the css structure
+>> + *
+>> + * Returns a pointer to a mem_cgroup structure after bumping
+>> + * the corresponding css's reference counter.
+>> + *
+>> + * It's fine to pass a css which belongs to any cgroup controller,
+>> + * e.g. unified hierarchy's main css.
+>> + *
+>> + * Implements KF_ACQUIRE semantics.
+>> + */
+>> +__bpf_kfunc struct mem_cgroup *
+>> +bpf_get_mem_cgroup(struct cgroup_subsys_state *css)
+>> +{
+>> +       struct mem_cgroup *memcg = NULL;
+>> +       bool rcu_unlock = false;
+>> +
+>> +       if (!root_mem_cgroup)
+>> +               return NULL;
+>> +
+>> +       if (root_mem_cgroup->css.ss != css->ss) {
+>> +               struct cgroup *cgroup = css->cgroup;
+>> +               int ssid = root_mem_cgroup->css.ss->id;
+>> +
+>> +               rcu_read_lock();
+>> +               rcu_unlock = true;
+>> +               css = rcu_dereference_raw(cgroup->subsys[ssid]);
+>> +       }
+>> +
+>> +       if (css && css_tryget(css))
+>> +               memcg = container_of(css, struct mem_cgroup, css);
+>> +
+>> +       if (rcu_unlock)
+>> +               rcu_read_unlock();
+>> +
+>> +       return memcg;
+>> +}
+>> +
+>> +/**
+>> + * bpf_put_mem_cgroup - Put a reference to a memory cgroup
+>> + * @memcg: memory cgroup to release
+>> + *
+>> + * Releases a previously acquired memcg reference.
+>> + * Implements KF_RELEASE semantics.
+>> + */
+>> +__bpf_kfunc void bpf_put_mem_cgroup(struct mem_cgroup *memcg)
+>> +{
+>> +       css_put(&memcg->css);
+>> +}
+>> +
+>> +/**
+>> + * bpf_mem_cgroup_events - Read memory cgroup's event counter
+>> + * @memcg: memory cgroup
+>> + * @event: event idx
+>> + *
+>> + * Allows to read memory cgroup event counters.
+>> + */
+>> +__bpf_kfunc unsigned long bpf_mem_cgroup_events(struct mem_cgroup *memcg, int event)
+>> +{
+>> +
+>> +       if (event < 0 || event >= NR_VM_EVENT_ITEMS)
+>> +               return (unsigned long)-1;
+>> +
+>> +       return memcg_events(memcg, event);
+>> +}
+>> +
+>> +/**
+>> + * bpf_mem_cgroup_usage - Read memory cgroup's usage
+>> + * @memcg: memory cgroup
+>> + *
+>> + * Returns current memory cgroup size in bytes.
+>> + */
+>> +__bpf_kfunc unsigned long bpf_mem_cgroup_usage(struct mem_cgroup *memcg)
+>> +{
+>> +       return page_counter_read(&memcg->memory);
+>> +}
+>> +
+>> +/**
+>> + * bpf_mem_cgroup_events - Read memory cgroup's page state counter
+>> + * @memcg: memory cgroup
+>> + * @event: event idx
+>> + *
+>> + * Allows to read memory cgroup statistics.
+>> + */
+>> +__bpf_kfunc unsigned long bpf_mem_cgroup_page_state(struct mem_cgroup *memcg, int idx)
+>> +{
+>> +       if (idx < 0 || idx >= MEMCG_NR_STAT)
+>> +               return (unsigned long)-1;
+>> +
+>> +       return memcg_page_state(memcg, idx);
+>> +}
+>> +
+>> +/**
+>> + * bpf_mem_cgroup_flush_stats - Flush memory cgroup's statistics
+>> + * @memcg: memory cgroup
+>> + *
+>> + * Propagate memory cgroup's statistics up the cgroup tree.
+>> + *
+>> + * Note, that this function uses the rate-limited version of
+>> + * mem_cgroup_flush_stats() to avoid hurting the system-wide
+>> + * performance. So bpf_mem_cgroup_flush_stats() guarantees only
+>> + * that statistics is not stale beyond 2*FLUSH_TIME.
+>> + */
+>> +__bpf_kfunc void bpf_mem_cgroup_flush_stats(struct mem_cgroup *memcg)
+>> +{
+>> +       mem_cgroup_flush_stats_ratelimited(memcg);
+>> +}
+>> +
+>> +__bpf_kfunc_end_defs();
+>> +
+>> +BTF_KFUNCS_START(bpf_memcontrol_kfuncs)
+>> +BTF_ID_FLAGS(func, bpf_get_mem_cgroup, KF_ACQUIRE | KF_RET_NULL)
+>
+> I think you could set KF_TRUSTED_ARGS for this as well.
 
-Show up in the trace as:
+Not really. The intended use case is to iterate over the cgroup tree,
+which gives non-trusted css pointers:
+	bpf_for_each(css, css_pos, &root_memcg->css, BPF_CGROUP_ITER_DESCENDANTS_POST) {
+		memcg = bpf_get_mem_cgroup(css_pos);
+	}
 
-	279.814717: cma_alloc_start: name=reserved request_count=4 available_count=8096 total_count=8192 align=0
-	309.790580: cma_alloc_start: name=reserved request_count=4 available_count=8092 total_count=8192 align=0
-	317.046609: cma_alloc_start: name=reserved request_count=4 available_count=8088 total_count=8192 align=0
-
-Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
----
- include/trace/events/cma.h | 19 +++++++++++++------
- mm/cma.c                   |  2 +-
- 2 files changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/include/trace/events/cma.h b/include/trace/events/cma.h
-index 383c09f583ac..37195edf2498 100644
---- a/include/trace/events/cma.h
-+++ b/include/trace/events/cma.h
-@@ -38,25 +38,32 @@ TRACE_EVENT(cma_release,
- 
- TRACE_EVENT(cma_alloc_start,
- 
--	TP_PROTO(const char *name, unsigned long count, unsigned int align),
-+	TP_PROTO(const char *name, unsigned long request_count, unsigned long available_count,
-+		unsigned long total_count, unsigned int align),
- 
--	TP_ARGS(name, count, align),
-+	TP_ARGS(name, request_count, available_count, total_count, align),
- 
- 	TP_STRUCT__entry(
- 		__string(name, name)
--		__field(unsigned long, count)
-+		__field(unsigned long, request_count)
-+		__field(unsigned long, available_count)
-+		__field(unsigned long, total_count)
- 		__field(unsigned int, align)
- 	),
- 
- 	TP_fast_assign(
- 		__assign_str(name);
--		__entry->count = count;
-+		__entry->request_count = request_count;
-+		__entry->available_count = available_count;
-+		__entry->total_count = total_count;
- 		__entry->align = align;
- 	),
- 
--	TP_printk("name=%s count=%lu align=%u",
-+	TP_printk("name=%s request_count=%lu available_count=%lu total_count=%lu align=%u",
- 		  __get_str(name),
--		  __entry->count,
-+		  __entry->request_count,
-+		  __entry->available_count,
-+		  __entry->total_count,
- 		  __entry->align)
- );
- 
-diff --git a/mm/cma.c b/mm/cma.c
-index 2ffa4befb99a..e56ec64d0567 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -864,7 +864,7 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
- 	if (!count)
- 		return page;
- 
--	trace_cma_alloc_start(name, count, align);
-+	trace_cma_alloc_start(name, count, cma->available_count, cma->count, align);
- 
- 	for (r = 0; r < cma->nranges; r++) {
- 		page = NULL;
--- 
-2.34.1
-
+Thanks
 
