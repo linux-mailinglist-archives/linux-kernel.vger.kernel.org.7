@@ -1,396 +1,153 @@
-Return-Path: <linux-kernel+bounces-778489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575D7B2E666
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:23:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBBE9B2E677
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47C7FA25A8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:23:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A2575E496C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9057228C849;
-	Wed, 20 Aug 2025 20:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BBC2BE653;
+	Wed, 20 Aug 2025 20:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZBasapC"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OG+9eib5"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DABC272805;
-	Wed, 20 Aug 2025 20:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFCD29BDB3;
+	Wed, 20 Aug 2025 20:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755721402; cv=none; b=cRS4bDPoKJKY2Kss07Bd64RE6HmMbQiAVoxY52Ts4FYuX1aRdqmENYrzV7Q99jywXAJVrO+SR65CYDwcBj8/ui83z05oxvB8yjOg73fxPwTw3KwAwlvxK56guCIoV9XfEy8aU/UmSavKDCKvDKbQVJzVnpIF82Q28k4nbwCGO6Y=
+	t=1755721408; cv=none; b=gHYFm3skdLfBj9NgixJ2KtK1UutmBU5bLS3fMjH2xo4hbmYzEkNZcXjU5pDZ9YZVQ1poQEz0bTFU2DXV8XSRKxeN80ura7Z9mZyYsYsFCL2vWzSw/LHR2+RV7m2rqnyVKSTQap1Fcg2IeV06SarKZbOnN5nv5V9TMyQnMvN71JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755721402; c=relaxed/simple;
-	bh=eYKAdJpEAzFxJchXm4gocNfC64jjCunkg29L3pb8OUo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dlbYK+7PmoOx557VeJcV1nSotPsU9Upp8XQ/A/63fRcVM7HF56VUQE/Vtxa9zVdhUYspg/3MXh7jkwGuEEE9kgW9ouqf6we2eIt1s58XPnoB/acMFwrQcgIfdSCftgMw57uWWbHeecH6od5vD9LCb9K0R/vI3py21e1fiaK9DIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZBasapC; arc=none smtp.client-ip=209.85.215.178
+	s=arc-20240116; t=1755721408; c=relaxed/simple;
+	bh=+DalE661eJEys/qZgy31C6MQ6pcmDofcU8cj8Ao6x2A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rjd2VJZ2K/z+4yq0JSjV//PkkgXmgTu5v8aY02arMOAIss5imQ+mL9rre/H/qjPuAeG71FPFzEjbcs39GfxxND0i7i0IuvCg4zAJyHJlzfMV89JCJCBxh3xVd/69wd21ZGy6YKv9tXlqW1tDKp6rgp1fzoCw0F0Cut+yHMDCrwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OG+9eib5; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b47174beb13so143383a12.2;
-        Wed, 20 Aug 2025 13:23:20 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3bb2fb3a436so150152f8f.1;
+        Wed, 20 Aug 2025 13:23:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755721400; x=1756326200; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xar26Fk7Vgh0oRtfSyJq7JbIEeQDQwbrb9OyTQGXg9c=;
-        b=JZBasapChlcRoffOYS/hLf83xtp+yG8hd/1OqGYHO3o8ACbuYhxbVHQDsVEE1Y1juz
-         PIQr4FbGV9emkvJVsNlneM+n3b3z1OeqirrMkiSjNSp2xu4F2CE2Om01VYwa79u/pZKA
-         YgfbYWPQNXveYuymQpfO380r2lA4wviOiK/cYCJiz+w9cBApIJc7wDmTjgGQO3pTIPJn
-         HyZ5pIru8BRWCoKgY+ZqXoFGSIyUbUh7oDxfNng+Oz0oUYR17e7UKJMd79HcP3gubrbz
-         iBYiT1wLmEi9len/04XylXIO1FBlBvzESGno56jTENpawQphm9eJxpHw9C7T0zXa5x6P
-         zZfg==
+        d=gmail.com; s=20230601; t=1755721405; x=1756326205; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+JMnfVk0eZesLYMwjq66M1EKLjCyRbvVqwMrJWQbZmw=;
+        b=OG+9eib5GRA2zw1tz4UhcrzZCBuAypCnCWsi05fy1EYeFg4r7pBHawb2X1WoY89on2
+         rAEcqrNsncunNl8XjlqYtSE3VdgGgGo+1avF+ENu/xSbuKmJ96Lvp2JUC+T1fHILuqIE
+         avphPgkUHaLnMbcg4Nq/Z58vqeO+BJzJzKiN1pXVGCk5iidce0yoKzNwOq0RPiBtOvK9
+         Q3ve8XbJ4zw9c9/ef5/I7GBpYpIV6aq+Qwhf3DoVgSWN83mlUbX5q2fABOzY7rU7XUag
+         Wg36VRZV6ZSkm0gbuppLKrAEp/e3/08Ffvduezs3AbE6LF2s+mINOUPAB1UL4HeIlKQp
+         3dGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755721400; x=1756326200;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xar26Fk7Vgh0oRtfSyJq7JbIEeQDQwbrb9OyTQGXg9c=;
-        b=Zk18ZTzIhUkff03zrdbjfsTiv9AN2dZH6yatp+xasy8t+Tov7TwLUsAhWcLQOhBhE8
-         RTjvyda2Pnq5T9uElX6qW9NrGTuNJ6kIo4UzA93B7eo8bzIBjLd3dAQevVQGuqY9AM6X
-         R3DUsOwtpgdSl9Mi5bK15HnffE0ZmodGUW9iBnt9jG9892e1hXaeOglz35VJ5LKQ/eFo
-         gFWKAuu6aan2petiDCFyFVfVWVZv1/p8u2J/WMwmIsgLwqbXL+mrGtLS0fVaK/dC/R4g
-         AZC5RrlX4cuBNYcv02BMJLSAkFhKvKpr/lJXAwwJnvCRRUl9KnaY0L82ie+YKIg0g+c6
-         2cFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQPkxyGMpjgTpR2SKs/yun98HrSAWYGlj+2S2Suqxf0lVZU/Th+mFDtpDadR9yx4Z01/yOFvomRCcr4XGp@vger.kernel.org, AJvYcCX5rlqqrsK9K3S6dwVSwZpH7CNaujyH6YjcH/bUnHnQYv2RCk+R32GNwpZNKfv/jqO95Nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ+BlND9GBxZb/LwFkUwn+qsQ0UrThQ2FU2ByiJxG+2TnHJfY5
-	2wZJcGFSDVGes65Fd1yLLxZEu/iXRbugN838jSDs15DDZE3/O7b/vM2gt8NZyK+Vd7YWsT18tYU
-	iRqRioevABYUGVQLPfjo1eiauVL44Ze0=
-X-Gm-Gg: ASbGncv9aA/zh1fjLwTWaJYyCONvLwsoDEiDRK1xthBYERoSuU2fUWzutIexbuSR76/
-	XUDiiHuFK8dNWE6N8rYl5a712KirZuWZfo6qxtTr8qnrErJc+0hSRjgw/B6K76zGEX8gZKXLBzr
-	xhKfi6L5+NSFIGYjwbzr7BTB3B314qbGOPCWDpc4QyxyS9du40viwkvQkgfTFz5+KQ72e4nQN1C
-	6ddADi8uaJzUX38TJESF+loltOeN8zFqg==
-X-Google-Smtp-Source: AGHT+IG/o+jqEz7MRGxhpE50JuhTkZh+GVplyCSf3EZMyZt5fBnjWyasiEEWrfzosT4slxa39kM963FxIztoBJRv9qw=
-X-Received: by 2002:a17:90b:2b48:b0:2ee:d371:3227 with SMTP id
- 98e67ed59e1d1-324ed1bf522mr209863a91.17.1755721400194; Wed, 20 Aug 2025
- 13:23:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755721405; x=1756326205;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+JMnfVk0eZesLYMwjq66M1EKLjCyRbvVqwMrJWQbZmw=;
+        b=rJPwsMF8Y1VeqlfKXBtniaSW07TOa6jojtsTY0HoyZYqMlvzRLlhqzs8fo9C1SaiJT
+         MqoxYEWDNFlPvRM8+WT0yeEgMFwwXNeymoCsExWXZH3AwhQl0HBINVCVko6DiS//M1VO
+         RTOPHKAwoilsebt5pSzQAgROwN6x5ez+GshgTgsyuaWxn4tgEb8FihiisM8nhs/mWbrY
+         nrzv9RHRxKxPcFrbOCi8fhVjaJgjo4R6rBXz2+B9Tazmzqtzxuqw66yK7oQBvksErV7l
+         hucWO5ic4gUuFZ1oHTjSZ0iCKEl9Y+o/K2jKhjE75xt+sRYvsCBhpdOv7t+tQAJd/Zye
+         3w+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV9IWmI4KqgnHp/1rf4fGcYNcc3zJI/6SsdXnTWOTaICPvOXCoRMSmvsNKGL7MC5wCZv6Yd5baEZoBWTl3R@vger.kernel.org, AJvYcCVKbv01vzs81k9Y32sBiXgdngJJlTtTxGB7hQN8q4xBT0juDalut5ugCDKarouN7k07SpdjhKHAs/N/noUOWr7aOTQ=@vger.kernel.org, AJvYcCWiDEWr3e/06DS9x7gAKV9GWJ0GxwSvs8UUTC2HrmIgCdD9M+67DhAVgl0i+gg66sU/sOSbnxe8Gaku@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpm4O/pCxbObYVWFLRYKDw5OGZoc3NyfvCDt57pVnadj2t/UB4
+	Tp2p8uE17C3/zBOHmx0xUU/sbhKW0qZbNanWQJtq7fyyT48ZRBF/xNz9
+X-Gm-Gg: ASbGncv56F/y1XbfX2kiF3hPEu3HRmM1ubbT6EOXNgZMBEPxbjx8yhGtDZTTp00Db6F
+	tl9h5ouaClh+Yx06qOk3kskZdcCsZ3h8nBCXRS+9WI95eBW3fB2yiw1ToEOVHgNdKPiWFZkNBg3
+	6s8s8LSaPKHXsr8Bqpe8cpb0uP2+K+Lr0M69pQ2LfSHpHXAUnQJr9tViiTLuUIr6Z+vKhH9LW/b
+	HMBUYmFq8Dhdp9GjqW3glMxye1JghGyVewz9KT5juYGjYP8mxncA5rUn7mCcJHBy92JtgsEy1TK
+	UtCOggFrGCp9R674JR0+kVGqIiiyDMWQO6naMX4NHWh9rvxJpZMD5BrBgUa86Tdszr03Yhsqbe7
+	slHJz44vCJXCTmwEQOUt9cxRNRHLgsCas78G8XwnBz6dLJJY7876aaYzT
+X-Google-Smtp-Source: AGHT+IG9sAh8G6qTZ/z2EMTh7C9L1gJQG3hqW2g9XE0NIZoYDG0kmblNN85yCMANJ9au2xA0ZSIhXw==
+X-Received: by 2002:a05:6000:2508:b0:3b7:948a:1361 with SMTP id ffacd0b85a97d-3c494ed1930mr104599f8f.6.1755721404574;
+        Wed, 20 Aug 2025 13:23:24 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:9b1:f84b:89f6:b00e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0754f3b7esm8471059f8f.30.2025.08.20.13.23.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 13:23:23 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 0/6] Add watchdog driver support for RZ/T2H and RZ/N2H SoCs
+Date: Wed, 20 Aug 2025 21:23:16 +0100
+Message-ID: <20250820202322.2051969-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818170136.209169-1-roman.gushchin@linux.dev> <20250818170136.209169-11-roman.gushchin@linux.dev>
-In-Reply-To: <20250818170136.209169-11-roman.gushchin@linux.dev>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 20 Aug 2025 13:23:05 -0700
-X-Gm-Features: Ac12FXwezbVvL0viCZVuAjNFUFHCHczXXpW3UtjzCHu_V1oLZOOrYvMnXKpxRX4
-Message-ID: <CAEf4BzZL+W0AYcr_+6oeV4+uOjam9hFSneCux93GnNRPdyqapA@mail.gmail.com>
-Subject: Re: [PATCH v1 10/14] bpf: selftests: bpf OOM handler test
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: linux-mm@kvack.org, bpf@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, 
-	David Rientjes <rientjes@google.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Song Liu <song@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 18, 2025 at 10:05=E2=80=AFAM Roman Gushchin
-<roman.gushchin@linux.dev> wrote:
->
-> Implement a pseudo-realistic test for the OOM handling
-> functionality.
->
-> The OOM handling policy which is implemented in bpf is to
-> kill all tasks belonging to the biggest leaf cgroup, which
-> doesn't contain unkillable tasks (tasks with oom_score_adj
-> set to -1000). Pagecache size is excluded from the accounting.
->
-> The test creates a hierarchy of memory cgroups, causes an
-> OOM at the top level, checks that the expected process will be
-> killed and checks memcg's oom statistics.
->
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> ---
->  .../selftests/bpf/prog_tests/test_oom.c       | 229 ++++++++++++++++++
->  tools/testing/selftests/bpf/progs/test_oom.c  | 108 +++++++++
->  2 files changed, 337 insertions(+)
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_oom.c
->  create mode 100644 tools/testing/selftests/bpf/progs/test_oom.c
->
-> diff --git a/tools/testing/selftests/bpf/prog_tests/test_oom.c b/tools/te=
-sting/selftests/bpf/prog_tests/test_oom.c
-> new file mode 100644
-> index 000000000000..eaeb14a9d18f
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/prog_tests/test_oom.c
-> @@ -0,0 +1,229 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include <test_progs.h>
-> +#include <bpf/btf.h>
-> +#include <bpf/bpf.h>
-> +
-> +#include "cgroup_helpers.h"
-> +#include "test_oom.skel.h"
-> +
-> +struct cgroup_desc {
-> +       const char *path;
-> +       int fd;
-> +       unsigned long long id;
-> +       int pid;
-> +       size_t target;
-> +       size_t max;
-> +       int oom_score_adj;
-> +       bool victim;
-> +};
-> +
-> +#define MB (1024 * 1024)
-> +#define OOM_SCORE_ADJ_MIN      (-1000)
-> +#define OOM_SCORE_ADJ_MAX      1000
-> +
-> +static struct cgroup_desc cgroups[] =3D {
-> +       { .path =3D "/oom_test", .max =3D 80 * MB},
-> +       { .path =3D "/oom_test/cg1", .target =3D 10 * MB,
-> +         .oom_score_adj =3D OOM_SCORE_ADJ_MAX },
-> +       { .path =3D "/oom_test/cg2", .target =3D 40 * MB,
-> +         .oom_score_adj =3D OOM_SCORE_ADJ_MIN },
-> +       { .path =3D "/oom_test/cg3" },
-> +       { .path =3D "/oom_test/cg3/cg4", .target =3D 30 * MB,
-> +         .victim =3D true },
-> +       { .path =3D "/oom_test/cg3/cg5", .target =3D 20 * MB },
-> +};
-> +
-> +static int spawn_task(struct cgroup_desc *desc)
-> +{
-> +       char *ptr;
-> +       int pid;
-> +
-> +       pid =3D fork();
-> +       if (pid < 0)
-> +               return pid;
-> +
-> +       if (pid > 0) {
-> +               /* parent */
-> +               desc->pid =3D pid;
-> +               return 0;
-> +       }
-> +
-> +       /* child */
-> +       if (desc->oom_score_adj) {
-> +               char buf[64];
-> +               int fd =3D open("/proc/self/oom_score_adj", O_WRONLY);
-> +
-> +               if (fd < 0)
-> +                       return -1;
-> +
-> +               snprintf(buf, sizeof(buf), "%d", desc->oom_score_adj);
-> +               write(fd, buf, sizeof(buf));
-> +               close(fd);
-> +       }
-> +
-> +       ptr =3D (char *)malloc(desc->target);
-> +       if (!ptr)
-> +               return -ENOMEM;
-> +
-> +       memset(ptr, 'a', desc->target);
-> +
-> +       while (1)
-> +               sleep(1000);
-> +
-> +       return 0;
-> +}
-> +
-> +static void setup_environment(void)
-> +{
-> +       int i, err;
-> +
-> +       err =3D setup_cgroup_environment();
-> +       if (!ASSERT_OK(err, "setup_cgroup_environment"))
-> +               goto cleanup;
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(cgroups); i++) {
-> +               cgroups[i].fd =3D create_and_get_cgroup(cgroups[i].path);
-> +               if (!ASSERT_GE(cgroups[i].fd, 0, "create_and_get_cgroup")=
-)
-> +                       goto cleanup;
-> +
-> +               cgroups[i].id =3D get_cgroup_id(cgroups[i].path);
-> +               if (!ASSERT_GT(cgroups[i].id, 0, "get_cgroup_id"))
-> +                       goto cleanup;
-> +
-> +               /* Freeze the top-level cgroup */
-> +               if (i =3D=3D 0) {
-> +                       /* Freeze the top-level cgroup */
-> +                       err =3D write_cgroup_file(cgroups[i].path, "cgrou=
-p.freeze", "1");
-> +                       if (!ASSERT_OK(err, "freeze cgroup"))
-> +                               goto cleanup;
-> +               }
-> +
-> +               /* Recursively enable the memory controller */
-> +               if (!cgroups[i].target) {
-> +
-> +                       err =3D write_cgroup_file(cgroups[i].path, "cgrou=
-p.subtree_control",
-> +                                               "+memory");
-> +                       if (!ASSERT_OK(err, "enable memory controller"))
-> +                               goto cleanup;
-> +               }
-> +
-> +               /* Set memory.max */
-> +               if (cgroups[i].max) {
-> +                       char buf[256];
-> +
-> +                       snprintf(buf, sizeof(buf), "%lu", cgroups[i].max)=
-;
-> +                       err =3D write_cgroup_file(cgroups[i].path, "memor=
-y.max", buf);
-> +                       if (!ASSERT_OK(err, "set memory.max"))
-> +                               goto cleanup;
-> +
-> +                       snprintf(buf, sizeof(buf), "0");
-> +                       write_cgroup_file(cgroups[i].path, "memory.swap.m=
-ax", buf);
-> +
-> +               }
-> +
-> +               /* Spawn tasks creating memory pressure */
-> +               if (cgroups[i].target) {
-> +                       char buf[256];
-> +
-> +                       err =3D spawn_task(&cgroups[i]);
-> +                       if (!ASSERT_OK(err, "spawn task"))
-> +                               goto cleanup;
-> +
-> +                       snprintf(buf, sizeof(buf), "%d", cgroups[i].pid);
-> +                       err =3D write_cgroup_file(cgroups[i].path, "cgrou=
-p.procs", buf);
-> +                       if (!ASSERT_OK(err, "put child into a cgroup"))
-> +                               goto cleanup;
-> +               }
-> +       }
-> +
-> +       return;
-> +
-> +cleanup:
-> +       cleanup_cgroup_environment();
-> +}
-> +
-> +static int run_and_wait_for_oom(void)
-> +{
-> +       int ret =3D -1;
-> +       bool first =3D true;
-> +       char buf[4096] =3D {};
-> +       size_t size;
-> +
-> +       /* Unfreeze the top-level cgroup */
-> +       ret =3D write_cgroup_file(cgroups[0].path, "cgroup.freeze", "0");
-> +       if (!ASSERT_OK(ret, "freeze cgroup"))
-> +               return -1;
-> +
-> +       for (;;) {
-> +               int i, status;
-> +               pid_t pid =3D wait(&status);
-> +
-> +               if (pid =3D=3D -1) {
-> +                       if (errno =3D=3D EINTR)
-> +                               continue;
-> +                       /* ECHILD */
-> +                       break;
-> +               }
-> +
-> +               if (!first)
-> +                       continue;
-> +
-> +               first =3D false;
-> +
-> +               /* Check which process was terminated first */
-> +               for (i =3D 0; i < ARRAY_SIZE(cgroups); i++) {
-> +                       if (!ASSERT_OK(cgroups[i].victim !=3D
-> +                                      (pid =3D=3D cgroups[i].pid),
-> +                                      "correct process was killed")) {
-> +                               ret =3D -1;
-> +                               break;
-> +                       }
-> +
-> +                       if (!cgroups[i].victim)
-> +                               continue;
-> +
-> +                       /* Check the memcg oom counter */
-> +                       size =3D read_cgroup_file(cgroups[i].path,
-> +                                               "memory.events",
-> +                                               buf, sizeof(buf));
-> +                       if (!ASSERT_OK(size <=3D 0, "read memory.events")=
-) {
-> +                               ret =3D -1;
-> +                               break;
-> +                       }
-> +
-> +                       if (!ASSERT_OK(strstr(buf, "oom_kill 1") =3D=3D N=
-ULL,
-> +                                      "oom_kill count check")) {
-> +                               ret =3D -1;
-> +                               break;
-> +                       }
-> +               }
-> +
-> +               /* Kill all remaining tasks */
-> +               for (i =3D 0; i < ARRAY_SIZE(cgroups); i++)
-> +                       if (cgroups[i].pid && cgroups[i].pid !=3D pid)
-> +                               kill(cgroups[i].pid, SIGKILL);
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +void test_oom(void)
-> +{
-> +       struct test_oom *skel;
-> +       int err;
-> +
-> +       setup_environment();
-> +
-> +       skel =3D test_oom__open_and_load();
-> +       err =3D test_oom__attach(skel);
-> +       if (CHECK_FAIL(err))
-> +               goto cleanup;
-> +
-> +       /* Unfreeze all child tasks and create the memory pressure */
-> +       err =3D run_and_wait_for_oom();
-> +       CHECK_FAIL(err);
-> +
-> +cleanup:
-> +       cleanup_cgroup_environment();
-> +       test_oom__destroy(skel);
-> +}
-> diff --git a/tools/testing/selftests/bpf/progs/test_oom.c b/tools/testing=
-/selftests/bpf/progs/test_oom.c
-> new file mode 100644
-> index 000000000000..ca83563fc9a8
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/progs/test_oom.c
-> @@ -0,0 +1,108 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include "vmlinux.h"
-> +#include <bpf/bpf_helpers.h>
-> +#include <bpf/bpf_tracing.h>
-> +
-> +char _license[] SEC("license") =3D "GPL";
-> +
-> +#define OOM_SCORE_ADJ_MIN      (-1000)
-> +
-> +void bpf_rcu_read_lock(void) __ksym;
-> +void bpf_rcu_read_unlock(void) __ksym;
-> +struct task_struct *bpf_task_acquire(struct task_struct *p) __ksym;
-> +void bpf_task_release(struct task_struct *p) __ksym;
-> +struct mem_cgroup *bpf_get_root_mem_cgroup(void) __ksym;
-> +struct mem_cgroup *bpf_get_mem_cgroup(struct cgroup_subsys_state *css) _=
-_ksym;
-> +void bpf_put_mem_cgroup(struct mem_cgroup *memcg) __ksym;
-> +int bpf_oom_kill_process(struct oom_control *oc, struct task_struct *tas=
-k,
-> +                        const char *message__str) __ksym;
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-These declarations should come from vmlinux.h, if you don't get them,
-you might not have recent enough pahole.
+Hi All,
 
-At the very least these should all be __ksym __weak, not just __ksym
-(but I'd rather not add them, though).
+This patch series adds watchdog driver support for the Renesas RZ/T2H
+(R9A09G077) and RZ/N2H (R9A09G087) SoCs. The necessary device tree
+bindings and driver modifications are included.
 
-[...]
+v3->v4:
+- Updated commit message for patch 1/6 to include an example node.
+- Added reviewed-by from Geert for patch 1/6.
+
+v2->v3:
+- Fixed commit header for the patches rzv2h_wdt->rzv2h
+- Added reviewed-by from Wolfram
+- Merged "watchdog: rzv2h_wdt: Make reset controller optional"
+  patch with "watchdog: rzv2h: Make "oscclk" and reset controller optional"
+- Dropped patch "watchdog: rzv2h: Set min_timeout based on
+  max_hw_heartbeat_ms" instead updated the period for RZ/T2H.
+- Updated rzv2h_of_data structure to include tops and timeout_cycles
+  for RZ/T2H.
+
+v1->v2:
+- Dropped items from clock-names and instead added maxItems: 1.
+- Added reviewed-by from Rob.
+
+v1: https://lore.kernel.org/all/20250707200111.329663-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+v2: https://lore.kernel.org/all/20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+v3: https://lore.kernel.org/all/20250804195723.3963524-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (6):
+  dt-bindings: watchdog: renesas,wdt: Add support for RZ/T2H and RZ/N2H
+  watchdog: rzv2h: Obtain clock-divider and timeout values from OF match
+    data
+  watchdog: rzv2h: Make "oscclk" and reset controller optional
+  watchdog: rzv2h: Add support for configurable count clock source
+  watchdog: rzv2h: Add support for RZ/T2H
+  watchdog: rzv2h: Improve error strings and add newlines
+
+ .../bindings/watchdog/renesas,wdt.yaml        |  36 ++++-
+ drivers/watchdog/rzv2h_wdt.c                  | 148 ++++++++++++++++--
+ 2 files changed, 164 insertions(+), 20 deletions(-)
+
+-- 
+2.51.0
+
 
