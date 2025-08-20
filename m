@@ -1,90 +1,149 @@
-Return-Path: <linux-kernel+bounces-777122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 970CBB2D597
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56489B2D59A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4830A3BC443
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:03:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1232A3BBB13
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3951F2C08AA;
-	Wed, 20 Aug 2025 08:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A9C2D77E3;
+	Wed, 20 Aug 2025 08:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxaVP6CX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w00Abl7L"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BF91F3BB5;
-	Wed, 20 Aug 2025 08:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CE71F3BB5
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755677025; cv=none; b=IQ0iEhlYNUFCNaypGaWz2pWMXpE2ikVM/viMXZ2+mNaVuTceyZmYTMiCAfd7jOfvXs5FTEnywW2LgXGqrI+E7tsSdPIYHKxxEP2Cu+8sCSe5xIApf0rAn3tRIA7zq55nRtAPjSGwYVAzle3pQxv46tJAY0Zy9KtqwHhSSPqFvsc=
+	t=1755677053; cv=none; b=V85WweglZPUQHizVYuqJlXjn0HtM6pXBE5y5E+NyxYZCL7ezfyJW89hUHfh2foKmvwA6a65ZbwNjnKossVGM+e0NY/sPncI8pX5mISqmPyFthIRvuzYbWRIKXiogize4GORG6cfXi9aWygGM2N8bDJH1vfMOpbNcSnnJGYBoDAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755677025; c=relaxed/simple;
-	bh=BISR+gtNp9+FdWJxwDQ/PC3a0OAeumHoulzrrl8qHsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ghobTA8YZlENhDcBt1MRIR2U5U4T0OCuDb57QcAU9xOcgCVNqgXJlAfCDT57R3VOJ1HnPx++WInfj6xbGDkQwNCSXEoZ5hM8nJTFJMnZaZpr6ebLm6pTiYAyFfMnLhzL5z2zvbgsaGvToyEY4xn8qp1tWVlWrIUfwCDa66g0DlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fxaVP6CX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E997C4CEEB;
-	Wed, 20 Aug 2025 08:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755677024;
-	bh=BISR+gtNp9+FdWJxwDQ/PC3a0OAeumHoulzrrl8qHsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fxaVP6CXICRipgpUoN8KbSwb0dfHkpQ8cbufSh7204gD4i3ENOWJXQcaTmScUS7RY
-	 SpxxhJvgttV3xsT+BB2/x9hFgk4nUOzZL59k4Uias7uxMRKARhEoXebyzKz3xfa4e5
-	 ockFdmutkcecsT52edwqViL7/Ax7X74GbKsvbxHxoHXxHVvlbsu3mGfmbRhV9VlzoL
-	 qn3/LCz3E4Izs1s0hhhbvpuxf4BF/CVMSOV0jlYiNYCD9wDV/D5Lx3kkYbCyUU6PRg
-	 kNWYsFeZdiLSKeT0tcoJah5uhxuJxrAWIxj/oYAbBkFGv5A2ZjRhc5bDfglXJwf8n8
-	 hSxDTqOXFeFuw==
-Date: Wed, 20 Aug 2025 10:03:41 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: i2s: spacemit: add support for K1 SoC
-Message-ID: <20250820-gecko-of-absolute-will-b06337@kuoka>
-References: <20250814-k1-i2s-v1-0-c31149b29041@linux.spacemit.com>
- <20250814-k1-i2s-v1-1-c31149b29041@linux.spacemit.com>
+	s=arc-20240116; t=1755677053; c=relaxed/simple;
+	bh=rbFXFjw4n1QivhuWIRmAWtZ9fMtej7RhLcACXFP/i3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nno0qkxSgyxQ3QgQUfbbJGQbzh/LhY4qDSIax+DWL6o5YSRV+nGSUcbpqj2XAfTLtcGXw0wzPDNERKkm77R0/kQlyih2IM6/TXJbHRrgdw690Z0N+qmKIberEbvQfWLXDsqdHF0DqEIT5DsYKXf+robG4FqSpyw+PQEtP+Q9RjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w00Abl7L; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55ce52658a7so5911845e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755677050; x=1756281850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rbFXFjw4n1QivhuWIRmAWtZ9fMtej7RhLcACXFP/i3Y=;
+        b=w00Abl7LIysvda5RITxZ3gyLq4xfappFa16LgbiYLPykC4dnMwAOUnsC/xSBnq7nW/
+         qUU3yqZBVi7rfxH90gQ5a7pra1XDv1lIB9MS8r8MxKzWYF5GS7awXgROujXmCF47gCrQ
+         oksu2jb1sZCFRD9qKTPEqZ5HuMy4Kbw2u/mkPXuU2jenNXN9aPtMsHjkibtHPMvB/CsQ
+         7yhAuqMmnf7vf+MIYqZQKHI1F02/kuJAZ7nKGF56KGmtIDTHeliKk7HlaFFSEcLm+k5x
+         W/XI1SLMshLnGDimdkgy23AeeBscKCQ22lJlFHJWoRCpgqH4jlGnbjcoE2HdMJpHbwdE
+         zu5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755677050; x=1756281850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rbFXFjw4n1QivhuWIRmAWtZ9fMtej7RhLcACXFP/i3Y=;
+        b=NyKvjMJjuHjE1YtL+hO2HQPwgisr7F/luyvpos+YEb+IAIzFYDCQozGUsZTNqzql4y
+         a7CFl+3XMkKUBt/2z2DRRK/O2fUc7SD4kc9kj+U3k7IKhOC8CGKXLZ+MRr2injB6Dj74
+         jl/QouXC9amfYJljq6A/dydTmMtbIkxhDuUrzm8IYtYQnXCQybGMW6mvtNda2ZeeD50v
+         8h2BBGIPomsnrA8wtindPwycwJPFga5j5UAcdmp5+cXYu/z936UsLWVXFYPRaR7e9rBa
+         yogkypC002Ogak6R8gQOef/YudUruCEEb3+vk+y3hDzuvdK/nB+f8S9OqrkuyghfrJBr
+         s8Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCXhNin5EdTc/utwe3mamWjle69StH1pYvJbHEFfuHVZOGQZV4HEuJ+T3SDn2dJh9AvpqojHamYY049tCeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAkeNmwYIkriNiUFwVxIPe/wL4Jla7ZaGJN+eY6kObrelP+CqB
+	qUaQh3tbNyGaKIim2suPgLm6hCSUScOpR4VzjK+OCG7TNvh+62KFIBgf+HIuoDYh9wHbAWDxdLE
+	CkECIdTG6sCbaMz1Vw8D0lCLqUmss5QTYuqnSKU4=
+X-Gm-Gg: ASbGnct4mISsdMsg7p5AAukWEbHGkTutfWZQ4t/BqqSWa4r1IG+75wtjYAROHJ3QLRW
+	GHS7pL++G/jqpdMdtzmbkFE3ny8cmOQT6i8HCUGtkduBycPcymXDwDv3/+Gf4PR/JOATqHP6Ur9
+	1bTAcwsu99DHLxKyRpBViX6d4ckhlFdCtJ3LjQmWiWbtccc99Rr1jTlCIUeMflW+VQoD4KESqRe
+	WVpZ0loABdtd3yJ8CCm0KxO9/mo2m5jJEw5YOJFMC05OX1ezgFZkQ==
+X-Google-Smtp-Source: AGHT+IGVK1oPtxH4WR1xR8qF9qbjjy/dcR0lYEGwtgT9scAs4HhXg+zq6box8q/WjPnqcqOrs9UAS7T3jjVlqulmz2U=
+X-Received: by 2002:ac2:4ca9:0:b0:55b:732d:931 with SMTP id
+ 2adb3069b0e04-55e06b2dd6fmr405525e87.12.1755677049307; Wed, 20 Aug 2025
+ 01:04:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250814-k1-i2s-v1-1-c31149b29041@linux.spacemit.com>
+References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de> <20250701-vdso-auxclock-v1-12-df7d9f87b9b8@linutronix.de>
+In-Reply-To: <20250701-vdso-auxclock-v1-12-df7d9f87b9b8@linutronix.de>
+From: John Stultz <jstultz@google.com>
+Date: Wed, 20 Aug 2025 01:03:56 -0700
+X-Gm-Features: Ac12FXwkxxvaSnLooTWKfhclqEnR_RwAuKEDNHPFBz1DnCC5Fudpwl3wjm0bVsk
+Message-ID: <CANDhNCqvKOc9JgphQwr0eDyJiyG4oLFS9R8rSFvU0fpurrJFDg@mail.gmail.com>
+Subject: Re: [PATCH 12/14] vdso/gettimeofday: Add support for auxiliary clocks
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan <shuah@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arch@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>, 
+	Christopher Hall <christopher.s.hall@intel.com>, Miroslav Lichvar <mlichvar@redhat.com>, 
+	Werner Abt <werner.abt@meinberg-usa.com>, David Woodhouse <dwmw2@infradead.org>, 
+	Kurt Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, 
+	Antoine Tenart <atenart@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 04:54:19PM +0800, Troy Mitchell wrote:
-> Add dt-binding for the i2s driver of SpacemiT's K1 SoC.
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  .../devicetree/bindings/sound/spacemit,k1-i2s.yaml | 88 ++++++++++++++++++++++
->  1 file changed, 88 insertions(+)
+On Tue, Jul 1, 2025 at 1:58=E2=80=AFAM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> Expose the auxiliary clocks through the vDSO.
+>
+> Architectures not using the generic vDSO time framework,
+> namely SPARC64, are not supported.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 
-Please run scripts/checkpatch.pl on the patches and fix reported
-warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-patches and (probably) fix more warnings. Some warnings can be ignored,
-especially from --strict run, but the code here looks like it needs a
-fix. Feel free to get in touch if the warning is not clear.
+Just as a heads up, I've just been bisecting and this commit seems to
+be causing problems on arm64 devices, running 32bit versions of
+kselftest nanosleep or inconsistency-check tests. Running the 64bit
+versions of the tests are not showing issues.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+From my initial digging, it looks like clockids that aren't vdso
+enabled (CLOCK_PROCESS_CPUTIME_ID, CLOCK_THREAD_CPUTIME_ID,
+CLOCK_REALTIME_ALARM, CLOCK_BOOTTIME_ALARM) are somehow getting caught
+in the vdso logic and are *not* falling back to the syscall (stracing
+the test I don't see syscalls happen before the failure), and the
+values returned don't look to be correct.
 
+The inconsistency-check output looks like:
+# 5983032:0
+# 5983317:0
+# 5983561:0
+# 5983846:0
+# 5984130:0
+# 5984415:0
+# --------------------
+# 5984659:0
+# 2009440:0
+# --------------------
+# 2009724:0
+# 2009969:0
+# 2010253:0
+# 2010538:0
+# 2010782:0
+# 2011067:0
 
-Best regards,
-Krzysztof
+Which hints we're returning nanosecond values in the tv_sec field somehow.
 
+Reverting just this change gets things back to working.
+
+It's pretty late here, so I'm going to try to dig a bit further to
+understand what's going on tomorrow, but wanted to raise this in case
+it's more obvious to less tired eyes. :)
+
+thanks
+-john
 
