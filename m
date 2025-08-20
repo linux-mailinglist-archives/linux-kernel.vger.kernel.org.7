@@ -1,226 +1,311 @@
-Return-Path: <linux-kernel+bounces-777756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B177AB2DD71
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9E8B2DD77
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F123A3731
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:12:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1C5A3AF0B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B8631B135;
-	Wed, 20 Aug 2025 13:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49BD3093CB;
+	Wed, 20 Aug 2025 13:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Q8V8kCGi"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2080.outbound.protection.outlook.com [40.107.223.80])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="UTZuHWwC"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628E73093CB;
-	Wed, 20 Aug 2025 13:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755695520; cv=fail; b=VjGObirwsgbKfpmSFKe8Q9eWuXOZbuJrXgpG44EATTrOFSObxmEiu1Ilg9+6IH+2hAxZV40t9uN/ncAYfY3ZT/ghEwlNyfapOHFHYJt6ow92Di5AzwjEvhqSXFRn8mAOy/gwKB8d9uL3tGdCPSNY+6Ia/DwcIOZin3xzSv3sV4A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755695520; c=relaxed/simple;
-	bh=hBlTHcHcheWHku2jVxDaCfGpHfdItGosuQuY17KYBCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hfuRXNi6SEzPgSrppqJnykxQLcr3RKJRuwSHSS5EBMvWwbv4EcE/nXvrmzT1wkDnzH9V0Q8F8Mg6PamApIFATiAN/AtJMlWEQM+cpi5SBqOzA598QpKip/qrFcYKfIgOaKggUTDkRKvWEqsHbiQRExJpRGXqmzp07JfRSxjRBjg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Q8V8kCGi; arc=fail smtp.client-ip=40.107.223.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uBKLMfRVpxpGoNv4E4RjARnEK4itPG41M1ruKMiwXbGthq1OnoJ2MzMclKsWShvZClYh19UaQdlHDnh0SmLTMpP1IcOO8lzDW2eZzea2oiNCYLQSTmUZc9ZW1umTi9fHHFGCACBDnVi1FWZUKir05s5xpPn82HyZ0lPMBqYY+XKKMxDD/TG5B/Vl8j/P8VgAr49dbvMthcX4D6GZP6AOahThvuMbyUojsUPchyUO1umhDOPNr9n9lhrAP9QPsdHCduMFi03fU1qEuBon/1wGnz/PCey/OuFIlZyPwfEntNbKGuFOZcuN4D+SAXSSW9vyk6akJEr1ozdLaXJnVOlNGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7rOdbunPn0S0VYOYrCOw48s/STZrEfsQJBRdv+YuXVs=;
- b=hxDE4wJZ/WAea822Pu9DXoOZYDImx1lz41rVwHW/Bfho3h5QfM9rNEb1WiKtHFcscYMHRkhdb24G1G09WvfOmVWhgnveYJAyLZAcP6eXy2uw7TQh09SXbqxJaaWjyygXeACM1nadbOwX+DJQjo6JQeQSsXCnsgO43w1nFslvpFwN4+spnNEe0FBoLyYwHQRMnYbJtRq9TxyJt7LAqYsBsg7Yn1oI2i1lHhHIBkkU/wwM+Z7K+KDquzk8YyWItu/B8Ec/L3t2b030obteYvgTqTIfu88ZgsmK9dvO2o56WKt7y+2qF7jQuiwFDcpTFLOWgCzXzAgDbeGbpRScz2qgSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7rOdbunPn0S0VYOYrCOw48s/STZrEfsQJBRdv+YuXVs=;
- b=Q8V8kCGit1MvlPwG3IE9UaQnrBx3SddEAvwmbACazkj9D81M82edf4NC8PqiBds98TX19zXVGn3Qr+/QTJcRg1wLmZvJr66SDjYtPY+QN78b0WAaA8k5oFbwRUqcIgLAku97Mja7Tuh5g4jCjY2T8uqhY2u12qOpETXjdPPQsKs=
-Received: from CH3P220CA0012.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1e8::32)
- by DS7PR12MB8202.namprd12.prod.outlook.com (2603:10b6:8:e1::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
- 2025 13:11:55 +0000
-Received: from CH1PEPF0000AD7D.namprd04.prod.outlook.com
- (2603:10b6:610:1e8:cafe::c7) by CH3P220CA0012.outlook.office365.com
- (2603:10b6:610:1e8::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.14 via Frontend Transport; Wed,
- 20 Aug 2025 13:11:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000AD7D.mail.protection.outlook.com (10.167.244.86) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Wed, 20 Aug 2025 13:11:54 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Aug
- 2025 08:11:54 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Wed, 20 Aug
- 2025 06:11:54 -0700
-Received: from [10.252.207.152] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 20 Aug 2025 08:11:51 -0500
-Message-ID: <6652929c-1e14-451f-afce-c5b4c2b7af9d@amd.com>
-Date: Wed, 20 Aug 2025 18:41:50 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE6C31AF25;
+	Wed, 20 Aug 2025 13:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755695539; cv=none; b=DprwzYS90O+2ABb8IxVuI2y0M95ICkUBV2VlZKd9BWOPZ5HG73P0AMjPzNBno+AIWgRe8HZVcirxHpmLkBPQXDUimx6Mg284f6usrIpY2dh+M5Uu4D2xtqXHfAy7eAhxzExZ1n7pe2gwJOsV34hWc8cD2xB9Q/xSqI6Q+8SKOZo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755695539; c=relaxed/simple;
+	bh=McrZKKG57E3PX1Jag9+iSNmJfy//YqZd1mwSALYSo7g=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=s6uKhaRPLX9We3h+xQof231hh4NpZl0iQJYEJ6pcMYr+WVPMDc/ZinSIf/cwJzUiIK44MWcsK2slh5kSF60ZfW8WyUHDCbPIu6WDIFoUen6vqqTZTFK/PoTCv+K5yY3oRQJdwkuoBV//rtO2OBIlc5cH1dkq3Pgd+82jJpqhyNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=UTZuHWwC; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=FkjoUVrkEbxgoQaDk5ZZ3XPrtdMLBaFU+7TZ7EnSAjc=; b=UTZuHWwC+2InavEBSqseZpQwkk
+	HFv0y6A+LZKM4LSBCnb0FXrm4N3Rki55rC2HaUcF6w4mqri8P4R/PksgIB0sNYE4TFH981obQ6nkN
+	vhTt88CmcJy3d0WpfJm8BEWrVDXeoOFrJWCIECPtjG1oKvHZyLPp6Rpc9SDctPeloCkcxv59O5xyv
+	KTEynBButoxre+2YWfjoGzr1/rQmp6vnCZzGrsMoYfHqXfGcWIA5K1Uv2g7evSz/7bUtOVz9Ce0R5
+	AIPA2wCWELkZLcycT6HYWE4GgrYJlV5QU0LSz0UPfdNQHfuddWI0Vo1Tlo8f5OcHiXxTsRor2VAoz
+	NFGSRy0Q==;
+Received: from [122.175.9.182] (port=37861 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1uoibs-0000000GEBr-3E16;
+	Wed, 20 Aug 2025 09:12:13 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id 1937A1783F55;
+	Wed, 20 Aug 2025 18:42:07 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id EE3171781A82;
+	Wed, 20 Aug 2025 18:42:06 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 7Zh1uusK_KgJ; Wed, 20 Aug 2025 18:42:06 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 973CE17823F4;
+	Wed, 20 Aug 2025 18:42:06 +0530 (IST)
+Date: Wed, 20 Aug 2025 18:42:06 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: Md Danish Anwar <a0501179@ti.com>
+Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
+	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
+	robh <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, 
+	conor+dt <conor+dt@kernel.org>, ssantosh <ssantosh@kernel.org>, 
+	richardcochran <richardcochran@gmail.com>, 
+	m-malladi <m-malladi@ti.com>, s hauer <s.hauer@pengutronix.de>, 
+	afd <afd@ti.com>, jacob e keller <jacob.e.keller@intel.com>, 
+	horms <horms@kernel.org>, johan <johan@kernel.org>, 
+	m-karicheri2 <m-karicheri2@ti.com>, s-anna <s-anna@ti.com>, 
+	glaroque <glaroque@baylibre.com>, 
+	saikrishnag <saikrishnag@marvell.com>, 
+	kory maincent <kory.maincent@bootlin.com>, 
+	diogo ivo <diogo.ivo@siemens.com>, 
+	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
+	basharath <basharath@couthit.com>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	ALOK TIWARI <alok.a.tiwari@oracle.com>, 
+	Bastien Curutchet <bastien.curutchet@bootlin.com>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
+	mohan <mohan@couthit.com>
+Message-ID: <723941373.207922.1755695526505.JavaMail.zimbra@couthit.local>
+In-Reply-To: <8ad6bb71-9ce5-414a-bbf6-b9893b88cb4f@ti.com>
+References: <20250812110723.4116929-1-parvathi@couthit.com> <8ad6bb71-9ce5-414a-bbf6-b9893b88cb4f@ti.com>
+Subject: Re: [PATCH net-next v13 0/5] PRU-ICSSM Ethernet Driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 8/8] KVM: SVM: Enable Secure TSC for SNP guests
-To: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Thomas Lendacky <thomas.lendacky@amd.com>,
-	Michael Roth <michael.roth@amd.com>, Borislav Petkov <bp@alien8.de>, Vaishali
- Thakkar <vaishali.thakkar@suse.com>, Kai Huang <kai.huang@intel.com>,
-	<David.Kaplan@amd.com>
-References: <20250819234833.3080255-1-seanjc@google.com>
- <20250819234833.3080255-9-seanjc@google.com>
- <c3e638e9-631f-47af-b0d2-06cea949ec1e@amd.com> <aKXHNDiKys9y8Xdw@google.com>
-Content-Language: en-US
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <aKXHNDiKys9y8Xdw@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7D:EE_|DS7PR12MB8202:EE_
-X-MS-Office365-Filtering-Correlation-Id: eafade8b-ad08-4efe-3c31-08dddfeb22c6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QVNIZU1pUXRRVVAxSXE2MVFNQzczWlRZbFQ1eEhqRldZdjhLQWxRMFNoYlF0?=
- =?utf-8?B?Wk5MQ29ZQjkyb053WFBCYW1JQ3l3U1ZNU0NFRmZKM0JBQjhhTXliY3dyUmxY?=
- =?utf-8?B?aGczQ1IrcHppUDVkak9obVB1QlJMejVEY1p5Z1hxUjJ6aENoU05Pemc4eEVa?=
- =?utf-8?B?SXdXSmZWLzc3eHhMWlB6K09IOGpGNnZiRXFJeTVOMjQxZWJpbm9CU1IrOGUr?=
- =?utf-8?B?R2tDRG5GL0EwazdoeTlVZ1JXTXZDRzhYRnFjTUlwcFVvQ2hXL3hKNW5WL0li?=
- =?utf-8?B?VGh3ckxid0xTQldVU3JXaWVaSkZoVmR4czduLzY2c2lBMWZ0ZEhjZ2p1cCs4?=
- =?utf-8?B?aG85b25mVkhLZy9oN0l5T3hOa1NPY0pVenRrVHEwOFVjQWN6bUoyY3hDcFZ5?=
- =?utf-8?B?bllJOERQUFpEV3RzVFdOdkFmME0zUElMZ2lFQmZSczJueFI0a1FTZUl1TG5v?=
- =?utf-8?B?Q0s2Y0xOTzhVVGFXVDNVTVM4NGJJWFVTenpqanNaUVptOFVud0MvZWN2WFBR?=
- =?utf-8?B?MGViZVBBTlJmV1Y4SkY2bnJSREdXQ3FBVDRuQ0JCVHNibngrZ3Z0S21scXpa?=
- =?utf-8?B?NkRwNFQwYjczVHVPUllyc1ozY2dhNG9tZldmbUxNMHJjcGJoVWRKNFVRNTd2?=
- =?utf-8?B?VlpKRzFzaDZCcHRCVnpjSSsyS3JPb2FlQnVMNUdKUlpsRHZQUkVWL1VPSVd6?=
- =?utf-8?B?SUMwdHdFUWlya1ZXbHpuZ2o0cTNmMnRHVW14ZHRKaUF4dmhFaDdvdHlTRXBa?=
- =?utf-8?B?bktsZFl6cHdENlNvRmtGd3hMTURtclVHT3c1R21iSHVhMGtIMEpFcFpOZXM2?=
- =?utf-8?B?L040Ynh1akcvR01ySkttejUvOUdLVGQxdEZqcnhHWDJ4d24vcG4xYytJMmNG?=
- =?utf-8?B?MzlIcGgxSjN6SmhNRDczWXcwN0tXVmREaGx4UFRKcWxDMFhRbnVvcjRwN1Qz?=
- =?utf-8?B?c1UxZDhpTURHSjRIM1VzR29hOFp3M2ZXR2ZBN01Td24wN25sV1ZkWEhXemVE?=
- =?utf-8?B?N3pUNjI1UDN5OE5xOTZHY2pxTEtpV3hPYzFIYXltdTdwRjlNWHplblB0R0Zp?=
- =?utf-8?B?NnNnSWFhZE1MTU1HditXblRVRmdnR0VMNDZ2Qitua0hJZnVtR1ZYVDNFMnRN?=
- =?utf-8?B?cmNBd1oyQTZ3VEhOMFpwY09ncklVVEV0N1E4NUNYeVdNWXhBWk84VFp2bXdi?=
- =?utf-8?B?NE53UktOSFA5M1RMU0VjRjVIM2xIWjh3OEMwb2svbnF3RFYvZTUxYjk1QnRF?=
- =?utf-8?B?Wm9IRUNTaHhhd1B5U3YrNmJiTmFxeExqckwxSGp0N3BmejdYbzRNQ0NVWUF1?=
- =?utf-8?B?TkpVUmR6d09GTld4UjR6WXo1WHZERFNRNGVsdGRFWXFnaTIyVGRWYUtUYlpH?=
- =?utf-8?B?dnlIcEtheXN3NzRLY3ozUW1YOUdqcE1LYU13d1ZkMU1mTEtGRkx0MXJaZ1BC?=
- =?utf-8?B?SW9TNWYzUjgwZngrVjBlVzVIN2dibkRLbkdaT1BwR1lQTUtGSHZoQWNRUmNk?=
- =?utf-8?B?OENwUTlBYVY2clRES0FWeXFZTjVQN015ZlBZNXRuMm9DdG1nS1JlUTRseW1C?=
- =?utf-8?B?WWFzVFlKVy9oSXFHRWVqNGhzd2VzcXYzZzBrVEhrdVRFcTVvYmNUQXRLdHJ6?=
- =?utf-8?B?NTBqNUNjR2FwYzdQcUNuWVVXbUNRVjkxWW41ZTFicGhsWFVEWk8zNXlYVXRB?=
- =?utf-8?B?ejdBL3dLS0cwb0ZvL0lMNkhFZVJuZXk4bE9tSURMQmlvdGdyNVZMUkxaMHJ1?=
- =?utf-8?B?WWJyVytsb2hKRTdCcG4yRzNKOWhqMkRpMjE2Kzc2Q3FCWGc3QVJ4T1NuMlZa?=
- =?utf-8?B?VVhWWUhnMGR2eXNWMFpabUpERDhlWFdRYTRISlJJQjdQV2M4TG0wckQzVTVw?=
- =?utf-8?B?dkRoUE9qK3dpN3E5cjJ4ZmFRWFp4ZGVLOTFJMHZySHMwa0Z5MSt3NmVRY1E4?=
- =?utf-8?B?NmpGeHJQd1Y5V2ZSdTBvUXowakxFWmttcXBkSGVEeDZ1VkRXcmp6cERvYjJ0?=
- =?utf-8?B?aWtrbWt1TXpvUDJDVTA1UnlDa1lXZ2RiU0tCVmhETnI1bzJYOWdIUmN4dktK?=
- =?utf-8?B?OTZMcnVVVldrbWNMOEV4eWhoNWpQcUoveldpQT09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 13:11:54.9668
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eafade8b-ad08-4efe-3c31-08dddfeb22c6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD7D.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8202
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: PRU-ICSSM Ethernet Driver
+Thread-Index: yzIaHTMGcOq0ItatwNI8VBAAqPuE7g==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
+Hi,
 
-
-On 8/20/2025 6:31 PM, Sean Christopherson wrote:
-> On Wed, Aug 20, 2025, Nikunj A. Dadhania wrote:
->>
->>
->> On 8/20/2025 5:18 AM, Sean Christopherson wrote:
->>> From: Nikunj A Dadhania <nikunj@amd.com>
->>>
->>> @@ -2195,6 +2206,12 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
->>>  
->>>  	start.gctx_paddr = __psp_pa(sev->snp_context);
->>>  	start.policy = params.policy;
->>> +
->>> +	if (snp_is_secure_tsc_enabled(kvm)) {
->>> +		WARN_ON_ONCE(!kvm->arch.default_tsc_khz);
->>
->> Any particular reason to drop the the following change: 
->>
->> +		if (WARN_ON(!kvm->arch.default_tsc_khz)) {
->> +			rc = -EINVAL;
->> +			goto e_free_context;
->> +		}
+> On 8/12/2025 4:35 PM, Parvathi Pudi wrote:
+>> Hi,
+>> 
+>> The Programmable Real-Time Unit Industrial Communication Sub-system (PRU-ICSS)
+>> is available on the TI SOCs in two flavors: Gigabit ICSS (ICSSG) and the older
+>> Megabit ICSS (ICSSM).
+>> 
+>> Support for ICSSG Dual-EMAC mode has already been mainlined [1] and the
+>> fundamental components/drivers such as PRUSS driver, Remoteproc driver,
+>> PRU-ICSS INTC, and PRU-ICSS IEP drivers are already available in the mainline
+>> Linux kernel. The current set of patch series builds on top of these components
+>> and introduces changes to support the Dual-EMAC using ICSSM on the TI AM57xx,
+>> AM437x and AM335x devices.
+>> 
+>> AM335x, AM437x and AM57xx devices may have either one or two PRU-ICSS instances
+>> with two 32-bit RISC PRU cores. Each PRU core has (a) dedicated Ethernet
+>> interface
+>> (MII, MDIO), timers, capture modules, and serial communication interfaces, and
+>> (b) dedicated data and instruction RAM as well as shared RAM for inter PRU
+>> communication within the PRU-ICSS.
+>> 
+>> These patches add support for basic RX and TX  functionality over PRU Ethernet
+>> ports in Dual-EMAC mode.
+>> 
+>> Further, note that these are the initial set of patches for a single instance of
+>> PRU-ICSS Ethernet.  Additional features such as Ethtool support, VLAN Filtering,
+>> Multicast Filtering, Promiscuous mode, Storm prevention, Interrupt coalescing,
+>> Linux PTP (ptp4l) Ordinary clock and Switch mode support for AM335x, AM437x
+>> and AM57x along with support for a second instance of  PRU-ICSS on AM57x
+>> will be posted subsequently.
+>> 
+>> The patches presented in this series have gone through the patch verification
+>> tools and no warnings or errors are reported. Sample test logs obtained from
+>> AM33x,
+>> AM43x and AM57x verifying the functionality on Linux next kernel are available
+>> here:
+>> 
+>> [Interface up
+>> Testing](https://gist.github.com/ParvathiPudi/e24ae1971258b689c411bf6d8b504576)
+>> 
+>> [Ping
+>> Testing](https://gist.github.com/ParvathiPudi/6077cc7ab71eb0bc62ef0435ce9a5572)
+>> 
+>> [Iperf
+>> Testing](https://gist.github.com/ParvathiPudi/54aec8d6aaa1149b68589af9c8511b23)
+>> 
+>> [1] https://lore.kernel.org/all/20230106121046.886863-1-danishanwar@ti.com/
+>> [2] https://lore.kernel.org/all/20250108125937.10604-1-basharath@couthit.com/
+>> 
+>> This is the v13 of the patch series [v1]. This version of the patchset
+>> addresses the comments made on [v12] of the series.
+>> 
+>> Changes from v12 to v13 :
+>> 
+>> *) Addressed Alok Tiwari comments on patch 2, 3 and 5 of the series.
+>> *) Addressed Bastien Curutchet comment on patch 2 of the series.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v11 to v12 :
+>> 
+>> *) Addressed Jakub Kicinski's comments on patch 2 of the series.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v10 to v11 :
+>> 
+>> *) Reduced patch series size by removing features such as Ethtool support,
+>> VLAN filtering, Multicast filtering, Promiscuous mode handling, Storm
+>> Prevention,
+>> Interrupt coalescing, and Linux PTP (ptp4l) ordinary clock support. This was
+>> done
+>> based on Jakub Kicinski's feedback regarding the large patch size (~5kLoC).
+>> Excluded features will be resubmitted.
+>> *) Addressed Jakub Kicinski comments on patch 2, and 3 of the series.
+>> *) Addressed Jakub Kicinski's comment on patch 4 of the series by implementing
+>> hrtimer based TX resume logic to notify upper layers in case of TX busy.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v9 to v10 :
+>> 
+>> *) Addressed Vadim Fedorenko comments on patch 6 and 11 of the series.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v8 to v9 :
+>> 
+>> *) Addressed Vadim Fedorenko comments on patch 6 of the series.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v7 to v8 :
+>> 
+>> *) Addressed Paolo Abeni comments on patch 3 and 4 of the series.
+>> *) Replaced threaded IRQ logic with NAPI logic based on feedback from Paolo
+>> Abeni.
+>> *) Added Reviewed-by: tag from Rob Herring for patch 1.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v6 to v7 :
+>> 
+>> *) Addressed Rob Herring comments on patch 1 of the series.
+>> *) Addressed Jakub Kicinski comments on patch 4, 5 and 6 of the series.
+>> *) Addressed Alok Tiwari comments on Patch 1, 4 and 5 of the series.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v5 to v6 :
+>> 
+>> *) Addressed Simon Horman comments on patch 2, 7 and 11 of the series.
+>> *) Addressed Andrew Lunn comments on patch 5 of the series.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v4 to v5 :
+>> 
+>> *) Addressed Andrew Lunn and Keller, Jacob E comments on patch 5 of the series.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v3 to v4 :
+>> 
+>> *) Added support for AM33x and AM43x platforms.
+>> *) Removed SOC patch [2] and its dependencies.
+>> *) Addressed Jakub Kicinski, MD Danish Anwar and Nishanth Menon comments on
+>> cover
+>>    letter of the series.
+>> *) Addressed Rob Herring comments on patch 1 of the series.
+>> *) Addressed Ratheesh Kannoth comments on patch 2 of the series.
+>> *) Addressed Maxime Chevallier comments on patch 4 of the series.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v2 to v3 :
+>> 
+>> *) Addressed Conor Dooley comments on patch 1 of the series.
+>> *) Addressed Simon Horman comments on patch 2, 3, 4, 5 and 6 of the series.
+>> *) Addressed Joe Damato comments on patch 4 of the series.
+>> *) Rebased the series on latest net-next.
+>> 
+>> Changes from v1 to v2 :
+>> 
+>> *) Addressed Andrew Lunn, Rob Herring comments on patch 1 of the series.
+>> *) Addressed Andrew Lunn comments on patch 2, 3, and 4 of the series.
+>> *) Addressed Richard Cochran, Jason Xing comments on patch 6 of the series.
+>> *) Rebased patchset on next-202401xx linux-next.
+>> 
+>> [v1] https://lore.kernel.org/all/20250109105600.41297-1-basharath@couthit.com/
+>> [v2] https://lore.kernel.org/all/20250124122353.1457174-1-basharath@couthit.com/
+>> [v3] https://lore.kernel.org/all/20250214054702.1073139-1-parvathi@couthit.com/
+>> [v4] https://lore.kernel.org/all/20250407102528.1048589-1-parvathi@couthit.com/
+>> [v5] https://lore.kernel.org/all/20250414113458.1913823-1-parvathi@couthit.com/
+>> [v6] https://lore.kernel.org/all/20250423060707.145166-1-parvathi@couthit.com/
+>> [v7] https://lore.kernel.org/all/20250503121107.1973888-1-parvathi@couthit.com/
+>> [v8] https://lore.kernel.org/all/20250610105721.3063503-1-parvathi@couthit.com/
+>> [v9] https://lore.kernel.org/all/20250623135949.254674-1-parvathi@couthit.com/
+>> [v10] https://lore.kernel.org/all/20250702140633.1612269-1-parvathi@couthit.com/
+>> [v11] https://lore.kernel.org/all/20250722132700.2655208-1-parvathi@couthit.com/
+>> [v12] https://lore.kernel.org/all/20250724072535.3062604-1-parvathi@couthit.com/
+>> 
+>> Thanks and Regards,
+>> Parvathi.
+>> 
+>> Parvathi Pudi (2):
+>>   dt-bindings: net: ti: Adds DUAL-EMAC mode support on PRU-ICSS2 for
+>>     AM57xx, AM43xx and AM33xx SOCs
+>>   net: ti: prueth: Adds IEP support for PRUETH on AM33x, AM43x and AM57x
+>>     SOCs
+>> 
+>> Roger Quadros (3):
+>>   net: ti: prueth: Adds ICSSM Ethernet driver
+>>   net: ti: prueth: Adds PRUETH HW and SW configuration
+>>   net: ti: prueth: Adds link detection, RX and TX support.
+>> 
 > 
-> Based on this conversation[*], both Kai and I expected KVM to let firmware deal
-> with the should-be-impossible situation.
+> Can you please use prefix "net: ti: icssm-prueth" instead of net: ti:
+> prueth" throughout the series?
 > 
->   On Tue, Jul 8, 2025 at 9:15 PM Nikunj A. Dadhania <nikunj@amd.com> wrote:
->   > On 7/8/2025 8:04 PM, Sean Christopherson wrote:
->   > > On Tue, Jul 08, 2025, Kai Huang wrote:
->   > >>>> Even some bug results in the default_tsc_khz being 0, will the
->   > >>>> SNP_LAUNCH_START command catch this and return error?
->   > >>>
->   > >>> No, that is an invalid configuration, desired_tsc_khz is set to 0 when
->   > >>> SecureTSC is disabled. If SecureTSC is enabled, desired_tsc_khz should
->   > >>> have correct value.
->   > >>
->   > >> So it's an invalid configuration that when Secure TSC is enabled and
->   > >> desired_tsc_khz is 0.  Assuming the SNP_LAUNCH_START will return an error
->   > >> if such configuration is used, wouldn't it be simpler if you remove the
->   > >> above check and depend on the SNP_LAUNCH_START command to catch the
->   > >> invalid configuration?
->   > >
->   > > Support for secure TSC should depend on tsc_khz being non-zero.  That way it'll
->   > > be impossible for arch.default_tsc_khz to be zero at runtime.  Then KVM can WARN
->   > > on arch.default_tsc_khz being zero during SNP_LAUNCH_START.
->   >
->   > Sure.
+> icssg driver uses prefix "net: ti: icssg-prueth" so this will be similar
+> to that.
 > 
-> https://lore.kernel.org/all/c327df02-c2eb-41e7-9402-5a16aa211265@amd.com
+> This way grepping in git log for,
+> - icssm will give you only icssm patches
+> - icssg will give you only icssg patches
+> - prueth will give you both icssm and icssg patches
 > 
->>
->> As this is an unsupported configuration as per the SEV SNP Firmware ABI Specification: 
-> 
-> Right, but what happens if KVM manages to pass in '0' for the frequency?  Does
-> SNP_LAUNCH_START fail?  
+> --
+> Thanks and Regards,
+> Md Danish Anwar
 
-SNP_LAUNCH_START succeeds, and the guest kernel starts and panics during early boot [*]
 
-> If so, bailing from KVM doesn't seem to add any value.
+We will update the prefix to "net: ti: icssm-prueth" in the next version.
 
-As firmware does not bail out, I had kept this check.
 
-RegardsNikunjhttps://lore.kernel.org/all/afcf9a0b-7450-4df7-a21b-80b56264fc15@amd.com 
-
+Thanks and Regards,
+Parvathi.
 
