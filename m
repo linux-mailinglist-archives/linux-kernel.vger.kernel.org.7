@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-778063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24026B2E129
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:32:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F3DB2E0E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83932AA1E2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:20:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE86F1CC17FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CA01FF1A0;
-	Wed, 20 Aug 2025 15:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330B636CDF3;
+	Wed, 20 Aug 2025 15:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBPkUwpi"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VO2lfdx3"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C212E4C79
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A343336CDE1;
+	Wed, 20 Aug 2025 15:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755702792; cv=none; b=D8asWlI2+cFLs6kRapVH7IM7ocn6nmmZT2fXfJHOAxKAYF1i/OKpvYj/bB5DiHKho01QaTMu86Kc6aHZuUQlNlGaBG9lhLqvhLFIsMEUGqnSe2QIy7r328NkjRDJI8s+HllIghBInsCtWDV0a6eo7FZVY8hEoLn/a1pgAb5GppI=
+	t=1755702827; cv=none; b=m6FcjuOwnhi8iW7E0I8ZOaxy55yiiDBrSCA1VMptzKQLQPo210a1KD7N0p9ekm6HID7ezIFcCd6V0B44SwHqRQI2dmSSa7bPyRRy/Hl4QKn9paeh1OVrUM0lhJe0s6Zu8pXX0hwbumbZNpFMLX2I0dRf2HUBujCiBMrFH/OvRoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755702792; c=relaxed/simple;
-	bh=yI0HadZsSi9K9jcVAsF3zjD24uk6FF9CqaCC5gh3OG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sDGXGbuglhDozzpJENNJP6P4uAbFJa9WQB24uXZlPBPuSfdoIK76uFiMwMeQBIrAZJUY5amcFE3Z+eU1YS+7vNWB6/BTN7VMDnlu1WuogdduUTyKOfZeEjUEGwz5OhTSuxBBtzOowbbHpyeXAoh6RXs2TYyg6tQseLwuF1TjJAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DBPkUwpi; arc=none smtp.client-ip=209.85.219.172
+	s=arc-20240116; t=1755702827; c=relaxed/simple;
+	bh=Q+FY2HZgN+2r/jPeIG//FV2KZZUId7ZVbeRPcXZwhJ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gLZnFjQvQi84/jLZE2k6f8rt/Ema8pWEv0HXoq9pCQ3W+AxvlV2LyY/XKP2WHAs/2WGRZZFCWUm1/HuWZIjDPvaImWSM9ET5ArhKQMjZQoFX6XwQCqILK9TW07jzr4qjYcjw6p8spR7XmPRMUznLlkJokVlomQnpVMo1+szv+Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VO2lfdx3; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e94eb6b811aso1577049276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:13:10 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6188b690517so10322a12.1;
+        Wed, 20 Aug 2025 08:13:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755702790; x=1756307590; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LFUStKMRHDPj6JYBVxnbw6Z9AEEYTWrR4Fi5aFJ1Z90=;
-        b=DBPkUwpiga3C2EOl5DqK4kz97h5ZEn6P+tdRbbLEHR+CHlJB8rq05lUDijbMP3VbUb
-         WI8osCqy16dY+/lsK6FtBjAAv+Wt1y0GwiA2nBimqI9Kr6apaOueT+9timzqN7b9gqAc
-         UVyZNjGqgvhQM4wAY9LWizKmm1LuMBI/1Km4YR3x5jL05ppdqNtVufTVYJ+CPuMOYQTx
-         BAtVl8lmMqz8/0CjrEWAsgBgCt+OoubDG7PvErYV+DfYbYN7U6mdYxj0MiE/lBJfowhN
-         0v19GpcEOgkYhNbw4KRu7goyJp+EXMkZXNGsYreS/LFW5oyv6oUmlpH8ygf4d+ceTIgS
-         4rzA==
+        d=gmail.com; s=20230601; t=1755702824; x=1756307624; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bmbXlaeZbd6bs8tudHkGuoTxa6KBgZ2JwZKNq9hGSw0=;
+        b=VO2lfdx3PC4OBXlOny1wbWmtnt56nvqHDb+//PBRwMvviAgx795IkRE92O92DzFD8f
+         3AlXYKR2deoRzjHAWzvU9WUBTL6qqxD+F0UnuTuu8sVc0IU4IU33FkdAnpwGoW80ZAbC
+         iwVk2til6jF798QIGQQ0iTurX+CrbhHvw7MxiMupThoE60o6SsxvMjG28X4jd6jXmPag
+         wQ2XahFlGRlGawBCQ9mIiwUW05JdIzzJlapMwvAoqID2mcMMi19CUGw+jbnHuhnYN+PF
+         CxRgZDH+nllMuRTIngJwIDtTuRLygVkXISmIIDy7z6vwmSVN2kgnbdLDqm6w5ECcloT7
+         wB4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755702790; x=1756307590;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LFUStKMRHDPj6JYBVxnbw6Z9AEEYTWrR4Fi5aFJ1Z90=;
-        b=f0TZb1658mBW+4Lxob1Zvt8Q16X/owSJ7x636L2nlWjqY2Ludu4bw+4Rke1LkXL9y4
-         5qymfXHTLZxub1EimUUzWJZ7rJhlelGqi9uh6N8c6dZx57asvtquD1X0vnscZ5KoiKMF
-         39zA1z+6Sr/1tSIobwmXQI8x57/paPoHRvByhLhwF3XvCV/Kqlu5J9rbOMa1VnybS6Q/
-         A5G+fR8K6m+5o/c3c5gaCab7iiIgQEXIyrYAsDD2ez9qnhpAjt4NjXxZVc5jkU6bYoQc
-         Z/QHRO7m+jTsEeyDI8LfdTPHWP4iu0kIeUCL2iY6Tj5b+1zEUW6bJx7fOLKbN+uwK68M
-         VyqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVq1i9uUfroKaN67tNamnOxdR4NCnZPuuNiF7TLM1ylgUlrESl4YlYRZvBgBGwjAKp9MHj2VFpCVHzp0Wg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwonKvb3/MInE1l9kVLVmz1XA5dox1qtaK+h1bRftdDky0HUukM
-	2D6cEBcMPAhTF6YbA3lSXnc/vbwx0yAiec2xnhPQarpvWOJtk/ucJpBZ
-X-Gm-Gg: ASbGncv1cxavLpvVxVoEQRy3Ox003FsrLIR907bPQI7Uhc/fO9jVVZ613gelnQExviJ
-	6b3LPjj1CtRcAMDtSej1jidg4m6OiehqHm8vSgFDhCz0Z8JiBQJ1Zq34UQ4d/fc0ASHj8T1TUbr
-	q0V1Z7SMDd30meM6mT0jnrpHi8LtmmGmRCGLuZ+gcuE5WX9QXj06tPjDFotx5+zCddBckDd6oAn
-	jj63ARBNfJE369MgOKOGd0hAmKggbDHelk5QMKUzUjT6eMfjqNdwpRVSkbCDDqGpsp+Om/+GDD9
-	txUWTPw4uRJDI3KvwmRc9QKr0XP++sFVXN3OO0j+5KZVd6Y0huP+oR32c7D8PIIeWQHupKH8jRI
-	iH/pJBUN0R7hiZ5g0Tick
-X-Google-Smtp-Source: AGHT+IGBD2iZAT2VlXMJEW/2T3OnRW/5IceBSHatfF1swKy5WFUb7kGAyVXVwSLkF/TyCFnIK2I5cA==
-X-Received: by 2002:a05:6902:6c15:b0:e93:4a06:96cb with SMTP id 3f1490d57ef6-e94f64c9f8bmr3251284276.2.1755702789638;
-        Wed, 20 Aug 2025 08:13:09 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:8::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e933264aabcsm5146211276.9.2025.08.20.08.13.08
+        d=1e100.net; s=20230601; t=1755702824; x=1756307624;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bmbXlaeZbd6bs8tudHkGuoTxa6KBgZ2JwZKNq9hGSw0=;
+        b=rxyfvRe844c4QwUNUDmV9RKmK+6ej7gexX0i7jjAtWyUdqdO99EhJ5ez72B8Z/b7XP
+         EcBujkf0qlUrK1esv5pCObRJO/s/XeqhwuYWAic/TLMF8CXtkGO3ictGDsfuPz9CGPU/
+         2JE97++o9HSGtAiDWpzxiV2e3tFpeBdxO/O5Om99XMfEVIdLf+rPBYYOvnMe8KHaYyLc
+         YZwQhogPC1W/hDCwOlKaP2AH22Eb6RFAgCnjxQO08U23nwJHTuWqn/DIpbI9nA3uZrNa
+         ScBjnYscV/ptyhBO1LWTki2W552KPmquT6TqBpzIBqInLrCuIrDTA3NE922nVG0NS752
+         Ud2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVGH7DhFcWEjkK3tzUGLutAtgOb2RTY2VA1ohAsCUNJHiogmclH5rTcXvb8+GWst8/T+WvJywR06pgi@vger.kernel.org, AJvYcCXOQzSmIS7EwA9kVobLRuPPs8Dy8h7DJz0rZu+YZFq2glDHb3M7waeDF++s2FuG0De1EbvY6CC/gVjy@vger.kernel.org, AJvYcCXVC+ppxWmPOIzUAA3OPN4wmFIuAJ1z7xsME3yU6uwiNiFvYtZxrgwVZHviwbxdKN1XpuQwTC6PR/ZNkFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPSh64OVJxAOOrnkQhlUKbQy+7mPWMjM4J1qM3WEfrhcUvmdyO
+	zXHd+RKZOenlvjaU65dWUp3Dk7tUOYOXVu1ZqVMjXyDD6ct9QMYu29Nm
+X-Gm-Gg: ASbGncu0vNO7+nfo9mpitL0dMXrcWSY8QEXqYO1NDKI3z1S6f/+iMgKPM8yiOXlc3je
+	VXub8D35CIMMKQXLUm9IhhcCljipiy9jxCcaHf7z/7bHUIyjpAusIj2sXQ9pZeUQJ3gVPLZdbeG
+	d/xplUJhk72Ilf6Um+fsoEix+NB6Anovt2H5j+qU5PlWfagx6ohpSb+GdxBfZaNHU1oesk4XzCP
+	0zcOpBGR8SoI0aMxSsVIvswmGJ8R1tERBsb53okGe7+swfpD3A8GTBo51G9ao6oW1ktR+7vAIg3
+	dHnf6bkbyaUec2dpFBZ22kilvrwSb7WZYDT796JJbJqC1rUZH17Iyn5YwvaQOsLWg7oRZvOlzvr
+	BsV3gtJ5+FEDICg==
+X-Google-Smtp-Source: AGHT+IG5g184ukqO2j/P+fGxNOMQMECOnRZiWMWKp3i2FsZCi3NseoOr+qgK/u4eHe5tjZSwUC5AOA==
+X-Received: by 2002:a17:907:9604:b0:ae0:de30:8569 with SMTP id a640c23a62f3a-afdf003e177mr259096566b.1.1755702823657;
+        Wed, 20 Aug 2025 08:13:43 -0700 (PDT)
+Received: from xeon.. ([188.163.112.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afdef1d34f8sm175905166b.83.2025.08.20.08.13.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 08:13:09 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Chris Mason <clm@fb.com>,
-	Michal Hocko <mhocko@suse.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: Occasionally relinquish zone lock in batch freeing
-Date: Wed, 20 Aug 2025 08:13:07 -0700
-Message-ID: <20250820151307.1821686-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250820012901.5083-1-hdanton@sina.com>
-References: 
+        Wed, 20 Aug 2025 08:13:43 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/9] Tegra114: implement EMC support
+Date: Wed, 20 Aug 2025 18:13:14 +0300
+Message-ID: <20250820151323.167772-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,38 +100,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Wed, 20 Aug 2025 09:29:00 +0800 Hillf Danton <hdanton@sina.com> wrote:
+Add support for External Memory Controller found in Tegra 4 SoC along
+with adjustments required for it to work properly.
 
-Hello Hillf, thank you for your review!
+Tested on ASUS TF701T (T40X) and Nvidia Tegratab (T40S). Both work fine.
 
-> On Mon, 18 Aug 2025 11:58:03 -0700 Joshua Hahn wrote:
-> > 
-> > While testing workloads with high sustained memory pressure on large machines
-> > (1TB memory, 316 CPUs), we saw an unexpectedly high number of softlockups.
-> > Further investigation showed that the lock in free_pcppages_bulk was being held
-> > for a long time, even being held while 2k+ pages were being freed.
-> > 
-> > Instead of holding the lock for the entirety of the freeing, check to see if
-> > the zone lock is contended every pcp->batch pages. If there is contention,
-> > relinquish the lock so that other processors have a change to grab the lock
-> > and perform critical work.
-> > 
-> Instead of the unlock/lock game, simply return with the rest left to workqueue
-> in case of lock contension. But workqueue is still unable to kill soft lockup
-> if the number of contending CPUs is large enough.
+This patchset requires DFLL patches to be applied first to avoid
+issues https://patchwork.ozlabs.org/project/linux-tegra/list/?series=464976
 
-Thank you for the idea. One concern that I have is that sometimes, we do expect
-free_pcppages_bulk to actually free all of the pages that it has promised to
-do. One example is when it is called from drain_zone_pages. Of course, we can
-have a while loop that would call free_pcppages_bulk until it returns 0, but
-I think that would be reduced to unlocking / locking over and over again.
+---
+Changes in v2:
+- fix programming completion detection (changed EMC reg to MC reg reading)
+- Tegra114 incorporated into Tegra124 dt-bindings schema
+---
 
-As for the number of contending CPUs -- I'm not really sure what the number
-looks like. In my testing, I have just done some spot checks to see that the
-zone lock is indeed contended, but I'm not entirely sure how hotly it is
-contended. I can run some tests before sending out the next version to see if
-it is higher / lower than expected.
+Svyatoslav Ryhel (9):
+  ARM: tegra: Add ACTMON support on Tegra114
+  dt-bindings: memory: Document Tegra114 Memory Controller
+  memory: tegra: implement EMEM regs and ICC ops for Tegra114
+  dt-bindings: memory: Add Tegra114 memory client IDs
+  clk: tegra: remove EMC to MC clock mux in Tegra114
+  dt-bindings: memory: Document Tegra114 External Memory Controller
+  memory: tegra: Add Tegra114 EMC driver
+  ARM: tegra: Add External Memory Controller node on Tegra114
+  ARM: tegra: Add EMC OPP and ICC properties to Tegra114 EMC and ACTMON
+    device-tree nodes
 
-Thank you, I hope you have a great day!
-Joshua
+ .../nvidia,tegra124-emc.yaml                  |  445 +++--
+ .../nvidia,tegra124-mc.yaml                   |  106 +-
+ .../dts/nvidia/tegra114-peripherals-opp.dtsi  |  151 ++
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        |   33 +
+ drivers/clk/tegra/clk-tegra114.c              |   48 +-
+ drivers/memory/tegra/Kconfig                  |   12 +
+ drivers/memory/tegra/Makefile                 |    1 +
+ drivers/memory/tegra/tegra114-emc.c           | 1487 +++++++++++++++++
+ drivers/memory/tegra/tegra114.c               |  193 +++
+ include/dt-bindings/memory/tegra114-mc.h      |   67 +
+ 10 files changed, 2349 insertions(+), 194 deletions(-)
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
+ create mode 100644 drivers/memory/tegra/tegra114-emc.c
+
+-- 
+2.48.1
+
 
