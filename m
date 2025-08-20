@@ -1,145 +1,153 @@
-Return-Path: <linux-kernel+bounces-776933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061BEB2D324
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:45:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A200FB2D329
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C4F1BC6836
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:45:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E81F2A1CEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E701E8836;
-	Wed, 20 Aug 2025 04:45:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA318258CC0;
+	Wed, 20 Aug 2025 04:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mv0mbxsM"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8041A8412
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E25257820;
+	Wed, 20 Aug 2025 04:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755665112; cv=none; b=HAmWWya3LlIT2v0tcc7dy/gbumwpY+AhAHseEdVvDHoRteEtouV9NgdTw7i0MxVZGNliv4s9jkN9ZWyixEw7MLNf3hRhH2cMG/HGypU880aTWjBjWqAIXcG38biJuufq16VQHRJFXx1Qj2oUPHVQw5KCmFi0K5aHLVysbmHHdhs=
+	t=1755665205; cv=none; b=FxPRLmXOQom697Wdno9d5K5GH/9muNYOANLF8QN95gdJZcFryWMkEpbUetfgAU7F7qQOo8yay4iOsNRyfxh3fvWNrpu9rSheov9WGjpNVY1gg4MIvs8nu5zQ/bZROsiozC4fmJKzNWhz2A/bulu/wPTVo+NSXFDs1lXs5D8CC1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755665112; c=relaxed/simple;
-	bh=FjnnWJI1niM6HBzIl/Pa9v+/KqD2U3tukeGd7ncCZ8I=;
+	s=arc-20240116; t=1755665205; c=relaxed/simple;
+	bh=1vQ/1al6KZ3n5t/tJ5DyWbLg4g2xkxVaVjbobiDk8EY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ql5BiL48ocBOcgIPycQ6TpL88tz9bT5/5bMEBLzbTyvTuLIHqEfe7LVuRmxOm6j76mTIUqmQoyACgWa27DtJZUag8n7AAjiuDFLIwbLxe75NJzZioqXJwudEilNNc4IpLdywh5QB+UDY+vQjXnzOrD2FB2aOAqwGtbwih3p/V0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uoagY-000120-MU; Wed, 20 Aug 2025 06:44:30 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uoagQ-001Bgj-2e;
-	Wed, 20 Aug 2025 06:44:22 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uoagQ-005pET-2F;
-	Wed, 20 Aug 2025 06:44:22 +0200
-Date: Wed, 20 Aug 2025 06:44:22 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk <roan@protonic.nl>
-Subject: Re: [PATCH net-next v2 1/5] ethtool: introduce core UAPI and driver
- API for PHY MSE diagnostics
-Message-ID: <aKVSpmKR0MGZhAD1@pengutronix.de>
-References: <20250815063509.743796-1-o.rempel@pengutronix.de>
- <20250815063509.743796-2-o.rempel@pengutronix.de>
- <489b2959-3374-4766-a982-9e7c26077899@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sI/G+vQsqMPpIcPIJCRczPxPKu5X8pM5knmbfl0bIKNmULuFETrG3K1o2lw0e7CB3OLu7UIsirHBAjtXMWN4gATqPRyWkmi8f8OqQv7Rh2s44OmTOZYhxye0zycOp/Dkm5rzJAsLbKjD7GZfPMkUT8gMtr+tpYPqYVymmrls3h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mv0mbxsM; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2449788923eso19747645ad.2;
+        Tue, 19 Aug 2025 21:46:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755665203; x=1756270003; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DarzXDuH+ffptNMW35ITw+JWwVE8qFcBtwND6II5+Pw=;
+        b=mv0mbxsMIzDrCPk7ORnB0N0jjQuP6kpIQTd87WWM8SLkkVZcaMBaXh/5Gh2/ayJ+8B
+         bGU1rxdpdD8jetWf4pIXR7OVs515UVs9uMU+5Bs7i8m36IkVR9SOmHKBKtOn7aUi0FDl
+         ybsrl1gwrNJWYXJ6EMxjyg5PCnGF8EeXj7VBYF5EUDA67xqwa8JzHpTur97F31NzJ2sg
+         XqCZFus+gcQtlkpdWEBpv7YqyDqBsH3F+awwM86Cw97S22f9UsY2O9WxbK72BUBoG1uS
+         2XcxPxmJPLCa6DzbwEaGm8Wa10ULYmv3jM0swkZ/hdlXKu2dJ6crIsA2KaeDc5V8ndmI
+         v9iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755665203; x=1756270003;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DarzXDuH+ffptNMW35ITw+JWwVE8qFcBtwND6II5+Pw=;
+        b=Phd/b6zhCPRn6ZOc6wZ19BurA1j7voCWL+I1ODgMiboaAUdyXKk0rNQLpZUJy7pNIM
+         7mcY56GhlCNcy6G1n1Xeg6mWufaAsijrs2QWfygRtVXDMqTelQlO1M+VFeV8XmWkXvLe
+         0fiwQCjMKt2T+WSueG0QZ4e8+zGecnYRWkdzdBgXwKxVKDprwv/lhIvVgnAoYmtJmIj2
+         AuWweoRzQr0B6WBSUrOK+O3hukmTWp00nAIAX3OM9NlU7z0YRxpCqeS13OhA/pbtk3ee
+         hiYAyUBuq/qaGRkockKYbmF9k74+yIkjfVdd8N6BP22fQYr7oth0MGWQXA7LQWJLs6Jy
+         EuPw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4a1tT3s31RL3NZdU6AFTmM+J/bWcMYk6W7/glJtkQvuSGuMvalqzsUhRlEheKm5F7ki//0Jw/gQFVY0gC@vger.kernel.org, AJvYcCUHJ2kgbpi+FqEH+fvcOjKJnsPuiBQhC1dic6JDrX45TPtg8scbf9D3UT9zkTM13MfEmZNTB2/d7YeL@vger.kernel.org, AJvYcCVqpWY98iVCL1fbGSCzEpqsW7qouTptvlKA0jIRnGp3qdI1PUH7AKwu427nLYmW7MNl2u4F9su3BgEv@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGLvB/N2A937pwoiGpSo06AAV9xjb/tgZfLdsnGn6cecSrGzCL
+	yDjoL98hSKDwJ3LtyQX91OSfZfy/IiBEjbxXezWdttLSCRgmGK6P7uRa
+X-Gm-Gg: ASbGncvDFfmKWFVxRC9En0mawE5Salc8MNhQINYVarSPlPCZWc+BX/fPSQEntjQtoYt
+	/BulaCrP9D7foWJ1dl9QZ/pY1S33Nf1OPuybULR+gEX3muVjLc8VYYtRFiTlDb33RIjLY6RJ7d9
+	59Mbch9LUkfJG7irkJlKrDTlF/plXGwohRUWRchl0SeEvY72jRdw9U2kBLlLbZ7pNEpTP+Rq8oW
+	35Lh60qdsKBtefvWOxl7vpF4DJnyPYowyFHane6M4MgtbkIGeoj3YDMrvfVwrssi+jwo3ndIVTl
+	GZ/SK0rMDShpdI/K5asJXPXNqC/teUMWqeaWm5UIQB0VeKB7LUhLe8jkQo6QJsVBP6TjcdaMpxn
+	ms9VPAp0jehNR1niE43n30w==
+X-Google-Smtp-Source: AGHT+IFP+L16oHaOm3NEbnsDegMl6fP87dVGenQVIRTDtsvxjEewVa+y5/ksq3qQr79odJCBXtGF6w==
+X-Received: by 2002:a17:903:15c8:b0:240:2b97:9102 with SMTP id d9443c01a7336-245ef252a2fmr16920955ad.46.1755665202836;
+        Tue, 19 Aug 2025 21:46:42 -0700 (PDT)
+Received: from dixit ([2401:4900:1c7e:5eb1:987b:ce27:5cd5:4ef])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed375db3sm13659485ad.59.2025.08.19.21.46.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Aug 2025 21:46:42 -0700 (PDT)
+Date: Wed, 20 Aug 2025 10:16:29 +0530
+From: Dixit Parmar <dixitparmar19@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] iio: magnetometer: add support for Infineon
+ TLV493D 3D Magentic sensor
+Message-ID: <aKVTJXe50zf07ipR@dixit>
+References: <20250814-tlv493d-sensor-v6_16-rc5-v4-0-81b82805aae0@gmail.com>
+ <20250814-tlv493d-sensor-v6_16-rc5-v4-1-81b82805aae0@gmail.com>
+ <20250816140448.37f38d0f@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <489b2959-3374-4766-a982-9e7c26077899@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250816140448.37f38d0f@jic23-huawei>
 
-On Wed, Aug 20, 2025 at 05:03:14AM +0200, Andrew Lunn wrote:
-> > Channel-to-pair mapping is normally straightforward, but in some cases
-> > (e.g. 100BASE-TX with MDI-X resolution unknown) the mapping is ambiguous.
-> > If hardware does not expose MDI-X status, the exact pair cannot be
-> > determined. To avoid returning misleading per-channel data in this case,
-> > a LINK selector is defined for aggregate MSE measurements.
+On Sat, Aug 16, 2025 at 02:04:48PM +0100, Jonathan Cameron wrote:
+> Hi Dixit,
 > 
-> This is the same with cable test. The API just labels the pairs using
+> A couple of really minor things inline. Given Andy has been doing most of the review
+> work on this one I'll leave it for a few days to give him chance for a final look.
 > 
->         ETHTOOL_A_CABLE_PAIR_A,
->         ETHTOOL_A_CABLE_PAIR_B,
->         ETHTOOL_A_CABLE_PAIR_C,
->         ETHTOOL_A_CABLE_PAIR_D,
+> The stuff below is small so if nothing else comes up I can tweak it whilst applying
 > 
-> It does not take into account MDI-X or anything.
-
-In the case of the cable test, MDI-X does not affect the reported
-results, or if it does, we can actively change the configuration and
-re-run the test. For SQI/MSE on this chip, however, the measurement is
-purely passive. If the hardware does not expose an MDI-X indicator, we
-cannot reliably assign the values to a specific pair, so we need the
-LINK selector to avoid returning misleading data.
-
-> > @@ -1174,6 +1246,60 @@ struct phy_driver {
-> >  	/** @get_sqi_max: Get the maximum signal quality indication */
-> >  	int (*get_sqi_max)(struct phy_device *dev);
-> >  
-> > +	/**
-> > +	 * get_mse_config - Get configuration and scale of MSE measurement
-> > +	 * @dev:    PHY device
-> > +	 * @config: Output (filled on success)
-> > +	 *
-> > +	 * Fill @config with the PHY's MSE configuration for the current
-> > +	 * link mode: scale limits (max_average_mse, max_peak_mse), update
-> > +	 * interval (refresh_rate_ps), sample length (num_symbols) and the
-> > +	 * capability bitmask (supported_caps).
-> > +	 *
-> > +	 * Implementations may defer configuration until hardware has
-> > +	 * converged; in that case they should return -EAGAIN and allow the
-> > +	 * caller to retry later.
-> > +	 *
-> > +	 * Return:
-> > +	 *  * 0              - success, @config is valid
-> > +	 *  * -EOPNOTSUPP    - MSE configuration not implemented by the PHY
-> > +	 *		       or not supported in the current link mode
-> > +	 *  * -ENETDOWN      - link is down and configuration is not
-> > +	 *		       available in that state
+> Thanks,
 > 
-> This seems a bit odd. phylib knows the state of the link. If it is
-> down, why would it even ask? 
+> Jonathan
+> 
+> > diff --git a/drivers/iio/magnetometer/tlv493d.c b/drivers/iio/magnetometer/tlv493d.c
+> > new file mode 100644
+> > index 000000000000..ee72211576a6
+> > --- /dev/null
+> > +++ b/drivers/iio/magnetometer/tlv493d.c
+> > @@ -0,0 +1,530 @@
+> 
+> > +	TLV493D_AXIS_X,
+> > +	TLV493D_AXIS_Y,
+> > +	TLV493D_AXIS_Z,
+> > +	TLV493D_TEMPERATURE
+> As below.
+> 
+> > +};
+> > +
+> > +enum tlv493d_op_mode {
+> > +	TLV493D_OP_MODE_POWERDOWN,
+> > +	TLV493D_OP_MODE_FAST,
+> > +	TLV493D_OP_MODE_LOWPOWER,
+> > +	TLV493D_OP_MODE_ULTRA_LOWPOWER,
+> > +	TLV493D_OP_MODE_MASTERCONTROLLED
+> This is not a terminating entry, so would typically have a trailing comma.
+Isn't the last entry in the enum list is termintating entry and it should
+not have trailing comma?
+> > +};
+> 
+> > +
+> > +static int tlv493d_init(struct tlv493d_data *data)
+> 
+> I think this is only called from probe, so it would be appropriate
+> to use return dev_err_probe() in all the error paths.
+There is dev_err_probe() being called based on the return value of this
+tlv493d_init(). This function reports the approproiate error(if any) and
+the negative return value will result in dev_error_probe().
+So I believe having single dev_err_probe() in the _probe() function would
+be more appropriate, IMO.
+> 
+> If nothing else comes up I might tweak that whilst applying.
+Much appreciated.
 
-Good point. I'll remove this part of comment.
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thank you,
+Dixit Parmar
 
