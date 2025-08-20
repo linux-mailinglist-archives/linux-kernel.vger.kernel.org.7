@@ -1,221 +1,122 @@
-Return-Path: <linux-kernel+bounces-778599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB93CB2E7C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:56:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9CBB2E7C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D7C1CC305D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:56:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AAC31CC200A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CF03375C8;
-	Wed, 20 Aug 2025 21:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1B733472F;
+	Wed, 20 Aug 2025 21:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABF/DvJb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKdj3UTR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F07335BD0;
-	Wed, 20 Aug 2025 21:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8699E24677C;
+	Wed, 20 Aug 2025 21:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755726980; cv=none; b=ZeJV9swUdD1YHlsuu+DHugcwM65Ac+h8+n6CXEb/JMlikpavDtDlSuka2zFLhG0hRvem7A37cZoS5nyjrYwsHydOJjvcviictkTl9HhYSXJutVPTyUUisdM9xC6OR1Mj/Qv4oy6XMJbaU86B65cdw3hsFZ+aMbfMbJtPi/ONWfc=
+	t=1755727125; cv=none; b=uYqmhpaqNOAa9K9ys+QrkCmNX2fdOyAedZEcezLBcC+IRh2geLASGSW49l31MQ9hKMXsGd2nSUCDJh1uQQ5P+VsZt2wJ/oF/EDmUWYDKfasmYKmEyIh6wVocrR2kdhYl/CHfCWq8QRSKaPWkWEKx58b9a8Tl7SP66490yvrXrFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755726980; c=relaxed/simple;
-	bh=0rUHM2uemlukqAn2SUAopv8MRbyIeZpCqjQQeDYDJaQ=;
+	s=arc-20240116; t=1755727125; c=relaxed/simple;
+	bh=BWCN+arTsW28B+WK1cfvN4ijd4eox2d2e4EsnPw7MFU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2QzK7goOG2l74pxc+IXK5Qk9yYl/MvzVMLX6JisyEUWs4tA0Mgf9myFNKS44mWgZ1dLBgbZOxzXk2fZ/pjlCwClQCaB5jJya13+BtrVYfE6Cp+MRg8SF49swj18g5QvCtaT3JPzUebftOJyETTGNBdvArd/k7DsOwvKvrxBti0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABF/DvJb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A3ABC4CEE7;
-	Wed, 20 Aug 2025 21:56:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPiwY5f7dNlJMH1zOhi0pli3UHmk+hzdipEdYCU8t5Dv/0drraNNJNH2vB1dKpPXdIXfDUO2fWGFY4qZXMRUTFkHkHR1EQUf812rv6g3flozYRAMdjoOsuFnp5NaLEK1jZGP2UpZtXjZKVkvzMO/sQGOxy0ZPgLSywqoVjmQgbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKdj3UTR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D591EC4CEE7;
+	Wed, 20 Aug 2025 21:58:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755726980;
-	bh=0rUHM2uemlukqAn2SUAopv8MRbyIeZpCqjQQeDYDJaQ=;
+	s=k20201202; t=1755727125;
+	bh=BWCN+arTsW28B+WK1cfvN4ijd4eox2d2e4EsnPw7MFU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ABF/DvJbxqGXza3FxFbixGqKBqH73e+JPH6xVycVidOenOqzumdOqzd2Dr0PFeLkk
-	 C9Cua9MvYGWHo8FmJEzkyJ0MQlPchKQQLmsyB1392ZtTi6Fk+nJwlgp+g1OcYPVMhq
-	 kWR4uV63i7/cDt0wzhlX3PGtLAk0ZNERXS1Tkj1ekAYLaa7pLSKAoKQJ923zhtA0Ml
-	 lE/uJHY4GAyKDaUptb/2A9ZNieQ+W3e8XH3KzOJU6SnXHlE8pK2tp7qFpN02Dga5Dt
-	 WqfDOU6evwGNrqnUHdMzZxW8HOXEF72EM3HeETMhP3TzL4qlDDLWWEIwRn3A3OXFcy
-	 6JYQv5PLl22Jw==
-Date: Wed, 20 Aug 2025 16:56:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Val Packett <val@packett.cool>
-Subject: Re: [PATCH 1/7] dt-bindings: media: i2c: Add DW9718S, DW9719 and
- DW9761 VCM
-Message-ID: <20250820215619.GA1381920-robh@kernel.org>
-References: <20250817-dw9719-v1-0-426f46c69a5a@apitzsch.eu>
- <20250817-dw9719-v1-1-426f46c69a5a@apitzsch.eu>
+	b=IKdj3UTR3m5FxxRMpGC18rmUS1Sq3wCQzCZxHXkZTa+EJaMA1gn1STH3YHR96QEju
+	 xX4+HD8ZJEj/LT4lR4CtLO0c324sgWpuLtRkb/poQwjqxiIoGD+7io5AW9E0nKmYfe
+	 VVyQM0xxcEgdH+5WAjEWPHbF3vlM+x6RLm5maXPvtgpjwK6vniXddJCu/QBKGZJ6Qq
+	 A5K6UT2uYcxGfBZEksWu45W4p1EOZGL6YnxgCh1NOwQIHe2YXW/woHFRjvMg92heW0
+	 3PjRcpd4yvF/I4vzqFRE1fvZkXgd1ZGrxc44BAqxqidzxg7h/ZFrBz+SFfg5nBmP7V
+	 VNsrrkYAYp8zg==
+Date: Wed, 20 Aug 2025 16:58:43 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	conor+dt@kernel.org, peter.ujfalusi@gmail.com, krzk+dt@kernel.org,
+	lee@kernel.org, shuah@kernel.org
+Subject: Re: [PATCH v5] mfd: dt-bindings: ti,twl6040: convert to DT schema
+Message-ID: <175572712295.1429558.12540417914156224115.robh@kernel.org>
+References: <20250817215234.50904-1-jihed.chaibi.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250817-dw9719-v1-1-426f46c69a5a@apitzsch.eu>
+In-Reply-To: <20250817215234.50904-1-jihed.chaibi.dev@gmail.com>
 
-On Sun, Aug 17, 2025 at 07:09:20PM +0200, André Apitzsch wrote:
-> Document Dongwoon DW9718S, DW9719 and DW9761 VCM devicetree bindings.
+
+On Sun, 17 Aug 2025 23:52:34 +0200, Jihed Chaibi wrote:
+> Convert the legacy TXT binding for the TWL6040 MFD to the modern YAML
+> DT schema format. This adds formal validation and improves documentation
+> for the TWL6040/TWL6041 audio codec, which provides audio, vibra, and GPO
+> functionality on OMAP4+ platforms.
 > 
-> Signed-off-by: André Apitzsch <git@apitzsch.eu>
+> Key changes:
 > 
-> --
+>  - Dropped usage of the 'twl6040,audpwron-gpio' property from the schema
+>    as it is not used by the driver.
+>  - Retained 'clocks' and 'clock-names' as flexible (1-2 items) to match
+>    the original binding's "and/or" phrasing, which allows clk32k, mclk,
+>    or both.
+>  - Updated node name to 'audio-codec@4b' to follow generic naming
+>    conventions per the Device Tree specification.
+>  - Replaced raw interrupt values with standard defines for clarity.
 > 
-> The possible values for sac-mode and vcm-prescale of DW9719 and DW9761
-> are missing because there is no documentation available.
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> 
 > ---
->  .../bindings/media/i2c/dongwoon,dw9719.yaml        | 115 +++++++++++++++++++++
->  1 file changed, 115 insertions(+)
+> Changes in v5:
+>  - Add missing changelogs
 > 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/dongwoon,dw9719.yaml b/Documentation/devicetree/bindings/media/i2c/dongwoon,dw9719.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..80fd3fd42327fcafe3ff209d1cd6bbe17b8a211b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/dongwoon,dw9719.yaml
-> @@ -0,0 +1,115 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/i2c/dongwoon,dw9719.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Dongwoon Anatech DW9719 Voice Coil Motor (VCM) Controller
-> +
-> +maintainers:
-> +  - devicetree@vger.kernel.org
-
-No. Must be someone that has the h/w or cares about it. If there is no 
-one, then we don't need the binding.
-
-> +
-> +description:
-> +  The Dongwoon DW9718S/9719/9761 is a single 10-bit digital-to-analog converter
-> +  with 100 mA output current sink capability, designed for linear control of
-> +  voice coil motors (VCM) in camera lenses. This chip provides a Smart Actuator
-> +  Control (SAC) mode intended for driving voice coil lenses in camera modules.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - dongwoon,dw9718s
-> +      - dongwoon,dw9719
-> +      - dongwoon,dw9761
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: VDD power supply
-> +
-> +  dongwoon,sac-mode:
-> +    description: |
-> +      Slew Rate Control mode to use: direct, LSC (Linear Slope Control) or
-> +      SAC1-SAC6 (Smart Actuator Control).
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum:
-> +      - 0   # Direct mode
-> +      - 1   # LSC mode
-> +      - 2   # SAC1 mode (operation time# 0.32 x Tvib)
-> +      - 3   # SAC2 mode (operation time# 0.48 x Tvib)
-> +      - 4   # SAC3 mode (operation time# 0.72 x Tvib)
-> +      - 5   # SAC4 mode (operation time# 1.20 x Tvib)
-> +      - 6   # SAC5 mode (operation time# 1.64 x Tvib)
-> +      - 7   # SAC6 mode (operation time# 1.88 x Tvib)
-> +    default: 4
-> +
-> +  dongwoon,vcm-prescale:
-> +    description:
-> +      Indication of VCM switching frequency dividing rate select.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: dongwoon,dw9718s
-> +    then:
-> +      properties:
-> +        dongwoon,sac-mode:
-> +          default: 4
-> +        dongwoon,vcm-prescale:
-> +          description:
-> +            The final frequency is 10 MHz divided by (value + 2).
-> +          minimum: 0
-
-That's already the minimum being unsigned.
-
-> +          maximum: 15
-> +          default: 0
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: dongwoon,dw9719
-> +    then:
-> +      properties:
-> +        dongwoon,sac-mode:
-> +          default: 4
-> +        dongwoon,vcm-prescale:
-> +          default: 96
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: dongwoon,dw9761
-> +    then:
-> +      properties:
-> +        dongwoon,sac-mode:
-> +          default: 6
-
-At the top-level you already said the default is 4. The if/then is an 
-AND operation. 'default' is just an annotation and has no effect on 
-validation. I would just drop it from the if/then altogether. It's not 
-worth the complexity.
-
-> +        dongwoon,vcm-prescale:
-> +          default: 62
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        actuator@c {
-> +            compatible = "dongwoon,dw9718s";
-> +            reg = <0x0c>;
-> +
-> +            vdd-supply = <&pm8937_l17>;
-> +
-> +            dongwoon,sac-mode = <4>;
-> +            dongwoon,vcm-prescale = <0>;
-> +        };
-> +    };
+> Changes in v4:
+>  - Retained 'clocks' and 'clock-names' as flexible (1-2 items) to match
+>    the original binding's "and/or" phrasing, which sould allow either
+>    clk32k, mclk, or both.
+>  - Updated node name to 'audio-codec@4b' to follow generic naming
+>    conventions per the Device Tree specification.
+>  - Replaced raw interrupt values with standard defines for clarity.
+>  - Added clock properties to the example.
 > 
-> -- 
-> 2.50.1
+> Changes in v3:
+>  - Drop usage of The unused 'twl6040,audpwron-gpio' property from the
+>    schema as it is not used by the driver.
+>  - This patch was originally part of a larger series but has been
+>    sent separately per maintainer feedback.
+>    v2 (origial patch series) link:
+>    https://lore.kernel.org/all/20250814132129.138943-3-jihed.chaibi.dev@gmail.com
 > 
+> Changes in v2:
+>  - Renamed twl6040,audpwron-gpio to ti,audpwron-gpio for consistency
+>    with TI naming, this fixes the dt_binding_check vendor name  error.
+>  - Minor description clarifications for improved readability.
+> 
+> Changes in v1:
+>  - Initial conversion of twl6040.txt to YAML format.
+>  - v1 link :
+>    https://lore.kernel.org/all/20250811224739.53869-3-jihed.chaibi.dev@gmail.com/
+> ---
+>  .../devicetree/bindings/mfd/ti,twl6040.yaml   | 154 ++++++++++++++++++
+>  .../devicetree/bindings/mfd/twl6040.txt       |  67 --------
+>  2 files changed, 154 insertions(+), 67 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/twl6040.txt
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
