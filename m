@@ -1,187 +1,246 @@
-Return-Path: <linux-kernel+bounces-778118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7035EB2E18E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:55:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5040B2E197
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 586F81BC0256
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:52:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1C615E3BC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D2C2E4242;
-	Wed, 20 Aug 2025 15:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="J0iSU8wQ"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2063.outbound.protection.outlook.com [40.107.212.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B375299AB3
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755705148; cv=fail; b=M8Fe40DXzuo0jHwSxgQ8i77TH2C4f91EZBfkJbDUHSJ6+FK4fyHbmRH5k2EqmRotStfzJbu8jDAqADaVagwWwGV/kCFAsbvs/r6DD7HzexCdZhUOLu8O4ZwuA0sSi1H4l6HutQoz5uHB869hYfxVbCpilCP5cDEHaZFIRp/uXa4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755705148; c=relaxed/simple;
-	bh=tAFcJ9FvG+CWVvOHSGcPgkf3VxUu1/bznJwcuuibEZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=iuWNYe477cqhQAJRN6E86IKUDMmGYwxFzQnmrCl0h7mreiOCYesWCbfzw2kOWrSLdHs+0j+ZNevekZ3f+gE/UKbt1Z3n+9ianX4oPSbJWaZnHMoS/ChwRVamqtHIsxBuns/1Hl42KrTP/n0G9hLGx7YmgSezrc/BQOanudFk2EQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=J0iSU8wQ; arc=fail smtp.client-ip=40.107.212.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DBwAXZxRp9TbtwqjkT2A/4d7RTtnE8OtTEGauJBBf5hQuXDxjzeCMH91ThW7O8LDswwW8NkZegwZb810OiPPj16nLuOabYERerayW+zzb73/QseLrcd0uQwhQdlFfNVp1/udLmC8RVe4FUoQ7RUz6o1Ztwf1kq2vnwMDK4a7RMxGbhak4yIS3azjYHOLqHcA013eSdQSkTbDgBObcCvphuBio5FBoRC/xd4YHFXnDOZjLgLlRL2HcekeSX4in1YicLyk7fOwy5CXkuTpQTDOC4jEZvT9AAL6hAULOVGeiyJPuQr5W0f6NdNSKIQ2Q2ihrE7NT9HOYerXF11Nr/xuuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jFTbI9ND2CyE1tYPzE40lpD55Qu2t/EH0KBRykBJyRs=;
- b=A45z62pzzv71/qD1htOkLHYJe+AXBAjBJyCIQKvjwHOdc+yN5sm+tTLX+iskGEVP778EcrV9wvYMv/N5E58xINo4+V8lWhYT2te1LCTNocvh0CJTgzP9w2ubNLAu87dsDu8kTUorkbVhxOME62y0FVweRBN8IZRN1DrpRCsBy+VeGu+6JYD7S6Il2OvGhRXiZ2GDmtglgMKAMDTJuvSqy3Ta+YY4OUX92crTUgQQH2dpOVjY4V1l7o/L5JxZvq5kQS1BoINIqOsRUsrkMk1x6bWIM6RfK6YCBNUXcjuzDr7yA/KQRSJxjMqBupjgtt5BsNJ7sZWKtxmQ0GP+pBzEOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jFTbI9ND2CyE1tYPzE40lpD55Qu2t/EH0KBRykBJyRs=;
- b=J0iSU8wQdUzm7rt4QSvQyqGmQKX3IvplXc+FOUklwwaq753EJKFP54N/zh+VREi7hZjEowPtmRreLm+7ERRfMy6FqK+mczby6qNXb/Mt39APvJEItEpJ67MvaqjFxlUyjoz9IcaLRILCUwzr/rHzJLi2TmzJrbS1Znl4lu+I7e1Ws3XG0nSRw2JIar3HPCRbnhdCDpsPpcnv6gZCOxHLTUICIE0pYQ7DqT6xh73b4NpOvCdfq1wZOnkBBwaEPXybS+4tRqD+HsYlGB5lxHTvSchiuqI7OtdRyEQ9JLSxCmBioSpNoCu7CVXwNowGXiaW3tiMgSXmjL8OHX3b4bgjig==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SA0PR12MB4366.namprd12.prod.outlook.com (2603:10b6:806:72::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
- 2025 15:52:24 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9031.023; Wed, 20 Aug 2025
- 15:52:24 +0000
-Date: Wed, 20 Aug 2025 17:52:16 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>,
-	Luigi De Matteis <ldematteis123@gmail.com>,
-	sched-ext@lists.linux.dev
-Subject: Re: [PATCH -rebased 07/15] sched_ext: Add a DL server for sched_ext
- tasks
-Message-ID: <aKXvMAdSvNcVAa4O@gpd4>
-References: <20250809184800.129831-1-joelagnelf@nvidia.com>
- <20250809184800.129831-8-joelagnelf@nvidia.com>
- <20250819075714.GE3245006@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819075714.GE3245006@noisy.programming.kicks-ass.net>
-X-ClientProxiedBy: MI2P293CA0007.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::7) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46CA322755;
+	Wed, 20 Aug 2025 15:54:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10702D531;
+	Wed, 20 Aug 2025 15:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755705247; cv=none; b=ry/T0RCoofj3CRCG0brG0KkEgrXl8gAwZt7t9AL8g23mxuzhkZLxp9d7giS6BQgsvviM11JZZ6Jhrft7hhSo0TUU/53AYQf49ZWiy+xoG89RPTVEI5u7Dijb2lRRo+O1aOSKU9VW5mxxQrwA5acH4fpsjEToyLudYojGcShGhzA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755705247; c=relaxed/simple;
+	bh=dw93fpOnU1qk6i+Od41CUz1J6p0iT7oWxDLdg3BSDwE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F4wp5XACdOPE4VZiurjMvrT5LbYn9j6s++lh3CDh9M/fUWeTCb/knb7nBDGSl4xnfseiA8LpS0LAhxjhuqXi9x5t5GpywQLSUZDmqHy7VWUAWrV3rlA/3k88VGrfvWn6uyaU26bDyENyojhYjUVLtCw4oy/MvlZp+AL7tWOaEko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3412D1D31;
+	Wed, 20 Aug 2025 08:53:56 -0700 (PDT)
+Received: from [10.57.90.209] (unknown [10.57.90.209])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F5FE3F63F;
+	Wed, 20 Aug 2025 08:53:57 -0700 (PDT)
+Message-ID: <4a828975-d412-4a4b-975e-4702572315da@arm.com>
+Date: Wed, 20 Aug 2025 17:53:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA0PR12MB4366:EE_
-X-MS-Office365-Filtering-Correlation-Id: b782ab05-5f7d-49ee-9223-08dde0018dfb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Uqxopv5zlUxey3cqh1UMg9t2/dhMTmdEK83dvs0wDV673xHQAQb2uAMk+S3C?=
- =?us-ascii?Q?+Gp2hq16AOU1aF/xu4EtEGTzX3O4+EDOiWFlo41+6Y65isGMXrC0dMAexkXL?=
- =?us-ascii?Q?NIIu+7whonRdixqKC6F6/h5gdeVQ8Z6Ew8epbuMs0A0mnACLDR5j86Ot5Y9J?=
- =?us-ascii?Q?j8tvutFCWrHOl8Co7LcmeUSGM606FVV4aaWNZfBx1UStrLVKj+JBGibJHGEh?=
- =?us-ascii?Q?tIKJFYRgC1mquzPMK84kRProDD1gCUslfgeu9F9eUhU1RrtNswmJ+ja0nFMA?=
- =?us-ascii?Q?t46lW0IS3LgwAYw9UklIVk8AgOOhRyXzfIsKQDRciKHyh480IdHihzpiWBfJ?=
- =?us-ascii?Q?awX7dSWtBLJchha9zpIICay0Z8V8ALsxewgfcwKk40NpntiBMvA1x64hm3h9?=
- =?us-ascii?Q?oGkSbZ7p67JQ80zyFkmsjddvg/tBoVk+d1XEpJKvfzrFgNO4ff/o/vgz84tG?=
- =?us-ascii?Q?hTzb+8WPrjIj16x+JzV4UgUh8tbzE+xBSz+fMRRnMeSm6bGMpauzCjYWg7L3?=
- =?us-ascii?Q?oZWXhW7ALkKClGjAiTi2C/ekAcA2dz+OuG6SfH8oBWl+e5IFSi9PDrbr3U3V?=
- =?us-ascii?Q?bSytaxRQzTqVym0H9pyprNUDXlIjLGds0L9dk36jBAPJH3cgfC6nsnjf0hpn?=
- =?us-ascii?Q?FQ0UHKPwwrEO02ryUR9kzaKSPX05A4G8L58dhuYMxSnLWpDfP0p+iwE+CqOM?=
- =?us-ascii?Q?qHSR8hlO4gNdaZeVSchNkVuuK7SAxLpdJOd4wNrJt9sNaXOFaQ30E4p7cR3c?=
- =?us-ascii?Q?S7NNLnx17ZQ6eicqvUeyUwe0gLc4HBq9b8UWP5I1Ah9898+1zprbZKVQI/G7?=
- =?us-ascii?Q?eqhMvSURGt6luEQsCWD9ZVg8CviIvL9SZGj+jhTm6yozEUiWluUt7EQStpFA?=
- =?us-ascii?Q?Ken3QK4IqW0TMJMsO1z6gMCnOPMdyvhPFLqbvrGUq0/AQ5sMnVEb3Te+4C9p?=
- =?us-ascii?Q?mFWUvBviza1dFhsCJ5Mwd4EjAFbSUk4ngIPuXjjrBzUWI3Cq78qrD6k7aoMc?=
- =?us-ascii?Q?S6+yjaLfzSws+QtGuAPdaRK6378UW1myWxyuSrQ6OaoOMHadjy+aw3tw7Yxx?=
- =?us-ascii?Q?tQFj5PDFpooPpLkJgRz5AoZPbdtjq5vXAGu4mpJOiyUUCVO9Rdm/K3iLPUkh?=
- =?us-ascii?Q?wM3se72jMNRCU3nZiidpVnNEGQ+ApjwdDJ2HEVtGswiK23bOha69i63KoN8h?=
- =?us-ascii?Q?FRdmYGGBqmqXwSkVZYK7zFp0lwUefouU1eNizPKPZLb6Pl77lUaJrqvF7AtW?=
- =?us-ascii?Q?6k0kAyTcvJepYnNWab2gdCwCJ/CjfQNijNmlPkzP2Tr1p4cHO7UUQEkrNdzF?=
- =?us-ascii?Q?8EuVeAXr5w5Ac4U/IQkgevrK3AY67uSCNXqctACR4Wmj4FBEO4kGTbjUHB9C?=
- =?us-ascii?Q?3JLgUal+HfGzoJvxifd+yfUAaIvVM5akZW9PJi4zia3GmR39uQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lnpVW/o3KGd0wAp5gnoK2yIKXbN0rXZtQzDpySfxaOyEhTAgBNQP+5MQJyOL?=
- =?us-ascii?Q?EPn/eVaonM3GaC6CrPFWP0rQMsllX2uQCccpn/I1RP4Br6gQMuQ+aqg8RRoF?=
- =?us-ascii?Q?tOMgDvM5WEJ0yLGx0eZ2Hgoj/QFNVNZVY1RKMwS/6ADYdStD8Ux71wDq1p3D?=
- =?us-ascii?Q?1huJWztHV8NLhYX9jR8aUkBu7ESDN+QMelUaU/xAHVU1OVO5GWufs9m7QP1Y?=
- =?us-ascii?Q?0Nb0LzBs2PA0zp/m24eaF8RdmKtvBd/40wlziDFLrKFhn2D3Y8y//DOYI4Qv?=
- =?us-ascii?Q?xZR4luqnKYLsSfGcW7D8cagP0OkzHFch3ppk/g+levagREw0pLjgGzprRLuv?=
- =?us-ascii?Q?NnIVbmAJpyjEO2sWS2SEKs4vwDYaKr4Gj8vrCPan7Un7MEQ3IXTsVX91ybQ6?=
- =?us-ascii?Q?A0Tg3Wi7FQeLKQJP3DK5AvM7zcNMe2G52kYb48TFkQwi67zPSqg4cu0zHwt/?=
- =?us-ascii?Q?+o1mfKVNpoFoElyGONTqba9vAVYmh5aaRKU8XIRwoxgEnJioW85wL5gFNYdb?=
- =?us-ascii?Q?RwPWgSZaxrFskbxEL//CEvLNDf9KHSArdG8KKHyJQdhvt9YBgzT2JbWW/lIT?=
- =?us-ascii?Q?RIyOrneBbDYK7RCn6QYj42QHhuQRQ6fojgY+ucpKwqq7ZRCa1/Qe05Gs/uol?=
- =?us-ascii?Q?kN2ms/X/EHeGqzEygvB6u/+5qeasEgWVxc8nd8/EcYZKrBWmhKRztNDFsxLC?=
- =?us-ascii?Q?UzRcytJaZpAN919ukclZIDcCK5cWu0hRWqkbRuaan+js317PN86VeTQmE92s?=
- =?us-ascii?Q?wAohn+pW+ikqh/O2lYofCzkAKwwsxkMLCrkicV7wpsnJu+UAIUYZBil2JRs5?=
- =?us-ascii?Q?dKozV2/k4A7rgIDMrTVk7LVBlEueffdKMaPh0LxYEyPcG8g1tBtRxa0R8c9Z?=
- =?us-ascii?Q?QsUnuK1NAfnRE3Lksm8rCcFW/K1r4z3o8OFmhPEohZZ3mDkfFbvzv8tqxzft?=
- =?us-ascii?Q?Okyut+KeVyeqmgi6FQu1Nxm9cI1aV1ZksEfiSoiigVgKvEQ9XWdI7fSb3ebP?=
- =?us-ascii?Q?W7rfq7YIHNyuwuOG5J8z/9mknSUVdr0Zk2ENKhXvOxrixpaPhSfL+isS9W5H?=
- =?us-ascii?Q?HyIVQumqKrBlkJaDEoWpbSHDIqpIHv/6rb7MqGcKZ4dVa2uowd6bd7G5vc2J?=
- =?us-ascii?Q?ql85g+yMnQXIod/rF6d9ALtEqth6zLcCEqB2rWRwl9cftv4+EoRV/qIPXGAM?=
- =?us-ascii?Q?rfslQ2UMpG8iFP9YLlI/A3JS1aA8tPJo70L06GqWm3P7wm9xJCVMPmHbNrAp?=
- =?us-ascii?Q?wdIFqGMVeHuFbdmo3nDxq9eYe04osZnTNetCXU5nDKO9/Imei3vEgnY/vv62?=
- =?us-ascii?Q?IqfOKHB3wkqEa9nRsYMt6xAMYJ8BYXytdVct8dIfAsrdgcKoezX1XDNTKTGz?=
- =?us-ascii?Q?cxufw3nlNHLSUngs1ILhH5QsmAr7rUVbOycJR10TrwQTGIn0Y4oEwpfw+gFs?=
- =?us-ascii?Q?b9nqCXhgpV4nF/AnnYabzw3fmshuXA8e2UNgHfqcfef6z/Je314/Ap1oFb3C?=
- =?us-ascii?Q?IkAjADEZtqZN47M68OTfAfD95qPqKLW7Rqf+mnAT91UKBBYv28FT6TBUSKE6?=
- =?us-ascii?Q?LBqkU3zr4cEvPNdxOPmJrW+pfGUi3zDDIF6M5K4l?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b782ab05-5f7d-49ee-9223-08dde0018dfb
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 15:52:23.9352
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oB7LmvbQp5Abd/eN4MVtjAUvTrHvECoQkbpG+nrHjzmnSnVj5wCFAzl4tVkdW9D/X3u2OvMsGMGwHcDbGcyQlA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4366
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v5 00/18] pkeys-based page table hardening
+To: linux-hardening@vger.kernel.org,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Andy Lutomirski <luto@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
+ Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@chromium.org>,
+ Joey Gouly <joey.gouly@arm.com>, Kees Cook <kees@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Maxwell Bland <mbland@motorola.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Pierre Langlois <pierre.langlois@arm.com>,
+ Quentin Perret <qperret@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-mm@kvack.org, x86@kernel.org
+References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 19, 2025 at 09:57:14AM +0200, Peter Zijlstra wrote:
-> On Sat, Aug 09, 2025 at 02:47:52PM -0400, Joel Fernandes wrote:
-> 
-> > --- a/kernel/sched/deadline.c
-> > +++ b/kernel/sched/deadline.c
-> > @@ -1510,7 +1510,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64
-> >  	 * The fair server (sole dl_server) does not account for real-time
-> >  	 * workload because it is running fair work.
-> >  	 */
-> > -	if (dl_se == &rq->fair_server)
-> > +	if (dl_se == &rq->fair_server || dl_se == &rq->ext_server)
-> >  		return;
-> 
-> Does that want to be: if (dl_se->dl_server) ?
+On 15/08/2025 10:54, Kevin Brodsky wrote:
+> [...]
+>
+> Performance
+> ===========
+>
+> No arm64 hardware currently implements POE. To estimate the performance
+> impact of kpkeys_hardened_pgtables, a mock implementation of kpkeys has
+> been used, replacing accesses to the POR_EL1 register with accesses to
+> another system register that is otherwise unused (CONTEXTIDR_EL1), and
+> leaving everything else unchanged. Most of the kpkeys overhead is
+> expected to originate from the barrier (ISB) that is required after
+> writing to POR_EL1, and from setting the POIndex (pkey) in page tables;
+> both of these are done exactly in the same way in the mock
+> implementation.
 
-Makes sense to me.
+It turns out this wasn't the case regarding the pkey setting - because
+patch 6 gates set_memory_pkey() on system_supports_poe() and not
+arch_kpkeys_enabled(), the mock implementation turned set_memory_pkey()
+into a no-op. Many thanks to Rick Edgecombe for highlighting that the
+overheads were suspiciously low for some benchmarks!
 
-I just tested it (even added a WARN_ON() to be 100% sure the check is
-equivalent), and everything seems to work as expected.
+> The original implementation of kpkeys_hardened_pgtables is very
+> inefficient when many PTEs are changed at once, as the kpkeys level is
+> switched twice for every PTE (two ISBs per PTE). Patch 18 introduces
+> an optimisation that makes use of the lazy_mmu mode to batch those
+> switches: 1. switch to KPKEYS_LVL_PGTABLES on arch_enter_lazy_mmu_mode(),
+> 2. skip any kpkeys switch while in that section, and 3. restore the
+> kpkeys level on arch_leave_lazy_mmu_mode(). When that last function
+> already issues an ISB (when updating kernel page tables), we get a
+> further optimisation as we can skip the ISB when restoring the kpkeys
+> level.
+>
+> Both implementations (without and with batching) were evaluated on an
+> Amazon EC2 M7g instance (Graviton3), using a variety of benchmarks that
+> involve heavy page table manipulations. The results shown below are
+> relative to the baseline for this series, which is 6.17-rc1. The
+> branches used for all three sets of results (baseline, with/without
+> batching) are available in a repository, see next section.
+>
+> Caveat: these numbers should be seen as a lower bound for the overhead
+> of a real POE-based protection. The hardware checks added by POE are
+> however not expected to incur significant extra overhead.
+>
+> Reading example: for the fix_size_alloc_test benchmark, using 1 page per
+> iteration (no hugepage), kpkeys_hardened_pgtables incurs 17.35% overhead
+> without batching, and 14.62% overhead with batching. Both results are
+> considered statistically significant (95% confidence interval),
+> indicated by "(R)".
+>
+> +-------------------+----------------------------------+------------------+---------------+
+> | Benchmark         | Result Class                     | Without batching | With batching |
+> +===================+==================================+==================+===============+
+> | mmtests/kernbench | real time                        |            0.30% |         0.11% |
+> |                   | system time                      |        (R) 3.97% |     (R) 2.17% |
+> |                   | user time                        |            0.12% |         0.02% |
+> +-------------------+----------------------------------+------------------+---------------+
+> | micromm/fork      | fork: h:0                        |      (R) 217.31% |        -0.97% |
+> |                   | fork: h:1                        |      (R) 275.25% |     (R) 2.25% |
+> +-------------------+----------------------------------+------------------+---------------+
+> | micromm/munmap    | munmap: h:0                      |       (R) 15.57% |        -1.95% |
+> |                   | munmap: h:1                      |      (R) 169.53% |     (R) 6.53% |
+> +-------------------+----------------------------------+------------------+---------------+
+> | micromm/vmalloc   | fix_size_alloc_test: p:1, h:0    |       (R) 17.35% |    (R) 14.62% |
+> |                   | fix_size_alloc_test: p:4, h:0    |       (R) 37.54% |     (R) 9.35% |
+> |                   | fix_size_alloc_test: p:16, h:0   |       (R) 66.08% |     (R) 3.15% |
+> |                   | fix_size_alloc_test: p:64, h:0   |       (R) 82.94% |        -0.39% |
+> |                   | fix_size_alloc_test: p:256, h:0  |       (R) 87.85% |        -1.67% |
+> |                   | fix_size_alloc_test: p:16, h:1   |       (R) 50.31% |         3.00% |
+> |                   | fix_size_alloc_test: p:64, h:1   |       (R) 59.73% |         2.23% |
+> |                   | fix_size_alloc_test: p:256, h:1  |       (R) 62.14% |         1.51% |
+> |                   | random_size_alloc_test: p:1, h:0 |       (R) 77.82% |        -0.21% |
+> |                   | vm_map_ram_test: p:1, h:0        |       (R) 30.66% |    (R) 27.30% |
+> +-------------------+----------------------------------+------------------+---------------+
 
-Thanks!
--Andrea
+These numbers therefore correspond to set_memory_pkey() being a no-op,
+in other words they represent the overhead of switching the pkey
+register only.
+
+I have amended the mock implementation so that set_memory_pkey() is run
+as it would on a real POE implementation (i.e. actually setting the PTE
+bits). Here are the new results, representing the overhead of both pkey
+register switching and setting the pkey of page table pages (PTPs) on
+alloc/free:
+
++-------------------+----------------------------------+------------------+---------------+
+| Benchmark         | Result Class                     | Without
+batching | With batching |
++===================+==================================+==================+===============+
+| mmtests/kernbench | real time                        |           
+0.32% |         0.35% |
+|                   | system time                      |        (R)
+4.18% |     (R) 3.18% |
+|                   | user time                        |           
+0.08% |         0.20% |
++-------------------+----------------------------------+------------------+---------------+
+| micromm/fork      | fork: h:0                        |      (R)
+221.39% |     (R) 3.35% |
+|                   | fork: h:1                        |      (R)
+282.89% |     (R) 6.99% |
++-------------------+----------------------------------+------------------+---------------+
+| micromm/munmap    | munmap: h:0                      |       (R)
+17.37% |        -0.28% |
+|                   | munmap: h:1                      |      (R)
+172.61% |     (R) 8.08% |
++-------------------+----------------------------------+------------------+---------------+
+| micromm/vmalloc   | fix_size_alloc_test: p:1, h:0    |       (R)
+15.54% |    (R) 12.57% |
+|                   | fix_size_alloc_test: p:4, h:0    |       (R)
+39.18% |     (R) 9.13% |
+|                   | fix_size_alloc_test: p:16, h:0   |       (R)
+65.81% |         2.97% |
+|                   | fix_size_alloc_test: p:64, h:0   |       (R)
+83.39% |        -0.49% |
+|                   | fix_size_alloc_test: p:256, h:0  |       (R)
+87.85% |    (I) -2.04% |
+|                   | fix_size_alloc_test: p:16, h:1   |       (R)
+51.21% |         3.77% |
+|                   | fix_size_alloc_test: p:64, h:1   |       (R)
+60.02% |         0.99% |
+|                   | fix_size_alloc_test: p:256, h:1  |       (R)
+63.82% |         1.16% |
+|                   | random_size_alloc_test: p:1, h:0 |       (R)
+77.79% |        -0.51% |
+|                   | vm_map_ram_test: p:1, h:0        |       (R)
+30.67% |    (R) 27.09% |
++-------------------+----------------------------------+------------------+---------------+
+
+Those results are overall very similar to the original ones.
+micromm/fork is however clearly impacted - around 4% additional overhead
+from set_memory_pkey(); it makes sense considering that forking requires
+duplicating (and therefore allocating) a full set of page tables.
+kernbench is also a fork-heavy workload and it gets a 1% hit in system
+time (with batching).
+
+It seems fair to conclude that, on arm64, setting the pkey whenever a
+PTP is allocated/freed is not particularly expensive. The situation may
+well be different on x86 as Rick pointed out, and it may also change on
+newer arm64 systems as I noted further down. Allocating/freeing PTPs in
+bulk should help if setting the pkey in the pgtable ctor/dtor proves too
+expensive.
+
+- Kevin
+
+> Benchmarks:
+> - mmtests/kernbench: running kernbench (kernel build) [4].
+> - micromm/{fork,munmap}: from David Hildenbrand's benchmark suite. A
+>   1 GB mapping is created and then fork/unmap is called. The mapping is
+>   created using either page-sized (h:0) or hugepage folios (h:1); in all
+>   cases the memory is PTE-mapped.
+> - micromm/vmalloc: from test_vmalloc.ko, varying the number of pages
+>   (p:) and whether huge pages are used (h:).
+>
+> On a "real-world" and fork-heavy workload like kernbench, the estimated
+> overhead of kpkeys_hardened_pgtables is reasonable: 4% system time
+> overhead without batching, and about half that figure (2.2%) with
+> batching. The real time overhead is negligible.
+>
+> Microbenchmarks show large overheads without batching, which increase
+> with the number of pages being manipulated. Batching drastically reduces
+> that overhead, almost negating it for micromm/fork. Because all PTEs in
+> the mapping are modified in the same lazy_mmu section, the kpkeys level
+> is changed just twice regardless of the mapping size; as a result the
+> relative overhead actually decreases as the size increases for
+> fix_size_alloc_test.
+>
+> Note: the performance impact of set_memory_pkey() is likely to be
+> relatively low on arm64 because the linear mapping uses PTE-level
+> descriptors only. This means that set_memory_pkey() simply changes the
+> attributes of some PTE descriptors. However, some systems may be able to
+> use higher-level descriptors in the future [5], meaning that
+> set_memory_pkey() may have to split mappings. Allocating page tables
+> from a contiguous cache of pages could help minimise the overhead, as
+> proposed for x86 in [1].
+>
+> [...]
 
