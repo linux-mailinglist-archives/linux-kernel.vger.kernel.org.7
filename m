@@ -1,158 +1,118 @@
-Return-Path: <linux-kernel+bounces-777125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1249B2D5A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:07:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C36B2D62C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E8A617414D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A243A65BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513FB2C11D2;
-	Wed, 20 Aug 2025 08:06:30 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC512DA775;
+	Wed, 20 Aug 2025 08:20:14 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E7328466F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0041E2D8DC0
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755677189; cv=none; b=KO4E7xwS0pc+Aq6IttYxuJtpLYWOTyf9rmPG5yXPk05cCYBusXKfuLwXLYQVcHGF/CNS/oBZnCzpwtCudtCoeJP8Efu3SZgnFmYnqAY/dXd1jUQ4hBbbpOja6NtmLzu+tZT06Ix69SjnmJLHjdL7UBwv8zv8LLnKPH2A1+fRplg=
+	t=1755678014; cv=none; b=pG8tsXszNIzcMMRA6wn3qQmiSUmfdjhi3+LS20sLZ2lz3N2Ele+37nVEdzcvIuHiiK+2lpOWW1k6pGteenCthcp/9zGIStz6zw5nXg0b4MmEaYaIRa1M+PHUnSCm0h4el5izDAQ/rIqX0tY3NYaRfpEb7IXpLAfapCZpQjMfahY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755677189; c=relaxed/simple;
-	bh=TSEWfehoPdM3gmaj9QZJ0UPUmwRx/M938OT2evtPpS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dLpZZrZsECicpu0WPSPcxZBMrrUGz/RGNWc0b3rlI6a7MT1zOPs1ox+MMKL2/Hnm0Wnho3s+yw5G+/Y6MAXkMi2ZLbfjScmHdpKP1hx2yPtvDj6fXMOWlktqT9uwuMG1OUZrmccrp8kQBfVjK4s3Jkwq8RDDnrofnUIE5TF0uhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uodpj-0007v7-DH; Wed, 20 Aug 2025 10:06:11 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uodpi-001DLk-0F;
-	Wed, 20 Aug 2025 10:06:10 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uodph-005rZz-36;
-	Wed, 20 Aug 2025 10:06:09 +0200
-Date: Wed, 20 Aug 2025 10:06:09 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Lukasz Majewski <lukma@denx.de>, Jonathan Corbet <corbet@lwn.net>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	Divya.Koppera@microchip.com
-Subject: Re: [PATCH net-next v2 1/1] Documentation: networking: add detailed
- guide on Ethernet flow control configuration
-Message-ID: <aKWB8QA8fTwrZhFb@pengutronix.de>
-References: <20250814075342.212732-1-o.rempel@pengutronix.de>
- <36bdd275-25bb-4b53-a14d-39677da468cc@lunn.ch>
+	s=arc-20240116; t=1755678014; c=relaxed/simple;
+	bh=RTSTDEIBXHGr1nvHn0RVkrs9xBnaM+R+QX9RCAqUbBY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UBjksYZXMSxSHj5rPiigS7kbLvQ1qQe4qX9+YC6vBBCNFeX3HfEXLy0tAXjcWd1S5CbK9ZzdVO1MgNUJqxtZwJAsUVYu4wY/bxjJCfiDWfkDw9AD0kvEgAgKcIiDztAwWiul8nUc/Cqk0htj6R27nSfwqISs7tvMIzMN9zBXiTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c6K7B0ZWgz2gLG9;
+	Wed, 20 Aug 2025 16:17:10 +0800 (CST)
+Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2C0FE1402CD;
+	Wed, 20 Aug 2025 16:20:03 +0800 (CST)
+Received: from huawei.com (10.50.85.135) by dggpemf200018.china.huawei.com
+ (7.185.36.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 20 Aug
+ 2025 16:20:02 +0800
+From: Quanmin Yan <yanquanmin1@huawei.com>
+To: <sj@kernel.org>
+CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<yanquanmin1@huawei.com>, <wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
+Subject: [RFC PATCH mm-next v2 00/12] mm/damon: support ARM32 with LPAE
+Date: Wed, 20 Aug 2025 16:06:10 +0800
+Message-ID: <20250820080623.3799131-1-yanquanmin1@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <36bdd275-25bb-4b53-a14d-39677da468cc@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf200018.china.huawei.com (7.185.36.31)
 
-On Tue, Aug 19, 2025 at 02:48:22PM +0200, Andrew Lunn wrote:
-> > +2. Half-Duplex: Collision-Based Flow Control
-> > +--------------------------------------------
-> > +On half-duplex links, a device cannot send and receive simultaneously, so PAUSE
-> > +frames are not used. Flow control is achieved by leveraging the CSMA/CD
-> > +(Carrier Sense Multiple Access with Collision Detection) protocol itself.
-> > +
-> > +* **How it works**: To inhibit incoming data, a receiving device can force a
-> > +    collision on the line. When the sending station detects this collision, it
-> > +    terminates its transmission, sends a "jam" signal, and then executes the
-> > +    "Collision backoff and retransmission" procedure as defined in IEEE 802.3,
-> > +    Section 4.2.3.2.5. This algorithm makes the sender wait for a random
-> > +    period before attempting to retransmit. By repeatedly forcing collisions,
-> > +    the receiver can effectively throttle the sender's transmission rate.
-> > +
-> > +.. note::
-> > +    While this mechanism is part of the IEEE standard, there is currently no
-> > +    generic kernel API to configure or control it. Drivers should not enable
-> > +    this feature until a standardized interface is available.
-> 
-> Interesting. I did not know about this.
-> 
-> I wounder if we want phylib and phylink to return -EOPNOTSUPP in the
-> general code, if the current link is 1/2 duplex?
+Previously, DAMON's physical address space monitoring only supported
+memory ranges below 4GB on LPAE-enabled systems. This was due to
+the use of 'unsigned long' in 'struct damon_addr_range', which is
+32-bit on ARM32 even with LPAE enabled[1].
 
-Rejecting ethtool -A calls in half-duplex mode would cause problems. At
-request time we often don’t know what the final link will be (autoneg,
-fixed link, link flapping, etc.). On top of that, PAUSE conflicts not
-only with half-duplex, but also with PFC.
+To add DAMON support for ARM32 with LPAE enabled, a new core layer
+parameter called 'addr_unit' was introduced[2]. Operations set layer
+can translate a core layer address to the real address by multiplying
+the parameter value to the core layer address. Support of the parameter
+is up to each operations layer implementation, though. For example,
+operations set implementations for virtual address space can simply
+ignore the parameter. Add the support on paddr, which is the DAMON
+operations set implementation for the physical address space, as we have
+a clear use case for that.
 
-A cleaner model is to treat ethtool pause config as a wish specifically
-for 802.3x PAUSE. Phylib/phylink store this wish and apply it
-automatically when the negotiated link is compatible (full-duplex
-without PFC). If the link is not compatible (half-duplex, PFC), the wish
-is ignored.
+[1]https://lore.kernel.org/all/20250408075553.959388-1-zuoze1@huawei.com/
+[2]https://lore.kernel.org/all/20250416042551.158131-1-sj@kernel.org/
 
-So the user always sets their preference once, the kernel enforces it
-when possible, and status queries (ethtool -a) show the actual active
-state. This avoids races and keeps semantics simple and predictable.
+Changes in v2:
+- set DAMOS_PAGEOUT, DAMOS_LRU_[DE]PRIO, DAMOS_MIGRATE_{HOT,COLD} and
+  DAMOS_STAT stat in core address unit.
+- pass ctx->min_region value to replace the original synchronization.
+- drop the DAMOS stats type changes, keep them as 'unsigned long' type.
+- separate add addr_unit support for DAMON_RECLAIM and LRU_SORT from
+  this patch series.
 
-> > +Additionally, some MACs provide a way to configure the `pause_time` value
-> > +(quanta) sent in PAUSE frames. This value's duration depends on the link
-> > +speed. As there is currently no generic kernel interface to configure this,
-> > +drivers often set it to a default or maximum value, which may not be optimal
-> > +for all use cases.
-> 
-> The Mellanox driver has something in this space. It is a long time ago
-> that i reviewed the patches. I don't remember if it is a pause_time
-> you can configure, or the maximum number of pause frames you can send
-> before giving up and just letting the buffers overflow. I also don't
-> remember what API is used, if it is something custom, or generic. It
-> is a bit of a niche thing, so maybe it is not worth researching and
-> mentioning.
+Quanmin Yan (2):
+  mm/damon: add damon_ctx->min_region
+  mm/damon/core: prevent unnecessary overflow in
+    damos_set_effective_quota()
 
-I did some digging. A number of drivers simply hard-code the pause
-quanta to the maximum value for all link modes:
+SeongJae Park (10):
+  mm/damon/core: add damon_ctx->addr_unit
+  mm/damon/paddr: support addr_unit for access monitoring
+  mm/damon/paddr: support addr_unit for DAMOS_PAGEOUT
+  mm/damon/paddr: support addr_unit for DAMOS_LRU_[DE]PRIO
+  mm/damon/paddr: support addr_unit for MIGRATE_{HOT,COLD}
+  mm/damon/paddr: support addr_unit for DAMOS_STAT
+  mm/damon/sysfs: implement addr_unit file under context dir
+  Docs/mm/damon/design: document 'address unit' parameter
+  Docs/admin-guide/mm/damon/usage: document addr_unit file
+  Docs/ABI/damon: document addr_unit file
 
-stmmac: #define PAUSE_TIME 0xffff
-lan78xx: pause_time_quanta = 65535
-smsc95xx / smsc75xx: flow = 0xFFFF0002
-FEC: FEC_ENET_OPD_V  = 0xFFF0
-
-If we translate quanta into real time:
-1 Gbps -> 1 quanta = 512 ns -> max val ~ 33.6 ms
-100 Mbps -> 1 quanta = 5.12 µs -> max val ~ 335 ms
-10 Mbps -> 1 quanta = 51.2 µs -> max val ~ 3.3 s
+ .../ABI/testing/sysfs-kernel-mm-damon         |   7 ++
+ Documentation/admin-guide/mm/damon/usage.rst  |  11 +-
+ Documentation/mm/damon/design.rst             |  16 ++-
+ include/linux/damon.h                         |   7 +-
+ mm/damon/core.c                               |  75 +++++++------
+ mm/damon/paddr.c                              | 106 +++++++++++-------
+ mm/damon/sysfs.c                              |  41 ++++++-
+ mm/damon/tests/core-kunit.h                   |  16 +--
+ mm/damon/tests/vaddr-kunit.h                  |   2 +-
+ mm/damon/vaddr.c                              |   2 +-
+ 10 files changed, 188 insertions(+), 95 deletions(-)
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.43.0
+
 
