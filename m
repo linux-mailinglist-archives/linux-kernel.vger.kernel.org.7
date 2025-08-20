@@ -1,244 +1,120 @@
-Return-Path: <linux-kernel+bounces-777503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C694EB2DA41
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:43:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA97BB2DA48
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 499D64E1508
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB98672320C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428A52DEA9D;
-	Wed, 20 Aug 2025 10:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E126123312D;
+	Wed, 20 Aug 2025 10:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AgK7Ci3C"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE2126E16A
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WlAqn8SE"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2974414;
+	Wed, 20 Aug 2025 10:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755686613; cv=none; b=HVS3huMkOpVCt2nhTTxfqL5/JN3c5G78L6PvNvtEpoUx7azTjMq0Y4lapquhyOpH/pL8iXhv88sx/vHx8pbymsMUex7ikPlR/FUvFXSbThyU/TkZHrejF0l7Z8yk5XHQD78XvqR+iUoVna2OQKBvCE1oJVhVu1e3PYRVqfRWQCA=
+	t=1755686749; cv=none; b=YFPqaCCISX2+10mwfxKWVBiI6KrTpxcLmJRW3gbpEBr5TH21ASERf5E/gOPOpGsL2pAKSm6P2ln0WWBE2h99cb1e0DNNpAd4qxdk7BnFh2irn7yT0DbS8T4WRBYl3bImfY/vgkeu4g8i2/Exmys79/lL/jb8ZlxlnsigQvpVjEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755686613; c=relaxed/simple;
-	bh=uVpcSCB5mtAaK6aCWFyWWs7ICZDA2hsY1/QCUgHENGk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S957K/bu8w59OLZ8N8llGk7FdEfHcDLcMzNjRrsd7pxMcDG9zDG//2r6S1g0CsL15GsIAxJehib2B17O8beXQ1qYK3rT2MjNAnO9U+BZqnW7ULu01NyZVaJRstyWEuTNbN2XLPf76YtEtLoyOuBHr0E+sL/JE4trK0gfo4tEweA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AgK7Ci3C; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24456f3f669so9263075ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 03:43:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755686611; x=1756291411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lk/vtWnmqYeXCudIPf+xoX46PWcEg0mYxFLpg6PHTfg=;
-        b=AgK7Ci3CQTgoua2GBKkBZpTU1Gfi273HSu35o7xv92dac4JzTFHwmhn235gSzJ3xeR
-         niex6/8bS3LFQqlQ+LDnHiTcTMBT3s0+Q8rlF2/9gHUUCPbwqavWZ5nLTbfxF9vQ87yI
-         mtuCzkNkJq6HymYAS89nPuhYeomX6xIlDejMZ/Y4RM2IM+j6R04eKcco1Cq0BnpKVHuI
-         0LUkUCK3uBKuBLjCL2/XgDMDlO2uVJU0K4+r4vdcu02zZ/LY1lZ9wf0zbf3ANH47SiEc
-         0NTsoCfAvGRsKHn5wywVf5Sv2JFLDO6k8DjtrP8voAJtt/aYYCEbEDm3QrLmz+eDJzIP
-         tTmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755686611; x=1756291411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lk/vtWnmqYeXCudIPf+xoX46PWcEg0mYxFLpg6PHTfg=;
-        b=GqJBQTvOR7VpaA5kTFXjC8HLbZjwaZ8UXPnHqk6SgZktVxnAro5w4EyR/mf64/L1u0
-         UO/J/7prWZK0T/pSi88ys+un1XdAawHlrLdyTFkrV0vSBn9mzDKOrJG4/rP3FHSGryAa
-         CCn23+8h/AdeUt9KwisKVeXm2x3sltTkKSHJ5uuPU690/WssqLF/QlNjZqo43aVVPjOv
-         5taAe5fFMZE+SueTl7wf4a9cE8Dc56uAj6nANeuE0R2liVfYEIYng//Yv1lYJnAUWx/4
-         5o/+klBCqHyRAtsbaGo8nGiXBoMcgDu/MYRbFRwfLcN1HlvWcAZ9OdM7Ql6TKaaWYgDP
-         GGXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVsla2bVQjKz/eDCrenlbvki2q1pejIVJntOm3YoapUrW7OhJ9K/0/Pt4RY3RBrPa3S2/WuOSScDRVpxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDcpdrlyHc13G8xfNEjppgcdOhZo/tI3ao+zK++evidI5CkwK1
-	tSMb3U2qmWYYdD2gLiXTwvjM2jOfM2vuVMaXFPH/u2UQ+D5kOt7xzIS52pwc+hzVbggEbYoAlyv
-	eUEoLfRM8R4hzxsNttvI0NT3kzfvWxjqN9BGtx6TXaA==
-X-Gm-Gg: ASbGncsgZRBs9VL+5cBiPLnMV23/rPsEISdwOLNUsKKSp0051uQFWUSwxWqUpHhUzFo
-	1F3I3FZi+71cr6aLRXeqf3KnroSd5n9ksCPWkKE/NUOgDgOeVy6tlCOeiGD//IiEQJJ9ccpPV2s
-	xAQo1B+zvPps1fNRFwe3KW0W+L0lz7a3SlIkh/10GLGUzg3RtHWhTIKe1FNBUJXl50gGDw5DAzH
-	RAefjUGF6wv649mYB9sQ6REU2xkl4LouykNywZJ40zGpUoZsbg=
-X-Google-Smtp-Source: AGHT+IFwrsubzwYy6OCz71QSPoYRUwgOCZIF012RxCruCEQL3nCCwcumSkjdOdE86Hy8RNzNzoY+6hhO68xb0y33ijc=
-X-Received: by 2002:a17:902:da85:b0:235:f091:11e5 with SMTP id
- d9443c01a7336-245ee010a57mr36015605ad.10.1755686611227; Wed, 20 Aug 2025
- 03:43:31 -0700 (PDT)
+	s=arc-20240116; t=1755686749; c=relaxed/simple;
+	bh=qGxKsdAFEHHSpPMZrdV+9RkQ/WpCc+7uFmKumcp5pho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fc8SIuyJoPO0JpSBXyq9T0g5pBUuUo5G91TJ/Yc4oTQVszRDu1LD3GtBeoMVbFk/cos6oqzxxF9O4JyCZ3TFZ0Sb0zYT+Sytyok0axPw1l8YEvkVxZ8K45W01dXU2OYA9xW/PLoCEzoQ/XFhJCZxjxHNs+YSJ+qH6J8vPPFo+BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WlAqn8SE; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=igVC+r9t1pPO+MPUsLfAQNKa2CjPT9tsw6veSywFJ7o=;
+	b=WlAqn8SEoQNWxMua51YoTVqNPFgUmaOExPK+RVA2lkjis7GxmR/xaVNk49K6ev
+	QBWfDq+jhDkeB0hOMOF9tU8j1lN37UN6pe8wuA1O3oM4WyjhQoej4/hdDmb4pK16
+	9FviIu7XONm8gbzCL3R6/CHDVonHx2FiFVavx286OxkTU=
+Received: from localhost (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wC3r3ILp6Voc_S3Cg--.25064S2;
+	Wed, 20 Aug 2025 18:44:28 +0800 (CST)
+Date: Wed, 20 Aug 2025 18:44:27 +0800
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: pmladek@suse.com, akpm@linux-foundation.org,
+	Simona Vetter <simona@ffwll.ch>, Helge Deller <deller@gmx.de>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	Shixiong Ou <oushixiong@kylinos.cn>,
+	Sravan Kumar Gundu <sravankumarlpu@gmail.com>,
+	Zsolt Kajtar <soci@c64.rulez.org>, Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org, feng.tang@linux.alibaba.com,
+	joel.granados@kernel.org, john.ogness@linutronix.de,
+	namcao@linutronix.de, linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 2/9] fbdev: Use panic_in_progress() helper
+Message-ID: <aKWnC4N8d4lBPrNi@debian.debian.local>
+References: <20250820091702.512524-1-wangjinchao600@gmail.com>
+ <20250820091702.512524-2-wangjinchao600@gmail.com>
+ <20250820091702.512524-3-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819122844.483737955@linuxfoundation.org>
-In-Reply-To: <20250819122844.483737955@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 20 Aug 2025 16:13:19 +0530
-X-Gm-Features: Ac12FXyXjg44pYVkVc6KmflacKpBYZDwKjup2B-GNdc5o1-6kkVWh646JGrHJBE
-Message-ID: <CA+G9fYuxaTeCD9ftGZ=MJVSoH-OY+pHx6XS8aXGhvySfT3V3TA@mail.gmail.com>
-Subject: Re: [PATCH 6.16 000/564] 6.16.2-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820091702.512524-3-wangjinchao600@gmail.com>
+X-CM-TRANSID:_____wC3r3ILp6Voc_S3Cg--.25064S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cr1xCF4Utr4rJF45AFW7twb_yoW8Xw43pF
+	45JFW3GF4Dtr15Ga97Wr47AFyFyws7JryUXFZ7t3WFq3Way3yIg3y0kFy0qFWftryxCw1S
+	vr1Ut3WrGFyUCFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UQqXQUUUUU=
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYByuamikVa45BQACsx
 
-On Tue, 19 Aug 2025 at 18:02, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.16.2 release.
-> There are 564 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 21 Aug 2025 12:27:23 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.16.2-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, Aug 20, 2025 at 05:14:47PM +0800, Jinchao Wang wrote:
+> This patch updates the fbcon_skip_panic() function to use
+> the panic_in_progress() helper.
+> 
+> The previous direct access to panic_cpu is less
+> readable and is being replaced by a dedicated function
+> that more clearly expresses the intent.
+> 
+> This change is part of a series to refactor the kernel's
+> panic handling logic for better clarity and robustness.
+> 
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> ---
+>  drivers/video/fbdev/core/fbcon.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+> index 55f5731e94c3..b062b05f4128 100644
+> --- a/drivers/video/fbdev/core/fbcon.c
+> +++ b/drivers/video/fbdev/core/fbcon.c
+> @@ -279,14 +279,7 @@ static int fbcon_get_rotate(struct fb_info *info)
+>  
+>  static bool fbcon_skip_panic(struct fb_info *info)
+>  {
+> -/* panic_cpu is not exported, and can't be used if built as module. Use
+> - * oops_in_progress instead, but non-fatal oops won't be printed.
+> - */
+> -#if defined(MODULE)
+> -	return (info->skip_panic && unlikely(oops_in_progress));
+> -#else
+> -	return (info->skip_panic && unlikely(atomic_read(&panic_cpu) != PANIC_CPU_INVALID));
+> -#endif
+> +	return (info->skip_panic && unlikely(panic_in_progress()));
+>  }
+>  
+>  static inline bool fbcon_is_active(struct vc_data *vc, struct fb_info *info)
+> -- 
+> 2.43.0
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Acked-by Qianqiang Liu <qianqiang.liu@163.com>
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+-- 
+Best,
+Qianqiang Liu
 
-## Build
-* kernel: 6.16.2-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: b81166f7d5904b51887cd414c27cc416fba3f215
-* git describe: v6.16-1186-gb81166f7d590
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16=
--1186-gb81166f7d590
-
-## Test Regressions (compared to v6.16-628-gcd8771110407)
-
-## Metric Regressions (compared to v6.16-628-gcd8771110407)
-
-## Test Fixes (compared to v6.16-628-gcd8771110407)
-
-## Metric Fixes (compared to v6.16-628-gcd8771110407)
-
-## Test result summary
-total: 329363, pass: 304882, fail: 6396, skip: 18085, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 138 passed, 1 failed
-* arm64: 57 total, 56 passed, 1 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 27 passed, 7 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 39 passed, 1 failed
-* riscv: 25 total, 24 passed, 1 failed
-* s390: 22 total, 22 passed, 0 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 48 passed, 1 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* modules
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
