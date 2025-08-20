@@ -1,139 +1,127 @@
-Return-Path: <linux-kernel+bounces-777471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C1BEB2D9DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:14:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFBDB2D9D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65440680DB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:10:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A18418969AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7A12E11B9;
-	Wed, 20 Aug 2025 10:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5H0RPWn"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F132E03FF;
+	Wed, 20 Aug 2025 10:10:13 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E932D9EC8;
-	Wed, 20 Aug 2025 10:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762842D9EC8;
+	Wed, 20 Aug 2025 10:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755684617; cv=none; b=rmIs+JropqKZjds/UpbKm7Y/35lAHf8KezD5mVVuGE4EZU/Y+1B4MGbJJY/qP7VYREF+8YRbDYrnAlnEyB6D0C1acZLhQzPGHhuaxQq4/yLS7+kGQ3VMprSDAAaRdVzgvRuJC5YpGMh8s95/IZkF1VeXez3imXOHV6EULVPzoEo=
+	t=1755684613; cv=none; b=KOg7QF9WqBaioOVrQnRjwV6AFukhB4P8QRMsCPppMq6fFFqEE3jKdBr0Soz6YXLeJ9UWWhKEblg7zlB0UsUDaungyFNvglRgGEkTkWvzUH/LnqyZZIkre21MicPE0VgXUfE5wKfVvC1U5k0KULvvjz7WiTbZrNk1hv4sm7qgImc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755684617; c=relaxed/simple;
-	bh=60GfjVXbry9G+w/OHLkAHNioFNEkyl7GB+4Ycj8rjoY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sZTT9UdWugtMbYwOowpRUYQoL88npHJtzIcs0L+HQWaLLKBa2IuhZsreX9C3oKaflK0pQwbNBIl8hO2GBd8tsWtirJbDcgGr8iHv1rnc1hUEdSKEGeYrbu/dnS+6n3SGPlLKIxTt+fnjJ8GwM3CgWmNcYZJq6FLEtZcUhxabROc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F5H0RPWn; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7ace3baso1074312566b.3;
-        Wed, 20 Aug 2025 03:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755684614; x=1756289414; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qr3cQzhEbQuCji4gAWpx2C5/wGxbJlr8wYKGSv1o+4E=;
-        b=F5H0RPWnsvKDktkZqgGDvfbeBdURqhbclCUmD4T1Iz7zi7ZFI8GfffVlSNCn6ZLR2D
-         X6L2fymZC2etDHDN6u3FcvOPnHoLz7wt5O438N9Du8HjvTremWyg5AoIY0E6Fjdwx0o/
-         StvwwUdB8LYz7m9SoA0dfpZvZ6zSMIM+NNXuZWTKaEW0TPN5k5PP6Vp1ZWsrgvFE2A1M
-         N5G/5WSfNGG7fRfWbtN0hV4AP50azvV3nCWZGRIreRh/G/hOb7g4BmuwsMLLC/KBWETu
-         3TYxPJVKufBO+mNBLYPVu9+nVLpZ6uoCblKIslCV6/Q9yZ7EWGv4R8fA9ccwymkV1Tjd
-         Puzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755684614; x=1756289414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qr3cQzhEbQuCji4gAWpx2C5/wGxbJlr8wYKGSv1o+4E=;
-        b=Va2r5ympjf3xODoT2sTp/o9kiPQnxiMvBvU8Y/rjfKkY8G04WVzNMWfChJYIvvzl2l
-         fcfrJ0pRzSl+CfdwWndm/cj4tbGZQmDrHmZvvuKcCk5kIDcRFEGOJuTLkmaaPMtMONVs
-         dzBKKaTsjyYXuO0syvq033Wa83Ud1v30x7Kx7wxYmnKShd5cV0E5XabRmIqr0FyLdB0s
-         jBHogYSE3UlcBVr0uQbbN5x+j8XkKIe54NNYrbgviCTAf2kE61AG86QyXr+U36wzKQPo
-         eMcajt9ivz3yyH6kGWAIvbrdIrQy8+rltI+aIzaeN1tpajTWzE1JONCKx8jTxWKB6J69
-         5FnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVA7DoHuuVY4yAKHlZWE+yC2tZJ8TRb1E1/hcLy8bNQ+TxPZpjXTTDBUnH/1xjaWrkCndFqjbWaOKwN@vger.kernel.org, AJvYcCWHEC/b2jA4owbL6szYzQgC0NXRJsZj2SyhHQjBYvob8gUmAeI+OrLuVCklEVWM4nDcl9I28omJVdsSrN4g@vger.kernel.org, AJvYcCXepgDfgaCYwXerCgKt5nq08Wu9h9+JuJ67LLxPKA2QTvPKOu/48kbsnW2vSru3RZpjY/8aGsWxHbDh@vger.kernel.org
-X-Gm-Message-State: AOJu0YycNnVaIn0ilP0k/fkHNt76WX8CUr7U7Q/xb7vLL9lnkkM5DHTf
-	6U04LQ8i6ZAFavEc+hWI+Fe7toe9wNoA7tYd6q057YTtUIn3UizXdMGAHn/27CkS7kbigMTAQ3H
-	5EXrFiGwJtk6iTR3ZODg1+nAwk7xY4LE=
-X-Gm-Gg: ASbGncuAAcEhfb/L5uIu3Ghvy+l8xqCbhV/v6lUTapT+xLeZ/ujeHTDFhqHJobr72PM
-	bzjZWeqXSkzMZn8V5s4yHkSTEKhS3h9SQkY33UopTO4pICQYeLn97dmou4GvqQjaiDenJktgvjM
-	vgVYbmyqDR9aqoc0fEV4kGxTPSXtaDDS3Y/IeOWJM5gOZ2AUZVqwWrbZ+SiL2jZm6JrMzG4oeZc
-	CiCQgphetBwGloLuaHn
-X-Google-Smtp-Source: AGHT+IGUDeay0CHadV0kDasR5/URUsLzjs3fmO8xfoV974vBOyXjgOwrOobdN2ZV6BW8B7jc4KHR7n5rOwAj7AoLzbI=
-X-Received: by 2002:a17:906:dc8f:b0:af9:6e4a:3b55 with SMTP id
- a640c23a62f3a-afdf01d1cf1mr187516666b.40.1755684614205; Wed, 20 Aug 2025
- 03:10:14 -0700 (PDT)
+	s=arc-20240116; t=1755684613; c=relaxed/simple;
+	bh=3VZJAWVT2ZlOtPTm8k6zpzkymgEDbsaX7suXN3GO5Cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=R7vFQH8voXqQl1drI0tkHFgDA6c1VqK+/c/inkOpuw3MxffNg2HDwuXESFP1M7L1V5ZQzIo7J7tAYKRxyI0NOWFj8uSsDqULCJcpiUN7NYusXlkHcnUerMTva03rI0AGeJIkAVf0anoInTVNfBachHBb0xeF4L+lv0XLqwfwpSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c6MZD0GyLz2gL95;
+	Wed, 20 Aug 2025 18:07:16 +0800 (CST)
+Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
+	by mail.maildlp.com (Postfix) with ESMTPS id 236CE1A0171;
+	Wed, 20 Aug 2025 18:10:09 +0800 (CST)
+Received: from [10.67.109.184] (10.67.109.184) by
+ kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 20 Aug 2025 18:10:07 +0800
+Message-ID: <239193b7-7dab-45b0-ab13-06bfe3f96f22@huawei.com>
+Date: Wed, 20 Aug 2025 18:10:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819-upstream-changes-v7-0-88a33aa78f6a@watter.com> <20250819-upstream-changes-v7-5-88a33aa78f6a@watter.com>
-In-Reply-To: <20250819-upstream-changes-v7-5-88a33aa78f6a@watter.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 20 Aug 2025 13:09:37 +0300
-X-Gm-Features: Ac12FXwGD-Ms_xqdRj3SNO41-1EuHkSMk4JDYqYE8OgoC9syVbvADiz5cuDJ8MI
-Message-ID: <CAHp75Ve2RigBHxn9s=MCY0zE66-vUhJtaixi3kSqYmKp7KR6eg@mail.gmail.com>
-Subject: Re: [PATCH v7 5/5] iio: mcp9600: Add support for thermocouple-type
-To: Ben Collins <bcollins@watter.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andrew Hepp <andrew.hepp@ahepp.dev>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 20, 2025 at 2:45=E2=80=AFAM Ben Collins <bcollins@watter.com> w=
-rote:
->
-> dt-bindings documentation for this driver claims to support
-> thermocouple-type, but the driver does not actually make use of
-> the property.
->
-> Implement usage of the property to configure the chip for the
-> selected thermocouple-type.
-
-...
-
-> +       /* Accept type from dt with default of Type-K. */
-> +       data->thermocouple_type =3D THERMOCOUPLE_TYPE_K;
-> +       ret =3D device_property_read_u32(&client->dev, "thermocouple-type=
-",
-> +                                      &data->thermocouple_type);
-> +       if (ret < 0 && ret !=3D -EINVAL)
-
-' < 0' part is redundant.
-
-> +               return dev_err_probe(&client->dev, ret,
-> +                                    "Error reading thermocouple-type pro=
-perty\n");
-> +
-> +       if (data->thermocouple_type >=3D ARRAY_SIZE(mcp9600_type_map))
-> +               return dev_err_probe(&client->dev, -EINVAL,
-> +                                    "Invalid thermocouple-type property =
-%u.\n",
-> +                                    data->thermocouple_type);
-
-...
-
-> +       /* Set initial config. */
-> +       ret =3D mcp9600_config(data);
-> +       if (ret < 0)
-
-Maybe here as well, but I haven't checked the actual code of the callee.
-
-> +               return ret;
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: bpf: Fix uninitialized symbol 'retval_off'
+Content-Language: en-US
+To: Chenghao Duan <duanchenghao@kylinos.cn>
+CC: <ast@kernel.org>, <bjorn@kernel.org>, <puranjay@kernel.org>,
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<daniel@iogearbox.net>, <andrii@kernel.org>, <martin.lau@linux.dev>,
+	<eddyz87@gmail.com>, <song@kernel.org>, <yonghong.song@linux.dev>,
+	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
+	<haoluo@google.com>, <jolsa@kernel.org>, <alex@ghiti.fr>,
+	<bpf@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250820062520.846720-1-duanchenghao@kylinos.cn>
+ <8b836b6e-103a-41c2-b111-0417d8db4dce@huawei.com>
+ <20250820092628.GA1289807@chenghao-pc>
+From: Pu Lehui <pulehui@huawei.com>
+In-Reply-To: <20250820092628.GA1289807@chenghao-pc>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemf100007.china.huawei.com (7.202.181.221)
 
 
---=20
-With Best Regards,
-Andy Shevchenko
+
+On 2025/8/20 17:26, Chenghao Duan wrote:
+> On Wed, Aug 20, 2025 at 02:52:01PM +0800, Pu Lehui wrote:
+>>
+>>
+>> On 2025/8/20 14:25, Chenghao Duan wrote:
+>>> In __arch_prepare_bpf_trampoline(), retval_off is only meaningful when
+>>> save_ret is true, so the current logic is correct. However, in the
+>>
+>> lgtm, and same for `ip_off`, pls patch it together.
+> 
+> I also checked at the time that ip_off is only initialized and assigned
+> when flags & BPF_TRAMP_F_IP_ARG is true. However, I noticed that the use
+> of ip_off also requires this condition, so the compiler did not issue a
+> warning.
+> 
+> Chenghao
+> 
+>>
+>>> original logic, retval_off is only initialized under certain
+
+Can you show how to replay this warning? I guess the warning path is as 
+follow. Compiler didn't know fmod_ret prog need BPF_TRAMP_F_CALL_ORIG.
+
+```
+if (fmod_ret->nr_links) {
+	...
+	emit_sd(RV_REG_FP, -retval_off, RV_REG_ZERO, ctx);
+}
+```
+
+>>> conditions, which may cause a build warning.
+>>>
+>>> So initialize retval_off unconditionally to fix it.
+>>>
+>>> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+>>> ---
+>>>    arch/riscv/net/bpf_jit_comp64.c | 5 ++---
+>>>    1 file changed, 2 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
+>>> index 10e01ff06312..49bbda8372b0 100644
+>>> --- a/arch/riscv/net/bpf_jit_comp64.c
+>>> +++ b/arch/riscv/net/bpf_jit_comp64.c
+>>> @@ -1079,10 +1079,9 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im,
+>>>    	stack_size += 16;
+>>>    	save_ret = flags & (BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_RET_FENTRY_RET);
+>>> -	if (save_ret) {
+>>> +	if (save_ret)
+>>>    		stack_size += 16; /* Save both A5 (BPF R0) and A0 */
+>>> -		retval_off = stack_size;
+>>> -	}
+>>> +	retval_off = stack_size;
+>>>    	stack_size += nr_arg_slots * 8;
+>>>    	args_off = stack_size;
 
