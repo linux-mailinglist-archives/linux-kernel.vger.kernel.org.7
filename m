@@ -1,221 +1,138 @@
-Return-Path: <linux-kernel+bounces-778335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD03B2E452
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 361E2B2E457
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAEE85E1839
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:47:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25FB85E1D07
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D4936CE0C;
-	Wed, 20 Aug 2025 17:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D96270ED2;
+	Wed, 20 Aug 2025 17:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGfgqJgv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="riCVKQ4u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4469A2629F;
-	Wed, 20 Aug 2025 17:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E5926B75C;
+	Wed, 20 Aug 2025 17:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755712070; cv=none; b=aHK0lq5pZJL+Bz7Zh56fmwcM8POH90tQ8wzYbDRshsvHg+iz+CnxSqOQDfd4HbCG9lpimKEcWcLE1+OslOhB9O/4QxA5DM8mmWcC0KAQXryAtQUce7tyrm6J5B2NLwuP6hUsRzCv53VGckeFdkuqn9bT6WmBdO0+KyaG96DE8/s=
+	t=1755712105; cv=none; b=CC0Um6X3hZaYnTKfqZz22pOfCjorGhsZckLHmeaVHwzcPK0plc1n/pFwA+UGeGKw6bGf8/0Jc8Gmv9MFtL1MWZa4gOlojnds2ila1Xe1Kg2MFRqJUZtrgDc85VKMyxu0BqgjNHrB8YC6tZLzfKBfsDGfxLk6yGcKaAA1i3O4RKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755712070; c=relaxed/simple;
-	bh=+LT24B6nqcidaacLuQ1/YF/caYmrsYm6FwAYLXqEPO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQnTyq1k9lx2WgEXWTOhEKrW+tvg0qVAGjwHFjStf+0KBbFmjtkTByCUa6CyJZDmMsfcLXYJtJhQtjI2JQ8u4zzVBzHKpeEUeBmjj2nJuLrdHa4ShamxfQV4O2w14Vzw2ReFfnKtkkslmOEXPjbPC+mbndn1SnP0fWb509+bHLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cGfgqJgv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B7EC4CEE7;
-	Wed, 20 Aug 2025 17:47:42 +0000 (UTC)
+	s=arc-20240116; t=1755712105; c=relaxed/simple;
+	bh=PFEXvydvZEHyXRetTO6NRqrW9oqiZPFCBpP/ylw7Zvo=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=ixTs68i96iq8C+htP5zXQuwkGaMJaaqgLLxByAKabMONKr2cbSA7aj0iBMj0uDz+p2UEiCGH4SbfOGumR9ti0gKT8aeCecdrrRgvV8tLYOtbvOn+G5u2jsjRt0AYUggPKqu6QLM1EqjIhsoV/3/FYAYTzCRftN2zjVmtnN3mrsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=riCVKQ4u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C397C4CEE7;
+	Wed, 20 Aug 2025 17:48:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755712069;
-	bh=+LT24B6nqcidaacLuQ1/YF/caYmrsYm6FwAYLXqEPO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cGfgqJgvrbi0zV1kwHYzxbXXJaIzYhoUFz2CSLBnMyRYL6ysG7dz8r+YTY4tp0/7e
-	 8hTD/KfoIYxXv8p+n5NzZZn/bVxt4wifzpDA2ERiFb40jnNfEArkddbUSn8XtrX86q
-	 N9c0FgJgxq/F8KL7SUSDJ1+xINq/wH2ixyUBhNszXwpvnlPZ/mRPFu5Uw0iWCa4Idt
-	 DFOLdGd8ER2vYoDgIFQow3Zzh+++QJa3RJKAzBmKW2iIrYV3sUngWGhs1lTt6oXsMb
-	 7ji8XG0nKmqqj2ehoFJg0BHUv8dfXOQe5Y6CTcllIHACTMMb7a4unufQfj9DVRkoPC
-	 MCj+DE8fbLJCQ==
-Date: Wed, 20 Aug 2025 23:17:30 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 3/9] PCI: of_property: Restore the arguments of the
- next level parent
-Message-ID: <7wmpgldjvznbllotblv6ufybd2qqzb2ole2nhvbx4xiavyqa2b@ezaqwghxmbve>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-4-claudiu.beznea.uj@bp.renesas.com>
+	s=k20201202; t=1755712105;
+	bh=PFEXvydvZEHyXRetTO6NRqrW9oqiZPFCBpP/ylw7Zvo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=riCVKQ4uzhPejIJpN0XkjJJjHABTNU7iHMiIdDfjkCXYSZVZJ0+6u2iC4wQ/7basr
+	 Ba41Fen7VgoJv5a9TPvEuGIz0qqVSwzlQjJXEjpE8+JobY6A45J/+upYl6ZFruplnc
+	 DFL3LxDsk9J/wC/korBjJrNYINuz2IJdc1Ka5hJtjcemXTHnFll7v+BnK1sq/dEdFM
+	 LiQNCWIWBp5hN4mJ98NSYU7SQ7rfS2ZhTy0u2zOO9G4vakAxg7DRrCEfczLNuTqSs+
+	 tfabsHn7V2rf0klUhYWHYfZodOcAhKaJ2YJpxxZtbwcGQOSTXg6vMq86mk6h5WG0Pj
+	 /JBWns/0iNUxw==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1uomvD-00000000rSh-3izi;
+	Wed, 20 Aug 2025 13:48:27 -0400
+Message-ID: <20250820174752.684086778@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 20 Aug 2025 13:47:52 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v6 0/3] tracepoints: Add warnings for unused tracepoints and trace events
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250704161410.3931884-4-claudiu.beznea.uj@bp.renesas.com>
 
-On Fri, Jul 04, 2025 at 07:14:03PM GMT, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> of_pci_make_dev_node() creates a device tree node for the PCIe bridge it
-> detects. The node name follows the format: pci_type@pci_slot,pci_func. If
-> such a node already exists in the current device tree, a new one is not
-> created.
-> 
-> When the node is created, its contents are populated with information from
-> the parent node. In the case of root complex nodes described in the device
-> tree, the created node duplicates the interrupt-map property. However, the
-> duplicated interrupt-map property does not correctly point to the next
-> interrupt controller.
-> 
-> For example, in the case of the Renesas RZ/G3S SoC, the resulting device
-> tree node is as follows (only relevant DT properties are shown):
-> 
-> pcie@11e40000 {
-> 
->     // ...
-> 
->     interrupt-map = <0x00 0x00 0x00 0x01 0x1f 0x00 0x00 0x00 0x00
->                      0x00 0x00 0x00 0x02 0x1f 0x00 0x00 0x00 0x01
->                      0x00 0x00 0x00 0x03 0x1f 0x00 0x00 0x00 0x02
->                      0x00 0x00 0x00 0x04 0x1f 0x00 0x00 0x00 0x03>;
->     interrupt-map-mask = <0x00 0x00 0x00 0x07>;
->     interrupt-controller;
->     #interrupt-cells = <0x01>;
-> 
->     #address-cells = <0x03>;
->     #size-cells = <0x02>;
-> 
->     phandle = <0x1f>;
-> 
->     // ...
-> 
->     pci@0,0 {
->         reg = <0x00 0x00 0x00 0x00 0x00>;
->         interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x00
->                          0x10000 0x00 0x00 0x02 0x1f 0x00 0x11e40000 0x00 0x01
->                          0x10000 0x00 0x00 0x03 0x1f 0x00 0x11e40000 0x00 0x02
->                          0x10000 0x00 0x00 0x04 0x1f 0x00 0x11e40000 0x00 0x03>;
->         interrupt-map-mask = <0xffff00 0x00 0x00 0x07>;
->         #interrupt-cells = <0x01>;
-> 
->         #address-cells = <0x03>;
->         #size-cells = <0x02>;
-> 
->         // ...
->     };
-> };
-> 
-> With this pci@0,0 node, the interrupt-map parsing code behaves as follows:
-> 
-> When a PCIe endpoint is enumerated and it requests to map a legacy
-> interrupt, of_irq_parse_raw() is called requesting the interrupt from
-> pci@0,0. If INTA is requested, of_irq_parse_raw() first matches:
-> 
-> interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x00>
-> 
-> from the pci@0,0 node. It then follows the phandle 0x1f to the interrupt
-> parent, looking for a mapping for interrupt ID 0x00
-> (0x00 0x11e40000 0x00 0x00). However, the root complex node does not
-> provide this mapping in its interrupt-map property, causing the interrupt
-> request to fail.
-> 
+Every trace event can take up to 5K of memory in text and metadata regardless
+if they are used or not. Trace events should not be created if they are not
+used.  Currently there's several events in the kernel that are defined
+but unused, either because their callers were removed without removing the
+trace event with it, or a config hides the trace event caller but not the
+trace event itself. And in some cases, trace events were simply added but were
+never called for whatever reason. The number of unused trace events continues
+to grow.
 
-Are you trying to say that the generated bridge node incorrectly uses Root
-Complex node as the interrupt parent?
+This patch series aims to fix this.
 
-I'm getting confused since your example above shows '0x1f' as the interrupt
-parent phandle for both Root Complex and bridge nodes. But I don't know to which
-node this phandle corresponds to.
+The first patch moves the elf parsing out of sorttable.c so that it can be
+used by other tooling.
 
-In any case, since this seems to be an independent fix, please send it
-separately.
+The second patch creates a new program to run during build called
+tracepoint-update (note this may be extended to do other tracepoint
+modifications in the future). It also creates a new section called
+__tracepoint_check, where all callers of a tracepoint creates a variable
+that is placed in this section with the name of the tracepoint they use.
+The scripts/tracepoint-update.c is used to find tracepoints that are defined
+but not used which would mean they would not be in the __tracepoint_check
+section. It sorts the names from that section, and then reads the
+__tracepoint_strings section that has all compiled in tracepoint names. It
+makes sure that every tracepoint is found in the check section and if not, it
+prints a warning message about it.  This lists the missing tracepoints at
+build time.
 
-- Mani
+The third patch adds EXPORT_TRACEPOINT() to the __tracepoint_check section as
+well. There was several locations that adds tracepoints in the kernel proper
+that are only used in modules. It was getting quite complex trying to move
+things around that I just decided to make any tracepoint in a
+EXPORT_TRACEPOINT "used". I'm using the analogy of static and global
+functions. An unused static function gets a warning but an unused global one
+does not.
 
-> To avoid this, in the interrupt-map property of the nodes generated by
-> of_pci_make_dev_node() map legacy interrupts to entries that are valid in
-> the next level interrupt controller in the interrupt mapping tree.
-> 
-> With this, the generated pci@0,0 node and its parent look as follows:
-> 
-> pcie@11e40000 {
->     // ...
-> 
->     interrupt-map = <0x00 0x00 0x00 0x01 0x1f 0x00 0x00 0x00 0x00
->                      0x00 0x00 0x00 0x02 0x1f 0x00 0x00 0x00 0x01
->                      0x00 0x00 0x00 0x03 0x1f 0x00 0x00 0x00 0x02
->                      0x00 0x00 0x00 0x04 0x1f 0x00 0x00 0x00 0x03>;
->     interrupt-map-mask = <0x00 0x00 0x00 0x07>;
->     interrupt-controller;
->     #interrupt-cells = <0x01>;
-> 
->     #address-cells = <0x03>;
->     #size-cells = <0x02>;
-> 
->     phandle = <0x1f>;
-> 
->     // ...
-> 
->     pci@0,0 {
->         reg = <0x00 0x00 0x00 0x00 0x00>;
->         interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x01
->                          0x10000 0x00 0x00 0x02 0x1f 0x00 0x11e40000 0x00 0x02
->                          0x10000 0x00 0x00 0x03 0x1f 0x00 0x11e40000 0x00 0x03
->                          0x10000 0x00 0x00 0x04 0x1f 0x00 0x11e40000 0x00 0x04>;
->         interrupt-map-mask = <0xffff00 0x00 0x00 0x07>;
->         #interrupt-cells = <0x01>;
-> 
->         #address-cells = <0x03>;
->         #size-cells = <0x02>;
->     };
-> };
-> 
-> Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
-> 
-> Changes in v3:
-> - none; this patch is new
-> 
->  drivers/pci/of_property.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
-> index 506fcd507113..8dfed096326f 100644
-> --- a/drivers/pci/of_property.c
-> +++ b/drivers/pci/of_property.c
-> @@ -243,6 +243,14 @@ static int of_pci_prop_intr_map(struct pci_dev *pdev, struct of_changeset *ocs,
->  		}
->  		of_property_read_u32(out_irq[i].np, "#address-cells",
->  				     &addr_sz[i]);
-> +
-> +		/*
-> +		 * Restore the arguments of the next level parent if a map
-> +		 * was found.
-> +		 */
-> +		out_irq[i].np = pnode;
-> +		out_irq[i].args_count = 1;
-> +		out_irq[i].args[0] = pin;
->  	}
->  
->  	list_for_each_entry(child, &pdev->subordinate->devices, bus_list) {
-> -- 
-> 2.43.0
-> 
+Changes since v5: https://lore.kernel.org/linux-trace-kernel/20250725025149.726267838@kernel.org
 
--- 
-மணிவண்ணன் சதாசிவம்
+- Removed extra blank line at end of elf-parse.h
+
+- Fixed change log "it's name" to "its name" (Mathieu Desnoyers)
+
+- Removed unnecessary len = strlen(str) in increment of for_each_shdr_str()
+
+- Removed assigned but not used "count" in check_tracepoints (kernel test robot)
+
+- Added more comments
+
+
+Steven Rostedt (3):
+      sorttable: Move ELF parsing into scripts/elf-parse.[ch]
+      tracing: Add a tracepoint verification check at build time
+      tracepoint: Do not warn for unused event that is exported
+
+----
+ include/asm-generic/vmlinux.lds.h |   1 +
+ include/linux/tracepoint.h        |  12 +
+ kernel/trace/Kconfig              |  10 +
+ scripts/Makefile                  |   6 +
+ scripts/elf-parse.c               | 198 ++++++++++++++++
+ scripts/elf-parse.h               | 305 ++++++++++++++++++++++++
+ scripts/link-vmlinux.sh           |   4 +
+ scripts/sorttable.c               | 477 +++-----------------------------------
+ scripts/tracepoint-update.c       | 232 ++++++++++++++++++
+ 9 files changed, 802 insertions(+), 443 deletions(-)
+ create mode 100644 scripts/elf-parse.c
+ create mode 100644 scripts/elf-parse.h
+ create mode 100644 scripts/tracepoint-update.c
 
