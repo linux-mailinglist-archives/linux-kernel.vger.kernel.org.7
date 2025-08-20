@@ -1,111 +1,201 @@
-Return-Path: <linux-kernel+bounces-777549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F04B2DAB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:19:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B280B2DAC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 381A37B4516
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:17:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086697278D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E812E3AE2;
-	Wed, 20 Aug 2025 11:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70BF2E339B;
+	Wed, 20 Aug 2025 11:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Ci+1gREv"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j+c6f9wv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72102DCF58;
-	Wed, 20 Aug 2025 11:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755688731; cv=pass; b=fra4OXZVhCho14iWMtkwZwee2UrfKrsq2gp+fNIRd6N8raEn/oMkHkQyHI5/8SxsJ8jq7kE3Tw1UM0ZadYfuBP7Vgxizui6SbDlXh7cJtRZTYTp/8DvEj7KkSUSX6zyVI6VKx5FRDTufy4dKdAMUySYNYp7J2nDgMueNt7Qsmzw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755688731; c=relaxed/simple;
-	bh=gh4JMVoWx2g9QVgzTZ1UfSG+u2iBWGemYGCyImRUOKc=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=n8CB41UFZRKN1Up8aDYz761+yGdGu9qfruIpevTmGHYhUaBwXc0yy4+exSgOSQDnR4MWOpusbGNy5AfFMSmoogA/1ywIIOvm9dXbKXRThIRw1JypGQ1gqdLv4SPMXdVLKEPenYnZcizbYTh67i4OBPmey92/UvtoVfMocV6bXSk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Ci+1gREv; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755688691; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MDoaSJ5MgzobSjosdP9fpEfA6II5Slqm7R3BM+7UTFKrkfe539jOafletTRLKxBcNQD2HNnPaYFliHLXQFJKB0ef3Wvz5B8qVrbk1C9c7tC8BcwtiEcUZiR2+B0cuXm+Q3+Lj9J2URg5JZknwej4oNVcEI9JlodUsyqYpJzAFmM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755688691; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Tln7FpGzb6hM5a2Y6c1iMqDX53JGUcU2Cq7EbnEbdno=; 
-	b=Uuz+L0hvM3P9VjgsY7xGlmO4axlUpFR/SYYASQ35os4vswhAFDtQ7Q2kBiYdpPFPqqryNdXW7d6fHA2HYFafuv9KRcD9807LekS6btih+SeuzOgBl/bVFutM0Qqim3WyFcxFd/qyjLFo6S+pjiv4HgGQzGifetbzREedGwoD0wY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755688691;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=Tln7FpGzb6hM5a2Y6c1iMqDX53JGUcU2Cq7EbnEbdno=;
-	b=Ci+1gREvG+DwWma+t9QNxApmObHsHCFrQa2Olv/9IDr9ISX661oPPFttzFFOz+yl
-	jiz5j03xVX+0P+J0nuO7iBmKKq4GaqkKNURB1pDAjcUgmIKUD/lgxi119cK7iJxXdy+
-	ntJEDLqijT2SLkxVNyg44OKagmGzkkE730ugJXRA=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1755688689152183.7487823630272; Wed, 20 Aug 2025 04:18:09 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Wed, 20 Aug 2025 04:18:09 -0700 (PDT)
-Date: Wed, 20 Aug 2025 15:18:09 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198c7335dba.d74f2e4174912.2623547306023456362@zohomail.com>
-In-Reply-To: <2025-08-12.1755009210-quick-best-oranges-coats-BNJpCV@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <20250809-new-mount-api-v3-8-f61405c80f34@cyphar.com>
- <1989db97e30.b71849c573511.8013418925525314426@zohomail.com> <2025-08-12.1755009210-quick-best-oranges-coats-BNJpCV@cyphar.com>
-Subject: Re: [PATCH v3 08/12] man/man2/move_mount.2: document "new" mount
- API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113FA23909F;
+	Wed, 20 Aug 2025 11:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755688709; cv=none; b=kRVcwlJe9EDCuw9qVFuEvpHLLtHJ/Xo+9Ctkth8M+rMeJ2MDU4EQTNNdYfLS2x5D8/B1r7GRk2Aiu2aNKrBYDqHDrFvMtZPcGoBAeygbfkpouk24sNztWZ07wQeOf+Gf3G4jGqqWaHfIas+HQppz+Iu87rjMyyD6rVz9uVvv9nU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755688709; c=relaxed/simple;
+	bh=NvKhqfHAjC7nxN4srjgB/PPxA3etfbhzLv69VOVPOKA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=OvdWTeOFpWmkFuOHoQK4lyiPDyTFq8nZZF4EH3UNsTdDpZR/Og8+9fpciM/xFZkIGwgWmYiXxPiGi35P7Snr+B1oY1jd90vUDdVQpj7iiQThqxdoTciEYH9NoOdZH37aVVY9qkHE7+gkiVNuHpvBy0Cw8ynFs4Vwl1feYcF96LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j+c6f9wv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D925C4CEEB;
+	Wed, 20 Aug 2025 11:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755688708;
+	bh=NvKhqfHAjC7nxN4srjgB/PPxA3etfbhzLv69VOVPOKA=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=j+c6f9wvQwsckWE4213N/FIFio0R3U3278n1yw8riaV8XMnaYGLGdoxefVtOkrFMS
+	 vXn/Q+ukin9JH+3jKvILqVQeba6kwSB5woWp05xEtWysf1puQDnonLq8Ct4dReKyCa
+	 nRSmhZPVT0Z95FeeARd++Wv1WPPLU/W1CFZWUehCJBdOgYEgExzjFcTKr036SNgPUn
+	 TuH6ck7UUMIzZsj0CdxgCrnEw2XRcxk8cyt98gEuzFGIGO9CMIeHqKwRIw8Ug1BTeK
+	 7dd4MBMzVvWabZP1rtovHfDU4+lR0aUpzFuFt3xneVd93sgcKYE1YzzxAOkxTCYsLZ
+	 2oqRJ+TxWEzqQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr0801122771423f3748bc7f61e1a7cc360000d64f8919ecb0ec0828783973dc22df6f86a68cd109d6a5d5b9:zu080112274a76baa063a7b02b2b81fa3f0000c46fc46491f547e719d9515a2cb4a06be1ad67f4e14f6fac4a:rf0801122c61455fb55853888d67840f080000c977eb60d6801d08e08b75bfeb8549a36767e5d9f8114056a0e5efb69309:ZohoMail
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 20 Aug 2025 13:18:23 +0200
+Message-Id: <DC77PBXCZP32.1FJ6BGM9YV27H@kernel.org>
+Subject: Re: [PATCH] rust: zpool: add abstraction for zpool drivers
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ "Uladzislau Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
+ Roy Baron" <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor Gross"
+ <tmgross@umich.edu>, "Johannes Weiner" <hannes@cmpxchg.org>, "Yosry Ahmed"
+ <yosry.ahmed@linux.dev>, "Nhat Pham" <nphamcs@gmail.com>,
+ <linux-mm@kvack.org>
+To: "Vitaly Wool" <vitaly.wool@konsulko.se>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250820091543.4165305-1-vitaly.wool@konsulko.se>
+ <DC76DSYUY978.3NR8S2K13I9RX@kernel.org>
+ <C642BA32-4EA5-4843-9625-5DBF40A42C6C@konsulko.se>
+In-Reply-To: <C642BA32-4EA5-4843-9625-5DBF40A42C6C@konsulko.se>
 
- ---- On Tue, 12 Aug 2025 18:36:53 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
- > > "Filesystem root" can be understood as "root of superblock".
- > > So, please, change this to "root directory" or something.
- > 
- > Maybe I should borrow the "root mount" terminology from pivot_root(2)?
+On Wed Aug 20, 2025 at 12:44 PM CEST, Vitaly Wool wrote:
+>> On Aug 20, 2025, at 12:16=E2=80=AFPM, Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>>> +/// zpool API
+>>=20
+>> It would be nice to have some more documentation on this trait, includin=
+g a
+>> doc-test illustrating some example usage.
+>>=20
+>>> +pub trait Zpool {
+>>> +    /// Opaque Rust representation of `struct zpool`.
+>>> +    type Pool: ForeignOwnable;
+>>=20
+>> Something that embedds a struct zpool, such as struct zswap_pool? If so,=
+ isn't
+>> this type simply Self?
+>
+> I think ForeignOwnable provides a good representation of 'struct zpool=E2=
+=80=99 and it=E2=80=99s convenient to borrow it, as done later in the patch=
+.
 
-I don't like this. For me "root mount" is initial root mount, i. e. initramfs.
-It is not what you mean here.
+ForeignOwnable is not a representation for a specific type, but rather some=
+thing
+that originates from the Rust side and is owned by the C side. But that's n=
+ot
+the case here.
 
- > I didn't like using "rootfs" as
- > shorthand in a man-page.
+Regarding the "convenient to borrow" part, why can't Zpool::create() return
+Result<Self> and e.g. malloc be defined as
 
-I agree.
+	fn malloc(
+	   &self,
+	   size: usize,
+	   gfp: Flags,
+	   nid: NumaNode,
+	) -> Result<usize>;
 
-What you mean by "filesystem root" here? "Thing, which is changed by chroot(2)", right?
-Then, please, write "root directory" (or "root"), this is standard term for that thing.
-Or you can just write "/".
+i.e. why does it need to be ForeignOwnable in the semantic sense of the tra=
+it?
 
---
-Askar Safin
-https://types.pl/@safinaskar
+>>> +    /// Make all the necessary preparations for the caller to be able =
+to read from the object
+>>> +    /// represented by `handle` and return a valid pointer to the `han=
+dle` memory to be read.
+>>> +    fn read_begin(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, =
+handle: usize)
+>>> +        -> *mut c_void;
+>>=20
+>> Why does this return a raw pointer? I think this needs a proper type
+>> representation.
+>
+> The zpool API wants a raw pointer here so I decided not to overcomplicate=
+ it. I thought of using NonNull<[u8]> but it doesn=E2=80=99t seem to be a g=
+ood fit. We=E2=80=99re basically returning a pointer to a place in memory w=
+hich is guaranteed to be allocated and owned by us, but it is a raw pointer=
+ at the end of the day. What would you recommend here instead?
 
+I don't know the exact semantics behind read_begin(), but we should at leas=
+t
+encapsulate the pointer into a new type and restrict its lifetime to the
+validity of the encapsulated pointer, such that it can't be used in the wro=
+ng
+way.
+
+More general, if we don't cover such things and use raw pointers for conven=
+ience
+instead, we may not provide enough of a benefit compared to what we can do =
+in
+a C API.
+
+>>> +
+>>> +    /// Finish reading from a previously allocated `handle`. `handle_m=
+em` must be the pointer
+>>> +    /// previously returned by `read_begin`.
+>>> +    fn read_end(
+>>> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
+>>> +        handle: usize,
+>>> +        handle_mem: *mut c_void,
+>>> +    );
+>>=20
+>> Same here...
+>>=20
+>>> +
+>>> +    /// Write to the object represented by a previously allocated `han=
+dle`. `handle_mem` points
+>>> +    /// to the memory to copy data from, and `mem_len` defines the len=
+gth of the data block to
+>>> +    /// be copied.
+>>> +    fn write(
+>>> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
+>>> +        handle: usize,
+>>> +        handle_mem: *mut c_void,
+>>=20
+>> ...and here.
+>>=20
+>>> +        mem_len: usize,
+>>> +    );
+>>> +
+>>> +    /// Get the number of pages used by the `pool`.
+>>> +    fn total_pages(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>)=
+ -> u64;
+>>> +}
+>>> +
+>>> +/// Zpool driver registration trait.
+>>> +pub trait Registration {
+>>=20
+>> I think you should use the kernel::driver::Registration instead, it's
+>> specifically for the purpose you defined this trait and ZpoolDriver for.
+>>=20
+>> As for the C callbacks, they should go into the Adapter type (which impl=
+ements
+>> kernel::driver::RegistrationOps) directly, they don't need to be in a tr=
+ait.
+>>=20
+>> This way a new Zpool Registration is created with:
+>>=20
+>> driver::Registration<zpool::Adapter>::new()
+>>=20
+>> This also allows you to take advantage of the module_driver!() macro to =
+provide
+>> your own module_zpool_driver!() macro.
+>
+> There was once a problem with that but I don=E2=80=99t remember what the =
+problem was :) I=E2=80=99ll try that one more time, thanks.
+
+I'm pretty sure this should work out well (just like it does for driver
+registrations such as PCI, platform, auxiliary, I2C, etc.). However, if you=
+ run
+into issues, please let me know, I'm happy to help out resolving them.
 
