@@ -1,78 +1,167 @@
-Return-Path: <linux-kernel+bounces-778330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DD4B2E44D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:47:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CCC6B2E442
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E969A2582F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:43:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5787E7BBECC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4EE279794;
-	Wed, 20 Aug 2025 17:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D61A25BEF2;
+	Wed, 20 Aug 2025 17:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sv+JIZlh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JBpblKnV"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DC4278E7C;
-	Wed, 20 Aug 2025 17:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C328325B695;
+	Wed, 20 Aug 2025 17:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755711757; cv=none; b=EzNdIKTJ/o19H9XV1Se4MO42G1FGRIFBC/3Vjw9l5qtafDgu9ZAlidNg7/b6IinaR1c++YUBEWCf7v+0bmgfwfGK702dqZBk3K2b3C1SqZknNQIBT6KkSqT+ycRClFMusE0oe3WGOAE+ey3MUv56tceWFPCLNYYC83XQFcf8vzM=
+	t=1755711847; cv=none; b=hfVkqXm888TMv577+NqG1C+PwPZnepzLIeYB5deucaG4OTjUxiK78L+xXZQEY4VdRLrDJNr7bCys2UYCZJg13dqwOxEB+Q5ttF+gUrZXtfm10gMtd9KIrMjPTeu0sNj5rZLQ8oUSae3XtdteSM+MqoTCzLt0mVuutnJuKuEaCVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755711757; c=relaxed/simple;
-	bh=f5b/XZjopr8Cuv8VprlPMa8Ukxq9ScSdZbNIDsH+L6o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aweJ04lQxlazo9M8yKMN2anUL26Ifvo4CXgpgZuz04fhvIrQ+PIccmVIxyiX2YgoUUfCS3YoIQPtQyG4YEqECxBirw3CQkMImoKV0gyqFwtBAse5ZhIHdSYj9il0BLA2guBdgbPcJT6+uXWPW+akwInOoH7FDx5ayxnOwLEbqvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sv+JIZlh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3804CC113D0;
-	Wed, 20 Aug 2025 17:42:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755711756;
-	bh=f5b/XZjopr8Cuv8VprlPMa8Ukxq9ScSdZbNIDsH+L6o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=sv+JIZlhwxm2bzqHaIT0dneeU60FkdTIN/60NpfBHVCytLiCHAtYgsZ0gEBNATsgl
-	 eeoMa7f2g3Elyr6Si+n6ft6bQPwBzUnd2RCZXo6/tar6V+8JR8CIZ8PfL7PumZUoJT
-	 kgRF2SESj6VD0kGpR6DFJLCZ+e5l7gfWkgGsUS16Z4PRjK9AzFmXte1RZ6t6R/j+Xj
-	 3DBnFXSZgfk+K843yterdk5wWUVEsavkrbo+5x8XUL2xMKpW5ruLPSb8LWWtEtE2v7
-	 ARLaJ53I0Zc2nGh6faRELNA3Jxiqec9n1e6cQuk7Ji5nAOM/iultrADMEp3nyfJHgi
-	 miHUy9/Ew6GgA==
-From: Vinod Koul <vkoul@kernel.org>
-To: dmaengine@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250730162712.2086439-1-colin.i.king@gmail.com>
-References: <20250730162712.2086439-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] dmaengine: ppc4xx: Remove space before newline
-Message-Id: <175571175477.87738.3069092823141018312.b4-ty@kernel.org>
-Date: Wed, 20 Aug 2025 23:12:34 +0530
+	s=arc-20240116; t=1755711847; c=relaxed/simple;
+	bh=FxL0NxPkofe7NitBUHU2NGWpht5QsXyst077cFH7HgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+Wl6BBJJLoWLCTMB+OniLm+fUZUwwPWXJS3iMU+01z56w4Z1wXbNBOGaAso9Wnl8Cv2S7hW3UzXQpeTtIFnyRy2VTpVyHXAKtm23vz0ZdcXTVToal3Vb2v64JMzbUOfYWZ34UMMdqrkO8X0eOVyi1NLvY01oQG99KFQhL36csA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JBpblKnV; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CfXNl7lKE0vtMJcFjNQzDmOnCiJgkTHDL4PjmkqEICo=; b=JBpblKnVn/dbHdwKCXz0r8bp+4
+	Wdn6labcFr3klEUj+nlpRHx60aLQSw8r1CUvvsn/JFmRPOURmkqJMgP52bh3hINxLhGvSVcO3VFi6
+	pzcPWxJiQqGU7JGCBwtHrFAdL0vi87azNaAWrZvfNaoVU9V23y3LR4mMxmNdTAVSOCTVegZR9FIv+
+	WcAGEif2sJYKV1294MPZqjkJS9PvyGklM5hbX4FZezUnSGjVKReT41bnkPMDNMLLuDrKIfg6F6mG8
+	k9wKLmaj4IUNEifXN6IHTXe3QwJKLlU2QAABzM5atIYFrY4T9RCFcLHWuoBEOZmGAUUUrJyfMN3Qj
+	jyoCnYHw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uomqi-00000000NIB-3sSK;
+	Wed, 20 Aug 2025 17:43:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9472B300385; Wed, 20 Aug 2025 19:43:47 +0200 (CEST)
+Date: Wed, 20 Aug 2025 19:43:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "songliubraving@fb.com" <songliubraving@fb.com>,
+	"alan.maguire@oracle.com" <alan.maguire@oracle.com>,
+	"mhiramat@kernel.org" <mhiramat@kernel.org>,
+	"andrii@kernel.org" <andrii@kernel.org>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"mingo@kernel.org" <mingo@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"David.Laight@aculab.com" <David.Laight@aculab.com>,
+	"yhs@fb.com" <yhs@fb.com>, "oleg@redhat.com" <oleg@redhat.com>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"thomas@t-8ch.de" <thomas@t-8ch.de>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"haoluo@google.com" <haoluo@google.com>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCHv6 perf/core 10/22] uprobes/x86: Add support to optimize
+ uprobes
+Message-ID: <20250820174347.GM3245006@noisy.programming.kicks-ass.net>
+References: <20250720112133.244369-1-jolsa@kernel.org>
+ <20250720112133.244369-11-jolsa@kernel.org>
+ <20250819191515.GM3289052@noisy.programming.kicks-ass.net>
+ <20250820123033.GL3245006@noisy.programming.kicks-ass.net>
+ <9ece46a40ae89925312398780c3bc3518f229aff.camel@intel.com>
+ <20250820171237.GL4067720@noisy.programming.kicks-ass.net>
+ <62574323ba73b0fec42a106ccc29f707b5696094.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62574323ba73b0fec42a106ccc29f707b5696094.camel@intel.com>
 
-
-On Wed, 30 Jul 2025 17:27:12 +0100, Colin Ian King wrote:
-> There is a extraneous space before a newline in pr_err and dev_dbg
-> messages. Remove the spaces.
+On Wed, Aug 20, 2025 at 05:26:38PM +0000, Edgecombe, Rick P wrote:
+> On Wed, 2025-08-20 at 19:12 +0200, Peter Zijlstra wrote:
+> > > Are we effectively allowing arbitrary shadow stack push here? 
+> > 
+> > Yeah, why not? Userspace shadow stacks does not, and cannot, protect
+> > from the kernel being funneh. It fully relies on the kernel being
+> > trusted. So the kernel doing a shstk_{pop,push}() to make things line up
+> > properly shouldn't be a problem.
 > 
+> Emulating a call/ret should be fine.
 > 
+> > 
+> > > I see we need to be in in_uprobe_trampoline(), but there is no mmap
+> > > lock taken, so it's a racy check.
+> > 
+> > Racy how? Isn't this more or less equivalent to what a normal CALL
+> > instruction would do?
+> 
+> Racy in terms of the "is trampoline" check happening before the write to the
+> shadow stack. I was thinking like a TOCTOU thing. The "Allow execution only from
+> uprobe trampolines" check is not very strong.
+> 
+> As for call equivalence, args.retaddr comes from userspace, right?
 
-Applied, thanks!
+Yeah. So this whole thing is your random code having a 5 byte nop. And
+instead of using INT3 to turn it into #BP, we turn it into "CALL
+uprobe_trampoline".
 
-[1/1] dmaengine: ppc4xx: Remove space before newline
-      commit: 1daede86fef9e9890c5781541ad4934c776858c5
+That trampoline looks like:
 
-Best regards,
--- 
-~Vinod
+	push %rcx
+	push %r11
+	push %rax;
+	mov $__NR_uprobe, %rax
+	syscall
+	pop %rax
+	pop %r11
+	pop %rcx
+	ret
 
+Now, that syscall handler is the one doing shstk_pop/push. But it does
+that right along with modifying the normal SP.
 
+Basically the syscall copies the 4 (CALL,PUSH,PUSH,PUSH) words from the
+stack into a local struct (args), adjusts SP, and adjusts IP to point to
+the CALL instruction that got us here (retaddr-5).
+
+This way, we get the same context as that #BP would've gotten. Then we
+run uprobe crap, and on return:
+
+ - sp changed, we take the (slow) IRET path out, and can just jump
+   wherever -- typically right after the CALL that got us here, no need
+   to re-adjust the stack and take the trampoline tail.
+
+ - sp didn't change, we take the (fast) sysexit path out, and have to
+   re-apply the CALL,PUSH,PUSH,PUSH such that the trampoline tail can
+   undo them again.
+
+The added shstk_pop/push() exactly match the above undo/redo of the CALL
+(and other stack ops).
+
+> > > I'm questioning if the security posture tweak is worth thinking about for
+> > > whatever the level of intersection of uprobes usage and shadow stack is
+> > > today.
+> > 
+> > I have no idea how much code is built with shadow stack enabled today;
+> > but I see no point in not supporting uprobes on it. The whole of
+> > userspace shadow stacks only ever protects from userspace attacking
+> > other userspace -- and that protection isn't changed by this.
+> 
+> Isn't this just about whether to support an optimization for uprobes?
+
+Yes. But supporting the shstk isn't hard (as per this patch), it exactly
+matches what it already does to the normal stack. So I don't see a
+reason not to do it.
+
+Anyway, I'm not a huge fan of any of this. I suspect FRED will make all
+this fancy code totally irrelevant. But until people have FRED enabled
+hardware in large quantities, I suppose this has a use.
 
