@@ -1,308 +1,286 @@
-Return-Path: <linux-kernel+bounces-777658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63ABB2DC4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:24:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B23B2DC50
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16C70587BBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:22:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF693BA81F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4042F1FD0;
-	Wed, 20 Aug 2025 12:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B663A2F0C6B;
+	Wed, 20 Aug 2025 12:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zke99Dc6"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OEHUQiPK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153D92512E6;
-	Wed, 20 Aug 2025 12:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1832E3AE1
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755692510; cv=none; b=VX05J6NOCDzi4GGtM/J2N71rBYYG3ReiicACmsFx/J5Ga15O49sESIxzAvT3/Xg+Ccd5jkrn+2cpG4y8VVGgSqxSC2vVC1HCJxkjg2C4015eiEU4se6BB2FOLTSweV38WvO+0t1QjSltUivMi2Qmw9WBPARiEzQW+0cCLgkLQ4g=
+	t=1755692681; cv=none; b=maN6c79oc/55hteIBz9OneL3RcfdGpi8BGuJAhlC5DAkjBg4kIPjbDkh2x507cepLzYnwZbnLkenu4gf+93rTxndBZZcVOWr+pk1dl9T5tdj95X8zp5Rt7ORhJzZg/ESPVLZWjQHyJHF0AmCcd1PJOksVWZJTPtDXKkeOJ4AN9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755692510; c=relaxed/simple;
-	bh=Dlw+xPHbNvw5HSlxlMWNFhE5O3SGJH1Tu04A2+ovXqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BCtafsRV4FGH80LU/5r6e4LAdTM+aRid0GnES22N608ahp6lQatkvhR20G5NREAqHjvHnKPPwaIlyyUnIzkrWRvrk/bFPndUNGjnVGyjFl93XIAR9E5f54GKAOX6iEDpMipIMxo6ns+mDnbIxooo+srvOUnYYocj2nmN3Cn0iqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zke99Dc6; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b9e4147690so3964248f8f.2;
-        Wed, 20 Aug 2025 05:21:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755692506; x=1756297306; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xn2uMhPhuiAUQnSJWLqsyZPdwG0fR3Hyg0ZEIEBTeNs=;
-        b=Zke99Dc6u0ir0dZIQ8VV2OAY3tf4ZhwlS+1MIU6YrMTUej1qqaQcOvsT/Q0uItkQfU
-         WHdoZ+JLiD2FMtR0TKhKZjucbkJ16azrgZ4Du/l9NRv2Ea7sea/DGcyVlvgD5KCOJjRf
-         MSr6eqGoUlEhGi6uprBXDrSk00ltRQsQXPtHCs4uABgSbRfzIepz62aj18P7LTVJ9Kum
-         3vF4XpspywhH3Xtp6IzorCiPTwYPAYXowR+HXXCK0Z2THWZK5IVPSd5UctQyAOspl0w5
-         7HH3tRSOnuN3Inyf3ipmRqsv+Ve5WB2d4YH2ufsLDf8JZHsdZ6zsvhnaw8c2Ui5NAZKB
-         WSBw==
+	s=arc-20240116; t=1755692681; c=relaxed/simple;
+	bh=MomZXsFaLDbT6+TmHvvmHexTKkxB4YMU4SO/vDjzvxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYga/KXuy0hPbpKkg+z3WVgrTp7vXuVhOi6xfANeVjD+G7yIZK9wVOnoSf5HvNIBkUPAXCHIDIkSzA9qDBLaMBLHFh1OLiEpatRTP3oma7XVAlNv/0XKRlDYXDa6W1Waw+ei9rzzW7vjrKDBvg5dZgb8L6vMzOTcBaJcfK+fdVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OEHUQiPK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K9vvW2025126
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:24:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	td0CaUx2Mv5Qw5Lyu7yhTrBx9hRRCjajUjhMqPsrw5c=; b=OEHUQiPKZshci3wo
+	ZOR33yd7Kwz53t4GeEpOB6cmS3TiQlnZoipvDV+5leJw1O9ufMzTlOD9CHu0ePfe
+	MuxftA4S10jrtSKzbxtM1hPwxLS3mGh/MwHrdqyFQ4noLOxhsbo5+LOfDfIev/7U
+	PU/aMDAL7dZYLtX0P18tJvzLZjp78P4g1fvXnW40NSoXj1eJPRK0jK+VD17n2QG7
+	R2kiHtLnJguVFoq1pUkqaG1jLfHqn9fVgdpRB7nkruW+yPhc+cRSZC3h+BYplf1O
+	sO0irGsZxwrcctHKRUL9pWJz7dnHDHmMrsUbTP+C/2TfiUGYNhYPN8k4d1Go+kR8
+	IWQOdw==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52a9pwb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 12:24:38 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3235e45b815so3942715a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 05:24:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755692506; x=1756297306;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Xn2uMhPhuiAUQnSJWLqsyZPdwG0fR3Hyg0ZEIEBTeNs=;
-        b=DVLkktBCxEHKakTuhR06gmRsSaq8jtO2PEfjxlFtiz6AqzferJXx7ttLWvll9b9Od6
-         vFaPJDNSYsgS6nlY/1eLxAG9KN9jgTCXfFmZ31qaX8HlCA9b3uplKcs8k2S8k9kJzgYk
-         s9+GAvJJIaKs5aEX/UKlzCUvNQbBtMbG/jrIqiGDZaENsSQzDaGVnQw5K2p6h1tOD4Ov
-         FsnqUBzuqpJgJ6BTciLrKgpTyiObs/OaZ2A8zYQozXH5XTS88X7esBYvLCjUMELArkHH
-         GJ1ywyGfskPaVeE4gAr+fB2ly4cnkYzTTLEF5WVV0MItraA8fFUlicXZ22Qjpj9gnAgE
-         eilg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjaPAMiI6/K3aoqzRbDTV4tIw7YKvN20oqoUo7w78aPWZQ7qzYFXcwWnQb5ytMwADUSGSErju7vKLYhuY=@vger.kernel.org, AJvYcCXq7Do14S6mxwtYI0/zayME438vYyjOJNxraiNDuAGfyRs/iXkzITFwAb5c/9zP+caWVUAZYsD6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfIUBiJkBVl3Mc0SsIlBHWr6kNE4G2banrHdDp0CxuUAxZDDlz
-	/eNJSNZ57GVtmcy0dU92mIj9raURRjZrjbCeLQde0fnb+rcUJtC/oC4T5cSTurVVSxQ=
-X-Gm-Gg: ASbGncuiQbXs3ybucSpSYi0vxJ3wJEQoVH96SwsgOQ3lvt0rMimWiJbd1vqjelEv9I2
-	4eh59OQRO5+0z6EXpMBOmEtpwTiHNu8Khd1DggoprtuJRJrtyaRf1cp26JyxZAqnrSywbN62qSC
-	oBrIkC1M5/PfIQzUDzfKwni82lNOk+uvjZXDZa9Bi0QvkhVRBbyi38Csnz3yTVtLr9v5qtV27mj
-	ziFm99iCUi1nSToMYxorm8IwPreWP3rT5jsPnViuoQ+nG/hntH//u3JwfP0DmG8gj70Jp8v00TN
-	nIH0UKLoplTiQdxbvcsgQzWDBDHi2yy3X9kCEsnbWexjczCdp6lmknTgd7rck4k47NVbfN7cya7
-	c4W2sykQbI348DuPkrLUj8v3x6X3x9L/tNkZvFQm8/FJ6
-X-Google-Smtp-Source: AGHT+IGG5woTaUhlPOonjwrWf6Pwnx4hseDDNN8dVhPqy3xsR2mbo+fHzXi6ESC3N82Nn7nUB5W/pQ==
-X-Received: by 2002:a05:6000:2485:b0:3b7:95dd:e535 with SMTP id ffacd0b85a97d-3c32e22ac33mr1945014f8f.42.1755692505935;
-        Wed, 20 Aug 2025 05:21:45 -0700 (PDT)
-Received: from localhost ([45.10.155.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c074879859sm7493855f8f.3.2025.08.20.05.21.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 05:21:45 -0700 (PDT)
-Message-ID: <72843355-2afc-413f-b42e-b5e804511874@gmail.com>
-Date: Wed, 20 Aug 2025 14:21:20 +0200
+        d=1e100.net; s=20230601; t=1755692677; x=1756297477;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=td0CaUx2Mv5Qw5Lyu7yhTrBx9hRRCjajUjhMqPsrw5c=;
+        b=P/Efa/yxKIYIfG3iI4SxN7jI0eB5Syxs1A5bmAoEVhPssl5uzJoFqSxBcrWaJ3QWMU
+         I1NMWvcQR9AoQVuP/qnFR1xZjGD8jNvRwGjqkuY2HxHPpCKAbzKMf2VFumzfG+XZcqfE
+         Y3sTWMjLuWWVDl0vjuqtHNiyIcqy131S8xEhNtGeS4v6tYTuRdELxVUhbYjiLp9YRkIT
+         7cKAyoMFXzQqBB7R9bmJnMYSZVEh76wVFnQy7f1GZojlnm9z9Srq6fOUImxmcTlykmmL
+         i1vTBBx78f7zm1Q3u4NfcXUZxkPBuDWZJNTZjCDvjQ9drFIjbWXKhLp4V8AjPwIQGZVx
+         XyqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVP8y9J0EtYCFDPpDr4sYkqf7zJCP6BHo27HB4b/uG8Y7cdSJfxJrjaa/EHl7xaV2OEaElz3yeC/aPI5Ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/r/JLVEhTC9KvvpcA3mWtBuAlPKiYifTkA763odJbKBJq3ahX
+	WP143+kRGcTCDmvC7co7igb/Lg9hIVOSEhPHoH1R+h3fHEdd5rG0geH1ozsD4TwgJxfaDiJJZd5
+	QjwPy53MphuEO9KHOdhtTI7soEZ5v8l8jRvx/ABzZqxvxAjyclxWdfi3hMY1kNjY/G5k=
+X-Gm-Gg: ASbGncuhd93MLyKOG3VoWB/IF1NqeysAaZbzhZL5p8PGpsz+Kjp9ThcCAVtiutPcmCw
+	ZKe0v1kek3JKlnuwbBEOTcQblpMIKknjHIBzzH81Md1nN84YyAc3NEDWQSBCIC4zfxIoGn4a11Z
+	Rmkg4pjDUt/SId0Ar2dMSsggrrFSkBsE94fmSa/rHerfT0NVNfbMq8Pj+SVVTVdR/DwW7cyJ07b
+	Hk1jMn0CFJt+Hmu0f3kWZnsoYaGwdZzwQxDgZ9ZBpFb0JXey/nzOTRL3W667BPKjk2g1YGgNHJJ
+	YrQPt6LdIEBtmKCOSpB954Xapak5X2NhzZGnnYU9lSXHPoGpV//g1gCyvd1GL7FTY5U=
+X-Received: by 2002:a17:90b:53c4:b0:312:1c83:58fb with SMTP id 98e67ed59e1d1-324e136d137mr3422811a91.1.1755692677119;
+        Wed, 20 Aug 2025 05:24:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSeDqZ1+f+FBiw8LkrIwhczOd3iHu1k+3zFS6lbDUoID7JiwtZhB6MFHXNPH6K7kLVr/h7Iw==
+X-Received: by 2002:a17:90b:53c4:b0:312:1c83:58fb with SMTP id 98e67ed59e1d1-324e136d137mr3422777a91.1.1755692676600;
+        Wed, 20 Aug 2025 05:24:36 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47640909f6sm2201034a12.35.2025.08.20.05.24.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 05:24:36 -0700 (PDT)
+Date: Wed, 20 Aug 2025 17:54:30 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 03/11] firmware: qcom_scm: Add a prep version of
+ auth_and_reset function
+Message-ID: <20250820122430.pasbypbrtbaynxv7@hu-mojha-hyd.qualcomm.com>
+Mail-Followup-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-4-mukesh.ojha@oss.qualcomm.com>
+ <fd9eadb2-a209-4b52-a269-4e45c884bbc1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 5/5] selftests/net: test ipip packets in
- gro.sh
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, netdev@vger.kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, shenjian15@huawei.com,
- salil.mehta@huawei.com, shaojijie@huawei.com, andrew+netdev@lunn.ch,
- saeedm@nvidia.com, tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org,
- ecree.xilinx@gmail.com, dsahern@kernel.org, ncardwell@google.com,
- kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me, ahmed.zaki@intel.com,
- aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
- linux-kernel@vger.kernel.org, linux-net-drivers@amd.com
-References: <20250819063223.5239-1-richardbgobert@gmail.com>
- <20250819063223.5239-6-richardbgobert@gmail.com>
- <willemdebruijn.kernel.33c6a8233829@gmail.com>
-From: Richard Gobert <richardbgobert@gmail.com>
-In-Reply-To: <willemdebruijn.kernel.33c6a8233829@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fd9eadb2-a209-4b52-a269-4e45c884bbc1@linaro.org>
+X-Proofpoint-ORIG-GUID: JAXo18e9zz6pEGoQOJOraxu-j0tqrpI-
+X-Authority-Analysis: v=2.4 cv=B83gEOtM c=1 sm=1 tr=0 ts=68a5be86 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=o3WOxAlSagPtyj5-6KUA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-GUID: JAXo18e9zz6pEGoQOJOraxu-j0tqrpI-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX6CQlel+0cmz7
+ PA8EZ1JnH1ITdQLNwv0qBdvxR2/Gv1qZfkesbwRJPMdez7FQ77z1XEnK+vrhsgwWG/6uBZ7W5b5
+ CcaKPBUD3hcG0OBeuu2Obg8UyrK9DGGL1ZqeZSHMPdkPRiP6U9+7+PpOwm/nl5OKa0yInldMyGW
+ 7vLb/eHQt1R2qL1FM/8bZzwYApppyXm85gKRa/nBt4A0XAav6Fb/gxfDV7tskztffuYPic79vnT
+ k0PG1cxzTfsNuDBif2U+vRWhxhG9XqunjoX9X0Aq7I4tJ2AcKED8g837IOECBJn74z9eMkDK0k6
+ rELEOdkN8HKuqcMGXkOfmeHWuhZmrbp9KDT0/AT1LsEBAM4tMsAuMUwhEiwBgjvWO4er60vMvT2
+ l6bA+R/kYywoQePenmNvnrSZC0jjGg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_04,2025-08-20_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 clxscore=1015 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-Willem de Bruijn wrote:
-> Richard Gobert wrote:
->> Add IPIP test-cases to the GRO selftest.
->>
->> This selftest already contains IP ID test-cases. They are now
->> also tested for encapsulated packets.
->>
->> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
->> ---
->>  tools/testing/selftests/net/gro.c  | 49 ++++++++++++++++++++++++------
->>  tools/testing/selftests/net/gro.sh |  5 +--
->>  2 files changed, 42 insertions(+), 12 deletions(-)
->>
->> diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
->> index 3d4a82a2607c..aeb4973418a4 100644
->> --- a/tools/testing/selftests/net/gro.c
->> +++ b/tools/testing/selftests/net/gro.c
->> @@ -93,6 +93,7 @@ static bool tx_socket = true;
->>  static int tcp_offset = -1;
->>  static int total_hdr_len = -1;
->>  static int ethhdr_proto = -1;
->> +static bool ipip;
->>  static const int num_flush_id_cases = 6;
->>  
->>  static void vlog(const char *fmt, ...)
->> @@ -114,7 +115,9 @@ static void setup_sock_filter(int fd)
->>  	int ipproto_off, opt_ipproto_off;
->>  	int next_off;
->>  
->> -	if (proto == PF_INET)
->> +	if (ipip)
->> +		next_off = sizeof(struct iphdr) + offsetof(struct iphdr, protocol);
->> +	else if (proto == PF_INET)
->>  		next_off = offsetof(struct iphdr, protocol);
->>  	else
->>  		next_off = offsetof(struct ipv6hdr, nexthdr);
->> @@ -244,7 +247,7 @@ static void fill_datalinklayer(void *buf)
->>  	eth->h_proto = ethhdr_proto;
->>  }
->>  
->> -static void fill_networklayer(void *buf, int payload_len)
->> +static void fill_networklayer(void *buf, int payload_len, int protocol)
->>  {
->>  	struct ipv6hdr *ip6h = buf;
->>  	struct iphdr *iph = buf;
->> @@ -254,7 +257,7 @@ static void fill_networklayer(void *buf, int payload_len)
->>  
->>  		ip6h->version = 6;
->>  		ip6h->payload_len = htons(sizeof(struct tcphdr) + payload_len);
->> -		ip6h->nexthdr = IPPROTO_TCP;
->> +		ip6h->nexthdr = protocol;
->>  		ip6h->hop_limit = 8;
->>  		if (inet_pton(AF_INET6, addr6_src, &ip6h->saddr) != 1)
->>  			error(1, errno, "inet_pton source ip6");
->> @@ -266,7 +269,7 @@ static void fill_networklayer(void *buf, int payload_len)
->>  		iph->version = 4;
->>  		iph->ihl = 5;
->>  		iph->ttl = 8;
->> -		iph->protocol	= IPPROTO_TCP;
->> +		iph->protocol	= protocol;
->>  		iph->tot_len = htons(sizeof(struct tcphdr) +
->>  				payload_len + sizeof(struct iphdr));
->>  		iph->frag_off = htons(0x4000); /* DF = 1, MF = 0 */
->> @@ -313,9 +316,19 @@ static void create_packet(void *buf, int seq_offset, int ack_offset,
->>  {
->>  	memset(buf, 0, total_hdr_len);
->>  	memset(buf + total_hdr_len, 'a', payload_len);
->> +
->>  	fill_transportlayer(buf + tcp_offset, seq_offset, ack_offset,
->>  			    payload_len, fin);
->> -	fill_networklayer(buf + ETH_HLEN, payload_len);
->> +
->> +	if (ipip) {
->> +		fill_networklayer(buf + ETH_HLEN + sizeof(struct iphdr),
->> +				  payload_len, IPPROTO_TCP);
->> +		fill_networklayer(buf + ETH_HLEN, payload_len + sizeof(struct iphdr),
->> +				  IPPROTO_IPIP);
->> +	} else {
->> +		fill_networklayer(buf + ETH_HLEN, payload_len, IPPROTO_TCP);
->> +	}
->> +
->>  	fill_datalinklayer(buf);
->>  }
->>  
->> @@ -416,6 +429,13 @@ static void recompute_packet(char *buf, char *no_ext, int extlen)
->>  		iph->tot_len = htons(ntohs(iph->tot_len) + extlen);
->>  		iph->check = 0;
->>  		iph->check = checksum_fold(iph, sizeof(struct iphdr), 0);
->> +
->> +		if (ipip) {
->> +			iph += 1;
->> +			iph->tot_len = htons(ntohs(iph->tot_len) + extlen);
->> +			iph->check = 0;
->> +			iph->check = checksum_fold(iph, sizeof(struct iphdr), 0);
->> +		}
->>  	} else {
->>  		ip6h->payload_len = htons(ntohs(ip6h->payload_len) + extlen);
->>  	}
->> @@ -777,7 +797,7 @@ static void send_fragment4(int fd, struct sockaddr_ll *daddr)
->>  	 */
->>  	memset(buf + total_hdr_len, 'a', PAYLOAD_LEN * 2);
->>  	fill_transportlayer(buf + tcp_offset, PAYLOAD_LEN, 0, PAYLOAD_LEN * 2, 0);
->> -	fill_networklayer(buf + ETH_HLEN, PAYLOAD_LEN);
->> +	fill_networklayer(buf + ETH_HLEN, PAYLOAD_LEN, IPPROTO_TCP);
->>  	fill_datalinklayer(buf);
->>  
->>  	iph->frag_off = htons(0x6000); // DF = 1, MF = 1
->> @@ -1071,7 +1091,7 @@ static void gro_sender(void)
->>  		 * and min ipv6hdr size. Like MAX_HDR_SIZE,
->>  		 * MAX_PAYLOAD is defined with the larger header of the two.
->>  		 */
->> -		int offset = proto == PF_INET ? 20 : 0;
->> +		int offset = (proto == PF_INET && !ipip) ? 20 : 0;
->>  		int remainder = (MAX_PAYLOAD + offset) % MSS;
->>  
->>  		send_large(txfd, &daddr, remainder);
->> @@ -1221,7 +1241,7 @@ static void gro_receiver(void)
->>  			check_recv_pkts(rxfd, correct_payload, 2);
->>  		}
->>  	} else if (strcmp(testname, "large") == 0) {
->> -		int offset = proto == PF_INET ? 20 : 0;
->> +		int offset = (proto == PF_INET && !ipip) ? 20 : 0;
->>  		int remainder = (MAX_PAYLOAD + offset) % MSS;
->>  
->>  		correct_payload[0] = (MAX_PAYLOAD + offset);
->> @@ -1250,6 +1270,7 @@ static void parse_args(int argc, char **argv)
->>  		{ "iface", required_argument, NULL, 'i' },
->>  		{ "ipv4", no_argument, NULL, '4' },
->>  		{ "ipv6", no_argument, NULL, '6' },
->> +		{ "ipip", no_argument, NULL, 'e' },
->>  		{ "rx", no_argument, NULL, 'r' },
->>  		{ "saddr", required_argument, NULL, 's' },
->>  		{ "smac", required_argument, NULL, 'S' },
->> @@ -1259,7 +1280,7 @@ static void parse_args(int argc, char **argv)
->>  	};
->>  	int c;
->>  
->> -	while ((c = getopt_long(argc, argv, "46d:D:i:rs:S:t:v", opts, NULL)) != -1) {
->> +	while ((c = getopt_long(argc, argv, "46ed:D:i:rs:S:t:v", opts, NULL)) != -1) {
+On Wed, Aug 20, 2025 at 01:03:41PM +0100, Bryan O'Donoghue wrote:
+> On 19/08/2025 17:54, Mukesh Ojha wrote:
+> > Qualcomm SoCs running with QHEE (Qualcomm Hypervisor Execution
+> > Environment—a library present in the Gunyah hypervisor) utilize the
+> > Peripheral Authentication Service (PAS) from TrustZone (TZ) firmware to
+> > securely authenticate and reset remote processors via a sequence of SMC
+> > calls such as qcom_scm_pas_init_image(), qcom_scm_pas_mem_setup(), and
+> > qcom_scm_pas_auth_and_reset().
+> > 
+> > For memory passed to Qualcomm TrustZone, it must either be part of a
+> > pool registered with TZ or be directly registered via SHMbridge SMC
+> > calls.
+> > 
+> > When QHEE is present, PAS SMC calls from Linux running at EL1 are
+> > trapped by QHEE (running at EL2), which then creates or retrieves memory
+> > from the SHMbridge for both metadata and remoteproc carveout memory
+> > before passing them to TZ. However, when the SoC runs with a
+> > non-QHEE-based hypervisor, Linux must create the SHM bridge for both
+> > metadata (before it is passed to TZ in qcom_scm_pas_init_image()) and
+> > for remoteproc memory (before the call is made to TZ in
+> > qcom_scm_pas_auth_and_reset()).
+> > 
+> > For auth_and_reset() call, first it need to register remoteproc carveout
+> > memory with TZ via SHMbridge SMC call and then it can trigger
+> > auth_and_reset SMC call and once the call returns, remoteproc carveout
+> > memory can be deregisterd with TZ.
+> > 
+> > Add qcom_scm_pas_prepare_and_auth_reset() function which does prepare
+> > the SHMbridge over carveout memory and call auth_and_reset SMC call.
+> > 
+> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> > ---
+> >   drivers/firmware/qcom/qcom_scm.c       | 46 ++++++++++++++++++++++++++
+> >   include/linux/firmware/qcom/qcom_scm.h |  2 ++
+> >   2 files changed, 48 insertions(+)
+> > 
+> > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> > index 33187d4f4aef..9a5b34f5bacb 100644
+> > --- a/drivers/firmware/qcom/qcom_scm.c
+> > +++ b/drivers/firmware/qcom/qcom_scm.c
+> > @@ -759,6 +759,52 @@ int qcom_scm_pas_auth_and_reset(u32 peripheral)
+> >   }
+> >   EXPORT_SYMBOL_GPL(qcom_scm_pas_auth_and_reset);
+> > +/**
+> > + * qcom_scm_pas_prepare_and_auth_reset() - Prepare, authenticate, and reset the remote processor
+> > + *
+> > + * @ctx:	Context saved during call to qcom_scm_pas_ctx_init()
+> > + *
+> > + * This function performs the necessary steps to prepare a PAS subsystem,
+> > + * authenticate it using the provided metadata, and initiate a reset sequence.
+> > + *
+> > + * It is typically used when Linux is in control setting up the IOMMU hardware
 > 
-> Please keep alphabetical order.
-> 
->>  		switch (c) {
->>  		case '4':
->>  			proto = PF_INET;
->> @@ -1269,6 +1290,11 @@ static void parse_args(int argc, char **argv)
->>  			proto = PF_INET6;
->>  			ethhdr_proto = htons(ETH_P_IPV6);
->>  			break;
->> +		case 'e':
->> +			ipip = true;
->> +			proto = PF_INET;
->> +			ethhdr_proto = htons(ETH_P_IP);
->> +			break;
->>  		case 'd':
->>  			addr4_dst = addr6_dst = optarg;
->>  			break;
->> @@ -1304,7 +1330,10 @@ int main(int argc, char **argv)
->>  {
->>  	parse_args(argc, argv);
->>  
->> -	if (proto == PF_INET) {
->> +	if (ipip) {
->> +		tcp_offset = ETH_HLEN + sizeof(struct iphdr) * 2;
->> +		total_hdr_len = tcp_offset + sizeof(struct tcphdr);
->> +	} else if (proto == PF_INET) {
->>  		tcp_offset = ETH_HLEN + sizeof(struct iphdr);
->>  		total_hdr_len = tcp_offset + sizeof(struct tcphdr);
->>  	} else if (proto == PF_INET6) {
->> diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
->> index 9e3f186bc2a1..d16ec365b3cf 100755
->> --- a/tools/testing/selftests/net/gro.sh
->> +++ b/tools/testing/selftests/net/gro.sh
->> @@ -4,7 +4,7 @@
->>  readonly SERVER_MAC="aa:00:00:00:00:02"
->>  readonly CLIENT_MAC="aa:00:00:00:00:01"
->>  readonly TESTS=("data" "ack" "flags" "tcp" "ip" "large")
->> -readonly PROTOS=("ipv4" "ipv6")
->> +readonly PROTOS=("ipv4" "ipv6" "ipip")
->>  dev=""
->>  test="all"
->>  proto="ipv4"
->> @@ -31,7 +31,8 @@ run_test() {
->>        1>>log.txt
->>      wait "${server_pid}"
->>      exit_code=$?
->> -    if [[ ${test} == "large" && -n "${KSFT_MACHINE_SLOW}" && \
->> +    if [[ ( ${test} == "large" || ${protocol} == "ipip" ) && \
->> +          -n "${KSFT_MACHINE_SLOW}" && \
-> 
-> Why does the ipip test need this debug xfail path?
+> Is there a non-typical case ?
 
-When I tested on a VM, ipip packets sometimes didn't get merged because they
-weren't received quickly enough (optimizing the selftest helped somewhat but
-not entirely), but I can't seem to reproduce this anymore.
+In non-typical case is when system runs with Gunyah which in control of
+IOMMU and create shmbridge before it passes the call to TrustZone.
 
 > 
->>            ${exit_code} -ne 0 ]]; then
->>          echo "Ignoring errors due to slow environment" 1>&2
->>          exit_code=0
->> -- 
->> 2.36.1
->>
+> "This function is used"
+
+Ack.
+
+> > + * for remote subsystem during secure firmware loading processes. The preparation
+> > + * step sets up shmbridge over the firmware memory before TrustZone access the
 > 
+> shmbridge -> "a shmbridge"
+> "access" -> "accesses"
+
+Ack.
+
+> 
+> > + * firmware memory region for authentication. The authentication step verifies
+> > + * the integrity and authenticity of the firmware or configuration using secure
+> > + * metadata. Finally, the reset step ensures the subsystem starts in a clean and
+> > + * sane state.
+> > + *
+> > + * Return: 0 on success, negative errno on failure.
+> > + */
+> > +int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_ctx *ctx)
+> > +{
+> > +	u64 handle;
+> > +	int ret;
+> > +
+> > +	if (!ctx->has_iommu)
+> > +		return qcom_scm_pas_auth_and_reset(ctx->peripheral);
+> > +
+> > +	/*
+> > +	 * When Linux running at EL1, Gunyah(EL2) traps auth_and_reset call and creates
+> > +	 * shmbridge on subsystem memory region before it passes the call to TrustZone
+> > +	 * to authenticate it while when Linux runs at EL2, it needs to create shmbridge
+> > +	 * before this call goes to TrustZone.
+> > +	 */
+> 
+> If Linux is running at EL1, Gunyah running at EL2 traps the auth_and_reset
+> call, creates a shmbridge in "subsystem memory ? bod: which subsystem do you
+> mean here"
+
+Subsystem memory => remote processor carve out memory
+
+> and then passes the call to TrustZone. If Linux is running at EL2
+> then Linux needs to create the shmbridge before calling into TrustZone.
+> 
+> > +	ret = qcom_tzmem_shm_bridge_create(ctx->mem_phys, ctx->mem_size, &handle);
+> > +	if (ret) {
+> > +		dev_err(__scm->dev, "Failed to create shmbridge ret=%d %u\n",
+> > +			ret, ctx->peripheral);
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = qcom_scm_pas_auth_and_reset(ctx->peripheral);
+> > +	qcom_tzmem_shm_bridge_delete(handle);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(qcom_scm_pas_prepare_and_auth_reset);
+> > +
+> >   /**
+> >    * qcom_scm_pas_shutdown() - Shut down the remote processor
+> >    * @peripheral: peripheral id
+> > diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+> > index b7eb206561a9..a31006fe49a9 100644
+> > --- a/include/linux/firmware/qcom/qcom_scm.h
+> > +++ b/include/linux/firmware/qcom/qcom_scm.h
+> > @@ -79,6 +79,7 @@ struct qcom_scm_pas_ctx {
+> >   	size_t mem_size;
+> >   	struct qcom_scm_pas_metadata *metadata;
+> >   	bool save_mdt_ctx;
+> > +	bool has_iommu;
+> >   };
+> >   void *qcom_scm_pas_ctx_init(struct device *dev, u32 peripheral, phys_addr_t mem_phys,
+> > @@ -87,6 +88,7 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+> >   			    struct qcom_scm_pas_metadata *ctx);
+> >   void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx);
+> >   int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr, phys_addr_t size);
+> > +int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_ctx *ctx);
+> >   int qcom_scm_pas_auth_and_reset(u32 peripheral);
+> >   int qcom_scm_pas_shutdown(u32 peripheral);
+> >   bool qcom_scm_pas_supported(u32 peripheral);
 > 
 
+-- 
+-Mukesh Ojha
 
