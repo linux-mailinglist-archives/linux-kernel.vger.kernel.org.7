@@ -1,124 +1,125 @@
-Return-Path: <linux-kernel+bounces-777893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC4FB2DEE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:16:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE63B2DED8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 532A11732DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:12:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 590E67B8C34
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458E226CE2A;
-	Wed, 20 Aug 2025 14:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4DC26C3BD;
+	Wed, 20 Aug 2025 14:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dK6fW8vU"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lhSQxCBd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D5E265623
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0827255E53;
+	Wed, 20 Aug 2025 14:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755699162; cv=none; b=FVPJQew0VWPCJR8fNUr6vGUNbb5fvGeyxtXyNH0FYAFTXNkmdMxEw5b4R0qTbnHNzYIvFMKHGduffWQTRL/vVYSs5WGyNoUC7wmKMYqBz3AsMcOlJKdkwPtagPIfHp0gMCCw1EFvDMyjwLGQ9EcW13tPOg+lM9jowB26vs3ydV0=
+	t=1755699195; cv=none; b=IgHwBdS4KnGT8mpLn/k1aR/ikod6Ol0saVX/HkEOOb9dl/IFNhotEmcMi4HdFv78HA4RfGbjVUdeUoFFodkBJa2sLtaLHRb3WYYdtoKLFBokrQpKHDUQj2UG67uUmu6XsdFOUnzkpD44bSkbcNc3VDX2aT208zXf+psel6K49Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755699162; c=relaxed/simple;
-	bh=9InHyz6ARRdf1AnUIymokXOt+NhUlq/lA972qGSJMVo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OaBTwPJUJAhbYMb8CEj8JWI8U5ZHFyreNl2XwceQDJL1DU1FCfOCoR4jpjYULP9isKYyEmMxyPoig50X7e5kqlxaUCtIpUGVbeMxpOvop470GcEllkIjRXhLTvaYwD7k4cXCqAHqijmujkl1K6mrIPV2d7ezmuC9dlMxmIEJ3gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dK6fW8vU; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b47175d5a90so5381469a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 07:12:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755699159; x=1756303959; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KkLo76GtbITqKuw6aQh/pzZK0f614lGIwVkQDIxZQ4g=;
-        b=dK6fW8vU8ZUfHgRZrTy8xlcr3Pr9Fwh8slVglVci1Lbgu9BxkQrTVp0gZxbI0ZVQA2
-         ce0fnedfOUOTS0ABhP51oPICRE9EMAeVqG8glDND+KOvieDxJim8PJO2nzHa9lLpKDYg
-         vstBnYc8qjdMpJW6L2ZAUV2HqIOokfHDtO2wwuswsZ2ktk/KMyoOHWY+3htHSz8tEi5d
-         atrZay++620B//gDqkUmHfLzZ55hvStun2SILJr0m5Baipc+SyAv4Q1fjyaJ+uFEuduG
-         6HDb9WuxD+dGNpTUNt5CddpbHUhNYjOu5xiVrA6BEov93zK2sDAgSPmHtHBXAi4Ndm2G
-         ggiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755699159; x=1756303959;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KkLo76GtbITqKuw6aQh/pzZK0f614lGIwVkQDIxZQ4g=;
-        b=gjmllL+TOcS2HwXTN0wVmJrwBblV6z4nspjrowtDcU+TX5/E/zGC8gYhvGpFXcqzDh
-         K38D35wYM3kWJg8Xs813+W/NuIww0/KwmPAY3tVoaBylFf+JPCnp1lrc5q3r2oWfJ+Dp
-         eUpx3N4+umB27/7o7raZREMbI3K3LBdXYx4HivfK8Z6d6QCUnv9gltA0KNCkgqCUANAX
-         YlvWCmkG3b7ojZvh7NhJyIsYAMIHlg3iGXYrOKl5AQ/BQzJVXNRYp0FsXevKZSLkPyfb
-         Nzi3vRo8/49KrnQkaCEV1TdjEtQAhyjzJ6sL52GIM5AjUu7rDkaXZpucwy1WSyLDqQ5F
-         szzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuDAoCs25ESwMcrEglXxIKI//KgpLKRqn0xlANUrVoCUjScG2X9nu2QVtbWA0SvgUquFDLgjE+9A8SFfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywrCWJSNb62JPvkERWQNkFkfQABo1GfWxmSJMGC/q6nWzFWFf3
-	HrIdkncfHPU/iKr3Kx1/AusXjGVADsW6XCsL53CcvWVOyYHF6aOBQex6YkzmKoxooYkpVlwC5mp
-	c8o5pVw==
-X-Google-Smtp-Source: AGHT+IGJQhBCVhVqaliziU8HDIj70XqxSr8dKTM1UVKTblB7QOEUcsE0cHTvWeeKL4c9L3kLeIOlS/MKYdo=
-X-Received: from pgbfe11.prod.google.com ([2002:a05:6a02:288b:b0:b47:3ab8:86d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6a28:b0:23d:54cb:2df6
- with SMTP id adf61e73a8af0-2431b7b90dbmr4933430637.3.1755699159523; Wed, 20
- Aug 2025 07:12:39 -0700 (PDT)
-Date: Wed, 20 Aug 2025 07:12:38 -0700
-In-Reply-To: <aKUzvnUHMUSC/A8/@intel.com>
+	s=arc-20240116; t=1755699195; c=relaxed/simple;
+	bh=VfORanwWK0N2IhGqM8/NSiG1djWcKbLvF+xLsE3bUv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GalfCSn0oGQcxkqZ6s3eGq0iV/MoYgiGwxIhAuDwG4emGCJ7RDYjMGx5X1NB7lbQq1vdF0DtJ9bxtMc4WNzbBbyksUb6wkm5PGYxNVT0MaYTf4+TbONams0eruFPOJ9CUo51wSCiKT6e50b4ra7ck+U0JDTImm/v2vkGkzf0NlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lhSQxCBd; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755699194; x=1787235194;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VfORanwWK0N2IhGqM8/NSiG1djWcKbLvF+xLsE3bUv0=;
+  b=lhSQxCBdJ3COdJ/bYPnndOtQeI7PMnea21xkKLz44eMnNhXMO97KzCxZ
+   MDgZtS5UtvTJrvk9LlMxcNS587eNNie0YwYJbdcPKp20A3KhS7Dgjjxkf
+   NoUiPIdoxL8Vx/z0Qg0ddbX2+or9EEI6HJLH229qhmre6tZpmLT4i2Y6a
+   sfJlJeOU8JEk1nQEM3cJ1Yrf5I3gQVqnF8ZofmcRXowLVCvwTe7jRDTdA
+   do0YiJyhqorEsiITavYSlF1Jf9aHRGmjq4LZU7hA8zhA5TqUMRtk2S4z5
+   wjJP9BQwVXZmRFZPmo9CVMrMQHxr7cbQ7Hi9PdeZFPuQVllxUKufLIvmR
+   Q==;
+X-CSE-ConnectionGUID: QibCzH58QB2Mfc4f7niEIQ==
+X-CSE-MsgGUID: 1K+00CdPRNOe54wSaVqUtg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61781622"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="61781622"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:13:13 -0700
+X-CSE-ConnectionGUID: TSwpvnkqSheNUQkwfrIe3Q==
+X-CSE-MsgGUID: 6XH5irdqTRyaRUjP2zyWfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="199006074"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:13:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uojYp-00000006xCa-26br;
+	Wed, 20 Aug 2025 17:13:07 +0300
+Date: Wed, 20 Aug 2025 17:13:07 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ioana Risteiu <Ioana.Risteiu@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ramona Nechita <ramona.nechita@analog.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] iio: adc: extract setup function without backend
+Message-ID: <aKXX8-ZrIgl9DeSs@smile.fi.intel.com>
+References: <20250820120247.3012-1-Ioana.Risteiu@analog.com>
+ <20250820120247.3012-4-Ioana.Risteiu@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250812025606.74625-1-chao.gao@intel.com> <20250812025606.74625-16-chao.gao@intel.com>
- <aKShs0btGwLtYlVc@google.com> <aKUzvnUHMUSC/A8/@intel.com>
-Message-ID: <aKXX1nOJb_q7GjQR@google.com>
-Subject: Re: [PATCH v12 15/24] KVM: VMX: Emulate read and write to CET MSRs
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mlevitsk@redhat.com, 
-	rick.p.edgecombe@intel.com, weijiang.yang@intel.com, xin@zytor.com, 
-	Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820120247.3012-4-Ioana.Risteiu@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Aug 20, 2025, Chao Gao wrote:
-> >> +	case MSR_IA32_PL0_SSP ... MSR_IA32_INT_SSP_TAB:
-> >> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK))
-> >> +			return KVM_MSR_RET_UNSUPPORTED;
-> >> +		if (is_noncanonical_msr_address(data, vcpu))
-> >
-> >This emulation is wrong (in no small part because the architecture sucks).  From
-> >the SDM:
-> >
-> >  If the processor does not support Intel 64 architecture, these fields have only
-> >  32 bits; bits 63:32 of the MSRs are reserved.
-> >
-> >  On processors that support Intel 64 architecture this value cannot represent a
-> >  non-canonical address.
-> >
-> >  In protected mode, only 31:0 are loaded.
-> >
-> >That means KVM needs to drop bits 63:32 if the vCPU doesn't have LM or if the vCPU
-> >isn't in 64-bit mode.  The last one is especially frustrating, because software
-> >can still get a 64-bit value into the MSRs while running in protected, e.g. by
-> >switching to 64-bit mode, doing WRMSRs, then switching back to 32-bit mode.
-> >
-> >But, there's probably no point in actually trying to correctly emulate/virtualize
-> >the Protected Mode behavior, because the MSRs can be written via XRSTOR, and to
-> >close that hole KVM would need to trap-and-emulate XRSTOR.  No thanks.
+On Wed, Aug 20, 2025 at 03:02:44PM +0300, Ioana Risteiu wrote:
+> Refactor probe function by moving the initialization specific to
+> communication without iio-backend into a separate setup function.
 > 
-> I don't get why we need to trap-and-emulate XRSTOR. if XRSTOR instruction in
-> protection mode can change higher 32 bits of CET MSRs, it is the hardware
-> behavior. why KVM needs to clear the higher 32 bits?
+> The purpose of this modification is better code organization. No
+> functional changes intended.
 
-If the VMM configures the virtual CPU model to be a 32-bit CPU, i.e. a vCPU that
-"does not support Intel 64 architecture", i.e. CPUID.0x80000001.EDX.LM = 0, then
-the behavior of the "hardware" that the guest sees should be that the upper 32
-bits do not exist and should always read '0'.  But because the actual harware on
-which the virtual CPU is running _does_ support Intel 64, XRSTORS/XSAVES in the
-guest could observe behavior that violates the architecture.
+...
+
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "request IRQ %d failed\n",
+> +					st->spi->irq);
+
+Something went wrong with the indentation.
+
+...
+
+> +	ret = ad7779_setup_without_backend(st, indio_dev);
+
+>  
+
+Now we have redundant blank line here, please remove it.
+
+>  	if (ret)
+>  		return ret;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
