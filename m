@@ -1,125 +1,91 @@
-Return-Path: <linux-kernel+bounces-777850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C53B2DE72
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4850BB2DE75
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 133723AB6D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D8E3B2FC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AE120E011;
-	Wed, 20 Aug 2025 13:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD4721B905;
+	Wed, 20 Aug 2025 13:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K1k+mqGo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gS3i7LWA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6977C1FECAD;
-	Wed, 20 Aug 2025 13:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9447821323C;
+	Wed, 20 Aug 2025 13:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755698180; cv=none; b=gDzMIF3EuQHa5kN179Lh2ImfRX5iaT4MmKsPG7Ra/Q9z+dlMTK8FnHcZddqwobNIr6lWcUKGhCWt3LPg0+f129qIAcuR2vOPtsr6sH98UbedSkvT0nBuZNVDbAm5KLjmBlOjs1f/D6v3qu7ZrYF+4vyHxiCPuRhTx2vPto2xPdo=
+	t=1755698205; cv=none; b=YjlzgNBWQfrZOCqmXwe4fNsyB+1tc1mhbC9Cv5e5qAiFOP8BCqLcxB66j/AaL33QREq90Y09gkSIVbcMF63DCw7NE+f+6t2QZEkg/Wiu0Xr/fY5ugOvZO6fhpbKe+srqz+gZuAfR6Zddd/4X5aDzaHLLc2oGZEsJNIaEQjzfmT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755698180; c=relaxed/simple;
-	bh=Z7G/14If/9CK+UBZzzYPV1MmXUnSBLj4Fxu7EHPGP+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4jq2i4XY5ZpBUcrBjGJA8SB7HiS2PlHg8dxOio+oP2pufbvnmsQGVZqDuynh1GxVwxrw0CflI9INp3Y79frqQVltJnDmMBfh+Ok5k/eXsEd1eExUTBTOIksVo96ogv7mVQTdIkn1zzbHPViucNQbCM9LsSyE2muEgdHv5mpVFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K1k+mqGo; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755698179; x=1787234179;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Z7G/14If/9CK+UBZzzYPV1MmXUnSBLj4Fxu7EHPGP+g=;
-  b=K1k+mqGoGNdeyNBqi3cLB5E/QyEs6y5IS1f1Zi8xUoxEoWfZw/e/pt65
-   Ngt6KroO9POyPwg7t1BLeIDKA/l1ksW88SJiFuOOz5WJRYsGTtShnZwq6
-   GBA7X1ZfFAFxNwORQhC2LyvQQhP+uZtKDzW9hKDqn/KabohwswOJMv/BX
-   gNKdgYtYmCvWpsbxbkVv+Hz0KPmZt73AK07jmwCaZcMV4gXviE8ZAofur
-   FGw3eyyQcPj8Zo1HF0zxzTBN3V8j7BrDHBHdtgLfwCKykcJ2pM6qKTVyR
-   W+YJBk+LVmvk3zzNmOJsnej2PHBUxAqHn+P699L6XNyNzVHNbcXrnNpHO
-   A==;
-X-CSE-ConnectionGUID: WRhHSB/eSAKZcVkWSADCgg==
-X-CSE-MsgGUID: Knk3w1WXRpywFjSWcwpXZQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="80557129"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="80557129"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:56:18 -0700
-X-CSE-ConnectionGUID: JJ5OOMrQRs+MEc4bgOwlWw==
-X-CSE-MsgGUID: U8f7/K0RQny2Vb4X74yvRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
-   d="scan'208";a="173387942"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 06:56:15 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uojIS-00000006wyS-4AbF;
-	Wed, 20 Aug 2025 16:56:12 +0300
-Date: Wed, 20 Aug 2025 16:56:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-Message-ID: <aKXT_HOrY1XUlsLu@smile.fi.intel.com>
-References: <20250814-tlv493d-sensor-v6_16-rc5-v4-0-81b82805aae0@gmail.com>
- <20250814-tlv493d-sensor-v6_16-rc5-v4-1-81b82805aae0@gmail.com>
- <20250816140448.37f38d0f@jic23-huawei>
- <aKVTJXe50zf07ipR@dixit>
+	s=arc-20240116; t=1755698205; c=relaxed/simple;
+	bh=piG/FiXhKiIArdVeFb0mh1k61fHGLdZsqcNNViU3X6g=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=MOFQveTGKCvbPw/8HQmhIL4HSzD3SWGWzPs5NII2nQT8qdGCN+U7QwGvmrmf0y8Po9Dv1bpl+9/BLGGr2lS6afgeDKt+8O45CF+vYQD5ZTqorcxodHYfC/mZ8dHOCFg2+NduHBCjbW8qIpED7wVzVBBF7giPoYihlu9TMkvt7AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gS3i7LWA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40983C4CEE7;
+	Wed, 20 Aug 2025 13:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755698205;
+	bh=piG/FiXhKiIArdVeFb0mh1k61fHGLdZsqcNNViU3X6g=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=gS3i7LWAe4EDXHuyD1/rYg1XqTVyLXT3pgtCd561jjf0M2wttckn8jFw7K1ssw01P
+	 OYwpupj11qtsNrN7p+yNHNIvFuXz6aPnHOWDi9xiA+GoGfVq7tESKMibmKim8JoEzX
+	 Q71d2WCaMAcPkQT90pVBimjKVPqecbTPqfFKlDz6rn5nraPOc2j6uVsZq4PwE3L09Q
+	 HYc5MHkC07RR2yQ0EGghcVSF2RuUPATiv06yz9TPVzC7cSpOVVddod+EWVQbtUmFlH
+	 XgUl3b7fqocDKrKRXHvp5ph1kXZ1wegx4Z9KMlg+d7U4409OrkpHd4Sql6aXsci0lj
+	 iKsFtV/oUeQXA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKVTJXe50zf07ipR@dixit>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 20 Aug 2025 15:56:39 +0200
+Message-Id: <DC7B2I88PS4K.TJAD25XWXK9K@kernel.org>
+Subject: Re: [PATCH v4 2/3] gpu: nova-core: avoid probing
+ non-display/compute PCI functions
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
+To: "Alexandre Courbot" <acourbot@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250820030859.6446-1-jhubbard@nvidia.com>
+ <20250820030859.6446-3-jhubbard@nvidia.com>
+ <DC7AZL4OWXTY.2F7TRSCZYNK6S@nvidia.com>
+In-Reply-To: <DC7AZL4OWXTY.2F7TRSCZYNK6S@nvidia.com>
 
-On Wed, Aug 20, 2025 at 10:16:29AM +0530, Dixit Parmar wrote:
-> On Sat, Aug 16, 2025 at 02:04:48PM +0100, Jonathan Cameron wrote:
+On Wed Aug 20, 2025 at 3:52 PM CEST, Alexandre Courbot wrote:
+> This is making use of `from_class_and_vendor`, which is modified in the
+> next patch, requiring to modify this part of the file again. How about
+> switching this patch with 3/3 so we only modify the nova-core code once?
 
-...
+I think that makes sense.
 
-> > > +	TLV493D_AXIS_X,
-> > > +	TLV493D_AXIS_Y,
-> > > +	TLV493D_AXIS_Z,
-> > > +	TLV493D_TEMPERATURE
-> > As below.
-> > 
-> > > +};
-> > > +
-> > > +enum tlv493d_op_mode {
-> > > +	TLV493D_OP_MODE_POWERDOWN,
-> > > +	TLV493D_OP_MODE_FAST,
-> > > +	TLV493D_OP_MODE_LOWPOWER,
-> > > +	TLV493D_OP_MODE_ULTRA_LOWPOWER,
-> > > +	TLV493D_OP_MODE_MASTERCONTROLLED
-> > This is not a terminating entry, so would typically have a trailing comma.
-> Isn't the last entry in the enum list is termintating entry and it should
-> not have trailing comma?
+> I also wonder if we want to merge 1/3 and (the current) 3/3, since 1/3
+> alone leaves `from_class_and_vendor` into some intermediate state that
+> nobody will ever get a chance to use anyway, and one doesn't really make
+> sense without the other. WDYT?
 
-No, it's not semantically. (Yes, it's terminating the list syntactically)
-
-> > > +};
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Let's not merge them please, the intermediate state is not that bad, curren=
+tly
+we deal with raw integers for representing vendor IDs as well. So, patch 1 =
+is an
+improvement even by itself.
 
