@@ -1,203 +1,112 @@
-Return-Path: <linux-kernel+bounces-777438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93741B2D965
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:56:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2896B2D92C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA50D727D31
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:51:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 960A24E4A6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD7F2DA77F;
-	Wed, 20 Aug 2025 09:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B23327C879;
+	Wed, 20 Aug 2025 09:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEBzBBtH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="alXELS6U"
+Received: from smtpout9.mo534.mail-out.ovh.net (smtpout9.mo534.mail-out.ovh.net [178.33.251.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF402798FE;
-	Wed, 20 Aug 2025 09:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9ED221FC7
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.33.251.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755683449; cv=none; b=nuctZBJ6IfXFYl1WG90LJT9oojPf2WUgvd+XvZS+w3TcGD0vSqu+d+rXDiSHvWX87B1M4PVPthzkT5vUkxXusu2HX2nGXGuxirQht0YWmR1xmu4vjDIgmpfc34kCKh8jLdW16iYFJb4dzheQcNSx1+DV0PPKzoVp650eUXdyyCA=
+	t=1755683496; cv=none; b=sVW64i0KTmguwiiygFZEYbJMtCypPpbNwa6DnfooVAA7jzahsU54pW0VLycxFxwrdQf54hnvF9c6EKnYcpQwYbNC7TLUFbry/P0Rosnb8chRDWJ9poCvTG5wS5qIQ1tBj+4OQJBXM0zQCCRHTuUdbmj8JLx0YFE9oyK7ke/PUXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755683449; c=relaxed/simple;
-	bh=/dGQ/KHU4QWB9oKn1Tz6oNVgq/D6ekwIYY7vjkTbeAA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iE8XjI5ahjsv7IXpg4gHDALzH9eNCuF63lX9QBgRu4nqdDEzb2p8JjAInhPK0b8zI7dQo2ecBNAY9hUCsimac60OM/fnMwMOFR1sPxrR5BJ0NSVnNFFHEmVlEeKWIxJi57/3jaDYot8v+diXkJ15T6tJHaWO/YaCir8W8VK4TGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEBzBBtH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 248C2C116C6;
-	Wed, 20 Aug 2025 09:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755683449;
-	bh=/dGQ/KHU4QWB9oKn1Tz6oNVgq/D6ekwIYY7vjkTbeAA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=JEBzBBtHkWI+yJiORa5Ux1XW2wpoxQ1cFd8kuxZf7k7RJ0aRIfFqTcvbBlNSgF5g9
-	 eVypj1zdNdq9VYyynGgrp7Qx2isUmLj2ipTyxpSnPW2h+Xf7Q3WvqDUrR7a2pa7a/4
-	 sZeGzIi8DKxDT4adgn9+k6A0+K8MKkz91gbJjMfHwDD9QYZBZknCSIGP9UC4Bwu3TW
-	 biUWCveWcrADKlhL39I/F1U1lW0WeHGWgqNNG+GasKBDDz6OzbhHeM/JLNKwO7r3Dv
-	 ot+dLWHlAjmphDBW66BEyiNkzMHtb6XsWHNwiG07Rrkrg1QLJzox8g/JhtTYmAM5d8
-	 5StaypxlCphVw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD58CA0EDC;
-	Wed, 20 Aug 2025 09:50:49 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Wed, 20 Aug 2025 17:50:39 +0800
-Subject: [PATCH RESEND v7 2/2] hwmon: document: add gpd-fan
+	s=arc-20240116; t=1755683496; c=relaxed/simple;
+	bh=LjIiuIvTvW3zfGFEHP8OBvqSzvdP3sXwjPprS50oumQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ezeD1RtER9L23oebzTEy4M3sST8I67YOlZCwZWuwcbRDJTIFTCaUCvBSZ6LNcL7NyKFWAVcWKS8/pfjnuEbJOk7XLbsY+2NVAX9Z/rFhEtfYM8npFMf/FyBhN5y3EJvnjqHZitDXj/FBRtIdVYcA70s8WBx0EspazcHvmhEjeFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=alXELS6U; arc=none smtp.client-ip=178.33.251.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
+	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4c6MD32WxKz6FyW;
+	Wed, 20 Aug 2025 09:51:31 +0000 (UTC)
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
+        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <bp@alien8.de>; Wed, 20 Aug 2025 09:51:30 +0000 (UTC)
+Received: from mta11.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.37.159])
+	by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c6MD240snz5xT3;
+	Wed, 20 Aug 2025 09:51:30 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.5])
+	by mta11.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id DA0719A32D8;
+	Wed, 20 Aug 2025 09:51:27 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-109S0037d4b4793-596f-4841-9b6e-7b1e6637a567,
+                    616188B862BD6F9D24C783D7A018D61FF224AB69) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:79.117.22.109
+Message-ID: <be242e65-b056-4e12-93e7-9a297aaf231a@orca.pet>
+Date: Wed, 20 Aug 2025 11:51:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250820-gpd_fan-v7-2-10c8058f4dba@uniontech.com>
-References: <20250820-gpd_fan-v7-0-10c8058f4dba@uniontech.com>
-In-Reply-To: <20250820-gpd_fan-v7-0-10c8058f4dba@uniontech.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Cryolitia PukNgae <cryolitia@uniontech.com>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- linux-doc@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>, 
- Yao Zi <ziyao@disroot.org>, Derek John Clark <derekjohn.clark@gmail.com>, 
- WangYuli <wangyuli@uniontech.com>, Jun Zhan <zhanjun@uniontech.com>, 
- niecheng1@uniontech.com, guanwentao@uniontech.com, 
- =?utf-8?q?Marcin_Str=C4=85gowski?= <marcin@stragowski.com>, 
- someone5678 <someone5678.dev@gmail.com>, 
- Justin Weiss <justin@justinweiss.com>, 
- Antheas Kapenekakis <lkml@antheas.dev>, command_block <mtf@ik.me>, 
- derjohn <himself@derjohn.de>, Crashdummyy <crashdummy1337@proton.me>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755683447; l=3233;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=gh/oPM4ovDnsO6Zc31vhvlqN6f1O4IdwmGmblL0tVrM=;
- b=kVuPITKo4enIBUQCSMFS7B+pfc8vQhyhP7jFEiJ4wpejvwkh7ZMO4f3iNkfgDJ8Jy64QhlLBj
- 9lxyZEAsDYrAoq3VGIEV/5QI/IELkSh4s1i4tDPt4spbnzJjWTyx6/Q
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86: add hintable NOPs emulation
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Ahmed S. Darwish" <darwi@linutronix.de>, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
+ Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+ David Kaplan <david.kaplan@amd.com>, Kees Cook <kees@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Andrew Cooper <andrew.cooper3@citrix.com>, Oleg Nesterov <oleg@redhat.com>,
+ "Xin Li (Intel)" <xin@zytor.com>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+References: <20250820013452.495481-1-marcos@orca.pet>
+ <aKWR8e6VUEZEgbkw@lx-t490> <2cd7b099-095d-405c-a7d9-b0f1f72184c2@orca.pet>
+ <20250820094347.GDaKWY02hR3AAoT7la@fat_crate.local>
+Content-Language: es-ES
+From: Marcos Del Sol Vives <marcos@orca.pet>
+In-Reply-To: <20250820094347.GDaKWY02hR3AAoT7la@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 11142468429620008628
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheektdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepuggrvhhiugdrkhgrphhlrghnsegrmhgurdgtohhmpdhrtghpthhtoheprghnughrvgifrdgtohhophgvrhefsegtihhtrhhigidrtghomhdprhgtphhtthhopegsrhhgvghrshhtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhnohhvihhtohhllhesghhmrghilhdrtghomhdprhgtphhtthhopehusghiiihjrghksehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgrug
+ gvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhg
+DKIM-Signature: a=rsa-sha256; bh=kWW/8Tg7JsOPvL+m44dmm8o+Dy4w5rB6iMVBwkz49hI=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755683492;
+ v=1;
+ b=alXELS6UOwOWE5fjiKxnlgM/oEPEv/2G69FUimvRpdC1GVrjXJxHCHduslikk4YboyKmet67
+ sg+Feo0S6DkOjiNuxQxxY06/EG48rDR4vs0eNnx2ZC0h5xePLM3T6eAEWG43Vqx1c6bowWFBNrL
+ UAWUREqGECjP4xmB4CKpOAViYavsqU0oenSShDvgP3OT4IHvcCKe0ctJ7fWKBNXYpmEFk7RpF0R
+ nKqwzAwMC/oAVLsD1XSy3f4Olrqn0+GNmyXTxFYGb4VJ7fO0i4rPnwakGx3eXUgnj8rCktP6dsf
+ 7fay3ZlBUNnnTKin8fHbz36iW9ZK5jpPHZX6FhxXwqWUw==
 
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+El 20/08/2025 a las 11:43, Borislav Petkov escribió:
+> On Wed, Aug 20, 2025 at 11:33:05AM +0200, Marcos Del Sol Vives wrote:
+>> But I think the kernel should let the user know the binaries they're
+>> running are having some performance penalty due to this emulation, in case
+>> they want to recompile without the offending flags.
+> 
+> Sure, once perhaps.
+> 
+> Do you want to let the user know for each binary?
+> 
+> And how many users do you really think will look at dmesg and recompile their
+> binaries?
 
-Add GPD fan driver document
+I mean, they should know what they need to recompile if they want to, not
+just that their machine is having a bug triggered by some binary.
 
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
----
- Documentation/hwmon/gpd-fan.rst | 71 +++++++++++++++++++++++++++++++++++++++++
- Documentation/hwmon/index.rst   |  1 +
- MAINTAINERS                     |  1 +
- 3 files changed, 73 insertions(+)
+A global flag would mean they'd need to reboot to see if there is any other
+binary triggering it too.
 
-diff --git a/Documentation/hwmon/gpd-fan.rst b/Documentation/hwmon/gpd-fan.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..82f064c80aac485348f7c5179a9c4104fd6a4745
---- /dev/null
-+++ b/Documentation/hwmon/gpd-fan.rst
-@@ -0,0 +1,71 @@
-+.. SPDX-License-Identifier: GPL-2.0-or-later
-+
-+Kernel driver gpd-fan
-+=========================
-+
-+Author:
-+    - Cryolitia PukNgae <cryolitia@uniontech.com>
-+
-+Description
-+------------
-+
-+Handheld devices from Shenzhen GPD Technology Co., Ltd. provide fan readings and fan control through
-+their embedded controllers.
-+
-+Supported devices
-+-----------------
-+
-+Currently the driver supports the following handhelds:
-+
-+ - GPD Win Mini (7840U)
-+ - GPD Win Mini (8840U)
-+ - GPD Win Mini (HX370)
-+ - GPD Pocket 4
-+ - GPD Duo
-+ - GPD Win Max 2 (6800U)
-+ - GPD Win Max 2 2023 (7840U)
-+ - GPD Win Max 2 2024 (8840U)
-+ - GPD Win Max 2 2025 (HX370)
-+ - GPD Win 4 (6800U)
-+ - GPD Win 4 (7840U)
-+
-+Module parameters
-+-----------------
-+
-+gpd_fan_board
-+  Force specific which module quirk should be used.
-+  Use it like "gpd_fan_board=wm2".
-+
-+   - wm2
-+       - GPD Win 4 (7840U)
-+       - GPD Win Max 2 (6800U)
-+       - GPD Win Max 2 2023 (7840U)
-+       - GPD Win Max 2 2024 (8840U)
-+       - GPD Win Max 2 2025 (HX370)
-+   - win4
-+       - GPD Win 4 (6800U)
-+   - win_mini
-+       - GPD Win Mini (7840U)
-+       - GPD Win Mini (8840U)
-+       - GPD Win Mini (HX370)
-+       - GPD Pocket 4
-+       - GPD Duo
-+
-+Sysfs entries
-+-------------
-+
-+The following attributes are supported:
-+
-+fan1_input
-+  Read Only. Reads current fan RPM.
-+
-+pwm1_enable
-+  Read/Write. Enable manual fan control. Write "0" to disable control and run at
-+  full speed. Write "1" to set to manual, write "2" to let the EC control decide
-+  fan speed. Read this attribute to see current status.
-+
-+pwm1
-+  Read/Write. Read this attribute to see current duty cycle in the range [0-255].
-+  When pwm1_enable is set to "1" (manual) write any value in the range [0-255]
-+  to set fan speed.
-+
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index d292a86ac5da902cad02c1965c90f5de530489df..ce4419f064e1368740387af70af38a85cadd952d 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -82,6 +82,7 @@ Hardware Monitoring Kernel Drivers
-    gigabyte_waterforce
-    gsc-hwmon
-    gl518sm
-+   gpd-fan
-    gxp-fan-ctrl
-    hih6130
-    hp-wmi-sensors
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1deb9b817a37998828b6773d3dc8237c982d4bf9..d5af3b7ab7a5fdc778b4032e5645fd9551223148 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10414,6 +10414,7 @@ GPD FAN DRIVER
- M:	Cryolitia PukNgae <cryolitia@uniontech.com>
- L:	linux-hwmon@vger.kernel.org
- S:	Maintained
-+F:	Documentation/hwmon/gpd-fan.rst
- F:	drivers/hwmon/gpd-fan.c
- 
- GPD POCKET FAN DRIVER
-
--- 
-2.50.1
-
-
+Whether they look or not at the dmesg I cannot tell, but if IOPL emulation
+does logging this way, I assumed this should too. Otherwise, would that
+mean IOPL emulation logging is also too verbose?
 
