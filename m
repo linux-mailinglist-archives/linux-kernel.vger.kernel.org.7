@@ -1,196 +1,132 @@
-Return-Path: <linux-kernel+bounces-777758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E77F7B2DD70
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:13:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59710B2DD72
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9ACD7B49A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:11:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F12E7B673A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC3B31B119;
-	Wed, 20 Aug 2025 13:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AC131B10F;
+	Wed, 20 Aug 2025 13:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="UbQQj6rf"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012048.outbound.protection.outlook.com [40.107.75.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="USNPPT+U"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D68C242D9E;
-	Wed, 20 Aug 2025 13:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755695598; cv=fail; b=i7FgYeTjVJa+9X9uyR/u4vGMv4FMB1r230Bo6XX20T4l3TmbZja6xsXr5Od8xt68KGrN2B4KJdB27K7fNYkFvnkAoyWrbEXZSLhjRC/G0HP/bdXAQUGnp9tQXxU7Hs+lIfhWULRuLXw2b5rYDdlTm/u6iVwj+odDORzsOPjaJBI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755695598; c=relaxed/simple;
-	bh=yGRbe2mrSi3R/FgafZig+DT209VZKcHRcOXCqQcoTkQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=e5Gdcp7ny6UuBTgTtUPs31cdX/IY7Bnuqt0Bg2dWDhTbyZIOPXcJ3wVRB2r2Nb6ngAzVugBu0TrvatN6dI7KxiAZIMoVEsquIQlE3GNoJg5HwUP1GmxenXfwZez+CM6qraLPQ7lBEHSbGOttuEECRJcewx+12aYRT+1xEjfS688=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=UbQQj6rf; arc=fail smtp.client-ip=40.107.75.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XN8kYoi1osy0etS1TrfgWdUvgqONQBHlovr7dp85jSVhK3ykymd8Z3q+Y0FUVjgza9qCWU/r6Ruev2j8dGDcek6rwzLMBhBSg03QTb2oFDkb+2hMjzpSTfpb8LYTVFfOJczRT9splLU+/m/YTKbzqiRFOq4am+BFrc0xDGFwNzFVOZCGaJjDbZFsPrmxiH9zl/v7JH7bIsx6bGi2mp8Y/FnCC5ka1Cxh2rewiiVVzDMk6F+boBl/Jr0hNZVuMptWaiBnTlXytyE/yYfy0e+G2W1Z/wThHtFTll0qXc/+JhgexeRLmiL6e2lXaghrLJHPNHCmVqTuFqbZpirWvqAvPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FHQOiioXwQMUvS7GxfjyTuit3kLANlCAJYdTjDWb0p8=;
- b=lGigkV2lAynt8gI78PbTOp2bVhwiNlwaod8mQDl7Lp2gQXWgtA9xnXR13QaxbAI5OmnTnAvsheZiT8B/T4/pdx6ySYswnvV/JHwEGLs+8FthmBJe55jABkXIXzjHI9/9TBjpV/d+5FcDwmGUVVWbS+aL8fMUgZSbVVAf3JZS7heQiIzFh+V4Z+s9RyMb7JnJXtEKkC8OIvguwedZPna4+9EGEexBBC3k6wroxvM/7HXs2SNu+ywDZpNmwYPw+Vu7bsA/pXbw2Yng26En+2qwdeUO59N27XOdDbwm3gEZbzgQvxz/0MCiuYTirH5+xOtcMhsUeBCjq9Sl85kWPzWBAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FHQOiioXwQMUvS7GxfjyTuit3kLANlCAJYdTjDWb0p8=;
- b=UbQQj6rfix5guKtPSmrGwdg/bHln1bVL0eFM8LAODbxevBNF/wjaX8cv4MKSIGCzTe+FLV+oiBBc76M6DaxHTstDWd9TGQLBpi94ilKuzets3xP9S4qptXIJbKOAFAbxFnIr6uLQnTiGJJgAzTYnFhJaZYEAod0uS1Y7KmatoprzUfbA3NdGxCZ96Bw3r21krHtf5wI86WvJjpph/GbHgdbw/Gqfyt/sU+6KyNgeLVkpJ4By0pGyymyUxwcH0zMMnX4HbcFTTN2StUoBoQnArv7cgxpHbtohoQgI6kP//AieymuwQT3AhxyH5dlkR7rTH+W/lpm76NenVwb0D+AhgQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by KL1PR06MB5994.apcprd06.prod.outlook.com (2603:1096:820:d8::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 20 Aug
- 2025 13:13:13 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9052.013; Wed, 20 Aug 2025
- 13:13:13 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Antonino Maniscalco <antomani103@gmail.com>,
-	linux-arm-msm@vger.kernel.org (open list:DRM DRIVER for Qualcomm display hardware),
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVER for Qualcomm display hardware),
-	freedreno@lists.freedesktop.org (open list:DRM DRIVER for Qualcomm display hardware),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] drm/msm/mdp4: remove the use of dev_err_probe()
-Date: Wed, 20 Aug 2025 21:12:56 +0800
-Message-Id: <20250820131300.499727-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR01CA0154.jpnprd01.prod.outlook.com
- (2603:1096:404:7e::22) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DC531AF21
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755695645; cv=none; b=Rtor/uU7vwJNBWokwnnsi+ES1vqpIQplOrevjSPcaQaa//jqgX5CJ8FuiP6karHueuyAktVTKEGSh/t8b6OfQUdQ7DjaiOMINfdUz8UP14GNfMFiIenB3UtCzHOKdZEgJyc1IDKHP+Yp3p9oAoCwLRcA8tSSzYjaSsI67RhJ2to=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755695645; c=relaxed/simple;
+	bh=KPSqciT5t06cKS/juMXRjSVgnjxRqIsScfumcMkysfU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hAxmQuKxT9SJP7FfWkycSKfuJKzM6i3yukxEWLi5qCNSdLPoSJu3VBO7F7isA2cR20CrX05j6hhDHE3EJpxkZLV1Zc2lyIkJs97kx8ztSa1ZCBFLeRKHhOhGePL9T1tszUc1Us/655ojf6yuolgPPz4DrzDehlxabpcCqRdQZrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=USNPPT+U; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b47175d02dcso5335224a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755695643; x=1756300443; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UEhLj+QpdbdIXsYiUCu+v2MbxwMNrA1QXcK0xjWmvUg=;
+        b=USNPPT+UVer55b6F4DCtWQz+eZxdh0mdzvT/wvZb5KL44j1742JdeGHOQa08aPKAA6
+         Q+HwoQ+ZlXsuaGA9/4vt8eX05eDSX+lyBkFgwOTqv03Xz0WeiNJ70KFeaiAc5UA3FVls
+         oXP50oTcW2COz6TV3wBvBeyAcFVYlD9FWYirQ6YI1yxbg3CKpS5FdHCIyT+jQ93VGcxr
+         nI+iG1QaodB/0ud+KWjoqGyR9ncjatJuaziVaVE6yI3GV/RsWrTH+OwKTs6nJc1RfFhU
+         ABq/EnAYxVpSWaoNr+DXO5XN8tuPTAOwnPJDpJVcln1rfPo29uUEijE61Gmb2Z0arfn1
+         0GPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755695643; x=1756300443;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UEhLj+QpdbdIXsYiUCu+v2MbxwMNrA1QXcK0xjWmvUg=;
+        b=Ky3I6MhhcmtKNqygY6vNL816Aaqn8i4j17p7FurOo0G6nr/pUlsyC4kGr53q18GYkN
+         Xw+/lf8t/I21h+jnXnGPvigjvbDDDNKuAssncEJDkqDC8tIigh65f0kr4/L9fQIr/HhL
+         HBqVgCOg3iyJMkGRJhw6oE+gmINiNIVWxwl3xvG5YDvVnMBhNJ2QAd4AXQ/RZvqvCvAN
+         LOBGj6EhPDjiwenCvYrcZ26dIrbXw86XZyKMDcmLGxnbuF4WTBtGIbLMQ4rbkihdVhGI
+         L4cOKzOKqMUxG1X+6bhCyroo0kGYemhNm8Ce9aRVlBg5AmsrzazUM+tYj22YVHBTmqiY
+         3Ziw==
+X-Gm-Message-State: AOJu0YyPqwwURrVShJgyogNnI50Hrdjgb0x2kTted/8odyDztPdc6gMJ
+	goIFWh0fhWBIcOpZMD9c/aD9xgivryKDxmejKmZz4j0ELxWzyQ7MThe2lwFKY0lu1SIDKJri5jo
+	wnAtwmk1TdHGU/f4tvVRkcPL8Wvz8xEkYagJ8EHXF7RoCXdPjM3J9OBs=
+X-Gm-Gg: ASbGncspog8efqVut+zuyoqp5kMST/wf4Naf4c3iz+fZ87nl/2sEOraE5gE08AvVvTE
+	wX3kkuYxiyDZEiZfnhKXwDr817l9+Ais3r6SimBQLQ7Mz2IQg10SdmmZbuMmRys/LS6FCR5vnqE
+	Rmnv6dcCOaikAQZeQ2FCN8W69k7XVNl425b50zd2Bg64dx3r+HPiGKzkPZ7Nqc+GzhAJooRUcL0
+	kCIDvMcdDNJqHNHxtk4gtIpu5vKcOSN7IJ+gu0=
+X-Google-Smtp-Source: AGHT+IFBJmOUaT50s2oqxUyYw4FxsnPw5mGp4PfDEiEg3YvV4hdLkFdHYDMKytflbhE2y2paxnWvZ4jXvQbb3KvxgAs=
+X-Received: by 2002:a17:903:1b48:b0:243:926:b1f3 with SMTP id
+ d9443c01a7336-245ef1728b2mr39549355ad.24.1755695642929; Wed, 20 Aug 2025
+ 06:14:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|KL1PR06MB5994:EE_
-X-MS-Office365-Filtering-Correlation-Id: 58bf72ea-0e8d-4a16-a680-08dddfeb50e8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|1800799024|52116014|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HE2mQ4HEw/cXJ/62McHBs0g4DbaFmammQjcoPGwFEdSSiIL80aSee8PBHuN9?=
- =?us-ascii?Q?C+V8v6G1LcTpyNSa/JofC2GTHsSf/H6Ykuwu2ULoR5zyoeFqQ1AUFIusPDAa?=
- =?us-ascii?Q?akAAOeYen0HuMiKDX/j++UfJKTe4b/iGmeXzVP/6K68ipDauuS8NPGRJsmMG?=
- =?us-ascii?Q?JHuTJ6CVFvyfderThRyCWs/eKXRu+vsrVGrf+EqQ1PQCgohuTjDFYiB4uthO?=
- =?us-ascii?Q?DPqppBgJw0SWSD+4Jmqbz7O+anU4cfKwX5AOsUT38dXhBUVJm1qVW4/OwvcG?=
- =?us-ascii?Q?ZcmgzjFZOxnkhRC2/9o6uSvN851cuSsjAq4K/J0oVp3tMF3AGPuykcjBZ7PV?=
- =?us-ascii?Q?iyK4LRqcN6/baezY/KQOK8MxeiFjzLitlfn+Fc1H0T10JU65fcRRjUsgJ2rN?=
- =?us-ascii?Q?6q7frKHVhL41640NP2BRmQn9s9BJ1/ZXaWvhnLUeBonwMqaFuzwCUJvx6HH3?=
- =?us-ascii?Q?jTE4ZRvHE/RMcB0khsLPRUqg6TH6Np5thFB8TEx4I5wf/a0NM5Ih6HtEdKZ9?=
- =?us-ascii?Q?w93Wz6f2clnNAAgF3IdD7dzUB3TOqvAmkiAoOjEo8coVTjLmx4OYO31DqHLT?=
- =?us-ascii?Q?OjCipjVqKjaRmpOXquHouyXfvYD7hkMstV9W46H13Q8kM+oM/vJ0FyMC1Iar?=
- =?us-ascii?Q?ukXHQ/pk+I+FYkZr5q6VyasaBa3D5Bi/ugAfGQfNpmV+zvfYcwo6nMo1enzS?=
- =?us-ascii?Q?Es4+Fb16xziIjRqiSYvimMIzQxDGKkYNUh4kqxGTf4BwtUUAAXpeh/sL4TAW?=
- =?us-ascii?Q?ZzNfy/TOAGSoMJdR+fBwx7XGJMDjzzIt+P9heyrVM7bOcwGdIzYCBTCMnjUC?=
- =?us-ascii?Q?IeLBiRLlyaaYbx/Rx9DctAFz5SEA2DceiRhDLm7fbxtNyCIiIv/MD3QTBctV?=
- =?us-ascii?Q?c5EMjSgqG5UcQq6rR6dRUxGLK5EaB9TpsrS1JfJKPiC2gq6wiHANCJeqBzxj?=
- =?us-ascii?Q?h0QwatAv0/TFTBhZgVAmdgEsw13VOaZI/9wnlm/Eg20YMZaOw2Lw3B9atNSj?=
- =?us-ascii?Q?pO50YuzQGVUfWtvtvBoMIXTvrZ+HcBTbsXHgUyYsuEErK6jbD7il6//d55Ui?=
- =?us-ascii?Q?b+pawO6eYMOeQGiqrcrObdA6zRg+VwczVfjQFwJyvkrYWAWqN9Yp57oqnr2y?=
- =?us-ascii?Q?ss8BmXkwjNvrXP6y9piL8k2tkavUrBBi8uj2a8FnJSwws3f6DeWyZRfTmNNI?=
- =?us-ascii?Q?ykd5jev9PNmfs2TIRZ+aQBS0JwKDwCfp5plpXk01Xv3sJl2NKy5GOi/bnKH4?=
- =?us-ascii?Q?nwzhkoyPAxVZSTrxVoO6vDEAg6RZQvoPoYaCQ2N6xkjv4f5ibBTrS1H8trqx?=
- =?us-ascii?Q?p8GR2FYUbnBi6Z+hPcRnizSmISpLwK39b5LDupR4oI0GDHLKeKr/6iCheHyF?=
- =?us-ascii?Q?BrJUg9ZXEXM0wbAQRrwuYUEa/Ab0GWf/Fo7De2tO19SAwn1n+kWQ0JFznQR5?=
- =?us-ascii?Q?BdV3ZkUdlHLO/9uoEZINyT3eeF+L4Bl9EtlYlxbIxfdHlOd1TyB+GzsnepZl?=
- =?us-ascii?Q?Jl+sGF7DrZQNuJA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(52116014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JmuYHhS96Gw0tkjed8Klv6GsXRgZHI9Whv4qyjfew7T0jCYk8hzmYKtI2ThX?=
- =?us-ascii?Q?mx+mH6FVzrNhnrv0Q98d4Gsh7q55f1oHByw/DGOLRQkJn5lHU5JuZ0hzHXTq?=
- =?us-ascii?Q?kA2aqlFFRsAA1TJDEJWti6sl4Z9Y1zr5kPgJ/0txXDuKI1Ve5F4bjrtc91TU?=
- =?us-ascii?Q?OxVveRWOyzX+pzWXwFKsRy0aiiP7IC38mlBIjUZrDMcTi+ptPtlbjFj8eH2y?=
- =?us-ascii?Q?nAQlm4w3RvFSy7kGbOd8FzcG0WfiXLNbc3gXCoewKBJLwyDEQnN/DNjlmoom?=
- =?us-ascii?Q?rrBQbreBGf6sebk1+l5T95nUJuwmqUptXMW3u+oVfe+MNk2Cgplo9wM4yT4F?=
- =?us-ascii?Q?MXZfCPXkPH7pikpLPhnZMlsuNX1X1v9gzJXiLXXmoCdnUBDcKF4HFICdk8OR?=
- =?us-ascii?Q?qzBdQ9r9Vs3E+Z43YEytbYSmmtuquoXBJk5ZaIouw7ZKhbfMUxTERfbNpoEk?=
- =?us-ascii?Q?L+7fXfbEprbPSUlCd4qUjG5AkJsPWYFJb8N9ITio7Ijiu0B5zZhe5Ld9R48I?=
- =?us-ascii?Q?uyasdeLciIAClLclCa9AHhDWZUeFmPQT8alegD9QDCCAYY69rRO0roJyhy4X?=
- =?us-ascii?Q?8YabByxHBAqg99qkzxuG2hySIMOExewm8xcHmx0Bt5R6Gnfb72JSJdkUUZPt?=
- =?us-ascii?Q?FH2pBkwBoV46DLWc4h8OT1p2DNM11Aivemxkhdhyicc/KOmeidUcooQd2lqG?=
- =?us-ascii?Q?YccgexmaHEqD+sFD4Hq3JNfAWAXp4DAd9wwNPPXPYOOjOoITM79PpKIzLcVb?=
- =?us-ascii?Q?mZwSdY5VAit3nPdRS1XarwVsG3UN/9zE4m2QFBXZ58oROnWC2MADxz83qgZF?=
- =?us-ascii?Q?Z/HFUnDARKmKWgZ8Kay3bcVaAmxEe5lPMJ0CM6QOBd9ATk3lMz3DfjxyKqy6?=
- =?us-ascii?Q?dFVOOp16fmBNsUoySdPT1Wz+kYcVCiGL3znydKOsGu34BeNopzMSS5dG2uow?=
- =?us-ascii?Q?SkO6b/cIVStziBnh0qgNtIS9nL9YWqi/DRKNLPRhx+ULOvySYZdMfs33/IDi?=
- =?us-ascii?Q?FHZQ5bRbGriSHCASOCjPSOMQogN6TfNk817e38+Qf3VPfW5shnUMGVIQkbjy?=
- =?us-ascii?Q?Y7ahQ+Xv0OAX9SxhedmIp507Xb7D5W2B0V3uUl6KU5DW6Jl7AIjHpW136G3F?=
- =?us-ascii?Q?wTxMMS898e1OuG1+FBT/TaWiOOLqbToZnXkZmPOSP9RgQ+vuUlhAsSqFalI8?=
- =?us-ascii?Q?sTcP+JN4E0G4pksS7bzII2vnDelsor6Fp1SFHzx1BWsdRC1+4qzjwgot5g7/?=
- =?us-ascii?Q?WVgHjgqprELdupSsBqK2EcxAblfznaYk99AXF2gEZ7Apa1ckIzgWhvx0FJte?=
- =?us-ascii?Q?zxT46WWoWDKdwKG8/rgEFSIRQtNXYP3zM+TjdvLyse9SBOYl37+tYqAitIW0?=
- =?us-ascii?Q?5OJX1NJjmQOB34l23nzMHraR8lad92zq0B4qMXGKsCPbhwoZwSth9c+/uwu1?=
- =?us-ascii?Q?saBX68A3Ea+qaM7mE1Gv3BLlIhVmFawcLrvCbVvmk/jT3lTzZmfCiagnCbZQ?=
- =?us-ascii?Q?itZXljEFmZs8oAiNEPFnLfyGSxMgSOdAiLbRxizsUAgKAllwsuJQ8NVaf+sr?=
- =?us-ascii?Q?5kxqGy24L0pTGui5t9neGXOT64Zp3IG8hbM/YkX8?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58bf72ea-0e8d-4a16-a680-08dddfeb50e8
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 13:13:12.6798
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TBqr6qpGMz2GZd4xbe31J1QS14DdvNmh7dkBtSLB90vsA/eDi+4GSFVSgeTq1IhRzHaeyXRMVhDIkd5kHm3BhA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB5994
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 20 Aug 2025 18:43:51 +0530
+X-Gm-Features: Ac12FXxC0MUMoUEpSUxG3tHBnH_B58ps1yvcBAmlPD_lH0pv4jzn6YQynSvCFy4
+Message-ID: <CA+G9fYtS9nDqC7g-B4285gmxDNRkYQixyPYMuzgDg5-sy2FumQ@mail.gmail.com>
+Subject: next-20250819: sdhci-cadence.c error variable 'hrs37_mode' is
+ uninitialized when used here [-Werror,-Wuninitialized]
+To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, clang-built-linux <llvm@lists.linux.dev>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Ben Copeland <benjamin.copeland@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Logging messages that show some type of "out of memory" error are generally
-unnecessary as there is a generic message and a stack dump done by the
-memory subsystem. These messages generally increase kernel size without
-much added value[1].
+The following build warnings / errors noticed with arm64 defconfig
+and x86 allyesconfig with clang-20 and clang-nightly toolchains.
 
-The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
-remove the useless call to dev_err_probe(), and just return the value
-instead.
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-[1]: https://lore.kernel.org/lkml/1402419340.30479.18.camel@joe-AO725/
+Build regression: next-20250819 sdhci-cadence.c error variable
+'hrs37_mode' is uninitialized when used here [-Werror,-Wuninitialized]
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c
-index 0952c7f18abd..c7d52caa1cba 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c
-@@ -529,7 +529,7 @@ static int mdp4_probe(struct platform_device *pdev)
- 
- 	mdp4_kms = devm_kzalloc(dev, sizeof(*mdp4_kms), GFP_KERNEL);
- 	if (!mdp4_kms)
--		return dev_err_probe(dev, -ENOMEM, "failed to allocate kms\n");
-+		return -ENOMEM;
- 
- 	mdp4_kms->mmio = msm_ioremap(pdev, NULL);
- 	if (IS_ERR(mdp4_kms->mmio))
--- 
-2.34.1
+## Build log
+drivers/mmc/host/sdhci-cadence.c:297:9: error: variable 'hrs37_mode'
+is uninitialized when used here [-Werror,-Wuninitialized]
+  297 |         writel(hrs37_mode, hrs37_reg);
+      |                ^~~~~~~~~~
+drivers/mmc/host/sdhci-cadence.c:291:16: note: initialize the variable
+'hrs37_mode' to silence this warning
+  291 |         u32 hrs37_mode;
+      |                       ^
+      |                        = 0
 
+## Source
+* Kernel version: 6.17.0-rc2
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: next-20250819
+* Git commit: 3ac864c2d9bb8608ee236e89bf561811613abfce
+* Architectures: arm64 x86
+* Toolchains: clang-20
+* Kconfigs: defconfig and allyesconfig
+
+## Build
+* Build log: https://qa-reports.linaro.org/api/testruns/29595553/log_file/
+* Build details x86:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250819/log-parser-build-clang/clang-compiler-drivers_mmc_host_sdhci-cadence_c-error-variable-hrs_mode-is-uninitialized-when-used-here/
+* Build details arm64:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250819/log-parser-build-clang/clang-compiler-drivers_mmc_host_sdhci-cadence_c-warning-variable-hrs_mode-is-uninitialized-when-used-here/
+* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/31UgO4773uaneRjyDrf418EXcDd
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31UgO4773uaneRjyDrf418EXcDd/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/31UgO4773uaneRjyDrf418EXcDd/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
