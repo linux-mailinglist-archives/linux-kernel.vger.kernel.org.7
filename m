@@ -1,99 +1,139 @@
-Return-Path: <linux-kernel+bounces-777484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDF9B2D9FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:28:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3F8B2DA04
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 326517AA6CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:27:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21751C4622A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827802E0B69;
-	Wed, 20 Aug 2025 10:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCE32E22B0;
+	Wed, 20 Aug 2025 10:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qvy1msbG"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mek/xkFR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F792512E6
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1B81D5170;
+	Wed, 20 Aug 2025 10:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755685721; cv=none; b=Qqy4Tdj/B8ht7jU0htnE1IPoWqy2OSaReNB8gC5fm8Ww6OtF91h2NE73DCWMonK6olPLQoLlpFFL/any2Fjm/C+8AG+Bn4OujCuhPPbqsF32/lCUseIr/TlkSga44df8236zfjaWMjiAafdps/xi2WWwN63HZElNlYF/Ke6rqZ8=
+	t=1755685819; cv=none; b=itmME0eOZECrHLsTEinIgNfPaqgLd1BibNA2Domxh/k7dTxh93utAClokTbANl3mJKuFOgUV8nf1TvrT+0TxNoMsImXyCf4s7EVeK67XQYA3lcUoNoJDo3e/5/4rzmspdoM6hdO/uZ3CUi1PlcigqDGHwcF7tsU9ttUasyDuhmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755685721; c=relaxed/simple;
-	bh=VvBPP1JzxSZ24YX0L1zBg4DhL9aZlsTeaXuWUncsHzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qB1b+t77XyrSFUsARYKzV0UNVHMNHvHyrCOW3DK8ZhdNPfxrASlZtwy9DfjO1U72JkEpdgZ5XGMFdMUZOhIu3M2jpNmlic6F2o2IdIgak+H4nzyZN2cMP+hNw/XRbnY/jWWThbnspXlI8ENJBOtjYyLshnSenIFjlAfbCJidWF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qvy1msbG; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755685715;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bK8IIfEe1FOZoRdwos/L/+QGHLxUxijwme8tytQJ0yM=;
-	b=qvy1msbGccyFE38vu7ohoidQJBRcEd2iZi1YeiVAO5Z3gF97gSx/TxksEH5Od5hBlFwOxn
-	ltiDyUVw9ZHJ65XzIAgl73lxk/i9YsJ7Og/Q2CxjD1z8WtpRI/rmLuBTaj4gM1NLGYnKDe
-	cRxdnL1h6sJiERIp7gF6DlCz4tS+I9k=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Michael Hennerich <michael.hennerich@analog.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] misc: ad525x_dpot: Use str_enabled_disabled() in sysfs_show_reg()
-Date: Wed, 20 Aug 2025 12:27:34 +0200
-Message-ID: <20250820102734.760844-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1755685819; c=relaxed/simple;
+	bh=P/oQpoiWxChiJCM1oIYIzsoGt24WyUjDZ+cuYN5z6pQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=BqbrEAQogl/gGm6snemvRR7bUcqoF5KDVyApkSwLgCI53UJj2OsmuO8Zyee0iCjlpq8FOx/1EZCxMu6xhzZorPZPg3XPJ1hyrZj0GLrTZTmhIqdC8DMNxNy7twHHZbWjAWgF6QVk4xDZfnPcN2onbnMbA3HGjIQWpwrBQfgusmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mek/xkFR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F143EC4CEEB;
+	Wed, 20 Aug 2025 10:30:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755685817;
+	bh=P/oQpoiWxChiJCM1oIYIzsoGt24WyUjDZ+cuYN5z6pQ=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=mek/xkFRir8nUYuV8F1j/oqDG1hgTdyrxPmeVdti2LpLwZlLCLmps8ZfTGdeBJacW
+	 C11ZNiZGRh0uV4rvkOKwRgUwCVhNEr6M+jiqHhJ23E+4JqvpPGo0heqw0kovLgc9Wg
+	 FB81vfneu0FRe+UaDiuywgLJ1sqh7S7db58E1Uv6aXIoTMtFaDLJdTHc9xN+Go7w0o
+	 MRvrGPm/LqbmgzlIO0TVyugmmfEXUXo21xyy7aEb54oGvV5OsQgrC61JF8fN/+KYIb
+	 dsbJ1EUGNHIQFM5vQsbcIOM7TEXlaxMXZeiNT3urYcbmLFELs4CkYjQAY0QKFAeiVK
+	 DtuZeYy1aosKg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 20 Aug 2025 12:30:14 +0200
+Message-Id: <DC76OGHHB0NH.2150TC0DHRN8A@kernel.org>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: linux-next: manual merge of the drm tree with the
+ drm-misc-fixes tree
+Cc: "Dave Airlie" <airlied@redhat.com>, "Simona Vetter"
+ <simona.vetter@ffwll.ch>, "Beata Michalska" <beata.michalska@arm.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "DRI" <dri-devel@lists.freedesktop.org>,
+ "Intel Graphics" <intel-gfx@lists.freedesktop.org>, "Linux Kernel Mailing
+ List" <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
+ <linux-next@vger.kernel.org>
+References: <20250820112144.43714c90@canb.auug.org.au>
+In-Reply-To: <20250820112144.43714c90@canb.auug.org.au>
 
-Remove hard-coded strings by using the str_enabled_disabled() helper
-function and silence the following Coccinelle/coccicheck warning
-reported by string_choices.cocci:
+On Wed Aug 20, 2025 at 3:21 AM CEST, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the drm tree got a conflict in:
+>
+>   drivers/gpu/drm/nova/file.rs
+>
+> between commit:
+>
+>   db2e7bcee11c ("drm: nova-drm: fix 32-bit arm build")
+>
+> from the drm-misc-fixes tree and commit:
+>
+>   94febfb5bcfb ("rust: drm: Drop the use of Opaque for ioctl arguments")
+>
+> from the drm tree.
+>
+> I fixed it up (I think - see below) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+>
+> --=20
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc drivers/gpu/drm/nova/file.rs
+> index 4fe62cf98a23,7e7d4e2de2fb..000000000000
+> --- a/drivers/gpu/drm/nova/file.rs
+> +++ b/drivers/gpu/drm/nova/file.rs
+> @@@ -39,8 -36,7 +36,8 @@@ impl File=20
+>               _ =3D> return Err(EINVAL),
+>           };
+>  =20
+>  -        getparam.value =3D value;
+>  +        #[allow(clippy::useless_conversion)]
+> -         getparam.set_value(value.into());
+> ++        getparam.value =3D value.into();
+>  =20
+>           Ok(0)
+>       }
 
-  opportunity for str_enabled_disabled(..)
+I think this resolution doesn't compile, since attributes on expressions ar=
+e
+behind an unstable feature flag.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/misc/ad525x_dpot.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+I assume your config does not have CONFIG_DRM_NOVA=3D{y,m}.
 
-diff --git a/drivers/misc/ad525x_dpot.c b/drivers/misc/ad525x_dpot.c
-index 756ef6912b5a..04683b981e54 100644
---- a/drivers/misc/ad525x_dpot.c
-+++ b/drivers/misc/ad525x_dpot.c
-@@ -73,6 +73,7 @@
- #include <linux/kernel.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
-+#include <linux/string_choices.h>
- 
- #include "ad525x_dpot.h"
- 
-@@ -418,10 +419,8 @@ static ssize_t sysfs_show_reg(struct device *dev,
- 	s32 value;
- 
- 	if (reg & DPOT_ADDR_OTP_EN)
--		return sprintf(buf, "%s\n",
--			test_bit(DPOT_RDAC_MASK & reg, data->otp_en_mask) ?
--			"enabled" : "disabled");
--
-+		return sprintf(buf, "%s\n", str_enabled_disabled(
-+			test_bit(DPOT_RDAC_MASK & reg, data->otp_en_mask)));
- 
- 	mutex_lock(&data->update_lock);
- 	value = dpot_read(data, reg);
--- 
-2.50.1
+The resolution in [1] is the one I came up with in the drm-tip tree.
+
+I should probably have given you a head-up on this conflict, sorry for that=
+.
+
+[1]
+
+diff --cc drivers/gpu/drm/nova/file.rs
+index 4fe62cf98a23,7e7d4e2de2fb..90b9d2d0ec4a
+--- a/drivers/gpu/drm/nova/file.rs
++++ b/drivers/gpu/drm/nova/file.rs
+@@@ -39,8 -36,7 +36,7 @@@ impl File
+              _ =3D> return Err(EINVAL),
+          };
+
+-         #[allow(clippy::useless_conversion)]
+-         getparam.set_value(value.into());
+ -        getparam.value =3D value;
+++        getparam.value =3D Into::<u64>::into(value);
+
+          Ok(0)
+      }
 
 
