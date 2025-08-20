@@ -1,111 +1,86 @@
-Return-Path: <linux-kernel+bounces-776814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF71B2D1BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:04:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3350B2D1BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D5EC52474B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DA06524873
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3488127C154;
-	Wed, 20 Aug 2025 02:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA1327F724;
+	Wed, 20 Aug 2025 02:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dJYs5NyH"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="aSlIru3f"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CAA27B35D
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C24027CB35;
+	Wed, 20 Aug 2025 02:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755655491; cv=none; b=rAjG7ci4/f9oQ76JEZjFtM/nmtABlzT09nTF2outWa1H/b8bhNjWrMK5eREXHw3KQ5WPlzSL3O9DdXATxjTDEnxAzhZmJ4vX/r9c12wx0q6B3ZSF+GAsV6hB/zWbGlf2JvRLyF/srJZEDyZu4LcIb9LiKvL3neHdt9/jz+V0Gww=
+	t=1755655522; cv=none; b=NKQIbHEOAxaV9fXjquytXYIiQNRATGltACCZhVE3tkY8ir0Rzg9v1IZn6YzpAvot15zVZ8EylxXE32ZfgiZRl9cKt/vFCWk7fMhU7LwoiOcvgPQ42cbcPY8SuF/b9KpxMsOxymuO9DgsoKMaqp1p/YQQYiY5hClEU12rNZuxY6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755655491; c=relaxed/simple;
-	bh=zEpVahfh535VfqbCsd1GZhquq+XM/4DWjCgCN7dt7yM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KB0A/ETyG8YQIq7I/qll8BNEIruRpY5wNeXVTuod53Y8X6BDfnUqD4Vdl5EtG9yOarivQUgQNLV1FQj4icB6q2JB157Ld0P4Brck0qBbyqm/HA8OLGBY5Q6xJjMdqeMVib3Tt6TpvoXIGTq0qKggVtaRCXyCNlFaHk17/c0TVd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dJYs5NyH; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32326e69f1dso6338324a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 19:04:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755655489; x=1756260289; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OVU8t8SEuGg2Ydf4TYKXUzr0Gv6gJe9s60zdvfLEhYg=;
-        b=dJYs5NyHxS03Ygxh0L2H2MNFT896tcRDXIrQT/8C1+FcaYLVKrz419/IilI7Oah9uQ
-         k2wCRNmUObuDEt5MZT6PlN1Df3BskVzgeYV7JSifK3H0SfHIQU8Ap3hYVkIYcXmjmjLy
-         MHmXRIpwp1MNJi43Ard5hwZrW+09nJb9ZyQHs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755655489; x=1756260289;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OVU8t8SEuGg2Ydf4TYKXUzr0Gv6gJe9s60zdvfLEhYg=;
-        b=o+eOjPaPShRHBr1G//rOoXiQU7go5SXZA7Ku9+Q0TpKwpvzLDqfHnCpeXJIDc5tshH
-         OfVzJG177n4ljedPHh9k3+bHMtYPhMpWW8WiOrehe1M878Sy9wX/2H1cfAG24dRhiwBV
-         XUl+pZYqIugUZHd8wx+g4TrWcUrhO0m7qW6TtNsMbSkc221ieWhXoDmB+uX7ShMABlA6
-         ppwpnVtqbzFmQISMjcFCft9v6d1ZOn6Lyvpm+M28BfSqC8hN5O1PftfU4pm1MTjd+WHI
-         8g1NJI5ApVY03SH1oydofGVkvaetEWFsqaRjbrt/3LGeas0km5TiZZbMTUXY/o8HLCsX
-         AWOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlYvSZIts9i73DwmeUX/hRSngQOTsRfZuynO9eZ5FeqzNBSvy0g+rCXhq0Yk7HKayf18uhpywpvw4T1vo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaRNpU5bR3SsGa1WkHwBzaUx4/FEK/rqUlo2YvLHaFUOF8jG3g
-	NcbF1HT+fRhaT6rWrrvheVH4QndZNYj9Uj+U3gJsPME1dwHg+sJz+96xxPgJeLa3pQ==
-X-Gm-Gg: ASbGncsubACo31FtueZlDMhrRa1Q2GRW6l40OCHY8+O3wTRoR33mpffPlu1aOWkHOJ+
-	vE2Ui1qwXz++Z4rFolJdEALXA2uYM5Ss5IpPBouI0Yki4wnM2jz9kUX6yL6ivMOZ65K4aMFYbaH
-	fO2LkpS1Q3ths1At3856nS9HiohB29c9VntgU3ofmCCmbEqGtdriatWKNT7E9dvx/Ima/UkwpkK
-	sYrAQgi6jNqE4S9+Am7uJ3I154hXXUWip84jUnRMx5fQwvgjNNgXhphRGTnbLUi/ppMOrmRK3/j
-	gJeJzoWgbuozAtAsrQG1uvIq7aP2R2bBnzA7sdPkz8zX5JDCBOIYQ0tcM/zkW5RCG9NY2t6H6GC
-	aww6R355cIv4HL9CRYFy35SkNSA==
-X-Google-Smtp-Source: AGHT+IHxv8AzQbZlnNl7yEBNhn//58P8cBNzw6MHuveKMqkiuqUA2DnZVcHCsQ6yHpB+x73iCeJGzA==
-X-Received: by 2002:a17:90b:3945:b0:321:81a7:775 with SMTP id 98e67ed59e1d1-324e142a186mr1457487a91.25.1755655489508;
-        Tue, 19 Aug 2025 19:04:49 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:3ff5:e488:6024:dadb])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324d335c4f1sm1601815a91.11.2025.08.19.19.04.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 19:04:48 -0700 (PDT)
-Date: Wed, 20 Aug 2025 11:04:44 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Pavel Machek <pavel@kernel.org>, Tomasz Figa <tfiga@chromium.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PM: dpm: add module param to backtrace all CPUs
-Message-ID: <afspavnfnnhyttvxmcgdl76jwpawqp7v7g7dd5bnjfc3vv3hg7@g3zey3r3zqc4>
-References: <20250731030125.3817484-1-senozhatsky@chromium.org>
- <CAJZ5v0jAdsyHKsfRtW+Crh_aDY_uryvNekTBivcdPVGAL4UyPQ@mail.gmail.com>
+	s=arc-20240116; t=1755655522; c=relaxed/simple;
+	bh=X9NTX1SzBwgkZdilljkAHG6X9Xk/OANUE6ryZG11rCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=OlblxYef6cAfjJZK9slKEJmGxO5KRFDsF3BfLZnIXwhd9UoO31jZAQyJacVTYRbef3Ri6+YDDzIv9iqie204OaCnCTgUP8s26+VJmSuBfnsuH9+VEsoYmlREXnv1R8WgNNJ1G0v40S1NPgE/jLd/g6MzYF8EzOygSn0D6eLoHdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=aSlIru3f; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cUUe9dsY9MAIPqES7FFoDEA5qENhhjh9/kZ9Y8+L7+o=; b=aSlIru3fW1j+J8J3bjg4SlMHAI
+	MjTEyeuCR8Brk/mXk0QLUVIPHSnnFqxxsZyIGDNnFqt1pXsmgGSjhPbUtqgdOGDhLViRkINT0Q2Ff
+	EvMDL3qTIY9ffqy2lqWONTBuhgjHIWgC0vOK5CFZtHvSkgXxgHKd2PXQAFwdUlSrszi619JcA7rgl
+	64AeW5bzkz4O9+RCc5KXzM8CgP2gaYTShlflxww+fJ4sTI47psbeXWP5WIPvmCHBowVkVyycDyUXl
+	bneFLsRsg73jo8xANwvZzWheSF3NOd8ajyAGFw0KVZF0mXpFJ671KA/82XDlAPHQTiGweZwRR6Don
+	ntb8YA0A==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uoXwo-00FgHU-1a;
+	Wed, 20 Aug 2025 10:05:03 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 20 Aug 2025 10:05:02 +0800
+Date: Wed, 20 Aug 2025 10:05:02 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: "Masami Hiramatsu  , Google" <mhiramat@kernel.org>
+Cc: olsajiri@gmail.com, menglong8.dong@gmail.com, mhiramat@kernel.org,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	hca@linux.ibm.com, revest@chromium.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next v5 1/4] fprobe: use rhltable for fprobe_ip_table
+Message-ID: <aKUtTpAYaMdNgj2a@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0jAdsyHKsfRtW+Crh_aDY_uryvNekTBivcdPVGAL4UyPQ@mail.gmail.com>
+In-Reply-To: <20250819111111.40f443fd7faae8e92f93beaf@kernel.org>
+X-Newsgroups: apana.lists.os.linux.kernel
 
-On (25/08/19 21:35), Rafael J. Wysocki wrote:
-> On Thu, Jul 31, 2025 at 5:01 AM Sergey Senozhatsky
-> <senozhatsky@chromium.org> wrote:
-> >
-> > Add dpm_all_cpu_backtrace module parameter which controls
-> > all CPU backtrace dump before DPM panics the system.
-> 
-> This is exclusively about the DPM watchdog, so the module parameter
-> name should reflect that.
+Masami Hiramatsu  , Google <mhiramat@kernel.org> wrote:
+>
+> Good catch! Hmm, previously we guaranteed that the find_first_fprobe_node()
+> must be called under rcu read locked or fprobe_mutex locked, so that the
+> node list should not be changed. But according to the comment of
+> rhltable_lookup(), we need to lock the rcu_read_lock() around that.
 
-I thought dpm in dpm_all_cpu_backtrace explains that.  Should
-I rename it so something like dpm_watchdog_all_cpu_backtrace?
-Any better suggestions?
+Just as is the case for RCU in general, rcu read locks are unnecessary
+for rhashtable if you already hold the write-side locks.
 
-> Also, it is not quite clear which module this is going to belong to,
-> so a comment with this information would be helpful.
-
-Ack, I'll add MODULE_PARM_DESC().
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
