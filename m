@@ -1,104 +1,106 @@
-Return-Path: <linux-kernel+bounces-777035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FDAB2D451
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:52:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73056B2D454
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C7BF2A791E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:52:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E17E3BF456
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5742C21E4;
-	Wed, 20 Aug 2025 06:52:13 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C452D12F5;
+	Wed, 20 Aug 2025 06:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ZVRWyZM+"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5019217F27;
-	Wed, 20 Aug 2025 06:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ED42797AE
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755672733; cv=none; b=FLDwgTfdbdUzocKTLY5I0oO3eSV5FT8TocR2Rup5sCeuXNKn3JDeACxkJ0/qDj8SjxRmMo3a3WHoqJ1QgGKUmkhfbNIvBcU7Hv9Dpw8vcdZIX1+4pf8J7HqQL20baXlkric9XycW5TZ5DfHBtgVA4wZ/1HAR0Bjogi/YY9Z6TBk=
+	t=1755672770; cv=none; b=ajaUcuRjdvycgo/COzhjW78ltfvSa6X09KFvFrothZAC64zOl/Nj1RBKkAZfHIjjF46LhFa9oPXa5Q7TrV6EIueoIKZKWIHq2gIwOp/ntRBLfCxVRawfL+T7Fk/P8GA5Y+KPbBf7Vu+vqnLh+Uihwe0iJPbY1Q9UMl4NVh9vhLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755672733; c=relaxed/simple;
-	bh=lftg13XEh+sVNwkBhLmMfjNGdF9EO0ZzzIRQu3aI6rU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Hqh1PxawCnEtQfeTQVLiLoHTTvMXumynvvwoTfNrWbj1vrWl5dkorKuqSU4C/QSsI0kfn7f6LViOvBg/z5rN4JzZrtvKoJrDru957NzhEtuX0Nrmf1Rh3ZL0BHbWlcZ3GjpUpPI5hn8taKM2r0AMjT2xsyoUj6dSzvll4X+G7as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c6H7h0Gf5zPqcX;
-	Wed, 20 Aug 2025 14:47:28 +0800 (CST)
-Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
-	by mail.maildlp.com (Postfix) with ESMTPS id DD612180080;
-	Wed, 20 Aug 2025 14:52:03 +0800 (CST)
-Received: from [10.67.109.184] (10.67.109.184) by
- kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 20 Aug 2025 14:52:02 +0800
-Message-ID: <8b836b6e-103a-41c2-b111-0417d8db4dce@huawei.com>
-Date: Wed, 20 Aug 2025 14:52:01 +0800
+	s=arc-20240116; t=1755672770; c=relaxed/simple;
+	bh=8KpNSuplwGzUxo+pl/kaST7GJG3ijoRwu/q/QBQCOQM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LO8u9UwQbogG+ET7ABT2t8R2v4CP6NzmK6g93SalRfFm0KCu2dHXQPxaLvGcLE6tJCQ5tCWp16CDDFFOaooKeZs+fyIjhyECcTjVlyGpEXanRXDG7GoUrhRqex3s7X0h7/4Mk7FQ8VXjWL4htNh/sPGWwe5Kh0ErtiNWUPb86T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=ZVRWyZM+; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b0fa7ed37dso6287101cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 23:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1755672768; x=1756277568; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=50jwrZQGjSslyTyuIwE+ZuameHGuXlZuSBPYcNv7KGE=;
+        b=ZVRWyZM+Bu0wsEu0yNCXSetYI+iD1L2DQAO0g2CrR+UQrKK/Y3iQnDtBMvLlPu3AKM
+         6yCcontr7PhcI6qbkfRLciQtaBFBp4xy2mISvv5zJHH7qsAyBGf3tuf8ZIkTuc+twaRa
+         JTHRpDfpLrij0ap5ioA1LZbxA+vnwXcCrWPsQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755672768; x=1756277568;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=50jwrZQGjSslyTyuIwE+ZuameHGuXlZuSBPYcNv7KGE=;
+        b=u3s0Gl/1eMNNiwuP3yVIJQjKA9Yl1b8N8Cu4mqjpaMptVLPB5rlVzuM2bVfk4H6epj
+         rZ2Q9qWEIPmpe35670NV3uUP/VlBWQo2/9egbaQjcp3u60qSbdc63scc7jMHhf1eihKn
+         onTwMNjpLYhjJDy85NsakIaGDiW8jHwntW/Cl0IyGP/PYHhtzfrExKD6yNLzaRLrmbh8
+         QYDOp/XTwXfQsf0YhnGhUYnXx8ng4fczqZpdfM+Uo/Fnr/GjyW/xhKihP36kmmlz8+dI
+         HzRyHqLOwwbqmWIUngY8mo+GcKnN2WVmobhxPl9sET2p+qyk0diPDimuZxvsldSk33IZ
+         sHrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXA63rtNTCOPovxjFem0ieLy0niOo8fnDH0sN+f78ckOoPo4gamdsGyS3VvojNpNDPHUgSXgzx6QptP/r8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwixVaWkvZ7zclb7f6tP2Y7ht3nQm+m1tGNKRqr4EedGmViDx0U
+	G0b223ODfk1tWHgnnDkXOVC9IqVcEeDsDbrQBXiHztORQCeB9L+eH701shrfQYMvWBJ2bGzieOo
+	mISQgokywbJty4CXPOWsnjjje26NJ4l3ItKr8SqJplw==
+X-Gm-Gg: ASbGncufGt/SYF9fFhnS0W4gBfhov5rfEhj62Xv/EZZy2ZsOf4A3XgB8bJn2LtzNkFp
+	MOdVW5GYavqhZptHKFKkmrc9BQ7fUJ/Ug712yM/0zaSYu7vo5YCaX4/juT1qAOH7jxORVvV9/An
+	CiGUyZLoVZAg1+jkvmImB5iUkD/YiJS13mapP4dM23Af7aCnZvfqO+UOPG8E8TR+aHK7gZ1dCCk
+	VxYt2NBRQ==
+X-Google-Smtp-Source: AGHT+IHMMLFegyAHtkHM39XKsIT7CwuHtFQVVR0IPD+S1rOAm1yFvIpYjEgCtH8dZpenVWW8VUPUG0GfQjanDxMFd38=
+X-Received: by 2002:a05:622a:146:b0:4b0:769e:42e8 with SMTP id
+ d75a77b69052e-4b291245817mr17863531cf.29.1755672767783; Tue, 19 Aug 2025
+ 23:52:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: bpf: Fix uninitialized symbol 'retval_off'
-Content-Language: en-US
-To: Chenghao Duan <duanchenghao@kylinos.cn>, <ast@kernel.org>,
-	<bjorn@kernel.org>, <puranjay@kernel.org>, <paul.walmsley@sifive.com>,
-	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>
-CC: <daniel@iogearbox.net>, <andrii@kernel.org>, <martin.lau@linux.dev>,
-	<eddyz87@gmail.com>, <song@kernel.org>, <yonghong.song@linux.dev>,
-	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
-	<haoluo@google.com>, <jolsa@kernel.org>, <alex@ghiti.fr>,
-	<bpf@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250820062520.846720-1-duanchenghao@kylinos.cn>
-From: Pu Lehui <pulehui@huawei.com>
-In-Reply-To: <20250820062520.846720-1-duanchenghao@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemf100007.china.huawei.com (7.202.181.221)
+References: <CAJfpegsz3fScMWh4BVuzax1ovVN5qEm1yr8g=XEU0DnsHbXCvQ@mail.gmail.com>
+ <20250820021143.1069-1-luochunsheng@ustc.edu> <20250820052043.GJ7942@frogsfrogsfrogs>
+In-Reply-To: <20250820052043.GJ7942@frogsfrogsfrogs>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 20 Aug 2025 08:52:35 +0200
+X-Gm-Features: Ac12FXw2UXnjG3CcysEUnSzytZykEIInMtM4kPoHI69C9Q7SHuaQEOwDwiyPNBY
+Message-ID: <CAJfpegtXUekKPaCxEG29SWAK0CTz-fdGvH=_1G5rcK9=eHt6wQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: clarify extending writes handling
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Chunsheng Luo <luochunsheng@ustc.edu>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 20 Aug 2025 at 07:20, Darrick J. Wong <djwong@kernel.org> wrote:
 
+> I don't understand the current behavior at all -- why do the callers of
+> fuse_writeback_range pass an @end parameter when it ignores @end in
+> favor of LLONG_MAX?  And why is it necessary to flush to EOF at all?
+> fallocate and copy_file_range both take i_rwsem, so what could they be
+> racing with?  Or am I missing something here?
 
-On 2025/8/20 14:25, Chenghao Duan wrote:
-> In __arch_prepare_bpf_trampoline(), retval_off is only meaningful when
-> save_ret is true, so the current logic is correct. However, in the
+commit 59bda8ecee2f ("fuse: flush extending writes")
 
-lgtm, and same for `ip_off`, pls patch it together.
+The issue AFAICS is that if writes beyond the range end are not
+flushed, then EOF on backing file could be below range end (if pending
+writes create a hole), hence copy_file_range() will stop copying at
+the start of that hole.
 
-> original logic, retval_off is only initialized under certain
-> conditions, which may cause a build warning.
-> 
-> So initialize retval_off unconditionally to fix it.
-> 
-> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
-> ---
->   arch/riscv/net/bpf_jit_comp64.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
-> index 10e01ff06312..49bbda8372b0 100644
-> --- a/arch/riscv/net/bpf_jit_comp64.c
-> +++ b/arch/riscv/net/bpf_jit_comp64.c
-> @@ -1079,10 +1079,9 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im,
->   	stack_size += 16;
->   
->   	save_ret = flags & (BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_RET_FENTRY_RET);
-> -	if (save_ret) {
-> +	if (save_ret)
->   		stack_size += 16; /* Save both A5 (BPF R0) and A0 */
-> -		retval_off = stack_size;
-> -	}
-> +	retval_off = stack_size;
->   
->   	stack_size += nr_arg_slots * 8;
->   	args_off = stack_size;
+So this patch is incorrect, since not flushing copy_file_range input
+file could result in a short copy.
+
+Thanks,
+Miklos
 
