@@ -1,92 +1,184 @@
-Return-Path: <linux-kernel+bounces-778217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F01EB2E2A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:50:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3ECB2E266
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C1C45A4BD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E3B85A8420
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E9D334389;
-	Wed, 20 Aug 2025 16:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C24327794;
+	Wed, 20 Aug 2025 16:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfkjQSOV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P25E8I0+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179F013B58D;
-	Wed, 20 Aug 2025 16:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72497322542;
+	Wed, 20 Aug 2025 16:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755708623; cv=none; b=l8vOuwrClDIdiQC42MOi3UMIkts7NWjCSVURdPlRwVirdQljfPsSea1NT0gIbSSppxk/70f4UM1yQKPf9t1Js1nJjp/+qsb12rmxE0RCoyz21h36wkIneSzJvGWCYJGpqXJ4/VtbSey2FK4fVn25m3CZKlC5Dl9mR4iQv6LdFKc=
+	t=1755707664; cv=none; b=LAhmA2/UBVrlBXAnRt2EW2wXJVZjDVvcioWbDrS8Acwg2o9eS04SM4ssJgw20BxGgOGAJjEdimgPnkK7kSZbVwxVP2p3clL6ysmtj/6ViEm9eyFfAyiYNpj2Dvu09NQ6xr2jA52foMvipAtMx9X1gV8AA+JrvyRCZ2RopGfz1BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755708623; c=relaxed/simple;
-	bh=CtbPTX7io4A3Gz773g0fcOqxjCbVp6eJsQ6NMB+qqN8=;
+	s=arc-20240116; t=1755707664; c=relaxed/simple;
+	bh=1SmINIXApk/rDoKKx82uVKPJSOdJg4DUAj+yAYn/Qlo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lED2HXxKMbbIk0Ae+d4b7CI2Skzu1OXbcbx257tn5wCTEhgGWeHe4+Kt4LZn8+/eFLSSei6FbgT/B6Zb++21fPv1cwbfF8XV27WLhquGoAhJ5ugDyFL38VWuqt3Ufcbhm2Zcgt3tbmeluxuU/6Hn23FjBIURLJL6HMnpi+OZwIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfkjQSOV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A49CAC4CEE7;
-	Wed, 20 Aug 2025 16:50:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XgAeFoGalmUW6FkNkHNFH+CF38+/k+2+OslOoI2P7O5sCdIttNj3CgT2jg+WnFjQkvE8IXpmGIinzYmYjjX4cJzuw2vOqRRcc2AIRzBt/yCDym24se2HsGQPXavSUKNAi9HhJyVeOmkMebvOmR4hzEUO0qqMXYnPB4az7kiBfkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P25E8I0+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12721C4CEE7;
+	Wed, 20 Aug 2025 16:34:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755708622;
-	bh=CtbPTX7io4A3Gz773g0fcOqxjCbVp6eJsQ6NMB+qqN8=;
+	s=k20201202; t=1755707664;
+	bh=1SmINIXApk/rDoKKx82uVKPJSOdJg4DUAj+yAYn/Qlo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nfkjQSOVZ3kCT0Y/Ex1hFMpGO9+3OIBpWKvnbNqBte3J4Ae+8lZN6Fv6EY9Oxat/w
-	 NedTgQzXwb5JcQEde2pRZpK3SdF8jVBJJ+rwEbsW9N/OfA8Y5DnKQVwL6qGVqND3Ru
-	 upoqfFiHb/SejQN+/U+6PT8L0WK6vu0oULm9JrBn4tYOzZBpw58gKYwADNwb7CnLA9
-	 xBSe3CUv4uTvcORhuoq3H7+0bwMvAz4i9VjDo3v+3KKVdcGjdklM0bpt91QcdK9ioq
-	 DWnpWESUCrSvBx1cyqrZdHEg8H2TORAMhJdVwC/TLmrS0SlxNDXXWMEx93MDL54Os+
-	 ks8yAuotHcC2A==
-Date: Thu, 21 Aug 2025 00:33:08 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 1/2] i2c: designware: Avoid taking clk_prepare mutex in
- PM callbacks
-Message-ID: <aKX4xEYE29JC_g14@xhacker>
-References: <20250820153125.22002-1-jszhang@kernel.org>
- <20250820153125.22002-2-jszhang@kernel.org>
- <aKXyVvFOvpsaAEAB@smile.fi.intel.com>
+	b=P25E8I0+N9soufsYxe6o1473U2YqA0vAMqaUeSoWcBvu3nz5DZxu7YpXwArUa4dp0
+	 C7Q6nq6HFLweUc1x7FKbAmYPsTJ5jDweX7ErKBDU4+icafh84YyWVK15Sw2vHUYiC6
+	 8ZqdFgzXHrNG7BHasTre09//Aj7CKO/ttOudvO3EuFyZ4ec0jiJGif3jRkX5ILY2LT
+	 fL08dCXQdRS+OX8ZFs0TBKqYE4KuiU2LxRWv0gQZoBOXWArDZq3PF6PH1gnf0SpbtB
+	 6DS4v3H30/RNHz9TM4IsQaXcLzZT4Yzat4gRjTj8fA1MDDSzZCUCgZzI8PaClHTGSG
+	 fmaMdfOtn9TtQ==
+Date: Wed, 20 Aug 2025 22:04:19 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
+	William Mcvicker <willmcvicker@google.com>,
+	Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 1/2] phy: add new phy_notify_state() api
+Message-ID: <aKX5C9Xlx2CSJraY@vaman>
+References: <20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org>
+ <20250813-phy-notify-pmstate-v3-1-3bda59055dd3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aKXyVvFOvpsaAEAB@smile.fi.intel.com>
+In-Reply-To: <20250813-phy-notify-pmstate-v3-1-3bda59055dd3@linaro.org>
 
-On Wed, Aug 20, 2025 at 07:05:42PM +0300, Andy Shevchenko wrote:
-> On Wed, Aug 20, 2025 at 11:31:24PM +0800, Jisheng Zhang wrote:
-> > This is unsafe, as the runtime PM callbacks are called from the PM
-> > workqueue, so this may deadlock when handling an i2c attached clock,
-> > which may already hold the clk_prepare mutex from another context.
+On 13-08-25, 16:00, Peter Griffin wrote:
+> Add a new phy_notify_state() api that notifies and configures a phy for a
+> given state transition.
 > 
-> Can you be more specific? What is the actual issue in practice?
-> Do you have traces and lockdep warnings?
+> This is intended to be by phy drivers which need to do some runtime
+                    ^^^^^^^^^^
+Missing 'used' possibly? 
 
-Assume we use i2c designware to control any i2c based clks, e.g the
-clk-si5351.c driver. In its .clk_prepare, we'll get the prepare_lock
-mutex, then we call i2c adapter to operate the regs, to runtime resume
-the i2c adapter, we call clk_prepare_enable() which will try to get
-the prepare_lock mutex again.
+> configuration of parameters that can't be handled by phy_calibrate() or
+> phy_power_{on|off}().
+> 
+> The first usage of this API is in the Samsung UFS phy that needs to issue
+> some register writes when entering and exiting the hibernate link state.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  drivers/phy/phy-core.c  | 25 +++++++++++++++++++++++++
+>  include/linux/phy/phy.h | 19 +++++++++++++++++++
+>  2 files changed, 44 insertions(+)
+> 
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 04a5a34e7a950ae94fae915673c25d476fc071c1..60be8af984bf06649ef00e695d0ed4ced597cdb9 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -520,6 +520,31 @@ int phy_notify_disconnect(struct phy *phy, int port)
+>  }
+>  EXPORT_SYMBOL_GPL(phy_notify_disconnect);
+>  
+> +/**
+> + * phy_notify_state() - phy state notification
+> + * @phy: the PHY returned by phy_get()
+> + * @state: the PHY state
+> + *
+> + * Notify the PHY of a state transition. Used to notify and
+> + * configure the PHY accordingly.
+> + *
+> + * Returns: %0 if successful, a negative error code otherwise
+> + */
+> +int phy_notify_state(struct phy *phy, union phy_notify state)
+> +{
+> +	int ret;
+> +
+> +	if (!phy || !phy->ops->notify_phystate)
+> +		return 0;
+> +
+> +	mutex_lock(&phy->mutex);
+> +	ret = phy->ops->notify_phystate(phy, state);
+> +	mutex_unlock(&phy->mutex);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_notify_state);
+> +
+>  /**
+>   * phy_configure() - Changes the phy parameters
+>   * @phy: the phy returned by phy_get()
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index 13add0c2c40721fe9ca3f0350d13c035cd25af45..664d0864c3a5042949cb121e982368fe0a97827f 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -53,6 +53,15 @@ enum phy_media {
+>  	PHY_MEDIA_DAC,
+>  };
+>  
+> +enum phy_ufs_state {
+> +	PHY_UFS_HIBERN8_ENTER,
+> +	PHY_UFS_HIBERN8_EXIT,
+> +};
+> +
+> +union phy_notify {
+> +	enum phy_ufs_state ufs_state;
+> +};
+> +
+>  /**
+>   * union phy_configure_opts - Opaque generic phy configuration
+>   *
+> @@ -83,6 +92,7 @@ union phy_configure_opts {
+>   * @set_speed: set the speed of the phy (optional)
+>   * @reset: resetting the phy
+>   * @calibrate: calibrate the phy
+> + * @notify_phystate: notify and configure the phy for a particular state
+>   * @release: ops to be performed while the consumer relinquishes the PHY
+>   * @owner: the module owner containing the ops
+>   */
+> @@ -132,6 +142,7 @@ struct phy_ops {
+>  	int	(*connect)(struct phy *phy, int port);
+>  	int	(*disconnect)(struct phy *phy, int port);
+>  
+> +	int	(*notify_phystate)(struct phy *phy, union phy_notify state);
+>  	void	(*release)(struct phy *phy);
+>  	struct module *owner;
+>  };
+> @@ -255,6 +266,7 @@ int phy_reset(struct phy *phy);
+>  int phy_calibrate(struct phy *phy);
+>  int phy_notify_connect(struct phy *phy, int port);
+>  int phy_notify_disconnect(struct phy *phy, int port);
+> +int phy_notify_state(struct phy *phy, union phy_notify state);
+>  static inline int phy_get_bus_width(struct phy *phy)
+>  {
+>  	return phy->attrs.bus_width;
+> @@ -412,6 +424,13 @@ static inline int phy_notify_disconnect(struct phy *phy, int index)
+>  	return -ENOSYS;
+>  }
+>  
+> +static inline int phy_notify_phystate(struct phy *phy, union phy_notify state)
+> +{
+> +	if (!phy)
+> +		return 0;
+> +	return -ENOSYS;
 
-Regards.
+Should be -ENOSYS either way, right?
 
-> 
-> AFAICS it seems related to the bus recovery mechanism. Is this what you have in
-> mind?
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+-- 
+~Vinod
 
