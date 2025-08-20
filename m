@@ -1,102 +1,108 @@
-Return-Path: <linux-kernel+bounces-777617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099A4B2DBD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:54:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46053B2DBCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2CD7188E0EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5C4F7215B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43362E7178;
-	Wed, 20 Aug 2025 11:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="F3r7A2l8"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0032C2E613B;
+	Wed, 20 Aug 2025 11:54:02 +0000 (UTC)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C72C1ACED7;
-	Wed, 20 Aug 2025 11:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690852; cv=pass; b=W5Zn+V4qqQ4PPaoLy67WuROcl9npCyML+qq4zBy40WQ/i4pC+90jhsaOe/L4bpt1Pf7aIFFYTn4Vh9kxT8cw+525lw2uQE4+cg0OWTCq6OeW24UfaAfPMo9dYM2LW85VnFxZ/WxJaL0ewtHsTiLsHzj1n29Xyxngu+ERsyYUOiA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690852; c=relaxed/simple;
-	bh=QE3RL+5Xhpp9wP3bUWghKuI9Z1KJ+Taaxn+LmcWtcXU=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=eyOuct90WPTf+kUs6dOTj7LAZO58fJjwmSqAM8z4WuD2BBYp+D/adM0C8Hpgi9zCRvEXpEb69dHU8BJZY8f03zudxQ5VScxxi6ZfjVkhbjftIIXskxTiG/LNmoqJkA5ZqrdP+//IyNaV7XeoHtJUQM0Z3dYFHIeuIEfe4Ebov4E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=F3r7A2l8; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755690824; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=d1wsPUhTDxNDGmMqav7AGfIeLP3DO96Ui0RCHMOcky8/JRxu9UB9xyM7raHE2qxc9u0pzV51FpAV5gNyJ36lAFVvtFh4rolqFmFMlmcu/i1duIscuDcV01yMn6iy4A4UefTU8jfWkYdCRc38FTmSBPZeoxSVb7DZEcytXyQLmic=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755690824; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QI1kAdmfGcNT+wdNrzq4R6c3p8F9w78AD4YJwFXjfL4=; 
-	b=W1uQiJ+F927AQfFCeVF3dxkXJSyiJ9LsySXbHsrRkv7K+mhHb1L5A8JGoSRK6zjdWh9/2vMcRa0dS5+uZNE2ENd6u7gWZdWs+/gVTwbWxQAgIAgGe+D3YWoDbGzoiq1D8ErmSTrxX3jcqKoTzgW10+kePpsTdCG2FJ3RJHHE5qA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755690824;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=QI1kAdmfGcNT+wdNrzq4R6c3p8F9w78AD4YJwFXjfL4=;
-	b=F3r7A2l8jhBHn6BvOyWElJ6fi7AyfbsZ/KOjb4jsKzfp7lXZn3DfuQRusS4hH69H
-	V7vgVeJVEQCWJvzgJWo2mSg14xxnfeYM1VhIqKGamuacoAQeOT8F9g2EjVW6e+PBufC
-	SEzK4bTxM6JGLyvLqNj28ZKKjLAXgc9RjtsAYgB8=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1755690822547169.44702397528795; Wed, 20 Aug 2025 04:53:42 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Wed, 20 Aug 2025 04:53:42 -0700 (PDT)
-Date: Wed, 20 Aug 2025 15:53:42 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198c753eb85.10c26821075264.8127819840821026944@zohomail.com>
-In-Reply-To: <2025-08-20.1755686261-lurid-sleepy-lime-quarry-j42HLU@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <20250809-new-mount-api-v3-7-f61405c80f34@cyphar.com>
- <1989d90de76.d3b8b3cc73065.2447955224950374755@zohomail.com>
- <2025-08-12.1755007445-rural-feudal-spacebar-forehead-28QkCN@cyphar.com>
- <198c6e76d3e.113f774e874302.5490092759974557634@zohomail.com> <2025-08-20.1755686261-lurid-sleepy-lime-quarry-j42HLU@cyphar.com>
-Subject: Re: [PATCH v3 07/12] man/man2/fsmount.2: document "new" mount API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7EB1ACED7;
+	Wed, 20 Aug 2025 11:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755690841; cv=none; b=AlLCcSAD/1QZCH/i1YsqF5DZWikjxM56GoXsi9CMapZtvFIwhxRw9MLIdHvTCpSU1+KnpLM1O+/04QA5T44+AMf0DtlJb0U5Hnr0yUA9PWj58rKC/9gEJ2HhQXMvp21KfdLGD/kse8xBSGeOC1Z2jKfvel5hMyhlGIn4S5DIGJE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755690841; c=relaxed/simple;
+	bh=QB2MQQNMFoetjcWtVJa01/TbjbCGv33M0NSGAkUVdDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jdz1BJqUuMhFK1ndMiJcvHaH84UItnDgoWIBJdOXsVykrBmJpeYU9un8Hr5+3wVKCutSN79ifozjTEjisOw3uwh7ephzPrSB4KvFwVQEjGe0QaO4D8pFooNHCamdtA4gEg4BLDELQUeh+/JCRpkZ80gAkq2NWxXync8oPwGVQaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-53b175498beso2038322e0c.3;
+        Wed, 20 Aug 2025 04:53:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755690838; x=1756295638;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m3cC7wTIi41/+V4NnXvdgtBZ4b3AkkW1EoT+UJ7kYNI=;
+        b=jb5c2RRAUAiMdPfW1mQCsh7t9Hhu3zAPnYd5lIZ+aZfKUTnpEAhqMVy/6Idf2qvo+U
+         htONKwsPzUAyTRN0Y+Sn/XCck8c5Zwf3HUia0ShVu7nhsmDMjdCCU+wXM7fZnRDHCaIp
+         iOYqBfGL8hVPZSRFFS7MJ5pBVwIyNVzkZshWfVM8Dq9K7SQMSQyfiRXbLivmrXrIrxCV
+         JWIhPzY3rpfw3MNeBqbqmgpYW5jQBv4Siu4IXCGP0AerUJbT4k9TQGdnSV64bkO2X3DL
+         FF/50JelLcPFHEbEmKGQP+n+PgWCWrdj9x1iyVv7fNqWlgOzDAHPpccWB/4+HO+8Cf8S
+         jdPg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0capFRkvrRYQaMzUfMSmaoCUWtW4TXSVYl3EghOaT440sSHmbPGvup2bB7CCDWxikEmj+Zn89vHHc@vger.kernel.org, AJvYcCVNb6p7rTgIjBTAvHMbh9cfsB8kWTwPq3IMoaNMQSPt9qBuit5UYnaILgd7oOahfX6hj6xxwuJoFtYCd3/HLQopu4E=@vger.kernel.org, AJvYcCWx4FKcAPGxVvAliakvlvp5LjTTE8mNuXOBWTDlTcm1zhzyRrklLtCvTZ0YGMoR64x1npgCqh+3Pj0z3ws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR2hYS4jT9VokknkP64QxxR6mhAJsqQguhkLz7zalU3muydomX
+	hkVl3ra1ogV5H9yFtrOMOXnF0buEiWLYVh306/qn19Ky2G6lPJiF4WnTN/2ywvk6
+X-Gm-Gg: ASbGncs8PD7AgLn8YHjOtGbIeWq2J1j9iPIvXrSl/gLP5Cej3MJy2ZkEOJN81yykcxF
+	K1kPe98dfWbYuFmI7s/COPphNHVAPj/0OB6XsgohHZ4TxX6f3hsMmWzuysLIUPXJs8xEq/ZS9KO
+	Atq8BBcDBsE2CiZaAlDYsB6NDFOntRMdkuCLZ7qtNlTLyqyn4cEVZtuMpvvueUuPeptR7Huak2U
+	ShZPmBtb0e4sos2O2gC04Gip1yrkKzcFGbVF2BnGIQZZa+d7hJlcHQVjZ1HqSXlC3pop5ovT9p6
+	pSsLRDROl/EXZu7bcVCrF0pC14bgk8yU15yceILKeA/JmwOLIt/5LolykJ9j+y6iP0w2VjkLC4P
+	C6Kt30RgTSHpKnZhtSG36LDausHJ15FW1fRuAXz5yGQhFoVM5fqDZM3eFGG4y
+X-Google-Smtp-Source: AGHT+IHMJyUY1FE8eduW+KGDPzAoJndiJKgiMe2Q9+9Q34rmkDoRgfPsZ5ToKmlm1zIOjhnzBBZBWA==
+X-Received: by 2002:a05:6122:319f:b0:539:3b3c:617a with SMTP id 71dfb90a1353d-53c6d60edacmr747604e0c.8.1755690837665;
+        Wed, 20 Aug 2025 04:53:57 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2beff365sm3141144e0c.23.2025.08.20.04.53.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 04:53:57 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-50f88cd722bso1909834137.1;
+        Wed, 20 Aug 2025 04:53:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV2XVIVI6ERWjLAIyFhAD9TqTQ0/rg93LwfViwYDxMm4nKjAtT4RVw0vzjvkuEd8HgddilPzpxH2xQpIPM=@vger.kernel.org, AJvYcCWvCaUBAJXjD0UV06ig8Mw0ozFrYai/wlDqSFWKtIKYvRfgGSySLGVj+fQ2moCouM1BazgT5uBnq8MCqmG4k/dBkic=@vger.kernel.org, AJvYcCXXM/CyBpNRWP5hjcLbNDr+YCrMHGS55XmWZ3zSnEDleBCmy83nSGYwbDMOf1G6JS2vLc00oNHY2LZ+@vger.kernel.org
+X-Received: by 2002:a05:6102:290e:b0:518:9c6a:2c03 with SMTP id
+ ada2fe7eead31-51a52a18e04mr605179137.30.1755690836961; Wed, 20 Aug 2025
+ 04:53:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250820104808.94562-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250820104808.94562-1-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Aug 2025 13:53:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWeB2z6eax8gm2oO_X35Qm0+cg8NjoFutWMdfHKW-1DBQ@mail.gmail.com>
+X-Gm-Features: Ac12FXy_1UNUF7-0Y5wL5N-u8MrFdhGcL9qUsuwrmyT27ZsRX-Q_yUiNcVYzW1o
+Message-ID: <CAMuHMdWeB2z6eax8gm2oO_X35Qm0+cg8NjoFutWMdfHKW-1DBQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: host: renesas_sdhi: Replace magic number '0xff' in renesas_sdhi_set_clock()
+To: Biju <biju.das.au@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-mmc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr0801122723c7726d214c058bb706d0670000b4acc5212ff9e3d42d907a53aceef1bc2f847c914a98d5e146:zu0801122768410bec87a26549bb2b37970000b04b3e7f072a62d0a61e94999743faf58684bd37cf2236fbfd:rf0801122c37d12711bae2ca8e4f7f84210000fe188faa4866b06a0272b0623bab8f3b46040c29b92d259e00a7af51d553:ZohoMail
 
- ---- On Wed, 20 Aug 2025 14:38:48 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
- > The reason I wanted to include the comparison is that you can create
- > multiple mount objects from the same underlying object using
- > open_tree(2) but that's not possible with fsmount(2) (at least, not
- > without creating a new filesystem context each time).
+On Wed, 20 Aug 2025 at 12:48, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Replace the magic number '0xff' with CLK_CTL_DIV_MASK macro for finding
+> actual clock in renesas_sdhi_set_clock().
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Okay, you may write that.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
---
-Askar Safin
-https://types.pl/@safinaskar
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
