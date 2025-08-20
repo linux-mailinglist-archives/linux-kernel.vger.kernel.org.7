@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-777064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E4BB2D4AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:16:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C075B2D4B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82A024E4EAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:15:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC9A5560E8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7732D47F5;
-	Wed, 20 Aug 2025 07:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80B62D3A74;
+	Wed, 20 Aug 2025 07:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sx8dB9Pe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+Mg0cGN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ADB2D375D;
-	Wed, 20 Aug 2025 07:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA4827A925;
+	Wed, 20 Aug 2025 07:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755674140; cv=none; b=DXdjywLA2IH5aXcM+urHk0TjbQ8Q2ZJWk6EZVyKavY2XhFlwPAYrLHIq6MJAqINDdS4Q3WXozv3LFgdPsBgW2KOFwZ+z14hgwOBqFbUP4hc+Na5VvhcqWivgnxSOZbqPRInYzqYx/+KEoB82eGtKpavsz+32ZU5A1PtKbIcvApw=
+	t=1755674223; cv=none; b=Lu1epyEsRLX2a4b02vdoaWYpKvTaiBqvim7AfyYG4MsaPRZ9+YlYCS4tMkh+v+LVe3eZ47SkjCZRL6COvnzOsXM8BBqjPU/9F3c+wJkYXbH6lKZ3+VmNK+UZAsf0gsaqs+6AwXna1ou8njF+xx/1XDrGe/WWfiT28RJPMoOwnt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755674140; c=relaxed/simple;
-	bh=VUZK2MpAHgOKjVJ19+Bw5dSQafJ8hDSl6PCW3an6dGA=;
+	s=arc-20240116; t=1755674223; c=relaxed/simple;
+	bh=5QX32rJNvEnTDH9xV1QQy+bxz6g/HzsiTFIRBQBuJ98=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2HOQ8UsvLbAdmDTIxzlwwESoTeKgFmqqQUbwisr/JqC7Z6I0FzM6jmInZ1PnortTKylEWnVAYyykmMWLhf0WkD3vZrlwFCd/IxlSk/GkqQAmnHU4XCalywCjws3oSVQAcXCiWsUgNYh4zeQCtz2rU8PP1X0sTL1KcQ4XWooK1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sx8dB9Pe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56AD9C4CEEB;
-	Wed, 20 Aug 2025 07:15:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=psSdg3vUZDGFjTOF3zu0zIg+J+djoJ8AQhpZg8yHaBd/HHpvHv1My0I8lqIzMczbO5oKsMT0YRVNsU6iwBR3HUjrfD/yfTJ+MD0skQtk098X90DAR/DDJL9fE5LFy1bccH6ge0FYqqDfOuop47gbjhEnQrSxkpExpxE4Vo03aAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+Mg0cGN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EFEC113CF;
+	Wed, 20 Aug 2025 07:16:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755674139;
-	bh=VUZK2MpAHgOKjVJ19+Bw5dSQafJ8hDSl6PCW3an6dGA=;
+	s=k20201202; t=1755674222;
+	bh=5QX32rJNvEnTDH9xV1QQy+bxz6g/HzsiTFIRBQBuJ98=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sx8dB9PeWGSZSptzXrYkdKAPu+omWGi87iV7Xw1hJgw/Wq5qWmFmk8M0JSXuBU50P
-	 J7gY9snTH8/n7QZTUoeJCD2SySao8w30ErNueMapvrxBXavnb6r9uTnFkTgk/fzGob
-	 jzoq894mOGpg3VKGvLwR26HV4oxvOp9dm0FEr440za8iUcIS53GrDersOBPgHj9N3J
-	 s7UEYqcVLvDf5bVAvj8oUq1Sww8fhN+Szx2SaC+TBdqXzCtu6sygVFdGsyoPhu3qVm
-	 IhZB81QfYdtuNGdt+6l07jQBL0Pj3+BVEt7yhMmHrsf4e3cUirEcp/++PBl12RCSFc
-	 YuBfy7Vnl2Rzg==
-Date: Wed, 20 Aug 2025 09:15:36 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v2 1/8] drm/connector: let drivers declare infoframes as
- unsupported
-Message-ID: <20250820-artichoke-silkworm-of-election-521b5e@houat>
-References: <20250819-drm-limit-infoframes-v2-0-7595dda24fbd@oss.qualcomm.com>
- <20250819-drm-limit-infoframes-v2-1-7595dda24fbd@oss.qualcomm.com>
+	b=D+Mg0cGNBCCwxQQj2Tjgj8vdHuLmQ65VgO8Of2q/PXj28Ep11hlLnAUYzM8gGeT3I
+	 TvtUfcXRTnjvokClpW85XKTT8emnXz6gwpQjGIs7H3ZExlR+nY1E91PG4zDCoECDm9
+	 bgnZTITT9Ma4MHizmbzzMFEnb7J5q1d3k7Wr8pBPvZQEx8FkZOn9znRWvSK+egIPiu
+	 Fj6veHIhqOwnd6lFGtigpN8mWJqqZZDkkzYxVXXG9h9gp24MhGFH2HOVF32Mgad4ge
+	 jO/wXgd3+CbeS7EXPCFlTGhmX1ajCIUhsambS/u4VNVPAfhGCUeZvM0M/djR6azWqi
+	 CyIXvDVsr40+g==
+Date: Wed, 20 Aug 2025 08:16:56 +0100
+From: Lee Jones <lee@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Kees Cook <kees@kernel.org>, Anish Kumar <yesanishhere@gmail.com>,
+	Mukesh Ojha <quic_mojha@quicinc.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dmitry Rokosov <ddrokosov@salutedevices.com>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/21] leds: gpio: make legacy gpiolib interface optional
+Message-ID: <20250820071656.GJ7508@google.com>
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-11-arnd@kernel.org>
+ <20250819121907.GA7508@google.com>
+ <e9252384-a55c-4a91-9c61-06e05a0b2ce4@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ovoxo52sdrhbbtrx"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250819-drm-limit-infoframes-v2-1-7595dda24fbd@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e9252384-a55c-4a91-9c61-06e05a0b2ce4@app.fastmail.com>
 
+On Tue, 19 Aug 2025, Arnd Bergmann wrote:
 
---ovoxo52sdrhbbtrx
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/8] drm/connector: let drivers declare infoframes as
- unsupported
-MIME-Version: 1.0
+> On Tue, Aug 19, 2025, at 14:19, Lee Jones wrote:
+> > On Fri, 08 Aug 2025, Arnd Bergmann wrote:
+> >>  {
+> >>  	struct gpio_desc *gpiod;
+> >> +#ifdef CONFIG_GPIOLIB_LEGACY
+> >>  	int ret;
+> >> +#endif
+> >
+> > Isn't there another way to do his that doesn't entail sprinkling #ifery
+> > around C-files?
+> >
+> 
+> An alternativew would be to duplicate the driver and have
+> one modern variant and an additional legacy variant that
+> is only used on the few remaining platforms that select CONFIG_GPIOLIB_LEGACY and define platform data. See below
+> for the list of files that reference struct gpio_led.
+> 
+> There are already patches to convert some of those to
+> software nodes, and a lot of the others can probably be
+> removed, in particular the orion5x ones.
+> 
+> The leds-gpio driver with just the legacy interfaces left
+> would be a really small driver, and removing those bits from
+> the normal one would make that a bit simpler as well, but
+> there would be some amount of duplication.
 
-Hi,
+Sounds like we're between a rock and a hard place with this.
 
-On Tue, Aug 19, 2025 at 09:57:30PM +0300, Dmitry Baryshkov wrote:
-> Currently DRM framework expects that the HDMI connector driver supports
-> all infoframe types: it generates the data as required and calls into
-> the driver to program all of them, letting the driver to soft-fail if
-> the infoframe is unsupported. This has a major drawback on userspace
-> API: the framework also registers debugfs files for all Infoframe types,
-> possibly surprising the users when infoframe is visible in the debugfs
-> file, but it is not visible on the wire.
->=20
-> Let drivers declare that they support only a subset of infoframes,
-> creating a more consistent interface.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Will the legacy parts be removed at some point or do you foresee us
+supporting this forever?
 
-I'm not really convinced. Infoframes aren't really something you should
-ignore, AVI is effectively mandatory, HDMI kind of is too, AUDIO is if
-audio support is enabled, DRM is mandatory if HDR is used.
-
-SPD is indeed optional though.
-
-So, it's really dynamic in essence, and not really something we should
-expect drivers to ignore.
-
-I do acknowledge that a lot of drivers just silently ignore the
-infoframes they don't support at the moment, which isn't great either.
-
-Maybe we should standardize and document what drivers should do when
-they don't support a given infoframe type?
-
-Something like return EOPNOTSUPP if you don't support it, and we warn in
-the core if we get one for a mandatory infoframe?
-
-Maxime
-
---ovoxo52sdrhbbtrx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaKV2FAAKCRAnX84Zoj2+
-dqXvAX0bvYzEBhvkZZcbwX8EsIm26JAHz/mS0cz6qC9clfhYyvLbKY2RswgLRcH0
-zdXoEXIBf1jm8cvKLzdlBWGxds9iQj9mYUOq/VxFsp7UhMYL7asc5mdt46fMCoym
-hEIMma0gbA==
-=7QRV
------END PGP SIGNATURE-----
-
---ovoxo52sdrhbbtrx--
+-- 
+Lee Jones [李琼斯]
 
