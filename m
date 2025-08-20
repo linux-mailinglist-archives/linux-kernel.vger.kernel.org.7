@@ -1,100 +1,129 @@
-Return-Path: <linux-kernel+bounces-778177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9350B2E238
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:23:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2A2B2E23B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0C01C809C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:24:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB547B411B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8693277B7;
-	Wed, 20 Aug 2025 16:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320D83277A6;
+	Wed, 20 Aug 2025 16:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L82BWB+3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Xpn3rQL5"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACD0326D78;
-	Wed, 20 Aug 2025 16:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76131322747;
+	Wed, 20 Aug 2025 16:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755706991; cv=none; b=YFvyoGbTvVBghUOl8NaNGg5sNM+WpbEXrOzhWhS4Ftz/dzWJiUISYPrG0c877/0/wcRE2JUlUGgv868DqdwBw5JlnPUg9cDYlvE4ppji5MgmiujzlI7bEbHLAthr2Cmj8TMU86+xtzlIFLFpf1flNU7jM5ZiC9VvWVH2qJaLf68=
+	t=1755707085; cv=none; b=cB7XIIukdT3VAwN8XJhB0eajf9VFBW2vsug/cD/i+fC0+W+xdFebxC4fQ99wMYp3LU8kysS2GCTX/swYncL/1BZ4U3URNxcwZqk4lWd7Fgur5oh9fBg5IN0/eZibgLfoCii6mRAjTJCag6PXIehjxlAD44/4syvfHBzt47fbTFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755706991; c=relaxed/simple;
-	bh=I18cqUGx7Hdm9LGLBpdG8guD9EJ88DA1sUAC0K19mog=;
+	s=arc-20240116; t=1755707085; c=relaxed/simple;
+	bh=wwps0N/86vOfUDd1Y2Jf/4c5untsNqYTzcR0bDOAy+M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a2R3Oa3aZ6JYdmNn9l2jYnJYoTyn/hPy1ItcVpV9YCceu5OuQ54/STp6JeTx+rCHyauDdd0kQ3p5qjU7dqzKSi/mjii4PuEXUuxK0YpZEuxJLdI509YKIwN5Gb1DMxNPhfNBcjAK281lZhXDxQ86xj43S8QzKQJgxFHJwK5Ct3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L82BWB+3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94BE4C4CEE7;
-	Wed, 20 Aug 2025 16:23:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755706989;
-	bh=I18cqUGx7Hdm9LGLBpdG8guD9EJ88DA1sUAC0K19mog=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=GU9QqO2tNE3wMolXc3+BWqFpP0I06eZadN9szo0UIFJyCzlL6XP1OUMmvMp0kqMHpQk5HG59g45/K7whgvRhZvdWN0dAf5iThmQK6ejCcz+IpKDAiE5BHmaZpFdPbHvOJMITzhp+U3eHDlfdTyuIf7hjHMiL9AR94VK1p1K7M/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Xpn3rQL5; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C886440E0217;
+	Wed, 20 Aug 2025 16:24:38 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 9tN_kXF78LWW; Wed, 20 Aug 2025 16:24:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755707074; bh=HWIAN4COtM7EocQZHQEUT/ZaG//VJsQJBVIvh+BQZUc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L82BWB+3EmQFCpuEB7JgXu8iyQqyZTs29OYY5Gip+zdbMM8ls86doHd4p9o/4Tbsh
-	 FmFy1RLQOceL+wp13UkDnwUCfen0Pj/j/NzWtnexJ6ukfDOo8JdUye/TB48fp9aZac
-	 JKysFgprnNK6SkDmQaXKOOWGOg4/Cu5OduDnsT0kbVMXVkbTyhLzclMimDaiLXolAU
-	 6OUZigQ3TQQawW2USdUokcKOZQ6xlBzNzCYaI7CmP/zG/V2B+ZFuQoQT1T+CP9lnnD
-	 1CSIxd/Bm/6N+GyCM07hCRIMyB5RRiJm4zBjZvZrdNqCuU5n6Nf3FS3Ou3CdsnhT96
-	 rco3i/kpGnRFQ==
-Date: Wed, 20 Aug 2025 09:23:04 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	clang-built-linux <llvm@lists.linux.dev>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: next-20250819: sdhci-cadence.c error variable 'hrs37_mode' is
- uninitialized when used here [-Werror,-Wuninitialized]
-Message-ID: <20250820162304.GD3805667@ax162>
-References: <CA+G9fYtS9nDqC7g-B4285gmxDNRkYQixyPYMuzgDg5-sy2FumQ@mail.gmail.com>
+	b=Xpn3rQL5/5YWQaTL2Wl6Zq8PEQsQQuzoN5NnGFx02U7/GYrOQ3I+uA5XwysHJg9/u
+	 cdNqbtwlD65rmvAXOPF4Sa8mK+0VIaxHc1rOb7s1OnwdnXnLuBbiK9dUoz4jJgiP+W
+	 AccyxDqfEtlfHZwdkuFu1ZN2XPLo0zooqH1af3upiyMsXnACNZxBfQCAe+rF2Gfwbm
+	 BgYPI3mYNJwGIqaa/4s/fw1NXEQnI8fDpma4eyysC+Nrdt/roil9yHy5CesZ2Q7ZiJ
+	 1x1a8FU1QW1iwVxSifswYXCtCl0MSs8wDqW0Wm0c431M1IENk27T98na5idLDyho6W
+	 zOU8R2AVkQScFfdL2myM4O31iPX7eeu6lHAS7VquNABV1bjwJd54jZiSuP8q5R6Ia6
+	 1s8qRwMVC399qltOPx+58EA22u8Yxjn5st2dySsZBB/p7E040zCpdWMewhcpp69rv3
+	 YHXjl9I/kAY3SqdbXue62zfszj5L3OfGTQEKarGGRjpySIZdrEmfqynf4idOj6gbqM
+	 0Ksj15IuBJkSbMhxFt+K91D8NZLoZrq8yjye+TsGcE7hZCNI1qEwXdPzZlx5VB+20+
+	 EnoQeC6kBKaTuDB7fzUb2NzqOfmTwZpPqxs/6XK7LbOaaAPnvyOOCR6ZyIVSvijtRB
+	 nwjfw0M/sVGK97ACv/UxgKUo=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EF46540E0206;
+	Wed, 20 Aug 2025 16:24:24 +0000 (UTC)
+Date: Wed, 20 Aug 2025 18:24:18 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+	Dinh Nguyen <dinguyen@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org
+Subject: Re: [PATCH -resend] edac: Use dev_fwnode()
+Message-ID: <20250820162418.GLaKX2soq1RgYCAPCA@fat_crate.local>
+References: <20250723062631.1830757-1-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYtS9nDqC7g-B4285gmxDNRkYQixyPYMuzgDg5-sy2FumQ@mail.gmail.com>
+In-Reply-To: <20250723062631.1830757-1-jirislaby@kernel.org>
 
-Hi Naresh,
-
-On Wed, Aug 20, 2025 at 06:43:51PM +0530, Naresh Kamboju wrote:
-> The following build warnings / errors noticed with arm64 defconfig
-> and x86 allyesconfig with clang-20 and clang-nightly toolchains.
+On Wed, Jul 23, 2025 at 08:26:31AM +0200, Jiri Slaby (SUSE) wrote:
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
 > 
-> Regression Analysis:
-> - New regression? yes
-> - Reproducibility? yes
+> So use the dev_fwnode() helper.
 > 
-> Build regression: next-20250819 sdhci-cadence.c error variable
-> 'hrs37_mode' is uninitialized when used here [-Werror,-Wuninitialized]
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Dinh Nguyen <dinguyen@kernel.org>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Robert Richter <rric@kernel.org>
+> Link: https://lore.kernel.org/all/4bc0e1ca-a523-424a-8759-59e353317fba@kernel.org/
 > 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> ---
+> Cc: linux-edac@vger.kernel.org
+> ---
+>  drivers/edac/altera_edac.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> ## Build log
-> drivers/mmc/host/sdhci-cadence.c:297:9: error: variable 'hrs37_mode'
-> is uninitialized when used here [-Werror,-Wuninitialized]
->   297 |         writel(hrs37_mode, hrs37_reg);
->       |                ^~~~~~~~~~
-> drivers/mmc/host/sdhci-cadence.c:291:16: note: initialize the variable
-> 'hrs37_mode' to silence this warning
->   291 |         u32 hrs37_mode;
->       |                       ^
->       |                        = 0
+> diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+> index cae52c654a15..cfd17a8e5865 100644
+> --- a/drivers/edac/altera_edac.c
+> +++ b/drivers/edac/altera_edac.c
+> @@ -2131,8 +2131,8 @@ static int altr_edac_a10_probe(struct platform_device *pdev)
+>  	edac->irq_chip.name = pdev->dev.of_node->name;
+>  	edac->irq_chip.irq_mask = a10_eccmgr_irq_mask;
+>  	edac->irq_chip.irq_unmask = a10_eccmgr_irq_unmask;
+> -	edac->domain = irq_domain_create_linear(of_fwnode_handle(pdev->dev.of_node),
+> -						64, &a10_eccmgr_ic_ops, edac);
+> +	edac->domain = irq_domain_create_linear(dev_fwnode(&pdev->dev), 64, &a10_eccmgr_ic_ops,
+> +						edac);
+>  	if (!edac->domain) {
+>  		dev_err(&pdev->dev, "Error adding IRQ domain\n");
+>  		return -ENOMEM;
+> -- 
 
-Thanks for the report. I sent a fix for this yesterday:
+Applied, thanks.
 
-https://lore.kernel.org/20250819-mmc-sdhci-cadence-fix-uninit-hrs37_mode-v1-1-94aa2d0c438a@kernel.org/
+-- 
+Regards/Gruss,
+    Boris.
 
-Cheers,
-Nathan
+https://people.kernel.org/tglx/notes-about-netiquette
 
