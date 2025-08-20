@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-777743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1DBB2DD4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:06:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 616CDB2DD4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A5E5C7DC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:03:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F4D416E854
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425AE302CA4;
-	Wed, 20 Aug 2025 13:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2034B31A046;
+	Wed, 20 Aug 2025 13:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KRppZq+b"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YerllQTq"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE1C1DFFC
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC5529BDBB
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755694996; cv=none; b=PZiadFZPDv1TumQ2rjaGFGtS2eAnNZiyT8ywQjWW4wgaYJQZM35pKqYYi9BKXSM4m9r4U8fkbLaqkTvFVMjZWpriiQuQszjOSZbWS1zhtTDO649s9ZsT2MCdS+3hvFrAHPRQy7uLDAP6vq5SMFS3fOsj71s6rM0XUVcKwwz5T00=
+	t=1755695058; cv=none; b=cIJP5vjLvKIoCiEu7WheDCRW29mBsdLRK1O5nHPoAR1jT4rGTIP/bOLToHwwGjpfXMLiZsBS91639FYREvNRqOLyj8qzKdrLtdUMcYuipztYxKhD2b2OtHuJa3NLnihYx5pf/10JnM3Ny4RGnNJlaLNfY9Aqpi+LODBvZh7dZr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755694996; c=relaxed/simple;
-	bh=ou3ZKDpar22z4Oo2WKPAdf/6zQC0VvNL1qqpdsnqSrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=frLb/s8EG07JO6DE5ybY9mDD71CnHxnTfHyuv5bAz72pNOQXAuNwJAHxKmRzZvbPl6wjbHPiXNqXI/FMiF+qzX1+Y230RznOXHh8HdbeWiPoCtvWZxjdFeO3+sKmu+obS3IdqsGeYhLE5/L2lrTYi7K38PV7VLdh1G3TdTzacgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KRppZq+b; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9CE7E43960;
-	Wed, 20 Aug 2025 13:03:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1755694990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rt+0HzlN0GaJY1va0P0oiYStG3sAxyTGjMfwBuvnESY=;
-	b=KRppZq+bBuap94XWSmAOhDA3aclBmjsNIEqRm59WtPolG/xPd78QgqhUFgPaxmkhTI5t+m
-	3X5+2ti0WeFuEDJ01GYN/EZExEPgbw3WXuzcTsK6ePb3EKOuQRcCVYu45ZkS3gpavIZ4Ds
-	jnIrsIUWLodzZ9mMnWSI7FpijLjEb0WCi2APzDW2hIjqpq6msOw1Rsc5dP6ctb10HaCOP4
-	in9JuXK+vOUHek9nlDFXksOjG0Bpuzk51zAi6Q3dD+waCV7gCSd+iLqNjethPBnoWgx+tL
-	0jHHsljZi7RhIDnYMXhJGORvLh02VVEO2JmKsa3qpGYY2+w1LswmKWfXW1CEFA==
-Date: Wed, 20 Aug 2025 15:03:07 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH v7 2/3] drm/bridge: add list of removed refcounted
- bridges
-Message-ID: <20250820150307.358e164c@booty>
-In-Reply-To: <ecfsac5tok6bu7n6ctzt5j7n6vtiumn47iwmff4pid57kdsunz@wqxdxgsaibcw>
-References: <20250819-drm-bridge-debugfs-removed-v7-0-970702579978@bootlin.com>
-	<20250819-drm-bridge-debugfs-removed-v7-2-970702579978@bootlin.com>
-	<ecfsac5tok6bu7n6ctzt5j7n6vtiumn47iwmff4pid57kdsunz@wqxdxgsaibcw>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755695058; c=relaxed/simple;
+	bh=MTEmr6PLWX1CfiIGNeCXCHdIIUWkodJVfLUhpASrxR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hB1LSV2N7B6wGOPyQVxJ+HxGH0MjViSC8F3z3MZeCFFJGYG6jOl2ir1cPRx4MFD1M/cTguBk1v0QL+/MDrhMIZER2c/iETaHx3/JmdcG0erxR1dFYmXxKGSw5agYrIqE1bO7gK+JRjT2BQy4gwMHbLdLKZ2p/p6J2DFEB1Xz8zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YerllQTq; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1ac7c066so5757875e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 06:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755695055; x=1756299855; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gY7XVkJ6w+vjaw3X44Oc8ca14AVZViv5sVYFg+uhWoE=;
+        b=YerllQTqNAuC/LZx1jCH5DoPfV+euqe4CVefRo/ko5eetzV8hbIdMkbMn/9LCfXAL/
+         gJ8Dc108bHuDSFbmO04KrQGTLWezDVkWfuHkKp7vxfc6sr2ViSCI5BhGSI07AJbA3Rub
+         WZ5ZlvlqaMg570F+YbvCw11QIvxMwPwoIRT6nFycBj25UbNhLFF5xTG8lFsUBluQUY46
+         yIsjNU04QnXRp3mJg/0ATKScMZCO/HA8QAMFfrqraAZwhPi1Vw2IKCBgPzy7wPpx/AXx
+         w2KfOVZyORgqSOskZWIa8qUfRWiNbFmntiJI0WKG4oI2SFCNuWghs94+0meo0aU8J3Hx
+         I4aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755695055; x=1756299855;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gY7XVkJ6w+vjaw3X44Oc8ca14AVZViv5sVYFg+uhWoE=;
+        b=XpElVZ0RQ+x7Ilxfa+t0N1JNy//r26ZnOtGBMcDKFAk1LJS7Xl+ZpkEhBtf6QgRhfY
+         fV+EAZ+h4pvY/A+Ez8u8MWh1Jjb/TWUeIkmJigXoaDcjb3I6qUSbzGBUOfofQAfQU33d
+         54azLea5Fkmc+a4TXTZRA92e1CtEJm2MpREFSuppddusyfa1hYsomfCjMOROVisd5GRO
+         21ccnv4iqKBj50GS/AWveCZge6EMD2saZck5tMUY0rsZxVSTgTiM9o6lJ6xOjsCJgZGp
+         2buQv7McjUyKOLL6T3411ZoO16aZo29C7YtOdGt8QcYsMkjn4KWxR0YQlrhRaib1HPEJ
+         su/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXVDePIAli0NVSHCv9F98RqTBv9XgGAk6Su7vSkFB9FFnPa/A6fjhynIZ+rhim6ucrrFVAenjOMfu1ei9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe8JRBT38K0O6dw7U2OeNGvFJjiaEhmmpTKifQyudVJMTVn56/
+	7WOfOMlUxD8VfDhWuGn12z0INX3YaWzQhX5N9rXsZjj5vGL8NP+cuKvTnsqa+VJa12U=
+X-Gm-Gg: ASbGncsBU58qb0C4mUzxD8dHz5+yBdILESO8xjXPIFa3jmJQpKMeILzm13JLmjapvzl
+	OyOGZ4rl/S/Qr4PSZ/5BKqmcFgc6+uqw4ipAI17K1FcJqL0mVNI6rsFjkM9f8c4lMjcJDI2DxvM
+	sx1hUhJBaH/cWyQ2Bh5IsF0W7P02L/GL5OqL/e3pVAfxGVxxdgGTeMHBl3yO2zQBYZBcnqm1f9F
+	OcgYXZq5lr7pZyxMHkpMUgrq609iEdPH0N53kJ1mzEvQmcpdVOLT21rtteNUD/XJ1lxPpd8UtKi
+	hVPgG6iz/WRKyGCUIt1sOF5Bv/xergx9rWmb1GIBzhzhOULi5yc3OqgApSpN5Oa/nlpQyYILqVY
+	C4tYyfzX2IFzFzAkfYDjn+uD4PFO8LBKa1bie2OR/vJOjd0jWrYGsAw==
+X-Google-Smtp-Source: AGHT+IFDXUSqh4DOnr6eHhJBZWOZMSWPHk/5O4ChkMSVZ6URykazM/OIpEHf8YVEdfT818C1CmnNkQ==
+X-Received: by 2002:a05:600c:1988:b0:459:dd1d:2ee0 with SMTP id 5b1f17b1804b1-45b43e0339cmr54417895e9.0.1755695055064;
+        Wed, 20 Aug 2025 06:04:15 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b47c30dc1sm31620545e9.6.2025.08.20.06.04.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 06:04:14 -0700 (PDT)
+Date: Wed, 20 Aug 2025 16:04:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH] staging: media: atomisp: Whitespaces style cleanup in
+ gdc.c
+Message-ID: <aKXHypUfl00qE0yP@stanley.mountain>
+References: <20250820124519.2287171-1-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheekgeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrr
- hhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250820124519.2287171-1-abarnas@google.com>
 
-Hi Maxime,
+On Wed, Aug 20, 2025 at 12:45:19PM +0000, Adrian Barnaś wrote:
+> NFC: This patch cleans up coding style whitespace issues
 
-On Tue, 19 Aug 2025 13:15:30 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
+What does "NFC" mean in this context?  I only know it as the networking
+protocol.
 
-> > @@ -197,15 +197,22 @@
-> >   * driver.
-> >   */
-> >  
-> > +/* Protect bridge_list and bridge_removed_list */
-> >  static DEFINE_MUTEX(bridge_lock);
-> >  static LIST_HEAD(bridge_list);
-> > +static LIST_HEAD(bridge_removed_list);  
+> in drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc.c
 > 
-> I'm not super fond of "removed" here, it's ambiguous, especially since
-> the bridge wouldn't be considered as removed after the last put.
+> Fixes include:
+>  - removal of unnecessary line breaks
+>  - correcting spacing around operators
+>  - correcting spaces between types and names
 > 
-> lingering maybe?
+> Signed-off-by: Adrian Barnaś <abarnas@google.com>
+> ---
 
-Sure, will rename.
+[ snip ]
 
-> > @@ -288,10 +296,13 @@ void *__devm_drm_bridge_alloc(struct device *dev, size_t size, size_t offset,
-> >  EXPORT_SYMBOL(__devm_drm_bridge_alloc);
-> >  
-> >  /**
-> > - * drm_bridge_add - add the given bridge to the global bridge list
-> > + * drm_bridge_add - publish a bridge
-> >   *
-> >   * @bridge: bridge control structure
-> >   *
-> > + * Add the given bridge to the global list of "published" bridges, where
-> > + * they can be found by users via of_drm_find_bridge().  
-> 
-> It's quite a change in semantics, at least in the doc. I believe it
-> should be a separate patch, since it's really more about updating the
-> drm_bridge_add / drm_bridge_remove doc than collecting the
-> removed-but-not-freed bridges.
-> 
-> Also, I'm not sure if it's more obvious here. The quotes around publish
-> kind of it to that too. Maybe using register / registration would make
-> it more obvious?
+> @@ -85,8 +79,7 @@ void gdc_lut_convert_to_isp_format(const int in_lut[4][HRT_GDC_N],
+>  	}
+>  }
+>  
+> -int gdc_get_unity(
+> -    const gdc_ID_t		ID)
+> +int gdc_get_unity(const gdc_ID_t ID)
+>  {
+>  	assert(ID < N_GDC_ID);
+>  	(void)ID;
+> @@ -96,10 +89,8 @@ int gdc_get_unity(
+>  /*
+>   * Local function implementations
+>   */
+> -static inline void gdc_reg_store(
+> -    const gdc_ID_t		ID,
+> -    const unsigned int	reg,
+> -    const hrt_data		value)
+> +static inline void gdc_reg_store(const gdc_ID_t ID, const unsigned int	reg,
+                                                                         ^^^^^^^
+Replace this tab with a space.
 
-OK, I'll reword using register/registration and definitely move to a
-separate patch.
 
-Thanks for reviewing.
 
-Luca
+> +				 const hrt_data value)
+>  {
+>  	ia_css_device_store_uint32(GDC_BASE[ID] + reg * sizeof(hrt_data), value);
+>  	return;
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+regards,
+dan carpenter
 
