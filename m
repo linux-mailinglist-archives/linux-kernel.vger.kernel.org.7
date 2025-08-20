@@ -1,245 +1,157 @@
-Return-Path: <linux-kernel+bounces-777593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CF7B2DB56
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:41:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48399B2DB6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FEA63A2ED1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:41:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C27C171DFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9846B2E4254;
-	Wed, 20 Aug 2025 11:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D593F2E7177;
+	Wed, 20 Aug 2025 11:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHKeSNJw"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjfNk6M5"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AFF2E339C;
-	Wed, 20 Aug 2025 11:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6495A242D72;
+	Wed, 20 Aug 2025 11:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755690070; cv=none; b=I0312ChLHW2s8EKU+vqYpRO1A/UV0gPdU+hzN9FBoWvwcvbvbyLrxvOfqlm+jwpuVilChqZYm1QOKxCPAtXya+1ceKt2pAExk3i3Gpsmh0PKF0HOBu7aby4CA1tdgnXd2Frq97LhkWe5wcFVnJVPfrGl4A9idyNhirKUEqq/OQA=
+	t=1755690181; cv=none; b=JhD7dqUuZw2uxo3O+8TrVGdsuOsfpe0G6BB6KBpX5ORoo9SHWLq+74OIOzocMrINlQnN7ZrVMXV8bJbHZVO4swnlHmuigVysVOfjigyfZl0bpZjFxEmOIh4JTcpacTilyLjAftIOuw9QqCviXhybKOAj7Bk+ZGVUotQOhNCuZpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755690070; c=relaxed/simple;
-	bh=FDKhP3oxNBolrhoIi7sDu3T3WCzQhnuinOYCpr/GBYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J39tP34jDlo1I2aO7TkgHuTkSpoVLBToM4R0EU4RXDQ13xvBTBJ5Vi1vyiZudGDJ7HCY1vx6WglehqfdyPQYijbNjwWwXQ7mT3Mms/NGcFT27eczMwWYzAXNXZpRfk8BlmdaFnmGQgrM0qkHL7PZCYfqd0Tq+oFq21qKQyRJeTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CHKeSNJw; arc=none smtp.client-ip=209.85.216.46
+	s=arc-20240116; t=1755690181; c=relaxed/simple;
+	bh=0nOC8WD4XjC1p1Onq7FgBg1DbdXb/Ajql1bTdvsPtn0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f2pbhlbFOk3KgX5FJqp/jnSKr/5VakxRPrKHQKoDMtu0PA31pzCbfqVmH885b6jjPBFOvTbpbj+Ecl9bLYSEh4dcVE3qMYBVpYXb1HLEN+s4ZcIdqfJqqbrxr9mj8SPkvOnyvIs8jqx1DnFJlbCBRMCcr7GvFoobYImGv5wJx2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QjfNk6M5; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-324e7600bf0so233647a91.0;
-        Wed, 20 Aug 2025 04:41:09 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb7acfde3so916004566b.3;
+        Wed, 20 Aug 2025 04:42:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755690068; x=1756294868; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1U217s/MxPIk/owGwkXwnp+FTymNWb/H2aQ0TsKxnoM=;
-        b=CHKeSNJwZhAtnOaiYg4wt7KgcCbu/S6PHrxJZG0VHuUs+ULFEVDphrMiFQE3+KwZQZ
-         xZz48BTWNqlrbuy2lLNSasQNWgoUhh92UAXoYDoKDB5tqVaqJqK3DPKHSpINjDtaBIyH
-         QnU0MrhQ0EWzlweFq1NuvL1sv5wob6Nc9UMQB64hseSBcHsbCRsTpLJ46GSfqfaIVDwf
-         RZbLEoIZMTEtsaju+O90RfyW8jWV5s0ryDbPUaUjUtjCb1TGbEUuhLZ8+OhkFdKCwkuG
-         8n8mF7EnUFK3NIO9dMZBYVAd+ng6+ooe4AVTQTHOJ91pAbph4pwdfGMR07i62DBhIPSQ
-         PvMQ==
+        d=gmail.com; s=20230601; t=1755690177; x=1756294977; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KULDlNgkmvRvA7vpAhRs9doDkFcWkJMR6necqXvdLkM=;
+        b=QjfNk6M5FL9VkRW1rmfP7JwnQeSRdGNjszcBKjfoVqqd+gEH3cuhE02pIrTTlTJlxZ
+         29kuo8RsqFt53TuL6N99aaF28zRoOF4xVu6fz9BZozCacl8I/tzCDNnn47ODnDPi/fmu
+         6XzhpUOkyLrLQpgM2xJb4IA7cr546/HrSVpG1nVThFlhMOHo+3Xhm51y5cTYYoJE47H6
+         50RSaoogB+nBZ+yve+e7uUw3XWqlSnkQ/HLqF7q7Oi6OLsoWHY0hfC+bFKxbCOhuu+Et
+         bNBXm+n5VrgMnLeNLgEmsEMpYT0j5xD7VGP/SBsH26fWC3D0EzIekfIyI/mVWMoFucCN
+         edqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755690068; x=1756294868;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1U217s/MxPIk/owGwkXwnp+FTymNWb/H2aQ0TsKxnoM=;
-        b=HgZH3YHssBVJXx6pQuxVnOTXllioqJo6c7JidrQCQW5YjfsWZj7hovz2Qtct0sRCVp
-         wOiEi1Oty0etWsruu4XJBL8xxuWD/omHYqk1veQAxFKkwhtNtaUdGIycWwlPoWcJgqca
-         nPj9hzccrBIg7P66BFKRwu+iRqHHc3YmE811byt0cB+mC5whfJIa+8xMDDtlrSmiaFLG
-         lyx2RnjY9F5oCYw+Wof0CG3pYdwfBKOhdF4WrE94F7SjkUbVceXPJwKjRU6dJe+VbK/N
-         oQ/4X3gN/Z0du1Qd0EG926Kf6EF2yyjDN1ypetSCFsy6H25+Ud5pIdlsKrUx3DYZu8oG
-         2Qew==
-X-Forwarded-Encrypted: i=1; AJvYcCUAAI3qLILQ0Vhvfe7kNVPFLs+wps0aSomFWS/dEHSiLKkqAgRPrwf2ca1ItZanz+xZANRJDzZS8ugchfpj@vger.kernel.org, AJvYcCUKdGZVTWle0qYaNXnnKw1KD9YyW0oE4J7aeX8WLzRt3m4OfITOM2B4vPOZSdbN4EzF1i+/Eca5sU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQdjhu40mGn3hyjiO1CQeRz+lAx9GqdsU+xTOCCmhlqMr5xGAh
-	dmdEKrJh8KxZeJwl7fu2TBIQ+5+xM5B+WFOeAty03YJ5M6juLkn0QsEb
-X-Gm-Gg: ASbGncusV8GpakbiOja5HkguiZkzj/rtQlxYVjkNUgoN9sjA3M74HGCsn/gtobtbk9Q
-	ew9qwWqi7nEvmLQp5jwKH5BttEcMETX58C7pbws2aBgi6Bk8MISvsthmqc/SAY4Enw2F2fDaCjE
-	Fcf4AXJKrfWDj9shMT7ZgFKRuPDc4GS5VhMq0lysS8gOUN4S0qccKBR1z2QrDn3q9lBaOg/ia0N
-	+o6y3OttEp/MwdI4qXlndYT9SI2T/KAzQGotGdMVBzBzmCkp0sdeTlPBi1G4QNApAZQ9yNHViku
-	a+yCigiormdQggRp8skXu4oWbYqGJef72oe84tDxrGMi+pbLwbX0zGtvmsHOo9fWN5BTBYGIO5Z
-	hQRn+zwsuXafrHJG6RClTSWaVi40QJYXoPRRtHpn6noOV6JgDTQGfI2s9OBELOZSCuqJr
-X-Google-Smtp-Source: AGHT+IFE+TwDcVQnwid3nVBw3dlreFydpUOjG7o6PH9Co3GXVed7LdFgfmI9MvrwEejQtMpjkkurhw==
-X-Received: by 2002:a17:90a:dfc7:b0:31f:ad:aa1b with SMTP id 98e67ed59e1d1-324e131b2b4mr3373520a91.3.1755690068302;
-        Wed, 20 Aug 2025 04:41:08 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e26259a9sm2124073a91.18.2025.08.20.04.41.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 04:41:07 -0700 (PDT)
-Message-ID: <3990f1c5-2108-44fe-913f-97ae3bb1ff42@gmail.com>
-Date: Wed, 20 Aug 2025 20:41:05 +0900
+        d=1e100.net; s=20230601; t=1755690177; x=1756294977;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KULDlNgkmvRvA7vpAhRs9doDkFcWkJMR6necqXvdLkM=;
+        b=F3kur6ctOBbcfP8HK1B8qxay53/HangpRbDpTv1367Wnu3eDmnOj+ZQUIm1rSQyyr6
+         x579QYr2jqk2dq54LihFz82NiJyjIyglWshUGMiDEbSGu0SGtmC4VvZYkvYd7Ey5vRZL
+         JzgwRAQHmcPkRT4Hwaja6St68eq6AAvoc0eiBXvvwyHgtBYTIuLF/0ZiHBM5g1EDTuxF
+         0n+OGJDj+LdOh2w78/bEoV2s6b3EruZJscjz+g5Ris1ZRW1OsruvtZ/r0DPYUxj3RyAY
+         rOd1pzH6oxjmOkVkQvPHo7IYbUXfBp7gP7H2qhXhJkP0wCVJ2ejJnROo+60RHPXIqfMS
+         9dcA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2yVa55Al4yjs06bSUDpfsynOosLs2ykBqfAxUR6Y6Ad5ngsiv88UE8OG21RW10McPsGiZf+LHcALt@vger.kernel.org, AJvYcCWLDHVzrNs9lu7LFwohmd8M0+kxJS7XTjj0VBUKbJAOZzhi98qgQUVrbeeQEHFwn+4MFiopJuuowhi1nZFz@vger.kernel.org, AJvYcCWeHDrkoKfun7viGVtR4p/MISC++J6KvJWhBK/jK1MBIHEqf1CKBLug0qfnstEtrMKqowgLzXrezVDGH0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyj5vPPg+gmHUiP9D6xHScTvtgHywJIS3PZwkUUj3B2yVNeXwt
+	jvUKnQ35/8omXzBwY4FycXCXwj1QjeBgtKlXK0U8feBvrraUNGbSnq43
+X-Gm-Gg: ASbGncuD7uH17jMTK+YGjQSb9V6t3tgayzjOScaVQtxhokzNWUzLt6hUwTwG7DAPzYi
+	a969kMJ3o5q4EerCe0wFd9PLtEuX2OxshzqD0LjLDrCTjguHCR6ofz+2t93+QT/rCH7lueETfID
+	4jxIwvPPJsCTxPRiR8ynR9gzbWvFi8ScdYF/HQLEFEnyNIF9RFAk5AUrl20bWgn5HwfoFT9CebN
+	dhrBDVuuXAiTG19tMI3z58BlQqahl44wZYRJ/MiWVjn10HDnnxmRaZOiCLExmap/BkBjarfS6oe
+	x+Bw9cCdY6WpFgw0yyTFkDJq7a2dUbwu6hW/IiQImbwh4VOJ6SWxCTSaiRL/BxIAf6WLoGYek85
+	znLXpDxkJ2Za9FA==
+X-Google-Smtp-Source: AGHT+IG/hefWtYD1eWDIgqXND7NoDeahDYRYO+aregWjbaemborHNsSsAqKvTHzqRzE275+MxG7UTQ==
+X-Received: by 2002:a17:907:7e81:b0:afd:c31c:2488 with SMTP id a640c23a62f3a-afdf01ba466mr190898066b.39.1755690176321;
+        Wed, 20 Aug 2025 04:42:56 -0700 (PDT)
+Received: from xeon.. ([188.163.112.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded4ca695sm161769566b.90.2025.08.20.04.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 04:42:55 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/6] thermal: tegra: add SOCTHERM support for Tegra114
+Date: Wed, 20 Aug 2025 14:42:25 +0300
+Message-ID: <20250820114231.150441-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
-References: <cover.1755256868.git.mchehab+huawei@kernel.org>
- <773f4968-8ba5-4b1a-8a28-ff513736fa64@gmail.com>
- <20250816135538.733b80d3@foz.lan>
- <acc71988-4ed7-4df1-aa1f-a9d7a125ca53@gmail.com>
- <20250817133606.79d968ed@sal.lan>
- <b3d97e98-121d-4d12-9624-3efd119b12a4@gmail.com>
- <20250817154544.78d61029@foz.lan>
- <b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
- <87y0rg7e35.fsf@trenco.lwn.net>
- <16b48826-6634-4ec9-86a0-7ddb59ce3bed@gmail.com>
- <20250819030239.41a2e97f@foz.lan>
- <142b209d-613a-4659-a0f7-27efa8c6be85@gmail.com>
- <20250819153200.3c2b2ff6@foz.lan>
- <08c3a7eb-0425-4709-a3ea-6d1d726fd3c8@gmail.com>
- <20250820091530.068c4b62@foz.lan>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20250820091530.068c4b62@foz.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+SOCTHERM is thermal sensor and thermal throttling controller found in Tegra
+SoC starting from Tegra114. Existing Tegra124 setup is mostly compatible
+with Tegra114 and needs only a few slight adjustmets of fuse calibration
+process.
 
-On Wed, 20 Aug 2025 09:15:30 +0200, Mauro Carvalho Chehab wrote:
-> Em Wed, 20 Aug 2025 08:54:52 +0900
-> Akira Yokosawa <akiyks@gmail.com> escreveu:
-> 
->> On Tue, 19 Aug 2025 15:32:00 +0200, Mauro Carvalho Chehab wrote:
+---
+Changes in v2:
+- no changes, resend.
 
-[...]
+Changes in v3:
+- expanded desciption of "thermal: tegra: soctherm-fuse: parametrize
+  configuration further" commit
+- changes title of "thermal: tegra: soctherm-fuse: parametrize
+  configuration further" to "thermal: tegra: soctherm-fuse: prepare
+  calibration for Tegra114 support"
+- Tegra11x > Tegra114 and Tegra12x > Tegra124
+- ft and cp shift bits dropped
+- clarified tegra114 precision
+- lower_precision > use_lower_precision
+- nominal calibration ft and cp hardcoded into SoC specific structures
+- added tegra114-soctherm header into dt-bindings
+---
 
->> I've just built a container "FROM ubuntu:plucky", which has inkscape
->> instead of imagemagick + rsvg-convert.
-> 
-> I don't think that inkscape x imagemagick/rsvg-convert itself has
-> anyhting to do with the problems I detected, as they're related to
-> font issues (still, I got an issue on one of my builds on kfigure
-> write file: encoding is missing at open, which may cause errors).
+Svyatoslav Ryhel (6):
+  soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
+  dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
+    System
+  thermal: tegra: soctherm-fuse: prepare calibration for Tegra114
+    support
+  dt-bindings: thermal: tegra: add Tegra114 soctherm header
+  thermal: tegra: add Tegra114 specific SOCTHERM driver
+  ARM: tegra: Add SOCTHERM support on Tegra114
 
-OK, so you have spent a lot of time to paper over the ImageMagick issue
-used as an SVG --> PDF converter.
+ .../thermal/nvidia,tegra124-soctherm.yaml     |   2 +
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        | 197 ++++++++++++++++
+ drivers/soc/tegra/fuse/fuse-tegra30.c         | 122 ++++++++++
+ drivers/thermal/tegra/Makefile                |   1 +
+ drivers/thermal/tegra/soctherm-fuse.c         |  31 ++-
+ drivers/thermal/tegra/soctherm.c              |   6 +
+ drivers/thermal/tegra/soctherm.h              |  12 +-
+ drivers/thermal/tegra/tegra114-soctherm.c     | 211 ++++++++++++++++++
+ drivers/thermal/tegra/tegra124-soctherm.c     |   6 +
+ drivers/thermal/tegra/tegra132-soctherm.c     |   6 +
+ drivers/thermal/tegra/tegra210-soctherm.c     |   6 +
+ .../dt-bindings/thermal/tegra114-soctherm.h   |  20 ++
+ 12 files changed, 610 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
+ create mode 100644 include/dt-bindings/thermal/tegra114-soctherm.h
 
-I have simply given up using ImageMagick and been using inkscape instead.
-
-I can reliably reproduce the warnings and build errors (see below) without
-inkscape installed, instead with imagemagick + rsvg-convert installed,
-under a ubuntu:plucky based container.
-
-When I run: "make cleandocs; make SPHINXDIRS=gpu latexdocs",
-    
-     [**NOTE**] SPHINXDIRS=peci is not affected by this issue!
-
-kfigure.py emits warnings like this:
-
------------------------------------------------------------------------------------
-WARNING: Error #1 when calling: /usr/bin/convert /linux/Documentation/gpu/amdgpu/pipe_and_queue_abstraction.svg /linux/Documentation/output/gpu/latex/pipe_and_queue_abstraction.pdf
-WARNING: Warning msg from convert(1): convert: unrecognized color `context-stroke' @ warning/color.c/GetColorCompliance/1064.
-convert: non-conforming drawing primitive definition `fill' @ error/draw.c/RenderMVGContent/4548.
------------------------------------------------------------------------------------
-
-Nevertheless, "make SPHINXDIRS=gpu pdfdocs" continues building gpu.pdf,
-but ends up in this error in the middle of xelatex run.
-
------------------------------------------------------------------------------------
-------------
-Run number 1 of rule 'xelatex'
-------------
-------------
-Running 'xelatex --no-pdf -interaction=batchmode -no-shell-escape -no-pdf -recorder  "gpu.tex"'
-------------
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2025/dev/Debian) (preloaded format=xelatex)
-entering extended mode
-Latexmk: Getting log file 'gpu.log'
-Latexmk: Examining 'gpu.fls'
-Latexmk: Examining 'gpu.log'
-Latexmk: Index file 'gpu.idx' was written
-Latexmk: References changed.
-Latexmk: Missing input file 'gpu.toc' (or dependence on it) from following:
-  No file gpu.toc.
-Latexmk: Missing input file 'gpu.ind' (or dependence on it) from following:
-  No file gpu.ind.
-Latexmk: References changed.
-Latexmk: References changed.
-Latexmk: Log file says output to 'gpu.xdv'
-Have index file 'gpu.idx', gpu.ind gpu
-Latexmk: Errors, so I did not complete making targets
-Collected error summary (may duplicate other messages):
-  xelatex: Command for 'xelatex' gave return code 1
-      Refer to 'gpu.log' and/or above output for details
-
-Latexmk: Sometimes, the -f option can be used to get latexmk
-  to try to force complete processing.
-  But normally, you will need to correct the file(s) that caused the
-  error, and then rerun latexmk.
-  In some cases, it is best to clean out generated files before rerunning
-  latexmk after you've corrected the files.
-make[3]: *** [Makefile:29: gpu.pdf] Error 12
-make[2]: *** [Documentation/Makefile:148: pdfdocs] Error 1
-make[1]: *** [/linux/Makefile:1806: pdfdocs] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
------------------------------------------------------------------------------------
-
-I think this is (mostly) the same as the issue you have been trying hard
-to track down.
-
-Lastly, I'm afraid but I have to tell you that I see the same error on my
-test branch which has both of your series applied.
-
-From "./scripts/sphinx-build-wrapper pdfdocs --sphinxdirs gpu":
-
------------------------------------------------------------------------------------
-------------
-Run number 1 of rule 'xelatex'
-------------
-------------
-Running 'xelatex --no-pdf  -no-pdf -interaction=batchmode -no-shell-escape -recorder  "/linux/Documentation/output/gpu/latex/gpu.tex"'
-------------
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2025/dev/Debian) (preloaded format=xelatex)
-entering extended mode
-Latexmk: Getting log file 'gpu.log'
-Latexmk: Examining 'gpu.fls'
-Latexmk: Examining 'gpu.log'
-Latexmk: Index file 'gpu.idx' was written
-Latexmk: References changed.
-Latexmk: Missing input file 'gpu.toc' (or dependence on it) from following:
-  No file gpu.toc.
-Latexmk: Missing input file 'gpu.ind' (or dependence on it) from following:
-  No file gpu.ind.
-Latexmk: References changed.
-Latexmk: References changed.
-Latexmk: Log file says output to 'gpu.xdv'
-Have index file 'gpu.idx', gpu.ind gpu
-Latexmk: Errors, so I did not complete making targets
-Collected error summary (may duplicate other messages):
-  xelatex: Command for 'xelatex' gave return code 1
-      Refer to 'gpu.log' and/or above output for details
-
-Latexmk: Sometimes, the -f option can be used to get latexmk
-  to try to force complete processing.
-  But normally, you will need to correct the file(s) that caused the
-  error, and then rerun latexmk.
-  In some cases, it is best to clean out generated files before rerunning
-  latexmk after you've corrected the files.
-
-Summary
-=======
-gpu: FAILED
-
-PDF build failed: not all PDF files were created.
------------------------------------------------------------------------------------
-
-Please test yourself with SPHINXDIRS=gpu and see what happens under your
-test environment.
-
-Thanks,
-Akira
+-- 
+2.48.1
 
 
