@@ -1,87 +1,104 @@
-Return-Path: <linux-kernel+bounces-778658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0065B2E893
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:19:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2AEB2E895
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2274F1CC3E47
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01BB25E595C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1ECF2DCF79;
-	Wed, 20 Aug 2025 23:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA662DE1E5;
+	Wed, 20 Aug 2025 23:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sO3zEQsr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kzT5dxLv"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467182DCC1F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 23:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8836F2DC35F;
+	Wed, 20 Aug 2025 23:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755731986; cv=none; b=smiSwPtHCvtCGAMPMmiSQGp8flMeSXqelQIuK95mQpYcS1SS84uBdHQzv7+Kecz4LtIMdf1NkNS9dsBRGVpvffMfhOnFjCJXdtoftSZSiiabqORtLYV2vpF8RqOpxooIbbKGL7W1J64q8gu7TUnlMG7RGgWksUJacMwG/64sHLU=
+	t=1755732009; cv=none; b=DcrKbsVUbHrjhJIOYuDIds+a2N2j8Y9gMURX2pWsILuDkTaU5G3zU6hFbtE3eJi6PmZuCDa8KwImMymsxdP7iqoMAmPXynwfidutIyBJKiC0ir9ERAhquoKE9wLbmWJqDz3onL/MhMvo55mhbm9rOnOn1v/zCoPooooodchBqoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755731986; c=relaxed/simple;
-	bh=yZaWdMLAsy4C/5siwNjbC65S7n4WvYketpGJLufA4Hg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iy971QLHGUZLeo8wTkLATGuP+sfhuxttSAsK6bMxrZmQVtpYwzfxjRQiRRqrEpGHLVnUD+AeqzO29/khVTs9obnUmPUie3MtakZ5KE8RxOfZ/D6X4c5x23A8huJSduKV8LUoN7TuES9OMsZEinn1vE2Ve/zTRL2EnO1KKO+7+8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sO3zEQsr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 979F1C4CEE7;
-	Wed, 20 Aug 2025 23:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755731985;
-	bh=yZaWdMLAsy4C/5siwNjbC65S7n4WvYketpGJLufA4Hg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sO3zEQsrda0tP9MveafyAvfBc3YmlDI6FZTBkBjAlMRdub+/eWp12Eamr5Epw67tV
-	 O1NIlMzKSsd58ORDNs8GzqazyJkPq+cKraNBwbz5oKtc9+IcP38S29dPywRro9ShOq
-	 WfTHv8Ek2f0/hniu3k3idVm6YdgBmVVQJiJeDmHH/FX+cVt1GY5HvyCw9jTLzYtNcZ
-	 W9m/FjrHJL74t2j5jDNCtur6qfi6yPgoknjAfXdTb8It4AfE+V98Hj3Y3VdyqaDDtC
-	 45qWqXRdtIOqH8TrdNDd5UqTD7oE4HJkNk6T+XNvVM2K4OdrohEo22mYGfEf4XuGk+
-	 wrw9w+rb6R8dQ==
-Date: Wed, 20 Aug 2025 13:19:44 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 0/4] Workqueue: replace system wq and change
- alloc_workqueue callers
-Message-ID: <aKZYEDYHYs3W2OL0@slm.duckdns.org>
-References: <20250815094510.52360-1-marco.crivellari@suse.com>
- <aJ92vqBchsh-h-0z@slm.duckdns.org>
- <CAAofZF5U_fND+te4Sj_+TQPgZH_DDTneN2XLyY7a0niGBjGjaA@mail.gmail.com>
+	s=arc-20240116; t=1755732009; c=relaxed/simple;
+	bh=7MXF6UHHnZAnb9ZSjj3ajc3FzjX7Lce3Zy1R1QMAs2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ixxo4NzIAUWCN8mGRnTXOqOC+y5AXQErVnm8o9mQ3YATkcWbfiWXBqJce4QlT24BQVS8Y5qGykTHkMztaN7ZB11NmAe1BJIyl+6h5Yft+0q4zHD+cPTUfDvyqeB8kfXMCfHR2Ju/OcT6TNRb0kYw064P96P/c7FnFPzyi6QfNow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kzT5dxLv; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755732005;
+	bh=YCQ3Y9INpwYs0WJhsNpvgwsuOp7ToH9IUiIcwYvCwYo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=kzT5dxLvAH18fONs2gCKmzTBlGmFSOHsTFqlDscTC/S/mus0EZ7j1wNTL+orJMDRW
+	 oJ2M8CyjS4cXccLsvX5fAs24LcIj5LFpUFp3YPQHW4vl2rZw7lDG7o61DhgjGBeQx+
+	 14L5nkX+l392Nm3g9GYpOO71rCDztgg1tQwNjbdcdW3Pq8k9VIdnCORAFWJnmRTSlZ
+	 lDeEQ50xJZlFMrDrMf+FCKON6gfl0Y1t4uSZ1kA8LQf3VzVH8CeM5DA3g+wz+rcrTf
+	 fHNfFTu2wsTbd/j+eoud/92JXdtItH8rFiTEft4AMGh7Q7LAVuXW2anojy8ruDIdYi
+	 pUABgB3bp9B/g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6j915vGxz4wbX;
+	Thu, 21 Aug 2025 09:20:05 +1000 (AEST)
+Date: Thu, 21 Aug 2025 09:20:05 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the fuse tree
+Message-ID: <20250821092005.64bbc5ee@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAofZF5U_fND+te4Sj_+TQPgZH_DDTneN2XLyY7a0niGBjGjaA@mail.gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/gHOpFTDSB6j6CN1QbtTs5NV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello,
+--Sig_/gHOpFTDSB6j6CN1QbtTs5NV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 02:28:12PM +0200, Marco Crivellari wrote:
-> Sorry for another email.
-> 
-> Another question / observation: I guess maintainers can't just pull
-> the changes and merge for the next release, if the workqueue changes
-> (e.g. changes in queue_work() etc) are not also merged, right?
->
-> I received a reply here, in the meantime, in "Workqueue: fs: replace
-> use of system_wq and add WQ_PERCPU to alloc_workqueue users"
-> (https://www.spinics.net/lists/kernel/msg5811817.html).
+Hi all,
 
-I can prepare a branch that fs can pull but aren't all the prerequisites
-already in the master branch from the last cycle?
+The following commit is also in Linus Torvalds' tree as a different commit
+(but the same patch):
 
-Thanks.
+  53ad50232e9f ("fuse: keep inode->i_blkbits constant")
 
--- 
-tejun
+This is commit
+
+  542ede096e48 ("fuse: keep inode->i_blkbits constant")
+
+in Linus' tree.
+
+This duplication is causing an unnecessary conflict in the merge of the
+fuse tree.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gHOpFTDSB6j6CN1QbtTs5NV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmimWCUACgkQAVBC80lX
+0Gzd0AgApHkOMlI/1rTL084BtooVhNP5WxMr2eMvJIGkQDtF2uajRxg/f1tf2R11
+bUVak6pKM8zwPLXqcxVveu2/SMU1W2Wp7NcJecQWhrumJIddhGQx40kUnAqZLOUr
+5+3h0ZnziJ3K3KUhdi528B7SaxdoANAl6XSpcBOqfvfUpL7qC+br3HUR9mff5YWp
+QQDN4251eyryiZsVgnNwetNWgdAfIJFsiwIJFCN9opk0O6+zD7pjIO0XCNF21jax
+EJM8cNBN0lziHabUTDJLvMt3dmmVTAJ5HnVi/FXdKmKVBrcyyzoXPp3FbLSMgsgq
+YzJ/S6TjPb8at+9EgkkRc4N7KAOrBA==
+=bhVm
+-----END PGP SIGNATURE-----
+
+--Sig_/gHOpFTDSB6j6CN1QbtTs5NV--
 
