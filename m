@@ -1,110 +1,88 @@
-Return-Path: <linux-kernel+bounces-776767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3565B2D146
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:18:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81427B2D14C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AADEF2A3711
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69D97285B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDC819DF4D;
-	Wed, 20 Aug 2025 01:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B1119F111;
+	Wed, 20 Aug 2025 01:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SXxvhSF+"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cyTHEKlR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BE235334D;
-	Wed, 20 Aug 2025 01:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDD835334D;
+	Wed, 20 Aug 2025 01:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755652731; cv=none; b=qizGQ4Wy8zySS9xC0bY0qhwJETrld+OJU7zJsiKX199iRnvfEaTlrmpVG0JqBUqvwpEWxy1RMPR6hhzHMnn+3Nbce6pJaRrbjBs9BN0cV5XfTz5d3NnHnv5GrBx0VTqGbq4ZbO6I2bggatd555bgIqwTaGQ2RI328E0uMDIF6ec=
+	t=1755652761; cv=none; b=WSpvOiJTsYyFptTl0hILAVgP5ZF9wbgdNlVkQFU9S7gWRqrQo4LXVGXUfTVtmWqiYnd1/1lZdfgHsKy6LXMSBR1th7VbgfyOTDSJxVcEaUbpghgyJp0U/of7p+sHyfhGHzmyEBmJrhZzbMLReR/V7/ntxe2lAskvrEGJiloj1TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755652731; c=relaxed/simple;
-	bh=Zc8KTvnnxKKucPRYOFGi/LfFPLjaylS9ofv+IXSkWSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+qAFaMN/2aa9GZ+3lfuqiLE3HkFVMvk8YzZQ2BvN/zA66ochP4h/HGU2nOG79IBIKdG7QM17cVq2hYrIFMKPhSNcZDjBez8Uaaxs9gbyCzvSAprZA3MW7qfXhbcs3/qNWOAc+v1fY+OdjkoTDZQqkpHQXgTpV+Pzjijybg4hhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SXxvhSF+; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=BiSimGacYECh9jzeLaODztaxsvnVtzIqcHjbY7zbm58=; b=SXxvhSF+IF2PyIMFltha02LLVP
-	qAjDNq5bB3dA+uHo8m/4QiFzvkkcVsl5J6vsCyGmXtwRrBSXisM8Kd1HtY97RhWBD2qIgKOLCBc+1
-	q7uIni4hKs+8L+gajwkGDJ+7HCzrpOzojE8VdQ6vZPyDpnv1NOvtZRdSn++CCTyO7SD0Tl1ER6bae
-	VWEVdGX2fawYNP1AOs/NzWOSgjWL46gI7wSL5y04hyNqAr15hQ9fxBqLUzCkeNgtGZPG85u4ao+3m
-	honXxKxwgNjExj6+FIKdhJZ5GfbDXzDI8YGUOR2bZbIlplqz0NhZplaU7USP6UPkvDRtAR5yrEaBN
-	hQNUE2sw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uoXTT-0000000C4M6-2w7b;
-	Wed, 20 Aug 2025 01:18:47 +0000
-Message-ID: <33d4f923-250b-48f0-b5f5-664f09a2edf5@infradead.org>
-Date: Tue, 19 Aug 2025 18:18:47 -0700
+	s=arc-20240116; t=1755652761; c=relaxed/simple;
+	bh=cjJRLW2sV4cFnb5HNArK4xCSZg33FLuESJ6vc/T4y5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LYJ4Ob/q8ECiYMEenhFKx8s1FA6Nm40ex6DTrsOvU7sEp4bujfzvz2Yu7p2Q7xWkcRxdG3nu5fyaeGYUOb0ZtqFn6zFLAKHbjZvCE7RwB6VoEaOAYoMsTZeSD3CfUJTT7aiNh9IsIerhFIMQHMoJ3A4cNnguYRIXslR6CpzpoY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cyTHEKlR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7D35C4CEF1;
+	Wed, 20 Aug 2025 01:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755652761;
+	bh=cjJRLW2sV4cFnb5HNArK4xCSZg33FLuESJ6vc/T4y5k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cyTHEKlRrdRQ1N62AOX3gs/46KVqddCnuOs/wFLM1W2Ng02c/2X0CX1eEbIgERXSQ
+	 /E53XK7ba39bRFUSW00l6LIpj/mlbgGXq5Aw7hRGZQVP7w0cY5tvTMQGCr3eTgHNNI
+	 yrrd7/Sux6QF8j8Me2YfV8qIwzgN+5Apuj93J2ym6b3FHC4wlPvvK3Hj/VN6DQ3fWQ
+	 p4RO7C/6MVu0GvXEeXRlbxaT3yLah8MOg1wpI0vOEnd6ZljHocO1a2qKQKLI7G1NRR
+	 I0jzZeE6ATgraaBHKp4jvExUeEd7bWGBub4U01XW+4q+xQ3ucUtjnm3MT8KH3uFPoi
+	 acdnyFpkpu0Qw==
+Date: Tue, 19 Aug 2025 18:19:20 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Rohan G Thomas via B4 Relay
+ <devnull+rohan.g.thomas.altera.com@kernel.org>
+Cc: rohan.g.thomas@altera.com, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Serge Semin
+ <fancer.lancer@gmail.com>, Romain Gantois <romain.gantois@bootlin.com>,
+ Jose Abreu <Jose.Abreu@synopsys.com>, Ong Boon Leong
+ <boon.leong.ong@intel.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
+ Gerlach <matthew.gerlach@altera.com>
+Subject: Re: [PATCH net-next v2 2/3] net: stmmac: xgmac: Correct supported
+ speed modes
+Message-ID: <20250819181920.275f2827@kernel.org>
+In-Reply-To: <20250816-xgmac-minor-fixes-v2-2-699552cf8a7f@altera.com>
+References: <20250816-xgmac-minor-fixes-v2-0-699552cf8a7f@altera.com>
+	<20250816-xgmac-minor-fixes-v2-2-699552cf8a7f@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: bcachefs: Add explicit title for idle work
- design doc
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux bcachefs <linux-bcachefs@vger.kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- Jonathan Corbet <corbet@lwn.net>
-References: <20250820002218.11547-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250820002218.11547-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 8/19/25 5:22 PM, Bagas Sanjaya wrote:
-> Commit 9e260e4590e044 ("docs: bcachefs: idle work scheduling design doc")
-> adds design doc (desiderata) for idle work scheduling, but missed
-> explicit title, causing its two section headings to be toctree entries
-> instead.
-> 
-> Add the title.
-> 
-> Fixes: 9e260e4590e0 ("docs: bcachefs: idle work scheduling design doc")
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/filesystems/bcachefs/future/idle_work.rst | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/filesystems/bcachefs/future/idle_work.rst b/Documentation/filesystems/bcachefs/future/idle_work.rst
-> index 59a332509dcd97..30f2844c3d9e5e 100644
-> --- a/Documentation/filesystems/bcachefs/future/idle_work.rst
-> +++ b/Documentation/filesystems/bcachefs/future/idle_work.rst
-> @@ -1,4 +1,5 @@
-> -Idle/background work classes design doc:
-> +Idle/background work classes desiderata
-> +=======================================
-
-I agree with the underline change and tested it. However, I don't care
-for the change in the wording.
-
+On Sat, 16 Aug 2025 00:55:24 +0800 Rohan G Thomas via B4 Relay wrote:
+>  {
+>  	u32 hw_cap;
 >  
->  Right now, our behaviour at idle isn't ideal, it was designed for servers that
->  would be under sustained load, to keep pending work at a "medium" level, to
-> 
-> base-commit: 37c52167b007d9d0bb8c5ed53dd6efc4969a1356
+> +	struct stmmac_priv *priv = container_of(dma_cap, struct stmmac_priv,
+> +						dma_cap);
+> +
+>  	/* MAC HW feature 0 */
 
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+nit: no empty lines between variable declarations and longest to
+shortest, so:
 
-
--- 
-~Randy
+ {
++	struct stmmac_priv *priv = container_of(dma_cap, struct stmmac_priv,
++						dma_cap);
+ 	u32 hw_cap;
 
