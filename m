@@ -1,269 +1,378 @@
-Return-Path: <linux-kernel+bounces-776916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F74FB2D2F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:26:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74D8B2D2F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21CB91C285B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:26:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7CE5870BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 04:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1752243367;
-	Wed, 20 Aug 2025 04:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8FC250BEC;
+	Wed, 20 Aug 2025 04:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hM23TLvi"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2051.outbound.protection.outlook.com [40.107.94.51])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MppeNeDm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DF021CC4F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755663974; cv=fail; b=D0IJvq+J6SRWztSQL0Cu55Kwa7t5jeXJ5HM0csBn2qYzWmyvoQS8RuMvAH2Iqddv3qwgjYFfREmtWQkWyFs9rImPUgdkw9P4eg6BD9/CBPx7olffj05dJC/mg6mtfd4i75MZZwRjIqlUNi5wN+zoQUsAKsMDtIyleJTnckiC3ww=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755663974; c=relaxed/simple;
-	bh=eKf+MJJgkxlbSm8vifglsyBjMRSYwyeG+bovmEVjK8E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nOlDnOKsO0l/YsUypunAFJTiC3f1K8wom+L1YbXeTal8dtrwGW/y5EIATx1TDdVXaNIEbUFqbjK6VZSJAmj14f7W4lSpVNVX7ULucSQQxK38PyRPmSlrZRIKDSl8CWVZNNcvFnL/zB9mjXxVe7uT2YEvF9cKR9cgmVDUdfWASr8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hM23TLvi; arc=fail smtp.client-ip=40.107.94.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TJ9jWe3jdnO+L0cJOpTMBTuMZTyCqsf4t30hUQuY6KS2tJie5z/hQtri3MhXcEoutuKqvhG80TU332JNs0wieKaasCzd8EsUHeWj+tSYk6BlD+vexS0/fn2WXFlbLbECx9WvdC6XdhVLNcNmPmjFhNFW+7YBKgt08GpZ9VxKPRvgAk6NaEgiPqeGHw36WHVVy/y85L77AoDfK+Gs9UNnUtqQLI5IgHjbfmDzAqVC1BFWKWhPcnNoZJMfCt0AbJsr/q61K2ajOgMDxjs1xTYGO4FZe6vyPa1SVFZ0/xkfseKGAvmodAGpAdaeiI2KjJFfRiIyy67Kn03EPybj4/h+Ug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eGMF+CurBIFd7jptVV3txTA1mXHe0IsnU900vo659AQ=;
- b=hzEWxIouys/J96Gv2WyMae5FDqztBHAZmThCXblhfleW8l+KsS2vQGsjReJWU7AHmdUFlBbsalSEPAQjwdHPgkHoU5YbsOaXDDNNpgbVFTD5FNidqybtcmm9uvddoLN7KvlRYwV2NZJjn8jGgiPYMRHmgWWJ+iHNTPmkGwg/hhIQwdmSGDy5xoL1+h+/QIA0WC7CBcW883KnuIpyeXr+uRYz6E+eZsicmXNvdoMZx7+956fXtbzI7ZUeznLFdGaiMYbNFduwTHq3yMJWNZZzVL8NQZhwawplo/rh9RFo5F73B1HsGMjxpa7MWFn90haCLo00BXZmnpD6a+eO+ilu5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eGMF+CurBIFd7jptVV3txTA1mXHe0IsnU900vo659AQ=;
- b=hM23TLvi6w1HBrtVCHYnDDR1Gr3CCCQNZB31FL52C5tCov/lUXf+Aq0uItwFAcr9e0kvX27BzVjXmTZjkEYZOBNyb8qB3ADV7LUo7wJwvAB5/Q+x3huuxHjR//9MEm4T8pwfzasGNzo5YpOcBG06QEoXosls6ypH0n0+nHJKS34=
-Received: from BN0PR02CA0013.namprd02.prod.outlook.com (2603:10b6:408:e4::18)
- by DS4PR12MB9817.namprd12.prod.outlook.com (2603:10b6:8:2ab::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
- 2025 04:26:07 +0000
-Received: from BN3PEPF0000B370.namprd21.prod.outlook.com
- (2603:10b6:408:e4:cafe::b1) by BN0PR02CA0013.outlook.office365.com
- (2603:10b6:408:e4::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.14 via Frontend Transport; Wed,
- 20 Aug 2025 04:26:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B370.mail.protection.outlook.com (10.167.243.167) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.0 via Frontend Transport; Wed, 20 Aug 2025 04:26:07 +0000
-Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 19 Aug
- 2025 23:26:02 -0500
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: <linux-kernel@vger.kernel.org>, <joro@8bytes.org>, <jgg@nvidia.com>,
-	<kevin.tian@intel.com>, <vasant.hegde@amd.com>
-CC: <iommu@lists.linux.dev>, <santosh.shukla@amd.com>,
-	<sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
-	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
-	<gptran@google.com>, <kpsingh@google.com>, Suravee Suthikulpanit
-	<suravee.suthikulpanit@amd.com>
-Subject: [PATCH] iommu/amd: Add support for hw_info for iommu capability query
-Date: Wed, 20 Aug 2025 04:25:33 +0000
-Message-ID: <20250820042533.5962-1-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609D723E32B
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755664077; cv=none; b=nUsJ0hnbDJleDLQUMqgrvPkbZzZLGCTMcdN6Y7Bf6p2SSzZNSrSvu0t/76OJ2IxonBuP/BifGIFEOF9W+4zHgCAndNInBN5ZT+9d5qLHKUQEtCloGYb7/iu8qj9KN4wDSV2BNFhSGtz/jd140Sd1G+WeZk7F/91vAjAe+7S84a0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755664077; c=relaxed/simple;
+	bh=IGnA1FXv1f8tKEdqJvkn6S/E7oLAVWuQedEUjt4GafM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MaCe8j3nsacMva1sP9fcjVgBOOQAiHN6y6/k7dKLSpgO8xlyMMcpL/AkeAevEBmjDYQgi8/HAD9+gie0i1wxEvOusUA+aKJJPbnin5VhGYfBwnU7m1bNEIWZWV2N/ImH4sp6uuwzwDs8EM9x+bah3I2hOSempo10XwKg7GTbnFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MppeNeDm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K1pDUn011480
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:27:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hAK0xru7GDJ8nMhMtlK0GPrXNKZ4lF18AzZoweZOXc8=; b=MppeNeDmQW3zgxHH
+	znkuQMlORXHaKNmWH7c1g3NaJ6BGvfqpa01qdsXLiwpBXrigzdaSXd0jvQCTp9iT
+	+PWJ7KW2/EFMU8UKKMLC+WrsRyBxar+0PTcdbfnIlNPPSnAVUuCToKanZSh6e1lF
+	pujYr99B6NDid+CSRpAuvM+8zvh7c2QPaRm1OjRUsmrNfY+DaXA5NQndbt9Rz6VU
+	QM7ZqrEwMOkAQ731Ix75CNABdpzWFM8va1/Lv2rxltSgstvmGWIQwg+oBlEbUh4N
+	pLaHfQg65QS8bOnt1w0y71+3GwG+CEp/Mdhfp5xOvEMKrC2gRIUOvGf9zwc3epol
+	9GgYiw==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52bgc6w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 04:27:54 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-76e2e890901so11502490b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Aug 2025 21:27:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755664073; x=1756268873;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hAK0xru7GDJ8nMhMtlK0GPrXNKZ4lF18AzZoweZOXc8=;
+        b=HgpAxtchkQIZ2h4X/K/VhX8hl657Z2PZPHyNXgNDa0XumO3Yz26ZlkF+PQePo0AcRO
+         yl0dIqgFKLDSxSBWzL/f6gHllHYDuOhqyvnSi8ImDkfu4SKp/3J6LI5auJ20mS2k0OUZ
+         BuSTKE6DmWSPZ27zjtyDnAbAqMgHuqqHxN1fUl0scCxX/h9VIeTPE5gvLPaPUcYtGwtm
+         5qwDtcEzrCbCQ8X+wIWMP9YZeBKtQnP5L/mTIOWkoJh1cZGa6XSgOEswuc+cJdAncG67
+         9kxcEomoKTRr8xh1ehdNUCx0qJCCmYSQhV2Tq7fXaupZ2gwiYogoJQVa4o0HUdkCePA8
+         6Y8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUoPnwB/fdS99Il4YRKgSb3DkUYLytZe1MHjyhWwhKRIdAMAu9QthTr8/Vj7pW72bnWsIzSKDwfoy9emnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3IUSLS0NPa6Ml4cR3khVqlyJ8vapShBD0LFecFYHYhZKv6R0h
+	kKcvFGDzb5mIfYILtbNZVQnQX2tLk0kIItomG8F0L7RbvcKRGWigdR1Vm3fEr2X+ZpK43Fc/oih
+	f/29TtiFLBOHOAAsfYiblHRrzQilWiCD1xtD/cPXe2ArmUvnPb6NoGj2QDrrMDcQQsWZSLnAB7+
+	s=
+X-Gm-Gg: ASbGnctqfU09h2OlsEMNhrQJrdJLbsQwMC047jWHTlNJe8MRmDQMSvEbBplI9Q5MMtl
+	yCvjFvAIek3f+WIGQtmMveX84ASDpqiFqzzAN6PlP2QnHPFFoSpHXW7EzuVGlq7A591Ga+kZ6CJ
+	5B2J66451F5zL63qZPrzvbdigVmvJonNgSQD4prSXTMS3qI/aOAV+7CUXzneEURgCXQ7R/fGz7A
+	VH9Vh+hIff1kEeZMea26qKe8P0wPD5Rq5cqJJ8hK/BHpuwz7cdNGFZvhYuO5aOiHGBsGuHpDIv1
+	ueX/uE9tM6g2g+k2olUuxGnPzib3Bbx8052B+Q/+faq5CGIPGK/qTOu9Zzm3YJdO7fUuoDNeGA=
+	=
+X-Received: by 2002:a05:6a00:3e11:b0:748:3385:a4a with SMTP id d2e1a72fcca58-76e8dd5c0f8mr1714834b3a.23.1755664073237;
+        Tue, 19 Aug 2025 21:27:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcUojZeMUSbe1pEWZytu3vdN7AWQXRbXfhsjIC+2+iyfPG1ah4/TK6T5StHV+fx+cuygIhdQ==
+X-Received: by 2002:a05:6a00:3e11:b0:748:3385:a4a with SMTP id d2e1a72fcca58-76e8dd5c0f8mr1714803b3a.23.1755664072690;
+        Tue, 19 Aug 2025 21:27:52 -0700 (PDT)
+Received: from [10.218.42.132] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d13ac60sm4006778b3a.48.2025.08.19.21.27.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 21:27:52 -0700 (PDT)
+Message-ID: <54d71bb6-27bb-494f-8f63-710e0e4148e7@oss.qualcomm.com>
+Date: Wed, 20 Aug 2025 09:57:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B370:EE_|DS4PR12MB9817:EE_
-X-MS-Office365-Filtering-Correlation-Id: 58d2be75-3300-42cf-5808-08dddfa1aecb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KHJGCYyG3t7sqMjWd+T/y3/4s4A4BsmKoNb1rXo4v3PMyjog11TMi7C06yNM?=
- =?us-ascii?Q?O3S239233RiNg4jllYON0ZGykpNyvnbtwvid8H0yvG8G11KLrP2dc5zFOO7x?=
- =?us-ascii?Q?j1ntY34AlOgWeVdgtEY+pA/AZ8rHORKqxZsr+XqQX1T5nmg6zdBRoeMMEoOI?=
- =?us-ascii?Q?gxEq7whWAdHN8UqaxAX27UrPdTsLtNoW4JuX0FFHqyZ+4J+G9viKDidTUEco?=
- =?us-ascii?Q?aa3KAWjLOElFYlJs+Yt3cl/WVVuwje18kuhjPlYfp8QtW+BCppkpDfFLU7SZ?=
- =?us-ascii?Q?wsEqHjdLkgt55gvmJuTnAtGL9IJzgTN9eBoIEvGbraKe+3NDSIQYqWr6Npkn?=
- =?us-ascii?Q?RhgVO6bO3V6yncXZaGX5t/T0retnpu2//gyiIju2rGtQYu9TWXhkHQGx+DbQ?=
- =?us-ascii?Q?9vYHasSGbQXmWmR/1wbnhKYydZ24Ki5jc7puW2/8rFxqJxa+wkrUB3xuOTVv?=
- =?us-ascii?Q?IN/HJGYSC6uC/eZulwq+P3E4sR7AYyHVX/QmyjfJjI1Fc0EIlGaSPwJXv42g?=
- =?us-ascii?Q?KyRpxJlIhs5oSng1f0VovzN8SkygzK6NLAew2TPztrdGpyrRqMwT0sdodB7m?=
- =?us-ascii?Q?9ifIgh/Kz+AeJ7z4mxh2//ljFlxhWPTRq9vI30c1KpImqzib9jc/HLgEyN23?=
- =?us-ascii?Q?81aV8zqUA13xr4dJAVUVJ0zlqyJwg6fSLxzXb0M0flNlsAxRw/XiWcgIjbKq?=
- =?us-ascii?Q?TiqSYF0JwDcO1tHh6qLvGmimSC+Awz6ybrGm54BXWSjlZW+KKTIhy9mMKGQL?=
- =?us-ascii?Q?g0YHWE6XDFszu5Ijuvh4+T+QUD8TDJ5iapXgaeD3wf8LgkrvUF6qxWOX7cKU?=
- =?us-ascii?Q?Vve0u9ulhgZ+gU0t66tdpEj/6Ez7xMeeRCnnJXqosIKEWE9X6ev1xYS4pp9J?=
- =?us-ascii?Q?5pQsUYruXmJLLWXLfI85zvPxc2X9GEdyFmo6DYBrTNFsIMD2wK1F+NXGRYRz?=
- =?us-ascii?Q?ibxh2yWTcmLqvg3SnLDXBuMRz/PdCod9Y4Cp8oViQaCtX+CqSCCR7l0cmEtT?=
- =?us-ascii?Q?eCku9pMGg+m/Ad3kRnUCtXWu8UQ9sLJvup+64WKaj+iWwcTQto5p83kQVUCR?=
- =?us-ascii?Q?OBcTHXyDxUtjAC0d3DzCZq6hpFLppjIKwX/Mc1/sJdP6yB6vp8P7s/b05yI1?=
- =?us-ascii?Q?IsWyN/8IAPxby5guLy1fW77MKeuK14IbpmY4JQu0KJWDjcHrVbehdaz818/v?=
- =?us-ascii?Q?zd8ZIRLahvys/6PjJ7FWKLTN8SudU9/z1RVYRNxYKidlugqVcEykHKdtNuii?=
- =?us-ascii?Q?UckAv3024Y8ljnZwktgl9y9E3r1bKaQN/8FsFkfJG8oiGOe6WmtyyasNBaLL?=
- =?us-ascii?Q?dBdVqIll+y2N4DkQ17H8iNhnOLdPAM1W7AWDggEL5wcLYGsIiiXTlrX+LBov?=
- =?us-ascii?Q?P2Q6KZSAcpdffN5HDZM4RA4BezZOrKlblkEqtwz/din9hj038UpRjW4KMh4+?=
- =?us-ascii?Q?S5icpn7lISdw6hj0ivfP7BOvKG1mT8qKquE0boVFu9O1p5rACMru7wwrpAtb?=
- =?us-ascii?Q?bimRL4ca3RMfG2qcG2Oc0Bo82tEa+LCRxZomdbKgNCzhZ3Nff8w3JYyvTw?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 04:26:07.1341
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58d2be75-3300-42cf-5808-08dddfa1aecb
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B370.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9817
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] OPP: Add support to find OPP for a set of keys
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250819-opp_pcie-v3-0-f8bd7e05ce41@oss.qualcomm.com>
+ <20250819-opp_pcie-v3-1-f8bd7e05ce41@oss.qualcomm.com>
+ <20250819081859.kz7c27d6c77oy2gv@vireshk-i7>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <20250819081859.kz7c27d6c77oy2gv@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXy9BsERiHtWOh
+ iJwxpd4JyuYDpiKKZSVVC5boha8ogoDc2M+JW7v3U35Vtgtdz82E0SoNGpI6+gTDe1wEi8sRB29
+ hQ1G3rhVqh4YRMqh8I18Mt7g4Rk/rJedxvOYbb9SbtZ52EIsFOc6s24VU46XkLPswBWmiYj+hHJ
+ IbzO6QL9AV/nGW3ly0BRSE2MbmPrsZwn0/p3PpjuIl1JNZdlxt3U84a5xZGSAXxLfsqf3F8ZVPk
+ 8jxFcw/Rx8bkJTyki7xypJj9pU9jOH+ASML+ytqDzFU8fiHLrwcakUX04MMVRtuctEasCee+YcL
+ K+XMCyygoLjF3NNM6y3k3qVkUvsxIS/TcipPviIuVSXj6xNV8AIq/voeexbLUtNGG3qAOOHcZYq
+ gETrGMkSb7IveyiYgrKGUB0n26bHag==
+X-Authority-Analysis: v=2.4 cv=cr3CU14i c=1 sm=1 tr=0 ts=68a54eca cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=76l3OPsZB85xAofE:21 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=6WgZcX-rmC49gpfAgPcA:9 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-GUID: k5m4tZp_ZzRUmf8GsPi-hGm9gijKpzww
+X-Proofpoint-ORIG-GUID: k5m4tZp_ZzRUmf8GsPi-hGm9gijKpzww
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 lowpriorityscore=0 bulkscore=0 adultscore=0 phishscore=0
+ malwarescore=0 suspectscore=0 impostorscore=0 spamscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-AMD IOMMU Extended Feature (EFR) and Extended Feature 2 (EFR2) registers
-specify features supported by each IOMMU hardware instance.
-The IOMMU driver checks each feature-specific bits before enabling
-each feature at run time.
 
-For IOMMUFD, the hypervisor determines which IOMMU features to support
-in the guest, and communicates this information to user-space (e.g. QEMU)
-via iommufd IOMMU_DEVICE_GET_HW_INFO ioctl.
 
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
- drivers/iommu/amd/amd_iommu_types.h |  3 +++
- drivers/iommu/amd/iommu.c           | 40 +++++++++++++++++++++++++++++
- include/uapi/linux/iommufd.h        | 19 ++++++++++++++
- 3 files changed, 62 insertions(+)
+On 8/19/2025 1:48 PM, Viresh Kumar wrote:
+> On 19-08-25, 11:04, Krishna Chaitanya Chundru wrote:
+>> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+>> index edbd60501cf00dfd1957f7d19b228d1c61bbbdcc..ce359a3d444b0b7099cdd2421ab1019963d05d9f 100644
+>> --- a/drivers/opp/core.c
+>> +++ b/drivers/opp/core.c
+>> @@ -461,6 +461,15 @@ int dev_pm_opp_get_opp_count(struct device *dev)
+>>   EXPORT_SYMBOL_GPL(dev_pm_opp_get_opp_count);
+>>   
+>>   /* Helpers to read keys */
+>> +static unsigned long _read_opp_key(struct dev_pm_opp *opp, int index, struct dev_pm_opp_key *key)
+> 
+> Move this to the end of the list, after _read_bw() i.e.
+> 
+ack
+>> +{
+>> +	key->bandwidth = opp->bandwidth ? opp->bandwidth[index].peak : 0;
+>> +	key->freq = opp->rates[index];
+>> +	key->level = opp->level;
+>> +
+>> +	return true;
+>> +}
+>> +
+>>   static unsigned long _read_freq(struct dev_pm_opp *opp, int index)
+>>   {
+>>   	return opp->rates[index];
+>> @@ -488,6 +497,23 @@ static bool _compare_exact(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
+>>   	return false;
+>>   }
+>>   
+>> +static bool _compare_opp_key_exact(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
+>> +				   struct dev_pm_opp_key opp_key, struct dev_pm_opp_key key)
+>> +{
+> 
+> And this after _compare_floor().
+> 
+ack
+>> +	bool level_match = (opp_key.level == OPP_LEVEL_UNSET ||
+> 
+> Why are we still checking this ? You removed this from freq check but
+> not level and bandwidth ?
+> 
+ok I will change for level and bw also similar to freq.
+>> +			    key.level == OPP_LEVEL_UNSET || opp_key.level == key.level);
+>> +	bool bw_match = (opp_key.bandwidth == 0 ||
+>> +			 key.bandwidth == 0 || opp_key.bandwidth == key.bandwidth);
+>> +	bool freq_match = (key.freq == 0 || opp_key.freq == key.freq);
+>> +
+>> +	if (freq_match && level_match && bw_match) {
+>> +		*opp = temp_opp;
+>> +		return true;
+>> +	}
+>> +
+>> +	return false;
+>> +}
+>> +
+>>   static bool _compare_ceil(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
+>>   			  unsigned long opp_key, unsigned long key)
+>>   {
+>> @@ -541,6 +567,40 @@ static struct dev_pm_opp *_opp_table_find_key(struct opp_table *opp_table,
+>>   	return opp;
+>>   }
+>>   
+>> +static struct dev_pm_opp *_opp_table_find_opp_key(struct opp_table *opp_table,
+>> +		struct dev_pm_opp_key *key, int index, bool available,
+>> +		unsigned long (*read)(struct dev_pm_opp *opp, int index,
+>> +				      struct dev_pm_opp_key *key),
+>> +		bool (*compare)(struct dev_pm_opp **opp, struct dev_pm_opp *temp_opp,
+>> +				struct dev_pm_opp_key opp_key, struct dev_pm_opp_key key),
+>> +		bool (*assert)(struct opp_table *opp_table, unsigned int index))
+>> +{
+>> +	struct dev_pm_opp *temp_opp, *opp = ERR_PTR(-ERANGE);
+>> +	struct dev_pm_opp_key temp_key;
+>> +
+>> +	/* Assert that the requirement is met */
+>> +	if (assert && !assert(opp_table, index))
+> 
+> Just drop the `assert` check, it isn't optional. Make the same change
+> in _opp_table_find_key() too in a separate patch if you can.
+> 
+ack
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	guard(mutex)(&opp_table->lock);
+>> +
+>> +	list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
+>> +		if (temp_opp->available == available) {
+>> +			read(temp_opp, index, &temp_key);
+>> +			if (compare(&opp, temp_opp, temp_key, *key))
+> 
+> Update *key and do dev_pm_opp_get() here itself. And same in
+> _opp_table_find_key().
+> 
+ack
+>> +				break;
+>> +		}
+>> +	}
+>> +
+>> +	/* Increment the reference count of OPP */
+>> +	if (!IS_ERR(opp)) {
+>> +		*key = temp_key;
+>> +		dev_pm_opp_get(opp);
+>> +	}
+>> +
+>> +	return opp;
+>> +}
+>> +
+>>   static struct dev_pm_opp *
+>>   _find_key(struct device *dev, unsigned long *key, int index, bool available,
+>>   	  unsigned long (*read)(struct dev_pm_opp *opp, int index),
+>> @@ -632,6 +692,46 @@ struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
+>>   }
+>>   EXPORT_SYMBOL_GPL(dev_pm_opp_find_freq_exact);
+>>   
+>> +/**
+>> + * dev_pm_opp_find_key_exact() - Search for an exact OPP key
+>> + * @dev:                Device for which the OPP is being searched
+>> + * @key:                OPP key to match
+>> + * @available:          true/false - match for available OPP
+>> + *
+>> + * Return: Searches for an exact match the OPP key in the OPP table and returns
+> 
+> The `Return` section should only talk about the returned values. The
+> above line for example should be present as a standalone line before
+> the `Return` section.
+> 
+ack
+>> + * pointer to the  matching opp if found, else returns ERR_PTR  in case of error
+>> + * and should  be handled using IS_ERR. Error return values can be:
+>> + * EINVAL:      for bad pointer
+>> + * ERANGE:      no match found for search
+>> + * ENODEV:      if device not found in list of registered devices
+>> + *
+>> + * Note: available is a modifier for the search. if available=true, then the
+>> + * match is for exact matching key and is available in the stored OPP
+>> + * table. if false, the match is for exact key which is not available.
+>> + *
+>> + * This provides a mechanism to enable an opp which is not available currently
+>> + * or the opposite as well.
+>> + *
+>> + * The callers are required to call dev_pm_opp_put() for the returned OPP after
+>> + * use.
+> 
+> There are various minor issues in the text here, like double spaces,
+> not starting with a capital letter after a full stop, etc. Also put
+> arguments in `` block, like `available`.
+> 
+ack
+>> + */
+>> +struct dev_pm_opp *dev_pm_opp_find_key_exact(struct device *dev,
+>> +					     struct dev_pm_opp_key key,
+>> +					     bool available)
+>> +{
+>> +	struct opp_table *opp_table __free(put_opp_table) = _find_opp_table(dev);
+>> +
+>> +	if (IS_ERR(opp_table)) {
+>> +		dev_err(dev, "%s: OPP table not found (%ld)\n", __func__,
+>> +			PTR_ERR(opp_table));
+>> +		return ERR_CAST(opp_table);
+>> +	}
+>> +
+>> +	return _opp_table_find_opp_key(opp_table, &key, 0, available, _read_opp_key,
+>> +				       _compare_opp_key_exact, assert_single_clk);
+> 
+> Since the only user doesn't use `index` for now, I wonder if that
+> should be added at all in all these functions.
+> 
+ok I will remove it.
+>> +}
+>> +EXPORT_SYMBOL_GPL(dev_pm_opp_find_key_exact);
+>> +
+>>   /**
+>>    * dev_pm_opp_find_freq_exact_indexed() - Search for an exact freq for the
+>>    *					 clock corresponding to the index
+>> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+>> index cf477beae4bbede88223566df5f43d85adc5a816..53e02098129d215970d0854b1f8ffaf4499f2bd4 100644
+>> --- a/include/linux/pm_opp.h
+>> +++ b/include/linux/pm_opp.h
+>> @@ -98,6 +98,18 @@ struct dev_pm_opp_data {
+>>   	unsigned long u_volt;
+>>   };
+>>   
+>> +/**
+>> + * struct dev_pm_opp_key - Key used to identify OPP entries
+>> + * @freq:       Frequency in Hz
+>> + * @level:      Performance level associated with the OPP entry
+>> + * @bandwidth:  Bandwidth associated with the OPP entry
+> 
+> Also mention the NOP value of all these keys, i.e. what the user must
+> fill them with if that key is not supposed to be matched.
+> 
+ack
+>> + */
+>> +struct dev_pm_opp_key {
+>> +	unsigned long freq;
+>> +	unsigned int level;
+>> +	u32 bandwidth;
+> 
+> Maybe use `bw` here like in other APIs.
+> 
+ack.
 
-diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
-index 5219d7ddfdaa..efdd0cbda1df 100644
---- a/drivers/iommu/amd/amd_iommu_types.h
-+++ b/drivers/iommu/amd/amd_iommu_types.h
-@@ -95,9 +95,12 @@
- #define FEATURE_HE		BIT_ULL(8)
- #define FEATURE_PC		BIT_ULL(9)
- #define FEATURE_HATS		GENMASK_ULL(11, 10)
-+#define FEATURE_GATS_SHIFT	12
- #define FEATURE_GATS		GENMASK_ULL(13, 12)
-+#define FEATURE_GLX_SHIFT	14
- #define FEATURE_GLX		GENMASK_ULL(15, 14)
- #define FEATURE_GAM_VAPIC	BIT_ULL(21)
-+#define FEATURE_PASMAX_SHIFT	32
- #define FEATURE_PASMAX		GENMASK_ULL(36, 32)
- #define FEATURE_GIOSUP		BIT_ULL(48)
- #define FEATURE_HASUP		BIT_ULL(49)
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index eb348c63a8d0..ebe1cb9b0807 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -3038,8 +3038,48 @@ static const struct iommu_dirty_ops amd_dirty_ops = {
- 	.read_and_clear_dirty = amd_iommu_read_and_clear_dirty,
- };
- 
-+#define AMD_VIOMMU_EFR_GUEST_TRANSLATION_FLAGS \
-+	(FEATURE_GT | FEATURE_GA | FEATURE_GIOSUP | \
-+	 FEATURE_PPR | FEATURE_EPHSUP)
-+
-+static void _build_efr_guest_translation(struct amd_iommu *iommu, u64 *efr, u64 *efr2)
-+{
-+	/*
-+	 * Build the EFR against the current hardware capabilities
-+	 *
-+	 * Also, not all IOMMU features are emulated by KVM.
-+	 * Therefore, only advertise what KVM can support
-+	 * or virtualzied by the hardware.
-+	 */
-+	if (!efr)
-+		return;
-+
-+	*efr |= (amd_iommu_efr & AMD_VIOMMU_EFR_GUEST_TRANSLATION_FLAGS);
-+	*efr |= (FIELD_GET(FEATURE_GATS, amd_iommu_efr) << FEATURE_GATS_SHIFT);
-+	*efr |= (FIELD_GET(FEATURE_GLX, amd_iommu_efr) << FEATURE_GLX_SHIFT);
-+	*efr |= (FIELD_GET(FEATURE_PASMAX, amd_iommu_efr) << FEATURE_PASMAX_SHIFT);
-+	pr_debug("%s: efr=%#llx\n", __func__, *efr);
-+}
-+
-+static void *amd_iommu_hw_info(struct device *dev, u32 *length, u32 *type)
-+{
-+	struct iommu_hw_info_amd *hwinfo;
-+	struct amd_iommu *iommu = rlookup_amd_iommu(dev);
-+
-+	hwinfo = kzalloc(sizeof(*hwinfo), GFP_KERNEL);
-+	if (!hwinfo)
-+		return ERR_PTR(-ENOMEM);
-+
-+	*length = sizeof(*hwinfo);
-+	*type = IOMMU_HW_INFO_TYPE_AMD;
-+
-+	_build_efr_guest_translation(iommu, &hwinfo->efr, &hwinfo->efr2);
-+	return hwinfo;
-+}
-+
- const struct iommu_ops amd_iommu_ops = {
- 	.capable = amd_iommu_capable,
-+	.hw_info = amd_iommu_hw_info,
- 	.blocked_domain = &blocked_domain,
- 	.release_domain = &release_domain,
- 	.identity_domain = &identity_domain.domain,
-diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-index c218c89e0e2e..0f7212f9e0ce 100644
---- a/include/uapi/linux/iommufd.h
-+++ b/include/uapi/linux/iommufd.h
-@@ -613,6 +613,24 @@ struct iommu_hw_info_tegra241_cmdqv {
- 	__u8 __reserved;
- };
- 
-+/**
-+ * struct iommu_hw_info_amd - AMD IOMMU device info
-+ *
-+ * @efr : Value of AMD IOMMU Extended Feature Register (EFR)
-+ * @efr2: Value of AMD IOMMU Extended Feature 2 Register (EFR2)
-+ *
-+ * Please See description of these registers in the following sections of
-+ * the AMD I/O Virtualization Technology (IOMMU) Specification.
-+ * (https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/specifications/48882_IOMMU.pdf)
-+ *
-+ * - MMIO Offset 0030h IOMMU Extended Feature Register
-+ * - MMIO Offset 01A0h IOMMU Extended Feature 2 Register
-+ */
-+struct iommu_hw_info_amd {
-+	__aligned_u64 efr;
-+	__aligned_u64 efr2;
-+};
-+
- /**
-  * enum iommu_hw_info_type - IOMMU Hardware Info Types
-  * @IOMMU_HW_INFO_TYPE_NONE: Output by the drivers that do not report hardware
-@@ -629,6 +647,7 @@ enum iommu_hw_info_type {
- 	IOMMU_HW_INFO_TYPE_INTEL_VTD = 1,
- 	IOMMU_HW_INFO_TYPE_ARM_SMMUV3 = 2,
- 	IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV = 3,
-+	IOMMU_HW_INFO_TYPE_AMD = 4,
- };
- 
- /**
--- 
-2.34.1
-
+- Krishna Chaitanya.
+>> +};
+>> +
+>>   #if defined(CONFIG_PM_OPP)
+>>   
+>>   struct opp_table *dev_pm_opp_get_opp_table(struct device *dev);
+>> @@ -131,6 +143,10 @@ struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
+>>   					      unsigned long freq,
+>>   					      bool available);
+>>   
+>> +struct dev_pm_opp *dev_pm_opp_find_key_exact(struct device *dev,
+>> +					     struct dev_pm_opp_key key,
+>> +					     bool available);
+>> +
+>>   struct dev_pm_opp *
+>>   dev_pm_opp_find_freq_exact_indexed(struct device *dev, unsigned long freq,
+>>   				   u32 index, bool available);
+>> @@ -289,6 +305,13 @@ static inline struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
+>>   	return ERR_PTR(-EOPNOTSUPP);
+>>   }
+>>   
+>> +static inline struct dev_pm_opp *dev_pm_opp_find_key_exact(struct device *dev,
+>> +							   struct dev_pm_opp_key key,
+>> +							   bool available)
+>> +{
+>> +	return ERR_PTR(-EOPNOTSUPP);
+>> +}
+>> +
+>>   static inline struct dev_pm_opp *
+>>   dev_pm_opp_find_freq_exact_indexed(struct device *dev, unsigned long freq,
+>>   				   u32 index, bool available)
+>>
+>> -- 
+>> 2.34.1
+> 
 
