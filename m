@@ -1,150 +1,167 @@
-Return-Path: <linux-kernel+bounces-777418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A7EB2D8F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:46:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE278B2D911
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 201924E350B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:46:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80A6FB60D5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460BA2E2DDC;
-	Wed, 20 Aug 2025 09:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327F22E285C;
+	Wed, 20 Aug 2025 09:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Y/y9Pepq"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FPTTjmI2"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5186B2797B2
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEE52DECBA
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755682843; cv=none; b=iBDMldhAbuYJrpDbqC46wtnBxt9h82h9VWxVH/hfoh4A0zELN6+W0ttzZH8SJeXuc5+QgA0XKqwSy4gBs6Wf0vbXeWGsbXGKiJoH2LICspugVKhBQrE3Grw7nrg2rSysJyHDsGh6QDth1+bS9dIC8YHXeKkuN099BJIm/7yr7rk=
+	t=1755682840; cv=none; b=WmgpH+o301/ForC2KYppDAQw6pbTunWMLsdF0Qt356QRXxj2Mq0M0FdNOKerho8vVcj7Kvkq5ewSjDtCFNjqTAzoT+EfjB37ocsdo+Ud5N3q7XZblSZbSaperTOBBJ4IuazfKfxeq/NYJg8E0LSMktV5F2azxHbQjYT7qj2HqxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755682843; c=relaxed/simple;
-	bh=SlDNVjaqSCJN1qq7vItlVzarPa3bLQWQpk6xfhoW6kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HC9o1UlcKgOwCmUvsnn2E3mvGm3szb1X0JMjRN8TlsBtC7BwuUtVBCrXwOL+xAigjxlOLWamSfRcvX5M7GPMA9h4rW5acAA6pPcGvkw0Q7/DORoYwVpp5imcpSNRQSb39smJuvPGPrLQHIT3QkrjAuNIMJkVY715A1QrJS3XFWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Y/y9Pepq; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C351643193;
-	Wed, 20 Aug 2025 09:40:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1755682838;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wF4ezXe1oz0qXQ3iPrYQSXp9CX1fNeaMxP5k7bhgW6w=;
-	b=Y/y9PepqlsSdvoFd64NEFTFgsyQlwPoRfHeHRuhUHMxQ67R8niwxqsZUEGaKTWEYy2tbaJ
-	8OgyxxkkKx1V9LH5l1nTOtxtv+hQww1vcEGMoUvYxikbV5EzCD3B/gQU0m5jR2DpOLz0xq
-	KGZDhOrxTHYZ2g3mJ7XNOL1SP0BkeeKRX83PiSrFwhtgHq88Iv7uv6k02VCQ13nh0WQfZ7
-	KrCCjR5uhKWwXqnzWgJ9p9vcR44jTZkDq5YZmlqHevFXif8umFS90Jq6m+47J5Rm3ik2+s
-	Gwk6sv+ZgpkBKPupUCKjZQDYEz7+ZGSsAIUdeUdMQlP28df9Z/pFw8yTaWltcg==
-Date: Wed, 20 Aug 2025 11:40:30 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dmitry Baryshkov
- <dmitry.baryshkov@oss.qualcomm.com>, Chaoyi Chen
- <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2 3/9] drm/bridge: add
- drm_for_each_bridge_in_chain_scoped()
-Message-ID: <20250820114030.401e5d4f@booty>
-In-Reply-To: <20250819180137.28ca89c0@booty>
-References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
-	<20250808-drm-bridge-alloc-getput-for_each_bridge-v2-3-edb6ee81edf1@bootlin.com>
-	<7gpqrxlxxuarbp5b7bycukbbjdcuonlhn4zm6xinnrlqzrbeu7@rrpcwxnxxrag>
-	<20250819180137.28ca89c0@booty>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755682840; c=relaxed/simple;
+	bh=jseJB8mxRO8twsWpgM50wcB2CH10FcIVLbrukEtfdPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XnMz/3mtM/cxhQxJQ8bF60hxZDJao1tq+jcO3TP4SdpFuPnwK4ZAuzOsHlSgJAWgY0BE3PKhYVNOswliCcuht5KJnRGwGtgZDpFxHH/SteSkYIaekUa/9vHwWttyi+BP8OaQOTZlUHFYazSjCIgNtxJM5Q95yYRuTyYQMrGgPXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FPTTjmI2; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-618b62dbb21so9074258a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:40:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1755682834; x=1756287634; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NM0fyXJdFVsVnU/yS6K0gQI6XozNG1TCaWkFW+vAlK8=;
+        b=FPTTjmI2m1Xomt7ZjDRJeFiH49jk8C86vS+VuzKkE6mL1E6wiF6vLMIos6Nhj1a9Vm
+         Fsl8OZjzNrochKnp+7JVlmy9j8mFj8SKlFcPR9mFcCK8u5ta+RcNDBXYJbAcZEy4lSJW
+         sXB7ULiB4Okj3DVDrPxHoO61qBgDj0BkBHwRNmlzV/VykAQWCGOUpEJqNrzCHwX5p7Lx
+         YIUn2lO0lwOXV4aVXTk+l7MwJj1kOZOpqWLd3E7It7KQP73sOp2IusL+yGQFRFaqTUpj
+         zE8fmPxRwEreDgcXddsa+btihZAWHN6D2OjZLETrz6ZBjH21IDvODIauQkRuI5T64rAk
+         oRhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755682834; x=1756287634;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NM0fyXJdFVsVnU/yS6K0gQI6XozNG1TCaWkFW+vAlK8=;
+        b=qxtUUsoO0P6ySphm+tOmdc7Kc1Ay2D/BBxjfy97rEfFtpg6ix18U2wJqc3JpI1P+XX
+         nUtXW75QPVzuXDZoNn4MI/i/HpQ/XRUAdIvOG7SAmuYKgtrhZ0WcUuY9sQ+Cbdrmqmy3
+         eT4MdAttS2RR03mz/4C3cqmWDBZRK6l+xLc71/aIVaKwWGj2utpJOAf1sOKuqyljEF9Y
+         hQBXS47PaRNnUAl0QMrZZllm47G1fR6nmS2m92rws/Vh0jAw/+G/XHR48kKkhuUjHi1u
+         CylK8s+1VENF6RqwL07T3F84V4Kfdc/nz7lMha7BiK2ZG9K9tEpcmTwJsWH2Q9LoYd8y
+         jWZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrcTuEYhWL21LNxOxAsMf3PnE3PR0c7aJHneVKyWUJIRfx9N1Z4CwB+F8y1BJpIdLfkx8i83/8pHyJzLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq1tjBPOpq+fiXpvJM10aTIpGmetRNYmvbYOAnL5F2cDkpnKmN
+	hV5hzNyOBgfiuUM+JC+uIXu4NWRwlqewMAaM0PbQFlUV2FJCMwHtx+CcjaCTb9Oln0Q=
+X-Gm-Gg: ASbGnctnLVaue8rMx3dqeHunRL5smCvKYtd0bv/BNMxf++XeLJuL9dGdYTuk9s6lDy8
+	FKIuemChGW8Pt31PUusIvthQ6EjhYQBjnthR/egQF+fVvR2TPmR+K6piPPom4o6RbF3TmWR7cYW
+	3Mw4Kxcs0Cw/wclBFDcENdZ3eK2Yx2mD7hIWI8HZpWPPCF96x8PFa9RqmJWquE/EpxgzGoxx4+u
+	pdmPB5rig9pV02ARvIqyARIx79wFEBKhIdFevsQkWVmEQypaLUAHDU1BDEVwnG7R3s0VLTOHG6m
+	NHqACoq+ZS4gbzEk7b930odlOjDIB+nPTT8inFGm7d6660lC4bUsJffnqu35cuJ5J799fVaMSI3
+	gyrbgLkRfG5NpAYMpVqDN5AzwFA==
+X-Google-Smtp-Source: AGHT+IEL5yizeK4oP3hcKNDpDCbogCgeCUIgrsK+feZZ6+ybN7ZuuNRbKKwxk5Z77sh2bbe8+uaS7Q==
+X-Received: by 2002:a17:907:3c8b:b0:ad8:9645:798c with SMTP id a640c23a62f3a-afdf0209598mr168513766b.51.1755682834470;
+        Wed, 20 Aug 2025 02:40:34 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded478a14sm148404966b.76.2025.08.20.02.40.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 02:40:34 -0700 (PDT)
+Date: Wed, 20 Aug 2025 11:40:32 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Lance Yang <lance.yang@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+	paulmck@kernel.org, john.ogness@linutronix.de,
+	kernel test robot <lkp@intel.com>,
+	Feng Tang <feng.tang@linux.alibaba.com>
+Subject: [PATCH v2] panic: Clean up message about deprecated 'panic_print'
+ parameter
+Message-ID: <aKWYELPjbhC7R8NO@pathway.suse.cz>
+References: <aKRJKZHgcxyNF3y7@pathway.suse.cz>
+ <202508200907.PsZ3geub-lkp@intel.com>
+ <ae9bb2ea-c6e5-4a4b-ae25-aea1d6fe084d@linux.dev>
+ <33a897b4-7d9a-4641-9c7a-07c19bb9cb6f@linux.dev>
+ <7a34da58-874d-4271-9dbb-7991468d58ff@linux.dev>
+ <aKWWcPOf9qPIoCe4@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -51
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheektdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuuhhsphgvtghtffhomhgrihhnucdlgeelmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfeukedufeekuddugfeuteekgeelveelgfduteefjeffjeeiveetvefflefguddtnecuffhomhgrihhnpehophgvnhdqshhtugdrohhrghdpghhithhhuhgsrdhiohdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegrgeeivdemudgsuggumeeluddtudemvdelgehfnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegrgeeivdemudgsuggumeeluddtudemvdelgehfpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhiiv
- ghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKWWcPOf9qPIoCe4@pathway.suse.cz>
 
-Hi Maxime,
+Remove duplication of the message about deprecated 'panic_print'
+parameter.
 
-On Tue, 19 Aug 2025 18:01:37 +0200
-Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+Also make the wording more direct. Make it clear that the new
+parameters already exist and should be used instead.
 
-> Hi Maxime,
-> 
-> On Tue, 19 Aug 2025 15:47:06 +0200
-> Maxime Ripard <mripard@kernel.org> wrote:
-> 
-> > > +/**
-> > > + * drm_for_each_bridge_in_chain_scoped - iterate over all bridges attached
-> > > + *                                       to an encoder
-> > > + * @encoder: the encoder to iterate bridges on
-> > > + * @bridge: a bridge pointer updated to point to the current bridge at each
-> > > + *	    iteration
-> > > + *
-> > > + * Iterate over all bridges present in the bridge chain attached to @encoder.
-> > > + *
-> > > + * Automatically gets/puts the bridge reference while iterating, and puts
-> > > + * the reference even if returning or breaking in the middle of the loop.
-> > > + */
-> > > +#define drm_for_each_bridge_in_chain_scoped(encoder, bridge)		\
-> > > +	for (struct drm_bridge *bridge __free(drm_bridge_put) =		\
-> > > +	     drm_bridge_chain_get_first_bridge(encoder);		\    
-> > 
-> > So my understanding is that the initial value of bridge would be cleaned
-> > up with drm_bridge_put...
-> >   
-> > > +	     bridge;							\
-> > > +	     bridge = drm_bridge_get_next_bridge_and_put(bridge))    
-> > 
-> > ... but also when iterating?
-> > 
-> > So if we have more than 0 values, we put two references?  
-> 
-> No, this is not the case. The __free action is executed only when
-> exiting the entire for loop, not a single iteration.
-> 
-> This is consistent with the fact that the loop variable is persistent
-> across iterations.
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+Changes since v1:
 
-PS: here's the C language spec reference:
+  - fixed compilation with CONFIG_SYSCTL disabled (kernel test
+    robot <lkp@intel.com>)
 
-> 6.8.5.3 The for statement
-> The statement
-> for ( clause-1 ; expression-2 ; expression-3 ) statement
-> behaves as follows:
-> [...]
-> If clause-1 is a declaration, the scope of any identifiers it declares
-> is the remainder of the declaration and the entire loop 
+Thanks Lance Yang <lance.yang@linux.dev> for debugging the compilation
+error reported by the test robot.
 
-https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf
-https://rgambord.github.io/c99-doc/sections/6/8/5/3/index.html
+ kernel/panic.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-Best regards,
-Luca
-
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 12a10e17ab4a..24bca263f896 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -77,6 +77,11 @@ ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
+ 
+ EXPORT_SYMBOL(panic_notifier_list);
+ 
++static void panic_print_deprecated(void)
++{
++	pr_info_once("Kernel: The 'panic_print' parameter is now deprecated. Please use 'panic_sys_info' and 'panic_console_replay' instead.\n");
++}
++
+ #ifdef CONFIG_SYSCTL
+ 
+ /*
+@@ -125,7 +130,7 @@ static int proc_taint(const struct ctl_table *table, int write,
+ static int sysctl_panic_print_handler(const struct ctl_table *table, int write,
+ 			   void *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
++	panic_print_deprecated();
+ 	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
+ }
+ 
+@@ -944,13 +949,13 @@ core_param(panic_console_replay, panic_console_replay, bool, 0644);
+ 
+ static int panic_print_set(const char *val, const struct kernel_param *kp)
+ {
+-	pr_info_once("Kernel: 'panic_print' parameter will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
++	panic_print_deprecated();
+ 	return  param_set_ulong(val, kp);
+ }
+ 
+ static int panic_print_get(char *val, const struct kernel_param *kp)
+ {
+-	pr_info_once("Kernel: 'panic_print' parameter will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
++	panic_print_deprecated();
+ 	return  param_get_ulong(val, kp);
+ }
+ 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.50.1
+
 
