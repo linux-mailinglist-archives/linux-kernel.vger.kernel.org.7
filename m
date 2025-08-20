@@ -1,105 +1,126 @@
-Return-Path: <linux-kernel+bounces-776709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7128CB2D0B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:31:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BBDB2D0BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 02:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8918D7B3942
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:29:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C276B17785D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 00:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B894B1684AC;
-	Wed, 20 Aug 2025 00:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C884170A37;
+	Wed, 20 Aug 2025 00:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="vviL69Pa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="joIF5yeQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90813BB48
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 00:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968B035336C;
+	Wed, 20 Aug 2025 00:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755649877; cv=none; b=cjBRDkYx9KonPgzzPNFjuAFnG1Pj4sg0xTfWs6gX/rBzf/I8U7v1dUtlCBuxyQO4wsScWLo5+ESBEpMhk3ylfAtfb1TR25aWC7agxzybQJ4EiMZirg68gUuI+vT3DPmMcVB+067TC5p2sSLqPX93yotMioE5CgoilxKWFvGah0o=
+	t=1755650054; cv=none; b=BreVpqnCQEQR/fACrwBxvUoQqkJ4CHL+uga8ijcdUmvhZJKgu4LmjIcC7Uj9shfCI3TGc9aGuuLhrOXIDCsSWHLSb/HumA/WZOXqyRzkxuzSAnD+FGTN0oH/sJa7a/Xcie3kqqJAhUaqglASw54C+uE1qgbJAfcUmnBN7jjYytA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755649877; c=relaxed/simple;
-	bh=a+rr+2zL+DBv7am64i01iujgX7lpz9V+YnwpK1m1TL0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=SqehAmHAPy2eZxF6BN/7RO94sw2xvdQj2zjHsXvMtZNqGmLCmtpQKJn7PUoQ4lVL7A9i9HOPi67t1FT0PgVb9WSidzA5duohAD8TmXQoRJtQ7NkDi5hmZfpVcythz8usXBL+0uoV+lFDm26FcMItmUHTwCbRx/BJi8j7gCJoElA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=vviL69Pa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 083A3C113CF;
-	Wed, 20 Aug 2025 00:31:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755649876;
-	bh=a+rr+2zL+DBv7am64i01iujgX7lpz9V+YnwpK1m1TL0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vviL69PaWq7ODy8RB7mn+u98Ymj7LRjtV+zSdyl5/BjX/YcJUxQASuMYO1De5A+BJ
-	 5OI3NBA6tgOvf9ZXdisrYykHZ0zICR52Bjg7btgyFO7pfTaqM/MKmjvqmJWRXCMYdv
-	 42Y/prdSa8yQx4UZVPmg4pvMSqyjGaW0tQaZiAlc=
-Date: Tue, 19 Aug 2025 17:31:15 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Xiang Gao <gxxa03070307@gmail.com>
-Cc: david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, gaoxiang17
- <gaoxiang17@xiaomi.com>
-Subject: Re: [PATCH] mm/cma: add 'available count' and 'total count' to
- trace_cma_alloc_start
-Message-Id: <20250819173115.55194150617998021b4130b9@linux-foundation.org>
-In-Reply-To: <20250819134817.247495-1-gxxa03070307@gmail.com>
-References: <20250819134817.247495-1-gxxa03070307@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755650054; c=relaxed/simple;
+	bh=JAI+oYkdbTIFn8JsqjU/opW6sYv/yyl6y9q76TmwkxQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=W/MYuxV/GQKUKlDPHNkcPUeBQryED0bpmiG7K1NwkK7PtzBuG284Zct55+XNQD4gX9t36Q/TXExysWa6Z9UcTRWL7hTZ/FdqaxNOSgZsgkpfDDAvPgKiqhCk/72gSvZWAZtEJTg4N//RMZvHFeW/IkzofLI0+8dq6niya3m1AlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=joIF5yeQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24FFFC4CEF1;
+	Wed, 20 Aug 2025 00:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755650054;
+	bh=JAI+oYkdbTIFn8JsqjU/opW6sYv/yyl6y9q76TmwkxQ=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=joIF5yeQMxdAwvFbojfpO5WzAKLrlTIFhUXiHjKaZwUIXQzvvrELiXa2mcFqvaQ19
+	 acpb04faE+MKfSIgNl+zM01YV7MplxCAQLMxjFhcVimrkRM0cBYHwJV9zdXCeg3AAd
+	 LfdJG4zchqLMGvIJsGldZXtW9mVJZNjs8XOXoXja7R3j2PUAca+0IYRaWJmJ1w07fx
+	 4pGSviBW6kIpNZ/I5TesMvZ58jrih8zZ7+WTv3TNsVKjrJY0vkcjYJoDiFQlp0HdPf
+	 6Hk6QobI1kDRXcz2lySI09f3VIyou8/WhH64VM6XtsCwcOUO0q6mQvcSdX+5gm29wS
+	 weHGuvofWRQwA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 20 Aug 2025 02:34:09 +0200
+Message-Id: <DC6U02DZSX1W.1SXD7XQTNHXQL@kernel.org>
+Subject: Re: [PATCH v10 5/7] samples: rust: Add debugfs sample driver
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>, "Dirk Beheme"
+ <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+To: "Matthew Maurer" <mmaurer@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
+ <20250819-debugfs-rust-v10-5-86e20f3cf3bb@google.com>
+In-Reply-To: <20250819-debugfs-rust-v10-5-86e20f3cf3bb@google.com>
 
-On Tue, 19 Aug 2025 21:48:17 +0800 Xiang Gao <gxxa03070307@gmail.com> wrote:
-
-> From: gaoxiang17 <gaoxiang17@xiaomi.com>
-> 
-> This makes cma info more intuitive during debugging.
-> 
-> ...
+On Wed Aug 20, 2025 at 12:53 AM CEST, Matthew Maurer wrote:
+> Adds a new sample driver that demonstrates the debugfs APIs.
 >
-> --- a/include/trace/events/cma.h
-> +++ b/include/trace/events/cma.h
+> The driver creates a directory in debugfs and populates it with a few
+> files:
+> - A read-only file that displays a fwnode property.
+> - A read-write file that exposes an atomic counter.
+> - A read-write file that exposes a custom struct.
 >
-> ...
+> This sample serves as a basic example of how to use the `debugfs::Dir`
+> and `debugfs::File` APIs to create and manage debugfs entries.
 >
->  	TP_STRUCT__entry(
->  		__string(name, name)
-> -		__field(unsigned long, count)
-> +		__field(unsigned long, request_count)
-> +		__field(unsigned long, available_count)
-> +		__field(unsigned long, total_count)
->  		__field(unsigned int, align)
->  	),
->  
->  	TP_fast_assign(
->  		__assign_str(name);
-> -		__entry->count = count;
-> +		__entry->count = request_count;
-> +		__entry->available_count = available_count;
-> +		__entry->total_count = total_count;
->  		__entry->align = align;
->  	),
->  
->  	TP_printk("name=%s count=%lu align=%u",
->  		  __get_str(name),
-> -		  __entry->count,
-> +		  __entry->request_count,
-> +		  __entry->available_count,
-> +		  __entry->total_count,
->  		  __entry->align)
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
 
-adds three args to the printk but didn't add their conversions to the
-printk control string?
+This is a great example, thanks! I really like how the API turned out.
 
+When it comes to the newly added Scope API - and I assume this does not com=
+e at
+a surprise - I have some concerns.
 
+But first, thanks a lot for posting the socinfo driver in both variants, wi=
+th
+and without the Scope API.
+
+I had a brief look at both of those and I can see why you want this.
+
+With the Scope thing you can indeed write things a bit more compressed (I t=
+hink
+in the patches the differences looks quite a bit bigger than it actually is=
+,
+because the scope-based one uses quite some code from the file-based one).
+
+I think the downsides are mainly:
+
+  - The degree of complexity added for a rather specific use-case, that is =
+also
+    perfectly representable with the file-based API.
+
+  - It makes it convinient to expose multiple fields grouped under the same=
+ lock
+    as separate files, which design wise we shouln't encourage for the reas=
+ons
+    we discussed in v8.
+
+I think for the sake of getting this series merged, which I would really lo=
+ve to
+see, I think we should focus on the file-based API first. Once we got this
+landed I think we can still revisit the Scope idea and have some more discu=
+ssion
+about it.
+
+I will have a more detailed look tomorrow (at least for the patches 1-5).
+
+Thanks again for working on this!
+
+- Danilo
 
