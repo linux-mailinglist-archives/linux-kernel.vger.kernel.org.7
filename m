@@ -1,99 +1,100 @@
-Return-Path: <linux-kernel+bounces-778479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05931B2E643
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:12:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037D6B2E642
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 771DF3B7B8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:12:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7001CC031C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EEB277026;
-	Wed, 20 Aug 2025 20:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA6F248F77;
+	Wed, 20 Aug 2025 20:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XOa5qIBJ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="re9SEYaV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A6D27B35D;
-	Wed, 20 Aug 2025 20:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9399727F728;
+	Wed, 20 Aug 2025 20:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755720748; cv=none; b=tV8gtya3TCG1MnSUkQOpUIjlJhlGu6wjuKE87+RhSXgGwjWa9hBX5DiyiK4xuQcCqG5VD7C2XY3niZ1kJnhqwTk9dAD6ldYV5A7qgB4sjhNVffGALM5s+yDGzF9k+3JihPODMValNPkXDuM1sc47G4W/Kqw4K/+AQmSQLxJCVlk=
+	t=1755720756; cv=none; b=ehl++PKnmBpItaEBpj5tEBo2CX0XMapBGqDjt4pZsZvJfLT5Ot++tvCq5PeYspLJzbDaRndzMP8gBHqEXsy3b8bfPzoE1qFy/q8rAet3O/dS7G41QsmeNiY1iE7qMPu+QKHl5R9LfiUN3UM5yPy70Zi3rPiGThBHdz8erEdvht4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755720748; c=relaxed/simple;
-	bh=zqcGJSspxf5zinFHLK4gHoVtE4aWtBICsxsjObTEl5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oRjGlw5Pd9dxvB+/Kc9Z7vQHlYnQldNb82Cfq6VQ00Yxdic5Gv5gtROzf6jE5kzl8z3CHMmghSXW25mxsiBpOhl0IEIt+m/aUfCadpBwxUcpR8nBFMOk8Aecim5SUJpSJ8t7VvDAQYFF9BKVP6wFOJLuAR3BJAfK2egLkiC84/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XOa5qIBJ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=W63MMTMvmB6dl+5eT7CKL9PFuVf8rs2QgB8pzsAzX9c=; b=XOa5qIBJdl6XTEe/8bgT4qMTos
-	EKVXS392npmS7iFDjpxCNXng7NCyyB8fvbGTOQmU3PbVL65tdZ0rvNmpgeaW30dxdUUsqsFdJOb5b
-	NfT7fd+6dMOApjUSdxjzI5GXyIV/56KojG7wkJUMYpmIE56p1FG3R+FoNhAQ6r2lBZ/7bhF3wJFDn
-	oZKmke2+o79yG5/VEPIILBVnYlcdlmtGShCId9Ce3HQA/IFINsqFu0meMDMEOyAx0RmBUaK4uh2ia
-	NvU0NNTn1Ki2gd3/yvNgtCtFZ76fWNEaG1FLm9RnXYm/kwsfqg0zu7gR0SUdyOgmHQHNYmIt3hOYA
-	gDyT5Ang==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uopAV-0000000EoWf-0mFq;
-	Wed, 20 Aug 2025 20:12:23 +0000
-Message-ID: <88b25b9d-911a-4419-b1a6-e6ae38d499ba@infradead.org>
-Date: Wed, 20 Aug 2025 13:12:22 -0700
+	s=arc-20240116; t=1755720756; c=relaxed/simple;
+	bh=AJMpxTtu9ORwc3IjKO1y9Jr9sD2s2UqoyzgJQPmeDDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fkn6bSe3Ra/DugOPn3Ov9UlHoTecT9isX4R9v/v2mJqsAKTrrvO4ZdF67D/Jdp1lhiXddfSuhSmO1SMUXu/w+JkCjMRPxlSsNSGsKFD3/sCwQLCobJbzLRK6eaeMPzEUYU02CQ5tTfoyqrshRggJ3YUcLERxUF+6xMLL9nFZYsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=re9SEYaV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26DBEC4CEE7;
+	Wed, 20 Aug 2025 20:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755720755;
+	bh=AJMpxTtu9ORwc3IjKO1y9Jr9sD2s2UqoyzgJQPmeDDw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=re9SEYaVlaWSOaXwyVqd3S6CaYsivjx35lZeUPIDt3UrNfEVLJ7OKjJr04AejGtmz
+	 CqWlViYduI47Vc8V1Rgsaads7kKdKGuzPan1vuk2VDTVlFXO6/4YZfJ0RrJB7r1Xc/
+	 aX/xvupj5baxEPCEXx8NlglwuDWWyiFNi3fw+50h/Bg3Bt53JPbiYEMg72O8PJbTjQ
+	 N/+tILx1cz9ARZ6ta8xZmwQmhM18nhgG3ByDJRDrkL14FCjzn1/F14C3eaUAgi01mh
+	 ICZhE3q6cEG6jUvTg4IdzNSFlNH/J0J4U/lfdEnwgVbxpVq/naemg5lfA4qK3otXiu
+	 NOoK/2p6RscvA==
+Date: Wed, 20 Aug 2025 21:12:31 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 03/11] dt-bindings: phy: renesas: Document Renesas RZ/G3E
+ USB3.0 PHY
+Message-ID: <20250820-commodity-curator-1f580789885b@spud>
+References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
+ <20250820171812.402519-4-biju.das.jz@bp.renesas.com>
+ <20250820-primer-shaded-66da9fa4bcae@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] tracing: Add a tracepoint verification check at
- build time
-To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <20250820174752.684086778@kernel.org>
- <20250820174828.080947631@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250820174828.080947631@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bCH9mOQO/aowJKBV"
+Content-Disposition: inline
+In-Reply-To: <20250820-primer-shaded-66da9fa4bcae@spud>
+
+
+--bCH9mOQO/aowJKBV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Aug 20, 2025 at 09:10:07PM +0100, Conor Dooley wrote:
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Now that I look again, same applies here with the different filename and
+compatible. Copypaste mistake? Or why does the compatible not match the
+filename?
 
 
 
-On 8/20/25 10:47 AM, Steven Rostedt wrote:
-> +/**
-> + * for_each_shdr_str - iterator that reads strings that are in an ELF section.
-> + * @len: "int" to hold the length of the current string
-> + * @ehdr: A pointer to the ehdr of the ELF file
-> + * @sec: The section that has the strings to iterater on
+--bCH9mOQO/aowJKBV
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                                                iterate> + *
-> + * This is a for loop that iterates over all the nul terminated strings
-> + * that are in a given ELF section. The variable "str" will hold
-> + * the current string for each iteration and the passed in @len will
-> + * contain theh strlen() of that string.
+-----BEGIN PGP SIGNATURE-----
 
-              the
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKYsLgAKCRB4tDGHoIJi
+0oG0AQCuiSe3fkytZB8sfmU9zi2rhLAgrvaN1TTt28ZbsSNIgAD/Rrl8leB8/feP
+PTf1dAjEv+tmCyyvbDhh3N8G3CwFgAg=
+=Rs73
+-----END PGP SIGNATURE-----
 
-> + */
-
--- 
-~Randy
-
+--bCH9mOQO/aowJKBV--
 
