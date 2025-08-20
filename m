@@ -1,132 +1,161 @@
-Return-Path: <linux-kernel+bounces-778462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02680B2E60B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:06:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3225AB2E60E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F1025E271F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:06:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E63F07BA7E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2684627B35D;
-	Wed, 20 Aug 2025 20:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E0226F462;
+	Wed, 20 Aug 2025 20:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b="EXZgzHI4"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jh3vppxj"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCAB24A054
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 20:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D03936CE19;
+	Wed, 20 Aug 2025 20:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755720389; cv=none; b=GjWSmgVLNo9uiqoySZfCh2FY8DJMLgPld/DsPoqehV5ZKiAhdt/GKItUk/io937bJwvDrHJA5XeW7VSUdYrRbrzgORtW/Z4zHXzag59lcIhZ7tc0GCOIyfUdzw2UjYwPB3v7PrKbvqgU8BZCl4+bhAsClkECS/BedB86FoHOWYs=
+	t=1755720427; cv=none; b=SQi1OldE2hiLCfyZvDS4L+IFoHWV9vMyGp0/YW7tDIdjXztm+UB/8nDCkTt1+suo34BoZ6UvG3MFQCopgurFOKc+KpPrX3RriRr8v+sXjESYwn1A6p7CPLqZBZgDthVBT0kbuTN/qT9vMlcveeSvNqZ47XCUtQl9nhagMe71h10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755720389; c=relaxed/simple;
-	bh=ztEsOKgOGhkOLLBEaxQErT0eY/aEkvcpopDJpCjcwqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPz54Phundphxz+h3p3Ua9wzSXD45+qc2jkTRen3PCvm/dTsrqPjdDuX5pWpmZpZ+opM7tCuhMnzdo/2gy7wt1GtwbZoTADgpx7uC2Z7g6zILB79jjqtESJt3hGvsF9XIPKWntm/6hA2bjsGn4UFfjtSdZ8n3zQQQ7tfmwTSTOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk; spf=pass smtp.mailfrom=philpotter.co.uk; dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b=EXZgzHI4; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=philpotter.co.uk
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9dc5c8ee7so261519f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:06:27 -0700 (PDT)
+	s=arc-20240116; t=1755720427; c=relaxed/simple;
+	bh=3gXciDHf96cHfHxBRvrLeajqxwFXAc6ddN57y0LB4IU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tHC79XDnPpmjVLUCnuhySVayagH2CMv4q4BwXWUzf2CDW7OSadoIQPKgvhx+xl9IJPxZ3NXkdp6harvWH3OZWQ0zybbpwj+j4g4X8zwx9KqsaVEgqAGv3mko+UkstWLW4xHgK1jO5+P+cRhSVhmBm9ulN6zThkWCGM71Yffb5To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jh3vppxj; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b49f7aaf5so1536505e9.2;
+        Wed, 20 Aug 2025 13:07:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=philpotter-co-uk.20230601.gappssmtp.com; s=20230601; t=1755720386; x=1756325186; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZPRIORLZJLic/0oP6MjeZBOD75ymlcPvAsVkfv5abFk=;
-        b=EXZgzHI4+vecfCg4WAvD6JbDNl5yTXYeyTFw1DLa9df1N8NE4cGI5wvQeOtd9cwFxi
-         3/JduaesuRe4DgmhrjG0lyXMN9mp/FgiuxaJfU43ZgpCj0DA22SIRNK4Q5rhVHSoR+zK
-         9fnqdNYK0Lo+AvARHJbitxUNt/YKj5PzzzAdJzGGgcCeaKzXfSdO/FlKIrZtQ7ydIyU4
-         ouPR6mdkEY1N3HHU2FuMwtep73ssaf/xiIqSIl89+yOpxnIe5ys/GqSEVSxb85NRnpHC
-         xnHj0GfV70/DnbkHpouZsAq/uZMqlRgBpDOptNTrDFs8p1As9hZxHh6M2ZJJY+j8L/5c
-         hyQA==
+        d=gmail.com; s=20230601; t=1755720424; x=1756325224; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hGdx81zu8mbzTejHRuI0a0QsTgQl5GSh7deJkiKL8ZE=;
+        b=jh3vppxjl89TB2Cg0GAsCVz1D1x9dN70EE4yvyT7/B4T9c6y5iyv+bigmidghEy8e5
+         j2MPMOOnRr9aZZbFFJY3oOb+DXng4bOj7uSiiHfyXaxH0oAKq+bYX9E8k1spPNZtVodI
+         Yn/U84dRR7M9UxqPbAh+SpLhppnYjVz/gHevehwN+VVwEnRQNb/3Nec2fpEowzDtSkm5
+         bPM3u01PYa8D/jFIHy0ndqvbEnuqyL395AulQfnfNxDoLCUT3uO/XRxE6hS/pre4oorm
+         BiQHo/Bq0HzZek67/GaD8v934+JlZPI0auV4cS8pTLAURyPTlfAKFJqDe1UjBA8z/HfT
+         gGug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755720386; x=1756325186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZPRIORLZJLic/0oP6MjeZBOD75ymlcPvAsVkfv5abFk=;
-        b=dDmQC4otRfICjgwGaMZeGWjErxKizhPygLh4SbGwDbr8lIuVrJTWjqI+UACroUCAZ3
-         u0zK9yu+TKQ3PInwmJpSVdJ1VMsMMCCVTBmTgM8y2IQkUNZ7fJiPRo8wYOf5aCBVpkrV
-         e0Rjl3DMcPqIYuiV2MTIEZA1IC8lHl55Oh7eXjErNl5dZumOwAEvnqQH2pxmnhg/feCJ
-         9NrzqkRaHCiKlmDrd+7o2MgZ53DiYMsPE+IZP+9CJ4+sd3CYXU05S2NmcdO+Cp6nb9l4
-         s9xrlcgzkvHgiSYRTdw+kxFSYS2UMrYfYoiCzNFv8Q2vO790dE11yfwyL3HAPzt2Cjbv
-         /q3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXkigj1+zw04FNTsZnvOk8ZUhUerym57NURDz7qsyPhQPybPbqasBwdRFLCc8UlO8gE3OljbridUanIUwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvCDSiFbxa2T+w5Uo0cCyPNgv71Do27hbdFWMfsz+fK6Fu61Zr
-	+wpirKgElqcdYpryJ2mhgHF0N4freF0rISyYmwD/du5FZVu2lCau4z5ycb5A0jbnEEs=
-X-Gm-Gg: ASbGnctj9HoCV7fiSw5SPHtcCPZx4E/zso2p/mednL83UvBs5Z1nQ6R0JuzuLopJbs5
-	C5MgnsdDq7raZjo4OB/ww/b/ETqvQn6VwEUghJ//ThhtErLfjk6OUYeOG7kmwCCMvUOCiq5vO8i
-	e/ULl+kocYyjwCKXA3aaQKVuPeGhBMuspDV+w6RQpBPRFXgBlmhMkQ5dD1ApjH/oCfmRX26egn1
-	t37NTvZ2VQjymAle7RjLSwD9U64alkvyrjg1XBp7fjWyMkwLEZ22BnlIpPmdp46NPLN+HlYXMVo
-	v/pIrvyFR7i3e+0ttXh6m2/+RETBkS45vvVfbPyHvJoAUAVReycY4Z4mx7koVZeIKJecGYFVXqT
-	eiUh3awDpuPfJipZLn0VAZmoku3BidJWbYX74YLnVzGUCWlOZUFi+u5gfs9qFvkBi/J5cF2wmkw
-	c6OiyG
-X-Google-Smtp-Source: AGHT+IFZoRI0AMFMAPaDlpVvz3RfQCKXg26W6gF/w2Djot9dOTMU/+XmyPpjyGfYLRjptRJSFPlD/w==
-X-Received: by 2002:a05:6000:4284:b0:3b8:d32e:9222 with SMTP id ffacd0b85a97d-3c495d47553mr84126f8f.38.1755720385979;
-        Wed, 20 Aug 2025 13:06:25 -0700 (PDT)
-Received: from equinox (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.6.1.f.d.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:df16::2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c42cf1sm49041585e9.12.2025.08.20.13.06.25
+        d=1e100.net; s=20230601; t=1755720424; x=1756325224;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hGdx81zu8mbzTejHRuI0a0QsTgQl5GSh7deJkiKL8ZE=;
+        b=w+X9+wxMQOK/YoBMR6gXuM4wL3da/VnShPiEpuilBF+EAIOJ7FYlcJTD7jFy7s0AoQ
+         KEuvzLZLy6Ooa7I0guhROIwBxnyZM4hSTxqTH+bnznoh8gRFSbmm9QwFtA862kEeFnxA
+         13Ip4kJmsHQZUeAnEKQvcyBsx47lu03xMdxHSPN1olKtZ/7KyOdjm82bAt03Oqma7Okm
+         tz0BAQidQq4kqNanjokZSezISNnWqhISYQublyq/YAV4eYU91zD7sFGAjdbzitHXich9
+         +kqjnmRHsXmtE+pciu4ps2BOLKL6acBwfEFiCZ6flQ/5ehUhafD3sLYZN5mNU6NcrhlV
+         r8ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUzSbZj4UZ41+MfnbgbRvR7GpDhBo7MNZF5MLtaUuy5LQSw+2x8320zoU+MnNKkElPpPYRSf+jRJKiX@vger.kernel.org, AJvYcCXYXPIc7XA0LVQpxO8sAZCByLMRz/TB5xtihSIQaG+iXx1H4RTbyD4SCos9OjfbgT5ivrL2q6ffo+YGli90@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFJnQ0jStNnOYHLk5PhYaJQzXkzzPdaRx/l2ojip2CxiWiqB2e
+	8NfqJxYEub7QDj389jJ7YsLWqoCorx+Ya0rVVFWuOfvigyZGytAqmAkbzarfErCS
+X-Gm-Gg: ASbGncvkYKNZ+NxY9TjTJU7eJQJd6INB5A4beZ1wMBBIzjLLcU/73DSNo81BTfvu+Lb
+	nwsCMiR996B39m0ypbQs+HKtLIw0jOOqRkfmtEIFWmR+wYWBxJ2f54VunTrLCEU54tlmcOVrgtw
+	AI8Dh1GmdY5IGQKtTnGDifApKy7BxBbwp4fS+oBT0rWunx1YT7UC55UbhE1LSm5WE8zmeqqGQfF
+	xchtUqDzl91W8EBE5lFozcBykEx1CWPp+JfOusQcEA83qnsTJr29sr7BdojOKQvnGmhE/F8+LW3
+	qqZbGDKCmHITv3tBlIlk7kctJdJ08BXAUhXMgex1OcRRcHtDCYvsPJhx5AN4WjmM4B180Sxq0Gv
+	nG7oQsj8j8l+8vzvgCRWCnKJqIoZKxXBeUe1kvBJAgEv4P2jSvDVssRlm
+X-Google-Smtp-Source: AGHT+IGF454H9VjRobp+KMDijyGma0XwVoVBh0JzN4Wob/gUgYZuREoyBNxCM15hNZYowyXttLZUCQ==
+X-Received: by 2002:a5d:5f8c:0:b0:3b8:f318:dc61 with SMTP id ffacd0b85a97d-3c495d47a4fmr63838f8f.40.1755720423546;
+        Wed, 20 Aug 2025 13:07:03 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:9b1:f84b:89f6:b00e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077789c92sm8810302f8f.52.2025.08.20.13.07.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 13:06:25 -0700 (PDT)
-Date: Wed, 20 Aug 2025 21:06:23 +0100
-From: Phillip Potter <phil@philpotter.co.uk>
-To: David Wang <00107082@163.com>
-Cc: Bart Van Assche <bvanassche@acm.org>, phil@philpotter.co.uk,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com
-Subject: Re: [BUG] general protection fault when connecting an old mp3/usb
- device
-Message-ID: <aKYqvyfSO-jSTZAr@equinox>
-References: <20250818095008.6473-1-00107082@163.com>
- <2899b7cb-106b-48dc-890f-9cc80f1d1f8b@acm.org>
- <7c8215f8.87f8.198c6edb9f0.Coremail.00107082@163.com>
+        Wed, 20 Aug 2025 13:07:03 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/9] arm64: dts: renesas: Add support for LEDs/I2C/MMC on RZ/{T2H,RZ/N2H} SoCs and boards
+Date: Wed, 20 Aug 2025 21:06:50 +0100
+Message-ID: <20250820200659.2048755-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c8215f8.87f8.198c6edb9f0.Coremail.00107082@163.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 06:02:05PM +0800, David Wang wrote:
-> 
-> >Phillip, is this behavior perhaps introduced by commit 5ec9d26b78c4
-> >("cdrom: Call cdrom_mrw_exit from cdrom_release function")? Please do
-> 
-> I manage to reproduce this, but It turns out this is not about my old mp3 device, but about my phone:
-> Just connect-umount-discnnect, and repeat, after several rounds, an error log would show up.
-> (I should pay attention to the USB Product  name in log......
-> It is just that I check the log only when I have trouble  connecting my mp3 device, and assuming the log is about my mp3 device.)
-> 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Interesting. It seems your phone is emulating a CD-ROM/optical device,
-which is why the driver is being loaded and attached to it.
+Hi All,
 
-> 
-> 
-> And after I upgrade to 6.17-rc1, it could not be reproduced ( I managed to test 10+ rounds of connect/umount/disconnect cycle)
-> So I think commit 5ec9d26b78c4 does fix my problem.
-> 
-> Thanks
-> David
-> 
-> >Bart.
+Extend hardware support on Renesas RZ/T2H and RZ/N2H SoCs and evaluation
+boards. Below are the features added for the RZ/T2H and RZ/N2H SoCs and
+EVKs:
+- Enable I2C0 and I2C1 support
+- Enable EEPROM on I2C0
+- Enable LEDs on RZ/T2H and RZ/N2H EVKs.
+- Enable MMC on RZ/T2H and RZ/N2H EVKs.
+- Enable MicroSD card slot on RZ/T2H and RZ/N2H EVKs.
+- Enable SD card slot on RZ/T2H and RZ/N2H EVKs.
 
-Yes, as you point out, this commit became part of 6.17-rc1 - it was not
-present in 6.16.0. It actually removes the cdrom_mrw_exit call from the
-module unregistration function, and puts it in cdrom_release instead.
+Note, patches apply on top of [0]
+[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git/log/?h=renesas-dts-for-v6.18
 
-This seems to have helped with the original issue - that of crashes when
-removing USB optical drives on Chromebooks, and has likely helped here
-for the same reason. Good to hear, and thanks for testing/confirming
-that 6.17-rc1 has helped.
+v1->v2:
+- Dropped patches which are already applied from v1 in
+  the renesas-dts-for-v6.18 branch
+- Dropped RZN2H_PORT_PINMUX and RZN2H_GPIO macros
+- Added Reviewed-by tag from Geert
+- Changed led node names
+- Added color/function/function-enumerator properties
+- Replaced GPIO_ACTIVE_LOW with GPIO_ACTIVE_HIGH
+- Moved header file inclusions to common dtsi
+- Updated switch settings for led-9
+- Replaced RZN2H_PORT_PINMUX with RZT2H_PORT_PINMUX
+- Corrected switch settings for I2C1
+- Added comment regarding DSW17 settings
+- Dropped sd0-emmc-prefixes
+- Added alias for mmc1
+- Dropped sd1-prefixes
+- Dropped sd0-sd-prefixes
+- Dropped DATA4-7 from data-pins
 
-Regards,
-Phil
+v1: https://lore.kernel.org/all/20250812200344.3253781-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (9):
+  arm64: dts: renesas: r9a09g087: Add pinctrl node
+  arm64: dts: renesas: r9a09g077m44-rzt2h-evk: Add user LEDs
+  arm64: dts: renesas: r9a09g087m44-rzn2h-evk: Add user LEDs
+  arm64: dts: renesas: rzt2h-evk-common: Add pinctrl for SCI0 node
+  arm64: dts: renesas: r9a09g087m44-rzt2h-evk: Enable I2C0 and I2C1
+    support
+  arm64: dts: renesas: rzt2h-evk-common: Enable EEPROM on I2C0
+  arm64: dts: renesas: rzt2h/rzn2h: Enable eMMC
+  arm64: dts: renesas: rzt2h/rzn2h: Enable MicroSD card slot
+  arm64: dts: renesas: rzt2h/rzn2h: Enable SD card slot
+
+ .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    | 100 ++++++++-
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi    |  13 ++
+ .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    | 172 ++++++++++++++++
+ .../dts/renesas/rzt2h-n2h-evk-common.dtsi     | 193 ++++++++++++++++++
+ 4 files changed, 476 insertions(+), 2 deletions(-)
+
+-- 
+2.51.0
+
 
