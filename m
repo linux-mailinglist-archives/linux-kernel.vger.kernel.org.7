@@ -1,107 +1,226 @@
-Return-Path: <linux-kernel+bounces-777490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1337FB2DA13
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:32:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C613B2D9F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A60267AF1EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:30:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B09E1C272F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D882E2DF5;
-	Wed, 20 Aug 2025 10:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17E62E040D;
+	Wed, 20 Aug 2025 10:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="B2jm7XyD"
-Received: from smtpout1.mo533.mail-out.ovh.net (smtpout1.mo533.mail-out.ovh.net [51.210.94.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gylopjft"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2D12E2847
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.210.94.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D635E24339D
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755685897; cv=none; b=upb5bxfOEMbpi3ma2GDVeZmd6b6TLLJaHl4Q/jQWNbVBjGbsUmSUt7lvSSIJYkPv7cAQD4XTD539d0CH+snwal/8wthJB8uj9/dyifGB+R5Pa5ZS6OPCyNr9eXt6hx7T85riOyBwQJCwAKiBcUACzUXG5+VCGa5OflhUcOSJxUc=
+	t=1755685344; cv=none; b=MhGNUrD2fGwaEGsz7On8Qr/ASGTA9bI3mkrhWlR9iFou3qVM1WZHilNzSikaQFlqgwqB2g8oMpCkLI8QYzKoOgz6WrIuobAXtdpQfMoR94dL5Iph8z5sBuz+Gvamar3B1lTONLjP2AVbUc4EYLf4LGEY9/64d+5fMn7AuFErAkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755685897; c=relaxed/simple;
-	bh=50P6jdL1wSOI6cAFuJxQzSrStkwb6vHkDTkewBe9OxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SYeZmylSVCoKVtyLTsXRCIFpBDvtzDJBXY9Xm408M4N1+0EU5NYccRk6/6cb9NxeiT6KYGpgb+klDS+I7UdkX3waaian5K9mIwyh/nUSszWHpjchx4hcYUUmJJEQQkI3WGthkG7eebL4OwaUOzob+cSLY5ikVxWe3qtLtvItXfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=B2jm7XyD; arc=none smtp.client-ip=51.210.94.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net [79.137.60.36])
-	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4c6Mtv1XlRz5y6j;
-	Wed, 20 Aug 2025 10:21:43 +0000 (UTC)
-Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net. [127.0.0.1])
-        by director2.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <bp@alien8.de>; Wed, 20 Aug 2025 10:21:43 +0000 (UTC)
-Received: from mta3.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.37.181])
-	by director2.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c6Mtt72Wvz1xpf;
-	Wed, 20 Aug 2025 10:21:42 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.10])
-	by mta3.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 945D494329C;
-	Wed, 20 Aug 2025 10:21:40 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-106R006643a39dd-4f29-4819-869f-07233b346813,
-                    616188B862BD6F9D24C783D7A018D61FF224AB69) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.22.109
-Message-ID: <ddfe73ac-177a-431f-8e6e-807ff0746213@orca.pet>
-Date: Wed, 20 Aug 2025 12:21:40 +0200
+	s=arc-20240116; t=1755685344; c=relaxed/simple;
+	bh=0MIxxlnsFlE6wMohjAf52vfPhSPMrRKH08nE3rYNXbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TI1ic6ypZOq8JJ+v9L/bFkZ9vAmzZ/UkEjvROvzTA88B2vxcVMK1Pubgl+INOdTRQcezrEjqK7LV6FSduciW8/x7IuftJTCP3gqwy/jC5yHjfsVLi26D75/AkvjfqAfPC9bTNp/Bn8eWf8t7Dmdwgd+wMxVyxOc4zTgTfN6Jg0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gylopjft; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6188b5b11b2so7754325a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 03:22:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1755685340; x=1756290140; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zFC5QnIalTSrK7rWNbwCun2cktTHrJwzb5OTVlazBro=;
+        b=gylopjfthDg/Z6ZUbdIVG5N25mvWJk45AoiUVege4c4QbCEgHO7yUXCBj2TK4MgS3M
+         y9Ohad5JxXr5tM0Lpkgw2yhmcIeRjgruP6GCMXj3MeY7OzBBlk0gG73PyRFvZ0gpJ6kY
+         Bcy8q2+7laReoCvUKC60oL73jpeRRHCjWF5IO51/8UbEYdaQ4M0dXIgGa8qY6ko1i7UP
+         bbkP8V6/60LTqo4LB+UflAAfiMdZCONIWAOZ5P6PVdvsHPFkqLcaTMLF2LaO3KW5Hku6
+         9+JRUqJK+Teaa2N93PWtXHc0mIrPqXCdBVu5GTsSC+wUni8QzKR56xs2XujIwBhaH1yf
+         9YFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755685340; x=1756290140;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zFC5QnIalTSrK7rWNbwCun2cktTHrJwzb5OTVlazBro=;
+        b=OWeZ7mIDJE8j+Q1JfHgLpB2g7ikEyt3CndBiWWRARnIT5jgQEtDqLT8jo0LlCRvW8Y
+         qvtGdPHB3qKh1LTuXaH9DUI5sj5MQSrvyij6PW7S30ESdBpp7OVYmW4OkuYj9mzXQAhI
+         te2sUKrCGyph0KT8mV9hFPEvczmAdwzKLIxjyVDI2Nj0vOQDrIIemRmEazFwF6UtzK9f
+         HhgURs5RzIYUhuHST80GWAMRyAvScjmTeYiHhDbWciKwITh4GAGzylvhb14Y/edu35Km
+         YARxC1byoEpJuZYqIAHKssIWX2/uMuxbhxFr81WMDwF4XOdYGRUyBn5bPisbJvS74v2A
+         uU3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVnaWszXBftxQ1tvXMP0fLUaKMWhf7Z7jx1Ncnze2RAAfL3lyXPS/WpzEKVnFTM0jbOpSlILVFvXVcObOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRSP4MDsxeOQMf1M5Gu8wqf69OG7NDahf4wCmIl1qXt6ZPQHjf
+	Aa3TnbzQtx676LT6feOxTMb0uB6R7l/3ukaaSYGY0aMK0nTfHsjaD5rbIrolN433mo3P34Vs5F4
+	D3ei3
+X-Gm-Gg: ASbGncvMzOy+siHcx5zbbxs4/hPaGr4KjZTaSlS9YKVTuSqVuAQhZZhQukTMr1Wz15X
+	T8YYhyH8YG7Kt0Mjtv5kKDFc32Kw74pYcBj+55QZ35kXYh67WLAJZ669Pnktb3KGNhuVBPSkSn8
+	SzZySJPjz2bVFGhNeGYGPfk1+0ZcHPZCGgg6Yhs38gjiA2GDEi0vfXYDm1eKbrfqjRtvsfOtRBy
+	O9/6vSAwTgE0XNWyjZr/E6/aaE6EFA5A9XewqPMdykammEX/lOzUQoflMJJ1SP9HbJ/SbiMJUaO
+	Evl3nMj7Wvvex/EgaTPmuxxaqylLN76Tp4SNlyGql/QeFhQzp5rCGAZ3igwZflh1Y5W+KBp3bdv
+	C0vVsFH2gVVtC12r6S4x1eKHqLQ==
+X-Google-Smtp-Source: AGHT+IFniwEUqFY61/eSW8b97xvSqR+1n4hgqzUbi0jHyu6onDS0pFv41RvZW/MhYd1VcaT1HB1CiQ==
+X-Received: by 2002:a05:6402:23d3:b0:618:adff:7f42 with SMTP id 4fb4d7f45d1cf-61a9752c3a8mr2080966a12.6.1755685340040;
+        Wed, 20 Aug 2025 03:22:20 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a755d9f3bsm3217563a12.1.2025.08.20.03.22.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 03:22:19 -0700 (PDT)
+Date: Wed, 20 Aug 2025 12:22:17 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Jinchao Wang <wangjinchao600@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Joel Granados <joel.granados@kernel.org>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Sravan Kumar Gundu <sravankumarlpu@gmail.com>,
+	Ryo Takakura <takakura@valinux.co.jp>, linux-kernel@vger.kernel.org,
+	Wei Liu <wei.liu@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH] panic: call hardlockup_detector_perf_stop in panic
+Message-ID: <aKWh2R0ZVZ7nnLiw@pathway.suse.cz>
+References: <20250730030638.65355-1-wangjinchao600@gmail.com>
+ <aKSRzbUvuEkVz-Gk@pathway.suse.cz>
+ <970366ee-0fc0-4a64-816e-3c3ac738e24a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Ahmed S. Darwish" <darwi@linutronix.de>, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
- Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
- David Kaplan <david.kaplan@amd.com>, Kees Cook <kees@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Andrew Cooper <andrew.cooper3@citrix.com>, Oleg Nesterov <oleg@redhat.com>,
- "Xin Li (Intel)" <xin@zytor.com>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-References: <20250820013452.495481-1-marcos@orca.pet>
- <aKWR8e6VUEZEgbkw@lx-t490> <2cd7b099-095d-405c-a7d9-b0f1f72184c2@orca.pet>
- <20250820094347.GDaKWY02hR3AAoT7la@fat_crate.local>
- <be242e65-b056-4e12-93e7-9a297aaf231a@orca.pet>
- <20250820095556.GEaKWbrMh24T7jTfBg@fat_crate.local>
- <3db7d599-c2a7-4bec-94b1-4872649dde8d@orca.pet>
- <20250820100812.GFaKWejCFMSAS6QIfS@fat_crate.local>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <20250820100812.GFaKWejCFMSAS6QIfS@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 11652782562187433652
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheekudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepuggrvhhiugdrkhgrphhlrghnsegrmhgurdgtohhmpdhrtghpthhtoheprghnughrvgifrdgtohhophgvrhefsegtihhtrhhigidrtghomhdprhgtphhtthhopegsrhhgvghrshhtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhnohhvihhtohhllhesghhmrghilhdrtghomhdprhgtphhtthhopehusghiiihjrghksehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgrug
- gvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhg
-DKIM-Signature: a=rsa-sha256; bh=0WgxTiwE9lCVl6akB+HLPooec9IpmzRQo97+ST4njzk=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755685303;
- v=1;
- b=B2jm7XyDbBMZ7gAWvtUyhkh4VmzcW4JnDhumIuKsvqplgZsXNNBJzKafdkPcETBuCALLR6AW
- Q1xDWRm5aYugFC1Hk/FQZJppc/WUQD1EoheJ/awJfWhJ/yuBbE/qncAnzkLIi6ML/15Ma7wKcKZ
- CavsBop0PAsN+HYxrMzFKqcalNoYAOKWgOMUUFHaL0yGrrNno9WctFErNAz4+g8uWXy4GSNMB1Y
- kMy4OfonruQo3fDzBRoUJ/OgbJn8kJ3Um6T+mFCgceEVRB/pvN8y9Mah8Cuu5D4ML0UV8kDLqYT
- wk5x/J9pK1ctJiy3/0CWce/abw/o/ESXxLqXc59oZ51ZA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <970366ee-0fc0-4a64-816e-3c3ac738e24a@gmail.com>
 
-El 20/08/2025 a las 12:08, Borislav Petkov escribió:
-> On Wed, Aug 20, 2025 at 12:01:30PM +0200, Marcos Del Sol Vives wrote:
->> Please define "once". Once per what? Per boot? Per executable? Per process?
+Adding Peter Zijlstra into Cc.
+
+The nested panic() should return. But panic() was never supposed to
+return. It seems that it is not marked as noreturn but I am not sure
+whether some tricks are not hidden somewhere, in objtool, or...
+
+On Wed 2025-08-20 14:22:52, Jinchao Wang wrote:
+> On 8/19/25 23:01, Petr Mladek wrote:
+> > On Wed 2025-07-30 11:06:33, Wang Jinchao wrote:
+> > > When a panic happens, it blocks the cpu, which may
+> > > trigger the hardlockup detector if some dump is slow.
+> > > So call hardlockup_detector_perf_stop() to disable
+> > > hardlockup dector.
+> > 
+> > Could you please provide more details, especially the log showing
+> > the problem?
 > 
-> pr_err_once(). Per boot.
+> Here's what happened: I configured the kernel to use efi-pstore for kdump
+> logging while enabling the perf hard lockup detector (NMI). Perhaps the
+> efi-pstore was slow and there were too many logs. When the first panic was
+> triggered, the pstore dump callback in kmsg_dump()->dumper->dump() took a
+> long time, which triggered the NMI watchdog. Then emergency_restart()
+> triggered the machine restart before the efi-pstore operation finished.
+> The function call flow looked like this:
+> 
+> ```c
+> real panic() {
+> 	kmsg_dump() {
+> 		...
+> 		pstore_dump() {
+> 			start_dump();
+> 			... // long time operation triggers NMI watchdog
+> 			nmi panic() {
+> 				...
+> 				emergency_restart(); //pstore unfinished
+> 			}
+> 			...
+> 			finish_dump(); // never reached
+> 		}
+> 	}
+> }
+> ```
+> 
+> This created a nested panic situation where the second panic interrupted
+> the crash dump process, causing the loss of the original panic information.
 
-Would a simple:
+I believe that we should prevent the nested panic() in the first
+place. There already is the following code:
 
-> pr_warn_once("Your processor does not correctly handle hintable NOPs.\n");
-> pr_warn_once("The kernel will emulate them, but the performance will be impacted!\n");
+void vpanic(const char *fmt, va_list args)
+{
+[...]
+	 * Only one CPU is allowed to execute the panic code from here. For
+	 * multiple parallel invocations of panic, all other CPUs either
+	 * stop themself or will wait until they are stopped by the 1st CPU
+	 * with smp_send_stop().
+	 *
+	 * cmpxchg success means this is the 1st CPU which comes here,
+	 * so go ahead.
+	 * `old_cpu == this_cpu' means we came from nmi_panic() which sets
+	 * panic_cpu to this CPU.  In this case, this is also the 1st CPU.
+	 */
+	old_cpu = PANIC_CPU_INVALID;
+	this_cpu = raw_smp_processor_id();
 
-work for you, then? With no thread information, as that might make the user
-think there is only once binary impacted.
+	/* atomic_try_cmpxchg updates old_cpu on failure */
+	if (atomic_try_cmpxchg(&panic_cpu, &old_cpu, this_cpu)) {
+		/* go ahead */
+	} else if (old_cpu != this_cpu)
+		panic_smp_self_stop();
+
+
+We should improve it to detect nested panic() call as well,
+something like:
+
+	this_cpu = raw_smp_processor_id();
+	/* Bail out in a nested panic(). Let the outer one finish the job. */
+	if (this_cpu == atomic_read(&panic_cpu))
+		return;
+
+	/* atomic_try_cmpxchg updates old_cpu on failure */
+	old_cpu = PANIC_CPU_INVALID;
+	if (atomic_try_cmpxchg(&panic_cpu, &old_cpu, this_cpu)) {
+		/* go ahead */
+	} else if (old_cpu != this_cpu)
+		panic_smp_self_stop();
+
+
+> > That said, it might make sense to disable the hardlockup
+> > detector during panic. But I do not like the proposed way,
+> > see below.
+> > 
+> > > --- a/kernel/panic.c
+> > > +++ b/kernel/panic.c
+> > > @@ -339,6 +339,7 @@ void panic(const char *fmt, ...)
+> > >   	 */
+> > >   	local_irq_disable();
+> > >   	preempt_disable_notrace();
+> > > +	hardlockup_detector_perf_stop();
+> > 
+> > Anyway, it does not look safe. panic() might be called in any context,
+> > including NMI, and I see:
+> > 
+> >   + hardlockup_detector_perf_stop()
+> >     + perf_event_disable()
+> >       + perf_event_ctx_lock()
+> >         + mutex_lock_nested()
+> > 
+> > This might cause deadlock when called in NMI, definitely.
+> > 
+> > Alternative:
+> > 
+> > A conservative approach would be to update watchdog_hardlockup_check()
+> > so that it does nothing when panic_in_progress() returns true. It
+> > would even work for both hardlockup detectors implementation.
+> Yes, I think it is a better solution.
+> I didn't find panic_in_progress() but found hardlockup_detector_perf_stop()
+> available instead :)
+> I will send another patch.
+
+OK.
+
+Best Regards,
+Petr
 
