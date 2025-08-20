@@ -1,114 +1,130 @@
-Return-Path: <linux-kernel+bounces-778229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA434B2E2C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:59:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C37B2E2C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D901756076E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:56:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFC73BB34A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9473033437C;
-	Wed, 20 Aug 2025 16:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F21D334364;
+	Wed, 20 Aug 2025 16:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzXlOZgL"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tp3rSuev";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SPoWI5mm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699F032A3E2;
-	Wed, 20 Aug 2025 16:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A7C57C9F;
+	Wed, 20 Aug 2025 16:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755709008; cv=none; b=mtSMENAQr9fNzS3ioFzlmjsmZOv1UxjktLEIT+ldNZNCVUWrtagQDYJLxaYIEWjWqkh5/kTbA+DmUxzQnUl+AyT7AAVQcmPbQJKF3BytTOLNS6U/jn/LgDiEjzvCfdi3wxxH5Wog70S21ilIEkCsSFoYl1ycGGw3q2YahZehUeY=
+	t=1755709101; cv=none; b=qy8IQoBcXWOiPrq4Bt++k9Q5e+73IvmTnDQmas7TMPORbYmho3PZiEwTx/F+Eqmn/+sYUU9HpZL/UgAJM5MgYR7K4ySyglDRt1u5RqGoGV6onL8SSpY208vfMSU7nlXomuv0gDeMJaDrXxloMkDvvSwYWVuX7BttJZ8q4Ahzu7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755709008; c=relaxed/simple;
-	bh=b1CQxA7NTMpHYXWDwB/GYYkioNL06ElZqxeWZtrZ6v0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UYTlFChANgJwANf/vA1l1+A/n5C9WEDI9zz9ev/oUJdQADIw7Qhhv/WETNK4Em3Y590/3RuU7zjBV4P3kFtwqtcRJNmkUBK9FoCDs1EVeDn+hfTeLEnKiTlmRG7JTyNuYwyIC9auTN07AzBw8rBgtI5idO+kezIdmHJsjNudyGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UzXlOZgL; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-333f8f9ace5so865611fa.1;
-        Wed, 20 Aug 2025 09:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755709003; x=1756313803; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b1CQxA7NTMpHYXWDwB/GYYkioNL06ElZqxeWZtrZ6v0=;
-        b=UzXlOZgL+DLb+h/ssrjvxWqaM89FHrLKexTPO/9F7bS1rSG2xIS7mD7X3zkIVR3n86
-         n+xbISquZLU77GJKp7+EndM7QWWdQv00F7St6fFPe2gfpKTys9wdoXZJasbkECL9SoQV
-         YLcTnZNBjUsACWViYVeGE4TGuXwNWyZ0ieWvWli7uint683zEuusE+cb/7Fl112QKrgv
-         xIn11oEf4Ht8uj72CbKad/E/f7CRDNsuNLP67MRE5KwAU88DouOO6obq30UOas8sNc5w
-         O4mmLd+eADSkB6p8DdVw/rX26XCcwnOFVTf643LKPBToDXaoTAf7oliH/IxIhwIp1l5y
-         98aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755709003; x=1756313803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b1CQxA7NTMpHYXWDwB/GYYkioNL06ElZqxeWZtrZ6v0=;
-        b=B6dXIYoqMrgTVIxD9GvItO5igz9DSg4HoCzfbeIYLDkt+RRw5bx+Bp2obHsXVyBpPE
-         wH6goXNwSHXiCQE/48imMTdtHBkMocO6aDopA89t2jIDqsbRPMFugwRFZ+ADW28wG2Xp
-         f/kO4cxrXHutnBxixZDkq2bb3/GQiUbXD7/byjibRS+WzqR4QdvlEXxPxAqSCdCDTuW9
-         DaNJshhNGscGLbOaBm8PudxNTbSUDfXEWLaWdtyYTFpffEE4Sv/TLGijJVW6+APb7iFP
-         OYLLA7PxgybUXpONHWO0jizNz/gQJ94onp/FeIjUvvlJA+FV7Onugu738LI93v4RqHtn
-         TJaA==
-X-Forwarded-Encrypted: i=1; AJvYcCViix4osRC8HQIMGL8XS+aMg69EAbvoOBpBBwSYKAVYavvs1muw44BlFozIDja+wQ7TlCZiHOdKThSB@vger.kernel.org, AJvYcCXhcOcOgqdEUSjOU6DEf0BlZNCj0Gs7rortNAY+N4lw6x9x7nqEjqdwpyL0CLgD2ioUdC6FCyZVVO3Mwg==@vger.kernel.org, AJvYcCXzZ5ul4bEngCO5gcB8yEcSO4jYiuVQyeJZG8fExT7KL+CoaIRsjQDFcxZ3K/EJU111ZDbzjhsQi4UiTRir@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYtA7824i8RrzrxBOy2DyAdDdUXMlQDWbxqz0WAmsw8cZrMV4x
-	A0Y9Xq2RfB6XReEBUlf7+4GAmo9dLpY0pcXuwHPHXeZWGf5ZC6P4+9g3I6yE0d9AcZr1lHjcARX
-	zEjSKkrpd2kfRoRMY9XcwDyjzXoSWD5A=
-X-Gm-Gg: ASbGncsElzCPHpx2YWGlNi+LbpMo6N2zF+0SwSSIVo3RHLJoNCZbLIkGJUtNxi5V9EJ
-	X+T4+i3b6tAMSCNE1qJRAbGZhZ6Zi2nRFE4ZXqFYpRByodKHe49YIHKk3yXA1TqxFrZnRNc2Jyx
-	bID8Rvf26M7YDnCnTabyF5gkkvvZe/Tqvn9czTiZubNccE1AiFGNqBh2mvyP8DPoKjDG0nOxBNq
-	1+EurnsgA==
-X-Google-Smtp-Source: AGHT+IFordkwi+zhqh14qMBLsS0rCZnAYtiWQK4SHByXpqr16/xqAHI6fvghj4M6wGzn1kjHGF8rYjLwee+S/KYPvX0=
-X-Received: by 2002:a2e:b888:0:b0:334:d4b:49b4 with SMTP id
- 38308e7fff4ca-3353be411c0mr11491871fa.29.1755709003200; Wed, 20 Aug 2025
- 09:56:43 -0700 (PDT)
+	s=arc-20240116; t=1755709101; c=relaxed/simple;
+	bh=zFit5RnosLTRx8J5sxAPztAFATI0JhtRZhWuAE2Kmxg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Fi5q4nvrxqG7Ji85zH5f3xhPw3gMHSrt+eem7s39kJmlml1hpMZBT0dEj1fFW6I5j4HVONPvaZPfe3yl6OipMBSamxMwscX7fjcbFWnwJGVkrFoXm5JYKgOsRrRtebigIm5JZfMAtAaOTFtFRcPNpCO9VhRurxdPatHg+Uhf0Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tp3rSuev; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SPoWI5mm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 20 Aug 2025 16:58:15 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755709097;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nXtuvnYgySowG7Wg0s3LkLu/Mt9yJWpNfUfy0OEXynM=;
+	b=Tp3rSuev+ZxIhJOU6ssdOEXSesIYLIe72y+Hz6Qm41VNUhgpPmpcxa7JQGXdH7Yx57aSUq
+	AEEuVSKcQ3vTl4sUiRNHojHafd0MFwYXv1UBY76XR2SitvodQRpKvcHD50IcCzcCIzPJaW
+	ax5J5spiMe8aH9m4vvNdzduCDCfuVo/ntHiiZS3GXd5C5g7UeJnpejTBUmRFzeoCSJ9e0u
+	iisTnY9nJPh5Mn6fl+Y/Kes7K9RRcDmBLFlD7pTOHPFH7/lqSsdLvJp+fz9L4dS4UXC066
+	fylOva0p9/Et8RP02ORiGP3nLdHEE3Zj+HuGuHnLNti5zKI7+4hzim+i0lFaYw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755709097;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nXtuvnYgySowG7Wg0s3LkLu/Mt9yJWpNfUfy0OEXynM=;
+	b=SPoWI5mm5Jhtt5TSooGCCotrOrA10gRHzQLWTnANs900mP747vbARppCcXASHup0TlxjvI
+	mrd9ZielIvAUscAg==
+From: "tip-bot2 for Lukas Bulwahn" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/cleanups] x86/kconfig: Drop unused and needless config X86_64_SMP
+Cc: Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250723071211.622802-1-lukas.bulwahn@redhat.com>
+References: <20250723071211.622802-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820154037.22228-1-jszhang@kernel.org> <20250820154037.22228-8-jszhang@kernel.org>
-In-Reply-To: <20250820154037.22228-8-jszhang@kernel.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 20 Aug 2025 19:56:06 +0300
-X-Gm-Features: Ac12FXwH4g6oMn14HY8Y29rYZvc4OR3qKCO04rOR5qjEf-HjYlk-qdZaKMvaQ74
-Message-ID: <CAHp75Vdh6MQzEZi1aLf+7J7evSwd76ANKDk6WahWzEcLq1Ew4Q@mail.gmail.com>
-Subject: Re: [PATCH 07/16] gpio: ml-ioh: Use modern PM macros
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Doug Berger <opendmb@gmail.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Michael Buesch <m@bues.ch>, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Andy Shevchenko <andy@kernel.org>, 
-	Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>, 
-	Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, 
-	Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Srinivas Neeli <srinivas.neeli@amd.com>, 
-	Michal Simek <michal.simek@amd.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-omap@vger.kernel.org, linux@ew.tq-group.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175570909600.1420.10792869791326478252.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 6:59=E2=80=AFPM Jisheng Zhang <jszhang@kernel.org> =
-wrote:
->
-> Use the modern PM macros for the suspend and resume functions to be
-> automatically dropped by the compiler when CONFIG_PM or
-> CONFIG_PM_SLEEP are disabled, without having to use __maybe_unused
+The following commit has been merged into the x86/cleanups branch of tip:
 
-Acked-by: Andy Shevchenko <andy@kernel.org>
-in case Bart wants to take it inside the whole series.
-Otherwise I can take it via my tree.
+Commit-ID:     03777dbd8c9d825fc6f792e4e85be9e4ce4c7f8f
+Gitweb:        https://git.kernel.org/tip/03777dbd8c9d825fc6f792e4e85be9e4ce4=
+c7f8f
+Author:        Lukas Bulwahn <lukas.bulwahn@redhat.com>
+AuthorDate:    Wed, 23 Jul 2025 09:12:11 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 20 Aug 2025 18:34:56 +02:00
 
---=20
-With Best Regards,
-Andy Shevchenko
+x86/kconfig: Drop unused and needless config X86_64_SMP
+
+As part of
+
+  38a4968b3190 ("x86/percpu/64: Remove INIT_PER_CPU macros"),
+
+the only use of the config option X86_64_SMP in the kernel tree is removed. As
+this config option X86_64_SMP is just equivalent to X86_64 && SMP, the source
+code in the tree just uses that expression in the few places where needed. No=
+te
+further that this option cannot be explicitly enabled or disabled when
+configuring the kernel build configuration.
+
+Drop this needless and unused config option. No functional change.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250723071211.622802-1-lukas.bulwahn@redhat.com
+---
+ arch/x86/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 58d890f..2eb3bb6 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -410,10 +410,6 @@ config HAVE_INTEL_TXT
+ 	def_bool y
+ 	depends on INTEL_IOMMU && ACPI
+=20
+-config X86_64_SMP
+-	def_bool y
+-	depends on X86_64 && SMP
+-
+ config ARCH_SUPPORTS_UPROBES
+ 	def_bool y
+=20
 
