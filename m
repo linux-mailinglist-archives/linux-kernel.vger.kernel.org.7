@@ -1,186 +1,170 @@
-Return-Path: <linux-kernel+bounces-778561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E87CB2E75C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:18:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE524B2E75D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4681D5E6248
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:18:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BEE61CC3E13
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 21:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220C32D9496;
-	Wed, 20 Aug 2025 21:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3185A2D1926;
+	Wed, 20 Aug 2025 21:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="mRLvGFFV"
-Received: from mail-244107.protonmail.ch (mail-244107.protonmail.ch [109.224.244.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w5uFRzjV"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A211E49F;
-	Wed, 20 Aug 2025 21:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D475026E71E
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755724711; cv=none; b=e4uthysS5IEp8g0g84mvnXscG8gctd1EczKPD9yOatv7cniIjKIBvsgcmrwV33sIivkqNgtMRh9U2miKeErkpPrJStlDjprDojaqvfWNEV69Zng1rzbsZMSNbV70glQpYH6Slvl15ykquexFNrIt78svuNz4ZoYh4pg9iDIcHN8=
+	t=1755724728; cv=none; b=nl0Ud4ZLzxFg/y7GiEl1vuBajx14TWMPjDLi/gfxcWXqjR535GxMCcNzjKqL+HOYIn8ebQf22JE0P+kAutPv3Pe3mLVqnDVBGLjSFMXQ31pqdXv+o/fKmQ/SW/M3uk8keDEHpdFqu9oYPrnJYtoigXCmXCZQVi5Hl5HVPMLYC18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755724711; c=relaxed/simple;
-	bh=U8X+7JyRirW1YLSFkGAfUxC6jQP6XhgmQavoB6gUt1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H2CMQLy1SXWvQD4vdYGsR8QNgqypYlNtd0ngrkYiV5K3BX2wAicRgvjFi2bXVpXEKcqVLi7GiPeUHvhQxzGkf7iXTVpqMi0hzycKRuIwRFIFH5dhyZpzi8Lf2qVfXNi+SklKIyRiGnpMq3VzIilCQHbCeQHtLhXf8WC+jTi8r0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=mRLvGFFV; arc=none smtp.client-ip=109.224.244.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
-	s=protonmail3; t=1755724706; x=1755983906;
-	bh=JSAu0mbSO2Oo3ckHfGpNPMrfRcVmm1IBIVSUbO2haro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=mRLvGFFVkHAjPY6dW6j4TC3cu15UDw7jn+8RL+wwYwFZnPibfP9rIdPa5JoSZqdeW
-	 hTwbO0p0XfJIKGVSKxmHOvoxIF5tgYrdKTw+wA5DVRCApljOBOZiHvHn5nd79Q4Xps
-	 ifGPh8vOhsgomfFKt0jegcZgLAuYJZmNeLAWlI96R3J6sBOzhVUCNc0LY3UKKkLggO
-	 SQNWmv3GezO8JbPcImZhi80xrGooKo2tKBq1NaMkG4D7r3BuSzwGbgkbdrRerZgJNV
-	 VUbbzhV+5ABBsao24jlN85kZOkSq4tRBTNL8D8h7UrlAklZtkQ7c+VoUnwdqrh9IPF
-	 thz5dnIvz+tmQ==
-X-Pm-Submission-Id: 4c6fSc1kpbz2ScPD
-Date: Wed, 20 Aug 2025 21:18:18 +0000
-From: Elle Rhumsaa <elle@weathered-steel.dev>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Drew Fustini <fustini@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v14 7/7] riscv: dts: thead: Add PWM fan and thermal
- control
-Message-ID: <aKY7mnaQwZtgqryR@archiso>
-References: <20250820-rust-next-pwm-working-fan-for-sending-v14-0-df2191621429@samsung.com>
- <CGME20250820083548eucas1p2a40775d53dfd9f8608671cc20003fd7d@eucas1p2.samsung.com>
- <20250820-rust-next-pwm-working-fan-for-sending-v14-7-df2191621429@samsung.com>
+	s=arc-20240116; t=1755724728; c=relaxed/simple;
+	bh=LjWgtUe2ffDBIWe5AFEdQGtloc8BFsTdPCWfRERMshk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PqSZqo/LpgVl0FDsd7vH476PG2b8wR6U692e3cHBAJ9F+qTsMeF6eGV1kdTnbtIi8CyxAyTgJJrOJKMGqJgJj2mPIA5i8pNqvr4qHO/r8c7FTRk4BZoAC84nGXLHEO9RztcwqBgEwvdRUwuO86HHHmLljTFRzZWEggeKqFJI0TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w5uFRzjV; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b29b715106so49101cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:18:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755724726; x=1756329526; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YanTK0e4sjbxPtv/E87AJagkyaCOqYnz6w0QIlh+WUM=;
+        b=w5uFRzjVLHGoWA28qun18g8F+qm8/UmNNMO0jRdnF3Rpf3dfqsha8zxn1xxBsI3NBI
+         HWzFT8vVEFFmqPy184XOZeqDWaDCBTCq9/sDgXgi4i6low7lnxw5E62gPiRiD2lxt0Hf
+         iIfMd8sWPn+dfe1PFP/EPZQoQEeSWQ4t4HMwb49atVeuZFU9zoJIAL8h4rS9izg+Q6tj
+         ik7BK0oT1fz6ZkxZGZfOxrouXlj+Z70dSuzY7t+cXyUxqJ1DzQqvkKQ9ZfmRNXV6+2iN
+         rGGwP4C4MhKCVilbOmfCUtuyb1N+uugtpo5NTV3knsJrh+OpP6H2XI49vU+ouio3nJjN
+         UBew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755724726; x=1756329526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YanTK0e4sjbxPtv/E87AJagkyaCOqYnz6w0QIlh+WUM=;
+        b=i7v/xvvhLu3xxhPKGikq2bvIprhAFCq24CqyjDbepiRAxCUk08KGCn4Do7Io5rqBp5
+         dxGVsRhU9aprofWGHZWGWIYR73qcevnp1qrP6a5txZYGenRW7CyrwSbCm6nsBLbb8TJt
+         juGNNb6yJkhbyKYFUXGF+23dcbEo6Y/ZLmD7SuGizLR8bUh1gckU4vI2hOBkTANEqv0w
+         gqLOd+DoVPy91w3XV5a+Zkx7JP1I5NFTJjYDeTZgdfatsAFcNded0F5lu75E/oaOySjP
+         u9tbg8TjVz3nKWKKUJhQ3hcAZeIeg99WMv2ARp9Rv6n6tuBu+HXUs0p8s7IXgzEOSZE8
+         G/iw==
+X-Forwarded-Encrypted: i=1; AJvYcCWt5YwSgESklTdwPS4OvwLDiJjwbGV1KsVsIebzNL5V+YmroaE2KVPb248j1Mf1C3HBE7CaT3mH8dzUJMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvldwb/77dU6m0m99WLxGCVkMnYUtF0A7MyuaIM6le+xkM4Mz3
+	7YoaWk8KKDDajvw/Fhf0cWrajkj6x8xqt3nH92su4OOD5Mtw6gP7Be+agIlWyGLMo6BsuwH1WWx
+	tj82FakeDyzZM7pTwi/hwUgmDNjkNL5sGisFuNBiX
+X-Gm-Gg: ASbGncu1E7uKPbFnIlFBzLvzRJwZ5YaykyA+bjgrmxiJzsVKsT+ie4tkNyb16Zpsytp
+	huIDS868qpanxWShb7zZTWO7WPuMvHGhOANRViT9LLOItE4cEA+vmjXHK9UOQQQ6wNqIK26of4l
+	C1TViQaV2TLobZTANw4G93+C154mv7bJit5Ip0tb8V94s80KvL3fXyWLP8kiu4ga1wYgbPDBHIn
+	O2bdSeCgpLS/EPBTtcJgXpIbVD39Y/RPu/31sODPvg8mcjGtyjfsXVP
+X-Google-Smtp-Source: AGHT+IHQRQFKbAOxo3PCN2gG1G+ONSaIYJEXSt8UDmWnpQyb4QJhOGxYZUIFKUu3mwSBMEBJBwB01GXcO6yRlid9inA=
+X-Received: by 2002:ac8:7d0f:0:b0:4ae:d28f:b259 with SMTP id
+ d75a77b69052e-4b29f9a3674mr171551cf.1.1755724725381; Wed, 20 Aug 2025
+ 14:18:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820-rust-next-pwm-working-fan-for-sending-v14-7-df2191621429@samsung.com>
+References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-8-sagis@google.com>
+ <55e8d6da-50e3-4916-a778-71da628cbc08@intel.com>
+In-Reply-To: <55e8d6da-50e3-4916-a778-71da628cbc08@intel.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Wed, 20 Aug 2025 16:18:34 -0500
+X-Gm-Features: Ac12FXy_O78l2qvX7QDGviCsQ0A4AbxaWcPp4bMvbe2OHW1_jf70ZZip1EYTtc4
+Message-ID: <CAAhR5DHc_1VtVTD=g=q7qvnrK0z57jwD38AoDSDK1buEb5WUDg@mail.gmail.com>
+Subject: Re: [PATCH v8 07/30] KVM: selftests: TDX: Use KVM_TDX_CAPABILITIES to
+ validate TDs' attribute configuration
+To: Chenyi Qiang <chenyi.qiang@intel.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Roger Wang <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 10:35:42AM +0200, Michal Wilczynski wrote:
-> Add Device Tree nodes to enable a PWM controlled fan and it's associated
-> thermal management for the Lichee Pi 4A board.
-> 
-> This enables temperature-controlled active cooling for the Lichee Pi 4A
-> board based on SoC temperature.
-> 
-> Reviewed-by: Drew Fustini <fustini@kernel.org>
-> Tested-by: Drew Fustini <fustini@kernel.org>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 67 +++++++++++++++++++++++
->  1 file changed, 67 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> index 4020c727f09e8e2286fdc7fecd79dbd8eba69556..c58c2085ca92a3234f1350500cedae4157f0c35f 100644
-> --- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> +++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> @@ -28,9 +28,76 @@ aliases {
->  	chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
-> +
-> +	thermal-zones {
-> +		cpu-thermal {
-> +			polling-delay = <1000>;
-> +			polling-delay-passive = <1000>;
-> +			thermal-sensors = <&pvt 0>;
-> +
-> +			trips {
-> +				fan_config0: fan-trip0 {
-> +					temperature = <39000>;
-> +					hysteresis = <5000>;
-> +					type = "active";
-> +				};
-> +
-> +				fan_config1: fan-trip1 {
-> +					temperature = <50000>;
-> +					hysteresis = <5000>;
-> +					type = "active";
-> +				};
-> +
-> +				fan_config2: fan-trip2 {
-> +					temperature = <60000>;
-> +					hysteresis = <5000>;
-> +					type = "active";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				map-active-0 {
-> +					cooling-device = <&fan 1 1>;
-> +					trip = <&fan_config0>;
-> +				};
-> +
-> +				map-active-1 {
-> +					cooling-device = <&fan 2 2>;
-> +					trip = <&fan_config1>;
-> +				};
-> +
-> +				map-active-2 {
-> +					cooling-device = <&fan 3 3>;
-> +					trip = <&fan_config2>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	fan: pwm-fan {
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&fan_pins>;
-> +		compatible = "pwm-fan";
-> +		#cooling-cells = <2>;
-> +		pwms = <&pwm 1 10000000 0>;
-> +		cooling-levels = <0 66 196 255>;
-> +	};
-> +
->  };
->  
->  &padctrl0_apsys {
-> +	fan_pins: fan-0 {
-> +		pwm1-pins {
-> +			pins = "GPIO3_3"; /* PWM1 */
-> +			function = "pwm";
-> +			bias-disable;
-> +			drive-strength = <25>;
-> +			input-disable;
-> +			input-schmitt-disable;
-> +			slew-rate = <0>;
-> +		};
-> +	};
-> +
->  	uart0_pins: uart0-0 {
->  		tx-pins {
->  			pins = "UART0_TXD";
-> 
-> -- 
-> 2.34.1
-
-Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+On Wed, Aug 13, 2025 at 8:34=E2=80=AFAM Chenyi Qiang <chenyi.qiang@intel.co=
+m> wrote:
+>
+>
+>
+> On 8/8/2025 4:16 AM, Sagi Shahar wrote:
+> > From: Ackerley Tng <ackerleytng@google.com>
+> >
+> > This also exercises the KVM_TDX_CAPABILITIES ioctl.
+> >
+> > Suggested-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> > Co-developed-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> > Signed-off-by: Sagi Shahar <sagis@google.com>
+> > ---
+> >  .../selftests/kvm/lib/x86/tdx/tdx_util.c        | 17 +++++++++++++++++
+> >  1 file changed, 17 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools=
+/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> > index 392d6272d17e..bb074af4a476 100644
+> > --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> > +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> > @@ -140,6 +140,21 @@ static void tdx_apply_cpuid_restrictions(struct kv=
+m_cpuid2 *cpuid_data)
+> >       }
+> >  }
+> >
+> > +static void tdx_check_attributes(struct kvm_vm *vm, uint64_t attribute=
+s)
+> > +{
+> > +     struct kvm_tdx_capabilities *tdx_cap;
+> > +
+> > +     tdx_cap =3D tdx_read_capabilities(vm);
+> > +
+> > +     /* TDX spec: any bits 0 in supported_attrs must be 0 in attribute=
+s */
+> > +     TEST_ASSERT_EQ(attributes & ~tdx_cap->supported_attrs, 0);
+> > +
+> > +     /* TDX spec: any bits 1 in attributes must be 1 in supported_attr=
+s */
+> > +     TEST_ASSERT_EQ(attributes & tdx_cap->supported_attrs, attributes)=
+;
+> > +
+> > +     free(tdx_cap);
+> > +}
+> > +
+> >  #define KVM_MAX_CPUID_ENTRIES 256
+> >
+> >  #define CPUID_EXT_VMX                        BIT(5)
+> > @@ -256,6 +271,8 @@ static void tdx_td_init(struct kvm_vm *vm, uint64_t=
+ attributes)
+> >       memcpy(&init_vm->cpuid, cpuid, kvm_cpuid2_size(cpuid->nent));
+> >       free(cpuid);
+> >
+> > +     tdx_check_attributes(vm, attributes);
+> > +
+> >       init_vm->attributes =3D attributes;
+> >
+> >       tdx_apply_cpuid_restrictions(&init_vm->cpuid);
+>
+> Do we need to set the init_vm->xfam based on cpuid.0xd and validate it wi=
+th tdx_cap->supported_xfam?
+>
+I don't think it's necessary. And according to the TDX spec (TDX
+Module Base Spec - 11.8.3. Extended Features Execution Control) the
+mapping from CPUID to XFAM is not trivial. Checking attributes makes
+sense since some tests use non-default attributes but right now we
+don't have any test which uses XFAM features. We can add XFAM support
+in the future if it's needed and do the check then.
 
