@@ -1,251 +1,207 @@
-Return-Path: <linux-kernel+bounces-777273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F24B2D794
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:09:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A601B2D79F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DC327B70C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:08:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B4E2169623
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150B92DFA32;
-	Wed, 20 Aug 2025 09:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313FD2E0B4B;
+	Wed, 20 Aug 2025 09:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NXa+Lrtk"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="C8jgJuGg"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A0E2DD5F7
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8842DECA1;
+	Wed, 20 Aug 2025 09:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680871; cv=none; b=UMwpCM9daV797397KePe4/Zunpto5FxLasv5P41pVvkmQ3joPKdCi6I3eTu9ntqT3l/x9p4hHI08WR2WBOYQUr8smP8YOWkUeW6rW9QcISOkoApUAOHxsEIkOoxSEOAFFy0h1V2+1BXRk6vzBLSjoM3uM9ekRRtQM6Uey0zgt1o=
+	t=1755680873; cv=none; b=WwXIQCeUBUEoMkCJgJGSCm4AgQUuKMZRF2tHxQ0wC+Af0MiT4gAEgtOcSpJ/VJOOxjUBx95hLttwhoqnJPeFdUG8ZjyPkLRqECiml3fQh0aCw6k7eodgSU2hpbtWH23+LHelmLLXmmWsbxumIZ5iDctPqasIXe6BXiaH0teR+BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680871; c=relaxed/simple;
-	bh=NI3SMXaSUNQXgIS0unSURR/fRocEo6hfMV5pRESv2Ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AbcOGrl7rk5Yc9V+8L8yAVbf0AySckXpAE+OTfVhl3hGQKT3twn1X8s/MLgDWKx0Mhep40HkmTE4Qcoya3fb1ufOsCWk7JanaBGhQEBtIjnOqfeXz578T0kJle8wmrcp1053+mJEUVMyDQM2J8uM9/VUmXd7Zwn8xdz45A4l8v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NXa+Lrtk; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+dQFoPVMaOz9zldizhNLGttkBrQFkHnnF8ugKvUt9Rw=; b=NXa+Lrtk4tAW4cgiaOHXpsiEtm
-	WVN2v0us53k+wWmD5CQIhcqCze/FByiPxuLdkvEkS342Hah6/gXuz8OG4rADU4AB6NvrDTj7bNtjh
-	KKFk6cX/RVdMlRAnq3KPXPPjDSWhZ3r7s+yIB6IYFQVZr8Hxx1cRv2/RU+4FUS+J4i/hh4Jk7o7Ed
-	pGicbUpydf5OK/+0pWIZ2h7S2Wo9H8RLyiSUYoWj226ZVL+9/SPVylNLXvViiyazTkMO6X6QG4FWU
-	CN1lPbRNbyj6xc/BJfaQNVuWh8uUxDxexoYqdW3KnnWRT5ItUiC1mySTaIeR4IHH80szdgSeq8VbQ
-	PqVKbaEA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uoen8-00000000FZf-2kj7;
-	Wed, 20 Aug 2025 09:07:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 99860300385; Wed, 20 Aug 2025 11:07:33 +0200 (CEST)
-Date: Wed, 20 Aug 2025 11:07:33 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Marcos Del Sol Vives <marcos@orca.pet>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
-	Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	David Kaplan <david.kaplan@amd.com>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Oleg Nesterov <oleg@redhat.com>, "Xin Li (Intel)" <xin@zytor.com>,
-	Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-Message-ID: <20250820090733.GJ3245006@noisy.programming.kicks-ass.net>
-References: <20250820013452.495481-1-marcos@orca.pet>
+	s=arc-20240116; t=1755680873; c=relaxed/simple;
+	bh=VrjHvrSL5QIhW51uCmcfRPbG25k53AyjW4E7xJMdBvo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZxfR2tVBjR0ec/D04WMCKMpIoIsV5M4sSxgKPgTuSfI3aaaT6ns21SfkPr1zSuukenIUXYJ7MPwnr1LksRGa/dJekjSaUZIGQBTnvbtFP09Y5+mkzEwfwu03JotNF/9XQwPndF424Z+zxOm71SFnPKkbB6gMfymQD5+9R6PQxfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=C8jgJuGg; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id EF5B1C6B3BE;
+	Wed, 20 Aug 2025 09:07:35 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9398A606A0;
+	Wed, 20 Aug 2025 09:07:49 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 647AD1C22D468;
+	Wed, 20 Aug 2025 11:07:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1755680868; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=aBfAQYLk80uQ0sZ8VK7L/49M4AQ2IfTAo8FjJAj5W1s=;
+	b=C8jgJuGgrwdEZk+SulBlYjG4Xi1pCaSl4YaU7BrfJUNUDjBNUrd3+N0+uhg2xx9FQffvyz
+	3LoE31UPB+HUSbzICFtRJCNTfQvqJiIG0OvdDriVJmuZEnVcwYI+rOZK2pbKoYZ05T5fN3
+	fmRePHSkJ5UiswaPUzlbiyJbA8n9fTy/6HGmaKWT1K+65H2RrgjWU5QCZzzP8M9Td8M61e
+	frc+yNwcBwYJKe4gKCnxYmHIranmr+rBfjyzoXoK0qrmL1pVz9R5k2Ge++q3OgnMImODb/
+	/dNX0WI9pUBHJNNPQ3g5cW/fLzMOdTwhX+RrGBnHSQJzhv//l6WACyr20DzOkA==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Date: Wed, 20 Aug 2025 11:07:34 +0200
+Subject: [PATCH ethtool v3 3/3] ethtool: pse-pd: Add PSE event monitoring
+ support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820013452.495481-1-marcos@orca.pet>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250820-b4-feature_poe_pw_budget-v3-3-c3d57362c086@bootlin.com>
+References: <20250820-b4-feature_poe_pw_budget-v3-0-c3d57362c086@bootlin.com>
+In-Reply-To: <20250820-b4-feature_poe_pw_budget-v3-0-c3d57362c086@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>
+Cc: Dent Project <dentproject@linuxfoundation.org>, 
+ Kyle Swenson <kyle.swenson@est.tech>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.15-dev-8cb71
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Aug 20, 2025 at 03:34:46AM +0200, Marcos Del Sol Vives wrote:
-> Hintable NOPs are a series of instructions introduced by Intel with the
-> Pentium Pro (i686), and described in US patent US5701442A.
-> 
-> These instructions were reserved to allow backwards-compatible changes
-> in the instruction set possible, by having old processors treat them as
-> variable-length NOPs, while having other semantics in modern processors.
-> 
-> Some modern uses are:
->  - Multi-byte/long NOPs
->  - Indirect Branch Tracking (ENDBR32)
->  - Shadow Stack (part of CET)
-> 
-> Some processors advertising i686 compatibility lack full support for
-> them, which may cause #UD to be incorrectly triggered, crashing software
-> that uses then with an unexpected SIGILL.
-> 
-> One such software is sudo in Debian bookworm, which is compiled with
-> GCC -fcf-protection=branch and contains ENDBR32 instructions. It crashes
-> on my Vortex86DX3 processor and VIA C3 Nehalem processors [1].
-> 
-> This patch is a much simplified version of my previous patch for x86
-> instruction emulation [2], that only emulates hintable NOPs.
-> 
-> When #UD is raised, it checks if the opcode corresponds to a hintable NOP
-> in user space. If true, it warns the user via the dmesg and advances the
-> instruction pointer, thus emulating its expected NOP behaviour.
-> 
-> [1]: https://lists.debian.org/debian-devel/2023/10/msg00118.html
-> [2]: https://lore.kernel.org/all/20210626130313.1283485-1-marcos@orca.pet/
-> 
-> Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>
+From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-This is going to be terribly slow if there's a significant number of
-traps (like with endbr32), but yeah, this ought to work.
+Add support for PSE (Power Sourcing Equipment) event monitoring
+capabilities through the monitor command.
 
-One indenting fail below, other than that:
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Changes in v3:
+- Change event loop limit to not ignore events that could be out of scope.
+- Fix incorrect attribute usage.
+---
+ netlink/monitor.c |  9 ++++++++-
+ netlink/netlink.h |  1 +
+ netlink/pse-pd.c  | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 69 insertions(+), 1 deletion(-)
 
-> ---
->  arch/x86/Kconfig                 | 29 +++++++++++++++++++++++++
->  arch/x86/include/asm/processor.h |  4 ++++
->  arch/x86/kernel/process.c        |  3 +++
->  arch/x86/kernel/traps.c          | 36 ++++++++++++++++++++++++++++++++
->  4 files changed, 72 insertions(+)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 58d890fe2100..a6daebdc2573 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1286,6 +1286,35 @@ config X86_IOPL_IOPERM
->  	  ability to disable interrupts from user space which would be
->  	  granted if the hardware IOPL mechanism would be used.
->  
-> +config X86_HNOP_EMU
-> +	bool "Hintable NOPs emulation"
-> +	depends on X86_32
-> +	default y
-> +	help
-> +	  Hintable NOPs are a series of instructions introduced by Intel with
-> +	  the Pentium Pro (i686), and described in US patent US5701442A.
-> +
-> +	  These instructions were reserved to allow backwards-compatible
-> +	  changes in the instruction set possible, by having old processors
-> +	  treat them as variable-length NOPs, while having other semantics in
-> +	  modern processors.
-> +
-> +	  Some modern uses are:
-> +	   - Multi-byte/long NOPs
-> +	   - Indirect Branch Tracking (ENDBR32)
-> +	   - Shadow Stack (part of CET)
-> +
-> +	  Some processors advertising i686 compatibility (such as Cyrix MII,
-> +	  VIA C3 Nehalem or DM&P Vortex86DX3) lack full support for them,
-> +	  which may cause SIGILL to be incorrectly raised in user space when
-> +	  a hintable NOP is encountered.
-> +
-> +	  Say Y here if you want the kernel to emulate them, allowing programs
-> +	  that make use of them to run transparently on such processors.
-> +
-> +	  This emulation has no performance penalty for processors that
-> +	  properly support them, so if unsure, enable it.
-> +
->  config TOSHIBA
->  	tristate "Toshiba Laptop support"
->  	depends on X86_32
-> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> index bde58f6510ac..c34fb678c4de 100644
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -499,6 +499,10 @@ struct thread_struct {
->  
->  	unsigned int		iopl_warn:1;
->  
-> +#ifdef CONFIG_X86_HNOP_EMU
-> +	unsigned int		hnop_warn:1;
-> +#endif
-> +
->  	/*
->  	 * Protection Keys Register for Userspace.  Loaded immediately on
->  	 * context switch. Store it in thread_struct to avoid a lookup in
-> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> index 1b7960cf6eb0..6ec8021638d0 100644
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -178,6 +178,9 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
->  	p->thread.io_bitmap = NULL;
->  	clear_tsk_thread_flag(p, TIF_IO_BITMAP);
->  	p->thread.iopl_warn = 0;
-> +#ifdef CONFIG_X86_HNOP_EMU
-> +	p->thread.hnop_warn = 0;
-> +#endif
->  	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
->  
->  #ifdef CONFIG_X86_64
-> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> index 36354b470590..2dcb7d7edf8a 100644
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -295,12 +295,48 @@ DEFINE_IDTENTRY(exc_overflow)
->  	do_error_trap(regs, 0, "overflow", X86_TRAP_OF, SIGSEGV, 0, NULL);
->  }
->  
-> +#ifdef CONFIG_X86_HNOP_EMU
-> +static bool handle_hnop(struct pt_regs *regs)
-> +{
-> +	struct thread_struct *t = &current->thread;
-> +	unsigned char buf[MAX_INSN_SIZE];
-> +	unsigned long nr_copied;
-> +	struct insn insn;
-> +
-> +	nr_copied = insn_fetch_from_user(regs, buf);
-> +	if (nr_copied <= 0)
-> +		return false;
-> +
-> +	if (!insn_decode_from_regs(&insn, regs, buf, nr_copied))
-> +		return false;
-> +
-> +	/* Hintable NOPs cover 0F 18 to 0F 1F */
-> +	if (insn.opcode.bytes[0] != 0x0F ||
-> +		insn.opcode.bytes[1] < 0x18 || insn.opcode.bytes[1] > 0x1F)
+diff --git a/netlink/monitor.c b/netlink/monitor.c
+index c511389..a16cb97 100644
+--- a/netlink/monitor.c
++++ b/netlink/monitor.c
+@@ -79,6 +79,10 @@ static struct {
+ 		.cmd	= ETHTOOL_MSG_PLCA_NTF,
+ 		.cb	= plca_get_cfg_reply_cb,
+ 	},
++	{
++		.cmd	= ETHTOOL_MSG_PSE_NTF,
++		.cb	= pse_ntf_cb,
++	},
+ };
+ 
+ static void clear_filter(struct nl_context *nlctx)
+@@ -194,7 +198,10 @@ static struct monitor_option monitor_opts[] = {
+ 		.pattern	= "--get-plca-cfg|--set-plca-cfg",
+ 		.cmd		= ETHTOOL_MSG_PLCA_NTF,
+ 	},
+-
++	{
++		.pattern	= "--pse-event",
++		.cmd		= ETHTOOL_MSG_PSE_NTF,
++	},
+ };
+ 
+ static bool pattern_match(const char *s, const char *pattern)
+diff --git a/netlink/netlink.h b/netlink/netlink.h
+index 290592b..eefedf7 100644
+--- a/netlink/netlink.h
++++ b/netlink/netlink.h
+@@ -93,6 +93,7 @@ int cable_test_tdr_ntf_cb(const struct nlmsghdr *nlhdr, void *data);
+ int fec_reply_cb(const struct nlmsghdr *nlhdr, void *data);
+ int module_reply_cb(const struct nlmsghdr *nlhdr, void *data);
+ int plca_get_cfg_reply_cb(const struct nlmsghdr *nlhdr, void *data);
++int pse_ntf_cb(const struct nlmsghdr *nlhdr, void *data);
+ 
+ /* dump helpers */
+ 
+diff --git a/netlink/pse-pd.c b/netlink/pse-pd.c
+index f761871..77d599b 100644
+--- a/netlink/pse-pd.c
++++ b/netlink/pse-pd.c
+@@ -475,6 +475,66 @@ int nl_gpse(struct cmd_context *ctx)
+ 	return ret;
+ }
+ 
++static const char *pse_events_name(u64 val)
++{
++	switch (val) {
++	case ETHTOOL_PSE_EVENT_OVER_CURRENT:
++		return "over-current";
++	case ETHTOOL_PSE_EVENT_OVER_TEMP:
++		return "over-temperature";
++	case ETHTOOL_C33_PSE_EVENT_DETECTION:
++		return "detection";
++	case ETHTOOL_C33_PSE_EVENT_CLASSIFICATION:
++		return "classification";
++	case ETHTOOL_C33_PSE_EVENT_DISCONNECTION:
++		return "disconnection";
++	case ETHTOOL_PSE_EVENT_OVER_BUDGET:
++		return "over-budget";
++	case ETHTOOL_PSE_EVENT_SW_PW_CONTROL_ERROR:
++		return "software power control error";
++	default:
++		return "unknown";
++	}
++}
++
++int pse_ntf_cb(const struct nlmsghdr *nlhdr, void *data)
++{
++	const struct nlattr *tb[ETHTOOL_A_PSE_NTF_MAX + 1] = {};
++	struct nl_context *nlctx = data;
++	DECLARE_ATTR_TB_INFO(tb);
++	u64 val;
++	int ret, i;
++
++	ret = mnl_attr_parse(nlhdr, GENL_HDRLEN, attr_cb, &tb_info);
++	if (ret < 0)
++		return MNL_CB_OK;
++
++	if (!tb[ETHTOOL_A_PSE_NTF_EVENTS])
++		return MNL_CB_OK;
++
++	nlctx->devname = get_dev_name(tb[ETHTOOL_A_PSE_NTF_HEADER]);
++	if (!dev_ok(nlctx))
++		return MNL_CB_OK;
++
++	open_json_object(NULL);
++	print_string(PRINT_ANY, "ifname", "PSE event for %s:\n",
++		     nlctx->devname);
++	open_json_array("events", "Events:");
++	val = attr_get_uint(tb[ETHTOOL_A_PSE_NTF_EVENTS]);
++	for (i = 0;
++	     i < mnl_attr_get_payload_len(tb[ETHTOOL_A_PSE_NTF_EVENTS]) * 8;
++	     i++)
++		if (val & 1 << i)
++			print_string(PRINT_ANY, NULL, " %s",
++				     pse_events_name(val & 1 << i));
++	close_json_array("\n");
++	if (ret < 0)
++		return MNL_CB_OK;
++
++	close_json_object();
++	return MNL_CB_OK;
++}
++
+ /* PSE_SET */
+ 
+ static const struct lookup_entry_u32 podl_pse_admin_control_values[] = {
 
-That continuation wants to be aligned at (, not tab-width.
+-- 
+2.43.0
 
-> +		return false;
-> +
-> +	if (!t->hnop_warn) {
-> +		pr_warn_ratelimited("%s[%d] emulating hintable NOP, ip:%lx\n",
-> +		       current->comm, task_pid_nr(current), regs->ip);
-> +		t->hnop_warn = 1;
-> +	}
-> +
-> +	regs->ip += insn.length;
-> +	return true;
-> +}
-> +#endif
-> +
->  #ifdef CONFIG_X86_F00F_BUG
->  void handle_invalid_op(struct pt_regs *regs)
->  #else
->  static inline void handle_invalid_op(struct pt_regs *regs)
->  #endif
->  {
-> +#ifdef CONFIG_X86_HNOP_EMU
-> +	if (user_mode(regs) && handle_hnop(regs))
-> +		return;
-> +#endif
-> +
->  	do_error_trap(regs, 0, "invalid opcode", X86_TRAP_UD, SIGILL,
->  		      ILL_ILLOPN, error_get_trap_addr(regs));
->  }
-> -- 
-> 2.34.1
-> 
 
