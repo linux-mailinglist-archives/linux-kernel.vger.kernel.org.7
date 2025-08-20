@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-777750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F51EB2DD59
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:09:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7EAEB2DD69
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A8301BC7425
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:09:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C9C5722461
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 13:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5AA31CA79;
-	Wed, 20 Aug 2025 13:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E71530F53F;
+	Wed, 20 Aug 2025 13:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpVkkvsC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJsjfv5U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F04242D9E;
-	Wed, 20 Aug 2025 13:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C266931A05B;
+	Wed, 20 Aug 2025 13:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755695328; cv=none; b=U9Gp5Sq4U86SICJYUSy33kkQubHwSgg7BW90BYJo9ukRN7JKp2fA8xjUu69NhsBmduH3WbsKe4X7TclhEG1p76WLa/7XMcUF7zsepOwjTmsMP2EbFpfj7o47x7KqNMOcCshJHiYqXgoCF5b7zVARMxDfMp5EQIRra9EBh7Y4DLs=
+	t=1755695421; cv=none; b=n+Bk/9iThz+1XgUJZ694fiKE2K2BhsLRxDYcCzDJD3ag6Dufyw2FiECMm4oZoQ/9GPXA8pLH1ZBX9mV4PdPFvRdEYR2/VMoLU1/Xr9PHi9SPKEAw8S0fUdRTuKVj3QQpuBRt7DQGdK4wGBYeToHycIfivLg5eh0JW+3iPgdH5k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755695328; c=relaxed/simple;
-	bh=ZMa6c5IXXc7FTpDi4XwZl4jGC7UySzLS0/LL8shetd8=;
+	s=arc-20240116; t=1755695421; c=relaxed/simple;
+	bh=0SqnvxWSghpdFT0G/fm0cx59Xcj+mNrKrhIyulL8UOc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uQmUW/aSQzwrWI8OVPWmrC0KFOJrEKHUO1yb7X99erHL7yNWU/TnKtMfnSe8rqLE/RMkIxdsgd7PPrl2NGu1EqXsNHEyPoBDat8bpXF2c+H8gyhc9y6+69aifFBu9GzOZaK9VumZW6uXzsCN+R4O//r/7GkySEjzhS7+G4n+eRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpVkkvsC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 694ADC4CEED;
-	Wed, 20 Aug 2025 13:08:42 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=LT9vbvMlacLBsphpNlvuInDZOjnX07zzadAXg4T7EDVVWaj4FoI/GXkkEmqyySJHE9u72+qL3Ya7u/RDA+j6E3WpW/G8zDNcHNewweXfjtgeKefq/4s+K2UzYQLxGTTLhq4cn+BtvJOpJizivmgTypIIl2liT++JRk/QKeL4Yo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJsjfv5U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87EC4C4CEEB;
+	Wed, 20 Aug 2025 13:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755695328;
-	bh=ZMa6c5IXXc7FTpDi4XwZl4jGC7UySzLS0/LL8shetd8=;
+	s=k20201202; t=1755695421;
+	bh=0SqnvxWSghpdFT0G/fm0cx59Xcj+mNrKrhIyulL8UOc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CpVkkvsC4Vdv5Os71gtsmYfUWJ/rB6peVMstYHp5nr3ZjHT69/1UcRQkYkQivO91T
-	 KUhGyRC/fEzdupijaiv00W2E9JW+8j4yidXGgkxBv4kTCAHnzeNGn3PPfSwEZN8CME
-	 eplaQVTvPWKk8Y4qoCgUuT3u/UoBx+I2yBQrvFx19SqJtfIwJY8GrxtWEBpV1j9SFM
-	 tFJXq8X1TUEGQNSo6cGUEhyoiWUBt+NhAvMIN5CTmZrcEDGGRRGMOFD/bLTfz0MWMW
-	 f6XWwNgGzj5RWmo7/Ulc8XR/ARkOSfSD39yIiFL5ubzLt6YY0D5OzdOyHPFp8XUsaK
-	 kYUpvn33knZ5Q==
-Message-ID: <9fe9d86e-0d24-4877-aefc-438248d7024e@kernel.org>
-Date: Wed, 20 Aug 2025 15:08:40 +0200
+	b=VJsjfv5Uhz6Hs90ZHJ8h6p3fpRjsZRewD6Fu8AXa1rOQW0d4hrieV0HbpolJM1GjR
+	 jYtSVPtvXAPwKtzj/iUxBm1mc/rf2lGABurInMQcHu8u8QiOAuPLOVCc4Elf+V5jQG
+	 yPj5uj500ivQX8VBslWh08tM7nBttc+pK1ihiGVQq5H5heQIyalcQQvH51e57wgxX8
+	 O+vuQKAuDbMuI0UdnAJEtGIoK6kK5NKAJVZxr6tMZ7YJEXBcQRKTLizp0p0vf0XST+
+	 H7QILJFYvQU0FP1mK4k+schUaVmkV/+DOLEwCKM5SDIuiQKxBGr2MmvrCIKwfO2YmY
+	 jlgfvb9Fsk9YQ==
+Message-ID: <083588db-10a5-48ff-80da-55c5b79e843b@kernel.org>
+Date: Wed, 20 Aug 2025 15:10:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,31 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6] arm64: dts: qcom: qcs615: add ethernet node
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>
-Cc: netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, stable+noautosel@kernel.org,
- Yijie Yang <quic_yijiyang@quicinc.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250819-qcs615_eth-v4-0-5050ed3402cb@oss.qualcomm.com>
- <20250819-qcs615_eth-v4-3-5050ed3402cb@oss.qualcomm.com>
- <c4cbd50e-82e3-410b-bec6-72b9db1bafca@kernel.org>
- <157c048d-0efd-458c-8a3f-dfc30d07edf8@oss.qualcomm.com>
- <0b53dc0b-a96f-49e1-a81e-3748fa908144@kernel.org>
- <1394aa43-3edc-4ed5-9662-43d98bf8d85f@oss.qualcomm.com>
- <7c072b63-f4ff-4d7f-b71e-01f239f6b465@kernel.org>
- <b1eb2ed6-9743-465e-9b2e-75d5a06c1497@oss.qualcomm.com>
+Subject: Re: [PATCH 3/3] MAINTAINERS: Add entry for Sitronix ST7920 driver
+To: Iker Pedrosa <ikerpedrosam@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Javier Martinez Canillas <javierm@redhat.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+References: <20250806-st7920-v1-0-64ab5a34f9a0@gmail.com>
+ <20250806-st7920-v1-3-64ab5a34f9a0@gmail.com>
+ <24a5ac33-945b-4861-ac0b-94eaa647e893@kernel.org>
+ <CABdCQ=Mysc3a5JNe7te0nRAOzB2n9vQcEz+hZmE3B3vmDYNt2A@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -119,62 +107,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <b1eb2ed6-9743-465e-9b2e-75d5a06c1497@oss.qualcomm.com>
+In-Reply-To: <CABdCQ=Mysc3a5JNe7te0nRAOzB2n9vQcEz+hZmE3B3vmDYNt2A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/08/2025 10:57, Yijie Yang wrote:
-> 
-> 
-> On 2025-08-19 17:08, Krzysztof Kozlowski wrote:
->> On 19/08/2025 11:04, Yijie Yang wrote:
+On 20/08/2025 14:23, Iker Pedrosa wrote:
 >>>
->>>
->>> On 2025-08-19 15:15, Krzysztof Kozlowski wrote:
->>>> On 19/08/2025 08:51, Yijie Yang wrote:
->>>>>
->>>>>
->>>>> On 2025-08-19 14:44, Krzysztof Kozlowski wrote:
->>>>>> On 19/08/2025 08:35, YijieYang wrote:
->>>>>>> From: Yijie Yang <quic_yijiyang@quicinc.com>
->>>>>>>
->>>>>>> Add an ethernet controller node for QCS615 SoC to enable ethernet
->>>>>>> functionality.
->>>>>>>
->>>>>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>>>>> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
->>>>>>> ---
->>>>>>
->>>>>>
->>>>>> Why do you mix up DTS and net-next patches? This only makes difficult to
->>>>>> apply it, for no benefits.
->>>>>
->>>>> The DTS changes and driver code modifications work together to achieve a
->>>>> single purpose, so I included them in one patch series. Should I
->>>>> consider splitting them into two separate series?
->>>> Of course yes. You are just making difficult to apply this. Patches are
->>>> completely independent and even your internal guideline asks to NOT
->>>> combine independent patches.
->>>
->>> The challenge with splitting this series lies in the fact that it
->>> attempts to reverse the incorrect semantics of phy-mode in both the
->>> driver code and the device tree. Selecting only part of the series would
->>> break Ethernet functionality on both boards.
+>>> +DRM DRIVER FOR SITRONIX ST7920 LCD DISPLAYS
+>>> +M:   Iker Pedrosa <ikerpedrosam@gmail.com>
+>>> +S:   Maintained
+>>> +T:   git https://gitlab.freedesktop.org/drm/misc/kernel.git
 >>
->> And where did you explain that? Anyway, you did not achieve your goal,
->> because you broke the boards still.
 >>
->> Your patchset is not bisectable and does not follow standard submission
->> guidelines. DTS is always independent, please read carefully the docs.
+>> Drop, unless you have commit rights there. Parent entry already covers
+>> this, doesn't it?
+>>
 > 
-> The approach I'm taking will inevitably make the series non-bisectable, 
+> I don't have them, but I'm working with Javier and I think he does have
+> permissions. Let me ask him when he gets back.
 
-The series are non-bisectable now!
+Javier is not mentioned here. You are adding redundant and useless
+information. T: is for subsystem maintainers, not for individual drivers.
 
-Do you understand the concept of commit and how patch is applied? How
-splitting this patchset per two changes ANYTHING in bisectability?
 
-And you keep arguing on this...
 
 Best regards,
 Krzysztof
