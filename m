@@ -1,303 +1,261 @@
-Return-Path: <linux-kernel+bounces-777332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13064B2D82E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:29:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3CDB2D842
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F391646F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55BE01C43619
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2242DCC1B;
-	Wed, 20 Aug 2025 09:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iz4D121v"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68511265631;
-	Wed, 20 Aug 2025 09:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A552E03E1;
+	Wed, 20 Aug 2025 09:21:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976E92DAFA9;
+	Wed, 20 Aug 2025 09:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681710; cv=none; b=qAJqAzmnl0mOQRHfWqC2WR3JOU9IDf3TUi34adpjttWQbU/1oekWW49W+rC67i52sOYSd4BRoyOjuaK6GxdTyxqvQgzKf1vtuLe41AgiewSuL/j6iIBw1X6Esh52Cu0drbYsyMfiqaY4KsMDC8BGz4ZahQcw3vf2HoobJJO0VlY=
+	t=1755681713; cv=none; b=C45PzP2GP/Y/7o9GXXtEFoMP6D80mF11wo708LUZPBC1WhCYwgcpDiD9ZbcybzI9SspIo0N5Ac4kapPvMO7BfCPQ2zoXnfe2Uo6jLRulxhEHdNy4NQZWMAJvC2bZZ1b5jLUNAcUIxAPQEi6aOZjhEPSow7ejuZHkXjgI9BkJ73c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681710; c=relaxed/simple;
-	bh=Auxv6Cc8iHZK7osvNCNmNlwZVaJ2fyakM3jecZ5zCGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NRztla+aBy2DRRWEZcF8pkynuczQSRTEW6AQ6iozGO/S9OfSDQEOMWQeg2JuPI3gOUQfmPo4FpV10ZPPtzjZbGUzHvpBeG1lbhffOA9VIzUCQ9Ypp6Ixf/KO6SBl1j5aSdazpQEK5+VjXwI0G3iCB66zupwsFHqofOXfYTihfmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iz4D121v; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-618b62dbb21so9047686a12.2;
-        Wed, 20 Aug 2025 02:21:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755681706; x=1756286506; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=S4lyKlFc5v1BTxRNLlaeXyBr7nmibh9oA3mYYzwZ4Lw=;
-        b=Iz4D121vVqsSXCo7rl9baJ9n+G+BVieQGeurAxwJNqip+9WPgHI8kfeP3WCk9XQg4U
-         51WIHWZT5eKqeS4PEsBRHkGsSysUWQHmv5lryzoxURDjIA64YEPo7MElCmBhFzG4QTiZ
-         iDFtIzdsD74//2c+v2Hkl10BRnqecDlGwqpS5fobjAoUJoe95iy3xnUl9jMaMEcjWuPN
-         LgMccZc3h4OoboxRqylYHDdNZ16m3s1kdIx2XQUEt1E6xKCd4gNqgdXhpWYWLdGSafpj
-         EWBvRHA+xYW+U8Hjg84vtvOwAjHttfSB0juJ73/xfC9X5/U63L1iYD2Ya0QyvbacKztS
-         37HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755681706; x=1756286506;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S4lyKlFc5v1BTxRNLlaeXyBr7nmibh9oA3mYYzwZ4Lw=;
-        b=QcuWGocgwAEgHALaSwNHGTUyI0U0063iYJA8f3YRyCpGv1GoTFw4tOlWAn+rxqSK1W
-         u/NCmi1IPnFAZ2Esmm73+54BU4kDvOaXWoPQMou4kSzriR/Ez/34oBJuaO8d6WOosfcD
-         6z76hYCjfhsvYIiAFqdLcx/E+WmDbZaBLuOGIV4nNnCbl/mgjM+Jlp/Q7Hy8nQdSJN7S
-         cXYYMfyNqEGV0kivNnK0YhsbQMJSUMBInFG3i9bIdRxzuxzdMgxuNTfuCXmsWeRce0z3
-         k0gxbLhGwxBKfb03G/QHRCmM0OBhYe8F/driTK18F++TI5qRWakiLgNu+d7bM4MBQ5rb
-         j6KA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqDOT0dlnRWnKTQEOVfYQKuymRuVhz27+sY6JMNyjNaMrTWeJoFZBZBZXU8w/IMwBEYuo=@vger.kernel.org, AJvYcCXukMX9MgDfSCGpAfhjUFwHpB5/Govr6FXyvcMyb+WBASna8WtNYqux6n4pTlWEBVCIAA5nN7D81krT0SYp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6bxM64mfS+018GOm6rE0R/52rIbmoRQCFsa2O+9JF9tN3vThK
-	/S2deQ/NmMbKxQ3EBQDrhfaYwgCytLBPujdvGVmg96AnUPbB0uYRwsAW0lx6LrFZsG7LFQLYgMs
-	AFiXVRvaKG1yJ21VbjpEZJwG8R6gtcg0=
-X-Gm-Gg: ASbGnctpfaLzjPl/ymeNcOX549jsR1bor9ukLT1V1OiUhHBX0ItYGXX1/g3gwJf94Jn
-	XCc63AKqr/5Vr//MnJfW9IXtgl8wHO4vBNJwqsWoHHPcH/EWCc+GA00CeQ/0Yor/T1z2Dm+RBW5
-	zIFlKtmY/89bBVmt6kOyK3DowXIE8Y4/yMOVw4ewjLiLc5Zaq5ZMyuMA2IMV0j+SAC89qt6FuqH
-	XtPs7vcrg==
-X-Google-Smtp-Source: AGHT+IG7xFTR4UZZQ4LFfHSulkCxAXFm3BGoaxsisWYUoJ1W6e9lz+bYlaZjjlP5HNP2olIECE2JZ2EVwHUYHLksKFk=
-X-Received: by 2002:a05:6402:254e:b0:615:a3f9:7be5 with SMTP id
- 4fb4d7f45d1cf-61a9782b6bbmr1710180a12.25.1755681706290; Wed, 20 Aug 2025
- 02:21:46 -0700 (PDT)
+	s=arc-20240116; t=1755681713; c=relaxed/simple;
+	bh=LP7Gyt4nxQbTfBodentLk9vM/oxSIKnDsTMwgqFCLN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mUY+cuvm2pQCyGwhxHdb84j1SuDBa5qPWYpaexmNIid0ZMydU6otAyGH1k2GG8y0N2vNhQV2pL9ZWJU4wp9cetzxNzKWbg4u2HdBNys83DqhNlePxJVv7TnmC9O8X0IaA5iNufkPbFSYxuKeSbXBS1hyrRMy9Ld5t3Hlggxo46w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9579F152B;
+	Wed, 20 Aug 2025 02:21:41 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 185663F58B;
+	Wed, 20 Aug 2025 02:21:43 -0700 (PDT)
+Date: Wed, 20 Aug 2025 11:21:23 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Lifeng Zheng <zhenglifeng1@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, rafael@kernel.org,
+	viresh.kumar@linaro.org, sudeep.holla@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	jonathan.cameron@huawei.com, vincent.guittot@linaro.org,
+	yangyicong@hisilicon.com, zhanjie9@hisilicon.com,
+	lihuisong@huawei.com, yubowen8@huawei.com, zhangpengjie2@huawei.com,
+	linhongye@h-partners.com
+Subject: Re: [PATCH v5 3/3] arm64: topology: Setup AMU FIE for online CPUs
+ only
+Message-ID: <aKWTk5dfZysd_8ks@arm.com>
+References: <20250819072931.1647431-1-zhenglifeng1@huawei.com>
+ <20250819072931.1647431-4-zhenglifeng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818170136.209169-1-roman.gushchin@linux.dev> <20250818170136.209169-5-roman.gushchin@linux.dev>
-In-Reply-To: <20250818170136.209169-5-roman.gushchin@linux.dev>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Wed, 20 Aug 2025 11:21:10 +0200
-X-Gm-Features: Ac12FXwos2sMHUp8zbWnk19WXsIHgjajQlczEbHOuQC7H311cCFHvdp7izscD3c
-Message-ID: <CAP01T77yTb69hhi0CtDp9afVzO3T0fyPqhBF7By-iYYy__uOjA@mail.gmail.com>
-Subject: Re: [PATCH v1 04/14] mm: introduce bpf kfuncs to deal with memcg pointers
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: linux-mm@kvack.org, bpf@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, 
-	David Rientjes <rientjes@google.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819072931.1647431-4-zhenglifeng1@huawei.com>
 
-On Mon, 18 Aug 2025 at 19:02, Roman Gushchin <roman.gushchin@linux.dev> wrote:
->
-> To effectively operate with memory cgroups in bpf there is a need
-> to convert css pointers to memcg pointers. A simple container_of
-> cast which is used in the kernel code can't be used in bpf because
-> from the verifier's point of view that's a out-of-bounds memory access.
->
-> Introduce helper get/put kfuncs which can be used to get
-> a refcounted memcg pointer from the css pointer:
->   - bpf_get_mem_cgroup,
->   - bpf_put_mem_cgroup.
->
-> bpf_get_mem_cgroup() can take both memcg's css and the corresponding
-> cgroup's "self" css. It allows it to be used with the existing cgroup
-> iterator which iterates over cgroup tree, not memcg tree.
->
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+The commit title does read a bit wrong I think.
+It does not really reflect the change for supporting cpu hotplug.
+Maybe smth along the lines of:
+	arm64: topology: Handle AMU FIE setup on CPU hotplug
+?
+
+On Tue, Aug 19, 2025 at 03:29:31PM +0800, Lifeng Zheng wrote:
+> When boot with maxcpu=1 restrict, and LPI(Low Power Idle States) is on,
+So actually it is `maxcpus` to start with, Not sure what LPI has to do with any
+of that ?
+It might be better to slightly reword the whole commit message.
+The problem is with CPUs being offline at the time the cpufreq policy is being
+created so it might be with maxcpus != nr_cpus , or because cpu bring-up
+failed, or due to RAS event that caused the cpu to go offline, etc.
+How about:
+
+"When a cpufreq policy is created, AMU FIE setup currently verifies all
+CPUs in the policy, regardless of whether they are online. If any of
+those CPUs are offline, their AMU capability flag is not yet verified, and
+the check fails. As a result, AMU FIE is not enabled even if the CPUs
+that are online do support it.
+
+Later, when the offline CPUs eventually come online and advertise AMU
+support, they have no opportunity to re-enable AMU FIE for the policy,
+leaving the whole frequency domain without AMU FIE despite being
+eligible.
+
+Restrict the initial AMU FIE check to the CPUs that are online at the
+time the policy is created, and allow CPUs brought online later to join
+the policy with AMU FIE enabled."
+
+> only CPU0 will go online. The support AMU flag of CPU0 will be set but the
+> flags of other CPUs will not. This will cause AMU FIE set up fail for CPU0
+> when it shares a cpufreq policy with other CPU(s). After that, when other
+> CPUs are finally online and the support AMU flags of them are set, they'll
+> never have a chance to set up AMU FIE, even though they're eligible.
+> 
+> To solve this problem, the process of setting up AMU FIE needs to be
+> modified as follows:
+> 
+> 1. Set up AMU FIE only for the online CPUs.
+> 
+> 2. Try to set up AMU FIE each time a CPU goes online and do the
+> freq_counters_valid() check. If this check fails, clear scale freq source
+> of all the CPUs related to the same policy, in case they use different
+> source of the freq scale.
+> 
+> At the same time, this change also be applied to cpufreq when calling
+> arch_set_freq_scale.
+Could we clarify that a bit ? Reads a bit ambiguous.
+
+> 
+> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
 > ---
->  include/linux/memcontrol.h |   2 +
->  mm/Makefile                |   1 +
->  mm/bpf_memcontrol.c        | 151 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 154 insertions(+)
->  create mode 100644 mm/bpf_memcontrol.c
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 87b6688f124a..785a064000cd 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -932,6 +932,8 @@ static inline void mod_memcg_page_state(struct page *page,
->         rcu_read_unlock();
+>  arch/arm64/kernel/topology.c | 54 ++++++++++++++++++++++++++++++++++--
+>  drivers/cpufreq/cpufreq.c    |  4 +--
+>  2 files changed, 54 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+> index 9317a618bb87..a9d9e9969cea 100644
+> --- a/arch/arm64/kernel/topology.c
+> +++ b/arch/arm64/kernel/topology.c
+> @@ -385,7 +385,7 @@ static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
+>  	struct cpufreq_policy *policy = data;
+>  
+>  	if (val == CPUFREQ_CREATE_POLICY)
+> -		amu_fie_setup(policy->related_cpus);
+> +		amu_fie_setup(policy->cpus);
+>  
+>  	/*
+>  	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
+> @@ -404,10 +404,60 @@ static struct notifier_block init_amu_fie_notifier = {
+>  	.notifier_call = init_amu_fie_callback,
+>  };
+>  
+> +static int cpuhp_topology_online(unsigned int cpu)
+> +{
+> +	struct cpufreq_policy *policy = cpufreq_cpu_policy(cpu);
+> +
+> +	/*
+> +	 * If the online CPUs are not all AMU FIE CPUs or the new one is already
+> +	 * an AMU FIE one, no need to set it.
+> +	 */
+> +	if (!policy || !cpumask_available(amu_fie_cpus) ||
+> +	    !cpumask_subset(policy->cpus, amu_fie_cpus) ||
+> +	    cpumask_test_cpu(cpu, amu_fie_cpus))
+> +		return 0;
+I believe this can be slightly optimised and made more ... readable, i.e:
+
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index a9d9e9969cea..2d6ce34af8e4 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -408,15 +408,25 @@ static int cpuhp_topology_online(unsigned int cpu)
+ {
+ 	struct cpufreq_policy *policy = cpufreq_cpu_policy(cpu);
+ 
++	/* Those are cheap checks */
++
+ 	/*
+-	 * If the online CPUs are not all AMU FIE CPUs or the new one is already
+-	 * an AMU FIE one, no need to set it.
++	 * Skip this CPU if:
++	 *  - it has no cpufreq policy assigned yet,
++	 *  - no policy exists that spans CPUs with AMU counters, or
++	 *  - it was already handled.
+ 	 */
+-	if (!policy || !cpumask_available(amu_fie_cpus) ||
+-	    !cpumask_subset(policy->cpus, amu_fie_cpus) ||
++	if (unlikely(!policy || !cpumask_available(amu_fie_cpus)) ||
+ 	    cpumask_test_cpu(cpu, amu_fie_cpus))
+ 		return 0;
+ 
++	/*
++	 * Only proceed if all already-online CPUs in this policy
++	 * support AMU counters.
++	 */
++	if (unlikely(!cpumask_subset(policy->cpus, amu_fie_cpus)))
++		return 0;
++
+ 	/*
+ 	 * If the new online CPU cannot pass this check, all the CPUs related to
+ 	 * the same policy should be clear from amu_fie_cpus mask, otherwise they
+
+
+---
+BR
+Beata
+
+> +
+> +	/*
+> +	 * If the new online CPU cannot pass this check, all the CPUs related to
+> +	 * the same policy should be clear from amu_fie_cpus mask, otherwise they
+> +	 * may use different source of the freq scale.
+> +	 */
+> +	if (WARN_ON(!freq_counters_valid(cpu))) {
+> +		topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_ARCH,
+> +						 policy->related_cpus);
+> +		cpumask_andnot(amu_fie_cpus, amu_fie_cpus, policy->related_cpus);
+> +		return 0;
+> +	}
+> +
+> +	cpumask_set_cpu(cpu, amu_fie_cpus);
+> +
+> +	topology_set_scale_freq_source(&amu_sfd, cpumask_of(cpu));
+> +
+> +	pr_debug("CPU[%u]: counter will be used for FIE.", cpu);
+> +
+> +	return 0;
+> +}
+> +
+>  static int __init init_amu_fie(void)
+>  {
+> -	return cpufreq_register_notifier(&init_amu_fie_notifier,
+> +	int ret;
+> +
+> +	ret = cpufreq_register_notifier(&init_amu_fie_notifier,
+>  					CPUFREQ_POLICY_NOTIFIER);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
+> +					"arm64/topology:online",
+> +					cpuhp_topology_online,
+> +					NULL);
+> +	if (ret < 0) {
+> +		cpufreq_unregister_notifier(&init_amu_fie_notifier,
+> +					    CPUFREQ_POLICY_NOTIFIER);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
 >  }
->
-> +unsigned long memcg_events(struct mem_cgroup *memcg, int event);
-> +unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap);
->  unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx);
->  unsigned long lruvec_page_state(struct lruvec *lruvec, enum node_stat_item idx);
->  unsigned long lruvec_page_state_local(struct lruvec *lruvec,
-> diff --git a/mm/Makefile b/mm/Makefile
-> index a714aba03759..c397af904a87 100644
-> --- a/mm/Makefile
-> +++ b/mm/Makefile
-> @@ -107,6 +107,7 @@ obj-$(CONFIG_MEMCG) += swap_cgroup.o
->  endif
->  ifdef CONFIG_BPF_SYSCALL
->  obj-y += bpf_oom.o
-> +obj-$(CONFIG_MEMCG) += bpf_memcontrol.o
->  endif
->  obj-$(CONFIG_CGROUP_HUGETLB) += hugetlb_cgroup.o
->  obj-$(CONFIG_GUP_TEST) += gup_test.o
-> diff --git a/mm/bpf_memcontrol.c b/mm/bpf_memcontrol.c
-> new file mode 100644
-> index 000000000000..66f2a359af7e
-> --- /dev/null
-> +++ b/mm/bpf_memcontrol.c
-> @@ -0,0 +1,151 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Memory Controller-related BPF kfuncs and auxiliary code
-> + *
-> + * Author: Roman Gushchin <roman.gushchin@linux.dev>
-> + */
-> +
-> +#include <linux/memcontrol.h>
-> +#include <linux/bpf.h>
-> +
-> +__bpf_kfunc_start_defs();
-> +
-> +/**
-> + * bpf_get_mem_cgroup - Get a reference to a memory cgroup
-> + * @css: pointer to the css structure
-> + *
-> + * Returns a pointer to a mem_cgroup structure after bumping
-> + * the corresponding css's reference counter.
-> + *
-> + * It's fine to pass a css which belongs to any cgroup controller,
-> + * e.g. unified hierarchy's main css.
-> + *
-> + * Implements KF_ACQUIRE semantics.
-> + */
-> +__bpf_kfunc struct mem_cgroup *
-> +bpf_get_mem_cgroup(struct cgroup_subsys_state *css)
-> +{
-> +       struct mem_cgroup *memcg = NULL;
-> +       bool rcu_unlock = false;
-> +
-> +       if (!root_mem_cgroup)
-> +               return NULL;
-> +
-> +       if (root_mem_cgroup->css.ss != css->ss) {
-> +               struct cgroup *cgroup = css->cgroup;
-> +               int ssid = root_mem_cgroup->css.ss->id;
-> +
-> +               rcu_read_lock();
-> +               rcu_unlock = true;
-> +               css = rcu_dereference_raw(cgroup->subsys[ssid]);
-> +       }
-> +
-> +       if (css && css_tryget(css))
-> +               memcg = container_of(css, struct mem_cgroup, css);
-> +
-> +       if (rcu_unlock)
-> +               rcu_read_unlock();
-> +
-> +       return memcg;
-> +}
-> +
-> +/**
-> + * bpf_put_mem_cgroup - Put a reference to a memory cgroup
-> + * @memcg: memory cgroup to release
-> + *
-> + * Releases a previously acquired memcg reference.
-> + * Implements KF_RELEASE semantics.
-> + */
-> +__bpf_kfunc void bpf_put_mem_cgroup(struct mem_cgroup *memcg)
-> +{
-> +       css_put(&memcg->css);
-> +}
-> +
-> +/**
-> + * bpf_mem_cgroup_events - Read memory cgroup's event counter
-> + * @memcg: memory cgroup
-> + * @event: event idx
-> + *
-> + * Allows to read memory cgroup event counters.
-> + */
-> +__bpf_kfunc unsigned long bpf_mem_cgroup_events(struct mem_cgroup *memcg, int event)
-> +{
-> +
-> +       if (event < 0 || event >= NR_VM_EVENT_ITEMS)
-> +               return (unsigned long)-1;
-> +
-> +       return memcg_events(memcg, event);
-> +}
-> +
-> +/**
-> + * bpf_mem_cgroup_usage - Read memory cgroup's usage
-> + * @memcg: memory cgroup
-> + *
-> + * Returns current memory cgroup size in bytes.
-> + */
-> +__bpf_kfunc unsigned long bpf_mem_cgroup_usage(struct mem_cgroup *memcg)
-> +{
-> +       return page_counter_read(&memcg->memory);
-> +}
-> +
-> +/**
-> + * bpf_mem_cgroup_events - Read memory cgroup's page state counter
-> + * @memcg: memory cgroup
-> + * @event: event idx
-> + *
-> + * Allows to read memory cgroup statistics.
-> + */
-> +__bpf_kfunc unsigned long bpf_mem_cgroup_page_state(struct mem_cgroup *memcg, int idx)
-> +{
-> +       if (idx < 0 || idx >= MEMCG_NR_STAT)
-> +               return (unsigned long)-1;
-> +
-> +       return memcg_page_state(memcg, idx);
-> +}
-> +
-> +/**
-> + * bpf_mem_cgroup_flush_stats - Flush memory cgroup's statistics
-> + * @memcg: memory cgroup
-> + *
-> + * Propagate memory cgroup's statistics up the cgroup tree.
-> + *
-> + * Note, that this function uses the rate-limited version of
-> + * mem_cgroup_flush_stats() to avoid hurting the system-wide
-> + * performance. So bpf_mem_cgroup_flush_stats() guarantees only
-> + * that statistics is not stale beyond 2*FLUSH_TIME.
-> + */
-> +__bpf_kfunc void bpf_mem_cgroup_flush_stats(struct mem_cgroup *memcg)
-> +{
-> +       mem_cgroup_flush_stats_ratelimited(memcg);
-> +}
-> +
-> +__bpf_kfunc_end_defs();
-> +
-> +BTF_KFUNCS_START(bpf_memcontrol_kfuncs)
-> +BTF_ID_FLAGS(func, bpf_get_mem_cgroup, KF_ACQUIRE | KF_RET_NULL)
-
-I think you could set KF_TRUSTED_ARGS for this as well.
-
-> +BTF_ID_FLAGS(func, bpf_put_mem_cgroup, KF_RELEASE)
-> +
-> +BTF_ID_FLAGS(func, bpf_mem_cgroup_events, KF_TRUSTED_ARGS)
-> +BTF_ID_FLAGS(func, bpf_mem_cgroup_usage, KF_TRUSTED_ARGS)
-> +BTF_ID_FLAGS(func, bpf_mem_cgroup_page_state, KF_TRUSTED_ARGS)
-> +BTF_ID_FLAGS(func, bpf_mem_cgroup_flush_stats, KF_TRUSTED_ARGS)
-> +
-> +BTF_KFUNCS_END(bpf_memcontrol_kfuncs)
-> +
-> +static const struct btf_kfunc_id_set bpf_memcontrol_kfunc_set = {
-> +       .owner          = THIS_MODULE,
-> +       .set            = &bpf_memcontrol_kfuncs,
-> +};
-> +
-> +static int __init bpf_memcontrol_init(void)
-> +{
-> +       int err;
-> +
-> +       err = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
-> +                                       &bpf_memcontrol_kfunc_set);
-> +       if (err)
-> +               pr_warn("error while registering bpf memcontrol kfuncs: %d", err);
-> +
-> +       return err;
-> +}
-> +late_initcall(bpf_memcontrol_init);
-> --
-> 2.50.1
->
+>  core_initcall(init_amu_fie);
+>  
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index 78ca68ea754d..d1890a2af1af 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -417,7 +417,7 @@ void cpufreq_freq_transition_end(struct cpufreq_policy *policy,
+>  
+>  	cpufreq_notify_post_transition(policy, freqs, transition_failed);
+>  
+> -	arch_set_freq_scale(policy->related_cpus,
+> +	arch_set_freq_scale(policy->cpus,
+>  			    policy->cur,
+>  			    arch_scale_freq_ref(policy->cpu));
+>  
+> @@ -2219,7 +2219,7 @@ unsigned int cpufreq_driver_fast_switch(struct cpufreq_policy *policy,
+>  		return 0;
+>  
+>  	policy->cur = freq;
+> -	arch_set_freq_scale(policy->related_cpus, freq,
+> +	arch_set_freq_scale(policy->cpus, freq,
+>  			    arch_scale_freq_ref(policy->cpu));
+>  	cpufreq_stats_record_transition(policy, freq);
+>  
+> -- 
+> 2.33.0
+> 
 
