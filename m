@@ -1,83 +1,95 @@
-Return-Path: <linux-kernel+bounces-777259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA9BB2D778
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:05:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B12B2D788
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED21188B899
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB9B31885C63
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077C52DAFCA;
-	Wed, 20 Aug 2025 09:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A2D2DC342;
+	Wed, 20 Aug 2025 09:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="l1ceEV87"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2083.outbound.protection.outlook.com [40.107.94.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rW8LlTp5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TNJr8Cbe";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="f2pomFcH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GAlbcD52"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65413227563;
-	Wed, 20 Aug 2025 09:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755680469; cv=fail; b=AA1ZrckgLXb965T0ZgrNfnng7UHhHJ2knB0Tl+PjgV/r1ppaVfguJm3psACeUyvu4tHrH4pIJUWKQ8fYqkBSaOpgHlgGzdGjXEQCep1VO77ccMVZGi0+mml/Df4UkZhUKEi8rrDTiYwkBZrZT6ObhaTRewOQVOfix0l0Aqbv+ZQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755680469; c=relaxed/simple;
-	bh=Gim44vDGdVJ8pLZx42eZYAJVmVNTLd42vBtZJTITOpw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gn4YhZ4MWYrMA8ohq/jIkoXc9zdD4moecMINZNEJlNnMnQcMBhZc2nrC1pf5Emqal9b5LYm7RgfnBG8yrTDx+0QkyY9uXdkwf+9Q1SFqNrn3j9dZPTWBg4HTPt0fP4+ApS6vMwWfOR2tqje/ZxXFYLTA4QcLwgD1d8yAOYNTl+g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=l1ceEV87; arc=fail smtp.client-ip=40.107.94.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VQRIO2B9wOwN5KTSdlGM3Z3F9gz3A1SHWt/HlVNbY8OfDpn/eAaZ+vF5rTnQty8XmyhLRR86ZpvM+obbRKamHMCFc/u+fFZDjkJeyCT0ZIxgLPLzjqo70Rj/Cki7TXFEHYAikjBbigbY3NOISttCt+Jy13UNFv/M355OOMKqN/L7xj/E3yTskJaZTcGNRZefO4jvoBJTZ1sHjj+zfT2ocDaO2aroZszfK0x+t1aOzpZsn+H/Jx5CTRymLmFFURZT79q1mox4lAOMxIT7ucLKIOd/8emLmQAMP8fdz5DHnzFtpkG/jkTdww8nyfioKbBgIGUEFlyY8C1ELWNhnXx+IQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p9PniNIsBFPI9uyFkByCKrFbl4ZIy0NNAq6yXea4cik=;
- b=udJaqFVg73qaSnU38rjcIG33I9SLM+3eajjU0cOEVqXLqdIIe7auglDwzMgeEtsdIhwbRsnGLBnHuMCWrWnPifKNox/g7lHirObeOVXzP91Mlies8MfxuiHPOsb+XDCpMBtxty+TyDpOX+9aOyiIU+/8rwDEboGFhrjtdHrTUQQ/V+0FpP/MYTztft5e3OGwVapx0erfPJHYw+keKLepnQtoBwcHBb8euyAcywBns7bHph02W1e2Od8qH0jxMuCFZTEDOt02+zA7hbLVABWhopWWXB+TifHGtIIoVXSRrVWAMyvcgQVZ/LnY8F2gQsXrgiNcFf/U/wzLhzGvuJoNwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p9PniNIsBFPI9uyFkByCKrFbl4ZIy0NNAq6yXea4cik=;
- b=l1ceEV87JEksPmhMf980dsJoik23vJc4TlP20K5h1zOULu8n5+cmcHUQi3VWcO1ndw587R/i+ARBMlnWinGnYEkTikrxYGMD4pBHevw4hveQaTOUTMkVZ0HKUNUCP8QHj+BqXbnootjTRqE7isWJIEvlINvK0VinON6V19e53W4=
-Received: from SJ2PR07CA0006.namprd07.prod.outlook.com (2603:10b6:a03:505::18)
- by DS7PR12MB9501.namprd12.prod.outlook.com (2603:10b6:8:250::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
- 2025 09:01:01 +0000
-Received: from SJ5PEPF000001EC.namprd05.prod.outlook.com
- (2603:10b6:a03:505:cafe::e2) by SJ2PR07CA0006.outlook.office365.com
- (2603:10b6:a03:505::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.14 via Frontend Transport; Wed,
- 20 Aug 2025 09:01:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001EC.mail.protection.outlook.com (10.167.242.200) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Wed, 20 Aug 2025 09:01:01 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Aug
- 2025 04:01:00 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Aug
- 2025 04:01:00 -0500
-Received: from [10.252.207.152] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 20 Aug 2025 04:00:57 -0500
-Message-ID: <25b39485-4c3e-4bd2-8cbc-f4ae67fcd82b@amd.com>
-Date: Wed, 20 Aug 2025 14:30:56 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF452D375C
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755680698; cv=none; b=ot+O04SeXNhOX3vQ4XjXgcpcx9D/MRe/IoWfg7ZdRajF4UKcwqlBh8SUMQUM5VKdaZ+e3UwFVsFrl7m1/tECdssrgqB8yiApyF7GXoMODHiz81qcI0ym4QtJPog9swAxjS6kZZ+xjuYczoItme9btdODIsgACvqYYMGF7RnLmFA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755680698; c=relaxed/simple;
+	bh=lsIvUMKikDBhwn3JuuUM/hbec5podOwUspKHJHPhHCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cAsyc2mZOJVsLpINC6jWSuhDgXYrt6NN4ptOuHA7i99cEW9FGkfGoGWRWyhYFH0XxhCV1ESQwACMONgmdj9yxyStOl4RSvGo5OyzWS8SvvVxBMZfu2aDYjuk3RbkQCnNscQqpL7MPF0h1KMDSdRCTXe1vR5Nylj37+aq8NIuvYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rW8LlTp5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TNJr8Cbe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=f2pomFcH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GAlbcD52; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 335F81F7B0;
+	Wed, 20 Aug 2025 09:04:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755680694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nZ//gYY6UXXsx8QcVxJZiYWNUdOZeg7R6DnSFft/9ko=;
+	b=rW8LlTp5Ius2uMmiWYqVwjeWp+YC2tYAXBljI9+eeJ0JmFnW5tylR0DNB8x8Z+4yJ9IIVO
+	YrWSReN62jrRzUiHDjSrWYOWRQB2+JDl5VBs4i+g6Zw4qGHL+O14vRKbV4F08zhuhcxJpp
+	t5aTBOq0KeGaPJUGUvCVXCQ9BI4gHIA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755680694;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nZ//gYY6UXXsx8QcVxJZiYWNUdOZeg7R6DnSFft/9ko=;
+	b=TNJr8Cbe8WiZNrEobLpZEppNUMiLfbnxJrDdSJcIB0jRWHFi9vANAh0ptiW40NQFAWno3W
+	yFzkVbCGxfWkxuAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=f2pomFcH;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=GAlbcD52
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755680693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nZ//gYY6UXXsx8QcVxJZiYWNUdOZeg7R6DnSFft/9ko=;
+	b=f2pomFcHTALt76PEmDQKAAWWh/vx1Hy6018RNVGOx9Ejrw/sfEde/Y7l1G9iaBEzw4eJlT
+	oxtNRHZsAuW9aUzJVGYruT+WHhT3ZivO5IWRIq/ytPo8Bs4tW8GyI83WpD9QOWOdqLXTmn
+	AwcmXp6jD5msYuCurUQJnTOF+EYB+ME=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755680693;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nZ//gYY6UXXsx8QcVxJZiYWNUdOZeg7R6DnSFft/9ko=;
+	b=GAlbcD52iVotZJkLmCBtrtGaL2bcOF3GBEearKbQ1jwn4JNiLKWkUYkT7SBy+B3KC4kNyA
+	e2kClt2La73YPfDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CF4271368B;
+	Wed, 20 Aug 2025 09:04:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id N/xoMbSPpWigdgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 20 Aug 2025 09:04:52 +0000
+Message-ID: <1dcb967f-4e7f-4a6b-957c-924d2dec55fc@suse.de>
+Date: Wed, 20 Aug 2025 11:04:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,209 +97,259 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 4/8] KVM: SVM: Move SEV-ES VMSA allocation to a
- dedicated sev_vcpu_create() helper
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
-	<pbonzini@redhat.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Thomas Lendacky
-	<thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>, "Borislav
- Petkov" <bp@alien8.de>, Vaishali Thakkar <vaishali.thakkar@suse.com>, "Ketan
- Chaturvedi" <Ketan.Chaturvedi@amd.com>, Kai Huang <kai.huang@intel.com>
-References: <20250819234833.3080255-1-seanjc@google.com>
- <20250819234833.3080255-5-seanjc@google.com>
+Subject: Re: [PATCH v2] drm/amdgpu: Pin buffers while vmap'ing exported
+ dma-buf objects
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ sumit.semwal@linaro.org, oushixiong@kylinos.cn, alexander.deucher@amd.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org
+References: <20250818151710.284982-1-tzimmermann@suse.de>
+ <f31550b1-b89c-47d6-b012-99479ba12aeb@amd.com>
 Content-Language: en-US
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <20250819234833.3080255-5-seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EC:EE_|DS7PR12MB9501:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3477bf2d-eb27-472e-3f9d-08dddfc8164b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R2NLek0yMHVvQ1QzTW1kTjFxYzY5SlplOEVZVkhxaTJmYkZhYzRDbFhvcy85?=
- =?utf-8?B?SWdaVUc1dTZaTE5USkh2eE53OTltUnR4U3l4bDV2VU5rcCtwUVlSdWhwcUlk?=
- =?utf-8?B?RzhhU1RUbTRvTkcyajZFTXo5emtLTEViZUNYbndEWWJYeG9ZbVJpREhsOExp?=
- =?utf-8?B?Q3hRZ3R2UE1oelM2RkR6eS9HLytRd0tlVWovcUw5bFpPZm12WDBBNjBUdzVP?=
- =?utf-8?B?bnhObXBnTlVPU2FHYWVxODV6TVUyUjRsV1JzTWVqR0RFWFFXNHF0SnBtdjFJ?=
- =?utf-8?B?NjNpcjJmNnlzZFRRbzhLcXlpZnMyVUVEYnZFZmRjSHM1WEJJS0F0SDFUM1dW?=
- =?utf-8?B?U203enlWRXB1Q1I3M2J6dk1wTkYxM0F6UmtEMGt2VHl1dlpNeHRWVTZwYnZY?=
- =?utf-8?B?d01UVFRuZE9zVEd3MGZ5NHprZmw5U0hFQ2tOOW15MTRodkJ0TmJXUWNIcVhT?=
- =?utf-8?B?dnZ1RVdtT3Q1M2xCenhwMmlzajNDY290Tm1zdUp0amRxTFZQWUwvMEVUeXJG?=
- =?utf-8?B?Z3VYQWNGaURrUFVIWUdhcC9XWmJSeE1CMTFCRk1tOG5ESVZySGp5QmhMWnN2?=
- =?utf-8?B?NFRnQm1GTmFubkVheE01bUN1RnFNTVFZZkltcEVLRlA1aGpWaTZVTHJrZ05U?=
- =?utf-8?B?TitJR2EvRkQ5ZHBKaFlmRUZvNFRUc1dTaTJxU1VqS1NNQlpVYk1zVy9KbHdW?=
- =?utf-8?B?Tlo1RW1RY2wxaXdEZXdJSklyckFCaWw4RDh3aXpTYld1U2laVE9qVThvK1hQ?=
- =?utf-8?B?NVZQYURkVzEwaHI4Sk8wU0NJalVWejRRN0swSVJ1QlNUT1BxVUt1clhPbnp1?=
- =?utf-8?B?WmpQTXpYSDdCQUt6bjJQWU9LUVhCbkdLdGlIUCtJa0lWbC9wUHpUTEs3KzZq?=
- =?utf-8?B?NEZud1pFcG1IWWVGK3NKNUZEcUNRRzYvSkFVTjBuMVl5ZHM1V3B3RG55Rk9D?=
- =?utf-8?B?cVRDZkxxYVlTVmdacVVZTXI3ZU9Kam9VNnlLdk9zZGdTdHJDQ0pad3dqRXFj?=
- =?utf-8?B?TXRhSiszdHRHUDFOeFlXYVYvZU1mTkg3ZFdqRkFENXBXVVVKTUZ4Y3lGVmE4?=
- =?utf-8?B?RjdqNDFwNHFYaGtGeTZVbDk4ejdhTWRuMmkzSUFveUx2MXZYQjZUWHBxMVVr?=
- =?utf-8?B?V29RVUZORWZQeU1FS200c1MzUzBQQWRTME5FeDhDVnVoaXJzaE9FZSs0SEp0?=
- =?utf-8?B?VTdYVmZKbFFzUFhIeFFydDRURTFTSy8yNVhBZk9hdWNGQ3FWNTVUNytQOEIy?=
- =?utf-8?B?Zjg4MkhwMVN1eklqUnJvVmNkSHg3d0ZUZ20yc0NNd1F6ejVEMUl5UHZ2YjFJ?=
- =?utf-8?B?djFUeTlxdE9PMTJWamNmWUNzQW05cnl3TFV5SzJnSGhzcGFwQm12ejNqeDRx?=
- =?utf-8?B?TXVJandpSEt1MElhUzlLdVhkVHFlUjlTMFM0R29RMm5xdzFmWUxmaVpHZHUy?=
- =?utf-8?B?aFBGMElIVkFBN1BGRW1Bd2hQb0tqMXMvV2J3YWJTSEpuWmErL3dYMVVWV2Vu?=
- =?utf-8?B?OWJ2RGVWRlpjaVZJSTdrZ1lMc0xFM1VnWWFTeEFXaUlvK21FUEIyVHM3Yk43?=
- =?utf-8?B?NnhwbjVKODg2TXBUNG4xQXdvZFJmN01QU3I3K0JRV052ZEpMaTBQM2xuSnh0?=
- =?utf-8?B?ZjlkanRaSFpJcUo4dGxjb1hHdUlnM2lxZGRKS2UxMGRiMDJYQWQyeWxxN21m?=
- =?utf-8?B?eEF6bytNUDkxK3MrZkF3M25COFk5VXlnUFRHMEFXYVFaR0tMb1NmbE16MDha?=
- =?utf-8?B?VUwxZW81am94VUZjT1huVTBaRTkrU2JpZ1J1Q3BmYlhEUzY3ZmJnZG4yZDl5?=
- =?utf-8?B?dGo2SkI1bzk5RExxYjd2ZEE2TnBiSCtHZEJCbTdua0Q1TWU2L1BKUTBjUFJW?=
- =?utf-8?B?Q2RrSTRmUXJYRnpvckdSeW9XUzRqdVVqUE5mVVFYcWxra09WNFNSaThpNS9B?=
- =?utf-8?B?QmtrSnJVM2NHRTFMeXZtRVJoMHE0UUxPQ2J0VnpsZWNPSzVLZUZ1eWQvQUhE?=
- =?utf-8?B?ZVNwVXhSVFk5ZjVIQmdTSDVSTWtpMXFMREZleE5RUDlQTzlXeEIvTFRYT3ll?=
- =?utf-8?Q?Wm7P1g?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 09:01:01.5625
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3477bf2d-eb27-472e-3f9d-08dddfc8164b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001EC.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9501
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <f31550b1-b89c-47d6-b012-99479ba12aeb@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 335F81F7B0
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[amd.com,linaro.org,kylinos.cn,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email,amd.com:email,suse.de:dkim,suse.de:mid,suse.de:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
+Hi
 
+Am 18.08.25 um 17:43 schrieb Christian König:
+> On 18.08.25 17:17, Thomas Zimmermann wrote:
+>> Current dma-buf vmap semantics require that the mapped buffer remains
+>> in place until the corresponding vunmap has completed.
+>>
+>> For GEM-SHMEM, this used to be guaranteed by a pin operation while creating
+>> an S/G table in import. GEM-SHMEN can now import dma-buf objects without
+>> creating the S/G table, so the pin is missing. Leads to page-fault errors,
+>> such as the one shown below.
+>>
+>> [  102.101726] BUG: unable to handle page fault for address: ffffc90127000000
+>> [...]
+>> [  102.157102] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
+>> [...]
+>> [  102.243250] Call Trace:
+>> [  102.245695]  <TASK>
+>> [  102.2477V95]  ? validate_chain+0x24e/0x5e0
+>> [  102.251805]  ? __lock_acquire+0x568/0xae0
+>> [  102.255807]  udl_render_hline+0x165/0x341 [udl]
+>> [  102.260338]  ? __pfx_udl_render_hline+0x10/0x10 [udl]
+>> [  102.265379]  ? local_clock_noinstr+0xb/0x100
+>> [  102.269642]  ? __lock_release.isra.0+0x16c/0x2e0
+>> [  102.274246]  ? mark_held_locks+0x40/0x70
+>> [  102.278177]  udl_primary_plane_helper_atomic_update+0x43e/0x680 [udl]
+>> [  102.284606]  ? __pfx_udl_primary_plane_helper_atomic_update+0x10/0x10 [udl]
+>> [  102.291551]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
+>> [  102.297208]  ? lockdep_hardirqs_on+0x88/0x130
+>> [  102.301554]  ? _raw_spin_unlock_irq+0x24/0x50
+>> [  102.305901]  ? wait_for_completion_timeout+0x2bb/0x3a0
+>> [  102.311028]  ? drm_atomic_helper_calc_timestamping_constants+0x141/0x200
+>> [  102.317714]  ? drm_atomic_helper_commit_planes+0x3b6/0x1030
+>> [  102.323279]  drm_atomic_helper_commit_planes+0x3b6/0x1030
+>> [  102.328664]  drm_atomic_helper_commit_tail+0x41/0xb0
+>> [  102.333622]  commit_tail+0x204/0x330
+>> [...]
+>> [  102.529946] ---[ end trace 0000000000000000 ]---
+>> [  102.651980] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
+>>
+>> In this stack strace, udl (based on GEM-SHMEM) imported and vmap'ed a
+>> dma-buf from amdgpu. Amdgpu relocated the buffer, thereby invalidating the
+>> mapping.
+>>
+>> Provide a custom dma-buf vmap method in amdgpu that pins the object before
+>> mapping it's buffer's pages into kernel address space. Do the opposite in
+>> vunmap.
+>>
+>> Note that dma-buf vmap differs from GEM vmap in how it handles relocation.
+>> While dma-buf vmap keeps the buffer in place, GEM vmap requires the caller
+>> to keep the buffer in place. Hence, this fix is in amdgpu's dma-buf code
+>> instead of its GEM code.
+>>
+>> A discussion of various approaches to solving the problem is available
+>> at [1].
+>>
+>> v2:
+>> - only use mapable domains (Christian)
+>> - try pinning to domains in prefered order
+>>
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> Fixes: 660cd44659a0 ("drm/shmem-helper: Import dmabuf without mapping its sg_table")
+>> Reported-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> Closes: https://lore.kernel.org/dri-devel/ba1bdfb8-dbf7-4372-bdcb-df7e0511c702@suse.de/
+>> Cc: Shixiong Ou <oushixiong@kylinos.cn>
+>> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>> Cc: Maxime Ripard <mripard@kernel.org>
+>> Cc: David Airlie <airlied@gmail.com>
+>> Cc: Simona Vetter <simona@ffwll.ch>
+>> Cc: Sumit Semwal <sumit.semwal@linaro.org>
+>> Cc: "Christian König" <christian.koenig@amd.com>
+>> Cc: dri-devel@lists.freedesktop.org
+>> Cc: linux-media@vger.kernel.org
+>> Cc: linaro-mm-sig@lists.linaro.org
+>> Link: https://lore.kernel.org/dri-devel/9792c6c3-a2b8-4b2b-b5ba-fba19b153e21@suse.de/ # [1]
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> ---
+>>   drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c | 41 ++++++++++++++++++++-
+>>   1 file changed, 39 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+>> index 5743ebb2f1b7..471b41bd3e29 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+>> @@ -285,6 +285,43 @@ static int amdgpu_dma_buf_begin_cpu_access(struct dma_buf *dma_buf,
+>>   	return ret;
+>>   }
+>>   
+>> +static int amdgpu_dma_buf_vmap(struct dma_buf *dma_buf, struct iosys_map *map)
+>> +{
+>> +	struct drm_gem_object *obj = dma_buf->priv;
+>> +	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+>> +	int ret;
+>> +
+>> +	/*
+>> +	 * Pin to keep buffer in place while it's vmap'ed. The actual
+>> +	 * domain is not that important as long as it's mapable. Using
+>> +	 * GTT should be compatible with most use cases. VRAM and CPU
+>> +	 * are the fallbacks if the buffer has already been pinned there.
+>> +	 */
+>> +	ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_GTT);
+>> +	if (ret) {
+>> +		ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_VRAM);
+> That makes even less sense :)
 
-On 8/20/2025 5:18 AM, Sean Christopherson wrote:
-> Add a dedicated sev_vcpu_create() helper to allocate the VMSA page for
-> SEV-ES+ vCPUs, and to allow for consolidating a variety of related SEV+
-> code in the near future.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+This is intentional so that amdgpu first tries the most compatible 
+domain GTT and VRAM only as a second option.
 
-Reviewed-by: Nikunj A Dadhania <nikunj@amd.com>
+>
+> The values are a mask, try this:
+>
+> ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_GTT | AMDGPU_GEM_DOMAIN_VRAM);
 
-> ---
->  arch/x86/kvm/svm/sev.c | 20 ++++++++++++++++++++
->  arch/x86/kvm/svm/svm.c | 25 +++++++------------------
->  arch/x86/kvm/svm/svm.h |  2 ++
->  3 files changed, 29 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index e88dce598785..c17cc4eb0fe1 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -4561,6 +4561,26 @@ void sev_init_vmcb(struct vcpu_svm *svm)
->  		sev_es_init_vmcb(svm);
->  }
->  
-> +int sev_vcpu_create(struct kvm_vcpu *vcpu)
-> +{
-> +	struct vcpu_svm *svm = to_svm(vcpu);
-> +	struct page *vmsa_page;
-> +
-> +	if (!sev_es_guest(vcpu->kvm))
-> +		return 0;
-> +
-> +	/*
-> +	 * SEV-ES guests require a separate (from the VMCB) VMSA page used to
-> +	 * contain the encrypted register state of the guest.
-> +	 */
-> +	vmsa_page = snp_safe_alloc_page();
-> +	if (!vmsa_page)
-> +		return -ENOMEM;
-> +
-> +	svm->sev_es.vmsa = page_address(vmsa_page);
-> +	return 0;
-> +}
-> +
->  void sev_es_vcpu_reset(struct vcpu_svm *svm)
->  {
->  	struct kvm_vcpu *vcpu = &svm->vcpu;
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index d9931c6c4bc6..3d4c14e0244f 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -1275,7 +1275,6 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
->  {
->  	struct vcpu_svm *svm;
->  	struct page *vmcb01_page;
-> -	struct page *vmsa_page = NULL;
->  	int err;
->  
->  	BUILD_BUG_ON(offsetof(struct vcpu_svm, vcpu) != 0);
-> @@ -1286,24 +1285,18 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
->  	if (!vmcb01_page)
->  		goto out;
->  
-> -	if (sev_es_guest(vcpu->kvm)) {
-> -		/*
-> -		 * SEV-ES guests require a separate VMSA page used to contain
-> -		 * the encrypted register state of the guest.
-> -		 */
-> -		vmsa_page = snp_safe_alloc_page();
-> -		if (!vmsa_page)
-> -			goto error_free_vmcb_page;
-> -	}
-> +	err = sev_vcpu_create(vcpu);
-> +	if (err)
-> +		goto error_free_vmcb_page;
->  
->  	err = avic_init_vcpu(svm);
->  	if (err)
-> -		goto error_free_vmsa_page;
-> +		goto error_free_sev;
->  
->  	svm->msrpm = svm_vcpu_alloc_msrpm();
->  	if (!svm->msrpm) {
->  		err = -ENOMEM;
-> -		goto error_free_vmsa_page;
-> +		goto error_free_sev;
->  	}
->  
->  	svm->x2avic_msrs_intercepted = true;
-> @@ -1312,16 +1305,12 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
->  	svm->vmcb01.pa = __sme_set(page_to_pfn(vmcb01_page) << PAGE_SHIFT);
->  	svm_switch_vmcb(svm, &svm->vmcb01);
->  
-> -	if (vmsa_page)
-> -		svm->sev_es.vmsa = page_address(vmsa_page);
-> -
->  	svm->guest_state_loaded = false;
->  
->  	return 0;
->  
-> -error_free_vmsa_page:
-> -	if (vmsa_page)
-> -		__free_page(vmsa_page);
-> +error_free_sev:
-> +	sev_free_vcpu(vcpu);
->  error_free_vmcb_page:
->  	__free_page(vmcb01_page);
->  out:
-> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-> index 58b9d168e0c8..cf2569b5451a 100644
-> --- a/arch/x86/kvm/svm/svm.h
-> +++ b/arch/x86/kvm/svm/svm.h
-> @@ -854,6 +854,7 @@ static inline struct page *snp_safe_alloc_page(void)
->  	return snp_safe_alloc_page_node(numa_node_id(), GFP_KERNEL_ACCOUNT);
->  }
->  
-> +int sev_vcpu_create(struct kvm_vcpu *vcpu);
->  void sev_free_vcpu(struct kvm_vcpu *vcpu);
->  void sev_vm_destroy(struct kvm *kvm);
->  void __init sev_set_cpu_caps(void);
-> @@ -880,6 +881,7 @@ static inline struct page *snp_safe_alloc_page(void)
->  	return snp_safe_alloc_page_node(numa_node_id(), GFP_KERNEL_ACCOUNT);
->  }
->  
-> +static inline int sev_vcpu_create(struct kvm_vcpu *vcpu) { return 0; }
->  static inline void sev_free_vcpu(struct kvm_vcpu *vcpu) {}
->  static inline void sev_vm_destroy(struct kvm *kvm) {}
->  static inline void __init sev_set_cpu_caps(void) {}
+I'm aware that it's a bitmask. But IIUC 
+amdgpu_bo_placement_from_domain() [1] prefers VRAM over GTT if both are 
+given. If another importer now comes that requires the BO in GTT, it 
+would fail the pin.
+
+[1] 
+https://elixir.bootlin.com/linux/v6.16.1/source/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c#L109
+
+>
+> Otherwise the pin code will try to move the buffer around to satisfy the contrain you given.
+
+>
+> And don't use the CPU domain here, this will otherwise potentially block submission later on.
+
+Ok.
+
+Best regards
+Thomas
+
+>
+> Regards,
+> Christian.
+>
+>> +		if (ret) {
+>> +			ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_CPU);
+>> +			if (ret)
+>> +				return ret;
+>> +		}
+>> +	}
+>> +	ret = drm_gem_dmabuf_vmap(dma_buf, map);
+>> +	if (ret)
+>> +		amdgpu_bo_unpin(bo);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void amdgpu_dma_buf_vunmap(struct dma_buf *dma_buf, struct iosys_map *map)
+>> +{
+>> +	struct drm_gem_object *obj = dma_buf->priv;
+>> +	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+>> +
+>> +	drm_gem_dmabuf_vunmap(dma_buf, map);
+>> +	amdgpu_bo_unpin(bo);
+>> +}
+>> +
+>>   const struct dma_buf_ops amdgpu_dmabuf_ops = {
+>>   	.attach = amdgpu_dma_buf_attach,
+>>   	.pin = amdgpu_dma_buf_pin,
+>> @@ -294,8 +331,8 @@ const struct dma_buf_ops amdgpu_dmabuf_ops = {
+>>   	.release = drm_gem_dmabuf_release,
+>>   	.begin_cpu_access = amdgpu_dma_buf_begin_cpu_access,
+>>   	.mmap = drm_gem_dmabuf_mmap,
+>> -	.vmap = drm_gem_dmabuf_vmap,
+>> -	.vunmap = drm_gem_dmabuf_vunmap,
+>> +	.vmap = amdgpu_dma_buf_vmap,
+>> +	.vunmap = amdgpu_dma_buf_vunmap,
+>>   };
+>>   
+>>   /**
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
