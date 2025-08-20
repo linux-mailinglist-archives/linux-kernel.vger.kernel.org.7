@@ -1,109 +1,126 @@
-Return-Path: <linux-kernel+bounces-777353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3F46B2D880
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:37:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BBCB2D851
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9DDF1C47CA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6B13ACCE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B972DEA94;
-	Wed, 20 Aug 2025 09:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C3B2DAFC2;
+	Wed, 20 Aug 2025 09:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ihye02n6"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hqU6/gMJ"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964B92DCF79;
-	Wed, 20 Aug 2025 09:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865ED2D9488;
+	Wed, 20 Aug 2025 09:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755682122; cv=none; b=MExPsDzERV5J1DQgrZtszQ0Km7OqWVfy7vQcxuT/DBux72CtgwaNNncMxcmXWzIzeA9bG5MJ75k0NJSC3RaungFfJqiDeeiJx46RNcdRwQ9fbX94hp+/f/NWSZ2d/h6XFIhujdIDyTPv22UaSkR1XN4seQmPwSlVUFataUndwsM=
+	t=1755682169; cv=none; b=hr/7xqJ0zuYNViz83T7RGS4R6V1Zb4OaDtX5z3ZSQookqOSRBL4Mt0xNBBQMRUbmGiWCmhaH4lQLVXo2B0BdC8PPrVvgY5Fkpl0K7NpgHueR28G845kYFUhRruEcVroP40qvGMzkYs96wPO5F46ajJICVvpLHyYKj/10AAlLLGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755682122; c=relaxed/simple;
-	bh=pfipzuvQo/2bKVONaEJPkjEnyGWR0uVaiGeC6t9iyMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s/wW3DblZU6QDRKUbdMGyRlkU79NtBIgB2v2sLnH4TeRQwqLLdYHivAx82UEI43aknrzbC8Y67Ucviq+T8wKMDrP3vxoYCXDM9ZA1dXq4pzMO3aJctGgcL69DG3ZIRR1Gyx3nU363/69VejFO/SNzfbBCF8xWhS5jlNlnhjsjqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ihye02n6; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7DB9C40E027E;
-	Wed, 20 Aug 2025 09:28:33 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id sP4gNivZuxzy; Wed, 20 Aug 2025 09:28:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755682109; bh=FMaoZYwb77gndXfYTCfwk5Udd9os45OGRqChyHPkrQI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ihye02n63PRXyClBqdSKfZqVXJpP6AJP79N/etUM9s0yi6Zn/Bka/XxQYtr+hHGjB
-	 0qaCWCXJhjIpY4STVCCU28/BaxI8XfcMKEF7XeJCc1rvtPncXbCmk2oDWzmxaMbdxZ
-	 CR5KarjNK6ZT3Voo7JOGJEcAWs4UxdGvfqFr8lnEpMy55i0wQoQ5g6or/eW1fd5j8s
-	 i405kk/9lPdjJJCuqzWn/FHGULoBM2eus2dW8AUK6nWiPNPcmImcFqddDyNDKitced
-	 psLW0K2o24F6WS3JpNFB+RHPVhvbwxIpsWeVak/SrfYuhM5bZMgmEJTwDx5Pld6j15
-	 fY2sb9UHMYNQEY03mXWDhmhs7gKeWFH0geWRwJZPLLNvRHWgu2NRHsLXdG6lDxSiOF
-	 DBjloLwNPIs5qU6g7/+eUgsgD5gLoxgctZ2hUaX30Xfmq6sNIhQgQt8lZ4i3bnpz93
-	 r6GKDrO6zQgl8lK/HDH4UlnM5XW8opbxHf1dGBAGHMOxrF6u5DFfw2Q1yTIk/hhu5c
-	 WW91IEXcd0m9fs2ak7hTjaoAunwOtHTx33QzRoJ1r1xEdEVHw8RRczGQbcT7pYwO7D
-	 pAR+i/xmtM6dxeEop5PimH7VCn68FSpHAPkhEygeyRdVtj4HDPTV55joWM/oN7sm0x
-	 WnIdff8dNlybJQzSXastXvqc=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0ABF240E0217;
-	Wed, 20 Aug 2025 09:28:09 +0000 (UTC)
-Date: Wed, 20 Aug 2025 11:28:03 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Naveen N Rao <naveen@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
-	Sairaj Kodilkar <sarunkod@amd.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	"Xin Li (Intel)" <xin@zytor.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: Re: [PATCH v3 0/4] x86/cpu/topology: Work around the nuances of
- virtualization on AMD/Hygon
-Message-ID: <20250820092803.GCaKWVI0fkM3aaqmn4@fat_crate.local>
-References: <20250818060435.2452-1-kprateek.nayak@amd.com>
- <20250819113447.GJaKRhVx6lBPUc6NMz@fat_crate.local>
- <mcclyouhgeqzkhljovu7euzvowyqrtf5q4madh3f32yeb7ubnk@xdtbsvi2m7en>
- <20250820085935.GBaKWOd5Wk3plH0h1l@fat_crate.local>
- <97aace4c-921f-4037-b8f2-c4112b4a26a9@amd.com>
+	s=arc-20240116; t=1755682169; c=relaxed/simple;
+	bh=GkLjC+KujJhxq+DPeb9PooDpqdQAPzuF/3QH6BnY+UA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GzU6reWg83fR6EUAjpknBO2rRG3pcDhLPALWzBHU0blE0h+l+a4lA789XfpZjQVFaBv3Nv2R3E1UToG8ySAgCAkRckAbboeTH8b2RR0jzaDCNFMkMsy03FqUogjwurwwkLfV1aU7r/buqgt0KJrpB611tZc+AIuHrnye2Y2MYzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hqU6/gMJ; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e2e614b84so5942721b3a.0;
+        Wed, 20 Aug 2025 02:29:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755682167; x=1756286967; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FsexL88QY+SMath9De6iu++b8EvHqE86irPkpuaoREQ=;
+        b=hqU6/gMJB3eh2DhM8AbgzJblLAjntti47X/haLSnndHt4RGrYppVIg9yavxk28uT/w
+         KNRh45pYk2KA3nDPY5CcVKj2QBPnHkLm6gsYMyS8FI4YHMh5TEMI1Qa7z8cHlndmGFB2
+         QlpyvcTFbpTiEysVoMGVIDc5es5V3+QmrHFKyFE1czkd1QDwnEMKyhR+feRargrlJQfb
+         u5a8d6BPY9oOXjZD5hUMpf+9gAw01ATXFgF3Ze3Y8c4No0JpvANPynjyKFmc1cVWDEPv
+         Ght2udbKzTVuUyQ1jA3tac+w0oPRJRe261Ao1n/gPr2UGDwBzor2c7i3lJ8U3AqZ1Z34
+         OHWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755682167; x=1756286967;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FsexL88QY+SMath9De6iu++b8EvHqE86irPkpuaoREQ=;
+        b=SElndIutVQRgxSlJxn3cdfWbBnhjlaKZDAM00H21TtwfaBdzy2uAia+8ixFkPOIg75
+         pgGEx8Qb1GxU5RFpSH/M72/8smtaM5t0Gr7/RbN8rzdVeRg8owL3Y+gr9Wq7YJ2DnWHj
+         nosseaXlcDXHIUbCWyJAHb1b4UHqU+e2X36XulrktVJ+O/8pLUu2gYjpCVUkHmBan02j
+         GCMhWZIdUPbHFp8sBn/BuXJjajU8xd3MxSWjkmNTXU6IgkmuoMNHQT0XNAfEsAP7VS1E
+         Yw1oBviKE3h4Su7JYA1gRJhrT2wjGWOmHR9vSu5buc3Du0SQBlhPXB1UBEuKvSpsWhgR
+         ksMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgWhsbKIf/xsPzXd6BfvkH1IecVyG4WmYVb0jjdlyNSuqN82bUiULHT9rr1DXo93eoqjBFBH/eDIOnToU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze1DmqB7RBfdOdyyQMaK9tJVSdpCUOZjRxvOz1U0S94DxkVY2Z
+	eBimEjN78jwVCfgAk3wANn+pBDPWvcyTuxvgKSE95n4Le626OITJbzCB/EOcNnxEzY8=
+X-Gm-Gg: ASbGncsVp0nwbWSDJR6x6316M983kV8TYPNZh61mradEN4np9QM+rzt3q7ytafr8plQ
+	6HmqcTLEe10VcoyZLdagiYOi/bDZQa30oYWl5QBXeL7CUift8cHBgYOwECqZ4BKQd2n/n93DTsh
+	yV5B0YvRCdpjBWViX2N+pyHLFxOwPmKtvlv5fPp4FqNzTGRINVSme2TcIsqGXVFiOyiy9hMGEIs
+	cLesXMxQVNIIO8GxfqzVMlnWNmo3hTWXLFGmIv3Jdrk3/n1xuUCvHG9eXxSm/ISzEwFrc+FZu6z
+	FhAGij8lY0kw3Mj96ORkZXNZLNZWWopNI4zJGU26l8UwsSxfwD8OdwosP5jaP5LCI+sfQ5Th6EX
+	tyjP4dVbDkaQ0WRIPLSo6mDmliDG94kC6eOUNHrZ5KYo=
+X-Google-Smtp-Source: AGHT+IGn68JTaRs07pPDRgCFtcGlNztT0yxQqHiSVS8QoTercV4jLxhlp4WSufdOVbDcRu2BeAYBOA==
+X-Received: by 2002:a05:6a00:17a5:b0:76e:885a:c344 with SMTP id d2e1a72fcca58-76e8dd4cb80mr3161982b3a.26.1755682166705;
+        Wed, 20 Aug 2025 02:29:26 -0700 (PDT)
+Received: from hh.localdomain ([223.153.149.237])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d0ffe93sm4830240b3a.28.2025.08.20.02.28.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 02:29:26 -0700 (PDT)
+From: huhai <hhtracer@gmail.com>
+X-Google-Original-From: huhai <huhai@kylinos.cn>
+To: miklos@szeredi.hu,
+	amir73il@gmail.com
+Cc: linux-unionfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	huhai <huhai@kylinos.cn>
+Subject: [PATCH] ovl: only assign err on error path
+Date: Wed, 20 Aug 2025 17:28:48 +0800
+Message-Id: <20250820092848.534-1-huhai@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <97aace4c-921f-4037-b8f2-c4112b4a26a9@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 02:42:26PM +0530, K Prateek Nayak wrote:
->       tscan->c->topo.initial_apicid = leaf.ext_apic_id; /*** Overwritten here ***/
+In ovl_get_upper(), the result of clone_private_mount() was
+unconditionally assigned to 'err' using PTR_ERR(), even when the
+returned 'upper_mnt' was valid. This assignment is unnecessary in
+the success path and can be avoided.
 
-Looks like it shouldn't unconditionally overwrite it but I'll let tglx comment
-here.
+Move the 'err = PTR_ERR(upper_mnt)' assignment inside the
+IS_ERR(upper_mnt) branch so that 'err' is only set when an
+error actually occurred.
 
+No functional change intended.
+
+Signed-off-by: huhai <huhai@kylinos.cn>
+---
+ fs/overlayfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index df85a76597e9..a29ce0bce6a5 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -512,9 +512,9 @@ static int ovl_get_upper(struct super_block *sb, struct ovl_fs *ofs,
+ 		goto out;
+ 
+ 	upper_mnt = clone_private_mount(upperpath);
+-	err = PTR_ERR(upper_mnt);
+ 	if (IS_ERR(upper_mnt)) {
+ 		pr_err("failed to clone upperpath\n");
++		err = PTR_ERR(upper_mnt);
+ 		goto out;
+ 	}
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.40.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
