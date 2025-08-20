@@ -1,117 +1,98 @@
-Return-Path: <linux-kernel+bounces-776756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB021B2D136
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F57B2D139
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C7E164752
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:11:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8D31771F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6621DDC08;
-	Wed, 20 Aug 2025 01:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C6D1A9F83;
+	Wed, 20 Aug 2025 01:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jm+YZY6+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lw4b8WF+"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010401A5BBE;
-	Wed, 20 Aug 2025 01:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306F51A7264
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755652058; cv=none; b=c3COniuCV35winPC6n3mQmYWWK26HKFwQbW8+30Z23FiV7F/r48odMVB0aEvovtL0clV34BQvSZCQUlhTCMTci3r/6uuLqtyQSMK7ypFls/HK4KsrnVAqz9JXS+5K73wO0GfSf4iaHXICcWcRM2l5q0MyK9DnEX9w+3cTLEUK68=
+	t=1755652124; cv=none; b=FrfD2NLHgR0DF58CX2x3ALJVXIcTwG22GMqSFQWAng485eNFm+Zq5hvS24I7UJf3Kvz0VOAguJiFayv5pz5o+Oe5xp/+exbEW6jwztLJj8Dm064l+6WjVZzjyxMkrGizasio63UNp1fidkquCE1nj+G3F3n0KFqNu2zuZ0JtwoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755652058; c=relaxed/simple;
-	bh=7k1sO4iEhovzZCGouVmIOXCPWu2hqIEKv/p30wza8KM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Peg9/ieHxmEuxOb6ukW6SA41vNZjM41offM0Sa5yqCm/SjVpc/mNOjwA1xBo2lAO5FU1E0I64SC3pB2nYuBJX7ig/h/WqJZhsVYqB6sYn3/mawijjRm+E/CkwU5i/Ly3WkgvnYj0qsQcfdtuoL0DpFUbs0Hb6SAb7lxGDI21ZMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jm+YZY6+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55680C4CEF1;
-	Wed, 20 Aug 2025 01:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755652055;
-	bh=7k1sO4iEhovzZCGouVmIOXCPWu2hqIEKv/p30wza8KM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jm+YZY6+eKEYj/dwKSFp7pLWmr4rLJJ+lwO++Ltrmw8KhMyMguxRDbf/jHiIyl/jb
-	 XRh3AtGTizFqz7pBQFHA1f9pwFiXWgmwaZkYVjvNCtT7PaDh9xtL2URYQ7vARarjb8
-	 rtKaM1eJFl9yLS+i/ncdspn+Fwd0+HVjDn1h4wUsRGetXBR8dCz80At8Qngi6uSoD3
-	 aMX9RnMBnWpOH0TBf6WA3MJ1YwTIsagJ1YrUSyErW5ReGUMVmE5rvccQSZ6jf6XZfU
-	 cuGJ8mmym1nPbWwFi90Sjl17oIRXs+F2lOosccdSBP4TS4p5KERRs9ESK9BLO8GY/f
-	 MVcLUl0XvQ3PQ==
-Date: Wed, 20 Aug 2025 10:07:31 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ben Hutchings <benh@debian.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] bootconfig: Fix negative seeks on 32-bit with LFS
- enabled
-Message-Id: <20250820100731.df29750fa21d864d18169d5c@kernel.org>
-In-Reply-To: <aKHlevxeg6Y7UQrz@decadent.org.uk>
-References: <aKHlevxeg6Y7UQrz@decadent.org.uk>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755652124; c=relaxed/simple;
+	bh=HRLMyCfwAcfssVFrAhwq0eZNBnnyMKG2jnRy1VCNxvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uyFHvh6dDWUlTfriQHkGLjkTKy//jr0IzBYMTy2Itkfg+rPpnvVw/Q7hbBvJNWHE7ChQ2Q3jO/TCpXNtkoexGF4SLwumv9TLjIbrg5N3nMCZEQTnmxKlIxbxYBeYbFAPx1nm2plCLtGXSOvEfB78dD9F5gJyetTdCpnJmcXcrBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lw4b8WF+; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 19 Aug 2025 21:08:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755652108;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y4RqJtTe0TJJz0GUaQNuT4YcjFhsas7L86jF7z2f/wA=;
+	b=Lw4b8WF+PZPA/xL/n28/7YyJDcmmXzdnShIza5PkuhI2u8fDJtwahd0n8G9WbYXHVtCxPY
+	Kc/H3eXFlbeTAaLckRlrCBo6Y2BKQqWWVs9QIdUwktbknjeEPg7YCSfG9Ly976iIgWAUub
+	+PhZA7IWOqqzlrawstR5vCfwUViHzdo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Documentation <linux-doc@vger.kernel.org>, Linux bcachefs <linux-bcachefs@vger.kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] Documentation: bcachefs: Add explicit title for idle
+ work design doc
+Message-ID: <p7ocizi2jg36uvk64yy5mv5bzg3dyrvnosz5mhj5j373tzr7iz@txx5juyvhwzf>
+References: <20250820002218.11547-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820002218.11547-1-bagasdotme@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, 17 Aug 2025 16:21:46 +0200
-Ben Hutchings <benh@debian.org> wrote:
-
-> Commit 26dda5769509 "tools/bootconfig: Cleanup bootconfig footer size
-> calculations" replaced some expressions of type int with the
-> BOOTCONFIG_FOOTER_SIZE macro, which expands to an expression of type
-> size_t, which is unsigned.
+On Wed, Aug 20, 2025 at 07:22:18AM +0700, Bagas Sanjaya wrote:
+> Commit 9e260e4590e044 ("docs: bcachefs: idle work scheduling design doc")
+> adds design doc (desiderata) for idle work scheduling, but missed
+> explicit title, causing its two section headings to be toctree entries
+> instead.
 > 
-> On 32-bit architectures with LFS enabled (i.e. off_t is 64-bit), the
-> seek offset of -BOOTCONFIG_FOOTER_SIZE now turns into a positive
-> value.
-
-Oops, I thought the sign bit would be extended.
-
+> Add the title.
 > 
-> Fix this by casting the size to off_t before negating it.
-> 
-> Just in case someone changes BOOTCONFIG_MAGIC_LEN to have type size_t
-> later, do the same thing to the seek offset of -BOOTCONFIG_MAGIC_LEN.
-> 
-> Fixes: 26dda5769509 ("tools/bootconfig: Cleanup bootconfig footer size calculations")
-> Signed-off-by: Ben Hutchings <benh@debian.org>
-
-Thanks for the fix!
-
+> Fixes: 9e260e4590e0 ("docs: bcachefs: idle work scheduling design doc")
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 > ---
->  tools/bootconfig/main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  Documentation/filesystems/bcachefs/future/idle_work.rst | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/tools/bootconfig/main.c b/tools/bootconfig/main.c
-> index 57c669d2aa90..55d59ed507d5 100644
-> --- a/tools/bootconfig/main.c
-> +++ b/tools/bootconfig/main.c
-> @@ -193,7 +193,7 @@ static int load_xbc_from_initrd(int fd, char **buf)
->  	if (stat.st_size < BOOTCONFIG_FOOTER_SIZE)
->  		return 0;
->  
-> -	if (lseek(fd, -BOOTCONFIG_MAGIC_LEN, SEEK_END) < 0)
-> +	if (lseek(fd, -(off_t)BOOTCONFIG_MAGIC_LEN, SEEK_END) < 0)
->  		return pr_errno("Failed to lseek for magic", -errno);
->  
->  	if (read(fd, magic, BOOTCONFIG_MAGIC_LEN) < 0)
-> @@ -203,7 +203,7 @@ static int load_xbc_from_initrd(int fd, char **buf)
->  	if (memcmp(magic, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN) != 0)
->  		return 0;
->  
-> -	if (lseek(fd, -BOOTCONFIG_FOOTER_SIZE, SEEK_END) < 0)
-> +	if (lseek(fd, -(off_t)BOOTCONFIG_FOOTER_SIZE, SEEK_END) < 0)
->  		return pr_errno("Failed to lseek for size", -errno);
->  
->  	if (read(fd, &size, sizeof(uint32_t)) < 0)
+> diff --git a/Documentation/filesystems/bcachefs/future/idle_work.rst b/Documentation/filesystems/bcachefs/future/idle_work.rst
+> index 59a332509dcd97..30f2844c3d9e5e 100644
+> --- a/Documentation/filesystems/bcachefs/future/idle_work.rst
+> +++ b/Documentation/filesystems/bcachefs/future/idle_work.rst
+> @@ -1,4 +1,5 @@
+> -Idle/background work classes design doc:
+> +Idle/background work classes desiderata
 
+.....
+what's going on with that spelling?
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> +=======================================
+>  
+>  Right now, our behaviour at idle isn't ideal, it was designed for servers that
+>  would be under sustained load, to keep pending work at a "medium" level, to
+> 
+> base-commit: 37c52167b007d9d0bb8c5ed53dd6efc4969a1356
+> -- 
+> An old man doll... just what I always wanted! - Clara
+> 
 
