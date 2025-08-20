@@ -1,94 +1,99 @@
-Return-Path: <linux-kernel+bounces-777324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70EC0B2D824
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:28:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE50EB2D83D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 11:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11956563881
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:23:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038651C42B68
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1555A2E3B03;
-	Wed, 20 Aug 2025 09:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D737C2E426A;
+	Wed, 20 Aug 2025 09:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHU/jPqO"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7NQfVHE"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E9B2E3AF3
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7F12E3AF3
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 09:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755681489; cv=none; b=CiILXsuAUjgFf8TQIXv8njdmDSEYknIbd9mW1D+2UleEUW7yWWHQR6BEKXbMuIhqAzAqo6FZVuiLO1lmc3ciwtpQ44YCcQ4d2yQtboNKUnQ+IZl8lbdHBBC84U/+HuouBCA86drWqBi65Vm2m+jd8qgKOryl42N3/YDBHYdovTs=
+	t=1755681498; cv=none; b=rkrgU5+TXNPHeyMPwcgdFn3K1TmvQMLHGcZJRJ4Vqb13+y6QYBuQ5PRk6pZ1W7L3gjK/+kyZQ9FYkeEZWX4NtoGrVAe8VoBlnrqKb1I7mCJsX0tCT9RSbWM/kyHPWs2VuBTTMQMPUrVrqobXGy1e/N39S+XRtmo0CbccVmGZUs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755681489; c=relaxed/simple;
-	bh=fvpf6gD/xruiPzcHNssl/1iOq8iDBE8RraYBxLIbPtw=;
+	s=arc-20240116; t=1755681498; c=relaxed/simple;
+	bh=/Vffl83wUI87E7o1oTDqOUkPoi70Eqk1k59wxwse63o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WqM8xiAtSnA1Arov3a+5v32KFuK3/cx+rJnq8urJlZuoktnI0JKvNV0r4ZiZEURt8Dad0v14yYzOF26vMAgU7xO//xCKKAHh6wV1ok2mD+OeDXiqGSJ/YW3PwWVLeOjNEgmp8tppsw4Sr2CsRoWmdZpSZGEhRG+1+aq3aEy5YNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHU/jPqO; arc=none smtp.client-ip=209.85.210.169
+	 MIME-Version; b=uSRHodsFtFYQl7eiTEjyDqdBomX6t7xGBZnJxJKq7GKSvCeOgAoEBT8fGKgDniyluWYe0i2Sf2qfPHWgWUJRNwic2Y83vwg9a5rsGLAUy3N2Ikg3DkjhdW6bDerB/lAf3UDg3NeeCHCnm4RD6MSjAsDLm5ci9AUlyHd/ZLQB72U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7NQfVHE; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e7af160f1so1658004b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:18:07 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e2e89bebaso4613972b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 02:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755681487; x=1756286287; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755681496; x=1756286296; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gk4id58LYwrdHhM1KMFw/JrWQGSX7dxtJHkJKzAUMeI=;
-        b=VHU/jPqOJ4rkUUA5sWTA88ZLAQqZKi7GUN4kuda+jLKHhzEIaU2xzqgCO5zJm7WvCd
-         NNhYgUSYU5ycD0ysuJFHTVFriybnWZkadEqMTJLbsmkfQ6MOiCcST3N3dlSWfeZ4Omvg
-         Jv9KLJFEw/XLhjGOj9Npb3gmmNFnrCuTPXcj8LcmwvhCyQwrJT+pcINIxUGwtEPMOWdD
-         mKNSl3NE/NK7VlMzN7URinbBJxv1/swaByLgMBeEs+bkPn6kJK0HLYmE+4lGog/oN3TS
-         eBwSES/iUrDJ0HSqmKgxLXlFGmjLI1jpQQEKYFa63/yWLa8CJ8XCMYADqgx8tSWqciil
-         seRA==
+        bh=VmJ7RIhD+Czj/7A+VwyBpCQYzPH3KIKkRyweRy7AzmE=;
+        b=g7NQfVHEDol/fnN4K6qhR5eOwtS7OrcYOMolm3qi2RN5DYz/j1PvxDNDlKZmBtmbyl
+         5HWe+yqw1dcgTnwzT01KteptttSkOaa2LlJVNRAZX92wouSlC6G4G5aO1uNMr3ka46Dd
+         HvAQm58F1YxFyVFY0K0bFSycqzYXGR3AkGG3FQdz29BgdlHbUwmEx3hdP0I2b0CAdHJO
+         DqKFs087YQpB644XIvYXm7rZWnEhdskcxRqxPZfFcX5WGTXOR1pg1LdilBmqXrwLzwKO
+         uvZ3bH8J5G6fgQC0VGVE9zCwBwHpPborxzh+hHnVrak956KCCUwL/iHJcZtFZMN3l4Wz
+         LHzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755681487; x=1756286287;
+        d=1e100.net; s=20230601; t=1755681496; x=1756286296;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gk4id58LYwrdHhM1KMFw/JrWQGSX7dxtJHkJKzAUMeI=;
-        b=Jt4IBXYPN/yztP9NyUYPPpGkVpD0Bs7/cZ/JJ72GohGWChqph5bEEyH5+1D9UkLzQu
-         xgaF1L/AK2NDWeIsjWGhtntc+sQKrcfs9NepLBNs5wEvzLmKNYKEjzfy6unKDBq231/w
-         K1O7sgdgK87+Corge5gIYBkssLHoPR0r1PMgmHm1QZKYh1o/o86rEj7AO0hdUbOgLSzP
-         WcHfcnfPZ4n08vgzc9gnv4xmY0s3lhKtJ5EHdaN10Y0eJgj+E9ocg0cBL3CFl1+9199s
-         6MpOyYwggaPk0DQlhWq2yxJ5u4znPAL9DXgyb/+DO/L+9atpGc0cp72/rN1zLXzBICJU
-         qInQ==
-X-Gm-Message-State: AOJu0YzWossKpLDJXZqu2a87/s76M5sNdvsczvvk9KVPMJTXmYFMJ7Lg
-	U9ors3jvGwQRqvPCid0Z/efmVyFzNQTim8DIGdfKSDLRFVqtnnPpDoxh
-X-Gm-Gg: ASbGncs+Yo0Bn0t8FUdGHOo/CUnzvY5YrWyYx/usOi/8X/hxCWX9Fxrvt3sNCaBb4WN
-	u3mbvQW2PGJe6iUmTQZv7iHtVgraGH6SMO0KpvZPbBMajK/YKvd6yWwwh0mdsGnGvihVCpXw2tO
-	dQD9VNlUjVRWddZXKhNyRFOxjievRnNdbEboJUPJ60+cCZ00X/WheQrvjIa0eFZ1GUkkk2ibXpf
-	dhpH5mwIOCz3xNzHbCpawDMDdgP1XbD/xFpDx883LmsIL3lrpvbwITo/7RcddXxCZHK5VGl4JIZ
-	I6xcuq3OSroXH9UZPaseteIA8KXpS54Wg0DiY5517LCDcmmbBFq85PEkur69o6jyRsl9QH3A6xC
-	F1RbNwbqdyTqjps5Jp0hGpTI10uk/3TDPzMkBPgwhbWFJ4E7nroHw9lofLWJ83DoWwtNJ3evCiF
-	E5ctny
-X-Google-Smtp-Source: AGHT+IEWDiz6JAWnPeRzkxcpd38t0vdvL9nqppMRb4d9Cxzipo6xXGDDvceC8KWekpj+k44/+WSi5Q==
-X-Received: by 2002:a05:6a00:800d:b0:76b:fb4a:118c with SMTP id d2e1a72fcca58-76e8dd45049mr3124227b3a.18.1755681486400;
-        Wed, 20 Aug 2025 02:18:06 -0700 (PDT)
+        bh=VmJ7RIhD+Czj/7A+VwyBpCQYzPH3KIKkRyweRy7AzmE=;
+        b=cLBM0eXWmZC5dvy1iM4t7QnEGO5w/47pCWV2O/m/9SG9Vu/lcWbl6NvCrv6nypmfJb
+         5udO8WF3Kk35Tq2an4U+D3FVYG55FXEwq4BzVGVEkZx1GOy70EOQ3XHoAIulvHGH5qop
+         CHnmN5QOgK68Nu9SsbxpbyIH36K69Qnt2vKVy3VTKTeJ/8IzkassOY4GDbnkMEOi43UK
+         x4hA6IiZcEoodo0LvknCGZFF/0k1Yv7yrCQParFlCGbYhV5eQNL4NTl6tt72vGPzhgYc
+         czNO6Ux0Vhg4N8mDsRnHF8rJoz8CaywpkhAFQ71t27U42MGflQGW8wh0upDUBOfICo0E
+         ZFZw==
+X-Gm-Message-State: AOJu0YxeC9WAObNnRQjAuQxQxkHcsEKrFe3DTfqiTTc0Ix2d+l2aVtQp
+	1HA9MJRoD3KZmAEc3fTGNaTgP13mPgfVZc4bb88pHz10t98h8SaVv93658mII+Jtc6tdrw==
+X-Gm-Gg: ASbGncsdRnV/rrV3jNaM6mgCb+0L1rVtMFjaoyPFncWXblNv9OX53Yd186AVpL+U6JZ
+	LiOMPQlXLpkBlDDG63SGm73LIp2YjHxm/0pSyoAKGQdgDX41SnYuPDr4uHNtvg9XSw9IJdf9hzR
+	9mZxLOS5AoDQkBAoeVWlkH1x61brI1XHgnzGpnyh4ilpjrnKU2ydIQz+a0Mfjy3A3fm8D6ctZYo
+	qlhNEXxAycJxM6aFp9+o60IQt9R8jTbgfDxpLOOHha3gg601oliQd2pv+mT+JeDy+x5075TIFA6
+	NuXjBXNBIJldiEA8uzyS5bHahibYNIuCg6uhkV79tmLjtQuYzP29blj1kYKPZpM03ZKARi6VcpL
+	yZhRiSdH0e6OGS/7qov6kxKzEYpzbOMjsIlYHqaD4l4npWOmnholU4sFhrsbf0fgdwNA2JaW23C
+	Vo/INwp6DUrQ==
+X-Google-Smtp-Source: AGHT+IEXkDOfQYg0NvfjHWusyyJCUZTfFWw+TXCd+fdhRd8DEqQUld5w5tVgIFeRFHJkBH3gi/CKag==
+X-Received: by 2002:a05:6a00:3c8a:b0:76e:885a:c33b with SMTP id d2e1a72fcca58-76e8ddc3dddmr2755576b3a.25.1755681496154;
+        Wed, 20 Aug 2025 02:18:16 -0700 (PDT)
 Received: from localhost.localdomain ([114.242.33.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7ccfa8d1sm4847120b3a.0.2025.08.20.02.18.02
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7ccfa8d1sm4847120b3a.0.2025.08.20.02.18.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 02:18:05 -0700 (PDT)
+        Wed, 20 Aug 2025 02:18:15 -0700 (PDT)
 From: Jinchao Wang <wangjinchao600@gmail.com>
 To: pmladek@suse.com,
 	akpm@linux-foundation.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
+	Jinchao Wang <wangjinchao600@gmail.com>,
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Li Huafei <lihuafei1@huawei.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>
 Cc: linux-kernel@vger.kernel.org,
 	feng.tang@linux.alibaba.com,
 	joel.granados@kernel.org,
-	wangjinchao600@gmail.com,
+	john.ogness@linutronix.de,
 	namcao@linutronix.de,
-	sravankumarlpu@gmail.com
-Subject: [PATCH 8/9] panic/printk: replace other_cpu_in_panic() with panic_on_other_cpu()
-Date: Wed, 20 Aug 2025 17:14:53 +0800
-Message-ID: <20250820091702.512524-9-wangjinchao600@gmail.com>
+	sravankumarlpu@gmail.com,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH 9/9] watchdog: skip checks when panic is in progress
+Date: Wed, 20 Aug 2025 17:14:54 +0800
+Message-ID: <20250820091702.512524-10-wangjinchao600@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250820091702.512524-8-wangjinchao600@gmail.com>
+In-Reply-To: <20250820091702.512524-9-wangjinchao600@gmail.com>
 References: <20250820091702.512524-1-wangjinchao600@gmail.com>
  <20250820091702.512524-2-wangjinchao600@gmail.com>
  <20250820091702.512524-3-wangjinchao600@gmail.com>
@@ -97,6 +102,7 @@ References: <20250820091702.512524-1-wangjinchao600@gmail.com>
  <20250820091702.512524-6-wangjinchao600@gmail.com>
  <20250820091702.512524-7-wangjinchao600@gmail.com>
  <20250820091702.512524-8-wangjinchao600@gmail.com>
+ <20250820091702.512524-9-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,132 +111,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The helper other_cpu_in_panic() duplicated
-logic already provided by panic_on_other_cpu().
+Both watchdog_buddy_check_hardlockup() and
+watchdog_overflow_callback() may trigger
+during a panic. This can lead to recursive
+panic handling.
 
-Remove other_cpu_in_panic() and update all
-users to call panic_on_other_cpu() instead.
+Add panic_in_progress() checks so watchdog
+activity is skipped once a panic has begun.
 
-This removes redundant code and makes panic
-handling consistent.
+This prevents recursive panic and keeps the
+panic path more reliable.
 
 Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 ---
- kernel/printk/internal.h |  1 -
- kernel/printk/nbcon.c    |  8 ++++----
- kernel/printk/printk.c   | 19 ++++---------------
- 3 files changed, 8 insertions(+), 20 deletions(-)
+ kernel/watchdog_buddy.c | 5 +++++
+ kernel/watchdog_perf.c  | 3 +++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index ef282001f200..f72bbfa266d6 100644
---- a/kernel/printk/internal.h
-+++ b/kernel/printk/internal.h
-@@ -332,7 +332,6 @@ struct printk_message {
- 	unsigned long		dropped;
- };
- 
--bool other_cpu_in_panic(void);
- bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
- 			     bool is_extended, bool may_supress);
- 
-diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-index c6d1a4a747e9..171480135830 100644
---- a/kernel/printk/nbcon.c
-+++ b/kernel/printk/nbcon.c
-@@ -255,7 +255,7 @@ static int nbcon_context_try_acquire_direct(struct nbcon_context *ctxt,
- 		 * opportunity to perform any necessary cleanup if they were
- 		 * interrupted by the panic CPU while printing.
- 		 */
--		if (other_cpu_in_panic() &&
-+		if (panic_on_other_cpu() &&
- 		    (!is_reacquire || cur->unsafe_takeover)) {
- 			return -EPERM;
- 		}
-@@ -310,7 +310,7 @@ static bool nbcon_waiter_matches(struct nbcon_state *cur, int expected_prio)
- 	 * Event #2 implies the new context is PANIC.
- 	 * Event #3 occurs when panic() has flushed the console.
- 	 * Event #4 occurs when a non-panic CPU reacquires.
--	 * Event #5 is not possible due to the other_cpu_in_panic() check
-+	 * Event #5 is not possible due to the panic_on_other_cpu() check
- 	 *          in nbcon_context_try_acquire_handover().
+diff --git a/kernel/watchdog_buddy.c b/kernel/watchdog_buddy.c
+index ee754d767c21..79a85623028c 100644
+--- a/kernel/watchdog_buddy.c
++++ b/kernel/watchdog_buddy.c
+@@ -93,6 +93,11 @@ void watchdog_buddy_check_hardlockup(int hrtimer_interrupts)
  	 */
+ 	if (hrtimer_interrupts % 3 != 0)
+ 		return;
++	/*
++	 * pass the buddy check if a panic is in process
++	 */
++	if (panic_in_progress())
++		return;
  
-@@ -349,7 +349,7 @@ static int nbcon_context_try_acquire_requested(struct nbcon_context *ctxt,
- 	struct nbcon_state new;
+ 	/* check for a hardlockup on the next CPU */
+ 	next_cpu = watchdog_next_cpu(smp_processor_id());
+diff --git a/kernel/watchdog_perf.c b/kernel/watchdog_perf.c
+index 9c58f5b4381d..7641de750ca5 100644
+--- a/kernel/watchdog_perf.c
++++ b/kernel/watchdog_perf.c
+@@ -12,6 +12,7 @@
  
- 	/* Note that the caller must still remove the request! */
--	if (other_cpu_in_panic())
-+	if (panic_on_other_cpu())
- 		return -EPERM;
+ #define pr_fmt(fmt) "NMI watchdog: " fmt
  
- 	/*
-@@ -447,7 +447,7 @@ static int nbcon_context_try_acquire_handover(struct nbcon_context *ctxt,
- 	 * nbcon_waiter_matches(). In particular, the assumption that
- 	 * lower priorities are ignored during panic.
- 	 */
--	if (other_cpu_in_panic())
-+	if (panic_on_other_cpu())
- 		return -EPERM;
++#include <linux/panic.h>
+ #include <linux/nmi.h>
+ #include <linux/atomic.h>
+ #include <linux/module.h>
+@@ -110,6 +111,8 @@ static void watchdog_overflow_callback(struct perf_event *event,
  
- 	/* Handover is not possible on the same CPU. */
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index faa8b1f0585b..236f03937107 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -346,17 +346,6 @@ static void __up_console_sem(unsigned long ip)
+ 	if (!watchdog_check_timestamp())
+ 		return;
++	if (panic_in_progress())
++		return;
+ 
+ 	watchdog_hardlockup_check(smp_processor_id(), regs);
  }
- #define up_console_sem() __up_console_sem(_RET_IP_)
- 
--/*
-- * Return true if a panic is in progress on a remote CPU.
-- *
-- * On true, the local CPU should immediately release any printing resources
-- * that may be needed by the panic CPU.
-- */
--bool other_cpu_in_panic(void)
--{
--	return (panic_in_progress() && !panic_on_this_cpu());
--}
--
- /*
-  * This is used for debugging the mess that is the VT code by
-  * keeping track if we have the console semaphore held. It's
-@@ -2391,7 +2380,7 @@ asmlinkage int vprintk_emit(int facility, int level,
- 	 * non-panic CPUs are generating any messages, they will be
- 	 * silently dropped.
- 	 */
--	if (other_cpu_in_panic() &&
-+	if (panic_on_other_cpu() &&
- 	    !debug_non_panic_cpus &&
- 	    !panic_triggering_all_cpu_backtrace)
- 		return 0;
-@@ -2827,7 +2816,7 @@ void console_lock(void)
- 	might_sleep();
- 
- 	/* On panic, the console_lock must be left to the panic cpu. */
--	while (other_cpu_in_panic())
-+	while (panic_on_other_cpu())
- 		msleep(1000);
- 
- 	down_console_sem();
-@@ -2847,7 +2836,7 @@ EXPORT_SYMBOL(console_lock);
- int console_trylock(void)
- {
- 	/* On panic, the console_lock must be left to the panic cpu. */
--	if (other_cpu_in_panic())
-+	if (panic_on_other_cpu())
- 		return 0;
- 	if (down_trylock_console_sem())
- 		return 0;
-@@ -3227,7 +3216,7 @@ static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handove
- 			any_progress = true;
- 
- 			/* Allow panic_cpu to take over the consoles safely. */
--			if (other_cpu_in_panic())
-+			if (panic_on_other_cpu())
- 				goto abandon;
- 
- 			if (do_cond_resched)
 -- 
 2.43.0
 
