@@ -1,101 +1,62 @@
-Return-Path: <linux-kernel+bounces-778534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B03B2E706
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:53:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179A1B2E708
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0D0C7BD01E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C800DA2521A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 20:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEA82D879F;
-	Wed, 20 Aug 2025 20:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9532D6E5C;
+	Wed, 20 Aug 2025 20:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="gDu97V0n"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJ2hdxxt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D40258ECA
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 20:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D55626F476;
+	Wed, 20 Aug 2025 20:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755723208; cv=none; b=EVtdq22fy+ojt7AYDDxu1Y0wAB4WDM7zX90MC5lAnAeHbfv984YsXS8Bkq/rmqcrAxF6u/2oW/gHj86g9jmf/O2NMnRbwPxRC2A+aQxBEelzdLA0fiZKuQIW80i5jud3+daIjOpw/8zZXnyDjmox6FPakpG0p00SfdAlViJHOVw=
+	t=1755723280; cv=none; b=ac+WaJ8FoVuEnyAonYd8LedoRWdzQgMoUw8OtuoUOroMYJmNvhIFdE/CMikB+6N96RG//gDqBSmEeVs5V7CdQbkCwiz2Xof/Ia2q+1AEGxjYMO2WrUz34JAGbVJy2wmBmyPl/OUqEQ3U6Q0/0lf3hWCmuKa8Js+D7V7PZuPmI4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755723208; c=relaxed/simple;
-	bh=VIyrJpEFIPYoatsZhLYlrCU2ggqd1pXHZxxhokSZRmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwXJcoZzaxzUlCWV5LYb3SogDtMshE07jINvwinQTkFT/dwWWyQyFEbwjsGVwc8fS86fLw0sUMn8G0OlHmGuHw7XLNmGLr+KxYB1RhN4MiIZkbJHymig266ocIVBV6qht6vikoCX46HeqbVsxC/pJ3NlnA2h4h0gpCKm+612rPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=gDu97V0n; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e8706491ecso35299685a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 13:53:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1755723206; x=1756328006; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJpxMjDnIaSlIPid+3+Qy5Nk3nV+2lcHpQzCfyRt4qQ=;
-        b=gDu97V0nQJlqRrlxk3m/ZQZA29Z4N9oSMOIYlcTE/cVlCvDnOONG1oTf+ORxMuh8RC
-         fTwmxF4Y2XdJ60s+N/RKjMnO4HsVkeInndxSwgVRYZkPM6GtomReWiO5zabTNkXp0rlF
-         sZEwN13mypzuapn3K1UdBaMaktQWacNn9aErvCSQcusCJM4QkRKYaX5Lx+EbmRrvD6Rg
-         jysLUmvFr0TdPjKYJk28jjLwuyGiyRsx5WqUxnFVdXyUN7DMy2WQ7RSqCxyNiFttogeS
-         UJkZCz5skTcTVDtYjjU0DlHEhiZPpWYnUpZNC+uBYHV27qE3k/1lzDeKVALSQuAGUwrb
-         iMcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755723206; x=1756328006;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jJpxMjDnIaSlIPid+3+Qy5Nk3nV+2lcHpQzCfyRt4qQ=;
-        b=nZJ2VXKVohV1yv8/XfLSzrCdDPbFf1cfMT4z7vcQYgdAsV5Uhc7q6AUgUDqGG6oF4O
-         8MA0BH8uz8nuHCk8zgG5HgxpBLmvtUeKmWALyL4zh/dZr50t3SBy+11j8HBUk3x9yLnE
-         FTUSvQ0mv5ri1xfhR+97wUU1nkC24D/NytE0+x+ZMeO+NJFiWIxivy5DOUccifPkRjOV
-         nDvmQSYzDyu89qzJGQ3z9ajXZXOB15+U+C9k9Hykpuct/jDNrtUaitFUv0F14R+eNDdV
-         C1AveaFmlyKBWUOO24tEMoCuaXAvb/dVidqD/PZEmNKNevFTuuJx/YqcdqeVTpYohH8U
-         oPEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1j0dzuNm2Zu+ENWVnUYq02M8Tt7NoAYr2lnEqc6jgSP6WjNkZvvOz4In5viQsIB56yMKEyfbFNxV2Frk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrsvL6UISuCtgCM2lQ3lzaitG6FcAYOk4h+D3GNKzIPHXWRPdx
-	CvjfAWpaiECqhtniH1XWf5ypvUInVemg1h0tpqzMiQRuZ3I10v76jqckk7scTuPQNA==
-X-Gm-Gg: ASbGncs7SfOXg+fOkrY/CiLruZBB/X+OkIx/863rL2hudhF+LAw/KG14UB+Cwaq0Ahh
-	I+JdBKIwXgzlcxMfaR15Z3DNWkEu+F1rwo5obPrRpijGWMMd7O5RChfYuGJ9bxjlEdZQxKie8TV
-	pSihnxMfHoltDwonHw6TELIP73zxTx4e2R7s9bvuikW25BZatzBki45vrj1P4bofkybJb5PmjNw
-	0PwaSK9LR9sH1odfn4dmT50XBFDv3EA9a1T6uSxr6DDu1vWa5TlEpd89S3je7T5WumgvSH2d7S+
-	WtRT9tg1lB4TBNvw1FiDcGH3uky1bGyIgxeCKWAghQ8v3i9aknoBOQWr6+7R4qyx2mLTPjN//Xw
-	j8p2mp6dsGrIops8fRjl0A+t5+qRM
-X-Google-Smtp-Source: AGHT+IEEiHEmJejSDKIefSGWku8mNaZgNv45VwJxxj00z/0zv9pKs7j2zbjaFIDW8liClWJhp9fD8Q==
-X-Received: by 2002:a05:620a:472b:b0:7e8:1cff:72fa with SMTP id af79cd13be357-7ea08e97cebmr1182285a.59.1755723205905;
-        Wed, 20 Aug 2025 13:53:25 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:156:8000:24f0::a6a7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e19211asm1007437385a.51.2025.08.20.13.53.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 13:53:25 -0700 (PDT)
-Date: Wed, 20 Aug 2025 16:53:22 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Yunseong Kim <ysk@kzalloc.com>, linux-usb@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: Re: [BUG] usbip: vhci: Sleeping function called from invalid context
- in vhci_urb_enqueue on PREEMPT_RT
-Message-ID: <f632babc-6f66-4ccc-93f8-1558fbcdeb08@rowland.harvard.edu>
-References: <c6c17f0d-b71d-4a44-bcef-2b65e4d634f7@kzalloc.com>
- <f6cdf21a-642f-458c-85c1-0c2e1526f539@rowland.harvard.edu>
- <28544110-3021-43da-b32e-9785c81a42c1@kzalloc.com>
- <1088432b-b433-4bab-a927-69e55d9eb433@rowland.harvard.edu>
- <2bf33071-e05e-4b89-b149-30b90888606f@rowland.harvard.edu>
- <20250819110457.I46wiKTe@linutronix.de>
- <49ee1b8a-d47a-42df-aa64-d0d62798c45b@rowland.harvard.edu>
- <20250819145700.sIWRW7Oe@linutronix.de>
- <bb7e34b7-c06b-4153-ba6c-009b9f1b34d0@rowland.harvard.edu>
- <20250820162621.UiUQUcp1@linutronix.de>
+	s=arc-20240116; t=1755723280; c=relaxed/simple;
+	bh=zxrA1lzdoDbp7mpFSOTFUseFY73qVTIleD3IxdZWXFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=hSq19uZO22l9Rb34S4Vt6SB1p+YYxcuyWRyZEAEpXaERyVsWDtQ/IzE9mVioI0dzoH6WLqEmUKgUkXnuYFcV1aI2X4sTiSV/C9K1jaRKXLwB56NvzT5kC32Nya9hOp8rV1wY5/PMQWhSCttdJt/4HpUha5lILy0nl9ZGp0hwtvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJ2hdxxt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1BB5C4CEE7;
+	Wed, 20 Aug 2025 20:54:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755723280;
+	bh=zxrA1lzdoDbp7mpFSOTFUseFY73qVTIleD3IxdZWXFI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=TJ2hdxxtEZJqm0h0iSTNd0IgM5rpLn97H2CEKISb+30so02U9pShR9DpP0D45ntFT
+	 UrQ5sNOnUoIOXcKdC6DOsQ6qoIDxMt/JXICFxB+LtYjgAGMmqnVEZNUXJRHTjxu7pz
+	 5h2Nzn+TwK+uyMbVoJG+os9A/rAjohPbxynkguv3wEXeyU48a3oornDpU8a/SiiDNr
+	 /p1cmi/gV91hsGt1CaqKOAhK+W3KeiMyXXk/MGfZGCpgnWNNw6zwySpTBpgTOz9nUc
+	 r5HltNy1hstkRpoK1dEHzMGDl3x+ISkDWzXUDu6ti2TZ+k6Vstl3s61ODtW1NE+J9h
+	 JizpZXTpNaoBw==
+Date: Wed, 20 Aug 2025 15:54:38 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
+	Juergen Gross <jgross@suse.com>, Nicolin Chen <nicolinc@nvidia.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Chen Wang <unicorn_wang@outlook.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v2 2/4] PCI/MSI: Add startup/shutdown for per device
+ domains
+Message-ID: <20250820205438.GA640534@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,54 +65,141 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250820162621.UiUQUcp1@linutronix.de>
+In-Reply-To: <20250813232835.43458-3-inochiama@gmail.com>
 
-On Wed, Aug 20, 2025 at 06:26:21PM +0200, Sebastian Andrzej Siewior wrote:
-> The problem is usually that nobody knows why exactly interrupts are
-> disabled an what purpose it serves. Often the reasons is no longer there
-> but the code still does it.
+On Thu, Aug 14, 2025 at 07:28:32AM +0800, Inochi Amaoto wrote:
+> As the RISC-V PLIC can not apply affinity setting without calling
+> irq_enable(), it will make the interrupt unavailble when using as
+> an underlying IRQ chip for MSI controller.
 
-Indeed, that seems to be the problem in several places here.
+s/unavailble/unavailable/ (mentioned previously)
 
-> > More to the point, out of all the possible reasons why $SOMETHING might 
-> > be invoked with disabled interrupts, which of these reasons remain valid 
-> > in RT builds and which don't?
+> Implement .irq_startup() and .irq_shutdown() for the PCI MSI and
+> MSI-X templates. For chips that specify MSI_FLAG_PCI_MSI_STARTUP_PARENT,
+> these startup and shutdown the parent as well, which allows the
+> irq on the parent chip to be enabled if the irq is not enabled
+> when allocating. This is necessary for the MSI controllers which
+> use PLIC as underlying IRQ chip.
+
+s/irq/IRQ/ a couple times above
+
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+Thomas, I assume you'll merge this series; let me know if not.
+
+> ---
+>  drivers/pci/msi/irqdomain.c | 52 +++++++++++++++++++++++++++++++++++++
+>  include/linux/msi.h         |  2 ++
+>  2 files changed, 54 insertions(+)
 > 
-> None (in most cases) because interrupt handler are threaded. So
-> interrupts are never truly disabled.
-> Adding the macros as you suggest would gain probably three users:
-> - inode
-> - dummy_hcd
-> - vhci-hcd
+> diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+> index 0938ef7ebabf..e0a800f918e8 100644
+> --- a/drivers/pci/msi/irqdomain.c
+> +++ b/drivers/pci/msi/irqdomain.c
+> @@ -148,6 +148,23 @@ static void pci_device_domain_set_desc(msi_alloc_info_t *arg, struct msi_desc *d
+>  	arg->hwirq = desc->msi_index;
+>  }
+>  
+> +static void cond_shutdown_parent(struct irq_data *data)
+> +{
+> +	struct msi_domain_info *info = data->domain->host_data;
+> +
+> +	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
+> +		irq_chip_shutdown_parent(data);
+> +}
+> +
+> +static unsigned int cond_startup_parent(struct irq_data *data)
+> +{
+> +	struct msi_domain_info *info = data->domain->host_data;
+> +
+> +	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
+> +		return irq_chip_startup_parent(data);
+> +	return 0;
+> +}
+> +
+>  static __always_inline void cond_mask_parent(struct irq_data *data)
+>  {
+>  	struct msi_domain_info *info = data->domain->host_data;
+> @@ -164,6 +181,23 @@ static __always_inline void cond_unmask_parent(struct irq_data *data)
+>  		irq_chip_unmask_parent(data);
+>  }
+>  
+> +static void pci_irq_shutdown_msi(struct irq_data *data)
+> +{
+> +	struct msi_desc *desc = irq_data_get_msi_desc(data);
+> +
+> +	pci_msi_mask(desc, BIT(data->irq - desc->irq));
+> +	cond_shutdown_parent(data);
+> +}
+> +
+> +static unsigned int pci_irq_startup_msi(struct irq_data *data)
+> +{
+> +	struct msi_desc *desc = irq_data_get_msi_desc(data);
+> +	unsigned int ret = cond_startup_parent(data);
+> +
+> +	pci_msi_unmask(desc, BIT(data->irq - desc->irq));
+> +	return ret;
+> +}
+> +
+>  static void pci_irq_mask_msi(struct irq_data *data)
+>  {
+>  	struct msi_desc *desc = irq_data_get_msi_desc(data);
+> @@ -194,6 +228,8 @@ static void pci_irq_unmask_msi(struct irq_data *data)
+>  static const struct msi_domain_template pci_msi_template = {
+>  	.chip = {
+>  		.name			= "PCI-MSI",
+> +		.irq_startup		= pci_irq_startup_msi,
+> +		.irq_shutdown		= pci_irq_shutdown_msi,
+>  		.irq_mask		= pci_irq_mask_msi,
+>  		.irq_unmask		= pci_irq_unmask_msi,
+>  		.irq_write_msi_msg	= pci_msi_domain_write_msg,
+> @@ -210,6 +246,20 @@ static const struct msi_domain_template pci_msi_template = {
+>  	},
+>  };
+>  
+> +static void pci_irq_shutdown_msix(struct irq_data *data)
+> +{
+> +	pci_msix_mask(irq_data_get_msi_desc(data));
+> +	cond_shutdown_parent(data);
+> +}
+> +
+> +static unsigned int pci_irq_startup_msix(struct irq_data *data)
+> +{
+> +	unsigned int ret = cond_startup_parent(data);
+> +
+> +	pci_msix_unmask(irq_data_get_msi_desc(data));
+> +	return ret;
+> +}
+> +
+>  static void pci_irq_mask_msix(struct irq_data *data)
+>  {
+>  	pci_msix_mask(irq_data_get_msi_desc(data));
+> @@ -234,6 +284,8 @@ EXPORT_SYMBOL_GPL(pci_msix_prepare_desc);
+>  static const struct msi_domain_template pci_msix_template = {
+>  	.chip = {
+>  		.name			= "PCI-MSIX",
+> +		.irq_startup		= pci_irq_startup_msix,
+> +		.irq_shutdown		= pci_irq_shutdown_msix,
+>  		.irq_mask		= pci_irq_mask_msix,
+>  		.irq_unmask		= pci_irq_unmask_msix,
+>  		.irq_write_msi_msg	= pci_msi_domain_write_msg,
+> diff --git a/include/linux/msi.h b/include/linux/msi.h
+> index e5e86a8529fb..3111ba95fbde 100644
+> --- a/include/linux/msi.h
+> +++ b/include/linux/msi.h
+> @@ -568,6 +568,8 @@ enum {
+>  	MSI_FLAG_PARENT_PM_DEV		= (1 << 8),
+>  	/* Support for parent mask/unmask */
+>  	MSI_FLAG_PCI_MSI_MASK_PARENT	= (1 << 9),
+> +	/* Support for parent startup/shutdown */
+> +	MSI_FLAG_PCI_MSI_STARTUP_PARENT	= (1 << 10),
+>  
+>  	/* Mask for the generic functionality */
+>  	MSI_GENERIC_FLAGS_MASK		= GENMASK(15, 0),
+> -- 
+> 2.50.1
 > 
-> Instead I would:
-> - vhci I would suggest to remove the disabling and move its completion
->    to BH.
-
-Agreed.  But it's up to the maintainer.
-
-> - dummy_hcd I would suggest to either do the thing you called silly or
->   audit the gadgets and remove it.
-
-Auditing is the best approach.  It would be a lot of work, though.
-Also, it's worth noting that other UDC drivers do use the 
-
-	spin_lock_irqsave();
-	...
-	spin_unlock();
-	usb_gadget_giveback_request();
-	spin_lock();
-	... 
-	spin_unlock_irqrestore();
-
-scheme, so using it in dummy_hcd would be reasonable.
-
-> - inode I would suggest to keep it as-is and audit it properly later
->   once someone intends to use it. It would also give the opportunity to
->   clean up the commented locking statement.
-
-I don't know if anyone is using AIO with gadgetfs any more.  I've never 
-seen any applications for it other than to test the implementation.
-
-Alan Stern
 
