@@ -1,182 +1,91 @@
-Return-Path: <linux-kernel+bounces-777722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38404B2DD20
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:58:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDEDB2DD1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0123F625F90
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B761C4157B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BF831A054;
-	Wed, 20 Aug 2025 12:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B8631A049;
+	Wed, 20 Aug 2025 12:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="onRefnT6"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBQfWlXE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AE521ABB0;
-	Wed, 20 Aug 2025 12:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C9621ABB0;
+	Wed, 20 Aug 2025 12:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755694606; cv=none; b=E+RWZMe5VjVAAUMP1erSo9NF2uI59YLUUyx+nxkh8aHdsnvVOzVLg+AMiJ4xuEuY18HEInyOn7aSMW42kDqtPDu2FklyV2n8LS04nNF6xQSnNEsg0FOsuc9onB/aOrHZmHYrTpRJPhh/9158M2HCJdgoU32zP2ws2ERYc/FsF8k=
+	t=1755694619; cv=none; b=nvcHGymKRpeQX+29CoufUhamoY74MekDBfTQNk/bY65DdMjDNELTjW/kB+3Uy8ZY7o2VZ5HvypnXJRNNDbZxzYWViH16fOVmGPc6JY7IRrjb26GnvoT9ffbG0UlLUHHwiMy1TUEKWGgCeLo8Gz9+Ry3sV37JmymHkP4vYVjIRNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755694606; c=relaxed/simple;
-	bh=sRLP8uWIXlFBFWspOK+jP+grjVNRkERyBQLI1QwsgAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ncRXFwlAe0mszTlRws7IvHR5GOirvp3MvG35QzDWmINolfZFxsdwkoBaxe3GJOaNJGdrw+wmIpoqAZsArcSeenhApUbx1Y3S+eTos6LDW309sHNe6XdmqLJyE7/rVcB0CZpWb8jPPbZQHDYUUwy63Hh9XfFPAQ4STA0sRsL+nQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=onRefnT6; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-62-213.net.vodafone.it [5.90.62.213])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 18666606;
-	Wed, 20 Aug 2025 14:55:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755694544;
-	bh=sRLP8uWIXlFBFWspOK+jP+grjVNRkERyBQLI1QwsgAg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=onRefnT6f30y52EvmkxgBRSnUq0H0g9RrMmNzR3HILYC4uIypuh2U68PGD1bkmKpT
-	 IOPbJDQVeGY3NQV9Bcsis5XbeixWkis+VBq/zP/upJ9/PDctnGwqr7Az8hxkvylkcE
-	 khM+GSQzt+KzTIoTkVxTdSJQZ6xGqnPeFm4yigR4=
-Date: Wed, 20 Aug 2025 14:56:38 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Aliaksandr Smirnou <support@pinefeat.co.uk>, 
-	Hans Verkuil <hverkuil@xs4all.nl>
-Cc: jacopo.mondi@ideasonboard.com, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, mchehab@kernel.org, robh@kernel.org
-Subject: Re: [PATCH v3 2/2] media: i2c: Pinefeat cef168 lens control board
- driver
-Message-ID: <d2ka3glpjiisjs7ydx7knzzfb2dzi2lyc2r7d4hppqor33xate@2evtuolz6wah>
-References: <4qxxvvzxbbdukjn5ykjxhgj6kp2yqd4bidpl74ozbrwtt2jgjj@ipleqjgnnpys>
- <20250819213234.18378-1-support@pinefeat.co.uk>
+	s=arc-20240116; t=1755694619; c=relaxed/simple;
+	bh=WUtS7YH/SFTY41jyLTuZUHacFQDyALN4XUUiWqnxkf0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=ZK+rm4nvGAPS+eej94MD6QvRjfqVDttAGEzw05lQ4OlGO7e5rqkI8XyDe9dWoOt29bTUeeja7jk4L+UObjdXmapxMkRXdtAx2JmPBcrKRsvYiJSYX2SjGSLbmuPNumA4QfsRI+s0xijaptTEsLVq3IyTAVT/5DSCbdhGH3Zq2BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBQfWlXE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64EB6C4CEEB;
+	Wed, 20 Aug 2025 12:56:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755694617;
+	bh=WUtS7YH/SFTY41jyLTuZUHacFQDyALN4XUUiWqnxkf0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=uBQfWlXE6egP51AfpugeaQe+SRkMjqQaTFBS08ZywfPjrF2ejzmvwEvs6wLFBj+Iv
+	 cKynCShXKVxGNHaslpmbD8mq9Q//X/eXIcouF/4iHgK9Bo2V+XmCwlVTj6B3DHHCP4
+	 YOsfgu5Hoi30iGRZZpYbwsOqNcHeKPNg67BEn3BcSUNyTq0tCIu/bqnMLQMTddeumP
+	 OIZqcgRzqcEswUlLJRWRiw6EVcCZ/59IJjSQau1Xvj/O7KfEw4TWsvIWAdjwc88GTl
+	 nUttOPV0065mEh9WQ80pjADloLlb3iGegfP1dOwaRtyET+k3MIUpkYIGTGQdiJjU6M
+	 PoQ5b8m+BoCTQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250819213234.18378-1-support@pinefeat.co.uk>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 20 Aug 2025 14:56:52 +0200
+Message-Id: <DC79SQDWVVMI.3A6WCE173M511@kernel.org>
+Subject: Re: [PATCH v3] rust: alloc: implement Box::pin_slice()
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ "Uladzislau Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
+ Roy Baron" <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor Gross"
+ <tmgross@umich.edu>
+To: "Vitaly Wool" <vitaly.wool@konsulko.se>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250811101456.2901694-1-vitaly.wool@konsulko.se>
+ <3e922cc6-6d27-49ad-9719-5662c6102b6b@konsulko.se>
+In-Reply-To: <3e922cc6-6d27-49ad-9719-5662c6102b6b@konsulko.se>
 
-Hello
-  +cc Hans
+On Wed Aug 20, 2025 at 10:07 AM CEST, Vitaly Wool wrote:
+> On 8/11/25 12:14, Vitaly Wool wrote:
+>> From: Alice Ryhl <aliceryhl@google.com>
+>>=20
+>> Add a new constructor to Box to facilitate Box creation from a pinned
+>> slice of elements. This allows to efficiently allocate memory for e.g.
+>> slices of structrures containing spinlocks or mutexes. Such slices may
+>> be used in kmemcache like or zpool API implementations.
+>>=20
+>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+>
+>  From what I could see, there were no objections to this one. Danilo,=20
+> would you be up for picking it or is there something missing about it sti=
+ll?
 
-On Tue, Aug 19, 2025 at 10:32:34PM +0100, Aliaksandr Smirnou wrote:
-> Hi Jacopo,
->
-> Thank you for the review. Your remarks are very helpful. While I'll apply
-> most of them, could you clarify the one regarding pm_runtime_ for me?
->
-> On Tue, 19 Aug 2025 15:47:54 +0200, Jacopo Mondi wrote:
-> > > +#include <linux/crc8.h>
-> >
-> > Do you need to "select CRC8" in Kconfig then ?
->
-> Yes, I'll include it.
->
-> > > +#include "cef168.h"
-> >
-> > Why an header file ?
->
-> Ok, I'll remove the header moving everying in the .c file.
->
-> > > +	for (retry = 0; retry < 3; retry++) {
-> >
-> > This seems a bit random, why do you need to retry three times ?
->
-> The driver retries writes to work around an issue in the Raspberry
-> Pi's I2C hardware, where the BCM2835 mishandles clock stretching.
-> When the slave stretches the clock, the Pi can misread the SCL line
-> or sample data too early, making it think the write failed. To
-> improve reliability, the kernel driver automatically retries the
-> write, effectively compensating for the hardware's timing bug.
->
+This looks good now.
 
-mmm, usually a mainline driver is not the right place for introducing in
-workarounds for a specific host/soc, as the assumption is that the
-driver should work on all platforms equally.
-
-Your case is certainly different as this product is pi-specific...
-
-With a comment I wouldn't mind too much. Maybe others do :)
-
-> > > +	    ctrl->id != CEF168_V4L2_CID_CUSTOM(data) &&
-> > > +	    ctrl->id != CEF168_V4L2_CID_CUSTOM(focus_range) &&
-> > > +	    ctrl->id != CEF168_V4L2_CID_CUSTOM(lens_id))
-> > > +		return -EINVAL;
-> >
-> > If you mark them WRITE_ONLY wouldn't the core take care of this ?
->
-> These controls are read-only. The data they return depens on the lens.
->
-
-Sorry, I wasn't clear.
-
-If you mark as WO the controls you don't accept here, will the core
-handle this for you ?
-
-> > > +	struct cef168_data data;
-> >
-> > I thought the compiler would complain for variables declared not at
-> > the beginning of the function
->
-> Ok, I'll move the variable at the beginning.
->
-> > > +	pm_runtime_set_active(&client->dev);
-> >
-> > Is the device powered up at this point ?
-> > If you depend on the pm_runtime_resume_and_get() call in open() to
-> > power the device up, then you need to depend on PM in KConfig ?
->
-> Yes, the device powers from 3v3 rail of a SBC, which makes it powered
-> up as soon as the SBC is up. Given that, should I remove all code
-> around Power Management Runtime (pm_runtime_*) as redundant?
->
-
-Yes, I overlooked the fact you don't regiser any resume/suspend
-routine, so your calls to pm_runtime_set_active/pm_runtime_put are
-nops (they do at least provide usage counting, but I would anyway
-remove them).
-
-> > > +#define CEF168_V4L2_CID_CUSTOM(ctrl) \
-> > > +	((V4L2_CID_USER_BASE | 168) + custom_##ctrl)
-> >
-> > I think you need to reserve space for your controls in
-> > include/uapi/linux/v4l2-controls.h
-> >
-> > otherwise this will never be visible to applications ?
->
-> I found there is no need for that. Custom control become available
-> automatically by name via the v4l2-ctl utility. For example, the focus
-> range can be read directly in the terminal as follows:
->
-> v4l2-ctl -d $DEV_LENS -C focus_range
->
-
-Yes the driver enuemrates them, but you need to add them to the main
-header, otherwise USER_BASE | 168 will be take by someone else.
-
-See in example 7c8c957ef12c41968adb66d785ce1dd5fb2f96e7 which is the
-latest commit that adds a custom control space.
-
-Hans, do we need a uapi header file with the definition of the custom
-controls registered by this driver ?
-
-Thanks
-  j
-
-> > > +/**
-> > > + * cef168 data structure
-> >
-> > No need to kerneldoc unless you properly document all fields and
-> > include the file in some of the Documentation/
->
-> OK, I'll remove the comment above the structure.
->
-> Kind regards,
->   Aliaksandr
+There's a few minor nits, e.g. it'd be nice to have an  empty line between
+struct definitions in the example and sentences ending with a period. But I=
+ can
+fix those up on apply.
 
