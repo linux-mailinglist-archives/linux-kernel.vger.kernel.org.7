@@ -1,125 +1,121 @@
-Return-Path: <linux-kernel+bounces-778605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9337BB2E7F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:15:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86F0B2E7FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1825686724
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:15:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD661171BBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 22:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE5B2494D8;
-	Wed, 20 Aug 2025 22:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5DE248F48;
+	Wed, 20 Aug 2025 22:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bjX4SZXc"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbA1UGh1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A34818991E;
-	Wed, 20 Aug 2025 22:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C80718991E;
+	Wed, 20 Aug 2025 22:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755728138; cv=none; b=UVfIs3qOnO4QljFGluCrkGOJaqew7AfLKScqfyJkLyKoAlApcl8kA8CBMu6198BSFkMuqgj/X6eVh/9I2QXEVQXYIlUSrOks5FKXH4nNrHh1yk3FHEEkFLN9pA2dNPNUIHK4gVRWhGF6WGb+7M6DRKdhpP/OVdbfpauRXVbrAhY=
+	t=1755728198; cv=none; b=EpekHfTtOBajdeL8idB+L1mbrgN3Mn5qnbRd+k5aD4m+tn+RCmsrhQc70h4lhiISeKKWoStCpQ1smSgdnUagtG57rPEcdbVa1orwDLkkVThSBnMrZttqzsbGcJW5b80yrWTLPmjGKY30CVytwbiPsLDnvadH6GzK0BVRqprUv54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755728138; c=relaxed/simple;
-	bh=w7ZhLVBtJork5lC6/PwqLofmXynK9t2XVXuul30JeBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eHEdTV1UzGYcKGqGspr+rco4Jq4zRdA/xpU6zh4rpsuXtqheXkYBvQVltDsRa2N2CoAR8qATXX/9559LpGldkg8Ph4WCkPs7t+w3XNYe69WSVTBdb97gxAZM6wFY//yIEJqNKVugu24+3iliorPGx059J/Sx0zjd1jVqDfIeOXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bjX4SZXc; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b47174beb13so202544a12.2;
-        Wed, 20 Aug 2025 15:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755728136; x=1756332936; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pcPQwn/g5jNJbs7+VbHJElT/HRRGmlILHSyyD8bjdFo=;
-        b=bjX4SZXcDCqN1TgrTT+tWuJkHvNc+6sJXzwroFjV6NABb0+n9fgSV5qdny1pSgLVQJ
-         zfRwy6r+nmJmmXy1muCMd1FMxDpIMOmPXV+tHCE3YUlZzMOGicZpRe1x/pmDYDZAY4oq
-         1ffl1NAEKGE4mNA/HagqTfQkuIm2x4gkk++giW+JOTREoF0r1V7Uda+H6CB/3/HsYBLB
-         eiscFfhY561KzYrxAttIKmZBlvTETyDJaZ1CbGNXRIvBDvDOvK0n2/ZXd6m0nBfoyEiC
-         ZNFonWKB8B/0ZjZmPEwkHJpd10mRtFqpplglJO+pkm7qaCiwuZgpCWbcekc3ikMK4VYl
-         N1xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755728136; x=1756332936;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pcPQwn/g5jNJbs7+VbHJElT/HRRGmlILHSyyD8bjdFo=;
-        b=R0A5UyEAQXaspeYWnj+3PfbSRypYHAu9zRKHjztR0nJG9FOomgNK1E6wOeSB6Z2E36
-         fn5LniQtaBoKpCHqysDiuOKx7R0ggQX3+8HZmeMRZyqz+mPPRYyCe/cNq21uAmxParEU
-         YCc35DzM8Vh6HvOA87u8qrX4jB/dxRkTGYr++72n7IoKdnLTIWCyKAIYDXzNk8Gfp57N
-         aNFz0w0sw/7JXaCUQlCyl14YyAR2JqXK5A/9RQGOHEmMwiXeFohGjgqva5Uq/c6oAW2e
-         0IF7LXq6kOyZm4ONtH9LKeM/Vo4qIsfofnyV1Q+xmQN/s+flZs12EMUfgOsVlXKkOuxi
-         L2Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+4ve/XMPr9+AwlE3OOwT/l4BVoNb4cmAQFmZE3FVBt9KFLoT+PotQj4+fyYy5ZDAA2ZUP6xfwKV2UCtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpbQ89d9R3o56wqGZlfCQK2UrE92/h1MPdsFK4IPrVqo6tFksq
-	aZHIC0ZLcg6RZ74gdDEF7GWL2KMx1NzV4x9LMKSNrvBu1YxwmXCMxU4/N5+8cQ==
-X-Gm-Gg: ASbGnctZ+HRVZnhF4EFnMyJVmjC8T8lx1UkP58maIibeOgD79g4M6OYaXnkrir05UYq
-	g/63ozWg6jrcG+YOKqsEA5VI6CE9RqWDFbLDgzaPRYYF76/mQ+y73CxOqxu/BtbJ2t6fdlpR5lt
-	uJxO13DsnUcywF8n3XsWjdLwGlEBS/zr3yv1WyJAo+v6iXdbKyDHatp8Kpy1I24x25G5Mepoukf
-	JauHP6MM7UsWcS/BQVJawrlZFrDWG0SkqnlsjAp9EGmn/I3vd+5nscNtq2hc4eVxeLLm660aOnM
-	S5jVIanUbr+kI6RGSl67Z6FKpd8fk2QkAP/Zm9eetJ/qV1r0EVhvvHcMzLIWl/k0APmH3RRDnBZ
-	0Fr4Hytjt41EIVUdubL4aJDbXGkWR8jDz
-X-Google-Smtp-Source: AGHT+IHPFyFwi4+H/VPlv9o1ob6JMSG8ZpfV+iZxZ8GWJpg19ea3g0Yd3nJ4E0bNeFXqqLIbEPq9dg==
-X-Received: by 2002:a17:902:f68f:b0:234:cf24:3be8 with SMTP id d9443c01a7336-245fed88b5cmr4609625ad.28.1755728136310;
-        Wed, 20 Aug 2025 15:15:36 -0700 (PDT)
-Received: from [10.25.72.178] ([202.164.25.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4fa997sm36254355ad.125.2025.08.20.15.15.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 15:15:36 -0700 (PDT)
-Message-ID: <fff77b13-1eea-4a9a-b58d-23e3d36dc866@gmail.com>
-Date: Thu, 21 Aug 2025 03:45:32 +0530
+	s=arc-20240116; t=1755728198; c=relaxed/simple;
+	bh=t+tWnrOdC52ng2PKCMOPQ3dU0wAXmGRrWg903Lm9s5k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Ycp90B7xIl/Qizg1RQLY7PoXAeu/Ok6156ckMjq5o1kdigzr0TtyJxZkm621chDRch31REUsHFAruKwFhxOACac1pFh7o6sl16tdynm3no5hF4gWU59I/BidCy5gQornxM0wTT3RqbSxGzrB+CI2iJkEm5ti1eAJgX0aPZ8E4pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbA1UGh1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78F6BC4CEE7;
+	Wed, 20 Aug 2025 22:16:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755728197;
+	bh=t+tWnrOdC52ng2PKCMOPQ3dU0wAXmGRrWg903Lm9s5k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VbA1UGh1nC3YLNxH36lmr0c4YOCpU6zi5divlNm5Vp7tVUEfHKWIjwqb3342Ktgu+
+	 dLDHwCayCyjiEeOWEf+EhacAOsU2xhK4a55nMVPYy30hDWPGs3zwiT/rI+Majx8b05
+	 XJp0xB1FwXZKAdOgSNjrg50hRj7tg2ppob0usfMC7Tz1EZecNieJgmhZQ+dMRbGLv6
+	 WAivW2gaszIZrtJTOv5XhfsX8KCmEVEXErinhfqGp4fZQjXCbd8vB8UDOTXk+jkd5Y
+	 JmeA4Av2AJiPd9enh172qDGMN7I343+BAUoJrCM0U2ifoLh3z+eZxAg4sqt7OFV7zX
+	 bxfNH3+Cosa7g==
+From: SeongJae Park <sj@kernel.org>
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com,
+	Andrew Paniakin <apanyaki@amazon.com>
+Subject: Re: [RFC PATCH mm-next v2 12/12] mm/damon/core: prevent unnecessary overflow in damos_set_effective_quota()
+Date: Wed, 20 Aug 2025 15:16:33 -0700
+Message-Id: <20250820221633.87243-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250820080623.3799131-13-yanquanmin1@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kselftests:grammer correction
-To: Pavan Bobba <opensource206@gmail.com>, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250820125836.14464-1-opensource206@gmail.com>
-Content-Language: en-US
-From: Shivam Chaudhary <cvam0000@gmail.com>
-In-Reply-To: <20250820125836.14464-1-opensource206@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
++ Andrew
 
-On 20/08/25 6:28 PM, Pavan Bobba wrote:
-> correct a minor grammer mistake
+On Wed, 20 Aug 2025 16:06:22 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
 
-grammer should be grammar , spelling.txt does not have this, that is why 
-missed by checkpatch.
+> On 32-bit systems, the throughput calculation in function
+> damos_set_effective_quota() is prone to unnecessary
+> multiplication overflow. Using mult_frac() to fix it.
 
-Also use proper subject prefix kselftests: should be selftests: acct:
+Andrew Paniakin also recently found and privately reported this issue, on 64
+bit systems.  This can also happen on 64-bit systems, once the charged size
+exceeds ~17 TiB.  On systems running for long time in production, this issue
+can actually happen.
 
-please Send v3
+More specifically, when a DAMOS scheme having the time quota runs for long
+time, throughput calculation can overflow and set esz too small.  As a result,
+speed of the scheme get unexpectedly slow.
 
-> Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+Quanmin, could you please add the above paragraph on the commit message?  Also,
+I think this fix deserves Cc: stable@ and has no reason to be a part of this
+patch series.  Could you please add appripriate tags like below and post again
+separately?
+
+    Fixes: 1cd243030059 ("mm/damon/schemes: implement time quota")
+    Reported-by: Andrew Paniakin <apanyaki@amazon.com>
+    Closes: N/A # privately reported
+    Cc: <stable@vger.kernel.org> # 5.16.x
+
+> 
+> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
 > ---
-> v1 -> v2 : changed the "corrected" word to "correct" word in message
->             description to follow the convention
->   tools/testing/selftests/acct/acct_syscall.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
-> index 87c044fb9293..ee2894e4f7bc 100644
-> --- a/tools/testing/selftests/acct/acct_syscall.c
-> +++ b/tools/testing/selftests/acct/acct_syscall.c
-> @@ -22,7 +22,7 @@ int main(void)
->   	ksft_print_header();
->   	ksft_set_plan(1);
->   
-> -	// Check if test is run a root
-> +	// Check if test is run as root
->   	if (geteuid()) {
->   		ksft_exit_skip("This test needs root to run!\n");
->   		return 1;
+>  mm/damon/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/damon/core.c b/mm/damon/core.c
+> index 980e271e42e9..38b5f842ef30 100644
+> --- a/mm/damon/core.c
+> +++ b/mm/damon/core.c
+> @@ -2102,8 +2102,8 @@ static void damos_set_effective_quota(struct damos_quota *quota)
+>  
+>  	if (quota->ms) {
+>  		if (quota->total_charged_ns)
+> -			throughput = quota->total_charged_sz * 1000000 /
+> -				quota->total_charged_ns;
+> +			throughput = mult_frac(quota->total_charged_sz, 1000000,
+> +							quota->total_charged_ns);
+>  		else
+>  			throughput = PAGE_SIZE * 1024;
+>  		esz = min(throughput * quota->ms, esz);
+> -- 
+> 2.43.0
+
+
+Thanks,
+SJ
 
