@@ -1,309 +1,612 @@
-Return-Path: <linux-kernel+bounces-778091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9049FB2E151
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:39:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B41CB2E173
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325AAA274F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:27:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462DC5C3771
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D6832276D;
-	Wed, 20 Aug 2025 15:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7102E8B88;
+	Wed, 20 Aug 2025 15:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0rK9mkK"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b="JMm6ZuRh";
+	dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b="dl4KQpF3"
+Received: from mx0b-003cac01.pphosted.com (mx0b-003cac01.pphosted.com [205.220.173.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E0836CE00;
-	Wed, 20 Aug 2025 15:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755703554; cv=none; b=Qd56TQJwbExNG8CNVkQQvT3uktL1TR10ietB30cq+pz7SfXLnb5a6DHTzAYp+qneLTP25hI9Ci81LEPL0+mheWCFwpzGT7CtRlN/PQpkiT7R0aCxX2wIYNnIILqahDCCVIddPyd3HeIX/WBZOsKyeI49FF622GJjfoMkhgh9NO0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755703554; c=relaxed/simple;
-	bh=IblGSvcl9YQ4J83zqi1Getk6bWaI1B1dN8cO0Jqw+lo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iXLPwOfFO+syGNN2Yuyb15e6A7VKwFcek9kXOUd5Hbrb9JnyyZWKERh72Ok8qNyeX9nIjHPcfl9oj4gEDxrtq3xH7Xq+H2xjfruVxEnFxlcmhbTh5ZCD4eyB8K0Z7wPHf711ze1KQSqimzmTLzr22seB2WBsyP/5/NcSnoVAVZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S0rK9mkK; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b05d252so48069835e9.1;
-        Wed, 20 Aug 2025 08:25:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755703551; x=1756308351; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=97f6BgM4JY/6DiuS5dYZ9XaNJjjXPDmqhV4WvduflVw=;
-        b=S0rK9mkK3dMLryDAi9hrwesPsvTPt4wMiZSb29XFVXg72KDxAOuXIH2kPmAeZkWTZf
-         qGraNikZc02xVz4z6D05Hm/kDj7CI3AhKRrThUlrlmpsupTWaEywcaQcXNsiP7fSEipJ
-         oe2riemr4gvGfZ06NV6eyengu9W8VuiEDCMsnJ0NW2SjAY2rNLQLZ7KRW2EIIO6YJbA9
-         hFHaFSkkYUkCarvCJO8Ej0zx9DXJtiAt5yeJXrXkwpFhT86qkLJQO8MGUA1EPKKBt4ol
-         zqqC6obNQBniDJe8jj5ToOiUmnloQaanT6RT4/OEtXGM6hHQ403cMn2OroWEpaHmqBIE
-         n3jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755703551; x=1756308351;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=97f6BgM4JY/6DiuS5dYZ9XaNJjjXPDmqhV4WvduflVw=;
-        b=offCt1qGFjKjXCZOTn/Zo2zsudccNhW0dUOiDdfxCr+CpBbVoG1cxJS1RLb5jHIVmJ
-         r5Ow+ixGsqIyr+JjweykSIY4Y1wOrvnp0vSRuh9MDH2t/MfhhivF/6zkg830z1leyV9J
-         hWAPgDkzA9rVp/rK6o9k0vAkORaf2ejZsS3e1FGYF3irBjrazYuUiarHdI95j2u7Q0b5
-         ZhTEquKUHh9dfcBdTe4qr/tvkvA5IhwBXsO2G+J6ukwxNanzPxRaRRj1YGWWP2VdZkNk
-         6Gx9ArMysv9sK0NRAjI/2waH5q2GLTXE/U4xS4C1lIKFoUA/iJ26nKUK3nXobQdxXQs8
-         K4yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0rVKVTzNpOtk+cANssfBtCeHnY0QLHMKAYRkHAiY61v48SnLZQeq2hHXiiKK0J8X4xFe6tQlm/QlZZnPt@vger.kernel.org, AJvYcCX8iA+QWw3TsoMaI6s0z/4hAggKSiIcFXA/EsCJD7MR+gWNqY5oH49dER6r5TMJYjA9u2cmymVt+PnlpWwEEIU=@vger.kernel.org, AJvYcCXP8u4B38CYdGmAyZ5pGChNoS9x3bbwwFpuP08ozvzG3J+hnBh09h4hqCH9Sb1hlQhxssP/fmoX9zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHZC7cRXXQxuQp9VBi6IgifPzmBFbGvfHb8AQRxmVVa+9ahFOC
-	WdU7qDgivGMKPKsYRgAsfVrmtWLmdi7g+yLMTx1o6P2DbPe20OQ9VhmB
-X-Gm-Gg: ASbGncvAZbvKspDMZQ9xU2tpAvbn+Up1kbUT6FHb8W0uPz3nTd/1SAdXPsHYLPa8Ass
-	QdhDtbK1+WSuQmbMsckSZRqJ9ojFHBVuiHu5ifLlrm2rYV1SKnpVJ2ncVyknY4R3UVS8qoTsD/1
-	B3B6e1BZ/qXNiuZocH3NeWI6xqBJSVwdRU9uoI+VO2SCiI1d0oc0qhZCQnkyKb1Tbf1jPlfAvoI
-	kmr2Bb45h7LoMcr0hao+hXPAuYPy1P+z3pTrw9/sKxPF1Mc1RnuUlBUc9miANhdv/T8gn2aXmmx
-	DgbQZ58tfFpq1Wxm1TwStvqGfoymlz9u1hkQzZXRmEImmpstUNhHj2BRQkI4NXw4L6IN/ExFZHM
-	Sc5clWPY3tLdLYb9TyMAXLUC+CutPQ99/n97pC5s00oiRflHDZ6wrW7ebV/oRV5VZWzjL0kfs
-X-Google-Smtp-Source: AGHT+IHcCNOs3Z1q0Tuneuj4ew4hMEZEq7HovMkKEHGHdsnXVNyrHD2r+/oTFPsjC5xgBrn0dl4Mbw==
-X-Received: by 2002:a05:600c:4f51:b0:456:1c4a:82b2 with SMTP id 5b1f17b1804b1-45b4a4eb04fmr17635775e9.10.1755703550325;
-        Wed, 20 Aug 2025 08:25:50 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47cad57asm40709915e9.24.2025.08.20.08.25.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 08:25:49 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Asahi Lina <lina+kernel@asahilina.net>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH v4 3/3] samples: rust: add Rust I2C sample driver
-Date: Wed, 20 Aug 2025 16:23:47 +0100
-Message-ID: <20250820152347.1815097-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250820151427.1812482-1-igor.korotin.linux@gmail.com>
-References: <20250820151427.1812482-1-igor.korotin.linux@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AEC2E8B73
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.173.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755704679; cv=fail; b=i5WDmVaOBkKYNdGtzinPAVfKdnWYQUgB/h983nvYfSBrS7yHrMT1Q2HU2r1D9LyQeQjNGXkBc1z+RHi+LEn0MohFzTyMBG0y1m67XViObFAoWQcx/2emL3XJIMuzHbbkImpza9roApwgMCG6k4/uUgBid1XcAaJFYUNXliYqayY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755704679; c=relaxed/simple;
+	bh=Z6XWo8MxrHXx4367P+Rdhkp/cpylsTbGiiBaFmcS3o8=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=GTzL61sRM2xAYLCZoH9WlD2Hawgr3wilc4lHgzcnak/wxbDaVz9vWUusE3kDrK1TcUxon9XxGg2xtmjBD4HoZxDqxBU/uboA/2jowxHWoDgx/UA4o13iAreetlLyLLeIUVIMA7AiABV6pkffJ6GkvNnh3erg8ds9lsPyTtICsRE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com; spf=pass smtp.mailfrom=keysight.com; dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b=JMm6ZuRh; dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b=dl4KQpF3; arc=fail smtp.client-ip=205.220.173.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=keysight.com
+Received: from pps.filterd (m0187216.ppops.net [127.0.0.1])
+	by mx0b-003cac01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K19d6V018860;
+	Wed, 20 Aug 2025 08:24:35 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=ppfeb2020; bh=91rOlhDJh/LuDoI3db2gZW
+	ZQapgGdrR8nKNEwYWe+/g=; b=JMm6ZuRhkPewCQdmMDzmFqi7Bjds1qFHOf6DUA
+	hS48XuIvTBbdHnujSqFptQcng4eWLmCjWE0xaiyIc8+65NIbiVRfzmYdBgHbPD+w
+	4pMB4ubUhoySL5RcUSCq55RMWbtBlc/+j8RFrdY3sUv/zXfZMzuHGKmpxchmyIvY
+	V8+mdR9zVjtjh2LfpC3lrhC7WoZLAzrPgl99jxo1ImX2hdtNesbztPBfEkZD8SL+
+	JzP7ioTCnslfnwhZ6QOsCj5syFDmbIQF/CW9zwwhtkGVH+BPh6+2JtaiJjZ8Chl2
+	VNHDPgWpwNIbDPmBCF69vMYRoCfoGAVF7Fa9WKD5Cx/pnYPw==
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
+	by mx0b-003cac01.pphosted.com (PPS) with ESMTPS id 48n3c4hyfn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Aug 2025 08:24:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uwEP4KeeESjI3TDM2t8y1cgj1vOz4n31l8EJYjY72vAOsL1/MhPPQlESVc9Ko5zDqZ4CZ8SbOz+uBFgXLI8egXd5DLVeqhPo+MF4gfY8TYRUx+P3Af2tZmNmf0JHHANe5Fb6j3aXBtnesfn+jJvtfWeUz3CA5WzGyVTy73mUdUHyEo9tIdgQgaSQvMMlEdyjSkzUbIOeADiVSCvBZPZVQAZX3QTos79LW5Rhbco5GETCGdakdKEW15RhBRqxvaj+642NgA/UN42/+1hU1gfYujS4r3oGLKXH5XzuEMNKg4hIvhU/rnrcEGAVi9RWmcc8OIuoiC4Bsi+tBgXKZonC9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=91rOlhDJh/LuDoI3db2gZWZQapgGdrR8nKNEwYWe+/g=;
+ b=IZ7+iY0Q883KotflTOfZ46sztM3AAZu+FOPL6CguNNqL6wDrSVl5iQQC+jBx72jFwdEk5IDzcDk9Nex1SxrsboYZnH5izzQQpaAKHCIRTntHSMvlLAQ8049wD5MQJVnADfO8s6/CemQQ3g7JR3/oFwWG436QqSnzdxKVbJBooYZ4MdS4zoIoA7vSiUcdNVgfAiNUg6+kDQVzEcT9DUsaY+a1gGj6iwiwGAijxRKoL5RT6IN/AiMjonPLJksatzI2sYyekkLt7anvUZZ51sFW5QgANgU1Qixxs1U1WqxQUzO03yxP7X7JTe3daOM0yb4tRGw9AF2B2Y192QGcg3EXaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=keysight.com; dmarc=pass action=none header.from=keysight.com;
+ dkim=pass header.d=keysight.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=91rOlhDJh/LuDoI3db2gZWZQapgGdrR8nKNEwYWe+/g=;
+ b=dl4KQpF3EqUmgiwyYewwBClJK/1WgIj2YD7ngJRJNBkEiuJLsFYSjpKeX9F0u9ebRSuhwC/dMktM5pWE9+1CnsF1uLM/3MWI6iSoG1NN1GBOHRIFTE6eP4vhZQY7YDttgI1ZmN93CtgmhSkcYKOs3gVc/lbLvgd3kPgKUgHusrM=
+Received: from PH7PR17MB6130.namprd17.prod.outlook.com (2603:10b6:510:1f5::17)
+ by PH8PR17MB6810.namprd17.prod.outlook.com (2603:10b6:510:23b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 20 Aug
+ 2025 15:24:22 +0000
+Received: from PH7PR17MB6130.namprd17.prod.outlook.com
+ ([fe80::54bb:3a4f:5f80:a51e]) by PH7PR17MB6130.namprd17.prod.outlook.com
+ ([fe80::54bb:3a4f:5f80:a51e%5]) with mapi id 15.20.9031.023; Wed, 20 Aug 2025
+ 15:24:22 +0000
+From: John Ripple <john.ripple@keysight.com>
+To: dianders@chromium.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
+        rfoss@kernel.org, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, John Ripple <john.ripple@keysight.com>
+Subject: [PATCH 1/2] drm/bridge: ti-sn65dsi86: Add support for DisplayPort mode with HPD
+Date: Wed, 20 Aug 2025 09:24:06 -0600
+Message-ID: <20250820152407.2788495-1-john.ripple@keysight.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CY5PR15CA0097.namprd15.prod.outlook.com
+ (2603:10b6:930:7::19) To PH7PR17MB6130.namprd17.prod.outlook.com
+ (2603:10b6:510:1f5::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR17MB6130:EE_|PH8PR17MB6810:EE_
+X-MS-Office365-Filtering-Correlation-Id: 09abd5f3-9da3-458c-f477-08dddffda39b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JJmHRnYMweSO+OFihdwDrvy2Ntfzi82uWHWtDW0uONi4UIe462tIy7fTauU/?=
+ =?us-ascii?Q?2mW8CNDiO6Hdd/dp3kxicDI32VnMKy9JWNprb/2aNmhbCwTG7PAJZuHrSy/D?=
+ =?us-ascii?Q?/t+57Ctb41udYtnAsLleJbhfE1r/kZc0LPLTjJaQB7My0hon9tpnXyHjC8R/?=
+ =?us-ascii?Q?n6/oD/OSGzgHwW5PdralvvLhUVB46jUlt6oD9ynbZ+rp1ZTnUXbcDZRow48R?=
+ =?us-ascii?Q?FEb51vJwXsO0RsR3JC98EYlsCl0hSW4bXZIR3MZG8hDgWVt4bNUbRchBFjJu?=
+ =?us-ascii?Q?07cdZwm68WJjvbeXrXWYRVsvszLs+b7liyi5sCGP8ylvpAqoSyVTBwvLTJ4h?=
+ =?us-ascii?Q?P79tpg1AzleSim33w9AsLw8mNhRRg0mpsEcIAuPQQbP+MAUONQWas3DUX/8z?=
+ =?us-ascii?Q?KInxsbhMbkj11MEF6sSlUjOoMR/kWHFbtOJXOyKdVBxXFTvhiWf9bhuiq5j1?=
+ =?us-ascii?Q?l6dmFY0UUgMTU/wahdfy5NVqODmBUp2w5wWcd8jhcAWpQcRZdEYJ1Gjw4io7?=
+ =?us-ascii?Q?GCbfMJAyvPbJFmnXmE8P2c1DmhNC6bDpR0FV4fiT/A0z+atpylfZh21LdNue?=
+ =?us-ascii?Q?bfE2LhCs5Id8mG08wdRvGvS/DWZEvSN7BnOwoyrOcdoFnLXLm1zo5s/LNbrA?=
+ =?us-ascii?Q?0NnLkB9c0wBxFdxj6Pz88Kq+JqLM0QlF4hPwJg7XGf3HSAWOtPGvfdaNQ/4N?=
+ =?us-ascii?Q?Cxwhm+RObo1AZ2jCmmFCas+i6U0FHvwEJzJfaGi5SW5zyAXWDAp/YEnowFXj?=
+ =?us-ascii?Q?9N6q3dHRfkA+sOe+ZhU8upMyWnaLycPkS33M3m1cebH7aUpFqvHQCUohCHTl?=
+ =?us-ascii?Q?4Ks3QWpONArFfzP8uQyrQGgC/GKKyDGmD+GdJnhjhQ+0bAcPzkrxTF0wl9oq?=
+ =?us-ascii?Q?Fk+hkdw2p2DbtMpaivX9PgaaUxFo3tKLGr/KSzj4GyE3Fx8yfrXrLmGar/7z?=
+ =?us-ascii?Q?7EF5rVaRWApPywQBOdHMMzdXvaLQRNWLz2a/k+Jk+9Mm5Qqj8w/qpPVOsd71?=
+ =?us-ascii?Q?uVh+T4QUTA5q1cN4AvOEe8KJh2cNfXJ5GqKY2LyYPShTrmxVAJmyGecqs+HZ?=
+ =?us-ascii?Q?UXIQFbVZYmNbscHVK8K81ftYASDcuIqVAOKDnz/jcicIPxEkJXCEf/0ySJXw?=
+ =?us-ascii?Q?o6+6WeKHfBfuFGEzPF8qzGl+4Qgyv5xCpm47hV6wMO9qmuEKxE/iP94uRrL7?=
+ =?us-ascii?Q?3qQwyw/q+kGTMyVPG0XnCXQZ7qsBzYgMZ4cY0SiKT7EibWBGzmFu0z5X88ir?=
+ =?us-ascii?Q?LhmzBrbUb12rYJreGiUhCSfUDarVNio1zqy7FAG25xGn5hO6m4zo/LR0v23m?=
+ =?us-ascii?Q?i1AzyMGPmL6i2VE1dNRExjGqaTH3sxe5T80sskWo0Zqfr65OM1zHskSUGsdd?=
+ =?us-ascii?Q?vWA9hZFNs09qOCDm9jPJzRjWRbGVnwwZxDJR9u62pJ0VuG8BKvWpm6OA5isQ?=
+ =?us-ascii?Q?2D4usaXs+Ps=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR17MB6130.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vKkEUexZ34O2gRFKhz28DOb+27MIuHmxXV+UfyUJSd4jRt8RYsfGD2J3PWen?=
+ =?us-ascii?Q?ABxOK40WXVjU8Zq8hR55Fz4vEOkoUrIi0Z5mF+0HkAUIhxuygHcwaJPosegy?=
+ =?us-ascii?Q?+85t+aqFC0RDIYO6uj0RVtWWgCUbO9PuCi/oMYbtOQpvFa9GiDLEZkwluvlj?=
+ =?us-ascii?Q?vzz8QjolXy3x3Chj9cIWIUAA1fnvUGAJlUn0x1i3M6pASWXS2xODMnliL9D8?=
+ =?us-ascii?Q?QJ+uUa/LKaPn5kLHqZ1uiM4XDAgVjKZpn7+j91vtrM5+ken6Ej3IGUnasC5x?=
+ =?us-ascii?Q?Au2B1BymbZKmc8ZVGkrOLTEm6QVlNpShA94kRhtScC7V9qK4LuJvzFtGTnry?=
+ =?us-ascii?Q?oolYUkWb0sg3nxPE2y3eRn7OH12k8N70M+k+qS8u4uELfvO9FHYtoA0OzI6U?=
+ =?us-ascii?Q?nqf9EZ/78YlR6e7ezEW9OmYGz5yrZALpw0DY0jHI+pWfqoGaQxVm4NlUg8B6?=
+ =?us-ascii?Q?+CUiGPu5IPJXxSDU4rjexpffBNmHGbIvVM+YL/X9HglaFpD2ZGaSBat/wLWB?=
+ =?us-ascii?Q?XOhK67ezxE7MRGV5pT7CKSvD3uy1hfU7+pT8pemPugrNMjgJGV2mVRDcTzf6?=
+ =?us-ascii?Q?o/R6Yk/pLmohPEDll/GagGlVW/Oh8fwXq2ZIgtLF3exNlx8fVo249TE4llto?=
+ =?us-ascii?Q?Ww6JJBCcc88TylJ1MEVRdQZgoXppBcKSS2ReZbX60QVMupIbzfluEJ390KTp?=
+ =?us-ascii?Q?d8L321nzNhGDbxmAp/ON2aXFeLxpPbuX+LrZPhFjLoYWMcU8mvi/Du7TWHRL?=
+ =?us-ascii?Q?ayHIhbOHOBVzEpD00yJpn6P5/2iQNmxzZU6iiNIoiGG/pa3PHpW+4XM7lwa7?=
+ =?us-ascii?Q?wA1HeWDbnqmTryN5xtfjFXxlBnbzCTs8MWNgex3FOqTfaJou89br7sloAWiX?=
+ =?us-ascii?Q?Rb92tDpZ9Z/phwtet0Rcun15Y62CuorWd5vmSLrT4ESduiSruRYTX04hfsVd?=
+ =?us-ascii?Q?YcOhNmss+R0ui4FrS1JQUrAfIvnyIeY7gEKr5/kCGQ5eBGSmD/n98lbQZ6MB?=
+ =?us-ascii?Q?DT/Irbf1wtx+lagp2sRmXRJ8viqwLj9Iu3leXqdy0Obg41BTPuzWMNk6c6pp?=
+ =?us-ascii?Q?5oDKYJqa86BsEtY22pxqh9p+OMdnqlqNJo9p57+2d1elS2g/PB840ZV0zzIj?=
+ =?us-ascii?Q?2VBJWqRf6ME27JnbT2OnDrhIG6WKlIYmEmvx+k7TMofmW0BnPI7fWWLKpu+Z?=
+ =?us-ascii?Q?5nXW/g8A/yF1DrvZfIgBdLiMELZYmm4Vjdc4yPCSwL8HRyLJszcgc/sAV9kg?=
+ =?us-ascii?Q?Yp+7VvS8EqbJkBZrEcR0KHi9VH6HDOQI9HtjpWlFHKdlb0+O9cUDHdcyBm29?=
+ =?us-ascii?Q?FMsmU7Bl829nhPsyhd+kRZo1e7urD9zGZUWnH0KML6BR7AZIHrCCONrkEn6J?=
+ =?us-ascii?Q?rQkS03x3PU6xRXKcVirVMF2HKpTeR5zDc56J3wFOeTNDzgcGZatM8XVkxRIE?=
+ =?us-ascii?Q?wa6zEEUAjAX9IZn6JuG4SUQlQh2P/wLMQYoCbeM4o3DRyJfi1XimN9rHEAnC?=
+ =?us-ascii?Q?FEMi3rEhz1n5Z0Ofl2eu6fT3PFFZNqKu9jvoo8ciJkSCCy4zi21EJ0SsNDQd?=
+ =?us-ascii?Q?l/o6AZS6yqFzyArprZBjAPkVJyB1xOweuxkPtC4K2Z6MpT6JumxE0RkfFTZO?=
+ =?us-ascii?Q?Ug=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	5NIZtBhzDWCv0et23UoCzLKmLexbB8Y6fcdpIuN3I0+6HHFEg2CqXQD2fnGNiiewYiEUCwAGzmr6WjL1XTZuD1PlygYik4u2ncCM07RLItoRwGVL9gNzgeBSfG8zaJAJW3siNfVSJSOvkHoNchhY80Ui/UT+z6dDsQi9aYURcRf5ZtoSRZ9RD64mZ2qNTVqTHSfvR9ul7Gj2eQqsE/9T61fyOKHx7nToJCYLOhKvhogBerc1fGTREcqmU9joCOxVv169Pcc05QZmagrZj/Icb88j0ZQg0fCwYfrbxVW0kwX8VqJoZc3dZChDexogJEf6zQZgUPWxSvBwE6Gem8/NGkTFNNGuNzyZlprr5wf5nAENdu6SujXjMstRIMw/RVywt2sLoMkYgjfdv3Os52sVEnDX0dXn+dTdTwOH9zTRnRQzS7AAXAyj2H7UOBozM5auCuW34CChwD2KIZBnoObWAB1w/oUJksxS5A2DMFhPupfTunJ1VNquDptEv1TiwPNA7dpkxylI23a/41ltPHkouIA6aPbDZM88fot72qgXaXgN7ZuODox8HMRGLXkRqx+C2TZd1RShKfnzmM/JgRYZGwQQixU6wDO6TOZi7z/a1PaFiXeQbPSuasVL5PeQEHSY
+X-OriginatorOrg: keysight.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09abd5f3-9da3-458c-f477-08dddffda39b
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR17MB6130.namprd17.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 15:24:22.5230
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 63545f27-3232-4d74-a44d-cdd457063402
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JetA4WhlJanS0u1Io6wSV+qKjZ7mplYvPRcwt+1ZKoAJGMfML7tcPgmgmsIjf0HrTr6BYxqao+01xhrPBpeuckeo4Gar4P43Zm3JGJkejC0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR17MB6810
+X-Authority-Analysis: v=2.4 cv=EoyLbScA c=1 sm=1 tr=0 ts=68a5e8b2 cx=c_pps
+ a=+wTz3zXVXQH4ZUjsIrltNg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10 a=vu2TTH8h0NUA:10 a=F6MVbVVLAAAA:8
+ a=SM69HdVMXvxhhzVWeQ0A:9 a=6mxfPxaA-CAxv1z-Kq-J:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: 3AlEGJzaT7K6XFiYAU6R-PBuBAkUz9xY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMyBTYWx0ZWRfX7V9inIGLQc0f
+ dg1M+a7f0lFpqcCJQYnPnQGjt2ZyKUCqALcopb6qgo2gQgf1q3wtDuj6bwpzQI2i3pe3A24j9gm
+ YTfOZ9qqtXO6oqcNGNphIIPDFpP6S863cbByTZ41fqKH/P+vzGav00C/ZLznrlQrRlEpn2mrKd9
+ Xy3voiV9E9ZMFLkXdt70yfJFQUj+0ytqnavZZoeFBgU46Hww10PKU6yqyy+3yZBfdYZU3cmxKVk
+ zQ9nndakGlpSozune9obkPm3kWpHQt687P/EBbqIoolcdQBJSMum7xe0W0ciOeneZH6CxoRpc1g
+ r6O3o4gwvlQXohy+iRb4573Cml8vqUQRUsVNYbb8vB+Yr/ueOlDVqxT3wFNrN/mB6312MO5YfhZ
+ G2M7IbRRaSVjLXPf/Qmzv1pW6Tg4/A==
+X-Proofpoint-ORIG-GUID: 3AlEGJzaT7K6XFiYAU6R-PBuBAkUz9xY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_04,2025-08-20_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 spamscore=0 adultscore=0 impostorscore=0
+ clxscore=1011 lowpriorityscore=0 phishscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190223
 
-Add a new `rust_driver_i2c` sample, showing how to create a new
-i2c client using `i2c::Registration` and bind a driver to it
-via legacy I2C-ID table.
+Add support for DisplayPort to the bridge, which entails the following:
+- Register the proper connector type;
+- Get and use an interrupt for HPD;
+- Properly clear all status bits in the interrupt handler;
+- Implement bridge and connector detection;
+- Report DSI channel errors;
+- Report Display Port errors;
+- Disable runtime pm entirely;
 
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+Signed-off-by: John Ripple <john.ripple@keysight.com>
 ---
- MAINTAINERS                     |   1 +
- samples/rust/Kconfig            |  11 +++
- samples/rust/Makefile           |   1 +
- samples/rust/rust_driver_i2c.rs | 128 ++++++++++++++++++++++++++++++++
- 4 files changed, 141 insertions(+)
- create mode 100644 samples/rust/rust_driver_i2c.rs
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 287 +++++++++++++++++++++++++-
+ 1 file changed, 281 insertions(+), 6 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c44c7ac317b1..2654a7ea0c80 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11523,6 +11523,7 @@ R:	Daniel Almeida <daniel.almeida@collabora.com>
- L:	rust-for-linux@vger.kernel.org
- S:	Maintained
- F:	rust/kernel/i2c.rs
-+F:	samples/rust/rust_driver_i2c.rs
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index 464390372b34..75f9be347b41 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -37,6 +37,8 @@
  
- I2C SUBSYSTEM HOST DRIVERS
- M:	Andi Shyti <andi.shyti@kernel.org>
-diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-index 7f7371a004ee..28dae070b365 100644
---- a/samples/rust/Kconfig
-+++ b/samples/rust/Kconfig
-@@ -62,6 +62,17 @@ config SAMPLE_RUST_DMA
+ #define SN_DEVICE_ID_REGS			0x00	/* up to 0x07 */
+ #define SN_DEVICE_REV_REG			0x08
++#define SN_RESET_REG				0x09
++#define  SOFT_RESET				BIT(0)
+ #define SN_DPPLL_SRC_REG			0x0A
+ #define  DPPLL_CLK_SRC_DSICLK			BIT(0)
+ #define  REFCLK_FREQ_MASK			GENMASK(3, 1)
+@@ -48,7 +50,9 @@
+ #define  CHA_DSI_LANES(x)			((x) << 3)
+ #define SN_DSIA_CLK_FREQ_REG			0x12
+ #define SN_CHA_ACTIVE_LINE_LENGTH_LOW_REG	0x20
++#define SN_CHA_ACTIVE_LINE_LENGTH_HIGH_REG	0x21
+ #define SN_CHA_VERTICAL_DISPLAY_SIZE_LOW_REG	0x24
++#define SN_CHA_VERTICAL_DISPLAY_SIZE_HIGH_REG	0x25
+ #define SN_CHA_HSYNC_PULSE_WIDTH_LOW_REG	0x2C
+ #define SN_CHA_HSYNC_PULSE_WIDTH_HIGH_REG	0x2D
+ #define  CHA_HSYNC_POLARITY			BIT(7)
+@@ -59,9 +63,14 @@
+ #define SN_CHA_VERTICAL_BACK_PORCH_REG		0x36
+ #define SN_CHA_HORIZONTAL_FRONT_PORCH_REG	0x38
+ #define SN_CHA_VERTICAL_FRONT_PORCH_REG		0x3A
++#define SN_COLOR_BAR_REG			0x3C
++#define  COLOR_BAR_EN				BIT(4)
+ #define SN_LN_ASSIGN_REG			0x59
+ #define  LN_ASSIGN_WIDTH			2
+ #define SN_ENH_FRAME_REG			0x5A
++#define  SCRAMBLER_CONTROL_MASK			GENMASK(1, 0)
++#define  SCRAMBLER_CONTROL_STANDARD		0
++#define  SCRAMBLER_CONTROL_ASSR			1
+ #define  VSTREAM_ENABLE				BIT(3)
+ #define  LN_POLRS_OFFSET			4
+ #define  LN_POLRS_MASK				0xf0
+@@ -106,10 +115,116 @@
+ #define SN_PWM_EN_INV_REG			0xA5
+ #define  SN_PWM_INV_MASK			BIT(0)
+ #define  SN_PWM_EN_MASK				BIT(1)
++
++#define SN_PSR_REG				0xC8
++#define  PSR_TRAIN				BIT(0)
++#define  PSR_EXIT_VIDEO				BIT(1)
++
++#define SN_IRQ_EN_REG				0xE0
++#define  IRQ_EN					BIT(0)
++#define SN_CHA_IRQ_EN0_REG			0xE1
++#define  CHA_CONTENTION_DET_EN			BIT(7)
++#define  CHA_FALSE_CTRL_EN			BIT(6)
++#define  CHA_TIMEOUT_EN				BIT(5)
++#define  CHA_LP_TX_SYNC_EN			BIT(4)
++#define  CHA_ESC_ENTRY_EN			BIT(3)
++#define  CHA_EOT_SYNC_EN			BIT(2)
++#define  CHA_SOT_SYNC_EN			BIT(1)
++#define  CHA_SOT_BIT_EN				BIT(0)
++
++#define SN_CHB_IRQ_EN0_REG			0xE3
++#define SN_CHB_IRQ_EN1_REG			0xE4
++#define SN_AUX_CMD_EN_REG			0xE5
++
++#define SN_CHA_IRQ_EN1_REG			0xE2
++#define  CHA_DSI_PROTOCOL_EN			BIT(7)
++#define  CHA_INVALID_LENGTH_EN			BIT(5)
++#define  CHA_DATATYPE_EN			BIT(3)
++#define  CHA_CHECKSUM_EN			BIT(2)
++#define  CHA_UNC_ECC_EN				BIT(1)
++#define  CHA_COR_ECC_EN				BIT(0)
++
++#define SN_IRQ_EVENTS_EN_REG			0xE6
++#define  IRQ_HPD_EN				BIT(0)
++#define  HPD_INSERTION_EN			BIT(1)
++#define  HPD_REMOVAL_EN				BIT(2)
++#define  HPD_REPLUG_EN				BIT(3)
++#define  PLL_UNLOCK_EN				BIT(5)
++
++#define SN_DPTL_IRQ_EN0_REG			0xE7
++#define SN_DPTL_IRQ_EN1_REG			0xE8
++#define SN_LT_IRQ_EN_REG			0xE9
++#define SN_CHA_IRQ_STATUS0_REG			0xF0
++#define  CHA_CONTENTION_DET_ERR			BIT(7)
++#define  CHA_FALSE_CTRL_ERR			BIT(6)
++#define  CHA_TIMEOUT_ERR			BIT(5)
++#define  CHA_LP_TX_SYNC_ERR			BIT(4)
++#define  CHA_ESC_ERRTRY_ERR			BIT(3)
++#define  CHA_EOT_SYNC_ERR			BIT(2)
++#define  CHA_SOT_SYNC_ERR			BIT(1)
++#define  CHA_SOT_BIT_ERR			BIT(0)
++#define SN_CHA_IRQ_STATUS1_REG			0xF1
++#define  CHA_DSI_PROTOCOL_ERR			BIT(7)
++#define  CHA_INVALID_LENGTH_ERR			BIT(5)
++#define  CHA_DATATYPE_ERR			BIT(3)
++#define  CHA_CHECKSUM_ERR			BIT(2)
++#define  CHA_UNC_ECC_ERR			BIT(1)
++#define  CHA_COR_ECC_ERR			BIT(0)
++#define SN_CHB_IRQ_STATUS0_REG			0xF2
++#define SN_CHB_IRQ_STATUS1_REG			0xF3
++#define  CHB_FALSE_CTRL_ERR			BIT(6)
++#define  CHB_LP_TX_SYNC_ERR			BIT(4)
++#define  CHB_EOT_SYNC_ERR			BIT(2)
++#define  CHB_SOT_SYNC_ERR			BIT(1)
++#define  CHB_SOT_BIT_ERR			BIT(0)
++
++#define  CHB_DSI_PROTOCOL_ERR			BIT(7)
++#define  CHB_INVALID_LENGTH_ERR			BIT(5)
++#define  CHB_DATATYPE_ERR			BIT(3)
++#define  CHB_CHECKSUM_ERR			BIT(2)
++#define  CHB_UNC_ECC_ERR			BIT(1)
++#define  CHB_COR_ECC_ERR			BIT(0)
+ #define SN_AUX_CMD_STATUS_REG			0xF4
+ #define  AUX_IRQ_STATUS_AUX_RPLY_TOUT		BIT(3)
+ #define  AUX_IRQ_STATUS_AUX_SHORT		BIT(5)
+ #define  AUX_IRQ_STATUS_NAT_I2C_FAIL		BIT(6)
++#define  AUX_IRQ_STATUS_I2C_DEFR		BIT(7)
++#define  AUX_IRQ_STATUS_AUX_SHORT		BIT(5)
++#define  AUX_IRQ_STATUS_AUX_DEFR		BIT(4)
++#define  AUX_IRQ_STATUS_AUX_RPLY_TOUT		BIT(3)
++#define  AUX_IRQ_STATUS_SEND_INT		BIT(0)
++#define SN_IRQ_STATUS_REG			0xF5
++#define  HPD_PLL_UNLOCK				BIT(5)
++#define  HPD_REPLUG_STATUS			BIT(3)
++#define  HPD_REMOVAL_STATUS			BIT(2)
++#define  HPD_INSERTION_STATUS			BIT(1)
++#define  IRQ_HPD_STATUS				BIT(0)
++#define SN_IRQ_EVENTS_DPTL_REG_1		0xF6
++#define  VIDEO_WIDTH_PROG_ERR			BIT(7)
++#define  LOSS_OF_DP_SYNC_LOCK_ERR		BIT(6)
++#define  DPTL_UNEXPECTED_DATA_ERR		BIT(5)
++#define  DPTL_UNEXPECTED_SECDATA_ERR		BIT(4)
++#define  DPTL_UNEXPECTED_DATA_END_ERR		BIT(3)
++#define  DPTL_UNEXPECTED_PIXEL_DATA_ERR		BIT(2)
++#define  DPTL_UNEXPECTED_HSYNC_ERR		BIT(1)
++#define  DPTL_UNEXPECTED_VSYNC_ERR		BIT(0)
++#define SN_IRQ_EVENTS_DPTL_REG_2		0xF7
++#define  DPTL_SECONDARY_DATA_PACKET_PROG_ERR	BIT(1)
++#define  DPTL_DATA_UNDERRUN_ERR			BIT(0)
++#define SN_IRQ_LT				0xF8
++#define  LT_EQ_CR_ERR				BIT(5)
++#define  LT_EQ_LPCNT_ERR			BIT(4)
++#define  LT_CR_MAXVOD_ERR			BIT(3)
++#define  LT_CR_LPCNT_ERR			BIT(2)
++#define  LT_FAIL				BIT(1)
++#define  LT_PASS				BIT(0)
++
++#define SN_PAGE_SELECT_REG			0xFF
++#define  SN_PAGE_SELECT_STANDARD		0x00
++#define  SN_PAGE_SELECT_TEST			0x07
++#define SN_ASSR_OVERRIDE_REG			0x16
++#define SN_ASSR_OVERRIDE_RO			0x00
++#define SN_ASSR_OVERRIDE_RW			0x01
  
- 	  If unsure, say N.
+ #define MIN_DSI_CLK_FREQ_MHZ	40
  
-+config SAMPLE_RUST_DRIVER_I2C
-+	tristate "I2C Driver"
-+	depends on I2C=y
-+	help
-+	  This option builds the Rust I2C driver sample.
+@@ -151,6 +266,7 @@
+  * @dp_lanes:     Count of dp_lanes we're using.
+  * @ln_assign:    Value to program to the LN_ASSIGN register.
+  * @ln_polrs:     Value for the 4-bit LN_POLRS field of SN_ENH_FRAME_REG.
++ * @no_hpd:       If true then the hot-plug functionality is disabled.
+  * @comms_enabled: If true then communication over the aux channel is enabled.
+  * @comms_mutex:   Protects modification of comms_enabled.
+  *
+@@ -189,6 +305,7 @@ struct ti_sn65dsi86 {
+ 	int				dp_lanes;
+ 	u8				ln_assign;
+ 	u8				ln_polrs;
++	bool			no_hpd;
+ 	bool				comms_enabled;
+ 	struct mutex			comms_mutex;
+ 
+@@ -987,6 +1104,11 @@ static int ti_sn_link_training(struct ti_sn65dsi86 *pdata, int dp_rate_idx,
+ 	int ret;
+ 	int i;
+ 
++	/*
++	 * DP data rate and lanes number will be set by the bridge by writing
++	 * to DP_LINK_BW_SET and DP_LANE_COUNT_SET.
++	 */
 +
-+	  To compile this as a module, choose M here:
-+	  the module will be called rust_driver_i2c.
+ 	/* set dp clk frequency value */
+ 	regmap_update_bits(pdata->regmap, SN_DATARATE_CONFIG_REG,
+ 			   DP_DATARATE_MASK, DP_DATARATE(dp_rate_idx));
+@@ -1105,7 +1227,10 @@ static void ti_sn_bridge_atomic_enable(struct drm_bridge *bridge,
+ 
+ 	valid_rates = ti_sn_bridge_read_valid_rates(pdata);
+ 
+-	/* Train until we run out of rates */
++	/*
++	 * Train until we run out of rates. Start with the lowest possible rate
++	 * and move up in order to select the lowest working functioning point.
++	 */
+ 	for (dp_rate_idx = ti_sn_bridge_calc_min_dp_rate_idx(pdata, state, bpp);
+ 	     dp_rate_idx < ARRAY_SIZE(ti_sn_bridge_dp_rate_lut);
+ 	     dp_rate_idx++) {
+@@ -1116,9 +1241,13 @@ static void ti_sn_bridge_atomic_enable(struct drm_bridge *bridge,
+ 		if (!ret)
+ 			break;
+ 	}
+-	if (ret) {
++	if (ret || dp_rate_idx == ARRAY_SIZE(ti_sn_bridge_dp_rate_lut)) {
+ 		DRM_DEV_ERROR(pdata->dev, "%s (%d)\n", last_err_str, ret);
+ 		return;
++	} else {
++		DRM_DEV_INFO(pdata->dev,
++			     "Link training selected rate: %u MHz\n",
++			     ti_sn_bridge_dp_rate_lut[dp_rate_idx]);
+ 	}
+ 
+ 	/* config video parameters */
+@@ -1298,6 +1427,69 @@ static int ti_sn_bridge_parse_dsi_host(struct ti_sn65dsi86 *pdata)
+ 	return 0;
+ }
+ 
++static irqreturn_t ti_sn_bridge_interrupt(int irq, void *private)
++{
++	struct ti_sn65dsi86 *pdata = private;
++	struct drm_device *dev = pdata->bridge.dev;
++	u32 status = 0;
++	bool hpd_event = false;
 +
-+	  If unsure, say N.
++	regmap_read(pdata->regmap, SN_IRQ_STATUS_REG, &status);
++	if (status & (HPD_REMOVAL_STATUS | HPD_INSERTION_STATUS))
++		hpd_event = true;
 +
- config SAMPLE_RUST_DRIVER_PCI
- 	tristate "PCI Driver"
- 	depends on PCI
-diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-index bd2faad63b4f..141d8f078248 100644
---- a/samples/rust/Makefile
-+++ b/samples/rust/Makefile
-@@ -5,6 +5,7 @@ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
- obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
- obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
- obj-$(CONFIG_SAMPLE_RUST_DMA)			+= rust_dma.o
-+obj-$(CONFIG_SAMPLE_RUST_DRIVER_I2C)		+= rust_driver_i2c.o
- obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
- obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
- obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
-diff --git a/samples/rust/rust_driver_i2c.rs b/samples/rust/rust_driver_i2c.rs
-new file mode 100644
-index 000000000000..6dfc299d5aea
---- /dev/null
-+++ b/samples/rust/rust_driver_i2c.rs
-@@ -0,0 +1,128 @@
-+// SPDX-License-Identifier: GPL-2.0
++	/*
++	 * Writing back the status register to acknowledge the IRQ apparently
++	 * needs to take place right after reading it or the bridge will get
++	 * confused and fail to report subsequent IRQs.
++	 */
++	if (status)
++		drm_err(dev, "(SN_IRQ_STATUS_REG = %#x)\n", status);
++	regmap_write(pdata->regmap, SN_IRQ_STATUS_REG, status);
 +
-+//! Rust I2C driver sample.
-+//!
-+//! This module shows how to:
-+//!
-+//! 1. Manually create an `i2c_client` at address `SAMPLE_I2C_CLIENT_ADDR`
-+//!    on the adapter with index `SAMPLE_I2C_ADAPTER_INDEX`.
-+//! 2. Register a matching Rust-based I2C driver for that client.
-+//!
-+//! # Requirements
-+//!
-+//! - The target system must expose an I2C adapter at index
-+//!   `SAMPLE_I2C_ADAPTER_INDEX`.
-+//! - To emulate an adapter for testing, you can load the
-+//!   `i2c-stub` kernel module with an option `chip_addr`
-+//!   For example for this sample driver to emulate an I2C device with
-+//!   an address 0x30 you can use:
-+//!      `modprobe i2c-stub chip_addr=0x30`
-+//!
++	regmap_read(pdata->regmap, SN_CHA_IRQ_STATUS0_REG, &status);
++	if (status)
++		drm_err(dev, "DSI CHA error reported (status0 = %#x)\n", status);
++	regmap_write(pdata->regmap, SN_CHA_IRQ_STATUS0_REG, status);
++	if (status)
++		regmap_write(pdata->regmap, SN_RESET_REG, SOFT_RESET);
 +
-+use kernel::{
-+    acpi, c_str,
-+    device::{Core, Normal},
-+    i2c, of,
-+    prelude::*,
-+    types::ARef,
-+};
++	regmap_read(pdata->regmap, SN_CHA_IRQ_STATUS1_REG, &status);
++	if (status)
++		drm_err(dev, "DSI CHA error reported (status1 = %#x)\n", status);
++	regmap_write(pdata->regmap, SN_CHA_IRQ_STATUS1_REG, status);
++	if (status)
++		regmap_write(pdata->regmap, SN_RESET_REG, SOFT_RESET);
 +
-+const SAMPLE_I2C_CLIENT_ADDR: u16 = 0x30;
-+const SAMPLE_I2C_ADAPTER_INDEX: i32 = 0;
-+const BOARD_INFO: i2c::I2cBoardInfo =
-+    i2c::I2cBoardInfo::new(c_str!("rust_driver_i2c"), SAMPLE_I2C_CLIENT_ADDR);
++	/* Dirty hack to reset the soft if any error occurs on the DP side */
++	regmap_read(pdata->regmap, SN_IRQ_EVENTS_DPTL_REG_1, &status);
++	if (status)
++		drm_err(dev, "(SN_IRQ_EVENTS_DPTL_REG_1 = %#x)\n", status);
++	regmap_write(pdata->regmap, SN_IRQ_EVENTS_DPTL_REG_1, status);
++	if (status)
++		regmap_write(pdata->regmap, SN_RESET_REG, SOFT_RESET);
 +
-+struct SampleDriver {
-+    pdev: ARef<i2c::I2cClient>,
++	regmap_read(pdata->regmap, SN_IRQ_EVENTS_DPTL_REG_2, &status);
++	if (status)
++		drm_err(dev, "(SN_IRQ_EVENTS_DPTL_REG_2 = %#x)\n", status);
++	regmap_write(pdata->regmap, SN_IRQ_EVENTS_DPTL_REG_2, status);
++	if (status)
++		regmap_write(pdata->regmap, SN_RESET_REG, SOFT_RESET);
++
++	regmap_read(pdata->regmap, SN_IRQ_LT, &status);
++	if (status)
++		drm_err(dev, "(SN_IRQ_LT = %#x)\n", status);
++	regmap_write(pdata->regmap, SN_IRQ_LT, status);
++	if (status)
++		regmap_write(pdata->regmap, SN_RESET_REG, SOFT_RESET);
++
++	/* Only send the HPD event if we are bound with a device. */
++	if (dev && !pdata->no_hpd && hpd_event)
++		drm_kms_helper_hotplug_event(dev);
++
++	return IRQ_HANDLED;
 +}
 +
-+kernel::acpi_device_table! {
-+    ACPI_TABLE,
-+    MODULE_ACPI_TABLE,
-+    <SampleDriver as i2c::Driver>::IdInfo,
-+    [(acpi::DeviceId::new(c_str!("LNUXBEEF")), 0)]
-+}
+ static int ti_sn_bridge_probe(struct auxiliary_device *adev,
+ 			      const struct auxiliary_device_id *id)
+ {
+@@ -1335,9 +1527,48 @@ static int ti_sn_bridge_probe(struct auxiliary_device *adev,
+ 		 * for eDP.
+ 		 */
+ 		mutex_lock(&pdata->comms_mutex);
+-		if (pdata->comms_enabled)
++		if (pdata->comms_enabled) {
++			/* Enable HPD and PLL events. */
++			regmap_write(pdata->regmap, SN_IRQ_EVENTS_EN_REG,
++					PLL_UNLOCK_EN |
++					HPD_REPLUG_EN |
++					HPD_REMOVAL_EN |
++					HPD_INSERTION_EN |
++					IRQ_HPD_EN);
 +
-+kernel::i2c_device_table! {
-+    I2C_TABLE,
-+    MODULE_I2C_TABLE,
-+    <SampleDriver as i2c::Driver>::IdInfo,
-+    [(i2c::DeviceId::new(c_str!("rust_driver_i2c")), 0)]
-+}
++			/* Enable DSI CHA error reporting events. */
++			regmap_write(pdata->regmap, SN_CHA_IRQ_EN0_REG,
++					CHA_CONTENTION_DET_EN |
++					CHA_FALSE_CTRL_EN |
++					CHA_TIMEOUT_EN |
++					CHA_LP_TX_SYNC_EN |
++					CHA_ESC_ENTRY_EN |
++					CHA_EOT_SYNC_EN |
++					CHA_SOT_SYNC_EN |
++					CHA_SOT_BIT_EN);
 +
-+kernel::of_device_table! {
-+    OF_TABLE,
-+    MODULE_OF_TABLE,
-+    <SampleDriver as i2c::Driver>::IdInfo,
-+    [(of::DeviceId::new(c_str!("test,rust_driver_i2c")), 0)]
-+}
++			regmap_write(pdata->regmap, SN_CHA_IRQ_EN1_REG,
++					CHA_DSI_PROTOCOL_EN |
++					CHA_INVALID_LENGTH_EN |
++					CHA_DATATYPE_EN |
++					CHA_CHECKSUM_EN |
++					CHA_UNC_ECC_EN |
++					CHA_COR_ECC_EN);
 +
-+impl i2c::Driver for SampleDriver {
-+    type IdInfo = u32;
++			/* Disable DSI CHB error reporting events. */
++			regmap_write(pdata->regmap, SN_CHB_IRQ_EN0_REG, 0);
++			regmap_write(pdata->regmap, SN_CHB_IRQ_EN1_REG, 0);
 +
-+    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
-+    const I2C_ID_TABLE: Option<i2c::IdTable<Self::IdInfo>> = Some(&I2C_TABLE);
-+    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
+ 			regmap_update_bits(pdata->regmap, SN_HPD_DISABLE_REG,
+-					   HPD_DISABLE, 0);
++					HPD_DISABLE, 0);
 +
-+    fn probe(pdev: &i2c::I2cClient<Core>, info: Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
-+        let dev = pdev.as_ref();
++			/* Enable DisplayPort error reporting events. */
++			regmap_write(pdata->regmap, SN_DPTL_IRQ_EN0_REG, 0xFF);
++			regmap_write(pdata->regmap, SN_DPTL_IRQ_EN1_REG, 0xFF);
 +
-+        dev_dbg!(dev, "Probe Rust I2C driver sample.\n");
++			regmap_update_bits(pdata->regmap, SN_IRQ_EN_REG, IRQ_EN,
++			IRQ_EN);
++		}
+ 		mutex_unlock(&pdata->comms_mutex);
+ 	}
+ 
+@@ -1884,8 +2115,12 @@ static inline void ti_sn_gpio_unregister(void) {}
+ 
+ static void ti_sn65dsi86_runtime_disable(void *data)
+ {
+-	pm_runtime_dont_use_autosuspend(data);
+-	pm_runtime_disable(data);
++	if (pm_runtime_enabled(data)) {
++		pm_runtime_dont_use_autosuspend(data);
++		pm_runtime_disable(data);
++	} else {
++		ti_sn65dsi86_suspend(data);
++	}
+ }
+ 
+ static int ti_sn65dsi86_parse_regulators(struct ti_sn65dsi86 *pdata)
+@@ -1943,6 +2178,7 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
+ 		return dev_err_probe(dev, PTR_ERR(pdata->refclk),
+ 				     "failed to get reference clock\n");
+ 
++	pdata->no_hpd = of_property_read_bool(pdata->host_node, "no-hpd");
+ 	pm_runtime_enable(dev);
+ 	pm_runtime_set_autosuspend_delay(pdata->dev, 500);
+ 	pm_runtime_use_autosuspend(pdata->dev);
+@@ -1950,6 +2186,45 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
+ 	if (ret)
+ 		return ret;
+ 
++	if (client->irq && !pdata->no_hpd) {
++		enum drm_connector_status status;
 +
-+        if let Some(info) = info {
-+            dev_info!(dev, "Probed with info: '{}'.\n", info);
-+        }
++		pm_runtime_disable(pdata->dev);
++		ti_sn65dsi86_resume(pdata->dev);
++		ret = devm_request_threaded_irq(pdata->dev, client->irq, NULL,
++						ti_sn_bridge_interrupt,
++						IRQF_TRIGGER_RISING |
++						IRQF_TRIGGER_FALLING |
++						IRQF_ONESHOT,
++						"ti_sn65dsi86", pdata);
 +
-+        let drvdata = KBox::new(Self { pdev: pdev.into() }, GFP_KERNEL)?;
++		/*
++		 * Cleaning status register at probe is needed because if the irq is
++		 * already high, the rising/falling condition will never occurs
++		 */
++		regmap_read(pdata->regmap, SN_IRQ_STATUS_REG, &status);
++		regmap_write(pdata->regmap, SN_IRQ_STATUS_REG, status);
++		regmap_read(pdata->regmap, SN_CHA_IRQ_STATUS0_REG, &status);
++		regmap_write(pdata->regmap, SN_CHA_IRQ_STATUS0_REG, status);
++		regmap_read(pdata->regmap, SN_CHA_IRQ_STATUS1_REG, &status);
++		regmap_write(pdata->regmap, SN_CHA_IRQ_STATUS1_REG, status);
++		regmap_read(pdata->regmap, SN_IRQ_EVENTS_DPTL_REG_1, &status);
++		regmap_write(pdata->regmap, SN_IRQ_EVENTS_DPTL_REG_1, status);
++		regmap_read(pdata->regmap, SN_IRQ_EVENTS_DPTL_REG_2, &status);
++		regmap_write(pdata->regmap, SN_IRQ_EVENTS_DPTL_REG_2, status);
++		regmap_read(pdata->regmap, SN_IRQ_LT, &status);
++		regmap_write(pdata->regmap, SN_IRQ_LT, status);
 +
-+        Ok(drvdata.into())
-+    }
++		if (ret) {
++			return dev_err_probe(dev, ret,
++					     "failed to request interrupt\n");
++		}
++	} else {
++		pm_runtime_enable(dev);
++		pm_runtime_set_autosuspend_delay(pdata->dev, 500);
++		pm_runtime_use_autosuspend(pdata->dev);
++	}
 +
-+    fn shutdown(pdev: &i2c::I2cClient<Core>) {
-+        dev_dbg!(pdev.as_ref(), "Shutdown Rust I2C driver sample.\n");
-+    }
-+}
-+
-+impl Drop for SampleDriver {
-+    fn drop(&mut self) {
-+        dev_dbg!(self.pdev.as_ref(), "Remove Rust I2C driver sample.\n");
-+    }
-+}
-+
-+// NOTE: The code below is expanded macro module_i2c_driver. It is not used here
-+//       because we need to manually create an I2C client in `init()`. The macro
-+//       hides `init()`, so to demo client creation on adapter SAMPLE_I2C_ADAPTER_INDEX
-+//       we expand it by hand.
-+type Ops<T> = kernel::i2c::Adapter<T>;
-+
-+#[pin_data]
-+struct DriverModule {
-+    #[pin]
-+    _driver: kernel::driver::Registration<Ops<SampleDriver>>,
-+    _reg: i2c::Registration,
-+}
-+
-+impl kernel::InPlaceModule for DriverModule {
-+    fn init(
-+        module: &'static kernel::ThisModule,
-+    ) -> impl ::pin_init::PinInit<Self, kernel::error::Error> {
-+        kernel::try_pin_init!(Self {
-+            _reg <- {
-+                let adapter = i2c::I2cAdapter::<Normal>::get(SAMPLE_I2C_ADAPTER_INDEX)?;
-+
-+                i2c::Registration::new(adapter, &BOARD_INFO)
-+            },
-+            _driver <- kernel::driver::Registration::new(
-+                 <Self as kernel::ModuleMetadata>::NAME, module
-+            ),
-+        })
-+    }
-+}
-+
-+kernel::prelude::module! {
-+    type: DriverModule,
-+    name: "rust_driver_i2c",
-+    authors: ["Igor Korotin"],
-+    description: "Rust I2C driver",
-+    license: "GPL v2",
-+}
--- 
-2.43.0
-
+ 	pm_runtime_get_sync(dev);
+ 	ret = regmap_bulk_read(pdata->regmap, SN_DEVICE_ID_REGS, id_buf, ARRAY_SIZE(id_buf));
+ 	pm_runtime_put_autosuspend(dev);
 
