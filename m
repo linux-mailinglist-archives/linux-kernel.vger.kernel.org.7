@@ -1,130 +1,179 @@
-Return-Path: <linux-kernel+bounces-778230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C37B2E2C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 18:59:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A05B2E2C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFC73BB34A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:58:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B227AF2C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F21D334364;
-	Wed, 20 Aug 2025 16:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85348322740;
+	Wed, 20 Aug 2025 17:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tp3rSuev";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SPoWI5mm"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GBOmepMk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A7C57C9F;
-	Wed, 20 Aug 2025 16:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD36C36CDFA;
+	Wed, 20 Aug 2025 17:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755709101; cv=none; b=qy8IQoBcXWOiPrq4Bt++k9Q5e+73IvmTnDQmas7TMPORbYmho3PZiEwTx/F+Eqmn/+sYUU9HpZL/UgAJM5MgYR7K4ySyglDRt1u5RqGoGV6onL8SSpY208vfMSU7nlXomuv0gDeMJaDrXxloMkDvvSwYWVuX7BttJZ8q4Ahzu7A=
+	t=1755709256; cv=none; b=BOIx5dig/QocP3+MXWzKDTnCjlp46pK4x0RH0ku0oe/EygI2EJHuY7oThxlOiDT5kHg0ZVT7T/SznkeTMAcxtWFR1itj/e9WGhzTMVCTOGJ6R0CpXK8YefRMjaly/yMS9BQCdV/dIcbGP5VXuZk0pCnV/y747yksNjedYZnWcN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755709101; c=relaxed/simple;
-	bh=zFit5RnosLTRx8J5sxAPztAFATI0JhtRZhWuAE2Kmxg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Fi5q4nvrxqG7Ji85zH5f3xhPw3gMHSrt+eem7s39kJmlml1hpMZBT0dEj1fFW6I5j4HVONPvaZPfe3yl6OipMBSamxMwscX7fjcbFWnwJGVkrFoXm5JYKgOsRrRtebigIm5JZfMAtAaOTFtFRcPNpCO9VhRurxdPatHg+Uhf0Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tp3rSuev; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SPoWI5mm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 20 Aug 2025 16:58:15 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755709097;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nXtuvnYgySowG7Wg0s3LkLu/Mt9yJWpNfUfy0OEXynM=;
-	b=Tp3rSuev+ZxIhJOU6ssdOEXSesIYLIe72y+Hz6Qm41VNUhgpPmpcxa7JQGXdH7Yx57aSUq
-	AEEuVSKcQ3vTl4sUiRNHojHafd0MFwYXv1UBY76XR2SitvodQRpKvcHD50IcCzcCIzPJaW
-	ax5J5spiMe8aH9m4vvNdzduCDCfuVo/ntHiiZS3GXd5C5g7UeJnpejTBUmRFzeoCSJ9e0u
-	iisTnY9nJPh5Mn6fl+Y/Kes7K9RRcDmBLFlD7pTOHPFH7/lqSsdLvJp+fz9L4dS4UXC066
-	fylOva0p9/Et8RP02ORiGP3nLdHEE3Zj+HuGuHnLNti5zKI7+4hzim+i0lFaYw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755709097;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nXtuvnYgySowG7Wg0s3LkLu/Mt9yJWpNfUfy0OEXynM=;
-	b=SPoWI5mm5Jhtt5TSooGCCotrOrA10gRHzQLWTnANs900mP747vbARppCcXASHup0TlxjvI
-	mrd9ZielIvAUscAg==
-From: "tip-bot2 for Lukas Bulwahn" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cleanups] x86/kconfig: Drop unused and needless config X86_64_SMP
-Cc: Lukas Bulwahn <lukas.bulwahn@redhat.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250723071211.622802-1-lukas.bulwahn@redhat.com>
-References: <20250723071211.622802-1-lukas.bulwahn@redhat.com>
+	s=arc-20240116; t=1755709256; c=relaxed/simple;
+	bh=w2+v/zgYO2P6qqQQjWZg0Z1GPgZwU3f5IIywEy7xtfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jeH5qjLNMNxUzfDkNXTfW/SiG2bG+S9w9qtPoCzUDODvVByn6/IrfBnOtyTiuqn6hcpbtdnRzvFyjJ5LIpJl+9ToRkAVRfxlHIFpjU9V15PA8Dy5SHmtN24CMB0Gf0ikJSFIPpOL1MqTU+jLKkCgZyPbMmFpQ7jddNZP6dT1X/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GBOmepMk; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755709254; x=1787245254;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=w2+v/zgYO2P6qqQQjWZg0Z1GPgZwU3f5IIywEy7xtfI=;
+  b=GBOmepMkWpFoY8cs99kVRBTldPQamIlyx7ENucqtGduwQqMRBfSYPhLJ
+   YrwUiIXbPoECctECu5r+xbkjEsEYoDgP3B2M29gubJoOU/tgvH2/B8OyK
+   EYgSBDQXxb0HG4cNuqEEblqPXKgC8HDJUfYuzznKO3176sscrfK0LakS9
+   d+fsfx/xozHdjmeaone1ozey91WQs3moQu+ilhL9wkRM1yxlBv+UlxZ3Y
+   deWNDzYY6LzaXB2qLjycfHmJSnMQlsRnH9+LsQtZ2hT9eNP52RTiThatM
+   QScNcbhmtJtTQijvOxMksPrD1EO001nFbYsB9HZA9c+HqGFsRflL7oclD
+   A==;
+X-CSE-ConnectionGUID: cVSgBEPCTJyauA4TKTpNfw==
+X-CSE-MsgGUID: 74sW78+4TNq0LVrARjAiww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57185991"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="57185991"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 10:00:52 -0700
+X-CSE-ConnectionGUID: xKe0lnXwSueVsVcV+g0axg==
+X-CSE-MsgGUID: sBm/ebDGSB682VPoFi2sAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="168975933"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 10:00:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uomB5-00000006zwy-3VKJ;
+	Wed, 20 Aug 2025 20:00:47 +0300
+Date: Wed, 20 Aug 2025 20:00:47 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 2/2] i2c: designware: Implement atomic transfer suppot
+Message-ID: <aKX_PwQWoe9S0QjP@smile.fi.intel.com>
+References: <20250820153125.22002-1-jszhang@kernel.org>
+ <20250820153125.22002-3-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175570909600.1420.10792869791326478252.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820153125.22002-3-jszhang@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The following commit has been merged into the x86/cleanups branch of tip:
+On Wed, Aug 20, 2025 at 11:31:25PM +0800, Jisheng Zhang wrote:
+> Rework the read and write code paths in the driver to support operation
+> in atomic contexts. To achieve this, the driver must not rely on IRQs
+> or perform any scheduling, e.g., via a sleep or schedule routine.
+> 
+> Implement atomic, sleep-free, and IRQ-less operation. This increases
+> complexity but is necessary for atomic I2C transfers required by some
+> hardware configurations, e.g., to trigger reboots on an external PMIC chip.
 
-Commit-ID:     03777dbd8c9d825fc6f792e4e85be9e4ce4c7f8f
-Gitweb:        https://git.kernel.org/tip/03777dbd8c9d825fc6f792e4e85be9e4ce4=
-c7f8f
-Author:        Lukas Bulwahn <lukas.bulwahn@redhat.com>
-AuthorDate:    Wed, 23 Jul 2025 09:12:11 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 20 Aug 2025 18:34:56 +02:00
+...
 
-x86/kconfig: Drop unused and needless config X86_64_SMP
+> -		usleep_range(25, 250);
+> +		if (dev->atomic)
+> +			udelay(25);
+> +		else
+> +			usleep_range(25, 250);
 
-As part of
+Wondering why this delay is not being properly calculated. Why in atomic case
+is okay to use the shortest one?
 
-  38a4968b3190 ("x86/percpu/64: Remove INIT_PER_CPU macros"),
+...
 
-the only use of the config option X86_64_SMP in the kernel tree is removed. As
-this config option X86_64_SMP is just equivalent to X86_64 && SMP, the source
-code in the tree just uses that expression in the few places where needed. No=
-te
-further that this option cannot be explicitly enabled or disabled when
-configuring the kernel build configuration.
+> -	if (!dev->acquire_lock)
+> +	if (dev->atomic || !dev->acquire_lock)
 
-Drop this needless and unused config option. No functional change.
+I think basically we should no allow atomic transfers at all when the lock is
+in use. Otherwise it will be interesting case if HW (FW) wants to have an
+exclusive access while OS wants to perform an atomic transfer.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20250723071211.622802-1-lukas.bulwahn@redhat.com
----
- arch/x86/Kconfig | 4 ----
- 1 file changed, 4 deletions(-)
+...
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 58d890f..2eb3bb6 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -410,10 +410,6 @@ config HAVE_INTEL_TXT
- 	def_bool y
- 	depends on INTEL_IOMMU && ACPI
-=20
--config X86_64_SMP
--	def_bool y
--	depends on X86_64 && SMP
--
- config ARCH_SUPPORTS_UPROBES
- 	def_bool y
-=20
+> +	if (dev->atomic)
+> +		return regmap_read_poll_timeout_atomic(dev->map, DW_IC_STATUS, status,
+> +						       !(status & DW_IC_STATUS_MASTER_ACTIVITY),
+> +						       1100, 20000) != 0;
+> +	else
+> +		return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
+> +					       !(status & DW_IC_STATUS_MASTER_ACTIVITY),
+> +					       1100, 20000) != 0;
+
+Please, drop ' != 0' parts at the same time, they are redundant.
+
+...
+
+> +static int i2c_dw_wait_transfer_atomic(struct dw_i2c_dev *dev)
+> +{
+> +	ktime_t timeout = ktime_add_us(ktime_get(), jiffies_to_usecs(dev->adapter.timeout));
+> +	unsigned int stat;
+> +	int ret;
+> +
+> +	do {
+> +		ret = try_wait_for_completion(&dev->cmd_complete);
+> +		if (ret)
+> +			break;
+> +
+> +		stat = i2c_dw_read_clear_intrbits(dev);
+> +		if (stat)
+> +			i2c_dw_process_transfer(dev, stat);
+> +		else
+> +			udelay(15);
+
+No explanation about this value.
+
+> +	} while (ktime_compare(ktime_get(), timeout) < 0);
+
+Whe have _before() and _after() APIs, use them.
+
+> +	return ret ? 0 : -ETIMEDOUT;
+> +}
+
+...
+
+>  	switch (dev->flags & MODEL_MASK) {
+>  	case MODEL_AMD_NAVI_GPU:
+> +		if (dev->atomic) {
+> +			ret = -EOPNOTSUPP;
+> +			goto done_nolock;
+> +		}
+
+Why only AMD case?
+
+>  		ret = amd_i2c_dw_xfer_quirk(adap, msgs, num);
+>  		goto done_nolock;
+>  	default:
+>  		break;
+>  	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
