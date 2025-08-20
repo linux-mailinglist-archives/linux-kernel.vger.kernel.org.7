@@ -1,119 +1,109 @@
-Return-Path: <linux-kernel+bounces-778336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E57B2E456
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:48:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B700B2E46A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 19:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D404C4E3FAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:48:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C9F7A051DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4701227057D;
-	Wed, 20 Aug 2025 17:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7kIQcYr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9A2275861;
+	Wed, 20 Aug 2025 17:49:02 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5D936CE0C;
-	Wed, 20 Aug 2025 17:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D8E26B2D7;
+	Wed, 20 Aug 2025 17:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755712105; cv=none; b=rLXIEFWC6tA/T62tL+FCeYmf6AyOcrpNsWniSShH9cEUZ5tpYik5bu4b3Aj9nsP9jA5kaKaSvDNigkARA4bMMweLBEMCGZBvuzK8+qU5fTzTBEmC6WrpdJSJazoYu6tMVCEumLrkNdTbZYa/wY/ugnUHsfFLcFziZGCcY0aUVTg=
+	t=1755712141; cv=none; b=Vj868QohH2ZzdEmG44K+0SSyU11L2FasdQbFIwYYXKjgSxvYNzmfJuLkAQWQP0lT8zwvxw/Dc62jjxud1cIDN5OUVxXfso3Tkz4qLj4sHxQ2eDaDOoV+dJojDXJ/b4WwXOVQanw6Vfms2PbYTkocz5h/OJoOQgehf5d/OXrQQtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755712105; c=relaxed/simple;
-	bh=6peswoOhdw7dXI0cwkW9pPp7bgdjqqT10/tl3qs06UY=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=UliK3kcEBNsugm+3fI0OsUK5WhWCDfplceVu3Q9qXpyZofwtL3yqcmUyuJRGlgLYFbRoe914oGvHKal1/u3M9jb+CRNpPvK/BjlM/qYd/yA79GKEYqfq427STt+Nu8Z+zg+7NqBpFyPUPFrglE4pq3JT/NPcxLo36ODfwouWQms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7kIQcYr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763EEC4AF09;
-	Wed, 20 Aug 2025 17:48:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755712105;
-	bh=6peswoOhdw7dXI0cwkW9pPp7bgdjqqT10/tl3qs06UY=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=k7kIQcYr4dAU3vHgI0Kg9RAqL96t50M5aDutZqH9CH2p5gvjhZAh4coACmWKLH1yl
-	 uQSzDmXp2kGfZcKzEzIffLXqu/3DEaYyG81rjz6cVu9F71xelvfee1H02j2Z4NBewf
-	 PhXlJUpDa2PHyqHbEbX1++TFHoEaHLnEsm0KBP7KV0LULFESg97+3frn944ajx8/jP
-	 gMu9B1RlpujqH9l8G8x/c8sM+9AvYl5LRkj9wkvhibM7xXTFNqUmBZ2T3JTH4wyOe4
-	 W0+V8gQb75sd8AVMtaefqb2kYiqT2fQMt+xnn8Y100kVA013OA/yAFXJ/Cn0jEW08O
-	 bgHuJc9rwREpQ==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1uomvE-00000000rUD-1g1S;
-	Wed, 20 Aug 2025 13:48:28 -0400
-Message-ID: <20250820174828.252631905@kernel.org>
-User-Agent: quilt/0.68
-Date: Wed, 20 Aug 2025 13:47:55 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v6 3/3] tracepoint: Do not warn for unused event that is exported
-References: <20250820174752.684086778@kernel.org>
+	s=arc-20240116; t=1755712141; c=relaxed/simple;
+	bh=wFEaUXSKxGKGDrafji9rNYNmODBy+B6j/W4l+Y+SZpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ElwwTEDZBqPB7k4DZcSN6Ok03NjW4SjU3t0n9bmQriP3R2SpKgLpZGgqHB5Dbcl3DebE6MwpEk8eIv46U0cpW9ATs8ZTaSbvaG+Io+kba3qxmHZVgBeYGTJrcsXL8NgSvM8CQ8acYVO0RXVNPaOcyO+16ZbM6vuY+4X5iXAB6uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.110] (unknown [114.241.87.235])
+	by APP-01 (Coremail) with SMTP id qwCowADXA6hiCqZoxxbODQ--.27375S2;
+	Thu, 21 Aug 2025 01:48:18 +0800 (CST)
+Message-ID: <ca3404c1-7773-4b47-8a95-b61e5cd9be96@iscas.ac.cn>
+Date: Thu, 21 Aug 2025 01:48:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 2/5] net: spacemit: Add K1 Ethernet MAC
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Vivian Wang <uwu@dram.page>, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250820-net-k1-emac-v6-0-c1e28f2b8be5@iscas.ac.cn>
+ <20250820-net-k1-emac-v6-2-c1e28f2b8be5@iscas.ac.cn>
+ <3c8d191c-efd6-4756-9c71-109236d4c54c@bootlin.com>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <3c8d191c-efd6-4756-9c71-109236d4c54c@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADXA6hiCqZoxxbODQ--.27375S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFWfKr45KrW5tF15Gr18uFg_yoW3CrcE9F
+	1vvwn7Zw1UK3WUGw4fKanFvws8Kr1kXr1xWr9rtws3t342yFyDWFnrK34Sgr43XrWvqrnr
+	Gw10vFWIkw17ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbV8YjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I
+	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
+	cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I
+	8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
+	xwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x07jgPEfUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Hi Maxime,
 
-There are a few generic events that may only be used by modules. They are
-defined and then set with EXPORT_TRACEPOINT*(). Mark events that are
-exported as being used, even though they still waste memory in the kernel
-proper.
+On 8/20/25 19:34, Maxime Chevallier wrote:
+> Hi Vivian,
+>
+> On 20/08/2025 08:47, Vivian Wang wrote:
+>> The Ethernet MACs found on SpacemiT K1 appears to be a custom design
+>> that only superficially resembles some other embedded MACs. SpacemiT
+>> refers to them as "EMAC", so let's just call the driver "k1_emac".
+>>
+>> Supports RGMII and RMII interfaces. Includes support for MAC hardware
+>> statistics counters. PTP support is not implemented.
+>>
+>> Tested-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+>
+> I've read through the driver and it's looking good to me
+>
+> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com> 
+>
+Thank you for the review. I appreciate it.
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- include/linux/tracepoint.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 71d2e085c49e..ec6827d00d79 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -223,8 +223,8 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 
- #ifdef CONFIG_TRACEPOINT_WARN_ON_UNUSED
- # define TRACEPOINT_CHECK(name)						\
--	static const char __used __section("__tracepoint_check") __trace_check[] = \
--		#name;
-+	static const char __used __section("__tracepoint_check")	\
-+	__trace_check_##name[] = #name;
- #else
- # define TRACEPOINT_CHECK(tname)
- #endif
-@@ -381,10 +381,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	__DEFINE_TRACE_EXT(_name, NULL, PARAMS(_proto), PARAMS(_args));
- 
- #define EXPORT_TRACEPOINT_SYMBOL_GPL(name)				\
-+	TRACEPOINT_CHECK(name)						\
- 	EXPORT_SYMBOL_GPL(__tracepoint_##name);				\
- 	EXPORT_SYMBOL_GPL(__traceiter_##name);				\
- 	EXPORT_STATIC_CALL_GPL(tp_func_##name)
- #define EXPORT_TRACEPOINT_SYMBOL(name)					\
-+	TRACEPOINT_CHECK(name)						\
- 	EXPORT_SYMBOL(__tracepoint_##name);				\
- 	EXPORT_SYMBOL(__traceiter_##name);				\
- 	EXPORT_STATIC_CALL(tp_func_##name)
--- 
-2.50.1
-
+Vivian "dramforever" Wang
 
 
