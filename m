@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-778088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA52B2E12D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:32:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0C7B2E139
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 17:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52E006067B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:27:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3774B1C8744A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 15:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F90321F4A;
-	Wed, 20 Aug 2025 15:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0684D36CDFC;
+	Wed, 20 Aug 2025 15:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E0KS97i/"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="br2XFwYf"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77B02E8B73
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F087C36CDEA
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 15:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755703522; cv=none; b=i41paM5MY2H02gqW7ZmgdmnWfFjB3gwzmHw9FA0h0OZvtksUa6/jdcIjQVn0sYlMu8nPV1tL6UjWmWq5hC7zR7uC3IusNxHmSKOQXyACSXFqRoGF0/bmcHzDsDNjp1i0vngvauKAytYLiZo5GbVZCJvv3VdX1XYKMXI8fkaMW9A=
+	t=1755703533; cv=none; b=kbJUPz9Y7SRudVFqRL6p8P19Sdzv//W908hqAkB+eYvpxFWoKHWNKM59qTxnj7uPTqn5bkkOXI5ZOyi5IL0+jkEp9QUlaJLSX/ljzmWwiSOJ2Cmy+bn3VTJ6PfyByk2uYOC8nNMIMXcFZNat4Fn1lkzhVqorwZDGCVSRVag6BMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755703522; c=relaxed/simple;
-	bh=Qav1M3tyQmglESrqnGWfLbt/rScnOPtiQBAqrwQENEo=;
+	s=arc-20240116; t=1755703533; c=relaxed/simple;
+	bh=XxY6ek00sDc3+fAtpidxuu/eX/gF18Bni2g/mJZ9m5k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ml5NxPaUq0trb8rrVsvPbehIFdQaSmmJGfLkmJx8K2hzBR5EtEK0Pjn9IWQSB+Hmjd4vgC2Oylt261r6GeQUHtWZUrUvZzpL9G0rIklQhrHwrho0LvhzNA30vrCxJ6J6txzGgAqZ9tvZzHVWnvYg3aLGILKobX5uqbPuMWJUqeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=E0KS97i/; arc=none smtp.client-ip=209.85.216.54
+	 To:Cc:Content-Type; b=TfNjlcDMkXRy25tadnKUzOUc3/DT5IoHFsQRAdXBkEcYP1oDl0lDykTzlNQbLfNpF/WZfbFHtIIl/tx5WeyxhyyPBC9F94FzW63UFOL5XvxsCeaMjANrBM6g6BImEh4cSo+rTPIeYytAtIEz8iCdcfVPaa+5/fzz9JKEmzPHooA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=br2XFwYf; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32326e8005bso43241a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:25:20 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2445824dc27so62552695ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:25:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755703518; x=1756308318; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1755703530; x=1756308330; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QkmFWE7tq6b3ya/7cYC7Eh1qJoGwKmH4XG/rocLbBXU=;
-        b=E0KS97i/cHDzXzamI/E3NW34BfVgyEXAvHzsHP5VModzMXqudWzAmYp1zH1zChtVVo
-         StrbHyN2wJZ+cipFcxCZ1TR+w4uRH/HRhGg8cEdcqFjBtQifw7ua2+JsF0McNlwOLnBa
-         mAM1fQNAe1GbZKhUxDdg4IhdUBN3HAcpYgqI8=
+        bh=1Uwy9jIZdofD/KICjKUSkalZ1bxXpwdmk7aQGqM1F+w=;
+        b=br2XFwYfHJl6SOwFVzQe6a4yvk0G/QzgFBlKHqUFCuylUU+yeDH4Z74VS2xE6MCPWC
+         xY22NpvwRB1iqK7LMlc/o8SVX/TALvSMdeuWDeah0vVtU+WHCvcFjPB/j3xmcoPQRM7x
+         i9Bo6WHPakm0JMJFISb0cteoAwjsqGuQ4TNYs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755703518; x=1756308318;
+        d=1e100.net; s=20230601; t=1755703530; x=1756308330;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QkmFWE7tq6b3ya/7cYC7Eh1qJoGwKmH4XG/rocLbBXU=;
-        b=QDEahwTbcN+c7Pv5rtzfK/vW1yEUnCrKxatQFBF/b6qk6CItlu35pfLTTvTLiB1hk9
-         bwp2MXR3N6qpDqfBqesvbFau6N6YeVECAVAIEcd0wQpcBYLkaau2QNalWXnjHf1PD+3n
-         4ot1ZDAO+tpQQ5rg2Lkavzw26nrtKM5wZB3OnaEMzt0SQoT8dMzjlqv7l+ohWM85YkuP
-         nNbgTwaOpVPvDThul+e3Xas+7lrYEMmOsItRbZJCbcfVNAlb8WHMosT7UolTe7E+dqfL
-         bU82dgMO+cdM6v6vyUUED4EkNHIV8sqYcElJy4ZFDf0x6Mids/RpyUZmB4F+p4TthEWs
-         dUWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUm+x4g9N1T/F6p7v6FzQrkcJX3CLpeK//BHRgW7Z/rAk2HAANqZ2xvldaoXIGc3KI+bk7DBeJbu6kYHvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBJrsIs9dFuRbsdy+PQ8iCvH5+3t55o9+g4ekW1zuBqh3pUHlO
-	TWMWgfa2LMuOTKpHWOajs8SXtPCX4zN5bKv1W201IorDaT/QZ48myixZmJ51iP+x2hjHtSMczHU
-	KZHiI3w==
-X-Gm-Gg: ASbGncu+2FiYwhzfT27to+3bQbegIGkO9zbaoHVmVhoH0KanKjmm7IjGrSTr46dmb9/
-	yml/7PdaJHGyPKUYwMfpnBXLqDeHs9xUzM6rGIkjZ+oaovNhEBhXsUl4OfnGsW7TISizo1AA1/Q
-	ypeYbP8BmKDAVzjsrvi1TPaRLZoeJRF+7CLUXnftoWtNvWdlj8OHpUvLhz8Z5Q5WbjRoLC2AP+o
-	RZIWr3nYhkRLTNCbDMUcaC+sYsDH9G77sdGujJ//gZO2Nj1eRIApZLQoltvJSJLZxB3WxdksFko
-	xj/tn1RFwlt0nvl+PLt3YC1hfLmEjwq58ADCYtBCxNkjOnSEwEE5eRDbpv4KqGS0ZoZ4d802Oh4
-	oSqoRr9gDRtYV5oqgqOs2ooiy6Zg7h1IT0RsvBIhzCMGhwx6YthJUYz40Kgn1SzxmQWsGP+8w
-X-Google-Smtp-Source: AGHT+IFVtk9qfBu0B36Gz6Cb7LH4T2HllhOULDmi0DOqQi0871wc8EvWLakhIrj9BCj3X5aYsqxe2Q==
-X-Received: by 2002:a17:90b:3945:b0:321:1a89:f692 with SMTP id 98e67ed59e1d1-324e1319f93mr4526743a91.8.1755703517731;
-        Wed, 20 Aug 2025 08:25:17 -0700 (PDT)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com. [209.85.216.43])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e250e52dsm2655047a91.6.2025.08.20.08.25.15
+        bh=1Uwy9jIZdofD/KICjKUSkalZ1bxXpwdmk7aQGqM1F+w=;
+        b=j7llnhY+8BFPoBkwMoE/Tgem533UfYILn//+9KpD72Foa6w6d5t1a2WIZKUd0/zmu7
+         sx+zGhXg/UcRxznnxNSEifLVgNpyNPo+dLuoURdIZRVsc3WjqNwG+qrLsJT+oWjcIUe6
+         rJqtn/GgmIA1gQONkKekQfEE0YFXstg4miHE+xtJspHB047FwCXV7lvBC5XjdSS1STzg
+         qvdJu1x9vMPsBWgps4Ot9yRAVkyXeSUvkQUC2DvqShiqcT+95qjJXzoQmXTzWG99smCz
+         cxc5v6gbuMsueZgraWmXNvGLCByFZCCVpgxQvIJDH2fsxICObPBBbVbXCuPXwiHMp9Pv
+         AJTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDIoxaUYFUHs9Vz1NVW+LYcDC+Y5EuJli2r/Q9c92uhHArtGzZrTBt/cZ/cNRIykU+G/GnY1iLddaOcEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4faJJbRjSUDd6Zps9x2+MXOJUfhjMQwRnCgFY271OVZoWs7Ht
+	ON7Q4VzKJL+fKJt/RSYKrtFelUY0X8dx8pTaKeMKebwhQu3d37j2c0ceHhc9BgkB7xsPnBBSMhg
+	8e0avmg==
+X-Gm-Gg: ASbGncto9xK7an92BaG94TqNHNy1QQdTn1ijviJCB1ox4gg51yDvPvGCiFnUcso5dFT
+	TUgJJuo2wTLcGP6emIPxS8xHCd3/XW2/rl3ocpP4qw2/8aXLxZgGHTEo7d1lQQgMkqqJ/3H6mmB
+	TPMwDT1uCnXpt8cO/CmQz/CWe3bzL8ezkofpxtZo2EH4vK0OUKLI66Jf3M2H9s+b8nWLim7uYqA
+	rmdho3JtNBJPZwXKthKHf4ewzwIA87t86DT0n6A43MdKNpr1XrurMhZMYDfAqvsmv07uDg/VBbw
+	QoL/gHDQsK8YqLGAFGXOGE9ccR2WYTNLQO+HGL7W3p1N44PiXaYf23iw8VSLRG6/krv78yDGlw5
+	NTIdTsN2L9keFFFj+uxklu3+XEMvgiG+HdYxjbS4VJy7Qzz7aIZGOrljFBNksLiLkVw==
+X-Google-Smtp-Source: AGHT+IEUT/tT+IfqX7Mvs4yEeuL9QsbDK5Gt8JG94nYZ3q+jT6imVICXbZj7i6c0wg6iBtpbI+LkDA==
+X-Received: by 2002:a17:902:f64a:b0:240:49e8:1d3c with SMTP id d9443c01a7336-245ef1e45d7mr38597865ad.35.1755703529555;
+        Wed, 20 Aug 2025 08:25:29 -0700 (PDT)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com. [209.85.214.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed51aa14sm29635495ad.145.2025.08.20.08.25.28
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 08:25:15 -0700 (PDT)
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32326e20aadso48640a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:25:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXRgi7NdAyTgQWZGESSz+sKWNb41Yg1b8BWRnJWUTHsD+4qrJpmjUaVFljOAo+AdNX0I/TzjA5U6964JpM=@vger.kernel.org
-X-Received: by 2002:a17:902:ccd2:b0:245:f7f3:6759 with SMTP id
- d9443c01a7336-245f7f36a54mr17614605ad.50.1755703515111; Wed, 20 Aug 2025
- 08:25:15 -0700 (PDT)
+        Wed, 20 Aug 2025 08:25:28 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-245f19aab74so5718715ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 08:25:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUK2aTeV/yjrUtsYQRd0fM35QV0ED+Ff/xMruqT00nfZP6USVeFyMWQOwCnNc8fLuEWMdma9xiZTTggv7w=@vger.kernel.org
+X-Received: by 2002:a17:902:f70e:b0:240:66ff:b253 with SMTP id
+ d9443c01a7336-245ef237b85mr45917035ad.46.1755703527669; Wed, 20 Aug 2025
+ 08:25:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812082135.3351172-1-fshao@chromium.org> <20250812082135.3351172-3-fshao@chromium.org>
-In-Reply-To: <20250812082135.3351172-3-fshao@chromium.org>
+References: <20250812082135.3351172-1-fshao@chromium.org> <20250812082135.3351172-2-fshao@chromium.org>
+ <CAD=FV=X_CiSoXyKkg8jBJLPKe3WDBpLEOAngQJNnN8yZfaC+qw@mail.gmail.com> <CAC=S1nhXO4mHkxGbLzja2au7RAfDR+-yRoGAkuMCKCc69N4rng@mail.gmail.com>
+In-Reply-To: <CAC=S1nhXO4mHkxGbLzja2au7RAfDR+-yRoGAkuMCKCc69N4rng@mail.gmail.com>
 From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 20 Aug 2025 08:25:01 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X4y10ejoYKkK+sd4YbtqqaYgXYNf1YAKdK6NodcH=EAw@mail.gmail.com>
-X-Gm-Features: Ac12FXxDFSB6mln8t-OwH89VVYymkhP85lC13PmFNjLgZsgGO3Gu1KDH09QT8WQ
-Message-ID: <CAD=FV=X4y10ejoYKkK+sd4YbtqqaYgXYNf1YAKdK6NodcH=EAw@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] drm/bridge: anx7625: register content protect property
+Date: Wed, 20 Aug 2025 08:25:15 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WFR7b=7h6gnyH_MtLW-dcngEqocBz6Lox4_JSBMO9RhQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyCoYEHWTUKnbt2HWCJxT_MXeti6--ZquIbT9ku4wcEFO6wcTTI38buFwc
+Message-ID: <CAD=FV=WFR7b=7h6gnyH_MtLW-dcngEqocBz6Lox4_JSBMO9RhQ@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] drm_bridge: register content protect property
 To: Fei Shao <fshao@chromium.org>
 Cc: Hubert Mazur <hmazur@google.com>, Sean Paul <seanpaul@chromium.org>, 
-	Hsin-Yi Wang <hsinyi@chromium.org>, Xin Ji <xji@analogixsemi.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+	Hsin-Yi Wang <hsinyi@chromium.org>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Tue, Aug 12, 2025 at 1:23=E2=80=AFAM Fei Shao <fshao@chromium.org> wrote=
+On Tue, Aug 12, 2025 at 8:01=E2=80=AFPM Fei Shao <fshao@chromium.org> wrote=
 :
 >
-> From: Hsin-Yi Wang <hsinyi@chromium.org>
+> On Wed, Aug 13, 2025 at 2:07=E2=80=AFAM Doug Anderson <dianders@chromium.=
+org> wrote:
+> >
+> > Hi,
+> >
+> > On Tue, Aug 12, 2025 at 1:23=E2=80=AFAM Fei Shao <fshao@chromium.org> w=
+rote:
+> > >
+> > > From: Hsin-Yi Wang <hsinyi@chromium.org>
+> > >
+> > > Some bridges can update HDCP status based on userspace requests if th=
+ey
+> > > support HDCP.
+> > >
+> > > The HDCP property is created after connector initialization and befor=
+e
+> > > registration, just like other connector properties.
+> > >
+> > > Add the content protection property to the connector if a bridge
+> > > supports HDCP.
+> > >
+> > > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> > > Signed-off-by: Fei Shao <fshao@chromium.org>
+> > > Reviewed-by: Sean Paul <seanpaul@chromium.org>
+> >
+> > nit: your Signed-off-by should always be moved to the bottom when
+> > posting patches. I wouldn't bother re-posting just for that, though...
 >
-> Set the `support_hdcp` bit to enable the connector to register content
-> protection during initialization.
->
-> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> Signed-off-by: Fei Shao <fshao@chromium.org>
-> Reviewed-by: Sean Paul <seanpaul@chromium.org>
-> ---
->
-> Changes in v8:
-> - rebase on top of next-20250731
->
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 1 +
->  1 file changed, 1 insertion(+)
+> Ah sorry, I didn't notice that..
+> Could you rearrange the tag order for me when applying these patches?
 
-Pushed to drm-misc-next:
+Sure, adjusted and pushed to drm-misc-next:
 
-[2/2] drm/bridge: anx7625: register content protect property
-      commit: 043d9c6928b010be7902a01b5cdfa7d754535b1a
+[1/2] drm_bridge: register content protect property
+      commit: 407a2fab3c99c40ad1acedaf028e8222da1f0433
 
