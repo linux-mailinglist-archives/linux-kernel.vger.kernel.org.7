@@ -1,197 +1,157 @@
-Return-Path: <linux-kernel+bounces-777018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B394DB2D423
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:38:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941C9B2D427
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 08:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC07117ADCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:38:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F05F01BC6DF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 06:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC8A2C11EC;
-	Wed, 20 Aug 2025 06:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A382C15A5;
+	Wed, 20 Aug 2025 06:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jBQgBuxI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="bBS5zmiG"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34D535336A;
-	Wed, 20 Aug 2025 06:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E828A3C17;
+	Wed, 20 Aug 2025 06:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755671890; cv=none; b=aTYOor9fQx747COYwJcAUGL26YkmYVVHvINCylmothkrL21jqP0NIvSb3adsMYlQ0hSgjs4joSBeboJsnfQl2WW3gazka6ldOMlieuACA/wKxCkKbuaDA2lGWUUglwZEt2ml2VaOYI78ZTB4Ak33IO5w5JmcoQUvwxwZzNkjU8Q=
+	t=1755671994; cv=none; b=YxrSq1VuYU8Ze77h2UqJjPX2sCchjw2zcfCvMMgD3K+mU8DUWp+xqYxv88uOyOfZ3RrD5XrUB/2SpntK3ROvWGlgnffY3zGqAnk+hBTCsySXCBhJjmm7WFQcyM9INXtvhLfWv1Kx6j8TAdpuE3MlAXtilLCxy5lb4vQE7+6R/tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755671890; c=relaxed/simple;
-	bh=+U6ld1iOfEhR8TxN/eQkKRpzew4eQlS5g+HYESpXTOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MNThriwsh5pQXvYuRhHyyUwUe3NTpaj93U40NlBbBZvuSibZcnL3i6TSk1sI6Wwr/ejo7j5VnZVvZxOFr7Fd6vOdlLS5eNpu6JrnE/JDtQUR5EEE5IQGNDyLZ9ryiVSKigvBeo79avJKUpc5MerknaVK8+4jNvY1iwbUlasjBkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jBQgBuxI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K1p3Pj021262;
-	Wed, 20 Aug 2025 06:38:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Jyu59zrtUvE/zad1Cgw8ZOa/vxAmIKD3+iAD66jXfY4=; b=jBQgBuxI5XCvYYds
-	QuOhroGBB7BlGgg9ixR88qt9reIfNI2pYVeIhu9UkV8jVKA45G75LvRhr9gvIJZo
-	NPvuVGvBA1kqamtmtgpRKLtXIhycZTqZmqrDpVdb1XLYKBLI12uLQOiLD4S/u7Vc
-	3FNONe7CyqdR/nuUhPvr8fUmhYjTC4x0juk0aoUEjxVsbLDpkDur5wPFsQOjALjk
-	tmAtpiLGkTuRMqelqoBEAZG/bOBZTmfY0rg5nfX2K4VivmoKDNaZw+8xJUVJkcOa
-	8WvzbRevhcXL35C85cQel7hTYpHACx95AinNh2jGvc+KVCcbzDUHC1GcnQfpo+Sz
-	MwIVMA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5290nfr-1
+	s=arc-20240116; t=1755671994; c=relaxed/simple;
+	bh=UUBWMtS3hGO6ro3MSdIWsYxBpiRu/KbewFdl/lHwdyg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aCJutih6pHGvNMC/mys69vJ/1Q05KvwO+7itdKjZFUU01GUWDL9m/m/xnUQewsfXdbC4ECRZyT39/rSAmB9x2C7nME7BN7+Ofvvb0zk8yplmDS8k8dy9ZOWEYgoplsqjOzBPpiX0I5tc6wsMZvZAXe8hw0cTMdFCV6vKk5qUrhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=bBS5zmiG; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57K1nx7P011897;
+	Tue, 19 Aug 2025 23:39:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=e9VXU8voCr5lX/8JBonq37X
+	MLvAdpWWuHhRTy6OBO8g=; b=bBS5zmiGQdOiKP/Psy1MH07pgXjhNSrnEhY2b3G
+	CtBVaE0MWSH6TY+VwHvxoAlYwE9FCaBmXUtxDN3hT6Xq4ljubdxnF4B7XzKzlnTA
+	CMhjR6sf01MJ360hZjwKokyezspxHNr0XRZGeCD2h0RJgUW+SZHY8pdeXFFLb7wj
+	2WSjIbNhMj3Wtq5hx5KcU+LsFHo5toX3wVD+UhZsEkVSKEqFbgzCnUQxF7N9fP4T
+	BrBZcgn/PapWPMh4X8oSpTtcIrVWV1BNYrJef7p8UarmAY/y27j1quSCfyNmxvnT
+	vBVlHPEAWpHfq/NeSUluPdfqfrkSMC2CmwTbwRr4CN2HRSw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48n51urfvd-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Aug 2025 06:38:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57K6c39F024136
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Aug 2025 06:38:03 GMT
-Received: from [10.216.14.39] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 19 Aug
- 2025 23:38:00 -0700
-Message-ID: <b453b8ff-a460-4ccd-9019-aed746a7d52d@quicinc.com>
-Date: Wed, 20 Aug 2025 12:07:57 +0530
+	Tue, 19 Aug 2025 23:39:28 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 19 Aug 2025 23:39:32 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 19 Aug 2025 23:39:32 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id AF0773F70B4;
+	Tue, 19 Aug 2025 23:39:22 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hariprasad Kelam <hkelam@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya
+	<gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        Subbaraya Sundeep
+	<sbhatta@marvell.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>,
+        Ratheesh Kannoth <rkannoth@marvell.com>
+Subject: [net PatchV2] Octeontx2-af: Skip overlap check for SPI field
+Date: Wed, 20 Aug 2025 12:09:18 +0530
+Message-ID: <20250820063919.1463518-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/2] phy: qcom-qmp-ufs: Add regulator loads for SM8650
- and SM8750
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <mani@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250819222832.8471-1-quic_nitirawa@quicinc.com>
- <20250819222832.8471-3-quic_nitirawa@quicinc.com>
- <ger4kizeltjwalfuwu4dpfjiskrv2okgo5c7d6n3pb24yaxgfo@nkcndblyx3il>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <ger4kizeltjwalfuwu4dpfjiskrv2okgo5c7d6n3pb24yaxgfo@nkcndblyx3il>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BQvDRfkUthZMWI5Gn7a_DJzQDd4m8iFZ
-X-Proofpoint-ORIG-GUID: BQvDRfkUthZMWI5Gn7a_DJzQDd4m8iFZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX/2to/qJcLkvr
- 6BEkScyV+2tK1n25Lf74iJWDNmFjNYJv9dyTwtCuUNIMCo2Ze9Q1CUIF6tK8+Ml5hYV7dtqdqGH
- 7WVUmQzJ3sZxj9jwZoSDpV0ssOS5q3WRiRZ0Wa9+a+0fs+wglIm+Qghem5gPuakmoYoP6MRSio9
- ggdXJ68P1zaoRW0fI1CW776wq/sclyasrJSdpSv4jYii3r8HCJXOB/T/pEy8fOUaj7Nkb1PlIS+
- 3kBeOtx733tNUsFWJeRuMdnZPlVFuuF3kzCXrjNT592V+5J7RyLwCvOqk02c0GHM3nObhxPXqSf
- YVNTulS0cc/TzXss1IpuRqeG2rMq2i0ddQJkZ2DcN9pMDtel9URH8ZgGfVlywf1/KYaHwbwMdgg
- VsFYt4x+P9G2IDGPh1AQgJVvqAB9yQ==
-X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a56d4c cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=nb8l9q_sgcfmG5NmqRQA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: k1X1ComJbykOcXmb4M2O--Jwsjvx_vrl
+X-Proofpoint-GUID: k1X1ComJbykOcXmb4M2O--Jwsjvx_vrl
+X-Authority-Analysis: v=2.4 cv=I9E8hNgg c=1 sm=1 tr=0 ts=68a56da0 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=ucxOQ4RWDg5Gs50NsgoA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDA1NSBTYWx0ZWRfX2kX9cEgc8jDl TopOJS7bAdQU9Wnx3nflP7YEOWJRDa5ZF+QuUlf9dcmc9HZTaQZp2TteqgRKi1tOwWDH12rN1nU pMi3swKKEzAfEWRd8YdzbtMdMld5+rB8aijP/y+1d1dMqMiMbWQLnn5EV7Sah29TeSJGOtqsMgl
+ 0YGuKwp/sdjplu6IDS5/ZMOv1C5R0lRIs3KPEp1PtqSPkv7A6pzLkqmEJ5Xocr5+TbdJIV3CsZB 5Rvzw4oFg+1EDncGTTJwMG3/Sz9rKa1Wqh0cSZIPnscIgcaDS5qZn3npwoI4XjiaVvmxgwXRlLu +Hrt18WGKYc/wpQwwDJG8sMjhCt6cswb/gu222+xi69BG0T1AB5HCg4t1AqtJHDQi4rB2z/5kuq
+ J3XhyuZkH1sDSd9KJSQlitoJG1K/TBp6aiP3GBzU+SD3BGisga9KIW2ILGDH+OFKRy2lGOKi
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-20_03,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
- impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
+ Octeontx2/CN10K silicon supports generating a 256-bit key per packet.
+The specific fields to be extracted from a packet for key generation
+are configurable via a Key Extraction (MKEX) Profile.
 
+The AF driver scans the configured extraction profile to ensure that
+fields from upper layers do not overwrite fields from lower layers in
+the key.
 
-On 8/20/2025 6:19 AM, Dmitry Baryshkov wrote:
-> On Wed, Aug 20, 2025 at 03:58:26AM +0530, Nitin Rawat wrote:
->> Add regulator load voting support for SM8650 and SM8750 platforms by
->> introducing dedicated regulator bulk data arrays with their load
->> values.
->>
->> The load requirements are:
->> - SM8650: vdda-phy (205mA), vdda-pll (17.5mA)
->> - SM8750: vdda-phy (213mA), vdda-pll (18.3mA)
->>
->> This ensures stable operation and proper power management for these
->> platforms where regulators are shared between the QMP USB PHY and
->> other IP blocks by setting appropriate regulator load currents during PHY
->> operations.
->>
->> Configurations without specific load requirements will continue to work
->> unchanged, as init_load_uA remains zero-initialized when .init_load_uA
->> is not provided.
-> 
-> Can we please get configuration for the rest of the platforms?
+Example Packet Field Layout:
+LA: DMAC + SMAC
+LB: VLAN
+LC: IPv4/IPv6
+LD: TCP/UDP
 
-Hi Dmitry,
+Valid MKEX Profile Configuration:
 
-If you're okay with it, can I merge the configuration for the remaining 
-platforms in the next patch series after I complete testing on all 
-remaining platforms.
+LA   -> DMAC   -> key_offset[0-5]
+LC   -> SIP    -> key_offset[20-23]
+LD   -> SPORT  -> key_offset[30-31]
 
-Regards,
-Nitin
+Invalid MKEX profile configuration:
 
-> 
->>
->> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 19 +++++++++++++++----
->>   1 file changed, 15 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
->> index aaa88ca0ef07..1c3ce0fa6adf 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
->> @@ -1170,6 +1170,17 @@ static const struct regulator_bulk_data qmp_phy_vreg_l[] = {
->>   	{ .supply = "vdda-pll" },
->>   };
->>
->> +/* Regulator bulk data with load values for specific configurations */
->> +static const struct regulator_bulk_data sm8650_ufsphy_vreg_l[] = {
->> +	{ .supply = "vdda-phy", .init_load_uA = 205000 },
->> +	{ .supply = "vdda-pll", .init_load_uA = 17500 },
->> +};
->> +
->> +static const struct regulator_bulk_data sm8750_ufsphy_vreg_l[] = {
->> +	{ .supply = "vdda-phy", .init_load_uA = 213000 },
->> +	{ .supply = "vdda-pll", .init_load_uA = 18300 },
->> +};
->> +
->>   static const struct qmp_ufs_offsets qmp_ufs_offsets = {
->>   	.serdes		= 0,
->>   	.pcs		= 0xc00,
->> @@ -1638,8 +1649,8 @@ static const struct qmp_phy_cfg sm8650_ufsphy_cfg = {
->>   		.max_gear	= UFS_HS_G5,
->>   	},
->>
->> -	.vreg_list		= qmp_phy_vreg_l,
->> -	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
->> +	.vreg_list		= sm8650_ufsphy_vreg_l,
->> +	.num_vregs		= ARRAY_SIZE(sm8650_ufsphy_vreg_l),
->>   	.regs			= ufsphy_v6_regs_layout,
->>   };
->>
->> @@ -1676,8 +1687,8 @@ static const struct qmp_phy_cfg sm8750_ufsphy_cfg = {
->>   		.max_gear	= UFS_HS_G5,
->>   	},
->>
->> -	.vreg_list		= qmp_phy_vreg_l,
->> -	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
->> +	.vreg_list		= sm8750_ufsphy_vreg_l,
->> +	.num_vregs		= ARRAY_SIZE(sm8750_ufsphy_vreg_l),
->>   	.regs			= ufsphy_v6_regs_layout,
->>
->>   };
->> --
->> 2.48.1
->>
-> 
+LA   -> DMAC   -> key_offset[0-5]
+LC   -> SIP    -> key_offset[20-23]
+LD   -> SPORT  -> key_offset[2-3]  // Overlaps with DMAC field
+
+In another scenario, if the MKEX profile is configured to extract
+the SPI field from both AH and ESP headers at the same key offset,
+the driver rejecting this configuration. In a regular traffic,
+ipsec packet will be having either AH(LD) or ESP (LE). This patch
+relaxes the check for the same.
+
+Fixes: 12aa0a3b93f3 ("octeontx2-af: Harden rule validation.")
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+---
+V2 * Update the comment for SPI field in key scanning logic
+
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+index 1b765045aa63..b56395ac5a74 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+@@ -606,8 +606,8 @@ static void npc_set_features(struct rvu *rvu, int blkaddr, u8 intf)
+ 		if (!npc_check_field(rvu, blkaddr, NPC_LB, intf))
+ 			*features &= ~BIT_ULL(NPC_OUTER_VID);
+ 
+-	/* Set SPI flag only if AH/ESP and IPSEC_SPI are in the key */
+-	if (npc_check_field(rvu, blkaddr, NPC_IPSEC_SPI, intf) &&
++	/* Allow extracting SPI field from AH and ESP headers at same offset */
++	if (npc_is_field_present(rvu, NPC_IPSEC_SPI, intf) &&
+ 	    (*features & (BIT_ULL(NPC_IPPROTO_ESP) | BIT_ULL(NPC_IPPROTO_AH))))
+ 		*features |= BIT_ULL(NPC_IPSEC_SPI);
+ 
+-- 
+2.34.1
 
 
