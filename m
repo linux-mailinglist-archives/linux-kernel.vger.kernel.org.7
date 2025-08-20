@@ -1,152 +1,108 @@
-Return-Path: <linux-kernel+bounces-776810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-776811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F039B2D1B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:58:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11351B2D1B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 03:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824BC5606AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:57:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A0D1C43D30
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 01:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7F327A45C;
-	Wed, 20 Aug 2025 01:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kwbjZqVD"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EF427EFE9;
+	Wed, 20 Aug 2025 01:56:18 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C150C277CBF
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 01:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7A527A925;
+	Wed, 20 Aug 2025 01:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755654974; cv=none; b=SVXpMStqRGpRACSWjVNZApI54SazG29cyhuiUo6JeaXjcfswsBoNRKqixfGRjMz+/ftjz5WNNhh+gV0yLw04EDLPNeBrdsebf4Xpy/5b/cvAzBzWmk+lcimMO/WnY9u1i24xKmU1GLuNDQN2oXy6itOftcgkmJCUW3U3Gcnd3y4=
+	t=1755654978; cv=none; b=MN6272C4RJ9GkvEsCqzHPAJxqeW0rInDvuCr9gLLvyfiLQkkDUPohGiZAp6Ma69y9RE4qadvYcgHKfnJxSErO3k1V5g0qnsCz09c5yBB6fe0fa+yS6HR8E65AmeRkxJzBSPwumDqVXbq76u+wQxLlvM969JlTjCwlGpDtg3Kxog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755654974; c=relaxed/simple;
-	bh=4AN/tT/8MLg491te4DnALVVbYyv56y92GYARFuneBg8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fsGg0gp1ZfTewURrmrSey/XPTOZe+zBZnMNHNu5Id3t+7dbzgT3saBimG4b3dEs4avgR7Qk96dezkU3PkfJL/CR30+aryT8UbYtuIZApoV1LQxSeveTnzIwRiwbvKSwfgWXw9d/bqDvJVeq2bOAWhqd82urPnu7GuxWsKYpDg4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kwbjZqVD; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <33a897b4-7d9a-4641-9c7a-07c19bb9cb6f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755654969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T+sb60WMq9s+elk6LLcRRaUDEvLIfQYZTGy2RixZQEM=;
-	b=kwbjZqVDNzhxhfdfPer2yb389B+y86OOTxcjkR3Z5WdIxZK5hxajSVjDJ6DOZKC+gG1Vaw
-	74SgsC1UPpikSliYOCg9ZZBnKIM984GAx1V4aMf1ks2uDUlsh0gjdgLwbSGJFjILDvSgN9
-	p52u73u9TPzDj9GN5/1Td8o5eilfKMc=
-Date: Wed, 20 Aug 2025 09:56:05 +0800
+	s=arc-20240116; t=1755654978; c=relaxed/simple;
+	bh=v5Pkj/+ycC5msIajiniWEkrmd0ZhUZcJcyZPwfAHCKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFeDkAYUrNX6D7q24ktnz4P3Cu0AZsa4FNN8y5n9s50c5DlP3s+gJfW3/sxJoMsG5hamf1lt7Sq2CnVeciWl+rE9CMpPNLWCuVBYEfhgnJI27lb2skEFfKsALKYsUzeq5mbiR07XTo4eJ/BiJ2aaIlgdm2drImaetjhWy2qPydU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uoY3g-000000006F1-0CJW;
+	Wed, 20 Aug 2025 01:56:12 +0000
+Date: Wed, 20 Aug 2025 02:56:08 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: [PATCH net-next v3 8/8] net: dsa: lantiq_gswip: add support for
+ SWAPI version 2.3
+Message-ID: <2022eda2ddc191dc9f34cbb1e0e146bda0120316.1755654392.git.daniel@makrotopia.org>
+References: <cover.1755654392.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] panic: Clean up message about deprecated 'panic_print'
- parameter
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-To: kernel test robot <lkp@intel.com>, Petr Mladek <pmladek@suse.com>,
- Feng Tang <feng.tang@linux.alibaba.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- Andrew Morton <akpm@linux-foundation.org>,
- Linux Memory Management List <linux-mm@kvack.org>,
- Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-kernel@vger.kernel.org, paulmck@kernel.org, john.ogness@linutronix.de
-References: <aKRJKZHgcxyNF3y7@pathway.suse.cz>
- <202508200907.PsZ3geub-lkp@intel.com>
- <ae9bb2ea-c6e5-4a4b-ae25-aea1d6fe084d@linux.dev>
-In-Reply-To: <ae9bb2ea-c6e5-4a4b-ae25-aea1d6fe084d@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1755654392.git.daniel@makrotopia.org>
 
+Add definition for switch API version 2.3 and a macro to make comparing
+the switch hardware version with the (byte-swapped) version macros more
+conveniant.
 
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+---
+v3: no changes
+v2: no changes
 
-On 2025/8/20 09:54, Lance Yang wrote:
-> 
-> 
-> On 2025/8/20 09:31, kernel test robot wrote:
->> Hi Petr,
->>
->> kernel test robot noticed the following build errors:
->>
->>
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/ 
->> UPDATE-20250819-180717/Feng-Tang/lib-sys_info-handle-sys_info_mask-0- 
->> case/20250815-152131
->> base:   the 3th patch of https://lore.kernel.org/ 
->> r/20250815071428.98041-4-feng.tang%40linux.alibaba.com
->> patch link:    https://lore.kernel.org/r/ 
->> aKRJKZHgcxyNF3y7%40pathway.suse.cz
->> patch subject: [PATCH] panic: Clean up message about deprecated 
->> 'panic_print' parameter
->> config: i386-buildonly-randconfig-004-20250820 (https:// 
->> download.01.org/0day-ci/archive/20250820/202508200907.PsZ3geub- 
->> lkp@intel.com/config)
->> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 
->> 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
->> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/ 
->> archive/20250820/202508200907.PsZ3geub-lkp@intel.com/reproduce)
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new 
->> version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202508200907.PsZ3geub- 
->> lkp@intel.com/
->>
->> All errors (new ones prefixed by >>):
->>
->>>> kernel/panic.c:952:2: error: call to undeclared function 
->>>> 'panic_print_deprecated'; ISO C99 and later do not support implicit 
->>>> function declarations [-Wimplicit-function-declaration]
->>       952 |         panic_print_deprecated();
->>           |         ^
->>     kernel/panic.c:958:2: error: call to undeclared function 
->> 'panic_print_deprecated'; ISO C99 and later do not support implicit 
->> function declarations [-Wimplicit-function-declaration]
->>       958 |         panic_print_deprecated();
->>           |         ^
->>     2 errors generated.
-> 
-> 
-> Oops, panic_print_deprecated() is defined within the #ifdef
-> CONFIG_PROC_SYSCTL block, but it's also called from panic_print_set()
+ drivers/net/dsa/lantiq_gswip.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Correction:
-
-CONFIG_SYSCTL block - sorry ;(
-
-> and panic_print_get(), which are outside of that block.
-> 
-> So, we need to move the definition out of the block to a common
-> scope where all its callers can see it. @Petr wdyt?
-> 
-> Thanks,
-> Lance
-> 
->>
->>
->> vim +/panic_print_deprecated +952 kernel/panic.c
->>
->>     949
->>     950    static int panic_print_set(const char *val, const struct 
->> kernel_param *kp)
->>     951    {
->>   > 952        panic_print_deprecated();
->>     953        return  param_set_ulong(val, kp);
->>     954    }
->>     955
->>
-> 
-
+diff --git a/drivers/net/dsa/lantiq_gswip.h b/drivers/net/dsa/lantiq_gswip.h
+index 077d1928149b..5cebb051ac90 100644
+--- a/drivers/net/dsa/lantiq_gswip.h
++++ b/drivers/net/dsa/lantiq_gswip.h
+@@ -7,6 +7,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
++#include <linux/swab.h>
+ #include <net/dsa.h>
+ 
+ /* GSWIP MDIO Registers */
+@@ -93,6 +94,8 @@
+ #define   GSWIP_VERSION_2_1		0x021
+ #define   GSWIP_VERSION_2_2		0x122
+ #define   GSWIP_VERSION_2_2_ETC		0x022
++#define   GSWIP_VERSION_2_3		0x023
++#define GSWIP_VERSION_GE(priv, ver)	((priv)->version >= swab16(ver))
+ 
+ #define GSWIP_BM_RAM_VAL(x)		(0x043 - (x))
+ #define GSWIP_BM_RAM_ADDR		0x044
+-- 
+2.50.1
 
