@@ -1,183 +1,134 @@
-Return-Path: <linux-kernel+bounces-777094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A76EB2D524
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:44:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C73B2D51F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 09:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6864C724964
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95DE1C23D3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 07:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE9C2D8DC3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0769D2D8DBD;
 	Wed, 20 Aug 2025 07:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="rAX0BG3v";
-	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="zm8Xthxv"
-Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="D3lAeHTV"
+Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397A121CC58
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 07:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F512D8DA4
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 07:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755675801; cv=none; b=Y2P9nVI0Q87eHtPMZ9o5gmIQsfcXXMogJDGIGUed+9tnqA6oM46blfT4QsFxR4x398SauoF56xfAVK3570u2n8YX6s7Wxvu+RcBI913dyLUQycB7ptifXXaoaRpGnfw06aT3CfJnAqmkccwWJ7R+hIha3uBP3VLONa5EDrF8h70=
+	t=1755675801; cv=none; b=X0+nuoi6cUVxrT0mucJu4RIoxQvx50nBTrsAv5zhn86KFypK2oCayOELSEIvgO3QUbq9pA3Y1018GyWppD6hMQ21+jXzbpIKLDzeupBm2tO3JdbDI49JgR6+4xW50H51iYnSz8ZeifMIfzwN+dxDWqyZxXlgVXpVrdCYdYhGRwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755675801; c=relaxed/simple;
-	bh=dTZfagQ0+o7nxH3bkE5UlsCnkY0SHpqO/vTGX9XGphg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FQXxG7d7Z/7lPnM+J+CFIFPSLAP2V5bgEgfh4b+0X7GKPBmVnC6FALWyT993oXGYrwf1VvJDpInCYIDtNM5Hu4VbVnViiuekOePNWdhQFEBim4x6cZA60ODV6XM5I+YbWKzs7Bu//VAn/YMVoVxRd+cFqms0D6xi236sHJpRMVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=rAX0BG3v; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=zm8Xthxv; arc=none smtp.client-ip=51.159.152.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
-DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1755675773; bh=w9SlD7ICoHxzqoTlV8Z7Rg/
-	8uwfey5HI6LYxS9+8BWE=; b=rAX0BG3v0QpJZ3qELpbEuE1Gnf64gsxn3p30lNCslrTapWnxa0
-	96q75Ty6EAUb+vhLw4Mp5Zycd4zEolapYeyBfWPx+FHf0ZddnV27HcZ8oGslepQMi+5ZpU8Psud
-	RQRl8letQVMEeo8/nuV2Lmh9gWWzPFDdQ42OqUC+iOcVwEZPttvpiG5rtW2gQFVFO+Id2Tn4mTS
-	gAkfv0mNwsRDHr+2XCxjfJKMljocgMF3yowrbrdQpfS79UL20TlwK94ceXuxEZOnWYUn+ZFou2E
-	+J1U+NA9X289Bq2EYkM1P17dj2PwwgUJGEuReHgXS9NBZMk3bJqeJgbpraMly5Ebrlw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1755675773; bh=w9SlD7ICoHxzqoTlV8Z7Rg/
-	8uwfey5HI6LYxS9+8BWE=; b=zm8XthxvusftN8sHmI0QViGO57N+qOWk3A0FtE0PtJhy6ni+vY
-	WW35Mb0I3jwxH/MeRss7mfEzj5j9AH+Q/ACQ==;
-Message-ID: <fb30efd4-1950-4b76-89fc-51c089319950@damsy.net>
-Date: Wed, 20 Aug 2025 09:42:52 +0200
+	bh=4auqw/phu6z/jlypeBfepV0a/baTEw5ESZBSdVZ5xz8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UmA7DPAvd6XxkDmcsvaTrEfkhcC8QdMkSG2WA+zk17JuBji1tHvMR/vgx08Td+FwNdHPBxRD0me2jlVTK6m5STFJxeac9cByWiHTkm+Zvkx5c9sSnIr+ajhGIzezTLAixkCUqpJikJx6lMJyyzbEHdVBby8PrSOhZr/zQ4FEkbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=D3lAeHTV; arc=none smtp.client-ip=109.224.244.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1755675790; x=1755934990;
+	bh=ed6yVSBNvc+WLbrEvk5vB+fyF1kLBiK/kk3SPf6wWiA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=D3lAeHTVgunKA9ZeLRagKntCYGciZ3iMzY2SHP+HB07/ukNbdiKENFhlTGf7DMvZn
+	 irbU84G04jviMnosqvqU8r14Gy/7iNZ1nBA1/oq0domkLjA1FgEjeepFWZEKdl+zx5
+	 2xe39k/sHAZeTtDNQjMDXrmuq6q7p8QQPTU0zc3stU/HmeyUzjtrY0bH0J8/e3mcyi
+	 SoNglKogqgoAPfo4+lfZfxMr4gGejiBvXEKRfaf+PLEnJZimNTeXhfiq80Zlgimo8w
+	 ylnf31yTnvvEP28+4Ac9/sEUv38Sp7qTXu6yLPeXy2LRbfNrZMtmwklurdxs6sFz7T
+	 OY41UhEd67mVA==
+Date: Wed, 20 Aug 2025 07:43:07 +0000
+To: Benno Lossin <lossin@kernel.org>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
+Message-ID: <aKV8h6i5vmiD0gHj@mango>
+In-Reply-To: <DC732XTLKE1U.244I3Q2DR8JNK@kernel.org>
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me> <DC5WOFIKX7VQ.30UNUNE37LOO5@kernel.org> <aKQT92ViZSL841rT@mango> <iQ0qeYmzFSlOQkNLti-a4Z6ItwaZgh3r8Pqdu5rSwYz4wUxAsKZJlGCrsVQ481Qkzc9EapD3bzKKtrsXVkwt2A==@protonmail.internalid> <DC69F17AFLB2.1KZ8JJUIH2CSP@kernel.org> <87ldnfd766.fsf@t14s.mail-host-address-is-not-set> <DC6KN0JN4X4D.1PHXPQ46O5J1Q@kernel.org> <aKVlA1Ctya6f2Nzc@mango> <DC732XTLKE1U.244I3Q2DR8JNK@kernel.org>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 7497ccf72aa2a36754b18fa9a79b3a05554b78ca
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/6] amdgpu: Avoid powering on the dGPU on
- vkEnumeratePhysicalDevices()
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Philipp Zabel <philipp.zabel@gmail.com>,
- Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- "Pelloux-Prayer, Pierre-Eric" <Pierre-eric.Pelloux-prayer@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250731-b4-dont-wake-next-v1-0-e51bdc347fa3@gmail.com>
- <601a40fd-e508-4e9d-8dd3-14329f3a637b@amd.com>
- <41b37595c42e4f492704a31970936d52b96dae97.camel@pengutronix.de>
- <ce732501-131d-420d-ad75-61ae987f51d0@amd.com>
-Content-Language: en-US
-From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
-In-Reply-To: <ce732501-131d-420d-ad75-61ae987f51d0@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-[resend because the previous email didn't make it to most recipients]
+On 250820 0941, Benno Lossin wrote:
+> On Wed Aug 20, 2025 at 8:02 AM CEST, Oliver Mangold wrote:
+> > On 250819 1913, Benno Lossin wrote:
+> >> On Tue Aug 19, 2025 at 10:53 AM CEST, Andreas Hindborg wrote:
+> >> > "Benno Lossin" <lossin@kernel.org> writes:
+> >> >> On Tue Aug 19, 2025 at 8:04 AM CEST, Oliver Mangold wrote:
+> >> >>> On 250819 0027, Benno Lossin wrote:
+> >> >>>> On Mon Aug 18, 2025 at 3:04 PM CEST, Oliver Mangold wrote:
+> >> >>>> > On 250818 1446, Andreas Hindborg wrote:
+> >> >>>> >> "Oliver Mangold" <oliver.mangold@pm.me> writes:
+> >> >>>> >> > +impl<T: OwnableMut> DerefMut for Owned<T> {
+> >> >>>> >> > +    fn deref_mut(&mut self) -> &mut Self::Target {
+> >> >>>> >> > +        // SAFETY: The type invariants guarantee that the o=
+bject is valid, and that we can safely
+> >> >>>> >> > +        // return a mutable reference to it.
+> >> >>>> >> > +        unsafe { self.ptr.as_mut() }
+> >> >>>> >> > +    }
+> >> >>>> >> > +}
+> >> >>>> >>
+> >> >>>> >> I think someone mentioned this before, but handing out mutable
+> >> >>>> >> references can be a problem if `T: !Unpin`. For instance, we d=
+on't want
+> >> >>>> >> to hand out `&mut Page` in case of `Owned<Page>`.
+> >> >>>> >>
+> >> >>>> >
+> >> >>>> > That was the reason, why `OwnableMut` was introduced in the fir=
+st place.
+> >> >>>> > It's clear, I guess, that as-is it cannot be implemented on man=
+y classes.
+> >> >>>>
+> >> >>>> Yeah the safety requirements ensure that you can't implement it o=
+n
+> >> >>>> `!Unpin` types.
+> >> >>>>
+> >> >>>> But I'm not sure it's useful then? As you said there aren't many =
+types
+> >> >>>> that will implement the type then, so how about we change the mea=
+ning
+> >> >>>> and make it give out a pinned mutable reference instead?
+> >> >>>
+> >> >>> Making `deref_mut()` give out a pinned type won't work. The return=
+ types of
+> >> >>> deref() are required to match.
+> >> >>
+> >> >> I meant the changes that Andreas suggested.
+> >> >
+> >> > Not sure what you are asking, but I need to assert exclusive access =
+to
+> >> > an `Page`. I could either get this by taking a `&mut Owned<Page>` or=
+ a
+> >> > `Pin<&mut Page>`. I think the latter is more agnostic.
+> >>
+> >> The former isn't really correct? It's like having a `&mut Box<Page>`
+> >> which is weird. I was saying we can have a `DerefMut` impl gated on `T=
+:
+> >> Unpin` and a `fn get_pin_mut(&mut self) -> Pin<&mut T>`.
+> >
+> > Yes. I think `Page` is the wrong example, as it already has owned seman=
+tics
+> > and does its own cleanup. Wrapping it in an Owned would be redundant.
+>=20
+> After we have these owned patches, we are going to change `Page` to
+> `Opaque<bindings::page>`.
 
-Hi,
+Ah, okay. Makes sense, I guess.
 
-Le 06/08/2025 à 15:17, Christian König a écrit :
-> On 06.08.25 12:15, Philipp Zabel wrote:
->> On Mi, 2025-08-06 at 10:58 +0200, Christian König wrote:
->>> On 31.07.25 07:36, Philipp Zabel wrote:
->>>> This is an attempt at fixing amd#2295 [1]:
->>>>
->>>>    On an AMD Rembrandt laptop with 680M iGPU and 6700S dGPU, calling
->>>>    vkEnumeratePhysicalDevices() wakes up the sleeping dGPU, even if all
->>>>    the application wants is to find and use the iGPU. This causes a delay
->>>>    of about 2 seconds on this system, followed by a few seconds of
->>>>    increased power draw until runtime PM turns the dGPU back off again.
->>>>
->>>> [1] https://gitlab.freedesktop.org/drm/amd/-/issues/2295
->>>>
->>>> Patch 1 avoids power up on some ioctls that don't need it.
->>>> Patch 2 avoids power up on open() by postponing fpriv initialization to
->>>> the first ioctl() that wakes up the dGPU.
->>>> Patches 3 and 4 add AMDGPU_INFO to the list of non-waking ioctls,
->>>> returning cached values for some queries.
->>>> Patch 5 works around an explicit register access from libdrm.
->>>> Patch 6 shorts out the syncobj ioctls while fpriv is still
->>>> uninitialized. This avoids waking up the dGPU during Vulkan syncobj
->>>> feature detection.
->>>
->>> This idea came up multiple times now but was never completed.
->>>
->>> IIRC Pierre-Eric last worked on it, it would probably be a good idea to dig up his patches from the mailing list.
->>
->> Thank you, I wasn't aware of those patches [1]. Pierre-Eric did mention
->> them in https://gitlab.freedesktop.org/mesa/mesa/-/issues/13001, but I
->> didn't pick up on that back then.
->>
->> [1] https://lore.kernel.org/all/20240618153003.146168-1-pierre-eric.pelloux-prayer@amd.com/
->>
->> Is that the latest version?
-> 
-> I honestly don't know. @Pierre-Eric?
+Best,
 
-
-https://lore.kernel.org/all/ZnvJHwnNAvDrRMVG@phenom.ffwll.local/ killed the approach taken by this 
-patchset.
-
-After that I've reworked the series, and sent 
-https://lists.freedesktop.org/archives/amd-gfx/2024-September/114417.html to do fine grain runtime 
-pm in drm/amd/pm as a first step.
-
-I also have a local branch that I never sent that implements Sima's suggestion: pushing rpm handling 
-down into the ioctl implementation.
-
-I'll try to rebase it and push it out on gitlab soon.
-
-Pierre-Eric
-
-
-> 
->> It looks to me like the review stalled out
->> on a disagreement whether the GB_ADDR_CONFIG query should be a separate
->> ioctl or whether it should be added to drm_amdgpu_info_device. The
->> discussion was later continued at
->> https://gitlab.freedesktop.org/mesa/libdrm/-/merge_requests/368,
->> seemingly coming to the conclusion that keeping the register read (but
->> cached) is the way to go? I didn't find a newer series with that
->> implemented.
-> 
-> Could be that Pierre-Eric dropped the work after that.
-> 
-> But IIRC we already use a cached value for GB_ADDR_CONFIG because of GFXOFF.
-> 
-> Regards,
-> Christian.
-> 
->>
->>>>
->>>> regards
->>>> Philipp
->>>>
->>>> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
->>>> ---
->>>> Alex Deucher (1):
->>>>        drm/amdgpu: don't wake up the GPU for some IOCTLs
->>>>
->>>> Philipp Zabel (5):
->>>>        drm/amdgpu: don't wake up the GPU when opening the device
->>>>        drm/amdgpu: don't query xclk in AMDGPU_INFO_DEV_INFO
->>>>        drm/amdgpu: don't wake up the GPU for some AMDGPU_INFO queries
->>>>        drm/amdgpu: don't wake up the GPU for mmGB_ADDR_CONFIG register read
->>>
->>> That is both unnecessary an insufficient. Unnecessary because we already have a mechanism to cache register values and insufficient because IIRC you need to add a bunch of more registers to the cached list.
->>
->> This series was (just barely) sufficient for my purpose, which was only
->> to make vkEnumeratePhysicalDevices() not wake the dGPU on my Laptop.
->> I didn't realize there already was a caching mechanism in the lower
->> layers.
->>
->>> See Pierre-Erics latest patch set, I think we already solved that but I'm not 100% sure.
->>
->> If I found the correct version, it seems Sima's suggestion of pushing
->> runtime pm handling down from amdgpu_drm_ioctl into the amdgpu ioctl
->> callbacks [2] would be the best first next step?
->>
->> [2] https://lore.kernel.org/amd-gfx/ZnvJHwnNAvDrRMVG@phenom.ffwll.local/
->>
->> regards
->> Philipp
+Oliver
 
 
