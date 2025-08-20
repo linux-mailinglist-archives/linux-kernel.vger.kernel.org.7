@@ -1,295 +1,177 @@
-Return-Path: <linux-kernel+bounces-777476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F0AB2D9E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:17:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4821BB2D9EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 12:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D80B64E36B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:16:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4626D188E3EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 10:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832C92DCBF8;
-	Wed, 20 Aug 2025 10:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299B82E0B45;
+	Wed, 20 Aug 2025 10:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhaTPXI8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m04ZDh9m"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AFE2459D4;
-	Wed, 20 Aug 2025 10:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605ED2253AE
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755684985; cv=none; b=hFaHVg7q+c8NU/TM7UkcgMtX9svqmR6cDUTzRlzuhj3gRMk35EO9SrHZQlrlresXEcmNoMiGwTmev7jz6LtNMHXEs7OB4X5nukR28CgF6wRhY1r9tbLdbnZaIo2tGAyDfLQ0pI3/1E/PNMJf8MsGrj2jIR3wbAhprMYgbGrTEoI=
+	t=1755685110; cv=none; b=gxzRvP050HJ5UJ//MmSPUKdE/+5N1W1MQ+8xpUPY3kyIfW95EztU6IPC4jhLDCPm5LuCS+NT9e8j9tpoZ1K3Av/GGtide/qSCjxytKPOSANReSR57qM1c8TCe1uYoTouNoGrodwdRNp2D1nYLAqVhj0p1mLYX70s368JE8wXqss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755684985; c=relaxed/simple;
-	bh=XzpGJTqPVcOFUMqIMIlLu/4sIUSnKk+XD+8t8pnJ85U=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=A7LQFaJVrMz6kC5xlezdHQO4YyhZpvqrJWyKfYfqXpZcUbhhv/WoVEE4cMnbHzNlHoAkzCIwDC9Ld52Ww3pOohdKaAQU2+yBPagvnoqiVOXfIjhrN4xx156sqS1LE0SvKbF7koqXgeQKzr/j/uq9K+mgd7u31GsYzLlFv/MPJTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhaTPXI8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49561C4CEEB;
-	Wed, 20 Aug 2025 10:16:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755684985;
-	bh=XzpGJTqPVcOFUMqIMIlLu/4sIUSnKk+XD+8t8pnJ85U=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=DhaTPXI8AFgELTg78k1LUty/cXh66N97H/gR9L42Ak9QJ29mB3qnyWoZycO/twy4R
-	 NcLenIqirpvssRdFKaoZRuQCjcr9HyPd206BovO//gZhThDSPgmoXlNAWN1OMhGAfE
-	 utJK7wnAjwA3WPcx26TVP8ZcDJF3Nv4IBpfVeZ3j5mhOmBNAYkPD9wfSCs8R9VlHJJ
-	 h+Fyjdwo6VYSRZZ0hhUaZGjWBguhA3nQjdeWV3B3+6HCTv29vKpxRX2DrvR6gddoC5
-	 nllKvmYOeH1bvHZTL6kR2yJd6TpEY0Sxdhiuhp30QsrzvonqtBruOrJyYvsjxE8c7J
-	 qrPR5q1lovOnw==
+	s=arc-20240116; t=1755685110; c=relaxed/simple;
+	bh=RD/YhGR6n6Cqcm80/va7EGUN4MC358kbGLBV1nwlbKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gaMcakW6liHxBPJNbXUkk1pJmi09VG6d6GH2Jd83cm3n+q8L1xXphDYXD9CKGcSEHWAGLLGfTKkw2RbOceWSJzAjtYu2CfacH7yx1fpDtui+kfotQR+c1ZjopK0yLu0Ipg2MxCJ/5kFr7QzRL6Zk55my36FglgaqqOuxo/n5vzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m04ZDh9m; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KABa9M031245
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:18:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=RMmIf6OvZrK65C2lJ9Pmjnze
+	nmAYNUQwMUXR7Q7PPco=; b=m04ZDh9m3eZZiWHDtRw+bhpEsiBl3XlWz+Yc9AOI
+	gHgXA+fqa8B1WbSIincNp6cSJOpfOMfWNNeETEgTS9HKHuZRTzUmxmb/OzkyMP9k
+	opd6Qz2SGN1A2t9iHN8DKTqa/T6mXIK/P6/mxC03PJ+R5fnmGQjP6fFgFenI1Gtj
+	8IkAuR9N4dHdQX4tyyNg0SlWajKunB4eLhw609Cbvw50G0NqHdLEAmNQoluZ7aV7
+	D6xVni2lWpctfrfXLiFV7woLvwdcFJRye/COQZjEuZhqtd7fFffcpMqxqLNt/0v1
+	oZAzzT7VTEQLP7wPHJ9g5aWfB/0yyYq5TGfP3zqV9otVHQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52dhakn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 10:18:27 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b109c7ad98so235004881cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 03:18:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755685106; x=1756289906;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RMmIf6OvZrK65C2lJ9PmjnzenmAYNUQwMUXR7Q7PPco=;
+        b=AgK9dgpNN4uUXb8n9VRG5nrRIIkovn20zKe9Rh0ooAYHmK2bo2A2S4m3V322bjik4/
+         xJB7Aon5GVsJkzWBuY6GNcnNLTXWcnOzu7toIg1e9FuimlhA/KjTfCQfWexZKVKvl7u7
+         WltOrwGndu4MQqLaRCOwPTbj56IlDkrMVdySIvprSbcYslmqqIZz9paEKyw4MIHGR95k
+         WvMMYHQ3GlFdVW3Zv29rur4KRlxrdiLN4TP+46NyTHtIqnbcg/h9PJELxcPQ4lCZf7qP
+         jkRHVzqKN/BUj6fU9+9/Vq9CpyTO9P+LB5ktzKt6G+g9aSB0fK2FheV+1qipLWilTwZc
+         kJQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYh+Y2ZlruFcVsSaQl6QcfiwZHRqs3F8/a2Ts697TwINYM21BAjdAwZL72kM7fXwaiyej8NjMC27xM+UE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGs1fHjPPfyeuhJr+UAG67oQ4RfwfBl4QTSIgNcWnKM4twHE4D
+	1GbPHEQkLrWFXM7aIwzXMiAIKj3YRbDDEdXTL2vnYP51nYQy2cBjE0BrRSIxIuhzjdPO5cJuXn6
+	JPc1LfR+xXtQMrhmCdoDsq/WNYPXcG6rL9i9fztduo2zK1baS3fiy3eqEVACawAJf3pI=
+X-Gm-Gg: ASbGncuThGxSEji3gSGfDbsV1Y5cANIAZl+7cy3w1EQP+qn4AnRDnxrxgWO3U0Bdv76
+	dkW1sAvp8p+ZlL4iANkcYJjtAQH7cmQ1p1x/8l2H9+9Fy0oU0XwoGs+kOm09sXAGC48OBN0PLnH
+	04DyNDWEVJr4rX+m8qrlFfB1f4cjckU+jeaaZJ1zg9U63RGQlSJgBrrhTx+ma0q5hGj4fLsiMPn
+	RvT4RxStikHMT/4+kagMF+Y1AIXTYFd/1aSVhMEvz8aiXNwm4HXs5v+QUTY5Q7/GMvs0X4kygr0
+	qZuux5IsWlHTqhuq6AaNsbFKTHM83iPbh6oScAFNVxXizZtjTXKwdIRtW99QAbIrREAlDaZyZ8d
+	Ex6rvO9t02DVCcZ9NdcsrX1haRMce+SYj+/hE/QcBsBlfQNkHDOBt
+X-Received: by 2002:ac8:7c52:0:b0:4b0:677f:db03 with SMTP id d75a77b69052e-4b291a450cbmr19243041cf.15.1755685106421;
+        Wed, 20 Aug 2025 03:18:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2AOZHGENtzCbjXG8zdnjHcyu3nc3kzJVHOmLOa0gbBzdcDRDqks1SlZYpXJ4L372H7WS/sw==
+X-Received: by 2002:ac8:7c52:0:b0:4b0:677f:db03 with SMTP id d75a77b69052e-4b291a450cbmr19242671cf.15.1755685105881;
+        Wed, 20 Aug 2025 03:18:25 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55e02c31498sm623244e87.12.2025.08.20.03.18.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 03:18:25 -0700 (PDT)
+Date: Wed, 20 Aug 2025 13:18:23 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, fange.zhang@oss.qualcomm.com,
+        yongxing.mou@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, quic_lliu6@quicinc.com
+Subject: Re: [PATCH v3 01/14] dt-bindings: display/msm: dp-controller: Add
+ sm6150
+Message-ID: <75ra2ofecqu6tid6kr4hnyuztpl6jjaq2ksyquafyajhq2sa4d@4tkggrdqky7y>
+References: <20250820-add-displayport-support-for-qcs615-platform-v3-0-a43bd25ec39c@oss.qualcomm.com>
+ <20250820-add-displayport-support-for-qcs615-platform-v3-1-a43bd25ec39c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 Aug 2025 12:16:19 +0200
-Message-Id: <DC76DSYUY978.3NR8S2K13I9RX@kernel.org>
-Subject: Re: [PATCH] rust: zpool: add abstraction for zpool drivers
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- "Uladzislau Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
- Roy Baron" <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor Gross"
- <tmgross@umich.edu>, "Johannes Weiner" <hannes@cmpxchg.org>, "Yosry Ahmed"
- <yosry.ahmed@linux.dev>, "Nhat Pham" <nphamcs@gmail.com>,
- <linux-mm@kvack.org>
-To: "Vitaly Wool" <vitaly.wool@konsulko.se>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250820091543.4165305-1-vitaly.wool@konsulko.se>
-In-Reply-To: <20250820091543.4165305-1-vitaly.wool@konsulko.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820-add-displayport-support-for-qcs615-platform-v3-1-a43bd25ec39c@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX/5gM0jEE5ofN
+ lGuZTIsSu1lNJHDZlLhzCwCmaQzFCKGXZWPbmoNrno5RqzpVjY+jrxq7Bldd+crHn3at6MQUSYh
+ gMwjXHMAPQc9zMQM+h9spaQn0Izs6Vt5kn9FL42fNpTkjsU/Zk6vrjTLBM5a6PdSQ0MQ/c19qQR
+ 9UyqlfQiyyqINGPW7493lcqkPmWC4BqwvEt+2nTkVsoDoXXwSgWoFqjtJPhzgNbXdLMFa4myQcS
+ oq3Fv2QdEVT8HVfIaOHFRKw3iNO9WpZjAFpNv0FkS3VmRCtx7dlMCDN20QWd27+d5qmDgidxHKJ
+ QI9tgiGxN3BuRFl8tUC5zFwLLcmp5vYwJfuCL8/SeJ7aNS1pGLWFK6vrVTOhPQOAz/QdWbusrY6
+ WwiQWZU0oaV31UbWxxb+dyCcmdGWpA==
+X-Proofpoint-ORIG-GUID: 22TRJijZUZhQVo2_7O3_LZiEJuOWwwSj
+X-Proofpoint-GUID: 22TRJijZUZhQVo2_7O3_LZiEJuOWwwSj
+X-Authority-Analysis: v=2.4 cv=SoXJKPO0 c=1 sm=1 tr=0 ts=68a5a0f3 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=6LesCdOPl9v1yPo426oA:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_03,2025-08-20_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On Wed Aug 20, 2025 at 11:15 AM CEST, Vitaly Wool wrote:
-> Zpool is a common frontend for memory storage pool implementations.
-> These pools are typically used to store compressed memory objects,
-> e. g. for Zswap, the lightweight compressed cache for swap pages.
->
-> This patch provides the interface to use Zpool in Rust kernel code,
-> thus enabling Rust implementations of Zpool allocators for Zswap.
+On Wed, Aug 20, 2025 at 05:34:43PM +0800, Xiangxu Yin wrote:
+> Add DisplayPort controller for Qualcomm SM6150 SoC.
+> While SM6150 currently shares the same configuration as SC7180,
+> its hardware capabilities differ. Explicitly listing it ensures clarity
+> and avoids potential issues if SC7180 support evolves in the future.
 
-Do you work on such a user? Do you have code using this API already?
+I assume, it has no MST support. Am I right?
 
-More specifically, do you plan to re-implement Zswap in Rust?
+> 
+> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> index 9923b065323bbab99de5079b674a0317f3074373..996d0132e084d401db85014a1a4e445d00d62ed8 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> @@ -27,6 +27,7 @@ properties:
+>            - qcom,sc8280xp-dp
+>            - qcom,sc8280xp-edp
+>            - qcom,sdm845-dp
+> +          - qcom,sm6150-dp
+>            - qcom,sm8350-dp
+>            - qcom,sm8650-dp
+>        - items:
+> 
+> -- 
+> 2.34.1
+> 
 
-> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-
-If Alice contributed to the patch you may want to add a Co-developed-by: ta=
-g,
-otherwise this doesn't need her SoB.
-
-> +/// zpool API
-
-It would be nice to have some more documentation on this trait, including a
-doc-test illustrating some example usage.
-
-> +pub trait Zpool {
-> +    /// Opaque Rust representation of `struct zpool`.
-> +    type Pool: ForeignOwnable;
-
-Something that embedds a struct zpool, such as struct zswap_pool? If so, is=
-n't
-this type simply Self?
-
-> +
-> +    /// Create a pool.
-> +    fn create(name: *const c_uchar, gfp: Flags) -> Result<Self::Pool>;
-
-This shouldn't be a raw pointer, but rather &CStr.
-
-> +
-> +    /// Destroy the pool.
-> +    fn destroy(pool: Self::Pool);
-> +
-> +    /// Allocate an object of size `size` using GFP flags `gfp` from the=
- pool `pool`, wuth the
-> +    /// preferred NUMA node `nid`. If the allocation is successful, an o=
-paque handle is returned.
-> +    fn malloc(
-> +        pool: <Self::Pool as ForeignOwnable>::BorrowedMut<'_>,
-> +        size: usize,
-> +        gfp: Flags,
-> +        nid: NumaNode,
-> +    ) -> Result<usize>;
-> +
-> +    /// Free a previously allocated from the `pool` object, represented =
-by `handle`.
-> +    fn free(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, handle: =
-usize);
-> +
-> +    /// Make all the necessary preparations for the caller to be able to=
- read from the object
-> +    /// represented by `handle` and return a valid pointer to the `handl=
-e` memory to be read.
-> +    fn read_begin(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, ha=
-ndle: usize)
-> +        -> *mut c_void;
-
-Why does this return a raw pointer? I think this needs a proper type
-representation.
-
-> +
-> +    /// Finish reading from a previously allocated `handle`. `handle_mem=
-` must be the pointer
-> +    /// previously returned by `read_begin`.
-> +    fn read_end(
-> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
-> +        handle: usize,
-> +        handle_mem: *mut c_void,
-> +    );
-
-Same here...
-
-> +
-> +    /// Write to the object represented by a previously allocated `handl=
-e`. `handle_mem` points
-> +    /// to the memory to copy data from, and `mem_len` defines the lengt=
-h of the data block to
-> +    /// be copied.
-> +    fn write(
-> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
-> +        handle: usize,
-> +        handle_mem: *mut c_void,
-
-...and here.
-
-> +        mem_len: usize,
-> +    );
-> +
-> +    /// Get the number of pages used by the `pool`.
-> +    fn total_pages(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>) -=
-> u64;
-> +}
-> +
-> +/// Zpool driver registration trait.
-> +pub trait Registration {
-
-I think you should use the kernel::driver::Registration instead, it's
-specifically for the purpose you defined this trait and ZpoolDriver for.
-
-As for the C callbacks, they should go into the Adapter type (which impleme=
-nts
-kernel::driver::RegistrationOps) directly, they don't need to be in a trait=
-.
-
-This way a new Zpool Registration is created with:
-
-	driver::Registration<zpool::Adapter>::new()
-
-This also allows you to take advantage of the module_driver!() macro to pro=
-vide
-your own module_zpool_driver!() macro.
-
-> +    /// Register a zpool driver.
-> +    fn register(&self, name: &'static CStr, module: &'static ThisModule)=
- -> Result;
-> +
-> +    /// Pool creation callback.
-> +    extern "C" fn _create(name: *const c_uchar, gfp: u32) -> *mut c_void=
-;
-> +
-> +    /// Pool destruction callback.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that `pool` is a valid pointer to `struct=
- zpool`.
-> +    unsafe extern "C" fn _destroy(pool: *mut c_void);
-> +
-> +    /// Callback for object allocation in the pool.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that `pool` is a valid pointer to `struct=
- zpool` and that `handle`
-> +    /// is a valid pointer to usize.
-> +    unsafe extern "C" fn _malloc(
-> +        pool: *mut c_void,
-> +        size: usize,
-> +        gfp: u32,
-> +        handle: *mut usize,
-> +        nid: c_int,
-> +    ) -> c_int;
-> +
-> +    /// Callback for object release.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that `pool` is a valid pointer to `struct=
- zpool`.
-> +    unsafe extern "C" fn _free(pool: *mut c_void, handle: usize);
-> +
-> +    /// Callback to prepare the object for reading.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that `pool` is a valid pointer to `struct=
- zpool`.
-> +    unsafe extern "C" fn _obj_read_begin(
-> +        pool: *mut c_void,
-> +        handle: usize,
-> +        local_copy: *mut c_void,
-> +    ) -> *mut c_void;
-> +
-> +    /// Callback to signal the end of reading from an object.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that `pool` is a valid pointer to `struct=
- zpool`.
-> +    unsafe extern "C" fn _obj_read_end(pool: *mut c_void, handle: usize,=
- handle_mem: *mut c_void);
-> +
-> +    /// Callback for writing to an object.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that `pool` is a valid pointer to `struct=
- zpool`.
-> +    unsafe extern "C" fn _obj_write(
-> +        pool: *mut c_void,
-> +        handle: usize,
-> +        handle_mem: *mut c_void,
-> +        mem_len: usize,
-> +    );
-> +
-> +    /// Callback to return the number of pages in the pool.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that `pool` is a valid pointer to `struct=
- zpool`.
-> +    unsafe extern "C" fn _total_pages(pool: *mut c_void) -> u64;
-> +}
-> +
-> +/// Zpool driver structure.
-> +pub struct ZpoolDriver<T: Zpool> {
-> +    inner: Opaque<bindings::zpool_driver>,
-
-I think this needs pin-init, another reason to use kernel::driver::Registra=
-tion
-instead. :)
-
-> +
-> +    /// Zpool callback functions that a zpool driver must provide
-> +    pub callbacks: T,
-> +}
-> +
-> +impl<T: Zpool> Clone for ZpoolDriver<T> {
-> +    fn clone(&self) -> Self {
-> +        todo!()
-> +    }
-> +}
-
-Cloning the driver structure? Why? Please also consider that struct zpool_d=
-river
-needs to be pinned.
+-- 
+With best wishes
+Dmitry
 
