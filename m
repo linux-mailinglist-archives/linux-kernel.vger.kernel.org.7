@@ -1,220 +1,451 @@
-Return-Path: <linux-kernel+bounces-777956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-777957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E71B2DFA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:40:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F94B2DFAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 16:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 134947AF8B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:38:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 938CE1BC5D00
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 14:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188D928CF76;
-	Wed, 20 Aug 2025 14:39:52 +0000 (UTC)
-Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1B8288512;
+	Wed, 20 Aug 2025 14:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YQUraHoN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981EB296BAF
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 14:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D3C2874E1;
+	Wed, 20 Aug 2025 14:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755700791; cv=none; b=UVdDOrr1Wg90hGXJf49S4uRQce0YFV3T7Q1BDBxpZrjIU2ovLn+7sYyxrzHH22IjMzYccwsUGB3guDfiYaJk0ugs+Bc0V2hqkyAPsoJYgISuIvOiWC+kmczdEkrb6pgS5wYtUALN8Z8zta2moycWih93/HluwNL1GQGsd1zt9Ts=
+	t=1755700806; cv=none; b=RHCD4dis7azAjWd2o6Fz/9TDbb6Kqb7pmk9p9FBT+5JqKwQMK6EpJKlIVnW5lQM5p+deQAqeirHWrv8mHGKJ2Taxk0qW9qqhi8g7X5Ad1xveUpx4VaVwwQLFFkS/V6porpSR7aHv5xWgQ6sWTHIMcf26yEZYWZGE/a9YdIC0SCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755700791; c=relaxed/simple;
-	bh=Jqa+oRFxpT5PHvadrbCfmGT0VQjho9bXsxWCXnvj4zs=;
+	s=arc-20240116; t=1755700806; c=relaxed/simple;
+	bh=2hsnr/uRVQ+w7TjHXO9WA8NgE8Si4u9KkJy0PnQOYm0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ea+E4qNYl7ot0eTI2v8TxXNW7sSFiH9K8Dbky9ko5C+H+yvdnJJpw8fTsbOXU/9xLigQVbJvzhrc7cFXkASIlGXm4oK4w7yJ/xPCfTBhEBDphjmSws0uKW0R0nPpTYz6aLvvZuD2nMPhNoXZ2yuSQh1nxyiKK0OvPT5VdGDC79M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.102 with ESMTP; 20 Aug 2025 23:39:40 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Wed, 20 Aug 2025 23:39:40 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330>
-References: <20250716202006.3640584-2-youngjun.park@lge.com>
- <jrkh2jy2pkoxgsxgsstpmijyhbzzyige6ubltvmvwl6fwkp3s7@kzc24pj2tcko>
- <aH+apAbBCmkMGPlO@yjaykim-PowerEdge-T330>
- <aH/baxIgrBI3Z1Hl@yjaykim-PowerEdge-T330>
- <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
- <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com>
- <aKC+EU3I/qm6TcjG@yjaykim-PowerEdge-T330>
- <CAF8kJuNuNuxxTbtkCb3Opsjfy-or7E+0AwPDi7L-EgqoraQ3Qg@mail.gmail.com>
- <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330>
- <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EW25CI6rq5uEvUK4fLUhQP4sSAS4Zxty53CgVnInX7+JuRzDQHbuacsfENSKK9AX8NK2WEgve9sMWcVCdOaeOy0e0cjNI1ZEPaI5N/UgnA7sip6RuCDi/hVDReUtsCK8IMzGqDf+teIhqRmuc1fhW8t45QeGigwf244HdWsm6ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YQUraHoN; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755700804; x=1787236804;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2hsnr/uRVQ+w7TjHXO9WA8NgE8Si4u9KkJy0PnQOYm0=;
+  b=YQUraHoNHlujSEUc8EB1vMBwM46z3GRGmYodLb44TZZ6jSKgEG4NQVk/
+   /ACVBBlZ6Exy23umh09MNWnVOIf9xZ4n3NF4V4Rgd60kob9nYfrrBEeBr
+   JbUv48UhgyhGWM3bYA69ICRDIVtIZ9CPCM3YRTMtLc4Lz9sbhMExvpZGB
+   cXr8XGEimeABIxPNK8yNF6lcgug/Cwi3uaJl0lMaTLXbnJfMvKw+Q+V8f
+   QVYI4qeZ4Sk1zka18mtkR9RZpEUJCfzvxF8XDrN/2toIoQxeVzQ7tIFJL
+   A7fNMRxBP83miuHtRT/8skKT2RJDUJf/qq4uQ1SYhyD2LoE5KMmo31qcG
+   g==;
+X-CSE-ConnectionGUID: gVQW9O1YSK6JP1IpuS027Q==
+X-CSE-MsgGUID: c+dzXP14SOGjWiCHjFaFoA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="69066266"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="69066266"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:40:03 -0700
+X-CSE-ConnectionGUID: NhCdyxuzQKa/uXKfQLMGCA==
+X-CSE-MsgGUID: t5SSJQBWQkWyVxtyIDNJ4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; 
+   d="scan'208";a="173494971"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 07:40:01 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uojyn-00000006xan-3C2o;
+	Wed, 20 Aug 2025 17:39:57 +0300
+Date: Wed, 20 Aug 2025 17:39:57 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Haixu Cui <quic_haixcui@quicinc.com>
+Cc: harald.mommer@oss.qualcomm.com, quic_msavaliy@quicinc.com,
+	broonie@kernel.org, virtio-dev@lists.linux.dev,
+	viresh.kumar@linaro.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hdanton@sina.com,
+	qiang4.zhang@linux.intel.com, alex.bennee@linaro.org,
+	quic_ztu@quicinc.com
+Subject: Re: [PATCH v4 3/3] SPI: Add virtio SPI driver
+Message-ID: <aKXePVShWzXGi8yP@smile.fi.intel.com>
+References: <20250820084944.84505-1-quic_haixcui@quicinc.com>
+ <20250820084944.84505-4-quic_haixcui@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
+In-Reply-To: <20250820084944.84505-4-quic_haixcui@quicinc.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-> > inclusion/exclusion semantics at the cgroup level. The reason I decided not to
-> > go with it is because it lacks flexibility — it cannot express arbitrary     
-> > ordering. As noted above, it is impossible to represent arbitrary orderings, 
-> > which is why I chose a per-device priority strategy instead.                 
->                                                                                
-> As said, arbitrary orders violate the swap entry LRU orders. You still         
-> haven't given me a detailed technical reason why you need arbitrary            
-> orders other than "I want a pony".
+On Wed, Aug 20, 2025 at 04:49:44PM +0800, Haixu Cui wrote:
+> This is the virtio SPI Linux kernel driver.
 
-I believe the examples I provided for arbitrary ordering can be considered
-a detailed technical reason.
-(You responded with Option 1 and Option 2.)
+...
 
-> > The `swap.tier` concept also requires mapping priorities to tiers, creating  
-> > per-cgroup tier objects, and so forth. That means a number of supporting     
-> > structures are needed as well. While I agree it is conceptually well-defined,
-> > I don’t necessarily find it simpler than the per-device priority model.      
->                                                                                
-> You haven't embraced the swap.tiers ideas to the full extent. I do see         
-> it can be simpler if you follow my suggestion. You are imaging a               
-> version using swap file priority data struct to implement the swap             
-> tiers. 
+> +#include <linux/completion.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/stddef.h>
+> +#include <linux/virtio.h>
+> +#include <linux/virtio_ring.h>
+> +#include <linux/virtio_spi.h>
 
-Thank you for the detailed explanation. I think I understood the core points of this concept
-What I wrote was simply my interpretation — that it can be
-viewed as a well-defined extension of maintaining equal priority dependency
-together with inclusion/exclusion semantics. Nothing more and nothing less.
+> +#define VIRTIO_SPI_MODE_MASK \
+> +	(SPI_CPHA | SPI_CPOL | SPI_CS_HIGH | SPI_LSB_FIRST)
 
-> That is not what I have in mind. The tiers can be just one             
-> integer to represent the set of tiers it enrolls and the default. If           
-> you follow my suggestion and the design you will have a simpler series         
-> in the end.                                                                    
+We have SPI_MODE_X_MASK.
 
-Through this discussion my intention is to arrive at the best solution,
-and I appreciate that you pointed out areas I should reconsider. If you,
-and other reviewers(If somebody gives opions of it, then it will be helpful)
-generally conclude that the tier concept is the right path,
-I have a clear willingness to re-propose an RFC and patches
-based on your idea. In that case, since arbitrary ordering would not be
-allowed, I fully agree that the main swap selection logic would become
-simpler than my current implementation.
-                                                                    
-> The problem is that you pollute your fast tier with very cold swap              
-> entry data, that is to your disadvantage, because you will need to             
-> swap back more from the slower tier.                                           
->                                                                                
-> e.g. you have two pages. Swap entry A will get 2 swap faults, the swap         
-> entry B will get 20 swap faults in the next 2 hours. B is hotter than          
-> A. Let's say you have to store them one in zswap and the other in hdd.         
-> Which one should you store in faster zswap? Obvious swap entry B.              
->                                                                                
-> It will cause more problems when you flush the data to the lower tier.         
-> You want to flush the coldest data first. Please read about the                
-> history of zswap write back and what LRU problem it encountered. The           
-> most recent zswap storing the incompressible pages series in the mail          
-> list precisely driven by preserving the swap entry LRU order reason.           
->                                                                                
-> You really should consider the effect on swap entry LRU ordering               
-> before you design the per cgroup swap priority.                                
+...
 
-Then I would like to ask a fundamental question about priority. Priority is
-a user interface, and the user has the choice. From the beginning, when the
-user sets priorities, there could be a scenario where the slower swap is
-given a higher priority and the faster swap is given a lower one. That is
-possible. For example, if the faster device has a short lifetime, a real
-use case might be to consume the slower swap first for endurance, and only
-use the faster swap when unavoidable.
+> +struct virtio_spi_req {
+> +	struct completion completion;
+> +	struct spi_transfer_head transfer_head	____cacheline_aligned;
+> +	const u8 *tx_buf;
+> +	u8 *rx_buf;
+> +	struct spi_transfer_result result	____cacheline_aligned;
+> +};
 
-In this case, logically from the LRU perspective there is no inversion of
-priority order, but in practice the slower device is filled first. That
-looks like degradation from a performance perspective — but it is exactly
-what the user intended.
+Dunno if `pahole` aware of ____cacheline_aligned attribute, but does it shows
+any potential improvement?
 
-The swap tier concept appears to map priority semantics directly to service
-speed, so that higher priority always means faster service. This looks like
-it enforces the choice on the user(but it is opend).
+I think the fields can be reshuffled to go last and only one needs that
+attribute.
 
-Even with swap tiers, under the semantics you suggested, it is possible for
-a given cgroup to use only the slower tier. From that cgroup’s view there
-is no LRU inversion, but since the fast swap exists and is left unused, it
-could still be seen as an "inverse" in terms of usage.
+struct virtio_spi_req {
+	struct completion completion;
+	const u8 *tx_buf;
+	u8 *rx_buf;
+	struct spi_transfer_head transfer_head	____cacheline_aligned;
+	struct spi_transfer_result result;
+};
 
-In summary, what I struggle to understand is that if the major assumption
-is that swap operation must always align with service speed, then even swap
-tiers can contradict it (since users may deliberately prefer the lower
-tier). In that case, wouldn’t the whole concept of letting users select swap
-devices by priority itself also become a problem?
+...
 
-> > I mentioned already on this mail: what swap tiers cannot do is arbitrary     
-> > ordering. If ordering is fixed globally by tiers, some workloads that want to
-> > consume slower swap devices first (and reserve faster devices as a safety    
-> > backend to minimize swap failures) cannot be expressed. This kind of policy  
-> > requires arbitrary ordering flexibility, which is possible with per-device   
-> > priorities but not with fixed tiers.                                         
->                                                                                
-> Let's say you have fast tier A and slow tier B.                                
->                                                                                
-> Option 1) All swap entries go through the fast tier A first. As time           
-> goes on, the colder swap entry will move to the end of the tier A LRU,         
-> because there is no swap fault happening to those colder entries. If           
-> you run out of space of  A, then you flush the end of the A to B. If           
-> the swap fault does happen in the relative short period of time, it            
-> will serve by the faster tier of A.                                            
->                                                                                
-> That is a win compared to your proposal you want directly to go to B,          
-> with more swap faults will be served by B compared to option 1).               
->                                                                                
-> option 2) Just disable fast tier A in the beginning, only use B until          
-> B is full. At some point B is full, you want to enable fast tier A.            
-> Then it should move the head LRU from B into A. That way it still              
-> maintains the LRU order.                                                       
->                                                                                
-> option 1) seems better than 2) because it serves more swap faults from         
-> faster tier A.                                                                 
+> +static int virtio_spi_set_delays(struct spi_transfer_head *th,
+> +				 struct spi_device *spi,
+> +				 struct spi_transfer *xfer)
+> +{
+> +	int cs_setup;
+> +	int cs_word_delay_xfer;
+> +	int cs_word_delay_spi;
+> +	int delay;
+> +	int cs_hold;
+> +	int cs_inactive;
+> +	int cs_change_delay;
+> +
+> +	cs_setup = spi_delay_to_ns(&spi->cs_setup, xfer);
+> +	if (cs_setup < 0) {
 
-Option 1 does not really align with the usage scenario I had in mind,
-since it starts from the fast swap. Option 2 fits partially, but requires
-controlling when to enable the fast tier once full, and handling LRU
-movement — which adds complexity.
+Hmm... Not a problem in your code, but ns can be quite high for low speed
+links, there is a potential overflow...
 
-Your final suggestion of Option 1 seems consistent with your original
-objection: that the system design should fundamentally aim at performance
-improvement by making use of the fast swap first.
+> +		dev_warn(&spi->dev, "Cannot convert cs_setup\n");
+> +		return cs_setup;
+> +	}
+> +	th->cs_setup_ns = cpu_to_le32(cs_setup);
+> +
+> +	cs_word_delay_xfer = spi_delay_to_ns(&xfer->word_delay, xfer);
+> +	if (cs_word_delay_xfer < 0) {
+> +		dev_warn(&spi->dev, "Cannot convert cs_word_delay_xfer\n");
+> +		return cs_word_delay_xfer;
+> +	}
+> +	cs_word_delay_spi = spi_delay_to_ns(&spi->word_delay, xfer);
+> +	if (cs_word_delay_spi < 0) {
+> +		dev_warn(&spi->dev, "Cannot convert cs_word_delay_spi\n");
+> +		return cs_word_delay_spi;
+> +	}
 
-> > And vswap possible usage: if we must consider vswap (assume we can select it 
-> > like an individual swap device), where should it be mapped in the tier model?
-> > (see https://lore.kernel.org/linux-mm/CAMgjq7BA_2-5iCvS-vp9ZEoG=1DwHWYuVZOuH8DWH9wzdoC00g@mail.gmail.com/)
->                                                                                
-> The swap tires do not depend on vswap, you don't need to worry about that now. 
+> +	if (cs_word_delay_spi > cs_word_delay_xfer)
+> +		th->word_delay_ns = cpu_to_le32(cs_word_delay_spi);
+> +	else
+> +		th->word_delay_ns = cpu_to_le32(cs_word_delay_xfer);
 
-I initially understood vswap could also be treated as an
-identity selectable in the unified swap framework. If that were the case, I
-thought it would be hard to map vswap into the tier concept. Was that my
-misinterpretation?
+Why not max() ?
 
-> The per cgroup swap tiers integer bitmask is simpler than maintaining          
-> a per cgroup order list. It might be the same complexity in your mind,         
-> I do see swap tiers as the simpler one.                                        
+> +	delay = spi_delay_to_ns(&xfer->delay, xfer);
+> +	if (delay < 0) {
+> +		dev_warn(&spi->dev, "Cannot convert delay\n");
+> +		return delay;
+> +	}
+> +	cs_hold = spi_delay_to_ns(&spi->cs_hold, xfer);
+> +	if (cs_hold < 0) {
+> +		dev_warn(&spi->dev, "Cannot convert cs_hold\n");
+> +		return cs_hold;
+> +	}
+> +	th->cs_delay_hold_ns = cpu_to_le32(delay + cs_hold);
+> +
+> +	cs_inactive = spi_delay_to_ns(&spi->cs_inactive, xfer);
+> +	if (cs_inactive < 0) {
+> +		dev_warn(&spi->dev, "Cannot convert cs_inactive\n");
+> +		return cs_inactive;
+> +	}
+> +	cs_change_delay = spi_delay_to_ns(&xfer->cs_change_delay, xfer);
+> +	if (cs_change_delay < 0) {
+> +		dev_warn(&spi->dev, "Cannot convert cs_change_delay\n");
+> +		return cs_change_delay;
+> +	}
+> +	th->cs_change_delay_inactive_ns =
+> +		cpu_to_le32(cs_inactive + cs_change_delay);
+> +
+> +	return 0;
+> +}
 
-I agree that from the perspective of implementing the main swap selection
-logic, tiers are simpler. Since arbitrary ordering is not allowed, a large
-part of the implementation complexity can indeed be reduced.
+...
 
-Once again, thank you for your thoughtful comments and constructive feedback.
+> +static int virtio_spi_transfer_one(struct spi_controller *ctrl,
+> +				   struct spi_device *spi,
+> +				   struct spi_transfer *xfer)
+> +{
+> +	struct virtio_spi_priv *priv = spi_controller_get_devdata(ctrl);
+> +	struct virtio_spi_req *spi_req;
+> +	struct spi_transfer_head *th;
+> +	struct scatterlist sg_out_head, sg_out_payload;
+> +	struct scatterlist sg_in_result, sg_in_payload;
+> +	struct scatterlist *sgs[4];
 
-Best Regards,
-Youngjun Park 
+> +	unsigned int outcnt = 0u;
+> +	unsigned int incnt = 0u;
+
+Are 'u':s important in this case/
+
+> +	int ret;
+> +
+> +	spi_req = kzalloc(sizeof(*spi_req), GFP_KERNEL);
+> +	if (!spi_req)
+> +		return -ENOMEM;
+> +
+> +	init_completion(&spi_req->completion);
+> +
+> +	th = &spi_req->transfer_head;
+> +
+> +	/* Fill struct spi_transfer_head */
+> +	th->chip_select_id = spi_get_chipselect(spi, 0);
+> +	th->bits_per_word = spi->bits_per_word;
+> +	th->cs_change = xfer->cs_change;
+> +	th->tx_nbits = xfer->tx_nbits;
+> +	th->rx_nbits = xfer->rx_nbits;
+> +	th->reserved[0] = 0;
+> +	th->reserved[1] = 0;
+> +	th->reserved[2] = 0;
+> +
+> +	static_assert(VIRTIO_SPI_CPHA == SPI_CPHA,
+> +		      "VIRTIO_SPI_CPHA must match SPI_CPHA");
+> +	static_assert(VIRTIO_SPI_CPOL == SPI_CPOL,
+> +		      "VIRTIO_SPI_CPOL must match SPI_CPOL");
+> +	static_assert(VIRTIO_SPI_CS_HIGH == SPI_CS_HIGH,
+> +		      "VIRTIO_SPI_CS_HIGH must match SPI_CS_HIGH");
+> +	static_assert(VIRTIO_SPI_MODE_LSB_FIRST == SPI_LSB_FIRST,
+> +		      "VIRTIO_SPI_MODE_LSB_FIRST must match SPI_LSB_FIRST");
+> +
+> +	th->mode = cpu_to_le32(spi->mode & VIRTIO_SPI_MODE_MASK);
+> +	if (spi->mode & SPI_LOOP)
+> +		th->mode |= cpu_to_le32(VIRTIO_SPI_MODE_LOOP);
+> +
+> +	th->freq = cpu_to_le32(xfer->speed_hz);
+> +
+> +	ret = virtio_spi_set_delays(th, spi, xfer);
+> +	if (ret)
+> +		goto msg_done;
+> +
+> +	/* Set buffers */
+> +	spi_req->tx_buf = xfer->tx_buf;
+> +	spi_req->rx_buf = xfer->rx_buf;
+> +
+> +	/* Prepare sending of virtio message */
+> +	init_completion(&spi_req->completion);
+> +
+> +	sg_init_one(&sg_out_head, th, sizeof(*th));
+> +	sgs[outcnt] = &sg_out_head;
+> +	outcnt++;
+> +
+> +	if (spi_req->tx_buf) {
+> +		sg_init_one(&sg_out_payload, spi_req->tx_buf, xfer->len);
+> +		sgs[outcnt] = &sg_out_payload;
+> +		outcnt++;
+> +	}
+> +
+> +	if (spi_req->rx_buf) {
+> +		sg_init_one(&sg_in_payload, spi_req->rx_buf, xfer->len);
+> +		sgs[outcnt] = &sg_in_payload;
+> +		incnt++;
+> +	}
+> +
+> +	sg_init_one(&sg_in_result, &spi_req->result,
+> +		    sizeof(struct spi_transfer_result));
+> +	sgs[outcnt + incnt] = &sg_in_result;
+> +	incnt++;
+> +
+> +	ret = virtqueue_add_sgs(priv->vq, sgs, outcnt, incnt, spi_req,
+> +				GFP_KERNEL);
+> +	if (ret)
+> +		goto msg_done;
+> +
+> +	/* Simple implementation: There can be only one transfer in flight */
+> +	virtqueue_kick(priv->vq);
+> +
+> +	wait_for_completion(&spi_req->completion);
+> +
+> +	/* Read result from message and translate return code */
+> +	switch (spi_req->result.result) {
+> +	case VIRTIO_SPI_TRANS_OK:
+> +		break;
+> +	case VIRTIO_SPI_PARAM_ERR:
+> +		ret = -EINVAL;
+> +		break;
+> +	case VIRTIO_SPI_TRANS_ERR:
+> +		ret = -EIO;
+> +		break;
+> +	default:
+> +		ret = -EIO;
+> +		break;
+> +	}
+> +
+> +msg_done:
+
+> +	kfree(spi_req);
+
+Can be called via __free() to simplify the error handling,
+
+> +	if (ret)
+> +		ctrl->cur_msg->status = ret;
+> +
+> +	return ret;
+> +}
+
+...
+
+> +static int virtio_spi_probe(struct virtio_device *vdev)
+> +{
+> +	struct virtio_spi_priv *priv;
+> +	struct spi_controller *ctrl;
+
+> +	int err;
+
+Out of a sudden it's named 'err'. Please, go through the code and make
+style/naming/etc consistent.
+
+> +	u32 bus_num;
+> +
+> +	ctrl = devm_spi_alloc_host(&vdev->dev, sizeof(*priv));
+> +	if (!ctrl)
+> +		return -ENOMEM;
+> +
+> +	priv = spi_controller_get_devdata(ctrl);
+> +	priv->vdev = vdev;
+> +	vdev->priv = priv;
+
+> +	device_set_node(&ctrl->dev, dev_fwnode(&vdev->dev));
+
+> +	/* Setup ACPI node for controlled devices which will be probed through ACPI. */
+> +	ACPI_COMPANION_SET(&vdev->dev, ACPI_COMPANION(vdev->dev.parent));
+
+This is strange. Either you need to put parent above in device_set_node() or
+drop it here. Otherwise it's inconsistent. Needs a very good explanation what's
+going on here...
+
+> +	dev_set_drvdata(&vdev->dev, ctrl);
+> +
+> +	err = device_property_read_u32(&vdev->dev, "spi,bus-num", &bus_num);
+> +	if (!err && bus_num <= S16_MAX)
+
+This is wrong. What is the bus_num value when err != 0?
+And why do we even care about this?
+
+> +		ctrl->bus_num = bus_num;
+> +	else
+> +		ctrl->bus_num = -1;
+> +
+> +	virtio_spi_read_config(vdev);
+> +
+> +	ctrl->transfer_one = virtio_spi_transfer_one;
+> +
+> +	err = virtio_spi_find_vqs(priv);
+> +	if (err) {
+
+> +		dev_err_probe(&vdev->dev, err, "Cannot setup virtqueues\n");
+> +		return err;
+
+		return dev_err_probe(...);
+
+> +	}
+
+> +	/* Register cleanup for virtqueues using devm */
+> +	err = devm_add_action_or_reset(&vdev->dev, (void (*)(void *))virtio_spi_del_vq, vdev);
+> +	if (err) {
+> +		dev_err_probe(&vdev->dev, err, "Cannot register virtqueue cleanup\n");
+> +		return err;
+> +	}
+> +
+> +	/* Use devm version to register controller */
+> +	err = devm_spi_register_controller(&vdev->dev, ctrl);
+> +	if (err) {
+> +		dev_err_probe(&vdev->dev, err, "Cannot register controller\n");
+> +		return err;
+
+As per above.
+
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int virtio_spi_freeze(struct device *dev)
+> +{
+> +	struct spi_controller *ctrl = dev_get_drvdata(dev);
+> +	struct virtio_device *vdev = container_of(dev, struct virtio_device, dev);
+
+Use dev_to_virtio()
+
+> +	int ret;
+> +
+> +	ret = spi_controller_suspend(ctrl);
+> +	if (ret) {
+> +		dev_warn(dev, "cannot suspend controller (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	virtio_spi_del_vq(vdev);
+> +	return 0;
+> +}
+> +
+> +static int virtio_spi_restore(struct device *dev)
+> +{
+> +	struct spi_controller *ctrl = dev_get_drvdata(dev);
+> +	struct virtio_device *vdev = container_of(dev, struct virtio_device, dev);
+
+As per above.
+
+> +	int ret;
+> +
+> +	ret = virtio_spi_find_vqs(vdev->priv);
+> +	if (ret) {
+> +		dev_err(dev, "problem starting vqueue (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = spi_controller_resume(ctrl);
+> +	if (ret)
+> +		dev_err(dev, "problem resuming controller (%d)\n", ret);
+> +
+> +	return ret;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
