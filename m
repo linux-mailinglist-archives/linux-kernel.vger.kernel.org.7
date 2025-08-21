@@ -1,101 +1,189 @@
-Return-Path: <linux-kernel+bounces-778957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C385B2ED28
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:49:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7052B2ED45
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B2355E2D2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:48:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CCB1162C0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BCE20E6E2;
-	Thu, 21 Aug 2025 04:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9C12E974E;
+	Thu, 21 Aug 2025 04:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CvDA5XY4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BaoHWOs8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007A6347C7;
-	Thu, 21 Aug 2025 04:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC3A2C21DE;
+	Thu, 21 Aug 2025 04:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755751680; cv=none; b=WL01BL5KKljM9Qam8j8iSuu19c8B1JrxNggOKB7Wohsu0iIGfbFQQYR7BoCeRAYDWJr39hpXlVUnn519HPJ2U5j2dO3ZuAug+dZzQ9rmaK2fLUcJwQZnH9W/uEQrMCsHeJtIJfH8QQzHmTmRXWhvgVnugBSmgZYlyKjN+rLTxLQ=
+	t=1755751770; cv=none; b=DlN9hn5e6TG2QcKJ2cUC2RSvRrwcR3fngG74AUaseCHckZm2WxV5A1FQmS/5wbjT9uk8/7D1sV0dMykJKjeTYo8CjISPi1SWibHbEH/98fBKlkxMdgqiYZXNo+4cYTxpmxzyDZuYblX8fvQhClAimHmyOWw6j8cV+XhksRhBVqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755751680; c=relaxed/simple;
-	bh=s9beO2CbS4BGY4VluAibPH2xkOmXO0+zZTnWtdDIyoI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=mHib93To+qTHFcsjI1vQxbR+gjj8zyDDsZOJFrQ7lxnVKs03WDZs+E3zOqbsJzQ8RpJldZy4j1Bxei4KqaSJ9vuLHpCQsObtu7C0RWJvV5BiZX9UQIJ27Q0QQQo6uEjvP2FD9mApXLs7mn8fkjKgD4yaLGkcI7wGHNXDKmWKewQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CvDA5XY4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0FCEC4CEF4;
-	Thu, 21 Aug 2025 04:47:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755751678;
-	bh=s9beO2CbS4BGY4VluAibPH2xkOmXO0+zZTnWtdDIyoI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CvDA5XY4aN67rGgi2OSdyrOpEVOn7NxmxoH2uDjIDpSs8anlTLBTKbRMz/iHchRzO
-	 W6HmgQ39fV65HHE0el8KyLHwXTIPh7kS0RAZieQaiD55oz40iINm/BZdX57b3cSsit
-	 soo/PqlghcS5IlzQDrxA+Pkb6MtHp/z7ntLDFpzo=
-Date: Wed, 20 Aug 2025 21:47:56 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Brian Mak <makb@juniper.net>
-Cc: Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>, Alexander
- Graf <graf@amazon.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Rob
- Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
- <x86@kernel.org>, <kexec@lists.infradead.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] kexec: Add KEXEC_FILE_NO_CMA as a legal flag
-Message-Id: <20250820214756.5c7b551e4723d9f0b5dd55e3@linux-foundation.org>
-In-Reply-To: <20250805211527.122367-2-makb@juniper.net>
-References: <20250805211527.122367-1-makb@juniper.net>
-	<20250805211527.122367-2-makb@juniper.net>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755751770; c=relaxed/simple;
+	bh=tW2Hau8AOhF6Y7T2uMXWcSWd6kg1T/J7pUIiWoEBYSY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V5BQ5ns0YxCfNQgLDnnnBcQoP/rzB0bRnuL5XHuAyWDvgMFleVZIirY42EIuIx3KBkQ0hw1k7DBN4xNYmxCiA9ZOK+zlox2qKw+xVPt9byFQsDpiK2X1fh09c6wp4fC/FlEyChDOo0y8TIzTbnDtAhg9ul57iWxNXDHiF+R3YPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BaoHWOs8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KI426V025147;
+	Thu, 21 Aug 2025 04:49:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=suOScva93YHWqgzzZ0UPw5fl6uhBUo7bt64
+	NhjijA6o=; b=BaoHWOs8FxyvnzUUNtqrnpMqe2jYVzNMaSZHvvgCj4LOkw88Ywe
+	c2uR+GynO7iNzSI6JIK0OW3IXcjZRUa/92a5C53ntsaOESoBB3oFje1scwSh0N1+
+	dDnn8hRJ+YZ468zqUzMM0E+C1AlQSg+cW3oyBKpEjAq8MlPp03o302ngFpiAPcz8
+	N+g5mhE8TSFD4wRlKJAmtN8X6KPK2nVjwQHHNdrk5OFojOwZcwT5h/F7KWT1lk//
+	ZhXwVpyeaXPrHal5cbJVyi08lhkKwDCjzr3Ctcn6eBrFFJeTOPOkkFRyB8CcV9E8
+	edRalUH8TL5KPiWypUolJX+E0m5MiVISlVQ==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52ac195-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 04:49:21 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57L4nHx8021953;
+	Thu, 21 Aug 2025 04:49:17 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 48jk2m996g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 04:49:17 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57L4nHTO021921;
+	Thu, 21 Aug 2025 04:49:17 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 57L4nHgh021917
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 04:49:17 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
+	id 677C75C6; Thu, 21 Aug 2025 10:19:16 +0530 (+0530)
+From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+        quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com,
+        Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+Subject: [PATCH v8 0/9] Enable audio on qcs6490-RB3Gen2 and qcm6490-idp boards
+Date: Thu, 21 Aug 2025 10:19:05 +0530
+Message-Id: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: dCeADrQFdI2vZzuGXb5qvzOgUzqeSmqk
+X-Authority-Analysis: v=2.4 cv=B83gEOtM c=1 sm=1 tr=0 ts=68a6a551 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=eK7tGN94E5jGERbYYjcA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: dCeADrQFdI2vZzuGXb5qvzOgUzqeSmqk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX2G5H4ykGbXh/
+ zc/Why06D9LqF57m567qLg2ibYa2dXSR1Bsprdr5UmuBpfYAU4U91O5LLLht65EzhDS2cS/L9lX
+ DflbAQV6fFIgcncd8uo7KV52BU26iDlntIGv880TCNwIu5QFChSXpSxtVZycuihKK4HmeMWqpGy
+ iofDoRIqRmBs+NN9K0RbUjqhQ4pEGrhFe9z58l2I3ca2+a9pahZm4YLK/Po+I0pF2qfLk6XGx3o
+ 6DkH91dOOyOZZUuf9CgBoxOTGBW3FsU2srcOMM8d/AwiBhdb00PtrUGIInv1gChg0DwPx2HUAmY
+ XMFnpwwGFrZtK/fKo+cWLEEYFZDZB0k/LZhCYVDbRM02oNfhaHFG+d3ZDBTl/t/cWiVfe2HLwDC
+ PFVL5TMXg1sVhTBY1FHsZP2Qd066jA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_06,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 clxscore=1015 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On Tue, 5 Aug 2025 14:15:26 -0700 Brian Mak <makb@juniper.net> wrote:
+From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
 
-> Commit 07d24902977e ("kexec: enable CMA based contiguous allocation")
-> introduces logic to use CMA-based allocation in kexec by default. As
-> part of the changes, it introduces a kexec_file_load flag to disable the
-> use of CMA allocations from userspace. However, this flag is broken
-> since it is missing from the list of legal flags for kexec_file_load.
-> kexec_file_load returns EINVAL when attempting to use the flag.
-> 
-> Fix this by adding the KEXEC_FILE_NO_CMA flag to the list of legal flags
-> for kexec_file_load.
-> 
-> Fixes: 07d24902977e ("kexec: enable CMA based contiguous allocation")
+Audio support is now enabled on the qcs6490-RB3Gen2 and qcm6490-idp boards.
+The updates include adding the necessary audio device tree support and the required
+dependencies.
 
-A description of the userspace-visible runtime effects of this bug
-would be very helpful, please.  A lot more than "is broken"!
+Both the qcs6490-RB3Gen2 and qcm6490-idp boards are derived from the same SoC 
+platform. Therefore, the audio support changes are included in a single patch 
+set for consistency and ease of maintenance.
 
-Also, could we please have some reviewer input on this change?
+changes in [v8]:
+	- Added drive strength for all lpass_dmic pinctrl nodes reported by Konrad Dybcio.
+	- Rebased changes on top of the latest kernel tree.
+	- Link to V7: https://lore.kernel.org/all/20250720173215.3075576-1-quic_pkumpatl@quicinc.com/
 
-Thanks.
+changes in [v7]:
+	- Addressed the review commnets in dt-binding patches from Krzysztof Kozlowski
+	- Rebased changes on top of dependent patches
+	- Link to V6: https://lore.kernel.org/linux-sound/20250715180050.3920019-1-quic_pkumpatl@quicinc.com/
 
-> --- a/include/linux/kexec.h
-> +++ b/include/linux/kexec.h
-> @@ -460,7 +460,8 @@ bool kexec_load_permitted(int kexec_image_type);
->  
->  /* List of defined/legal kexec file flags */
->  #define KEXEC_FILE_FLAGS	(KEXEC_FILE_UNLOAD | KEXEC_FILE_ON_CRASH | \
-> -				 KEXEC_FILE_NO_INITRAMFS | KEXEC_FILE_DEBUG)
-> +				 KEXEC_FILE_NO_INITRAMFS | KEXEC_FILE_DEBUG | \
-> +				 KEXEC_FILE_NO_CMA)
->  
->  /* flag to track if kexec reboot is in progress */
->  extern bool kexec_in_progress;
-> -- 
-> 2.25.1
-> 
+changes in [v6]:
+	- Addressed the review commnets in dt-binding patches from Krzysztof Kozlowski
+	- Link to V5: https://lore.kernel.org/linux-arm-msm/20250625082927.31038-1-quic_pkumpatl@quicinc.com/
+
+changes in [v5]:
+	- Added separate patch for QCS6490 pinctrl bindings.
+	- Updated commit message with more description.
+	- Addressed the review commnets.
+	- Link to V4: https://lore.kernel.org/linux-arm-msm/20250527111227.2318021-1-quic_pkumpatl@quicinc.com/
+
+Changes in [v4]:
+	- Fix DT binding errors by adding dt-binding clock changes for ADSP base platform.
+	- Link to V3 : https://lore.kernel.org/linux-arm-msm/20250520062618.2765109-1-quic_pkumpatl@quicinc.com/
+
+Changes in [v3]:
+	- Added protection-domain in gpr services.
+	- Addressed the review commnets from Konrad Dybcio.
+	- Fix DT binding errors reported by Rob Herring.
+	- Link to V2 : https://lore.kernel.org/linux-arm-msm/20250429092430.21477-1-quic_pkumpatl@quicinc.com/
+
+Changes in [v2]:
+	- Created dtsi file to handle common audio nodes to support Audioreach.
+	- Addressed the review comments.
+	- Link to V1 : https://lore.kernel.org/linux-arm-msm/20250317054151.6095-2-quic_pkumpatl@quicinc.com/
+
+Mohammad Rafi Shaik (9):
+  arm64: dts: qcom: qcs6490-audioreach: Add gpr node
+  dt-bindings: pinctrl: qcom,sc7280-lpass-lpi-pinctrl: Document the
+    clock property
+  ASoC: dt-bindings: qcom,lpass-va-macro: Update bindings for clocks to
+    support ADSP
+  arm64: dts: qcom: sc7280: Add WSA SoundWire and LPASS support
+  arm64: dts: qcom: qcs6490-audioreach: Modify LPASS macros clock
+    settings for audioreach
+  arm64: dts: qcom: qcs6490-rb3gen2: Add WSA8830 speakers amplifier
+  arm64: dts: qcom: qcs6490-rb3gen2: Add sound card
+  arm64: dts: qcom: qcm6490-idp: Add WSA8830 speakers and WCD9370
+    headset codec
+  arm64: dts: qcom: qcm6490-idp: Add sound card
+
+ .../qcom,sc7280-lpass-lpi-pinctrl.yaml        |  16 ++
+ .../bindings/sound/qcom,lpass-va-macro.yaml   |  23 +-
+ arch/arm64/boot/dts/qcom/qcm6490-idp.dts      | 207 ++++++++++++++++++
+ .../boot/dts/qcom/qcs6490-audioreach.dtsi     | 121 ++++++++++
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  |  80 +++++++
+ arch/arm64/boot/dts/qcom/sc7280.dtsi          |  99 ++++++++-
+ 6 files changed, 540 insertions(+), 6 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+
+
+base-commit: 5303936d609e09665deda94eaedf26a0e5c3a087
+-- 
+2.34.1
+
 
