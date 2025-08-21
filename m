@@ -1,137 +1,143 @@
-Return-Path: <linux-kernel+bounces-778870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53FDB2EC41
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:44:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11528B2EC4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA4725A821E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:44:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 847EB1CC47CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A6325D1FC;
-	Thu, 21 Aug 2025 03:44:36 +0000 (UTC)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925082E7F29;
+	Thu, 21 Aug 2025 03:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vSDGKzlK"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F3A1A2C0B;
-	Thu, 21 Aug 2025 03:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2D52E7BD6
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 03:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755747876; cv=none; b=GfJuCueAmon7RHGYGY94BT/WNA7Znh3AR4bL4O5nKwmYaPGxaI6ljwPC8S3mvRL8/AWtHGqg/3lbMWZU+c+Wo0i98EaS6J1qoExz2WegS9koXJml01HMIVdCypEsCUSfeBOKWiqUlYH4J2rNX6R50xu01h19GyzosvdeYXXBbQw=
+	t=1755747910; cv=none; b=X4V1NMFDD+8ZQ5oMTVX8PiQMGpcKQMPNaAzWZ6pG1eTgM58ktD0KVw6mfb2mDBa+ZFGGfUksJf2zgd7sBrogv7FGihnmgr0kPm1m6i1eOTFGRSVJAQg2EwnwJhSdMTt3RnVS5fOOIAqPMba9QtAUtGY0EPtwrS1nzeHAAwTSVVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755747876; c=relaxed/simple;
-	bh=RyXJIjGQgBc3po6jjxW8jkV5efFNpfWOL8tbG5Mu6uo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjpaMavw5AjkMzl7HIlhfHj5TWBRIfVOzGNp6CGGkRe0ZI3aTtL8pGizXxNUvMUjfZoagCPcEVxqrEGSWKg9sRPg65upQK3LHhWmQcNGjcc1zCAM0oZrVwjWc1WFkBp/uTmbJIoiaBdQRtoI74fQjLO3mRNDBSYa7cZfjSlOmfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpsz17t1755747812t3cdede6a
-X-QQ-Originating-IP: /PIIUZV9tLa4lzulq/S6d4ZgXhpMQyylT/75u3kv3Hs=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 21 Aug 2025 11:43:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17795680503353605927
-Date: Thu, 21 Aug 2025 11:43:31 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] net: rnpgbe: Add register_netdev
-Message-ID: <7F14A04FE9C40F1A+20250821034331.GB1754449@nic-Precision-5820-Tower>
-References: <20250818112856.1446278-1-dong100@mucse.com>
- <20250818112856.1446278-6-dong100@mucse.com>
- <c37ee9e7-53de-4c21-b0cb-4cfb0936bc1e@lunn.ch>
+	s=arc-20240116; t=1755747910; c=relaxed/simple;
+	bh=RXOpSrix9UpiXiqz3m7Asn7b5jcVM4AJa3WjZvLUE5s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oMYVfO03kYMNv/7/8ZsQNb55CWyk0IjHtS1ZWRjY3rYxOgHFAefcq5QarkCBfFghdMJgZWRhR87s7HAJa8tQMU0E8t8IXSYWzbsI8z/sSM3IaeFAbI4v2KgxKGrnf79TJmj2H4ExriD6JnFFxyi5sFLIm4VJtoXmFH9dJEvPOyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vSDGKzlK; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e87031f560so86572985a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 20:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755747906; x=1756352706; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fiE3Yh9HLu32nPRPAj9hq4fRnZM1rWhHLDD+Kq+cBWU=;
+        b=vSDGKzlKWeLwMreXD8jleeS5BOU43kNmNgXnWGLhW+FfzhAxwrob/wL59l30vfEYg5
+         /leo7lqRAO6BzcAXyhC0+sURW5GvHpjS9VEGcDNN2zVg38K96I+EYOzdKsfoak624bqT
+         s65smWq6GEualbmAnSeGt4crXK3Xxa50+JHcZK64NKXUCVezLju+XsFoWtRMWGs/8Hml
+         ua1oeP46JSFJwCNzZupna2UsbhLGN/Qfu7ZkPsYsH5wXDpkBiOZqQrCcOLVNgsaRqxs0
+         Y3DJ+4hjYXyp7sa+i9O0NX8wOwQ9PqMQMi14zyFNTLi13CG6et6Wgv/q0XYD/SLakQNA
+         E8zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755747906; x=1756352706;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fiE3Yh9HLu32nPRPAj9hq4fRnZM1rWhHLDD+Kq+cBWU=;
+        b=eQovzEEGGopJ67i+U5S6ZeoV6QXGFEllqsT84tGamceLXlFfg6qtXoaUTYDltwnX4j
+         itYKlPNejQ9rb96z4wPLPx6nKAR+laVXrtiswqjDaaZB/DxhyIMBNrleMSKwFi3XineR
+         RSbRXi0H1QvLtxqXPkLuTsGuJ8F3bxCRbFjiKQGZovJuDQXLRnXNMHWlv8JJzASitiyc
+         31l7DTBgEQNd8cn9v4TTxFvwGOYQ7pujt3raqQY2I4dlqQ5s9R4vZT+IV9ryR93lJefI
+         5dDJ27uZx4l3jnGF6k/5oFZ7gfzqnmMDgxlL4CyUWd7BGTwqyvJ2rha3YrXW0kH9Ovu5
+         bgJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/N7RHBy4MbaX9PM1RnEErZOAdoTjBFbdyAqmrobXvDb3LelMHYJBWKCPW5Mw98o7YCR0paOsMltVGU7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxslDqfapKwFHRtFRGTFRX9HXG5qdr8dVf63XxWR53WTxYWf0RA
+	XomE13B7og/5NNPjb5YTa4nMd6wFxMBmAUmkI8sZ/mAt+MND+xonPJPxLAxE8WGudsFvMWStSwe
+	C8ct68qw+Xa5+vW8E425FH62PoFYn0yNwKaNUkinX9Q==
+X-Gm-Gg: ASbGncvYxWykpQrK3gLBhRoMl3zxUrSrBOa+M+9Stpr8A1lOkvCPNWOVhTzZZcyP4Gl
+	NGDw31XA9aCUwyzxiJYjv06eIw/L48/LzhgypapzZfi/wmz/n6nlYOIr9iARF3f6cEqfmG4OpRh
+	6gFyZ0hfEJe62XXGIe4xZbbtJCI9ZCxSYVD2GTPicvDPo4gQcLD9SXw2hNm0W3vWBCN81Fqph1d
+	oYLhz5l
+X-Google-Smtp-Source: AGHT+IGXTyFK3xz+R36l9e+TJiI56LYwF4z978HRe+c4os6j/REG/pla7Tv4Hx3g5sKF9/0tCU9dcttqYEnmb5ZmnqA=
+X-Received: by 2002:a05:620a:2991:b0:7e6:5ef5:8469 with SMTP id
+ af79cd13be357-7ea08e80c18mr104986685a.63.1755747906598; Wed, 20 Aug 2025
+ 20:45:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c37ee9e7-53de-4c21-b0cb-4cfb0936bc1e@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N1GwrkiB7FDZQmygpdP7EBd9LEZPjkl6RclOexlIjBJqFnRM0dfFYdqK
-	hiG/17M1CV3rhVEpnNYyR9rQGt+TpbBH9KYM1Y26VOn0jhGaVxj1UlB9Wa+wcf/mgHT4fXy
-	2LOzDtYBpOjgzEPQg9SBP9cci+YSxCeIhZJFUVzBuzReob0ciiauHb9As/qcUtbaIBUEuGt
-	5samx0uPif+I2ZT9mqEROzCjmzW2fRukOMqsNydAvvO0O+vi56fErNZmtL30b1NjJI+voAC
-	3e8X/uwe/XBPsAwtN12ZSTrzHG0S/8NKqUZErtlG7nIe2HzRumqh7VXuP1h/TEM15+ryYOS
-	LAkuEPbz9ZAvQcU809w7BT4yU1SMfPXBhsKPtte/mhu59ZX3IowTCU6HFUOhfnDJcDKh+v9
-	Rh0hnLRJe+/LJjyywnwKmJG+v4AHrpcx2jrYuYICOCUpvK39QFkM/kuaaEFpSxdUCwNf5zm
-	GayNLkw+9tHvvxQE07z/984wez5vFg5rnKjTLihZyPIRl87DYzL27cdqKINCXSf6YdpRl/+
-	SzsaVnhXMP+S2xl6fJCoV80L1s3VMpcxTez3DWJWt3b22/J07qnqJ7Pa20fG7ggffJAiL18
-	6dBOxTePLVTQd9fOEcLWCPBy/psYd2SDNc7QMZEnqZtmKgixc7nPqJejC5Ngb65YeTJwU5B
-	cAAPzSLlAci9Q2FFG6WxImrkwQ2ggCiTmB/OZPMMar4PLqm9+yK5g8ybLDPyo6y8Li+pAsD
-	fHQMB3ZGef5I860OuDGhLIF623Kyk6bAZ974hI/uBIcvgqpgwi2kRbUrA7x37o5pdGA/vXf
-	BSG38NoCHu7shajnBYnWRO5XDMafKUK/EcnLvPE7J1kkKJ5A3BFyR2/0Z3a1JaJfXobRcKV
-	esT7YfN0fRFc/DgR3kbI0DoiFaWwDFp91a9BCPrYzAuig+OCKpFAYzltQhXoBrz5rQMaFAW
-	pDY1vvP3mL79EHD5jAuRmfHg4q68O4mwtx4VUIVx87goxd6MJQ5/fSsKtNJyo5UOHxfhiE5
-	0EhZhwJcg141XjKXYiUym5DUsHS6wstUhy3puyK++/XEwuovHk
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+References: <20250821031514.49497-1-yelangyan@huaqin.corp-partner.google.com>
+In-Reply-To: <20250821031514.49497-1-yelangyan@huaqin.corp-partner.google.com>
+From: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+Date: Thu, 21 Aug 2025 11:44:55 +0800
+X-Gm-Features: Ac12FXxOPPOiZTgdG6dOtQKc4mxwM4nRdgfY0u6QqW8Rdf9SOc-Vt1HgddabZpw
+Message-ID: <CA++9cvojHApEr0b5ZbRNVjYtWvCS8WmZ-mrGMDh5O9mp1fkT0w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Add tc3408 bindings and timing
+To: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, jikos@kernel.org, bentiss@kernel.org
+Cc: dianders@chromium.org, linux-input@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 10:42:47PM +0200, Andrew Lunn wrote:
-> > +static int rnpgbe_get_permanent_mac(struct mucse_hw *hw,
-> > +				    u8 *mac_addr)
-> > +{
-> > +	struct device *dev = &hw->pdev->dev;
-> > +
-> > +	if (mucse_fw_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->port) ||
-> > +	    !is_valid_ether_addr(mac_addr)) {
-> > +		dev_err(dev, "Failed to get valid MAC from FW\n");
-> > +		return -EINVAL;
-> 
-> I _think_ mucse_fw_get_macaddr() can return -EINTR, because deep down,
-> it has a call to mutex_lock_interruptible(). If that happens, you
-> should not return iEINVAL, it is not an invalid value, its just an
-> interrupted system call.
-> 
-> This is what i'm talking about needing careful review...
-> 
->     Andrew
-> 
-> ---
-> pw-bot: cr
-> 
-> 
+Langyan Ye <yelangyan@huaqin.corp-partner.google.com> =E4=BA=8E2025=E5=B9=
+=B48=E6=9C=8821=E6=97=A5=E5=91=A8=E5=9B=9B 11:15=E5=86=99=E9=81=93=EF=BC=9A
+>
+> The tc3408 touch screen chip same as Elan eKTH6915 controller
+> has a reset gpio. The difference is that they have different
+> post_power_delay_ms.
+>
+> According to the Parade TC3408 datasheet, the reset pin requires a
+> pull-down duration longer than 10 ms, therefore post_power_delay_ms
+> is set to 10. In addition, the chipset requires an initialization
+> time greater than 300 ms after reset, so post_gpio_reset_on_delay_ms
+> is configured as 300.
+>
+> Changes in v3:
+> - PATCH 2/2: Corrected post_gpio_reset_on_delay_ms: 100 -> 300
+> - PATCH 2/2: Dropped Reviewed-by tag from Douglas Anderson since code cha=
+nged
+> - Link to v2: https://lore.kernel.org/all/20250820122520.3356738-1-yelang=
+yan@huaqin.corp-partner.google.com/
+>
+> Changes in v2:
+> - PATCH 1/2: Drop redundant "bindings for" from subject
+> - PATCH 1/2: Improve description (describe hardware instead of bindings)
+> - PATCH 1/2: Drop "panel: true" property
+> - PATCH 1/2: Drop redundant description for reset-gpios
+> - PATCH 1/2: Use unevaluatedProperties: false instead of additionalProper=
+ties
+> - Link to v1: https://lore.kernel.org/all/20250819034852.1230264-1-yelang=
+yan@huaqin.corp-partner.google.com/
+>
+> Langyan Ye (2):
+>   dt-bindings: input: Add Parade TC3408 touchscreen controller
+>   HID: i2c-hid: elan: Add parade-tc3408 timing
+>
+>  .../bindings/input/parade,tc3408.yaml         | 68 +++++++++++++++++++
+>  drivers/hid/i2c-hid/i2c-hid-of-elan.c         |  8 +++
+>  2 files changed, 76 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/parade,tc3408=
+.yaml
+>
+> --
+> 2.34.1
+>
 
-Ok, Maybe like This?
-Just return function return if mucse_fw_get_macaddr failed, and return
--EINVAL if not a valid mac.
+Hi all,
 
-static int rnpgbe_get_permanent_mac(struct mucse_hw *hw,
-				    u8 *mac_addr)
-{
-	struct device *dev = &hw->pdev->dev;
-	int ret;
+Apologies for the confusion. The last series I sent was labeled as
+"[PATCH v2 0/2]" in the subject, but it should have been "[PATCH v3 0/2]".
+Please consider that series as v3.
 
-	ret = mucse_fw_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->port); 
-	if (ret) {
-		dev_err(dev, "Failed to get MAC from FW\n");
-		return ret;
-	}
-
-	if (!is_valid_ether_addr(mac_addr)) {
-		dev_err(dev, "MAC from FW is not valid\n");
-		return -EINVAL;
-	}
-
-	return 0;
-}
-
-Thanks for your feedback.
-
+Thanks,
+Langyan
 
