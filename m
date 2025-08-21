@@ -1,99 +1,289 @@
-Return-Path: <linux-kernel+bounces-778752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FD0B2EA59
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:16:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE81AB2EA86
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ADED1C24C92
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:16:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B6471BC6B62
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2001F9A89;
-	Thu, 21 Aug 2025 01:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CADE1F418D;
+	Thu, 21 Aug 2025 01:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nmcfr7e8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HGb41qSo"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4449A36CE02;
-	Thu, 21 Aug 2025 01:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E181EF9EC
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755738971; cv=none; b=QjalFCCCqINwU8nTKnjb4nXhBjkbFTof1U+cutLZA0VT6D29hMGs+tPW/hrIfn9uUz0KfYxlkax1cdFqV6FribdOv6UR13PWZkVUjCOvE0cDRSUui8+2i+zFVG+7hJJU7OvTQXZPFKy7YNyeFN9N5Tfk0hpgczCHiapuTuc6BcA=
+	t=1755739206; cv=none; b=lZTgAgATBj8B9sytOEzICXgvtKL+BODZB5T1qhW/M5ZYSFT312EbPdSIi2UhPQlU6caEYH2MGszAX4IBXK8H+Y6FdJ356trQsUs8H87aglSJ0MCk2QJ9ChQvRspzXEPBG/iL9X42RI4G4rXcHlpr3IgsYN4pwp4YQ2i3h5q8y9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755738971; c=relaxed/simple;
-	bh=PkeRqvBIRGhspvX/sKPFj1tXO8ucfCKO6Wmq7H5bPh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X+CAC3jTdVvkdB7ExTNcVYpIcEhMxjcZgAiUT6xRl7KEsrPMYezIbU9chRpHrf8dmNGVPbsOo3iAizfQW6fBNBYBRfug5QC7itfZEawbffGp/0U5YOeqU6CpTz+mm8xIhvJfhGk4H2zh2otbOmnAaM903XNVVy9DdC/Ls/Qy62s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nmcfr7e8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77D79C4CEE7;
-	Thu, 21 Aug 2025 01:16:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755738970;
-	bh=PkeRqvBIRGhspvX/sKPFj1tXO8ucfCKO6Wmq7H5bPh0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Nmcfr7e8X94BeorS+PzjFVtzAk4dzIyD17E/Qv+R8sSC/1yD+csRH3Gp/LslhEVru
-	 +1DUNhByODJR0TY0JV6L6PM0TjlPCGXT732+v8UsMCvsAQfaW2l6SuDTUCcI9JDpxC
-	 ghRP4TcmNBnXaNwS4shi1GeSQMbKBiYR18YpYlPzKbZyLa/tLNCOd2tMJxMFZ/UlU/
-	 +op5CUXaQ9vDFGJ7OYk/n32qbYlWw/axg65ThxXDH0EnL1X8jkEsBMX3RFqLiWmjPw
-	 l/9tmz5aO3PsECQfmQv5j4+xBhO+FKSiMcZE3m/SyYkqAheKqKF2Lx8xuDBEzL1YeB
-	 bsy2CrwgDt0YA==
-Date: Wed, 20 Aug 2025 18:16:09 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: <almasrymina@google.com>, <asml.silence@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, <cratiu@nvidia.com>,
- <parav@nvidia.com>, <netdev@vger.kernel.org>, <sdf@meta.com>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v4 7/7] net: devmem: allow binding on rx queues
- with same DMA devices
-Message-ID: <20250820181609.616976d2@kernel.org>
-In-Reply-To: <20250820171214.3597901-9-dtatulea@nvidia.com>
-References: <20250820171214.3597901-1-dtatulea@nvidia.com>
-	<20250820171214.3597901-9-dtatulea@nvidia.com>
+	s=arc-20240116; t=1755739206; c=relaxed/simple;
+	bh=m8Z5IasriQz/I2WWaTd7UxK62rTZ1rKrUrN0XIc/o70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kLwQdYKqgKeWktOMlU9V/i6wS89OiO2vZtF4t5/1l+91SHaxcu5kk+pSQKuPbhyCJST+jpLD6/JKeSoCPWqGVxyGdAr9anxiZj+YKOoXtUgAY5jT0CSCDCVuTXPPNr1xpBbm/Rx8Nvpy8mlmEnncdnMuPHQRfyc4CG9utxJtmQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HGb41qSo; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <00a013bd-f30f-4b13-8019-f97a4d2eabb2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755739199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B1BwYAqmbIpfEsknqfyliOokHoXYWfDAgiKkk9hfZ3Y=;
+	b=HGb41qSovPGgohfPkGNYwp2m7O/CRz4mpKLjsIIrD3nI92y3dTGuTVfokht0kSj5pVtoZW
+	8MgTPqOeUIMVakn6iGFe5YIizsykpLZU2GKG0kTzL9is03AJdt8LNknyAACZAbrZd/vNHN
+	Yggh/5i1PH8nKC8/K4wgfnpNul6stbU=
+Date: Thu, 21 Aug 2025 09:19:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 2/5] LoongArch: Add kexec_file support
+To: Yao Zi <ziyao@disroot.org>, Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
+ kexec@lists.infradead.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+References: <20250820055700.24344-1-youling.tang@linux.dev>
+ <20250820055700.24344-3-youling.tang@linux.dev> <aKVwHOM9KNEpUZF4@pie>
+ <5f6eeefb-681a-424e-9a6b-2e91eaf87571@linux.dev> <aKWt63S_wD3zeMYU@pie>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <aKWt63S_wD3zeMYU@pie>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 20 Aug 2025 20:11:58 +0300 Dragos Tatulea wrote:
-> +static struct device *netdev_nl_get_dma_dev(struct net_device *netdev,
-> +					    unsigned long *rxq_bitmap,
-> +					    struct netlink_ext_ack *extack)
+On 2025/8/20 19:13, Yao Zi wrote:
 
-break after type if it's long and multi line:
+> On Wed, Aug 20, 2025 at 05:13:27PM +0800, Youling Tang wrote:
+>> Hi, Yao
+>>
+>> On 2025/8/20 14:50, Yao Zi wrote:
+>>
+>>> On Wed, Aug 20, 2025 at 01:56:57PM +0800, Youling Tang wrote:
+>>>> From: Youling Tang <tangyouling@kylinos.cn>
+>>>>
+>>>> This patch adds support for kexec_file on LoongArch.
+>>>>
+>>>> The efi_kexec_load() as two parts:
+>>>> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
+>>>> - the second part loads other segments (eg: initrd, cmdline)
+>>>>
+>>>> This initrd will be passed to the second kernel via the command line
+>>>> 'initrd=start,size'.
+>>>>
+>>>> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images are supported,
+>>>> but ELF format is not supported.
+>>>>
+>>>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+>>>> ---
+>>>>    arch/loongarch/Kconfig                     |   9 ++
+>>>>    arch/loongarch/include/asm/image.h         |  17 +++
+>>>>    arch/loongarch/include/asm/kexec.h         |  12 +++
+>>>>    arch/loongarch/kernel/Makefile             |   1 +
+>>>>    arch/loongarch/kernel/kexec_efi.c          | 111 +++++++++++++++++++
+>>>>    arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
+>>>>    arch/loongarch/kernel/machine_kexec_file.c | 117 +++++++++++++++++++++
+>>>>    7 files changed, 289 insertions(+), 11 deletions(-)
+>>>>    create mode 100644 arch/loongarch/kernel/kexec_efi.c
+>>>>    create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
+>>> ...
+>>>
+>>>> diff --git a/arch/loongarch/include/asm/image.h b/arch/loongarch/include/asm/image.h
+>>>> index 1f090736e71d..655d5836c4e8 100644
+>>>> --- a/arch/loongarch/include/asm/image.h
+>>>> +++ b/arch/loongarch/include/asm/image.h
+>>>> @@ -36,5 +36,22 @@ struct loongarch_image_header {
+>>>>    	uint32_t pe_header;
+>>>>    };
+>>>> +static const uint8_t loongarch_image_pe_sig[2] = {'M', 'Z'};
+>>>> +
+>>>> +/**
+>>>> + * loongarch_header_check_pe_sig - Helper to check the loongarch image header.
+>>>> + *
+>>>> + * Returns non-zero if 'MZ' signature is found.
+>>>> + */
+>>>> +
+>>>> +static inline int loongarch_header_check_pe_sig(const struct loongarch_image_header *h)
+>>>> +{
+>>>> +	if (!h)
+>>>> +		return 0;
+>>>> +
+>>>> +	return (h->pe_sig[0] == loongarch_image_pe_sig[0]
+>>>> +		&& h->pe_sig[1] == loongarch_image_pe_sig[1]);
+>>>> +}
+>>> This check is still too weak and doesn't improve comparing to v1.
+>>>
+>>>> This could be simplified with a memcmp(). Also, this check isn't
+>>>> strict enough: PE files for any architectures, and even legacy MS-DOS
+>>>> COM executables all start with "MZ".
+>>> I've pointed this out in my previous reply[1].
+>> Previously, I had considered adding a specific LoongArch magic
+>> number (such as "Loongson") in the loongarch_image_header, but
+>> this is incompatible with older versions of the kernel, so it
+>> remains the same without further checks.
+> All PE images ship a PE signature with offset 0x3c[1] and you could
+> locate the PE header[2] by the offset provided by
+> loongarch_image_header.pe_header and check its machine field[3], which
+> should be 0x6264 for 64-bit LoongArch executables and 0x6232 for 32-bit
+> ones. At least this ensures it's a LoongArch kernel image.
+I mentioned this judgment to Huacai before. Huacai, what do you think?
+If necessary, I will add this judgment.
 
-static struct device *
-netdev_nl_get_dma_dev(struct net_device *netdev, unsigned long *rxq_bitmap,
-		      struct netlink_ext_ack *extack)
-
-> +{
-> +	struct device *dma_dev = NULL;
-> +	u32 rxq_idx, prev_rxq_idx;
-> +
-> +	for_each_set_bit(rxq_idx, rxq_bitmap, netdev->real_num_rx_queues) {
-> +		struct device *rxq_dma_dev;
-> +
-> +		rxq_dma_dev = netdev_queue_get_dma_dev(netdev, rxq_idx);
-> +		/* Multi-PF netdev queues can belong to different DMA devoces.
-
-typo: devoces
-
-> +		 * Block this case.
-> +		 */
-> +		if (dma_dev && rxq_dma_dev != dma_dev) {
-> +			NL_SET_ERR_MSG_FMT(extack, "Queue %u has a different dma device than queue %u",
-
-s/dma/DMA/
-I think we may want to bubble up the Multi-PF thing from the comment to
-the user. This could be quite confusing to people. How about:
-
-	"DMA device mismatch between queue %u and %u (multi-PF device?)"
+Thanks,
+Youling.
+>
+>>>>    #endif /* __ASSEMBLY__ */
+>>>>    #endif /* __ASM_IMAGE_H */
+>>> ...
+>>>
+>>>> diff --git a/arch/loongarch/kernel/kexec_efi.c b/arch/loongarch/kernel/kexec_efi.c
+>>>> new file mode 100644
+>>>> index 000000000000..7741f1139a12
+>>>> --- /dev/null
+>>>> +++ b/arch/loongarch/kernel/kexec_efi.c
+>>> ...
+>>>
+>>>> +static void *efi_kexec_load(struct kimage *image,
+>>>> +				char *kernel, unsigned long kernel_len,
+>>>> +				char *initrd, unsigned long initrd_len,
+>>>> +				char *cmdline, unsigned long cmdline_len)
+>>>> +{
+>>>> +	struct loongarch_image_header *h;
+>>>> +	struct kexec_buf kbuf;
+>>>> +	unsigned long text_offset, kernel_segment_number;
+>>>> +	struct kexec_segment *kernel_segment;
+>>>> +	int ret;
+>>>> +
+>>>> +	h = (struct loongarch_image_header *)kernel;
+>>>> +	if (!h->image_size)
+>>>> +		return ERR_PTR(-EINVAL);
+>>>> +
+>>>> +	/* Load the kernel */
+>>>> +	kbuf.image = image;
+>>>> +	kbuf.buf_max = ULONG_MAX;
+>>>> +	kbuf.top_down = false;
+>>>> +
+>>>> +	kbuf.buffer = kernel;
+>>>> +	kbuf.bufsz = kernel_len;
+>>>> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>>>> +	kbuf.memsz = le64_to_cpu(h->image_size);
+>>>> +	text_offset = le64_to_cpu(h->text_offset);
+>>>> +	kbuf.buf_min = text_offset;
+>>>> +	kbuf.buf_align = SZ_2M;
+>>>> +
+>>>> +	kernel_segment_number = image->nr_segments;
+>>>> +
+>>>> +	/*
+>>>> +	 * The location of the kernel segment may make it impossible to satisfy
+>>>> +	 * the other segment requirements, so we try repeatedly to find a
+>>>> +	 * location that will work.
+>>>> +	 */
+>>>> +	while ((ret = kexec_add_buffer(&kbuf)) == 0) {
+>>>> +		/* Try to load additional data */
+>>>> +		kernel_segment = &image->segment[kernel_segment_number];
+>>>> +		ret = load_other_segments(image, kernel_segment->mem,
+>>>> +					  kernel_segment->memsz, initrd,
+>>>> +					  initrd_len, cmdline, cmdline_len);
+>>>> +		if (!ret)
+>>>> +			break;
+>>>> +
+>>>> +		/*
+>>>> +		 * We couldn't find space for the other segments; erase the
+>>>> +		 * kernel segment and try the next available hole.
+>>>> +		 */
+>>>> +		image->nr_segments -= 1;
+>>>> +		kbuf.buf_min = kernel_segment->mem + kernel_segment->memsz;
+>>>> +		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>>>> +	}
+>>>> +
+>>>> +	if (ret) {
+>>>> +		pr_err("Could not find any suitable kernel location!");
+>>>> +		return ERR_PTR(ret);
+>>>> +	}
+>>>> +
+>>>> +	kernel_segment = &image->segment[kernel_segment_number];
+>>>> +
+>>>> +	/* Make sure the second kernel jumps to the correct "kernel_entry". */
+>>>> +	image->start = kernel_segment->mem + h->kernel_entry - text_offset;
+>>> And this still assumes the loaded, secondary kernel is relocatable,
+>>> with neither extra check nor comment explaining its limitation.
+>>>
+>>> Please see my previous reply[2] that explains why loading a
+>>> non-relocatble kernel with kexec_file API is reasonable.
+>> LoongArch is a non-position independent (non-PIE) kernel when
+>> the RELOCATABLE option is not enabled, the kernel contains certain
+>> instructions such as la.abs, which prevent it from being relocated to
+>> arbitrary memory addresses for execution. As a result, limitations
+>> exist that make features like kdump or kexec_file dependent on
+>> the RELOCATABLE option.
+>>
+>> Strictly speaking, we need to add additional checks: if the kernel is
+>> non-relocatable, the loading operation should fail directly.
+> Agree.
+>
+>> For a
+>> running kernel, we can easily determine this by calling
+>> kallsyms_lookup_name("relocate_kernel"). However, for a kernel
+>> that is being loaded but has not yet started execution, it is difficult
+>> to easily determine whether the currently loaded kernel has the
+>> RELOCATABLE configuration option enabled.
+> I understand the difficulty, thus IMHO a comment is helpful here to
+> remind the reader of lack of relocatability checks.
+>
+> Best regards,
+> Yao Zi
+>
+>> For ELF format images, we can determine whether the loaded image
+>> contains the ".la_abs" section in the following way:
+>> static struct mem_shdr *laabs_section(const struct mem_ehdr *ehdr)
+>> {
+>>          struct mem_shdr *shdr, *shdr_end;
+>>          unsigned char *strtab;
+>>
+>>          strtab = (unsigned char *)ehdr->e_shdr[ehdr->e_shstrndx].sh_data;
+>>          shdr_end = &ehdr->e_shdr[ehdr->e_shnum];
+>>          for (shdr = ehdr->e_shdr; shdr != shdr_end; shdr++) {
+>>                  if (shdr->sh_size &&
+>>                          strcmp((char *)&strtab[shdr->sh_name], ".la_abs") ==
+>> 0) {
+>>                          return shdr;
+>>                  }
+>>          }
+>>
+>>          return NULL;
+>> }
+>>
+>> Thanks,
+>> Youling.
+>>>> +	kexec_dprintk("Loaded kernel at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+>>>> +		      kernel_segment->mem, kbuf.bufsz,
+>>>> +		      kernel_segment->memsz);
+>>>> +
+>>>> +	return NULL;
+>>>> +}
+>>>> +
+>>>> +const struct kexec_file_ops kexec_efi_ops = {
+>>>> +	.probe = efi_kexec_probe,
+>>>> +	.load = efi_kexec_load,
+>>>> +};
+>>> Thanks,
+>>> Yao Zi
+>>>
+>>> [1]: https://lore.kernel.org/all/aJojDiHWi8cgvA2W@pie/
+>>> [2]: https://lore.kernel.org/all/aJwFa8x5BQMouB1y@pie/
+> [1]: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#signature-image-only
+> [2]: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#coff-file-header-object-and-image
+> [3]: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#machine-types
 
