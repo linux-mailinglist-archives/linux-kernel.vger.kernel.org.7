@@ -1,116 +1,89 @@
-Return-Path: <linux-kernel+bounces-780133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB193B2FE11
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 588BBB2FE1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11C961C26F2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D712C5A6B90
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977C338F9C;
-	Thu, 21 Aug 2025 15:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFEE2EDD45;
+	Thu, 21 Aug 2025 15:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3dODcZ7h"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="rMl2rQX8"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E25D16D9C2
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EE91DEFE0;
+	Thu, 21 Aug 2025 15:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755789165; cv=none; b=a7B5z451x1+3+iUfTSudwkKqFeCHGQ7TbGH3qeYlaY/W8V6trKYJCJ5kLV0Ipvu9Swy2hh0v6MpowxATQcpdheCN8wbrNYDItXQlhRJnev38AxxMGT4S/OR0MNe7b+gXxEmMXS9ggVjegpezAMZ/zPaou0N8f8B8l6nffA26c0U=
+	t=1755789196; cv=none; b=u1ITZggVkeriuz/i71BKRtezAXfZ30oHYqjY5WrILUvr0qA+rjX0owZjPGJmIpFUYcXtAP/97cxi9MyI0rPIzbjGZbCa6U8JkfQZ4+YlJQ1kLQrGgxnl8xmOgeFQj4INaZJe1pYT28WC+B4xRbrXO2vA7/ppy5q3IVRkyc3+tFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755789165; c=relaxed/simple;
-	bh=2ztGlIi9jhNoVS9BS3L9BthWA8NithL9Qy05+r7uzEo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d2yn5ixgRP1Xsx3Z5v1SlToZwoATJDGONfL9y5QpEXxtRKJkeVlIL9R98h3DX/CDk1BNdDSrdGp9hyMw9AOllJHIUo1QuPgl2rjp41w03hFJFcq9Ei82cIYNTDhDDZ3skaoAPoR91lLluT7qN/xOQwPBi6rK/8KQyLPwlZonfDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3dODcZ7h; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-333f92a69d4so8722731fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:12:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755789161; x=1756393961; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2ztGlIi9jhNoVS9BS3L9BthWA8NithL9Qy05+r7uzEo=;
-        b=3dODcZ7hmPv9PNKiFZbNfYlM1uaUvRadV47s/7LEEVifubbJRElbQeFDD0kKUiHrm3
-         02ciFTMxcMI99EjMvvGKXwMsENmVdR2YLloDOKKXeH78H2gW4iQev/0oP+qYKQ3xDbgk
-         JlVRLFZY3phuAhWfjX08fylMjIJo6phdkiiyZ3RPPFfBWcfazsNcQUPyKNk/Rys6752r
-         4ADiGObUnWlzY6k5fNkloUhC3HnaRxjKolpIAGOUOLmsLoPNSTzq0H/B3V4HCInRpe4T
-         L7blLIHXlUf9C4asMoJHqOiU3fgXDpVD/JJYyPDdaA+GnJ90ltQvQL5/1cxiSEXLnzPv
-         uC8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755789161; x=1756393961;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2ztGlIi9jhNoVS9BS3L9BthWA8NithL9Qy05+r7uzEo=;
-        b=trExJZHCHGfr4rRU2ART8giTOBvkgZfljCJvplVyCulcjV2fDT25F+tYumU3Yz/Z8j
-         u24lukwuncqyS+r+t3DorjIkG77X5rqt8gA9wXJZWXHcE9Y0KY1Y1QyUSf7x1A2svpjr
-         8b+o6tCJT2pHdn4OfZvnRT5v+UE/2cUekz0sGsrpcZgmCm5bP3B46z0uJVUuDLG9PLGe
-         Xz7XN3y/F4iO0vpVnGKOcSdby3Bdv3njj6kOMjv05fixG9lG8IXu5O9pGr02UmRG3j7D
-         RTiRRsPmn4I+amHMT0eAexM/bLPt6nW2Xq00ffCPCWee9y/MW0bRf2wT3eektktktjhD
-         oXlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXg2DohpRYaa/EijMkycZK+SrMGkqQ/bpMmD48dU6yrrmGUfYxhIB7OQkUTG55sUJfvQBfQortLwP6riuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbmyUAvNUz/oe1aHvoGOidM0lLj7dTYNtjVJ/z2uPjkaFYwOUK
-	Tx2AfQjFGu5q1/QmJxRGSTNs8w7h/JYHqioetUSZKjjDAs9IfDv6iNaPs1ZM55RvAg/ON2K2V0v
-	vqrPi/Q8L9D+cflvX8YsAI2OuJw21/J5dLPw2j6UMBIm7hJqF4Zh2pu6YxWU=
-X-Gm-Gg: ASbGncsy5cfQAS2jpXsYhgdwuCuIgqmqD1ogPzvDyhk9s+q6mhbdkRhRyRIMu1h78O9
-	RUAMtpxmQqrkqZxPIlkIFELiVPZpvvvCfh6kYrpI+GUPeJiozAnEc0gZk4Yz+GFUnvcxW6s4311
-	WH60cYt1ipS0SZbo+U3E3RLImk5bTcpLA4clyhzECEp9DGJc6D7t+vblG8mHn5Awy1im1WY9CzS
-	Rda+eVHOSBYbLjJTBcYRBk=
-X-Google-Smtp-Source: AGHT+IGgs3o6N1t7H2DOARQPBYqR2fDZBHhF1hDPpM/VN9qB9DqymvvNNruI66I2wrgVpAwwEboMyUeNt/ldkvHZX2A=
-X-Received: by 2002:a2e:a556:0:b0:330:dc53:22d4 with SMTP id
- 38308e7fff4ca-33549e40356mr8950451fa.9.1755789161039; Thu, 21 Aug 2025
- 08:12:41 -0700 (PDT)
+	s=arc-20240116; t=1755789196; c=relaxed/simple;
+	bh=qodkbxh+3qRl8JdkLf1RKw+tBZAn05xOsGyllQXNnGg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bUnLJjjb0fPrhsGPfxQCd5ms1dxyIbxpKLwe7GLVTNYJ5GqidskmHgp4rmn15jMC9N+mdJ7WqqVGxnwbA4bv7OCTn2uYTUv5V/5eigyU+14SkqdcB3Uf27jlVYtGNtrUL4gG/VjRYejySSO2pdcWQn7OF53k1I3oxb+yjx4rbpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=rMl2rQX8; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1755789186;
+	bh=qodkbxh+3qRl8JdkLf1RKw+tBZAn05xOsGyllQXNnGg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=rMl2rQX8INuqKsgnuQBfCdmNBfgPoXTiAPULHv5yMpPUDWGF5M/p/4kePW701WDNb
+	 akDC5b7bfvENcanirtjI/lZXR3RSsHlsAOf5rkezr5aG/KHgfuDqirXH2ZMVoCOuHw
+	 KnSOpY52cEtlb6tLq35IBPRe97670ldMLXXpCgSQ=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 0/2] kselftest/arm64/gcs: Cleanups for basic-gcs.c
+Date: Thu, 21 Aug 2025 17:13:01 +0200
+Message-Id: <20250821-nolibc-gcs-fixes-v1-0-88519836c915@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1747817128.git.dvyukov@google.com> <138c29bd5f5a0a22270c9384ecc721c40b7d8fbd.1747817128.git.dvyukov@google.com>
- <CACT4Y+ZcQV3JWEaeh7BXNwXUsoH6RcVRyG2iNUA+_mrOBOHfNA@mail.gmail.com>
- <CACT4Y+anDdNU9rh1xsDRs7vZRfXbbvjFS3RRBu1zVejrp11Scw@mail.gmail.com>
- <CACT4Y+b0cdGZwqmZSikxam+ASp9LXMuT9f8iifnmNed+PjamVg@mail.gmail.com>
- <6e737bd5-1167-4cc8-96c3-abc3d3598d2d@efficios.com> <885a517e-fe3b-436a-accf-9d8c6b991aee@intel.com>
-In-Reply-To: <885a517e-fe3b-436a-accf-9d8c6b991aee@intel.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 21 Aug 2025 08:12:28 -0700
-X-Gm-Features: Ac12FXxyRT5emCZFTeuYmrsgCHoL9i8AEcQNDZ3iVBEavAMVHB8G2k51aEdN0rQ
-Message-ID: <CACT4Y+ZtFPSaNyp9m=cU-QZNeRz1GoUHE08TDq+X-8yAz34Rcg@mail.gmail.com>
-Subject: Re: [PATCH v7 3/4] rseq: Make rseq work with protection keys
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, dave.hansen@linux.intel.com, 
-	"Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, peterz@infradead.org, 
-	boqun.feng@gmail.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	hpa@zytor.com, aruna.ramakrishna@oracle.com, elver@google.com, 
-	Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAH03p2gC/x3LQQqAIBBA0avIrBtQSZKuEi3SphoIDQciCO+et
+ Hx8/gtChUlgVC8Uulk4pwbTKYjHknZCXpvBauu0twZTPjlE3KPgxg8JGhO3wXkXwtBD265Cf2j
+ XNNf6AbBcKthiAAAA
+X-Change-ID: 20250821-nolibc-gcs-fixes-11cf7585bb74
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ Thiago Jung Bauermann <thiago.bauermann@linaro.org>, 
+ Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755789186; l=531;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=qodkbxh+3qRl8JdkLf1RKw+tBZAn05xOsGyllQXNnGg=;
+ b=JE6FOoDOazDnOVA+XQS69RfeWKq/hWoXA6Jd8c9cGQo5lFQSmvSmfnwzVENC5di3S9qg8Tlt4
+ X8UnVcDnx/5Dhjc0y8ukmX67x/BfIsqNhqI+OMtXnbFIqJfQm1OniiM
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Mon, 21 Jul 2025 at 10:41, Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 7/21/25 06:25, Mathieu Desnoyers wrote:
-> > This series looks OK from my perspective. I think the last piece that
-> > was missing was to get a review from Dave Hansen.
-> >
-> > Dave ?
->
-> It looks fine to me. I think the best thing is if you folks send it in
-> as an rseq fix. I'm OK with the x86 bits. For the series:
->
-> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Two small cleanups.
 
-Ingo,
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (2):
+      kselftest/arm64/gcs: Correctly check return value when disabling GCS
+      kselftest/arm64/gcs: Use nolibc's getauxval()
 
-Now both Mathieu and Dave reviewed this series.
+ tools/testing/selftests/arm64/gcs/basic-gcs.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250821-nolibc-gcs-fixes-11cf7585bb74
 
-Can you please take it to your tree? Or suggest who can take it?
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
-Thanks
 
