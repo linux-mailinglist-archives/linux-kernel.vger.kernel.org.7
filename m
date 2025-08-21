@@ -1,459 +1,811 @@
-Return-Path: <linux-kernel+bounces-779476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FD6B2F497
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:52:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11476B2F5D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CBEF3A69F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:51:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDAAF72064F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9120285CB5;
-	Thu, 21 Aug 2025 09:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F0330C35C;
+	Thu, 21 Aug 2025 11:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="v+prr1Ge"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013021.outbound.protection.outlook.com [40.107.159.21])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hfQY++KM"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29825224B1B;
-	Thu, 21 Aug 2025 09:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769912; cv=fail; b=jU/DwKlRLo+c0x5Hx+y6UOCYNGRq28Nq0pVhSJ1RGZiXn9MH3uomOQqdOG5Dn+T+7t65SqEdqAzLsbbUorMnCp4MTS9qjlkOVGSyXPMionSkKLF/JbK4i/NdbvvpWnQGUxT9pD/1i3BSPYgZVCGJ8s8zlSOTxiDaFSZ/F0PwkFE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769912; c=relaxed/simple;
-	bh=6AZOLHtCC92HgZSwvlYEa/WDrxKUckVFrc7x6TGKBNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DrdI4FJCo8BZN+evyBRfQuomTbWAkC+OU7bMcQoWaW4WcqGSZ0V2WsVtDa7ZyTGjMjzN4Nl7rXj/9UwOuAptXrrmZ/vxYduu9t8xtpVC2JZy5f8F96hSteWlfZjKdj9R5fFNUuuzUmNoo/dJCGFTzhiv26VB/BbjrUbaLCWDDE4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=v+prr1Ge; arc=fail smtp.client-ip=40.107.159.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RMwFPKxuumspFnXZPYI87+M1fv8vYJo3iadSFEFUYY5+a9cB9G+qpmI7L3anXeiN20HubL6G17p6MTiSDr/9ByXQmL4b4a/nAi9i7AvYJUeVuHNWKzfi8iJE4nqI/fF7cToB1qBvC9RtYXK+gohI+z76DzR99Aii/ePqMqH5RecVw3QwDBuIu4BM5DcfT2e3VtnHPJ2SBK2U0R/KPizGDZbHWAxamcc6eeLpy07iiqBr1DjqEqkANeGJM59Y3m46Oz7jW5caBEacGokpt7nqi2o9PHf9qmw1zFLimrJeZt7JgxCg6KXnJC1gh0zbDobnUjlBdUWkTCGl1k6Bmv0UBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S+zLHkYC4FcV+3KDc0Sq0+/X4YhPXcqIwAQnrN3af5Y=;
- b=DoMTOu7aHFXNK8KH0H0SS0zKAYwHMvvWmuEoR+hoP7jKB596E8lotg5+wjuVdsdlHThXOtKXxOhNOTWXR2mkO+iS7OARUz9EdrB6jMSoQUYPaZT6Z5rgqeXUccTStcZ+TQ6IRyBc/JFZ+MnazUx7QCQxwyUmDYIswG4BK1cTd0zNWZgDgF/oX898L8M81KVDZPoJqOsPX9MJlOi82ePyvpqSdNlvPMmy/2up+QI9CJoEuPQJyY45SBrsnZFcjZ/+Xai/dCTMc4LRSOUb4n9nKmTJXwgB8xT4UmlWgX9GE6xR6W7OJtcTidOUjJ+QkIzxggkIps2BLNTkkBEKjr3uNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S+zLHkYC4FcV+3KDc0Sq0+/X4YhPXcqIwAQnrN3af5Y=;
- b=v+prr1Ge0idEFwRbnwlLXygzykuNiFFr+7Hcumgi21wXKKj75E8CNDMyAAtAk0Cv73CXQ6MTWopYVUu9xouenxV5iItbQXh0GFwpPMRvOeUOqVnpJ28XvHNqnMsBLRz+rMX2h+0bMiexZL/blvJRa/hedV85K2qnJPIBJtqSksw5dHgdMSCI5mns8WbmBOUMwuC0L6bj6y7PY6shWLgNlBpYsNAi8at/GznkvniGqXWHGOqBc9g3txk7qjypbVuDRCM3ATDPiGv4j21Kesg2bALoXrdiuw7F2pTgkLegL0M3UZ4+yW2VStb++3wELBPAIstOEXxYax/v0f7NHvBVRQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PR3PR04MB7387.eurprd04.prod.outlook.com (2603:10a6:102:91::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.12; Thu, 21 Aug
- 2025 09:51:46 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9052.013; Thu, 21 Aug 2025
- 09:51:46 +0000
-Date: Thu, 21 Aug 2025 19:02:52 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-imx@nxp.com
-Subject: Re: [PATCH 2/4] remoteproc: imx_rproc: Populate devices under
- "rpmsg" subnode
-Message-ID: <20250821110252.GC19763@nxa18884-linux.ap.freescale.net>
-References: <20250818204420.794554-1-shenwei.wang@nxp.com>
- <20250818204420.794554-3-shenwei.wang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818204420.794554-3-shenwei.wang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI1PR02CA0025.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::13) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AD02E88A6;
+	Thu, 21 Aug 2025 11:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755774190; cv=none; b=p40ZLRhhvfApUpSSvLWOlXd2jYCoyuCgu0Mvt8HjIaxIlnHMAxdg67NNuYRTPKezb2ScaRdDpSfG6V7MiV2lFkdXT4dDD5E2N+xz9WMQqcB4tzJfW0B7+CZq81b1H3QOffUGr6eH+V/58Te8RztDx4/0z4CtZgzHXZm89ZgpsLk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755774190; c=relaxed/simple;
+	bh=83nijZGF9IJNrfZDYqv5BmmeHdWI8dGcl07IgxkmYNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TVcrpBjl91uVj0J8FIrM2L5QUeqR8qTQSPXC50PtwIKH2quAb806Weu6l9esbrmuSPKG6H5pKRARw9MdJ9TGxRu0BhjSiSgypt0kuL2ObpAEN3ocbBnIY5DPW72kBFhPkc98TNJDquoW2/Dv6zsTh4Br8z7we/eI5jrXXditGXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hfQY++KM; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id AA3857A011A;
+	Thu, 21 Aug 2025 07:03:06 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Thu, 21 Aug 2025 07:03:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1755774186; x=1755860586; bh=To0LunQqcTUU2ceWd5w4Tcu+qq+4aC5UAkt
+	plrBSovg=; b=hfQY++KMTqtSMPAW7cOOYPBpzLrdpr2x9woNSCiiUT8pSP6+4Rd
+	bebT/iLeJAGdqzyhQFiisVS4plNdcR0YRx7kt7NMfmhI/nJchZuw0GNvQpwc4/sm
+	ExkkeQPiziCRG0xcNRqOUfvRCDWvdMILpqx7sTumCpfEGQuUY0BBEIPagHi3nd+c
+	OpwkZrs4I3gaa/BrsqwdkxokFf/gOxu4JHrcrpk+CnsMbcsErHEp/jPaQHIPUPAw
+	IS00UseKdj8uEooLI3TmwWEfmI1+KiD/edSOkhNY/zvI01IT4tYB2PSsASm8VyH4
+	oZFam+DdqF3S+63AJDxKGatyBtQnbcAt+lQ==
+X-ME-Sender: <xms:6fymaEg7OHDv8mWK6tPkm-Rf2Ottc2OHuc1PPp_WBpuP6qR8qeLWlQ>
+    <xme:6fymaEZknHF_Ca-2oynT1MLYQWpbzwzIFII7ouqOxEfFYVyjFyeowcYUCFrNT19Vz
+    1LfmllibHAHtFA>
+X-ME-Received: <xmr:6fymaBqaAwWuJo_813-P6NKF5naKC2a0Om5POLX3Ph074DxY6OlYZuh0C5_8vtAx5-KcKmSw6Ddgvfc8HxJkkb5lq_NEww>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedutdeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcuufgt
+    hhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhephefhtdejvdeiffefudduvdffgeetieeigeeugfduffdvffdtfeehieejtdfhjeek
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhgpdhn
+    sggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrhhghh
+    hoshhhsegtihhstghordgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrihgughgvsehlihhsthhsrdhlihhnuhig
+    qdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrhhinhhmohihpghgsehhoh
+    htmhgrihhlrdgtohhmpdhrtghpthhtohepphgsrhhishhsvghtsegtihhstghordgtohhm
+X-ME-Proxy: <xmx:6fymaBPVN-Y3KnKmVRqKQS7aF2AvHz2AjKX9DvpnNEZAkAQQHPD1cg>
+    <xmx:6fymaEo5aKVJkbq_Bd8j6mxC_LWFgVjxB7eAMCFVV_-_mhswpwfSSg>
+    <xmx:6fymaOe0xVS_aFxooA8F0RmNvzDgmdau0pVxpNkT0PhfT1U7iiKGCA>
+    <xmx:6fymaCTw9iGKZoTtk9s8UORHc3jSoDdGCnZCopSEFxpFZiRhhP7v7w>
+    <xmx:6vymaJpleJNQx55pxbY-b32AXlwahxJ_2a_yYaMWYNieD1_y8FiHjmwE>
+Feedback-ID: i494840e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Aug 2025 07:03:04 -0400 (EDT)
+Date: Thu, 21 Aug 2025 14:03:02 +0300
+From: Ido Schimmel <idosch@idosch.org>
+To: Mrinmoy Ghosh <mrghosh@cisco.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	bridge@lists.linux-foundation.org,
+	Mrinmoy Ghosh <mrinmoy_g@hotmail.com>,
+	Patrice Brissette <pbrisset@cisco.com>
+Subject: Re: [PATCH] net: bridge: vxlan: Protocol field in bridge fdb
+Message-ID: <aKb85mWHy1csP4U9@shredder>
+References: <20250818175258.275997-1-mrghosh@cisco.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PR3PR04MB7387:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75540db8-94ac-4858-07be-08dde0985746
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|19092799006|7416014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8JuJBGEyG90Y8roSV3A1yxXdszCZcr7WFZhHR8zxBjQVjyb42ABjuIbz4fzT?=
- =?us-ascii?Q?MD0M/68npAWh4CRMSs0BnlW9T+anESNdkQ34bV1mX8MmYmERq9jVEVYaHq7i?=
- =?us-ascii?Q?xjg2FNxJJt46RxV6IGEiahgkOnw9egBWbrgDIOF37qneSNFDwcCd96jcJ1gX?=
- =?us-ascii?Q?Z+KYEanFUPUKywC322P7w16PuGrX9zr7qhQBX8G1BtlCQF8UOIdQoFkJCE+Q?=
- =?us-ascii?Q?rcg078n7A/Bz9y1jtA+V5lZUTCE6Axzm6grGm+mQsC8H39hI9vthxsNDNULo?=
- =?us-ascii?Q?pCH9lK+g1ETrjFAVwo8T5gBfVjrafsXPYiTMEVKe16vj4ATg1wsaWEUEanbx?=
- =?us-ascii?Q?gwE5iw6DucfJdQoNL9Icz+dD482OP35yryg4Q5ZzpGRnLOXP5EtaTJbrvnF2?=
- =?us-ascii?Q?GXLSHlet36wTSC5FLYHb2pEyuuI7n1D7PVzvOijr8ClJQxmLo5CnQ/g0WZgq?=
- =?us-ascii?Q?0s4KNtxUNz34H9TYBylqpBugxW5bE8R0yiTyi1riA74EksqWJaF0we9kxSSU?=
- =?us-ascii?Q?GtSsQoyvkB0WkQOlLJk999qhb9KdjwEM0lT7crHVKctlvUKX0BIfP3Y6PjiU?=
- =?us-ascii?Q?a7axudzj526moGCmNbaTo0ZpAwF/Y3F/kbbQAjk/CuWCblvvbcQHM+5aSmLj?=
- =?us-ascii?Q?/lzng33KAcov0Aeuzh3uk1NFmgR8fAhWium6eoydPxH/DozxTg14wou9weH3?=
- =?us-ascii?Q?k04dQmXhXdVfJY3w9wI+188JG9dNf+goxqZDM8kJS41/1VHXgaJwXTm74e4+?=
- =?us-ascii?Q?eD55KMHxY6hOsccAxziwkj78nyIqRQJlRxY/4rPX99/tStHHqDOywYpD7nqA?=
- =?us-ascii?Q?H323ZSencQFLguN65QEPs2ZIJF0CQ6pEp2HFL4GDCSehUHk2+kW0wECJ0XfD?=
- =?us-ascii?Q?1Dd25XwzF+6//s8JWWxIJa5DQNujUdM1ysgf6RoYdSAtL0X+Nc1QO/sdC//h?=
- =?us-ascii?Q?EEX1h+2nr06poFS5wOhDegZ50/692oXs7JO0CqAYRJ+8fX6O52ABhQAF5I4b?=
- =?us-ascii?Q?wEp0UQB6SObWqHrOsQHsDMxRHOkaGmftOc9uxUTdmj11TbgIfVBQ2cFv7wrh?=
- =?us-ascii?Q?Bz1cazCRW2s3Skb5mEawzLM77kDnxQ8Z4M6Ct1XlCBw/bt49VFdzRcApzFeE?=
- =?us-ascii?Q?ekCYsQwX7QrcFhHHbQxzwQTQ6UTmPrLlgbyQeZyS9I4DqCaOPMrZ/nUXVT88?=
- =?us-ascii?Q?uEAmkt6u9w8woPo5S7U2GmgFZXEza58+1KMEeQ+IZWkecU+cOr+gCbcAGMD8?=
- =?us-ascii?Q?VGcix27QooZBmxINIrRSX+YTxhbfLQ3jF7p3vQwYbxJDS0NbEdD0OFgAlQDu?=
- =?us-ascii?Q?Ed+oMJhaGxKHLONELXamGjV8hINGBssrAxIDgtA1GGimwmvOjTxXvH97m8xz?=
- =?us-ascii?Q?tdp3RLl5Js1tBBtMrv6Jf1OzI+mlrLOqLVgMFpVZSOyzmpcmYJSf3fzKqFz0?=
- =?us-ascii?Q?w+gTVZ0ZFFwMvcxIMmpUEDY13I+SvMX6rX7JZGkYL5X2U64+YWY9nw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(19092799006)(7416014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/xZgP7oPlH8kf3bOYoSCbVloKlm1pQM7bFDyoczjKsF4o5G+yNap1IJoGhcF?=
- =?us-ascii?Q?k/16xt8nLL/XKhWO92QyRczglURvP9z+3DqXT8y2QspxUbQkAzJ6JEK7z4An?=
- =?us-ascii?Q?Wvh+dIpCQJDUmJkXT1pEDK63IN3k+/meQ6AdStKAvZMQdkGoCMHM5U2T2MuA?=
- =?us-ascii?Q?sZLF6sCG1vohYSf4SPIpbhibe7oRSpt7UAe1ZjE8oKjfwEOV5NyQV+FeCocz?=
- =?us-ascii?Q?WPuonLjgApqa62OS3aKHkj7CcVRRE9nD8adGPC4oDxyHl5y537mIGEa7+IT1?=
- =?us-ascii?Q?wbekzFW+D9bk7PdCSJDLfMi0oI4TpOTegHJ1pbUE+nGcldavdb2gwwg6VAMp?=
- =?us-ascii?Q?KD4cY8v2GKw+uhBY6y6XfDZ+4BRYy5BrfZU0u6PA4SnNWvQHEWpvQlgBx7gz?=
- =?us-ascii?Q?D3s0Fu/gouxN0lrwkjZr3A+mtdbgDdQmnMx9ZMw9wIZEiZ8ocIw47qB27/Ng?=
- =?us-ascii?Q?7zeUDfKqrSSinmu9SO4HYLDfcLNBfq1MMF+5p58+MZg0BUEelD1RUpDD4Wb7?=
- =?us-ascii?Q?Ex5CXn+iHXCXlKyPa7VZ5S8JWmz+b7vrAWIoDjqRQtjjzi7asOW+uT9gWir5?=
- =?us-ascii?Q?dXJ2S+altmb/R6GNVz9P8mrz7lM9JfSPcsmCaibf8lwSOTfXdVjo85hSqjCj?=
- =?us-ascii?Q?4jgJuZDyMpp7hZJ7silW5nSjUocavNAiXZLlvQnmTVwAdKLNIPhEjHkAHXEM?=
- =?us-ascii?Q?+PdbzEuOXRvJ7bJb0L4GqMPSxcDYn/Oj4faGP06Nig3N7nCRW5ginB1JUXky?=
- =?us-ascii?Q?Oj3iGyVwf6CFUOeusFInOwTbN5g59HB+odimcCiYiJKFduEP3t/lTjrks1qs?=
- =?us-ascii?Q?QQBJrZHF6Dc4nW1HCB6IC5DrfHTySgdqkmM41LEyRMWRptTeCLBIrxhN6+rX?=
- =?us-ascii?Q?MtI1A7F6a9agbb7WETO30J1skQC/o3E35mWH6CTPesCP4Fg7zKccChe1HtYY?=
- =?us-ascii?Q?Kojf7q9QJDlW5dF5j63Hy5Ch+aeOwX/kno1bBNZmaJCF1n+LEK8tYeTBlWQT?=
- =?us-ascii?Q?O9FP89ye9Hf6iH81S9uDjlSBipqKUC78a+mP9pdK4E7mZ+BlnuKhDW49ffuQ?=
- =?us-ascii?Q?n1zQFvk7cokIdVb0UuA+iHUSaaRuBB6LJ+1rdN/syntegmmkYOYNzXOMPgmg?=
- =?us-ascii?Q?r5b0OH7T8BggRi8eMf6oEAWXBMVoqIu2ZeoiKDvH6ZXB5k7sKolcPk3WtPwl?=
- =?us-ascii?Q?kqYbJCOlLC5zIccyUsLH3t9FCuaGwkUEntq4+ZxxNdpLQRe+/Ot1GKInLZTo?=
- =?us-ascii?Q?y8N4Sy5t/afMNVU7UPwS0zihZKBff2ohfU69URiddnOLomGcPSvSW68tbR39?=
- =?us-ascii?Q?ewXU6cdTE1pYxZFO5dmi6yszL+UP9ZUb8nPV+DAQjwa+8nFE85sJSEQnrK2r?=
- =?us-ascii?Q?Gq+rDTUUxJ3LuCNUEKcU/jqmjQ+jcR5F/SM3Yy6SnradU+1tLiiUexqBsrne?=
- =?us-ascii?Q?NhG5ned1pbsplsSeTvYxf/0L0p7FfN7ifOXzSHvhjsPjWGcFMYsy5Iu2/u88?=
- =?us-ascii?Q?GEmVsg0lLoL+lAPRKtCIM1MEiEXknJ3uJltnG7yUlLPFpCJkv1aBwrBLfNsM?=
- =?us-ascii?Q?dALypy0x9sR/4SEEbm3G2/HLTMYGiCe8X+66DP+y?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75540db8-94ac-4858-07be-08dde0985746
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 09:51:46.3955
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T+40YUgKZe8msLcYB+Q5nCHwuQ/cI8DkAURllKLGkPVy6kdIT3I4YNiUACNXjYR7vaomn4b5iD1e0HwGCdEfzw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7387
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818175258.275997-1-mrghosh@cisco.com>
 
-Hi Shenwei,
+On Mon, Aug 18, 2025 at 05:52:58PM +0000, Mrinmoy Ghosh wrote:
+> This is to add optional "protocol" field for bridge fdb entries.
+> The introduction of the 'protocol' field in the bridge FDB for EVPN Multihome, addresses the need to distinguish between MAC addresses learned via the control plane and those learned via the data plane with data plane aging. Specifically:
+> * A MAC address in an EVPN Multihome environment can be learned either through the control plane (static MAC) or the data plane (dynamic MAC with aging).
 
-On Mon, Aug 18, 2025 at 03:44:18PM -0500, Shenwei Wang wrote:
->Register the RPMsg channel driver and populate remote devices defined
->under the "rpmsg" subnode upon receiving their notification messages.
->
->The following illustrates the expected DTS layout structure:
->
->	cm33: remoteproc-cm33 {
->		compatible = "fsl,imx8ulp-cm33";
->
->		rpmsg {
->			rpmsg-io-channel {
->				gpio@0 {
->					compatible = "fsl,imx-rpmsg-gpio";
->					reg = <0>;
->				};
->
->				gpio@1 {
->					compatible = "fsl,imx-rpmsg-gpio";
->					reg = <1>;
->				};
->
->				...
->			};
->
->			rpmsg-i2c-channel {
->				i2c@0 {
->					compatible = "fsl,imx-rpmsg-i2c";
->					reg = <0>;
->				};
->			};
->
->			...
->		};
+This is true for EVPN in general, so why mention MH?
 
-Need dt-binding maintainers to review the binding part first.
-Good to see this feature, so I will still give a look on the driver changes.
+> * The 'protocol' field uses values such as 'HW' for data plane dynamic MACs and 'ZEBRA' for control plane static MACs.
 
->	};
->
->Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
->---
-> drivers/remoteproc/imx_rproc.c | 125 +++++++++++++++++++++++++++++++++
-> include/linux/imx_rpmsg.h      |  55 +++++++++++++++
-> 2 files changed, 180 insertions(+)
-> create mode 100644 include/linux/imx_rpmsg.h
->
->diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
->index a6eef0080ca9..9b3396f3f1ec 100644
->--- a/drivers/remoteproc/imx_rproc.c
->+++ b/drivers/remoteproc/imx_rproc.c
->@@ -8,6 +8,7 @@
-> #include <linux/clk.h>
-> #include <linux/err.h>
-> #include <linux/firmware/imx/sci.h>
->+#include <linux/imx_rpmsg.h>
-> #include <linux/interrupt.h>
-> #include <linux/kernel.h>
-> #include <linux/mailbox_client.h>
->@@ -15,6 +16,8 @@
-> #include <linux/module.h>
-> #include <linux/of.h>
-> #include <linux/of_address.h>
->+#include <linux/of_irq.h>
->+#include <linux/of_platform.h>
-> #include <linux/of_reserved_mem.h>
-> #include <linux/platform_device.h>
-> #include <linux/pm_domain.h>
->@@ -22,6 +25,7 @@
-> #include <linux/reboot.h>
-> #include <linux/regmap.h>
-> #include <linux/remoteproc.h>
->+#include <linux/rpmsg.h>
-> #include <linux/workqueue.h>
+"HW" does not make sense to me. Why does the control plane care if the
+entry was learned dynamically in the software data path (no offload) or
+in the hardware data path? Entries installed by the kernel should be
+installed with "RTPROT_KERNEL" regardless of the origin of the entry
+(software / hardware).
+
+That being said, you can encode whatever you want in the protocol field
+and adjust rt_protos to display it however you like.
+
+> * This distinction allows the application to manage the MAC address state machine effectively during transitions, which can occur due to traffic hashing between EVPN Multihome peers or mobility of MAC addresses across EVPN peers.
+> * By identifying the source of the MAC learning (control plane vs. data plane), the system can handle MAC aging and mobility more accurately, ensuring synchronization between control and data planes and improving stability and reliability in MAC route handling.
+
+This is quite vague. Can you be more specific on how exactly the control
+plane is expected to use the protocol field in EVPN MH?
+
+AFAIK, when the kernel notifies FRR about an FDB entry that was learned
+on an ES peer, FRR installs the entry on all the ES peers as a static
+entry (no aging, roaming enabled) with the "activity_notify" and
+"inactive" flags so that the control plane will be notified when the
+entry becomes active (i.e., was learned locally). See:
+
+https://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git/commit/?id=e041178ba6bc2af0a1148145ee303c9db79fb4cb
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit/?id=5e88777a382480d0b1f7eafb6d0fb680ec7a40bb
+
+I am not against adding a cookie ("protocol") to FDB entries, but I
+would like to understand your motivation.
+
 > 
-> #include "imx_rproc.h"
->@@ -1084,6 +1088,126 @@ static int imx_rproc_sys_off_handler(struct sys_off_data *data)
-> 	return NOTIFY_DONE;
-> }
+> This mechanism supports the complex state transitions and synchronization required in EVPN Multihome scenarios, where MAC addresses may move or be learned differently depending on network events and traffic patterns.
 > 
-
-Just wonder could the changes be moved to drivers/rpmsg?
-
->+struct imx_rpmsg_driver {
->+	struct rpmsg_driver rpdrv;
->+	void *driver_data;
->+};
->+
->+static char *channel_device_map[][2] = {
->+	{"rpmsg-io-channel", "fsl,imx-rpmsg-gpio"},
->+	{"rpmsg-i2c-channel", "fsl,imx-rpmsg-i2c"},
->+};
->+
->+static int imx_rpmsg_endpoint_cb(struct rpmsg_device *rpdev,
->+	void *data, int len, void *priv, u32 src)
->+{
->+	struct imx_rpmsg_driver_data *drvdata;
->+
->+	drvdata = dev_get_drvdata(&rpdev->dev);
->+	if (drvdata && drvdata->rx_callback)
->+		return drvdata->rx_callback(rpdev, data, len, priv, src);
->+
->+	return 0;
->+}
->+
->+static void imx_rpmsg_endpoint_remove(struct rpmsg_device *rpdev)
->+{
->+	of_platform_depopulate(&rpdev->dev);
->+}
->+
->+static int imx_rpmsg_endpoint_probe(struct rpmsg_device *rpdev)
->+{
->+	struct imx_rpmsg_driver_data *drvdata;
->+	struct imx_rpmsg_driver *imx_rpdrv;
->+	struct device *dev = &rpdev->dev;
->+	struct of_dev_auxdata *auxdata;
->+	struct rpmsg_driver *rpdrv;
->+	int i;
->+
->+	rpdrv = container_of(dev->driver, struct rpmsg_driver, drv);
->+	imx_rpdrv = container_of(rpdrv, struct imx_rpmsg_driver, rpdrv);
->+
->+	if (!imx_rpdrv->driver_data)
->+		return -EINVAL;
->+
->+	drvdata = devm_kmemdup(dev, imx_rpdrv->driver_data, sizeof(*drvdata), GFP_KERNEL);
->+	if (!drvdata)
->+		return -ENOMEM;
->+
->+	i = drvdata->map_idx;
->+	if (i >= ARRAY_SIZE(channel_device_map))
->+		return -ENODEV;
->+
->+	auxdata = devm_kzalloc(dev, sizeof(*auxdata)*2, GFP_KERNEL);
->+	if (!auxdata)
->+		return -ENOMEM;
->+
->+	drvdata->rpdev = rpdev;
->+	auxdata[0].compatible = channel_device_map[i][1];
->+	auxdata[0].platform_data = drvdata;
->+	dev_set_drvdata(dev, drvdata);
->+
->+	of_platform_populate(drvdata->channel_node, NULL, auxdata, dev);
->+	of_node_put(drvdata->channel_node);
->+
->+	return 0;
->+}
->+
->+static int imx_of_rpmsg_node_init(struct platform_device *pdev)
->+{
->+	struct device_node *np __free(device_node), *channel;
->+	struct imx_rpmsg_driver_data *driver_data;
->+	struct imx_rpmsg_driver *rp_driver;
->+	struct rpmsg_device_id *rpdev_id;
->+	int i, ret;
->+
->+	int count = ARRAY_SIZE(channel_device_map);
->+	struct device *dev = &pdev->dev;
->+
->+	np = of_get_child_by_name(dev->of_node, "rpmsg");
->+	if (!np)
->+		return 0;
->+
->+	for (i = 0; i < count; i++) {
->+		ret = -ENOMEM;
->+		channel = of_get_child_by_name(np, channel_device_map[i][0]);
->+		if (!channel)
->+			continue;
->+
->+		rpdev_id = devm_kzalloc(dev, sizeof(*rpdev_id)*2, GFP_KERNEL);
-
-sizeof(*rpdev_id) * 2
-
->+		if (!rpdev_id)
->+			break;
->+		strscpy(rpdev_id[0].name, channel_device_map[i][0], RPMSG_NAME_SIZE);
->+
->+		rp_driver = devm_kzalloc(dev, sizeof(*rp_driver), GFP_KERNEL);
->+		if (!rp_driver)
->+			break;
->+
->+		driver_data = devm_kzalloc(dev, sizeof(*driver_data), GFP_KERNEL);
->+		if (!driver_data)
->+			break;
->+
->+		ret = 0;
->+		driver_data->rproc_name = dev->of_node->name;
->+		driver_data->channel_node = channel;
->+		driver_data->map_idx = i;
->+
->+		rp_driver->rpdrv.drv.name = channel_device_map[i][0];
->+		rp_driver->rpdrv.id_table = rpdev_id;
->+		rp_driver->rpdrv.probe = imx_rpmsg_endpoint_probe;
->+		rp_driver->rpdrv.remove = imx_rpmsg_endpoint_remove;
->+		rp_driver->rpdrv.callback = imx_rpmsg_endpoint_cb;
->+		rp_driver->driver_data = driver_data;
->+
->+		register_rpmsg_driver(&rp_driver->rpdrv);
->+	}
->+
->+	if ((ret < 0) && channel)
->+		of_node_put(channel);
->+
->+	return ret;
->+}
->+
-> static int imx_rproc_probe(struct platform_device *pdev)
-> {
-> 	struct device *dev = &pdev->dev;
->@@ -1177,6 +1301,7 @@ static int imx_rproc_probe(struct platform_device *pdev)
-> 		goto err_put_clk;
-> 	}
+> Change Summary:
+> vxlan_core.c:  Encode NDA_PROTOCOL, and create and update fdb protocol field
+>                Use RTPROT_UNSPEC when protocol not specified (default)
+> vxlan_private.h: protocol field in vxlan_fdb, function signature updates
+> vxlan_vnifilter.c: Use default RTPROT_UNSPEC, for default fdb create
+> br.c: Use default RTPROT_UNSPEC as protocol, for swdev event
+> br_fdb.c: Set NDA_PROTOCOL from protocol for fdb fill.
+>           bridge fdb add, delete, learn update of protocol field
+> br_private.h: protocol field in net_bridge_fdb_entry
 > 
->+	imx_of_rpmsg_node_init(pdev);
-
-blank line
-
-> 	return 0;
+> e.g:
+> Test along with iproute2 change i.e https://lore.kernel.org/netdev/20250816031145.1153429-1-mrghosh@cisco.com/T/#u
 > 
-> err_put_clk:
->diff --git a/include/linux/imx_rpmsg.h b/include/linux/imx_rpmsg.h
+> $ bridge fdb add 00:00:00:00:00:88 dev hostbond2 vlan 1000 master dynamic extern_learn proto hw
+> 
+> $ bridge -d fdb show dev hostbond2 | grep 00:00:00:00:00:88
+> 00:00:00:00:00:88 vlan 1000 extern_learn master br1000 proto hw
+> 
+> $ bridge -d -j -p fdb show dev hostbond2
+> 
+> ...
+> 
+> [ {
+>         "mac": "00:00:00:00:00:88",
+>         "vlan": 1000,
+>         "flags": [ "extern_learn" ],
+>         "master": "br1000",
+>         "flags_ext": [ ],
+>         "protocol": "hw",
+>         "state": ""
+>     },{
+> ...
+> 
+> Transition to Zebra:
+> $ bridge fdb replace  00:00:00:00:00:88 dev hostbond2 vlan 1000 master dynamic extern_learn proto zebra
+> 
+> $ bridge -d fdb show dev hostbond2 | grep 00:00:00:00:00:88
+> 00:00:00:00:00:88 vlan 1000 extern_learn master br1000 proto zebra
+> 
+> $ bridge -d -j -p fdb show dev hostbond2 ...
+> [ {
+>         "mac": "00:00:00:00:00:88",
+>         "vlan": 1000,
+>         "flags": [ "extern_learn" ],
+>         "master": "br1000",
+>         "flags_ext": [ ],
+>         "protocol": "zebra",
+>         "state": ""
+>     },
+> ...
+> 
+> iproute2 review: https://lore.kernel.org/netdev/20250816031145.1153429-1-mrghosh@cisco.com/T/#u
+> 
+> Signed-off-by: Mrinmoy Ghosh <mrghosh@cisco.com>
+> Co-authored-by: Mrinmoy Ghosh <mrinmoy_g@hotmail.com>
+> Co-authored-by: Patrice Brissette <pbrisset@cisco.com>
+> ---
+>  drivers/net/vxlan/vxlan_core.c      | 132 ++++++++++++++--------------
+>  drivers/net/vxlan/vxlan_private.h   |  21 +++--
+>  drivers/net/vxlan/vxlan_vnifilter.c |  11 +--
+>  net/bridge/br.c                     |   4 +-
+>  net/bridge/br_fdb.c                 |  52 ++++++++---
+>  net/bridge/br_private.h             |   5 +-
+>  6 files changed, 127 insertions(+), 98 deletions(-)
+> 
+> diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
+> index f32be2e301f2..eff342e467a6 100644
+> --- a/drivers/net/vxlan/vxlan_core.c
+> +++ b/drivers/net/vxlan/vxlan_core.c
+> @@ -206,6 +206,8 @@ static int vxlan_fdb_info(struct sk_buff *skb, struct vxlan_dev *vxlan,
+>  			peernet2id(dev_net(vxlan->dev), vxlan->net)))
+>  		goto nla_put_failure;
+>  
+> +	if (nla_put_u8(skb, NDA_PROTOCOL, fdb->protocol))
 
-This file should be put under include/linux/rpmsg/
+Maybe fill only if not 0?
 
->new file mode 100644
->index 000000000000..300ada6237be
->--- /dev/null
->+++ b/include/linux/imx_rpmsg.h
->@@ -0,0 +1,55 @@
->+/* SPDX-License-Identifier: GPL-2.0 */
->+/*
->+ * Copyright (C) 2025 NXP.
+You should patch vxlan_nlmsg_size() as well.
 
-Copyright 2025 NXP
+> +		goto nla_put_failure;
+>  	if (send_eth && nla_put(skb, NDA_LLADDR, ETH_ALEN, &fdb->key.eth_addr))
+>  		goto nla_put_failure;
+>  	if (nh) {
+> @@ -852,12 +854,11 @@ static int vxlan_fdb_nh_update(struct vxlan_dev *vxlan, struct vxlan_fdb *fdb,
+>  	return err;
+>  }
+>  
+> -int vxlan_fdb_create(struct vxlan_dev *vxlan,
+> -		     const u8 *mac, union vxlan_addr *ip,
+> -		     __u16 state, __be16 port, __be32 src_vni,
+> -		     __be32 vni, __u32 ifindex, __u16 ndm_flags,
+> +int vxlan_fdb_create(struct vxlan_dev *vxlan, const u8 *mac,
+> +		     union vxlan_addr *ip, __u16 state, __be16 port,
+> +		     __be32 src_vni, __be32 vni, __u32 ifindex, __u16 ndm_flags,
+>  		     u32 nhid, struct vxlan_fdb **fdb,
+> -		     struct netlink_ext_ack *extack)
+> +		     struct netlink_ext_ack *extack, u8 protocol)
 
->+ *
->+ * This program is free software; you can redistribute it and/or modify
->+ * it under the terms of the GNU General Public License version 2 as
->+ * published by the Free Software Foundation.
+Move this after 'nhid' so it's closer to the other attributes.
 
-Drop this duplicated License
+I will add an item to my TODO list to move these arguments into an FDB
+config structure.
 
->+ */
->+
->+/*
->+ * @file linux/imx_rpmsg.h
->+ *
->+ * @brief Global header file for iMX RPMSG
->+ *
->+ * @ingroup RPMSG
->+ */
->+#ifndef __LINUX_IMX_RPMSG_H__
->+#define __LINUX_IMX_RPMSG_H__
->+
->+#include <linux/completion.h>
->+#include <linux/mutex.h>
+>  {
+>  	struct vxlan_rdst *rd = NULL;
+>  	struct vxlan_fdb *f;
+> @@ -872,6 +873,7 @@ int vxlan_fdb_create(struct vxlan_dev *vxlan,
+>  	if (!f)
+>  		return -ENOMEM;
+>  
+> +	f->protocol = protocol;
 
-The including headers should be completed for what used in this file.
+Multicast FDB entries can have multiple remotes and each can be added by
+a different entity. I think it makes more sense to move the protocol
+field to the remote structure.
 
->+
->+/* Category define */
->+#define IMX_RMPSG_LIFECYCLE	1
->+#define IMX_RPMSG_PMIC		2
->+#define IMX_RPMSG_AUDIO		3
->+#define IMX_RPMSG_KEY		4
->+#define IMX_RPMSG_GPIO		5
->+#define IMX_RPMSG_RTC		6
->+#define IMX_RPMSG_SENSOR	7
->+/* rpmsg version */
->+#define IMX_RMPSG_MAJOR		1
->+#define IMX_RMPSG_MINOR		0
->+
->+#define MAX_DEV_PER_CHANNEL	10
->+
->+struct imx_rpmsg_head {
->+	u8 cate;
->+	u8 major;
->+	u8 minor;
->+	u8 type;
->+	u8 cmd;
->+	u8 reserved[5];
->+} __packed;
+>  	if (nhid)
+>  		rc = vxlan_fdb_nh_update(vxlan, f, nhid, extack);
+>  	else
+> @@ -964,14 +966,12 @@ static void vxlan_dst_free(struct rcu_head *head)
+>  	kfree(rd);
+>  }
+>  
+> -static int vxlan_fdb_update_existing(struct vxlan_dev *vxlan,
+> -				     union vxlan_addr *ip,
+> -				     __u16 state, __u16 flags,
+> -				     __be16 port, __be32 vni,
+> -				     __u32 ifindex, __u16 ndm_flags,
+> -				     struct vxlan_fdb *f, u32 nhid,
+> -				     bool swdev_notify,
+> -				     struct netlink_ext_ack *extack)
+> +static int
+> +vxlan_fdb_update_existing(struct vxlan_dev *vxlan, union vxlan_addr *ip,
+> +			  __u16 state, __u16 flags, __be16 port, __be32 vni,
+> +			  __u32 ifindex, __u16 ndm_flags, struct vxlan_fdb *f,
+> +			  u32 nhid, bool swdev_notify,
+> +			  struct netlink_ext_ack *extack, u8 protocol)
+>  {
+>  	__u16 fdb_flags = (ndm_flags & ~NTF_USE);
+>  	struct vxlan_rdst *rd = NULL;
+> @@ -1005,6 +1005,11 @@ static int vxlan_fdb_update_existing(struct vxlan_dev *vxlan,
+>  			f->flags = fdb_flags;
+>  			notify = 1;
+>  		}
+> +		if (f->protocol != protocol) {
+> +			f->protocol = protocol;
+> +			f->updated = jiffies;
+> +			notify = 1;
+> +		}
+>  	}
+>  
+>  	if ((flags & NLM_F_REPLACE)) {
+> @@ -1063,13 +1068,12 @@ static int vxlan_fdb_update_existing(struct vxlan_dev *vxlan,
+>  	return err;
+>  }
+>  
+> -static int vxlan_fdb_update_create(struct vxlan_dev *vxlan,
+> -				   const u8 *mac, union vxlan_addr *ip,
+> -				   __u16 state, __u16 flags,
+> -				   __be16 port, __be32 src_vni, __be32 vni,
+> -				   __u32 ifindex, __u16 ndm_flags, u32 nhid,
+> -				   bool swdev_notify,
+> -				   struct netlink_ext_ack *extack)
+> +static int vxlan_fdb_update_create(struct vxlan_dev *vxlan, const u8 *mac,
+> +				   union vxlan_addr *ip, __u16 state,
+> +				   __u16 flags, __be16 port, __be32 src_vni,
+> +				   __be32 vni, __u32 ifindex, __u16 ndm_flags,
+> +				   u32 nhid, bool swdev_notify,
+> +				   struct netlink_ext_ack *extack, u8 protocol)
+>  {
+>  	__u16 fdb_flags = (ndm_flags & ~NTF_USE);
+>  	struct vxlan_fdb *f;
+> @@ -1081,8 +1085,8 @@ static int vxlan_fdb_update_create(struct vxlan_dev *vxlan,
+>  		return -EOPNOTSUPP;
+>  
+>  	netdev_dbg(vxlan->dev, "add %pM -> %pIS\n", mac, ip);
+> -	rc = vxlan_fdb_create(vxlan, mac, ip, state, port, src_vni,
+> -			      vni, ifindex, fdb_flags, nhid, &f, extack);
+> +	rc = vxlan_fdb_create(vxlan, mac, ip, state, port, src_vni, vni,
+> +			      ifindex, fdb_flags, nhid, &f, extack, protocol);
+>  	if (rc < 0)
+>  		return rc;
+>  
+> @@ -1099,13 +1103,11 @@ static int vxlan_fdb_update_create(struct vxlan_dev *vxlan,
+>  }
+>  
+>  /* Add new entry to forwarding table -- assumes lock held */
+> -int vxlan_fdb_update(struct vxlan_dev *vxlan,
+> -		     const u8 *mac, union vxlan_addr *ip,
+> -		     __u16 state, __u16 flags,
+> -		     __be16 port, __be32 src_vni, __be32 vni,
+> -		     __u32 ifindex, __u16 ndm_flags, u32 nhid,
+> -		     bool swdev_notify,
+> -		     struct netlink_ext_ack *extack)
+> +int vxlan_fdb_update(struct vxlan_dev *vxlan, const u8 *mac,
+> +		     union vxlan_addr *ip, __u16 state, __u16 flags,
+> +		     __be16 port, __be32 src_vni, __be32 vni, __u32 ifindex,
+> +		     __u16 ndm_flags, u32 nhid, bool swdev_notify,
+> +		     struct netlink_ext_ack *extack, u8 protocol)
+>  {
+>  	struct vxlan_fdb *f;
+>  
+> @@ -1119,7 +1121,8 @@ int vxlan_fdb_update(struct vxlan_dev *vxlan,
+>  
+>  		return vxlan_fdb_update_existing(vxlan, ip, state, flags, port,
+>  						 vni, ifindex, ndm_flags, f,
+> -						 nhid, swdev_notify, extack);
+> +						 nhid, swdev_notify, extack,
+> +						 protocol);
+>  	} else {
+>  		if (!(flags & NLM_F_CREATE))
+>  			return -ENOENT;
+> @@ -1127,7 +1130,7 @@ int vxlan_fdb_update(struct vxlan_dev *vxlan,
+>  		return vxlan_fdb_update_create(vxlan, mac, ip, state, flags,
+>  					       port, src_vni, vni, ifindex,
+>  					       ndm_flags, nhid, swdev_notify,
+> -					       extack);
+> +					       extack, protocol);
+>  	}
+>  }
+>  
+> @@ -1142,7 +1145,7 @@ static void vxlan_fdb_dst_destroy(struct vxlan_dev *vxlan, struct vxlan_fdb *f,
+>  static int vxlan_fdb_parse(struct nlattr *tb[], struct vxlan_dev *vxlan,
+>  			   union vxlan_addr *ip, __be16 *port, __be32 *src_vni,
+>  			   __be32 *vni, u32 *ifindex, u32 *nhid,
+> -			   struct netlink_ext_ack *extack)
+> +			   struct netlink_ext_ack *extack, u8 *protocol)
+>  {
+>  	struct net *net = dev_net(vxlan->dev);
+>  	int err;
+> @@ -1222,6 +1225,11 @@ static int vxlan_fdb_parse(struct nlattr *tb[], struct vxlan_dev *vxlan,
+>  
+>  	*nhid = nla_get_u32_default(tb[NDA_NH_ID], 0);
+>  
+> +	if (tb[NDA_PROTOCOL])
+> +		*protocol = nla_get_u8(tb[NDA_PROTOCOL]);
+> +	else
+> +		*protocol = RTPROT_UNSPEC;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -1238,6 +1246,7 @@ static int vxlan_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
+>  	__be32 src_vni, vni;
+>  	u32 ifindex, nhid;
+>  	int err;
+> +	u8 protocol;
 
-A comment should be added to describe each member.
+https://docs.kernel.org/process/maintainer-netdev.html#local-variable-ordering-reverse-xmas-tree-rcs
 
-Regards,
-Peng
+Make this change throughout the patch.
+
+>  
+>  	if (!(ndm->ndm_state & (NUD_PERMANENT|NUD_REACHABLE))) {
+>  		pr_info("RTM_NEWNEIGH with invalid state %#x\n",
+> @@ -1249,7 +1258,7 @@ static int vxlan_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
+>  		return -EINVAL;
+>  
+>  	err = vxlan_fdb_parse(tb, vxlan, &ip, &port, &src_vni, &vni, &ifindex,
+> -			      &nhid, extack);
+> +			      &nhid, extack, &protocol);
+>  	if (err)
+>  		return err;
+>  
+> @@ -1257,10 +1266,10 @@ static int vxlan_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
+>  		return -EAFNOSUPPORT;
+>  
+>  	spin_lock_bh(&vxlan->hash_lock);
+> -	err = vxlan_fdb_update(vxlan, addr, &ip, ndm->ndm_state, flags,
+> -			       port, src_vni, vni, ifindex,
+> -			       ndm->ndm_flags | NTF_VXLAN_ADDED_BY_USER,
+> -			       nhid, true, extack);
+> +	err = vxlan_fdb_update(vxlan, addr, &ip, ndm->ndm_state, flags, port,
+> +			       src_vni, vni, ifindex,
+> +			       ndm->ndm_flags | NTF_VXLAN_ADDED_BY_USER, nhid,
+> +			       true, extack, protocol);
+>  	spin_unlock_bh(&vxlan->hash_lock);
+>  
+>  	if (!err)
+> @@ -1314,9 +1323,10 @@ static int vxlan_fdb_delete(struct ndmsg *ndm, struct nlattr *tb[],
+>  	u32 ifindex, nhid;
+>  	__be16 port;
+>  	int err;
+> +	u8 protocol;
+>  
+>  	err = vxlan_fdb_parse(tb, vxlan, &ip, &port, &src_vni, &vni, &ifindex,
+> -			      &nhid, extack);
+> +			      &nhid, extack, &protocol);
+>  	if (err)
+>  		return err;
+>  
+> @@ -1470,13 +1480,12 @@ static enum skb_drop_reason vxlan_snoop(struct net_device *dev,
+>  
+>  		/* close off race between vxlan_flush and incoming packets */
+>  		if (netif_running(dev))
+> -			vxlan_fdb_update(vxlan, src_mac, src_ip,
+> -					 NUD_REACHABLE,
+> -					 NLM_F_EXCL|NLM_F_CREATE,
+> -					 vxlan->cfg.dst_port,
+> -					 vni,
+> -					 vxlan->default_dst.remote_vni,
+> -					 ifindex, NTF_SELF, 0, true, NULL);
+> +			vxlan_fdb_update(vxlan, src_mac, src_ip, NUD_REACHABLE,
+> +					 NLM_F_EXCL | NLM_F_CREATE,
+> +					 vxlan->cfg.dst_port, vni,
+> +					 vxlan->default_dst.remote_vni, ifindex,
+> +					 NTF_SELF, 0, true, NULL,
+> +					 RTPROT_UNSPEC);
+
+Entries installed by the kernel should have RTPROT_KERNEL
+
+>  		spin_unlock(&vxlan->hash_lock);
+>  	}
+>  
+> @@ -3963,15 +3972,13 @@ static int __vxlan_dev_create(struct net *net, struct net_device *dev,
+>  	/* create an fdb entry for a valid default destination */
+>  	if (!vxlan_addr_any(&dst->remote_ip)) {
+>  		spin_lock_bh(&vxlan->hash_lock);
+> -		err = vxlan_fdb_update(vxlan, all_zeros_mac,
+> -				       &dst->remote_ip,
+> +		err = vxlan_fdb_update(vxlan, all_zeros_mac, &dst->remote_ip,
+>  				       NUD_REACHABLE | NUD_PERMANENT,
+>  				       NLM_F_EXCL | NLM_F_CREATE,
+> -				       vxlan->cfg.dst_port,
+> -				       dst->remote_vni,
+> -				       dst->remote_vni,
+> -				       dst->remote_ifindex,
+> -				       NTF_SELF, 0, true, extack);
+> +				       vxlan->cfg.dst_port, dst->remote_vni,
+> +				       dst->remote_vni, dst->remote_ifindex,
+> +				       NTF_SELF, 0, true, extack,
+> +				       RTPROT_UNSPEC);
+>  		spin_unlock_bh(&vxlan->hash_lock);
+>  		if (err)
+>  			goto unlink;
+> @@ -4416,10 +4423,10 @@ static int vxlan_changelink(struct net_device *dev, struct nlattr *tb[],
+>  					       &conf.remote_ip,
+>  					       NUD_REACHABLE | NUD_PERMANENT,
+>  					       NLM_F_APPEND | NLM_F_CREATE,
+> -					       vxlan->cfg.dst_port,
+> -					       conf.vni, conf.vni,
+> -					       conf.remote_ifindex,
+> -					       NTF_SELF, 0, true, extack);
+> +					       vxlan->cfg.dst_port, conf.vni,
+> +					       conf.vni, conf.remote_ifindex,
+> +					       NTF_SELF, 0, true, extack,
+> +					       RTPROT_UNSPEC);
+>  			if (err) {
+>  				spin_unlock_bh(&vxlan->hash_lock);
+>  				netdev_adjacent_change_abort(dst->remote_dev,
+> @@ -4767,14 +4774,11 @@ vxlan_fdb_external_learn_add(struct net_device *dev,
+>  
+>  	spin_lock_bh(&vxlan->hash_lock);
+>  	err = vxlan_fdb_update(vxlan, fdb_info->eth_addr, &fdb_info->remote_ip,
+> -			       NUD_REACHABLE,
+> -			       NLM_F_CREATE | NLM_F_REPLACE,
+> -			       fdb_info->remote_port,
+> -			       fdb_info->vni,
+> -			       fdb_info->remote_vni,
+> -			       fdb_info->remote_ifindex,
+> -			       NTF_USE | NTF_SELF | NTF_EXT_LEARNED,
+> -			       0, false, extack);
+> +			       NUD_REACHABLE, NLM_F_CREATE | NLM_F_REPLACE,
+> +			       fdb_info->remote_port, fdb_info->vni,
+> +			       fdb_info->remote_vni, fdb_info->remote_ifindex,
+> +			       NTF_USE | NTF_SELF | NTF_EXT_LEARNED, 0, false,
+> +			       extack, RTPROT_UNSPEC);
+>  	spin_unlock_bh(&vxlan->hash_lock);
+>  
+>  	return err;
+> diff --git a/drivers/net/vxlan/vxlan_private.h b/drivers/net/vxlan/vxlan_private.h
+> index 6c625fb29c6c..19d1b93be279 100644
+> --- a/drivers/net/vxlan/vxlan_private.h
+> +++ b/drivers/net/vxlan/vxlan_private.h
+> @@ -39,6 +39,7 @@ struct vxlan_fdb {
+>  	struct vxlan_fdb_key key;
+>  	u16		  state;	/* see ndm_state */
+>  	u16		  flags;	/* see ndm_flags and below */
+> +	u8 protocol; /* protocol for FDB entry */
+>  	struct list_head  nh_list;
+>  	struct hlist_node fdb_node;
+>  	struct nexthop __rcu *nh;
+> @@ -180,24 +181,22 @@ vxlan_vnifilter_lookup(struct vxlan_dev *vxlan, __be32 vni)
+>  }
+>  
+>  /* vxlan_core.c */
+> -int vxlan_fdb_create(struct vxlan_dev *vxlan,
+> -		     const u8 *mac, union vxlan_addr *ip,
+> -		     __u16 state, __be16 port, __be32 src_vni,
+> -		     __be32 vni, __u32 ifindex, __u16 ndm_flags,
+> +int vxlan_fdb_create(struct vxlan_dev *vxlan, const u8 *mac,
+> +		     union vxlan_addr *ip, __u16 state, __be16 port,
+> +		     __be32 src_vni, __be32 vni, __u32 ifindex, __u16 ndm_flags,
+>  		     u32 nhid, struct vxlan_fdb **fdb,
+> -		     struct netlink_ext_ack *extack);
+> +		     struct netlink_ext_ack *extack, u8 protocol);
+>  int __vxlan_fdb_delete(struct vxlan_dev *vxlan,
+>  		       const unsigned char *addr, union vxlan_addr ip,
+>  		       __be16 port, __be32 src_vni, __be32 vni,
+>  		       u32 ifindex, bool swdev_notify);
+>  u32 eth_vni_hash(const unsigned char *addr, __be32 vni);
+>  u32 fdb_head_index(struct vxlan_dev *vxlan, const u8 *mac, __be32 vni);
+> -int vxlan_fdb_update(struct vxlan_dev *vxlan,
+> -		     const u8 *mac, union vxlan_addr *ip,
+> -		     __u16 state, __u16 flags,
+> -		     __be16 port, __be32 src_vni, __be32 vni,
+> -		     __u32 ifindex, __u16 ndm_flags, u32 nhid,
+> -		     bool swdev_notify, struct netlink_ext_ack *extack);
+> +int vxlan_fdb_update(struct vxlan_dev *vxlan, const u8 *mac,
+> +		     union vxlan_addr *ip, __u16 state, __u16 flags,
+> +		     __be16 port, __be32 src_vni, __be32 vni, __u32 ifindex,
+> +		     __u16 ndm_flags, u32 nhid, bool swdev_notify,
+> +		     struct netlink_ext_ack *extack, u8 protocol);
+>  void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
+>  		    __be32 default_vni, struct vxlan_rdst *rdst, bool did_rsc);
+>  int vxlan_vni_in_use(struct net *src_net, struct vxlan_dev *vxlan,
+> diff --git a/drivers/net/vxlan/vxlan_vnifilter.c b/drivers/net/vxlan/vxlan_vnifilter.c
+> index adc89e651e27..908b6b489ac8 100644
+> --- a/drivers/net/vxlan/vxlan_vnifilter.c
+> +++ b/drivers/net/vxlan/vxlan_vnifilter.c
+> @@ -482,15 +482,12 @@ static int vxlan_update_default_fdb_entry(struct vxlan_dev *vxlan, __be32 vni,
+>  
+>  	spin_lock_bh(&vxlan->hash_lock);
+>  	if (remote_ip && !vxlan_addr_any(remote_ip)) {
+> -		err = vxlan_fdb_update(vxlan, all_zeros_mac,
+> -				       remote_ip,
+> +		err = vxlan_fdb_update(vxlan, all_zeros_mac, remote_ip,
+>  				       NUD_REACHABLE | NUD_PERMANENT,
+>  				       NLM_F_APPEND | NLM_F_CREATE,
+> -				       vxlan->cfg.dst_port,
+> -				       vni,
+> -				       vni,
+> -				       dst->remote_ifindex,
+> -				       NTF_SELF, 0, true, extack);
+> +				       vxlan->cfg.dst_port, vni, vni,
+> +				       dst->remote_ifindex, NTF_SELF, 0, true,
+> +				       extack, RTPROT_UNSPEC);
+>  		if (err) {
+>  			spin_unlock_bh(&vxlan->hash_lock);
+>  			return err;
+> diff --git a/net/bridge/br.c b/net/bridge/br.c
+> index 1885d0c315f0..55f017e00247 100644
+> --- a/net/bridge/br.c
+> +++ b/net/bridge/br.c
+> @@ -173,8 +173,8 @@ static int br_switchdev_event(struct notifier_block *unused,
+>  	case SWITCHDEV_FDB_ADD_TO_BRIDGE:
+>  		fdb_info = ptr;
+>  		err = br_fdb_external_learn_add(br, p, fdb_info->addr,
+> -						fdb_info->vid,
+> -						fdb_info->locked, false);
+> +						fdb_info->vid, fdb_info->locked,
+> +						false, RTPROT_UNSPEC);
+>  		if (err) {
+>  			err = notifier_from_errno(err);
+>  			break;
+> diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+> index 902694c0ce64..e1b93e495db3 100644
+> --- a/net/bridge/br_fdb.c
+> +++ b/net/bridge/br_fdb.c
+> @@ -123,6 +123,8 @@ static int fdb_fill_info(struct sk_buff *skb, const struct net_bridge *br,
+>  		goto nla_put_failure;
+>  	if (nla_put_u32(skb, NDA_MASTER, br->dev->ifindex))
+>  		goto nla_put_failure;
+> +	if (nla_put_u8(skb, NDA_PROTOCOL, fdb->protocol))
+> +		goto nla_put_failure;
+
+Need to patch fdb_nlmsg_size()
+
+>  	if (nla_put_u32(skb, NDA_FLAGS_EXT, ext_flags))
+>  		goto nla_put_failure;
+>  
+> @@ -1153,7 +1155,8 @@ static int fdb_add_entry(struct net_bridge *br, struct net_bridge_port *source,
+>  static int __br_fdb_add(struct ndmsg *ndm, struct net_bridge *br,
+>  			struct net_bridge_port *p, const unsigned char *addr,
+>  			u16 nlh_flags, u16 vid, struct nlattr *nfea_tb[],
+> -			bool *notified, struct netlink_ext_ack *extack)
+> +			bool *notified, struct netlink_ext_ack *extack,
+> +			u8 protocol)
+
+Move this after 'vid' so it's closer to the other attributes.
+
+>  {
+>  	int err = 0;
+>  
+> @@ -1177,7 +1180,8 @@ static int __br_fdb_add(struct ndmsg *ndm, struct net_bridge *br,
+>  					   "FDB entry towards bridge must be permanent");
+>  			return -EINVAL;
+>  		}
+> -		err = br_fdb_external_learn_add(br, p, addr, vid, false, true);
+> +		err = br_fdb_external_learn_add(br, p, addr, vid, false, true,
+> +						protocol);
+>  	} else {
+>  		spin_lock_bh(&br->hash_lock);
+>  		err = fdb_add_entry(br, p, addr, ndm, nlh_flags, vid, nfea_tb);
+> @@ -1206,6 +1210,7 @@ int br_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
+>  	struct net_bridge_vlan *v;
+>  	struct net_bridge *br = NULL;
+>  	u32 ext_flags = 0;
+> +	u8 protocol = RTPROT_UNSPEC;
+>  	int err = 0;
+>  
+>  	trace_br_fdb_add(ndm, dev, addr, vid, nlh_flags);
+> @@ -1237,6 +1242,9 @@ int br_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
+>  	if (tb[NDA_FLAGS_EXT])
+>  		ext_flags = nla_get_u32(tb[NDA_FLAGS_EXT]);
+>  
+> +	if (tb[NDA_PROTOCOL])
+> +		protocol = nla_get_u8(tb[NDA_PROTOCOL]);
+> +
+>  	if (ext_flags & NTF_EXT_LOCKED) {
+>  		NL_SET_ERR_MSG_MOD(extack, "Cannot add FDB entry with \"locked\" flag set");
+>  		return -EINVAL;
+> @@ -1261,10 +1269,10 @@ int br_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
+>  
+>  		/* VID was specified, so use it. */
+>  		err = __br_fdb_add(ndm, br, p, addr, nlh_flags, vid, nfea_tb,
+> -				   notified, extack);
+> +				   notified, extack, protocol);
+>  	} else {
+>  		err = __br_fdb_add(ndm, br, p, addr, nlh_flags, 0, nfea_tb,
+> -				   notified, extack);
+> +				   notified, extack, protocol);
+>  		if (err || !vg || !vg->num_vlans)
+>  			goto out;
+>  
+> @@ -1276,7 +1284,7 @@ int br_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
+>  			if (!br_vlan_should_use(v))
+>  				continue;
+>  			err = __br_fdb_add(ndm, br, p, addr, nlh_flags, v->vid,
+> -					   nfea_tb, notified, extack);
+> +					   nfea_tb, notified, extack, protocol);
+>  			if (err)
+>  				goto out;
+>  		}
+> @@ -1288,7 +1296,8 @@ int br_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
+>  
+>  static int fdb_delete_by_addr_and_port(struct net_bridge *br,
+>  				       const struct net_bridge_port *p,
+> -				       const u8 *addr, u16 vlan, bool *notified)
+> +				       const u8 *addr, u16 vlan, u8 protocol,
+> +				       bool *notified)
+>  {
+>  	struct net_bridge_fdb_entry *fdb;
+>  
+> @@ -1296,6 +1305,13 @@ static int fdb_delete_by_addr_and_port(struct net_bridge *br,
+>  	if (!fdb || READ_ONCE(fdb->dst) != p)
+>  		return -ENOENT;
+>  
+> +	/* If the delete comes from a different protocol type,
+> +	* that type is used in the notification as some software
+> +	* may be expecting multiple deletes (control learned +
+> +	* hardware datapath learned) */
+> +	if (protocol != RTPROT_UNSPEC)
+> +		fdb->protocol = protocol;
+
+I don't understand this. The protocol that should be notified is the one
+of the FDB entry being deleted.
+
+> +
+>  	fdb_delete(br, fdb, true);
+>  	*notified = true;
+>  
+> @@ -1304,12 +1320,13 @@ static int fdb_delete_by_addr_and_port(struct net_bridge *br,
+>  
+>  static int __br_fdb_delete(struct net_bridge *br,
+>  			   const struct net_bridge_port *p,
+> -			   const unsigned char *addr, u16 vid, bool *notified)
+> +			   const unsigned char *addr, u16 vid, u8 protocol,
+> +			   bool *notified)
+>  {
+>  	int err;
+>  
+>  	spin_lock_bh(&br->hash_lock);
+> -	err = fdb_delete_by_addr_and_port(br, p, addr, vid, notified);
+> +	err = fdb_delete_by_addr_and_port(br, p, addr, vid, protocol, notified);
+>  	spin_unlock_bh(&br->hash_lock);
+>  
+>  	return err;
+> @@ -1324,8 +1341,12 @@ int br_fdb_delete(struct ndmsg *ndm, struct nlattr *tb[],
+>  	struct net_bridge_vlan_group *vg;
+>  	struct net_bridge_port *p = NULL;
+>  	struct net_bridge *br;
+> +	u8 protocol = RTPROT_UNSPEC;
+>  	int err;
+>  
+> +	if (tb[NDA_PROTOCOL])
+> +		protocol = nla_get_u8(tb[NDA_PROTOCOL]);
+> +
+>  	if (netif_is_bridge_master(dev)) {
+>  		br = netdev_priv(dev);
+>  		vg = br_vlan_group(br);
+> @@ -1341,19 +1362,20 @@ int br_fdb_delete(struct ndmsg *ndm, struct nlattr *tb[],
+>  	}
+>  
+>  	if (vid) {
+> -		err = __br_fdb_delete(br, p, addr, vid, notified);
+> +		err = __br_fdb_delete(br, p, addr, vid, protocol, notified);
+>  	} else {
+>  		struct net_bridge_vlan *v;
+>  
+>  		err = -ENOENT;
+> -		err &= __br_fdb_delete(br, p, addr, 0, notified);
+> +		err &= __br_fdb_delete(br, p, addr, 0, protocol, notified);
+>  		if (!vg || !vg->num_vlans)
+>  			return err;
+>  
+>  		list_for_each_entry(v, &vg->vlan_list, vlist) {
+>  			if (!br_vlan_should_use(v))
+>  				continue;
+> -			err &= __br_fdb_delete(br, p, addr, v->vid, notified);
+> +			err &= __br_fdb_delete(br, p, addr, v->vid, protocol,
+> +					       notified);
+>  		}
+>  	}
+>  
+> @@ -1414,7 +1436,7 @@ void br_fdb_unsync_static(struct net_bridge *br, struct net_bridge_port *p)
+>  
+>  int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
+>  			      const unsigned char *addr, u16 vid, bool locked,
+> -			      bool swdev_notify)
+> +			      bool swdev_notify, u8 protocol)
+>  {
+>  	struct net_bridge_fdb_entry *fdb;
+>  	bool modified = false;
+> @@ -1445,6 +1467,7 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
+>  			err = -ENOMEM;
+>  			goto err_unlock;
+>  		}
+> +		fdb->protocol = protocol;
+>  		fdb_notify(br, fdb, RTM_NEWNEIGH, swdev_notify);
+>  	} else {
+>  		if (locked &&
+> @@ -1483,6 +1506,11 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
+>  		    test_and_clear_bit(BR_FDB_DYNAMIC_LEARNED, &fdb->flags))
+>  			atomic_dec(&br->fdb_n_learned);
+>  
+> +		if (fdb->protocol != protocol) {
+> +			modified = true;
+> +			fdb->protocol = protocol;
+> +		}
+> +
+>  		if (modified)
+>  			fdb_notify(br, fdb, RTM_NEWNEIGH, swdev_notify);
+>  	}
+> diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
+> index b159aae594c0..dc14c3c102b2 100644
+> --- a/net/bridge/br_private.h
+> +++ b/net/bridge/br_private.h
+> @@ -291,6 +291,7 @@ struct net_bridge_fdb_entry {
+>  	struct net_bridge_fdb_key	key;
+>  	struct hlist_node		fdb_node;
+>  	unsigned long			flags;
+> +	u8 protocol;
+
+Align the name like other fields. I guess position in the structure is
+OK since this field is not write-heavy and there is a 16 bytes hole
+here.
+
+>  
+>  	/* write-heavy members should not affect lookups */
+>  	unsigned long			updated ____cacheline_aligned_in_smp;
+> @@ -870,8 +871,8 @@ int br_fdb_get(struct sk_buff *skb, struct nlattr *tb[], struct net_device *dev,
+>  int br_fdb_sync_static(struct net_bridge *br, struct net_bridge_port *p);
+>  void br_fdb_unsync_static(struct net_bridge *br, struct net_bridge_port *p);
+>  int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
+> -			      const unsigned char *addr, u16 vid,
+> -			      bool locked, bool swdev_notify);
+> +			      const unsigned char *addr, u16 vid, bool locked,
+> +			      bool swdev_notify, u8 protocol);
+>  int br_fdb_external_learn_del(struct net_bridge *br, struct net_bridge_port *p,
+>  			      const unsigned char *addr, u16 vid,
+>  			      bool swdev_notify);
+> -- 
+> 2.43.0
+> 
+> 
 
