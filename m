@@ -1,182 +1,279 @@
-Return-Path: <linux-kernel+bounces-780152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE434B2FE2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:22:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 285D3B2FE2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5251F7B9C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:20:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B00C7B8514
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E03275B1C;
-	Thu, 21 Aug 2025 15:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6955D2777F1;
+	Thu, 21 Aug 2025 15:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GC/CiuOv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MuD8TxHr"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011002.outbound.protection.outlook.com [52.101.70.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2FB274FF1
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755789674; cv=none; b=E7ds8asf3J2V7UFrqPyGX3OgZ2arNazEWNWJWseJL3rTmwZAFTdZGvkJ/6N7xCxBXhYUjRCtrDc8YB6j87m32gl+uME57HgrreXu5D0CT3amnsyKLpoQPl04Ykf1gnElbXlT+jN/0fui+PH9JN0fjFoEdJRgNauU+fYAMmYPvak=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755789674; c=relaxed/simple;
-	bh=8SEb4wkjQdTMVzzMIlhoKDexPBWVmtCAXkNcPzK1ofY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iby/DYqnr/F96TcbZfG8Gf9w0ZllLngl1DQwn8PWXRnxsNYDUXVX4JvbueCDm0Utmp9GnanPEg4QXnQqtlqQI7qM99owJSRI7DMhpzupKp4bPm6ERvMKofHdOFUq37jTgt6EEc9i02nJfxMAA77HC4xPb/CrLhvguVXOI6qQEK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GC/CiuOv; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755789672; x=1787325672;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8SEb4wkjQdTMVzzMIlhoKDexPBWVmtCAXkNcPzK1ofY=;
-  b=GC/CiuOviq+d4qOGb/90yP7EjJc4w/aumpxj5OrDwxLuTAQ7YGHRiGUz
-   /wEAPMCD9LJwccPTR8rZkNMYbMOyUNcCOOOeC+p8gnkYIn2jg6pdc+GY7
-   VV7N60OXVpIeYe0a90RiqaJQblY806nzYr42o2hKHwTwi7Hxwwpq2bgW6
-   sNWIOru/edhU9QbuKuOOirJJPZcL4/AoE1gH52sXs3pWhPES/ROz1+ET3
-   XGJJNz2tt7QgFTHCWrWd9MFGXNTgUctvT7blhHem3TfuEqp2rdwllTi+u
-   UwEHrsxdBFqyy9qVmD0QmjRSbWaMSXLaxK27FOxmNayu078JtEu5VLSl9
-   Q==;
-X-CSE-ConnectionGUID: 145wKggyQpG3qr7tI9yppw==
-X-CSE-MsgGUID: 3pYr7DURStWflqrVQSZ9pA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="68354746"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="68354746"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 08:21:12 -0700
-X-CSE-ConnectionGUID: eKaor9GbTsaPHbDKG1137A==
-X-CSE-MsgGUID: pxA8/nlrSFqyC8cp5eW+BA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="168858187"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 21 Aug 2025 08:21:09 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1up762-000KQb-26;
-	Thu, 21 Aug 2025 15:21:00 +0000
-Date: Thu, 21 Aug 2025 23:19:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maxime Ripard <mripard@kernel.org>,
-	Jyri Sarha <jyri.sarha@linux.intel.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>
-Subject: Re: [PATCH v2 06/14] drm/tidss: dispc: Get rid of FLD_MOD
-Message-ID: <202508212351.neQpMO5p-lkp@intel.com>
-References: <20250820-drm-tidss-field-api-v2-6-43cab671c648@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496A6270EA5;
+	Thu, 21 Aug 2025 15:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755789679; cv=fail; b=TPGKMa7H6pP8THeJI6GQGMHNaYKixCvGwWl7w/brLSfsewAtsxPtNuXpBGfKsG7qph/C+w6546EPGq/v775EOfbHlsQYgwIRmskcos2pyLbgd6DPatEzyFPgTI53XHPD8rutQjBn5TS7Kiv6EGzpdeRaJVITyW5W+yqFF0p2irI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755789679; c=relaxed/simple;
+	bh=jRDmGY92bhedqNsRSnHPc6iu5e9MsrOwp+lRfcA6vsY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=NXwwIuu7DNkdxgY8U6MqKwYtOTX8SpUoUflwTIgWbCe981NpvyV0P4/YDZoAEExauW+eT5fdFKY3cy5q46uJysCXKYB1ZK5o1p6e5sCjPhHtogyfvOlblqFKxzh5DRS/uqZsspru0byu1g9ZmwGuavfc3PAQJVgmQvYTuK3qCEU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MuD8TxHr; arc=fail smtp.client-ip=52.101.70.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QRfifc+ANyj2FyKuEuS1XvqeqvUGDES5+YBL/8tWgHstJ467ahH2jDSvnJLkd6I9xhx7rtm5uUYRHtxJWPm5hXidc+1e+1jJDOZDwM3WLtXXpZnUBf4OIj+TrrMZ+ncMzlzHa2AdhvFX7fQe+hc8vk231H9xsk8c8Lz+GXpmsbXXBF4Z9iDqgkg8VrJrbMY3rZk3N5ibqal5eqQ36NvQvYu8pFVxAKOP548XnwSgzk7gGgGEWHXBTCjv3FmWb6Yley3+MoURRWcZ791IIUqdbD9r/dGgZ3FTeYidBbmppfCtztELy3kw2nq7K8Zv3bdSuE5AIuPs/Wn49qyY9v6SLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NbE2LnbUR3B4zkZAOMTt2MiMR+4lTFgimIUldomNLMY=;
+ b=vRAKFNVhRNnJj3+prH+m83dFS9kmjWqLkLX5fr8AjqiPy6cjGZbj9slN0DTX9d8GTCjNBgXdu3/g6XknESiNSh6cReXeFmy2Z8q8rV5GhHKrjfIbZXgYOFhp29bQDnmCg5Ig7ZK6pDCL1GzS2d+8/tAzPgm3BJ5eMOm5/lKq1lElwmHFa4ogEoi8pr2DbmgACOMmAPKkbniOO9Eisn51V6efY3b2u+hExlvbNWIQjhVGGhEx0kxATWDkHJugMKVgTARY5acPXXOnrhgxvLVzUUsjb3yla1n13UOOk3DsxiVxCb8S07Xi+WNG3FGWAb/wlsevMprRLawbB3CWg37F6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NbE2LnbUR3B4zkZAOMTt2MiMR+4lTFgimIUldomNLMY=;
+ b=MuD8TxHroTPRTqEvfi1Yxfuf4dgBK8Q39vh6utFmlf4m5sQsE/fG0X22tEgsWkrgXKLZEGOcqdwPth+gnJvTa/5C1vhDB4/esFMwWhQiqdRCKGOpBso8noaoLsG9wHfUgpEgiDf3pT65/+eVpqMFD69js/WKbeErn43w+MGK88H3J/OZ2R7HtRXN05yVD11tqg6OP+MmgyDc1ZfXiKgQDpZ2I+lIOEi2ahlQqhfPXazWZEwn4lkOOkfGq9cr8FYspoo3sFbpHEM1fu2xnw9STHe5xhCJtaNBgS8tixcYNX7ZmAsYgZPua7SMt786CG8K9cVYNUfAW5gU/0pFjAoyFg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by VI2PR04MB10809.eurprd04.prod.outlook.com (2603:10a6:800:27b::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.11; Thu, 21 Aug
+ 2025 15:21:14 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9052.013; Thu, 21 Aug 2025
+ 15:21:14 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	linux-kernel@vger.kernel.org,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Robert Marko <robimarko@gmail.com>,
+	=?UTF-8?q?Pawe=C5=82=20Owoc?= <frut3k7@gmail.com>,
+	Sean Anderson <sean.anderson@seco.com>,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH net-next 00/15] Aquantia PHY driver consolidation - part 1
+Date: Thu, 21 Aug 2025 18:20:07 +0300
+Message-Id: <20250821152022.1065237-1-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4PR09CA0016.eurprd09.prod.outlook.com
+ (2603:10a6:20b:5d4::8) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820-drm-tidss-field-api-v2-6-43cab671c648@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|VI2PR04MB10809:EE_
+X-MS-Office365-Filtering-Correlation-Id: 474aa94d-07d7-464b-b38a-08dde0c65dd6
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|52116014|376014|19092799006|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?TVRibW5EOWdmNTlKY0g3aFNCblhZbWl6NWlwbTZHeitSL0RwV0JPR0tVLzBI?=
+ =?utf-8?B?SnltYkJkbUJ0anVhWGJ0dnRORE8vREo4TTgwQkZ0bFpOTzlrTGhPRVBHaWtF?=
+ =?utf-8?B?S3daT29KbXpRRWhxcTZWWXB6Ri8rMnc5QXhoWHZZTEpPUUhnWmVxWVV1MGhK?=
+ =?utf-8?B?cFdxZWdyN0NCT0hNQ1ZSVG1wWDVsNGRYRC9OU1dPQ3lJc2ZJeVpwZzNHZFY3?=
+ =?utf-8?B?TTBPZUlpL1BJMHduclZxQnZ6QkpMK1B5Z1ZxWXduQXQ2cDVrU1lCVldVTGUv?=
+ =?utf-8?B?cmhmSUJuckgvbStTTDBhZkprQ3FCZllnRkNWZWc5OTBQSHFZZ2ZGNTdQYTJx?=
+ =?utf-8?B?LzlGYzBYQmNMN3RNekNQS2xaWThub0M1OW02SS9WME9BOXlPR0NpcythWlJB?=
+ =?utf-8?B?K3dmZ2lqWFkxWEVid2lWOEJWZi9BWVhqTHBZamdKQzQ1MGZoZVc0L0hCUC9n?=
+ =?utf-8?B?QURPNjFNbGhGN1JVUzl4RFRVZm1SRjR2NVplTG5iOVEvMi9wNVlFcHdydEtD?=
+ =?utf-8?B?RVh6TmxiaXdscCtDRHpEVFZENXM4L0p1cmt6elVlVm80TFVYcFU2bHNTRGl2?=
+ =?utf-8?B?ejRIRnZ0Z1d3SUNkTE1mamNNWTk5d2FCT2ljTTc1RW9uSm9JbmRVT2FCdXpX?=
+ =?utf-8?B?U0gweEp0RG4xaGRwRzNhNG1UZ3JkSVpQemJodUpZazJKbmY0N3pnVDBMREQr?=
+ =?utf-8?B?ZCtBUjFGTHkzbWpwQlVDTEpMV3ZkcHI1SDNlcGp2aTBaejF5Wk0vTXI1R0h3?=
+ =?utf-8?B?NTljb2R3SlpvLzhMaWh4T2ZIRFhLSW1KQzU4SFM4WGp5RXZoZGp6eVprOVpV?=
+ =?utf-8?B?ckNIUnFKeHBmclFEZmhUYkRhaWMzV1N3dWVXa0NwWEZjN3lHSGlaWisxMXV6?=
+ =?utf-8?B?YzNSc096Y09mZGxyTklOTENSdDNTTlBNejY5NXNWalFJa2I5ckpIL0V4am4z?=
+ =?utf-8?B?MllVTlVTbVQ4Uk52SFNJejZxZFljRWpwd0xkM0c1KzBNMDgwRnBSZ2NyUzUy?=
+ =?utf-8?B?VTdLZjQxQ1czSWdVV3gyNFl0RUE0RUZBbk96d2l0UHNtUEtoajRuN1RFRkFV?=
+ =?utf-8?B?K2Q3K3dweElzamJBU3VEOThoZkFLR0FObHIyZTc1YWt5c0FhVVVXNkJyZFZO?=
+ =?utf-8?B?VkhYa0VXTm5DSmZiV0FOZnlzSFpGN2FGYlRFSTE2WWNXLzVELzZpSXE4cjUy?=
+ =?utf-8?B?MDUzZlJQMXRVc0x2NUM4YmNDNjdiSzhiUysvbmNkUjhmdXJETEN6cjlTbDhV?=
+ =?utf-8?B?SVJ6dFNKZ2RrM1IwRnJhVmo0eWJwM2NsYlpGb2dXZ3ZNQjR0SjZHenBhSWhZ?=
+ =?utf-8?B?Y2dlZW96eTdMcGtJc3p3bzNWNTZmajZxTmhBNjNBck5teFZaZy9JZmtvaUta?=
+ =?utf-8?B?UStzTGJIN3hGY2lNc2VackFYTTZXMWYydUF5ZzZzcGpKdkJDUHBZRUZaQ3hX?=
+ =?utf-8?B?M01vNmQ1VFQwMnRtK21pM05DM1BRZTZpSUNTUnkzV1J5VEkxV1hFM1d0WGRM?=
+ =?utf-8?B?aTlDdisvUUdsd0IvdDJjSjdldEtwREIwS01yTFg4d2xLQmxQaXZWZGZaS0ps?=
+ =?utf-8?B?T2tldzhIcEEvaXkrOVlTMWxFQ2t1bXd0d05JWGI2MG9oc2wydGQyY3g5NkpE?=
+ =?utf-8?B?bjhhVk1QRG9NVVNQbmNhQUxtQ1R5WkNCbmhpVnZyTnFhbVdUSGRaSkcwRFpq?=
+ =?utf-8?B?MEZTazBPVDJ5eU14Nzg4MWVobXJuSkoySlg4WENqODBnZFlXeE9FWTVPaGox?=
+ =?utf-8?B?UU91dUpNd3NyQXdZMVdBa0RUSEtWYlA3SXN2bUNMUm9xS3VGNSsySi9FcmRB?=
+ =?utf-8?B?TFBRQkJBRnhaRUFoSmt1UTBxUVpVYmtVbWtaWWlEcTlFeHFkeHd3NlkyR0NW?=
+ =?utf-8?B?ZllqS1FlUjhqUThDUStrTUh6eklLMHZTS04rdjFCekhYS0F4ZjBvY1d5city?=
+ =?utf-8?B?TTZoVVdLMmF2dDNLVUhOOERoMys2N0VsUUMyS1Jvd0toKzRPMkVXamRNL29L?=
+ =?utf-8?B?cGVQTnNNL0FRPT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(19092799006)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?azNjUERiWFpIZ21NUmxSTTRGSXIvY1dXNFN5VFErSGVkbTVVcWl6ZGZXT20r?=
+ =?utf-8?B?Q0VGcWpQOGNSLzFMZU5UQlZTNkJzd3EveVVIbGh5OXQ1bHVuTVZ5REtmaUxU?=
+ =?utf-8?B?OXkwWjd5MGZmNEVrQ1ltUkt6a2ZnbTFBQ2JWbWxvY0IzcnNsd0wyWW15MUR1?=
+ =?utf-8?B?V1pTMlc4Z1E3YXlhVlpnQ2xIbTlOU2FRS1BlWUtxRVhtdElHOGM4WjJUSDFD?=
+ =?utf-8?B?UzZUNzJzb1BFYXNuVEVxaVhUV3JQdUFtWlZZdmY0c2g3eFpUYy80cm90WHU5?=
+ =?utf-8?B?R3FEcm85QnN6anBqVU5iS29QaE5TNFJXVktvT0VUL2U0b0xMR3I2TGVQc2k3?=
+ =?utf-8?B?dFpuOEJHYitrOE44cjJJU2wzTHowcG5TaDhaSHEvZktWemI5UHpyalVwY2JP?=
+ =?utf-8?B?RmszOGNnenlxN0I5R1IwNkZFRm02Ukx0WWN0L0VyTkNaRmp1MUlhdVJrYWRN?=
+ =?utf-8?B?Q3crankvOUpxWldrUmg5ZVhHc2JKdnlxN1E4bStNeCtMa0lGa29nNGVFRnpv?=
+ =?utf-8?B?dzV6U2pZdmZTZkUvRHBBSzRpcXlEdXVyd3VsZ0hvcG05cktkQ1lnbTRzTVNw?=
+ =?utf-8?B?cnZrNnVxVndsbnkzd0RiS056US9NcGlSVk9iZDcxOXhZRDQ1RWo4Wk9KNHVK?=
+ =?utf-8?B?RWR3d0N4ei8ydDI0d2ZsUkx0alhKVzM4aTNCZzVWWDQ4bEFjSEsyZVgrb09o?=
+ =?utf-8?B?TFJrWjVEbHRGR3JIay95ZVM3bk56UU5qMHVWb3BVemxjL0VyaU1uK0RBdXpF?=
+ =?utf-8?B?UGxzQk9PN1lYaEN6MEVaTDVDMlV1cjJ5eFcxY3FZd2M3RHF4Q0xuTHpNSXdv?=
+ =?utf-8?B?YWFTa2w1MGs4a3RqWnpPaVdGU09KTVk3Q0lURVN4L0haczBZS1BtbmpBbnBx?=
+ =?utf-8?B?R3FRWGtoR0Rwa0owM2JNTnlnL0RJTG5CWDd3V04xVGliaURmZ0syZG1oU0Fr?=
+ =?utf-8?B?RHAwek9pVWUxWDRUSXVCUDk4ZTE1eEFCajNremdEU0Vkbk5CdXJGUjU5WmNz?=
+ =?utf-8?B?b2dlUFYyTGRFNWV0QXN3QXpQbStCMFo4aEx2Q0hFaExhVTZKVHRrMVFWVDk2?=
+ =?utf-8?B?TW9QaWJ4S3FkVmNtY0p6bm9HNHorcTVJSmlzWS9IQWoyVFdPZzBsMnNYbWcv?=
+ =?utf-8?B?Z0wzZ0hvY1ZqZ0VSZXhNNnB4dXRnemJic09TQ0dQQ0JvQ2VtWXhRMG9MMmZu?=
+ =?utf-8?B?SFpkTGMrSnFMcFNaaU8rOUcwREhjWGh4bG9YWUxxMTlqOWVoWDZHL3hiSUhy?=
+ =?utf-8?B?NzUzamZiRTJCNWRDaklWOHk0ZUlhdDB3UmxDc0NKa09jdG5kQWpzVyt4Z0l1?=
+ =?utf-8?B?aWhxSitpSmUyRk5Vdi9BdWVzMzBwVitmeGFwZmJtSklHNE5kaktjQlY5Nlc0?=
+ =?utf-8?B?MXdtcDVLaHUvVGVMSlRyMEkydFhsWmhKdFN0U2J4VmlVV1F2SDRyM1BsZ2VI?=
+ =?utf-8?B?UGtSWHBXS2RPSW93azdDdEVNRUdrNGsyRXQ4WUN2NmdJKzZ6c053MUZJTXlw?=
+ =?utf-8?B?bGRCdEt4NnpaaG9BYjIxalpkNEZucEJaelFxQWo2dGk3RUhBVjVsNWRZMlA3?=
+ =?utf-8?B?MWMwRnAxd09SSUU4aTk2YjlPMWFZa2FIdHlYdVpCUnFIekFwajVOcXNhN3lz?=
+ =?utf-8?B?dUlFTXlpYkt2YjZBbXJ4WEczUWtWbmN1b05TY0ZvbVlxNUloOEUySitiZWd1?=
+ =?utf-8?B?M0tBVytXU1FlQi83RnY2V2ZIQW9ndVBwaFRGV1NTRURpb1BiZmg2YUhXNkl3?=
+ =?utf-8?B?ZnZNN0d0dlFENm4xZlNaVTJNdGpydDNreTZkUUNDWnJ3TzNLUFV4RWg0WWto?=
+ =?utf-8?B?dlFaMmdoQ05HQThmaGlraEZKQ0QyQ1NBYy85K0FWZ2loK05YaVY0eDl0alpQ?=
+ =?utf-8?B?TlJiVFBCM21aYi9aNWtqMVVQMU9oQnJPWjBSczhpWTROWEtsY2xQWE9lM0k3?=
+ =?utf-8?B?cGNSYjUzNW8yLy9jSG4zSWZzdDVzbVlZVjZxeVoxcUlRL0g3ZmtNQkJlZFZn?=
+ =?utf-8?B?dlpFYVhPZW56Q3dHR05ac0NkbjhHZEo2LzQ1QmRuMEM1NU9HaUE0M2JDVnBi?=
+ =?utf-8?B?bFVKM2dXWmpCK3ZiWlVKSDhDQi96ZEdVVGZteFZ6VDVuK0Y4WjRlNFVxckUz?=
+ =?utf-8?Q?dl2P6WofnPmeY0r9bf+MfV8O9?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 474aa94d-07d7-464b-b38a-08dde0c65dd6
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 15:21:14.0620
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uyAf2DRxPUif1meV+Z4c55SLwzDGOb9dWrlROa3/B6RD8Pg3KXhFRHct8whBWZ/FDxsdDWWovXK0uXOPlsPfTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10809
 
-Hi Maxime,
+This started out as an effort to add some new features hinging on the
+VEND1_GLOBAL_CFG_* registers, but I quickly started to notice that the
+Aquantia PHY driver has a large code base, but individual PHYs only
+implement arbitrary subsets of it.
 
-kernel test robot noticed the following build errors:
+The table below lists the PHYs known to me to have the
+VEND1_GLOBAL_CFG_* registers.
 
-[auto build test ERROR on fbb0210d25fde20027f86a6ca9eee75630b5ac2b]
+ PHY       Access from            Access from
+           aqr107_read_rate()     aqr113c_fill_interface_modes()
+ ------------------------------------------------------------------
+ AQR107    y                      n
+ AQCS109   y                      n
+ AQR111    y                      n
+ AQR111B0  y                      n
+ AQR112    y                      n
+ AQR412    y                      n
+ AQR113    y                      y
+ AQR113C   y                      y
+ AQR813    y                      n
+ AQR114C   y                      n
+ AQR115C   y                      y
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Ripard/drm-tidss-dispc-Remove-unused-OVR_REG_GET/20250820-220945
-base:   fbb0210d25fde20027f86a6ca9eee75630b5ac2b
-patch link:    https://lore.kernel.org/r/20250820-drm-tidss-field-api-v2-6-43cab671c648%40kernel.org
-patch subject: [PATCH v2 06/14] drm/tidss: dispc: Get rid of FLD_MOD
-config: xtensa-randconfig-001-20250821 (https://download.01.org/0day-ci/archive/20250821/202508212351.neQpMO5p-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250821/202508212351.neQpMO5p-lkp@intel.com/reproduce)
+Maybe you're wondering, after reading this, why don't more Aquantia PHYs
+populate phydev->possible_interfaces based on the registers that they
+are known to have? And why do AQR114C and AQR115C, PHYs from the same
+generation, just having different max speeds, differ in this behaviour?
+And why does AQR813, the 8-port variant of AQR113, not call
+aqr113c_config_init(), but aqr107_config_init()?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508212351.neQpMO5p-lkp@intel.com/
+I did wonder, and I don't know either, but I suspect it has to do with
+developers not wanting to break what they can't test, and only touching
+what they are interested in. Multiplied at a large enough scale, this
+tends to result in unmaintainable code.
 
-All errors (new ones prefixed by >>):
+The tendency might also be encouraged by the slightly strange and
+inconsistent naming scheme in this driver.
 
-   drivers/gpu/drm/tidss/tidss_dispc.c: In function 'dispc_set_num_datalines':
->> drivers/gpu/drm/tidss/tidss_dispc.c:649:17: error: implicit declaration of function 'FIELD_MODIFY' [-Werror=implicit-function-declaration]
-     649 |                 FIELD_MODIFY(GENMASK((start), (end)), &_reg, (val));    \
-         |                 ^~~~~~~~~~~~
-   drivers/gpu/drm/tidss/tidss_dispc.c:1134:9: note: in expansion of macro 'VP_REG_FLD_MOD'
-    1134 |         VP_REG_FLD_MOD(dispc, hw_videoport, DISPC_VP_CONTROL, v, 10, 8);
-         |         ^~~~~~~~~~~~~~
-   drivers/gpu/drm/tidss/tidss_dispc.c: In function 'dispc_vp_enable':
-   drivers/gpu/drm/tidss/tidss_dispc.c:1219:24: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
-    1219 |                        FIELD_PREP(GENMASK(7, 0), hsw - 1) |
-         |                        ^~~~~~~~~~
-   drivers/gpu/drm/tidss/tidss_dispc.c: In function 'dispc_vp_go_busy':
-   drivers/gpu/drm/tidss/tidss_dispc.c:640:15: error: implicit declaration of function 'FIELD_GET' [-Werror=implicit-function-declaration]
-     640 |         ((u32)FIELD_GET(GENMASK((start), (end)),                        \
-         |               ^~~~~~~~~
-   drivers/gpu/drm/tidss/tidss_dispc.c:1280:16: note: in expansion of macro 'VP_REG_GET'
-    1280 |         return VP_REG_GET(dispc, hw_videoport, DISPC_VP_CONTROL, 5, 5);
-         |                ^~~~~~~~~~
-   cc1: some warnings being treated as errors
+The set proposes a naming scheme based on generations, and feature
+inheritance from Gen X to Gen X+1. This helps fill in missing
+software functionalities where the hardware feature should be present.
+I had to put a hard stop at 15 patches, so I've picked the more
+meaningful functions to consolidate, rather than going through the
+entire driver. Depending on review feedback, I can do more or I can
+stop.
 
+Furthermore, the set adds generation-appropriate support for two more
+PHY IDs: AQR412 and AQR115, and fixes the improper reporting of AQR412C
+as AQR412.
 
-vim +/FIELD_MODIFY +649 drivers/gpu/drm/tidss/tidss_dispc.c
+The changes were tested on AQR107, AQR112, AQR412C and AQR115.
 
-   606	
-   607	/*
-   608	 * TRM gives bitfields as start:end, where start is the higher bit
-   609	 * number. For example 7:0
-   610	 */
-   611	
-   612	#define REG_GET(dispc, idx, start, end)					\
-   613		((u32)FIELD_GET(GENMASK((start), (end)),			\
-   614				dispc_read((dispc), (idx))))
-   615	
-   616	#define REG_FLD_MOD(dispc, idx, val, start, end)			\
-   617		({								\
-   618			struct dispc_device *_dispc = (dispc);			\
-   619			u32 _idx = (idx);					\
-   620			u32 _reg = dispc_read(_dispc, _idx);			\
-   621			FIELD_MODIFY(GENMASK((start), (end)), &_reg, (val));	\
-   622			dispc_write(_dispc, _idx, _reg);			\
-   623		})
-   624	
-   625	#define VID_REG_GET(dispc, hw_plane, idx, start, end)			\
-   626		((u32)FIELD_GET(GENMASK((start), (end)),			\
-   627				dispc_vid_read((dispc), (hw_plane), (idx))))
-   628	
-   629	#define VID_REG_FLD_MOD(dispc, hw_plane, idx, val, start, end)		\
-   630		({								\
-   631			struct dispc_device *_dispc = (dispc);			\
-   632			u32 _hw_plane = (hw_plane);				\
-   633			u32 _idx = (idx);					\
-   634			u32 _reg = dispc_vid_read(_dispc, _hw_plane, _idx);	\
-   635			FIELD_MODIFY(GENMASK((start), (end)), &_reg, (val));	\
-   636			dispc_vid_write(_dispc, _hw_plane, _idx, _reg);		\
-   637		})
-   638	
-   639	#define VP_REG_GET(dispc, vp, idx, start, end)				\
-   640		((u32)FIELD_GET(GENMASK((start), (end)),			\
-   641				dispc_vp_read((dispc), (vp), (idx))))
-   642	
-   643	#define VP_REG_FLD_MOD(dispc, vp, idx, val, start, end)			\
-   644		({								\
-   645			struct dispc_device *_dispc = (dispc);			\
-   646			u32 _vp = (vp);						\
-   647			u32 _idx = (idx);					\
-   648			u32 _reg = dispc_vp_read(_dispc, _vp, _idx);		\
- > 649			FIELD_MODIFY(GENMASK((start), (end)), &_reg, (val));	\
-   650			dispc_vp_write(_dispc, _vp, _idx, _reg);		\
-   651		})
-   652	
+Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Robert Marko <robimarko@gmail.com>
+Cc: Paweł Owoc <frut3k7@gmail.com>
+Cc: Sean Anderson <sean.anderson@seco.com>
+
+Camelia Groza (1):
+  net: phy: aquantia: add support for AQR115
+
+Vladimir Oltean (14):
+  net: phy: aquantia: rename AQR412 to AQR412C and add real AQR412
+  net: phy: aquantia: merge aqr113c_fill_interface_modes() into
+    aqr107_fill_interface_modes()
+  net: phy: aquantia: reorder AQR113C PMD Global Transmit Disable bit
+    clearing with supported_interfaces
+  net: phy: aquantia: rename some aqr107 functions according to
+    generation
+  net: phy: aquantia: fill supported_interfaces for all
+    aqr_gen2_config_init() callers
+  net: phy: aquantia: save a local shadow of GLOBAL_CFG register values
+  net: phy: aquantia: remove handling for
+    get_rate_matching(PHY_INTERFACE_MODE_NA)
+  net: phy: aquantia: use cached GLOBAL_CFG registers in
+    aqr107_read_rate()
+  net: phy: aquantia: merge and rename aqr105_read_status() and
+    aqr107_read_status()
+  net: phy: aquantia: call aqr_gen2_fill_interface_modes() for AQCS109
+  net: phy: aquantia: call aqr_gen3_config_init() for AQR112 and
+    AQR412(C)
+  net: phy: aquantia: reimplement aqcs109_config_init() as
+    aqr_gen2_config_init()
+  net: phy: aquantia: rename aqr113c_config_init() to
+    aqr_gen4_config_init()
+  net: phy: aquantia: promote AQR813 and AQR114C to
+    aqr_gen4_config_init()
+
+ drivers/net/phy/aquantia/aquantia.h      |  28 ++
+ drivers/net/phy/aquantia/aquantia_main.c | 531 +++++++++++------------
+ 2 files changed, 289 insertions(+), 270 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
