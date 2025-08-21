@@ -1,166 +1,172 @@
-Return-Path: <linux-kernel+bounces-778794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B621B2EB22
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:14:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE37B2EB2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B03188168A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E833B48B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26C22D979E;
-	Thu, 21 Aug 2025 02:14:34 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B7F22A4F1;
+	Thu, 21 Aug 2025 02:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mx8Xv+UK"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70591DD543
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F0521D5AA
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755742474; cv=none; b=QTPt3NrwvGyUeaBqgLwtd0+YoeSTBsJ12lTyMnKKu1GZ57lCrcL2AgSbGd0sNO+ZZP/JGJGDiQtVgescAzx9d0rkqRUtW3v9QemsZJAOVhFkSta/+Nklrc8fxDV31g1mBkd/42ifhXvBrPqbv8LPtAq2HvPRow+yajDgqyvc1xM=
+	t=1755742939; cv=none; b=NCgxUgRp2WTQJ74u0Atg7LBVVLU+G5YiU9YNIaCzAn7mZDrxsXGg7NyECIf/Za+FX5riMVbJnu8jLuhzKH6Vef9uUCEQ++CbxYo4APt3x5hpkHoOax4u+Ird3hIrEyfStXeCsS5q1QyYA8BgcoPz7M7zouRu8usF9th4h3O5qc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755742474; c=relaxed/simple;
-	bh=c1JzjzcqhHeqb50RUyDDT9Y98mtiHK/L6+DIp7oHAW8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=e32VpbwiUAdgftwRcxfP+hE0kgL2gc8T0clBhs/d0Va/Q5jC/jm74AHDow2gX8PVXwXEqBvX9huxptIiFz8NLaybn5XuSipycrrB+QclQ64jfNe9umh917qol4doWytZ2D+kXyIThkhzjhc7mGnRCPNVvCZZmdzqF4JBc798FEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e6e61caf71so5957685ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:14:32 -0700 (PDT)
+	s=arc-20240116; t=1755742939; c=relaxed/simple;
+	bh=M+Tt7lOyvwNBEVxje7vB5+qnUcdtvBNxt4rOINYoqf0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d/d3jiISJdK5eJmezLdBYtLFZITu3iBtCNPCTk1lKj+QJIot+z91h3Hzy6C5PYYz95fHOHjLv7eHfP0DanTVgGOuQgLnY0HM80iS+gCnuOZrrLWnlGEYs0Q2duSmmlTPru+4oTJ1tiH8fYM6oXUFov2mv7G1Fto6kPUrY6Uh8xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mx8Xv+UK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KGnGrm001621
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:22:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fhuQQAYtkFz1+EMzbo9h41xY8JijUtMlK2wIkAFemmg=; b=mx8Xv+UKFekjgIea
+	zpwoOjBGpC8vG24HybBj9dFPUt5QlmnxYQI1nLF8qREnKjpKlPZWWhwvbIQSm75g
+	AcfvH8kA10kv7f/86IZhqHh0uayUClUfBvRuLXE/AJBKZPrNY2mJlOufKoHv0fVy
+	c0OBFnzpDknd9ZbpLkJ98UFg9FM+oxyx+q7o3t19K0C754pSN2QwlwdVhOeGq05S
+	wyA/ACFZPVgH4tfzv/wZNXwBN7MwYWzXTMeO+citUmkwfWKIixxOuoUwhJzeacWI
+	NaBtSrWeTcKHyU4ig+xdplvCIu80jwleequB4k36qWtceMtk4klLI/tzwrWQemCl
+	SJD2FQ==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52dkkqe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:22:17 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32326e2f184so1136645a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:22:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755742472; x=1756347272;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aQxHRgeChNTxbLV3131Rwb52VhDI/1dYJc8+5cwgx30=;
-        b=Sz/RN2GpzagDFOcQUnudi4eh2ctYt/WVfbCAHlU4+UMa4eld2TqUcAVbLgAi7SNaOc
-         kBm4PvmJjTmXU4frxi+BV9aTxz38ZG6XC0WwSQJa4J9L2ZvoYNEZLoFqt4ii1JGR1E/O
-         d7GUwgrzVmIlVnE2olto1ee+Vh+P0985zkLa9asjV9ZsdSoSdQ+RLruo0xMjNjf0CWhz
-         x7PnHCfXCpSnD6MY+foNhrXxOts48ItQjcfSZkjta1X7MJdbB/NT8PD3nYPRuXAlOHWn
-         nIeONksRCyYsZG3qoRzrYHJOiGZ6FRhV+QwiPSIT5Z1i2+9UYky26fzKMY0qid+FADF0
-         uTWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVavxT/D/TfjRBgBWdAQC1WDARy/YjpnuEMLr8wp3dTxzI49QcmHhBm+GmS/hBEmrZr7yiCUpVnyz4/k8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz73HlpJha8H5v0mCwo9ffDC5kJuOUkpRQuH7Z35QUKE/2dtJUz
-	2J8526JHsiEZHBFoCSkj7u+54NvQyhgXztcc6LZSRdY3Yd7ABcfptklqQoGlprb8YEgmcLrxHE0
-	nsGz408+yWsWWCypGrnJ7ofoAzcrRlfmNLKpLhn3JPfLJgLNIheyG3Wmu56w=
-X-Google-Smtp-Source: AGHT+IHGC44FrRLwYHhyTjthukMc8igcR3mKads8/zioUjdqWD2TAcdwPDOGULm4I7iJqaRzfo/oKWobKAXoZpW4bMxv5gyafIMf
+        d=1e100.net; s=20230601; t=1755742936; x=1756347736;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fhuQQAYtkFz1+EMzbo9h41xY8JijUtMlK2wIkAFemmg=;
+        b=k3BZCfbElyTga7wlEEf+SRouqV1CfbZAaLwRJiOPVST3G5ROQIkO6p+yL7sVQBadNj
+         Yh6THFEzFjcA6qs07LLOC3wHcdvbU9xeKHrVtWxeIP6YXXNI2Rauwvft7r83jx9tquBb
+         4uNs6DW+WerayWWkxCLlXMOc1sB+kSuOomIDNj/Hr2Ile+P7bawRktvnAlF/OWIxMjO1
+         W/EMKL12gg5KB1+HmjKeyhDmzaGiatZjar5MUrP+t4uZ8stJyhqmOrfr+/u+glwBisId
+         64ueB3ag17OIXyLv+YeHRyD/vFJvhG98Skhtoy1Nbuxino++DNrs8/rXkRtjRBNbEDzd
+         UO4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWmRqZgAbEJ7mJ20kBTsVoA8v0Ui6RfuHYZHEK7JYwi8HE/DBYLBjzQ8pFze9MNdi/E/HDvKWAHo+ISuTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+3y7zwFB0zCMK4H8BC9WwO0eTVuTDwJgdctOUhiA29slgXvE2
+	aW/Fdf4xL2M0aY1z64Qxdg1HX4x3d/ui3gVLeFy2mwX8o3/cIDHyWR3kF+ek/102pdwsQfMvxfK
+	e90vkbXQFaSoT2i6gz+hfO/5lwlEcDmWoOS2YzHBRTkxY/mfnndIwMDfb5kbWxWIe9Po=
+X-Gm-Gg: ASbGncvPZL3Wn8fiLt8BlPpQozlGNjMkd0muMgeu4ASdCwh7nnThEP1pr1NYAu5cLw+
+	mcWi05jj5l2VcQRXOtnEunSfpJmmkTn+/ys6pgyXTJIglRhtfPepksBpWcmQ1CdyW4Ay195tTkr
+	s1NDGm2RwHpk0ckcw/Mz64/Ocy1j33W/Q7+3er2abvOtcaZCvb7b2Rx55xkFEz9qQa70XtLtmxC
+	EB4IsCP1w9dA2TWontrf8tctoRqgkar2RTMakPJgqsBDc6qkiV7F8j6xmRWZMw7wkquOD2hvjKC
+	fcPuqusuTY3i6ISSJnYCqbB+szjd2yKBDgCXPVIlrAdiAx0efz40yoElvsgZXrJqr87g05sqT8K
+	AFu2ipv6CrNcn7aPtZmYXwQuZp9AQDQyj
+X-Received: by 2002:a17:90b:53c4:b0:324:e642:b5ca with SMTP id 98e67ed59e1d1-324ed13a72dmr1379004a91.29.1755742935703;
+        Wed, 20 Aug 2025 19:22:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEJRz4sysTqGhrRLL4dSQy2QlK07feYrDXxAVKB+n79aOM7MsuZWRLWFY/xgGqdwpBUmHYgnw==
+X-Received: by 2002:a17:90b:53c4:b0:324:e642:b5ca with SMTP id 98e67ed59e1d1-324ed13a72dmr1378979a91.29.1755742935196;
+        Wed, 20 Aug 2025 19:22:15 -0700 (PDT)
+Received: from [10.133.33.88] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324f23d745csm356703a91.4.2025.08.20.19.22.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 19:22:14 -0700 (PDT)
+Message-ID: <f467aade-e604-448d-b23e-9b169c30ff2e@oss.qualcomm.com>
+Date: Thu, 21 Aug 2025 10:22:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:158b:b0:3e5:8249:e973 with SMTP id
- e9e14a558f8ab-3e6d7b4aa01mr14110555ab.16.1755742471892; Wed, 20 Aug 2025
- 19:14:31 -0700 (PDT)
-Date: Wed, 20 Aug 2025 19:14:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a68107.050a0220.1f0557.0000.GAE@google.com>
-Subject: [syzbot] [mm?] INFO: rcu detected stall in hub_event (2)
-From: syzbot <syzbot+039eab266c6321a174bd@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, pasha.tatashin@soleen.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    90d970cade8e Merge tag 'ata-ata-6.17-rc2' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1193b3a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c5d01e11121d45
-dashboard link: https://syzkaller.appspot.com/bug?extid=039eab266c6321a174bd
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/104fc9d3de89/disk-90d970ca.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/59eb5344d41f/vmlinux-90d970ca.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e0bed540b10c/bzImage-90d970ca.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+039eab266c6321a174bd@syzkaller.appspotmail.com
-
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P9643/1:b..l
-rcu: 	(detected by 1, t=10503 jiffies, g=87629, q=1145 ncpus=2)
-task:kworker/1:13    state:R  running task     stack:22384 pid:9643  tgid:9643  ppid:2      task_flags:0x4288060 flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
- preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
- irqentry_exit+0x36/0x90 kernel/entry/common.c:197
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:check_kcov_mode kernel/kcov.c:185 [inline]
-RIP: 0010:write_comp_data+0x3c/0x90 kernel/kcov.c:246
-Code: 8b 05 58 b3 1a 12 a9 00 01 ff 00 74 1d f6 c4 01 74 67 a9 00 00 0f 00 75 60 a9 00 00 f0 00 75 59 8b 82 3c 16 00 00 85 c0 74 4f <8b> 82 18 16 00 00 83 f8 03 75 44 48 8b 82 20 16 00 00 8b 92 1c 16
-RSP: 0000:ffffc90004fdf430 EFLAGS: 00000246
-RAX: 0000000080000000 RBX: 0000000000000004 RCX: ffffffff822dbf07
-RDX: ffff88802883a440 RSI: 0000000000000004 RDI: 0000000000000006
-RBP: 0000000000000003 R08: 0000000000000006 R09: 0000000000000004
-R10: 0000000000000003 R11: 00000000000082fe R12: ffff8880200096f0
-R13: ffff8880200096ec R14: 0000000000000002 R15: dffffc0000000000
- __page_table_check_zero+0x207/0x5d0 mm/page_table_check.c:139
- page_table_check_free include/linux/page_table_check.h:43 [inline]
- free_pages_prepare mm/page_alloc.c:1396 [inline]
- __free_frozen_pages+0x7b7/0x10f0 mm/page_alloc.c:2895
- discard_slab mm/slub.c:2753 [inline]
- __put_partials+0x165/0x1c0 mm/slub.c:3218
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4d/0x120 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4180 [inline]
- slab_alloc_node mm/slub.c:4229 [inline]
- kmem_cache_alloc_node_noprof+0x1d5/0x3b0 mm/slub.c:4281
- __alloc_skb+0x2b2/0x380 net/core/skbuff.c:659
- alloc_skb include/linux/skbuff.h:1336 [inline]
- alloc_uevent_skb+0x7d/0x210 lib/kobject_uevent.c:289
- uevent_net_broadcast_untagged lib/kobject_uevent.c:326 [inline]
- kobject_uevent_net_broadcast lib/kobject_uevent.c:410 [inline]
- kobject_uevent_env+0xca4/0x1870 lib/kobject_uevent.c:608
- device_del+0x623/0x9f0 drivers/base/core.c:3896
- usb_disable_device+0x355/0x7d0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2e1/0x9c0 drivers/usb/core/hub.c:2344
- hub_port_connect drivers/usb/core/hub.c:5406 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
- port_event drivers/usb/core/hub.c:5870 [inline]
- hub_event+0x1c81/0x4fe0 drivers/usb/core/hub.c:5952
- process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/6] net: stmmac: Inverse the phy-mode definition
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, stable+noautosel@kernel.org
+References: <20250819-qcs615_eth-v4-0-5050ed3402cb@oss.qualcomm.com>
+ <20250819-qcs615_eth-v4-2-5050ed3402cb@oss.qualcomm.com>
+ <80a60564-3174-4edd-a57c-706431f2ad91@lunn.ch>
+Content-Language: en-US
+From: Yijie Yang <yijie.yang@oss.qualcomm.com>
+In-Reply-To: <80a60564-3174-4edd-a57c-706431f2ad91@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX47F64QkyO+RN
+ zKubxbnGWi8H+jYU0yiA0pDTlVpUdds38qsD357pssEho/F16oRyOpczLHDeUa+sKFDiFqlCpZx
+ j0pFNJ3zJFlQ8X6pyU1vmrzijI9ykjlaB8HmYFfkDGWYJ13c09cY1AWrLJ0WqCgurfPS2stPRqk
+ vo8FyUsexqB317wa0L3/y4xV5JEqR/pEbCzKLjatN8RJlMaG+dW/e0xSmyUHnanXLYmwiqTHtUP
+ DYPF6VNVYfMaGhjA8Cq5veqrSRc5OQ/SKhPr+KE6KZdQ8dXhd/4EhOZNZi0yK1dphjScenjmXMU
+ t5FPC00ad269zIOXDAXzttVd5KcsM9Unbau9pAJnSqB5iWBmMSULjQLdbzVFz8HYI+p+Eh2gCfC
+ XTF+djg8jGKmY354i8ikCzBOfnOFcg==
+X-Proofpoint-ORIG-GUID: GswC_VCunnNU5lP60oO9RIOsh2hoXMn6
+X-Proofpoint-GUID: GswC_VCunnNU5lP60oO9RIOsh2hoXMn6
+X-Authority-Analysis: v=2.4 cv=SoXJKPO0 c=1 sm=1 tr=0 ts=68a682d9 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=uddfqdTxQVX4ueY0IN0A:9
+ a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_06,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 2025-08-20 00:20, Andrew Lunn wrote:
+>>   static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos, int speed)
+>>   {
+>>   	struct device *dev = &ethqos->pdev->dev;
+>> -	int phase_shift;
+>> +	int phase_shift = 0;
+>>   	int loopback;
+>>   
+>>   	/* Determine if the PHY adds a 2 ns TX delay or the MAC handles it */
+>> -	if (ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_ID ||
+>> -	    ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_TXID)
+>> -		phase_shift = 0;
+>> -	else
+>> +	if (ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_ID)
+>>   		phase_shift = RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN;
+> 
+> Does this one setting control both RX and TX delays? The hardware
+> cannot support 2ns delay on TX, but 0ns on RX? Or 2ns on RX but 0ns on
+> TX?
+> 
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+This setting is only for Tx delay. Rx delays are taken care separately 
+with DLL delays.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> 	Andrew
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+-- 
+Best Regards,
+Yijie
 
-If you want to undo deduplication, reply with:
-#syz undup
 
