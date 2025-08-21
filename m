@@ -1,142 +1,198 @@
-Return-Path: <linux-kernel+bounces-780268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FCCB2FFA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:08:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFA4B2FFAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D38A41CC1374
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:02:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13BCD60363F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B858C27FD71;
-	Thu, 21 Aug 2025 16:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A8928F92E;
+	Thu, 21 Aug 2025 16:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nNDT6cSb"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VexkOBYj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC4F27BF7C;
-	Thu, 21 Aug 2025 16:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B533D27EFFF;
+	Thu, 21 Aug 2025 16:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755792114; cv=none; b=ZTeo27U8mRIq4QiaEhx6BwlF+5An3SjcXt97hJJUSts7wQILz/bVuk4eGm7LJgWz9FNQYBUOOA6antj3FOOsqKd4xCOhAWREemaKvFY2TXbNcm2jgvyna8T5p8SA/J9jXHu1hyFGK3LD2A00AM1CCi0NVfqY1D+RBuf2TmUrMu4=
+	t=1755792172; cv=none; b=K9JAFOzIvAEsVYeCg9OHZtxnj1TycoqU/pgPyPl8IHTnXaqmA05QhCyMcPPs4A6tkv7eQXTWCR+3n2Lc9yXB1x/zyceTcuDwNn/W2Bze3GGuuWmRWJNlPd5VJg+tyKAOMuGHGirRADYEQTm1X+mYt4+p+FbvQ/Wa3cElJoEcoZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755792114; c=relaxed/simple;
-	bh=Sb2tmvyhA9kl4RDm1IjcNLqVSOU59BKXqAaqUHmoj7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fa5l576KXcSAxwkKm1V071shP0qHtrcRQtcTXBEfFfj0FhaM7JOYwtZIZbXQrwLADDaQcYkAMDkT1JqmjfskfvXRfHoV6CLv/vjABrZkJ8cfbaUXwXydHOTU4lgyFKC26GtjHCl2k/lMzDNBEWbO81qCwmumpLFFIAgAmtaFR54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nNDT6cSb; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e2eb6ce24so1054061b3a.3;
-        Thu, 21 Aug 2025 09:01:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755792111; x=1756396911; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zzsiqmbfqBkVY+f01p1NV6V6NJGQ87QW0Z5a0oYFHFU=;
-        b=nNDT6cSb0HsTCeGho5RmnuPfCUanyNKgNH2U6DsfKxDNLW0G+sWJtqoCUg4Nuh8oO1
-         TdWNFdh0+IvwWbc+QsThEMBzowXQrhmkubrDIzNctWF+h7ZZ6qOxltN2VCogeujVabzK
-         QbwsGF0qLD5WAkdJtuezFDnTXR0NIoEgC66KCd/DmxBv6OXoFJdXE19xbrgiH8X21zEq
-         RPnaK1gpjc7KcLKzd/MIV4mOv3NvPzMJIfBn80IZlAaSsFmb1g4FAN5bwOFGK9RZ8pxS
-         yHdmBtfhgVGK4IGfcktsQsPoHKpS0BxEtt/XTKPr3BLf3iiEkjWSy8UP6A8WIx+6ux9w
-         YTfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755792111; x=1756396911;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zzsiqmbfqBkVY+f01p1NV6V6NJGQ87QW0Z5a0oYFHFU=;
-        b=eqXv4WwvCMwqBaQJlBMGK1uBuKlS/XDPBc5xp6Y48Y/Fw9KZJxogzW6o9GAyB8Ycj2
-         b/749ZS2Fu0tKfzLe3huNJFJCREky4sh2H1dpSn21RX88rVLc4V2kNx/C5Qn8a5nhTLC
-         KZqKT3TfX16zUXbEvk5ox7MdUYF1MVYXMgahW2J+bJE576HFw1IOz+mA8V4yx0gnxY70
-         778xaoO5fbYkjGDw7Wn8GzWE0uatJWPFjdqGDAQsWrMLeM3/CMAkyPRnGMm1AURaXFe+
-         0deDabRR/XnFamJcUw+xCWZ3fYk932h6c4XqxI8uWxS3Sw5G4vFRVcf7lNWhT1TjNWNh
-         If8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUzzcs9AfuaDOvYrRhiJL4aBr20+m8RZyDddAFGwe7aKGrToBb6z3JISgIUK1FmdtzJMz7Pygema/E=@vger.kernel.org, AJvYcCVG7IIS4hRmwODbq/MCWcV7SVYbTACeqV5vVuSRo7t21WkneSun8xsI9Tl5/L+6c0j5XukZqT/aTCMl3FFT@vger.kernel.org, AJvYcCVaLieDQkL2156GdK4KUgxHIENKYChUzAsVwGeIjbXneenHwVXA5Mg5bVB6Z3AAPVMJV397KUWkW2bgHoo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVHRdG18P4gg7G3FfQhbwBB0n9ZMp9V9MO4H9oF+jzNV4ElgXv
-	SSSIe9M1RfJBpy+2JsuF+YmqwwvOGso0TRwMoLbIxDKX/DN3CQeRKgAH
-X-Gm-Gg: ASbGncv8nYBEWnfB7yo5XfjUJIU6927bDAQWYUT7xKzur1cZqUL7qFmF7ZUOVaQHehB
-	05AKdC9xQxRjNV/N6QrXvAsnMFvOwhazDUJVnQEjCicSB6sCoRi1cIueu6CqQ/WvtZh4HRL9xjy
-	fwFKk2dbDr46G5nOP6nbVrfVXjN87EevV5/AP3C88DaccnVb2+1KBVZoE8CG1oA82GmcEQfT6hO
-	LzJgRQ7QaRsaZRVo4TLgVvxcsj80j6ZiYgbcO610p8fcgunmh/g59lPnLz3veJF3eS6frHCGnBs
-	ytRbBG3VTI7k3M8WZBP/T+y5eRgW4hIptmxN+bwYlU8oDOCyEtDtjDnElE9NmBvwGOyCfSt9tlE
-	0yeFk8DJ/NwSy8PhiYus8kPkTCTyz0ADzFq0GbrxxmuAytTN1uy5E8iFv
-X-Google-Smtp-Source: AGHT+IE6uLjtZA+NsA4etmBGRhXqOtbKJrOEJL92MfF6Uthlu2MOjaGFDFnyQtI4j943jND6fmZtZw==
-X-Received: by 2002:aa7:8888:0:b0:76e:885a:c3ef with SMTP id d2e1a72fcca58-76ea325e544mr3700074b3a.27.1755792111050;
-        Thu, 21 Aug 2025 09:01:51 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d0d14efsm8849369b3a.2.2025.08.21.09.01.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 09:01:50 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 21 Aug 2025 09:01:49 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
-Cc: skhan@linuxfoundation.org, jdelvare@suse.com, corbet@lwn.net,
-	linux-kernel-mentees@lists.linux.dev, ninad@linux.ibm.com,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Fix typos in hwmon docs
-Message-ID: <bcfd4b37-599b-4797-b3a3-6c4ae34ebaf7@roeck-us.net>
-References: <20250821125539.58313-1-kerneldev@debanilchowdhury.com>
+	s=arc-20240116; t=1755792172; c=relaxed/simple;
+	bh=C8xw7tu6C/VTwyQy7VhFy4pnhRO0rLzDaMi7Jy3Ew/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pvicMndIrKbH5mz1lzZIw6WDGQHbYjPhwFZwYk7yrHQc+xmdiOlISEHaTWquY4DD4R1TPZFvGVv+zjmuiJpyo2SRUNiG4xnRLGJ2H0KKYiN7beAmnYGyF7FDMkRzeufRUxp+vKfnO9hKcDDHkCzon7rnf9F2X1Fg/oPHaK8rPes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VexkOBYj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9bDaa006394;
+	Thu, 21 Aug 2025 16:02:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xxPNP5AS8eEt0PeGMcjZ3CMG90P5nYV1hx2wnGBeO10=; b=VexkOBYj7mlm4V0W
+	pmvoBpkPbSkKG/S57mM3jrdY7iMY7Bpt43Wdzapc+l9D3+fSDruxKbOTeH0KMsqq
+	2sxkTPjP7PZqRjE1dK2S/Cet6hpyT0vptMH8m7VMHDhBfk3twwe7DyZwsGD9JraJ
+	FbzfMB90aoJfgiLNkOklJkwfafX6WOyh/KJJ+ZLr2525Yxuf7jYLfBkFkGm24XNA
+	Oct+hJ6sTdbgOXe1PB0vYs3kWBblvvVLyt0M2leV7VHyRledFfxOTZPrzqhHMMap
+	o8fiqh1s1ECOFi7ldOtD0pV5HuEjLKbNaCoMQfBQkY49GKsmPtx2X4SFkjRQ6not
+	JCG+5w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n529626h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 16:02:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57LG2hVJ008528
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 16:02:43 GMT
+Received: from [10.216.47.227] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 21 Aug
+ 2025 09:02:39 -0700
+Message-ID: <9a38ec05-f7ab-4241-ba47-0d514b79e808@quicinc.com>
+Date: Thu, 21 Aug 2025 21:32:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/2] phy: qcom-qmp-ufs: Add regulator loads for SM8650
+ and SM8750
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>, <mani@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250819222832.8471-1-quic_nitirawa@quicinc.com>
+ <20250819222832.8471-3-quic_nitirawa@quicinc.com>
+ <ger4kizeltjwalfuwu4dpfjiskrv2okgo5c7d6n3pb24yaxgfo@nkcndblyx3il>
+ <b453b8ff-a460-4ccd-9019-aed746a7d52d@quicinc.com>
+ <ukxv7donvkulgci2dwrokuflzxzeyh4kohoyja2vywropntxnb@qepcssbe4wpc>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <ukxv7donvkulgci2dwrokuflzxzeyh4kohoyja2vywropntxnb@qepcssbe4wpc>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821125539.58313-1-kerneldev@debanilchowdhury.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LcVfzQqGIZtt7cMx1acfeeU9pxt1VbCq
+X-Proofpoint-ORIG-GUID: LcVfzQqGIZtt7cMx1acfeeU9pxt1VbCq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXy8LKfEsvyKFa
+ GjvaA+veIO0BNAJLC9QgGIKJ38POqywKlcZJXwscz7zEv6To3Vi/sLbNDAdd8EQFFD1SnMMzNw3
+ oy0DOsjuVnirl0HNnDzwYv3A/QSGtP9FEdacFCKteJ5j3OLEA3UrRvT3LEBFBvDf2JnEYoaDMps
+ u1fJ0aIiYKzKV9CB5YNLXVdFlWSfJCYn5Yn+spM5eYFB2C6NrHCCV006wD/Gt7eqeDJv1XRVwKX
+ l1RYaJ1xLbLXq0QV0hWaPzYhkf17Vx9UJxENMWkC9b7+QAMcCQdqbfecu63QAmfc95Qb9sME2z/
+ wYU8lk9wbGQRGkxG59dSng/0fLTH1duOAkT9wjCN648RRNLDI8cwt8BNbjBP6QOHluUNoPz6+ub
+ lddXkcYKXGyELnfr0HUvri55UEJWIw==
+X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a74324 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=1y30qzyz97Y3s8v4aJsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On Thu, Aug 21, 2025 at 06:20:24PM +0530, Debanil Chowdhury wrote:
-> Fixed some typos ("Critial" → "Critical") in hwmon documentation.
-> 
-> Reported-by: codespell
-> Signed-off-by: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
-> ---
-> changed in v2:
-> - In previous patch "From" header did not have my name in it. Fixed
->   that.
 
-The real problem is that the subject does not identify which documentation
-is being fixed. It does not fix problems in "hwmon documentation", it
-fixes a misspelling in the crps driver documentation. And responding to
-this -and having to look at multiple versions of a spelling fix - prevents
-me from reviewing patches which solve _real_ problems.
+
+On 8/20/2025 5:24 PM, Dmitry Baryshkov wrote:
+> On Wed, Aug 20, 2025 at 12:07:57PM +0530, Nitin Rawat wrote:
+>>
+>>
+>> On 8/20/2025 6:19 AM, Dmitry Baryshkov wrote:
+>>> On Wed, Aug 20, 2025 at 03:58:26AM +0530, Nitin Rawat wrote:
+>>>> Add regulator load voting support for SM8650 and SM8750 platforms by
+>>>> introducing dedicated regulator bulk data arrays with their load
+>>>> values.
+>>>>
+>>>> The load requirements are:
+>>>> - SM8650: vdda-phy (205mA), vdda-pll (17.5mA)
+>>>> - SM8750: vdda-phy (213mA), vdda-pll (18.3mA)
+>>>>
+>>>> This ensures stable operation and proper power management for these
+>>>> platforms where regulators are shared between the QMP USB PHY and
+>>>> other IP blocks by setting appropriate regulator load currents during PHY
+>>>> operations.
+>>>>
+>>>> Configurations without specific load requirements will continue to work
+>>>> unchanged, as init_load_uA remains zero-initialized when .init_load_uA
+>>>> is not provided.
+>>>
+>>> Can we please get configuration for the rest of the platforms?
+>>
+>> Hi Dmitry,
+>>
+>> If you're okay with it, can I merge the configuration for the remaining
+>> platforms in the next patch series after I complete testing on all remaining
+>> platforms.
+> 
+> You don't need to test, finding MSM8996 or 98 might be troublesome. Just
+> fill in the values from the hardware documentation.
+
+Hi Dmitry,
+
+While implementing changes for all remaining platform, I noticed that 
+the "regulator-allow-set-load" property is defined only for SM8750 and 
+SM8850 within the PMIC PHY and PLL device tree nodes which means that 
+even if the UFS PHY driver is updated to vote for this configuration on 
+other platforms, it will have no impact.
+
+Should I still proceed with applying the change across all platform, or 
+limit it to just the SM8750 and SM8850 drivers? What’s your recommendation?
+
+===========================================================================
+// Device tree:
+vreg_l1j_0p91: ldo1 {
+     regulator-name = "vreg_l1j_0p91";
+     regulator-min-microvolt = <880000>;
+     regulator-max-microvolt = <920000>;
+     regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+     regulator-allow-set-load;
+     regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM 
+RPMH_REGULATOR_MODE_HPM>;
+};
+
+===========================================================================
+drivers/regulator/of_regulator.c
+
+
+if (of_property_read_bool(np, "regulator-allow-set-load"))
+		constraints->valid_ops_mask |= REGULATOR_CHANGE_DRMS;
+
+===========================================================================
+//drivers/regulator/core.c
+static int drms_uA_update(struct regulator_dev *rdev)
+{
+     ...
+     if (!regulator_ops_is_valid(rdev, REGULATOR_CHANGE_DRMS)) {
+         rdev_dbg(rdev, "DRMS operation not allowed\n");
+         return 0;
+     }
+     ...
+}
+
+
+Regards,
+Nitin
+
+
+
 
 > 
->  Documentation/hwmon/crps.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/hwmon/crps.rst b/Documentation/hwmon/crps.rst
-> index 87380b496..d42ea59d2 100644
-> --- a/Documentation/hwmon/crps.rst
-> +++ b/Documentation/hwmon/crps.rst
-> @@ -43,7 +43,7 @@ curr1_label		"iin"
->  curr1_input		Measured input current
->  curr1_max		Maximum input current
->  curr1_max_alarm		Input maximum current high alarm
-> -curr1_crit		Critial high input current
-> +curr1_crit		Critical high input current
->  curr1_crit_alarm	Input critical current high alarm
->  curr1_rated_max		Maximum rated input current
->  
-> @@ -51,7 +51,7 @@ curr2_label		"iout1"
->  curr2_input		Measured output current
->  curr2_max		Maximum output current
->  curr2_max_alarm		Output maximum current high alarm
-> -curr2_crit		Critial high output current
-> +curr2_crit		Critical high output current
->  curr2_crit_alarm	Output critical current high alarm
->  curr2_rated_max		Maximum rated output current
->  
-> -- 
-> 2.49.1
-> 
+
 
