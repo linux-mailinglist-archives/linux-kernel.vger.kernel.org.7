@@ -1,145 +1,123 @@
-Return-Path: <linux-kernel+bounces-778727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6DEB2E971
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A89B2E977
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FD1688697
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:30:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295E45C739B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FD31F1505;
-	Thu, 21 Aug 2025 00:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1A61C3C14;
+	Thu, 21 Aug 2025 00:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="ZatSAQS9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BOASutjh"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667E01D516C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fgRkRCib"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC355464E;
+	Thu, 21 Aug 2025 00:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755736230; cv=none; b=ndSNj3W4hqevOJH2ZSfpyhhGITkUweQZAl5G+3BljZNIncrtdO58tqVAkKWomxTm9nYz+Yy/U0VT2/D1Q/KZMS8J9/zdgPTAYGkqtTH0Ze8xvCtnzuZV6FURtyxjuu+cN+VaEOQblbKswRuDRLuCYoUOWyB6N3/TuImQluwToAE=
+	t=1755736319; cv=none; b=SmtAOFYDui0gWChB+VvIBYkxrYtpIxJOnvtWHyONl6ZmpcZqR/PXevXRjS4Ky5m3o+ZmYu7+pr8ExFL+tgyYxYuTlylJLB0ogkbILqgddHBuHYmORwuSzeRFRRKY22j/rQoQrNyawmFbVy8+wdLFAdiHbixxz0hjgrtcr5CBhc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755736230; c=relaxed/simple;
-	bh=7/52hrzDnwKKHNOyhvLcGtSWxHlP5P1EZdABet1qIRU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HblYtneenxZYhZKXz8/+OUUG3BIEVlaI+BlKUYfQkNyboKoahCyLW7nU5nBa2GlWynNAffyO9tWNMfJhlSNTX+QLR8len+6mJIUZ9FDQBGONFLCL7IZw2ylF7XLiVBdxLeIL67IiKKi1NbWRvPy76iESb16X59vqfEBGnMUv8Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=ZatSAQS9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BOASutjh; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7F0FD14000BE;
-	Wed, 20 Aug 2025 20:30:27 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Wed, 20 Aug 2025 20:30:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1755736227; x=
-	1755822627; bh=Y3gqU4SmbBblagmxLkKgp6Bptdbd0oMAoCphalQECBI=; b=Z
-	atSAQS9CSedBqwhF/YHndWSgZj5FaOHiGmKFGR703WQekQUKt7wEhZPXD6geUX9y
-	kefKFQ9cv0rS4SZ3g4rJRlofDEcn8VyZ9bSmjztftREhes+0wACXbRArqj1S4VCd
-	DijW3hFPb1IPT2+7/6VA+rcBMhlc9vv0HuUEGxPiFULmXUEQzINVNRhqYVpTNHgc
-	9Vt3id3ydr+v03Mey4LKA2OX24etg0Qd6AJYacLaHCdT+of8hDRhYXLiaqU+QX6g
-	CBluBw/nhTxPlFIFvQ9nPcST3uT69UKJY2tonRb5TzyOSa969pnFmFVxqRcHcTmO
-	pEAHTUJB/8WmfhEpsoJ4w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1755736227; x=1755822627; bh=Y
-	3gqU4SmbBblagmxLkKgp6Bptdbd0oMAoCphalQECBI=; b=BOASutjhosW6V0JB0
-	/00WsVVgy6RJVt4CPgnsXjNMXEPMH8N5T6CZYOlUR9ciQDd+s/MzaSAACIuE4IQM
-	8dIFeZTplcUVbE8mxX56S2P5zg++raog0Xo+IBFjIXhk8fHcT2RW9H0HU4F/GAXJ
-	rwBZzJ7s8MgYvQKtv1tmQwCvhA3t5+Knqt+DGQiy5iNStTKaWvCGM3LSJ5Tpt3tA
-	Zk0uxSlzuGWTAREJGUO5+2CyWeg2yoenXCMvVrMRQrygqbuDXWnJTlj69CXrNhv8
-	pS5bM/AqENooMiDqU8iomt6JmOJhpjYq1cB3IaWQRlr3xZr05EAb/ZkP7Jlo97j2
-	b2z4A==
-X-ME-Sender: <xms:o2imaKqcuYBcSlJQv0FRqbA5Vzf6LqRG3xBoVMaF8LSKwjYkj96_nw>
-    <xme:o2imaBnuRlQM0svr3LjcVixDoHqaqatzqPEazAwAR07857uysFy2B67oLMKbGNqtf
-    HhPVfwxjPBv1h5VEeU>
-X-ME-Received: <xmr:o2imaBLCwWbh6XiItLJ4dG6ODmc2F7qoEzE6ACnL7B2sefEd6fo0cYYww9BHxGzAZG91CUCwOvLbMREaBKZ0mqOVxivnCcrcFDEo2KfH_UZ36Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheelkeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
-    ertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
-    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpedvjefgjeeuvd
-    fguddukeelveetgfdtvefhtdfffeeigfevueetffeivdffkedvtdenucevlhhushhtvghr
-    ufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrg
-    hkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurh
-    gtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:o2imaGyACDVa2DnvXBtDgs-VIIh0qnANrM_IHe1xNIHKhww47iNItw>
-    <xmx:o2imaJutYfUwEIm794xuvxUWVrIKOdJ78qFCN7C9S7--_6t0fl1a9g>
-    <xmx:o2imaFs18uVK4MIhQDG6yZktu8H9jR_D091WwzUEIDZvcx042aHzmA>
-    <xmx:o2imaGP9voZ_6TZwzSFDhZOiNETZoU2jGUnzmJ8FaRDiKWfM0Bg2qw>
-    <xmx:o2imaKu4hhaaLk9bKKxdPjD6Sh4FYD3SEqNggCeVR5zM6QZ-LO7HB-gg>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 20 Aug 2025 20:30:26 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] firewire: ohci: remove obsolete module-level debug parameter
-Date: Thu, 21 Aug 2025 09:30:17 +0900
-Message-ID: <20250821003017.186752-5-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250821003017.186752-1-o-takashi@sakamocchi.jp>
-References: <20250821003017.186752-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1755736319; c=relaxed/simple;
+	bh=dU8whZC5nQFnLKTOvPqBGari4dX5MZhx1uUJG2HCUm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FQoqE+PEwaprjRvY/re/Z1CUKLjLVlEQ//ZXTeDP80xb8CzYKYLJyf+wS0M07REN/ibH69fTQ9/rVincHWvP7EU7pRZvfoOmGzV4xATZsZ6dzGgB9IhHiViv5gf33Jxi02b84orYKck5wYXeFc//TtmOCwXrtdIuNK5rxcMRwo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fgRkRCib; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.75.64.99] (unknown [40.78.13.173])
+	by linux.microsoft.com (Postfix) with ESMTPSA id CCC642115A23;
+	Wed, 20 Aug 2025 17:31:56 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CCC642115A23
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1755736317;
+	bh=6tWe+ykgzm/q5D9sU/3IncC099spEIMtixvUbdzAH0g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fgRkRCibLmm15Pgj0Dh8/jXOwqg24NZtEsHFxPDCYCWFNKvdjQOPsd9qotCOSoosQ
+	 cu/PsJA282fh2UGhoSI1UmRJsqDcyGAExSxBjohPwbnUeuDqiGzNeMNU4ark2z/Bif
+	 tzJS095bYDDRM8uaEoba7Lr+LE005zUfQHCqXVKA=
+Message-ID: <f711d4ad-87a8-9cb3-aabc-a493ff18986a@linux.microsoft.com>
+Date: Wed, 20 Aug 2025 17:31:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v3 1/7] Drivers: hv: Introduce hv_hvcall_*() functions for
+ hypercall arguments
+Content-Language: en-US
+To: mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, bhelgaas@google.com, arnd@arndb.de
+Cc: x86@kernel.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org
+References: <20250415180728.1789-1-mhklinux@outlook.com>
+ <20250415180728.1789-2-mhklinux@outlook.com>
+From: Mukesh R <mrathor@linux.microsoft.com>
+In-Reply-To: <20250415180728.1789-2-mhklinux@outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The module-level debug parameter was added in v2.6.26 by a commit
-ad3c0fe8b8d16 ("firewire: debug interrupt events"). Its functionality
-has long been superseded by tracepoints.
+On 4/15/25 11:07, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+> 
+> Current code allocates the "hyperv_pcpu_input_arg", and in
+> some configurations, the "hyperv_pcpu_output_arg". Each is a 4 KiB
+> page of memory allocated per-vCPU. A hypercall call site disables
+> interrupts, then uses this memory to set up the input parameters for
+> the hypercall, read the output results after hypercall execution, and
+> re-enable interrupts. The open coding of these steps leads to
+> inconsistencies, and in some cases, violation of the generic
+> requirements for the hypercall input and output as described in the
+> Hyper-V Top Level Functional Spec (TLFS)[1].
+> 
+<snip>
 
-This commit removes the module parameter, bye.
+> The new functions are realized as a single inline function that
+> handles the most complex case, which is a hypercall with input
+> and output, both of which contain arrays. Simpler cases are mapped to
+> this most complex case with #define wrappers that provide zero or NULL
+> for some arguments. Several of the arguments to this new function
+> must be compile-time constants generated by "sizeof()"
+> expressions. As such, most of the code in the new function can be
+> evaluated by the compiler, with the result that the code paths are
+> no longer than with the current open coding. The one exception is
+> new code generated to zero the fixed-size portion of the input area
+> in cases where it is not currently done.
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
----
- drivers/firewire/ohci.c | 10 ----------
- 1 file changed, 10 deletions(-)
+IMHO, this is unnecessary change that just obfuscates code. With status quo
+one has the advantage of seeing what exactly is going on, one can use the
+args any which way, change batch size any which way, and is thus flexible.
+With time these functions only get more complicated and error prone. The
+saving of ram is very minimal, this makes analyzing crash dumps harder,
+and in some cases like in your patch 3/7 disables unnecessarily in error case:
 
-diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-index ae7f75fade8d..c8c5d598e3c8 100644
---- a/drivers/firewire/ohci.c
-+++ b/drivers/firewire/ohci.c
-@@ -393,11 +393,6 @@ MODULE_PARM_DESC(quirks, "Chip quirks (default = 0"
- 	", IR wake unreliable = "	__stringify(QUIRK_IR_WAKE)
- 	")");
- 
--static int param_debug;
--module_param_named(debug, param_debug, int, 0644);
--MODULE_PARM_DESC(debug, "Verbose logging, deprecated in v6.11 kernel or later. (default = 0"
--	", or a combination, or all = -1)");
--
- static bool param_remote_dma;
- module_param_named(remote_dma, param_remote_dma, bool, 0444);
- MODULE_PARM_DESC(remote_dma, "Enable unfiltered remote DMA (default = N)");
-@@ -2017,11 +2012,6 @@ static irqreturn_t irq_handler(int irq, void *data)
- 	if (!event || !~event)
- 		return IRQ_NONE;
- 
--	if (unlikely(param_debug > 0)) {
--		dev_notice_ratelimited(ohci->card.device,
--				       "The debug parameter is superseded by tracepoints events, and deprecated.");
--	}
--
- 	/*
- 	 * busReset and postedWriteErr events must not be cleared yet
- 	 * (OHCI 1.1 clauses 7.2.3.2 and 13.2.8.1)
--- 
-2.48.1
+- if (count > HV_MAX_MODIFY_GPA_REP_COUNT) {
+-  pr_err("Hyper-V: GPA count:%d exceeds supported:%lu\n", count,
+-   HV_MAX_MODIFY_GPA_REP_COUNT);
++ local_irq_save(flags);      <<<<<<<
+...
 
+So, this is a nak from me. sorry.
+
+<snip>
+
+> +/*
+> + * Allocate one page that is shared between input and output args, which is
+> + * sufficient for all current hypercalls. If a future hypercall requires
+
+That is incorrect. We've iommu map hypercalls that will use up entire page
+for input. More coming as we implement ram withdrawl from the hypervisor.
+
+Thanks,
+-Mukesh
 
