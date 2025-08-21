@@ -1,110 +1,130 @@
-Return-Path: <linux-kernel+bounces-779132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E9CB2EF85
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:26:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCAA3B2EF7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44B065E7759
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:23:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDDC77B5E4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682922E8B88;
-	Thu, 21 Aug 2025 07:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dMom5Aco"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73242283FEB;
-	Thu, 21 Aug 2025 07:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F960296BB1;
+	Thu, 21 Aug 2025 07:24:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66632E62B1;
+	Thu, 21 Aug 2025 07:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755761002; cv=none; b=DumasI8N0ZJpwQsiI33wzpgTuK9FU/bceae9CsC37JbNjygmfHoSWoQO5+aZ+Jx4XurdsR3wbSnlaQwMsSZmu6cj2zeze0aimozKdFQX7Petk0MoKtjaI51aZgDfoDJxQnVunSGmb91gx4BLmurlmgS/k3qa25cYyIt/y/u9KRs=
+	t=1755761041; cv=none; b=cQotXTw/2ZAyUabQYHxlHf1eMEJk6lTVYHAzEqNWQrxWskAYBbxpjUONhVJKmPj7OE7op6fXDujofUWNTWlPbaYCqHMCHmzhxmpKQ1v7jxIdJiDKstv6s6mYX518JfwXSmq0+KYlX/RiIQI5su/KBjfy25/7v8bTMvVbQ/jDESI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755761002; c=relaxed/simple;
-	bh=l+Xf6Cch4otNX9tUnaUGjMlw9IQdKLXtuDE0iA7v9pQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aw/WdkE5pEScTpyyb/H76Nt2p6Mcg28WqbohPzD3BztirAPuFCgtvf41SrapAzILrt+pQQXwWOFL5gWRQO96dYttduH/RKOLsuJEGE0k+ljb/2Qtxg8768SeACWPLD6vfHRVnmWCjN5g7xSXWESjb6vRQJG/iFojlHd8x58vfbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dMom5Aco; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755761001; x=1787297001;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=l+Xf6Cch4otNX9tUnaUGjMlw9IQdKLXtuDE0iA7v9pQ=;
-  b=dMom5AcoubJ+XKVWlqkqsYvmR4Ay1rntK0J7WP6JMz+JRzjztKK8Z2aF
-   JB6aySfr+7USu0HaSXeVN/YIyT7pXv0P1NYEY48NJpsdJbU2WqFrLEoxe
-   U+ZJd3cmQX8Pzq1e0rDwOW42jfmKsa0QP0y1+OGwUf41NX5UDAZEaLjLD
-   D6g08dwaROu84D3liqL5izBz/28El9uPcXCJlFTuJm+gk2UU0mbC/CAG3
-   T63fkGga8Ny1rgsOuZQqGoOkGb/nLlLWu1bcZbBpBvIJeVJUSxQXo8kc0
-   VISl7VDQwqApZoaRMKDR2GfdRzGd+/Xm3gQdXezLLF6PPGcMlubXjGRP/
-   Q==;
-X-CSE-ConnectionGUID: 46Vo+Nh1Qv2HNBXtXcR6JA==
-X-CSE-MsgGUID: PO7KKEdwTaKHjiEstae0KQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58136719"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="58136719"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 00:23:20 -0700
-X-CSE-ConnectionGUID: 2bruqgrORWCFqqqUbkKbrQ==
-X-CSE-MsgGUID: bcGw8VVRS2K/RI8OtffQdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="199211870"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa001.fm.intel.com with SMTP; 21 Aug 2025 00:23:18 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 21 Aug 2025 10:23:17 +0300
-Date: Thu, 21 Aug 2025 10:23:17 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: romain.gantois@bootlin.com, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: mux: Remove the use of dev_err_probe()
-Message-ID: <aKbJZa1tQMpf0QWX@kuha.fi.intel.com>
-References: <20250819112451.587817-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1755761041; c=relaxed/simple;
+	bh=X64IdBmjHXhS6gvtudLgoG6tBJL+bVjtjgEiJHPyTrg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=olKV0Ym64TjyDOVKkYZgwVq6nM4fR1A1CnPS9xdlrOfTlt7YSJEJ1vLc/gYPQ+0bsUv2Zl3SmQOK+5wNFc8WwUijufMvM1ZwYf6w3BvIsFHUVk6+b5UWU6bv6OmXbumXCKuQ9qJmw165d1bYOXaZy2XT+sFN7NQYnBcc1HKGlsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A871168F;
+	Thu, 21 Aug 2025 00:23:43 -0700 (PDT)
+Received: from [10.57.91.165] (unknown [10.57.91.165])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C45A3F58B;
+	Thu, 21 Aug 2025 00:23:45 -0700 (PDT)
+Message-ID: <09873338-574e-43e4-a6ff-590a3c9a9e87@arm.com>
+Date: Thu, 21 Aug 2025 09:23:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819112451.587817-1-zhao.xichao@vivo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v5 00/18] pkeys-based page table hardening
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+Cc: "maz@kernel.org" <maz@kernel.org>, "luto@kernel.org" <luto@kernel.org>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "mbland@motorola.com" <mbland@motorola.com>,
+ "david@redhat.com" <david@redhat.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "rppt@kernel.org" <rppt@kernel.org>, "joey.gouly@arm.com"
+ <joey.gouly@arm.com>, "akpm@linux-foundation.org"
+ <akpm@linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "Weiny, Ira" <ira.weiny@intel.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
+ "pierre.langlois@arm.com" <pierre.langlois@arm.com>,
+ "jeffxu@chromium.org" <jeffxu@chromium.org>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "kees@kernel.org" <kees@kernel.org>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "jannh@google.com" <jannh@google.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "will@kernel.org" <will@kernel.org>,
+ "qperret@google.com" <qperret@google.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "broonie@kernel.org" <broonie@kernel.org>, "x86@kernel.org" <x86@kernel.org>
+References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+ <4a828975-d412-4a4b-975e-4702572315da@arm.com>
+ <5b5455eb-e649-4b20-8aad-6d7f5576a84a@arm.com>
+ <3c18d1f1e94d3491410168e37cdf67e9e471649e.camel@intel.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <3c18d1f1e94d3491410168e37cdf67e9e471649e.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 19, 2025 at 07:24:51PM +0800, Xichao Zhao wrote:
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-> Therefore, remove the useless call to dev_err_probe(), and just
-> return the value instead.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+On 20/08/2025 18:18, Edgecombe, Rick P wrote:
+> On Wed, 2025-08-20 at 18:01 +0200, Kevin Brodsky wrote:
+>> Apologies, Thunderbird helpfully decided to wrap around that table...
+>> Here's the unmangled table:
+>>
+>> +-------------------+----------------------------------+------------------+---------------+
+>>> Benchmark         | Result Class                     | Without batching | With batching |
+>> +===================+==================================+==================+===============+
+>>> mmtests/kernbench | real time                        |            0.32% |         0.35% |
+>>>                    | system time                      |        (R) 4.18% |     (R) 3.18% |
+>>>                    | user time                        |            0.08% |         0.20% |
+>> +-------------------+----------------------------------+------------------+---------------+
+>>> micromm/fork      | fork: h:0                        |      (R) 221.39% |     (R) 3.35% |
+>>>                    | fork: h:1                        |      (R) 282.89% |     (R) 6.99% |
+>> +-------------------+----------------------------------+------------------+---------------+
+>>> micromm/munmap    | munmap: h:0                      |       (R) 17.37% |        -0.28% |
+>>>                    | munmap: h:1                      |      (R) 172.61% |     (R) 8.08% |
+>> +-------------------+----------------------------------+------------------+---------------+
+>>> micromm/vmalloc   | fix_size_alloc_test: p:1, h:0    |       (R) 15.54% |    (R) 12.57% |
+> Both this and the previous one have the 95% confidence interval. So it saw a 16%
+> speed up with direct map modification. Possible?
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Positive numbers mean performance degradation ("(R)" actually stands for
+regression), so in that case the protection is adding a 16%/13%
+overhead. Here this is mainly due to the added pkey register switching
+(+ barrier) happening on every call to vmalloc() and vfree(), which has
+a large relative impact since only one page is being allocated/freed.
 
-> ---
->  drivers/usb/typec/mux/tusb1046.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/mux/tusb1046.c b/drivers/usb/typec/mux/tusb1046.c
-> index b4f45c217b59..3c1a4551c2fb 100644
-> --- a/drivers/usb/typec/mux/tusb1046.c
-> +++ b/drivers/usb/typec/mux/tusb1046.c
-> @@ -129,7 +129,7 @@ static int tusb1046_i2c_probe(struct i2c_client *client)
->  
->  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->  	if (!priv)
-> -		return dev_err_probe(dev, -ENOMEM, "failed to allocate driver data\n");
-> +		return -ENOMEM;
->  
->  	priv->client = client;
->  
-> -- 
-> 2.34.1
+>>>                    | fix_size_alloc_test: p:4, h:0    |       (R) 39.18% |     (R) 9.13% |
+>>>                    | fix_size_alloc_test: p:16, h:0   |       (R) 65.81% |         2.97% |
+>>>                    | fix_size_alloc_test: p:64, h:0   |       (R) 83.39% |        -0.49% |
+>>>                    | fix_size_alloc_test: p:256, h:0  |       (R) 87.85% |    (I) -2.04% |
+>>>                    | fix_size_alloc_test: p:16, h:1   |       (R) 51.21% |         3.77% |
+>>>                    | fix_size_alloc_test: p:64, h:1   |       (R) 60.02% |         0.99% |
+>>>                    | fix_size_alloc_test: p:256, h:1  |       (R) 63.82% |         1.16% |
+>>>                    | random_size_alloc_test: p:1, h:0 |       (R) 77.79% |        -0.51% |
+>>>                    | vm_map_ram_test: p:1, h:0        |       (R) 30.67% |    (R) 27.09% |
+>> +-------------------+----------------------------------+------------------+---------------+
+> Hmm, still surprisingly low to me, but ok. It would be good have x86 and arm
+> work the same, but I don't think we have line of sight to x86 currently. And I
+> actually never did real benchmarks.
 
--- 
-heikki
+It would certainly be good to get numbers on x86 as well - I'm hoping
+that someone with a better understanding of x86 than myself could
+implement kpkeys on x86 at some point, so that we can run the same
+benchmarks there.
+
+- Kevin
 
