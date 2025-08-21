@@ -1,476 +1,208 @@
-Return-Path: <linux-kernel+bounces-780125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33620B2FDF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:14:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D515B2FDD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A7C7262E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:09:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 372EC7B13CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C988B2D3A69;
-	Thu, 21 Aug 2025 15:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1FF2D6E45;
+	Thu, 21 Aug 2025 15:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="HTZfU1IM"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EnGcPHzq"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D109B283FF0
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755788980; cv=none; b=BBlS1Ze1FMfNehOISg7fKuJhzoyN/t4vXygpTUcrQBOZWhg1fKiYReyUYfkuaD2vJYOueWjkJQT52/GEPjvxCJZ/XUnpTzN6vW7lFzpCW4HmOvMffZm/PkePZkgbcVJ+4mOuRg33QvzmUPcJDpU8yWGHhQEM+rbdGwA/1mCFbZU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755788980; c=relaxed/simple;
-	bh=QiX+YNdLW0om3mUTjwDAs6d9HsJzzT92VO9OpZfag3s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AS0GtF2eMgtWkHKQkxV9ZWTxRBnXWIQJ9Z7STvzKqMFIrFVgTHJO0txSjNzyclcHudmYj8TllTEuZcOIuELw5Qzgd7cFsgLuwgXYU0aMNZPV1x/wvgQzV1q21oVGdanxbSALq0pgkkeZPfa4+vM3dWLZdDdEuhTV/NZUcjHBGDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=HTZfU1IM; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-70d93f57924so3283776d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:09:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1755788978; x=1756393778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RggB6TtFQuYRXanMGqNph9WSo1Y0LSeA90mLIhIK0fA=;
-        b=HTZfU1IMTBrSBeGH3nK9QhYXUKNJV8vzvaREIiTA7GXlICFzGRoBhy4t2iPYsFdodn
-         okLswHVG3aqEvfp9aTKnbtmkOC0jR3neqSAs369Vn0PCOqK7uStZb2KUMqHCQYNbrlKo
-         +D549h+F18D38bV2i09+VeBtrdWDgSx4rNfdfOSk7O3LIbmroHWgYov9tCTkWgEF6lRB
-         JiSOB2+PqAokiszXT0JSx2Bww8lg2ul/GKaNJbCQIg40F52UyxdAT9d/bFK9ihziID9U
-         m8nnSp1qs4ehpggytzf37wJcX7F4VOyZZ4VGC8F00ZhThmmK7q9of32tpq43vSl63CVU
-         UJ6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755788978; x=1756393778;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RggB6TtFQuYRXanMGqNph9WSo1Y0LSeA90mLIhIK0fA=;
-        b=vi40I9BRAXZDf1ucajmpgykVHxEKgvpkI+C+n0TdsS/0KnRudZzNXnv3n45yxie4Fo
-         98dIOzs3e4W75EY99MwZQQgfmEZ9VNNs3BGQJHmH8gkP7X8Ap02vJOxvNuwZrrd7ZRNI
-         0oOsH5Qa/jf3xyT1aB/3oYgXyoA5vTBaeetiXXbwmi36XNAW/7nxi2clAnfgsj1Jzsi0
-         CJAFgrof6FxNDBt9dDepDzcW70RkZbuf118Lc5KW+b4/mFHrO0BNg02NSH8o/2dTyuB9
-         tWq3RVG70heFJGrnYoy1vgTbABL3Q6HO2r6SjPZMyEhGwz7FDDWddYVrpOp9K6KIkXjf
-         W/gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Uqsd7oMdssJVagABv0gP+6xwRK/jXAmd9FvpDmyCsQTE5w0DULlnnnppmXekYobQeR8LY9lmbSxfo/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSveHAKtDC2ivgKWNK5rAMjLLX0LlSjXtibdpCYMPzSA8tVgdE
-	ofs56P6B1JHbjlhtq0UbPXoGszgRONQyrnbhCXHUMhRYgP1oKgfAmxnS2ejJVUuWLTNf3z1RH1q
-	xEafg
-X-Gm-Gg: ASbGncsHq6IIr9pOIV2qWtq3NHoNyimKe4xcCN4fXA4D6BHt5odxIQNxEWD01r4IBxa
-	OMgTH7vvMqVs9SWSiFFkh9cO/+CVQMibeWKCKqt5X/dEEHA7nc0F9afFlEQaaJgnATmdeQce+zZ
-	BpoJd3qY+x2nqHd3SamBr7qr4vxZs9h9oGKr/ZUIJ3rFwOZiyPK/FI1rdkDXm5Zb1admkJ9x0pl
-	VCAkidBU+vnS5OdYhk0UbfP1lJQtXXZXM40xXbEXZCsCM6bmzuzIZsWIrI/n90u83u0v4uF52Zq
-	yudDICtCqwON3cZno+bgKb3Ndmh7dNsZzvk+fu0VPoXx2PIIkCtjctbTj8xQR0L+lygECXzv/wZ
-	Tnja0+MOVE1F+Z6Zl+BhBVf+xDJAvVxhI0c1Cog==
-X-Google-Smtp-Source: AGHT+IEss4bK0dWNN8rJAypmL4XlATNbrJ15OVba+3ss6iU5pHA4gBIwKx/QPTq34/thLqZW0SSlRw==
-X-Received: by 2002:a05:6214:3005:b0:707:54b6:1f2c with SMTP id 6a1803df08f44-70d88ea98ccmr27818266d6.27.1755788977377;
-        Thu, 21 Aug 2025 08:09:37 -0700 (PDT)
-Received: from ethanf.zetier.com ([65.222.209.234])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70d8b0e3e6dsm10845676d6.73.2025.08.21.08.09.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 08:09:36 -0700 (PDT)
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com,
-	yuezhang.mo@sony.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: [PATCH v3 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-Date: Thu, 21 Aug 2025 11:09:26 -0400
-Message-Id: <20250821150926.1025302-2-ethan.ferguson@zetier.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250821150926.1025302-1-ethan.ferguson@zetier.com>
-References: <20250821150926.1025302-1-ethan.ferguson@zetier.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A980228725A
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755789046; cv=fail; b=aRPuoFj3DxSxZn34AbCH4lduGKDtUWJZLyiAMJh62FpHNgzZIXj3XjJPSPmXzXZnFuaGKE/NBTMZ43tENtK8whUjYr5BuqHDPZ3ZlqygA/l6e41KshAngXvPUrEDasCr1M8k/eB0z/piIzuYJMt9ty/UjLx/yCE9TQxhAgM3r6Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755789046; c=relaxed/simple;
+	bh=Lqty/zG8EryEUYucislmYnF6woFHN+TeuE60tqEL7AI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aZwxEW2ubX2CSs06RklGy4Y9B5mTUOKd7UT14H4NvyBSjofJ29V7iNdZIXAKWxfDPpfR6dd980U0iZmviCNtkou6TrRWOgBOA9ziUjroWF9ulPc8kzqI/EnUSVTMkb6waTCLlYsjurik/4J7Rsa+nmQ2hcIJp8xv8/xyfymAKfE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EnGcPHzq; arc=fail smtp.client-ip=40.107.244.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MijM3BSvOTeoQ/wZXFYzhI2JtswAnDiwo2RLZlylIZPuk9wpuvo70jyb0qd10RiAj6qSsrY0zdytM6XWCm+bqTYkp4uDvRNo0QIQBhcFHu1liPRbNk/rI6vKiG5YTzbh1ns5q81W7/+mlnDGKD3Eg+/14Z3dy8WUA8Gj6qUxp4fHUVMXgHp2aIpyEooiVRuOE1Xhmm/ZCVZYN+5LYPS22TVcH9NEa3YciUnMW/xZGJtlZY00b5THeRGH8yIp4mntHLrgpIbhIYBEBiB/h9Ig1yg7+3LE+v9u5hT87BYErAMb6Ap6/A2saldZRmsJy3J9F+0dTsK4wklxvj2WYv4tSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FrdQNRSdLJsYgea4TQJDA5nlRrf6twmeq8DDDNf4Rvc=;
+ b=mASe9OxzQ9WZtDeFKGDmPDUZ9olkv4S6KmBoU3TqJ55kL05bw6LiLPqN0Xhl8nNflIUwxszI9EpXrlYTm2mjij17rAkxL+UioEnXlkMxrsLDoNisnbts1jmPmBO/fdkHkUwr/eukHP3IxzE6MYWK8zvjyiTjP8pGzySuC9IQtHBYf1U6q1PjoAT3SOQiRKXt9AHgWU631JGYd0ScJaXOvM39cltf6IZhP50sPvQU/3jxU7zFPQMoXXK7Ger3hmDXeAjez/oPQEY/of9SBCdovBr58+ZnObVB4KrIu5YO4oU2uXL7Vo3YL9+znD+lfbElFfooT/pbnEEk5uVrwITioQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FrdQNRSdLJsYgea4TQJDA5nlRrf6twmeq8DDDNf4Rvc=;
+ b=EnGcPHzqrOtEizPZn2X86pYVxfkV52S4iwJ0kIiFuDaYoTiNE2sVrqaGf6+kyYm5Kp9ikKxKx21eupvByjpcS7S1F4pVJV3pA1v/xw/UUkZG/9gAT45+yIHSAJBU0lOkaaCx0oFJiHBhOqSmLSblETRRbXsy3hQLudhYO2k6trY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6439.namprd12.prod.outlook.com (2603:10b6:8:c9::7) by
+ PH7PR12MB8793.namprd12.prod.outlook.com (2603:10b6:510:27a::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
+ 2025 15:10:31 +0000
+Received: from DS0PR12MB6439.namprd12.prod.outlook.com
+ ([fe80::ec83:b5e5:82dd:b207]) by DS0PR12MB6439.namprd12.prod.outlook.com
+ ([fe80::ec83:b5e5:82dd:b207%5]) with mapi id 15.20.9052.013; Thu, 21 Aug 2025
+ 15:10:30 +0000
+Message-ID: <5a61df0d-f2dd-49f4-97db-36eaf1ef4e62@amd.com>
+Date: Thu, 21 Aug 2025 20:40:17 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 3/7] mm: Hot page tracking and promotion
+To: Alok Rathore <alok.rathore@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Jonathan.Cameron@huawei.com, dave.hansen@intel.com, gourry@gourry.net,
+ hannes@cmpxchg.org, mgorman@techsingularity.net, mingo@redhat.com,
+ peterz@infradead.org, raghavendra.kt@amd.com, riel@surriel.com,
+ rientjes@google.com, sj@kernel.org, weixugc@google.com, willy@infradead.org,
+ ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
+ nifan.cxl@gmail.com, xuezhengchu@huawei.com, yiannis@zptcorp.com,
+ akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com,
+ kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com,
+ balbirs@nvidia.com, alokrathore20@gmail.com, gost.dev@samsung.com,
+ cpgs@samsung.com
+References: <20250814134826.154003-1-bharata@amd.com>
+ <20250814134826.154003-4-bharata@amd.com>
+ <CGME20250821111729epcas5p4b57cdfb4a339e8ac7fc1ea803d6baa34@epcas5p4.samsung.com>
+ <1983025922.01755775202288.JavaMail.epsvc@epcpadp1new>
+Content-Language: en-US
+From: Bharata B Rao <bharata@amd.com>
+In-Reply-To: <1983025922.01755775202288.JavaMail.epsvc@epcpadp1new>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0132.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:bf::16) To DS0PR12MB6439.namprd12.prod.outlook.com
+ (2603:10b6:8:c9::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6439:EE_|PH7PR12MB8793:EE_
+X-MS-Office365-Filtering-Correlation-Id: d79fd799-61af-464d-06c6-08dde0c4de13
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q2lQa3FCQStsdEkwTWc1TVJKM3ZVM0wzWFh6QlVmbVRSbTdib3IzY0czWUlB?=
+ =?utf-8?B?aHNJbDB2SS9WeGN4VGlySXU2dG1Kbk9JZEkrZ3FVdXZrTDRrbmdxR1U0b3lm?=
+ =?utf-8?B?dnZNSEUvRm5yekVEOTdxN3dNN0FHeEg5YWJEQnAveTZFT01QbTlrTEJjUlpC?=
+ =?utf-8?B?TkZXZUR3QVU4UVBGamdZVkltV2dKVzYxMjZyUVpRZ1c1clk2K1RNcmkvYmlr?=
+ =?utf-8?B?TlltMGUvVGt0YXVBQmo0aGNIamsrbkxkRW5GeVN5aWhRNEJsdStzT0QxVk5w?=
+ =?utf-8?B?LzRKcTgzMUVYYVhNQ3RQOHUrNHptWjFPcHlCVGpTR0cyNmtDRVV4Lzh3c2tP?=
+ =?utf-8?B?UGs0RlFvZHM1eW9rQklXM1FhdUZLeWFKN1lQbzNNT0U2TGluTS9NV0hHUGJJ?=
+ =?utf-8?B?YlZkbmFpZEZyZEZCU2MweDBJUkU3b1lyT3RPYkJaemF6RXdlNTBMVk1LLzFJ?=
+ =?utf-8?B?dDYwR0ZVYmR2eUFSMnFQYXE0MW9MZUhQQ3p3dTk2Y2xzYkkvUmltRDlaU1Vw?=
+ =?utf-8?B?SzVEOVBIcmcxVS9VRE9pYkhxNHhhcVFJcEp1Y1NHSW11Ni9jTFhRU3Q0NUNt?=
+ =?utf-8?B?bnd3b2tvTGVzdTFTZEd1WTAwNXNVZnMra3BJdGRpZkdWcTZPK3IzVE8wK2Vx?=
+ =?utf-8?B?YkpFR3lWVTl1SjlqeG5FOGx4aHN1eVlJOU1JMC9sczZWS1pFQmxaU1lXNHRt?=
+ =?utf-8?B?WmdBZEpsamQ3QytZRWozQ2lGVU1NbEVqUzBUc09DVDhjRnl6YUZCWXZWakt6?=
+ =?utf-8?B?NGdZL1d1RVdqRG43VW9PRVl4VlhhSXVpV1licVYxeFBXZ1N3S0JFZmhDUnZJ?=
+ =?utf-8?B?UVJSQTFPV0I5clZ2enVlUGJhSnVHQ25lV1orOHBEb09zSklXMHA4MS8zWDNO?=
+ =?utf-8?B?dDdYb0c4cE95NnhYUHFwSmlmazJtSnhWdnJqS2REVDZZc1psYUlzRXpPSGho?=
+ =?utf-8?B?c01vbC9XejZjWjI3K3NYdytORkplNzhac0l2ZENLMCtuUDBwdVI3VXNPajR5?=
+ =?utf-8?B?WHVKYkNMTC90MjlTYTVPeFRuWEFYZzJQenVLenNJUHovZmNYNFFwZ0Nkd0ZY?=
+ =?utf-8?B?TFVwTzlPNGpjajBOdjg1YVRDcDRlMm5iWVhQcEt5RG5Ed1pCTkpKdk1wY2w2?=
+ =?utf-8?B?cjg3OXZTaUJYdE1sL3BjZkh0WkRBL0xBd3AreXJFMHJ3cmk4REE2QjhWKzJV?=
+ =?utf-8?B?N2tHZGVVSnp4V1FqQkxGZ0JhS2UzK29kKzVLZnZvNVl4eFZ1YkxvN1ZSSHBO?=
+ =?utf-8?B?YmY4T0RJMFh6R2hlV1FPSWtweHFQdnBwRWJLK0VJR2VjMkJNYkhua21DK3B1?=
+ =?utf-8?B?Z3ZvbG13ei91OWlySmtGcXRRNkQwNWRPRWRxckV1amVzY3IraHYxTDVnUTQ0?=
+ =?utf-8?B?cjRkakl3dWtNRGphVUV3MDJlSFdoV1ZjWmh2Z01ZTXJkaXp6dU9EZHp6S0Vr?=
+ =?utf-8?B?TzNxVXdaTFVvRXF0THZaWEo1US9MOWJHVkRBZElHdlZ1SkZpOWt4RWlNRWh5?=
+ =?utf-8?B?cmtPLzJ0MmZtR3IxWS9vT1BadHQvT1c1MXpMR0IwZWovVUxCTXhuemhqbzBo?=
+ =?utf-8?B?ZFNINllGem1ZaThsVFFkNElSZDIySWxVT04yb0htNTJsOFZvZUtSanNzRG82?=
+ =?utf-8?B?UFFwdWEvSlRyNUpaVGdzbS94dkhvem1qRXdvSC9hdUpOQlFYOVgzaXZ4UkJC?=
+ =?utf-8?B?c0l4b01KMXZKMUtEcnVuUHg0WmkyVEEvU3F1WVpRMXVTOWtMbURZc3JBSS8r?=
+ =?utf-8?B?bnZrRGFsRXY3Z1dNRjZtSlB0N3RpVVZpSmtYUjZja3QzQnVZeUtWYlZremFJ?=
+ =?utf-8?B?MFR4NE41TkU5QzNya2NRY3JBbnR1RmJQdzV5bVA2bnVpRmNuRXJ1WXNqSkNz?=
+ =?utf-8?B?ZDlxR1ZqeVdoVEhXWnRHU20wYUxWSlQveDVFUGJhcTlERDNKclptUVY3Umps?=
+ =?utf-8?Q?5I7IuzZmbAI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6439.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dWFsWlhBMHliTDhPVngrQjNjRVlpK1l0ZHUyOVlrUk9pK0REYVFCTjVQMlVi?=
+ =?utf-8?B?ZWVBV3RRQ3NXSEF3SkFvV3hJc0JoVGd4Si9kMHlNczh5d1hIM1VYODNURFpG?=
+ =?utf-8?B?K3VKSW84L2NCVmtMSXkzNFBaVndpRHFVRU1IZzBSaXZzT24weFlLVk5JaEZQ?=
+ =?utf-8?B?cU1xVFVzL1dDVnlSenlsWkxzdnNBYXpDWnkrNldZTmEzU0VWckpvUGFBa3ly?=
+ =?utf-8?B?dEVxVGxpTzFoUmoxM2JqR2h1aWN2ckxUNXJiS1IwY3Q3Y0xCUkFpMGZJTnI1?=
+ =?utf-8?B?RUhmYmxVRkRaajVRWExENS9BcnJHTTNGcUp5MENmaHlmZFViYmZsM2lhc3g5?=
+ =?utf-8?B?ajI5RXZrRWd2MHpiZHcrUDIzODY0RzBQOXlxakpwZ2xZU1I2Wjk0YkNXTnky?=
+ =?utf-8?B?NG1WT2xOVjYrMHkrdThZbC9VMmswaFgxeThmdzVFRUM2Tm5oczVyR0hxYk9Q?=
+ =?utf-8?B?M0IrRlduQ0w4YzFpaFR1YVRONHMwem9IU0tTaENYRWZDM1oyMTFMb0VFYldl?=
+ =?utf-8?B?NUdjTGZOaXFBRXY0czRTU3lQZTFMaThtajJNQzVqdnFkd0p0Tnp1WEhscTJv?=
+ =?utf-8?B?VFFwUDdVdkVpTVZ6YTBmRzk2Qm5Qc29FNEd1K3EwNTIxV3dKY1NlV2NFREw2?=
+ =?utf-8?B?QlhScGxoZ1lKSTRkcTZGUXpqM0pLTEZzaFhQUTZOemVGbGJ1aWJscUVaV0Nr?=
+ =?utf-8?B?WmpYZ1NWWExVSHVRcTdKeUxjSEZBSEoxZG40TldNdFRIQjVLYm16WFk0WGhi?=
+ =?utf-8?B?dCtFS24xQjhBTHJZNloxWHZRaHhRSVpGYURSSkpxay90R3dmblIveG9EVHBr?=
+ =?utf-8?B?b0hOc2k5Zmwvb1B5djYwS1B4SmJ0dFRFVlJDNGZyczlhRlczSUdlUzZHd3hH?=
+ =?utf-8?B?RzBOSkJJaDYvWHYyWnV0WHBWcUtqelJGTXN3SGp6RWl2VjEyOWVoMnJ6OWYw?=
+ =?utf-8?B?Mk9JNzZuTUk5RjFPL2d5RXJCMVJ0RUxQUzR5WkllNDZpVHRLUHdNc2JubjZK?=
+ =?utf-8?B?ZnlLeVdaRGE1QzFmdGZhRGlPcVNxYytrUHVCNFZjSzYyNUQzWGNtYXFpVzZt?=
+ =?utf-8?B?MHJUcWVwVUpGdWlzeUdTUDBiaC9nRGRVVWNsQzBmUU5ieW5zM2lHS1J2aVRn?=
+ =?utf-8?B?alJETFo3Ync4UVVVU2h3ZmFJaE5UQ014MzhaOUR6UENVS3VGTUR4VGVNdHVo?=
+ =?utf-8?B?Z2xBcnp4R0hRNzVuSEZ1REtLTFh6K2VUK0owQXR1aWxTcFhDRUdTTXlDcFJO?=
+ =?utf-8?B?b0N4cFFmQWZSem0ycXNsT3FHNk91d3pKQVpEZStLdElrR1lIK1d1NlRiNU5G?=
+ =?utf-8?B?aUtrdFNJaGpIMlEvMjdDUGlYUGo2Nm1Vb0ptL0lBTEV1K0o5clcvcmFscW5K?=
+ =?utf-8?B?WE0xYXNPOVNKUWxPVldaK0dDSlVhbUZ1S0NGUUV1M2J1dWtMZUMvcmRhL2Y1?=
+ =?utf-8?B?dW51R3NxRjFSbngrazZWa0FQVk1FTmJ3ZmhSZThvVGt2ckRMMTQ2ZlMzWHVJ?=
+ =?utf-8?B?SHZOSG1MUW96TXBCc3hheEVldmpuMkJ4YU1nU0lwc05IMVRGTjF1emI2RFdZ?=
+ =?utf-8?B?L0MveDlocStacFhDM2hzQ2xrcFJaY3JPN0RHVkJ6K0hRNmt5enFmaXlSb09l?=
+ =?utf-8?B?QzlVR0pUeGZsaHZ3a3czMXF5MEZvODZZVEJBeW9YL3dCTkRHc0o3V2MyVVhZ?=
+ =?utf-8?B?aWd1VGp5dEFlWlVGTVVybEFpcWZ2dlFWRlNBeEY0bGkxdlB1bkplbTZLYTM4?=
+ =?utf-8?B?L2xPMDhUVjh1RXVNOTVicDNORVFGU0V1bFVTdWVDVUlLaVZmeVVlU0NlMWhz?=
+ =?utf-8?B?OE5mRkNBNVp5Nnd5bVJQZG9RM3RSc0h6L05scTFQcE1OSWFlNytuM0hybkF2?=
+ =?utf-8?B?LzVNbGZkN1V5TmRLeWhPY1o1K3R1WXZDaDVnV2l2N3U2VGFIUDN6bmZlZDNB?=
+ =?utf-8?B?bTN6ZmhvVlo2Z2ZsNUxLa3VtZmo4eUdZelZ3ZU5zUCtQaTdoaDRWWFJlZUFT?=
+ =?utf-8?B?SzQrMzBxeEhRSmtOU1NlTm5TaXFNZjQxNGEvRkFKSjBZL1NhMlBNUzc5dG5R?=
+ =?utf-8?B?R2J0RVJja1Y3QlNPVWt2ZXpZT3ZwY2hCazdkaEFrN3YvNnk0TFcrNWlKTUtS?=
+ =?utf-8?Q?jyBglEucCcttVTBsYrPOe15JM?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d79fd799-61af-464d-06c6-08dde0c4de13
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6439.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 15:10:30.5604
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: E8S4sZjLZbZTdFdTVKcqRebTKymKCO6OjWrNoCRIrA9D+N0Ms2IMDXJCOLqWh7tIbvpQArNYAHv0+3uSZ/jxPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8793
 
-Add support for reading / writing to the exfat volume label from the
-FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
+On 21-Aug-25 4:47 PM, Alok Rathore wrote:
+> On 14/08/25 07:18PM, Bharata B Rao wrote:
+>>
+>> diff --git a/mm/Makefile b/mm/Makefile
+>> index ef54aa615d9d..8799bd0c68ed 100644
+>> --- a/mm/Makefile
+>> +++ b/mm/Makefile
+>> @@ -147,3 +147,4 @@ obj-$(CONFIG_SHRINKER_DEBUG) += shrinker_debug.o
+>> obj-$(CONFIG_EXECMEM) += execmem.o
+>> obj-$(CONFIG_TMPFS_QUOTA) += shmem_quota.o
+>> obj-$(CONFIG_PT_RECLAIM) += pt_reclaim.o
+>> +obj-$(CONFIG_PGHOT) += kpromoted.o
+> 
+> Looks like by mistake used older file name. It should be pghot.o
+> 
+> Can you please provide base commit. Unable to apply patch cleanly using b4 utility.
 
-Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+Right, sorry about this. The base commit is 8742b2d8935f476449ef37e263bc4da3295c7b58
 
-Lazy label loading, better char conversion
----
- fs/exfat/exfat_fs.h  |   3 +
- fs/exfat/exfat_raw.h |   6 ++
- fs/exfat/file.c      |  78 ++++++++++++++++++
- fs/exfat/super.c     | 190 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 277 insertions(+)
+The updated patchset is available from
+https://github.com/AMDESE/linux-mm/tree/bharata/kpromoted-rfcv1
 
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index f8ead4d47ef0..19b8524e5b7d 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -267,6 +267,7 @@ struct exfat_sb_info {
- 	struct buffer_head **vol_amap; /* allocation bitmap */
- 
- 	unsigned short *vol_utbl; /* upcase table */
-+	unsigned short *volume_label; /* volume name */
- 
- 	unsigned int clu_srch_ptr; /* cluster search pointer */
- 	unsigned int used_clusters; /* number of used clusters */
-@@ -431,6 +432,8 @@ static inline loff_t exfat_ondisk_size(const struct inode *inode)
- /* super.c */
- int exfat_set_volume_dirty(struct super_block *sb);
- int exfat_clear_volume_dirty(struct super_block *sb);
-+int exfat_read_volume_label(struct super_block *sb);
-+int exfat_write_volume_label(struct super_block *sb, struct exfat_uni_name *uniname);
- 
- /* fatent.c */
- #define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu)
-diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
-index 971a1ccd0e89..4082fa7b8c14 100644
---- a/fs/exfat/exfat_raw.h
-+++ b/fs/exfat/exfat_raw.h
-@@ -80,6 +80,7 @@
- #define BOOTSEC_OLDBPB_LEN		53
- 
- #define EXFAT_FILE_NAME_LEN		15
-+#define EXFAT_VOLUME_LABEL_LEN		11
- 
- #define EXFAT_MIN_SECT_SIZE_BITS		9
- #define EXFAT_MAX_SECT_SIZE_BITS		12
-@@ -159,6 +160,11 @@ struct exfat_dentry {
- 			__le32 start_clu;
- 			__le64 size;
- 		} __packed upcase; /* up-case table directory entry */
-+		struct {
-+			__u8 char_count;
-+			__le16 volume_label[EXFAT_VOLUME_LABEL_LEN];
-+			__u8 reserved[8];
-+		} __packed volume_label; /* volume label directory entry */
- 		struct {
- 			__u8 flags;
- 			__u8 vendor_guid[16];
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 538d2b6ac2ec..12c8ae450193 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -12,6 +12,7 @@
- #include <linux/security.h>
- #include <linux/msdos_fs.h>
- #include <linux/writeback.h>
-+#include "../nls/nls_ucs2_utils.h"
- 
- #include "exfat_raw.h"
- #include "exfat_fs.h"
-@@ -486,6 +487,79 @@ static int exfat_ioctl_shutdown(struct super_block *sb, unsigned long arg)
- 	return exfat_force_shutdown(sb, flags);
- }
- 
-+static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned long arg)
-+{
-+	int ret;
-+	char utf8[FSLABEL_MAX] = {0};
-+	struct exfat_uni_name *uniname;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+
-+	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
-+	if (!uniname)
-+		return -ENOMEM;
-+
-+	ret = exfat_read_volume_label(sb);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	memcpy(uniname->name, sbi->volume_label,
-+	       EXFAT_VOLUME_LABEL_LEN * sizeof(short));
-+	uniname->name[EXFAT_VOLUME_LABEL_LEN] = 0x0000;
-+	uniname->name_len = UniStrnlen(uniname->name, EXFAT_VOLUME_LABEL_LEN);
-+
-+	ret = exfat_utf16_to_nls(sb, uniname, utf8, FSLABEL_MAX);
-+
-+	if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX)) {
-+		ret = -EFAULT;
-+		goto cleanup;
-+	}
-+
-+cleanup:
-+	kfree(uniname);
-+	return 0;
-+}
-+
-+static int exfat_ioctl_set_volume_label(struct super_block *sb, unsigned long arg)
-+{
-+	int ret, lossy;
-+	char utf8[FSLABEL_MAX];
-+	struct exfat_uni_name *uniname;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
-+	if (!uniname)
-+		return -ENOMEM;
-+
-+	if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX)) {
-+		ret = -EFAULT;
-+		goto cleanup;
-+	}
-+
-+	if (utf8[0]) {
-+		exfat_nls_to_utf16(sb, utf8, strnlen(utf8, FSLABEL_MAX), uniname, &lossy);
-+		if (lossy & NLS_NAME_LOSSY) {
-+			ret = -EINVAL;
-+			goto cleanup;
-+		}
-+	} else {
-+		uniname->name[0] = 0x0000;
-+		uniname->name_len = 0;
-+	}
-+
-+	if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
-+		exfat_info(sb, "Volume label length too long, truncating");
-+		uniname->name_len = EXFAT_VOLUME_LABEL_LEN;
-+	}
-+
-+	ret = exfat_write_volume_label(sb, uniname);
-+
-+cleanup:
-+	kfree(uniname);
-+	return ret;
-+}
-+
- long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -500,6 +574,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return exfat_ioctl_shutdown(inode->i_sb, arg);
- 	case FITRIM:
- 		return exfat_ioctl_fitrim(inode, arg);
-+	case FS_IOC_GETFSLABEL:
-+		return exfat_ioctl_get_volume_label(inode->i_sb, arg);
-+	case FS_IOC_SETFSLABEL:
-+		return exfat_ioctl_set_volume_label(inode->i_sb, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 8926e63f5bb7..7aee6ea594d8 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -18,6 +18,7 @@
- #include <linux/nls.h>
- #include <linux/buffer_head.h>
- #include <linux/magic.h>
-+#include "../nls/nls_ucs2_utils.h"
- 
- #include "exfat_raw.h"
- #include "exfat_fs.h"
-@@ -573,6 +574,194 @@ static int exfat_verify_boot_region(struct super_block *sb)
- 	return 0;
- }
- 
-+static int exfat_get_volume_label_ptrs(struct super_block *sb,
-+				       struct buffer_head **out_bh,
-+				       struct exfat_dentry **out_dentry,
-+				       bool find_new)
-+{
-+	int i, ret;
-+	unsigned int type;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct exfat_chain clu;
-+	struct exfat_dentry *ep, *deleted_ep = NULL;
-+	struct buffer_head *bh, *deleted_bh;
-+
-+	clu.dir = sbi->root_dir;
-+	clu.flags = ALLOC_FAT_CHAIN;
-+
-+	while (clu.dir != EXFAT_EOF_CLUSTER) {
-+		for (i = 0; i < sbi->dentries_per_clu; i++) {
-+			ep = exfat_get_dentry(sb, &clu, i, &bh);
-+
-+			if (!ep) {
-+				ret = -EIO;
-+				goto end;
-+			}
-+
-+			type = exfat_get_entry_type(ep);
-+			if (type == TYPE_DELETED && !deleted_ep && find_new) {
-+				deleted_ep = ep;
-+				deleted_bh = bh;
-+				continue;
-+			}
-+
-+			if (type == TYPE_UNUSED) {
-+				if (find_new) {
-+					brelse(bh);
-+					ret = -ENOENT;
-+					goto end;
-+				}
-+
-+				if (deleted_ep) {
-+					brelse(bh);
-+					goto end;
-+				}
-+
-+				// Last dentry in cluster
-+				if (i == sbi->dentries_per_clu - 1) {
-+					// TODO allocate new cluster
-+					brelse(bh);
-+					ret = -ENOSPC;
-+					goto end;
-+				}
-+
-+				deleted_ep = ep;
-+				deleted_bh = bh;
-+
-+				ep = exfat_get_dentry(sb, &clu, i + 1, &bh);
-+				memset(ep, 0, sizeof(struct exfat_dentry));
-+				ep->type = EXFAT_UNUSED;
-+				exfat_update_bh(bh, true);
-+				brelse(bh);
-+
-+				goto end;
-+			}
-+
-+			if (type == TYPE_VOLUME) {
-+				*out_bh = bh;
-+				*out_dentry = ep;
-+
-+				if (deleted_ep)
-+					brelse(deleted_bh);
-+
-+				return 0;
-+			}
-+
-+			brelse(bh);
-+		}
-+
-+		if (exfat_get_next_cluster(sb, &(clu.dir))) {
-+			ret = -EIO;
-+			goto end;
-+		}
-+	}
-+
-+end:
-+	if (deleted_ep) {
-+		*out_bh = deleted_bh;
-+		*out_dentry = deleted_ep;
-+		memset((*out_dentry), 0, sizeof(struct exfat_dentry));
-+		(*out_dentry)->type = EXFAT_VOLUME;
-+		return 0;
-+	}
-+
-+	*out_bh = NULL;
-+	*out_dentry = NULL;
-+	return ret;
-+}
-+
-+static int exfat_alloc_volume_label(struct super_block *sb)
-+{
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+
-+	if (sbi->volume_label)
-+		return 0;
-+
-+	sbi->volume_label = kcalloc(EXFAT_VOLUME_LABEL_LEN,
-+						     sizeof(short), GFP_KERNEL);
-+	if (!sbi->volume_label)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+int exfat_read_volume_label(struct super_block *sb)
-+{
-+	int ret, i;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct buffer_head *bh;
-+	struct exfat_dentry *ep;
-+
-+	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, false);
-+	// ENOENT signifies that a volume label dentry, doesn't exist
-+	// We will treat this as an empty volume label and not fail.
-+	if (ret < 0 && ret != -ENOENT)
-+		goto cleanup;
-+
-+	ret = exfat_alloc_volume_label(sb);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	mutex_lock(&sbi->s_lock);
-+	for (i = 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
-+		sbi->volume_label[i] = le16_to_cpu(ep->dentry.volume_label.volume_label[i]);
-+	mutex_unlock(&sbi->s_lock);
-+
-+	ret = 0;
-+
-+cleanup:
-+	if (bh)
-+		brelse(bh);
-+
-+	return ret;
-+}
-+
-+int exfat_write_volume_label(struct super_block *sb,
-+			     struct exfat_uni_name *uniname)
-+{
-+	int ret, i;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct buffer_head *bh;
-+	struct exfat_dentry *ep;
-+
-+	if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
-+		ret = -EINVAL;
-+		goto cleanup;
-+	}
-+
-+	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, true);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	ret = exfat_alloc_volume_label(sb);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	memcpy(sbi->volume_label, uniname->name,
-+	       uniname->name_len * sizeof(short));
-+
-+	mutex_lock(&sbi->s_lock);
-+	for (i = 0; i < uniname->name_len; i++)
-+		ep->dentry.volume_label.volume_label[i] =
-+			cpu_to_le16(sbi->volume_label[i]);
-+	// Fill the rest of the str with 0x0000
-+	for (; i < EXFAT_VOLUME_LABEL_LEN; i++)
-+		ep->dentry.volume_label.volume_label[i] = 0x0000;
-+
-+	ep->dentry.volume_label.char_count = uniname->name_len;
-+	mutex_unlock(&sbi->s_lock);
-+
-+	ret = 0;
-+
-+cleanup:
-+	if (bh) {
-+		exfat_update_bh(bh, true);
-+		brelse(bh);
-+	}
-+
-+	return ret;
-+}
-+
- /* mount the file system volume */
- static int __exfat_fill_super(struct super_block *sb,
- 		struct exfat_chain *root_clu)
-@@ -791,6 +980,7 @@ static void delayed_free(struct rcu_head *p)
- 
- 	unload_nls(sbi->nls_io);
- 	exfat_free_upcase_table(sbi);
-+	kfree(sbi->volume_label);
- 	exfat_free_sbi(sbi);
- }
- 
--- 
-2.34.1
-
+Regards,
+Bharata.
 
