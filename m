@@ -1,304 +1,415 @@
-Return-Path: <linux-kernel+bounces-779441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BA1B2F41E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:38:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BE2B2F42D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541031CC871B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:38:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADC7716807B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27E12F28FD;
-	Thu, 21 Aug 2025 09:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6CE2E11B6;
+	Thu, 21 Aug 2025 09:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="P0SoNE2G";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="cj3APdqZ"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="tpt0f3v8"
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D701A2E3B0E;
-	Thu, 21 Aug 2025 09:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769043; cv=fail; b=N0BuEYWqhL5vMoViRSztXHmtfDyDb3bmTb6QrKMh1rm0sHOO1ZhYjmWm9zIb4OdkLfsPQM9oqb2yPgCcxcvOB9HoHZlUYq3Luj0KFaki7JOuPdg7ZqFID61yhRN+Rpc1WTLptQ2a8Kmfs37fEnMlK6cMn8wBypKgKQfzFfGjKxQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769043; c=relaxed/simple;
-	bh=R0stPluiD8Gq5pVWpCKg0VIIBWt09rMc9i2rDDl5s3U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Qwa8rjAlePMYpUjoQyClu0Mb7QIR8mZGLKPzsvG+YNhWHST/2o3InkJLnYpRb8S8t9Ke08ZNcDj6UHPY6ycXMF5+T4wZXud5bbcqTLhmHZty8KTobiaMoLJYVflc33u6KmHZOxWUAbCVDpCbMoD1IepvM4F/+QwLLR1Bs8v4IB8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=P0SoNE2G; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=cj3APdqZ; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L8mUUI023006;
-	Thu, 21 Aug 2025 09:35:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=t7C/ZkePXuHaSSRniUQ6zJrNziJVIJoM0SiGk5Oc5p0=; b=
-	P0SoNE2GxH1Xnm54bJlQ8YzJ0rGz5WlqWYBc81uDsIiqm43J5Aq1SnJnUkwse2tj
-	830+VnUJUTnJldEQb65VzfkWCPxrwVXNMsFAiEF9I6MAZcSyb8uhi2GUHzoZPpDw
-	URTI2Y0BosdnYmizC4qyj1CLbrWAXoQBRtkSM+S4dgRHlBy1xPD/tkHB/9CKePQL
-	99Rix8/d076USNDOCD0ExtcT4FECaBBSSc5Exy77M7HNC6wioN20hoNQU6z51CCr
-	5Z32w2XgkKd3fBQa+wCykXizAInW95OH4se5ahJwmp1MENS4A/DbT6fivtnWt/B0
-	Z3L/PHCUPiANggjYU4i8iw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48n0tsu2wt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 09:35:57 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57L8Kavv030293;
-	Thu, 21 Aug 2025 09:35:56 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2076.outbound.protection.outlook.com [40.107.236.76])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48my3v5cun-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 09:35:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kIq3a29/hvDvwgAzCg0/XWkggr3gr6hB2jVCY7Hu3++nyAx2OydWvwgv3GINt3NPbzjZ9XHzG5yh8e7EJ2zR6izJxcn1XJREicElYodqM8UzBQ6UIg/Wvgn8X3szKa3aXh2O/xzjllgl9DH3jBAhLJceqrCe47YgiF/o/BLsecOdsiycTcmfxXidEklUq2K3se9v4hurZ2GtK7Eo4AhEa5uQlN/2ono4gHvnJ1QUSOCtFeSBibrFvZ14c/9kTh0wsjETGEkJDTkxAjUBUmwU+9E/LtishjKpiN6HRFrkzI5z7DH1J0Aqv0k9AIcTH9pY+Fr7UG29SsGYppAAmz+MyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t7C/ZkePXuHaSSRniUQ6zJrNziJVIJoM0SiGk5Oc5p0=;
- b=CtHGlOD2s3ELKVNd1/+xtmEjhYx4DLCjRpos2JtZIYFlNx3d1snXmUhope2JN6yIYtYsyq5uQIRO1xHDzOFFjC4qMd1nICkc2fhQsliO60f5oHAaNebyHe459bwe/+5mUddssNSnpUAbtwMiZ3rzu8Vk9uLhRcBCxovBP6yDg47kmVzoZ4ssD7YSYYpjZHzY7lcBxd13Vn0Xytit8De2lAIwlsDLLkt4C91NZCIYoPoiogVXhao43bNb3QU0FEDiTBVvw6+boX/TRQDNYMyk2EnsnpvEzXwN+hjMRrask9+TyAvpEPI4FT1U6E8hE/OlQPSY4YVO68H2U7pl3y3Tbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t7C/ZkePXuHaSSRniUQ6zJrNziJVIJoM0SiGk5Oc5p0=;
- b=cj3APdqZvsCdnTlS8yfU8s7p++nkrDmfA7LZnppT80corUN0aiJg0tTtB3kqAUSM3L4hDuCXbbzDEdvIJ24ePwbGnzG268icqppk5PJ+o1Jk2xgp86uyAi2jlHhSW77Ptoo8MJfw1D9U9gVpnKCRLMqDmgN2BBccO5BgdQyBm40=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by LV3PR10MB8203.namprd10.prod.outlook.com (2603:10b6:408:284::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
- 2025 09:35:54 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9031.024; Thu, 21 Aug 2025
- 09:35:53 +0000
-From: Harry Yoo <harry.yoo@oracle.com>
-To: harry.yoo@oracle.com
-Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, andreyknvl@gmail.com,
-        aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com,
-        apopple@nvidia.com, ardb@kernel.org, arnd@arndb.de, bp@alien8.de,
-        cl@gentwo.org, dave.hansen@linux.intel.com, david@redhat.com,
-        dennis@kernel.org, dev.jain@arm.com, dvyukov@google.com,
-        glider@google.com, gwan-gyeong.mun@intel.com, hpa@zyccr.com,
-        jane.chu@oracle.com, jgross@suse.de, jhubbard@nvidia.com,
-        joao.m.martins@oracle.com, joro@8bytes.org, kas@kernel.org,
-        kevin.brodsky@arm.com, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        lorenzo.stoakes@oracle.com, luto@kernel.org, maobibo@loongson.cn,
-        mhocko@suse.com, mingo@redhat.com, osalvador@suse.de,
-        peterx@redhat.com, peterz@infradead.org, rppt@kernel.org,
-        ryabinin.a.a@gmail.com, ryan.roberts@arm.com, stable@vger.kernel.org,
-        surenb@google.com, tglx@linutronix.de, thuth@redhat.com, tj@kernel.org,
-        urezki@gmail.com, vbabka@suse.cz, vincenzo.frascino@arm.com,
-        x86@kernel.org, zhengqi.arch@bytedance.com
-Subject: [PATCH] mm: fix KASAN build error due to p*d_populate_kernel()
-Date: Thu, 21 Aug 2025 18:35:42 +0900
-Message-ID: <20250821093542.37844-1-harry.yoo@oracle.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250818020206.4517-3-harry.yoo@oracle.com>
-References: <20250818020206.4517-3-harry.yoo@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SL2P216CA0185.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:1a::9) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38171DF74F;
+	Thu, 21 Aug 2025 09:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755769082; cv=none; b=VRR7oPn57vNss/7eV+d7w+Ad9njSJ/nJj35vRmxITPSpTgvfER57LGgB/mCjYK3Dg9670gArvd4h+TZ4oZJzNWt67NTLVAIHtZhWAxXxL9By2WBluH9fPrHDaRBvq6sHZfShsO5AFT/TPZDLQ6inm/iI9jJ/fgBhlcoQfIIqumk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755769082; c=relaxed/simple;
+	bh=zjzHsYUFAYdhKsd6LMQCUsQ4i3LBBoVBbwpa+M9mieI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ReV1g4bY/+MEMFi6pO2p4wzCrD51/WZNFYH1GLoZwx3Jc+6wn+UpKmmh26Igz+0VLk+jyFwXjLhu+DysaHEy1LYr6gpTBOg1WWdFkpdjL+4T6ASAIHbfjLimWlX8FoMzJSvE067nwS8WKYSW++s9FJtFv+oBvhoVGXyXIwjn0Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=tpt0f3v8; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1755768995;
+	bh=Z7a20uzgaJfYK7FaliYK+7k5YDrvLjGIWAUoVZyPaKo=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To;
+	b=tpt0f3v8z6ix/aeQztJY5oQD/ljaDELcTOJLD8oQjXxo6DIuVSUf2tazLsxdjWtsx
+	 UJ+yE15QWeuZy7JHOStYVa6i5i/6b7T0Q6jHBUS+ilIB6/4b51wOKWmbrkddnsaTFk
+	 wRH7B+BtPHSUPjFYKho3Dq/ZH08FkVnYhPT8OQew=
+X-QQ-mid: zesmtpgz5t1755768987tf998ac75
+X-QQ-Originating-IP: zxGfrGj3pnsFHyfA4AE25AfviKwsBEHGf+H24mqqqh4=
+Received: from = ( [120.239.196.181])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 21 Aug 2025 17:36:26 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11650469383386562404
+EX-QQ-RecipientCnt: 7
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Date: Thu, 21 Aug 2025 17:36:10 +0800
+Subject: [PATCH RESEND v3] i2c: spacemit: configure ILCR for accurate SCL
+ frequency
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|LV3PR10MB8203:EE_
-X-MS-Office365-Filtering-Correlation-Id: f0023e47-4ccd-4e6d-9ce7-08dde0961f5e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?s+PFx4Rh33wEnFVsKbrGzTds2aQbqZ7ZE9TeaKqe4cRbggVAgOuUvFeTwyoV?=
- =?us-ascii?Q?RWGx47ZPyGXHJhWeDNhI0PyT2Hn/6omue2d79peuFsC0vFeLYrT23EcIgWM+?=
- =?us-ascii?Q?C1ewXlB25xBH275LaZb17hCtO6zYXFKAW8+SPv5F9bI73jXZB1szWugqBsOI?=
- =?us-ascii?Q?8ADv7XaLhb5ysoOGjp1ka4pW/GYTui/A1KsU4J1MHlXQZMqVm5T3wkDTbAZI?=
- =?us-ascii?Q?an9csBjdGYSlS7w2nkzvlLCTbmrpbh4G1vJyqUEs2NbnUEa9I5DHY3vr1okG?=
- =?us-ascii?Q?b1BWOx6gIAuNV6Fgm3nsg2feIYF5PqQ7leRNyZzIe+0G7eb5tUb0xWgyXO1W?=
- =?us-ascii?Q?dOe00PGcJz5+biS7bO8j1MoD42uJf1TiUNlh3BxyDpAKfFw2NSsXUpHE5A4k?=
- =?us-ascii?Q?W9LvIcfvf2i55w2MhuBhKRqoYO6OoWYzDmkRIGX/sReozRiRs+mFaaeAmoBq?=
- =?us-ascii?Q?hb+So4vQMFMQXeb9IM9SHTg1OkHDCtg+wM8ZltNKqbrtdpCEzNXZAammhOfg?=
- =?us-ascii?Q?MoLRGhL1A7H+ew/FveOm7fuotYAtkhLmgPgPCQbPI4v6EEbBBMWU6K+jxrr2?=
- =?us-ascii?Q?OpgkZ701Dth0SQ/Gr8yvw64df0ov10EC+39/sS6zSR9whpUIGvGyfwFQnLTl?=
- =?us-ascii?Q?AFJShwqBuO4+vv1INt2xONEaipTIevRS+zyrPjr9jsCIly5R6Ns3AREPiy6R?=
- =?us-ascii?Q?4NjZjXuyRMMUfvON5dBZh221hbP2W/MCvMV2qNwtN3+lxPeyO8iVtcAa6Xxf?=
- =?us-ascii?Q?mda5ChdLJfu/Fy5vl6dD7Ijh/7vkoAbUA6EHY923W1CUiWblU2V3rFKLvSkc?=
- =?us-ascii?Q?OlnWLwYSNNZ5SBx/Ik+QrfTY5XfxF2+Zbx9h+eqFS5gvDYuaAGMhfPJhZzOB?=
- =?us-ascii?Q?/3f/Kl4CElVCou06DcuMqRA9koPHhCBehQggLAxzsItW+lWi9AvBepsEQcEu?=
- =?us-ascii?Q?PzBF0bjOj6EWOsAe2ADZUH6Ra36V0m6tJyt16i1zn6vgPaswIx86rMlsNr+z?=
- =?us-ascii?Q?+6BcBFfLdy6PsIdpYKQL5G7LYB/NwejPg7fCSj34bTtqJ9a89E0lbewpafQb?=
- =?us-ascii?Q?9pQ2w4l/qCVqN5U38Gq3fS43hhFMcxurhNMoIIFbndDuUnHa6vlFCOPQukYt?=
- =?us-ascii?Q?Reet359taLONfz6VVJLifAwfITxFICCKBLyt7Xl0A14gur7mmfjPCUhtE7Yj?=
- =?us-ascii?Q?+yZiAmpQRQHpxiLaZlDCoM8YHpW4Hx/tO3IyycvTIEvSKZtd9qXsLJz9iYNH?=
- =?us-ascii?Q?rpiSaysxHhvvPEzzvc3QmF5A37UlOgIwOzXWFh67mPBU1L2Sl16ED3auWpTm?=
- =?us-ascii?Q?sGo2fvDA1ToX3KvfU94kF+pk67zDP59IgIs+11a9I5wc4tcS1sXHh/vsz8Ly?=
- =?us-ascii?Q?ruQf/+wCGrlwYb1G/ZcAFwv7hWaguBsDHIJ41d91E6eYBSiPLeI58QUHtBFU?=
- =?us-ascii?Q?8cLiMeYwT88=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4/8kQekAv/ISdzwDyEtu5zxs5mrtg/88pvDibvBU76OOBJBBpZYh3UKRRBRi?=
- =?us-ascii?Q?sxXwgaOxKmzH49L4UZle0DBp5nPDcdfZLpmcIDRNIUMeASUU/Nu6b2GU00u7?=
- =?us-ascii?Q?rtFycLTwiAsBOl9ARezcvyougGWHk0xidB/GWOrV4EXZfdqAUeMh/NfS02Y4?=
- =?us-ascii?Q?HnKNZGHOWJWokloZfnSyvimWtyKIPClpclJfWkeZp/mVPn3rge0id3NigAMk?=
- =?us-ascii?Q?73hwQ35rf4WDMCd4UHi3eVtW8zc6PNgUtveVoPsaBDipK0xnPatBxAYb3BO2?=
- =?us-ascii?Q?pElgqcOYfWl/X95Lw74JB1BA9IOIqkZ2X7b3FlWec8sbJVQWiiKBXDRllXPV?=
- =?us-ascii?Q?gBNtNHc+014vSOl3E9vVvxPSqdO6GoWmA/1+4Z9+a0M5Y15WHD8338PNs9DC?=
- =?us-ascii?Q?AapKWsZ4hVIczFAE6YWJe91GPAEM1ro62tRj3NDZNhayWhAkzT4Qn54SIp+9?=
- =?us-ascii?Q?s6xOWM5X3JeHHwo7yyyznw/6CVVfpakS2Dsidb99mLTXQtfR3iwEODntJvzy?=
- =?us-ascii?Q?S30ciHunw55m492Tc18ZcFPh95VAqzRP6GxZFtt+Y0K8kHqdL1/YGjBVkySr?=
- =?us-ascii?Q?G4ZmvRCusXVCK227Hy8JwCVDfRVcLBCa7u2yN8YEvOCApGqyY440AsSRrD/S?=
- =?us-ascii?Q?euqqbhlIrq9T/sdBBkKd0TgT6jqFvguSotGp75g/iIr828RiBJhBPm93oEO/?=
- =?us-ascii?Q?DDon04JtOeCu1A8EbORhEaALNhx+vc8dxuWaoGn/BviTxxgPfnTTprygEfSs?=
- =?us-ascii?Q?c/0a7Sq5+tQrO874VJZv0xdGl/HBsKAVEalRP989fEQvNpd9AbS6C4Bd7sLe?=
- =?us-ascii?Q?X4TrC5EhT+hG8J4Zy+xTzBGVyQHqCQIcnxfBVg7mRJZ+M+9FCHVk+F2x50sc?=
- =?us-ascii?Q?qcLgeiV4loFQAHfd3rWLbV9PhmacE1Td5M78MoUnfQgsFh/K+3Nnke1M4A4f?=
- =?us-ascii?Q?OcWE0JhIG6khRP9w09Vvbc23LvuPb0jFkS/gv4UdeaXKWJCim4Ij2VRfE3+5?=
- =?us-ascii?Q?c5gapCoEqiFZPD+D1FgG6+ajaMa1UcCok5FNDSU3o1o04fBsSEFA8omzkOp9?=
- =?us-ascii?Q?O0K+5CaM2Bxp/zxmb+VkUeI7Z3zJF0nkMP3Wu2EXNxsTbOA8JPd+iPGwG/IL?=
- =?us-ascii?Q?zN+XaOorZfeWHUnPDe+oBjAMcMO38crnS47VxzRtgD+DFR1pdLykLA8hMgn1?=
- =?us-ascii?Q?rXCHzdJD+lPImPb2MgxWHVxlPFi+wNn3QGJIrlfTllCNLyx3ONDjk7QNUqjy?=
- =?us-ascii?Q?A64qCt6Fo+NJILWjTIUeBF+marVn2u+U3O3ANdQz8SYElMgfupoZAKoMSQ3T?=
- =?us-ascii?Q?YHPiX07MukrQJFzSJwbLhJ0VykhM0UbJlRdaxUMAnQY67Y/0jtbq4ozFIEcB?=
- =?us-ascii?Q?vxGRQmP4IK22OHf/MTZi3eQI7kkHSnggPIKmJbfK1BlS6MXbDiSyF7sFtV07?=
- =?us-ascii?Q?OjfyMc8v1M3vyz2Y9YJ/aZ6zMvSw3Zz+LGnzYrKKPrsU8FJ2goBG2FiAHrvW?=
- =?us-ascii?Q?OJRS/1fk6ReYwT/OSQiSadwNTjXjDv8ohQLJFXXZrqpFKoGfPfLC6l7fwpjR?=
- =?us-ascii?Q?SRgx1HBhIQsjaEldx9HNbNIFuwGuLOxnLqbs101z?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	WAoN6DkpVwtG1oYJz5h2TFepBOsGMroSdy8iboreyQH7jn9i5E9vjG6PvYisgnp2bTJBYRgwmP1POZtDmy7C7VLk7aZithTynvwJnbyNjF+M1zitF2xLIcoQAWlGeT3CnWPZY55H5+qTzsX8SXaNJyTo9OMl0Pq6wfCemrewPKVNz8q4NQbgzkt7lGTWj4uDu5Cs2/+mjRVMnZl2iS5qYlR18mBADcrMJxj/n2b0vqVMfpIExPkXZNFpGSEB5AWRtRiahxBzzx5Jh8yAJioiXEI4dtcY/egxx+YMH6Np1C2Z9H1QqP1wlQYLDek1iTBCoA3f1g/6dgHDCENVtGafLJ+pGb2F7sYKaC+DKY+zGz/yJmjFzD9dM+XPp1Obir0G0IIwvOO+pDkTmQL6xkTAJ1ivHAijLbTh9eEaw0zuThYAIaEDzuI2eGT/zZqoNl1Bk+ilUhmMBxgUaFpRaMJtrRxoLfqEsYS2HaQHWP+e4iIzJgAFcI39iPQa42fHBs9brrB0fYxmWe6MI2pkBwBLnxS9g/hekGN/uAqcGlfd2VJ/BWn3JY4XbxrdUAe2og/zVa85QekRCAOJ5DAbA28o+slsiLkAvTEWMfqQJr1pf0U=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0023e47-4ccd-4e6d-9ce7-08dde0961f5e
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 09:35:53.6783
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RZ79UBIHJXOMXf+TSVMDjghZzTu4scIUGUHzPQ2S/fFhTTWNoo0mkI417LqqcRe9EKJyfB3TRCRKCPI/4ZgWeQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB8203
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 phishscore=0
- mlxscore=0 adultscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508210075
-X-Proofpoint-GUID: KqArVyz6v0zbYgqzAzbEl6HBZBziUhPK
-X-Authority-Analysis: v=2.4 cv=S6eAAIsP c=1 sm=1 tr=0 ts=68a6e87d b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
- a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=qG1Prv0osz8Essy9glYA:9
- cc=ntf awl=host:13600
-X-Proofpoint-ORIG-GUID: KqArVyz6v0zbYgqzAzbEl6HBZBziUhPK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NyBTYWx0ZWRfX/T2BVpZcBdJd
- VJ/SnKhNwr8tCnVgatYt1hiwK01nRwxdAXh2oDLPBhiOFV4oseb7MhWKNwQKilSs5AnuwrK6POR
- vxQ0L3qmaaj2JoCGpQ2xuWDC6JrrBBu3IBSYsP+mo8HLFgTw6jgcnb/4vIBddHwlFnCzUUo65X2
- hkV+qBx939nElwHA8i4e9LF+6EZaEvbUvoG4rCtDWUrXk0Le1498XKUU2Q66xuVx+JSGX4M2jc/
- XcrHXE+Eh9a90o29vbmxuilpvXRHARBmLYxp6JuHhG4lzr/+/R7iYmhlfqH8v80FUrU18fkYcYa
- 2KR7A/+KXn4t6R69oxUFhkPwTJ4oqcZCbFALJeTKOSVumihrDagjza0mHmDuQoNHT2Tph+Vy5tA
- eVO54R6tTErXiUn1TZSpuAkYd4PZUZr1fTqS42Qv7ZL8bt/mC9I=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250821-k1-i2c-ilcr-v3-1-1a024f935717@linux.spacemit.com>
+X-B4-Tracking: v=1; b=H4sIAInopmgC/23NOw+CMBQF4L9iOlvSFxadHGR10NE4QLnIjbzSI
+ sEQ/rtNHQyJ47kn9zszcWARHDlsZmJhRIdd64PcboipsvYBFAufiWAiZprt6ZNTFIZibSyFTCo
+ NLIlZpoj/6C2UOAXtRi7pNT2fyN3fK3RDZ99hZBSh/Xo8WXmjoJzmyuySksvC5PxYY/uaItdnB
+ hocItM1ARzlD0m4WiPSI5JrLSRolZviL7IsywcTrSWj/AAAAA==
+X-Change-ID: 20250709-k1-i2c-ilcr-ea347e0850a4
+To: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755768986; l=10871;
+ i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
+ bh=zjzHsYUFAYdhKsd6LMQCUsQ4i3LBBoVBbwpa+M9mieI=;
+ b=itq6wpZdtCHg8ajcuUM4J4yG4tiyX8jUU243UK7lf0ii2+HBTjdpATfu7CKEQ3d2cTOffvkMj
+ +c4Exf95LDyD5ABnXgW/0HMcjka7fkfJVQdNYFx6yz10arG4o8pTWEL
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NSoa40jSEY0I0YCbYx3R2VyQoZFSz2NSDTt1nbYsf8T5v3+e6yyU8F1P
+	vYXw5EM6khJ9Ybc/bYqEmpc0ConXs2E4djLuZlBleZdTupRw88TLfbwsyD+lVekZNVwpYgT
+	SIysLCvyw51bvmtQUIsVZ5ADIyjo1089FPus3nneM0h7Fn0A3qCb+Xq/PVgZKhhw1L3O4Jo
+	Ma5NiVbRPkmOkc7tgChTWfCb4iFwTbnkWMNEqPYA+1s4E8QbyQs4zCMk1Zj70K3OYEREGef
+	zD7tDduelBVvMV2nuh0jLcV6Ogqg+9o4KbkQUDfJRP6buIum7vrk1BWo3lLU9vD1A1wolSI
+	z4D9FH2aoYAhOajA0EZtH71iFpp38EFi+nNeafO787lI2yfkXk7uQOggbQwDZ1SE1bPYLXd
+	79fopQIg+V9bZKdCuSmlRwDITfQcIDzDSwmVQ6dJ4gJtbeWqRmmpYhV+i8IAyJCRgRpc0VW
+	C9rsw08PONC4Inf/fwyWS29/80YbK0xXe5wWQbn+1scVkq9qKeMQuK2sdmu/cEx42oaWK6S
+	N1jdCtO55y2U3tM1IUtfdn37Xfb+FNwFMT5ZPhUK+Lu7KNv5bD4HD2AkwSl+1Yi+RDtfo4j
+	1ATjVjUDcspetyQ9ZhCFT62j5moiXp+UFzqVV2Jf9MUPXNTYpnrf+6wh/F/siklkLUV7ayz
+	ZW/RLdnPJmimvHkwJaj0+So60fSd8FKC+CKE+7tWLdE/tu9TGCEcn14CWM0tMWoweDttViQ
+	8JZAJxOt9WyJeo4pxsbdUVHUpZvQweYlPUH+GMOdRX9dCx7x0bmqk8qgfRMNdepBJ+S3q15
+	wR8496LRa7AIJ4Xs6hcjemXtBL7pbhm2BovRfv2RTh3YkvHICxxEqz3EcAh9jOpVOV4ZAu1
+	0B9uDqBRgepjpETkFXWUGFA9OYj0vlr2BaQ8QZ9QwkrixIAOdqMu/R+U6SqTWPF7b0PvQ4v
+	bF3x4V7kx+r0P/4UI/WGN6kd7QNXq8l1umO4/knN2SBgCayqHEi7zK7AtDIGcU33PtoBfyG
+	bzOFUL7vgvAnXPRSlLYICJUlfjPGUkzzlBDabWnOx1Ak+gxcEu9ye3inXlp4L9HwuMScJL9
+	Q9lPSmajQrkWdWcpGjPTy+R9lzYDX/7eh19cYc2jG9jsdbsVO+gvSw=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-KASAN unconditionally references kasan_early_shadow_{p4d,pud}.
-However, these global variables may not exist depending on the number of
-page table levels. For example, if CONFIG_PGTABLE_LEVELS=3, both
-variables do not exist. Although KASAN may refernce non-existent
-variables, it didn't break builds because calls to {pgd,p4d}_populate()
-are optimized away at compile time.
+The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
+master mode operations is determined by the ILCR (I2C Load Count Register).
+Previously, the driver relied on the hardware's reset default
+values for this register.
 
-However, {pgd,p4d}_populate_kernel() is defined as a function regardless
-of the number of page table levels, so the compiler may not optimize
-them away. In this case, the following linker error occurs:
+The hardware's default ILCR values (SLV=0x156, FLV=0x5d) yield SCL
+frequencies lower than intended. For example, with the default
+31.5 MHz input clock, these default settings result in an SCL
+frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
+and approximately 338 kHz (fast mode) when targeting 400 kHz.
+These frequencies are below the 100 kHz/400 kHz nominal speeds.
 
-ld.lld: error: undefined symbol: kasan_early_shadow_p4d
->>> referenced by init.c:260 (/home/hyeyoo/mm-new/mm/kasan/init.c:260)
->>>               mm/kasan/init.o:(kasan_populate_early_shadow) in archive vmlinux.a
->>> referenced by init.c:260 (/home/hyeyoo/mm-new/mm/kasan/init.c:260)
->>>               mm/kasan/init.o:(kasan_populate_early_shadow) in archive vmlinux.a
->>> did you mean: kasan_early_shadow_pmd
->>> defined in: vmlinux.a(mm/kasan/init.o)
+This patch integrates the SCL frequency management into
+the Common Clock Framework (CCF). Specifically, the ILCR register,
+which acts as a frequency divider for the SCL clock, is now registered
+as a managed clock (scl_clk) within the CCF.
 
-ld.lld: error: undefined symbol: kasan_early_shadow_pud
->>> referenced by init.c:263 (/home/hyeyoo/mm-new/mm/kasan/init.c:263)
->>>               mm/kasan/init.o:(kasan_populate_early_shadow) in archive vmlinux.a
->>> referenced by init.c:263 (/home/hyeyoo/mm-new/mm/kasan/init.c:263)
->>>               mm/kasan/init.o:(kasan_populate_early_shadow) in archive vmlinux.a
->>> referenced by init.c:200 (/home/hyeyoo/mm-new/mm/kasan/init.c:200)
->>>               mm/kasan/init.o:(zero_p4d_populate) in archive vmlinux.a
->>> referenced 1 more times
+This patch also cleans up unnecessary whitespace
+in the included header files.
 
-Therefore, to allow calls to {pgd,p4d}_populate_kernel() to be optimized
-out at compile time, define {pgd,p4d}_populate_kernel() as macros.
-This way, when pgd_populate() or p4d_populate() are simply empty macros,
-the corresponding *_populate_kernel() functions can also be optimized
-away.
-
-Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
+Changelog in v3:
+- use MASK macro in `recalc_rate` function
+- Link to v2: https://lore.kernel.org/r/20250718-k1-i2c-ilcr-v2-1-b4c68f13dcb1@linux.spacemit.com
 
-While the description is quite verbose, it is intended to be fold-merged
-into patch [1] of the page table sync series V5.
+Changelog in v2:
+- Align line breaks.
+- Check `lv` in `clk_set_rate` function.
+- Force fast mode when SCL frequency is illegal or unavailable.
+- Change "linux/bits.h" to <linux/bits.h>
+- Kconfig: Add dependency on CCF.
+- Link to v1: https://lore.kernel.org/all/20250710-k1-i2c-ilcr-v1-1-188d1f460c7d@linux.spacemit.com/
+---
+ drivers/i2c/busses/Kconfig  |   2 +-
+ drivers/i2c/busses/i2c-k1.c | 180 ++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 167 insertions(+), 15 deletions(-)
 
-[1] https://lore.kernel.org/linux-mm/20250818020206.4517-3-harry.yoo@oracle.com/
-
- include/linux/pgalloc.h | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/pgalloc.h b/include/linux/pgalloc.h
-index 290ab864320f..8812f842978f 100644
---- a/include/linux/pgalloc.h
-+++ b/include/linux/pgalloc.h
-@@ -5,20 +5,18 @@
- #include <linux/pgtable.h>
- #include <asm/pgalloc.h>
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index c8d115b58e449b59a38339b439190dcb0e332965..1382b6c257fa4ba4cf5098d684c1bbd5e2636fd4 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -797,7 +797,7 @@ config I2C_JZ4780
+ config I2C_K1
+ 	tristate "SpacemiT K1 I2C adapter"
+ 	depends on ARCH_SPACEMIT || COMPILE_TEST
+-	depends on OF
++	depends on OF && COMMON_CLK
+ 	help
+ 	  This option enables support for the I2C interface on the SpacemiT K1
+ 	  platform.
+diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
+index b68a21fff0b56b59fe2032ccb7ca6953423aad32..34b22969cf6789e99de58dd93dda6f0951069f85 100644
+--- a/drivers/i2c/busses/i2c-k1.c
++++ b/drivers/i2c/busses/i2c-k1.c
+@@ -3,17 +3,20 @@
+  * Copyright (C) 2024-2025 Troy Mitchell <troymitchell988@gmail.com>
+  */
  
--static inline void pgd_populate_kernel(unsigned long addr, pgd_t *pgd,
--				       p4d_t *p4d)
--{
--	pgd_populate(&init_mm, pgd, p4d);
--	if (ARCH_PAGE_TABLE_SYNC_MASK & PGTBL_PGD_MODIFIED)
--		arch_sync_kernel_mappings(addr, addr);
--}
-+#define pgd_populate_kernel(addr, pgd, p4d)				\
-+	do {								\
-+		pgd_populate(&init_mm, pgd, p4d);			\
-+		if (ARCH_PAGE_TABLE_SYNC_MASK & PGTBL_PGD_MODIFIED)	\
-+			arch_sync_kernel_mappings(addr, addr);		\
-+	} while (0)
+- #include <linux/clk.h>
+- #include <linux/i2c.h>
+- #include <linux/iopoll.h>
+- #include <linux/module.h>
+- #include <linux/of_address.h>
+- #include <linux/platform_device.h>
++#include <linux/bits.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/i2c.h>
++#include <linux/iopoll.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
  
--static inline void p4d_populate_kernel(unsigned long addr, p4d_t *p4d,
--				       pud_t *pud)
--{
--	p4d_populate(&init_mm, p4d, pud);
--	if (ARCH_PAGE_TABLE_SYNC_MASK & PGTBL_P4D_MODIFIED)
--		arch_sync_kernel_mappings(addr, addr);
--}
-+#define p4d_populate_kernel(addr, p4d, pud)				\
-+	do {								\
-+		p4d_populate(&init_mm, p4d, pud);			\
-+		if (ARCH_PAGE_TABLE_SYNC_MASK & PGTBL_P4D_MODIFIED)	\
-+			arch_sync_kernel_mappings(addr, addr);		\
-+	} while (0)
+ /* spacemit i2c registers */
+ #define SPACEMIT_ICR		 0x0		/* Control register */
+ #define SPACEMIT_ISR		 0x4		/* Status register */
+ #define SPACEMIT_IDBR		 0xc		/* Data buffer register */
++#define SPACEMIT_ILCR		 0x10		/* Load Count Register */
+ #define SPACEMIT_IBMR		 0x1c		/* Bus monitor register */
  
- #endif /* _LINUX_PGALLOC_H */
+ /* SPACEMIT_ICR register fields */
+@@ -80,6 +83,19 @@
+ #define SPACEMIT_BMR_SDA         BIT(0)		/* SDA line level */
+ #define SPACEMIT_BMR_SCL         BIT(1)		/* SCL line level */
+ 
++#define SPACEMIT_LCR_LV_STANDARD_SHIFT		0
++#define SPACEMIT_LCR_LV_FAST_SHIFT		9
++#define SPACEMIT_LCR_LV_STANDARD_WIDTH		9
++#define SPACEMIT_LCR_LV_FAST_WIDTH		9
++#define SPACEMIT_LCR_LV_STANDARD_MAX_VALUE	GENMASK(SPACEMIT_LCR_LV_STANDARD_WIDTH - 1, 0)
++#define SPACEMIT_LCR_LV_FAST_MAX_VALUE		GENMASK(SPACEMIT_LCR_LV_FAST_WIDTH - 1, 0)
++#define SPACEMIT_LCR_LV_STANDARD_MASK		GENMASK(SPACEMIT_LCR_LV_STANDARD_SHIFT +\
++						SPACEMIT_LCR_LV_STANDARD_WIDTH - 1,\
++						SPACEMIT_LCR_LV_STANDARD_SHIFT)
++#define SPACEMIT_LCR_LV_FAST_MASK		GENMASK(SPACEMIT_LCR_LV_FAST_SHIFT +\
++						SPACEMIT_LCR_LV_FAST_WIDTH - 1,\
++						SPACEMIT_LCR_LV_FAST_SHIFT)
++
+ /* i2c bus recover timeout: us */
+ #define SPACEMIT_I2C_BUS_BUSY_TIMEOUT		100000
+ 
+@@ -95,11 +111,20 @@ enum spacemit_i2c_state {
+ 	SPACEMIT_STATE_WRITE,
+ };
+ 
++enum spacemit_i2c_mode {
++	SPACEMIT_MODE_STANDARD,
++	SPACEMIT_MODE_FAST
++};
++
+ /* i2c-spacemit driver's main struct */
+ struct spacemit_i2c_dev {
+ 	struct device *dev;
+ 	struct i2c_adapter adapt;
+ 
++	struct clk_hw scl_clk_hw;
++	struct clk *scl_clk;
++	enum spacemit_i2c_mode mode;
++
+ 	/* hardware resources */
+ 	void __iomem *base;
+ 	int irq;
+@@ -120,6 +145,88 @@ struct spacemit_i2c_dev {
+ 	u32 status;
+ };
+ 
++static void spacemit_i2c_scl_clk_disable_unprepare(void *data)
++{
++	struct spacemit_i2c_dev *i2c = data;
++
++	clk_disable_unprepare(i2c->scl_clk);
++}
++
++static void spacemit_i2c_scl_clk_exclusive_put(void *data)
++{
++	struct spacemit_i2c_dev *i2c = data;
++
++	clk_rate_exclusive_put(i2c->scl_clk);
++}
++
++static int spacemit_i2c_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++				     unsigned long parent_rate)
++{
++	struct spacemit_i2c_dev *i2c = container_of(hw, struct spacemit_i2c_dev, scl_clk_hw);
++	u32 lv, lcr, mask, shift, max_lv;
++
++	lv = DIV_ROUND_UP(parent_rate, rate);
++
++	if (i2c->mode == SPACEMIT_MODE_STANDARD) {
++		mask = SPACEMIT_LCR_LV_STANDARD_MASK;
++		shift = SPACEMIT_LCR_LV_STANDARD_SHIFT;
++		max_lv = SPACEMIT_LCR_LV_STANDARD_MAX_VALUE;
++	} else if (i2c->mode == SPACEMIT_MODE_FAST) {
++		mask = SPACEMIT_LCR_LV_FAST_MASK;
++		shift = SPACEMIT_LCR_LV_FAST_SHIFT;
++		max_lv = SPACEMIT_LCR_LV_FAST_MAX_VALUE;
++	}
++
++	if (!lv || lv > max_lv) {
++		dev_err(i2c->dev, "set scl clock failed: lv 0x%x", lv);
++		return -EINVAL;
++	}
++
++	lcr = readl(i2c->base + SPACEMIT_ILCR);
++	lcr &= ~mask;
++	lcr |= lv << shift;
++	writel(lcr, i2c->base + SPACEMIT_ILCR);
++
++	return 0;
++}
++
++static long spacemit_i2c_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++					unsigned long *parent_rate)
++{
++	u32 lv, freq;
++
++	lv = DIV_ROUND_UP(*parent_rate, rate);
++	freq = DIV_ROUND_UP(*parent_rate, lv);
++
++	return freq;
++}
++
++static unsigned long spacemit_i2c_clk_recalc_rate(struct clk_hw *hw,
++						  unsigned long parent_rate)
++{
++	struct spacemit_i2c_dev *i2c = container_of(hw, struct spacemit_i2c_dev, scl_clk_hw);
++	u32 lcr, lv = 0;
++
++	lcr = readl(i2c->base + SPACEMIT_ILCR);
++
++	if (i2c->mode == SPACEMIT_MODE_STANDARD)
++		lv = (lcr & SPACEMIT_LCR_LV_STANDARD_MASK) >>
++		     SPACEMIT_LCR_LV_STANDARD_SHIFT;
++	else if (i2c->mode == SPACEMIT_MODE_FAST)
++		lv = (lcr & SPACEMIT_LCR_LV_FAST_MASK) >>
++		     SPACEMIT_LCR_LV_FAST_SHIFT;
++	else
++		return 0;
++
++	return DIV_ROUND_UP(parent_rate, lv);
++}
++
++static const struct clk_ops spacemit_i2c_clk_ops = {
++	.set_rate = spacemit_i2c_clk_set_rate,
++	.round_rate = spacemit_i2c_clk_round_rate,
++	.recalc_rate = spacemit_i2c_clk_recalc_rate,
++};
++
+ static void spacemit_i2c_enable(struct spacemit_i2c_dev *i2c)
+ {
+ 	u32 val;
+@@ -138,6 +245,27 @@ static void spacemit_i2c_disable(struct spacemit_i2c_dev *i2c)
+ 	writel(val, i2c->base + SPACEMIT_ICR);
+ }
+ 
++static struct clk *spacemit_i2c_register_scl_clk(struct spacemit_i2c_dev *i2c,
++						 struct clk *parent)
++{
++	struct clk_init_data init;
++	char name[32];
++
++	snprintf(name, sizeof(name), "%s_scl_clk", dev_name(i2c->dev));
++
++	init.name = name;
++	init.ops = &spacemit_i2c_clk_ops;
++	init.parent_data = (struct clk_parent_data[]) {
++		{ .fw_name = "func" },
++	};
++	init.num_parents = 1;
++	init.flags = 0;
++
++	i2c->scl_clk_hw.init = &init;
++
++	return devm_clk_register(i2c->dev, &i2c->scl_clk_hw);
++}
++
+ static void spacemit_i2c_reset(struct spacemit_i2c_dev *i2c)
+ {
+ 	writel(SPACEMIT_CR_UR, i2c->base + SPACEMIT_ICR);
+@@ -224,7 +352,7 @@ static void spacemit_i2c_init(struct spacemit_i2c_dev *i2c)
+ 	 */
+ 	val |= SPACEMIT_CR_DRFIE;
+ 
+-	if (i2c->clock_freq == SPACEMIT_I2C_MAX_FAST_MODE_FREQ)
++	if (i2c->mode == SPACEMIT_MODE_FAST)
+ 		val |= SPACEMIT_CR_MODE_FAST;
+ 
+ 	/* disable response to general call */
+@@ -519,14 +647,15 @@ static int spacemit_i2c_probe(struct platform_device *pdev)
+ 		dev_warn(dev, "failed to read clock-frequency property: %d\n", ret);
+ 
+ 	/* For now, this driver doesn't support high-speed. */
+-	if (!i2c->clock_freq || i2c->clock_freq > SPACEMIT_I2C_MAX_FAST_MODE_FREQ) {
+-		dev_warn(dev, "unsupported clock frequency %u; using %u\n",
+-			 i2c->clock_freq, SPACEMIT_I2C_MAX_FAST_MODE_FREQ);
++	if (i2c->clock_freq > SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ &&
++	    i2c->clock_freq <= SPACEMIT_I2C_MAX_FAST_MODE_FREQ) {
++		i2c->mode = SPACEMIT_MODE_FAST;
++	} else if (i2c->clock_freq && i2c->clock_freq <= SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ) {
++		i2c->mode = SPACEMIT_MODE_STANDARD;
++	} else {
++		dev_warn(i2c->dev, "invalid clock-frequency, using fast mode");
++		i2c->mode = SPACEMIT_MODE_FAST;
+ 		i2c->clock_freq = SPACEMIT_I2C_MAX_FAST_MODE_FREQ;
+-	} else if (i2c->clock_freq < SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ) {
+-		dev_warn(dev, "unsupported clock frequency %u; using %u\n",
+-			 i2c->clock_freq,  SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ);
+-		i2c->clock_freq = SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ;
+ 	}
+ 
+ 	i2c->dev = &pdev->dev;
+@@ -548,10 +677,33 @@ static int spacemit_i2c_probe(struct platform_device *pdev)
+ 	if (IS_ERR(clk))
+ 		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable func clock");
+ 
++	i2c->scl_clk = spacemit_i2c_register_scl_clk(i2c, clk);
++	if (IS_ERR(i2c->scl_clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(i2c->scl_clk),
++				     "failed to register scl clock\n");
++
+ 	clk = devm_clk_get_enabled(dev, "bus");
+ 	if (IS_ERR(clk))
+ 		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable bus clock");
+ 
++	ret = clk_set_rate_exclusive(i2c->scl_clk, i2c->clock_freq);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "failed to set exclusive rate for SCL clock");
++
++	ret = devm_add_action_or_reset(dev, spacemit_i2c_scl_clk_exclusive_put, i2c);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				"failed to register cleanup action for exclusive SCL clock rate");
++
++	ret = clk_prepare_enable(i2c->scl_clk);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "failed to prepare and enable clock");
++
++	ret = devm_add_action_or_reset(dev, spacemit_i2c_scl_clk_disable_unprepare, i2c);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				"failed to register cleanup action for clk disable and unprepare");
++
+ 	spacemit_i2c_reset(i2c);
+ 
+ 	i2c_set_adapdata(&i2c->adapt, i2c);
+
+---
+base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
+change-id: 20250709-k1-i2c-ilcr-ea347e0850a4
+
+Best regards,
 -- 
-2.43.0
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
 
