@@ -1,109 +1,283 @@
-Return-Path: <linux-kernel+bounces-779736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624DAB2F7F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:29:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1DB8B2F801
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67C633A4A7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:29:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A221CC6A1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9BF30E833;
-	Thu, 21 Aug 2025 12:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448B93112DA;
+	Thu, 21 Aug 2025 12:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dt47RlAC"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bvIsxVXD"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575DF8248B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBCC3112C2
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755779349; cv=none; b=c5yxjNdwZeP27vi/LmGIIu7e5EtXYTKoqapHUnV0hVkSdJhAXrytaGDC8//VY634lpVMbvukXXosi+VMkVCqJWHQAJ0DY3AAjDqu++inNZO4VFZDSX1v1jztv0MsmfH8luZcUNMqr0kEHaDKQluD41HhA8tpfDN/UvzDOhEuNfo=
+	t=1755779396; cv=none; b=EQ4PIZLLxSEh6EQvy/1rDD3rySmMxo6UZjceuF+j3GDeS31hTUmQN6nCUkH0lxuONhE10uGNZYO2mxn+Did8H3AkUYnFvp7ZIM4PRDqqlm6lcKlTrlQxIHX1/9Y9mJbJYV8mtVfXzkCME28hqW0RHQZ72pOoFsFKL3EqDgCiIEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755779349; c=relaxed/simple;
-	bh=ipyvJjqvXQZXiCECZcXAcXKFk38PARAX3ClkU4503z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gJdkIqAm6dEVishTmx+UPhs3pYWJoIQRglusnBUgQ8d4fU+U4u+jI+Kdl42BJunp2+ypRR7hwwwxNylW+L/QF4Jwm6ZkqoCeHDXgx5UszmPv1N/sIryoojYeLVWkrSDMlVGrS3PXSlTLZYSnPf9K8aIr+jKiRo4m27rDzVm7cp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dt47RlAC; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b05ac1eso5432225e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:29:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755779346; x=1756384146; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uk+Gw1wsKmJ7CUTVerhhurDygK4Wa2zZgqD1NupOrg8=;
-        b=dt47RlACZaACMEuspGRIAm0S+AhxBX+t7/xkvF7apLxB25qoDhgK5a3dIXw2g3AZqG
-         ACdCiteUf/nc4jPe7RCqJjtA+4IENyFT3zvzmmuN1+n/EhdIBEHUVXUPHLx0zFH9Rfbv
-         0E9EUqmiRVMnW5hQBUUSy8uEeiKMdUwY/2og8EhfBmdkSP0WFWjY+3LcCPpNdLkfWdsO
-         Xs8hjmlnc+cH72q800mHkUfxLxWnu3DDySk5hMvgwfoJTp+1DMgCQyilyZtKNsgrCXGe
-         j7hiRm6Ze5OgdpKS2kB7+FULaIsm3Mof1UvZBTSJGmQ9K0xv9MW6LBRB4vpFGKgQ7yvm
-         M5pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755779346; x=1756384146;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uk+Gw1wsKmJ7CUTVerhhurDygK4Wa2zZgqD1NupOrg8=;
-        b=GlQFv8dody6W5mfSv3T1OHFt9aZ1q6cveihQXLiWfKD9xcUnSoaGtfsf9xupvrIS8a
-         oR5z8cQTzDzg48fg30nN53fyf/z8kC2M2u+eC9TyRix5+5TAjhOI/rIy39bB+7qFdY7u
-         Wc1vPfhi7LiJgz9+MPrTdbhTsVTTBhwjvA2s3jzOftbFhALVT5j223XmkPs27OWHIx+z
-         nBg2PfxGaAvBD9RRNzk0MSDEAnzUEIN3xt3IhC0CWoPHF5rRXaOaKfPe6n0jf2mWbR7W
-         L53q6KBfpH4SPMipp829VwVocbq6ta3RAyOcPYtOjl7+LJJ4FqLowYehKm2PDMDuVX6b
-         bR6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Jic5wEhxxzB47sxk8n6BWkWUVsP1kSSms7ZplTePn+XEMTkrHF2ADr2L+1L+fbbhGOc76NMCuRCMCOo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmkSYYZZqGTSN3b+NMkN/C6DA1Ip5jLlpoh5VbUeE0QSuOYzCL
-	NQ4NlQTJ7dmJ9rtVyMhdq7wS0PvxWKQQwJlnQfJn3GUGMeJaUzWhCL5ENjwSMisuf8g=
-X-Gm-Gg: ASbGncvFlhd6jkWyF6pFnrGd7rMNV+crjx893cgD+2IKDZbmCFC8Dix4YOmL6kPxecV
-	0ky2hO2v3p2ADjvkkFQgFB0uTwNacYYWBKgQQXfPZxvbKwdkfHvv+N2rBzCMKIcXzTjfVSzdUcr
-	ZZEwOfz0pPIDTxGUg31q6cgj5dG/weM+BlM+wi6aLOVuR4ywvagbigtiqkvX7PCdLOWY3MpKOQC
-	c+ps8nlhRuG+O8e6WRsQjl0XFzBk+IUKQQ8FhwB2KxFt1RsWEsph30PWHxPC+L6AK+b4FJ3XvGP
-	dC8fo4XEUbSa/sPpPs4TeSg4jGdiew0EAuXmg63aHb04ywNYhhIVTVmKqeqO89LUjV1bXD3y/QV
-	Qmz8Wla2dtfA67UG9aNkP1UdpE02Fa7FJLWNOVQ==
-X-Google-Smtp-Source: AGHT+IGJrYKPC9BNmSR70F39FVaCXjHhbs3ESqGZ+t90Sf0UFy3gTnptWt8uEhlEoOhqqmoO/zvgsA==
-X-Received: by 2002:a05:600c:4743:b0:459:d6a6:77c with SMTP id 5b1f17b1804b1-45b4d85db41mr19889845e9.33.1755779345665;
-        Thu, 21 Aug 2025 05:29:05 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b4dc25b04sm26193375e9.22.2025.08.21.05.29.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 05:29:05 -0700 (PDT)
-Date: Thu, 21 Aug 2025 15:29:01 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2 1/3] staging: media: atomisp: Remove unnecessary
- inline declaration in gdc.c
-Message-ID: <aKcRDWlRQ1gughvQ@stanley.mountain>
-References: <20250821070130.2581766-1-abarnas@google.com>
+	s=arc-20240116; t=1755779396; c=relaxed/simple;
+	bh=ijlb5esqaLBXf0mALq1QvcDz562IVmpFjpHLeOxS04A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MGodQ9vdncUMJODn33zPUHu/iP7M7rolBKP7cg2WjQ/thVrsegtb6QcxFbtIQDWYrFkT0gsZ6MSH2s9qV/W8ZeSw591FATCdGMWge1ID5JVk+PwZ1E0IyPizv1Dz/BgwF8UHE2nsyFqz14YOAG8K+3nN5lF6pEQKJxkBiCgBNGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bvIsxVXD; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755779392;
+	bh=ijlb5esqaLBXf0mALq1QvcDz562IVmpFjpHLeOxS04A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bvIsxVXDCBsn2Z1qyYYvRXjkxTtpvHYKqzHyZZPnWRZX9coT5rj1CjMzo6balyWZH
+	 OM4rM/Xj0uDrHauJIhlsnMAuWivpuSA5ShIa3k9DXdsaZaDVf2x+feMIYF8rqMiMy1
+	 ePhXELqiWF0VNnpOUTmRSPVbNIuu/LvOTsaS4KGSgYMAcOS2sE8FdwJZm1HvKufRce
+	 kg8SUX2Zz5LAX1QDoX5aLyOjeVCGwOXLoX0TirgdkzFV6CPBDFlxOiVw4MccVMeYKI
+	 8d2uwFTx9pJkSWQ8jxOLS3k3urwNq82wUQxzGwWajNQvs8clBOZ5wAQSIEkDjm83hM
+	 lbmnFqHmBiFrg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D298417E0154;
+	Thu, 21 Aug 2025 14:29:51 +0200 (CEST)
+Date: Thu, 21 Aug 2025 14:29:46 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: "Caterina Shablia" <caterina.shablia@collabora.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Frank Binns"
+ <frank.binns@imgtec.com>, "Matt Coster" <matt.coster@imgtec.com>, "Karol
+ Herbst" <kherbst@redhat.com>, "Lyude Paul" <lyude@redhat.com>, "Steven
+ Price" <steven.price@arm.com>, "Liviu Dudau" <liviu.dudau@arm.com>, "Lucas
+ De Marchi" <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
+ <thomas.hellstrom@linux.intel.com>, "Rodrigo Vivi"
+ <rodrigo.vivi@intel.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <intel-xe@lists.freedesktop.org>, <asahi@lists.linux.dev>, "Asahi Lina"
+ <lina@asahilina.net>, "Asahi Lina" <lina+kernel@asahilina.net>
+Subject: Re: [PATCH v4 6/7] drm/gpuvm: Add DRM_GPUVA_REPEAT flag and logic
+Message-ID: <20250821142946.00110c49@fedora>
+In-Reply-To: <DB62O8GQ2Y1C.11UY1XZV8OE3Q@kernel.org>
+References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
+	<20250707170442.1437009-7-caterina.shablia@collabora.com>
+	<DB62O8GQ2Y1C.11UY1XZV8OE3Q@kernel.org>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821070130.2581766-1-abarnas@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 21, 2025 at 07:01:28AM +0000, Adrian Barnaś wrote:
-> Get rid of gdc_reg_store() forward declaration because it brings no value
+On Mon, 07 Jul 2025 21:33:13 +0200
+"Danilo Krummrich" <dakr@kernel.org> wrote:
 
-The subject should say "forward" instead of "inline".  Also add a period
-to the end of your sentences.
+> On Mon Jul 7, 2025 at 7:04 PM CEST, Caterina Shablia wrote:
+> > From: Asahi Lina <lina+kernel@asahilina.net>
+> >
+> > To be able to support "fake sparse" mappings without relying on GPU page
+> > fault handling, drivers may need to create large (e.g. 4GiB) mappings of
+> > the same page repeatedly (or same range of pages). Doing this through
+> > individual mappings would be very wasteful. This can be handled better
+> > by using a flag on map creation, but to do it safely, drm_gpuvm needs to
+> > be aware of this special case.
+> >
+> > Add a flag that signals that a given mapping is a page mapping, which is
+> > repeated all over the entire requested VA range. This tweaks the
+> > sm_map() logic to treat the GEM offsets differently when mappings are
+> > a repeated ones so they are not incremented as they would be with regular
+> > mappings.
+> >
+> > The size of the GEM portion to repeat is passed through
+> > drm_gpuva::gem::range. Most of the time it will be a page size, but
+> > it can be bigger as long as it's less that drm_gpuva::va::range, and
+> > drm_gpuva::gem::range is a multiple of drm_gpuva::va::range.  
+> 
+> Should be "as long as it's less that drm_gpuva::va::range, and
+> drm_gpuva::va::range is a multiple of  drm_gpuva::gem::range".
+> 
+> I also think this feature deserves its own section in the global GPUVM
+> documentation -- please add a corresponding paragraph.
 
-regards,
-dan carpenter
+Sure.
+
+> 
+> > +static int check_map_req(struct drm_gpuvm *gpuvm,  
+> 
+> Let's call this validate_map_request().
+
+I can do that, sure.
+
+> 
+> > +			 const struct drm_gpuvm_map_req *req)
+> > +{
+> > +	if (unlikely(!drm_gpuvm_range_valid(gpuvm, req->va.addr, req->va.range)))
+> > +		return -EINVAL;
+> > +
+> > +	if (req->flags & DRM_GPUVA_REPEAT) {
+> > +		u64 va_range = req->va.range;
+> > +
+> > +		/* For a repeated mapping, GEM range must be > 0
+> > +		 * and a multiple of the VA range.
+> > +		 */
+> > +		if (unlikely(!req->gem.range ||
+> > +			     va_range < req->gem.range ||
+> > +			     do_div(va_range, req->gem.range)))
+> > +			return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int
+> >  __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  		   const struct drm_gpuvm_ops *ops, void *priv,
+> > @@ -2137,6 +2179,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  	struct drm_gpuva reqva = {
+> >  		.va.addr = req->va.addr,
+> >  		.va.range = req->va.range,
+> > +		.gem.range = req->gem.range,
+> >  		.gem.offset = req->gem.offset,
+> >  		.gem.obj = req->gem.obj,
+> >  		.flags = req->flags,
+> > @@ -2144,7 +2187,8 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  	u64 req_end = req->va.addr + req->va.range;
+> >  	int ret;
+> >  
+> > -	if (unlikely(!drm_gpuvm_range_valid(gpuvm, req->va.addr, req->va.range)))
+> > +	ret = check_map_req(gpuvm, req);
+> > +	if (unlikely(ret))
+> >  		return -EINVAL;
+> >  
+> >  	drm_gpuvm_for_each_va_range_safe(va, next, gpuvm, req->va.addr, req_end) {
+> > @@ -2175,7 +2219,8 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  					.va.addr = req_end,
+> >  					.va.range = range - req->va.range,
+> >  					.gem.obj = obj,
+> > -					.gem.offset = offset + req->va.range,
+> > +					.gem.range = va->gem.range,
+> > +					.gem.offset = offset,  
+> 
+> Why change this from offset + req->va.range to just offset?
+
+This is conditionally updated if DRM_GPUVA_REPEAT is not set further
+down, because we don't want to move the GEM offset if the mapped portion
+is repeated.
+
+> 
+> Same for similar other changes below.
+> 
+> Also it seems that we need to update the documentation which shows all potential
+> cases when calling __drm_gpuvm_sm_map() [1].
+
+Yep, will do.
+
+> 
+> [1] https://docs.kernel.org/gpu/drm-mm.html#split-and-merge
+> 
+> >  					.flags = va->flags,
+> >  				};
+> >  				struct drm_gpuva_op_unmap u = {
+> > @@ -2183,6 +2228,9 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  					.keep = merge,
+> >  				};
+> >  
+> > +				if (!(va->flags & DRM_GPUVA_REPEAT))
+> > +					n.gem.offset += req->va.range;
+> > +
+> >  				ret = op_remap_cb(ops, priv, NULL, &n, &u);
+> >  				if (ret)
+> >  					return ret;
+> > @@ -2194,6 +2242,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  				.va.addr = addr,
+> >  				.va.range = ls_range,
+> >  				.gem.obj = obj,
+> > +				.gem.range = va->gem.range,
+> >  				.gem.offset = offset,
+> >  				.flags = va->flags,
+> >  			};
+> > @@ -2220,11 +2269,14 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  					.va.addr = req_end,
+> >  					.va.range = end - req_end,
+> >  					.gem.obj = obj,
+> > -					.gem.offset = offset + ls_range +
+> > -						      req->va.range,
+> > +					.gem.range = va->gem.range,
+> > +					.gem.offset = offset,
+> >  					.flags = va->flags,
+> >  				};
+> >  
+> > +				if (!(va->flags & DRM_GPUVA_REPEAT))
+> > +					n.gem.offset += ls_range + req->va.range;
+> > +
+> >  				ret = op_remap_cb(ops, priv, &p, &n, &u);
+> >  				if (ret)
+> >  					return ret;
+> > @@ -2250,7 +2302,8 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  					.va.addr = req_end,
+> >  					.va.range = end - req_end,
+> >  					.gem.obj = obj,
+> > -					.gem.offset = offset + req_end - addr,
+> > +					.gem.range = va->gem.range,
+> > +					.gem.offset = offset,
+> >  					.flags = va->flags,
+> >  				};
+> >  				struct drm_gpuva_op_unmap u = {
+> > @@ -2258,6 +2311,9 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  					.keep = merge,
+> >  				};
+> >  
+> > +				if (!(va->flags & DRM_GPUVA_REPEAT))
+> > +					n.gem.offset += req_end - addr;
+> > +
+> >  				ret = op_remap_cb(ops, priv, NULL, &n, &u);
+> >  				if (ret)
+> >  					return ret;
+> > @@ -2294,6 +2350,7 @@ __drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm,
+> >  			prev.va.addr = addr;
+> >  			prev.va.range = req_addr - addr;
+> >  			prev.gem.obj = obj;
+> > +			prev.gem.range = va->gem.range;
+> >  			prev.gem.offset = offset;
+> >  			prev.flags = va->flags;
+> >  
+> > @@ -2304,7 +2361,10 @@ __drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm,
+> >  			next.va.addr = req_end;
+> >  			next.va.range = end - req_end;
+> >  			next.gem.obj = obj;
+> > -			next.gem.offset = offset + (req_end - addr);
+> > +			prev.gem.range = va->gem.range;
+> > +			next.gem.offset = offset;
+> > +			if (!(va->flags & DRM_GPUVA_REPEAT))
+> > +				next.gem.offset += req_end - addr;
+> >  			next.flags = va->flags;
+> >  
+> >  			next_split = true;
+> > diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
+> > index f77a89e791f1..629e8508f99f 100644
+> > --- a/include/drm/drm_gpuvm.h
+> > +++ b/include/drm/drm_gpuvm.h
+> > @@ -56,10 +56,19 @@ enum drm_gpuva_flags {
+> >  	 */
+> >  	DRM_GPUVA_SPARSE = (1 << 1),
+> >  
+> > +	/**
+> > +	 * @DRM_GPUVA_REPEAT:
+> > +	 *
+> > +	 * Flag indicating that the &drm_gpuva is a mapping of a GEM
+> > +	 * portion repeated multiple times to fill the virtual address  
+> 
+> "of a GEM object with a certain range that is repeated multiple times to ..."
 
 
