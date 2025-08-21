@@ -1,181 +1,112 @@
-Return-Path: <linux-kernel+bounces-779356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F3AB2F303
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A7AB2F31B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB68B4E5ADD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:57:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACB63AADBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428601AE844;
-	Thu, 21 Aug 2025 08:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ka18AQYl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GrQ80cyk"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A9F2ED86D;
+	Thu, 21 Aug 2025 08:56:46 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAC92D9EDA
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3324C1AE844;
+	Thu, 21 Aug 2025 08:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755766607; cv=none; b=udUjSf/O1oRDda1uZp2U/CKxXyJ8cI/7n43EjmQ37N92rlBNirMEInXO6mgxXjDwMhlilbr72Z4meKx/qGgSmEUCCLn0BVWItk9XVY7vZRGVxMNFfjVESXGOdoUEicNocheKgkQKdrP3sw38F+an20GhmEVCKSJmzdvta9mDdt8=
+	t=1755766606; cv=none; b=JkQJ3sLxKTzxOW5EDX0P3JnY+qKvxeZu7cvJ5Kw4eD/ULuaErGvNg/xygj+uA7RSeS20hUJEmb/czTqj6+SR9VdbElOwlRNT5sYXDzyHGGD6EWM+ixC32P7x79Bl0Wb5k9m4bVXTtcorMFB6d2IMsUAvVHJJ20urbzEgNB/+llQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755766607; c=relaxed/simple;
-	bh=a1gg61GveMK37Vgat4p5xGihJXs2sVoy0t3OQ7BH/2A=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=PKoaP9nBwLps4cfJsuv64FKUgcUVq/xFHfCeL1dOmCdYNSdtB9Lw8QzBNfrCRLvD61ddhQD8VAErgojHxzOE5GiG81V8ekbTqO7LvlwmTPxtAlq8oqxSr5JDK+oTTViPVon2U/if8BLkFFQt4eE4nFNNZhfROEGORFhwf14H9lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ka18AQYl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GrQ80cyk; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id D49E1EC007C;
-	Thu, 21 Aug 2025 04:56:43 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 21 Aug 2025 04:56:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1755766603;
-	 x=1755853003; bh=PWUJOpVst/YmMMRlLpZwMEFvROh86/hNVtmyCtTvurw=; b=
-	ka18AQYlhBDAu0f0gGvasfnP7Gx4ZkscfHtofGo7wXTdZRpCy212fX5SWsewEwo4
-	qSDcO/DoohtC1kUngNakGflIf9cJIF+dr4bm9OON2PZ7zPf0Oswc4kbw8obrEW18
-	ZJ/a+Y8RsFi7ywGioMhP6n3f//aNLc8+sUV6ByI8rCZJsEE0iQLLmzhlqDmmbRGU
-	jIk3VRK/as38x6mGilROBeHX4dRwB8/ivy4QgtHeFk0xe3ThA05hU2uZrOiJtbys
-	ezvMKztRmzk07vAdQn2YDnW9sfvUBiF3m6BecZ84FskqbRf99L5EJO/FgARKhDBM
-	XrOTAJ33R69+RLRBr2IxLg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755766603; x=
-	1755853003; bh=PWUJOpVst/YmMMRlLpZwMEFvROh86/hNVtmyCtTvurw=; b=G
-	rQ80cykBTpscz+0cte7aixSEKdpEleELfCJbR+AOsCZyBws8Zvol3u1fZ8Was10c
-	4qbmNp6MqUp0ZufnVJJW8P6A983ErEgyTVKYyYeqAWF+qoXaMOrxMvso6L+60aap
-	VwH/6f6zyg6qoUzp1P0gj2MK9sWyr9n53E/hpioHusgDpZyUdPqGPjDNa0dRZPxd
-	OyD89ri6upLpZ4GGRMHwkESrZ2Rlw9l5A26CfRPYLZeNKiDHgTHkIaN/IhpLUzl/
-	tS4/nasrMe66ZOhWaQqckaYLembyaFH9yTIYZY0mQ7g/NikG97RFKnZU7Vzar6d/
-	1OemTpBIjip+JV1WkyZAQ==
-X-ME-Sender: <xms:S9-maL8pmu64l9nEtKTGP1Z_c2z0MECdFrFst-KkU7KjxuL0AlDG6A>
-    <xme:S9-maHt8L3-tFafCR_g7iRdWVuNiM1B2lLTMiziKlOxVdhyK07o7yfTkLR9cIKIjv
-    NEvqF09S39XK_mY-gU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedtkeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopegtrhhishhtihgrnhdrmhgrrhhushhsihesrghrmhdrtghomhdprh
-    gtphhtthhopehsuhguvggvphdrhhholhhlrgesrghrmhdrtghomhdprhgtphhtthhopehf
-    vghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopehshhgrfihnghhuoheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehl
-    ihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepihhmgieslhhishhtsh
-    drlhhinhhugidruggvvhdprhgtphhtthhopehpvghnghdrfhgrnhesnhigphdrtghomhdp
-    rhgtphhtthhopehpvghnghdrfhgrnhesohhsshdrnhigphdrtghomhdprhgtphhtthhope
-    hkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
-X-ME-Proxy: <xmx:S9-maOCrP5OE2BCPwQrHUwLMCXuy82-ITAilNRTItJOIwLDeSlthvA>
-    <xmx:S9-maOAEkt86365ksOCQbqB8S3f5ZAsbj15tdoOhHEycoWaDomj20w>
-    <xmx:S9-maAolDEsGL_wpYjXy7a8YjvVcy8EKHPz8hLy7ixr4CcuRsD0jAQ>
-    <xmx:S9-maBHPQ3gnUyk7DSxjdL98zBCCfH7l4UV_om2sWqnuwh_dOKrkFg>
-    <xmx:S9-maOXTQFC_sPO9vJCFBxjut-TQnhsM8RCraBoVTttupZ4j0wxVELf5>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4FF34700068; Thu, 21 Aug 2025 04:56:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1755766606; c=relaxed/simple;
+	bh=ojTgrGCKPxcDJf5fNPh7HK4tXJI5lvpspffIagftjYc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=YDobHH9XhJYkPxTGkoscjpORqKPVEfN0ERygmnYigo4j3byZv9GTLihUTbW3ycH9+WVG8qhAydlvZHb96yD8yr/V5wd/cTkfFQtmmiXZSs7pSd21r/y4kUBJnk8cr6KXblCnOjVm2oY3yIvE0RQOY0S+kW5r4a+DxaGfEZP8SHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c6xyF19kVzYQw2d;
+	Thu, 21 Aug 2025 16:56:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B36711A1494;
+	Thu, 21 Aug 2025 16:56:35 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDXUxRB36ZoygyuEQ--.8310S3;
+	Thu, 21 Aug 2025 16:56:35 +0800 (CST)
+Subject: Re: [PATCH] block: fix disordered IO in the case recursive split
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, neil@brown.name, akpm@linux-foundation.org,
+ linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, colyli@kernel.org, xni@redhat.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
+ <aKbcM1XDEGeay6An@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <54fc027f-f4dc-0412-0d6d-b44a3e644c39@huaweicloud.com>
+Date: Thu, 21 Aug 2025 16:56:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A6YapAphagno
-Date: Thu, 21 Aug 2025 10:56:23 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Peng Fan" <peng.fan@oss.nxp.com>
-Cc: "Peng Fan" <peng.fan@nxp.com>, "Shawn Guo" <shawnguo@kernel.org>,
- "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Fabio Estevam" <festevam@gmail.com>, "Sudeep Holla" <sudeep.holla@arm.com>,
- "Cristian Marussi" <cristian.marussi@arm.com>, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-Id: <b92218a6-e30c-4163-b441-1187d2e429d0@app.fastmail.com>
-In-Reply-To: <20250821095657.GB19763@nxa18884-linux.ap.freescale.net>
-References: <20250807-imx9-sm-v1-0-3489e41a6fda@nxp.com>
- <20250807-imx9-sm-v1-1-3489e41a6fda@nxp.com>
- <2ff85fec-b571-4423-9161-674f88a32e18@app.fastmail.com>
- <20250821095657.GB19763@nxa18884-linux.ap.freescale.net>
-Subject: Re: [PATCH 1/3] firmware: imx: Add stub functions for SCMI MISC API
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <aKbcM1XDEGeay6An@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXUxRB36ZoygyuEQ--.8310S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruFyDWF1DKw4ftF47uF1UAwb_yoW3Krb_Wa
+	1DCr1DAr1kCrZrArWjkFnYqr4kWr45Wr1xWrWfKF4xGr95G39xJF10yFsrZr1UGrn7K39I
+	gFn0qa9293y7ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, Aug 21, 2025, at 11:56, Peng Fan wrote:
-> On Wed, Aug 20, 2025 at 03:55:20PM +0200, Arnd Bergmann wrote:
->>On Thu, Aug 7, 2025, at 03:47, Peng Fan wrote:
->>
->>
->>When a caller of this function is in a built-in driver but the
->>IMX_SCMI_MISC_DRV code is in a loadable module, you still
->>get a link failure, see 514b2262ade4 ("firmware: arm_scmi:
->>Fix i.MX build dependency") for an example.
->>
->>As you still need the correct Kconfig dependencies, I
->>think your patch here is not helpful.
->
-> The consumer driver still needs Kconfig dependcies, such as
->   depends on IMX_SCMI_MISC_DRV || !IMX_SCMI_MISC_DRV
->
-> So when IMX_SCMI_MISC_DRV is module built, the consumer driver will
-> also be module built.
->
-> But if IMX_SCMI_MISC_DRV is n, the consumer driver is y, there will be
-> link error.
->
-> The consumer driver is to support platform A and platform B.
->
-> Platform A does not require the real API in IMX_SCMI_MISC_DRV.
-> Platform B requires the real API in IMX_SCMI_MISC_DRV.
->
-> So when producing an image for platform A, IMX_SCMI_MISC_DRV could set
-> to n to make Image smaller. Introducing the stub API is mainly for this
-> case.
->
-> Hope this is clear
+Hi,
 
-I see. In this case the stub helpers are not wrong, but I
-still find them more error-prone than not having them and
-using IS_ENABLED() checks as in commit 101c9023594a
-("ASoC: fsl_mqs: Support accessing registers by scmi interface"):
+ÔÚ 2025/08/21 16:43, Christoph Hellwig Ð´µÀ:
+> On Thu, Aug 21, 2025 at 03:47:06PM +0800, Yu Kuai wrote:
+>> +	if (current->bio_list) {
+>> +		if (bio_flagged(bio, BIO_CHAIN))
+>> +			bio_list_add_head(&current->bio_list[0], bio);
+>> +		else
+>> +			bio_list_add(&current->bio_list[0], bio);
+>> +	} else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO)) {
+> 
+> This breaks all the code the already chains the right way around,
+> and there's quite a bit of that (speaking as someone who created a few
+> instances).
+> 
+> So instead fix your submitter to chain the right way instead.
+> 
 
-+static int fsl_mqs_sm_read(void *context, unsigned int reg, unsigned int *val)
-+{
-+       struct fsl_mqs *mqs_priv = context;
-+       int num = 1;
-+
-+       if (IS_ENABLED(CONFIG_IMX_SCMI_MISC_DRV) &&
-+           mqs_priv->soc->ctrl_off == reg)
-+               return scmi_imx_misc_ctrl_get(SCMI_IMX_CTRL_MQS1_SETTINGS, &num, val);
-+
-+       return -EINVAL;
-+};
+Can you give some examples as how to chain the right way? BTW, for all
+the io split case, should this order be fixed? I feel we should, this
+disorder can happen on any stack case, where top max_sector is greater
+than stacked disk.
 
-The logic is the same here in the end, but the link failure
-is easier to trigger and repair if someone gets it wrong.
+Thanks,
+Kuai
 
-Also, for drivers that actually need the exported interface,
-the dependency becomes the simpler 'depends on IMX_SCMI_MISC_DRV'.
+> 
+> .
+> 
 
-Which driver using this symbol are you actually looking
-at? I see you have three similar patches for a couple of
-interfaces, and want to make sure the added complexity is
-really needed here. I do a lot of randconfig build tests,
-so quite often I end up being the one that runs into
-the subtle link failures from these.
-
-      Arnd
 
