@@ -1,111 +1,130 @@
-Return-Path: <linux-kernel+bounces-780666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5B09B307D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7ADCB307E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D747FAE6C5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:59:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D85BEAC7F83
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996E8352FFB;
-	Thu, 21 Aug 2025 20:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B49362076;
+	Thu, 21 Aug 2025 20:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKD35vlM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCgTS1FU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D4D352FE7;
-	Thu, 21 Aug 2025 20:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAE835334F
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755809376; cv=none; b=lKZYmQ0gT+WwGLluHliBwB1j6CmGBG32pJmyzbLugXEIP49RM4kCcOCQAWgdH8kYLKr46To6dXi4zBrRo5O1Y4XczHrYZv4JY/dt7nxuPL5UuRND3X2OFD9kbZytPvocdXf0rwjjzfdjJudsXyWoI0r9GzZhuKR6n4jjKVxumFc=
+	t=1755809384; cv=none; b=E7CdqjE1kUwWsEYGoO2j5oOijTUcdjAZ6R+bTGUX6eKQEHePS6gYHOKu9ez9niEMbmVOXoUW3ozylM673dSMEpmUMups7RnE16JZuEhOVhBMwZpOHNMhG977T3i4XFQomZUK0JUxNd3jgDpCJ8Ueu4XJ6uMFXu2SCtmdHeIpdfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755809376; c=relaxed/simple;
-	bh=Rbd/4KwEl8hFhj9W4DP/GsOYavHXATjdIGBQxWM6AIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QrrEBsBgJ5+c3PpQ2YezGa0JuvS/eUWWgMZuS+x8Ch7iY+QP70J8gBgW/Qgk3TxXMOBcJwYzXKpPzlsE1DRz9dQNSrTf9QMCb1esbctPyfs33N44SrEl/0VKESXrM+97dDSc1mKvWiBfpkUvNznxNOfxQJHEEm50KknWmcDjPFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKD35vlM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C3CC4CEEB;
-	Thu, 21 Aug 2025 20:49:32 +0000 (UTC)
+	s=arc-20240116; t=1755809384; c=relaxed/simple;
+	bh=KoIUInjX6RJEpDrGgIm4Hycfp7oY5456rd0zqjDmfjs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pEigUssiE7usoitUWsmqX5mojIoGv/XnykPd64xXKLIfl5HMKWpnm/BrocVKlzCxcGKPiUumEOMPO4JWtxwBpv6wjA7AvUy+9M26801HApjUTyo/tyvP6hOxI/jnMCDfAV8CsO84hY9TcT8OiYIgDbzUvUHbHwSNIXPsMfGQU9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tCgTS1FU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18307C19422
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:49:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755809374;
-	bh=Rbd/4KwEl8hFhj9W4DP/GsOYavHXATjdIGBQxWM6AIQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GKD35vlMLUuMNmiLl+X/wclsjiC8FOsiKGz6gejy1ADhyxU7/QyRe26AxpfDUXm1l
-	 WLTzefSWPGECKFFJpdO8qmUqktqgabiAcLfYXCWBkyod+7msM/TB0d9NE8e4OhzhI+
-	 PSRqtZCulGcm30KUmuXhNDoh18+ySu2PByFuDhaG1EYxBFpowmJuhlCyqYUDS3qXUq
-	 sc/96ANW63gn1RldkhMvRcGytD1dT5tp2AdGYjHOayUI5aCjWkmmG0g0FVxEzLPqzD
-	 jcK0fXwlTMPN0CwKuHl+HU0WELfQUJc2aH4OGmNnoDQ/MlLWL/eGAIkoCNcQrqC4/L
-	 x5gd5FTvzl54w==
-Date: Thu, 21 Aug 2025 21:49:29 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
-Cc: perex@perex.cz, tiwai@suse.com, shuah@kernel.org,
-	linux-sound@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] selftests/alsa: remove 0/NULL global variable assignment
-Message-ID: <9c310ab7-0f0b-412f-8df7-71730a2d2caa@sirena.org.uk>
-References: <20250821200132.1218850-1-zlatistiv@gmail.com>
+	s=k20201202; t=1755809384;
+	bh=KoIUInjX6RJEpDrGgIm4Hycfp7oY5456rd0zqjDmfjs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tCgTS1FUJED5X7BKRr1G1uHmLLdl2HxWV5HWRiudFUmEweu/0jCZzpVj982pmN3wF
+	 gfbUDV19byGg11HLjIC5AfMnYxgUY0L1tgD/fSWTRJ6I3UoJsMxFBZ/fQrDHdJvTIu
+	 9OWEVWE8BSh7wJSI0KcSbmH2xyGYUlRUMkKsNbxWjrs4Yysis6wjO5KQExw7xGsSoQ
+	 N0h1ax18NzJuLok/Pdp+GDtqhqyFwbrJWSWluiJLAHNypBucs1ID6K25VIcRm40Yrs
+	 cQwUFKd3RNpYQIthqljoUWy/M91EqpwgQCtsrrpv2cWo8VpgbTtb5tjayZvwzXJQ3P
+	 EvUEBo5C56kxg==
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so20665e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:49:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX8o70YzaW+pgr0cSuKdOwWgG+O6yUaneZWSkK9ubjKo2a6zj6FNm5wsSsojEPwXU3c5Bm9eVWSQVfr6Vg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLOIMF2s6HH8wdKTOoIVSkInO6TpUFrY9+Z3M/vvfw/TNpagx1
+	TfQ3qH0ayJq4B3+iSvoSeZCC8k3GMHgAGUh20NxVUnyl+pUPLGAmjZHKVa7zTNKBgo813mhC4Tx
+	vu0jxPnAfgJOxskX5S+QRm9xy06FVmRmBu2DwRKOf
+X-Google-Smtp-Source: AGHT+IHl0pS9R9FTkQgIv/5Hdf1X8d4Nj3rq1y1QABgTLUekN9baPu7Uk8DZ+Euo3lzu+Y1TgqaNMZRejMKp976OXZ4=
+X-Received: by 2002:a05:600c:2d47:b0:45b:4acd:836d with SMTP id
+ 5b1f17b1804b1-45b52128850mr12145e9.5.1755809382698; Thu, 21 Aug 2025 13:49:42
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LIJm8UEXT3cPURDU"
-Content-Disposition: inline
-In-Reply-To: <20250821200132.1218850-1-zlatistiv@gmail.com>
-X-Cookie: Warp 7 -- It's a law we can live with.
-
-
---LIJm8UEXT3cPURDU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CAGsJ_4yLDLvOZ2=3iVcQhu2jnbWQ+iTQsqVefJsx4_YT4bnEZg@mail.gmail.com>
+ <20250821164255.78596-1-sj@kernel.org>
+In-Reply-To: <20250821164255.78596-1-sj@kernel.org>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 21 Aug 2025 13:49:31 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuM++mc5PjcN_bxjZjbByT7QpVdOqRQte=vGJnuQxSTVfw@mail.gmail.com>
+X-Gm-Features: Ac12FXyGjYZaF6MgM88P2QEJUWcwgSvwYevAX28lXk8lha2JfaULLr54VhuGvAI
+Message-ID: <CAF8kJuM++mc5PjcN_bxjZjbByT7QpVdOqRQte=vGJnuQxSTVfw@mail.gmail.com>
+Subject: Re: [PATCH v4] mm/zswap: store <PAGE_SIZE compression failed page as-is
+To: SeongJae Park <sj@kernel.org>
+Cc: Barry Song <21cnbao@gmail.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Andrew Morton <akpm@linux-foundation.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Takero Funaki <flintglass@gmail.com>, 
+	David Hildenbrand <david@redhat.com>, Baoquan He <bhe@redhat.com>, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 11:01:32PM +0300, Nikola Z. Ivanov wrote:
-> Remove 0/NULL global variable assignment in mixer-test.c and pcm-test.c
+On Thu, Aug 21, 2025 at 9:43=E2=80=AFAM SeongJae Park <sj@kernel.org> wrote=
+:
+>
+> On Thu, 21 Aug 2025 18:27:52 +0800 Barry Song <21cnbao@gmail.com> wrote:
+>
+> > On Thu, Aug 21, 2025 at 1:33=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> w=
+rote:
+> > >
+> > > On Tue, Aug 19, 2025 at 6:37=E2=80=AFPM Herbert Xu <herbert@gondor.ap=
+ana.org.au> wrote:
+> > > >
+> > > > On Wed, Aug 20, 2025 at 01:34:01PM +1200, Barry Song wrote:
+> > > > >
+> > > > > We might want to revisit the old thread to check whether it is no=
+w safe for us
+> > > > > to move to PAGE_SIZE in zswap now.
+> > > >
+> > > > It's perfectly safe as LZO was fixed months ago.
+> > >
+> > > Perfect. Then I'll revive Chengming's patch (see [1]) to reduce the
+> > > compression buffer :)
+> >
+> > Nice!
+> >
+> > But perhaps we should wait until SeongJae sends a new version that
+> > addresses the counter issue?
+>
+> Is there a reason to wait?  I was thinking those are orthogonal problems?
+>
+> Anyway, for the counter (crypto_compress_fail), I don't have a strong opi=
+nion.
+> To my understanding, the options for path forward are...
+>
+> 1. remove it,
+> 2. keep it as is, or
+> 3. keep it, but account only -EINPROGRESS[1]
+>
+> If I'm not missing other options, I'm tempted to the first option (remove=
+ it)
+> since it doesn't change any existing things, and we can revisit later.
 
-Why?
+I am fine with 1) removing it. Maybe add a log once print error on the
+error code if -EINPROGRESS, just to know such extreme error has been
+triggered.
+>
+> Please let me know if I'm missing other options or if you have other pref=
+erences.
 
-> --- a/tools/testing/selftests/alsa/mixer-test.c
-> +++ b/tools/testing/selftests/alsa/mixer-test.c
-> @@ -53,10 +53,10 @@ struct ctl_data {
->  	struct ctl_data *next;
->  };
-> =20
-> -int num_cards =3D 0;
-> -int num_controls =3D 0;
-> -struct card_data *card_list =3D NULL;
-> -struct ctl_data *ctl_list =3D NULL;
-> +int num_cards;
-> +int num_controls;
-> +struct card_data *card_list;
-> +struct ctl_data *ctl_list;
+I just don't want to hide the extreme error case but I am also fine
+with just removing it. It is your call.
 
-Nothing now sets initial values for these variables so they all have
-undefined values which is buggy.  The code is relying on the default
-values.
-
---LIJm8UEXT3cPURDU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAminhlgACgkQJNaLcl1U
-h9CPJwf/aY4pSg8MnKf2igmuuzd3CZ724kH69g0zDGajBcie5gE89S13NPjG7KgM
-/VqX6quyiBtSYbWQKw8FvgygKrkxmoBsuuIFuv9k2FeTGSfi3pHkiVjYcCIjWgsj
-svj8YUiPvueCupUt1/gHGwx0KcAaAd2gwLJhl0smVHejqgcgvk7fTMINwjWmdkLq
-nNS/nn1SSEc0vxspvndTPrt/P1FcOhkhrc+62bIqsHCtxZDU+fJ9+Z7LUz6PZxlq
-sSC6kl39VKdLcu4WI0ZwUk/D8T6CX4AZPyhrAZdhz9B91KppvdqN3HbgUAjdBlq7
-QMgeLAk0USWC4pI7l4umXzxb+xUc6A==
-=1rKS
------END PGP SIGNATURE-----
-
---LIJm8UEXT3cPURDU--
+Chris
 
