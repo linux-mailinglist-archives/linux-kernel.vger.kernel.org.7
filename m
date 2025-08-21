@@ -1,181 +1,269 @@
-Return-Path: <linux-kernel+bounces-779429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C20B2F40D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:35:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9A7B2F403
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4273F3B1D4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F7F188B8BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDCB2D9ED8;
-	Thu, 21 Aug 2025 09:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007612DA767;
+	Thu, 21 Aug 2025 09:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Qjk46bmO"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013048.outbound.protection.outlook.com [52.101.127.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yvh1Z5Q3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lQh8JrGX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yvh1Z5Q3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lQh8JrGX"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F8C72625
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755768789; cv=fail; b=K5aO4j5TmNvDTmPzgD66S90ckhCQa9J6cO0Ihayq0Tjg0ZrOREBhisBvauesrSsBZ+3YIR7aErQ0NjeVmVSUDQSnmpjJe4gszlt9tPtaBcLNezKydy7MbAtDMUFUOf4zJo9/PI74gc6NpCQZ4pE7GqOjedhnoPt4tf0lx4Weyog=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755768789; c=relaxed/simple;
-	bh=ZENZNWHiNIvEdsn6WGxvqaNK/XhIyihoWtDyk5jQgVA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=aDid3kzys4AV+i9Z1jBt73LN5eRtV+usAwjUqt3uCg+JH79lhdYNOVW5ZBH6OWRaKvGBP6e35UfkjPtKRlE7+AJie//IbN9oFDVtA36Wwa1JEtTFu7OjzGbhZW1hlgvzLLY4JuNukJb6SK2CAAgK3NNTompkxRfP8zkzvJ1L1Ho=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Qjk46bmO; arc=fail smtp.client-ip=52.101.127.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q4HwbR+NxOtnutTYt2/cVpZaOzKn7P9bHxQJK/JtAeFeVhOKSax7aRpwSLW4zAGXk2ZzjJkA3zFZEQ71m2D8aE8/scWZakMFaA7+XA0QcgPDatdibaPgSu6lMlWvpCFNDn6k75dU3X2R9TqOAIBH/YISxApUuKhMeN/LKpVM3X1k1G4ApxJyBzbYfn/O7doxaZpsF3R9+Ws81Rel8u/R9uQTzfhXW6wK5pD4mgjNQt7JaVuSToCvOIExDRMZntzjVco85RSC0ZDLpaNPtU5hSRbpLlRz+PAjdw/QkSnT2hdxCqB3avMON3+0/21+AyUtmoQN9kwFANHGe0KJSmcKVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZyM0nV16EDBXuA7hV0tE/nHsrNwso1+hYUO4zftz5EE=;
- b=ZJ4TTyp609DuN2w9AlsQ+z1Mizp0IeoLnuqf94VLvT61VVCfYqgoxiHUAkIw4jEsmKPeKLEkTvvs/GbZlK7OnJBuMyhcODAPRd6CqKskvxIc3kOUM+/m5wvq9yG11+sdNEjaVLgcQLX51jBNIfQxFt7+iCAclZ9nW5W150Mvwj3C2ABUPveZUx/AQb6QaKjzLlgGUyFVCkfnTa64q7R8iXu7HoWNVIVhp6/80+F+EyyJQrp7smUwgno7Z5oE7tU6I3Spnpvdo5UAdQxQImgQDHk3Ax+NZ+FmEJ+33NjJjATJBUrVvJLTXC6eiL5Fb6tfKLBDOpHqJlKVBbrQ9nEIvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZyM0nV16EDBXuA7hV0tE/nHsrNwso1+hYUO4zftz5EE=;
- b=Qjk46bmOEUlQzcytonj1F83fP+NOvr0rW0HZhIHeEhXl0paCkUeOKfamV7R3ugkMFVLPTwfo0f24TPtCCoxlzI7dke9K1guwJMXT+cDTL0nvtKeLMWLWoasnmS9le1XC2RysJTTo1SYRlEOIobi0z+NT17WW1zWKBpepi0pPhvbGM+N5Bfj9J7uYyI66Yx1sdzBXW/v1wZkw/3LbCpF0nE7hfMFPBEFD1XVEbb1uWhsHTg8RRsUzw9dG7evU6ISexHZAF2ya4/c+59qmA0PU0W1JIJnnhMy/HefFdbN5Fndjt4zamPp1qpEP7ZkE/obn7cbZUeCFXfqHh9MM8K8Qcw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by KL1PR0601MB5448.apcprd06.prod.outlook.com (2603:1096:820:c5::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Thu, 21 Aug
- 2025 09:33:04 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9052.012; Thu, 21 Aug 2025
- 09:33:04 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: sudeep.holla@arm.com,
-	cristian.marussi@arm.com,
-	jassisinghbrar@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] mailbox: arm_mhuv3: Remove dev_err_probe() if error is -ENOMEM
-Date: Thu, 21 Aug 2025 17:32:53 +0800
-Message-Id: <20250821093253.559809-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY4P286CA0045.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:36e::12) To KL1PR06MB6020.apcprd06.prod.outlook.com
- (2603:1096:820:d8::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499842DEA75
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755768779; cv=none; b=tMZeJ4eEjpifdERoawi1yjmIn42IpxLT+BYi+8Ss9kq6p1FmzN8Px6X3sMxZJBPh105sqA/VPvEXsMTX0UmDkl10aWY86t5b/ZOvjRz2B9p8EtYKc75pzA/dvxzB2lLIHTTe9IGei5+zc8dSM2T+RoPd/fAjjXc9cDuqVj5SRSk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755768779; c=relaxed/simple;
+	bh=+GeUMCEKmXD3fPE9qcybBLeAcDrJH285XXn24TOZyLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jNsPB3U0wYucM7JRUBmuimoRZyOuVDEJ0oDl+SFfj/9TMu8ZDA1zOVPngkVtPgvysO8AaKdH546Md+A7pSMghhcOLSHh1Q2DmxgNPY6qaNv0EgwQvJhUhnqjdTxHuSKYA02cmZ9Rnra3hWU1KONOq4+J4xooqakN8Bhlmb3Ifs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yvh1Z5Q3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lQh8JrGX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yvh1Z5Q3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lQh8JrGX; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7C6E11F7C7;
+	Thu, 21 Aug 2025 09:32:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755768775; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HSOE/POrg1VyRnjOccSnEhf2Rw07HMBFsL5nh18d+jI=;
+	b=yvh1Z5Q3eLEQ4lhL9dGASWyvFdDLV189GV/7qUXjPu0tfo1HZwZe48h6iXLVk7t09NrKaf
+	O5uU6FnK/f+TWg9lBRDyhVZ7uhKqLtg0pQNhzlmRj4WHvSWX/h4dKFhysgY7FyMbYzVVBc
+	olXcpSKqZZAilnXo9PWMi0UD5sOa7kM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755768775;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HSOE/POrg1VyRnjOccSnEhf2Rw07HMBFsL5nh18d+jI=;
+	b=lQh8JrGXeJ2mBfB5wOTx1pIy3RVWek/Zi40Y0Ucl3U1OjvwnnBmPOujYqgXcsSBV0Y24VS
+	bNPOwlhoP9yZJnAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755768775; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HSOE/POrg1VyRnjOccSnEhf2Rw07HMBFsL5nh18d+jI=;
+	b=yvh1Z5Q3eLEQ4lhL9dGASWyvFdDLV189GV/7qUXjPu0tfo1HZwZe48h6iXLVk7t09NrKaf
+	O5uU6FnK/f+TWg9lBRDyhVZ7uhKqLtg0pQNhzlmRj4WHvSWX/h4dKFhysgY7FyMbYzVVBc
+	olXcpSKqZZAilnXo9PWMi0UD5sOa7kM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755768775;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HSOE/POrg1VyRnjOccSnEhf2Rw07HMBFsL5nh18d+jI=;
+	b=lQh8JrGXeJ2mBfB5wOTx1pIy3RVWek/Zi40Y0Ucl3U1OjvwnnBmPOujYqgXcsSBV0Y24VS
+	bNPOwlhoP9yZJnAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0FB64139A8;
+	Thu, 21 Aug 2025 09:32:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Z91fAsfnpmjNJwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 21 Aug 2025 09:32:55 +0000
+Message-ID: <0e8a1005-baa6-493e-a514-cd5d806949e1@suse.de>
+Date: Thu, 21 Aug 2025 11:32:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|KL1PR0601MB5448:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7bca1322-b8e4-421d-b950-08dde095baa5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sQdOElQW976EWn7RdmDtXtLhfQa02CbO+uuTZzebY8iqh9d5mgw7f5wLNjei?=
- =?us-ascii?Q?mQy5QlGUTQiw5z9Sqi6Vwa8DEhghYR41y9a1BjZ6D+hkPqYiqPXXGNfy3QcM?=
- =?us-ascii?Q?F+5KbvzToeVVtZfCPP8xHwPh3NYG9CZGt+E/94T8ZG8ztra/3bodVTg11gig?=
- =?us-ascii?Q?Lmmyj2+bNDb65nDL4u+SHRVoXve3VBj10ydYStYmQGAelGa5zaswwgwrZc52?=
- =?us-ascii?Q?Kz1wq2hXvSEqsiBdx9bAXoPHQdzNUeJoGPcD8ZN7YaXIDHsOH4j5v03T5Pgy?=
- =?us-ascii?Q?3nlK/uu37Oa1H1SqSIcDHfZpcif+VIrbOh3LGTEeFGfBtsg/stRNe0ZccUzz?=
- =?us-ascii?Q?M39DxHn9RAmTr+qGDU+XldNcxf/tPe92gCOEpNz74skxQ2TkuyE1KjfPVPed?=
- =?us-ascii?Q?acnwo/W7zbBO+3oAJdHaQXK9KneZom/24SRR/HhH7YNqr3ze6Z5OWmht9kP1?=
- =?us-ascii?Q?/ZoOQjWalFxM5HtTmHI1DFJ9D7GufFvGEGfyWSm9ENiDGPUPwc4dXbUFXDOV?=
- =?us-ascii?Q?MdDmxXTwY3JKp1gVae2I4gHFSttoT5K/XrbyhJPMBEYSdLPZiFlKl9yLGdGm?=
- =?us-ascii?Q?l7H24akORXRjKNUbZ0T40PufezYTsGjCLiGTUDFh39aD+4waqY+ZUnBKpqPH?=
- =?us-ascii?Q?CE03KoCI1l7masGxgdVU3Kloir9DFfVZFkoyN9e9eAhhB1nojfL/GqwhW97p?=
- =?us-ascii?Q?PwlEalNvRPwasyRG/cVONZWnDxeKH7ZvIw275oDljvSLiHfATx685eVoSNdc?=
- =?us-ascii?Q?EFCquSLkFgmylvHOua2ISbi7Gfx+FT4X+XZOH9mtzMpVbed/hhSnS7lE1ky2?=
- =?us-ascii?Q?GHKf5olsd9Aw65UERlAVZBsSwOSKtKYO2BA/cgfncvjhIK6IfZYr0a5WIgAf?=
- =?us-ascii?Q?kbzkgauAutxl9lhVZEGCeJzxrF7JKcLXGQ9LPuDXZ9RLVpaK/4EGwFhOUFe3?=
- =?us-ascii?Q?+hGqRr9+Q0DqVqV5vLSfoNPmSubpf5VZll2Ie+vArZXXkCzeJob7IY442feq?=
- =?us-ascii?Q?RJDObrvrv6KZRsrzDt9enz54wPvj6Vfsfk7hISr80mAYRtCxoJ7exemterAR?=
- =?us-ascii?Q?1QKtu7kwSCaJChagj1gzqROpUH6jyDdw4+zabwuPgPx7DbFfNbWRsOioBHCD?=
- =?us-ascii?Q?a8xLDYpLzook6sSUxIihP8BDWoTVtY4FGP9DtDfrtyu1bnTgWSdZM9tNPsn2?=
- =?us-ascii?Q?E0VCJwfbbJ4ecvqjVinmC9pNlvfp9nYlnB/eJRi94oBxjwX0mizKQ50TWDlF?=
- =?us-ascii?Q?q4a/P6z2tmfQ3mgOAI63G8Vg1IHKYy/oXZhk61trddpbfdBD5xTTjTSQsOQU?=
- =?us-ascii?Q?4Z0YKEHmB1FPSug5J9NiHw7hcUksebolCvWfFOA3mr8uBXLJ9zz4vSNSaCtG?=
- =?us-ascii?Q?op7P5oyQkmCSABa/05utRNYsUdiYwG9WAVI32LHsJvGDp+zy7eBNOuNuNkqd?=
- =?us-ascii?Q?HHs7GlpYVG/NPdwfHU2yYgOJuDUrNKElQHlROEsuEdUs8WjlRhTbkdXM0Sp9?=
- =?us-ascii?Q?kgHi64Q5KF744/8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dcIVjk1O9D4HNjKsmrYnUffhFUvHUHgTNe29KhuFA4D8upqUghdJGyT1RoDo?=
- =?us-ascii?Q?ZIMncOjp9GF3aw1/TGpm0ehTVZ86mdyg79WvvGjmOVrlPJ6iEpQkoYN2PKG1?=
- =?us-ascii?Q?6wHVXw8GEVShXHJxrfAbGCQOV0Zf/IwJU2YJyHkz/RYay80B/XsScnDYq/d0?=
- =?us-ascii?Q?48GxQH1MOntSHT2zUYvm1yJDdmdCMY/KukMKFE08/0680FCZj5s7zNXvOY7i?=
- =?us-ascii?Q?3WcHVMrSNlo2QEGbU1YflzU1Rxggh62apwxlQ8rhI1D6oK4fQ09HysqQlT3L?=
- =?us-ascii?Q?RntJgTG9rkEQ99odEKw9TQOsdCZQIH9pU1uqUHJNNgzDI/zaDcmMEfXtxhxF?=
- =?us-ascii?Q?B8Vrd/jeXQLwTO3pQuYMsJpWjwyamkm5MOR6qifac+/Q351z3hTYBDEwEWci?=
- =?us-ascii?Q?Fb3x3g2qZtO9ADS1JRESqKm5+lHcgA/vWX2JjIzfqq/5DA37RhfbkpTihc+H?=
- =?us-ascii?Q?i9dUOUt1+TQA8+8zluwD6oU1WdTAfA6aSX8J5TOgxg250fkngIfu0+Pm91qx?=
- =?us-ascii?Q?XdJx2BgP7opDeHLVZHGY/pOiz6/W+L8vMp0iBm0NkzMj83QiALj9kOVQkEO3?=
- =?us-ascii?Q?Wpw9FUNUww0mPrQvR3+iCXeKW/8cGIurktXGzpUP5IdaAsQ8RTG4z26yixWQ?=
- =?us-ascii?Q?QhoEIfhQH2uTudnOrX1u7eLh2ZkXNV1ruhgWTR+25SO0Zmpy/XGn+6uprD0l?=
- =?us-ascii?Q?j4LGXiv+KRcfuoLhhEE5UNev2qjgB47HzrXFp5FRnu9d4OosTt9A7bII/G3r?=
- =?us-ascii?Q?j/BWQDx4YF1nOWSFHZXrw9RzbhPWcVj4UkIfLWSz+OLOKVSJm99eD+2vwqeb?=
- =?us-ascii?Q?jau0JyCc2Nm0tWDF7HYBg3pF0A1PVFwIXppnHz8a1D9eaEis6S2djUzfO35b?=
- =?us-ascii?Q?1YF5bpGGnslS8rQI1vHsTQxpv2trYba/n4hveIr0GWDT6LIZhOZrasRZPbDJ?=
- =?us-ascii?Q?w74VANA1E+dnXsszf1qx/C1iW2tZLSriddbgsxKdZMIgOyYPXmbis60m94VX?=
- =?us-ascii?Q?idjTmcIB0bXN9ibuodOX9YIOHXGttRRgiJ//WhbVXE2EgoPLPHHNywjp0tqF?=
- =?us-ascii?Q?QtYIJxPF6hcAJxSQaeIIKM6M0hoWVY3SHKrYDDSq9HjZmDaWLxP5gq0SS0hI?=
- =?us-ascii?Q?A9Rm0KG74dDgO37AoXBF3+ovNfI/IHiyQFbJNPJPnfGn2Hr21mzdzju0ZPHx?=
- =?us-ascii?Q?KaZGczPvlbakLoY63+a5y7jVssZqttDdamD4hPhts4Nbs6VW2XCU1AFCBqGj?=
- =?us-ascii?Q?tZz38PQ955n0DO63fn4KK5KFdu6m2mgEKmQqDYHwNH0yP8TE3DszuCd9FacA?=
- =?us-ascii?Q?UarlZVmmYBWmAOr15rpEi3HcUrZrs6RItgvT1QfhabernOejHq7rHVm0++UV?=
- =?us-ascii?Q?k4edxsUDthlx26xUZOfUH4LtfjNjfhKZL3Wrl6xIEeG6TKBZEiYmgrGOiLZt?=
- =?us-ascii?Q?Cp924fEVY0pjpT88TmhaBDMzP/hCJE9w3ruJj9B/p6htFm1tU7uY4P9hjW18?=
- =?us-ascii?Q?CV9LhwIOWaes9IaSFYGJS849Keg9Z9tSyj1a66XiqlXPeSsvN1P5XbgOyEJv?=
- =?us-ascii?Q?1kCVFYLqTnxwOgR4LFWVCcbZncMXXPaZeGRj96VT?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bca1322-b8e4-421d-b950-08dde095baa5
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 09:33:04.5093
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oXdlzV34G6BN99DDlZv38CBfU+k70tiXyVZS5ZruEr6DS86UF/EFR1X+Ld3qS0TlgPFZ4LjaO9rmpLXNKLlsQA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5448
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH AUTOSEL 6.14 107/642] drm/amdgpu: adjust
+ drm_firmware_drivers_only() handling
+To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ Kent Russell <kent.russell@amd.com>, christian.koenig@amd.com,
+ airlied@gmail.com, simona@ffwll.ch, lijo.lazar@amd.com,
+ mario.limonciello@amd.com, rajneesh.bhardwaj@amd.com, kenneth.feng@amd.com,
+ Ramesh.Errabolu@amd.com, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+References: <20250505221419.2672473-1-sashal@kernel.org>
+ <20250505221419.2672473-107-sashal@kernel.org>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250505221419.2672473-107-sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[amd.com,gmail.com,ffwll.ch,lists.freedesktop.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-Therefore, remove the useless call to dev_err_probe(), and just
-return the value instead.
+Hi
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/mailbox/arm_mhuv3.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Am 06.05.25 um 00:05 schrieb Sasha Levin:
+> From: Alex Deucher <alexander.deucher@amd.com>
+>
+> [ Upstream commit e00e5c223878a60e391e5422d173c3382d378f87 ]
+>
+> Move to probe so we can check the PCI device type and
+> only apply the drm_firmware_drivers_only() check for
+> PCI DISPLAY classes.  Also add a module parameter to
+> override the nomodeset kernel parameter as a workaround
+> for platforms that have this hardcoded on their kernel
+> command lines.
 
-diff --git a/drivers/mailbox/arm_mhuv3.c b/drivers/mailbox/arm_mhuv3.c
-index b97e79a5870f..cae1f9bea050 100644
---- a/drivers/mailbox/arm_mhuv3.c
-+++ b/drivers/mailbox/arm_mhuv3.c
-@@ -775,8 +775,7 @@ static int mhuv3_initialize_channels(struct device *dev, struct mhuv3 *mhu)
- 	mbox->chans = devm_kcalloc(dev, mhu->num_chans,
- 				   sizeof(*mbox->chans), GFP_KERNEL);
- 	if (!mbox->chans)
--		return dev_err_probe(dev, -ENOMEM,
--				     "Failed to initialize channels\n");
-+		return -ENOMEM;
- 
- 	for (i = 0; i < NUM_EXT && !ret; i++)
- 		if (mhu->ext[i])
+I just came across this patch because it got backported into various 
+older releases. It was part of the series at [1]. From the cover letter:
+
+ >>>
+
+There are a number of systems and cloud providers out there
+that have nomodeset hardcoded in their kernel parameters
+to block nouveau for the nvidia driver.  This prevents the
+amdgpu driver from loading. Unfortunately the end user cannot
+easily change this.  The preferred way to block modules from
+loading is to use modprobe.blacklist=<driver>.  That is what
+providers should be using to block specific drivers.
+
+Drop the check to allow the driver to load even when nomodeset
+is specified on the kernel command line.
+
+<<<
+
+Why was that series never on dri-devel?
+
+Why is this necessary in the upstream kernel? It works around a problem 
+with the user's configuration. The series' cover letter already states 
+the correct solution.
+
+Firmware-only parameters affect all drivers; why not try for a common 
+solution? At least the test against the PCI class appears useful in the 
+common case.
+
+Best regards
+Thomas
+
+
+>
+> Reviewed-by: Kent Russell <kent.russell@amd.com>
+> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 14 ++++++++++++++
+>   1 file changed, 14 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> index f2d77bc04e4a9..7246c54bd2bbf 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> @@ -173,6 +173,7 @@ uint amdgpu_sdma_phase_quantum = 32;
+>   char *amdgpu_disable_cu;
+>   char *amdgpu_virtual_display;
+>   bool enforce_isolation;
+> +int amdgpu_modeset = -1;
+>   
+>   /* Specifies the default granularity for SVM, used in buffer
+>    * migration and restoration of backing memory when handling
+> @@ -1033,6 +1034,13 @@ module_param_named(user_partt_mode, amdgpu_user_partt_mode, uint, 0444);
+>   module_param(enforce_isolation, bool, 0444);
+>   MODULE_PARM_DESC(enforce_isolation, "enforce process isolation between graphics and compute . enforce_isolation = on");
+>   
+> +/**
+> + * DOC: modeset (int)
+> + * Override nomodeset (1 = override, -1 = auto). The default is -1 (auto).
+> + */
+> +MODULE_PARM_DESC(modeset, "Override nomodeset (1 = enable, -1 = auto)");
+> +module_param_named(modeset, amdgpu_modeset, int, 0444);
+> +
+>   /**
+>    * DOC: seamless (int)
+>    * Seamless boot will keep the image on the screen during the boot process.
+> @@ -2244,6 +2252,12 @@ static int amdgpu_pci_probe(struct pci_dev *pdev,
+>   	int ret, retry = 0, i;
+>   	bool supports_atomic = false;
+>   
+> +	if ((pdev->class >> 8) == PCI_CLASS_DISPLAY_VGA ||
+> +	    (pdev->class >> 8) == PCI_CLASS_DISPLAY_OTHER) {
+> +		if (drm_firmware_drivers_only() && amdgpu_modeset == -1)
+> +			return -EINVAL;
+> +	}
+> +
+>   	/* skip devices which are owned by radeon */
+>   	for (i = 0; i < ARRAY_SIZE(amdgpu_unsupported_pciidlist); i++) {
+>   		if (amdgpu_unsupported_pciidlist[i] == pdev->device)
+
 -- 
-2.34.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
