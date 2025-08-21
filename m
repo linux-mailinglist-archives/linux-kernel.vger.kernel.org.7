@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-779212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A77B2F087
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:06:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E638B2F081
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F9A95C6840
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:04:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E436EA01937
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A999B2EA148;
-	Thu, 21 Aug 2025 08:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238E12EA168;
+	Thu, 21 Aug 2025 08:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="f7Qa674Z"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ue0uQc6g"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D1E2E9ECA
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EC72E9ED7
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763434; cv=none; b=i2ZAzPTkYm4TDfwrkIh+goGoDfIhILeHRimaB/qzYVsAFPvN5lgsMu+oHUCvzoID9lAuezn8MT9fzx3AdkTPq8zcinKHA85/qvxj+jbh6HhXCeUX+McF6jQcMtTztqfvEO8cnJ2emZHOWBgYLvM82vt6dzGXEcvWtw8EWYEo8XM=
+	t=1755763435; cv=none; b=k43wDyVvFNHzvxHL65CpGg8bk9dwif04T3GagPIEYMXOwCERJ/x3tXRGrw9iP0re2uo/UZdVIZUQ8JD3r9m0oKHt1prQdh2dys/kG7izW6YS4Bd9d8+ruhhza8DY/BqAKzuIyz/ZN4KgDgKSCZtkvaX5q0GdawdIg4KIV4aNdF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763434; c=relaxed/simple;
-	bh=BkUjAzazCdrdco3Umhau/Xuq5nuzBQH/yodQbE/M+BY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xw7B3GbsgLadi20ZlKBtZGG3uJUkVRtsCIa9TwTBTc1kDRaUcRUGFjgAPMvl3ex17oKuxhAim2cUdrcxMWBQJNWxBoKZQbnaYEmXVPFdBdPVAmaAT+/iogEKSSYDStsaJgKqeXv6spZ7zjAF+vbnINnpZkeIjvNXmljEKH6J4YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=f7Qa674Z; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1755763435; c=relaxed/simple;
+	bh=UgZqJPI03azHfavD3Y+z6reHEnmYzpFLbpmicXpKdUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AoqZZxC6/wm1vfl1yW/5szsK+w8eC/oU4m6r1bNwHecgqTHjXNPH1kvHD2l9qhFmhwANGLA2SzBXR4hgrEXmdNXMFa+c4sQMJB8O0qe3kPbzFTwlJpa1dl1o2yugbbBAEPRKYXRnnm0P0S7/RgUE0n/kiKnA1DN+1231aZ4GQ24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ue0uQc6g; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1b0d224dso3141525e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:03:51 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c44dfa7739so177395f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:03:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1755763430; x=1756368230; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPH4Dt9LC8zmN5YywximTfS/LxGtIse3pZkHAnoKBEk=;
-        b=f7Qa674ZsqtyHtXxNt1JKOnNJCL3M6IKA3Mh7jiyKjGh/g1E2LhMd9yADGzcn4gmMO
-         jI0yPDYpFDitcsRZ2MZXiS8uri6J0qARmJL0DMWOWkwatbWz2aDjTeD4zilKMvt4BpME
-         uV8BVqeFdmr9RNYrqT3oHBb7KtWauTCYO9I9uHMzd1gUTmSpqM/jorNVnmyUVJvzyoMb
-         SF7gqLqaczPNJ4gGdfLAyDu8TupSQDNlYd9mMPVZH7h1bMHcjyWnwG6cOI3PeXOtXTkz
-         alnLLLavwtL6EQGjhj5dSUDbfH6M873mAolfjpMQgcatQ6T1m+oR8S2+dFrBiavamNYy
-         i3lQ==
+        d=tuxon.dev; s=google; t=1755763432; x=1756368232; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2XjehKGt2s9Iw0S60/WJtSyoiI8bGy2dbzPpshFFO9Q=;
+        b=Ue0uQc6gMYDbCbCxfNRlT8vnqxxtmV2bCMvUb1Fh3Q+BHQf2uZg4axVRjvTQdmxYTH
+         EP1T+6Cbd65juppz89cycqCVXYglTsV7cA88xU1zsy9ABai90IKkN0ryuZixMrlhYB+H
+         qd9NRG0FN8bb0lRHd5Xr6zY2BsI/4iV95sSsLPhKl8wUTxZ+9Kq3u8YQ6me4+LVRfvtm
+         GmO9kuZb1a3qT5GY1ZhUAdtzqbwQaS00nFmxtDZK5HP9cDuM/gkzqjq5iab059oKIH8J
+         3ShP7oMDmusYkSmcP3jc+bfWLUMd2UzK0McpWpvQo4r8ojkfbw8iPitsxEJMD/MyWvmv
+         2J2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755763430; x=1756368230;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cPH4Dt9LC8zmN5YywximTfS/LxGtIse3pZkHAnoKBEk=;
-        b=mf4BsKyCmM5lShOWNSUhLAH4D2L4O3VJmO1Dg5406CkxNxmds8yuCBTWc5oD7dPT0C
-         x46fj7SVc/Zu1KFojL1uOec6Ui5Wdxr9e90w1q8/P31KN0g7G5UdWFi6v5cjtARvawj2
-         WBEi/GQGCZ2ZgB3npwZiDdmxpltclJ/cBIC3xroZURIjQqGCAEx5rZhaPcmMExZ2/xWR
-         TZpxhwr56fS99kGDNDXn4CWkaATUHwz6C+thi1ViAnWhYWdGHigBujza70eq38287zxE
-         GQnalCjz4VwRt2rrHaezpSa9FFHBVYl1rdsor95I+C1bhO3FdcQJaOaayAh1pC0V1XcD
-         FTpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXE2PZP0s84OGNZglHUGpdPmJvvMo2NkmKzMrPiFw7GWFuQRipkcFwiqYC2TNmJizdF4NAKxz4ju50yyfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywet6+eI+zoS3Z/Q74HCEuL/EZS36s1VYWBDdMBjCTp6YHh/yIb
-	CMHgkBGSiUcsd1IMh+qklhNfYOWVm/51p4HkMxpxLJlkfBpiwbcfZwNIk7kWSfutjVk=
-X-Gm-Gg: ASbGncvEMxieB1+1sb9ujWk60SiXdQy77pdsqSlL8zGFeOXuRxq1+tniFKK0vGhNd1+
-	55YtT1eGWI7Lrj+YYGxXmM9Rn57NghssfWIqCYijZ/M689ls9lKYHyi4RJf5HXO61RIRG5wcPXx
-	6QqSQgvy55zj7p895rTm4uHV7djtMxZv+ePS8DHwWVgXHfJPp4Me/c7QemocnlsIrNpoC8gpeoA
-	suA601oGHsAq1o54rkOxAIG8+8GWjJSYRE0OF8lixr4kq4WtD10OQ4U4ycGWFsLkHBNru+qvtDl
-	eFgoJMnD7aHMFHvsPpgTm0lx5tVRcKDJdiZxYfrRIH9l9edlBtSGWdqDQGAVwyiAxDaenKdPNCo
-	7W3sOXENEgEQNW0Ht6QqC0ZTaloRhQaLpVFJ9mnDO9X/vCjUmXHk=
-X-Google-Smtp-Source: AGHT+IHHm8Lchn2zvhRJUg1fgGzuxGz8KFFfOq4sSoyn5I0S9lKsbcJu4rnRhc/hWeaHsuyWmyDFzw==
-X-Received: by 2002:a05:600c:3b19:b0:456:496:2100 with SMTP id 5b1f17b1804b1-45b4d84e6f0mr14634375e9.31.1755763430131;
-        Thu, 21 Aug 2025 01:03:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755763432; x=1756368232;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2XjehKGt2s9Iw0S60/WJtSyoiI8bGy2dbzPpshFFO9Q=;
+        b=EUtFlPOJabEecsXHCgn+0b3PIKtXikonHgr/7lFSXuxFO2m8yhCmex+VWSATycshOC
+         vOYsyAs3xxRSukY/A8x+E2RQdJRBr+BYIdFZRZnAbNs+d5Vo92YnUcYSPhLt6hLny5jm
+         b0lrlW4b9rm7vVoVv4NEM5vkWKAd4CIOkoXAbaWHNXMhP2hxYq6T0nia5gdN0roatRX9
+         Ozr1tUVy/Kg02HttirMctW8p7btIqrcmSob+TQmMNhvKczKLmTEMH7hdVUX489u+LOFS
+         1fcfr/s3+tDe6QpdQVjnN0Zxfl4m1N98o3arHF3u0DXDn+BryoVINmXjnTRI89IrfyZn
+         zO3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWIPy8vwzRdSqhT6xckwUBJ5o2Ai24F3zqL1qTzWWLSNZr8ImdLVvrNO7l0FOPaDanzFxUV92G1gkPTp1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGDyKJwdv4Ipgef2WSU3vn06WEnF/XvzODv2U5Xi54rgs0M3zg
+	/sD1LXsYh5gxM/RncuWL+TVs8QW+TQS29iA6xeSzcYztZ07uTup7HcMECvsTnNVs6Pg=
+X-Gm-Gg: ASbGnct2omY4ioVjU6uhlsnO+WfoEa1cbfk5TF0s66yJU8ehev8dOc3UMV7QUtRPVOH
+	71tfO8SHR9Qzhk10I55HN3PQvYUfOXzFjiQXhd/sSmYxU1jQqQpeAoMTjY6mK6e8Y7ohfZOF7Z5
+	4Ymn7PbGuxzcRrJrecEHe9ocA2PKan/FRk5ov0poHwmR1pOd80mjqe1KRVpLaTzn+5K39oparlA
+	yv9C62kunsoGoGUmNGI5UcS+jZw9g7n4bdb3tBulSJXbNK1iB42hHTi5mLe2i6w8L0OmzvuYZ2m
+	x4lEodlAtMAJ+HGXoMdv767iWYo47FMbC6JQw0JKNMHTDuOrHFsng5sdtRvzuoB2Imkkbtmrf34
+	4bwrZsPlbDzL1pB+Fm0qhoG7auUclYCX7OCev422U+IkAIVGkG3w=
+X-Google-Smtp-Source: AGHT+IHc431XLCYaF8pLi9lptfBNKV1wKndQFd3h8KySRGUYBaDuLZGptDhbLDqZIqPusEPqY1JIQg==
+X-Received: by 2002:a5d:5f56:0:b0:3c4:9c59:52e2 with SMTP id ffacd0b85a97d-3c4aec25ae2mr1116773f8f.7.1755763431534;
+        Thu, 21 Aug 2025 01:03:51 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.81])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4dc155b8sm17356225e9.19.2025.08.21.01.03.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4dc155b8sm17356225e9.19.2025.08.21.01.03.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 01:03:49 -0700 (PDT)
+        Thu, 21 Aug 2025 01:03:50 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: mturquette@baylibre.com,
@@ -82,10 +84,12 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 0/2] clk: renesas: rzg2l: Disable unused clocks after resume
-Date: Thu, 21 Aug 2025 11:03:30 +0300
-Message-ID: <20250821080333.27049-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 1/2] clk: Export clk_disable_unused()
+Date: Thu, 21 Aug 2025 11:03:31 +0300
+Message-ID: <20250821080333.27049-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250821080333.27049-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20250821080333.27049-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,31 +100,105 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+The Renesas RZ/G3S SoC has a suspend mode where power to most components is
+turned off and RAM is switched to self-refresh. Resuming from this
+low-power mode is done with the help of the bootloader. During resume, the
+bootloader re-enables the clocks for the modules needed in the resume
+process (e.g. SDHI or serial). After that, control is passed to Linux.
 
-This series disables clocks that remain unused after resume.
-This is necessary when the resume process is done with the help of the
-bootloader, as the bootloader enables various clocks when returning from
-resume.
+If Linux has not probed a driver for one of the modules enabled by the
+bootloader, or if the module was previously in a runtime-suspended state,
+the corresponding clocks remain enabled after resume, even though they have
+no consumers or they were previously disabled.
 
-On the RZ/G3S SoC (where this series was tested), the bootloader enables
-the SDHI clocks (for all SDHI modules, of which 2 are used by Linux and
-1 is unused) and the clocks for a serial IP (unused by Linux).
+To avoid keeping these clocks enabled unnecessarily, make the
+clk_disable_unused() function available to other drivers. Drivers can then
+call it during resume to disable any unused clocks.
 
-Testing was done on the RZ/G3S SMARC Carrier II board.
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/clk/clk.c   |  9 +++++----
+ include/linux/clk.h | 12 ++++++++++++
+ 2 files changed, 17 insertions(+), 4 deletions(-)
 
-Thank you,
-Claudiu Benea
-
-Claudiu Beznea (2):
-  clk: Export clk_disable_unused()
-  clk: renesas: rzg2l: Register PM notifier to disable unused clocks
-
- drivers/clk/clk.c               |  9 +++++----
- drivers/clk/renesas/rzg2l-cpg.c | 24 ++++++++++++++++++++++++
- include/linux/clk.h             | 12 ++++++++++++
- 3 files changed, 41 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b821b2cdb155..5278030b0ad8 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1460,7 +1460,7 @@ static void clk_core_disable_unprepare(struct clk_core *core)
+ 	clk_core_unprepare_lock(core);
+ }
+ 
+-static void __init clk_unprepare_unused_subtree(struct clk_core *core)
++static void clk_unprepare_unused_subtree(struct clk_core *core)
+ {
+ 	struct clk_core *child;
+ 
+@@ -1485,7 +1485,7 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
+ 	}
+ }
+ 
+-static void __init clk_disable_unused_subtree(struct clk_core *core)
++static void clk_disable_unused_subtree(struct clk_core *core)
+ {
+ 	struct clk_core *child;
+ 	unsigned long flags;
+@@ -1526,7 +1526,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+ 		clk_core_disable_unprepare(core->parent);
+ }
+ 
+-static bool clk_ignore_unused __initdata;
++static bool clk_ignore_unused;
+ static int __init clk_ignore_unused_setup(char *__unused)
+ {
+ 	clk_ignore_unused = true;
+@@ -1534,7 +1534,7 @@ static int __init clk_ignore_unused_setup(char *__unused)
+ }
+ __setup("clk_ignore_unused", clk_ignore_unused_setup);
+ 
+-static int __init clk_disable_unused(void)
++int clk_disable_unused(void)
+ {
+ 	struct clk_core *core;
+ 	int ret;
+@@ -1574,6 +1574,7 @@ static int __init clk_disable_unused(void)
+ 	return 0;
+ }
+ late_initcall_sync(clk_disable_unused);
++EXPORT_SYMBOL_GPL(clk_disable_unused);
+ 
+ static int clk_core_determine_round_nolock(struct clk_core *core,
+ 					   struct clk_rate_request *req)
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index b607482ca77e..7eb0e5eb9aba 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -950,6 +950,13 @@ int clk_save_context(void);
+  */
+ void clk_restore_context(void);
+ 
++/**
++ * clk_disable_unused - disable unused clocks
++ *
++ * Disable unused clocks at boot or resume time.
++ */
++int clk_disable_unused(void);
++
+ #else /* !CONFIG_HAVE_CLK */
+ 
+ static inline struct clk *clk_get(struct device *dev, const char *id)
+@@ -1136,6 +1143,11 @@ static inline int clk_save_context(void)
+ 
+ static inline void clk_restore_context(void) {}
+ 
++static inline int clk_disbale_unused(void)
++{
++	return 0;
++}
++
+ #endif
+ 
+ /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
 -- 
 2.43.0
 
