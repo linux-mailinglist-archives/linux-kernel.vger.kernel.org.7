@@ -1,182 +1,200 @@
-Return-Path: <linux-kernel+bounces-778876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A8EB2EC4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:46:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C43CB2EC4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF623AFA6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:46:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2358B189CEC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736E12E8B9F;
-	Thu, 21 Aug 2025 03:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7E82DF3F2;
+	Thu, 21 Aug 2025 03:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="neGSrA/P"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6AF2E7F11;
-	Thu, 21 Aug 2025 03:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="jwsMvzBF"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A39F1E515
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 03:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755747931; cv=none; b=hKzPfBLKKtXEkoXzLwN0dmeQmdVeFFs9l5Jl93ZkArugY+eiylj5biONE/3YcnUvaVkWLdFSUeGMnCjbjU68vBqIHYaDrOlp5YKzu6rIjC3CtO88OJXHMJFQQ2EENjwfMrzqQD/d3qKgvDkCLXlbx+XFQA2VJN40gvAO2ah+Xm0=
+	t=1755748115; cv=none; b=SnBRhrGDXDWKoQn8kRyYg/4Yi5YmtaTveLXJiq2Hwz3dudBcG1sN7exC1Ih6NNHRqBS9M1L9ckcTSpVkEvPcw6FsKyoaa8HIflA80lC2gc4L5G98m6OB1b5Fg44bKbZkZG9+R0E0FBmvGz2N3sDkVGLSd1HmDxdjM7GiCNO3ixA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755747931; c=relaxed/simple;
-	bh=duHJrcuN+a6VGbHHRUXM6AyyXv7mjDeSL3MEGJah8SU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YqDVZcprFzUCMsn9NJQc0+EZ/4kmZWjjvRLpnU8UcidQgzNb6jGFHWvxgwAK+BhWKRcJZEy2VTl8PUcCWiQ42id6ztZnFf78iKxjRir+NpUuGCCBnyN21DHknzZaTXVruldCRsPUYdHRq/3pzSzL2SY8YNL7hSiLb+kJuAYe8u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=neGSrA/P; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-323267bc2eeso495837a91.1;
-        Wed, 20 Aug 2025 20:45:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755747929; x=1756352729; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=crrUsFCfq3k63xR/frZMkp0dE+IOgUMhJSDZs9vTaEM=;
-        b=neGSrA/PATE+pnnl/y7b8YnjW7f5v/BC7wicIxyGDkK4gb2Al13yeB//n4VHqSDSHd
-         Bqg4Fl4VjKmXksjew/yoamnmCVyLc7IsGWtQHYRhAeyj3Vasc2yC4p7JKwq3RhSno+Yz
-         SXqmNZk6c7Hf3O8PtqopQrk6Nefdtobj8wOYzm34sh8t2ChFzSWQteDxjliiRglQpSLl
-         Zv1CVh98so/V6Xs6sz9yE9NRcGoSYrV8BAXrVFDWlyH6/8NhV+blwQZaB+O+iS1KVmx/
-         Dg9dMcNdNZmrYwBtvyeJa7uwwsHX4H2BX9M4goDemMvvqgCwCBf2ks10QHv0RWcOzPXr
-         9WzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755747929; x=1756352729;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=crrUsFCfq3k63xR/frZMkp0dE+IOgUMhJSDZs9vTaEM=;
-        b=JyTfUAqY0UM492gM+djASpHxR3uFyfwAUplnvM1NvtYzyJxqBgnqJwnPcpk3ypfB3P
-         LpAFLrGyeQ/DKGEnoyjgEdsVIc29q1Qm8acY2XAlK9NAi8Cq0kXYJnp9nLyU4gaQEjpG
-         CSW4Zx6rtgbG4QHD8rWFkVN1f3hv+PvGWJElkEacrAeEaBKwGd+HLsloKouSeRq1Hdnv
-         K3MjFNu+Ld8b2JHk1OOvM+/6X+uF8SGdBhn4upGxErujO5OzQVJtnNiKdWuaO83khNSf
-         WKRL57Ne60wCTwMEYnPgUfQb7/1Wmi5G/ae2GWDZJPeQss9THp2KTHWMUUDcYtZweDC3
-         Pn/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV7AzCZ7OPSeBJf1b0FwIdCOt3ywAn9Ke8K8Yn6zKaZHi/sRrAs/NhmqQc+FNaBJKgHTvR2g8a/mOhIA5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSo9KKxPXb3lrOwCZ3p4QYRY71mpWI8GqfQ0tn3oG8Tk/ZRtAk
-	HWq4FnTFAQy09mIZZB4zqSN3eYnsiscnnp+HSOGb8Dqfrx1bOQyG+CSOFStamA==
-X-Gm-Gg: ASbGncu+GWpq3LLcEbL0/yTOZFDmt+EtA02Hem5MPxHzwB4OdhkZuVDpLgOB0u5N1Rj
-	P0Jf7YGw+LmgXg2MQMxp+1BJrmluBGoMyf1eslbS+isjEj01dUY1HEpPz4MXtDSRCFiBeesm15I
-	iqvUifRqE/MfNoP4ZOTf0LMApJJFnR464wSdVjzvMQquNDpTxW2BAP6c7DtgfCYfVH4WjYOquds
-	S2wtIoSQ0HNk2+ilAUYiF0V2YazwxAaevEPrk4/1KDyq79Tpfb29Fq0VbDR3Nxl/sBUq++1BuQF
-	lBuwfq8VmlykrV2CVUz9IdpqQsg7ZWJNZ1GBo7pv2a4MstZTP/rcloK/id6DX2e5yOC4WgaUM4Q
-	J5Esb
-X-Google-Smtp-Source: AGHT+IHsDt928GDuTpULjuqdN4JrTIOvzBlZyIvUuOn1oUNZJCHPP0ghkkaFnemIKVtwYzrvotnhEg==
-X-Received: by 2002:a17:90b:3d08:b0:321:c37e:e325 with SMTP id 98e67ed59e1d1-324ed0f1999mr1656032a91.12.1755747929361;
-        Wed, 20 Aug 2025 20:45:29 -0700 (PDT)
-Received: from archlinux.lan ([2601:644:8200:acc7::1f6])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324f2402c9asm504932a91.11.2025.08.20.20.45.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 20:45:28 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: dmaengine@vger.kernel.org
-Cc: Vinod Koul <vkoul@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv2 3/3] dmaengine: mv_xor: use devm for request_irq
-Date: Wed, 20 Aug 2025 20:45:25 -0700
-Message-ID: <20250821034525.642664-4-rosenp@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250821034525.642664-1-rosenp@gmail.com>
-References: <20250821034525.642664-1-rosenp@gmail.com>
+	s=arc-20240116; t=1755748115; c=relaxed/simple;
+	bh=olXJrF8t7oUlO43zmSrMYNCvokq4aUhJjs+rJ6zAxh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=limRija+5C82e78ublKocWxR8TK9G0X0Vfb0mAOdNF8BnaQvlTdHbLMzjpwH5+xzwR+csBN7OQSc8fOkFzYNrBgm8a16vzNy7uHAzXzcMCY5/f2wZ75eHa8etyN9i40CAkciwFt7rzHwdexiou9JV/TMtXl8G/EjOAlTu7LVQOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=jwsMvzBF; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id D8C4D14C2D3;
+	Thu, 21 Aug 2025 05:48:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1755748104;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7Q0l/pepFb0UQcSiId8Kpfa1b1R1Hcz1V8en1YvbWWU=;
+	b=jwsMvzBFTbWbNVpp+8yRFSTlhFCY7jh68XiUoNyDMtUV3vhn2VHAN6ezACWw5lOGPkD7vF
+	hOgH6CHAksbni93Hhwr8T4ud44oYEXUNh4ls/GMmtciC0B2otqNf5LTaXlmVaruGcxEaTE
+	+kMzJafFw5krPgf9CpP5hl7ve6Bw5Au19gUmVyAHJCMV0wQ46eohfaKUYWH3s18ZnutlYs
+	FTaxmKrF9a+tOkhDklEQg2aq8Q5Qqgwv+Sf15jhpZk8+eyci5EdPEFS/W2J7zz7mRPhAFr
+	NB12+3x6S19LgMlly9i7ceBbcIx4UJ6S6bne/gnhOXpXT/MrcfnOoTIZ1/ewkg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id c6f93705;
+	Thu, 21 Aug 2025 03:48:20 +0000 (UTC)
+Date: Thu, 21 Aug 2025 12:48:05 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: ericvh@kernel.org, linux-kernel@vger.kernel.org,
+	linux_oss@crudebyte.com, lucho@ionkov.net,
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev,
+	syzbot <syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [v9fs?] UBSAN: shift-out-of-bounds in v9fs_get_tree
+Message-ID: <aKaW9bi5INq7OwGy@codewreck.org>
+References: <68a68b57.050a0220.3d78fd.0012.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <68a68b57.050a0220.3d78fd.0012.GAE@google.com>
 
-This is only called in _probe. Removes the need to manually free_irq.
+Hi Eric,
 
-Same with irq_dispose_mapping.
+syzbot wrote on Wed, Aug 20, 2025 at 07:58:31PM -0700:
+> UBSAN: shift-out-of-bounds in fs/9p/vfs_super.c:57:22
+> shift exponent 32 is too large for 32-bit type 'int'
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>  ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
+>  __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
+>  v9fs_fill_super fs/9p/vfs_super.c:57 [inline]
+>  v9fs_get_tree+0x957/0xa90 fs/9p/vfs_super.c:125
+>  vfs_get_tree+0x8f/0x2b0 fs/super.c:1752
+>  do_new_mount+0x2a2/0xa30 fs/namespace.c:3810
+>  do_mount fs/namespace.c:4138 [inline]
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/dma/mv_xor.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+I thinks the mount rework triggered this one (full copy below or at [1])
+[1] https://lore.kernel.org/all/68a68b57.050a0220.3d78fd.0012.GAE@google.com/T/#u
 
-diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
-index 8f0c3bfc60cb..18ddbff38abc 100644
---- a/drivers/dma/mv_xor.c
-+++ b/drivers/dma/mv_xor.c
-@@ -1025,8 +1025,6 @@ static int mv_xor_channel_remove(struct mv_xor_chan *mv_chan)
- 		list_del(&chan->device_node);
- 	}
- 
--	free_irq(mv_chan->irq, mv_chan);
--
- 	return 0;
- }
- 
-@@ -1112,8 +1110,9 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
- 	/* clear errors before enabling interrupts */
- 	mv_chan_clear_err_status(mv_chan);
- 
--	ret = request_irq(mv_chan->irq, mv_xor_interrupt_handler,
--			  0, dev_name(&pdev->dev), mv_chan);
-+	ret = devm_request_irq(&pdev->dev, mv_chan->irq,
-+			       mv_xor_interrupt_handler, 0,
-+			       dev_name(&pdev->dev), mv_chan);
- 	if (ret)
- 		goto err_free_dma;
- 
-@@ -1138,14 +1137,14 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
- 		ret = mv_chan_memcpy_self_test(mv_chan);
- 		dev_dbg(&pdev->dev, "memcpy self test returned %d\n", ret);
- 		if (ret)
--			goto err_free_irq;
-+			goto err_free_dma;
- 	}
- 
- 	if (dma_has_cap(DMA_XOR, dma_dev->cap_mask)) {
- 		ret = mv_chan_xor_self_test(mv_chan);
- 		dev_dbg(&pdev->dev, "xor self test returned %d\n", ret);
- 		if (ret)
--			goto err_free_irq;
-+			goto err_free_dma;
- 	}
- 
- 	dev_info(&pdev->dev, "Marvell XOR (%s): ( %s%s%s)\n",
-@@ -1156,12 +1155,10 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
- 
- 	ret = dma_async_device_register(dma_dev);
- 	if (ret)
--		goto err_free_irq;
-+		goto err_free_dma;
- 
- 	return mv_chan;
- 
--err_free_irq:
--	free_irq(mv_chan->irq, mv_chan);
- err_free_dma:
- 	dma_free_coherent(&pdev->dev, MV_XOR_POOL_SIZE,
- 			  mv_chan->dma_desc_pool_virt, mv_chan->dma_desc_pool);
-@@ -1398,7 +1395,6 @@ static int mv_xor_probe(struct platform_device *pdev)
- 						  cap_mask, irq);
- 			if (IS_ERR(chan)) {
- 				ret = PTR_ERR(chan);
--				irq_dispose_mapping(irq);
- 				goto err_channel_add;
- 			}
- 
-@@ -1433,11 +1429,8 @@ static int mv_xor_probe(struct platform_device *pdev)
- 
- err_channel_add:
- 	for (i = 0; i < MV_XOR_MAX_CHANNELS; i++)
--		if (xordev->channels[i]) {
-+		if (xordev->channels[i])
- 			mv_xor_channel_remove(xordev->channels[i]);
--			if (pdev->dev.of_node)
--				irq_dispose_mapping(xordev->channels[i]->irq);
--		}
- 
- 	return ret;
- }
+From a quick look the old code bound msize to 4k-INT_MAX, but the new
+code accepts higher uint32 values.
+To be honest I'm not sure INT_MAX even makes sense as later allocations
+are likely to work :) but for now something as simple as this is likely
+to work (I'm not sure I got the test thing right, let's see...)
+
+Shall I just roll that into your patch, unless you know of a more
+appropriate limit?
+There doesn't seem to be any easy to use variable about max allocation
+size, a limit of a few MB is probably sensible but I don't like
+artificial restrictions just to please syzbot so happy to defer to
+someone else here.
+
+
+#syz test
+
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 55ba26186351..cc65330ee684 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -302,6 +302,10 @@ int v9fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+                        p9_debug(P9_DEBUG_ERROR, "msize should be at least 4k\n");
+                        return -EINVAL;
+                }
++               if (result.uint_32 > INT_MAX) {
++                       p9_debug(P9_DEBUG_ERROR, "msize too big\n");
++                       return -EINVAL;
++               }
+                clnt->msize = result.uint_32;
+                break;
+        case Opt_trans:
+
+syzbot wrote on Wed, Aug 20, 2025 at 07:58:31PM -0700:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    3ac864c2d9bb Add linux-next specific files for 20250818
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13706442580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=6d1acc6b9e1fca1b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=30c83da54e948f6e9436
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141586f0580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124c9ba2580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/37dbe82593f0/disk-3ac864c2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/d2fea0824445/vmlinux-3ac864c2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/6f2a83735a01/bzImage-3ac864c2.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in fs/9p/vfs_super.c:57:22
+> shift exponent 32 is too large for 32-bit type 'int'
+> CPU: 0 UID: 0 PID: 5861 Comm: syz-executor379 Not tainted 6.17.0-rc2-next-20250818-syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>  ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
+>  __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
+>  v9fs_fill_super fs/9p/vfs_super.c:57 [inline]
+>  v9fs_get_tree+0x957/0xa90 fs/9p/vfs_super.c:125
+>  vfs_get_tree+0x8f/0x2b0 fs/super.c:1752
+>  do_new_mount+0x2a2/0xa30 fs/namespace.c:3810
+>  do_mount fs/namespace.c:4138 [inline]
+>  __do_sys_mount fs/namespace.c:4349 [inline]
+>  __se_sys_mount+0x317/0x410 fs/namespace.c:4326
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7ff35edd46a9
+> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffeee8a4078 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00002000000025c0 RCX: 00007ff35edd46a9
+> RDX: 00002000000000c0 RSI: 00002000000025c0 RDI: 0000000000000000
+> RBP: 0000200000000280 R08: 0000200000000280 R09: 00007ffeee8a4258
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff35ee1d017
+> R13: 00007ffeee8a4248 R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
+> ---[ end trace ]---
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+
 -- 
-2.50.1
-
+Dominique Martinet | Asmadeus
 
