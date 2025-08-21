@@ -1,183 +1,120 @@
-Return-Path: <linux-kernel+bounces-780271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DCCB2FF94
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:04:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324AAB2FFAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 593904E00DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:04:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D78C17DBD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572DC29BD85;
-	Thu, 21 Aug 2025 16:04:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D430327B51C;
-	Thu, 21 Aug 2025 16:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7811A2BE7D9;
+	Thu, 21 Aug 2025 16:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FOrqUx8y"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F8B33F6;
+	Thu, 21 Aug 2025 16:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755792280; cv=none; b=SvQbWBsE1vvRMCgxIZLJUKxMmvja3eLIAA1k9+PW1GKZ/OYlejkdhPqIgcID7VSg4VUZ9D1CDGOnFHyk0T9nVzhWtldX7QhgS5RjWCFwZ+9ujHezS4dRrmpiplLYP0bizbq+9x3UQGQfYCK2VRi9f++xXJpVS982wmm0SE6rCnw=
+	t=1755792389; cv=none; b=mcWQ3xd2Byr2nGwiDIc/IT3yecOuDCyAJWtGQrW5JKrLJo2Pk8AdFqSInl7RqEoMA/lZEEifv0o95FX5NIKUOgkOIBXptHgLQI2bGcFN31NxSK/WuWS65/8ZhpPk/B+Eyrp3ZfeBxAvYIXyhMwaVAw2Lp100FdCPzxQnczgoeco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755792280; c=relaxed/simple;
-	bh=HALvVvb0gXqFcWEkglCftIHTCcB2sGPCCyVzcrgmOBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QBFFyWjxt66SdJtNvy+91x+LwQ/7GUAlfNLYJSoSsHRCHhuqtxzyRtp428blqpLJUqP8aHeF0QpgX9ficHg7vdAWgklqajaYUyAZdesa9yoFyyLdz4lf59IP3W9Dcftj3f9LixDRUfn/pRbZFULjF1+6cJsif9cqAv9qfgdVzH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2870A152B;
-	Thu, 21 Aug 2025 09:04:29 -0700 (PDT)
-Received: from [10.57.1.114] (unknown [10.57.1.114])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 84EDD3F738;
-	Thu, 21 Aug 2025 09:04:35 -0700 (PDT)
-Message-ID: <35ff1e0e-5810-49c4-8a1a-d58ad7a5cc31@arm.com>
-Date: Thu, 21 Aug 2025 17:04:33 +0100
+	s=arc-20240116; t=1755792389; c=relaxed/simple;
+	bh=H5Gl/Dlk01UYvSZ7Pt0ZvOAvjpTDWYxvU1bVp68chnA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LD5w/VD7rb0aK8A8fNcXa9SDDW8gVKyXSnFCO7Y6gSEF4j409KUlBFnH65RZlcepq10RxD/dW+dz5X1zcyY+agSRxGe4+vR/W8rG3uTMhOLmUwhTltLIRQEtRfDGGBi/IkmUFvsgJu4Bax/gpLOXF8e9mK11IlIr3zfKMM1J5/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FOrqUx8y; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9bDbC006394;
+	Thu, 21 Aug 2025 16:06:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=vq/DxXBUblw0KRtCxEe9cXyEZGdVjJmne62
+	pp8Qm2L0=; b=FOrqUx8yb2B0IuXZb1LPDXyq/jyj93CnQbqUVLHg/9v7+tIIb5u
+	alVm5+KdTAIarLGj1WebZl7Z9vXvUHP+/tSjjgb+usBYlTi6Xekw6J/xqcSaqaDQ
+	Ay6I5luLtfxTTNYfOdms7UVKFpvYUY7FyeE1mWhzheFndUddLnIY0VBWRm0swKKr
+	P74iZckpYAS4OLRZa+rNK9LtEF66WnCHVNrlWPuY7KTNWV+r79qCoVeUaKoxvV2y
+	PQ7h7joGuGAx05qOci71DrQa41vR75lsDAW7eyckHUoo9e85Paqi5cpn+XB4rM8L
+	cffP1gBysN0q2zEMR1zQIZ+Rw6C+P1wC0dQ==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52962mh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 16:06:26 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57LG6LhZ004072;
+	Thu, 21 Aug 2025 16:06:21 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 48jk2m3g9h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 16:06:21 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57LG6L50004063;
+	Thu, 21 Aug 2025 16:06:21 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 57LG6Lcl004060
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 16:06:21 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
+	id 54FE05C5; Thu, 21 Aug 2025 21:36:20 +0530 (+0530)
+From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com,
+        srinivas.kandagatla@oss.qualcomm.com
+Subject: [PATCH v1 0/1] Add SM8750 protection domain support
+Date: Thu, 21 Aug 2025 21:36:17 +0530
+Message-Id: <20250821160618.1037157-1-quic_pkumpatl@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] perf/arm_cspmu: Export arm_cspmu_apmt_node
-To: Besar Wicaksono <bwicaksono@nvidia.com>,
- Ilkka Koskinen <ilkka@os.amperecomputing.com>
-Cc: "will@kernel.org" <will@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
- "mark.rutland@arm.com" <mark.rutland@arm.com>,
- Thierry Reding <treding@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
- Vikram Sethi <vsethi@nvidia.com>, Rich Wiley <rwiley@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>
-References: <20250812233411.1694012-1-bwicaksono@nvidia.com>
- <20250812233411.1694012-2-bwicaksono@nvidia.com>
- <88a25a26-109d-b5cc-4bd2-776c3c2ba113@os.amperecomputing.com>
- <SJ0PR12MB567600C6753A076E2ECD6FC6A033A@SJ0PR12MB5676.namprd12.prod.outlook.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <SJ0PR12MB567600C6753A076E2ECD6FC6A033A@SJ0PR12MB5676.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wgSW2D5dpixnHwQA_-rHSGPPuuDzgfYM
+X-Proofpoint-ORIG-GUID: wgSW2D5dpixnHwQA_-rHSGPPuuDzgfYM
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX3DeQVytzczxZ
+ 9VbcP5PzNkb67kIpPwgfCAfYIDFj7NDPOrvQKfRgKizFxV6baqFgOcvJFrd3ZD57ofEf2qdtusW
+ jEqWVq9tw12CtrV8pwc8lMH0/rWf++xi6RxZs0SSPHpqdoeALg+0uX205mtynplcEJTIC+vSwJG
+ Qhtqxnsf//cHA8Pikt9VzB3zHMVXtHrxlzm/GDoRYPef2j8Z0f7JcDXuPEMVSY0N5R1Jtm7ZDDO
+ hobyW7JfifNe8Y2wx0C0LSK7xjrGnTPP4XnAtbVUDRiuMNIefMewKEDea92KGCjldUIcRNnLbzn
+ knPxq556ncIUgJxuBuSpVDUg8dBITGNt5xGZwJTH0wDjGEt/DHLcIArYhESLGC1PzjJ5KXxZ894
+ tQS26h+BL6/2qN5/HhFLn3SnAxiHBg==
+X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a74402 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=2OwXVqhp2XgA:10 a=RFJ9OqplesZEtbKTtmEA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On 2025-08-20 8:07 pm, Besar Wicaksono wrote:
-> Hi Ilkka,
-> 
-> Thanks for the feedback. Please see my comment inline.
-> 
->> -----Original Message-----
->> From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
->> Sent: Tuesday, August 19, 2025 3:16 PM
->> To: Besar Wicaksono <bwicaksono@nvidia.com>
->> Cc: will@kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> kernel@vger.kernel.org; linux-tegra@vger.kernel.org;
->> suzuki.poulose@arm.com; robin.murphy@arm.com;
->> ilkka@os.amperecomputing.com; mark.rutland@arm.com; Thierry Reding
->> <treding@nvidia.com>; Jon Hunter <jonathanh@nvidia.com>; Vikram Sethi
->> <vsethi@nvidia.com>; Rich Wiley <rwiley@nvidia.com>; Shanker Donthineni
->> <sdonthineni@nvidia.com>
->> Subject: Re: [PATCH 1/5] perf/arm_cspmu: Export arm_cspmu_apmt_node
->>
->> External email: Use caution opening links or attachments
->>
->>
->> Hi Ben,
->>
->> On Tue, 12 Aug 2025, Besar Wicaksono wrote:
->>> Make arm_cspmu_apmt_node API accessible to vendor driver.
->>
->> I think I haven't seen the latest version of the spec. So, I'm curious,
->> what kind of information the table has that the vendor drivers needs to
->> have access to it?
->>
-> 
-> The vendor driver may need the node instance primary and secondary
-> fields to get additional properties of the PMU that is not covered
-> by the standard properties. For example, the PMU device entry in
-> APMT can be defined as ACPI node type. The node instance primary
-> and secondary will contain the HID and UID of an ACPI device object
-> that is associated with the PMU. This ACPI object can have more info
-> to supplement the standard props.
+This patch adds support for the Qualcomm SM8750 SoC to the
+protection domain mapper. Since SM8750 shares the same protection
+domain configuration as SM8550, the existing SM8550
+domain data is reused.
 
-Rather than exposing the raw APMT data, maybe then cspmu should just 
-encapsulate a method for retrieving the associated ACPI device, if any? 
-I guess it could be a generalised "firmware device" notion - even though 
-for DT that should mostly be cspmu->dev already - since that could then 
-work neatly for generic device properties, but perhaps we don't expect 
-many sub-drivers to support both ACPI and DT...
+Prasad Kumpatla (1):
+  soc: qcom: pd-mapper: Add SM8750 compatible
 
-Thanks,
-Robin.
+ drivers/soc/qcom/qcom_pd_mapper.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->>>
->>> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
->>> ---
->>> drivers/perf/arm_cspmu/arm_cspmu.c | 3 ++-
->>> drivers/perf/arm_cspmu/arm_cspmu.h | 4 ++++
->>> 2 files changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c
->> b/drivers/perf/arm_cspmu/arm_cspmu.c
->>> index efa9b229e701..e4b98cfa606c 100644
->>> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
->>> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
->>> @@ -70,12 +70,13 @@ static void arm_cspmu_set_ev_filter(struct
->> arm_cspmu *cspmu,
->>> static void arm_cspmu_set_cc_filter(struct arm_cspmu *cspmu,
->>>                                    const struct perf_event *event);
->>>
->>> -static struct acpi_apmt_node *arm_cspmu_apmt_node(struct device *dev)
->>> +struct acpi_apmt_node *arm_cspmu_apmt_node(struct device *dev)
->>> {
->>>        struct acpi_apmt_node **ptr = dev_get_platdata(dev);
->>>
->>>        return ptr ? *ptr : NULL;
->>> }
->>> +EXPORT_SYMBOL_GPL(arm_cspmu_apmt_node);
->>
->> Rather than exporting the function, wouldn't it be better to move it to
->> arm_cspmu.h instead?
-> 
-> Sounds good to me. I will make the change on the next revision.
-> 
-> Thanks,
-> Besar
-> 
->>
->> Cheers, Ilkka
->>
->>>
->>> /*
->>>   * In CoreSight PMU architecture, all of the MMIO registers are 32-bit except
->>> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.h
->> b/drivers/perf/arm_cspmu/arm_cspmu.h
->>> index 19684b76bd96..36c1dcce33d6 100644
->>> --- a/drivers/perf/arm_cspmu/arm_cspmu.h
->>> +++ b/drivers/perf/arm_cspmu/arm_cspmu.h
->>> @@ -8,6 +8,7 @@
->>> #ifndef __ARM_CSPMU_H__
->>> #define __ARM_CSPMU_H__
->>>
->>> +#include <linux/acpi.h>
->>> #include <linux/bitfield.h>
->>> #include <linux/cpumask.h>
->>> #include <linux/device.h>
->>> @@ -222,4 +223,7 @@ int arm_cspmu_impl_register(const struct
->> arm_cspmu_impl_match *impl_match);
->>> /* Unregister vendor backend. */
->>> void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_match
->> *impl_match);
->>>
->>> +/* Get ACPI APMT node. */
->>> +struct acpi_apmt_node *arm_cspmu_apmt_node(struct device *dev);
->>> +
->>> #endif /* __ARM_CSPMU_H__ */
->>> --
->>> 2.47.0
->>>
->>>
+-- 
+2.34.1
+
 
