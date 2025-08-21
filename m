@@ -1,68 +1,63 @@
-Return-Path: <linux-kernel+bounces-779753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D261B2F837
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:38:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA50FB2F879
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 762BB1693B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F0C1CC8B73
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D578D2DE706;
-	Thu, 21 Aug 2025 12:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F1932274C;
+	Thu, 21 Aug 2025 12:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3G9p2mup";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pWUDwvyw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WY/wwDUW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB86B23E32B;
-	Thu, 21 Aug 2025 12:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681B131AF13;
+	Thu, 21 Aug 2025 12:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755779924; cv=none; b=KfTtBlBiczdgpz7d3ORISZk9nOK6yJGoXw+hkAHM37cop3qj2BkVdWguB19/9bEIzQiquwH+znoLj/TVmsXaU0+sH7j8VfnGWgWdJSSKRTWnkqzKznZ39ZUQ7/314ZCNgh0+Whs3Yib270s4zUQeUH6alrxkH9zsX4Qs0Z/wVeY=
+	t=1755780080; cv=none; b=ikKln9V7GkLkfgKnTG3PRKDGyLJaCIUxiDvseGyuqlb6WoGgwqtnjp7mLwReddUsJ5PI+TK4GmL7abuixS38fWbamQJvsM0GAU+wQZya+IpurCmtsbRm3rZ64UXRfzvjMjPGmQf3pdkNZpU98MLhvaPAalv8qGlpvskh9gU8NFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755779924; c=relaxed/simple;
-	bh=oXhDUv87NoCszJ8tfluMEgInDZ24yKa+PfkHBpJD45A=;
+	s=arc-20240116; t=1755780080; c=relaxed/simple;
+	bh=5SntXcT3EX6iRj3qRaCgNZss4u35RUFrPDY1w3CY6gA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uL2FkKRzYBrPU0yIrIzmv+vvyUquaKLkAlfSTuDvcI7pEUmlfNxSmELgDHS26bKLKT/FgYDD/6cRuJDSXoS6fXrLmJc91rhySdvFT2fCvYRKgrrP0X3rRb1UIir5Yma93MhZgCiTdh88FSPDr5OvOfJPS6v+9IcCjRXwGTTpE4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3G9p2mup; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pWUDwvyw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 21 Aug 2025 14:38:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755779921;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KbDOghMuFQXuB3jWN6gYshboT1kfc8EL9B6GPmeFLlE=;
-	b=3G9p2mupIErF15oKhHnIHUrphQ9Yd48PQ1Cxe/YnvoAlbTSwgPPp4RLUxROzs9jLMi2imG
-	nBoV9boof9YJ9BcuiXjmY6RPE1B0usKuPzpRHyaJaWkMpYheDV34ScdJB6ACTtAQtMMa/Y
-	DBdr9q9xPLz0A+Ntp0eCNPJIax90jNTXrip2H9YYr7eb9+ZKuarphEpitJ5ynDYzybQZ8N
-	zTVtw+WTAZ4xe0YPar82KLYbeT88erLSAMPfacM8HIw350iKKVmX7ddugY0nG8fxjUyup/
-	Z2si2IVLAB3vd6a5P9ZbBwf1FnoYjn0GJKhPQFzLEGHITj1uh1NZ8FtfWQgadA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755779921;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KbDOghMuFQXuB3jWN6gYshboT1kfc8EL9B6GPmeFLlE=;
-	b=pWUDwvywEQ0Xe2xQakcXyJZvoTZjoZYJkMi95swQWMVSggu6/ZjsNxM/vzmbnRrwd/W0BZ
-	6SbWnA3HcwehyqAw==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [RFC PATCH 10/17] verification/rvgen: Add support for Hybrid
- Automata
-Message-ID: <20250821123839.Gj3vCzCo@linutronix.de>
-References: <20250814150809.140739-1-gmonaco@redhat.com>
- <20250814150809.140739-11-gmonaco@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CE/L5aSsSMhC/4MzAHMn7onftJQNJT0NgVEsAAiuRiI4kaSLbrvLfkLtWuMEXPDonwnlEpYylvqrB255C/lMpGGvBbF7LjSymWTkk7//AzxY9OKfWsLx7jQkxFSvQoL7MZecPZJnhdFk0BAMb+TQdxkBRiJkDeYQbLjjq0Me7R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WY/wwDUW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=jYiM3Qw38rzuBVo6SaPYD/cuw6C9KtVM8CdKHhDfty0=; b=WY/wwDUWzp4h7zINiTrJz700Um
+	p3pkz2fXL/JslUBJLYn2wfRTAaSuJDF9/AKKecZDL8s40kz0MoyCJ5SoX/GdDFJBmgV8Q1ZiZtEQs
+	Li02meBLdBk8GxQGiRwkWJH80PVISjD2chohLLuRvxGLK3qAU5g4nYooZqIzGa17MT0Q=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1up4bN-005Ryv-TY; Thu, 21 Aug 2025 14:41:09 +0200
+Date: Thu, 21 Aug 2025 14:41:09 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: David Yang <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net-next v5 3/3] net: dsa: yt921x: Add support for Motorcomm
+ YT921x
+Message-ID: <02baf961-b82d-4819-8791-229f7735a1a7@lunn.ch>
+References: <20250820075420.1601068-1-mmyangfl@gmail.com>
+ <20250820075420.1601068-4-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,39 +66,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250814150809.140739-11-gmonaco@redhat.com>
+In-Reply-To: <20250820075420.1601068-4-mmyangfl@gmail.com>
 
-On Thu, Aug 14, 2025 at 05:08:02PM +0200, Gabriele Monaco wrote:
-> +import re
-
-Oh no..
-
-> +from typing import Iterator
->  
->  class Automata:
->      """Automata class: Reads a dot file and part it as an automata.
->  
-> +    It supports both deterministic and hybrid automata.
+> +#define should_unreachable() \
+> +	pr_err("%s: !!unreachable %d, please report a bug!\n", \
+> +	       __func__, __LINE__)
+> +#define consume_retval(res) do { \
+> +	if (unlikely(res)) \
+> +		pr_err("%s: %i\n", __func__, (res)); \
+> +} while (0)
 > +
->      Attributes:
->          dot_file: A dot file with an state_automaton definition.
->      """
->  
->      invalid_state_str = "INVALID_STATE"
-> +    # val can be numerical, uppercase (constant or macro), lowercase (parameter or function)
-> +    # only numerical values should have units
-> +    constraint_rule = re.compile(r"""
-> +        ^
-> +        (?P<env>[a-zA-Z_][a-zA-Z0-9_]+)  # C-like identifier for the env var
-            ^
-            My regex knowledge is not that great, but I think this is not
-            standard regex syntax, right?
 
-            I'm guessing this is Python's feature to store this group into
-            "env"?
+> +static int
+> +yt921x_vid_del(struct yt921x_priv *priv, int port, u16 vid)
+> +{
+> +	struct yt921x_port *pp = &priv->ports[port];
+> +	u32 mask;
+> +	u32 ctrl;
+> +	u32 val;
+> +	int res;
 
-I think my brain's battery just run out, I will continue with the review
-another day.
+...
 
-Nam
+> +
+> +	if (pp->vids_cnt <= 0)
+> +		should_unreachable();
+> +	else
+> +		pp->vids_cnt--;
+> +	return 0;
+
+Have you seen other drivers do this? If you are doing something which
+other drivers don't do, it is probably wrong.
+
+What you are more likely to see is WARN_ON(pp->vids_cnt <= 0); You
+then get a stack trace, to help debug what happened. Kernel developers
+know what WARN_ON() does, so it is easy to
+understand. should_unreachable() is unique, it is unclear what it
+does, making it harder to understand and review.
+
+> +static void
+> +yt921x_dsa_port_bridge_leave(struct dsa_switch *ds, int port,
+> +			     struct dsa_bridge bridge)
+> +{
+> +	struct yt921x_priv *priv = to_yt921x_priv(ds);
+> +	struct device *dev = to_device(priv);
+> +	u16 ports_mask;
+> +	int res;
+> +
+> +	ports_mask = dsa_bridge_ports(ds, bridge.dev);
+> +
+> +	dev_dbg(dev, "%s: port %d, mask 0x%x\n", __func__, port, ports_mask);
+> +
+> +	ports_mask |= priv->cpu_ports_mask;
+> +
+> +	yt921x_smi_acquire(priv);
+> +	res = yt921x_bridge_force(priv, ports_mask);
+> +	yt921x_smi_release(priv);
+> +
+> +	consume_retval(res);
+> +}
+
+And this is the same. Every driver you look at would just have the if
+statement, not a macro.
+
+In order to make drivers easy to maintain, easier to review, easy to
+debug, they should all look similar.
+
+	Andrew
 
