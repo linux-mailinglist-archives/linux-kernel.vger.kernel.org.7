@@ -1,164 +1,204 @@
-Return-Path: <linux-kernel+bounces-779203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F73B2F06F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA20B2F073
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51E5B5C540E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:02:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF2C5E2935
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D5F2EA75D;
-	Thu, 21 Aug 2025 08:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABA92F4A;
+	Thu, 21 Aug 2025 08:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lPXpavYv"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XDYl1nBG"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54982EA165
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DD336CE06
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763287; cv=none; b=MQpax84sFb4LBRHWo8dhf4hmRZJSM3gWUIVGqlCdCADHe9HoWshexsEI9uFgAC8XjdqshYjHO9/OlhX4YSSIQo7RjnSoXrGl81Hod4XWLCnysU5qvt5102vftBXSrV0kGDSjXRZgDd0RjxQMCXazIkQ8m5XYkRQRr/lvlahbmZg=
+	t=1755763329; cv=none; b=B9q9+LJqY4+91eVItpC9wpBpLXDfR9m0gdVtJKFHTCKAe/dyWHvd93448YWk1fDZfbQZgEJjqfD7OMHL+/L13MMnFNqE/gdUd0aKOXmqqytvaZ+YGIvosSdbFjFTdCbwbPDF8vXpaoLcyreq9pMYTcAjB34MWqvCkeWnMLMIjKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763287; c=relaxed/simple;
-	bh=oZLJpaFA1XQqrArXlzUBWsQNthOhGI0qtYmaSRqQPTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bXaoYgeLVfnbIgKcuE6pwPGYTkd5B3gfjN5+brn9Kf2Be26Iqw392/Q6i9H6MxoQu7e/S5BDDBikMKcHTnqfubLTXP8jumQWk0smnuj+CmP0JbZrDeOmNUeSVWyIgNVyTBuHJ1zwnG7oaC3XuMCfyTHDZJPrvIZ+89k7BCT4qro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lPXpavYv; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1755763329; c=relaxed/simple;
+	bh=zt6yiLOQI7rD9+6jP0vFg/flZSuMXk7SuTB5NlV0LnU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DtsLRiYXkpGT1kLICW0KKhFXBFwxS/Hlt/PEJTMaade4eiYqiPwzt/LdoGEFCJ/f/qjTVIub2dK7IDO8KtKCMf3INQ8TPUqY7+76x5/E111UmBUUtrG0qM2E+fOXKfXnEn4xji64Nna/75lCxEHjW7qCdEGRTRSNAS8/Kg6+VHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XDYl1nBG; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b00797dso4818905e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:01:25 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a1b0d231eso3623445e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:02:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755763284; x=1756368084; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iNGT98klqSv2rZl0EJTYaB+wlY9yv0npHx6OP4ljkeY=;
-        b=lPXpavYvHhVKV9hUtYe8IH3KqW1LI6mGgoofrXSLMjgtFK2hhEuX2V589fF4UFaS/d
-         lLyu7i/mkUkhWlGL62hoqhdA6/WNDkruw1OBGLY4CPEfLaMaWSEgKkjXwgOZSApn7+b4
-         sTwwe64yXZPLXsQ0kIjjIzlbEGXEtMIsIBYgzXczpmFuTH18LVrAHgHWfjl+RCEo5+WU
-         eykx/hedcZUAZVx4RdMEmhcbyns/CHatxJgarQARMYAxzRKnO2SWCUmqJtCijOxuqhKQ
-         sMR7gUYQUMtD7DUdZ17dIYYq7g89zaROF9callkTBZ9znyulHElpY7HLVyOX4C/i+r7T
-         3RFQ==
+        d=linaro.org; s=google; t=1755763326; x=1756368126; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hn27vZnhIqBSicegyUAo/osnGXFM0EzIXplvQ6HEFls=;
+        b=XDYl1nBGC7cgi4GNwJ6oo8gQVwBT6qbeiQHbkUbkgGjRicCK9AG0XNOl3GDuGsM5FC
+         qE104L5ZQ6AWQxI8+StKkGobp+DXNH0a6CxX8SXH6/sbHsUb6+h8wAeOOqnADYsGNuOh
+         qig02b3sALChrzn92ul+zfulw009/lHiQTjX17d3G85TGfkia3a+B09PY6wiZ1q8Q9ND
+         0S3hWVoW3fvoBRqmOWcecl+XSlYfDVzDLhfCiQDd/yHOx+wkDsZeaHS3D4OyOtZlzyEf
+         pIQqKP+k3/cx4kj3yYo+DNTt9y0ejXdcdIHDYftZtcYmvmIhozuwgiEAbYbb0diE49+5
+         CJJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755763284; x=1756368084;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iNGT98klqSv2rZl0EJTYaB+wlY9yv0npHx6OP4ljkeY=;
-        b=UX/6hVCdD9/sNJc9/Zi+MF640KlYjNS35dNJaDvheONUO8pnQwix/nuKU2XLjtZp2r
-         hdD+M1Dv8OwXqKtanIGfCua9rrHUM4CpjBrcBX32MnTi7LPClIlGDaV0d1Lgv8P4co3Y
-         bxRpe6xWAqwlcZMWblb1XCudGV4jYinyYbMupgys2g9YXRI29qb6FAVz+/pmBtGivL7a
-         DIAqiZE0cvscJPgCk2JPHZlt2hJ6zTFAImGu5gDsJDW236/FayM3bfoU0Kv/Av6K31Jx
-         h6SGlS2TsfIZLQAKaomR/HhQ0tudEN8a7/S7hm5KEAv0FPrJ/PjvocSo7Yb4vzivC1H2
-         R8kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVYKHjcfMwVNsSoFt23/w6CKEPy82V054UsGIf7m0nSnS/IZueofCHHG0Td6bSvGYLegEJFZGIj/TXqqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6ssLZHkuIrplFRVZ3M5iwEQ4nVUmMYKt/T4n6vPsyIzJpuS8V
-	TN5XD5hw8NB9JA/9OBuJI35bFpXg2cHITjoH5jkV5HIRqYa6cIgURf5XfUi05bWEoYs=
-X-Gm-Gg: ASbGncvjE5HsCP81Aw8X32m4QKV+aCunN+NWKZql8+UDGHv17QRfiyW+Dqb1ahobQQA
-	hIITLaLYDH1ZScdyptUhmHyTFJqP82nHGHaxEDbKrNi1ti/xwxVlkb53GD5PgPNLj6ymosMaMPx
-	ZlgUzumt11/txfzIjpZM3hPWOjVQbzKsCj/dDOU97sjErIwIhI2Qav6PyjvOkH15fTOX5vLuiHD
-	P9vbzWPTEekfzVbsglmdH6ZJ5bKi/4eOvrByjJaD0yddcngkaT+jIQG7MmbU79wBU867QJMsVEp
-	P7GN7KZ8Sos8Pc8hYqYMM8z2/R0Spz+VeMql4KDjL5fT02GQaB52Gu+q0k/RQDGZ9LZbtGs3u8h
-	VZE9PcJQ3Pg3LD092BBCbI91fXtn4ppuVIIZpNvJy7Jpwpv+wbx2Bav866F1UZTw=
-X-Google-Smtp-Source: AGHT+IHCjFPjgsVt7tr3xezlGae2i3luW4j7fhzwL2N2wuLceLA5EUcPHt7ylepsbKjsUGTs+yYXqg==
-X-Received: by 2002:a05:600c:45d4:b0:459:da76:d7aa with SMTP id 5b1f17b1804b1-45b4d84ff9fmr10651545e9.25.1755763284010;
-        Thu, 21 Aug 2025 01:01:24 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4dba004bsm17558505e9.24.2025.08.21.01.01.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 01:01:23 -0700 (PDT)
-Message-ID: <8f337afc-32aa-47cc-afb5-7d5785d3e377@linaro.org>
-Date: Thu, 21 Aug 2025 09:01:21 +0100
+        d=1e100.net; s=20230601; t=1755763326; x=1756368126;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hn27vZnhIqBSicegyUAo/osnGXFM0EzIXplvQ6HEFls=;
+        b=UgHUwz1nZLXplzoaYHw4eiPhejL/eJsiqSwKvGfy6699M0+lntjKWJDhFU6jL5nJL/
+         8wA0QCokR05eRCHnE/N/brnCKCgs5LIM4+BtokL3kaHMlxyPfv87Fhg9leErSkJrBfK3
+         xg/RxzlD5+ezjdLN2x6/hKx3gVK03RRlP+CqwTNSmJGsoUn6PwXgGhtR/e5fX71dj2tR
+         zMLQUvSGuuEW3bvNIecXkrPfytQCwrQB5RYPoK6+JPMbbOl4hyBePfdL/ira1lAdvYEn
+         IS8m7tbFlVJUt1CT7ajQ4tRZPpePeRwezAt7Lk2ft7QybCKE0rP6LHgFRcOCe8YKEQNi
+         I4lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUqxvzT/nRZd+ruYTm7Pt2y9nZ6gVa9JaErqGG0+6L0qyjXT4kv4RTYmHTjxIK7wKY/fh0ynXtk0bnvlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHVIgu75KD1tncgRFdmiTsYJm5TsZjCXB28ZgCmjdtm3ktUyZK
+	pwn3roPFzutOZXrQvG8kYbus3zwZMBKS0+uhXo2faFySfasUxePF2iIg57LEokN3lUs=
+X-Gm-Gg: ASbGncvHh2KsybSFsCVvLowYDeHSwwpp1LBPOeKmNwwN+QLQYrAFOQYOMWlf7LPYJrZ
+	FEdGq+8WqI20y+SELE6Bn+QF6jNCXord2Hy1pt9/Nw2SO6YbMdDL8C2Z2kA7WjWpL2aIXtcQrht
+	YY6XFUBO7TxFZVE/gv+z41ESChUhy0RR/J0XSTXMWeCEdwNPh5iORVahiyfVfxym2q0zQQuET19
+	bOHpBAqaqBTl4OsexPskRzPH4o+hWZaRl49fkEbcWsF4fd66dzWw4Ha/Pfxag57fj5xlh+jtjq/
+	oNijUEKOZ1l4T8r5IiVF7Q61h5uvrakGiXj5yg/gBc0ynMt9qNgJ1aO4TFk5y7zzTrfmrJgrDU2
+	BEz+LgFmukZTDR4UXfLH+snFN+MESH4UEnUob
+X-Google-Smtp-Source: AGHT+IFyf4GxZUgfH24ON3BuA2aO3p7JoOEyz8RGPT602L+yh2FycWNW4H1ldr6Xsp2nsN+1IQ/uyQ==
+X-Received: by 2002:a05:600c:138f:b0:456:1824:4808 with SMTP id 5b1f17b1804b1-45b4d8779camr9361005e9.32.1755763325420;
+        Thu, 21 Aug 2025 01:02:05 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:a59f:f2cf:3ca3:965])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4dc28fc8sm16337285e9.24.2025.08.21.01.02.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 01:02:05 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Date: Thu, 21 Aug 2025 10:01:47 +0200
+Subject: [PATCH v3] phy: qcom: qmp-pcie: Fix PHY initialization when
+ powered down by firmware
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: venus: firmware: Use correct reset sequence for
- IRIS2
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil <hverkuil@kernel.org>,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250820-venus-iris2-no-tz-v1-1-9ebcc343195a@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250820-venus-iris2-no-tz-v1-1-9ebcc343195a@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250821-phy-qcom-qmp-pcie-nocsr-fix-v3-1-4898db0cc07c@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGrSpmgC/43NsQ6DIBSF4VcxzL0NXIXWTn2PpgMCKkkVhIbUG
+ N+96NQuTcf/DN9ZSDTBmkguxUKCSTZaN+YoDwVRvRw7A1bnJkiR0zND8P0Mk3IDTIMHr6yB0ak
+ YoLUvYIKWjAqsK6VJFnwwed712z13b+PThXk/S2xb/3MTAwa1PGkqucamEteHHWVwRxc6ssEJP
+ 7HqN4YZaw0X2HBNUbIvbF3XN3EVRhcUAQAA
+X-Change-ID: 20250812-phy-qcom-qmp-pcie-nocsr-fix-1603106294cd
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Wenbin Yao <quic_wenbyao@quicinc.com>, Qiang Yu <qiang.yu@oss.qualcomm.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>
+X-Mailer: b4 0.14.2
 
-On 20/08/2025 16:16, Stephan Gerhold wrote:
-> When starting venus with the "no_tz" code path, IRIS2 needs the same
-> boot/reset sequence as IRIS2_1. This is because most of the registers were
-> moved to the "wrapper_tz_base", which is already defined for both IRIS2 and
-> IRIS2_1 inside core.c. Add IRIS2 to the checks inside firmware.c as well to
-> make sure that it uses the correct reset sequence.
-> 
-> Both IRIS and IRIS2_1 are HFI v6 variants, so the correct sequence was used
-> before commit c38610f8981e ("media: venus: firmware: Sanitize
-> per-VPU-version").
-> 
-> Fixes: c38610f8981e ("media: venus: firmware: Sanitize per-VPU-version")
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
->   drivers/media/platform/qcom/venus/firmware.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-> index 66a18830e66dac2acbe11751a8c250876e20d795..4e2636b0536693a86dc51503d01dc2bca40b532a 100644
-> --- a/drivers/media/platform/qcom/venus/firmware.c
-> +++ b/drivers/media/platform/qcom/venus/firmware.c
-> @@ -30,7 +30,7 @@ static void venus_reset_cpu(struct venus_core *core)
->   	u32 fw_size = core->fw.mapped_mem_size;
->   	void __iomem *wrapper_base;
->   
-> -	if (IS_IRIS2_1(core))
-> +	if (IS_IRIS2(core) || IS_IRIS2_1(core))
->   		wrapper_base = core->wrapper_tz_base;
->   	else
->   		wrapper_base = core->wrapper_base;
-> @@ -42,7 +42,7 @@ static void venus_reset_cpu(struct venus_core *core)
->   	writel(fw_size, wrapper_base + WRAPPER_NONPIX_START_ADDR);
->   	writel(fw_size, wrapper_base + WRAPPER_NONPIX_END_ADDR);
->   
-> -	if (IS_IRIS2_1(core)) {
-> +	if (IS_IRIS2(core) || IS_IRIS2_1(core)) {
->   		/* Bring XTSS out of reset */
->   		writel(0, wrapper_base + WRAPPER_TZ_XTSS_SW_RESET);
->   	} else {
-> @@ -68,7 +68,7 @@ int venus_set_hw_state(struct venus_core *core, bool resume)
->   	if (resume) {
->   		venus_reset_cpu(core);
->   	} else {
-> -		if (IS_IRIS2_1(core))
-> +		if (IS_IRIS2(core) || IS_IRIS2_1(core))
->   			writel(WRAPPER_XTSS_SW_RESET_BIT,
->   			       core->wrapper_tz_base + WRAPPER_TZ_XTSS_SW_RESET);
->   		else
-> @@ -181,7 +181,7 @@ static int venus_shutdown_no_tz(struct venus_core *core)
->   	void __iomem *wrapper_base = core->wrapper_base;
->   	void __iomem *wrapper_tz_base = core->wrapper_tz_base;
->   
-> -	if (IS_IRIS2_1(core)) {
-> +	if (IS_IRIS2(core) || IS_IRIS2_1(core)) {
->   		/* Assert the reset to XTSS */
->   		reg = readl(wrapper_tz_base + WRAPPER_TZ_XTSS_SW_RESET);
->   		reg |= WRAPPER_XTSS_SW_RESET_BIT;
-> 
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250815-venus-iris2-no-tz-f9b52f33c4d0
-> 
-> Best regards,
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Commit 0cc22f5a861c ("phy: qcom: qmp-pcie: Add PHY register retention
+support") added support for using the "no_csr" reset to skip configuration
+of the PHY if the init sequence was already applied by the boot firmware.
+The expectation is that the PHY is only turned on/off by using the "no_csr"
+reset, instead of powering it down and re-programming it after a full
+reset.
+
+The boot firmware on X1E does not fully conform to this expectation: If the
+PCIe3 link fails to come up (e.g. because no PCIe card is inserted), the
+firmware powers down the PHY using the QPHY_PCS_POWER_DOWN_CONTROL
+register. The QPHY_START_CTRL register is kept as-is, so the driver assumes
+the PHY is already initialized and skips the configuration/power up
+sequence. The PHY won't come up again without clearing the
+QPHY_PCS_POWER_DOWN_CONTROL, so eventually initialization fails:
+
+  qcom-qmp-pcie-phy 1be0000.phy: phy initialization timed-out
+  phy phy-1be0000.phy.0: phy poweron failed --> -110
+  qcom-pcie 1bd0000.pcie: cannot initialize host
+  qcom-pcie 1bd0000.pcie: probe with driver qcom-pcie failed with error -110
+
+This can be reliably reproduced on the X1E CRD, QCP and Devkit when no card
+is inserted for PCIe3.
+
+Fix this by checking the QPHY_PCS_POWER_DOWN_CONTROL register in addition
+to QPHY_START_CTRL. If the PHY is powered down with the register, it
+doesn't conform to the expectations for using the "no_csr" reset, so we
+fully re-initialize with the normal reset sequence.
+
+Also check the register more carefully to ensure all of the bits we expect
+are actually set. A simple !!(readl()) is not enough, because the PHY might
+be only partially set up with some of the expected bits set.
+
+Cc: stable@vger.kernel.org
+Fixes: 0cc22f5a861c ("phy: qcom: qmp-pcie: Add PHY register retention support")
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+Changes in v3:
+- Move up existing comment block and clarify it, so that it is more obvious
+  what the additional checks really do (Bjorn)
+- Link to v2: https://lore.kernel.org/r/20250814-phy-qcom-qmp-pcie-nocsr-fix-v2-1-fe562b5d02a1@linaro.org
+
+Changes in v2:
+- Ensure that all expected bits are set (Konrad)
+- Link to v1: https://lore.kernel.org/r/20250812-phy-qcom-qmp-pcie-nocsr-fix-v1-1-9a7d0a5d2b46@linaro.org
+---
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+index 95830dcfdec9b1f68fd55d1cc3c102985cfafcc1..0fa63b734b67b8f44580b56555950bb5d74ef94c 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+@@ -3067,6 +3067,14 @@ struct qmp_pcie {
+ 	struct clk_fixed_rate aux_clk_fixed;
+ };
+ 
++static bool qphy_checkbits(const void __iomem *base, u32 offset, u32 val)
++{
++	u32 reg;
++
++	reg = readl(base + offset);
++	return (reg & val) == val;
++}
++
+ static inline void qphy_setbits(void __iomem *base, u32 offset, u32 val)
+ {
+ 	u32 reg;
+@@ -4339,16 +4347,21 @@ static int qmp_pcie_init(struct phy *phy)
+ 	struct qmp_pcie *qmp = phy_get_drvdata(phy);
+ 	const struct qmp_phy_cfg *cfg = qmp->cfg;
+ 	void __iomem *pcs = qmp->pcs;
+-	bool phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
+ 	int ret;
+ 
+-	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
+ 	/*
+-	 * We need to check the existence of init sequences in two cases:
+-	 * 1. The PHY doesn't support no_csr reset.
+-	 * 2. The PHY supports no_csr reset but isn't initialized by bootloader.
+-	 * As we can't skip init in these two cases.
++	 * We can skip PHY initialization if all of the following conditions
++	 * are met:
++	 *  1. The PHY supports the nocsr_reset that preserves the PHY config.
++	 *  2. The PHY was started (and not powered down again) by the
++	 *     bootloader, with all of the expected bits set correctly.
++	 * In this case, we can continue without having the init sequence
++	 * defined in the driver.
+ 	 */
++	qmp->skip_init = qmp->nocsr_reset &&
++		qphy_checkbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START) &&
++		qphy_checkbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], cfg->pwrdn_ctrl);
++
+ 	if (!qmp->skip_init && !cfg->tbls.serdes_num) {
+ 		dev_err(qmp->dev, "Init sequence not available\n");
+ 		return -ENODATA;
+
+---
+base-commit: aac1256a41cfbbaca12d6c0a5753d1e3b8d2d8bf
+change-id: 20250812-phy-qcom-qmp-pcie-nocsr-fix-1603106294cd
+
+Best regards,
+-- 
+Stephan Gerhold <stephan.gerhold@linaro.org>
+
 
