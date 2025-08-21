@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-779480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5EAB2F4A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:53:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115F6B2F4A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A893B9B03
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0AF11CE1939
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793BF2DA776;
-	Thu, 21 Aug 2025 09:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CE52DC332;
+	Thu, 21 Aug 2025 09:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fXGGMaTQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OQtTxl2j"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD762E2DC6
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EAB2DBF7C
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769970; cv=none; b=M5XVbCOvc5+SH3gfPVWfjRHxpDznmthqnFGTkUHI+YLOjKXtuZw94c03LZ6n3e9L17/xfFval9PsOIIhkjj8yNPLIxZzYAV6NP5u9oWipms3Dop8Hg7J29ckgs6sVa8MI1mCo3U7qOBzwJI7BycIVR4aH30iYeeC/N6FL1tcyz0=
+	t=1755769977; cv=none; b=frKwCGKgNpcF7kvVN8tKpZ8NjknG8PGYJtyQkHoOJBMCgAquqeWoNElxmGdqDYIOrLf3FC5EY7dT1+VDMtivchlyuIapyIcx+nEcbOw2sOS0zTttw1hBrpSUlsBKW/qPmW3vden5Bguqeq3Wj7Ea+M7OiAEu/B2KiJyO1Vrn3zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769970; c=relaxed/simple;
-	bh=t2iUy/wZuKlC7s7lNGJcsEGhu3N4LW8iuiwyZGIDZRA=;
+	s=arc-20240116; t=1755769977; c=relaxed/simple;
+	bh=bByej5AoCQfD9FvX/vBFcWq7In0h5Eynno/lFzhDY+8=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rkW+8B3kiTyzRqgGpj674VedH06aBIm62s74bfRR/4hiqyVxMu83wOzks5z2YaHXwOPPrXzGK/lqtgz5IkJ3uOSzIFe5owPiIhhtL0bEOyTY0qlibzZhvdBmjP5rWchgzBUiK4MUXTkspcmGWJwbM3jLReMeFCyU9FRHohKuqFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fXGGMaTQ; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=qyy3lkTIqkeLrWWVu0gAgti1BhySwooXJbPJKqBXGxkRYmpJ3dbO5TlkQ/eJkOztI1/I2ANCeGFqJd7da/i+/QW5UbKKQnZAbBtJGshGlB+T9LNbM1ghIwkeifD9POND4MSHVl1FaPkSA/4xn+u7BM0ZO6OlD6Gub7NzORrRPqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OQtTxl2j; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755769967;
+	s=mimecast20190719; t=1755769974;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kgTYz/xc1IhWIiyKBtA2fPS1zW/AfOLuNLmyMAtu254=;
-	b=fXGGMaTQDw0ynK0b3eWgcvgltQu1GoNz98nhK+cfQo5jlGAFEmdvePz5LtzrUAeAyh3yGZ
-	SngCOQF06J37iO6gDrtSJxckKjqEv1f+cJRhLeaQhpxLAkmxpZt++u58aYW5P9bXOJiTpC
-	nX4Oademel5+ofjuSApMKF+EX2ACvaU=
+	bh=+SYzSNImSl+LPKPKIoN+DdHAjnOxi2k0cEcilhLXTaY=;
+	b=OQtTxl2jgUBVjKrDA4rsMJ4lboEGaFZLQVPs5t0kzMc4yEqrhD0RopLoPQGgKprTBphZ/L
+	x5MNisz4ocQhU2clfe7gFtMBRE3yNdb0TJVz0fcSj5cHxrCP/wuFytdnGgomYk7HOuVEZT
+	ICUmWYu+Xys+QTc2P7hlJlZ5uIFkfd0=
 Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-552-lG8voXtTPkmKoLxWi8A7gg-1; Thu,
- 21 Aug 2025 05:52:44 -0400
-X-MC-Unique: lG8voXtTPkmKoLxWi8A7gg-1
-X-Mimecast-MFC-AGG-ID: lG8voXtTPkmKoLxWi8A7gg_1755769963
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-255-HOOafrVsOBe7CguEyxdt0A-1; Thu,
+ 21 Aug 2025 05:52:48 -0400
+X-MC-Unique: HOOafrVsOBe7CguEyxdt0A-1
+X-Mimecast-MFC-AGG-ID: HOOafrVsOBe7CguEyxdt0A_1755769966
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1BE841956086;
-	Thu, 21 Aug 2025 09:52:43 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9773A1956087;
+	Thu, 21 Aug 2025 09:52:46 +0000 (UTC)
 Received: from hydra.redhat.com (unknown [10.44.33.118])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 112B01977691;
-	Thu, 21 Aug 2025 09:52:39 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 98FE9197768D;
+	Thu, 21 Aug 2025 09:52:43 +0000 (UTC)
 From: Jocelyn Falempe <jfalempe@redhat.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -66,9 +66,9 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Javier Martinez Canillas <javierm@redhat.com>,
 	linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH 2/3] drm/panic: Add kunit tests for drm_panic
-Date: Thu, 21 Aug 2025 11:49:06 +0200
-Message-ID: <20250821095228.648156-3-jfalempe@redhat.com>
+Subject: [PATCH 3/3] drm/panic: Add a kconfig option to dump kunits results to png
+Date: Thu, 21 Aug 2025 11:49:07 +0200
+Message-ID: <20250821095228.648156-4-jfalempe@redhat.com>
 In-Reply-To: <20250821095228.648156-1-jfalempe@redhat.com>
 References: <20250821095228.648156-1-jfalempe@redhat.com>
 Precedence: bulk
@@ -80,212 +80,247 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Add kunit tests for drm_panic.
-They check that drawing the panic screen doesn't crash, but they
-don't check the correctness of the resulting image.
+This is a bit hacky, but very handy if you want to customize the
+panic screen.
+It allows to dump the generated images to the logs, and then a python
+script can convert it to .png files. It makes it easy to check how
+the panic screen will look on different resolutions, without having
+to crash a VM.
+To not pollute the logs, it uses a monochrome framebuffer, compress
+it with zlib, and base64 encode it.
 
 Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 ---
- MAINTAINERS                            |   1 +
- drivers/gpu/drm/drm_panic.c            |   4 +
- drivers/gpu/drm/tests/drm_panic_test.c | 164 +++++++++++++++++++++++++
- 3 files changed, 169 insertions(+)
- create mode 100644 drivers/gpu/drm/tests/drm_panic_test.c
+ drivers/gpu/drm/Kconfig.debug          |  14 ++++
+ drivers/gpu/drm/tests/drm_panic_test.c | 111 +++++++++++++++++++++++++
+ scripts/kunitpanic2png.py              |  53 ++++++++++++
+ 3 files changed, 178 insertions(+)
+ create mode 100755 scripts/kunitpanic2png.py
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cfa28b3470ab..285d1e27734f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8465,6 +8465,7 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
- F:	drivers/gpu/drm/drm_draw.c
- F:	drivers/gpu/drm/drm_draw_internal.h
- F:	drivers/gpu/drm/drm_panic*.c
-+F:	drivers/gpu/drm/tests/drm_panic_test.c
- F:	include/drm/drm_panic*
+diff --git a/drivers/gpu/drm/Kconfig.debug b/drivers/gpu/drm/Kconfig.debug
+index 05dc43c0b8c5..d8ae85132d32 100644
+--- a/drivers/gpu/drm/Kconfig.debug
++++ b/drivers/gpu/drm/Kconfig.debug
+@@ -84,6 +84,20 @@ config DRM_KUNIT_TEST
  
- DRM PANIC QR CODE
-diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-index 1e06e3a18d09..d89812ff1935 100644
---- a/drivers/gpu/drm/drm_panic.c
-+++ b/drivers/gpu/drm/drm_panic.c
-@@ -986,3 +986,7 @@ void drm_panic_exit(void)
- {
- 	drm_panic_qr_exit();
- }
+ 	  If in doubt, say "N".
+ 
++config DRM_PANIC_KUNIT_TEST_DUMP
++	bool "Enable screen dump to logs in KUnit tests for drm_panic"
++	default n
++	depends on DRM && DRM_PANIC && DRM_KUNIT_TEST
++	select ZLIB_DEFLATE
++	help
++	  This allows to dump the panic screen to the KUnit tests logs.
++	  It's possible with a small python script to write pngs from the logs.
 +
-+#ifdef CONFIG_DRM_KUNIT_TEST
-+#include "tests/drm_panic_test.c"
-+#endif
++	  This is only to help developers customizing the drm_panic screen,
++	  checking the result for different resolutions.
++
++	  If in doubt, say "N"
++
+ config DRM_TTM_KUNIT_TEST
+ 	tristate "KUnit tests for TTM" if !KUNIT_ALL_TESTS
+ 	default n
 diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm/tests/drm_panic_test.c
-new file mode 100644
-index 000000000000..46ff3e5e0e5d
---- /dev/null
+index 46ff3e5e0e5d..8cddb845aea9 100644
+--- a/drivers/gpu/drm/tests/drm_panic_test.c
 +++ b/drivers/gpu/drm/tests/drm_panic_test.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0 or MIT
-+/*
-+ * Copyright (c) 2025 Red Hat.
-+ * Author: Jocelyn Falempe <jfalempe@redhat.com>
-+ *
-+ * KUNIT tests for drm panic
-+ */
+@@ -115,24 +115,135 @@ static void drm_test_panic_screen_user_page(struct kunit *test)
+ 	kfree(pages);
+ }
+ 
++#ifdef CONFIG_DRM_PANIC_KUNIT_TEST_DUMP
++#include <linux/base64.h>
++#include <linux/delay.h>
++#include <linux/zlib.h>
 +
-+#include <drm/drm_fourcc.h>
-+#include <drm/drm_panic.h>
++#define LINE_LEN 128
 +
-+#include <kunit/test.h>
++#define COMPR_LEVEL 6
++#define WINDOW_BITS 12
++#define MEM_LEVEL 4
 +
-+#include <linux/units.h>
-+#include <linux/vmalloc.h>
-+
-+struct drm_test_mode {
-+	const int width;
-+	const int height;
-+	const u32 format;
-+	void (*draw_screen)(struct drm_scanout_buffer *sb);
-+	const char *fname;
-+};
-+
-+/*
-+ * Run all tests for the 3 panic screens: user, kmsg and qr_code
-+ */
-+#define DRM_TEST_MODE_LIST(func) \
-+	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_XRGB8888, func) \
-+	DRM_PANIC_TEST_MODE(300, 200, DRM_FORMAT_XRGB8888, func) \
-+	DRM_PANIC_TEST_MODE(1920, 1080, DRM_FORMAT_XRGB8888, func) \
-+	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB565, func) \
-+	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB888, func) \
-+
-+#define DRM_PANIC_TEST_MODE(w, h, f, name) { \
-+	.width = w, \
-+	.height = h, \
-+	.format = f, \
-+	.draw_screen = draw_panic_screen_##name, \
-+	.fname = #name, \
-+	}, \
-+
-+static const struct drm_test_mode drm_test_modes_cases[] = {
-+	DRM_TEST_MODE_LIST(user)
-+	DRM_TEST_MODE_LIST(kmsg)
-+	DRM_TEST_MODE_LIST(qr_code)
-+};
-+#undef DRM_PANIC_TEST_MODE
-+
-+static int drm_test_panic_init(struct kunit *test)
++static int compress_image(u8 *src, int size, u8 *dst)
 +{
-+	struct drm_scanout_buffer *priv;
++	struct z_stream_s stream;
 +
-+	priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, priv);
++	stream.workspace = kmalloc(zlib_deflate_workspacesize(WINDOW_BITS, MEM_LEVEL),
++				   GFP_KERNEL);
 +
-+	test->priv = priv;
++	if (zlib_deflateInit2(&stream, COMPR_LEVEL, Z_DEFLATED, WINDOW_BITS,
++			      MEM_LEVEL, Z_DEFAULT_STRATEGY) != Z_OK)
++		return -EINVAL;
 +
-+	drm_panic_set_description("Kunit testing");
++	stream.next_in = src;
++	stream.avail_in = size;
++	stream.total_in = 0;
++	stream.next_out = dst;
++	stream.avail_out = size;
++	stream.total_out = 0;
 +
-+	return 0;
++	if (zlib_deflate(&stream, Z_FINISH) != Z_STREAM_END)
++		return -EINVAL;
++
++	if (zlib_deflateEnd(&stream) != Z_OK)
++		return -EINVAL;
++
++	kfree(stream.workspace);
++
++	return stream.total_out;
 +}
 +
-+static void drm_test_panic_screen_user_map(struct kunit *test)
++static void dump_image(u8 *fb, unsigned int width, unsigned int height)
 +{
-+	struct drm_scanout_buffer *sb = test->priv;
-+	const struct drm_test_mode *params = test->param_value;
-+	void *fb;
-+	int fb_size;
++	int len = 0;
++	char *dst;
++	char *compressed;
++	int sent = 0;
++	int stride = DIV_ROUND_UP(width, 8);
++	int size = stride * height;
 +
-+	sb->format = drm_format_info(params->format);
-+	fb_size = params->width * params->height * sb->format->cpp[0];
-+
-+	fb = vmalloc(fb_size);
-+	KUNIT_ASSERT_NOT_NULL(test, fb);
-+
-+	iosys_map_set_vaddr(&sb->map[0], fb);
-+	sb->width = params->width;
-+	sb->height = params->height;
-+	sb->pitch[0] = params->width * sb->format->cpp[0];
-+
-+	params->draw_screen(sb);
-+	vfree(fb);
-+}
-+
-+static void drm_test_panic_screen_user_page(struct kunit *test)
-+{
-+	struct drm_scanout_buffer *sb = test->priv;
-+	const struct drm_test_mode *params = test->param_value;
-+	int fb_size;
-+	struct page **pages;
-+	int i;
-+	int npages;
-+
-+	sb->format = drm_format_info(params->format);
-+	fb_size = params->width * params->height * sb->format->cpp[0];
-+	npages = DIV_ROUND_UP(fb_size, PAGE_SIZE);
-+
-+	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, pages);
-+
-+	for (i = 0; i < npages; i++) {
-+		pages[i] = alloc_page(GFP_KERNEL);
-+		KUNIT_ASSERT_NOT_NULL(test, pages[i]);
++	compressed = vzalloc(size);
++	if (!compressed)
++		return;
++	len = compress_image(fb, size, compressed);
++	if (len < 0) {
++		pr_err("Compression failed %d", len);
++		return;
 +	}
-+	sb->pages = pages;
-+	sb->width = params->width;
-+	sb->height = params->height;
-+	sb->pitch[0] = params->width * sb->format->cpp[0];
 +
-+	params->draw_screen(sb);
++	dst = vzalloc(4 * DIV_ROUND_UP(len, 3) + 1);
++	if (!dst)
++		return;
 +
-+	for (i = 0; i < npages; i++)
-+		__free_page(pages[i]);
-+	kfree(pages);
++	len = base64_encode(compressed, len, dst);
++
++	pr_info("KUNIT PANIC IMAGE DUMP START %dx%d", width, height);
++	while (len > 0) {
++		char save = dst[sent + LINE_LEN];
++
++		dst[sent + LINE_LEN] = 0;
++		pr_info("%s", dst + sent);
++		dst[sent + LINE_LEN] = save;
++		sent += LINE_LEN;
++		len -= LINE_LEN;
++	}
++	pr_info("KUNIT PANIC IMAGE DUMP END");
++	vfree(compressed);
++	vfree(dst);
++
 +}
 +
++// Ignore pixel format, use 1bit per pixel in monochrome.
+ static void drm_test_panic_set_pixel(struct drm_scanout_buffer *sb,
+ 				     unsigned int x,
+ 				     unsigned int y,
+ 				     u32 color)
+ {
++	int stride = DIV_ROUND_UP(sb->width, 8);
++	size_t off = x / 8 + y * stride;
++	u8 shift = 7 - (x % 8);
++	u8 *fb = (u8 *) sb->private;
++
++	if (color)
++		fb[off] |= 1 << shift;
++	else
++		fb[off] &= ~(1 << shift);
+ }
+ 
++#else
++static void dump_image(u8 *fb, unsigned int width, unsigned int height) {}
 +static void drm_test_panic_set_pixel(struct drm_scanout_buffer *sb,
 +				     unsigned int x,
 +				     unsigned int y,
 +				     u32 color)
 +{
 +}
++#endif
 +
-+static void drm_test_panic_screen_user_set_pixel(struct kunit *test)
-+{
-+	struct drm_scanout_buffer *sb = test->priv;
-+	const struct drm_test_mode *params = test->param_value;
+ static void drm_test_panic_screen_user_set_pixel(struct kunit *test)
+ {
+ 	struct drm_scanout_buffer *sb = test->priv;
+ 	const struct drm_test_mode *params = test->param_value;
++	int fb_size;
++	u8 *fb;
+ 
+ 	sb->format = drm_format_info(params->format);
++	fb_size = DIV_ROUND_UP(params->width, 8) * params->height;
 +
-+	sb->format = drm_format_info(params->format);
-+	sb->set_pixel = drm_test_panic_set_pixel;
-+	sb->width = params->width;
-+	sb->height = params->height;
++	fb = vzalloc(fb_size);
++	KUNIT_ASSERT_NOT_NULL(test, fb);
++	sb->private = fb;
+ 	sb->set_pixel = drm_test_panic_set_pixel;
+ 	sb->width = params->width;
+ 	sb->height = params->height;
+ 
+ 	params->draw_screen(sb);
++	if (params->format == DRM_FORMAT_XRGB8888)
++		dump_image(fb, sb->width, sb->height);
 +
-+	params->draw_screen(sb);
-+}
++	vfree(fb);
+ }
+ 
+ static void drm_test_panic_desc(const struct drm_test_mode *t, char *desc)
+diff --git a/scripts/kunitpanic2png.py b/scripts/kunitpanic2png.py
+new file mode 100755
+index 000000000000..e292afd7422c
+--- /dev/null
++++ b/scripts/kunitpanic2png.py
+@@ -0,0 +1,53 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: MIT
++#
++# Copyright (c) 2025 Red Hat.
++# Author: Jocelyn Falempe <jfalempe@redhat.com>
 +
-+static void drm_test_panic_desc(const struct drm_test_mode *t, char *desc)
-+{
-+	sprintf(desc, "Panic screen %s, mode: %d x %d \t%p4cc",
-+		t->fname, t->width, t->height, &t->format);
-+}
++from argparse import ArgumentParser
++from PIL import Image
++import base64
++import zlib
 +
-+KUNIT_ARRAY_PARAM(drm_test_panic_screen_user_map, drm_test_modes_cases, drm_test_panic_desc);
-+KUNIT_ARRAY_PARAM(drm_test_panic_screen_user_page, drm_test_modes_cases, drm_test_panic_desc);
-+KUNIT_ARRAY_PARAM(drm_test_panic_screen_user_set_pixel, drm_test_modes_cases, drm_test_panic_desc);
++def get_dim(s):
++    (w, h) = s.split('x')
++    return (int(w), int(h))
 +
-+static struct kunit_case drm_panic_screen_user_test[] = {
-+	KUNIT_CASE_PARAM(drm_test_panic_screen_user_map,
-+			 drm_test_panic_screen_user_map_gen_params),
-+	KUNIT_CASE_PARAM(drm_test_panic_screen_user_page,
-+			 drm_test_panic_screen_user_page_gen_params),
-+	KUNIT_CASE_PARAM(drm_test_panic_screen_user_set_pixel,
-+			 drm_test_panic_screen_user_set_pixel_gen_params),
-+	{ }
-+};
++def draw_image(img_data, width, height, n_img):
 +
-+static struct kunit_suite drm_panic_suite = {
-+	.name = "drm_panic",
-+	.init = drm_test_panic_init,
-+	.test_cases = drm_panic_screen_user_test,
-+};
++    decoded = base64.b64decode(img_data)
++    unzipped = zlib.decompress(decoded)
 +
-+kunit_test_suite(drm_panic_suite);
++    img = Image.frombytes("1", (width, height), unzipped)
++    fname = f"panic_screen_{n_img}.png"
++    img.save(fname)
++    print(f"Image {width}x{height} saved to {fname}")
++
++def main():
++    parser = ArgumentParser(
++        prog="kunitpanic2png",
++        description="Read drm_panic kunit logs and translate that to png files")
++
++    parser.add_argument("filename", help="log file from kunit, usually test.log")
++
++    parsing_img = False
++    img_data = ""
++    n_img = 0
++
++    args = parser.parse_args()
++    with open(args.filename, "r") as f:
++        for line in f.readlines():
++            if line.startswith("KUNIT PANIC IMAGE DUMP START"):
++                parsing_img = True
++                width, height = get_dim(line.split()[-1])
++                continue
++            if line.startswith("KUNIT PANIC IMAGE DUMP END"):
++                draw_image(img_data, width, height, n_img)
++                parsing_img = False
++                img_data = ""
++                n_img += 1
++                continue
++            if parsing_img:
++                img_data += line.strip()
++
++main()
 -- 
 2.50.1
 
