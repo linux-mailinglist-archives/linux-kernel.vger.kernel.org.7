@@ -1,217 +1,120 @@
-Return-Path: <linux-kernel+bounces-780526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32D7B3030E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A971DB3030C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 634EC6071F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:37:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD4765C82EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1779834AAEA;
-	Thu, 21 Aug 2025 19:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA2334DCCF;
+	Thu, 21 Aug 2025 19:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="pN+Cg84+"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="fj06HT0d"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF6D2C21E8;
-	Thu, 21 Aug 2025 19:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EC92DF71C;
+	Thu, 21 Aug 2025 19:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755805034; cv=none; b=djESNiWaW1UD4kv2rePGC4zTyyFgFiCwBkviVMJQx0q9npqdz9QwId3z77yDh7dCFAoMwKDiiAgYRpKOKBFF5QJ8F0Z7sdJu5OQeSBBRQ3tyBUllF4jkBAm64kLO8/VoQSHx6qQWuxVhCUb8nryPGuiHPn1YbInkSCqzmUMR1OY=
+	t=1755804987; cv=none; b=sIU9jWFUrhV1p+0QYd/wtcRo2XOuARITI/cI8QdXp2BnsRsoNH9BKkrdyWgiNtzYfRlbrxnMrj7n1cEwTau6ZDTTDny/a/0ddLPLLZmAEG5ZAosa2AAawna8MZX8fcy27rKE9kSBDGwmEeyDVA7N7y8Y2iHYM3C9l5oM53WxUNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755805034; c=relaxed/simple;
-	bh=KLLf9VyDfAK4FWoUs75vwIko48STkzdu8JSJfszwCuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+h++wBjTgf54RDGGOmLamW+B1osVpqYq53ZQ9095eqNj9RO/OWsziLZpuhNBVvPf3PzbYrz7Os3slmmfEiWTuzMTN3bXy3U3ua9J36SUdy0huCcpN1TEtTXAkFDpSTxl5VPMN059HJxIkd83VJu3tYqMOEYHq7RGCXp1BkaiQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=pN+Cg84+; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134420.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LIGo25019507;
-	Thu, 21 Aug 2025 19:36:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pps0720; bh=Wa
-	8/iqYdFpX8MJDTCXt3R7g1KRe65oEz4/7rMZKRdyY=; b=pN+Cg84+5+u0N6DOIP
-	GwTc5IaeL20gcPm4Ev/zqIkEXIDgWfypgqcHEpGHguLRySZ2ai05WIte7Cm++yqh
-	vpIFFvYthn5gDIdOQ5SHR95CpedzAiun25h3cmskmsF6nBwdvZ033979gXTLSzkF
-	LLXpCgRTnw7KDD6orr6ThDI+TqyELXCzwYb5dlOkXExlAZnJPdSAZf91U6EBPIz8
-	wNuVIGFJr+ccz30mXqMPOvBkabXM+M2cEOhb1UO3ArSNHinbvI0hXBu3KbIdz/Ue
-	/3Dwdot56ix6hKYb5qJorfQ7SA318hqNcVm5EIzLpjy3LWZ+WC6RaHUCr6tD+8Mw
-	6ZDA==
-Received: from p1lg14881.it.hpe.com ([16.230.97.202])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48p10evsb0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 19:36:17 +0000 (GMT)
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	s=arc-20240116; t=1755804987; c=relaxed/simple;
+	bh=uHcy2AviljsxLllJ3OPGmlhzgQEqdyQntMpt5D8c29U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gUySWPo1uBnKbs5CqjidSRiWLcB+5o3aIInQ8tlhNfaNIV53KXSJ35Wl6w+Nj/M2+HrMnu8EMgv8MOExlaumUmi2v+u3aZcgPksHzKfDAhrCsbwDV+1eDEcdNPcj7qNgiikv2loJdIlkgoDAaNBp5oUbDjUCziL7kxOIdAHzs6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=fj06HT0d; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E418940AD5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755804985; bh=pmY6KG+wTzJ4LEBx4m1XWQJtkWHMxxgvsD7nwMl8SYQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=fj06HT0d89qImOAXo2ani3JiR3pwXraPM90AW8x5eBBe06pZLslh/l+Dy/mosefIZ
+	 KUNfFJuD85Srygk0zFJFWEUF0aLMZv5Dc3lE+ygdvu/qLQQ+L/ezSqndfEs2QIzMMO
+	 JnS5r+qmyqe0vjCcKpytc3hBr/q49ZSVLfSN6qIJAzCoEuS9AgbPwJiR40UWbzfUrR
+	 2gZ8jieG/K2QGowQSYwZIwpkylpTZ3cQkRDizGd6mGSCKRjgggxghAhiA4bJ2PgUJb
+	 1B50cqbzdWrtEZ5swW7IH2dio9/CcRlVSfncaKFcgsJrNxPWxIjb/Hhp2lU9N8VOC9
+	 C8y1dNTHIWmqw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 3B86B805E18;
-	Thu, 21 Aug 2025 19:36:16 +0000 (UTC)
-Received: from HPE-5CG20646DK.localdomain (unknown [16.231.227.36])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 67945805E5B;
-	Thu, 21 Aug 2025 19:36:13 +0000 (UTC)
-Date: Thu, 21 Aug 2025 14:36:11 -0500
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: Jiaqi Yan <jiaqiyan@google.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, tony.luck@intel.com,
-        bp@alien8.de, linmiaohe@huawei.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-        rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-        nao.horiguchi@gmail.com, jane.chu@oracle.com, osalvador@suse.de
-Subject: Re: [PATCH] mm/memory-failure: Do not call action_result() on
- already poisoned pages
-Message-ID: <aKd1K3ueTacGTf1W@hpe.com>
-References: <20250821164445.14467-1-kyle.meyer@hpe.com>
- <CACw3F53KmKRJyH+ajicyDUgGbPZT=U3VE4n+Jt3E62BxEiiCGA@mail.gmail.com>
+	by ms.lwn.net (Postfix) with ESMTPSA id E418940AD5;
+	Thu, 21 Aug 2025 19:36:24 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, =?utf-8?Q?Bj=C3=B6r?=
+ =?utf-8?Q?n?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Alice
+ Ryhl <aliceryhl@google.com>, Andreas Hindborg <mchehab+huawei@kernel.org>,
+ Benno Lossin <mchehab+huawei@kernel.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Danilo Krummrich <mchehab+huawei@kernel.org>, Gary
+ Guo <gary@garyguo.net>, Miguel Ojeda <mchehab+huawei@kernel.org>, Trevor
+ Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 04/11] scripts: sphinx-build-wrapper: add a wrapper for
+ sphinx-build
+In-Reply-To: <88a95c7f6996cafb247d6706060173b17a46d570.1755258303.git.mchehab+huawei@kernel.org>
+References: <cover.1755258303.git.mchehab+huawei@kernel.org>
+ <88a95c7f6996cafb247d6706060173b17a46d570.1755258303.git.mchehab+huawei@kernel.org>
+Date: Thu, 21 Aug 2025 13:36:24 -0600
+Message-ID: <87v7mg5ux3.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACw3F53KmKRJyH+ajicyDUgGbPZT=U3VE4n+Jt3E62BxEiiCGA@mail.gmail.com>
-X-Proofpoint-GUID: ZsbMeJ8F2AyD1J_S0CWBl-FkjT0scDay
-X-Proofpoint-ORIG-GUID: ZsbMeJ8F2AyD1J_S0CWBl-FkjT0scDay
-X-Authority-Analysis: v=2.4 cv=X9oL6GTe c=1 sm=1 tr=0 ts=68a77531 cx=c_pps
- a=FAnPgvRYq/vnBSvlTDCQOQ==:117 a=FAnPgvRYq/vnBSvlTDCQOQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=MvuuwTCpAAAA:8 a=yW6kyvSLy8IxsXRRQqMA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIxMDE2NSBTYWx0ZWRfXweS0z0IijUjv
- TR5xEPl57yRTGITviQj7VxIoB/dhthyPhn3Caj5YbwX+GC6OYnvX99pN+Moi+jnFIzqflNUfAx1
- nVVN0mYFsxaB7/FmjOe9Hyr9suVi+Yj7m+ihVNQtmcQKRBzuV3OnqTQrvxRAXD4nuJQqvJhat2S
- Dt6Wwq87akgo5EK9miGGi7t9ISMpoNqKz30QF14/qO7CHBIckrso9IVUly3vGzZVwnie5WFG/1C
- 1TrUwSNZVHF1Ep7Hox1jV/J4B9pDqIh6cez5UOUKzn1B0Uv0uxFngbIGUzkzCn2DnPHQViY3CGb
- lmKRjiW1lq4gyiSCP6/YbV1cAc/Xoq69zgAifbVWB5pC/13+GLevXr77zpCKqHz8UF56PKl7N/P
- nhFW2WU1zPAaa05SsRivOpoC0k2xRJtnqaU4a4cztznNj/ZXP7k7Fgd0p+hbZfSocDjOo0HI
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
- spamscore=0 adultscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
- suspectscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
- definitions=main-2508210165
+Content-Type: text/plain
 
-On Thu, Aug 21, 2025 at 11:23:48AM -0700, Jiaqi Yan wrote:
-> On Thu, Aug 21, 2025 at 9:46 AM Kyle Meyer <kyle.meyer@hpe.com> wrote:
-> >
-> > Calling action_result() on already poisoned pages causes issues:
-> >
-> > * The amount of hardware corrupted memory is incorrectly incremented.
-> > * NUMA node memory failure statistics are incorrectly updated.
-> > * Redundant "already poisoned" messages are printed.
-> 
-> All agreed.
-> 
-> >
-> > Do not call action_result() on already poisoned pages and drop unused
-> > MF_MSG_ALREADY_POISONED.
-> 
-> Hi Kyle,
-> 
-> Patch looks great to me, just one thought...
-> 
-> Alternatively, have you thought about keeping MF_MSG_ALREADY_POISONED
-> but changing action_result for MF_MSG_ALREADY_POISONED?
-> - don't num_poisoned_pages_inc(pfn)
-> - don't update_per_node_mf_stats(pfn, result)
-> - still pr_err("%#lx: recovery action for %s: %s\n", ...)
-> - meanwhile remove "pr_err("%#lx: already hardware poisoned\n", pfn)"
-> in memory_failure and try_memory_failure_hugetlb
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-I did consider that approach but I was concerned about passing
-MF_MSG_ALREADY_POISONED to action_result() with MF_FAILED. The message is a
-bit misleading.
+> There are too much magic inside docs Makefile to properly run
+> sphinx-build. Create an ancillary script that contains all
+> kernel-related sphinx-build call logic currently at Makefile.
 
-How about introducing a new MF action result? Maybe MF_NONE? The message could
-look something like:
+So I am just now looking at the script and seeking to understand it, but
+one thing has jumped at me that I wanted to toss out there...
 
-Memory failure: 0xXXXXXXXX: recovery action for already poisoned page: None
+> +# Minimal supported Python version needed by Sphinx and its extensions
+> +MIN_PYTHON_VERSION = parse_version("3.7")
+> +
+> +# Default value for --venv parameter
+> +VENV_DEFAULT = "sphinx_latest"
+> +
+> +# List of make targets and its corresponding builder and output directory
+> +TARGETS = {
 
-> This way, all the MF recovery result kernel logs out will be sitting
-> in one place, action_result, instead of scattering around all over the
-> place.
+We don't at this point have a formal coding standard for Python code,
+but I do think that we should, to the extent possible, stick to the
+rules that have been established for C code.  One thing I would really
+like to see is in the comment style; our rules want:
 
-That sounds better to me.
- 
-> >
-> > Fixes: b8b9488d50b7 ("mm/memory-failure: improve memory failure action_result messages")
-> > Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
-> > ---
-> >  include/linux/mm.h      | 1 -
-> >  include/ras/ras_event.h | 1 -
-> >  mm/memory-failure.c     | 3 ---
-> >  3 files changed, 5 deletions(-)
-> >
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 1ae97a0b8ec7..09ce81ef7afc 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -4005,7 +4005,6 @@ enum mf_action_page_type {
-> >         MF_MSG_BUDDY,
-> >         MF_MSG_DAX,
-> >         MF_MSG_UNSPLIT_THP,
-> > -       MF_MSG_ALREADY_POISONED,
-> >         MF_MSG_UNKNOWN,
-> >  };
-> >
-> > diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-> > index c8cd0f00c845..f62a52f5bd81 100644
-> > --- a/include/ras/ras_event.h
-> > +++ b/include/ras/ras_event.h
-> > @@ -374,7 +374,6 @@ TRACE_EVENT(aer_event,
-> >         EM ( MF_MSG_BUDDY, "free buddy page" )                          \
-> >         EM ( MF_MSG_DAX, "dax page" )                                   \
-> >         EM ( MF_MSG_UNSPLIT_THP, "unsplit thp" )                        \
-> > -       EM ( MF_MSG_ALREADY_POISONED, "already poisoned" )              \
-> >         EMe ( MF_MSG_UNKNOWN, "unknown page" )
-> >
-> >  /*
-> > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> > index e2e685b971bb..7839ec83bc1d 100644
-> > --- a/mm/memory-failure.c
-> > +++ b/mm/memory-failure.c
-> > @@ -948,7 +948,6 @@ static const char * const action_page_types[] = {
-> >         [MF_MSG_BUDDY]                  = "free buddy page",
-> >         [MF_MSG_DAX]                    = "dax page",
-> >         [MF_MSG_UNSPLIT_THP]            = "unsplit thp",
-> > -       [MF_MSG_ALREADY_POISONED]       = "already poisoned",
-> >         [MF_MSG_UNKNOWN]                = "unknown page",
-> >  };
-> >
-> > @@ -2090,7 +2089,6 @@ static int try_memory_failure_hugetlb(unsigned long pfn, int flags, int *hugetlb
-> >                 if (flags & MF_ACTION_REQUIRED) {
-> >                         folio = page_folio(p);
-> >                         res = kill_accessing_process(current, folio_pfn(folio), flags);
-> > -                       action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
-> >                 }
-> >                 return res;
-> >         } else if (res == -EBUSY) {
-> > @@ -2283,7 +2281,6 @@ int memory_failure(unsigned long pfn, int flags)
-> >                         res = kill_accessing_process(current, pfn, flags);
-> >                 if (flags & MF_COUNT_INCREASED)
-> >                         put_page(p);
-> > -               action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
-> >                 goto unlock_mutex;
-> >         }
-> >
-> > --
-> > 2.50.1
-> >
-> >
+    /*
+     * ...C comments spread out with the markers on separate lines
+     * like this...
+     */
+
+so can we do something similar for Python?
+
+    #
+    # Markers above and below
+    #
+
+I will confess that this matches my personal subject preference, but it
+also brings us closer to what our C code looks like.
+
+(I don't know that I would push to redo everything to match that style,
+but instead to move that way going forward).
+
+Thanks,
+
+jon
 
