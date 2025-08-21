@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-780024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0EACB2FCC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:34:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70FC4B2FCBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50F811BA3C34
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:23:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7E8C6000E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55ED028A72F;
-	Thu, 21 Aug 2025 14:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EEB2D6612;
+	Thu, 21 Aug 2025 14:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkM3VPIC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYV5s84B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D9D27AC2A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B29E28134C;
 	Thu, 21 Aug 2025 14:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755786099; cv=none; b=GPQzK7hhGflfHyz6y+xDOCVEiJwTUEmbPk/1CARhhpJdvUtDCJPUtGuAGgIgvc282m5xA5l95k9pK1bX94QYYBwhQd9DNfxIZJ0l+u+ukO7VJQNuNd7VSM0XJV35+VKXDBNwbO89+1aEpYvAhQeBn5gSpBGoIUzjg0tqmiuEJ+E=
+	t=1755786099; cv=none; b=RVd8OD0tyC94gxDSJTfXw5mPW0pjWZUgCui6l0jlwGf0qhEPJKlZhHXUgGcBlNiZNIFy0ps2Y/dIvnYMQ4UtpvSZeV3iLF2m+AQvyOFqJLwVXuDOoH2a31GfEZKiOlYTp1rqnFm80/6iHZY8IQttCbGaFWqkF4HiPTJxqnZdYDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755786099; c=relaxed/simple;
-	bh=/wRz/bm5opGP5gUAlYf6YzB0TWc+kftZ82g5lfHklv8=;
+	bh=HiN7NqutO6hirOm4EnCnsuZhXt+MMY3adGpEmCAC7NY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J1kc9C0HkBngFhG5YEGQq5SRoi0qFEcm2Tq7NCItAAB48rgcmOEUww+ozZI/yobPruWzG3nXXXh2w0L+x/zfwmm8MLiq3W9tE+g6klL4ccCkqITOWCAt37rDAlv6DoR6vIb6Xp0PKcwZdVjTNoOBIXOneQa/PvobaT5oFZzXNck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkM3VPIC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167BBC116C6;
+	 MIME-Version; b=blJVjb3H0M/ojp3ExZm+Xj7A/G/ygnkKfWTEGonK1nQBfE7FqFOsXZ6h27G2P0F1CzAbB0aj5PSrTBs3uI/YWI1TIOGcbZbFYkcb9O9JVlDbDJJ55B5np46iD2zJxRSCj2zeiQ6+GV86uOYj/P9jDlRs3E840iftAGpkbwoL1NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYV5s84B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B7E3C4CEED;
 	Thu, 21 Aug 2025 14:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755786099;
-	bh=/wRz/bm5opGP5gUAlYf6YzB0TWc+kftZ82g5lfHklv8=;
+	bh=HiN7NqutO6hirOm4EnCnsuZhXt+MMY3adGpEmCAC7NY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LkM3VPICjUXquRQ26JDE0AY8UPKLVzZkS6t0WwXQCyviz7+fz266jVJPYOpAddtGg
-	 HRJzpMhM0vAGRjivgBf/kEE9eNwtvoWcWDoFPKeguA+gvU5aZrSDiNaHcfCPd2F5TN
-	 Tk0LY8v3FHyEb4el4oU3PPQZsWXliSIIRg4NoXm6VdAFw2qJkiwvjCXJqoSWTEDdM6
-	 bll6wcehDP9NiYXxmMEkrtBR6+jHOgqeKvYI2kXe99H1pfzAaPJwdBIHRsic1J6CbB
-	 QhsEVBI7X0qq2NAbIAg/zUjAH6nNXhOuTCKnQpKY5ps6K4R7328q1eSxaxH05b6dzQ
-	 LCi39YZMarjmw==
+	b=TYV5s84Bgs1X5htuk44nmyIRe+YxE4Ga/73kTS/2zGuuZQwn9W0eiJAzNuPo1RcPD
+	 JQh1asCNqz5GDYR8NqdO0xr53xgOU2sfKEHu56W+8GpyVMHYloL2/nwUrW4EJKHcK9
+	 G3aAqn1IKswVYU+UjQWZcodtDKPoewqCw59wROqPSrDWstHo7tDYSTHncZ7utpRzlZ
+	 1EN8ReMFSZgyz2nyLuSh+/ZobxAiXXVwD+hRsxcqEuybel3t//mx/ZFHLMpslF9qN7
+	 cT4u1929Q2s4e8SqsO9qAZdjxC6ghDuP4oyVAjaQwJLJgEkpjlrB0h9w4AwDIj4Ibf
+	 3ClSBa06FP/Zg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1up6Ab-0000000BT8C-0Fgr;
+	id 1up6Ab-0000000BT8G-0MP6;
 	Thu, 21 Aug 2025 16:21:37 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 03/24] docs: parse-headers.py: improve --help logic
-Date: Thu, 21 Aug 2025 16:21:09 +0200
-Message-ID: <8ffefe7813007a4a55c1dbb43da09616250e7037.1755784930.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 04/24] docs: parse-headers.py: better handle @var arguments
+Date: Thu, 21 Aug 2025 16:21:10 +0200
+Message-ID: <7a8bb6f607dd3d614cd27ae1c3176aab404605ee.1755784930.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755784929.git.mchehab+huawei@kernel.org>
 References: <cover.1755784929.git.mchehab+huawei@kernel.org>
@@ -64,133 +64,47 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-When printing --help, we'd like the name of the files
-from __doc__ to match the displayed positional arguments at
-both usage and argument description lines.
+The kernel-doc markups inside headers may contain @var markups.
 
-Use a custom formatter class to convert ``foo`` into ANSI SGR
-code to bold the argument, if is TTY, and adjust the help
-text to match the argument names.
+With the current rule, this would be converted into:
 
-Here on Plasma, that makes it display it colored, wich is
-really cool. Yet, I opted for SGR, as the best is to follow
-the terminal color schema for bold.
+     \* @:c:type:`DMX_BUFFER_FLAG_DISCONTINUITY_INDICATOR <dmx_buffer_flags>`\:
+
+Fix it adding a non-printed space if needed.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/sphinx/parse-headers.py | 67 +++++++++++++++++++++++----
- 1 file changed, 58 insertions(+), 9 deletions(-)
+ Documentation/sphinx/parse-headers.py | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/sphinx/parse-headers.py b/Documentation/sphinx/parse-headers.py
-index b39284d21090..650f9c9a68d1 100755
+index 650f9c9a68d1..f4ab9c49d2f5 100755
 --- a/Documentation/sphinx/parse-headers.py
 +++ b/Documentation/sphinx/parse-headers.py
-@@ -4,20 +4,20 @@
- # pylint: disable=C0103,R0902,R0912,R0914,R0915
+@@ -120,12 +120,12 @@ class ParseHeader:
+         },
+         # This is the name of the enum itself
+         "enum": {
+-            "prefix": "",
++            "prefix": "\\ ",
+             "suffix": "\\ ",
+             "ref_type": ":c:type",
+         },
+         "struct": {
+-            "prefix": "",
++            "prefix": "\\ ",
+             "suffix": "\\ ",
+             "ref_type": ":c:type",
+         },
+@@ -390,6 +390,8 @@ class ParseHeader:
  
- """
--Convert a C header or source file (C_FILE), into a ReStructured Text
-+Convert a C header or source file ``FILE_IN``, into a ReStructured Text
- included via ..parsed-literal block with cross-references for the
- documentation files that describe the API. It accepts an optional
--EXCEPTIONS_FILE with describes what elements will be either ignored or
--be pointed to a non-default reference.
-+``FILE_RULES`` file to describes what elements will be either ignored or
-+be pointed to a non-default reference type/name.
- 
--The output is written at the (OUT_FILE).
-+The output is written at ``FILE_OUT``.
- 
- It is capable of identifying defines, functions, structs, typedefs,
- enums and enum symbols and create cross-references for all of them.
- It is also capable of distinguish #define used for specifying a Linux
- ioctl.
- 
--The EXCEPTIONS_FILE contains a set of rules like:
-+The optional ``FILE_RULES`` contains a set of rules like:
- 
-     ignore ioctl VIDIOC_ENUM_FMT
-     replace ioctl VIDIOC_DQBUF vidioc_qbuf
-@@ -400,17 +400,66 @@ class ParseHeader:
-             f.write("\n\n.. parsed-literal::\n\n")
-             f.write(text)
- 
-+class EnrichFormatter(argparse.HelpFormatter):
-+    """
-+    Better format the output, making easier to identify the positional args
-+    and how they're used at the __doc__ description.
-+    """
-+    def __init__(self, *args, **kwargs):
-+        """Initialize class and check if is TTY"""
-+        super().__init__(*args, **kwargs)
-+        self._tty = sys.stdout.isatty()
-+
-+    def enrich_text(self, text):
-+        """Handle ReST markups (currently, only ``foo``)"""
-+        if self._tty and text:
-+            # Replace ``text`` with ANSI bold
-+            return re.sub(r'\`\`(.+?)\`\`',
-+                          lambda m: f'\033[1m{m.group(1)}\033[0m', text)
-+        return text
-+
-+    def _fill_text(self, text, width, indent):
-+        """Enrich descriptions with markups on it"""
-+        enriched = self.enrich_text(text)
-+        return "\n".join(indent + line for line in enriched.splitlines())
-+
-+    def _format_usage(self, usage, actions, groups, prefix):
-+        """Enrich positional arguments at usage: line"""
-+
-+        prog = self._prog
-+        parts = []
-+
-+        for action in actions:
-+            if action.option_strings:
-+                opt = action.option_strings[0]
-+                if action.nargs != 0:
-+                    opt += f" {action.dest.upper()}"
-+                parts.append(f"[{opt}]")
-+            else:
-+                # Positional argument
-+                parts.append(self.enrich_text(f"``{action.dest.upper()}``"))
-+
-+        usage_text = f"{prefix or 'usage: '} {prog} {' '.join(parts)}\n"
-+        return usage_text
-+
-+    def _format_action_invocation(self, action):
-+        """Enrich argument names"""
-+        if not action.option_strings:
-+            return self.enrich_text(f"``{action.dest.upper()}``")
-+        else:
-+            return ", ".join(action.option_strings)
+         # Remove "\ " where not needed: before spaces and at the end of lines
+         text = re.sub(r"\\ ([\n ])", r"\1", text)
++        text = re.sub(r" \\ ", " ", text)
 +
  
- def main():
-     """Main function"""
-     parser = argparse.ArgumentParser(description=__doc__,
--                                     formatter_class=argparse.RawDescriptionHelpFormatter)
-+                                     formatter_class=EnrichFormatter)
+         title = os.path.basename(file_in)
  
-     parser.add_argument("-d", "--debug", action="count", default=0,
-                         help="Increase debug level. Can be used multiple times")
-     parser.add_argument("file_in", help="Input C file")
-     parser.add_argument("file_out", help="Output RST file")
--    parser.add_argument("file_exceptions", nargs="?",
-+    parser.add_argument("file_rules", nargs="?",
-                         help="Exceptions file (optional)")
- 
-     args = parser.parse_args()
-@@ -418,8 +467,8 @@ def main():
-     parser = ParseHeader(debug=args.debug)
-     parser.parse_file(args.file_in)
- 
--    if args.file_exceptions:
--        parser.process_exceptions(args.file_exceptions)
-+    if args.file_rules:
-+        parser.process_exceptions(args.file_rules)
- 
-     parser.debug_print()
-     parser.write_output(args.file_in, args.file_out)
 -- 
 2.50.1
 
