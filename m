@@ -1,295 +1,96 @@
-Return-Path: <linux-kernel+bounces-779338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98243B2F2CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:51:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C417B2F2B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA06189329E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:48:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76F207BCF2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743512ECD2C;
-	Thu, 21 Aug 2025 08:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FD42EB85B;
+	Thu, 21 Aug 2025 08:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JR/XurJW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="u8QbfY9E"
+Received: from smtp153-163.sina.com.cn (smtp153-163.sina.com.cn [61.135.153.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A35242D76;
-	Thu, 21 Aug 2025 08:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EDB1E7C18
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755766067; cv=none; b=k8nSf/ISIM/CvtXb74orPjwhCU9GwMKzh7Zs/Tng1Qd5WR3qsKfzAfT1JTbhC6pKQ7WzrcRTmBbjr9CGG622JPuiNVIAmaM9CYcd3dV0AOROk4F/bxwA4TF7IM/3mB2Gk/Um0FB5aZfVVEIUcwUCXkKkJ8EHdXWqvHaWXpKwH1w=
+	t=1755766093; cv=none; b=Ca2h6rYOJJfB00D48rSgbOJwCpbV474ILwcg4SZxQ1tHpeZI5WHIlau1RSdTTdWt/scHvil2XDl8wZ7rF9+hSo1qrvL6M/7PD6ivu23SFsJ1VHhraqwr6plW+63dPB/5DmQzOJUjSo974yYtpNQSdE2YKr1aiUtRf41XRdYAPhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755766067; c=relaxed/simple;
-	bh=YOJtioSHHd/SkiLRqPzjm4PRQjeoNg6aVatMs971PnA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tgz1IWmi0k26tFQqMvOIgWf9z8GOr5U8ZzxNeUuMAVDFogLK3sl8+IgNCpSWs515CMn/sJJrlcKwHoKVy6roUlMjvvxwn2f8pwbgPd0of+DzQzcxkf/bTOKkrE301t13MY6kVq0w5NU3LCdVeqHMB+MipOf4hDeO3efgN7CnvUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JR/XurJW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1BDEFC78;
-	Thu, 21 Aug 2025 10:46:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755765995;
-	bh=YOJtioSHHd/SkiLRqPzjm4PRQjeoNg6aVatMs971PnA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JR/XurJW8sk9ngBFyhtN41bOYZKc3k6MO96wg5S1s/yToSxVonfxw9oBZCQeluZc4
-	 hC5yUxoMZeMOJDoy+oNNr2zhw/ZUz2MejPSMRyXxSdBRev9IAwx146iUVyEZncJuFf
-	 ukWll4p/fGM3RUiMJdlG0yqwWG8S0wD4TJl2KYj0=
-Message-ID: <913b5a87-19f1-44f5-8782-8711980644a1@ideasonboard.com>
-Date: Thu, 21 Aug 2025 11:47:29 +0300
+	s=arc-20240116; t=1755766093; c=relaxed/simple;
+	bh=OsKkrYP2K1kZ5nL9zj3zSGW9MW+lhOQxhduKnhMKUJ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TFyPYbRnkIKCjPb2uPYpMo4J7SRAz6jm8VyZYhtLdShZF88fgBT14CgLEdblr9c0qtCU8xctrd6IDb58Tyo9fSGoqeJZLTRJVpwmVs6cZeUZk4OT6MiP1PcXwO5o8FjWz/BqcYGGYlgifERU/xoQ6z7YXkcxTdT6tTtxl3pWvHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=u8QbfY9E; arc=none smtp.client-ip=61.135.153.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755766084;
+	bh=ASmlOtkq/5yE7hsUC/gPgPV7oXsMfgZPITdY5ZzM4xg=;
+	h=From:Subject:Date:Message-ID;
+	b=u8QbfY9EfduM9O2kYCYWym+r5b4iJYW8PHp0YW4wBbnzQpf9pcqV1Kbpf8CwoTCjx
+	 hj1taMc5pW7xj2hyak0UI3vwWexQTBYc45yDR790fe7qn26n51kGzhYKuzPGZizfW8
+	 XEZwTLHVMiixmyxQu21ru3hCsHJMN8d6dbgof8Es=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68A6DD3800005A96; Thu, 21 Aug 2025 16:47:53 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8702004457044
+X-SMAIL-UIID: 55F76CE797EA4A61B7127B1AF56606F0-20250821-164753-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [v9fs?] UBSAN: shift-out-of-bounds in v9fs_get_tree
+Date: Thu, 21 Aug 2025 16:47:33 +0800
+Message-ID: <20250821084742.5216-1-hdanton@sina.com>
+In-Reply-To: <68a68b57.050a0220.3d78fd.0012.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/6] dt-bindings: display: bridge: renesas, dsi:
- Document RZ/V2H(P) and RZ/V2N
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>,
- Magnus Damm <magnus.damm@gmail.com>
-References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-In-Reply-To: <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On Wed, Aug 20, 2025 at 07:58:31PM -0700:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    3ac864c2d9bb Add linux-next specific files for 20250818
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13706442580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=6d1acc6b9e1fca1b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=30c83da54e948f6e9436
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141586f0580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124c9ba2580000
 
-On 28/07/2025 23:14, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add the compatible string "renesas,r9a09g057-mipi-dsi" for the Renesas
-> RZ/V2H(P) (R9A09G057) SoC. While the MIPI DSI LINK registers are shared
-> with the RZ/G2L SoC, the D-PHY register layout differs. Additionally, the
-> RZ/V2H(P) uses only two resets compared to three on RZ/G2L, and requires
-> five clocks instead of six.
-> 
-> To reflect these hardware differences, update the binding schema to
-> support the reduced clock and reset requirements for RZ/V2H(P).
-> 
-> Since the RZ/V2N (R9A09G056) SoC integrates an identical DSI IP to
-> RZ/V2H(P), the same "renesas,r9a09g057-mipi-dsi" compatible string is
-> reused for RZ/V2N.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v6->v7:
-> - Renamed pllclk to pllrefclk
-> - Preserved the reviewed by tag from Geert and Krzysztof
-> 
-> v5->v6:
-> - Preserved the sort order (by part number).
-> - Added reviewed tag from Geert.
-> 
-> v4->v5:
-> - No changes
-> 
-> v3->v4:
-> - No changes
-> 
-> v2->v3:
-> - Collected reviewed tag from Krzysztof
-> 
-> v1->v2:
-> - Kept the sort order for schema validation
-> - Added  `port@1: false` for RZ/V2H(P) SoC
-> ---
->  .../bindings/display/bridge/renesas,dsi.yaml  | 120 +++++++++++++-----
->  1 file changed, 91 insertions(+), 29 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> index 5a99d9b9635e..c20625b8425e 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> @@ -14,16 +14,21 @@ description: |
->    RZ/G2L alike family of SoC's. The encoder can operate in DSI mode, with
->    up to four data lanes.
->  
-> -allOf:
-> -  - $ref: /schemas/display/dsi-controller.yaml#
-> -
->  properties:
->    compatible:
-> -    items:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-> +              - renesas,r9a07g054-mipi-dsi # RZ/V2L
-> +          - const: renesas,rzg2l-mipi-dsi
-> +
-> +      - items:
-> +          - const: renesas,r9a09g056-mipi-dsi # RZ/V2N
-> +          - const: renesas,r9a09g057-mipi-dsi
-> +
->        - enum:
-> -          - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-> -          - renesas,r9a07g054-mipi-dsi # RZ/V2L
-> -      - const: renesas,rzg2l-mipi-dsi
-> +          - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
->  
->    reg:
->      maxItems: 1
-> @@ -49,34 +54,56 @@ properties:
->        - const: debug
->  
->    clocks:
-> -    items:
-> -      - description: DSI D-PHY PLL multiplied clock
-> -      - description: DSI D-PHY system clock
-> -      - description: DSI AXI bus clock
-> -      - description: DSI Register access clock
-> -      - description: DSI Video clock
-> -      - description: DSI D-PHY Escape mode transmit clock
-> +    oneOf:
-> +      - items:
-> +          - description: DSI D-PHY PLL multiplied clock
-> +          - description: DSI D-PHY system clock
-> +          - description: DSI AXI bus clock
-> +          - description: DSI Register access clock
-> +          - description: DSI Video clock
-> +          - description: DSI D-PHY Escape mode transmit clock
-> +      - items:
-> +          - description: DSI D-PHY PLL reference clock
-> +          - description: DSI AXI bus clock
-> +          - description: DSI Register access clock
-> +          - description: DSI Video clock
-> +          - description: DSI D-PHY Escape mode transmit clock
+#syz test
 
-Is this style ok in the bindings? I thought it's necessary to "if" these
-kind of blocks based on the compatible.
-
->    clock-names:
-> -    items:
-> -      - const: pllclk
-> -      - const: sysclk
-> -      - const: aclk
-> -      - const: pclk
-> -      - const: vclk
-> -      - const: lpclk
-> +    oneOf:
-> +      - items:
-> +          - const: pllclk
-> +          - const: sysclk
-> +          - const: aclk
-> +          - const: pclk
-> +          - const: vclk
-> +          - const: lpclk
-> +      - items:
-> +          - const: pllrefclk
-> +          - const: aclk
-> +          - const: pclk
-> +          - const: vclk
-> +          - const: lpclk
->  
->    resets:
-> -    items:
-> -      - description: MIPI_DSI_CMN_RSTB
-> -      - description: MIPI_DSI_ARESET_N
-> -      - description: MIPI_DSI_PRESET_N
-> +    oneOf:
-> +      - items:
-> +          - description: MIPI_DSI_CMN_RSTB
-> +          - description: MIPI_DSI_ARESET_N
-> +          - description: MIPI_DSI_PRESET_N
-> +      - items:
-> +          - description: MIPI_DSI_ARESET_N
-> +          - description: MIPI_DSI_PRESET_N
->  
->    reset-names:
-> -    items:
-> -      - const: rst
-> -      - const: arst
-> -      - const: prst
-> +    oneOf:
-> +      - items:
-> +          - const: rst
-> +          - const: arst
-> +          - const: prst
-> +      - items:
-> +          - const: arst
-> +          - const: prst
->  
->    power-domains:
->      maxItems: 1
-> @@ -130,6 +157,41 @@ required:
->  
->  unevaluatedProperties: false
->  
-> +allOf:
-> +  - $ref: ../dsi-controller.yaml#
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a09g057-mipi-dsi
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 5
-> +
-> +        clock-names:
-> +          maxItems: 5
-> +
-> +        resets:
-> +          maxItems: 2
-> +
-> +        reset-names:
-> +          maxItems: 2
-> +    else:
-> +      properties:
-> +        clocks:
-> +          minItems: 6
-> +
-> +        clock-names:
-> +          minItems: 6
-> +
-> +        resets:
-> +          minItems: 3
-> +
-> +        reset-names:
-> +          minItems: 3
-> +
-
-Oh... So this one does the selection based on the compatible. And if we
-get a new SoC which doesn't fit into the above classification model,
-we'll have to restructure the binding (or add a new one)?
-
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-
- Tomi
-
->  examples:
->    - |
->      #include <dt-bindings/clock/r9a07g044-cpg.h>
-
+--- x/fs/9p/v9fs.c
++++ y/fs/9p/v9fs.c
+@@ -302,6 +302,8 @@ int v9fs_parse_param(struct fs_context *
+ 			p9_debug(P9_DEBUG_ERROR, "msize should be at least 4k\n");
+ 			return -EINVAL;
+ 		}
++		if (result.uint_32 < P9_IOHDRSZ)
++			return -EINVAL;
+ 		clnt->msize = result.uint_32;
+ 		break;
+ 	case Opt_trans:
+--
 
