@@ -1,134 +1,282 @@
-Return-Path: <linux-kernel+bounces-779730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C5FB2F7E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:26:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F6FB2F7E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8E693B1C25
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:26:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CC368114B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B89F30DD36;
-	Thu, 21 Aug 2025 12:26:11 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE3D8248B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755779170; cv=none; b=uFN2Gq5WtHQQYAl1GMQ2WTWE3BZyOrxNixBxINbyuFEHlJBPAHzGVlOFgp2WEFdPEFtoBb4IkJHaDGzh7O0lBrKEr3GutJms/PVOq7m0tNym5zanq7dAt0pk6Et7y8O69ngVb74LU/I8JkP7OCYsVIbn3hxP+7tpJ3z72xQXdak=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755779170; c=relaxed/simple;
-	bh=YqoTewEht3AiwH7FFwLmhvsXBjLcxSAa1J+T9pF5rb4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=URYj2rvK2e8jUk2N2psXCN9svCTjXBIW8PEclypM1WouVzrn03Q4DxPzj9eo9ZhV74HLFDeXqUlipWjTcWefgxB03/0syiEBCFYT189rPpIT0683rmYMAIW+1lUM6VGJRlogvQIRNcnR09IGY1k5iDHnUKfxK5t2+WEtTsUV7i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.89])
-	by gateway (Coremail) with SMTP id _____8Dxvr8AEKdoO24BAA--.1678S3;
-	Thu, 21 Aug 2025 20:24:32 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.89])
-	by front1 (Coremail) with SMTP id qMiowJCxrsP5D6do3ZldAA--.48716S2;
-	Thu, 21 Aug 2025 20:24:31 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [GIT PULL] LoongArch fixes for v6.17-rc3
-Date: Thu, 21 Aug 2025 20:24:10 +0800
-Message-ID: <20250821122410.1144154-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015F32DEA8F;
+	Thu, 21 Aug 2025 12:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="AXOwZklX"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11023117.outbound.protection.outlook.com [40.107.159.117])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E082E0916;
+	Thu, 21 Aug 2025 12:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755779081; cv=fail; b=O87Qiv1qBtiPm9j4OOIUIS+NL5AIXWbJOk+sLv3Fcy8q4Vu/19InXTNvGElY+7GdNJAgeBIzwALbmtizVgZ0juSaviZZBbhxEWQUV3hd1Hwfr0eJMekVu/Eki7l5ULefNFZjwBA/e5lQ3uiKF0+PVbUC9XB2f3GITVFFr5YM0gw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755779081; c=relaxed/simple;
+	bh=mkyTvOea/hs2n8i645OHeeTu257e0z2bAQuu4pZmWBQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BBcbNjCjsdW9+bgM/rLxGvpc2B+wwEV2if3vOK5HmQDPOqGKvH3406+5AfbwqPIE5fnYudyglfjrqG3PSeRi9rCdQaVlPGzM6A0kl6t+pBFL/feurxeKwjWGaOD9jSdFsN7X5qgsqBu04e2yiIh6eapBeCfHG8YBKPWy/pV8sJE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=AXOwZklX; arc=fail smtp.client-ip=40.107.159.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EMYN+K5jhdD1GmEkagXo6vNfU1qRGevT6dHBVmgR5NS+DjaSVK9jEya5zXWTEo1RoRj28H2KgVK6r6Ji/c8KfZQtlTYrHZf1cClWdkLF0EalCjUEBJhxsyPiF12vG87fRAxW9Fd1iAmYLXFmZjBHPo5cW75O0siKsilvFtDc+RswKGqxSFughG2t/zcYH+bx5JP1+o/kyKgr970iPrOL0cUfwwHqLTcm2rAav45jWi706175C3hsxkh+ImGcOfMCZCxS0vgfwcnVotd0rr6qIK4Kx9St4H80ZV5Y96Nioqy04jinKtR5C6nvqEoPQBxxUlUtPNge/1hYMMej0SVSiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nlgaev1FlUxKVQQRQfeXXtabeWMBFjWFcnpkiXP/Osw=;
+ b=du2BxON4JfIkpjQJ9SaJnjfmxKpyVUXCO2gye77cOMCe7biy48M/iJ9mcnpgYKcRfjT8y/UTin3aVzKDzMMjZ5IVeT3A+KDKuKIh9mymOIbDCsyB7hudMmkg76hO30RD5eOAq6kVjSmlDcIwYRtjhxFmt119kNhTKC+n1SZHE861XD6XiurgiL/WiFE3/oODv/+iixhWYXlOnVBwAtbjNM/mY9d2dfemSOWiL2C4E3rXFw5gQoFShiFttRuTeM9oSwBE5dAckvvNbAdJjN0Eq+4lKvV8961rDZxw+JYqhFnV0Ea8DEA9lOKRDVRP2ZRsSRVnk8rdkvNSXslICZWH+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
+ dkim=pass header.d=iopsys.eu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nlgaev1FlUxKVQQRQfeXXtabeWMBFjWFcnpkiXP/Osw=;
+ b=AXOwZklX0r45ihqb7wX/kIu2BcHgMw4WGSskoPbDwmMVQv0l2yl2hkVSc0kBHQljtXFhqL1meXpzHia3W7kKrmLSs29BIZ5N77iHMcvjdLUVMJJNlD+Naa7ExHUGm6z1/RJkShx9hx4GrdhFdIIsJlQ1ULFfRVX89D+HTw46v9A28YWd92C7jXpMM++16YBhT7+wGPMsK+yD1iaAXFyfyXbJ5UMTgGzQ0pWOHIvbecubVmFKua4ADmACCOl+CxAK2ztzAKXMo4KbrMLS4cmVotaWNoat3TnVceLPcX9MUpk1DEowmt8ec9E5dcpBy96W/p4CDK5LiMZkCem0ODwYuw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=iopsys.eu;
+Received: from GV2PR08MB8121.eurprd08.prod.outlook.com (2603:10a6:150:7d::22)
+ by DB8PR08MB5467.eurprd08.prod.outlook.com (2603:10a6:10:11b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Thu, 21 Aug
+ 2025 12:24:36 +0000
+Received: from GV2PR08MB8121.eurprd08.prod.outlook.com
+ ([fe80::4cd3:da80:2532:daa0]) by GV2PR08MB8121.eurprd08.prod.outlook.com
+ ([fe80::4cd3:da80:2532:daa0%4]) with mapi id 15.20.9031.018; Thu, 21 Aug 2025
+ 12:24:35 +0000
+Message-ID: <f846056f-b6d7-4503-b23f-672039fc3fc4@iopsys.eu>
+Date: Thu, 21 Aug 2025 15:24:33 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/14] spi: airoha: driver fixes & improvements
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Frieder Schrempf <frieder.schrempf@kontron.de>
+References: <20250820123317.728148-1-mikhail.kshevetskiy@iopsys.eu>
+ <aKbDjIZhJuWo3yFu@lore-rh-laptop>
+ <7bca8089-09ad-4550-93d1-35a365bcd167@iopsys.eu>
+ <aKcEYn_hX0ZIusne@lore-rh-laptop>
+From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Content-Language: en-US, ru-RU
+In-Reply-To: <aKcEYn_hX0ZIusne@lore-rh-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: GV3P280CA0088.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:150:a::19) To GV2PR08MB8121.eurprd08.prod.outlook.com
+ (2603:10a6:150:7d::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxrsP5D6do3ZldAA--.48716S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Wry3Xw45Gry7CFy8tryDtwc_yoW5JF4kpF
-	13urnxGF4rGrZ3Xwnxt34UWr15Jr1xGr1jqF47K348Cr1UZr1UJr18XrZ7JFyUJ3yrJr10
-	qF1rJr1YgFyUJacCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_
-	JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
-	CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
-	I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I
-	8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU
-	0xZFpf9x07jepB-UUUUU=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR08MB8121:EE_|DB8PR08MB5467:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b4b0dca-3c05-423f-0d94-08dde0adb0b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U0pJR2dNNTZJeVBYczhBdzlINmowbSt6RUJySUVRRFZBeGdQQkxKRXlEbk8x?=
+ =?utf-8?B?NkpGcFkwWUpyYlk5VlpvOEVmU3hlUTIyRXdGSk5Eay9pRGxXU00yTW15VWhT?=
+ =?utf-8?B?S0VhaEtyWTFZNTJKdUE3Q1RkRlI1bnUxNjhjWnE0RzBWZy9OczA2OCtrdHJG?=
+ =?utf-8?B?dXc1SS9ZODlMT0lGbktyZkxuR1BrUW53Tk0zQnE3UEY2eHQ4OGNWcGNPR2hy?=
+ =?utf-8?B?L09ycng4N0UzVzY2TTVOTFZmemdJLzBNNEo0Wlp0SnRJQWphY29HWW9WdXZD?=
+ =?utf-8?B?aDBGSDhIdTBRbW5MMUF5bjh6OHEzaUwreFRNVGcrMmI3V0oyaXcycU1kbk5y?=
+ =?utf-8?B?cmYwYVB3ckFRdWx2VGx0UWtPRER5aG51YVRNNW9OSHlLTXEvb29weDllRlBu?=
+ =?utf-8?B?blIzVzFXUnJtVHViNUtMNkY5U1N5a1haL0RBY1hZT2pEalM1NTRsZ1VQem5X?=
+ =?utf-8?B?cUFkWUNiMVBIL002Sk42bTFiMTFrNjhmU3RLVWkwQVlFdUJuOTVMekZKNkRh?=
+ =?utf-8?B?V0Z0YmZqbXlnNUNBWFZoQnJoTm4ycC9kY3NwSHFDRGpSdXdJZ1BKdjNXSUJU?=
+ =?utf-8?B?MlVFVTh4citESG9zUTNnSy82QkwrYTRZQ1c4azVkTFVsWFFiMkJYV2VVT2Q1?=
+ =?utf-8?B?eTV6Wm96NERvY0l6dDJ1bG9EL2RiY0U1UnNmK1JDcU1HY1NZYm1RZXllN2Ny?=
+ =?utf-8?B?dC9kNktETStaUGlWejlYOFNDT1N1VWdIRE9wbWRrMXdwZ1gwN24xUVQ1WW12?=
+ =?utf-8?B?aWk2YklkQUpROXh4Q0NObUUzdGxpQXgxd2lRMEFmOG1uMC9BakxPYW5ZSzVr?=
+ =?utf-8?B?RlFmU29nUklFZkE2eXpsejVJMzdMYTJpeENMYmZHQVBWSkIrNjhqdEEzVzVC?=
+ =?utf-8?B?ZWk4S0tBcHIxKzFiZlBuMEVGWUFGeC9TQWpqcDJiRFJXZmRFSlJmdmErM0hQ?=
+ =?utf-8?B?akliRWUrei9KeHM2Wk5qcnhUSkN5ZGlaMHFKalJ1UFhaTUpGTTFuUXRybzM5?=
+ =?utf-8?B?MUo2RUFVNEtUR2Fxc2hUQ1JvSlJ3cVBuWVdnTTB4Wlg0NjJvcFM3OXVnUHhk?=
+ =?utf-8?B?ekZqbjU2U21MbmkyK2p0bTJBTU5kbENmdHlxWmhoWXNsVjd5aHZndXFwbTN4?=
+ =?utf-8?B?U0VCREZFM2hzWHhhdENqVnpnTjdPT3hsUzRQbHVqSG9aV25BcFRaMzJPekZI?=
+ =?utf-8?B?dWRVK1BzSWRxNzFTd3RUSkMxYXd3Ym1ZcWM3TkVRTGlPbHJCUHpqTi93ekxk?=
+ =?utf-8?B?b0NXeWdGNUNPb3R6NjEzRm5jUisvZk1oQktDdnFIMklORzlJQjNIOHBMNEhn?=
+ =?utf-8?B?SFpJSTFoejJTNmdlU3ZzNThUK2c0QUhiZWEvR0pEcW4yRnZPYkJ1Q2VWL25Z?=
+ =?utf-8?B?eGJUNjAyOXpSS3RSSGF6ZkNRU09SZkRpNnZQVjJ2dWpIYlpxZkE2cGRZT2cr?=
+ =?utf-8?B?aG9SbjJaQTZ1SG15eHB6b2YxZFk5YnllTW93TUw0LzNrV1g1YWdaK1RRTVZM?=
+ =?utf-8?B?TFI2MTJvUDhwUnRIbjlJSHFxYzVsS1liZ1ZVUlBoaW1QR0Mxck9JZjR5NXRx?=
+ =?utf-8?B?Rm9BZy9rT25iQ3AwYzdKcEFibW1kRjZCWElJZUZnZWNGdnZ6Mm1Cd1VzZ0VP?=
+ =?utf-8?B?VGJabVNpS2pTQnpFQytJZC92aDZwL05pMHZzVXFCZDlYbnFHeGlxVTh3ZWlw?=
+ =?utf-8?B?Uk03NDZKVThtbnlwUkllVDQ0dDlJYXBsNUNSNGNWYUxxWlYvTVBTSytEMlRn?=
+ =?utf-8?B?S05OQm0zKzd0NjJlRWJ3aXB2aHNkZGZYUWR3WDcxbzJpS3V5L09kWVVHRTg5?=
+ =?utf-8?B?MTZTYzVWQzhtb0psdmk3ODNTTjhnWHBQZlhpdDA3Z2E1ME5JTXl6UU5iUUQx?=
+ =?utf-8?B?K3NmY1hSdDFHeU5iZzdBNS9hT0FnS1BieS9xaGxTRHBtMjRMTTlEN2svcElp?=
+ =?utf-8?Q?8apjqdf1HFg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR08MB8121.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TnV4UUtBOElvMGlJREJFRkkxbGFYVzdCeVV3c1lSTTN6ZkRhUEsvM2pPak5s?=
+ =?utf-8?B?UGJXOTFKV2d2Z0dlbEo5NVVhTEhLVVpPc3ZNY0dpWmc3U1RJWjRCRFZqSStj?=
+ =?utf-8?B?eXI4RG11UTJYQXZkdlB5cGVRR0dMTVVDUlVoWHZKejR0TUg3eGVWaHhMK0Y4?=
+ =?utf-8?B?NkV2OXRkNElCOFd5RDFnUU1udnBIVXh3UVpFUU5DM2NKalBjR0dJT2NKa3J4?=
+ =?utf-8?B?VHdoRVVHRE1HZHV1VFBFN0ZYWTZPQUlERU5ONkx6a2dLcmlpbXR0c1RJbnNw?=
+ =?utf-8?B?SWgwYnFaSG1aZGxPVmsxZ3JQQXBMZDUzL3JRRnpaTGlxL01ObU0yek1pNjBC?=
+ =?utf-8?B?aGxDZEFPMEFrWjlMVk54RHZtZjVpcVJLNTJIOWxzZ29uMEdURW42NUdQdHdL?=
+ =?utf-8?B?MjNZZTgrL0lWUFQ4NmtwUDJlK0RSNWpWWWdnRHM4TTAyR2xrdmdjR1FBU2o5?=
+ =?utf-8?B?QzRTZ3M3ZkFJODRQZE04RUI1S3EyWjBSNUkzeVVMazh3SjJaTUhiY1VRdllu?=
+ =?utf-8?B?djRjazR5L2NLQ0YyZ1NqVHJMVUFSVXlLZjVPb1ExM2h4UW9TYzEzUzV5Rmgw?=
+ =?utf-8?B?YXh3OFB5M0VsNmlidGZYb3kwRlFma2RQaHJHTlZxWlluM0JoQzQzMUcvdXc3?=
+ =?utf-8?B?VHY2QWpXYUdjVGhhdnJzNW5HZ2RFZm5pWTFpLzZtSFZPT3pCUXhnM1dDSHlF?=
+ =?utf-8?B?TjgxT09CRmc5ZTkyTEwvTEdodTA3d2R1VWZVK2xHbFd5dExFVlNTT21CUWFj?=
+ =?utf-8?B?Zk41YTRxZmd5anJBOG02clFUVGYxRW13SDJaa1p6dE54MFJRaWtjQitmVWNm?=
+ =?utf-8?B?VEgyVnpKZ2dYZ0hEcW5VeDYyTkNxenRZRUZsU2Z4ai9TNStobXhMUnROYTdQ?=
+ =?utf-8?B?QWNrWXRrMDBGc1NuRGVFRXpFTWRWY0pobWJseDl6ZzFaeWpHR09xTXlNdE9I?=
+ =?utf-8?B?cHNJZElWNml0c3VZYXFuV3JCT3NXQ3d3VHZQTWNsZklzZ01oQ0IzZGtRVGVH?=
+ =?utf-8?B?Z014UXRYR1puUnUrMXBFWHpjeDExVGZHVHZ0dkRyVWZuRWFUSDNXTnpILzhT?=
+ =?utf-8?B?MXJoVHRONlo4TlJOckplcVh2NWcyMUcvWlZUU3N0Q09xL2xNWVhIRTQrTUcy?=
+ =?utf-8?B?bTlTOXNSbnJMVzdJbkJqREc1dDA3VWxpUDV3NWtVTlFzQmVFYXJLRTFWM050?=
+ =?utf-8?B?SUNIcVd1VU5ncUVTTWFDQ0dRNEh5UzZEd24wRXE5S1pkc1FDa1g3YW1HaUYw?=
+ =?utf-8?B?YVlzV0FYZFpaMHdCRHI0R2NiY3pyckcwdUtDaXBpVzczMTNhVjFDbUMxU1Az?=
+ =?utf-8?B?VS9iYXJtN3ZMQXN2cDVpVUNNcmYyZFNFYm9jaXllZ29SdUkzcEM0Wno0TCth?=
+ =?utf-8?B?UzkvRU1seEFSNGdTWU82c0wvaCtJcTJYYTRBNVFXR1AyalRvdEhHRndpUGJm?=
+ =?utf-8?B?NndkcEp2bC8yQnBWMWJWNEw1Y3B0VFJwa0J6ZXdJNXFGM2dOL1VMSDdocm5v?=
+ =?utf-8?B?cXplWWlMSU9sUllLejBmSTROb2VCRmFJbGpCcFB5MEx1cUp1RTJMQkwwR2hv?=
+ =?utf-8?B?QkxYUW5oOHUrVkVmWThqU2w5ZjR3cE9YZDRldUR0U3M5YmpXRy9tOStGdFJZ?=
+ =?utf-8?B?SnVodmdDOWMxeUJqS200WDN6Wk4yRjh1UE45THFBSU9SQzduSEtIem1GTmwr?=
+ =?utf-8?B?YlBLTGJpamJQclI1c1ZMaU5HRmVlbjZGQUhvNVFIMUhNUlBLNmVjTk9ScjdG?=
+ =?utf-8?B?MTB3N2NMVEI3dVhaaWZvdzhlUlFERW5Na216Nkd5Y3JQeW4rSGNvemlmZlNt?=
+ =?utf-8?B?WmlMN0YvdTRnMk9CQk1wVmFKdnVvTG9sY09hdGpua2FRMGlVNmRiWTNxUDBR?=
+ =?utf-8?B?WnF1eStHcjd4N1M3SlBmRWppdWVVQ1UvOThaUEpWYzl3cUtjNHVod3RKeUZi?=
+ =?utf-8?B?QU1Ga1ExNEdMSFNnNG5nREtYUElmRzVWVEgxa290OExnN1JsVG9KSnVDNnZK?=
+ =?utf-8?B?Q0laL2I5c1lsQ2hFaWtJY0dqZFNmZFg1QjR2cXBrekxnWTFoQzFoWUpnUFVB?=
+ =?utf-8?B?aG1WbitMY2lndlc1U1dCcmladWRSekRYSGZqRzVCaGpGbVdSU1diWmptSG5v?=
+ =?utf-8?B?QVdPUXcvWDRmNWhFVEdrOTk4Nk41SFZ2TzlZNldIV2pmTTRybDU2bUZEaGRS?=
+ =?utf-8?Q?lYP+40UfhY3thOmqrN//Ens=3D?=
+X-OriginatorOrg: iopsys.eu
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b4b0dca-3c05-423f-0d94-08dde0adb0b7
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR08MB8121.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 12:24:35.7816
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i/q6qI+l9F8ZdmKqoVkvCo33mqVI8U3aod0YLHSzlI8SQpK7MEQxEBt/CTFj5V+nLdIoOqZeih5eNFHsqnG41GOOZI48AFFDr6CH7ANL57Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB5467
 
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+On 21.08.2025 14:34, Lorenzo Bianconi wrote:
+>> On 21.08.2025 09:58, Lorenzo Bianconi wrote:
+>>>> This patch series greatly improve airoha snfi driver and fix a
+>>>> number of serious bug.
+>>>>
+>>>> Fixed bugs:
+>>>>  * Fix reading/writing of flashes with more than one plane per lun
+>>>>  * Fix inability to read/write oob area
+>>>>  * Fill the buffer with 0xff before writing
+>>>>  * Fix reading of flashes supporting continuous reading mode
+>>>>  * Fix error paths
+>>>>
+>>>> Improvements:
+>>>>  * Add support of dual/quad wires spi modes in exec_op().
+>>>>  * Support of dualio/quadio flash reading commands
+>>>>  * Remove dirty hack that reads flash page settings from SNFI registers
+>>>>    during driver startup
+>>>>
+>>>> Unfortunately I am unable to test the driver with linux at the moment,
+>>>> so only the following testing was done:
+>>> It seems to me this is quite an important rework of the driver. I would prefer
+>>> to have some test results for this series. Are you able to run mtd_test kernel
+>>> module for testing?
+>> I'll try to build latest openwrt with this patches  and mtd_test kernel
+>> module and try it on one of our boards.
+> what board are you using for testing? If it is based on Airoha-7581 you could
+> use the following repo for testing.
+>
+> https://github.com/Ansuel/openwrt/tree/openwrt-24.10-airoha-an7581-stable
+>
+> Regards,
+> Lorenzo
+>
+yes, it's based on Airoha-7581
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.17-1
-
-for you to fetch changes up to 538c06e3964a8e94b645686cc58ccc4a06fa6330:
-
-  LoongArch: KVM: Add address alignment check in pch_pic register access (2025-08-20 22:51:15 +0800)
-
-----------------------------------------------------------------
-LoongArch fixes for v6.17-rc3
-
-Fix a lot of build warnings for LTO-enabled objtool check, increase
-COMMAND_LINE_SIZE up to 4096, rename a missing GCC_PLUGIN_STACKLEAK
-to KSTACK_ERASE, and fix some bugs about arch timer, module loading,
-LBT and KVM.
-----------------------------------------------------------------
-Bibo Mao (3):
-      LoongArch: KVM: Make function kvm_own_lbt() robust
-      LoongArch: KVM: Fix stack protector issue in send_ipi_data()
-      LoongArch: KVM: Add address alignment check in pch_pic register access
-
-Huacai Chen (2):
-      LoongArch: Save LBT before FPU in setup_sigcontext()
-      LoongArch: Rename GCC_PLUGIN_STACKLEAK to KSTACK_ERASE
-
-Kanglong Wang (1):
-      LoongArch: Optimize module load time by optimizing PLT/GOT counting
-
-Ming Wang (1):
-      LoongArch: Increase COMMAND_LINE_SIZE up to 4096
-
-Song Gao (1):
-      LoongArch: KVM: Use kvm_get_vcpu_by_id() instead of kvm_get_vcpu()
-
-Tiezhu Yang (2):
-      objtool/LoongArch: Get table size correctly if LTO is enabled
-      LoongArch: Pass annotate-tablejump option if LTO is enabled
-
-Xianglai Li (1):
-      LoongArch: Add cpuhotplug hooks to fix high cpu usage of vCPU threads
-
- arch/loongarch/Makefile                 |  6 ++++++
- arch/loongarch/include/asm/stackframe.h |  2 +-
- arch/loongarch/include/uapi/asm/setup.h |  8 ++++++++
- arch/loongarch/kernel/module-sections.c | 36 ++++++++++++++++-----------------
- arch/loongarch/kernel/signal.c          | 10 ++++-----
- arch/loongarch/kernel/time.c            | 22 ++++++++++++++++++++
- arch/loongarch/kvm/intc/eiointc.c       |  7 ++++++-
- arch/loongarch/kvm/intc/ipi.c           |  8 ++++----
- arch/loongarch/kvm/intc/pch_pic.c       | 10 +++++++++
- arch/loongarch/kvm/vcpu.c               |  8 +++++---
- include/linux/cpuhotplug.h              |  1 +
- tools/objtool/arch/loongarch/special.c  | 23 +++++++++++++++++++++
- 12 files changed, 109 insertions(+), 32 deletions(-)
- create mode 100644 arch/loongarch/include/uapi/asm/setup.h
-
+>> Actually patches can be divided on to parts:
+>> * fixes of current driver (patches 1-10)
+>> * change of behavior to avoid reading flash page settings from SNFI
+>> registers during driver startup (patches 11-14)
+>>
+>> The changes are based on the code we are using for more than 3 years. I
+>> adapt it to latest linux/u-boot code.
+>>
+>> Up to now the only known issue appears on en7523 chips only. Here a
+>> corresponding patch description (not added to this series)
+>> ====================================================== spi: airoha:
+>> en7523: workaround flash damaging if UART_TXD was short to GND We found
+>> that some serial console may pull TX line to GROUND during board boot
+>> time. Airoha uses TX line as one of it's BOOT pins. This will lead to
+>> booting in RESERVED boot mode. It was found that some flashes operates
+>> incorrectly in RESERVED mode. Micron and Skyhigh flashes are definitely
+>> affected by the issue, Winbond flashes are NOT affected. Details:
+>> -------- DMA reading of odd pages on affected flashes operates
+>> incorrectly. Page reading offset (start of the page) on hardware level
+>> is replaced by 0x10. Thus results in incorrect data reading. Usage of
+>> UBI make things even worse. Any attempt to access UBI leads to ubi
+>> damaging. As result OS loading becomes impossible. Non-DMA reading is
+>> OK. =======================================================
+>>
+>> Regards,
+>> Mikhail
+>>
+>>
+>>> Regards,
+>>> Lorenzo
+>>>
+>>>>  * Driver compiles without error.
+>>>>  * All changes were tested with corresponding u-boot driver. U-Boot
+>>>>    SpiNAND driver was modified as well to match linux-6.17-rc2 with
+>>>>    additional fixes for continuous mode.
+>>>>
+>>>> Changes v2:
+>>>>  * minor fix
+>>>>  * add comments to code
+>>>>
+>>>> Changes v3:
+>>>>  * add patch to prevent continuous reading
+>>>>
+>>>> Mikhail Kshevetskiy (14):
+>>>>   spi: airoha: return an error for continuous mode dirmap creation cases
+>>>>   spi: airoha: remove unnecessary restriction length
+>>>>   spi: airoha: add support of dual/quad wires spi modes
+>>>>   spi: airoha: remove unnecessary switch to non-dma mode
+>>>>   spi: airoha: unify dirmap read/write code
+>>>>   spi: airoha: switch back to non-dma mode in the case of error
+>>>>   spi: airoha: fix reading/writing of flashes with more than one plane
+>>>>     per lun
+>>>>   spi: airoha: support of dualio/quadio flash reading commands
+>>>>   spi: airoha: allow reading/writing of oob area
+>>>>   spi: airoha: buffer must be 0xff-ed before writing
+>>>>   spi: airoha: avoid setting of page/oob sizes in REG_SPI_NFI_PAGEFMT
+>>>>   spi: airoha: reduce the number of modification of REG_SPI_NFI_CNFG and
+>>>>     REG_SPI_NFI_SECCUS_SIZE registers
+>>>>   spi: airoha: set custom sector size equal to flash page size
+>>>>   spi: airoha: avoid reading flash page settings from SNFI registers
+>>>>     during driver startup
+>>>>
+>>>>  drivers/spi/spi-airoha-snfi.c | 508 +++++++++++++++++-----------------
+>>>>  1 file changed, 260 insertions(+), 248 deletions(-)
+>>>>
+>>>> -- 
+>>>> 2.50.1
+>>>>
 
