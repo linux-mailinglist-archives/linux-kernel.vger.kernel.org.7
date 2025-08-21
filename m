@@ -1,175 +1,101 @@
-Return-Path: <linux-kernel+bounces-779747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41541B2F829
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:35:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C63B2F815
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE1860360F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:33:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663891CC6101
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7263112D7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AA830E0E1;
 	Thu, 21 Aug 2025 12:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L1YncIOH"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADB02F5E;
-	Thu, 21 Aug 2025 12:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FE319E83C
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755779616; cv=none; b=UhQSVUP+obgKnX4IVDZIkXG+4wBnJbl9GaYiZbuP7RaItZkT4Y857ygsZCf1rk/8wZSxZy47Bu/HdOzFo5AjfIccpjD1jkbH8xmCr9KqOEBVNNWkD5dJLBzUqXAuFs3mrxBv0wXzER8W59WVWOflJoJYYeq3QgeHgN7UlSExyd8=
+	t=1755779615; cv=none; b=rfB6nl6G2mgXbVw/iwWammccYSvtO4j6ggtNjYOpygWjLfF18oIUyCrXhZ7m/Y7xBKHilb6xEHRuLoj5qUfkeZX75ZMEWsIRlAYKI+Kxmn+/XRQDAnz+1fWmlb/noPCfubSMFnjAmyHVZzhdibQta0SpDQ9y73uyv6P8gwkx79Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755779616; c=relaxed/simple;
-	bh=STIWLtVOMHk9RfVFUUas9ZZPysmjI7JRjEhbfGJJX/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6QxDdVeqWLHkdo5KWdhOAdxDm23EFu4fmafHFq8abP+hAUYDTwaMNug2XNxLOvB95qdRBpDt7lTOOybYHrS02NsMaaJhJnyot83JL1+DVKuMXlpMz2dnaroTjtJLdUwqhO/DPsFrs/RXmukwh49y0Hvh/f9jY3ig9ZZf33SQnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=L1YncIOH; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A342EEFF;
-	Thu, 21 Aug 2025 14:32:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755779551;
-	bh=STIWLtVOMHk9RfVFUUas9ZZPysmjI7JRjEhbfGJJX/I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L1YncIOH3YE/EcyBbynXHYa8GJMi6nL8Pm2nCWAJhQKuipg3XJiAAE6Yx8H49oOBY
-	 SacwpnqIkyhRZFahZoypuiEzmLg/m6DrUn1QcqWOvPJ9GAxFs1g0tqTVhMrcXUFdmL
-	 aRoIUsqUg0uespog5NQTpTPVY9T6FKgbOoePB/dM=
-Date: Thu, 21 Aug 2025 15:33:07 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Guoniu Zhou <guoniu.zhou@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stefan Riedmueller <s.riedmueller@phytec.de>,
-	Christian Hemp <c.hemp@phytec.de>, Jacopo Mondi <jacopo@jmondi.org>,
-	linux-media@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v2] media: nxp: imx8-isi: Fix streamon/streamoff calls
- are imbalanced issue
-Message-ID: <20250821123307.GB8865@pendragon.ideasonboard.com>
-References: <20250821-isi_m2m-v2-1-c616e4b00600@nxp.com>
+	s=arc-20240116; t=1755779615; c=relaxed/simple;
+	bh=x+Hm+jlpve5bhMsoCyS9BQA1Kt5xXfpBC/IqW4ac0us=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Vb/d2ER1H1N9zCvnuoc2ysy62O2Nz254kuz21cjgYcUELPpOlCQDVpsEFCgOHGDUuU6BouVNJay/VLcVv2nFw9J+aQ1dE1pbB2UBkdA0p8+XLpf6DJBK5rZs3b3Po4HnQSDScAkH4Tr5vEdf1q+EeZyPi2DirvdxtuFwNVqphUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-435de7c0722so1514553b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:33:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755779613; x=1756384413;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wzZRRGKVVE9scqFqMUJIdWTgztlx3eiucU/EMi2gV+U=;
+        b=FXdg5+hsvtLcjBqaS9UUTbV50u+zkaQZj9RKLGilXZ/qO8C0mRDJgV+hmKm4zZ3mIc
+         u38d2NZAg8LYGETLf44BI6wbGUOx01ocHkJyEnk0mrFdIONgh2YJLB6EQ+AcOrKhr1uE
+         YjCZyz6YKKyd5pV/8chH3zuTGNvvWrc4tTjjrN2wuBFMRa9fO/9oBIScmL7YCR4X57v6
+         z5LEnKKfoI637sx8VL49nhEQZq/wHjGPviGKtVcYVWSKaTdmyOfHcZVSjFHH+xC8L55F
+         KduAgUBU4uPNs2sqN47EocOXwX2Gpl0tSEA13tpUwrPrkLDBSv2SMPJPO3mrZh+/nO5O
+         j2Mg==
+X-Gm-Message-State: AOJu0Yxc86fsHHg5CS2xk9rnV41ZeIYA+ChuAnL0iG+tw5hQTKn+MzeA
+	EaxrRYl6fZlUkwsAXbLKePJJcZbl+/vsxaZSlTWSNmuGiz4Jw+J4N620NRJNb5h4BR2XxZnb7fy
+	2W4Th06XWH9w8DthO7CG2TnhoFIyc0EHvsB5IS6inxOHCyFhpy0p7pe5ysls=
+X-Google-Smtp-Source: AGHT+IGs+jx2/q3II9+0bk/3Agl8Uiev1mygp+Gevet8yBXKJRz3qHTlp2jWodu3KRQNAlEseKcvqVpZmf7x/lDC31V9kb8WO1Ju
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250821-isi_m2m-v2-1-c616e4b00600@nxp.com>
+X-Received: by 2002:a05:6808:2394:b0:41e:9fd0:bd2c with SMTP id
+ 5614622812f47-4377d701a5amr822447b6e.18.1755779613539; Thu, 21 Aug 2025
+ 05:33:33 -0700 (PDT)
+Date: Thu, 21 Aug 2025 05:33:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a7121d.050a0220.3d78fd.0026.GAE@google.com>
+Subject: [syzbot] Monthly rdma report (Aug 2025)
+From: syzbot <syzbot+listd166d65ef55e86d38882@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Guoniu,
+Hello rdma maintainers/developers,
 
-Thank you for the patch.
+This is a 31-day syzbot report for the rdma subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/rdma
 
-On Thu, Aug 21, 2025 at 02:08:29PM +0800, Guoniu Zhou wrote:
-> If streamon/streamoff calls are imbalanced, such as exit application
-> with Ctrl+C when streaming, m2m usage_count will never reach to zero
-> and ISI channel won't be freed. Besides from that, if the input line
-> width is more 2K and exit with Ctrl+C when streaming, it will trigger
-> kernel panic, like bellow:
-> 
-> [ 59.222120] ------------[ cut here ]------------
-> [ 59.226758] WARNING: drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c:631 at mxc_isi_channel_chain+0xa4/0x120, CPU#4: v4l2-ctl/654
-> [ 59.238569] Modules linked in: ap1302
-> [ 59.242231] CPU: 4 UID: 0 PID: 654 Comm: v4l2-ctl Not tainted 6.16.0-rc4-next-20250704-06511-gff0e002d480a-dirty #258 PREEMPT
-> [ 59.253597] Hardware name: NXP i.MX95 15X15 board (DT)
-> [ 59.258720] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [ 59.265669] pc : mxc_isi_channel_chain+0xa4/0x120
-> [ 59.270358] lr : mxc_isi_channel_chain+0x44/0x120
-> [ 59.275047] sp : ffff8000848c3b40
-> [ 59.278348] x29: ffff8000848c3b40 x28: ffff0000859b4c98 x27: ffff800081939f00
-> [ 59.285472] x26: 000000000000000a x25: ffff0000859b4cb8 x24: 0000000000000001
-> [ 59.292597] x23: ffff0000816f4760 x22: ffff0000816f4258 x21: ffff000084ceb780
-> [ 59.299720] x20: ffff000084342ff8 x19: ffff000084340000 x18: 0000000000000000
-> [ 59.306845] x17: 0000000000000000 x16: 0000000000000000 x15: 0000ffffdb369e1c
-> [ 59.313969] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-> [ 59.321093] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
-> [ 59.328217] x8 : ffff8000848c3d48 x7 : ffff800081930b30 x6 : ffff800081930b30
-> [ 59.335340] x5 : ffff0000859b6000 x4 : ffff80008193ae80 x3 : ffff800081022420
-> [ 59.342464] x2 : ffff0000852f6900 x1 : 0000000000000001 x0 : ffff000084341000
-> [ 59.349590] Call trace:
-> [ 59.352025]  mxc_isi_channel_chain+0xa4/0x120 (P)
-> [ 59.356722]  mxc_isi_m2m_streamon+0x160/0x20c
-> [ 59.361072]  v4l_streamon+0x24/0x30
-> [ 59.364556]  __video_do_ioctl+0x40c/0x4a0
-> [ 59.368560]  video_usercopy+0x2bc/0x690
-> [ 59.372382]  video_ioctl2+0x18/0x24
-> [ 59.375857]  v4l2_ioctl+0x40/0x60
-> [ 59.379168]  __arm64_sys_ioctl+0xac/0x104
-> [ 59.383172]  invoke_syscall+0x48/0x104
-> [ 59.386916]  el0_svc_common.constprop.0+0xc0/0xe0
-> [ 59.391613]  do_el0_svc+0x1c/0x28
-> [ 59.394915]  el0_svc+0x34/0xf4
-> [ 59.397966]  el0t_64_sync_handler+0xa0/0xe4
-> [ 59.402143]  el0t_64_sync+0x198/0x19c
-> [ 59.405801] ---[ end trace 0000000000000000 ]---
-> 		VIDIOC_STREAMON returned -1 (Invalid argument)
-> 
-> So check the queue streaming status when application close and call
-> streamoff to fix the issue.
-> 
-> Fixes: cf21f328fcaf ("media: nxp: Add i.MX8 ISI driver")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-> ---
-> Changes in v2:
-> - No functions changed, add Cc:stable@vger.kernel.org tag in the sign-off area
-> - Link to v1: https://lore.kernel.org/r/20250818-isi_m2m-v1-1-bbe2b774d4bf@nxp.com
-> ---
->  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
-> index 22e49d3a128732c077beb7ac2e2f688e0899f8e2..7650a9fe6b093e2b4e09e3e66b624c8c019c8583 100644
-> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
-> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
-> @@ -709,6 +709,14 @@ static int mxc_isi_m2m_release(struct file *file)
->  	struct mxc_isi_m2m *m2m = video_drvdata(file);
->  	struct mxc_isi_m2m_ctx *ctx = to_isi_m2m_ctx(file->private_data);
->  
-> +	if (ctx->queues.out.streaming)
-> +		mxc_isi_m2m_streamoff(file, &ctx->fh,
-> +				      V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
-> +
-> +	if (ctx->queues.cap.streaming)
-> +		mxc_isi_m2m_streamoff(file, &ctx->fh,
-> +				      V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-> +
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 7 issues are still open and 65 have already been fixed.
 
-Stopping streaming is supposed to be handled by the
-v4l2_m2m_ctx_release() function, which calls vb2_queue_release() for
-both queues. This doesn't work today because mxc_isi_m2m_streamon() and
-mxc_isi_m2m_streamoff() perform extra operations before calling
-v4l2_m2m_ioctl_streamon() and v4l2_m2m_ioctl_streamoff(). I think moving
-that code to the .prepare_streaming() and .unprepare_streaming()
-operations would be best, as done in
-https://lore.kernel.org/r/20250813212451.22140-2-laurent.pinchart@ideasonboard.com
-for the non-M2M case.
+Some of the still happening issues:
 
-I'm testing a patch and I will send it out.
+Ref Crashes Repro Title
+<1> 567     No    INFO: task hung in rdma_dev_change_netns
+                  https://syzkaller.appspot.com/bug?extid=73c5eab674c7e1e7012e
+<2> 403     Yes   WARNING in rxe_pool_cleanup
+                  https://syzkaller.appspot.com/bug?extid=221e213bf17f17e0d6cd
+<3> 79      No    INFO: task hung in add_one_compat_dev (3)
+                  https://syzkaller.appspot.com/bug?extid=6dee15fdb0606ef7b6ba
+<4> 55      No    INFO: task hung in rdma_dev_exit_net (6)
+                  https://syzkaller.appspot.com/bug?extid=3658758f38a2f0f062e7
+<5> 43      Yes   WARNING in gid_table_release_one (3)
+                  https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
 
->  	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
->  	mxc_isi_m2m_ctx_ctrls_delete(ctx);
->  
-> 
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250818-isi_m2m-ac52338ae925
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
--- 
-Regards,
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-Laurent Pinchart
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
