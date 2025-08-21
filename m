@@ -1,68 +1,93 @@
-Return-Path: <linux-kernel+bounces-780281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4A8B2FFCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:18:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33868B2FFDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3EFF7B140C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600A91C873E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6309F2DA74A;
-	Thu, 21 Aug 2025 16:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16BD2DCBFC;
+	Thu, 21 Aug 2025 16:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNRgbDAy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaN/HfZX"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73DF277C8D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 16:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562852DBF46;
+	Thu, 21 Aug 2025 16:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755793073; cv=none; b=g7E7v4FekYuEhSvc69DMv520B+jlJ03f0yXEeaWPHOVZwrr2dFmjdUr88jvKfhQoPW8nlkR/S7iHQKi3RvmSKWxtgQL3kRl8iOTeDyNfIbkiM1vSIOC9LimawRLVdosU9IM4BeVyn0RmdoFspa6AhJW73vTlTRM9iriPeofGPpo=
+	t=1755793194; cv=none; b=uOZAnwZMDLNqfgZ+nxRJkpOBMeNP//IZ9BLZWKyCoC1OAquwsF02abj/JL/SkLrGsYqkH/LxppElMEMvX9Oq899Q/d3u+reebsZH2pv0tQ7LNGUmAO2CUeMYHMgl+68WM6C9BLYM0bamW98m6yuhvIkNmvwdyHsqFUVW7TPosXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755793073; c=relaxed/simple;
-	bh=62f4v2C5TZWy6Ea8Ev+LCACWGOLFhbSa+Hwla4aQfSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=clNLyjMdMZa/dmJw+wJXozEy7TURQ7KDzCU2nuDtQabCX5yXofnX+L/ORVWJlNuIejwsmnHQyl3oU5k4aQCw7OXDJI06KOrfJcuMqg6If5Q5kHF6yk9CwWFSSTBZKBUIin/eJwTisZ7QTw7s/GJ1oSuXVVtDVIy+suEPzv3dsvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNRgbDAy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AEC0C4CEEB;
-	Thu, 21 Aug 2025 16:17:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755793073;
-	bh=62f4v2C5TZWy6Ea8Ev+LCACWGOLFhbSa+Hwla4aQfSU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eNRgbDAyKKEZl9+zRwZ0kIv9nDBiiUGI9iztOq24T4ldF9Z2DjjelTFyu7zIriKB5
-	 TQNUeYu8OEEKLXsQI1N46atx+TjxBWq6QnbIadfCaJB/5OkqSVMkwaW/rDI8xXpazE
-	 OF9Ow0REARBCVYkUtWHxn3SXZSVT/+VyAyHGNdzHtwdaJ9nqB9lU83Ct+LWfXHv0Sw
-	 im9et2TzfrDWZpfo6sf8Qyd+/oMfHy1zmIUTU/IRIB66iCC8ZRN1F5qcQM9Co9CW+D
-	 K8j6GF4dPZ8q5LnxKgFTXS5wcAWAndnqOQn3ZcbnTV2zAQQnRAWZ1hKuadFAkgJ/VY
-	 lucKDI8oCBRrg==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	kernel-team@meta.com,
+	s=arc-20240116; t=1755793194; c=relaxed/simple;
+	bh=GtGqkTcLS1ceBcL5auy/IhY+0QRzkp6Vueo+gdxXWao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B2rpL5TrDLOWr1YMrEArc3yF5k2NOD1myLYXGktgCfXXbyEY2/LNVo0mj4XPnyVd0mrWTdgbBpa5noatMkVAzoBRjxC22EqmaopJs+kL0unKhkCstIvUqVnW8R813PQs169UYo3raRGF3b9RZjW+afZj9S/bFhRo/ylT0f987GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaN/HfZX; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9a342e8ffso920766f8f.0;
+        Thu, 21 Aug 2025 09:19:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755793191; x=1756397991; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fTMvkN5940SW84+RcC5Rq13leHclwNf9WmDN3d3WW+w=;
+        b=eaN/HfZXFaSFIxZJ8Vs/h8zcUW5cnP7a38tGzWFAOCftivFELzj/uVsD9s7SBqwDPD
+         Gp0QZtr5Gn2UYz6PcscXMs5fXXs7fBMp1ChHjOkgWu8H8iJWNAkaq6fgd/3egWvW7UHB
+         OxgmWqcIQgq4ooT10a94HDq9XQ6hfBKxLXbjwXuoNxeWyhM0i8WFYbsdxmt8nFsMKVcE
+         urr2wwscl3bTYcf8NGJlan7sk4E5Wg7uIJFGDffQkETcz/U8DkNuaxZKDwjxDIT8C7Yw
+         5HRo4dZDk4P+NRvcTpuDRWRn4JlQzWsXxF/IqOJYwzZQUQOSA4ayGQEz3RzJmcVHihtM
+         vg6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755793191; x=1756397991;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fTMvkN5940SW84+RcC5Rq13leHclwNf9WmDN3d3WW+w=;
+        b=YHYXhy04deJGGR4URr2BPXInldi/h5OY083dRKCKjgbgGUqhVH+bZ+TQ+gabgV+Mb6
+         dkuk1Pq0n4359MyNN3aGehd5nXGTXUDZQWHpwQgPiqD51E76ZMIqJL1W84mqMU5NLZT0
+         cQQkFUbBY2RJFwD89FDLhNDrL2nf3XHVx/43n3BatotydmnBFBuH9Z8A/FdzACW1BoLw
+         OOsC9lHVmwlHfiQ0gI13zemnbspuVB50FXiMHmRRbITqTC0XN6tFVfeMD5CzSmElKKGg
+         W/uDMOg9jA34uxHB+6OTR4y8RUqNlNEwcyl01d++0K5NgZ8r3kT2vcnlCtWV8BFb7Nmw
+         Bixg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfsjK4ACt2WZm5nTB+by1/0yv2fv8I8sHNCbLf3GlvF03dwsi5w8SzjKJ2/dAjZXRZYTqxt3bEBmNO@vger.kernel.org, AJvYcCUux4cRkcKHqV3wx7uXn/gQ63nT5z6Lls/vfGORVVR6RkYF5qZEG9B6YXT3LEfcTtZXrjUhP+Kl9eh7LRZW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy71Y8pUNkHbR7ZFASOdwRJ18zM/kLtqGgIpL6ek/GUUfPzbVd4
+	20WE+VpJndOL72Ib5f/E2wBFUtgqU8cqwNrOE58e7tUl02zMibCinGGr
+X-Gm-Gg: ASbGnctS8lHxvEKD/bnxmuq4+CneL3usSWIc6Ahu8Mbw7gceTD7rH2rRBBeHzT1ypNx
+	r6JamyGDD7Oun3cYAju46c69/A9JFTbAFy8/c86kGvXy+Rqq9uG6wZBb4Ps9xZjt13TCT2Lg0fa
+	gSPN6I8HVuSsWUxzld+2tB1UBmgPx5jYErt1w1IKVXR5UO2odhxFEQAQyVSsOf7ZaoxvOl3m2R3
+	XtiDOIt9JhNLPH9CuNN6cwx2n/KpXk2f2S0X0ROfTJnQst5QIoBOBf8DIKAd+Y1PJZDPfvPacPq
+	w0PXJwLopbBfpRP1ehga0btwzBJknVDFnfnTlMW4c/dOoD5UrInu8rW+4la1+igtoxlDaaqJIBy
+	SN11sZ+SUHW8KPSJbWgVrtbDqYP/8G8tj1mkIrGUb7yueG5jELcOq4X5g
+X-Google-Smtp-Source: AGHT+IFioIErM3rMkgYrGIe72wb8WzpV4s9E2BuZBI5tRDNfY9dgUvoY7I8rjwPC27aHJVVxVmGR9Q==
+X-Received: by 2002:a05:6000:24c7:b0:3c2:e033:3994 with SMTP id ffacd0b85a97d-3c4b5a85a80mr2496182f8f.26.1755793190240;
+        Thu, 21 Aug 2025 09:19:50 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:9ed2:95cd:69a:8d10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c4f77e969asm2316464f8f.20.2025.08.21.09.19.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 09:19:49 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Takero Funaki <flintglass@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Baoquan He <bhe@redhat.com>,
-	Barry Song <baohua@kernel.org>,
-	Chris Li <chrisl@kernel.org>,
-	Kairui Song <kasong@tencent.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v4] mm/zswap: store <PAGE_SIZE compression failed page as-is
-Date: Thu, 21 Aug 2025 09:17:50 -0700
-Message-Id: <20250821161750.78192-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250819193404.46680-1-sj@kernel.org>
-References: 
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/6] arm64: dts: renesas: Add support for WDT/USB2.0 on RZ/{T2H,N2H} SoCs and EVKs
+Date: Thu, 21 Aug 2025 17:19:40 +0100
+Message-ID: <20250821161946.1096033-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,69 +96,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 19 Aug 2025 12:34:04 -0700 SeongJae Park <sj@kernel.org> wrote:
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-[...]
-> Knowing how many compression failures from the crypto engine happened so
-> far, and how many incompressible pages are stored at the given moment
-> will be useful for future investigations.  Add two new debugfs files,
-> crypto_compress_fail and stored_incompressible_pages, for the two
-> counts, respectively.
-[...]
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 3c0fd8a13718..1f1ac043a2d9 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -42,8 +42,10 @@
->  /*********************************
->  * statistics
->  **********************************/
-> -/* The number of compressed pages currently stored in zswap */
-> +/* The number of pages currently stored in zswap */
->  atomic_long_t zswap_stored_pages = ATOMIC_LONG_INIT(0);
-> +/* The number of incompressible pages currently stored in zswap */
-> +atomic_long_t zswap_stored_incompressible_pages = ATOMIC_LONG_INIT(0);
+Hi All,
 
-Kernel test robot reported a sparse warning for the above line.  Andrew, could
-you please add below attached fixup?
+Extend hardware support on Renesas RZ/T2H and RZ/N2H SoCs and evaluation
+boards. Below are the features added for the RZ/T2H and RZ/N2H SoCs and
+EVKs:
+- Add Watchdog Timer (WDT) nodes for RZ/T2H and RZ/N2H SoCs.
+- Enable WDT2 on RZ/T2H and RZ/N2H EVKs.
+- Add USB2.0 nodes for RZ/T2H and RZ/N2H SoCs.
+- Enable USB2.0 support for RZ/T2H and RZ/N2H EVKs.
 
+Note
+1] This series applies on top of the following series:
+   - https://lore.kernel.org/all/20250820200659.2048755-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+2] WDT driver and binding patches have been submitted separately.
+   - https://lore.kernel.org/all/20250820202322.2051969-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+3] USB2.0 driver and binding patches have been submitted separately
+   and are already merged into -next a fix for PHY driver is posted,
+   - https://lore.kernel.org/all/20250821155957.1088337-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-Thanks,
-SJ
+Cheers,
+Prabhakar
 
-[...]
+Lad Prabhakar (6):
+  arm64: dts: renesas: r9a09g077: Add WDT nodes
+  arm64: dts: renesas: r9a09g087: Add WDT nodes
+  arm64: dts: renesas: rzt2h-evk-common: Enable WDT2
+  arm64: dts: renesas: r9a09g077: Add USB2.0 support
+  arm64: dts: renesas: r9a09g087: Add USB2.0 support
+  arm64: dts: renesas: rzt2h-n2h-evk: Enable USB2.0 support
 
-==== Attachment 0 (0001-mm-zswap-mark-zswap_stored_incompressible_pages-as-s.patch) ====
-From 1d41d75c47a6d3ef3cbf58636faf2b4dc04616ba Mon Sep 17 00:00:00 2001
-From: SeongJae Park <sj@kernel.org>
-Date: Thu, 21 Aug 2025 09:10:57 -0700
-Subject: [PATCH] mm/zswap: mark zswap_stored_incompressible_pages as static
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi    | 107 ++++++++++++++++++
+ .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    |  36 ++++++
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi    | 107 ++++++++++++++++++
+ .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    |  41 +++++++
+ .../dts/renesas/rzt2h-n2h-evk-common.dtsi     |  27 +++++
+ 5 files changed, 318 insertions(+)
 
-Only zswap.c uses zswap_stored_incompressible_pages, but it is not
-marked as static.  This incurs a sparse warning that reported by kernel
-teset robot.  Mark it as a static variable to eliminate the warning.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202508211706.DnJPQQMn-lkp@intel.com/
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/zswap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 5dd282c5b626..ee443b317ac7 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -45,7 +45,7 @@
- /* The number of pages currently stored in zswap */
- atomic_long_t zswap_stored_pages = ATOMIC_LONG_INIT(0);
- /* The number of incompressible pages currently stored in zswap */
--atomic_long_t zswap_stored_incompressible_pages = ATOMIC_LONG_INIT(0);
-+static atomic_long_t zswap_stored_incompressible_pages = ATOMIC_LONG_INIT(0);
- 
- /*
-  * The statistics below are not protected from concurrent access for
 -- 
-2.39.5
+2.51.0
 
 
