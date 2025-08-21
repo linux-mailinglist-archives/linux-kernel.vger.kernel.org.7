@@ -1,127 +1,215 @@
-Return-Path: <linux-kernel+bounces-780200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD31B2FEE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:45:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BA3B2FEFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E0A4724A57
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:39:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E636FAA08D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2BE278751;
-	Thu, 21 Aug 2025 15:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754DD2D46D6;
+	Thu, 21 Aug 2025 15:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Sx/XziRd"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1127258EFF;
-	Thu, 21 Aug 2025 15:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCadD0RF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A081277C8D;
+	Thu, 21 Aug 2025 15:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755790735; cv=none; b=qPXpVwDAqPCfEs4Lu4+6f+/MmRH1Q4QupDmjrspdBj3D6octHF0AodH7ppbZLg6WKTJsne1HDlp0uhxRVKH5PgvTybbpb60IDE6wta2CUnWLfE9nosaq1l9VdQUcmWP6KPErgjs9Y7Eps5QM5gU2JLYZ/V+4z2PhE8z8iqAMifk=
+	t=1755790803; cv=none; b=nl2v2X8CKegQvXCQRktcbbQoskk4IZC/24VGZ6G7qbLGjBKGxM4+/3o8aokMLZEuURlO3WRlf1z+RWKcH9WRDFWiXliS7l2RthhvTerBLbPgk0a9+cjUoJLtNY0jh5tRVWrGWDPd981LjUbc2TjpseWVPIIL6+WtEWsTI8KaWpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755790735; c=relaxed/simple;
-	bh=34WxhVkd3Zb9HWQceYCWNuG5BF2cNsCX7/SRYVYgZDU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=YfPkdjfZNYW9KRkRolzb4DKalQkl8LpnSnNA5JTyK4bcICWQ6fNLY2ihZbUqhd4Vtlxw/jWfzAO6FMVnWDleJ2UZvfBGX7OmsvaG8TpqhhWG9QeR5qoFDgVDPbSV8LFOL+QX2dhetolxZVnGTicSbD+4GmLlr5ca0iXzCZnANb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Sx/XziRd reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=N3Ina/fhCR8xT0SbpvmwgG8VxddZ2Fai2XOqRVIwIcE=; b=S
-	x/XziRdPgFrU2/P3dXRFlhoWrVS5011E2vH98MZN04FsdskRB7VMaTzQDrW3l8vt
-	Pwmin/i3MZYHW7HZAJgikWQLStZWrFzH4/4DOvdImWD5fO5D6Dpp3UG+PTyzA7mb
-	2Fextc/rqXntkcUu8oiSiRZfwfI323+i9P7OLIGnFI=
-Received: from phoenix500526$163.com ( [120.230.124.83] ) by
- ajax-webmail-wmsvr-40-132 (Coremail) ; Thu, 21 Aug 2025 23:38:13 +0800
- (CST)
-Date: Thu, 21 Aug 2025 23:38:13 +0800 (CST)
-From: =?UTF-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>
-To: "Andrii Nakryiko" <andrii.nakryiko@gmail.com>
-Cc: "Yonghong Song" <yonghong.song@linux.dev>, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH v7 2/2] selftests/bpf: Force -O2 for USDT selftests
- to cover SIB handling logic
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <CAEf4Bzbpu9PM6GHV6ewE_hJJ7=94Rn1ZYq5QWVnpoH6_LRQDCw@mail.gmail.com>
-References: <20250806092458.111972-1-phoenix500526@163.com>
- <20250806092458.111972-3-phoenix500526@163.com>
- <f5d8d886-1de3-4521-917a-e98b645b987e@linux.dev>
- <30d8fcac.2669.19882763de2.Coremail.phoenix500526@163.com>
- <e7ba3f7f-38b8-4c06-8aff-ef1fb8d04d86@linux.dev>
- <310495cd.19eb.19893314d03.Coremail.phoenix500526@163.com>
- <0f6d16c1-0e85-4709-9846-3a993a9f041b@linux.dev>
- <65e51538.57aa.1989d162bb8.Coremail.phoenix500526@163.com>
- <2559a8cd-b439-43fc-96e4-d5f2941ca4d8@linux.dev>
- <3fbb9319.20c8.198a1410186.Coremail.phoenix500526@163.com>
- <6c444d7d-524d-4bc8-bda6-0440af621ebe@linux.dev>
- <46f4c341.1dea.198b845a4b0.Coremail.phoenix500526@163.com>
- <7495eeb9-777b-4b9e-8312-c6654268d6ec@linux.dev>
- <CAEf4Bzbpu9PM6GHV6ewE_hJJ7=94Rn1ZYq5QWVnpoH6_LRQDCw@mail.gmail.com>
-X-NTES-SC: AL_Qu2eB/uSv04i5SSQYukfmUsVh+o9X8K1vfsk3oZfPJp+jAPo8CYNenRSAXvt8e60NDCgmgmGWztUxPtYULV/TqgBw3HLFMj7h2JODLD44ZLNbA==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1755790803; c=relaxed/simple;
+	bh=Ffhri9SjHSf/0JyrOM8P9yB5VxqUTJqas+Uuy3v7zJ8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EjmvhbqBVBWyxseDeNbS9AE0tZ1+5R2fRMsNa88FX6gPYf+9L9mcjUS+eoyh0FyM9JAtznL09+sDlZ+/ZgIb+OJwxCl3J2sGwyaHDmyYeqJ85MUXkQZm9FlBn2yM+YVdxLNZNLPaQPC3LbCUNsqiDa8p+gG/ARkS8yQpXtNoUww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCadD0RF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EE573C4CEEB;
+	Thu, 21 Aug 2025 15:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755790803;
+	bh=Ffhri9SjHSf/0JyrOM8P9yB5VxqUTJqas+Uuy3v7zJ8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ZCadD0RFHlKN5iyFo7ll/4qzPl87fAwXHR5iDeI086x32ktz4C681VTsa97Bqx0W5
+	 HEoHuxQZgFUKlAzRWCnWI06i4lmCkVE56zImxz7He9EUjJ8cSl6vOFaUpiQOCUdzga
+	 zcDQjgiymTmBsGvolsl8RbP7K2MZzStCCKH1Gmsu3/R47RmAmVCd9ZQ/LtEmAD7xTp
+	 +iPFMtMjEpCIQM1wgYvOwVbYJJwwCNnzW+It+vLe+iKj4+nlu2/uMKDQUeEUrBEtJP
+	 UKsibveOCTg3i7TIK36yGVPyzrWmypyDOYEeeXXVPaitQDXY3YMqbUzl1BGS326v5L
+	 lh2RkOPiWSeuQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FF1CA0FE1;
+	Thu, 21 Aug 2025 15:40:02 +0000 (UTC)
+From: Sven Peter <sven@kernel.org>
+Subject: [PATCH RFC 00/22] Apple Silicon USB3 support
+Date: Thu, 21 Aug 2025 15:38:52 +0000
+Message-Id: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <eb7a3ed.9723.198cd47d479.Coremail.phoenix500526@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:hCgvCgD3X+xmPadotSMfAA--.2845W
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFAGwiGinMrOWNQACsC
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIw9p2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyMD3cSS5IKMSl0zXUNz3STz1MQ0I+OkVEPzZCWgjoKi1LTMCrBp0Up
+ Bbs5KsbW1ABc+4BViAAAA
+X-Change-ID: 20250820-atcphy-6-17-b7eaf23be17c
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>, 
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, 
+ Sven Peter <sven@kernel.org>, Hector Martin <marcan@marcan.st>, 
+ stable@kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6416; i=sven@kernel.org;
+ h=from:subject:message-id;
+ bh=Ffhri9SjHSf/0JyrOM8P9yB5VxqUTJqas+Uuy3v7zJ8=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ8Zy27nOvKsmrbr5ZHFFULWSbmqNU6Cf/GdhsxZJDpOlr
+ /YtNZzUUcrCIMbBICumyLJ9v73pk4dvBJduuvQeZg4rE8gQBi5OAZhITQTD/yApX4eCr+cqeRw1
+ T5XvdD0t9Tg+mjlFZc70zo2Kl85v5WVkWPFqbkp+4sUwCT7P/bIazrIej3UUzwgFLfKW/b+uw4u
+ PBQA=
+X-Developer-Key: i=sven@kernel.org; a=openpgp;
+ fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
+X-Endpoint-Received: by B4 Relay for sven@kernel.org/default with
+ auth_id=407
 
-CgoKCgoKCgoKSW4gdGhlIHByZXZpb3VzIGRpc2N1c3Npb24gd2l0aCBZb25naG9uZyBTb25nLCB3
-ZSBmb3VuZCB0aGF0IHNvbWUgY29tcGlsZXIgd291bGQgZ2VuZXJhdGUKc3VjaCBhbiBhcmd1ZW1l
-bnQgZm9ybWF0LiBBbHRob3VnaCBJIGhhdmUgbmV2ZXIgZW5jb3VudGVyIHN1Y2ggYW4gaXNzdWUs
-IEkgZm91bmQgdGhhdCB0aGUgCmdsb2JhbCB2b2xhdGlsZSB2YXJpYWJsZSBjb3VsZCB0cmlnZ2Vy
-IHRoZSBjb21waWxlciB0byBnZW5lcmF0ZSB0aGlzIGFyZ3VtZW50IHNwZWMuIFNvIEkgdHJpZWQg
-dG8gCnNvbHZlIHRoaXMgcHJvYmxlbS4gSSBndWVzcyB0aGlzIHdvdWxkIG5vdCBiZSBhIHByb2Js
-ZW0gc2luY2Ugd2UgaGF2ZSBhbHJlYWR5IHVzZWQgU1RBUF9QUk9CRV9BU00KdG8gcmVsaWFibHkg
-Z2VuZXJhdGUgU0lCIGFyZ3VtZW50IHNwZWMuIAoKQlRXLCBJIGhhdmUgYW5vdGhlciBpc3N1ZSB0
-byBkaXNjdXNzLiAKCk5vdywgYmNjIGZyYW1ld29yayBpcyBub3QgYSByZWNvbW1lbmRhdGlvbiBm
-b3Igd3JpdGluZyBicGYgcHJvZ3JhbSwgc28gYnBmdHJhY2UgaXMgbm93IG1pZ3JhdGluZyAKZnJv
-bSBiY2MgZnJhbWV3b3JrIHRvIGxpYmJwZi4gQmNjIGZyYW1ld29yayBwcm92aWRlcyBzb21lIHJl
-bGV2YW50IEFQSXMgZm9yIGdldCB1c2R0IHByb2JlIGluZm9bMV0uCkFuZCBJIGZvdW5kIHRoYXQg
-dGhlcmUgaXMgbm90IHNpbWlsYXIgQVBJcyBpbiBsaWJicGYsIHRoZXJlZm9yZSBJIGhhdmUgdG8g
-cGFyc2UgZWxmIGZpbGUgbWFudWFsbHkuIAoKQ291bGQgd2UgYWRkIHNvbWUgcmVsZXZhbnQgQVBJ
-cywgbWF5YmUgbGlrZSBgYnBmX3Byb2dyYW1fX3VzZHRfcHJvYmVfbGlzdGAsIGluIGxpYmJwZj8g
-SSBjYW4gbWFrZQphIHBhdGNoIHRvIGltcGxlbWVudCBpdC4gV0RZVD8KCgpbMV0uIGh0dHBzOi8v
-Z2l0aHViLmNvbS9icGZ0cmFjZS9icGZ0cmFjZS9ibG9iLzFjZDRiYmRkNGExM2RkNTU4ODBmMmNj
-NjM4ZGRlNjQxZmI1Zjg0NzQvc3JjL3VzZHQuY3BwI0wxMzFDMS1MMTUyQzIKCgoKCgoKCkF0IDIw
-MjUtMDgtMjEgMDc6MDA6MzUsICJBbmRyaWkgTmFrcnlpa28iIDxhbmRyaWkubmFrcnlpa29AZ21h
-aWwuY29tPiB3cm90ZToKPk9uIE1vbiwgQXVnIDE4LCAyMDI1IGF0IDEwOjM14oCvQU0gWW9uZ2hv
-bmcgU29uZyA8eW9uZ2hvbmcuc29uZ0BsaW51eC5kZXY+IHdyb3RlOgo+Pgo+Pgo+Pgo+PiBPbiA4
-LzE3LzI1IDY6NDMgQU0sIOi1teS9s+eCnCB3cm90ZToKPj4gPgo+PiA+Cj4+ID4KPj4gPgo+PiA+
-Cj4+ID4KPj4gPiBIaSwgWW9uZ2hvbmcuIEkndmUgYWxyZWFkeSBmaWxlZCBhbiBpc3N1ZVsxXSBp
-biBHQ0MgIGNvbW11bml0eS4KPj4gPgo+PiA+Cj4+ID4gQWNjcm9kaW5nIHRvIHRoZSBkaXNjdXNz
-aW9uLCBpdCdzIG5vdCBhIGdjYyBidWcgYnV0IG1heSBiZSBhIHN5c3RlbXRhcCBidWcuCj4+ID4g
-SSBkb24ndCBrbm93IGhvdyB0byByZXBvcnQgdGhpcyBidWcgdG8gc3lzdGVtdGFwLCBidXQgSSBm
-b3VuZCB0aGF0IHRoZQo+PiA+IGxpYmJwZi91c2R0IGhhdmUgdGhlIHNhbWUgcHJvYmxlbS4gSSd2
-ZSBmaWxlZCBhbiBpc3N1ZSBpbiBsaWJicGYvdXNkdCByZXBvWzJdLgo+PiA+Cj4+ID4gSSBhbHNv
-IGhhdmUgc29tZSBpZGVhcyBhYm91dCBpdC4gSSB3cm90ZSBpdCBkb3duIGluIHRoZSBpc3N1ZVsy
-XSBjb21tZW50Lgo+PiA+IE1heSBiZSB3ZSBjYW4gZGlzY3VzcyB0aGVyZS4KPj4gPgo+PiA+IFsx
-XS4gaHR0cHM6Ly9nY2MuZ251Lm9yZy9idWd6aWxsYS9zaG93X2J1Zy5jZ2k/aWQ9MTIxNTY5Cj4+
-ID4gWzJdLiBodHRwczovL2dpdGh1Yi5jb20vbGliYnBmL3VzZHQvaXNzdWVzLzEzCj4+Cj4+IFRo
-YW5rcyBmb3IgZmlsaW5nIGFuIGlzc3VlIG9uIGdjYyBhbmQgZ2V0dGluZyBzb21lIGZlZWRiYWNr
-L3N1Z2dlc3Rpb25zCj4+IGZyb20gZ2NjIGNvbW11bml0eS4KPj4KPj4gQ3VycmVudGx5LCBsaWJi
-cGYvdXNkdCBkb2VzIG5vdCBzdXBvcnQgZm9ybWF0IGxpa2UgJy0xQHRpKCVyaXApJy4gSWYgd2Ug
-ZG8KPgo+RXhhY3RseSwgaXQgZG9lc24ndC4gSSBoYXZlbid0IHlldCByYW4gaW50byBhIGNhc2Ug
-d2hlcmUgcmVhbC13b3JsZAo+YXBwbGljYXRpb25zIHdvdWxkIHVzZSBzdWNoIGFuIGFyZ3VtZW50
-IGZvcm1hdCwgc28gdGhlcmUgd2FzIG5vCj5pbmNlbnRpdmUgaW4gdHJ5aW5nIHRvIHN1cHBvcnQg
-aXQuCj4KPldhcyB0aGlzIGlzc3VlIGRpc2NvdmVyZWQgYXMgcGFydCBvZiB0ZXN0aW5nIG9uIHNv
-bWUgcmVhbCB3b3JsZAo+YXBwbGljYXRpb24sIG9yIGl0J3MgbW9zdGx5IHRocm91Z2ggdGVzdGlu
-ZyBvbiBzeW50aGV0aWMgY2FzZXM/Cj4KPj4gaW50ZW5kIHRvIGltcGxlbWVudCB0aGlzLiBsaWJi
-cGYvdXNkdCBjYW4gcmVqZWN0IHRoYXQgaWYgJ3RpJyBpcyBhCj4+IHN0YXRpYyB2YXJpYWJsZS4g
-bGliYnBmIGNhbiBwcm92aWRlIHNvbWUgaGludHMgYWJvdXQgaG93IHRvIG1ha2UgaXQKPj4gd29y
-ayAoc2VlIGFib3ZlIFsxXSBhbmQgWzJdKS4gVGhlbiwgaXQgd291bGQgYmUgdXNlcidzIHJlcG9u
-c2liaWxpdHkgdG8KPj4gY2hhbmdlIGNvZGUgc28gbGliYnBmIGNhbiBzdXBwb3J0IGl0Lgo+Pgo+
-PiA+Cj4+ID4KPj4gPgo+Cj5bLi4uXQo=
+Hi,
+
+This series includes changes to dwc3, tipd and a new phy driver to enable
+USB3 on these machines. There's also some preparations to eventually enable
+DisplayPort AltMode and Thunderbolt but those need future work.
+Overall, this entire setup is quite a mess and we've tried to make it work
+for quite a while now and finally came up with this solution here.
+
+The USB3 controller is a very special kind of broken: It never sees any port
+plug/unplug events that should normally arrive directly at dwc3.
+Additionally, it needs to go through a full hard reset for every new connection
+and most mode change. Details on why this is required are in the commit
+description.
+
+On top of that we need to keep the Type-C PHY bringup and dwc3 bringup tightly
+synchronized. If there's a race between the two systems at best the port stops
+working until a system reboot and at worst there's a watchdog somewhere that 
+forcefully resets the entire SoC after ~5 seconds. I've only seen the latter
+when bringing up thunderbolt so far but wouldn't be surprised if it happens
+with just usb3 as well.
+
+The entire bringup/bringup is orchestrated by a TIPD variant called CD321x
+found on these machines. Unlike the original chips we however get no control
+over which mode is negotiated or are even able to see the PDOs or VDOs. We only
+get to know once the mode has been negotiated and have to act accordingly. I
+even went as far as dumping the firmware from the chip to confirm this [1][2].
+
+Hector wrote another summary of this early in January as well [3] and this
+series is the only way we've been able to bring these ports up reliably.
+It's not pretty in some places but I have no other idea how to implement this,
+hence the RFC tag. Happy to discuss other approaches as well.
+
+Both the PHY and the TIPD driver already include changes for DisplayPort
+AltMode and USB4/Thunderbolt. These need additional work though but
+since we can't control the mode devices end up in we can already merge
+them now.
+
+I used phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml as a template for the dt-binding
+for atcphy (especially the ports). That was the most recent binding I found for
+a PHY with similar features.
+
+In order to test this you need to run the latest m1n1 master [4] because the
+1.5.0 release does not include the code that lifts the tunables from Apple's
+device tree. A kernel tree for testing is also tagged as apple-usb3-v1 at [5].
+
+If the overall approach here is fine and no one can think of a better way to
+support this SoC I'll drop the RFC and include the dts changes for the other
+M1 and M2 machines as well.
+
+Best,
+
+Sven
+
+[1] https://social.treehouse.systems/@sven/111092587315536174
+[2] https://social.treehouse.systems/@sven/111096589846468888
+[3] https://lore.kernel.org/all/fda8b831-1ffc-4087-8e7b-d97779b3ecc5@marcan.st/
+[4] https://github.com/AsahiLinux/m1n1
+[5] https://git.kernel.org/pub/scm/linux/kernel/git/sven/linux.git
+
+Signed-off-by: Sven Peter <sven@kernel.org>
+---
+Hector Martin (7):
+      usb: dwc3: apple: Use synchronous role switch for apple
+      usb: dwc3: apple: Adjust vendor-specific registers during init
+      usb: typec: tipd: Update partner identity when power status was updated
+      usb: typec: tipd: Use read_power_status function in probe
+      usb: typec: tipd: Read data status in probe and cache its value
+      usb: typec: mux: Introduce data_role to mux state
+      usb: typec: tipd: Handle mode transitions for CD321x
+
+Janne Grunau (1):
+      usb: dwc3: apple: Do not use host-vbus-glitches workaround
+
+Sven Peter (14):
+      dt-bindings: usb: snps,dwc3: Allow multiple iommus
+      dt-bindings: usb: Add Apple dwc3
+      dt-bindings: phy: Add Apple Type-C PHY
+      usb: dwc3: apple: Reset dwc3 during role switches
+      usb: typec: tipd: Clear interrupts first
+      usb: typec: tipd: Move initial irq mask to tipd_data
+      usb: typec: tipd: Move switch_power_state to tipd_data
+      usb: typec: tipd: Trace data status for CD321x correctly
+      usb: typec: tipd: Add cd321x struct with separate size
+      usb: typec: tipd: Read USB4, Thunderbolt and DisplayPort status for cd321x
+      usb: typec: tipd: Register DisplayPort and Thunderbolt altmodes for cd321x
+      soc: apple: Add hardware tunable support
+      phy: apple: Add Apple Type-C PHY
+      arm64: dts: apple: t8103: Add Apple Type-C PHY and dwc3 nodes
+
+ .../devicetree/bindings/phy/apple,atcphy.yaml      |  210 ++
+ .../devicetree/bindings/usb/apple,dwc3.yaml        |   82 +
+ .../devicetree/bindings/usb/snps,dwc3.yaml         |    2 +-
+ MAINTAINERS                                        |    3 +
+ arch/arm64/boot/dts/apple/t8103-j274.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8103-j293.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8103-j313.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8103-j456.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8103-j457.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8103-jxxx.dtsi          |  137 ++
+ arch/arm64/boot/dts/apple/t8103.dtsi               |  105 +
+ drivers/phy/Kconfig                                |    1 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/apple/Kconfig                          |   14 +
+ drivers/phy/apple/Makefile                         |    4 +
+ drivers/phy/apple/atc.c                            | 2537 ++++++++++++++++++++
+ drivers/soc/apple/Kconfig                          |    4 +
+ drivers/soc/apple/Makefile                         |    3 +
+ drivers/soc/apple/tunable.c                        |   77 +
+ drivers/usb/dwc3/core.c                            |   85 +-
+ drivers/usb/dwc3/core.h                            |   26 +
+ drivers/usb/dwc3/drd.c                             |   11 +-
+ drivers/usb/dwc3/host.c                            |    8 +-
+ drivers/usb/typec/tipd/core.c                      |  569 ++++-
+ drivers/usb/typec/tipd/tps6598x.h                  |    5 +
+ drivers/usb/typec/tipd/trace.h                     |   39 +
+ include/linux/soc/apple/tunable.h                  |   64 +
+ include/linux/usb/typec_mux.h                      |    1 +
+ 28 files changed, 3987 insertions(+), 61 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250820-atcphy-6-17-b7eaf23be17c
+
+Best regards,
+-- 
+Sven Peter <sven@kernel.org>
+
+
 
