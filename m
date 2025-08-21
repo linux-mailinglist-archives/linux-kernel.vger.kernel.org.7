@@ -1,132 +1,116 @@
-Return-Path: <linux-kernel+bounces-780695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CEEAB3081D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:16:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E43B30827
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40F01890FAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:11:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DE6B1897296
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5362C265CBB;
-	Thu, 21 Aug 2025 21:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AADF230269;
+	Thu, 21 Aug 2025 21:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wtUK/Gpi"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZTKWrar"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6191D3594F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38B01AF0AF
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755810676; cv=none; b=rLmaByJtBS3GNLYbFXJfXd4+1VlHuRL8hwx7DqXk/G/KmFLFSeYBMEsOaXXMKbi8GZNsfUhCfN8HnZ5ECuXM9+AGWbbjOtV+MvhI3ExAi6aeam+WMUjweVEKZR/1pLAFVLKrRHU8kQHGQygU53v3Sbjt+Sapc6kL2XmZ9ooo0SM=
+	t=1755810785; cv=none; b=ReGNLR/sJWdlHmeqNH0gjVO0NzgnnvJkQmSYab1nnmx74ECdHQoEiOjIPEvrwJirN6ShJ/IczOgW6wHWGrTG3wmvZp2XTweAVnKTvfeSEIjmAEu3dFyHyJh8uxT9aBI6llHwFtstahVVFiTBQDhq0QMFA+le5x+8F9fUCBvJ6h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755810676; c=relaxed/simple;
-	bh=yAe6WKMNOAPLqG6uE3wI/PcBPJRugF3nwDNw2Cck6gE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VUJ7W0MzWsXv0iH7B2UuPtZFxV+LvC1cJJlvo1/Go38L9XIK7hWHsn11UFB6ffcLj0bSh6Lslauhdzh0yhMPut7wTsochjJMhMRkMk5ON/2AB0e1DNgzsUEU9ff/JUZC19dkjGcAb/OeC0T0wGRQIed9i38spEfDc/UtkkPHlis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wtUK/Gpi; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-323766e64d5so2349726a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:11:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755810675; x=1756415475; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2kTOmJET5CY2YmXsSJN5Ri4cRLSNJeepYuftRiHpt+w=;
-        b=wtUK/GpiGdmY32K4hrojzioJ+ZFZofdUWaKzsxmXySizhGyQjJgnqYWz4Dr1K73x29
-         rqCS3Yo3SeNwmqJjvkGHDl2CC8m3FOsU6ZVEPVtdNM6oTRpKY7vk7oPolY3EtEvZw0cY
-         ZkmdqBcYTcwV6a8hqSO6HXzUg0LVPZDccKRbQpbq9/gN5ptRUGr+hKdPfsjKIcRtsBUv
-         S7A4ynqAg9TycyEtoURg3Q5K3c8pJP+Wq14A0xUqx+8uCvJsEUuW3qQ/2kOXdHZzeEqV
-         gvj692HdhzaCnXx3SMz/bA8TaVb+nYBeJbUJucB+kqZjvMBL92GdFp6UcsfBtqdG6Bu7
-         OiHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755810675; x=1756415475;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2kTOmJET5CY2YmXsSJN5Ri4cRLSNJeepYuftRiHpt+w=;
-        b=Okhrvx4u/aeO2UaLYRo9ehR6cSNUZo/E8yhcVGvDOhEFXtF78rpP20b28gUcjF6N/7
-         s2WaLus+QCnZGb2FjXEyZyvv/MQspZZs6Dh0DEOKCkYzce8ENrn21AASmJcXknblOa5i
-         BBOmrtc4A6Tc+Evu3t83Z8okfrhEfEOODRe5cKX0OcbeVVpBm5GhWyz+/bX8ocYfkwso
-         1NTjOQ0SMdte6/0kWYE4G+dztIzUcqDCHMnwjmgQYPVInIh4+5VJ/XqDeUIhxv+VOjUz
-         op2UfDR2OZ7VVxgX/sUBQ7QTp07gLt0XFH4kzZrOzGMWh6FcXWUw5q+VTN8ayxV5fz4M
-         uyMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWitRyJNv9riZgLElTyJbqC+F8rKLQKjsngZUFtk1KFPhYVqlu6A5sctiDVLHMK5X12huGsBRat5StD2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfZCXLLD499iWBrgxvuxkXt5YBjfG2/mT6AY247W+HKfo2qwHs
-	mz9g8WsTp6TXX/3qhvV3Z//3eS52dZNb2MuDBcxwMJ+1CmBCeIPh+Re6SlUrZgCmKWJKuL3dnp2
-	+Vf2Z0g==
-X-Google-Smtp-Source: AGHT+IHEBA3GX5sk2NVlCt/kXBe2DuoCt3ExblCPGoicFR+vSF6LiicZfWBUHCZym6cU7+QlSR845MMN0V4=
-X-Received: from pjbmf6.prod.google.com ([2002:a17:90b:1846:b0:321:a6cc:51c3])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d406:b0:311:be43:f09a
- with SMTP id 98e67ed59e1d1-3251d543a09mr684667a91.9.1755810674699; Thu, 21
- Aug 2025 14:11:14 -0700 (PDT)
-Date: Thu, 21 Aug 2025 14:11:13 -0700
-In-Reply-To: <1f63036c-a72a-47bf-a75f-23ca7fd3b7cf@oracle.com>
+	s=arc-20240116; t=1755810785; c=relaxed/simple;
+	bh=d4LvZt2aqV3dFzac86Byv4m6KNuAQDtZesHFxEyue/g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i9UqMYK2Y90rqbEAWtN/BZUckSHOQ8o+/6k0KKVx7qRoQiKa0cQfJRkNUq1vZeIN0ltZqc+PVkos2Ggs5lB6hYPVp5ClF4xcF5tj1zUdja/y6KP8FMkK03JtxdJ/b/w7HkwnM8SxrJcZgExaqYuX2qTxUo416wc6eJB86xgiIjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZTKWrar; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB28C19422
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:13:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755810784;
+	bh=d4LvZt2aqV3dFzac86Byv4m6KNuAQDtZesHFxEyue/g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BZTKWrarz+FjcikzzA1VRYISyCwmmVs7q36u6GQ5nLj9rMp/6XDxRrX2yEcN6Qi60
+	 vE2iwGEapgUoT6jo9NBGg/sFy8TlAqwRqYkNq/lYbmXGpXNqOfGqIX4b+OfhlupjPt
+	 Pq9rWFXiKZcofJV+a9khr5a/F6D/t8D06iKjyM9LHeuwDn3MnUTir2JVyXftsnFF5b
+	 /C+xOBsWw5Zoi3RslBsV4LEtTjToptKyG2jRG/xVafKlJyVnPPvmhJOBRsPRHmcMH9
+	 hc82BmzhACWboRl8bGmN/p24RUprdE8U5N58RrIUkTgAzFkfut3RKkt6cuwVAX2TR/
+	 bubme2TfdJeVw==
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-459fc779bc3so7765e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:13:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVUqeExZZRWkLY73tmGzVdQlBJaH3nrFTfIYtGiqWLd9uknwG3fjpsoYMo8pVgW11n/WHA/FId2u2zZx6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVXOMhZO8hlaICsKepq81ywovPiyN4/QSswCqMvSmOMd4yfmiI
+	mCTMQO8Ww8U3u4rjnNYqtPkjarhbew7KaDhhqHbcqZOpYhFK4P+OR7G+PWLx+foUpn82kReYvH6
+	U4/I3ZyAgJlpwsdN2/U9McMWlzjyaE8+nKM/1PuvH
+X-Google-Smtp-Source: AGHT+IHwAslQYh3tct59quajnnFXnOJIh7Dx/F1xRgBrh+DxXFUL4O7TIP/4OJCF7vgKU/9zH2fA6BUTYK6TqvAM2Ck=
+X-Received: by 2002:a05:600c:2d47:b0:45b:4acd:836d with SMTP id
+ 5b1f17b1804b1-45b52128850mr39305e9.5.1755810783115; Thu, 21 Aug 2025 14:13:03
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1755609446.git.maciej.szmigiero@oracle.com>
- <zeavh4vqorbuq23664til6hww6yafm4lniu4dm32ii33hyszvq@5byejwk3bom3>
- <275b4fa3-9675-4953-8766-c6cd4e5f0d57@maciej.szmigiero.name> <1f63036c-a72a-47bf-a75f-23ca7fd3b7cf@oracle.com>
-Message-ID: <aKeLcU5SoCt41RFY@google.com>
-Subject: Re: [PATCH 0/2] KVM: SVM: Fix missing LAPIC TPR sync into VMCB::V_TPR
- with AVIC on
-From: Sean Christopherson <seanjc@google.com>
-To: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Naveen N Rao <naveen@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250815191031.3769540-1-Liam.Howlett@oracle.com> <20250815191031.3769540-2-Liam.Howlett@oracle.com>
+In-Reply-To: <20250815191031.3769540-2-Liam.Howlett@oracle.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 21 Aug 2025 14:12:51 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuPs4FBQ3x8Z_ME3vjwJHaAtHeE8jmn9pBqz8cau72e_+w@mail.gmail.com>
+X-Gm-Features: Ac12FXyAKFIrA1ANsgy3Dp9wOcjESjPU68j7zxxmQrp3w0J6Atw6ZDtuSNed-Ek
+Message-ID: <CAF8kJuPs4FBQ3x8Z_ME3vjwJHaAtHeE8jmn9pBqz8cau72e_+w@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/6] mm/mmap: Move exit_mmap() trace point
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	maple-tree@lists.infradead.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Charan Teja Kalla <quic_charante@quicinc.com>, shikemeng@huaweicloud.com, 
+	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com, baohua@kernel.org, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025, Alejandro Jimenez wrote:
-> On 8/21/25 7:42 AM, Maciej S. Szmigiero wrote:
-> > On 21.08.2025 10:18, Naveen N Rao wrote:
-> > > > Yes, this breaks real guests when AVIC is enabled.
-> > > > Specifically, the one OS that sometimes needs different handling and its
-> > > > name begins with letter 'W'.
-> > > 
-> > > Indeed, Linux does not use TPR AFAIK.
-> 
-> I believe it does, 
+Acked-by: Chris Li <chrisl@kernel.org>
 
-Heh, yes, Linux technically "uses" the TPR in that it does a one-time write to
-it.  But what Naveen really meant is that Linux doesn't actively use TPR to
-manage what IRQs are masked/allowed, whereas Windows heavily uses TPR to do
-exactly that.  Specifically, what matters is that Linux doesn't use TPR to _mask_
-IRQs, and so clobbering it to '0' on migration is largely benign.
+Chris
 
-> during the local APIC initialization. When Maciej
-> determined the root cause of this issue, I was wondering why we have not
-> seen it earlier in Linux. I found that Linux takes a defensive approach and
-> drains all pending interrupts during lapic initialization. Essentially, for
-> each CPU, Linux will:
-> - temporarily disable the Local APIC (via Spurious Int Vector Reg)
-> - set the TPR to accept all "regular" interrupts i.e. tpr=0x10
-> - drain all pending interrupts in ISR and/or IRR
-> - attempt the above draining step a max of 512 times
-> - then re-enable APIC and continue initialization
-> 
-> The relevant code is in setup_local_APIC()
-> https://elixir.bootlin.com/linux/v6.16/source/arch/x86/kernel/apic/apic.c#L1533-L1545
-> 
-> So without Maciej's proposed change, other OSs that are not as resilient
-> could also be affected by this issue.
-> 
-> Alejandro
-> 
-> > > - Naveen
-> > > 
-> > 
-> > Thanks,
-> > Maciej
-> > 
-> > 
-> 
+
+Chris
+
+On Fri, Aug 15, 2025 at 12:11=E2=80=AFPM Liam R. Howlett
+<Liam.Howlett@oracle.com> wrote:
+>
+> Move the trace point later in the function so that it is not skipped in
+> the event of a failed fork.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> ---
+>  mm/mmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 7306253cc3b57..c4c315b480af7 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1310,9 +1310,9 @@ void exit_mmap(struct mm_struct *mm)
+>
+>         BUG_ON(count !=3D mm->map_count);
+>
+> -       trace_exit_mmap(mm);
+>  destroy:
+>         __mt_destroy(&mm->mm_mt);
+> +       trace_exit_mmap(mm);
+>         mmap_write_unlock(mm);
+>         vm_unacct_memory(nr_accounted);
+>  }
+> --
+> 2.47.2
+>
+>
 
