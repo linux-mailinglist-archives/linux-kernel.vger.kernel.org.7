@@ -1,261 +1,108 @@
-Return-Path: <linux-kernel+bounces-779192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB01B2F04D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:58:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C084B2F04F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EA2C1698F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:57:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD40B5C4E43
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779E62E8E12;
-	Thu, 21 Aug 2025 07:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D732EA16A;
+	Thu, 21 Aug 2025 07:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qxk9Yt7J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OwS5Z+2s";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pcseysWd"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDD928315A;
-	Thu, 21 Aug 2025 07:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294232E8DF2
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763002; cv=none; b=eFI5/PQDhjbM2U77mnUvd0qAHv3uJIaywFkl2r6djWTfQd+kTLuCBetx8CK/Do9inosUFXEfWXAPKBGET8zccksR9UeMgsMhDfb2CjQeZVzWZkvoDUA1dzIg0GDCYA9mzEsPuGZrmNysCQ8DS0D2zllpP0HEtTe15LldYGmVvCU=
+	t=1755763012; cv=none; b=XNgj0SAe3bSMCO0fHc8Q3EJfqiYjjJ+W96YA/clcReaf0NLhO+biPq+EjTQZ51xJc3kZ8KSE2rddUIuHkG2lr4T9iRiTfX83q6sKjlQWuoW8UH+88n6Okv6x6m5v9hMkO30+2+1cweT8HIXkBgkD38URDHeW9AQCsVQiV1nyrik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763002; c=relaxed/simple;
-	bh=al2HgMvixL4DhM3Vv6wS8bxJ0NVBLNWxsvmiKZ2jAj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lMZi/zRHqaLgwMTneODsZrkWWbY0ZMZnoNmX94OIdzgpsp5vOLc60n6SD6jRqSA6iBdpYOZWPx6fDGFeZFBKe8GJhpNx6eF5b30jgLMaYhWG9MInS7PZJmysJ69O3CfGYgugrHKrN0fbnmzqXayszHuP3oXt4mQyKgvtuWOf8fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qxk9Yt7J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CA5C4CEED;
-	Thu, 21 Aug 2025 07:56:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755763001;
-	bh=al2HgMvixL4DhM3Vv6wS8bxJ0NVBLNWxsvmiKZ2jAj0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Qxk9Yt7JNe9dCaXigKMrkvOAbGMEwINyljQdIKVUdSK8X3RsQOcOs7HGQtWHbzAMI
-	 QcsqnQrF6bo1KCE0ahBASGzak7bvmQe5Ptk157isWhx7sWIf58pkwfk8ONuo/+sFWW
-	 PUNNuj/4Zl0N6U5MR5p5vJQ0N91F9O/ZaoyXxy1WsruN2yGzakvqgIjFdyslwz5vYr
-	 QYLMTr/bmiPzRPQ2xjX3fBtUbgYVjJnZ3jBLss+JK2h16Ph4JmsgFAe1YeAuYXLK8w
-	 dSbuzN1tt2ehlOKFtFRfASRgAs5WrA+TO5yUloYkuwO4WLHUOThglaTlOiOb90G3sf
-	 BJK6KNuYMhP5Q==
-Date: Thu, 21 Aug 2025 09:56:37 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
-Message-ID: <20250821095637.5dbe9533@foz.lan>
-In-Reply-To: <20250821095221.5e6510f5@foz.lan>
-References: <20250817154544.78d61029@foz.lan>
-	<b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
-	<87y0rg7e35.fsf@trenco.lwn.net>
-	<16b48826-6634-4ec9-86a0-7ddb59ce3bed@gmail.com>
-	<20250819030239.41a2e97f@foz.lan>
-	<142b209d-613a-4659-a0f7-27efa8c6be85@gmail.com>
-	<20250819153200.3c2b2ff6@foz.lan>
-	<08c3a7eb-0425-4709-a3ea-6d1d726fd3c8@gmail.com>
-	<20250820091530.068c4b62@foz.lan>
-	<3990f1c5-2108-44fe-913f-97ae3bb1ff42@gmail.com>
-	<xik6a2kb3mge5xh2mbdtc4p3ikbr4mnjlkk4ujc4sfztb3iqnr@tc76jva4smpm>
-	<526d1aee-d401-4f04-8ddc-122f1fef7905@gmail.com>
-	<5fb6ce64-747b-46e4-b135-0d987334a12c@gmail.com>
-	<20250821095221.5e6510f5@foz.lan>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755763012; c=relaxed/simple;
+	bh=FtgeFYaDlptcACR44zN8/uEJ15VLyaL5sLAi8t0tqwg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gFfOPBaUXqUbkdE7Ap0H6Hje/ZFFcK67PPAJ2OrBJh4SGh38WIPR/RXnWHgfuBy6JRy/HM0meK1PlZx2F66eY2yhqSZR0O8VUO1+nMcRH8jy3JyWExe5eXSIjefNvlnjFXX+aSyYVRZ0Gf9BSMjNn9ZHaIiMy3Vu9itrx0QemyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OwS5Z+2s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pcseysWd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755763009;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=78N5yAzXn9F4cMxhSTaeDyetjjEQj7TQb3kpzPri+ps=;
+	b=OwS5Z+2sRowPnuwoMRmdCEST/rk1jg+FqeXzKunDEkEoQ/ElZ1QHyfjyNCxRxkG0TaNv/v
+	HCiwqUI4MA/RgreOcaPOL1pvV1q4WJ2URLB+zKGrZV7zgf/Qbb9VhtuSqfBc5/fA869f9T
+	brUYdCXzURsNfOKW9OVU6ePnTRP8DFzn7yk92gs9Fhni8+qAf1xwYfytGm3azvtgk4fmLx
+	HtjhJGqzxtXAppkrCs3TnRTTVDcr2sKa89kvNRp/zW/4AHh7LXWwQlW+gDR3Ff385y7oeM
+	yvyxAB05yC4/+CArYknDhQDKhPLsqZB/v8r928LVxt0tNdyuvTUkTNyRWVCeKw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755763009;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=78N5yAzXn9F4cMxhSTaeDyetjjEQj7TQb3kpzPri+ps=;
+	b=pcseysWdxT0feFT+CR+MGviNCt1/2WmXDJPR3gu7TtTJzzPjET06k8uyj1X7rjquAvEBQp
+	CoPsbF3gKF+k51Bg==
+Subject: [PATCH 0/3] arm64: uapi: Provide correct __BITS_PER_LONG for the
+ compat vDSO
+Date: Thu, 21 Aug 2025 09:56:43 +0200
+Message-Id: <20250821-vdso-arm64-compat-bitsperlong-v1-0-700bcabe7732@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADvRpmgC/x3MTQrCMBAG0KuUWTsQQ3/Uq0gXsf1SB2wSZkoRS
+ u9ucPk27yCDCowezUGKXUxyqrheGpreIS1gmavJO9+5m3e8z5Y56Nq3POW1hI1fslmBfnJauI3
+ dPWBA7DFQPYoiyvf/P8fz/AFOR/mrbwAAAA==
+X-Change-ID: 20250820-vdso-arm64-compat-bitsperlong-4f59ae7ef6e7
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Arnd Bergmann <arnd@arndb.de>, Andy Lutomirski <luto@kernel.org>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: John Stultz <jstultz@google.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755763005; l=898;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=FtgeFYaDlptcACR44zN8/uEJ15VLyaL5sLAi8t0tqwg=;
+ b=cQoS+W7yx1HdLENzCa9chzj4mcTqwVSeZKJmiTYpFutzIQBXQDMV8Pu/Mw4tsk3hB6r6GZ6qQ
+ MemqYTqF37VBb0wqFqy7qwCqmc6oHu+DYu2hcihLlsviBu94OOA1DRV
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Em Thu, 21 Aug 2025 09:52:21 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+The generic vDSO library uses the UAPI headers. On arm64 __BITS_PER_LONG is
+always '64' even when used from the compat vDSO. In that case __GENMASK()
+does an illegal bitshift, invoking undefined behaviour.
 
-> Em Thu, 21 Aug 2025 09:09:41 +0900
-> Akira Yokosawa <akiyks@gmail.com> escreveu:
-> 
-> > Hi,
-> > 
-> > Let me do a quick follow up.
-> > I messed up the table.
-> > 
-> > On Thu, 21 Aug 2025 08:53:04 +0900, Akira Yokosawa wrote:
-> > > Hi,
-> > > 
-> > > Commenting on your observation quoted below.
-> > > 
-> > > On Wed, 20 Aug 2025 18:48:10 +0200, Mauro Carvalho Chehab wrote:
-> > > [...]
-> > >   
-> > >> If you want a more comprehensive answer:
-> > >>
-> > >> LaTeX is highly dependent lots of packages, including fonts. The
-> > >> reason why you can't reproduce the font issues with Docker
-> > >> (I wasn't able to reproduce with Docker here as well) is
-> > >> probably due to either packaging differences between the
-> > >> two containers, due to different environment technologies
-> > >> or even due to the way Docker and LXC handles OS virtualization.
-> > >>  
-> > > 
-> > > I'm not saying there is no difference between Docker and LXC.
-> > > 
-> > > Can you fill in ???? cells in the table below ?  
-> > I mean                                          with this series applied
-> > 
-> > > Docker column is my observation of "FROM ubuntu:plucky" podman runs.
-> > > 
-> > >  "make SPHINXDIRS=gpu pdfdocs" under Ubuntu Plucky
-> > >   
-> > 
-> > I meant:
-> > 
-> >      --------------- --------- ----------
-> >      SVG --> PDF     Docker    LXC
-> >      --------------- --------- ----------
-> >      imagemagick     FAIL      ????
-> >      inkscape        SUCCESS   ????
-> >      imagemagick [*] FAIL      ????
-> >      --------------- --------- ----------
-> 
-> This is after my series, with doesn't deal with imagemagick/inkscape,
-> it only fixes broken texlive dependencies and fix font handling:
-> 
-> # (dpkg -l |grep -i magick; dpkg -l |grep inkscape)|grep ii
-> ii  imagemagick                   8:7.1.1.43+dfsg1-1                    amd64        image manipulation programs -- binaries
-> ii  imagemagick-7-common          8:7.1.1.43+dfsg1-1                    all          image manipulation programs -- infrastructure
-> ii  imagemagick-7.q16             8:7.1.1.43+dfsg1-1                    amd64        image manipulation programs -- quantum depth Q16
-> ii  libmagickcore-7.q16-10:amd64  8:7.1.1.43+dfsg1-1                    amd64        low-level image manipulation library -- quantum depth Q16
-> ii  libmagickwand-7.q16-10:amd64  8:7.1.1.43+dfsg1-1                    amd64        image manipulation library -- quantum depth Q16
-> 
-> # make SPHINXDIRS=gpu pdfdocs
-> 
-> Summary
-> =======
-> gpu: gpu/pdf/gpu.pdf
-> 
-> All PDF files were built.
-> 
-> # rm -rf Documentation/output/gpu/*
-> # (dpkg -l |grep -i magick; dpkg -l |grep inkscape)|grep ii
-> ii  imagemagick                     8:7.1.1.43+dfsg1-1                    amd64        image manipulation programs -- binaries
-> ii  imagemagick-7-common            8:7.1.1.43+dfsg1-1                    all          image manipulation programs -- infrastructure
-> ii  imagemagick-7.q16               8:7.1.1.43+dfsg1-1                    amd64        image manipulation programs -- quantum depth Q16
-> ii  libimage-magick-perl            8:7.1.1.43+dfsg1-1                    all          Perl interface to the ImageMagick graphics routines
-> ii  libimage-magick-q16-perl        8:7.1.1.43+dfsg1-1                    amd64        Perl interface to the ImageMagick graphics routines -- Q16 version
-> ii  libmagickcore-7.q16-10:amd64    8:7.1.1.43+dfsg1-1                    amd64        low-level image manipulation library -- quantum depth Q16
-> ii  libmagickwand-7.q16-10:amd64    8:7.1.1.43+dfsg1-1                    amd64        image manipulation library -- quantum depth Q16
-> ii  inkscape                   
-> 
-> # rm -rf Documentation/output/gpu/*
-> # (dpkg -l |grep -i magick; dpkg -l |grep inkscape)|grep ii
-> ii  inkscape                        1.2.2-8build1                         amd64        vector-based drawing program
-> 
-> # make SPHINXDIRS=gpu pdfdocs
-> 
-> Summary
-> =======
-> gpu: gpu/pdf/gpu.pdf
-> 
-> > >     --------------- --------- ----------
-> > >     SVG --> PDF     Docker    LXC
-> > >     --------------- --------- ----------
-> > >     imagemagick     FAIL      FAIL
-> > >     inkscape        SUCCESS   ????
-> > >     imagemagick [*] FAIL      ????
-> > >     --------------- --------- ----------
-> > > 
-> > > [*] after installing both inkscape and imagemagick, remove inkscape
-> > >     with all its dependencies kept.
-> > > 
-> > > Do you see any difference between Docker and LXC columns in the table?
-> > > I'm all ears.
-> 
-> Yes. After having texlive dependencies fixed, and addressing the broken
-> conf.py file that is not aligned with modern Sphinx practices, it passed
-> on all three scenarios.
-> 
-> Please notice that addressing image was not the intent of this series.
-> 
-> The goal was *just* to fix texlive dependencies and fix text font
-> mapping that were causing troubles on Ubuntu and on other distros.
-> 
-> 
-> Thanks,
-> Mauro
+The first patch should go into the 6.17 tree.
 
-Thanks,
-Mauro
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Thomas Weißschuh (3):
+      arm64: uapi: Provide correct __BITS_PER_LONG for the compat vDSO
+      arm64: vdso32: Stop suppressing warnings
+      arm64: vdso32: Respect -Werror from kbuild
 
-Hmm.. I ended doing the above tests with this patch on my pile.
-It could be affecting the results, as it prevents kfigure.py to
-crash when writing PDF output.
+ arch/arm64/include/uapi/asm/bitsperlong.h |  5 +++++
+ arch/arm64/kernel/vdso32/Makefile         | 13 +------------
+ 2 files changed, 6 insertions(+), 12 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250820-vdso-arm64-compat-bitsperlong-4f59ae7ef6e7
 
-
-commit df1602df0da3a6254d58a782654e7f2e60512dc8
-Author: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Date:   Wed Aug 20 09:17:50 2025 +0200
-
-    docs: kfigure.py: don't crash during read/write
-    
-    By default, Python does a very bad job when reading/writing
-    from files, as it tries to enforce that the character is < 128.
-    Nothing prevents a SVG file to contain, for instance, a comment
-    with an utf-8 accented copyright notice - or even an utf-8
-    invalid char.
-    
-    While testing PDF and html builds, I recently faced one build
-    that got an error at kfigure.py saying that a char was > 128,
-    crashing PDF output.
-    
-    To avoid such issues, let's use PEP 383 subrogate escape encoding
-    to prevent read/write errors on such cases.
-    
-    Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-diff --git a/Documentation/sphinx/kfigure.py b/Documentation/sphinx/kfigure.py
-index ad495c0da270..8ba07344a1c8 100644
---- a/Documentation/sphinx/kfigure.py
-+++ b/Documentation/sphinx/kfigure.py
-@@ -88,7 +88,7 @@ def mkdir(folder, mode=0o775):
-         os.makedirs(folder, mode)
- 
- def file2literal(fname):
--    with open(fname, "r") as src:
-+    with open(fname, "r", encoding='utf8', errors='surrogateescape') as src:
-         data = src.read()
-         node = nodes.literal_block(data, data)
-     return node
-@@ -355,7 +355,7 @@ def dot2format(app, dot_fname, out_fname):
-     cmd = [dot_cmd, '-T%s' % out_format, dot_fname]
-     exit_code = 42
- 
--    with open(out_fname, "w") as out:
-+    with open(out_fname, "w", encoding='utf8', errors='surrogateescape') as out:
-         exit_code = subprocess.call(cmd, stdout = out)
-         if exit_code != 0:
-             logger.warning(
-@@ -533,7 +533,7 @@ def visit_kernel_render(self, node):
-     literal_block = node[0]
- 
-     code      = literal_block.astext()
--    hashobj   = code.encode('utf-8') #  str(node.attributes)
-+    hashobj   = code.encode('utf-8', errors='surrogateescape')) #  str(node.attributes)
-     fname     = path.join('%s-%s' % (srclang, sha1(hashobj).hexdigest()))
- 
-     tmp_fname = path.join(
-@@ -541,7 +541,7 @@ def visit_kernel_render(self, node):
- 
-     if not path.isfile(tmp_fname):
-         mkdir(path.dirname(tmp_fname))
--        with open(tmp_fname, "w") as out:
-+        with open(tmp_fname, "w", encoding='utf8', errors='surrogateescape') as out:
-             out.write(code)
- 
-     img_node = nodes.image(node.rawsource, **node.attributes)
-
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
