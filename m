@@ -1,66 +1,58 @@
-Return-Path: <linux-kernel+bounces-780045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B78B2FCEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:38:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E5AB2FCD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2711BC31B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A890F6403A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55052EDD61;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EED2EDD5C;
 	Thu, 21 Aug 2025 14:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExsOIfGY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYKypHZ/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7277228CF49;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0AE28AB0B;
 	Thu, 21 Aug 2025 14:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755786100; cv=none; b=kx7UYxjKnVS++k9OrgTG/JIpZLdmXueBGxX4F7/Ysgky8TGqxvKITAlKDOjI6cNrdyMFUKTCHSYb7jJ7gjfc+UX3psqQgTUrevheu/LSRh4qhQuqLqKNryf8x0oJpHkJhUvHG0dA+m5l9MmAJVH+56oBDHTyxi0FELc/vF9kAOc=
+	t=1755786100; cv=none; b=RR/CP2Eup3K6XuXBQa0T4hI3JHLaWsK9A9U+teEGhYGW60J5ZKfsZFppLFTCQQMnWpA6PDYxrOFTILlLWmS9eGsqFf49K50d8MDiI7n6nkmEOmZ6rORfJa3vhm1NRHoxnF51wuSVtkzYzEps0Qn1PSOW0BkycRKFei2tQpxZDN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755786100; c=relaxed/simple;
-	bh=KsD1vNVCtNtIDrdngUGcQADwaGx5iOiHWVt8kHIS/5Y=;
+	bh=uYEK1a2ZG5UzKHVraa8W5O9cCQbPaE3FbRWgQy8mxrI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KM3fBZGJVn873cMptQJXkrXnZjsjCYZ6v/bMUohEz1hYdRTr7y7Rd9uesCvhs32CTOeIHTuIx8GM6pG/GLmoGlM9ACPOYIIEy2HYoRoAR5J3oDFr5jY4Y+4hz4FXvn5sLHA1U8tLgJAtv5crK2X+o4jfkTjPnlDh1cUqgxrQgjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExsOIfGY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1A7C4CEF4;
+	 MIME-Version; b=VM6Bgr1A/iQu7NqVe/bNMmW06GQmJ+GGLa+j6DIhtTzh7OD7E53r9XLf6hqVP+9O3wUIbJYnlIGaDpNc/SG2a86mSU0AacSoJKrOzaUvfGwmFZPZaZCOoE/75lN/2FkOeZVaeKshrjYeesngUR36b2+wqzJtlsiHIFrXzXK5/i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYKypHZ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C5FFC16AAE;
 	Thu, 21 Aug 2025 14:21:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755786100;
-	bh=KsD1vNVCtNtIDrdngUGcQADwaGx5iOiHWVt8kHIS/5Y=;
+	bh=uYEK1a2ZG5UzKHVraa8W5O9cCQbPaE3FbRWgQy8mxrI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ExsOIfGYWwOaZ5MoutZDuMpVbAfW2+2P6Snm8/PlalBhiMJuxudAABK0DOTLiHK2L
-	 ehTj9R2/5GjSPN7ipKhryQfAfOH8w3/Mt1Y2Kj6C4GtMs/qK7DhQ+mhhE9K2G5rW/C
-	 fIcRPdV6ZYw9mEy2fUjhcKv8Pp1LdGD5y09MMPrMxBpQraMsXBTxEy8iLpvy5jvt5F
-	 T4V9X7n1xWvgJjuaB1exw+ZmnHONTkLfaquuoiJghBclOlToR9bOefjBxxm01Tzhs8
-	 5huvuWg1s2IbOIHfdK32ckJ6QocptTJlxpxLlJ8BOd4VMGMdzHJiyYOFhXr+TSalPY
-	 S3BwYpixHvN3w==
+	b=BYKypHZ/p75IMUVHV2u1aeOlh/lFPeeUMsCfZP8rey7YwoACZ0n8h3ZQh1cZxNNIt
+	 u9+y8UykM5RNnBnG9A6UqEVNuf6umgGmEeblRhJQ0ciUFv8IVJxEHVGdqHSJ3HkD6/
+	 RlfgexA0Fq47+1g/jP2bBx4/pZ3GN2tokd9NdiY/gc91beWj5dO0OYR28yEYbX389n
+	 F0EfglEi0Pb/7mn0Ffyq1HAkXkWuPs8eM4YG9fbXgd09yHwSUXseVGYta1CZUM81li
+	 nXetHbQCfzUvgEw+tt6J6+ZKmBw15zHKVbLUyRFh7iP8CBBhXBaMiPytWizJqKRxmo
+	 FdCLGFrrfFbtQ==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1up6Ab-0000000BT9U-2R6C;
+	id 1up6Ab-0000000BT9Y-2XwE;
 	Thu, 21 Aug 2025 16:21:37 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Erling Ljunggren <hljunggr@cisco.com>,
-	Hans Verkuil <mchehab+huawei@kernel.org>,
-	Hans de Goede <mchehab+huawei@kernel.org>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Sean Young <sean@mess.org>,
-	Yunke Cao <yunkec@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH 23/24] scripts: sphinx-build-wrapper: get rid of uapi/media Makefile
-Date: Thu, 21 Aug 2025 16:21:29 +0200
-Message-ID: <72c95996d5202b467ad55b5948cc8e70d99ac5cd.1755784930.git.mchehab+huawei@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 24/24] docs: sphinx: drop parse-headers.pl
+Date: Thu, 21 Aug 2025 16:21:30 +0200
+Message-ID: <cd825f90abec4828725e8143af010bd0d802c3ca.1755784930.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755784929.git.mchehab+huawei@kernel.org>
 References: <cover.1755784929.git.mchehab+huawei@kernel.org>
@@ -73,292 +65,439 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Now that kernel-include directive supports parsing data
-structs directly, we can finally get rid of the horrible hack
-we added to support parsing media uAPI symbols.
-
-As a side effect, Documentation/output doesn't have anymore
-media auto-generated .rst files on it.
+Now that we have a replacement in place, drop the old version.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/userspace-api/media/Makefile    | 64 -------------------
- .../userspace-api/media/cec/cec-header.rst    |  5 +-
- .../media/{ => cec}/cec.h.rst.exceptions      |  0
- .../media/{ => dvb}/ca.h.rst.exceptions       |  0
- .../media/{ => dvb}/dmx.h.rst.exceptions      |  0
- .../media/{ => dvb}/frontend.h.rst.exceptions |  0
- .../userspace-api/media/dvb/headers.rst       | 17 +++--
- .../media/{ => dvb}/net.h.rst.exceptions      |  0
- .../media/mediactl/media-header.rst           |  5 +-
- .../{ => mediactl}/media.h.rst.exceptions     |  0
- .../userspace-api/media/rc/lirc-header.rst    |  4 +-
- .../media/{ => rc}/lirc.h.rst.exceptions      |  0
- .../userspace-api/media/v4l/videodev.rst      |  4 +-
- .../{ => v4l}/videodev2.h.rst.exceptions      |  0
- scripts/sphinx-build-wrapper                  | 48 --------------
- 15 files changed, 25 insertions(+), 122 deletions(-)
- delete mode 100644 Documentation/userspace-api/media/Makefile
- rename Documentation/userspace-api/media/{ => cec}/cec.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/ca.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/dmx.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/frontend.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/net.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => mediactl}/media.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => rc}/lirc.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => v4l}/videodev2.h.rst.exceptions (100%)
+ Documentation/sphinx/parse-headers.pl | 419 --------------------------
+ 1 file changed, 419 deletions(-)
+ delete mode 100755 Documentation/sphinx/parse-headers.pl
 
-diff --git a/Documentation/userspace-api/media/Makefile b/Documentation/userspace-api/media/Makefile
-deleted file mode 100644
-index accc734d045a..000000000000
---- a/Documentation/userspace-api/media/Makefile
+diff --git a/Documentation/sphinx/parse-headers.pl b/Documentation/sphinx/parse-headers.pl
+deleted file mode 100755
+index 560685926cdb..000000000000
+--- a/Documentation/sphinx/parse-headers.pl
 +++ /dev/null
-@@ -1,64 +0,0 @@
+@@ -1,419 +0,0 @@
+-#!/usr/bin/env perl
 -# SPDX-License-Identifier: GPL-2.0
+-# Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@kernel.org>.
 -
--# Rules to convert a .h file to inline RST documentation
+-use strict;
+-use Text::Tabs;
+-use Getopt::Long;
+-use Pod::Usage;
 -
--SRC_DIR=$(srctree)/Documentation/userspace-api/media
--PARSER = $(srctree)/tools/docs/parse-headers.py
--UAPI = $(srctree)/include/uapi/linux
--KAPI = $(srctree)/include/linux
+-my $debug;
+-my $help;
+-my $man;
 -
--FILES = ca.h.rst dmx.h.rst frontend.h.rst net.h.rst \
--	videodev2.h.rst media.h.rst cec.h.rst lirc.h.rst
+-GetOptions(
+-	"debug" => \$debug,
+-	'usage|?' => \$help,
+-	'help' => \$man
+-) or pod2usage(2);
 -
--TARGETS := $(addprefix $(BUILDDIR)/, $(FILES))
+-pod2usage(1) if $help;
+-pod2usage(-exitstatus => 0, -verbose => 2) if $man;
+-pod2usage(2) if (scalar @ARGV < 2 || scalar @ARGV > 3);
 -
--gen_rst = \
--	echo ${PARSER} $< $@ $(SRC_DIR)/$(notdir $@).exceptions; \
--	${PARSER} $< $@ $(SRC_DIR)/$(notdir $@).exceptions
+-my ($file_in, $file_out, $file_exceptions) = @ARGV;
 -
--quiet_gen_rst = echo '  PARSE   $(patsubst $(srctree)/%,%,$<)'; \
--	${PARSER} $< $@ $(SRC_DIR)/$(notdir $@).exceptions
+-my $data;
+-my %ioctls;
+-my %defines;
+-my %typedefs;
+-my %enums;
+-my %enum_symbols;
+-my %structs;
 -
--silent_gen_rst = ${gen_rst}
+-#
+-# read the file and get identifiers
+-#
 -
--$(BUILDDIR)/ca.h.rst: ${UAPI}/dvb/ca.h ${PARSER} $(SRC_DIR)/ca.h.rst.exceptions
--	@$($(quiet)gen_rst)
+-my $is_enum = 0;
+-my $is_comment = 0;
+-open IN, $file_in or die "Can't open $file_in";
+-while (<IN>) {
+-	$data .= $_;
 -
--$(BUILDDIR)/dmx.h.rst: ${UAPI}/dvb/dmx.h ${PARSER} $(SRC_DIR)/dmx.h.rst.exceptions
--	@$($(quiet)gen_rst)
+-	my $ln = $_;
+-	if (!$is_comment) {
+-		$ln =~ s,/\*.*(\*/),,g;
 -
--$(BUILDDIR)/frontend.h.rst: ${UAPI}/dvb/frontend.h ${PARSER} $(SRC_DIR)/frontend.h.rst.exceptions
--	@$($(quiet)gen_rst)
+-		$is_comment = 1 if ($ln =~ s,/\*.*,,);
+-	} else {
+-		if ($ln =~ s,^(.*\*/),,) {
+-			$is_comment = 0;
+-		} else {
+-			next;
+-		}
+-	}
 -
--$(BUILDDIR)/net.h.rst: ${UAPI}/dvb/net.h ${PARSER} $(SRC_DIR)/net.h.rst.exceptions
--	@$($(quiet)gen_rst)
+-	if ($is_enum && $ln =~ m/^\s*([_\w][\w\d_]+)\s*[\,=]?/) {
+-		my $s = $1;
+-		my $n = $1;
+-		$n =~ tr/A-Z/a-z/;
+-		$n =~ tr/_/-/;
 -
--$(BUILDDIR)/videodev2.h.rst: ${UAPI}/videodev2.h ${PARSER} $(SRC_DIR)/videodev2.h.rst.exceptions
--	@$($(quiet)gen_rst)
+-		$enum_symbols{$s} =  "\\ :ref:`$s <$n>`\\ ";
 -
--$(BUILDDIR)/media.h.rst: ${UAPI}/media.h ${PARSER} $(SRC_DIR)/media.h.rst.exceptions
--	@$($(quiet)gen_rst)
+-		$is_enum = 0 if ($is_enum && m/\}/);
+-		next;
+-	}
+-	$is_enum = 0 if ($is_enum && m/\}/);
 -
--$(BUILDDIR)/cec.h.rst: ${UAPI}/cec.h ${PARSER} $(SRC_DIR)/cec.h.rst.exceptions
--	@$($(quiet)gen_rst)
+-	if ($ln =~ m/^\s*#\s*define\s+([_\w][\w\d_]+)\s+_IO/) {
+-		my $s = $1;
+-		my $n = $1;
+-		$n =~ tr/A-Z/a-z/;
 -
--$(BUILDDIR)/lirc.h.rst: ${UAPI}/lirc.h ${PARSER} $(SRC_DIR)/lirc.h.rst.exceptions
--	@$($(quiet)gen_rst)
+-		$ioctls{$s} = "\\ :ref:`$s <$n>`\\ ";
+-		next;
+-	}
 -
--# Media build rules
+-	if ($ln =~ m/^\s*#\s*define\s+([_\w][\w\d_]+)\s+/) {
+-		my $s = $1;
+-		my $n = $1;
+-		$n =~ tr/A-Z/a-z/;
+-		$n =~ tr/_/-/;
 -
--.PHONY: all html texinfo epub xml latex
+-		$defines{$s} = "\\ :ref:`$s <$n>`\\ ";
+-		next;
+-	}
 -
--all: $(IMGDOT) $(BUILDDIR) ${TARGETS}
--html: all
--texinfo: all
--epub: all
--xml: all
--latex: $(IMGPDF) all
--linkcheck:
+-	if ($ln =~ m/^\s*typedef\s+([_\w][\w\d_]+)\s+(.*)\s+([_\w][\w\d_]+);/) {
+-		my $s = $2;
+-		my $n = $3;
 -
--clean:
--	-rm -f $(DOTTGT) $(IMGTGT) ${TARGETS} 2>/dev/null
+-		$typedefs{$n} = "\\ :c:type:`$n <$s>`\\ ";
+-		next;
+-	}
+-	if ($ln =~ m/^\s*enum\s+([_\w][\w\d_]+)\s+\{/
+-	    || $ln =~ m/^\s*enum\s+([_\w][\w\d_]+)$/
+-	    || $ln =~ m/^\s*typedef\s*enum\s+([_\w][\w\d_]+)\s+\{/
+-	    || $ln =~ m/^\s*typedef\s*enum\s+([_\w][\w\d_]+)$/) {
+-		my $s = $1;
 -
--$(BUILDDIR):
--	$(Q)mkdir -p $@
-diff --git a/Documentation/userspace-api/media/cec/cec-header.rst b/Documentation/userspace-api/media/cec/cec-header.rst
-index d70736ac2b1d..f67003bb8740 100644
---- a/Documentation/userspace-api/media/cec/cec-header.rst
-+++ b/Documentation/userspace-api/media/cec/cec-header.rst
-@@ -6,5 +6,6 @@
- CEC Header File
- ***************
- 
--.. kernel-include:: $BUILDDIR/cec.h.rst
+-		$enums{$s} =  "enum :c:type:`$s`\\ ";
 -
-+.. kernel-include:: include/uapi/linux/cec.h
-+    :generate-cross-refs:
-+    :exception-file: cec.h.rst.exceptions
-diff --git a/Documentation/userspace-api/media/cec.h.rst.exceptions b/Documentation/userspace-api/media/cec/cec.h.rst.exceptions
-similarity index 100%
-rename from Documentation/userspace-api/media/cec.h.rst.exceptions
-rename to Documentation/userspace-api/media/cec/cec.h.rst.exceptions
-diff --git a/Documentation/userspace-api/media/ca.h.rst.exceptions b/Documentation/userspace-api/media/dvb/ca.h.rst.exceptions
-similarity index 100%
-rename from Documentation/userspace-api/media/ca.h.rst.exceptions
-rename to Documentation/userspace-api/media/dvb/ca.h.rst.exceptions
-diff --git a/Documentation/userspace-api/media/dmx.h.rst.exceptions b/Documentation/userspace-api/media/dvb/dmx.h.rst.exceptions
-similarity index 100%
-rename from Documentation/userspace-api/media/dmx.h.rst.exceptions
-rename to Documentation/userspace-api/media/dvb/dmx.h.rst.exceptions
-diff --git a/Documentation/userspace-api/media/frontend.h.rst.exceptions b/Documentation/userspace-api/media/dvb/frontend.h.rst.exceptions
-similarity index 100%
-rename from Documentation/userspace-api/media/frontend.h.rst.exceptions
-rename to Documentation/userspace-api/media/dvb/frontend.h.rst.exceptions
-diff --git a/Documentation/userspace-api/media/dvb/headers.rst b/Documentation/userspace-api/media/dvb/headers.rst
-index 88c3eb33a89e..c75f64cf21d5 100644
---- a/Documentation/userspace-api/media/dvb/headers.rst
-+++ b/Documentation/userspace-api/media/dvb/headers.rst
-@@ -7,10 +7,19 @@ Digital TV uAPI header files
- Digital TV uAPI headers
- ***********************
- 
--.. kernel-include:: $BUILDDIR/frontend.h.rst
-+.. kernel-include:: include/uapi/linux/dvb/frontend.h
-+    :generate-cross-refs:
-+    :exception-file: frontend.h.rst.exceptions
- 
--.. kernel-include:: $BUILDDIR/dmx.h.rst
-+.. kernel-include:: include/uapi/linux/dvb/dmx.h
-+    :generate-cross-refs:
-+    :exception-file: dmx.h.rst.exceptions
- 
--.. kernel-include:: $BUILDDIR/ca.h.rst
-+.. kernel-include:: include/uapi/linux/dvb/ca.h
-+    :generate-cross-refs:
-+    :exception-file: ca.h.rst.exceptions
-+
-+.. kernel-include:: include/uapi/linux/dvb/net.h
-+    :generate-cross-refs:
-+    :exception-file: net.h.rst.exceptions
- 
--.. kernel-include:: $BUILDDIR/net.h.rst
-diff --git a/Documentation/userspace-api/media/net.h.rst.exceptions b/Documentation/userspace-api/media/dvb/net.h.rst.exceptions
-similarity index 100%
-rename from Documentation/userspace-api/media/net.h.rst.exceptions
-rename to Documentation/userspace-api/media/dvb/net.h.rst.exceptions
-diff --git a/Documentation/userspace-api/media/mediactl/media-header.rst b/Documentation/userspace-api/media/mediactl/media-header.rst
-index c674271c93f5..d561d2845f3d 100644
---- a/Documentation/userspace-api/media/mediactl/media-header.rst
-+++ b/Documentation/userspace-api/media/mediactl/media-header.rst
-@@ -6,5 +6,6 @@
- Media Controller Header File
- ****************************
- 
--.. kernel-include:: $BUILDDIR/media.h.rst
+-		$is_enum = $1;
+-		next;
+-	}
+-	if ($ln =~ m/^\s*struct\s+([_\w][\w\d_]+)\s+\{/
+-	    || $ln =~ m/^\s*struct\s+([[_\w][\w\d_]+)$/
+-	    || $ln =~ m/^\s*typedef\s*struct\s+([_\w][\w\d_]+)\s+\{/
+-	    || $ln =~ m/^\s*typedef\s*struct\s+([[_\w][\w\d_]+)$/
+-	    ) {
+-		my $s = $1;
 -
-+.. kernel-include:: include/uapi/linux/media.h
-+    :generate-cross-refs:
-+    :exception-file: media.h.rst.exceptions
-diff --git a/Documentation/userspace-api/media/media.h.rst.exceptions b/Documentation/userspace-api/media/mediactl/media.h.rst.exceptions
-similarity index 100%
-rename from Documentation/userspace-api/media/media.h.rst.exceptions
-rename to Documentation/userspace-api/media/mediactl/media.h.rst.exceptions
-diff --git a/Documentation/userspace-api/media/rc/lirc-header.rst b/Documentation/userspace-api/media/rc/lirc-header.rst
-index 54cb40b8a065..a53328327847 100644
---- a/Documentation/userspace-api/media/rc/lirc-header.rst
-+++ b/Documentation/userspace-api/media/rc/lirc-header.rst
-@@ -6,5 +6,7 @@
- LIRC Header File
- ****************
- 
--.. kernel-include:: $BUILDDIR/lirc.h.rst
-+.. kernel-include:: include/uapi/linux/lirc.h
-+    :generate-cross-refs:
-+    :exception-file: lirc.h.rst.exceptions
- 
-diff --git a/Documentation/userspace-api/media/lirc.h.rst.exceptions b/Documentation/userspace-api/media/rc/lirc.h.rst.exceptions
-similarity index 100%
-rename from Documentation/userspace-api/media/lirc.h.rst.exceptions
-rename to Documentation/userspace-api/media/rc/lirc.h.rst.exceptions
-diff --git a/Documentation/userspace-api/media/v4l/videodev.rst b/Documentation/userspace-api/media/v4l/videodev.rst
-index c866fec417eb..cde485bc9a5f 100644
---- a/Documentation/userspace-api/media/v4l/videodev.rst
-+++ b/Documentation/userspace-api/media/v4l/videodev.rst
-@@ -6,4 +6,6 @@
- Video For Linux Two Header File
- *******************************
- 
--.. kernel-include:: $BUILDDIR/videodev2.h.rst
-+.. kernel-include:: include/uapi/linux/videodev2.h
-+    :generate-cross-refs:
-+    :exception-file: videodev2.h.rst.exceptions
-diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/v4l/videodev2.h.rst.exceptions
-similarity index 100%
-rename from Documentation/userspace-api/media/videodev2.h.rst.exceptions
-rename to Documentation/userspace-api/media/v4l/videodev2.h.rst.exceptions
-diff --git a/scripts/sphinx-build-wrapper b/scripts/sphinx-build-wrapper
-index 0d13c19f6df3..abe8c26ae137 100755
---- a/scripts/sphinx-build-wrapper
-+++ b/scripts/sphinx-build-wrapper
-@@ -463,56 +463,10 @@ class SphinxBuilder:
-             except subprocess.CalledProcessError as e:
-                 sys.exit(f"Error generating info docs: {e}")
- 
--    def get_make_media(self):
--        """
--        The media uAPI requires an additional Makefile target.
--        """
+-		$structs{$s} = "struct $s\\ ";
+-		next;
+-	}
+-}
+-close IN;
 -
--        mediadir = f"{self.obj}/userspace-api/media"
+-#
+-# Handle multi-line typedefs
+-#
 -
--        make = os.environ.get("MAKE", "make")
--        build = os.environ.get("build", "-f $(srctree)/scripts/Makefile.build obj")
+-my @matches = ($data =~ m/typedef\s+struct\s+\S+?\s*\{[^\}]+\}\s*(\S+)\s*\;/g,
+-	       $data =~ m/typedef\s+enum\s+\S+?\s*\{[^\}]+\}\s*(\S+)\s*\;/g,);
+-foreach my $m (@matches) {
+-	my $s = $m;
 -
--        # Check if the script was started outside docs Makefile
--        if not os.environ.get("obj"):
--            mediadir = os.path.abspath(mediadir)
+-	$typedefs{$s} = "\\ :c:type:`$s`\\ ";
+-	next;
+-}
 -
--        # the build makefile var contains macros that require expand
--        make_media = f"{make} {build}={mediadir}"
--        make_media = make_media.replace("$(", "${").replace(")", "}")
--        make_media = os.path.expandvars(make_media)
+-#
+-# Handle exceptions, if any
+-#
 -
--        # As it also contains multiple arguments, use shlex to split it
--        return shlex.split(make_media)
+-my %def_reftype = (
+-	"ioctl"   => ":ref",
+-	"define"  => ":ref",
+-	"symbol"  => ":ref",
+-	"typedef" => ":c:type",
+-	"enum"    => ":c:type",
+-	"struct"  => ":c:type",
+-);
 -
--    def prepare_media(self, builder):
--        """
--        Run userspace-api/media Makefile.
+-if ($file_exceptions) {
+-	open IN, $file_exceptions or die "Can't read $file_exceptions";
+-	while (<IN>) {
+-		next if (m/^\s*$/ || m/^\s*#/);
 -
--        The logic behind it are from the initial ports to Sphinx.
--        They're old and need to be replaced by a proper Sphinx extension.
--        While we don't do that, we need to explicitly call media Makefile
--        to build some files.
--        """
+-		# Parsers to ignore a symbol
 -
--        cmd = self.get_make_media() + [builder]
+-		if (m/^ignore\s+ioctl\s+(\S+)/) {
+-			delete $ioctls{$1} if (exists($ioctls{$1}));
+-			next;
+-		}
+-		if (m/^ignore\s+define\s+(\S+)/) {
+-			delete $defines{$1} if (exists($defines{$1}));
+-			next;
+-		}
+-		if (m/^ignore\s+typedef\s+(\S+)/) {
+-			delete $typedefs{$1} if (exists($typedefs{$1}));
+-			next;
+-		}
+-		if (m/^ignore\s+enum\s+(\S+)/) {
+-			delete $enums{$1} if (exists($enums{$1}));
+-			next;
+-		}
+-		if (m/^ignore\s+struct\s+(\S+)/) {
+-			delete $structs{$1} if (exists($structs{$1}));
+-			next;
+-		}
+-		if (m/^ignore\s+symbol\s+(\S+)/) {
+-			delete $enum_symbols{$1} if (exists($enum_symbols{$1}));
+-			next;
+-		}
 -
--        if self.verbose:
--            print(" ".join(cmd))
+-		# Parsers to replace a symbol
+-		my ($type, $old, $new, $reftype);
 -
--        with JobserverExec() as jobserver:
--            rc = jobserver.run(cmd, env=self.env)
+-		if (m/^replace\s+(\S+)\s+(\S+)\s+(\S+)/) {
+-			$type = $1;
+-			$old = $2;
+-			$new = $3;
+-		} else {
+-			die "Can't parse $file_exceptions: $_";
+-		}
 -
--        if rc:
--            cmd_str = " ".join(cmd)
--            sys.exit(f"Failed to run {cmd_str}")
+-		if ($new =~ m/^\:c\:(data|func|macro|type)\:\`(.+)\`/) {
+-			$reftype = ":c:$1";
+-			$new = $2;
+-		} elsif ($new =~ m/\:ref\:\`(.+)\`/) {
+-			$reftype = ":ref";
+-			$new = $1;
+-		} else {
+-			$reftype = $def_reftype{$type};
+-		}
+-		if (!$reftype) {
+-		    print STDERR "Warning: can't find ref type for $type";
+-		}
+-		$new = "$reftype:`$old <$new>`";
 -
-     def cleandocs(self, builder):
- 
-         shutil.rmtree(self.builddir, ignore_errors=True)
- 
--        self.prepare_media(builder)
+-		if ($type eq "ioctl") {
+-			$ioctls{$old} = $new if (exists($ioctls{$old}));
+-			next;
+-		}
+-		if ($type eq "define") {
+-			$defines{$old} = $new if (exists($defines{$old}));
+-			next;
+-		}
+-		if ($type eq "symbol") {
+-			$enum_symbols{$old} = $new if (exists($enum_symbols{$old}));
+-			next;
+-		}
+-		if ($type eq "typedef") {
+-			$typedefs{$old} = $new if (exists($typedefs{$old}));
+-			next;
+-		}
+-		if ($type eq "enum") {
+-			$enums{$old} = $new if (exists($enums{$old}));
+-			next;
+-		}
+-		if ($type eq "struct") {
+-			$structs{$old} = $new if (exists($structs{$old}));
+-			next;
+-		}
 -
-     def build(self, target, sphinxdirs=None, conf="conf.py",
-               theme=None, css=None, paper=None):
-         """
-@@ -533,8 +487,6 @@ class SphinxBuilder:
-         if not sphinxbuild:
-             sys.exit(f"Error: {self.sphinxbuild} not found in PATH.\n")
- 
--        self.prepare_media(builder)
+-		die "Can't parse $file_exceptions: $_";
+-	}
+-}
 -
-         if builder == "latex":
-             if not self.pdflatex_cmd and not self.latexmk_cmd:
-                 sys.exit("Error: pdflatex or latexmk required for PDF generation")
+-if ($debug) {
+-	my @all_hashes = (
+-		{ioctl      => \%ioctls},
+-		{typedef    => \%typedefs},
+-		{enum       => \%enums},
+-		{struct     => \%structs},
+-		{define     => \%defines},
+-		{symbol     => \%enum_symbols}
+-	);
+-
+-	foreach my $hash (@all_hashes) {
+-		while (my ($name, $hash_ref) = each %$hash) {
+-			next unless %$hash_ref;  # Skip empty hashes
+-
+-			print "$name:\n";
+-			for my $key (sort keys %$hash_ref) {
+-				print "  $key -> $hash_ref->{$key}\n";
+-			}
+-			print "\n";
+-		}
+-	}
+-}
+-
+-#
+-# Align block
+-#
+-$data = expand($data);
+-$data = "    " . $data;
+-$data =~ s/\n/\n    /g;
+-$data =~ s/\n\s+$/\n/g;
+-$data =~ s/\n\s+\n/\n\n/g;
+-
+-#
+-# Add escape codes for special characters
+-#
+-$data =~ s,([\_\`\*\<\>\&\\\\:\/\|\%\$\#\{\}\~\^]),\\$1,g;
+-
+-$data =~ s,DEPRECATED,**DEPRECATED**,g;
+-
+-#
+-# Add references
+-#
+-
+-my $start_delim = "[ \n\t\(\=\*\@]";
+-my $end_delim = "(\\s|,|\\\\=|\\\\:|\\;|\\\)|\\}|\\{)";
+-
+-foreach my $r (keys %ioctls) {
+-	my $s = $ioctls{$r};
+-
+-	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
+-
+-	print "$r -> $s\n" if ($debug);
+-
+-	$data =~ s/($start_delim)($r)$end_delim/$1$s$3/g;
+-}
+-
+-foreach my $r (keys %defines) {
+-	my $s = $defines{$r};
+-
+-	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
+-
+-	print "$r -> $s\n" if ($debug);
+-
+-	$data =~ s/($start_delim)($r)$end_delim/$1$s$3/g;
+-}
+-
+-foreach my $r (keys %enum_symbols) {
+-	my $s = $enum_symbols{$r};
+-
+-	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
+-
+-	print "$r -> $s\n" if ($debug);
+-
+-	$data =~ s/($start_delim)($r)$end_delim/$1$s$3/g;
+-}
+-
+-foreach my $r (keys %enums) {
+-	my $s = $enums{$r};
+-
+-	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
+-
+-	print "$r -> $s\n" if ($debug);
+-
+-	$data =~ s/enum\s+($r)$end_delim/$s$2/g;
+-}
+-
+-foreach my $r (keys %structs) {
+-	my $s = $structs{$r};
+-
+-	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
+-
+-	print "$r -> $s\n" if ($debug);
+-
+-	$data =~ s/struct\s+($r)$end_delim/$s$2/g;
+-}
+-
+-foreach my $r (keys %typedefs) {
+-	my $s = $typedefs{$r};
+-
+-	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
+-
+-	print "$r -> $s\n" if ($debug);
+-	$data =~ s/($start_delim)($r)$end_delim/$1$s$3/g;
+-}
+-
+-$data =~ s/\\ ([\n\s])/\1/g;
+-
+-#
+-# Generate output file
+-#
+-
+-my $title = $file_in;
+-$title =~ s,.*/,,;
+-
+-open OUT, "> $file_out" or die "Can't open $file_out";
+-print OUT ".. -*- coding: utf-8; mode: rst -*-\n\n";
+-print OUT "$title\n";
+-print OUT "=" x length($title);
+-print OUT "\n\n.. parsed-literal::\n\n";
+-print OUT $data;
+-close OUT;
+-
+-__END__
+-
+-=head1 NAME
+-
+-parse_headers.pl - parse a C file, in order to identify functions, structs,
+-enums and defines and create cross-references to a Sphinx book.
+-
+-=head1 SYNOPSIS
+-
+-B<parse_headers.pl> [<options>] <C_FILE> <OUT_FILE> [<EXCEPTIONS_FILE>]
+-
+-Where <options> can be: --debug, --help or --usage.
+-
+-=head1 OPTIONS
+-
+-=over 8
+-
+-=item B<--debug>
+-
+-Put the script in verbose mode, useful for debugging.
+-
+-=item B<--usage>
+-
+-Prints a brief help message and exits.
+-
+-=item B<--help>
+-
+-Prints a more detailed help message and exits.
+-
+-=back
+-
+-=head1 DESCRIPTION
+-
+-Convert a C header or source file (C_FILE), into a ReStructured Text
+-included via ..parsed-literal block with cross-references for the
+-documentation files that describe the API. It accepts an optional
+-EXCEPTIONS_FILE with describes what elements will be either ignored or
+-be pointed to a non-default reference.
+-
+-The output is written at the (OUT_FILE).
+-
+-It is capable of identifying defines, functions, structs, typedefs,
+-enums and enum symbols and create cross-references for all of them.
+-It is also capable of distinguish #define used for specifying a Linux
+-ioctl.
+-
+-The EXCEPTIONS_FILE contain two rules to allow ignoring a symbol or
+-to replace the default references by a custom one.
+-
+-Please read Documentation/doc-guide/parse-headers.rst at the Kernel's
+-tree for more details.
+-
+-=head1 BUGS
+-
+-Report bugs to Mauro Carvalho Chehab <mchehab@kernel.org>
+-
+-=head1 COPYRIGHT
+-
+-Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@kernel.org>.
+-
+-License GPLv2: GNU GPL version 2 <https://gnu.org/licenses/gpl.html>.
+-
+-This is free software: you are free to change and redistribute it.
+-There is NO WARRANTY, to the extent permitted by law.
+-
+-=cut
 -- 
 2.50.1
 
