@@ -1,62 +1,52 @@
-Return-Path: <linux-kernel+bounces-779938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33259B2FB74
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:57:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39955B2FB87
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CEF23B7CBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6A43AC810
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA39343D95;
-	Thu, 21 Aug 2025 13:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E11420C004;
+	Thu, 21 Aug 2025 13:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YglzjWry"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="WMfbOtDg"
+Received: from smtpout9.mo534.mail-out.ovh.net (smtpout9.mo534.mail-out.ovh.net [178.33.251.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6ED343206
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAB6205ABA
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.33.251.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755783824; cv=none; b=p+HrhVj/EcYYXZkE7ULSJKgJZ0DRpxp9z6vNTMXeKeq95oOgTGd5krTgZQJBhFBx7zaEey9yP6Ch3k0pZzSX6aSQofjXsmF+HkNKE/NZogFwx5K/btT+eqAKRSR7e/MeNNodnjcNYhz9GmBYW43PZNeDBRucP/9uvsRpzcue7X0=
+	t=1755783942; cv=none; b=S5xKnqGh1LP2WITjfTvWXLU+QF7RoZ0cmNJZZ2+j9HQdcD1ZiBFGyFbqXlws66Wkfu0mFcZahT3xwUU02kN3nTsYIq8zZAxi+5dW0kHdZiWVBRYDl9vfReWst3dDt/v/qhG4wbWRFF7Z9dqBZyqXtMw3ThJ+ykCJ2tvwtcu+j3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755783824; c=relaxed/simple;
-	bh=30cVhYBqXd0eVwyt1FtKIuGdL92EgZf4AECAHBNRQxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X0ktC67AV5BI9L2wE/yrmf/I4DC4kA5GZbjv0/5JF59/RbgV+Sm/SYED5StEExqJ4C4qfYXJGV/OBid/RJiC2jVjZPluDQSSEHuf1Du8Iug8O4YI+RTUry1MJ7+Ex1RFGO7QcZ5zFN1LmIdvul1SJFhcnHSiY9+jmgMzlDvOWG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YglzjWry; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57LDhdfT495897;
-	Thu, 21 Aug 2025 08:43:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755783819;
-	bh=A0t7ea2MaiVbtpbHvHc/Darxtf6sqBo1OfAkySCgOJI=;
-	h=Date:Subject:To:References:From:In-Reply-To;
-	b=YglzjWryNmgiH1ERO7aMTgqelpo0ecTOPulWIuVuiaqtwVGbCSJZLs/Y2TVXv6zqN
-	 LjROG4kaS8mg2C02apcEMJ/7XB32ak4xTBRGx1hoL2iXoHjS9+4IYoeP6UQIldZDG4
-	 92kv8txrqD2xfC3SHW1ggqvMTdmTI4tWw5qUI6yA=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57LDhd1m2167080
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 21 Aug 2025 08:43:39 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 21
- Aug 2025 08:43:39 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 21 Aug 2025 08:43:39 -0500
-Received: from [172.24.235.200] (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.235.200])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57LDhbZJ2239935;
-	Thu, 21 Aug 2025 08:43:38 -0500
-Message-ID: <37e7589a-15c3-465e-8ba9-195dc205a2bd@ti.com>
-Date: Thu, 21 Aug 2025 19:13:36 +0530
+	s=arc-20240116; t=1755783942; c=relaxed/simple;
+	bh=4quadHfFtezURIkWRXVabZEgAmlOiHGhXnvjlAIzgVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQ7XKR/SgXasx2+MGRUkInEJgzIo1NJzzUp2CXAtk8r28EiO4SKw8/66iLglphZxUR0PGzyDWFDbmmh4KPty+8VDhCNeUdxWGdiTWQImJ2pv3gDm3eUG7OB4F59DS4IfHt+BbSzPBpfSJIpdlIbp4keUkt26cabyplT7DIkVaJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=WMfbOtDg; arc=none smtp.client-ip=178.33.251.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net [152.228.215.222])
+	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4c74Mb2w9Lz6GWH;
+	Thu, 21 Aug 2025 13:45:31 +0000 (UTC)
+Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net. [127.0.0.1])
+        by director3.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <bp@alien8.de>; Thu, 21 Aug 2025 13:45:31 +0000 (UTC)
+Received: from mta2.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.188.134])
+	by director3.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c74Mb1Rmhz5wDl;
+	Thu, 21 Aug 2025 13:45:31 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.8])
+	by mta2.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 1935B3E32C2;
+	Thu, 21 Aug 2025 13:45:29 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-106R00615733f67-033e-454f-9811-f14730d1c113,
+                    684E78C7C579463DAB27E2CA1F9C4E28A39E1181) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:79.117.22.109
+Message-ID: <666f534d-b974-4f39-9356-3e2f1ab178f0@orca.pet>
+Date: Thu, 21 Aug 2025 15:45:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,230 +54,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource: timer-ti-dm : Capture functionality for
- OMAP DM timer
-To: Gokul Praveen <g-praveen@ti.com>, <daniel.lezcano@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
-References: <20250812105346.203541-1-g-praveen@ti.com>
-Content-Language: en-US
-From: Neha Malcom Francis <n-francis@ti.com>
-In-Reply-To: <20250812105346.203541-1-g-praveen@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Subject: Re: [PATCH] x86: add hintable NOPs emulation
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
+ Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+ David Kaplan <david.kaplan@amd.com>, "Ahmed S. Darwish"
+ <darwi@linutronix.de>, Kees Cook <kees@kernel.org>,
+ Andrew Cooper <andrew.cooper3@citrix.com>, Oleg Nesterov <oleg@redhat.com>,
+ "Xin Li (Intel)" <xin@zytor.com>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+References: <20250820013452.495481-1-marcos@orca.pet>
+ <20250821124804.GP3289052@noisy.programming.kicks-ass.net>
+Content-Language: es-ES
+From: Marcos Del Sol Vives <marcos@orca.pet>
+In-Reply-To: <20250821124804.GP3289052@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 2520608420077459124
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedufeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepuggrvhhiugdrkhgrphhlrghnsegrmhgurdgtohhmpdhrtghpthhtoheprghnughrvgifrdgtohhophgvrhefsegtihhtrhhigidrtghomhdprhgtphhtthhopegsrhhgvghrshhtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhnohhvihhtohhllhesghhmrghilhdrtghomhdprhgtphhtthhopehusghiiihjrghksehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgrug
+ gvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhg
+DKIM-Signature: a=rsa-sha256; bh=WBpANyQKSLHUucko2BsTZBGhCmR3nQaRHV8okAqrR8M=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755783932;
+ v=1;
+ b=WMfbOtDgsvo5quCArArgXQzkRF1wugwCPu5Heq7Lmu9fiehIpCaxtzhwD8+o2B3hQPo2Ayv/
+ k6txLw/Ikg7DZdzxT0xzOibG/Of5p1sWp2rCMVuOD9gwG7c1Gkdb/QAY6kcSFDm0+mksbS2hp4T
+ m4tQG8H11LfwFjJ068gsxdVl/wIUDdF0vd8Rm4FqyIfMTCkvBPAh0MaabVRnao+wJd5bFLX3Y+H
+ V5/13zPTxtZ3Hlz/fOcG85LdzD4BOdHrPjneCIARudQUyDStZsDIf79c+bSHDXgcHfzRfNZr5Wm
+ DDNjJWFCJnwh3Vc53EglmTEr/L0byiHWLiW8zYqmDoUGg==
 
-Hi Gokul
-
-On 12/08/25 16:23, Gokul Praveen wrote:
-> Add PWM capture function in DM timer driver.
+El 21/08/2025 a las 14:48, Peter Zijlstra escribió:
+> On Wed, Aug 20, 2025 at 03:34:46AM +0200, Marcos Del Sol Vives wrote:
+>> +	/* Hintable NOPs cover 0F 18 to 0F 1F */
+>> +	if (insn.opcode.bytes[0] != 0x0F ||
+>> +		insn.opcode.bytes[1] < 0x18 || insn.opcode.bytes[1] > 0x1F)
+>> +		return false;
 > 
-> OMAP DM timer hardware supports capture feature.It can be used to
-> timestamp events (falling/rising edges) detected on input signal.
+> FWIW, you need to check for insn.opcode.nbytes == 2.
 > 
-> Signed-off-by: Gokul Praveen <g-praveen@ti.com>
-> ---
-> v2<==> v1
-> ===========
-> * Optimized the code and fixed some comment spacing and newline issues
-> 
-> Precondition : Before calling driver API,it is assumed that the
->                capture signal is active else both duty cycle
->                and period returned by driver will not be valid.
-> ---
->  drivers/clocksource/timer-ti-dm.c          | 119 ++++++++++++++++++++-
->  include/linux/platform_data/dmtimer-omap.h |   4 +
->  2 files changed, 121 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-> index e9e32df6b566..793e7cdcb1b1 100644
-> --- a/drivers/clocksource/timer-ti-dm.c
-> +++ b/drivers/clocksource/timer-ti-dm.c
-> @@ -31,6 +31,7 @@
->  #include <linux/platform_data/dmtimer-omap.h>
->  
->  #include <clocksource/timer-ti-dm.h>
-> +#include <linux/delay.h>
->  
->  /*
->   * timer errata flags
-> @@ -836,6 +837,48 @@ static int omap_dm_timer_set_match(struct omap_dm_timer *cookie, int enable,
->  	return 0;
->  }
->  
-> +static int omap_dm_timer_set_cap(struct omap_dm_timer *cookie,
-> +					int autoreload, bool config_period)
-> +{
-> +	struct dmtimer *timer;
-> +	struct device *dev;
-> +	int rc;
-> +	u32 l;
-> +
-> +	timer = to_dmtimer(cookie);
-> +	if (unlikely(!timer))
-> +		return -EINVAL;
-> +
-> +	dev = &timer->pdev->dev;
-> +	rc = pm_runtime_resume_and_get(dev);
-> +	if (rc)
-> +		return rc;
-> +	/*
-> +	 *  1. Select autoreload mode. TIMER_TCLR[1] AR bit.
-> +	 *  2. TIMER_TCLR[14]: Sets the functionality of the TIMER IO pin.
-> +	 *  3. TIMER_TCLR[13] : Capture mode select bit.
-> +	 *  3. TIMER_TCLR[9-8] : Select transition capture mode.
-> +	 */
-> +
-> +	l = dmtimer_read(timer, OMAP_TIMER_CTRL_REG);
-> +
-> +	if (autoreload)
-> +		l |= OMAP_TIMER_CTRL_AR;
-> +
-> +	l |= OMAP_TIMER_CTRL_CAPTMODE | OMAP_TIMER_CTRL_GPOCFG;
-> +
-> +	if (config_period == true)
-> +		l |= OMAP_TIMER_CTRL_TCM_LOWTOHIGH; /* Time Period config */
-> +	else
-> +		l |= OMAP_TIMER_CTRL_TCM_BOTHEDGES; /* Duty Cycle config */
-> +
-> +	dmtimer_write(timer, OMAP_TIMER_CTRL_REG, l);
-> +
-> +	pm_runtime_put_sync(dev);
-> +
-> +	return 0;
-> +}
-> +
->  static int omap_dm_timer_set_pwm(struct omap_dm_timer *cookie, int def_on,
->  				 int toggle, int trigger, int autoreload)
->  {
-> @@ -1023,23 +1066,92 @@ static unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *cookie)
->  	return __omap_dm_timer_read_counter(timer);
->  }
->  
-> +static inline unsigned int __omap_dm_timer_cap(struct dmtimer *timer, int idx)
-> +{
-> +	return idx == 0 ? dmtimer_read(timer, OMAP_TIMER_CAPTURE_REG) :
-> +			  dmtimer_read(timer, OMAP_TIMER_CAPTURE2_REG);
-> +}
-> +
->  static int omap_dm_timer_write_counter(struct omap_dm_timer *cookie, unsigned int value)
->  {
->  	struct dmtimer *timer;
-> +	struct device *dev;
->  
->  	timer = to_dmtimer(cookie);
-> -	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
-> -		pr_err("%s: timer not available or enabled.\n", __func__);
-> +	if (unlikely(!timer)) {
-> +		pr_err("%s: timer not available.\n", __func__);
->  		return -EINVAL;
->  	}
->  
-> +	dev = &timer->pdev->dev;
-> +
-> +	pm_runtime_resume_and_get(dev);
->  	dmtimer_write(timer, OMAP_TIMER_COUNTER_REG, value);
-> +	pm_runtime_put_sync(dev);
->  
->  	/* Save the context */
->  	timer->context.tcrr = value;
->  	return 0;
->  }
->  
-> +/**
-> + * omap_dm_timer_cap_counter() - Calculate the high count or period count depending on the
-> + * configuration.
-> + * @cookie:Pointer to OMAP DM timer
-> + * @is_period:Whether to configure timer in period or duty cycle mode
-> + *
-> + * Return high count or period count if timer is enabled else appropriate error.
-> + */
-> +static unsigned int omap_dm_timer_cap_counter(struct omap_dm_timer *cookie,	bool is_period)
-> +{
-> +	struct dmtimer *timer;
-> +	unsigned int cap1 = 0;
-> +	unsigned int cap2 = 0;
-> +	u32 l, ret;
-> +
-> +	timer = to_dmtimer(cookie);
-> +	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
-> +		pr_err("%s:timer is not available or enabled.%p\n", __func__, (void *)timer);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Stop the timer */
-> +	omap_dm_timer_stop(cookie);
-> +
-> +	/* Clear the timer counter value to 0 */
-> +	ret = omap_dm_timer_write_counter(cookie, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Sets the timer capture configuration for period/duty cycle calculation */
-> +	ret = omap_dm_timer_set_cap(cookie, true, is_period);
-> +	if (ret) {
-> +		pr_err("%s: Failed to set timer capture configuration.\n", __func__);
-> +		return ret;
-> +	}
-> +	/* Start the timer */
-> +	omap_dm_timer_start(cookie);
-> +
-> +	/*
-> +	 * 1 sec delay is given so as to provide
-> +	 * enough time to capture low frequency signals.
-> +	 */
-> +	msleep(1000);
-> +
-> +	cap1 = __omap_dm_timer_cap(timer, 0);
-> +	cap2 = __omap_dm_timer_cap(timer, 1);
-> +
-> +	/*
-> +	 *  Clears the TCLR configuration.
-> +	 *  The start bit must be set to 1 as the timer is already in start mode.
-> +	 */
-> +	l = dmtimer_read(timer, OMAP_TIMER_CTRL_REG);
-> +	l &= ~(0xffff) | 0x1;
-> +	dmtimer_write(timer, OMAP_TIMER_CTRL_REG, l);
-> +
-> +	return (cap2-cap1);
-> +}
-> +
->  static int __maybe_unused omap_dm_timer_runtime_suspend(struct device *dev)
->  {
->  	struct dmtimer *timer = dev_get_drvdata(dev);
-> @@ -1246,6 +1358,9 @@ static const struct omap_dm_timer_ops dmtimer_ops = {
->  	.write_counter = omap_dm_timer_write_counter,
->  	.read_status = omap_dm_timer_read_status,
->  	.write_status = omap_dm_timer_write_status,
-> +	.set_cap = omap_dm_timer_set_cap,
-> +	.get_cap_status = omap_dm_timer_get_pwm_status,
-> +	.read_cap = omap_dm_timer_cap_counter,
->  };
->  
->  static const struct dmtimer_platform_data omap3plus_pdata = {
-> diff --git a/include/linux/platform_data/dmtimer-omap.h b/include/linux/platform_data/dmtimer-omap.h
-> index 95d852aef130..726d89143842 100644
-> --- a/include/linux/platform_data/dmtimer-omap.h
-> +++ b/include/linux/platform_data/dmtimer-omap.h
-> @@ -36,9 +36,13 @@ struct omap_dm_timer_ops {
->  	int	(*set_pwm)(struct omap_dm_timer *timer, int def_on,
->  			   int toggle, int trigger, int autoreload);
->  	int	(*get_pwm_status)(struct omap_dm_timer *timer);
-> +	int	(*set_cap)(struct omap_dm_timer *timer,
-> +			   int autoreload, bool config_period);
-> +	int	(*get_cap_status)(struct omap_dm_timer *timer);
->  	int	(*set_prescaler)(struct omap_dm_timer *timer, int prescaler);
->  
->  	unsigned int (*read_counter)(struct omap_dm_timer *timer);
-> +	unsigned int (*read_cap)(struct omap_dm_timer *timer, bool is_period);
->  	int	(*write_counter)(struct omap_dm_timer *timer,
->  				 unsigned int value);
->  	unsigned int (*read_status)(struct omap_dm_timer *timer);
 
-LGTM
+I can add it no problem for clarity, but would it be really necessary?
 
-Reviewed-by: Neha Malcom Francis <n-francis@ti.com>
+All opcodes in that range will have that length by the Intel SDM, so it seems
+somewhat redundant, and if the opcode couldn't be read in full the decode
+would've failed earlier.
 
--- 
-Thanking You
-Neha Malcom Francis
+insn_decode_mmio for example which I used as an example of software parsing
+of instructions does not check any length if the prefix was 0x0f.
 
