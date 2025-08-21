@@ -1,140 +1,173 @@
-Return-Path: <linux-kernel+bounces-778868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61594B2EC3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:42:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDF3B2EC3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0E73A3166
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:42:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C46F83A64E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9282D94AD;
-	Thu, 21 Aug 2025 03:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FE22E2F16;
+	Thu, 21 Aug 2025 03:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kDYgn13X"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEMdT9DK"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD121805E
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 03:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7291FBEA6;
+	Thu, 21 Aug 2025 03:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755747718; cv=none; b=Dc/i8pnJfMET/LJHgfdyl+vakgC93V9nFBpsv3+D3JTlAL+Y7hzAB7emZE1UA1S11pQ1lK/8tPEZ+B55/2irn4XhG3czflFUFv9+BHXKCDv8+KIRsSWYav8/d072BPAaXQ71uIbQSXFG1uDXghOvOzcCn8KdVhQYukXvON9H6h0=
+	t=1755747718; cv=none; b=VBjOXiGc5SUjxQIeWRr2oTbe9DbzLd0y6y+dqG+/1/yTDD5ln14P6X/0w2cbrKZMMFwTEzaWK8CY70H+kVzQvmVTSimisdt/PO2TAUU7If8OFCzRHMTbUDW135lfJ5C/iy8UHPgSqJNowsjSHlhOVp5/mr+XvoMX2JZRrz/YzMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755747718; c=relaxed/simple;
-	bh=YiwkmmbsLbpvcvYhIyLFGdSVD8nnf2CMSbS+teXFHDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=alOigTlAKOVn9GMVzuuiV+sI7ghkNhQXSk7fCUY6sMHV6Z8HIegkPGURdG+o9GmO6fvv8pM5INEBubwFMBJiUBdJn5fiZ/OyTViQD2Str3DBjKCN6vjvPBPCnDWFRfocE4gJyVkKFPVYjsl5kdk91yFiY1x1+VhU7RmFpXskwCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kDYgn13X; arc=none smtp.client-ip=209.85.215.182
+	bh=X+MusV7/pRuzSWK84Guko9Sj7ekebKWsuoI3ckFV02k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yv+ThHgazDQZ7/63QA2mh9seUZehGiVzUpqm0hpuFab4YfuuvepxSNwvP3vwdlWnicGQdUIrW5QY6EOqHXvlDOsCZYuFsGBFbHsNY0JVDQyEHEOVOSWu4+DL9cc9xKMLKIXNRIhCNoASLzqfekX8ov+5nX+Z0kl9WewhbS6dKiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEMdT9DK; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b471738daabso442418a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 20:41:56 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb73394b4so81144966b.0;
+        Wed, 20 Aug 2025 20:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755747716; x=1756352516; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IRLfDVwYP4ZCgK56gRuVbf3v6A1tlVDw7Fe7cw3dhoQ=;
-        b=kDYgn13X8LN/o1sM7Kqi6K5SWBcZiN12bCRA9ULRMcCX4L/CvpqJpnru9QP0YHMBk+
-         fBR8kWtF0klWUkeZwjhSY9ubdOfF2xmazY3KMvGCBT19O9Z/RNTzFowb8vHlkX3hftra
-         EoPimEZFnEu84T42G57vrtIPbFliNCDbpi8EAXDN5HpfKuoRjWu5rzkks40ElM6BNkBL
-         OIvy+GdMXAyiwirDfymqY22fCJtCXTV4CgfEUWtJjZ9B7pcXDv3R24LJjsrtjklTckWa
-         yonTDxNbSrBXnEILHHZyyTDcc3Go8BvJBFr6B0/J+k73gAF96t1mfL9uVje7G3OuCe29
-         y91g==
+        d=gmail.com; s=20230601; t=1755747715; x=1756352515; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ly8HhEQvY9JxMVhrYHzoh/hAff3HjFqcoEOj5b7KCq4=;
+        b=ZEMdT9DKGVPUePaus5FFyXbk3eLDWC8B6ohc3qetL7MdDsWjxA3kT5ey1D9i7Nu3T+
+         lTTC9S+mPBPbF1bdBcI5kLy/QHns9OFTc2p3MxwOhucGUJbWCNW8TD01uoyWZNF6UgKG
+         O9PeKfqJICWpp6Cw9CeZngFxE9nA4Q0gAx2B/SoMSwrOdaJrrOI6BjZ06fkszz9mourR
+         DkGMXe+YQ/KeAHu++P4yMqFBWadA9CyCjLarGklfhSQdx4GmCY/FFJcf0L+mWFGwmo8w
+         AVZBHNHs9z06ewFE96wpAVNMXJu+APjVECh0E/lsPK41T2tNPeyQg8mYRYBIGqX8HuPk
+         kN3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755747716; x=1756352516;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IRLfDVwYP4ZCgK56gRuVbf3v6A1tlVDw7Fe7cw3dhoQ=;
-        b=xUT8MISJKDmZsOsGZJnVnYNp1B2as1hgpD8B7eXlA6DUQzo5J0T/LqNntfhadTFasx
-         gQW2pj4dwB6X1p0g2/Ym/tj8KjIhrabVTaVukjsQoQcGf5xcfTAL+2nvjejIS+HB1wOf
-         aI7wB7SKTYxrl82jhSZ6iCcSpTDlnEDTPXmJYWycH6uFuij/vIz5gRELcHABYB1/f53p
-         atl3d3w6BFu46KwDSZLPuZg5tC65Tsd8nf+jzUAlhrAOPelQTkaZffjXKZ5yUZk/Y5+Z
-         +hgj24V99nqd+H7J8ZpMcESpt1biRodbdlpsA5j3lkKia9X2g0ArCE31Q4IHNVGI6VSC
-         2A7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUZIXmaUzZ3apEAA86vPjeQq2dTQ5QUE+yZ46DjvgcebxRZbC9+pWDtTias7s5VCQVPuGhFYY6DDi+fXVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAeUqee1YzJwJ5OZMkPUPNX3A3EI+dPfkM+6Ad0WWp6ZkJ3BZc
-	o3uhWry41ydGX1T/YOXx9x+HNLZqU61HaYJZ24by93gO7GyUJI+ZcuBc
-X-Gm-Gg: ASbGncvzOWVBA30hM8j1hl45YxpMmnnW3RrIGSf/7t/wZV4kWsw0mCMKu2opOeS6OOT
-	4hykML6gsFeaeEKq6HBN1R3cTud406DJXxfBUO646JquEE6w4/FV8PdySy7PfwahjTcupFfVlF5
-	I5jYOZamv5m9gE8J4mzILJUT63jtuuCMoVdQ2WaRHHrrt9tqwlykvbtTE6B7rmgSIA4hEdXOSFO
-	X8PkfoQooVjfZOdiZ9T+od1kOOX1Pv5VdtC00ENMEWNCuZOe4fvgrsBdd9a+bpJznx6VOaMqHH3
-	u+r0P+vG4vzQzqdbOb1dH0aXxq1fwe5EnGWFeUKlVIlHIhKhoP7L5rGaWJEDCoaYImBRTxjE/zY
-	7/EF/JKJl9jyi5z4=
-X-Google-Smtp-Source: AGHT+IGHVc1FTNUDeFUsPOjRM4aR3LLXqdfdYwjrp5/bYhy1+SZ1tq+Kh46WSZHKBqSXtdOxVJeNpg==
-X-Received: by 2002:a17:902:d54e:b0:240:469d:beb0 with SMTP id d9443c01a7336-245fed7e65amr15261125ad.31.1755747715733;
-        Wed, 20 Aug 2025 20:41:55 -0700 (PDT)
-Received: from [127.0.0.1] ([2403:2c80:6::3058])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed51aa14sm40806585ad.145.2025.08.20.20.41.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 20:41:55 -0700 (PDT)
-Message-ID: <3bfd0f8c-cda1-40fb-9642-bd305d3ff98f@gmail.com>
-Date: Thu, 21 Aug 2025 11:41:39 +0800
+        d=1e100.net; s=20230601; t=1755747715; x=1756352515;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ly8HhEQvY9JxMVhrYHzoh/hAff3HjFqcoEOj5b7KCq4=;
+        b=cgJExGWyBzlUXk7CDAiYAGKkJl+oOF/8M0qYwaGjH2lj1EhyEQ1VZLj7cU9DqpJWmx
+         G/VmKTJ5s2lkhEkfLHa8kYWu363NfpxIvK7hvugx4VPJYeIYmnvn/XTAHntX69++RMy6
+         78VH+3e4juFJP+KXZHcq2doUry0XKmhlUHkMuY/3Lqb4bbGAB63RZi4bdsSErmF9q22R
+         pm/GFZYO//MGt5UbL1hMxCCGusQ3Yer8mjRnvVSzBXK+E3cKPy5jjw8hvmfnZ1AvcqkI
+         IclBPOBn6sf1+pvbxgbP40gNusDgy41RX6PwPz3xyKGMWkpGjHzpDqEiIIA/C2GKTPGN
+         6dYA==
+X-Forwarded-Encrypted: i=1; AJvYcCW78S5+yZ2JacgKY4ce0EoEqjMXnGSOCcwkFTNscxEMkFDcj5h/dHkCSuBPuYG6L6YQFoEwFynuNxwl0okQ@vger.kernel.org, AJvYcCW88HcGYAHvdY9BCLNNFquzmWKyzERn53YaHot8qIog27vTm0dRYxDgXz5j0YIv4pPifGIr4xEPPvM=@vger.kernel.org, AJvYcCX0f0T2kQ20kUvdrH9IOfrVE7wVT5vPIwx83K6mMNigOfZjJLinQuWiHPTRdl34ECBO6zh62DQCIfuVYXkBeakshhu7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy050G6Yvky7ECqvi9I5ZkMq7XFflsBiZZAM9EqZi5D855WvImZ
+	N8XjUJ6wQeRblfIyOVVGuBhdoL22L4PRqxNB7nUNVSn4rzVkE2DiviF4
+X-Gm-Gg: ASbGncv7WyuS9Prxf0OsIuqe/qfwCeMbhNbmpvLcaXpr7X9nXFCyo5Q7FyiQP5cg7A0
+	i8/RPYV1395JrCPLyVAGjzFVDDbn4NnHgBob+k2L/gz9tH2Ze2oAH3EFpHGto8s9qiaMcnyfIcR
+	hJ+aDYpUFFBuG3XNY+v1bJ/A725OvCpqlVVaNUrTZJSoYqXaQzKkETa/PmtkaxmrdOgtP52Pt9f
+	8W31MklQhFIfgHhb2d1PRt95lKbRTj6ls2/pf3C3P72QHXfn/TwHTCJxrVmUK1w9s+cuRDEdSjs
+	v2DtF/POZHo/DQTSLJT+7KJhmIyfJ6Sh6MgnCPSz532cBAgQdAMFAKscHO5CMRXZeB/oLnpMJWR
+	jwn9p38wnce1Pyd7L4zs1rQ==
+X-Google-Smtp-Source: AGHT+IGaJqB8Du4nZbwZH6+ZZ1UR1jsjKqH51Z9VenWWYM+Y2riY0qwNibopPt1+EA0CWK1IUnGClQ==
+X-Received: by 2002:a17:907:3e8d:b0:af2:5a26:b32a with SMTP id a640c23a62f3a-afe07c154d7mr97515766b.30.1755747714772;
+        Wed, 20 Aug 2025 20:41:54 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded2ba31dsm299249166b.12.2025.08.20.20.41.54
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Aug 2025 20:41:54 -0700 (PDT)
+Date: Thu, 21 Aug 2025 03:41:53 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Nico Pache <npache@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, david@redhat.com,
+	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
+	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+	baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+	wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+	sunnanyong@huawei.com, vishal.moola@gmail.com,
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+	kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+	raquini@redhat.com, anshuman.khandual@arm.com,
+	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+	dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+	jglisse@google.com, surenb@google.com, zokeefe@google.com,
+	hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+	rdunlap@infradead.org, hughd@google.com
+Subject: Re: [PATCH v10 03/13] khugepaged: generalize hugepage_vma_revalidate
+ for mTHP support
+Message-ID: <20250821034153.uyxjy5yvxx5no5sf@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250819134205.622806-1-npache@redhat.com>
+ <20250819134205.622806-4-npache@redhat.com>
+ <cd4dd743-679f-4c55-9635-6d32e6fa5ff7@lucifer.local>
+ <CAA1CXcDORXqm4JoHn4ZSEhT3ajsuY2MAPwefMXk3+YMXcpvqkw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/9] crash_core: use panic_try_start() in crash_kexec()
-Content-Language: en-US
-To: Baoquan He <bhe@redhat.com>
-Cc: pmladek@suse.com, akpm@linux-foundation.org,
- Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
- linux-kernel@vger.kernel.org, feng.tang@linux.alibaba.com,
- joel.granados@kernel.org, john.ogness@linutronix.de, namcao@linutronix.de,
- sravankumarlpu@gmail.com, kexec@lists.infradead.org
-References: <20250820091702.512524-1-wangjinchao600@gmail.com>
- <20250820091702.512524-2-wangjinchao600@gmail.com>
- <20250820091702.512524-3-wangjinchao600@gmail.com>
- <20250820091702.512524-4-wangjinchao600@gmail.com>
- <aKaHvnxEaXF/fLnW@MiWiFi-R3L-srv>
-From: Jinchao Wang <wangjinchao600@gmail.com>
-In-Reply-To: <aKaHvnxEaXF/fLnW@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA1CXcDORXqm4JoHn4ZSEhT3ajsuY2MAPwefMXk3+YMXcpvqkw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On 8/21/25 10:43, Baoquan He wrote:
-> On 08/20/25 at 05:14pm, Jinchao Wang wrote:
->> crash_kexec() had its own code to exclude
->> parallel execution by setting panic_cpu.
->> This is already handled by panic_try_start().
+On Wed, Aug 20, 2025 at 09:40:40AM -0600, Nico Pache wrote:
+[...]
 >>
->> Switch to panic_try_start() to remove the
->> duplication and keep the logic consistent.
+>> >       if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
+>> >               return SCAN_ADDRESS_RANGE;
+>> > -     if (!thp_vma_allowable_order(vma, vma->vm_flags, type, PMD_ORDER))
+>> > +     if (!thp_vma_allowable_orders(vma, vma->vm_flags, type, orders))
+>> >               return SCAN_VMA_CHECK;
+>> >       /*
+>> >        * Anon VMA expected, the address may be unmapped then
+>> > @@ -1134,7 +1135,8 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
+>> >               goto out_nolock;
+>> >
+>> >       mmap_read_lock(mm);
+>> > -     result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
+>> > +     result = hugepage_vma_revalidate(mm, address, true, &vma, cc,
+>> > +                                      BIT(HPAGE_PMD_ORDER));
 >>
->> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-> 
-> I had to use b4 to grab back the whole patchset, but I can't comment on
-> other patches, especially the patch 1.
-> 
-> Firstly, this series looks interesting. It does enhance code
-> readibility. But I am a vim user, I like open code on this one line of
-> code wrapping. So leave this to other reviewers to decide if this should
-> be accepted.
-> 
-> Secondly, the lines of your patch log are too short, it's not convenient
-> for reading. Can you set your mail writer to change this.
-> 
-Thanks for the feedback. I will make sure to set my email client to use 
-a wider line length for future patches.
-> Thirdly, please add people to CC in all patches. I don't know why you
-> only CC me in patch 3 if the whole patchset is related to crash and
-> panic.
-I use git send-email, which automatically adds the To and Cc headers 
-based on these two configuration lines:
-	tocmd = "scripts/get_maintainer.pl --norolestats --nol"
-	ccCmd = "scripts/get_maintainer.pl --norolestats --nom"
-It seems this isn't working very well. I'll find another configuration 
-for the toCmd/ccCmd.
-I would be very grateful if you could share your configuration or commands.
+>> Shouldn't this be PMD order? Seems equivalent.
+>Yeah i'm actually not sure why we have both... they seem to be the
+>same thing, but perhaps there is some reason for having two...
+
+I am confused with these two, PMD_ORDER above and HPAGE_PMD_ORDER from here.
+
+Do we have a guide on when to use which?
+
+>>
+>> >       if (result != SCAN_SUCCEED) {
+>> >               mmap_read_unlock(mm);
+>> >               goto out_nolock;
+>> > @@ -1168,7 +1170,8 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
+>> >        * mmap_lock.
+>> >        */
+>> >       mmap_write_lock(mm);
+>> > -     result = hugepage_vma_revalidate(mm, address, true, &vma, cc);
+>> > +     result = hugepage_vma_revalidate(mm, address, true, &vma, cc,
+>> > +                                      BIT(HPAGE_PMD_ORDER));
+>> >       if (result != SCAN_SUCCEED)
+>> >               goto out_up_write;
+>> >       /* check if the pmd is still valid */
+>> > @@ -2807,7 +2810,7 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
+>> >                       mmap_read_lock(mm);
+>> >                       mmap_locked = true;
+>> >                       result = hugepage_vma_revalidate(mm, addr, false, &vma,
+>> > -                                                      cc);
+>> > +                                                      cc, BIT(HPAGE_PMD_ORDER));
+>> >                       if (result  != SCAN_SUCCEED) {
+>> >                               last_fail = result;
+>> >                               goto out_nolock;
+>> > --
+>> > 2.50.1
+>> >
+>>
+>
 
 -- 
-Best regards,
-Jinchao
+Wei Yang
+Help you, Help me
 
