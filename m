@@ -1,101 +1,131 @@
-Return-Path: <linux-kernel+bounces-778827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A293FB2EBAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:06:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 821F4B2EBAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DAFA5C5E56
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:06:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9BF83AE3E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675792D6639;
-	Thu, 21 Aug 2025 03:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFC52D877E;
+	Thu, 21 Aug 2025 03:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MQWMeOsc"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="MQ57fu+t"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DC52D4B4E;
-	Thu, 21 Aug 2025 03:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E47F277C90;
+	Thu, 21 Aug 2025 03:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755745604; cv=none; b=hmJZ/VFW+qv6lPCN6WTe74f58JjFtS1uoU/86xtDVq7hh8IbHZe1uMwPBT70F0QQxellTZ6GEkI1lrRWFwORjrjflFjcCUXQkwEyOfErr0fTQmsk1qjfOJNihzRga+L/L9jFUS6UWaZgOHDGBllw/BHf1vj+9Tz0a3OaVNUikVA=
+	t=1755745644; cv=none; b=lCLNPAWngexgsYhq+AQX60yBbA13cQMTRq/JJ7tQ1rrltuoAMxsRktnKfXgwWy2PBCnZVzYg97CBc06X+74x42DLXbYjN7o/4VQToUlvly8vlgLjwkMP5jzCbw0CyHNBOjvai3IhR7sh1rS+bXejbaSonhvihFONF7LcbhqHpkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755745604; c=relaxed/simple;
-	bh=bF24w49KxhiqPN4eoMYn+dEQt0aAYbwmA0oPyP/PBnw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZSZooTZY6mylyaiCnqVjyp3DIpHVxcXngWnuhmuuzhPhLsyVxqdl3bOYGvHVan5RCUnE+rhFwK12flczpkZyFGU+RxbAQCLimH50SnXgG67oO+/k4LoJMYf+Hw993XOr0UMefhYgKds1zdRpx8ZfiPtJxascxE7sv3iXVHz0OgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MQWMeOsc; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=tIDAFgFXP+KfCHaBZYFy17v8lTqJ/ZVxo+olFKcoIuY=; b=MQWMeOsc+RDyD8Tr1/R8PmI0OQ
-	iu1epjTKc78mfsv7VX1uKwZfZ8nTGPaOrPpF7e1+Xjsv6Od3IIwmNjTmuMNz3rPNeGdKtSuG3Y5uk
-	tn9sQcda55euFysdFxBzGWMfXp5kMfNTiDVkN/V/b4qsLj2t1Wq6Sz9VMtCnkEswt1H4ZaS1G/JJy
-	KMTPF50GwCSFjdDhJmDeNE7U+GwBpxKYy0Jfels2bQyjBesPWsUUsL9xih/z4o4sYWkv4T+WHASMI
-	ktdoospC+Y45wsC/cOKnxhRi8HsIXdwE2lvpVo9Wfnn7HLAgUiCMN7D1cU7PymKMMeKWI3TSKIAUJ
-	EH6NzA4Q==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uovdS-0000000Fb0r-3xFG;
-	Thu, 21 Aug 2025 03:06:42 +0000
-Message-ID: <0f11100e-ca60-44a8-9826-03c80675446f@infradead.org>
-Date: Wed, 20 Aug 2025 20:06:42 -0700
+	s=arc-20240116; t=1755745644; c=relaxed/simple;
+	bh=kNtl7aaIov48PZW8RnkouC5yMH/0vKwj8089QgZo/xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rl/G9ySPimMWhSD3r3XOE/GrpMZ7jmxPy3TKD2R5CEeEk4o5cp0wXqZB8ZAOtF1GHISqbWYSR9NiHnxdvePeMRxrFmiSk+40Uyn2D4UmWB1n/POIBnstdmgq1poDfNkoyppNIiUtJjbfGRVijJCHJar1IPrRk1Yd3+Ww8vWUO6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=MQ57fu+t; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=P0a1IzO9BpfonDm6AwhGWLiKp//cCmUP156Hl+GNrao=; b=MQ57fu+t08HIKhylo5imqYm+F0
+	8cPEUJV6jckfZL7F2Nd6nCCAzEVxXRe29kZSycLOUuPEBuLsXkatl4suXs2Cw0YIKLw/UL1KVmArF
+	4CYmczIVDOc0iBINoqma2Ghjfg5Gw4G/YP/MxlNw3rjuUFpgY8MUeIXozSaOOcOMeZ8s=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uovda-005P2U-8O; Thu, 21 Aug 2025 05:06:50 +0200
+Date: Thu, 21 Aug 2025 05:06:50 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yibo Dong <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] net: rnpgbe: Add basic mbx ops support
+Message-ID: <f0c9aee0-0e57-429e-8918-d91bf307018e@lunn.ch>
+References: <20250818112856.1446278-1-dong100@mucse.com>
+ <20250818112856.1446278-4-dong100@mucse.com>
+ <5cced097-52db-41c9-93e4-927aab5ffb2e@lunn.ch>
+ <6981CF6C1312658E+20250821014411.GB1742451@nic-Precision-5820-Tower>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] docs: gpu: Fix spelling in gpu documentation
-To: Rakuram Eswaran <rakuram.e96@gmail.com>, linux-doc@vger.kernel.org,
- alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com,
- corbet@lwn.net
-Cc: tzimmermann@suse.de, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, simona@ffwll.ch, siqueira@igalia.com,
- harry.wentland@amd.com, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org
-References: <20250821025957.22546-1-rakuram.e96@gmail.com>
- <20250821025957.22546-3-rakuram.e96@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250821025957.22546-3-rakuram.e96@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6981CF6C1312658E+20250821014411.GB1742451@nic-Precision-5820-Tower>
 
-
-
-On 8/20/25 7:59 PM, Rakuram Eswaran wrote:
-> Fixed following typos reported by Codespell
+On Thu, Aug 21, 2025 at 09:44:11AM +0800, Yibo Dong wrote:
+> On Wed, Aug 20, 2025 at 10:23:44PM +0200, Andrew Lunn wrote:
+> > > +/**
+> > > + * mucse_mbx_get_ack - Read ack from reg
+> > > + * @mbx: pointer to the MBX structure
+> > > + * @reg: register to read
+> > > + *
+> > > + * @return: the ack value
+> > > + **/
+> > > +static u16 mucse_mbx_get_ack(struct mucse_mbx_info *mbx, int reg)
+> > > +{
+> > > +	return (mbx_data_rd32(mbx, reg) >> 16);
+> > > +}
+> > 
+> > > +static int mucse_check_for_ack_pf(struct mucse_hw *hw)
+> > > +{
+> > > +	struct mucse_mbx_info *mbx = &hw->mbx;
+> > > +	u16 hw_fw_ack;
+> > > +
+> > > +	hw_fw_ack = mucse_mbx_get_ack(mbx, MBX_FW2PF_COUNTER);
+> > 
+> > > +int mucse_write_mbx_pf(struct mucse_hw *hw, u32 *msg, u16 size)
+> > > +{
+> > > +	struct mucse_mbx_info *mbx = &hw->mbx;
+> > > +	int size_inwords = size / 4;
+> > > +	u32 ctrl_reg;
+> > > +	int ret;
+> > > +	int i;
+> > > +
+> > > +	ctrl_reg = PF2FW_MBOX_CTRL(mbx);
+> > > +	ret = mucse_obtain_mbx_lock_pf(hw);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	for (i = 0; i < size_inwords; i++)
+> > > +		mbx_data_wr32(mbx, MBX_FW_PF_SHM_DATA + i * 4, msg[i]);
+> > > +
+> > > +	/* flush msg and acks as we are overwriting the message buffer */
+> > > +	hw->mbx.fw_ack = mucse_mbx_get_ack(mbx, MBX_FW2PF_COUNTER);
+> > 
+> > It seems like the ACK is always at MBX_FW2PF_COUNTER. So why pass it
+> > to mucse_mbx_get_ack()? Please look at your other getters and setters.
+> > 
 > 
-> 1. complection ==> completion
->    implementions ==> implementations
-> In Documentation/gpu/todo.rst
-> 
-> 2. unpriviledged ==> unprivileged
-> In Documentation/gpu/drm-uapi.rst
-> 
-> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-> Suggested-by: Alexander Deucher <Alexander.Deucher@amd.com>
-> Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
+> 'mucse_mbx_get_ack' is always at MBX_FW2PF_COUNTER now, just for pf-fw mbx. 
+> But, in the future, there will be pf-vf mbx with different input.
+> Should I move 'MBX_FW2PF_COUNTER' to function 'mucse_mbx_get_ack', and
+> update the function when I add vf relative code in the future?
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Maybe add mucse_mbx_get_pf_ack() so you can later add
+mucse_mbx_get_vf_ack()?
 
-Thanks.
+The problem is, our crystal ball about what will come next is not very
+good. So we review the code we see now, and make comments about it
+now. You can add comments explaining why something is the way it is
+because in the future it needs to be more generic to handle additional
+use cases, etc. Or explain in the commit message.
 
-> ---
->  Documentation/gpu/drm-uapi.rst | 2 +-
->  Documentation/gpu/todo.rst     | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-
-
--- 
-~Randy
+	Andrew
 
