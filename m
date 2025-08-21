@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-778792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDD1B2EB11
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:05:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FEF9B2EB21
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9A1A23470
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:05:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A7461758E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEBA2D5423;
-	Thu, 21 Aug 2025 02:05:18 +0000 (UTC)
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677522D94AD;
+	Thu, 21 Aug 2025 02:11:37 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAA8230BCE;
-	Thu, 21 Aug 2025 02:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC4C194124;
+	Thu, 21 Aug 2025 02:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755741917; cv=none; b=ZfgpzNMsmwbt7QisdrjoM2VTOIf6YfZhzt15cSWDywSZ8SdoQDizFGX/ww202d9fotehpeCd1WsAO4dOlezRGlCRlB1Ia1U1J7oFpIlkyV/zFq1w9WKp2+jLP7ttbQQFSAOlAeCYHsPlqSz2SB4xgSOlCuuTW1/D8vlCOmllbho=
+	t=1755742297; cv=none; b=moZ4BNU3mx65KA39UFc4ud+uFEAVDCm+53rNMbCiAhk+247lwXPRtAxP+HldKzUQl4O+hAln7YVEQnR6g/6UyuwHQTVhtBoinJXYk3GnuXmnEylpdCdVXr1KG6eYpxuVg2Bc/NWhR8cmVK6h5rvyDA+MN2n+C2VpKTGjD0M6oHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755741917; c=relaxed/simple;
-	bh=FNLBdWhtXd2m9yHwmeI8KFlYBcHkijGv9Sr7nDG2Uyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TNpLi9fyNVxQePIgfs/P5TcndLjoPxFHsyvpKw/OCyAtCJvkUg8kW0ogxTp4tpN1Rp2oU9rtL1lJUSPywfIlT7WJAAqODcq/YsCC55DrEbWy3F7IX+1qOmVDOjPd0MGC0J6U7jriH7OCjznL8WAQjH5dLThoYmHSBSB7vl0S2Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpgz12t1755741849tfda9277f
-X-QQ-Originating-IP: CBo+yViVKO1fMalkEw0THj+HBznWJv82D9hIYlQUVFM=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 21 Aug 2025 10:04:07 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4256339024035975856
-Date: Thu, 21 Aug 2025 10:04:08 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <9BFA6532A427F621+20250821020408.GE1742451@nic-Precision-5820-Tower>
-References: <20250818112856.1446278-1-dong100@mucse.com>
- <20250818112856.1446278-5-dong100@mucse.com>
- <399be32e-5e11-479d-bd2a-bd75de0c2ff5@lunn.ch>
+	s=arc-20240116; t=1755742297; c=relaxed/simple;
+	bh=KfoDvDxYcogeLGEPuoMCFKFWUu0e1tr8+QbKzrTi+Ug=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K8w2VdgIZuXf9WMcoVxaPsTZO+5saA39GHnhUz8f+9EyqQhC7aKTt7OBhgvzsSHCyP9N4gIRCsHffU3wTCOz9KxOCyUWP0m2gt33c03Hxi0hA9eWeMzkdccJo05s+9yGDtmsgFnrVrIiarrwlkI7BkUE4lEGnWBQm+8AMiXzlUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6myq4cxKzKHMhh;
+	Thu, 21 Aug 2025 10:11:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1C4841A0AD8;
+	Thu, 21 Aug 2025 10:11:31 +0800 (CST)
+Received: from huawei.com (unknown [10.67.174.45])
+	by APP4 (Coremail) with SMTP id gCh0CgB38hJLgKZo7P6NEQ--.63669S2;
+	Thu, 21 Aug 2025 10:11:30 +0800 (CST)
+From: Tengda Wu <wutengda@huaweicloud.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ingo Molnar <mingo@elte.hu>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tengda Wu <wutengda@huaweicloud.com>
+Subject: [PATCH -next v2] ftrace: Fix potential warning in trace_printk_seq during ftrace_dump
+Date: Thu, 21 Aug 2025 02:11:20 +0000
+Message-Id: <20250821021120.2986553-1-wutengda@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <399be32e-5e11-479d-bd2a-bd75de0c2ff5@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NY3HYYTs4gYSjrhh3m4f0J0Kvtdb/NldPTYVgytLe5LaYOwshZEv00FW
-	vk75Ova3HY7YABMvLPcTpJ0x2t7juGYgsk6GdypMPmazhtZNY+UBwUEmHna+w81AfgIlvMx
-	tiSW5We2O9FJuhlbG3cOpAEpVe+eDDlhsOzu0LuhdTKLZtMcP/TCnZGRBQwkfm09LpxJeiZ
-	m9wnEDEEwCXbcuq+MDLzvZPItSRnkpRLYvKMNa+UvxM/eG2v6b5pXMnx6DYHwGBpdcJ+BJG
-	5Z28k4rMbHU2C+Emcwy1HYH5HRw1eTLXO+ihWyw3J+4g/wnD1S3J746RRpXm5QLvG7vz2qq
-	MMog3g/ZQSUFMAb7K+YfNhc8MknPO4agjHByGRrpr6deXMJqmBonxzViW8M8OJHJDn+eNNl
-	pg/SWlo63yPH+yShLAKY/PinkhO8ijnpW9Enm72zCmbzG6zdHq82VGgz5iZLJUcNGIbUZxP
-	HulYLTG6fkwtt7ShPxgqNslqYpuqtPcH1+5usAFPDbxwBXO5kAzlQZDRDPg/9eP6C0ztkFl
-	KuM0fwGrJTwUA8QtjmbmV2s0J8luxGr2T0wpoDgb9kAGssRcFiNXNUo9IqzPLpnvYmpPHgr
-	C7c+KTjeWgnM6x8SPRuWSBTu2TffvkSslkm3d+NaY4LCtZ+Hq7sIaSWxWrPegQo/3WAh8vo
-	wie/phgYRHBvBg6HXmLVe2RgEr/3pGPeZlfETywdmAkeRwmJzkrcNf45YWfQW8+zxkZ6HAl
-	W9gOX5PzDy5fsYxCJq3j9IdLiv4poXKRruc7emxMcqu4Pf7SXxDD552xWss6H2RZdKJDrc1
-	WqCH2TY72RVSTE6XSvSZZqttRF9sUOGfk480KMh0s0zoi+UgcewQnV5cPR5/H/tw/1FHWMP
-	nT8jFyyb29FisGEujhLptRT0dFoFSzwGD5Er8rHuZaWlNShAXPjQNZUtyNpEM6RGvrpnVMx
-	kWF98bEC+aaK4rC9ju9W+MNR9rQJtI4A1QJZFPpb1oBnvN2civXjeqUsv1lawWs0I6bfq0J
-	RxupG4DZzxPafjWwNVpZ6DgfKsCsOi5XJ9mvG9l+XnEa86ccIB
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB38hJLgKZo7P6NEQ--.63669S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw13WFy7Kw4fJFyDCFyfJFb_yoW8Kr1rpF
+	y3K3srJrs5AFsrtF1UuF4xCr1xX3y0gry7WrsrJw1rJan8Ar1jvrnrt3ZaqFyfA3yDW3sI
+	yrWYy348Cw129FJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUU
+	UUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-On Wed, Aug 20, 2025 at 10:30:17PM +0200, Andrew Lunn wrote:
-> > +int mucse_mbx_get_capability(struct mucse_hw *hw)
-> > +{
-> > +	struct hw_abilities ability = {};
-> > +	int try_cnt = 3;
-> > +	int err = -EIO;
-> > +
-> > +	while (try_cnt--) {
-> > +		err = mucse_fw_get_capability(hw, &ability);
-> > +		if (err)
-> > +			continue;
-> > +		hw->pfvfnum = le16_to_cpu(ability.pfnum);
-> > +		hw->fw_version = le32_to_cpu(ability.fw_version);
-> > +		hw->usecstocount = le32_to_cpu(ability.axi_mhz);
-> 
-> If you can get it from the hardware, why do you need to initialise it
-> in the earlier patch?
-> 
-> I guess you have a bootstrap problem, you need it to get it. But
-> cannot you just initialise it to a single pessimistic value which will
-> work well enough for all hardware variants until you can actually ask
-> the hardware?
-> 
->     Andrew
-> 
+When calling ftrace_dump_one() concurrently with reading trace_pipe,
+a WARN_ON_ONCE() in trace_printk_seq() can be triggered due to a race
+condition.
 
-It is a problem related with fw version. Older fw may return with axi_mhz
-0, So I init a no-zero default value first. Also, I missed to check the axi_mhz
-here. The 'usecstocount' is removed in v6, I will update here like this in
-the patch which truely use 'usecstocount':
+The issue occurs because:
 
-if (le32_to_cpu(ability.axi_mhz))
-	hw->usecstocount = le32_to_cpu(ability.axi_mhz);
-/* else keep use the default value */
+CPU0 (ftrace_dump)                              CPU1 (reader)
+echo z > /proc/sysrq-trigger
 
-Thanks for your feedback.
+!trace_empty(&iter)
+trace_iterator_reset(&iter) <- len = size = 0
+                                                cat /sys/kernel/tracing/trace_pipe
+trace_find_next_entry_inc(&iter)
+  __find_next_entry
+    ring_buffer_empty_cpu <- all empty
+  return NULL
+
+trace_printk_seq(&iter.seq)
+  WARN_ON_ONCE(s->seq.len >= s->seq.size)
+
+In the context between trace_empty() and trace_find_next_entry_inc()
+during ftrace_dump, the ring buffer data was consumed by other readers.
+This caused trace_find_next_entry_inc to return NULL, failing to populate
+`iter.seq`. At this point, due to the prior trace_iterator_reset, both
+`iter.seq.len` and `iter.seq.size` were set to 0. Since they are equal,
+the WARN_ON_ONCE condition is triggered.
+
+Add a non-NULL check on the return value of trace_find_next_entry_inc
+prior to invoking trace_printk_seq, ensuring the `iter.seq` is properly
+populated before subsequent operations.
+
+Fixes: d769041f8653 ("ring_buffer: implement new locking")
+Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+---
+ kernel/trace/trace.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 4283ed4e8f59..b4cec22753ea 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -10617,6 +10617,7 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
+ 	 */
+ 
+ 	while (!trace_empty(&iter)) {
++		void *ent;
+ 
+ 		if (!cnt)
+ 			printk(KERN_TRACE "---------------------------------\n");
+@@ -10625,17 +10626,18 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
+ 
+ 		trace_iterator_reset(&iter);
+ 		iter.iter_flags |= TRACE_FILE_LAT_FMT;
++		ent = trace_find_next_entry_inc(&iter);
+ 
+-		if (trace_find_next_entry_inc(&iter) != NULL) {
++		if (ent) {
+ 			int ret;
+ 
+ 			ret = print_trace_line(&iter);
+ 			if (ret != TRACE_TYPE_NO_CONSUME)
+ 				trace_consume(&iter);
++
++			trace_printk_seq(&iter.seq);
+ 		}
+ 		touch_nmi_watchdog();
+-
+-		trace_printk_seq(&iter.seq);
+ 	}
+ 
+ 	if (!cnt)
+-- 
+2.34.1
+
 
