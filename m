@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-780753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F349EB308FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:18:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D45EB308FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C0DAE85D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:18:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B89607C3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9452D9792;
-	Thu, 21 Aug 2025 22:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CE32D249E;
+	Thu, 21 Aug 2025 22:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ddlvl2vF"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O3dvl0s2"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36721E5206
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEC42C029B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755814698; cv=none; b=MDLOK1b76uq3paqOe0uoyXJXt1gxE0hN5P/OWVwGVngi03dFf0ALQCvXrwXqAPEmPSe3wrGzGwiZLvyLURhQIiZRzX3X2aYFk4KpPepPWBUDE/Qd1PTorgJAbvHVP4/lVL4+lnmeYbO5ZnI7+EDKiUBuIEr4Vl2VQ7+SfXdndFI=
+	t=1755814722; cv=none; b=deHXjXjP7kapoF78671o7SFl3jw8O8k1mL/1p+v0rjVHS//WmpbPCRz3defRw+Iz/aagz6sVRvr271VOPui11cZnn4UE+TVEpIKvDZ24xzLLohC/Pn/dzqjAuXssMK3Vne1zxIx0E6UE1KcFBK/s/9Ta/jKFbLvKZDOUJ2uDvN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755814698; c=relaxed/simple;
-	bh=hJvLmDOHRH8htVDkh8Zi3UnZ6HEw3OYx2eFdQyAdZEU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k1B4ZiusDU4XdIGltQKLDxGLJV9x/NACHIe6bWFy22IE6TaFGSQdIGW9Bll7MRcOPelw6CLCrD1U6kzxFYTLKGmBUnLAYOP27ssNuaM6j7cx6q6WdR2GYZ3wlOV54vOw8hlF1q5rNZcjhintMNOaAvfVRNFVP3nKpjRCF1BydVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ddlvl2vF; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-333f8f02afaso12648731fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:18:16 -0700 (PDT)
+	s=arc-20240116; t=1755814722; c=relaxed/simple;
+	bh=K0symyrZuyZvqS1XBD24qplV3mvlV//oYKSTemn9QkM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=rIo3AN/OPVhjGpnOt3PDJKgKx481SdqK8lBRWlvNX77nAqlzuJDPJ8RHlLCFWa9AWPZY5i0bPnfTDCwmxgY9H1Q1F+3O5nl3CJKX0Nz+5/VQij8NvYLRIcv+BPyGVUiK6Jg8dU8WHqgl4qJe/pyJ03e03XE1Ti2+GKlrOG2Bh48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O3dvl0s2; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2e60221fso3112848b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:18:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755814695; x=1756419495; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hJvLmDOHRH8htVDkh8Zi3UnZ6HEw3OYx2eFdQyAdZEU=;
-        b=ddlvl2vFfSC7cPidCuNjxai5SVOm9E493/urLmHQ8fZL9CMGMmebB+BSNOqXJ0ztVz
-         FBnYt4bEkbD8XHQ75DrNuzdo/kraEIRrGBDQALiRnyMBEg56U58tKwOLhS6dr8zbpxEd
-         dIE4h9gTiW1mMgoWKqPGHfBl8AQ1epzvNXPRuaqN9dY3KlpFMnzcsEkwb2yyZWeAkp05
-         rS2hw8GKg6qkvO6vi/zs9/Jh57ViYDhH3+yUsjnfHNGarUlGf1rPPH8eCwIhK9Nkl6gf
-         2XYNfFJlqNLo8cBQH7LKc1+ylEWmuX7dPAC7hKk4xyVkMgO659B00Rrw4CPVjxaUYQBZ
-         YgEg==
+        d=google.com; s=20230601; t=1755814720; x=1756419520; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cFBRMtm2qDJHWakDl01mNCIUuG7fMg/wQlZbnAFILFc=;
+        b=O3dvl0s2TsCFOGpgvcY1+V4HO1GocxiboYbPlB5QFHOkHFamD45dIytRbAk858O++4
+         34a+P7VNbPRLm3zB7K9bL7oH8agNzbBzgcYAr4p+NST0bE4WyULomqLa8FDqirbG8/Jj
+         aSNFjSmURtaoBBwbaleWu/mNsG9PQUwLe/Kn0HD9LRB3F1GZ4n9BjD5Ue0/8ibsFQVGl
+         q9FbBDbXyOKSjora1TpVpx5/A+q0Bd5L2dy9JwiE1ZlZGhJCN8qCx9AK5ipUnnpK6zYd
+         uIvpIHzQE+1MRlfxgJ6RcbkguV+C87+O5ftCDzN/8iV+WnPNfbtnEYYchS1JPzcdcx5C
+         a4CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755814695; x=1756419495;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hJvLmDOHRH8htVDkh8Zi3UnZ6HEw3OYx2eFdQyAdZEU=;
-        b=uXt0NMrr4CNZ8O/ZQ4x5K4A8JzZOqByh0aLS4kGOMiHvidC2hokM1Lgw857/0M+nFd
-         c503+9iRCiPlJLPkydeJ2YU7DKdA2Yo/D/gV3TU9CvZcJppCU/GPMY5w+CjMkR2TkxJq
-         D4rHSSj8AJfpXY0T2DGDfPYxNUWnhCyKQRozQF58rmqqNPGWZbh30ZlGLcgb7uqauOAU
-         jw0Oa0e+MvgfmPQUQ9W/94SZPUYvUBcR0furog9o+2tqiEPdwRwOHzifMClZwXXFwJYW
-         KThQZDbSsFKoiD3i799JET/HCu4NTZT7qklyQY5krqgsH+PLfgtDyNVyiH7ZCBGETNtn
-         +iHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7wmTUXKTbSB8rECqUxgh6KYv1h5abJRzy8c5QgFb0j8nrcYp/W2iCI4JerHP0Ckg+TayMZt0g4RkSuNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGvmAHxQY5O4q1TFDTzRH9qYsP9Q2i7U+ne2ZiNUmPf9JR4pGX
-	xyJ5OVlEqHLpuVA/Oh2Gj0bvi9vrcFF7/AAJCYSSiMUyLVg2PfD3KfYYL3hlAgdps4seo0lk8I8
-	0GG/WQGGf5dNkP1LDMb9zFqzpEjhpw5VjX62GF2Atjw==
-X-Gm-Gg: ASbGncvPNGmoCgJrnwXg6Ngm8EU9s2ExSmnxDD/qUBSyBScd10LPyFvvFlY3UPSbjsT
-	PcFsfDbw0D0UYzM1yEMWZW8HYs7Ix2mWjcwwja4T4aCFs1jkUl26cpsDicER7n34W7zilbhPJfZ
-	ADWy0S4Zb769Rk02z8jJAciYuczYaYLqDEzPaM/rsFFeq22MmULiwbrSTepf9w5AYBOi0bHrm17
-	GMjsiM=
-X-Google-Smtp-Source: AGHT+IFrY2hS5SsxaMer/fv4j+sLFV7Lrat9cyli9ISfVkjiqJsId841iqyuhRGNs237tnPBVWSS/MeqLwPZ7xMQfUE=
-X-Received: by 2002:a2e:be2b:0:b0:333:b1c4:4d8e with SMTP id
- 38308e7fff4ca-33650f9e9c7mr1818881fa.35.1755814694915; Thu, 21 Aug 2025
- 15:18:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755814720; x=1756419520;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cFBRMtm2qDJHWakDl01mNCIUuG7fMg/wQlZbnAFILFc=;
+        b=G78wDHMzPyWDqxx47xiJRQlhdDEdG7TKLn5XJxnPXzXwXDshHgjyBZX6oXExcWKgax
+         1o8eqNSRmfFRa2pU3YpncEgwwd0xsaEoBaX+qMLZWNUIxpC0xU96gBL2tRB0diG+nPyV
+         QpKCtkMjyg9i+JPX0adiSdq+wu8RXMZ4IlaYbDFrDcjfpoRV2xZfLD60U5kFgUf2gTVd
+         BjUQ/LyX0GGMVDh35A5hEMLesVSEZs4q8onxYvQ2JWmZts9TdlL3A1+fEvVt6miR90vG
+         YXSmg7D4Ln2tp/f6R6edt86yO8Nd5ksdEZ+zqB5fEgEgNSI58Elq0dRSm0L6kVr+NfGC
+         OXwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWccTC4fAek5SrM95s2S82cZlgHJ7ZaTmv5KVPC1j7SV6yKu7roeMjYc+5Kk31UClCGboVoyRBY7yUvMC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnPsI2HTDpWzZBB0ScB3fbDlH/QuJ2DYwqBYO/zSLThwlfnWQ1
+	wLPbTiWPCkruriODIIUHn6eOKBdf7eWnc1Gtjr0Sc5e8wqxeDR+smpzjQM3yjNwhtOJNl6wGzIi
+	hjxav4pXk5w==
+X-Google-Smtp-Source: AGHT+IEYCOqIVvEgBg5sE0uG0GD/Uwi7bsNao2K16RSgQpglbB8njv7CwRYmCbYulD290cjdmEXQUl3QhEqK
+X-Received: from pfbbu4.prod.google.com ([2002:a05:6a00:4104:b0:76e:7b1b:137d])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1ca8:b0:76b:dedb:3048
+ with SMTP id d2e1a72fcca58-7702fa0a9e3mr1182787b3a.14.1755814720446; Thu, 21
+ Aug 2025 15:18:40 -0700 (PDT)
+Date: Thu, 21 Aug 2025 15:18:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250821215703.869628-1-robh@kernel.org>
-In-Reply-To: <20250821215703.869628-1-robh@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 22 Aug 2025 00:18:04 +0200
-X-Gm-Features: Ac12FXxrs--F6z9RMfNLzTHaN2eK8D_83wEqiGwNidiDTMP6YOpUfEK7YMZn4RM
-Message-ID: <CACRpkdZMJ-wY-jtonjJaNufGG3L_OhA4_CeWqfODto-TAHhEVQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: rtc: Fix Xicor X1205 vendor prefix
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
+Message-ID: <20250821221834.1312002-1-irogers@google.com>
+Subject: [PATCH v1 0/4] Test/uniquification related fixes
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Chun-Tse Shao <ctshao@google.com>, 
+	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 11:57=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org=
-> wrote:
+Failures discovered running as non-root and with v6.17-rc1 changes.
 
-> The vendor for the Xircom X1205 RTC is not Xircom, but Xicor which was
-> acquired by Intersil.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Ian Rogers (4):
+  perf test shell lbr: Avoid failures with perf event paranoia
+  perf test: Don't leak workload gopipe in PERF_RECORD_*
+  perf evsel: Fix uniquification when PMU given without suffix
+  perf test: Avoid uncore_imc/clockticks in uniquification test
 
-Aw shoot. My misspelling.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+ tools/perf/tests/perf-record.c                |   4 +
+ tools/perf/tests/shell/record_lbr.sh          |  26 ++++-
+ .../tests/shell/stat+event_uniquifying.sh     | 105 ++++++++----------
+ tools/perf/util/evsel.c                       |  28 +++--
+ 4 files changed, 86 insertions(+), 77 deletions(-)
 
-Yours,
-Linus Walleij
+-- 
+2.51.0.rc2.233.g662b1ed5c5-goog
+
 
