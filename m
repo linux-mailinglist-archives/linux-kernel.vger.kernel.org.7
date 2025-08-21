@@ -1,235 +1,119 @@
-Return-Path: <linux-kernel+bounces-779832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B0DB2F9D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:15:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F1DB2F9DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B45151C809E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:08:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614AC607E68
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35C8322A23;
-	Thu, 21 Aug 2025 13:08:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEEC2D3746;
+	Thu, 21 Aug 2025 13:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="Vo6tXthg"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79910321F55
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755781680; cv=none; b=DZbzAlFv3D+Lxzzc7KZ30mzfc6PVGWXHfDcuK9HMDg7o1j0q2OMLFzQDq4C/za9wbU/qJf+pZcrs11xokVt9hTGEdskWTlRp3vOZuK2kggqyZefG+2MpX0lDMDTYOJOJP5LNRkZ0n608j3w8BwdcRnfCUN05R2sZKawbIeRaQeg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755781680; c=relaxed/simple;
-	bh=eGQ0CfNbA2Jn0IeZ2cMUSXIb6cbfso5zyJoOLg94ZhM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VVWV2Qj+0sbbLxcflvnp/lOc5zhGPswqKMevn/x1fh/lN2gaJWbbg2LU9maLxjyfwlNYcF8Szljqd9zpvOOKQ/XsweAN7ew4qXdgIH2tyG7Wp/YKCgszgltiuyXkovjQePN/pcl1hIFz5mttagzKa7Z2xL6CfMJbRpPZ4z3bO64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1up51H-0006wF-Mx; Thu, 21 Aug 2025 15:07:55 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1up51H-001Q1r-1E;
-	Thu, 21 Aug 2025 15:07:55 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1up51H-008lbk-10;
-	Thu, 21 Aug 2025 15:07:55 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Avri Altman <Avri.Altman@sandisk.com>
-Subject: [PATCH v9 2/2] mmc: core: add undervoltage handler for MMC/eMMC devices
-Date: Thu, 21 Aug 2025 15:07:51 +0200
-Message-Id: <20250821130751.2089587-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250821130751.2089587-1-o.rempel@pengutronix.de>
-References: <20250821130751.2089587-1-o.rempel@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1179322741;
+	Thu, 21 Aug 2025 13:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755781791; cv=pass; b=F7Na3qsQuQhP8GZp2ZrertgyXb+FlT+peiMkHUKAobTLEV7AsHS9kBeLTJ5/jpDwnPA5lSLO/LKBaNU8yw0Cr3p/I2tTIAOZovHbZ4C/Pfy/IdPHwJhAd6Ezhf3w5I5UXRkhTjhc1b5khZ6T9LNeOkbb/bLNjtjgTP+Q8wsc9jA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755781791; c=relaxed/simple;
+	bh=c6z2Anh6sbb5NivOvu50DI5uIAsCrwWMa55qQX9GMCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jGsiTABL/WLOb5WP1oT6L2MnT/Lr3NZq5b6YThC/IuHev7RmbG8ejPZkn+PPmX91i6vmy9qo5mXn/CIRMeGmrZYsHIsI8vpVqrVBO5CfFBP6NMl6sgG9b9QRdD2522465HRNUbmOzkkOe5J8AMy3d9ve1/j1esexElmXGmy5qjU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=Vo6tXthg; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4c73ZH3YdZz49PyC;
+	Thu, 21 Aug 2025 16:09:43 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1755781783;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RG7FdxGayk/FT0R62hdmtMFE2/mK6pkaoyT3IzHXIaw=;
+	b=Vo6tXthgccMZmtWu2QBRLpsm3Qay2pZX9qfLnMzBct6LBwbZO0UKh+XUFOWhpGzm33bRYE
+	eGB2kyFR6Fj0794U/2ez/vYAkyzzlawq4F3T0dGLyoueeFk56ons1Dyc47zzUBiSELe0gc
+	c6DdHsoZBSh3vyLpSbgeRtiObHh2suB2Qq6yadM0Ty4kLDD/Nbs6K/Rz1EcNupPbcPA64A
+	Gky5huTHSmv2w+JpTo+1pFo1kzYzSyA0X5+6OgPLV8bco74PScrz9XjH+fBCJin8wYPlU8
+	gm0Jv/mpV4vAXaXD7V9qdYxnb2qpbTcodxtElC17OO7jMgQ6C+0XvJgx9WK+OQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1755781783;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RG7FdxGayk/FT0R62hdmtMFE2/mK6pkaoyT3IzHXIaw=;
+	b=XlxMkKEiXF/zZPvPnppC1yOUqSMq8u8SbV8Hiig8S9XdBbbUMCs4juAc0264rkDVUUS+L0
+	xD+JM90M4v9JeVLtzDt2wT5zKktLIGI6s1VN6jpYnuV2yoq+uJWIoHX7Di/T94nJXWuzbl
+	n6CAIHMEIsLMslqzbUsmmTdzQjK12N061Vg/67y0L2GYNuYyrJyh+STWWy1MJnQb7z0S4z
+	IeFFL9esk4g3ElxUAL1W+3/ab/J1WTh4j6Otl2Kd5irzjdl/JGQDM1IWTafgHOh8kAabkT
+	aaN98VaDb6R6DLmp65kOa422amfE9g9xra6WIuPPAuZe1SWkpF5Oauzqpp6wxw==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1755781783; a=rsa-sha256;
+	cv=none;
+	b=A3Np8sImhwJccJz+4U+x/yU8qaL2TcD5WuITJkgbhgXx8o1F9FkK7e2H3iQY0VLaRMEGcK
+	Gsd7Fb4QEHLxQE1wc8ioIWFNvJ6fPJqBtAMpF68OwRJbCgpgTO25QKlmqgzh4i64uPVjh3
+	4wQFn/m0x1Zmf3aOZEwFhLLBqJ7zG9ucFy8+srZTSabaAb7oiPNCmqCYys5PFYkvaZ0+Nl
+	td/mIq5sbSKY5A341OcGi+/PPOiwm3gX3PXbJx6ocAVgpCOhSntQ72q2Ob3c16oDnBzdRW
+	c3qx0/JTHhEs+0mnfcYVatWpY/3cvbzlMHw3W0hgFDBn3VbTKhcwK7oQtGXkbA==
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 0064F634C96;
+	Thu, 21 Aug 2025 16:08:18 +0300 (EEST)
+Date: Thu, 21 Aug 2025 13:08:19 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>
+Subject: Re: [PATCH v4 4/5] docs: media: document media multi-committers
+ rules and process
+Message-ID: <aKcaQ7R1LTWRf3rd@valkosipuli.retiisi.eu>
+References: <cover.1733218348.git.mchehab+huawei@kernel.org>
+ <01acc93fd8780265ea55772ba793f3f09a43ffa7.1733218348.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01acc93fd8780265ea55772ba793f3f09a43ffa7.1733218348.git.mchehab+huawei@kernel.org>
 
-Add infrastructure to handle regulator undervoltage events for MMC/eMMC
-cards. When an undervoltage is detected, the new handler performs a
-controlled emergency suspend using a short power-off notification,
-skipping the cache flush to maximize the chance of a safe shutdown.
-After the operation, the card is marked as removed to prevent further
-I/O and possible data corruption.
+Hi Mauro, Hans,
 
-This is implemented by introducing MMC_POWEROFF_UNDERVOLTAGE to the
-mmc_poweroff_type enum and refactoring the suspend logic into an
-internal __mmc_suspend() helper that allows the caller to skip the cache
-flush if required. The undervoltage handler is registered as a bus
-operation and invoked from the core undervoltage path.
+On Tue, Dec 03, 2024 at 10:35:48AM +0100, Mauro Carvalho Chehab wrote:
+> As the media subsystem will experiment with a multi-committers model,
+> update the Maintainer's entry profile to the new rules, and add a file
+> documenting the process to become a committer and to maintain such
+> rights.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
 
-If power-off notification is not supported by the card, the handler
-falls back to sleep or deselecting the card.
+Overall it looks like the review comments are fine tuning with probably
+little effect in practice right now. Do you think you could re-spin the
+series, taking the discussion into account?
 
-Additionally, update the shutdown path to avoid redundant shutdown
-steps if the card is already removed
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v9:
-- remove host->card check
-changes v7:
-- Squash undervoltage suspend preparation and handler into one patch.
-- Use mmc_card_removed() in shutdown path instead of host->undervoltage.
-- Remove redundant card presence check in undervoltage handler.
-changes v6:
-- Refactor suspend logic: move cache flush skipping during undervoltage
-  to a separate, preceding commit.
-- update commit message
-changes v5:
-- Rebased on top of patch introducing enum mmc_poweroff_type
-- Updated call to __mmc_suspend() to use MMC_POWEROFF_UNDERVOLTAGE
-- Dropped __mmc_resume() helper, as it is no longer needed
-- Updated commit message to reflect API change and code removal
-changes v4:
-- Drop HPI step.
-changes v3:
-- reword commit message.
-- add comments in the code
-- do not try to resume sleeping device
----
- drivers/mmc/core/mmc.c | 70 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 5be9b42d5057..3e7d9437477c 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -36,6 +36,7 @@
- enum mmc_poweroff_type {
- 	MMC_POWEROFF_SUSPEND,
- 	MMC_POWEROFF_SHUTDOWN,
-+	MMC_POWEROFF_UNDERVOLTAGE,
- 	MMC_POWEROFF_UNBIND,
- };
- 
-@@ -2132,9 +2133,15 @@ static int _mmc_suspend(struct mmc_host *host, enum mmc_poweroff_type pm_type)
- 	if (mmc_card_suspended(host->card))
- 		goto out;
- 
--	err = _mmc_flush_cache(host);
--	if (err)
--		goto out;
-+	/*
-+	 * For the undervoltage case, we care more about device integrity.
-+	 * Avoid cache flush and notify the device to power off quickly.
-+	 */
-+	if (pm_type != MMC_POWEROFF_UNDERVOLTAGE) {
-+		err = _mmc_flush_cache(host);
-+		if (err)
-+			goto out;
-+	}
- 
- 	if (mmc_card_can_poweroff_notify(host->card) &&
- 	    mmc_host_can_poweroff_notify(host, pm_type))
-@@ -2212,6 +2219,13 @@ static int mmc_shutdown(struct mmc_host *host)
- {
- 	int err = 0;
- 
-+	/*
-+	 * In case of undervoltage, the card will be powered off (removed) by
-+	 * _mmc_handle_undervoltage()
-+	 */
-+	if (mmc_card_removed(host->card))
-+		return 0;
-+
- 	/*
- 	 * If the card remains suspended at this point and it was done by using
- 	 * the sleep-cmd (CMD5), we may need to re-initialize it first, to allow
-@@ -2302,6 +2316,55 @@ static int _mmc_hw_reset(struct mmc_host *host)
- 	return mmc_init_card(host, card->ocr, card);
- }
- 
-+/**
-+ * _mmc_handle_undervoltage - Handle an undervoltage event for MMC/eMMC devices
-+ * @host: MMC host structure
-+ *
-+ * This function is triggered when an undervoltage condition is detected.
-+ * It attempts to transition the device into a low-power or safe state to
-+ * prevent data corruption.
-+ *
-+ * Steps performed:
-+ * - Perform an emergency suspend using EXT_CSD_POWER_OFF_SHORT if possible.
-+ *    - If power-off notify is not supported, fallback mechanisms like sleep or
-+ *      deselecting the card are attempted.
-+ *    - Cache flushing is skipped to reduce execution time.
-+ * - Mark the card as removed to prevent further interactions after
-+ *    undervoltage.
-+ *
-+ * Note: This function does not handle host claiming or releasing. The caller
-+ *	 must ensure that the host is properly claimed before calling this
-+ *	 function and released afterward.
-+ *
-+ * Returns: 0 on success, or a negative error code if any step fails.
-+ */
-+static int _mmc_handle_undervoltage(struct mmc_host *host)
-+{
-+	struct mmc_card *card = host->card;
-+	int err;
-+
-+	/*
-+	 * Perform an emergency suspend to power off the eMMC quickly.
-+	 * This ensures the device enters a safe state before power is lost.
-+	 * We first attempt EXT_CSD_POWER_OFF_SHORT, but if power-off notify
-+	 * is not supported, we fall back to sleep mode or deselecting the card.
-+	 * Cache flushing is skipped to minimize delay.
-+	 */
-+	err = _mmc_suspend(host, MMC_POWEROFF_UNDERVOLTAGE);
-+	if (err)
-+		pr_err("%s: undervoltage suspend failed: %pe\n",
-+		       mmc_hostname(host), ERR_PTR(err));
-+
-+	/*
-+	 * Mark the card as removed to prevent further operations.
-+	 * This ensures the system does not attempt to access the device
-+	 * after an undervoltage event, avoiding potential corruption.
-+	 */
-+	mmc_card_set_removed(card);
-+
-+	return err;
-+}
-+
- static const struct mmc_bus_ops mmc_ops = {
- 	.remove = mmc_remove,
- 	.detect = mmc_detect,
-@@ -2314,6 +2377,7 @@ static const struct mmc_bus_ops mmc_ops = {
- 	.hw_reset = _mmc_hw_reset,
- 	.cache_enabled = _mmc_cache_enabled,
- 	.flush_cache = _mmc_flush_cache,
-+	.handle_undervoltage = _mmc_handle_undervoltage,
- };
- 
- /*
 -- 
-2.39.5
+Kind regards,
 
+Sakari Ailus
 
