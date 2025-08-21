@@ -1,141 +1,141 @@
-Return-Path: <linux-kernel+bounces-780811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EA5B309B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:58:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91888B309B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EB1DAC1BA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:57:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303ED620F09
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B242E9EAC;
-	Thu, 21 Aug 2025 22:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712512E88AE;
+	Thu, 21 Aug 2025 23:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmBZ2TUB"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q+72Keho"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F17D28E0F;
-	Thu, 21 Aug 2025 22:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532A226AA83;
+	Thu, 21 Aug 2025 23:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755817033; cv=none; b=cf4WzQgnAvAwr9DM47supwUxqJrfyDfvPj+rTJbyTL9r+Fa+KGVtodHVCFpKf34uvkSOpWQLtPzAcZTiTfwThaTrn0H2f/Vq9qpt1HbgqFfPNtGN+1SAXK2vHmQZgtBDphuASN3vJGGHenNVDCiRWuPfVtknx+1MX8Rh2/Vi50A=
+	t=1755817211; cv=none; b=MW7fpDKG3oZIQTa0uLRBaYMq+k5QLS1febwU9GmenmXFlPNiJ8rqoTnFnr3IzjGR0Le43gzqMBOiYkhi6NzgAN/lD0OmmbVtzs00FzRCaH4SYL/cAB3KOX6x2lJ5caD0keSOCdfAgIPzzSvBQkP2ERXWOlJn/C59jGgrx5eZOtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755817033; c=relaxed/simple;
-	bh=gjNGlFYrWdAxwJw9cFMTACnKXVbNl/94mhTpU0ua4xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pMP2RkD5NN5lv2HXgBIF32Iw96BMcak50hhvsL8doWNn8NriIABVuOAaSvXxS3UtWY9tjmzUDt74GcN2Sx3xwQ1EaAxWeJsViKrcMDRWhdmc/nvDeA66LT6iiGHEERJQLZPQ7zfRq9DjUltenxua4GtW1EnCMPcXOYvzeVNCB04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KmBZ2TUB; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b0bd237so11363255e9.2;
-        Thu, 21 Aug 2025 15:57:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755817030; x=1756421830; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tLKs7kTK+4hcjMq7nRN9dNEk8LtEip2NyviTVvyZITg=;
-        b=KmBZ2TUBNmnp7GHdf6+JGTc3CMdy/brvG+NQFxH8Lfc8k0T+wo/KURDZnCFjNBeaPv
-         l26FeO+w2eJv5ij1pLzMl33YwiBIAhOCACTkIzek5/bbROkY3+Xu+XVXWFF1hkUIFTez
-         6O/HHEUsYTFgwWdhG2Ct+O09XDb39T+cxcBd65Z4X8KCn5c4ng3oXu7khulkMD7dilu8
-         L7D9aF6GwFh5+Rsl/XXoqi+cVbiV4MLR1QzDKbe1LgF2nzjom2T2JikmxYYTlmXWc2tS
-         rqomggLQC7JwqcNsOHmIN0DIxZJM4oys2oZWxH8bqUV0Yk/qo4OwVE4PYmua1ojjDaX6
-         EUhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755817030; x=1756421830;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tLKs7kTK+4hcjMq7nRN9dNEk8LtEip2NyviTVvyZITg=;
-        b=V8i6R0jkWh/aTEwPw7TB4ZPktaiNtASmkPINTHySe1P0Z7Adon9nSQU0RIYd8SHaYD
-         q0l1gDqlNYlQlXJV/6xZv09mGt9UBt2xQOow63NEfOt20IbQJs23khw+FTnWIWhuMvwN
-         XVM4tSbpkOjaoSoIUG0CYYz5eD/XvctOq4A6HAwI/y/P3BLiQ99omMcNOe5K6JCuVdXz
-         W8r5gTCqSegmpSAkfPd5WvnP6gXu4b8yFEYmP8hlhLta5bcG6LEgwPfmiNZivDwwsZnx
-         U4XUW9rUofwJQ+V/XvkY8wovqNrXzes/4WRKO14a2UUIh5S0EAfnyc/DyvAjCEnHF9rz
-         DFug==
-X-Forwarded-Encrypted: i=1; AJvYcCVSdsLQlUh/InG+qwIMbjclWOX/ORjs2c87T23ULIPlYFlkXCk+kRtb7tlrQWNFOBPkaZV1nnrnOB2xDhM=@vger.kernel.org, AJvYcCWIl0Bg2lvfNsQvza40YJOKrI9yWYrwgJFIONbjkvTQckg6BsDG9AfrF8NZrcb9TqQRh9UMNSJhEKh8L4Y=@vger.kernel.org, AJvYcCXiRHqiwEZifh5/f73P2is727thzvsoo2geLgePsJ7uIPHYMW5M8PYkCNJIlfmJc27oapaqznVIkPdME9S+03tR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzogvRc7REfcwc8F5+YOd7LVQA8bEdlpSABSNZ12wAZh/9G0mhJ
-	aUVkFKmjTEiyoExSBMmEe3ueKyw6oZac2pGUcklB/r6SqQat8U2W6dSW
-X-Gm-Gg: ASbGncv82xK7dEdSKfUSDPaFG/bdT3Y7yNWhR1XxK7OmJXVZG9E/nTMuphEKvUS5wFN
-	Gh4q+baj6zrEea88UTdRGjkq9finIdfqEvUl+7cnHKoRqPefg7EeNn2GO7GAPG5DvR6WAMh96yi
-	4ovIXad083LGWritPUJApjUsMMC8+DJ2yrcColUQQt/7FJtdTeOyk/UjDTnY/3mTWsLd4/4L6mM
-	rqAqePvO7ebxJGmYByz4fDvhfEU2erLhN8Ji8YpplU8JqiZuwCEpd/GHjlBHo3n686MjlWtoB5O
-	eLpbH3gWrA4liXHm4tEBEsL7g+gxbcNXMrNXOYQWfvHT1PM9Vr3Dd6nugorzBe0FaQRnSddMbXz
-	nQg2lRyFfdEdJpF0j+epOsAqb8hmrop4Pubn2J0aGRe7RMnxEj2eBzMgQXYH2lzot8NTTOwUq5I
-	U=
-X-Google-Smtp-Source: AGHT+IFOkdJXi/riVyjR61X1ulOdIUxV4W3ij/Q4IWrHFGzdHXPBWukoRxT8mrsmftUQOsDLFBCJIA==
-X-Received: by 2002:a05:600c:3504:b0:458:caec:a741 with SMTP id 5b1f17b1804b1-45b517c5d8bmr5445465e9.24.1755817029657;
-        Thu, 21 Aug 2025 15:57:09 -0700 (PDT)
-Received: from localhost.localdomain ([46.10.223.24])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50e4249bsm12615605e9.25.2025.08.21.15.57.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 15:57:08 -0700 (PDT)
-Date: Fri, 22 Aug 2025 01:57:05 +0300
-From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: perex@perex.cz, tiwai@suse.com, shuah@kernel.org, 
-	linux-sound@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] selftests/alsa: remove 0/NULL global variable assignment
-Message-ID: <uzfke2ry3rhdirqpdb2bdjkoemj4rgtfwsio7yf5la7p3p2ait@6umacnfdeto2>
-References: <20250821200132.1218850-1-zlatistiv@gmail.com>
- <9c310ab7-0f0b-412f-8df7-71730a2d2caa@sirena.org.uk>
- <CAHjv_as7m7UbSLAPU6hX_=tAvLZYR_7Q=1n+Xq-nW-6OJ237PA@mail.gmail.com>
- <f7ff446f-2a9e-49dc-af7a-6e4c76803471@sirena.org.uk>
+	s=arc-20240116; t=1755817211; c=relaxed/simple;
+	bh=ytFpAwEOCPsAjk6tJkIJ+onW7AKsz09Oxgs5MtaFIGs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=swXl8Dr0F849Ec7GT1b7aSEYt5r49D6WJrt7ZR4eEI0ePY54ladRuOeHApStJvm5+h/yW5uULJasX4r7MYBvKRHgjmqbd+HlW6AcGoutZiPQvm/UhCc+4MZadYHxJ/kbFYmMz38vrjC8c0BAhqrA5YMgt4iYzdoiGZhJmdrgDs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q+72Keho; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755817210; x=1787353210;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=ytFpAwEOCPsAjk6tJkIJ+onW7AKsz09Oxgs5MtaFIGs=;
+  b=Q+72KehoVojckZEXO7yaWVt9mAB9+/D0eTY0v6IMOGmD3e4N+qNtcs4U
+   oGBPbG5F2SzPQfmFA6Bx6rCUs1R90rCDrhwEIjCZTkxZLIwLBF4qf+emy
+   GSuD3hqi96XuybXdn/zUJHSLPwxxBBBKmILh4h8XT/y1yDwlhkhLGyMJO
+   Bujgpgjma0aojnc4QPs+bsQ4YxxwFvLFgeZgmNnkS8N6GFgr3cGAw2q1H
+   G2xYwZa692HfZzsUN/YkQlRHGW+rvIHjPU3o3vgRiPSFaZ32BxsQ4GKX3
+   tMt1gYUbv8wyOWnjg8R6tgUoFwNZ38VFQpCnlhZr2XBs+gyx7dZ75D0+2
+   A==;
+X-CSE-ConnectionGUID: rKf2XS9TSwehE4HusQOPYw==
+X-CSE-MsgGUID: SRNLhNQKSOu5bqp/026gFQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="60748480"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="60748480"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 16:00:09 -0700
+X-CSE-ConnectionGUID: QQnSmKADQ3KUKxMP6wAVdA==
+X-CSE-MsgGUID: Ah0/TwLSQFWDTIuYvWV1fA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="168444337"
+Received: from vcostago-mobl3.jf.intel.com (HELO [10.98.24.157]) ([10.98.24.157])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 16:00:09 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Subject: [PATCH v2 00/10] dmaengine: idxd: Memory leak and FLR fixes
+Date: Thu, 21 Aug 2025 15:59:34 -0700
+Message-Id: <20250821-idxd-fix-flr-on-kernel-queues-v3-v2-0-595d48fa065c@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f7ff446f-2a9e-49dc-af7a-6e4c76803471@sirena.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANakp2gC/5WNQQ6CMBBFr0Jm7Zi2QEpceQ/DAuhUJmKrLTQYw
+ t2t3MDl+/l5b4NIgSnCpdggUOLI3mVQpwKGsXN3QjaZQQlVi0ZUGVeDlle0U0Dv8EHB0YTvhRa
+ KmEqUpS111xstdQNZ8wqU70fi1mYeOc4+fI5ikr/1D3mSKLAioYTtba0GeWU303Qe/BPafd+/G
+ +qwMtAAAAA=
+X-Change-ID: 20250804-idxd-fix-flr-on-kernel-queues-v3-13f37abd7178
+To: Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>, 
+ Fenghua Yu <fenghua.yu@intel.com>, Dan Williams <dan.j.williams@intel.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>
+X-Mailer: b4 0.15-dev-2e5ae
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755817209; l=2091;
+ i=vinicius.gomes@intel.com; s=20230921; h=from:subject:message-id;
+ bh=ytFpAwEOCPsAjk6tJkIJ+onW7AKsz09Oxgs5MtaFIGs=;
+ b=k1GtBK4WqqgXjv37I5ZXI2pKlxb47VgVKs3u9xGeNrbUbD2XaU3h1raO9HCcAkVc5PhpkECHx
+ lbg65uQ+IDHChkfgMZ/2e+yLqVPYHOZegCoyYfd6KR0HaKb5YfbQeDP
+X-Developer-Key: i=vinicius.gomes@intel.com; a=ed25519;
+ pk=aJkrtgqgT6TZ8iIHSG8/rTPsmlYnjMrUjCsMYvCzntk=
 
-On Thu, Aug 21, 2025 at 10:30:50PM +0100, Mark Brown wrote:
-> On Fri, Aug 22, 2025 at 12:17:14AM +0300, Nikola Ivanov wrote:
-> > On Thu, Aug 21, 2025 at 09:49:29PM +0100, Mark Brown wrote:
-> 
-> > > > -int num_cards = 0;
-> > > > -int num_controls = 0;
-> > > > -struct card_data *card_list = NULL;
-> > > > -struct ctl_data *ctl_list = NULL;
-> > > > +int num_cards;
-> > > > +int num_controls;
-> > > > +struct card_data *card_list;
-> > > > +struct ctl_data *ctl_list;
-> 
-> > > Nothing now sets initial values for these variables so they all have
-> > > undefined values which is buggy.  The code is relying on the default
-> > > values.
-> 
-> > Checkpatch reports it as an error, it looks to be part of the C
-> > standard that all compilers must initialize globals to 0.
-> > Though I suppose it helps with readability to see
-> > the num_ counters assigned 0.
-> 
-> Do you have a reference there, note that these are just plain non-static
-> variables?  I wouldn't trust checkpatch for anything that isn't kernel
-> code (and even there it's got issues).
+Hi,
 
+During testing some not so happy code paths in a debugging (lockdep,
+kmemleak, etc) kernel, found a few issues.
 
-This is what it says in the C99/C11/C18/C23 drafts I found:
+There's still a crash that happens when doing a PCI unbind, but I
+don't have a patch at this time.
 
-> If an object that has automatic storage duration is not initialized explicitly, its value is
-> indeterminate. If an object that has static or thread storage duration is not initialized
-> explicitly, then:
-> — if it has pointer type, it is initialized to a null pointer;
-> — if it has arithmetic type, it is initialized to (positive or unsigned) zero;
+Cheers,
 
-"static or thread storage" referring to variables declared at global scope 
-(regardless of static keyword) as well as those inside function scope defined
-with static keyword.
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+---
+Changes in v2:
+- Fixed messing up the definition of FLR (Function Level
+  Reset) (Nathan Lynch)
+- Simplified callers of idxd_device_config(), moved a common check,
+  and locking to inside the function (Dave Jiang);
+- For idxd DMA backend, ->terminate_all() now flushes all pending
+  descriptors (Dave Jiang);
+- For idxd DMA backend, ->device_synchronize() now waits for submitted
+  operations to finish (Dave Jiang);
+- Link to v1: https://lore.kernel.org/r/20250804-idxd-fix-flr-on-kernel-queues-v3-v1-0-4e020fbf52c1@intel.com
 
-Since as you said checkpatch.pl is mostly intended for kernel code
-(which I was not aware of) this patch is probably not desired.
-In case it still is I can add quote to the draft and link it in the patch.
+---
+Vinicius Costa Gomes (10):
+      dmaengine: idxd: Fix lockdep warnings when calling idxd_device_config()
+      dmaengine: idxd: Fix crash when the event log is disabled
+      dmaengine: idxd: Fix possible invalid memory access after FLR
+      dmaengine: idxd: Flush kernel workqueues on Function Level Reset
+      dmaengine: idxd: Flush all pending descriptors
+      dmaengine: idxd: Wait for submitted operations on .device_synchronize()
+      dmaengine: idxd: Fix not releasing workqueue on .release()
+      dmaengine: idxd: Fix memory leak when a wq is reset
+      dmaengine: idxd: Fix freeing the allocated ida too late
+      dmaengine: idxd: Fix leaking event log memory
+
+ drivers/dma/idxd/cdev.c   |  8 ++++----
+ drivers/dma/idxd/device.c | 43 +++++++++++++++++++++++++++++--------------
+ drivers/dma/idxd/dma.c    | 18 ++++++++++++++++++
+ drivers/dma/idxd/idxd.h   |  1 +
+ drivers/dma/idxd/init.c   | 14 +++++++-------
+ drivers/dma/idxd/irq.c    | 16 ++++++++++++++++
+ drivers/dma/idxd/sysfs.c  |  1 +
+ 7 files changed, 76 insertions(+), 25 deletions(-)
+---
+base-commit: 1daede86fef9e9890c5781541ad4934c776858c5
+change-id: 20250804-idxd-fix-flr-on-kernel-queues-v3-13f37abd7178
+
+Best regards,
+--  
+Vinicius
+
 
