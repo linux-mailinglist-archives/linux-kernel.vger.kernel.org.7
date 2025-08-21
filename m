@@ -1,145 +1,100 @@
-Return-Path: <linux-kernel+bounces-779972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C48B2FBC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D69B2FBCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 945DCAE71FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:59:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6DA9AA65D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4112FB62F;
-	Thu, 21 Aug 2025 13:56:22 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805082EC574;
+	Thu, 21 Aug 2025 14:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DomIJUUh"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4ED2DF6FF;
-	Thu, 21 Aug 2025 13:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6475646B5
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755784581; cv=none; b=q6tadntjrcXzetF5EWK0gqdaeBefrpQBtMEWPxLr+TPC8YuuisUVcoAyA8p1DF9HaxjgzHXMb1IBUJ2tVrxWZWhIRrXoJshARD3zRgqe7IvM58h3mXsqPOme75neEv9Oo48RuqtRnsuwWjETgtvL+3npDPS1EDR2tPNNnGUNRJY=
+	t=1755784799; cv=none; b=eK73hZrHCLtN15Vp8R06cNJm4tvouuldVLFTfuP9Z2stabhZX+qjq0r8hqJSdtyZYNTTXZf91USZ44lUt5tnheUuHWIECDHmzNYfqXxiutfm02M1XgriXJUbvNE3r1h8urnHsjqe8XQZT4yCP+prDv6+v4DxTwR5p9IURdGSmS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755784581; c=relaxed/simple;
-	bh=j+dnGsQvvMyv+gqHvh4MX/eBm+f7ZHWkpmRE/R7IECM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EdklqliG07GHRRWtF6wkAdo7NfyMKmybxpW4TO90OlR+OCl3S6gFkFvAaQV9zLN5sZAKy/AciQv8UPa5SiymVLtUVXOfuaMCjJPc4TrUX3lScdwBHqiO8lw5SLe8E85xo6lSVf4qpSxMaVP52WjZzJttgwdh/504T+FG5DysJFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
-Received: from ROG.lan (unknown [118.251.176.166])
-	by APP-03 (Coremail) with SMTP id rQCowAAngIFZJadoCYkTDg--.22571S7;
-	Thu, 21 Aug 2025 21:55:53 +0800 (CST)
-From: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	anup@brainfault.org,
-	pbonzini@redhat.com,
-	shuah@kernel.org,
-	cyan.yang@sifive.com,
-	cleger@rivosinc.com,
-	charlie@rivosinc.com,
-	cuiyunhui@bytedance.com,
-	samuel.holland@sifive.com,
-	namcao@linutronix.de,
-	jesse@rivosinc.com,
-	inochiama@gmail.com,
-	yongxuan.wang@sifive.com,
-	ajones@ventanamicro.com,
-	parri.andrea@gmail.com,
-	mikisabate@gmail.com,
-	yikming2222@gmail.com,
-	thomas.weissschuh@linutronix.de
-Cc: linux-riscv@list.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-kselftest@vger.kernel.org,
-	pincheng.plct@isrc.iscas.ac.cn
-Subject: [PATCH 5/5] KVM: riscv: selftests: add Zilsd and Zclsd extension to get-reg-list test
-Date: Thu, 21 Aug 2025 21:55:27 +0800
-Message-Id: <20250821135527.224044-6-pincheng.plct@isrc.iscas.ac.cn>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250821135527.224044-1-pincheng.plct@isrc.iscas.ac.cn>
-References: <20250821135527.224044-1-pincheng.plct@isrc.iscas.ac.cn>
+	s=arc-20240116; t=1755784799; c=relaxed/simple;
+	bh=Lu2bYgG5dOuLdip1WI1gX3Gl0kPuIjNwVUw97npG0zw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZDaak6MXehcu8splYjfq+Ec4a+xxnjG9BUYpESGqs2o9ji00eCfSxSDVKnHHtbbOT7WO6Z2m7Zqua79V20+Gsk5ZSvVTvP3HPOYHt/BN1bmHQebi4apoTw2tP0RRu4tZyIUL8CCwQoH+wYIenM/rKA7gW8BB3pyL6WzEn46nDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DomIJUUh; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=K0ldq7vnLW7qoAr345+DDDIwBqqpyaF5tEeLb/FgKHg=; b=DomIJUUhiGMbybJXjF9ITOPRWh
+	/kMXXM3LvWPzmdLUd/8xhanFhs/NqSiK0Chh2/NbJyqQCZGpAYm1exlWJvYQTx8P/d1ZEO3FZPZ+y
+	qSIRaEx2xA8bouxzMDAoYM9t8NaqVHu7jjnQNv6Ah3ZisY3bjcfh5vMzfhukyZmmicZRHO79Nb2U5
+	GngBh3eMAg7ISYiacnfFC2pQIR3AO8nEks6QqaJPnb7F4MdLtD9iP+At5RYf8uI0RYAFnzvnmE+ch
+	D0jAvwOzXA7ahCcLBLDG36H4vSNBsexaetN5iKylVr+5iny0IbfIK+bQbrdp3WfG1Ojdp2HkWWIW4
+	eBUz8lvg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1up5pU-00000000aIs-1rlX;
+	Thu, 21 Aug 2025 13:59:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 056483002ED; Thu, 21 Aug 2025 15:59:48 +0200 (CEST)
+Date: Thu, 21 Aug 2025 15:59:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Marcos Del Sol Vives <marcos@orca.pet>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
+	Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	David Kaplan <david.kaplan@amd.com>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Oleg Nesterov <oleg@redhat.com>, "Xin Li (Intel)" <xin@zytor.com>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Subject: Re: [PATCH] x86: add hintable NOPs emulation
+Message-ID: <20250821135947.GR4067720@noisy.programming.kicks-ass.net>
+References: <20250820013452.495481-1-marcos@orca.pet>
+ <20250821124804.GP3289052@noisy.programming.kicks-ass.net>
+ <666f534d-b974-4f39-9356-3e2f1ab178f0@orca.pet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAngIFZJadoCYkTDg--.22571S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw47Ar47Jw4fZr4kXryUAwb_yoW8ZF15pr
-	1rA39Ikr4kJ34fA392y3s8Ww18Xws8Jws5Cw43ur4fAryjyryxtFnrA3W3Jr1DJa4Fqr1S
-	yF1fWr12vw40yrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUml14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUWVWUuwAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_
-	Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6x
-	IIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r1j
-	6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x0262
-	8vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE
-	7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
-	8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_
-	Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r
-	1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4U
-	JbIYCTnIWIevJa73UjIFyTuYvjTRRNtIDUUUU
-X-CM-SenderInfo: pslquxhhqjh1xofwqxxvufhxpvfd2hldfou0/
+In-Reply-To: <666f534d-b974-4f39-9356-3e2f1ab178f0@orca.pet>
 
-The KVM RISC-V allows Zilsd and Zclsd extensions for Guest/VM so add
-this extension to get-reg-list test.
+On Thu, Aug 21, 2025 at 03:45:29PM +0200, Marcos Del Sol Vives wrote:
+> El 21/08/2025 a las 14:48, Peter Zijlstra escribió:
+> > On Wed, Aug 20, 2025 at 03:34:46AM +0200, Marcos Del Sol Vives wrote:
+> >> +	/* Hintable NOPs cover 0F 18 to 0F 1F */
+> >> +	if (insn.opcode.bytes[0] != 0x0F ||
+> >> +		insn.opcode.bytes[1] < 0x18 || insn.opcode.bytes[1] > 0x1F)
+> >> +		return false;
+> > 
+> > FWIW, you need to check for insn.opcode.nbytes == 2.
+> > 
+> 
+> I can add it no problem for clarity, but would it be really necessary?
+> 
+> All opcodes in that range will have that length by the Intel SDM, so it seems
+> somewhat redundant, and if the opcode couldn't be read in full the decode
+> would've failed earlier.
+> 
+> insn_decode_mmio for example which I used as an example of software parsing
+> of instructions does not check any length if the prefix was 0x0f.
 
-Signed-off-by: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
----
- tools/testing/selftests/kvm/riscv/get-reg-list.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-index a0b7dabb5040..477bd386265f 100644
---- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-+++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-@@ -78,7 +78,9 @@ bool filter_reg(__u64 reg)
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCB:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCD:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCF:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCLSD:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCMOP:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZILSD:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFA:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFH:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFHMIN:
-@@ -530,7 +532,9 @@ static const char *isa_ext_single_id_to_str(__u64 reg_off)
- 		KVM_ISA_EXT_ARR(ZCB),
- 		KVM_ISA_EXT_ARR(ZCD),
- 		KVM_ISA_EXT_ARR(ZCF),
-+		KVM_ISA_EXT_ARR(ZCLSD),
- 		KVM_ISA_EXT_ARR(ZCMOP),
-+		KVM_ISA_EXT_ARR(ZILSD),
- 		KVM_ISA_EXT_ARR(ZFA),
- 		KVM_ISA_EXT_ARR(ZFH),
- 		KVM_ISA_EXT_ARR(ZFHMIN),
-@@ -1199,7 +1203,9 @@ struct vcpu_reg_list *vcpu_configs[] = {
- 	&config_zcb,
- 	&config_zcd,
- 	&config_zcf,
-+	&config_zclsd,
- 	&config_zcmop,
-+	&config_zilsd,
- 	&config_zfa,
- 	&config_zfh,
- 	&config_zfhmin,
--- 
-2.39.5
-
+Yeah, I suppose you're right.
 
