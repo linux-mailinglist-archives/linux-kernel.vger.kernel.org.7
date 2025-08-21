@@ -1,216 +1,193 @@
-Return-Path: <linux-kernel+bounces-779866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E214B2FA70
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:31:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB728B2FA84
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B79FE189732F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:28:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B25E165E03
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B9F334392;
-	Thu, 21 Aug 2025 13:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9273E335BDC;
+	Thu, 21 Aug 2025 13:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eNvgPcH2"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WjckZDPu"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9443D334378
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4008532BF50
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755782905; cv=none; b=OY2EJmzQ0yJat2pbLkEc5IkqQkCQgedMmBr4OTH39qkzL7VYw/xOb2cwTN6o8CJlgQ+caOm1nKy/Qmta3XBbIY6eBgvmT8pZNZkCAu3gIvAdXQj+2ejz1UK5qvzrG00lUbjSRF/cbR1bwk7r45jOSj+RniKBlcMGB3m8kBDYhOk=
+	t=1755782977; cv=none; b=Ww3RnsyI+rqEVDeQ2xMBwnMRD9z//e1H5gvMYXCDwUaIzQruWtqFbCuXcxhBejtMZUbFMC31N9hYytde+qpvtBctnfMAlw4YTYexD8B6LhhCyWsy/vwDwD2D1TOQO7foPTaMp1i+wgCdF3eL6qlCuyAcdD7uaFeJBrS3FTEI+dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755782905; c=relaxed/simple;
-	bh=uBtIogbSOsIbkE4R4niciJeJE+S7iTtvZxRDaPAge9A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r6LbSFeI+1Yeti9K4dTW5IphNs+edtZWGkvuOZbvQVehUBb2Zx8UxM0bxuNjks6xM7z29080Qg5kQbScR8Ew4ERmcF/0cQdOUpvfa7vI3gifUXbSrR7VNAkPJf+qbWVm3dxo33UMo7GOQfntIpNDMtYlBUWz2l3vSQo1Y9R9aR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eNvgPcH2; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b9d41c1963so614331f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:28:23 -0700 (PDT)
+	s=arc-20240116; t=1755782977; c=relaxed/simple;
+	bh=wc5v9uTTIL728+hB7UJTKaDvwgtQwqhmi3Vl/hFU5ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZdbFSrBANc4gu8VZrmWt5ByjSR0ZXhj5JDmNNW8qgI2Hh/b9Mvoz3W1B5DPkSxS5Cdjambs6rXxd5LO3IEW8WwZRRENCXJqWGr+ZIDVlxw7VQeG+POsk+ESF5vm8X6O0wssd/RupY3REHQJ6NECcObUwexKVLYf1+h0WZdVTlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WjckZDPu; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24611734e50so83575ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:29:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755782902; x=1756387702; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d8T31mCfWW90OKBE5TgdxVP07GBpIWXUZaFTrUQ7T0g=;
-        b=eNvgPcH2mvccST7yomJhSaiOtQ4QywpazjVtPqKCneWttUxku10PW8OgPEuNNTnyxl
-         fck8412vRX+gTnjWS64iM9remCSOTRKx73GgVxvEzGcKPRca4eMdaL7F6Qaz+dg9dmRh
-         qifsrNB3KWkRrXLiGbK+E6Qm5tnWKKqFwWIfxGwiU71Pkolwg3pYcCAjOowboOtfC1Dg
-         Lz2Y0us5mhyDYKjAoI689+Pdk+ei4nFmfoWAP0/rjBT2c4RJ2/8gD+bIehLak1ohQaRR
-         /25jpeRikac4IG5HmmsLrn1dqpUbhe/x5JwiE/oAI04usERIBgS3thz0URuhd++c03cT
-         j06w==
+        d=google.com; s=20230601; t=1755782975; x=1756387775; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=J13Esd7nTONrArlNpUKcH+9/JHXUHsKEy/Ib89aPaCQ=;
+        b=WjckZDPuo7y3Xh8jJTXxR+MBh9aWmoKvkLNd0tcrZtigIT2fPZ2vi94ZoJMZl9dgv/
+         VtoNsQPws+ioJBCOI9Y/Kmqbfd+YXVnue2vpoZH4Fv0XW5JqqdwEnoR0poRFBbLeEKn6
+         ljtT5o4Q05byKB714hFG2EoUVQEx04JRW+ESAGCTmkqY/DKcloSPi9bFlsy9fSkAPnTK
+         2ocCKCzcWsRXpBD5wjKi2vyO1VrVMclcC0nPaOw/p16X70FE9z3QlPhl/SjeyEDdaapJ
+         aFhzYxIVeJ/TWNgk4rwWMl06bF+RDyeMS3vOMCUXZzOLkoJD1BMxoQ4fV1jAE4QuTm/N
+         qm1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755782902; x=1756387702;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d8T31mCfWW90OKBE5TgdxVP07GBpIWXUZaFTrUQ7T0g=;
-        b=HPULQmBF6GLvpUuJyWRqaeBxM+HNKDtyZpaw0FSq7vk+Vq6JfSa1t9JRxHfG+/l0cs
-         tcdflQR8FNthv9Bw/ZrTNes861aSzZJMnJqwanGkjjSugh/45ETpllAlLtrd+Iocqqt9
-         YJuvsq9lQXw2QMGoXfOOUqSf1nLW1HXSTNHxB6IwfybEjgHfjPSuCEXkja5/+kVPZagu
-         3qClrrKYbvorhM0kEdfnoeiw/UX3KAAYIO7zhayFNl1lGSk8ibfHWQQiox6EbMSof2GT
-         7ls3dhXvprhetpJsIsV40bj179zqSgs4UoFxde+gH1MdWItH4MMJTs8pFAdb2Kb/lTl8
-         d9qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzojeLh+9ou7UpHbSx3FgbdmRfpSKWnHqCxzWmg9boo0M23DwBNNMX7jZNudqS20itsxi008x3Eorvq2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMSls7qGpmwqGFx58lV4YKxDXb5c5Jp5ZGGO/M79s1oJimqJK9
-	saIvjUfY4m0Y7DNPZ67XcvVrgRwBSz24nUvEL9TJ1nXEFsAX4KlVl0Mjtut0O9B5YO0=
-X-Gm-Gg: ASbGncvINBOkvn5zMZy6MrjBRZtBs+ngCujHIVMCqd+Y24SoH/1caPETokdt0nLCYFl
-	usWa6LPy/2prQFn884vPfm29uhLpZr1cjvr9HJKbd9oJChHmV/YXGmlckULpQDdLqgu8cAW0TeY
-	43cHn3/7qBE4zrbgPlUK2sboAwxN6zxMPz9PV+m5QGUytqO8iF9zst0QLB6LWZzLyWOg174wMD+
-	Ozh/63JgQO6Iy6YI/EtfXmkG68jZbkwTFM1mMFswfeBnvOB2ipmUcfpgZmjH1uGljcaACInMGw4
-	vAcRMi1US4DqlIoNCWmW+ZNU42mW8nf2BRXm28ftVPICZAymcOjZ/Gzx0imzzsmc7lbDfznKH0V
-	nGQHcro2R+xqfL5X44ZRXTv2ZbZXcP0sQDC5Wc6Kx6j/odDDe2dE4dqHP1D8f2C6+UlaFN4h8Mc
-	5fnWpJWlvsvA4S
-X-Google-Smtp-Source: AGHT+IHOk+jQ+Wc1ajIsPeOQSauihlXX1jqWqmrDAgPp4glmc0IjdS3XEeisSeIe/xP/WO4p4q+GUw==
-X-Received: by 2002:a05:6000:4382:b0:3a6:d349:1b52 with SMTP id ffacd0b85a97d-3c49452a39dmr2007478f8f.21.1755782901781;
-        Thu, 21 Aug 2025 06:28:21 -0700 (PDT)
-Received: from ta2.c.googlers.com (219.43.233.35.bc.googleusercontent.com. [35.233.43.219])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4db1be3csm31540135e9.1.2025.08.21.06.28.21
+        d=1e100.net; s=20230601; t=1755782975; x=1756387775;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J13Esd7nTONrArlNpUKcH+9/JHXUHsKEy/Ib89aPaCQ=;
+        b=OBm0Ojwp2IdkXd0gctAEQMxBrveodH8YWNmgcWLPSX8FtQGsgbGJJvi/7T09k49OVx
+         UVNpFBcQiqWe9FIVwENkorw0AFmKSCc68lI1ScecCjeCRKpqBqlMHo3OCR67sZQs0OgU
+         lKiSlZcQgtxipu+bH0BPcCyDRqhiYYjI9SF1vOywYkyxdZ7Cume+Y7wWow9yW9Wqshee
+         SfEJ4z7KcPMUKrvbywsQAZ2jqUY0gs5kAcT9zv5tUrD3Gk7KIH4g/Hb22oFlpNi9hWIu
+         b7jHpN7VW5Qq5IOdxRIGbkPy/OkOpun8WtKgVq0f5Rzwiv3aG7Hy1cMZg3GcNuxnDl01
+         OFCA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1bthGCfEWQKS0NzGDLgetF9XEgC3jRAbYJAhAObEKx+lHQcdLHbyC93A3GkYbtgJ9HZGm4BwC5SVPcuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY1jFptgNb+4lAlapTm+ilOaljG2AXeZCNhgH88Zd+aG8WUW6u
+	lGo/346fueA0m7zb6vOVgTjR5P98GWOahK0XMr8Qq+ty2dfHLGBbqx+CUvaynxKU5w==
+X-Gm-Gg: ASbGncuDE+xa4Bn5uVx9AAJX7uHCQxo7De6RHiuObJV6j1eQXZommpVc4L+TiTrQY6X
+	esSHCOTT07V9oDYmDrxFnT8xHm5ykupjIkjIZvu+cgbieMgR5113ayd/zhYm5UWQyAE6MudVPFk
+	J9f9xw3WQatK0kBYMJCZoREPnA+w83YGbLhh49VKXorlJFFUj8wDl0mVATx+IX/OBV+FwqxevoN
+	XOHbDlC7bKyaSa7fKm0zm5j6/k2Hab/+654TvjQ8NXBTXrOF0pKC4dasUAvm46i7VieIB5IPWNi
+	R7PbiJFHR3knioOrV7TBxw3rUGDnd/xWmbbLQUgVTQhzKMysEI2C7DT4LFcxJXY0VPcWM5Ev9Qv
+	WRqOVJuQ2xltaNc2Sw4vHVjCp3Yx8YM5n17e/yjY9w04WF1+Ea0DO3VpWhl3XqA==
+X-Google-Smtp-Source: AGHT+IEJ89+AicE1lZQ3XnhpL5tHd/m1IsnyOgUW94AR1BOA58fjSEzDksF9jqNKQwq8P3RC6Erj0g==
+X-Received: by 2002:a17:903:166e:b0:234:b441:4d4c with SMTP id d9443c01a7336-24602317afcmr3273645ad.5.1755782975217;
+        Thu, 21 Aug 2025 06:29:35 -0700 (PDT)
+Received: from google.com (3.32.125.34.bc.googleusercontent.com. [34.125.32.3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d4fd2f5sm8344077b3a.74.2025.08.21.06.29.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 06:28:21 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Thu, 21 Aug 2025 13:28:19 +0000
-Subject: [PATCH] firmware: exynos-acpm: fix PMIC returned errno
+        Thu, 21 Aug 2025 06:29:34 -0700 (PDT)
+Date: Thu, 21 Aug 2025 13:29:29 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Li Li <dualli@google.com>, Tiffany Yang <ynaffit@google.com>,
+	John Stultz <jstultz@google.com>, Shai Barack <shayba@google.com>,
+	=?iso-8859-1?Q?Thi=E9baud?= Weksteen <tweek@google.com>,
+	kernel-team@android.com, linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Todd Kjos <tkjos@android.com>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+	Martijn Coenen <maco@android.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Linux kernel regressions list <regressions@lists.linux.dev>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH v20 3/5] binder: introduce transaction reports via netlink
+Message-ID: <aKcfOXcutUwoivDD@google.com>
+References: <20250727182932.2499194-1-cmllamas@google.com>
+ <20250727182932.2499194-4-cmllamas@google.com>
+ <e21744a4-0155-40ec-b8c1-d81b14107c9f@leemhuis.info>
+ <2025082145-crabmeat-ounce-e71f@gregkh>
+ <ddbf8e90-3fbb-4747-8e45-c931a0f02935@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250821-acpm-pmix-fix-errno-v1-1-771a5969324c@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAPMep2gC/x2MSwqAMAwFryJZG2grfq8iLrSNmoW1pCCCeHeDi
- 1kMw3sPZBKmDEPxgNDFmc+oYssC/D7HjZCDOjjjatM5g7NPB6aDb1wVEokn9m6pqCHbBruALpO
- Qxv91nN73AxVDRlplAAAA
-X-Change-ID: 20250820-acpm-pmix-fix-errno-92b3e6e17d1b
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org, 
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com, 
- Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755782901; l=3666;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=uBtIogbSOsIbkE4R4niciJeJE+S7iTtvZxRDaPAge9A=;
- b=1nMwO7SPbvVV2Ic1y0bLWWFDpBvHQZlBekOmTvTQEbZx+2RjXPdcqhD6YnT+0MGs1ddVLnyky
- J4OcImc4x67CzaIkz3H3GahGRXSxX7N+V5IUctoqE+OAraYZLLQo/Yc
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ddbf8e90-3fbb-4747-8e45-c931a0f02935@leemhuis.info>
 
-ACPM PMIC command handlers returned a u8 value when they should
-have returned either zero or negative error codes.
-Translate the APM PMIC errno to linux errno.
+On Thu, Aug 21, 2025 at 03:00:50PM +0200, Thorsten Leemhuis wrote:
+> On 21.08.25 14:19, Greg Kroah-Hartman wrote:
+> > On Thu, Aug 21, 2025 at 10:49:09AM +0200, Thorsten Leemhuis wrote:
+> >> On 27.07.25 20:29, Carlos Llamas wrote:
+> >>> From: Li Li <dualli@google.com>
+> >>>
+> >>> Introduce a generic netlink multicast event to report binder transaction
+> >>> failures to userspace. This allows subscribers to monitor these events
+> >>> and take appropriate actions, such as stopping a misbehaving application
+> >>> that is spamming a service with huge amount of transactions.
+> >>>
+> >>> The multicast event contains full details of the failed transactions,
+> >>> including the sender/target PIDs, payload size and specific error code.
+> >>> This interface is defined using a YAML spec, from which the UAPI and
+> >>> kernel headers and source are auto-generated.
+> >>
+> >> It seems to me like this patch (which showed up in -next today after
+> >> Greg merged it) caused a build error for me in my daily -next builds
+> >> for Fedora when building tools/net/ynl:
+> >>
+> >> """
+> >> make[1]: Entering directory '/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/lib'
+> >> gcc -std=gnu11 -O2 -W -Wall -Wextra -Wno-unused-parameter -Wshadow   -c -MMD -c -o ynl.o ynl.c
+> >>         AR ynl.a
+> >> make[1]: Leaving directory '/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/lib'
+> >> make[1]: Entering directory '/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/generated'
+> >>         GEN binder-user.c
+> >> Traceback (most recent call last):
+> >>   File "/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/generated/../pyynl/ynl_gen_c.py", line 3673, in <module>
+> >>     main()
+> >>     ~~~~^^
+> >>   File "/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/generated/../pyynl/ynl_gen_c.py", line 3382, in main
+> >>     parsed = Family(args.spec, exclude_ops)
+> >>   File "/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/generated/../pyynl/ynl_gen_c.py", line 1205, in __init__
+> >>     super().__init__(file_name, exclude_ops=exclude_ops)
+> >>     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> >>   File "/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/pyynl/lib/nlspec.py", line 462, in __init__
+> >>     jsonschema.validate(self.yaml, schema)
+> >>     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+> >>   File "/usr/lib/python3.13/site-packages/jsonschema/validators.py", line 1307, in validate
+> >>     raise error
+> >> jsonschema.exceptions.ValidationError: 'from_pid' does not match '^[0-9a-z-]+$'
+> >>
+> >> Failed validating 'pattern' in schema['properties']['attribute-sets']['items']['properties']['attributes']['items']['properties']['name']:
+> >>     {'pattern': '^[0-9a-z-]+$', 'type': 'string'}
+> >>
+> >> On instance['attribute-sets'][0]['attributes'][2]['name']:
+> >>     'from_pid'
+> >> make[1]: *** [Makefile:48: binder-user.c] Error 1
+> >> make[1]: Leaving directory '/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/generated'
+> >> make: *** [Makefile:25: generated] Error 2
+> >> """
+> > 
+> > Odd, this works for me.
+> 
+> Hmmm, happened on various Fedora releases and archs in Fedora's coprs
+> buildsys for me today. And with a local Fedora 41 x86_64 install, too;
+> in the latter case (just verified) both when checking out next-20250821
+> and 63740349eba78f ("binder: introduce transaction reports via netlink")
+> from -next.
+> 
+> > How exactly are you building this?
+> 
+> Just "cd tools/net/ynl; make".
+> 
+> Ciao, Thorsten
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-input/aElHlTApXj-W_o1r@stanley.mountain/
-Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- drivers/firmware/samsung/exynos-acpm-pmic.c | 36 +++++++++++++++++++++++++----
- 1 file changed, 31 insertions(+), 5 deletions(-)
+Judging by the regex in the error log it seems there is a new
+restriction to not using underscores in the yml files. This restriction
+probably raced with my patch in next. It should be very easy to fix. Can
+you please try replacing the underscores?
 
-diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
-index 39b33a356ebd240506b6390163229a70a2d1fe68..a355ee194027c09431f275f0fd296f45652af536 100644
---- a/drivers/firmware/samsung/exynos-acpm-pmic.c
-+++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
-@@ -5,6 +5,7 @@
-  * Copyright 2024 Linaro Ltd.
-  */
- #include <linux/bitfield.h>
-+#include <linux/errno.h>
- #include <linux/firmware/samsung/exynos-acpm-protocol.h>
- #include <linux/ktime.h>
- #include <linux/types.h>
-@@ -33,6 +34,26 @@ enum exynos_acpm_pmic_func {
- 	ACPM_PMIC_BULK_WRITE,
- };
- 
-+enum acpm_pmic_error_codes {
-+	ACPM_PMIC_SUCCESS = 0,
-+	ACPM_PMIC_ERR_READ = 1,
-+	ACPM_PMIC_ERR_WRITE = 2,
-+	ACPM_PMIC_ERR_MAX
-+};
-+
-+static int acpm_pmic_linux_errmap[ACPM_PMIC_ERR_MAX] = {
-+	0, /* ACPM_PMIC_SUCCESS */
-+	-EACCES, /* Read register can't be accessed or issues to access it. */
-+	-EACCES, /* Write register can't be accessed or issues to access it. */
-+};
-+
-+static inline int acpm_pmic_to_linux_errno(int errno)
-+{
-+	if (errno >= ACPM_PMIC_SUCCESS && errno < ACPM_PMIC_ERR_MAX)
-+		return acpm_pmic_linux_errmap[errno];
-+	return -EIO;
-+}
-+
- static inline u32 acpm_pmic_set_bulk(u32 data, unsigned int i)
- {
- 	return (data & ACPM_PMIC_BULK_MASK) << (ACPM_PMIC_BULK_SHIFT * i);
-@@ -79,7 +100,8 @@ int acpm_pmic_read_reg(const struct acpm_handle *handle,
- 
- 	*buf = FIELD_GET(ACPM_PMIC_VALUE, xfer.rxd[1]);
- 
--	return FIELD_GET(ACPM_PMIC_RETURN, xfer.rxd[1]);
-+	return acpm_pmic_to_linux_errno(FIELD_GET(ACPM_PMIC_RETURN,
-+						  xfer.rxd[1]));
- }
- 
- static void acpm_pmic_init_bulk_read_cmd(u32 cmd[4], u8 type, u8 reg, u8 chan,
-@@ -110,7 +132,8 @@ int acpm_pmic_bulk_read(const struct acpm_handle *handle,
- 	if (ret)
- 		return ret;
- 
--	ret = FIELD_GET(ACPM_PMIC_RETURN, xfer.rxd[1]);
-+	ret = acpm_pmic_to_linux_errno(FIELD_GET(ACPM_PMIC_RETURN,
-+						 xfer.rxd[1]));
- 	if (ret)
- 		return ret;
- 
-@@ -150,7 +173,8 @@ int acpm_pmic_write_reg(const struct acpm_handle *handle,
- 	if (ret)
- 		return ret;
- 
--	return FIELD_GET(ACPM_PMIC_RETURN, xfer.rxd[1]);
-+	return acpm_pmic_to_linux_errno(FIELD_GET(ACPM_PMIC_RETURN,
-+						  xfer.rxd[1]));
- }
- 
- static void acpm_pmic_init_bulk_write_cmd(u32 cmd[4], u8 type, u8 reg, u8 chan,
-@@ -190,7 +214,8 @@ int acpm_pmic_bulk_write(const struct acpm_handle *handle,
- 	if (ret)
- 		return ret;
- 
--	return FIELD_GET(ACPM_PMIC_RETURN, xfer.rxd[1]);
-+	return acpm_pmic_to_linux_errno(FIELD_GET(ACPM_PMIC_RETURN,
-+						  xfer.rxd[1]));
- }
- 
- static void acpm_pmic_init_update_cmd(u32 cmd[4], u8 type, u8 reg, u8 chan,
-@@ -220,5 +245,6 @@ int acpm_pmic_update_reg(const struct acpm_handle *handle,
- 	if (ret)
- 		return ret;
- 
--	return FIELD_GET(ACPM_PMIC_RETURN, xfer.rxd[1]);
-+	return acpm_pmic_to_linux_errno(FIELD_GET(ACPM_PMIC_RETURN,
-+						  xfer.rxd[1]));
- }
+ $ sed -i 's/_/-/' Documentation/netlink/specs/binder.yaml
 
----
-base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-change-id: 20250820-acpm-pmix-fix-errno-92b3e6e17d1b
+I think that should fix your build. I'll try to reproduce.
 
-Best regards,
--- 
-Tudor Ambarus <tudor.ambarus@linaro.org>
-
+--
+Carlos Llamas
 
