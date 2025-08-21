@@ -1,131 +1,206 @@
-Return-Path: <linux-kernel+bounces-780502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EF3B302CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:22:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D8FB30282
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB5A5E842C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD89D1CC6585
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E34134AB0E;
-	Thu, 21 Aug 2025 19:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835FA3451CE;
+	Thu, 21 Aug 2025 18:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b="PyOYl/Aa"
-Received: from www571.your-server.de (www571.your-server.de [78.46.3.230])
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="DWNouFtu";
+	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="bCHTvQEA"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC9E34AAF0;
-	Thu, 21 Aug 2025 19:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.3.230
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755804103; cv=none; b=gpZl7YEwqa4ZHV05swSxl9Q5wfOkkO85A3MpHL6rNo7E9csMutQIp4G8MB4CpHaf7mxLarmQz7Fng4Hpj1buT3O5GBHPPOWi/3qcr8vE0lp2kFwS86iNNv2bjl3ibotjgG7qfVlOLPnDurTo0mfKDTkFl1agqd4puw/ii7oj7Ws=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755804103; c=relaxed/simple;
-	bh=9mmC57fqiW/CDgmXrXmLgJFmPtncNpi9tgM8einNv+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mKvyIrHa0zUb6Wqr19ZKnXXcGM9TW8w+j8qvJAOH9eIC0FT7U8mlQXiShRvvqB4dDzdwhxKe8ajEt6FHjN/uqSmuH6exAS74nHXW2aGeCaMFPk6X9ph999Uaua0QZP3c/6iQe0krD8BXSd0IGSQJ/piGOh3EqRPuSaeXm1vkTwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de; spf=pass smtp.mailfrom=it-klinger.de; dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b=PyOYl/Aa; arc=none smtp.client-ip=78.46.3.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=it-klinger.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=it-klinger.de; s=default2502; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=MJPn6pdlhSOyboOro+8VXBZQMw43Z9UgpGkHulJjXTE=; b=PyOYl/AaZYJ2hjEzZVWDwnNXQR
-	NqNR2MSP0z6owBZQLtgUOqNyj9ECsdf8ehWSAJqxaLHRVQfooQ0D6GTuLJO8gtLA4uCs3D6KqLVPt
-	Vxl8sa60OpIMDIJj/hj+s0KJZwq+jbKPELQm1UvCv9W03AyCO+Km8K4XX0e0uWphgbdiCOVylfNkH
-	ffq7oF+fi4tqVdHd+UrGmb3034uifGkeMtmB0fK0GS4dRs6toGa3ad2dIKtnO1nkiKUj6UmIkrnmM
-	cDogbj98thcuF1P3Q2JvQuAy9Sez7SXYl1Vm/zr9mE+iRHXEHP7os46NPOFXBSnphKTgB80Jm0kW2
-	VQJFHHYQ==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www571.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <ak@it-klinger.de>)
-	id 1upAQ2-000CVe-07;
-	Thu, 21 Aug 2025 20:53:49 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ak@it-klinger.de>)
-	id 1upAQ1-0006XM-10;
-	Thu, 21 Aug 2025 20:53:49 +0200
-Date: Thu, 21 Aug 2025 20:53:47 +0200
-From: Andreas Klinger <ak@it-klinger.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, lars@metafoo.de,
-	javier.carrasco.cruz@gmail.com, mazziesaccount@gmail.com,
-	arthur.becker@sentec.com, perdaniel.olsson@axis.com,
-	mgonellabolduc@dimonoff.com, muditsharma.info@gmail.com,
-	clamor95@gmail.com, emil.gedenryd@axis.com,
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] iio: light: add support for veml6046x00 RGBIR
- color sensor
-Message-ID: <aKdrO7DE8ky2DBu2@mail.your-server.de>
-References: <20250715085810.7679-1-ak@it-klinger.de>
- <20250715085810.7679-3-ak@it-klinger.de>
- <aHdWAUMMH43tIqV4@smile.fi.intel.com>
- <aIMy_BHJYNA20k-x@mail.your-server.de>
- <aKbqLpJMCxJd3QXW@smile.fi.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15652DCBFD;
+	Thu, 21 Aug 2025 18:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755802688; cv=pass; b=Ar1Zxzy3hFtQYaopepFplmfemyoUm1qMLKScI+5qWQ01v7iWzvrZAORjpL4BBdgLmBerg3uwUnUDeoR2Vg2yORcIDW7jNbolRPt4ijPSSfIIRyeCVWHCzMYDyeLzGvWzdKAnmI2M3yJdu9MIdzQOD87+kme+inO3WgdpjoVqqrQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755802688; c=relaxed/simple;
+	bh=GjsOBI4bPr96x7VFuHyS3ITwTCf8VRb/tRRe/XKU8XI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=mXakUMrne7Do09SzKdt46Q/Jk6/SmnlMK7FdBFNl4MAIpV3ZCr8USwN2g5BC549g9Ae71FpqSKQ/38T8/zwwVO8Z94z3ZIuSOtwaoqWqyYHRYakoJI9A5nNmQAbLyB7WbrZIHMY2mtMjz0rMOX6O0bzDM7pWwYGol006IljdYr4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=DWNouFtu; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=bCHTvQEA; arc=pass smtp.client-ip=85.215.255.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755802492; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=BPVJy5WlfNgBmiZ3mbsnTR6JVN2Tck6iGLGbqHi9RT4RPr+wvjFJMFS7r5seYtfuCX
+    FkkVkjryDe1leg+h3ma2b9D878lcOk9d8di1mUG3ZM2OGC/bId9txxzzL0jPVHVgxSFd
+    LpG5h3kdq3/Mg52qxnYQZ91la01XEjE46lK2IT3Y43hp3kdwE52fFTAhZsn+RJh0OKxl
+    z8nNERRBIdfwYmD7GdErhy6JPH5p3fw2pOhbPGdeHwBtziiGPDXASGTjnViOHeEu/w/+
+    gTD5JfIy92KvAqGH/t9616grYIZxngCFJ8DxbNZJmb3SAAd5jUKPFLaXqayqEZOFLPbK
+    xZbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1755802492;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=n+K+WaLmPgM9QTvAsx0hZF849I/TLqpLKyL1G4QQN6Q=;
+    b=ADVsbH+L1W7OkTlMuOMXB5+IkE3ZkySfsj3nOlc7ZFNmpLN7IYCsi5WHrg1AnXLyGz
+    qveoe6FlN2TN2i/jfzMVv7Kd8rRqwdBYAklGjdkLpVeChMfxitZ1yQ3D+Hb2FimRch7e
+    1E3hVAXJMakwNgt1Yfs6ml6tctN+wWnid1FgW5Wd/DHbgPMMcpVIXIQ2I6vr2pB1XMZS
+    1z+bwp8Djdrprh9FV6B9uFe0mgnZ9S7TYAhn3NRqb/qdhV2CVSH3UZvrrd1nZgGEpjC5
+    Nn1yqz9zsjRUdh/lMIYtQ/DbtA4OySWIAx48ZPLVhhpwozQpZYwxce8eCkyXQuPVk5FU
+    tQSA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1755802492;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=n+K+WaLmPgM9QTvAsx0hZF849I/TLqpLKyL1G4QQN6Q=;
+    b=DWNouFtuhwIG1SzjgXQjkFo3jgAeQhjSU/T23DKwtazEJlEVRrBdYIjJCnNn/SjWTj
+    LiM2faos8KutLRtSN1yQ+tVfNuf4Zf4MLBWAp8vWqMOfNyRDy9ggp7DpcT6a1lvA0vH5
+    Y2ycHmER2U6cBVQfKE3cz+qFAym7y3bzXlGlrXYFESPe1YOLrCiHgb6ZnKnUzSjzYg+N
+    9Ys27ebnyJNoiV6Rz7deuNfswP0bLOrdU9hXzuR8Qrqks3P15yLUqK+tijkxQxlLeuzp
+    X1w2vBWObznsGPtXDyG3Ch2JLOb7cpHlFcFb7DQQ6RF5i6T9tCHXSw41KIcY4nzs4JLh
+    fpSA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1755802492;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=n+K+WaLmPgM9QTvAsx0hZF849I/TLqpLKyL1G4QQN6Q=;
+    b=bCHTvQEAdp/diUjvAMXSxik4969cJ52xm9gI7AKnTHX4lvazJ1zIkmAdl5+l5Tze8p
+    xF57xDH6cc9enhUYLLCg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfzAZ"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 52.1.2 DYNA|AUTH)
+    with ESMTPSA id Q307a417LIsqvZv
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Thu, 21 Aug 2025 20:54:52 +0200 (CEST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BsflbtbAoRY220fB"
-Content-Disposition: inline
-In-Reply-To: <aKbqLpJMCxJd3QXW@smile.fi.intel.com>
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27739/Thu Aug 21 10:27:23 2025)
-
-
---BsflbtbAoRY220fB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] power: supply: bq27xxx: fix error return in case of no
+ bq27000 hdq battery
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20250821201544.047e54e9@akair>
+Date: Thu, 21 Aug 2025 20:54:41 +0200
+Cc: Sebastian Reichel <sre@kernel.org>,
+ Jerry Lv <Jerry.Lv@axis.com>,
+ =?utf-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+ linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ letux-kernel@openphoenux.org,
+ stable@vger.kernel.org,
+ kernel@pyra-handheld.com
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <10174C85-591A-4DCB-A44E-95F2ACE75E99@goldelico.com>
+References: <bc405a6f782792dc41e01f9ddf9eadca3589fcdc.1753101969.git.hns@goldelico.com>
+ <20250821201544.047e54e9@akair>
+To: Andreas Kemnade <andreas@kemnade.info>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
 
-Hi Andy,
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> schrieb am Do, 21. Aug =
-12:43:
-> > > > +	part_id =3D le16_to_cpu(reg);
-> > > > +	if (part_id !=3D 0x0001)
-> > > > +		dev_info(dev, "Unknown ID %#04x\n", part_id);
-> > >=20
-> > > For 0 it will print 0 and not 0x0000. Is it okay?
-> >=20
-> > I just tried and it prints 0x00 if the part_id is 0.
+
+> Am 21.08.2025 um 20:15 schrieb Andreas Kemnade <andreas@kemnade.info>:
 >=20
-> This is interesting... So it's not 0, nor 0x0000?
+> Hi,
+>=20
+> Am Mon, 21 Jul 2025 14:46:09 +0200
+> schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
+>=20
+>> Since commit
+>>=20
+>> commit f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when =
+busy")
+>>=20
+>> the console log of some devices with hdq but no bq27000 battery
+>> (like the Pandaboard) is flooded with messages like:
+>>=20
+>> [   34.247833] power_supply bq27000-battery: driver failed to report =
+'status' property: -1
+>>=20
+>> as soon as user-space is finding a /sys entry and trying to read the
+>> "status" property.
+>>=20
+>> It turns out that the offending commit changes the logic to now =
+return the
+>> value of cache.flags if it is <0. This is likely under the assumption =
+that
+>> it is an error number. In normal errors from bq27xxx_read() this is =
+indeed
+>> the case.
+>>=20
+>> But there is special code to detect if no bq27000 is installed or =
+accessible
+>> through hdq/1wire and wants to report this. In that case, the =
+cache.flags
+>> are set (historically) to constant -1 which did make reading =
+properties
+>> return -ENODEV. So everything appeared to be fine before the return =
+value was
+>> fixed. Now the -1 is returned as -ENOPERM instead of -ENODEV, =
+triggering the
+>> error condition in power_supply_format_property() which then floods =
+the
+>> console log.
+>>=20
+>> So we change the detection of missing bq27000 battery to simply set
+>>=20
+>> cache.flags =3D -ENODEV
+>>=20
+>> instead of -1.
+>>=20
+> This all is a bit inconsistent, the offending commit makes it worse.=20=
 
-No. It prints 0x00 on my BeagleBoneBlack with kernel 6.16.0-rc5.
+> Normally devices appear only in /sys if they exist. Regarding stuff in
+> /sys/class/power_supply, input power supplies might be there or not,
+> but there you can argument that the entry in /sys/class/power_supply
+> only means that there is a connector for connecting a supply.
 
-Andreas
+Indeed. If there is an optional bq27000 hdq battery the entry exists.
 
+> But having the battery entry everywhere looks like waste. If would
+> expect the existence of a battery bay in the device where the common
+> battery is one with a bq27xxx.
 
---BsflbtbAoRY220fB
-Content-Type: application/pgp-signature; name="signature.asc"
+I think the flaw you are mentioning is a completely diffent one. It =
+comes from that
+the 1-wire or hdq interface of some omap processors is enabled in the =
+.dtsi by default
+instead of disabling it like other interfaces (e.g. mcbsp1). E.g. for =
+omap3 hdqw1w:
 
------BEGIN PGP SIGNATURE-----
+=
+https://elixir.bootlin.com/linux/v6.16.1/source/arch/arm/boot/dts/ti/omap/=
+omap3.dtsi#L502
 
-iQGzBAABCgAdFiEE7/NrAFtB/Pj7rTUyyHDM+xwPAVEFAminazsACgkQyHDM+xwP
-AVErKQv7BcvpopjcA540YIbkMLjXkAhC4E2sIeu0ECxlfQ/1MgQeLW/K99kULoQl
-2m2JxkVaHl43qmmLdZwOAsWLOLGMmVrOJVambXsMTHAYqj3iP1sKB7TVmOvW6x0M
-VtkRF+41spEStMUfkv8WViRVUvDHM8n/kI1EPZzcxqTBMF4FOyhBVVvM0qMZQDzs
-f6SKi3xP8L1i5mCmHlZCC2o3t4Pwq0YT0x7iUGwq1RvGw1cVTkznYZLm8EbiqIt5
-gvi3/s+Bp2RA+Hq1jKYEfDIikryYxRKns2UKsjfJ1lQDI9IG2Oqv6DjK0I+GEYLE
-ZRQbMLEf9Vi+7/IGvCmHXhU7KJgJmXrMiJlA+g78jR8GjXqjmhKekQfcimsriVFY
-z5YiR/zTcqw0iFKfRbDO9rHS7ZuBGiqhnfNmJ8TcXLHUHIMBLWmPZwt61XXTrNUM
-Pic8ZJAv4ayAticgCBwz/zzhJt9YrYJktmc6w8hrq4UAbGMtn7pB89HrtxwWLQkF
-93iem3Xg
-=9IwD
------END PGP SIGNATURE-----
+And we should have the dts for the boards enable it only if the hdq =
+interface is really
+in use and there is a chance that a bq27000 can be connected. In that =
+case the full
+/sys entry is prepared but returns -ENODEV if the battery is missing, =
+which is then
+exactly the right error return (instead of -EPERM triggering the console =
+message).
 
---BsflbtbAoRY220fB--
+Or is there something related to power-management, so that the hdq =
+silicon always
+needs the hdq driver to properly idle?
+
+Anyways I think this is a different topic for separate cleanup. For the =
+moment we
+should fix the hdq27000 missing battery detection which was broken by =
+changing
+the return value logic.
+
+BR,
+Nikolaus=
 
