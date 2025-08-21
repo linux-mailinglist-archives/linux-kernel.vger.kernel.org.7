@@ -1,87 +1,108 @@
-Return-Path: <linux-kernel+bounces-778758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3EA7B2EAAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AB4CB2EAAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E72511C869A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:27:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEF021C86036
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097F921B8E7;
-	Thu, 21 Aug 2025 01:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE8D218AC4;
+	Thu, 21 Aug 2025 01:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pv2bELXf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="A0pTjsCl"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4A918991E;
-	Thu, 21 Aug 2025 01:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A5518991E;
+	Thu, 21 Aug 2025 01:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755739594; cv=none; b=O0uLPbtiLmXXfWlU74HsPMCEBnkfm/SEzGs/nATbqAGyQcChKrpUYwTTONUQf0CQStJRoRD1ESzW0Ox07Qjf2kCrJhqK0kB7con+0g5djZJlF0ZCqIxqbxlucoGa5WMjvPVioo3uUpKy2iQgeJemjR7J3yODaf41W78T8u92kSM=
+	t=1755739668; cv=none; b=D46EnIvWaXTsVKy7dki/Q10MWTBI48EISZ36pEbXskpwI3aEf0iMPhW+/AfT2THe4B9fmC2W7ZmRzJUIEHaJCRhZmBB0GZwfavj9ObWntoq0XHAhNFx6AbYaFFbPp2dagHRawfbRhsz71BDMlSwxro2iQZEWkBtrTRTYLZ6SfSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755739594; c=relaxed/simple;
-	bh=nt1wmkMzdycDN1HariQos43upByKwX/rxUM0DpMe4/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SuxTio3SEx6dFFUqWYKO1pWGCToANszhfZtH77T+6UUxpTG5ZnXqyfUxVVA216r17uU5nF+5cSGpsFNLiiCuYlPny1QT/IBM1ob4M+Jez8zn2Zze82S8xJnclaK5+R+g6bMEDuOv/004THn0RHMZxqPLG6HOM+uwDbLWgJeQje0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pv2bELXf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6247C4CEE7;
-	Thu, 21 Aug 2025 01:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755739594;
-	bh=nt1wmkMzdycDN1HariQos43upByKwX/rxUM0DpMe4/0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Pv2bELXfWtTeYycHKkro4DewMzQ4mvDaEtTv7yJLs2P9xCZt1Sv8asex3zLsxMiK5
-	 zoCsNk/MHlRPWOllAjCWahRoL0I6W06AvNn0PSF1MZjI9LpNmTvNWnvo/JTBL48mo+
-	 BIrki7sBA7bhCflLXuJxmD/ylw3a6QeGG5ln3R+VpsPxRzTQ4uxp6DInswsu+V6bLV
-	 M2Pa3zUGK3LcsNO5BAYoWfwT8WRNZMQKbL8ue0XUPYbqnmT/KAHa4tCJpmI+GTcfMY
-	 hGqXCfwSG1q/FUFluvmKYHXE84I2hgkQ8KR3H1RXM5vtBQJvHtiZYW9dDpu0vOO3cB
-	 iBE3t/Rs9/5JQ==
-Date: Wed, 20 Aug 2025 18:26:33 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org, Eric
- Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, Paolo
- Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org,
- davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk,
- michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH net-next v3 00/23][pull request] Queue configs and large
- buffer providers
-Message-ID: <20250820182633.71e991a5@kernel.org>
-In-Reply-To: <CAHS8izP2odYCfEfB_JMdT26nUzniXRdp5MaZgqozYd7wV9Z-gg@mail.gmail.com>
-References: <cover.1755499375.git.asml.silence@gmail.com>
-	<20250819193126.2a4af62b@kernel.org>
-	<fb85866c-3890-41d2-9d5c-27549c4b7aa3@gmail.com>
-	<CAHS8izP2odYCfEfB_JMdT26nUzniXRdp5MaZgqozYd7wV9Z-gg@mail.gmail.com>
+	s=arc-20240116; t=1755739668; c=relaxed/simple;
+	bh=pXhUVov2Opw3ud/d5uoLFOMdl0xu/jMq6yllDFC3cLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DMLXxU/hLXgbDiP3gud4Mx375AHtUbP5YqbspA4/3HPThPwL41r/qTfkXJ8SfSCvDtQ/lMXn84L9enkNZSiIl4XYbX4aqMBcmspLC4+t7GMeq7rtRsg5gOjt4H4PSlza4GCQhJ8jaTfrSnIt5umM3KUqRf29pVkTjNjQRAULyG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=A0pTjsCl; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755739662;
+	bh=D71JkR5sm795zPhuB7etBXYik2tD6TPOlFYa2QscM54=;
+	h=Date:From:To:Cc:Subject:From;
+	b=A0pTjsClnD8UwkPPiyYubUqWXfpPMCq49trxigmCiNIrxDiotO4KsCR6XGzFBvjte
+	 uJnMsrXdGugCrUiTZMPXE+Rmetee94jkNoWgr7MM6HdhDbao8XYcw0M8i5A/+EFbi5
+	 l2zQakicgD0jjDVVhL/dV9BfKYjGSw56QyVSsRXAQI759e395N7o+/+1drziBfDB3T
+	 jcRrwyOhEW1/JXMYA1aG5x69ILL6ZvheiffRBEvRoLj8oqisYy2kolcO0KYDSS6Ccc
+	 HOZPmF9bqNGxQtqGwBH7Wu4poq7LqT8Y6/ItJcJOVMtsau8jdMn1WXfCG59f3SNpuI
+	 pDNhELANIfIZw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6m0F0PsCz4w2Q;
+	Thu, 21 Aug 2025 11:27:41 +1000 (AEST)
+Date: Thu, 21 Aug 2025 11:27:40 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Inki Dae <daeinki@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Kaustabh Chakraborty
+ <kauschluss@disroot.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm-exynos tree
+Message-ID: <20250821112740.75a41814@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/f6.lEqS51xA1E5r7qOlVa6W";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/f6.lEqS51xA1E5r7qOlVa6W
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 20 Aug 2025 06:59:51 -0700 Mina Almasry wrote:
-> We could make sure anything touching io_uring/zcrx. and anything using
-> netmem_ref/net_iov goes to netdev. I think roughly adding something
-> like this to general networking entry?
-> 
-> F: io_uring/zcrx.*
-> K: \bnet(mem_ref|_iov)\b
+Hi all,
 
-Right, I think clearest would be to add a new entry for this, and copy
-the real metadata (Jens as the maintainer, his tree etc.). If we just
-add the match to netdev it will look like the patches will flow via
-net-next. No strong preference, tho. As long as get_maintainer suggests
-CCing netdev I'll be happy.
+After merging the drm-exynos tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-> I had suggested this before but never had time to suggest the actual
-> changes, and in the back of my mind was a bit weary of spamming the
-> maintainers, but it seems this is not as much a concern as the patches
-> not getting to netdev.
+drivers/gpu/drm/exynos/exynos_drm_dsi.c:158:20: error: 'DSIM_TYPE_EXYNOS787=
+0' undeclared here (not in a function); did you mean 'DSIM_TYPE_EXYNOS5410'?
+  158 |         .hw_type =3D DSIM_TYPE_EXYNOS7870,
+      |                    ^~~~~~~~~~~~~~~~~~~~
+      |                    DSIM_TYPE_EXYNOS5410
+
+Caused by commit
+
+  d07e4c00696f ("drm/exynos: dsi: add support for exynos7870")
+
+I have used the drm-exynos tree from next-20250820 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/f6.lEqS51xA1E5r7qOlVa6W
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmimdgwACgkQAVBC80lX
+0GzzxAf9FsqwLkLwc5BZh+QlDr5fzAUpkJr3L+79JzcXtWuwwbfxhZUl83nFBSIL
+b4hWrtHGEu9nY2QpPCIXX+tgRjicCs3zYYVkWo/x7jCk9vx6zKskARI1NQybaizR
+YAcCZ0c95dIomVdOwEmiJOOupRA67vqMSpyEpLvTi89m+M7RPmEd2Oc+tMdsJaFC
+s8ZGLfbOHDo/hEPm/CAjmA1C85mTqAwoKEZIT5mo29K0Zo6kPGvG/cMkM4TJBNBl
+GIF8m81AIL4FQAyxxgGHEJlupzO5wwz7esLwBMv18FUrDO7CfnAzaOvHm7gqsBBZ
+iArp6MGIuabECjuj0b8dxrfG13nI3A==
+=5cDe
+-----END PGP SIGNATURE-----
+
+--Sig_/f6.lEqS51xA1E5r7qOlVa6W--
 
