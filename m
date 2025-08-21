@@ -1,129 +1,78 @@
-Return-Path: <linux-kernel+bounces-779696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8DCB2F769
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:02:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A028CB2F770
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29319179111
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:01:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EEBAAA7153
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E946F30F531;
-	Thu, 21 Aug 2025 12:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B370E30FF06;
+	Thu, 21 Aug 2025 12:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="FANoF1CS"
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQKI7AtX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B3D28C869
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A62336CDFD;
+	Thu, 21 Aug 2025 12:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755777688; cv=none; b=UViyQGuWwKcN5wmk1USA9L21pePgJMtbRlS1fR5e3y9wesSD1Gm7o0+4/7qYxIldyQ5vBzdrWFPkZv1BdWPQ4b0EaNeo8j7YVtri7CExeQoc4GF5H9fS2hl72lGCZFC8ctvGd+8awzQqgzw08/RA5iUxsE4v6ILoPEQxNkjtKE0=
+	t=1755777657; cv=none; b=YrNbffm0CA32aqqclZM9VoO+OhYPP7BXpkkGx/++u6sXjXSJEENqCkXKVIc+q2SmSRJz/E1TQf1bRQQ+i0NPWqb8SfHq7S2UsVxWt6OuADG8E5ONcNSMTJLZzK4Xpm7xsSCayzaF/La8hoO6BPcOOogQB8PcqFMkn7QEpoN3yPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755777688; c=relaxed/simple;
-	bh=AZqPOIs8oTppgZY6LZx0VdFQyYDMm9MLTjA6k0xXVeM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PH/qAE8zSQx6jtBtUH2rOgS8dn1pOOOmx4ea3U5RfKcSOQNBNhe32Yq0RsROazJNkEizewLixreImYwVzeWbph5rvCerImhzhu5vP2wMZUQxVcfckDNRDzSlYcyiaz439AqPueRxo90OeOWigiQVl/GK0L5ueeWdIdaSCaig7yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=FANoF1CS; arc=none smtp.client-ip=185.136.65.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202508211201150eea1a82f96fed1571
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 21 Aug 2025 14:01:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=uFziv+Xoqi8s1O750PzRShk/r5lOsnFwo6no1Ndpf4A=;
- b=FANoF1CSNcNhr0AzulgktsCv51sdgu0zyLNmYj8uo+YgW5H+jcFgTEBccktzoVBc0cXQqz
- WZxAe1J/kqCmDXahSLd0oi//0StCM16PlOty2c9HNjqo71J6+dTuX1xgCG/1Aj6pakw2thA/
- RYHKTD3gGvm0zZ0d+dngae0QJm40XFUVUER0jtG41a7XMMuvBLMqwHF6mhG8SaWMpdKggF7/
- soaC1OgPgeedpFJghTnbrTLjH2Xyny5SZAZoVdbmJpwBucU1OejrhxmRA386vL2ywecXGz5+
- /NkOrAmXc/He6Bki0O2CQJj6dtLU7aCGNdD0WrAOBgIKIRO5b8Z2w9ow==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: Boris Brezillon <bbrezillon@kernel.org>,
-	linux-mtd@lists.infradead.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Balamanikandan.Gunasundar@microchip.com,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] mtd: nand: raw: atmel: Respect tAR, tCLR in read setup timing
-Date: Thu, 21 Aug 2025 14:00:57 +0200
-Message-ID: <20250821120106.346869-1-alexander.sverdlin@siemens.com>
+	s=arc-20240116; t=1755777657; c=relaxed/simple;
+	bh=0If7dBB0sCLIUEXZ2OkN2bJH+rbHuRFSthuH8PWLWxQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sEZTvqPr1WNEtIvcHAuvJxhgNq1dVocwwRxLYKvsR75A964c1GVLe2r0j9TCW9cVTo7+1SqmoJvXFFWZ4qal9lbhwTw5mW/ahweBl9PX4p8744zHURkIJqk04d7AnCUu5UIT6aUmqZnAtUvxhYmpdWt+/lx7L4IteS+lQXjhC9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQKI7AtX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5202C4CEEB;
+	Thu, 21 Aug 2025 12:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755777657;
+	bh=0If7dBB0sCLIUEXZ2OkN2bJH+rbHuRFSthuH8PWLWxQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=UQKI7AtXBg0iBmKFt6mtmjw4pKfHYoEmaWoLCMbj+nAF1ZfDpPk7Hv1vxeLRaLh8o
+	 MFc3MwqcrN9aKiOinqIWGHj4u4N4wopkPksDhcwC07HhMWbvAl91Q8qx8HGUvPTJQp
+	 hYxJ8IVuAoxuVIwoLeVaaTsjjzehqGxrKH5AVEEN1CA1OfMHwFzIdNrCTtZeLTEXFo
+	 45KujCo5cmQL/kGuau8ApIIEOKLArgAD+/+hzA+tyJbNH5SJNboQfw8yLlTEPRgeA2
+	 jFduqLB1VMBAb9RZucq/DlSLRHXJNSaOWmHuSztXzVeDHj7YFT/xtYE6xSwKgqGxpO
+	 nL7y1BjoQ+uEQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 715A2383BF5B;
+	Thu, 21 Aug 2025 12:01:07 +0000 (UTC)
+Subject: Re: [GIT PULL] Crypto library fixes for v6.17-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250821033420.GB185832@quark>
+References: <20250821033420.GB185832@quark>
+X-PR-Tracked-List-Id: <linux-crypto.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250821033420.GB185832@quark>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/libcrypto-for-linus
+X-PR-Tracked-Commit-Id: fd7e5de4b2eddd34e3567cd419812d8869ef4f13
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 32b7144f806e231a3fb619d4ddc5a6bffb731715
+Message-Id: <175577766591.1009012.3319634323445862102.pr-tracker-bot@kernel.org>
+Date: Thu, 21 Aug 2025 12:01:05 +0000
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Tal Zussman <tz2294@columbia.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+The pull request you sent on Wed, 20 Aug 2025 23:34:20 -0400:
 
-Having setup time 0 violates tAR, tCLR of some chips, for instance
-TOSHIBA TC58NVG2S3ETAI0 cannot be detected successfully (first ID byte
-being read duplicated, i.e. 98 98 dc 90 15 76 14 03 instead of
-98 dc 90 15 76 ...).
+> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/libcrypto-for-linus
 
-Atmel Application Notes postulated 1 cycle NRD_SETUP without explanation
-[1], but it looks more appropriate to just calculate setup time properly.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/32b7144f806e231a3fb619d4ddc5a6bffb731715
 
-[1] Link: https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ApplicationNotes/ApplicationNotes/doc6255.pdf
-Cc: stable@vger.kernel.org
-Fixes: f9ce2eddf176 ("mtd: nand: atmel: Add ->setup_data_interface() hooks")
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
----
-v2:
-- Cc'ed stable
-- reformatted atmel_smc_cs_conf_set_setup() call
-- rebased onto mtd/fixes
+Thank you!
 
- drivers/mtd/nand/raw/atmel/nand-controller.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
-index dedcca87defc7..ad0eff385e123 100644
---- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-+++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-@@ -1377,14 +1377,24 @@ static int atmel_smc_nand_prepare_smcconf(struct atmel_nand *nand,
- 	if (ret)
- 		return ret;
- 
-+	/*
-+	 * Read setup timing depends on the operation done on the NAND:
-+	 *
-+	 * NRD_SETUP = max(tAR, tCLR)
-+	 */
-+	timeps = max(conf->timings.sdr.tAR_min, conf->timings.sdr.tCLR_min);
-+	ncycles = DIV_ROUND_UP(timeps, mckperiodps);
-+	totalcycles += ncycles;
-+	ret = atmel_smc_cs_conf_set_setup(smcconf, ATMEL_SMC_NRD_SHIFT, ncycles);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * The read cycle timing is directly matching tRC, but is also
- 	 * dependent on the setup and hold timings we calculated earlier,
- 	 * which gives:
- 	 *
--	 * NRD_CYCLE = max(tRC, NRD_PULSE + NRD_HOLD)
--	 *
--	 * NRD_SETUP is always 0.
-+	 * NRD_CYCLE = max(tRC, NRD_SETUP + NRD_PULSE + NRD_HOLD)
- 	 */
- 	ncycles = DIV_ROUND_UP(conf->timings.sdr.tRC_min, mckperiodps);
- 	ncycles = max(totalcycles, ncycles);
 -- 
-2.50.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
