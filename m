@@ -1,181 +1,175 @@
-Return-Path: <linux-kernel+bounces-779191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C51DB2F046
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:57:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25AC8B2F048
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4543BF337
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:56:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD5FD7B7982
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40A92EA734;
-	Thu, 21 Aug 2025 07:56:09 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966512E9EB9;
+	Thu, 21 Aug 2025 07:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dA7PoDtW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9213B2E975A
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576EA2E92D6;
+	Thu, 21 Aug 2025 07:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755762969; cv=none; b=sBd9inc4x3gTsQ1xuHyrM+XLxPpkmmgM2WtJMs5wI+WKZwobH4su2FvSBcyelXHb9o7kvUPa77JnN+pIRBslA4+1mR84gDsoDNhuccwQKrhNPW3PudhMJ8GaSNpRii66i+KHgVrto1hm40s+3Zc8oF632oMKUBGuIXtSUZGeS4A=
+	t=1755763006; cv=none; b=cxRS/HQ++0CS9evm4tIgprf1XMiUpAW8XC3zmW3Au3i6v6h9SHEuJI5Xa6Zi2Zo+KDqTtvymdnLz9uyqW82hSHWUBFxF+LiUm/ot+bi6op1tTuaujd/HbrKYF/BrFrsp6hugNO2YDgIKrRs+/IQBbBnc1I/ef+yyP1jjDQ+oVVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755762969; c=relaxed/simple;
-	bh=0uEM7bQq/eJ/YzvUxLVKwsfk0kvlU86FWPYCAlo26wE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hFaptuaG+0zXDtI3vYQScAETE/UTfFny2SnvH+p6Jg7dOBqNfTs4zvNM9PG+oEZxHfSiELdT3RL690xQCAkZuoxJJ19vIlcdeLw0ffkdmElXmCuLpnjB2OGCbydd4gPbPVMkGBqBMb09A6vip1DoJBPTyY8CukugNdC5t6LXlZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1up09C-00073K-0N; Thu, 21 Aug 2025 09:55:46 +0200
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Thu, 21 Aug 2025 09:55:32 +0200
-Subject: [PATCH 5/5] arm64: dts: imx8mp-skov: support new 10" panel board
+	s=arc-20240116; t=1755763006; c=relaxed/simple;
+	bh=XoCpPVB5wOAtJ7m6MaTrQOLr2oFV7hOj0Lum1iwDtxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YaxTW0HMiq2Z8AqTZ/dYnUNLNH58SJd9s8k9bCgakNrGnTElx04rVrekJc79hkzodeb9R6qv+5aYPEh/tnX0NV6L3AHdAbb7k+3nR3m/WafteQK+2Fixmg+I7/7xgjcLhquZCXNY4A8LUluFyAOfQqKG9HC77BoYJ9yz0wvIpTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dA7PoDtW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L7kSve020839;
+	Thu, 21 Aug 2025 07:56:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qIJ8sGJ241dgJr/7UiTgj7Fpjrs1hEGq9F6pHGgt3Mg=; b=dA7PoDtWgU0xFjOG
+	d1uVW3s1BqkUAISUghRkRi2mtmRJVHeNXPDshgFAnuggnwV90pD55bD5TCkt1W5S
+	S4JK6zPggVFIvtgIZasunmhuOuY+KlQ2tYSb+RsTBxbqTmfoZCs3X+MPFBUWGZcD
+	RrDBGrzAkVismrg9uAOmXavjjLaw7i1yDijMkqqSJ4SsDW1e4sR4k2qYEu9eGvdi
+	9sa57WmEEN0xh9+vGSj/smYB2aVp8OBeHe3fZ2Kj9elm+eS3xfQ6xIqUFG92FEzX
+	MilW5j6q98xUFVAkBIA7dl1EzwIgzpXWKXRbdvzxjYDAAQa8qIz18YYZV9db16Ee
+	lUNeGg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5294hdt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 07:56:39 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57L7uc3N020678
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 07:56:38 GMT
+Received: from [10.216.5.63] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 21 Aug
+ 2025 00:56:34 -0700
+Message-ID: <f104c9d8-16ae-64c6-4494-49981ef950ea@quicinc.com>
+Date: Thu, 21 Aug 2025 13:26:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250821-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v1-5-b492ef807d12@pengutronix.de>
-References: <20250821-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v1-0-b492ef807d12@pengutronix.de>
-In-Reply-To: <20250821-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v1-0-b492ef807d12@pengutronix.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, 
- Steffen Trumtrar <s.trumtrar@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 00/26] Enable H.264/H.265 encoder support and fixes in
+ iris driver common code
+Content-Language: en-US
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Vedang
+ Nagar" <quic_vnagar@quicinc.com>,
+        Hans Verkuil <hverkuil@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Renjiang Han <quic_renjiang@quicinc.com>,
+        Wangao Wang <quic_wangaow@quicinc.com>
+References: <20250820-iris-video-encoder-v3-0-80ab0ba58b3d@quicinc.com>
+ <9584a286-7d8a-48b0-a65c-7a37ced78ac6@linaro.org>
+ <38d56655-cfea-ef3d-46ff-a77d81e35297@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <38d56655-cfea-ef3d-46ff-a77d81e35297@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: coqtGhz_i8faQO0kYJcT4v4KLTBE27P-
+X-Proofpoint-ORIG-GUID: coqtGhz_i8faQO0kYJcT4v4KLTBE27P-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX62ksjgec8+4J
+ a0yg17uHEBxaLJhqkjCEzhR2UXrHS+/L3Eov4e5edOys/wcd/JKZWa0XpBamJ41fvIMyjrT1WnA
+ RqB2c4lhKqZUWfy4Ji3dVSCQGs7hg2nIloWHWiVBXNtxFy8cMGmdJCQPFl/BwZ5QDyKfokYELBV
+ TIt8edelrg+6BuLe+I2oRVv1D48LGV6gnvJMlhEiOM8gwGJWAjqhNUoN3n7IyObKPvod/PhsBO9
+ 4/bTlFoRTwD8r7XddEN7EMiFsVBfz67q6CE8lxR7MdtV2WcYSjyTfwBqE0Sda/hLUJWJTYbgTUT
+ +P3Mq5SVyw/o6iAJfgB1MZghfhjjoexK3Yz7OvCC6EsD4gGXquiYSgYYipsyuXQ+qe725AzJYRV
+ mYynnLpxgyUqG0DaZ1u6aAkblh21Cw==
+X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a6d137 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=s6u6a83h0psUokLNlGwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_01,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-This board is similar to the already upstream
-imx8mp-skov-recv-tian-g07017.dts but uses a different 10" panel with a
-different touch controller.
 
-Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
----
- arch/arm64/boot/dts/freescale/Makefile             |  1 +
- .../imx8mp-skov-revc-jutouch-jt101tm023.dts        | 79 ++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
+On 8/21/2025 12:51 PM, Dikshita Agarwal wrote:
+>> The change occurs around Aug 14 2024, So I checked the downstream driver
+>> and I found that fixes the encoding:
+>> ===========================><=================================================
+>> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+>> @@ -863,9 +863,18 @@ static inline
+>>  u32 size_vpss_line_buf(u32 num_vpp_pipes_enc, u32 frame_height_coded,
+>>                        u32 frame_width_coded)
+>>  {
+>> -       return ALIGN(((((((8192) >> 2) << 5) * (num_vpp_pipes_enc)) + 64) +
+>> -                     (((((max_t(u32, (frame_width_coded),
+>> -                                (frame_height_coded)) + 3) >> 2) << 5) +
+>> 256) * 16)), 256);
+>> +       u32 vpss_4tap_top = 0, vpss_4tap_left = 0, vpss_div2_top = 0,
+>> vpss_div2_left = 0, vpss_top_lb = 0, vpss_left_lb = 0, size_left = 0,
+>> size_top = 0;
+>> +
+>> +       vpss_4tap_top = ((((max_t(u32, frame_width_coded,
+>> frame_height_coded) * 2) + 3) >> 2) << 4) + 256;
+>> +       vpss_4tap_left = (((8192 + 3) >> 2) << 5) + 64;
+>> +       vpss_div2_top = (((max_t(u32,frame_width_coded, frame_height_coded)
+>> + 3) >> 2) << 4) + 256;
+>> +       vpss_div2_left = ((((max_t(u32, frame_width_coded,
+>> frame_height_coded)* 2) + 3) >> 2) << 5) + 64;
+>> +       vpss_top_lb = (frame_width_coded + 1) << 3;
+>> +       vpss_left_lb = (frame_height_coded << 3) * num_vpp_pipes_enc;
+>> +       size_left = (vpss_4tap_left + vpss_div2_left) * 2 * num_vpp_pipes_enc;
+>> +       size_top = (vpss_4tap_top + vpss_div2_top) * 2;
+>> +
+>> +       return ALIGN(size_left + size_top + vpss_top_lb + vpss_left_lb,
+>> DMA_ALIGNMENT);
+>>  }
+> Seems this calculation is different for iris3 and iris33, hence you see
+> this issue on SM8650.
+> 
+> Updating this calculation in common code will increase the buffer size with
+> from ~400KB to ~2.2 MBs (for 640x480) and even more for higher resolution.
+> 
+> @vikash, pls comment if we should update in common code or have this
+> implemented specific for iris33 separately using some ops.
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 23535ed47631ca8f9db65bec5c07b6a7a7e36525..b0f98d60553d968820db45c06418ac671753df4b 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -226,6 +226,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-lt6.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-mi1010ait-1cp1.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revc-bd500.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revc-tian-g07017.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revc-jutouch-jt101tm023.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-toradex-smarc-dev.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-skov-revc-jutouch-jt101tm023.dts b/arch/arm64/boot/dts/freescale/imx8mp-skov-revc-jutouch-jt101tm023.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..676c604fb4e5093af48f4de62a890700095ccf01
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-skov-revc-jutouch-jt101tm023.dts
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+
-+/dts-v1/;
-+
-+#include "imx8mp-skov-reva.dtsi"
-+
-+/ {
-+	model = "SKOV IMX8MP CPU revC - JuTouch JT101TM023";
-+	compatible = "skov,imx8mp-skov-revc-jutouch-jt101tm023", "fsl,imx8mp";
-+
-+	panel {
-+		compatible = "jutouch,jt101tm023";
-+		backlight = <&backlight>;
-+		power-supply = <&reg_tft_vcom>;
-+
-+		port {
-+			in_lvds0: endpoint {
-+				remote-endpoint = <&ldb_lvds_ch0>;
-+			};
-+		};
-+	};
-+};
-+
-+&backlight {
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	clock-frequency = <100000>;
-+	status = "okay";
-+
-+	touchscreen@2a {
-+		compatible = "eeti,exc81w32";
-+		reg = <0x2a>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_touchscreen>;
-+		interrupts-extended = <&gpio4 28 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio4 29 GPIO_ACTIVE_LOW>;
-+		touchscreen-size-x = <1280>;
-+		touchscreen-size-y = <800>;
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+};
-+
-+&lcdif2 {
-+	status = "okay";
-+};
-+
-+&lvds_bridge {
-+	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_LDB>,
-+				 <&clk IMX8MP_VIDEO_PLL1>;
-+	assigned-clock-parents = <&clk IMX8MP_VIDEO_PLL1_OUT>;
-+	/* IMX8MP_VIDEO_PLL1 = IMX8MP_CLK_MEDIA_DISP2_PIX * 7 */
-+	assigned-clock-rates = <0>, <506800000>;
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			ldb_lvds_ch0: endpoint {
-+				remote-endpoint = <&in_lvds0>;
-+			};
-+		};
-+	};
-+};
-+
-+&pwm4 {
-+	status = "okay";
-+};
-+
-+&pwm1 {
-+	status = "okay";
-+};
-+
-+&reg_tft_vcom {
-+	regulator-min-microvolt = <3160000>;
-+	regulator-max-microvolt = <3160000>;
-+	voltage-table = <3160000 73>;
-+	status = "okay";
-+};
+increasing 1.8 MBs for VGA and assuming it grows further for higher resolution,
+i would recommend to separate it out for line buffer alone.
 
--- 
-2.49.0
+Neil,
+We are doing something similar as a preparation for enabling an upcoming SOC,
+maybe let me share the pseudo code offline with you. When you add encode support
+for SM8650, you can raise that change to extend the line buffer calculation for
+iris33.
 
+Regards,
+Vikash
 
