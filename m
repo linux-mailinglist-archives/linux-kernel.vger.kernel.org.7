@@ -1,125 +1,201 @@
-Return-Path: <linux-kernel+bounces-780692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7B3B30814
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:11:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B67B30849
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E425640308
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:06:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3681E1888F4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45424393DED;
-	Thu, 21 Aug 2025 21:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9882C0282;
+	Thu, 21 Aug 2025 21:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="tP7T+6SL"
-Received: from sonic314-20.consmr.mail.sg3.yahoo.com (sonic314-20.consmr.mail.sg3.yahoo.com [106.10.240.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="E7Ze60CN"
+Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91EA393DDF
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.240.144
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755810140; cv=none; b=ng15mRk9M6FV0CNVxfnR8ERS3OtwMFq8jFk7Q1ijoZIADQ4t477jLNFeF/qlvqQ+x0UXKfDptW4YNC6bkiZ4dlx45ZN7dEIQ5McI/5qgDu45naCgv1p9yRcu8EX+WNo075Pjw2T4YYMPB574RQrL2OYwBExAFWj5TjOXgwwbo6U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755810140; c=relaxed/simple;
-	bh=o/QW5Eq00a5QXAUtM52Knv7Z7ah1Xkh2S53OzkGeLmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hv5W/DZwPXfkP1fKiN8Uzfhl7Orj4s0SsI5TZYSL8Tq1dyhIRlUXq06Cr4SOX+xiF4ipKI1UiyJYhIGizYS0aYfPOUitzjlojtAvFAx81gGBzWRXl52n4PlRI5BXeH02Wr66NNVM1IghRQd+N4J+YkSeNcNLQjLcvlkbjF3XngE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=tP7T+6SL; arc=none smtp.client-ip=106.10.240.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755810137; bh=vBI/OWLaWKWrwJL5r562JGOYuxBdZwPCSQTwe/bG9+o=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=tP7T+6SL80gLeVgWlTfxuCPq2Xif+sXhm9z9YoU3E4I/x/8LH0fPUazRJze/BXwqySpFBJHq1nf3KOzxfEHhTcXD4DwJO6jxQ2Rp7SCzstRN2PfJjszFBEG449U0QYd3zkj6KxY+DngDR5s0JD/bORWfxHlpONnOV5zw+dHxd0ZgZ4Nj7MAEOEg/w99Mh5WxQrmY6jMgNf0E4q/XAJhb4ba5lO3KPvkXot4TX7NTNXuTqIawD4gTnoznFYOu98SZhiaAqb5KD7E/ASM6cEqRns7l5dn+VrcjQx8A532/aVQ6AY7Fcb1h9oh4gG3WpKh1ivjYYbNlPfaV6NV8+xohmQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755810137; bh=oNOWcUMXdRdd16yc4QspODBcYUG7kpTvqwRShVE3F7f=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Mpa8cDXab7Czb2BwGdGSs8uin8URMOOEaWFibgol6nRaiU+0YUVfkPXy5JUpg52mUpJEgGKI1ul1edi21di5/hNz6SY4wMMmHoLmnmDy9+GKDpy7cSoLSS1+Woz8WtSbthBuUNxtAvnM2fjx+sL/etlwstXX28zlLTghq7LJtHE3g27F2keV8EGIoLxjxm/cd+U1QSn3MZAKwl0FaJGGA/RA5kF4okesFbyTvVZEHPnAvQQGQ+kfphqhJptXQ/iFOJqDUiDbVVk1oZaZkUS0et525kXcPGZWTb6PDtD24pSwyJOXZdoGRsaFocpuk8vBFxjo2WVLJkT9lPIWrfISUQ==
-X-YMail-OSG: vWSuLkUVM1kfy4eu59THuypnKreboSQetJiKdBU7SvJytXnwFfl3L.Tzu.MAhQ9
- 28sPyt6.IXL8ugM8NdCXEsrpb2SuPOBxdbLHha2.Z66PgyIcvICHLxPEXVBLcfmDSOruVb6Qqlaq
- htcyD9pk9Bk1uBy2_o7wnK9zTv6Jk.MB.jFGcRzwccFCp1ZTEFRqDYPa_iM5.yvRUSJuY5F4jUa5
- oXjq6FMX04b6bSaA1I.JhyaHng_2T2pehNrZtW4.1lci3MBqTWIWw_0nZoPRYbjL6TPGhR1g_bi9
- gOV3ojAJCga5fYX.maaPA18k_SI334Qp9JoQsfSKbgG7QaOsbEYSkweUT4P90gOqqATTA_MNQdLi
- zvPG_2O5MU3AOUfVQpxKaOPa5y8nzQcZkzMyi3Iqy3lFIUjnvHCNt0LJM53E.V9DJwglg15uieGv
- Kx5fCaKAKhfyuuUo6_J1LACM_svaxWC.ZuPVfFAjRsHILOvfKGW9m4w7TL0N71Jh3ty39Xu.RWWN
- Wkm4MiEraB1Y9i4T.0yrgM3OT2aCgAiMOUYk0_CCd02RsSNtXV3o8RNiNnZHz1rMe1xo1sVaNJc3
- 0Ako1wwzCKr01PdhNg8NDu96PWgRpnqba2bZOMaVLOgkAec4iOcfAyGWrBNyNUMRUoESH9xnsAP.
- x.R1I5XavcNd34hLbf66kpTiX5n4jVWkydQ413HV1AXmiHho5FkzSLKGKPTI.HWVT2yM.zZJ8gGQ
- ygZQfoOpI4Sj27caq.LRWw.wPFXTQWqXebPgZ_sM4a6EBN97Wq9L8Zvfkc039BdUUYpu7ikO1Myc
- q5iv_07T5qrtBJeXgmJGjILv2wlAJD.pSOa8yH_rXwpKsW0VjOS8manuoSmfstIzRcPLlFZWS_9Q
- Lr6j597U_JizRWV5mdWgbblOP8cAIN383ScnWujN7gCEw766Rimd_.Lj5PECyaPXKRh_W6l7ptl6
- fkvIsGwppLX7rnu0pB9loz0..IE79p6j6yiNFJm7VZjEpKUqssCj0iED4shIDvYVbIyZxWgZcxyC
- xmz4sIPL8SoMAYI84ugy_WikTKeSsoennDB1ouhxMybiXfEvS3OLGdVlhby_AfS0NZKRq303q6ju
- Aa9jpxUvaEn602Mcj14QfQM6r47dPYFC0f7Hqh1LCs5gWVUaTfB4Xz7KXzPp0BNMUub5tgh6h.Yd
- Af_lKR7ZjG7rhBAibZNzI5_96wcEZZNmssm.Wnrhgdzjdp.oJ.BgmLU4v9l.XQzWz6MiKjRZZJeM
- Pq34OxsFtmP8_BRlKWyvImKSy8.QXGGxSqfz.mApefMFK6c58b66av52D7qn9oRSJfweLSAJD11f
- .B8mKr1Ag99xKg74Sl5e0_BimYXcs4XddTE_HgyXCYecIm.R0Pk.cugWxAKbFksI_JUEtxpfH5Pf
- _nONMDyFN189LT1bhrxwnDY7x1auQeNLtSsLEuk2W10OeiIRWPZPWuLuDJH.h.dNFaPCj2KyZRlX
- SfJUnROeYgTbTBpmFB.StMJmW7.lE8cLNwA.PKhuJR8sb5q5YFfBxsy3e3vzPBsG3P4CT78NzfNt
- SCAEXx069UCJ7eIwfKaShERP7tgc5q3Foihwttg_SwgGvblDrUiQEK2vpaBf2fmxJg.wZ2mwrF1Y
- xj_io0JicrkoflwOGHTUcAHfY8nNZJGyYBCCel.ZoIHjFVhz3mc7v3pLgbEHH6Yh0siRUU2WSN.m
- uhO9J1KKpn4OwX0fHW3tyLcw7F3zXigRyXb7CXyzOcdQxusGtl01ugJaCjRBo_aDaGISXpHqD2gE
- QfDVRkttxWMMBGh0nIVkpxe_rXiBn.sA0qs18GrwSEn5BoaJ8t8AgWLTYAreYEMAzOA2Bbs3qEJH
- kURK80zsAWILmZVjnQ5EZPoaN1C1jbGDW1i78zbsUhpgKJAiTIgt2xFPmRH1g6lzshTg.Eq0WyD6
- N3A2oYj_FwV2dm8PjSCYxJ.x7qZhSqPvYT3f0gEa4oOZLFgNDxK1pHXxrXFRBelmQbFL7EUIknLa
- 8_F5.0aI8t5P6V3tbw_PAzkAeospn93Ws8ekD3qmf4dBNQFqTScE6CfaAnKEX0QBvuS9FPVfd0pH
- vm9IYSAxGODQ9s7vW9DhrpadpVLFFTrNVTpwxToIN6LorOOG9Jkk08HMLmRsKfp4gXhRPL81jIQ0
- yEX5dQQy66XIs1ghn9YKxH_H3maB0QAenWFB2fN3kYErg1bAxeZQp3GOJOCyXo7UdoA_lU3lDP4A
- NPOPYV0zhrYdYTDGN9NaIMeuTYioZkJPKVZtXtm7epK0t8qFqXkRYsas2utQpcG3kjY2ojwZNkQJ
- 5EV2IeItuS2y13npY
-X-Sonic-MF: <sumanth.gavini@yahoo.com>
-X-Sonic-ID: b855ca6c-ebb3-4909-904f-82bbd6905c1d
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.sg3.yahoo.com with HTTP; Thu, 21 Aug 2025 21:02:17 +0000
-Received: by hermes--production-ne1-9495dc4d7-dbtfw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 63f50e64a47cfa33942b2637b7ef206d;
-          Thu, 21 Aug 2025 21:02:12 +0000 (UTC)
-From: Sumanth Gavini <sumanth.gavini@yahoo.com>
-To: jstultz@google.com
-Cc: boqun.feng@gmail.com,
-	clingutla@codeaurora.org,
-	elavila@google.com,
-	gregkh@linuxfoundation.org,
-	kprateek.nayak@amd.com,
-	linux-kernel@vger.kernel.org,
-	mhiramat@kernel.org,
-	mingo@kernel.org,
-	rostedt@goodmis.org,
-	ryotkkr98@gmail.com,
-	sashal@kernel.org,
-	stable@vger.kernel.org,
-	sumanth.gavini@yahoo.com,
-	tglx@linutronix.de
-Subject: [PATCH 6.1] softirq: Add trace points for tasklet entry/exit
-Date: Thu, 21 Aug 2025 16:02:08 -0500
-Message-ID: <20250821210208.1724231-1-sumanth.gavini@yahoo.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CANDhNCr3E3nUjwYqFq1aC9P-EkX6iPs-X857wwN+a_QK9q7u4g@mail.gmail.com>
-References: <CANDhNCr3E3nUjwYqFq1aC9P-EkX6iPs-X857wwN+a_QK9q7u4g@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFE52BD001;
+	Thu, 21 Aug 2025 21:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755811316; cv=pass; b=aaORIOpLJVEA+8B8f+l1Eguax2mXDzlPiHWtbIqIX7uUr8BD0wIaolgJPN3EhfigLKe2vQU5NIBVaRzSHzXITieA1NG6a8y2A41NlBTn/tqo2tD54EW4KsErJLhxdMIauW85TWKf1GVfdohWw8W1YKONeLihrfgcynLQp8aIH0U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755811316; c=relaxed/simple;
+	bh=gHc9N+sPNmbFdoVvlcXaXBnEUwSsL2C2pPfbjITtm2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T24ZERiKtkukb2gip27u04p3LUQ2LzdbRX0C7Q7gHbl6my40KWs8SMPfIl1Qe3ffqIclOMSQzuc2POlhxgQ5Zybfc171Mpr/qb0aUFeRICrvAFE5BlSU/y+k/ewng1EPNnhJXrQ48gD2LoLe0isoUAuS8XhPYYpoiFODy4IS5BA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=E7Ze60CN; arc=pass smtp.client-ip=23.83.212.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 67DB02C60D5;
+	Thu, 21 Aug 2025 21:02:47 +0000 (UTC)
+Received: from pdx1-sub0-mail-a254.dreamhost.com (trex-blue-3.trex.outbound.svc.cluster.local [100.96.37.67])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id BB8372C6073;
+	Thu, 21 Aug 2025 21:02:44 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1755810165; a=rsa-sha256;
+	cv=none;
+	b=VA395R/iBN/iOB+2AT3Sx/h1V57sN4gvPNEF/dlZq+Ge5opPfCJ/TpPnVatyDp0CHNJxEv
+	tfDOgcPj/9I3SSVqRyD5TEldt/tqv/xweW+60BgBStohBbFv8e2ynhrglN2nyyxh25jZQA
+	YORnb92Kh16oV1zpUf9tESKgdmeBarvhIeE7vF0+64eZYgtrrOlVucRk0kDNPxv7OQ5qY/
+	E2N1+scnJbeXWvTnXGmf8uS0oFkgbmIM+zJq5T0ul1As2+W1OWWVvNCUD+YIrVnck8t/2A
+	ji//1hdJ9dZfNDYeeIgIAVsb/CjjUaJAfb6JHpd7XAcTnKIglfss8ZWkvQuNWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1755810165;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=PiRdnVkb3Mdck8rf90p7+DnOfB9A+JduUXfai72Z7+4=;
+	b=fvPcQG0GmaTFX0s1SvnPmsgzy7jrpdnnof5z+FJUBRcZNz6Yrb7EjpplCBztg5XKo8l85X
+	vHXX5ehr9qCvBYjGuVtmUvNX7211fZM0R9Xql2poMvPoFXHnoBmEFYsyNj4CC5rM9SmwHO
+	EAPh/w93JrVjFX3ybeA5SbFS+CvE6mYStAXAMcPUXA2p3YmsqIRTR+lWEtDtz6xxqipg7a
+	wI/lpLAQAIurkhZwCy7PSEzAmul2gk48lwVbObDJY/IKmMwgd9RSptaiYI45tUTfv3K7ml
+	HcRlx8kRl3opZw0WLx0xmQEJVlTb7vOavtegGw4yurw/8Zt+PJG4G0s6aM2eNg==
+ARC-Authentication-Results: i=1;
+	rspamd-b597879cf-ngsbq;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
+X-MailChannels-Auth-Id: dreamhost
+X-Macabre-Bubble: 2f8dd21033f8e097_1755810167283_2720825162
+X-MC-Loop-Signature: 1755810167283:381200934
+X-MC-Ingress-Time: 1755810167283
+Received: from pdx1-sub0-mail-a254.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.96.37.67 (trex/7.1.3);
+	Thu, 21 Aug 2025 21:02:47 +0000
+Received: from [IPV6:2607:fb90:faae:51e1:d9d4:2e42:ae75:9827] (unknown [172.58.14.113])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: rob@landley.net)
+	by pdx1-sub0-mail-a254.dreamhost.com (Postfix) with ESMTPSA id 4c7G431Sm7zDF;
+	Thu, 21 Aug 2025 14:02:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
+	s=dreamhost; t=1755810164;
+	bh=PiRdnVkb3Mdck8rf90p7+DnOfB9A+JduUXfai72Z7+4=;
+	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
+	b=E7Ze60CNKAiVA+WD8T4gncR5kdArdw1idFuny3yPyKtIHpxERaG5Sb3tizBAEbBL/
+	 1rZpQo1GhUTePym7uXRlMqKbqQScRPDFlva0DiRf+aR0LSjS/M+i/0OSjzvlYfTtCd
+	 IgsnjyNyyunyCtWVkBI/altwWbggCNtHJGZ7XJ3zZhXH203GZsTE7otLwmIRNL/uUV
+	 Fjdx1AxvsaHevwhNKe1sIfhj+tUt6JSudtond1NWpomo1JJ7C5lGodn70E5f4LSu22
+	 96C1BYubVxQ4CfoUOIKdH3ZsHxphuqfLytr7+LmMt956XvMF7DNvFXe8gaUzBPpzRP
+	 pM+ZgqBhRFNkw==
+Message-ID: <4df745a6-2997-4eee-87b1-0c77ff46cfdd@landley.net>
+Date: Thu, 21 Aug 2025 16:02:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: net: Add support for J-Core EMAC
+To: Rob Herring <robh@kernel.org>, "D. Jeff Dionne" <jeff@coresemi.io>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Artur Rojek <contact@artur-rojek.eu>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250815194806.1202589-3-contact@artur-rojek.eu>
+ <aa6bdc05-81b0-49a2-9d0d-8302fa66bf35@kernel.org>
+ <cab483ef08e15d999f83e0fbabdc4fdf@artur-rojek.eu>
+ <CAMuHMdVGv4UHoD0vbe3xrx8Q9thwrtEaKd6X+WaJgJHF_HXSaQ@mail.gmail.com>
+ <26699eb1-26e8-4676-a7bc-623a1f770149@kernel.org>
+ <295AB115-C189-430E-B361-4A892D7528C9@coresemi.io>
+ <bc96aab8-fbb4-4869-a40a-d655e01bb5c7@kernel.org>
+ <CAMuHMdW0NZHCX1V01N4oay-yKuOf+RR5YV3kjNFiM6X6aVAvdw@mail.gmail.com>
+ <0784109c-bb3e-4c4e-a516-d9e11685f9fb@kernel.org>
+ <CB2BF943-8629-4D01-8E52-EEC578A371B5@coresemi.io>
+ <20250820213959.GA1242641-robh@kernel.org>
+Content-Language: en-US
+From: Rob Landley <rob@landley.net>
+In-Reply-To: <20250820213959.GA1242641-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
->>
->> Hi All,
->>
->> Just following up on my patch submitted with subject "Subject: [PATCH 6.1] softirq: Add trace points for tasklet entry/exit".
->>
->> Original message: https://lore.kernel.org/all/20250812161755.609600-1-sumanth.gavini@yahoo.com/
->>
->> Would you have any feedback on this change? I'd be happy to address any comments or concerns.
->>
->> This patch fixes this three bugs
->> 1. https://syzkaller.appspot.com/bug?extid=5284a86a0b0a31ab266a
->> 2. https://syzkaller.appspot.com/bug?extid=296695c8ae3c7da3d511
->> 3. https://syzkaller.appspot.com/bug?extid=97f2ac670e5e7a3b48e4
+On 8/20/25 16:39, Rob Herring wrote:
+> On Mon, Aug 18, 2025 at 10:55:51PM +0900, D. Jeff Dionne wrote:
+>> J-Core SoCs are assembled with an SoC generator tool from standard
+>> components.  An SoC has a ROM from soc_gen with a Device Tree binary
+>> included.  Therefore, J-Core SoC devices are designed to ‘just work’
+>> with linux, but this means the DT entires are generic, slightly
+>> different than standard device tree practice.
+> 
+> Yes. Though doesn't the SoC generator evolve/change? New features in the
+> IP blocks, bug fixes, etc. Soft IP for FPGAs is similar I think.
 
-> How does a patch adding a tracepoint fix the bugs highlighted here?
-> It seems maybe it would help in debugging those issues, but I'm not
-> sure I see how it would fix them.
+The j-core guys almost never change the hardware interface on a deployed 
+I/O device: when the existing interface is too limiting they do a new 
+design with a different interface. (You'll notice in the github soc_top, 
+components/ has ddr and ddr2, and components/misc has aic and aic2 from 
+when the interrupt controller changed, for example. Those aren't version 
+numbers, those are rewrites.)
 
-This patch is related to linux 6.1/backports, the backports(https://syzkaller.appspot.com/linux-6.1/backports)
-I see this patch would fix these bugs. Let me know if my understand is wrong. 
+Outputting a different constellation of devices/busses from the SOC 
+generator is more akin to running "make menuconfig". There isn't an 
+ancestor/descendant relationship there, it's a generator working from a 
+configuration to instantiate and connect existing components.
 
-Regards,
-Sumanth
+> There
+> we typically just require the versioning schema be documented and
+> correlate to the IP versions (vs. made up v1, v2, v3).
+
+There hasn't been a new version of the 100baseT specification recently.
+
+The same chunk of bitstream is still driving the same PHY chips on the 
+boards (or compatible, long out of patent) via the same small parallel 
+bus at 50mhz. The engineers are no more interested in changing the 
+kernel side interface than they are in changing the PHY side interface.
+
+> This is all pretty niche I think, so I'm not too concerned about what 
+> you do here.
+
+Eh, not that niche. Just hardware development culture rather than 
+software development culture. What's the model number on your microwave? 
+If you need to replace it, how many versions will you advance?
+
+Chip model numbers tend to be assigned by marketing well after the fact, 
+and don't necessarily have a linear relationship even for the big boys 
+making central components other people build entire systems around:
+
+https://en.wikipedia.org/wiki/List_of_Qualcomm_Snapdragon_systems_on_chips
+
+The Pentium II's development name was Kalmath, Pentium III was Katmai, 
+then Pentium 4 was a space heater and everybody backed up and switched 
+to "Pentium M" (which was MEANT to be a mobile chip but was instead a 
+"not stupid" chip) and then they did "Core"... And then "Core 2" and 
+"Core Duo" were different things and "Core 2 Duo" was both of those 
+things, and then they had i3 and i5 and i7 but they all came out at the 
+same time...
+
+Jeep produced a "Cherokee" for 50 years and expected the user to step 
+from a 1973 model to a 2023 model and be able to drive it the same 
+(modulo major flag day changes like stick shift or leaded gasoline) with 
+zero learning curve. Hardware developers of today go "here's an sd card, 
+it goes click-click into your device and it just works, the only numbers 
+you really need to know are price and capacity" (modulo microsd, but 
+they still provide adapter sleds).
+
+Software developers think that "DOS 2.0" and "DOS 3.0" or "Windows 3.0" 
+and "Windows 3.1" being profoundly different and largely incompatible is 
+just normal, and track that stuff minutely.
+
+Different culture.
+
+Rob
 
