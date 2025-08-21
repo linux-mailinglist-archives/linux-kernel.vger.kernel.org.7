@@ -1,514 +1,729 @@
-Return-Path: <linux-kernel+bounces-779367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3372B2F32B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:03:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3967AB2F363
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E51D27B3D2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:01:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FA711CC5FDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434412D2488;
-	Thu, 21 Aug 2025 09:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A341F2D7805;
+	Thu, 21 Aug 2025 09:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bzVF3klE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="gCO9rBM8";
+	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="nYdIaURv"
+Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BCE2D2494;
-	Thu, 21 Aug 2025 09:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755766976; cv=none; b=U6jMnb8STwLvJ1cEEanm8oxtWOsK5JX0wTZpr9bo/mh/XALaNHZA5x+iu0x6iOWhdw3TzEp8PmazhoAUCSF/Hv9wxMjQCDQ5ujuBFxr8wteipcITc8JG5p15lSP/qDE6jclmTeSIAjEO8muhuu4v08PJtUff5IrjkgB5dvRQXJU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755766976; c=relaxed/simple;
-	bh=5Ct1X/NWDfj1g40enmLEC9nkoZJMpOpO47zVSn/Uc7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S3txPh/Bvvks9tyK8A799R0u3PHEDffPTPm+FsKRk8iREgHLYHsXQIvrxouSFGybuqhtmOpfg0Bbf2y3pN9rmd3oh6yXnoSq5YxRXj62jTunEZRCAGdqC4W0gkF1TSAXjUkevS3WEcotQiRe/IwXxzUVzfkykjObUZVPn7E+vfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bzVF3klE; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755766974; x=1787302974;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5Ct1X/NWDfj1g40enmLEC9nkoZJMpOpO47zVSn/Uc7g=;
-  b=bzVF3klES1BShUMJSDgTLxIVQH6e9aN7SZFUd8NLLmVnVZHxp0PCgNm8
-   iUc0AtnW2C2qGVH2gCk+umaThQLOi+lfmIU/ozB4YS7asYSRk1ZsZ26wT
-   sSX2ytsdQp8LXYDz/+ERGLHRsO7k+DXRFM41IQFZ4Xl4Q8QJ6BEUjhf+g
-   3YZSqnZWtCZDniC9wnXvbRM23bwphCpBRIv4gteEE8ykRfzVDKv+9X/MC
-   zo8XI3DS5QwtaKctBN4N8vsNxcCsuCB+HQ1JE/1ioJrYD4JiLSXMGbtiX
-   YK9MoNgjd+XkGgxtqbHN5iQpyrCWUpojBUVDCTkv703VugAaZzl/RWfk8
-   w==;
-X-CSE-ConnectionGUID: TgAkPCMPTMmGx0UFM/IfQA==
-X-CSE-MsgGUID: wfI7OLeBTvm3ah7wfi9/8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58118527"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="58118527"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 02:02:53 -0700
-X-CSE-ConnectionGUID: AHxlsIQWSeyrzXTDwXQGbg==
-X-CSE-MsgGUID: gqG2rZ2xTs6EQgOdeBJomw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="168279667"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 02:02:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1up1C4-00000007BCh-0F4P;
-	Thu, 21 Aug 2025 12:02:48 +0300
-Date: Thu, 21 Aug 2025 12:02:47 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: remi.buisson@tdk.com
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/9] iio: imu: inv_icm45600: add new inv_icm45600
- driver
-Message-ID: <aKbgt_g3FsLMM8-g@smile.fi.intel.com>
-References: <20250820-add_newport_driver-v5-0-2fc9f13dddee@tdk.com>
- <20250820-add_newport_driver-v5-2-2fc9f13dddee@tdk.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2135225390;
+	Thu, 21 Aug 2025 09:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.180.163
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755767484; cv=fail; b=ISOTxMyyyd8hKqpY1PG2j0seBK6FxEPy4JIRf1v8CpCAtYmWGZpES9ZhKNoBE9jVhRHOcH60Dal4/uxI64EzmMcUJ7Q1NWZqivwbfJAHTyViLNbM2/uxFaFRygV4FkCD4whRU3e2v8R6vp66VnFJG65RWuDubKj7F+peF5oECms=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755767484; c=relaxed/simple;
+	bh=qUW+5jKyM+XW7jZAPb4qLeJ6aiP1OeK/q1onMV2EsRA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=R0ZXk76bmiJyJ9nX4iHBvd1XOi5sRetnjDPjYpFheD2CvmJjy82Kz40IjM30fp5jocG2eTL4gmR86MPuPIKNBExJI4BMSbAedFG9iXzULAHpUy4GK5plCxbvblyeIOLun966BB8bK57dCZHuXiBDhpCvapkPStQsJnINRrSdOrc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=gCO9rBM8; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=nYdIaURv; arc=fail smtp.client-ip=185.132.180.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
+	by mx07-00376f01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 57L4Kf7v2738248;
+	Thu, 21 Aug 2025 10:02:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=dk201812; bh=ELWzlHvXduYDkeSS3UcmVcihf
+	HIt8MRs5ppjAGg95KM=; b=gCO9rBM8sgrzUbEcg22UpZpacivdrJgt3YpdrGJyT
+	t4gGWCJuZBMmdx5A3lTJoTQgPZUrEwAys5gj91UQ8RtqLAauA+1Zjn8usaIM2d1Y
+	a8LqmfaBuKstv4AQAiiFA2v6o8QzNDTPT1Q6UaEoB0+iHI3q6p6Z6fU5kimiPW5c
+	SVqXfgzUBWgTmtHNIevHbZ/D+SYkCZSci0sAiNRdC2yKKmioCDGaGJw9K52OanN3
+	qqJ38MxY1YBWDR0G/K/TgWO1BSJUnwSgaxl5AxABAXD7coirfr0GT0EAK9LWIw8h
+	vELk3gT7EabROyJw118wnwMP/YRlWWozMkX1YduVWywEQ==
+Received: from cwxp265cu008.outbound.protection.outlook.com (mail-ukwestazon11020108.outbound.protection.outlook.com [52.101.195.108])
+	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 48jj2qnadx-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 10:02:55 +0100 (BST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z1858awBqq6c+laUZWljaM3c7nl4bmbg4CNLp4x3E2zgbB4jFFIN2X0GrPi4pVfHllIqwc7/o6ujJS7g4RlOWIsgOuD8wcAT0qIIlxExGRnLnK8fcqmge/iNoP3HG/9D6sFhEy4Fw++xaARNF+vHtb20JrLIn5BbqztTct+snlFsbRb0A9AY0zAAlFgYEVYYNLCp2qWLBdP6Xm9k+EjwpQ059UtapXThFPBFeKMLwrKMMaMQHXBMVOpzf/BqfHFh7KFnhY3QGGcqC06YWAiu46n+AECKwPGC+Dtrt1cR5n69z+5y+t1NqRJ0FQuHHEBMAFay91jFwa0Nm9/vFdYRcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ELWzlHvXduYDkeSS3UcmVcihfHIt8MRs5ppjAGg95KM=;
+ b=qvE/2u4Y72m/4wH/VJ4R5PnFn38r26dJihZ+ScWLNyFaPSTykqxh4CLqPVePPhl9X3Sc8oQRlIcKWjcX71yt3JC6oBkRiK2xExgiMwfsyhd2KERi3zP+oVyzCCk6nlaIxpdnEnBiiSVIgzRtq2nt9z0oRgZJx5nq961eaPKtd0egGBLkLsyb0lTAb7dsiOxTr/2dZa2KsprxhlBNQQpX4xRfz9SqgXz4GO2z5UPoxmj6cXwQEBJQuu3Q0PY9jFZgYRGfhMc8hF+mNNcXmSZ6CP/PJS5AdtvMeweuvulJJ+OVcTujqfIZvEBd53xDyop164Acomk/5TeK2vLcws/clQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
+ dkim=pass header.d=imgtec.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ELWzlHvXduYDkeSS3UcmVcihfHIt8MRs5ppjAGg95KM=;
+ b=nYdIaURvEUupV9olBf/RM1CXLgYAitpRx0sg99Jl67jVZVy4fOjNVMqCJhedNjoeClzkyr7IvhDu/Gg6OPaPmlQlykyF2V4e5FlTkQ9Nm3Ms4MI3Pz44PzTIAfrX6Xak7o5eSN6bJDqbFPLtXI4LuVGNPpIF8rn0siX3gZbjqq0=
+Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e7::8) by
+ LO4P265MB3712.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:1cf::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.15; Thu, 21 Aug 2025 09:02:51 +0000
+Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::8e9d:6b2f:9881:1e15]) by CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::8e9d:6b2f:9881:1e15%7]) with mapi id 15.20.9052.014; Thu, 21 Aug 2025
+ 09:02:51 +0000
+From: Matt Coster <Matt.Coster@imgtec.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Michal Wilczynski
+	<m.wilczynski@samsung.com>
+CC: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Frank Binns <Frank.Binns@imgtec.com>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Paul Walmsley
+	<paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou
+	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+        Marek Szyprowski
+	<m.szyprowski@samsung.com>,
+        Drew Fustini <fustini@kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v12 1/4] drm/imagination: Use pwrseq for TH1520 GPU power
+ management
+Thread-Topic: [PATCH v12 1/4] drm/imagination: Use pwrseq for TH1520 GPU power
+ management
+Thread-Index: AQHcEnpfrcxk3htevUamrDFaR6uzlg==
+Date: Thu, 21 Aug 2025 09:02:50 +0000
+Message-ID: <27d70d29-9e37-4905-9d22-0266c8a290a2@imgtec.com>
+References:
+ <CGME20250820085609eucas1p2938d69999f4d7c9654d5d2a12a20c906@eucas1p2.samsung.com>
+ <20250820-apr_14_for_sending-v12-0-4213ccefbd05@samsung.com>
+ <20250820-apr_14_for_sending-v12-1-4213ccefbd05@samsung.com>
+ <CAPDyKFqeOUwTbZEUFmHS2Onyj5LZ1b26vGgC4=UHUOxhwbzjRw@mail.gmail.com>
+In-Reply-To:
+ <CAPDyKFqeOUwTbZEUFmHS2Onyj5LZ1b26vGgC4=UHUOxhwbzjRw@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CWXP265MB3397:EE_|LO4P265MB3712:EE_
+x-ms-office365-filtering-correlation-id: 00388a74-a8eb-41e0-1a26-08dde09181da
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|366016|376014|4053099003|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?U3diRWIycUtzNWpGMW9WYjZjM0hyNVUzRlZ6bVVtcW9CYy9uNU14bVpCV25F?=
+ =?utf-8?B?WnNFdWczQ0hUTnJ3MThCa29ZLzNHUFEweENYQjM0RllwcTNLNTMra3NYTG9k?=
+ =?utf-8?B?OWhLUXNpK255VUpEMm9ZbS9vUFpIRkNQSG56RGVNMnVsaFExSUZZVC96NXl3?=
+ =?utf-8?B?SUl4c1pDdVBCVzRNTXpSYlpHYVEzWW1XWmJraUZpaWd2NlRvcnU1YWtQU1VD?=
+ =?utf-8?B?cFNxQVVRUUV2a2doaVkrcFFQTUJPaUpVL203OGtPTjNsL0EySHlOOWZKbWRT?=
+ =?utf-8?B?cEh2WFpMeXRHaXlBd2ZWK2RFYVQzWnZobHFhOGxNbHpTVnduSGUxOE1zNWpm?=
+ =?utf-8?B?OWIwMllGN0lwK2FpS254TmV3b3BCQUF0Sk5tMDNJNUN1SHVUTnpQRDBlc2xx?=
+ =?utf-8?B?VHB1dnl3MVBJT3BDUjN0a29HZzBwcVd2WFpyQmJlSmUwVE5jWFZYL0wxeTdP?=
+ =?utf-8?B?S2FrUUx1eDRublpzOEpWYmtQZmNLZFBGcVd1OGFRc0hpZ3ZiYTYrSGpKSjA3?=
+ =?utf-8?B?QnRueisySVhQRTl6ZCtZV256WlBLTTBiS3QyVjJMdUExaDhHQUNUeVZMUlNl?=
+ =?utf-8?B?MmtSVC8wZk5jUWdxSzNLclV5OFFqOUZTNWtKNXI2RGdmK0p6QVJhYm5TQTRR?=
+ =?utf-8?B?aUVEc0dWdnZJcTlnRThPdmpvblErd3g2UzVvYVRsMUJoWFJQK1U0QU5zbkhK?=
+ =?utf-8?B?Ly9xTUVMKy90MFFjYzM2L0VGTVgwQUJoejM1eVNlUmMwcHlkQUhWVDQrREJX?=
+ =?utf-8?B?MHBodUxGVmNMQU5rWHRCY1Q4TWp5QTZ1WTROSUNJUkowcFY3UmZvL25DQnhE?=
+ =?utf-8?B?QUdwa0VyNCtSb1QvWGtzVVJxc1NEQWVFc0h3RUdMMnJGQW1rQW5xbkxJcWs2?=
+ =?utf-8?B?aGRZREE0aVJXbjVpdjF0dG8zSDhUYm90ZmxPQUh6WkpFakRVU3l3Ukx6QmVW?=
+ =?utf-8?B?SlArUGZETHBicGVoZm15cml2RTJSUzd0OGExSUhFdHJQNDNLV0Q3YklaOUFO?=
+ =?utf-8?B?OG40MmZiNURNaUZKR3NTUWhQdnVUVXc3a2J2dkxQbzVYWGhJTEZ2T3A2c2ty?=
+ =?utf-8?B?KzJrWDREVW9YRUZJeDdjMjNXOCt0MkNQanM4YlJLQjlIUSswTTh1cnluMW5u?=
+ =?utf-8?B?OHlJZFprcG95T1BkTVdNMGtXRS8xc01CNkxSVTV6dmUrdzBNMUgzUmtIMWtP?=
+ =?utf-8?B?LzBlUzZIMlk5bmd3UjF1VFBPSklzcUZmWnFaOGl1M2NCR3IybWNEMTFGNm9j?=
+ =?utf-8?B?M1gxb016ZWpwbEROK1FISDFxaWVjRWMrclJ2ODdmSFNRZ1VMLzYwN2JNMEt2?=
+ =?utf-8?B?NXY3ZHBRVHJ2bzBxNS8yTUFkSEpDeWEreDA3MUZIS3QyZnBGMjJGVnNPYnlZ?=
+ =?utf-8?B?Z0lwQWVuRld6R2gzbFd5ZlFSVWE2RlNYRjVhQmMwRW9HcjY5c0JzUWNzUHdH?=
+ =?utf-8?B?QUd6OHl1UFlONjdtOG5NOEM2TUd3WkI3V1VVYklZVWVENzdENHBlZWpZcWZE?=
+ =?utf-8?B?TDRObVgwdVpCS2JxWUlhY2lHclhZa1U3QzV6N0V6RUV4YkJBVUxyWUlFOGRV?=
+ =?utf-8?B?QjlhVzUyTU5rQ2NyTWcvVkNVc2hKRFdhK1Q2MEo1VGhlNUFmN1IrZUJEdTZ0?=
+ =?utf-8?B?MG96RDlwdTJCYzdJYy9pb2pTUk5VaE52VTRCbDQ3LzZlR25scUhaZllMenFR?=
+ =?utf-8?B?SStrVFpvVVRmTi9ZNU5CSmdmN21YMExpRzMrSWJQL1FHVUJJTklvQXFocDJE?=
+ =?utf-8?B?L2Y3L2UrcGF6NFYzeEVjYkxhdWxEY3ZvRHR1ZUJWUzYwTjN1NXN0cHBZdmRW?=
+ =?utf-8?B?SWJEOWFsRytxRzBnemZkcjBYUWdwUnMramRIdm5PUmp2T0Z6WlE5Smpubzdp?=
+ =?utf-8?B?UGZreXk5V1RhT3lZQkNBd2pEVnl5UmNWNTh1alFDd1BFTDVKU0tCbXFtT0xx?=
+ =?utf-8?B?bVdyVjJDQTU5UjJlSkJGU1VCcFJVZitEVkl1ZkVja1dVc2xta3VLTXdJbmVP?=
+ =?utf-8?Q?Izirww8lSbI9xmkfzdBlizexL+FHXk=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(4053099003)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?WnByOXhCdkhQalJJeFEyVktiKyt6Y1NaVDkrMDlTcFBSSmE5REF0MjcvNVd6?=
+ =?utf-8?B?azJNa3lzaEx3SnNlNjB4MGowSjU5SDZlMnJCT25STFpCMzZMb24wWWtBSlRz?=
+ =?utf-8?B?NnJoRm5tKytaczlGUVZwZFFSSEdMallscFA5YXltRXBmbGxvM0hVUytjSHpl?=
+ =?utf-8?B?ZnI5bHZyU2lvVXpkNGdYcFo2NlBPN0hRc3phQW01NVVqN2dIL0loeFM4RmR1?=
+ =?utf-8?B?OU5Wcy9ONk9qaXN6N3lab3JMQkhJNEF6emhNbmVVNlFFK3M2VHhGN0Zja0hI?=
+ =?utf-8?B?MTVrTndQZjVzNm9ROFBqM291MUIyNk5nenk3ZHZTS3h2ZDB1VC80TUpsZ3ZC?=
+ =?utf-8?B?YnZBUWpjeHFsK0ZJRDlBbEFjY3RjSlpMQ2dDQkFkejRkNlBBV3ByM2I5ZlFi?=
+ =?utf-8?B?ZHhKNEJXMStvZjAxTGp4K2RsQ0t3M2dkbmRXZ1B2ckp0WVYxZEJhRGRlZm9U?=
+ =?utf-8?B?WWlRVFRIR0hiQzZ0UklIS3pzYWcwWFdrcGVjWkJSVjhwNXJpRmJVTm1aZFhF?=
+ =?utf-8?B?TG1UYjdlczN3bUhYQzFrSWE4WDY0NENVVU0vRWN2WDdNZzlNVHNRRjNZZmp4?=
+ =?utf-8?B?Y2t1RVM3Rm1QUGl6Qm5TWGFOZzNMMUJsSFY5NVhQK2ZSNFRJNWZWeWpUeG1O?=
+ =?utf-8?B?UC93WThyblEwTkQvVUE2eFAxaHhEaXVuUytKY0l0VHdpS091MXFiSDM3WEtj?=
+ =?utf-8?B?NEZkZXlBL3FKZUtCZGR2YkZPeHRmWGVwQVdETWkwY2VNbVBwNEpyTlNuTE4r?=
+ =?utf-8?B?WG4wNXd5a0VWU2huVXVmRExOQXNVUkxCeFRMYkNZL2VPdjJCNDVjTlJ1dGtB?=
+ =?utf-8?B?SXZlZHNDUXRFckwwV1hIa3p4L3FGOGpHVGRKbkRkUU9LY3JsbEJUMkRGK0xL?=
+ =?utf-8?B?Mm1OSllMR0VVNnZJNVNpN2J4NWtwSHo3dlRnUzVzTnBucDR4TmthK0JackFQ?=
+ =?utf-8?B?UmVVRW51UU9uTWFiKzVEK2ZhU1UzWGFoREtxd1ZUT2VXVzRWV1dRODNrVk84?=
+ =?utf-8?B?ZmwvR21KajRKYVJZNWNIanJpQ0VxR21OMkRrYkZOWGxSU2xvR0pNOHlncUx4?=
+ =?utf-8?B?SXJuTnVhRmVmNEN1Vm1TSXFDN0tuQW1MRHhqcS9GbCs1eVdpVGdmS09QTGY2?=
+ =?utf-8?B?b0FqQVJjUDFSOXJzdmtXMk5SdUNMdDdvNGZWR2FCY1FaVzhzYUZkNGxpZ3JY?=
+ =?utf-8?B?T2h4cUVOV1kvbWdmeGlLK3RtNGtkMWhJb2R5UHMxR005Q2NxYkF3NmloWGdp?=
+ =?utf-8?B?VytyY1ZCQ2NXYjlVcXFocGd2MkxZR1Q5Y3JOMHpMc1NKSVF4cjgybTdFM05S?=
+ =?utf-8?B?SC9TVkRkMjdaem02aWd3dUpTOUlhK081Z1RRbzFFMDBKamtSODRENlBoNXRQ?=
+ =?utf-8?B?VW9XTnZUeE1QV0hOWldYMzJKZEFxNmdhWFZueVdCYjN4cWJSVTN5MUU4a3Nt?=
+ =?utf-8?B?Ryt3bHhYcGFoR0VZbDRGQkN2YkpIdXFhbzRnb1pHWmdWeFdRK1Q5amZxT2RU?=
+ =?utf-8?B?TURocWFETHJOVEh4bTR4UVJxbFN1VTlGbXdOcjdmcndvS1BNVTJmbkFSekR4?=
+ =?utf-8?B?V2haZFhJb2lLSENFRGNLdkR4bW94blBlMXo1Z2ttYVo0NVlVYVgvdTdmcCtt?=
+ =?utf-8?B?dkJqL2lnSUlaRUJ4aU5hWk00QSt4bVBRR3pLY2VhZVRGdndtcUx2Vm1WbzFR?=
+ =?utf-8?B?MlUyQmp2S0tscVhYcSthalBxUjZZaFlMdjlXWnJoNkcva1g5Q2ZVYkZYdkln?=
+ =?utf-8?B?dmtLZk9KK2xVMjhEajhRSC8ydXVISTljN1o0OHJIbXZCVHNneDd0RXk4MWl1?=
+ =?utf-8?B?cmpESkNtdzdNN0R6RC84ci9WbXg3VU44UmVyWEZwOENMUHRCL1Y0TnJmUWtS?=
+ =?utf-8?B?VzlwdGVYbTduMG9yRm96dithNjlSMUxSeFdYMnFVR2tjckxxNE9pSjV6QVVI?=
+ =?utf-8?B?Wld2eHFMTlRPa0dXSEV1Z3F2RDdUK3hjTzB6WUpVRVhxRlhweXVxQ2YrMk00?=
+ =?utf-8?B?TldHd21qR0M3VDhMSE1VUXptNEdUTkdDSWc3c3RxZDFKc3MrcG1SSTVQZlh6?=
+ =?utf-8?B?d1hkUDlWZUNubWpIV1NZdkQ1R1J6Tm5FdVVYR2JWdjNEcGxidEtIL3JGU2NF?=
+ =?utf-8?B?NHl6c08yTjZ3TTNOdUZEV1RaVTh2Mmc3SHRBcFdJQ2JYYWpvd2JpbC80UXE5?=
+ =?utf-8?B?OGc9PQ==?=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="------------pO1n71RM0RGpVh08a2JDY0fO"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820-add_newport_driver-v5-2-2fc9f13dddee@tdk.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Wed, Aug 20, 2025 at 02:24:20PM +0000, Remi Buisson via B4 Relay wrote:
-> 
-> Core component of a new driver for InvenSense ICM-45600 devices.
-> It includes registers definition, main probe/setup, and device
-> utility functions.
-> 
-> ICM-456xx devices are latest generation of 6-axis IMU,
-> gyroscope+accelerometer and temperature sensor. This device
-> includes a 8K FIFO, supports I2C/I3C/SPI, and provides
-> intelligent motion features like pedometer, tilt detection,
-> and tap detection.
-
-...
-
-> +#ifndef INV_ICM45600_H_
-> +#define INV_ICM45600_H_
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/iio/common/inv_sensors_timestamp.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/types.h>
-
-Please, follow IWYU principle. Also, it's better to split out the IIO group as
-it's part of the subsystem this driver is for.
-
-#include <linux/bitfield.h>
-#include <linux/bits.h>
-#include <linux/types.h>
-
-#include <linux/iio/common/inv_sensors_timestamp.h>
-#include <linux/iio/iio.h>
-
-(but again, the list of the headers seems incorrect / incomplete).
-
-...
-
-> +struct inv_icm45600_state {
-> +	struct mutex lock;
-
-No header for this.
-
-> +	struct regmap *map;
-
-No forward declaration.
-
-> +	struct regulator *vddio_supply;
-
-Ditto.
-
-> +	struct iio_mount_matrix orientation;
-
-
-
-> +	struct iio_dev *indio_gyro;
-> +	struct iio_dev *indio_accel;
-> +	const struct inv_icm45600_chip_info *chip_info;
-> +	struct {
-> +		s64 gyro;
-> +		s64 accel;
-> +	} timestamp;
-> +	union {
-> +		u8 buff[2];
-> +		__le16 u16;
-> +		u8 ireg[3];
-> +	} buffer __aligned(IIO_DMA_MINALIGN);
-> +};
-
-...
-
-> +#define INV_ICM45600_FIFO_SIZE_MAX			(8 * 1024)
-
-SZ_8K from sizes.h ?
-
-...
-
-> +#include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/limits.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/property.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/types.h>
-
-As per above, please double check for IWYU principle.
-
-...
-
-> +static int inv_icm45600_ireg_read(struct regmap *map, unsigned int reg,
-> +				   u8 *data, size_t count)
-> +{
-> +	const struct device *dev = regmap_get_device(map);
-> +	struct inv_icm45600_state *st = dev_get_drvdata(dev);
-> +	unsigned int d;
-
-> +	ssize_t i;
-
-Why signed? Same comment for all similar cases.
-
-> +	int ret;
-> +
-> +	st->buffer.ireg[0] = FIELD_GET(INV_ICM45600_REG_BANK_MASK, reg);
-> +	st->buffer.ireg[1] = FIELD_GET(INV_ICM45600_REG_ADDR_MASK, reg);
-> +
-> +	/* Burst write address. */
-> +	ret = regmap_bulk_write(map, INV_ICM45600_REG_IREG_ADDR, st->buffer.ireg, 2);
-> +	/* Wait while the device is busy processing the address. */
-> +	fsleep(INV_ICM45600_IREG_DELAY_US);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Read the data. */
-> +	for (i = 0; i < count; i++) {
-> +		ret = regmap_read(map, INV_ICM45600_REG_IREG_DATA, &d);
-> +		/* Wait while the device is busy processing the data. */
-> +		fsleep(INV_ICM45600_IREG_DELAY_US);
-> +		if (ret)
-> +			return ret;
-> +		data[i] = d;
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
-
-> +	if (FIELD_GET(INV_ICM45600_REG_BANK_MASK, reg) == 0)
-
-Why not using positive conditional?
-
-> +		return regmap_bulk_read(map, FIELD_GET(INV_ICM45600_REG_ADDR_MASK, reg),
-> +					val_buf, val_size);
-> +
-> +	return inv_icm45600_ireg_read(map, reg, val_buf, val_size);
-
-	if (FIELD_GET(INV_ICM45600_REG_BANK_MASK, reg))
-		return inv_icm45600_ireg_read(map, reg, val_buf, val_size);
-
-Ditto for other similar cases.
-
-...
-
-> +static int inv_icm45600_write(void *context, const void *data,
-> +				   size_t count)
-
-This is perfectly 1 line, please, check that the code utilises exactly 80 limit
-when there is a room. It's probably a wrapping done by the (mis)configured editor.
-
-...
-
-> +static const struct regmap_config inv_icm45600_regmap_config = {
-> +	.reg_bits = 16,
-> +	.val_bits = 8,
-
-No cache?
-
-> +};
-
-...
-
-> +static const struct inv_icm45600_conf inv_icm45600_default_conf = {
-> +	.gyro = {
-> +		.mode = INV_ICM45600_SENSOR_MODE_OFF,
-> +		.fs = INV_ICM45686_GYRO_FS_2000DPS,
-> +		.odr = INV_ICM45600_ODR_800HZ_LN,
-> +		.filter = INV_ICM45600_GYRO_LP_AVG_SEL_8X,
-> +	},
-> +	.accel = {
-> +		.mode = INV_ICM45600_SENSOR_MODE_OFF,
-> +		.fs = INV_ICM45686_ACCEL_FS_16G,
-> +		.odr = INV_ICM45600_ODR_800HZ_LN,
-> +		.filter = INV_ICM45600_ACCEL_LP_AVG_SEL_4X,
-> +	},
-> +};
-
-Can you split the patch adding accel or gyro separately? I haven't checked all
-the details, so it might be not worth it, just consider it.
-
-...
-
-> +u32 inv_icm45600_odr_to_period(enum inv_icm45600_odr odr)
-> +{
-> +	static const u32 odr_periods[INV_ICM45600_ODR_MAX] = {
-> +		0, 0, 0,	/* reserved values */
-
-Make it one per line as the rest.
-
-> +		156250,		/* 6.4kHz */
-> +		312500,		/* 3.2kHz */
-> +		625000,		/* 1.6kHz */
-> +		1250000,	/* 800kHz */
-> +		2500000,	/* 400Hz */
-> +		5000000,	/* 200Hz */
-> +		10000000,	/* 100Hz */
-> +		20000000,	/* 50Hz */
-> +		40000000,	/* 25Hz */
-> +		80000000,	/* 12.5Hz */
-> +		160000000,	/* 6.25Hz */
-> +		320000000,	/* 3.125Hz */
-> +		640000000,	/* 1.5625Hz */
-
-These seem to be times or so, can you use proper naming instead of _periods?
-
-> +	};
-> +
-> +	return odr_periods[odr];
-> +}
-
-...
-
-> +int inv_icm45600_debugfs_reg(struct iio_dev *indio_dev, unsigned int reg,
-> +			     unsigned int writeval, unsigned int *readval)
-> +{
-> +	struct inv_icm45600_state *st = iio_device_get_drvdata(indio_dev);
-
-> +	int ret;
-
-Useless, just return directly.
-
-> +	guard(mutex)(&st->lock);
-
-> +	if (readval)
-> +		ret = regmap_read(st->map, reg, readval);
-> +	else
-> +		ret = regmap_write(st->map, reg, writeval);
-> +
-> +	return ret;
-> +}
-
-...
-
-> +/**
-> + *  inv_icm45600_setup() - check and setup chip
-> + *  @st:	driver internal state
-> + *  @chip_info:	detected chip description
-> + *  @reset:	define whether a reset is required or not
-> + *  @bus_setup:	callback for setting up bus specific registers
-> + *
-> + *  Returns 0 on success, a negative error code otherwise.
-
-Please, run kernel-doc validator. It's not happy (Return section is missing)
-
-> + */
-
-...
-
-> +	if (val != chip_info->whoami) {
-> +		if (val == U8_MAX || val == 0)
-
-Hmm... Perhaps in_range() ?
-
-> +			return dev_err_probe(dev, -ENODEV,
-> +					     "Invalid whoami %#02x expected %#02x (%s)\n",
-> +					     val, chip_info->whoami, chip_info->name);
-
-> +		else
-
-Redundant 'else'.
-
-> +			dev_warn(dev, "Unexpected whoami %#02x expected %#02x (%s)\n",
-> +				 val, chip_info->whoami, chip_info->name);
-> +	}
-
-...
-
-> +		ret = regmap_write(st->map, INV_ICM45600_REG_MISC2,
-> +				   INV_ICM45600_MISC2_SOFT_RESET);
-> +		if (ret)
-> +			return ret;
-> +		/* IMU reset time: 1ms. */
-> +		fsleep(1000);
-
-Use 1 * USEC_PER_MSEC and drop useless comment after that.
-You will need time.h for it.
-
-> +
-> +		if (bus_setup) {
-> +			ret = bus_setup(st);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +
-> +		ret = regmap_read(st->map, INV_ICM45600_REG_INT_STATUS, &val);
-> +		if (ret)
-> +			return ret;
-> +		if (!(val & INV_ICM45600_INT_STATUS_RESET_DONE)) {
-> +			dev_err(dev, "reset error, reset done bit not set\n");
-> +			return -ENODEV;
-> +		}
-
-...
-
-> +static int inv_icm45600_enable_regulator_vddio(struct inv_icm45600_state *st)
-> +{
-> +	int ret;
-> +
-> +	ret = regulator_enable(st->vddio_supply);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Wait a little for supply ramp. */
-> +	fsleep(3000);
-
-As per above.
-
-> +	return 0;
-> +}
-
-...
-
-> +int inv_icm45600_core_probe(struct regmap *regmap, const struct inv_icm45600_chip_info *chip_info,
-> +				bool reset, inv_icm45600_bus_setup bus_setup)
-> +{
-> +	struct device *dev = regmap_get_device(regmap);
-> +	struct fwnode_handle *fwnode;
-> +	struct inv_icm45600_state *st;
-> +	struct regmap *regmap_custom;
-> +	int ret;
-> +
-> +	regmap_custom = devm_regmap_init(dev, &inv_icm45600_regmap_bus,
-> +					 regmap, &inv_icm45600_regmap_config);
-
-There is room for 'regmap' on the previous line.
-
-> +	if (IS_ERR(regmap_custom))
-> +		return dev_err_probe(dev, PTR_ERR(regmap_custom), "Failed to register regmap\n");
-> +
-> +	st = devm_kzalloc(dev, sizeof(*st), GFP_KERNEL);
-> +	if (!st)
-> +		return dev_err_probe(dev, -ENOMEM, "Cannot allocate memory\n");
-> +
-> +	dev_set_drvdata(dev, st);
-> +
-> +	ret = devm_mutex_init(dev, &st->lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->map = regmap_custom;
-> +
-> +	ret = iio_read_mount_matrix(dev, &st->orientation);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to retrieve mounting matrix\n");
-> +
-> +	st->vddio_supply = devm_regulator_get(dev, "vddio");
-> +	if (IS_ERR(st->vddio_supply))
-> +		return PTR_ERR(st->vddio_supply);
-> +
-> +	ret = devm_regulator_get_enable(dev, "vdd");
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to get vdd regulator\n");
-> +
-> +	/* IMU start-up time. */
-> +	fsleep(100000);
-
-100 * USEC_PER_MSEC
-
-> +	ret = inv_icm45600_enable_regulator_vddio(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_add_action_or_reset(dev, inv_icm45600_disable_vddio_reg, st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = inv_icm45600_setup(st, chip_info, reset, bus_setup);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = inv_icm45600_timestamp_setup(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Setup runtime power management. */
-> +	ret = devm_pm_runtime_set_active_enabled(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pm_runtime_get_noresume(dev);
-> +	/* Suspend after 2 seconds. */
-> +	pm_runtime_set_autosuspend_delay(dev, 2000);
-
-2 * MSEC_PER_SEC and drop yet another useless comment.
-
-> +	pm_runtime_use_autosuspend(dev);
-> +	pm_runtime_put(dev);
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int inv_icm45600_resume(struct device *dev)
-> +{
-> +	struct inv_icm45600_state *st = dev_get_drvdata(dev);
-> +	int ret = 0;
-
-Why assignment?
-
-> +	ret = pm_runtime_force_resume(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	scoped_guard(mutex, &st->lock)
-> +		/* Restore sensors state. */
-> +		ret = inv_icm45600_set_pwr_mgmt0(st, st->suspended.gyro,
-> +						st->suspended.accel, NULL);
-
-With guard()() this whole construction will look better.
-
-> +	return ret;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+X-OriginatorOrg: imgtec.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00388a74-a8eb-41e0-1a26-08dde09181da
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2025 09:02:50.9727
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aRhonREi8dQ/77nHBONZntUYTEGgb3lIhhrDFMEjV4P91xDqwjrPkbiWeaptCQZUI2/MlOMafvxEQBK3xXQhpw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO4P265MB3712
+X-Authority-Analysis: v=2.4 cv=FodcP2rq c=1 sm=1 tr=0 ts=68a6e0c0 cx=c_pps
+ a=BiIdyD/7WWdsakcmwxy6cA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
+ a=NgoYpvdbvlAA:10 a=hD80L64hAAAA:8 a=r_1tXGB3AAAA:8 a=suRIpz00yrdexZQq2NUA:9
+ a=QEXdDO2ut3YA:10 a=8phQkBtYVeM1x3jINw4A:9 a=FfaGCDsud1wA:10
+ a=t8nPyN_e6usw4ciXM-Pk:22 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
+ a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-ORIG-GUID: TdIyx0MTa1opfuV-bPR6TfM02SdtSITS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIxMDA3MCBTYWx0ZWRfX+j2qPkcqHM0p
+ ICxyGErylnSLhXlh+su/LoEkd6A8UNFqNvzM648G7dJU1abVMAeLfe+PleUbCZeiY8TMj9RVE6H
+ 2GLzos53+pokC3I+KaMsZfk5JXfcnlyCn6KGqFCIW9xvi4CUbFxf0SYC0arusVl3r+nGWJTxJea
+ duiyKsN5kszTOMyIolISC7AxZRVfFFh9NSffAvf8aYx30r88YX10NPz7NhsgsWb6H5Z2I7ngNbe
+ WAwAZtI63wgl0ysYZX3dLZVnBiQ+T5Z+oQQtfbNCa5aycOR2C+4WMKDHhCNCH0TC51YBGO0am3t
+ RAP8q3LHeF0pHAS3SN2hFeLU4+6cW3IrzhYuygPr2K8Ob6uXUzzcCBv97RWNN/YU+soNFSTXNJ5
+ tcyJ5IE6ttzxxOakHk2FIxjT4QKvew==
+X-Proofpoint-GUID: TdIyx0MTa1opfuV-bPR6TfM02SdtSITS
+
+--------------pO1n71RM0RGpVh08a2JDY0fO
+Content-Type: multipart/mixed; boundary="------------HSLxHC03v0J1ufjRUGumkuRv";
+ protected-headers="v1"
+From: Matt Coster <matt.coster@imgtec.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+ Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns
+ <frank.binns@imgtec.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Drew Fustini <fustini@kernel.org>,
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Message-ID: <27d70d29-9e37-4905-9d22-0266c8a290a2@imgtec.com>
+Subject: Re: [PATCH v12 1/4] drm/imagination: Use pwrseq for TH1520 GPU power
+ management
+References: <CGME20250820085609eucas1p2938d69999f4d7c9654d5d2a12a20c906@eucas1p2.samsung.com>
+ <20250820-apr_14_for_sending-v12-0-4213ccefbd05@samsung.com>
+ <20250820-apr_14_for_sending-v12-1-4213ccefbd05@samsung.com>
+ <CAPDyKFqeOUwTbZEUFmHS2Onyj5LZ1b26vGgC4=UHUOxhwbzjRw@mail.gmail.com>
+In-Reply-To: <CAPDyKFqeOUwTbZEUFmHS2Onyj5LZ1b26vGgC4=UHUOxhwbzjRw@mail.gmail.com>
+
+--------------HSLxHC03v0J1ufjRUGumkuRv
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On 20/08/2025 18:08, Ulf Hansson wrote:
+> On Wed, 20 Aug 2025 at 10:56, Michal Wilczynski
+> <m.wilczynski@samsung.com> wrote:
+>>
+>> Update the Imagination PVR DRM driver to leverage the pwrseq framework=
+
+>> for managing the complex power sequence of the GPU on the T-HEAD TH152=
+0
+>> SoC.
+>>
+>> To cleanly separate platform-specific logic from the generic driver,
+>> this patch introduces an `init` callback to the `pwr_power_sequence_op=
+s`
+>> struct. This allows for different power management strategies to be
+>> selected at probe time based on the device's compatible string.
+>>
+>> A `pvr_device_data` struct, associated with each compatible in the
+>> of_device_id table, points to the appropriate ops table (manual or
+>> pwrseq).
+>>
+>> At probe time, the driver now calls the `->init()` op. For pwrseq-base=
+d
+>> platforms, this callback calls `devm_pwrseq_get("gpu-power")`, deferri=
+ng
+>> probe if the sequencer is not yet available. For other platforms, it
+>> falls back to the existing manual clock and reset handling. The runtim=
+e
+>> PM callbacks continue to call the appropriate functions via the ops
+>> table.
+>>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
+>>  drivers/gpu/drm/imagination/pvr_device.c |  22 +---
+>>  drivers/gpu/drm/imagination/pvr_device.h |  22 ++++
+>>  drivers/gpu/drm/imagination/pvr_drv.c    |  27 ++++-
+>>  drivers/gpu/drm/imagination/pvr_power.c  | 174 ++++++++++++++++++++++=
+++-------
+>>  drivers/gpu/drm/imagination/pvr_power.h  |  15 +++
+>>  5 files changed, 201 insertions(+), 59 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/imagination/pvr_device.c b/drivers/gpu/dr=
+m/imagination/pvr_device.c
+>> index 8b9ba4983c4cb5bc40342fcafc4259078bc70547..294b6019b4155bb7fdb7de=
+73ccf7fa8ad867811f 100644
+>> --- a/drivers/gpu/drm/imagination/pvr_device.c
+>> +++ b/drivers/gpu/drm/imagination/pvr_device.c
+>> @@ -23,6 +23,7 @@
+>>  #include <linux/firmware.h>
+>>  #include <linux/gfp.h>
+>>  #include <linux/interrupt.h>
+>> +#include <linux/of.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/reset.h>
+>> @@ -121,21 +122,6 @@ static int pvr_device_clk_init(struct pvr_device =
+*pvr_dev)
+>>         return 0;
+>>  }
+>>
+>> -static int pvr_device_reset_init(struct pvr_device *pvr_dev)
+>> -{
+>> -       struct drm_device *drm_dev =3D from_pvr_device(pvr_dev);
+>> -       struct reset_control *reset;
+>> -
+>> -       reset =3D devm_reset_control_get_optional_exclusive(drm_dev->d=
+ev, NULL);
+>> -       if (IS_ERR(reset))
+>> -               return dev_err_probe(drm_dev->dev, PTR_ERR(reset),
+>> -                                    "failed to get gpu reset line\n")=
+;
+>> -
+>> -       pvr_dev->reset =3D reset;
+>> -
+>> -       return 0;
+>> -}
+>> -
+>>  /**
+>>   * pvr_device_process_active_queues() - Process all queue related eve=
+nts.
+>>   * @pvr_dev: PowerVR device to check
+>> @@ -618,6 +604,9 @@ pvr_device_init(struct pvr_device *pvr_dev)
+>>         struct device *dev =3D drm_dev->dev;
+>>         int err;
+>>
+>> +       /* Get the platform-specific data based on the compatible stri=
+ng. */
+>> +       pvr_dev->device_data =3D of_device_get_match_data(dev);
+>> +
+>>         /*
+>>          * Setup device parameters. We do this first in case other ste=
+ps
+>>          * depend on them.
+>> @@ -631,8 +620,7 @@ pvr_device_init(struct pvr_device *pvr_dev)
+>>         if (err)
+>>                 return err;
+>>
+>> -       /* Get the reset line for the GPU */
+>> -       err =3D pvr_device_reset_init(pvr_dev);
+>> +       err =3D pvr_dev->device_data->pwr_ops->init(pvr_dev);
+>>         if (err)
+>>                 return err;
+>>
+>> diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/dr=
+m/imagination/pvr_device.h
+>> index 7cb01c38d2a9c3fc71effe789d4dfe54eddd93ee..0c970255f90805a569d7d1=
+9e35ec5f4ca7f02f7a 100644
+>> --- a/drivers/gpu/drm/imagination/pvr_device.h
+>> +++ b/drivers/gpu/drm/imagination/pvr_device.h
+>> @@ -37,6 +37,9 @@ struct clk;
+>>  /* Forward declaration from <linux/firmware.h>. */
+>>  struct firmware;
+>>
+>> +/* Forward declaration from <linux/pwrseq/consumer.h> */
+>> +struct pwrseq_desc;
+>> +
+>>  /**
+>>   * struct pvr_gpu_id - Hardware GPU ID information for a PowerVR devi=
+ce
+>>   * @b: Branch ID.
+>> @@ -57,6 +60,14 @@ struct pvr_fw_version {
+>>         u16 major, minor;
+>>  };
+>>
+>> +/**
+>> + * struct pvr_device_data - Platform specific data associated with a =
+compatible string.
+>> + * @pwr_ops: Pointer to a structure with platform-specific power func=
+tions.
+>> + */
+>> +struct pvr_device_data {
+>> +       const struct pvr_power_sequence_ops *pwr_ops;
+>> +};
+>> +
+>>  /**
+>>   * struct pvr_device - powervr-specific wrapper for &struct drm_devic=
+e
+>>   */
+>> @@ -98,6 +109,9 @@ struct pvr_device {
+>>         /** @fw_version: Firmware version detected at runtime. */
+>>         struct pvr_fw_version fw_version;
+>>
+>> +       /** @device_data: Pointer to platform-specific data. */
+>> +       const struct pvr_device_data *device_data;
+>> +
+>>         /** @regs_resource: Resource representing device control regis=
+ters. */
+>>         struct resource *regs_resource;
+>>
+>> @@ -148,6 +162,14 @@ struct pvr_device {
+>>          */
+>>         struct reset_control *reset;
+>>
+>> +       /**
+>> +        * @pwrseq: Pointer to a power sequencer, if one is used.
+>> +        *
+>> +        * Note: This member should only be accessed when
+>> +        * IS_ENABLED(CONFIG_POWER_SEQUENCING) is true.
+>> +        */
+>=20
+> This looks like something that should be taken care of by the pwrseq in=
+terface?
+>=20
+> Ideally there should be stub functions, when CONFIG_POWER_SEQUENCING
+> is unset, right?
+
+This one is my fault, I was just reviewing from the patches when I
+requested that note and didn't appreciate that the pwrseq header
+includes stubbed-out functions already. Lesson learned.
+
+>=20
+>> +       struct pwrseq_desc *pwrseq;
+>> +
+>>         /** @irq: IRQ number. */
+>>         int irq;
+>>
+>> diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/i=
+magination/pvr_drv.c
+>> index b058ec183bb30ab5c3db17ebaadf2754520a2a1f..af830e565646daf1955519=
+7df492438ef48d5e44 100644
+>> --- a/drivers/gpu/drm/imagination/pvr_drv.c
+>> +++ b/drivers/gpu/drm/imagination/pvr_drv.c
+>> @@ -1480,15 +1480,37 @@ static void pvr_remove(struct platform_device =
+*plat_dev)
+>>         pvr_power_domains_fini(pvr_dev);
+>>  }
+>>
+>> +static const struct pvr_device_data pvr_device_data_manual =3D {
+>> +       .pwr_ops =3D &pvr_power_sequence_ops_manual,
+>> +};
+>> +
+>> +#if IS_ENABLED(CONFIG_POWER_SEQUENCING)
+>=20
+> Ditto.
+>=20
+>> +static const struct pvr_device_data pvr_device_data_pwrseq =3D {
+>> +       .pwr_ops =3D &pvr_power_sequence_ops_pwrseq,
+>> +};
+>> +#endif
+>> +
+>>  static const struct of_device_id dt_match[] =3D {
+>> -       { .compatible =3D "img,img-rogue", .data =3D NULL },
+>> +#if IS_ENABLED(CONFIG_POWER_SEQUENCING)
+>=20
+> Ditto.
+>=20
+> I don't see anything wrong with allowing the driver to probe with the
+> compatible below.
+>=20
+> When it then tries to hook up a pwrseq handle and fails, then the
+> probe function should fail. Right?
+>=20
+>> +       {
+>> +               .compatible =3D "thead,th1520-gpu",
+>> +               .data =3D &pvr_device_data_pwrseq,
+>> +       },
+>> +#endif
+>> +       {
+>> +               .compatible =3D "img,img-rogue",
+>> +               .data =3D &pvr_device_data_manual,
+>> +       },
+>>
+>>         /*
+>>          * This legacy compatible string was introduced early on befor=
+e the more generic
+>>          * "img,img-rogue" was added. Keep it around here for compatib=
+ility, but never use
+>>          * "img,img-axe" in new devicetrees.
+>>          */
+>> -       { .compatible =3D "img,img-axe", .data =3D NULL },
+>> +       {
+>> +               .compatible =3D "img,img-axe",
+>> +               .data =3D &pvr_device_data_manual,
+>> +       },
+>>         {}
+>>  };
+>>  MODULE_DEVICE_TABLE(of, dt_match);
+>> @@ -1513,4 +1535,5 @@ MODULE_DESCRIPTION(PVR_DRIVER_DESC);
+>>  MODULE_LICENSE("Dual MIT/GPL");
+>>  MODULE_IMPORT_NS("DMA_BUF");
+>>  MODULE_FIRMWARE("powervr/rogue_33.15.11.3_v1.fw");
+>> +MODULE_FIRMWARE("powervr/rogue_36.52.104.182_v1.fw");
+>>  MODULE_FIRMWARE("powervr/rogue_36.53.104.796_v1.fw");
+>> diff --git a/drivers/gpu/drm/imagination/pvr_power.c b/drivers/gpu/drm=
+/imagination/pvr_power.c
+>> index 187a07e0bd9adb2f0713ac2c8e091229f4027354..58e0e812894de19c834e1d=
+fca427208b343eaa1c 100644
+>> --- a/drivers/gpu/drm/imagination/pvr_power.c
+>> +++ b/drivers/gpu/drm/imagination/pvr_power.c
+>> @@ -18,6 +18,9 @@
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pm_domain.h>
+>>  #include <linux/pm_runtime.h>
+>> +#if IS_ENABLED(CONFIG_POWER_SEQUENCING)
+>> +#include <linux/pwrseq/consumer.h>
+>> +#endif
+>>  #include <linux/reset.h>
+>>  #include <linux/timer.h>
+>>  #include <linux/types.h>
+>> @@ -234,6 +237,132 @@ pvr_watchdog_init(struct pvr_device *pvr_dev)
+>>         return 0;
+>>  }
+>>
+>> +static int pvr_power_init_manual(struct pvr_device *pvr_dev)
+>> +{
+>> +       struct drm_device *drm_dev =3D from_pvr_device(pvr_dev);
+>> +       struct reset_control *reset;
+>> +
+>> +       reset =3D devm_reset_control_get_optional_exclusive(drm_dev->d=
+ev, NULL);
+>> +       if (IS_ERR(reset))
+>> +               return dev_err_probe(drm_dev->dev, PTR_ERR(reset),
+>> +                                    "failed to get gpu reset line\n")=
+;
+>> +
+>> +       pvr_dev->reset =3D reset;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int pvr_power_on_sequence_manual(struct pvr_device *pvr_dev)
+>> +{
+>> +       int err;
+>> +
+>> +       err =3D clk_prepare_enable(pvr_dev->core_clk);
+>> +       if (err)
+>> +               return err;
+>> +
+>> +       err =3D clk_prepare_enable(pvr_dev->sys_clk);
+>> +       if (err)
+>> +               goto err_core_clk_disable;
+>> +
+>> +       err =3D clk_prepare_enable(pvr_dev->mem_clk);
+>> +       if (err)
+>> +               goto err_sys_clk_disable;
+>> +
+>> +       /*
+>> +        * According to the hardware manual, a delay of at least 32 cl=
+ock
+>> +        * cycles is required between de-asserting the clkgen reset an=
+d
+>> +        * de-asserting the GPU reset. Assuming a worst-case scenario =
+with
+>> +        * a very high GPU clock frequency, a delay of 1 microsecond i=
+s
+>> +        * sufficient to ensure this requirement is met across all
+>> +        * feasible GPU clock speeds.
+>> +        */
+>> +       udelay(1);
+>> +
+>> +       err =3D reset_control_deassert(pvr_dev->reset);
+>> +       if (err)
+>> +               goto err_mem_clk_disable;
+>> +
+>> +       return 0;
+>> +
+>> +err_mem_clk_disable:
+>> +       clk_disable_unprepare(pvr_dev->mem_clk);
+>> +
+>> +err_sys_clk_disable:
+>> +       clk_disable_unprepare(pvr_dev->sys_clk);
+>> +
+>> +err_core_clk_disable:
+>> +       clk_disable_unprepare(pvr_dev->core_clk);
+>> +
+>> +       return err;
+>> +}
+>> +
+>> +static int pvr_power_off_sequence_manual(struct pvr_device *pvr_dev)
+>> +{
+>> +       int err;
+>> +
+>> +       err =3D reset_control_assert(pvr_dev->reset);
+>> +
+>> +       clk_disable_unprepare(pvr_dev->mem_clk);
+>> +       clk_disable_unprepare(pvr_dev->sys_clk);
+>> +       clk_disable_unprepare(pvr_dev->core_clk);
+>> +
+>> +       return err;
+>> +}
+>> +
+>> +const struct pvr_power_sequence_ops pvr_power_sequence_ops_manual =3D=
+ {
+>> +       .init =3D pvr_power_init_manual,
+>> +       .power_on =3D pvr_power_on_sequence_manual,
+>> +       .power_off =3D pvr_power_off_sequence_manual,
+>> +};
+>> +
+>> +#if IS_ENABLED(CONFIG_POWER_SEQUENCING)
+>=20
+> Again, this should not be needed. Instead, the call to
+> devm_pwrseq_get() should return an error from a stub function if
+> CONFIG_POWER_SEQUENCING is not set, right?
+>=20
+> The similar should apply to pwrseq_power_on|off(), right?
+>=20
+>> +static int pvr_power_init_pwrseq(struct pvr_device *pvr_dev)
+>> +{
+>> +       struct device *dev =3D from_pvr_device(pvr_dev)->dev;
+>> +
+>> +       pvr_dev->pwrseq =3D devm_pwrseq_get(dev, "gpu-power");
+>> +       if (IS_ERR(pvr_dev->pwrseq)) {
+>> +               /*
+>> +                * This platform requires a sequencer. If we can't get=
+ it, we
+>> +                * must return the error (including -EPROBE_DEFER to w=
+ait for
+>> +                * the provider to appear)
+>> +                */
+>> +               return dev_err_probe(dev, PTR_ERR(pvr_dev->pwrseq),
+>> +                                    "Failed to get required power seq=
+uencer\n");
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int pvr_power_on_sequence_pwrseq(struct pvr_device *pvr_dev)
+>> +{
+>> +       return pwrseq_power_on(pvr_dev->pwrseq);
+>> +}
+>> +
+>> +static int pvr_power_off_sequence_pwrseq(struct pvr_device *pvr_dev)
+>> +{
+>> +       return pwrseq_power_off(pvr_dev->pwrseq);
+>> +}
+>> +
+>> +const struct pvr_power_sequence_ops pvr_power_sequence_ops_pwrseq =3D=
+ {
+>> +       .init =3D pvr_power_init_pwrseq,
+>> +       .power_on =3D pvr_power_on_sequence_pwrseq,
+>> +       .power_off =3D pvr_power_off_sequence_pwrseq,
+>> +};
+>> +#else /* IS_ENABLED(CONFIG_POWER_SEQUENCING) */
+>> +static int pvr_power_sequence_stub(struct pvr_device *pvr_dev)
+>> +{
+>> +       WARN_ONCE(1, "pwrseq support not enabled in kernel config\n");=
+
+>> +       return -EOPNOTSUPP;
+>> +}
+>> +
+>> +const struct pvr_power_sequence_ops pvr_power_sequence_ops_pwrseq =3D=
+ {
+>> +       .init =3D pvr_power_sequence_stub,
+>> +       .power_on =3D pvr_power_sequence_stub,
+>> +       .power_off =3D pvr_power_sequence_stub,
+>> +};
+>> +#endif /* IS_ENABLED(CONFIG_POWER_SEQUENCING) */
+>=20
+> Yeah, this looks really messy to me.
+>=20
+> If there is something missing in the pwrseq interface to make this
+> simpler, let's add that instead of having to keep this if/def hacks
+> around.
+
+Agreed (now that I've actually done my homework), I see no reason to
+keep the IS_ENABLED(...) checks around.
+
+Cheers,
+Matt
+
+>=20
+> [...]
+>=20
+> Other than the if/def hacks, I think this looks good to me!
+>=20
+> Kind regards
+> Uffe
+
+
+--=20
+Matt Coster
+E: matt.coster@imgtec.com
+
+--------------HSLxHC03v0J1ufjRUGumkuRv--
+
+--------------pO1n71RM0RGpVh08a2JDY0fO
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCaKbgugUDAAAAAAAKCRB5vBnz2d5qsCto
+AP95CAYLSlqylQy/qCleff4Zke9TydtB5uBHBHZpSrDo3AD+K3p8QEhLiR+h+EqBS58mw9YblP1J
+sKb/hAUjU0lO8g8=
+=Fupx
+-----END PGP SIGNATURE-----
+
+--------------pO1n71RM0RGpVh08a2JDY0fO--
 
