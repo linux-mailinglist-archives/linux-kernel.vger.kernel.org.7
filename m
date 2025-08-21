@@ -1,305 +1,244 @@
-Return-Path: <linux-kernel+bounces-779151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9583EB2EFC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:34:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB5AFB2EFB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A9B25E7DA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:32:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59F9B7A36E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37A92EA468;
-	Thu, 21 Aug 2025 07:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6762925783F;
+	Thu, 21 Aug 2025 07:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iH4ZeaPa"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NFUU7H36"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013041.outbound.protection.outlook.com [52.101.83.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292432E8DFA;
-	Thu, 21 Aug 2025 07:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755761491; cv=none; b=hZpAVtIYITS58VrGEP5O7Dc7pU77Gntq7kN0JF384u3PTHV1POpRqzdJFLsbEW2ycou7W6eCPMSR4ffZdiewWZjkUtFYZz5Lq9EEw6eKU6++LOialESA4q1XuShevvpOyLj/Mr/7g2KZJc9nMSEFKgf2g6eyPxicXkf3Esi46a0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755761491; c=relaxed/simple;
-	bh=Bmup3zTtr8ZOHU7szSWCp6L/22E8IeBocLNjAmRD/tg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ih/a5Y20MxZv+8mC3UdQfHRqu2y8X2rRwM3MEIOM3LQs2kCOuEfS9XMB38oxeZ9atDIUIp04FoYrqsLVyH3ibKt8xbUeXxplur3aeEdFihYorsmlQ8pYSnKxFnrl8Wua9oTVMxdu3LoY7FR/bf4VwVVn+0mFUi2OiU0RbkxI6QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iH4ZeaPa; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b0c8867so4822415e9.3;
-        Thu, 21 Aug 2025 00:31:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755761487; x=1756366287; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j3AY6EOb7TA3Vk/44dz1/Kzv3q8Ug/SBekAw+P0yOWU=;
-        b=iH4ZeaPal/apcRiOz3M4FeXysB3FfkQ4QQYSQvJH5wiDg1YTNPxBEd3J5VaI8qm/ds
-         3+eeeLNoHEP9VVVv7dszkARkuptNHPH10199VKnzEDs9iX2mAgqx2f2LnfXRiwXxoYwW
-         mOIIfluahS2qm04/z6CgbyX0T7x9Yqfly6kl+r1Ol1NIuktA4xBykzaN8JHWmVABByQ7
-         wovymeRf6oBDQq/h+PkDU2aOmzodv9K1pybwvbxs+XCy4gone0/S1CzN+ueWk+ZcGZpD
-         kMx4vS0byVQMquDGbbuxpK5dgSm5/1bIV/vRRLIgikDVpAb1MeEANc1DU3bdFAo8I9NB
-         Ud9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755761487; x=1756366287;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j3AY6EOb7TA3Vk/44dz1/Kzv3q8Ug/SBekAw+P0yOWU=;
-        b=idtiLhb9H2TBe7drU3IP+qEFlYXpB5ZL0GjyrA2M2fKrRsmEMDwZgORXJW0RG7Xji3
-         XPGJhfvRgNtmJEAv1Mjr0U5kq8G6va3uMt6Fo2ZSee+F2w1aSqfKpwtAkW/Kc8/RJz/t
-         +RdUY64Hs/DoELbsMCrHD7JiIJ06g/essYibOv6d6J2nOKYPDRpE64P2EOB1/oqBgb40
-         5a+BTI4vOp41j9qsLvPRbiZC9HfnUIkqAtrAncqn9mzTxLeWKsVB8DqvjK4lCLpsW23V
-         W+eSHbt3seMdo43Zq5uQkY9VdGkrFUztresrbRP7DuV45fWQd2xyurZhbgHCSDGDwwQT
-         0kQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2kOhuoDdPzjleGZKRWDTnic6AydAcsAyVscwoP0TIZcuVvHFhcbyCSZoDRa2nXzhf4zfnhMXj0vSQfA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwylNpbbxARLow+Y8RXc1KjUn5JvW9s6dSwTcuM6zUgy6HJLGwj
-	fRlKEcIvh8Nu5Rj4FO/6lubvsG2ZaAsA94WgE6rztNknC9mvYSi8RkD1njjaAQ==
-X-Gm-Gg: ASbGnctjRR+G3aIMGgY2h39x1NylIUPR+RUYtrcil5zUWkCl9vXBS50O3u24vDajKnV
-	CxdtZ+kK+PvbXCepq2TmlOJQ2JMCSTr0sYq/qVFqXIFU9oenkOSOS4/sqoBn6d8ev+fhtcBMQK3
-	MmcvjS9y4PiXIxmCcpjahkl/fScX+LgucCjXj6CuMeZ4GBd/OICT+03/h4X24APdC3k3NdAc6GY
-	MdySzqr1RvLDXt/IOvfpi52MhWVFCbNjbMhSBuNbClnKNfWsCXEyz6XPO5ALEMb8I9URStYZZpp
-	nWXHBiz0Z9nl8MJQMu5xT6zmytafFNy+p3TI0A6mmXPOt3VCh1PS6Q0NPTgP3vC61h1zbah+ssz
-	V2OjI0ksuKnUyCw==
-X-Google-Smtp-Source: AGHT+IEA6K2pX3lP5oONFfM9qMeCQu6OcRiAOhoIM3+7Z7qv/kdyGKHh723MIEBCgLKJPj8uK5Xl9Q==
-X-Received: by 2002:a05:600c:4f03:b0:458:c059:7d9c with SMTP id 5b1f17b1804b1-45b4d7d5e3emr9027515e9.6.1755761487275;
-        Thu, 21 Aug 2025 00:31:27 -0700 (PDT)
-Received: from localhost ([45.84.137.104])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4db1be26sm16421495e9.5.2025.08.21.00.31.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 00:31:26 -0700 (PDT)
-From: Richard Gobert <richardbgobert@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	corbet@lwn.net,
-	saeedm@nvidia.com,
-	tariqt@nvidia.com,
-	mbloch@nvidia.com,
-	leon@kernel.org,
-	ecree.xilinx@gmail.com,
-	dsahern@kernel.org,
-	ncardwell@google.com,
-	kuniyu@google.com,
-	shuah@kernel.org,
-	sdf@fomichev.me,
-	aleksander.lobakin@intel.com,
-	florian.fainelli@broadcom.com,
-	willemdebruijn.kernel@gmail.com,
-	alexander.duyck@gmail.com,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F372E7261A;
+	Thu, 21 Aug 2025 07:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755761559; cv=fail; b=uJw/Td7YrUAJp0ipiYc6YAgW7kbNzj34DsBkKLMqh4HMN8ER7KtU9d75nNfO6rPb7LaMPeQ/jdnLCr5Uq0tZCohLNkJVI1YblpFGhYhcxJftPIJX35LeB6IWseSaK8+/ITfUbhtgamiM2oMJgsLLch125TAneWQFvEKxrSergmY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755761559; c=relaxed/simple;
+	bh=Moch1DiwBzmuR7XIUWkvhAZEwCPo9j2ykvsI7Ad/Hmg=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=H2Ick/QuYvwpyQheEH3B1CslfJOLO8NtjK8Agp6zvK1VnHcibqVD/QjQaTdegPL3lBAzLlgOKJFFxX04n+/stMU5XuHIZnqLwJbtUf0NX2T4Wy8BoPebl4LKHfXEGZ/fGDkxnmA7ersc49ZVnrfCyiIFIPhDHf8BvhehXmasLyo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NFUU7H36; arc=fail smtp.client-ip=52.101.83.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v3ZuufFqELjKgu+mZqIsyEMoyllCZQTSrOakwQWc43rDQkXahWz8R35HOHqmPEjgG6QslKUhRqv3xM80va/YdjcjP7UWapzlTyVAvstP8q+juWD1VQs4cICxy9rm6zeNxtJtLgCmv+4xFPMI+y17CaNe8o/9PdELygD46bbKzfA6slW/rkgQR3ZI09A/h5lBapbrSa8iJsVZGjSbqXgbb90aZ2fvmP6MnH1KlUzcn/E/jL+gFKChqAWAPtX/ktTmOX5bM3srVTkGs+LpqIZO5hcNr1mtKd8Z4N51LDWY0EzSUaM4OUPzNVoyFl8opaQ1FFn9GeFXjePD6NIq4GY/kQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t7eGh27JFpJchx4tzC/K2tkkcR51sNynsSDLtMpHPPY=;
+ b=qP7ggRKlx+BYuTCNe7/OpZVYUDVVrNPnyzncDMwHRcgnRHivwFsQrmUdbCcBnvEoJio4SfeDeuRP8A6m8sVrhsxdKa0zRVY78c45f28vzVbiJRodiuDN6jRs4KYqwkUdB6/dDTk2udp/UdTqSTeaS/4gJ1b1S5n8XNaimxIVkB1SR6gdc7SefPnkItM60gl5/r0eHAvt2CG03StJ6xbIRMUhT+iYWwLf+zGPlV4Ou8LTHZFo8VxUwUzLM8gxrpO1l/J831eK48A8dfVb0XcseNoemgCz2hgz5owE751grs/hUwFSGgkqLEP6lYlDWEJIQKzmIOdhVmwDx8DK1/KeDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t7eGh27JFpJchx4tzC/K2tkkcR51sNynsSDLtMpHPPY=;
+ b=NFUU7H36eBYtlmnsRvTPyA/zWK7hV6BK1ACPovRp2bGsoWDmd0odM5fAF7RV8G+n53O4IIP3H70w9WkI+OZxuOxQilsdgAT54Em6RjFcx0cVGD962AA/p2YIhgkFjXGHLBYb1svPtIYcIAroGVfxWhHwyUTCewkZErC+Wn6fS/M4L6VPZPw0aDp21B6/zIXWDHpxlYi//qs2JxdPPwMGdWxQnsN7FoeZqws/R11/V10sy2FRyareZcg2PSFEzsXCj59HvM7tzxEO2Gu0qC3Ij2USoSRsO7lrBDHDt62TY2oDY8uYxsVH8TS2S6SJEgx8JjKlpGZKFUUhL4i5SP4n3g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
+ by DB9PR04MB9377.eurprd04.prod.outlook.com (2603:10a6:10:36b::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
+ 2025 07:32:33 +0000
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891%5]) with mapi id 15.20.9052.014; Thu, 21 Aug 2025
+ 07:32:33 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	lumag@kernel.org,
+	dianders@chromium.org,
+	cristian.ciocaltea@collabora.com,
+	luca.ceresoli@bootlin.com,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	linux-net-drivers@amd.com,
-	Richard Gobert <richardbgobert@gmail.com>
-Subject: [PATCH net-next v3 5/5] selftests/net: test ipip packets in gro.sh
-Date: Thu, 21 Aug 2025 09:30:47 +0200
-Message-Id: <20250821073047.2091-6-richardbgobert@gmail.com>
-In-Reply-To: <20250821073047.2091-1-richardbgobert@gmail.com>
-References: <20250821073047.2091-1-richardbgobert@gmail.com>
+	victor.liu@nxp.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org,
+	l.stach@pengutronix.de,
+	shengjiu.wang@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH v5 0/7] drm/bridge: imx: Add HDMI PAI driver on i.MX8MP
+Date: Thu, 21 Aug 2025 15:31:24 +0800
+Message-Id: <20250821073131.2550798-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0021.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::19) To AM0PR04MB7044.eurprd04.prod.outlook.com
+ (2603:10a6:208:191::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|DB9PR04MB9377:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae33616e-b249-4a31-83b6-08dde084e495
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|1800799024|19092799006|7416014|52116014|376014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?zH22DUTEoWLcsfAniVDj7hdpSuq9NbvHQPxD/+4RvdQtaAeCX+SjKdMs8te1?=
+ =?us-ascii?Q?9LNnTyFb8YX5o4xakDrvn9kYOI9FUSlLxypqx1FwyE6XpPywf7/S7NvUlreU?=
+ =?us-ascii?Q?RZLY8RBLiwl1BrY6/aeVSqvFuEjb8Tg7aXKqMOWYwB9bh54JFqkjvUC8vx2Q?=
+ =?us-ascii?Q?waDS88xfcC1bWx8a0D16jsY8qRoQlI9iqWzCMUHO8241RA7tophkjkDTqcKN?=
+ =?us-ascii?Q?xcTDcqrDpdyqZ2xI41W5FopZFnjQ5mcnI5gsLnEbT0WU8ocfShsOZaYAWagB?=
+ =?us-ascii?Q?WtwLbWs5zOgcQF3RFCryB6vzm7Ye2wvJx+bAWvaVBvNgeLpt/MxO/IacNBXf?=
+ =?us-ascii?Q?nLseozTYrnvoAbxvZN/MdpiRiwP7k3EWap+Qovj50rjWRwz2QBQOZULhlHgu?=
+ =?us-ascii?Q?YO/nwnRwqqsytHcc6lN9hgXhhSpADALtf396ipfFL2NGPQkRhBCVIZVxMiuQ?=
+ =?us-ascii?Q?NqKikxmt2rgjz8ZVTTeXMLcBk7ODCBZVZMoVneQ5pu17cGYPvUWmf7NAx7h6?=
+ =?us-ascii?Q?Te4t3/aUd54w2+XuHFIDfa+A68Du6ocao8QBwJAReR0deHMcjiZcqSiEvKpH?=
+ =?us-ascii?Q?8j2XJSVpmE18wPFuQtg+v0Y42XGbaVtN4+7+BweXFfTY6fz6ZCnhry5I7Ig2?=
+ =?us-ascii?Q?3z9vB/rDnhMUsyd1sXSL86EIk1WyMFKY+eN1IiJCL3joUMNKMd7m6iDSd6iQ?=
+ =?us-ascii?Q?W52KxiMY2MNrgncJKN8/CsaQzTCPJQbCVXfoAdE2ZB3gkTjv7JCA+LgdxzAN?=
+ =?us-ascii?Q?ZT0DyX8D4FIfr00xEsfs1Ac3Jjl+fZypVeQof3FdopMvvQNzCg7IKSc2Xs3s?=
+ =?us-ascii?Q?eQtJ2uwLLYROUTE6qy4nKSHYm1Az448XV+H8gmS6EanLp+ynIrXMLoFGjq8v?=
+ =?us-ascii?Q?rzna1shn2hdh7i/uCMITh6NBsyg9/ed6jzDTw1VS+lKonzRbamjBwt5e008b?=
+ =?us-ascii?Q?RYjDkhXDmaDdn4MzudTOXlqmT9AIxHe0pO3goapKjcRjqfd/OwSXsP208Hn1?=
+ =?us-ascii?Q?MlYy0bQ+f5EUjeaaBh4Lv/D1+p5qa5KHvxZN+8N4yElvhlWYwc9SrXkf1YFD?=
+ =?us-ascii?Q?B0oGKCj//xHfvrTWTvqvy5n/7oXLTQ+LAmNp77OVy+wu6D3kHecjatzu3yaL?=
+ =?us-ascii?Q?35gLPMMPx8j1VmJF/KBIePVF871M5+2fZC1l9vwkuklOUlk25B7mdSTpeYQ6?=
+ =?us-ascii?Q?sXTlOI0FTPUc8gmLJUdYfFf85CF+NJ/qX6EhcOMtCbLGwh3XbDho/WcPCx2X?=
+ =?us-ascii?Q?c9fBu9SuvfGpdgrzmI7i6oIOYZv70b44MtwtRmAOR5ZMLiQDZlu97YVcoIYQ?=
+ =?us-ascii?Q?CI0fL0nzoy9ls3AMz3UTlUZSBIH53u9BbICVm9394XHiZoF2RhV7XJbOOsT0?=
+ =?us-ascii?Q?lPmzQyFzlAm6IUuYwYqc1NFk4OVXjywnPTk1BSgJ8SPzmjwGRkyza7MlhO+0?=
+ =?us-ascii?Q?QnQTjrCXWnJIyu3FkjjxNrpOx041vsdxdDV7dT8c4w2Sro+hToZHBypxEHyq?=
+ =?us-ascii?Q?fx7/ZoKg1VSlnec=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(7416014)(52116014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?N0k6xm+NlY5HCjDJ7lcabbFviCxewxt7g0QM+5n8B8YvJKYz+a3Qj4lTB7QT?=
+ =?us-ascii?Q?Z3gf+4B0XwpY6X0wEyoKKzi15nGqcZfZq5WOR5c5ZoXm+Q1Nt87KO3USFn0G?=
+ =?us-ascii?Q?eBWM47A1emyklfa2KkwpMJQ4MLaSA77yzolaZDct65y7Hbko/SbvaCY/MFLo?=
+ =?us-ascii?Q?vOo33c0qIYOvQjbpL+AsETWI8cNE+iwGrMgEUb+TOJqUPBsU94xtdXvOq3Of?=
+ =?us-ascii?Q?k7TNK2ER91sbzwDJ/j4LKbnmb7iVLuZMeJtdNOJHUBN1J3wFol4e4fHQZqhL?=
+ =?us-ascii?Q?rJIA/YhvUMXEXvILv3lg5wQQcOo6eOx/WlVfd/2XwN7d+RuBXcCyXtpHRFwh?=
+ =?us-ascii?Q?Gk76nY6zQXKnr9V9RYR7HLaorIYjKtMImVUkhm0Dp18a8X4X4XiH1umtDUMm?=
+ =?us-ascii?Q?4W0wCOzCvegEcQsn/2CfoItnFBlq2c7ClLqKBCxJYHhGUYlnbfeAInU7Sjcu?=
+ =?us-ascii?Q?6dirrGCdvey2ms0E/1Cxh4MF7XzKDU1gMUF/Kxyx4fIyT4VEjyc4/lDLxyPO?=
+ =?us-ascii?Q?qfqGABmxwH/vZp416pE3Kk2FN07tLEPOTW8pw0/47aJ7iEsyX1MtyhlSAp0b?=
+ =?us-ascii?Q?cek4S30Jw4uIUXoywjkaOPfo0/yBCwaHpqf/WIfh4v/9RPg+bqhFuALeOLFC?=
+ =?us-ascii?Q?VyjlWPscyC/CrZrtJx3UXRh8uupF6qZOkp4Y+hRb6JXLFSRLb6I5/AU+/h8E?=
+ =?us-ascii?Q?RVwUpwuztiTCFmV+WjNMp63KfYjwjB3dqLfAnIQZW55Dw3uVZaDC9W7JVmlv?=
+ =?us-ascii?Q?S+jaHVzK1sYrIynlxiE1r7Kkle1+Jh60rmoWeddTxFqkQFYTQv1AUlSrXc84?=
+ =?us-ascii?Q?H4KMhiIoKSnj8tCiMBIa0Qa3WfkXBYv3AmYNK6AI65TMJJVVgsxvsdzoKk28?=
+ =?us-ascii?Q?gQJiKnMqdiFVrl6uXr3jxcK6CBqjTbGyVsEuhhDBekU8NVhsT/M6EEXmLMUy?=
+ =?us-ascii?Q?/9HOmo378Uwqn1EpYmuMhtpQuq6sjq25XsQbdDr2npxr7XYnIPc0SNPSxDBA?=
+ =?us-ascii?Q?7sEZpa+F7BMi6vxdbGcnsmQF4r9D+tPNAuJlRQrWq7JXqBmWjxG7rFMUqvUq?=
+ =?us-ascii?Q?BRbhL8NhiJRi0/qtX43sC1WBnMKNywFeBkvLXtRPgNV+xvdUyOPs7Zs3VaRe?=
+ =?us-ascii?Q?D8rEYXgeC8IdD9k8/AOcKcRragfH4WfAc3tTZsQbk3abvtmQu3z3J2D0b2yQ?=
+ =?us-ascii?Q?oevAF8ERiqPfvGp/wqiigdUi/hNJAK/12QRvgW9lg0iM86S7ZaY+ELzk8Nmw?=
+ =?us-ascii?Q?tA6gu4Ue3h0e8liT5lZywLSHSz6a5FQoCoea++d7ipOgACAQzcD+KVrPMJh0?=
+ =?us-ascii?Q?8Z9BAi/vHPBf5AdJVAU5CDlI+gsvz4YiDJi2BMq6sWzLWTaHfe4CwsoBfRaK?=
+ =?us-ascii?Q?N2tAEwmoe43Y+fUDeltRk5z7ucawvVUSVNgH3OCyLI6ZjCq/tsjTKCJAeBIT?=
+ =?us-ascii?Q?Psx4/iGgspLk+JmEA90FBf4/4GXEcqySWCEnTByy67m+spGiTOGpVwLjluz8?=
+ =?us-ascii?Q?Z7hGPceyuOTNSesaILn239hDnQ9aH4Axc2VMYY/DGlpOjgJyGLmklOGGqYad?=
+ =?us-ascii?Q?Y2tONLOM793lSqvZatCiqqlzTT2tO7BlQofqFipW?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae33616e-b249-4a31-83b6-08dde084e495
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 07:32:33.3874
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YuLMJeiHiUtTGu829qjHqGXlAvtzmVp4QVzyoOSZNeZZInG98wbBZFlr5jNhnynSj+fC1/9PyXrfa/3yGihLEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9377
 
-Add IPIP test-cases to the GRO selftest.
+The HDMI TX Parallel Audio Interface (HTX_PAI) is a digital module that
+acts as the bridge between the Audio Subsystem to the HDMI TX Controller.
 
-This selftest already contains IP ID test-cases. They are now
-also tested for encapsulated packets.
+Add HDMI PAI driver on i.MX8MP to make HDMI audio function fully work.
 
-This commit also fixes ipip packet generation in the test.
+changes in v5:
+- add empty line commit message for patch 7
+- remove blank line in dts node
+- add component_unbind_all when dw_hdmi_probe return error
 
-Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
----
- tools/testing/selftests/net/gro.c  | 49 ++++++++++++++++++++++++------
- tools/testing/selftests/net/gro.sh |  5 +--
- 2 files changed, 42 insertions(+), 12 deletions(-)
+changes in v4:
+- separate dts for soc and board
+- bind hdmi_pai with hdmi_tx by moving some code to .bind() and .unbind()
+- add "select DRM_DW_HDMI" to fix build error reported by test robot
+- remove unnecessary code/definition in pai driver
 
-diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
-index 3d4a82a2607c..451dc1c1eac5 100644
---- a/tools/testing/selftests/net/gro.c
-+++ b/tools/testing/selftests/net/gro.c
-@@ -93,6 +93,7 @@ static bool tx_socket = true;
- static int tcp_offset = -1;
- static int total_hdr_len = -1;
- static int ethhdr_proto = -1;
-+static bool ipip;
- static const int num_flush_id_cases = 6;
- 
- static void vlog(const char *fmt, ...)
-@@ -114,7 +115,9 @@ static void setup_sock_filter(int fd)
- 	int ipproto_off, opt_ipproto_off;
- 	int next_off;
- 
--	if (proto == PF_INET)
-+	if (ipip)
-+		next_off = sizeof(struct iphdr) + offsetof(struct iphdr, protocol);
-+	else if (proto == PF_INET)
- 		next_off = offsetof(struct iphdr, protocol);
- 	else
- 		next_off = offsetof(struct ipv6hdr, nexthdr);
-@@ -244,7 +247,7 @@ static void fill_datalinklayer(void *buf)
- 	eth->h_proto = ethhdr_proto;
- }
- 
--static void fill_networklayer(void *buf, int payload_len)
-+static void fill_networklayer(void *buf, int payload_len, int protocol)
- {
- 	struct ipv6hdr *ip6h = buf;
- 	struct iphdr *iph = buf;
-@@ -254,7 +257,7 @@ static void fill_networklayer(void *buf, int payload_len)
- 
- 		ip6h->version = 6;
- 		ip6h->payload_len = htons(sizeof(struct tcphdr) + payload_len);
--		ip6h->nexthdr = IPPROTO_TCP;
-+		ip6h->nexthdr = protocol;
- 		ip6h->hop_limit = 8;
- 		if (inet_pton(AF_INET6, addr6_src, &ip6h->saddr) != 1)
- 			error(1, errno, "inet_pton source ip6");
-@@ -266,7 +269,7 @@ static void fill_networklayer(void *buf, int payload_len)
- 		iph->version = 4;
- 		iph->ihl = 5;
- 		iph->ttl = 8;
--		iph->protocol	= IPPROTO_TCP;
-+		iph->protocol	= protocol;
- 		iph->tot_len = htons(sizeof(struct tcphdr) +
- 				payload_len + sizeof(struct iphdr));
- 		iph->frag_off = htons(0x4000); /* DF = 1, MF = 0 */
-@@ -313,9 +316,19 @@ static void create_packet(void *buf, int seq_offset, int ack_offset,
- {
- 	memset(buf, 0, total_hdr_len);
- 	memset(buf + total_hdr_len, 'a', payload_len);
-+
- 	fill_transportlayer(buf + tcp_offset, seq_offset, ack_offset,
- 			    payload_len, fin);
--	fill_networklayer(buf + ETH_HLEN, payload_len);
-+
-+	if (ipip) {
-+		fill_networklayer(buf + ETH_HLEN + sizeof(struct iphdr),
-+				  payload_len, IPPROTO_TCP);
-+		fill_networklayer(buf + ETH_HLEN, payload_len + sizeof(struct iphdr),
-+				  IPPROTO_IPIP);
-+	} else {
-+		fill_networklayer(buf + ETH_HLEN, payload_len, IPPROTO_TCP);
-+	}
-+
- 	fill_datalinklayer(buf);
- }
- 
-@@ -416,6 +429,13 @@ static void recompute_packet(char *buf, char *no_ext, int extlen)
- 		iph->tot_len = htons(ntohs(iph->tot_len) + extlen);
- 		iph->check = 0;
- 		iph->check = checksum_fold(iph, sizeof(struct iphdr), 0);
-+
-+		if (ipip) {
-+			iph += 1;
-+			iph->tot_len = htons(ntohs(iph->tot_len) + extlen);
-+			iph->check = 0;
-+			iph->check = checksum_fold(iph, sizeof(struct iphdr), 0);
-+		}
- 	} else {
- 		ip6h->payload_len = htons(ntohs(ip6h->payload_len) + extlen);
- 	}
-@@ -777,7 +797,7 @@ static void send_fragment4(int fd, struct sockaddr_ll *daddr)
- 	 */
- 	memset(buf + total_hdr_len, 'a', PAYLOAD_LEN * 2);
- 	fill_transportlayer(buf + tcp_offset, PAYLOAD_LEN, 0, PAYLOAD_LEN * 2, 0);
--	fill_networklayer(buf + ETH_HLEN, PAYLOAD_LEN);
-+	fill_networklayer(buf + ETH_HLEN, PAYLOAD_LEN, IPPROTO_TCP);
- 	fill_datalinklayer(buf);
- 
- 	iph->frag_off = htons(0x6000); // DF = 1, MF = 1
-@@ -1071,7 +1091,7 @@ static void gro_sender(void)
- 		 * and min ipv6hdr size. Like MAX_HDR_SIZE,
- 		 * MAX_PAYLOAD is defined with the larger header of the two.
- 		 */
--		int offset = proto == PF_INET ? 20 : 0;
-+		int offset = (proto == PF_INET && !ipip) ? 20 : 0;
- 		int remainder = (MAX_PAYLOAD + offset) % MSS;
- 
- 		send_large(txfd, &daddr, remainder);
-@@ -1221,7 +1241,7 @@ static void gro_receiver(void)
- 			check_recv_pkts(rxfd, correct_payload, 2);
- 		}
- 	} else if (strcmp(testname, "large") == 0) {
--		int offset = proto == PF_INET ? 20 : 0;
-+		int offset = (proto == PF_INET && !ipip) ? 20 : 0;
- 		int remainder = (MAX_PAYLOAD + offset) % MSS;
- 
- 		correct_payload[0] = (MAX_PAYLOAD + offset);
-@@ -1250,6 +1270,7 @@ static void parse_args(int argc, char **argv)
- 		{ "iface", required_argument, NULL, 'i' },
- 		{ "ipv4", no_argument, NULL, '4' },
- 		{ "ipv6", no_argument, NULL, '6' },
-+		{ "ipip", no_argument, NULL, 'e' },
- 		{ "rx", no_argument, NULL, 'r' },
- 		{ "saddr", required_argument, NULL, 's' },
- 		{ "smac", required_argument, NULL, 'S' },
-@@ -1259,7 +1280,7 @@ static void parse_args(int argc, char **argv)
- 	};
- 	int c;
- 
--	while ((c = getopt_long(argc, argv, "46d:D:i:rs:S:t:v", opts, NULL)) != -1) {
-+	while ((c = getopt_long(argc, argv, "46d:D:ei:rs:S:t:v", opts, NULL)) != -1) {
- 		switch (c) {
- 		case '4':
- 			proto = PF_INET;
-@@ -1269,6 +1290,11 @@ static void parse_args(int argc, char **argv)
- 			proto = PF_INET6;
- 			ethhdr_proto = htons(ETH_P_IPV6);
- 			break;
-+		case 'e':
-+			ipip = true;
-+			proto = PF_INET;
-+			ethhdr_proto = htons(ETH_P_IP);
-+			break;
- 		case 'd':
- 			addr4_dst = addr6_dst = optarg;
- 			break;
-@@ -1304,7 +1330,10 @@ int main(int argc, char **argv)
- {
- 	parse_args(argc, argv);
- 
--	if (proto == PF_INET) {
-+	if (ipip) {
-+		tcp_offset = ETH_HLEN + sizeof(struct iphdr) * 2;
-+		total_hdr_len = tcp_offset + sizeof(struct tcphdr);
-+	} else if (proto == PF_INET) {
- 		tcp_offset = ETH_HLEN + sizeof(struct iphdr);
- 		total_hdr_len = tcp_offset + sizeof(struct tcphdr);
- 	} else if (proto == PF_INET6) {
-diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
-index 9e3f186bc2a1..d16ec365b3cf 100755
---- a/tools/testing/selftests/net/gro.sh
-+++ b/tools/testing/selftests/net/gro.sh
-@@ -4,7 +4,7 @@
- readonly SERVER_MAC="aa:00:00:00:00:02"
- readonly CLIENT_MAC="aa:00:00:00:00:01"
- readonly TESTS=("data" "ack" "flags" "tcp" "ip" "large")
--readonly PROTOS=("ipv4" "ipv6")
-+readonly PROTOS=("ipv4" "ipv6" "ipip")
- dev=""
- test="all"
- proto="ipv4"
-@@ -31,7 +31,8 @@ run_test() {
-       1>>log.txt
-     wait "${server_pid}"
-     exit_code=$?
--    if [[ ${test} == "large" && -n "${KSFT_MACHINE_SLOW}" && \
-+    if [[ ( ${test} == "large" || ${protocol} == "ipip" ) && \
-+          -n "${KSFT_MACHINE_SLOW}" && \
-           ${exit_code} -ne 0 ]]; then
-         echo "Ignoring errors due to slow environment" 1>&2
-         exit_code=0
+changes in v3:
+- add space and 'U' in asoundef.h
+- add more commit message for binding doc commit
+- add bitfield.h header for fixing build error
+
+changes in v2:
+- address some comments on commit messages
+- add two more commits:
+  add definitions for the bits in IEC958 subframe
+  add API dw_hdmi_set_sample_iec958() for iec958 format
+- use component helper in hdmi_pai and hdmi_tx driver
+- use regmap in hdmi_pai driver.
+- add clocks in binding doc
+
+Shengjiu Wang (7):
+  dt-bindings: display: imx: add HDMI PAI for i.MX8MP
+  ALSA: Add definitions for the bits in IEC958 subframe
+  drm/bridge: dw-hdmi: Add API dw_hdmi_to_plat_data() to get plat_data
+  drm/bridge: dw-hdmi: Add API dw_hdmi_set_sample_iec958() for iec958
+    format
+  drm/bridge: imx: add driver for HDMI TX Parallel Audio Interface
+  arm64: dts: imx8mp: Add hdmi parallel audio interface node
+  arm64: dts: imx8mp-evk: enable hdmi_pai device
+
+ .../display/bridge/fsl,imx8mp-hdmi-tx.yaml    |  12 ++
+ .../display/imx/fsl,imx8mp-hdmi-pai.yaml      |  69 ++++++++
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts  |   4 +
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  27 ++-
+ drivers/gpu/drm/bridge/imx/Kconfig            |  11 ++
+ drivers/gpu/drm/bridge/imx/Makefile           |   1 +
+ drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c  | 158 ++++++++++++++++++
+ drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c   |  65 ++++++-
+ .../drm/bridge/synopsys/dw-hdmi-gp-audio.c    |   5 +
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |  18 +-
+ include/drm/bridge/dw_hdmi.h                  |  11 +-
+ include/sound/asoundef.h                      |   9 +
+ 12 files changed, 382 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
+ create mode 100644 drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c
+
 -- 
-2.36.1
+2.34.1
 
 
