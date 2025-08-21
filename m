@@ -1,129 +1,226 @@
-Return-Path: <linux-kernel+bounces-779216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3977AB2F089
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:06:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755C7B2F08D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31B7FA22975
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:05:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418F11899900
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2328C2E9ED5;
-	Thu, 21 Aug 2025 08:05:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9AF2E9ECE;
-	Thu, 21 Aug 2025 08:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB2C2EA168;
+	Thu, 21 Aug 2025 08:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qdjZ0B/K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3108224DCF9;
+	Thu, 21 Aug 2025 08:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763510; cv=none; b=gl8kqthNKsmMHAkjV6SD5KG/BAvvqPKPsGzDS/mq501/ajJABIHzM6jPw+fsshPPb+5Bb2v8tcanLJcvzbeNEW3vlCQvPRWpsXxu7RcMOQ941gjzvKnuPHK7AIIh/eQj8bvYiSmIZGGxhoWplqkbQZEXweuK8WkILro2qz/yydI=
+	t=1755763581; cv=none; b=EyKOfKiv46CPN6ttfi/FOA8YLuVH3+id2yLfbcweVwupjlLnpvzXRgrp7/Dydmw4rnMMRi4dgIXDbTKLNDNWeWwhMpKCPj8OhdiCIv1y44wlZDD4RambntVCoEHnhTMj5ozY5aF+3EEtqk3c7gk4SEa9ymnFa2BplaLUmXiwFo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763510; c=relaxed/simple;
-	bh=xujlK4f4nsLmmcHmO++zn6YCGlGxYrtPlci9BS0YYFA=;
+	s=arc-20240116; t=1755763581; c=relaxed/simple;
+	bh=7a/7R5WmT6S/6Nh45FbQ6DvBmKodvXnJv67k8mhkHsU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IERzK4lUjm0MCMyBRzubTjgj3/kpldS0Uqn73lKpoI3XJOmgxty3lr58MNHOJOMaDCh8Ndbu6E3VUJQH9wdnBu7r5Kn3xphe2PpQPATUOStiugMhzCXHK2REKVbXT3YMj/Cg4Q9PaOlNadsBIWO/xzLkE3Expoyofd9Llug+F8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6C931515;
-	Thu, 21 Aug 2025 01:04:59 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09E063F63F;
-	Thu, 21 Aug 2025 01:05:05 -0700 (PDT)
-Date: Thu, 21 Aug 2025 09:04:58 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Deepti Jaggi <quic_djaggi@quicinc.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
-	Nikunj Kela <quic_nkela@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v6] dt-bindings: firmware: arm,scmi: allow multiple
- instances
-Message-ID: <aKbTKq04umCgS_eL@pluto>
-References: <20250730-8255-scmi-v6-1-a7d8ba19aded@quicinc.com>
- <e5c5c2da-ae77-4738-9f0f-33c51111f91c@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8RnUuepx3IRv6e5o9luN541OsoTUuKXOeC2pM/7nQM8ggI8/WjkTaJdRMWb899N/qSnXinRrnVHaYR1NIIj2BOpNxgW2hSzEuQ7aMDOp5Prp3IVkj+m3tfKZsBWbDChvjfGl94/SA6fOGZ4J6PuRFFabJvT11SSJE9WqMm/+Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qdjZ0B/K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD02BC4CEED;
+	Thu, 21 Aug 2025 08:06:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755763578;
+	bh=7a/7R5WmT6S/6Nh45FbQ6DvBmKodvXnJv67k8mhkHsU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qdjZ0B/Kro1DeNdNUgDT6PlTOOTEguAjDIpW41W/C0pbrXSyGHSw1NSklcDRRAaVM
+	 uDGdAFCNMmiS96ZK0uSUq3Xy31plo4KmVvqzzxi0D6+CcOXYp5y5kEGkCZJGpuNPwg
+	 3tCmhsmd1R/vEnCZq+LRkGRHsmUkXPfEilpjfKx2aSjQsuSMAXjoTXTNd+hzBeXfEE
+	 O0QhRAK3sYwgphxIVI9IMLwpFBqcx2ddE/1v4Q57yZEA4gbduB+9/355s8qBaL82R8
+	 hMyks4hoplN/yT+wRtF1/EfADDq6x/FT/AvJpumzVkjxLzx8v1uE7IxPVgyHfPV20V
+	 vbpDalkoAr5xw==
+Date: Thu, 21 Aug 2025 16:06:11 +0800
+From: Coly Li <colyli@kernel.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, neil@brown.name, akpm@linux-foundation.org, 
+	linux-block@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	xni@redhat.com, yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com, 
+	johnny.chenyi@huawei.com
+Subject: Re: [PATCH] block: fix disordered IO in the case recursive split
+Message-ID: <43pgbt3ugu4mwaeh2ai537vkejqott2pez3qkxvuf4utq5ibgq@q4ncjkea4kwy>
+References: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e5c5c2da-ae77-4738-9f0f-33c51111f91c@quicinc.com>
+In-Reply-To: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
 
-On Wed, Aug 20, 2025 at 11:44:26AM -0700, Deepti Jaggi wrote:
+On Thu, Aug 21, 2025 at 03:47:06PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> On 7/30/25 14:30, Deepti Jaggi wrote:
-> > From: Nikunj Kela <quic_nkela@quicinc.com>
-> > 
-
-Hi,
-
-> > Allow multiple SCMI instances by extending the scmi node name to include
-> > an instance number suffix.
-> > 
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-> > Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
-> > Signed-off-by: Deepti Jaggi <quic_djaggi@quicinc.com>
-> > ---
-> > Changes in v6:
-> >          - Dropped 'this change' from description
-> > 	- Link to v5: https://lore.kernel.org/all/20250423005824.3993256-1-quic_djaggi@quicinc.com
-> > 
-> > Changes in v5:
-> >          - Added Reviewed-by tag
-> > 	- Link to v4: https://lore.kernel.org/all/20240910163456.2383372-1-quic_nkela@quicinc.com
-> > 
-> > Changes in v4:
-> >          - Dropped 'virtual' from subject and description
-> > 	- Link to v3: https://lore.kernel.org/all/20240905201217.3815113-1-quic_nkela@quicinc.com
-> > 
-> > Changes in v3:
-> >          - Added Reviewed-by tag
-> >          - Removed the patch from original series[1]
-> > 
-> > Changes in v2:
-> >          - Fixed scmi nodename pattern
-> > 
-> > [1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
-> > ---
-> >   Documentation/devicetree/bindings/firmware/arm,scmi.yaml | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > index abbd62f1fed0993ab98fa44bdb9a0575f8e1c78e..be817fd9cc34b14009a3b1d69e78b802215571b6 100644
-> > --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > @@ -27,7 +27,7 @@ anyOf:
-> >   properties:
-> >     $nodename:
-> > -    const: scmi
-> > +    pattern: '^scmi(-[0-9]+)?$'
-> >     compatible:
-> >       oneOf:
-> > 
-> > ---
-> > base-commit: 0b90c3b6d76ea512dc3dac8fb30215e175b0019a
-> > change-id: 20250728-8255-scmi-ed963ef8f155
+> Currently, split bio will be chained to original bio, and original bio
+> will be resubmitted to the tail of current->bio_list, waiting for
+> split bio to be issued. However, if split bio get split again, the IO
+> order will be messed up, for example, in raid456 IO will first be
+> split by max_sector from md_submit_bio(), and then later be split
+> again by chunksize for internal handling:
 > 
-> Gentle ping!!
-> Could you please review the patch?
->
+> For example, assume max_sectors is 1M, and chunksize is 512k
+> 
+> 1) issue a 2M IO:
+> 
+> bio issuing: 0+2M
+> current->bio_list: NULL
+> 
+> 2) md_submit_bio() split by max_sector:
+> 
+> bio issuing: 0+1M
+> current->bio_list: 1M+1M
+> 
+> 3) chunk_aligned_read() split by chunksize:
+> 
+> bio issuing: 0+512k
+> current->bio_list: 1M+1M -> 512k+512k
+> 
+> 4) after first bio issued, __submit_bio_noacct() will contuine issuing
+> next bio:
+> 
+> bio issuing: 1M+1M
+> current->bio_list: 512k+512k
+> bio issued: 0+512k
+> 
+> 5) chunk_aligned_read() split by chunksize:
+> 
+> bio issuing: 1M+512k
+> current->bio_list: 512k+512k -> 1536k+512k
+> bio issued: 0+512k
+> 
+> 6) no split afterwards, finally the issue order is:
+> 
+> 0+512k -> 1M+512k -> 512k+512k -> 1536k+512k
+> 
+> This behaviour will cause large IO read on raid456 endup to be small
+> discontinuous IO in underlying disks. Fix this problem by placing chanied
+> bio to the head of current->bio_list.
+> 
+> Test script: test on 8 disk raid5 with 64k chunksize
+> dd if=/dev/md0 of=/dev/null bs=4480k iflag=direct
+> 
+> Test results:
+> Before this patch
+> 1) iostat results:
+> Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz  aqu-sz  %util
+> md0           52430.00   3276.87     0.00   0.00    0.62    64.00   32.60  80.10
+> sd*           4487.00    409.00  2054.00  31.40    0.82    93.34    3.68  71.20
+> 2) blktrace G stage:
+>   8,0    0   486445    11.357392936   843  G   R 14071424 + 128 [dd]
+>   8,0    0   486451    11.357466360   843  G   R 14071168 + 128 [dd]
+>   8,0    0   486454    11.357515868   843  G   R 14071296 + 128 [dd]
+>   8,0    0   486468    11.357968099   843  G   R 14072192 + 128 [dd]
+>   8,0    0   486474    11.358031320   843  G   R 14071936 + 128 [dd]
+>   8,0    0   486480    11.358096298   843  G   R 14071552 + 128 [dd]
+>   8,0    0   486490    11.358303858   843  G   R 14071808 + 128 [dd]
+> 3) io seek for sdx:
+> Noted io seek is the result from blktrace D stage, statistic of:
+> ABS((offset of next IO) - (offset + len of previous IO))
+> 
+> Read|Write seek
+> cnt 55175, zero cnt 25079
+>     >=(KB) .. <(KB)     : count       ratio |distribution                            |
+>          0 .. 1         : 25079       45.5% |########################################|
+>          1 .. 2         : 0            0.0% |                                        |
+>          2 .. 4         : 0            0.0% |                                        |
+>          4 .. 8         : 0            0.0% |                                        |
+>          8 .. 16        : 0            0.0% |                                        |
+>         16 .. 32        : 0            0.0% |                                        |
+>         32 .. 64        : 12540       22.7% |#####################                   |
+>         64 .. 128       : 2508         4.5% |#####                                   |
+>        128 .. 256       : 0            0.0% |                                        |
+>        256 .. 512       : 10032       18.2% |#################                       |
+>        512 .. 1024      : 5016         9.1% |#########                               |
+> 
+> After this patch:
+> 1) iostat results:
+> Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz  aqu-sz  %util
+> md0           87965.00   5271.88     0.00   0.00    0.16    61.37   14.03  90.60
+> sd*           6020.00    658.44  5117.00  45.95    0.44   112.00    2.68  86.50
+> 2) blktrace G stage:
+>   8,0    0   206296     5.354894072   664  G   R 7156992 + 128 [dd]
+>   8,0    0   206305     5.355018179   664  G   R 7157248 + 128 [dd]
+>   8,0    0   206316     5.355204438   664  G   R 7157504 + 128 [dd]
+>   8,0    0   206319     5.355241048   664  G   R 7157760 + 128 [dd]
+>   8,0    0   206333     5.355500923   664  G   R 7158016 + 128 [dd]
+>   8,0    0   206344     5.355837806   664  G   R 7158272 + 128 [dd]
+>   8,0    0   206353     5.355960395   664  G   R 7158528 + 128 [dd]
+>   8,0    0   206357     5.356020772   664  G   R 7158784 + 128 [dd]
+> 2) io seek for sdx
+> Read|Write seek
+> cnt 28644, zero cnt 21483
+>     >=(KB) .. <(KB)     : count       ratio |distribution                            |
+>          0 .. 1         : 21483       75.0% |########################################|
+>          1 .. 2         : 0            0.0% |                                        |
+>          2 .. 4         : 0            0.0% |                                        |
+>          4 .. 8         : 0            0.0% |                                        |
+>          8 .. 16        : 0            0.0% |                                        |
+>         16 .. 32        : 0            0.0% |                                        |
+>         32 .. 64        : 7161        25.0% |##############                          |
+> 
+> BTW, this looks like a long term problem from day one, and large
+> sequential IO read is pretty common case like video playing.
+> 
+> And even with this patch, in this test case IO is merged to at most 128k
+> is due to block layer plug limit BLK_PLUG_FLUSH_SIZE, increase such
+> limit and cat get even better performance. However, we'll figure out
+> how to do this properly later.
+> 
+> Fixes: d89d87965dcb ("When stacked block devices are in-use (e.g. md or dm), the recursive calls")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-I thought this was already reviewed/acked and merged since ages....
-...also the wording-change in the commit message LGTM.
+Tested-by: Coly Li <colyli@kernel.org>
 
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+Yeah, I can see 'dd if=./on-fs-file of=/dev/null bs=6400K status=proress' to report
+the read throughput from around 1.2GiB/s to 9.8GiB/s.
 
-Thanks,
-Cristian
+Great job and thank you!
+
+Coly Li
+
+> ---
+>  block/blk-core.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 4201504158a1..0d46d10edb22 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -745,12 +745,16 @@ void submit_bio_noacct_nocheck(struct bio *bio)
+>  	 * to collect a list of requests submited by a ->submit_bio method while
+>  	 * it is active, and then process them after it returned.
+>  	 */
+> -	if (current->bio_list)
+> -		bio_list_add(&current->bio_list[0], bio);
+> -	else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
+> +	if (current->bio_list) {
+> +		if (bio_flagged(bio, BIO_CHAIN))
+> +			bio_list_add_head(&current->bio_list[0], bio);
+> +		else
+> +			bio_list_add(&current->bio_list[0], bio);
+> +	} else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO)) {
+>  		__submit_bio_noacct_mq(bio);
+> -	else
+> +	} else {
+>  		__submit_bio_noacct(bio);
+> +	}
+>  }
+>  
+>  static blk_status_t blk_validate_atomic_write_op_size(struct request_queue *q,
+> -- 
+> 2.39.2
+> 
+> 
 
