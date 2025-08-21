@@ -1,136 +1,194 @@
-Return-Path: <linux-kernel+bounces-779765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA50FB2F879
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:44:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82560B2F87D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F0C1CC8B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79543AC4BD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F1932274C;
-	Thu, 21 Aug 2025 12:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DDD31985A;
+	Thu, 21 Aug 2025 12:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WY/wwDUW"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W21/DPCq"
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681B131AF13;
-	Thu, 21 Aug 2025 12:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7130331196E;
+	Thu, 21 Aug 2025 12:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780080; cv=none; b=ikKln9V7GkLkfgKnTG3PRKDGyLJaCIUxiDvseGyuqlb6WoGgwqtnjp7mLwReddUsJ5PI+TK4GmL7abuixS38fWbamQJvsM0GAU+wQZya+IpurCmtsbRm3rZ64UXRfzvjMjPGmQf3pdkNZpU98MLhvaPAalv8qGlpvskh9gU8NFs=
+	t=1755780097; cv=none; b=B6iay7zpaVF1X2kB3wiliMixMUpcQSGtEbegDB326RHRzVa8Lfp2XxwQ3WXVeVLuyQjLoQv9CAYvR2OSOBg4+JtJcqXScN78PswzvP7eYiSdLHKRIhIA52DJ4o2n71BAZd6uXN3Fau5uyd5XtwfIdQmx/Sx0+1uEvIbcCZ93kKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780080; c=relaxed/simple;
-	bh=5SntXcT3EX6iRj3qRaCgNZss4u35RUFrPDY1w3CY6gA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CE/L5aSsSMhC/4MzAHMn7onftJQNJT0NgVEsAAiuRiI4kaSLbrvLfkLtWuMEXPDonwnlEpYylvqrB255C/lMpGGvBbF7LjSymWTkk7//AzxY9OKfWsLx7jQkxFSvQoL7MZecPZJnhdFk0BAMb+TQdxkBRiJkDeYQbLjjq0Me7R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WY/wwDUW; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=jYiM3Qw38rzuBVo6SaPYD/cuw6C9KtVM8CdKHhDfty0=; b=WY/wwDUWzp4h7zINiTrJz700Um
-	p3pkz2fXL/JslUBJLYn2wfRTAaSuJDF9/AKKecZDL8s40kz0MoyCJ5SoX/GdDFJBmgV8Q1ZiZtEQs
-	Li02meBLdBk8GxQGiRwkWJH80PVISjD2chohLLuRvxGLK3qAU5g4nYooZqIzGa17MT0Q=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1up4bN-005Ryv-TY; Thu, 21 Aug 2025 14:41:09 +0200
-Date: Thu, 21 Aug 2025 14:41:09 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [net-next v5 3/3] net: dsa: yt921x: Add support for Motorcomm
- YT921x
-Message-ID: <02baf961-b82d-4819-8791-229f7735a1a7@lunn.ch>
-References: <20250820075420.1601068-1-mmyangfl@gmail.com>
- <20250820075420.1601068-4-mmyangfl@gmail.com>
+	s=arc-20240116; t=1755780097; c=relaxed/simple;
+	bh=vMbgsNjjm4zsv6kHeB79Iza9JJ78/9jVyLQ06lZ4lRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WNcoSAHWOllbRkM8/SUwwcFM/glpkiW0AC0AouzL/V+sNYAhhkSXQ6o1LfaDnqvuNIHC6HhfAyDUdyO/jYrUvxZUbHQJaFQsRB3icfbL+9BlbGKiYGptV+9ne0ujvCy1inZeSNT1CaRhtH+KdOhxiJLPhBcOSsI1pwxWBmmL1Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W21/DPCq; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-3b9e413a219so710812f8f.3;
+        Thu, 21 Aug 2025 05:41:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755780093; x=1756384893; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K/rXJGPFK3wi2vxqTh6d3zW1dWSC1/Ce4Xx/Ix7y1KE=;
+        b=W21/DPCq+WrHPfgm62YAf8HNr1wWZVlKVf4t/g+Ii0WfIWZuV4BK9pxPkpFx0pChxY
+         Hn/7mOPX5y65MUKipsLwMoxJudxT2j/eEglv9sT2EyaJOufkmZQBfmtRcDuF6+5AHwB5
+         cDBh0fcvYX52d06Wobr3D9uLH7sJQ1l/eBKHLrX8m6EUJQAqXA8tCLsKsod66e6qNUvd
+         cTsKJVANayCeW8BXVVDkENju8Bw7RILNrxoF/zlK8SKvVc2OuxSh90kiIP/LJ8xbI4LF
+         SnftMwJQGtNNkVcgN9hlxru2zQdhx5HPdzM/gO6jzpYJLuIgfqp+zqbrBk/FF50CgdoG
+         uWgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755780093; x=1756384893;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K/rXJGPFK3wi2vxqTh6d3zW1dWSC1/Ce4Xx/Ix7y1KE=;
+        b=pP30lUQ3lU9xwmNBbOeFzZPkbTtBFP4pqAcQDp4BE76ZW+3r/gGhfAcoBQSyWvQk5R
+         5gwp++YyXypqu+BYv/Vhha4KsOMmJsv2RPCXsiA6XCdpoyDLhE8FxzHdFUfNwb6DFFGM
+         qaNSiDND13I9cbEj1cPVrGX+kJo//M/qISETxsVy2Q+k6j2h4T2DDF7LcDXUqJIqFTtk
+         EPlWagiTU1WimKWzIlBIUYWFQEMrmney18XEBomXVBhwFOQlqlCfvh0I1glGxNtdbqa4
+         rHF+B9aBJQsCzqM7jxxco0ESXNIg/cAG3+p3Pys7f2UcZOrdYTF6YLRGxw3ZQ8ZQMcmp
+         aDNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnvWsmLdu4XwPPBFqXXLay34ibjSlGjZbJkacajlWSHYZ8VDAPNSb3LHQLV6pZyOjMUWah09PLxA7BCac=@vger.kernel.org, AJvYcCWq/BLhd32VHuzpVVVBp764WbDXASlJqbMJDCRTedN0dRw5DhpANim+9HLoare6yKeJsfKgu+mDILjQ@vger.kernel.org, AJvYcCXhi0KJOcFeQXYAc24astv0F7/fXnm0zXyFi6WvEBbGgjkovXlvJw5nAt1Q5fwLLc1ikvs3mF9K@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEZd7+weyWduSN0Hko1WhPgbR8hMiLixSrYm7a7sXhDjWO5ZcL
+	CzDk3ShPUJ8S1LnUYujhG1Hu7sXQAsmeDlJBherxRDuB3C0LM7YeuhAa7py5iLxX
+X-Gm-Gg: ASbGnctTD7MQp3f2OoHR4lBsJR6mRGgY9HMDYoNgLRigWbjNgsSNO1lbjEpGssbpMJO
+	LR6B2KgL+k/vJij108tNDWB260X8kKmcfeKql1WxUCFkyGU7isf8UWblCY+O1ZmVrnI2lUaSQJB
+	tU7rx6stQggppVvuxq+frcU5JJ02WluewieBkLS6GKu1s5tkNeq2VIvrBI1eAuxJTakHmwlryQY
+	FrZDxVaiCOAO0P/NeAy0KKDGGfMcUdE8tV+SBEPtMvpXSvFnfi8NN9qLtQnWAaFe+qrEFybD2fw
+	nYItP5+PWaFvdzFxwMSLdYzYWQATvFIW33vIujWRjLZQK+kBx2uRmBXkPEV3IWVLfz0hjkZyJlB
+	3OkqFZKGu+pqM0p+zlu3pEaRay/enwDMl743zZjNUVZQ1W6buX4oEaSoO78+QeF6+KnFEqilcMC
+	UuwdC8EyOS3Q9yjjyPRr1TeZNBa/nsD0dOmu2onHfq2l0nDmQ3D4wG
+X-Google-Smtp-Source: AGHT+IGcpDcX/P1q3uGkxcuaxRs1676Mc/G7jVz/fGjilz+IUOZqIoSzLB5QGJrKSrKiTI0QC2xV8g==
+X-Received: by 2002:a05:6000:4284:b0:3b5:f0af:4bb0 with SMTP id ffacd0b85a97d-3c495687e00mr2017211f8f.23.1755780093100;
+        Thu, 21 Aug 2025 05:41:33 -0700 (PDT)
+Received: from [26.26.26.1] (ec2-63-178-255-169.eu-central-1.compute.amazonaws.com. [63.178.255.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c3e673ab01sm4930549f8f.18.2025.08.21.05.41.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 05:41:32 -0700 (PDT)
+Message-ID: <048bd3c4-887c-4d17-9636-354cc626afa3@gmail.com>
+Date: Thu, 21 Aug 2025 20:41:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820075420.1601068-4-mmyangfl@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, stable@vger.kernel.org
+References: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
+ <dfdc655e-1e06-42df-918f-7d56f26a7473@gmail.com>
+ <aKaK4WS0pY0Nb2yi@google.com>
+Content-Language: en-US
+From: Ethan Zhao <etzhao1900@gmail.com>
+In-Reply-To: <aKaK4WS0pY0Nb2yi@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> +#define should_unreachable() \
-> +	pr_err("%s: !!unreachable %d, please report a bug!\n", \
-> +	       __func__, __LINE__)
-> +#define consume_retval(res) do { \
-> +	if (unlikely(res)) \
-> +		pr_err("%s: %i\n", __func__, (res)); \
-> +} while (0)
-> +
 
-> +static int
-> +yt921x_vid_del(struct yt921x_priv *priv, int port, u16 vid)
-> +{
-> +	struct yt921x_port *pp = &priv->ports[port];
-> +	u32 mask;
-> +	u32 ctrl;
-> +	u32 val;
-> +	int res;
 
-...
+On 8/21/2025 10:56 AM, Brian Norris wrote:
+> On Thu, Aug 21, 2025 at 08:54:52AM +0800, Ethan Zhao wrote:
+>> On 8/21/2025 1:26 AM, Brian Norris wrote:
+>>> From: Brian Norris <briannorris@google.com>
+>>>
+>>> max_link_speed, max_link_width, current_link_speed, current_link_width,
+>>> secondary_bus_number, and subordinate_bus_number all access config
+>>> registers, but they don't check the runtime PM state. If the device is
+>>> in D3cold, we may see -EINVAL or even bogus values.
+>> My understanding, if your device is in D3cold, returning of -EINVAL is
+>> the right behavior.
+> 
+> That's not the guaranteed result though. Some hosts don't properly
+> return PCIBIOS_DEVICE_NOT_FOUND, for one. But also, it's racy -- because
+> we don't even try to hold a pm_runtime reference, the device could
+> possibly enter D3cold while we're in the middle of reading from it. If
+> you're lucky, that'll get you a completion timeout and an all-1's
+> result, and we'll return a garbage result.
+> 
+> So if we want to purposely not resume the device and retain "I can't
+> give you what you asked for" behavior, we'd at least need a
+> pm_runtime_get_noresume() or similar.
+I understand you just want the stable result of these caps, meanwhile
+you don't want the side effect either.>
+>>> Wrap these access in pci_config_pm_runtime_{get,put}() like most of the
+>>> rest of the similar sysfs attributes.
+>>>
+>>> Fixes: 56c1af4606f0 ("PCI: Add sysfs max_link_speed/width, current_link_speed/width, etc")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Brian Norris <briannorris@google.com>
+>>> Signed-off-by: Brian Norris <briannorris@chromium.org>
+>>> ---
+>>>
+>>>    drivers/pci/pci-sysfs.c | 32 +++++++++++++++++++++++++++++---
+>>>    1 file changed, 29 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+>>> index 5eea14c1f7f5..160df897dc5e 100644
+>>> --- a/drivers/pci/pci-sysfs.c
+>>> +++ b/drivers/pci/pci-sysfs.c
+>>> @@ -191,9 +191,16 @@ static ssize_t max_link_speed_show(struct device *dev,
+>>>    				   struct device_attribute *attr, char *buf)
+>>>    {
+>>>    	struct pci_dev *pdev = to_pci_dev(dev);
+>>> +	ssize_t ret;
+>>> +
+>>> +	pci_config_pm_runtime_get(pdev);
+>> This function would potentially change the power state of device,
+>> that would be a complex process, beyond the meaning of
+>> max_link_speed_show(), given the semantics of these functions (
+>> max_link_speed_show()/max_link_width_show()/current_link_speed_show()/
+>> ....),
+>> this cannot be done !
+> 
+> What makes this different than the 'config' attribute (i.e., "read
+> config register")? Why shouldn't that just return -EINVAL? I don't
+> really buy your reasoning -- "it's a complex process" is not a reason
+It is a reason to know there is side effect to be taken into account.> 
+not to do something. The user asked for the link speed; why not give it?
+> If the user wanted to know if the device was powered, they could check
+> the 'power_state' attribute instead.
+> 
+> (Side note: these attributes don't show up anywhere in Documentation/,
+> so it's also a bit hard to declare "best" semantics for them.)
+> 
+> To flip this question around a bit: if I have a system that aggressively
+> suspends devices when there's no recent activity, how am I supposed to
+> check what the link speed is? Probabilistically hammer the file while
+> hoping some other activity wakes the device, so I can find the small
+> windows of time where it's RPM_ACTIVE? Disable runtime_pm for the device
+> while I check?
+Hold a PM reference by pci_config_pm_runtime_get() and then write some
+data to the PCIe config space, no objection.
 
-> +
-> +	if (pp->vids_cnt <= 0)
-> +		should_unreachable();
-> +	else
-> +		pp->vids_cnt--;
-> +	return 0;
+To know about the linkspeed etc capabilities/not status, how about
+creating a cached version of these caps, no need to change their
+power state.
 
-Have you seen other drivers do this? If you are doing something which
-other drivers don't do, it is probably wrong.
+If there is aggressive power saving requirement, and the polling
+of these caps will make up wakeup/poweron bugs.
 
-What you are more likely to see is WARN_ON(pp->vids_cnt <= 0); You
-then get a stack trace, to help debug what happened. Kernel developers
-know what WARN_ON() does, so it is easy to
-understand. should_unreachable() is unique, it is unclear what it
-does, making it harder to understand and review.
 
-> +static void
-> +yt921x_dsa_port_bridge_leave(struct dsa_switch *ds, int port,
-> +			     struct dsa_bridge bridge)
-> +{
-> +	struct yt921x_priv *priv = to_yt921x_priv(ds);
-> +	struct device *dev = to_device(priv);
-> +	u16 ports_mask;
-> +	int res;
-> +
-> +	ports_mask = dsa_bridge_ports(ds, bridge.dev);
-> +
-> +	dev_dbg(dev, "%s: port %d, mask 0x%x\n", __func__, port, ports_mask);
-> +
-> +	ports_mask |= priv->cpu_ports_mask;
-> +
-> +	yt921x_smi_acquire(priv);
-> +	res = yt921x_bridge_force(priv, ports_mask);
-> +	yt921x_smi_release(priv);
-> +
-> +	consume_retval(res);
-> +}
+Thanks,
+Ethan
 
-And this is the same. Every driver you look at would just have the if
-statement, not a macro.
 
-In order to make drivers easy to maintain, easier to review, easy to
-debug, they should all look similar.
 
-	Andrew
+
+
+
+
+> 
+> Brian
+
 
