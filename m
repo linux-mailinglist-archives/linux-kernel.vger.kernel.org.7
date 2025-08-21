@@ -1,97 +1,141 @@
-Return-Path: <linux-kernel+bounces-780805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CA3B30996
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:49:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA45B3099F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D3ABB03BE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:46:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B8BF3BB00F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0DB285CB5;
-	Thu, 21 Aug 2025 22:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F3D2DE6FA;
+	Thu, 21 Aug 2025 22:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amuhykT/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NQNQCiS+"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446012EA726;
-	Thu, 21 Aug 2025 22:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F20A7262F;
+	Thu, 21 Aug 2025 22:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755816205; cv=none; b=nR/jGDrHKeBlxr8MjrqD7i0eVuKIAroOHI1+298dC3OxONMlzY/ME9p31uoFt6MBuUTLcGvN7SpoyKvSebMBupw4hZUBV/uod2YMkS228Ux+ksMXw8NTDhsTY7MNWWlcbp+kPPuMsVDM1BNVcDuqNRNJ8HE9yrOENKMBuY7UM7M=
+	t=1755816566; cv=none; b=O8BGlOL6UiIQcEAo9KF8MUHQbs1Ghi+5IBDuJCppriSaGlKxnQYE4H42mt4951vXXJKhvBGZ4b2T/bsdUA0wHHMh3nd9cVCz5NOHdWRphNp90T/b2KSANN6u5Kshm6uH9TtjSb2saJKHd7uXsJRRuxL/uiKdcV1W37GS9SuIXbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755816205; c=relaxed/simple;
-	bh=0XbwMb6mfin25nqVmVGrS3TJAQ9t4OcYnRFmV8vF+TI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WnhrkYpYgnyMgn1hhsdkQ00kzYA7GabvXOnF8U2z+WBFhEYQdjfLmFVrfSfvbefZiUYxAK41oVIQU1q9RYQlhEGOiZkizvK28oPd+5zs8TLX1nWiq803P4uNhQ7iApnqJo1izXKyf49Pqz5M1Z0aNVh17ALR79pLrDIevWkQn4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amuhykT/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B50E0C4AF0B;
-	Thu, 21 Aug 2025 22:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755816204;
-	bh=0XbwMb6mfin25nqVmVGrS3TJAQ9t4OcYnRFmV8vF+TI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=amuhykT/6bNl92qycxjo47EVZhzUA0e1iADgBLIPhuY6UAix9Wo8dl1CVaPx5knEw
-	 mUFsbfRFgwb7MyLDGPcZaWZ+pZG4jnpIahOHvFysCbuvjSR/v7rOehquS3TEoeesCB
-	 7/XlSuRgxFUTyoYiv/UZMN6ATtX80HlIc8c4w9/SIHN2HSLOeArcXf7eXV070BVZBf
-	 hDGiqYoU3D7rAuMjQUdtcOvPZcW4myQBcFPoqCv2TWnlHxMCFVVl2NyMV4XmqS5dPG
-	 RF+2nHPP2T4+BIF5JxutNhAAZQ9KwGMi4MaXVNjIgzQ2Y+UUdrSi/5ewxdsoMXRAB1
-	 pVGryf1fQR4ZQ==
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb79db329so218975766b.2;
-        Thu, 21 Aug 2025 15:43:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfz0c1qZhuC4XBAp9kV5LQgY6lvgHJrzivhDIK3Upd04Aa00NK8iqspEyMMnSzH/YmNToFi4Kn/Kay@vger.kernel.org, AJvYcCV5AFXnEFtLXdeaskCBGoc36pWuo2q+ctjIBrPItroXGBssigwkyjeqF1nqtFaS+m7mo+QJv2R91R0k@vger.kernel.org, AJvYcCXHEYaT3qRDMcXlyA5RsaK79htmgJxRHbsRrR7XYZaAWUeRKX1IisA0FspwhGuOoKVv5OSODAYXl4HcZB/J@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjf9MYVXZ+7RIeyCEfRXxq71e3CNPt+e9KEoVERUxaqNHrXjyK
-	NGZwhBgLTESM3YqiLNVMo1wcyuaGbWlab0h/VgPwPMwhP/33D6qMrxFV0/JiLo0l+lF7FT/8rXp
-	Q1BW0XMRCpwsxJAettPQhuE76Eum45g==
-X-Google-Smtp-Source: AGHT+IH5yQMQji2hRsT6QwRFxddQ2y8BE8bx5gJJ7gFL6eR9s/SUuEMn0KPKpJsw1jIA0I1WxumHVB9d6lrVFiKy6WE=
-X-Received: by 2002:a17:907:6e91:b0:adb:4342:e898 with SMTP id
- a640c23a62f3a-afe28f6a89bmr73376466b.28.1755816203289; Thu, 21 Aug 2025
- 15:43:23 -0700 (PDT)
+	s=arc-20240116; t=1755816566; c=relaxed/simple;
+	bh=xO0+39O03QMzTJvycdF9AB9Q4yStemFa0AkzpNo8SFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hYIR5uZ71C76fBnJXdAfawa4vvRl7MdsaSdvdhO2k/2i5dgFL8DH0YfBBnT2+kh1xMkq8zwMj6JEVIUDw38IGxv6J0oECy9JgGgWt9m+N4fEHxc5sMYRb3/EGYNehM/1crA45el47/Sm5LBYrGBmnkQQ8mmGQEyRLOycv30+/Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NQNQCiS+; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=M5fdkSinOLEsx8CVxm+D7u+eTJmqya4T5yF1QxGe0ls=; b=NQNQCiS+m8f6HhJLcFzJnxN0FR
+	potx5tDK939ZqPe3ExCjToyQhG/yl+fI8JpxldS9kcrRbiO/CQTj/G2RrI5q4CXjB/X5Z4TZOW5pg
+	iufnCTqAIY1Smy9j9vH4P5u0OIG84iZTX7geADsFDDTF8iHZpkJ17we/Ufe95q52dwNdarJ72RW6I
+	2fzac4qFQacZq14rvSGixiWqFrRE7d+gHcAZFdLULdLcTIiWB3OBQXHjfZ6IMQs7V43yrLQH5pSzO
+	UsEX6NxunEguhp8cyvbUT67CBPOM292Ah8wnW0AosTDYdjHk/0mAK0yP0Pfp/P9tKRGMGysDyAfUX
+	EaV793WQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1upE5q-00000003Lwx-48Ux;
+	Thu, 21 Aug 2025 22:49:15 +0000
+Date: Thu, 21 Aug 2025 23:49:14 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	x86@kernel.org, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [patch 0/4] uaccess: Provide and use helpers for user masked
+ access
+Message-ID: <20250821224914.GD39973@ZenIV>
+References: <20250813150610.521355442@linutronix.de>
+ <20250817144943.76b9ee62@pumpkin>
+ <20250818222106.714629ee@pumpkin>
+ <CAHk-=wibAE=yDhWdY7jQ7xvCtbmW5Tjtt_zMJcEzey3xfL=ViA@mail.gmail.com>
+ <20250818222111.GE222315@ZenIV>
+ <CAHk-=whvSAi1+fr=YSXU=Ax204V1TP-1c_3Y3p2TjznxSo=_3Q@mail.gmail.com>
+ <20250819003908.GF222315@ZenIV>
+ <20250820234815.GA656679@ZenIV>
+ <20250821-erkunden-gazellen-924d52f0a1c6@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821215703.869628-1-robh@kernel.org> <20250821215703.869628-2-robh@kernel.org>
- <CACRpkdY5Oi6sM8i2OQFkSYUQ-Wwi4FTD3Q3uQ=C6BJyTo8FPKQ@mail.gmail.com>
-In-Reply-To: <CACRpkdY5Oi6sM8i2OQFkSYUQ-Wwi4FTD3Q3uQ=C6BJyTo8FPKQ@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 21 Aug 2025 17:43:10 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+gty=zHMnaOd9COh-vjAxHenQWtbn9EczA73qGbfzCSQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwunv16yw6bnZIocD2VS8MWHN95_HSfSlaZ39HW0byBPg8Z-HL8ztuaLxk
-Message-ID: <CAL_Jsq+gty=zHMnaOd9COh-vjAxHenQWtbn9EczA73qGbfzCSQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rtc: x1205: Fix Xicor X1205 vendor prefix
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-erkunden-gazellen-924d52f0a1c6@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Aug 21, 2025 at 5:21=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
->
-> On Thu, Aug 21, 2025 at 11:57=E2=80=AFPM Rob Herring (Arm) <robh@kernel.o=
-rg> wrote:
->
-> > The vendor for the X1205 RTC is not Xircom, but Xicor which was acquire=
-d
-> > by Intersil. Since the I2C subsystem drops the vendor prefix for driver
-> > matching, the vendor prefix hasn't mattered.
-> >
-> > Fixes: 6875404fdb44 ("rtc: x1205: Add DT probing support")
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
->
-> This should probably be tagged for stable since there is
-> a device tree using this (correct) compatible and it doesn't
-> probe right now.
+On Thu, Aug 21, 2025 at 09:45:22AM +0200, Christian Brauner wrote:
+> On Thu, Aug 21, 2025 at 12:48:15AM +0100, Al Viro wrote:
+> > On Tue, Aug 19, 2025 at 01:39:09AM +0100, Al Viro wrote:
+> > > I'm still trying to come up with something edible for lock_mount() -
+> > > the best approximation I've got so far is
+> > > 
+> > > 	CLASS(lock_mount, mp)(path);
+> > > 	if (IS_ERR(mp.mp))
+> > > 		bugger off
+> > 
+> > ... and that does not work, since DEFINE_CLASS() has constructor return
+> > a value that gets copied into the local variable in question.
+> > 
+> > Which is unusable for situations when a part of what constructor is
+> > doing is insertion of that local variable into a list.
+> > 
+> > __cleanup() per se is still usable, but... no DEFINE_CLASS for that kind
+> > of data structures ;-/
+> 
+> Just add the custom infrastructure that we need for this to work out imho.
 
-It should probe just fine as I explained. The I2C subsystem strips the
-vendor prefix off for matching, so what you put doesn't really matter.
+Obviously...  I'm going to put that into a branch on top of -rc3 and keep
+the more infrastructural parts in the beginning, so they could be merged
+into other branches in vfs/vfs.git without disrupting things on reordering.
 
-Rob
+> If it's useful outside of our own realm then we can add it to cleanup.h
+> and if not we can just add our own header...
+
+lock_mount() et.al. are purely fs/namespace.c, so no header is needed at
+all.  FWIW, existing guards in there have problems - I ended up with
+
+DEFINE_LOCK_GUARD_0(namespace_excl, namespace_lock(), namespace_unlock())
+DEFINE_LOCK_GUARD_0(namespace_shared, down_read(&namespace_sem),
+				      up_read(&namespace_sem))
+in fs/namespace.c and
+DEFINE_LOCK_GUARD_0(mount_writer, write_seqlock(&mount_lock),
+		    write_sequnlock(&mount_lock))
+DEFINE_LOCK_GUARD_0(mount_locked_reader, read_seqlock_excl(&mount_lock),
+		    read_sequnlock_excl(&mount_lock))
+in fs/mount.h; I'm doing conversions to those where they clearly are
+good fit and documenting as I go.
+
+mount_lock ones really should not be done in a blanket way - right
+now they are wrong in quite a few cases, where writer is used instead
+of the locked reader; we'll need to sort that out and I'd rather
+keep the open-coded ones for the stuff yet to be considered and/or
+tricky.
+
+BTW, the comments I'm using for functions are along the lines of
+ * locks: mount_locked_reader || namespace_shared && is_mounted(mnt)
+this one - for is_path_reachable().  If you look through the comments
+there you'll see things like "vfsmount lock must be held for write" and
+the rwlock those are refering to had been gone for more than a decade...
+
+DEFINE_LOCK_GUARD_0 vs. DEFINE_GUARD makes for saner code generation;
+having it essenitally check IS_ERR_OR_NULL(&namespace_sem) is already
+ridiculous, but when it decides to sacrifice a register for that, complete
+with a bunch of spills...
 
