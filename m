@@ -1,314 +1,89 @@
-Return-Path: <linux-kernel+bounces-780503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4976B302D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:22:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78B5B302D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6DFF5E85EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:22:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3A61BC6C3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E20634AAF6;
-	Thu, 21 Aug 2025 19:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A434834AB0E;
+	Thu, 21 Aug 2025 19:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qaB5aa6/"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="e89V9QoO"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEBB2D46C6
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 19:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BDF1D2F42;
+	Thu, 21 Aug 2025 19:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755804122; cv=none; b=qJy90k5/gNKclhVAzLXfnHlk0yvRnBbDuL2KcaFBEwBW27LK1k1YFGef3tJipJgSzwCfe7lCQH9bSF50YUbpA5dTrQkLtCOrxrLH9UFlofpuQ1R0ykwKqJq2d4sOSXYn/+0J/OtcZdEv76bDRD6IQwrSxN87aBSlGyzY3oXsF0Q=
+	t=1755804153; cv=none; b=WVXUyYGVr130XPz4RtbcgAtN4hdtxk3WF4Ldo+BW0tuE2RvZPQi4RX26CnbSk8QjX/DHs4pJyEIOjh7Ygeu6nkz0HuLNvQt0oOIYSVwhCRjrtFmwmI2/QxeRHTcwgQRYZKELbYEz8zbr2smoZxrk2pjvbQAFnFFmaSLJtBfKfeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755804122; c=relaxed/simple;
-	bh=hKjV3Bdfa+3lPnicmtByd+iT0qEQfKA6FCL7/PvnH14=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJUFdgPyTE6dXGL5GzJDqTgkSreLcCamd/RtEnkI5P7iyDUfteDI6ZRntqBIBwjwmFEDvS1pOcyoyByAYe5uwbGNr2x9Hkw3lYz6ZGvWXLX5WFf+Gq+Zy9XeUKQv+XzmijKu2gselR4qG2rK8M/ERMhDLKpNDVKBem35W5CkGLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qaB5aa6/; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b0bd88ab8fso72251cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:22:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755804120; x=1756408920; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ilc50mPVGrwfo+k7PZHzZeT1zp8dvAwV807vh9LnQD8=;
-        b=qaB5aa6/4joBtFbkUpSpQZKdKcPDpXCi5OoHBWIQAMytX+qrMyEjBxXj0Yh1FKBkBJ
-         sjjgLeZilZdvwfOiyhHpK9wcEOsKjXekN2tMPY8slEsp6LApTiB9lTHrekqHFydRhb0E
-         nRBIlIfwhRCezb52IIBN3z3wulWtx+ADB3DxWwduLAUGSII84VZthseZ7WNaTRDiL2mo
-         5KnUAIUk1rtxToqsUZWUG0phwK6WS5IgpvratzX7/m3FJpX5PaPX2hUvy3Pt/mO4AJZM
-         tKt17RtC9p0W4BR3tipB2MQm6++Y4bgrIHwbH8ssYH7Q5sP4VVLdu1QloiPqd/krpvy8
-         jG4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755804120; x=1756408920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ilc50mPVGrwfo+k7PZHzZeT1zp8dvAwV807vh9LnQD8=;
-        b=Ht3Bm/I/NNzSzfNfijDRhT0znInYr+uUgcd3Dl7rr3Yq0XqK4pe5B3r1Xc+2xNv/JR
-         vuATTEABmBr0LaIkKSH79zlzIc0MXSH8UlwOUNJdZKZ4rGAAxuNLLNz8/lEp9dHXiTin
-         xlsTM7wHNMSHvVrrVW3/LspOVshX+BRWgYiomI+UWvXO2PY/P8UfFtC7xgsxsUqyDx6P
-         oldhiUFFhwzmGhzmN9//wPSOLEYIxNqqSDrIuS8Qfdp2rbbKXhjHDdUPqCY+jvno1f+y
-         uGsu8fwVgstKwSRY2ug7wNoind/PHWAB+/Eyq47E8s86Ml9RX2uio4vIAgEklVirajUt
-         nx/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXn69n8KkuQEW0rXIbqTyYoGtPcHJPGeO31jpRVWVjelSlJiKz1gfeLT7u6Ax4haxx2WC+N4uW1Y2OfMNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5MTHSY7rhUTbOSROx/7bDbGWuUMl3/a3tmcVa8PFZz7vCUmH3
-	djiH6JwIJmGpSEej6VIh46g8jfYgycvU4ymediAzvxGt52yXnx9yij8veL3ANkVZplMihHwPT9m
-	DbwC6y69MSrIlqYEFjJUY4cbV55GPXZYlEj+Ew1h+
-X-Gm-Gg: ASbGncuoWhShQ/PEeqcS56Twt7l02uTlpJiZdXY1GHRtX+oin+WqbiRWfHDJysRXWcy
-	BPmBaovZQ2VZVRoRazm4J2G0Qn1PmjihZmEIRzCP84bbf7NGhnIXT89Tp8CrWDmgcwOQ0/EMWKo
-	FCidmTVvay7dmhKgHieJrLrMjFgUT+l1pFY1fdo75d6cqO2nEredx8hodS07GIH1lF7OBFzwvVJ
-	jorXHWxi9tpi4pvVvqpGFVGS2hWLepbxJkX5oJlj73B/4PVcCeKi6flaA==
-X-Google-Smtp-Source: AGHT+IEfSQSRZKTmvco6JeYeQU6/BI51GtHOl5P8UiOFcRQ1UL7CTs/n9GMqAQJ/KofHvStmBAuUDbtTK0h93IsHqY4=
-X-Received: by 2002:a05:622a:860c:b0:4ab:3a34:317a with SMTP id
- d75a77b69052e-4b2aaff5aecmr374371cf.17.1755804119341; Thu, 21 Aug 2025
- 12:21:59 -0700 (PDT)
+	s=arc-20240116; t=1755804153; c=relaxed/simple;
+	bh=eqpxT8Akg9rcLVQcFKQxNoaLgF9UucXwjbEfd9RDP3U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZabZ+9juvwGn7nDAdUwhmiJUo0DSBK35P57cTiMR/WK0V1ymQzBGWBkNmGroWoXP542ppQ13VE5WvIcmbB9HHJj8Cp3cr9qweHrYXNJ+KCetpDTgutsXv7y0k+pREnOBAZyTbtuKcKVUhkAfm23jpgPTADWak6XMr8p0Unkf4ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=e89V9QoO; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 56A4D40AD5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755804150; bh=eqpxT8Akg9rcLVQcFKQxNoaLgF9UucXwjbEfd9RDP3U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=e89V9QoONR1oGXET/xBFAg5fplIG8liCmjMcP5AA0rKkcivqA/AUGgG4GZZ7SiENJ
+	 ylA5e1x7t2JV5bmZtfqLhNRAQmU7875IecbxlNEkZbLrWPs7f670RF4fNW9dDt58fO
+	 ddus703JdI239uRnXhsd38ZUpC1+TCCyP0ddHEUmNOO9md7QlxAqnXup/0HljaLAXX
+	 /FJXeLHlG6vxK3CTjnkvFFMTuCi6Y7zZJHWJ3TOBVt/Sb2wfvb20sY1zf4nHzdtjtD
+	 ySl4oTXy/uH0kXmh7nIMJmx4guqcM/0L5D0+l1tJUgZMxvhbvgTkVoH55Dmx/9l6Qf
+	 2Y9WchpEPswQA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 56A4D40AD5;
+	Thu, 21 Aug 2025 19:22:30 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Alice
+ Ryhl <aliceryhl@google.com>, Andreas Hindborg <mchehab+huawei@kernel.org>,
+ Benno Lossin <mchehab+huawei@kernel.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Danilo Krummrich <mchehab+huawei@kernel.org>, Gary
+ Guo <gary@garyguo.net>, Miguel Ojeda <mchehab+huawei@kernel.org>, Trevor
+ Gross <tmgross@umich.edu>, bpf@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] Fix PDF doc builds on major distros
+In-Reply-To: <cover.1755763127.git.mchehab+huawei@kernel.org>
+References: <cover.1755763127.git.mchehab+huawei@kernel.org>
+Date: Thu, 21 Aug 2025 13:22:29 -0600
+Message-ID: <87zfbs5vka.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com> <20250609191340.2051741-9-kirill.shutemov@linux.intel.com>
-In-Reply-To: <20250609191340.2051741-9-kirill.shutemov@linux.intel.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Thu, 21 Aug 2025 14:21:47 -0500
-X-Gm-Features: Ac12FXyTJoAPd-OPdCjI8iU_xiRJBgChDEsznpBOvEolzcRHN3gqj2WyAmgSbJ4
-Message-ID: <CAAhR5DGGWss4jovHETYmBeK1gze04LR9c8Dcd2oMpCC3SnMDgQ@mail.gmail.com>
-Subject: Re: [PATCHv2 08/12] KVM: TDX: Handle PAMT allocation in fault path
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, dave.hansen@linux.intel.com, 
-	rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, kai.huang@intel.com, 
-	yan.y.zhao@intel.com, chao.gao@intel.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, kvm@vger.kernel.org, x86@kernel.org, 
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Jun 9, 2025 at 2:16=E2=80=AFPM Kirill A. Shutemov
-<kirill.shutemov@linux.intel.com> wrote:
->
-> There are two distinct cases when the kernel needs to allocate PAMT
-> memory in the fault path: for SEPT page tables in tdx_sept_link_private_s=
-pt()
-> and for leaf pages in tdx_sept_set_private_spte().
->
-> These code paths run in atomic context. Use a pre-allocated per-VCPU
-> pool for memory allocations.
->
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  arch/x86/include/asm/tdx.h  |  4 ++++
->  arch/x86/kvm/vmx/tdx.c      | 40 ++++++++++++++++++++++++++++++++-----
->  arch/x86/virt/vmx/tdx/tdx.c | 21 +++++++++++++------
->  virt/kvm/kvm_main.c         |  1 +
->  4 files changed, 55 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-> index 47092eb13eb3..39f8dd7e0f06 100644
-> --- a/arch/x86/include/asm/tdx.h
-> +++ b/arch/x86/include/asm/tdx.h
-> @@ -116,6 +116,10 @@ u32 tdx_get_nr_guest_keyids(void);
->  void tdx_guest_keyid_free(unsigned int keyid);
->
->  int tdx_nr_pamt_pages(void);
-> +int tdx_pamt_get(struct page *page, enum pg_level level,
-> +                struct page *(alloc)(void *data), void *data);
-> +void tdx_pamt_put(struct page *page, enum pg_level level);
-> +
->  struct page *tdx_alloc_page(void);
->  void tdx_free_page(struct page *page);
->
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 36c3c9f8a62c..bc9bc393f866 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -1537,11 +1537,26 @@ static int tdx_mem_page_record_premap_cnt(struct =
-kvm *kvm, gfn_t gfn,
->         return 0;
->  }
->
-> +static struct page *tdx_alloc_pamt_page_atomic(void *data)
-> +{
-> +       struct kvm_vcpu *vcpu =3D data;
-> +       void *p;
-> +
-> +       p =3D kvm_mmu_memory_cache_alloc(&vcpu->arch.pamt_page_cache);
-> +       return virt_to_page(p);
-> +}
-> +
->  int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
->                               enum pg_level level, kvm_pfn_t pfn)
->  {
-> +       struct kvm_vcpu *vcpu =3D kvm_get_running_vcpu();
->         struct kvm_tdx *kvm_tdx =3D to_kvm_tdx(kvm);
->         struct page *page =3D pfn_to_page(pfn);
-> +       int ret;
-> +
-> +       ret =3D tdx_pamt_get(page, level, tdx_alloc_pamt_page_atomic, vcp=
-u);
-> +       if (ret)
-> +               return ret;
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-tdx_pamt_get() can return non-zero value in case of success e.g.
-returning 1 in case tdx_pamt_add() lost the race. Shouldn't we check
-for (ret < 0) here and below cases?
+> Hi Jon,
+>
+> Here it is the second version of the PDF series. I opted to split one of
+> the patches in 3, to have a clearer changelog and description.
 
->
->         /* TODO: handle large pages. */
->         if (KVM_BUG_ON(level !=3D PG_LEVEL_4K, kvm))
-> @@ -1562,10 +1577,16 @@ int tdx_sept_set_private_spte(struct kvm *kvm, gf=
-n_t gfn,
->          * barrier in tdx_td_finalize().
->          */
->         smp_rmb();
-> -       if (likely(kvm_tdx->state =3D=3D TD_STATE_RUNNABLE))
-> -               return tdx_mem_page_aug(kvm, gfn, level, page);
->
-> -       return tdx_mem_page_record_premap_cnt(kvm, gfn, level, pfn);
-> +       if (likely(kvm_tdx->state =3D=3D TD_STATE_RUNNABLE))
-> +               ret =3D tdx_mem_page_aug(kvm, gfn, level, page);
-> +       else
-> +               ret =3D tdx_mem_page_record_premap_cnt(kvm, gfn, level, p=
-fn);
-> +
-> +       if (ret)
-> +               tdx_pamt_put(page, level);
-> +
-> +       return ret;
->  }
->
->  static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
-> @@ -1622,17 +1643,26 @@ int tdx_sept_link_private_spt(struct kvm *kvm, gf=
-n_t gfn,
->                               enum pg_level level, void *private_spt)
->  {
->         int tdx_level =3D pg_level_to_tdx_sept_level(level);
-> -       gpa_t gpa =3D gfn_to_gpa(gfn);
-> +       struct kvm_vcpu *vcpu =3D kvm_get_running_vcpu();
->         struct page *page =3D virt_to_page(private_spt);
-> +       gpa_t gpa =3D gfn_to_gpa(gfn);
->         u64 err, entry, level_state;
-> +       int ret;
-> +
-> +       ret =3D tdx_pamt_get(page, PG_LEVEL_4K, tdx_alloc_pamt_page_atomi=
-c, vcpu);
-> +       if (ret)
-> +               return ret;
->
->         err =3D tdh_mem_sept_add(&to_kvm_tdx(kvm)->td, gpa, tdx_level, pa=
-ge, &entry,
->                                &level_state);
-> -       if (unlikely(tdx_operand_busy(err)))
-> +       if (unlikely(tdx_operand_busy(err))) {
-> +               tdx_pamt_put(page, PG_LEVEL_4K);
->                 return -EBUSY;
-> +       }
->
->         if (KVM_BUG_ON(err, kvm)) {
->                 pr_tdx_error_2(TDH_MEM_SEPT_ADD, err, entry, level_state)=
-;
-> +               tdx_pamt_put(page, PG_LEVEL_4K);
->                 return -EIO;
->         }
->
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index 4f9eaba4af4a..d4b50b6428fa 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -2067,10 +2067,16 @@ static void tdx_free_pamt_pages(struct list_head =
-*pamt_pages)
->         }
->  }
->
-> -static int tdx_alloc_pamt_pages(struct list_head *pamt_pages)
-> +static int tdx_alloc_pamt_pages(struct list_head *pamt_pages,
-> +                                struct page *(alloc)(void *data), void *=
-data)
->  {
->         for (int i =3D 0; i < tdx_nr_pamt_pages(); i++) {
-> -               struct page *page =3D alloc_page(GFP_KERNEL);
-> +               struct page *page;
-> +
-> +               if (alloc)
-> +                       page =3D alloc(data);
-> +               else
-> +                       page =3D alloc_page(GFP_KERNEL);
->                 if (!page)
->                         goto fail;
->                 list_add(&page->lru, pamt_pages);
-> @@ -2115,7 +2121,8 @@ static int tdx_pamt_add(atomic_t *pamt_refcount, un=
-signed long hpa,
->         return 0;
->  }
->
-> -static int tdx_pamt_get(struct page *page, enum pg_level level)
-> +int tdx_pamt_get(struct page *page, enum pg_level level,
-> +                struct page *(alloc)(void *data), void *data)
->  {
->         unsigned long hpa =3D page_to_phys(page);
->         atomic_t *pamt_refcount;
-> @@ -2134,7 +2141,7 @@ static int tdx_pamt_get(struct page *page, enum pg_=
-level level)
->         if (atomic_inc_not_zero(pamt_refcount))
->                 return 0;
->
-> -       if (tdx_alloc_pamt_pages(&pamt_pages))
-> +       if (tdx_alloc_pamt_pages(&pamt_pages, alloc, data))
->                 return -ENOMEM;
->
->         ret =3D tdx_pamt_add(pamt_refcount, hpa, &pamt_pages);
-> @@ -2143,8 +2150,9 @@ static int tdx_pamt_get(struct page *page, enum pg_=
-level level)
->
->         return ret >=3D 0 ? 0 : ret;
->  }
-> +EXPORT_SYMBOL_GPL(tdx_pamt_get);
->
-> -static void tdx_pamt_put(struct page *page, enum pg_level level)
-> +void tdx_pamt_put(struct page *page, enum pg_level level)
->  {
->         unsigned long hpa =3D page_to_phys(page);
->         atomic_t *pamt_refcount;
-> @@ -2179,6 +2187,7 @@ static void tdx_pamt_put(struct page *page, enum pg=
-_level level)
->
->         tdx_free_pamt_pages(&pamt_pages);
->  }
-> +EXPORT_SYMBOL_GPL(tdx_pamt_put);
->
->  struct page *tdx_alloc_page(void)
->  {
-> @@ -2188,7 +2197,7 @@ struct page *tdx_alloc_page(void)
->         if (!page)
->                 return NULL;
->
-> -       if (tdx_pamt_get(page, PG_LEVEL_4K)) {
-> +       if (tdx_pamt_get(page, PG_LEVEL_4K, NULL, NULL)) {
->                 __free_page(page);
->                 return NULL;
->         }
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index eec82775c5bf..6add012532a0 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -436,6 +436,7 @@ void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memor=
-y_cache *mc)
->         BUG_ON(!p);
->         return p;
->  }
-> +EXPORT_SYMBOL_GPL(kvm_mmu_memory_cache_alloc);
->  #endif
->
->  static void kvm_vcpu_init(struct kvm_vcpu *vcpu, struct kvm *kvm, unsign=
-ed id)
-> --
-> 2.47.2
->
->
+OK, in the hopes of pushing through some of this stuff, I have gone
+ahead and applied this set; if things need tweaking, we can tweak in the
+coming weeks.
+
+Thanks,
+
+jon
 
