@@ -1,138 +1,137 @@
-Return-Path: <linux-kernel+bounces-779865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2732EB2FA76
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:32:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6CDB2FA7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B2506017FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DED7B1BA5590
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2284E335BDE;
-	Thu, 21 Aug 2025 13:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B386338F4A;
+	Thu, 21 Aug 2025 13:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M4spp80R"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lBfknWVb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eFdHDXbW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2AB334392
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D2B3376A4;
+	Thu, 21 Aug 2025 13:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755782832; cv=none; b=KhPVfrq5rf0iMy4tQL7ulOKHYpQcwyNlORdKHt8zwXBZl1gOzU9IEISmAGsTB08gJGzlDh0Xsm6/RoML+YLfz0DKhnR/sIf/0yNKsCx3WHK9LW8BiICrgocLMgePIrKqwWkdt1Ir1HwIU/uCB0NeD1wgUCnnt9LTNX4GByVlvL4=
+	t=1755782982; cv=none; b=do6x188ofBcrwJpi/dKPCM03eCMwaMhkqXBg0zvalgaLMF+rrxtlWpQRYGbX1Jz/EEXJg/LYLetgSBAyIie5YU8A93V/yWu2jKTejY6ZG6dPwVXrsIpSQ8b6qtSVip2BBKFkq5sM+PFqMuCXSUBElEa5wpvcG9hX876e+WIfayE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755782832; c=relaxed/simple;
-	bh=7wm2W8BdjxtMx0zQmKaAvq1NAERm3m272ZTgG+IyrPg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iYsYSebVSSn2I6B4wKgt+NvWl+aJtBv6dfRXBo/5mM+kgzlm+rJAGeY/vqgusoUmH3Zs+Rnegr7R/AGQitU8Hun+B2k22bdgLLsus/1TQzhFhsSd5EK89WmK2m3Y9xCT4mi/naFJa3q8ORP3u+b/VSOzXQpzJzCsxan2Ko/V0jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M4spp80R; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e94e40fd473so782573276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755782830; x=1756387630; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7wm2W8BdjxtMx0zQmKaAvq1NAERm3m272ZTgG+IyrPg=;
-        b=M4spp80RizxkKWhudgP7/pg/zb7cRJHzvJfRdyWE3uvfpbCbdUKO22InPbELwWyyvJ
-         Z/+mS9+K1N54hwVHfPt784IGXP4icgznEobawSD0jwNxkRJP5X+8QONVqj+4kAPI+kBQ
-         iYLTmXgZovDfw1jvOMI2c0bv7wOi6gcluWZPGBBg5zDTswLGJXkszU5qbdeBYb1VCOG4
-         7CcqHwoYgizRsGZDPvJjxGhkKXjrNihHNd31ZL/vGyxl1yKXappHpPc/Sm6mcO6jLM2l
-         zs8DMa0wM9gufC5J1Jzp+YX4BNQtZA1bto0XmaltLVnLsP9J2dfEnS7X4Xgc6YvIy3uB
-         +yqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755782830; x=1756387630;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7wm2W8BdjxtMx0zQmKaAvq1NAERm3m272ZTgG+IyrPg=;
-        b=pF7wU1OtOZHztyQhz5pJk3EN6+nf1AkN1UXkbhnVS48fZmS1AuOykmLNTjbL5AaAwQ
-         z7BqVdQGBYzk4iUMS50IGkyEaOnFdCg920mBslbTOeAIi4YUY9QxOql72w30lAfYRSS5
-         v0NLoqP4EC+Hxh2Hk3uN2n4F7AVIoo9j6QkgZ5AywSci4fVWCeeHMlQt6ugmh4Srth7C
-         i7iCE8Jvf93zfJFonwqd1PcvodVuV8wJFVBE79LyIBaziaosWLQD/dpTHTuJ6Q1syHBw
-         HFcYKXteEM2MmWz4wYucbOCOJamEFgXwLyIlt2RJ9Or/LdRpXnITn1U90FG8oI+OoCSO
-         /yGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkPrM+gI1J62K23DU9+4rphwCao5xZ2CwMdWH/SaxJ7qrr6F/4fC5F2S5FIIZR7I/a7CSEz2VRr0GN30A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgcM2/90XKzk1b/+r4nDLYuTlQswt8wXZ7oc/tiihzJOgDvG2d
-	sXKWB69dUFTeW8Ks/q2GLKn4ghIOoC7tARtmOlMfJdbC2Myozs0y0ZR1owSOvUCSEACh5tvJfjV
-	HcSod43WmAa3XDVBSLcVMbbUyrMtOjtxUnJ804UJY4Q==
-X-Gm-Gg: ASbGncvdE41AR98+Hzg2SwT0XrNXDIzUIFxhczirTUPPyG1+v85sGGqTxcnX8DIm+RO
-	4atHPybCRrV4vbZFVnyNe2tANmE0UPV54pgIxgzBFj7Vyxh/AMwbvUGaJjogmqj6Zs3X5yZ2eFr
-	dTmV4k5OZl8kJ9ywOobItrMkHLI0UHCBfNfOaMcTDHy/s6y4HJeOfcUecSHq2MmmrCxT17TeJL7
-	UYxWnuQJbdNWBj7fRXzS+UrApMgpRqRuBxO7dPY
-X-Google-Smtp-Source: AGHT+IEj0h/LwZOxGTRuKo85/IJqDM49Kxictjq1uzS1PpYHjDIs+ZTlaJVAyyLzNrazr70KAnjmjUib9T5ZdeFnFMQ=
-X-Received: by 2002:a05:6902:5404:b0:e93:3ba9:9e45 with SMTP id
- 3f1490d57ef6-e9509a6de27mr2684091276.43.1755782829678; Thu, 21 Aug 2025
- 06:27:09 -0700 (PDT)
+	s=arc-20240116; t=1755782982; c=relaxed/simple;
+	bh=lh4GI5/eFBI8OTn1QJ/Btg9LnQHdDy7gu1gwdYWndp8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=I0lmAGSEitaAuQFOhPWN+wmlF0eLO67U5lIds1g2AO5aI1ppRqGaDQ2VXfPwIHwjMuEKVDetksxTbBjzXdtqAwji9KTzZutyUMHnfsspMPW/DSI1tiBzuLeOF76pL7Xqjy9lQk6ufLqW4t5n+D80qrtRQQZiQLsPqToSq7AwnDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lBfknWVb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eFdHDXbW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755782978;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/22kGxTjt1WwvcoZvYm0bJNx0EMkPzwFbeyf40/sVlo=;
+	b=lBfknWVbiLllOft06mMW9dJrAcCa4aTQN2vcpBqK1nn/wNzMgEjNbhCrMWnVIX97s6sQB5
+	9FgR3CebjFCEphTsYmgtMBD7Z3LeWjqoLVkOcrSmEQRybtlXzT/s1jTd0dAwXFLEzFTulV
+	W8aVbtTiHdypwWgIFM51tFUOOY507X/s7PexDH455Hf12iXwR4tPqQmKMm6FkByBlZFrjp
+	d1LJROSWll0hN2mymXErM/rNMdixFHVtA3iSWRFmhCugGGqHo2TgBTJAktfa+gosDM7z2i
+	yyc+BnvmoiQljEUtyA0KkqXB5C2HmrvLMMm5RjaFpVvlGrIcHHRT/HuW/gV1Tw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755782978;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/22kGxTjt1WwvcoZvYm0bJNx0EMkPzwFbeyf40/sVlo=;
+	b=eFdHDXbWYZX4kr4QWMEtNTMA1bJ/fYUUlreTQrp+/W1F+7MZjQEr4S27d/OdFlXUuroQ/G
+	2j2WR+cFlMb4gFDg==
+Subject: [PATCH v2 0/9] hrtimer: Remove hrtimer_clock_base::get_time
+Date: Thu, 21 Aug 2025 15:28:07 +0200
+Message-Id: <20250821-hrtimer-cleanup-get_time-v2-0-3ae822e5bfbd@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755285161.git.jan.kiszka@siemens.com> <c53346c183ce0c3d02322726ef5808f468441a42.1755285161.git.jan.kiszka@siemens.com>
- <CAC_iWjLMFGp3wg=59PruJQb7heds6CUcy8FMZ_cdT0b2vC5a3g@mail.gmail.com>
- <50f7f2fc-2c6d-4ae1-bbce-e132b1d9c9fe@siemens.com> <3a9eb8eb-3420-4232-8259-3b33ed45dc66@siemens.com>
-In-Reply-To: <3a9eb8eb-3420-4232-8259-3b33ed45dc66@siemens.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Thu, 21 Aug 2025 16:26:33 +0300
-X-Gm-Features: Ac12FXws7T5AEBgk39TXNjCs8naGRTEnfry-l4q5CDOLsbQ6YRDbnIK3SKhYQik
-Message-ID: <CAC_iWjJ5bogQwhqGRVBB59=J6wcB0q5h5B-LkiTkZOmwN4z-2Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] efi: stmm: Use EFI return code of setup_mm_hdr
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Masahisa Kojima <masahisa.kojima@linaro.org>, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sumit Garg <sumit.garg@linaro.org>, Jens Wiklander <jens.wiklander@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOcep2gC/3WNQQ6CMBBFr0K6dgzUAK0r72GIqe0Ik2Ah00Iwh
+ LtbcO3yveS/v4qATBjENVsF40yBBp9AnjJhO+NbBHKJhcxlmddSQceR3shgezR+GqHF+NgNKGO
+ 1q3VtKlWKNB8ZX7Qc6XuTuKMQB/4cT3Ox219UFfJ/dC4gh6eupHXa6Ysqbz35KfLgaTk7FM22b
+ V+dsqK+xAAAAA==
+X-Change-ID: 20250728-hrtimer-cleanup-get_time-8ac9d797a685
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+ Matt Wu <wuqiang.matt@bytedance.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Sean Young <sean@mess.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+ linux-media@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ Takashi Iwai <tiwai@suse.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755782975; l=1774;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=lh4GI5/eFBI8OTn1QJ/Btg9LnQHdDy7gu1gwdYWndp8=;
+ b=IEkqHTSTeaVThWHHMvcj1X6SuVqEeVfho40mpZjwtWgbknbWPPnuONJBha7nKjoPryqI+qQlx
+ x/qodVrzBUkBwB22Hu33ElfpGezuSI9myjtrDgu1L7tzU7JpjFTIGcK
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On Thu, 21 Aug 2025 at 16:00, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->
-> On 20.08.25 16:59, Jan Kiszka wrote:
-> > On 20.08.25 09:10, Ilias Apalodimas wrote:
-> >> Hi Jan
-> >>
-> >> On Fri, 15 Aug 2025 at 22:12, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> >>>
-> >>> From: Jan Kiszka <jan.kiszka@siemens.com>
-> >>>
-> >>> If a too large payload_size is passed to setup_mm_hdr, callers will
-> >>> returned EFI_OUT_OF_RESOURCES rather than EFI_INVALID_PARAMETER that is
-> >>> passed down via ret. No need to fold errors here.
-> >>
-> >> Apart from not folding the error here, the current code kind of
-> >> violates the EFI spec.
-> >> If you look at GetVariable, GetNextVariable, SetVariable, and
-> >> QueryVariableInfo only SetVariable is supposed to return
-> >> EFI_OUT_OF_RESOURCES, if there's no storage space left.
-> >
-> > And with storage space is likely meant the persistent part of it. ENOMEM
-> > is something different.
-> >
-> >>
-> >> Should we also change setup_mm_hdr() and return EFI_INVALID_PARAMETER
-> >> always? It's still not ideal, but much closer to the spec.
-> >
-> > EFI_DEVICE_ERROR? The "hardware" is has a problem by not providing us
-> > enough RAM. Yeah, not optimal either. But invalid parameter is clearly
-> > described, and nothing fits.
-> >
->
-> If there are no concerns, I will switch to EFI_DEVICE_ERROR and even
-> drop the error "ret" argument in v2.
+The get_time() callbacks always need to match the bases clockid.
+Instead of maintaining that association twice in hrtimer_bases,
+use a helper.
 
-Yea, I don't think there's an ideal scenario and the EFI spec doesn't
-cover the case where some allocation failed, but please add this info
-on the commit message.
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v2:
+- Pick up tags from the mailing list
+- Reorder switch-case branches to match hrtimer_bases table
+- Link to v1: https://lore.kernel.org/r/20250812-hrtimer-cleanup-get_time-v1-0-b962cd9d9385@linutronix.de
 
-Thanks
-/Ilias
->
-> Jan
->
-> --
-> Siemens AG, Foundational Technologies
-> Linux Expert Center
+---
+Thomas Weißschuh (9):
+      posix-timers: Avoid direct access to hrtimer clockbase
+      timers/itimer: Avoid direct access to hrtimer clockbase
+      sched/core: Avoid direct access to hrtimer clockbase
+      lib: test_objpool: Avoid direct access to hrtimer clockbase
+      ALSA: hrtimer: Avoid direct access to hrtimer clockbase
+      media: pwm-ir-tx: Avoid direct access to hrtimer clockbase
+      hrtimer: Use hrtimer_cb_get_time() helper
+      hrtimer: Remove hrtimer_clock_base::get_time
+      hrtimer: Reorder branches in hrtimer_clockid_to_base()
+
+ drivers/media/rc/pwm-ir-tx.c   |  5 +----
+ include/linux/hrtimer.h        | 14 +++++---------
+ include/linux/hrtimer_defs.h   |  2 --
+ kernel/sched/core.c            |  2 +-
+ kernel/time/hrtimer.c          | 38 +++++++++++++++++++++++++++-----------
+ kernel/time/itimer.c           |  3 +--
+ kernel/time/posix-timers.c     |  5 ++---
+ kernel/time/timer_list.c       |  2 --
+ lib/test_objpool.c             |  2 +-
+ scripts/gdb/linux/timerlist.py |  2 --
+ sound/core/hrtimer.c           |  2 +-
+ 11 files changed, 39 insertions(+), 38 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250728-hrtimer-cleanup-get_time-8ac9d797a685
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
