@@ -1,222 +1,168 @@
-Return-Path: <linux-kernel+bounces-779201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569D6B2F061
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4EEB2F060
 	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13AD31BA8DCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:01:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87FAAA0033C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785A02EA478;
-	Thu, 21 Aug 2025 08:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1172EA463;
+	Thu, 21 Aug 2025 08:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cVbfFlaS"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="depHaB0+"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAA12EA14E;
-	Thu, 21 Aug 2025 08:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2FF284682
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763267; cv=none; b=HODoecBOUjX7VwRvTUq1DnbCrq8xreMYrrPeljXjUV3RJcsOitxppvhvj27LPeU8laTL8DHi3Ire4tJO7a/qED0MX9P2k6jC6AHhMVCy08p1JQTm5jxxQKIPtoyoCTqBtHjL8FDK40nLA9aEzy7otcYmb1oyc+OpXmOtspXUMyI=
+	t=1755763285; cv=none; b=PdaVaVjCQs1evbs+VBTu++jlNho+2KeSfbydiEodJuEpq597kZ8NDM2UMuZb3FpSAcyCx+GzhulqaakIbbCmPqO2LqhD0VwSJAAfAz0iLTaPBUed3LLNJGNHnx9Fd/1aHwcy1KZ/cLOs8Dfpf2xB1/tE8ZItdhBYz0PXxXgBEBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763267; c=relaxed/simple;
-	bh=LDomPiZ9p1Qt2fE9RQvZk4IbzMA8y76qgVlk+q9O49M=;
+	s=arc-20240116; t=1755763285; c=relaxed/simple;
+	bh=jvkOLdZKZr5olKwFsRHATvSPLUv4tAJnWsvZ0GtpMh0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qA64/IekbLeSiiOZEPt+Vfsg5lzuRrQeMW6H4X4FPDF17AxM1Rtzo4U+lzwbWsL7w6Z16leiv83KATLjcr5m/K1JuPd+TPqC5XJO+mR9UfrFKct47ntjgvthxWd4tMTpSiY9h+1BX1yhQ43KZ5ocY6/OonhXplNXxIqESeQ0YmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cVbfFlaS; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c380aa198eso288617f8f.0;
-        Thu, 21 Aug 2025 01:01:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=n5j/x/nV8jmJtmBeegfhM6N4jNevzZOkYVJYvBpiJBgEbis3vMHYyD8Oe85UzEEMfHDn58zOAFXoqqAkhIrvGzdmxhDS5NUjaCQpSHby0YMl76nMCSEkgSX6Ak04OXRHbYluHgFhcgMUZbyjtgSqU3ZWPs99crPWYH3Jy/s0xjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=depHaB0+; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-4360056a2adso407477b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:01:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755763264; x=1756368064; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1755763283; x=1756368083; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cYC81/CspQI2x5Zt5nFbZgxnDKsw/U0sKguPuiHeEsU=;
-        b=cVbfFlaSRfAS/dVH9WK5idYBXwUUUws2DHtZ2QKvRvQbDWbbI13bD2PdGfzho3ASMy
-         7zRfQoDFPX1iRRvqDRnc4Oz5NcQroreQAvVX5wtsH0DoB+qfrVSnndIB0onStRvM2YxC
-         2a9mBy5QUmZy2uIQ7M+TYv//8fA5rAYLER21fpJtvrFuSQci6nka29CyG0z1HQkIbNQK
-         iWqFlupEmaxxNLzKBXV91T6hs1O2nkmuJepV3znfYCJIgvbjvcijdIJTVz2FodqYbimT
-         vcPbjQ4Yso2Vea2ifl0c7RQsxwWagsi0422IOPEO5uwLZAsjgywhEr75w4v8dQXYfik2
-         1v/w==
+        bh=X0l+hqGahEDr13/VVOMr1/ba48aJ1pl6KG+1VNry8aA=;
+        b=depHaB0+LCDgBAKKfFEPLn3Luk1y/KEN8gAE/dfODF6uN5y4rRwV6SIyeE5ddcnIhO
+         gwTqfXFpOe1Hjzuz/X5cLJNdDknbey4enYbq2EKtooJs+8CgWayrUARpblxmWP5bVovw
+         oAuNGCSV98IJJ7x87akbZK3YssWrH9eIytNAsgUntqfHN5Q3Q4400tUZcNx5JpQn8rh3
+         qW9x43NsfwM1XTjaq9zaAXKhYqajbQN/dL7rbrOK0Os0lNtN4kgWBCvx5kCspHDX4Wju
+         0AfSEcxeYYmgnGNWMhIrRCMySqPbHmfnDyROUMYPe+WYQLEHxB1vwweTS1Mq24H+SnzO
+         anLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755763264; x=1756368064;
+        d=1e100.net; s=20230601; t=1755763283; x=1756368083;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cYC81/CspQI2x5Zt5nFbZgxnDKsw/U0sKguPuiHeEsU=;
-        b=O3pEiO92PaDE2pDMF/mmdIenRK1Yxp9+Kw+wRVaKWznvhV4NsowmYnEqLyxnf09zgy
-         eTPjWLfSppQx9DFj2JjfQXMIVCwFp0i2CmqIweCT5sJgTAM8o3Gt4/ya5iNpNmVjJk6w
-         Wh9Cw/CTH/w7581JiOhYZju9w8RcZu8hKCcq7DVVHxdD9IjydAcdA6UWoRKUoj/8V4hj
-         QgHQIL6DM72L9iaqTas+MX9SSqvE/WGGcv8p0YUntxOTXQo8rnWyvor/JjnLC6lwD0MG
-         9vAHDNWAmaxPz6Ce26vwNDfK+zmpIZoHWwjFu1YBWaFxS99YMdS0nX02oq9nLo/5CjVN
-         zKSg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6HoV5fV9j/rWbj5+OCQ2V0jYX+S3h1qDDf5y+HTfNtJfW13Pz/EDYTfQKsQe/xn1wO8h6pMGTiZQz/JI=@vger.kernel.org, AJvYcCW/sChiY4SMfp1fe0CWs1mkXyXMmrJL0GuLfRZzXp4vDikjd0MBcy/uz0YcD50EKzeFB+n+/W5flOno@vger.kernel.org, AJvYcCWciwGq20Jzrn4kqVOBwLe+si//cBrtT0KHGUymp17qW/XJVrzuVWd+DdILApOuXpLFJElsmUFEflk=@vger.kernel.org, AJvYcCXWKUzhxDKvp0FDKS0WRJytb7ovTR8Era7Zl7U0MC6RI7bdnlVHmZLica8Vd+eM71nLcxA538nhq0bGW6zt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7WphJVjIx8ZOIIxyRMVAC9RTkiADpw80lt357WbhPAAg7AzAZ
-	r2LAqUqFXKmPx4dJ+X8oTasfc57FoZ+TDW6ttrcI7mkJDR4p1uyXYVinQ+NfGBZ5NPCTfj6V5t0
-	pVvhrum2NHTuyEuCXnSGVFHF6KZCl0/0=
-X-Gm-Gg: ASbGncvgs+VO+ex9S7zblaM37jNXIWZN2ChRBpT2gSeJYFgufp3YMwke06RcE9hdqq7
-	++gVFe+/Tf8+XJOMi4XNsO2Qu93VNRIMf29N1IvVfBRRAEBsuMo3mNokV8ycpi3lvqRrXeipQfG
-	ffb7sdOL3W/R8dNuoMYbYF2WcTN/z5H7aC192xdUPDZCuh2EmDfaBBA50VqyhcKtCSZZ/BuQBsV
-	2o8l1ot
-X-Google-Smtp-Source: AGHT+IHlu6plWkGMAqF0313C+JSEwT6vux+7MQ+TdBXXvqnjy/h7v5byLE/hb46RMj242B7yotgV8zSydX3+XR8ue+A=
-X-Received: by 2002:a05:6000:2307:b0:3c3:d82c:2295 with SMTP id
- ffacd0b85a97d-3c49549d23dmr1368855f8f.24.1755763263696; Thu, 21 Aug 2025
- 01:01:03 -0700 (PDT)
+        bh=X0l+hqGahEDr13/VVOMr1/ba48aJ1pl6KG+1VNry8aA=;
+        b=aOH5hLwrkDeg3JVOlJDvqSbyL3vCY96S41cv2gBVT5q2srQ3p2zsuEM6kB6vg3W856
+         pk1C2m5OI0+mvJiJh4uOWzOW5jjkZlWZEtyRVOe0STiHm0mtCYt3/IT/GEWcrvKQkM3o
+         R/n1cDrzRUdXmjRI6aqQEvvFHZkc80O1eD320pwlr/hwEqxahlaI0ClYj7ZQXMkWebZu
+         kvsI5KZfgDnT/ZY9qUAYP40WICQgq6XR4NqclvbxbqrOmV/8p/UFnHEee3/akxIhHg1j
+         PvO7JBGGJ3+s718XKTIWxwFXn4fJgfY4gM7gBbROMx2FdyI97tAtSadbIvqqOjAe9TOb
+         DfqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP0N/2gxjHkw9OhAw5InUrehFe8o8uL6HnKZwzLUDie41dZYyCnVP8fnf493bJ0VohebH5YkjqUelo7hc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi+VqgmZN90GP+3UC8zUm/Mqs8/WZroWWHNoEOX36EQpblYCkf
+	fozgsnTyJL68UvbEYWMhgxg8WfyG/FhfJ3RzxvziDT2Kio0Q9zjFQ8OdXVRwioMbBK5uN/u2lJy
+	LRXXxRCcNwYlEm/CBKWKnSzatkruePJVjWVeq1AWn7Q==
+X-Gm-Gg: ASbGncsaohVmKRIhb8OEo8OFvOxzVj+In1ImnZOx7ogBGAAYvWoNpZ0AAIKVJfRjtXN
+	+0PcGkvLZSS0mY2368WA1NNdyZSmGyQ5eO2O0jvekqNrYHvo7HajqrT+szAhwmrvLql5lv9kda5
+	KkfcfLgqXd205byqegZW2TxX9i8BUKFX6iauKSP/PpYkf+9vV+86sv45KtKkyigSzU3P5+or/7y
+	28EHqKGrlJv+sCwLmlmyDXo
+X-Google-Smtp-Source: AGHT+IE1OeafrLylfvLmrdDojnOroAp8hDYwluDFKL9kS6j+UuoaPTREpF8UcR7eJdteZMLpeZ1xWt+LGXG2u0Pv6TQ=
+X-Received: by 2002:a05:6808:50a5:b0:435:27b4:3fcb with SMTP id
+ 5614622812f47-4377d6b1ed9mr504349b6e.3.1755763282540; Thu, 21 Aug 2025
+ 01:01:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820114231.150441-1-clamor95@gmail.com> <20250820114231.150441-4-clamor95@gmail.com>
- <22816196.EfDdHjke4D@senjougahara>
-In-Reply-To: <22816196.EfDdHjke4D@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 21 Aug 2025 11:00:52 +0300
-X-Gm-Features: Ac12FXyXQq5Kfxjhl2aCxdTEED7OiYUsslF67UQV98LjSRtX5dSrp8cwLQqjhNY
-Message-ID: <CAPVz0n0vCjM=tz_GAM9TTKO76eMmq-1AjW4y8C==GDg2NUZE=w@mail.gmail.com>
-Subject: Re: [PATCH v3 3/6] thermal: tegra: soctherm-fuse: prepare calibration
- for Tegra114 support
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250819135007.85646-1-cuiyunhui@bytedance.com>
+ <20250819135007.85646-3-cuiyunhui@bytedance.com> <e7653089-5c57-ee61-ed01-0b3245e10d82@gentwo.org>
+In-Reply-To: <e7653089-5c57-ee61-ed01-0b3245e10d82@gentwo.org>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Thu, 21 Aug 2025 16:01:11 +0800
+X-Gm-Features: Ac12FXwUWi_BUfDOcCWj-9DhtNJYZaytAFdS1lP3UQLaq51ftYyrJTGQtLfjgb4
+Message-ID: <CAEEQ3w=KrysBJrkYA6mUKCjC=fz23R7u81a2p8EipaN9oVHs_Q@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH 2/2] riscv: introduce percpu.h into include/asm
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: yury.norov@gmail.com, linux@rasmusvillemoes.dk, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	dennis@kernel.org, tj@kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D1=87=D1=82, 21 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 10:4=
-2 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+Hi Christoph,
+
+On Thu, Aug 21, 2025 at 7:39=E2=80=AFAM Christoph Lameter (Ampere)
+<cl@gentwo.org> wrote:
 >
-> On Wednesday, August 20, 2025 8:42=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > The Tegra114 has a different fuse calibration register layout and addre=
-ss
-> > compared to other Tegra SoCs, requiring SOCTHERM shift, mask, register
-> > address, and nominal calibration values to be configurable.
-> >
-> > Additionally, a use_lower_precision option was implemented to account f=
-or
-> > the Tegra114's 0.5C thermal data output, which differs from the 1C
-> > precision of newer SoCs.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/thermal/tegra/soctherm-fuse.c     | 31 ++++++++++++++++-------
-> >  drivers/thermal/tegra/soctherm.h          |  8 +++++-
-> >  drivers/thermal/tegra/tegra124-soctherm.c |  6 +++++
-> >  drivers/thermal/tegra/tegra132-soctherm.c |  6 +++++
-> >  drivers/thermal/tegra/tegra210-soctherm.c |  6 +++++
-> >  5 files changed, 47 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/thermal/tegra/soctherm-fuse.c
-> > b/drivers/thermal/tegra/soctherm-fuse.c index 190f95280e0b..d27876dd9b2=
-a
-> > 100644
-> > --- a/drivers/thermal/tegra/soctherm-fuse.c
-> > +++ b/drivers/thermal/tegra/soctherm-fuse.c
-> > @@ -9,15 +9,10 @@
-> >
-> >  #include "soctherm.h"
-> >
-> > -#define NOMINAL_CALIB_FT                     105
-> > -#define NOMINAL_CALIB_CP                     25
-> > -
-> >  #define FUSE_TSENSOR_CALIB_CP_TS_BASE_MASK   0x1fff
-> >  #define FUSE_TSENSOR_CALIB_FT_TS_BASE_MASK   (0x1fff << 13)
-> >  #define FUSE_TSENSOR_CALIB_FT_TS_BASE_SHIFT  13
-> >
-> > -#define FUSE_TSENSOR_COMMON                  0x180
-> > -
-> >  /*
-> >   * Tegra210: Layout of bits in FUSE_TSENSOR_COMMON:
-> >   *    3                   2                   1                   0
-> > @@ -26,7 +21,7 @@
-> >   * |       BASE_FT       |      BASE_CP      | SHFT_FT | SHIFT_CP  |
-> >   * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-> >   *
-> > - * Tegra12x, etc:
-> > + * Tegra124:
-> >   * In chips prior to Tegra210, this fuse was incorrectly sized as 26 b=
-its,
-> >   * and didn't hold SHIFT_CP in [31:26]. Therefore these missing six bi=
-ts
-> >   * were obtained via the FUSE_SPARE_REALIGNMENT_REG register [5:0].
-> > @@ -44,6 +39,13 @@
-> >   * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-> >   * |---------------------------------------------------| SHIFT_CP  |
-> >   * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-> > + *
-> > + * Tegra114: Layout of bits in FUSE_TSENSOR_COMMON aka FUSE_VSENSOR_CA=
-LIB:
-> > + *    3                   2                   1                   0
-> > + *  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-> > + * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-> > + * | SHFT_FT |       BASE_FT       | SHIFT_CP  |      BASE_CP      |
-> > + * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-> >   */
-> >
-> >  #define CALIB_COEFFICIENT 1000000LL
-> > @@ -77,7 +79,7 @@ int tegra_calc_shared_calib(const struct
-> > tegra_soctherm_fuse *tfuse, s32 shifted_cp, shifted_ft;
-> >       int err;
-> >
-> > -     err =3D tegra_fuse_readl(FUSE_TSENSOR_COMMON, &val);
-> > +     err =3D tegra_fuse_readl(tfuse->fuse_common_reg, &val);
-> >       if (err)
-> >               return err;
-> >
-> > @@ -96,10 +98,21 @@ int tegra_calc_shared_calib(const struct
-> > tegra_soctherm_fuse *tfuse, return err;
-> >       }
-> >
-> > +     shifted_cp =3D (val & tfuse->fuse_shift_cp_mask) >>
-> > +                  tfuse->fuse_shift_cp_shift;
-> >       shifted_cp =3D sign_extend32(val, 5);
-> >
-> > -     shared->actual_temp_cp =3D 2 * NOMINAL_CALIB_CP + shifted_cp;
-> > -     shared->actual_temp_ft =3D 2 * NOMINAL_CALIB_FT + shifted_ft;
-> > +     shared->actual_temp_cp =3D 2 * tfuse->nominal_calib_cp + shifted_=
-cp;
-> > +     shared->actual_temp_ft =3D 2 * tfuse->nominal_calib_ft + shifted_=
-ft;
+> On Tue, 19 Aug 2025, Yunhui Cui wrote:
+>
+> > +#define __PERCPU_AMO_OP_CASE(sfx, name, sz, amo_insn)                 =
+       \
+> > +static inline void                                                   \
+> > +__percpu_##name##_amo_case_##sz(void *ptr, unsigned long val)         =
+       \
+> > +{                                                                    \
+> > +     asm volatile (                                                  \
+> > +             "amo" #amo_insn #sfx " zero, %[val], %[ptr]"            \
+> > +             : [ptr] "+A" (*(u##sz *)ptr)                            \
+> > +             : [val] "r" ((u##sz)(val))                              \
+> > +             : "memory");                                            \
+> > +}
+>
+> AMO creates a single instruction that performs the operation?
+>
+> > +#define _pcp_protect(op, pcp, ...)                                   \
+> > +({                                                                   \
+> > +     preempt_disable_notrace();                                      \
+> > +     op(raw_cpu_ptr(&(pcp)), __VA_ARGS__);                           \
+> > +     preempt_enable_notrace();                                       \
+> > +})
+>
+> Is "op" a single instruction? If so then preempt disable / endable would
+> not be needed if there is no other instruction created.
+>
+> But raw_cpu_ptr performs a SHIFT_PERCPU_PTR which performs an addition.
+> So you need the disabling of preemption to protect the add.
+>
+> Is there a way on RISC V to embedd the pointer arithmetic in the "AMO"
+> instruction? Or can you use relative addressing to a register that
+> contains the cpu offset. I believe RISC V has a thread pointer?
+>
+> If you can do this then a lot of preempt_enable/disable points can be
+> removed from the core kernel and the instruction may be as scalable as x8=
+6
+> which can do the per cpu operations with a single instruction.
+
+Yes, thank you. While it=E2=80=99s certainly good to remove preemption
+disabling, currently RISC-V=E2=80=99s amoadd.w/d instructions can take the
+address of a variable rather than a register.
+
+I previously submitted an attempt to use gp to store the percpu
+offset, and we are also trying to push for an extension that uses a
+register to store the percpu offset.
+https://lore.kernel.org/all/CAEEQ3w=3DPsM5T+yMrEGdWZ2nm7m7SX3vzscLtWpOPVu1z=
+pfm3YQ@mail.gmail.com/
+https://lists.riscv.org/g/tech-privileged/topic/risc_v_tech_arch_review/113=
+437553?page=3D2
+
+>
 > > +
-> > +     /*
-> > +      * Tegra114 provides fuse thermal corrections in 0.5C while newer
-> > +      * SoCs provide data in 1C
-> > +      */
+> > +#define _pcp_protect_return(op, pcp, args...)                         =
+       \
+> > +({                                                                   \
+> > +     typeof(pcp) __retval;                                           \
+> > +     preempt_disable_notrace();                                      \
+> > +     __retval =3D (typeof(pcp))op(raw_cpu_ptr(&(pcp)), ##args);       =
+ \
+> > +     preempt_enable_notrace();                                       \
+> > +     __retval;                                                       \
+> > +})
 >
-> I've been looking a bit into these fuses, and from what I can tell the
-> precision for these fuses should be in 0.5C units for all of Tegra114, 12=
-4,
-> and 210. The documented nominal CP (cold) and FT (hot) temperatures for
-> Tegra114 should be 25C and 90C respectively.
+> Same here.
 >
-> The reason for the code '2 * NOMINAL_CALIB_XX + shifted_xx' then is that =
-the
-> value of 'actual_temp_xx' is in 0.5C units -- NOMINAL_CALIB_XX being in 1=
-C
-> units and being multiplied by 2 to match the units of the shifted_xx valu=
-es
-> coming from fuses.
->
-> If you're getting correct values with your code, clearly there's more hij=
-inks
-> going on.
 >
 
-I have based this code on downstream kernel which sometimes can be
-quite challenging to understand correctly. If you assume that Tegra114
-fits into existing driver even more, that is great, I will test it and
-remove unnecessary parts.
+Thanks,
+Yunhui
 
