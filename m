@@ -1,393 +1,104 @@
-Return-Path: <linux-kernel+bounces-780048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7677BB2FCF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A436B2FD0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 860C06264E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:29:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1AE364179A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B2D2C08B2;
-	Thu, 21 Aug 2025 14:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F559280A4B;
+	Thu, 21 Aug 2025 14:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fPFH/xPq";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rzPFh/jN"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqBcBWXi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEC1235046;
-	Thu, 21 Aug 2025 14:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755786341; cv=fail; b=pdTKFlKJojLPGLRlHQcyWcB61FX9DthNc5FOEL8GhZDtssGdA/b/bgt69OyUjJdRLS6dfYU5SXBTdP3skCjnf8p98IpkuixAE2D7XeUE7okWhwY/xYaut8PGFd4mr+0XN9puHI8FBgmtLvyaECG7TConUOFZqEgZFY1Q70oURZQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755786341; c=relaxed/simple;
-	bh=vDV2mPvTFeGtX0ibRJwEHgv24BWyyRdrqJlCeZffGkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=RHA/6ypG7UvTBmiqjG2V/jNlDeQ55HBOc8iAmLVxXKWqipNS7g0udc/sqk6+z2nw96KildZ5wXMlKJ8oSg+Vqptb+Y6baxoblcnZYYMig1dxF9q+GYcZE6lJjfQOYB3LeqzijCEBGsz2rg3JwmdbnW8IcIiGpEXgNTi7g2jRMJI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fPFH/xPq; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rzPFh/jN; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LCv07R016962;
-	Thu, 21 Aug 2025 14:24:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=J2xR1dvhOn7Ev+7skt
-	bZ/YJYGGHuterTXPWsCqSQTxw=; b=fPFH/xPq14Kzz8CvBxq9eaw1oAtD3+yo4Y
-	9gt2OR18cs6n2RNMi8p0yt5bNbwybnukpuntidDGRcv8rkTt58n79u+5WkekQybO
-	+Uz7tI3qAbX+/es05WjNvtGpxOXtqnaTp3X2twCmt4syaDJgSv+8F4wYYMPgNKM2
-	dnnc0YKb5f4/KiNYIT/ZjoyuSXmQSK7fTmtOSC+dY9xDIkfC3dy+1PWwRhdUA93U
-	oUD3FcbFhFzRY4TTrOxna+6wfVCb9HvrJ0SqBYUSpLfkL1Ae3iqDzyi0rN7czEOU
-	bNUBxYMHwFXt15ljX2Bf2tXqeiREJurEwcG1NTO+G8phsWudMufA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48n0tquqd2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 14:24:29 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57LE4mlX027084;
-	Thu, 21 Aug 2025 14:24:28 GMT
-Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11012014.outbound.protection.outlook.com [52.101.43.14])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48n3sxm6ff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 14:24:28 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YSG5JMEmMRlYMsNpAA84U+5ryu9RfzjVo8MU9QX9w/LwGyUtPgLijv0KAbrJ9oBvH1p6UbHMGzCstBwNEBsg50tqma4RarKujSnj0pp5ucGeDP3P/SSvcx1+CDlObPDVhkgp10esqmMUMZiAhWBnHYEmzXnwarpJYPHFuYYmro0L15ixFsq9/KrCw0BXrfQquj6pGXNdZpng/sz0JvdL2S0+jk1HXyHvs1pBvjEcNYuUJfFFiYA8240XU0rzSEc+oCFxJ7gyQfQsnTiEtHpFH+2HKtp9Q0ClBV16LvqV0E4l5ZRKD4cHq1aene+fURhyfYce8UDQrXZe/yhge9yWBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J2xR1dvhOn7Ev+7sktbZ/YJYGGHuterTXPWsCqSQTxw=;
- b=VVeEXooX7QY14IZoGjz2jmCa9uTEdRhcZ02d/hL51tsp7yGPvB5xiGBWJarPgJ47Nu8AWl03bGV3HZ5ZD9NPAcrk5hM6CaENNRDen2Ze1N3fKN22GbBbIHHaSGn0TZXGdmt9E5ZAuaT9q5pIOGJDp6YduJuMofxGZLIBEbmtsjk7Qki3LHXIQO5L30iA+c+EtLKiQMecpYFuexiYVFnTwPI/eXrTLBmmL1ny3VFGwCW20rba+YQZ4uI4zJ+66bkI+/jDEHiYxGxW0srSs6OXN2xl1GmIWj1TUpguZH4z7315kfCVpqH5OgbpNhKn8bf+nFz6NcUCvk+ttTfT1z6w3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J2xR1dvhOn7Ev+7sktbZ/YJYGGHuterTXPWsCqSQTxw=;
- b=rzPFh/jN3iRCVF/BCtbgxxPvotV8SzfbqLN0PFJ59noTpULtjnSITRG/c+4e9BeGY8P7gWyLBD2hyCW2qcSfw4huNKYBFIb3O41xHbntGf/t12UGkoEDVwhjfCD+W1+1rjIQMwlxcI3aLm7x70G3HElwpAGs9t1iumsM+6dtrHw=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS7PR10MB7345.namprd10.prod.outlook.com (2603:10b6:8:ef::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Thu, 21 Aug
- 2025 14:24:19 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9031.024; Thu, 21 Aug 2025
- 14:24:19 +0000
-Date: Thu, 21 Aug 2025 15:24:17 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Nico Pache <npache@redhat.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-        Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
-        corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
-        mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
-        baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
-        wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
-        sunnanyong@huawei.com, vishal.moola@gmail.com,
-        thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        raquini@redhat.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
-        tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com,
-        jack@suse.cz, cl@gentwo.org, jglisse@google.com, surenb@google.com,
-        zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com,
-        mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
-Subject: Re: [PATCH v10 11/13] khugepaged: improve tracepoints for mTHP orders
-Message-ID: <8ce6482f-4e24-4f6c-b28d-641fa878b4fd@lucifer.local>
-References: <20250819134205.622806-1-npache@redhat.com>
- <20250819134205.622806-12-npache@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819134205.622806-12-npache@redhat.com>
-X-ClientProxiedBy: MM0P280CA0003.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:a::14) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993D2279791;
+	Thu, 21 Aug 2025 14:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755786363; cv=none; b=IHR+yEWoS7Vc4bANomUFZ7UZfkB2zhBwsALmkj7jE3/D6lvh0/tE4G7ePSrNWCSk3Cm9JOfhtuPlFrIlKulFoK44aXhaSFMGA3mmeI/VNgZNNpIj1PJ/nQI9pwe32cbAw07y3XricniFMC5+wDP6+0dB1+1UmzG/+WWRyGSFidU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755786363; c=relaxed/simple;
+	bh=vf5Fi2dD1hhyyDWhuRPa6MLAXnOLAHxSyHEh1kLOyk8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vowouz86gWSs/2FmP1FK3bwy4IYYFa0cJ5dr6OQuX7SXgXayrrUOBWs1og1g0s54y/oE8oCQaVAwv860uBxk3+Z/GtrmfG6ekSeFoHW1s4qa8UuMGUqDhf8Dk0h3ahPjTLMwTZD/J9keNZKdB3RopMByVCXXbaO0Qwk3CuSscxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqBcBWXi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F3AC4CEEB;
+	Thu, 21 Aug 2025 14:25:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755786363;
+	bh=vf5Fi2dD1hhyyDWhuRPa6MLAXnOLAHxSyHEh1kLOyk8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jqBcBWXif+fIThL2sAHLO6P+dezcJUD6B52uyjHEhlGr4G2F3sudhSN7uIWye1M4F
+	 mrwuL1Yyarc1DGE5SuyKM0Pq2xOfSzMT1BbQZL9OWHjwlrJvTRSMGe65mxyaCn7zck
+	 ICYuQ7jaay+7UeUdQiSrERxZH50CFVgAh83mhcgZRsev0oUaYncD4XqaQwOUYYivMl
+	 P5FxSILMXi8HpKYDy6z/JdrUzYAd2UaufXHKE4ULD1M3OjrK9PnwTf/cnsL/R28Y7d
+	 OUppzyuTbuuURCsHkqxKvxmSfdaUFU9Y5mM4tQThNIm6d8eQKB8bHje65F5YU5I7kB
+	 mNNuFXp94m/sA==
+From: guoren@kernel.org
+To: guoren@kernel.org,
+	troy.mitchell@linux.dev
+Cc: alex@ghiti.fr,
+	anup@brainfault.org,
+	aou@eecs.berkeley.edu,
+	atish.patra@linux.dev,
+	fangyu.yu@linux.alibaba.com,
+	guoren@linux.alibaba.com,
+	kvm-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com
+Subject: [PATCH V4 RESEND 0/3] Fixup & optimize hgatp mode & vmid detect functions
+Date: Thu, 21 Aug 2025 10:25:39 -0400
+Message-Id: <20250821142542.2472079-1-guoren@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS7PR10MB7345:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66d9f333-65a1-4309-df21-08dde0be6acf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uw7WVe8K8wwsjDVvs84SzReDh7X+wRnBgHV+XoL5/kxba70rKSBaO3MAxm/f?=
- =?us-ascii?Q?Hi9V3PpQexOfOh9Lx0EWWR5YXgbMpFASlzKsIP4gp4XssvykzWa8dqq1IlwX?=
- =?us-ascii?Q?bYwFkzMCp8/eun6qglKYMiD8S9P5fuhChEgYntXbDwKxY4wAzBi/2OxnvlhB?=
- =?us-ascii?Q?vL53VnY8Obm27Jh7kvq+guDO33jO1mSfQs/HA/L71RPTzaATDCc+ddjyl0fA?=
- =?us-ascii?Q?oGAaws9K79b9BzgYmXLv+pJAWCl/6zR1qtSgD8d0sCVMRokLnu4rG09Pka88?=
- =?us-ascii?Q?6o10FARD7H0dyoxEUkBRu6hNyzFLdPq6kT/Um5ZfxLidbPQukFBpPGiZVzAo?=
- =?us-ascii?Q?NF6g5nWek7Yq/dw/A+TZYB5e2VPL5GY30psPVONOKghW1C43mm6kP3JFakok?=
- =?us-ascii?Q?2KdT/DE2Tu+fasBSQMjiryuKLk3px8QGRqzRSvb9GMtg4ycmtW+IxKlN9LDY?=
- =?us-ascii?Q?LozdEMVqNiaAZSwI4d9/Sr7yZVeJfM+aWlzVqN8oWS405hCVrokCVJ823133?=
- =?us-ascii?Q?DDxZOTiuliz5wrDesaRx84D8eOqixZRWaHtqgsceRXcmBdD+9pApkFse3oKH?=
- =?us-ascii?Q?5Ugp0lXmIJ32iEGb9xjW5TCIDbD8fd5LkhXPWTwi3gi3TDDKOb6YQCs0wamy?=
- =?us-ascii?Q?/vG5WwQ8Lx+e6fehlUsPqNakfK9dDeV9tRV31R4Pj7TzQJfFmlnpK/ROGIhl?=
- =?us-ascii?Q?cRge64WlFyh+spU3B/qE0OJrc3n/YwW4zdiM4RuDlw/i1fKzzV/Erngih4yB?=
- =?us-ascii?Q?uSAaY8X7wJgGW4OKMgCIUUmqSR+sEyOz6TyTwyJOZfxEbwuztTXglPf15voa?=
- =?us-ascii?Q?7jCQQgMthJR7Uw28/fw2n/ostvsBdWtZjHe3te/DEHeaaHudyU44mc+XieXE?=
- =?us-ascii?Q?ZrAsZ/UrTcYDT7lPGUzmz/uWwtG0lptYotLzP79B/pj1WSiXhEeUgR8NzKE+?=
- =?us-ascii?Q?fDZxfqnB0i8Ze8lClz9AgFFJxTdMuRLNr11s7PBevM9WOBDfzhqd3eIp3nWT?=
- =?us-ascii?Q?aC9qDaoTKfI7ckSSoDxd6yo+7CMmZSJTJ3LZ4ycBew3jKjGKg3QrZ4S8LIq/?=
- =?us-ascii?Q?EzxE8u0raqPKjHm5iUIBGIhdeRpUU7yZfz9U/gqyW4midFLRyGugC0GMEHy+?=
- =?us-ascii?Q?osS/JG0Bnk+p84kyD5/HSn0L7sRof58Z4CnUsOAvgHyIY9IoRrPPOl9ZMrNd?=
- =?us-ascii?Q?curX6Hhd5/0Bd1DRTLXYw1eNCCKq29XiV0umFKbUegkK8sUq+1MF5Bn2nStu?=
- =?us-ascii?Q?O0Jg82BWp1MHW7kIRJuTt8FCoCX96/hrETI4oDXYp0zXCRu5l7zgPxXtKR/J?=
- =?us-ascii?Q?2StWF8yRzRn7EqlNEcNmThEU0K+kKmn1sAF9r6yuNLvRmdwjePoppmgHpdYA?=
- =?us-ascii?Q?vX2FQyQoctROcomxJ/WFQUjG8UT1OvcPPZ6nYzrO1ZClg6rVD9jzD3leqd+w?=
- =?us-ascii?Q?/D1DN+Rohm8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?S1lVHl7LrI3qFgpzp0AucvAaMuYK+2gPI1LDdrPrGg1kFlZ//ow2CBVtAhjY?=
- =?us-ascii?Q?oalbf1Ire4umxd4fTnd57uUai0pNsd4HY53TQr/myMB0YM/p0Mew3yaFIQ2N?=
- =?us-ascii?Q?tJKsZN1KO09+5rzRqv5T7ka5EJ/QEL52oyxwnu3NxKwM2464IcdtNlQoePu4?=
- =?us-ascii?Q?47iUm3mQ1WYoTTPj422tuD85WASZ5cAx3v5blMSrBsTcWwq20hgwyScHyMsA?=
- =?us-ascii?Q?+V5SBmSFj0LIvTk2Sf1xHEpWWTwR9W7if0EQqQ3BOHl8WnMa3m2mt/HpccRP?=
- =?us-ascii?Q?mqGikaA1V5rK6O7w7pkaXhMN3S6xtvcDrJ8oJgEeNNQk6Xi4IDFpOClzW5hD?=
- =?us-ascii?Q?7P2CQuxEpVh2S0jikzWZP8VJxjFZdx8wWj3aWwUz1xBXDH0gFACVXihq+D8X?=
- =?us-ascii?Q?PaqMpJ7lYa5rSHmfBlqxf5fJPJh9eN6cCkBB4uQukZiZG6p8Z5zy2Il+hheG?=
- =?us-ascii?Q?v7G04FKVd1thKJxfSPtMFFWN/1F5HRxYt0wCkq6aB1VkJ+RxTLyflQX0s91E?=
- =?us-ascii?Q?roNUEHnl8CJtZ0hUF6HWPb1lBwEAnYxRPeUaTPHOgR0ZMPwfH0W4l+AMrRSZ?=
- =?us-ascii?Q?wPQl69P3Z1b1LOsVHV8nLLI3Q6R7mXkxqCSpe3eHe3YZHNAieZeTVT415tZ4?=
- =?us-ascii?Q?/Y9PXOjwC2hFYghzQPmyaG2YqeCnJN8FMmV5mPc7yDuR7jtK8VAzuQ0mr5SN?=
- =?us-ascii?Q?gCMfJz2HF1mmgwRa3VmPnIZzz5RI3wEIKfRdCAUUdGgcWdXBPqWnFFFmbWrw?=
- =?us-ascii?Q?CFEUboTwQVQFxeDZMwGTezsXTh6+mEL/W899SSXeeHPScKyPHHQ4sgQkHJOb?=
- =?us-ascii?Q?Z7beSLNoW8Kf4BkAp/KxpneiHAPueaXVpR3fyg+lEwMwKQnLxwa/b2GBXhd4?=
- =?us-ascii?Q?KhrFzXiHCgT42vzsApCRSwPI1U2GZkRIe412g3WLuTBFHXe0utKHlscTsrh3?=
- =?us-ascii?Q?SE9Wdp3qLHpOh0SrJ7q3uB6eVnIqNio3YWwYdY4mDJIac30ugkMoW4T0At1Z?=
- =?us-ascii?Q?2o9sF/ws8mHBDU1slVt6eA5wcqIYMG4yR6C50GVqZLpAe7M3b/ciclvJEXs2?=
- =?us-ascii?Q?JMgv2zMTj6IDs0+GzJtYL24UERkvjTr72e4h3FSScL2xge7jyJUaRzAg/Ip9?=
- =?us-ascii?Q?6Qz4U5TYjbDNV30R+NyvQ22FL1EwxdJP3CWETli5g+ztjJjiEI2mAuXL7PWO?=
- =?us-ascii?Q?jBMDL4TtXFdrfyrAA7xe2pD6WBYN/krMbCu4M0MwSo7PwEdOKFa6jhBDBMg2?=
- =?us-ascii?Q?6EGdtr+RfNqyBA3JIrPVTI5vmRcmzQ5KhN67YPiv7qj6iHjBMt3JljD8nOK3?=
- =?us-ascii?Q?VLCcoyRhExILS7ETUVT8tiipn1YdBlpCK+FwydQTU1AqAqJMLgOQlbXKdZcJ?=
- =?us-ascii?Q?7ei611tnzAdcP3qg5WJrbcn00/zczvzOJjnxWiOUTbssskArpTSUN/ke2k+Y?=
- =?us-ascii?Q?AJtVIrS5S+PTomd0zSBYZdMp51n9k5UoxhdJkAC7MrCAXmS/cP9cxXIJHiLI?=
- =?us-ascii?Q?r9cvL4lSDH/inIiDjC4MsDvBQBeDepqD/i8UBHsKiXlKOncBzl2v8rhJFopk?=
- =?us-ascii?Q?JUBMuNaUkgIt2pvamWYcGGzC+A8n15GFbIkYWdAH+HL8AcZ/GJW9rXcxXPWM?=
- =?us-ascii?Q?VA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	7K1FhCyhHJjXV5U39sY0XSR2S4++Coh6wFe5pUGT4N4w9QO8pCA5AiSEQYXfADwMgX4SCMHW2vfKEH22ybH2EgloNZyoSwNpsg2HZgov0PEqJvgr1Rqi4OvlxJW2N1FNyk7hp8JTIyR32pFqS1wCMTt6EEPjGF74DiIKpjp8v3YVsnRj4+I8VUPfDXa012c5xSPjkXZHj0cwi/WHxcZGjKdlUq4mTTgRUw7+FKLTDao0QrIud3T0lkbB0N+Lh0MhHxP6T+oqBvaIxojt++QpV6qTmOJVv2j3aLR/jaGaGgBSLy2czeqUxyz2Y7kqqMc9JB9tqndizgGaNCJZEwWK9N1EdxAOP/lGsudp1rUoObR5yZ5DL/taM7+ROkIs5hfZq4W9QCZblozGvVromlw+ctuRO0/aTHXwT8dYUOe0ZKR9oCd0exZyaxYtLCzlKsFcXBPxm23v2++xI6k5wT1ksckl4UWk0tMbCc/yUJPx2cux3eizBTkUS7xOiKj0P5CgDsUmDz2hwj99rtzX2NaMTFBQNYEMumqjycGd+4rWQqk2nRmBzpHZ0OaQsyvEWoGJ0ML+VpnCYJTnhuzvz3rN+CD3Lrw2ho5qn/cYRlTGIVc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66d9f333-65a1-4309-df21-08dde0be6acf
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 14:24:19.7699
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eVUxyZ859luux1/rFlnY8lxiL04S3C+1NW7c4wjbjko+f7xjR6DhfpcAvbT+wJO+BkeEd7rlf+KNNxEgVJbyFyARxu/3Fj2jUbKsFXe5JtA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7345
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 suspectscore=0
- spamscore=0 phishscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508210116
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NyBTYWx0ZWRfXy140zumW+dE5
- MWQcjPZTcgEA4D+cBdUuQTdR4pZzZrHxnPA5+IlOj7uS2FhpLlvq2igHv54TRsaDhlQDPhPdpX5
- lPKJOEwUzBTRsd5ZuD/zwvDeXgXybwIREkdLSPSDN9o2gUtHLwdQsXN/CaC/Ch0R22JRpacBzZm
- tZdtXeLlbOsurc+1k5Y3PCi2zxSQqlJnP6xHxsm9NYBOlj6k8Bdq+rbJY8WajJGPj+poj9NLDgG
- L2ubv1Z4OOxRtY4dgSa64+kIsV8MkXsumIOtvC+Ylhc6ghcP3BKIQdjz70BFYP7sjFv2/B7H7HK
- VpvFrz1Pdbwe7jYbECq97/2Hgf7LtVn0rRrxs6/xZ/JLE15PCQE38cwC9VMIVGXlEdEKLXxQ97h
- i86dh/l6oe6pbi335gXm1jHYiqZSLA==
-X-Proofpoint-ORIG-GUID: 4RoGAKHqTJWq2Iwwwu2D58m5ch_B9isV
-X-Proofpoint-GUID: 4RoGAKHqTJWq2Iwwwu2D58m5ch_B9isV
-X-Authority-Analysis: v=2.4 cv=K/p73yWI c=1 sm=1 tr=0 ts=68a72c1d cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=20KFwNOVAAAA:8 a=SRrdq9N9AAAA:8
- a=yPCof4ZbAAAA:8 a=v-LYk_omI0BxYk_5GfEA:9 a=CjuIK1q_8ugA:10
- a=UhEZJTgQB8St2RibIkdl:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=QOGEsqRv6VhmHaoFNykA:22
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 19, 2025 at 07:42:03AM -0600, Nico Pache wrote:
-> Add the order to the tracepoints to give better insight into what order
-> is being operated at for khugepaged.
+From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
 
-NIT: Would be good to list the tracepoints you changed here.
+Here are serval fixup & optmizitions for hgatp detect according
+to the RISC-V Privileged Architecture Spec.
 
->
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
+---
+Changes in v4:
+ - Involve ("RISC-V: KVM: Prevent HGATP_MODE_BARE passed"), which
+   explain why gstage_mode_detect needs reset HGATP to zero.
+ - RESEND for wrong mailing thread.
+ 
+Changes in v3:
+ - Add "Fixes" tag.
+ - Involve("RISC-V: KVM: Remove unnecessary HGATP csr_read"), which
+   depends on patch 1.
 
-LGTM to me, so:
+Changes in v2:
+ - Fixed build error since kvm_riscv_gstage_mode() has been modified.
+---
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Fangyu Yu (1):
+  RISC-V: KVM: Write hgatp register with valid mode bits
 
-> ---
->  include/trace/events/huge_memory.h | 34 +++++++++++++++++++-----------
->  mm/khugepaged.c                    | 10 +++++----
->  2 files changed, 28 insertions(+), 16 deletions(-)
->
-> diff --git a/include/trace/events/huge_memory.h b/include/trace/events/huge_memory.h
-> index 2305df6cb485..56aa8c3b011b 100644
-> --- a/include/trace/events/huge_memory.h
-> +++ b/include/trace/events/huge_memory.h
-> @@ -92,34 +92,37 @@ TRACE_EVENT(mm_khugepaged_scan_pmd,
->
->  TRACE_EVENT(mm_collapse_huge_page,
->
-> -	TP_PROTO(struct mm_struct *mm, int isolated, int status),
-> +	TP_PROTO(struct mm_struct *mm, int isolated, int status, unsigned int order),
->
-> -	TP_ARGS(mm, isolated, status),
-> +	TP_ARGS(mm, isolated, status, order),
->
->  	TP_STRUCT__entry(
->  		__field(struct mm_struct *, mm)
->  		__field(int, isolated)
->  		__field(int, status)
-> +		__field(unsigned int, order)
->  	),
->
->  	TP_fast_assign(
->  		__entry->mm = mm;
->  		__entry->isolated = isolated;
->  		__entry->status = status;
-> +		__entry->order = order;
->  	),
->
-> -	TP_printk("mm=%p, isolated=%d, status=%s",
-> +	TP_printk("mm=%p, isolated=%d, status=%s order=%u",
->  		__entry->mm,
->  		__entry->isolated,
-> -		__print_symbolic(__entry->status, SCAN_STATUS))
-> +		__print_symbolic(__entry->status, SCAN_STATUS),
-> +		__entry->order)
->  );
->
->  TRACE_EVENT(mm_collapse_huge_page_isolate,
->
->  	TP_PROTO(struct folio *folio, int none_or_zero,
-> -		 int referenced, bool  writable, int status),
-> +		 int referenced, bool  writable, int status, unsigned int order),
->
-> -	TP_ARGS(folio, none_or_zero, referenced, writable, status),
-> +	TP_ARGS(folio, none_or_zero, referenced, writable, status, order),
->
->  	TP_STRUCT__entry(
->  		__field(unsigned long, pfn)
-> @@ -127,6 +130,7 @@ TRACE_EVENT(mm_collapse_huge_page_isolate,
->  		__field(int, referenced)
->  		__field(bool, writable)
->  		__field(int, status)
-> +		__field(unsigned int, order)
->  	),
->
->  	TP_fast_assign(
-> @@ -135,27 +139,31 @@ TRACE_EVENT(mm_collapse_huge_page_isolate,
->  		__entry->referenced = referenced;
->  		__entry->writable = writable;
->  		__entry->status = status;
-> +		__entry->order = order;
->  	),
->
-> -	TP_printk("scan_pfn=0x%lx, none_or_zero=%d, referenced=%d, writable=%d, status=%s",
-> +	TP_printk("scan_pfn=0x%lx, none_or_zero=%d, referenced=%d, writable=%d, status=%s order=%u",
->  		__entry->pfn,
->  		__entry->none_or_zero,
->  		__entry->referenced,
->  		__entry->writable,
-> -		__print_symbolic(__entry->status, SCAN_STATUS))
-> +		__print_symbolic(__entry->status, SCAN_STATUS),
-> +		__entry->order)
->  );
->
->  TRACE_EVENT(mm_collapse_huge_page_swapin,
->
-> -	TP_PROTO(struct mm_struct *mm, int swapped_in, int referenced, int ret),
-> +	TP_PROTO(struct mm_struct *mm, int swapped_in, int referenced, int ret,
-> +		 unsigned int order),
->
-> -	TP_ARGS(mm, swapped_in, referenced, ret),
-> +	TP_ARGS(mm, swapped_in, referenced, ret, order),
->
->  	TP_STRUCT__entry(
->  		__field(struct mm_struct *, mm)
->  		__field(int, swapped_in)
->  		__field(int, referenced)
->  		__field(int, ret)
-> +		__field(unsigned int, order)
->  	),
->
->  	TP_fast_assign(
-> @@ -163,13 +171,15 @@ TRACE_EVENT(mm_collapse_huge_page_swapin,
->  		__entry->swapped_in = swapped_in;
->  		__entry->referenced = referenced;
->  		__entry->ret = ret;
-> +		__entry->order = order;
->  	),
->
-> -	TP_printk("mm=%p, swapped_in=%d, referenced=%d, ret=%d",
-> +	TP_printk("mm=%p, swapped_in=%d, referenced=%d, ret=%d, order=%u",
->  		__entry->mm,
->  		__entry->swapped_in,
->  		__entry->referenced,
-> -		__entry->ret)
-> +		__entry->ret,
-> +		__entry->order)
->  );
->
->  TRACE_EVENT(mm_khugepaged_scan_file,
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 81d2ffd56ab9..c13bc583a368 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -721,13 +721,14 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->  	} else {
->  		result = SCAN_SUCCEED;
->  		trace_mm_collapse_huge_page_isolate(folio, none_or_zero,
-> -						    referenced, writable, result);
-> +						    referenced, writable, result,
-> +						    order);
->  		return result;
->  	}
->  out:
->  	release_pte_pages(pte, _pte, compound_pagelist);
->  	trace_mm_collapse_huge_page_isolate(folio, none_or_zero,
-> -					    referenced, writable, result);
-> +					    referenced, writable, result, order);
->  	return result;
->  }
->
-> @@ -1123,7 +1124,8 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
->
->  	result = SCAN_SUCCEED;
->  out:
-> -	trace_mm_collapse_huge_page_swapin(mm, swapped_in, referenced, result);
-> +	trace_mm_collapse_huge_page_swapin(mm, swapped_in, referenced, result,
-> +					   order);
->  	return result;
->  }
->
-> @@ -1348,7 +1350,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	*mmap_locked = false;
->  	if (folio)
->  		folio_put(folio);
-> -	trace_mm_collapse_huge_page(mm, result == SCAN_SUCCEED, result);
-> +	trace_mm_collapse_huge_page(mm, result == SCAN_SUCCEED, result, order);
->  	return result;
->  }
->
-> --
-> 2.50.1
->
+Guo Ren (Alibaba DAMO Academy) (2):
+  RISC-V: KVM: Remove unnecessary HGATP csr_read
+  RISC-V: KVM: Prevent HGATP_MODE_BARE passed
+
+ arch/riscv/kvm/gstage.c | 27 ++++++++++++++++++++++++---
+ arch/riscv/kvm/main.c   | 35 +++++++++++++++++------------------
+ arch/riscv/kvm/vmid.c   |  8 +++-----
+ 3 files changed, 44 insertions(+), 26 deletions(-)
+
+-- 
+2.40.1
+
 
