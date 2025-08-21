@@ -1,101 +1,217 @@
-Return-Path: <linux-kernel+bounces-780453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24FDB3020D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E255BB3020C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B7FA07759
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:27:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85F01189103E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C8A2FB63C;
-	Thu, 21 Aug 2025 18:27:48 +0000 (UTC)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7983634321C;
+	Thu, 21 Aug 2025 18:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ggqy1sN5"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570D12E7BC0
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 18:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537D525B30E;
+	Thu, 21 Aug 2025 18:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755800867; cv=none; b=u5O7VGkyhQH1yV5AVom8eL6JLhiejyhHzswRgY4RUfQSIsGtpjC2Hbx4pXuXQwo7KdPtOh9QMrtv/cFUumYTymHDc6bSwcTbRF4vrOc/jkloM2GfN3ioyYe7+G0EzdiHfAbhWCN4H6xm2TGHNlpphv2LN5sJY4feCRI+OdPYrqM=
+	t=1755800928; cv=none; b=LO/5fMkjxE+t6HiZFFgucPOBYZdNwdKDnW+U3EzFngGpP7XAmmm7++EsDYGKJ5nP7w8yW5A5tElZQSN5lJ4Bor/5fnOgxyQ2gMCOjowJAU2BwUSTdBBEf35/XWPQwFUGJHPG83b9np38PfpCNaWEHNznfkasZ60jUofgRC0o1io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755800867; c=relaxed/simple;
-	bh=EY0gY/mYWjkbDIJfbNJ2HQGjwHWyLFvQfujYiQs4CyM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DCmvo3zozI2IKLI8JksGFmTJe4OZPUUzQlo83y/cl6zIuqPrAUsJpiCKxRru/APgr7E9i00H7cf40dkQhzCn00zPLfjVdiBTwMTon1pxrbFMbtF0sYFkbSKcSnTPdeIaJDny0hw6uxGvvlCRrJOh1Dd8V88BlssRRdKKQIJkKG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e2eb9ae80so1451875b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:27:44 -0700 (PDT)
+	s=arc-20240116; t=1755800928; c=relaxed/simple;
+	bh=irrCb5oJOWOd724NogNnH/LuopoDXINCIHXq8vhoRVg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s7QayJJPAVgWHsAV3IDVt14jS8i2Xq4uAoZ2eBs8g11QU323cf3UjvCHnsZo5r3PiqvMnFKiYGd2+6T0gmM9JnhEPB+PWPzlVpPN8a7HgZLU/YSY26nRTEmsg1PHZ9vCqGBjcUecVEyRaWPhjLM/WioG/o2LCf0ACtXef6Sdp+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ggqy1sN5; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b472fd93ad1so925624a12.0;
+        Thu, 21 Aug 2025 11:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755800926; x=1756405726; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oRMXBc3KQplXBAbVSw/VgjpqcIwybUMzF6DaguqJcQk=;
+        b=Ggqy1sN5+iuGQQ3yqoV4EYezixQsuyHCM9kZJG2cW5zq+3I6wFmdW5RNWg+/GSR7Xx
+         niOo95VWr2oZwJ/7pPfI6rbksmv1myNb1OuSwAVDVHf/DsampCvH2qDu6QPDqZ82nTCa
+         HgUFm41z6t11ElWyZvGNPORuHtGExX3XHlSshqMR6gWgd84k1h6F7Z4wY1K2xuKtLDMn
+         AMhcUNB/PSX3uF2R/znTh1rME1D7vdZI+E/yfzUUD5nOk2BvX4lHJDgkXIns4OTo9/UU
+         o2JOVAVi0daEWTnmB/f95XKKh6qBH3gPKvUemCvv1/c9Wder6IT7ZsGKU3qylfuJj5Ml
+         7ZuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755800864; x=1756405664;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EY0gY/mYWjkbDIJfbNJ2HQGjwHWyLFvQfujYiQs4CyM=;
-        b=ig1DzSuJM+2z3ud77L38EAWbyfRWOjWtaTbkJZw0LYNJUPdgh+UGpqtyUZ3yuTALu+
-         3UW+E4u7U0tgtxngZML+zaWLuFOdqWsej/cBLbHMOpGZrtDZ/qSqGDiOvj15I+FOSyCy
-         zXKdf5frjeEE+jJklNwtnCYv2422BlaW6J8yP5VTiTjN2LpyMtCA9MIvjgqJ3bql8+6j
-         yCtXl3vei/H1RiD9pKEuNcgfV8+KNZE63RweXIzMXh1paQg2A7irO6zPL8JVlcSPydUl
-         LWhAXfL1CSoA4WbEDvEmZ6Bhm8+I2LUBF1fQMufHqeVq6FWhRIH+ewM/BlcYx20glOTX
-         f/jg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7neG1NL/OpD6pzhaU0GJjJo+IqoL3EV+GUulP2J+aJYb6vsf1gngkaNiaZIQgHA6XFBPIfM54o4uZkVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQWzk3LmI6H5fX45l8iOiKB96P/5vmjKGWApW/4r5zcm48eJ57
-	sTKsiNZQ/E4h/xWps+QxShKAxyuZq82Z0iqqJ9bVeSNgqMT6jIzDZYnOeYvMWqU7MoU=
-X-Gm-Gg: ASbGnctOxgJYJnkU2l3ALLZ0xCSBdXPFswU0akZuZpnLsv2VbpaXR06h3TEjGXu8EYc
-	AMteNuXkcMB0G1UDaTWCRm//dxsDOE2klTjhbfay+GvYUE14yoGwCSIA8JtL2dbVNRYsB6idx6o
-	qEQcGLg8uwRAIwQi8l/QpHrvohJm2PANrg4gFhz0jnR1H873WcRzw3mralPCuQlG9rR8F2TlUNQ
-	+eS5sbru+ieYfJtOjIKMUZpv4AW8o34F70q6Je1c/SdaR444TsoNziny2u0MxXY/QQhJglWrfjn
-	p4PhkW09+esoouLkP5m9DQuC3MbBIKTQJC7Q1E77LycCiICfleduSiWcGkpspHNJJjQeaRvH09A
-	/VCF3bC0XpWbEBIIDe5gG3sYwm2JDT2Q=
-X-Google-Smtp-Source: AGHT+IEfpImoo2zYBpYt2BN1pDYojgLhRO7Rhajj0yKSOBhITg9cGOeeQi2GsaQb0mQqp5FnSKDG/A==
-X-Received: by 2002:a05:6a21:328d:b0:23d:ac50:3339 with SMTP id adf61e73a8af0-24340d2c073mr175396637.29.1755800864449;
-        Thu, 21 Aug 2025 11:27:44 -0700 (PDT)
-Received: from localhost ([71.212.208.158])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4763fe3287sm5319640a12.15.2025.08.21.11.27.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 11:27:43 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: Beleswar Padhi <b-padhi@ti.com>, linux@armlinux.org.uk, arnd@arndb.de
-Cc: krzk@kernel.org, afd@ti.com, u-kumar1@ti.com, praneeth@ti.com,
- b-padhi@ti.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm: multi_v7_defconfig: Enable more OMAP related
- configs
-In-Reply-To: <20250819101137.2878336-1-b-padhi@ti.com>
-References: <20250819101137.2878336-1-b-padhi@ti.com>
-Date: Thu, 21 Aug 2025 11:27:43 -0700
-Message-ID: <7hy0rc4jj4.fsf@baylibre.com>
+        d=1e100.net; s=20230601; t=1755800926; x=1756405726;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oRMXBc3KQplXBAbVSw/VgjpqcIwybUMzF6DaguqJcQk=;
+        b=KGntsNLQkZKY5aFULu0RcS5NWdtTHqDxvt3MpHCqwTjojE0E0TxRIvCPpPtn5Wd9Sb
+         lAyJKTYmJrpgpyw9PCw42PLN5GEuMPdjh2daTdvir+R6NcpXGxvHlA/HVWqiS2nZ6x80
+         rA+A4HrFJ69npIrmF3QJ7mKhI3oNHGxsZWd0iwGCcy7HtwiLT7MaSrBaoE0/3mlZGwf/
+         EI4m5fXch2u6sZoQwPlf0VKZD2TcFI4hpO0DGxYmw6SnysVQPW7iYrNWgDlFFTfZwBpR
+         oqU8FNT+wJJ1RIIsMjwIfpUUG1R4c0TQF7NimcJW4nV+9sk8+mzcdeZL+fsb9x4PDtvX
+         CFRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfiJndfV3ZZExp4UMJwmzVWilWhdKkMQWI80X9iuF9O4BWmEuapfd/g6l3xF+s4Od73Y8=@vger.kernel.org, AJvYcCX7o8mUuDBD0i/M4qsw7Ej+WD/R/kKC0T4FAw+nTIeHOG2ZXFSxcjbc9+zjXpjzgzWTuKxF7PemQX8xIi+rmp9u@vger.kernel.org, AJvYcCXYFScK9BB+TBrj/QofOx3CU9wz+7tZFLjU3y7TBmyC8hWJYv0fTb/gxyLg2MfTg1txUlmMhXVeodvjOX1+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkIgllgthtYaZSsIe9U36xAS1motSpnmsl8r1JdgfGfbxwjjZg
+	NcaNQgY2B4DZWdEVZ6xSHiwGTtZiUU/acZlKkQLXiG2BjqABGRUZzVTqxCuEk9+ILCdCf/zTn1q
+	ryNA8WdPXePZxyDchjvI1jlPvMk2kFu96ypAU
+X-Gm-Gg: ASbGncvGy0JrhcTje5l1dP3aRbPygKnOIK9JnxMVyTiL8ifnHkZwKjy7lLnq5dyrWFG
+	VUI4uxlhJ1p1xAMQTVYK4OhHR9vYrpVyWYhqHtI2sDwTYk7vMTyaMSYuCqzlzyTytdAUYhbkXrS
+	jqNxDISXGgoa7gTgRsSiTxKKr2BrwxVpIfK7sh8ukD5PHRz3BN/YDt26pG+DfxIfi5xdMZ9UQbE
+	B5faSJC1Eap6Fp73xcTpQGD8V6Vk4paiIRoAmQxdOtI
+X-Google-Smtp-Source: AGHT+IFnb0b/Oii6gre/2MJERcVnzSC+35nJHsL0gUNARV4flgsdPVX17CDH803ut0ZBXb7TqtGH10qMfHHodee5Jys=
+X-Received: by 2002:a17:90b:2ccd:b0:324:eac4:2968 with SMTP id
+ 98e67ed59e1d1-32515ee13cdmr596495a91.33.1755800926466; Thu, 21 Aug 2025
+ 11:28:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250806092458.111972-1-phoenix500526@163.com>
+ <20250806092458.111972-3-phoenix500526@163.com> <f5d8d886-1de3-4521-917a-e98b645b987e@linux.dev>
+ <30d8fcac.2669.19882763de2.Coremail.phoenix500526@163.com>
+ <e7ba3f7f-38b8-4c06-8aff-ef1fb8d04d86@linux.dev> <310495cd.19eb.19893314d03.Coremail.phoenix500526@163.com>
+ <0f6d16c1-0e85-4709-9846-3a993a9f041b@linux.dev> <65e51538.57aa.1989d162bb8.Coremail.phoenix500526@163.com>
+ <2559a8cd-b439-43fc-96e4-d5f2941ca4d8@linux.dev> <3fbb9319.20c8.198a1410186.Coremail.phoenix500526@163.com>
+ <6c444d7d-524d-4bc8-bda6-0440af621ebe@linux.dev> <46f4c341.1dea.198b845a4b0.Coremail.phoenix500526@163.com>
+ <7495eeb9-777b-4b9e-8312-c6654268d6ec@linux.dev> <CAEf4Bzbpu9PM6GHV6ewE_hJJ7=94Rn1ZYq5QWVnpoH6_LRQDCw@mail.gmail.com>
+ <eb7a3ed.9723.198cd47d479.Coremail.phoenix500526@163.com>
+In-Reply-To: <eb7a3ed.9723.198cd47d479.Coremail.phoenix500526@163.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 21 Aug 2025 11:28:31 -0700
+X-Gm-Features: Ac12FXwz8zMdMHKi5OkkmNPfee3WJJ2yngOjesrE_ZG4DaVHRNF6aLdrVLUSwr8
+Message-ID: <CAEf4BzZLMp5oLnF_Nfjru7+zE2P4981GXWGf6d=6jEY4TqBt4Q@mail.gmail.com>
+Subject: Re: Re: [PATCH v7 2/2] selftests/bpf: Force -O2 for USDT selftests to
+ cover SIB handling logic
+To: =?UTF-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>
+Cc: Yonghong Song <yonghong.song@linux.dev>, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Beleswar Padhi <b-padhi@ti.com> writes:
-
-> This allows us to enable various peripherals in the TI OMAP family
-> platforms like AM571X-IDK, AM572X-IDK, AM574X-IDK, AM57XX-BEAGLE-X15,
-> AM57XX-EVM using the multi_v7_defconfig, instead of only with the
-> OMAP specific defconfigs.
+On Thu, Aug 21, 2025 at 8:38=E2=80=AFAM =E8=B5=B5=E4=BD=B3=E7=82=9C <phoeni=
+x500526@163.com> wrote:
 >
-> DRM_PANEL_OSD_OSD101T2587_53TS:
-> Enables OSD LCD panel support used in AM57XX evaluation modules.
 >
-> SPI_TI_QSPI:
-> Enables TI's QSPI master controller driver for accessing flash devices
-> on OMAP5 platforms.
 >
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+>
+>
+>
+>
+>
+>
+>
+> In the previous discussion with Yonghong Song, we found that some compile=
+r would generate
+> such an arguement format. Although I have never encounter such an issue, =
+I found that the
+> global volatile variable could trigger the compiler to generate this argu=
+ment spec. So I tried to
+> solve this problem. I guess this would not be a problem since we have alr=
+eady used STAP_PROBE_ASM
+> to reliably generate SIB argument spec.
 
-Boot tested on am437x-gp-evm and am57xx-beagle-x15
+Yep, let's hold off on implementing this, as it doesn't seem to be
+really necessary in practice.
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
+>
+> BTW, I have another issue to discuss.
+>
+> Now, bcc framework is not a recommendation for writing bpf program, so bp=
+ftrace is now migrating
+> from bcc framework to libbpf. Bcc framework provides some relevant APIs f=
+or get usdt probe info[1].
+> And I found that there is not similar APIs in libbpf, therefore I have to=
+ parse elf file manually.
+>
+> Could we add some relevant APIs, maybe like `bpf_program__usdt_probe_list=
+`, in libbpf? I can make
+> a patch to implement it. WDYT?
+>
 
-Kevin
+I'm not yet convinced this belongs in libbpf, tbh. The process of
+discovering USDTs actually involved two separate tasks: discovering
+binaries (executable and shared libs) that constitute a process, and
+then for each binary discovering which USDTs belong to it. The first
+part is pretty clearly out of scope for libbpf. Second one in
+principle can be added, but as I said I'm a bit hesitant at this
+point, as we don't even have "USDT manager" exposed through public
+API.
+
+So not yet.
+
+>
+> [1]. https://github.com/bpftrace/bpftrace/blob/1cd4bbdd4a13dd55880f2cc638=
+dde641fb5f8474/src/usdt.cpp#L131C1-L152C2
+>
+>
+>
+>
+>
+>
+>
+> At 2025-08-21 07:00:35, "Andrii Nakryiko" <andrii.nakryiko@gmail.com> wro=
+te:
+> >On Mon, Aug 18, 2025 at 10:35=E2=80=AFAM Yonghong Song <yonghong.song@li=
+nux.dev> wrote:
+> >>
+> >>
+> >>
+> >> On 8/17/25 6:43 AM, =E8=B5=B5=E4=BD=B3=E7=82=9C wrote:
+> >> >
+> >> >
+> >> >
+> >> >
+> >> >
+> >> >
+> >> > Hi, Yonghong. I've already filed an issue[1] in GCC  community.
+> >> >
+> >> >
+> >> > Accroding to the discussion, it's not a gcc bug but may be a systemt=
+ap bug.
+> >> > I don't know how to report this bug to systemtap, but I found that t=
+he
+> >> > libbpf/usdt have the same problem. I've filed an issue in libbpf/usd=
+t repo[2].
+> >> >
+> >> > I also have some ideas about it. I wrote it down in the issue[2] com=
+ment.
+> >> > May be we can discuss there.
+> >> >
+> >> > [1]. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D121569
+> >> > [2]. https://github.com/libbpf/usdt/issues/13
+> >>
+> >> Thanks for filing an issue on gcc and getting some feedback/suggestion=
+s
+> >> from gcc community.
+> >>
+> >> Currently, libbpf/usdt does not suport format like '-1@ti(%rip)'. If w=
+e do
+> >
+> >Exactly, it doesn't. I haven't yet ran into a case where real-world
+> >applications would use such an argument format, so there was no
+> >incentive in trying to support it.
+> >
+> >Was this issue discovered as part of testing on some real world
+> >application, or it's mostly through testing on synthetic cases?
+> >
+> >> intend to implement this. libbpf/usdt can reject that if 'ti' is a
+> >> static variable. libbpf can provide some hints about how to make it
+> >> work (see above [1] and [2]). Then, it would be user's reponsibility t=
+o
+> >> change code so libbpf can support it.
+> >>
+> >> >
+> >> >
+> >> >
+> >
+> >[...]
 
