@@ -1,134 +1,147 @@
-Return-Path: <linux-kernel+bounces-780272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3628B2FFAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:11:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8722B2FFB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD141890984
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:07:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070D65644F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1142BE7A3;
-	Thu, 21 Aug 2025 16:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CAB2D3ECF;
+	Thu, 21 Aug 2025 16:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KTtiLgJp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L09ve3g5"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B192E1F1F;
-	Thu, 21 Aug 2025 16:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6432D3745;
+	Thu, 21 Aug 2025 16:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755792389; cv=none; b=kxtvvPVyo+gv6N4w7F/cyEJOvccaosHYu1k5b8ESFjrvFuYz5UDByOCkfPV6tCOB/tQQj8UdJnvlYcT4pTHWoYOb0YPrZgo4bCqOqP0RTY3qxEAzm2leXcG5WYpzRm1xaXk9HdqSB3nct8m+YEKNpaoOGefv8Onq3mBPvIo3mjc=
+	t=1755792394; cv=none; b=shI5NQXpLc0ewb4bMhYrJkuB4RQ2nQB+CPa1L60Z9wgpsa2Vb2SmkukbtGwmJM5aDVOo6uHvzgtNMjeouGrftjnhEDHjSZyB6/6iFnJaeTPiDnW+xP01a0vxlNCxKjZjNm2Lq7drm/biAsA4W52eJ1ZWKIbjh1UtXedHwSC34N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755792389; c=relaxed/simple;
-	bh=FODxZJDqJiA51SCHFlE8Dkqdeu9T2hXHsHMBvAWxsDg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AG0Z3B+CmEbSifooGngtBa8BRpiy7Me2i58Hxmm+Umfm/wIIGsFvukV3XX1CzeRE9iWO+REBIfkgXuniggGbNiFx+B6o4qw2AQouPphA5ZXl9xFVjJxKGIKXWyIl4QZtzSqVscg7ZkRhtJWZanIlaobQ7igL79DsW/VGz66MQlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KTtiLgJp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9b9l7015180;
-	Thu, 21 Aug 2025 16:06:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=tykzyocvn1o
-	rj3e0lDZzBWkkTCtVyWLXJWIpc3wUvr8=; b=KTtiLgJpEy4tJm38rskl6GNrdPl
-	EBPmoZ7/sYI+saQCgU+19UpomZeCKS0rRbrcHVWrytJ+MeYEoVcfAuBFpErjbk3K
-	PwYcVe/PpPXrv0+mCcIJ5EopvoSDsomCNVaLBlrzNRvuu7HIHOqOHiQNERkerGGu
-	fhdCHVyptmjxGLttrJ/aXxofV1yVjeC08VHFmZtnWAvEHZRNw1gBeh3yJHVI0TDR
-	DHBOVm+fpq7k2XHSi5IDPOQJwO/Yn8b9MsXh1CP4MYDuFbKt0sV3Ir5iwLSjnTKV
-	v1WTUC8w3gND4JPOIublCt0gonZNYFCq9l4Gy2KvOcmNACHNDNz6eNWRkdQ==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52cp27s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 16:06:26 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57LG6LCU004073;
-	Thu, 21 Aug 2025 16:06:21 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 48jk2m3g9g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 16:06:21 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57LG6LsV004062;
-	Thu, 21 Aug 2025 16:06:21 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 57LG6LTH004059
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 16:06:21 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
-	id 5721D517; Thu, 21 Aug 2025 21:36:20 +0530 (+0530)
-From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com,
-        srinivas.kandagatla@oss.qualcomm.com
-Subject: [PATCH v1 1/1] soc: qcom: pd-mapper: Add SM8750 compatible
-Date: Thu, 21 Aug 2025 21:36:18 +0530
-Message-Id: <20250821160618.1037157-2-quic_pkumpatl@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250821160618.1037157-1-quic_pkumpatl@quicinc.com>
-References: <20250821160618.1037157-1-quic_pkumpatl@quicinc.com>
+	s=arc-20240116; t=1755792394; c=relaxed/simple;
+	bh=wcbuo+3AyQiSAOlwL37GqZNp7kSPC8hi55kPJHMirsU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Rqtq1/8hRG+tbMKObMVB7hEcLZ2PVwoEIMUl5/IpT26ySgoyg27yE1z5PubQCYzwHTEFN4cv2zo/4u5yH0nX33mDrx2Sm5aHVpj+HyTR3HUoQMSsrHF03HegJLS6Fut26NpjnMJQE9ARyYr560c98cgGoiK/JiVzWpm+y4WJLcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L09ve3g5; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb7a16441so173160966b.2;
+        Thu, 21 Aug 2025 09:06:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755792391; x=1756397191; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q9dk1yp1rV4JBOFv12CvKzNbPaa/5Em4ZRaChGbcovk=;
+        b=L09ve3g5WC0zBlbxQ1/QCPQLQpnNbfrsH5A26+i5sZbURpR0OJ7ewCuAGbTUR728s6
+         zX00FrduE4DSzk0+RNNIZZiRqVQblDu7e5LzQL4mQdObXu/4IcPRnlOkD0JhgE3YxNC3
+         u43zz1zH924VdRhrMBVm7rkpGP6bRMUOOI5+AAzZ+fUAnzVTogDVxEu/Zs9jxK60amvV
+         0lPvytHir1Q/J6P6UkntOE8qMbmQyz+9H4XEI1RBG21ZpbJ6WFz49J9FUu6MFei3hFpN
+         uxZ6h/v58OffmTHGFJUXcOcBm4LXnoxZ6/HwThk8QOn2d2Cy1EKwo2XQrPUAWvRJ7Lwe
+         xuvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755792391; x=1756397191;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=q9dk1yp1rV4JBOFv12CvKzNbPaa/5Em4ZRaChGbcovk=;
+        b=lzxim12W9X83z1d9RfWZt6h1IUqhWB0ZztW74DJHEkZdUTUevT2nTqBOBuFmkv6Ecf
+         bHoRjAFnZAQBMLbA0YrxlNTNQXmHU2TeSOxwfnYNEY8T+5FtlYg85DQ7KHuQWZajbd3Q
+         1gzl/tC4rb8J+cOtPikpuZOI4H2M71bT85R1xvDnNuiq//XWtMSLW4wnedwrcFrWbibr
+         /Guwr4oyAIi/KFXVTajBhcGVaFahOCvwEFkESPGnlYB1a6Sv3/MJdOFfk3lQhrlObTwF
+         f8NykjlTVvfoJfq+El+yz/2RsxAwzck73zaNJe4ewUsuvh94RlY25covGXBsl+d3Pqh3
+         GREw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmotBR/5CK296cjBlQJzZKp0QjjwXYSNAT9pOHis4WMKTm7FaLkcacbdd1dGFfjweaG2aYIhb+jUkOei0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzASfy/oOlIu7K7TeQ2d0/1MMrzYLh163+D1vh6QhGBrI1pRJLv
+	XKXqaMs6YUVoy05b3ohd86wjjepO3yROM2mOLpb970noq1ZeYwYACpiPNn8RbfhN
+X-Gm-Gg: ASbGncskNTjOOuckXiutL7wYFyF6QVcUHjQyuavtrk7MW65B75FsfU831I7VaS3jH2D
+	1nymVT53BLV4A2b5rqI0+/vOvwdSt3CSdBb/k1Gm2E7zN5lu5X5NbOzVnuHoUJa1qcNblAZjWl/
+	il7qi+l1r5Ycn1Hk2h94vv9vycLeo/BXcCDDv2a66DeBjojwJiXFl0kKxcq39DJsuXHJVJuIPN6
+	LHMeuNi6XYatW3SRlVEnPcM/AJs6uDi53m0TR1qsk9Gwu27p63Gzf4tG3YC9Dk9mJdJQ0wMz+0e
+	knoq0uq6tSTpxgCnXIjpiP+lqJfqmjJdJEk6XdC3DZlDyBUL3eSjv4xal8AuPF6rrW7J9zOKmiv
+	el/62lK1RyBykwMWADzTDQ3SKshGkIVUPc+bYj++MXcb4QPZ2VPvXm0jb9ybupTNbDw94aZyuOL
+	3/t8ltHCaLJQ==
+X-Google-Smtp-Source: AGHT+IGKXeMeNQVsD7I3Q41pa0/1sqAvoMwsxsmgB21YXcBn7EBXZ6SIqmeKxjoEvA32/r19jYIiAQ==
+X-Received: by 2002:a17:907:3f90:b0:afd:d9e3:9541 with SMTP id a640c23a62f3a-afe07d7f373mr291307466b.65.1755792390777;
+        Thu, 21 Aug 2025 09:06:30 -0700 (PDT)
+Received: from [192.168.1.171] (host-95-252-189-221.retail.telecomitalia.it. [95.252.189.221])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded2badd9sm408882466b.20.2025.08.21.09.06.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 09:06:30 -0700 (PDT)
+Message-ID: <7514c681-1020-4b31-b195-ebbc3e4a611f@gmail.com>
+Date: Thu, 21 Aug 2025 18:06:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TqcjZNjORkNsBWecgP67mpVM_xzUoODX
-X-Proofpoint-ORIG-GUID: TqcjZNjORkNsBWecgP67mpVM_xzUoODX
-X-Authority-Analysis: v=2.4 cv=Xpij+VF9 c=1 sm=1 tr=0 ts=68a74402 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=G6_dLcO6j6K2A5EbCMUA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX1f+O+trvSwbk
- cBG7+w2j5OUdwEFucCOw0koIN4XR98b7hKNAdGBr8xUoFXBXt9qFbu8bqHzgM8OA0NUk80wPdPu
- dlkH3z4iXGUeyNts5ppl5vhYDickD1jB6wp+dmzo+LxKsCVCbE4UBo1zW9P5MoRoXGcF16NHL+U
- ObNNGsd1Et0QpTR+8Yqcqod9ysv5a2uLCT/KCtLaKm+waKu04YFDn869dB0MAqRzMNCP8yWJpeM
- cg5t6qxMapDtEPZLGm2Q4E6CCU2kqftaRYb/lAPdZzx3idPhXqHNHkpMv0CqXSJ2RGJDlUcLqc4
- uSuRpRF64OJomEgjKWXk4neKV0GiiJqhW0joq/qZkeC8Wp9bpu0PNKVx2aMCyP5/KCNJRp0RSKC
- 0WxgRdbZa4cDboMelgqetXapZYNxUA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0 impostorscore=0
- adultscore=0 spamscore=0 phishscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US, it
+From: Massimo Giambona <massimo.giambona@gmail.com>
+Subject: [HID][asus] Fn+Esc not handled on ASUS ProArt P16
+To: jikos@kernel.org, bentiss@kernel.org
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add support for the Qualcomm SM8750 SoC to the protection
-domain mapper. SM8750 shares the same protection domain
-configuration as SM8550, so reuse the existing SM8550 domain data.
+Hello,
 
-Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
----
- drivers/soc/qcom/qcom_pd_mapper.c | 1 +
- 1 file changed, 1 insertion(+)
+on ASUS ProArt P16 laptops the Fn+Esc key is not handled by the hid-asus
+driver.
 
-diff --git a/drivers/soc/qcom/qcom_pd_mapper.c b/drivers/soc/qcom/qcom_pd_mapper.c
-index 3abea241b1c4..6384f271953d 100644
---- a/drivers/soc/qcom/qcom_pd_mapper.c
-+++ b/drivers/soc/qcom/qcom_pd_mapper.c
-@@ -584,6 +584,7 @@ static const struct of_device_id qcom_pdm_domains[] __maybe_unused = {
- 	{ .compatible = "qcom,sm8450", .data = sm8350_domains, },
- 	{ .compatible = "qcom,sm8550", .data = sm8550_domains, },
- 	{ .compatible = "qcom,sm8650", .data = sm8550_domains, },
-+	{ .compatible = "qcom,sm8750", .data = sm8550_domains, },
- 	{ .compatible = "qcom,x1e80100", .data = x1e80100_domains, },
- 	{ .compatible = "qcom,x1p42100", .data = x1e80100_domains, },
- 	{},
--- 
-2.34.1
+When pressing Fn+Esc, dmesg shows:
 
+   [21348.413951] asus 0003:0B05:19B6.0002: Unmapped Asus vendor 
+usagepage code 0x4e
+   [21348.498405] asus 0003:0B05:19B6.0002: Unmapped Asus vendor 
+usagepage code 0x4e
+
+One message is for press, the other for release.
+
+According to USB PCap traces (see 
+https://gitlab.com/asus-linux/asusctl/-/issues/585),
+Fn+Esc sends:
+
+   - 0x5ad04e01 (enable)
+   - 0x5ad04e00 (disable)
+
+It would be useful to map this to KEY_FN_ESC (or another appropriate 
+keycode)
+in drivers/hid/hid-asus.c so that it becomes available to userspace.
+
+System information:
+- Model: ASUS ProArt P16 H7606 (BIOS 319)
+- Kernel version: Linux 6.15.10-200.fc42.x86_64
+- evtest: no event generated
+- dmesg: "Unmapped Asus vendor usagepage code 0x4e"
+- Distribution: Fedora 42 Workstation
+
+Additional notes:
+- I tested a local modification of hid-asus.c:
+
+     case 0x4e:
+         asus_map_key_clear(KEY_FN_ESC);
+
+   With this, Fn+Esc is mapped correctly.
+- I also tried sending the raw reports to enable/disable the FnLock feature
+   from the driver, but hit an error:
+     "BUG: scheduling while atomic"
+- I wrote a small tool: https://github.com/m4ss1m0g/proart_p16_fnlock
+
+Could you please consider adding support for this key to the driver?
+
+Thanks for your work,
+
+Massimo
+
+P.S. Other unmapped vendor codes were also observed on this machine:
+- Fn+F8  (emoji): dmesg code 0x7e
+- Fn+F12 (ProArt): dmesg code 0x8b
+- Fn+F10 (Camera toggle): dmesg codes 0x85, 0x01 (but work)
+These may also deserve mapping, but Fn+Esc is the most important one.
 
