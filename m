@@ -1,129 +1,139 @@
-Return-Path: <linux-kernel+bounces-780412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64FDB30192
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:59:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE78B30199
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73903AA820C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:59:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CAF81CE2CE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3039C341AA1;
-	Thu, 21 Aug 2025 17:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47DC34321D;
+	Thu, 21 Aug 2025 18:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJvd88tp"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="lU75Lnbc"
+Received: from pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.77.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB470275B06;
-	Thu, 21 Aug 2025 17:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E09D341AA7;
+	Thu, 21 Aug 2025 18:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.77.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755799145; cv=none; b=gl53G22xz33OPvTuqN6lXu5lrNEEnDa93wGGGjFJb6lZNNFY2ehP0XPqFhsAYAkIb4WKMzr533pNgKplpQQQmSDydbSo++IBvYX5eMKYA9Zll0LFzPcCn7uwW6v1MgqR2fyRkDX23dHpMHOJNZqdTTG60JF8Z8C6wnqp2zel4gM=
+	t=1755799226; cv=none; b=UydGOaKwBUxNbayBrHK94osU63w9yUkEc6pKjzwsOWAeF+OR33I+LggVjmBjYsQ0ES0xjHXkDtgbxIRUOEbtS5LRllWwYte+E1OTBvgmeHU9Glx99X9BCdTxptnrZqLMrT4etLPaWshD+accFy8za9H/z1wd+puKzoLNgNRaDd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755799145; c=relaxed/simple;
-	bh=jQoAmKygf4wigCtyyYmJVlUTQpWM02rCOK+0eXdZsRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mt3WVrnspw7I/tA0x8Gj93CR5MsZI5vrSZRgvrX4eXTwzFEhOvaiuGHLOP9wWIns+gSosRpZIiqZZ7y0+80h5DvI7lrhxZQQf/436dMK44wjCSfP+wZt4kL/xW6m3xpPK+tGs+jvo0olWdJZm7c2tp13CEKOvKv8OhA2KyfyYzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJvd88tp; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61a8c134533so2685001a12.3;
-        Thu, 21 Aug 2025 10:59:03 -0700 (PDT)
+	s=arc-20240116; t=1755799226; c=relaxed/simple;
+	bh=uKBuRqek+3J+kI9u8EgkNan2G1ZIvTlDcTJyVSHU+0o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b8LukTH4CAJEieja1CGIuPu9Ytyfu8zzjvd5UiCsKI87ZGzLM7U4VaWqcGSJHxD3Ff8IMnMerjMuZzhlGuCGoj6RWLEIym6tgmo0oHkN7HZCj9m4Uzq7Dj68mKyttGjnvx7C1ifLDaSDE9QZhwHAv6PT+B1ulyHtY/HurY/szr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=lU75Lnbc; arc=none smtp.client-ip=44.246.77.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755799142; x=1756403942; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nzWslUIcKMm4pzLPKKp3UOSdTMmH1fUOcendkUjM6ew=;
-        b=cJvd88tpUEExKTXF/TpGn9jJgO+rxz8iZ8j9w18ouelokp0m01QEeu8Y54tHq4VHl9
-         fnwajsS4Hvw8JKJlureadHdfpeiS9KGZTwZX7FSmTzrLwNa+2G/8AdVAQmXItXfGHZVE
-         TpQuc08otDTqkzL9tXdhJ4u1jvbRrh9U9EV8U0RQakdr980kIaPSN1XZBp8ChLSQEeq1
-         CwPoYwdasKKaR1N+OrGM2vwBsw8akp+Az5nE69kCSa3YJKDnXA0Jiy+MmEUkvBXS/LxR
-         RYURHr/7HkLsL6HteyHYZ/6lTju2MRkJUJcpEm3fctjroLhnUM49C8vu9p3bSAmQdnF4
-         vM4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755799142; x=1756403942;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nzWslUIcKMm4pzLPKKp3UOSdTMmH1fUOcendkUjM6ew=;
-        b=NTrWfY9bwWtMazsGEFZ1+Gez/aS6SvkUnXvgeO+KuxiPT/OhrDzWV/lJTsRDpxscmv
-         OpCuFXwJuujdPeSy/FZFY7WJCcpEvMjy0oZq7/hCvCR8Ierb34qGNjJvjhPBYKtwIBy7
-         Lh5/joCcC6yB5MXz7mVJdYjxGp1wPs9EMivw2ZqT+AC/+yUanPO1lCdA/KICEa+bM7KD
-         eAu3VSWfzm1+GNj8ahgmzALspt/SPu6n1lWoFXcHAuhwAiqmwByzwOha3fUszcByfduT
-         6Acp4uiDdWGjJ+zMLkG3zH2Qp9HhoCUnvFPCIjnvs7CQjunCfTPtBB5lxG9y5+9LbMRs
-         U2Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWULMe08jSlZDvkXkUpIZA0EGYmM6atRbmu5MF07OKbJJZxt6GD3UATNBsu5wSMFCMtCZ0+CDWIgGPYyg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXVAfK/S1zweSqHpmOOssSzGvp+mbK2ICUe3U41ewzoInbXWJz
-	ksFfwnDaW0gGziiOVhOFXZbOfhxbm1F+zlg21GAcYVFaLeEEqg4eUQ7C
-X-Gm-Gg: ASbGncsR5vep5f6gQZzmv9Cr1G//tSLofwbcw+x3epom9NjpYoRHiVeM3y2hEaTYgTe
-	WJqn7eJDfZrU8oqhP1927wsyVe/kGHfpcDEwMAqYV0c+U5UkVkbEwXclT7aOGuWOc9SDIHHOGRq
-	Nwu9wperXXDaLRiN5fGq3B+Idny1UIEY8pmEhf5i7oDJMQrHK3jb8WMQgA/A/lUEmAklTh82R84
-	HTuD6ZKfvqZjB7LawxmbGhyO7dVH7oGObFcc0kvGvrtZkx0SvjaH3b3ebotj6ZqqvAV+TE14rMw
-	NeyuE4AEsw1A32x5vjWGxcKn4YCg8ndffxFb5X6vCtXM7D3Nq9pAYK2khcmHxWKJDEKUstVuiHi
-	yZxYlnn0DjucgxbH2GlJHZrFY
-X-Google-Smtp-Source: AGHT+IE1Mp+BDJKSG2h6UdBHyeuWwNpn1jBj0G0i5bb0XI9lq6H4YwijSDhLAWX0ePlTRFcvlGJQlA==
-X-Received: by 2002:a17:907:3e13:b0:afd:d994:7d1c with SMTP id a640c23a62f3a-afe29748869mr1150466b.65.1755799142033;
-        Thu, 21 Aug 2025 10:59:02 -0700 (PDT)
-Received: from XPS.. ([2a02:908:1b0:afe0:c1c2:807c:915b:ed9d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded2bc4e9sm435492566b.14.2025.08.21.10.59.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 10:59:01 -0700 (PDT)
-From: Osama Abdelkader <osama.abdelkader@gmail.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	mingo@kernel.org,
-	john.ogness@linutronix.de,
-	tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Osama Abdelkader <osama.abdelkader@gmail.com>
-Subject: [PATCH] serial: 8250_core: fix coding style issues
-Date: Thu, 21 Aug 2025 19:58:56 +0200
-Message-ID: <20250821175856.22957-1-osama.abdelkader@gmail.com>
-X-Mailer: git-send-email 2.43.0
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1755799224; x=1787335224;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=S+gS8f64vE5JkLxSnB7ir6Lb0kF6iQE9gWFgqB32eCo=;
+  b=lU75Lnbcz2Bdw3+DkwZYvc/0Zk4y+zyYvLgi0+jpjWV9TzFyvHR/Ez6+
+   8thHu0h8jql8eWqKMZJbWwC2mrZKKezKK4hkJVl/aUu7/rUV6QS0Z007e
+   /9y8GECLz4VtZM88xtz9350Rw9sUalQaZVm/dcK0bosV3dj3MOGSql5HL
+   0fDlh8QUkNM3a2Zdzf9ZFlG3ljZEBv+5+eLx9I4LLYV4KxRMoBnihL1vm
+   uO0yeoE+Rj1de3t+IjFCicRpuLMC6wrceX+ZbWQgnksgL37MJTtg31P6t
+   wKH61gslRfJ58/oi+gZRQs6pdg1iFjfaGl0PBxvCVBHqS66xceM5R6j6D
+   g==;
+X-CSE-ConnectionGUID: K8Hohe32Qp+Vv4T80IzDyQ==
+X-CSE-MsgGUID: xyRxENLgS6O/spnd+SQBkw==
+X-IronPort-AV: E=Sophos;i="6.17,309,1747699200"; 
+   d="scan'208";a="1570660"
+Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
+  by internal-pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 17:59:14 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:34303]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.45.64:2525] with esmtp (Farcaster)
+ id ddd70eb3-6448-4aee-bf33-ff8d888990ad; Thu, 21 Aug 2025 17:59:14 +0000 (UTC)
+X-Farcaster-Flow-ID: ddd70eb3-6448-4aee-bf33-ff8d888990ad
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
+ Thu, 21 Aug 2025 17:59:13 +0000
+Received: from dev-dsk-epetron-1c-1d4d9719.eu-west-1.amazon.com
+ (10.253.109.105) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17; Thu, 21 Aug 2025
+ 17:59:11 +0000
+From: Evangelos Petrongonas <epetron@amazon.de>
+To: Ard Biesheuvel <ardb@kernel.org>, Mike Rapoport <rppt@kernel.org>
+CC: Evangelos Petrongonas <epetron@amazon.de>, Alexander Graf
+	<graf@amazon.com>, Changyuan Lyu <changyuanl@google.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+	<kexec@lists.infradead.org>, <linux-mm@kvack.org>,
+	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nh-open-source@amazon.com>
+Subject: [PATCH v3 0/2] efi: Fix EFI boot with kexec handover (KHO)
+Date: Thu, 21 Aug 2025 17:58:58 +0000
+Message-ID: <cover.1755721529.git.epetron@amazon.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D043UWC004.ant.amazon.com (10.13.139.206) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Fix a few coding style issues in 8250_core.c:
+This patch series fixes a kernel panic that occurs when booting with
+both EFI and KHO (Kexec HandOver) enabled.
 
-- Remove redundant NULL initialization of a global pointer
-- Add missing blank line after a variable declaration
+The issue arises because EFI's `reserve_regions()` clears all memory
+regions with `memblock_remove(0, PHYS_ADDR_MAX)` before rebuilding them
+from EFI data. This destroys KHO scratch regions that were set up early
+during device tree scanning, causing a panic as the kernel has no valid
+memory regions for early allocations.
 
-Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
----
- drivers/tty/serial/8250/8250_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The first patch introduces `is_kho_boot()` to allow early boot
+components to reliably detect if the kernel was booted via KHO-enabled
+kexec. The existing `kho_is_enabled()` only checks the command line and
+doesn't verify if an actual KHO FDT was passed.
 
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index feb920c5b2e8..0d1d2eed2a5c 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -307,7 +307,7 @@ static void univ8250_release_irq(struct uart_8250_port *up)
- 		serial_unlink_irq_chain(up);
- }
- 
--const struct uart_ops *univ8250_port_base_ops = NULL;
-+const struct uart_ops *univ8250_port_base_ops;
- struct uart_ops univ8250_port_ops;
- 
- static const struct uart_8250_ops univ8250_driver_ops = {
-@@ -773,6 +773,7 @@ int serial8250_register_8250_port(const struct uart_8250_port *up)
- 	 */
- 	if (!has_acpi_companion(uart->port.dev)) {
- 		struct mctrl_gpios *gpios = mctrl_gpio_init(&uart->port, 0);
-+
- 		if (IS_ERR(gpios)) {
- 			ret = PTR_ERR(gpios);
- 			goto err;
+The second patch modifies EFI's `reserve_regions()` to selectively
+remove only non-KHO memory regions when KHO is active, preserving the
+critical scratch regions while still allowing EFI to rebuild its memory
+map.
+
+The patchset was developed/tested on arm64.
+
+Main Changes in v3 (smaller changes can be found in individual patches):
+    - Condition is_kho_boot only on the existence of a KHO FDT
+    - Add Reviewed-by/Acked-by
+
+Main Changes in v2:
+    - Introduce is_kho_boot()
+    - Replace manual loop with for_each_mem_region macro
+
+Evangelos Petrongonas (2):
+  kexec: introduce is_kho_boot()
+  efi: Support booting with kexec handover (KHO)
+
+ drivers/firmware/efi/efi-init.c | 29 +++++++++++++++++++++++++----
+ include/linux/kexec_handover.h  |  6 ++++++
+ kernel/kexec_handover.c         | 20 ++++++++++++++++++++
+ 3 files changed, 51 insertions(+), 4 deletions(-)
+
 -- 
-2.43.0
+2.47.3
+
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
 
