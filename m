@@ -1,81 +1,45 @@
-Return-Path: <linux-kernel+bounces-778888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0B3B2EC72
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:53:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34557B2EC78
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4314D3B4BFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:52:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11B3E5C3166
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74282E8896;
-	Thu, 21 Aug 2025 03:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLga+w5X"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E287621ABBB;
+	Thu, 21 Aug 2025 03:55:10 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7902F2E7F00;
-	Thu, 21 Aug 2025 03:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425131A7264
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 03:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755748331; cv=none; b=lg5/krCfxdFv+QLSkd36Sx17HC+aGnmyfftKgWARIB57phrxpbMSMRdJI5oR6NYd+6uBbFwpbRiof8jwAI+9kiZs0EUEF4rRDsTJO5YTYBEs0GcCr56z1Hjro/NRz7LWnJIRHCSCYhkGhtDr+V8FLKDGHc5Pc4gdEl3+4MuGevQ=
+	t=1755748510; cv=none; b=kp3LCX0oUR766JowKVNJm39diZezHw579L86lWQia9Ues995pmocMj/o+9wuoxv8lZHgXIJVjGQ9NYYOWchCZRAI+Aq22IZiNmiNPGzIHKLVzU3QIOHPDrVRKMfJhHkkSWyMMJotjAHm9Kid5YkQ7xPOaglOMUFEcs56LIrOYPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755748331; c=relaxed/simple;
-	bh=HO+iKLe8HlT2pb6fd5e3H9BdROezL8fWqlMIHvgy/Kc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EUzDV7uZRY3OeD2Wp0dg7vWPVCrc5HsCKhB5+DxwgR2DUGwiJ0ZPb2fSu7Cgnvwc72bPtxTvrAdN4kkMvK7/n/LvNFAaCCzNtxrzOM9ja4tk5EEjmlicpG3+hdlzUrNf+yomqDcm+AkHUnODQafDPVgBZsvRphwQuBsI9+XFg7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OLga+w5X; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2445811e19dso4479145ad.1;
-        Wed, 20 Aug 2025 20:52:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755748330; x=1756353130; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=JyMYwN8hLYvWAiCmCjc2sLRiji+vi2/IY5OYZOqnCHI=;
-        b=OLga+w5XJaM9XA3vIJ1Sh/E/J9m/Zku1x9XrppoJqV42//Sc0FUhKOSgl9MEwnuCPv
-         P2GJ194qzggm3DvrHFUfRV9F+LmwX6S1qCz9F2BrwxLBg3fphkUc2aTtRGpXlLhF62Vi
-         A/qWJNhOrka9ck4DuUGam1tlUDj+QrI8x4HlfZcs+839cyb4+5EIAOowMMe4RUAaVUUg
-         xGLVqPWyKs6Ly7H7BHljjLCHMSaEyWcM+gCoOVm9vk2jd4W+5bQ0UuerqiQsG3OEGbbE
-         YSmzNcrteC6jxg9iG8BVPglrHWvpU2Ms4LVZWvXhmc7Gmo9WJcvgWv90LnADK/snVznP
-         CWow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755748330; x=1756353130;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JyMYwN8hLYvWAiCmCjc2sLRiji+vi2/IY5OYZOqnCHI=;
-        b=vBpnsWqDLOIZJrYA0MUDr9L6bVZaFsvojHdoxYFGsnDLxXAGej2js1NdxFsgtlKKhW
-         01dwDGXrJ6rP6Pj5f5eSfm4MM3uozZv/Az2oVdfMBmoI58uL1DnE8Pewo1uTOnScTgIg
-         FJkIaSc1iTZl+cJVWbNW73xHzZCKUKb0vwyheY9xorX6NbWuKG1t1+lVGmJ27TB2h/fo
-         A+TtZj8+McK3Ddpkm5igVVuTwGbs0EXz5uVeFKmYw4c5uxmMKZY/aHKC+qQbYOcvzaEl
-         kSWc2EqCFhmIreqQjSxxx7RUb8bg9RtRjP1tPhduJzQgHLgIgubRqVq3QKFPRLb73xkx
-         MKOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmbwoNhVeL11uzbXv5tEPuztrPQomrl2ghWcbkMI3QjqBZGnfWtURlgJWdsQ5CHS9JDiUmyPndtWKfjnjP@vger.kernel.org, AJvYcCW+2f84fZSkoLNN3zcBAw6w/vGQ20zyYjjz0J3GtIg6O3l0p6VGwW6pK8G46+3ASiXOSw5CHG/yLFLP@vger.kernel.org, AJvYcCW5cVSOc7tE3O7+sRCPeFBLzgvEebo8iyat9sSd5axQQQ508JxHjy4QX44xKckHJs231pCHrlF0Tk0J0Ima86moJ4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXJlrQlkgmTybx+6M2b0d3PofF5KlZQRYLNS6Z3zzDOdGYHZru
-	kw56tyPibU/Zin/8gX2sj3Vm22WILXJH8jRendSjDCX26WqrE+KCuRKd
-X-Gm-Gg: ASbGncti4Hxv5qNf9EK7m80IFUPNZXcEoIxWFJPhk0I5OF55DdxW7xb6x1koXRovR02
-	xtbnDASg6WRIAph4mAcuogoBnUxz8rKOeku45JkPfkvoE462jkEJEpbIteexJuK5b53/agp6vhy
-	NVCn6Y+QWlWEVpM/PM3GSw62FDUHglUCO2rG7YCpfShAXVI9ZIUEMW9oRP/tWPY2fVr7VeX+QS4
-	RmSydJW9zf03pyked/aYLt3aUiOZ/zThp1fK45JrdBn7WudGf+m1GRaanJB7b12wj/lozDq3CMe
-	SbgQd3GETcQPyGY6X/TKyBil/4QC2I2ClNGE89YQx3sp0osjfasufBhlh3yAthwXdN1stJZFmdm
-	vDGA6UKZDA738oStr5f9a5kOchAx/ripZ+QmFoNwnuvkvJc5A+3EyNcKTVHSuFxLH3GF+XzM=
-X-Google-Smtp-Source: AGHT+IFdrBOlIZ1KC6ZocldPQNsAuSVc4siyM4M9qVomvcrP+Sm16xq8ocBgPOsSrRoaZL0c/B9wlg==
-X-Received: by 2002:a17:902:f684:b0:240:6aad:1c43 with SMTP id d9443c01a7336-245ff865cadmr17423075ad.48.1755748329666;
-        Wed, 20 Aug 2025 20:52:09 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c707csm40992795ad.69.2025.08.20.20.52.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 20:52:09 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <fa916e30-581b-4454-92b6-2c2614661e79@roeck-us.net>
-Date: Wed, 20 Aug 2025 20:52:07 -0700
+	s=arc-20240116; t=1755748510; c=relaxed/simple;
+	bh=Apnre9DzDyuEE1Owdns8eHF+Pe1h7bNuW72ddlkM6SU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SfanG94YIel/csB+hroiPwmzUoXFAEcpgHcBqxKiCKxTm/PHeZXAQt53uQDqGc8QAisX/Yurzl6Xw0rJUV/gCp0+GUBjbdW1V8GmXju1CjeYAFfK6QtTL4tMd/pzbcVNL1une84wDEjqNOS9FdEITdO64bXLoqU5z6oXgU52ols=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c6qF92pVZztTDt;
+	Thu, 21 Aug 2025 11:54:05 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2DE3D180080;
+	Thu, 21 Aug 2025 11:55:04 +0800 (CST)
+Received: from [10.67.120.170] (10.67.120.170) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 21 Aug 2025 11:55:03 +0800
+Message-ID: <ca162322-b97e-4ec1-828e-dad7b09f4735@huawei.com>
+Date: Thu, 21 Aug 2025 11:55:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,81 +47,177 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] watchdog: rzv2h: Improve error strings and add
- newlines
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Magnus Damm <magnus.damm@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250820202322.2051969-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250820202322.2051969-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250820202322.2051969-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/2] tools/dma: move dma_map_benchmark from selftests to
+ tools/dma
+To: Barry Song <21cnbao@gmail.com>
+CC: <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
+	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <yangyicong@huawei.com>
+References: <20250814133527.2679261-1-xiaqinxin@huawei.com>
+ <20250814133527.2679261-2-xiaqinxin@huawei.com>
+ <CAGsJ_4wbgqGavjQNXtbFVeMw8j8oSCEVSdL4BrBVWEuNHzomPg@mail.gmail.com>
+ <8db50f47-9295-4c7c-8bbc-dbbbd3fb5f79@huawei.com>
+ <CAGsJ_4xXt2uEtAohcq+3XF_cKdsZiWsRaRh+ZK4nj0-Zw-yWYw@mail.gmail.com>
+From: Qinxin Xia <xiaqinxin@huawei.com>
+In-Reply-To: <CAGsJ_4xXt2uEtAohcq+3XF_cKdsZiWsRaRh+ZK4nj0-Zw-yWYw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-On 8/20/25 13:23, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Update rzv2h_wdt_probe() to provide clearer error strings when retrieving
-> the pclk, oscclk, and reset controller, and append missing newline
-> characters to dev_err_probe() and dev_warn() calls for proper log
-> formatting.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+On 2025/8/21 11:39:14, Barry Song <21cnbao@gmail.com> wrote:
+>> I'm so sorry, there were some mistake，'usr/include' should be placed
+>> before 'include' during include :
+>> CFLAGS += -I../../usr/include -I../../include
+>> After the modification, it'll work.In the next version, I will submit
+>> the two patches separately, and put the modification of the file path
+>> in MAINTAINERS into this patch. Is there anything else that needs to be
+>> modified?
+> 
+> i am still getting same build errors with the below:
+> 
+> tools/dma$ git diff .
+> diff --git a/tools/dma/Makefile b/tools/dma/Makefile
+> index 841b54896288..c37393a3e937 100644
+> --- a/tools/dma/Makefile
+> +++ b/tools/dma/Makefile
+> @@ -1,7 +1,7 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   bindir ?= /usr/bin
+> 
+> -CFLAGS += -I../../include -I../../usr/include
+> +CFLAGS += -I../../usr/include  -I../../include
+> 
+>   TARGET = dma_map_benchmark
+> 
+> 
+> make:
+> 
+> cc -I../../usr/include  -I../../include dma_map_benchmark.c -o dma_map_benchmark
+> In file included from dma_map_benchmark.c:13:
+> ../../include/linux/types.h:20:33: error: conflicting types for
+> ‘fd_set’; have ‘__kernel_fd_set’
+>     20 | typedef __kernel_fd_set         fd_set;
+>        |                                 ^~~~~~
+> In file included from /usr/include/x86_64-linux-gnu/sys/types.h:179,
+>                   from /usr/include/stdlib.h:395,
+>                   from dma_map_benchmark.c:8:
+> /usr/include/x86_64-linux-gnu/sys/select.h:70:5: note: previous
+> declaration of ‘fd_set’ with type ‘fd_set’
+>     70 |   } fd_set;
+>        |     ^~~~~~
+> In file included from dma_map_benchmark.c:13:
+> ../../include/linux/types.h:21:33: error: conflicting types for
+> ‘dev_t’; have ‘__kernel_dev_t’ {aka ‘unsigned int’}
+>     21 | typedef __kernel_dev_t          dev_t;
+>        |                                 ^~~~~
+> In file included from /usr/include/stdlib.h:395,
+>                   from dma_map_benchmark.c:8:
+> /usr/include/x86_64-linux-gnu/sys/types.h:59:17: note: previous
+> declaration of ‘dev_t’ with type ‘dev_t’ {aka ‘long unsigned int’}
+>     59 | typedef __dev_t dev_t;
+>        |                 ^~~~~
+> In file included from dma_map_benchmark.c:13:
+> ../../include/linux/types.h:25:33: error: conflicting types for
+> ‘nlink_t’; have ‘u32’ {aka ‘unsigned int’}
+>     25 | typedef u32                     nlink_t;
+>        |                                 ^~~~~~~
+> In file included from /usr/include/stdlib.h:395,
+>                   from dma_map_benchmark.c:8:
+> /usr/include/x86_64-linux-gnu/sys/types.h:74:19: note: previous
+> declaration of ‘nlink_t’ with type ‘nlink_t’ {aka ‘long unsigned int’}
+>     74 | typedef __nlink_t nlink_t;
+>        |                   ^~~~~~~
+> In file included from dma_map_benchmark.c:13:
+> ../../include/linux/types.h:31:33: error: conflicting types for
+> ‘timer_t’; have ‘__kernel_timer_t’ {aka ‘int’}
+>     31 | typedef __kernel_timer_t        timer_t;
+>        |                                 ^~~~~~~
+> In file included from /usr/include/x86_64-linux-gnu/sys/types.h:130,
+>                   from /usr/include/stdlib.h:395,
+>                   from dma_map_benchmark.c:8:
+> /usr/include/x86_64-linux-gnu/bits/types/timer_t.h:7:19: note:
+> previous declaration of ‘timer_t’ with type ‘timer_t’ {aka ‘void *’}
+>      7 | typedef __timer_t timer_t;
+>        |                   ^~~~~~~
+> In file included from dma_map_benchmark.c:13:
+> ../../include/linux/types.h:52:33: error: conflicting types for
+> ‘loff_t’; have ‘__kernel_loff_t’ {aka ‘long long int’}
+>     52 | typedef __kernel_loff_t         loff_t;
+>        |                                 ^~~~~~
+> In file included from /usr/include/stdlib.h:395,
+>                   from dma_map_benchmark.c:8:
+> /usr/include/x86_64-linux-gnu/sys/types.h:42:18: note: previous
+> declaration of ‘loff_t’ with type ‘loff_t’ {aka ‘long int’}
+>     42 | typedef __loff_t loff_t;
+>        |                  ^~~~~~
+> In file included from dma_map_benchmark.c:13:
+> ../../include/linux/types.h:115:33: error: conflicting types for
+> ‘u_int64_t’; have ‘u64’ {aka ‘long long unsigned int’}
+>    115 | typedef u64                     u_int64_t;
+>        |                                 ^~~~~~~~~
+> In file included from /usr/include/stdlib.h:395,
+>                   from dma_map_benchmark.c:8:
+> /usr/include/x86_64-linux-gnu/sys/types.h:161:20: note: previous
+> declaration of ‘u_int64_t’ with type ‘u_int64_t’ {aka ‘long unsigned
+> int’}
+>    161 | typedef __uint64_t u_int64_t;
+>        |                    ^~~~~~~~~
+> In file included from dma_map_benchmark.c:13:
+> ../../include/linux/types.h:116:33: error: conflicting types for
+> ‘int64_t’; have ‘s64’ {aka ‘long long int’}
+>    116 | typedef s64                     int64_t;
+>        |                                 ^~~~~~~
+> In file included from /usr/include/x86_64-linux-gnu/sys/types.h:155,
+>                   from /usr/include/stdlib.h:395,
+>                   from dma_map_benchmark.c:8:
+> /usr/include/x86_64-linux-gnu/bits/stdint-intn.h:27:19: note: previous
+> declaration of ‘int64_t’ with type ‘int64_t’ {aka ‘long int’}
+>     27 | typedef __int64_t int64_t;
+>        |                   ^~~~~~~
+> In file included from dma_map_benchmark.c:13:
+> ../../include/linux/types.h:137:13: error: conflicting types for
+> ‘blkcnt_t’; have ‘u64’ {aka ‘long long unsigned int’}
+>    137 | typedef u64 blkcnt_t;
+>        |             ^~~~~~~~
+> In file included from /usr/include/stdlib.h:395,
+>                   from dma_map_benchmark.c:8:
+> /usr/include/x86_64-linux-gnu/sys/types.h:192:20: note: previous
+> declaration of ‘blkcnt_t’ with type ‘blkcnt_t’ {aka ‘long int’}
+>    192 | typedef __blkcnt_t blkcnt_t;     /* Type to count number of
+> disk blocks.  */
+>        |                    ^~~~~~~~
+> 
+> Thanks
+> Barry
+
+Does usr/include have header files? Did you run make headers_install 
+before make?
+[xiaqinxin@localhost linux]$ make headers_install
+   HOSTCC  scripts/basic/fixdep
+   HOSTCC  scripts/unifdef
+   WRAP    arch/arm64/include/generated/uapi/asm/socket.h
+   SYSHDR  arch/arm64/include/generated/uapi/asm/unistd_64.h
+   HDRINST usr/include/asm-generic/mman.h
+   HDRINST usr/include/asm-generic/stat.h
+   HDRINST usr/include/asm-generic/ucontext.h
+   HDRINST usr/include/asm-generic/int-ll64.h
+   HDRINST usr/include/asm-generic/unistd.h
+   HDRINST usr/include/asm-generic/kvm_para.h
+   HDRINST usr/include/asm-generic/types.h
+   HDRINST usr/include/asm-generic/ipcbuf.h
+   HDRINST usr/include/asm-generic/termbits-common.h
+...
+[xiaqinxin@localhost linux]$ cd tools/dma/
+[xiaqinxin@localhost dma]$ make
+cc -I../../usr/include -I../../include dma_map_benchmark.c -o 
+dma_map_benchmark
+
+My test is ok.
+
+
+
 
