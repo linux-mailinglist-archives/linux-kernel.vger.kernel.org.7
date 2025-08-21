@@ -1,100 +1,73 @@
-Return-Path: <linux-kernel+bounces-779344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0267B2F2DE
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B70B2F2E0
 	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC231BC3E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCB8117AE21
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAB42E7F2A;
-	Thu, 21 Aug 2025 08:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ab32gm+y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7902D2641FC;
-	Thu, 21 Aug 2025 08:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E546F2ECE9C;
+	Thu, 21 Aug 2025 08:50:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF382EACF9;
+	Thu, 21 Aug 2025 08:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755766203; cv=none; b=GaedEey3I+x5Dvz2u2/erylHhaAa+njPIgaOkIPr4I16pRagxghVwmAnnzXGER0XPAZ1pkqc5/MpTTyXY1LW35y8TlzSkO0f9O64YMVDiinhGui4napI8CfGOojlSESA5KS7hPOW7ok1a+fU4wazHPYQ+8HOwk21p3azb1Y9HyQ=
+	t=1755766252; cv=none; b=n6UH+oNmdfnhNRIvUci0LtOcQYxwtE7hepH3xxQVc8GyzVT7j3fIriiRt0QqFzY5zw85E16bOMOrzsSOusty7WiPHXK6LrLsu/TI1gE3cs4+wcpy6a+k7t32zm1bCn7pDnE4zQOK4aH/1q7obtz0RIs8kF/V2x5vAG3H/AFF/lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755766203; c=relaxed/simple;
-	bh=uorD+s6RTCZK6xWgBvrtaRd33UyFWBIPNmlokBD8v60=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=D2IwDrhLs+w5HzFrBxe57Jbo50LyPDAGLmtrdlL7WcUmYsMy+JgWPPebJv8Hchhm3q1KFFMe/DDtsrKUYkcpG7Q67AOqUQH67bNKFrPtFMRcF5ZWdyPZ6AUBRsq0VsB84MyFpirYL8SqfVDDbL80KbVhRCPYUD6XhCD8Uq9UHkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ab32gm+y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6026C4CEEB;
-	Thu, 21 Aug 2025 08:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755766203;
-	bh=uorD+s6RTCZK6xWgBvrtaRd33UyFWBIPNmlokBD8v60=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ab32gm+yDbtJM/o4sXTqtD48EqvCP5OfEKo54d4wSLRdZuRmbYdQ7nZZT40dGDGRG
-	 SFLFRek3Nh2nL0am9ic0Z2EC6WfogipbZWoBf46sIU1usG/q0kx1Egls+P71sNxEav
-	 JcrvsfCs3XOy49HP2sn2CTWmjX39YhnmbDcopoiPrMVn/snsYK+Uv0eeLDvz82pP+2
-	 8xBmVJckFKQVExJ0IlzAVxHvxhIHY4+JEeJiG+IwCSkcF27EW8KHx5a+EjaLYZWWyA
-	 Z2SRTXw3T6A/C6nZ0VGmG/H5/2oarwYAwjooEhPuOolD2N4gWV4Hy3iGpJoCwyK9dX
-	 lO40SSaFFTh0Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C1B383BF5B;
-	Thu, 21 Aug 2025 08:50:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1755766252; c=relaxed/simple;
+	bh=kT4d4IVeF7vdxKC3lEeqNlkmFN4f81zYWRkjhthO6Po=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SW94YX0xDYlV3Obu7U9le2zkQmI/RzuVI6B8JnK9wWOSfB+fS2blHY+0JVKgMAyT2s4u8fAMNY/OGPBiwEcvcaX0mL1UBWCdOKQmS084SVt1pkBAqHYBz3Tm8OzAlr3rB7dLeB1t+q+t+u/Sqwhv3knNC75/aS8GXqDC2jcakEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30BDA168F;
+	Thu, 21 Aug 2025 01:50:42 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1FE883F63F;
+	Thu, 21 Aug 2025 01:50:49 -0700 (PDT)
+Date: Thu, 21 Aug 2025 09:50:46 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 7/7] pinctrl-scmi: remove unused struct member
+Message-ID: <aKbd5uiF0ccUU3X3@pluto>
+References: <cover.1753039612.git.dan.carpenter@linaro.org>
+ <27a80ed0-65a3-4a41-994e-9c2d3bb76b54@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v5 0/4] net: phy: micrel: Add support for lan8842
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175576621125.946325.3157798502826280312.git-patchwork-notify@kernel.org>
-Date: Thu, 21 Aug 2025 08:50:11 +0000
-References: <20250818075121.1298170-1-horatiu.vultur@microchip.com>
-In-Reply-To: <20250818075121.1298170-1-horatiu.vultur@microchip.com>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, o.rempel@pengutronix.de, alok.a.tiwari@oracle.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27a80ed0-65a3-4a41-994e-9c2d3bb76b54@sabinyo.mountain>
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Mon, 18 Aug 2025 09:51:17 +0200 you wrote:
-> Add support for LAN8842 which supports industry-standard SGMII.
-> While add this the first 3 patches in the series cleans more the
-> driver, they should not introduce any functional changes.
+On Sun, Jul 20, 2025 at 02:39:13PM -0500, Dan Carpenter wrote:
+> The ->nr_pins is not used so delete that.
 > 
-> v4->v5:
-> - implement inband_caps and config_inband ops
-> - remove unused defines
-> - use reverse x-mas tree in lan8842_get_stat function
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/pinctrl/pinctrl-scmi.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> [...]
 
-Here is the summary with links:
-  - [net-next,v5,1/4] net: phy: micrel: Start using PHY_ID_MATCH_MODEL
-    https://git.kernel.org/netdev/net-next/c/54e974c71524
-  - [net-next,v5,2/4] net: phy: micrel: Introduce lanphy_modify_page_reg
-    https://git.kernel.org/netdev/net-next/c/a0de636ed7a2
-  - [net-next,v5,3/4] net: phy: micrel: Replace hardcoded pages with defines
-    https://git.kernel.org/netdev/net-next/c/d471793a9b67
-  - [net-next,v5,4/4] net: phy: micrel: Add support for lan8842
-    https://git.kernel.org/netdev/net-next/c/5a774b64cd6a
+LGTM.
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks,
+Cristian
 
