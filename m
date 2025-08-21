@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-779011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC2BB2EDE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:05:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC299B2EDFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56F8CA06DE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:05:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3F873BFC74
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F920285C8E;
-	Thu, 21 Aug 2025 06:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YS8g+a4s"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1595E2D481D;
+	Thu, 21 Aug 2025 06:14:31 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1974B20330;
-	Thu, 21 Aug 2025 06:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9248618FDBE;
+	Thu, 21 Aug 2025 06:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755756325; cv=none; b=GYE73v2aoT6QaW7pfyeacD2ejjW2VLlLg3/AKALqYKyPGEDjjMLvZSC0/yKd3e2Va2ShWXyfzzQqgQ4+DLUMMygZWmNWJZPwRvhtE4RNO7qWi+61y/MD/MAe0e9rII+07AqcJ8vamuSUjvCCkkF26ODxyItaWXBt4HzszY6pPvE=
+	t=1755756870; cv=none; b=p67ajnWfNZkKf8vr+7s2jHlBsU4QCZuan9oik7XM+HDEdRBTGE8B6gGXMNUAfLbsJvxWkAlkDvmb26U8DPUndIGQabh5Ia4MRaU5eGdpbSNJc3+0YNWuEwjyDi8V852OTVyBLgccZt5gI4FE8E5hOmR7k9BOOIM6UGsPy9JPBbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755756325; c=relaxed/simple;
-	bh=L2XaWQf8Bv1sBxfwNLa4pVuwLQ02ytj967/mxyjWWl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rcxMlt1bX/OJmiGBbPL/XqdcqERqnaXsc9ru9HYgpEuORX2a1YOzRYnGmw5v9uwh5nNjFdb68RrksOj0rHCCGFskNs4GOWEl8OlArP0A/hpNPC8Hf09BeyLCfSrYZ9FcRseHDr5M11LVm0+jGMKvdQDU5nu+gw6eVqG9D4srsfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YS8g+a4s; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755756317;
-	bh=vqgDg4bCYW2gsBIgVXv2Kq5IO21o/xIVTLCrKpkTwtc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YS8g+a4srL64Y4fomXQ7zjm/1GPXrtCurkm2n+reHz9OgTpybGr/cfMXjenVgIAOi
-	 dku4H3NFRk0G3XA+55SG277pPItvsGHAGoOO0b34XPfxklypFGzfVKIb8Zjrj//p2/
-	 9H/Yaa4No5BB32tfNZv2p0E8fD9qdGJUc++1+v3f8FhSLYxLt9GUXZeofXFF5Nbwu4
-	 m+ey9zvoK5+EXShCxwUmZ3pZwATJ9jvXnJ+5XqDYNNWC72TRODqLJLP/DaCF5abMGx
-	 FlwvQWcjTSgY8xSSmQ/rSFKQW0QIvB5uJvKaM8XZ+GVNBWwjJxkF/0cKfc+ipStl8u
-	 lCV7ib+8rMMUg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6t8Y0C8gz4wbr;
-	Thu, 21 Aug 2025 16:05:16 +1000 (AEST)
-Date: Thu, 21 Aug 2025 16:05:15 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Harry Yoo <harry.yoo@oracle.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mm-hotfixes tree
-Message-ID: <20250821160515.611d191e@canb.auug.org.au>
+	s=arc-20240116; t=1755756870; c=relaxed/simple;
+	bh=2F8qj9LXUdJK53J3zDVrtY3qsXgrM+dpOM5dxd5zV+I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G3Jg2GPdkvXljRubPXWUyv1ko6IN8jPt8XHLsqA+vXAd9c2hLl+SGIK6CY/DMgF2SAtIu2jXHmQ3yAquP/34OTIXJLGeYuk5fUPSZC6dVlwSUVoLhFmxfsAv2DbvJucp7BZo8aElYck/4YTvEmb9iYFyklOoUQFcOxnvBp42Vts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6tM50vmczKHNXx;
+	Thu, 21 Aug 2025 14:14:25 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 930551A0B8F;
+	Thu, 21 Aug 2025 14:14:24 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBHERI+uaZoxBuhEQ--.58405S4;
+	Thu, 21 Aug 2025 14:14:24 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: yukuai3@huawei.com,
+	axboe@kernel.dk,
+	bvanassche@acm.org,
+	ming.lei@redhat.com,
+	nilay@linux.ibm.com,
+	hare@suse.de
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v3 0/2] blk-mq: fix update nr_requests regressions
+Date: Thu, 21 Aug 2025 14:06:10 +0800
+Message-Id: <20250821060612.1729939-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3=oZanJ88xOlG5Opuq5I2+U";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHERI+uaZoxBuhEQ--.58405S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrKrWfKFy5JrWDWF1DCr1xZrb_yoWkGrg_GF
+	WDAa4kJr4DWF45GFW7KF15JrWxK3yrtr4kGa4DJrWkt34fJF4rArW5Ar4Y9Fs8uFWUGFn5
+	G3sYqr18tr1jgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
---Sig_/3=oZanJ88xOlG5Opuq5I2+U
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Yu Kuai <yukuai3@huawei.com>
 
-Hi all,
+Changes in v3:
+ - call depth_updated() directly in init_sched() method in patch 1;
+ - fix typos in patch 2;
+ - add review for patch 2;
+Changes in v2:
+ - instead of refactor and cleanups and fix updating nr_requests
+ thoroughly, fix the regression in patch 2 the easy way, and dealy
+ refactor and cleanups to next merge window.
 
-After merging the mm-hotfixes tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+patch 1 fix regression that elevator async_depth is not updated correctly
+if nr_requests changes, first from error path and then for mq-deadline,
+and recently for bfq and kyber.
 
-ld: mm/kasan/init.o:(.toc+0x0): undefined reference to `kasan_early_shadow_=
-p4d'
+patch 2 fix regression that if nr_requests grow, kernel will panic due
+to tags double free.
 
-Caused by commit
+Yu Kuai (2):
+  blk-mq: fix elevator depth_updated method
+  blk-mq: fix blk_mq_tags double free while nr_requests grown
 
-  4b99d7a3e69a ("mm: introduce and use {pgd,p4d}_populate_kernel()")
+ block/bfq-iosched.c   | 22 +++++-----------------
+ block/blk-mq-sched.h  | 11 +++++++++++
+ block/blk-mq-tag.c    |  1 +
+ block/blk-mq.c        | 23 ++++++++++++-----------
+ block/elevator.h      |  2 +-
+ block/kyber-iosched.c | 19 +++++++++----------
+ block/mq-deadline.c   | 16 +++-------------
+ 7 files changed, 42 insertions(+), 52 deletions(-)
 
-I have reverted that commit (and the following 07cf1bc1f659) for today.
+-- 
+2.39.2
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3=oZanJ88xOlG5Opuq5I2+U
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmimtxsACgkQAVBC80lX
-0Gy8MQf/TAZzOu2C5XGYFr8elkw88XdexwbCaMZh3PC/mmw3scaC3bUER+cFV6nx
-M11qySWJ/+meGHmRdHkgLErWEp4hiOTCyBZ5SjJmuywXH0+TIBBmVDvG1MvzxTcC
-c+iHCAZGnSe91wk05RKxVQh++irT6/FG8nLciaGFBLy6GfHDKuwOE1qqcYcQ5gKX
-QLfQOin35ZbkCPwzGfVCqKaWBPs77VrJpOAqGhE9YUbizA7iIxGQrsB6VFcsJ1bL
-2WsMwt26JffLuh1HiZqGgUaWPRznkKxSnwAKBzjYMxga/hFdDk00nVRO72glryF5
-tjKglwSzed/4YMefrZu0Yf7nv3lb4A==
-=uFr+
------END PGP SIGNATURE-----
-
---Sig_/3=oZanJ88xOlG5Opuq5I2+U--
 
