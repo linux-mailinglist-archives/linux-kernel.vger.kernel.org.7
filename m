@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-779830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720BCB2F9B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:13:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D86E9B2F9BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 414351797DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:08:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FEDF1793B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9E9322772;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E19322A1F;
 	Thu, 21 Aug 2025 13:08:00 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349B832275C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8988532274E
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755781679; cv=none; b=j0070z7qy2Vk2zoZQg1BgIbwslCUWhIDYX5eT7zuljyUeikzqkS2h4ObLtHSYnh6oE4w57pQ1BGZBBysNMBpf3sUPEXxi9IvM/IKelJwEjqPUzQ0hef0g7htjJltp7+Fguhz11nrspyVvgFvDSnbsU409+EyIlpIcjcfJ8ji6A0=
+	t=1755781680; cv=none; b=PzJg7FVdc/zpdZZECPh8C5LTUsqvFa2M5m2XGgGWvcwCjcCf5gR1Ob6rVrwhJtkfZKrM+NYUplHauwZX+ZmuJ/fOe4K6r70tPDFohXvzZkQCJescAYlCTOHwu4d15Kff/PTFPM/TTqZrMNrQsmUv+Jk0hY9WOT+IdzSsEkT09YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755781679; c=relaxed/simple;
-	bh=GVT++RIpuMKHnz1jb10ppTFG4JAkgYP2kXAzzMDnq0M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ppN+qHXqc1OuFtZcWl+mls3MQP0TvsT261z9jyZ86BpByYIAWRnYn14j/lKcPF9debx9xNFF+AtvRjBYBWL7FV02fVn43QJ7iOO42RQ/H/zjLpVRcTFF4gLetxSw5z6vgMRL7lDoWiuiMgLpgwnSEXPPVzt3phBvdWpFJEVj1tg=
+	s=arc-20240116; t=1755781680; c=relaxed/simple;
+	bh=clUjc6iM5rYPo+PgiNX0yGj1ORiRkLxVFKBHx69GVOQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=O10UNRMbxFdFOjgqEkaZUfApuSzSx299ej1uy9b9vQ67Ni6bUWWxTJ3PqRdHYidCaaM6fMJgNxzhea6xKoDcaf1nyuKaJKGOb2A63m6GSCu+20WCwUmvwiKWMCSRyzAEz3NLt9czMB6Oh/cSZguyn06Fmq2nSKMSbEvnWClRyEE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -31,17 +32,17 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1up51F-0006uq-QL; Thu, 21 Aug 2025 15:07:53 +0200
+	id 1up51H-0006wE-Mx; Thu, 21 Aug 2025 15:07:55 +0200
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1up51E-001Q1m-2h;
-	Thu, 21 Aug 2025 15:07:52 +0200
+	id 1up51H-001Q1q-17;
+	Thu, 21 Aug 2025 15:07:55 +0200
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1up51E-008lbO-2S;
-	Thu, 21 Aug 2025 15:07:52 +0200
+	id 1up51H-008lbZ-0t;
+	Thu, 21 Aug 2025 15:07:55 +0200
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
@@ -55,10 +56,12 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	Christian Loehle <christian.loehle@arm.com>,
 	Adrian Hunter <adrian.hunter@intel.com>,
 	Avri Altman <Avri.Altman@sandisk.com>
-Subject: [PATCH v9 0/2] mmc: handle undervoltage events and prevent eMMC corruption
-Date: Thu, 21 Aug 2025 15:07:49 +0200
-Message-Id: <20250821130751.2089587-1-o.rempel@pengutronix.de>
+Subject: [PATCH v9 1/2] mmc: core: Add infrastructure for undervoltage handling
+Date: Thu, 21 Aug 2025 15:07:50 +0200
+Message-Id: <20250821130751.2089587-2-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250821130751.2089587-1-o.rempel@pengutronix.de>
+References: <20250821130751.2089587-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,6 +74,30 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Implement the core infrastructure to allow MMC bus types to handle
+REGULATOR_EVENT_UNDER_VOLTAGE events from power regulators. This is
+primarily aimed at allowing devices like eMMC to perform an emergency
+shutdown to prevent data corruption when a power failure is imminent.
+
+This patch introduces:
+- A new 'handle_undervoltage' function pointer to 'struct mmc_bus_ops'.
+  Bus drivers (e.g., for eMMC) can implement this to define their
+  emergency procedures.
+- A workqueue ('uv_work') in 'struct mmc_supply' to handle the event
+  asynchronously in a high-priority context.
+- A new function 'mmc_handle_undervoltage()' which is called from the
+  workqueue. It stops the host queue to prevent races with card removal,
+  checks for the bus op, and invokes the handler.
+- Functions to register and unregister the regulator notifier, intended
+  to be called by bus drivers like 'mmc_attach_mmc' when a compatible
+  card is detected.
+
+The notifier is only registered for the main vmmc supply, as
+undervoltage handling for vqmmc or vqmmc2 is not required at this
+time.
+
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
 changes v9:
 - Drop stray whitespace after mmc_claim_host() in mmc_attach_mmc()
 - Remove unnecessary #include <linux/workqueue.h> from host.h,
@@ -78,9 +105,6 @@ changes v9:
 - Move internal prototypes for undervoltage helpers
   (mmc_regulator_register/unregister_undervoltage_notifier(),
    mmc_undervoltage_workfn()) from host.h to core.h
-- remove host->card check
-changes v8:
-- fix compile warning
 changes v7:
 - Remove all usage of the redundant undervoltage_notify_registered flag
 - Register undervoltage notifier in mmc_add_card() after setting card as
@@ -91,9 +115,6 @@ changes v7:
 - Move all host claiming and releasing responsibility for undervoltage events
   into the bus_ops callback;
 - add comment for host->undervoltage
-- Squash undervoltage suspend preparation and handler into one patch.
-- Use mmc_card_removed() in shutdown path instead of host->undervoltage.
-- Remove redundant card presence check in undervoltage handler.
 changes v6:
 - Rewrite commit message to be more technical per reviewer feedback.
 - Address race conditions by using __mmc_stop_host() instead of only
@@ -108,84 +129,279 @@ changes v6:
 - Consolidate multiple notifier callbacks into a single, generic handler.
 - Remove premature notifier support for vqmmc and vqmmc2 regulators.
 - Move INIT_WORK() for the undervoltage workqueue to mmc_alloc_host().
-changes v5:
-- Rebased on top of mmc/next after introduction of enum mmc_poweroff_type
-- Replaced boolean undervoltage parameter with MMC_POWEROFF_UNDERVOLTAGE
-- Dropped unused __mmc_resume() helper
-- Updated commit messages accordingly
-changes v4:
-- drop HPI and SDHCI related patches
+changes v3:
+- filter supported cards at early stage
+- add locking in mmc_handle_regulator_event()
+- claim/release host in mmc_handle_undervoltage()
 
-This patch set introduces a framework for handling undervoltage events
-in the MMC subsystem. The goal is to improve system reliability by
-ensuring graceful handling of power fluctuations that could otherwise
-lead to metadata corruption, potentially rendering the eMMC chip
-unusable or causing significant data loss.
+Background & Decision at LPC24:
 
-## Problem Statement
+This solution was proposed and refined during LPC24 in the talk
+"Graceful Under Pressure: Prioritizing Shutdown to Protect Your Data in
+Embedded Systems," which aimed to address how Linux should handle power
+fluctuations in embedded devices to prevent data corruption or storage
+damage.
 
-Power fluctuations and sudden losses can leave eMMC devices in an
-undefined state, leading to severe consequences. The worst case can
-result in metadata corruption, making the entire storage inaccessible.
-While some eMMC devices promise to handle such situations internally,
-experience shows that some chip variants are still affected. This has
-led vendors to take a more protective approach, implementing external
-undervoltage handling as a precautionary measure to avoid costly field
-failures and returns.
+At the time, multiple possible solutions were considered:
+1. Triggering a system-wide suspend or shutdown: when undervoltage is
+   detected, with device-specific prioritization to ensure critical
+   components shut down first.
+   - This approach was disliked by Greg Kroah-Hartman, as it introduced
+     complexity and was not suitable for all use cases.
 
-The existence of the "Power Off Notification" feature in the eMMC
-standard itself serves as indirect evidence that this is a real-world
-issue.  While some projects have already faced the consequences of
-ignoring this problem (often at significant cost), specific cases cannot
-be disclosed due to NDAs.
-
-## Challenges and Implementation Approach
-
-1. **Raising awareness of the problem**: While vendors have used
-   proprietary solutions for years, a unified approach is needed upstream.
-   This patch set is a first step in making that happen.
-
-2. **Finding an acceptable implementation path**: There are multiple
-   ways to handle undervoltage - either in the kernel or in user space,
-   through a global shutdown mechanism, or using the regulator framework.
-   This patch set takes the kernel-based approach but does not prevent
-   future extensions, such as allowing user-space handoff once available.
-
-3. **Preparing for vendor adoption and testing**: By providing a
-   structured solution upstream, this patch set lowers the barrier for
-   vendors to standardize their undervoltage handling instead of relying on
-   fragmented, out-of-tree implementations.
-
-## Current Limitations
-
-This patch set is an initial step and does not yet cover all possible
-design restrictions or edge cases. Future improvements may include
-better coordination with user space and enhancements based on broader
-testing.
-
-## Testing Details
-
-The implementation was tested on an iMX8MP-based system. The board had
-approximately 100ms of available power hold-up time. The Power Off
-Notification was sent ~4ms after the board was detached from the power
-supply, allowing sufficient time for the eMMC to handle the event
-properly.  Tests were conducted under both idle conditions and active
-read/write operations.
-
-Oleksij Rempel (2):
-  mmc: core: Add infrastructure for undervoltage handling
-  mmc: core: add undervoltage handler for MMC/eMMC devices
-
+2. Notifying relevant devices through the regulator framework: to allow
+   graceful per-device handling.
+   - This approach was agreed upon as the most acceptable by participants
+     in the discussion, including Greg Kroah-Hartman, Mark Brown,
+     and Rafael J. Wysocki.
+   - This patch implements that decision by integrating undervoltage
+     handling into the MMC subsystem.
+---
  drivers/mmc/core/bus.c       | 12 ++++++
  drivers/mmc/core/core.c      | 23 +++++++++++
  drivers/mmc/core/core.h      |  5 +++
  drivers/mmc/core/host.c      |  2 +
- drivers/mmc/core/mmc.c       | 70 ++++++++++++++++++++++++++++++--
  drivers/mmc/core/regulator.c | 77 ++++++++++++++++++++++++++++++++++++
  include/linux/mmc/host.h     | 11 ++++++
- 7 files changed, 197 insertions(+), 3 deletions(-)
+ 6 files changed, 130 insertions(+)
 
---
+diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
+index 1cf64e0952fb..ec4f3462bf80 100644
+--- a/drivers/mmc/core/bus.c
++++ b/drivers/mmc/core/bus.c
+@@ -19,6 +19,7 @@
+ 
+ #include <linux/mmc/card.h>
+ #include <linux/mmc/host.h>
++#include <linux/mmc/mmc.h>
+ 
+ #include "core.h"
+ #include "card.h"
+@@ -383,6 +384,14 @@ int mmc_add_card(struct mmc_card *card)
+ 
+ 	mmc_card_set_present(card);
+ 
++	/*
++	 * Register for undervoltage notification if the card supports
++	 * power-off notification, enabling emergency shutdowns.
++	 */
++	if (mmc_card_mmc(card) &&
++	    card->ext_csd.power_off_notification == EXT_CSD_POWER_ON)
++		mmc_regulator_register_undervoltage_notifier(card->host);
++
+ 	return 0;
+ }
+ 
+@@ -394,6 +403,9 @@ void mmc_remove_card(struct mmc_card *card)
+ {
+ 	struct mmc_host *host = card->host;
+ 
++	if (mmc_card_present(card))
++		mmc_regulator_unregister_undervoltage_notifier(host);
++
+ 	mmc_remove_card_debugfs(card);
+ 
+ 	if (mmc_card_present(card)) {
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index 88fd231fee1d..860378bea557 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -1398,6 +1398,29 @@ void mmc_power_cycle(struct mmc_host *host, u32 ocr)
+ 	mmc_power_up(host, ocr);
+ }
+ 
++/**
++ * mmc_handle_undervoltage - Handle an undervoltage event on the MMC bus
++ * @host: The MMC host that detected the undervoltage condition
++ *
++ * This function is called when an undervoltage event is detected on one of
++ * the MMC regulators.
++ *
++ * Returns: 0 on success or a negative error code on failure.
++ */
++int mmc_handle_undervoltage(struct mmc_host *host)
++{
++	/* Stop the host to prevent races with card removal */
++	__mmc_stop_host(host);
++
++	if (!host->bus_ops || !host->bus_ops->handle_undervoltage)
++		return 0;
++
++	dev_warn(mmc_dev(host), "%s: Undervoltage detected, initiating emergency stop\n",
++		 mmc_hostname(host));
++
++	return host->bus_ops->handle_undervoltage(host);
++}
++
+ /*
+  * Assign a mmc bus handler to a host. Only one bus handler may control a
+  * host at any given time.
+diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+index 73f5d3d8c77d..a028b48be164 100644
+--- a/drivers/mmc/core/core.h
++++ b/drivers/mmc/core/core.h
+@@ -31,6 +31,7 @@ struct mmc_bus_ops {
+ 	int (*sw_reset)(struct mmc_host *);
+ 	bool (*cache_enabled)(struct mmc_host *);
+ 	int (*flush_cache)(struct mmc_host *);
++	int (*handle_undervoltage)(struct mmc_host *host);
+ };
+ 
+ void mmc_attach_bus(struct mmc_host *host, const struct mmc_bus_ops *ops);
+@@ -59,6 +60,10 @@ void mmc_power_off(struct mmc_host *host);
+ void mmc_power_cycle(struct mmc_host *host, u32 ocr);
+ void mmc_set_initial_state(struct mmc_host *host);
+ u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
++int mmc_handle_undervoltage(struct mmc_host *host);
++void mmc_regulator_register_undervoltage_notifier(struct mmc_host *host);
++void mmc_regulator_unregister_undervoltage_notifier(struct mmc_host *host);
++void mmc_undervoltage_workfn(struct work_struct *work);
+ 
+ static inline void mmc_delay(unsigned int ms)
+ {
+diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+index f14671ea5716..5f0ec23aeff5 100644
+--- a/drivers/mmc/core/host.c
++++ b/drivers/mmc/core/host.c
+@@ -564,6 +564,8 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *dev)
+ 	INIT_WORK(&host->sdio_irq_work, sdio_irq_work);
+ 	timer_setup(&host->retune_timer, mmc_retune_timer, 0);
+ 
++	INIT_WORK(&host->supply.uv_work, mmc_undervoltage_workfn);
++
+ 	/*
+ 	 * By default, hosts do not support SGIO or large requests.
+ 	 * They have to set these according to their abilities.
+diff --git a/drivers/mmc/core/regulator.c b/drivers/mmc/core/regulator.c
+index 3dae2e9b7978..a85179f1a4de 100644
+--- a/drivers/mmc/core/regulator.c
++++ b/drivers/mmc/core/regulator.c
+@@ -7,6 +7,7 @@
+ #include <linux/err.h>
+ #include <linux/log2.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/workqueue.h>
+ 
+ #include <linux/mmc/host.h>
+ 
+@@ -262,6 +263,82 @@ static inline int mmc_regulator_get_ocrmask(struct regulator *supply)
+ 
+ #endif /* CONFIG_REGULATOR */
+ 
++/* To be called from a high-priority workqueue */
++void mmc_undervoltage_workfn(struct work_struct *work)
++{
++	struct mmc_supply *supply;
++	struct mmc_host *host;
++
++	supply = container_of(work, struct mmc_supply, uv_work);
++	host = container_of(supply, struct mmc_host, supply);
++
++	mmc_handle_undervoltage(host);
++}
++
++static int mmc_handle_regulator_event(struct notifier_block *nb,
++				      unsigned long event, void *data)
++{
++	struct mmc_supply *supply = container_of(nb, struct mmc_supply,
++						 vmmc_nb);
++	struct mmc_host *host = container_of(supply, struct mmc_host, supply);
++	unsigned long flags;
++
++	switch (event) {
++	case REGULATOR_EVENT_UNDER_VOLTAGE:
++		spin_lock_irqsave(&host->lock, flags);
++		if (host->undervoltage) {
++			spin_unlock_irqrestore(&host->lock, flags);
++			return NOTIFY_OK;
++		}
++
++		host->undervoltage = true;
++		spin_unlock_irqrestore(&host->lock, flags);
++
++		queue_work(system_highpri_wq, &host->supply.uv_work);
++		break;
++	default:
++		return NOTIFY_DONE;
++	}
++
++	return NOTIFY_OK;
++}
++
++/**
++ * mmc_regulator_register_undervoltage_notifier - Register for undervoltage
++ *						  events
++ * @host: MMC host
++ *
++ * To be called by a bus driver when a card supporting graceful shutdown
++ * is attached.
++ */
++void mmc_regulator_register_undervoltage_notifier(struct mmc_host *host)
++{
++	int ret;
++
++	if (IS_ERR_OR_NULL(host->supply.vmmc))
++		return;
++
++	host->supply.vmmc_nb.notifier_call = mmc_handle_regulator_event;
++	ret = regulator_register_notifier(host->supply.vmmc,
++					  &host->supply.vmmc_nb);
++	if (ret)
++		dev_warn(mmc_dev(host), "Failed to register vmmc notifier: %d\n", ret);
++}
++
++/**
++ * mmc_regulator_unregister_undervoltage_notifier - Unregister undervoltage
++ *						    notifier
++ * @host: MMC host
++ */
++void mmc_regulator_unregister_undervoltage_notifier(struct mmc_host *host)
++{
++	if (IS_ERR_OR_NULL(host->supply.vmmc))
++		return;
++
++	regulator_unregister_notifier(host->supply.vmmc, &host->supply.vmmc_nb);
++	cancel_work_sync(&host->supply.uv_work);
++}
++
+ /**
+  * mmc_regulator_get_supply - try to get VMMC and VQMMC regulators for a host
+  * @mmc: the host to regulate
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 5ed5d203de23..e0d935a4ac1d 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -337,11 +337,15 @@ struct mmc_slot {
+ 
+ struct regulator;
+ struct mmc_pwrseq;
++struct notifier_block;
+ 
+ struct mmc_supply {
+ 	struct regulator *vmmc;		/* Card power supply */
+ 	struct regulator *vqmmc;	/* Optional Vccq supply */
+ 	struct regulator *vqmmc2;	/* Optional supply for phy */
++
++	struct notifier_block vmmc_nb;	/* Notifier for vmmc */
++	struct work_struct uv_work;	/* Undervoltage work */
+ };
+ 
+ struct mmc_ctx {
+@@ -494,6 +498,13 @@ struct mmc_host {
+ 	unsigned int		can_dma_map_merge:1; /* merging can be used */
+ 	unsigned int		vqmmc_enabled:1; /* vqmmc regulator is enabled */
+ 
++	/*
++	 * Indicates if an undervoltage event has already been handled.
++	 * This prevents repeated regulator notifiers from triggering
++	 * multiple REGULATOR_EVENT_UNDER_VOLTAGE events.
++	 */
++	unsigned int		undervoltage:1;	 /* Undervoltage state */
++
+ 	int			rescan_disable;	/* disable card detection */
+ 	int			rescan_entered;	/* used with nonremovable devices */
+ 
+-- 
 2.39.5
 
 
