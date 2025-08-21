@@ -1,223 +1,126 @@
-Return-Path: <linux-kernel+bounces-779673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE56AB2F70C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:49:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34686B2F718
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770521CE15E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:48:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBF45C3F43
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136BF2DFA48;
-	Thu, 21 Aug 2025 11:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B361B30C340;
+	Thu, 21 Aug 2025 11:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l8trKXeg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="gaK1lMu2"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49A0311961
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0373A28850B;
+	Thu, 21 Aug 2025 11:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755776826; cv=none; b=MmVmGOBOHAup5YvqPW0Vie5ztWJcK1ZBcBQHVJ8943ufM5QY49s4TF2ZvShiv2n8T3aXZWet9edqCDOmoG5Cog0D1Lw08TNTsGC8Nujtr2pu6AD43LeUvlBeJK3FJG1f6jveIoz8q14FYN3OAjgXbePlU7RW2L4Jt6tz5lz+7Aw=
+	t=1755776853; cv=none; b=aTLR+BPesVz+PjvGVTiP888KMiezbQy5DGGFub2m3/9W72quyU0srcbC2ZLT8Dv5tpzgNZVgPcsgzua1wo9mDSKX361o9U0e7tKi2ZzlM8gGIP1Cx+ALsGmxYToYq08fzkPcO1jP1O45XeigZUJSqdwhc1m9g0MlkyF/QOwxD5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755776826; c=relaxed/simple;
-	bh=iJneFFGjQzLecO0NbP6dLUmEON+W6rvWnRMxdzIQpkM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SMPpPlIkEtXzpf5hX0LCkYYQ4Ub2C3DthO6afOh2RD0giBQIo6fWrYgt+iGPITm+MKmYQAxKk9xa1w0Lqc5IJWk9bs02BQ6aQ4CQef5oKOzPA83jAHBe2uWNZVfubiOSD3L9yIrFRxmjpXswx6gMU74IoLls389tlbbuiY1MYqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l8trKXeg; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755776825; x=1787312825;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=iJneFFGjQzLecO0NbP6dLUmEON+W6rvWnRMxdzIQpkM=;
-  b=l8trKXegGvDTJpgBYQlgtz2Ku6AVBrpCxmLutEE/CSl129AbsxeQ+4Xn
-   iiRiUtL0AEYnVaxWoMYdCFEy/m3Nsr988I1zO2fT8afmKfLefiGfIO/do
-   RPuruct6CWcMkpH5MfivLwaPtx8oiH4Y+KuSKX0Ci+Uo71RfWLWtETd4U
-   um7KyGGMLbkxg4T338MgXiD+7lHJseyuTgA5Hm0wbIK+zEOiHgJp/4bCv
-   pGD1qfnA5B4qpXHnoTFWD71pqo8u+q+zD3djUgMJlPKJCd3bMZavjFBa0
-   72UjBJdmREBLU5RRDXpTyRdim8kTX0C59ltRSC2/TnB/IEFLkjp5r4tA0
-   Q==;
-X-CSE-ConnectionGUID: JNBKTwhoT2eZk9rpzNv4+w==
-X-CSE-MsgGUID: D/SHWDEsSl2x0Em1tVsV/A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57989491"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="57989491"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 04:47:05 -0700
-X-CSE-ConnectionGUID: m/oDoepnQumFqMGRpcZkOw==
-X-CSE-MsgGUID: xiY/gQ3BRTuN2LEm+B2oOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="172613664"
-Received: from johunt-mobl9.ger.corp.intel.com (HELO fedora) ([10.245.245.201])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 04:47:02 -0700
-From: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
-To: intel-xe@lists.freedesktop.org
-Cc: Matthew Brost <matthew.brost@intel.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dave Airlie <airlied@gmail.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] drm/xe: Implement two pass MMU notifiers for SVM
-Date: Thu, 21 Aug 2025 13:46:26 +0200
-Message-ID: <20250821114626.89818-7-thomas.hellstrom@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250821114626.89818-1-thomas.hellstrom@linux.intel.com>
-References: <20250821114626.89818-1-thomas.hellstrom@linux.intel.com>
+	s=arc-20240116; t=1755776853; c=relaxed/simple;
+	bh=nB+ATKIsYq7SgOgpe9JFJ9iZ+Kn/zPxfjmzpITUU9ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n6bWE2a449ULTMRbD3mf4jYfcIqQcmTtVXdZukrMyanU31cT2VMs2LvltG0BiIwRkMOGpnmPiyF0D67wwZ/ya2zmv95r/qRRTk9JyrK4Kf5KJTy4Y1Ay+ZRfe7IqY5OZjr/us9WIUfFLz99HyihHFYcGitjAoDYnsXf7aejJPqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=gaK1lMu2; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4c71lL6GGtz9tVh;
+	Thu, 21 Aug 2025 13:47:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1755776846;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nB+ATKIsYq7SgOgpe9JFJ9iZ+Kn/zPxfjmzpITUU9ks=;
+	b=gaK1lMu25/4Ohv/XeUjp1PM1eVfIgVguyAH0C+nrmLmzSy01LhckBE+sybt20pc0CqAiPW
+	eDQOPFkwLSCaHFzK7JtFPgJkGlKobFvdmmL3ko3gGeFxOhoxFU2btVYOnK46h2JIJKHhHS
+	vH39OEeUQTla/otCVlVacaEXBGUqhvkyne/zDmoI6IA1e8AaDFoTU4eK6vCH9mn6B6oMAO
+	E2xKp9YjVPfBSVvNrXIu+lkAsB/G6sHGIYFozhzdAI8R0bm3nBj100MK1MlunDJ//ThCaE
+	XrneDFnAlDwqMz+AYsOeVAjeGeJUjP8ilFjQhJJPoU9s8wowO7UiVBkWv373uA==
+Date: Thu, 21 Aug 2025 21:47:17 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v3 06/12] man/man2/fsconfig.2: document "new" mount API
+Message-ID: <2025-08-21.1755776734-magenta-shaved-atrium-spacebar-n0zDCn@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+ <20250809-new-mount-api-v3-6-f61405c80f34@cyphar.com>
+ <198cc299cd9.eec1817f85794.4679093070969175955@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7ixnxzpvxygwsjat"
+Content-Disposition: inline
+In-Reply-To: <198cc299cd9.eec1817f85794.4679093070969175955@zohomail.com>
 
-From: Matthew Brost <matthew.brost@intel.com>
 
-Implement two-pass MMU notifiers for SVM, enabling multiple VMs or
-devices with GPU mappings to pipeline costly TLB invalidations by
-issuing them in the first pass and waiting for completion in the second.
+--7ixnxzpvxygwsjat
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 06/12] man/man2/fsconfig.2: document "new" mount API
+MIME-Version: 1.0
 
-v1:
-- Adjust naming.
+On 2025-08-21, Askar Safin <safinaskar@zohomail.com> wrote:
+> There is a convention: you can pass invalid fd (such as -1) as dfd to *at=
+-syscalls to enforce that the path is absolute.
+> This is documented. "man openat" says: "Specifying an invalid file descri=
+ptor number in dirfd can be used as a means to ensure that pathname is abso=
+lute".
+> But fsconfig with FSCONFIG_SET_PATH breaks this convention due to this li=
+ne: https://elixir.bootlin.com/linux/v6.16/source/fs/fsopen.c#L377 .
+> I think this is a bug, and it should be fixed in kernel. Also, it is poss=
+ible there are a lot of similarly buggy syscalls. All of them should be fix=
+ed,
+> and moreover a warning should be added to https://docs.kernel.org/process=
+/adding-syscalls.html . And then new fsconfig behavior should be documented.
+> (Of course, I'm not saying that *you* should do all these. I'm just sayin=
+g that this bug exists.) (I tested this.)
 
-Signed-off-by: Matthew Brost <matthew.brost@intel.com>
----
- drivers/gpu/drm/xe/xe_svm.c | 73 +++++++++++++++++++++++++++++++------
- 1 file changed, 61 insertions(+), 12 deletions(-)
+Indeed, good catch! I think we discussed this before --
+FSCONFIG_SET_PATH actually doesn't work with any parameters today so
+it's not very surprising nobody has noticed this until now. I'll include
+it in the set of fixes I have for fscontext.
 
-diff --git a/drivers/gpu/drm/xe/xe_svm.c b/drivers/gpu/drm/xe/xe_svm.c
-index 5ef673b70575..a278c9dc5306 100644
---- a/drivers/gpu/drm/xe/xe_svm.c
-+++ b/drivers/gpu/drm/xe/xe_svm.c
-@@ -144,15 +144,8 @@ xe_svm_range_notifier_event_begin(struct xe_vm *vm, struct drm_gpusvm_range *r,
- 	 * invalidations spanning multiple ranges.
- 	 */
- 	for_each_tile(tile, xe, id)
--		if (xe_pt_zap_ptes_range(tile, vm, range)) {
-+		if (xe_pt_zap_ptes_range(tile, vm, range))
- 			tile_mask |= BIT(id);
--			/*
--			 * WRITE_ONCE pairs with READ_ONCE in
--			 * xe_vm_has_valid_gpu_mapping()
--			 */
--			WRITE_ONCE(range->tile_invalidated,
--				   range->tile_invalidated | BIT(id));
--		}
- 
- 	return tile_mask;
- }
-@@ -161,16 +154,59 @@ static void
- xe_svm_range_notifier_event_end(struct xe_vm *vm, struct drm_gpusvm_range *r,
- 				const struct mmu_notifier_range *mmu_range)
- {
-+	struct xe_svm_range *range = to_xe_range(r);
- 	struct drm_gpusvm_ctx ctx = { .in_notifier = true, };
- 
- 	xe_svm_assert_in_notifier(vm);
- 
-+	/*
-+	 * WRITE_ONCE pairs with READ_ONCE in xe_vm_has_valid_gpu_mapping()
-+	 */
-+	WRITE_ONCE(range->tile_invalidated, range->tile_present);
-+
- 	drm_gpusvm_range_unmap_pages(&vm->svm.gpusvm, r, &ctx);
- 	if (!xe_vm_is_closed(vm) && mmu_range->event == MMU_NOTIFY_UNMAP)
- 		xe_svm_garbage_collector_add_range(vm, to_xe_range(r),
- 						   mmu_range);
- }
- 
-+struct xe_svm_invalidate_finish {
-+	struct drm_gpusvm *gpusvm;
-+	struct drm_gpusvm_notifier *notifier;
-+#define XE_SVM_INVALIDATE_FENCE_COUNT	\
-+	(XE_MAX_TILES_PER_DEVICE * XE_MAX_GT_PER_TILE)
-+	struct xe_gt_tlb_invalidation_fence fences[XE_SVM_INVALIDATE_FENCE_COUNT];
-+	struct mmu_interval_notifier_finish f;
-+};
-+
-+static void
-+xe_svm_invalidate_finish(struct mmu_interval_notifier_finish *final,
-+			 const struct mmu_notifier_range *mmu_range,
-+			 unsigned long cur_seq)
-+{
-+	struct xe_svm_invalidate_finish *xe_final = container_of(final, typeof(*xe_final), f);
-+	struct drm_gpusvm *gpusvm = xe_final->gpusvm;
-+	struct drm_gpusvm_notifier *notifier = xe_final->notifier;
-+	struct drm_gpusvm_range *r = NULL;
-+	struct xe_vm *vm = gpusvm_to_vm(gpusvm);
-+	u64 adj_start = mmu_range->start, adj_end = mmu_range->end;
-+	int id;
-+
-+	/* Adjust invalidation to notifier boundaries */
-+	adj_start = max(drm_gpusvm_notifier_start(notifier), adj_start);
-+	adj_end = min(drm_gpusvm_notifier_end(notifier), adj_end);
-+
-+	for (id = 0; id < XE_SVM_INVALIDATE_FENCE_COUNT; ++id)
-+		xe_gt_tlb_invalidation_fence_wait(&xe_final->fences[id]);
-+
-+	drm_gpusvm_in_notifier_lock(gpusvm);
-+	drm_gpusvm_for_each_range(r, notifier, adj_start, adj_end)
-+		xe_svm_range_notifier_event_end(vm, r, mmu_range);
-+	drm_gpusvm_in_notifier_unlock(gpusvm);
-+
-+	kfree(xe_final);
-+}
-+
- static void xe_svm_invalidate_start(struct drm_gpusvm *gpusvm,
- 				    struct drm_gpusvm_notifier *notifier,
- 				    const struct mmu_notifier_range *mmu_range,
-@@ -179,6 +215,8 @@ static void xe_svm_invalidate_start(struct drm_gpusvm *gpusvm,
- 	struct xe_vm *vm = gpusvm_to_vm(gpusvm);
- 	struct xe_device *xe = vm->xe;
- 	struct drm_gpusvm_range *r, *first;
-+	struct xe_svm_invalidate_finish *xe_final = NULL;
-+	struct xe_gt_tlb_invalidation_fence *fences = NULL;
- 	u64 adj_start = mmu_range->start, adj_end = mmu_range->end;
- 	u8 tile_mask = 0;
- 	long err;
-@@ -226,14 +264,25 @@ static void xe_svm_invalidate_start(struct drm_gpusvm *gpusvm,
- 
- 	xe_device_wmb(xe);
- 
--	err = xe_vm_range_tilemask_tlb_invalidation(vm, NULL, adj_start,
-+	xe_final = kzalloc(sizeof(*xe_final), GFP_NOWAIT);
-+	if (xe_final) {
-+		xe_final->gpusvm = gpusvm;
-+		xe_final->notifier = notifier;
-+		xe_final->f.finish = xe_svm_invalidate_finish;
-+		fences = xe_final->fences;
-+		*final = &xe_final->f;
-+	}
-+
-+	err = xe_vm_range_tilemask_tlb_invalidation(vm, fences, adj_start,
- 						    adj_end, tile_mask);
- 	WARN_ON_ONCE(err);
- 
- range_notifier_event_end:
--	r = first;
--	drm_gpusvm_for_each_range(r, notifier, adj_start, adj_end)
--		xe_svm_range_notifier_event_end(vm, r, mmu_range);
-+	if (!xe_final) {
-+		r = first;
-+		drm_gpusvm_for_each_range(r, notifier, adj_start, adj_end)
-+			xe_svm_range_notifier_event_end(vm, r, mmu_range);
-+	}
- }
- 
- static int __xe_svm_garbage_collector(struct xe_vm *vm,
--- 
-2.50.1
+(FWIW, the convention I see more commonly is -EBADF but that's just a
+stylistic I suppose.)
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--7ixnxzpvxygwsjat
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaKcHRBsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+bOwEAtiZOgy2wL1XHTEHcdKvh
+QWCwK51hfBt9OuM9DCIl+6YBAIlVGA+rQIFTOcd1a5ZeG9gFXByfKCGcnHexmwN/
+kkcJ
+=EOPu
+-----END PGP SIGNATURE-----
+
+--7ixnxzpvxygwsjat--
 
