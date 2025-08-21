@@ -1,138 +1,87 @@
-Return-Path: <linux-kernel+bounces-778949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E97B2ED09
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:38:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4C7B2ED08
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5121D3A281E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:36:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07E81BA049E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97752E88B7;
-	Thu, 21 Aug 2025 04:32:51 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684FA25392D;
-	Thu, 21 Aug 2025 04:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA51E2E093A;
+	Thu, 21 Aug 2025 04:32:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FA5280325
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755750771; cv=none; b=O5rmcsqrifvxhCwy5PRUec4Xd4dS9nVTLHfchBi5+soBNs/KZWY+2vhI4xY7GsIdzALMFcVmll7JN5VDdADvEc0U3hzuGSfCi/DG3IdnfEp+TIK8T1GV8wEz9MtJp81+h1MmJByO26upV9pj4sgP6L062VwisDmFIXQklYABtWQ=
+	t=1755750725; cv=none; b=uf3/4aM+dOZBodks9rjlLgM4yiTI9thU/2tAkEN7QCl/pyus5EbJclEjaTozZyIz0sU5DezuJYEmkIM11wCjKa6OlXWnJb5YUlMZVeZcskDw1YbDAklknT0BxmadKHfZtD8ogP/sHsGHwl0oeNHb2lznuPPM2JnLB1hxaG64M/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755750771; c=relaxed/simple;
-	bh=wudxfahAkG91oksJkB2hKaFuZIUSOFCQvcfN5AMdmsM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kIWAyZlNO2Vfko/p5x7YYBWLfFPOCcXuyNLt0BBTtUIazVGb1dNwotRGdctHm4zAItFywAC7CzUHW4oKHvEQl0tsQuTXaqWXrH8oge0zvtqr8jyqKQTkiMQa6phGL8lHBm9j3P4XHatB+tR0Ne5E8mjxQSighT+erhpbcY937Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [218.12.18.46])
-	by mtasvr (Coremail) with SMTP id _____wD34GpMoaZoH5xwAQ--.19131S3;
-	Thu, 21 Aug 2025 12:32:13 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [218.12.18.46])
-	by mail-app2 (Coremail) with SMTP id zC_KCgB3RDZFoaZo+ldfAQ--.29576S2;
-	Thu, 21 Aug 2025 12:32:11 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: brcm80211@lists.linux.dev
-Cc: brcm80211-dev-list.pdl@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	mingo@kernel.org,
-	tglx@linutronix.de,
-	arend.vanspriel@broadcom.com,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH] brcmfmac: btcoex: Fix use-after-free when rescheduling brcmf_btcoex_info work
-Date: Thu, 21 Aug 2025 12:32:02 +0800
-Message-Id: <20250821043202.21263-1-duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755750725; c=relaxed/simple;
+	bh=mnFf5Isj80moJw5eKowoxDq9BMeSxf5fOOcUS6udiLw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QJP/FfeYGtSrvfOCav4Px77c+ysvUkzpOVn5f3bu/ZbEEau/9xp3q0zA62B/lGnykI8itid5njbawVw1nl5q5F9iFQVkiXKcnTi4N3yZaWMm8V56vdC6g9CbB+YyRmYhVdkc9nALP4SLq87iMdmrbmNn7Uylh/yo7976yL4KmD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-88432e3c4ffso57019439f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:32:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755750723; x=1756355523;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t83oR121fIfuWD4ievhPG3RfXQKyHGYPVX8fG//IpIw=;
+        b=nz+F2hlnE9A260NxMG/DfTbfRYvV7wQ2kMC9P/8I7lxYNW19Qc8YdlnfUhSDEpRVdT
+         v9mS2hlGHn09PDS0ry6CDssOQtjjFIDgPaAuZQvOGv7QOpyrhrSsmiMzx859FCCOqwmK
+         /wEaeyh9XttzVCGdZX/K6mJAOCUJEbskYfwgNodTUVsXqmnTHx/Qp0wU6FEI1YQ5m56o
+         NvuJ+l77+PZ7M7FqxSNiCGlLvuGyYn1Bnjtvuw8AtYAkBkt5UTsF7wqGf9Ia41a+c6fS
+         YlmiEDADihTMFKLyROpzNMtpXun91qGajZ8kE8TOfVbPPZ3VIpO6WDWsLRfxUWJJMway
+         uvvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFiPwYd4QsyXXqX0QppmZNpTDIu1hdK1CQEIinzh5vkxCa0nvQHij6ONQqKCj3UVwNFu8DCMc1cTJqldQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqGChc4/ZlD2uYdTSQ6PIeJbivCXjhECxCy7DwKbdeoBpdW/oV
+	XBmlB4nDblz/rMQ1LsT7AUzQT0gs/GlVdDfr7aYJkwgB49XPUlr7ZW5mArauHYIZqwqV89eZzai
+	BScAX0w3znKJI8My2LZ1wmjYTiDGlDswAt0cdqeshQCgMPydAokPfpjHzVEk=
+X-Google-Smtp-Source: AGHT+IFv9Fm/dgk84jwrTaEYz90E3vi013WGcrvOGHqIcZzSOyLnWAMFQhLwhXiyFa/I3zjpPekynBBvFBni0f1STGcNrWo5hBZB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zC_KCgB3RDZFoaZo+ldfAQ--.29576S2
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwAFAWimJPgB2QBGsL
-X-CM-DELIVERINFO: =?B?DtiifAXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR1x+P/0SGdmHLgiraX9IMEJhemD36L/3z5dEROEpufn5xEJEOZxQeXyfLvW+ICf4T82FG
-	GVC4lAYirsvrmktc4zr5u/MkoErypH07V0iWcVNZJhzhoKg0FpbtyDr9+TYt3w==
-X-Coremail-Antispam: 1Uk129KBj93XoW7Cr1fAr48CrWkAF4kGw4rWFX_yoW8Kr1Dpa
-	93G34ayryjvw43KrWDJF1kXFyrKa9rG3Wqyr48AFZxuFn2qr1IqF48KFyagFW7CF4Ivay2
-	yF4Fqrn8JrnxtFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
-	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
-	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
-	WUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
-	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuY
-	vjxU7xwIDUUUU
+X-Received: by 2002:a05:6e02:1fc1:b0:3e4:2ea:bbf5 with SMTP id
+ e9e14a558f8ab-3e6d89bd2f6mr19443275ab.21.1755750723217; Wed, 20 Aug 2025
+ 21:32:03 -0700 (PDT)
+Date: Wed, 20 Aug 2025 21:32:03 -0700
+In-Reply-To: <20250821040350.5170-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a6a143.050a0220.3d78fd.0017.GAE@google.com>
+Subject: Re: [syzbot] [atm?] general protection fault in atmtcp_c_send
+From: syzbot <syzbot+1741b56d54536f4ec349@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The brcmf_btcoex_detach() only shuts down the btcoex timer, if the
-flag timer_on is false. However, the brcmf_btcoex_timerfunc(), which
-runs as timer handler, sets timer_on to false. This creates a critical
-race condition:
+Hello,
 
-1.If brcmf_btcoex_detach() is called while brcmf_btcoex_timerfunc()
-is executing, it may observe timer_on as false and skip the call to
-timer_shutdown_sync().
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-2.The brcmf_btcoex_timerfunc() may then reschedule the brcmf_btcoex_info
-worker after the cancel_work_sync() has been executed.
+Reported-by: syzbot+1741b56d54536f4ec349@syzkaller.appspotmail.com
+Tested-by: syzbot+1741b56d54536f4ec349@syzkaller.appspotmail.com
 
-3.Subsequently, the brcmf_btcoex_info structure is freed.
+Tested on:
 
-4.Finally, the rescheduled worker attempts to execute, leading to
-use-after-free bugs by accessing the freed brcmf_btcoex_info object.
+commit:         62a2b350 net: openvswitch: Use for_each_cpu() where ap..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=137cb3bc580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a58f6518808151f2
+dashboard link: https://syzkaller.appspot.com/bug?extid=1741b56d54536f4ec349
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17ca8fa2580000
 
-The following diagram illustrates this sequence of events:
-
-cpu0                            cpu1
-brcmf_btcoex_detach          |  brcmf_btcoex_timerfunc
-                             |    bt_local->timer_on = false;
-  if (cfg->btcoex->timer_on) |
-    ...                      |
-  cancel_work_sync();        |
-  ...                        |    schedule_work() //reschedule
-  kfree(cfg->btcoex);//free  |
-                             |    brcmf_btcoex_handler() //worker
-                             |    btci-> //use
-
-To resolve this race condition, drop the conditional check and call
-timer_shutdown_sync() directly. It can deactivate the timer reliably,
-regardless of its current state. Once stopped, the timer_on state is
-then set to false.
-
-Fixes: 61730d4dfffc ("brcmfmac: support critical protocol API for DHCP")
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c
-index 69ef8cf203d2..67c0c5a92f99 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c
-@@ -393,10 +393,8 @@ void brcmf_btcoex_detach(struct brcmf_cfg80211_info *cfg)
- 	if (!cfg->btcoex)
- 		return;
- 
--	if (cfg->btcoex->timer_on) {
--		cfg->btcoex->timer_on = false;
--		timer_shutdown_sync(&cfg->btcoex->timer);
--	}
-+	timer_shutdown_sync(&cfg->btcoex->timer);
-+	cfg->btcoex->timer_on = false;
- 
- 	cancel_work_sync(&cfg->btcoex->work);
- 
--- 
-2.34.1
-
+Note: testing is done by a robot and is best-effort only.
 
