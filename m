@@ -1,99 +1,56 @@
-Return-Path: <linux-kernel+bounces-779794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7B7DB2F8FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:56:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9709B2F908
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94DC1CE5B28
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:52:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE7D717DAD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DE531DD90;
-	Thu, 21 Aug 2025 12:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mL/rqBGn"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B7B315779;
-	Thu, 21 Aug 2025 12:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28F231197D;
+	Thu, 21 Aug 2025 12:51:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823F92DCC11
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780647; cv=none; b=IUwMhjf7FAchHgjxRKqRqsol4lDPeSHOaBAAeQfxHqTfKnE+HHqLtM/Ok/rM+v/6ZqOafmRQ+WO20cpYGtGbjyTnbLaLgcI5T6CSUKnIKf56MJy8rJEt1qkjfBP7lo3eLsE5SwpSsBNd2+Jur8TO5MLFnHzEd18v4S7hd06c+sM=
+	t=1755780690; cv=none; b=CTZ3P+K/8cv0DUop9ja8SOHfD6Q3UtVyzvJbjNPnvrVrXrqV1aHcfj8S5mEcdbOwywlIS0mwoxf06PGWSDMuynRyN+sq9fGqlbhIcW/PRcZy7ONfDkmza29YnUGNK+358nmXYSPLuPqKOe/zt4qqnWKxFPAyl8RHeUnsW4CY43c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780647; c=relaxed/simple;
-	bh=iM45yIansOQAMUNjn0bUabduD2UfVw8nzX3XVGOkjdU=;
+	s=arc-20240116; t=1755780690; c=relaxed/simple;
+	bh=HJFG4NS9VToRCH/PP8pM4bm5e8VAePCRW5cCjXmy59o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j7DSTraoQUuVirI8smNP//BdJD11nDWgJjvDEnfVGXruSciiA8bu30rTvMK4L92onEt6MSfqZ5T+WeQEumQF3lenriixmW39JLgBQOS5kOCHd5a7F/lOhEK/HUpN9U7Vek87KX4GYVYQOSEmExVEb6Zak74LIKXSPC8bzZGRyNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mL/rqBGn; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-70d93f5799bso1277256d6.1;
-        Thu, 21 Aug 2025 05:50:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755780644; x=1756385444; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fxU/c9QtdpeT6vjzYdNg7d6fasiYd8WLob216PwFuUw=;
-        b=mL/rqBGnzkdE0Ia05RypHfyf1L7lh7afPiYX4WcTIoBO4AQpAXrUwux/ixovPXREsW
-         hWmT2ZWgvGAm946wD8iV7/ZJod3dwoQIEepx7hpBybNc2yKy7znul7LoVTOqbpDqznUU
-         N1pJ/m7g2z4p3Wij4vD9KUzKrXmTfAQM1QJI8ZOZJwe5tf0muC7Giix7UpbbyWNChMY3
-         E6AxerAcGUQHOvTprwX9FhgrGLk++7EHGndZi93uWXGhCOQgndNF+N6bSwlEdyfPL3nn
-         fZtHI93pfK3PuIljWRJ85+fMO9y1+IJD4J3OorGAyAoAyYG2AnHQz2a47fGXRyNvrtmo
-         oLFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755780644; x=1756385444;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fxU/c9QtdpeT6vjzYdNg7d6fasiYd8WLob216PwFuUw=;
-        b=l2gvq9dr4Jh5XlpVaWd+gxrbR4SSpHrBifG2YQFAmMozfZrNKGH3JgCDNm/UVkXAeV
-         IVfdpQPR2kshhkq2zjWZdqqe6fYPJlq2AONtAo2rGr+Abn4dOOlWSyi7eA4asT+0f0WH
-         PkfqDfLL0esq831Ln/kD8KELJ2daQnQDx7aEtJzCDa1SqaRXuTreftx/jLx8JT3/49c6
-         G4YMgDrF+rz2G4eugtgGSzCFSVOxbHs9ZpyUhKuKbKYjwL1Dtv50ekTZBkdeV2QRmtMF
-         qf16tIsqRZTwW8NnfE53MRqg5kasT6PKyDNynBUcEdEkFqMmmg6pV0hpO1YfGH82Y/Ij
-         dGeg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1jnCqTEZ1yxEL8OiqpEA317SDceuw1SU9F9mjNNSQjKPRx0E8bxboFgiqGdChl9QK+MN3QvtA@vger.kernel.org, AJvYcCVndG9akLohI1OQKO+PojnnAxUmwf9OzrofWs6eA3UFFYDzicihFxmWrPO80rP0zYlYC9MN911XVAXY@vger.kernel.org, AJvYcCWhdh4ER1O3BRmJSBPrrjX36DRnQRrGH1e2vXWtcs5No332Qt2V4iXSAuh73h0W02C1rC4dO7PwnEvJCgGX@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA+waUTRaJvfvuNQkeBI6fZRW2am0RdJR4PDBCqQheDqshDFUk
-	7QaJ8+1aEBy1BgL3STG+fOYXLD4TzWIiM/+QpHCjWX/RNX//6CZueyiI
-X-Gm-Gg: ASbGncswlB61M73r0GQkE+a4yp7E3s0/fFzf2b8utF7PrWBL6z0sTjXDne4jocpm2xr
-	JIKILc7zj5dhd7JHmHskLBqP8PmynMAWj7gVRJs1msadS5TMMxWzgGlcBMUqVRvrf4mJjPpVRAG
-	r6N5yIqM5NJYn0cnhf5xLKEl7C+8ZLOSU0G4mWvH0AbY4mF+Lb6th69Jj8kwGB9iSkAwViJZoD6
-	jaIsc+BqOaUzAIqjWTswRLsJjlM4fkX1NUMDhdU15q/+rTPa4Rb+rUOS3qgaeU3etGArYVEX7jh
-	y3U+9oeZYRYaCVJ2Chva4L02YHhzNB1cv5lLo/AGFceZncPwNrri/fCJrJMBRi55gRQCpF58br/
-	vGkjAhGsuvg3YkjdndFk1AhbdL/Zto0AVXx6eRkULyQmhKxvNG5RSglNTCQ==
-X-Google-Smtp-Source: AGHT+IGbZanLkhWctvc/z0MtnIxZdEvoJJZIiEwfGt+Ut7mMdNAmEieP2/DGUu6J7Q5lwzwUveSegg==
-X-Received: by 2002:a05:6214:478e:b0:70d:9527:e45a with SMTP id 6a1803df08f44-70d9527e62emr1519806d6.16.1755780644519;
-        Thu, 21 Aug 2025 05:50:44 -0700 (PDT)
-Received: from glsmbp.wifi.local.cmu.edu (cmu-device2.nat.cmu.net. [128.2.149.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70d905e19a9sm5318436d6.19.2025.08.21.05.50.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 05:50:43 -0700 (PDT)
-Date: Thu, 21 Aug 2025 08:50:41 -0400
-From: "Gabriel L. Somlo" <gsomlo@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Karol Gugala <kgugala@antmicro.com>,
-	Mateusz Holenko <mholenko@antmicro.com>,
-	Joel Stanley <joel@jms.id.au>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Lars Povlsen <lars.povlsen@microchip.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] dt-bindings: net: Drop vim style annotation
-Message-ID: <aKcWIZ2zMKuOeW6M@glsmbp.wifi.local.cmu.edu>
-References: <20250821083038.46274-3-krzysztof.kozlowski@linaro.org>
- <20250821083038.46274-4-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b8nZPzGgktAM018DH3cJGJyd2Klfd5fdkZFx5/2imLCJtCNbB9EUpc2bALF/4oAD/zjnpR1rmfmJNeTDtGO5Dh1ewW9Xky7KAVW7Gjfv5AoCjBhnVLsbeMrsTGx2Oiz5IfyoNclopFHoP8wCTChuIhyVEVXg+Bi/MJR4wyLEitI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83DDB152B;
+	Thu, 21 Aug 2025 05:51:19 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59AD33F63F;
+	Thu, 21 Aug 2025 05:51:27 -0700 (PDT)
+Date: Thu, 21 Aug 2025 13:51:25 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Levi Yun <yeoreum.yun@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Yabin Cui <yabinc@google.com>, Keita Morisaki <keyz@google.com>,
+	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>
+Subject: Re: [PATCH v2 02/28] coresight: etm4x: Always set tracer's device
+ mode on target CPU
+Message-ID: <20250821125125.GA745921@e132581.arm.com>
+References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
+ <20250701-arm_cs_pm_fix_v3-v2-2-23ebb864fcc1@arm.com>
+ <751030d7-444e-46e6-b56f-0b72206969fc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,45 +59,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250821083038.46274-4-krzysztof.kozlowski@linaro.org>
-X-Clacks-Overhead: GNU Terry Pratchett
+In-Reply-To: <751030d7-444e-46e6-b56f-0b72206969fc@linaro.org>
 
-On Thu, Aug 21, 2025 at 10:30:40AM +0200, Krzysztof Kozlowski wrote:
-> Bindings files should not carry markings of editor setup, so drop vim
-> style annotation.  No functional impact.
+On Thu, Aug 21, 2025 at 10:45:10AM +0100, James Clark wrote:
+
+[...]
+
+> > The flow is updated with this change:
+> > 
+> >   CPU0                                    CPU1
+> >   etm4_enable()
+> >    ` etm4_enable_sysfs()
+> >       ` smp_call_function_single() ---->  etm4_enable_hw_smp_call()
+> >                                            ` coresight_take_mode(SYSFS)
+> > 	                                    Failed, set back to DISABLED
+> >                                            ` coresight_set_mode(DISABLED)
+> > 
+> >                                            CPU idle:
+> >                                            etm4_cpu_save()
+> >                                             ` coresight_get_mode()
+> >                                                ^^^
+> >                                                Read out the DISABLED mode
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> There's no lock though, so can't it do this:
+> 
+>  CPU0                                    CPU1
+>  etm4_enable()
+>    ` etm4_enable_sysfs()
+>       ` smp_call_function_single() --->  etm4_enable_hw_smp_call()
+>                                              `coresight_take_mode(SYSFS)
+> 
+>                                          CPU idle:
+>                                          etm4_cpu_save()
+>                                            ` coresight_get_mode()
+>                                           ^^ Intermediate SYSFS mode
 
-Acked-by: Gabriel Somlo <gsomlo@gmail.com>
+No.
+
+The point is a target CPU will execute etm4_enable_hw_smp_call() and CPU
+idle flow sequentially. It is no chance for the idle flow to preempt the
+ETM flow. This is why using the target CPU to set the ETM state machine
+will dismiss the race condition.
+
+> This is why I was voting for changing the compare and swap mode stuff to
+> spinlocks so we can be sure it's correct. The lock shouldn't be released
+> until the mode is at its final value.
+
+The question is a spinlock usage. If both initiate CPUs and target CPU
+try to acquire the spinlock, the low level's CPU idle flow
+(etm4_cpu_save() / etm4_cpu_restore()) needs to wait for high level's
+SysFS operation to complete - which is what we try to avoid.
+
+If we move the state machine on the target CPU - the operation and its
+state transition on the same CPU so that dismiss a race condition. And
+the idle flow is sequential to the ETM enabling/disabling, then, we can
+achieve lockless approach.
+
+A global picture is ETM's state is used in multiple places (Sysfs knobs,
+ETM enabling / disabling, CPU idle and hotplug flow), if we start to use
+spinlock for exclusively access the statch machine, then everywhere will
+use it. This is why this series wants to do reliable state transition
+based on appropriate atomic APIs (it also can promise atomicity and
+ordering but lockless).
 
 Thanks,
---Gabriel
-
-> ---
->  Documentation/devicetree/bindings/net/litex,liteeth.yaml        | 2 --
->  .../devicetree/bindings/net/microchip,sparx5-switch.yaml        | 1 -
->  2 files changed, 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/litex,liteeth.yaml b/Documentation/devicetree/bindings/net/litex,liteeth.yaml
-> index bbb71556ec9e..200b198b0d9b 100644
-> --- a/Documentation/devicetree/bindings/net/litex,liteeth.yaml
-> +++ b/Documentation/devicetree/bindings/net/litex,liteeth.yaml
-> @@ -95,5 +95,3 @@ examples:
->          };
->      };
->  ...
-> -
-> -#  vim: set ts=2 sw=2 sts=2 tw=80 et cc=80 ft=yaml :
-> diff --git a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-> index a73fc5036905..082982c59a55 100644
-> --- a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-> +++ b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-> @@ -245,4 +245,3 @@ examples:
->      };
->  
->  ...
-> -#  vim: set ts=2 sw=2 sts=2 tw=80 et cc=80 ft=yaml :
-> -- 
-> 2.48.1
-> 
+Leo
 
