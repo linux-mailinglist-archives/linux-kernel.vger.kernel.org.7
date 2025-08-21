@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-778791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7DEB2EB0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:03:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDD1B2EB11
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23D7E1CC245E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:03:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9A1A23470
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1519D2C21E1;
-	Thu, 21 Aug 2025 02:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kasvz05S"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEBA2D5423;
+	Thu, 21 Aug 2025 02:05:18 +0000 (UTC)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAF919E7E2;
-	Thu, 21 Aug 2025 02:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAA8230BCE;
+	Thu, 21 Aug 2025 02:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755741779; cv=none; b=qZW/N4bpe5BVgwMEVrUvcPG46IPTWFAmgJ/l0DrJzJbzGga2WydnxMsp6ZQegfF2iEkBkPGaYWgeXtvV1+Ch00yJ7cacxLJy4lOy0yM33gR2WGSE4eJbMbuEe0tgr9TTQi5Q+TNjApOHv9+Opi+wue3Jy6vXmAI4KM3gyivCIPk=
+	t=1755741917; cv=none; b=ZfgpzNMsmwbt7QisdrjoM2VTOIf6YfZhzt15cSWDywSZ8SdoQDizFGX/ww202d9fotehpeCd1WsAO4dOlezRGlCRlB1Ia1U1J7oFpIlkyV/zFq1w9WKp2+jLP7ttbQQFSAOlAeCYHsPlqSz2SB4xgSOlCuuTW1/D8vlCOmllbho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755741779; c=relaxed/simple;
-	bh=q/bb9gTQN/O3uOOQMCaFMGKV2OTwlVVRp0KuduQ/434=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dAESJvb6vylgkhdPyiRNBs7GYn7tbKCRQ8qsHEgiBMqamFJgDwspVIhAjmHwYyRtDjTc56NV92UHvfThxEZpJ3h/Q8ZlvwaGEnmL44mBD68vxqqwOGHiSHRAl5BPThzQsS13e5dRpLW2r9pP+A+GwIe/+gqozhn4BE7Nthujphs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kasvz05S; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7e8704c7a46so62140085a.1;
-        Wed, 20 Aug 2025 19:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755741777; x=1756346577; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uChfv3dbEQUO8eMCGtEccp07YhaPFLJJZXa93OWzg6Q=;
-        b=kasvz05SMMY1GHfToevo6DPuezcBxoDdtVI2A8R3UYlLuOZ52ge40yVgGGOu3A3TCl
-         gAFUDxUiTSIsf4reCO1JpN8eR/S/kVs7gaPynfiF3hhxJO82Aqg5twiwID9sT8jdKjjG
-         Wx6pSbIiTz2mxzvq3i1Wehm/89ytLldLgrqk+XQjIrzHzMnSobhOnovVl13Vd3kP1Hj6
-         Ez7rTVJHA8GikU2tBmAGfPtLdd11fILxMQlBTw2xn5Oo3X/fHHOOCcJzqLfBwenGyGRc
-         sl3dKinhD5orL6YNg+19uIUyhKT+WALLw+gzWqQhNZS+6aVBpOVy9ntKkDpBykRF4Ai3
-         5dDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755741777; x=1756346577;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uChfv3dbEQUO8eMCGtEccp07YhaPFLJJZXa93OWzg6Q=;
-        b=JgeJxtNppjSi5yaX+lz1aF1K7jkB/2WD5tsRPXkCnkgvejjIgja2yJivg5pHMJPIhB
-         VjX6IuAs9lZLh1NAQm+y7iGsHOnzWZcqIKY6pBiOHrKEyPv5Gsr7ppqnG4TbtXoJ0uCh
-         kg1uIZeykLIHq41tV1d6AnpSxoAxvjFA+Mi6YYXnR5sgxvPbrSt1cxjpq20KgmXstfU/
-         xA/f5HBaa5N2+JYjkMBo0sELk1ZciFJJ08O8Qny7LcEuZrerUhFkm+jMX3kPFPN4qPMu
-         9iKCq2brxbhz7y9KnImnCMpytZMHEMGsmNG6xDGnpBdPlZRUhfZt81KgQ2LaqSAL3czg
-         gNvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUr+fxnSmhnlAOAo2nPm5fKEhpsde0Qd7aN9jQe60Cm8MNZzvoeZ2XLwV8whB5gYcyMNo4tJiUgD5O8vnps@vger.kernel.org, AJvYcCWvHkZsPprehMHUUYLMbkU+j6z+NlBHEZE99tTx3LWj1hG+JZBGCZ/L7smqFuqgM3Uwi/PW4igJGAJl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxMHr2AiOMGY/bTPW/wYRVDqqv7D6lsBVJAgi8CLHMAQkNwGUD
-	L0421khS/fE4IpbcG+/gMjyoT25zBo2CrdAaTBXK5tNJ8SguOa41ykW94/lPEq/CSyIrJYxEyd0
-	OyLU9CS44BAcU7r4dPgdaikDSle/+F1GFsQQf
-X-Gm-Gg: ASbGncu14SbEu+zrHbXklH9D70EaBbE8/Lz5fUUvmmDPEKT04ICWdcd3s7FFBDFqs4t
-	equ6svetD1jv6E7Ygb4042ucL3b7ddmNT6ILHjPzX4UJIkffWjbp32mjNmnV1eKl+nFAHKT6miH
-	tbxn6Zvvb9iZovFy/fhqvvd9rx3J2PtLcRSeMRyG3zc+695NLsXLPMpIndi43ENIQ0BkFiT1w+O
-	0J0cWPbbLecX2Yt+/AlsHqL8y6+ssU77cNq4JFJUoCY0itvQvU=
-X-Google-Smtp-Source: AGHT+IFH1O4qBTSjA04bPjX7F2AhQ8hW+zCerUQe54wrBaRP/uBghNK/ND/L4HDQzKomSt+BYBf8sDaseZ17HBoj95c=
-X-Received: by 2002:a05:620a:3190:b0:7e8:710d:a514 with SMTP id
- af79cd13be357-7ea08e43716mr93848385a.53.1755741776612; Wed, 20 Aug 2025
- 19:02:56 -0700 (PDT)
+	s=arc-20240116; t=1755741917; c=relaxed/simple;
+	bh=FNLBdWhtXd2m9yHwmeI8KFlYBcHkijGv9Sr7nDG2Uyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TNpLi9fyNVxQePIgfs/P5TcndLjoPxFHsyvpKw/OCyAtCJvkUg8kW0ogxTp4tpN1Rp2oU9rtL1lJUSPywfIlT7WJAAqODcq/YsCC55DrEbWy3F7IX+1qOmVDOjPd0MGC0J6U7jriH7OCjznL8WAQjH5dLThoYmHSBSB7vl0S2Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpgz12t1755741849tfda9277f
+X-QQ-Originating-IP: CBo+yViVKO1fMalkEw0THj+HBznWJv82D9hIYlQUVFM=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 21 Aug 2025 10:04:07 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 4256339024035975856
+Date: Thu, 21 Aug 2025 10:04:08 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <9BFA6532A427F621+20250821020408.GE1742451@nic-Precision-5820-Tower>
+References: <20250818112856.1446278-1-dong100@mucse.com>
+ <20250818112856.1446278-5-dong100@mucse.com>
+ <399be32e-5e11-479d-bd2a-bd75de0c2ff5@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 20 Aug 2025 21:02:45 -0500
-X-Gm-Features: Ac12FXx99RwOD6LIDlz9lcKmgeewb4DN6PYRoc4wZWKQ4muA9weLs57PbzDyOuw
-Message-ID: <CAH2r5msSBLTFkG1FGLFD9rUjQ+8xSHdnUaoZ4zsBGrG33zGrcg@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <399be32e-5e11-479d-bd2a-bd75de0c2ff5@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NY3HYYTs4gYSjrhh3m4f0J0Kvtdb/NldPTYVgytLe5LaYOwshZEv00FW
+	vk75Ova3HY7YABMvLPcTpJ0x2t7juGYgsk6GdypMPmazhtZNY+UBwUEmHna+w81AfgIlvMx
+	tiSW5We2O9FJuhlbG3cOpAEpVe+eDDlhsOzu0LuhdTKLZtMcP/TCnZGRBQwkfm09LpxJeiZ
+	m9wnEDEEwCXbcuq+MDLzvZPItSRnkpRLYvKMNa+UvxM/eG2v6b5pXMnx6DYHwGBpdcJ+BJG
+	5Z28k4rMbHU2C+Emcwy1HYH5HRw1eTLXO+ihWyw3J+4g/wnD1S3J746RRpXm5QLvG7vz2qq
+	MMog3g/ZQSUFMAb7K+YfNhc8MknPO4agjHByGRrpr6deXMJqmBonxzViW8M8OJHJDn+eNNl
+	pg/SWlo63yPH+yShLAKY/PinkhO8ijnpW9Enm72zCmbzG6zdHq82VGgz5iZLJUcNGIbUZxP
+	HulYLTG6fkwtt7ShPxgqNslqYpuqtPcH1+5usAFPDbxwBXO5kAzlQZDRDPg/9eP6C0ztkFl
+	KuM0fwGrJTwUA8QtjmbmV2s0J8luxGr2T0wpoDgb9kAGssRcFiNXNUo9IqzPLpnvYmpPHgr
+	C7c+KTjeWgnM6x8SPRuWSBTu2TffvkSslkm3d+NaY4LCtZ+Hq7sIaSWxWrPegQo/3WAh8vo
+	wie/phgYRHBvBg6HXmLVe2RgEr/3pGPeZlfETywdmAkeRwmJzkrcNf45YWfQW8+zxkZ6HAl
+	W9gOX5PzDy5fsYxCJq3j9IdLiv4poXKRruc7emxMcqu4Pf7SXxDD552xWss6H2RZdKJDrc1
+	WqCH2TY72RVSTE6XSvSZZqttRF9sUOGfk480KMh0s0zoi+UgcewQnV5cPR5/H/tw/1FHWMP
+	nT8jFyyb29FisGEujhLptRT0dFoFSzwGD5Er8rHuZaWlNShAXPjQNZUtyNpEM6RGvrpnVMx
+	kWF98bEC+aaK4rC9ju9W+MNR9rQJtI4A1QJZFPpb1oBnvN2civXjeqUsv1lawWs0I6bfq0J
+	RxupG4DZzxPafjWwNVpZ6DgfKsCsOi5XJ9mvG9l+XnEa86ccIB
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-Please pull the following changes since commit
-c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+On Wed, Aug 20, 2025 at 10:30:17PM +0200, Andrew Lunn wrote:
+> > +int mucse_mbx_get_capability(struct mucse_hw *hw)
+> > +{
+> > +	struct hw_abilities ability = {};
+> > +	int try_cnt = 3;
+> > +	int err = -EIO;
+> > +
+> > +	while (try_cnt--) {
+> > +		err = mucse_fw_get_capability(hw, &ability);
+> > +		if (err)
+> > +			continue;
+> > +		hw->pfvfnum = le16_to_cpu(ability.pfnum);
+> > +		hw->fw_version = le32_to_cpu(ability.fw_version);
+> > +		hw->usecstocount = le32_to_cpu(ability.axi_mhz);
+> 
+> If you can get it from the hardware, why do you need to initialise it
+> in the earlier patch?
+> 
+> I guess you have a bootstrap problem, you need it to get it. But
+> cannot you just initialise it to a single pessimistic value which will
+> work well enough for all hardware variants until you can actually ask
+> the hardware?
+> 
+>     Andrew
+> 
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+It is a problem related with fw version. Older fw may return with axi_mhz
+0, So I init a no-zero default value first. Also, I missed to check the axi_mhz
+here. The 'usecstocount' is removed in v6, I will update here like this in
+the patch which truely use 'usecstocount':
 
-are available in the Git repository at:
+if (le32_to_cpu(ability.axi_mhz))
+	hw->usecstocount = le32_to_cpu(ability.axi_mhz);
+/* else keep use the default value */
 
-  git://git.samba.org/ksmbd.git tags/6.17-rc2-ksmbd-server-fixes
-
-for you to fetch changes up to 89bb430f621124af39bb31763c4a8b504c9651e2:
-
-  ksmbd: fix refcount leak causing resource not released (2025-08-17
-19:33:29 -0500)
-
-----------------------------------------------------------------
-Three ksmbd smb3 server fixes
-- fix refcount issue that can cause memory leak
-- rate limit repeated connections from IPv6, not just IPv4 addresses
-- fix potential null pointer access of smb direct work queue
-----------------------------------------------------------------
-Namjae Jeon (1):
-      ksmbd: extend the connection limiting mechanism to support IPv6
-
-Stefan Metzmacher (1):
-      smb: server: split ksmbd_rdma_stop_listening() out of ksmbd_rdma_destroy()
-
-Ziyan Xu (1):
-      ksmbd: fix refcount leak causing resource not released
-
- fs/smb/server/connection.c     |  3 ++-
- fs/smb/server/connection.h     |  7 ++++++-
- fs/smb/server/oplock.c         | 13 ++++++++++---
- fs/smb/server/transport_rdma.c |  5 ++++-
- fs/smb/server/transport_rdma.h |  4 +++-
- fs/smb/server/transport_tcp.c  | 26 +++++++++++++++++++++++---
- 6 files changed, 48 insertions(+), 10 deletions(-)
-
--- 
-Thanks,
-
-Steve
+Thanks for your feedback.
 
