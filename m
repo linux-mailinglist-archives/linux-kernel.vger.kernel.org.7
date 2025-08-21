@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-779440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574E6B2F422
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:38:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFAEB2F428
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820643BD839
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:37:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 561D5601FBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593C02E62A7;
-	Thu, 21 Aug 2025 09:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GmWYqJP6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CF02F1FD9;
+	Thu, 21 Aug 2025 09:37:24 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B908E2DEA75
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19FA2D9ED8;
+	Thu, 21 Aug 2025 09:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769035; cv=none; b=eWFzu7mvU8mWMU3Ehco6HjhZ/xPPHq3KWYeaBS8XhvVBZpA9Xg+GzE7dcfSaRlsIY340PTbj6yxBpgjRx2R9aEjz45MT4Y7aPghpjk7gI96PgxhxI1COnm5LqZ4dddyjHOCgX5JB8y6jUDJ/xK21kBr1XHfKwGi5mEQmYW1HZfI=
+	t=1755769043; cv=none; b=s1tM9Fv9jqnwf6PT6/RxgErJjixqstDmWNG0ULIF5jPOoToCwnMojvU1QS7gY91iWJydD2ucLRQSAj2hhzjZcdA0QFL6Kl8jHk+7izfouDRxq71cPzO0+HRvHEruYmLyS1B6tcCHblHgX/0goV1kRSHKRwbssfNnIsF3Quu1Fvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769035; c=relaxed/simple;
-	bh=Z1xajZ3+05Q+UuE7jtAgc4UYFwabW7W2pYmp5EVAd0I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P2TJ1a6p/Z4xMFULpHjBipL3pvHMHoVuo6+oJRrajvWClDy9X84Dd8rVBQNZdZYX19mPtZ7d9WHDOjjat+vs/TeYz/x1AqqZhMRiq0MM611Y3rHBr0d5YkZpxyq9xJ2zTj+qwAsFU4VmB6u/RKR9p76Zgecr3m2C/5rpqJdBnuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GmWYqJP6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CDDEC4CEEB
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755769035;
-	bh=Z1xajZ3+05Q+UuE7jtAgc4UYFwabW7W2pYmp5EVAd0I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GmWYqJP6+9xdwMM2mtP13N2KLVGlRrLcLUQKsuNvZ9cA2lIebr2+XKtOg5OUp/7rl
-	 ZZsE0dVSDGHXv1pMJkKb6ytplsOYipwVXwvsL2M4zy296j8MqNunMHTXtTwunSuSML
-	 H1TvusOqwlh7xyJh5K9XvvVsJYpCMSFB6NqpF9oBNZ8SE6QuSVLRJXqjyrKnDdLCVe
-	 U4Bu1joHpiw5Z5ZiEk6eh495L57E0mJWethgPHHBKeZMqioJQ2K0inPnvacaGCIbok
-	 0sjU2rZdTWm3IiKCrZUaDLKP8ckxp3RMf5CgVX3jjnGiVdCvbeXP16BZArGBDcva0o
-	 v2Otqi/aOcOaw==
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b5b113eso1144716a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:37:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOCjqA/X32GI+Xg/0iQm2EkEGM69KtkoB+CwLEwbMfzurSDzemLLED6soqfc/zhHskdqnklxPLKZ7eBSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/0XJ9RATQ6AUq0Ozgqt6X+NKVGHlpUBBvah5dpN8PB0xcwYeE
-	C929ZymC9OePmdAd2XzIP33BcE6rrv6o/wen/PAJ+LS078pqXFKrKTPnwbjbz27wu91WQ8tbnPh
-	wftAfWZ9AfZ6H5P4NkRoZn/1FI6OkFMg=
-X-Google-Smtp-Source: AGHT+IGdEZAL1HDZaBeEI7REqCxgbgwB8Bm1qPZhNWktAGRMWjWTn5Aw48GXRZvyx4s82eTiupVE5DeAdW7H6qKlIek=
-X-Received: by 2002:a05:6402:42c4:b0:618:229d:7076 with SMTP id
- 4fb4d7f45d1cf-61bf86dfe4amr1637334a12.6.1755769034002; Thu, 21 Aug 2025
- 02:37:14 -0700 (PDT)
+	s=arc-20240116; t=1755769043; c=relaxed/simple;
+	bh=n4fIBJ6MbfStIGrhDd09fFWKmMINwX0H3pKE+b6YzSQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=QvrfMQ8W+KxEvK64sdFAfP+5sSQVXRi7hG8boqLP5c63R6BwY9Xq15znK/Eum+yxAS2c1nQuu3Lx+fVU1MbYbGr5ZapBvcAcmPRjGeqK154moje3ONB5IC3zx4yTnoP9E5V4WzIxP8xRBUqX95xbJU7IQBe/veU4r3Io/KPiAuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6ysB1rqlzKHMST;
+	Thu, 21 Aug 2025 17:37:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B04971A0D11;
+	Thu, 21 Aug 2025 17:37:17 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAHzw_L6KZoEFaxEQ--.38020S3;
+	Thu, 21 Aug 2025 17:37:17 +0800 (CST)
+Subject: Re: [PATCH] block: fix disordered IO in the case recursive split
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, neil@brown.name, akpm@linux-foundation.org,
+ linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, colyli@kernel.org, xni@redhat.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>, tieren@fnnas.com
+References: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
+ <aKbcM1XDEGeay6An@infradead.org>
+ <54fc027f-f4dc-0412-0d6d-b44a3e644c39@huaweicloud.com>
+ <aKbgqoF0UN4_FbXO@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <060396d7-797e-b876-9945-1dc9c8cbf2b4@huaweicloud.com>
+Date: Thu, 21 Aug 2025 17:37:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820032229.913361-1-gaosong@loongson.cn>
-In-Reply-To: <20250820032229.913361-1-gaosong@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 21 Aug 2025 17:37:00 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6sWPQrqBPuQmb_iMurg0PJ8ifZZo1o4Gx_rEsFQ=QvOw@mail.gmail.com>
-X-Gm-Features: Ac12FXwsE2tye1aLmYjgI4BclarHKvV1yS9uHVDRg1tAMh2Klsv2U2K4_TrZmHU
-Message-ID: <CAAhV-H6sWPQrqBPuQmb_iMurg0PJ8ifZZo1o4Gx_rEsFQ=QvOw@mail.gmail.com>
-Subject: Re: [PATCH v2] LoongArch: KVM: Use kvm_get_vcpu_by_id() instead of kvm_get_vcpu()
-To: Song Gao <gaosong@loongson.cn>
-Cc: maobibo@loongson.cn, zhaotianrui@loongson.cn, lixianglai@loongson.cn, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Yanteng Si <siyanteng@cqsoftware.com.cm>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aKbgqoF0UN4_FbXO@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHzw_L6KZoEFaxEQ--.38020S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw4DGF1xKw47Gw47CFWUXFb_yoW8Wrykpw
+	n3Wan5tr4DtF1SkF9rWr4jq3WrA3yrXry8AF9agFn3Zay5KrnrZrn3Ja1Fkry5WFyDKayq
+	vrWxt345W3y5ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Applied, thanks.
+Hi,
 
-Huacai
+ÔÚ 2025/08/21 17:02, Christoph Hellwig Ð´µÀ:
+> On Thu, Aug 21, 2025 at 04:56:33PM +0800, Yu Kuai wrote:
+>> Can you give some examples as how to chain the right way?
+> 
+> fs/xfs/xfs_bio_io.c: xfs_rw_bdev
 
-On Wed, Aug 20, 2025 at 11:45=E2=80=AFAM Song Gao <gaosong@loongson.cn> wro=
-te:
->
-> Since using kvm_get_vcpu() may fail to retrieve the vcpu context,
-> kvm_get_vcpu_by_id() should be used instead.
->
-> Fixes: 8e3054261bc3 ("LoongArch: KVM: Add IPI user mode read and write fu=
-nction")
-> Fixes: 3956a52bc05b ("LoongArch: KVM: Add EIOINTC read and write function=
-s")
-> Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cm>
-> Signed-off-by: Song Gao <gaosong@loongson.cn>
-> ---
->  arch/loongarch/kvm/intc/eiointc.c | 6 +++++-
->  arch/loongarch/kvm/intc/ipi.c     | 2 +-
->  2 files changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/loongarch/kvm/intc/eiointc.c b/arch/loongarch/kvm/intc/=
-eiointc.c
-> index a3a12af9ecbf..b3829fb4f64e 100644
-> --- a/arch/loongarch/kvm/intc/eiointc.c
-> +++ b/arch/loongarch/kvm/intc/eiointc.c
-> @@ -45,7 +45,11 @@ static void eiointc_update_irq(struct loongarch_eioint=
-c *s, int irq, int level)
->         }
->
->         cpu =3D s->sw_coremap[irq];
-> -       vcpu =3D kvm_get_vcpu(s->kvm, cpu);
-> +       vcpu =3D kvm_get_vcpu_by_id(s->kvm, cpu);
-> +       if (unlikely(vcpu =3D=3D NULL)) {
-> +               kvm_err("%s: invalid target cpu: %d\n", __func__, cpu);
-> +               return;
-> +       }
->         if (level) {
->                 /* if not enable return false */
->                 if (!test_bit(irq, (unsigned long *)s->enable.reg_u32))
-> diff --git a/arch/loongarch/kvm/intc/ipi.c b/arch/loongarch/kvm/intc/ipi.=
-c
-> index e658d5b37c04..0348a83a7ed7 100644
-> --- a/arch/loongarch/kvm/intc/ipi.c
-> +++ b/arch/loongarch/kvm/intc/ipi.c
-> @@ -298,7 +298,7 @@ static int kvm_ipi_regs_access(struct kvm_device *dev=
-,
->         cpu =3D (attr->attr >> 16) & 0x3ff;
->         addr =3D attr->attr & 0xff;
->
-> -       vcpu =3D kvm_get_vcpu(dev->kvm, cpu);
-> +       vcpu =3D kvm_get_vcpu_by_id(dev->kvm, cpu);
->         if (unlikely(vcpu =3D=3D NULL)) {
->                 kvm_err("%s: invalid target cpu: %d\n", __func__, cpu);
->                 return -EINVAL;
-> --
-> 2.39.3
->
+Just take a look, this is
+
+old bio->new bio
+
+while bio split is:
+
+new_bio->old bio
+
+So xfs_rw_bdev won't flag old bio as BIO_CHAIN, while old bio will still
+be resubmitted to current->bio_list, hence this patch won't break this
+case, right?
+
+I'll take look at all the bio_chain() callers other than split case to
+make sure.
+> fs/xfs/xfs_buf.c: xfs_buf_submit_bio
+
+This is a little different, new bio -> old bio, while new bio is
+resubmitted, the new bio still don't have flag BIO_CHAIN, so this is not
+affected by this patch.
+
+> fs/xfs/xfs_log.c: xlog_write_iclog
+
+This is the same as above.
+> 
+>> BTW, for all
+>> the io split case, should this order be fixed? I feel we should, this
+>> disorder can happen on any stack case, where top max_sector is greater
+>> than stacked disk.
+> 
+> Yes, I've been trying get Bart to fix this for a while instead of
+> putting in a workaround very similar to the one proposed here,
+> but so far nothing happened.
+> 
+
+Do you mean this thread?
+
+Fix bio splitting by the crypto fallback code
+
+I'll take look at all the callers of bio_chain(), in theory, we'll have
+different use cases like:
+
+1) chain old -> new, or chain new -> old
+2) put old or new to current->bio_list, currently always in the tail,
+we might want a new case to the head;
+
+Perhaps it'll make sense to add high level helpers to do the chain
+and resubmit and convert all callers to use new helpers, want do you
+think?
+
+Thanks,
+Kuai
+
+> .
+> 
+
 
