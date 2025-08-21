@@ -1,234 +1,320 @@
-Return-Path: <linux-kernel+bounces-779184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61089B2F034
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:55:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8C41B2F018
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB301176835
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71CC53B81AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A872A2E972E;
-	Thu, 21 Aug 2025 07:55:31 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010D827C872;
+	Thu, 21 Aug 2025 07:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TbQ+CBsl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E512E8DFD;
-	Thu, 21 Aug 2025 07:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B9A1CCEE0;
+	Thu, 21 Aug 2025 07:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755762931; cv=none; b=bTG3ZUJzL5uB9P6efu6H9Ox/iWOqJ3LKPozl8eeThqNslsc4ntG+VlXblWj3jrLTEs1iS41GfH+Z8DcYbvFKYZuG9rE5UOJYhXNQu9VG2yYgVwZwjSOINHzuS45c8lQV0iW0utIkju+uqzGIk8lms+W9N9BgKiZsVAywnJwabKc=
+	t=1755762505; cv=none; b=M1tTZ9+BZSJwt+iYTxLeJxaf+E9b22039NCiD2GF1U5W7Ni5fR99yFUzrqUtQjmS5ThHDdeEGVqqldQUfIPjgst1bTGjrWvPKcct3AEk1HzrP96Txrr+/O7wdHwcZFQKgLme5Vg9wf3CD/kDBAHbyF0LAanyLXLpmC+XJs3yA1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755762931; c=relaxed/simple;
-	bh=luh7zUJNPaiMiCUc9aL02ayTbOO3oMhsEoGmoaeY6JM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jpJTgPuGQ/25rr4Crk3aeUYsw1Twr2C/2ATTHyKPg14IJpNhzRN7NCFc4Lo9kqj3J6FWl8jdDTJw8KYFvs71GM0UGeYixmYCldyIll1iwbwf8F+cYJ3imSmhkLqbHclsxIM385zNJxP+37fPtKbYVY6M2fWS6dOj7X7fQKFkq2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6wbW5l1ZzKHNSC;
-	Thu, 21 Aug 2025 15:55:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 44D711A0ADA;
-	Thu, 21 Aug 2025 15:55:19 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAHgxPl0KZoQiypEQ--.5616S4;
-	Thu, 21 Aug 2025 15:55:19 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	neil@brown.name,
-	akpm@linux-foundation.org
-Cc: linux-block@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	colyli@kernel.org,
-	xni@redhat.com,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] block: fix disordered IO in the case recursive split
-Date: Thu, 21 Aug 2025 15:47:06 +0800
-Message-Id: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1755762505; c=relaxed/simple;
+	bh=HYeRAvRb3rfgv0xY7vus9iwQsutYh/rKrcDeQlXqn9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQPXYHhHNY+OkxxtxYHxVFFwSXHIxYMFll4rjYb5AHdGY1DkKO1w2msPHl7hPe2qbFvxahAOcV8s3vYSqz/pV3jfHEOd8/2Zzne5y/dUTVQN9GRq72kqwShKQ4CtaI5Fe2YApg0kkcFxm696/iCoRsZsb+urRsAe3q2FKxj5bds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TbQ+CBsl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16450C116C6;
+	Thu, 21 Aug 2025 07:48:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755762504;
+	bh=HYeRAvRb3rfgv0xY7vus9iwQsutYh/rKrcDeQlXqn9c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TbQ+CBslJrB9QPvxzNUalzN/Hh0VKb4KBJ8N4XTJfNNl0Wrc2QstWveFIY9se27SO
+	 YcpFwt2sqvj8MrusNTFBERcWClfX4GnKxYdDL1VQsw3NboW1XSiAXXUT7kgoGoA6v6
+	 zR5pu5qbcHg92V3TJF58bBpM2U8URZwAfCOufmSS27S37ercLYCbBB0QudPvDeFVm7
+	 KSHb84mblAFHV0VgjQeNv6dFoqVKgM5u3d0uwRS1KiICNJQiHGMe4JwkfbzeOR0SKg
+	 Zx0vjByhlUJ+WilQmGCPJoJ+U+akuwmJUaFv0IpXFCctkTVeBkILp6BdfjaDiyVjsP
+	 iFrqwM0CwbQBQ==
+Date: Thu, 21 Aug 2025 09:48:21 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?Q?Jean-Fran=C3=A7ois?= Lessard <jefflessard3@gmail.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, 
+	Boris Gjenero <boris.gjenero@gmail.com>, Christian Hewitt <christianshewitt@gmail.com>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Paolo Sabatino <paolo.sabatino@gmail.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v3 2/4] dt-bindings: auxdisplay: add Titan Micro
+ Electronics TM16xx
+Message-ID: <20250821-funny-hasty-poodle-582053@kuoka>
+References: <20250820163120.24997-1-jefflessard3@gmail.com>
+ <20250820163120.24997-3-jefflessard3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHgxPl0KZoQiypEQ--.5616S4
-X-Coremail-Antispam: 1UD129KBjvJXoW3AryrZr13CF1UGryrCrWfKrg_yoW7GF45pr
-	47Gw1Ykr1DGF47Ar48GrWj9a1xtF98Cr4rCry5C3yfJr4YgrnFq3ZrAay0yasxAryUurZ8
-	Xa4kKr9093s2vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250820163120.24997-3-jefflessard3@gmail.com>
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Wed, Aug 20, 2025 at 12:31:15PM -0400, Jean-Fran=C3=A7ois Lessard wrote:
+> Add documentation for TM16xx-compatible 7-segment LED display controllers=
+ with
+> keyscan.
 
-Currently, split bio will be chained to original bio, and original bio
-will be resubmitted to the tail of current->bio_list, waiting for
-split bio to be issued. However, if split bio get split again, the IO
-order will be messed up, for example, in raid456 IO will first be
-split by max_sector from md_submit_bio(), and then later be split
-again by chunksize for internal handling:
+Here and other patches - this is not wrapped.
 
-For example, assume max_sectors is 1M, and chunksize is 512k
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/subm=
+itting-patches.rst#L597
 
-1) issue a 2M IO:
+>=20
+> Signed-off-by: Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail.com>
+> ---
+>=20
+> Note: The 'segments' property is intentionally not vendor-prefixed as it =
+defines
+> a generic hardware description concept applicable to any 7-segment display
+> controller. The property describes the fundamental grid/segment coordinate
+> mapping that is controller-agnostic and could be reused by other LED matr=
+ix
+> display bindings. Similar to how 'gpios' describes GPIO connections gener=
+ically,
+> 'segments' describes segment connections in a standardized way using
+> uint32-matrix format.
+>=20
+>  .../bindings/auxdisplay/titanmec,tm16xx.yaml  | 471 ++++++++++++++++++
+>  1 file changed, 471 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/auxdisplay/titanmec=
+,tm16xx.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx=
+=2Eyaml b/Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx.yaml
+> new file mode 100644
+> index 000000000..b563c6e1e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx.yaml
+> @@ -0,0 +1,471 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/auxdisplay/titanmec,tm16xx.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Auxiliary displays based on TM16xx and compatible LED controllers
+> +
+> +maintainers:
+> +  - Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail.com>
+> +
+> +description: |
+> +  LED matrix controllers used in auxiliary display devices that drive in=
+dividual
+> +  LED icons and 7-segment digit groups through a grid/segment addressing=
+ scheme.
+> +  Controllers manage a matrix of LEDs organized as grids (columns/banks =
+in
+> +  vendor datasheets) and segments (rows/bit positions in vendor datashee=
+ts).
+> +  Maximum grid and segment indices are controller-specific.
+> +
+> +  The controller is agnostic of the display layout. Board-specific LED w=
+iring is
+> +  described through child nodes that specify grid/segment coordinates for
+> +  individual icons and segment mapping for 7-segment digits.
+> +
+> +  The bindings use separate 'leds' and 'digits' containers to accommodate
+> +  different addressing schemes:
+> +  - LEDs use 2-cell addressing (grid, segment) for matrix coordinates
+> +  - Digits use 1-cell addressing with explicit segment mapping
+> +
+> +  Optional keypad scanning is supported when both 'linux,keymap' and
+> +  'poll-interval' properties are specified.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      # Controllers with titanmec,tm1628 fallback
 
-bio issuing: 0+2M
-current->bio_list: NULL
+Drop comment, obvious. Schema tells that.
 
-2) md_submit_bio() split by max_sector:
+> +      - items:
+> +          - enum:
+> +              - fdhisi,fd628
+> +              - princeton,pt6964
+> +              - wxicore,aip1628
+> +          - const: titanmec,tm1628
+> +      - const: titanmec,tm1628
 
-bio issuing: 0+1M
-current->bio_list: 1M+1M
+This is part of one enum
 
-3) chunk_aligned_read() split by chunksize:
+> +      # Controllers with titanmec,tm1618 fallback
+> +      - items:
+> +          - enum:
+> +              - wxicore,aip1618
+> +          - const: titanmec,tm1618
+> +      - const: titanmec,tm1618
 
-bio issuing: 0+512k
-current->bio_list: 1M+1M -> 512k+512k
+Enum...
 
-4) after first bio issued, __submit_bio_noacct() will contuine issuing
-next bio:
+> +      # Controllers with titanmec,tm1650 fallback
+> +      - items:
+> +          - enum:
+> +              - fdhisi,fd650
+> +              - wxicore,aip650
+> +          - const: titanmec,tm1650
+> +      - const: titanmec,tm1650
+> +      # Canonical standalone controllers
 
-bio issuing: 1M+1M
-current->bio_list: 512k+512k
-bio issued: 0+512k
+Drop
 
-5) chunk_aligned_read() split by chunksize:
+> +      - const: fdhisi,fd620
+> +      - const: fdhisi,fd655
+> +      - const: fdhisi,fd6551
+> +      - const: titanmec,tm1620
+> +      - const: titanmec,tm1638
+> +      - const: winrise,hbs658
 
-bio issuing: 1M+512k
-current->bio_list: 512k+512k -> 1536k+512k
-bio issued: 0+512k
+This is one enum
 
-6) no split afterwards, finally the issue order is:
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  label:
+> +    description: Name of the entire device
+> +    default: display
 
-0+512k -> 1M+512k -> 512k+512k -> 1536k+512k
+Huh? Why do you need label? Are you sure auxdisplays have labels?
 
-This behaviour will cause large IO read on raid456 endup to be small
-discontinuous IO in underlying disks. Fix this problem by placing chanied
-bio to the head of current->bio_list.
 
-Test script: test on 8 disk raid5 with 64k chunksize
-dd if=/dev/md0 of=/dev/null bs=4480k iflag=direct
+> +
+> +  default-brightness:
+> +    description:
+> +      Brightness to be set if LED's default state is on. Used only during
+> +      initialization. If the option is not set then max brightness is us=
+ed.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  max-brightness:
+> +    description:
+> +      Normally the maximum brightness is determined by the hardware and =
+this
+> +      property is not required. This property is used to put a software =
+limit
+> +      on the brightness apart from what the driver says, as it could hap=
+pen
+> +      that a LED can be made so bright that it gets damaged or causes da=
+mage
+> +      due to restrictions in a specific system, such as mounting conditi=
+ons.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  linux,keymap:
+> +    $ref: /schemas/input/matrix-keymap.yaml#/properties/linux,keymap
+> +
+> +  poll-interval:
+> +    $ref: /schemas/input/input.yaml#/properties/poll-interval
+> +
+> +  autorepeat:
+> +    $ref: /schemas/input/input.yaml#/properties/autorepeat
 
-Test results:
-Before this patch
-1) iostat results:
-Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz  aqu-sz  %util
-md0           52430.00   3276.87     0.00   0.00    0.62    64.00   32.60  80.10
-sd*           4487.00    409.00  2054.00  31.40    0.82    93.34    3.68  71.20
-2) blktrace G stage:
-  8,0    0   486445    11.357392936   843  G   R 14071424 + 128 [dd]
-  8,0    0   486451    11.357466360   843  G   R 14071168 + 128 [dd]
-  8,0    0   486454    11.357515868   843  G   R 14071296 + 128 [dd]
-  8,0    0   486468    11.357968099   843  G   R 14072192 + 128 [dd]
-  8,0    0   486474    11.358031320   843  G   R 14071936 + 128 [dd]
-  8,0    0   486480    11.358096298   843  G   R 14071552 + 128 [dd]
-  8,0    0   486490    11.358303858   843  G   R 14071808 + 128 [dd]
-3) io seek for sdx:
-Noted io seek is the result from blktrace D stage, statistic of:
-ABS((offset of next IO) - (offset + len of previous IO))
+You rather miss some reference to input or touchscreen.
 
-Read|Write seek
-cnt 55175, zero cnt 25079
-    >=(KB) .. <(KB)     : count       ratio |distribution                            |
-         0 .. 1         : 25079       45.5% |########################################|
-         1 .. 2         : 0            0.0% |                                        |
-         2 .. 4         : 0            0.0% |                                        |
-         4 .. 8         : 0            0.0% |                                        |
-         8 .. 16        : 0            0.0% |                                        |
-        16 .. 32        : 0            0.0% |                                        |
-        32 .. 64        : 12540       22.7% |#####################                   |
-        64 .. 128       : 2508         4.5% |#####                                   |
-       128 .. 256       : 0            0.0% |                                        |
-       256 .. 512       : 10032       18.2% |#################                       |
-       512 .. 1024      : 5016         9.1% |#########                               |
+> +
+> +  digits:
+> +    type: object
+> +    description: Container for 7-segment digit group definitions
 
-After this patch:
-1) iostat results:
-Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz  aqu-sz  %util
-md0           87965.00   5271.88     0.00   0.00    0.16    61.37   14.03  90.60
-sd*           6020.00    658.44  5117.00  45.95    0.44   112.00    2.68  86.50
-2) blktrace G stage:
-  8,0    0   206296     5.354894072   664  G   R 7156992 + 128 [dd]
-  8,0    0   206305     5.355018179   664  G   R 7157248 + 128 [dd]
-  8,0    0   206316     5.355204438   664  G   R 7157504 + 128 [dd]
-  8,0    0   206319     5.355241048   664  G   R 7157760 + 128 [dd]
-  8,0    0   206333     5.355500923   664  G   R 7158016 + 128 [dd]
-  8,0    0   206344     5.355837806   664  G   R 7158272 + 128 [dd]
-  8,0    0   206353     5.355960395   664  G   R 7158528 + 128 [dd]
-  8,0    0   206357     5.356020772   664  G   R 7158784 + 128 [dd]
-2) io seek for sdx
-Read|Write seek
-cnt 28644, zero cnt 21483
-    >=(KB) .. <(KB)     : count       ratio |distribution                            |
-         0 .. 1         : 21483       75.0% |########################################|
-         1 .. 2         : 0            0.0% |                                        |
-         2 .. 4         : 0            0.0% |                                        |
-         4 .. 8         : 0            0.0% |                                        |
-         8 .. 16        : 0            0.0% |                                        |
-        16 .. 32        : 0            0.0% |                                        |
-        32 .. 64        : 7161        25.0% |##############                          |
+additionalProperties go here
 
-BTW, this looks like a long term problem from day one, and large
-sequential IO read is pretty common case like video playing.
+and blank line
 
-And even with this patch, in this test case IO is merged to at most 128k
-is due to block layer plug limit BLK_PLUG_FLUSH_SIZE, increase such
-limit and cat get even better performance. However, we'll figure out
-how to do this properly later.
+> +    properties:
+> +      "#address-cells":
+> +        const: 1
+> +      "#size-cells":
+> +        const: 0
+> +
+> +    patternProperties:
+> +      "^digit@[0-9]+$":
+> +        type: object
 
-Fixes: d89d87965dcb ("When stacked block devices are in-use (e.g. md or dm), the recursive calls")
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/blk-core.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+unevaluatedProperties
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 4201504158a1..0d46d10edb22 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -745,12 +745,16 @@ void submit_bio_noacct_nocheck(struct bio *bio)
- 	 * to collect a list of requests submited by a ->submit_bio method while
- 	 * it is active, and then process them after it returned.
- 	 */
--	if (current->bio_list)
--		bio_list_add(&current->bio_list[0], bio);
--	else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
-+	if (current->bio_list) {
-+		if (bio_flagged(bio, BIO_CHAIN))
-+			bio_list_add_head(&current->bio_list[0], bio);
-+		else
-+			bio_list_add(&current->bio_list[0], bio);
-+	} else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO)) {
- 		__submit_bio_noacct_mq(bio);
--	else
-+	} else {
- 		__submit_bio_noacct(bio);
-+	}
- }
- 
- static blk_status_t blk_validate_atomic_write_op_size(struct request_queue *q,
--- 
-2.39.2
+Blank line
+
+> +        properties:
+> +          reg:
+> +            description: Digit position identifier
+> +            maxItems: 1
+
+Blank line
+
+> +          segments:
+> +            $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +            description: |
+> +              Array of grid/segment coordinate pairs for each 7-segment =
+position.
+> +              Each entry is <grid segment> mapping to standard 7-segment=
+ positions
+> +              in order: a, b, c, d, e, f, g
+> +
+> +              Standard 7-segment layout:
+> +                 aaa
+> +                f   b
+> +                f   b
+> +                 ggg
+> +                e   c
+> +                e   c
+> +                 ddd
+> +            items:
+> +              items:
+> +                - description: Grid index
+> +                - description: Segment index
+> +            minItems: 7
+> +            maxItems: 7
+> +        required:
+> +          - reg
+> +          - segments
+> +        unevaluatedProperties: false
+> +
+> +    additionalProperties: false
+> +
+> +  leds:
+> +    type: object
+> +    description: Container for individual LED icon definitions
+> +    properties:
+> +      "#address-cells":
+> +        const: 2
+> +      "#size-cells":
+> +        const: 0
+> +
+> +    patternProperties:
+> +      "^led@[0-9]+,[0-9]+$":
+> +        type: object
+> +        $ref: /schemas/leds/common.yaml#
+> +        properties:
+> +          reg:
+> +            description:
+> +              Grid and segment indices as <grid segment> of this individ=
+ual LED icon
+> +        required:
+> +          - reg
+> +        unevaluatedProperties: false
+> +
+> +    additionalProperties: false
+
+Best regards,
+Krzysztof
 
 
