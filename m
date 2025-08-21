@@ -1,140 +1,199 @@
-Return-Path: <linux-kernel+bounces-779078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3A2B2EEBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:53:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60118B2EED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA8BD4E3476
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 549643B6992
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F06A2E8B70;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C502E2E8B81;
 	Thu, 21 Aug 2025 06:53:10 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qs7XcmMv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0588A2E093A
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31732E62B1;
+	Thu, 21 Aug 2025 06:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755759190; cv=none; b=QVXOSpvv9Z6iWisasINpjXHt1HOEahQFanOnH6iCyutS4EqR1CCyR5q7tkKRJ5ruieTI5qo+uXFSrJqeLBOMVo7My1Yize0PDRaBdQ6aHimNhTSi9N4twym1FNCIziw0OnSTv9RMU1+4kueiG+hINNd/8tdhCx4L4cAx09xKceU=
+	t=1755759190; cv=none; b=RVLHIKuHMmHPAWhZ8as+c4ONAX7MO2DLGcSqjuQKBXejK+amWSgxkiScQqQqOs3fAeGksvirw1QjBySJbvSFg3sEPOmBP4u8QHj/x8vksHK35Cw12Re/8W1dE30filN/UfkMWuAmYMndc2JwC90F2S35tYRsLYFvE1OloKEtVH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755759190; c=relaxed/simple;
-	bh=RmmERoEA013CqYqHZ/gUF7ZZnNFcE/eoBYkAwXxdRCo=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=tZtbXhwbON0wkrf0d34FpBjt2maTGsiTxdhm6NWlHs7bN1gCt2WWOj4cIzm7/ehRk27THmQFEWM2EdQasWjVku1M4KJOocutwObq5azJxe7ua9pZWx3+L9WaA1qafC2BamIFLE18ZAtV/UX0LNr53dTZwPXrF6U+IvTkn112LAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c6v8K6Wbdz2gLPM;
-	Thu, 21 Aug 2025 14:50:09 +0800 (CST)
-Received: from kwepemk200017.china.huawei.com (unknown [7.202.194.83])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6859A1400DA;
-	Thu, 21 Aug 2025 14:53:03 +0800 (CST)
-Received: from [10.174.178.219] (10.174.178.219) by
- kwepemk200017.china.huawei.com (7.202.194.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 21 Aug 2025 14:53:02 +0800
-Subject: Re: [PATCH] irqchip/gic-v5: Fix kmemleak L2 IST table entries false
- positives
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Jinjie Ruan <ruanjinjie@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Marc Zyngier <maz@kernel.org>
-References: <20250811135001.1333684-1-lpieralisi@kernel.org>
-From: Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <82bac373-21d6-7aab-0b3d-509b5bce25db@huawei.com>
-Date: Thu, 21 Aug 2025 14:53:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+	bh=Bq9tP1dBXwQ3sRC4YKUxmHUFPSXpyXHLlJKSZ1attcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n78rQaSabD/ScKUnpdTllO9ZlOg/hDxdCc+ldpAowt6f4umkVt5TxhZ8AArkxFRzJinaYlanbIJQWKe0+FhGCd+kGDQAQhPK9H/U8b72NoTMSW3CS4wOv092aogUcb+K2vG42wz4oKsRxYZrpbO/St1YuZzDs5k89jvumpkF2SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qs7XcmMv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22860C4CEED;
+	Thu, 21 Aug 2025 06:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755759189;
+	bh=Bq9tP1dBXwQ3sRC4YKUxmHUFPSXpyXHLlJKSZ1attcQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qs7XcmMvSsV7ZlsJpkSxU/mY6+27bCRXN2nW1JYMEkIZbbbxqeCb++SHayuZouPBe
+	 pXLdV6i4y+uV93jaiaeZXB1iriW3zE/bbKi69plgG3xa5OIs0Qi76qhRmK7VU1E6ss
+	 LtnBtwtwFnfX6J44cs071lPZ9x5vD+8uwLd7zPounkMciOpdxkDvBvqh8jlNUP8dii
+	 u2f72i1+0PrrVy50oULnOBet9AcjJiPjRXovxGrycQLyhLCkK3Ylvj06fa/HZTKOhm
+	 8BZFUH4yFIxuQlwwigXeCGWanttsE4WFa/g75aoSrNq3PTsRHEf2r+EsWQcMVJMPEe
+	 J0JNPZ+l1tSHA==
+Date: Thu, 21 Aug 2025 08:53:07 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch, 
+	andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com, broonie@kernel.org, 
+	chunkuang.hu@kernel.org, ck.hu@mediatek.com, conor+dt@kernel.org, davem@davemloft.net, 
+	dmitry.torokhov@gmail.com, edumazet@google.com, flora.fu@mediatek.com, 
+	houlong.wei@mediatek.com, jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com, 
+	krzk+dt@kernel.org, kuba@kernel.org, kyrie.wu@mediatek.corp-partner.google.com, 
+	lgirdwood@gmail.com, linus.walleij@linaro.org, louisalexis.eyraud@collabora.com, 
+	maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com, mchehab@kernel.org, 
+	minghsiu.tsai@mediatek.com, mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com, 
+	robh@kernel.org, sean.wang@kernel.org, simona@ffwll.ch, 
+	support.opensource@diasemi.com, tiffany.lin@mediatek.com, tzimmermann@suse.de, 
+	yunfei.dong@mediatek.com, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v1 10/14] regulator: dt-bindings: Convert Dialog
+ Semiconductor DA9211 Regulators to YAML
+Message-ID: <20250821-practical-coyote-of-hail-d2fddb@kuoka>
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-11-ariel.dalessandro@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250811135001.1333684-1-lpieralisi@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk200017.china.huawei.com (7.202.194.83)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250820171302.324142-11-ariel.dalessandro@collabora.com>
 
-On 2025/8/11 21:50, Lorenzo Pieralisi wrote:
-> L2 IST table entries are allocated with the kmalloc interface
-> and their physical addresses are programmed in the GIC (either
-> IST base address register or L1 IST table entries) but their
-> virtual addresses are not stored in any kernel data structure
-> because they are not needed at runtime - the L2 IST table entries
-> are managed through system instructions but never dereferenced
-> directly by the driver.
+On Wed, Aug 20, 2025 at 02:12:58PM -0300, Ariel D'Alessandro wrote:
+> Convert the existing text-based DT bindings for Dialog Semiconductor DA9211
+> Voltage Regulators family to a YAML schema. Examples are simplified, as
+> these are all equal.
+
+Also not wrapped... fix your editor to recognize how commits are
+written.
+
 > 
-> This triggers kmemleak false positive reports:
-> 
-> unreferenced object 0xffff00080039a000 (size 4096):
->   comm "swapper/0", pid 0, jiffies 4294892296
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace (crc 0):
->     kmemleak_alloc+0x34/0x40
->     __kmalloc_noprof+0x320/0x464
->     gicv5_irs_iste_alloc+0x1a4/0x484
->     gicv5_irq_lpi_domain_alloc+0xe4/0x194
->     irq_domain_alloc_irqs_parent+0x78/0xd8
->     gicv5_irq_ipi_domain_alloc+0x180/0x238
->     irq_domain_alloc_irqs_locked+0x238/0x7d4
->     __irq_domain_alloc_irqs+0x88/0x114
->     gicv5_of_init+0x284/0x37c
->     of_irq_init+0x3b8/0xb18
->     irqchip_init+0x18/0x40
->     init_IRQ+0x104/0x164
->     start_kernel+0x1a4/0x3d4
->     __primary_switched+0x8c/0x94
-> 
-> Instruct kmemleak to ignore L2 IST table memory allocation
-> virtual addresses to prevent these false positive reports.
-> 
-> Reported-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Closes: https://lore.kernel.org/lkml/cc611dda-d1e4-4793-9bb2-0eaa47277584@huawei.com/
-> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
 > ---
->  drivers/irqchip/irq-gic-v5-irs.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
-> index ad1435a858a4..e8a576f66366 100644
-> --- a/drivers/irqchip/irq-gic-v5-irs.c
-> +++ b/drivers/irqchip/irq-gic-v5-irs.c
-> @@ -5,6 +5,7 @@
->  
->  #define pr_fmt(fmt)	"GICv5 IRS: " fmt
->  
-> +#include <linux/kmemleak.h>
->  #include <linux/log2.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> @@ -117,6 +118,7 @@ static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data
->  		kfree(ist);
->  		return ret;
->  	}
-> +	kmemleak_ignore(ist);
->  
->  	return 0;
->  }
-> @@ -232,6 +234,7 @@ int gicv5_irs_iste_alloc(const u32 lpi)
->  		kfree(l2ist);
->  		return ret;
->  	}
-> +	kmemleak_ignore(l2ist);
 
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+...
 
-Thanks,
-Zenghui
+> +---
+> +$id: http://devicetree.org/schemas/regulator/dlg,da9211.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: |
+
+Drop |
+
+> +  Dialog Semiconductor DA9211/DA9212/DA9213/DA9223/DA9214/DA9224/DA9215/DA9225
+> +  Voltage Regulator
+> +
+> +maintainers:
+> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - "dlg,da9211"
+> +      - "dlg,da9212"
+> +      - "dlg,da9213"
+> +      - "dlg,da9223"
+> +      - "dlg,da9214"
+> +      - "dlg,da9224"
+> +      - "dlg,da9215"
+> +      - "dlg,da9225"
+
+No quotes. I don't think this was ever tested.
+
+Also, keep it properly ordered
+
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  regulators:
+> +    type: object
+> +    additionalProperties: false
+> +    description: |
+
+Drop |
+
+> +      List of regulators provided by the device
+> +
+> +    patternProperties:
+> +      "^BUCK([A-B])$":
+
+[AB]
+
+> +        type: object
+> +        $ref: regulator.yaml#
+> +        description: |
+> +          Properties for a single BUCK regulator
+> +
+> +        properties:
+> +          regulator-initial-mode:
+> +            items:
+> +              enum: [ 1, 2, 3 ]
+> +            description: Defined in include/dt-bindings/regulator/dlg,da9211-regulator.h
+> +
+> +          regulator-allowed-modes:
+> +            items:
+> +              enum: [ 1, 2, 3 ]
+> +            description: Defined in include/dt-bindings/regulator/dlg,da9211-regulator.h
+> +
+> +          enable-gpios:
+> +            maxItems: 1
+> +            description: Specify a valid GPIO for platform control of the regulator
+
+Drop description, obvious.
+
+> +
+> +        unevaluatedProperties: false
+
+For nested blocks this goes after $ref: regulator.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - regulators
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/regulator/dlg,da9211-regulator.h>
+> +
+> +    i2c1 {
+
+i2c
+
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        da9212: da9212@68 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+
+Best regards,
+Krzysztof
+
 
