@@ -1,124 +1,148 @@
-Return-Path: <linux-kernel+bounces-779814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C0ACB2F91F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:59:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD25B2F952
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A7914E6081
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:59:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6CBD161A34
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0EB31AF21;
-	Thu, 21 Aug 2025 12:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F4D31E0E9;
+	Thu, 21 Aug 2025 13:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grdbK7l3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blyoPFAt"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7326E36CDE1;
-	Thu, 21 Aug 2025 12:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C30315761;
+	Thu, 21 Aug 2025 13:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755781181; cv=none; b=EImhD3EcX3M7xcZtOr8NAtx+FsLj4iiwxI1ynC3RLaS9WdlA4zRxwZEF3e6kzrtDUvbEPk9X1n7FzMC5sFOQ9AmRCrst1eOhcWHGSWofi8w2wZ1AdPrlt5ykqdtBRenpyj0vYvxTyUZxGSbP2lwXHoKEltfxixH0q7HzEwOhulg=
+	t=1755781205; cv=none; b=DMOr2Ez6aLg4sOlx8t2ODglJTFqqW7ehUhgPoj84LwjGEzJnjGdViSV90gd9S5mI8/gqPtHF+eVEAB9/ddqO58jesLJTlvwyZOjmD7hjD5F9/dTq6NBoND1OMGy6JD+57TgXIsoAXl12llY1uYqjgRf1GpaM4MwKnxj+dF/tIJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755781181; c=relaxed/simple;
-	bh=71b6hgwbfDeSBSalaVlAEyTbwwEcR8fqw0NuU3fVyM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KRmifBeYyFMaa3RFTqMB269FbjKm1M8enpbbvD3m4uIccD4vwnj250DGIgdMR8poH1h8sMfFiD76bUNV70ldP5m3NCH32nRYp2YGjfeM5nk8Pu6nHnbuU6ubt7EVTHtGX0GjajDBcQvOizQCpdxdSenjcsPoDtJRNpjZtFE9i64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grdbK7l3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE78DC4CEEB;
-	Thu, 21 Aug 2025 12:59:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755781180;
-	bh=71b6hgwbfDeSBSalaVlAEyTbwwEcR8fqw0NuU3fVyM8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=grdbK7l3zLoQjKYHUjWWpt/ZJCDCwAih9CgW2vAxyCOdNpWtVBZZbQe9VrejGem93
-	 pH1IaTEp9XaJslfLLQ1MLzwFcBGEBVuKmUqVx4Ort/dJAoGli5OCY3tW39bibNzDt8
-	 4GhY32G0D3snqUVhT4JPTpL92jcQuUXYD4I0nzWKTescIQkcamkfA11/OppDmi5VHK
-	 gFuWsUX3KlkQw8O1myLcoOVgEj2yYYD1rdwOp4aNtJHgsChR8eh5BKXclw6pejSy8U
-	 /jjOFtj1M6LO461U9MkSOxZYfXqyf14deS30XPW85G59DbUsmCkgPlLn7jma7ODDGp
-	 SZ2KKXLCsZ1AA==
-Date: Thu, 21 Aug 2025 08:59:39 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] fgraph: Copy args in intermediate storage with entry
-Message-ID: <aKcYO5xvRv3M0Ngf@laps>
-References: <20250820195522.51d4a268@gandalf.local.home>
+	s=arc-20240116; t=1755781205; c=relaxed/simple;
+	bh=4KrfimWBNwAtJPyUf+qP1dpHV5DKSwK8yzQl9Mt3TFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f6GxhQA3c52dY3y2S2vM1clcwwhofuWPertwprJL2kM8mRkEtYiBwlF97sFArCiCHGHa8x23qKmHlWHHBLaxK2FqSl2ez4p/gpjlYx4UGWftoj6gw8V1gmFZzmzX2CPvv9TqVzCLHb7drP4Dt+0zjb3QWTTkK4w3NeO8K6jW2rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=blyoPFAt; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-324fb2bb099so424926a91.3;
+        Thu, 21 Aug 2025 06:00:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755781203; x=1756386003; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=porHcg3o+CIlMILgXPZ+Bm8oPIC1CRCMt8yqWjRC8KA=;
+        b=blyoPFAtzrBpHiPnB5let5tRC8pEgUglXHugS/Jxuhen6ccb6HCEcPz+na5QKz8kK2
+         NGSvbE9ocDTJ59YDxidQnVk06FtK0yK2XUhZtjbnfy0iR2XtURi2wEAOqwgkpYTVjxfo
+         OlN6LnNazXXbGzglYhh3upaLCnPUwW9hwFWIis/RZwFsKcpm+tYrmBku67kmgSi16WCt
+         RgQR3/T/YmQ7vm7SJb92IoD6jZZiD39uLrsoCv0aRGWZsPfYYyBpfN54CxkeRyS/zjGj
+         /p1WjJT4uGdItkWmLF1tbzBP/qVgfNaxU6ggVxoRAqjxrTgBUB5l6PAvhtabLxsSkOcI
+         VESg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755781203; x=1756386003;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=porHcg3o+CIlMILgXPZ+Bm8oPIC1CRCMt8yqWjRC8KA=;
+        b=J+uwFpkNPPtTpH9e1yHXjIloDshoIQ7xPHSw0FeDNYqvVonEprXtD5f8E4TT2JrlsJ
+         kIKepIZ9u+f0pj7WSGHTEhwQOLoBGhltdJn+CRQMVHAdu98iYzv7JPZZKbcMi8qmdqff
+         RRMX0r6FFN5IWHitJJVWxHdXV1Jr81MmhKYB+Q57tfJ9tO8J2NlqaDWq3VRz6IUmDY1n
+         9kH1pTEl/p3ndsapROHQKHs/yg0KaG685mTIQ0DoaGv2Q2MTZscEevJZKPbufasEL1HE
+         VHEaB/MrrElrc0JgHZmnhe2Q96qGPQ2fr1j5ZpDgAhkjuPr8CIpzZO5uEACeY1qlSjKB
+         9aLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsDDfPmsmbQPHerTzYNDShiYsc9qOEKHFOUSx0NlG6a/ePShrQzK02bXHqCCRZqn8bNlSYrJZINOHGxI8=@vger.kernel.org, AJvYcCWiYdxLmLfi0XOd5T33ZF+o79ko94jDHpKI5Ebd1EtVo2DXyzAgaL0yKAYAn7p/xuVPwQRdyLkH3w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN+QFDuGmilb+TF3rTjkmSHsXVGIA9BICh7mqLWEgPGMaMU3Iz
+	b0jUxMhPl1GAZXeMrMF4EjR/gOsPSUb9NM4Tj/GnqHQFFDgU6XWbq+GWZF2/OZDhF4hPcTWm8im
+	t4thFID1/6YEhRuy8Ww8cSVrscPvBaYI=
+X-Gm-Gg: ASbGncs+t/MLT8dSdYB2LQRtQ+Agjxj62FHBXXRiOTZ+RFe2JH3It8hl9gfU+2seT18
+	bDG+zJ19HtgqCyFALVFHpqQsMdTVsHJusDz2FcUuRldoOXrkp0YxxV9WCEXDykwNNE/wh9hqmRY
+	2pKAAMgl7+MzJnsVb1aSnkgj/Pv1Qbougtmo4tOm9mMWO9VbHtYd258JyNv3k8gTw7zLssGM9Af
+	7mOQWQ=
+X-Google-Smtp-Source: AGHT+IGhfF7ZuE01O8iuJxPeUZxW4tnDVFdj7yiQ0fXUgOVpDWzyJZ6B2kePNFYCIjZ1J5z94V5nPCW/1PVlqBK8OL8=
+X-Received: by 2002:a17:90b:1cce:b0:31e:d4e3:4002 with SMTP id
+ 98e67ed59e1d1-324ed0d6fcdmr3057651a91.2.1755781203014; Thu, 21 Aug 2025
+ 06:00:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250820195522.51d4a268@gandalf.local.home>
+References: <20250820212302.2325779-1-nkapron@google.com>
+In-Reply-To: <20250820212302.2325779-1-nkapron@google.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 21 Aug 2025 08:59:51 -0400
+X-Gm-Features: Ac12FXy53CXh_ByAd_wEhfKRh7orVilBeqNXVQCpecz66dlkirgVwdHriDPCuE0
+Message-ID: <CAEjxPJ4Vi9rXXkvPUoS-tjHks_6oevdkhrjvSeX_Rh5VV5gBBw@mail.gmail.com>
+Subject: Re: [PATCH] selinux: enable per-file labeling for functionfs
+To: Neill Kapron <nkapron@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>, kernel-team@android.com, 
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 07:55:22PM -0400, Steven Rostedt wrote:
->From: Steven Rostedt <rostedt@goodmis.org>
+On Wed, Aug 20, 2025 at 5:23=E2=80=AFPM Neill Kapron <nkapron@google.com> w=
+rote:
 >
->The output of the function graph tracer has two ways to display its
->entries. One way for leaf functions with no events recorded within them,
->and the other is for functions with events recorded inside it. As function
->graph has an entry and exit event, to simplify the output of leaf
->functions it combines the two, where as non leaf functions are separate:
+> This patch adds support for genfscon per-file labeling of functionfs
+> files as well as support for userspace to apply labels after new
+> functionfs endpoints are created.
 >
-> 2)               |              invoke_rcu_core() {
-> 2)               |                raise_softirq() {
-> 2)   0.391 us    |                  __raise_softirq_irqoff();
-> 2)   1.191 us    |                }
-> 2)   2.086 us    |              }
+> This allows for separate labels and therefore access control on a
+> per-endpoint basis. An example use case would be for the default
+> endpoint EP0 used as a restricted control endpoint, and additional
+> usb endpoints to be used by other more permissive domains.
 >
->The __raise_softirq_irqoff() function above is really two events that were
->merged into one. Otherwise it would have looked like:
+> It should be noted that if there are multiple functionfs mounts on a
+> system, genfs file labels will apply to all mounts, and therefore will no=
+t
+> likely be as useful as the userspace relabeling portion of this patch -
+> the addition to selinux_is_genfs_special_handling().
 >
-> 2)               |              invoke_rcu_core() {
-> 2)               |                raise_softirq() {
-> 2)               |                  __raise_softirq_irqoff() {
-> 2)   0.391 us    |                  }
-> 2)   1.191 us    |                }
-> 2)   2.086 us    |              }
->
->In order to do this merge, the reading of the trace output file needs to
->look at the next event before printing. But since the pointer to the event
->is on the ring buffer, it needs to save the entry event before it looks at
->the next event as the next event goes out of focus as soon as a new event
->is read from the ring buffer. After it reads the next event, it will print
->the entry event with either the '{' (non leaf) or ';' and timestamps (leaf).
->
->The iterator used to read the trace file has storage for this event. The
->problem happens when the function graph tracer has arguments attached to
->the entry event as the entry now has a variable length "args" field. This
->field only gets set when funcargs option is used. But the args are not
->recorded in this temp data and garbage could be printed. The entry field
->is copied via:
->
->  data->ent = *curr;
->
->Where "curr" is the entry field. But this method only saves the non
->variable length fields from the structure.
->
->Add a helper structure to the iterator data that adds the max args size to
->the data storage in the iterator. Then simply copy the entire entry into
->this storage (with size protection).
->
->Reported-by: Sasha Levin <sashal@kernel.org>
->Closes: https://lore.kernel.org/all/aJaxRVKverIjF4a6@lappy/
->Fixes: ff5c9c576e75 ("ftrace: Add support for function argument to graph tracer")
->Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Signed-off-by: Neill Kapron <nkapron@google.com>
 
-	Tested-by: Sasha Levin <sashal@kernel.org>
+Did you confirm that functionfs is safe wrt genfscon-based and
+userspace labeling, as per:
+https://github.com/SELinuxProject/selinux-kernel/issues/2
 
-Thanks for the fix!
+Also as per that longstanding open issue, we'd welcome patches to
+generalize the current hardcoded list of filesystem types to
+instead lookup the filesystem type in the policy to see if it should
+support genfscon and/or userspace labeling.
 
--- 
-Thanks,
-Sasha
+> ---
+>  security/selinux/hooks.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index e474cd7398ef..54b82c814b4d 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -474,6 +474,7 @@ static int selinux_is_genfs_special_handling(struct s=
+uper_block *sb)
+>                 !strcmp(sb->s_type->name, "debugfs") ||
+>                 !strcmp(sb->s_type->name, "tracefs") ||
+>                 !strcmp(sb->s_type->name, "rootfs") ||
+> +               !strcmp(sb->s_type->name, "functionfs") ||
+>                 (selinux_policycap_cgroupseclabel() &&
+>                  (!strcmp(sb->s_type->name, "cgroup") ||
+>                   !strcmp(sb->s_type->name, "cgroup2")));
+> @@ -741,6 +742,7 @@ static int selinux_set_mnt_opts(struct super_block *s=
+b,
+>             !strcmp(sb->s_type->name, "binder") ||
+>             !strcmp(sb->s_type->name, "bpf") ||
+>             !strcmp(sb->s_type->name, "pstore") ||
+> +           !strcmp(sb->s_type->name, "functionfs") ||
+>             !strcmp(sb->s_type->name, "securityfs"))
+>                 sbsec->flags |=3D SE_SBGENFS;
+>
+> --
+> 2.51.0.261.g7ce5a0a67e-goog
+>
 
