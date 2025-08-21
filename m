@@ -1,219 +1,176 @@
-Return-Path: <linux-kernel+bounces-780187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1727FB2FEAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:40:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF13B2FEA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B119F1D2243D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01BE1891E41
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE56133CE83;
-	Thu, 21 Aug 2025 15:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E463277B3;
+	Thu, 21 Aug 2025 15:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="F4NVOt5l"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943D9338F29;
-	Thu, 21 Aug 2025 15:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nY2rt5KH"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C524322754
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755790077; cv=none; b=IjhwZexgkOk4sQdwnl9ZZhOXxWQQko8MEYKXpo0KqyDtnoxm/C8SITGkLC40fm67J3txN+fQlXttPU7bQ3tJLOQzxGuIajNK0rTPBdcwREjOMiLF5aurGsNEyWZjVBqkFLttxf6G7blrIcrh6Z8Dzo50HLrqgsPRmD14Yr625wU=
+	t=1755790042; cv=none; b=RC5B0ix+AK93RtFFHuGBBYIEUIHRarEg5zHetCnTz4P+fv/PghblByo0v+WcgGp7dn9nUD4u0jqvbo21QyXa6uuLSfNsy2DfHfDCV3uoQuwJK6edrJPGTMqZGyj0jo8oStWEMijarMssM92kyohJwyPcycSUhw6Z1XJjEsYpQEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755790077; c=relaxed/simple;
-	bh=DYIv+8O47AgXECoNN0D9qxENXd43XygJabRYMi9Zf2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YsYTdRlxUtoNQc3f+k9vdo+pWwTN8Ueay/s1bEGNJhflAw8ZfF7wwN4fJ6TX/hAQkLe6uHMJIja+Pqyr61M3unIXpY5OS1cA/C5hHg8CsyGxlgbRGr6IDGkafuudixalaQcKkFgLvJMy5Y3GUwN28Aa9fK0I3OV/SINfTHQttHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=F4NVOt5l; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=2M
-	64p6PzM6E+Ful7zBk13hxPItF7DaAAOT0U0YpEi50=; b=F4NVOt5lbRNxtZSMkm
-	C/apxh+REHsK9QkI+Nwn8WLDs+U0mk/sgegx6gy8SFxd43/CQqAorm/7gZcKt2NN
-	yWWjq4hunEUv1azE3TZcLt+8XuCQtOmQeb0u7dEf6Vwf2eci/BMySXA5RyHxJn0s
-	p2RMI2IGxH4y7me/HCIaBi7Wk=
-Received: from phoenix.. (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDnLGHROqdon1G_DQ--.32608S4;
-	Thu, 21 Aug 2025 23:27:16 +0800 (CST)
-From: Jiawei Zhao <phoenix500526@163.com>
-To: ast@kernel.org
-Cc: daniel@iogearbox.net,
-	andrii@kernel.org,
-	yonghong.song@linux.dev,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v12 2/2] selftests/bpf: Enrich subtest_basic_usdt case in selftests to cover SIB handling logic
-Date: Thu, 21 Aug 2025 15:27:12 +0000
-Message-ID: <20250821152713.1024982-3-phoenix500526@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250821152713.1024982-1-phoenix500526@163.com>
-References: <20250821152713.1024982-1-phoenix500526@163.com>
+	s=arc-20240116; t=1755790042; c=relaxed/simple;
+	bh=RuVd6VhLx/ESvjcEdKEJ0sQssvWWc/dXK+bjffFMlDU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kwRKpNI6aYOb3oBLoNxTqbUGrSGJBXYvVOAytPRnXxid+y06vdxGCrNc/hi35bBpYApiyxTu3DI+HJvzb4q8YKbamUbL6+yY1txBW+uhq/uZvghRWKWL8L8e+V9fWaeZ6iIN6zIly1yUs3MPTmhWM/aLg2FBrILovniTDmDq4+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nY2rt5KH; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3235e45b815so1324921a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:27:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755790040; x=1756394840; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J0nOEic8CcwY+6hpqmum6A9VNU65AINFJfOA9KBUaPg=;
+        b=nY2rt5KHHZ9Yy4NlUbKvDYneBU+HGEc0nCkNzpr7/PgG07v61rggWtSBy0BiFA/PyH
+         B69LrsO4qc0npVOq0+FsJ/fDodVZitvoradAjktb84Exbp0V3vTAHtKuR9naLYSMwj8I
+         Y6yGEU1cY7vU3qEQEuBtZMwy5+PWJ3SvkrTrTvs3lwCxMSe9OOOsxzNtweOhj+D1OmVR
+         uze0DBliPIuvxoUlQtW86l2BVAuoxCryvYk/i0O5b+3LtFh8AKV8J8wgZx9ewlMWAmLG
+         zXTFlrKIUrEcfnuIHju9QEKyKwgnD1/T8yMfAdtPHgAFaz3oDfAsr2/a3ggpGV1qcxTN
+         ohbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755790040; x=1756394840;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=J0nOEic8CcwY+6hpqmum6A9VNU65AINFJfOA9KBUaPg=;
+        b=OPF+Wy4zSYAOEYKOAUjCpUpeUUteRFUk6qH/MxsgqC+weqBmqxy4S0usDRjbO6VndA
+         OFOX12y0BD7fIRutvkoU7Z9Dy8HblCZTBBhm37KY3GVoFQo/ByfA8gAjJ3fZMU1jQJfU
+         0KSobp2J6OflNY8yKbuIebuDJ52xYLDxKHDeteIJcr4dKh3HHCyEimEABttJL8Wfs8/Y
+         MaI5K/9qdgK1daPO4H2JNEqdtUA5cJuqaYCrE+VamtLBpFl+fDxhATkD0p3u2mmpn7I+
+         RsNfXDO1gNy7goivyvAzMKNp5VCMbIJLugRmf9ROZkF0f5KBhwb09x8M2boomb02TLqJ
+         KvMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfP6psn0znqaOvoWfhSQlYXo5cKMHMkKELKzv/dY5SELIXJc8DMn7Ilw/WZfLcLae06+pkS4EmG9l3Qv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo8/NdzGn7/bHb+1B+IDklX8LtNKQLbWx1g9mWo7E+N7jtRCo6
+	7IrIfaeDYJDZhp8RG8qZQ50dJwOEzgHK3u/bwbqbervDkttMp3ZWv+Bj/JNw1eloRK4FZQbnKYz
+	aggPwQA==
+X-Google-Smtp-Source: AGHT+IErn+S7Lo3tcvkDcjWls4tKiHbQGQvkGoFOV+v791Vf8loaYFkjMjAYIe9Wb0EbdLX8P8wL1dPep+E=
+X-Received: from pjbdb4.prod.google.com ([2002:a17:90a:d644:b0:324:e309:fc3d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d83:b0:31f:2bd7:a4d2
+ with SMTP id 98e67ed59e1d1-324ed15c158mr4291122a91.35.1755790040396; Thu, 21
+ Aug 2025 08:27:20 -0700 (PDT)
+Date: Thu, 21 Aug 2025 08:27:19 -0700
+In-Reply-To: <f1ec8527-322d-4bdb-9a38-145fd9f28e4b@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnLGHROqdon1G_DQ--.32608S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKF15Cry3JFW7ZFyfKr17Jrb_yoW7CrWfpa
-	ykZ34xtryrt3WxG34fJr4jqw4rKFn2yrW5JFZrXryjvrWkGrs7Xrn7tw13KFnxX3ykX3W5
-	ArZ0kan5Kw4xXF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jqeHDUUUUU=
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFAGwiGinMrOWNQAAsA
+Mime-Version: 1.0
+References: <aIDzBOmjzveLjhmk@google.com> <550a730d-07db-46d7-ac1a-b5b7a09042a6@linux.intel.com>
+ <aIeX0GQh1Q_4N597@google.com> <ad616489-1546-4f6a-9242-a719952e19b6@linux.intel.com>
+ <CAGtprH9EL0=Cxu7f8tD6rEvnpC7uLAw6jKijHdFUQYvbyJgkzA@mail.gmail.com>
+ <20641696-242d-4fb6-a3c1-1a8e7cf83b18@linux.intel.com> <697aa804-b321-4dba-9060-7ac17e0a489f@linux.intel.com>
+ <aKYMQP5AEC2RkOvi@google.com> <d84b792e-8d26-49c2-9e7c-04093f554f8a@linux.intel.com>
+ <f1ec8527-322d-4bdb-9a38-145fd9f28e4b@linux.intel.com>
+Message-ID: <aKc61y0_tvGLmieC@google.com>
+Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
+From: Sean Christopherson <seanjc@google.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Vishal Annapurve <vannapurve@google.com>, Nikolay Borisov <nik.borisov@suse.com>, 
+	Jianxiong Gao <jxgao@google.com>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dionna Glaze <dionnaglaze@google.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, jgross@suse.com, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com, 
+	Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, jiewen.yao@intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-When using GCC on x86-64 to compile an usdt prog with -O1 or higher
-optimization, the compiler will generate SIB addressing mode for global
-array and PC-relative addressing mode for global variable,
-e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
+On Thu, Aug 21, 2025, Binbin Wu wrote:
+> On 8/21/2025 11:30 AM, Binbin Wu wrote:
+> > Variable MTRR has requirement for range size and alignment:
+> > For ranges greater than 4 KBytes, each range must be of length 2^n and =
+its base
+> > address must be aligned on a 2^n boundary, where n is a value equal to =
+or
+> > greater than 12. The base-address alignment value cannot be less than i=
+ts length.
+>=20
+> Wait, Linux kernel converts MTRR register values to MTRR state (base and =
+size) and
+> cache it for later lookups (refer to map_add_var()). I.e., in Linux kerne=
+l,
+> only the cached state will be used.
+>=20
+> These MTRR register values are never programmed when using
+> guest_force_mtrr_state() , so even the values doesn't meet the requiremen=
+t
+> from hardware perspective, Linux kernel can still get the right base and
+> size.
 
-In this patch:
-- enrich subtest_basic_usdt test case to cover SIB addressing usdt argument spec
-  handling logic
+Yeah.  I forget what happens if the ranges don't meet the power-of-2 requir=
+ements,
+but the mask+match logic should work jus tfine.
 
-Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
----
- tools/testing/selftests/bpf/prog_tests/usdt.c | 44 ++++++++++++++++++-
- tools/testing/selftests/bpf/progs/test_usdt.c | 30 +++++++++++++
- 2 files changed, 72 insertions(+), 2 deletions(-)
+> No bothering to force the base and size alignment.
+> But a comment would be helpful.
+> Also, BIT(11) could be replaced by MTRR_PHYSMASK_V.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/usdt.c b/tools/testing/selftests/bpf/prog_tests/usdt.c
-index 9057e983cc54..c04b416aa4a8 100644
---- a/tools/testing/selftests/bpf/prog_tests/usdt.c
-+++ b/tools/testing/selftests/bpf/prog_tests/usdt.c
-@@ -25,6 +25,10 @@ unsigned short test_usdt0_semaphore SEC(".probes");
- unsigned short test_usdt3_semaphore SEC(".probes");
- unsigned short test_usdt12_semaphore SEC(".probes");
- 
-+#if ((defined(__x86_64__) || defined(__i386__)) && defined(__GNUC__) && !defined(__clang__))
-+unsigned short test_usdt_sib_semaphore SEC(".probes");
-+#endif
-+
- static void __always_inline trigger_func(int x) {
- 	long y = 42;
- 
-@@ -40,12 +44,29 @@ static void __always_inline trigger_func(int x) {
- 	}
- }
- 
-+#if ((defined(__x86_64__) || defined(__i386__)) && defined(__GNUC__) && !defined(__clang__))
-+static __attribute__((optimize("O1"))) void trigger_sib_spec(void)
-+{
-+	/* Base address + offset + (index * scale) */
-+	/* Force SIB addressing with inline assembly */
-+	asm volatile(
-+		"# probe point with memory access\n"
-+		STAP_PROBE_ASM(test, usdt_sib, -2@(%%rdx,%%rax,2))
-+		"# end probe point"
-+		:
-+		: "d"(nums), "a"(0)
-+		: "memory"
-+	);
-+}
-+#endif
-+
- static void subtest_basic_usdt(void)
- {
- 	LIBBPF_OPTS(bpf_usdt_opts, opts);
- 	struct test_usdt *skel;
- 	struct test_usdt__bss *bss;
- 	int err, i;
-+	const __u64 expected_cookie = 0xcafedeadbeeffeed;
- 
- 	skel = test_usdt__open_and_load();
- 	if (!ASSERT_OK_PTR(skel, "skel_open"))
-@@ -59,20 +80,29 @@ static void subtest_basic_usdt(void)
- 		goto cleanup;
- 
- 	/* usdt0 won't be auto-attached */
--	opts.usdt_cookie = 0xcafedeadbeeffeed;
-+	opts.usdt_cookie = expected_cookie;
- 	skel->links.usdt0 = bpf_program__attach_usdt(skel->progs.usdt0,
- 						     0 /*self*/, "/proc/self/exe",
- 						     "test", "usdt0", &opts);
- 	if (!ASSERT_OK_PTR(skel->links.usdt0, "usdt0_link"))
- 		goto cleanup;
- 
-+#if ((defined(__x86_64__) || defined(__i386__)) && defined(__GNUC__) && !defined(__clang__))
-+	opts.usdt_cookie = expected_cookie;
-+	skel->links.usdt_sib = bpf_program__attach_usdt(skel->progs.usdt_sib,
-+								0 /*self*/, "/proc/self/exe",
-+								"test", "usdt_sib", &opts);
-+	if (!ASSERT_OK_PTR(skel->links.usdt_sib, "usdt_sib_link"))
-+		goto cleanup;
-+#endif
-+
- 	trigger_func(1);
- 
- 	ASSERT_EQ(bss->usdt0_called, 1, "usdt0_called");
- 	ASSERT_EQ(bss->usdt3_called, 1, "usdt3_called");
- 	ASSERT_EQ(bss->usdt12_called, 1, "usdt12_called");
- 
--	ASSERT_EQ(bss->usdt0_cookie, 0xcafedeadbeeffeed, "usdt0_cookie");
-+	ASSERT_EQ(bss->usdt0_cookie, expected_cookie, "usdt0_cookie");
- 	ASSERT_EQ(bss->usdt0_arg_cnt, 0, "usdt0_arg_cnt");
- 	ASSERT_EQ(bss->usdt0_arg_ret, -ENOENT, "usdt0_arg_ret");
- 	ASSERT_EQ(bss->usdt0_arg_size, -ENOENT, "usdt0_arg_size");
-@@ -156,6 +186,16 @@ static void subtest_basic_usdt(void)
- 	ASSERT_EQ(bss->usdt3_args[1], 42, "usdt3_arg2");
- 	ASSERT_EQ(bss->usdt3_args[2], (uintptr_t)&bla, "usdt3_arg3");
- 
-+#if ((defined(__x86_64__) || defined(__i386__)) && defined(__GNUC__) && !defined(__clang__))
-+	trigger_sib_spec();
-+	ASSERT_EQ(bss->usdt_sib_called, 1, "usdt_sib_called");
-+	ASSERT_EQ(bss->usdt_sib_cookie, expected_cookie, "usdt_sib_cookie");
-+	ASSERT_EQ(bss->usdt_sib_arg_cnt, 1, "usdt_sib_arg_cnt");
-+	ASSERT_EQ(bss->usdt_sib_arg, nums[0], "usdt_sib_arg");
-+	ASSERT_EQ(bss->usdt_sib_arg_ret, 0, "usdt_sib_arg_ret");
-+	ASSERT_EQ(bss->usdt_sib_arg_size, sizeof(nums[0]), "usdt_sib_arg_size");
-+#endif
-+
- cleanup:
- 	test_usdt__destroy(skel);
- }
-diff --git a/tools/testing/selftests/bpf/progs/test_usdt.c b/tools/testing/selftests/bpf/progs/test_usdt.c
-index 096488f47fbc..b5f883bca66b 100644
---- a/tools/testing/selftests/bpf/progs/test_usdt.c
-+++ b/tools/testing/selftests/bpf/progs/test_usdt.c
-@@ -107,4 +107,34 @@ int BPF_USDT(usdt12, int a1, int a2, long a3, long a4, unsigned a5,
- 	return 0;
- }
- 
-+
-+int usdt_sib_called;
-+u64 usdt_sib_cookie;
-+int usdt_sib_arg_cnt;
-+int usdt_sib_arg_ret;
-+u64 usdt_sib_arg;
-+int usdt_sib_arg_size;
-+
-+// Note: usdt_sib is only tested on x86-related architectures, so it requires
-+// manual attach since auto-attach will panic tests under other architectures
-+SEC("usdt")
-+int usdt_sib(struct pt_regs *ctx)
-+{
-+	long tmp;
-+
-+	if (my_pid != (bpf_get_current_pid_tgid() >> 32))
-+		return 0;
-+
-+	__sync_fetch_and_add(&usdt_sib_called, 1);
-+
-+	usdt_sib_cookie = bpf_usdt_cookie(ctx);
-+	usdt_sib_arg_cnt = bpf_usdt_arg_cnt(ctx);
-+
-+	usdt_sib_arg_ret = bpf_usdt_arg(ctx, 0, &tmp);
-+	usdt_sib_arg = (short)tmp;
-+	usdt_sib_arg_size = bpf_usdt_arg_size(ctx, 0);
-+
-+	return 0;
-+}
-+
- char _license[] SEC("license") = "GPL";
--- 
-2.43.0
+Ha!  I spent a good 5 minutes looking for a #define couldn't find one.  Wha=
+t a
+bizarre name...
 
+> How about:
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 90097df4eafd..a9582ffc3088 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -934,9 +934,15 @@ static void kvm_sev_hc_page_enc_status(unsigned long=
+ pfn, int npages, bool enc)
+> =C2=A0static void __init kvm_init_platform(void)
+> =C2=A0{
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 u64 tolud =3D e820__end_of_low_ram_pfn() << P=
+AGE_SHIFT;
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0/*
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * The range's base address and size may not =
+meet the alignment
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * requirement for variable MTRR. However, Li=
+nux guest never
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * programs MTRRs when forcing guest MTRR sta=
+te, no bothering to
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * enforce the base and range size alignment.
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 */
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct mtrr_var_range pci_hole =3D {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .base_lo =3D tolu=
+d | X86_MEMTYPE_UC,
+> -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mask_lo =3D (u32=
+)(~(SZ_4G - tolud - 1)) | BIT(11),
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mask_lo =3D (u32=
+)(~(SZ_4G - tolud - 1)) | MTRR_PHYSMASK_V,
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .mask_hi =3D (BIT=
+_ULL(boot_cpu_data.x86_phys_bits) - 1) >> 32,
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 };
+>=20
+>=20
+> I tested it in my setup, it can fix the issue of TPM driver failure with =
+the
+> modified ACPI table for TPM in QEMU.
+>=20
+>=20
+> Hi Vishal,
+> Could you test it with google's VMM?
+
+Vishal is OOO for a few days.  I pinged our internal bug tracker, I'll find
+someone to test.
+
+Thanks much!
 
