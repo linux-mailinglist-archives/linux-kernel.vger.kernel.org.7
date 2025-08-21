@@ -1,202 +1,163 @@
-Return-Path: <linux-kernel+bounces-778721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B73CB2E963
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:24:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8432FB2E966
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 154E45E0F21
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:24:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B33BB7B5D3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED731B4F0E;
-	Thu, 21 Aug 2025 00:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16F71AF0AF;
+	Thu, 21 Aug 2025 00:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ETWmkSM3"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f1pzUfMI"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383DB347C7
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75734347C7
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755735890; cv=none; b=WYCS7Ms9DMs3kgu3934DSsne5fdRfPqkfhhOKNS/SEkhugwrLNzfdzPKRPu1dUV/3ZriloywAOginS//INiqoPPvdX48CcczERcGD8fZJMnXAfhAhASdT9DP+Iw/p0pjKkZl6ZTmgXpz4q6nvnkid98UzmSpgiZf1/zsRGQ8WG0=
+	t=1755735905; cv=none; b=ok0sK/FavgMnPbFwINsqjForOiJBUr6Wy15o/hV2/Bsh8CuG43cEWfOL9diKC5k/eV8bvw8HHW/fh1v/1MgEQHLZqF0JBvO0Ooj/c+A+5vGzZZ9XNeAk8pKIYT9RTA1nbrpg+A8DXWCD1ASSXpGNRUhbRohefZNJE+SciwqFYqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755735890; c=relaxed/simple;
-	bh=ouPE6xmkeY4aYQfvv2K7TkBNeEwsezMGqf/BRWSZoPs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=H8ai0krr3wSxlOlM9tDs2TI12t4UF7JCNPvx7R7lcBs5tuA7x6g0fasI5fTpCATO8z6+YzLVUYyXagdtLh0357v1pMdFhL2ZCfQ83NOqcip3lRJkBvIxNgndiBGirXrCkENN/hNWNR1V0c7nJjh6Q1sJQ/2OZqRN83PaM5cGvzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ETWmkSM3; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b47175d5a90so297909a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:24:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755735888; x=1756340688; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZzV/mlBPnS2GvNCCcjdoQhPKlsDEhZV19xDyokbadQ=;
-        b=ETWmkSM3knew4jCVH5G/fPdTKIBoZPqAKOp1jVsLLTS0e2/BZ4V5YLnRpgRcEGC3An
-         P1gUy79f15N77K7IKol4EnaGluQdn8tJ0e+Rif0Hx8+iReWYWWECl22VzBVXACg/vB7f
-         bcC8Q2b2aL+NN6KfS87k5IxuHc6L24yf9Al3W6jMZQAsn04+rwdoJurIjqMwoqrxkirT
-         XQn9VebrZ9vOdeINiczPltkmuMjQHDmaHXxudDnffiehMoDq3ZiIIL9dKKOgkbgAYa7F
-         mg5NwwA+BY1n97BgL6SQ59xEFtiCcHT/FyASMo8qn+gMFOX6pDJtO+LIAGxvlShIKYko
-         E7Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755735888; x=1756340688;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZzV/mlBPnS2GvNCCcjdoQhPKlsDEhZV19xDyokbadQ=;
-        b=lYUBHtqjJ6zHSkdg2In0MSZV5xyGaOkTqEYoXrerafnLwKcfH3iwKbjxvFKkehPGLC
-         RSnGJH8XJhfjlpJniXXvVUqPeVRgngBW1tec26Mkbx1svPX29GJf1wsNhEmWuAswrQrK
-         AChqoy8pL8GkBIq+ZxdFlL2xiK6+GhAX9wLo42vq5a/AR02F7Hmi0AUdHhMWVaj9Agr8
-         7YObfrnccsl6Gs5EN19CfYjHnjQ1zAGMj8W7XByl40eNOTWQcAiBnFVsDDUM499vMpp1
-         dLetmJBm88kQvm6AgbpUFrgA+Net0SwVcrDJv61w6w1hKSyT511e4zI9SUV7SD7Ji6i/
-         6uIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbq6lnKFOoHoa5Fez7m0w5GLlyIzihNJuJsztSoWlwZpfJAdhChoej6WPHfCxRllm+ijkxBEPy2xDy6+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0VT6F+MRsXJB2rxu1M4lixuGo8kDBm259pFeAeTnWYnekJxU2
-	Vpf8Lt+VernoM0UDBpzmljmTWxNhhZmrvDxc9mCgTmgPms/WmpBNQsddqabFdyEbNOBUGXFjbvQ
-	TKB3ikw==
-X-Google-Smtp-Source: AGHT+IGbcGjNVYeJAsxCM13+2V27BLrczzbABDW//9tJzxcoTaUWncDgkTlsyuUrUapckiQp+ahpmhndqtk=
-X-Received: from pfbfd5.prod.google.com ([2002:a05:6a00:2e85:b0:76e:313a:6f90])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2591:b0:243:78a:827b
- with SMTP id adf61e73a8af0-24330b47cd1mr462519637.51.1755735888381; Wed, 20
- Aug 2025 17:24:48 -0700 (PDT)
-Date: Wed, 20 Aug 2025 17:24:47 -0700
-In-Reply-To: <20250722055030.3126772-2-suleiman@google.com>
+	s=arc-20240116; t=1755735905; c=relaxed/simple;
+	bh=uMIfGNHZZrwNbXqBcjHg4r4JEXQMTvawSi1ltovbTnM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lZyGhQ/J/aEVGA8t0N3tunDGHGjpgWIhjX+jlC3bJP/Mpf6mtBKVCPHgwtSOmBlU6O9+JdKGgSTKkn7pSOa/tOi0oKy3N6Gsw0joBa9l84ktkvu53RhX5m2gN2uI+tX3+tFn+cyyTCz/3eun1+Xb6d/dzUFLu7PMF+QoFrecmC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f1pzUfMI; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755735901;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FX8HTbC4t5mzQ4enhPjum2fJkgBjClbezU/1uRSatWo=;
+	b=f1pzUfMIl0HI3yotPn3qpxVBD1cKujg+g6E8HGFQ5nAimJQw+BiEoqriXFs4nxLNRKFJGL
+	NPq2l0X93eWXYRqCBpbtt9pwXN7X3O1Nwr5+RPYx9X8y+cIS9ODDvrqbh70Sn6+Gq+RDFc
+	HiORW6wg5SfKJnsYMAYau0YC1xkWHtE=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: linux-mm@kvack.org,  bpf@vger.kernel.org,  Suren Baghdasaryan
+ <surenb@google.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Michal Hocko
+ <mhocko@suse.com>,  David Rientjes <rientjes@google.com>,  Matt Bobrowski
+ <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
+ Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
+In-Reply-To: <CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
+	(Kumar Kartikeya Dwivedi's message of "Wed, 20 Aug 2025 13:28:46
+	+0200")
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+	<20250818170136.209169-2-roman.gushchin@linux.dev>
+	<CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
+Date: Wed, 20 Aug 2025 17:24:55 -0700
+Message-ID: <87ms7tldwo.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250722055030.3126772-1-suleiman@google.com> <20250722055030.3126772-2-suleiman@google.com>
-Message-ID: <aKZnT_57aPWfrfia@google.com>
-Subject: Re: [PATCH v8 1/3] KVM: x86: Advance guest TSC after deep suspend.
-From: Sean Christopherson <seanjc@google.com>
-To: Suleiman Souhlal <suleiman@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	John Stultz <jstultz@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ssouhlal@freebsd.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 22, 2025, Suleiman Souhlal wrote:
-> Try to advance guest TSC to current time after suspend when the host
-> TSCs went backwards.
-> 
-> This makes the behavior consistent between suspends where host TSC
-> resets and suspends where it doesn't, such as suspend-to-idle, where
-> in the former case if the host TSC resets, the guests' would
-> previously be "frozen" due to KVM's backwards TSC prevention, while
-> in the latter case they would advance.
+Kumar Kartikeya Dwivedi <memxor@gmail.com> writes:
 
-Before you waste too much time reading through the various pieces of feedback...
+> On Mon, 18 Aug 2025 at 19:01, Roman Gushchin <roman.gushchin@linux.dev> wrote:
+>>
+>> Introduce a bpf struct ops for implementing custom OOM handling policies.
+>>
+>> The struct ops provides the bpf_handle_out_of_memory() callback,
+>> which expected to return 1 if it was able to free some memory and 0
+>> otherwise.
+>>
+>> In the latter case it's guaranteed that the in-kernel OOM killer will
+>> be invoked. Otherwise the kernel also checks the bpf_memory_freed
+>> field of the oom_control structure, which is expected to be set by
+>> kfuncs suitable for releasing memory. It's a safety mechanism which
+>> prevents a bpf program to claim forward progress without actually
+>> releasing memory. The callback program is sleepable to enable using
+>> iterators, e.g. cgroup iterators.
+>>
+>> The callback receives struct oom_control as an argument, so it can
+>> easily filter out OOM's it doesn't want to handle, e.g. global vs
+>> memcg OOM's.
+>>
+>> The callback is executed just before the kernel victim task selection
+>> algorithm, so all heuristics and sysctls like panic on oom,
+>> sysctl_oom_kill_allocating_task and sysctl_oom_kill_allocating_task
+>> are respected.
+>>
+>> The struct ops also has the name field, which allows to define a
+>> custom name for the implemented policy. It's printed in the OOM report
+>> in the oom_policy=<policy> format. "default" is printed if bpf is not
+>> used or policy name is not specified.
+>>
+>> [  112.696676] test_progs invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=0
+>>                oom_policy=bpf_test_policy
+>> [  112.698160] CPU: 1 UID: 0 PID: 660 Comm: test_progs Not tainted 6.16.0-00015-gf09eb0d6badc #102 PREEMPT(full)
+>> [  112.698165] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-5.fc42 04/01/2014
+>> [  112.698167] Call Trace:
+>> [  112.698177]  <TASK>
+>> [  112.698182]  dump_stack_lvl+0x4d/0x70
+>> [  112.698192]  dump_header+0x59/0x1c6
+>> [  112.698199]  oom_kill_process.cold+0x8/0xef
+>> [  112.698206]  bpf_oom_kill_process+0x59/0xb0
+>> [  112.698216]  bpf_prog_7ecad0f36a167fd7_test_out_of_memory+0x2be/0x313
+>> [  112.698229]  bpf__bpf_oom_ops_handle_out_of_memory+0x47/0xaf
+>> [  112.698236]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> [  112.698240]  bpf_handle_oom+0x11a/0x1e0
+>> [  112.698250]  out_of_memory+0xab/0x5c0
+>> [  112.698258]  mem_cgroup_out_of_memory+0xbc/0x110
+>> [  112.698274]  try_charge_memcg+0x4b5/0x7e0
+>> [  112.698288]  charge_memcg+0x2f/0xc0
+>> [  112.698293]  __mem_cgroup_charge+0x30/0xc0
+>> [  112.698299]  do_anonymous_page+0x40f/0xa50
+>> [  112.698311]  __handle_mm_fault+0xbba/0x1140
+>> [  112.698317]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> [  112.698335]  handle_mm_fault+0xe6/0x370
+>> [  112.698343]  do_user_addr_fault+0x211/0x6a0
+>> [  112.698354]  exc_page_fault+0x75/0x1d0
+>> [  112.698363]  asm_exc_page_fault+0x26/0x30
+>> [  112.698366] RIP: 0033:0x7fa97236db00
+>>
+>> It's possible to load multiple bpf struct programs. In the case of
+>> oom, they will be executed one by one in the same order they been
+>> loaded until one of them returns 1 and bpf_memory_freed is set to 1
+>> - an indication that the memory was freed. This allows to have
+>> multiple bpf programs to focus on different types of OOM's - e.g.
+>> one program can only handle memcg OOM's in one memory cgroup.
+>> But the filtering is done in bpf - so it's fully flexible.
+>
+> I think a natural question here is ordering. Is this ability to have
+> multiple OOM programs critical right now?
 
-I'm leaning towards scrapping this patch.  I still like the idea, but making it
-do the right thing given all the edge cases and caveats with TSC management in
-KVM seems practically impossible.  E.g. as you called out in an earlier version,
-fast-forwarding to "now" is probably undesirable if a vCPU's TSC was completel
-disassociated from "now" and/or arch.kvmclock_offset.
+Good question. Initially I had only supported a single bpf policy.
+But then I realized that likely people would want to have different
+policies handling different parts of the cgroup tree.
+E.g. a global policy and several policies handling OOMs only
+in some memory cgroups.
+So having just a single policy is likely a no go.
 
-We could probably figure out ways to cobble together a solution that works for
-most situations, but given that no one is clamoring for KVM to operate this way,
-I doubt it'd be worth the effort and complexity.  And it certainly isn't worth
-taking on the risk of breaking an existing setup/user.
+> How is it decided who gets to run before the other? Is it based on
+> order of attachment (which can be non-deterministic)?
 
-For the suspend steal time angle, a PV feature bit means both the host and the
-guest need to opt-in.  A host opt-in means we can punt to documentation, e.g.
-we can document that there are caveats with running VMs across deep suspend, and
-the user should consider whether or not they care before enable suspend steal time.
+Yeah, now it's the order of attachment.
 
-And then if someone really wants KVM to fast-forward time (or comes up with a
-simple solution), they can have honor of figuring out how to do so correctly for
-all of the crazy TSC flows.
+> There was a lot of discussion on something similar for tc progs, and
+> we went with specific flags that capture partial ordering constraints
+> (instead of priorities that may collide).
+> https://lore.kernel.org/all/20230719140858.13224-2-daniel@iogearbox.net
+> It would be nice if we can find a way of making this consistent.
 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Suleiman Souhlal <suleiman@google.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  3 ++
->  arch/x86/kvm/x86.c              | 49 ++++++++++++++++++++++++++++++++-
->  2 files changed, 51 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index fb01e456b624..e57d51e9f2be 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1415,6 +1415,9 @@ struct kvm_arch {
->  	u64 cur_tsc_offset;
->  	u64 cur_tsc_generation;
->  	int nr_vcpus_matched_tsc;
-> +#ifdef CONFIG_X86_64
-> +	bool host_was_suspended;
+I'll take a look, thanks!
 
-Adding an #idfef to save a single bool isn't worth it, especially since it
-necessitates a wrapper (or more #ifdefs).  For something like this, I'd just
-set it unconditionally, and then esentially ignore it for 32-bit, along with a
-comment explaining why we can't do anything useful for 32-bit.
-
-> +#endif
->  
->  	u32 default_tsc_khz;
->  	bool user_set_tsc;
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index a9d992d5652f..422c7fcc5d83 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2779,7 +2779,7 @@ static inline void adjust_tsc_offset_guest(struct kvm_vcpu *vcpu,
->  	kvm_vcpu_write_tsc_offset(vcpu, tsc_offset + adjustment);
->  }
->  
-> -static inline void adjust_tsc_offset_host(struct kvm_vcpu *vcpu, s64 adjustment)
-> +static inline void __adjust_tsc_offset_host(struct kvm_vcpu *vcpu, s64 adjustment)
->  {
->  	if (vcpu->arch.l1_tsc_scaling_ratio != kvm_caps.default_tsc_scaling_ratio)
->  		WARN_ON(adjustment < 0);
-> @@ -4995,6 +4995,52 @@ static bool need_emulate_wbinvd(struct kvm_vcpu *vcpu)
->  
->  static DEFINE_PER_CPU(struct kvm_vcpu *, last_vcpu);
->  
-> +#ifdef CONFIG_X86_64
-> +static void kvm_set_host_was_suspended(struct kvm *kvm)
-> +{
-> +	kvm->arch.host_was_suspended = true;
-> +}
-> +
-> +static void adjust_tsc_offset_host(struct kvm_vcpu *vcpu, u64 adj)
-> +{
-> +	unsigned long flags;
-> +	struct kvm *kvm;
-> +	bool advance;
-> +	u64 kernel_ns, l1_tsc, offset, tsc_now;
-> +
-> +	kvm = vcpu->kvm;
-> +	advance = kvm_get_time_and_clockread(&kernel_ns, &tsc_now);
-> +	raw_spin_lock_irqsave(&kvm->arch.tsc_write_lock, flags);
-> +	/*
-> +	 * Advance the guest's TSC to current time instead of only preventing
-> +	 * it from going backwards, while making sure all the vCPUs use the
-> +	 * same offset.
-> +	 */
-> +	if (kvm->arch.host_was_suspended && advance) {
-> +		l1_tsc = nsec_to_cycles(vcpu,
-> +					kvm->arch.kvmclock_offset + kernel_ns);
-> +		offset = kvm_compute_l1_tsc_offset(vcpu, l1_tsc);
-
-This is where my idea really falls apart.  For this to be correct, KVM would need
-to know the relationship between a vCPU's TSC offset and kvmclock_offset.  The
-simplest thing would likely be to do something like force an update if and only
-if TSCs are matched across all vCPUs, but trying to reason about how that would
-work when vCPUs account for the suspend time at different and arbitrary times
-makes my head hurt.
-
-One idea I might fiddle with is to snapshot get_kvmclock_base_ns() on suspend
-and then grab it again on resume, and use _that_ delta for tsc_offset_adjustment.
-But that's something that can be pursued separately (if at all; I don't see any
-reason to gate suspend steal time on it.
+I hope that my naive approach might be good enough for the start
+and we can implement something more sophisticated later, but maybe
+I'm wrong here.
 
