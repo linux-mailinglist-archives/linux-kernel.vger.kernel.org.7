@@ -1,119 +1,149 @@
-Return-Path: <linux-kernel+bounces-780121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721FAB2FDDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:11:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD91B2FDF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17DD61899F61
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5DA17EAD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA424261574;
-	Thu, 21 Aug 2025 15:05:10 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA23F26CE0F;
+	Thu, 21 Aug 2025 15:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkP+L5A4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BB625DAE7;
-	Thu, 21 Aug 2025 15:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B21D265606;
+	Thu, 21 Aug 2025 15:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755788710; cv=none; b=fJqvXXtmgYzmGTk4u75zV/9xmwTvgv2ILo2ec34PdI1WECJcR+gz6SzWY+HaSKok7NZWgDm5XSgU9emTaUdGdCOHamN3ToapfsM40jVzqKniu+HMv5eFTP6kqjxHGEYJ9V/Gz7KqhtdqStOaX1weUHZhy4IWXi5S4yAH7OVgtXc=
+	t=1755788767; cv=none; b=S7hZmHHedSAi8OTvq1eemyodXNQE0r5F5aCv7zgw4T9AnTK6YeJB/ZZINZqKbguOZZrOJrhn9cQ+ZTVR/BufF1VZiPsgXFan4ZFXB5/c3ZETeHC7EtMiaEw7dwNw6/VBq1Qrcwt9B2jO6QMN0JSlnCloxK6NpZFdYHhhqOFGg9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755788710; c=relaxed/simple;
-	bh=bJQig0T9oS6xig+yQQJGTH945hEMJoQh0QjDQ23dq8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mmj5uPU3Uv3/av8VhjjWmOADtnzl2XvxPCgfg5o7zvIlchX7GiOsZVw9O742qrj7JrzhRsaQyjk9+rdIY76VxXYSxpTQFpAhr8ZU/V9tSbHacCKbUDNMwqQOq3s9B3mfU8plaC3iF9PkQLJZAoaoMrWY87QYeFz5EgbmzZcPxqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id E21D41A03E6;
-	Thu, 21 Aug 2025 15:05:00 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id DE2272000E;
-	Thu, 21 Aug 2025 15:04:58 +0000 (UTC)
-Date: Thu, 21 Aug 2025 11:05:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tengda Wu <wutengda@huaweicloud.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ingo Molnar <mingo@elte.hu>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v2] ftrace: Fix potential warning in
- trace_printk_seq during ftrace_dump
-Message-ID: <20250821110503.5f5c3156@gandalf.local.home>
-In-Reply-To: <20250821021120.2986553-1-wutengda@huaweicloud.com>
-References: <20250821021120.2986553-1-wutengda@huaweicloud.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755788767; c=relaxed/simple;
+	bh=9c+DmefedBCjSps1/tVd1qVVcibiDPyr2DDXDxuPlSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i0KJe3Izr9tFscQI4MfWowpraRGPHEEZYHOAfn3NkxlYr48BZAC7hE9dIn9TNqFTfidng5pDcLOc9tryUPPEVoUcg0gfF2QH3rt40ym4uf3d5GzRP6Nqi5JifX8VQ8lFQXKafuEe99gxeOyPo9kAbac0o4K29NuCHyiXS+6XBTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkP+L5A4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DD6CC4CEEB;
+	Thu, 21 Aug 2025 15:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755788764;
+	bh=9c+DmefedBCjSps1/tVd1qVVcibiDPyr2DDXDxuPlSY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jkP+L5A4ajl1eI9D8jrZEkScbDIVfmlZFgtnjDYeG5Jx30+moGq3efcCB5w/Lohsx
+	 s3Xji2vaMf14OPdkg5ATWWBUJKfrfCeOY4foWGk78wnmgHbLlr2NUMnxwXpzqZiKIs
+	 QGC1QWkBoEXEak3REj4vJMJKp4MHFbM1J9h204ZNuQsKxaO7A+hJ412sCITMe4FC1w
+	 ntUdBQE1NP4ZkDPlmr7Raxw66c+ox17FzzOGq33F2MQuJIjl/HN+ZNv2B/WeCXrgbh
+	 7cm6TaijwQGJ7Zb8Gmi1cq3yDqR4JZjURop7PwSoZbq4aBrRkQF4FOX/POqcQNUjQP
+	 sazLv0JqX2Alw==
+Message-ID: <4a60c3d3-11fb-40fb-8686-3d83539f250b@kernel.org>
+Date: Thu, 21 Aug 2025 17:05:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/11] firmware: qcom_scm: Add
+ qcom_scm_pas_get_rsc_table() to get resource table
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
+ <20250819165447.4149674-8-mukesh.ojha@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250819165447.4149674-8-mukesh.ojha@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: DE2272000E
-X-Stat-Signature: w3ibgc48qu3dkmyw4ekyfohtqiqw1x79
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18ThLyse5WuRnvVDb7JRaiuDEqLg6xGPpI=
-X-HE-Tag: 1755788698-787842
-X-HE-Meta: U2FsdGVkX1+e0KzmUl1+S6s7g6fTli/DKzqp5x5YkgvaM61Vjs8OSC5PWmAg3nDZkm2WHiZfH7k9N4FNZM2AdqdutQI4YlIl2thCFlcahyFb1NewzHWFPgCeQ5y7RcDznNC9hV+ja6I4yAMIONF2VIUITjXNveED/FD5ahoJtEgp6J2SmheC9l+9l1cXiluVneh7+DEeokFygg76ZnGeQ6wUl06GOVJDlixE0bVcofgDgt5yuzivSv8G5NdMe7FJnnnrslS4KZNRBujc5rY0ZUE7dhns9MDbRe4ijlKykyHLMEPkK+qZE6F5iJV1DBkdRx8tGIOixbxBzJC9e3Xh+S/Et33vKOyp
 
-On Thu, 21 Aug 2025 02:11:20 +0000
-Tengda Wu <wutengda@huaweicloud.com> wrote:
+On 19/08/2025 18:54, Mukesh Ojha wrote:
+> Qualcomm remote processor may rely on both static and dynamic resources
+> for its functionality. Static resources typically refer to memory-mapped
+> addresses required by the subsystem and are often embedded within the
+> firmware binary and dynamic resources, such as shared memory in DDR
+> etc., are determined at runtime during the boot process.
+> 
+> On Qualcomm Technologies devices, it's possible that static resources
 
- tested this and was writing the change log for the pull request when I
-realized an issue.
+It is possible? Only possible?
 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 4283ed4e8f59..b4cec22753ea 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -10617,6 +10617,7 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
->  	 */
->  
->  	while (!trace_empty(&iter)) {
-> +		void *ent;
->  
->  		if (!cnt)
->  			printk(KERN_TRACE "---------------------------------\n");
-> @@ -10625,17 +10626,18 @@ static void ftrace_dump_one(struct trace_array *tr, enum ftrace_dump_mode dump_m
->  
->  		trace_iterator_reset(&iter);
->  		iter.iter_flags |= TRACE_FILE_LAT_FMT;
-> +		ent = trace_find_next_entry_inc(&iter);
->  
-> -		if (trace_find_next_entry_inc(&iter) != NULL) {
-> +		if (ent) {
+> are not embedded in the firmware binary and instead are provided by
+> TrustZone However, dynamic resources are always expected to come from
 
-Why do we need "ent"?
+So dynamic are always in TZ?
 
+> TrustZone. This indicates that for Qualcomm devices, all resources
+> (static and dynamic) will be provided by TrustZone via the SMC call.
 
->  			int ret;
->  
->  			ret = print_trace_line(&iter);
->  			if (ret != TRACE_TYPE_NO_CONSUME)
->  				trace_consume(&iter);
-> +
-> +			trace_printk_seq(&iter.seq);
+And now all of them are by TZ? Previously it was only possible?
 
-Isn't just moving trace_printk_seq() enough?
+Srsly, what sort of AI hallucinated slop it is?
 
-The code is no different with or without the "ent" as "ent" is not used in
-the if block.
+I think this is pretty close to proof that your submission does not meet
+criteria of open source contribution.
 
--- Steve
+Did you run any of this through your legal process in Qualcomm?
 
+I don't trust any part of this code.
 
->  		}
->  		touch_nmi_watchdog();
-> -
-> -		trace_printk_seq(&iter.seq);
->  	}
->  
->  	if (!cnt)
+Best regards,
+Krzysztof
 
 
