@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-780308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22575B30043
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:41:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19AA9B3004B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 190EEA28048
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:38:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6A2A5A4DA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283802DFA5B;
-	Thu, 21 Aug 2025 16:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65C82E06E4;
+	Thu, 21 Aug 2025 16:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t8ENoNUY"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MLH6AIb8"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262F8224225
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 16:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52012E03E8
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 16:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755794310; cv=none; b=nskd/TeJjhzmSjggXTDS4/8k/O5AkKGDhhtogewjEkQu6R1LwjNLQ3qDlsCbiE8e1r+eZ3Lf/GJ/e6VqgRwqmB6pii0M81sVnnIgirZIYLqVnVwzL6d7oTHrTvFFupZBbnHw7OlHCJRY87rDPXqqVgqincOuXcUwOe0H0GOuM9o=
+	t=1755794312; cv=none; b=FTGR4C04NYjbrRE/L74UJZyKEH7Zz+rKdEE5HtlI6ubehoV80mn1cWByg+DSisYp29x+NWophVAOjRhgAjWYKWyyqKPDfkA0CzmTnsGnwg5YH38G8LVRsyrnliEYh7G+GdFprHlwOlsnWAaWux1CrparMWEOkYJFW+L+Kcjb+H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755794310; c=relaxed/simple;
-	bh=FmSZRX3koaRc5xVjwiZ4Y+oDfi8L1Fq1v8ZCc/U6jCU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=T4qTJ6gblAwpFPVTfDbR1bEM5gZbK6kfeAORzPzyGVdx+k8adADHp7UaZP9uo2TGvhKIvLX7ml4wV8IkoJkC3OYFK33tIFbOZP1Lfx2CY409tuJZJ36veChJGOGP1R2TdLqWotApIqyQjbp2TmR/8RTJy/Yalp05dtDkdWTTI+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t8ENoNUY; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1755794312; c=relaxed/simple;
+	bh=8n1sV62Nfazy06tMYoFP1zPSTaaez+AvZXx0FOsaOao=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=rnOdnGy1FIQFqEBKpekrDFJrmZvsVBbNygzkBJkm+JcZzFCERmqgyOePRI3htqw7mc9v3u8Y5yvdan57tI2XWqVKVFNXNUWcAM2J9zixTqRFngxdVu8wi379zxnIXsm2fwWxdXp+QZ+GNCR0Sv/r0m+pLZKoUw+n9GaPdgaB2mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MLH6AIb8; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2445806b18aso15105275ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:38:28 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-324f2d61681so1100255a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:38:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755794308; x=1756399108; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=W1pc3BsmB+4h6SdwgDkAJflcNWhD+GOK23UuzPvNCfo=;
-        b=t8ENoNUYCyvfeTkHktjan8UghEpjFqsHjjwqOyc1lTCusMWQYl5TUB97nByIfHwd2k
-         8pygEpEU45RIaAn3SWy4SLqa7cnFh7qCH9fKcmsKvf7Zg4sjIz8t+s8gJwrQlXKtGCzm
-         6g8uqWyxd/8EHDCLQE06oH5cfpmCAplyRHX2ywD4g4jusaW3wFFR7E/jTpfjdkJPd3RO
-         h+hUhn8G8MBKzq6WEkTTPsq227ChYqRHRxyiQ1TTqxuHLV4ufN4Dl4SO/OYFiJ/rmzGc
-         5NXQjaQ5Wo3D6vamw4y+5reEAvwbz9JJfEflA+kdXJcXd0ZsLdMwlISnU8JiYBSkkpCa
-         5EgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755794308; x=1756399108;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=google.com; s=20230601; t=1755794310; x=1756399110; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=W1pc3BsmB+4h6SdwgDkAJflcNWhD+GOK23UuzPvNCfo=;
-        b=Dmt0SOxf7/XBFD1ry/UNPW5Jmb4wxT8EaIA9IhAWaKeXAlh2puN1evZJqXJWEcuu7E
-         5WPJozu5yx1qpZJwPZ9+1j3/5A3QcHW8GEuwAqeURpjq/Tx9MGkKvbGpf8q4PzmExUfd
-         8/zjoNDAxE+pbVsyb5vKPO0KES22/8yCb3arfEltpQoap54LRXzzalTHkiQtB1QAV5ui
-         LSd3+PXT/N9EKMKQ2jP7Ndp8GUKQsxqjztp6dgK3FFVAEsWpMsatTkS2HHH1bvVqa2XJ
-         qlCoJxLl00nCFV5r41n+WqURX6k3bap/yQD9AkQWfsQ8q+C9j/kbB4Kln8kPywFxq1LD
-         VaAw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+AffHU042o7alZIrOEn5HIMuirHwcCap9xzOCoNe83vPEj/CmM9p8A/+5tseDlnkkoCDcLfgOc98YTes=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/u13CFjpP7gKb0LaS6c4hggjgzsvGGc6wgk6i+DLJLa2sA/tC
-	L2LfodAF/xX2NRYskN87KUb4ltabPXhFNWprvgjX5xJcXUl2PJ9MlW3j/ogJ55laSay0ltE+10E
-	IdW+6F1oX3w==
-X-Google-Smtp-Source: AGHT+IFt9Ngz+QPPxTxk9IR/2Mz2ApN9qOA4RZARGm+TgXKmf7I0vyXwgMSWF8q54fYHcE9PdsXwH0d1Xdwr
-X-Received: from plge17.prod.google.com ([2002:a17:902:cf51:b0:246:500:6de8])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:c9c5:b0:240:41a4:96c0
- with SMTP id d9443c01a7336-2462ef21b46mr1155ad.29.1755794308363; Thu, 21 Aug
- 2025 09:38:28 -0700 (PDT)
-Date: Thu, 21 Aug 2025 09:38:14 -0700
+        bh=PUbXtlHAwgGqqJx9+B1gHsCORD+CThrnBxlTMp4vr6o=;
+        b=MLH6AIb8TBJAtYXywWGfcAhiNB0/0JPrFpbFlvXpXtc4z1OPaaWjTcUl+wKTs+ADh4
+         FaLq4POAYL7oh2RHHoUHwFaAgwQXvrQSNMIfpCPqxJ6+ThOKGfthY0Mwk+t7x6rwxWY6
+         0DfmmRAm9OuYG6zjxySTzfddLllUe56KNpGqmZL1vcAQfBhGQaB7I1vfRq46mMKGFp3j
+         JqNlLwdtTwOvzdD7G9EXAvzO58kkP6FEEBd8yph3Vj6ZQnuuiu+TMGfsAzgvpxavHOge
+         esnEkCTXieqFcdYHA5cg4VAHFETvcbwotNdl6c20Iz3Bo34h7QUEGcNozFr6gnPsPKNr
+         Xamg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755794310; x=1756399110;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PUbXtlHAwgGqqJx9+B1gHsCORD+CThrnBxlTMp4vr6o=;
+        b=oUza46Uvl8qT59VFezaxdWieYNbg42YL4uNvpuCAD4QXeokDaw4lxtW/XNA6KVH7r4
+         V9yoeIdt0mhbcUskA7mMKw1lIIbXPb+o0Q8d++UJZcGwnpmcgumh0pS+hKJiChXYonUS
+         K2WYwIY0YUw9lzOvJ5YjWrkq5rdFykqfjqEbTLOrFq2UJ+OYXG0MHzV1mS6tkkB9Q/LN
+         mwkbYgXDe4cX5je+0wbEhKIdJAqG786UVQUdKuad42FlEE45sWdxikzj6wDgkHI9DxUd
+         VVcMXglYXQzYv34IJmcd6Q/iHvl8+XzpbuK1gykZeBIbUjduUEx1safYq1fpu8vA8ohK
+         NZlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxvHXvdwC4+CkVb4GIR72EAhAxfGEGqFURF0wG/6CZCX96MpKQqHCXvewYxtnbCWS0kXskneTI6V/oa+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2wtioVbEOhB1SWfowVr+z7ZvX/p9spYo78s1sQK2qQCJYwV6a
+	aIce/j6MfTUcw1WG0IiK/ztHCAmdj+8E69Ce83KNZWzYCRw7LfeRp1LzWMnThHx2Jtu5ymhPyTb
+	fNh89s2x8JQ==
+X-Google-Smtp-Source: AGHT+IFC0FPH58EcxYNCNsDlbFVM2eQ7zXRysU3PWwwtUJGNFehDhJ+ieRWR9RCSFQjUoENWksgGJ4sctYWc
+X-Received: from pjvb16.prod.google.com ([2002:a17:90a:d890:b0:31e:c1fb:dbb2])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2644:b0:31f:335d:3424
+ with SMTP id 98e67ed59e1d1-32517c23cfcmr166650a91.27.1755794310098; Thu, 21
+ Aug 2025 09:38:30 -0700 (PDT)
+Date: Thu, 21 Aug 2025 09:38:15 -0700
+In-Reply-To: <20250821163820.1132977-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250821163820.1132977-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.rc1.193.gad69d77794-goog
-Message-ID: <20250821163820.1132977-1-irogers@google.com>
-Subject: [PATCH v2 0/5] Various fixes around undefined behavior
+Message-ID: <20250821163820.1132977-2-irogers@google.com>
+Subject: [PATCH v2 1/5] perf disasm: Avoid undefined behavior in incrementing NULL
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,32 +90,40 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Fix various undefined behavior issues, improve tests to make them
-easier to diagnose and add assertions so that problems don't recur.
+Incrementing NULL is undefined behavior and triggers ubsan during the
+perf annotate test. Split a compound statement over two lines to avoid
+this.
 
-v2: Add Namhyung's acked-by. Drop container_of assert that ptr !=
-    NULL, to simplify the series. The bsearch UB fix was picked up as
-    a patch by CT:
-    https://lore.kernel.org/r/20250303183646.327510-2-ctshao@google.com
-    It seems this patch series fell-through the cracks as v1 was
-    sent/acked 9 months ago.
+Fixes: 98f69a573c66 ("perf annotate: Split out util/disasm.c")
+Signed-off-by: Ian Rogers <irogers@google.com>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/util/disasm.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-v1: https://lore.kernel.org/lkml/20241213210425.526512-1-irogers@google.com/
-
-Ian Rogers (5):
-  perf disasm: Avoid undefined behavior in incrementing NULL
-  perf test trace_btf_enum: Skip if permissions are insufficient
-  perf evsel: Avoid container_of on a NULL leader
-  perf test shell lock_contention: Extra debug diagnostics
-  libperf event: Ensure tracing data is multiple of 8 sized
-
- tools/lib/perf/include/perf/event.h       |  1 +
- tools/perf/tests/shell/lock_contention.sh |  7 ++++++-
- tools/perf/tests/shell/trace_btf_enum.sh  | 11 +++++++++++
- tools/perf/util/disasm.c                  |  7 +++++--
- tools/perf/util/evsel.c                   |  2 ++
- 5 files changed, 25 insertions(+), 3 deletions(-)
-
+diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+index b1e4919d016f..e257bd918c89 100644
+--- a/tools/perf/util/disasm.c
++++ b/tools/perf/util/disasm.c
+@@ -390,13 +390,16 @@ static int jump__parse(struct arch *arch, struct ins_operands *ops, struct map_s
+ 	 * skip over possible up to 2 operands to get to address, e.g.:
+ 	 * tbnz	 w0, #26, ffff0000083cd190 <security_file_permission+0xd0>
+ 	 */
+-	if (c++ != NULL) {
++	if (c != NULL) {
++		c++;
+ 		ops->target.addr = strtoull(c, NULL, 16);
+ 		if (!ops->target.addr) {
+ 			c = strchr(c, ',');
+ 			c = validate_comma(c, ops);
+-			if (c++ != NULL)
++			if (c != NULL) {
++				c++;
+ 				ops->target.addr = strtoull(c, NULL, 16);
++			}
+ 		}
+ 	} else {
+ 		ops->target.addr = strtoull(ops->raw, NULL, 16);
 -- 
 2.51.0.rc1.193.gad69d77794-goog
 
