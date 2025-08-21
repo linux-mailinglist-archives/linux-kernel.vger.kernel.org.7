@@ -1,148 +1,130 @@
-Return-Path: <linux-kernel+bounces-780092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495FBB2FD4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:50:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF532B2FD96
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 428C87A7377
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:48:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8A65E04F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB70C2EDD4F;
-	Thu, 21 Aug 2025 14:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27992EDD41;
+	Thu, 21 Aug 2025 14:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sv0wCK/M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="THjQbHDj"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC001FF1B4;
-	Thu, 21 Aug 2025 14:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3308284B2E
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755787785; cv=none; b=lzHqFT2Bamqa5LJKmLOTRWqIznIyH9xSQ9ZLsMar72UiCHn5dzms8LH+hFV4bZhjZ3Vsqnd1BNRIGQ9scHQDQYBrjKv8ztqUmUbFm/YLM+ThEX0E2HyxLltikZ7Yg+eTH8mve/Gn8TUJI6jEmJ8GH9vlZILur4XIVcU9Ke4vHFI=
+	t=1755787838; cv=none; b=AJtzJCXwwM62iJk6B5hletcrpeOXzUNqJLYqGNq7Yo98p1fjolSqv3hQ7krmtuJ3Fu42zLvAr8hrDKk6dcJ+uYfJpEEVadAyeFrd/4HbvpzmucLmMsn8Pot1CcFErmvkcaeKsXnYvF8Ez8NKdv2Sb6GW9A31hXe5oElm+avII+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755787785; c=relaxed/simple;
-	bh=4kHSoKbzH1VsNCZ4lhP60elvvkZwQ3ujTwXQge/bTxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bw5xUYq59LFEaOtIDTAqk665wA8h6BkwB70hc4E4Qj/Z8Iv4ApjcVKhLxUsuTVlKXzxqeaYq4AgvW1WNgXG7ye8JppbNj/68mwK0eDNr+nEwbFIQqZGu3/aZidQz8Az/DMjf3dTn1REbWOSwdTSTvSuLX5WAhAvp+qgAWgr2so4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sv0wCK/M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF61BC4CEEB;
-	Thu, 21 Aug 2025 14:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755787784;
-	bh=4kHSoKbzH1VsNCZ4lhP60elvvkZwQ3ujTwXQge/bTxw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Sv0wCK/M6NZsk/XL8JPYa4DMdGP+mhSBHn7hkL+BxD4f/A4a3sYVHcmGnJ+4di3wV
-	 5H//DdWs7MPwYoYZy1qMB6AbI0T6scTkG8LCSwDXW3igDp7UEnql29vZwuf2+x4WLi
-	 peerGwzpC/glLK68QCqOChH2T4T3YAiW/zQGXwLXrwiahE9Wc/uYU8TlmLqTO2g8H6
-	 4z6ZK7nZoFlpVmpPgMvXqWmBdOtiSQAfwlMXckcgh2xYkOztSBn/eLgWhxAzI96sPO
-	 sMtDP8ccfmXUaFj5ZOCfMaj4Qr3zsH8Q22sJ+NSCGBJVUfzA7Lf5KP1C8bK52RkE6B
-	 EGeNrRyFGec2Q==
-Message-ID: <da22b26a-99da-4dae-9c46-2f871e45faa6@kernel.org>
-Date: Thu, 21 Aug 2025 16:49:39 +0200
+	s=arc-20240116; t=1755787838; c=relaxed/simple;
+	bh=GH8+AwypDZSc5Wk9KNNPh/6qRQD5BUNBbwVozKXNp8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KsE0cVmKc83SGbHIDO1ZYspqpuYlfihpxBiM27kFuFPphUypKhrOkW81luaDYu0WVLVu/ZCV9YaotYzgUrVJDd05esMfhu8RzGgI8cWQJzFyuiY73NmdaK0ueOlJKpNuudqiK48aLylgJUszFahcs50Fa4jnMMSo7xFPkYLWJ8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=THjQbHDj; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e39ec6f30so1056205b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:50:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755787831; x=1756392631; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yjqHieTqBHy+cNT3ZdROla3bmT3OzWvs9RzgpXfbZLc=;
+        b=THjQbHDjv11//lACWeHb8qIey8DijCVUsh6cVXDb++r5Z88f6nXUjSAsUnlAg5SNGY
+         3RjNdhbKl/0YuZPh1iEtK4IZAe9u2gLAgO67b2ewiaAsiYfyp6sLlyGoGPYaiQERUlHA
+         RONiA4VOkc6eCZM+/KRYP/pDG8ScwaAqfdCxM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755787831; x=1756392631;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yjqHieTqBHy+cNT3ZdROla3bmT3OzWvs9RzgpXfbZLc=;
+        b=rvXflbxGXy3z/Bw9zPmQxDOKYaGlssrvbKC67bbThNr+b3s8oEQ6Hoi1XBZgmmAtWH
+         +eabsvtz67ZZFQSTf/VGvXrAcU5S3lXIR4VYym3AT7qqv9A6k3VUVG9n6KFkHOkrFUsw
+         3DMRUAcknjZOT75pdvEttlOE9Hy5jwQWcGpEtop0fEaxNULNlojoL2sua8UTo+kS0oZh
+         lvFktjAYfcM6BhW3/Wv0TyxkVfsRSiL8UmWcdDAhW4U3CUPFLS/YeeBgq4HTHv/eBD7i
+         isGwVKh4jyXicgPnwWkim05XBaC1JRnj39+lV0HmpEBKvnxVOiajylQDhTQ9se7l+zDU
+         t2ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlK6Hz5PWPfE9zXBlLPV/lvm95S9Tcu46ajTnUoVpheQbO8FB7QYh98SKUYZFFkqjwMonS2wV+Fta2noM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbWps25jCHVluDRb5nd/8fxGDHoBjk974lMo43c67zGpgnQAg4
+	2yRcE8zwr1ernv96FkXuaU08xuOhvtsHRK+6xZ2ZfVkNYyWmpDkETs4hPiYnAthYh4/Zl+av6+0
+	w6Y4=
+X-Gm-Gg: ASbGncvT0zGHQuBX0Lph/6OyR6vq/qF/Hj8WU5hxnIuxnq2cNsjT/6XQylMJ5h+EeLw
+	flvA+L/WFoxjDXbBJt2v9uep0dLRKtQYJuXAv7+kv0jJdMmMKuC9voKbnBV8XaQqSI8xAK3TxMF
+	ueiio278QE2uN8UTkCInHFABXdeXbyk0wZhsjduGtgAnecHaBiDtSszvwPUNj1wdJ1pOhjnzGnU
+	PA1oMml6/8aeHCvVtdiiDB+A30TRqQs1exSFGmvChNvUqgpk4Rqzyx9DqxQqscf/mt9Mh+dyDsu
+	LdUFFPWjzm5W7fj9EJfsj0mV+uke6xZH/KqwStGOrUpdNh9ijoVxHqC+luWEG5xk7dVZKLirKSk
+	k5kG4hDYkVGzU7xjL96epVagKb4nXnSIGl+rJaz6Wg5atpuBuXl9nDlzSsKN+ZjtS3bLergnbJh
+	Wa
+X-Google-Smtp-Source: AGHT+IFq/4YdOrX2lDT9d1+Oblj0jUKS0C24Wpw4jDJMLQlzh9OeVJtAFlhtUVN+e2QxQaRdjXL5LA==
+X-Received: by 2002:a17:902:d4ca:b0:240:7753:3bec with SMTP id d9443c01a7336-245ff871294mr34154755ad.51.1755787830931;
+        Thu, 21 Aug 2025 07:50:30 -0700 (PDT)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com. [209.85.215.177])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed375db3sm58089235ad.59.2025.08.21.07.50.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 07:50:29 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b472da8ff0eso696719a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:50:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6PDtj1EVRhPt+X1O48sZk9TpFF0FcaJvl2k0EvMv6p4RkiiA/jBqREcvRTrLaDHXz8EUsKSqlHEeMH0M=@vger.kernel.org
+X-Received: by 2002:a17:902:f550:b0:244:214f:13a0 with SMTP id
+ d9443c01a7336-245ff871cf5mr35274985ad.52.1755787828128; Thu, 21 Aug 2025
+ 07:50:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/11] remoteproc: pas: Extend parse_fw callback to
- parse resource table
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
- Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-10-mukesh.ojha@oss.qualcomm.com>
- <aKWI-izL5BooL61p@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aKWI-izL5BooL61p@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <aKcRfq8xBrFmhqmO@stanley.mountain>
+In-Reply-To: <aKcRfq8xBrFmhqmO@stanley.mountain>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 21 Aug 2025 07:50:16 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WMu9YJgkkqTEpKEzPdMUka8tYzPZVKEeh501-mSsh4uQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwRHXd6Q5sCwpiasX5YznwxVtKCHmDt34fauOc1r6Twa8Tf38YLNCLnydw
+Message-ID: <CAD=FV=WMu9YJgkkqTEpKEzPdMUka8tYzPZVKEeh501-mSsh4uQ@mail.gmail.com>
+Subject: Re: [PATCH next] drm/panel: jdi-lpm102a188a: Fix error code in jdi_panel_prepare()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Brigham Campbell <me@brighamcampbell.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20/08/2025 10:36, Stephan Gerhold wrote:
->>  #include <linux/slab.h>
->>  #include <linux/soc/qcom/mdt_loader.h>
->>  
->> -#define MAX_RSCTABLE_SIZE	SZ_16K;
-> 
-> I'm confused why there is a semicolon here suddenly. Did you edit this
-> patch by hand?
-> 
-> Applying: remoteproc: pas: Extend parse_fw callback to parse resource table
-> Patch failed at 0009 remoteproc: pas: Extend parse_fw callback to parse resource table
-> error: patch failed: drivers/soc/qcom/mdt_loader.c:22
-> error: drivers/soc/qcom/mdt_loader.c: patch does not apply
+Hi,
 
+On Thu, Aug 21, 2025 at 5:31=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> If the mipi_dsi_dual() macro fails, the error code is stored in
+> dsi_ctx.accum_err.  Propagate that error back to the caller instead
+> of returning success as the current code does.
+>
+> Fixes: a6adf47d30cc ("drm/panel: jdi-lpm102a188a: Fix bug and clean up dr=
+iver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-This is very, very odd process. Editing patches POST format-patch or
-post b4 (wut?) is a serious warning sign.
+Thanks for the fix.
 
-Few commit msgs also bring attention to possibility of AI, therefore
-please clarify:
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Did you use AI tools (qcom internal, external, any LLM/AI related tools)
-when writing that code, formatting it or creating this patchset?
+Since it's straightforward and a fix, I'm not waiting and I'm pushing
+to drm-misc-next.
 
-This is very important, as it create might create legal risk and
-everyone should be aware of it.
-
-Best regards,
-Krzysztof
-
+[1/1] drm/panel: jdi-lpm102a188a: Fix error code in jdi_panel_prepare()
+      commit: 61ce50fd8196c8782b9620bb60d33649ec429f64
 
