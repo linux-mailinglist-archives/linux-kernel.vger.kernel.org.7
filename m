@@ -1,223 +1,142 @@
-Return-Path: <linux-kernel+bounces-778786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192ECB2EAFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:55:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0362B2EB06
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B835881BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:55:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4F95C75A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACAD25DCE0;
-	Thu, 21 Aug 2025 01:55:00 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCCE1E5B70;
-	Thu, 21 Aug 2025 01:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DCC292B4D;
+	Thu, 21 Aug 2025 01:56:37 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3292A288504;
+	Thu, 21 Aug 2025 01:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755741300; cv=none; b=QUPhzsX1dfvoDzNQX2P/MGwhM3ZIRxSKPnGIZqZWF7/P73WT+A9ABmF8f6ILOQfRaXftlOkKYEWupq3UaKXFHjzij5F184Nbgk1VXyFEtIaGEJZlw0vIw+jiANadS7tpHxixpMkiRPNP+EzpwlsTxgDII79cZCwFMCTe/y0QxjM=
+	t=1755741396; cv=none; b=kYA7dTVBt8ygtvLbU93Pk0qzRDhIFXQBvXtv9r/e3IUkxDJChu60TqofloNRmXZr/bUtxYK842YAkD1BN0lZTgIaGB4Ue99ALhiMcdEl8SSurpLgAO7cibQTnVtdiB1Btx1PIrJ6FcFUQFm02Ox5jfiF4M+qhN3c0lF/OZM+G9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755741300; c=relaxed/simple;
-	bh=ftVHyoR0REzwlwbsKeVJCSsTvphT02LmiD7RbuxVDmY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HtQ9v+ne79Upe6WALF8r8VZx7TuFT/SWDiXVgb0OnxnMuJqBI39hXg0t8zaU0qxDds1xi3Wr7pF6Ikc2D+4xUFMukynoBo1JLT8ybrnFKb0yVrc5sqOIWkLk0nYhaIkL3dYg8dADMGXTMMM3SxlJoUjJ+x7t3mHpI7Kq9Fmftyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: uCH/36kVQRCPhph3eqqG2w==
-X-CSE-MsgGUID: bjCfyUpdS7C57aalFwN9QA==
-X-IronPort-AV: E=Sophos;i="6.17,306,1747670400"; 
-   d="scan'208";a="124123840"
-From: =?gb2312?B?1uzi/ces?= <zhukaiqian@xiaomi.com>
-To: "rafael@kernel.org" <rafael@kernel.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>, "christian.loehle@arm.com"
-	<christian.loehle@arm.com>, "quic_zhonhan@quicinc.com"
-	<quic_zhonhan@quicinc.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] cpuidle: menu: find the typical interval by a heuristic
- classification method
-Thread-Topic: [PATCH v2] cpuidle: menu: find the typical interval by a
- heuristic classification method
-Thread-Index: AdwSPR9RpJ1m/pSHR122I7B8+vG7xwAAPOVQ
-Date: Thu, 21 Aug 2025 01:54:53 +0000
-Message-ID: <f2bab6677d4b4fe585f7e01b1e490717@xiaomi.com>
-References: <ec528693bdf84a61829427c4988bfa85@xiaomi.com>
-In-Reply-To: <ec528693bdf84a61829427c4988bfa85@xiaomi.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1755741396; c=relaxed/simple;
+	bh=rB1BGf26IEIKquulbtzHM2s9bSe26Cv/iAmfPf+I+1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G4q2pYqLwNnT8lIFqrM5hTHgormSxZ1kl0/YxecLrrXYknudztNahiAjEs5qC4GP/TGJcjVEtL0zVQiz3INQT77BEivpSxUXI+7lTozVb7vmRHFN7MQh3IMcjFsE/P4Rz3F3hNTj5xrLyuJg9OEapJ6bIgPqpagHsAHpRMkQPI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c6mXR14Snzdcfc;
+	Thu, 21 Aug 2025 09:52:07 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 750DC180B63;
+	Thu, 21 Aug 2025 09:56:30 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 21 Aug 2025 09:56:29 +0800
+Message-ID: <80706fff-ca22-45f5-ac0b-ff84e1ba6a8b@huawei.com>
+Date: Thu, 21 Aug 2025 09:56:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] netfilter: br_netfilter: reread nf_conn from skb
+ after confirm()
+To: Florian Westphal <fw@strlen.de>
+CC: <pablo@netfilter.org>, <kadlec@netfilter.org>, <razor@blackwall.org>,
+	<idosch@nvidia.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
+	<bridge@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250820043329.2902014-1-wangliang74@huawei.com>
+ <aKWyImI9qxi6GDIF@strlen.de>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <aKWyImI9qxi6GDIF@strlen.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-TWVudSBnb3Zlcm5vciByZWxpZXMgb24gZ2V0X3R5cGljYWxfaW50ZXJ2YWwoKSB0byBmaW5kIHRo
-ZSByZXBlYXRpbmcNCmlkbGUgaW50ZXJ2YWwgZnJvbSB0aGUgaGlzdG9yeSwgYnV0IGl0IGNhbiBu
-b3QgaGFuZGxlIHRoZSBjYXNlIHdoZW4NCnRoZXJlJ3JlIHR3byBvciBtb3JlIHJlcGVhdGluZyBw
-YXR0ZXJucy4gVGhlIGNhbGN1bGF0aW9uIG9mIGRldmlhdGlvbg0KYWx3YXlzIGxlYWRzIHRvIGEg
-c2luZ2xlIGNsb3NlbHkgY29ubmVjdGVkIGludGVydmFscy4NCg0KSW4gb3JkZXIgdG8gZmluZCBh
-bGwgdGhlIHBvc3NpYmxlIHJlcGVhdGluZyBpbnRlcnZhbHMgYW5kIGNob29zZSB0aGUNCm1vc3Qg
-cHJvbWlzaW5nIG9uZSBmb3IgdGhlIG5leHQgaWRsZS4gVGhpcyBhbGdvcml0aG0gaXMgY2xhc3Np
-ZnlpbmcNCnRoZSBpZGxlIGhpc3RvcmllcyBoZXVyaXN0aWNhbGx5IGJ5IHRoZSBzdGF0ZSBpdCBp
-cyBpbi4gSXQgY2hhbmdlcw0KdGhlIGJlaGF2aW9yIG9mIHRoZSBmdW5jdGlvbiB0byBsb29rIGZv
-ciB0aGUgcmVwZWF0aW5nIHN0YXRlIGFjdHVhbGx5LA0KYnV0IGl0IHN0aWxsIG1lZXRzIHRoZSBn
-b2FsIG9mIGNob29zaW5nIGFuIGlkbGUgc3RhdGUuDQoNClRoZSBvY2N1cnJlbmNlIG9mIGVhY2gg
-c3RhdGUgaXMgY291bnRlZCBhbmQgdGhlaXIgYXZlcmFnZSBpcyBjYWxjdWxhdGVkLg0KVGhlIGF2
-ZXJhZ2UgdmFsdWUgb2YgZWFjaCBzdGF0ZSB3b3VsZCBiZSB0YWtlbiBhcyBhIHJlcGVhdGluZyBw
-YXR0ZXJuLg0KVG8gZmluZCB0aGUgb25lIG1vc3QgbGlrZWx5IHRvIGhhcHBlbiwgd2VpZ2h0cyBh
-cmUgYWRkZWQgdG8gdGhlDQpoaXN0b3JpZXMgYnkgdGhlIG9yZGVyIG9mIHRpbWUsIHNvIHRoZSBz
-dGF0ZSBoYXMgdGhlIGhpZ2hlc3Qgd2VpZ2h0LCBvcg0Kb2NjdXJzIG1vc3Qgb2Z0ZW4gaW4gdGhl
-IHJlY2VudCBoaXN0b3J5LCBpcyBzZWxlY3RlZCwgYW5kIGl0J3MgYXZlcmFnZQ0KaXMgcmV0dXJu
-ZWQgYXMgdGhlIHR5cGljYWwgaW50ZXJ2YWwuDQoNCkNvbnNpZGVyaW5nIHRoZSBmYWN0IHRoYXQg
-c29tZSBpZGxlIGludGVydmFscyBtYXkgYmUgdmVyeSBjbG9zZSB0byBhbm90aGVyDQpzdGF0ZSwg
-dGhlIGFsZ29yaXRobSBjYWxjdWxhdGVzIHRoZSBkaXN0YW5jZSB0byBlYWNoIGF2ZXJhZ2UsIGFu
-ZCBkbyB0aGUNCnJlLWNsYXNzaWZpY2F0aW9uIG9uY2UgYnkgcHV0dGluZyB0aGUgaGlzdG9yeSBp
-bnRvIHRoZSBzdGF0ZSBjbG9zZXIgdG8gaXQuDQpJdCBtYWtlcyB0aGUgc3RhdGUgYXZlcmFnZSBw
-b3NzaWJsZSB0byBkZXJpdmUgYW4gYXZlcmFnZSB1bmRlciBvciBhYm92ZSB0aGUNCnN0YXRlIHJl
-c2lkZW5jeS4NCg0KQ29tcGFyaW5nIHdpdGggdGhlIGRldmlhdGlvbiBjYWxjdWxhdGlvbiwgdGhp
-cyBtZXRob2QNCjEpIGNhbiBmaW5kIG11bHRpcGxlIHBhdHRlcm5zIGZyb20gdGhlIGhpc3Rvcnkg
-YW5kIGNob29zZSBmcm9tIHRoZW0NCjIpIGNhbiBiZSBtb3JlIHNlbnNpdGl2ZSB0byB0aGUgY2hh
-bmdpbmcgd29ya2xvYWQgYXMgdGhlIHRocmVzaG9sZCBpcw0KbG93ZXJlZA0KMykgcHV0cyB0aW1l
-IGludG8gY29uc2lkZXJhdGlvbiwgc28gcHJlZGljdGlvbiB3b24ndCBzdHVjayBpbiB0aGUgc3Rh
-bGUNCmhpc3Rvcmllcw0KDQpTaWduZWQtb2ZmLWJ5OiBLYWlxaWFuIFpodSA8emh1a2FpcWlhbkB4
-aWFvbWkuY29tPg0KLS0tDQogZHJpdmVycy9jcHVpZGxlL2dvdmVybm9ycy9tZW51LmMgfCAxNzIg
-KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCA4OSBpbnNl
-cnRpb25zKCspLCA4MyBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1aWRs
-ZS9nb3Zlcm5vcnMvbWVudS5jIGIvZHJpdmVycy9jcHVpZGxlL2dvdmVybm9ycy9tZW51LmMNCmlu
-ZGV4IDgxMzA2NjEyYTVjNi4uNWIyNzlhZTA3YjE2IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9jcHVp
-ZGxlL2dvdmVybm9ycy9tZW51LmMNCisrKyBiL2RyaXZlcnMvY3B1aWRsZS9nb3Zlcm5vcnMvbWVu
-dS5jDQpAQCAtMTA3LDEwOSArMTA3LDExNSBAQCBzdGF0aWMgdm9pZCBtZW51X3VwZGF0ZV9pbnRl
-cnZhbHMoc3RydWN0IG1lbnVfZGV2aWNlICpkYXRhLCB1bnNpZ25lZCBpbnQgaW50ZXJ2YQ0KDQog
-c3RhdGljIHZvaWQgbWVudV91cGRhdGUoc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsIHN0cnVj
-dCBjcHVpZGxlX2RldmljZSAqZGV2KTsNCg0KK3N0YXRpYyBpbnQgZ2V0X2FjdHVhbF9zdGF0ZShz
-dHJ1Y3QgY3B1aWRsZV9kcml2ZXIgKmRydiwNCisgICAgc3RydWN0IGNwdWlkbGVfZGV2aWNlICpk
-ZXYsDQorICAgIGludCBkdXJhdGlvbl91cykNCit7DQoraW50IGFjdHVhbDsNCisNCitmb3IgKGlu
-dCBpID0gMDsgaSA8IGRydi0+c3RhdGVfY291bnQ7IGkrKykgew0KK2lmIChkdXJhdGlvbl91cyA8
-IGRydi0+c3RhdGVzW2ldLnRhcmdldF9yZXNpZGVuY3kpDQorYnJlYWs7DQorDQorYWN0dWFsID0g
-aTsNCit9DQorDQorcmV0dXJuIGFjdHVhbDsNCit9DQorDQogLyoNCi0gKiBUcnkgZGV0ZWN0aW5n
-IHJlcGVhdGluZyBwYXR0ZXJucyBieSBrZWVwaW5nIHRyYWNrIG9mIHRoZSBsYXN0IDgNCi0gKiBp
-bnRlcnZhbHMsIGFuZCBjaGVja2luZyBpZiB0aGUgc3RhbmRhcmQgZGV2aWF0aW9uIG9mIHRoYXQg
-c2V0DQotICogb2YgcG9pbnRzIGlzIGJlbG93IGEgdGhyZXNob2xkLiBJZiBpdCBpcy4uLiB0aGVu
-IHVzZSB0aGUNCi0gKiBhdmVyYWdlIG9mIHRoZXNlIDggcG9pbnRzIGFzIHRoZSBlc3RpbWF0ZWQg
-dmFsdWUuDQorICogRmluZCBhIHR5cGljYWwgaW50ZXJ2YWwgYnkgYW5hbHl6aW5nIHRoZSBzbGVl
-cCB0aW1lcyBhbmQgdGhlaXINCisgKiBjb3JyZXNwb25kaW5nIHN0YXRlcy4gVGhlIHN0YXRlIHRo
-YXQgY29udGFpbnMgdGhlIHJlY2VudCBpZGxlDQorICogYW5kIGZyZXF1ZW50bHkgaGl0IGluIHRo
-ZSBoaXN0b3J5IGlzIGNvbnNpZGVyZWQgbW9zdCBsaWtlbHkgdG8NCisgKiBoYXBwZW4gaW4gdGhl
-IGZ1dHVyZSwgYW5kIHRoZSBhdmVyYWdlIGludGVydmFsIGZvciB0aGF0IHN0YXRlDQorICogaXMg
-cmV0dXJuZWQuDQorICoNCisgKiBGb3IgdGhlIGNhc2VzIHRoYXQgYSBzbGVlcCB0aW1lIGlzIGNs
-b3NlIHRvIGFub3RoZXIgc3RhdGUncw0KKyAqIHJlc2lkZW5jeSwgaXQgaXMgcmVjbGFzc2lmaWVk
-IG9uY2UgZHVyaW5nIHRoZSBwcm9jZXNzIGJhc2VkIG9uDQorICogaXRzIHByb3hpbWl0eSB0byB0
-aGUgYXZlcmFnZSBvZiBlYWNoIHN0YXRlLg0KICAqLw0KLXN0YXRpYyB1bnNpZ25lZCBpbnQgZ2V0
-X3R5cGljYWxfaW50ZXJ2YWwoc3RydWN0IG1lbnVfZGV2aWNlICpkYXRhKQ0KK3N0YXRpYyB1bnNp
-Z25lZCBpbnQgZ2V0X3R5cGljYWxfaW50ZXJ2YWwoc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYs
-DQorIHN0cnVjdCBjcHVpZGxlX2RldmljZSAqZGV2LA0KKyBzdHJ1Y3QgbWVudV9kZXZpY2UgKmRh
-dGEpDQogew0KLXM2NCB2YWx1ZSwgbWluX3RocmVzaCA9IC0xLCBtYXhfdGhyZXNoID0gVUlOVF9N
-QVg7DQotdW5zaWduZWQgaW50IG1heCwgbWluLCBkaXZpc29yOw0KLXU2NCBhdmcsIHZhcmlhbmNl
-LCBhdmdfc3E7DQotaW50IGk7DQoraW50IGNudCA9IDA7DQoNCi1hZ2FpbjoNCi0vKiBDb21wdXRl
-IHRoZSBhdmVyYWdlIGFuZCB2YXJpYW5jZSBvZiBwYXN0IGludGVydmFscy4gKi8NCi1tYXggPSAw
-Ow0KLW1pbiA9IFVJTlRfTUFYOw0KLWF2ZyA9IDA7DQotdmFyaWFuY2UgPSAwOw0KLWRpdmlzb3Ig
-PSAwOw0KLWZvciAoaSA9IDA7IGkgPCBJTlRFUlZBTFM7IGkrKykgew0KLXZhbHVlID0gZGF0YS0+
-aW50ZXJ2YWxzW2ldOw0KLS8qDQotICogRGlzY2FyZCB0aGUgc2FtcGxlcyBvdXRzaWRlIHRoZSBp
-bnRlcnZhbCBiZXR3ZWVuIHRoZSBtaW4gYW5kDQotICogbWF4IHRocmVzaG9sZHMuDQotICovDQot
-aWYgKHZhbHVlIDw9IG1pbl90aHJlc2ggfHwgdmFsdWUgPj0gbWF4X3RocmVzaCkNCi1jb250aW51
-ZTsNCitpbnQgc3RhdGVfaGl0W0NQVUlETEVfU1RBVEVfTUFYXTsNCitpbnQgc3RhdGVfYXZnW0NQ
-VUlETEVfU1RBVEVfTUFYXTsNCitpbnQgYWRqX3dlaWdodFtDUFVJRExFX1NUQVRFX01BWF07DQor
-aW50IGFkal9hdmdbQ1BVSURMRV9TVEFURV9NQVhdOw0KK2ludCBhZGpfaGl0W0NQVUlETEVfU1RB
-VEVfTUFYXTsNCitpbnQgaGl0X3RocmVzID0gbWF4KDMsIElOVEVSVkFMUyAvIGRydi0+c3RhdGVf
-Y291bnQpOw0KK2ludCB3ZWlnaHRzW0lOVEVSVkFMU10gPSB7NSwgMywgMiwgMX07DQoraW50IHdl
-aWdodCA9IDA7DQoraW50IGhpZ2hfc3RhdGUgPSAtMTsNCg0KLWRpdmlzb3IrKzsNCg0KLWF2ZyAr
-PSB2YWx1ZTsNCi12YXJpYW5jZSArPSB2YWx1ZSAqIHZhbHVlOw0KKy8qIEdvaW5nIHRocm91Z2gg
-dGhlIGhpc3RvcnksIGFuZCBkaXZpZGUgdGhlbSBieSB0aGUgYWN0dWFsIHN0YXRlICovDQorZm9y
-IChpbnQgaSA9IDA7IGkgPCBJTlRFUlZBTFM7IGkrKykgew0KK2ludCBhY3R1YWwgPSBnZXRfYWN0
-dWFsX3N0YXRlKGRydiwgZGV2LCBkYXRhLT5pbnRlcnZhbHNbaV0pOw0KDQotaWYgKHZhbHVlID4g
-bWF4KQ0KLW1heCA9IHZhbHVlOw0KKy8qIENvdW50IHRoZSBpZGxlIHN0YXRlcyBoaXQgaW4gdGhl
-IGhpc3RvcnkgKi8NCitzdGF0ZV9hdmdbYWN0dWFsXSArPSBkYXRhLT5pbnRlcnZhbHNbaV07DQor
-c3RhdGVfaGl0W2FjdHVhbF0rKzsNCg0KLWlmICh2YWx1ZSA8IG1pbikNCi1taW4gPSB2YWx1ZTsN
-CitjbnQrKzsNCiB9DQoNCi1pZiAoIW1heCkNCitpZiAoY250IDwgaGl0X3RocmVzKQ0KIHJldHVy
-biBVSU5UX01BWDsNCg0KLWlmIChkaXZpc29yID09IElOVEVSVkFMUykgew0KLWF2ZyA+Pj0gSU5U
-RVJWQUxfU0hJRlQ7DQotdmFyaWFuY2UgPj49IElOVEVSVkFMX1NISUZUOw0KLX0gZWxzZSB7DQot
-ZG9fZGl2KGF2ZywgZGl2aXNvcik7DQotZG9fZGl2KHZhcmlhbmNlLCBkaXZpc29yKTsNCisvKiBD
-YWxjdWxhdGUgdGhlIGF2ZXJhZ2Ugb2YgZWFjaCBzdGF0ZSAqLw0KK2ZvciAoaW50IGkgPSAwOyBp
-IDwgZHJ2LT5zdGF0ZV9jb3VudDsgaSsrKSB7DQoraWYgKHN0YXRlX2hpdFtpXSA+IDEpDQorc3Rh
-dGVfYXZnW2ldIC89IHN0YXRlX2hpdFtpXTsNCiB9DQoNCi1hdmdfc3EgPSBhdmcgKiBhdmc7DQot
-dmFyaWFuY2UgLT0gYXZnX3NxOw0KKy8qIFRyeSB0byByZS1hc3NpZ24gdGhlIGRhdGEgcG9pbnRz
-IGJ5IHRoZSBjbG9zZW5lc3MgKi8NCitmb3IgKGludCBpID0gMDsgaSA8IElOVEVSVkFMUzsgaSsr
-KSB7DQorLyogU3RhcnRpbmcgZnJvbSB0aGUgcmVjZW50IGhpc3RvcnkgKi8NCitpbnQgaWR4ID0g
-KChkYXRhLT5pbnRlcnZhbF9wdHIgLSBpIC0gMSkgKyBJTlRFUlZBTFMpICUgSU5URVJWQUxTOw0K
-K3Vuc2lnbmVkIGludCBkaWZmOw0KK3Vuc2lnbmVkIGludCBiZXN0X2RpZmYgPSBVSU5UX01BWDsN
-Cit1bnNpZ25lZCBpbnQgYmVzdF9zdGF0ZTsNCit1bnNpZ25lZCBpbnQgdmFsdWUgPSBkYXRhLT5p
-bnRlcnZhbHNbaWR4XTsNCisNCitmb3IgKGludCBzdGF0ZSA9IDA7IHN0YXRlIDwgZHJ2LT5zdGF0
-ZV9jb3VudDsgc3RhdGUrKykgew0KK2RpZmYgPSBhYnMoc3RhdGVfYXZnW3N0YXRlXSAtIHZhbHVl
-KTsNCitpZiAoZGlmZiA8IGJlc3RfZGlmZikgew0KK2Jlc3RfZGlmZiA9IGRpZmY7DQorYmVzdF9z
-dGF0ZSA9IHN0YXRlOw0KK30NCit9DQoNCi0vKg0KLSAqIFRoZSB0eXBpY2FsIGludGVydmFsIGlz
-IG9idGFpbmVkIHdoZW4gc3RhbmRhcmQgZGV2aWF0aW9uIGlzDQotICogc21hbGwgKHN0ZGRldiA8
-PSAyMCB1cywgdmFyaWFuY2UgPD0gNDAwIHVzXjIpIG9yIHN0YW5kYXJkDQotICogZGV2aWF0aW9u
-IGlzIHNtYWxsIGNvbXBhcmVkIHRvIHRoZSBhdmVyYWdlIGludGVydmFsIChhdmcgPg0KLSAqIDYq
-c3RkZGV2LCBhdmdeMiA+IDM2KnZhcmlhbmNlKS4gVGhlIGF2ZXJhZ2UgaXMgc21hbGxlciB0aGFu
-DQotICogVUlOVF9NQVggYWthIFUzMl9NQVgsIHNvIGNvbXB1dGluZyBpdHMgc3F1YXJlIGRvZXMg
-bm90DQotICogb3ZlcmZsb3cgYSB1NjQuIFdlIHNpbXBseSByZWplY3QgdGhpcyBjYW5kaWRhdGUg
-YXZlcmFnZSBpZg0KLSAqIHRoZSBzdGFuZGFyZCBkZXZpYXRpb24gaXMgZ3JlYXRlciB0aGFuIDcx
-NSBzICh3aGljaCBpcw0KLSAqIHJhdGhlciB1bmxpa2VseSkuDQotICoNCi0gKiBVc2UgdGhpcyBy
-ZXN1bHQgb25seSBpZiB0aGVyZSBpcyBubyB0aW1lciB0byB3YWtlIHVzIHVwIHNvb25lci4NCi0g
-Ki8NCi1pZiAobGlrZWx5KHZhcmlhbmNlIDw9IFU2NF9NQVgvMzYpKSB7DQotaWYgKChhdmdfc3Eg
-PiB2YXJpYW5jZSAqIDM2ICYmIGRpdmlzb3IgKiA0ID49IElOVEVSVkFMUyAqIDMpIHx8DQotICAg
-IHZhcmlhbmNlIDw9IDQwMCkNCi1yZXR1cm4gYXZnOw0KK2Fkal93ZWlnaHRbYmVzdF9zdGF0ZV0g
-Kz0gd2VpZ2h0c1tpXTsNCithZGpfYXZnW2Jlc3Rfc3RhdGVdICs9IHZhbHVlOw0KK2Fkal9oaXRb
-YmVzdF9zdGF0ZV0rKzsNCiB9DQoNCi0vKg0KLSAqIElmIHRoZXJlIGFyZSBvdXRsaWVycywgZGlz
-Y2FyZCB0aGVtIGJ5IHNldHRpbmcgdGhyZXNob2xkcyB0byBleGNsdWRlDQotICogZGF0YSBwb2lu
-dHMgYXQgYSBsYXJnZSBlbm91Z2ggZGlzdGFuY2UgZnJvbSB0aGUgYXZlcmFnZSwgdGhlbg0KLSAq
-IGNhbGN1bGF0ZSB0aGUgYXZlcmFnZSBhbmQgc3RhbmRhcmQgZGV2aWF0aW9uIGFnYWluLiBPbmNl
-IHdlIGdldA0KLSAqIGRvd24gdG8gdGhlIGxhc3QgMy80IG9mIG91ciBzYW1wbGVzLCBzdG9wIGV4
-Y2x1ZGluZyBzYW1wbGVzLg0KLSAqDQotICogVGhpcyBjYW4gZGVhbCB3aXRoIHdvcmtsb2FkcyB0
-aGF0IGhhdmUgbG9uZyBwYXVzZXMgaW50ZXJzcGVyc2VkDQotICogd2l0aCBzcG9yYWRpYyBhY3Rp
-dml0eSB3aXRoIGEgYnVuY2ggb2Ygc2hvcnQgcGF1c2VzLg0KKy8qIFdlJ3ZlIGFkanVzdGVkIHRo
-ZSBoaXQgc3RhdHVzIGJ5IHRoZSBjbG9zZW5lc3MsIGlmIG9uZSBzdGF0ZSBpcyBzdGlsbA0KKyAq
-IGhpdCBtb3JlIG9mdGVuIGFuZCBzZWxlY3RlZCByZWNlbnRseSwgd2UgY2FuIGFzc3VtZSB0aGF0
-IHN0YXRlIGlzIG1vcmUNCisgKiBsaWtlbHkgdG8gaGFwcGVuIGluIHRoZSBmdXR1cmUNCiAgKi8N
-Ci1pZiAoZGl2aXNvciAqIDQgPD0gSU5URVJWQUxTICogMykgew0KLS8qDQotICogSWYgdGhlcmUg
-YXJlIHN1ZmZpY2llbnRseSBtYW55IGRhdGEgcG9pbnRzIHN0aWxsIHVuZGVyDQotICogY29uc2lk
-ZXJhdGlvbiBhZnRlciB0aGUgb3V0bGllcnMgaGF2ZSBiZWVuIGVsaW1pbmF0ZWQsDQotICogcmV0
-dXJuaW5nIHdpdGhvdXQgYSBwcmVkaWN0aW9uIHdvdWxkIGJlIGEgbWlzdGFrZSBiZWNhdXNlIGl0
-DQotICogaXMgbGlrZWx5IHRoYXQgdGhlIG5leHQgaW50ZXJ2YWwgd2lsbCBub3QgZXhjZWVkIHRo
-ZSBjdXJyZW50DQotICogbWF4aW11bSwgc28gcmV0dXJuIHRoZSBsYXR0ZXIgaW4gdGhhdCBjYXNl
-Lg0KLSAqLw0KLWlmIChkaXZpc29yID49IElOVEVSVkFMUyAvIDIpDQotcmV0dXJuIG1heDsNCi0N
-Ci1yZXR1cm4gVUlOVF9NQVg7DQorZm9yIChpbnQgc3RhdGUgPSAwOyBzdGF0ZSA8IGRydi0+c3Rh
-dGVfY291bnQ7IHN0YXRlKyspIHsNCitpZiAoYWRqX3dlaWdodFtzdGF0ZV0gPiAxICYmIGFkal9o
-aXRbc3RhdGVdID49IGhpdF90aHJlcykgew0KK2Fkal9hdmdbc3RhdGVdIC89IGFkal9oaXRbc3Rh
-dGVdOw0KKw0KK2lmIChhZGpfd2VpZ2h0W3N0YXRlXSA+IHdlaWdodCkgew0KK3dlaWdodCA9IGFk
-al93ZWlnaHRbc3RhdGVdOw0KK2hpZ2hfc3RhdGUgPSBzdGF0ZTsNCit9IGVsc2UgaWYgKGFkal93
-ZWlnaHRbc3RhdGVdID09IHdlaWdodCkgew0KK2lmIChhZGpfaGl0W3N0YXRlXSA+IGFkal9oaXRb
-aGlnaF9zdGF0ZV0pDQoraGlnaF9zdGF0ZSA9IHN0YXRlOw0KK30NCit9DQogfQ0KDQotLyogVXBk
-YXRlIHRoZSB0aHJlc2hvbGRzIGZvciB0aGUgbmV4dCByb3VuZC4gKi8NCi1pZiAoYXZnIC0gbWlu
-ID4gbWF4IC0gYXZnKQ0KLW1pbl90aHJlc2ggPSBtaW47DQotZWxzZQ0KLW1heF90aHJlc2ggPSBt
-YXg7DQorLyogUmV0dXJuIHRoZSBhdmVyYWdlIG9mIHRoZSByZS1jbGFzc2lmZWQgc3RhdGUgKi8N
-CitpZiAod2VpZ2h0KQ0KK3JldHVybiBhZGpfYXZnW2hpZ2hfc3RhdGVdOw0KDQotZ290byBhZ2Fp
-bjsNCityZXR1cm4gVUlOVF9NQVg7DQogfQ0KDQogLyoqDQpAQCAtMjQxLDcgKzI0Nyw3IEBAIHN0
-YXRpYyBpbnQgbWVudV9zZWxlY3Qoc3RydWN0IGNwdWlkbGVfZHJpdmVyICpkcnYsIHN0cnVjdCBj
-cHVpZGxlX2RldmljZSAqZGV2LA0KIH0NCg0KIC8qIEZpbmQgdGhlIHNob3J0ZXN0IGV4cGVjdGVk
-IGlkbGUgaW50ZXJ2YWwuICovDQotcHJlZGljdGVkX25zID0gZ2V0X3R5cGljYWxfaW50ZXJ2YWwo
-ZGF0YSkgKiBOU0VDX1BFUl9VU0VDOw0KK3ByZWRpY3RlZF9ucyA9IGdldF90eXBpY2FsX2ludGVy
-dmFsKGRydiwgZGV2LCBkYXRhKSAqIE5TRUNfUEVSX1VTRUM7DQogaWYgKHByZWRpY3RlZF9ucyA+
-IFJFU0lERU5DWV9USFJFU0hPTERfTlMpIHsNCiB1bnNpZ25lZCBpbnQgdGltZXJfdXM7DQoNCi0t
-DQoyLjM0LjENCg0KIy8qKioqKiqxvtPKvP68sMbkuL28/rqs09DQocPXuavLvrXEsaPD3NDFz6Kj
-rL32z97T2reiy824+MnPw+a12Na31tDB0LP2tcS49sjLu/LIutfpoaO9+9a5yM66zsbky/vIy9LU
-yM66ztDOyr3KudPDo6iw/MCotauyu8/e09rIq7K/u/Kyv7fWtdjQucK2oaK4tNbGoaK78smit6Kj
-qbG+08q8/tbQtcTQxc+ioaPI57n7xPq07crVwcuxvtPKvP6jrMfrxPrBory0tee7sLvy08q8/s2o
-1qq3orz+yMuyosm+s/2xvtPKvP6joSBUaGlzIGUtbWFpbCBhbmQgaXRzIGF0dGFjaG1lbnRzIGNv
-bnRhaW4gY29uZmlkZW50aWFsIGluZm9ybWF0aW9uIGZyb20gWElBT01JLCB3aGljaCBpcyBpbnRl
-bmRlZCBvbmx5IGZvciB0aGUgcGVyc29uIG9yIGVudGl0eSB3aG9zZSBhZGRyZXNzIGlzIGxpc3Rl
-ZCBhYm92ZS4gQW55IHVzZSBvZiB0aGUgaW5mb3JtYXRpb24gY29udGFpbmVkIGhlcmVpbiBpbiBh
-bnkgd2F5IChpbmNsdWRpbmcsIGJ1dCBub3QgbGltaXRlZCB0bywgdG90YWwgb3IgcGFydGlhbCBk
-aXNjbG9zdXJlLCByZXByb2R1Y3Rpb24sIG9yIGRpc3NlbWluYXRpb24pIGJ5IHBlcnNvbnMgb3Ro
-ZXIgdGhhbiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpIGlzIHByb2hpYml0ZWQuIElmIHlvdSBy
-ZWNlaXZlIHRoaXMgZS1tYWlsIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIgYnkg
-cGhvbmUgb3IgZW1haWwgaW1tZWRpYXRlbHkgYW5kIGRlbGV0ZSBpdCEqKioqKiovIw0K
+
+在 2025/8/20 19:31, Florian Westphal 写道:
+> Wang Liang <wangliang74@huawei.com> wrote:
+>> Previous commit 2d72afb34065 ("netfilter: nf_conntrack: fix crash due to
+>> removal of uninitialised entry") move the IPS_CONFIRMED assignment after
+>> the hash table insertion.
+> How is that related to this change?
+> As you write below, the bug came in with 62e7151ae3eb.
+
+
+Before the commit 2d72afb34065, __nf_conntrack_confirm() set
+'ct->status |= IPS_CONFIRMED;' before check hash, the warning will not
+happen, so I put it here.
+
+As you say, the bug came in with 62e7151ae3eb. I will delete this paragraph
+in next patch.
+
+>> To solve the hash conflict, nf_ct_resolve_clash() try to merge the
+>> conntracks, and update skb->_nfct. However, br_nf_local_in() still use the
+>> old ct from local variable 'nfct' after confirm(), which leads to this
+>> issue. Fix it by rereading nfct from skb.
+>>
+>> Fixes: 62e7151ae3eb ("netfilter: bridge: confirm multicast packets before passing them up the stack")
+>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>> ---
+>>   net/bridge/br_netfilter_hooks.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hooks.c
+>> index 94cbe967d1c1..55b1b7dcb609 100644
+>> --- a/net/bridge/br_netfilter_hooks.c
+>> +++ b/net/bridge/br_netfilter_hooks.c
+>> @@ -626,6 +626,7 @@ static unsigned int br_nf_local_in(void *priv,
+>>   		break;
+>>   	}
+>>   
+>> +	nfct = skb_nfct(skb);
+>>   	ct = container_of(nfct, struct nf_conn, ct_general);
+>>   	WARN_ON_ONCE(!nf_ct_is_confirmed(ct));
+> There is a second bug here, confirm can return NF_DROP and
+> nfct will be NULL.
+
+
+Thanks for your suggestion!
+
+Do you mean that ct may be deleted in confirm and return NF_DROP, so we can
+not visit it in br_nf_local_in() and need to add 'case NF_DROP:' here?
+
+I cannot find somewhere set skb->_nfct to NULL and return NF_DROP. Can you
+give some hints?
+
+------
+Best regards
+Wang Liang
+
+>
+> Can you make this change too? (or something similar)?
+>
+> diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hooks.c
+> index 94cbe967d1c1..69b7b7c7565e 100644
+> --- a/net/bridge/br_netfilter_hooks.c
+> +++ b/net/bridge/br_netfilter_hooks.c
+> @@ -619,8 +619,9 @@ static unsigned int br_nf_local_in(void *priv,
+>          nf_bridge_pull_encap_header(skb);
+>          ret = ct_hook->confirm(skb);
+>          switch (ret & NF_VERDICT_MASK) {
+> +       case NF_DROP:
+>          case NF_STOLEN:
+> -               return NF_STOLEN;
+> +               return ret;
+>
+>
+> nfct reload seems correct, thanks for catching this.
 
