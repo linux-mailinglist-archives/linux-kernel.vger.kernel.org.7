@@ -1,142 +1,181 @@
-Return-Path: <linux-kernel+bounces-779702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C1DB2F77C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:06:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBB6B2F782
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 788B14E2B91
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:06:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A3CA3BBF73
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2633631064D;
-	Thu, 21 Aug 2025 12:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C2A3101AF;
+	Thu, 21 Aug 2025 12:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NzzFcGxt"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kCj1XYaS"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCF930AAD6
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFBE23D7D1
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755777985; cv=none; b=Y/QK39+N+GZYeb8TwHtjyvGoBQmDxfY6t1z+7GXJ4c/tbcBBb+37h05MHKWkDR8xlFHowW6YacJTloeShtnjva3svav/J1AGn1Fp1Nje4VYKfnJkj42uM2n/8a/CyeyCNBG61o1l25j8zPBPRrHUdu8PCdkS494u4Sd04TQ3C2A=
+	t=1755777995; cv=none; b=aQEpJ7QId3CoIbXFoaWvVz7YiC6emmteMaUpgPt7MR1NA8+yYXaQ61jJLQBpf4eRySiSs4XPSowgSADz2R5eWm7AK4+AE23inK+Y2JDvjdoOaDGyI4ArsRKoY7GAC2JRCilK29Ibc4wQE/L2LqPVZeAlrqmiry5nG7iJXbXWvr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755777985; c=relaxed/simple;
-	bh=EqOATe6lxC8lL+rMjGZLssQp3T91Kjl3xSz+jvx0DUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MLjK5M7Do/Fgu24dQy5QOaRCvzDNuORGhHqsAqXv632Zy4DRJfh9+UuWHETHooiaWRmUIp8L9p+joDzn8muLqGth4zHvIou/Q58lI8HrpvaTjmT3OuDdHY0ut4gEq0je+v5k7PrS38KFocVkBVXkVGZlyJw0vu79biASBaBwfh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NzzFcGxt; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-333f8f5ca72so6756691fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:06:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755777982; x=1756382782; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EqOATe6lxC8lL+rMjGZLssQp3T91Kjl3xSz+jvx0DUc=;
-        b=NzzFcGxtagRSaXmQ90qDHpMpg0V+GJbMNS2fMBIsfgZTfzijlYbpMr+k7eo/JxCxip
-         DNz1O7FPLl9CEUERoghlQkigiooJ48pppA+nTJBxK8iArpXE7bWo3Ie4L7mbKeuCY/Kz
-         zMDQ1pZF2pfiKSyMJ3vzVw7a3imKVC3uj8nSYNQ/X2MkwSa1CT3+58yXllYrAwSYWhKz
-         5PebktTTpKQodCnxnU/LKYXmta3it+hOE2UA34wJgGCJ7iAqqIFrWvLnYQua9k/Zj1ow
-         KYYAoacyUQF6ef93EgZ+r8F1oVS7NHim1DLVubXi4GW4yO18GnTwCo76S5fvDkYXzkAa
-         YiHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755777982; x=1756382782;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EqOATe6lxC8lL+rMjGZLssQp3T91Kjl3xSz+jvx0DUc=;
-        b=kzRDkQfGIzuzPATP2jR1YpO4rKbt2WLwBWY5TmlqaNprdQKXeZ0oc/t9ru313Zv7/d
-         LUf7Ux0mM+39LRtfxn5xKe9mJndKBsm0gGzuCVv6Z3cxDPhEOLcBpiIL+Obn1ferz7gj
-         HdLfmHV9Eo8vJ+25T+rVr7xez2en4aTRyg2jmaR1zBtEbbNHxxHKci160i8FNZvAcCv2
-         w7Fuz3miKW5kt4xS2qnb9dbXABf8uXFspdmz3+pv+Ua4m+SX8ln08u2CqIitNLTaFCEX
-         /BATFGk4toR9XnY8hwt5K4iBZ4rCDyytD5p6s6ruuSxMgObThQfqimgZg/hZWakHWWDK
-         NDsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUq/PlFoi3EoLb+AgoWPpo4SnjkSkCzjq1E3tWlQtckY/6jkxIgf8X7aRmd8iWN5yGmDfWJTE3vET/TPTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHl7l80Xw+BDFDClQcfTFnkUTo5516ntz8Zzf+4Y+1Tk7bRBaQ
-	m2fg3QYVH4myQWB2ef39DwfwDOPY3YTgybKS9TYoHUDt0wo+XjcbYXZL+Z7JBya05GODR8K1b92
-	HXGjEIJScVp5tGtO8hXor5Z0af9OkGxpGgHHLJP8zRA==
-X-Gm-Gg: ASbGncuE5eTsOWq8VYlDoPA+u9ivxpQibnuSnRwA/DobEP+nRHaGNzr1tP1EkiDULNj
-	rwG9UM156vmbOsz9BOMY4J3B+F51VAWfxhOiZTe0M95a8AkqnEjBgAuxK9sbxejt2bMtl8v5+k9
-	s7vrwLXkbF1TIZA3ywiqX2rhXybPpiIUzIKjK6T/iaZPEx0NDpq5I1a+cqIEFFn6inADc2H/5Y3
-	lY/crc=
-X-Google-Smtp-Source: AGHT+IGVtqYhx03rZLGlR0AUldfQFleIV8XTQ56VN7QoZ+/jtWggdq8uZGuLFW7FEnNgvU5NHrdHkWFWoRsaEWfWGQg=
-X-Received: by 2002:a2e:a272:0:b0:333:be30:5adb with SMTP id
- 38308e7fff4ca-33549ea13e1mr5180611fa.14.1755777981770; Thu, 21 Aug 2025
- 05:06:21 -0700 (PDT)
+	s=arc-20240116; t=1755777995; c=relaxed/simple;
+	bh=azA9B3z3wNJhuYfDiL6hn0MK71QZlZtvPMK9aLiNlzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lhl8Z+SSXXTJj3QqrkrdOQFzMirKH11Tnho34HrCjCNwqj0rHor+K5moCoO331iyfWXPswJcZjS/ibBpMHZyoaPvxUAZtTbS/o/k1+0RNmJ3vM1TSXbrKQ6h/oMg9rv2lQdR2KW3Qct2DzMhZM4FmEfpeqaojU1M15VIRZZz/Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kCj1XYaS; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755777991;
+	bh=azA9B3z3wNJhuYfDiL6hn0MK71QZlZtvPMK9aLiNlzM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kCj1XYaS83k8mGgwFVzOGw/7T9Jyrr/FSA3T60nkcpG+AsxqHXoDD8gY5Mw1+ETQ1
+	 HG5gD0g1ImsJwJduMuS6Sone9bNLFwhHUy41nA4Tv0qMZ7nx09B0Aaw7GAdZWWUj7R
+	 vZvf+65iVW+iYtRzK6VIT5FJkRI2g8oGOWGC8qG9gF28tn8gPyFiGEoCCIe2//FzOD
+	 pnvTv82D0U84uBclgLWP4iQaQSsEsa640xay1bwo+A4N6xfu7BIO7QVTIYvaykeRVT
+	 37Gx5/FY2u3bfXDToAPNU3/2IVr2COWOtpObFzYMXgqer+GxcsijlEwHczC0WwQCIS
+	 4xejSDYWju5Mw==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BD2E217E0071;
+	Thu, 21 Aug 2025 14:06:30 +0200 (CEST)
+Date: Thu, 21 Aug 2025 14:06:25 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: "Caterina Shablia" <caterina.shablia@collabora.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Frank Binns"
+ <frank.binns@imgtec.com>, "Matt Coster" <matt.coster@imgtec.com>, "Karol
+ Herbst" <kherbst@redhat.com>, "Lyude Paul" <lyude@redhat.com>, "Steven
+ Price" <steven.price@arm.com>, "Liviu Dudau" <liviu.dudau@arm.com>, "Lucas
+ De Marchi" <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
+ <thomas.hellstrom@linux.intel.com>, "Rodrigo Vivi"
+ <rodrigo.vivi@intel.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <intel-xe@lists.freedesktop.org>, <asahi@lists.linux.dev>, "Asahi Lina"
+ <lina@asahilina.net>
+Subject: Re: [PATCH v4 4/7] drm/gpuvm: Add a helper to check if two VA can
+ be merged
+Message-ID: <20250821140625.6c33daba@fedora>
+In-Reply-To: <DB61ZHDINPNE.1VFXNF2XXSJPA@kernel.org>
+References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
+	<20250707170442.1437009-5-caterina.shablia@collabora.com>
+	<DB61ZHDINPNE.1VFXNF2XXSJPA@kernel.org>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
- <CACRpkdYWNgU8PxVaxDe3F6Cbb15J5cgEV1-kgDooOHdBoXXs3g@mail.gmail.com> <5f456224-d26f-4cca-a2f2-31418da287c2@roeck-us.net>
-In-Reply-To: <5f456224-d26f-4cca-a2f2-31418da287c2@roeck-us.net>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 21 Aug 2025 14:06:10 +0200
-X-Gm-Features: Ac12FXxIcyY_DhShmyxPbMRYnHac2dfkJsh4yDQXH3sgZV0u5dJUBt6Cww9nAa0
-Message-ID: <CACRpkdYQa21PeAHTUPY2XRVnknnDS+v3Ci8DGyiYSdJdYVJCEA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] mfd: Add support for the LTC4283 Hot Swap Controller
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: nuno.sa@analog.com, Jonathan Cameron <jic23@kernel.org>, linux-hwmon@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 19, 2025 at 6:11=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
-wrote:
-> On 8/19/25 05:36, Linus Walleij wrote:
-> > On Thu, Aug 14, 2025 at 12:52=E2=80=AFPM Nuno S=C3=A1 via B4 Relay
-> > <devnull+nuno.sa.analog.com@kernel.org> wrote:
-> >
-> >> The LTC4283 device features programmable current limit with foldback a=
-nd
-> >> independently adjustable inrush current to optimize the MOSFET safe
-> >> operating area (SOA). The SOA timer limits MOSFET temperature rise for
-> >> reliable protection against overstresses.
-> >>
-> >> An I2C interface and onboard ADC allow monitoring of board current, vo=
-ltage,
-> >> power, energy, and fault status.
-> >>
-> >> It also features 8 pins that can be configured as GPIO devices. But si=
-nce
-> >> the main usage for this device is monitoring, the GPIO part is optiona=
-l
-> >> while the HWMON is being made as required.
-> >
-> > This main device just screams Industrial I/O, IIO.
-> >
->
-> Really ? I would have assumed that the sensors on a chip like this are su=
-pposed
-> to be used for hardware monitoring, and that IIO is supposed to be used i=
-n cases
-> where the data itself is the relevant information. What exactly makes a h=
-ot swap
-> controller screaming IIO ? Am I missing something here ?
->
-> I am not going to argue about this if IIO wants to extend into hardware m=
-onitoring,
-> I just wonder about the rationale behind it.
+On Mon, 07 Jul 2025 21:00:54 +0200
+"Danilo Krummrich" <dakr@kernel.org> wrote:
 
-It was mainly because the text talks about regulating currents and current
-rush, and an onboard ADC. There is admittedly even a bit of regulator
-framework-related business going on.
+> On Mon Jul 7, 2025 at 7:04 PM CEST, Caterina Shablia wrote:
+> > diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+> > index 05978c5c38b1..dc3c2f906400 100644
+> > --- a/drivers/gpu/drm/drm_gpuvm.c
+> > +++ b/drivers/gpu/drm/drm_gpuvm.c
+> > @@ -2098,12 +2098,48 @@ op_unmap_cb(const struct drm_gpuvm_ops *fn, void *priv,
+> >  	return fn->sm_step_unmap(&op, priv);
+> >  }
+> >  
+> > +static bool can_merge(struct drm_gpuvm *gpuvm, const struct drm_gpuva *a,
+> > +		      const struct drm_gpuva *b)
+> > +{
+> > +	/* Only GEM-based mappings can be merged, and they must point to
+> > +	 * the same GEM object.
+> > +	 */
+> > +	if (a->gem.obj != b->gem.obj || !a->gem.obj)
+> > +		return false;
+> > +
+> > +	/* Let's keep things simple for now and force all flags to match. */
+> > +	if (a->flags != b->flags)
+> > +		return false;
+> > +
+> > +	/* Order VAs for the rest of the checks. */
+> > +	if (a->va.addr > b->va.addr)
+> > +		swap(a, b);
+> > +
+> > +	/* We assume the caller already checked that VAs overlap or are
+> > +	 * contiguous.
+> > +	 */
+> > +	if (drm_WARN_ON(gpuvm->drm, b->va.addr > a->va.addr + a->va.range))
+> > +		return false;
+> > +
+> > +	/* We intentionally ignore u64 underflows because all we care about
+> > +	 * here is whether the VA diff matches the GEM offset diff.
+> > +	 */
+> > +	return b->va.addr - a->va.addr == b->gem.offset - a->gem.offset;
+> > +}
+> > +
+> >  static int
+> >  __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  		   const struct drm_gpuvm_ops *ops, void *priv,
+> >  		   const struct drm_gpuvm_map_req *req)
+> >  {
+> >  	struct drm_gpuva *va, *next;
+> > +	struct drm_gpuva reqva = {
+> > +		.va.addr = req->va.addr,
+> > +		.va.range = req->va.range,
+> > +		.gem.offset = req->gem.offset,
+> > +		.gem.obj = req->gem.obj,
+> > +		.flags = req->flags,  
+> 
+> Huh? Where does req->flags come from? I don't remember that this flag exists in
+> struct drm_gpuvm_map_req in the preceding patch?
 
-On second look it's fine to keep as hwmon, discard my previous
-opinion, I should have looked closer and now I changed my mind.
-I'ts good with some pushback!
+Oops, I re-ordered commits, and forgot to verify that the series was
+bisectable. This should be part of patch 4 actually.
 
-Yours,
-Linus Walleij
+> 
+> > +	};
+> >  	u64 req_end = req->va.addr + req->va.range;
+> >  	int ret;
+> >  
+> > @@ -2116,12 +2152,9 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+> >  		u64 addr = va->va.addr;
+> >  		u64 range = va->va.range;
+> >  		u64 end = addr + range;
+> > -		bool merge = !!va->gem.obj;
+> > +		bool merge = can_merge(gpuvm, va, &reqva);  
+> 
+> I know you want to do the swap() trick above, but I don't like creating a
+> temporary struct drm_gpuva with all the other uninitialized fields.
+
+I mean, I could do it the other way around (gpuva -> op_map), but it
+means doing it on each va with cross.
+
+> 
+> If you really want this, can we please limit the scope? Maybe the following
+> helper:
+> 
+> 	static bool can_merge(struct drm_gpuvm *gpuvm,
+> 			      const struct drm_gpuva *va,
+> 			      struct drm_gpuvm_map_req *req)
+> 	{
+> 		struct drm_gpuva reqva = { ... };
+> 		return __can_merge(gpuvm, va, reqva);
+
+It's a bit of a shame though, because then this reqva is
+initialized every time can_merge() is called, instead of once at the
+beginning of an sm_map() operation. But maybe the compiler is smart
+enough to see through it when inlining (assuming it actually inlines
+the check).
+
+> 	}
+
 
