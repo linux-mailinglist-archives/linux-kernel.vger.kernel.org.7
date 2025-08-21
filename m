@@ -1,144 +1,135 @@
-Return-Path: <linux-kernel+bounces-780020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC0EB2FC99
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:30:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35313B2FC79
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30AFC1D21EF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0474AA36CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D4A267B02;
-	Thu, 21 Aug 2025 14:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6992877C9;
+	Thu, 21 Aug 2025 14:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Kr5/s2BQ"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjCPEr+S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01762EC551;
-	Thu, 21 Aug 2025 14:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E72279791;
+	Thu, 21 Aug 2025 14:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755786093; cv=none; b=mg6sGOJ3wSfz1FYZu7ve4mBwFpKiJABay7GsWTuLjczhLyEl+cYcrrOHeW6xY+zqVJXtiGHO2O30MwozpeVCrixCvmZM/P3uqWDCYu8vWuT6X/ljF4hsuE9dw8KmEUtt5GbVpDKGXdDK/7WBT2vG71HgZoQfWkHXfBdXe9cLE6M=
+	t=1755786099; cv=none; b=sQAob0fqpio84UkoNHPIVJhWa/NVAc+rfSgQybzE6qsUoqIqjlnFgZEj/Yodvs/v0NKnwBmZ3hsQyfy4CXaFOv+BQdlsuoVCRYwjrwsJFrAhfewLA32tSUTCHHUo0bv+B+AJJtzySrPffSa+/cxB/1ORXlq6bLDh9GlZ78Qtw9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755786093; c=relaxed/simple;
-	bh=Vb2F+1YyfLyYDbBvxHKpFvzAWDyxW1OpfmWp6x/xB0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZmM9WpbjSXaBIiLln+CxseXhn9to8SNeaeEutNGYM2N6EPxNEqeM3PauahvvnwOD0mbvCzu4zn4FjqQ/+DXvZFxRZoJO2pRIO0MiTmVbpwKki7FlgeTJL0aSBPwYAUa9q/KW2mk0U/8ftvLnDsE6Bt4iAxVLZL34ATBaW56j7ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Kr5/s2BQ; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4c758y38mCz9smF;
-	Thu, 21 Aug 2025 16:21:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1755786082;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fW3Zzx4J8tGS72KjNJnVUhaHtHsXE0Z0H9CSM70UsDs=;
-	b=Kr5/s2BQubpmBB8hHQQAUB6etiNM4h6E6thzMmaQnKfCymVva8DBHBG54j6HuhDhkxWwrV
-	5/447MFJJp07PckYe5JoOrb6tPddsM7HT83PDLziKjKa05mbw9zoBA2Yx7u5FtJZlDd55T
-	251bJnqvZc/jFMQMz61+I+/zh9yN6agNsuIISsWqd3Kjv1tu1/917TPqqqorL5Rii7pP2z
-	pv1L6Uow8egV7ut9UB8zvAQu6CbqawXBxVMvkzOs6ne37GeHV2Lbyzl3RisrJwbiutAWXQ
-	BnXDxMojrt/hYumfmgxISnUJEwF+9TghaS4jDP3VyfYuoHAkcdrSBsbUyy21ew==
-Date: Fri, 22 Aug 2025 00:21:06 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
-	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
-Message-ID: <2025-08-21.1755785636-rusted-ivory-corgi-salad-fYNRl1@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <198cc8d3da6.124bd761f86893.6196757670555212232@zohomail.com>
+	s=arc-20240116; t=1755786099; c=relaxed/simple;
+	bh=XDxTPT2c6W8eHR7BT6Ec6vb15gsGsFJ8CPPzepOj7LY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aEQV5HtrA/WcFw4+R9AXahMpX3/C38kyJNTh3U0kleUiHzKWrQufro+ZKt9dsSCkHJRRaIrCHHJXa+5CAWzHqKw0hT9jideMhGlcce9V63K9A1xWsbcN/RCdSyZIEt5Q/5o4BdKFMo2sjs7CsekyaOAehzWT+YIBHmcHR+ufF3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjCPEr+S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C6E1C4CEEB;
+	Thu, 21 Aug 2025 14:21:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755786099;
+	bh=XDxTPT2c6W8eHR7BT6Ec6vb15gsGsFJ8CPPzepOj7LY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AjCPEr+S/XdiTJptR5n3uyAVivqrZGWjiLttZqAJf4tUJZ89h0Wj0euE5S4i3bZbX
+	 9zrmAe2gI0pyeg899Mq3yYYSzGn+eWzuOocK3XNMYy1p+yNg748v4QT1Apzku+u2BB
+	 8335srwSXNgxc1UFYX4wRb94bMX9VpwTgv1iFxAfcuC+I/1sL/ydi4qCldmLznAsGS
+	 rSElgV2+oPFpvwbb8Hdo7WIJv2uBC5Ot8+rnxdWhf1JuqRzJCxkXf5B0Syk1pQL/Cs
+	 Gvs04mE/sYrxJS8RU1OA2TYC6rdUWoNl7Ccquk5I4mSJNaKsg68SH84lLY5/DWWOEm
+	 Iy7xsVh0lVFPw==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1up6Ab-0000000BT84-028y;
+	Thu, 21 Aug 2025 16:21:37 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 01/24] docs: parse-headers.pl: improve its debug output format
+Date: Thu, 21 Aug 2025 16:21:07 +0200
+Message-ID: <3d23cd095d482715284fc2e0a46199b00e10e851.1755784930.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <cover.1755784929.git.mchehab+huawei@kernel.org>
+References: <cover.1755784929.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jsdomwd2btigmqhb"
-Content-Disposition: inline
-In-Reply-To: <198cc8d3da6.124bd761f86893.6196757670555212232@zohomail.com>
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
+Change the --debug logic to help comparing its results with
+a new python script.
 
---jsdomwd2btigmqhb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
-MIME-Version: 1.0
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/sphinx/parse-headers.pl | 31 ++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
-On 2025-08-21, Askar Safin <safinaskar@zohomail.com> wrote:
-> There is one particular case when open_tree is more powerful than openat =
-with O_PATH. open_tree supports AT_EMPTY_PATH, and openat supports nothing =
-similar.
-> This means that we can convert normal O_RDONLY file descriptor to O_PATH =
-descriptor using open_tree! I. e.:
->   rd =3D openat(AT_FDCWD, "/tmp/a", O_RDONLY, 0); // Regular file
->   open_tree(rd, "", AT_EMPTY_PATH);
-> You can achieve same effect using /proc:
->   rd =3D openat(AT_FDCWD, "/tmp/a", O_RDONLY, 0); // Regular file
->   snprintf(buf, sizeof(buf), "/proc/self/fd/%d", rd);
->   openat(AT_FDCWD, buf, O_PATH, 0);
-> But still I think this has security implications. This means that even if=
- we deny access to /proc for container, it still is able to convert O_RDONLY
-> descriptors to O_PATH descriptors using open_tree. I. e. this is yet anot=
-her thing to think about when creating sandboxes.
-> I know you delivered a talk about similar things a lot of time ago: https=
-://lwn.net/Articles/934460/ . (I tested this.)
+diff --git a/Documentation/sphinx/parse-headers.pl b/Documentation/sphinx/parse-headers.pl
+index 7b1458544e2e..560685926cdb 100755
+--- a/Documentation/sphinx/parse-headers.pl
++++ b/Documentation/sphinx/parse-headers.pl
+@@ -31,8 +31,6 @@ my %enums;
+ my %enum_symbols;
+ my %structs;
+ 
+-require Data::Dumper if ($debug);
+-
+ #
+ # read the file and get identifiers
+ #
+@@ -197,6 +195,9 @@ if ($file_exceptions) {
+ 		} else {
+ 			$reftype = $def_reftype{$type};
+ 		}
++		if (!$reftype) {
++		    print STDERR "Warning: can't find ref type for $type";
++		}
+ 		$new = "$reftype:`$old <$new>`";
+ 
+ 		if ($type eq "ioctl") {
+@@ -229,12 +230,26 @@ if ($file_exceptions) {
+ }
+ 
+ if ($debug) {
+-	print Data::Dumper->Dump([\%ioctls], [qw(*ioctls)]) if (%ioctls);
+-	print Data::Dumper->Dump([\%typedefs], [qw(*typedefs)]) if (%typedefs);
+-	print Data::Dumper->Dump([\%enums], [qw(*enums)]) if (%enums);
+-	print Data::Dumper->Dump([\%structs], [qw(*structs)]) if (%structs);
+-	print Data::Dumper->Dump([\%defines], [qw(*defines)]) if (%defines);
+-	print Data::Dumper->Dump([\%enum_symbols], [qw(*enum_symbols)]) if (%enum_symbols);
++	my @all_hashes = (
++		{ioctl      => \%ioctls},
++		{typedef    => \%typedefs},
++		{enum       => \%enums},
++		{struct     => \%structs},
++		{define     => \%defines},
++		{symbol     => \%enum_symbols}
++	);
++
++	foreach my $hash (@all_hashes) {
++		while (my ($name, $hash_ref) = each %$hash) {
++			next unless %$hash_ref;  # Skip empty hashes
++
++			print "$name:\n";
++			for my $key (sort keys %$hash_ref) {
++				print "  $key -> $hash_ref->{$key}\n";
++			}
++			print "\n";
++		}
++	}
+ }
+ 
+ #
+-- 
+2.50.1
 
-O_RDONLY -> O_PATH is less of an issue than the other way around. There
-isn't much you can do with O_PATH that you can't do with a properly open
-file (by design you actually should have strictly less privileges but
-some operations are only really possible with O_PATH, but they're not
-security-critical in that way).
-
-I was working on a new patchset for resolving this issue (and adding
-O_EMPTYPATH support) late last year but other things fell on my plate
-and the design was quite difficult to get to a place where everyone
-agreed to it.
-
-The core issue is that we would need to block not just re-opening but
-also any operation that is a write (or read) in disguise, which kind of
-implies you need to have capabilities attached to file descriptors. This
-is already slightly shaky ground if you look at the history of projects
-like capsicum -- but also my impression was that just adding it to
-"file_permission" was not sufficient, you need to put it in
-"path_permission" which means we have to either bloat "struct path" or
-come up with some extended structure that you need to plumb through
-everywhere.
-
-But yes, this is a thing that is still on my list of things to do, but
-not in the immediate future.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---jsdomwd2btigmqhb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaKcrThsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9TSwD9Ez8Vfzuiim607l6uNQY4
-4f9TZbwHuIVkqc4PsjYgz3UBANuelZQN20hYZ3EVADF7hQ6wiLdCEdTVMElYczRh
-XRIJ
-=fSGM
------END PGP SIGNATURE-----
-
---jsdomwd2btigmqhb--
 
