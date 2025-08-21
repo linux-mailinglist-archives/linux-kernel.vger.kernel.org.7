@@ -1,94 +1,148 @@
-Return-Path: <linux-kernel+bounces-779086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63424B2EEF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:59:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EE9B2EEEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B6953A9F97
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E7317597F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD032E88B7;
-	Thu, 21 Aug 2025 06:57:57 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD422E88B1;
+	Thu, 21 Aug 2025 06:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsRpfLjO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF542D7806;
-	Thu, 21 Aug 2025 06:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592532D7806;
+	Thu, 21 Aug 2025 06:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755759477; cv=none; b=Qr3RZZ3v7w8zG5xH0/9FUR6CppzQCfMqq6ZvdkV2TA4c/t4IU/DZTpPmVHfH96zx36FRO5MkWRHUK7cixp+ngXpbpAWiE0MFYV9ugUDs0PBL40vPeDdQOdjY8tC3mA7OrVejCPYSkZ/VFQGX7lLGnHKgxgqg/qYGU7+UbXVevVY=
+	t=1755759505; cv=none; b=Qppu+HzeuWG2UzpdFISvlxyDZu5mmw7KlEP98aH9n5Owl0iByVJhVrJbKKX6iL/h8SI+veUShE61qakTjg6x6RzGOSlcYTvuZObjB2mVZsx/D0LPzRgQ16WrJgIFKBUFq758PAgE1+8oKPX7A/JJW0VXmjs5TjOlPyHA/lMHtjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755759477; c=relaxed/simple;
-	bh=Zsqy658H8dRNDoXaGNLhO3ruTZRx6XDalsMX6lmZMeg=;
+	s=arc-20240116; t=1755759505; c=relaxed/simple;
+	bh=mZ4FUqwpeliFM+BfIUJKWhmDxAE2ZXgT86u5GAWrTAA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iG1c93LHwCN4NsrKA3lqrcwIqKtq15BMb6fbDATPf2FIc3KZ5Yb9xwG1EfwODmavlY959L0fJJEKxdjXrK8CEH63G5FcJGXMeNbqlU55BLW/UYYo0lNh/PQf2l3GogC2jo3nHQ6o+F0IBkxl32z6pNCXc+0cXjBISwmp9bYSZ4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
-	id 5AD2E60224; Thu, 21 Aug 2025 08:57:52 +0200 (CEST)
-Date: Thu, 21 Aug 2025 08:57:41 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, razor@blackwall.org,
-	idosch@nvidia.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	yuehaibing@huawei.com, zhangchangzhong@huawei.com,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] netfilter: br_netfilter: reread nf_conn from skb
- after confirm()
-Message-ID: <aKbDZWHNf4_Nktsm@strlen.de>
-References: <20250820043329.2902014-1-wangliang74@huawei.com>
- <aKWyImI9qxi6GDIF@strlen.de>
- <80706fff-ca22-45f5-ac0b-ff84e1ba6a8b@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=scmlsw0Lwc6EuFPhdAfEpUz/DHAFM11x4V9ku/ersZ69Icd1q0sZwkU6SKLzhTU7JFpnJ+5l+Jfp8ExW1ztSfNobI8n9ZoLtKO7/qsd/uaB8DCLQOsuEHQbLhpwyh/ys5Pn2n9Auke8/g/Ou5yK93YpbN/3VOvTMo6kkUcItaMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsRpfLjO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 490E1C4CEED;
+	Thu, 21 Aug 2025 06:58:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755759504;
+	bh=mZ4FUqwpeliFM+BfIUJKWhmDxAE2ZXgT86u5GAWrTAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FsRpfLjOy3xC581SFRPJeAyZkyycZvl6aPn2IFA5QoPv9IeStQDToqlAa5mlJqPQL
+	 89USDd4HGTiTtFM46F85AMnbO0B9pwrv1rES7j9hr4QJaQ32GjXhTKk/qum4+WCaOL
+	 9YQ9Nej5JXVLvyMMJ5af2Q79KlBdLYxYt/+URZC2BVZaTeWN8RDe9L/ETsdIfNFizm
+	 IjsXai0Q5igBl+5vgvQKLv76aykaU4ZImTGOxDJ2gi/xXbV5VTfJr+fn6HiceIp67x
+	 yIEb5mXLA+7xUGuW1wI/g5uoBYo/sV8sE0QS1RbHr1f6vyMUSFvAgC9U1NvqUN4XLJ
+	 cO8TVfCtXw5BQ==
+Date: Thu, 21 Aug 2025 08:58:20 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Frieder Schrempf <frieder.schrempf@kontron.de>
+Subject: Re: [PATCH v3 00/14] spi: airoha: driver fixes & improvements
+Message-ID: <aKbDjIZhJuWo3yFu@lore-rh-laptop>
+References: <20250820123317.728148-1-mikhail.kshevetskiy@iopsys.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1AUHNkd+gHsq61gf"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <80706fff-ca22-45f5-ac0b-ff84e1ba6a8b@huawei.com>
+In-Reply-To: <20250820123317.728148-1-mikhail.kshevetskiy@iopsys.eu>
 
-Wang Liang <wangliang74@huawei.com> wrote:
-> 
-> 在 2025/8/20 19:31, Florian Westphal 写道:
-> > Wang Liang <wangliang74@huawei.com> wrote:
-> > > Previous commit 2d72afb34065 ("netfilter: nf_conntrack: fix crash due to
-> > > removal of uninitialised entry") move the IPS_CONFIRMED assignment after
-> > > the hash table insertion.
-> > How is that related to this change?
-> > As you write below, the bug came in with 62e7151ae3eb.
-> 
-> Before the commit 2d72afb34065, __nf_conntrack_confirm() set
-> 'ct->status |= IPS_CONFIRMED;' before check hash, the warning will not
-> happen, so I put it here.
 
-Oh, right, the problem was concealed before this.
+--1AUHNkd+gHsq61gf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > There is a second bug here, confirm can return NF_DROP and
-> > nfct will be NULL.
-> 
-> Thanks for your suggestion!
-> 
-> Do you mean that ct may be deleted in confirm and return NF_DROP, so we can
-> not visit it in br_nf_local_in() and need to add 'case NF_DROP:' here?
->
-> I cannot find somewhere set skb->_nfct to NULL and return NF_DROP. Can you
-> give some hints?
+> This patch series greatly improve airoha snfi driver and fix a
+> number of serious bug.
+>=20
+> Fixed bugs:
+>  * Fix reading/writing of flashes with more than one plane per lun
+>  * Fix inability to read/write oob area
+>  * Fill the buffer with 0xff before writing
+>  * Fix reading of flashes supporting continuous reading mode
+>  * Fix error paths
+>=20
+> Improvements:
+>  * Add support of dual/quad wires spi modes in exec_op().
+>  * Support of dualio/quadio flash reading commands
+>  * Remove dirty hack that reads flash page settings from SNFI registers
+>    during driver startup
+>=20
+> Unfortunately I am unable to test the driver with linux at the moment,
+> so only the following testing was done:
 
-You are right, skb->_nfct isn't set to NULL in case NF_DROP is returned.
-However, the warning will trigger as we did not insert the conntrack
-entry in that case.
+It seems to me this is quite an important rework of the driver. I would pre=
+fer
+to have some test results for this series. Are you able to run mtd_test ker=
+nel
+module for testing?
 
-I suggest to remove the warning, I don't think it buys anything.
+Regards,
+Lorenzo
 
-Thanks.
+>  * Driver compiles without error.
+>  * All changes were tested with corresponding u-boot driver. U-Boot
+>    SpiNAND driver was modified as well to match linux-6.17-rc2 with
+>    additional fixes for continuous mode.
+>=20
+> Changes v2:
+>  * minor fix
+>  * add comments to code
+>=20
+> Changes v3:
+>  * add patch to prevent continuous reading
+>=20
+> Mikhail Kshevetskiy (14):
+>   spi: airoha: return an error for continuous mode dirmap creation cases
+>   spi: airoha: remove unnecessary restriction length
+>   spi: airoha: add support of dual/quad wires spi modes
+>   spi: airoha: remove unnecessary switch to non-dma mode
+>   spi: airoha: unify dirmap read/write code
+>   spi: airoha: switch back to non-dma mode in the case of error
+>   spi: airoha: fix reading/writing of flashes with more than one plane
+>     per lun
+>   spi: airoha: support of dualio/quadio flash reading commands
+>   spi: airoha: allow reading/writing of oob area
+>   spi: airoha: buffer must be 0xff-ed before writing
+>   spi: airoha: avoid setting of page/oob sizes in REG_SPI_NFI_PAGEFMT
+>   spi: airoha: reduce the number of modification of REG_SPI_NFI_CNFG and
+>     REG_SPI_NFI_SECCUS_SIZE registers
+>   spi: airoha: set custom sector size equal to flash page size
+>   spi: airoha: avoid reading flash page settings from SNFI registers
+>     during driver startup
+>=20
+>  drivers/spi/spi-airoha-snfi.c | 508 +++++++++++++++++-----------------
+>  1 file changed, 260 insertions(+), 248 deletions(-)
+>=20
+> --=20
+> 2.50.1
+>=20
+
+--1AUHNkd+gHsq61gf
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaKbDiQAKCRA6cBh0uS2t
+rJDmAP9GGuvSZEogcCj+X2sKTBaavTRJxM26qOSQDYgAAIL4nQD9HS0AIcUP+7jg
+0doMcxD0fGbfIx1hqOoVPVYE1CgCWAc=
+=YwyO
+-----END PGP SIGNATURE-----
+
+--1AUHNkd+gHsq61gf--
 
