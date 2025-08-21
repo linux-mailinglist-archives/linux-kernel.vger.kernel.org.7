@@ -1,49 +1,72 @@
-Return-Path: <linux-kernel+bounces-779978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F51AB2FBCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:07:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F311B2FBDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABCBF1BA0507
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74AC4AE5D9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FB325487A;
-	Thu, 21 Aug 2025 14:01:35 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1054B1FAC42;
-	Thu, 21 Aug 2025 14:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161D52459C5;
+	Thu, 21 Aug 2025 14:02:01 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDFE1F463B;
+	Thu, 21 Aug 2025 14:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755784894; cv=none; b=YuMCsllZ20MUOlIic7ztDEMvQmGmUj5Gr2I1m/MKJSTRP8rjNfiW57Zf1/A5Liq5YpTXAPTUucvj13yIrdBq6okSAlgr2yHv6FfsRu0WWCPTAn5sZUr1BKBvG94v6pyrR9lFj40UmJdkuJ+PONmuS8n502H2LlLRFn0zZVMHpNM=
+	t=1755784920; cv=none; b=FjjOAsOFX2Zl2ARhp4uZp+FiHHMLMLS4QHzUrn2tYzzIa1qrqNSIZc6DqxhY9nDkmBxqUnCsKzyxrNQfLc4cyP9ahfZx0bXPipn2vq0sYF+iiE6Q1g+Z6DCZkxQ60PlC+sHvJkMLiOJvg5ovpwqvLh3asqTgnKJOE+yog0S5PvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755784894; c=relaxed/simple;
-	bh=r/+8ODg0b9YgcL33UXUKZFg5Kqh5wZuQHj1SZZR1Jdo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sGBEWC4b+ENMRqNXneElJm+wWFXEMlmmpnSnIh1/CZz2O8ruYkAhGHy7ts11sATzf1mP5uHA/K6K5z6cetp8SUMDyM/p4qF8QLGfFs2mPagvhIMMGMByExMlx6cJxYWaNwVs8H0lfEw73Rgaf4LtmnkqF9tLnZxacKZU3q1zV2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxO9K4JqdoAXYBAA--.2704S3;
-	Thu, 21 Aug 2025 22:01:28 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJBxpeSyJqdorsZdAA--.26328S4;
-	Thu, 21 Aug 2025 22:01:28 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Hengqi Chen <hengqi.chen@gmail.com>
-Cc: loongarch@lists.linux.dev,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/2] LoongArch: BPF: Add 12 function arguments support for trampoline
-Date: Thu, 21 Aug 2025 22:01:22 +0800
-Message-ID: <20250821140122.29752-3-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20250821140122.29752-1-yangtiezhu@loongson.cn>
-References: <20250821140122.29752-1-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1755784920; c=relaxed/simple;
+	bh=HQf8iG9brolgU0iVx1X71lVWDLRN87n0FG7+6GJp7hM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FCfPKpQQ/L4MgUyWKCkpdlf8T39XOWsDtR9Pct4sJ/ZQfn9VDmV7Ckq0e9OfFZvLTVIVD11R2gDkeJIuPDuaKY5evh27xjJvCefrCeAe/mnMABubFy7LHPKPklz26KDgp0dBEw9eAhIwyIKYGrrxJWFr2d1+PAfToAEf2aQYfeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from ROG.lan (unknown [118.251.176.166])
+	by APP-03 (Coremail) with SMTP id rQCowABn+Xq+JqdoP8MTDg--.22469S2;
+	Thu, 21 Aug 2025 22:01:36 +0800 (CST)
+From: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	anup@brainfault.org,
+	pbonzini@redhat.com,
+	shuah@kernel.org,
+	cyan.yang@sifive.com,
+	cleger@rivosinc.com,
+	charlie@rivosinc.com,
+	cuiyunhui@bytedance.com,
+	samuel.holland@sifive.com,
+	namcao@linutronix.de,
+	jesse@rivosinc.com,
+	inochiama@gmail.com,
+	yongxuan.wang@sifive.com,
+	ajones@ventanamicro.com,
+	parri.andrea@gmail.com,
+	mikisabate@gmail.com,
+	yikming2222@gmail.com,
+	thomas.weissschuh@linutronix.de
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	pincheng.plct@isrc.iscas.ac.cn
+Subject: [PATCH v1 RESEND 0/5] RISC-V: Add Zilsd/Zclsd support in hwprobe and KVM
+Date: Thu, 21 Aug 2025 22:01:26 +0800
+Message-Id: <20250821140131.225756-1-pincheng.plct@isrc.iscas.ac.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,185 +74,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxpeSyJqdorsZdAA--.26328S4
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Gr15uw4DWF4DuFW7WF1fXwc_yoW7uF1kpF
-	1qkFsY9F18tFW7Wa97XF4Uur1Ykan3A3y5KrW7Ja92gws8Zr98GayrtF1akFy5Gr1kZr1x
-	Aws0vryYkF1xJrbCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r126r13M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v2
-	6r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j5l1kUUUUU=
+X-CM-TRANSID:rQCowABn+Xq+JqdoP8MTDg--.22469S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ArykGr1fCw45Aw13Xw4xJFb_yoW8KrWUpa
+	n5Gw1YgF1kXry7C34fAr48ur1rKF4ru393Jrnxt348WFW3Cr95Jr93K3ZxZF18AFWI9ry0
+	93WFgw1I93Z7ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9v14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUWVWUuwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbV
+	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
+	xVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r
+	1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0
+	rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJV
+	WxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUU2jg7UUUUU==
+X-CM-SenderInfo: pslquxhhqjh1xofwqxxvufhxpvfd2hldfou0/
 
-Currently, LoongArch bpf trampoline supports up to 8 function arguments.
-According to the statistics from commit 473e3150e30a ("bpf, x86: allow
-function arguments up to 12 for TRACING"), there are over 200 functions
-accept 9 to 12 arguments, so add 12 arguments support for trampoline.
+Hi all,
 
-The initial aim is to pass the following related testcases:
+This is a RESEND of v1 to correct a mistake in the CC list.
+There are **no changes in code** compared to the previous v1.
 
-  sudo ./test_progs -a tracing_struct/struct_many_args
-  sudo ./test_progs -a fentry_test/fentry_many_args
-  sudo ./test_progs -a fexit_test/fexit_many_args
+This patch series adds support for the recently ratified Zilsd
+(Load/Store pair instructions) and Zclsd (Compressed Load/Store pair
+instructions) extensions to the RISC-V Linux kernel. It covers device tree
+binding,ISA string parsing, hwprobe exposure, KVM guest handling and selftests.
 
-but there exist some other problems now, maybe it is related with
-the following failed testcase:
+Zilsd and Zclsd allow more efficient memory access sequences on RV32. My
+goal is to enable glibc and other user-space libraries to detect these
+extensions via hwprobe and make use of them for optimized
+implementations of common routines. To achieve this, the Linux kernel
+needs to recognize and expose the availability of these extensions
+through the device tree bindings, ISA string parsing and hwprobe
+interfaces. KVM support is also required to correctly virtualize these
+features for guest environments.
 
-  sudo ./test_progs -t module_attach
+The series is structured as follows:
+- Patch 1: Add device tree bindings documentation for Zilsd and Zclsd
+- Patch 2: Extend RISC-V ISA extension string parsing to recognize them.
+- Patch 3: Export Zilsd and Zclsd via riscv_hwprobe
+- Patch 4: Allow KVM guests to use them.
+- Patch 5: Add KVM selftests.
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/net/bpf_jit.c | 57 ++++++++++++++++++++++++++++--------
- 1 file changed, 45 insertions(+), 12 deletions(-)
+This series of patches is a preparatory step toward enabling user-space
+optimizations in glibc that leverage Zilsd and Zclsd, by providing the
+necessary kernel-side support.
 
-diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-index 7bd4b132755a..805fa6dba2d8 100644
---- a/arch/loongarch/net/bpf_jit.c
-+++ b/arch/loongarch/net/bpf_jit.c
-@@ -1340,26 +1340,48 @@ int bpf_arch_text_invalidate(void *dst, size_t len)
- 	return ret;
- }
- 
--static void store_args(struct jit_ctx *ctx, int nregs, int args_off)
-+static void store_args(struct jit_ctx *ctx, int nr_arg_slots, int args_off)
- {
- 	int i;
- 
--	for (i = 0; i < nregs; i++) {
--		emit_insn(ctx, std, LOONGARCH_GPR_A0 + i, LOONGARCH_GPR_FP, -args_off);
-+	for (i = 0; i < nr_arg_slots; i++) {
-+		if (i < LOONGARCH_MAX_REG_ARGS) {
-+			emit_insn(ctx, std, LOONGARCH_GPR_A0 + i, LOONGARCH_GPR_FP, -args_off);
-+		} else {
-+			/* skip slots for T0 and FP of traced function */
-+			emit_insn(ctx, ldd, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP,
-+				  16 + (i - LOONGARCH_MAX_REG_ARGS) * 8);
-+			emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -args_off);
-+		}
- 		args_off -= 8;
- 	}
- }
- 
--static void restore_args(struct jit_ctx *ctx, int nregs, int args_off)
-+static void restore_args(struct jit_ctx *ctx, int nr_reg_args, int args_off)
- {
- 	int i;
- 
--	for (i = 0; i < nregs; i++) {
-+	for (i = 0; i < nr_reg_args; i++) {
- 		emit_insn(ctx, ldd, LOONGARCH_GPR_A0 + i, LOONGARCH_GPR_FP, -args_off);
- 		args_off -= 8;
- 	}
- }
- 
-+static void restore_stk_args(struct jit_ctx *ctx, int nr_stk_args,
-+			       int args_off, int stk_arg_off)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr_stk_args; i++) {
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP,
-+			  -(args_off - LOONGARCH_MAX_REG_ARGS * 8));
-+		emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP,
-+			  -stk_arg_off);
-+		args_off -= 8;
-+		stk_arg_off -= 8;
-+	}
-+}
-+
- static int invoke_bpf_prog(struct jit_ctx *ctx, struct bpf_tramp_link *l,
- 			   const struct btf_func_model *m, int args_off,
- 			   int retval_off, int run_ctx_off, bool save_ret)
-@@ -1477,7 +1499,7 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 					 void *func_addr, u32 flags)
- {
- 	int i, ret, save_ret;
--	int stack_size = 0, nregs = m->nr_args;
-+	int stack_size = 0, nr_arg_slots = 0, stk_arg_off;
- 	int retval_off, args_off, nregs_off, ip_off, run_ctx_off, sreg_off, tcc_ptr_off;
- 	bool is_struct_ops = flags & BPF_TRAMP_F_INDIRECT;
- 	void *orig_call = func_addr;
-@@ -1511,9 +1533,13 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	 * FP - sreg_off    [ callee saved reg  ]
- 	 *
- 	 * FP - tcc_ptr_off [ tail_call_cnt_ptr ]
-+	 *
-+	 *                  [ stack_argN        ]
-+	 *                  [ ...               ]
-+	 * FP - stk_arg_off [ stack_arg1        ] BPF_TRAMP_F_CALL_ORIG
- 	 */
- 
--	if (m->nr_args > LOONGARCH_MAX_REG_ARGS)
-+	if (m->nr_args > MAX_BPF_FUNC_ARGS)
- 		return -ENOTSUPP;
- 
- 	/* extra regiters for struct arguments */
-@@ -1544,7 +1570,7 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	}
- 
- 	/* Room of trampoline frame to store args */
--	stack_size += nregs * 8;
-+	stack_size += nr_arg_slots * 8;
- 	args_off = stack_size;
- 
- 	/* Room of trampoline frame to store args number */
-@@ -1570,8 +1596,14 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 		tcc_ptr_off = stack_size;
- 	}
- 
-+	if ((flags & BPF_TRAMP_F_CALL_ORIG) && (nr_arg_slots - LOONGARCH_MAX_REG_ARGS > 0))
-+		stack_size += (nr_arg_slots - LOONGARCH_MAX_REG_ARGS) * 8;
-+
- 	stack_size = round_up(stack_size, 16);
- 
-+	/* Room for args on stack must be at the top of stack */
-+	stk_arg_off = stack_size;
-+
- 	if (is_struct_ops) {
- 		/*
- 		 * For the trampoline called directly, just handle
-@@ -1613,10 +1645,10 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	}
- 
- 	/* store arg regs count */
--	move_imm(ctx, LOONGARCH_GPR_T1, nregs, false);
-+	move_imm(ctx, LOONGARCH_GPR_T1, nr_arg_slots, false);
- 	emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -nregs_off);
- 
--	store_args(ctx, nregs, args_off);
-+	store_args(ctx, nr_arg_slots, args_off);
- 
- 	/* To traced function */
- 	/* Ftrace jump skips 2 NOP instructions */
-@@ -1648,7 +1680,8 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	}
- 
- 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
--		restore_args(ctx, nregs, args_off);
-+		restore_args(ctx, min_t(int, nr_arg_slots, LOONGARCH_MAX_REG_ARGS), args_off);
-+		restore_stk_args(ctx, nr_arg_slots - LOONGARCH_MAX_REG_ARGS, args_off, stk_arg_off);
- 
- 		if (flags & BPF_TRAMP_F_TAIL_CALL_CTX)
- 			emit_insn(ctx, ldd, REG_TCC, LOONGARCH_GPR_FP, -tcc_ptr_off);
-@@ -1685,7 +1718,7 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	}
- 
- 	if (flags & BPF_TRAMP_F_RESTORE_REGS)
--		restore_args(ctx, nregs, args_off);
-+		restore_args(ctx, min_t(int, nr_arg_slots, LOONGARCH_MAX_REG_ARGS), args_off);
- 
- 	if (save_ret) {
- 		emit_insn(ctx, ldd, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -retval_off);
+Please review, and let me know if any adjustments are needed.
+
+Thanks,
+Pincheng Wang
+
+
+Pincheng Wang (5):
+  dt-bidings: riscv: add Zilsd and Zclsd extension descriptions
+  riscv: add ISA extension parsing for Zilsd and Zclsd:
+  riscv: hwprobe: export Zilsd and Zclsd ISA extensions
+  riscv: KVM: allow Zilsd and Zclsd extensions for Guest/VM
+  KVM: riscv: selftests: add Zilsd and Zclsd extension to get-reg-list
+    test
+
+ Documentation/arch/riscv/hwprobe.rst          |  8 ++++
+ .../devicetree/bindings/riscv/extensions.yaml | 39 +++++++++++++++++++
+ arch/riscv/include/asm/hwcap.h                |  2 +
+ arch/riscv/include/uapi/asm/hwprobe.h         |  2 +
+ arch/riscv/include/uapi/asm/kvm.h             |  2 +
+ arch/riscv/kernel/cpufeature.c                | 24 ++++++++++++
+ arch/riscv/kernel/sys_hwprobe.c               |  2 +
+ arch/riscv/kvm/vcpu_onereg.c                  |  2 +
+ .../selftests/kvm/riscv/get-reg-list.c        |  6 +++
+ 9 files changed, 87 insertions(+)
+
 -- 
-2.42.0
+2.39.5
 
 
