@@ -1,119 +1,126 @@
-Return-Path: <linux-kernel+bounces-779836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F1DB2F9DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:16:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 917C0B2F9DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614AC607E68
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D782C3BAAEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEEC2D3746;
-	Thu, 21 Aug 2025 13:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5732C11C1;
+	Thu, 21 Aug 2025 13:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="Vo6tXthg"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="s+jGAUic"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1179322741;
-	Thu, 21 Aug 2025 13:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755781791; cv=pass; b=F7Na3qsQuQhP8GZp2ZrertgyXb+FlT+peiMkHUKAobTLEV7AsHS9kBeLTJ5/jpDwnPA5lSLO/LKBaNU8yw0Cr3p/I2tTIAOZovHbZ4C/Pfy/IdPHwJhAd6Ezhf3w5I5UXRkhTjhc1b5khZ6T9LNeOkbb/bLNjtjgTP+Q8wsc9jA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755781791; c=relaxed/simple;
-	bh=c6z2Anh6sbb5NivOvu50DI5uIAsCrwWMa55qQX9GMCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jGsiTABL/WLOb5WP1oT6L2MnT/Lr3NZq5b6YThC/IuHev7RmbG8ejPZkn+PPmX91i6vmy9qo5mXn/CIRMeGmrZYsHIsI8vpVqrVBO5CfFBP6NMl6sgG9b9QRdD2522465HRNUbmOzkkOe5J8AMy3d9ve1/j1esexElmXGmy5qjU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=Vo6tXthg; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CF036CDE1
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755781768; cv=none; b=bJJFh1w9ACuX6W/f7FBIcSSZ3lzfHTZNYawRJvdAW0kZxrjG1GrPnpjmjCThsc1Ebkgz3r+b/afJLVzpEPljbw8XG4/Sb22Z8Jaw4Jxj9wQx5B+irN8P4URdcLhRSmltfAXfSgVoBMjmpF5AeIQxWdiRZn0VX1K09Qbc9jUt6SI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755781768; c=relaxed/simple;
+	bh=MeQEZv8XM24OgU4ggYQjZ95ovNGDRXHKtmzcUdqWP5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Oq2QiUmDwc/x9MRVHsKyOkb1OFIlmJUqVmcPJngq+v0wEB6EqlBcboz9oPiUq+APPlA2UfpIbBBFPU/l2GNZ/Y7MA6dCMjzgZdTtLDsAHRngHbgPhUvx3y8bVUeLX8/mFPGjWEqqE3btvbo6b2msCf646073kyxeWPjrwfyRjk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=s+jGAUic; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4c73ZH3YdZz49PyC;
-	Thu, 21 Aug 2025 16:09:43 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1755781783;
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4c73Yv1V1cz9tJx;
+	Thu, 21 Aug 2025 15:09:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1755781763;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RG7FdxGayk/FT0R62hdmtMFE2/mK6pkaoyT3IzHXIaw=;
-	b=Vo6tXthgccMZmtWu2QBRLpsm3Qay2pZX9qfLnMzBct6LBwbZO0UKh+XUFOWhpGzm33bRYE
-	eGB2kyFR6Fj0794U/2ez/vYAkyzzlawq4F3T0dGLyoueeFk56ons1Dyc47zzUBiSELe0gc
-	c6DdHsoZBSh3vyLpSbgeRtiObHh2suB2Qq6yadM0Ty4kLDD/Nbs6K/Rz1EcNupPbcPA64A
-	Gky5huTHSmv2w+JpTo+1pFo1kzYzSyA0X5+6OgPLV8bco74PScrz9XjH+fBCJin8wYPlU8
-	gm0Jv/mpV4vAXaXD7V9qdYxnb2qpbTcodxtElC17OO7jMgQ6C+0XvJgx9WK+OQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1755781783;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RG7FdxGayk/FT0R62hdmtMFE2/mK6pkaoyT3IzHXIaw=;
-	b=XlxMkKEiXF/zZPvPnppC1yOUqSMq8u8SbV8Hiig8S9XdBbbUMCs4juAc0264rkDVUUS+L0
-	xD+JM90M4v9JeVLtzDt2wT5zKktLIGI6s1VN6jpYnuV2yoq+uJWIoHX7Di/T94nJXWuzbl
-	n6CAIHMEIsLMslqzbUsmmTdzQjK12N061Vg/67y0L2GYNuYyrJyh+STWWy1MJnQb7z0S4z
-	IeFFL9esk4g3ElxUAL1W+3/ab/J1WTh4j6Otl2Kd5irzjdl/JGQDM1IWTafgHOh8kAabkT
-	aaN98VaDb6R6DLmp65kOa422amfE9g9xra6WIuPPAuZe1SWkpF5Oauzqpp6wxw==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1755781783; a=rsa-sha256;
-	cv=none;
-	b=A3Np8sImhwJccJz+4U+x/yU8qaL2TcD5WuITJkgbhgXx8o1F9FkK7e2H3iQY0VLaRMEGcK
-	Gsd7Fb4QEHLxQE1wc8ioIWFNvJ6fPJqBtAMpF68OwRJbCgpgTO25QKlmqgzh4i64uPVjh3
-	4wQFn/m0x1Zmf3aOZEwFhLLBqJ7zG9ucFy8+srZTSabaAb7oiPNCmqCYys5PFYkvaZ0+Nl
-	td/mIq5sbSKY5A341OcGi+/PPOiwm3gX3PXbJx6ocAVgpCOhSntQ72q2Ob3c16oDnBzdRW
-	c3qx0/JTHhEs+0mnfcYVatWpY/3cvbzlMHw3W0hgFDBn3VbTKhcwK7oQtGXkbA==
-Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 0064F634C96;
-	Thu, 21 Aug 2025 16:08:18 +0300 (EEST)
-Date: Thu, 21 Aug 2025 13:08:19 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>
-Subject: Re: [PATCH v4 4/5] docs: media: document media multi-committers
- rules and process
-Message-ID: <aKcaQ7R1LTWRf3rd@valkosipuli.retiisi.eu>
-References: <cover.1733218348.git.mchehab+huawei@kernel.org>
- <01acc93fd8780265ea55772ba793f3f09a43ffa7.1733218348.git.mchehab+huawei@kernel.org>
+	bh=52AW3vX2G/gONvQRliEmju8kdN4K7aQivHGiuzDOHmM=;
+	b=s+jGAUic/ET4f3uS8kGl/sLr8obP/gvQlWLnXAU7A/5pRIpCSJuw48ObfQD4kqqOL2GWxy
+	okDa/fq/dfTkmxuxZGxqfTW1YStwNU9pitzLoWRItb35yCYOeNZjMVn2U7C+KtwpKZgMAq
+	SuG3NpGCf6zIegVozyX/xbCcj7kbngzhX3JZ1nmEgz8CTggPBDOYItayjbsGX6teJD2eKv
+	NXl4JtrUYVAmDUkuKHWM28BE7A9uPGrsGUCpxXwCDGXkAuR79vu8/St1YARB8QhzRDcbPZ
+	PTTLyADBSHraW+k936OhCXcYglKh8quexx+XSBhGvk4juDSYBxjSNqzk6W8jzg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of listout@listout.xyz designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=listout@listout.xyz
+From: Brahmajit Das <listout@listout.xyz>
+To: alexander.deucher@amd.com
+Cc: Christian.Koenig@amd.com,
+	Jun.Lei@amd.com,
+	Qingqing.Zhuo@amd.com,
+	alexdeucher@gmail.com,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	listout@listout.xyz
+Subject: [PATCH v2] drm/amd/display: clean-up dead code in dml2_mall_phantom
+Date: Thu, 21 Aug 2025 18:39:09 +0530
+Message-ID: <20250821130909.25428-1-listout@listout.xyz>
+In-Reply-To: <BL1PR12MB5144269A278EED9AC3CCEE7EF733A@BL1PR12MB5144.namprd12.prod.outlook.com>
+References: <BL1PR12MB5144269A278EED9AC3CCEE7EF733A@BL1PR12MB5144.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01acc93fd8780265ea55772ba793f3f09a43ffa7.1733218348.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4c73Yv1V1cz9tJx
 
-Hi Mauro, Hans,
+pipe_idx in funtion dml2_svp_validate_static_schedulabilit, although set
+is never actually used. While building with GCC 16 this gives a warning:
 
-On Tue, Dec 03, 2024 at 10:35:48AM +0100, Mauro Carvalho Chehab wrote:
-> As the media subsystem will experiment with a multi-committers model,
-> update the Maintainer's entry profile to the new rules, and add a file
-> documenting the process to become a committer and to maintain such
-> rights.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml2_mall_phantom.c: In function ‘set_phantom_stream_timing’:
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml2_mall_phantom.c:657:25: warning: variable ‘pipe_idx’ set but not used [-Wunused-but-set-variable=]
+  657 |         unsigned int i, pipe_idx;
+      |                         ^~~~~~~~
 
-Overall it looks like the review comments are fine tuning with probably
-little effect in practice right now. Do you think you could re-spin the
-series, taking the discussion into account?
+Signed-off-by: Brahmajit Das <listout@listout.xyz>
+---
+v1 -> v2: leaving declaration above
+---
+ drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c b/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c
+index a56e75cdf712..c59f825cfae9 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c
+@@ -654,14 +654,14 @@ static void set_phantom_stream_timing(struct dml2_context *ctx, struct dc_state
+ 				     unsigned int svp_height,
+ 				     unsigned int svp_vstartup)
+ {
+-	unsigned int i, pipe_idx;
++	unsigned int i;
+ 	double line_time, fp_and_sync_width_time;
+ 	struct pipe_ctx *pipe;
+ 	uint32_t phantom_vactive, phantom_bp, pstate_width_fw_delay_lines;
+ 	static const double cvt_rb_vblank_max = ((double) 460 / (1000 * 1000));
+ 
+ 	// Find DML pipe index (pipe_idx) using dc_pipe_idx
+-	for (i = 0, pipe_idx = 0; i < ctx->config.dcn_pipe_count; i++) {
++	for (i = 0; i < ctx->config.dcn_pipe_count; i++) {
+ 		pipe = &state->res_ctx.pipe_ctx[i];
+ 
+ 		if (!pipe->stream)
+@@ -669,8 +669,6 @@ static void set_phantom_stream_timing(struct dml2_context *ctx, struct dc_state
+ 
+ 		if (i == dc_pipe_idx)
+ 			break;
+-
+-		pipe_idx++;
+ 	}
+ 
+ 	// Calculate lines required for pstate allow width and FW processing delays
 -- 
-Kind regards,
+2.51.0
 
-Sakari Ailus
 
