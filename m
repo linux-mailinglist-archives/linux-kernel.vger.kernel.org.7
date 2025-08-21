@@ -1,201 +1,129 @@
-Return-Path: <linux-kernel+bounces-779687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FEE2B2F74B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:57:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D50B2F760
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D89A587B5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:54:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C13D5179D8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDCA2DEA78;
-	Thu, 21 Aug 2025 11:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A455F30E0F2;
+	Thu, 21 Aug 2025 11:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ly8rgEvX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VM7mxTvl"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A630292B4D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D33320F07C
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755777288; cv=none; b=MB4SHQoFSnJ8nWtlnXcRy9ScTGY/x4QlUPNHfsXklLgk1FF2v7B9072YPlj9RbQASwKjfZfI3eJONx+aV368aNnzlP3adCBuHY7nPkL5obDN0WP1oYCTTFY44TRrLqe8+xHOCdhH+PcVjAQQm4IfwKG6R6GbaGhfbweqCyubn2s=
+	t=1755777399; cv=none; b=gZAeXFw/OXh4aC0gHoTm8U4+Uf6HFjAWG5EgCwG69H5kM3zBQhYXbOeriUgL/HW6iKjkOqk6wUvEw8W5Uno2Fl+7P4cUKSRRCO+8FyyNYJKVBIvvbHy9XCI3Dm891V4pWxg7UicJi1uluw8c8eK5fhc4HaDyiOO93X9c02VwjuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755777288; c=relaxed/simple;
-	bh=69wzCZHhSFHeHuTH3cr2PUYgHqtI+f+GALGK+wokVyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eLlEcdxvBRyqNgur9U6ZZ97cdS0KGrUlrMqt80hJQ+f5MWNhMvpV/xKPHYg24F95yzI5e6PVHDUoFXbta52pZ28K2GKzu3r//EdD6hdazadcD9IObwCIFbzoD48ykRBcPRMluT6KuiFYN2PcxqLJml7FEDNndj5HGUJE9Failv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ly8rgEvX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755777284;
-	bh=69wzCZHhSFHeHuTH3cr2PUYgHqtI+f+GALGK+wokVyA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ly8rgEvX5U+tO7SJMmv4YFydyn0vAw3UgGN9Bx2xeLJA5ukPvo3AsnW6jngbMxY+N
-	 lKez3ppvehdP16jThVFB4BjSU9smlrCz50csvQJA989iC1n8oX+lc+TXvjdNMKveBd
-	 ILd9DPlfPzlvVTSOMKPpT3sCrzyqYFWnS2g7jHC7R69oDiG3xAaO4GJ/7z7x6JQswH
-	 h7cIxm7z2uUZj71qJIEzgqj4Tkiq7UuJ38zd9DeerR9Tp9rxEhHkXuMaUJ/5OXOYkN
-	 fH21M9MwIPuYBCT4FwQinAJOwGQWfQPTAVp7QdLJ1+Miy5lvb+fUDqnBVskzT0s/GA
-	 VVCum848K4ViA==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EF55C17E127B;
-	Thu, 21 Aug 2025 13:54:43 +0200 (CEST)
-Date: Thu, 21 Aug 2025 13:54:37 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Adrian Larumbe <adrian.larumbe@collabora.com>
-Cc: Caterina Shablia <caterina.shablia@collabora.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Frank Binns <frank.binns@imgtec.com>, Matt
- Coster <matt.coster@imgtec.com>, Karol Herbst <kherbst@redhat.com>, Lyude
- Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Lucas De Marchi
- <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
- <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- asahi@lists.linux.dev, Asahi Lina <lina@asahilina.net>
-Subject: Re: [PATCH v4 4/7] drm/gpuvm: Add a helper to check if two VA can
- be merged
-Message-ID: <20250821135437.499d9a6a@fedora>
-In-Reply-To: <bvoiomc5x7cbyc4l35rbideznuyw557u2ttp7utoifaxs27j3m@6mc7ya7asmpy>
-References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
-	<20250707170442.1437009-5-caterina.shablia@collabora.com>
-	<bvoiomc5x7cbyc4l35rbideznuyw557u2ttp7utoifaxs27j3m@6mc7ya7asmpy>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755777399; c=relaxed/simple;
+	bh=uf6vS3Gl2AuJ7xqaJiaRJedxS56Xesptizd08sfMens=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BRR2UaY8lgodNagIdjM/QRhnvKYIDTbhdAP2Yh+lAZS8SjN5kqmsYbdpWcanbyX0JBVwjPPCE47npLl6j0IPDp+uMp521on9oIeN5vCM7pI3LBjN6rbuO5GmNleOhB0d9VrWi7teCF9iFuEXc4vnU/qeFfPBstQkLMDGRyhr/6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VM7mxTvl; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-333f8f0dd71so7544731fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:56:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755777395; x=1756382195; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NTRZmz9b45Hl2bTm1apFpY/NlVi3bfWcm6ULUt78zN4=;
+        b=VM7mxTvljui9g3lu39TOLUk1ZV6pCMH8OG9CoturI99lwEeKkgCehLIJXnFI4/vOQc
+         Xfv7eVzvCp7gInSOBUAbKzyCXFHGSOueTtC3cCcSR7wiAwxx2tGtLVVhGe/kiivOKwFp
+         IQXHPxpy+J7zMIWq4oHb1H8j55i5msEMt2S8QlNV+wlIqPKD353nNI5w2rEqAAQ6olKV
+         SDdC+kFjxAF46YbZJLE2f73+tl5D39nhSS/SUjUPFsFENoN6BuEwradO09gEt8+gTHUW
+         euEgTAZc7VOvIBaJPDt6XMqfceDOhVrWPWLB8QEyrZvVj7LXb8plg7+C3LdG5v9SVrka
+         bj6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755777396; x=1756382196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NTRZmz9b45Hl2bTm1apFpY/NlVi3bfWcm6ULUt78zN4=;
+        b=b5xfvtyvP3e3pqVioTx8840MRCOAG0XDbvniK/9QjThlelxHliO/yl98mes/7O3t5m
+         80jPhznNdZZmaC6iar38l8VNIy1fJSXmFyPZff8MkejlU0ycUcnrPgYHrL0BcBP2QRN9
+         uI7OCS6CnZ72V3YqAECn21g7axNRNDXSgZfZlzyInRhN2dfYhfZJCqf/PCNW0Ih7sUBy
+         oJRJaV+3bKT048ZRVbdVqOZetBcDMWhGnDXNx7gKb/JLEQB58s5bVWFYlDbfP07jArIo
+         8IfcqvaBhj/Jqm+I3LFO3cFQX70VuilWvvW0TGVRnqBDWvudhkhb9N+HuAnZahqK1IPk
+         /r2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUHBvH1cJEZFwlZLP47s1muhQJ3y8FgZ/4Zs0K1LiVN5XTCAWxEGlBwpLVlTQA+vb7sJetAf8YFstPCbPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB7iOFLrdXxyYmsh7oWpzINKa8thKFDusm4eVD1WOvVeWTMBYv
+	lvdMJAjLdVbNsBsBMg2V5OP9INaWOG3xTzDWuM9S/N7sSY03Pe8drHbvmzMYh8vcAblmMNnA6mk
+	nAvIATnf+Bf4hB+MaqjxQJd1+9OCNTtcjElleRqfwaw==
+X-Gm-Gg: ASbGncugVbiJqKtkXcPA4CcGMJoOcbzshNYjHbVSzQ8mVbeOokQfVXS53Xt3mBdjmAG
+	P/fTbZR4g9aIF4ZmyJHIiXiz0SePMNoicTEVRU8a/jlwVX92AgxghVWHXShjrDwiRQSOhy2I4gh
+	ewcwwQ+ARNrKD4kZcixSvFWOOpC37M4MwzOehE4qRjn4TFC7BuxKxfb5f8ie/7Gei9DgYVfh3XC
+	tZqFo8=
+X-Google-Smtp-Source: AGHT+IHLNT7GNgIK+Yc1AUKtRsJ+Pu3qxvF99KQLgmBORucS0GzpXEZZoUCuuB+z9QVIQwaQ+MKKQAluSVZweFngFeU=
+X-Received: by 2002:a05:651c:54a:b0:332:57b8:92eb with SMTP id
+ 38308e7fff4ca-33549e7e81dmr7293611fa.10.1755777395492; Thu, 21 Aug 2025
+ 04:56:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com> <20250820171302.324142-14-ariel.dalessandro@collabora.com>
+In-Reply-To: <20250820171302.324142-14-ariel.dalessandro@collabora.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 21 Aug 2025 13:56:24 +0200
+X-Gm-Features: Ac12FXxjp4iK3cFyWU_S6p_GaEq9BIq8dd_UPbgZlXscJTvrfMnMiNgyqvjOGHs
+Message-ID: <CACRpkdbpKqKyebADj0xPFq3g0biPh-vm4d6C3sd8r0URyfyYRg@mail.gmail.com>
+Subject: Re: [PATCH v1 13/14] dt-bindings: input/touchscreen: Convert MELFAS
+ MIP4 Touchscreen to YAML
+To: "Ariel D'Alessandro" <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch, 
+	andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com, 
+	broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com, 
+	conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com, 
+	edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com, 
+	jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com, 
+	krzk+dt@kernel.org, kuba@kernel.org, 
+	kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com, 
+	louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com, 
+	matthias.bgg@gmail.com, mchehab@kernel.org, minghsiu.tsai@mediatek.com, 
+	mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com, 
+	robh@kernel.org, sean.wang@kernel.org, simona@ffwll.ch, 
+	support.opensource@diasemi.com, tiffany.lin@mediatek.com, tzimmermann@suse.de, 
+	yunfei.dong@mediatek.com, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-sound@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 22 Jul 2025 20:17:14 +0100
-Adrian Larumbe <adrian.larumbe@collabora.com> wrote:
+Hi Ariel,
 
-> On 07.07.2025 17:04, Caterina Shablia wrote:
-> > From: Boris Brezillon <boris.brezillon@collabora.com>
-> >
-> > We are going to add flags/properties that will impact the VA merging
-> > ability. Instead of sprinkling tests all over the place in
-> > __drm_gpuvm_sm_map(), let's add a helper aggregating all these checks
-> > can call it for every existing VA we walk through in the
-> > __drm_gpuvm_sm_map() loop.
-> >
-> > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
-> > ---
-> >  drivers/gpu/drm/drm_gpuvm.c | 47 +++++++++++++++++++++++++++++--------
-> >  1 file changed, 37 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-> > index 05978c5c38b1..dc3c2f906400 100644
-> > --- a/drivers/gpu/drm/drm_gpuvm.c
-> > +++ b/drivers/gpu/drm/drm_gpuvm.c
-> > @@ -2098,12 +2098,48 @@ op_unmap_cb(const struct drm_gpuvm_ops *fn, void *priv,
-> >  	return fn->sm_step_unmap(&op, priv);
-> >  }
-> >
-> > +static bool can_merge(struct drm_gpuvm *gpuvm, const struct drm_gpuva *a,
-> > +		      const struct drm_gpuva *b)
-> > +{
-> > +	/* Only GEM-based mappings can be merged, and they must point to
-> > +	 * the same GEM object.
-> > +	 */
-> > +	if (a->gem.obj != b->gem.obj || !a->gem.obj)
-> > +		return false;
-> > +
-> > +	/* Let's keep things simple for now and force all flags to match. */
-> > +	if (a->flags != b->flags)
-> > +		return false;
-> > +
-> > +	/* Order VAs for the rest of the checks. */
-> > +	if (a->va.addr > b->va.addr)
-> > +		swap(a, b);
-> > +
-> > +	/* We assume the caller already checked that VAs overlap or are
-> > +	 * contiguous.
-> > +	 */
-> > +	if (drm_WARN_ON(gpuvm->drm, b->va.addr > a->va.addr + a->va.range))
-> > +		return false;
-> > +
-> > +	/* We intentionally ignore u64 underflows because all we care about
-> > +	 * here is whether the VA diff matches the GEM offset diff.
-> > +	 */
-> > +	return b->va.addr - a->va.addr == b->gem.offset - a->gem.offset;  
-> 
-> If we're reordering the VAs for the rest of the checks, when could underflow happen?
+thanks for your patch!
 
-I think this comments predates the re-ordering (I originally tried not
-to order VAs).
+On Wed, Aug 20, 2025 at 7:17=E2=80=AFPM Ariel D'Alessandro
+<ariel.dalessandro@collabora.com> wrote:
 
-> 
-> > +}
-> > +
-> >  static int
-> >  __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
-> >  		   const struct drm_gpuvm_ops *ops, void *priv,
-> >  		   const struct drm_gpuvm_map_req *req)
-> >  {
-> >  	struct drm_gpuva *va, *next;
-> > +	struct drm_gpuva reqva = {
-> > +		.va.addr = req->va.addr,
-> > +		.va.range = req->va.range,
-> > +		.gem.offset = req->gem.offset,
-> > +		.gem.obj = req->gem.obj,
-> > +		.flags = req->flags,
-> > +	};
-> >  	u64 req_end = req->va.addr + req->va.range;
-> >  	int ret;
-> >
-> > @@ -2116,12 +2152,9 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
-> >  		u64 addr = va->va.addr;
-> >  		u64 range = va->va.range;
-> >  		u64 end = addr + range;
-> > -		bool merge = !!va->gem.obj;
-> > +		bool merge = can_merge(gpuvm, va, &reqva);
-> >
-> >  		if (addr == req->va.addr) {
-> > -			merge &= obj == req->gem.obj &&
-> > -				 offset == req->gem.offset;
-> > -
-> >  			if (end == req_end) {
-> >  				ret = op_unmap_cb(ops, priv, va, merge);
-> >  				if (ret)
-> > @@ -2163,8 +2196,6 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
-> >  			};
-> >  			struct drm_gpuva_op_unmap u = { .va = va };
-> >
-> > -			merge &= obj == req->gem.obj &&
-> > -				 offset + ls_range == req->gem.offset;
-> >  			u.keep = merge;
-> >
-> >  			if (end == req_end) {
-> > @@ -2196,10 +2227,6 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
-> >  				break;
-> >  			}
-> >  		} else if (addr > req->va.addr) {
-> > -			merge &= obj == req->gem.obj &&
-> > -				 offset == req->gem.offset +
-> > -					   (addr - req->va.addr);
-> > -
-> >  			if (end == req_end) {
-> >  				ret = op_unmap_cb(ops, priv, va, merge);
-> >  				if (ret)
-> > --
-> > 2.47.2  
-> 
-> 
-> Adrian Larumbe
+> +  ce-gpios:
+> +    description: GPIO connected to the CE (chip enable) pin of the chip
+> +    maxItems: 1
 
+Mention that this should always have the flag GPIO_ACTIVE_HIGH
+as this is required by the hardware.
+
+Unfortunately we have no YAML syntax for enforcing flags :/
+
+With that fix:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
