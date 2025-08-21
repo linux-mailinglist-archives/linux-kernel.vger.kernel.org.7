@@ -1,155 +1,210 @@
-Return-Path: <linux-kernel+bounces-779555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220C2B2F594
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9DE7B2F5AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 316AF7AB793
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:44:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 684167AEABE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966282F0C57;
-	Thu, 21 Aug 2025 10:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C23430AAC6;
+	Thu, 21 Aug 2025 10:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="QYQFW7xv"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BDD1E32A3;
-	Thu, 21 Aug 2025 10:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="iUzuca7u"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA576308F35;
+	Thu, 21 Aug 2025 10:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755773138; cv=none; b=ODJmtVxvuK4N8exxCbofxw+KOTzhAIvy3+3WDipisar24j0CH9fifiiQ544G1Ucz6FiUyYmPpYf/tudtEr1Euctglvy9cnG4RtwwMutURSW9tXNgUdTYRaqlpf261XBFKHSrJVY59mjdMHfG7hWGanLbls8vnvQWpZ2FcLQckx8=
+	t=1755773494; cv=none; b=laNydgR40UO/yFp+LOCBSuJDiWqDHtjKAg6zolzqKo779+u8fhN+/TwNT5A4Hvb6MjjREO/iyknNY3lk0tvd6tPSXmmZBWZio7mKb9IRhvtKzsglPotEhb0Q8oDUfcu6E2pNhxgWkYhZ/XEXJWdyFZy654p5N7kUzONpPRm6SBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755773138; c=relaxed/simple;
-	bh=veJAZrUvtc7LapBQCcIADvZXJAqQ0896ep04FaDpdtI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=mq7hZqJumIyAKa1zqBfO2hd9b3Y1ybSBbj2pg4vYk7Q1JMOm2YJaL+0irpH0nh1auYi8p/Ytd81oGSZf0IrlFACaNa4rfdK6bUOqvKrDlL1VuDE5/TTz03yOqrmqoBJSsCYmcVJ7FbX6wxlbIZs0iJMx2b8MlaAP1au9SfpZiPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=QYQFW7xv reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=FIdCM0oVeX0+VbSjoJSJjSjQuPULlX/MyyfwfgwFUpY=; b=Q
-	YQFW7xvR+nS7G15SXoslmE3ZHV8EwxMBWV04Vm1/yrVq0yVuJ+bBElyjNI4uLWUh
-	MAUL40RVl8TlIaVYLo83XUmycMq5nsBXs4lxoLK9dsFaLmobAeaiFHxkOTMk0z5k
-	hF0VPMukhrVrQWIZlLsKkfrtkZFSmIzET4v4yGLo+c=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-122 (Coremail) ; Thu, 21 Aug 2025 18:44:21 +0800
- (CST)
-Date: Thu, 21 Aug 2025 18:44:21 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: dmitry.baryshkov@oss.qualcomm.com, heiko@sntech.de
-Cc: hjc@rock-chips.com, mripard@kernel.org, naoki@radxa.com,
-	stephen@radxa.com, cristian.ciocaltea@collabora.com,
-	neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com,
-	yubing.zhang@rock-chips.com, krzk+dt@kernel.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	"Andy Yan" <andy.yan@rock-chips.com>
-Subject: Re:[PATCH v6 00/10] Add support for RK3588 DisplayPort Controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20250728082846.3811429-1-andyshrk@163.com>
-References: <20250728082846.3811429-1-andyshrk@163.com>
-X-NTES-SC: AL_Qu2eB/ucvEgt5yScYOkfmUgWjuw/WsG1v/Ul1YBSP556jDHp3AUhenRSH3TH8e60MAaUmgmGWx5szO5WeIlkc5MgoEaz4pLV5OhHt9PPWoNeWA==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1755773494; c=relaxed/simple;
+	bh=KHvuHVpT8XLrB8kkvREiSYcjY5lHv8A1nlW+gWH/5H8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m5NTxZB+CYir41SvY35gj4se9u91A/kGSAiRWFU6JR8YvtMs1iMHx5r+nrVXawl7e+wlhPHlT/IuZIlUu8ba4UnBGzR1t0v286D3krDh3JvbjSauVpIgF4Fs5q8r/h8YIxzGElQUgF6PUX0xhuVcnJGGpGcg3cb5WfO5IoUmonM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=iUzuca7u; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1755773492; x=1787309492;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=KHvuHVpT8XLrB8kkvREiSYcjY5lHv8A1nlW+gWH/5H8=;
+  b=iUzuca7uruZLMUAiio2XuCgKMu+6lV9GtR+sZRBHuQp6D/y9x82N/ge2
+   s3A+gIqQmf4hGeBZad6hGW6x4FilynMXGPZjWYI2tNvdd3PWTz0lZdfBR
+   9Pk/rX2e0bYnbM+WYn92JOHwGtB+7Zh8nX91Owex4CBBB73+/I0FbKz64
+   3hlyvONMO//DemUhJ+KYF7EeGqXjX7tJYJaIsDrpAlxFosauYko2VO83Q
+   6pEtLVp3Gjg4CLIQDMLcmaw/eO/WqLG9Vt9Vjjr2rjs4ksIRALZgKUuM6
+   Obnt7qlqlz4KXHvvFLvPBABwgd/pfnIIWVcHr5vc+WqaZ9KCnP/u9UBWE
+   w==;
+X-CSE-ConnectionGUID: +qjVfyXuTYuMLQY71/8fbw==
+X-CSE-MsgGUID: aNC6yLbjRH6jginZxGGdSg==
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="212904275"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Aug 2025 03:51:25 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 21 Aug 2025 03:50:44 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Thu, 21 Aug 2025 03:50:41 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vadim.fedorenko@linux.dev>,
+	<vladimir.oltean@nxp.com>, <rmk+kernel@armlinux.org.uk>, <rosenp@gmail.com>,
+	<christophe.jaillet@wanadoo.fr>, <viro@zeniv.linux.org.uk>,
+	<atenart@kernel.org>, <quentin.schulz@bootlin.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net] phy: mscc: Fix when PTP clock is register and unregister
+Date: Thu, 21 Aug 2025 12:46:28 +0200
+Message-ID: <20250821104628.2329569-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1ebeae81.8b20.198cc3ac94a.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:eigvCgBHV0GF+KZo1BMfAA--.9984W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gmwXmim9ughywADsM
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-CgpIZWxsbyBEbWl0cnksCiAgICAKCkF0IDIwMjUtMDctMjggMTY6Mjg6MjUsICJBbmR5IFlhbiIg
-PGFuZHlzaHJrQDE2My5jb20+IHdyb3RlOgo+RnJvbTogQW5keSBZYW4gPGFuZHkueWFuQHJvY2st
-Y2hpcHMuY29tPgo+Cj4KPlRoZXJlIGFyZSB0d28gRFcgRFBUWCBiYXNlZCBEaXNwbGF5UG9ydCBD
-b250cm9sbGVyIG9uIHJrMzU4OCB3aGljaAo+YXJlIGNvbXBsaWFudCB3aXRoIHRoZSBEaXNwbGF5
-UG9ydCBTcGVjaWZpY2F0aW9uIFZlcnNpb24gMS40IHdpdGgKPnRoZSBmb2xsb3dpbmcgZmVhdHVy
-ZXM6Cj4KPiogRGlzcGxheVBvcnQgMS40YQo+KiBNYWluIExpbms6IDEvMi80IGxhbmVzCj4qIE1h
-aW4gTGluayBTdXBwb3J0IDEuNjJHYnBzLCAyLjdHYnBzLCA1LjRHYnBzIGFuZCA4LjFHYnBzCj4q
-IEFVWCBjaGFubmVsIDFNYnBzCj4qIFNpbmdsZSBTdHJlYW0gVHJhbnNwb3J0KFNTVCkKPiogTXVs
-dGlzdHJlYW0gVHJhbnNwb3J0IChNU1QpCj4qIFR5cGUtQyBzdXBwb3J0IChhbHRlcm5hdGUgbW9k
-ZSkKPiogSERDUCAyLjIsIEhEQ1AgMS4zCj4qIFN1cHBvcnRzIHVwIHRvIDgvMTAgYml0cyBwZXIg
-Y29sb3IgY29tcG9uZW50Cj4qIFN1cHBvcnRzIFJCRywgWUNiQ3I0OjQ6NCwgWUNiQ3I0OjI6Miwg
-WUNiQ3I0OjI6MAo+KiBQaXhlbCBjbG9jayB1cCB0byA1OTRNSHoKPiogSTJTLCBTUERJRiBhdWRp
-byBpbnRlcmZhY2UKPgo+VGhlIGN1cnJlbnQgdmVyc2lvbiBvZiB0aGlzIHBhdGNoIHNlcmllcyBv
-bmx5IHN1cHBvcnRzIGJhc2ljIGRpc3BsYXkgb3V0cHV0cy4KPkkgY29uZHVjdGVkIHRlc3RzIHdp
-dGggRFAwIGluIDEwODBwIGFuZCA0S0A2MCBZQ2JDcjQ6MjowIG1vZGVzOyB0aGUgQUxUL1R5cGUt
-Qwo+bW9kZSB3YXMgdGVzdGVkIG9uIFJvY2sgNUIsIERQMSB3YXMgdGVzdGVkIG9uIFJvY2sgNSBJ
-VFggYnkgU3RlcGhlbiBhbmQgUGlvdHIuCj5IRENQIGFuZCBhdWRpbyBmZWF0dXJlcyByZW1haW4g
-dW5pbXBsZW1lbnRlZC4KPkZvciBSSzM1ODgsIGl0J3Mgb25seSBzdXBwb3J0IFNTVCwgd2hpbGUg
-aW4gdGhlIHVwY29taW5nIFJLMzU3NiwgaXQgY2FuIHN1cHBvcnQKPk1TVCBvdXRwdXQuCgoKCiBD
-b3VsZCB5b3UgdGFrZSB0aGlzIHNlcmllcz8gSXQgd291bGQgYmUgbmljZSBpZiB0aGV5IGNvdWxk
-IGxhbmQgTGludXggNi4xOC4KCgo+Cj4KPkNoYW5nZXMgaW4gdjY6Cj4tIFVzZSBkcm1fZHBfdnNj
-X3NkcF9zdXBwb3J0ZWQKPi0gU3RvcmUgYnBjL2JwcC9jb2xvciBmb3JtYXQgaW4gZHdfZHBfYnJp
-ZGdlX3N0YXRlCj4tIENvbGxlY3QgUmV2aWV3ZWQtYnkgdGFncwo+LSBMaW5rIHRvIFY1OiBodHRw
-czovL2xvcmUua2VybmVsLm9yZy9saW51eC1yb2NrY2hpcC8yMDI1MDcxNjEwMDQ0MC44MTYzNTEt
-MS1hbmR5c2hya0AxNjMuY29tLwo+Cj5DaGFuZ2VzIGluIHY1Ogo+LSBVc2UgZHJtX2RwX3JlYWRf
-c2lua19jb3VudF9jYXAgaW5zdGVhZCBvZiB0aGUgcHJpdmF0ZSBpbXBsZW1lbnRhdGlvbi4KPi0g
-Rmlyc3QgaW5jbHVkZWQgaW4gdGhpcyB2ZXJzaW9uLgo+LSBMaW5rIHRvIFY0OiBodHRwczovL2xv
-cmUua2VybmVsLm9yZy9saW51eC1yb2NrY2hpcC8yMDI1MDYxOTA2MzkwMC43MDA0OTEtMS1hbmR5
-c2hya0AxNjMuY29tLwo+Cj5DaGFuZ2VzIGluIHY0Ogo+LSBEcm9wIHVubmVjZXNzYXJ5IGhlYWRl
-ciBmaWxlcwo+LSBTd2l0Y2ggdG8gZGV2bV9kcm1fYnJpZGdlX2FsbG9jCj4tIERyb3AgdW51c2Vk
-IGZ1bmN0aW9uCj4tIEFkZCBwbGF0Zm9ybV9zZXRfZHJ2ZGF0YQo+LSBMaW5rIHRvIFYzOiBodHRw
-czovL2xvcmUua2VybmVsLm9yZy9saW51eC1yb2NrY2hpcC8yMDI1MDQwMzAzMzc0OC4yNDUwMDct
-MS1hbmR5c2hya0AxNjMuY29tLwo+Cj4KPkNoYW5nZXMgaW4gdjM6Cj4tIFJlYmFzZSBvbiBkcm0t
-bWlzYy1uZXh0Cj4tIFN3aXRjaCB0byBjb21tb24gaGVscGVycyB0byBwb3dlciB1cC9kb3duIGRw
-IGxpbmsKPi0gT25seSBwYXNzIHBhcmFtZXRlcnMgdG8gcGh5IHRoYXQgc2hvdWxkIGJlIHNldAo+
-LSBGaXJzdCBpbnRyb2R1Y2VkIGluIHRoaXMgdmVyc2lvbi4KPi0gRmlyc3QgaW50cm9kdWNlZCBp
-biB0aGlzIHZlcnNpb24uCj4tIEFkZCBSQTYyMCBpbnRvIGJyaWRnZSBjaGFpbi4KPi0gTGluayB0
-byBWMjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcm9ja2NoaXAvMjAyNTAzMTIxMDQy
-MTQuNTI1MjQyLTEtYW5keXNocmtAMTYzLmNvbS8KPgo+Q2hhbmdlcyBpbiB2MjoKPi0gRml4IGEg
-Y2hhcmFjdGVyIGVuY29kaW5nIGlzc3VlCj4tIEZpeCBjb21waWxlIGVycm9yIHdoZW4gYnVpbGQg
-YXMgbW9kdWxlCj4tIEFkZCBwaHkgaW5pdAo+LSBPbmx5IHVzZSBvbmUgZHdfZHBfbGlua190cmFp
-bl9zZXQKPi0gaW5saW5lIGR3X2RwX3BoeV91cGRhdGVfdnNfZW1waAo+LSBVc2UgZHBfc2RwCj4t
-IENoZWNrIHJldHVybiB2YWx1ZSBvZiBkcm1fbW9kZXNldF9sb2NrCj4tIE1lcmdlIGNvZGUgaW4g
-YXRvbWljX3ByZV9lbmFibGUvbW9kZV9maXh1cCB0byBhdG9taWNfY2hlY2sKPi0gUmV0dXJuIE5V
-TEwgaWYgY2FuJ3QgZmluZCBhIHN1cHBvcnRlZCBvdXRwdXQgZm9ybWF0Cj4tIEZpeCBtYXhfbGlu
-a19yYXRlIGZyb20gcGxhdF9kYXRhCj4tIG5vIGluY2x1ZGUgdWFwaSBwYXRoCj4tIHN3aXRjaCB0
-byBkcm1tX2VuY29kZXJfaW5pdAo+LSBTb3J0IGluIGFscGhhYmV0aWNhbCBvcmRlcgo+LSBMaW5r
-IHRvIFYxOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1yb2NrY2hpcC8yMDI1MDIyMzEx
-MzAzNi43NDI1Mi0xLWFuZHlzaHJrQDE2My5jb20vCj4KPkFuZHkgWWFuICgxMCk6Cj4gIGR0LWJp
-bmRpbmdzOiBkaXNwbGF5OiByb2NrY2hpcDogQWRkIHNjaGVtYSBmb3IgUkszNTg4IERQVFggQ29u
-dHJvbGxlcgo+ICBkcm0vYnJpZGdlOiBzeW5vcHN5czogQWRkIERXIERQVFggQ29udHJvbGxlciBz
-dXBwb3J0IGxpYnJhcnkKPiAgZHJtL3JvY2tjaGlwOiBBZGQgUkszNTg4IERQVFggb3V0cHV0IHN1
-cHBvcnQKPiAgTUFJTlRBSU5FUlM6IEFkZCBlbnRyeSBmb3IgRFcgRFBUWCBDb250cm9sbGVyIGJy
-aWRnZQo+ICBkdC1iaW5kaW5nczogZGlzcGxheTogc2ltcGxlLWJyaWRnZTogQWRkIHJhNjIwIGNv
-bXBhdGlibGUKPiAgZHJtL2JpcmRnZTogc2ltcGxlLWJyaWRnZTogQWRkIHN1cHBvcnQgZm9yIHJh
-ZHhhIHJhNjIwCj4gIGFybTY0OiBkdHM6IHJvY2tjaGlwOiBBZGQgRFAwIGZvciByazM1ODgKPiAg
-YXJtNjQ6IGR0czogcm9ja2NoaXA6IEFkZCBEUDEgZm9yIHJrMzU4OAo+ICBhcm02NDogZHRzOiBy
-b2NrY2hpcDogRW5hYmxlIERpc3BsYXlQb3J0IGZvciByazM1ODhzIENvb2wgUGkgNEIKPiAgYXJt
-NjQ6IGR0czogcm9ja2NoaXA6IEVuYWJsZSBEUDJIRE1JIGZvciBST0NLIDUgSVRYCj4KPiAuLi4v
-ZGlzcGxheS9icmlkZ2Uvc2ltcGxlLWJyaWRnZS55YW1sICAgICAgICAgfCAgICAxICsKPiAuLi4v
-ZGlzcGxheS9yb2NrY2hpcC9yb2NrY2hpcCxkdy1kcC55YW1sICAgICAgfCAgMTUwICsrCj4gTUFJ
-TlRBSU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAgOCArCj4gYXJj
-aC9hcm02NC9ib290L2R0cy9yb2NrY2hpcC9yazM1ODgtYmFzZS5kdHNpIHwgICAzMCArCj4gLi4u
-L2FybTY0L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OC1leHRyYS5kdHNpIHwgICAzMCArCj4gLi4u
-L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OC1yb2NrLTUtaXR4LmR0cyAgIHwgICA1OSArCj4gLi4u
-L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OHMtY29vbHBpLTRiLmR0cyAgIHwgICAzNyArCj4gZHJp
-dmVycy9ncHUvZHJtL2JyaWRnZS9zaW1wbGUtYnJpZGdlLmMgICAgICAgIHwgICAgNSArCj4gZHJp
-dmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9LY29uZmlnICAgICAgIHwgICAgNyArCj4gZHJp
-dmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9NYWtlZmlsZSAgICAgIHwgICAgMSArCj4gZHJp
-dmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1kcC5jICAgICAgIHwgMjA5NCArKysrKysr
-KysrKysrKysrKwo+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9LY29uZmlnICAgICAgICAgICAg
-ICB8ICAgIDkgKwo+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9NYWtlZmlsZSAgICAgICAgICAg
-ICB8ICAgIDEgKwo+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9kd19kcC1yb2NrY2hpcC5jICAg
-ICB8ICAxNTAgKysKPiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5j
-ICAgfCAgICAxICsKPiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5o
-ICAgfCAgICAxICsKPiBpbmNsdWRlL2RybS9icmlkZ2UvZHdfZHAuaCAgICAgICAgICAgICAgICAg
-ICAgfCAgIDIwICsKPiAxNyBmaWxlcyBjaGFuZ2VkLCAyNjA0IGluc2VydGlvbnMoKykKPiBjcmVh
-dGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
-cm9ja2NoaXAvcm9ja2NoaXAsZHctZHAueWFtbAo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWRwLmMKPiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
-dmVycy9ncHUvZHJtL3JvY2tjaGlwL2R3X2RwLXJvY2tjaGlwLmMKPiBjcmVhdGUgbW9kZSAxMDA2
-NDQgaW5jbHVkZS9kcm0vYnJpZGdlL2R3X2RwLmgKPgo+LS0gCj4yLjQzLjAKPgo=
+It looks like that every time when the interface was set down and up the
+driver was creating a new ptp clock. On top of this the function
+ptp_clock_unregister was never called.
+Therefore fix this by calling ptp_clock_register and initialize the
+mii_ts struct inside the probe function and call ptp_clock_unregister when
+driver is removed.
+
+Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+---
+ drivers/net/phy/mscc/mscc.h      |  4 ++++
+ drivers/net/phy/mscc/mscc_main.c |  4 +---
+ drivers/net/phy/mscc/mscc_ptp.c  | 40 +++++++++++++++++++++++---------
+ 3 files changed, 34 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/net/phy/mscc/mscc.h b/drivers/net/phy/mscc/mscc.h
+index b8c6ba7c7834e..2d8eca54c40a2 100644
+--- a/drivers/net/phy/mscc/mscc.h
++++ b/drivers/net/phy/mscc/mscc.h
+@@ -484,6 +484,7 @@ static inline void vsc8584_config_macsec_intr(struct phy_device *phydev)
+ void vsc85xx_link_change_notify(struct phy_device *phydev);
+ void vsc8584_config_ts_intr(struct phy_device *phydev);
+ int vsc8584_ptp_init(struct phy_device *phydev);
++void vsc8584_ptp_deinit(struct phy_device *phydev);
+ int vsc8584_ptp_probe_once(struct phy_device *phydev);
+ int vsc8584_ptp_probe(struct phy_device *phydev);
+ irqreturn_t vsc8584_handle_ts_interrupt(struct phy_device *phydev);
+@@ -498,6 +499,9 @@ static inline int vsc8584_ptp_init(struct phy_device *phydev)
+ {
+ 	return 0;
+ }
++static inline void vsc8584_ptp_deinit(struct phy_device *phydev)
++{
++}
+ static inline int vsc8584_ptp_probe_once(struct phy_device *phydev)
+ {
+ 	return 0;
+diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
+index 800da302ae632..a034a8a8dde51 100644
+--- a/drivers/net/phy/mscc/mscc_main.c
++++ b/drivers/net/phy/mscc/mscc_main.c
+@@ -2370,9 +2370,7 @@ static int vsc85xx_probe(struct phy_device *phydev)
+ 
+ static void vsc85xx_remove(struct phy_device *phydev)
+ {
+-	struct vsc8531_private *priv = phydev->priv;
+-
+-	skb_queue_purge(&priv->rx_skbs_list);
++	vsc8584_ptp_deinit(phydev);
+ }
+ 
+ /* Microsemi VSC85xx PHYs */
+diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
+index de6c7312e8f29..827c399d9d30f 100644
+--- a/drivers/net/phy/mscc/mscc_ptp.c
++++ b/drivers/net/phy/mscc/mscc_ptp.c
+@@ -1298,7 +1298,6 @@ static void vsc8584_set_input_clk_configured(struct phy_device *phydev)
+ 
+ static int __vsc8584_init_ptp(struct phy_device *phydev)
+ {
+-	struct vsc8531_private *vsc8531 = phydev->priv;
+ 	static const u32 ltc_seq_e[] = { 0, 400000, 0, 0, 0 };
+ 	static const u8  ltc_seq_a[] = { 8, 6, 5, 4, 2 };
+ 	u32 val;
+@@ -1515,17 +1514,15 @@ static int __vsc8584_init_ptp(struct phy_device *phydev)
+ 
+ 	vsc85xx_ts_eth_cmp1_sig(phydev);
+ 
+-	vsc8531->mii_ts.rxtstamp = vsc85xx_rxtstamp;
+-	vsc8531->mii_ts.txtstamp = vsc85xx_txtstamp;
+-	vsc8531->mii_ts.hwtstamp = vsc85xx_hwtstamp;
+-	vsc8531->mii_ts.ts_info  = vsc85xx_ts_info;
+-	phydev->mii_ts = &vsc8531->mii_ts;
++	return 0;
++}
+ 
+-	memcpy(&vsc8531->ptp->caps, &vsc85xx_clk_caps, sizeof(vsc85xx_clk_caps));
++static void __vsc8584_deinit_ptp(struct phy_device *phydev)
++{
++	struct vsc8531_private *vsc8531 = phydev->priv;
+ 
+-	vsc8531->ptp->ptp_clock = ptp_clock_register(&vsc8531->ptp->caps,
+-						     &phydev->mdio.dev);
+-	return PTR_ERR_OR_ZERO(vsc8531->ptp->ptp_clock);
++	ptp_clock_unregister(vsc8531->ptp->ptp_clock);
++	skb_queue_purge(&vsc8531->rx_skbs_list);
+ }
+ 
+ void vsc8584_config_ts_intr(struct phy_device *phydev)
+@@ -1552,6 +1549,18 @@ int vsc8584_ptp_init(struct phy_device *phydev)
+ 	return 0;
+ }
+ 
++void vsc8584_ptp_deinit(struct phy_device *phydev)
++{
++	switch (phydev->phy_id & phydev->drv->phy_id_mask) {
++	case PHY_ID_VSC8572:
++	case PHY_ID_VSC8574:
++	case PHY_ID_VSC8575:
++	case PHY_ID_VSC8582:
++	case PHY_ID_VSC8584:
++		return __vsc8584_deinit_ptp(phydev);
++	}
++}
++
+ irqreturn_t vsc8584_handle_ts_interrupt(struct phy_device *phydev)
+ {
+ 	struct vsc8531_private *priv = phydev->priv;
+@@ -1612,7 +1621,16 @@ int vsc8584_ptp_probe(struct phy_device *phydev)
+ 
+ 	vsc8531->ptp->phydev = phydev;
+ 
+-	return 0;
++	vsc8531->mii_ts.rxtstamp = vsc85xx_rxtstamp;
++	vsc8531->mii_ts.txtstamp = vsc85xx_txtstamp;
++	vsc8531->mii_ts.hwtstamp = vsc85xx_hwtstamp;
++	vsc8531->mii_ts.ts_info  = vsc85xx_ts_info;
++	phydev->mii_ts = &vsc8531->mii_ts;
++
++	memcpy(&vsc8531->ptp->caps, &vsc85xx_clk_caps, sizeof(vsc85xx_clk_caps));
++	vsc8531->ptp->ptp_clock = ptp_clock_register(&vsc8531->ptp->caps,
++						     &phydev->mdio.dev);
++	return PTR_ERR_OR_ZERO(vsc8531->ptp->ptp_clock);
+ }
+ 
+ int vsc8584_ptp_probe_once(struct phy_device *phydev)
+-- 
+2.34.1
+
 
