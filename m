@@ -1,233 +1,172 @@
-Return-Path: <linux-kernel+bounces-780172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431CEB2FE85
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:36:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3279EB2FE88
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C0EAB01357
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73C6727F9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C558728CF76;
-	Thu, 21 Aug 2025 15:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FFB296BC2;
+	Thu, 21 Aug 2025 15:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IRMivByi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ONYFbl0e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B38272811;
-	Thu, 21 Aug 2025 15:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8FB27A45C
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755789788; cv=none; b=pZk3IyBqOB9X2mX8L1s/Hx6FABOfZACR/lOxZB8eCWgz6ao84lP19B3sBEV+43FlVSEnq66fyaE4Ues4Dm7JxToepumYy8SaGAtAh8UCsItczpkpCz4lMkvVUMEkT+ybe2kll7RuH7Ipo0UVun9WiRKvxLVb4aEw/a1HG+EWMmY=
+	t=1755789803; cv=none; b=M4jNk/qyJV3X7qNRj1IkD6kvLynjPK7kzzkxfOnhTWY03ZFPchey92EZCoM9ztT5X+l6rmWz2peRp9jG9Eo2NIIMDKaMLck85Zz2zWZf5K9FTDHYIHQFxYLdV0sMnAe2+XpIdiEUfLayAbF0ruymQJN6C4AuBI1sdrYeNKfQkYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755789788; c=relaxed/simple;
-	bh=tJCT2Tv2rsnR+elP2MDgDezCXgl0iUYyhaj0V30RHH4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=oDUS5wIqKFUwowclzbjSDJ5s6LzKbWpVrRLT4mzONHqrR0T6Zn6abBs98fludMmpjMYnPQ7tLjCLM6a/+TMRJmLycdGmdoQOtuMNMkpy4IMu8spLUS8vO8PZz0hvkSMxqyU2dF+10ARWckgv0sniIy+J95R7YUbDCaaoJo+YTB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IRMivByi; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755789786; x=1787325786;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=tJCT2Tv2rsnR+elP2MDgDezCXgl0iUYyhaj0V30RHH4=;
-  b=IRMivByiGgf7+Wx/pwws/Ba2U7JH/zp9/1ixTOq7NN8gMa0dvyHuLTGQ
-   1o/pzY+kHXpmO2UKOU5Ua4YxjvEYJEMJFOiqknDeZH1izJkS2Sg4CsYU8
-   VavVSC21w0bqsYkx04o5x5Q5wuXrI281G75ULikwxmCVy8j7bZiU7cPKz
-   8hJTrERjP0vFo0IXGQgFLvdiP8ExEn1vF8x1jJMYtPNjfgsqjgGyMPneh
-   72GCDHEOlCfXAaf5/C8DtIOr0FjybdkrX/6P9LVSCDjSPRcYYlSFEy0EP
-   jYRf5RzA7mZ7PhoDyEPC1OfxicG0rx4vHYGBFGV1A51f3AANBbDmEoKYa
-   A==;
-X-CSE-ConnectionGUID: FZzAHwBrSZ6AsE4gXh9Irw==
-X-CSE-MsgGUID: lruv8KeFSauY5j0OTLeW3A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="68790157"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="68790157"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 08:23:05 -0700
-X-CSE-ConnectionGUID: 8XGK7D9gSayGGZrknd0c+g==
-X-CSE-MsgGUID: ZXNIDUhORFaUleygoFeKWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="167653769"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.192])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 08:23:02 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 21 Aug 2025 18:22:58 +0300 (EEST)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Tudor Ambarus <tudor.ambarus@linaro.org>, Rio <rio@r26.me>, 
-    D Scott Phillips <scott@os.amperecomputing.com>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] PCI: Fix failure detection during resource
- resize
-In-Reply-To: <20250821151444.GA674725@bhelgaas>
-Message-ID: <422340e7-8016-866d-5e49-e6ea48db1683@linux.intel.com>
-References: <20250821151444.GA674725@bhelgaas>
+	s=arc-20240116; t=1755789803; c=relaxed/simple;
+	bh=phOEOrcbb6XWP/f68JJcZtVW5Y1qLoFhmz5f49cY/fc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lX3EY8RwNdPU0Xf5xW1Z2ACnpGcpA89mQj4G3Y64Dlxi7To5qCNpHXmaYI42l1E/fAnELW3ly2yE80DUviequYvOX0i14ZWRmYCJ/gCYPG4PbNEFUGhmwDwtHZqxSSpADjQ73fAU2zne4DGeFLA7aOce60KjKjjBhrLhhmyJ0+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ONYFbl0e; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755789800;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Pp2QMqSmglzTl9N5ktKXe1fiz3QOWjTH6/o2x2dsayc=;
+	b=ONYFbl0eIr03dPdTdjI00XhGu+tUVwBv4jNUVh5fMqW2mRKU5vtqwUSJRqyPxlVjVhSzeZ
+	Kxk5sh23XggI3IN77ctGB5Zc1URjVydJXLEjvOWNt4kYk3ObMYdnlEhHKeAKfHdeXjR0IP
+	t1FpYRlqTBwOmj5Jx8A4cuO+WZEx3xA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-miNiIWGfMPeJx_avnRzFLA-1; Thu,
+ 21 Aug 2025 11:23:17 -0400
+X-MC-Unique: miNiIWGfMPeJx_avnRzFLA-1
+X-Mimecast-MFC-AGG-ID: miNiIWGfMPeJx_avnRzFLA_1755789795
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7240019560A5;
+	Thu, 21 Aug 2025 15:23:15 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.45.226.28])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AD86919560B0;
+	Thu, 21 Aug 2025 15:23:10 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	kvm@vger.kernel.org
+Cc: Peter Xu <peterx@redhat.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: s390: Fix access to unavailable adapter indicator pages during postcopy
+Date: Thu, 21 Aug 2025 17:23:09 +0200
+Message-ID: <20250821152309.847187-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1617396853-1755789778=:933"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Thomas Huth <thuth@redhat.com>
 
---8323328-1617396853-1755789778=:933
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+When you run a KVM guest with vhost-net and migrate that guest to
+another host, and you immediately enable postcopy after starting the
+migration, there is a big chance that the network connection of the
+guest won't work anymore on the destination side after the migration.
 
-On Thu, 21 Aug 2025, Bjorn Helgaas wrote:
-> On Mon, Jun 30, 2025 at 05:26:41PM +0300, Ilpo J=C3=A4rvinen wrote:
-> > Since the commit 96336ec70264 ("PCI: Perform reset_resource() and build
-> > fail list in sync") the failed list is always built and returned to let
-> > the caller decide what to do with the failures. The caller may want to
-> > retry resource fitting and assignment and before that can happen, the
-> > resources should be restored to their original state (a reset
-> > effectively clears the struct resource), which requires returning them
-> > on the failed list so that the original state remains stored in the
-> > associated struct pci_dev_resource.
-> >=20
-> > Resource resizing is different from the ordinary resource fitting and
-> > assignment in that it only considers part of the resources. This means
-> > failures for other resource types are not relevant at all and should be
-> > ignored. As resize doesn't unassign such unrelated resources, those
-> > resource ending up into the failed list implies assignment of that
-> > resource must have failed before resize too. The check in
-> > pci_reassign_bridge_resources() to decide if the whole assignment is
-> > successful, however, is based on list emptiness which will cause false
-> > negatives when the failed list has resources with an unrelated type.
-> >=20
-> > If the failed list is not empty, call pci_required_resource_failed()
-> > and extend it to be able to filter on specific resource types too (if
-> > provided).
-> >=20
-> > Calling pci_required_resource_failed() at this point is slightly
-> > problematic because the resource itself is reset when the failed list
-> > is constructed in __assign_resources_sorted(). As a result,
-> > pci_resource_is_optional() does not have access to the original
-> > resource flags. This could be worked around by restoring and
-> > re-reseting the resource around the call to pci_resource_is_optional(),
-> > however, it shouldn't cause issue as resource resizing is meant for
-> > 64-bit prefetchable resources according to Christian K=C3=B6nig (see th=
-e
-> > Link which unfortunately doesn't point directly to Christian's reply
-> > because lore didn't store that email at all).
-> >=20
-> > Fixes: 96336ec70264 ("PCI: Perform reset_resource() and build fail list=
- in sync")
-> > Link: https://lore.kernel.org/all/c5d1b5d8-8669-5572-75a7-0b480f581ac1@=
-linux.intel.com/
-> > Reported-by: D Scott Phillips <scott@os.amperecomputing.com>
->=20
-> Any URL we can include here?
+With a debug kernel v6.16.0, there is also a call trace that looks
+like this:
 
-Again, it'sin the thread of the original patch:
+ FAULT_FLAG_ALLOW_RETRY missing 881
+ CPU: 6 UID: 0 PID: 549 Comm: kworker/6:2 Kdump: loaded Not tainted 6.16.0 #56 NONE
+ Hardware name: IBM 3931 LA1 400 (LPAR)
+ Workqueue: events irqfd_inject [kvm]
+ Call Trace:
+  [<00003173cbecc634>] dump_stack_lvl+0x104/0x168
+  [<00003173cca69588>] handle_userfault+0xde8/0x1310
+  [<00003173cc756f0c>] handle_pte_fault+0x4fc/0x760
+  [<00003173cc759212>] __handle_mm_fault+0x452/0xa00
+  [<00003173cc7599ba>] handle_mm_fault+0x1fa/0x6a0
+  [<00003173cc73409a>] __get_user_pages+0x4aa/0xba0
+  [<00003173cc7349e8>] get_user_pages_remote+0x258/0x770
+  [<000031734be6f052>] get_map_page+0xe2/0x190 [kvm]
+  [<000031734be6f910>] adapter_indicators_set+0x50/0x4a0 [kvm]
+  [<000031734be7f674>] set_adapter_int+0xc4/0x170 [kvm]
+  [<000031734be2f268>] kvm_set_irq+0x228/0x3f0 [kvm]
+  [<000031734be27000>] irqfd_inject+0xd0/0x150 [kvm]
+  [<00003173cc00c9ec>] process_one_work+0x87c/0x1490
+  [<00003173cc00dda6>] worker_thread+0x7a6/0x1010
+  [<00003173cc02dc36>] kthread+0x3b6/0x710
+  [<00003173cbed2f0c>] __ret_from_fork+0xdc/0x7f0
+  [<00003173cdd737ca>] ret_from_fork+0xa/0x30
+ 3 locks held by kworker/6:2/549:
+  #0: 00000000800bc958 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x7ee/0x1490
+  #1: 000030f3d527fbd0 ((work_completion)(&irqfd->inject)){+.+.}-{0:0}, at: process_one_work+0x81c/0x1490
+  #2: 00000000f99862b0 (&mm->mmap_lock){++++}-{3:3}, at: get_map_page+0xa8/0x190 [kvm]
 
-Link: https://lore.kernel.org/all/86plf0lgit.fsf@scott-ph-mail.amperecomput=
-ing.com/
+The "FAULT_FLAG_ALLOW_RETRY missing" indicates that handle_userfaultfd()
+saw a page fault request without ALLOW_RETRY flag set, hence userfaultfd
+cannot remotely resolve it (because the caller was asking for an immediate
+resolution, aka, FAULT_FLAG_NOWAIT, while remote faults can take time).
+With that, get_map_page() failed and the irq was lost.
 
---=20
- i.
+We should not be strictly in an atomic environment here and the worker
+should be sleepable (the call is done during an ioctl from userspace),
+so we can allow adapter_indicators_set() to just sleep waiting for the
+remote fault instead.
 
-> > Tested-by: D Scott Phillips <scott@os.amperecomputing.com>
-> > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> > Reviewed-by: D Scott Phillips <scott@os.amperecomputing.com>
-> > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > Cc: <stable@vger.kernel.org>
-> > ---
-> >  drivers/pci/setup-bus.c | 26 ++++++++++++++++++--------
-> >  1 file changed, 18 insertions(+), 8 deletions(-)
-> >=20
-> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> > index 24863d8d0053..dbbd80d78d3d 100644
-> > --- a/drivers/pci/setup-bus.c
-> > +++ b/drivers/pci/setup-bus.c
-> > @@ -28,6 +28,10 @@
-> >  #include <linux/acpi.h>
-> >  #include "pci.h"
-> > =20
-> > +#define PCI_RES_TYPE_MASK \
-> > +=09(IORESOURCE_IO | IORESOURCE_MEM | IORESOURCE_PREFETCH |\
-> > +=09 IORESOURCE_MEM_64)
-> > +
-> >  unsigned int pci_flags;
-> >  EXPORT_SYMBOL_GPL(pci_flags);
-> > =20
-> > @@ -384,13 +388,19 @@ static bool pci_need_to_release(unsigned long mas=
-k, struct resource *res)
-> >  }
-> > =20
-> >  /* Return: @true if assignment of a required resource failed. */
-> > -static bool pci_required_resource_failed(struct list_head *fail_head)
-> > +static bool pci_required_resource_failed(struct list_head *fail_head,
-> > +=09=09=09=09=09 unsigned long type)
-> >  {
-> >  =09struct pci_dev_resource *fail_res;
-> > =20
-> > +=09type &=3D PCI_RES_TYPE_MASK;
-> > +
-> >  =09list_for_each_entry(fail_res, fail_head, list) {
-> >  =09=09int idx =3D pci_resource_num(fail_res->dev, fail_res->res);
-> > =20
-> > +=09=09if (type && (fail_res->flags & PCI_RES_TYPE_MASK) !=3D type)
-> > +=09=09=09continue;
-> > +
-> >  =09=09if (!pci_resource_is_optional(fail_res->dev, idx))
-> >  =09=09=09return true;
-> >  =09}
-> > @@ -504,7 +514,7 @@ static void __assign_resources_sorted(struct list_h=
-ead *head,
-> >  =09}
-> > =20
-> >  =09/* Without realloc_head and only optional fails, nothing more to do=
-=2E */
-> > -=09if (!pci_required_resource_failed(&local_fail_head) &&
-> > +=09if (!pci_required_resource_failed(&local_fail_head, 0) &&
-> >  =09    list_empty(realloc_head)) {
-> >  =09=09list_for_each_entry(save_res, &save_head, list) {
-> >  =09=09=09struct resource *res =3D save_res->res;
-> > @@ -1708,10 +1718,6 @@ static void __pci_bridge_assign_resources(const =
-struct pci_dev *bridge,
-> >  =09}
-> >  }
-> > =20
-> > -#define PCI_RES_TYPE_MASK \
-> > -=09(IORESOURCE_IO | IORESOURCE_MEM | IORESOURCE_PREFETCH |\
-> > -=09 IORESOURCE_MEM_64)
-> > -
-> >  static void pci_bridge_release_resources(struct pci_bus *bus,
-> >  =09=09=09=09=09 unsigned long type)
-> >  {
-> > @@ -2449,8 +2455,12 @@ int pci_reassign_bridge_resources(struct pci_dev=
- *bridge, unsigned long type)
-> >  =09=09free_list(&added);
-> > =20
-> >  =09if (!list_empty(&failed)) {
-> > -=09=09ret =3D -ENOSPC;
-> > -=09=09goto cleanup;
-> > +=09=09if (pci_required_resource_failed(&failed, type)) {
-> > +=09=09=09ret =3D -ENOSPC;
-> > +=09=09=09goto cleanup;
-> > +=09=09}
-> > +=09=09/* Only resources with unrelated types failed (again) */
-> > +=09=09free_list(&failed);
-> >  =09}
-> > =20
-> >  =09list_for_each_entry(dev_res, &saved, list) {
-> > --=20
-> > 2.39.5
-> >=20
->=20
---8323328-1617396853-1755789778=:933--
+Link: https://issues.redhat.com/browse/RHEL-42486
+Signed-off-by: Peter Xu <peterx@redhat.com>
+[thuth: Assembled patch description and fixed some cosmetical issues]
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ Note: Instructions for reproducing the bug can be found in the ticket here:
+ https://issues.redhat.com/browse/RHEL-42486?focusedId=26661116#comment-26661116
+
+ arch/s390/kvm/interrupt.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+index 60c360c18690f..dcce826ae9875 100644
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -2777,12 +2777,19 @@ static unsigned long get_ind_bit(__u64 addr, unsigned long bit_nr, bool swap)
+ 
+ static struct page *get_map_page(struct kvm *kvm, u64 uaddr)
+ {
++	struct mm_struct *mm = kvm->mm;
+ 	struct page *page = NULL;
++	int locked = 1;
++
++	if (mmget_not_zero(mm)) {
++		mmap_read_lock(mm);
++		get_user_pages_remote(mm, uaddr, 1, FOLL_WRITE,
++				      &page, &locked);
++		if (locked)
++			mmap_read_unlock(mm);
++		mmput(mm);
++	}
+ 
+-	mmap_read_lock(kvm->mm);
+-	get_user_pages_remote(kvm->mm, uaddr, 1, FOLL_WRITE,
+-			      &page, NULL);
+-	mmap_read_unlock(kvm->mm);
+ 	return page;
+ }
+ 
+-- 
+2.50.1
+
 
