@@ -1,148 +1,205 @@
-Return-Path: <linux-kernel+bounces-779087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92EE9B2EEEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:59:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9F4B2EEF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E7317597F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:58:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F68F3B9213
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD422E88B1;
-	Thu, 21 Aug 2025 06:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7322E88B3;
+	Thu, 21 Aug 2025 06:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsRpfLjO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ekm6KjpF"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592532D7806;
-	Thu, 21 Aug 2025 06:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C582D7806
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755759505; cv=none; b=Qppu+HzeuWG2UzpdFISvlxyDZu5mmw7KlEP98aH9n5Owl0iByVJhVrJbKKX6iL/h8SI+veUShE61qakTjg6x6RzGOSlcYTvuZObjB2mVZsx/D0LPzRgQ16WrJgIFKBUFq758PAgE1+8oKPX7A/JJW0VXmjs5TjOlPyHA/lMHtjE=
+	t=1755759548; cv=none; b=ayHbNnqueVFH882j8ZA5K2gDJE8KnBkC3PtjV6vYOxe/KlJezjFI6pM1JAI4MaAkxKbWEoYlzu1A0Ny0btXPaMhInBh3jbygLNptnpPD1866naHVdtm6iVc9moQPWdKG2LkpzVDgjoD5Oa5Kl6jQa/BTHQxTUBeeIhNRrqztRsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755759505; c=relaxed/simple;
-	bh=mZ4FUqwpeliFM+BfIUJKWhmDxAE2ZXgT86u5GAWrTAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=scmlsw0Lwc6EuFPhdAfEpUz/DHAFM11x4V9ku/ersZ69Icd1q0sZwkU6SKLzhTU7JFpnJ+5l+Jfp8ExW1ztSfNobI8n9ZoLtKO7/qsd/uaB8DCLQOsuEHQbLhpwyh/ys5Pn2n9Auke8/g/Ou5yK93YpbN/3VOvTMo6kkUcItaMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsRpfLjO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 490E1C4CEED;
-	Thu, 21 Aug 2025 06:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755759504;
-	bh=mZ4FUqwpeliFM+BfIUJKWhmDxAE2ZXgT86u5GAWrTAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FsRpfLjOy3xC581SFRPJeAyZkyycZvl6aPn2IFA5QoPv9IeStQDToqlAa5mlJqPQL
-	 89USDd4HGTiTtFM46F85AMnbO0B9pwrv1rES7j9hr4QJaQ32GjXhTKk/qum4+WCaOL
-	 9YQ9Nej5JXVLvyMMJ5af2Q79KlBdLYxYt/+URZC2BVZaTeWN8RDe9L/ETsdIfNFizm
-	 IjsXai0Q5igBl+5vgvQKLv76aykaU4ZImTGOxDJ2gi/xXbV5VTfJr+fn6HiceIp67x
-	 yIEb5mXLA+7xUGuW1wI/g5uoBYo/sV8sE0QS1RbHr1f6vyMUSFvAgC9U1NvqUN4XLJ
-	 cO8TVfCtXw5BQ==
-Date: Thu, 21 Aug 2025 08:58:20 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	s=arc-20240116; t=1755759548; c=relaxed/simple;
+	bh=noJnXR5fz5uvdCvAkcNEa1jNmbr6rkH0YiAY8IYmjQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jIsElCQak3yn2Shwo03STF1uK3XDqmxKghV4bNmnXK894zi0NjxvgvfvtV9k5ewosEpZiHup9h3QMcKKlw+IwOBe3hfVXRd0ujWvu646cLKHBJ4kFrEJxeQwuNpT4OMHt1alYkIAaVwjKft+po73Xcb1Cv2mYITVfHH/kVRPALA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ekm6KjpF; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb731ca55so7449166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 23:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755759545; x=1756364345; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pLhC4lsKdeJ9/A2G31nCU/i9ls1OYFW3dx0kccZaDUU=;
+        b=Ekm6KjpFgjpZp5ky1Uf9Gw/T0tc6GgFCJlD5Emk8e4yW1s00Wh7x77c3cjJW1jt8cn
+         6D5JaHVsUR8WE+2lU8MXZB3lUaxwWzmuvobMWaYgbs02z8T3rh4pphpaRGoM3GqcFRi3
+         6JFXFqWoDlDrUubz/z6R24z+hJhNMg8j8eU5YE3sBmUU5VY0ZLJImxjIBJdu/HJYFlg/
+         b6aiVSp1eHa6qXwtwmM7uSSVPIAutzwsRTlumw4ZQp2Hv2J7alMQdBwyFjQm2LqfZDBa
+         s0sL8RnZ39pvazWmT/Kqrs6sC3tD5VUymh1cT/9sOMz06C24gaPWx+qRx1eGCRfonRaz
+         PK4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755759545; x=1756364345;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pLhC4lsKdeJ9/A2G31nCU/i9ls1OYFW3dx0kccZaDUU=;
+        b=J0/uU1OQ9HfDecEMl7YUhpLgn3Z90cU1bTBOwz7n2nuOoQQMwPab5libZ523zaZZ+Q
+         hUvXt6uvDA1hX1MzN2i5Okh/w+EXOP4MMzDOR39QNwDk1RCXnxq4so//bGoqcKdgU7Ka
+         5MarNTXi+Mzzbj2FPkW3UCymGjvSR2IJNOVgRLJtyuO8hvlySbl2e2g4EVR56pojnmU1
+         k/4mNwTXlsZqbZAhZ2k+GU7pFZ1Ex6v2bBlbD5vrNPqP3oi0v5gP7mtPT++TxrGh1L1i
+         IrHaKmLLw8pNuUl4k0EYEtjkNivnoz9z+I1CnZrU6DEehjHwWfE3p17bJ6AOSHHSO2Us
+         jYlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYaQeO7JbtcFLsk8GEkLURVDXgPsJ1PBUqOC4LrhuHZudq32r08U/eSP+DFndnrvqqSsjYnPaFyzhpPJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNE/1/GBLKkQy3x+8p4XFYP9oe7ZB+JM2R2Cb8ihLiF8j/pY2U
+	5birKdIZZplzxNDGFi4AIGUrlnt5vIbk+nokQ/FftMvWiB+U85FdSM9jtiIEHPNLkPIY9imMpEh
+	5HpGY
+X-Gm-Gg: ASbGnct13GUCvqtsAq2EiaRbhgYzvgtPmeWykmBFTMbUzHF8ODROunVQDuqSBB00PmP
+	YMx63BzJWB47EkO6vk3yeyaX6v4ojujy1jUbuphtaCfQ/fkTIpmpPdFyHU9jThEjbIRARIIiffm
+	+BUeLbkxDn+dED+39mWsqmsj1a6Dy4WcVglY7QkecKUfdASZJGqLgczGC66UmNk6L3ofOLzfsUn
+	stYkbWa/HCwDd66YRouKc2tyIoO67g5+Y0FYHakqvB5BI5QnjFAPf2yZ/sJQlcbOGhAcMRrG7Rs
+	nByUyXfa/hh0vpH+DEDwyxMOWsbh9LmdVmftNpyePPgYVRqtRskdfadI5eF56vzOxlGlCMHIzG+
+	CQp1Tkc8mOKXSrBBOddULdk437Sf9QS1+Ww==
+X-Google-Smtp-Source: AGHT+IEuVTZYnamN/Xowwi1nRdH6LMjKeL4XdJAvBXyBCXh3wYl1BQwHweSgtnWHDmWjFNyCCYNcGw==
+X-Received: by 2002:a17:907:2d90:b0:ae3:5d47:634 with SMTP id a640c23a62f3a-afe07e9d221mr56729866b.9.1755759545251;
+        Wed, 20 Aug 2025 23:59:05 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afdf0ba2a42sm296119266b.49.2025.08.20.23.59.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 23:59:04 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Frieder Schrempf <frieder.schrempf@kontron.de>
-Subject: Re: [PATCH v3 00/14] spi: airoha: driver fixes & improvements
-Message-ID: <aKbDjIZhJuWo3yFu@lore-rh-laptop>
-References: <20250820123317.728148-1-mikhail.kshevetskiy@iopsys.eu>
+	linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v2] media: dt-bindings: mediatek: Constrain iommus
+Date: Thu, 21 Aug 2025 08:59:01 +0200
+Message-ID: <20250821065900.17430-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1AUHNkd+gHsq61gf"
-Content-Disposition: inline
-In-Reply-To: <20250820123317.728148-1-mikhail.kshevetskiy@iopsys.eu>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3795; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=noJnXR5fz5uvdCvAkcNEa1jNmbr6rkH0YiAY8IYmjQg=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBopsO0jo7CwTeUi/nTEXn6Hl/cd661HvDUBl1G1
+ CoaNqlc6G2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKbDtAAKCRDBN2bmhouD
+ 13pQD/9vTqb+ZSb40TqgV9s9GSHbKX+jREpUaz1Lbl/H9x1SCzuYcFTdKLgx0SBdIv/3/DnkpJq
+ vo4NhdsbhEwABDRNfTFkidTninZ4+sOOW9IBkJcd81ceHIlMX/+8FhLS+PaWcfQMGzjmOWO2LeM
+ hl1knU+od7Z5A6vy6xOrsQ+UIqs3NPsxc7KkHDjxYdc5HynoLR5dP02syrmBRRvX7A19iy+9RnS
+ ZeW4b4suXJhVRt6Bp+OT3EGGuQxXuJ/lmlt5AX+5b/lYeUkw1+WQSRJDDEpl/7zgoQODT35oveh
+ kmYdjWLaxjh6T99vUluCdHMm20oVUoiF1ESlZ+juv+2wkQ83KrC7H6V4mh24OywQu+omV6FXXgS
+ UkP1ZpMX318tChOvSCx+Flh5W66b+1NAfDyq4eFJzqJsgd8BUj4HP7AXPZtEYZWUB+TlxW58LVY
+ AUqfnNxQKwMp4in3IYO2O0a7/ybRfGUOBxTzYITO4PWbHZq3ofmPG1GG8qayMt9OFJbDjBP/gUb
+ IxShcYENueZ0YrKLb82fSGXqRGhcfnFNr8AB8APcAIjlUg40iWE9ySR+DnZagKj74puDbphzG0Q
+ iUyzR25u2kDVdGOnM5FcwTuUYBApUdObGTvJlNtxmoBzWfuZ6LQyU4DO3bPoiltiVSoKKt3AQlG vlGi4hhxJqNiBxQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
+Lists should have fixed constraints, because binding must be specific in
+respect to hardware.  Add missing constraints to number of iommus in
+Mediatek media devices and remove completely redundant and obvious
+description.
 
---1AUHNkd+gHsq61gf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> This patch series greatly improve airoha snfi driver and fix a
-> number of serious bug.
->=20
-> Fixed bugs:
->  * Fix reading/writing of flashes with more than one plane per lun
->  * Fix inability to read/write oob area
->  * Fill the buffer with 0xff before writing
->  * Fix reading of flashes supporting continuous reading mode
->  * Fix error paths
->=20
-> Improvements:
->  * Add support of dual/quad wires spi modes in exec_op().
->  * Support of dualio/quadio flash reading commands
->  * Remove dirty hack that reads flash page settings from SNFI registers
->    during driver startup
->=20
-> Unfortunately I am unable to test the driver with linux at the moment,
-> so only the following testing was done:
+---
 
-It seems to me this is quite an important rework of the driver. I would pre=
-fer
-to have some test results for this series. Are you able to run mtd_test ker=
-nel
-module for testing?
+Changes in v2:
+1. Ack
+2. Mention dropping description
+---
+ .../bindings/display/mediatek/mediatek,ovl-2l.yaml           | 5 ++---
+ .../devicetree/bindings/display/mediatek/mediatek,ovl.yaml   | 5 ++---
+ .../devicetree/bindings/display/mediatek/mediatek,rdma.yaml  | 4 +---
+ .../devicetree/bindings/display/mediatek/mediatek,wdma.yaml  | 4 +---
+ 4 files changed, 6 insertions(+), 12 deletions(-)
 
-Regards,
-Lorenzo
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,ovl-2l.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,ovl-2l.yaml
+index bacdfe7d08a6..ac0d924a451b 100644
+--- a/Documentation/devicetree/bindings/display/mediatek/mediatek,ovl-2l.yaml
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,ovl-2l.yaml
+@@ -45,9 +45,8 @@ properties:
+       - description: OVL-2L Clock
+ 
+   iommus:
+-    description:
+-      This property should point to the respective IOMMU block with master port as argument,
+-      see Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
++    minItems: 1
++    maxItems: 2
+ 
+   mediatek,gce-client-reg:
+     description: The register of client driver can be configured by gce with
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,ovl.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,ovl.yaml
+index 4f110635afb6..c0fd0a91c4d8 100644
+--- a/Documentation/devicetree/bindings/display/mediatek/mediatek,ovl.yaml
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,ovl.yaml
+@@ -65,9 +65,8 @@ properties:
+       - description: OVL Clock
+ 
+   iommus:
+-    description:
+-      This property should point to the respective IOMMU block with master port as argument,
+-      see Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
++    minItems: 1
++    maxItems: 2
+ 
+   mediatek,gce-client-reg:
+     description: The register of client driver can be configured by gce with
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,rdma.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,rdma.yaml
+index 878f676b581f..7e5234def39a 100644
+--- a/Documentation/devicetree/bindings/display/mediatek/mediatek,rdma.yaml
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,rdma.yaml
+@@ -64,9 +64,7 @@ properties:
+       - description: RDMA Clock
+ 
+   iommus:
+-    description:
+-      This property should point to the respective IOMMU block with master port as argument,
+-      see Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
++    maxItems: 1
+ 
+   mediatek,rdma-fifo-size:
+     description:
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,wdma.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,wdma.yaml
+index a3a2b71a4523..276868c0fde7 100644
+--- a/Documentation/devicetree/bindings/display/mediatek/mediatek,wdma.yaml
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,wdma.yaml
+@@ -43,9 +43,7 @@ properties:
+       - description: WDMA Clock
+ 
+   iommus:
+-    description:
+-      This property should point to the respective IOMMU block with master port as argument,
+-      see Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
++    maxItems: 1
+ 
+   mediatek,gce-client-reg:
+     description: The register of client driver can be configured by gce with
+-- 
+2.48.1
 
->  * Driver compiles without error.
->  * All changes were tested with corresponding u-boot driver. U-Boot
->    SpiNAND driver was modified as well to match linux-6.17-rc2 with
->    additional fixes for continuous mode.
->=20
-> Changes v2:
->  * minor fix
->  * add comments to code
->=20
-> Changes v3:
->  * add patch to prevent continuous reading
->=20
-> Mikhail Kshevetskiy (14):
->   spi: airoha: return an error for continuous mode dirmap creation cases
->   spi: airoha: remove unnecessary restriction length
->   spi: airoha: add support of dual/quad wires spi modes
->   spi: airoha: remove unnecessary switch to non-dma mode
->   spi: airoha: unify dirmap read/write code
->   spi: airoha: switch back to non-dma mode in the case of error
->   spi: airoha: fix reading/writing of flashes with more than one plane
->     per lun
->   spi: airoha: support of dualio/quadio flash reading commands
->   spi: airoha: allow reading/writing of oob area
->   spi: airoha: buffer must be 0xff-ed before writing
->   spi: airoha: avoid setting of page/oob sizes in REG_SPI_NFI_PAGEFMT
->   spi: airoha: reduce the number of modification of REG_SPI_NFI_CNFG and
->     REG_SPI_NFI_SECCUS_SIZE registers
->   spi: airoha: set custom sector size equal to flash page size
->   spi: airoha: avoid reading flash page settings from SNFI registers
->     during driver startup
->=20
->  drivers/spi/spi-airoha-snfi.c | 508 +++++++++++++++++-----------------
->  1 file changed, 260 insertions(+), 248 deletions(-)
->=20
-> --=20
-> 2.50.1
->=20
-
---1AUHNkd+gHsq61gf
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaKbDiQAKCRA6cBh0uS2t
-rJDmAP9GGuvSZEogcCj+X2sKTBaavTRJxM26qOSQDYgAAIL4nQD9HS0AIcUP+7jg
-0doMcxD0fGbfIx1hqOoVPVYE1CgCWAc=
-=YwyO
------END PGP SIGNATURE-----
-
---1AUHNkd+gHsq61gf--
 
