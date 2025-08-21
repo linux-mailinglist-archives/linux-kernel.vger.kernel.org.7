@@ -1,102 +1,145 @@
-Return-Path: <linux-kernel+bounces-778818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B87B2EB8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:58:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1191B2EB89
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CE937BCA81
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:57:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B7144E3955
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27632D46D6;
-	Thu, 21 Aug 2025 02:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="w4X7xw2L"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A112D3EEB;
+	Thu, 21 Aug 2025 02:58:34 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733B32D3ED7;
-	Thu, 21 Aug 2025 02:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777441C4A10
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755745126; cv=none; b=IxIpD5sB8qXbXG555I8u6EPD3QkGAqEdlrbX86OlN4descerlC0AnF4YMWqB0PbgNGpRZOv/Wpa00JRFJNG1DTibjKkMF4gmgXMnK4YxK65qf7ej8eKUrcq20J0L1j+r6l4kxH53WkaCp/MYK53j4//nGC/MuvNzImf4doSwpig=
+	t=1755745114; cv=none; b=bq85eY6cvmW+lFkt8UpINRRcHH3bM4XeKSvGtnoB0OVrSf1DzfCvV2m1iNDese/9oQs1DqBXDHfAxJ1rQA/XnGdZ2nE7BcuvID8JwaDCFplb3NQPBt8VZvlK43Il9bC1VuQLdA4j15a08j9Y70hzAp8h8mJBeNgDj37loGp18TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755745126; c=relaxed/simple;
-	bh=ipnT4qyQdgKYvzDTgVarpM3gJWUVAc083y4UR3xajUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8SAyEECOShXEFYqFvMgQi7WVNH9XY+fmRmTurhOZ3NiXzNCtQXIkYm5W1+sDq0V5N/LYIX74gHaCeX3Q4cKD9DrvTiV2qrVzzXeHLUTYBMl/UvzRnceorX40Sn9XFIDOTSSjpJOlN3QjSuT51E3JhQ8jQ+QNmlz19dwVWxIyW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=w4X7xw2L; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=L95uriYwgXcsKp7IEjNA2NGmB2cdqeLOLMS6FJXClwI=; b=w4X7xw2LaPr+dk2WvxqBTc6Q03
-	pu4QSk23JtL9o5A/IfmhNAfuIB92SZHp0Axa+9nhLgQZZwCWcOoR95925q95ZOyX7RGlvyHMRyCgM
-	6peUojZrhuH4pu4R2FlltqYcr6pja2lyJnO8mU+AiK2C8WEkcAnoJ3pnkRnIPh4xXyD8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uovVP-005Oz4-9f; Thu, 21 Aug 2025 04:58:23 +0200
-Date: Thu, 21 Aug 2025 04:58:23 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v3 7/8] net: dsa: lantiq_gswip: store switch API
- version in priv
-Message-ID: <58d31b56-8145-419e-b7be-1fd48cfeda88@lunn.ch>
-References: <cover.1755654392.git.daniel@makrotopia.org>
- <88e9ca073e31cdd54ef093053731b32947e8bc67.1755654392.git.daniel@makrotopia.org>
- <aKZg3TviLUDgKgLz@pidgin.makrotopia.org>
+	s=arc-20240116; t=1755745114; c=relaxed/simple;
+	bh=Ckzyyo8fMNJ1pKXd2LuWDzsluunYZETjwc3xFjhjF8E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=e/Kta7RhiQN3X4+tQBPZWH8tLIt+MD01fkCegSiWBW4VHjOk3ZTrS+/DxQHQq75Z2tju967o/F9DRf/gpmt95ExPnbB0nAjZigLTGANgn9OXPyiBCOV25cL1IUxGRGwNZNxX+8yOXn5G8IqdT8DYkvFajHGdazrteOogfgQRREc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e7172dea48so6053185ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:58:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755745111; x=1756349911;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HahCLua8zUrTqOzXr4U9vE+qOFX9I1AwrpiJRZveyPs=;
+        b=YeOsm6tlG47Qm1cuGQwldTKT62e4J5eEEevB16LhIGpchzdjdD3yI0G2WUWX+PmxHR
+         KzZebxTg9U7CMZZ9Zy8OgxRA+HomGkIzhjGbCsKlKA/Yp3mpa+cDQqf2INVVwVEsO6AI
+         q4jR8EPIqtDPuvE21rnaeGoKvMQW6DEznwydn74zyUNGEYccLn59OrWjsVlDbWvCiNC7
+         ShNwg4lzSdol3rKphjL09/p7PCyCvL+mbrNcMNIIGDG54nujEmOq+3dZeljalxKzDBlb
+         tU82A9yz8csKGaqDIqHs7JE5Z5XMm8giCvNF54EbOtAXm2fP58CgPRQzyOWbMq8UtBBB
+         O5UA==
+X-Forwarded-Encrypted: i=1; AJvYcCUloG/qrzAZzHizRqr4ra2bUYcHKF18rw8iec+jcivXYUCsUk09/i+oI2odgRyxQxAlb/MTlJaMBrntl2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9woaZCozKOesn87MhT8RZUw9jrXmnXwm9vM5j1HDAzanNmuRv
+	FxUaMid4vBT1NPWKWWQXW5mw0qf5CP62ky9j0TVzCSBcpyVc7IizwBe5GKPEv34keiBe/4H4gFr
+	2/XHYnbrhEEgqllUIZ5Um2qk0kMr3O7XoO3R4o6dzcw9KtwmRbZefNtizTMk=
+X-Google-Smtp-Source: AGHT+IHslzf/hk+X+HthHyVz9yOLGrLH/CQVRtSQ53f0E0gtvbiEL1S8Fb7DRaqQ5HM3GthZ4IEjMx0f1lrJamHWW/gdSlWybJ+o
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKZg3TviLUDgKgLz@pidgin.makrotopia.org>
+X-Received: by 2002:a92:c248:0:b0:3e5:5937:e555 with SMTP id
+ e9e14a558f8ab-3e6d4060f71mr17648015ab.6.1755745111642; Wed, 20 Aug 2025
+ 19:58:31 -0700 (PDT)
+Date: Wed, 20 Aug 2025 19:58:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a68b57.050a0220.3d78fd.0012.GAE@google.com>
+Subject: [syzbot] [v9fs?] UBSAN: shift-out-of-bounds in v9fs_get_tree
+From: syzbot <syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
+	v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-> > +	priv->version = le16_to_cpu((__le16 __force)version);
-> 
-> I've researched this a bit more and came to the conclusion that while the
-> above works fine because all Lantiq SoCs with built-in switch are
-> big-endian machines it is still wrong.
-> I base this conclusion on the fact that when dealing with more recent
-> MDIO-connected switches (MaxLinear GSW1xx series) the host endian doesn't
-> play a role in the driver -- when dealing with 16-bit values on the MDIO
-> bus, the bus abstraction takes care of converting from/to host endianess.
+Hello,
 
-I agree that all MDIO bus registers are host endian, 16 bit. The shift
-register in the hardware is responsible for putting the bits on the
-wire in the correct order for MDIO.
+syzbot found the following issue on:
 
-> Hence I believe this should simply be a swab16() which will always result
-> in the version being in the right byte order to use comparative operators
-> in a meaningful way.
+HEAD commit:    3ac864c2d9bb Add linux-next specific files for 20250818
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13706442580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6d1acc6b9e1fca1b
+dashboard link: https://syzkaller.appspot.com/bug?extid=30c83da54e948f6e9436
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141586f0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124c9ba2580000
 
-How is this described in the datasheet? And is version special, or do
-all registers need swapping?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/37dbe82593f0/disk-3ac864c2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d2fea0824445/vmlinux-3ac864c2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6f2a83735a01/bzImage-3ac864c2.xz
 
-	Andrew
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/9p/vfs_super.c:57:22
+shift exponent 32 is too large for 32-bit type 'int'
+CPU: 0 UID: 0 PID: 5861 Comm: syz-executor379 Not tainted 6.17.0-rc2-next-20250818-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
+ __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
+ v9fs_fill_super fs/9p/vfs_super.c:57 [inline]
+ v9fs_get_tree+0x957/0xa90 fs/9p/vfs_super.c:125
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1752
+ do_new_mount+0x2a2/0xa30 fs/namespace.c:3810
+ do_mount fs/namespace.c:4138 [inline]
+ __do_sys_mount fs/namespace.c:4349 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4326
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff35edd46a9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffeee8a4078 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00002000000025c0 RCX: 00007ff35edd46a9
+RDX: 00002000000000c0 RSI: 00002000000025c0 RDI: 0000000000000000
+RBP: 0000200000000280 R08: 0000200000000280 R09: 00007ffeee8a4258
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff35ee1d017
+R13: 00007ffeee8a4248 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+---[ end trace ]---
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
