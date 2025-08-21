@@ -1,153 +1,104 @@
-Return-Path: <linux-kernel+bounces-780078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82AF6B2FD51
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:50:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E128AB2FD64
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73EDD1C22302
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:42:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4A1717B02D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFF425B1CE;
-	Thu, 21 Aug 2025 14:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b0nYVNDR"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FE91DF749
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38A4241136;
+	Thu, 21 Aug 2025 14:43:11 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF201C8633;
+	Thu, 21 Aug 2025 14:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755787343; cv=none; b=Pi84AngmzrcXLFXHivSngQsAroBisr4ZT/r6Y1IP/07p9cG+Vxu/tsgFvvjTTjaiDXE6Mj/FBtPNadISEEYsLLxdodMKAfZw4fr0JXZt6uBKGm9Tmmmyz105fb0tzG7673ynpB25ObRqYwf/Dr/+d7WC3AosLVamVWW+UQnU7i0=
+	t=1755787391; cv=none; b=VPgpIp1PaQYuoonE4yySKTiDsMFv/NrN74r0DkmM0z/15rE2ZPJmLH+ZOLfocaWllNp31m50hK8/J8hzyP+blVQHXO9+0TKOmjeqpjHF908pJFlkD45r1+XafDtm+1A22LUzEQFYe7qlXVdAaIo37ingUdaur/gFyOplndVMD54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755787343; c=relaxed/simple;
-	bh=BX5DAhqdzslnO/91gi/bXKLfgy/01PP5THxGap5lJvU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z2Pny7CFJQb0OFqGFaGsfocpdFEkl1iac0SKp0ju9SuY0GEXXx870AjojkCXzcMzXcAYTq9GmNqZz1ZGGDEOpNZ48ERGF5pLEBmkAWm8nyrOwIZzxTxO4pvqmgEYsz/m3/wulyLRqkY0Qw1O42PAki1JNgiE1hD8SSSal0DTjJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b0nYVNDR; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3232669f95eso1151343a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755787341; x=1756392141; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZwhaOsDZKjM31to5aYQy2uwlBTUbbjztbU3kR381HLQ=;
-        b=b0nYVNDRA1kOYjQGgCHB5C8rfDce4HmsKtSRI3W36RslK8RxjKxfzISVXA7Tr3duK+
-         Vq2n9n9I10HqXr74NS3RJkHugMJbfhnyQfqt5kzklh9qQDStznW5+qK8hUvecm9294J7
-         tLCpQgjRZy8iDoxS2JYrHKVuLXcBHc82a4yqd55zaL7JJYQDWtBdjkLyegoo8OpC6wWI
-         SKby1HzZdHroOIpzm8kG/v2WYXOCkg+K5GkNJKrGbQ57ZHDvDzovDASldYZ5RGjQpfbn
-         V9sPPC2YXHBdtnS+fbAo5+PADkuHN7HukvgMVh1GPstW3aYMajyr20IUlOEWCl+bkqIV
-         IPXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755787341; x=1756392141;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZwhaOsDZKjM31to5aYQy2uwlBTUbbjztbU3kR381HLQ=;
-        b=s5H8vzJ+umHhKCWQPI1prkJELSdBHAShqpbszSb7sstmiqeo2mshmzzORA10hYsVIM
-         khPmifDZES3MnpjyNYd3e9OE6euz8YL6ghD+6mg0A3ofSfMoF/n6Sh0yLxsCf0vAIEbS
-         Oxlb5Gn/tZFRWjrtQKx0S/b78pu7CuGzR7je0RU+AkQvBOwnAXaIrm237npKApGVaYyp
-         LlPTvUwPvOt3InQ3F+XTF67eS3qymyLzp2uAa3XSqq8sJ0v0ZfqoLmuoAKLbTamrPsLo
-         chORSkM/dYLFtY4RM15hXJcnN6YYi+aD7mnlnZ4L18PXsPbThkVGy3hlYckEaUUfVQVu
-         2WmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrOVbcCUYlaUWV9Ug+0czbLYRBZvoMc1vdpz8zlW+GjXAHCpGe7I0ZADxsvxMPEplnaYB0ldDJnRTVNK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD7FO8kCuH34KhXLJ6nI+FBmFQKH4JteuOSbwYptfc8O0rLshD
-	obLwW/lKw8eCvLZnKz/NT/H70DHQx2k6bb4ApBTre/vLW7fRWLZla9Tu16ClaZM7O5oIpq5IosV
-	UQ88qKg==
-X-Google-Smtp-Source: AGHT+IHVlRF4YOtCmwKhiHtV/w+adEcX043CzoyDKgxhaqZVVCG0NLmbgeDnpXrLHXuQ4ZYW1MGM4IlOTFM=
-X-Received: from pjbse8.prod.google.com ([2002:a17:90b:5188:b0:311:c5d3:c7d0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5183:b0:2fe:85f0:e115
- with SMTP id 98e67ed59e1d1-324ed1d36ebmr3436941a91.26.1755787341218; Thu, 21
- Aug 2025 07:42:21 -0700 (PDT)
-Date: Thu, 21 Aug 2025 07:42:19 -0700
-In-Reply-To: <68a72f36be3db_2a6d02294bc@iweiny-mobl.notmuch>
+	s=arc-20240116; t=1755787391; c=relaxed/simple;
+	bh=CsN4eU3evTNdrqK03JAhq8/VxGqGePsdXOj1BPeP5OE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qMsYi5Q9CPGr8zkrl4Q9A7WAu5mEvuyid2EJAmgxr8jwI3+p7TEy0JvnESzoImueQH6MZ+VfckJZNhHixNJN44Y11k09VkRycAabXLMGl1ILxZ698ptpbIrkwrcWy2RPq3yeqr1ZtNTjuS9AR2CulwFFxzr1Z27GTS7C5lotnOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8DxvdJ4MKdo_HgBAA--.2681S3;
+	Thu, 21 Aug 2025 22:43:04 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJBxzsF3MKdo0NpdAA--.294S2;
+	Thu, 21 Aug 2025 22:43:03 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Hengqi Chen <hengqi.chen@gmail.com>
+Cc: loongarch@lists.linux.dev,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v2 0/2] LoongArch: BPF: Add more feature for trampoline
+Date: Thu, 21 Aug 2025 22:43:00 +0800
+Message-ID: <20250821144302.14010-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-2-sagis@google.com>
- <68a72f36be3db_2a6d02294bc@iweiny-mobl.notmuch>
-Message-ID: <aKcwS9uY1WSvM3uz@google.com>
-Subject: Re: [PATCH v9 01/19] KVM: selftests: Include overflow.h instead of
- redefining is_signed_type()
-From: Sean Christopherson <seanjc@google.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Sagi Shahar <sagis@google.com>, linux-kselftest@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxzsF3MKdo0NpdAA--.294S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7XF17Ar4rCw4DJr1DGrW3urX_yoWkWrbEkF
+	93KFyDCw48Wa4YqFy29rn3Ar9ruFWUGryrCF4qqrZ5KryxZr43Ar4vv34Duw1v9rs3Xa98
+	KrnIvry0vryxuosvyTuYvTs0mTUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUb78YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+	oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F4
+	0EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_
+	Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8HSoJUUUUU==
 
-On Thu, Aug 21, 2025, Ira Weiny wrote:
-> Need to add the selftest folks.
-> 
-> + linux-kselftest@vger.kernel.org
-> + Kees Cook <kees@kernel.org>
-> + Shuah Khan <shuah@kernel.org>
-> 
-> Sagi Shahar wrote:
-> > Redefinition of is_signed_type() causes compilation warning for tests
-> > which use kselftest_harness. Replace the definition with linux/overflow.h
-> > 
-> > Signed-off-by: Sagi Shahar <sagis@google.com>
-> 
-> Thanks!  I've seen this as well and it fixes the warning for me as well.
-> It might be worth picking up separate from this series depending on what
-> the selftest folks say.
+Please ignore the previous version, the code is a mess.
+Sorry for the noise, this version fixed the mess code.
 
-Again[1], I already have a fix applied and will send it to Paolo today.  And simply
-including overflow.h doesn't work[2] because not all selftests add tools/include to
-their include path.
+This is a RFC series, based on Hengqi's series [1]:
 
-I appreciate the enthusiastic though!
+  LoongArch: Fix BPF trampoline related issues
 
-[1] https://lore.kernel.org/all/aKcqRFWuGZQQ3v3y@google.com
-[2] https://lore.kernel.org/all/18f2ea68-0f7c-465e-917e-e079335995c1@sirena.org.uk
+The initial aim is to pass the following related testcase:
 
-> 
-> Tested-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> 
-> > ---
-> >  tools/testing/selftests/kselftest_harness.h | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-> > index 2925e47db995..a580a0d33c65 100644
-> > --- a/tools/testing/selftests/kselftest_harness.h
-> > +++ b/tools/testing/selftests/kselftest_harness.h
-> > @@ -56,6 +56,7 @@
-> >  #include <asm/types.h>
-> >  #include <ctype.h>
-> >  #include <errno.h>
-> > +#include <linux/overflow.h>
-> >  #include <linux/unistd.h>
-> >  #include <poll.h>
-> >  #include <stdbool.h>
-> > @@ -751,8 +752,6 @@
-> >  	for (; _metadata->trigger; _metadata->trigger = \
-> >  			__bail(_assert, _metadata))
-> >  
-> > -#define is_signed_type(var)       (!!(((__typeof__(var))(-1)) < (__typeof__(var))1))
-> > -
-> >  #define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
-> >  	/* Avoid multiple evaluation of the cases */ \
-> >  	__typeof__(_expected) __exp = (_expected); \
-> > -- 
-> > 2.51.0.rc1.193.gad69d77794-goog
-> > 
-> 
-> 
+  sudo ./test_progs -a tracing_struct/struct_args
+  sudo ./test_progs -a tracing_struct/struct_many_args
+  sudo ./test_progs -a fentry_test/fentry_many_args
+  sudo ./test_progs -a fexit_test/fexit_many_args
+
+but there exist some other problems now, maybe it is related with
+the following failed testcase:
+
+  sudo ./test_progs -t module_attach
+
+so just RFC for now, I will address the comments and send a formal
+series once there are no problems.
+
+[1] https://lore.kernel.org/loongarch/20250821091003.404870-1-hengqi.chen@gmail.com/
+
+Tiezhu Yang (2):
+  LoongArch: BPF: Add struct arguments support for trampoline
+  LoongArch: BPF: Add 12 function arguments support for trampoline
+
+ arch/loongarch/net/bpf_jit.c | 84 ++++++++++++++++++++++++++----------
+ 1 file changed, 61 insertions(+), 23 deletions(-)
+
+-- 
+2.42.0
+
 
