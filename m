@@ -1,121 +1,154 @@
-Return-Path: <linux-kernel+bounces-779075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B4FB2EEB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:53:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A50B2EE41
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AAD15E65B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA0C13BA4E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82092E718E;
-	Thu, 21 Aug 2025 06:50:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6667D2E88B2
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F6A26F285;
+	Thu, 21 Aug 2025 06:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahlmc3VE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE46F5680;
+	Thu, 21 Aug 2025 06:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755759037; cv=none; b=Cqqxby9xYsfx4vUjpK81D3587i6S4y2xCcskxdNG3jNo1Ij01c+h8oY3q47Ig6SVg82smVcTPZYLGzagj4qizQCZ0XqJf6qiywpQ/RHgYJm8fpUJmvl4PuZxBnrqtO57LSdatPzn/0STU6Od4CezSf/mI7PQ+Xi5IGXdrEzPgx0=
+	t=1755757865; cv=none; b=N5hM81a1LryiWUBQedvTywzUcxSUL4v+W7Imrs7warCaLFPPPWx2SdeE3pMqQwGiA1lunyqZ4ONOf6LBdYzcLP5kx0a3klUdrEPj0vPg/QyOB97Lq9ctfZvZOhUxDPfhY0SRwDW1P53Og/EWcjsWzwEOmT8lpmqR5s81cWk9BfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755759037; c=relaxed/simple;
-	bh=iyl6104RZSrIlJicOe4iR8mRE0MXWiG2nNwBytsDVko=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F9+bGYO1qmMhfMSq/pEYJLfzK14uTDgNBTa1cUU4XUfBYhGqgguonbdaVTjn1p1a47Y3GszB2S9qLERA5CqmSqQesVT9rm81vhnq5H2o1C4vBynL4bEfz3HwyjAPsoIks0yGeorVJM1uSK/qIoGAooiN1ZoMfx8ILnCGjju7pnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c6tjb6Dxlz9sRs;
-	Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id cBZ596fMmV_9; Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c6tjb5Sflz9sRk;
-	Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A473D8B76C;
-	Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 9xKpAQnhDf4U; Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 372FB8B763;
-	Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] powerpc/603: Really copy kernel PGD entries into all PGDIRs
-Date: Thu, 21 Aug 2025 08:30:18 +0200
-Message-ID: <752ab7514cae089a2dd7cc0f3d5e35849f76adb9.1755757797.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1755757865; c=relaxed/simple;
+	bh=8gidM6G9cAD1gbH9lRLRqrEdyStqaXcALxwsVA8/3Sg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MDlAxz8mBP6DXFKB/ZpgVzsgaSM/GO6byIIm7RPY3PI9QVXstKutMDGlzK+QfbtZA5bozCBidPqh7XTC/cNhoTklKn1AHo35+0gZGdx9SSIREbkwx+hlLWWAuBCeJU7hDVmlET//y9WUbfTyRTeG2ml0nymcSQqhD9vOMd+k5hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahlmc3VE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C70EC4CEED;
+	Thu, 21 Aug 2025 06:31:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755757864;
+	bh=8gidM6G9cAD1gbH9lRLRqrEdyStqaXcALxwsVA8/3Sg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ahlmc3VEQxY2P1AxB8ORK+XkWtx510+u7bIIebercr9bed69mAV1Wnz5MmIzaQiBT
+	 /385CBHk6FYVoK7no1/VabWd5p2dSSdjiicPUjOk/A3HPxhfynw6amOARLtGL5pps2
+	 ttn4NGZJcTLpiZw9cTGKjhSGb1HaMKty8lkHuXCZjq1v8shqwb4AtRzChKTnkiGN9o
+	 2IKeJPPTw8dQKzKS5esomAC237CyZcRvZbcuTMEfb7t05QNAwz3AjlRevRk/yFDhXz
+	 I6bpVYl236UQ32J/Umue9mh80UrD2m3Z6iuvpaA1MVbkaOj9W5Rw3DpO8CdZwluPau
+	 BXe8DebnKnN1g==
+Message-ID: <c288db22-7a80-4dc1-abb5-fb5adb2f5669@kernel.org>
+Date: Thu, 21 Aug 2025 08:30:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755757819; l=2209; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=iyl6104RZSrIlJicOe4iR8mRE0MXWiG2nNwBytsDVko=; b=jrtj+Mhrve85dIiULvqBIHwkjs+0MUxfUNNTTBQwdFwyoZP1NSdSfQbyzXeXuAyUbarBVHbC4 1ab825nC7UaBkYOka/LjRy2gDK1c8nbIQ1duIz9ax+0mbH9198THgdr
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?B?UmU6IOWbnuimhjogW25ldF0gQVJNOiBkdHM6IGFzcGVlZDogYXN0MjYw?=
+ =?UTF-8?Q?0-evb=3A_Correct_phy-mode_to_rgmii-id?=
+To: Jacky Chou <jacky_chou@aspeedtech.com>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
+ <joel@jms.id.au>, "andrew@codeconstruct.com.au"
+ <andrew@codeconstruct.com.au>, Z-Howard Chiu <howard_chiu@aspeedtech.com>,
+ "arnd@arndb.de" <arnd@arndb.de>,
+ "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250821052555.298860-1-jacky_chou@aspeedtech.com>
+ <80723310-97e6-45ea-8154-c48de40e14aa@kernel.org>
+ <SEYPR06MB5134106F024EB9EC32472A329D32A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <SEYPR06MB5134106F024EB9EC32472A329D32A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Commit 82ef440f9a38 ("powerpc/603: Copy kernel PGD entries into all
-PGDIRs and preallocate execmem page tables") was supposed to extend
-to powerpc 603 the copy of kernel PGD entries into all PGDIRs
-implemented in a previous patch on the 8xx. But 603 is book3s/32 and
-uses a duplicate of pgd_alloc() defined in another header.
+On 21/08/2025 08:17, Jacky Chou wrote:
+> Hi Krzysztof,
+> 
+> Thank you for your reply.
+> 
+>>> According to the latest ethernet-controller.yaml.
+>>> Since there is no RGMII delay on AST2600 EVB, the phy-mode property of
+>>> all MACs change to "rgmii-id" mode.
+>>>
+>>> Fixes: 4d338ee40ba8 ("ARM: dts: aspeed: ast2600-evb: Enable RX delay
+>>> for MAC0/MAC1")
+>>> Fixes: 2ca5646b5c2f ("ARM: dts: aspeed: Add AST2600 and EVB")
+>>> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+>>> ---
+>>>  arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dts | 8 ++++----
+>>
+>> No, DTS cannot go to net. Why do you propose that?
+>>
+> 
+> If there is a series of patches to add or fix about networking and this series
+> Includes dts or dt-binding, I send it to net or net-next.
 
-So really do the copy at the correct place for the 603.
+No. That's really irrelevant. And if you change there I2C you send to
+I2C maintainers? That makes no sense.
 
-Fixes: 82ef440f9a38 ("powerpc/603: Copy kernel PGD entries into all PGDIRs and preallocate execmem page tables")
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- arch/powerpc/include/asm/book3s/32/pgalloc.h | 10 ++++++++--
- arch/powerpc/include/asm/nohash/pgalloc.h    |  2 +-
- 2 files changed, 9 insertions(+), 3 deletions(-)
+You send it to respective maintainers. networking things go to netdev.
+SoC (so DTS) goes to SoC.
 
-diff --git a/arch/powerpc/include/asm/book3s/32/pgalloc.h b/arch/powerpc/include/asm/book3s/32/pgalloc.h
-index dd4eb3063175..f4390704d5ba 100644
---- a/arch/powerpc/include/asm/book3s/32/pgalloc.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgalloc.h
-@@ -7,8 +7,14 @@
- 
- static inline pgd_t *pgd_alloc(struct mm_struct *mm)
- {
--	return kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
--			pgtable_gfp_flags(mm, GFP_KERNEL));
-+	pgd_t *pgd = kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
-+				      pgtable_gfp_flags(mm, GFP_KERNEL));
-+
-+#ifdef CONFIG_PPC_BOOK3S_603
-+	memcpy(pgd + USER_PTRS_PER_PGD, swapper_pg_dir + USER_PTRS_PER_PGD,
-+	       (MAX_PTRS_PER_PGD - USER_PTRS_PER_PGD) * sizeof(pgd_t));
-+#endif
-+	return pgd;
- }
- 
- static inline void pgd_free(struct mm_struct *mm, pgd_t *pgd)
-diff --git a/arch/powerpc/include/asm/nohash/pgalloc.h b/arch/powerpc/include/asm/nohash/pgalloc.h
-index bb5f3e8ea912..4ef780b291bc 100644
---- a/arch/powerpc/include/asm/nohash/pgalloc.h
-+++ b/arch/powerpc/include/asm/nohash/pgalloc.h
-@@ -22,7 +22,7 @@ static inline pgd_t *pgd_alloc(struct mm_struct *mm)
- 	pgd_t *pgd = kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
- 			pgtable_gfp_flags(mm, GFP_KERNEL));
- 
--#if defined(CONFIG_PPC_8xx) || defined(CONFIG_PPC_BOOK3S_603)
-+#ifdef CONFIG_PPC_8xx
- 	memcpy(pgd + USER_PTRS_PER_PGD, swapper_pg_dir + USER_PTRS_PER_PGD,
- 	       (MAX_PTRS_PER_PGD - USER_PTRS_PER_PGD) * sizeof(pgd_t));
- #endif
--- 
-2.49.0
 
+> So, this is just changing the DTS settings, even if it is for MAC,
+> wouldn't it be sent to net?
+
+You must follow what MAINTAINERS tell you. Don't invent your own rules.
+
+Best regards,
+Krzysztof
 
