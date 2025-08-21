@@ -1,116 +1,96 @@
-Return-Path: <linux-kernel+bounces-780349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA5DB300C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:10:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED67B300C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA024A22748
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:10:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 799FE5E851C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7972FB62D;
-	Thu, 21 Aug 2025 17:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9112FB632;
+	Thu, 21 Aug 2025 17:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vmDCimZh"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exGElCHi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532DF261B91
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 17:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766F62FB62B;
+	Thu, 21 Aug 2025 17:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755796204; cv=none; b=PiuJqrjFxR47E/r5mXSo+Db4yKqT3MrJX95+jqhCKWaFCaSZI1aRPh1e3RGK9ZSD/rLR0S8zFeAdsdLudLoIKPAiiilsckUTxzguLM+isoGMxssQyu8M1qpFWvPHkbqWH2PCgfLZZHcjbEmGCP+4kzXy3hY86APCF8aW5MTQKao=
+	t=1755796216; cv=none; b=o5dNKIX2Bg1HpHSMXhgG22rLXtWcnOUQhdU6Fuf+pka+4TT6c5EQO387i6xN5WYVVX8VCsPkWHzxo27q9pF+iym4RblE9+ROpJXOI828W49M18GsITSmf7H1b9oqQjjt6ZqVJymJK8WvcPhGq11KqIOFCmyfQFrfpGsEuRIhUjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755796204; c=relaxed/simple;
-	bh=qzyta2RpwZZkPSoINkCs6FPoiQyGdt7Ek43OoHB8SWI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R4yZpKpyoCjM1d3NE5ek52CP6PyH919FlTCm9SYvDavfuqRWG1h4uOZUw6xxAU+xq1hc+r9uBtWnqkjphJ1mGbt7lAjArccugidlWjvrVtg4gMgfnq+of9UsyCIbYUGCXNZav4NnL/oKXnFbP/4qBWOiBBsf0nVeeW6QWjDiRX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vmDCimZh; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55ce520caf9so1366943e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:10:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755796200; x=1756401000; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qzyta2RpwZZkPSoINkCs6FPoiQyGdt7Ek43OoHB8SWI=;
-        b=vmDCimZh6hqMz1ZPE4+u/BlGzzptUQHoDUz3fiJIKY3PHdIT8k8eTVmjSfgEvMGYcA
-         /2rVwGtMaLzDUK8PQkphMQCEImlxmUr1a9uB0AZ8MudnBOAw1zYAded2OcwBmBI8e6t8
-         O+7Umtr2WK/RjkR79IX5sEcI0WeTO1wyjtOvhJx9rTA32knKCqIktfb2lv5u/tKAQPlw
-         AsK7irJ8iuFX7XKiHO41QwGLk2+NgP3PcDA6CxvIkvoPhECgyZqHZaddAXKUfoW2mcwf
-         i31qnLjNBupovuW7QFya9A6xSFPlQyyHQLeyKf/s9T6fiF6An5uSa5XKtZdpVnQZ+2hp
-         YbVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755796200; x=1756401000;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qzyta2RpwZZkPSoINkCs6FPoiQyGdt7Ek43OoHB8SWI=;
-        b=olt+2dMucJ00vEx46vjcownr031kd25vxYOknxfAKu+jSd3sWvqZIktJn9qTDDOko9
-         yf5kRbgoAR2cVY7S146pcg+m84a62oQNM93KB5s9tJDczpBBf9f1PAdDVbCO0u304EE/
-         I50U/hmh51HHVboyaVSZZ7u6t+OOTHJFomt2z5qeF6eIEwkF0y/zTQq45gq4WP4OMdYz
-         dm76SPSk/Bb6DDjan2TJueJJhZuaeKo7uyL2dHgJqz102ZUtMDpKHjVx/R7/h3+Tt+R0
-         I2HVMRmtBexAVt+AkmMeyfxzMpkdR0kjzbCjJcEoi0phNpUJvxYrLIzVUXf6tCFCfgor
-         6Bzg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3+0RdRei5dt7Pzh38TTzllFhQs7Do1HTB321tu6QQSkz9LpSpy07ijrEH//KYYy5suj4+LrebjgG7V+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxULijc/7+y8ZDfCOFZdKbcnsGwDXvzxGu1cF20J8g8//yAKUEk
-	1REZfwAJcoWcNsZat8ZPcNHkPYUPRruhEjXEYDMt1kTB8PT3YFF3qGDL8eeUvHcN76VZf5pRYDA
-	F6kN2JcBnz0LGd/qARrnCt0uo78zlNQl38Z/KOMU=
-X-Gm-Gg: ASbGncvIIl4qYDTAjXu3c6zGI/20eaGntu/lMSwbmcJlMyrcpL15SFlHg+UiS7q7/1q
-	5ckV8PeIVEeqwpZFiCeRSRQz2n6VK1YpN3Ze4t83V0ppuOcj4vZ/pkWx6DuFRPpaG66E/smLurw
-	R5goWwZ5Q79BUt9icgSMj0ZJW2jtbQfdvH56XlDY+6Xjw/B0iRqkeJ4AqN1kyDxhfMVtf/ANREy
-	2xfkgJw+f0uRn5wM+c/76OSyCiSAN2GiwbjZkiGjDU=
-X-Google-Smtp-Source: AGHT+IGCtOn7tbH9t0p8srawhbiUJfL181nmv8fCMU5ZSgZahzHyg5r83rFQoVb5IzGafcrdKfDNDNBRg7nmKzntFD8=
-X-Received: by 2002:a05:6512:3d87:b0:55c:d64e:f941 with SMTP id
- 2adb3069b0e04-55f0ccefb10mr68135e87.1.1755796200079; Thu, 21 Aug 2025
- 10:10:00 -0700 (PDT)
+	s=arc-20240116; t=1755796216; c=relaxed/simple;
+	bh=iI8uK540bgopoq0pOE9qeewmZlSP/Z8gE7wwo6c/en8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hSAAeawG7+y00YbFT1KXC1w4sQkncR9Mbegk2OIsOcVU0x+8assk2uQAUS/7O1bSNIg/QXWzZSaxywuZ7RAqCmxc1a0Uc2hxAhT4SkiwI1Zp1c6z2dZpskR6nD9oF6890L2V0dnU5pslXdR+7yUyVOxrJVbtqAdeYeRWKOFAf9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exGElCHi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C9BC4CEEB;
+	Thu, 21 Aug 2025 17:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755796215;
+	bh=iI8uK540bgopoq0pOE9qeewmZlSP/Z8gE7wwo6c/en8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=exGElCHiv1aDaMOYVKOe5UvmhtQYYptdFQG8s76oU2GVNQnRQGLLnBevGW41uja9Q
+	 TEbxmCx6gKNBjjLv3OEa5RD+pnJHfYG5xv+go8Mbe1OKOWq7fVAJt9hUQmkIM4+IBh
+	 krEaKKkeUKCAfPmxQgykRtTu9lE7plOLxQuL8hKviEXvAPp/mwMW9bEKmsZeLMexDu
+	 z7TYbipA/1tzu4p0OAyPE91WsTaMJy5z9xL19fEiw7ccBFFHFhrRj9LgaHSFHj51VP
+	 RaS5pd/0K96+KYagyRoRXEbqlDWZRGm86uJAd2wfQFQGpyo2KrYpEbiGYlhjPTAX1e
+	 ksKIjwy1kjDbg==
+From: SeongJae Park <sj@kernel.org>
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com
+Subject: Re: [PATCH 01/11] mm/damon/core: add damon_ctx->addr_unit
+Date: Thu, 21 Aug 2025 10:10:13 -0700
+Message-Id: <20250821171013.79499-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250821105159.2503894-2-yanquanmin1@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821-vdso-arm64-compat-bitsperlong-v1-0-700bcabe7732@linutronix.de>
- <20250821-vdso-arm64-compat-bitsperlong-v1-1-700bcabe7732@linutronix.de>
-In-Reply-To: <20250821-vdso-arm64-compat-bitsperlong-v1-1-700bcabe7732@linutronix.de>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 21 Aug 2025 10:09:47 -0700
-X-Gm-Features: Ac12FXzdv4nEar1SRFxGb-uqGlOF-O5VXp_mUrNfgvVnxfVbcoJVpWP9zgsBo4I
-Message-ID: <CANDhNCqbZbhSLgvFYnzK0Fmu2qndQ-7qHwHmGtRcFwirgZvcEg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: uapi: Provide correct __BITS_PER_LONG for the
- compat vDSO
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@arndb.de>, Andy Lutomirski <luto@kernel.org>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 12:56=E2=80=AFAM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> The generic vDSO library uses the UAPI headers. On arm64 __BITS_PER_LONG =
-is
-> always '64' even when used from the compat vDSO. In that case __GENMASK()
-> does an illegal bitshift, invoking undefined behaviour.
->
-> Change __BITS_PER_LONG to also work when used from the comapt vDSO.
-> To not confuse real userspace, only do this when building the kernel.
->
-> Reported-by: John Stultz <jstultz@google.com>
-> Closes: https://lore.kernel.org/lkml/CANDhNCqvKOc9JgphQwr0eDyJiyG4oLFS9R8=
-rSFvU0fpurrJFDg@mail.gmail.com/
-> Fixes: cd3557a7618b ("vdso/gettimeofday: Add support for auxiliary clocks=
-")
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+On Thu, 21 Aug 2025 18:51:49 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
 
-Tested-by: John Stultz <jstultz@google.com>
+> From: SeongJae Park <sj@kernel.org>
+> 
+> In some cases, some of the real address that handled by the underlying
+> operations set cannot be handled by DAMON since it uses only 'unsinged
+> long' as the address type.  Using DAMON for physical address space
+> monitoring of 32 bit ARM devices with large physical address extension
+> (LPAE) is one example[1].
+> 
+> Add a parameter name 'addr_unit' to core layer to help such cases.
+> DAMON core API callers can set it as the scale factor that will be used
+> by the operations set for translating the core layer's addresses to the
+> real address by multiplying the parameter value to the core layer
+> address.  Support of the parameter is up to each operations set layer.
+> The support from the physical address space operations set (paddr) will
+> be added with following commits.
+> 
+> [1] https://lore.kernel.org/20250408075553.959388-1-zuoze1@huawei.com
+> 
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
 
-Thank you so much for the quick fix!
--john
+Reviewed-by: SeongJae Park <sj@kernel.org>
+
+
+Thanks,
+SJ
+
+[...]
 
