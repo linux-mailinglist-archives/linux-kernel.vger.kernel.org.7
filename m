@@ -1,121 +1,95 @@
-Return-Path: <linux-kernel+bounces-780749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9939AB308EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:09:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC1DB308F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579F7AC728B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:09:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44ACF5857D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E2E2EA73C;
-	Thu, 21 Aug 2025 22:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E5E2EA740;
+	Thu, 21 Aug 2025 22:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kX3T/mcE"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="h8Pefxhw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7548C28466C;
-	Thu, 21 Aug 2025 22:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F284F7262F;
+	Thu, 21 Aug 2025 22:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755814186; cv=none; b=ocEDgkys5HvDN/+wTYKfb+3j2TIAmFrHz5j/eZvYy5pB0H29A2st2wWV1XQafrWRj4oqF/SveJRhmKjDpbxKMLCQKqfhJ1P4ns5uIPk7ftB2a1m25JyucUGIPh83k2MfVicYIzENuIXdllhJeSsaRjOGQBIOXp9nEbMnhsPH6TE=
+	t=1755814391; cv=none; b=f8dDEE4K348gHXS4Mr2zk/J2SLqKCDT6AVt0lE6gazfrMiI0g4VqF/O/2hAVXx/whI5Qf3w7JbGKTypf3Ciu1ZftBpKPSJMYH0zKz7s5RwNpa2Se01u/GziBtKX/vYaMrLAZMPeDqCvgPhJUO25rXaQW6ukAgcHBkFuSZLISAQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755814186; c=relaxed/simple;
-	bh=HbrzIow6ro5F8biuzHHI59aFAdttm39yiOQJ9djR9aA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iIjHIVzN6475XYk/IRxRumj5Ovhv2a15LCHWWevprzfeeS0oel5x4fpyjSkNaUxyQ25Ncdb6alvFqeZ/yQUTtY0aWBTjTyjWTp6QpbgvClfczoup42f5kkJNG0o6hhpgCUvgP0WR+QwNrMI8+vW/VXNVR7Z8hG9CROZSV6D26tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kX3T/mcE; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b476c67c5easo1042648a12.0;
-        Thu, 21 Aug 2025 15:09:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755814185; x=1756418985; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=++SJ5jRH+WreHKVhkZdUv3bQcfYuCui1mzziW/uI5PI=;
-        b=kX3T/mcEGAtVrxGHPHnE78N5qdG9GWPF3Eh4ueDjGergcBiQRg781u4Ixs7kSwHgOc
-         NkCmeKgZPms9+vCdbeQKh4MlUjLeb5BewFwMGw3l8pnzEF5JPlqmss3Kn4OutBEiA5q6
-         RLnmbukpIMeGjJkdMDesbyk+hh+G5lZraYc3NTO4aWeSyj7wPYZHURy9sMw6T96UZNKN
-         ui+hW4NW54hS1q9NKWEWtT552gckuqrO/CR+kewyLKU5aIJdngv6pp6pTqRr5jRUOJZe
-         Wxm+FxmBk2LSzmP6NDR0S69993LgZIBLjH7okNKdR9p8XaOiWCg2g26UM35TXdH2Ehgf
-         A4QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755814185; x=1756418985;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=++SJ5jRH+WreHKVhkZdUv3bQcfYuCui1mzziW/uI5PI=;
-        b=srndMQjUfU3zJUSff3VdHI3Paa/HTVKAehoYzFg16E7vhoJhI/niewkL5ZFT1qq8k1
-         85VAotnDZZXoxHQ4KE/bfjJsQu3MhByMQ8dMm0ydS+1w/Hzk7gpJRXoznOQ2TbORpTzI
-         5VC4POwoATL+EZdZUSV3lDC7HBJQeAaV55RphD+mcKDL6+x/iAAnVDadg+jIAsSPwOwD
-         b75HgX49c/Oj8YCpYMUhXylNpMFvCr89rMAV4EwhtuXxLL9vERxMTgCpmMDOLZ669SEs
-         hux2vZ2c1aQe1FSl87yVnDSzPuuj9GoTePQ7oF/a8WRfwoAroIUyPw5DWFNczurOm2mA
-         LQgw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9JkkaBqRQYmM99RitRTy7DH2IF+hSgFSO1JPOF6l30RDmSskKD7eFMz0YYCsvPr6VPW0WBI3MffNKNJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9kyWGxZxTOAfg1x7lGXgxwoMeqi+9E0VjznHn3q3Ef8aihshK
-	otBqSGlJWrYz5ekO3rceScOQpbjqOwNxZpkHGOataT2qNmfMKE1/C6Pn2JCTlQ==
-X-Gm-Gg: ASbGncv2Ppl5MxLPNeP9MWOZ1tYtsrafOnGAOhFDjkJKLMyz30J5R9hKBOm1yK2k4o0
-	pWP0sy8KCJZIDZax0Sx977kIGPQnuGLImEsZliqCw2773Tdf1GUxzV71u9MmKYuVih4VPZmwcmu
-	cK0Rj1aZo24ik2X6tVYJpkd0jil0QN645o/JziRTiOyUXC4bYGujEg2WTwTSjoTvJWfHJWR3kth
-	FbnVjJOvE+GQn9Dd0KfHEJ5f6kpy0Ff4UMmqiGWaP4gnu9LeLke1PXeVl1TCQaJ2ZBSNVHQhCTe
-	MjJ91O926/ZlpW0aisy3ux8y2PHfgOyB5eXuEp6xadiPkhqV4M2uUhw13UvChO+QzauuLsGFAMP
-	JQDMuOCwPbRBU+rq4p6heUTTj3F3w3YMwe5SHI7kYPPBtwQionXK5wFQYW8TqFkIeVQ==
-X-Google-Smtp-Source: AGHT+IFR3qzaOnGO7yrX3uuFPVS/s11ir63odsICB5K60MZo855LaBFjjGXcwnxMQGBeb+hKpixCfQ==
-X-Received: by 2002:a17:903:32c8:b0:240:72d8:96fa with SMTP id d9443c01a7336-24602484973mr47892845ad.20.1755814184474;
-        Thu, 21 Aug 2025 15:09:44 -0700 (PDT)
-Received: from archlinux.lan ([2601:644:8200:acc7::1f6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2462e6ba0d8sm5939655ad.125.2025.08.21.15.09.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 15:09:44 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: dmaengine@vger.kernel.org
-Cc: Vinod Koul <vkoul@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] dmaengine: mv_xor: match alloc_wc and free_wc
-Date: Thu, 21 Aug 2025 15:09:42 -0700
-Message-ID: <20250821220942.10578-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755814391; c=relaxed/simple;
+	bh=OZVsV1pjh5cFcCuKO5I5KInQUt83XkwpyN8e5LAvhKs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=okzgF/g/0Nplf/BKBk01yJA6C5f+gl4dzaMh7RskUHkqClzOQnakwlqdbbCuqlub6rpmkDUfUBUmg4YFSm4nFR2tQVUuYQ7tw+OAGSuVmaWIZbcRmyVvHk39UDtjbb3zov6TJgD/3DNitJihOaDI4XXPDC4DvOUgxx1DNXH8Nj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=h8Pefxhw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA09C4CEEB;
+	Thu, 21 Aug 2025 22:13:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755814390;
+	bh=OZVsV1pjh5cFcCuKO5I5KInQUt83XkwpyN8e5LAvhKs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h8PefxhwzUDkEVO/G7Udqk5ywBFaWt9v80jL/AxtOQi2x3HrajmGLKlp/Jzy3IK33
+	 jRNdGw8nWXvygM/jJFn4eftYLX1BV7wHKc/GKOYZJypKp3M12AanRlfcEb8RG6EBDB
+	 3AU+Ot/yjoAk7wmY5xRhet+2x2RivUMY3LZGC/Qg=
+Date: Thu, 21 Aug 2025 15:13:08 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>, kernel@collabora.com,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Vlastimil
+ Babka <vbabka@suse.cz>, Albert Ou <aou@eecs.berkeley.edu>, Zi Yan
+ <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>, Suren Baghdasaryan
+ <surenb@google.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Baolin
+ Wang <baolin.wang@linux.alibaba.com>, Mike Rapoport <rppt@kernel.org>,
+ Peter Xu <peterx@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Ryan Roberts <ryan.roberts@arm.com>, Leon
+ Romanovsky <leon@kernel.org>, Shuah Khan <shuah@kernel.org>, Lorenzo
+ Stoakes <lorenzo.stoakes@oracle.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ Barry Song <baohua@kernel.org>, Dev Jain <dev.jain@arm.com>,
+ linux-kselftest@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
+ linux-mm@kvack.org, Nico Pache <npache@redhat.com>, John Hubbard
+ <jhubbard@nvidia.com>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v2 4/8] selftests/mm: Add -Wunused family of flags
+Message-Id: <20250821151308.915362b14e82f5626f659481@linux-foundation.org>
+In-Reply-To: <4abd97fe-412d-4e3e-9efc-cf3092d66e57@collabora.com>
+References: <20250731160132.1795351-1-usama.anjum@collabora.com>
+	<20250731160132.1795351-5-usama.anjum@collabora.com>
+	<57c816d6-a9ba-47c9-8f40-3978580b7f67@arm.com>
+	<8e9d7c59-46b4-4e1b-8a55-1898302f5080@collabora.com>
+	<88ea592c-c6ff-4a19-a366-eadeca66b039@arm.com>
+	<4abd97fe-412d-4e3e-9efc-cf3092d66e57@collabora.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-dma_alloc_wc is used but not dma_free_wc.
+On Thu, 21 Aug 2025 17:31:21 +0500 Muhammad Usama Anjum <usama.anjum@collabora.com> wrote:
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/dma/mv_xor.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > My
+> > feeling is that unused parameters are expected to be allowed in the
+> > kernel and it isn't helpful to go against that expectation in just a
+> > small subset of kselftests.
+> I thought kernel must be giving error for unused parameters as well (from
+> my memory). But just checked and it doesn't seem like it. I'm okay with
+> dropping -Wunused-parameters.
+> 
+> We need to drop patch 6/7 and in Patch 4 should have only:
+> 
+> -CFLAGS += -Wunused  -Wunused-parameter -Wunused-function -Wunused-label -Wunused-variable -Wunused-value
+> +CFLAGS += -Wunused
+> 
+> @Andrew, Should I resend the entire series or would you can make the change?
 
-diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
-index 18ddbff38abc..7ef1d2b20609 100644
---- a/drivers/dma/mv_xor.c
-+++ b/drivers/dma/mv_xor.c
-@@ -1013,7 +1013,7 @@ static int mv_xor_channel_remove(struct mv_xor_chan *mv_chan)
- 
- 	dma_async_device_unregister(&mv_chan->dmadev);
- 
--	dma_free_coherent(dev, MV_XOR_POOL_SIZE,
-+	dma_free_wc(dev, MV_XOR_POOL_SIZE,
- 			  mv_chan->dma_desc_pool_virt, mv_chan->dma_desc_pool);
- 	dma_unmap_single(dev, mv_chan->dummy_src_addr,
- 			 MV_XOR_MIN_BYTE_COUNT, DMA_FROM_DEVICE);
-@@ -1160,7 +1160,7 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
- 	return mv_chan;
- 
- err_free_dma:
--	dma_free_coherent(&pdev->dev, MV_XOR_POOL_SIZE,
-+	dma_free_wc(&pdev->dev, MV_XOR_POOL_SIZE,
- 			  mv_chan->dma_desc_pool_virt, mv_chan->dma_desc_pool);
- err_unmap_dst:
- 	dma_unmap_single(dma_dev->dev, mv_chan->dummy_dst_addr,
--- 
-2.50.1
-
+I think a new series would be clearer, please.  It's unclear (to me)
+whether Kevin's various comments have all been addressed.
 
