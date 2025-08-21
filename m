@@ -1,117 +1,188 @@
-Return-Path: <linux-kernel+bounces-778909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A082B2EC9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:06:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C5AB2EC9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79747BFEFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9615B17CE90
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F42255F2C;
-	Thu, 21 Aug 2025 04:06:08 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4433255F2C;
+	Thu, 21 Aug 2025 04:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f4TN4DpN"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6C822A4CC
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E54C1FBEA6
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755749168; cv=none; b=L6yN5e5Uzpj1rFKWuS885yQH4liOBTsJ5rNAPadllDDxNB9fLAhtSapOeaGi8/r6kGft8MI0PioUInbsOXtOIMIAHO3dCO6EcY33bJnW4tn/y8P1S8vjk8OeZ89Qdx2/nbrkrLMeKNkMVFXkxMv82WMyv5eWFITGDWA3iP52m2s=
+	t=1755749255; cv=none; b=VhJxJRL6yeIWlCobS5wu3BE9kqqYsez37YnkaGkG7wdYXl477WQ3B2jaAnyoLxDCER5DhJWg9TmnkpMHkRQrnNnVGH5D7FYUUaE60Q4RVg7xvK83//5kXUfNmWMGiOug65SedsdNnnCA1LX5OCm2hv03/jHBdYL/PEy6ZjX1SiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755749168; c=relaxed/simple;
-	bh=CzX3JaJ7NwONLAn2TTeNBMK6lIbHD9i+uC1AXEIdOFg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FGSTamnYDmDwqavcuv2SL0dx5Tn4pr7Jq8oroMKhZA0B5vB4Q2JxWE4ghtQsNQh82N0UbPcP7JX3ktfIpuPUvb9NcCkrfkv/8cVPBSuoD1Ra7Vm2u3idJytjjjfgEI/OVhjHpltvfN96mC/t3qykpGHtJvGi94vpuwwNFxK9DIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-88432e1d004so52792939f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:06:06 -0700 (PDT)
+	s=arc-20240116; t=1755749255; c=relaxed/simple;
+	bh=5oirP7WiNifHumklvNdf1HOpwUeGPcRbhlJLskwX9hc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ndBhjcV9YYPouyw/PuaaUTyHSRiw7vE9vSrxGApZUrp6Oppov+KFLfc5UGwHQySD8t9Z0i3oxH14kEgzEPkuQYukSaqHJjN1qZdffCzHWEJISQecdHmhacHZswSGiLX33FD6TTsizvbufQcQhkYTnikO67Gbjp5NK5ICGpjnt64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f4TN4DpN; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61a207a248cso7149a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 21:07:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755749252; x=1756354052; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D2zfCcSJOzjARkXqmrK2VbK9VW5RbRjtX977JzOFSGY=;
+        b=f4TN4DpNGOUC91OZ4sACkuUfzsOB7BCcfva7qX/8nCC7M1sTdmQPHiQDYT47nK4V1w
+         4FPmCvkdnuPZM+fVBCIN7atWpoGca6DBEI4qom+uvjjEOkRppLtg/AdebGa4Wr/B/C1U
+         3Wao/GaQlSi6m4d5cuKTGbz2Ck6+azpfjcilozM56ob+g76dTu385g4Zm0c6ELKGJ5uN
+         G4fpvLA7uQyk5YPGpGc8Qcj35ZHAY2gIBpgq9dIkA4ddic8M9lvw7bbt6NqMPfoMmYtm
+         RtSY/0+AH4MFtDtkZ3mL/xRfcoKEwuT6PjSl0AIns1FPhYpx3bls7mPBuAqHL2Wk5SMK
+         ZPAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755749165; x=1756353965;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rcPZ7h1w38XKs5IO8/ha7JNh4WrNn3KTQrDcAx81ZOg=;
-        b=TaFmX3pAGULcnobqYoSH1h3jpC6UDAQfw0uoxupg49muxN8DlrCzcQlUW02/pXBzC+
-         JnDkJGWVyjN//jQKlcE/UCSXA9ZBe+N11HNaBnrXjUEUvmyjtrO1/pqxMHJoZBn+7Gc3
-         Acaw+n47RC5W2VaGGRzTIGmFhy7CXub4wb1o0hBE/717Fc6tXt8E5FX6vWU1JnsGvg1y
-         ttz4yhA1rNZQwqELw9mk7k4s54Lr7ZrU2yKPocVeDWPLf66icEHbIpqU9kEI7/2u+oCa
-         ctYRpZeaOYmKu0GsEwfbiuL7hKuobitItxTtoGmDRI4geHcJNmlk27qZyuSOMstryJ5N
-         lnpg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2E7VSq/ULz06XarH0oaQ95Sqb70zvIN21ZLuprf2OVBgV2u1nwQV+juzEUNb8Lcw85bj26vnKEmS37aI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH7jAs1QYigiggEla5h8z98Yl1jL4io3iws8jW7KSlQzGAdb3u
-	Sixp+Aj4xH0dAvYQQw6rqHa/IQtZjx/yiNWh/iHZBsIx87aj0wBm2YH66pWBBSyfPwaOT1s0aPL
-	xySVK59jbMuI30TmHxhEjhcdKOhApsQuno6P2RfkRcFvmMmvDwyIkkOXqD/c=
-X-Google-Smtp-Source: AGHT+IGhvQdQ1rnNUg7em2QGQiFzvqEhT3LwDf6es0ungmVDt4/JphxGZD7eCFZIEomXzEnT23TdbSP+cmIP2cVrADIEKOeFTSIe
+        d=1e100.net; s=20230601; t=1755749252; x=1756354052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D2zfCcSJOzjARkXqmrK2VbK9VW5RbRjtX977JzOFSGY=;
+        b=K8TiExnb0QWl9wUTWhMdAT3TVO/X161rno1lmaxsQOMQtzjQ4EM0FJVXU9CdoBgCoO
+         KjplMT3l0QbVqaCcNv9ecrnJ80iORztuFxpJuZhs088CPFr9e7cf0PhCjhQo39ljpruj
+         fUEOFi7Vl3FxwDDIaT5NksLsSESq/72qNIU1NKOG8FeXLFYAoRA15wy9PR5Hle1YzDZh
+         NBxVaqCxfDxk5P5pqC865h1OuXMv/lWi+hByiWq1vdlqwaktJu7mCzqcg3frSLA6r7K+
+         D9ss2cKPC3I4WiA4NsLMt+H7k2HRuwwun2OIHMMAc69eiXl003TZlKgFaWEXqRU+gd68
+         dWMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVht7Cual8doj++3Djz0Gcm7ZMD8w7A19Jwh4ZnWm+T4UXsIV3OdZcMop6h408hCSvlgEvU47J7AftOGxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDXpFrYPPYcGdTQ2JWok2CLZRP3AlCphNzxJYf90ywucxBCuQ/
+	ZqiI0SMkNXwYdgTq+izsvKAtOy9wuPdNyxfBDqy4yQgU5a9S/ukd/4MWB6a7YxvsCfxlJqZ7rPv
+	esgKsDHkkIU5yDCSiUuC2gCsIbqKCmvf7lUoyV0SJ
+X-Gm-Gg: ASbGnctb0L+hACmH/+sOhwKvCPmXAEGXR2QAH9aWCKKgd25eZuiSplHbUUPKTX+IJKR
+	5p40LI+CVx1b/X1M9MuART1iVtR8/wYCabVxNa88KIxUrqrkOm7UTdHUYX1QA/gIgvK8qgphsTR
+	nzZ3LhU5kHV0+6/qntgrM1xa3ppW4w/pp7RGB7BLM4bhP7SscSE2ZO63n9yBC8EpPmfhJ/icooe
+	t9YxGQDL1ydSh1tFTAzrPE3oeGA7/QDfD2UjmuNLtw=
+X-Google-Smtp-Source: AGHT+IFrsPEyM2E5GeeRSvRDPHxWAC8MsuCNQnD2ZE2YVMx9fd6Zq4+VAYIDnVwZC2VKlhk7LZVLABzTWFCADUsy7rk=
+X-Received: by 2002:a50:d658:0:b0:61b:f987:42d9 with SMTP id
+ 4fb4d7f45d1cf-61bf98753a1mr20993a12.2.1755749251625; Wed, 20 Aug 2025
+ 21:07:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b49:b0:3e3:cc1b:2b5e with SMTP id
- e9e14a558f8ab-3e6d6acf0c9mr19983935ab.15.1755749165619; Wed, 20 Aug 2025
- 21:06:05 -0700 (PDT)
-Date: Wed, 20 Aug 2025 21:06:05 -0700
-In-Reply-To: <aKaW9bi5INq7OwGy@codewreck.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a69b2d.050a0220.3d78fd.0016.GAE@google.com>
-Subject: Re: [syzbot] [v9fs?] UBSAN: shift-out-of-bounds in v9fs_get_tree
-From: syzbot <syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
-	linux_oss@crudebyte.com, lucho@ionkov.net, sandeen@redhat.com, 
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+References: <20250813073955.1775315-1-maze@google.com> <6df59861-8334-49ac-8dca-2b0bac82f2d7@linux.dev>
+In-Reply-To: <6df59861-8334-49ac-8dca-2b0bac82f2d7@linux.dev>
+From: =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>
+Date: Wed, 20 Aug 2025 21:07:19 -0700
+X-Gm-Features: Ac12FXwOFUmHRzE1mYnem_hnpYjz3EZEML8HNI_-8PwFPwygE3VYTkye6feLPsg
+Message-ID: <CANP3RGek2nTodF_niyenmrLg2_g=BCPV6MQkwXT4SpZ6W8+9pg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] bpf: hashtab - allow BPF_MAP_LOOKUP{,_AND_DELETE}_BATCH
+ with NULL keys/values.
+To: Yonghong Song <yonghong.song@linux.dev>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Linux Network Development Mailing List <netdev@vger.kernel.org>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, BPF Mailing List <bpf@vger.kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Aug 18, 2025 at 1:58=E2=80=AFPM Yonghong Song <yonghong.song@linux.=
+dev> wrote:
+> On 8/13/25 12:39 AM, Maciej =C5=BBenczykowski wrote:
+> > BPF_MAP_LOOKUP_AND_DELETE_BATCH keys & values =3D=3D NULL
+> > seems like a nice way to simply quickly clear a map.
+>
+> This will change existing API as users will expect
+> some error (e.g., -EFAULT) return when keys or values is NULL.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-UBSAN: shift-out-of-bounds in v9fs_get_tree
+No reasonable user will call the current api with NULLs.
 
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/9p/vfs_super.c:57:22
-shift exponent 32 is too large for 32-bit type 'int'
-CPU: 1 UID: 0 PID: 6530 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
- __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
- v9fs_fill_super fs/9p/vfs_super.c:57 [inline]
- v9fs_get_tree+0x957/0xa90 fs/9p/vfs_super.c:125
- vfs_get_tree+0x92/0x2b0 fs/super.c:1752
- do_new_mount+0x2a2/0xa30 fs/namespace.c:3810
- do_mount fs/namespace.c:4138 [inline]
- __do_sys_mount fs/namespace.c:4349 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4326
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6fe798ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6fe87a7038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f6fe7bb5fa0 RCX: 00007f6fe798ebe9
-RDX: 00002000000000c0 RSI: 00002000000025c0 RDI: 0000000000000000
-RBP: 00007f6fe7a11e19 R08: 0000200000000280 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f6fe7bb6038 R14: 00007f6fe7bb5fa0 R15: 00007ffebc4cd908
- </TASK>
----[ end trace ]---
+This is a similar API change to adding a new system call
+(where previously it returned -ENOSYS) - which *is* also a UAPI
+change, but obviously allowed.
 
+Or adding support for a new address family / protocol (where
+previously it -EAFNOSUPPORT)
+Or adding support for a new flag (where previously it returned -EINVAL)
 
-Tested on:
+Consider why userspace would ever pass in NULL, two possibilities:
+(a) explicit NULL - you'd never do this since it would (till now)
+always -EFAULT,
+  so this would only possibly show up in a very thorough test suite
+(b) you're using dynamically allocated memory and it failed allocation.
+  that's already a program bug, you should catch that before you call bpf()=
+.
 
-commit:         5303936d Add linux-next specific files for 20250820
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=156cb3bc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2619a6495a03d773
-dashboard link: https://syzkaller.appspot.com/bug?extid=30c83da54e948f6e9436
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17fcd442580000
+> We have a 'flags' field in uapi header in
+>
+>          struct { /* struct used by BPF_MAP_*_BATCH commands */
+>                  __aligned_u64   in_batch;       /* start batch,
+>                                                   * NULL to start from be=
+ginning
+>                                                   */
+>                  __aligned_u64   out_batch;      /* output: next start ba=
+tch */
+>                  __aligned_u64   keys;
+>                  __aligned_u64   values;
+>                  __u32           count;          /* input/output:
+>                                                   * input: # of key/value
+>                                                   * elements
+>                                                   * output: # of filled e=
+lements
+>                                                   */
+>                  __u32           map_fd;
+>                  __u64           elem_flags;
+>                  __u64           flags;
+>          } batch;
+>
+> we can add a flag in 'flags' like BPF_F_CLEAR_MAP_IF_KV_NULL with a comme=
+nt
+> that if keys or values is NULL, the batched elements will be cleared.
 
+I just don't see what value this provides.
+
+> > BPF_MAP_LOOKUP keys/values =3D=3D NULL might be useful if we just want
+> > the values/keys and don't want to bother copying the keys/values...
+> >
+> > BPF_MAP_LOOKUP keys & values =3D=3D NULL might be useful to count
+> > the number of populated entries.
+>
+> bpf_map_lookup_elem() does not have flags field, so we probably should no=
+t
+> change existins semantics.
+
+This is unrelated to this patch, since this only touches 'batch' operation.
+(unless I'm missing something)
+
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Daniel Borkmann <daniel@iogearbox.net>
+> > Cc: Stanislav Fomichev <sdf@fomichev.me>
+> > Signed-off-by: Maciej =C5=BBenczykowski <maze@google.com>
+> > ---
+> >   kernel/bpf/hashtab.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+> > index 5001131598e5..8fbdd000d9e0 100644
+> > --- a/kernel/bpf/hashtab.c
+> > +++ b/kernel/bpf/hashtab.c
+> > @@ -1873,9 +1873,9 @@ __htab_map_lookup_and_delete_batch(struct bpf_map=
+ *map,
+> >
+> >       rcu_read_unlock();
+> >       bpf_enable_instrumentation();
+> > -     if (bucket_cnt && (copy_to_user(ukeys + total * key_size, keys,
+> > +     if (bucket_cnt && (ukeys && copy_to_user(ukeys + total * key_size=
+, keys,
+> >           key_size * bucket_cnt) ||
+> > -         copy_to_user(uvalues + total * value_size, values,
+> > +         uvalues && copy_to_user(uvalues + total * value_size, values,
+> >           value_size * bucket_cnt))) {
+> >               ret =3D -EFAULT;
+> >               goto after_loop;
 
