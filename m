@@ -1,103 +1,172 @@
-Return-Path: <linux-kernel+bounces-779421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1430B2F3D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:27:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A71B2F3F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26681CE01B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:27:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54BCA3B2AE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B0C2EF676;
-	Thu, 21 Aug 2025 09:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA862EE60E;
+	Thu, 21 Aug 2025 09:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S+um4o4l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yxqPURep";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7hNYeuAV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510311FF1B5;
-	Thu, 21 Aug 2025 09:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEC523AE93
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755768407; cv=none; b=dYC2PfwiijjiqWf/1Jiu/zZ3XEeJHX0mk3P959YE3q7ryuVuljL5+zfeGSZ1wL1/hjJWXBufU2f42ZRzcRm9FZXWqUSiNSOphnQQANYKrKJM8OI3dguN5V4rxBh5UelggX5m7YOIjaPZSjWtZlt6yG9glFG/S2eVn4MJ+50oPBw=
+	t=1755768512; cv=none; b=a0Fu1NbjkmmKU3zck9ENWP1/28SgOMI0VQNWKplVdyGcpgy0m/8xx7xeeG7pMY3xHFBJ9JPEwhWyMlCG50ImDAvSlbuEIoVKfKU4ZuWi/1tJC2c9Fy0Oza7JDnVthyNJe/hz9vkESxoeiICMrHgHrewjXKJHZQXLDb2wq2xhLh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755768407; c=relaxed/simple;
-	bh=PQOJTBPJoyQfCaJKlfGKvW3sZq/+GNu3eo+031+ohKc=;
+	s=arc-20240116; t=1755768512; c=relaxed/simple;
+	bh=FFkqcHyNLGVIkxTVqaglxLctBTrfvQNtONprm/7E0P8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQ15LqwXZh0R58IDqdXMFKG2UHPtXBnmz+uihDQ3mtRP6vLP2OWbRTi0JMWjar4PwFMNT2KO+heahwvYreHh4a6l1iiVwXfPDNFJGpCr9jb41MP8+tlcF1CdzG4Hqi6r5hgnhYxTFqbkqAc/mi1iYT3ZqSNym+WiQ0psRvfR6Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S+um4o4l; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755768405; x=1787304405;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PQOJTBPJoyQfCaJKlfGKvW3sZq/+GNu3eo+031+ohKc=;
-  b=S+um4o4l+ifUaAtICHGi/EZly4Skq1TChWSu4UD8v37N2Hr4shew7Bhr
-   yZxkfYzYYKrxvUFiZ3eALNvnN6ShBjPUM/uMMWvIBJzYVpcSboNA/+CMC
-   8GXeSi+R+7vCqNuSS+nnNV0LhWn9sA7FehSsepSlKH3TgNfvh9ciuGWVD
-   IZGYJUXwKCZlErIlu2Kf5hWktPr/vdUv62siWBDe13gHoQxeMGSVVUOxt
-   pZjrC8JxLkPiLTKcK/JniHhTtTCttmdrzSzNkTJsjoIJTQkThOJBDgvxh
-   roSECmsYWrRiQZAF94aBh6rfTryDhg6SlLVx7uGR9l9XYQNplzQH/F7Nn
-   g==;
-X-CSE-ConnectionGUID: TlNxYedkStKG3UNKPs2+3w==
-X-CSE-MsgGUID: WAyKBEByTBKpoZmakxuJKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="75636921"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="75636921"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 02:26:45 -0700
-X-CSE-ConnectionGUID: qD3OKUNpQ7+Uusx0LXqupA==
-X-CSE-MsgGUID: MjeHRN/DSyG0Of+9Wq0q4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="168274682"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 02:26:42 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1up1Z9-00000007BUH-2QpV;
-	Thu, 21 Aug 2025 12:26:39 +0300
-Date: Thu, 21 Aug 2025 12:26:39 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2] media: atomisp: use kmalloc_array() for array space
- allocation
-Message-ID: <aKbmTz3bd2dq_i3X@smile.fi.intel.com>
-References: <20250821081746.528018-1-rongqianfeng@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V8aCebID+gVEdG9wJ59EbWs69lChLCEWKeDnP/Rrys/Wxr/BEuS3U+vVWP+qP0+P8UC0psRoh2wW7VaXsZ+Lz8hzEmBP9p14T8ueY1/mlYjP+c5KGMpz+xaq1fnoyKkwrt/9YkKq0TGSo91rEAMMEkSg80V7SDwj83HLzv5XfSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yxqPURep; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7hNYeuAV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 21 Aug 2025 11:28:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755768509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wU/cBDBWbyglLLmEqf++i2P7dpq4BufgBTHjyWh9zuk=;
+	b=yxqPURepnPP223gj7lTjP9eoaP6pdN8AzglLTkAKdp1eq6SweHz6nJvQq/KRYhrOv3UCn7
+	d8VDoXcJwqb+PMLDRZiQQZzvduS/B+CVEwp8CFoEzvFbM421KDMXW4Kkz5zA621WwWQbSr
+	s0C+kY3w6Bh8d2sGSHs8Mi9wE6yxq0deRcG91H112TVggDwaJwDcjeMBpIGaAPpGFMPl8n
+	MksKTzq9klen/6L5fLfmB177UPRujALl6SuvHHqUnBQE3oNejqwYpZ+HuCmk7MTu0qsJr3
+	Ibmh8yInCfQvKjh/Q4f6MIAGs2qZxgntYixDJrMWSSCybggssmk6AcMLcGKbZA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755768509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wU/cBDBWbyglLLmEqf++i2P7dpq4BufgBTHjyWh9zuk=;
+	b=7hNYeuAVRFn8ZhQXdxfKBdOaIkt1v1c4H86UXNtQeR2HtENjXsf8CWdqz+uFw1N+pcsQbY
+	M0HFzu6sYArmquBA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] softirq: Provide a handshake for canceling tasklets via
+ polling on PREEMPT_RT
+Message-ID: <20250821092827.zcFpdnNy@linutronix.de>
+References: <20250812145359.QMcaYh9g@linutronix.de>
+ <aJuYStGVBjyfVmZM@slm.duckdns.org>
+ <20250813063311.33m0TDKl@linutronix.de>
+ <aJzT7rqwkRQrLGqo@slm.duckdns.org>
+ <20250818125242.vJ4wGk20@linutronix.de>
+ <aKNlshZmWsHVXBo0@slm.duckdns.org>
+ <20250819150105.DYeV89fa@linutronix.de>
+ <20250820103657.vDuDuLx6@linutronix.de>
+ <20250820105518.Yf36NzJd@linutronix.de>
+ <aKYltdkLBRZJF0Ok@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250821081746.528018-1-rongqianfeng@vivo.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aKYltdkLBRZJF0Ok@slm.duckdns.org>
 
-On Thu, Aug 21, 2025 at 04:17:42PM +0800, Qianfeng Rong wrote:
-> Replace kmalloc(count * sizeof(type)) with kmalloc_array() for safer memory
-> allocation and overflow prevention. Additionally, replace sizeof(type) with
-> sizeof(*ptr) to improve code robustness.
+On 2025-08-20 09:44:53 [-1000], Tejun Heo wrote:
+> Hello,
+Hi Tejun,
 
-LGTM, thanks.
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> On Wed, Aug 20, 2025 at 12:55:18PM +0200, Sebastian Andrzej Siewior wrote:
+> > On 2025-08-20 12:36:59 [+0200], To Tejun Heo wrote:
+> > > Subject: [PATCH] workqueue: Provide a handshake for canceling BH work=
+ers
+> > =E2=80=A6
+> > > This will flush all BH-work items assigned to that pool.
+> >=20
+> > We need to flush all items because the inserted wq_barrier is at the
+> > end of the queue. So if the cb_lock is dropped after
+> > worker->current_func(work) then we will live lock. Just tested, I
+> > somehow assumed it polls on worker.
+>=20
+> Is flushing all a problem tho?=20
 
--- 
-With Best Regards,
-Andy Shevchenko
+It is not wrong as in something will explode. The priority-inheritance
+boost is meant to give the lower priority task runtime in order to leave
+its critical section. So the task with the higher priority can continue
+to make progress instead of sitting around. Spinning while waiting for
+completion will not succeed.
+In this case "leaving the critical section" would mean complete the one
+work item. But instead we flush all of them. It is more of semantics in
+this case. That is why the looping-cancel in tasklet cancels just that
+one workitem.
 
+> I think the main focus is keeping the
+> semantics matching on RT, right?
 
+Yes, but having the semantics with busy waiting on a BH work is kind of
+the problem. And there is no need for it which makes it a bit difficult.
+The previous patch would match the !RT bits but we flush all work, have
+and the lock for no reason. That is why I don't like it. The majority of
+tasklet users don't need it. It is in my opinion bad semantics.
+
+But if you insist on it, the previous patch will make it work and has
+been tested. There is not much I can do.
+
+> ...
+> > -	if (from_cancel) {
+> > +	if (from_cancel && !IS_ENABLED(CONFIG_PREEMPT_RT)) {
+> >  		unsigned long data =3D *work_data_bits(work);
+> > =20
+> >  		if (!WARN_ON_ONCE(data & WORK_STRUCT_PWQ) &&
+> >  		    (data & WORK_OFFQ_BH)) {
+> > -			/*
+> > -			 * On RT, prevent a live lock when %current preempted
+> > -			 * soft interrupt processing or prevents ksoftirqd from
+> > -			 * running by keeping flipping BH. If the BH work item
+> > -			 * runs on a different CPU then this has no effect other
+> > -			 * than doing the BH disable/enable dance for nothing.
+> > -			 * This is copied from
+> > -			 * kernel/softirq.c::tasklet_unlock_spin_wait().
+> > -			 */
+> >  			while (!try_wait_for_completion(&barr.done)) {
+> > -				if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
+> > -					local_bh_disable();
+> > -					local_bh_enable();
+> > -				} else {
+> > -					cpu_relax();
+> > -				}
+> > +				cpu_relax();
+>=20
+> I'm most likely missing something about RT but wouldn't the above still l=
+ead
+> to deadlocks if the caller is non-hardirq but higher priority thread?
+
+Not sure what you refer to. Right now there is this lock in
+local_bh_disable() which forces PI.
+Removing the whole section for RT as in this snippet gets us to the
+wait_for_completion() below. It lets the task with higher priority
+schedule out allowing task with lower priority to run. Eventually the
+barrier item completes and with the wakeup the high priority task will
+continue.
+So the high-priority task will lose runtime (allowing task with lower
+priority to run). I don't think it will be a problem because it is
+mostly used in "quit" scenarios (not during normal workload) and matches
+tasklet_disable().
+
+> Thanks.
+
+Sebastian
 
