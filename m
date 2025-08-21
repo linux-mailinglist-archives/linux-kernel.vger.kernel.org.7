@@ -1,126 +1,238 @@
-Return-Path: <linux-kernel+bounces-780663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB57B307B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:02:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EFDB307C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 144D2B021CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:58:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A5C16068BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F39393DD3;
-	Thu, 21 Aug 2025 20:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC870393DF2;
+	Thu, 21 Aug 2025 20:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dvj99zj8"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hWEvV7MD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E739393DC3
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA13393DEB
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755809290; cv=none; b=X0TvZBhkj/Gk1/ZOPnCtiN19k6w/pnbT3E8vVyAXjs7Q2wz3rh8DPcWKEbSWzobHMMDxt+F/jzTWSdm92ag88ooEwv0Y/KXmgrLC5JfrqaZMG3RAsEcO23ULEbRl5bGkr6eaHRDfYviyXg5s4XY5GEeaWKenBJluBaZOs7cGRUk=
+	t=1755809359; cv=none; b=miPX9ApU2udQplr6yNP+dOJwswwoH5xtQvfzhRjsE0sujLS9953Tds/sMFdpJARfFxqJ/yUVb8iLMldBxg02ZeFGd1E78dkpMBIaQRnspPUY/QfK4+nraq5xDknshhCU7warmI3W3O3YvGDukWSQ7ZPnnet45bmGPiR6ztXV0Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755809290; c=relaxed/simple;
-	bh=u0qAFg0w6DmFqgeo+FGgznU5nyNw2qIKOCtpovYVDJs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nMNuaO/WDi35fafBNO/O87Ns/nHonkRQ6oGqqmR2RFpmeXvMhsO9SWJ5+jYY0hIu68coltD60qiIW0A2rof1vBMZVjhd5DfufFuPYfV9PXuwi/7j6jxnNRKlevKbZiaDj88OUE6/EiuM5Hev2nB7xlOgvZYXKiqVW2jCKT3PsuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dvj99zj8; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-323266a1e87so1420775a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:48:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755809288; x=1756414088; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ND27ByCi8FxwH4N1fs9wDJsbh1LvmHDFCkk7m0bPpgk=;
-        b=dvj99zj8vezlHLoH5NHuy2+9ETUxhDg32on5TGo70m8+ahudruXx9XoX/elTkgAdiX
-         Di0y7/fFrbwaywmsz5nsalM0a8OoPfUM4u8ESQgE14VYNafB75VhpERuaYahEFnNKMxF
-         nEuz5dN0IdK7Ds+b/WBmIb8vZMzSNa7hIDxwDr7P53duHPJ+fR3sRboCO9SP+JV8w4X+
-         N9ew99oXj4eKXIQz63WO+y0vlQRrDazyjUmLVEXUw3qzuHLI7lCrKnn++GnZZlLrLrS1
-         Hv65psQs8X+AecSCXRAblnAlW8Oxi4L8fVbLjKa01OhQqP6mAQwgCIPa24ak2qlaRqDq
-         zhSA==
+	s=arc-20240116; t=1755809359; c=relaxed/simple;
+	bh=ttpRgX2WRarIZ7BHjDHCFpaBA1Eb2Zd4JhuxGrxMq2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fQLZ/7BwrUADH56aIj61nWYTYkCIunwOUXV/YCDoGUzlHK3bDcri/KBpTEAE/EeCayLWCWJ+XgaKESxGpHih8jrBmkuliYxcEdi7jrxxTHACts5DE+GtNQSZxSvi6fRjNBXRaOJpiePfQ49XNTVJDee5AnGvGhiI0MOtML288dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hWEvV7MD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755809354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OQbfbvrWDouK+ZcKIphQE1nervr1PSIMFSTWfTxDfjA=;
+	b=hWEvV7MD47f0ckOqJ+Bg2hychSLIMcXncfFRqKpgBxhCmdhyNUzOUTh9uoqrjrivMpO+UV
+	R/ZSwbmY+iS4vfMmw6SFUxGsqNvY0JQJOppSXW4BpIQLdhz5Jp9sz+pZ6fCRx9eRfwN9y0
+	A8MUm5vNaNxszqhG4MlbOhJogCbEXzo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-562-afX4QMrwPpGZF7-Ymga5vw-1; Thu, 21 Aug 2025 16:49:12 -0400
+X-MC-Unique: afX4QMrwPpGZF7-Ymga5vw-1
+X-Mimecast-MFC-AGG-ID: afX4QMrwPpGZF7-Ymga5vw_1755809351
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b05d8d0so8973665e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:49:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755809288; x=1756414088;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ND27ByCi8FxwH4N1fs9wDJsbh1LvmHDFCkk7m0bPpgk=;
-        b=Nrih4COFFRz55/rFaCGM22e5+qj1mWI5wRYsadK0HiSlda1+40LRQuIegQ5Eyf0ACn
-         eHyrZKsiBv3X7OoE5t1CbOlN9f+SF0FsPNgCE1WNOxEThf4uMo57/4ijVm6ahoSrWXZn
-         /zF2k181z8Vu0XNQ162Y0FEH6YKSLJIGapWXcX+Mf+T665TY8X0fMUhwXoZ80M3ZOV/D
-         mVQXu8c+Hs8p3aZaS3/ovIJR5BX76sAyb3uX3FUjCN+fh+Spnr2zhfDYHHTkGprI695H
-         xQaSBJiBx6P3AROWFZ54k3f8hr40i0iU5eaziN/aptmEo/M18Molcfhzs78ux3slgiIB
-         2UsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV77rDAUUh+6oahPtF8hhLiTeZ2rDngSnWQsf9XgpxDq1b23N3yjbziO6r3npzNjs+EhgEU9bHQohAS9DA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzioMiSrnOXSdYf40Y7+Sa0rcdfQ50LLcTdOkumDoIC+JN7ItvV
-	sFd4ygq+tX+tiKhdvqG70MZV/lE7Imy9TkRXiKpuhJOKHSoavDT3BQS51ZS1zYoYKl1MgheCLXH
-	LDWLhOg==
-X-Google-Smtp-Source: AGHT+IGb8bllN3WweHljCycX2OTDOIuqByEGF5OmfEKIoI89t/XTtEhC0baTzcLsE02jx1iDQuQe88zLHuI=
-X-Received: from pjq16.prod.google.com ([2002:a17:90b:5610:b0:312:15b:e5d1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3952:b0:321:3715:993
- with SMTP id 98e67ed59e1d1-32515e48ec5mr1174634a91.14.1755809287794; Thu, 21
- Aug 2025 13:48:07 -0700 (PDT)
-Date: Thu, 21 Aug 2025 13:48:06 -0700
-In-Reply-To: <6783241f1bfadad8429f66c82a2f8810a74285a0.camel@infradead.org>
+        d=1e100.net; s=20230601; t=1755809351; x=1756414151;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OQbfbvrWDouK+ZcKIphQE1nervr1PSIMFSTWfTxDfjA=;
+        b=vd3hVIAG65/JuLQOYzQYP6YZcZmVdE4uT0nJ7Y37B0fEnxldzOwo/aIIB1bVOuWMVh
+         T43WUQ50yHgEOERwsYZ4DcdEKTOv+L94qYI+c/xExFIaZ2oel/WG4nlu/bVWqX3rubFW
+         TAeTSXp+PaMPy1RrVKG1zPczJVzezAqAOK7YaV+TWzElQAm/FuR6eIGHS86KkBESjsCh
+         KLTaL/uAlQf+3+HektP28hf1Ry72KtLF0KAsMP+tdAQ9eHFvBwSE5X6WOmTNFgteuXN3
+         WKNgcSne3p/5YwEkghDlUip2gvGQrcp7lslLpi33fhNNZXqqj6zcgaeBY7L9za59X0US
+         n9yQ==
+X-Gm-Message-State: AOJu0Yzu7HT8cXdN5V7Eo36vsRqehGV17I2tjPqxJS20+N9puoiKEMox
+	vSk2wPNtvXGRnvuHoMwhKCLsZ+zCZJxGfP4oUX7KR5rvbAzHe3ISjaEqH0NS5Yq99C2D1wzO2c4
+	cZIWEA41smuchR1wqSVCh3MsY5NEiBEV0gz/CW6m5nQavp+0yPW0DQa6Se5uocIl0Kg==
+X-Gm-Gg: ASbGncs/lHJBtlpsj//iSGf9gKmAI5gvjGGrMBFG4pRdDh6BYqWzAtcJaYjI08GFCUn
+	lV/P2CFtQurHGWs1/Qy/FA1pbZYfnXHCaWQnnqOQ48AWGVROfpXEMopPguIzfkJlHK3ZpGrjtvw
+	rBud8OYv/l75S3nnTG8hyCn6J83/mVuGHyhAgb/XDYLzf4ga+WwOXJvYEPJ6C6cZ48FmbPI02hm
+	2KxJNb6TOhCQ72WfrYY51jS4DzJ5VrWPRPhN9IQ82lgR3T95vvz/TqTxMQbveHVqia7jZkNOpI7
+	2axH3q9jF+IK0qYrHH2XirLUol9oC7nbA+PhL6JttDYQIz2XaDaDHZoIN7Yfsdm2pflh4Q1QdRF
+	+OG8UUlxNxc4hlgjgAFlnJDtqYj9vajggjPQnpxjBunToEhSq0SEzsSqx/WxE0g==
+X-Received: by 2002:a05:600c:3584:b0:459:a1c7:99ad with SMTP id 5b1f17b1804b1-45b517c5dc0mr2897855e9.22.1755809351414;
+        Thu, 21 Aug 2025 13:49:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQxIz6cJmjwdOB6bO2j0uv4baEhvDU693i3u6jJ5B08S4e/6/ILSJ1Cj5B/IwK2GJTi24SIA==
+X-Received: by 2002:a05:600c:3584:b0:459:a1c7:99ad with SMTP id 5b1f17b1804b1-45b517c5dc0mr2897695e9.22.1755809350879;
+        Thu, 21 Aug 2025 13:49:10 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f26:ba00:803:6ec5:9918:6fd? (p200300d82f26ba0008036ec5991806fd.dip0.t-ipconnect.de. [2003:d8:2f26:ba00:803:6ec5:9918:6fd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c4c218c599sm3550158f8f.67.2025.08.21.13.49.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 13:49:10 -0700 (PDT)
+Message-ID: <835b776a-4e15-4821-a601-1470807373a1@redhat.com>
+Date: Thu, 21 Aug 2025 22:49:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250816101308.2594298-1-dwmw2@infradead.org> <aKdIvHOKCQ14JlbM@google.com>
- <933dc95ead067cf1b362f7b8c3ce9a72e31658d2.camel@infradead.org>
- <aKdzH2b8ShTVeWhx@google.com> <6783241f1bfadad8429f66c82a2f8810a74285a0.camel@infradead.org>
-Message-ID: <aKeGBkv6ZjwM6V9T@google.com>
-Subject: Re: [PATCH v2 0/3] Support "generic" CPUID timing leaf as KVM guest
- and host
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, graf@amazon.de, 
-	Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov <alexey.makhalov@broadcom.com>, 
-	Colin Percival <cperciva@tarsnap.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 12/35] mm: limit folio/compound page sizes in
+ problematic kernel configs
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+ Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+ Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
+ Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org
+References: <20250821200701.1329277-1-david@redhat.com>
+ <20250821200701.1329277-13-david@redhat.com>
+ <FFF22E91-6CA5-4C8F-92DE-89C22DB3EAD7@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <FFF22E91-6CA5-4C8F-92DE-89C22DB3EAD7@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025, David Woodhouse wrote:
-> On Thu, 2025-08-21 at 12:27 -0700, Sean Christopherson wrote:
-> > =C2=A0
-> > > The problem with that is that it's been quite unreliable. The kernel
-> > > doesn't trust it even on chips as recent (hah) as Skylake. I'd be
-> > > happier to trust what the hypervisor explicitly gives us. But yes, it
-> > > should be *one* of the sources of information before we reverse-
-> > > calculate it from the pvclock.=20
-> >=20
-> > Sorry, by "the VMM use" I mean have the host, e.g. QEMU, explicitly def=
-ine TSC
-> > frequency in CPUID.0x15 and CPU frequency in CPUID.0x16.=C2=A0 And then=
- on the
-> > KVM-as-a-guest side of things, trust those leaves when they're availabl=
-e.
->=20
-> Those leaves are untrustworthy on hardware. Are you suggesting that the
-> kernel should trust them when it detects that it's running under KVM,
-> on the assumption that KVM will have corrected them? And that KVM will
-> be fabricating them even on CPU models which didn't naturally have
-> those leaves? And that in the presence of TSC scaling, those leaves
-> will show the right values for the guest even on hypervisors running
-> today?
->=20
-> I'll be surprised if that works out well.
->=20
-> I think I'm a lot happier with the explicit CPUID leaf exposed by the
-> hypervisor.
+On 21.08.25 22:46, Zi Yan wrote:
+> On 21 Aug 2025, at 16:06, David Hildenbrand wrote:
+> 
+>> Let's limit the maximum folio size in problematic kernel config where
+>> the memmap is allocated per memory section (SPARSEMEM without
+>> SPARSEMEM_VMEMMAP) to a single memory section.
+>>
+>> Currently, only a single architectures supports ARCH_HAS_GIGANTIC_PAGE
+>> but not SPARSEMEM_VMEMMAP: sh.
+>>
+>> Fortunately, the biggest hugetlb size sh supports is 64 MiB
+>> (HUGETLB_PAGE_SIZE_64MB) and the section size is at least 64 MiB
+>> (SECTION_SIZE_BITS == 26), so their use case is not degraded.
+>>
+>> As folios and memory sections are naturally aligned to their order-2 size
+>> in memory, consequently a single folio can no longer span multiple memory
+>> sections on these problematic kernel configs.
+>>
+>> nth_page() is no longer required when operating within a single compound
+>> page / folio.
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>   include/linux/mm.h | 22 ++++++++++++++++++----
+>>   1 file changed, 18 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index 77737cbf2216a..48a985e17ef4e 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -2053,11 +2053,25 @@ static inline long folio_nr_pages(const struct folio *folio)
+>>   	return folio_large_nr_pages(folio);
+>>   }
+>>
+>> -/* Only hugetlbfs can allocate folios larger than MAX_ORDER */
+>> -#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+>> -#define MAX_FOLIO_ORDER		PUD_ORDER
+>> -#else
+>> +#if !defined(CONFIG_ARCH_HAS_GIGANTIC_PAGE)
+>> +/*
+>> + * We don't expect any folios that exceed buddy sizes (and consequently
+>> + * memory sections).
+>> + */
+>>   #define MAX_FOLIO_ORDER		MAX_PAGE_ORDER
+>> +#elif defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
+>> +/*
+>> + * Only pages within a single memory section are guaranteed to be
+>> + * contiguous. By limiting folios to a single memory section, all folio
+>> + * pages are guaranteed to be contiguous.
+>> + */
+>> +#define MAX_FOLIO_ORDER		PFN_SECTION_SHIFT
+>> +#else
+>> +/*
+>> + * There is no real limit on the folio size. We limit them to the maximum we
+>> + * currently expect.
+> 
+> The comment about hugetlbfs is helpful here, since the other folios are still
+> limited by buddy allocator’s MAX_ORDER.
 
-Why?  If the hypervisor is ultimately the one defining the state, why does =
-it
-matter which CPUID leaf its in?
+Yeah, but the old comment was wrong (there is DAX).
+
+I can add here "currently expect (e.g., hugetlfs, dax)."
+
+-- 
+Cheers
+
+David / dhildenb
+
 
