@@ -1,162 +1,119 @@
-Return-Path: <linux-kernel+bounces-780468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4FFB3023A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:40:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC5EB302AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34DFFA21652
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:40:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C6E17F034
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E401E343D62;
-	Thu, 21 Aug 2025 18:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D66C3469EE;
+	Thu, 21 Aug 2025 19:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fYSycIEm"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="aFAOahdz"
+Received: from sonic311-21.consmr.mail.sg3.yahoo.com (sonic311-21.consmr.mail.sg3.yahoo.com [106.10.244.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8381E24677C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 18:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5A56BFCE
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 19:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755801622; cv=none; b=XxHm4GKN1gDOO+FPQUOZm8buAvaoqYs16/kn7SVUYZrgHA+WqaqG33rhOl3wDxfPrBXry0vif9exbTY8Geoa3KlSDOGwvVhxEmMw8UhiM7UIVfrtR8d//KL+pgR/Rad+rches2GTSJr27VrlyFcLzl7WPFTULn9fBc9u/ddopUA=
+	t=1755803490; cv=none; b=Zs7XK24GzZNrKoVFPPR6poi/7WmXY1E59EPxZpRYnQx0S3JNpftBTJfcGWqBuyKItocnOsMcm4+oLj7R9n6JBHuJXOlZNtMTCRbhMPG0cE4DKclIzQwJQfR2WpKDJ/Sjgovt1SXWczRb8BjAmcIWFi2LzjwqyP6pSX33D3QPNo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755801622; c=relaxed/simple;
-	bh=nDK0ZcWageZif12HNVptkW6uLrwCCYhU/Uqnb9pbUCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D9Hc2CwK623s/Qq1eaw+EpncTWKX1em7lCd8d3qUnTd++VHcE1im6fejP6pLZSYyMSyWY/+M7JrdYX/N3Xnaqr+YN+t6XC2UU2A+LYC8hiWb/qjLzG6c/RjyZLOxsVxFG6LPL/+p7pCwWj9vB0vB5OUUdVu7h63epmJfOMRh4mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fYSycIEm; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9a342e8ffso1022296f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755801619; x=1756406419; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9EJFUbAFx8jPWT2LuRuozcCZv7qHtbh5f6F6dR/mulk=;
-        b=fYSycIEmvoVJzFZ6Di9C7sstFcw6EmCMuwJZ+Y8KMBF1FRB8lbYUyuoMFqU+sBQaQr
-         qtJ4OFx6kvAuYCXttMF+LkvrTM7QqTkCDudEagbUaYsOT42o+d1xoRv2KNwH2YWbonDg
-         Xysg0nAJd0BR4aPu6vWb/NwdH03XfS9KmtXQWStbKHTGgFPJdSp9mSbK11pLm2E5kzV/
-         xwYNAMwbsX7AvX5xcqQPvTxC/X6DHBaj1R0w3C4xj1qyCb8KN3xktLMEjIg5vHgg2t0P
-         YjWlQBcjkbqHGc8RIUjdlek50wxstFMl+ZBcyL2+4I0onCyFANn/HJWq4c9FbNk665X5
-         SEFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755801619; x=1756406419;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9EJFUbAFx8jPWT2LuRuozcCZv7qHtbh5f6F6dR/mulk=;
-        b=RZ3qr1UDiR+AMIcfuDyk4JMlKLjtUF2UJcZtJpBMiVQrZicJQGLwjALAh3N+n+khQJ
-         T5q3szgtmv09yPZBNyRCbin7Vn7qbm64/m3YzvssPx6AsVGutJEidmWjW/TFU5PXCCZu
-         qADAPJvNc9H9Jte5j7y4ur6UQQocsa4c8gMAc3VyPe8vW3UMfdll0/Dye2f7svHRZlPN
-         grGPN+2kD1TC6RjviNda8/oInu9SPaxG40dli1bcsX96uQLuA+sn4BdQVayWVvvce6zU
-         jz+NX/6St7bEDl6utazn0AdDxSx1QsMrmEUKSJbneC0kDEEy5AUDpntUgF7Sd3iAD2GY
-         DIpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNZUd6/JRDBlobvyq23/Jma2Qd0LQDHjwypgAMSWkL8cbUGN6U2mFA1nsXTvWAPU2nmR2jISNC2eVNWKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5WxOd/NbRbOGFRFxUaPn985paRQz8RgU/ONMZzZ6nwjsYWM/P
-	DmiCHVq/UE2Py0MKsmOJfEb8enNgmGyzp9D1hbU9bKF56G/Qvg/pvbif
-X-Gm-Gg: ASbGncux9/c/C2x3N2jB3SKEvGC5LYCCULDojoSpXXkcoafb/hVfgZYUXkZnfkzU/HN
-	ddP/We0kta9rpVHpc678iSQ2rxI/4umxrgfK08fbHhvEK3uZWItAh4psT0k1YcnGW00pEUWgYzE
-	scLrxIyD1+Yy1AutbItnPdE4qrfg9hsCp/WP3QeJXcR39NE/RwROvSzmnSbrtPRbfM4MZ7PRVIE
-	xVMxiFP1zNg4n2IgOGFidbM10bFtdISxDYWThvAlMIOLP+sBMB7zbVmpMP+lA8YaSLPwEQTptVG
-	AAG29FPNwD1paFCrxJwkhpLhQU94lUHEIMX4r6g3tXTNWDUa2RNDp6/TxCRf+YLsmoz6G+1xYi8
-	0c3Y4jZ6oAnqTFyvLirjtiz+/4CFh5XZhL3Nwg289MMa3PpwBUqQPev4bVQe67GFKlupZCw6Uqn
-	8=
-X-Google-Smtp-Source: AGHT+IFqGj53ZdUXevzNpXmq8o1Hqpb6smTO0MmxfObPRFu1DLKDX0MJhD+ui5UdijfGjOnE2L5+Kg==
-X-Received: by 2002:a05:6000:40c8:b0:3b7:908e:e4ac with SMTP id ffacd0b85a97d-3c4ae74eafbmr3323294f8f.2.1755801618516;
-        Thu, 21 Aug 2025 11:40:18 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c52121313asm2306558f8f.57.2025.08.21.11.40.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 11:40:18 -0700 (PDT)
-Date: Thu, 21 Aug 2025 19:40:15 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Marcos Del Sol Vives <marcos@orca.pet>, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Brian Gerst
- <brgerst@gmail.com>, Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel
- <ardb@kernel.org>, David Kaplan <david.kaplan@amd.com>, "Ahmed S. Darwish"
- <darwi@linutronix.de>, Kees Cook <kees@kernel.org>, Andrew Cooper
- <andrew.cooper3@citrix.com>, Oleg Nesterov <oleg@redhat.com>, "Xin Li
- (Intel)" <xin@zytor.com>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-Message-ID: <20250821194015.3c56964c@pumpkin>
-In-Reply-To: <20250821124659.GO3289052@noisy.programming.kicks-ass.net>
-References: <20250820013452.495481-1-marcos@orca.pet>
-	<20250820090733.GJ3245006@noisy.programming.kicks-ass.net>
-	<20250821132807.0a898dfa@pumpkin>
-	<20250821124659.GO3289052@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1755803490; c=relaxed/simple;
+	bh=79qMtTR4pCr7m4hgzi1TMnj2YF1DzyvB2hWRPAcN4nQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PJ8xOnAWCi/Idv0KxYr3Ef72WaF+0RR6PWGdPmhKwWKbb9CHjSm4Y8EXE02IafutHlBnBwMdgU3GaLH2s3iwRH+o2HjQ8CgDCtgr9m+631gucJySzRZaoqXmIMl3mkolK+MrmFV1IGik0JofsVU8cEA9i9D99pjzZBbnjfAj9oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=aFAOahdz; arc=none smtp.client-ip=106.10.244.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755803486; bh=79qMtTR4pCr7m4hgzi1TMnj2YF1DzyvB2hWRPAcN4nQ=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=aFAOahdz9+ZrXwLvq4YssNBcD66BBzL0GSUmR16FROpllHSArHmIRRqdpa1ZhYj4Jn8/6P46q7nOGdy8dKmUy6IPMckW8RB6VihJdBXcKZ93uMNPKpIYxCFS6qtH+dY9qUSxtdD4mwQoeoXdou0dbZekPoq1B9kqcy0ylC8QuhKt3H+jMpwCqwqVXIeaTTVUGX2TR7BnnomoyzOkMgk73rcwcCwB3+PlOkSX9lGur5izSTbNJNsGrzwAIlnXdMZsBktu3+hRdVLBmTG7r1lTXtQf6KNgIZ8yqzNrnaUC6hSIFJXnCzSN2YV2LzJhuy3YMRoqiogINgipQzArAi+O9Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755803486; bh=iKVvppsSsgI9xWSFQ3ND8FR8LOYm8rJg6QVehQmI7hE=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=SrQrh8JOPTfc/Wg2WAVc8wCprZh/exIj+LdGIWzGMkKgmNui8M7eOqcKpSLDMNzD1dg/ent6TtLNQEPUDtJMO7CyxHICh3ZWa2J01nN2K+aHCwec/typrRYCkwcYJwBmsuHtVTlqHDLYNDPJ96WvoUV4l/QaI4KC53jYisfiFma921o6Cswe5RPyyCSyr74sHYRdRy6nd6z6OLsEc9mjmGozwO+lRmlPSULKQmgUuKT0v19nWo3U1xTVz3RETUpvP7+DlwAeOWdrKOfopzPl6xXCY1x3GMKwhL6gsOFD3LVQ1ED4hvuvgyhVcS26Bu4HOkBf9X2Vj4w7Q2j/V/KP7w==
+X-YMail-OSG: TGkLaP4VM1nLSGOtAxOAS8DHyIaqeUWcqNZOPGYGG0qgGc88Piy6.qOfB8krpn4
+ 90cTgZMSR4yOSsmNxBT.HafiRoj8pv38t.FJMAnNGxlaYJQjsiQgOdPFJo.jucGY95rwD4meJyW_
+ _ICSRtIiwstQHuUft5rhAOkzLQMk3p2C4bRxHk2GXQktP5s_eYkuFEgToAGnPmFM4QYzzfjpPwbL
+ LKqACYkAQWTHaH86ooHOoa7ewdi_B4JvOBmxlAx7No5ZrbrqP2YegiS39Zxx67zFiJnbvxZpsCRh
+ Ka0xxrjZQGfA1sHpz2q70VKMpCZJHuVkk6_LI48NU9zXH_.mOA8AdzxohkfssObl.4mG5q7fsorX
+ dY4pl8U5wWt8Ak81icHDxClNLnw9lMBFd_PL6j8Ii0AcJxN5woq.WxNSjzcgY5EM6qSiFQer32T2
+ BU_TDi6v5xhsSMbyroX8CqZqHO5mnLB20rS2YTs2C0eoAK.XCX8p8Oyhz4z7crXmmEXb.1EckWA_
+ RZ97d0l_0ylunFvLADeua.m5jmI2agmyIWV6BVpvdZ99i8daqStJWrIdDlZjgmC16VUMEEAE4Q2S
+ SaLa_aIIy7eLlqHuWRn5yhWitVtfYRN94gCAYVyRBAyeJIneuCFsRXTDx21O_bcBi4kYbgWYQzv.
+ P5ASZewYO6S.cmTHczJMz.T77PBxGi6DkTie5TydnbncrIjSO72AwgzHtdYyNhr7I5ObAaaO5ts4
+ UJBCShAQnm6vg3PcpWV5TbiGlTBrV.RMLIgy87Ew3v_oe4rbSh1lnF4y3udBIsYjXjtVhizSdFDK
+ tsRs4tOHcOUnuCOiU1sjBmix37lcrTCTFnaZbbtsKjj7HBovxc9AivUPC.wdTTp5RvExZJWR85q.
+ PF1cAFesb9oBSco.BO6_CZcDNIwvyXPve1EPRokx9ONUitNyoDiZ9Z7yU4C38zmjXaJLvcE48AJF
+ S7LEyTtfZ9u6O4Ck_MBcY0H0yLKt2VPceQ_Z4k59HNbGkTWFEGcdvnbET3TjCGhEeKLQVH3U6hsa
+ v.GC94Xt3nbKnIYbY17eoPgMTqMTP1BmPX78g1otx2_SGi.atWRjOsiX6U4jOlDkya5e5GbMRJr8
+ ouXiFrT4SYP76iPwAdagYQDpAs._Gjw450rsJFOkff_gQalXDQTA35gBc6tbbDFrTL_jhc5qwKAx
+ 28EjdroxkhlasGuc3dBZ5fN48UPBCt4lHTj5hfGfwTfL8QzjQemkyOLps1XRTGWROmuoRrM32TA7
+ ND5o2z647VXd0v6A61k4G6j38pn0oQInKKbRzzxHMg.rK2nPyfb2cOo71V6ZCw5IOMmWeezaSoAQ
+ qkCqjW7XKdp9h_eYUF56Qo41wikuKywBrd96WSjOC6K.4xvL69Sim8FU9B_kfrvWDAwG7HSStiEI
+ IwfMqVQomTM.T6r6eslCdSkysJwmQdvc4y7HBUI2syg1_86iavOM1b0YSMWyoz9y89gVf6k8C0It
+ eEZAWaVnO8GIStST1AyR2GrQdg66L.FJxxPI_FK8g1sTMdj3oDACjKJhqBxF_aANlhV54yRmSZ89
+ mDNAtfsv2Mgxl9OBFjE7nU1jTXogGD8ZtUU.ECQR.r7L1lipScsUpl0ruQ_qAcgGlJK6EFW_wmBc
+ _mEEaYjA_6zbwp1ZB4o5cMHatO9FKpKYoF8KL4ggG_JbNsp4j_Mu_dtJ1cwuV1gijA1NKNbrqE3q
+ KGdWcOm6ABXRKyW3v0nNta_fspuOdraxvb.FnofKYMtJvCIC3Q6cUuRlrRZXh7iHkYyJEh3ZIPnt
+ vKnob3ixMwGHJbjt_t37mqmU9uHoxC.rVcXvAKnddyO2VQPd2FllepKL5REbkcJO_cr8zZiTGGMR
+ YHaJf_M9tj5jQ4JePF5DDojWWKmcnn0Dd.1Y87L6sqJba9BpNwFl6649i_iLbCbA1G8IdT5c0hrp
+ FzphVREkqdLWHDJM9GzV77eEVovGPUHqNovpDEwjGNuvuKeuKSTkSoPIBI9x6dDf5Ub9zSvUEitI
+ .3IzsmzCEoM.UpzTRIfHffnWDRxHy.6V4Bb6NSbaRcyLsFQZd0fWe.ayWaxvAcW_oUF68EjMVGnm
+ 58Sq0a5iBZD.S1YYYo1AuEYp4G9JIG.Dqhccs8njbCiK.DiPR43APsPHxrE_8vEndyNK5hxKBs3k
+ 59h1ujBOoZwhIgILrHa_GkbfviOod.z_hOtj1fyK4fHq85Z5KU30enyehPtZq4bhn_EbaIxdWN45
+ dE1IskItp9eUX5_g.qI_qLRDsVWcmbdtOG_hLhyY1iyrpeN7sPH0JqpC1mu.H9Ih1tjuRdWHwPdi
+ MA6htqxlmboKpzVMKkA--
+X-Sonic-MF: <sumanth.gavini@yahoo.com>
+X-Sonic-ID: 5ed3eba4-7b80-485b-9dff-9c2729790cd5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.sg3.yahoo.com with HTTP; Thu, 21 Aug 2025 19:11:26 +0000
+Received: by hermes--production-ne1-9495dc4d7-dbtfw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d67fb2e8a117233158f28e86817b6c53;
+          Thu, 21 Aug 2025 18:40:59 +0000 (UTC)
+From: Sumanth Gavini <sumanth.gavini@yahoo.com>
+To: sumanth.gavini@yahoo.com
+Cc: boqun.feng@gmail.com,
+	clingutla@codeaurora.org,
+	elavila@google.com,
+	gregkh@linuxfoundation.org,
+	jstultz@google.com,
+	kprateek.nayak@amd.com,
+	linux-kernel@vger.kernel.org,
+	mhiramat@kernel.org,
+	mingo@kernel.org,
+	rostedt@goodmis.org,
+	ryotkkr98@gmail.com,
+	sashal@kernel.org,
+	stable@vger.kernel.org,
+	tglx@linutronix.de
+Subject: [PATCH 6.1] softirq: Add trace points for tasklet entry/exit
+Date: Thu, 21 Aug 2025 13:40:54 -0500
+Message-ID: <20250821184055.1710759-1-sumanth.gavini@yahoo.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250812161755.609600-1-sumanth.gavini@yahoo.com>
+References: <20250812161755.609600-1-sumanth.gavini@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Aug 2025 14:46:59 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+Hi All,
 
-> On Thu, Aug 21, 2025 at 01:28:07PM +0100, David Laight wrote:
-> > On Wed, 20 Aug 2025 11:07:33 +0200
-> > Peter Zijlstra <peterz@infradead.org> wrote:
-> >   
-> > > On Wed, Aug 20, 2025 at 03:34:46AM +0200, Marcos Del Sol Vives wrote:  
-> > > > Hintable NOPs are a series of instructions introduced by Intel with the
-> > > > Pentium Pro (i686), and described in US patent US5701442A.
-> > > > 
-> > > > These instructions were reserved to allow backwards-compatible changes
-> > > > in the instruction set possible, by having old processors treat them as
-> > > > variable-length NOPs, while having other semantics in modern processors.
-> > > > 
-> > > > Some modern uses are:
-> > > >  - Multi-byte/long NOPs
-> > > >  - Indirect Branch Tracking (ENDBR32)
-> > > >  - Shadow Stack (part of CET)
-> > > > 
-> > > > Some processors advertising i686 compatibility lack full support for
-> > > > them, which may cause #UD to be incorrectly triggered, crashing software
-> > > > that uses then with an unexpected SIGILL.
-> > > > 
-> > > > One such software is sudo in Debian bookworm, which is compiled with
-> > > > GCC -fcf-protection=branch and contains ENDBR32 instructions. It crashes
-> > > > on my Vortex86DX3 processor and VIA C3 Nehalem processors [1].
-> > > > 
-> > > > This patch is a much simplified version of my previous patch for x86
-> > > > instruction emulation [2], that only emulates hintable NOPs.
-> > > > 
-> > > > When #UD is raised, it checks if the opcode corresponds to a hintable NOP
-> > > > in user space. If true, it warns the user via the dmesg and advances the
-> > > > instruction pointer, thus emulating its expected NOP behaviour.
-> > > > 
-> > > > [1]: https://lists.debian.org/debian-devel/2023/10/msg00118.html
-> > > > [2]: https://lore.kernel.org/all/20210626130313.1283485-1-marcos@orca.pet/
-> > > > 
-> > > > Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>    
-> > > 
-> > > This is going to be terribly slow if there's a significant number of
-> > > traps (like with endbr32), but yeah, this ought to work.  
-> > 
-> > Could you patch the memory resident page to contain a supported nop?
-> > (without marking it 'dirty')
-> > Then the same function wouldn't trap until the code page was reloaded
-> > from the source file.  
-> 
-> It would mean cloning the page as private. Yes you can do it, uprobes
-> has all the code for this. But it has non-trivial memory overhead.
+Just following up on my patch submitted with subject "Subject: [PATCH 6.1] softirq: Add trace points for tasklet entry/exit".
 
-I was thinking it would be safe to do this change without cloning the page.
-After all the change is needed for all processes executing the code.
-That might only be easy on UP systems - but I doubt the affected CPU are SMP.
+Original message: https://lore.kernel.org/all/20250812161755.609600-1-sumanth.gavini@yahoo.com/
 
-	David
+Would you have any feedback on this change? I'd be happy to address any comments or concerns.
 
+This patch fixes this three bugs
+1. https://syzkaller.appspot.com/bug?extid=5284a86a0b0a31ab266a
+2. https://syzkaller.appspot.com/bug?extid=296695c8ae3c7da3d511
+3. https://syzkaller.appspot.com/bug?extid=97f2ac670e5e7a3b48e4
+
+Thank you for your time and consideration.
+
+Regards,
+Sumanth Gavini
 
