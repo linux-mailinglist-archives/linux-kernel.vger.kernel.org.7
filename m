@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-779457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB09B2F455
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBEFB2F45A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19FD5603388
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60AE36037D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DF72EAD01;
-	Thu, 21 Aug 2025 09:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3892E62A7;
+	Thu, 21 Aug 2025 09:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="dJWh1pCD"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cAk05YtB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33AE2E7F36;
-	Thu, 21 Aug 2025 09:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769390; cv=pass; b=XkkZcctBfehMZRtpgJuvM051zL1MVHEWeaWOR1YJQhU8P4mlu2q92qyqhU8WTTAMzCNQURouLAFUqSDwLl6n0UoocHBg+jvlcNsM+EBC9PvLtPryVPCoA/BHKsTBvLeCKaTpO6mGVGOXlOegPNjvdaXEyPE+2lKk8BgCrFq8/QU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769390; c=relaxed/simple;
-	bh=00IT2GFNBj2sojSpzKRrz+QslCt09lqE4RCqCNWAukE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=To1CJrqezodL+yAjUo4sZoOMGKhP3q4Q08y4EA6XLE5w9nhZad+2tLe1jiDR4uRFuOjlLmQ1Y+JCEXPyQ6FynxSbFbNutxsBI6IoLq+tHAZOtywSbIWv2D2UQVLRGsoJn7TZsIIatDmlnXx77L81Whrl3y8CbL+9+zGwM456to4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=dJWh1pCD; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755769364; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=l79hCeiMG1l+JPmpZCe8qHRC4Hw9jk65n7+Tuc+HGAhrvKMTkrr/zF+7cSSEvNIFEWIDaBdSevBTy4G/U8UB50pxabkBIko7WpiTllcg3eUpCaTprjBSYNUSVrg0J8mxJN8agXQyTvpW9640Oov6MVlET3iplytezyohkuu3rW8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755769364; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=CLyI4kDf1dViZxhG8N82OEUcewRrHXnbAp3Ib/mYQAc=; 
-	b=iMusWNu/SUzGw0qp5Puhy3vtsa7pq7OcwshQJQcyV7Sb78De6ED6zuKnc33cufbjpNnsCWWBvv0O7AMCSxzfOjpdj7tzcep0OH1YnkifBTs0qBBtzlMFpOoqy7Qxw487bxbq/RFED0+htEQovHN+ppVRSqu7MF1In3ahYOJEtUY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755769364;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=CLyI4kDf1dViZxhG8N82OEUcewRrHXnbAp3Ib/mYQAc=;
-	b=dJWh1pCDaI/Hgfi3czd40BPYxe8FijbYwjSagzIu3yA54qwK1FudyMjdqbVxavMQ
-	vEtp4mLEsBJrXIdUzQ2mff6km61VevEJarHx9s2SR33/pGr7L4nlvlPieD59aEYqvuV
-	iJX88puT/SItBSlof6u3pg0cB30KDl8pabo07EP4=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 175576936248297.23526332386348; Thu, 21 Aug 2025 02:42:42 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Thu, 21 Aug 2025 02:42:42 -0700 (PDT)
-Date: Thu, 21 Aug 2025 13:42:42 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198cc025823.ea44e3f585444.6907980660506284461@zohomail.com>
-In-Reply-To: <2025-08-12.1755022847-yummy-native-bandage-dorm-8U46ME@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <20250809-new-mount-api-v3-6-f61405c80f34@cyphar.com> <2025-08-12.1755022847-yummy-native-bandage-dorm-8U46ME@cyphar.com>
-Subject: Re: [PATCH v3 06/12] man/man2/fsconfig.2: document "new" mount API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82051DF74F;
+	Thu, 21 Aug 2025 09:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755769400; cv=none; b=uFKtxQy7/JQIG1n3Fyr4sQL0RkRImk9fYCZT+w40Ud/dQP2OMtYLfB1p09WOhZoA7srPdi81O5g5rpBzNx/3z2o2VeJLzlSAAD7+MgMJTkDtIVUUwZNr8wJRGILBIXN6JbHpPAvBJdATjitDBLPPiCUAsDp4gJ7yN63FsAbuc+A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755769400; c=relaxed/simple;
+	bh=IzAeBKvBI5xikFKRMfx1rMJjSZ8IRUExIksmFutkdG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjVaUjUr4Ak26IfXFmnzIcLgsdTmGStRKIb9QjYeLFsm0eaL3KdtBU17cgO5ikLnK5c0m6JyMgbRfZyrYp+yYYbJBj5KO3pZPxB9amUHyjxUmEjd6zFYD5D0Awn9DnRc3Iu3JWPJHKyNl7UsS+k7QVZ4v+DooOaIairyDHubOm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cAk05YtB; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755769399; x=1787305399;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IzAeBKvBI5xikFKRMfx1rMJjSZ8IRUExIksmFutkdG4=;
+  b=cAk05YtBRXdjZI/YleNWF3IUjSh9oU4ffFOAs3BR4qlcqBV7AOpoofRr
+   EEcmnrOJ1akFMq9Nu+jIQPV+G+Lf/qwKlLv8loHhb6qywPlk5jCNgg+Xc
+   r2BLrUMm28vIRK0pYfneot34jXEUE3KT0WMtjEpC2RHDdt0jU1TOvAYdh
+   FFJHAL+QG5mtN25JS+Jo6lGtUtUvyDbJvrlkCElPtEFT+4zkjjUdbg1yy
+   6S8iIaF6MisazghJEDMzh1lihXPV+so8IBoNGTawXEekVE4XcOUnzTAxD
+   0S+yl+Wemzfr2hwkBM7liFSdDJjnPlmWHbjtMsoG2qLPkYnsiqEgKflfE
+   g==;
+X-CSE-ConnectionGUID: YMMYxu17Qs++154AsKnTYg==
+X-CSE-MsgGUID: jItEiEL0RGW7Q8CkvN5cAA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="75502530"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="75502530"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 02:43:18 -0700
+X-CSE-ConnectionGUID: zko0mtC0T9OplGy9wW7qmw==
+X-CSE-MsgGUID: 27nKqLPuS5OpcVtm0xa9Eg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="199245987"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 02:43:14 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1up1p9-00000007Bk4-08MG;
+	Thu, 21 Aug 2025 12:43:11 +0300
+Date: Thu, 21 Aug 2025 12:43:10 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andreas Klinger <ak@it-klinger.de>
+Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, lars@metafoo.de,
+	javier.carrasco.cruz@gmail.com, mazziesaccount@gmail.com,
+	arthur.becker@sentec.com, perdaniel.olsson@axis.com,
+	mgonellabolduc@dimonoff.com, muditsharma.info@gmail.com,
+	clamor95@gmail.com, emil.gedenryd@axis.com,
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/3] iio: light: add support for veml6046x00 RGBIR
+ color sensor
+Message-ID: <aKbqLpJMCxJd3QXW@smile.fi.intel.com>
+References: <20250715085810.7679-1-ak@it-klinger.de>
+ <20250715085810.7679-3-ak@it-klinger.de>
+ <aHdWAUMMH43tIqV4@smile.fi.intel.com>
+ <aIMy_BHJYNA20k-x@mail.your-server.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227dee011c4ba359fc500e9059100007db79ba7484654c5a5653498434b216f50461561059d32dbf7:zu08011227a5cb7776ba5e89f37adeb9890000f68e1e3f1def807e9a70a6be15172071ba36f84ae63e892f2f:rf0801122cb48f3615ec900817651bd8180000abdc6db1be998902154ea5eec4aa5d2718197cb8c3f3aba5b4253436ffea:ZohoMail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIMy_BHJYNA20k-x@mail.your-server.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
- ---- On Tue, 12 Aug 2025 22:25:40 +0400  Aleksa Sarai <cyphar@cyphar.com> wrote --- 
- > On 2025-08-09, Aleksa Sarai <cyphar@cyphar.com> wrote:
- > > +Note that the Linux kernel reuses filesystem instances
- > > +for many filesystems,
- > > +so (depending on the filesystem being configured and parameters used)
- > > +it is possible for the filesystem instance "created" by
- > > +.B \%FSCONFIG_CMD_CREATE
- > > +to, in fact, be a reference
- > > +to an existing filesystem instance in the kernel.
- > > +The kernel will attempt to merge the specified parameters
- > > +of this filesystem configuration context
- > > +with those of the filesystem instance being reused,
- > > +but some parameters may be
- > > +.IR "silently ignored" .
- > 
- > While looking at this again, I realised this explanation is almost
- > certainly incorrect in a few places (and was based on a misunderstanding
- > of how sget_fc() works and how it interacts with vfs_get_tree()).
- > 
- > I'll rewrite this in the next version.
+On Fri, Jul 25, 2025 at 09:32:12AM +0200, Andreas Klinger wrote:
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> schrieb am Mi, 16. Jul 10:34:
 
-This recent patch seems to be relevant:
-https://lore.kernel.org/all/20250816-debugfs-mount-opts-v3-1-d271dad57b5b@posteo.net/
+...
 
---
-Askar Safin
-https://types.pl/@safinaskar
+> > > +#define	VEML6046X00_GAIN_1          0x0
+> > > +#define	VEML6046X00_GAIN_2          0x1
+> > > +#define	VEML6046X00_GAIN_0_66       0x2
+> > > +#define	VEML6046X00_GAIN_0_5        0x3
+> > 
+> > Is it defined as hexadecimal in the datasheet? Otherwise use plain decimal
+> > numbers.
+> 
+> It's in the datasheet defined exactly the way i did.
+
+OK!
+
+...
+
+> > > +	part_id = le16_to_cpu(reg);
+> > > +	if (part_id != 0x0001)
+> > > +		dev_info(dev, "Unknown ID %#04x\n", part_id);
+> > 
+> > For 0 it will print 0 and not 0x0000. Is it okay?
+> 
+> I just tried and it prints 0x00 if the part_id is 0.
+
+This is interesting... So it's not 0, nor 0x0000?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
