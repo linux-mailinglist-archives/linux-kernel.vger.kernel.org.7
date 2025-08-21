@@ -1,97 +1,142 @@
-Return-Path: <linux-kernel+bounces-779533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3FABB2F54A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:28:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6341B2F54B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBDB1631E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E101889111
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9232F83B5;
-	Thu, 21 Aug 2025 10:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7908D2FB97B;
+	Thu, 21 Aug 2025 10:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Y5gMUZce"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWNDQnhX"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0119B1FE47B;
-	Thu, 21 Aug 2025 10:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755771967; cv=pass; b=r6a5xxU5mYoV2xuJ7UOyRSgZW8jzcW17XNpqZ2MNBYhRhVWDR6CtzolYcEqVPCfVLUMgul4SeAM60AJVquNLr8OgUlZjSIOrc893c6cEUvIrw6m5Tao3ccgt00ikK9Zwshjvn3HYzbqX4+4av0XqkI1CPGip2Z0/HYiQqQZtQyM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755771967; c=relaxed/simple;
-	bh=W7nRQTwlK5iFYOf7ruzsnyR1XO+giS3VVJzYJMKaeE4=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=SMfPTp6J7eb2imj5dIcvaVhwSl9MKhiFgez7MLi82AJ50HWKkn1yMxK76c8GF+nMO8sChT5qyrPWncF5j9DTYLLVNOUue4R1MxDdMVL+oGL+MGcrX4fks4vh6eIbu6p/NiyZqBTiKISgRpEQcAX1YsPR+POa8RzG4RXjy9x7264=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Y5gMUZce; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755771938; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FtyanEjCEVdCOJwYmzkCu3s2ClkEg6HUspuwVV/fL5juf6VbS1J6iwOP5IhAyyPpimbx/Qji2tUgd4PpIZtI8UotveXUDvfj8UVMrYd84bYxW1LNui7Z2s26WVwUniFek2bLCCaBmZXViY+whSnd5PyVkEnmE3dAPGK5I9gRCzQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755771938; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=W7nRQTwlK5iFYOf7ruzsnyR1XO+giS3VVJzYJMKaeE4=; 
-	b=bR1fncYLM/M3PjdS+BS3tCdBw3P17myuxC/zApkykw912yRJQXbv/lIFPXA/J5SoGrh9/9DbAk+XHy7Kncjgx00kRC3EBdQX+m5y67LgLxKKU3ko+H5a8leK4xB6Tcq7tYyX1PJDKII0v9XA741XFharE3xP8x3J3AG8fGb8qjc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755771938;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=W7nRQTwlK5iFYOf7ruzsnyR1XO+giS3VVJzYJMKaeE4=;
-	b=Y5gMUZceqTVcB/+feY2KjY41TIzXK6VkQCtx6t9jBC8mVL8C+lMDoprv5OCIpEGt
-	rnInLUCHZ7bTwvWl1XJvPClQpInixXqMuUxQ61BinyJC0io7dXCPufzfz7rFzrZ93zB
-	QE3Dnaubdh2viys9U4iILo+cbXp4FPTzLKhpK/U0=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1755771935979736.7022252257623; Thu, 21 Aug 2025 03:25:35 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Thu, 21 Aug 2025 03:25:35 -0700 (PDT)
-Date: Thu, 21 Aug 2025 14:25:35 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198cc299cd9.eec1817f85794.4679093070969175955@zohomail.com>
-In-Reply-To: <20250809-new-mount-api-v3-6-f61405c80f34@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com> <20250809-new-mount-api-v3-6-f61405c80f34@cyphar.com>
-Subject: Re: [PATCH v3 06/12] man/man2/fsconfig.2: document "new" mount API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D252FABFF
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755772085; cv=none; b=S7qzj+PVbI9icfFZucFsHMd5Q0SJa4fqldECN0zyjWf7FYycAHRUhQ4QDf/lWfIsGhwX/wdQd3I3U8KEQmM2kxYpg8TKpTrK48cKgPHaEkdnGnVEDrkab/AdUQSSVbuvOEh++4V1scwAG6hDrsAnnojrYuSDy538WKE7bRW5fkA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755772085; c=relaxed/simple;
+	bh=YjrblC3jYZGoPfPUFfs4Pv9S3MjUDxE5dS3PmqeJpDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MOYWqWCAjduN1/2FkPaoepNQAsnP0JW/rV9rzSvK+NbFSixF0amzMKJldVhmwHTtG9IVjc0QEMafRbB6WumBV5AabTLFdLtl0nCegm5JFwy2ZM+i9SvLIXEC6sXlcjm26Q1Dy/AGJS9BYgRmpn1mau2I/+2ZGNUPVkDdMwUxnjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWNDQnhX; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8902ee514deso591435241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 03:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755772083; x=1756376883; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ELnpUP80gM/anqPaD6FJUI5nOkHoieYS5dIGUYiXjKs=;
+        b=lWNDQnhXxVw62blO7IbpPVtz55emjIz4GR+CUgGXXfQI0EXUlqSJzCHOnkyEm63iRG
+         XijokYbm8Czcb8MJ1meq39Lku0zTUixsiBOqCOq6b4e1OgZsWoRhc19kDkNBIwcFt/4P
+         sWN7M0gvGNdYvLeJG4PIATIkssglRAuNZ1kxPmEbia9n2YHMtkIrl8ijhZmbSKhr48kC
+         jSShH9PEY3fXZEp/MT5wQpr/gMKxRTRY7s8aNit07R6tpu1ASk3WyizQAvSkGmzMPzT7
+         mwZqnIDtCRHrZ4cdnaatQZNw9Fd3H7slZAHKJnVgS6HXbFFwZov0hUo5OlYcALnnrg6m
+         KQBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755772083; x=1756376883;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ELnpUP80gM/anqPaD6FJUI5nOkHoieYS5dIGUYiXjKs=;
+        b=SCB/Vv7v+1Pyg/272+UodTFv6LMUSQlJR7hio7vF38TBOuUEGKJVdycl+3GqyLft62
+         X0gjhH0pPC8e5Gclyc6hfJ7IDHMLG6egTjQXcuGL/F8HQ4o0R0pJFKyl5Pdoo8sVAXI8
+         sLn2FGLWdjc2PLDu28lTbVzdJ836ePySgOJQNCVxOfb87n5609Fu9eZ82b5YQ4lLW/TM
+         ydqdG3CuyjQl3D4Y3M5PBCsn4q/gVMmhDVR+yrATXIWpPJCyicl0PBt3o9a5A+xZCULs
+         wHqAx39pqLU6uVvBkxy+31Aue2jikj4oQDXLkCJ6ZSvqBdV+GfqHok2AApYElcPXMsNF
+         Pjtg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLdX2CaKiu4j8Agqd0XWHKSs+2wflSN/bb5kuOlVa9rSp94XUpx1j717hjZdrb0Wo10cUwKURSRSR6Xyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgcI91/x4/C6QiQzUxsg89tY9EzSo2RWUawBNbYTb4gb6xjMEg
+	ryv8hL99mGT+vxef6ZoYryckkf2pDD/ozb8a4LFRIk1/ap4kzzS4ixLWOttHfN3lhEtm3+Z/oGg
+	QXrrP8ZUmaFJw00XETGh3EvuMX0n26oVi5pG5
+X-Gm-Gg: ASbGncuKK8gIfEKqTa/NkklGTVUnF5ZgsU5mwIUN1UO3LvVI9fZK/FI0ExHQ3sgzgpg
+	mbWJczHuxZU/XWpjRCG0XdCDBObACeALQ4Ru3rZK2PPxKWYETKHbiK5u+oTHxZ3bGU9X+AIbdWh
+	GdXNn0GwSLLIlEOWB/zkbFQsDgkyPmHMxhUwVFWxe7JzMG8Vf6q+vnqZrrMcKED4FZmgB3oAoQd
+	rEcWPJbkRkJnwI0GA==
+X-Google-Smtp-Source: AGHT+IGhsHZhpGrX5u3RwtmYG2F9aPC/LyvWwHX9lVj48ZQXQI8Kte0gM2HpALra1byLLMV/IG1fu6eUGcDQRg787Jo=
+X-Received: by 2002:a05:6102:54a8:b0:508:c145:4150 with SMTP id
+ ada2fe7eead31-51be7c58738mr464375137.4.1755772083184; Thu, 21 Aug 2025
+ 03:28:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250819193404.46680-1-sj@kernel.org> <CAGsJ_4ygTv1tCJeuF43NhRR4E0kiMLpk6i8c+UHoUMt6LXykww@mail.gmail.com>
+ <aKUi7hvcaK0h0oMg@gondor.apana.org.au> <CAGsJ_4z6YvQULrEmNjFjLNrJ4RK6w0+d9uF2-7v06gOYirrYRw@mail.gmail.com>
+ <aKUmyl5gUFCdXGn-@gondor.apana.org.au> <CAKEwX=P9T315JcOBOBGK21Zk8XyDruMTv_XEPa0CuD=oAN2QYQ@mail.gmail.com>
+In-Reply-To: <CAKEwX=P9T315JcOBOBGK21Zk8XyDruMTv_XEPa0CuD=oAN2QYQ@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 21 Aug 2025 18:27:52 +0800
+X-Gm-Features: Ac12FXxHrOX-eRoJHXmtuhny6Df4zWfM_2k3KeDK1nAUUmvXOdnwHKvu18ASyck
+Message-ID: <CAGsJ_4yLDLvOZ2=3iVcQhu2jnbWQ+iTQsqVefJsx4_YT4bnEZg@mail.gmail.com>
+Subject: Re: [PATCH v4] mm/zswap: store <PAGE_SIZE compression failed page as-is
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, SeongJae Park <sj@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Takero Funaki <flintglass@gmail.com>, David Hildenbrand <david@redhat.com>, Baoquan He <bhe@redhat.com>, 
+	Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227db3c8f31e337e49c01f78bf10000b7d239f5922a924b97b0ab90cdf9b3ce2aa3ff99e670b1eef7:zu08011227bf53eaae3a190cdb345976ed000034bff602aad29ec6bb4ecddc7a74b8c664ee10dd659a879c9f:rf0801122cee3861b98fd703c79cb13a390000af1c99c384db64b8ce3b3f1f2d3f6afb573266bdf1d4831d4d6a4a0e33ce:ZohoMail
+Content-Transfer-Encoding: quoted-printable
 
-There is a convention: you can pass invalid fd (such as -1) as dfd to *at-syscalls to enforce that the path is absolute.
-This is documented. "man openat" says: "Specifying an invalid file descriptor number in dirfd can be used as a means to ensure that pathname is absolute".
-But fsconfig with FSCONFIG_SET_PATH breaks this convention due to this line: https://elixir.bootlin.com/linux/v6.16/source/fs/fsopen.c#L377 .
-I think this is a bug, and it should be fixed in kernel. Also, it is possible there are a lot of similarly buggy syscalls. All of them should be fixed,
-and moreover a warning should be added to https://docs.kernel.org/process/adding-syscalls.html . And then new fsconfig behavior should be documented.
-(Of course, I'm not saying that *you* should do all these. I'm just saying that this bug exists.) (I tested this.)
+On Thu, Aug 21, 2025 at 1:33=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote=
+:
+>
+> On Tue, Aug 19, 2025 at 6:37=E2=80=AFPM Herbert Xu <herbert@gondor.apana.=
+org.au> wrote:
+> >
+> > On Wed, Aug 20, 2025 at 01:34:01PM +1200, Barry Song wrote:
+> > >
+> > > We might want to revisit the old thread to check whether it is now sa=
+fe for us
+> > > to move to PAGE_SIZE in zswap now.
+> >
+> > It's perfectly safe as LZO was fixed months ago.
+>
+> Perfect. Then I'll revive Chengming's patch (see [1]) to reduce the
+> compression buffer :)
 
---
-Askar Safin
-https://types.pl/@safinaskar
+Nice!
 
+But perhaps we should wait until SeongJae sends a new version that
+addresses the counter issue? Also, I noticed the following code may
+have problems with the patch:
+
+        if (comp_ret =3D=3D -ENOSPC || alloc_ret =3D=3D -ENOSPC)
+                zswap_reject_compress_poor++;
+
+Can we still reach the code comp_ret =3D=3D -ENOSPC since we already
+handled comp_ret by ...
+
++       if (comp_ret || !dlen) {
++               zswap_crypto_compress_fail++;
++               dlen =3D PAGE_SIZE;
++       }
++       if (dlen >=3D PAGE_SIZE) {
++               if (!mem_cgroup_zswap_writeback_enabled(
++                                       folio_memcg(page_folio(page)))) {
++                       comp_ret =3D -EINVAL;
++                       goto unlock;
++               }
++               comp_ret =3D 0;
++               dlen =3D PAGE_SIZE;
++               dst =3D kmap_local_page(page);
++       }
+
+Thanks
+Barry
 
