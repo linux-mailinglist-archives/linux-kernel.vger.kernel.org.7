@@ -1,70 +1,58 @@
-Return-Path: <linux-kernel+bounces-779279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBBBB2F183
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:26:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21068B2F191
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 293D768047A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:22:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66301CE0AE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015042FDC45;
-	Thu, 21 Aug 2025 08:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0642FDC39;
+	Thu, 21 Aug 2025 08:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UO+N5AYi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akVg+l4E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C352EBDC9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EC22EBDCA;
 	Thu, 21 Aug 2025 08:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755764225; cv=none; b=BFMn8j6j4QoTOUhS0a1iCtZhDmIbXuDrpTepUvn9am22lh+/G6wxsBh1l6T5+Cdyocxpxk03uEWMpY7fHxcTUErCOGYYnKmN7E0mvDtbjclD/PzjpYhykDNtWcy4N08V5as1nl96i+jF0iFtSRX4bpkbZJntGevaGRwZyu5Zb8k=
+	t=1755764225; cv=none; b=YaaEkaWirZGOfmgEG8jo+wRfpYBVGocrR37hI/ONtf4IZxxXNvWYdfCw1cC2hJeor9wRS0xaxOmnhIxc1cr4s1vmbw+PGiCVxJMGlta+p3QiTj1t14EcSiO5PcxvFqD0pnDHCOGjwzRdSsR2bYMNSX8RvPEFacGnpc4AcK7lA90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755764225; c=relaxed/simple;
-	bh=FF6CTJItuLQX4L+saUiPgdc0K549DCILUpiRkhl6c30=;
+	bh=+0AJ0cWG/9OFYSPOjOfNLiW9rTewkgZT7lE9vDRgSBw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OjMO4dDNqNrMTHyLchOeALEVePMwsFx+YseCbHcm2aqO/QZsAVxyvMzF5Fo1MX8DJBkctNQlr8qojiVFZxxsSJmxhEwEXy+IBvrMep9ICWnysqwqMjnDVHY0yYcQW4L+NFvmV0NOr4p0CZxpO6lHoj8lGE2gpcaUakqBgZLQTZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UO+N5AYi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A097CC2BCB2;
+	 MIME-Version; b=brdtHdIudeSpW3YRrepuAAieiGCY5jrWm0gXVtxhUyPmBK9NRgUHfd+dT1IF3/SQqdJ1ERJufyn0Durs8AN35Gggx8uabiBfDCXNC6j362sgpXEyC0EyZ2llC8Ta26vpI+TjcG3XB/H14PsmbipoVXWsonr9dynoe4klMkOZTOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akVg+l4E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBFF4C2BCB7;
 	Thu, 21 Aug 2025 08:17:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755764224;
-	bh=FF6CTJItuLQX4L+saUiPgdc0K549DCILUpiRkhl6c30=;
+	bh=+0AJ0cWG/9OFYSPOjOfNLiW9rTewkgZT7lE9vDRgSBw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UO+N5AYimlPSluyn9jignm2yFluYaxYo4hv+xK5XBUjRqTbFv2mm+O/vrWeqRrzDd
-	 jang/PKy/YXZKXzq0dpCCLXb3YGrW+tZLoDDLd2b+9VVPKQGiz2uN/hvJRBxfodbRq
-	 Bbqp0/X9lPIC90wUh90ssGmarYxC2xYu11hoO97SWXR79bCEkYcJVc8eACmEiAZT9w
-	 GwcApCoP1oOKmALsC2Q39PAoh5SsSVrqevYvnt9fuFDsz1L+fLxYCxsxldpY4MxQZR
-	 s2UyLmrFOXlCpPdf/gwvkoLBNBeU/Fa0iWGBRFiA/yeAq2K+qYvPHh/l8eKmnM/XcF
-	 PUNmBYVep4mWg==
+	b=akVg+l4EyuUOLB2ezLIsGpaqJ5VlEMWNQzFfgwHPHeil2dkl7MGYirWCyyGuI11gu
+	 0FvRNeMFQnqXAXfzQisDOWqVD03RcZfrmyJCFXQmdBmR5CgDFs+TBVc7CA+yu52ytA
+	 KwSLbPK5O/IuqDJweBECi/FeB3lXGqmPbkCa7YnLoRQfk9BzYdwiU14YBVYRd5FMK/
+	 luUILGiTGX3uoQlJhZS0LptCp5WTGCWxdtzDtlv1wu4QFLcIgMU+FTIH6pvPxFqlZZ
+	 2TPSyH98mt5d0Y54NmXen1q2pEfodGGCiyAj/4523+UHoGgk6dHDs/MM2bD6EDcv7a
+	 uvfrvwxcFLfdg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1up0Tm-0000000BLgr-3luW;
+	id 1up0Tm-0000000BLgv-3sqz;
 	Thu, 21 Aug 2025 10:17:02 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <mchehab+huawei@kernel.org>,
-	Benno Lossin <mchehab+huawei@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <mchehab+huawei@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	Miguel Ojeda <mchehab+huawei@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH v2 13/14] scripts: sphinx-pre-install: fix PDF dependencies for gentoo
-Date: Thu, 21 Aug 2025 10:16:49 +0200
-Message-ID: <1ccbac9fd1f4e598dda82e775b64768ec3696248.1755763127.git.mchehab+huawei@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 14/14] scripts/sphinx-pre-install: fix Archlinux PDF dependencies
+Date: Thu, 21 Aug 2025 10:16:50 +0200
+Message-ID: <574d902f7691861e18339217f42409850ee58791.1755763127.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755763127.git.mchehab+huawei@kernel.org>
 References: <cover.1755763127.git.mchehab+huawei@kernel.org>
@@ -77,98 +65,81 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Package fonts are wrong. Fix it. With that, most PDF files
-now builds.
+There are some missing packages causing PDF build to fail on
+Archlinux and add latexmk (from texlive-binextra package).
 
-  PDF docs:
-  ---------
-      PASSED: dev-tools: pdf/dev-tools.pdf
-      PASSED: tools: pdf/tools.pdf
-      PASSED: filesystems: pdf/filesystems.pdf
-      PASSED: w1: pdf/w1.pdf
-      PASSED: maintainer: pdf/maintainer.pdf
-      PASSED: process: pdf/process.pdf
-      PASSED: isdn: pdf/isdn.pdf
-      PASSED: fault-injection: pdf/fault-injection.pdf
-      PASSED: iio: pdf/iio.pdf
-      PASSED: scheduler: pdf/scheduler.pdf
-      PASSED: staging: pdf/staging.pdf
-      PASSED: fpga: pdf/fpga.pdf
-      PASSED: power: pdf/power.pdf
-      PASSED: leds: pdf/leds.pdf
-      PASSED: edac: pdf/edac.pdf
-      PASSED: PCI: pdf/PCI.pdf
-      PASSED: firmware-guide: pdf/firmware-guide.pdf
-      PASSED: cpu-freq: pdf/cpu-freq.pdf
-      PASSED: mhi: pdf/mhi.pdf
-      PASSED: wmi: pdf/wmi.pdf
-      PASSED: timers: pdf/timers.pdf
-      PASSED: accel: pdf/accel.pdf
-      PASSED: hid: pdf/hid.pdf
-      FAILED: userspace-api: Build failed (FAILED)
-      PASSED: spi: pdf/spi.pdf
-      PASSED: networking: pdf/networking.pdf
-      PASSED: virt: pdf/virt.pdf
-      PASSED: nvme: pdf/nvme.pdf
-      FAILED: translations: Build failed (FAILED)
-      PASSED: input: pdf/input.pdf
-      PASSED: tee: pdf/tee.pdf
-      PASSED: doc-guide: pdf/doc-guide.pdf
-      PASSED: cdrom: pdf/cdrom.pdf
-      FAILED: gpu: Build failed (FAILED)
-      FAILED: i2c: Build failed (FAILED)
-      FAILED: RCU: Build failed (FAILED)
-      PASSED: watchdog: pdf/watchdog.pdf
-      PASSED: usb: pdf/usb.pdf
-      PASSED: rust: pdf/rust.pdf
-      PASSED: crypto: pdf/crypto.pdf
-      PASSED: kbuild: pdf/kbuild.pdf
-      PASSED: livepatch: pdf/livepatch.pdf
-      PASSED: mm: pdf/mm.pdf
-      PASSED: locking: pdf/locking.pdf
-      PASSED: infiniband: pdf/infiniband.pdf
-      PASSED: driver-api: pdf/driver-api.pdf
-      PASSED: bpf: pdf/bpf.pdf
-      PASSED: devicetree: pdf/devicetree.pdf
-      PASSED: block: pdf/block.pdf
-      PASSED: target: pdf/target.pdf
-      FAILED: arch: Build failed (FAILED)
-      PASSED: pcmcia: pdf/pcmcia.pdf
-      PASSED: scsi: pdf/scsi.pdf
-      PASSED: netlabel: pdf/netlabel.pdf
-      PASSED: sound: pdf/sound.pdf
-      PASSED: security: pdf/security.pdf
-      PASSED: accounting: pdf/accounting.pdf
-      PASSED: admin-guide: pdf/admin-guide.pdf
-      FAILED: core-api: Build failed (FAILED)
-      PASSED: fb: pdf/fb.pdf
-      PASSED: peci: pdf/peci.pdf
-      PASSED: trace: pdf/trace.pdf
-      PASSED: misc-devices: pdf/misc-devices.pdf
-      PASSED: kernel-hacking: pdf/kernel-hacking.pdf
-      PASSED: hwmon: pdf/hwmon.pdf
+Yet, at least today, PDF builds are failing on a very late
+stage, when trying to run xdvipdfmx:
+
+	$ xdvipdfmx -E -o "peci.pdf"  "peci.xdv"
+	xdvipdfmx:fatal: Unrecognized paper format: # Simply write the paper name. See man 1 paper and "paper --no-size --all" for possible values
+
+Despite its message, even using a very simple document like:
+
+        \def\sphinxdocclass{report}
+	\documentclass[a4paper,11pt,english]{sphinxmanual}
+	\begin{document}
+	Test
+	\end{document}
+
+or even:
+
+	\def\sphinxdocclass{report}
+	\documentclass{sphinxmanual}
+	\begin{document}
+	Test
+	\end{document}
+
+Is causing xdvipdfmx to complain about geometry. As Archlinux is
+a rolling release distro, maybe I got it on a bad day. So, let's
+fix it in the hope that soon enough someone would fix the issues
+there.
+
+Such broken scenario happens with those packages installed:
+
+texlive-basic 2025.2-1
+texlive-bin 2025.2-1
+texlive-binextra 2025.2-1
+texlive-fontsrecommended 2025.2-1
+texlive-langchinese 2025.2-1
+texlive-langcjk 2025.2-1
+texlive-latex 2025.2-1
+texlive-latexextra 2025.2-1
+texlive-latexrecommended 2025.2-1
+texlive-pictures 2025.2-1
+texlive-xetex 2025.2-1
+python-docutils 1:0.21.2-3
+python-sphinx 8.2.3-1
+python-sphinx-alabaster-theme 1.0.0-4
+python-sphinxcontrib-applehelp 2.0.0-3
+python-sphinxcontrib-devhelp 2.0.0-4
+python-sphinxcontrib-htmlhelp 2.1.0-3
+python-sphinxcontrib-jsmath 1.0.1-19
+python-sphinxcontrib-qthelp 2.0.0-3
+python-sphinxcontrib-serializinghtml 2.0.0-3
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/sphinx-pre-install | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/sphinx-pre-install | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/scripts/sphinx-pre-install b/scripts/sphinx-pre-install
-index 758a84ae6347..c46d7b76f93c 100755
+index c46d7b76f93c..954ed3dc0645 100755
 --- a/scripts/sphinx-pre-install
 +++ b/scripts/sphinx-pre-install
-@@ -1069,10 +1069,10 @@ class SphinxDependencyChecker(MissingCheckers):
-         Provide package installation hints for Gentoo.
-         """
-         texlive_deps = [
-+            "dev-texlive/texlive-fontsrecommended",
-             "dev-texlive/texlive-latexextra",
-             "dev-texlive/texlive-xetex",
-             "media-fonts/dejavu",
--            "media-fonts/lm",
-         ]
+@@ -1048,7 +1048,12 @@ class SphinxDependencyChecker(MissingCheckers):
+         }
  
-         progs = {
+         archlinux_tex_pkgs = [
++            "texlive-basic",
++            "texlive-binextra",
+             "texlive-core",
++            "texlive-fontsrecommended",
++            "texlive-langchinese",
++            "texlive-langcjk",
+             "texlive-latexextra",
+             "ttf-dejavu",
+         ]
 -- 
 2.50.1
 
