@@ -1,300 +1,104 @@
-Return-Path: <linux-kernel+bounces-780752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D35FB308F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:14:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F349EB308FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E262585D4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:14:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C0DAE85D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4794B2EA754;
-	Thu, 21 Aug 2025 22:14:42 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9452D9792;
+	Thu, 21 Aug 2025 22:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ddlvl2vF"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45512EA73E
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36721E5206
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755814481; cv=none; b=X2iaI9gE296EN246r1Tw/DtE8iP9jeS+qqLy6HXnD/T766vUPqs6YUST/4eOvdt5IABB5xOnplawBTcBOBRb0f/xbbE+LvYTtwop0aPW46GqQOycDFv3JeurKvSNYIwH7MlzMDOqxNj4dq6+vq07fY3EcX/dp7J7h+OsieStoYo=
+	t=1755814698; cv=none; b=MDLOK1b76uq3paqOe0uoyXJXt1gxE0hN5P/OWVwGVngi03dFf0ALQCvXrwXqAPEmPSe3wrGzGwiZLvyLURhQIiZRzX3X2aYFk4KpPepPWBUDE/Qd1PTorgJAbvHVP4/lVL4+lnmeYbO5ZnI7+EDKiUBuIEr4Vl2VQ7+SfXdndFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755814481; c=relaxed/simple;
-	bh=y6o0/xujEY3dRnWjW36bCtMJHDopfxz2c2MIJXcEG0o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T2o4HCFWI3Z49uFk89abBG8oCDW8LEBRda9Vn4EsVbpO2vrcwR9xtB86ov0s0qafSwsJXpS38KpdLI7lNd83Rk18c2YAGEVprl304N/f91ZzLYxA7ILd7KlEx3lFSaQ8hZuaSmMrtn6TlJTbmRvehmnFFJTFluC8+1sHCKfyXyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3e5d398a912so17288555ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:14:39 -0700 (PDT)
+	s=arc-20240116; t=1755814698; c=relaxed/simple;
+	bh=hJvLmDOHRH8htVDkh8Zi3UnZ6HEw3OYx2eFdQyAdZEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k1B4ZiusDU4XdIGltQKLDxGLJV9x/NACHIe6bWFy22IE6TaFGSQdIGW9Bll7MRcOPelw6CLCrD1U6kzxFYTLKGmBUnLAYOP27ssNuaM6j7cx6q6WdR2GYZ3wlOV54vOw8hlF1q5rNZcjhintMNOaAvfVRNFVP3nKpjRCF1BydVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ddlvl2vF; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-333f8f02afaso12648731fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:18:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755814695; x=1756419495; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hJvLmDOHRH8htVDkh8Zi3UnZ6HEw3OYx2eFdQyAdZEU=;
+        b=ddlvl2vFfSC7cPidCuNjxai5SVOm9E493/urLmHQ8fZL9CMGMmebB+BSNOqXJ0ztVz
+         FBnYt4bEkbD8XHQ75DrNuzdo/kraEIRrGBDQALiRnyMBEg56U58tKwOLhS6dr8zbpxEd
+         dIE4h9gTiW1mMgoWKqPGHfBl8AQ1epzvNXPRuaqN9dY3KlpFMnzcsEkwb2yyZWeAkp05
+         rS2hw8GKg6qkvO6vi/zs9/Jh57ViYDhH3+yUsjnfHNGarUlGf1rPPH8eCwIhK9Nkl6gf
+         2XYNfFJlqNLo8cBQH7LKc1+ylEWmuX7dPAC7hKk4xyVkMgO659B00Rrw4CPVjxaUYQBZ
+         YgEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755814479; x=1756419279;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kH/EniwJmnLRBhMK6SUWmXVfH8WUAiQw0RZlFHQjQ+8=;
-        b=G5Xjf2jXI4Sco/Z7suZfYdbwU9fEfG74XMSEk0ZzhA/ctUynW4RfpPuFYy4U62w/PL
-         z5fGLP1WpEFyRx1ASVUpaiZX22D8wHoohpQT+yusR0sI9BbHEMARnJeIbelXEvlBAvwE
-         KmrsWY4nMy+9Bca5LugYV4kSyX3FNoxXNAVtj68+4mFZZfOzMeCUwRGtUJVb7LZr/AOk
-         dixfPI9yJ8bN6ZvcTqjgGNEEIQfERssB7z0T4ymBOFVZCkvdnE6WX6DGfH/lojn+TgVf
-         /Oz4p1IUrDk0bf+6dqiMwsZKNogMjNAEqXFwBrhfuXwWKkJEyh9kvmycctSOE7NlSYNa
-         hwgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVx5tEHiuLgkLScj6tchn2rnGAd90kq1ZbauQfM4THqBrtLYevlLLh0TIA6VRk5Nvzs6gNoGkRrWI0QrGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6zCd/6k+k52QIggDZ+GohKeVdt3KZmJ566OPIHXN+KgNSR5+E
-	xdekifZLbGgiEg24z/an0evO/cxMbJvdQaYYOXj9d8Va4hw26F+LLPuyL5wqs3ubKP8kPcsyP1f
-	PTFpeYoR5RXTfmPxAUs4VUTmkwF2D41OQas45RVVg4xHUb6LnNFW3dON+Pk4=
-X-Google-Smtp-Source: AGHT+IEH0hAQsv51nLYkOPkGLrfcKESJb6IFFb4ucTiC4uYbnybSeKaNdSx6s8Wk8CRz4NuIJ8xVkrNRG8B+m/6XX1abIV48reJK
+        d=1e100.net; s=20230601; t=1755814695; x=1756419495;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hJvLmDOHRH8htVDkh8Zi3UnZ6HEw3OYx2eFdQyAdZEU=;
+        b=uXt0NMrr4CNZ8O/ZQ4x5K4A8JzZOqByh0aLS4kGOMiHvidC2hokM1Lgw857/0M+nFd
+         c503+9iRCiPlJLPkydeJ2YU7DKdA2Yo/D/gV3TU9CvZcJppCU/GPMY5w+CjMkR2TkxJq
+         D4rHSSj8AJfpXY0T2DGDfPYxNUWnhCyKQRozQF58rmqqNPGWZbh30ZlGLcgb7uqauOAU
+         jw0Oa0e+MvgfmPQUQ9W/94SZPUYvUBcR0furog9o+2tqiEPdwRwOHzifMClZwXXFwJYW
+         KThQZDbSsFKoiD3i799JET/HCu4NTZT7qklyQY5krqgsH+PLfgtDyNVyiH7ZCBGETNtn
+         +iHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7wmTUXKTbSB8rECqUxgh6KYv1h5abJRzy8c5QgFb0j8nrcYp/W2iCI4JerHP0Ckg+TayMZt0g4RkSuNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGvmAHxQY5O4q1TFDTzRH9qYsP9Q2i7U+ne2ZiNUmPf9JR4pGX
+	xyJ5OVlEqHLpuVA/Oh2Gj0bvi9vrcFF7/AAJCYSSiMUyLVg2PfD3KfYYL3hlAgdps4seo0lk8I8
+	0GG/WQGGf5dNkP1LDMb9zFqzpEjhpw5VjX62GF2Atjw==
+X-Gm-Gg: ASbGncvPNGmoCgJrnwXg6Ngm8EU9s2ExSmnxDD/qUBSyBScd10LPyFvvFlY3UPSbjsT
+	PcFsfDbw0D0UYzM1yEMWZW8HYs7Ix2mWjcwwja4T4aCFs1jkUl26cpsDicER7n34W7zilbhPJfZ
+	ADWy0S4Zb769Rk02z8jJAciYuczYaYLqDEzPaM/rsFFeq22MmULiwbrSTepf9w5AYBOi0bHrm17
+	GMjsiM=
+X-Google-Smtp-Source: AGHT+IFrY2hS5SsxaMer/fv4j+sLFV7Lrat9cyli9ISfVkjiqJsId841iqyuhRGNs237tnPBVWSS/MeqLwPZ7xMQfUE=
+X-Received: by 2002:a2e:be2b:0:b0:333:b1c4:4d8e with SMTP id
+ 38308e7fff4ca-33650f9e9c7mr1818881fa.35.1755814694915; Thu, 21 Aug 2025
+ 15:18:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e9:b0:3e5:75cb:44fc with SMTP id
- e9e14a558f8ab-3e921a5d155mr19895995ab.12.1755814478859; Thu, 21 Aug 2025
- 15:14:38 -0700 (PDT)
-Date: Thu, 21 Aug 2025 15:14:38 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a79a4e.050a0220.13802c.0002.GAE@google.com>
-Subject: [syzbot] [bcachefs?] possible deadlock in trans_set_locked (2)
-From: syzbot <syzbot+7c044bb36ac38f98889f@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250821215703.869628-1-robh@kernel.org>
+In-Reply-To: <20250821215703.869628-1-robh@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 22 Aug 2025 00:18:04 +0200
+X-Gm-Features: Ac12FXxrs--F6z9RMfNLzTHaN2eK8D_83wEqiGwNidiDTMP6YOpUfEK7YMZn4RM
+Message-ID: <CACRpkdZMJ-wY-jtonjJaNufGG3L_OhA4_CeWqfODto-TAHhEVQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: rtc: Fix Xicor X1205 vendor prefix
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Aug 21, 2025 at 11:57=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org=
+> wrote:
 
-syzbot found the following issue on:
+> The vendor for the Xircom X1205 RTC is not Xircom, but Xicor which was
+> acquired by Intersil.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=160daba2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-dashboard link: https://syzkaller.appspot.com/bug?extid=7c044bb36ac38f98889f
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
+Aw shoot. My misspelling.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7c044bb36ac38f98889f@syzkaller.appspotmail.com
-
-  u64s 7 type extent 536870913:24:U32_MAX len 24 ver 0: durability: 0 crc: c_size 8 size 24 offset 0 nonce 0 csum none 0:0  compress lz4 ptr: 237:893353206280 gen 0
-======================================================
-WARNING: possible circular locking dependency detected
-6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 Not tainted
-------------------------------------------------------
-syz.2.330/8664 is trying to acquire lock:
-ffff000102c481b0 (bcachefs_btree){+.+.}-{0:0}, at: trans_set_locked+0x68/0x200 fs/bcachefs/btree_locking.h:205
-
-but task is already holding lock:
-ffff0000f6b182e8 (mapping.invalidate_lock#7){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
-ffff0000f6b182e8 (mapping.invalidate_lock#7){.+.+}-{4:4}, at: filemap_fault+0x3fc/0x1280 mm/filemap.c:3433
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (mapping.invalidate_lock#7){.+.+}-{4:4}:
-       down_read+0x58/0x2f8 kernel/locking/rwsem.c:1537
-       filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
-       filemap_fault+0x3fc/0x1280 mm/filemap.c:3433
-       bch2_page_fault+0x2cc/0x700 fs/bcachefs/fs-io-pagecache.c:594
-       __do_fault+0x1fc/0x4cc mm/memory.c:5152
-       do_read_fault mm/memory.c:5573 [inline]
-       do_fault mm/memory.c:5707 [inline]
-       do_pte_missing mm/memory.c:4234 [inline]
-       handle_pte_fault mm/memory.c:6052 [inline]
-       __handle_mm_fault mm/memory.c:6195 [inline]
-       handle_mm_fault+0x2c90/0x4d34 mm/memory.c:6364
-       do_page_fault+0x57c/0x13cc arch/arm64/mm/fault.c:696
-       do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:789
-       do_mem_abort+0x70/0x194 arch/arm64/mm/fault.c:929
-       el0_da+0x64/0x164 arch/arm64/kernel/entry-common.c:697
-       el0t_64_sync_handler+0x90/0x12c arch/arm64/kernel/entry-common.c:901
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-
--> #2 (&mm->mmap_lock){++++}-{4:4}:
-       __might_fault+0xc4/0x124 mm/memory.c:6958
-       _inline_copy_to_user include/linux/uaccess.h:192 [inline]
-       copy_to_user include/linux/uaccess.h:223 [inline]
-       copy_to_user_errcode fs/bcachefs/util.h:701 [inline]
-       bch2_ioctl_read_super fs/bcachefs/chardev.c:611 [inline]
-       bch2_fs_ioctl+0xb3c/0x13e0 fs/bcachefs/chardev.c:718
-       bch2_fs_file_ioctl+0x4dc/0x1964 fs/bcachefs/fs-ioctl.c:411
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:598 [inline]
-       __se_sys_ioctl fs/ioctl.c:584 [inline]
-       __arm64_sys_ioctl+0x14c/0x1c4 fs/ioctl.c:584
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
-       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-
--> #1 (&c->sb_lock){+.+.}-{4:4}:
-       __mutex_lock_common+0x1d0/0x24ac kernel/locking/mutex.c:598
-       __mutex_lock kernel/locking/mutex.c:760 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:812
-       __bch2_trans_mark_dev_sb fs/bcachefs/buckets.c:1129 [inline]
-       bch2_trans_mark_dev_sb+0xd8/0x67c fs/bcachefs/buckets.c:1176
-       bch2_trans_mark_dev_sbs_flags+0x414/0x47c fs/bcachefs/buckets.c:1186
-       bch2_mark_superblocks fs/bcachefs/btree_gc.c:805 [inline]
-       bch2_check_allocations+0x52c/0x3c34 fs/bcachefs/btree_gc.c:1089
-       bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:484 [inline]
-       __bch2_run_recovery_passes+0x2b8/0xd54 fs/bcachefs/recovery_passes.c:539
-       bch2_run_recovery_passes+0x174/0x1f4 fs/bcachefs/recovery_passes.c:610
-       bch2_fs_recovery+0x1c34/0x2fb4 fs/bcachefs/recovery.c:1016
-       bch2_fs_start+0x940/0xbec fs/bcachefs/super.c:1213
-       bch2_fs_get_tree+0x880/0x107c fs/bcachefs/fs.c:2488
-       vfs_get_tree+0x90/0x28c fs/super.c:1815
-       do_new_mount+0x278/0x7f4 fs/namespace.c:3805
-       path_mount+0x5b4/0xde0 fs/namespace.c:4120
-       do_mount fs/namespace.c:4133 [inline]
-       __do_sys_mount fs/namespace.c:4344 [inline]
-       __se_sys_mount fs/namespace.c:4321 [inline]
-       __arm64_sys_mount+0x3e8/0x468 fs/namespace.c:4321
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
-       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-
--> #0 (bcachefs_btree){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3165 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain kernel/locking/lockdep.c:3908 [inline]
-       __lock_acquire+0x1774/0x30a4 kernel/locking/lockdep.c:5237
-       lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5868
-       trans_set_locked+0x94/0x200 fs/bcachefs/btree_locking.h:206
-       bch2_trans_begin+0x800/0xd30 fs/bcachefs/btree_iter.c:3403
-       bch2_read_err_msg_trans+0x64/0x298 fs/bcachefs/io_read.c:374
-       __bch2_read_extent+0x25f0/0x3638 fs/bcachefs/io_read.c:1070
-       bch2_read_extent fs/bcachefs/io_read.h:147 [inline]
-       bchfs_read+0x107c/0x17e8 fs/bcachefs/fs-io-buffered.c:226
-       bch2_read_single_folio+0x498/0x6e4 fs/bcachefs/fs-io-buffered.c:360
-       bch2_read_folio+0x40/0x84 fs/bcachefs/fs-io-buffered.c:378
-       filemap_read_folio+0xec/0x2f8 mm/filemap.c:2413
-       filemap_fault+0xd48/0x1280 mm/filemap.c:3537
-       bch2_page_fault+0x2cc/0x700 fs/bcachefs/fs-io-pagecache.c:594
-       __do_fault+0x1fc/0x4cc mm/memory.c:5152
-       do_read_fault mm/memory.c:5573 [inline]
-       do_fault mm/memory.c:5707 [inline]
-       do_pte_missing mm/memory.c:4234 [inline]
-       handle_pte_fault mm/memory.c:6052 [inline]
-       __handle_mm_fault mm/memory.c:6195 [inline]
-       handle_mm_fault+0x2c90/0x4d34 mm/memory.c:6364
-       do_page_fault+0x8a0/0x13cc arch/arm64/mm/fault.c:696
-       do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:789
-       do_mem_abort+0x70/0x194 arch/arm64/mm/fault.c:929
-       el0_da+0x64/0x164 arch/arm64/kernel/entry-common.c:697
-       el0t_64_sync_handler+0x90/0x12c arch/arm64/kernel/entry-common.c:901
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-
-other info that might help us debug this:
-
-Chain exists of:
-  bcachefs_btree --> &mm->mmap_lock --> mapping.invalidate_lock#7
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(mapping.invalidate_lock#7);
-                               lock(&mm->mmap_lock);
-                               lock(mapping.invalidate_lock#7);
-  lock(bcachefs_btree);
-
- *** DEADLOCK ***
-
-2 locks held by syz.2.330/8664:
- #0: ffff0000c2c65e50 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_trylock include/linux/mmap_lock.h:472 [inline]
- #0: ffff0000c2c65e50 (&mm->mmap_lock){++++}-{4:4}, at: get_mmap_lock_carefully mm/mmap_lock.c:277 [inline]
- #0: ffff0000c2c65e50 (&mm->mmap_lock){++++}-{4:4}, at: lock_mm_and_find_vma+0x38/0x2d8 mm/mmap_lock.c:337
- #1: ffff0000f6b182e8 (mapping.invalidate_lock#7){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
- #1: ffff0000f6b182e8 (mapping.invalidate_lock#7){.+.+}-{4:4}, at: filemap_fault+0x3fc/0x1280 mm/filemap.c:3433
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 8664 Comm: syz.2.330 Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
- __dump_stack+0x30/0x40 lib/dump_stack.c:94
- dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- print_circular_bug+0x324/0x32c kernel/locking/lockdep.c:2043
- check_noncircular+0x154/0x174 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3165 [inline]
- check_prevs_add kernel/locking/lockdep.c:3284 [inline]
- validate_chain kernel/locking/lockdep.c:3908 [inline]
- __lock_acquire+0x1774/0x30a4 kernel/locking/lockdep.c:5237
- lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5868
- trans_set_locked+0x94/0x200 fs/bcachefs/btree_locking.h:206
- bch2_trans_begin+0x800/0xd30 fs/bcachefs/btree_iter.c:3403
- bch2_read_err_msg_trans+0x64/0x298 fs/bcachefs/io_read.c:374
- __bch2_read_extent+0x25f0/0x3638 fs/bcachefs/io_read.c:1070
- bch2_read_extent fs/bcachefs/io_read.h:147 [inline]
- bchfs_read+0x107c/0x17e8 fs/bcachefs/fs-io-buffered.c:226
- bch2_read_single_folio+0x498/0x6e4 fs/bcachefs/fs-io-buffered.c:360
- bch2_read_folio+0x40/0x84 fs/bcachefs/fs-io-buffered.c:378
- filemap_read_folio+0xec/0x2f8 mm/filemap.c:2413
- filemap_fault+0xd48/0x1280 mm/filemap.c:3537
- bch2_page_fault+0x2cc/0x700 fs/bcachefs/fs-io-pagecache.c:594
- __do_fault+0x1fc/0x4cc mm/memory.c:5152
- do_read_fault mm/memory.c:5573 [inline]
- do_fault mm/memory.c:5707 [inline]
- do_pte_missing mm/memory.c:4234 [inline]
- handle_pte_fault mm/memory.c:6052 [inline]
- __handle_mm_fault mm/memory.c:6195 [inline]
- handle_mm_fault+0x2c90/0x4d34 mm/memory.c:6364
- do_page_fault+0x8a0/0x13cc arch/arm64/mm/fault.c:696
- do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:789
- do_mem_abort+0x70/0x194 arch/arm64/mm/fault.c:929
- el0_da+0x64/0x164 arch/arm64/kernel/entry-common.c:697
- el0t_64_sync_handler+0x90/0x12c arch/arm64/kernel/entry-common.c:901
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-bcachefs (loop2): /file3 offset 0: no_devices_valid
-  u64s 7 type extent 536870913:24:U32_MAX len 24 ver 0: durability: 0 crc: c_size 8 size 24 offset 0 nonce 0 csum none 0:0  compress lz4 ptr: 237:893353206280 gen 0
-bcachefs (loop2): /file3 offset 0: no_devices_valid
-  u64s 7 type extent 536870913:24:U32_MAX len 24 ver 0: durability: 0 crc: c_size 8 size 24 offset 0 nonce 0 csum none 0:0  compress lz4 ptr: 237:893353206280 gen 0
-bcachefs (loop2): /file3 offset 0: no_devices_valid
-  u64s 7 type extent 536870913:24:U32_MAX len 24 ver 0: durability: 0 crc: c_size 8 size 24 offset 0 nonce 0 csum none 0:0  compress lz4 ptr: 237:893353206280 gen 0
-bcachefs (loop2): /file3 offset 0: no_devices_valid
-  u64s 7 type extent 536870913:24:U32_MAX len 24 ver 0: durability: 0 crc: c_size 8 size 24 offset 0 nonce 0 csum none 0:0  compress lz4 ptr: 237:893353206280 gen 0
-bcachefs (loop2): /file3 offset 0: no_devices_valid
-  u64s 7 type extent 536870913:24:U32_MAX len 24 ver 0: durability: 0 crc: c_size 8 size 24 offset 0 nonce 0 csum none 0:0  compress lz4 ptr: 237:893353206280 gen 0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Yours,
+Linus Walleij
 
