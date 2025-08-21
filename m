@@ -1,224 +1,245 @@
-Return-Path: <linux-kernel+bounces-779528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41340B2F53B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:25:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 822BCB2F53A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 826087BBEB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:22:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D50A37BA875
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B042A2FF140;
-	Thu, 21 Aug 2025 10:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3812F290B;
+	Thu, 21 Aug 2025 10:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RVOvnaOK"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hEoGC+b6"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2070.outbound.protection.outlook.com [40.107.95.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDFA2F4A14
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755771757; cv=none; b=LQKBRhmoJYpf8jRkEswp7Ua9DrHjBkxubZ1ZY4kdN9TNEncxiaKpVqg88FpE0D/E60280kft3EwPWxPsCEm1bE4BL5/ZtzRAQO3hO8Lkk2iNf+0GUgduYyPIbi8a3xb6NKZs9D7zMVk7B3GGa8uPf6D7G2r3Q+86sgUB+Bp2UJ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755771757; c=relaxed/simple;
-	bh=Xoy55CwU4giBJll8gjCN19iyVwh+OG2OUEkfJgm/bdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0deRCwCnhCActZr3Y1MFnPRhyCE6hDqWshWX6ZqWP2K59Kd0tMWt7GuMBEBfdYi/SbTv2yoH5cNXRP+PudU7G+AEtrncKz6Hq+u26NsWcgdSI/2Fsfq3C7Pet492jW5bcoZbtRZVhMr4Pb8OSUP0qzoW/k0ZeZr6SCh4DZ5iD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RVOvnaOK; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7991540E0232;
-	Thu, 21 Aug 2025 10:22:31 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id QTrnAPh8V5It; Thu, 21 Aug 2025 10:22:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1755771746; bh=dFiMOwXbOUT9pc81mZWQSd7wt3VW9jkYyN3t4XQgQgM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RVOvnaOKtbfUqdcpknJ+954WamjS2NvodihJIXMyWUarqIy63KRh3R4w+FwmLfZwW
-	 Pk4xnk0s+pRuyoy/e4I8o2gXYCs7wG32tPQPctdhpxguU4cL4YfmZ1S12QUoQaNM3r
-	 m9m7mN3AE5nLr5yDrQRn7A6LgrrXca9dHX0zJY2PabJL2+ml9LvHq4IJbSyQPF4glZ
-	 85d9RcJRRB2ExSAhVJzn9NtVJ77LQnv0fs5MAS+FEQvcmYwYb3j08jdBXDD8bD7SxN
-	 BMnxEZ/oPf7VRH04xtg5iiLFvrkk92Nl9EFb4GtPKx9PQJrt6VTr2x2t1Afvyc9gXm
-	 vTumjao9lAb7fenFyzSkTbdG53D42qQR9GCjwj7Jx5F2ojwCxeoebi0Fo9IkiyofgA
-	 OHL9GL74HS9PKuaqRek+6E4QknBNvSF6/PT+9FKYLZyaP6Qiu8/RG7y7tKYSufCvzY
-	 L3cp2kS5q6h2WmXenapSwLL7C8afsGagreUXpZ5mVyw3w+ObEifvcKXtzweCggKosD
-	 AS45d7TmqduC72FbjLIvL6mDeEEtOJlOHWEyD5HygaH/dvhZfrNHEqFPOVXATu6WxB
-	 FXWTk88T7ii5ji6oh3XGRgyWGiIR/sQ76jG6bK362oj7ImQpoI+258GpbG/EmdodzT
-	 b7VyqKOz0OJtVcDuk/m6YOXA=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 363F240E01AB;
-	Thu, 21 Aug 2025 10:22:18 +0000 (UTC)
-Date: Thu, 21 Aug 2025 12:22:13 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Ahmed S. Darwish" <darwi@linutronix.de>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH 0/2] x86/cpu/cacheinfo: Simplify llc_id calculation on
- AMD platforms
-Message-ID: <20250821102213.GBaKbzVWCNgEZbaxv8@fat_crate.local>
-References: <20250821051910.7351-1-kprateek.nayak@amd.com>
- <aKbspRcrEWBiox8c@lx-t490>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1F42206AF
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755771856; cv=fail; b=X+Jx7SGcTQuO7aMM5QMT1q1hvl6P4uD30NFCAas6mYPF8AcG7VZKDcjBclJTj+9KSMYOQVtb3EKq/kIhVKlp+RlfmuA4jBPKgCJOfolGe9AQ8jZmEaFyfx2M7LnWa3iUD+l+bHLE6n/l1FymNHAglT8GRppNuQy0IyP8HC+sYrA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755771856; c=relaxed/simple;
+	bh=GOlBI9q/j7gBDck4KXmz7kgq3K3gh4A6+SWLow16/CM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=V0uLiWx4QRc4ZiSqgkr9rL9lGMKYxdanMcX+T+JRCLlDVtnBwYUvGEKGVKtUsHSsqSE5tTsfBWL8C5xteQZtX4b2qX3y5D1Hr4nIdR/Lsz2maEV7WqXWHvcBB50IEriAD+d/Z408afcoIRehts+LJ+0ykh4tjYum6vAvB/WUDSw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hEoGC+b6; arc=fail smtp.client-ip=40.107.95.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cyT5t3yfDOEJD6fofq10FnEuui/V7G22qyTbPVjCjVYkrOzym17hl/2WMRAmStNA6pEIPnVl6jbHyoJlSGKVwi/ZxliqAq04PxwSUFjjj8dDuKm8D6xbvb0xO0kDm74xgtORfl/smxl+KKrQm3uwDCkl5rvYssa4yXjDWum9c1rwt9rk6KwewfOZ9B941wRVZ+1IERPwTqBd8lyEx2VLJ/NwLPctYkTRz1Yx9Wcs8+5wlfw0xO7cI2g4k0kcpKSymv/RsW6nf4g9Tn8nbiIIGDdSp6uhKgrsPQTjnqATX9yvglFrCeU2z2G8YXvJIbqSvZcla3xza0gev74tXxAICQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AIf7CbBbltScwi+P54axotgCldu+ulOSNxURut1tfzQ=;
+ b=JOl03gEnt1PVGn3vNXG7W9AAe+JZjSyYFwlXM8bkVPH/t/O2uiNiubjfF8ZC3elI4+fDC0FmYPTbc2HxsQyVDNqywbu5p+wbnJQiTca9wihg9r1u7MwxsPFKrQr0HQoTX6/x7P8zYCJOX++qYV5ieFBViCSqT8KM3YMZ94Igt0VjapXYev6S4uffJg3/Pnc9f/mfRKTgZJikSlnud2pf15mde+BI5qXLzxTIYleTBLtCSJXfhgxEmWmHFjlfNyEJv1965J4JZEuqZcO1XXEEivqpZKRCw0kcT0xnvaUy79uSwG+bjdTOgBpfiBnluQyUIYWsBLG/2mXQCB05hqCvcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AIf7CbBbltScwi+P54axotgCldu+ulOSNxURut1tfzQ=;
+ b=hEoGC+b6oWfo+DzjxeLFmkafGKUotm+pT5Mzqaztz2BMXB8Tnzs0aofkInP3u8ZcQnMPoVOOZPMufRQJPj7zpXjxtPeAyzsD6N4uuK2YkrVoLkpiup5nD7y+8bVtvrN1SP2ZXkUdNZvRcJ3+pqo1/jQradveGBQRltIr8pXl+0asfuUeViNAd3YYskAwatyY+vziwLaZtdHqqUTQeUQv32nR0EdClHmTWs4LDp0ul8WFxC1WXyatFn8oPcXwnrR/ymwWp4dYc1lYvVlf8Py3EoU0jF6zjAgdQm1nzaENKDIDNhQXHHOdNsm91s8YJaRH4IsNT8X3KxhbED/Gzc3W7A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA1PR12MB7272.namprd12.prod.outlook.com (2603:10b6:806:2b6::7)
+ by PH0PR12MB8128.namprd12.prod.outlook.com (2603:10b6:510:294::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.16; Thu, 21 Aug
+ 2025 10:24:10 +0000
+Received: from SA1PR12MB7272.namprd12.prod.outlook.com
+ ([fe80::a970:b87e:819a:1868]) by SA1PR12MB7272.namprd12.prod.outlook.com
+ ([fe80::a970:b87e:819a:1868%2]) with mapi id 15.20.9031.014; Thu, 21 Aug 2025
+ 10:24:10 +0000
+Message-ID: <e43b3eff-6d9e-4e6e-a0a2-9537e669aa82@nvidia.com>
+Date: Thu, 21 Aug 2025 20:24:00 +1000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3 03/11] mm/migrate_device: THP migration of zone device pages
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250812024036.690064-1-balbirs@nvidia.com>
+ <20250812024036.690064-4-balbirs@nvidia.com>
+ <81ca37d5-b1ff-46de-8dcc-b222af350c77@redhat.com>
+ <9207451b-ebd1-46d5-b277-2adf3028f361@nvidia.com>
+ <23a3e9b9-ad35-4469-884d-279aac0868de@redhat.com>
+ <a8732499-161b-47f3-a936-580a43c6f323@nvidia.com>
+ <aJ55c8yrcAN6upp9@lstrano-desk.jf.intel.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <aJ55c8yrcAN6upp9@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR03CA0159.namprd03.prod.outlook.com
+ (2603:10b6:a03:338::14) To SA1PR12MB7272.namprd12.prod.outlook.com
+ (2603:10b6:806:2b6::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aKbspRcrEWBiox8c@lx-t490>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR12MB7272:EE_|PH0PR12MB8128:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d7276a3-5176-4827-9375-08dde09cddfb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZEtkd3lnUXcrend6Zm83UzJDZmRTY0w4RURNZmVmQy9uNkI3RlJrMDlGUC9V?=
+ =?utf-8?B?angraTcwRTNvQWUrRFd3RjRjeC9zQzVCR1RLUGZKL3UzeVJUQjRFNDVaZ0di?=
+ =?utf-8?B?VCtlREpKMWFsNUxYSSs2NHlzZFEvd0k2Q0dXTmVZRThSd2NJQ2RxVWp5Q0NK?=
+ =?utf-8?B?R1ZUQlFDT2s2YWQ1czVvL1ovd3dBWUlnQ1N0bmhEVW9LUGRGRmNacStnWWFU?=
+ =?utf-8?B?QXp4YVlrY2VvZUhTOCt1TlcxYVM1QVhEQnBCeHN0ZnNRQzdoVERkN2h6TmVo?=
+ =?utf-8?B?TDVMRk8rL0s2WlZaY3psUnZtL09NK09DdmkxVjlOZmUyMER0ZjBHRHdEMEFi?=
+ =?utf-8?B?MjB6MjZPOHlvTlVxanl4MFVCblcvRjJjRVFNbUpwRHBaV1FlSGFmTzBEaEp5?=
+ =?utf-8?B?b1ZTK1RhaHNhYVpZb0RtTzBkUlE2QzdZWXlORWpXY1lCOW15bFFXOTVYeEY0?=
+ =?utf-8?B?cDVncll2Z2lObU81N3hmaWEvemtMSjgxTEVCM1ZOVnc2ZDFRYi92S1FhMHkz?=
+ =?utf-8?B?VytaQ1JGNnVxRlhEWmJaYVlIWDNaWEorWkRvK0NlQWlLVHN3U2Ftem5yN1Ux?=
+ =?utf-8?B?QVZKME93cFBXdy9WZFBKck9nalpTRDgyRXhTMDNQT1AyeWpFK05jQjRaU3Ux?=
+ =?utf-8?B?WDlneFROQW9GVmhkY3ZRV0F5SGFtcVE1dXVWWjErQmdOUVVBbFZ4NHRoZWxv?=
+ =?utf-8?B?ZE5TUjNFL05TN3o2OVN5WW1aMmZGd2VWV2VCUVZYb3NUTWpaQzAzNmROVThF?=
+ =?utf-8?B?TTRLWGdDLzNBZjlUT2RTSnc2bTJ4ZUNPSFp1anljd2ZkTGsrcFlad3FhWFpM?=
+ =?utf-8?B?em91TGYwd1ZVUEs5UnhzZ1hORmNOZVRzUjlBejBud0RGZlVvS3MzVHFnTys0?=
+ =?utf-8?B?dGlxSVltSmhKRG5WaDAxL3AveXlXNTdFOUZVeUJqUi9TcXcvUlQ2dmFSQlBR?=
+ =?utf-8?B?QVBsRHZBb01oY0o3UkJnQzlaTFJjNEtCWFcrL3hYSVN5Y3JmTnlVSS81WXUv?=
+ =?utf-8?B?MXg4elBSK3RFQkdBaFlFY1dkWHR6VDFVR3k0N21kYThISzk1Z0xtVGFBU0NS?=
+ =?utf-8?B?bXQ0YWNhVnhodUtZSllEK3NPYk9sOVczZmNiL3lGRWkxWmtqaHpUb2NEVUo0?=
+ =?utf-8?B?TUJVRXNyKzk2WENDV2JEUGdaeXRTcTRUekpvTGpMZDZwa1RMMFk4aWpLbWtT?=
+ =?utf-8?B?NE1hQkRDakQ5TDNZdUNZY1RsNHRTdGRta3hBYzlhSUtQMXdUYUlEVlkxMkEw?=
+ =?utf-8?B?azk2bTM5TVVjcm1LMGRvbzN0YW9uRFljTzRPdVpXb21RL0ZHUDJOalJCTjRU?=
+ =?utf-8?B?RHptN3pCOFlVN0RIM2t5V3JWVGlsV0YyUGlQWTBkWmx0TDhSc08wdE5VZ2tF?=
+ =?utf-8?B?Q0phZFdIRjEwZ1JhUktzaGQrRmVUN3VvTWdMd2xMQVMzTStWdVcvVmh6MFFQ?=
+ =?utf-8?B?TnRUaUtNZmN6RERqcmVMdVUrY2lDQ0p3VGdUM2RKVFVDaXlsMkZWZVZoaDJ2?=
+ =?utf-8?B?RS84eHlRajdmZHZiSXZXOEdEVEU4ZVpJdTV3MlFJWER6UWZGS0FHTTB6cDNJ?=
+ =?utf-8?B?SEFUSk1UV0tlRWd5MDA0M05GeWlVM2lSaXUzajd5TkpucG5SclJHQmNNNzZy?=
+ =?utf-8?B?NTdpS3N1T2dwN2xwWFJNT2dnNW0rTWJYb0VqcCtQTnZwczVUWTFpRzdGMk5j?=
+ =?utf-8?B?ODRpSXkxcnRLTGtxQmEvckZ5bWFrOVVoY2ZqM1hXUFBpZ25VV2gvMjcwWHFq?=
+ =?utf-8?B?clFsMzBVQ0xwSTVVMDV4VXUwVzdBdHhnMjhMSG5PUFp5RHZ1Ump2ZVJLdGZx?=
+ =?utf-8?B?UlZUUlJoeDEzSEZ5cTlDVHA2QXcybzBETVN1WlBmWmVraDRWY1hUcnNQbEJC?=
+ =?utf-8?B?WVcvbXRZWnRuZEtaR3AyeGJJN0w1cDNaL0Jzdi9JeXkwRTQycGJqZ0JrN1N4?=
+ =?utf-8?Q?WIwZIYhauyE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7272.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZTBjbzNmWEZOTkJITVRlWGcvNTdzSnFQS2lIUERiYUNmZ21pMEVvemZOamZt?=
+ =?utf-8?B?U3N2YVRnWVN4SnQyeVZ1ZzZKWlFCb2FiSE9SQ1FUOGRVR0kvWDJNMmp2Rm81?=
+ =?utf-8?B?Wmc3cHlONTBoN1pVR3FwWHo2R0dSbGhTZmNmY1BmdDU0aGtpSUxWVkJnc2Vt?=
+ =?utf-8?B?RzhmUUlYcFdxcERubm5aN1p0WlJtUnliQ0hnL1BMRnVLRmJiUVU0bXpscUky?=
+ =?utf-8?B?R3V5TjNINHlXWTNHN0JmS2Q2K0toRmYzVEljdC80bm1VVjRYeDFzdHdpVFJa?=
+ =?utf-8?B?UmtjVWxjSGNDL1ZkdFdPc0lCSGF2ZDFlM2hRbVVzL1pIU1NzaDdNZHBSZGdC?=
+ =?utf-8?B?cHJmTVlGbGFqVThxL3IzOUcwRDVRM3ptVzVsTElGSy9LRzBOWjNiOFdlYjA2?=
+ =?utf-8?B?WERUL21ubWxiNkZGQTNTajFMY3BPSEJ5MWR3S0kxMDlGY1dWaWVOK0RicVBq?=
+ =?utf-8?B?dzViRU5aOFUrVDJkN1gveTNkak9ySktJVjRhUW9tcVNmTXEyVDUxRFFDNUI0?=
+ =?utf-8?B?MDVUcmVHQm9NYnlDbGpIM3JsK2dKbFRxWUJmMjNJa0VTNTBIUHZvcms1cHhS?=
+ =?utf-8?B?SW1BeDRvelB1Y1hEendtUHV4S3E3b3kvSkJLSXRvS3pTekpWVGl0bEx1N3RT?=
+ =?utf-8?B?a0ZRd09VK3FvQmxNUXlpTFdXeC9BcXFSRmprQThxWkRHNlN6L0xFbzUzVmlM?=
+ =?utf-8?B?VTVWV0dEaExVenlZcU1GUkRRLzFyTU9mSUc0STJpelhmRDA3K3h4NTZ4UlpH?=
+ =?utf-8?B?M0dYcXVJc0RqRnpEMER5cS9xbVRyRXlHcE5WUFVHUDdvb0Q5V0dZUTBoK2ZI?=
+ =?utf-8?B?OFQ4V2hOamh0QldFdENUT3dkVm5ENmR6bmVXa1FLUXRWbFUxelE5UUliYmFh?=
+ =?utf-8?B?YzZVSHFPVDFoQ0Q4VjJVM3VoRFN2N1VSZU1FWk0yY0o1NHBLVjhzU3FZTnV0?=
+ =?utf-8?B?cW9YVHNqZkNUUVFORzFabkVWaVUvNWFHdkJNUS9DU3A5TnRUV2dqNk1vZmJI?=
+ =?utf-8?B?N3lIZjEzd3d3MzR0cEg4U0JNYU5qcFBXMWNOazcrSW5xUFFydWxacGtmTVIy?=
+ =?utf-8?B?RElnT3JrWjVRM0ZhRG91d0xpV1VSMVVlYlNuZEtHYi94NFB2bWNLQS8xVGh4?=
+ =?utf-8?B?M1pudzkxQk1FQ2xkZ3ZmemRKYnVzYytDRnNhc2xCRXR3WVRsUzdENFluSWRi?=
+ =?utf-8?B?WVVVOUhneTZENjlacExpeGJUcWxrRGVIYkhWWTRDcCtNalNZb1hRaEFXcmRY?=
+ =?utf-8?B?bU03MXN4bGREd3lkVHFLUTFwZ3AxdkpyYThaWU9CQ2VhYVRXV3Q2cGkyUENP?=
+ =?utf-8?B?RVd3SzlBSk5KeGVuNlRuZXNvK0lLZ0sxZHl1M0xIYSsyekJnK2hqRnJKQlpC?=
+ =?utf-8?B?UUE0VUkvM1h2YTN5TFl0L21ncHhPdXBLRWFkaTMzb0RqL1BQbGVNSk1BNERN?=
+ =?utf-8?B?cVg1TmlaSkRtb25TQml4d1Fhb09pZ2VZcjQ5MGZZNlpmSXNCcVBsMTJJWmpC?=
+ =?utf-8?B?bHdVUkp5eGxScVdXdzFNYlg2djdTaE42SWV4WVE3VUlTZERYYUlGbHBVbFJP?=
+ =?utf-8?B?ZUlTa096SzNMUklwcUhEUC9Fa254RFNjTWZWVHppc1lWWU9aSzlTUTJHWXN3?=
+ =?utf-8?B?R0l1Q1A1ek5VOUpqSHc2a3g1NzI2NDJ1S3ZsMFNsbVRZeVdLVnhaOUNLUTZE?=
+ =?utf-8?B?bjBsUFhNMFBOM3pMc05ncmNLUmcwR0c2azltNVNrekdtV25tWUxWRzA4NjVz?=
+ =?utf-8?B?N01ZWmhYNkdNLzBlbGQ1azlTaDVNQWFmRWR3VXhtRkdZU2Q3bldGN0hVR1J2?=
+ =?utf-8?B?dC9kRW0zdG90VExzaWFYNTFnV0xadzNxeURGMEQ1UTNkVENkTUhGdzdlNWpy?=
+ =?utf-8?B?dFBKMWNJZTNLY2ErdWtCaHAvbkJMTFN2dncxWENBVi96M1d3RXdnMCsvT0VT?=
+ =?utf-8?B?Vk1oSVdWSktSNU8wZXZUSUl2NUx1K2VUNWFUQTYvMDF4TFQxNFN2V3EyM3dR?=
+ =?utf-8?B?aEN5Z21mc0YyN2lZenU3ZUdXUkdwNHhFVEtVb2MraTFqbjZRN1lZRmU2alJJ?=
+ =?utf-8?B?TEhxcW5KQ3R6M2VGNE94cXBveERMUkZWMnBOcHlPNFBIZnZsaHoyQTBuWjls?=
+ =?utf-8?Q?PCQix/ImvrUZKlRPQ88CBxgjU?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d7276a3-5176-4827-9375-08dde09cddfb
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7272.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 10:24:10.1994
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fGJ5Bi02u9tq7XXVwhYpkygnTW08nGUQZu5E4PJykhey4YxR7aV5xFx7vGkFgR5zqZQjSWawL2doc/vvTNqhHw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8128
 
-On Thu, Aug 21, 2025 at 11:53:41AM +0200, Ahmed S. Darwish wrote:
-> Since you don't write to 'id4' anymore, please make the pointer constant.
-> It helps with code comprehension: from a quick glance, one knows that the
-> function does not write to the passed structure.
+On 8/15/25 10:04, Matthew Brost wrote:
+> On Fri, Aug 15, 2025 at 08:51:21AM +1000, Balbir Singh wrote:
+>> On 8/13/25 10:07, Mika Penttilä wrote:
+>>>
+>>> On 8/13/25 02:36, Balbir Singh wrote:
+>>>
+>>>> On 8/12/25 15:35, Mika Penttilä wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On 8/12/25 05:40, Balbir Singh wrote:
+...
+
+>> I've not run into this with my testing, let me try with more mTHP sizes enabled. I'll wait on Matthew
+>> to post his test case or any results, issues seen
+>>
 > 
-> Other than that, and possibly merging the two patches (if you want to):
+> I’ve hit this. In the code I shared privately, I split THPs in the
+> page-collection path. You omitted that in v2 and v3; I believe you’ll
+> need those changes. The code I'm referring to had the below comment.
 > 
-> Acked-by: Ahmed S. Darwish <darwi@linutronix.de>
+>  416         /*
+>  417          * XXX: No clean way to support higher-order folios that don't match PMD
+>  418          * boundaries for now — split them instead. Once mTHP support lands, add
+>  419          * proper support for this case.
+>  420          *
+>  421          * The test, which exposed this as problematic, remapped (memremap) a
+>  422          * large folio to an unaligned address, resulting in the folio being
+>  423          * found in the middle of the PTEs. The requested number of pages was
+>  424          * less than the folio size. Likely to be handled gracefully by upper
+>  425          * layers eventually, but not yet.
+>  426          */
 > 
-> Thanks!
+> I triggered it by doing some odd mremap operations, which caused the CPU
+> page-fault handler to spin indefinitely iirc. In that case, a large device
+> folio had been moved into the middle of a PMD.
+> 
+> Upstream could see the same problem if the device fault handler enforces
+> a must-migrate-to-device policy and mremap moves a large CPU folio into
+> the middle of a PMD.
+> 
+> I’m in the middle of other work; when I circle back, I’ll try to create
+> a selftest to reproduce this. My current test is a fairly convoluted IGT
+> with a bunch of threads doing remap nonsense, but I’ll try to distill it
+> into a concise selftest.
+> 
 
-Makes sense, final result still looks readable:
+I ran into this while doing some testing as well, I fixed it in a manner similar
+to split_folio() for partial unmaps. I will consolidate the folio splits into
+a single helper and post it with v4.
 
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-Date: Thu, 21 Aug 2025 05:19:09 +0000
-Subject: [PATCH] x86/cpu/cacheinfo: Simplify cacheinfo_amd_init_llc_id() using
- _cpuid4_info
 
-struct _cpuid4_info has the same layout as the CPUID leaf 0x8000001d.
-Use the encoded definition and amd_fill_cpuid4_info(), get_cache_id()
-helpers instead of open coding masks and shifts to calculate the llc_id.
-
-cacheinfo_amd_init_llc_id() is only called on AMD systems that support
-X86_FEATURE_TOPOEXT and amd_fill_cpuid4_info() uses the information from
-CPUID leaf 0x8000001d on all these systems which is consistent with the
-current open coded implementation.
-
-While at it, avoid reading  cpu_data() every time get_cache_id() is
-called and instead pass the APIC ID necessary to return the
-_cpuid4_info.id from get_cache_id().
-
-No functional changes intended.
-
-  [ bp: do what Ahmed suggests: merge into one patch, make id4 ptr
-    const. ]
-
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Acked-by: Ahmed S. Darwish <darwi@linutronix.de>
-Link: https://lore.kernel.org/20250821051910.7351-2-kprateek.nayak@amd.com
----
- arch/x86/kernel/cpu/cacheinfo.c | 48 +++++++++++++++------------------
- 1 file changed, 21 insertions(+), 27 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index adfa7e8bb865..51a95b07831f 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -289,6 +289,22 @@ static int find_num_cache_leaves(struct cpuinfo_x86 *c)
- 	return i;
- }
- 
-+/*
-+ * The max shared threads number comes from CPUID(0x4) EAX[25-14] with input
-+ * ECX as cache index. Then right shift apicid by the number's order to get
-+ * cache id for this cache node.
-+ */
-+static unsigned int get_cache_id(u32 apicid, const struct _cpuid4_info *id4)
-+{
-+	unsigned long num_threads_sharing;
-+	int index_msb;
-+
-+	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
-+	index_msb = get_count_order(num_threads_sharing);
-+
-+	return apicid >> index_msb;
-+}
-+
- /*
-  * AMD/Hygon CPUs may have multiple LLCs if L3 caches exist.
-  */
-@@ -312,18 +328,11 @@ void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, u16 die_id)
- 		 * Newer families: LLC ID is calculated from the number
- 		 * of threads sharing the L3 cache.
- 		 */
--		u32 eax, ebx, ecx, edx, num_sharing_cache = 0;
- 		u32 llc_index = find_num_cache_leaves(c) - 1;
-+		struct _cpuid4_info id4 = {};
- 
--		cpuid_count(0x8000001d, llc_index, &eax, &ebx, &ecx, &edx);
--		if (eax)
--			num_sharing_cache = ((eax >> 14) & 0xfff) + 1;
--
--		if (num_sharing_cache) {
--			int index_msb = get_count_order(num_sharing_cache);
--
--			c->topo.llc_id = c->topo.apicid >> index_msb;
--		}
-+		if (!amd_fill_cpuid4_info(llc_index, &id4))
-+			c->topo.llc_id = get_cache_id(c->topo.apicid, &id4);
- 	}
- }
- 
-@@ -598,27 +607,12 @@ int init_cache_level(unsigned int cpu)
- 	return 0;
- }
- 
--/*
-- * The max shared threads number comes from CPUID(0x4) EAX[25-14] with input
-- * ECX as cache index. Then right shift apicid by the number's order to get
-- * cache id for this cache node.
-- */
--static void get_cache_id(int cpu, struct _cpuid4_info *id4)
--{
--	struct cpuinfo_x86 *c = &cpu_data(cpu);
--	unsigned long num_threads_sharing;
--	int index_msb;
--
--	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
--	index_msb = get_count_order(num_threads_sharing);
--	id4->id = c->topo.apicid >> index_msb;
--}
--
- int populate_cache_leaves(unsigned int cpu)
- {
- 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
- 	struct cacheinfo *ci = this_cpu_ci->info_list;
- 	u8 cpu_vendor = boot_cpu_data.x86_vendor;
-+	u32 apicid = cpu_data(cpu).topo.apicid;
- 	struct amd_northbridge *nb = NULL;
- 	struct _cpuid4_info id4 = {};
- 	int idx, ret;
-@@ -628,7 +622,7 @@ int populate_cache_leaves(unsigned int cpu)
- 		if (ret)
- 			return ret;
- 
--		get_cache_id(cpu, &id4);
-+		id4.id = get_cache_id(apicid, &id4);
- 
- 		if (cpu_vendor == X86_VENDOR_AMD || cpu_vendor == X86_VENDOR_HYGON)
- 			nb = amd_init_l3_cache(idx);
--- 
-2.51.0
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Balbir Singh
 
