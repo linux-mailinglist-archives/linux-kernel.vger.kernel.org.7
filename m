@@ -1,257 +1,239 @@
-Return-Path: <linux-kernel+bounces-779058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BD8B2EE8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:47:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02002B2EE8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89AE25C5B87
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:47:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68621580B50
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC0C27A12C;
-	Thu, 21 Aug 2025 06:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1642E7F3C;
+	Thu, 21 Aug 2025 06:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K1uks7Iz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWVE8Im2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B382472BD
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5834457C9F;
+	Thu, 21 Aug 2025 06:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755758816; cv=none; b=jqxoqYjHHKHtk7zPTSIDzJ9QGPyY++0pwfi14/jQqpGamex2eqqo6WcR24x0HdGWtQYLf4bq03dIpoylhAslPM+ZtZJ1IQrG2SS/fPN4Q5slvN/TJuNpbUqBofziH5gMyfvZwu/ltD3oVs5TEZLV8FG8ZGBPy7J5YjpwXghCvWQ=
+	t=1755758780; cv=none; b=P2iFu1yzayqrxbIFj4sT8giwJ4qQhDKMgpjnUM3toAdEeJ3R1Z17Fg0RSPOHTo0ffNkH0Bz8QQjOhDxg55yapeiqf01zbGFt1O993qSSpvFXfLH4iRnrtYWhDJpMsYwZN5rvda4yIBHdmATiuBFhFp5D/0xW2sRJa9CqPMSE4CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755758816; c=relaxed/simple;
-	bh=d7RhC2fsTWwVhobWw3PonU9nT5IyDG5yahvZlbUImeI=;
+	s=arc-20240116; t=1755758780; c=relaxed/simple;
+	bh=i+n/4B/MiYix4PhRatm6mvUq8Z++Ah+iaPndzC5npow=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFbsmvt9gOGF3ZCgsbW9PhIcL+vdx68gohNMoFVNaTTu77MRWdDQHbBMk9jArLXh4gVsFyAjJZputnrigviZc/0HUpWjJYo5pS5y0vQMOlV3AxgPTQ/oikdV9WaaXsfmyp5V41eM3BmrT3RPibi45oTxcihfRgsVPWlEHWrNC7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K1uks7Iz; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755758814; x=1787294814;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=d7RhC2fsTWwVhobWw3PonU9nT5IyDG5yahvZlbUImeI=;
-  b=K1uks7IzAyOtO6slu3nEgN7pe6Q5/sHGYBTBAfTFCzCHN+JmuQmvbMPA
-   /MWL3ykHZN49n1s6Jj94p5nAhekjialcmcPNA02BqAp47ANbzcu6PeNyw
-   4RgFx1/qB3K4u1DwgbGZErqZbI+rlGcJuTxONRX7KrpcCsWzoCA//76/V
-   KOargSr39AGnzGzjqAjCnyhI++idASLrPzxiImGxUnH6odEzZN1W0m+hN
-   FrG+bUbC8LOyHFZjTAD4Jrp8moFI8pxbjqyZhpVCab63oKfzzQ6u8ijOn
-   G/M2uUNYjBhJnI+3BLeqy3P3XUHwBUX93Xh5uWiEA4JAKViu0x6grYanI
-   w==;
-X-CSE-ConnectionGUID: Q0W5aPLZSr6nk6RMPOox7w==
-X-CSE-MsgGUID: eCnN5G8dTNuf4mK09+MW1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="68741533"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="68741533"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 23:46:53 -0700
-X-CSE-ConnectionGUID: k1/lA4lDR/mP90NzjvyyuA==
-X-CSE-MsgGUID: 1mSzPClsREmtMFAev7O/HQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="205500084"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 20 Aug 2025 23:46:50 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uoz48-000K1D-1V;
-	Thu, 21 Aug 2025 06:46:42 +0000
-Date: Thu, 21 Aug 2025 14:46:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mike Looijmans <mike.looijmans@topic.nl>,
-	dri-devel@lists.freedesktop.org
-Cc: oe-kbuild-all@lists.linux.dev, Mike Looijmans <mike.looijmans@topic.nl>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
-Message-ID: <202508211421.aYwuLvvk-lkp@intel.com>
-References: <20250820144128.17603-3-mike.looijmans@topic.nl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KYnrBq6VQOWENEe/r3xgk3C/S7z6PPYxig4VbIEndkXENOskmGpMIgLBPrQFHjb0vQGKXS3mAHDDRSN6P9g+o4oGbdxFaE4tf7+VcHjtSwTwFmzlWxG2V8Ul7yRppqUE5zcqiRsiOAoF25/jFwOwetiufPZ9MQgiobp0gpBUjUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWVE8Im2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44E33C4CEED;
+	Thu, 21 Aug 2025 06:46:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755758777;
+	bh=i+n/4B/MiYix4PhRatm6mvUq8Z++Ah+iaPndzC5npow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qWVE8Im28bcNByDb4nmbii+MVUYW1gsPh1TPxiVjMbVj3iGap2s3VVKOPiLVFPKnd
+	 4Eu+45zODx7dsxT4FLsoLUe0zDJrLe5xa06Y4lRzGAeJkKV+7Q3eT3SmSmt7R0F38z
+	 ra0pegJVHDO71R+XeH/4/xx8U4aL3pNN3wGmeUw2uRh0CQ0qpXe4RFtix1Xr1djnbJ
+	 MJGnBfQGKhAyz67jrXPCbdi1Q5DUERLN2mJz5bq4a9VH+9MpAN986KJJnQD3D9pdrV
+	 POjph9k+6aZgMrrQ5ZAoMjAy48TcKN2O+H2a4/6p5ClojOr7JIlJnE6/E4UsYZ4wFd
+	 c5wAQG7EG7dcg==
+Date: Thu, 21 Aug 2025 08:46:15 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch, 
+	andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com, broonie@kernel.org, 
+	chunkuang.hu@kernel.org, ck.hu@mediatek.com, conor+dt@kernel.org, davem@davemloft.net, 
+	dmitry.torokhov@gmail.com, edumazet@google.com, flora.fu@mediatek.com, 
+	houlong.wei@mediatek.com, jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com, 
+	krzk+dt@kernel.org, kuba@kernel.org, kyrie.wu@mediatek.corp-partner.google.com, 
+	lgirdwood@gmail.com, linus.walleij@linaro.org, louisalexis.eyraud@collabora.com, 
+	maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com, mchehab@kernel.org, 
+	minghsiu.tsai@mediatek.com, mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com, 
+	robh@kernel.org, sean.wang@kernel.org, simona@ffwll.ch, 
+	support.opensource@diasemi.com, tiffany.lin@mediatek.com, tzimmermann@suse.de, 
+	yunfei.dong@mediatek.com, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v1 01/14] media: dt-bindings: Convert MediaTek mt8173-mdp
+ bindings to YAML
+Message-ID: <20250821-silky-slug-of-novelty-e4bb64@kuoka>
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-2-ariel.dalessandro@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250820144128.17603-3-mike.looijmans@topic.nl>
+In-Reply-To: <20250820171302.324142-2-ariel.dalessandro@collabora.com>
 
-Hi Mike,
+On Wed, Aug 20, 2025 at 02:12:49PM -0300, Ariel D'Alessandro wrote:
+> Convert the existing text-based DT bindings for MediaTek MT8173 Media Data Path
+> to a YAML schema.
 
-kernel test robot noticed the following build warnings:
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-[auto build test WARNING on 53e760d8949895390e256e723e7ee46618310361]
+> 
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> ---
+>  .../bindings/media/mediatek,mt8173-mdp.yaml   | 174 ++++++++++++++++++
+>  .../bindings/media/mediatek-mdp.txt           |  95 ----------
+>  2 files changed, 174 insertions(+), 95 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/media/mediatek-mdp.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
+> new file mode 100644
+> index 0000000000000..f3a08afc305b1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
+> @@ -0,0 +1,174 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/mediatek,mt8173-mdp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek MT8173 Media Data Path
+> +
+> +maintainers:
+> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> +
+> +description:
+> +  Media Data Path is used for scaling and color space conversion.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mike-Looijmans/dt-bindings-drm-bridge-ti-tmds181-Add-TI-TMDS181-and-SN65DP159-bindings/20250820-224316
-base:   53e760d8949895390e256e723e7ee46618310361
-patch link:    https://lore.kernel.org/r/20250820144128.17603-3-mike.looijmans%40topic.nl
-patch subject: [PATCH v3 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250821/202508211421.aYwuLvvk-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250821/202508211421.aYwuLvvk-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508211421.aYwuLvvk-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/gpu/drm/bridge/ti-tmds181.c:292:9: warning: cast to smaller integer type 'enum tmds181_chip' from 'const void *' [-Wvoid-pointer-to-enum-cast]
-     292 |         chip = (enum tmds181_chip)of_device_get_match_data(&client->dev);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning generated.
+Just enum, no items here
 
 
-vim +292 drivers/gpu/drm/bridge/ti-tmds181.c
+> +          - enum:
+> +              - mediatek,mt8173-mdp-rdma
+> +              - mediatek,mt8173-mdp-rsz
+> +              - mediatek,mt8173-mdp-wdma
+> +              - mediatek,mt8173-mdp-wrot
+> +      - items:
+> +          - enum:
+> +              - mediatek,mt8173-mdp-rdma
+> +              - mediatek,mt8173-mdp-rsz
+> +              - mediatek,mt8173-mdp-wdma
+> +              - mediatek,mt8173-mdp-wrot
+> +          - const: mediatek,mt8173-mdp
 
-   252	
-   253	static int tmds181_probe(struct i2c_client *client)
-   254	{
-   255		struct tmds181_data *data;
-   256		struct gpio_desc *oe_gpio;
-   257		enum tmds181_chip chip;
-   258		int ret;
-   259		u32 param;
-   260		u8 val;
-   261	
-   262		/* Check if the adapter supports the needed features */
-   263		if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-   264			return -EIO;
-   265	
-   266		data = devm_drm_bridge_alloc(&client->dev, struct tmds181_data, bridge,
-   267					     &tmds181_bridge_funcs);
-   268		if (IS_ERR(data))
-   269			return PTR_ERR(data);
-   270	
-   271		data->client = client;
-   272		i2c_set_clientdata(client, data);
-   273		data->regmap = devm_regmap_init_i2c(client, &tmds181_regmap_config);
-   274		if (IS_ERR(data->regmap))
-   275			return PTR_ERR(data->regmap);
-   276	
-   277		/* The "OE" pin acts as a reset */
-   278		oe_gpio = devm_gpiod_get_optional(&client->dev, "oe", GPIOD_OUT_LOW);
-   279		if (IS_ERR(oe_gpio)) {
-   280			ret = PTR_ERR(oe_gpio);
-   281			if (ret != -EPROBE_DEFER)
-   282				dev_err(&client->dev, "failed to acquire 'oe' gpio\n");
-   283			return ret;
-   284		}
-   285		if (oe_gpio) {
-   286			/* Need at least 100us reset pulse */
-   287			usleep_range(100, 200);
-   288			gpiod_set_value_cansleep(oe_gpio, 1);
-   289		}
-   290	
-   291		/* Reading the ID also provides enough time for the reset */
- > 292		chip = (enum tmds181_chip)of_device_get_match_data(&client->dev);
-   293		ret = tmds181_check_id(data, &chip);
-   294		if (ret)
-   295			return ret;
-   296	
-   297		/*
-   298		 * We take care of power control, so disable the chips PM functions, and
-   299		 * allow the DDC to run at 400kHz
-   300		 */
-   301		regmap_update_bits(data->regmap, TMDS181_REG_CTRL9,
-   302				TMDS181_CTRL9_SIG_EN | TMDS181_CTRL9_PD_EN |
-   303				TMDS181_CTRL9_HPD_AUTO_PWRDWN_DISABLE |
-   304				TMDS181_CTRL9_I2C_DR_CTL,
-   305				TMDS181_CTRL9_PD_EN |
-   306				TMDS181_CTRL9_HPD_AUTO_PWRDWN_DISABLE |
-   307				TMDS181_CTRL9_I2C_DR_CTL);
-   308	
-   309		/* Apply configuration changes */
-   310		if (of_property_read_bool(client->dev.of_node, "ti,source-mode"))
-   311			regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
-   312					   TMDS181_CTRLA_MODE_SINK, 0);
-   313		if (of_property_read_bool(client->dev.of_node, "ti,sink-mode"))
-   314			regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
-   315					   TMDS181_CTRLA_MODE_SINK, TMDS181_CTRLA_MODE_SINK);
-   316	
-   317		/*
-   318		 * Using the automatic modes of the chip uses considerable power as it
-   319		 * will keep the PLL running at all times. So instead, define our own
-   320		 * threshold for the pixel rate. This also allows to use a sane default
-   321		 * of 200MHz pixel rate for the redriver-retimer crossover point, as the
-   322		 * modes below 3k don't show any benefit from the retimer.
-   323		 */
-   324		data->retimer_threshold_khz = 200000;
-   325		if (!of_property_read_u32(client->dev.of_node,
-   326					  "ti,retimer-threshold-hz", &param))
-   327			data->retimer_threshold_khz = param / 1000;
-   328	
-   329		/* Default to low-power redriver mode */
-   330		regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
-   331				   TMDS181_CTRLA_DEV_FUNC_MODE, 0x00);
-   332	
-   333		if (of_property_read_bool(client->dev.of_node, "ti,adaptive-equalizer"))
-   334			regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
-   335					   TMDS181_CTRLA_EQ_EN | TMDS181_CTRLA_EQ_ADA_EN,
-   336					   TMDS181_CTRLA_EQ_EN | TMDS181_CTRLA_EQ_ADA_EN);
-   337		if (of_property_read_bool(client->dev.of_node, "ti,disable-equalizer"))
-   338			regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
-   339					   TMDS181_CTRLA_EQ_EN | TMDS181_CTRLA_EQ_ADA_EN,
-   340					   0);
-   341	
-   342		switch (chip) {
-   343		case dp159:
-   344			val = 0;
-   345			if (!of_property_read_u32(client->dev.of_node,
-   346						  "ti,slew-rate", &param)) {
-   347				if (param > 3) {
-   348					dev_err(&client->dev, "invalid slew-rate\n");
-   349					return -EINVAL;
-   350				}
-   351				/* Implement 0 = slow, 3 = fast slew rate */
-   352				val = FIELD_PREP(TMDS181_CTRLB_SLEW_CTL, (3 - param));
-   353			}
-   354			if (of_property_read_bool(client->dev.of_node, "ti,dvi-mode"))
-   355				val |= TMDS181_CTRLB_HDMI_SEL_DVI;
-   356			break;
-   357		default:
-   358			val = TMDS181_CTRLB_DDC_DR_SEL;
-   359			break;
-   360		}
-   361	
-   362		/* Default to low-speed termination */
-   363		val |= FIELD_PREP(TMDS181_CTRLB_TX_TERM_CTL, TMDS181_CTRLB_TX_TERM_150_300_OHMS);
-   364	
-   365		ret = regmap_write(data->regmap, TMDS181_REG_CTRLB, val);
-   366		if (ret < 0) {
-   367			dev_err(&client->dev, "regmap_write(B) failed\n");
-   368			return ret;
-   369		}
-   370	
-   371		/* Find next bridge in chain */
-   372		data->next_bridge = devm_drm_of_get_bridge(&client->dev, client->dev.of_node, 1, 0);
-   373		if (IS_ERR(data->next_bridge))
-   374			return dev_err_probe(&client->dev, PTR_ERR(data->next_bridge),
-   375					     "Failed to find next bridge\n");
-   376	
-   377		/* Register the bridge. */
-   378		data->bridge.of_node = client->dev.of_node;
-   379	
-   380		return devm_drm_bridge_add(&client->dev, &data->bridge);
-   381	}
-   382	
+This makes no sense. How devices can be compatible and can not be
+compatible.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks: true
+
+No, there's no such syntax. Look at other bindings.
+
+
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  iommus:
+> +    description: |
+
+Drop |
+
+> +      This property should point to the respective IOMMU block with master port as argument,
+> +      see Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
+
+Drop entire description, completely redundant. I don't know why my patch
+fixing this was not applied, so you keep repeating same mistakes...
+
+> +    maxItems: 1
+> +
+> +  mediatek,vpu:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Describes point to vpu.
+
+Useless description. We see that from the property name. Explain the
+purpose in the hardware.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - power-domains
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: mediatek,mt8173-mdp-rdma
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Main clock
+> +            - description: Mutex clock
+> +    else:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Main clock
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - mediatek,mt8173-mdp-rdma
+> +              - mediatek,mt8173-mdp-wdma
+> +              - mediatek,mt8173-mdp-wrot
+> +    then:
+> +      required:
+> +        - iommus
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: mediatek,mt8173-mdp
+
+This makes no sense either.
+
+> +    then:
+> +      required:
+> +        - mediatek,vpu
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/mt8173-clk.h>
+> +    #include <dt-bindings/memory/mt8173-larb-port.h>
+> +    #include <dt-bindings/power/mt8173-power.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        mdp_rdma0: rdma@14001000 {
+
+One example is enough. Two could be fine if they differ significantly.
+
+Best regards,
+Krzysztof
+
 
