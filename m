@@ -1,76 +1,69 @@
-Return-Path: <linux-kernel+bounces-779315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D46CB2F285
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:42:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628EAB2F282
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DAD7188664E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80D501751ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D1C2EA755;
-	Thu, 21 Aug 2025 08:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A142F2EACFF;
+	Thu, 21 Aug 2025 08:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="enVuY8+7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="byXyswnO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e/E7YlEO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17156277CB4
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94F6277CB4;
+	Thu, 21 Aug 2025 08:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755765226; cv=none; b=PmRDWmN36aKnHecx7YzuKulKVIHGu2HFzSl1KyUq8V4H3AfR6kFUUK3L2QzHPEnEaQbBUpDJVtFJ6pM9z8ahXPyCojprt0PDtNlsJp04b1KT0tsvoqu+s8CzOOyvRJoKa3kIhwJd5VeBr3Xn9MX2gZGGEUBtjphnpAuII/A9O2E=
+	t=1755765231; cv=none; b=UW1euApM2WmiGRVOcAy9JLWUQN4is7OO2vNNxntzpPPmNc3uTcqCPwOxIqSDIrusSTMMr/CeBbe7mw3J867+1YKp5SYeMBw34kCV4qBr0mwQ3aQJDeYDzevKEx5YpO8cppNmQM+friu6PBWmFBZ19lFv2qEwd65UAhzXo6Gr+KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755765226; c=relaxed/simple;
-	bh=dUiKgRAI3A9prYuCnQ9p9wAtGjplO7hUq0Q2if+VdEA=;
+	s=arc-20240116; t=1755765231; c=relaxed/simple;
+	bh=EDQMUD163/PsSKhQ/C/oFy04iaU6YGYrNe8p6Jih4ts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g1fUaDB2X2aCc6/coYMGX8ycYAit8l5uVZup0QcfXMG40oePEL8gA7X8zvvrVS6XJfx2IEykiIsYjpGP3Wq6FSdnn8RB/xgWFmudzANLce0Bun1/A4vR11S43Poc8qULMiCKCPNdsQBs742C5l7YwWZBuBpS5RDKPMSDO2sGGd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=enVuY8+7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755765221;
+	 Content-Type:Content-Disposition:In-Reply-To; b=fhdifqYRiJATCmpgBTr75+YpO0Mp0WzOzWfdoMkXRT4pQ+3qWL/542qZzg3/b2bsxV865wyugUOALxW4ukMBP+pICbh88y+xU2wxZtOsrMFWk85Npqn3VjSwE44QKS/t64MCkut5CX0/XHRFvE5bmn1RCrfFrifwys4AzjwTaOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=byXyswnO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e/E7YlEO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 21 Aug 2025 10:33:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755765228;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iHkbj41Kh3yJaLj8nTXZWWFLEJs9EarVkmAtxTUg4F8=;
-	b=enVuY8+7GWHqah6VuIrStl6NIETfJNgJg6lk1WLO8mj1BMAS/crPRoOcrd69+QSXHbmbd3
-	C3sS1cREc7LI9jS3tf799zrrbMt8as4B5muwmD3a2Lr3RrkYQzG26cnUyNwZAC3CwJpR/F
-	JkgEEqGrWn1mGkTa/iIiGSgrlPttd7s=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-156-W112auD0NF6QiV5OPsKlWA-1; Thu,
- 21 Aug 2025 04:33:37 -0400
-X-MC-Unique: W112auD0NF6QiV5OPsKlWA-1
-X-Mimecast-MFC-AGG-ID: W112auD0NF6QiV5OPsKlWA_1755765215
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A25D019560B2;
-	Thu, 21 Aug 2025 08:33:34 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.99])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9E6BE180029D;
-	Thu, 21 Aug 2025 08:33:32 +0000 (UTC)
-Date: Thu, 21 Aug 2025 16:33:26 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Brian Mak <makb@juniper.net>
-Cc: Dave Young <dyoung@redhat.com>, Alexander Graf <graf@amazon.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>, x86@kernel.org,
-	kexec@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] kexec: Add KEXEC_FILE_NO_CMA as a legal flag
-Message-ID: <aKbZ1h5mjtfoFMh8@MiWiFi-R3L-srv>
-References: <20250805211527.122367-1-makb@juniper.net>
- <20250805211527.122367-2-makb@juniper.net>
- <20250820214756.5c7b551e4723d9f0b5dd55e3@linux-foundation.org>
+	bh=qVLOMP3peEviAlxpJeN013Ps2j0XdPNBI8r6+cBD39o=;
+	b=byXyswnOxYAdv7GTZUMOioyGNc6JnI3KQ4+EpleaV/iDi+tCTp2UpU/p1nkSEBsZM9F3yo
+	cgyujMsFTTO+Mb/LJKQeXp4l2lUNoSdhO9lQbS7M6bq3m8Nun/I5pnL8TR9Yl76lQ2xsAV
+	NC0ZwU4dkQJvPgfrxzzX+7qA13jQwO0fVSaTF2KcQFtGHLph6GIflgFz7JQ6tsLF5ttvf5
+	wnbg2i1I13as7HQ9rjC+8uRpWBkmB2xxJ4vhoIyACFhZHS/cFINLmugFHZif9RpeYJdTaB
+	Z9dxd59HEOPopXlsKoBnQtxDDNkIh8ARlh5o0pIUKRmXk245CDqH3ooscc3ORw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755765228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qVLOMP3peEviAlxpJeN013Ps2j0XdPNBI8r6+cBD39o=;
+	b=e/E7YlEOKT8YzUH5k6gYSJI2HyIsy5orUSu/hPEiC1azHdyuZa+cFMaR9ymn0MyQKXQUUw
+	Vnt70+SLJANJsICg==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [RFC PATCH 07/17] verification/rvgen: Remove unused variable
+ declaration from containers
+Message-ID: <20250821083346.5MSO6h_Q@linutronix.de>
+References: <20250814150809.140739-1-gmonaco@redhat.com>
+ <20250814150809.140739-8-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,49 +72,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250820214756.5c7b551e4723d9f0b5dd55e3@linux-foundation.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250814150809.140739-8-gmonaco@redhat.com>
 
-On 08/20/25 at 09:47pm, Andrew Morton wrote:
-> On Tue, 5 Aug 2025 14:15:26 -0700 Brian Mak <makb@juniper.net> wrote:
+On Thu, Aug 14, 2025 at 05:07:59PM +0200, Gabriele Monaco wrote:
+> The monitor container source files contained a declaration and a
+> definition for the rv_monitor variable. The former is superfluous and
+> can be removed.
 > 
-> > Commit 07d24902977e ("kexec: enable CMA based contiguous allocation")
-> > introduces logic to use CMA-based allocation in kexec by default. As
-> > part of the changes, it introduces a kexec_file_load flag to disable the
-> > use of CMA allocations from userspace. However, this flag is broken
-> > since it is missing from the list of legal flags for kexec_file_load.
-> > kexec_file_load returns EINVAL when attempting to use the flag.
-> > 
-> > Fix this by adding the KEXEC_FILE_NO_CMA flag to the list of legal flags
-> > for kexec_file_load.
-> > 
-> > Fixes: 07d24902977e ("kexec: enable CMA based contiguous allocation")
+> Remove the variable declaration from the template as well as the
+> existing monitor containers.
 > 
-> A description of the userspace-visible runtime effects of this bug
-> would be very helpful, please.  A lot more than "is broken"!
-> 
-> Also, could we please have some reviewer input on this change?
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 
-I didn't receive this patchset, and kexec mailing list is not in CC.
-I don't know what happened.
-
-> 
-> 
-> > --- a/include/linux/kexec.h
-> > +++ b/include/linux/kexec.h
-> > @@ -460,7 +460,8 @@ bool kexec_load_permitted(int kexec_image_type);
-> >  
-> >  /* List of defined/legal kexec file flags */
-> >  #define KEXEC_FILE_FLAGS	(KEXEC_FILE_UNLOAD | KEXEC_FILE_ON_CRASH | \
-> > -				 KEXEC_FILE_NO_INITRAMFS | KEXEC_FILE_DEBUG)
-> > +				 KEXEC_FILE_NO_INITRAMFS | KEXEC_FILE_DEBUG | \
-> > +				 KEXEC_FILE_NO_CMA)
-> >  
-> >  /* flag to track if kexec reboot is in progress */
-> >  extern bool kexec_in_progress;
-> > -- 
-> > 2.25.1
-> > 
-> 
-
+Reviewed-by: Nam Cao <namcao@linutronix.de>
 
