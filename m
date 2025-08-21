@@ -1,116 +1,119 @@
-Return-Path: <linux-kernel+bounces-780107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A834B2FDCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:08:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC97B2FD8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB5FA62407E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:58:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A8807AA89A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CF22EDD55;
-	Thu, 21 Aug 2025 14:57:59 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905712EDD5E;
+	Thu, 21 Aug 2025 14:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JV1cHWwF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A324230981;
-	Thu, 21 Aug 2025 14:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3298C281378;
+	Thu, 21 Aug 2025 14:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755788278; cv=none; b=Du0oO+nKk/Tnjxa1qPYfbHn7oKuYLExzkrB2vSCSTl0WwOGs6QwqwjmQ2U3fZFw+G3Hm0wfSQn4PFbCveKIOuSF06Bp1dpcVUSZmtVTBt+qs7WhSAJwmRvHeTyTPcCv3WacQIZ4X4ei+PoZh6iZhE77mCi4SQmX5/l/6RC7Evcg=
+	t=1755788298; cv=none; b=nYdUpwK2e5TcGCA+iVpSSbtsRxOGWpMsRYj1CQw5ULrwS6bY5vvslsWdnVouAHS44rKw+Q7XsfnSzSXyKtUZRs5K2X4fyxlCrBEkTDYI1SzD+GqlEvVskK34uQc5MZwOLX8ih0ugqrMBR6oVubXWOIL5f+Ja9Lv1oggnKc3KWOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755788278; c=relaxed/simple;
-	bh=btb8OpSIDzaYwIh5DloBXgKGwd5YBFL6xZNrbtcwjJ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JaedhIERE59KTczwAHwy0Fk8ZUMEwovqIkVzp0QRTpeiOwg8/VCLC6rxY7PKzTN0zL8tgscC7qizG0ULdFUyEKgWyC72p/Qoo0Qy/jfE7uSsgUpyf1vhtdLc/3egBkKKE5hluTXdJ0UzQ2zci9Z7jka4CrFQfTFk0eeXaZvwGSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c75z52z5KzKHN9N;
-	Thu, 21 Aug 2025 22:57:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DD4F31A0E60;
-	Thu, 21 Aug 2025 22:57:52 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgDHjxDuM6do7NLKEQ--.32491S3;
-	Thu, 21 Aug 2025 22:57:51 +0800 (CST)
-Message-ID: <1366b2ec-cce5-632a-09a6-fba528d11f03@huaweicloud.com>
-Date: Thu, 21 Aug 2025 22:57:50 +0800
+	s=arc-20240116; t=1755788298; c=relaxed/simple;
+	bh=Z/gzAbasFa+AZqdw/nW3cMEkH5QJ+aFAU3QURDOwygs=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=sXv9Rp4n3JLCV0XJG55WP2Z5UDsGVnL/23oEkUrtfg/h4tZDEmp1aX8AK9IdtWPD3Fsx1uDtiQ3h3CV2Aj6+apLqMMVq05/x1aX/hrJvxfunacvC6+Cu3Qrt4Ak/sysgTTOi9kfbZIfMALPPGh1Wk89ycYX7U7uP4f78ig5ap0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JV1cHWwF; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755788296; x=1787324296;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Z/gzAbasFa+AZqdw/nW3cMEkH5QJ+aFAU3QURDOwygs=;
+  b=JV1cHWwFKbXVLY4XNBn4lyn3h8haTpiwQbDmWzW0P0S8CHIw4b4C4esv
+   ZSZuJBkY8+JFLdax2lU7ijyGZXUbx4D8OdbzXTQzqnG3GgmRzSr9Cv6lz
+   h9y2QmjNmeIZbjI2U03zwuV8BT19YWWDp6LbMjoKWAbng5XS43rCgxYyD
+   mAAjc0ygj/xIrAO2PgH9h1+9wNZQ+VCAhgnz5rDiE26kV9SByGqqw6VfE
+   lYIhRW1RU8DgSRwMv7m/TjCTU2qSvvK8wJBlejdRhkatiZsxHHt0uHxdR
+   fysnu5Y+yZtQL8Z/UsKMP7abbf7i4HsXD+WD1S1s7eT3uelR7GDf+gy94
+   g==;
+X-CSE-ConnectionGUID: u5lbW/NOSome24tmXVgt5A==
+X-CSE-MsgGUID: hztIKp87ScCxykqWzYgocw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58146960"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="58146960"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 07:58:15 -0700
+X-CSE-ConnectionGUID: geccJIc2TUaO7Dv/lefTTw==
+X-CSE-MsgGUID: EbEvc5V8Ta258Vs0SPQ3ug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="199307451"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.192])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 07:58:12 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 21 Aug 2025 17:58:09 +0300 (EEST)
+To: Bjorn Helgaas <bhelgaas@google.com>
+cc: linux-pci@vger.kernel.org, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Tudor Ambarus <tudor.ambarus@linaro.org>, Rio <rio@r26.me>, 
+    D Scott Phillips <scott@os.amperecomputing.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v2 0/3] PCI: Resource fitting algorith fixes
+In-Reply-To: <9d141c1d-9cc0-30b4-e345-b3d458ccb1fc@linux.intel.com>
+Message-ID: <971961bd-cc19-1933-5fec-39ab201b88c1@linux.intel.com>
+References: <20250630142641.3516-1-ilpo.jarvinen@linux.intel.com> <9d141c1d-9cc0-30b4-e345-b3d458ccb1fc@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v3 2/2] blk-mq: fix blk_mq_tags double free while
- nr_requests grown
-To: Yu Kuai <yukuai1@huaweicloud.com>, yukuai3@huawei.com, axboe@kernel.dk,
- bvanassche@acm.org, ming.lei@redhat.com, nilay@linux.ibm.com, hare@suse.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250821060612.1729939-1-yukuai1@huaweicloud.com>
- <20250821060612.1729939-3-yukuai1@huaweicloud.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <20250821060612.1729939-3-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHjxDuM6do7NLKEQ--.32491S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7GrWkKrW5Cw1xuw13WFWDXFb_yoWDKrXEv3
-	yFkr97J3s5JF1Ikw1FqrnIvFWkGw45tFZ5Ga4DXrWfGFnxJF93GFn5KFZ5AF47GwsavayD
-	X3Z3Zan0v3yjvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbq8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
-	M4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI
-	0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
-	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUF0eH
-	DUUUU
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: multipart/mixed; boundary="8323328-2013826386-1755788289=:933"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-2013826386-1755788289=:933
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-在 2025/8/21 14:06, Yu Kuai 写道:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> In the case user trigger tags grow by queue sysfs attribute nr_requests,
-> hctx->sched_tags will be freed directly and replaced with a new
-> allocated tags, see blk_mq_tag_update_depth().
-> 
-> The problem is that hctx->sched_tags is from elevator->et->tags, while
-> et->tags is still the freed tags, hence later elevator exit will try to
-> free the tags again, causing kernel panic.
-> 
-> Fix this problem by replacing et->tags with new allocated tags as well.
-> 
-> Noted there are still some long term problems that will require some
-> refactor to be fixed thoroughly[1].
-> 
-> [1] https://lore.kernel.org/all/20250815080216.410665-1-yukuai1@huaweicloud.com/
-> Fixes: f5a6604f7a44 ("block: fix lockdep warning caused by lock dependency in elv_iosched_store")
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> Reviewed-by: Ming Lei <ming.lei@redhat.com>
-> Reviewed-by: Nilay Shroff<nilay@linux.ibm.com>
-> ---
+On Wed, 23 Jul 2025, Ilpo J=C3=A4rvinen wrote:
+> On Mon, 30 Jun 2025, Ilpo J=C3=A4rvinen wrote:
+>=20
+> > This series addresses three issues in the PCI resource fitting and
+> > assignment algorithm.
+> >=20
+> > v2:
+> > - Add fix to resize problem (new patch)
+> >=20
+> > Ilpo J=C3=A4rvinen (3):
+> >   PCI: Relaxed tail alignment should never increase min_align
+> >   PCI: Fix pdev_resources_assignable() disparity
+> >   PCI: Fix failure detection during resource resize
+> >=20
+> >  drivers/pci/setup-bus.c | 38 ++++++++++++++++++++++++++------------
+> >  1 file changed, 26 insertions(+), 12 deletions(-)
+>=20
+> Hi Bjorn,
+>=20
+> You might have perhaps forgotten this series that addresses issues people=
+=20
+> have reported over the last few months.
 
-LGTM
+Hi again,
 
-Reviewed-by: Li Nan <linan122@huawei.com>
+Another ping.
 
--- 
-Thanks,
-Nan
+--=20
+ i.
 
+--8323328-2013826386-1755788289=:933--
 
