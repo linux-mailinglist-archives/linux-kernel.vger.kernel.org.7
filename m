@@ -1,132 +1,104 @@
-Return-Path: <linux-kernel+bounces-779018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9530B2EDF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:13:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC2BB2EDE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81E4B5C3425
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:13:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56F8CA06DE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185E82D47EE;
-	Thu, 21 Aug 2025 06:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F920285C8E;
+	Thu, 21 Aug 2025 06:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="zONGa+v4"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YS8g+a4s"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077FC4A32;
-	Thu, 21 Aug 2025 06:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1974B20330;
+	Thu, 21 Aug 2025 06:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755756793; cv=none; b=JTiveXfymz2C5VwI+xwqh5JKoL/1a6zBMKiwZotwyTQe6Jmm+pQ89J1OzZO1moCQjg1/3vDcs0BkibA+DLRm5u62sG2CXJ7s/b69qgWwXHLfozv6RE5UxUtaCrsBhEoo2+TwO6u1ALzNHvkI7/KW/geA6IcT36EUOZGhgEV20T0=
+	t=1755756325; cv=none; b=GYE73v2aoT6QaW7pfyeacD2ejjW2VLlLg3/AKALqYKyPGEDjjMLvZSC0/yKd3e2Va2ShWXyfzzQqgQ4+DLUMMygZWmNWJZPwRvhtE4RNO7qWi+61y/MD/MAe0e9rII+07AqcJ8vamuSUjvCCkkF26ODxyItaWXBt4HzszY6pPvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755756793; c=relaxed/simple;
-	bh=5Rd1KLtf8zQOsf+WxURU9WHlomXnffj+uLZyprYQBiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WxMm8DGrdpe1HD8peQxs2clRoCOS1my2VL7jJnnVPOBMhZLLyHIOpNjip/89DHeG+IRMDqCMpH+RRSslwBQFoBWVr36z3sHjBEo4+XR/bI0y33UOsgHUL/y7XbKRX32fKX9WRVdlaidN2MJW1L7NiimDHFDD0IRFZs2ekfFKoFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=zONGa+v4; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id CA76C1F928;
-	Thu, 21 Aug 2025 08:03:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1755756208;
-	bh=FrScFWxwUweYwsRmH5bskazblTnrXR09gx4xHuFB8Kg=; h=From:To:Subject;
-	b=zONGa+v4bwGNv4NkMlLXJBcl+T66Aubn6+uZeZqZRxlK6EgqdY9fErRukWmC0wcPt
-	 pn+NE89+6dK+apL5q0hIvkumyummyYKvGo+21g+mKTaGmaVZcabaqZCg43Q/6fnbcd
-	 QW/kncFmMvnikr+nvoWPZYcleJNZ36/AhUhEcGq8/2p+Y7wtNc9ujO35A0Uy3ZaTcm
-	 pE3kSJCiUk+54u+aHTd813thKqqoG3Mud2to++HEWJM4axNNQkqSejgqDNRlXa3fY7
-	 KR7xNojpleTwPv/DH5HtYZ8BIuAl1PSQ3o4AKlzatsaRjzSLfzyqjmmrwUPADRDzp6
-	 xFoJWqyMOhsMw==
-Date: Thu, 21 Aug 2025 08:03:24 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Beleswar Padhi <b-padhi@ti.com>
-Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, afd@ti.com,
-	u-kumar1@ti.com, hnagalla@ti.com, jm@ti.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 20/33] arm64: dts: ti: k3-am62: Enable Mailbox nodes at
- the board level
-Message-ID: <20250821060324.GA7503@francesco-nb>
-References: <20250814223839.3256046-1-b-padhi@ti.com>
- <20250814223839.3256046-21-b-padhi@ti.com>
+	s=arc-20240116; t=1755756325; c=relaxed/simple;
+	bh=L2XaWQf8Bv1sBxfwNLa4pVuwLQ02ytj967/mxyjWWl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rcxMlt1bX/OJmiGBbPL/XqdcqERqnaXsc9ru9HYgpEuORX2a1YOzRYnGmw5v9uwh5nNjFdb68RrksOj0rHCCGFskNs4GOWEl8OlArP0A/hpNPC8Hf09BeyLCfSrYZ9FcRseHDr5M11LVm0+jGMKvdQDU5nu+gw6eVqG9D4srsfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YS8g+a4s; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755756317;
+	bh=vqgDg4bCYW2gsBIgVXv2Kq5IO21o/xIVTLCrKpkTwtc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YS8g+a4srL64Y4fomXQ7zjm/1GPXrtCurkm2n+reHz9OgTpybGr/cfMXjenVgIAOi
+	 dku4H3NFRk0G3XA+55SG277pPItvsGHAGoOO0b34XPfxklypFGzfVKIb8Zjrj//p2/
+	 9H/Yaa4No5BB32tfNZv2p0E8fD9qdGJUc++1+v3f8FhSLYxLt9GUXZeofXFF5Nbwu4
+	 m+ey9zvoK5+EXShCxwUmZ3pZwATJ9jvXnJ+5XqDYNNWC72TRODqLJLP/DaCF5abMGx
+	 FlwvQWcjTSgY8xSSmQ/rSFKQW0QIvB5uJvKaM8XZ+GVNBWwjJxkF/0cKfc+ipStl8u
+	 lCV7ib+8rMMUg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6t8Y0C8gz4wbr;
+	Thu, 21 Aug 2025 16:05:16 +1000 (AEST)
+Date: Thu, 21 Aug 2025 16:05:15 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Harry Yoo <harry.yoo@oracle.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the mm-hotfixes tree
+Message-ID: <20250821160515.611d191e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814223839.3256046-21-b-padhi@ti.com>
+Content-Type: multipart/signed; boundary="Sig_/3=oZanJ88xOlG5Opuq5I2+U";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Aug 15, 2025 at 04:08:26AM +0530, Beleswar Padhi wrote:
-> Mailbox nodes defined in the top-level AM62x SoC dtsi files are
-> incomplete and may not be functional unless they are extended with a
-> chosen interrupt and connection to a remote processor.
-> 
-> As the remote processors depend on memory nodes which are only known at
-> the board integration level, these nodes should only be enabled when
-> provided with the above information.
-> 
-> Disable the Mailbox nodes in the dtsi files and only enable the ones
-> that are actually used on a given board.
-> 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
->  arch/arm64/boot/dts/ti/k3-am62-main.dtsi         | 1 +
->  arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dts | 1 +
->  arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi       | 1 +
->  3 files changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
-> index 029380dc1a35..40fb3c9e674c 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
-> @@ -808,6 +808,7 @@ mailbox0_cluster0: mailbox@29000000 {
->  		#mbox-cells = <1>;
->  		ti,mbox-num-users = <4>;
->  		ti,mbox-num-fifos = <16>;
-> +		status = "disabled";
->  	};
->  
->  	ecap0: pwm@23100000 {
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dts b/arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dts
-> index df2e1b0e74a1..2140e0cdec85 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dts
-> @@ -299,6 +299,7 @@ &epwm2 {
->  };
->  
->  &mailbox0_cluster0 {
-> +	status = "okay";
+--Sig_/3=oZanJ88xOlG5Opuq5I2+U
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-add new line
+Hi all,
 
->  	mbox_m4_0: mbox-m4-0 {
->  		ti,mbox-rx = <0 0 0>;
->  		ti,mbox-tx = <1 0 0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-> index fba6f5c8d099..1c44d17281dd 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-> @@ -1335,6 +1335,7 @@ &main_i2c3 {
->  };
->  
->  &mailbox0_cluster0 {
-> +	status = "okay";
+After merging the mm-hotfixes tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-add new line
+ld: mm/kasan/init.o:(.toc+0x0): undefined reference to `kasan_early_shadow_=
+p4d'
 
->  	mbox_m4_0: mbox-m4-0 {
->  		ti,mbox-rx = <0 0 0>;
->  		ti,mbox-tx = <1 0 0>;
-> -- 
-> 2.34.1
-> 
+Caused by commit
+
+  4b99d7a3e69a ("mm: introduce and use {pgd,p4d}_populate_kernel()")
+
+I have reverted that commit (and the following 07cf1bc1f659) for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3=oZanJ88xOlG5Opuq5I2+U
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmimtxsACgkQAVBC80lX
+0Gy8MQf/TAZzOu2C5XGYFr8elkw88XdexwbCaMZh3PC/mmw3scaC3bUER+cFV6nx
+M11qySWJ/+meGHmRdHkgLErWEp4hiOTCyBZ5SjJmuywXH0+TIBBmVDvG1MvzxTcC
+c+iHCAZGnSe91wk05RKxVQh++irT6/FG8nLciaGFBLy6GfHDKuwOE1qqcYcQ5gKX
+QLfQOin35ZbkCPwzGfVCqKaWBPs77VrJpOAqGhE9YUbizA7iIxGQrsB6VFcsJ1bL
+2WsMwt26JffLuh1HiZqGgUaWPRznkKxSnwAKBzjYMxga/hFdDk00nVRO72glryF5
+tjKglwSzed/4YMefrZu0Yf7nv3lb4A==
+=uFr+
+-----END PGP SIGNATURE-----
+
+--Sig_/3=oZanJ88xOlG5Opuq5I2+U--
 
