@@ -1,155 +1,227 @@
-Return-Path: <linux-kernel+bounces-779591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688AFB2F5F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:11:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CDFB2F626
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB9BEAC2ACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E1C03A820E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1476C30C357;
-	Thu, 21 Aug 2025 11:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD24C30E822;
+	Thu, 21 Aug 2025 11:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aDzRSnd7"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="t0Y5RbJm"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE79130BF74
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB2D304BD8;
+	Thu, 21 Aug 2025 11:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755774528; cv=none; b=gST9NmothSN+Z1mnfdCRf8VVNvI+nnXDWM+ta7uoHqtQ7Qi28YFWcZb6nvpagC+/wBP/yxcQC2FB8MFKJfYRSBYy7y+xobj3+VqlPo6p63+mrQvje8OnJnKSUFvb04/2JFF8QUe9wv26mqptjJ8cGygghD/MwWogLmcJZdq7BAQ=
+	t=1755774749; cv=none; b=TlZNe0Dcn1WktH4EDR4m3GVegZRG9zzMowYLbP3f6bVaO3P3ezpc0sgymIQZjpYs6bVFH7nOUTdBfwEPrrXNjyuHMOoIlXqOpGMtgWyrBl9HXKyG3SBcaehh/NuRuDsCXhW+JR7WqzqeUqaJj5PrJ/ufapJ91jf3TcCbfr8b3OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755774528; c=relaxed/simple;
-	bh=wo8fFKRkmyhr5A9bJwCdfaCDsrAwCqyfhGhNWQU/vBQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=r0EQc9nx6Mk2/8zsQd5C5plAiG+zP/SRvlCd7fW92WgKVMa/93uiXFKsfUofKULFkSJpo4xCSyjTsMIdfj0YrmOb2gG8OF1Mok3pt63/hf8xF/OGJSwrgEglCJZAoT9twur0iMR5iUUN/AokgeRm2OWwfrHbd/+79plhU+lau6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aDzRSnd7; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2445827be70so9351745ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755774526; x=1756379326; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pz2lRLfqaRELH/ch1+xtt9bzWUsIFWaw5ujjaHxpXSw=;
-        b=aDzRSnd7uoiFkFfBlVIj2veQLDMlFA7G7zPibH0Rwsg+7vzGedri9LSdnQMzx60DbT
-         o77rcufHdxH9AvvD8POlpA/fnmiwErBc+1WRlHDsBfQwl/+eOzS/SodxWDaopcBPL+bh
-         yqdrYORkYDLlv0f9euBiCHBcHgXGFObQ6oGdt6N1uMBn3m26I1P5igUf2SZmY2fh/xEw
-         VRvr3gCBGTd2nwWDJvgl6VlhK6oIhPNt/ZAoz5cuLcQqjItczbunNqTqJY8It7bOStj+
-         HtRDZAnygQEdFdlOvbhNA5U5YOoMU59WrLQujvLV1JnBDC/Bqd1ZJFTQU5QDcFC40qco
-         BLfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755774526; x=1756379326;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pz2lRLfqaRELH/ch1+xtt9bzWUsIFWaw5ujjaHxpXSw=;
-        b=JW3XN0fJHLYQIylH8eoGGRxdrZSk70qZD2dHjqyqezblYfNOh4CHnRPamG6wExPNq5
-         fcC7crgobGYUzS44CL36b2vyTy+1ZONjj6kuXxOisEmgRX1wt9f5U6sZRtwaIa1HX/p2
-         cPfoTjWeZQIs7IrDagt9r83VbnkSHpFlwXoDR4/nule0MeyYP7OxbJSykS73Ls6g6jR/
-         rscg9z1mewMlz3ASjt4svbvWi5KlwpF9XbwbAQzh0nAluBK0IeTICG72pTT98rQmSThE
-         aCJd+D7Ov7YRWptxec41KsqBEA/hOYmWwUtbNpaGldmcS82B38JxxQjivx8tB1YfVLwT
-         Xcvg==
-X-Gm-Message-State: AOJu0YyztX9BiTuiUQprdvkGwRMwDq224UU/+K6olEwURrWkjM1ZCE/C
-	ldB258J7n1xdKvsws4uLY9Go8TmoTha/d7YRW6uWxJK775k0nFqTnlR9bBo52pI9g9Mo1+s8e8w
-	lz3qFU3AwEa7JfOTevw/UaC7wajy79Ogi2ymgEbM8IwcwPCBexdz/B54=
-X-Gm-Gg: ASbGnctrWzLrryupcs3ti4ALiJbjxC56O37XaOHSb265ZB+o4WfMP7563f40t9vdO6X
-	d36QnXtTD8pnLZPHnntMx+0y2CV0D4pqL9IhHp1ALe76860sqk1qdSJze1hu2a33TWtmuPEZBoS
-	R65c1KwCS4YM0FmfHi7JQ1x9TPxh9C3CTfy7aqYxR9Ou6mTXuj/E3JALYqYuq7JYPGyN0f0XCDv
-	sogGwK5wIlEPxriLaCpwt9hvD5xcrGgIeJm3w==
-X-Google-Smtp-Source: AGHT+IGqJIXkeZ1cPE92KQPkVZFoOov2gyYnj+M9lqpBVRW5SAgiAAGuqW38eqvgWo6dJioAKo2uIFcmCS3PrSxJ3x0=
-X-Received: by 2002:a17:903:3d0c:b0:246:571:4b24 with SMTP id
- d9443c01a7336-24605714c82mr21886425ad.61.1755774525706; Thu, 21 Aug 2025
- 04:08:45 -0700 (PDT)
+	s=arc-20240116; t=1755774749; c=relaxed/simple;
+	bh=rh2xmRDg16batEKdcuvG/Ijbj9vj0VGi+3thcgNZo/A=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=n582WMYATe1owfFHnFWTHOsHn0Dul7HClQEHiZ4A5TnBYcAHc333B7DeESJbPnsFVFKYJOtuo8Xsgq7176aKiE1e9Ta1iZ0bTQlpVe308Q869sHZqbwzTpmFTkr/+suMJR4cbE3SFxepCyRqh7suzBPvbvuYXlTqqWMS4O+D80k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=t0Y5RbJm; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LAg3FU015986;
+	Thu, 21 Aug 2025 13:12:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=X+qzU/CTwFD1hKZMqSzOxX
+	ahtSY5VOj2gTRB2d6uLcM=; b=t0Y5RbJmiRbMtS506SvgSz4xp/cZCGARjz6IkI
+	IFYoAg/9DXtj/drHkpn8hp22FlxyUyK7RsZaJKveb6Hv2OsADZRNosfQ51LISE5i
+	yt7V0Kv19XOPNCFiIJubu1z8zfsO9oPOY5A8LF3dGNcE7DQ/5vVKYC+Mq9cZuFSA
+	dyNS0nza7MgbEzYzmOqzg0mRqo6d3Y2/PKYEZyLuaUxBpLNhEoKLN50u6WeI6jp5
+	2KmyS4hc/NL1mABdvm/eYDuUF88UB9XWBUPy3GbELwbPlcqH/F6kUcdhsyt5NluT
+	7gdOWEqCAno7LNxCqamLwpyEv/en1jrtOQfKpSJlsnKnVPiA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48nj3v3n7y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 13:12:07 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E0F814004C;
+	Thu, 21 Aug 2025 13:10:48 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7C75B74E7CE;
+	Thu, 21 Aug 2025 13:09:50 +0200 (CEST)
+Received: from localhost (10.252.7.99) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
+ 2025 13:09:50 +0200
+From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Subject: [PATCH v4 00/13] Enable display support for STM32MP25
+Date: Thu, 21 Aug 2025 13:08:50 +0200
+Message-ID: <20250821-drm-misc-next-v4-0-7060500f8fd3@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 21 Aug 2025 16:38:34 +0530
-X-Gm-Features: Ac12FXxrwC8J1BsX_IcVeNAB7p8j33bNwbFGted2nZTmpvEH-5C9tgp38KBgcNs
-Message-ID: <CA+G9fYss3ztUGNvEu07Veck+09Lsied5TGbb-2fSw8H5wxRaJw@mail.gmail.com>
-Subject: next-20250821: tinyconfig: kernel/panic.c error: implicit declaration
- of function 'panic_print_deprecated'; did you mean 'panic_print_set'? [-Werror=implicit-function-declaration]
-To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEL+pmgC/2XMSQ6CMACF4auQri3pPLjyHsYFdJAuANOSBkO4u
+ wUXKi7fS75/AcnF4BI4VwuILocUxqEMdqqA6Zrh7mCwZQOCCEcCS2hjD/uQDBzcPEHWeIaEwYZ
+ xD4p5ROfDvPeut7K7kKYxPvd8xtv7LknCD6WMIYIN14opJ4jx+uLHlOo01WbswdbK5OMVJkdPi
+ seUeKsYE9TKf0+/vT56WjximFMtlWtt++vXdX0BDTzX0iwBAAA=
+X-Change-ID: 20250617-drm-misc-next-4af406c1c45f
+To: Yannick Fertre <yannick.fertre@foss.st.com>,
+        Philippe Cornu
+	<philippe.cornu@foss.st.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>
+CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
 
-The following build warnings / errors are noticed with arc, arm, arm64 defconfig
-with clang-20 and gcc-12 toolchains.
+This series aims to add and enable sufficient LVDS display support for
+STM32MP257F-EV1 board.
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
+LVDS is the default use case to drive a display panel on STM32MP257F-EV,
+even though DSI panels will be supported in the near future.
 
-Build regression: next-20250821 tinyconfig kernel panic.c error
-implicit declaration of function 'panic_print_deprecated'; did you
-mean 'panic_print_set'? [-Werror=implicit-function-declaration]
+The LTDC needs a pixel rate in sync with the bridge currently in use.
+For that both DSI and LVDS bridges need to declare an internal clock and
+become clock provider to the mux. The mux then selects the reference
+clock for the LTDC pixel rate generation.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+For now this mux is handled internally in the LTDC, while waiting for
+the STM32 clock framework to merge a 'clk-mux' based on the SYSCFG.
+This explains the link done in the patch [7/8] between the LVDS,
+providing the reference clock for the LTDC internals.
 
-* arc, build
-  - gcc-9-tinyconfig
+  +----------+              |\
+  |  DSI PHY |------------->| \           +------------+
+  |          |ck_dsi_phy    |  |          |            |
+  +----------+              |  |--------->|    LTDC    |
+  +----------+              |  |pixel_clk |            |
+  | LVDS PHY |------------->|  |          +------------+
+  |          |clk_pix_lvds  |  |
+  +----------+              |  |
+                            |  |
+   ck_ker_ltdc ------------>| /
+                            |/|
+                              └- SYSCFG
 
-* arm, build
-  - clang-20-tinyconfig
-  - clang-nightly-tinyconfig
-  - gcc-13-tinyconfig
-  - gcc-8-tinyconfig
+Clock selection applies as follow:
+- 0b00: Selects ck_dsi_phy
+- 0b01: Selects clk_pix_lvds
+- 0b10: Selects ck_ker_ltdc (for parallel or DSI display).
+- 0b11: Reserved
 
-* arm64, build
-  - clang-20-tinyconfig
-  - clang-nightly-tinyconfig
-  - gcc-13-tinyconfig
-  - gcc-8-tinyconfig
+The reset value of the register controlling the mux is 0b01, meaning
+that the default clock assigned is the clk_pix_lvds.  This causes two
+things:
 
-* parisc, build
-  - gcc-11-tinyconfig
+- In order to get basic display on the LVDS encoder, like intended,
+nothing has to be done on this mux within the LTDC driver (which for now
+explains the unused syscfg phandle on the LTDC node in the device-tree).
 
-* powerpc, build
-  - clang-20-tinyconfig
-  - clang-nightly-tinyconfig
-  - gcc-13-tinyconfig
-  - gcc-8-tinyconfig
+- 'pixel_clk' is dependent from 'clk_pix_lvds' because of the LTDC clock
+domains.  They also need to be sync to get a coherent pixel rate though
+the display clock tree (which explains the LVDS phandle on the LTDC node
+in the device-tree).
 
-## Build log
-kernel/panic.c: In function 'panic_print_set':
-kernel/panic.c:954:9: error: implicit declaration of function
-'panic_print_deprecated'; did you mean 'panic_print_set'?
-[-Werror=implicit-function-declaration]
-  954 |         panic_print_deprecated();
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-      |         panic_print_set
-cc1: some warnings being treated as errors
+Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+---
+Changes in v4:
+- Documentation:
+  - LTDC: Add "st,stm32mp255-ltdc" compatible.  After internal
+    discussion, we came to the solution that the LTDC on STM32MP255 SoC
+    needs its own compatible, since it does have the same amount of
+    clocks than on STM32MP251 SoC.
+- Devicetree:
+  - Add "st,stm32mp255" compatible on corresponding dtsi
+- Drivers:
+  - LTDC: Handle "st,stm32mp255" compatible
+- Remove Rob's r-b from patch [01/13] since it was modified.
+- Link to v3: https://lore.kernel.org/r/20250819-drm-misc-next-v3-0-04153978ebdb@foss.st.com
 
-## Source
-* Kernel version: 6.17.0-rc2
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git describe: next-20250821
-* Git commit: 7fa4d8dc380fbd81a9d702a855c50690c9c6442c
-* Architectures: arc arm arm64
-* Toolchains: clang-20 gcc-12
-* Kconfigs: defconfig
+Changes in v3:
+- Rebased on latest drm-misc-next
+- Documentation:
+  - LTDC: Clamp correctly min/maxItems value
+  - LVDS: Remove second 'items' keyword
+- Add Krzysztof's trailer where relevant
+- Link to v2: https://lore.kernel.org/r/20250812-drm-misc-next-v2-0-132fd84463d7@foss.st.com
 
-## Build
-* Build log: https://qa-reports.linaro.org/api/testruns/29616870/log_file/
-* Build details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250821/build/clang-20-tinyconfig/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/31aRY2vQ0cMol9wA63TKkoCPsxC
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31aRY2vQ0cMol9wA63TKkoCPsxC/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/31aRY2vQ0cMol9wA63TKkoCPsxC/config
+Changes in v2:
+- Documentation:
+  - Add support for new compatible "st,stm32mp255-lvds"
+  - Change LTDC compatible for SoC compliant one
+  - Make clearer LTDC clock-names property
+- Devicetree:
+  - Change compatible according to the documentation
+  - Change clock and clock-names order to match documentation (and avoid
+    warnings)
+- Drivers:
+  - Change LTDC compatible
+- Add Rob's trailer where relevant
+- Link to v1: https://lore.kernel.org/r/20250725-drm-misc-next-v1-0-a59848e62cf9@foss.st.com
 
---
-Linaro LKFT
-https://lkft.linaro.org
+---
+Raphael Gallais-Pou (11):
+      dt-bindings: display: st: add two new compatibles to LTDC device
+      dt-bindings: display: st,stm32-ltdc: add access-controllers property
+      dt-bindings: display: st: add new compatible to LVDS device
+      dt-bindings: display: st,stm32mp25-lvds: add access-controllers property
+      dt-bindings: display: st,stm32mp25-lvds: add power-domains property
+      dt-bindings: arm: stm32: add required #clock-cells property
+      arm64: dts: st: add ltdc support on stm32mp251
+      arm64: dts: st: add ltdc support on stm32mp255
+      arm64: dts: st: add lvds support on stm32mp255
+      arm64: dts: st: add clock-cells to syscfg node on stm32mp251
+      arm64: dts: st: enable display support on stm32mp257f-ev1 board
+
+Yannick Fertre (2):
+      drm/stm: ltdc: support new hardware version for STM32MP25 SoC
+      drm/stm: ltdc: handle lvds pixel clock
+
+ .../bindings/arm/stm32/st,stm32-syscon.yaml        | 31 ++++++---
+ .../devicetree/bindings/display/st,stm32-ltdc.yaml | 53 ++++++++++++++-
+ .../bindings/display/st,stm32mp25-lvds.yaml        | 13 +++-
+ arch/arm64/boot/dts/st/stm32mp251.dtsi             | 19 ++++++
+ arch/arm64/boot/dts/st/stm32mp255.dtsi             | 20 +++++-
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         | 79 ++++++++++++++++++++++
+ drivers/gpu/drm/stm/drv.c                          | 12 +++-
+ drivers/gpu/drm/stm/ltdc.c                         | 58 +++++++++++++++-
+ drivers/gpu/drm/stm/ltdc.h                         |  6 ++
+ 9 files changed, 273 insertions(+), 18 deletions(-)
+---
+base-commit: c8cea4371e5eca30cda8660aabb337747dabc51d
+change-id: 20250617-drm-misc-next-4af406c1c45f
+
+Best regards,
+-- 
+Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+
 
