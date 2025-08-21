@@ -1,269 +1,118 @@
-Return-Path: <linux-kernel+bounces-779785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6367AB2F8EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:53:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B73AB2F8F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78A1D3BE56C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 082031CE4884
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C616322557;
-	Thu, 21 Aug 2025 12:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A658B3101AF;
+	Thu, 21 Aug 2025 12:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XbMVR0h9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="19/f4//x"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATcVbSpD"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7686B30DEA0;
-	Thu, 21 Aug 2025 12:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B59E3112DA;
+	Thu, 21 Aug 2025 12:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780403; cv=none; b=k+FQwza7Abhr7FgG6HmdzXZMcAiOiNT8j4XwdBgdcAUcTRXoatBfxe21UHWLNUlk70ynCcOnQvhq34FVzn9miWVlnueQUBE4GC/7UVR9HPikaSkTvZz+UqimbKFCfdptnI2JQYOOsP3fdk0cYBsazzHFrCsVZwvlUtty8Xffd/I=
+	t=1755780442; cv=none; b=PNJMHqTeeOzf81hjOhDFDYS7eIQiLS6fJWTWIirsyiGeGMcUun7lv9ccB6AQLUGDp9kavEhIlTkR5CHcVwpWru4BqXABRzmcswbnaEVTNNF+R6XUmdg2ifwHhUrnWOK8stt3tl8eNZW8m9tZ3IRcbn2/18KyYi0bKERAKdtXxbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780403; c=relaxed/simple;
-	bh=10M73hlg9fKiplCCOeMO1VdipSXEmlPmTibHaldOVvU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=lMIarp2aaeQp0dqBCr2hlDQECjitGta59zzamUWiaQBMz0PAVtkVj0ZgCbiNFLw6sgebV0baiIUrccmvgpE/bDOJLHUaFHMPwwyKADFcPQmHQa8ZFVW8k5jrTfjW8hsmGRpII44Iuw0OxDCdMDgmjUC5Eo6JjrMzHTO1ZyTZhBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XbMVR0h9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=19/f4//x; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 21 Aug 2025 12:46:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755780399;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VPxH4mtN0R+INd7TpNNEZ4CQVu0UwA0Mkbf470ms+CM=;
-	b=XbMVR0h9RUXx0YLXf4Ni8TQwzmkcBhDtTI+wOTVkuc3lJVOJz64Bo2lHnG73KN0/Qm40G5
-	6e5NoVkZ9GBY1KghSwV75PPJC2SlmDssuaWhH0hefo9qIfTqMU/aQwQTm3Cw7NSOaBMk0C
-	TmJ5z4DMutpCIJgb34IjsOESO5ClJzQ1JN3j4W71y+VCrsnAtwbi2d8QNOj4lCzksid4KU
-	viAQLc5QNiPygxIva2XmK62UyaN0+eTJHZGaQ4k+qLjxMDE5RbIXIZLu2QWlaBVs3sNpsQ
-	xAMstO0VitBkaTPfoE75KXEZ5lqWhNW160Wnt6NQloREuDBZHwj86HwrLtv7GA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755780399;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VPxH4mtN0R+INd7TpNNEZ4CQVu0UwA0Mkbf470ms+CM=;
-	b=19/f4//xqdAe3h9UGlOB3MO1q0AdHo8Sz1Kg7WOB/+/R1bg8bU45J66sKzqJzBjiRDzeI5
-	Mjl6ocsXSOBU+nDA==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] crypto: x86 - Remove CONFIG_AS_VPCLMULQDQ
-Cc: Uros Bizjak <ubizjak@gmail.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Herbert Xu <herbert@gondor.apana.org.au>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250819085855.333380-3-ubizjak@gmail.com>
-References: <20250819085855.333380-3-ubizjak@gmail.com>
+	s=arc-20240116; t=1755780442; c=relaxed/simple;
+	bh=iAlqtw/ekplPI7hAlw85q9BkNYl69V2XA6PQmsBcWjQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sQ0eaP/24NzoFE7joRIcu1A5tcJd9ng0ZFZ3kOBunrqhPfblm0uHMfgKTShzZUYBqSXTZ3C3+p6/UWkLFQmo6G6a/TIq1oZVDMcJgSAROc9jD4qklzjeSInpx2wcBV02dhKPzOzEGVnl7DFJkk8aD5yMaSgp6nopTnNHv/gFNbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATcVbSpD; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so3479934a12.1;
+        Thu, 21 Aug 2025 05:47:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755780439; x=1756385239; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iAlqtw/ekplPI7hAlw85q9BkNYl69V2XA6PQmsBcWjQ=;
+        b=ATcVbSpDOO2fkPpxYLOdAVmUPOnslyGA99P3FBm6zwtJFnOUrOk7TWfPYt4WrpNHyO
+         vN7YrLiIaBBRhHlukCcQVRtB9GCTVSs6a+cgtZQbar9YMHeqQaIQHtch9NAycIKR6b3x
+         1tvfaz0X8wOvtiFo2pkqEphjYsMHegoPkiGOeHOclCpcuATG5CJX+kkBAVXckg4lhK6e
+         SJCk8vpqt7ggXq01yT5wWBPEHz9oGus34d6b4HS9O3yGwwcNMm5ZVShnlOf7qqbZPaOf
+         e+2bEycpIkg3B4Cfq/K1nfUNyyXnrPUXvMmpiWoxhEovsNqiYMoEP5QQq9A7BW+mMdFI
+         OeGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755780439; x=1756385239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iAlqtw/ekplPI7hAlw85q9BkNYl69V2XA6PQmsBcWjQ=;
+        b=oSeYL+5GGHGXYSfVwvGwpJDrmM9uaCJR0t5EvzwslPoV3agftITthuph7+Qze3xYC0
+         u7CZbNZzYTClPICxEAv8cu8TbD1sZWSDTndy4tzBR6WRzEjQlr2kNfhS9cXarOyKHrkQ
+         YmkyvaIBDPo+A6/khl5FTtINeAGtbWZufDdCDu/XvJjZGo/kIiGNvJevCw9aPr9u9tFm
+         HY6X8leUzDVhXYlRp3r4L5EJnNPS+rczFzH2u6Cmk/gGRHZ3Yhb3XObqHUZ8N5gqqT8k
+         Ea71C6Z/Y5vEKe81nQeQ6lB8Io0UIyT9j7yhg3viI68XywIL4XgnEQfvsGKH1AhfyXle
+         JKLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKHDsZsCplbi2skFRkRfYurlG7jbqxvCXK24WosqiUg3vF0RFYVVTAOYz+sPgdSXpmgjJDxGAQ6eLGVD+Z@vger.kernel.org, AJvYcCWL3QvaP7wq2ad5RenUqbMkdnFSvrSkL3ZnVlFrGN5Hl/z7LrdwHwinBA1CPc1d6KhLgSBBqTRCzd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX3RaD6xibZ+yem4OhqeSL2mNh5vAxR5fJkJVOL7Vdcp4raNiM
+	4KMRJjGG1Zay+I9V9yjpgSRqcWLT2cWLrwIi3KCjjcwbt8CqNbgjin3B2vTGAI5tbv0er9HliHC
+	2vexVkxo0kNBuqxwn8ZF3hw0LGiTkgS+7k3HePls=
+X-Gm-Gg: ASbGncucnB5cVVwf0D7gwStD0c9EiwXCE6JUGlGZ5SFFEz5f4yVXbAEfoiqSW03wKn3
+	YJLIipSQByKxM4cabuQeyv3BLlH5LEmAXkbXY6Or82ALlP6gD57sRkUwth2p0cVAnQHYkrYDDTi
+	PAe7DxbgrspTUTSYRQo5Za4bg1tbSYIt2F9HBVeX+x9748L8wwnUsk+WVjc9G6mYyvXEevTzqCy
+	QkhMeqKLA==
+X-Google-Smtp-Source: AGHT+IHmiqDKBL7inkU4c3NcsKqH46gJn0QZkqcBffSyda0YXauQGNFGKIsY7HXjFWaEH1OqWzaISPFXjLgD6k580zk=
+X-Received: by 2002:a17:906:730d:b0:ad2:e08:e9e2 with SMTP id
+ a640c23a62f3a-afe0bb11421mr194028866b.27.1755780438529; Thu, 21 Aug 2025
+ 05:47:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175578039814.1420.6303269539921395888.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+References: <20250821080723.525379-1-zhao.xichao@vivo.com> <20250821080723.525379-8-zhao.xichao@vivo.com>
+ <CAKv63usy7FsiUCjrqibcr196kVGb5_FDeU__OwLWJxasb3MgZg@mail.gmail.com>
+In-Reply-To: <CAKv63usy7FsiUCjrqibcr196kVGb5_FDeU__OwLWJxasb3MgZg@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 21 Aug 2025 15:46:42 +0300
+X-Gm-Features: Ac12FXzTrV-5gedpLziAcDDxaeMEe5HasNPwVIZs576dMifd7PgzqQZBBbd_MGw
+Message-ID: <CAHp75Vd+p1kPPZyrkOsE7EUpCEjd0ii+uHR69EvGNbbDOFuA6w@mail.gmail.com>
+Subject: Re: [PATCH 7/7] iio: temperature: mlx90635: Remove dev_err_probe() if
+ error is -ENOMEM
+To: Crt Mori <cmo@melexis.com>
+Cc: Xichao Zhao <zhao.xichao@vivo.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, 
+	"open list:MELEXIS MLX90635 DRIVER" <linux-iio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/cleanups branch of tip:
+On Thu, Aug 21, 2025 at 2:47=E2=80=AFPM Crt Mori <cmo@melexis.com> wrote:
+>
+> I am not sure I agree with this. It provides an error message with
+> reason and I understand we want as few as possible, but this would be
+> a valid remark inside the logs?
 
-Commit-ID:     e084e9f8151f1d37b085317752d36b4fa2fec9b9
-Gitweb:        https://git.kernel.org/tip/e084e9f8151f1d37b085317752d36b4fa2f=
-ec9b9
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Tue, 19 Aug 2025 10:57:51 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 21 Aug 2025 14:32:41 +02:00
+How? dev_err_probe() is no-op for ENOMEM.
 
-crypto: x86 - Remove CONFIG_AS_VPCLMULQDQ
+Also there is an agreement inside the kernel community that ENOMEM
+errors need no log, as if it's the case, we have much bigger issues
+than that.
 
-Current minimum required version of binutils is 2.30, which supports VPCLMULQ=
-DQ
-instruction mnemonics.
+> On Thu, 21 Aug 2025 at 10:08, Xichao Zhao <zhao.xichao@vivo.com> wrote:
+> >
+> > The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+> > Therefore, remove the useless call to dev_err_probe(), and just
+> > return the value instead.
 
-Remove check for assembler support of VPCLMULQDQ instructions and all relevant
-macros for conditional compilation.
+With all that said, the series is correct and good to go. I don't see
+obstacles otherwise.
 
-No functional change intended.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Link: https://lore.kernel.org/20250819085855.333380-3-ubizjak@gmail.com
----
- arch/x86/Kconfig.assembler           |  5 -----
- arch/x86/crypto/Makefile             |  6 ++----
- arch/x86/crypto/aes-ctr-avx-x86_64.S |  2 --
- arch/x86/crypto/aes-xts-avx-x86_64.S |  2 --
- arch/x86/crypto/aesni-intel_glue.c   | 22 +++-------------------
- 5 files changed, 5 insertions(+), 32 deletions(-)
-
-diff --git a/arch/x86/Kconfig.assembler b/arch/x86/Kconfig.assembler
-index 8d18084..ea0e9df 100644
---- a/arch/x86/Kconfig.assembler
-+++ b/arch/x86/Kconfig.assembler
-@@ -6,11 +6,6 @@ config AS_AVX512
- 	help
- 	  Supported by binutils >=3D 2.25 and LLVM integrated assembler
-=20
--config AS_VPCLMULQDQ
--	def_bool $(as-instr,vpclmulqdq \$0x10$(comma)%ymm0$(comma)%ymm1$(comma)%ymm=
-2)
--	help
--	  Supported by binutils >=3D 2.30 and LLVM integrated assembler
--
- config AS_WRUSS
- 	def_bool $(as-instr64,wrussq %rax$(comma)(%rbx))
- 	help
-diff --git a/arch/x86/crypto/Makefile b/arch/x86/crypto/Makefile
-index 50f1c04..419252d 100644
---- a/arch/x86/crypto/Makefile
-+++ b/arch/x86/crypto/Makefile
-@@ -46,10 +46,8 @@ obj-$(CONFIG_CRYPTO_AES_NI_INTEL) +=3D aesni-intel.o
- aesni-intel-y :=3D aesni-intel_asm.o aesni-intel_glue.o
- aesni-intel-$(CONFIG_64BIT) +=3D aes-ctr-avx-x86_64.o \
- 			       aes-gcm-aesni-x86_64.o \
--			       aes-xts-avx-x86_64.o
--ifeq ($(CONFIG_AS_VPCLMULQDQ),y)
--aesni-intel-$(CONFIG_64BIT) +=3D aes-gcm-avx10-x86_64.o
--endif
-+			       aes-xts-avx-x86_64.o \
-+			       aes-gcm-avx10-x86_64.o
-=20
- obj-$(CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL) +=3D ghash-clmulni-intel.o
- ghash-clmulni-intel-y :=3D ghash-clmulni-intel_asm.o ghash-clmulni-intel_glu=
-e.o
-diff --git a/arch/x86/crypto/aes-ctr-avx-x86_64.S b/arch/x86/crypto/aes-ctr-a=
-vx-x86_64.S
-index ec957b2..2745918 100644
---- a/arch/x86/crypto/aes-ctr-avx-x86_64.S
-+++ b/arch/x86/crypto/aes-ctr-avx-x86_64.S
-@@ -552,7 +552,6 @@ SYM_TYPED_FUNC_START(aes_xctr_crypt_aesni_avx)
- 	_aes_ctr_crypt	1
- SYM_FUNC_END(aes_xctr_crypt_aesni_avx)
-=20
--#if defined(CONFIG_AS_VPCLMULQDQ)
- .set	VL, 32
- .set	USE_AVX512, 0
- SYM_TYPED_FUNC_START(aes_ctr64_crypt_vaes_avx2)
-@@ -570,4 +569,3 @@ SYM_FUNC_END(aes_ctr64_crypt_vaes_avx512)
- SYM_TYPED_FUNC_START(aes_xctr_crypt_vaes_avx512)
- 	_aes_ctr_crypt	1
- SYM_FUNC_END(aes_xctr_crypt_vaes_avx512)
--#endif // CONFIG_AS_VPCLMULQDQ
-diff --git a/arch/x86/crypto/aes-xts-avx-x86_64.S b/arch/x86/crypto/aes-xts-a=
-vx-x86_64.S
-index e44e568..a30753a 100644
---- a/arch/x86/crypto/aes-xts-avx-x86_64.S
-+++ b/arch/x86/crypto/aes-xts-avx-x86_64.S
-@@ -886,7 +886,6 @@ SYM_TYPED_FUNC_START(aes_xts_decrypt_aesni_avx)
- 	_aes_xts_crypt	0
- SYM_FUNC_END(aes_xts_decrypt_aesni_avx)
-=20
--#if defined(CONFIG_AS_VPCLMULQDQ)
- .set	VL, 32
- .set	USE_AVX512, 0
- SYM_TYPED_FUNC_START(aes_xts_encrypt_vaes_avx2)
-@@ -904,4 +903,3 @@ SYM_FUNC_END(aes_xts_encrypt_vaes_avx512)
- SYM_TYPED_FUNC_START(aes_xts_decrypt_vaes_avx512)
- 	_aes_xts_crypt	0
- SYM_FUNC_END(aes_xts_decrypt_vaes_avx512)
--#endif /* CONFIG_AS_VPCLMULQDQ */
-diff --git a/arch/x86/crypto/aesni-intel_glue.c b/arch/x86/crypto/aesni-intel=
-_glue.c
-index d5a2f5b..d953ac4 100644
---- a/arch/x86/crypto/aesni-intel_glue.c
-+++ b/arch/x86/crypto/aesni-intel_glue.c
-@@ -828,10 +828,8 @@ static struct skcipher_alg skcipher_algs_##suffix[] =3D =
-{{		       \
- }}
-=20
- DEFINE_AVX_SKCIPHER_ALGS(aesni_avx, "aesni-avx", 500);
--#if defined(CONFIG_AS_VPCLMULQDQ)
- DEFINE_AVX_SKCIPHER_ALGS(vaes_avx2, "vaes-avx2", 600);
- DEFINE_AVX_SKCIPHER_ALGS(vaes_avx512, "vaes-avx512", 800);
--#endif
-=20
- /* The common part of the x86_64 AES-GCM key struct */
- struct aes_gcm_key {
-@@ -912,17 +910,8 @@ struct aes_gcm_key_avx10 {
- #define FLAG_RFC4106	BIT(0)
- #define FLAG_ENC	BIT(1)
- #define FLAG_AVX	BIT(2)
--#if defined(CONFIG_AS_VPCLMULQDQ)
--#  define FLAG_AVX10_256	BIT(3)
--#  define FLAG_AVX10_512	BIT(4)
--#else
--   /*
--    * This should cause all calls to the AVX10 assembly functions to be
--    * optimized out, avoiding the need to ifdef each call individually.
--    */
--#  define FLAG_AVX10_256	0
--#  define FLAG_AVX10_512	0
--#endif
-+#define FLAG_AVX10_256	BIT(3)
-+#define FLAG_AVX10_512	BIT(4)
-=20
- static inline struct aes_gcm_key *
- aes_gcm_key_get(struct crypto_aead *tfm, int flags)
-@@ -1519,7 +1508,6 @@ DEFINE_GCM_ALGS(aesni_avx, FLAG_AVX,
- 		"generic-gcm-aesni-avx", "rfc4106-gcm-aesni-avx",
- 		AES_GCM_KEY_AESNI_SIZE, 500);
-=20
--#if defined(CONFIG_AS_VPCLMULQDQ)
- /* aes_gcm_algs_vaes_avx10_256 */
- DEFINE_GCM_ALGS(vaes_avx10_256, FLAG_AVX10_256,
- 		"generic-gcm-vaes-avx10_256", "rfc4106-gcm-vaes-avx10_256",
-@@ -1529,7 +1517,6 @@ DEFINE_GCM_ALGS(vaes_avx10_256, FLAG_AVX10_256,
- DEFINE_GCM_ALGS(vaes_avx10_512, FLAG_AVX10_512,
- 		"generic-gcm-vaes-avx10_512", "rfc4106-gcm-vaes-avx10_512",
- 		AES_GCM_KEY_AVX10_SIZE, 800);
--#endif /* CONFIG_AS_VPCLMULQDQ */
-=20
- static int __init register_avx_algs(void)
- {
-@@ -1551,7 +1538,6 @@ static int __init register_avx_algs(void)
- 	 * Similarly, the assembler support was added at about the same time.
- 	 * For simplicity, just always check for VAES and VPCLMULQDQ together.
- 	 */
--#if defined(CONFIG_AS_VPCLMULQDQ)
- 	if (!boot_cpu_has(X86_FEATURE_AVX2) ||
- 	    !boot_cpu_has(X86_FEATURE_VAES) ||
- 	    !boot_cpu_has(X86_FEATURE_VPCLMULQDQ) ||
-@@ -1592,7 +1578,7 @@ static int __init register_avx_algs(void)
- 				    ARRAY_SIZE(aes_gcm_algs_vaes_avx10_512));
- 	if (err)
- 		return err;
--#endif /* CONFIG_AS_VPCLMULQDQ */
-+
- 	return 0;
- }
-=20
-@@ -1607,12 +1593,10 @@ static void unregister_avx_algs(void)
- {
- 	unregister_skciphers(skcipher_algs_aesni_avx);
- 	unregister_aeads(aes_gcm_algs_aesni_avx);
--#if defined(CONFIG_AS_VPCLMULQDQ)
- 	unregister_skciphers(skcipher_algs_vaes_avx2);
- 	unregister_skciphers(skcipher_algs_vaes_avx512);
- 	unregister_aeads(aes_gcm_algs_vaes_avx10_256);
- 	unregister_aeads(aes_gcm_algs_vaes_avx10_512);
--#endif
- }
- #else /* CONFIG_X86_64 */
- static struct aead_alg aes_gcm_algs_aesni[0];
+--=20
+With Best Regards,
+Andy Shevchenko
 
