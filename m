@@ -1,127 +1,126 @@
-Return-Path: <linux-kernel+bounces-779660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E989CB2F6EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:42:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90CA9B2F6FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A348F5C2463
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:41:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8C6723B79
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DDE30F54F;
-	Thu, 21 Aug 2025 11:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556C330F7E1;
+	Thu, 21 Aug 2025 11:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="thnjZZX4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3hbGI+b"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8682253A1;
-	Thu, 21 Aug 2025 11:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613D030F531;
+	Thu, 21 Aug 2025 11:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755776510; cv=none; b=imoJmaKMporvIzGbhojdUZfbSZPvcC4j66jhcc1n73rrz2SYO6PdZELvC6JvSVAxHFpz6QW1jR1QTCbW6osD5+KwmcBPpWapPLIJ+/7yMEtSm6E7cydR6BYeT7z+7r+bcgDK7InEFrx4/H6N3ZoEE7VtueAzVRx+XyxEds6iLiE=
+	t=1755776628; cv=none; b=sLTqTyz+WhMUrXfmFe+/rrOACYgSfZxppsgh7JfFOO4Gvl++1cupoh+MIKQbw2ZKHho/PAYm3w6qrc5FKCyX/eG3aWkHUesIV6PToAZJJ3E5BDOitbzVPGwfZm9/q+6KrBkEM3UdGF2o4+kWtGlti3M4Op077Mthsc7nLmzFcaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755776510; c=relaxed/simple;
-	bh=UlimAOmq4oBwLMElEItrHUAt5oszOCegMRpxWXdd0K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YmsAxMjP/OHHaScujhABi/L274obWLypVjRTY71T9Zh46DgsLf+BfJi00urz+2fMKB6vTQYPpSkMDcay2xOR+rfedOkfgLPVQEKdQ+FPHhXqM9kmkpcGmWorIqRNNaAeRjIUGFCQmDSwyuqqbEv82vAxyx31zWUhh390sGccINY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=thnjZZX4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C06C4CEEB;
-	Thu, 21 Aug 2025 11:41:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755776510;
-	bh=UlimAOmq4oBwLMElEItrHUAt5oszOCegMRpxWXdd0K0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=thnjZZX4M0j7D4VmGOdSAk4KMpbTymEJH6+vygU/eBOW/Y5XYrXKRwSNocQ79AAZI
-	 tNhfBxJBg3G399FlkyAZ/Ys1Bo9gr/jB3Qu1sgyEb9UmH4JMEjURK6QU2K9i5d2Sca
-	 CsI+KJNhsS6Pb0//+QqvQ+3uJ/s0bZNjs/6gsL4MoosfUOx8Ui7FqkBETdNbrMZIri
-	 nQe43p3CezaEVWHZIX0WFvZ1UnS364zDzdrB6MWPfw1dUY/vS7sHvGhuGulKKPo9mU
-	 PwZysvqIDGD1ktFoRYGUtZXVjWwjBcv6C30C0iu93nENDITwWGqArAEE51VdZ3egsn
-	 jE0YeLbweXzWA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D5A27CE0A48; Thu, 21 Aug 2025 04:41:49 -0700 (PDT)
-Date: Thu, 21 Aug 2025 04:41:49 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: ast@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, boqun.feng@gmail.com,
-	urezki@gmail.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, daniel@iogearbox.net,
-	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	jolsa@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH bpf-next v3 1/7] rcu: add rcu_read_lock_dont_migrate()
-Message-ID: <a9745beb-133a-447d-80ea-b7322676b3ed@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250821090609.42508-1-dongml2@chinatelecom.cn>
- <20250821090609.42508-2-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1755776628; c=relaxed/simple;
+	bh=R3Scx1nCm7qXdEeR72YI5W2/n/X1yCm0pDtCDNCqSJg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CG/aJsHCK3Hzg6sZ1reX37Duz7xCtjedvwF992Nr2M0SrufraNndVcgOXyVZEgn5qEwktJNmI96J3UTfBI7A53ycnSFy2yQPatOcCjNqqV7MgHdIWjeCRGXTNT/Gz4f3iwADUP/Qaf6926/ooo90HUCbFGUaYeBP9V0IboTkASM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3hbGI+b; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2eb6ce24so777936b3a.3;
+        Thu, 21 Aug 2025 04:43:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755776625; x=1756381425; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E8SdXJDP9EOWPMR/erbb4MQMr6TAUsa/gMSJnaqvBaM=;
+        b=M3hbGI+bZyo/3KqL7E4qr+BbOPl/m2sv+140ItqMmkkJbG3qw8Bm0hADgXvTO4Nzdv
+         hq8fKesE9Mx6cu7AviaIZ4so3YfDwM3O5tGO5C7VsSiWZhCXPB6sJtU91YCbqHnxasAS
+         BnodHSytcbkeAgp8fJxT7hXtGnYgF0/Y9EXHSsB92LzpY+iwUM96ppLze12aqLgV7Aqo
+         8x7kioN/89v5NcvMjf7g+EEY7FIcZm6TIUNz+qK3p6QW96gXSQVG4O3EyE87YPfiTtoW
+         Dq1eb+NxEYD6vfqXHV6kyxVPZKY/Ouct9ohgYHmdSwyIVwz2Zj+27jVygN+CSezneJIa
+         OBTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755776625; x=1756381425;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E8SdXJDP9EOWPMR/erbb4MQMr6TAUsa/gMSJnaqvBaM=;
+        b=ERh/4GG9KQlu67aVHxQJA0FpvQL8kJ4yHs/mxCLBoGqIgILDAKpSjdGWIWxyT1Fi9r
+         vNabN49g7KDUxhlUepcLh48qtuoUqKK+i1HZAgR0cEB9SG/EAfQ/gnWqYE3tYngT+VGW
+         VGL76STbseW2rzbOfjqksYgPwPalYnP1QIUft5P1mzNhP9sQ4oshbadLAapp+/ngntGV
+         vOBNx6TVuzZArOqtEBgNTIXiv1I36Ns9qXjeELD0XfcevuoUi0KegyG4PeSFiIIJ407U
+         wXYEX/wqByqSmuF/v/6ADVVtDBoje2P5UTN31ZkgoLjKb6mTUS0fmKyCcT+Xp3lwKV8g
+         0WWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2pNpm/4SoSbYrI5uiSro/sCS4+5JllhHc+iiUp+FoHPyVvD8aDphwbhFIRnN/WF/wS4m5eha5IKWEF3E=@vger.kernel.org, AJvYcCWbAVGs5KW6OdO6hPjV/C8BNH7Jznp0CVRIwg8sGaM1Pvapsenk5+TwJLOF4mkx+7mDeOOZ6omZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHH0vtIB9pGuomvrP48gtLZ2dJvl1rYVYYn7TT/3ficA2/f/ZH
+	QGFJ5HWNG+V8o3WHYzhjH+2rqo7DGC0CChYn2FyupY8LAEnTHg7kICAq
+X-Gm-Gg: ASbGnctKQRXKlUp8SbCj74RuTmevgzljTFW/+McMeC5VTwtqFIbZF8QHs/nebNQu5FS
+	BP4E+EujWU9Eo+tZWo3/dMyqV4y11GkKQoShzviyvgnTPQkW2XA2jVFIDMGAsWvI+jJ9d40hzJz
+	l+JjdfnaCF+iNRCdUKHh7ncpaM7oirb/KefoqbWnpx/AQllPoHKoBUyeGg8w8jpoRuEzmirxak4
+	Wua8eRUwZs/5qRSQm7I3ojJdpzPHjTHCazaKihbSLSk8x8/u9d+fVc+LdOuY/xkRbmzlTVzj+zG
+	6wkZCBbHNDInoEJ22p0NJlujzM1txFevhFndGrhSj928kT3fp1d42tYkN0ZK7wOUc85BRt1FAxC
+	6Js7S7r18Y26ex9tHDdNr+ZQz
+X-Google-Smtp-Source: AGHT+IG0qPXrimBqxKsTPgNOg7cjXvEK1Tg1fEhT9QgLA9n/DxXnbIC5Aibc3t7h6VGnDQWi710POQ==
+X-Received: by 2002:a05:6a20:7f96:b0:23d:ab68:1b7c with SMTP id adf61e73a8af0-24330a98906mr2887985637.46.1755776625394;
+        Thu, 21 Aug 2025 04:43:45 -0700 (PDT)
+Received: from mythos-cloud ([121.159.229.173])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7ccfa8d1sm8072679b3a.0.2025.08.21.04.43.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 04:43:45 -0700 (PDT)
+From: Yeounsu Moon <yyyynoom@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Yeounsu Moon <yyyynoom@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: dlink: fix multicast stats being counted incorrectly
+Date: Thu, 21 Aug 2025 20:42:53 +0900
+Message-ID: <20250821114254.3384-1-yyyynoom@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821090609.42508-2-dongml2@chinatelecom.cn>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 05:06:03PM +0800, Menglong Dong wrote:
-> migrate_disable() is called to disable migration in the kernel, and it is
-> often used together with rcu_read_lock().
-> 
-> However, with PREEMPT_RCU disabled, it's unnecessary, as rcu_read_lock()
-> will always disable preemption, which will also disable migration.
-> 
-> Introduce rcu_read_lock_dont_migrate() and rcu_read_unlock_migrate(),
-> which will do the migration enable and disable only when PREEMPT_RCU.
-> 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+`McstFramesRcvdOk` counts the number of received multicast packets, and
+it reports the value correctly.
 
-Much better!
+However, reading `McstFramesRcvdOk` clears the register to zero. As a
+result, the driver was reporting only the packets since the last read,
+instead of the accumulated total.
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Fix this by updating the multicast statistics accumulatively instaed of
+instantaneously.
 
-> ---
-> v3:
-> - make rcu_read_lock_dont_migrate() more compact
-> 
-> v2:
-> - introduce rcu_read_lock_dont_migrate() instead of rcu_migrate_disable()
-> ---
->  include/linux/rcupdate.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> index 120536f4c6eb..9691ca380a4f 100644
-> --- a/include/linux/rcupdate.h
-> +++ b/include/linux/rcupdate.h
-> @@ -962,6 +962,20 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
->  	preempt_enable_notrace();
->  }
->  
-> +static __always_inline void rcu_read_lock_dont_migrate(void)
-> +{
-> +	if (IS_ENABLED(CONFIG_PREEMPT_RCU))
-> +		migrate_disable();
-> +	rcu_read_lock();
-> +}
-> +
-> +static inline void rcu_read_unlock_migrate(void)
-> +{
-> +	rcu_read_unlock();
-> +	if (IS_ENABLED(CONFIG_PREEMPT_RCU))
-> +		migrate_enable();
-> +}
-> +
->  /**
->   * RCU_INIT_POINTER() - initialize an RCU protected pointer
->   * @p: The pointer to be initialized.
-> -- 
-> 2.50.1
-> 
+Tested-on: D-Link DGE-550T Rev-A3
+Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
+---
+ drivers/net/ethernet/dlink/dl2k.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
+index cc60ee454bf9..6bbf6e5584e5 100644
+--- a/drivers/net/ethernet/dlink/dl2k.c
++++ b/drivers/net/ethernet/dlink/dl2k.c
+@@ -1099,7 +1099,7 @@ get_stats (struct net_device *dev)
+ 	dev->stats.rx_bytes += dr32(OctetRcvOk);
+ 	dev->stats.tx_bytes += dr32(OctetXmtOk);
+ 
+-	dev->stats.multicast = dr32(McstFramesRcvdOk);
++	dev->stats.multicast += dr32(McstFramesRcvdOk);
+ 	dev->stats.collisions += dr32(SingleColFrames)
+ 			     +  dr32(MultiColFrames);
+ 
+-- 
+2.50.1
+
 
