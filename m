@@ -1,186 +1,146 @@
-Return-Path: <linux-kernel+bounces-779853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F057B2FA48
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:25:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B270DB2FA4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CA9C1C87760
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:22:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F4D1C87D8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5E232C335;
-	Thu, 21 Aug 2025 13:21:48 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049EA3314DF;
+	Thu, 21 Aug 2025 13:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SfnSiBk+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3395532BF5F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22EE321F5D
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755782507; cv=none; b=KaIHx/ItaOiVO1O3eDa9e1gMVuTAoCyKuAXoB7uBoPIWBDaVmVXLEGygqhDC4vwuOVK4SatwdAtbSfj5M5E+E6HeCZYabAok6ZCtTuXhEhi/sSBl4VnYyX+4LaKWnzE3yDYzd5yfZzlAyMnvAg0sCOWNGUd2zebLEnjC9kTPG4k=
+	t=1755782550; cv=none; b=N+0cHR1LxdO18sid1qS+Qw+yCEdCuQ1Jc0hzJRlFPS5BC9U0igrn7FRc/hOphKEdM+yZNxysym3MP2OyYn92Zb4mQBdZtrqfgzBC3DNTOj0BLSfnIMRBbB02BYzwjcm4jFw5idSiKZSo/PGWl+F6GbVZIIqXl2BMbBU9ik7X1D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755782507; c=relaxed/simple;
-	bh=W8oIlS2h1YPSW2RCaPjV5TA/bkt4+gglZE1HOsmlJjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NqSAGvem038B5kuno4x+DaXsNnL0RYC6whcrK40Q7/Cz5gyfmZC2Au3OWmEApRh0f7Mf76PAQYboDYPXl6+5ipE2s+ymiMEGZV+3nofw3orUPIqqKXQvqBe9nrREBdvgwXQ6/XM7S8TcXxrTVGo3ZcYy6RGGWFM01tCt3wfCh3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1up5ER-0000UN-IZ; Thu, 21 Aug 2025 15:21:31 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1up5EP-001Q3r-0n;
-	Thu, 21 Aug 2025 15:21:29 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1up5EP-0082gA-0L;
-	Thu, 21 Aug 2025 15:21:29 +0200
-Date: Thu, 21 Aug 2025 15:21:29 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	Frank Li <frank.li@nxp.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Varun Sethi <V.Sethi@nxp.com>,
-	Sahil Malhotra <sahil.malhotra@nxp.com>
-Subject: Re: [EXT] Re: [PATCH v18 3/7] firmware: imx: add driver for NXP
- EdgeLock Enclave
-Message-ID: <20250821132129.hwnnqdagalvxw2uk@pengutronix.de>
-References: <AM9PR04MB8604611B8D91B5526C9704E69545A@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <20250627084653.6vgwnm3llf3zknlp@pengutronix.de>
- <b02055bb-0995-4fd8-99f3-4ca5146eedd4@kontron.de>
- <20250630121722.wviidlggt7hguyt7@pengutronix.de>
- <087b8689-7443-4720-a94c-160edd31a5da@kontron.de>
- <AM9PR04MB8604C05882605EDB4913DA089549A@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <20250714094124.e6fnkrocnqagbm22@pengutronix.de>
- <AM9PR04MB8604EFCC5400DEBB7DF0CF49952DA@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <20250806132701.fouikyuqtzdsxqwh@pengutronix.de>
- <AM9PR04MB8604A636762E81DF9EA9A9B89532A@AM9PR04MB8604.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1755782550; c=relaxed/simple;
+	bh=YJxrQ7FD5/mktZk9Z49i+8l7WqlZZGyKMw2C4BluJ3M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iI1jDhIHColB8lknPzdWd0+B53lwnDhLwhKFFBoKUAlmIH5WtxQO6ImN95g8mhEnGSDtOGTGqXp1iHIOK0v/nkgAJ1BvU2D/27DtDFqHKbc6vTtoTn2+D3vT7sV3+Suuy9OylusXzeZmTtlkHSNtwfSGEnrQuUmcqNrG/69OtUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SfnSiBk+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755782548;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YJxrQ7FD5/mktZk9Z49i+8l7WqlZZGyKMw2C4BluJ3M=;
+	b=SfnSiBk+bUccezP+VXVtDG2T7tqspA+RBP80TZ/YIr0hGS1r4Rt2MA9l+xisdmfE+X1H2+
+	i2NgVUO73j8ox9V1Pt/CqvkNhYGCy3NfhG1jlKRrFKHYCQvljE3eUVpYMvd2iJV8FEFs1X
+	Db8BSwFMMUuFIWFwkRxSlY8i0IVNklA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-103-ONV9Q-u_P0igtwN9tSZ-Ow-1; Thu, 21 Aug 2025 09:22:26 -0400
+X-MC-Unique: ONV9Q-u_P0igtwN9tSZ-Ow-1
+X-Mimecast-MFC-AGG-ID: ONV9Q-u_P0igtwN9tSZ-Ow_1755782545
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b9e40ffdffso645378f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:22:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755782545; x=1756387345;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YJxrQ7FD5/mktZk9Z49i+8l7WqlZZGyKMw2C4BluJ3M=;
+        b=qVoiG1XJwVhznbi9hdzOMW0CfK3AF4hvgEVvXoMJxcQhFQlOoDtkcpOR3VgkZXFuk0
+         /S7HFmAybceAZne40tBUKzmf4KcIG82B4JANo0d7bu9bH3YSSaTmZHSN3//alpTwC9BT
+         7McwxCB572B+cAwJTWi+rGYDvq8yEXGzDOtQPApg+2Xy+K0mKzrtsPK0H/qMTChO9NgQ
+         +a6ErMiADtNEkZ/nEId6803SGmoZBHEiBJ82N89m9BPilDLEQDpwKmjwhGq8QKpUDsPI
+         FhL6ccqVCg9Q7oFPfrMRhttA2BmbN29q5HFE9kUb5HICPIztv6BwJVIMuZcC0hzeFAMX
+         aVNw==
+X-Gm-Message-State: AOJu0YyfsLQ5UBBiEqo31TSidTa8QiNcRG7GyRsJG43QHGuvKmlyRQmE
+	kga8q7pTn8x5Lv6lFpZzGltIK3UA8oP1txAy3PsOulcjHVuMcBYqK9qmYtG9Vm3E+CqkZRwoldg
+	8ZoW1dGTX8T0MZ8ncpPFtOLbQiZBcfZCQ7+dniH/nygyuUSfwnBQC9CC0rAj7o5LKOA==
+X-Gm-Gg: ASbGncukUVDVKcJfpVkx2NMQy+tUhlAm9dH+hC04WYrW20JVj0NKg6H672KcFasxtSu
+	KKa2xO4Z0Ru7AYJGQSCu759/32FViw/JylLqXCasRLAsRbfOQRYg0MGpVhUTScoqeYdKqVMrDKb
+	KChJPna3l1aqyVaAEBYIzar98nUTxbDhaol9xgNVeJuz2eYZ82XK25dEgsL9wjkX5TCeBaj7PJL
+	LGAHXDclj4ZVqMoVrQZudGesZB61j/lvv6xD65OAs46LLWrF4LHOFRzytzIEwkFZPq50MALBYoH
+	rlFbAoVsQrWm12JE4q/y+iUzrJXacI/Qd2FYzyaCXJfdiWjTPkxcc3FX5qT0mc1FHg==
+X-Received: by 2002:a05:6000:2211:b0:3c0:5db6:aed with SMTP id ffacd0b85a97d-3c497274a23mr2285741f8f.54.1755782545376;
+        Thu, 21 Aug 2025 06:22:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHKWmMoUwH90shvbiFwGWyOGLnBY4pbSOBI6/RkBga7+ERO9KAT/vEMDc9J8jOx3Yd+hLCURQ==
+X-Received: by 2002:a05:6000:2211:b0:3c0:5db6:aed with SMTP id ffacd0b85a97d-3c497274a23mr2285725f8f.54.1755782544997;
+        Thu, 21 Aug 2025 06:22:24 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077c5731dsm11591509f8f.59.2025.08.21.06.22.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 06:22:24 -0700 (PDT)
+Message-ID: <a87d09f61a873778fe9f737ea4ab7c62dc43e950.camel@redhat.com>
+Subject: Re: [RFC PATCH 09/17] verification/rvgen: Allow spaces in and
+ events strings
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-trace-kernel@vger.kernel.org, Tomas Glozar <tglozar@redhat.com>, Juri
+ Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John Kacur
+ <jkacur@redhat.com>
+Date: Thu, 21 Aug 2025 15:22:23 +0200
+In-Reply-To: <20250821122210.B9iAsUFG@linutronix.de>
+References: <20250814150809.140739-1-gmonaco@redhat.com>
+	 <20250814150809.140739-10-gmonaco@redhat.com>
+	 <20250821122210.B9iAsUFG@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM9PR04MB8604A636762E81DF9EA9A9B89532A@AM9PR04MB8604.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 25-08-21, Pankaj Gupta wrote:
-> 
-> 
-> > On 25-08-06, Pankaj Gupta wrote:
-> > > > On 25-07-09, Pankaj Gupta wrote:
-> > > > > > Am 30.06.25 um 14:17 schrieb Marco Felsch:
-> > 
-> > ...
-> > 
-> > > > Lockdown: For a verified boot setup you need to burn an eFuse at
-> > > > some
-> > > point,
-> > > > to tell the bootROM to boot only correct verified firmware images.
-> > > >
-> > > > After this lockdown it's no longer possible to burn eFuses from the
-> > > > REE
-> > > albeit
-> > > > the production line setup still requires the support.
-> > > >
-> > > Understood. ELE access from both secure and non-secure world is fixed
-> > > in Q3 release.
-> > > User can be able to modify eFuses via OPTEE.
-> > 
-> > Splitting the read and write between two drivers is even worse.
-> 
-> This could be use-case dependent. Depends on how customer will deploy its
-> solution.
+On Thu, 2025-08-21 at 14:22 +0200, Nam Cao wrote:
+> On Thu, Aug 14, 2025 at 05:08:01PM +0200, Gabriele Monaco wrote:
+> > Currently the automata parser assumes event strings don't have any
+> > space, this stands true for event names, but can be a wrong
+> > assumption
+> > if we want to store other information in the event strings (e.g.
+> > constraints for hybrid automata).
+> >=20
+> > Adapt the parser logic to allow spaces in the event strings.
+>=20
+> The current parser does have a few problems. Not all valid .dot files
+> are accepted.
+>=20
+> I have a patch buried somewhere which removes the custom parser and
+> instead uses a library. But then it adds a new dependency, so I'm not
+> sure if it is worth..
 
-I don't get this. You introduce even more segmentation if the read-path
-uses another driver than the write-path and if this is optional.
+Yeah it isn't really robust, I tried to improve it a bit but sure
+something is still failing it.
+We don't need full dot capabilities, but just extract some keywords,
+I'd avoid pulling in a dependency for that.
 
-> > Can you please point out why you can't just move the driver parts into the
-> > tee? I do see many advantages if only op-tee is used:
-> 
-> The ELE's KEY derivation function takes account of world from where, the
-> operations are requested.
-> - The key derived from secure world and from non-secure world will be
-> different.
+I'm imagining users would either generate graphs from the
+Waters/Supremica tool [1] or copy/edit existing ones, so I'm not sure
+they can go that far.
+Still that's hacky because some things are just lightly implied by the
+code (e.g. initial/final states, edges labels, etc.), so one day we
+should at the very least say what DOT is valid and what not.
 
-Which is correct and no reason for not having an OP-TEE only solution.
+Do you have specific examples of what doesn't work?
 
-> There are different use-case for ELE accesses from both the worlds.
->
-> Using OPTEE ELE driver for Linux specific ELE-HSM requests, it will add
-> significant overhead.
->
-> Usecases like Transparent TLS offload while securing the secrets in HSM,
-> would incur additional overhead.
+Thanks,
+Gabriele
 
-Of course, the ELE communication itself will be faster if Linux
-communicates directly with the ELE instead of going through OP-TEE.
+[1] - https://github.com/robimalik/Waters/releases
 
-But to be honest I don't think that the ELE usage itself is much faster
-than using OP-TEE and the ARMv8 Crypto-Extensions.
-
-For the ELE you need to:
- - setup the context (incl. the message and all mailbox mechanism)
- - wait for the ELE to be accessible (only one ELE, only one
-   normal-world MU).
- - transfered the messages to/from the ELE
- - the ELE processing should be equal to the CPU processing time
-
-(Side note: What is the ELE behavior if the secure-world stresses the
-ELE? Is there a MU priority so the normal-world MU may get blocked
-(never addressed) or are both MUs scheduled in round-robin?)
-
-For OP-TEE you need to:
- - setup the context
- - switch the CPU mode
- - make use of ARMv8 Crypte-Extensions
-
-On i.MX8M, which uses the CAAM (the ELE predecessor), we can verify that
-the ARMv8 crypto extensions are much faster than the crypto-engine
-itself. Therefore the CAAM is mostly unused.
-
-Are there measurements/application-notes that show that the usage of the
-ELE is more performant than using the crypto-extensions?
-
-> IOT-cases where real-time encrypted feed from sensors, will take latency
-> hit.
-
-Does the ELE support inline en-/decryption? If not, I don't think so.
-
-The data needs to be read from the CPU first, afterwards it needs to be
-prepared for the ELE and transfered to/from the ELE. Also there is just
-a single ELE with a single normal-world MU, so you need to handle
-concurrent access if there are multiple ELE-users
-(sensor+tls-offloading).
-
-If CPU is used, the data still needs to be read from the communication
-interface but afterwards doesn't need to be passed to another IP. Also
-there are multiple CPUs.
-
-Regards,
-  Marco
 
