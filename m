@@ -1,113 +1,115 @@
-Return-Path: <linux-kernel+bounces-779941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA121B2FB7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08278B2FB10
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B31F3AD0D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AB83AE3C6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401A8239085;
-	Thu, 21 Aug 2025 13:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E3A343203;
+	Thu, 21 Aug 2025 13:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Fa557fnk";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="XD/MxP9q"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fAiWDRlP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709D623ABB3;
-	Thu, 21 Aug 2025 13:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33C234166D;
+	Thu, 21 Aug 2025 13:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755783993; cv=fail; b=FveRursIznIbSYl1rUsnOPChsrbdFeqiomUO81U1wcWw2KIdXTdGvzYRcU0qVc2Fq9GdHDMfAS9MMha6ynuCe0M+kjUExht3hadZRR+oSPh45CMGYnAhcKFJlSp8xfr9rkTg4aye8LCBrLzeBXEWSSRx81kMXl3intAf0K4GLEo=
+	t=1755783369; cv=fail; b=RcJNlBwelCrNo2c9HxXGx1efx0ZosgOgljiF2VJAAViHEyxyGE26viBVAojiZWSKvWmGyzX8Rw37PcwE/4DBNrrLbRYolPOe3QIYhCvPvOmqTK3aWt4Q+2la5B+KCDygOb8ui6hzpqgA/YkMF9gnRy+pyU6VcufP+lXfhIsA77U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755783993; c=relaxed/simple;
-	bh=n96VsMKCqDehKAzRSxZTfjZgPn6GtZTX5zxKnAHFIF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Ux+ohJop8D+k5xs2UEB/AQSNHLbn+bMTMtJwaf2geoLiS9B+eILbrugk7XwTHTQpRAA74IArJp2zqQnRXm3ZamSYVcCo8ywozhWF0WKlxB7KvPZxZR3cjPhTibamFbCg710LUKzr59Yr5Kg1SoPVPLkrpiKCXkgjgGbym+ymzD8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Fa557fnk; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=XD/MxP9q; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LCk9lL022271;
-	Thu, 21 Aug 2025 13:35:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=XxZJfgDLCOyQ0WV+hG
-	iUKloReuPaO4RIY3Ddi6aNHuY=; b=Fa557fnk/8TPGfdV708Vj/8RGt2MId2aFf
-	PlBfzIx045z6TDqQWV8BJS4klq4OTX46qPcC/Gck4uK4wegdtZJjxZbhblEVtDel
-	4ixGX3EJtNzu+LOHTY3YeCcQngQNPreDhMykRsScmAC05rv0fvFYmz2Emr+Uuv+p
-	3VbylF/J6vM0lWzQ1HRcTs6ylrPvDKmIXyaYn/7XZUsXvUTt6+N2RskA1XnnpXyU
-	MOqNV2vskDCm9YDOlfXNwDW/pNWySyHAhKFFaxAPkpO0Ugjf/LyWp6FPsl2mMNXq
-	j2VRU3qYjumVNEEnFGCUY2nPRKWSlUxOZ3ipSqBcSgoE73loIIPw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48n0w2bghs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 13:35:40 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57LCb8Jf020541;
-	Thu, 21 Aug 2025 13:35:39 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2074.outbound.protection.outlook.com [40.107.92.74])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48nj6g2u4x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 13:35:39 +0000
+	s=arc-20240116; t=1755783369; c=relaxed/simple;
+	bh=nrkUg7k/1w1yOvxgNi7m9nf6aJ817Bqe/LK4NdZJ75A=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SaMsUXp9ntq/mspQks7pcyv1Gt7b+dJHCsvS+urpu+5qJCnkqN/75Ahu2/+U1Gf1qu0nq9i4cqJRimRDfLfiKErMbGohCTJQVbndZoBEAGByWdwdil/Bf9zV+hEsOPwv1CZGgA3Cej7Mh2oNPdnkBb94bfK7PrL82AdK5MvBGq4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fAiWDRlP; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755783368; x=1787319368;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=nrkUg7k/1w1yOvxgNi7m9nf6aJ817Bqe/LK4NdZJ75A=;
+  b=fAiWDRlPNhavGvMmMQoxO2GKEE+wVSqv3OGjbUc93AXNAfJM+GLy5KkK
+   uff9mWiNFMSpdQTrYVTs9861DkunBPVcN9P9EKA6miHkgXs4Z5ROshz4J
+   7oROelSA9TgNqOsDDQCpxmxuYNQb3zLec0/z9zA1FWBBekC35ASZYu5XU
+   Zt1S+5Z2HRXu6O03MAD0D0c8yBovKbVAPCj0XgI1NBQGJe9Tdtlhj1nkS
+   1Q8vdBPMuv/ozkW8v6AN2KnOvyzGps44ttcP7WSAFcmJ4dBYSa4Ahp1zI
+   Qit9Ty6SM5vPJ+W41oOJKIwpDJ4B5FgqNLq45prO5vgw9F0WrimwajcJ7
+   w==;
+X-CSE-ConnectionGUID: PluM3tk3QN+X5tOkwHAZSg==
+X-CSE-MsgGUID: QpDVJWD7Q8W03iZjNX3xqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57932874"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="57932874"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 06:36:07 -0700
+X-CSE-ConnectionGUID: JCY+rrP/QsKV5UV2lMzh7A==
+X-CSE-MsgGUID: l2cgpohISz21MszL5tGiaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="169219136"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 06:36:06 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 21 Aug 2025 06:36:05 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 21 Aug 2025 06:36:05 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.62)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 21 Aug 2025 06:36:04 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=muttxcLal2EwXY+r3OCiI+V+gyfrAG/uS7a+I7h4R8zxIT0LTOa+SlSOSgpfVXXOD+4RllY4/Gf6okQtxp8WWD3QO+ZgDeWP6Rz3K8lTfL/E8gMc/LVpuaukpjCkzm3C3lao4AsvV0HPk3C9M3NqIMSpbUEtEC7NHmJpiuhq0taZJB1jif/xE4DQBcJeAke3tk2mi1KvNlC10js+nlTNz60Ggcr8aWGpbtKNCIIDqMujCK6iRyTChXPvqJg78RArw6WLJ2oDyWKtjXa2OS2AzOmFUqykiJcTXuKBSfLIr3utz6MnVpiPCpHqfnyJDyk58ggWFGE+fg5fwGlf5Y0i6g==
+ b=jnapgLyGNMqOZmnZ0idU63MWtMZk/AKYVvHi8bOjlrMgun2Til2LQeCvhGXjQz37x9EbqkRLFGccf8mk5ll58gjSVb3IHFRhMXL5p6Sm8wvAE3q1+we+Mp9a1537vgQRzQ7Mh87UQPrY1FfKx8uhCqSM2xfOKxQtrZBKmZ6BAt7NX92HgRvDpruLEKCQizs7Wn0GuceE5qL3jFM40qFsFzf51EsTpSMB+CD74/vZGW3UVOKbeQ3kEcNDInI4Cv/LXYZQQWEsEhDalvBjlAN9Hf+Iy7Dwo3fqAYa4QK57ewbaEj0BJXko/T9TJpCoqA3wNiAHb4GyuS5E7bmMC8T7Lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XxZJfgDLCOyQ0WV+hGiUKloReuPaO4RIY3Ddi6aNHuY=;
- b=Z1CyI7q3GuYA3BHRpVgn/cFvXX7PXjM8VUdyXc8F5ggsrw4JNNpyqTsAw+DgkoatpuaaTtir3mQzs6RiJOAtsk0rjVrdf7OJyykXIM1l/Q1dj7JWJ/t+UhYfKsBIxyR6q6Q3jPB2Qx7r+xZd+FDWb5I7gXEqnDcvTrHA8eDCCAlxaXINdeFLmChQBxOcfILNHr4lhGLf5FhhBUnsfyCnR2Ma88spDRi/lMduxux3hjIGfdcwv/CJ4CczSoW3uXJEVDA/dnh/LBXmbnw+UJ0SiWn1gxExXOodmjTqVbuxFM83PI50a+4vWHEbekqgu0XOBjP0qvaOLxY/E8xxWou5uA==
+ bh=liFMShFgpZClD9lOv0W+mwgRT8PTWYP60G6UAQUt47E=;
+ b=Dum31JP69NwxWKFOilD+CCNhMSQu40YyH0a/InEkc0LTPXavyx5ZV62P69Alf3/Hf2DF5mi6D16plQb6KvmyJGORwvleOdgEdP7el0EUYyPiJI3EWqTZBLVDa5Z+kIOlbpk8jvqxCi3YCT9Glz1FoyJvhxfdsfOa0+Ggebf/aGm8trJ/rDn48Ksqveh24XtuO/hmRputRI8/X5brhRa9f7voyNpOHrX7eaCWydtR/duY+xtKGlkevCf/DaFtcpS3yKqIrQpwvCCVZ3nbSFTRgfwm4h/yGLINF1YRFt+6PYxl/d15xYhymXlQEwCckombs/133S5kJBMeecDtfbxazw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XxZJfgDLCOyQ0WV+hGiUKloReuPaO4RIY3Ddi6aNHuY=;
- b=XD/MxP9q6UjuEc5UNFL83BOlUX992V9mrtxE6vQ+bSU/taSMxzxDA10d1b3SV0vwU+78r3zRi+MB3yOVVK4WzXdsbPBkmuEhuRGX7FN5qwvTwZC7P7hQz34oYe3Z4Jb35M2LqG2DdUxcQEMq33m1UIMYiK2qKzQbEwUfjm9JWQw=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by CH3PR10MB7186.namprd10.prod.outlook.com (2603:10b6:610:125::7) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by PH3PPF9D9CDC305.namprd11.prod.outlook.com (2603:10b6:518:1::d3b) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Thu, 21 Aug
- 2025 13:35:31 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9031.024; Thu, 21 Aug 2025
- 13:35:31 +0000
-Date: Thu, 21 Aug 2025 14:35:28 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Nico Pache <npache@redhat.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-        Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
-        corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
-        mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
-        baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
-        wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
-        sunnanyong@huawei.com, vishal.moola@gmail.com,
-        thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        raquini@redhat.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
-        tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com,
-        jack@suse.cz, cl@gentwo.org, jglisse@google.com, surenb@google.com,
-        zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com,
-        mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
-Subject: Re: [PATCH v10 09/13] khugepaged: enable collapsing mTHPs even when
- PMD THPs are disabled
-Message-ID: <af8a7c77-fc79-4c9e-93e7-f69300580a8d@lucifer.local>
-References: <20250819134205.622806-1-npache@redhat.com>
- <20250819134205.622806-10-npache@redhat.com>
-Content-Type: text/plain; charset=us-ascii
+ 2025 13:36:02 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.9031.024; Thu, 21 Aug 2025
+ 13:36:02 +0000
+Date: Thu, 21 Aug 2025 21:35:49 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>
+CC: <bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<john.allen@amd.com>, <mingo@redhat.com>, <minipli@grsecurity.net>,
+	<mlevitsk@redhat.com>, <pbonzini@redhat.com>, <rick.p.edgecombe@intel.com>,
+	<seanjc@google.com>, <tglx@linutronix.de>, <weijiang.yang@intel.com>,
+	<x86@kernel.org>, <xin@zytor.com>, Arnaldo Carvalho de Melo
+	<acme@redhat.com>, Ingo Molnar <mingo@kernel.org>, Namhyung Kim
+	<namhyung@kernel.org>, "Pratik R. Sampat" <prsampat@amd.com>, Shuah Khan
+	<shuah@kernel.org>
+Subject: Re: [PATCH v13 00/21] Enable CET Virtualization
+Message-ID: <aKcgtWhD/4qz4jDD@intel.com>
+References: <20250821133132.72322-1-chao.gao@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250819134205.622806-10-npache@redhat.com>
-X-ClientProxiedBy: MM0P280CA0088.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:8::15) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+In-Reply-To: <20250821133132.72322-1-chao.gao@intel.com>
+X-ClientProxiedBy: SG2PR04CA0156.apcprd04.prod.outlook.com (2603:1096:4::18)
+ To CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,172 +117,536 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH3PR10MB7186:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2aa8eea6-bd17-4221-a59f-08dde0b7997e
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|PH3PPF9D9CDC305:EE_
+X-MS-Office365-Filtering-Correlation-Id: 306115b9-8c29-48e1-3c21-08dde0b7abcc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?e9ps+YffEPFQrdpZX1ZRUAFlwv9aDU7y/xHtvzNPdz2PhcgLid1sFbZmdno+?=
- =?us-ascii?Q?CPmzNQ/G6klrzO6lHu3Pb5WmHtRTFgYgjkSMYrnPEAsn8N93CHlvFWV1w5xJ?=
- =?us-ascii?Q?WgXDM2zWkdrXdQJpXON7TTRBl04fXCl5eHo03iUv/S3aLxti6opKy8aNwILt?=
- =?us-ascii?Q?K+Mu9uVlCplPxWsShazpZ4eOjnrNMVBw6fF3OcgvXuZWK9bDBcY1IdxRLHOd?=
- =?us-ascii?Q?9jXbLNVXUI/+msWG8ZzvaXibilO/Xi2pLsyJl4rYrVnjvJSf2JGQqAjEW8+D?=
- =?us-ascii?Q?ajUpBaz0NrvAj28/xrQszUNpEyFqP3T22YzXZFMTCzs31jkqKo+Q+X7dIjBe?=
- =?us-ascii?Q?N6s/Zu2TxBY2lvaAVHgGYuUkojDL0eZJzIic0z7Lf6xXpUZ7l9JAydK3BrBG?=
- =?us-ascii?Q?o1DEdlBCm0JHE3c6f+JMGp+tvsXJrS8fRX8OuEMBas9Vd0mIQdpMdVAlR1Tx?=
- =?us-ascii?Q?iPm6h6qCTWZ4jsGw15OuYtjLn7U/OeBKRZpEzI7h9Phj1pnddkwod9sbYwpm?=
- =?us-ascii?Q?EkbYoa4n4f2s53Ys51O9dLqnaWkVU6W5EBDjSRkCxMma2+AQ441mOCKhkZnc?=
- =?us-ascii?Q?k4BK/f95QyTWjBFqu/ucVLaUZTXs1riB3Y+Y/LJaOAGsgHE5PpT1ko0QVNAI?=
- =?us-ascii?Q?nhwOM/T4yOC/e+EXy74MKPevnK852D49CqPxnCpBWLLk6X3HsHc2GKYbwlAt?=
- =?us-ascii?Q?iDpSo8iLOpZF5UYTn2EJms3y3V1TOD/wapGMCrf/rChc1O8O/9Z14njcT7BU?=
- =?us-ascii?Q?dQpKFkc4rxZrXNozlF164oNEFV+9rMMo3jgBr6YErwPLifakrO4FpfAePXJ5?=
- =?us-ascii?Q?TFoh+j6rALGJAv8Ky9XoRZDh+3CagryYok6hCAZZC2OIpWIkMQAo2gxsla71?=
- =?us-ascii?Q?b0/LRkZDtE93KD+WPDKI6ysodFtO7PEGMMZ43O7uPc4UI3mmJSPv5WohExEL?=
- =?us-ascii?Q?Rv4u8vQw32ZPSXMb60N+tvQ2ob9ilsRiuIR9u4ZE0n/D6iN2x34MTj3t3TLb?=
- =?us-ascii?Q?SUa6ClXIBgBy80U2yP5yRs1zLBHJuPQKSVUKrTyNqWKXnzO4d7xdAWBSSs7B?=
- =?us-ascii?Q?0LwWag+tyxnqSrgPI39IVovKMFTmPX5or4ZyINwVdWSMNDrbemO1bofps+ai?=
- =?us-ascii?Q?hDeDT+zYQHIbhRGOL0UAsBr0Ufr+1c8afaGea5lSLIBfC7HgAn6ez+LtISrd?=
- =?us-ascii?Q?92TMgV32MLX7mUzBwGK48qJ0EQUl8uU0op6bI+69NoOnZqsGtGE/8j2hKhYT?=
- =?us-ascii?Q?mHY+5Wv70KOTDcnxOLllbgdGpwJPJuru5Skrx4UI0hTM10nGxCcjaR4D03d+?=
- =?us-ascii?Q?wsYcihQ0HNGH4je9hYvDF0baFweaBtcXObjTTE1wll5BzpX9kIQVEuRk8L5t?=
- =?us-ascii?Q?+fvLftjXIfS3tY20bMWtQCVyNldvwSVYpyTJIPnX+IBavwwlshnbghKJ9o30?=
- =?us-ascii?Q?3nbWkajZ5qI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Fni8W2PF1qrt+5XK4vvyW7X1gSQtnWosWPKlAuuxDLvPRPoRNSxnmubqRDJp?=
+ =?us-ascii?Q?W5eY8W0DF4ZBSaW5Y+eV3JKWIp6Q6aBOiKKOQpJJJvaFuQ1pRTF2oqKPqiAf?=
+ =?us-ascii?Q?YHk5z6+LEv2zWYFeXZ4E8tLlijraj0IaGKxSVPIPb8E3JQRqvo3myphCGtva?=
+ =?us-ascii?Q?46C2l9Ai4RwriBN7hchvzdLdejGEASOWQq+/UCd9V7omlrQKF8y9A5ji2DdL?=
+ =?us-ascii?Q?sLbbo0nolp5e0cshNhOmV9AS68WatUyH0q3ZmvNPg1pHSxO2mPLVWYWH+Gl9?=
+ =?us-ascii?Q?KdJfNvp+lT0zPZ/sMHaHWsgXfS6uu4X8DboBeGSgzScJT/M8A2kSH0rNqefv?=
+ =?us-ascii?Q?qOMZAMe8Nfw7LSNJw6AJtuqkfKedMOW0HII62Ms6/zReH7r6OBfppWpi+Ai0?=
+ =?us-ascii?Q?xKtPtBK6uK5+/hRyk3FxMX7kSqlNj372UsnhyEpwl2aCCKKFjbnaBObLubun?=
+ =?us-ascii?Q?uUtDknnunGOUxt0GLwbfH2J/Eyy6YvrHIK6GCCFzMCKwe/FT43yY/cXf0P9X?=
+ =?us-ascii?Q?BcWdweEYF3QZ42lU9g2YhHyI6gO3B1M+x6TKwf00aEoJLg3LYo/CCfov5iF9?=
+ =?us-ascii?Q?iAo9h2I5QF2N3tK/2bu9iu93fIo0ZiOTSqC3BWm1i6seH/FhzuCvrlK72Q/b?=
+ =?us-ascii?Q?1dJyRvnyXOC6rZqLQT/EZhBgJmqZD1nXKFXenwUlPnD0Bu7YLARYyQ9JeXZV?=
+ =?us-ascii?Q?l6E4gtHuj1USI7sHPTJmLLPIiCRvPaDhZWFxM1pTaXyBy9b2CD552KLCydwm?=
+ =?us-ascii?Q?mqqYX5qdX7o9YZZuMKEthVgIPtmqz45OJq0xivnVuWmk9o8uwTFUbaYQ+xcp?=
+ =?us-ascii?Q?hSmzNB103aixi5ejv3o3Zc2PWLRpauU1L6tS/BIOtkErp4wkYCd1KUghPG5g?=
+ =?us-ascii?Q?XDsSJh0t8baTmBhtxosUKMe9i+/Or6SUPkp6r0GYjBEGECGRwcFvIUvVEM3r?=
+ =?us-ascii?Q?w1slCg3Iz7A/mYGKxr0n2fdc3LwZp0asnV7/Yjfgi6MuLsex10T1q74P2tfX?=
+ =?us-ascii?Q?MEUPY6HmADzrymwo/O+w3/go8tORZqD30fn21bGCqHKTxBrh6S13rpLHDS2/?=
+ =?us-ascii?Q?nxC1ffbNZG6IBlrhNfl8BH4gv5ggbO9evgJ/zlahRr/mm98sFgtstqHrbi4a?=
+ =?us-ascii?Q?2oYigU5jcwdS0iXQTFYz+KmeZAbRP1Od+Zwt7UcIvYs/lQoX/zNYkapzoHo7?=
+ =?us-ascii?Q?ahzIOQZZDR/ww1xBL2o0U6kfzbnfhp/OO8blIRqaG7dr5wu1Zv+f5L0oxJU6?=
+ =?us-ascii?Q?oMsVTcawMNgt0Fb2nNxyaRblYR28LWHo8dEUMzfTA6waGRgtHrJ5y/VBdt6L?=
+ =?us-ascii?Q?/5sH++exdOvJiw55e5eu77UaTYd1DXDMqPazXISMlHkYffWwsQ260t015TpU?=
+ =?us-ascii?Q?BNk5EvZ2p6Hzw3EiXlmPJitjUwTiuH59kEttEQ9gqVOFH/ybOFzvZRvPd0kA?=
+ =?us-ascii?Q?WB2CJZ5jaf0=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hWAI7Ng8zFnuwGykahBO+FlwKKmT6RusiZVGu2F/5v7qLlbB5n0G9ChYU79P?=
- =?us-ascii?Q?585meoyKktfZS5AOpm06RYtHcBAiUtwZPrHtCt5Px4d3IQ6FUalbyYNECC2O?=
- =?us-ascii?Q?P4d081t7RxXA8bVQ1alxfvUfnnbDuOSL7lod1zdxrbukUF/QaSAP6UQojFpN?=
- =?us-ascii?Q?z6J9FLVURbUDVc6nD3pObE5lUNwDZ+t7XvOGVKbtkUAg0IPOrdjUOnSn5QNL?=
- =?us-ascii?Q?1Mvpcm1OkF2iz+YVK3ubXl3ssZMi9TtxVsUIWlQD4hmOrZuFiFU/UDI0vaFv?=
- =?us-ascii?Q?GzXSF2hUxQqFsDPD++qql6KKe3XczVpL5jTM4Q4VD/5gWV0daftA7swO38IX?=
- =?us-ascii?Q?uLVfPbQ8JMYTvLckDJk4nTumJPHI0IZbwA+4fDaXzNSc1qO9nHcPR6m1fFbW?=
- =?us-ascii?Q?EOU14Q1GTFe69E3T3S/9B1wTkaTMuhsQWKlJjB/1JHsKtyP7kwf0VEClUBVF?=
- =?us-ascii?Q?ZokfyoVBQNxuik8FbMOgjf5G0aweXPf9kjWqfyXALLC2axxfG65mJPYfdS77?=
- =?us-ascii?Q?hMnVi7fL2/okhIjR70nTRhXupcQkUWEMWJLycWN2YdQ93rbm0FFub9VzH9fr?=
- =?us-ascii?Q?0g/ouMNHbRtBlqMD9Iy3S/P3NIBwRFShWB6N/SLUwbAJRnDDFV+2GCv46jIY?=
- =?us-ascii?Q?NE8DXggCSt2tBwwkKaYcqyDs62sZHbR03neT4OPtx1qGNlpW9Cx5FKcSC/hm?=
- =?us-ascii?Q?57Tp0Rq1NNDCAOOfIN5ZNbHr7NIUXEu+PI3eRB8ft+7UqOtrnXXuXQD13A/p?=
- =?us-ascii?Q?3III9n0276jtMGzgx/wZSf3m8eYX7DyI4J50OiYKZvKgf+KhDYREeosiWikA?=
- =?us-ascii?Q?txI45ZQaCqoMgsdrOTGRp0T8mx0j81/PyouGf3RBciYyVZ0XsxHAcF62fuAy?=
- =?us-ascii?Q?Zzj0pXgQUywLpUR32gLed1ZLdL71AQkXm3ww0H0C2HrUXXu5R1iWHMJJOQrd?=
- =?us-ascii?Q?/DmWtGEzNP36wqCsaMaraTFIOPyx+DMMwc3vZk1TwZjVshtv8hFzpzE8Fo6J?=
- =?us-ascii?Q?4s62LV2u3f2RDaWbdidjR+vgBng13hBrwQvKmEgCXJe/GcFne/3rEwtqQXRn?=
- =?us-ascii?Q?DgFlpvP/tspvOde6vqIsNkP1gXjhGou/bbyG++RvwRkOYLkwnwFg4o2egU/m?=
- =?us-ascii?Q?vc21zz1uQe4sgtzP2zq57v7o008XQSNImMZDppTQ5BSV1TGdRGOQg4mCihx1?=
- =?us-ascii?Q?6dVwehB8kDJ3tKZVjr62S1nnZazCqZ8H7LGgdj6mHR4CyGp22Es57Tq5nmRY?=
- =?us-ascii?Q?rPOYSXFBaJ64E+iJLnhllymU+ctOVH7OOCc/DEmGdStB7QkSieI64kuREY/9?=
- =?us-ascii?Q?8r8AMxMixR0y50HqHH0sUdUULbwV1/A6HIawEsNBRD+p3Bfu6E9/7vypM1db?=
- =?us-ascii?Q?i4/u/7bVmjbcFAZ3wQHS57Xirk1ebKji4aNmx5hK7SFO0ywUJJdNbAAZhutt?=
- =?us-ascii?Q?dGQisfLqKemRtZQYa5yGnuuMhwGG5twCE+gFEI2xAWjjZgXv3pmHcu4+AUYM?=
- =?us-ascii?Q?4uZAZSHBPkDnpYZqPkfkCoRG0mLPLP80fv41bFUkybprCsuhmEdQJI/Ym5in?=
- =?us-ascii?Q?A4dZpyYJvtzolHZhaA0BtfVDH1L0Xm04VPoa0uSFE5Wt+7gsrQa1bufHzOYS?=
- =?us-ascii?Q?cg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	pxxrhi2vvPJ7ONxrvGe5vD2vlWBJNFbjSkrBY6qfg8Uzg+2SG2jK5DnMZrQE6rLxy+T3NNGDkx6lkEL1OaaIsxT4uexUxS3zzRQzMunCVn+1aB8uMqb20Jn3teyPqnA78qNGjjLUvA8gwC5/Z5I+ZuX5SqFcA7zAmtL0VVO6fIcKltBRuiUr+ozrI9naPTd5/gJB2Yu3blB4PN7yN9+VcHFKmR0ufyz5BAM3Jvu7na3qbZdMU4SBQ+NYT9Z/oO6W5clvu7d8IpiProtH9k2PSALfCEfdRopVRzaxw9kh7L840URjRbLUEHuPPrtbbmslGJ0bPBekaLlfRyvKH4py5KzaWL9YDu0F6klcLtHm3nuNFqhkvwnNi9cpz9zGjcjldRVyYhPpnEwoIGHQIkZN34Hxt3TuYM42yuojTAYFBc7BgKWjsY99L8xbgDN2kOAOOd3D+NxItU8hqc0jqMSElfJNqt3mWkYpbXaJfgK+WOPv/mKfULqV7PkURrO418hw0ezFzXLnXLCP9Ij+9qs8kVBWcBTqSI142Dk9cRIIM+huiZYCwPxit75nx5oA/BW/mCh0aYLxepH4UVjpzumXY6W5KOZTnC86ocXIbc9B/uY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2aa8eea6-bd17-4221-a59f-08dde0b7997e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SN5BPIhBR/1GMmjeKXrjQIsIJQPAtqtjQ+GxPgzSc2w6HqzdKZmtA/P1P07G?=
+ =?us-ascii?Q?P+o6mavWOfGmKaOZLaIbexrbrTSPkNwDEGvCH+vedggH9JX9x/auz+DQrdwX?=
+ =?us-ascii?Q?16qNwpTl1ntiz8lYudqZ1aBDuqtKQU9pE0AdanJyr+S+Y+3IDuorgZjgukHY?=
+ =?us-ascii?Q?Gqaebt4BI+OqQ5THptTX4Ru1XIYWkJBpC6mgEZOLGB9cpmf1URvvS9YxVq2n?=
+ =?us-ascii?Q?QRAUxCLlVO9KjRHs9i13za3jb+CuT+Y9ecHalAhrHwVh7wwLEW6FglbnjnAN?=
+ =?us-ascii?Q?S15bM1hELBCyhMHZtk309aT5pvZp+Xzfz74bdRLFGSoJbilU+bK+pbdK9pMV?=
+ =?us-ascii?Q?flV0EADzdUMqLx88zHdRyUDXQ0XJ8sjwWLMrudw8xlX/V9tpqy95UuDyb92t?=
+ =?us-ascii?Q?tJhjqp7lt/JMpcKgTi+v396AESPaq+2cWfTagCHDF5hkkwxybHJz/kRVWY+a?=
+ =?us-ascii?Q?bb34nHGILp+daCoV+/9k2S/eT/vGN9V5O7bKFnake8Mi8Zr35odd4Gu8MhTz?=
+ =?us-ascii?Q?E1ZPl9Me0FwkC9mgvLohYR3xIrvhzERUJJ7yWSZa2d7pUoUIVd6+ZSd2rh/C?=
+ =?us-ascii?Q?/qAQgcRHbLKCFM8VnMUjknJYzq06UwhF3qunFqwJNg+rl0zOfr34aZkTsVT7?=
+ =?us-ascii?Q?OLkugF1oMxShuGFDs3hMN2i5p/07URSLUATdI3avU/8vrh/aVDMw8O0TJLs1?=
+ =?us-ascii?Q?E1DBsCom7NXPtRx/BmcsChvSw75emJChkLiicnptxocH0DPoDQuFbOvJN2CL?=
+ =?us-ascii?Q?67bz/dY+yZcvvwI/A02Na1Le5+0LT0kIDTba53OXtZ1MoqtG0HmeCt3j4Jzw?=
+ =?us-ascii?Q?S1j/SHbY6jhai98mt9k1D7iT8DTV/UTGW+y1pA5/m5nIIJVXIncVf8vh0Dje?=
+ =?us-ascii?Q?Usu13z6zv6W2Q0Xic4bgMEL+eWjjdoD6/gV4+2WvhSwSmqfT4fws4IQ5aqmW?=
+ =?us-ascii?Q?KB+R4ti79jYkXAkevFvtk/ZvtkVNAAaGuTURz9gXtd7XV4nfMWUaV7iPDdY0?=
+ =?us-ascii?Q?r3XFqaqlL0gyNnBAFBUb30RjfYy7KgrOEqbW5+ukgP6uIja9c5Z4jaE+4i71?=
+ =?us-ascii?Q?FOIjDIOChr6WBKtxWtGLqt85C61VWzKzPX/GOs5idyK/NlyY/k/qg7dIzbeW?=
+ =?us-ascii?Q?CD8Y1KUNN8XMoj4fr5JbdGmMjAw+Troe1qcvSlUmEdlnBZHFMwEye1J5S1zI?=
+ =?us-ascii?Q?343eavXgL/G1UUny2jCumLeDgsoveR9PAHnrFcygbVA8iQboV+ToBA5ruMoP?=
+ =?us-ascii?Q?liFDHqidTE7UoszG6RZN4t9RnulAqkZs4kNWuDEaaBG8T81qJqGGVCN8rQau?=
+ =?us-ascii?Q?JEElamrKSMaNtFDrX4ZiScA1Ri+MPoOinscqPLzYDdkX/EsM665wUwGGeD0c?=
+ =?us-ascii?Q?SZF/Kz4H0JoGUo2YlLCrJbuXvDSEEKOJEqGj7x+t5MzjK3zc4YLiZL/kgPoU?=
+ =?us-ascii?Q?JA35LGug24Ua++Kyp5aFfmbqzxVejdpNbatCrRkuigewipeISyBXoLMUYObc?=
+ =?us-ascii?Q?GUtxbjsXsWZBiZqRCriVlw/ltVL9zw+5P2S6sXdDy4cg8uvyOMrsqeMGuzA+?=
+ =?us-ascii?Q?9G73G/BUmAXeRzcOdk9/5Fwmu31iHj0hwVVjudUI?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 306115b9-8c29-48e1-3c21-08dde0b7abcc
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 13:35:31.6345
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 13:36:02.6714
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 59IwGEh9WIe+4oiKNb6qjVkj5e5LZo8mYZZCiY77ZNUEpcQEtmvMi2aCUoQOXUw/qjxOdAMXax7MpCGQzgGLwq/R3MthIi27qwmIu6HdjKc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7186
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- suspectscore=0 bulkscore=0 spamscore=0 adultscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2508210109
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NyBTYWx0ZWRfX7Dij34iXitzb
- OgOkwWWMIAxxHIdCm23q40tvmytw8Z6MRbgR1x6qaz6FwaBNZpjh51LgceS+a36MnBcPD19xfUA
- VRuQ0JJK91QCXIqaVfSDWXYNpOS3jgxLScYD3qn9MlzNVsGaEmtoXmCauoJL6rCNU5IIz7l/KF3
- gNxcsZ2f09Wr8BHR62H9jV5jYmptD2GtRtnNfae4HgbciARDGqUEr1AU5Ip7J5S+F6UBNHONCPY
- zb77L2ZHbkkb4VyuAAowwKBhxwW4rY8FOAcJzYEs5TZpt8cpBO9wzupN2BfjNi0zKKrKpnfMeJY
- aYK9QpWEVPAxBQ2yPuHodFgXozDssILcF7GQF2KHyxLW/ZpzeoHY+BqNxYe97/EtSnwym92BueF
- eMpOA/BtDeDEOX4fPSx8vVwbNIL/F+8YZbLBSeybEZBKRXBkSSE=
-X-Proofpoint-ORIG-GUID: uNDvILqrHgU0FydeZGJgRvqjP-IozCy2
-X-Proofpoint-GUID: uNDvILqrHgU0FydeZGJgRvqjP-IozCy2
-X-Authority-Analysis: v=2.4 cv=GoIbOk1C c=1 sm=1 tr=0 ts=68a720ac b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=SRrdq9N9AAAA:8 a=20KFwNOVAAAA:8
- a=X7hCWaasMElsSS5S6T0A:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12069
+X-MS-Exchange-CrossTenant-UserPrincipalName: XEW7hqgD5GGcFuIslcP/1tvLqUpZPcUup72SfvhQFMzR/WXRI4amtO3b8lvfGJbKOGQWcpuYRrk3CQZJ+Bjr8g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF9D9CDC305
+X-OriginatorOrg: intel.com
 
-On Tue, Aug 19, 2025 at 07:42:01AM -0600, Nico Pache wrote:
-> From: Baolin Wang <baolin.wang@linux.alibaba.com>
+On Thu, Aug 21, 2025 at 06:30:34AM -0700, Chao Gao wrote:
+>The FPU support for CET virtualization has already been merged into 6.17-rc1.
+>Building on that, this series introduces Intel CET virtualization support for
+>KVM.
 >
-> We have now allowed mTHP collapse, but thp_vma_allowable_order() still only
-> checks if the PMD-sized mTHP is allowed to collapse. This prevents scanning
-> and collapsing of 64K mTHP when only 64K mTHP is enabled. Thus, we should
-> modify the checks to allow all large orders of anonymous mTHP.
->
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
->  mm/khugepaged.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 7d9b5100bea1..2cadd07341de 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -491,7 +491,11 @@ void khugepaged_enter_vma(struct vm_area_struct *vma,
->  {
->  	if (!mm_flags_test(MMF_VM_HUGEPAGE, vma->vm_mm) &&
->  	    hugepage_pmd_enabled()) {
-> -		if (thp_vma_allowable_order(vma, vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
-> +		unsigned long orders = vma_is_anonymous(vma) ?
-> +					THP_ORDERS_ALL_ANON : BIT(PMD_ORDER);
+>Changes in v13
+>1. Add "arch" and "size" fields to the register ID used in
+>   KVM_GET/SET_ONE_REG ioctls
+>2. Add a kselftest for KVM_GET/SET_ONE_REG ioctls
+>3. Advertise KVM_CAP_ONE_REG
+>4. Document how the emulation of SSP MSRs is flawed for 32-bit guests
+>5. Don't pass-thru MSR_IA32_INT_SSP_TAB and report it as unsupported for
+>   32-bit guests
+>6. Refine changelog to clarify why CET MSRs are pass-thru'd.
+>7. Limit SHSTK to 64-bit kernels
+>8. Retain CET state if L1 doesn't set VM_EXIT_LOAD_CET_STATE
+>9. Rename a new functions for clarity
 
-We need some explanation here please, a comment explaining what's going on here
-would go a long way.
+below is the diff between v12 and v13:
 
-> +
-> +		if (thp_vma_allowable_orders(vma, vm_flags, TVA_KHUGEPAGED,
-> +					    orders))
->  			__khugepaged_enter(vma->vm_mm);
->  	}
->  }
-> @@ -2671,6 +2675,8 @@ static unsigned int collapse_scan_mm_slot(unsigned int pages, int *result,
->
->  	vma_iter_init(&vmi, mm, khugepaged_scan.address);
->  	for_each_vma(vmi, vma) {
-> +		unsigned long orders = vma_is_anonymous(vma) ?
-> +					THP_ORDERS_ALL_ANON : BIT(PMD_ORDER);
+diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+index a4870d9c9279..478d9b63a9db 100644
+--- a/arch/x86/include/uapi/asm/kvm.h
++++ b/arch/x86/include/uapi/asm/kvm.h
+@@ -411,15 +411,26 @@ struct kvm_xcrs {
+ 	__u64 padding[16];
+ };
+ 
+-#define KVM_X86_REG_MSR			(1 << 2)
+-#define KVM_X86_REG_SYNTHETIC		(1 << 3)
+-
+-struct kvm_x86_reg_id {
+-	__u32 index;
+-	__u8 type;
+-	__u8 rsvd;
+-	__u16 rsvd16;
+-};
++#define KVM_X86_REG_TYPE_MSR		2
++#define KVM_X86_REG_TYPE_SYNTHETIC_MSR	3
++
++#define KVM_X86_REG_TYPE_SIZE(type)						\
++({										\
++	__u64 type_size = (__u64)type << 32;					\
++										\
++	type_size |= type == KVM_X86_REG_TYPE_MSR ? KVM_REG_SIZE_U64 :		\
++		     type == KVM_X86_REG_TYPE_SYNTHETIC_MSR ? KVM_REG_SIZE_U64 :\
++		     0;								\
++	type_size;								\
++})
++
++#define KVM_X86_REG_ENCODE(type, index)				\
++	(KVM_REG_X86 | KVM_X86_REG_TYPE_SIZE(type) | index)
++
++#define KVM_X86_REG_MSR(index)					\
++	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_MSR, index)
++#define KVM_X86_REG_SYNTHETIC_MSR(index)			\
++	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_SYNTHETIC_MSR, index)
+ 
+ /* KVM synthetic MSR index staring from 0 */
+ #define KVM_SYNTHETIC_GUEST_SSP 0
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index d0c08aab3e3a..ee05b876c656 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -944,7 +944,7 @@ void kvm_set_cpu_caps(void)
+ 		VENDOR_F(WAITPKG),
+ 		F(SGX_LC),
+ 		F(BUS_LOCK_DETECT),
+-		F(SHSTK),
++		X86_64_F(SHSTK),
+ 	);
+ 
+ 	/*
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 092c91af8f0c..d7e2fb30fc1a 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -739,9 +739,6 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+ 	nested_vmx_set_intercept_for_msr(vmx, msr_bitmap_l1, msr_bitmap_l0,
+ 					 MSR_IA32_PL3_SSP, MSR_TYPE_RW);
+ 
+-	nested_vmx_set_intercept_for_msr(vmx, msr_bitmap_l1, msr_bitmap_l0,
+-					 MSR_IA32_INT_SSP_TAB, MSR_TYPE_RW);
+-
+ 	kvm_vcpu_unmap(vcpu, &map);
+ 
+ 	vmx->nested.force_msr_bitmap_recalc = false;
+@@ -2542,8 +2539,8 @@ static void prepare_vmcs02_early(struct vcpu_vmx *vmx, struct loaded_vmcs *vmcs0
+ 	}
+ }
+ 
+-static inline void cet_vmcs_fields_get(struct kvm_vcpu *vcpu, u64 *s_cet,
+-				       u64 *ssp, u64 *ssp_tbl)
++static void vmcs_read_cet_state(struct kvm_vcpu *vcpu, u64 *s_cet,
++				u64 *ssp, u64 *ssp_tbl)
+ {
+ 	if (guest_cpu_cap_has(vcpu, X86_FEATURE_IBT) ||
+ 	    guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK))
+@@ -2555,8 +2552,8 @@ static inline void cet_vmcs_fields_get(struct kvm_vcpu *vcpu, u64 *s_cet,
+ 	}
+ }
+ 
+-static inline void cet_vmcs_fields_set(struct kvm_vcpu *vcpu, u64 s_cet,
+-				       u64 ssp, u64 ssp_tbl)
++static void vmcs_write_cet_state(struct kvm_vcpu *vcpu, u64 s_cet,
++				 u64 ssp, u64 ssp_tbl)
+ {
+ 	if (guest_cpu_cap_has(vcpu, X86_FEATURE_IBT) ||
+ 	    guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK))
+@@ -2685,8 +2682,8 @@ static void prepare_vmcs02_rare(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
+ 	vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, vmx->msr_autoload.guest.nr);
+ 
+ 	if (vmcs12->vm_entry_controls & VM_ENTRY_LOAD_CET_STATE)
+-		cet_vmcs_fields_set(&vmx->vcpu, vmcs12->guest_s_cet,
+-				    vmcs12->guest_ssp, vmcs12->guest_ssp_tbl);
++		vmcs_write_cet_state(&vmx->vcpu, vmcs12->guest_s_cet,
++				     vmcs12->guest_ssp, vmcs12->guest_ssp_tbl);
+ 
+ 	set_cr4_guest_host_mask(vmx);
+ }
+@@ -2730,9 +2727,9 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+ 
+ 	if (!vmx->nested.nested_run_pending ||
+ 	    !(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_CET_STATE))
+-		cet_vmcs_fields_set(vcpu, vmx->nested.pre_vmenter_s_cet,
+-				    vmx->nested.pre_vmenter_ssp,
+-				    vmx->nested.pre_vmenter_ssp_tbl);
++		vmcs_write_cet_state(vcpu, vmx->nested.pre_vmenter_s_cet,
++				     vmx->nested.pre_vmenter_ssp,
++				     vmx->nested.pre_vmenter_ssp_tbl);
+ 
+ 	if (kvm_mpx_supported() && (!vmx->nested.nested_run_pending ||
+ 	    !(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_BNDCFGS)))
+@@ -3106,7 +3103,7 @@ static bool is_l1_noncanonical_address_on_vmexit(u64 la, struct vmcs12 *vmcs12)
+ 
+ static bool is_valid_cet_state(struct kvm_vcpu *vcpu, u64 s_cet, u64 ssp, u64 ssp_tbl)
+ {
+-	if (!is_cet_msr_valid(vcpu, s_cet) || !IS_ALIGNED(ssp, 4))
++	if (!kvm_is_valid_u_s_cet(vcpu, s_cet) || !IS_ALIGNED(ssp, 4))
+ 		return false;
+ 
+ 	if (is_noncanonical_msr_address(ssp_tbl, vcpu))
+@@ -3665,7 +3662,7 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
+ 
+ 	if (!vmx->nested.nested_run_pending ||
+ 	    !(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_CET_STATE))
+-		cet_vmcs_fields_get(vcpu, &vmx->nested.pre_vmenter_s_cet,
++		vmcs_read_cet_state(vcpu, &vmx->nested.pre_vmenter_s_cet,
+ 				    &vmx->nested.pre_vmenter_ssp,
+ 				    &vmx->nested.pre_vmenter_ssp_tbl);
+ 
+@@ -4596,9 +4593,6 @@ static bool is_vmcs12_ext_field(unsigned long field)
+ 	case GUEST_IDTR_BASE:
+ 	case GUEST_PENDING_DBG_EXCEPTIONS:
+ 	case GUEST_BNDCFGS:
+-	case GUEST_S_CET:
+-	case GUEST_SSP:
+-	case GUEST_INTR_SSP_TABLE:
+ 		return true;
+ 	default:
+ 		break;
+@@ -4649,10 +4643,6 @@ static void sync_vmcs02_to_vmcs12_rare(struct kvm_vcpu *vcpu,
+ 	vmcs12->guest_pending_dbg_exceptions =
+ 		vmcs_readl(GUEST_PENDING_DBG_EXCEPTIONS);
+ 
+-	cet_vmcs_fields_get(&vmx->vcpu, &vmcs12->guest_s_cet,
+-			    &vmcs12->guest_ssp,
+-			    &vmcs12->guest_ssp_tbl);
+-
+ 	vmx->nested.need_sync_vmcs02_to_vmcs12_rare = false;
+ }
+ 
+@@ -4759,6 +4749,10 @@ static void sync_vmcs02_to_vmcs12(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
+ 
+ 	if (vmcs12->vm_exit_controls & VM_EXIT_SAVE_IA32_EFER)
+ 		vmcs12->guest_ia32_efer = vcpu->arch.efer;
++
++	vmcs_read_cet_state(&vmx->vcpu, &vmcs12->guest_s_cet,
++			    &vmcs12->guest_ssp,
++			    &vmcs12->guest_ssp_tbl);
+ }
+ 
+ /*
+@@ -4884,9 +4878,17 @@ static void load_vmcs12_host_state(struct kvm_vcpu *vcpu,
+ 	if (vmcs12->vm_exit_controls & VM_EXIT_CLEAR_BNDCFGS)
+ 		vmcs_write64(GUEST_BNDCFGS, 0);
+ 
++	/*
++	 * Load CET state from host state if VM_EXIT_LOAD_CET_STATE is set.
++	 * otherwise CET state should be retained across VM-exit, i.e.,
++	 * guest values should be propagated from vmcs12 to vmcs01.
++	 */
+ 	if (vmcs12->vm_exit_controls & VM_EXIT_LOAD_CET_STATE)
+-		cet_vmcs_fields_set(vcpu, vmcs12->host_s_cet, vmcs12->host_ssp,
+-				    vmcs12->host_ssp_tbl);
++		vmcs_write_cet_state(vcpu, vmcs12->host_s_cet, vmcs12->host_ssp,
++				     vmcs12->host_ssp_tbl);
++	else
++		vmcs_write_cet_state(vcpu, vmcs12->guest_s_cet, vmcs12->guest_ssp,
++				     vmcs12->guest_ssp_tbl);
+ 
+ 	if (vmcs12->vm_exit_controls & VM_EXIT_LOAD_IA32_PAT) {
+ 		vmcs_write64(GUEST_IA32_PAT, vmcs12->host_ia32_pat);
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 294a294f0d0d..989008f5307e 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -4102,7 +4102,7 @@ void pt_update_intercept_for_msr(struct kvm_vcpu *vcpu)
+ 
+ void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
+ {
+-	bool set;
++	bool intercept;
+ 
+ 	if (!cpu_has_vmx_msr_bitmap())
+ 		return;
+@@ -4150,21 +4150,20 @@ void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
+ 					  !guest_cpu_cap_has(vcpu, X86_FEATURE_FLUSH_L1D));
+ 
+ 	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
+-		set = !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
++		intercept = !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
+ 
+-		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL0_SSP, MSR_TYPE_RW, set);
+-		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL1_SSP, MSR_TYPE_RW, set);
+-		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL2_SSP, MSR_TYPE_RW, set);
+-		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL3_SSP, MSR_TYPE_RW, set);
+-		vmx_set_intercept_for_msr(vcpu, MSR_IA32_INT_SSP_TAB, MSR_TYPE_RW, set);
++		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL0_SSP, MSR_TYPE_RW, intercept);
++		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL1_SSP, MSR_TYPE_RW, intercept);
++		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL2_SSP, MSR_TYPE_RW, intercept);
++		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL3_SSP, MSR_TYPE_RW, intercept);
+ 	}
+ 
+ 	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK) || kvm_cpu_cap_has(X86_FEATURE_IBT)) {
+-		set = !guest_cpu_cap_has(vcpu, X86_FEATURE_IBT) &&
+-		      !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
++		intercept = !guest_cpu_cap_has(vcpu, X86_FEATURE_IBT) &&
++			    !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
+ 
+-		vmx_set_intercept_for_msr(vcpu, MSR_IA32_U_CET, MSR_TYPE_RW, set);
+-		vmx_set_intercept_for_msr(vcpu, MSR_IA32_S_CET, MSR_TYPE_RW, set);
++		vmx_set_intercept_for_msr(vcpu, MSR_IA32_U_CET, MSR_TYPE_RW, intercept);
++		vmx_set_intercept_for_msr(vcpu, MSR_IA32_S_CET, MSR_TYPE_RW, intercept);
+ 	}
+ 
+ 	/*
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index f2b89190a200..9930678f5a3b 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1892,16 +1892,33 @@ static int __kvm_set_msr(struct kvm_vcpu *vcpu, u32 index, u64 data,
+ 		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) &&
+ 		    !guest_cpu_cap_has(vcpu, X86_FEATURE_IBT))
+ 			return KVM_MSR_RET_UNSUPPORTED;
+-		if (!is_cet_msr_valid(vcpu, data))
++		if (!kvm_is_valid_u_s_cet(vcpu, data))
+ 			return 1;
+ 		break;
+ 	case MSR_KVM_INTERNAL_GUEST_SSP:
+ 		if (!host_initiated)
+ 			return 1;
+ 		fallthrough;
++		/*
++		 * Note that the MSR emulation here is flawed when a vCPU
++		 * doesn't support the Intel 64 architecture. The expected
++		 * architectural behavior in this case is that the upper 32
++		 * bits do not exist and should always read '0'. However,
++		 * because the actual hardware on which the virtual CPU is
++		 * running does support Intel 64, XRSTORS/XSAVES in the
++		 * guest could observe behavior that violates the
++		 * architecture. Intercepting XRSTORS/XSAVES for this
++		 * special case isn't deemed worthwhile.
++		 */
+ 	case MSR_IA32_PL0_SSP ... MSR_IA32_INT_SSP_TAB:
+ 		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK))
+ 			return KVM_MSR_RET_UNSUPPORTED;
++		/*
++		 * MSR_IA32_INT_SSP_TAB is not present on processors that do
++		 * not support Intel 64 architecture.
++		 */
++		if (index == MSR_IA32_INT_SSP_TAB && !guest_cpu_cap_has(vcpu, X86_FEATURE_LM))
++			return KVM_MSR_RET_UNSUPPORTED;
+ 		if (is_noncanonical_msr_address(data, vcpu))
+ 			return 1;
+ 		/* All SSP MSRs except MSR_IA32_INT_SSP_TAB must be 4-byte aligned */
+@@ -4852,6 +4869,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_IRQFD_RESAMPLE:
+ 	case KVM_CAP_MEMORY_FAULT_INFO:
+ 	case KVM_CAP_X86_GUEST_MODE:
++	case KVM_CAP_ONE_REG:
+ 		r = 1;
+ 		break;
+ 	case KVM_CAP_PRE_FAULT_MEMORY:
+@@ -6030,11 +6048,20 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
+ 	}
+ }
+ 
++struct kvm_x86_reg_id {
++	__u32 index;
++	__u8  type;
++	__u8  rsvd;
++	__u8  rsvd4:4;
++	__u8  size:4;
++	__u8  x86;
++};
++
+ static int kvm_translate_synthetic_msr(struct kvm_x86_reg_id *reg)
+ {
+ 	switch (reg->index) {
+ 	case KVM_SYNTHETIC_GUEST_SSP:
+-		reg->type = KVM_X86_REG_MSR;
++		reg->type = KVM_X86_REG_TYPE_MSR;
+ 		reg->index = MSR_KVM_INTERNAL_GUEST_SSP;
+ 		break;
+ 	default:
+@@ -6170,22 +6197,28 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 			break;
+ 
+ 		r = -EINVAL;
++		if ((reg.id & KVM_REG_ARCH_MASK) != KVM_REG_X86)
++			break;
++
+ 		id = (struct kvm_x86_reg_id *)&reg.id;
+-		if (id->rsvd || id->rsvd16)
++		if (id->rsvd || id->rsvd4)
++			break;
++
++		if (id->type != KVM_X86_REG_TYPE_MSR &&
++		    id->type != KVM_X86_REG_TYPE_SYNTHETIC_MSR)
+ 			break;
+ 
+-		if (id->type != KVM_X86_REG_MSR &&
+-		    id->type != KVM_X86_REG_SYNTHETIC)
++		if ((reg.id & KVM_REG_SIZE_MASK) != KVM_REG_SIZE_U64)
+ 			break;
+ 
+-		if (id->type == KVM_X86_REG_SYNTHETIC) {
++		if (id->type == KVM_X86_REG_TYPE_SYNTHETIC_MSR) {
+ 			r = kvm_translate_synthetic_msr(id);
+ 			if (r)
+ 				break;
+ 		}
+ 
+ 		r = -EINVAL;
+-		if (id->type != KVM_X86_REG_MSR)
++		if (id->type != KVM_X86_REG_TYPE_MSR)
+ 			break;
+ 
+ 		value = u64_to_user_ptr(reg.addr);
+@@ -9862,7 +9895,7 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+ 	}
+ 
+ 	if (boot_cpu_has(X86_FEATURE_SHSTK)) {
+-		rdmsrl(MSR_IA32_S_CET, kvm_host.s_cet);
++		rdmsrq(MSR_IA32_S_CET, kvm_host.s_cet);
+ 		/*
+ 		 * Linux doesn't yet support supervisor shadow stacks (SSS), so
+ 		 * KVM doesn't save/restore the associated MSRs, i.e. KVM may
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index d0b91e3ad9ec..d6b21ba41416 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -744,7 +744,7 @@ static inline void kvm_set_xstate_msr(struct kvm_vcpu *vcpu,
+ #define CET_US_IBT_MASK_BITS		(GENMASK_ULL(5, 2) | GENMASK_ULL(63, 10))
+ #define CET_US_LEGACY_BITMAP_BASE(data)	((data) >> 12)
+ 
+-static inline bool is_cet_msr_valid(struct kvm_vcpu *vcpu, u64 data)
++static inline bool kvm_is_valid_u_s_cet(struct kvm_vcpu *vcpu, u64 data)
+ {
+ 	if (data & CET_US_RESERVED_BITS)
+ 		return false;
+diff --git a/tools/arch/x86/include/uapi/asm/kvm.h b/tools/arch/x86/include/uapi/asm/kvm.h
+index 6f3499507c5e..590762820a61 100644
+--- a/tools/arch/x86/include/uapi/asm/kvm.h
++++ b/tools/arch/x86/include/uapi/asm/kvm.h
+@@ -411,6 +411,30 @@ struct kvm_xcrs {
+ 	__u64 padding[16];
+ };
+ 
++#define KVM_X86_REG_TYPE_MSR		2
++#define KVM_X86_REG_TYPE_SYNTHETIC_MSR	3
++
++#define KVM_X86_REG_TYPE_SIZE(type)						\
++({										\
++	__u64 type_size = (__u64)type << 32;					\
++										\
++	type_size |= type == KVM_X86_REG_TYPE_MSR ? KVM_REG_SIZE_U64 :		\
++		     type == KVM_X86_REG_TYPE_SYNTHETIC_MSR ? KVM_REG_SIZE_U64 :\
++		     0;								\
++	type_size;								\
++})
++
++#define KVM_X86_REG_ENCODE(type, index)				\
++	(KVM_REG_X86 | KVM_X86_REG_TYPE_SIZE(type) | index)
++
++#define KVM_X86_REG_MSR(index)					\
++	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_MSR, index)
++#define KVM_X86_REG_SYNTHETIC_MSR(index)			\
++	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_SYNTHETIC_MSR, index)
++
++/* KVM synthetic MSR index staring from 0 */
++#define KVM_SYNTHETIC_GUEST_SSP 0
++
+ #define KVM_SYNC_X86_REGS      (1UL << 0)
+ #define KVM_SYNC_X86_SREGS     (1UL << 1)
+ #define KVM_SYNC_X86_EVENTS    (1UL << 2)
+diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
+index f6fe7a07a0a2..9a375d5faf1c 100644
+--- a/tools/testing/selftests/kvm/Makefile.kvm
++++ b/tools/testing/selftests/kvm/Makefile.kvm
+@@ -136,6 +136,7 @@ TEST_GEN_PROGS_x86 += x86/max_vcpuid_cap_test
+ TEST_GEN_PROGS_x86 += x86/triple_fault_event_test
+ TEST_GEN_PROGS_x86 += x86/recalc_apic_map_test
+ TEST_GEN_PROGS_x86 += x86/aperfmperf_test
++TEST_GEN_PROGS_x86 += x86/get_set_one_reg
+ TEST_GEN_PROGS_x86 += access_tracking_perf_test
+ TEST_GEN_PROGS_x86 += coalesced_io_test
+ TEST_GEN_PROGS_x86 += dirty_log_perf_test
+diff --git a/tools/testing/selftests/kvm/x86/get_set_one_reg.c b/tools/testing/selftests/kvm/x86/get_set_one_reg.c
+new file mode 100644
+index 000000000000..8b069155ddc7
+--- /dev/null
++++ b/tools/testing/selftests/kvm/x86/get_set_one_reg.c
+@@ -0,0 +1,35 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <fcntl.h>
++#include <stdint.h>
++#include <sys/ioctl.h>
++
++#include "test_util.h"
++#include "kvm_util.h"
++#include "processor.h"
++
++int main(int argc, char *argv[])
++{
++	struct kvm_vcpu *vcpu;
++	struct kvm_vm *vm;
++	u64 data;
++	int r;
++
++	TEST_REQUIRE(kvm_has_cap(KVM_CAP_ONE_REG));
++
++	vm = vm_create_with_one_vcpu(&vcpu, NULL);
++
++	TEST_ASSERT_EQ(__vcpu_get_reg(vcpu, KVM_X86_REG_MSR(MSR_EFER), &data), 0);
++	TEST_ASSERT_EQ(__vcpu_set_reg(vcpu, KVM_X86_REG_MSR(MSR_EFER), data), 0);
++
++	if (kvm_cpu_has(X86_FEATURE_SHSTK)) {
++		r = __vcpu_get_reg(vcpu, KVM_X86_REG_SYNTHETIC_MSR(KVM_SYNTHETIC_GUEST_SSP),
++				   &data);
++		TEST_ASSERT_EQ(r, 0);
++		r = __vcpu_set_reg(vcpu, KVM_X86_REG_SYNTHETIC_MSR(KVM_SYNTHETIC_GUEST_SSP),
++				   data);
++		TEST_ASSERT_EQ(r, 0);
++	}
++
++	kvm_vm_free(vm);
++	return 0;
++}
 
-
-Can we have this as a separate helper function please? As you're now open-coding
-this in two places.
-
-In fact, you can put the comment I mention above there and have that document
-what's happening here.
-
->  		unsigned long hstart, hend;
->
->  		cond_resched();
-> @@ -2678,7 +2684,8 @@ static unsigned int collapse_scan_mm_slot(unsigned int pages, int *result,
->  			progress++;
->  			break;
->  		}
-> -		if (!thp_vma_allowable_order(vma, vma->vm_flags, TVA_KHUGEPAGED, PMD_ORDER)) {
-> +		if (!thp_vma_allowable_orders(vma, vma->vm_flags,
-> +			TVA_KHUGEPAGED, orders)) {
->  skip:
->  			progress++;
->  			continue;
-> --
-> 2.50.1
->
 
