@@ -1,89 +1,126 @@
-Return-Path: <linux-kernel+bounces-780504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78B5B302D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:22:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11AB3B302D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3A61BC6C3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:23:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53185E8468
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A434834AB0E;
-	Thu, 21 Aug 2025 19:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C8234AB0C;
+	Thu, 21 Aug 2025 19:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="e89V9QoO"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjipredU"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BDF1D2F42;
-	Thu, 21 Aug 2025 19:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7601F948;
+	Thu, 21 Aug 2025 19:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755804153; cv=none; b=WVXUyYGVr130XPz4RtbcgAtN4hdtxk3WF4Ldo+BW0tuE2RvZPQi4RX26CnbSk8QjX/DHs4pJyEIOjh7Ygeu6nkz0HuLNvQt0oOIYSVwhCRjrtFmwmI2/QxeRHTcwgQRYZKELbYEz8zbr2smoZxrk2pjvbQAFnFFmaSLJtBfKfeo=
+	t=1755804233; cv=none; b=JXEfslm2qIPYVFJZ0mvyjNFWwf+cxLnjPCEHdvMVm7luVgBqggqb6wt5Ss0W/Brs2BgBtfZfRin91o/CKkE3oUdMQivYlJXsa8lp+3obI6I6wPESG5mKE0W8U4C7GkUJ7IeeiNL491PxbhR9xIpF3jjRn+5TNlCovKTKW29UVDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755804153; c=relaxed/simple;
-	bh=eqpxT8Akg9rcLVQcFKQxNoaLgF9UucXwjbEfd9RDP3U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZabZ+9juvwGn7nDAdUwhmiJUo0DSBK35P57cTiMR/WK0V1ymQzBGWBkNmGroWoXP542ppQ13VE5WvIcmbB9HHJj8Cp3cr9qweHrYXNJ+KCetpDTgutsXv7y0k+pREnOBAZyTbtuKcKVUhkAfm23jpgPTADWak6XMr8p0Unkf4ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=e89V9QoO; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 56A4D40AD5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755804150; bh=eqpxT8Akg9rcLVQcFKQxNoaLgF9UucXwjbEfd9RDP3U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=e89V9QoONR1oGXET/xBFAg5fplIG8liCmjMcP5AA0rKkcivqA/AUGgG4GZZ7SiENJ
-	 ylA5e1x7t2JV5bmZtfqLhNRAQmU7875IecbxlNEkZbLrWPs7f670RF4fNW9dDt58fO
-	 ddus703JdI239uRnXhsd38ZUpC1+TCCyP0ddHEUmNOO9md7QlxAqnXup/0HljaLAXX
-	 /FJXeLHlG6vxK3CTjnkvFFMTuCi6Y7zZJHWJ3TOBVt/Sb2wfvb20sY1zf4nHzdtjtD
-	 ySl4oTXy/uH0kXmh7nIMJmx4guqcM/0L5D0+l1tJUgZMxvhbvgTkVoH55Dmx/9l6Qf
-	 2Y9WchpEPswQA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 56A4D40AD5;
-	Thu, 21 Aug 2025 19:22:30 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org, =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Alice
- Ryhl <aliceryhl@google.com>, Andreas Hindborg <mchehab+huawei@kernel.org>,
- Benno Lossin <mchehab+huawei@kernel.org>, Boqun Feng
- <boqun.feng@gmail.com>, Danilo Krummrich <mchehab+huawei@kernel.org>, Gary
- Guo <gary@garyguo.net>, Miguel Ojeda <mchehab+huawei@kernel.org>, Trevor
- Gross <tmgross@umich.edu>, bpf@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 00/14] Fix PDF doc builds on major distros
-In-Reply-To: <cover.1755763127.git.mchehab+huawei@kernel.org>
-References: <cover.1755763127.git.mchehab+huawei@kernel.org>
-Date: Thu, 21 Aug 2025 13:22:29 -0600
-Message-ID: <87zfbs5vka.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755804233; c=relaxed/simple;
+	bh=ZjZW3xaTk92JHRhfwk9CdBU4Fsf43qj1FDXPfSJqJmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bvX8W/YU6dfCiI9+nGSOgbSXnPB2nJdsUipW+v0QbBFHf9WhCmqte8AIrJvjjsrwojImBHS+/z8/pmp6RbS35L579aPth1yyQfd+XdMDZXk7qwOMgbzyGfXTbTK22KEJq1CyUjL2L3sSr0zJG4btsDOY2GadyuJUiOIaVDdlaiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjipredU; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e39ec6e05so1216995b3a.2;
+        Thu, 21 Aug 2025 12:23:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755804231; x=1756409031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GwLToObS9wN2E94iBpYxKsBNZP49OCzPMmD+i5CI6oE=;
+        b=TjipredUurrGrYcvsbMPzq/XqxpCrYCx4v7AyLUiP2yY9urlsYGy8SWh7ENV3+1UNo
+         x9+7mIvgIjwqSQ8KasXZBRWaJoR9f5QJRYh2Bg7yBToZtbG6VS58sMyqb1p0kRwl+9Ue
+         mqT1jbEXFr+WhiHYmgaVX/SeGByj4LTNUkbiQBqpDgmndGUN2rmurWG4Z89t7CTY39U3
+         OxQtEpdQ0SN1QbmDH7BP3T+48vARRs8+Y8XvCvCXTRazgQ2MBgyuLWLRsNq8CbCl1Wz/
+         tjI4T/qBAG6Ai7tgUj/6qhx3v5l9zAmu4EgJtuYBBgqSDJKAt3aYSqcP9lzPixWEP07P
+         SCiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755804231; x=1756409031;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GwLToObS9wN2E94iBpYxKsBNZP49OCzPMmD+i5CI6oE=;
+        b=Imr+ksZ2/ejmfjNnwVIyGouZA6Iegua0n+quZs169ZHybntUmeXCquvJBL9ThLlhpl
+         3Ysn/ULi/rPZXwqh6/QzUEi2448I+dgNjfZml2c/7VIJja4BhZdDQjRANrDbYH6t2srv
+         kGIbaQhcumPLC2DQq+lwjFz3XMsgp8qA+gMQrjjZ/DHCwLwoF+6mpLJvM7PdZa+urEGf
+         nW1Ez6Emze56PfHP4b0LUDZmH0LdnO20lLkzG1k1Hx3Ur+iogO6dke2Al4fo+JdmrDyx
+         IrLTDO+4mv4g+DfrhIfWStZfnhXtZT77l1bV0OqPktcGRZ4d2EFsTX/XbIH+JtiqdLmp
+         xbNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVd/qJsTNMwuu8LI+xukMwuQZSuTGIT2607LZ1EUzRHYom5FO0VmYRbOfmhJQHoOcGXWdtCO2li84v4@vger.kernel.org, AJvYcCX7voERPqaMGRlODf7XH1drO/shhhCpuj300EWoLkZ8aWuGQAC/VuXAwGBH2afhabxLLFJVmJm4B3ue@vger.kernel.org, AJvYcCXIqHnUjfodv8lEz1os16ZZTZtn91XFxD9RAXpUGOKq0anwNqVybWgEzMgQV1YytAGMTH0vI0qP45tl5Qba@vger.kernel.org
+X-Gm-Message-State: AOJu0YyksvHSnF5k4dEsIC8F3ofb7cnX10WCtsFx0PAEx3BoL8pNdEAG
+	1uh/y3akhfH7X3bCvoUn2XkMrLa30qYwyNuFKHBxPI2FKmDwCeii+/q7
+X-Gm-Gg: ASbGncu0YETLRQZ3vAQyeOsilcKK2pFnNrbO4azOwOrVPfwsIY5/Pr77OvCZ8mYhGhJ
+	pwJQBEErj3hHH2YTv6+/qO9KYl9/Btz4KsSmuNCZWoFAcIXFnQRJjwmjQZOqeAU+04UY+LsHGdb
+	36w7++mUp1semiP1Herv9S/hgcx3bkZtvrp4zbiW1/B8OG/5Gb0BHDKFKDEtJ2WZPRU9VPfEqka
+	bN219xTFyqoZZGbeHFDtcGGIOd74xf8GpJlV0YR7Ktz98vgOPN2t5dPQL/RNFvCcAuCoMn1htFH
+	J2K4grikpXlLAMTA4ttY7vi4SlzRRuIrWIPSA8xDSBbo5HaEj+ocmWZYs0PfgU+FUdn7MPFkK8p
+	D+jwlrLPYxaRwPLwtqF/IdLW3gCVAYw==
+X-Google-Smtp-Source: AGHT+IGLIIWFLR1VKYkqDlFL8XdgVSTqxteEHtPGg75YFIj2fes5gzkZ+w4ysK+R7xQKent42dPWgQ==
+X-Received: by 2002:a05:6a20:2446:b0:240:66:bfbf with SMTP id adf61e73a8af0-24340d2c0aemr368744637.32.1755804231225;
+        Thu, 21 Aug 2025 12:23:51 -0700 (PDT)
+Received: from localhost ([2804:30c:1f77:e900:8ef5:b053:b8a:9345])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-76e951da867sm5037870b3a.102.2025.08.21.12.23.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 12:23:50 -0700 (PDT)
+Date: Thu, 21 Aug 2025 16:24:11 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>
+Subject: Re: [PATCH v1 0/2] Add MAX14001/MAX14002 support
+Message-ID: <aKdyW1rWlwNFg85k@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1755778211.git.marilene.agarcia@gmail.com>
+ <20250821-haziness-squeamish-81713e94d079@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-haziness-squeamish-81713e94d079@spud>
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On 08/21, Conor Dooley wrote:
+> On Thu, Aug 21, 2025 at 10:36:06AM -0300, Marilene Andrade Garcia wrote:
+> > Hello maintainers,
+> > 
+> > This patch series adds basic support for the Analog Devices 
+> > MAX14001/MAX14002, configurable, isolated 10-bit ADCs for multi-range 
+...
+> 
+> Something gone wrong here? There's already a v9 from another ADI
+> employee on the list:
+> https://lore.kernel.org/all/20230710042723.46084-2-kimseer.paller@analog.com/
 
-> Hi Jon,
->
-> Here it is the second version of the PDF series. I opted to split one of
-> the patches in 3, to have a clearer changelog and description.
+Yes, my procedure for finding parts for GSoC projects failed to find that set.
+From quick read of v9 thread, the reason for that not being applied was lack
+of detailed comments about device data transfer handling?
+Anyway, I guess the only thing left to do now is see what can be taken from
+Marilene's set and applied on top of Kim's one.
 
-OK, in the hopes of pushing through some of this stuff, I have gone
-ahead and applied this set; if things need tweaking, we can tweak in the
-coming weeks.
-
-Thanks,
-
-jon
+I'm sorry for this unfortunate situation.
 
