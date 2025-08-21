@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-779413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9118AB2F3CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8941B2F3D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872DF3B31A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:23:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 706613BC1E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95B32E9EBB;
-	Thu, 21 Aug 2025 09:23:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AFA2F1FF9;
+	Thu, 21 Aug 2025 09:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AM5fe4ma"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5D92BD031
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9EE2EF655
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755768186; cv=none; b=Ydq8HAMFMlg6wrtU1BI5kJxNNIm/pFI9Y/PSMuvHfMaWLtwDD599gTuBNh+NwLcCWmgCmjS1kN2FBe0LH0BHnDSefhzlON8xmZpt3Yz5JT7i6PPDHXXvI36XG63NiNDF7WBc7dvEPr1ydlh+DJVHepiP3ja4hucpNwk186J9x20=
+	t=1755768212; cv=none; b=E22DgoJYWBqNmvmP4GLl1pbVkttg+lNUevjP6BWssjL31XofmVos7epZr42bLywryrFHic6p7QpOgxqEdXR9x7kKLn6fpreKKzSvTOP6fW+ukiz9hAB3yvrNuI13Z1d9T5RZeADK+ll6q5UVVQMk2Q8izm/gtPwpYpbrmN06hXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755768186; c=relaxed/simple;
-	bh=WCZDKgo7yoV2Ay41zKZi8zTJTfFdRcXhO/zfnSxSdps=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=o93bPv/sGM7Uq0PDp8tPROj4JfXW9YmP06WRAAD11qbo9X4WmbbcIBswlxWR17OGDkerDUU8erIB0uTj2t9Xeq6LRDUjELClpQltKiTLDkBBJfT8Pg16vSkD886opdKRHnQftW7r9cvAH4Ezu+16KNEEmAgMTiIOLD2L0wFbv74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e5d398a961so20858415ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:23:04 -0700 (PDT)
+	s=arc-20240116; t=1755768212; c=relaxed/simple;
+	bh=bqK1EohHu71zjabqHTqoKWsH2VYa/lqUaQNt1/AZT4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h1nnXLJsJRGVRBZTSqaiTboLoSfUWfGDhrBE89W85vgngxbcIBgXuD2Nux3JQ3EXOrE6CiRt1Rdjwrc0/WCTl9jOfgusTwyzSBSk0oC4kAZCoXvr6U8aeASQP7e5hRfEtrgLqrp8g6obfJlP58MRS3LEZBarS/kL+OX62PHNAYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AM5fe4ma; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755768209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOJOZZdThAmSYOmW8vQd0bDMJuONYkO1YWwTFftLPfc=;
+	b=AM5fe4maG/g/9HnhWALhkMhB7DAVlIfNZW2OnmvPGcRFmuBi2R18sKXaGL/Vp8t019OohU
+	drQDgcMMHjxLxZESSfUYkIzrbC5tcaAaXRrxZhv9IoKJZqMNqkHge1yGhAvnScSLcqImMR
+	zqfsyqM6dExxXSewXNRKtHvXzleoUsA=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-203-T5IxXDsgOySGGEOgie8YZw-1; Thu, 21 Aug 2025 05:23:28 -0400
+X-MC-Unique: T5IxXDsgOySGGEOgie8YZw-1
+X-Mimecast-MFC-AGG-ID: T5IxXDsgOySGGEOgie8YZw_1755768207
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70a9f57ef93so16758696d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:23:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755768184; x=1756372984;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1755768207; x=1756373007;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hKir4ayNb6PiB/M+72qfF1KOS5bW4MURUJIg+KnK7fU=;
-        b=DB87Xkr5OW1MHgK4R1Mr3aX2vw2kHrqIwrNab5JHowojB5Opb5hDMDQQHsbZQIBAzt
-         uX5lh7mvwf7T8pPCoyVBq8UBaRp3ifhRsBgrrGNwQMBp5HwKboMWGWmrXYKC6Zm1/r1Z
-         xdcleEiqQvULTVxSs74BR6fax8Z8SaOQT/MrqFQUaKwdZOu3RsuNP/kifg0hEsSebgp1
-         SunlPUqzTQpNOMWDClDzz5NFDfJOTaj8XShlu9xrVKf0AyZFeQQILG9SFajzI+8A8A0U
-         MGmMHsjj5GhnuNLLFwky/FVES1QChqRVYJYdEUtO82/mAUyQwruymxckwJQVMZMbqTHG
-         t1iA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbU8RhW+HAAUVYl6b6o44jxGo6IpO3PryFzd84f9vx50P7yJTUwsuYK0FWuXR0TBleqGvmhWmGpxqYFqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+M/5czsYQkDGyRSmABhEMeJbC7IiHXnbEQqJzC4l+IbhlQK6Z
-	j5oNW7ki1vqSLy8YgQuJdTo4skuKeN9fAxCdD3ZLMdAkpfKyLMjNpVrI/H7hJHKFnN3LiXycdqJ
-	Xo5PvkVDo2mm7Z+iyJ2XmKvK7+HlBuE2RgxNqlAZojcD0p8w8/RUqx1hFPrY=
-X-Google-Smtp-Source: AGHT+IGvFTHJN+83jRDDbB8asMYffQIQSkByQKRNuBTGfPSvb1Ey6SIOjn/6Dksri+LOd4AQachENKVJ/Yfmj0b+mCLADS2HwGlR
+        bh=dOJOZZdThAmSYOmW8vQd0bDMJuONYkO1YWwTFftLPfc=;
+        b=St0cdZSzw5iEdO+wJ8CuO9nN/QVvvycdpy8v5rYzUc8L8qKRvRJmVUY/DiLxAJW+2Y
+         EPISPCppV6PzEQVg4zyHU3K/GCVmjjnRjYLZb+JczXMs+H4es2og7HPf3UtB8L+oVPTf
+         ZZnPvPrt1IViZRKderlViTz9RjkZt5sUnGl4PHyVtkt/d5/gSKTJYTLoRwrpBS/8JcTQ
+         0+1w/jN6kKiP3gmgKbrrpXbmR1mKSd9tTBFpuzrSLTyFFp+tjQ8/aUKW2dQE2f+6ONw0
+         +7+UOekQQGBSD/xbx1Ov3I0JpGQZ7dihnDe0kHLEhL/3K0M0BcHfU8dSroPR669lGeAQ
+         tYww==
+X-Forwarded-Encrypted: i=1; AJvYcCUu17x+PABboPP1x7CLC+AJN6X1imULqeIkHWwfTPPPpkGaMhgHaOkLrAJ5x+aK/dYWoeaDuYBjAmS1kHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+KNPD3qONjjLKLlHZlRLdMTkJQJEP/koiokMNwea/ETL5lhCc
+	LXJFzT1oeWc6KXw+CCMwoMeT+XMamxhGFFJ5vCJLcHFs5VH2LBmpDO/gO5mRAjlnGj55v3EvTD3
+	vM463wDOn11hX3hmdt7Xow7V65GK7NlsXJX1HCJU8GmclMG/wIn41veaq1RyeXyXqMA==
+X-Gm-Gg: ASbGncsO+tfdpge7zv1pvZMU77p74QFIgmbK793XTR01UcL+dTWIkhDiEV9cKf7lNuI
+	z5CTI4K6LY2IKRVB6xVYORIlPdSujdhlNH+Lao1nTO4zrQuut9LcRAvveTjeMNgexiw+BzkPr+Q
+	nhqOqYReshxMA9tOx5r9Hr78Cdf5qvQJd0adVLOQkTO7/pzRXpGdd4kl0zTgd6FeTkgzbXIQcsT
+	UK7QhUmHiAi9wWUGJI9XROQYZlhoggIZqixznmoFvyM1kmOPQlneIyUZdxc39jwtjG4qDyaWDLJ
+	EE6ePyAiH8O3dGHArdTEFjsPTweKq2CAXHqO56CwW1+Bpw3jAvfsoE5lHdyIyUe6qbs33AbGAoq
+	Zy8Eqm3EPjqo=
+X-Received: by 2002:ad4:5bac:0:b0:707:4aa0:2fb with SMTP id 6a1803df08f44-70d88e92700mr14422366d6.16.1755768207416;
+        Thu, 21 Aug 2025 02:23:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHQeoOWaOCAlmZqkreErWZ1WAJZpVAGCQsupGfVEE7FWFJd2NfiFuKMU9Iyktu8wjNf2tj3A==
+X-Received: by 2002:ad4:5bac:0:b0:707:4aa0:2fb with SMTP id 6a1803df08f44-70d88e92700mr14422236d6.16.1755768207031;
+        Thu, 21 Aug 2025 02:23:27 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba9382300sm100386566d6.64.2025.08.21.02.23.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 02:23:26 -0700 (PDT)
+Message-ID: <062219ff-6abf-4289-84da-67a5c731564e@redhat.com>
+Date: Thu, 21 Aug 2025 11:23:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b09:b0:3e3:ef06:674c with SMTP id
- e9e14a558f8ab-3e6d7861fd3mr32010065ab.20.1755768183872; Thu, 21 Aug 2025
- 02:23:03 -0700 (PDT)
-Date: Thu, 21 Aug 2025 02:23:03 -0700
-In-Reply-To: <20250821084742.5216-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a6e577.050a0220.3d78fd.0020.GAE@google.com>
-Subject: Re: [syzbot] [v9fs?] UBSAN: shift-out-of-bounds in v9fs_get_tree
-From: syzbot <syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ipv6: mcast: extend RCU protection in igmp6_send()
+To: Chanho Min <chanho.min@lge.com>, "David S . Miller"
+ <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+ Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com,
+ stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>
+References: <20250818092453.38281-1-chanho.min@lge.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250818092453.38281-1-chanho.min@lge.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 8/18/25 11:24 AM, Chanho Min wrote:
+> From: Eric Dumazet <edumazet@google.com>
+> 
+> [ Upstream commit 087c1faa594fa07a66933d750c0b2610aa1a2946 ]
+> 
+> igmp6_send() can be called without RTNL or RCU being held.
+> 
+> Extend RCU protection so that we can safely fetch the net pointer
+> and avoid a potential UAF.
+> 
+> Note that we no longer can use sock_alloc_send_skb() because
+> ipv6.igmp_sk uses GFP_KERNEL allocations which can sleep.
+> 
+> Instead use alloc_skb() and charge the net->ipv6.igmp_sk
+> socket under RCU protection.
+> 
+> Cc: stable@vger.kernel.org # 5.4
+> Fixes: b8ad0cbc58f7 ("[NETNS][IPV6] mcast - handle several network namespace")
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Reviewed-by: David Ahern <dsahern@kernel.org>
+> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Link: https://patch.msgid.link/20250207135841.1948589-9-edumazet@google.com
+> [ chanho: Backports to v5.4.y. v5.4.y does not include
+> commit b4a11b2033b7(net: fix IPSTATS_MIB_OUTPKGS increment in OutForwDatagrams),
+> so IPSTATS_MIB_OUTREQUESTS was changed to IPSTATS_MIB_OUTPKGS defined as
+> 'OutRequests'. ]
+> Signed-off-by: Chanho Min <chanho.min@lge.com>
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-UBSAN: shift-out-of-bounds in v9fs_get_tree
+FWIW, the SoB chain above looks incorrect, as I think that neither Jakub
+nor Sasha have touched yet this patch.
 
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/9p/vfs_super.c:57:22
-shift exponent 32 is too large for 32-bit type 'int'
-CPU: 0 UID: 0 PID: 6499 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
- __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
- v9fs_fill_super fs/9p/vfs_super.c:57 [inline]
- v9fs_get_tree+0x957/0xa90 fs/9p/vfs_super.c:125
- vfs_get_tree+0x8f/0x2b0 fs/super.c:1752
- do_new_mount+0x2a2/0xa30 fs/namespace.c:3810
- do_mount fs/namespace.c:4138 [inline]
- __do_sys_mount fs/namespace.c:4349 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4326
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f470358ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f47043a2038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f47037b5fa0 RCX: 00007f470358ebe9
-RDX: 00002000000000c0 RSI: 00002000000025c0 RDI: 0000000000000000
-RBP: 00007f4703611e19 R08: 0000200000000280 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f47037b6038 R14: 00007f47037b5fa0 R15: 00007ffea4e4d958
- </TASK>
----[ end trace ]---
-
-
-Tested on:
-
-commit:         7fa4d8dc Add linux-next specific files for 20250821
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=174c0a34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ae76068823a236b3
-dashboard link: https://syzkaller.appspot.com/bug?extid=30c83da54e948f6e9436
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13ac96f0580000
+/P
 
 
