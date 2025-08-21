@@ -1,130 +1,78 @@
-Return-Path: <linux-kernel+bounces-780095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF532B2FD96
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:00:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42462B2FD90
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8A65E04F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:51:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60604A03BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27992EDD41;
-	Thu, 21 Aug 2025 14:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3ED92EDD41;
+	Thu, 21 Aug 2025 14:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="THjQbHDj"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDeCkhL/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3308284B2E
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5751D8E01;
+	Thu, 21 Aug 2025 14:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755787838; cv=none; b=AJtzJCXwwM62iJk6B5hletcrpeOXzUNqJLYqGNq7Yo98p1fjolSqv3hQ7krmtuJ3Fu42zLvAr8hrDKk6dcJ+uYfJpEEVadAyeFrd/4HbvpzmucLmMsn8Pot1CcFErmvkcaeKsXnYvF8Ez8NKdv2Sb6GW9A31hXe5oElm+avII+o=
+	t=1755787816; cv=none; b=UAEKheYBGPBpFgUDBxc8djDfhPiRiRameroZGwzX2QNu0oMYP1e9r8mTg9HqDe0u8OvoSnP024yJNzQ6vpx04gIbuDil21CmdSyMrCBiYUlfuxMmKbn8QBzy3iSPvenZkVF0G2kOEFFFNHt/ZsvNUOPcwKb8cV6JlJwHJqvjN/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755787838; c=relaxed/simple;
-	bh=GH8+AwypDZSc5Wk9KNNPh/6qRQD5BUNBbwVozKXNp8M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KsE0cVmKc83SGbHIDO1ZYspqpuYlfihpxBiM27kFuFPphUypKhrOkW81luaDYu0WVLVu/ZCV9YaotYzgUrVJDd05esMfhu8RzGgI8cWQJzFyuiY73NmdaK0ueOlJKpNuudqiK48aLylgJUszFahcs50Fa4jnMMSo7xFPkYLWJ8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=THjQbHDj; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e39ec6f30so1056205b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:50:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755787831; x=1756392631; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yjqHieTqBHy+cNT3ZdROla3bmT3OzWvs9RzgpXfbZLc=;
-        b=THjQbHDjv11//lACWeHb8qIey8DijCVUsh6cVXDb++r5Z88f6nXUjSAsUnlAg5SNGY
-         3RjNdhbKl/0YuZPh1iEtK4IZAe9u2gLAgO67b2ewiaAsiYfyp6sLlyGoGPYaiQERUlHA
-         RONiA4VOkc6eCZM+/KRYP/pDG8ScwaAqfdCxM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755787831; x=1756392631;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yjqHieTqBHy+cNT3ZdROla3bmT3OzWvs9RzgpXfbZLc=;
-        b=rvXflbxGXy3z/Bw9zPmQxDOKYaGlssrvbKC67bbThNr+b3s8oEQ6Hoi1XBZgmmAtWH
-         +eabsvtz67ZZFQSTf/VGvXrAcU5S3lXIR4VYym3AT7qqv9A6k3VUVG9n6KFkHOkrFUsw
-         3DMRUAcknjZOT75pdvEttlOE9Hy5jwQWcGpEtop0fEaxNULNlojoL2sua8UTo+kS0oZh
-         lvFktjAYfcM6BhW3/Wv0TyxkVfsRSiL8UmWcdDAhW4U3CUPFLS/YeeBgq4HTHv/eBD7i
-         isGwVKh4jyXicgPnwWkim05XBaC1JRnj39+lV0HmpEBKvnxVOiajylQDhTQ9se7l+zDU
-         t2ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlK6Hz5PWPfE9zXBlLPV/lvm95S9Tcu46ajTnUoVpheQbO8FB7QYh98SKUYZFFkqjwMonS2wV+Fta2noM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbWps25jCHVluDRb5nd/8fxGDHoBjk974lMo43c67zGpgnQAg4
-	2yRcE8zwr1ernv96FkXuaU08xuOhvtsHRK+6xZ2ZfVkNYyWmpDkETs4hPiYnAthYh4/Zl+av6+0
-	w6Y4=
-X-Gm-Gg: ASbGncvT0zGHQuBX0Lph/6OyR6vq/qF/Hj8WU5hxnIuxnq2cNsjT/6XQylMJ5h+EeLw
-	flvA+L/WFoxjDXbBJt2v9uep0dLRKtQYJuXAv7+kv0jJdMmMKuC9voKbnBV8XaQqSI8xAK3TxMF
-	ueiio278QE2uN8UTkCInHFABXdeXbyk0wZhsjduGtgAnecHaBiDtSszvwPUNj1wdJ1pOhjnzGnU
-	PA1oMml6/8aeHCvVtdiiDB+A30TRqQs1exSFGmvChNvUqgpk4Rqzyx9DqxQqscf/mt9Mh+dyDsu
-	LdUFFPWjzm5W7fj9EJfsj0mV+uke6xZH/KqwStGOrUpdNh9ijoVxHqC+luWEG5xk7dVZKLirKSk
-	k5kG4hDYkVGzU7xjL96epVagKb4nXnSIGl+rJaz6Wg5atpuBuXl9nDlzSsKN+ZjtS3bLergnbJh
-	Wa
-X-Google-Smtp-Source: AGHT+IFq/4YdOrX2lDT9d1+Oblj0jUKS0C24Wpw4jDJMLQlzh9OeVJtAFlhtUVN+e2QxQaRdjXL5LA==
-X-Received: by 2002:a17:902:d4ca:b0:240:7753:3bec with SMTP id d9443c01a7336-245ff871294mr34154755ad.51.1755787830931;
-        Thu, 21 Aug 2025 07:50:30 -0700 (PDT)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com. [209.85.215.177])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed375db3sm58089235ad.59.2025.08.21.07.50.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 07:50:29 -0700 (PDT)
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b472da8ff0eso696719a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:50:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW6PDtj1EVRhPt+X1O48sZk9TpFF0FcaJvl2k0EvMv6p4RkiiA/jBqREcvRTrLaDHXz8EUsKSqlHEeMH0M=@vger.kernel.org
-X-Received: by 2002:a17:902:f550:b0:244:214f:13a0 with SMTP id
- d9443c01a7336-245ff871cf5mr35274985ad.52.1755787828128; Thu, 21 Aug 2025
- 07:50:28 -0700 (PDT)
+	s=arc-20240116; t=1755787816; c=relaxed/simple;
+	bh=LUNHhOeProkO+2w/4nY2nMhxYqrg5esMB9L9HARyL00=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ngs5xtO72mHJmdRZNkM/2s0xtsq3QgcTPix7jTIP7uI+DVrHMuBBtbxmGApHSn3ziNOEKfgs0yw+rCcmvq+lBYV5OVgCKp/ohZ2wi3tpHQHl324OAYuPffKSOtmTA955sfnL1xTn4Ew2NM+HBQIiU29ZZYf6fs5moc5Ju3AlROY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDeCkhL/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED8C9C4CEEB;
+	Thu, 21 Aug 2025 14:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755787816;
+	bh=LUNHhOeProkO+2w/4nY2nMhxYqrg5esMB9L9HARyL00=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=aDeCkhL/xC8rJ3n2yCjGNMJP9e/4Q5h6XS0EqaZn1UCaO0xybMy8FdEISHrdHKOd7
+	 PsmnfjcW9kRbw2nTy4lWXqlJAyUX6OWhkSrK8kR7c0Mi3Tjvd+X3EvVfIGl1bsP97V
+	 dwIGMQwpNRKNskxPAr79fMWFuonZdh8owQ9+KRi7dFCaVTomqtbfCTybA9m/NmusR/
+	 oLAG/V/Y+Hc0LEj2pap/QfMhGa3fgW/f7fVAYgImde3nCOvKts8qqzjpP6vsRwU5YI
+	 Hm3cJc/4araTmC2BVW5aVnja9vK4o8gQ3jag/YCx2PQ/cS1vbpsZGO/8jZadlRRjz5
+	 +EqcNozKmwaVA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71089383BF5B;
+	Thu, 21 Aug 2025 14:50:26 +0000 (UTC)
+Subject: Re: [GIT PULL] LoongArch fixes for v6.17-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250821122410.1144154-1-chenhuacai@loongson.cn>
+References: <20250821122410.1144154-1-chenhuacai@loongson.cn>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250821122410.1144154-1-chenhuacai@loongson.cn>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.17-1
+X-PR-Tracked-Commit-Id: 538c06e3964a8e94b645686cc58ccc4a06fa6330
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1c656b1efde6ce86a6c810d27a5f925e938d568d
+Message-Id: <175578782513.1072218.4196681357493888705.pr-tracker-bot@kernel.org>
+Date: Thu, 21 Aug 2025 14:50:25 +0000
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <aKcRfq8xBrFmhqmO@stanley.mountain>
-In-Reply-To: <aKcRfq8xBrFmhqmO@stanley.mountain>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 21 Aug 2025 07:50:16 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WMu9YJgkkqTEpKEzPdMUka8tYzPZVKEeh501-mSsh4uQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwRHXd6Q5sCwpiasX5YznwxVtKCHmDt34fauOc1r6Twa8Tf38YLNCLnydw
-Message-ID: <CAD=FV=WMu9YJgkkqTEpKEzPdMUka8tYzPZVKEeh501-mSsh4uQ@mail.gmail.com>
-Subject: Re: [PATCH next] drm/panel: jdi-lpm102a188a: Fix error code in jdi_panel_prepare()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Brigham Campbell <me@brighamcampbell.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+The pull request you sent on Thu, 21 Aug 2025 20:24:10 +0800:
 
-On Thu, Aug 21, 2025 at 5:31=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> If the mipi_dsi_dual() macro fails, the error code is stored in
-> dsi_ctx.accum_err.  Propagate that error back to the caller instead
-> of returning success as the current code does.
->
-> Fixes: a6adf47d30cc ("drm/panel: jdi-lpm102a188a: Fix bug and clean up dr=
-iver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.17-1
 
-Thanks for the fix.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1c656b1efde6ce86a6c810d27a5f925e938d568d
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Thank you!
 
-Since it's straightforward and a fix, I'm not waiting and I'm pushing
-to drm-misc-next.
-
-[1/1] drm/panel: jdi-lpm102a188a: Fix error code in jdi_panel_prepare()
-      commit: 61ce50fd8196c8782b9620bb60d33649ec429f64
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
