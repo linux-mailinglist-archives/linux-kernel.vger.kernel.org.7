@@ -1,413 +1,84 @@
-Return-Path: <linux-kernel+bounces-780090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9731B2FD46
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:49:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A8EB2FD79
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5CCD7A59E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B688D1C20BBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFFB2EDD43;
-	Thu, 21 Aug 2025 14:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20EB2E3363;
+	Thu, 21 Aug 2025 14:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ulhfm/5J";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="b1mg3Z3I"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdVvUYzQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290862DC322;
-	Thu, 21 Aug 2025 14:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755787757; cv=fail; b=APwa9hugZ3CSdyOo0rDcB86BxU+PvwAQDRtUhuf+WJKinn8cpBFqW7gKmUHW1TaJKrpG1DLRGHHyGHVfjzXyjdkCbQFfF1XyuduyEBzP9zL1H/vzMiP9rQrLYCiX4yIF+nHPKS40cNkncvcpUesT0qt8BZ5aYbpee5w6hnZTsc4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755787757; c=relaxed/simple;
-	bh=yXVI8N2Z5a+0ST+ul/2/ShZBxyZcc7p8y/P1JggSY3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ZFf2rWRJpJNAnjJboeBWO80Dn+aiLSzTmVBXMse9pOttOcjRzLsOKu8TYhmk/TWiSHKkvo2YnPJ7jrRc3BvGBV4bkfMWRuuis5XsTNNzuv1nw6jBA1J+0vnYRdl7Veqb3M6NVGLqSxMtF8wh9AhjfUfCooOSGEF31MOEHfQ03Ik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ulhfm/5J; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=b1mg3Z3I; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LEhbLD032031;
-	Thu, 21 Aug 2025 14:48:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=M8O2JJTC7pIKMeTJca
-	1dc18YoysPk8LtAX+2mKGMbJI=; b=Ulhfm/5JKxRiFaY+cUyH22fQtqCNU3GJ5w
-	ClfTZdEavyEmk4gCoDmnZ8Duy4f8jB1dZE8b1/fc0LSV04WVtO3EtK1Az4c9sgzO
-	VDW3SpTbc9FDazDmVCYMXEHQa0k0JzTKsWPTgVDPoeMDEze+Psu9o2wiX2IZfXVy
-	R9ZccZlE8CpvH7aacWxJJtc8Or9+KuX0ELXcGfiKBtvuJfnvoAca8U6s/HndhOIg
-	3BhGSr4DelCl7rP+VDxjTka7IZr71tKY5HZQm9gJ2ybVWv+UghEN9IQEzs7afE83
-	qINnP7mEAQQAQBUJ5e0MIp60Xkp0Jeigv8rMwKXhlEslw58iMH6w==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48n0tsujqa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 14:48:18 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57LDC7VT026336;
-	Thu, 21 Aug 2025 14:48:17 GMT
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04on2052.outbound.protection.outlook.com [40.107.102.52])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48n3sxn3b7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 14:48:17 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QyT7FTixVd+gf298UPtkldhjgqT4q09kvU7JHP8A3HdA4NWzR8rHMH+ilOreEFf95LpSNhQcP6YKP3rSehCsPdSsIcD9sUMqO2k/IfEqTIl68+EZBIH1T1xef/uoUFw1/+LwRW2GiRDitsSmqtUWSgpNeXKPN2/eCp/fpL7cJj6ZN4qqo5Gx2Cp7lQVIlsjbjBAyThH8fNMvtmF/4MJYD2ditkzWJkTccMZaooPj3KSw+CJWOljbp1QGw28njEkZeLkJICC3LpK2sAlwMyEv5ggY0MJzXIL3hQQsPbybmyQN1xaI7Zu+zZc0bnGuTkVnirBe/p1DWjsSWa9S6JGGCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M8O2JJTC7pIKMeTJca1dc18YoysPk8LtAX+2mKGMbJI=;
- b=cChuq06TRE9Z/UfOCwjgggHKOAnsioGP974qiIufAEuZej63OAi8J1YH9O/Gp1atHtdrPrZb7P1CJlr78VgEXtnzJZX01HpugsM+Hzz/n1hFsQulw0Vg3LW10XVq5X5CLK05w7qrPRZnX3rBoY/uujP4zK18GZlsVNPP+98srRADQXMMU07ZZATXe6eUY/nUI7StplQH0vTb/Sjf5UChyChOyj6oksDVX+41+Mh91n0Py8PbgsdQTNv4w5OyS7/euI1vr2PTxy2nA+BBw9SOImHP/0tqms+w3KjWOP7ArNSkV6vcFaTd0YpYbf4eBVGkypdtubJWYeiHNqc0UoaCiQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M8O2JJTC7pIKMeTJca1dc18YoysPk8LtAX+2mKGMbJI=;
- b=b1mg3Z3IO3ev+oGqH4q2VliVVn1/Ecg5XL8bh32hQp6mDcfse2Pjqpwp/Mv/weF0pb+cbFTHueOX/8K0pLyCMhWITB0Z8QkzvrflWhxCjB3sLW0EyAGBJbYGfX6YPLNa15QVzOUiRoM0vIkYgzt/pWEMS7pctm0XUcxJDkVixLM=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS7PR10MB7252.namprd10.prod.outlook.com (2603:10b6:8:ee::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
- 2025 14:47:55 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9031.024; Thu, 21 Aug 2025
- 14:47:55 +0000
-Date: Thu, 21 Aug 2025 15:47:52 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Nico Pache <npache@redhat.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-        Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
-        corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
-        mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
-        baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
-        wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
-        sunnanyong@huawei.com, vishal.moola@gmail.com,
-        thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        raquini@redhat.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
-        tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com,
-        jack@suse.cz, cl@gentwo.org, jglisse@google.com, surenb@google.com,
-        zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com,
-        mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
-Subject: Re: [PATCH v10 12/13] khugepaged: add per-order mTHP khugepaged stats
-Message-ID: <69e9c0e9-25bb-4ff6-8469-d9137a5e5a75@lucifer.local>
-References: <20250819134205.622806-1-npache@redhat.com>
- <20250819141610.626140-1-npache@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819141610.626140-1-npache@redhat.com>
-X-ClientProxiedBy: MM0P280CA0058.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:b::25) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558E22E092D;
+	Thu, 21 Aug 2025 14:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755787682; cv=none; b=tPVjcNgnj0dJek3bPCvkFsLdwpIDm08xRuBDMf3o0n0WSt5NsdLM9iTry9bv6kn4W8DjKWVEngkSTy9YwVdVck7N3MF9NVFoWj+ee1X62zxfsyYInl4zEs74IEfzxid9eZPdEQoTld0KywcBI5QcSFDmE8Aetf/pxBTTU3X7p7s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755787682; c=relaxed/simple;
+	bh=tB7QtdU0NteP+l/nGwCklPPyZMU+e1CWu4so91o586A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=eyXx99VlcpojiFKInqS/H5a3Q1BYqpuO8kR1jfMt0fK/yMUlWH9/ReeMnqb/6znq+wI7G+xxXPuTrDv57U8UBrPxCj/M9RmU7L7rFj3s79R8EWGNf2hT5o1SJ4Q+3v4q9vuLp9kPR2Zi8+rHMj6vVe/BY7Sov3J9FvXXeKUZ9Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdVvUYzQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4687EC4CEF4;
+	Thu, 21 Aug 2025 14:47:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755787682;
+	bh=tB7QtdU0NteP+l/nGwCklPPyZMU+e1CWu4so91o586A=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=OdVvUYzQRrZEGgK//Y4nFymFQ5F7TCs6nhQ5PooKRMxPVo1OVBB/T4VdpBV660B/1
+	 f3Ogx1FjJjXzKwyimeyFSZ58icpJq6pgPtKcZohJtMrHD6YlxdzsT4SZ1GV9gKUvVn
+	 pX6IAsWwX9UvkvcrIj04vccU6mLLC1eKZ1mg4eQmz0Aj9qwnkDwIw7wJ35MBWlfgOx
+	 5pwcAMJGNcC3w9SiFdUGuMWrNPKnQyJD6mvfiINtleLKVmf6i0JB3auKe+Bu6JiUjz
+	 IK4RV9LwTVQE+tG69CLeseSh3OV7o1O2I8kLHXRGtPbezSD9K/ju8W1AucL+tKzBRl
+	 jwqIyq51xAobg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS7PR10MB7252:EE_
-X-MS-Office365-Filtering-Correlation-Id: fdce3df2-22b1-49a8-dc69-08dde0c1b698
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rTA53gDoszq7ZwASgD2ustZo78dwTWVlMvoh2zd7OGAKWKZPeKkREsfjTHzJ?=
- =?us-ascii?Q?Zqp64EGqptRSu6qDTrLyols2P920Qr03c4ifT67ZO980ktws1EdqEvUVQY33?=
- =?us-ascii?Q?qApTlGBKMX5VUBIco+0WFCOfVq3nU/40tjED6bC+wozJifM+5IyPMbECBHNQ?=
- =?us-ascii?Q?9OKvvGaal5w/SN0nDq4NLkEjGjf2ovXdDR1MSUK1enBz23hkLF3TbnZ0J1rC?=
- =?us-ascii?Q?E+kRWirq5JC8av1IDEYBBj/Zso4nVGrkO6RyrEfO3+WynALtFsfWkY4eK/yB?=
- =?us-ascii?Q?kUxx4pCD8n2jQDGMpxZVD+ipKOSCyia/ACF8SbAloLOwnh5eE5u2VutvUF8B?=
- =?us-ascii?Q?HCBrWV/wZhCesSTSO4Zs7rmaoWsvqWm9GhxKIC+aJ+Au+v48ydk0345oWXBj?=
- =?us-ascii?Q?Ie4zoJmu5Bp7FGY/KEKXenl22Q4z33PW01+GQGD65Rpf6L5h9KPTcC4uYzEE?=
- =?us-ascii?Q?4xJGVkoeu/LW0KIjYboDDA3oUmeWAIA/6iSLOI0Xn+T3zbfqY1wFuCBbDtgz?=
- =?us-ascii?Q?5QqvRFhZ4oYk97+Q/SQrRWPGTFrrVKmCy1Jva3gNoGf2Et9JOVgn7Q1me3Eu?=
- =?us-ascii?Q?alYJ0yCBz2SFmBFWA0BIjt0wnfN4kh5KUoqRuS9DEYTJhyZ2zIrn/Y6afy1e?=
- =?us-ascii?Q?tQMEBGF1LfQujGUR4s8y7uvs73rfmtnopYAic/j8LpFsJBLa30ImpxcjX4hY?=
- =?us-ascii?Q?/Hkb4kKSku4wkVtuoML6glD4/Zav0anDFg9MgqWi3OcAQQxe1Yxz0EHPND62?=
- =?us-ascii?Q?i0sJUKEj/vABqz2woUVt+4Hk5T6h9IuHJzrgfVKN6mKXZBNM9i6rA2t3g21J?=
- =?us-ascii?Q?SbpKOmZLS/j8JNjlo48zsJ1k61KAB5pchL/54mEeoCYZIICNnv79rX0/XNQP?=
- =?us-ascii?Q?yy/eyX3tCy3IwQXmB6WxEdx2407f4iiD0bli+f2qD/yxCMDCK7czy9RG4yjC?=
- =?us-ascii?Q?+JwQEcN6B2Weg0J017bPoXVv3R8MvxT3X5upLKrTYZwqyC7o1ZRKBggHsKle?=
- =?us-ascii?Q?POB8SUQrRsA/RJ7AlzzPiz1UjIWk0/d1lnWyXm/FxT7Z/xQPFop5HxYw2NNf?=
- =?us-ascii?Q?fS8RUBrxu7KS0EP0+I5qWOywxAS4jqztcR3t6XBx3hQMUSDgjPzzpknCI92u?=
- =?us-ascii?Q?HpyRrPeAs89CyHjydcVmYZC9dmbO0DE3dzP5ROdbuqiUeAAzLinsvWSixWsf?=
- =?us-ascii?Q?d4B7xTICAEu47b9lYptTokUSmYRp3fYqzcuObs+C7uCGi5WZltmCLgwqfuEs?=
- =?us-ascii?Q?2CBwk7bA6eMBpv53matz2S/iXSGprO1zMKiw7S3VAF67ujxFU5ssUD224sSl?=
- =?us-ascii?Q?lUM8hpbWEiN5+6fGyy+wGkfwcB83RyB/Bd0Ud9NqzYPDoIiXJirIW4Mig0BC?=
- =?us-ascii?Q?BpEjjC+qfeAbXeWN58mcUsKX96s2AzOdFZz5Hluvu2y+m4QfVsV2q0L+/a3n?=
- =?us-ascii?Q?c2QG7NFRxtw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CcoKSY0uP0XoTN9p4qX3/uvxIjw+cEsDgeZejw+Il8rhWOWCOuxIEpGFQ1d7?=
- =?us-ascii?Q?FDp949xtXU5HMRRGPcM+rbKlUlPADhYl0mhTrQ6puFROfKKxaCrIxvLa448K?=
- =?us-ascii?Q?8b1AvxZprb/L2cCykvoxZH8yXaJZzk+7jyd5fKbCLWBg6YQQCGMdERMkseQj?=
- =?us-ascii?Q?5L7v6aLFUV1xBoth4wT/8MsXPVJODPovFdm96bXVAxGHJpiPV1u2PT9gmskw?=
- =?us-ascii?Q?GQwxeyAj66Cd5/AKAgQxNjwnfqRKvM58rxZTGh8paOAVqxGxFXlbpNylFf0a?=
- =?us-ascii?Q?wU11fbTZPCuWaHh4KeJLFZiK1Zx7ki6KYSFDMlci4XkVYhGPuqYaNqr6kV/p?=
- =?us-ascii?Q?4tsrKGKJOjFwqYMGLKpX8ygMXwKJw7BuQKS15mbZZhAHIUXt1q21TNleQsC7?=
- =?us-ascii?Q?BlDAQHXz45ZyqM8YEQTbzreyn3tUFYOLdQMcztZeOI4dAqkE2p9Oa/u+EcIR?=
- =?us-ascii?Q?U64+1zTCNcfrROkcvjUuhyWOJmntdxOWC0OYXAVQK4974lCv3mdjncTykOKX?=
- =?us-ascii?Q?/FwkLKOL7tHTNwvK40zWHFWechap5sKhRp+8paCyaqy6wgiF5xSD/PiMCaCt?=
- =?us-ascii?Q?uIhEl/e/Jtjs44v+XCkNFeYlT2bvIn77dVLQ1nlvuc/XzG7oJLurrh0dJqs6?=
- =?us-ascii?Q?8MiFJjHKLGyyG81SNRcHfwWxKpoCGQkcTpd7NfaEI/3mqLd5yO2JHTrujKz3?=
- =?us-ascii?Q?mWoywJBo2g6D/ZdOiADx9aGX7Alac/3qRgPswSuRiziZmCXe0uzS8hiL07Fb?=
- =?us-ascii?Q?NRucAZQJDjgWKIrP8wE2JKgbp4iPa8boVHkHj/ElGQb3pRb0elqhI6xBuO6O?=
- =?us-ascii?Q?WmJaUl7MvUd6hc2NFuYeSESaoxcYFhVwNG211tsgubb+yVV4qlnIWX1bG4HK?=
- =?us-ascii?Q?QcgT9X7ogZuheeeThfZuF63Z/FpCnZSAsRnc2QVo35K9guppx18XkKb0m6ai?=
- =?us-ascii?Q?d/G1IZhBiYcsFWkSqdh6hfnhKho7LVjOGP6Ofkz6mN9KhcATlJA2DA/x5E0H?=
- =?us-ascii?Q?uy0Y5pWO9BQMcWNH0bisFu2sumeqVrJo3v+akHCTeDb57pLBSaKF1rfEzIfq?=
- =?us-ascii?Q?bBGqdaqUh3OxmZEEwIkqvZFa3K6dHV5XEkrvaIib97AesFuYkuxBx0FzWNFk?=
- =?us-ascii?Q?6AksHCtoAE8WfOXoEA4taGMvvZHGDbj9WRmLvtDyuRPx/lf2Z7kl4BPXk7vv?=
- =?us-ascii?Q?OK31HcDli5xO80IPajH3DNm7xd7EphFivWb0PpCJq3mnA+zJvXoS1YJTsc0F?=
- =?us-ascii?Q?+iww5B/p5vrye+gSCGqj7b0dizmYyrpW/tbEu0o7+DqwcVmUJhR3nA9jYLO+?=
- =?us-ascii?Q?PxYqzMkvGPe3e8MsNsi4FBFOlkEP+mZzHaHyPHr+pkwwlEB44lt3gE//V7Nm?=
- =?us-ascii?Q?MYfQR/M5sOTtIyjXxbmEetYiBnhXYb1rcHAHMNAZV2pYTMOUKFgKXeUPriKH?=
- =?us-ascii?Q?+uNkoFJZBZLa95ro7Jiyax9gz2fUQVdzdQknxFj6s9bOZQLv0SHrFPxIG0OG?=
- =?us-ascii?Q?C27AsasdqGk0Zu8nEmEYdNbAjjeDXDAv/Tt7lRtfARm5x01zs4uvEGE6FVij?=
- =?us-ascii?Q?QtgB+T7YF/p+HaxGggu1UPf8kIMCUp9u1PNQo4bttNmuMNAxixICAcSTARab?=
- =?us-ascii?Q?kA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	cruyF7waZPci7k72xtEjWcJsOJe5+K10OzrZHrYUlqa5ndTU7ZOsVUaSrNrjQ7agVSNhihwMXAFHCHcThkfpU92e461mlQrkA64/Kipy4BB9aMeXd0sWMfoGY+sfTDyrrbwILfmqvRYezrcYLo7dP005tHQ9ZFPpge1Fvtk0oN7jq2wKjblKpHz0H6QAvIRnB+AskHPvzJVkwh4i9Q6zRQbUXdZFJB/C9Fr8uIrtzooAWkA9ZNejZlUgDifPUM7stwf6epzS6VQkFm0Xw9fr5R/NGQ0RXj6/5unIU5w7jZzog4UdSEzRD+2ZK3p/SvWiiwkK3Ob7p8ECILRmrtkwdMboZg49NYC5bnBKRAcufVpSX/Hah02/2d9bjhcaS3Nq/K4+bR+DEsa0hMZUPkeaUXZKk2Fcerk+1HDCzVxwanNBPaDuKcy5tF6lXUApEcEGOJ6UNOvOIJGQN47JsO6nMwz4+uDpi6/f5yRQZ9dkl0hnMATq2U/YSfBKsF9gqnDu4XXLucmxpCA2h0Zv9uOptvqG1FV7+kWJ2Eg2aATBoi5DwWOfW7+IiSFOMi/p+BIRFOFylGv4rtkiMIv2Km1zHIWAirkr10OV6QLWiltLhkU=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdce3df2-22b1-49a8-dc69-08dde0c1b698
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 14:47:55.4491
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mndDs9MD9xvO9oGuu/KBylCgo3U4b6SxYn7Jemtin6rKPi92IjeAjYxXly35ZMgELdTz6sCLMVtWXQv1lIwFLDyWxJwYz3HUH4qpZjv0zQc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7252
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 suspectscore=0
- spamscore=0 phishscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508210120
-X-Proofpoint-GUID: vpXXJd_36qQK72amN3GNc6nWSIi9BeeZ
-X-Authority-Analysis: v=2.4 cv=S6eAAIsP c=1 sm=1 tr=0 ts=68a731b2 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=20KFwNOVAAAA:8 a=Y7f1edr8uATmA_85KAkA:9
- a=CjuIK1q_8ugA:10 a=UhEZJTgQB8St2RibIkdl:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
- a=QOGEsqRv6VhmHaoFNykA:22
-X-Proofpoint-ORIG-GUID: vpXXJd_36qQK72amN3GNc6nWSIi9BeeZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NyBTYWx0ZWRfX+i+42olQYdUh
- WRjteooGPhnKHGbi+GZ5YT9mSql1xeMRuaIg8VMpHVQA91c8/TK/KaOra9WBlkHghTJPnAhV8Aj
- zbWx+OeeSRB+b8OkG94Qr4B6BfXpHQJtvkNRD0Y9Ma5tKuFS+nWOaJfZK0hCj4PqxGnCP98yjiC
- f0s3b/gbYMTvZBLK3OQquop00IYgG6ZRzr9HobmpCEXEYxwlVSh+JmWlmMJyWDMsa8r1HSv1AbA
- Xxib92wuHt8+MFZS/r7yOYmEfGS9ZkLQP1y93y+95X7HMYudHoxUw4RHftm874cFkjFXyu+0+la
- he3DW6pkdpJnEjHYsb8BS+MQ6x2xDBH6heXUH7sCd2x39WTVkmQUJ08RZee4G71TMlzAmHxagGc
- F0UxqZ2hxDldcgGUZeaVsqP1SkQw4Q==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 21 Aug 2025 16:47:57 +0200
+Message-Id: <DC86SBUYSPYP.IRM1O8GC6CAR@kernel.org>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ "Uladzislau Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
+ Roy Baron" <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor Gross"
+ <tmgross@umich.edu>
+To: "Vitaly Wool" <vitaly.wool@konsulko.se>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v3] rust: alloc: implement Box::pin_slice()
+References: <20250811101456.2901694-1-vitaly.wool@konsulko.se>
+In-Reply-To: <20250811101456.2901694-1-vitaly.wool@konsulko.se>
 
-On Tue, Aug 19, 2025 at 08:16:10AM -0600, Nico Pache wrote:
-> With mTHP support inplace, let add the per-order mTHP stats for
-> exceeding NONE, SWAP, and SHARED.
+On Mon Aug 11, 2025 at 12:14 PM CEST, Vitaly Wool wrote:
+> From: Alice Ryhl <aliceryhl@google.com>
 >
-
-This is really not enough of a commit message. Exceeding what, where, why,
-how? What does 'exceeding' mean here, etc. etc. More words please :)
-
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
->  Documentation/admin-guide/mm/transhuge.rst | 17 +++++++++++++++++
->  include/linux/huge_mm.h                    |  3 +++
->  mm/huge_memory.c                           |  7 +++++++
->  mm/khugepaged.c                            | 16 +++++++++++++---
->  4 files changed, 40 insertions(+), 3 deletions(-)
+> Add a new constructor to Box to facilitate Box creation from a pinned
+> slice of elements. This allows to efficiently allocate memory for e.g.
+> slices of structrures containing spinlocks or mutexes. Such slices may
+> be used in kmemcache like or zpool API implementations.
 >
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-> index 7ccb93e22852..b85547ac4fe9 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -705,6 +705,23 @@ nr_anon_partially_mapped
->         an anonymous THP as "partially mapped" and count it here, even though it
->         is not actually partially mapped anymore.
->
-> +collapse_exceed_swap_pte
-> +       The number of anonymous THP which contain at least one swap PTE.
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
 
-The number of anonymous THP what? Pages? Let's be specific.
+Applied to alloc-next, thanks!
 
-> +       Currently khugepaged does not support collapsing mTHP regions that
-> +       contain a swap PTE.
-
-Wait what? So we have a counter for something that's unsupported? That
-seems not so useful?
-
-> +
-> +collapse_exceed_none_pte
-> +       The number of anonymous THP which have exceeded the none PTE threshold.
-
-THP pages. What's the 'none PTE threshold'? Do you mean
-/sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none ?
-
-Let's spell that out please, this is far too vague.
-
-> +       With mTHP collapse, a bitmap is used to gather the state of a PMD region
-> +       and is then recursively checked from largest to smallest order against
-> +       the scaled max_ptes_none count. This counter indicates that the next
-> +       enabled order will be checked.
-
-I think you really need to expand upon this as this is confusing and vague.
-
-I also don't think saying 'recursive' here really benefits anything, Just
-saying that we try to collapse the largest mTHP size we can in each
-instance, and then give a more 'words-y' explanation as to how
-max_ptes_none is (in effect) converted to a ratio of a PMD, and then that
-ratio is applied to the mTHP sizes.
-
-You can then go on to say that this counter measures the number of
-occasions in which this occurred.
-
-> +
-> +collapse_exceed_shared_pte
-> +       The number of anonymous THP which contain at least one shared PTE.
-
-anonymous THP pages right? :)
-
-> +       Currently khugepaged does not support collapsing mTHP regions that
-> +       contain a shared PTE.
-
-Again I don't really understand the purpose of creating a counter for
-something we don't support.
-
-Let's add it when we support it.
-
-I also in this case and the exceed swap case don't understand what you mean
-by exceed here, you need to spell this out clearly.
-
-Perhaps the context missing here is that you _also_ count THP events in
-these counters.
-
-But again, given we have THP_... counters for the stats mTHP doesn't do
-yet, I'd say adding these is pointless.
-
-> +
->  As the system ages, allocating huge pages may be expensive as the
->  system uses memory compaction to copy data around memory to free a
->  huge page for use. There are some counters in ``/proc/vmstat`` to help
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 4ada5d1f7297..6f1593d0b4b5 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -144,6 +144,9 @@ enum mthp_stat_item {
->  	MTHP_STAT_SPLIT_DEFERRED,
->  	MTHP_STAT_NR_ANON,
->  	MTHP_STAT_NR_ANON_PARTIALLY_MAPPED,
-> +	MTHP_STAT_COLLAPSE_EXCEED_SWAP,
-> +	MTHP_STAT_COLLAPSE_EXCEED_NONE,
-> +	MTHP_STAT_COLLAPSE_EXCEED_SHARED,
-
-Wh do we put 'collapse' here but not in the THP equivalents?
-
->  	__MTHP_STAT_COUNT
->  };
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 20d005c2c61f..9f0470c3e983 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -639,6 +639,10 @@ DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
->  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
->  DEFINE_MTHP_STAT_ATTR(nr_anon, MTHP_STAT_NR_ANON);
->  DEFINE_MTHP_STAT_ATTR(nr_anon_partially_mapped, MTHP_STAT_NR_ANON_PARTIALLY_MAPPED);
-> +DEFINE_MTHP_STAT_ATTR(collapse_exceed_swap_pte, MTHP_STAT_COLLAPSE_EXCEED_SWAP);
-> +DEFINE_MTHP_STAT_ATTR(collapse_exceed_none_pte, MTHP_STAT_COLLAPSE_EXCEED_NONE);
-> +DEFINE_MTHP_STAT_ATTR(collapse_exceed_shared_pte, MTHP_STAT_COLLAPSE_EXCEED_SHARED);
-> +
->
->  static struct attribute *anon_stats_attrs[] = {
->  	&anon_fault_alloc_attr.attr,
-> @@ -655,6 +659,9 @@ static struct attribute *anon_stats_attrs[] = {
->  	&split_deferred_attr.attr,
->  	&nr_anon_attr.attr,
->  	&nr_anon_partially_mapped_attr.attr,
-> +	&collapse_exceed_swap_pte_attr.attr,
-> +	&collapse_exceed_none_pte_attr.attr,
-> +	&collapse_exceed_shared_pte_attr.attr,
->  	NULL,
->  };
->
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index c13bc583a368..5a3386043f39 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -594,7 +594,9 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->  				continue;
->  			} else {
->  				result = SCAN_EXCEED_NONE_PTE;
-> -				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-
-Hm so wait you were miscounting statistics in patch 10/13 when you turned
-all this one? That's not good.
-
-This should be in place _first_ before enabling the feature.
-
-> +				if (order == HPAGE_PMD_ORDER)
-> +					count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> +				count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_NONE);
->  				goto out;
->  			}
->  		}
-> @@ -633,10 +635,17 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->  			 * shared may cause a future higher order collapse on a
->  			 * rescan of the same range.
->  			 */
-> -			if (order != HPAGE_PMD_ORDER || (cc->is_khugepaged &&
-> -			    shared > khugepaged_max_ptes_shared)) {
-> +			if (order != HPAGE_PMD_ORDER) {
-
-Hm wait what? I dont understand what's going on here? You're no longer
-actually doing any check except order != HPAGE_PMD_ORDER?... am I missnig
-something?
-
-Again why we are bothering to maintain a counter that doesn't mean anything
-I don't know? I may be misinterpreting somehow however.
-
-> +				result = SCAN_EXCEED_SHARED_PTE;
-> +				count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_SHARED);
-> +				goto out;
-> +			}
-> +
-> +			if (cc->is_khugepaged &&
-> +			    shared > khugepaged_max_ptes_shared) {
->  				result = SCAN_EXCEED_SHARED_PTE;
->  				count_vm_event(THP_SCAN_EXCEED_SHARED_PTE);
-> +				count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_SHARED);
->  				goto out;
->  			}
->  		}
-> @@ -1084,6 +1093,7 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
->  		 * range.
->  		 */
->  		if (order != HPAGE_PMD_ORDER) {
-> +			count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_SWAP);
-
-This again seems surely to not be testing for what it claims to be
-tracking? I may again be missing context here.
-
->  			pte_unmap(pte);
->  			mmap_read_unlock(mm);
->  			result = SCAN_EXCEED_SWAP_PTE;
-> --
-> 2.50.1
->
+    [ Add empty lines after struct definitions in the example; end sentence=
+s
+      with a period. - Danilo ]
 
