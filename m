@@ -1,313 +1,250 @@
-Return-Path: <linux-kernel+bounces-780305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BAEDB3003C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:39:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E741B30046
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B445F1BC3A30
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:34:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7B6416BF74
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D6A2E0B5F;
-	Thu, 21 Aug 2025 16:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFB12E03EF;
+	Thu, 21 Aug 2025 16:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="o4O53yF+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="USZ+a7ET"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jCLrax+/"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2075.outbound.protection.outlook.com [40.107.244.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09612E0915;
-	Thu, 21 Aug 2025 16:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755794007; cv=none; b=To4TnvvtRerJQcF8OpVTYzdWLBUPZ7ch9D+DDWKBAtsjirc7LGlVHgtHsl5A+n0sO0OcLTr6k1+PcQ15qigXAU4QtfnjhMKLbVKnQU2T9TyLJw3MyOnQlgxe9aut2BCE3u9ocrmDi1UoH3t43L1o9adCnbDqK91Dry0cnH8QsoY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755794007; c=relaxed/simple;
-	bh=9o7K2oRkJ7uECcYLWLfQEr0rutUleUHG+qmIZqoxHQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lj3YIGzMrLp8vs/EzW9NLZirA+AEK3qYyqKO96VHHXOEXXJs9vxJa179viA/z5wiT5AnB2xoE3osAQ7oOUlzMCHrWYZLTgHQ0+pnY/gDgz9vneeJjH7Jf9i99oLc4rERGOJCZf8zvHVymSjxL+nFH6svOIKGaWAbqN5ZmM7Fvf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=o4O53yF+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=USZ+a7ET; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1ED2C14002A4;
-	Thu, 21 Aug 2025 12:33:24 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Thu, 21 Aug 2025 12:33:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1755794004; x=1755880404; bh=WnhvrMRU0G
-	4sFueNvawSUGt53uKKtYRG2McTbwQb1gk=; b=o4O53yF+lXPDP0nzGjDDcYosBQ
-	K2J2DmV4gOQeFdk8HCrL7+EsaBIlbzZ99pCPA4yfDkuIcYBTDBVQD3IErkd0i9Z4
-	7hsZWwpjcCX8E+jdf3IniO7n/0wogLgrUEUaxBCvXFFsrKJ2ufUh0Mwng/mr4qyI
-	HV0E3+fO/DWynna5QAYqI14MmiEOlIIAywFwAEUcpY1D2drymaFOwPuN7mVsqddh
-	V2VzbJIWu7PzN568ByWW3QDu/f7KzXNAqiEcHsvvUdYkCaHniySvkn/NIr2vMqyY
-	k7RoXfCm6bhpXK22h+Q653vGF8Wn9rU5raSZuhyqfhRx+UQMK4dy9r3E1n3g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1755794004; x=1755880404; bh=WnhvrMRU0G4sFueNvawSUGt53uKKtYRG2Mc
-	TbwQb1gk=; b=USZ+a7ET46mt/NqAtfTT80hSCq16JndAN3AsGUg15BS7AUJOYpZ
-	2zabDX95r8waba2ThKKKmMoWoTQfXyqc/CYAiT+LPdiDcVO1v6va9NvlEAhBNSgL
-	uC6UuNilVvshBwCew7jLWkU1mDUhaQEfGK7sZZYnQ88N+s2lJ7/eA1Q6N1Qei9FW
-	t3gieJZ0EW/ugtZbtPEmAczcZ/w/YhVrQvKBB3OIjC7ZIih6csGIWHimq0xP5fdj
-	8ig75d7bzrVO12qeUtXjaf1TDxDNHShX14BMhjxV44DS94JbkTSafNxc/3Aewj8s
-	9foB+FIlcgabXqPhXv25S0rn7hO26E0CCww==
-X-ME-Sender: <xms:UkqnaDpo1zdgcc3MUoykP1u5MRsaSTr0QVK4aSLHKfIoLtZI3X4IEA>
-    <xme:UkqnaMBmRgNl7WXHma0g0QJY822DxrUTSU6ED8dJk4x0Sy7tZUS92SvjD6gcXrSFK
-    MQWhzaX5n9Bc6xqIbg>
-X-ME-Received: <xmr:UkqnaMP4tVmbVk--IVeagBtMe1LcCdLalnqmTztgCZI-tFB7HU2nJ-_T-_zVcr1TJr2ReIbXkvUIysrxofzHRDrJX529GWZy5Ac>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedujedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcu
-    ifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpeettd
-    ehleefveduteehudeklefhhfdvheffudekkeelkeeijeejgfeljeevhefhtdenucffohhm
-    rghinhepuggvvhhitggvthhrvggvrdhorhhgpdhkvghrnhgvlhdrohhrghenucevlhhush
-    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdr
-    nhgvthdpnhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopehsvhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhn
-    uhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggrlhgsih
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlhihsshgrsehrohhsvghniiifvghi
-    ghdrihhopdhrtghpthhtohepnhgvrghlsehgohhmphgrrdguvghvpdhrtghpthhtohepvh
-    hkohhulheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:UkqnaKCzGd7lNR73vqhqz3zUakNcVipSTIxeWaY6xlQ_y0xPglfJQQ>
-    <xmx:UkqnaK9cnQlTZFRIsxRQ0NZXZ5mXUfqIDt-WOUwKHJ8vUc3N3BH2rA>
-    <xmx:UkqnaLFkqHaQLEgb1tEXvT1vFWNr2SCbksOK3Ex11xwdfsGdHIyOTA>
-    <xmx:UkqnaBLzD6CtS6P_bX5Ek5zSBXhdtmNDdoqNeeYkNAzMGvH4W4HTdw>
-    <xmx:VEqnaEjtt7i03_bO3qzyfztIdHyrM3CKmFPT0wSwZD9jb5uJK3mMBEH3>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Aug 2025 12:33:22 -0400 (EDT)
-Date: Thu, 21 Aug 2025 18:33:20 +0200
-From: Janne Grunau <j@jannau.net>
-To: Sven Peter <sven@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org
-Subject: Re: [PATCH RFC 03/22] dt-bindings: phy: Add Apple Type-C PHY
-Message-ID: <20250821163320.GE1270980@robin.jannau.net>
-References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
- <20250821-atcphy-6-17-v1-3-172beda182b8@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580C7224225;
+	Thu, 21 Aug 2025 16:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755794239; cv=fail; b=ZXRzWaFc11K33P3vWtkUtJv2E6Rn9rZ/+z0+bxrURGfEFGITkZIr/CrH20715UppaNRsZUR3Q2VAKjmMKewNjTAnMK6rXJQ8WzyH+ncnmiVwY/LlfsBICPO1EVJMAIqY1ikB0zVilBharmrv6AdlBCGkrK83x8xhx3JEcXAJGJI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755794239; c=relaxed/simple;
+	bh=hjJsScqFjRMboG5j0+cHqQGjWwPv669V9gWbQ0gfsUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dAI7n8Jtp/g+qi4pchFAA9EeExGIZ0BgbXtxRc1hwJq4KQgI7bbAQECR3zt70wYeBTvRc96DhjamTHaztbxx03hjRONFc6gxKv9sUfNQkCD3Fmg4MOJHgWRioY1j0ZzxcsyvM3Hr3aJ2jvloUIWaGW9ypDn56PvAn/pYJPSAiRo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jCLrax+/; arc=fail smtp.client-ip=40.107.244.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=L2c+THglIYRxwvLhXuydoNDVK9bBwWuiWWAw4nrRUE/N6DaUkXVjW2R+u0hUAO9ICXgNXDDhhZGsWw31nCirMtD7S6biv/xGSy696Uw8cSziDOH/n4nNM5u++0gJ1FJC0EM6vYgI1sY6VJujqNEqKHhwBU9sBa0EbyrPmHC7ZEWg99LB0kTdeueg6CNvShfQq3r8Qys5OHYspJpZA7gICbrwzIOiF3bM3gnwJJwXeoX6Al/EqwK/PlvvgRRUfl38BNvJDvK6arSj6DnFq0Q3JAGiHgiaHMI2gu5bzCaXV8k3IB2iFkoQpl54e6gwoe0rCf/j2g3WO1tLI6djI5mFSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rJLOT2sAvN0746YVNigkt+QCTO8bHAejtmZ/PA01SAc=;
+ b=f99/WNrxj5hmpHhV6xc/vVoUg/aPZ2WWro8cUQaBC/nF1gFoz6gpN+HG9rvZFFzWISDfk9O41HMuYybbx7FzraM5JSzWBWDa1owTdSb5JQUmuLPtkydkvE7SrujfvmaeORFTX11GEHpta9BVl84UnHVjifACWEMd9OC8y2B1HqqF5oDhi9sEeL4XD1rcF2GdHpjnNATFPq/JNzIUhRUw/NbDlvJLFj/9wZrKz6aTbW/fzkL7Vi0+spp8KV0Sv/fXiyzk33AnfqAlpKq7qhD5+6ke8W2+FGRDRTWc674SxrnGXVsxZLW1RuhyJ5A6Y4wXFXefgr+5PzYjxw0JSTJ6Vw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rJLOT2sAvN0746YVNigkt+QCTO8bHAejtmZ/PA01SAc=;
+ b=jCLrax+/flTMOWBsUPF4wT7EMiXsRw/Tb2nyQJ83nyid+crR+W9IZN+G0xRkGiRmqMxJu0KIz8LGIOvZGvRdpVlHXbvfn0qDiaym/rE/bQy3bVUMduF78n/hKpKdiq5JrdHPR/LPgx3C/fw8heIxDcwrmFqjirOtaed1pOq+GrHisQD1JvMXqEDVzmWb1ffDoucT0GgHSCMwpTUXn9PhxNQGXMbK87IIUgn3pmf88TZxVwRo+PDkaU4lHj+0Y3Z+d7ED4PYx8MwnHBUJymNtyxUy64BFU1XSpQtQweTCgpAriu9mSS+O9388/RxEH6qXzYEKKzl5Eed/0BT56jFdig==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from IA1PR12MB9031.namprd12.prod.outlook.com (2603:10b6:208:3f9::19)
+ by SA1PR12MB8985.namprd12.prod.outlook.com (2603:10b6:806:377::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.28; Thu, 21 Aug
+ 2025 16:37:14 +0000
+Received: from IA1PR12MB9031.namprd12.prod.outlook.com
+ ([fe80::1fb7:5076:77b5:559c]) by IA1PR12MB9031.namprd12.prod.outlook.com
+ ([fe80::1fb7:5076:77b5:559c%6]) with mapi id 15.20.9052.014; Thu, 21 Aug 2025
+ 16:37:14 +0000
+Date: Thu, 21 Aug 2025 16:37:10 +0000
+From: Dragos Tatulea <dtatulea@nvidia.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: asml.silence@gmail.com, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, cratiu@nvidia.com, 
+	parav@nvidia.com, netdev@vger.kernel.org, sdf@meta.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v4 7/7] net: devmem: allow binding on rx queues
+ with same DMA devices
+Message-ID: <jj67tggdc6wlotpsj2ixnk4spfdlaxbw3knd3vrbn3s7awka7y@j3gy7ciwmahz>
+References: <20250820171214.3597901-1-dtatulea@nvidia.com>
+ <20250820171214.3597901-9-dtatulea@nvidia.com>
+ <CAHS8izOQ=G-wVo5UXPyof+U=sxB-27Rv8UBfnVkvgtoOTW7Cdw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izOQ=G-wVo5UXPyof+U=sxB-27Rv8UBfnVkvgtoOTW7Cdw@mail.gmail.com>
+X-ClientProxiedBy: TL2P290CA0006.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:2::6)
+ To IA1PR12MB9031.namprd12.prod.outlook.com (2603:10b6:208:3f9::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250821-atcphy-6-17-v1-3-172beda182b8@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB9031:EE_|SA1PR12MB8985:EE_
+X-MS-Office365-Filtering-Correlation-Id: 72d327ee-c052-4181-b75d-08dde0d0fc04
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L2VueXJnTDNvY2Q4QlFqUXFnejNVTStRUVFsaUFYK3lOakFvMTRXNFJtZ296?=
+ =?utf-8?B?OFhmcVNTMFRLa0dkdnJ2amtuZTFrVkN0WHN4TElkWkQ5WWhHUVBSRVpPZlZw?=
+ =?utf-8?B?cUM4Yyt1ZmFMSHJTN3JIRXJQNERPWXVSYytPVVFqaUhZbE5GOTFCdkp6akgy?=
+ =?utf-8?B?bzkzQXNKM0dmQlFZVVMzRkRzUlIzNmdRL1p5aGZlTnZXNnpteWhXRlFINEVL?=
+ =?utf-8?B?L0FUMHJ0bmp0eEpWNFNWcFJRN1VXTlIxcG0xaFBlbnhJYlN2MWZCbE1vOXd3?=
+ =?utf-8?B?UXk0T2ZEYjlEdk1SaTQyemUraHRKaGpmSEcrQ3BRcVJqdUhCMm1PK0RLSEFJ?=
+ =?utf-8?B?ZTVGMEdnU0VwcXBsNC9VdGp0bTZhdHBZbkJPTkkwTkdWL1pQRVBwQnBsLzJQ?=
+ =?utf-8?B?MkdFYXdYNG5IK0lETTZXZ01STVMya20rK2ZMWDEwZXFkZ0dDTm9HTmVVdTRq?=
+ =?utf-8?B?eGNmdjF0NVhKSER0cWtwV2hsMXdYRm9aS1YyMk5WRko3VmpVNnJSRW5YSFpy?=
+ =?utf-8?B?WTUrdmNtQlUyZHhscjVGVzNGK2h0QXpCSXlyMGNST0syMi96T0E4V0lKaXJ0?=
+ =?utf-8?B?a1g3RlRYRld1TC9LcW03aDUxVWw4Vkk2TVZFREprbnJHS2NXVldQc0Vwamsr?=
+ =?utf-8?B?RzhTNG1RTEo3dTFWaS9LWEExTSswRzNkL0hRSjA2Sy9EVU51azdIL1RJam5q?=
+ =?utf-8?B?RnMzYnJ0ZEhRVnJRNkVQZnN3Z0JUbGhla21Nc3pPTGxQMCswaVFSUldkUkcz?=
+ =?utf-8?B?MGdQeElqeUJzUHp6MnV3bCs3NlBZY0trQ1NuVU0xWkN0a1A0MFo2YlZVam1Z?=
+ =?utf-8?B?QUI3QTNKK25BUHlxYXFvMGhMVlU4TWdleFdQZnlpNng0OUwzRHUwdTB1dmov?=
+ =?utf-8?B?a01LemhnU1h0WE1ZYTF5QjM4WGhiK0R4OHMvbWVnWFQveGJyTGJZVU9BbEEv?=
+ =?utf-8?B?aTJiTkVKWkpHVnpWdnVnbm90MzRxS2NEUGhZak1zRitVbngzdi9SVkFPTnF3?=
+ =?utf-8?B?d0RCeXJYb0hISDh3b2tra2c4K09nVFNnbWNYQ2w4WjN6RXdlNWZGVkpOS3BP?=
+ =?utf-8?B?Z3RFbm1yOUZ5WVJ4UktlMVdtN1o4TE5LYlE4dG5WZnRkRTA5dGpSRFRaei9w?=
+ =?utf-8?B?anlKcE9qTzVwTnk5RWdIYkhQcWJkcDc0aTl5WE1tZ2hyYldtZ2cvZmVzMUxz?=
+ =?utf-8?B?QzhIYlRmR211ZTUzWXR6YXBhOXJDRFdITlEzZ25SWVV2UVRrRU9ocGhsUEQy?=
+ =?utf-8?B?S09VTzI1S20wS3Zzem94OVNaRzg2UnlPUWVob3pIdUE5ZGVYbENtSk5YZTJR?=
+ =?utf-8?B?ZUhJdW92ZG1kR2M1WW1tRXFkemdKZXgzaTBySFdLQ3pPeWZtQ0QwSk1iNDVB?=
+ =?utf-8?B?TDg2czZmTFp1bU9kRTNnU1pOd2VYU1hYV3JOS2F0bFQ4YmNOdEZLS2ZqVnIz?=
+ =?utf-8?B?MjNPUVo1clZwVlJqNDE3dmRRaDhjeTBUWU51ZDNqS3ZBejR4eDQ4ZUdvOHNz?=
+ =?utf-8?B?cGo4WjQ1K0tucHhXYnQySlVLS3NXaThxbUJyRXcvb0tIOVhoeFVlRDRyMnkv?=
+ =?utf-8?B?VFFEOUpMOWhxWWlhbkdXeCthcFFEdHNlbk9ocXJneGZsdy9TcyszYkIva0hE?=
+ =?utf-8?B?NTNGcXRHRC9BN0dqOE5PWldtSi9ZV0s0OWdwMmg5S05QNFNhVThOYldqa28x?=
+ =?utf-8?B?L0JQOUFzTktieXQ0dEJESDJtNldsUVpBM1E2amduSmFMWkIwSmtVMFhSeGZl?=
+ =?utf-8?B?UTFIcVZzbUZIaHJ2TnR3eFZjdnhsYks4MlFrR0JkZkNwNEN6cTlsQkpMRFNL?=
+ =?utf-8?B?ajNOeXhkTEp0Vm9sRTlYQWplK3JpWFNTYytyL0pNVy9Wa0JuMzQrUy9oTDJ3?=
+ =?utf-8?B?Y2JpdlJ1ZjIvQk1ZSmo4eWlFNnZvNHJhZ0dGMUVNYy9MRWJyRHdqZ3dGbXVZ?=
+ =?utf-8?Q?wb5TqsXZjRU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB9031.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ckIzTnJUMHFtSk1vQTl2TzJadXIvelBzSGNPWFhyTHAxQ2IyeWFmek54bjlp?=
+ =?utf-8?B?RkhrTTZRamhmd296MEJUUFZ3WXZVMnl4ckdOUkF5VFlDcGxpSGROQkU3UXB3?=
+ =?utf-8?B?bHl5WjBSUzF3Q1hHUEFHTjdseVV4QXJnYmNhZ2plcHBsczZLNWRxZjJqajNz?=
+ =?utf-8?B?MytUb1gxTXdDSWhoaHRmQnRYRmJsU1BIcWxSNVJSVWxjZFlkWDVVZEhxUUNM?=
+ =?utf-8?B?anYzUVpzeFpYM0IrSlRkNDU1NGRPK2hEbVlYdDNYZVJWMC9lcC9zdjJLRERZ?=
+ =?utf-8?B?Q3JBbTRxR1MzbmY3TWp6dFNhNXZBTUdVMHF2TXRyK2J6bTE4ajlab2dQMVl4?=
+ =?utf-8?B?OTJWRi8rMjM2bTBUOWZzQjhTSmtTRGJKVlVrY1lJbjdad25UdFVMQ1A2V0lV?=
+ =?utf-8?B?OUMxTmdsSUNncTdlV2grT0dWUEt0TDhzTk5kbTdCRithWjlBLy9uVXN3anVV?=
+ =?utf-8?B?WFc0WUgyaUpnUm51VVBwa3lGbGNaNTZnMGxBaXA1ZUVybjVDeThFczF1WEhK?=
+ =?utf-8?B?ODJhR0NSWnVuZytncUdWRG8zNmpBaG5mMDRKRkZPOWh4RkY1am5lb016QmhV?=
+ =?utf-8?B?NlNkcFcvTnlFR0IwU1B0MDY1WmlkVWtNd2dWNjROSllSTnJoakJVdDJMYmdH?=
+ =?utf-8?B?NnYvN1h1S2hTc2krQnFmUVk0ZUJzN1hQQW94ZlFVdEtwOWlBNnJJQ2dTK0lN?=
+ =?utf-8?B?Y3JHdnNFeXJUK3NlbTBsNG1CKzdnM0x2b1hWOGRFeGJhdG44bnhhTGsySDMw?=
+ =?utf-8?B?Y21wZ0NPUjRSNEtKT1N6YVd3c2MxMi95bjZnUFAvNTF5VlFSUFkvTCt5VG5T?=
+ =?utf-8?B?N2VmQ3NCOGUwM3lGSlQvWHUvNnNzdzFIc3lqYmIrTDF1SGM2MWVCcmJ0YTZa?=
+ =?utf-8?B?MHJLSTMwUVRIN1dXSWExS1NjZCtINXo4Q0FJWW5UTkJ3bldwOS9UR291RWdj?=
+ =?utf-8?B?NjIxNDdDeE5SZk4rWVFReXZOZ0FLYTdDTXVwZU9jb25uS1RQYlMyclhNekxk?=
+ =?utf-8?B?VG9jUEdMTnhMZFluQ0s2b1I4RXNqSzhiZm0rRmQzZzh2blBiSXNMVWMvQmpJ?=
+ =?utf-8?B?V1p5cy9VZ0pCQ1VTbk5oMnYvSnRER2IrVUxrb0hzb0hOd0NQZTFkazl3VlVG?=
+ =?utf-8?B?RXJZMDE3UUIrSWtVNDBxcnJaL041QVlobGh0TXkrd3FvZ3RHRjdGRDlrR0JO?=
+ =?utf-8?B?dWlFcGxKMmdncXJkQU05andVanMvMWxuTXc2OGw1aWpVL3RudXM0eGhVc0dv?=
+ =?utf-8?B?Ym9jV2VXR3E5NmJRQ25JdGgvOENndDhBUFhUNkNrNGp4K2o5OTZYUmo5WC9G?=
+ =?utf-8?B?ZjBSbTlvaERzYnM4WnZIckFWZXN4TElYU2pjQWRKRzZGeUtBemxDUzZtSTY2?=
+ =?utf-8?B?UFhNd09wbmlES216SVcraHkxQ3FDRUw4cEJxb1hPbDU0akNGV3BYTS9sV3E5?=
+ =?utf-8?B?dnVBeVNMeDJyMlFzMml2SldWUllCY1FhOHVDd3dpV2c0blhPMzM5UlZWU3dK?=
+ =?utf-8?B?d0tiMndaTkg5Ujhxck5mUUZ3NkZ6bkNUVXpTM3VESU9ESzNPTnliZ2IvREF3?=
+ =?utf-8?B?MFpESUN6VnFqVUJ2MTBtSXdhM0NJNU9RS0g5djZia1o1RUFBai9URitJTXRm?=
+ =?utf-8?B?aDM3N3M0ZVVnWEJ1aFY2OXYzbW9iTW1jY1Evekx3WW42a2lNMXJpVWIxL1g0?=
+ =?utf-8?B?VnltaEtNVGt3MVlvMTc4SHBvdEFKRWJKcEFZVFJ4eG00cmhIY3Bsb3E5SnY4?=
+ =?utf-8?B?RDFFckc2TU9rZG1JTHNqWjRQQ2ppa29LMzlqT3BhVXlhSUprTTdrVm15Z2hZ?=
+ =?utf-8?B?OWl6OStPRkRvVnljblZsNzFlSUR2NUFwNUR2OFFTT2k0M25TYnJuVlF6WFI0?=
+ =?utf-8?B?UG9xbmlLYzhwU2twcml5VS9vSys1VXl4MGREWEZzdm45TnJaMEJCQ3NkSGgv?=
+ =?utf-8?B?SWdodlhlN1lFdVJ4WEpQOTFPaGxaaTYxNFF3OHBJNTcvT2lEblFWQzFaYlZ5?=
+ =?utf-8?B?NzZwRkpBcDRxaU1GS3JoMjVPL0hibnl5S2h1Ump1SkRzakREYzcrTFFBRStN?=
+ =?utf-8?B?enF5aWE3UGJlaEVrVjFHWlMxd21kcHpiQ2FRVDNoQWZMUlNIWGo1V2tvbUdx?=
+ =?utf-8?Q?GoXzRcTvUqnRmCRYyeXasMFxt?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72d327ee-c052-4181-b75d-08dde0d0fc04
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB9031.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 16:37:14.5280
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PZq2CBqcJW9SUvJE4ZvLqT/KbPcDMqQ8igKn3JM5BVORpXbKC+ZdPDXyPNOyXaV1BtZk8cGDZRmGXyvl9LdWhQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8985
 
-On Thu, Aug 21, 2025 at 03:38:55PM +0000, Sven Peter wrote:
-> Apple's Type-C PHY (ATCPHY) is a PHY for USB 2.0, USB 3.x,
-> USB4/Thunderbolt, and DisplayPort connectivity found in Apple Silicon
-> SoCs.
+On Wed, Aug 20, 2025 at 03:57:32PM -0700, Mina Almasry wrote:
+> On Wed, Aug 20, 2025 at 10:14 AM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+> >
+> > Multi-PF netdevs have queues belonging to different PFs which also means
+> > different DMA devices. This means that the binding on the DMA buffer can
+> > be done to the incorrect device.
+> >
+> > This change allows devmem binding to multiple queues only when the
+> > queues have the same DMA device. Otherwise an error is returned.
+> >
+> > Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> > ---
+> >  net/core/netdev-genl.c | 34 +++++++++++++++++++++++++++++++++-
+> >  1 file changed, 33 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+> > index 0df9c159e515..a8c27f636453 100644
+> > --- a/net/core/netdev-genl.c
+> > +++ b/net/core/netdev-genl.c
+> > @@ -906,6 +906,33 @@ static int netdev_nl_read_rxq_bitmap(struct genl_info *info,
+> >         return 0;
+> >  }
+> >
+> > +static struct device *netdev_nl_get_dma_dev(struct net_device *netdev,
+> > +                                           unsigned long *rxq_bitmap,
+> > +                                           struct netlink_ext_ack *extack)
+> > +{
+> > +       struct device *dma_dev = NULL;
+> > +       u32 rxq_idx, prev_rxq_idx;
+> > +
+> > +       for_each_set_bit(rxq_idx, rxq_bitmap, netdev->real_num_rx_queues) {
+> > +               struct device *rxq_dma_dev;
+> > +
+> > +               rxq_dma_dev = netdev_queue_get_dma_dev(netdev, rxq_idx);
+> > +               /* Multi-PF netdev queues can belong to different DMA devoces.
+> > +                * Block this case.
+> > +                */
+> > +               if (dma_dev && rxq_dma_dev != dma_dev) {
+> > +                       NL_SET_ERR_MSG_FMT(extack, "Queue %u has a different dma device than queue %u",
+> > +                                          rxq_idx, prev_rxq_idx);
+> > +                       return ERR_PTR(-EOPNOTSUPP);
+> > +               }
+> > +
+> > +               dma_dev = rxq_dma_dev;
+> > +               prev_rxq_idx = rxq_idx;
+> > +       }
+> > +
+> > +       return dma_dev;
+> > +}
+> > +
+> >  int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
+> >  {
+> >         struct net_devmem_dmabuf_binding *binding;
+> > @@ -969,7 +996,12 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
+> >         if (err)
+> >                 goto err_rxq_bitmap;
+> >
+> > -       dma_dev = netdev_queue_get_dma_dev(netdev, 0);
+> > +       dma_dev = netdev_nl_get_dma_dev(netdev, rxq_bitmap, info->extack);
+> > +       if (IS_ERR(dma_dev)) {
 > 
-> The PHY handles muxing between these different protocols and also provides
-> the reset controller for the attached dwc3 USB controller.
-> 
-> Signed-off-by: Sven Peter <sven@kernel.org>
-> ---
->  .../devicetree/bindings/phy/apple,atcphy.yaml      | 210 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 211 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/apple,atcphy.yaml b/Documentation/devicetree/bindings/phy/apple,atcphy.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..eb14010557c94f313b54b528e2d4039fe540062a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/apple,atcphy.yaml
-> @@ -0,0 +1,210 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/apple,atcphy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Apple Type-C PHY (ATCPHY)
-> +
-> +maintainers:
-> +  - Sven Peter <sven@kernel.org>
-> +
-> +description:
-> +  The Apple Type-C PHY (ATCPHY) is a PHY for USB 2.0, USB 3.x,
-> +  USB4/Thunderbolt, and DisplayPort connectivity found in Apple Silicon SoCs.
-> +
-> +  The PHY handles muxing between these different protocols and also provides the
-> +  reset controller for the attached dwc3 USB controller.
-> +
-> +  The PHY is designed for USB4 operation and does not handle individual
-> +  differential pairs as distinct DisplayPort lanes. Any reference to lane in
-> +  this binding hence refers to two differential pairs (RX and TX) as used in USB
-> +  terminology.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - apple,t6000-atcphy
-> +      - apple,t6000-atcphy-dp-only # PHY hardwired to DP-to-HDMI converter on M2 Pro MacBook
+> Does this need to be IS_ERR_OR_NULL? AFAICT if all the ndos return
+> NULL, then dma_dev will also be NULL, and NULL is not a valid value to
+> pass to bind_dmabuf below.
+>
+netdev_nl_get_dma_dev() signals DMA device mismatch though EOPNOTSUPP.
+That's why it is IS_ERR_OR_NULL. I find that doing this at the calling
+site would be possible but less accurate.
 
-The comment is misleading, "t6000-atcphy-dp-only" would be for M1
-Pro/Max Macbooks. M2 Pro/Max Macbooks use the same design so the
-corresponding "apple,t6020-atcphy-dp-only" compatible is missing.
-I'm not sure this is the correct design though as the HW block is
-identical to "apple,t6000-atcphy".
-I think it might be better to have either the DRM KMS driver or a
-custom DP->HDMI drm_bridge switch the mode to DP-only.
-Or atcphy could initialize itself to DP-only based on the available
-ports.
+Or did you mean something else?
 
-> +      - apple,t6020-atcphy
-> +      - apple,t8103-atcphy
-> +      - apple,t8112-atcphy
-> +
-> +  reg:
-> +    minItems: 5
-> +    maxItems: 5
-> +
-> +  reg-names:
-> +    items:
-> +      - const: core
-> +      - const: lpdptx
-> +      - const: axi2af
-> +      - const: usb2phy
-> +      - const: pipehandler
-> +
-> +  "#phy-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 0
-> +
-> +  orientation-switch:
-> +    type: boolean
-> +    description:
-> +      The PHY handles swapping lanes if the Type-C connector is flipped.
-> +
-> +  mode-switch:
-> +    type: boolean
-> +    description:
-> +      The PHY handles muxing between USB 2.0, USB 3.x, USB4/Thunderbolt, and DisplayPort.
-
-These two properties could be referenced from
-/schemas/usb/usb-switch.yaml, see
-https://lore.kernel.org/linux-devicetree/20250807-topic-4ln_dp_respin-v4-1-43272d6eca92@oss.qualcomm.com/
-
-> +  power-domains:
-> +    minItems: 1
-> +    maxItems: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Output endpoint of the PHY to the Type-C connector
-
-Not sure if it's justified to mention the hardwired DP->HDMI converter
-in 14-/16-inch Macbooks Pro here as well.
-
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Incoming endpoint from the USB3 controller
-> +
-> +      port@2:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Incoming endpoint from the DisplayPort controller
-> +
-> +      port@3:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Incoming endpoint from the USB4/Thunderbolt controller
-> +
-> +  apple,tunable-axi2af:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      AXI2AF tunables.
-> +
-> +      This array is filled with 3-tuples each containing three 32-bit values
-> +      <register offset>, <mask>, and <value> by the bootloader.
-> +      The driver will use these to configure the PHY by reading from each
-> +      register, ANDing it with <mask>, ORing it with <value>, and storing the
-> +      result back to the register.
-> +      These values slightly differ even between different chips of the same
-> +      generation and are likely calibration values determined by Apple at
-> +      manufacturing time.
-> +
-> +  apple,tunable-common:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      Common tunables required for all modes, see apple,tunable-axi2af for details.
-> +
-> +  apple,tunable-fuses:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      Fuse based tunables required for all modes, see apple,tunable-axi2af for details.
-> +
-> +  apple,tunable-lane0-usb:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      USB tunables on lane 0, see apple,tunable-axi2af for details.
-> +
-> +  apple,tunable-lane1-usb:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      USB tunables on lane 1, see apple,tunable-axi2af for details.
-> +
-> +  apple,tunable-lane0-cio:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      USB4/Thunderbolt ("converged IO") tunables on lane 0, see apple,tunable-axi2af for details.
-> +
-> +  apple,tunable-lane1-cio:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      USB4/Thunderbolt ("converged IO") tunables on lane 1, see apple,tunable-axi2af for details.
-> +
-> +  apple,tunable-lane0-dp:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      DisplayPort tunables on lane 0, see apple,tunable-axi2af for details.
-> +
-> +      Note that lane here refers to a USB RX and TX pair re-used for DisplayPort
-> +      and not to an individual DisplayPort differential lane.
-> +
-> +  apple,tunable-lane1-dp:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      DisplayPort tunables on lane 1, see apple,tunable-axi2af for details.
-> +
-> +      Note that lane here refers to a USB RX and TX pair re-used for DisplayPort
-> +      and not to an individual DisplayPort differential lane.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - "#phy-cells"
-> +  - "#reset-cells"
-> +  - orientation-switch
-> +  - mode-switch
-
-any reason not to require "ports"? This would be carried over from
-usb-switch
-
-Janne
+Thannks,
+Dragos
 
