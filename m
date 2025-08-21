@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-779694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A028CB2F770
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:03:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF03B2F76A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EEBAAA7153
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42DC1CE1D90
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B370E30FF06;
-	Thu, 21 Aug 2025 12:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A5C30F531;
+	Thu, 21 Aug 2025 12:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQKI7AtX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bP1QoMmp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A62336CDFD;
-	Thu, 21 Aug 2025 12:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D962836B5;
+	Thu, 21 Aug 2025 12:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755777657; cv=none; b=YrNbffm0CA32aqqclZM9VoO+OhYPP7BXpkkGx/++u6sXjXSJEENqCkXKVIc+q2SmSRJz/E1TQf1bRQQ+i0NPWqb8SfHq7S2UsVxWt6OuADG8E5ONcNSMTJLZzK4Xpm7xsSCayzaF/La8hoO6BPcOOogQB8PcqFMkn7QEpoN3yPI=
+	t=1755777662; cv=none; b=tCOwgboIJFUjkLYt28WIfEiADnKTgn1nKwXXj/ExJqD9bkcgk9OW/8ZiqXrON7DKap1Wl/GZRcaWe4RXYA1H5VQO2gEFmt4GBuyoYONRZx5j8GyG+0SqO0siuDx2JmLfiXhRv9LZCkxHYJ5DGbY9tvGI2yNxtbK7GUxbz8NamXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755777657; c=relaxed/simple;
-	bh=0If7dBB0sCLIUEXZ2OkN2bJH+rbHuRFSthuH8PWLWxQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sEZTvqPr1WNEtIvcHAuvJxhgNq1dVocwwRxLYKvsR75A964c1GVLe2r0j9TCW9cVTo7+1SqmoJvXFFWZ4qal9lbhwTw5mW/ahweBl9PX4p8744zHURkIJqk04d7AnCUu5UIT6aUmqZnAtUvxhYmpdWt+/lx7L4IteS+lQXjhC9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQKI7AtX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5202C4CEEB;
-	Thu, 21 Aug 2025 12:00:56 +0000 (UTC)
+	s=arc-20240116; t=1755777662; c=relaxed/simple;
+	bh=ikICiDx5ynHD9UKWIpK0SLbF0G/cChV9xzcF3tz7FMo=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LsZ9WxIJqTMKd1NXfFsatZX/aAEo18PgWCMj0FKceycK32UIUHFcxeIHl7X00lJiJCBWcettNbr/RVZnHCViFmx9bQrdLvHuWsFMROld06m7qbSt9C7j7u0JSCA5W74oisLXZCs+OxnvAhjb+yXpjkKT0409aQv5CdfB5iZdSxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bP1QoMmp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34035C4CEEB;
+	Thu, 21 Aug 2025 12:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755777657;
-	bh=0If7dBB0sCLIUEXZ2OkN2bJH+rbHuRFSthuH8PWLWxQ=;
+	s=k20201202; t=1755777662;
+	bh=ikICiDx5ynHD9UKWIpK0SLbF0G/cChV9xzcF3tz7FMo=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=UQKI7AtXBg0iBmKFt6mtmjw4pKfHYoEmaWoLCMbj+nAF1ZfDpPk7Hv1vxeLRaLh8o
-	 MFc3MwqcrN9aKiOinqIWGHj4u4N4wopkPksDhcwC07HhMWbvAl91Q8qx8HGUvPTJQp
-	 hYxJ8IVuAoxuVIwoLeVaaTsjjzehqGxrKH5AVEEN1CA1OfMHwFzIdNrCTtZeLTEXFo
-	 45KujCo5cmQL/kGuau8ApIIEOKLArgAD+/+hzA+tyJbNH5SJNboQfw8yLlTEPRgeA2
-	 jFduqLB1VMBAb9RZucq/DlSLRHXJNSaOWmHuSztXzVeDHj7YFT/xtYE6xSwKgqGxpO
-	 nL7y1BjoQ+uEQ==
+	b=bP1QoMmpj/83CiccuD5gxObMIGZZOYpJfJmiUXLJ1WkNa7cCTH9x4XSxKEUNgL+iS
+	 iuV2je2sTxbaGevZh/we78CmygnjQS4gImwAczedmARZZC/J+d4iWgghHIlJ7tbGNZ
+	 fOvR5qyu6mcHqsynuS2onWmt19nb9EPDYFNVcLmkrvxfKf/sdsR424uMdVY/XYl9pQ
+	 ubxTxkP7EEEHAUGTd65Jj4IXNVZdY57MPfILtS08QeYw6rcs/HMu79DJf4Mh3eGKvK
+	 X9henDuUj/tpJqUvxVFI80T33rX8ctEzcQg3LM+n5AEggQgqA3mohJTDj9GYrfd0Vt
+	 UeDn7yKfxrvWQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 715A2383BF5B;
-	Thu, 21 Aug 2025 12:01:07 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto library fixes for v6.17-rc3
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE048383BF5B;
+	Thu, 21 Aug 2025 12:01:12 +0000 (UTC)
+Subject: Re: [GIT PULL] ksmbd server fixes
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250821033420.GB185832@quark>
-References: <20250821033420.GB185832@quark>
-X-PR-Tracked-List-Id: <linux-crypto.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250821033420.GB185832@quark>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/libcrypto-for-linus
-X-PR-Tracked-Commit-Id: fd7e5de4b2eddd34e3567cd419812d8869ef4f13
+In-Reply-To: <CAH2r5msSBLTFkG1FGLFD9rUjQ+8xSHdnUaoZ4zsBGrG33zGrcg@mail.gmail.com>
+References: <CAH2r5msSBLTFkG1FGLFD9rUjQ+8xSHdnUaoZ4zsBGrG33zGrcg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5msSBLTFkG1FGLFD9rUjQ+8xSHdnUaoZ4zsBGrG33zGrcg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/ksmbd.git tags/6.17-rc2-ksmbd-server-fixes
+X-PR-Tracked-Commit-Id: 89bb430f621124af39bb31763c4a8b504c9651e2
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 32b7144f806e231a3fb619d4ddc5a6bffb731715
-Message-Id: <175577766591.1009012.3319634323445862102.pr-tracker-bot@kernel.org>
-Date: Thu, 21 Aug 2025 12:01:05 +0000
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Tal Zussman <tz2294@columbia.edu>
+X-PR-Merge-Commit-Id: eb4a0992ddae04ad5b402029a430b2fa06c81647
+Message-Id: <175577767131.1009012.2197929237550101428.pr-tracker-bot@kernel.org>
+Date: Thu, 21 Aug 2025 12:01:11 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Wed, 20 Aug 2025 23:34:20 -0400:
+The pull request you sent on Wed, 20 Aug 2025 21:02:45 -0500:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/libcrypto-for-linus
+> git://git.samba.org/ksmbd.git tags/6.17-rc2-ksmbd-server-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/32b7144f806e231a3fb619d4ddc5a6bffb731715
+https://git.kernel.org/torvalds/c/eb4a0992ddae04ad5b402029a430b2fa06c81647
 
 Thank you!
 
