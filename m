@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-779038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D80B2EE3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B4FB2EEB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDE065E3339
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AAD15E65B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF05F2DC34E;
-	Thu, 21 Aug 2025 06:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SVwqIJMb"
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6498F29CEB;
-	Thu, 21 Aug 2025 06:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82092E718E;
+	Thu, 21 Aug 2025 06:50:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6667D2E88B2
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755757780; cv=none; b=uNZiDnUlhAdScHAyPqdqCFKRUziot6/FEcEv/Sn5dGrVWCd/i0bPRQqn1Z+TXnAAdDRbiW5uZylMCaN8IDc3zchagqU+3O1L5ocJUCOMK9w255j/lQeMhwik+uXlvwUTGWhRrFX/+xbJdlbthMI4/EGjvZ3sWlaV1IIWcHuULBA=
+	t=1755759037; cv=none; b=Cqqxby9xYsfx4vUjpK81D3587i6S4y2xCcskxdNG3jNo1Ij01c+h8oY3q47Ig6SVg82smVcTPZYLGzagj4qizQCZ0XqJf6qiywpQ/RHgYJm8fpUJmvl4PuZxBnrqtO57LSdatPzn/0STU6Od4CezSf/mI7PQ+Xi5IGXdrEzPgx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755757780; c=relaxed/simple;
-	bh=Vft/aTY8HINoWeptFeNZ6DU2nnhJEmoDi6IGcH08nUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C4DyUHoPD17YjJqSc+QybdJIEAbsKRu/tf0Sp7SUlh7tOsSnZcIlmrUMXPbkky6a4AP1Ro9q8Pj8g7fpl38iFB8X7/bkmuV6HcSCoC9SoJtC3jRqE55ybZymoc+IhZrnh14CxfVxQ6VvXSdNH95g7etZ/DNqvv+HjIyOFKqchw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SVwqIJMb; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-71d6014810fso6051827b3.0;
-        Wed, 20 Aug 2025 23:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755757776; x=1756362576; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZ++liDHqHU/+1Q4q7tOfI2K+QGQy7gcYUpitGDsOe0=;
-        b=SVwqIJMbvs/Lmk5JPqxC5GVhbk7vuvBmFdNht5xhRUF/iDmAucTaC5kTpxSt71WjmV
-         fBzDfgRAfY0TTZMi5aA/6hbTWl/roYItQn3EkLGb/R+moGmbR+rKipmVcYC5wW5FREbJ
-         KXlb7pnFOKj9bL4IsE6LEUsKeB+0YiY5nYI71Fbdd6uhbcUWLxKIhQRbCDkxWxHnwCYa
-         0VpheoYLc3HM2j99LXlUUoGrQJ+6klmmeqbxWK4MZqJjZ3mnkFD4YIL+SmAQ7CJlp2QF
-         schZJR956fmUpjOIM2dx4W5AYGJ7Q8HVqeF2r/lMTdWko8LAzA7N+nTo/xwJKZ952pJZ
-         dMyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755757776; x=1756362576;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SZ++liDHqHU/+1Q4q7tOfI2K+QGQy7gcYUpitGDsOe0=;
-        b=kd74+NNz3ML/7VKZ+yH6hG2tF6B6pBbdP+r1c/rPaC5lm4BvJPxK8c6pc9sJnrRQlO
-         LteBdPiIqUzM6D4FTP+pbbGQpq9HD/4RWdBkWmPLtEPCpZT45i8XzOxaGTarVSSzKzzh
-         pmcgLSYnlMhlqO7CdiMwJxerGjkFl1twJTWJcBRoUxR7pXqeUdXYBZmqi5jT2zKIwvMe
-         LfwPu4YUBqcL1Ms2PHoq5RBjWkNK4/wOSzPGD6O4g+aBA4tKVxnl+DHuwYsDdp6itkVA
-         ygPyrhGI5p2RORtIC3KdjG3C/Jnkfshy/YenaFVsIEhak4RBua8WbOdvWKo4aW84AePQ
-         5eBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZXWDg+CSr4KGrMc0S3g5Z5Rj4IBR/afjII3hrHR1T7Wh4l9AKO99+93vyjZOmaeF+W4iR4tehyw5gu6Q=@vger.kernel.org, AJvYcCWWfwTWzf8e2Ke6CTQvaCPNYO3z/ULpq37+zZZowQ9zaDe7I70+UdMGhJAjtQFSNc5LQJ8RLMiV2x4ScDIejuL9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvMAnqiNCIpOo/BuZIfc8RCnLSLCqNzgWJaxfhSRZ0jAEu3u0I
-	9N+SbCs+67IExCW51LD7dv18qGSKR6UZiKah/hmCe7Z/4piGOeJ0rhJW
-X-Gm-Gg: ASbGncvR5E/Ck2it5STn4Mrzzq21auZY6kE1tEpyEVKj4Jr9mizU0l6j0hryQQZzKpe
-	/fN5KPUjTqKcJcCuWuGp5kE+hXyfpmu90S4Ya3yBVGpRZ98GXx55rFt/Gz/myrkBERrpjZeXeE0
-	ek5rGZ+gGUTxauHhbKZdEUV3ZRy9twJHiMWr47ey0lVPWC7k5Gd7vr3lHwUR4UrfggFpM3c4q3W
-	P2eFTQW7qylWsboMXeYikoMA5OG4e4lT9Sbv6RyG32Me9FRCqXbjwlILtra4ezyV9umpJx1sZgY
-	bT6op73QU++yGNcbFBFMAu5ovT5PxrOFOGFf+RUy97g/jP7K8dpeqnXbJGsMNDO/nfEKOg5Q8IJ
-	6Nv+YU4k=
-X-Google-Smtp-Source: AGHT+IG27pkkO4wkswVqV8JiRUKLCYv6YmkwvUm5bKcFFA8q2JPHCMXIg5UUl059QPJ946XF7TRSNw==
-X-Received: by 2002:a05:690c:5:b0:71f:b944:103e with SMTP id 00721157ae682-71fc8d42296mr17807217b3.47.1755757775282;
-        Wed, 20 Aug 2025 23:29:35 -0700 (PDT)
-Received: from fedora.attlocal.net ([2600:1700:3680:fd50::44])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71e6de96c79sm42443447b3.11.2025.08.20.23.29.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 23:29:35 -0700 (PDT)
-From: Abhishek Jadhav <abhijadhav.dev@gmail.com>
-To: shuah@kernel.org
-Cc: Abhishek Jadhav <abhijadhav.dev@gmail.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Fix typo in comment, amd-pstate selftest gitsource script
-Date: Wed, 20 Aug 2025 23:29:06 -0700
-Message-ID: <20250821062913.333316-1-abhijadhav.dev@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755759037; c=relaxed/simple;
+	bh=iyl6104RZSrIlJicOe4iR8mRE0MXWiG2nNwBytsDVko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F9+bGYO1qmMhfMSq/pEYJLfzK14uTDgNBTa1cUU4XUfBYhGqgguonbdaVTjn1p1a47Y3GszB2S9qLERA5CqmSqQesVT9rm81vhnq5H2o1C4vBynL4bEfz3HwyjAPsoIks0yGeorVJM1uSK/qIoGAooiN1ZoMfx8ILnCGjju7pnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c6tjb6Dxlz9sRs;
+	Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id cBZ596fMmV_9; Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c6tjb5Sflz9sRk;
+	Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A473D8B76C;
+	Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 9xKpAQnhDf4U; Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 372FB8B763;
+	Thu, 21 Aug 2025 08:30:27 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] powerpc/603: Really copy kernel PGD entries into all PGDIRs
+Date: Thu, 21 Aug 2025 08:30:18 +0200
+Message-ID: <752ab7514cae089a2dd7cc0f3d5e35849f76adb9.1755757797.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755757819; l=2209; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=iyl6104RZSrIlJicOe4iR8mRE0MXWiG2nNwBytsDVko=; b=jrtj+Mhrve85dIiULvqBIHwkjs+0MUxfUNNTTBQwdFwyoZP1NSdSfQbyzXeXuAyUbarBVHbC4 1ab825nC7UaBkYOka/LjRy2gDK1c8nbIQ1duIz9ax+0mbH9198THgdr
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Abhishek Jadhav <abhijadhav.dev@gmail.com>
----
- tools/testing/selftests/amd-pstate/gitsource.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Commit 82ef440f9a38 ("powerpc/603: Copy kernel PGD entries into all
+PGDIRs and preallocate execmem page tables") was supposed to extend
+to powerpc 603 the copy of kernel PGD entries into all PGDIRs
+implemented in a previous patch on the 8xx. But 603 is book3s/32 and
+uses a duplicate of pgd_alloc() defined in another header.
 
-diff --git a/tools/testing/selftests/amd-pstate/gitsource.sh b/tools/testing/selftests/amd-pstate/gitsource.sh
-index 4cde62f90468..9b7323b1d0a6 100755
---- a/tools/testing/selftests/amd-pstate/gitsource.sh
-+++ b/tools/testing/selftests/amd-pstate/gitsource.sh
-@@ -121,7 +121,7 @@ parse_gitsource()
- 	en_sum=$(awk 'BEGIN {sum=0};{sum += $1};END {print sum}' $OUTFILE_GIT-energy-$1-$2.log)
- 	printf "Gitsource-$1-#$2 power consumption(J): $en_sum\n" | tee -a $OUTFILE_GIT.result
+So really do the copy at the correct place for the 603.
+
+Fixes: 82ef440f9a38 ("powerpc/603: Copy kernel PGD entries into all PGDIRs and preallocate execmem page tables")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/powerpc/include/asm/book3s/32/pgalloc.h | 10 ++++++++--
+ arch/powerpc/include/asm/nohash/pgalloc.h    |  2 +-
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/book3s/32/pgalloc.h b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+index dd4eb3063175..f4390704d5ba 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+@@ -7,8 +7,14 @@
  
--	# Permance is the number of run gitsource per second, denoted 1/t, where 1 is the number of run gitsource in t
-+	# Performance is the number of run gitsource per second, denoted 1/t, where 1 is the number of run gitsource in t
- 	# seconds. It is well known that P=E/t, where P is power measured in watts(W), E is energy measured in joules(J),
- 	# and t is time measured in seconds(s). This means that performance per watt becomes
- 	#        1/t     1/t     1
-@@ -179,7 +179,7 @@ gather_gitsource()
- 	avg_en=$(awk 'BEGIN {sum=0};{sum += $1};END {print sum/'$LOOP_TIMES'}' $OUTFILE_GIT-energy-$1.log)
- 	printf "Gitsource-$1 avg power consumption(J): $avg_en\n" | tee -a $OUTFILE_GIT.result
+ static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+-	return kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
+-			pgtable_gfp_flags(mm, GFP_KERNEL));
++	pgd_t *pgd = kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
++				      pgtable_gfp_flags(mm, GFP_KERNEL));
++
++#ifdef CONFIG_PPC_BOOK3S_603
++	memcpy(pgd + USER_PTRS_PER_PGD, swapper_pg_dir + USER_PTRS_PER_PGD,
++	       (MAX_PTRS_PER_PGD - USER_PTRS_PER_PGD) * sizeof(pgd_t));
++#endif
++	return pgd;
+ }
  
--	# Permance is the number of run gitsource per second, denoted 1/t, where 1 is the number of run gitsource in t
-+	# Performance is the number of run gitsource per second, denoted 1/t, where 1 is the number of run gitsource in t
- 	# seconds. It is well known that P=E/t, where P is power measured in watts(W), E is energy measured in joules(J),
- 	# and t is time measured in seconds(s). This means that performance per watt becomes
- 	#        1/t     1/t     1
+ static inline void pgd_free(struct mm_struct *mm, pgd_t *pgd)
+diff --git a/arch/powerpc/include/asm/nohash/pgalloc.h b/arch/powerpc/include/asm/nohash/pgalloc.h
+index bb5f3e8ea912..4ef780b291bc 100644
+--- a/arch/powerpc/include/asm/nohash/pgalloc.h
++++ b/arch/powerpc/include/asm/nohash/pgalloc.h
+@@ -22,7 +22,7 @@ static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+ 	pgd_t *pgd = kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
+ 			pgtable_gfp_flags(mm, GFP_KERNEL));
+ 
+-#if defined(CONFIG_PPC_8xx) || defined(CONFIG_PPC_BOOK3S_603)
++#ifdef CONFIG_PPC_8xx
+ 	memcpy(pgd + USER_PTRS_PER_PGD, swapper_pg_dir + USER_PTRS_PER_PGD,
+ 	       (MAX_PTRS_PER_PGD - USER_PTRS_PER_PGD) * sizeof(pgd_t));
+ #endif
 -- 
-2.50.1
+2.49.0
 
 
