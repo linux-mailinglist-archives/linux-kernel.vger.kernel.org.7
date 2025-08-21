@@ -1,108 +1,151 @@
-Return-Path: <linux-kernel+bounces-778753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D675B2EA6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:19:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D6CB2EA3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96A373B1D11
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:17:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B199D188D6B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE24E1FF7D7;
-	Thu, 21 Aug 2025 01:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E625F1F8676;
+	Thu, 21 Aug 2025 01:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wlZnw6kv"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AV2O85AW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0333636CE02;
-	Thu, 21 Aug 2025 01:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EA71A9FB1;
+	Thu, 21 Aug 2025 01:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755739038; cv=none; b=W2TaNZr5ZZgH1ZvBqUqcAARdq21G9fKxAPLPhvPuR5aTHz3nR69KMMI0du0a7HfoKGiM/U9n5w25yvrIWRndYhUQNPvkzh0rA56a0yrVDMOD9YCHgHO37BdHCHBt+jY/OzZjMIWTapX4AssdDs+l+X+2S/123g79D08RHP90nM4=
+	t=1755738842; cv=none; b=I8yXdiRfOwm3kVthymz9VQYaEsAFmoCfDIC9huuoXGptjQ/pY+3kU0VkSHT2KwWKCRIw+tW5Ak8+AWnHYlXg3dC9S8mLwtyKkH+Mcaouy4aQIVtB8U+FSe1Ty+r7Vyg0VHrCtZxlwJ+kk0B76+bAx81BizZZgZzE/EqxXyDW4JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755739038; c=relaxed/simple;
-	bh=w/mhTWUbr6/K3ZpBOw6iFBOZ7tUKFPr+Fy1MPDtZFyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ut72dnrZ4FcY/0Id5LCkncZyJCxTrWv6AOzdsB1x7n8Nl2Zt30hD/Q3/W8adiqAxK+4zDdoRlYJysXgUvwivRJM8Q+t22yIDY0KPSbpIL4+losRhT7B2jQnTjPNpP2x7Ht+umol0O0p70TVR2suCb5nYI0pF7qpRaHvVBDd+UTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wlZnw6kv; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755739027; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Kcy4kiDvfXjZXkr3p+YJ3IZARRcGWf8p3DtdKNM7Prw=;
-	b=wlZnw6kv3L93IuGWKFpgFpZrvNt6crSxCtPi/QEu8b3ZHojHqNCD0Gh+jWq2Q0WDFPVw4wEHL0ooB0rLKL74LibaRUWTtODZ0K7kUZ31h2cFb2aSQT7x86F14zvhOT/lOtokuLcx9NAZFY7bOIDaJCOUUKkpz3tBL5tdmDzUIYQ=
-Received: from 30.74.144.114(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmE-6ch_1755738705 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 21 Aug 2025 09:11:46 +0800
-Message-ID: <816d77f1-aa8f-4580-b1cd-b8c81f929fdd@linux.alibaba.com>
-Date: Thu, 21 Aug 2025 09:11:45 +0800
+	s=arc-20240116; t=1755738842; c=relaxed/simple;
+	bh=45NXROLhzFWPchWEfmo+8RdCuCIUFvLMSvkuiR//zk8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gm2B9up9NX3hhA03oVkexb5kdY7w5G0HjhZ4AwK04KEyG1nXTC5XkmrXqRdtwfGVHDxocdvlYqq2hJejBATCXo0x4+5meRNNEJ3LXkLLcFSzbqoNc5OP7D//Y+rAdcZ79Emg88lPRH8TmK6BN97BH48Kx0GNMUrwHBmUrKjUnoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AV2O85AW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41E9C116C6;
+	Thu, 21 Aug 2025 01:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755738841;
+	bh=45NXROLhzFWPchWEfmo+8RdCuCIUFvLMSvkuiR//zk8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AV2O85AWad5xKprLZOTLbAOBXZOAckbHAQUSDaQYLVQvbVAes6PrpXuUcvbs3QtB8
+	 BgGv2EZTC2/1U020NEKuQXtZc4ZI+PsM6bAxLSTvcpzfOMLUk8Ctz0U/dht5MYivJh
+	 DH5dngak565O0ISJSOuj9vdNYTbK9sr613Z7kZCPaYmljzLfEFwEfM7XK3BLHaD72y
+	 Ut+oH9mh7w542Mjz0ku+Lmlul9ycBp703J0IRJXsiYM9zTOipts2cut1LtpKmDFYfU
+	 IjEB8dEwh/eNwL+yelFy/KBhiuOg53vex3BMPo4zEY0MrghY9fZds2LFVDruWSi7mZ
+	 Cuvk3FnYA5Vgg==
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9e4193083so436070f8f.3;
+        Wed, 20 Aug 2025 18:14:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW036WrLhK0KWmx5PWxiW+KBgPSkC4a5tR1Gd9UWmY6rBHuK/0J2y2JFPQt+zAlScecNx0=@vger.kernel.org, AJvYcCWdprkJWcMT6CyIJlX+8m75lF/ZEsVDr1YC+mQuz5xu6/EpqeOmYe8zVtu0TAiSulJzLdbQ/jpG31pUcfqf@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBkGQycySZwbvcnl0GcE4ZyA82yPThNn7CI2LBvfVzqOxucIeD
+	VZvGKB5Pt4Wu5oxVeK/Yb+mGRXUiGn5V1GV/G1htJf0S439RcY/aTWHQBnf/fv4q4+3xReHq5M+
+	sIxGhL5s0QhlZf1M7f9o08CPLGZCkU3g=
+X-Google-Smtp-Source: AGHT+IHZN+pvmQenAfdScnxdgIeND2pxNhMesffXW4PF/YmXxHES0fVAha8XrYgyDwwnSOqPLvKrtGhubH5RGQQu4jQ=
+X-Received: by 2002:a5d:5f42:0:b0:3b7:9dc1:74a5 with SMTP id
+ ffacd0b85a97d-3c4962226d5mr440951f8f.52.1755738840191; Wed, 20 Aug 2025
+ 18:14:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] selftests/mm: add check_after_split_folio_orders()
- helper.
-To: Zi Yan <ziy@nvidia.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
- David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250818184622.1521620-1-ziy@nvidia.com>
- <20250818184622.1521620-5-ziy@nvidia.com>
- <a81b7fd3-c466-45c9-9374-361b780ce09b@linux.alibaba.com>
- <A5A3C9E5-7E90-4EB4-878F-D5143FE0F349@nvidia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <A5A3C9E5-7E90-4EB4-878F-D5143FE0F349@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250820125952.71689-1-fangyu.yu@linux.alibaba.com>
+ <20250820125952.71689-3-fangyu.yu@linux.alibaba.com> <aKXeXd4pZvoQmYB9@troy-wujie14pro-arch>
+In-Reply-To: <aKXeXd4pZvoQmYB9@troy-wujie14pro-arch>
+From: Guo Ren <guoren@kernel.org>
+Date: Thu, 21 Aug 2025 09:13:47 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRBpCj+ToxMMTD9w9fkPHvF=SXNm8mJOUAP_J7RUywxuQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyrfWTEOIumNm2zK1RJwo1sCg6Y71V-rBfVkEDGBWsArsLczQzhQ0Kly3w
+Message-ID: <CAJF2gTRBpCj+ToxMMTD9w9fkPHvF=SXNm8mJOUAP_J7RUywxuQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] RISC-V KVM: Remove unnecessary HGATP csr_read
+To: Troy Mitchell <troy.mitchell@linux.dev>
+Cc: fangyu.yu@linux.alibaba.com, anup@brainfault.org, atish.patra@linux.dev, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 20, 2025 at 10:40=E2=80=AFPM Troy Mitchell <troy.mitchell@linux=
+.dev> wrote:
+>
+> On Wed, Aug 20, 2025 at 08:59:52PM +0800, fangyu.yu@linux.alibaba.com wro=
+te:
+> > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
+> >
+> > The HGATP has been set to zero in gstage_mode_detect(), so there
+> > is no need to save the old context. Unify the code convention
+> > with gstage_mode_detect().
+> >
+> > Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
+> > Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> > ---
+> >  arch/riscv/kvm/vmid.c | 5 +----
+> >  1 file changed, 1 insertion(+), 4 deletions(-)
+> >
+> > diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
+> > index 5f33625f4070..abb1c2bf2542 100644
+> > --- a/arch/riscv/kvm/vmid.c
+> > +++ b/arch/riscv/kvm/vmid.c
+> > @@ -25,15 +25,12 @@ static DEFINE_SPINLOCK(vmid_lock);
+> >
+> >  void __init kvm_riscv_gstage_vmid_detect(void)
+> >  {
+> > -     unsigned long old;
+> > -
+> >       /* Figure-out number of VMID bits in HW */
+> > -     old =3D csr_read(CSR_HGATP);
+> >       csr_write(CSR_HGATP, (kvm_riscv_gstage_mode << HGATP_MODE_SHIFT) =
+| HGATP_VMID);
+> >       vmid_bits =3D csr_read(CSR_HGATP);
+> >       vmid_bits =3D (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
+> >       vmid_bits =3D fls_long(vmid_bits);
+> > -     csr_write(CSR_HGATP, old);
+> > +     csr_write(CSR_HGATP, 0);
+> Is setting HGATP to 0 in gstage_mode_detect meaningless now?
+It's not meaningless, it means keep hgatp off. CSR_HGATP is set to 0
+by gstage_mode_detect(), but that's another independent function whose
+coincidence is set to 0. And in that function, we use
+"csr_write(CSR_HGATP, 0)", but here we change to confusing save_old &
+restore_old coding convention?
+
+So, keep kvm_riscv_gstage_vmid_detect() coding convention clear. We
+should follow the same approach as gstage_mode_detect(), that is,
+"csr_write(CSR_HGATP, 0)".
+
+ - The first patch is focused on fixing meaning, so keep the minimum
+modifications, no coding convention cleanup.
+ - The second one is about coding convention, which is no need to Cc:
+stable@kernel.org
+
+Hope the above explanation makes sense.
+
+> If so, it might be better to drop it and just keep the one here.
+>
+>                 - Troy
+>
+> >
+> >       /* We polluted local TLB so flush all guest TLB */
+> >       kvm_riscv_local_hfence_gvma_all();
+> > --
+> > 2.49.0
+> >
+> >
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
 
 
-On 2025/8/20 21:49, Zi Yan wrote:
-> On 20 Aug 2025, at 5:22, Baolin Wang wrote:
-> 
->> On 2025/8/19 02:46, Zi Yan wrote:
->>> The helper gathers a folio order statistics of folios within a virtual
->>> address range and checks it against a given order list. It aims to provide
->>> a more precise folio order check instead of just checking the existence of
->>> PMD folios.
->>>
->>> The helper will be used the upcoming commit.
->>>
->>> Signed-off-by: Zi Yan <ziy@nvidia.com>
->>> ---
->>
->> I tested this patch, and it works for me.
->> Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> 
-> Thanks.
-> 
->>
->> By the way, I moved gather_after_split_folio_orders() to the vm_util.c file as a helper for mTHP collapse checks in my patchset[1]. I'm not sure whether you need to move gather_after_split_folio_orders() to vm_util.c in this patch, or if I should move it in my patchset.
-> 
-> Feel free to move it in your patchset. My initial version has it in vm_util.c, but
-> I realized that its implementation is very limited to folio split check and moved
-> it to split_huge_page_test.c. If you find it suitable for your test cases, feel
-> free to move it. Just note that the code does not handle memremapped THP, since
-> it only checks page flags without checking the PFN. So when a vaddr range is mapped
-> to a THP/mTHP head page and some other THP/mTHP tail pages, the code just treats
-> the whole vaddr range as if it is mapped to a single THP/mTHP and gets a wrong
-> order. After-split folios do not have this concern, so
-> gather_after_split_folio_orders() is simplified to not handle such cases.
-
-Thanks for the information. khugepaged also does not have this case, so 
-it works well for me.
+--=20
+Best Regards
+ Guo Ren
 
