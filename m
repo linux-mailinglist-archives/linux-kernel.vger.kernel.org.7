@@ -1,226 +1,221 @@
-Return-Path: <linux-kernel+bounces-779217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755C7B2F08D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55219B2F09A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418F11899900
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:06:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0846417EDF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB2C2EA168;
-	Thu, 21 Aug 2025 08:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F1E26F443;
+	Thu, 21 Aug 2025 08:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qdjZ0B/K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="BC2Bjycq"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013062.outbound.protection.outlook.com [52.101.127.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3108224DCF9;
-	Thu, 21 Aug 2025 08:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763581; cv=none; b=EyKOfKiv46CPN6ttfi/FOA8YLuVH3+id2yLfbcweVwupjlLnpvzXRgrp7/Dydmw4rnMMRi4dgIXDbTKLNDNWeWwhMpKCPj8OhdiCIv1y44wlZDD4RambntVCoEHnhTMj5ozY5aF+3EEtqk3c7gk4SEa9ymnFa2BplaLUmXiwFo4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763581; c=relaxed/simple;
-	bh=7a/7R5WmT6S/6Nh45FbQ6DvBmKodvXnJv67k8mhkHsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M8RnUuepx3IRv6e5o9luN541OsoTUuKXOeC2pM/7nQM8ggI8/WjkTaJdRMWb899N/qSnXinRrnVHaYR1NIIj2BOpNxgW2hSzEuQ7aMDOp5Prp3IVkj+m3tfKZsBWbDChvjfGl94/SA6fOGZ4J6PuRFFabJvT11SSJE9WqMm/+Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qdjZ0B/K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD02BC4CEED;
-	Thu, 21 Aug 2025 08:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755763578;
-	bh=7a/7R5WmT6S/6Nh45FbQ6DvBmKodvXnJv67k8mhkHsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qdjZ0B/Kro1DeNdNUgDT6PlTOOTEguAjDIpW41W/C0pbrXSyGHSw1NSklcDRRAaVM
-	 uDGdAFCNMmiS96ZK0uSUq3Xy31plo4KmVvqzzxi0D6+CcOXYp5y5kEGkCZJGpuNPwg
-	 3tCmhsmd1R/vEnCZq+LRkGRHsmUkXPfEilpjfKx2aSjQsuSMAXjoTXTNd+hzBeXfEE
-	 O0QhRAK3sYwgphxIVI9IMLwpFBqcx2ddE/1v4Q57yZEA4gbduB+9/355s8qBaL82R8
-	 hMyks4hoplN/yT+wRtF1/EfADDq6x/FT/AvJpumzVkjxLzx8v1uE7IxPVgyHfPV20V
-	 vbpDalkoAr5xw==
-Date: Thu, 21 Aug 2025 16:06:11 +0800
-From: Coly Li <colyli@kernel.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, neil@brown.name, akpm@linux-foundation.org, 
-	linux-block@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	xni@redhat.com, yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com, 
-	johnny.chenyi@huawei.com
-Subject: Re: [PATCH] block: fix disordered IO in the case recursive split
-Message-ID: <43pgbt3ugu4mwaeh2ai537vkejqott2pez3qkxvuf4utq5ibgq@q4ncjkea4kwy>
-References: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1053F24DCF9;
+	Thu, 21 Aug 2025 08:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755763666; cv=fail; b=Gto2N0daecjtFW3CbPH5yHraJmzg85pKFM262CtS4s0t51lA8hDPFyVBzFYUm8H0+7efVvxJur5yqhg92wbLfLdkjDtPXNqLIDXZYaeGEMic5RjgBKVR4c/8+Axjd/yEyi96aa8AWryUKi1N0BNxvppHIdpxBknhGJGx2OyKbDQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755763666; c=relaxed/simple;
+	bh=mNswIVViM7nibn+ntiOyvV60oarQqWJbUd1LjSVeb4Y=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=RXNG1F3h/C5XzgyPL73frZzrRDIpHlVcimxoGVqCE//7SYvK0AHWA+ZFa4G4jDJXwoeS3MNlNF/thsD4iGQodMXZl2ObBgNxI85IPdIgTve2uPPdz7WrWb1j/iQoNNMHEMkeRczy0pJ9OJis1pZlT3oinQFyOsMog6bEITDfTAA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=BC2Bjycq; arc=fail smtp.client-ip=52.101.127.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DE02HkwDCS5l6Fsm7AJlZwvRhUHdGm5VvYmhWrBjLn1e/T6pOhXwYRvBNVjNXN+kJm6a29d3WqhJ/Ze4fR/D/kpvLpQueZCWti4qtrXuSdLHYBvC5QUv/UyYQoCcHYYbRmWhnwJqACa4yvTfDMz8ziKqNd2O8nbX5XeoyA1VWJIY9CpjKq1dbNO8pQRrCRtTs+pwDbV94VVTyzvA9qJf77BFZUH7gG8XNlabaNjtWJ9lcSiyC1MKgkTJYGP6KzCb4Cz+kB6/NQk8rtxK/JQBCm3UWwUwOudiFFUjCCRQ4SFAXWyaB9EQgZis6d4KOc2WNp1hEqLM09B2F4fCL2uv9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QDBq7ts4Aa2+P3c6upNyukXvuuAeh7oYP6MMc2MPggM=;
+ b=b/yAauY/7ShhFrmV4d28JEsZX30yAsFZlaRc6GyiPrb0IykIYBIQBIgWNAaWraxvBbaxWMNxNDJAzOlDm0q3xpjcoPruyf7CqLebEAJRSV/yXwnLPVUIPoYA+MbUMC5vrXGY6xcNkT4MSOjC0KzYF+f8BRxQrZ9o1wZdNZcyS4i7VG1Nf1Y4yZnaAJo/kAAAT/v5T83s6GAlKSpocUVHLBW7/M9aRDW3omAckR2p5MRWZl0XmMXcpIohK/YriYW2KL5NYNXc4hpi9JsQZqq0cQI+5v6NdE1uO2i7ZFmZXN8K30SLZYDNjN0QTsC//ZGUxSJXkbyif7R+23nx1YwhwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QDBq7ts4Aa2+P3c6upNyukXvuuAeh7oYP6MMc2MPggM=;
+ b=BC2Bjycql56jHW0mRzqzdlM/TG7jpTAC3En/BO1S8u6lOyJYqJbxVlpJ6F1ILLx6VvJT09Iv8s347pOUGCmR31MHM9peK44oZrwWiSESWFLhYKTHV2UOXQY8wHpXnetxJQsx220MgTDDAPyvlNqlcaLtfTSTHjDVqENfNu3jZOAWI8hTf+mb2+zcvtu/IML/FKaY03dXenp+7zWuT1DKdhzNNNhNcQPEgBwOqgvrz9iqd30HNUgG+649Q9fX6o6hLAAzW+KeSBBcFKYODk/wCiJ0o4Uh8jFM9GfwQxJc7R+FCXwpnsKUsLs0b1pu5Ut3bzzduNdwMr1sYHRRo8k4wQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by SEZPR06MB6598.apcprd06.prod.outlook.com (2603:1096:101:187::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
+ 2025 08:07:39 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9052.012; Thu, 21 Aug 2025
+ 08:07:38 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andreas Klinger <ak@it-klinger.de>,
+	Haibo Chen <haibo.chen@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	=?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Gustavo Silva <gustavograzs@gmail.com>,
+	Tomasz Duszynski <tomasz.duszynski@octakon.com>,
+	Jagath Jog J <jagathjog1996@gmail.com>,
+	Crt Mori <cmo@melexis.com>,
+	Xichao Zhao <zhao.xichao@vivo.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Waqar Hameed <waqar.hameed@axis.com>,
+	Yasin Lee <yasin.lee.x@gmail.com>,
+	Julien Stephan <jstephan@baylibre.com>,
+	linux-iio@vger.kernel.org (open list:IIO SUBSYSTEM AND DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	imx@lists.linux.dev (open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-amlogic@lists.infradead.org (open list:ARM/Amlogic Meson SoC support),
+	linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support)
+Subject: [PATCH 0/7] iio: Remove dev_err_probe() if error is -ENOMEM
+Date: Thu, 21 Aug 2025 16:06:44 +0800
+Message-Id: <20250821080723.525379-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY4P301CA0027.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:2b1::9) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SEZPR06MB6598:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a5f3c3b-82cb-485b-4637-08dde089cb73
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|366016|52116014|376014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4dZeZ5IkhEg4GGvjCMw8sElf+L2UyzEweVtq12BaRQPYLTqPe4sk7x3/bg0u?=
+ =?us-ascii?Q?ljcTD2umIqosoSMPrVLQpOagAmqHYRZHrz7fiSAW75JYXGpJW2/7WqY6JqXh?=
+ =?us-ascii?Q?zyEmPSmgEbx2XI/LjDbWzpqEPyEtSxQjV1bhQN7iVVdt0rM1QTyaQQGBivLX?=
+ =?us-ascii?Q?oF1eK/v+uwNskPAaHRc7FColxnpTwfSXBQUm+YtKytF7Bkozvlruhaym8rq9?=
+ =?us-ascii?Q?i4H6pmbTCrdMfskFyQwWyxssdwKCSjrpBNxT656j3PoOMRHdmKuby8XUlDuD?=
+ =?us-ascii?Q?4jK2fhaDAz+AqAgxO9MyKfUuCPTGrQMEXALZncMTlMKfrsVP4g4ryxRzxw+3?=
+ =?us-ascii?Q?LBeMivCxyEwQbQXqJ7cZQvcmkB06bev2epmb41660qe1z/ekdfX3IKWVNFmF?=
+ =?us-ascii?Q?pr0lF0OcRmr9PIVEkbON4T7GUIowb2JDW6kzR5EX05ddDa/E63vHKWxTACVn?=
+ =?us-ascii?Q?5jbABMLFkdhvyIvEyV69KMYHbFZvC+50rJ5SsxtnsCOutB02NEL3WJGUbuQJ?=
+ =?us-ascii?Q?oK2FPeWmVopoMrJc3RCrABboKBGgsshwI7xROfFs42F2YGoX1XcaV/pjw5ZH?=
+ =?us-ascii?Q?IPRMa4l7BBEdAPNVuB+/7R1bzYurxtc9F7YhADeq0eDGAvB0v5NaCApbQplh?=
+ =?us-ascii?Q?87QMKrH7g7TjqV+JyhX1Iv6Fxu5gzMUqpW5nyG5q+FDrEZqVKALnDB/U+eeR?=
+ =?us-ascii?Q?vgl2bipQmMgwHrc9cyVxLXpaJGtem5BKiEYmFrqQ8EinOmd+F6tHMZvxc/GH?=
+ =?us-ascii?Q?LE3EHQ5K8EEWW+mHs6OcC8QGxMuZf71O5B3EWhtHuLdxwnB0d92DcctfeFM/?=
+ =?us-ascii?Q?3mE8Dmc7n0QR6i05KG8d0kOGxy/4y2Fmgk9th5XI7LiXXD3M+TJ1p4lWR9bG?=
+ =?us-ascii?Q?YHx9AashhVelUzXWd4n1ljOt3vTZekV/hZmbUwRSt0oPVYb9s0t7Tn/6XGNU?=
+ =?us-ascii?Q?8piHn6GYJ4Qnw9BIPPOFS4RdFvsWBqfj5jOvtalq4DLR1L9rHqWbHBHJe3EX?=
+ =?us-ascii?Q?58TGHtpYfxTXGyinmGqsHgBLPP8smvCzBhXMT1y1rcmGbC9n4eZJjt8QCZoS?=
+ =?us-ascii?Q?ydd0tADtgHV95ojdUp4OOrw4oVb8g3zhLVlYYrIApIOP1iB92It1lK3y5qjG?=
+ =?us-ascii?Q?LMRte7mVHWlGJKjnXDt1MXlHRCS8/Wh7MWdFDMr3ZisyPkaPaeo4iWjhIKSm?=
+ =?us-ascii?Q?4HUa94QWvNDPpK3qVztQUl0n0TbtVa6GyQBj2MNq9ThA7FRd8KzBlF/lZICn?=
+ =?us-ascii?Q?YkykQz60tbS+VBzW5UkJF+UOEN/GTQTAzk1YFhKTgIhU8BjS9LLdNKeKSPMk?=
+ =?us-ascii?Q?4c7VpVdggt+t1zUf2nro54zYyKWn81WUEgFnwQZMoPug/iGjtlVEwdaLiC9k?=
+ =?us-ascii?Q?QEW5hZ+B3h41IWr35G9t/f4uhp+r3rQ41h6Nb1YMrK7njE4mRjYAvGIIkNLZ?=
+ =?us-ascii?Q?v8zUi7OVaIaWvL184h9Y8IbuWgY8JAaYvFpSe0Va7ndpYKbWOfnnzUv8s7OK?=
+ =?us-ascii?Q?kq0/gfISTIv5Pko=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(52116014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zi6CBwhCdh8TNaTIw+IlnPt2i0BIXMZM8GtI5SK56zlReidRtUNxeXKKVWuA?=
+ =?us-ascii?Q?4pd4Wl0E5WSVegWst4yAmIld/XgAjiDFRVIKS74VyHAl9jnVlvWorj/RoK19?=
+ =?us-ascii?Q?KteLyQ6IjsVFcdZqyZ+FhRbfZcDJiOB40TMPSP6maIinVdqI8NWZxVsPIaOW?=
+ =?us-ascii?Q?6ljX0xn+YmqXnbP71QjR+/9z2tPFgwxKgGLTre1cVn4CPABmR4FMtnyg8Vw5?=
+ =?us-ascii?Q?fdxWqlUS0ZZz5b6BX8NedoEwMiraDybVKO9sKdIZPUkG0M7kpeXe+mWdj7Fy?=
+ =?us-ascii?Q?bZpKrP203y0/vhHaTgGTQL115q86YBKFiK9+l9XHTC159qAg31/B2Jl4zZtm?=
+ =?us-ascii?Q?z8Alpog+sgudK6BTe69y3/R/0Mtqk7dRJmCLS6I5K/W/UsFJWzLO4NmKqJ36?=
+ =?us-ascii?Q?+G5vMVcWKsam2tIq4W4y1wzV6VEHE4dT+CohoXS5nZYQg2PFI0YtBJHsRfyr?=
+ =?us-ascii?Q?J2N/Rh7gxHD7i8DygprtpXsh6SjPY/XKZgnYXLB30BrVUkUucXf/tTL5K5Cl?=
+ =?us-ascii?Q?TLxXByYHsmSjZbx0h00VARYZfcD86xV935zbOPjZXe7+lPVkwq5wRZ63jdt/?=
+ =?us-ascii?Q?PuoqxaXGQmWVbapWRDDaua/ER8FAE4ADfoTUQETqo9znsQx3DwcSHreNw3fv?=
+ =?us-ascii?Q?oyqwC7LALfPXepkojSakUbKZGZmmhu7wbScBmqAT9v5TKYFQcdWp032y1NcR?=
+ =?us-ascii?Q?8l2YIu3Ac/9DJGlrDwn0d8YSpvr8qVqhrIvnOu191vaNHVXMJWfam75zkAvR?=
+ =?us-ascii?Q?0HLJkKkK1B2ampIF5hV+eE0XXmAccrbFInq1NXzWXQPZ9PCN9wQA2uuUqGZI?=
+ =?us-ascii?Q?eOm/WzftiKPxtjMSaDdQGr54uHSexKKYtp/Fxrv9Pd1vXqmRv+qiVH+Az3J5?=
+ =?us-ascii?Q?Xa4gYqFGdgikQEXowY9x2SNy6veMNlz6y4CsXVorbx4tW1++se3PT+fKzgCj?=
+ =?us-ascii?Q?NeqZBFxRHS4cqpBMtRoegtdPRkTimwwzcTay4KEa9X3VC5yUHQRxuiUHACds?=
+ =?us-ascii?Q?XrsnYFovSH2LerHKrRdm7EAxfbOQazzD+MjUym68cF843KbrqqiRfJCmluri?=
+ =?us-ascii?Q?UI6q3eL+B4xSQpG1JI7JVsBeprgVjnKN81iVcYWdBOqzXf/eX14TH3bPP244?=
+ =?us-ascii?Q?5LedpHo7KCx6dFwcL664ABXzDWD3Sx/x5nvg+2S1prOxvM+ZEzQzSgATZQei?=
+ =?us-ascii?Q?mXMibPopa6mALkLi/D1jl4sjSunkFp2He/oRNgb193e2FmjUhsAhhwxYiyZ4?=
+ =?us-ascii?Q?E8CuExav4L8d/SrS15l+aUjrk80J1eTMkYOLQJpq59dvw8IagI/boFJiNdFA?=
+ =?us-ascii?Q?YGSTZSHOj5ahGe6ELmQDuB6tDWjpPWIDveAOGVWQWW60pn1oYmHizu1I9lhi?=
+ =?us-ascii?Q?NQPvL7CN6oF6aEQuREkKo9hUO5w9ger5D3ifwERfDm8gGKzVI+COg/mw+Sck?=
+ =?us-ascii?Q?8LhRYeNk/LXgrxrEstg0ASQxnnS1WLHmqE2y6xS65bnO+tjHlYzGxDh2N5l/?=
+ =?us-ascii?Q?Q3Y3jfJrNkDJCV9DT2nJo9Y2EwG0RP+1hoR3Vxyfe3OfcvE+2xND/IhmC7rW?=
+ =?us-ascii?Q?S5OuD0uFofYVWNA2TXIrS3bZ6FgK1f+damBlmOas?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a5f3c3b-82cb-485b-4637-08dde089cb73
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 08:07:38.7621
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GK92CaqbdrujQat5X1Y/8B8xHp79Q/v3hAOXRDmlZ56GkvMvG96NvlnFPpnMqOjAFKzJ5+soXN9mrass7dVtmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6598
 
-On Thu, Aug 21, 2025 at 03:47:06PM +0800, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Currently, split bio will be chained to original bio, and original bio
-> will be resubmitted to the tail of current->bio_list, waiting for
-> split bio to be issued. However, if split bio get split again, the IO
-> order will be messed up, for example, in raid456 IO will first be
-> split by max_sector from md_submit_bio(), and then later be split
-> again by chunksize for internal handling:
-> 
-> For example, assume max_sectors is 1M, and chunksize is 512k
-> 
-> 1) issue a 2M IO:
-> 
-> bio issuing: 0+2M
-> current->bio_list: NULL
-> 
-> 2) md_submit_bio() split by max_sector:
-> 
-> bio issuing: 0+1M
-> current->bio_list: 1M+1M
-> 
-> 3) chunk_aligned_read() split by chunksize:
-> 
-> bio issuing: 0+512k
-> current->bio_list: 1M+1M -> 512k+512k
-> 
-> 4) after first bio issued, __submit_bio_noacct() will contuine issuing
-> next bio:
-> 
-> bio issuing: 1M+1M
-> current->bio_list: 512k+512k
-> bio issued: 0+512k
-> 
-> 5) chunk_aligned_read() split by chunksize:
-> 
-> bio issuing: 1M+512k
-> current->bio_list: 512k+512k -> 1536k+512k
-> bio issued: 0+512k
-> 
-> 6) no split afterwards, finally the issue order is:
-> 
-> 0+512k -> 1M+512k -> 512k+512k -> 1536k+512k
-> 
-> This behaviour will cause large IO read on raid456 endup to be small
-> discontinuous IO in underlying disks. Fix this problem by placing chanied
-> bio to the head of current->bio_list.
-> 
-> Test script: test on 8 disk raid5 with 64k chunksize
-> dd if=/dev/md0 of=/dev/null bs=4480k iflag=direct
-> 
-> Test results:
-> Before this patch
-> 1) iostat results:
-> Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz  aqu-sz  %util
-> md0           52430.00   3276.87     0.00   0.00    0.62    64.00   32.60  80.10
-> sd*           4487.00    409.00  2054.00  31.40    0.82    93.34    3.68  71.20
-> 2) blktrace G stage:
->   8,0    0   486445    11.357392936   843  G   R 14071424 + 128 [dd]
->   8,0    0   486451    11.357466360   843  G   R 14071168 + 128 [dd]
->   8,0    0   486454    11.357515868   843  G   R 14071296 + 128 [dd]
->   8,0    0   486468    11.357968099   843  G   R 14072192 + 128 [dd]
->   8,0    0   486474    11.358031320   843  G   R 14071936 + 128 [dd]
->   8,0    0   486480    11.358096298   843  G   R 14071552 + 128 [dd]
->   8,0    0   486490    11.358303858   843  G   R 14071808 + 128 [dd]
-> 3) io seek for sdx:
-> Noted io seek is the result from blktrace D stage, statistic of:
-> ABS((offset of next IO) - (offset + len of previous IO))
-> 
-> Read|Write seek
-> cnt 55175, zero cnt 25079
->     >=(KB) .. <(KB)     : count       ratio |distribution                            |
->          0 .. 1         : 25079       45.5% |########################################|
->          1 .. 2         : 0            0.0% |                                        |
->          2 .. 4         : 0            0.0% |                                        |
->          4 .. 8         : 0            0.0% |                                        |
->          8 .. 16        : 0            0.0% |                                        |
->         16 .. 32        : 0            0.0% |                                        |
->         32 .. 64        : 12540       22.7% |#####################                   |
->         64 .. 128       : 2508         4.5% |#####                                   |
->        128 .. 256       : 0            0.0% |                                        |
->        256 .. 512       : 10032       18.2% |#################                       |
->        512 .. 1024      : 5016         9.1% |#########                               |
-> 
-> After this patch:
-> 1) iostat results:
-> Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz  aqu-sz  %util
-> md0           87965.00   5271.88     0.00   0.00    0.16    61.37   14.03  90.60
-> sd*           6020.00    658.44  5117.00  45.95    0.44   112.00    2.68  86.50
-> 2) blktrace G stage:
->   8,0    0   206296     5.354894072   664  G   R 7156992 + 128 [dd]
->   8,0    0   206305     5.355018179   664  G   R 7157248 + 128 [dd]
->   8,0    0   206316     5.355204438   664  G   R 7157504 + 128 [dd]
->   8,0    0   206319     5.355241048   664  G   R 7157760 + 128 [dd]
->   8,0    0   206333     5.355500923   664  G   R 7158016 + 128 [dd]
->   8,0    0   206344     5.355837806   664  G   R 7158272 + 128 [dd]
->   8,0    0   206353     5.355960395   664  G   R 7158528 + 128 [dd]
->   8,0    0   206357     5.356020772   664  G   R 7158784 + 128 [dd]
-> 2) io seek for sdx
-> Read|Write seek
-> cnt 28644, zero cnt 21483
->     >=(KB) .. <(KB)     : count       ratio |distribution                            |
->          0 .. 1         : 21483       75.0% |########################################|
->          1 .. 2         : 0            0.0% |                                        |
->          2 .. 4         : 0            0.0% |                                        |
->          4 .. 8         : 0            0.0% |                                        |
->          8 .. 16        : 0            0.0% |                                        |
->         16 .. 32        : 0            0.0% |                                        |
->         32 .. 64        : 7161        25.0% |##############                          |
-> 
-> BTW, this looks like a long term problem from day one, and large
-> sequential IO read is pretty common case like video playing.
-> 
-> And even with this patch, in this test case IO is merged to at most 128k
-> is due to block layer plug limit BLK_PLUG_FLUSH_SIZE, increase such
-> limit and cat get even better performance. However, we'll figure out
-> how to do this properly later.
-> 
-> Fixes: d89d87965dcb ("When stacked block devices are in-use (e.g. md or dm), the recursive calls")
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+Therefore, remove the useless call to dev_err_probe(), and just
+return the value instead.
 
-Tested-by: Coly Li <colyli@kernel.org>
+Xichao Zhao (7):
+  iio: accel: msa311: Remove dev_err_probe() if error is -ENOMEM
+  iio: adc: Remove dev_err_probe() if error is -ENOMEM
+  iio: chemical: Remove dev_err_probe() if error is -ENOMEM
+  iio: imu: bmi323: Remove dev_err_probe() if error is -ENOMEM
+  iio: light: Remove dev_err_probe() if error is -ENOMEM
+  iio: proximity: Remove dev_err_probe() if error is -ENOMEM
+  iio: temperature: mlx90635: Remove dev_err_probe() if error is -ENOMEM
 
-Yeah, I can see 'dd if=./on-fs-file of=/dev/null bs=6400K status=proress' to report
-the read throughput from around 1.2GiB/s to 9.8GiB/s.
+ drivers/iio/accel/msa311.c           | 8 +++-----
+ drivers/iio/adc/hx711.c              | 2 +-
+ drivers/iio/adc/imx93_adc.c          | 3 +--
+ drivers/iio/adc/mcp3564.c            | 2 +-
+ drivers/iio/adc/meson_saradc.c       | 2 +-
+ drivers/iio/adc/rockchip_saradc.c    | 3 +--
+ drivers/iio/adc/spear_adc.c          | 3 +--
+ drivers/iio/adc/ti-ads1119.c         | 6 ++----
+ drivers/iio/adc/ti-ads7924.c         | 3 +--
+ drivers/iio/adc/vf610_adc.c          | 2 +-
+ drivers/iio/chemical/ens160_core.c   | 3 +--
+ drivers/iio/chemical/scd30_core.c    | 2 +-
+ drivers/iio/imu/bmi323/bmi323_core.c | 3 +--
+ drivers/iio/light/opt4060.c          | 2 +-
+ drivers/iio/light/veml6040.c         | 3 +--
+ drivers/iio/proximity/d3323aa.c      | 3 +--
+ drivers/iio/proximity/hx9023s.c      | 3 +--
+ drivers/iio/proximity/irsd200.c      | 6 ++----
+ drivers/iio/temperature/mlx90635.c   | 2 +-
+ 19 files changed, 23 insertions(+), 38 deletions(-)
 
-Great job and thank you!
+-- 
+2.34.1
 
-Coly Li
-
-> ---
->  block/blk-core.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index 4201504158a1..0d46d10edb22 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -745,12 +745,16 @@ void submit_bio_noacct_nocheck(struct bio *bio)
->  	 * to collect a list of requests submited by a ->submit_bio method while
->  	 * it is active, and then process them after it returned.
->  	 */
-> -	if (current->bio_list)
-> -		bio_list_add(&current->bio_list[0], bio);
-> -	else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
-> +	if (current->bio_list) {
-> +		if (bio_flagged(bio, BIO_CHAIN))
-> +			bio_list_add_head(&current->bio_list[0], bio);
-> +		else
-> +			bio_list_add(&current->bio_list[0], bio);
-> +	} else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO)) {
->  		__submit_bio_noacct_mq(bio);
-> -	else
-> +	} else {
->  		__submit_bio_noacct(bio);
-> +	}
->  }
->  
->  static blk_status_t blk_validate_atomic_write_op_size(struct request_queue *q,
-> -- 
-> 2.39.2
-> 
-> 
 
