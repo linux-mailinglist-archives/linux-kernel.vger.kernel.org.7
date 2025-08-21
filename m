@@ -1,149 +1,102 @@
-Return-Path: <linux-kernel+bounces-779726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C95B2F7D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:23:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 758DBB2F7CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47775C6858
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:22:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4692A1757BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D752131076A;
-	Thu, 21 Aug 2025 12:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773F62DE712;
+	Thu, 21 Aug 2025 12:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LVTy1H79"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CndxvURl"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8C02E11D7;
-	Thu, 21 Aug 2025 12:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060AE16F265
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755778937; cv=none; b=MQNjSTNHIIzZfnbH6pCKhy8sDOA76aowx/uieslaYEWbPk950NTfzyHJAJwIrUiiqp8quOG2DXltLtxFXeVvzUwB2bt+maF/w8YGyQvy68/wFSwkBVuKCdLha9gv9J0MzK5cV3vwu2FyK3M4yIRAG9oAfbwrbZUYlEiJVgcNU+4=
+	t=1755778919; cv=none; b=G4HlU2D/Pu4ZJwoG0wUxFEZtVGtd7L2idvYh3zYLwCxenimYPy4m60Q6u97iFnsR2RhycJotysIH6IDYvDBhi6/MSk7mXvA+bJcSQDfhMy1mN3uIXYSyocpUOXd1rciQDdsCjxMszvoZ5Qn+UPzs8cU4+fikxT9SOGOFB/ttEgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755778937; c=relaxed/simple;
-	bh=qNcFoh/UlNjjFgV79qooYF0rIFA73Dk9vUEULa8BVHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rJCkRm7X0YewksDXxGwBOhCzRISUykSjDYa2qOZUHAlGKpU8Rg6sBFxHCMcwSnmTi60ebMY/V0pVp2w87QSTbJoPtWUOkd89HsRMdrCy23IRoqbHQPIm3qaT2CTsJkrqmY5mjgXa0MFLD1o8iSKXiEJfD7mECx80R/Ve7Z5FkpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LVTy1H79; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LBRhAJ002194;
-	Thu, 21 Aug 2025 12:21:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=A52f6L
-	2XomxtU6yBzuD6WmyIMfHyxLnbdp3M3IJQVo4=; b=LVTy1H798029Bfy/769xw/
-	Yi4SBO5sHVmfrNK7phGS94QN5Hh9axh41ZCrlrQLH+vc7fHFrdsCCNM2zxBJRIxa
-	TaCgOk7GmU+cvJsdGbonsftEIGSpXIMkXJahCkv0VDv0ave81HKB7+gUKshZnoQ6
-	oTeq/gJXvzNPXLZ/sXJfc3mRXzYLa39wbfM6DJjHFh7m8sXJYYrZN/R4VwZD7OAE
-	/xPPF6OnKoeE82URwy2+Gmij9U68qobW3ldWBkgGDlltxreAa8UyO9TwnZZ85o7V
-	YZhTKannySI7K4MZr2o4zoCB2vOAUEhX+5u26ilT2y7TacllRsKkDGsVax9xw2sw
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38w8cxf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 12:21:52 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57LAo8s0015613;
-	Thu, 21 Aug 2025 12:21:52 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48my4287de-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 12:21:52 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57LCLpHM29753862
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 12:21:51 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5335A58060;
-	Thu, 21 Aug 2025 12:21:51 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ACA0B58050;
-	Thu, 21 Aug 2025 12:21:47 +0000 (GMT)
-Received: from [9.109.198.214] (unknown [9.109.198.214])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 21 Aug 2025 12:21:47 +0000 (GMT)
-Message-ID: <98b30bef-3f7c-411b-b724-ed614a86b056@linux.ibm.com>
-Date: Thu, 21 Aug 2025 17:51:46 +0530
+	s=arc-20240116; t=1755778919; c=relaxed/simple;
+	bh=uP1N1902khxh6xGxbKqeAltpkKMdvPiQyeNvSgMbdpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s62bw9+wS0pZxP9HelBRV2kGB0fNvzSWTt3USMDfM66NPoKlkNSQGb2YHfoWjb86rwIkmd5jH4Cen5QYy5KAurxKoA6X+mDWovjnnZt5T0WF+QKCSGexTJZOzyfK9Xtfjp8qlHCGcyt1l2LcL4RTErQDc6ohQ84Pm2FJWpsXfSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CndxvURl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755778915;
+	bh=uP1N1902khxh6xGxbKqeAltpkKMdvPiQyeNvSgMbdpg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CndxvURl8YRl4ufGEM+GjYWLpYiY8hZ4yNeYQxANE//lzFpjLeQ5xBGiG8px8nN/j
+	 f1Z3jVy2MRt/k+6O3ravflwR7nc/UWJRrl/Dr+i4+YUU32FLiKFnAbY7LM6w43OANL
+	 l0UW9s8IqcV7aHW6BxrqtfnOkCi7n2w5i58kK5gx8UxwoM5yGezybxh51r6Z32cu/v
+	 Cnc2Bp+sTTIpk2i592uNy2AMrdbiF9xfFNN/WdFySQ1cgGQqWJLtzeyUHHd/r4keq7
+	 CVbTEt+VPJjNWucyQ6MN6Rl0AZ0htZS1726XzxLERF5D2TJmrWUzZbM6Aghwf0IIkl
+	 4hvHtF7HUB7FQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 548D317E110D;
+	Thu, 21 Aug 2025 14:21:54 +0200 (CEST)
+Date: Thu, 21 Aug 2025 14:21:50 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Adrian Larumbe <adrian.larumbe@collabora.com>
+Cc: Caterina Shablia <caterina.shablia@collabora.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Frank Binns <frank.binns@imgtec.com>, Matt
+ Coster <matt.coster@imgtec.com>, Karol Herbst <kherbst@redhat.com>, Lyude
+ Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Lucas De Marchi
+ <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
+ <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ asahi@lists.linux.dev, Asahi Lina <lina@asahilina.net>
+Subject: Re: [PATCH v4 5/7] drm/gpuvm: Add a flags field to
+ drm_gpuvm_map_req/drm_gpuva_op_map
+Message-ID: <20250821142150.48250375@fedora>
+In-Reply-To: <rquyd5sq4y6dhnnbqcmnorvhzvui6kbpysol6idinuwajlmawn@awv2uqosdacl>
+References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
+	<20250707170442.1437009-6-caterina.shablia@collabora.com>
+	<rquyd5sq4y6dhnnbqcmnorvhzvui6kbpysol6idinuwajlmawn@awv2uqosdacl>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] blk-mq: fix elevator depth_updated method
-To: Yu Kuai <yukuai1@huaweicloud.com>, yukuai3@huawei.com, axboe@kernel.dk,
-        bvanassche@acm.org, ming.lei@redhat.com, hare@suse.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250821060612.1729939-1-yukuai1@huaweicloud.com>
- <20250821060612.1729939-2-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20250821060612.1729939-2-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfX8MxBI+DUbmlB
- gtPYZuoTM/8zmwLXcN8isjjOR+6ICeV6g4++RxBIvInmqJGb+QseBJpGcTADnKpuQHi2fX0drCW
- IIs8w7WOgv1PUj9K1ezA9IJmYVJtxMCMFauPuIi59eOGX2DWj5gsGqY9JwZAz1b6qKpmcJAd+td
- fyQvFj/fjAlXmxlt0riELlUc/6bVjdfV02v70378d1Boxnsi9o09CjjWGJWY6pV5OviOsK98cTR
- UhIw6DlCP0HLHlip0iT6z8gh85cW3Y/+M7kb419cPIOc2bvMSucFMymCiUftcXeJuwUbH0BbEhC
- 8xtJyD37Eoc6u8qwg9gqBUubmvU177La2OWn5KVsqQcLSTQ47Fm6r4XPCwXoRJPVLIGYtapMAu0
- cKrNWRhCnEi8xzjfRNu5UWLdb1Kx8w==
-X-Authority-Analysis: v=2.4 cv=H62CA+Yi c=1 sm=1 tr=0 ts=68a70f60 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8
- a=G2FcNzjyDMgwL_yvhcQA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: 1NdmM2f24fRXeyeJCiB8Ab2F_qlC7JCi
-X-Proofpoint-GUID: 1NdmM2f24fRXeyeJCiB8Ab2F_qlC7JCi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 bulkscore=0 adultscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
- definitions=main-2508190222
 
+On Tue, 22 Jul 2025 20:21:25 +0100
+Adrian Larumbe <adrian.larumbe@collabora.com> wrote:
 
+> >  /**
+> > @@ -1074,6 +1079,9 @@ struct drm_gpuvm_map_req {
+> >  		/** @offset: offset in the GEM */
+> >  		u64 offset;
+> >  	} gem;
+> > +
+> > +	/** @flags: combination of DRM_GPUVA_ flags describing the mapping properties. */
+> > +	enum drm_gpuva_flags flags;  
+> 
+> Wouldn't this be better expressed as a u32 combination of enum drm_gpuva_flags flags?
+> Calling it 'flags' makes me feel like any OR'd combination of enum values would be possible.
 
-On 8/21/25 11:36 AM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Current depth_updated has some problems:
-> 
-> 1) depth_updated() will be called for each hctx, while all elevators
-> will update async_depth for the disk level, this is not related to hctx;
-> 2) In blk_mq_update_nr_requests(), if previous hctx update succeed and
-> this hctx update failed, q->nr_requests will not be updated, while
-> async_depth is already updated with new nr_reqeuests in previous
-> depth_updated();
-> 3) All elevators are using q->nr_requests to calculate async_depth now,
-> however, q->nr_requests is still the old value when depth_updated() is
-> called from blk_mq_update_nr_requests();
-> 
-> Those problems are first from error path, then mq-deadline, and recently
-> for bfq and kyber, fix those problems by:
-> 
-> - pass in request_queue instead of hctx;
-> - move depth_updated() after q->nr_requests is updated in
->   blk_mq_update_nr_requests();
-> - add depth_updated() call inside init_sched() method to initialize
->   async_depth;
-> - remove init_hctx() method for mq-deadline and bfq that is useless now;
-> 
-> Fixes: 77f1e0a52d26 ("bfq: update internal depth state when queue depth changes")
-> Fixes: 39823b47bbd4 ("block/mq-deadline: Fix the tag reservation code")
-> Fixes: 42e6c6ce03fd ("lib/sbitmap: convert shallow_depth from one word to the whole sbitmap")
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-
-Looks good to me:
-Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
+I agree, but it's how other flags field are defined in gpuvm so I went
+for the same definition to keep things consistent. Luckily (or
+unfortunately, depending on where you place yourself), C is pretty lax
+about what can be assigned to an enum type.
 
