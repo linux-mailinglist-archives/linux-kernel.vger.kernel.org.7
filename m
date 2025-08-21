@@ -1,165 +1,164 @@
-Return-Path: <linux-kernel+bounces-778796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10603B2EB2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:24:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7ED9B2EB33
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4723BFC8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:22:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510005A85D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B6023C38C;
-	Thu, 21 Aug 2025 02:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1E424DFF4;
+	Thu, 21 Aug 2025 02:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Suk4niCs"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZy9ibA4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D74228C9D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530EF253F03;
+	Thu, 21 Aug 2025 02:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755742963; cv=none; b=kQRFWdaOO3NjDtdlXeSs+E+glqezHHj0AVe7iqBRWb1wfVsl7XxKzyr3m9ls9CbwfvY2Ov1ChSUYTuT4FtdF3WwenYHi3sxSsSwDtsPPd8V2+WsEjLuAVXpkSJguQ3+/ql7fPdie5EARVugAsN4C2QENmDdk8Wyz2bVdWDMEErE=
+	t=1755743406; cv=none; b=IYE15kAHSNvPAKg42bV2RFWvIeSfvxfg+j5nDvMZfcNwyHz0z060e7p2uMeLBQ9R0tt2BU3rrc8H96iyeg3yHXlxJNfpD27813bkEtcBCI8ytpP80BkHqlUy4miE+IK5yDlRB8MgspL6l/9ppAGcoKRqgxPgvjHVgSZxULcS53s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755742963; c=relaxed/simple;
-	bh=oDwbBGmgxy3vUPvM7avZroGuhizSxxMXx+qwF7bBMrE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=d/pmJLFPxBI3eef3A+lB+V5BrMyycNK95MxdscLUDtJXJz38znOBKgKBvESbUZm6kUe38SciEMEvovgWirT460V1EV0xjVpx7YAYS+bFfq/hwPI8hbT/QDAa6Il9G/eUXFNWIzZC0y7iRxEnQgcnfyLWyGpK9ALsb6GrYxTn8nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Suk4niCs; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755742958;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j74vLZJ/pDTvrOLGmgUzsjwHFqEGtuc7kqWVVBs93lA=;
-	b=Suk4niCsZPDfF3AjH92kMN99VOBt3dRVWTsdffSM0hmqybDSR7M+H6BQe0sxIveGb+8V/9
-	/sTqh0mdQNBNFIDknWXs8LeU5Y/lKkrNYX65al5YV4UQEcL5OzfCbhfAdc537GMe/n8xXP
-	p8s623IbZqPxrfdYYuAifSgkbamO820=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: linux-mm@kvack.org,  bpf@vger.kernel.org,  Suren Baghdasaryan
- <surenb@google.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Michal Hocko
- <mhocko@suse.com>,  David Rientjes <rientjes@google.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
- Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
-In-Reply-To: <CAP01T76xFkhsQKCtCynnHR4t6KyciQ4=VW2jhF8mcZEVBjsF1w@mail.gmail.com>
-	(Kumar Kartikeya Dwivedi's message of "Thu, 21 Aug 2025 02:36:49
-	+0200")
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
-	<20250818170136.209169-2-roman.gushchin@linux.dev>
-	<CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
-	<87ms7tldwo.fsf@linux.dev>
-	<CAP01T76xFkhsQKCtCynnHR4t6KyciQ4=VW2jhF8mcZEVBjsF1w@mail.gmail.com>
-Date: Wed, 20 Aug 2025 19:22:31 -0700
-Message-ID: <875xehh0rc.fsf@linux.dev>
+	s=arc-20240116; t=1755743406; c=relaxed/simple;
+	bh=hubpUThmEzsghOP3D/C7Zn97GmCl6Og8IXTCNTfgLvU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RIdM4w5+PcxNEmLUV0k/NYBTwH348xOkKuwUIWR5a19olVEHn6dSBEucQmufw8gZbf7uNHuqJB3z3OFQVCQFJmyhvxdUoqCitWcI0IA3OZn7Sylx3uG28IjOWgPUQ7GHeahHe78uKmUbvOzwRqpAxYK1OxqnuIWP4bysZFzYUO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZy9ibA4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D18C116C6;
+	Thu, 21 Aug 2025 02:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755743405;
+	bh=hubpUThmEzsghOP3D/C7Zn97GmCl6Og8IXTCNTfgLvU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SZy9ibA4EDz7L62RgEWFEo9hJQ/vxQ7Fnp+Nd/4CfZpQe80EA5wZxZjxi3wz+nVAt
+	 gXlqIhk6hRmGtUcUXCpN6PhuO5v5esX8Db5l9xiiwih47XGarB9LGrg/uORS1gPCXy
+	 1igIdIsfCuOL9MOtsVqmJEO/1kB/pLA6mmuLJ/x+a42Z+8wWIh0wtd1jUDJyMXP6F6
+	 LhblU1I/X/pbifS09DqxJr2UzyJX3BB72BMCprkGmxOwjHWQYJOV7CphUMo0Dwt7+B
+	 ICzg6lqrcyWwMUYvvz9sX6sA/cL5BfqudbmMTrCQYRJHVAKTKSt1/hUDDOZjlU/MA/
+	 nwxhf2v2WQQiw==
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b004a31so3227165e9.0;
+        Wed, 20 Aug 2025 19:30:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUjZoqBfN7QssoxkDEnqFwbpSLPccbqNK/eA+gOVfV0eyGbpplVG+lll1+CDacL7FjaYPI=@vger.kernel.org, AJvYcCWegdbaSKfdSdZO1dOjAsp7WykhviJ+pJ1D9J3WdB5/HrNS8tvwdSIn4O6Kt2hE9YBR4Dwbm1Xr4jSYJu0u@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ4wMmB9hBpVroD91+kMnWfJOnNf2eeZUXtcaMclTPfNYkAQ7k
+	b2MiaUo1f61EZWyToC7tK873sWpXgQviYGg+of6UiD6xwU+1EzFaKGl9SmAmgxnd+nq8cU3x/i0
+	BvB6Ga0Qv+JqALUhv7y78enGMMQPlUdU=
+X-Google-Smtp-Source: AGHT+IGYX4eEyPphK+rf6VYqExLd5m/PEgZbk79xQHbEyvtKvfzfhnDjWrlazH1kSQ3/wuGNLwSYdViL32OHBPoQlXg=
+X-Received: by 2002:a05:600c:4587:b0:456:302:6dc3 with SMTP id
+ 5b1f17b1804b1-45b4d858a37mr4606865e9.26.1755743404380; Wed, 20 Aug 2025
+ 19:30:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+References: <20250820125952.71689-1-fangyu.yu@linux.alibaba.com>
+ <20250820125952.71689-3-fangyu.yu@linux.alibaba.com> <aKXeXd4pZvoQmYB9@troy-wujie14pro-arch>
+ <CAJF2gTRR0LTO-CbUMkyXisov3BeftN+UJzv99GX7KfqCxWxmUg@mail.gmail.com>
+In-Reply-To: <CAJF2gTRR0LTO-CbUMkyXisov3BeftN+UJzv99GX7KfqCxWxmUg@mail.gmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Thu, 21 Aug 2025 10:29:51 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTT9Py=wE9eHfY-i-cvoPatwFvRHq2dH1xznyX+GM8BxQw@mail.gmail.com>
+X-Gm-Features: Ac12FXw_adGCNVjgTV_UXKrfw26y_tUOuHc9MjDbq3ZDuenvMG1Bo2H0ToRcxCg
+Message-ID: <CAJF2gTT9Py=wE9eHfY-i-cvoPatwFvRHq2dH1xznyX+GM8BxQw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] RISC-V KVM: Remove unnecessary HGATP csr_read
+To: Troy Mitchell <troy.mitchell@linux.dev>
+Cc: fangyu.yu@linux.alibaba.com, anup@brainfault.org, atish.patra@linux.dev, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Kumar Kartikeya Dwivedi <memxor@gmail.com> writes:
-
-> On Thu, 21 Aug 2025 at 02:25, Roman Gushchin <roman.gushchin@linux.dev> wrote:
->>
->> Kumar Kartikeya Dwivedi <memxor@gmail.com> writes:
->>
->> > On Mon, 18 Aug 2025 at 19:01, Roman Gushchin <roman.gushchin@linux.dev> wrote:
->> >>
->> >> Introduce a bpf struct ops for implementing custom OOM handling policies.
->> >>
->> >> The struct ops provides the bpf_handle_out_of_memory() callback,
->> >> which expected to return 1 if it was able to free some memory and 0
->> >> otherwise.
->> >>
->> >> In the latter case it's guaranteed that the in-kernel OOM killer will
->> >> be invoked. Otherwise the kernel also checks the bpf_memory_freed
->> >> field of the oom_control structure, which is expected to be set by
->> >> kfuncs suitable for releasing memory. It's a safety mechanism which
->> >> prevents a bpf program to claim forward progress without actually
->> >> releasing memory. The callback program is sleepable to enable using
->> >> iterators, e.g. cgroup iterators.
->> >>
->> >> The callback receives struct oom_control as an argument, so it can
->> >> easily filter out OOM's it doesn't want to handle, e.g. global vs
->> >> memcg OOM's.
->> >>
->> >> The callback is executed just before the kernel victim task selection
->> >> algorithm, so all heuristics and sysctls like panic on oom,
->> >> sysctl_oom_kill_allocating_task and sysctl_oom_kill_allocating_task
->> >> are respected.
->> >>
->> >> The struct ops also has the name field, which allows to define a
->> >> custom name for the implemented policy. It's printed in the OOM report
->> >> in the oom_policy=<policy> format. "default" is printed if bpf is not
->> >> used or policy name is not specified.
->> >>
->> >> [  112.696676] test_progs invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=0
->> >>                oom_policy=bpf_test_policy
->> >> [  112.698160] CPU: 1 UID: 0 PID: 660 Comm: test_progs Not tainted 6.16.0-00015-gf09eb0d6badc #102 PREEMPT(full)
->> >> [  112.698165] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-5.fc42 04/01/2014
->> >> [  112.698167] Call Trace:
->> >> [  112.698177]  <TASK>
->> >> [  112.698182]  dump_stack_lvl+0x4d/0x70
->> >> [  112.698192]  dump_header+0x59/0x1c6
->> >> [  112.698199]  oom_kill_process.cold+0x8/0xef
->> >> [  112.698206]  bpf_oom_kill_process+0x59/0xb0
->> >> [  112.698216]  bpf_prog_7ecad0f36a167fd7_test_out_of_memory+0x2be/0x313
->> >> [  112.698229]  bpf__bpf_oom_ops_handle_out_of_memory+0x47/0xaf
->> >> [  112.698236]  ? srso_alias_return_thunk+0x5/0xfbef5
->> >> [  112.698240]  bpf_handle_oom+0x11a/0x1e0
->> >> [  112.698250]  out_of_memory+0xab/0x5c0
->> >> [  112.698258]  mem_cgroup_out_of_memory+0xbc/0x110
->> >> [  112.698274]  try_charge_memcg+0x4b5/0x7e0
->> >> [  112.698288]  charge_memcg+0x2f/0xc0
->> >> [  112.698293]  __mem_cgroup_charge+0x30/0xc0
->> >> [  112.698299]  do_anonymous_page+0x40f/0xa50
->> >> [  112.698311]  __handle_mm_fault+0xbba/0x1140
->> >> [  112.698317]  ? srso_alias_return_thunk+0x5/0xfbef5
->> >> [  112.698335]  handle_mm_fault+0xe6/0x370
->> >> [  112.698343]  do_user_addr_fault+0x211/0x6a0
->> >> [  112.698354]  exc_page_fault+0x75/0x1d0
->> >> [  112.698363]  asm_exc_page_fault+0x26/0x30
->> >> [  112.698366] RIP: 0033:0x7fa97236db00
->> >>
->> >> It's possible to load multiple bpf struct programs. In the case of
->> >> oom, they will be executed one by one in the same order they been
->> >> loaded until one of them returns 1 and bpf_memory_freed is set to 1
->> >> - an indication that the memory was freed. This allows to have
->> >> multiple bpf programs to focus on different types of OOM's - e.g.
->> >> one program can only handle memcg OOM's in one memory cgroup.
->> >> But the filtering is done in bpf - so it's fully flexible.
->> >
->> > I think a natural question here is ordering. Is this ability to have
->> > multiple OOM programs critical right now?
->>
->> Good question. Initially I had only supported a single bpf policy.
->> But then I realized that likely people would want to have different
->> policies handling different parts of the cgroup tree.
->> E.g. a global policy and several policies handling OOMs only
->> in some memory cgroups.
->> So having just a single policy is likely a no go.
+On Thu, Aug 21, 2025 at 9:25=E2=80=AFAM Guo Ren <guoren@kernel.org> wrote:
 >
-> If the ordering is more to facilitate scoping, would it then be better
-> to support attaching the policy to specific memcg/cgroup?
+> On Wed, Aug 20, 2025 at 10:40=E2=80=AFPM Troy Mitchell <troy.mitchell@lin=
+ux.dev> wrote:
+> >
+> > On Wed, Aug 20, 2025 at 08:59:52PM +0800, fangyu.yu@linux.alibaba.com w=
+rote:
+> > > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
+> > >
+> > > The HGATP has been set to zero in gstage_mode_detect(), so there
+> > > is no need to save the old context. Unify the code convention
+> > > with gstage_mode_detect().
+> > >
+> > > Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
+> > > Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> > > ---
+> > >  arch/riscv/kvm/vmid.c | 5 +----
+> > >  1 file changed, 1 insertion(+), 4 deletions(-)
+> > >
+> > > diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
+> > > index 5f33625f4070..abb1c2bf2542 100644
+> > > --- a/arch/riscv/kvm/vmid.c
+> > > +++ b/arch/riscv/kvm/vmid.c
+> > > @@ -25,15 +25,12 @@ static DEFINE_SPINLOCK(vmid_lock);
+> > >
+> > >  void __init kvm_riscv_gstage_vmid_detect(void)
+> > >  {
+> > > -     unsigned long old;
+> > > -
+> > >       /* Figure-out number of VMID bits in HW */
+> > > -     old =3D csr_read(CSR_HGATP);
+> > >       csr_write(CSR_HGATP, (kvm_riscv_gstage_mode << HGATP_MODE_SHIFT=
+) | HGATP_VMID);
+> > >       vmid_bits =3D csr_read(CSR_HGATP);
+> > >       vmid_bits =3D (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
+> > >       vmid_bits =3D fls_long(vmid_bits);
+> > > -     csr_write(CSR_HGATP, old);
+> > > +     csr_write(CSR_HGATP, 0);
+> > Is setting HGATP to 0 in gstage_mode_detect meaningless now?
+> > If so, it might be better to drop it and just keep the one here.
+> Sorry, I misunderstood here.
+>
+> 1. kvm_riscv_gstage_vmid_detect() & gstage_mode_detect() are indepent
+> function, so keep csr_write(CSR_HGATP, 0) is considerable.
+>
+> 2. But your idea is good, because csr_write(CSR_HGATP, 0) would cause
+> TLB flush in some micro-arch, which reduces the IPC. So, removing
+> unnecessary CSR_write (CSR_HGATP, 0) is also considerable.
+>
+> I would update V4 to merge kvm_riscv_gstage_vmid_detect() &
+> gstage_mode_detect() into a single function, inspired by your idea.
+I found we can't remove "csr_write(CSR_HGATP, 0)" in
+gstage_mode_detect(), because this patch needs to reset the HGATP when
+mode check failure:
+https://lore.kernel.org/linux-riscv/20250819004643.1884149-1-guoren@kernel.=
+org/
 
-Well, it has some advantages and disadvantages. First, it will require
-way more infrastructure on the memcg side. Second, the interface is not
-super clear: we don't want to have a struct ops per cgroup, I guess.
-And in many case a single policy for all memcgs is just fine, so asking
-the user to attach it to all memcgs is just adding a toil and creating
-all kinds of races.
-So I see your point, but I'm not yet convinced, to be honest.
+I would update to v4, which collects these related patches together
+for review convenience.
 
-Thanks!
+>
+> >
+> >                 - Troy
+> >
+> > >
+> > >       /* We polluted local TLB so flush all guest TLB */
+> > >       kvm_riscv_local_hfence_gvma_all();
+> > > --
+> > > 2.49.0
+> > >
+> > >
+> > > _______________________________________________
+> > > linux-riscv mailing list
+> > > linux-riscv@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
+>
+>
+>
+> --
+> Best Regards
+>  Guo Ren
+
+
+
+--=20
+Best Regards
+ Guo Ren
 
