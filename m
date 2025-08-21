@@ -1,145 +1,145 @@
-Return-Path: <linux-kernel+bounces-778840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9FCB2EBD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:20:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2795FB2EBDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ADB2A23603
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:18:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F74DA28786
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE2D2E3B1C;
-	Thu, 21 Aug 2025 03:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866102D5419;
+	Thu, 21 Aug 2025 03:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOooZLj+";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.b="2ZxzVYUV";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="koOuzd7g";
-	dkim=neutral (0-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Bw06UKcc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cPCudEBk"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D666E2E0927;
-	Thu, 21 Aug 2025 03:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3A927280F;
+	Thu, 21 Aug 2025 03:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755746279; cv=none; b=ECKf6mneXKgXFwQI9Mme941Fp1gRskmd86NNO7r74h9OXuEeIWKal5QVA3b0j3ZVBXbjoPxspk8MjDlnlLbUA4skB5CaCTezc1J5P4a/njoWsnSKXfK5A6tAJ+cs8tHw4MX18At70Wg9iBN6go2bDsaYQztMsOhKKDVjvHK3mzQ=
+	t=1755746298; cv=none; b=Nw2Sr+bi/nmpd2zVlVgMidQaMniJTb+vMfMKkOfS8fcwIx8HL2NygKTPfAuNnwWwWMqi002Y6FuPjMwnI43FLAgylGslXW8ndL3Rn02g0d6pi92v/OaPu7I6uEstMA60lJu+65uBVmPvm6rt4Lf+SXWNh9g3vyqsOFl3fmxfjSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755746279; c=relaxed/simple;
-	bh=pIZZGYlHJcwUGIEu2mrA8wTduJ6lRtlRg1MiSy3SH4k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sfYWa6EQnfoqGbzQ7UjiwiIHEr3/trWB8x3gYonbFFgQpK4iJZQaDgLhE/qDiZCdQY1lYNV+WgEVKhbMUCwgQj+QzOpTEYVXSFaNBOqrtpvAnsYER1CDlp575IHGC+5VEfc2zHV0PizY6PnRtwKvkRm5Sa8QFTyKQXLDnXvwnms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOooZLj+; dkim=fail (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.b=2ZxzVYUV reason="signature verification failed"; dkim=fail (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=koOuzd7g reason="signature verification failed"; dkim=neutral (0-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Bw06UKcc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B005CC113D0;
-	Thu, 21 Aug 2025 03:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755746278;
-	bh=pIZZGYlHJcwUGIEu2mrA8wTduJ6lRtlRg1MiSy3SH4k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-Id:
-	 List-Unsubscribe:List-Archive:List-Post:List-Help:List-Subscribe:
-	 From;
-	b=jOooZLj+YY+aMj55dFok5m9llv1ugcrpy1AnF3OnHvsDm2gTVE352eR81/Z+EGf9q
-	 Cf2KY06W8UScjXMHJjJnNHU9TVGBFVI6AGPxfpeV6aeY+97FBlKcP+gxupn+L7PuQa
-	 r7gmWcgUNxb9JEtxRKEhnQwI/IglV/Nus7Q0208bSS+ArdxHHFxwMxoOG1VKjHstlI
-	 0y28zXaPFNSQYyRf8HoncVQj+stLzg3iryXzJ4hRDZdJxXubJs9dPgUlJMJR7yhw60
-	 Oe4SOqsA0CauzfF+3rp2Aae75vydTlh2G8BanL6PzBVH87nf9qE+jOalab4bSJRYBY
-	 Vif1tHQMLP+MQ==
-From: guoren@kernel.org
-To: guoren@kernel.org,
-	troy.mitchell@linux.dev,
-	anup@brainfault.org,
-	atish.patra@linux.dev,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: fangyu.yu@linux.alibaba.com,
-	guoren@linux.alibaba.com,
-	kvm-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH V2] RISC-V: KVM: Write hgatp register with valid mode bits
-Date: Wed, 20 Aug 2025 23:17:19 -0400
-Message-Id: <20250818054207.21532-1-fangyu.yu@linux.alibaba.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250821031719.2366017-1-guoren@kernel.org>
-References: <CAJF2gTQFWJzHhRoQ-oASO9nn1kC0dv+NuK-DD=JgfeHE90RWqw@mail.gmail.com>
- <20250821031719.2366017-1-guoren@kernel.org>
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133]) (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits)) (No client certificate requested) by smtp.lore.kernel.org (Postfix) with ESMTPS id 99F14CA0EE4 for <linux-riscv@archiver.kernel.org>; Mon, 18 Aug 2025 05:42:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lists.infradead.org; s=bombadil.20210309; h=Sender: Content-Transfer-Encoding:Content-Type:List-Subscribe:List-Help:List-Post: List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-Id:Date:Subject:Cc :To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From: Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References: List-Owner; bh=V/Xvw3Ej+7ZPNCPsGP++tgMpKMekL0hhuM8UIwiPd5Y=; b=2ZxzVYUVFi37Yt jF7MIm78837f27APbAPlvfpkdaMJWzjexabx9AD8ZAonS3zJuWlOE1V1KdFXv3NzCW/4OxKLK28My iBQo2YXcFrVn6B/W32Cx4kULqj/3bJln7lIkBy6xx8a9cBT1CHrkRRDltDg4mkITpUX3M+GvdY4OT NXjbntvEwuq7DQ2RABwvL6nSsyhqxNI3pOsLK4Cm8a/bLWkv+BJzhoLHexWlkmaW+GG66u4AAQnYu E5QoEymQ1zI/yNPiGl3c2X1zlMfvfaUG+FqQDR8ZjghL9oKWgSYZoFIWHcuxd68JDhj+DKZsVdAtf dpa7pkCixetHi2UQ91xw==;
-Received: from localhost ([::1] helo=bombadil.infradead.org) by bombadil.infradead.org with esmtp (Exim 4.98.2 #2 (Red Hat Linux)) id 1unsdj-00000006ZQx-2OO3; Mon, 18 Aug 2025 05:42:39 +0000
-Received: from desiato.infradead.org ([2001:8b0:10b:1:d65d:64ff:fe57:4e05]) by bombadil.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux)) id 1unsdh-00000006ZQR-2Mit; Mon, 18 Aug 2025 05:42:37 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:MIME-Version :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID: Content-Description:In-Reply-To:References; bh=W4lHP3UjuHeCBUcDEIF9ZeVamIkRm6NrjeDmREzHBUM=; b=koOuzd7gtEiuvbX6QWUdEEfxep wAoSpz+VU+Pvg8z5YcgXjpCuSUBt9vOfCZYlk2EHiOJdkxBoA0L97jRRXlMA08bhZvQREefopKM45 7fUXMPpddLtAY3wEzin8HeCmpDUj80aphi2Cq7MjsUt7sNP+ouV2apWc+n6iQPf+1Zr/njiwynjsA 9XaYUFDot8JKd7WB3rjbi0qN8uYGTArj+/9GuOkTUvtEvRFOmEgpo6PNgVMZmMXSuv6PWx/ptlUt0 9gJ+ZmGYWq7GiufiH/bvt9BgskruRB3jP+/R+3wcjclP+NpdaEVNvDxLSq+y0KUgNpXOEwzAQCi9W UE/CQv4A==;
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]) by desiato.infradead.org with esmtps (Exim 4.98.2 #2 (Red Hat Linux)) id 1unsdd-0000000HGDo-03SR; Mon, 18 Aug 2025 05:42:35 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.alibaba.com; s=default; t=1755495738; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=W4lHP3UjuHeCBUcDEIF9ZeVamIkRm6NrjeDmREzHBUM=; b=Bw06UKccpjeqr3QGXKendqsuoZ4upfWC07EDlSUZNyTv+ry0pLXfAM2oL4nyomAVBWM74WLkZRF0F0c5dctIJ454Neh1G659OADELFbLykfqQXtkwgyK9Dq3g76FZ1LI+amflRyfHSNziddWLTU/Qqp8JmdV1lxO4C99atObuJw=
-Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0Wlvjb0u_1755495732 cluster:ay36) by smtp.aliyun-inc.com; Mon, 18 Aug 2025 13:42:14 +0800
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1755746298; c=relaxed/simple;
+	bh=2UR92VNRaMCtjMofh2FcvKU+LoMwMOhOdugn0qR8nME=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qnp7iiSPffFrrPTT/WXO+jeRrAPV9Zq66vSXPdpApgDso9P1Gq+4+QkUVZ8IgTkWSA6tMTcmBW4ZGcqjWFua1nKtXKqgnv9g2EeGbLyXl/9f/Fqu0B6FWzf98tYl8JONNvrikvFqwk/q4g2Dssyx7Wd/z4vclL0lKvcZwijt9vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cPCudEBk; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b134f1c451so7779661cf.1;
+        Wed, 20 Aug 2025 20:18:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755746293; x=1756351093; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=norIsueGJ0euaeFc8RiefmZBp5cE2pqR9gRaAbo8bd4=;
+        b=cPCudEBkQr5ZK3m26zswddD9d9BBDKoZYGZOCHnS+vvgIaefSRThUJ+jNt7txV82SG
+         z21y+ObTnnwBDs/beZgDax/LcA85PlFvPUZ12j151HDKUvTn/9QAONnGlHc4IJcfbJOo
+         hflt6yJxxdkXd18t+af2y0vGNjHx/ALN0uD4WYpZKdwxpDeWGQQbyDyKo4FQfHe3t6pA
+         q9H7jh0K5kyD/SMHfqgkHjS/S1NrXmx5Kifvv7EvSrfJzCq6R4bF6Pnnd0RXhmVRgFHl
+         2OshDfGcVtoc62x71gZqGe75Nacb64LkcMLduesn9VGwbtP0u81NYk6/XYmobOuLPZGC
+         8v7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755746293; x=1756351093;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=norIsueGJ0euaeFc8RiefmZBp5cE2pqR9gRaAbo8bd4=;
+        b=na3zv6okYZYsU4LRUobw2fjM0RXegeQYNKOLXnnugEqXcgGlOygwUkxN6GT8+n9C3+
+         BJJJN/xfzJutLZAo4wkhxeDqkv0FaZL5yZLpQCeceKl1Qz1x6vVvRaH+xMvZ+QckYIKD
+         SO5mDE5XiEJo+0uPQDdaTv9yupggNYPBsy4CRvLPBWyjsImZ3uMYM67dkvnKmKct5GUs
+         +h6jok4lD7mOWy12u5k8kbwXxCnjNAE6cj1aFqv9Vi2PUnE/V+fnmB5xi4i3BNcGkKeC
+         4rkYJp/hq7PWQJPI4eZ/NL9IOR+N/Mq8AfVNfsq5yofLCmL5feEPsOJvAUrCYTeRDX2V
+         mzkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUq4N8qWgOJVaRNT1D0n30zf6/chnK4k9V/wWBqBCSbUGirJKfsCqpI6+0VoksmpM6vXLOY+V0MHRm7ACc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypb4dc+ANDl+ySGj95y+oZcAoJBr/uG8P+Lm3zmaYxeWJC8jVX
+	g8z7OcTYbaQHvktWK7fIi4AISNYi+v6Sf+hLNZhep6UC5dLoa0Hg7P+vodCwvQ==
+X-Gm-Gg: ASbGnct0wceloEWMPoywMjFev6ezo/fRg+tbdhujal1IsED64vxyjVRmxdG5nxGkJzV
+	0052yhKPlcNfJb9BfsX3RNXGOBMXVyEe6HzYDklk+QkZ1q2igo0Xir3lOJqQApcsCLsP5Mlk/3Z
+	ybBgkWrjMaz6n14DHWZeoRaToNfhosEf05U3U1zG9VTEYon7ubaTj3g4HvHHummDxjvKkhP6bjE
+	TTc8iwqpRZBE5YQc2A4rrAhJyNDqUWpzPBzJyO7ZuzxpLW5GP+MpWSpVtBeR1G/m9ecEbBXeX3D
+	b4AD9KxU/8Hn0hmKAqBNDDCRNg6NZz9xTGxbEQ9+GraSPeVpfcsuIdjOZ9gzw1xtwD0Bn/m7cVD
+	CVRzY
+X-Google-Smtp-Source: AGHT+IF4zWamBt8IcXrEUJ7Nb//GtcxX/b+1m2NqdTW3mh1LFJiCPvbzpcR/Ru+P/Uv4irtieW9oXw==
+X-Received: by 2002:a05:622a:1995:b0:4af:157e:3823 with SMTP id d75a77b69052e-4b29ff99fbemr10384331cf.42.1755746293020;
+        Wed, 20 Aug 2025 20:18:13 -0700 (PDT)
+Received: from archlinux.lan ([2601:644:8200:acc7::1f6])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11dc1aa56sm95904591cf.7.2025.08.20.20.18.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 20:18:12 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Nick Kossifidis <mickflemm@gmail.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH ath-next] wireless: ath5k: set MAC address through OF
+Date: Wed, 20 Aug 2025 20:18:09 -0700
+Message-ID: <20250821031809.631727-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-BeenThere: linux-riscv@lists.infradead.org
-X-Mailman-Version: 2.1.34
-Precedence: list
-List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
-List-Post: <mailto:linux-riscv@lists.infradead.org>
-List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
-Errors-To: linux-riscv-bounces+linux-riscv=archiver.kernel.org@lists.infradead.org
 Content-Transfer-Encoding: 8bit
 
-From: fangyu.yu@linux.alibaba.com
+If defined in OF, set the MAC address. Allows avoiding having to do that
+in userspace.
 
-From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
-
-According to the RISC-V Privileged Architecture Spec, when MODE=Bare
-is selected,software must write zero to the remaining fields of hgatp.
-
-We have detected the valid mode supported by the HW before, So using a
-valid mode to detect how many vmid bits are supported.
-
-Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
-
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
-Changes in v2:
-- Fixed build error since kvm_riscv_gstage_mode() has been modified.
----
- arch/riscv/kvm/vmid.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath5k/base.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
-index 3b426c800480..5f33625f4070 100644
---- a/arch/riscv/kvm/vmid.c
-+++ b/arch/riscv/kvm/vmid.c
-@@ -14,6 +14,7 @@
- #include <linux/smp.h>
- #include <linux/kvm_host.h>
- #include <asm/csr.h>
-+#include <asm/kvm_mmu.h>
- #include <asm/kvm_tlb.h>
- #include <asm/kvm_vmid.h>
+diff --git a/drivers/net/wireless/ath/ath5k/base.c b/drivers/net/wireless/ath/ath5k/base.c
+index 4d88b02ffa79..22ca7e624b32 100644
+--- a/drivers/net/wireless/ath/ath5k/base.c
++++ b/drivers/net/wireless/ath/ath5k/base.c
+@@ -59,6 +59,7 @@
+ #include <net/cfg80211.h>
+ #include <net/ieee80211_radiotap.h>
  
-@@ -28,7 +29,7 @@ void __init kvm_riscv_gstage_vmid_detect(void)
++#include <linux/of_net.h>
+ #include <linux/unaligned.h>
  
- 	/* Figure-out number of VMID bits in HW */
- 	old = csr_read(CSR_HGATP);
--	csr_write(CSR_HGATP, old | HGATP_VMID);
-+	csr_write(CSR_HGATP, (kvm_riscv_gstage_mode << HGATP_MODE_SHIFT) | HGATP_VMID);
- 	vmid_bits = csr_read(CSR_HGATP);
- 	vmid_bits = (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
- 	vmid_bits = fls_long(vmid_bits);
+ #include <net/mac80211.h>
+@@ -2570,6 +2571,19 @@ static const struct ieee80211_iface_combination if_comb = {
+ 	.num_different_channels = 1,
+ };
+ 
++static int ath5k_of_init(struct ath5k_hw *ah)
++{
++	struct ath_common *common = ath5k_hw_common(ah);
++	struct device_node *np = ah->dev->of_node;
++	int ret;
++
++	ret = of_get_mac_address(np, common->macaddr);
++	if (ret == -EPROBE_DEFER)
++		return ret;
++
++	return 0;
++}
++
+ int
+ ath5k_init_ah(struct ath5k_hw *ah, const struct ath_bus_ops *bus_ops)
+ {
+@@ -2638,6 +2652,10 @@ ath5k_init_ah(struct ath5k_hw *ah, const struct ath_bus_ops *bus_ops)
+ 	common->priv = ah;
+ 	common->clockrate = 40;
+ 
++	ret = ath5k_of_init(ah);
++	if (ret)
++		return ret;
++
+ 	/*
+ 	 * Cache line size is used to size and align various
+ 	 * structures used to communicate with the hardware.
 -- 
-2.49.0
-
-
-_______________________________________________
-linux-riscv mailing list
-linux-riscv@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-riscv
+2.50.1
 
 
