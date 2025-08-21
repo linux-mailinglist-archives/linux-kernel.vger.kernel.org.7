@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-780801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A22B30987
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:46:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5716B30982
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBF3D62358D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:45:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1D1D7B113D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AE92ECE9F;
-	Thu, 21 Aug 2025 22:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F912ED14B;
+	Thu, 21 Aug 2025 22:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QB7tZjdv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWroQvBl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2302ECD12;
-	Thu, 21 Aug 2025 22:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEC42ECE9E;
+	Thu, 21 Aug 2025 22:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755815991; cv=none; b=fm3HFLt0FZNyeMRBr98InMW5foacnfSy5fA7qyd+KPiI0JhnLoRGTD/158LeTzn/bzFxeH8GclSLtZldFehAatAzZHPlDOCOU9TS9dFlFyqVkzwp3UTnEwA1BXvq6jDVEksatCK8/qt3uduVVD2IZT2haW4SlNqTgIbw354FlDk=
+	t=1755815992; cv=none; b=X6yp4AbV5syVCy/d3CtRABb9rYOHO9FS938fEoyK+kn0sjNVI9i+7RyIS5Zht9Bjiu3vlmW/Y8X7D3IPToAmgsAJQTjWBUlXu6l8tBFZScQ2TcQ05HtCh07AbY+kA1y+bMqxKjN51CWEgBz7Q4QR2Dsexs7GkpKxQz7zjmzw3Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755815991; c=relaxed/simple;
-	bh=vuZhFVJxi98oZW9G4+46GRkaq4U3k45zs10DSDHFn2k=;
+	s=arc-20240116; t=1755815992; c=relaxed/simple;
+	bh=6+cneP8xDnuU5FHp6ZE4wpE6pWPQvWdqGAQj+wxVZj8=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Y3fb0xunnxzcJojERMkoKu/RjWqZbglFyacNSxIQ6ceaMd+TUfVXVUxCW4+MxqHcTu+pLd9I+pRXBrMhXBtnVunGkvqWZJaHQRvzUX+nZcM7002apFM9W+6zapU8SzaCKjdRfxiNWKKrmIctsEGl+fcOTVZRv3p2ReRACZZQFT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QB7tZjdv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EEC0C4CEEB;
-	Thu, 21 Aug 2025 22:39:51 +0000 (UTC)
+	 Message-Id:Subject; b=nlqQbuLV73MMOd7oVzvJJrPtxgMuIMLkVlj/IVkBjOV7CGMwokpLLu/b602n4NlRjBWb2AcTR/L9DMtyrwVTRVxqer/BaO4OSk3QwyFCxL1bSgwueywtvT/5kMWt7wkuvIdMZE4p5tsRsgSXsLEjcDRLc389aEfM5mJeKlCl/Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWroQvBl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6D8C116C6;
+	Thu, 21 Aug 2025 22:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755815991;
-	bh=vuZhFVJxi98oZW9G4+46GRkaq4U3k45zs10DSDHFn2k=;
+	s=k20201202; t=1755815992;
+	bh=6+cneP8xDnuU5FHp6ZE4wpE6pWPQvWdqGAQj+wxVZj8=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=QB7tZjdvYg84DKSiyFtv3QG8PehyI3EomBo3qpPbXBg3avH2COX+5vcwJVq4K0EM4
-	 1itP36tXMVtW/ALvIMSVpq8cDpVb/RFo6/3NcSsOVpnkZTLfvwSbf3oOgHQELjDKXw
-	 YZKl56kdsVoRrdL+Z+s6weaNU5i0psZgmy2mdZ/0HJ9Vx1vsAbG58rnQg2SjpsLv4F
-	 8rPB8pQICq1KDfP8D3L2GeW+gG9UQd3IqYQOHFqtIs/b85M0XstjATm3xQA6vympYZ
-	 Jeg3COmMvyLyOF49z3CZiiKSwnRVXnPTkmP0YpCIQC+ZB8Pg3CyUV7HilsWOIJ9BPn
-	 vmniA3eB5h5IA==
-Date: Thu, 21 Aug 2025 17:39:50 -0500
+	b=JWroQvBlvJj3n3GQj85XFCVw1RomjL3x/nkCU4RTbgYO65e9E7eN8T3+QPp8VPUDi
+	 5rUdQz4i7YpZV3cCkF7fVvd7pwkI3tNbYHvFIXRy6kzneXEeRzPwmgcq9Izgv+1Oin
+	 DYtwhazNI783UY+RndJ8i50KtG02lJ9LORgbBg4URyKshly+QMkwzjoku368tF3oaZ
+	 PV3k43WFiYPE7Y++y+OTu+0uMBSP/3l5S9OJPdkyW4Abcy/2DT/Pf4bj95pe5H6liF
+	 DiK8e+cKE+CBABkBpqThiec+t13OK8+NseaAbugSa7K8jOzA6hreQ1LeUfYpPCllxW
+	 aST3CoSeeDmUA==
+Date: Thu, 21 Aug 2025 17:39:51 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,54 +50,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>, Neal Gompa <neal@gompa.dev>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, asahi@lists.linux.dev, 
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Vinod Koul <vkoul@kernel.org>, 
- linux-usb@vger.kernel.org, 
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Neal Gompa <neal@gompa.dev>, 
  Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- devicetree@vger.kernel.org, linux-phy@lists.infradead.org, 
- Philipp Zabel <p.zabel@pengutronix.de>, Felipe Balbi <balbi@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Janne Grunau <j@jannau.net>
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org, 
+ Felipe Balbi <balbi@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Janne Grunau <j@jannau.net>, devicetree@vger.kernel.org, 
+ Vinod Koul <vkoul@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
 To: Sven Peter <sven@kernel.org>
-In-Reply-To: <20250821-atcphy-6-17-v1-1-172beda182b8@kernel.org>
+In-Reply-To: <20250821-atcphy-6-17-v1-2-172beda182b8@kernel.org>
 References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
- <20250821-atcphy-6-17-v1-1-172beda182b8@kernel.org>
-Message-Id: <175581575751.1136230.16771549350883688048.robh@kernel.org>
-Subject: Re: [PATCH RFC 01/22] dt-bindings: usb: snps,dwc3: Allow multiple
- iommus
+ <20250821-atcphy-6-17-v1-2-172beda182b8@kernel.org>
+Message-Id: <175581575858.1136316.14856911628324128636.robh@kernel.org>
+Subject: Re: [PATCH RFC 02/22] dt-bindings: usb: Add Apple dwc3
 
 
-On Thu, 21 Aug 2025 15:38:53 +0000, Sven Peter wrote:
-> Apple's dwc3 variant requires two iommus.
+On Thu, 21 Aug 2025 15:38:54 +0000, Sven Peter wrote:
+> Apple Silicon uses Synopsys DesignWare dwc3 based USB controllers for
+> their Type-C ports.
 > 
 > Signed-off-by: Sven Peter <sven@kernel.org>
 > ---
->  Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../devicetree/bindings/usb/apple,dwc3.yaml        | 82 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 83 insertions(+)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
+./Documentation/devicetree/bindings/usb/apple,dwc3.yaml:33:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/usb/apple,dwc3.yaml:40:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/qcom,dwc3.example.dtb: usb@a6f8800 (qcom,sdm845-dwc3): usb@a600000:iommus: [[4294967295, 1856, 0]] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/qcom,dwc3.example.dtb: usb@a6f8800 (qcom,sdm845-dwc3): usb@a600000: Unevaluated properties are not allowed ('iommus' was unexpected)
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/qcom,dwc3.example.dtb: usb@a6f8800 (qcom,sdm845-dwc3): usb@a600000: Unevaluated properties are not allowed ('iommus' was unexpected)
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/qcom,dwc3.example.dtb: usb@a600000 (snps,dwc3): iommus: [[4294967295, 1856, 0]] is too short
-	from schema $id: http://devicetree.org/schemas/usb/snps,dwc3.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/qcom,dwc3.example.dtb: usb@a600000 (snps,dwc3): Unevaluated properties are not allowed ('iommus' was unexpected)
-	from schema $id: http://devicetree.org/schemas/usb/snps,dwc3.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/apple,dwc3.example.dtb: usb@82280000 (apple,t8103-dwc3): 'resets' is a required property
+	from schema $id: http://devicetree.org/schemas/usb/apple,dwc3.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/apple,dwc3.example.dtb: usb@82280000 (apple,t8103-dwc3): 'power-domains' is a required property
+	from schema $id: http://devicetree.org/schemas/usb/apple,dwc3.yaml#
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250821-atcphy-6-17-v1-1-172beda182b8@kernel.org
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250821-atcphy-6-17-v1-2-172beda182b8@kernel.org
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
