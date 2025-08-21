@@ -1,189 +1,250 @@
-Return-Path: <linux-kernel+bounces-779230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C85B2F0AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:12:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75C6B2F0C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A336A20A93
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:10:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F22316D651
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740072EA143;
-	Thu, 21 Aug 2025 08:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E952EA73E;
+	Thu, 21 Aug 2025 08:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="wr5WYWMs"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZgItUGwp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2F72EA147;
-	Thu, 21 Aug 2025 08:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763845; cv=none; b=KWWyvH96NQM1oFC0Rwj2TDqiYrw2mU0gdKvAQXzNcM4KkdCsZUsJ8Um1zTHx7oeK6fORAAnjZT7KtilMhjjbsWXYrq7IaHNhXH3lgq0y2/lvp7ewx3vQZdB3xs69Ex8qsfK4LUHNBnGLIrAYbGuGlPHjRIJi2+JTOYhKPSdAMEM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763845; c=relaxed/simple;
-	bh=/V8isM0ZKMRHjabJH8c4dqaTU2r3gmc4a+aIFeO7cGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mbcwe+wWj8qV5+rij7BZW6Vq6XRlibeyq0A0JcOm6M9xHCuz3EPY5aC5NqqbUnXvpNmqihbz0aZhuen9jGGMqyffTAB1anKEJT8kOfFJQAh6HjMAvnvZVyKmZQEP0VFeHK4Sqrl9iIO854f/CKjeOLHSfXnbsYB3QLqJD0AV7yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=wr5WYWMs; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=eA/tikPlv56QYDz+5XgTBzNjPIWxLn/j3F8xjQ0hJDE=; b=wr5WYWMsNLBL4YOW+UXeGmyrqe
-	u0W03YpZn5qmTsc09xVZFjxoL59uleP8K3QQ3MK8sOLh/KialhyCcz+pRXoksH+SInGqAGUSlSM0T
-	hD3hFAS3/EShj/W8RlG16LVc8AsrgAkV0UtmpZECR45R2nWIKZjrYi++HbdVpSp7wSdgWhDMYs7+z
-	o8AmVmQPrI/8Pi4V9ARjgP/5aw5CUDBFU0JLmKjlTMORl8SrtLDEj9hSOsKSGegqHRjwaMmtl1OM1
-	ZWHYJJy3+FDAdeA3mCjwnDnKud2tYhFQifSW9g8cSgPN0V36CUVGd6GN6biqZ/suTA+274CUOtvuW
-	ff1kFHSA==;
-Date: Thu, 21 Aug 2025 10:10:27 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
- Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/2] power: supply: Add bd718(15/28/78) charger driver
-Message-ID: <20250821101027.16747c23@akair>
-In-Reply-To: <dc2a9ea1-29fd-4ae8-b414-ca3acb0d8ad3@gmail.com>
-References: <20250816-bd71828-charger-v1-0-71b11bde5c73@kemnade.info>
-	<20250816-bd71828-charger-v1-2-71b11bde5c73@kemnade.info>
-	<bf82cd81-bcc7-4929-aa84-b749533d5b95@kernel.org>
-	<20250817101121.19a86716@akair>
-	<bbd17f22-8834-42d8-a109-971bdd2e0fa1@kernel.org>
-	<e8955365-73c0-4c7a-a579-0ee6940340b2@gmail.com>
-	<20250818103600.0c3a015d@akair>
-	<3dd9aa2d-a318-4a94-b53f-11dac139ccb2@gmail.com>
-	<20250820180523.170acbea@akair>
-	<dc2a9ea1-29fd-4ae8-b414-ca3acb0d8ad3@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E420E2EA475;
+	Thu, 21 Aug 2025 08:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755763871; cv=fail; b=XFNJg/LYaD9iKk59Zpm2zfqghfIjowjXfk5iQDLh3/x1GaoPuPkaSXdrvEnb6btl5UsTx6T2FWRwzZT27M0uB4cjYjQDiM1XWQ8KMVYPiPE+slZi9yAU16Tqk2nYwc791uWBWTS76U+CRVPZ8+h7lxxXWyPj0RFw7c8c1kRhPrE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755763871; c=relaxed/simple;
+	bh=voBvJkxSLryI4laWJI8ANNUN+/uBYaCwDU09/IOyGqA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JwmJdp/zgPH2Cc8jhqTLSfX3/srZN9uogbIXkCZLFpCumjiFZXjmg34/PJ1zSVAAsjCFZMyNB7Z1ZPg1s2VKkgbt3yJI2flN4uT3oVFwdF/BHJnW3KbnZriJToJ3DwjtX80rnriXYQNSce+D9RbrpGuvRwlE4vxTaH6Zxx0ydOc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZgItUGwp; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755763870; x=1787299870;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=voBvJkxSLryI4laWJI8ANNUN+/uBYaCwDU09/IOyGqA=;
+  b=ZgItUGwpvlGL2nAvfBgBUCDuZQy/XWwKxPan91mvSnWxpMFDBN8Z7CQY
+   sU0MUV0c8h5PaVXwSBRtrChBRgzTieAnHtQTOb2KsAbb+qXS8JkJDvcMd
+   IvY2sWbavLufI9lFPe6mjVp4CSn78ywiEPgzD+9o5hUdhrRiZqETg6spe
+   Dwx78UeJqgPkBIAuiSzYL3eKQpfC7KxFjTqw2TryndJmqg0fvIIJW88d+
+   yI2lm3C3S9o16Y9VrcngiyIDNCU9yC1B0UT76RPZdwRdCOTPRE2EbJjfm
+   YOIy4t+9QQXY1sW2GNlJ+HJ22OkEUcHC/ZnuyoOKC78tHvsL/yMs3PYNn
+   g==;
+X-CSE-ConnectionGUID: ogSxwTdQTRWTlXhrVXDaVA==
+X-CSE-MsgGUID: 0XKo+fdsS0ypO2gcVmoWhw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61684262"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="61684262"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 01:11:09 -0700
+X-CSE-ConnectionGUID: GwFhfnJPSJWYjwA6VpQnrA==
+X-CSE-MsgGUID: 2pKJVL8uQbaGQQOy/br1OA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="168711169"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 01:11:08 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 21 Aug 2025 01:11:08 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 21 Aug 2025 01:11:08 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.79)
+ by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 21 Aug 2025 01:11:08 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p4sjSSFTlI8gA103akoN5Wa4TfqP+u/JjSjE8m0W4U2WS0O8Y1ETX/MX8uwB6Zbsx3WLvOaKeAOd1biHNxZv8wtNmLRJ7pNm4F99Rhq8KluBLqBDLK/XRj0WSD37LViCDf1IIUhaRQYBbLXsXA9v3iiSRiYVb6iOyaUC1lCWSBAd3eHPtC7n72MMa1ftDRIbwSLh8Mxy5Orz5ikTL40Fp6Q+D13B76gQspePg+gEMfTwdxaYjzvyMHmU0T2Zuf7fT4EPYQDS3SCKQ59X973k0JEO5Nscfa8JM/FuF9aFG53XbI7R5yHb/o94Yb+h29BhgZRpnwP/0pjr10q3EdRLrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5fKWptvpOY/YOa6fywgJnpO+Ur3ioNbffCB709MuQKQ=;
+ b=pUZiLtwMVe8OQfpziAXBdajqOv+/il6w2qxAlZ9wSv3QOv7xKNT+pehZfE5E/JYUQeZ705WN8XBYDqQfeoMlv8AIZI3WSK+46M2iSXDHZRNPXk+gzeWlI6xbEgrlbzIfvAg3rVZXFgj+4lPAjozXYx+x/1CgwqOztIO+dzLP+dYWk61LexF9/RMBS+Fddri1MrXG88AMCiwJ8Jc/WKczhXnvelKDSZjkQ4U9obGhMfFD6wFRbI0A/vh0bi72JckjBdykHkMHcwHGXzDvrkuxA8XI4NQcDhX9nX+J+89927FWLWnixYTpqyhrJdhHRB3fZswcSnUs5hvCozzIbkS3jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by DS0PR11MB8232.namprd11.prod.outlook.com (2603:10b6:8:15d::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
+ 2025 08:11:05 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.9031.023; Thu, 21 Aug 2025
+ 08:11:05 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>
+CC: "robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
+	<joro@8bytes.org>, "bhelgaas@google.com" <bhelgaas@google.com>,
+	"will@kernel.org" <will@kernel.org>, "robin.clark@oss.qualcomm.com"
+	<robin.clark@oss.qualcomm.com>, "yong.wu@mediatek.com"
+	<yong.wu@mediatek.com>, "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>, "thierry.reding@gmail.com"
+	<thierry.reding@gmail.com>, "vdumpa@nvidia.com" <vdumpa@nvidia.com>,
+	"jonathanh@nvidia.com" <jonathanh@nvidia.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>, "Liu, Yi L"
+	<yi.l.liu@intel.com>, "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>, "Jaroszynski, Piotr" <pjaroszynski@nvidia.com>,
+	"Sethi, Vikram" <vsethi@nvidia.com>, "helgaas@kernel.org"
+	<helgaas@kernel.org>, "etzhao1900@gmail.com" <etzhao1900@gmail.com>
+Subject: RE: [PATCH v3 3/5] iommu: Add iommu_get_domain_for_dev_locked()
+ helper
+Thread-Topic: [PATCH v3 3/5] iommu: Add iommu_get_domain_for_dev_locked()
+ helper
+Thread-Index: AQHcCxPRj0zb6W5cHUaGmJqSwKG0krRohb6AgAAtjgCABBvC0A==
+Date: Thu, 21 Aug 2025 08:11:05 +0000
+Message-ID: <BN9PR11MB5276262E1925E2CD8AE037EF8C32A@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <cover.1754952762.git.nicolinc@nvidia.com>
+ <a69557026b7e2353bae67104bbe6a88f0682305e.1754952762.git.nicolinc@nvidia.com>
+ <20250818143949.GO802098@nvidia.com> <aKNhIr08fK+xIYcg@Asurada-Nvidia>
+In-Reply-To: <aKNhIr08fK+xIYcg@Asurada-Nvidia>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DS0PR11MB8232:EE_
+x-ms-office365-filtering-correlation-id: 967c0acd-0d24-42f4-dc2e-08dde08a46fe
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?fiWpRFRynaNde93ZtHcn/CUDKyuigBT43ZVHbkIt7vl3ByDPQJntar5MEcoY?=
+ =?us-ascii?Q?+IHEgbLSDdt+g+9rZe9md4nRNpWb/LbziTuQXSpysg7/xEbcIvLodNjSLVL5?=
+ =?us-ascii?Q?MFMcYHsvRFKcf1xcE+751CB/BC+NfT/cMKbltUAywjvym6xBDWlsxKWe5M3U?=
+ =?us-ascii?Q?DSg6QNXxU1cmXIU1i8OwCOMYxm0NuRePKEVjYA5fsO1u0nE8ksawJ5p98yPj?=
+ =?us-ascii?Q?0bqeO+uiq4zi+hRGuXLxm0K4yaYc8d807iNpoCktcbesAhGJolrkoVKrAWjB?=
+ =?us-ascii?Q?HiNuRPyXYEV3zh5D2X0AFoWyy37bP1/F0Dzt4jOHmU4u9+2MZtZRJuma/Y4t?=
+ =?us-ascii?Q?dR3x5RBVzCUbmiCDgTcAN4ZUY7Gdq2xbHNROzdKhPyXFj/6qHngUtPD+UEnW?=
+ =?us-ascii?Q?qQmqP6e43FqYIATjrRV1Uqh8joK+AUOZb9CKq2T3YNcde6wKi0B6kynFQPUS?=
+ =?us-ascii?Q?3tLB91vMA/GAfV0fCaXUYfgpy01sE1+ISR3fHW/08CscWPL6Pqy/aJFUAIMv?=
+ =?us-ascii?Q?X4RabmrKrqzP6wnAYY+YlBdfyjCgwZAp0nODOZhw1hOY0cZ3FyAjUdYOnuOc?=
+ =?us-ascii?Q?GKcejgbg04bgZB3VybqM9VXzO8noaHn2LhzB/opudgZDtPjs/18r+waX847V?=
+ =?us-ascii?Q?/Ea8z/xt3is+wrzD62uehRqc9X71hACCchvpBpxXA442WTMuDcGBTfoqVyzn?=
+ =?us-ascii?Q?W1IABxm4Dz3aeL8LFo23bKOPblH7qSS4MB8J4RPpaNebm+58vr0VU3JnXINr?=
+ =?us-ascii?Q?6DlyEkUXJbtaBmbcOsGZSzRzz3jNnIUf43GKIdKIgP7O+fFCuRxj3yz/kfy0?=
+ =?us-ascii?Q?vKxGd+PhQykoYLhKI+2PAYEZ6BM7uPr6ER9xGr+kXaFvHOkrFHjhxSKQaYJv?=
+ =?us-ascii?Q?0mZSNeY0gF2JVdwTHxBvk4bwKTjlJJraRXfoImLsxD/rFszrEv4PK602Y+mL?=
+ =?us-ascii?Q?mYY+buN3/YETfVI8TlSGzHAI9LRAA1MZFACuqU5GU2HL56R4ktcUa1z/DInB?=
+ =?us-ascii?Q?kJmv63WwREkNgi7TXssYd0gXch7rQ8TjWvQxxoBwGrqml0JpdcjynA91AdwZ?=
+ =?us-ascii?Q?JPMeRzj5ETNrUxtycJVKU6UYFHfOsr3iXaX+YzTD/1mv+pdZLh0JDaPyy2s9?=
+ =?us-ascii?Q?myzm6ym2jmQs5vyBIoO3zxbhBCcjdysFvLOqaottIbT+OMIHP5kiiSqCde6e?=
+ =?us-ascii?Q?AkVch2abYuwfgMrRZrupyA2l39uoBMhw2nCO3SiMYkr/Jd3YCm6TKPfVCgNR?=
+ =?us-ascii?Q?1YBK33nPP5ZHfFtMF16td3p0Y7Irb3PI8buPuwH+mL+CSnFUOKY5P7lzWaPa?=
+ =?us-ascii?Q?YNZN34wgsjuPPzXotPtJ3k90lKRUJFcw9URKwPY2B62OkKLY/abn1UgS2mpu?=
+ =?us-ascii?Q?dWQuANWJEOkn3npTUjfZnU9KINaAz8xuzR6BEkB7ANUV4mMlF+IBOtrETD/7?=
+ =?us-ascii?Q?jcDol5AqTXXe3RkM0RDmZDDb8mxmZwWZ4zYPiLi4rSMXRoG7ZvsW7Q=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ZJwblIWBf1RT2zKv48oPNrEBQ8sc793gBaMqREvlceqfF6mC3UdPMcfWcu0B?=
+ =?us-ascii?Q?t+bbpdyiGVdqP4+5KcVKGtI8vPUC72j0BkrqAsru2jIaSvwQsh9idJd+naQB?=
+ =?us-ascii?Q?Lal/TmgvicXIPv0tVnuJF9ietuF4Xi5vXfaw34UV7QuTyIfAizktd7ocwYOT?=
+ =?us-ascii?Q?fTxPeGHj11BYcPNY2XCM5Ya9WNBzXqYUx5xrN/9WsiJuL7vr2+4lmCV4kDc5?=
+ =?us-ascii?Q?E8FdzfRf2VEWIU4tFyro2AoNyzbMY5Tv+pJ5qumOvne+v6ebgwZ8/YGZRS6t?=
+ =?us-ascii?Q?3BOKaBpTAiwBeriS2mHmjhdMJtOkNvDM2Gj1oQBtfT3xGavObX7ekfcHovWJ?=
+ =?us-ascii?Q?fcEJcyG4ho7il6/+e+zXPTwJsHbEdi2eZQcXbOEaX5X4516Gyt9eSveYZEmv?=
+ =?us-ascii?Q?s+rWZWWv2IQETQmYFiOYywdSAyLLgeHXeC973ZW3EK82lL+wP7xcd3dwSvrt?=
+ =?us-ascii?Q?48dmdU0+rxfGx9nbws25Ch90TOK76fdqRCNvJDAtT+11E6ZH30UJJxFwdC1Q?=
+ =?us-ascii?Q?XfZluxNtPDRnvNIGJjyQ8U16e/Hj3CzE1CXGVl67NwwM7Rdel7WvBEpQpX6v?=
+ =?us-ascii?Q?/jFppEKBVgWx/Uy86+TtKekVjttga0RelEdMD0FKvq/XFJMiT4VeuP8T7JVg?=
+ =?us-ascii?Q?/7Njjiy3Igqr3jiVv7v3WgDE228Q5D7CZxfKku6ZVWXpmj5xX/cO4RRjzf+L?=
+ =?us-ascii?Q?htl1Y5KMYDr1/+vIQ940J0eL5plGL91z2D0TEnqS2fFbu3hYFzSqTPqBIYUf?=
+ =?us-ascii?Q?a57ssxCLVW0xr28xskn8WseT3GLDPl8M4ozFII2x6Hq3Y4PM/C/VCXg19AXv?=
+ =?us-ascii?Q?e8MYJtNCbKHFGrpzTIgEO6iSBM+IIP+NnGdyt4v1OXLzosGv7ZI3T/LN2cDx?=
+ =?us-ascii?Q?vVG9PuXXm3C3BF43DBqylF8e06VCFGGiPF5mx3tLzUB2FqBwF9QX4X/93YlC?=
+ =?us-ascii?Q?QjRkknjGFo+97kedjHDQTENNJEKJvxSZ1S6IBqGAWLvEQ5XXulpfsrdQi/iI?=
+ =?us-ascii?Q?pCLnELfyvmSeqX6OxYfwWyg3LTz2AJWU+tKzARnlz9BxvSP6US2BNXjEVOsA?=
+ =?us-ascii?Q?olHh3YXlsHfxWXQfBdeh+e0gyOZkWuDlRuzWJNx7uLiey0Halcismapp/C6O?=
+ =?us-ascii?Q?fEzqN39du9SJjJHHrKhw+p2+lKDVRPheQoSY1r4gCselx30DTQbBVVpu6Zqr?=
+ =?us-ascii?Q?fdwosdynOvAouRZYTwCc5mAiW9NoM6zDfH8ZlgoP20UPBxH/nQ3MEOPsCnhR?=
+ =?us-ascii?Q?VH2BLoJ82YMxHmfv73gR1hS7pxq85CUrfsy1nVjWoqINdySwBiRcaePqH0tA?=
+ =?us-ascii?Q?17Fstd8O/57Q20zTJZUY0QLZSrGPBpihHKkbEjD5VHvK/FX9XnzlsxrPY/B3?=
+ =?us-ascii?Q?6CaGfLFQ/be6ZyRCTq61tEbAL8Z5Ptfas16K8k4nq4PBuP0TaLboQGou+Pu0?=
+ =?us-ascii?Q?eFOvZk8u7u+9vU4ffLj+Gu9FzhUWjcCces/gCfMXLRTI3uhih+MyyeBNaMym?=
+ =?us-ascii?Q?+e5x+qkg9PSH5eiR6f21uZBd+16s5Z220yS9QjriOBw2hXAJhynWP3ewCUur?=
+ =?us-ascii?Q?P44aUf8BLSxZyLYGgjc/gj/A1g8ZU4/JgtfFcGee?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 967c0acd-0d24-42f4-dc2e-08dde08a46fe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2025 08:11:05.7435
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ekJgjuvm8OengaBXq5hgzIag1AGTn+wWmkXwst+2hYIxL9Rh5ub0wiBJrjFHCCVYAZRNFhTCr8gmUnvyIlhPaw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB8232
+X-OriginatorOrg: intel.com
 
-Am Thu, 21 Aug 2025 08:31:06 +0300
-schrieb Matti Vaittinen <mazziesaccount@gmail.com>:
+> From: Nicolin Chen <nicolinc@nvidia.com>
+> Sent: Tuesday, August 19, 2025 1:23 AM
+>=20
+> ... I found that in SMMUv3 driver, iommu_get_domain_for_dev() is
+> used to get the RID domain for an SVA domain:
+>     arm_smmu_set_pasid()
+>     arm_smmu_blocking_set_dev_pasid()
+>=20
+> These two are already given an "old" (SVA) domain pointer, FWIW.
+>=20
+> So, we may change to passing in the old domain as you suggested,
+> yet we still have to fix the iommu_get_domain_for_dev() in order
+> to reflect the RID domain correctly for the driver that calls it
+> (or even potentially) in some group->mutex locked context where
+> the RID domain might not be naturally passed in.
+>=20
 
-> On 20/08/2025 19:05, Andreas Kemnade wrote:
-> > Am Mon, 18 Aug 2025 12:32:43 +0300
-> > schrieb Matti Vaittinen <mazziesaccount@gmail.com>:
-> >   
-> >>> Kobo kernels have these tables as part of the driver, the right one is
-> >>> selected via an index in the NTX_HWCONFIG blob provided by the
-> >>> bootloader to the kernel. So that is not necessarily a problem. It
-> >>> could be translated into dt.
-> >>>
-> >>> static int ocv_table_28_PR284983N[23] = {
-> >>>           //4200000, 4162288, 4110762, 4066502, 4025265, 3988454, 3955695, 3926323, 3900244, 3876035, 3834038, 3809386, 3794093, 3782718, 3774483, 3768044, 3748158, 3728750, 3704388, 3675577, 3650676, 3463852, 2768530
-> >>>           4200000, 4166349, 4114949, 4072016, 4031575, 3995353, 3963956, 3935650, 3910161, 3883395, 3845310, 3817535, 3801354, 3789708, 3781393, 3774994, 3765230, 3749035, 3726707, 3699147, 3671953, 3607301, 3148394
-> >>> };
-> >>>
-> >>> static int vdr_table_h_28_PR284983N[23] = {
-> >>>           //100, 100, 101, 101, 102, 102, 103, 103, 104, 104, 105, 106, 106, 107, 107, 108, 108, 109, 110, 112, 124, 157, 786
-> >>>           100, 100, 101, 102, 102, 105, 106, 107, 112, 108, 108, 105, 105, 108, 110, 110, 110, 111, 112, 114, 120, 131, 620
-> >>> };
-> >>>
-> >>> static int vdr_table_m_28_PR284983N[23] = {
-> >>>           //100, 100, 101, 101, 102, 102, 103, 103, 104, 104, 105, 102, 100, 100, 102, 103, 103, 105, 108, 112, 124, 157, 586
-> >>>           100, 100, 103, 106, 110, 114, 115, 119, 122, 122, 115, 113, 112, 114, 117, 124, 126, 123, 122, 126, 140, 156, 558
-> >>> };
-> >>>
-> >>> static int vdr_table_l_28_PR284983N[23] = {
-> >>>           //100, 100, 103, 105, 110, 110, 113, 112, 112, 112, 105, 110, 110, 111, 122, 131, 138, 143, 150, 166, 242, 354, 357
-> >>>           100, 100, 105, 110, 114, 117, 121, 125, 126, 122, 116, 114, 115, 118, 124, 132, 140, 148, 156, 170, 210, 355, 579
-> >>> };
-> >>>
-> >>> static int vdr_table_vl_28_PR284983N[23] = {
-> >>>           //100, 100, 103, 106, 108, 111, 114, 117, 118, 115, 108, 106, 108, 113, 115, 114, 118, 125, 144, 159, 204, 361, 874
-> >>>           100, 100, 109, 115, 118, 123, 127, 130, 140, 139, 134, 130, 128, 138, 140, 150, 154, 164, 178, 204, 271, 362, 352
-> >>> };  
-> >>
-> >> Oh, good. If we can get the right battery parameters from the vendor
-> >> driver, then the main problem gets solved. Although, multiple sets of
-> >> different VDR tables probably means, that there are variants with
-> >> different types of battery out there. I assume the bootloader can
-> >> somehow detect the battery type to provide the correct blob?  
-> > 
-> > Historically the Kobo devices ship said HWCONFIG blob apparently to use
-> > the same kernel on multiple devices, then devicetree was invented and
-> > used what was available. There is then a
-> >                  switch(gptHWCFG->m_val.bBattery) {
-> > ...
-> >                                  ocv_table_default =
-> >                                  ocv_table_28_PR284983N;
-> > 
-> > 
-> > 
-> > So that all only means there
-> > are several different batteries amoung the devices supported by that
-> > kernel.  
-> 
-> Ah. So you believe the other batteries are used on other devices which 
-> run the same kernel. Makes sense.
-> 
-> > From my guts feeling I wonder if the is_relaxed stuff is
-> > properly working and I wonder whether a Kalman filter would give better
-> > results, but that is all something for the future.  
-> 
-> I believe your experience is stronger than mine (also) here :) I don't 
-> really know the theory behind the 'relaxed battery' (or much of other 
-> battery chemistry stuff). I was merely trusting the inventions of the HQ 
-> engineers, who told me that the OCV tables can be used to adjust the 
-> coulomb counter when the battery is 'relaxed'. 'Relaxed' here meaning 
-> that it has not been charged (or a lot of current has not been drawn 
-> from it) recently. AFAIR, most of the PMIC models had some hardware 
-> support for detecting if the battery is in 'relaxed' state.
-> 
-I am also no battery chemistry expert. But I have looked a lot at
-battery voltage behavior for various reasons e.g. for simple things
-like: does my charger behave? I do not believe in
-in the concept of a boolean is_relaxed. You can always know something
-about battery state by doing something like a table_lookup(vbat -
-some_factor * ibat)
-Depending on situation you have different accuracy. Your battery will
-probably not be empty if e.g. your voltage is at 3.9V and you are not
-doing excessive charging. I have seen many surprises. My pinephone
-sometimes suddenly went off with battery state like 40%. I personally
-feel more confident, if I can additionally see the battery voltage.
-I have not debugged such issues much yet.
+Out of curiosity.
 
-> I admit it sounds like somewhat uncertain approach. I'd love to hear how 
-> you think the filter would help. I suppose you think of applying some 
-> filtering to the CC correction? Eg, 'smoothen' the CC resetting based on 
-> relaxed OCV, by applying some filtering to the correction values? Sounds 
-> cool! But... It does also sound the analysis about the impact of the 
-> filtering will be hard.
+arm_smmu_blocking_set_dev_pasid()
 
-The problems to solve look a bit like problems in inertial navigation
-and there Kalman filters are used. There you have e.g. gyroscopes to
-determine the rate of turn, producing drift like a coloumb counter.
-Accelerometers can show your orientation if things are "relaxed" so not
-much acceleration besides gravity. Magnetometers can be "unrelaxed" by
-some magnetic disturbance.
+	/*                             =20
+	 * When the last user of the CD table goes away downgrade the STE back
+	 * to a non-cd_table one.
+	 */
+	if (!arm_smmu_ssids_in_use(&master->cd_table)) {
+		struct iommu_domain *sid_domain =3D
+			iommu_get_domain_for_dev(master->dev);
 
-The basic point is you can put the accuracy into the model. So you can
-use the information like battery capacity can be estimated by
-looking voltage/current by +/- 15%, so something produced by looking
-at the gauge cannot be out of that range. On the other hand capacity can
-not change faster than fuel gauge + estimated drift can produce.
+		if (sid_domain->type =3D=3D IOMMU_DOMAIN_IDENTITY ||
+		   sid_domain->type =3D=3D IOMMU_DOMAIN_BLOCKED)
+			sid_domain->ops->attach_dev(sid_domain, dev);=20
+	}
 
-You can spend a life time on optimizing such filters. The question is
-how easily you can improve something by using them. The analysis of the
-impact can be doing a bit more subjective by looking at how sane the
-capacity display behaves, and whether there are less surprises.
-More objectively, you can of course relax the battery as much as
-possible and check if there are no illogical capacity changes or do
-well defined charging/discharging and look what happens to see whether
-capacity was correct.
-
-Regards,
-Andreas
+why cannot downgrade apply to the case where the RID is attached to
+a DMA domain?
 
