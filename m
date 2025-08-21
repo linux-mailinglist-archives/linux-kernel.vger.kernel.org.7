@@ -1,52 +1,64 @@
-Return-Path: <linux-kernel+bounces-779434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5360FB2F40C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:35:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D17DB2F443
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE591BC1C19
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49967AA3EE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BB92D9ED8;
-	Thu, 21 Aug 2025 09:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2C12ED149;
+	Thu, 21 Aug 2025 09:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="Ui9zIsF2"
-Received: from 9.mo533.mail-out.ovh.net (9.mo533.mail-out.ovh.net [188.165.47.174])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="x54WHZWt"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672871DF74F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.47.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9191DF74F;
+	Thu, 21 Aug 2025 09:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755768910; cv=none; b=NzpvU0V8Ed33aiXxv9qbt2tnKl5kpf9GjH1I+aVd0gximXcfVO1OeYOAl2CTrncH783pdx4wgEdkrbxOEkjR2W6k/fR38K4eAx67WrHGg3C4MRWjdCEZK+dMkBoIl1JSiGqVT3CIRGgd+HWwJtKW88UOKEtf/NqH0oq3/32c/0A=
+	t=1755769215; cv=none; b=f5RXo6tgRaV07xYzbFw4RQjhU6mUPlV27A27/OO+iR2E5bqbFlf0K/GGz3titHPF8IzfphuqC3U1K78I++vtcwC+7xdg62xOGfgQkQeJw6px0fPUSV2Q8L50DwZC6QfGYNpjJha9YJhtzcDbszWMskIlf4SfTs4ClhYqAITpCrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755768910; c=relaxed/simple;
-	bh=vSy0u5rqzbAcHiM6ktr8vOBdqjdwmzLfCOVwg8VHRFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vvoh6/ITktGHrERNH+qFA0MfS/a3WPLingx+8mspOhnKCMij4YQySU57mHCa1q70InSuPdgMBt813flNzA5lpqnH7RrSP+Md9xn7qkC1x7U+Ri703/TpVQ+X5wysvGnmwY6xrNFZVw9TfJ6H5DoipoMaDyZ+F06mcI/Y1jAFVN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=Ui9zIsF2; arc=none smtp.client-ip=188.165.47.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
-	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4c6ypb1vrqz5xHk;
-	Thu, 21 Aug 2025 09:35:03 +0000 (UTC)
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
-        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <bp@alien8.de>; Thu, 21 Aug 2025 09:35:02 +0000 (UTC)
-Received: from mta2.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.101.166])
-	by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c6ypZ4SsHz5xT4;
-	Thu, 21 Aug 2025 09:35:02 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.6])
-	by mta2.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 6E42A3E32C5;
-	Thu, 21 Aug 2025 09:35:00 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-106R0066d340cff-da3a-45d0-bbaf-3a55200613d7,
-                    684E78C7C579463DAB27E2CA1F9C4E28A39E1181) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.22.109
-Message-ID: <77c08318-f67d-42e0-8745-6a999e2e9f62@orca.pet>
-Date: Thu, 21 Aug 2025 11:35:01 +0200
+	s=arc-20240116; t=1755769215; c=relaxed/simple;
+	bh=fW45PNHK/J993qQlytHQ9XXEMMWn/NrRcHqFiD5whj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=j8UY+b6SLq8dBIlVIUynUIOpfqaqQJ4cCiDi7G6srzUK8Q8sxtsasl8HdqKwA+hLGkEzAKTLl7bJ7PaVtu1n7WZ+DrGFY4yjwL49Zsv0Wbsl5rh4BNWK8WfK7d2q+hn93PqdVL6+ppXZo/69aZOhffkvyAZX5+h+jpKlzkcTYTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=x54WHZWt; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L8uf03028719;
+	Thu, 21 Aug 2025 11:39:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	kHxcorhp5czLlBBNNIvPxeZEYbfShmd+8rRbKqHVLQc=; b=x54WHZWtHoVtnKSh
+	GwXIq32qEehSt5QN4pnCvtl8/TiFHUGkCVxLDpTAaQktot64B36wulxk1ei+r5EB
+	q4oJU0m5ApNcrcGtHJTtGKf8JmVGtpf2P+Nqv7T7elfSWoaqyewnWBbT/y30hkyM
+	QztQ5odjdA0mMraCkgbl+w7JGJlgWV4xAyEG9fI/kLcwVxziU/qGhGPxTAw20d6i
+	hM/4vG1IQ1AxUrf3PLjbdmzhAQKlbABlritN7UG4B85uzMmfNcd9IrPQzWD/XlfS
+	/PHF7fjxPPYQDRwv1ACERxT7tPpV8bBLheQgLG2lpZ+jXslc/76fxC3S4Xlo4gTt
+	cUUJxA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48n81wnyun-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 11:39:25 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 50FE64002D;
+	Thu, 21 Aug 2025 11:36:50 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C3FF873DB4E;
+	Thu, 21 Aug 2025 11:35:26 +0200 (CEST)
+Received: from [10.48.87.178] (10.48.87.178) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
+ 2025 11:35:25 +0200
+Message-ID: <ea6b8999-4f5d-4cc2-b92b-b0776c2b1363@foss.st.com>
+Date: Thu, 21 Aug 2025 11:35:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,66 +66,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-To: "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, Brian Gerst <brgerst@gmail.com>,
- Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
- David Kaplan <david.kaplan@amd.com>, "Ahmed S. Darwish"
- <darwi@linutronix.de>, Kees Cook <kees@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Andrew Cooper <andrew.cooper3@citrix.com>, Oleg Nesterov <oleg@redhat.com>,
- "Xin Li (Intel)" <xin@zytor.com>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-References: <20250820013452.495481-1-marcos@orca.pet>
- <08A1B314-C015-4EE9-A13D-3D712FD274C4@zytor.com>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <08A1B314-C015-4EE9-A13D-3D712FD274C4@zytor.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v2 6/9] drm/stm/dw_mipi_dsi-stm: convert from round_rate()
+ to determine_rate()
+To: Brian Masney <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Shawn Guo
+	<shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Clark
+	<robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        "Abhinav
+ Kumar" <abhinav.kumar@linux.dev>,
+        Jessica Zhang
+	<jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Raphael Gallais-Pou
+	<raphael.gallais-pou@foss.st.com>,
+        Philippe Cornu
+	<philippe.cornu@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai
+	<wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland
+	<samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <freedreno@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-sunxi@lists.linux.dev>
+References: <20250811-drm-clk-round-rate-v2-0-4a91ccf239cf@redhat.com>
+ <20250811-drm-clk-round-rate-v2-6-4a91ccf239cf@redhat.com>
+Content-Language: en-US
+From: Yannick FERTRE <yannick.fertre@foss.st.com>
+In-Reply-To: <20250811-drm-clk-round-rate-v2-6-4a91ccf239cf@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 16737065066167359156
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedtkeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpeeffeelueevgeeijeehgfegfeeltdetteeifeevtedtudehffeuudekgeevheeitdenucffohhmrghinhepuggvsghirghnrdhorhhgpdhkvghrnhgvlhdrohhrghenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepuggrvhhiugdrkhgrphhlrghnsegrmhgurdgtohhmpdhrtghpthhtoheprghnughrvgifrdgtohhophgvrhefsegtihhtrhhigidrtghomhdprhgtphhtthhopegsrhhgvghrshhtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhnohhvihhtohhllhesghhmrghilhdrtghomhdprhgtphhtthhopehusghiiihjrghkse
- hgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhg
-DKIM-Signature: a=rsa-sha256; bh=vSy0u5rqzbAcHiM6ktr8vOBdqjdwmzLfCOVwg8VHRFA=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755768904;
- v=1;
- b=Ui9zIsF2Sh9TwEx/m7ijXoxNSpqYaBodi32hrDbx9deQOWBxB2PU24xemyvA2Qo/iomwZKou
- zqG28bdhoM259vVjcmAJy364UVJ7DM1VT7SNSHSeix734jlwEM5fJVBS+D46CltMq+uKE6mIXpp
- 9iKXTcSnOpS1JZVAASKy3cGLpJ7f/VVvtn1rHNOb7icJWNcjJar5EXjMXgM2SQh4tpKi6XOy1ze
- 17RsVkS0+nd6wlsAIKKnJudqww0b6UbqY1ZKZ90Z8OOahIf2RkVOqgqG+xUsDi76kXgFPOAblJ9
- 0J24bV3BHyHzJceQPcY41tLxYZJWY5TUNYd94bNKpMDmQ==
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
 
-El 21/08/2025 a las 3:43, H. Peter Anvin escribió:
-> On August 19, 2025 6:34:46 PM PDT, Marcos Del Sol Vives <marcos@orca.pet> wrote:
->> One such software is sudo in Debian bookworm, which is compiled with
->> GCC -fcf-protection=branch and contains ENDBR32 instructions. It crashes
->> on my Vortex86DX3 processor and VIA C3 Nehalem processors [1].
->>
->> This patch is a much simplified version of my previous patch for x86
->> instruction emulation [2], that only emulates hintable NOPs.
->>
->> [1]: https://lists.debian.org/debian-devel/2023/10/msg00118.html
->> [2]: https://lore.kernel.org/all/20210626130313.1283485-1-marcos@orca.pet/
+Hi Brian,
+
+thanks for the patch.
+
+Acked-by: Yannick Fertre <yannick.fertre@foss.st.com>
+
+Le 11/08/2025 à 12:56, Brian Masney a écrit :
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
 >
-> Do those processors support FCOMI?
-
-The Vortex86DX3, at the very least, does. Unlike the Vortex86MX I wrote the
-previous patch for, this one seems to support all standard i686
-instructions. It's modern enough to support SSE1, even.
-
-I have tested it using the program I wrote for testing it on the -MX
-last time: https://lore.kernel.org/all/b69e0c78-81eb-0d4d-dce5-076b5f239e28@orca.pet/.
-
-> marcos@vdx3:~$ LANG=C gcc -Wall fucomi-test.c -o fucomi-test
-> marcos@vdx3:~$ ./fucomi-test
-> Float value: 6.210000
-> FPU status: 3800 EFLAGS: 00000242
-
-Which matches 1:1 my current desktop Ryzen 8645H.
-
-Greetings,
-Marcos
+> Acked-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+>   drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 14 ++++++++------
+>   1 file changed, 8 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
+> index 2c7bc064bc66c6a58903a207cbe8091a14231c2b..58eae6804cc82d174323744206be7046568b905c 100644
+> --- a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
+> +++ b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
+> @@ -274,8 +274,8 @@ static unsigned long dw_mipi_dsi_clk_recalc_rate(struct clk_hw *hw,
+>   	return (unsigned long)pll_out_khz * 1000;
+>   }
+>   
+> -static long dw_mipi_dsi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> -				       unsigned long *parent_rate)
+> +static int dw_mipi_dsi_clk_determine_rate(struct clk_hw *hw,
+> +					  struct clk_rate_request *req)
+>   {
+>   	struct dw_mipi_dsi_stm *dsi = clk_to_dw_mipi_dsi_stm(hw);
+>   	unsigned int idf, ndiv, odf, pll_in_khz, pll_out_khz;
+> @@ -283,14 +283,14 @@ static long dw_mipi_dsi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+>   
+>   	DRM_DEBUG_DRIVER("\n");
+>   
+> -	pll_in_khz = (unsigned int)(*parent_rate / 1000);
+> +	pll_in_khz = (unsigned int)(req->best_parent_rate / 1000);
+>   
+>   	/* Compute best pll parameters */
+>   	idf = 0;
+>   	ndiv = 0;
+>   	odf = 0;
+>   
+> -	ret = dsi_pll_get_params(dsi, pll_in_khz, rate / 1000,
+> +	ret = dsi_pll_get_params(dsi, pll_in_khz, req->rate / 1000,
+>   				 &idf, &ndiv, &odf);
+>   	if (ret)
+>   		DRM_WARN("Warning dsi_pll_get_params(): bad params\n");
+> @@ -298,7 +298,9 @@ static long dw_mipi_dsi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+>   	/* Get the adjusted pll out value */
+>   	pll_out_khz = dsi_pll_get_clkout_khz(pll_in_khz, idf, ndiv, odf);
+>   
+> -	return pll_out_khz * 1000;
+> +	req->rate = pll_out_khz * 1000;
+> +
+> +	return 0;
+>   }
+>   
+>   static int dw_mipi_dsi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -351,7 +353,7 @@ static const struct clk_ops dw_mipi_dsi_stm_clk_ops = {
+>   	.disable = dw_mipi_dsi_clk_disable,
+>   	.is_enabled = dw_mipi_dsi_clk_is_enabled,
+>   	.recalc_rate = dw_mipi_dsi_clk_recalc_rate,
+> -	.round_rate = dw_mipi_dsi_clk_round_rate,
+> +	.determine_rate = dw_mipi_dsi_clk_determine_rate,
+>   	.set_rate = dw_mipi_dsi_clk_set_rate,
+>   };
+>   
+>
 
