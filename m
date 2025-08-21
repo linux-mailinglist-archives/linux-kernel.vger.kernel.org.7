@@ -1,183 +1,144 @@
-Return-Path: <linux-kernel+bounces-780027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44E2B2FCCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC0EB2FC99
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9E71BC1FF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30AFC1D21EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F16A2D6604;
-	Thu, 21 Aug 2025 14:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D4A267B02;
+	Thu, 21 Aug 2025 14:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMoln9ch"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Kr5/s2BQ"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B232280A4B;
-	Thu, 21 Aug 2025 14:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01762EC551;
+	Thu, 21 Aug 2025 14:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755786099; cv=none; b=PGqdnmRTdQFfokEHP0mp9Y+PjWWYj1FMVkKO0zy/FGarAfeJVi6894vn/ZcjRbdn0zq+EJ3koSdosoMKG78ilL6Yvcggo6QCeAX+8U+j7igMyCikzjCBodnzt8GUt4QsJYgVAiG4N8c89SKfms/syPzg8pH07ORkukNXTe6nI/Y=
+	t=1755786093; cv=none; b=mg6sGOJ3wSfz1FYZu7ve4mBwFpKiJABay7GsWTuLjczhLyEl+cYcrrOHeW6xY+zqVJXtiGHO2O30MwozpeVCrixCvmZM/P3uqWDCYu8vWuT6X/ljF4hsuE9dw8KmEUtt5GbVpDKGXdDK/7WBT2vG71HgZoQfWkHXfBdXe9cLE6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755786099; c=relaxed/simple;
-	bh=7D8ImbQ64qRP/VowwgAm1Rn3cTSGFFW/kfcVSm7ahHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SHcVqzdszplt8kLaKHGV4/f4qqlzdMtw18yfgejYpAF2lnJ10eRUkmmvFim1PzuZveo5Ni9HuThpXv49f4Uj0kRdJl6RoqHaywEpoehlHqOXuz08NAhykAbRv1YUU3GAQ9BmyjEu7LnV2H/pLsf/Waejj4SRtjh7QLCyhYxPBe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMoln9ch; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 224A0C19423;
-	Thu, 21 Aug 2025 14:21:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755786099;
-	bh=7D8ImbQ64qRP/VowwgAm1Rn3cTSGFFW/kfcVSm7ahHI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RMoln9chByuA9HzKbsT2GkLLsIMipkSxktB1G0OdhOnmY4Mn3j5wg7HAEp2+4Bqbo
-	 lLHL2LoD7jMxt397NSYatwYeQhhT0D7FrojNI4fT9ktLy3FuEpaovMcmhFw8EUQCkk
-	 Mv7l2pu3+Hp24ZMf8Y6dIsGESyaw5ASQi/QcHMCP8u5Qxs9odRmzrDOm/4rFeMLpB4
-	 cn6PWX79+gYjkDA4IqqIFbNafXT3odqPQK//oNiEszc7uTPO0HGgPEkEgF3tkNw+iI
-	 T5w8d0kvp4+hfjuOQyxvEfg0EqLk5R9nj6+ahMPPZRAOISF1X0G1iujMwt+ia7PMiZ
-	 E/98q137XhI6A==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1up6Aa-0000000BT81-44nX;
-	Thu, 21 Aug 2025 16:21:36 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Sean Young <sean@mess.org>,
-	linux-media@vger.kernel.org
-Subject: [PATCH 00/24] better handle media headers
-Date: Thu, 21 Aug 2025 16:21:06 +0200
-Message-ID: <cover.1755784929.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755786093; c=relaxed/simple;
+	bh=Vb2F+1YyfLyYDbBvxHKpFvzAWDyxW1OpfmWp6x/xB0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZmM9WpbjSXaBIiLln+CxseXhn9to8SNeaeEutNGYM2N6EPxNEqeM3PauahvvnwOD0mbvCzu4zn4FjqQ/+DXvZFxRZoJO2pRIO0MiTmVbpwKki7FlgeTJL0aSBPwYAUa9q/KW2mk0U/8ftvLnDsE6Bt4iAxVLZL34ATBaW56j7ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Kr5/s2BQ; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4c758y38mCz9smF;
+	Thu, 21 Aug 2025 16:21:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1755786082;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fW3Zzx4J8tGS72KjNJnVUhaHtHsXE0Z0H9CSM70UsDs=;
+	b=Kr5/s2BQubpmBB8hHQQAUB6etiNM4h6E6thzMmaQnKfCymVva8DBHBG54j6HuhDhkxWwrV
+	5/447MFJJp07PckYe5JoOrb6tPddsM7HT83PDLziKjKa05mbw9zoBA2Yx7u5FtJZlDd55T
+	251bJnqvZc/jFMQMz61+I+/zh9yN6agNsuIISsWqd3Kjv1tu1/917TPqqqorL5Rii7pP2z
+	pv1L6Uow8egV7ut9UB8zvAQu6CbqawXBxVMvkzOs6ne37GeHV2Lbyzl3RisrJwbiutAWXQ
+	BnXDxMojrt/hYumfmgxISnUJEwF+9TghaS4jDP3VyfYuoHAkcdrSBsbUyy21ew==
+Date: Fri, 22 Aug 2025 00:21:06 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
+Message-ID: <2025-08-21.1755785636-rusted-ivory-corgi-salad-fYNRl1@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
+ <198cc8d3da6.124bd761f86893.6196757670555212232@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-Hi Jon,
-
-Sorry for the big series. I wanted it to be smaller, by still this
-is still only the first half of the history. I have a pile of other
-patches on the top of this one to be sent - part of them to media.
-
-This series comes after:
-	https://lore.kernel.org/linux-doc/cover.1755258303.git.mchehab+huawei@kernel.org/
-
-Its goal is to drop one of the most ancient and ugliest hack from
-the documentation build system.
-
-Before migrating to Sphinx, the media subsystem already had
-a very comprehensive uAPI book, together with a build time
-system to detect and point for any documentation gaps.
-
-When migrating to Sphinx, we ported the logic to a Perl script
-(parse-headers.pl) and Markus came up with a Sphinx extension
-(kernel_include.py). We also added some files to control how
-parse-headers produce results, and a Makefile.
-
-At the initial Sphinx versions (1.4.1 if I recall correctly), when
-a new symbol is added to videodev2.h, a new warning were
-produced at documentatiion time, it the patchset didn't have
-the corresponding documentation path.
-
-While kernel-include is generic, the only user at the moment
-is the media subsystem.
-
-This series gets rid of the Python script, replacing it by a
-command line script and a class. The parse header class
-can optionally be used by kernel-include to produce an
-enriched code that will contain cross-references.
-
-As the other conversions, it starts with a bug-compatible
-version of parse-headers, but the subsequent patches
-add more functionalities and fix bugs.
-
-It should be noticed that modern of Sphinx disabled the
-cross-reference warnings. So, at the next series, I'll be
-re-adding it in a controlled way (e.g. just for the
-references from kernel-include that has an special
-argument).
-
-The script also supports now generating a "toc" output,
-which will be used at the next series.
-
-Mauro Carvalho Chehab (24):
-  docs: parse-headers.pl: improve its debug output format
-  docs: parse-headers.py: convert parse-headers.pl
-  docs: parse-headers.py: improve --help logic
-  docs: parse-headers.py: better handle @var arguments
-  docs: parse-headers.py: simplify the rules for hashes
-  tools: docs: parse-headers.py: move it from sphinx dir
-  tools: docs: parse_data_structs.py: add methods to return output
-  MAINTAINERS: add files from tools/docs to documentation entry
-  docs: uapi: media: Makefile: use parse-headers.py
-  docs: : Update its coding style
-  docs: kernel_include.py: allow cross-reference generation
-  docs: kernel_include.py: generate warnings for broken refs
-  docs: kernel_include.py: move rawtext logic to separate functions
-  docs: kernel_include.py: move range logic to a separate function
-  docs: kernel_include.py: remove range restriction for gen docs
-  docs: kernel_include.py: move code and literal functions
-  docs: kernel_include.py: add support to generate a TOC table
-  docs: kernel_include.py: append line numbers to better report errors
-  docs: kernel_include.py: move apply_range() and add a docstring
-  docs: kernel_include.py: remove line numbers from parsed-literal
-  docs: kernel_include.py: remove Include class inheritance
-  docs: kernel_include.py: document all supported parameters
-  scripts: sphinx-build-wrapper: get rid of uapi/media Makefile
-  docs: sphinx: drop parse-headers.pl
-
- .pylintrc                                     |   2 +-
- Documentation/sphinx/kernel_include.py        | 519 +++++++++++++-----
- Documentation/sphinx/parse-headers.pl         | 404 --------------
- Documentation/userspace-api/media/Makefile    |  64 ---
- .../userspace-api/media/cec/cec-header.rst    |   5 +-
- .../media/{ => cec}/cec.h.rst.exceptions      |   0
- .../media/{ => dvb}/ca.h.rst.exceptions       |   0
- .../media/{ => dvb}/dmx.h.rst.exceptions      |   0
- .../media/{ => dvb}/frontend.h.rst.exceptions |   0
- .../userspace-api/media/dvb/headers.rst       |  17 +-
- .../media/{ => dvb}/net.h.rst.exceptions      |   0
- .../media/mediactl/media-header.rst           |   5 +-
- .../{ => mediactl}/media.h.rst.exceptions     |   0
- .../userspace-api/media/rc/lirc-header.rst    |   4 +-
- .../media/{ => rc}/lirc.h.rst.exceptions      |   0
- .../userspace-api/media/v4l/videodev.rst      |   4 +-
- .../{ => v4l}/videodev2.h.rst.exceptions      |   0
- MAINTAINERS                                   |   1 +
- scripts/sphinx-build-wrapper                  |  48 --
- tools/docs/lib/__init__.py                    |   0
- tools/docs/lib/enrich_formatter.py            |  70 +++
- tools/docs/lib/parse_data_structs.py          | 452 +++++++++++++++
- tools/docs/parse-headers.py                   |  60 ++
- 23 files changed, 984 insertions(+), 671 deletions(-)
- delete mode 100755 Documentation/sphinx/parse-headers.pl
- delete mode 100644 Documentation/userspace-api/media/Makefile
- rename Documentation/userspace-api/media/{ => cec}/cec.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/ca.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/dmx.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/frontend.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => dvb}/net.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => mediactl}/media.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => rc}/lirc.h.rst.exceptions (100%)
- rename Documentation/userspace-api/media/{ => v4l}/videodev2.h.rst.exceptions (100%)
- create mode 100644 tools/docs/lib/__init__.py
- create mode 100644 tools/docs/lib/enrich_formatter.py
- create mode 100755 tools/docs/lib/parse_data_structs.py
- create mode 100755 tools/docs/parse-headers.py
-
--- 
-2.50.1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jsdomwd2btigmqhb"
+Content-Disposition: inline
+In-Reply-To: <198cc8d3da6.124bd761f86893.6196757670555212232@zohomail.com>
 
 
+--jsdomwd2btigmqhb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
+MIME-Version: 1.0
+
+On 2025-08-21, Askar Safin <safinaskar@zohomail.com> wrote:
+> There is one particular case when open_tree is more powerful than openat =
+with O_PATH. open_tree supports AT_EMPTY_PATH, and openat supports nothing =
+similar.
+> This means that we can convert normal O_RDONLY file descriptor to O_PATH =
+descriptor using open_tree! I. e.:
+>   rd =3D openat(AT_FDCWD, "/tmp/a", O_RDONLY, 0); // Regular file
+>   open_tree(rd, "", AT_EMPTY_PATH);
+> You can achieve same effect using /proc:
+>   rd =3D openat(AT_FDCWD, "/tmp/a", O_RDONLY, 0); // Regular file
+>   snprintf(buf, sizeof(buf), "/proc/self/fd/%d", rd);
+>   openat(AT_FDCWD, buf, O_PATH, 0);
+> But still I think this has security implications. This means that even if=
+ we deny access to /proc for container, it still is able to convert O_RDONLY
+> descriptors to O_PATH descriptors using open_tree. I. e. this is yet anot=
+her thing to think about when creating sandboxes.
+> I know you delivered a talk about similar things a lot of time ago: https=
+://lwn.net/Articles/934460/ . (I tested this.)
+
+O_RDONLY -> O_PATH is less of an issue than the other way around. There
+isn't much you can do with O_PATH that you can't do with a properly open
+file (by design you actually should have strictly less privileges but
+some operations are only really possible with O_PATH, but they're not
+security-critical in that way).
+
+I was working on a new patchset for resolving this issue (and adding
+O_EMPTYPATH support) late last year but other things fell on my plate
+and the design was quite difficult to get to a place where everyone
+agreed to it.
+
+The core issue is that we would need to block not just re-opening but
+also any operation that is a write (or read) in disguise, which kind of
+implies you need to have capabilities attached to file descriptors. This
+is already slightly shaky ground if you look at the history of projects
+like capsicum -- but also my impression was that just adding it to
+"file_permission" was not sufficient, you need to put it in
+"path_permission" which means we have to either bloat "struct path" or
+come up with some extended structure that you need to plumb through
+everywhere.
+
+But yes, this is a thing that is still on my list of things to do, but
+not in the immediate future.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--jsdomwd2btigmqhb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaKcrThsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9TSwD9Ez8Vfzuiim607l6uNQY4
+4f9TZbwHuIVkqc4PsjYgz3UBANuelZQN20hYZ3EVADF7hQ6wiLdCEdTVMElYczRh
+XRIJ
+=fSGM
+-----END PGP SIGNATURE-----
+
+--jsdomwd2btigmqhb--
 
