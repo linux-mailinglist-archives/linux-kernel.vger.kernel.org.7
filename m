@@ -1,104 +1,164 @@
-Return-Path: <linux-kernel+bounces-779025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D25B2EE0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:18:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72033B2EE12
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19AE01C233F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:18:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D59DA274C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AFD261B70;
-	Thu, 21 Aug 2025 06:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E2C26CE3A;
+	Thu, 21 Aug 2025 06:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M+MnbAwZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPHMcxYK"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD943253B64
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5EA25BEFD;
+	Thu, 21 Aug 2025 06:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755757105; cv=none; b=IAEd8vIWbdaHXzESdxGd3tvVlsVC7ltl8Rgx7GM2WVpBn7+QsBCaP4VzdlzkOAQqZy7RHvZq3LCDQD8g5vgzqZ0GrCNKHCgjxGemXvXK+5DZNs/oo4YeFJOaHIQhorksf4Q70sdIG75Oj1hFdS5oCE4dMV2VftAX8Gq+FH6ntts=
+	t=1755757117; cv=none; b=RT8wyrPjyjoQ8nbCBa/359j3K2/Q0dcfFVG1sxozRlWlTRgeWtUCcZWmPfg4BZ3yGp7RarRtdiActB11qLWj+l5Fhuvcfj+bwKgklNqznkIcTwrr9JR2c/aXtAu1LMyerR/PSMtZ7eSucpddTJN6MA3AGFpcOZKJ1DJU5s+e8HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755757105; c=relaxed/simple;
-	bh=a5NB4YSnjNykT3B7T37kW69kXSRi/DEs+BwKmL5VXzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OEg/oUcJgb2MKfCmP6ccENUuX44VdA05B/F4GqHd1qhTZ4lFm6ieu1UPxUG3he6kYltqNj8CXGUqAVEWLROIP6gCFqe278UDe8P9Tef0v/wt44RAkyTWrYknQ+4aEA87msba64wd65ZzbanV8hnsTPg80ALQAL277WYN/aUfUfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M+MnbAwZ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755757104; x=1787293104;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a5NB4YSnjNykT3B7T37kW69kXSRi/DEs+BwKmL5VXzQ=;
-  b=M+MnbAwZZL0S3tL1Y4nEg6TS6VF0vRFtpc7dWg5XEoYTAhyUnG4deHNR
-   OCJI9WzWfNMYnDToqvgWphGTmzBBVS3b3D2MUbvnpult3GkeNCUWUPnHD
-   ePACOLFY2m68hQgbx9RMD10bVmFgxGeWsA8KA5qtIA5Z0l1OTBmGJlzxh
-   jJunv7nLD1hZGZFojr6qOP6FJxYXuN1GRiQCM3h8VL+jgrWUdvmmcSkJE
-   gVVZt+p16WV7lZU/1RdRO79uFex6oKYpvGbYr7cArf3iUmcv6egZiA1vU
-   3dg8jKQ5vgIevF6a8ExZSyYt2lxZYQfInZbsb4YQwo/YL7hg8XXTq2DK+
-   g==;
-X-CSE-ConnectionGUID: 0FsvIJoQThO8Jp8WBLek0g==
-X-CSE-MsgGUID: wmv0nSCvQLGyMhtc7VkQew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="69137212"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="69137212"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 23:18:23 -0700
-X-CSE-ConnectionGUID: uAFHpS/OS0GnYLggw9sLyw==
-X-CSE-MsgGUID: B8Jq0RsrQLOYYPsrms6H1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="173590857"
-Received: from guptapa-dev.ostc.intel.com (HELO desk) ([10.54.69.136])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 23:18:22 -0700
-Date: Wed, 20 Aug 2025 23:18:17 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: David Kaplan <david.kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Bugs clean-up
-Message-ID: <xbegna7ztb525ri2l76pd3uyh4rdmtj76enf4ad4ekvilkxygp@h3uoy2hjyfqy>
-References: <20250819192200.2003074-1-david.kaplan@amd.com>
+	s=arc-20240116; t=1755757117; c=relaxed/simple;
+	bh=Bi1fwnl9yUGn7Fca+mMWIkXWwgXtyoTjKasK8Wa5i+U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rv6UsfhIU7H4ngnbF0YC0HQpND6S3NFYRJPiQKy7r87Y2ATxXoO2GPGWLSfO2nrM7ZdrxsO2cO/3EyUOVmM/kBrAyAQT7pcjxb9ZuMu4Jz6sJsg4ekpc+F8kbgcDjU7oszRENFd+f3b876sDGX3R4tpwbUaosF/d9fluRigZVsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPHMcxYK; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76e93370ab8so699953b3a.1;
+        Wed, 20 Aug 2025 23:18:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755757114; x=1756361914; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zztoWmaSBvqb0v836T63J5CDKtmGeRpJXnzAG/6LZ58=;
+        b=WPHMcxYKgtSdcDVZKxRt8c+Cm5la+XpvdfcAxgmIAFbUYOaijbMxKSeUaUNYFHPDMs
+         pPtbKXmfy/yFpBuTddS5i8kjxdNdnjpNkREfaIgUyUS8/2NQ8B40cCjdOgWCTKWw9Q5+
+         +Y8jjaBXB8oYtYuXiY2nD98Xtv/ibhcr1VQkrmbkQQ/rNjLPlVd68jH/Z6xbTl/sm5NC
+         FOiO2zfgiqS4OeSd+zmzvLqKefiVYMBYcFFSfPxLEsPKl7FCQPmbLdiJBa5uPNlZgDwr
+         pYSIoOwBF0oOSZuPFujEKAZG7t7GpKaRbEBmsJSnuG74vDU8yGRMZFfOeaDWvxkRnaZ6
+         JD1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755757114; x=1756361914;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zztoWmaSBvqb0v836T63J5CDKtmGeRpJXnzAG/6LZ58=;
+        b=TReoyyccjHPx85eE5e1kw9oUXFyEyEPWmYogggZhrYPYQAxIAHuVntruEPSd0RnaBL
+         FerzpVcNmmrLcHnN5DwPLOD9w/Up5nHeVwB48nZaGTDS1ZZYtJSFL/bC9/P/51YBXQuF
+         Ky3z47utKSmcUuRqYL6oe+ukfXfSilXQQFBbR9Ibn6tbDwBGBuQF1O+UFFHG9s+sZJoS
+         iidLPw5/H1eTV3sOjYKTUAsXJKtBCxZyAJYmweqa2HSX9DePnxBqSuyAJsqUDW3z85wu
+         DOJHvLnXAKmUAkOhloj/GgtwDvUFrRjLlZS8YVMn87i33y0/icUnzMDhUpfZsjFX3SoF
+         3XRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjD0vkgI3aoOXqPmlgpTa4WkaxrrX7WKKBRcan5dOch9VERVqE895QDk6BDMCYZ/ABy/R3LlBwYn9T/KQ=@vger.kernel.org, AJvYcCXB0T/kMivcvLozUaG4TDVmzDDCvx0BEnJbIlKkBz1ctYqf5z9xMubsibRHRhdO4N9KWpj/y+f3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH8q8pSjkuyIFtksrIdJBnrtjrhzNLRuKB55DFufgAhNkHDamh
+	yfigmTmaT2L3zlrL7skgGL55rz3IorzeH4KL+vskTnQ/lQNuHZHu2II9
+X-Gm-Gg: ASbGncs+S6l+OBdGxepdXv9ryE9RK46j/DBhaUz69Q9x3ZljyzpKhME3obh8CxwtF3B
+	wKBgOdjK686niHxT+PHqmSCCjAAEobMbXqIbCjhi+VF5n4tCT1RYDc00rEbJ/OVOAOW+h0ugwav
+	ZbPwVIIxw0xsV82ihxQVStnZgJvrB5YkN8ggdKoGRPo5aciygUpmu2AJ+A/W7CPvk9Ife1yf/px
+	o0SiSwjHJGZ7cDJdPmx+hUu+5b2LZoV4D72CubsOnBMS9/p4FT/I1YaMF1dsT+bHuT+LSo74y/W
+	yblEybOmM6mMpxXfDcrIOsyHRBCeBRR2BEqf5uLfMdq4dRM+uYuFtpxF1yhQHRQ24GkWa1m96W1
+	cxb+KH5pMFAaoTflzrlvesq+6JJjjQMe5NbvH
+X-Google-Smtp-Source: AGHT+IGs7MFSfbXvQy8Flp3Dq70Rfkp04rNwWT4c3+yfMUrn/wBHUprehQHinYmoPC+kH7sQIVsbmg==
+X-Received: by 2002:a05:6a20:2586:b0:240:cd6:a91e with SMTP id adf61e73a8af0-2433089f7cfmr1826634637.20.1755757113567;
+        Wed, 20 Aug 2025 23:18:33 -0700 (PDT)
+Received: from [192.168.0.69] ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4763fba4cesm3900670a12.9.2025.08.20.23.18.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 23:18:33 -0700 (PDT)
+Message-ID: <90cc9b71e356a94e593b66614bbb28a542ca204c.camel@gmail.com>
+Subject: Re: [RFC v2 1/1] net/tls: allow limiting maximum record size
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: Hannes Reinecke <hare@suse.de>, chuck.lever@oracle.com,
+ davem@davemloft.net, 	edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, donald.hunter@gmail.com, 	borisp@nvidia.com,
+ john.fastabend@gmail.com
+Cc: alistair.francis@wdc.com, dlemoal@kernel.org, 
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 21 Aug 2025 16:18:25 +1000
+In-Reply-To: <a9ea0abf-1f11-4760-80b8-6a688e020093@suse.de>
+References: <20250808072358.254478-3-wilfred.opensource@gmail.com>
+	 <20250808072358.254478-5-wilfred.opensource@gmail.com>
+	 <a9ea0abf-1f11-4760-80b8-6a688e020093@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819192200.2003074-1-david.kaplan@amd.com>
 
-On Tue, Aug 19, 2025 at 02:21:55PM -0500, David Kaplan wrote:
-> Patches 1-3 focus on cleaning up parameter parsing.  Most mitigations use
-> early_param but a few older ones do not and look at boot_command_line
-> directly.  Modify those to be consistent with the newer ones.
-> 
-> Patch 4 adds missing attack vector controls for spec store bypass.
-> 
-> Patch 5 cleans up straggling unnecessary calls to cpu_mitigations_off().
-> 
-> Changes from v1
->    - Removed spec_*_print_cond() functions
->    - Fixed bugs pointed out by Pawan
->    - Added last 2 patches
-> 
-> David Kaplan (5):
->   x86/bugs: Use early_param for spectre_v2_user
->   x86/bugs: Use early_param for spectre_v2
->   x86/bugs: Simplify SSB cmdline parsing
->   x86/bugs: Add attack vector controls for SSB
->   x86/bugs: Remove uses of cpu_mitigations_off()
+On Mon, 2025-08-18 at 08:31 +0200, Hannes Reinecke wrote:
+>=20
+[snip]
+> > --- a/include/uapi/linux/handshake.h
+> > +++ b/include/uapi/linux/handshake.h
+> > @@ -54,6 +54,7 @@ enum {
+> > =C2=A0=C2=A0	HANDSHAKE_A_DONE_STATUS =3D 1,
+> > =C2=A0=C2=A0	HANDSHAKE_A_DONE_SOCKFD,
+> > =C2=A0=C2=A0	HANDSHAKE_A_DONE_REMOTE_AUTH,
+> > +	HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT,
+> > =C2=A0=20
+> > =C2=A0=C2=A0	__HANDSHAKE_A_DONE_MAX,
+> > =C2=A0=C2=A0	HANDSHAKE_A_DONE_MAX =3D (__HANDSHAKE_A_DONE_MAX - 1)
+> > diff --git a/net/handshake/genl.c b/net/handshake/genl.c
+> > index f55d14d7b726..44c43ce18361 100644
+> > --- a/net/handshake/genl.c
+> > +++ b/net/handshake/genl.c
+> > @@ -16,10 +16,11 @@ static const struct nla_policy
+> > handshake_accept_nl_policy[HANDSHAKE_A_ACCEPT_HAN
+> > =C2=A0 };
+> > =C2=A0=20
+> > =C2=A0 /* HANDSHAKE_CMD_DONE - do */
+> > -static const struct nla_policy
+> > handshake_done_nl_policy[HANDSHAKE_A_DONE_REMOTE_AUTH + 1] =3D {
+> > +static const struct nla_policy
+> > handshake_done_nl_policy[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT + 1] =3D
+> > {
+>=20
+Hey Hannes,
 
-For the series:
+I did consider using HANDSHAKE_A_DONE_MAX, but wasn't sure if the
+existing convention is there for some reason. But I can switch over if
+you think that is best.
 
-Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> Shouldn't that be 'HANDSHAKE_A_DONE_MAX'?
+>=20
+> > =C2=A0=C2=A0	[HANDSHAKE_A_DONE_STATUS] =3D { .type =3D NLA_U32, },
+> > =C2=A0=C2=A0	[HANDSHAKE_A_DONE_SOCKFD] =3D { .type =3D NLA_S32, },
+> > =C2=A0=C2=A0	[HANDSHAKE_A_DONE_REMOTE_AUTH] =3D { .type =3D NLA_U32, },
+> > +	[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT] =3D { .type =3D NLA_U32,
+> > },
+> > =C2=A0 };
+> > =C2=A0=20
+> > =C2=A0 /* Ops table for handshake */
+> > @@ -35,7 +36,7 @@ static const struct genl_split_ops
+> > handshake_nl_ops[] =3D {
+> > =C2=A0=C2=A0		.cmd		=3D HANDSHAKE_CMD_DONE,
+> > =C2=A0=C2=A0		.doit		=3D handshake_nl_done_doit,
+> > =C2=A0=C2=A0		.policy		=3D
+> > handshake_done_nl_policy,
+> > -		.maxattr	=3D HANDSHAKE_A_DONE_REMOTE_AUTH,
+> > +		.maxattr	=3D
+> > HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT,
+>=20
+> HANDSHAKE_A_DONE_MAX - 1?
+
+Shouldn't it be `HANDSHAKE_A_DONE_MAX`? Unless the existing
+`HANDSHAKE_A_DONE_REMOTE_AUTH` is incorrect?
+
+Thanks for the review!
+
+Regards,
+Wilfred
+>=20
 
