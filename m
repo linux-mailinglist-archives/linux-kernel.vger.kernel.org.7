@@ -1,284 +1,146 @@
-Return-Path: <linux-kernel+bounces-779167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AAA6B2EFED
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:43:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926F9B2EFF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9709DA0435E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:40:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAECE1BA6000
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D62F2DEA7B;
-	Thu, 21 Aug 2025 07:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0E224EA90;
+	Thu, 21 Aug 2025 07:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="paI360l2"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Y+p5wdLO"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1156E2BB1D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B078121FF28
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755762048; cv=none; b=DTZAycIUhFFvQZc49FlDvlKPZb+NCsTRNSQbWX5SstjCYiFt8b+E3zTcfiKJYs/Z6qHJsdGEmJU1xWsySg6MyyOWOEzbPhuLuFYtqa4FvmGYjr7aqXJaHw3Rr4ZfvfZl/ByqCLhzj1iV98YLY6w7fAbRZ0BSY7v0a9fWW6vUatQ=
+	t=1755762077; cv=none; b=m5N6Pq1Cw/5PAZVu/VNGxvny1Qb2VJ0MKpSNfGBqCVSh754Oiq+VrEd1BX3E8pBvDurVz1DJV3fzwsWfPyflZu8tBJjPt1hatzKV98b1dv6eT0YIbIPIncjpVtiZ//nzAIn83eb12DPJ4+dKSPmGz+msjUcOBvtGXS3b+Q5mmH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755762048; c=relaxed/simple;
-	bh=Uj3lhiNQ8KTr4No999KBtD5ZsLbjQ3f79sUlJDHS0tg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fFpYWP+od/D1IWGLrbAh8pBEanwOzYKflS5EfdScFjby/JtTEdPNWTLM/1SPjWNGuv5ICjOo6re6YOTWEUimnTC2VSgYT20vEfDMAlTgtXxjYJgZhCoXpxmU5C09J/s1AKFV8o/7aJ8Z1BzA/FUVat6S90nsmzUODfV5g+w4iAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=paI360l2; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7347e09so119753966b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:40:44 -0700 (PDT)
+	s=arc-20240116; t=1755762077; c=relaxed/simple;
+	bh=R5Ttggd32V+MFeSKFELvnP16jw3tNq8ik1dqzw206rU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GHWj+bDGm3LyYeow4l5vsIyq82RGbgeoLQ+bfReeKje309Pcw2BmDg5OrMKyzm9MrULsA2yuAqYTNvzI51hnfKdjEx/HzhyplTMeTQVaCS4F0fJ53Hm18NFqwr3DweOIArYlhT1ZFXbvvqdktOpX2NLuD11tFk2+244weIGgNgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Y+p5wdLO; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3354b208913so2244381fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:41:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1755762043; x=1756366843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UOmX8DoVDkdi25dNPPFg/anGS8Ls6i4vihgyINbx3eI=;
-        b=paI360l21SWhZYekRBoBldNtbNlggtjTEkV5yobCx2NadeoBa9xSBwXClqKI7zV9Zx
-         nEdNZ779qCpmNO4SspzhzPJvD+pJszCwTv5109KY+ulHiKCKpy56jPFMvzvhImHvfYqh
-         j+x77tPi+4j8VqsWgxd9ujlTX6XL6SpNgW5DPFHX1UCwT/9FqhOT+CTTOQmXoxrCbciP
-         NDBqBXPt4OR6yEp4DYqRIT/KDttkWZpMCNOh5iC4cvsl1s19yZMDckrGtJh1aBNTQQ0u
-         zt3VEFEGZH6hMEV5lMB9NyWdojju3SdSeCTqzSWyrMd4JA9P/XeQcyMLgJq+WcS3PcKn
-         yeMQ==
+        d=suse.com; s=google; t=1755762070; x=1756366870; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ti5B2OppIdJ14C+jlxk9QeuB8MZbK9cE5qBq6GJOv6w=;
+        b=Y+p5wdLOECckicpForG42AzFiPrhrIbl+H/eZ81teq/1038DdTgPcb/8gUnhrwdS9P
+         f60Ybbf4Yri6P43M5cP20g5DoZw70wJjACv8DwEgKtzUAUaiiLNWd4STD9JEytdktv0L
+         U9fZ1YlPziA7kwRFsOL7WOvFhGN/9tynX2Hs5sLHBtl/FlrPP3xFE6/nq7Px/9ohUT4r
+         PK08sbZmoF6NhE6ovlw3Vff8t8gzmof12c5Yayq7QKVvB/NMeym0flQxMeJwDvCnun7Q
+         Z6vNK1RhJnUBoa0uHjBJXF9Oh/scoHeoBehDDhCuOcc2T7zw4Mz6R4idF9zvsCVTNOuf
+         lnbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755762043; x=1756366843;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UOmX8DoVDkdi25dNPPFg/anGS8Ls6i4vihgyINbx3eI=;
-        b=M1x72JdW4n9oONLD0obpM8mvaNN+4yqi+G44HjSsLgUku+QtL8UOM8f+Fd31Rv8lw7
-         FFJBWNZg8ncL2aaTVNKSAXUbra3O0Td5ms2eDPAKS95MgKw6KywI/W0nwhUtc8JtwSJ5
-         cBt5CKJU1VsM/9pqhA9v/HzCylSOpBlIms2+ZKFV7LXFqnZPEw/a4+8ObtY3VzAsb9AM
-         N08SGYZ6R9/HbNDFxFV0gt9lOnW5QJa0iu34HNYp7bk3zlbKl4DLwqzpNxZwOxJS4SAB
-         EdMRBpRKihzgyI3+qjQ3pLDi43wnMXt6W1lqvVX6TyefB6IIglFaSMegVOoOIvVOuyCQ
-         Kt4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWSM3iwy5WyVGfFNHrNYF57c1bm1JIbQQ6FzmZXAppcIFRT0qhRPEhAG9ZjAi73zglrbI8JwN8BdZj9miE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/WKNL2GKrbLA9nVIi1zqJwe1EXimrBSPmEl3CAPeomNepW7Tf
-	xLTjWPNR5Niqpab3WV/5xNvGdSSkzFMLAuqgYtDrA8Q/u/ls/bhwb6qcv2ylRpYRZKA=
-X-Gm-Gg: ASbGncutytD8jTyHMoFXAv54RS3+U8RE+hEO/eSMZd6hhzSJut5VdVOAzG/OsIB68jG
-	dLCCxUq2z7XKHwnxuw8GCvPkSTYplWIdppf7qVRJIeVi+VrI0L3NbvvHJ4137y0Uzzzg9/n1UrL
-	8rAerkn2raN983X2iPdPBzXf1Gr8NayMVkEEGBHt5ppTAS/ohf4RMYaAz3EXboTfbL4p0zQj36R
-	lLeIjYVr21vHYYc6odD1ZMOIC3eWJH+Lzv9DSfrECrbq7aDFulgUESdwJSPgvTHZkOgtD2O1V7P
-	/WRrWfp8Z+Hyw6DM0tGeAfO1QpENIkXLRhqSZUGnvv9OcO2vE359tAuOV7hPg+VeIWoir/gr4iE
-	9HzIaJWL5Ycotl8Hi0tP08Se3ow/MGQ==
-X-Google-Smtp-Source: AGHT+IHEJwqxJwdifUOCSxwxS8LU3s+6tTaEhqmWIZcz8WNrqBZn4cOf5NK2eo88RGZk0Kt+NV58dg==
-X-Received: by 2002:a17:907:3e89:b0:afd:d9e4:5a4a with SMTP id a640c23a62f3a-afe07d61255mr154660366b.62.1755762043006;
-        Thu, 21 Aug 2025 00:40:43 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.81])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded309f55sm341039666b.47.2025.08.21.00.40.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 00:40:42 -0700 (PDT)
-Message-ID: <d004d9c4-f71b-49e6-9ced-031761f5e338@tuxon.dev>
-Date: Thu, 21 Aug 2025 10:40:40 +0300
+        d=1e100.net; s=20230601; t=1755762070; x=1756366870;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ti5B2OppIdJ14C+jlxk9QeuB8MZbK9cE5qBq6GJOv6w=;
+        b=Yo8pzsTaIX7L3ATDf/YJ0mOQc+Y7dabEeeTeu2CCJXiGwCurNAmPfeMMc0CgQlsFb/
+         LL7ZSso9zrJvus5sKwdHtUf7fdGuqIvGkedFeCVSN45t3/A9/R8Weo41AZ19LjZogsKa
+         aDLxoyf414wLIFiTPMFB7c14t4KVqxIlXn19bwl7cwP9fJu/WkpnKqqpMCzP54GBfDf8
+         cOq1LHwugYjnLOoohBZHEbAl19utlASsxgkuwwyHcceBexnlGTPz0vjzBZGtpaKw8ONs
+         F55/XH4yJ3jNbbzkpySj58QMW+i3u/9DSJxZ81vpvgGE8JcOQE7xiSZDIojyMQIEpigC
+         LXXA==
+X-Gm-Message-State: AOJu0YxS6lM2uHB9ZEkigWxbIfvua7/JWOMqgNAuLLN7LRP4X1juliOU
+	/gLBW7VtHqplQfkTfdWNMBmC8Ek69iqocp0/0nClJx0osh1C/+1CUvwo0GQhwAZhrtVv+7LcXKb
+	9iV8/I6ljLM7/xf28MwZFCtc4WU59tjdOaTnWXMdCItSFxSk/22AqMko=
+X-Gm-Gg: ASbGncvOpFslgmMoSSGkpnf3wRk6kXntMv9rp2MyejxtJsniS9ApkyChBrnfjnyOsFr
+	F4dIHrl0pBmHUI4jsQ61viZhGfOb1L5lxvBuIZJuqIpduwlPVhvY2AKjJ17gwcbQFQFrsKm7iPB
+	w1Yky9yoDJKMQ7sleyjNjPD3fBnzzQJ/V4apZ/IDTtAnf5dhI1rnWT9UvKNYPE3C7xcYUbzdCX2
+	cmcaHSnjEgI9GF9lkEIFVrUm1GyLG1m+8/L5jXSRWn0xkRT/a8=
+X-Google-Smtp-Source: AGHT+IFPeGolGP1SHT+UI5FBN+TFk76c10gfNsDmUba4Dqno3VnXTqdsdQqTIRxAN0cNEBF8z0NIIENh9QfuZa/7hHQ=
+X-Received: by 2002:a2e:be22:0:b0:332:2c2a:63bf with SMTP id
+ 38308e7fff4ca-33549f5a800mr5305301fa.20.1755762069623; Thu, 21 Aug 2025
+ 00:41:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/9] PCI: of_property: Restore the arguments of the
- next level parent
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
- will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-4-claudiu.beznea.uj@bp.renesas.com>
- <7wmpgldjvznbllotblv6ufybd2qqzb2ole2nhvbx4xiavyqa2b@ezaqwghxmbve>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <7wmpgldjvznbllotblv6ufybd2qqzb2ole2nhvbx4xiavyqa2b@ezaqwghxmbve>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250815094510.52360-1-marco.crivellari@suse.com>
+ <aJ92vqBchsh-h-0z@slm.duckdns.org> <CAAofZF5U_fND+te4Sj_+TQPgZH_DDTneN2XLyY7a0niGBjGjaA@mail.gmail.com>
+ <aKZYEDYHYs3W2OL0@slm.duckdns.org>
+In-Reply-To: <aKZYEDYHYs3W2OL0@slm.duckdns.org>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Thu, 21 Aug 2025 09:40:58 +0200
+X-Gm-Features: Ac12FXwwL0dlcW3LF8umxrthiAb0KN6xOhvm9kaXzH64zEK9pDHR4frIyf7zkGE
+Message-ID: <CAAofZF7gEeKVWf_i3uCj=QPNpDXmunb30_6MqiXRHbb9wGHKCQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Workqueue: replace system wq and change
+ alloc_workqueue callers
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Manivannan,
+On Thu, Aug 21, 2025 at 1:19=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
+>
+> Hello,
+>
+> On Tue, Aug 19, 2025 at 02:28:12PM +0200, Marco Crivellari wrote:
+> > Sorry for another email.
+> >
+> > Another question / observation: I guess maintainers can't just pull
+> > the changes and merge for the next release, if the workqueue changes
+> > (e.g. changes in queue_work() etc) are not also merged, right?
+> >
+> > I received a reply here, in the meantime, in "Workqueue: fs: replace
+> > use of system_wq and add WQ_PERCPU to alloc_workqueue users"
+> > (https://www.spinics.net/lists/kernel/msg5811817.html).
+>
+> I can prepare a branch that fs can pull but aren't all the prerequisites
+> already in the master branch from the last cycle?
+>
+> Thanks.
+>
+> --
+> tejun
 
-On 20.08.2025 20:47, Manivannan Sadhasivam wrote:
-> On Fri, Jul 04, 2025 at 07:14:03PM GMT, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> of_pci_make_dev_node() creates a device tree node for the PCIe bridge it
->> detects. The node name follows the format: pci_type@pci_slot,pci_func. If
->> such a node already exists in the current device tree, a new one is not
->> created.
->>
->> When the node is created, its contents are populated with information from
->> the parent node. In the case of root complex nodes described in the device
->> tree, the created node duplicates the interrupt-map property. However, the
->> duplicated interrupt-map property does not correctly point to the next
->> interrupt controller.
->>
->> For example, in the case of the Renesas RZ/G3S SoC, the resulting device
->> tree node is as follows (only relevant DT properties are shown):
->>
->> pcie@11e40000 {
->>
->>     // ...
->>
->>     interrupt-map = <0x00 0x00 0x00 0x01 0x1f 0x00 0x00 0x00 0x00
->>                      0x00 0x00 0x00 0x02 0x1f 0x00 0x00 0x00 0x01
->>                      0x00 0x00 0x00 0x03 0x1f 0x00 0x00 0x00 0x02
->>                      0x00 0x00 0x00 0x04 0x1f 0x00 0x00 0x00 0x03>;
->>     interrupt-map-mask = <0x00 0x00 0x00 0x07>;
->>     interrupt-controller;
->>     #interrupt-cells = <0x01>;
->>
->>     #address-cells = <0x03>;
->>     #size-cells = <0x02>;
->>
->>     phandle = <0x1f>;
->>
->>     // ...
->>
->>     pci@0,0 {
->>         reg = <0x00 0x00 0x00 0x00 0x00>;
->>         interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x00
->>                          0x10000 0x00 0x00 0x02 0x1f 0x00 0x11e40000 0x00 0x01
->>                          0x10000 0x00 0x00 0x03 0x1f 0x00 0x11e40000 0x00 0x02
->>                          0x10000 0x00 0x00 0x04 0x1f 0x00 0x11e40000 0x00 0x03>;
->>         interrupt-map-mask = <0xffff00 0x00 0x00 0x07>;
->>         #interrupt-cells = <0x01>;
->>
->>         #address-cells = <0x03>;
->>         #size-cells = <0x02>;
->>
->>         // ...
->>     };
->> };
->>
->> With this pci@0,0 node, the interrupt-map parsing code behaves as follows:
->>
->> When a PCIe endpoint is enumerated and it requests to map a legacy
->> interrupt, of_irq_parse_raw() is called requesting the interrupt from
->> pci@0,0. If INTA is requested, of_irq_parse_raw() first matches:
->>
->> interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x00>
->>
->> from the pci@0,0 node. It then follows the phandle 0x1f to the interrupt
->> parent, looking for a mapping for interrupt ID 0x00
->> (0x00 0x11e40000 0x00 0x00). However, the root complex node does not
->> provide this mapping in its interrupt-map property, causing the interrupt
->> request to fail.
->>
-> 
-> Are you trying to say that the generated bridge node incorrectly uses Root
-> Complex node as the interrupt parent?
+Hello Tejun,
 
-I'm trying to say that the generated bridge node is wrong because it copies
-the interrupt-map from the root complex mapping int 0x1 to 0x0 in the
-bridge node, while it should have map the int 0x1 to something valid for
-root complex mapping.
+There is still the logic inside "include/linux/workqueue.h", in
+queue_delayed_work() / mod_delayed_work() / queue_work().
+Just the pr_warn_once() and the workqueue redirection.
 
-E.g. when some device requests INT with id 0x1 from bridge the bridge
-mapping returns 0x0 then the returned 0x0 is used to find a new mapping on
-the root complex based on what is provided for in with interrupt-map DT
-property.
+These changes are introduced by 2 different patches, based on when the
+two new wq(s) are replaced inside the code.
+
+There are also changes inside  __alloc_workqueue(), always in this
+series (when WQ_PERCPU is used), because they are the "general" (core)
+changes.
+
+If I remember correctly we decided to keep the prerequisites without
+any more "logic".
+As long as this series is merged before or anyhow in the same rc, I
+think there are no problems; right?
+
+Thank you!
+
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
 
-> 
-> I'm getting confused since your example above shows '0x1f' as the interrupt
-> parent phandle for both Root Complex and bridge nodes. But I don't know to which
-> node this phandle corresponds to.
-
-Root complex node from this patch description has:
-
-phandle = <0x1f>;
 
 
-> 
-> In any case, since this seems to be an independent fix, please send it
-> separately.
-
-Yes, once port bindings are added this fix is not needed for this driver
-anymore. Will post it as a separate fix.
-
-Thank you,
-Claudiu
-
-
-> 
-> - Mani
-> 
->> To avoid this, in the interrupt-map property of the nodes generated by
->> of_pci_make_dev_node() map legacy interrupts to entries that are valid in
->> the next level interrupt controller in the interrupt mapping tree.
->>
->> With this, the generated pci@0,0 node and its parent look as follows:
->>
->> pcie@11e40000 {
->>     // ...
->>
->>     interrupt-map = <0x00 0x00 0x00 0x01 0x1f 0x00 0x00 0x00 0x00
->>                      0x00 0x00 0x00 0x02 0x1f 0x00 0x00 0x00 0x01
->>                      0x00 0x00 0x00 0x03 0x1f 0x00 0x00 0x00 0x02
->>                      0x00 0x00 0x00 0x04 0x1f 0x00 0x00 0x00 0x03>;
->>     interrupt-map-mask = <0x00 0x00 0x00 0x07>;
->>     interrupt-controller;
->>     #interrupt-cells = <0x01>;
->>
->>     #address-cells = <0x03>;
->>     #size-cells = <0x02>;
->>
->>     phandle = <0x1f>;
->>
->>     // ...
->>
->>     pci@0,0 {
->>         reg = <0x00 0x00 0x00 0x00 0x00>;
->>         interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x01
->>                          0x10000 0x00 0x00 0x02 0x1f 0x00 0x11e40000 0x00 0x02
->>                          0x10000 0x00 0x00 0x03 0x1f 0x00 0x11e40000 0x00 0x03
->>                          0x10000 0x00 0x00 0x04 0x1f 0x00 0x11e40000 0x00 0x04>;
->>         interrupt-map-mask = <0xffff00 0x00 0x00 0x07>;
->>         #interrupt-cells = <0x01>;
->>
->>         #address-cells = <0x03>;
->>         #size-cells = <0x02>;
->>     };
->> };
->>
->> Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - none; this patch is new
->>
->>  drivers/pci/of_property.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
->> index 506fcd507113..8dfed096326f 100644
->> --- a/drivers/pci/of_property.c
->> +++ b/drivers/pci/of_property.c
->> @@ -243,6 +243,14 @@ static int of_pci_prop_intr_map(struct pci_dev *pdev, struct of_changeset *ocs,
->>  		}
->>  		of_property_read_u32(out_irq[i].np, "#address-cells",
->>  				     &addr_sz[i]);
->> +
->> +		/*
->> +		 * Restore the arguments of the next level parent if a map
->> +		 * was found.
->> +		 */
->> +		out_irq[i].np = pnode;
->> +		out_irq[i].args_count = 1;
->> +		out_irq[i].args[0] = pin;
->>  	}
->>  
->>  	list_for_each_entry(child, &pdev->subordinate->devices, bus_list) {
->> -- 
->> 2.43.0
->>
-> 
-
+marco.crivellari@suse.com
 
