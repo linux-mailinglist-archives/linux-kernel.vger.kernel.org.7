@@ -1,176 +1,150 @@
-Return-Path: <linux-kernel+bounces-779388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5909BB2F380
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:15:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E77DB2F37A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4510A02B6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948C11CC581C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1C92E9EBB;
-	Thu, 21 Aug 2025 09:11:28 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686C12ED14B;
+	Thu, 21 Aug 2025 09:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="NoLftIDx"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6921A2D94A3
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA28B2D3ED1;
+	Thu, 21 Aug 2025 09:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755767488; cv=none; b=k5prBKqlBsiVqyMfyC/GlgT5NZESpXpvytWxKxkUOjkJUBHSyUrajewh2NiSpv41V0G6pjyfetbhQLTKe9KALVPylta/mFyoPSvItrTa+pp3RSZtebOPvF+Ck/92aBKGkcASUOm9R/0gpeBylyKGDW7Phhx9cASoLtIfUUCMoxw=
+	t=1755767522; cv=none; b=VW1hWM+DMrdIzr41dEkhqo5+U4OtgIl8B07eOqNuclAT8eELimMLyR8Qa9VOitzF1CvppiF5YWOD0esWJzHyg+V1Ar6lCtgY8bOodEHFntbXgGhHBTDcRmYkCqPEGjhAeipsbuTzmsk2pnemBriGXE/mGoTGZmRwnsnKBr2Kaxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755767488; c=relaxed/simple;
-	bh=XJ8dJfc9C+AXY03gnuhjk4/tqKb5I1LlCrhmkBUFcbM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N97YHu7xAb5tIOVgY1kS5tqg3KCR3mdFa9xugjz76iCWd3gOAZ4IBqi+t13GfTDsK+OiCWY8Hr8sKlbLKJ3uIQT+poVpi5mHyk/r7QWrYQ7GYtgkjMjwYvOMW5Sgi/lr8mF3Ogd/SbgIb61rgAbtNRH/3UNrHLK4HS0cohaJx3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1up1K4-0001Px-32; Thu, 21 Aug 2025 11:11:04 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1up1K2-001O8D-1q;
-	Thu, 21 Aug 2025 11:11:02 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1up1K2-008Itt-1V;
-	Thu, 21 Aug 2025 11:11:02 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>,
-	Roan van Dijk <roan@protonic.nl>
-Subject: [PATCH net-next v4 5/5] net: phy: dp83td510: add MSE interface support for 10BASE-T1L
-Date: Thu, 21 Aug 2025 11:11:01 +0200
-Message-Id: <20250821091101.1979201-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250821091101.1979201-1-o.rempel@pengutronix.de>
-References: <20250821091101.1979201-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1755767522; c=relaxed/simple;
+	bh=g59s4/Qwtwv1YpMSQzMuBoZHeETrJWRYPs4pguuzfhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=at7djwTqFIm2Vj7NgFSP0qFztEgSd2kAJicLzLni9TStzQMNjNyqU5OUDWrcD//lqE/DureU/2BnoRNruncqHia/o/wVxQC0VQtE3lGUMi4acbol+guFEdUCGX1cw+oj/OgwNb7TM7Vw5DGGvZzqTsn77Z+G6UZ1ixzYrI3Oy9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=NoLftIDx; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [5.228.116.177])
+	by mail.ispras.ru (Postfix) with UTF8SMTPSA id D91C140D3C55;
+	Thu, 21 Aug 2025 09:11:49 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru D91C140D3C55
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1755767509;
+	bh=sCzSseHm8aXWfxStb92YtXd+xaCSsUO+vJVCCr4NWHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NoLftIDxC/fj9s5CSXp5WL5ycPNK32f7Nuy6sF+8HHelNi1usU9rlnCUktMomw6ak
+	 sgU+ks5Popmg2Oc6+n9noaaCwkActjlyUXLKrFl8EsRSrVE+jEQYXd8n+9pPlQoHot
+	 QXJixOXEj1YplJICZ8ao+lUxI7D7bwQ7Lp2r74ag=
+Date: Thu, 21 Aug 2025 12:11:49 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Zong-Zhe Yang <kevin_yang@realtek.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, Bernie Huang <phhuang@realtek.com>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH rtw-next 1/2] wifi: rtw89: fix use-after-free in
+ rtw89_core_tx_kick_off_and_wait()
+Message-ID: <20250821113341-4d93a84ec8bcd73321acd2b7-pchelkin@ispras>
+References: <20250820141441.106156-1-pchelkin@ispras.ru>
+ <20250820141441.106156-2-pchelkin@ispras.ru>
+ <b4ec58864e544b0295ddb02ed408199b@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b4ec58864e544b0295ddb02ed408199b@realtek.com>
 
-Implement get_mse_config() and get_mse_snapshot() for the DP83TD510E
-to expose its Mean Square Error (MSE) register via the new PHY MSE
-UAPI.
+Thanks for the feedback, Zong-Zhe!
 
-The DP83TD510E does not document any peak MSE values; it only exposes
-a single average MSE register used internally to derive SQI. This
-implementation therefore advertises only PHY_MSE_CAP_AVG, along with
-LINK and channel-A selectors. Scaling is fixed to 0xFFFF, and the
-refresh interval/number of symbols are estimated from 10BASE-T1L
-symbol rate (7.5 MBd) and typical diagnostic intervals (~1 ms).
+On Thu, 21. Aug 04:01, Zong-Zhe Yang wrote:
+> Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> > Though one solution that _works_ currently is to get rid of 'struct rtw89_tx_wait_info' and
+> > replace it with the only field it is used for - 'bool tx_done'.  Then it can be stored at 'struct
+> > ieee80211_tx_info::status::status_driver_data' directly without the need for allocating an
+> > extra dynamic object and tracking its lifecycle.
+> > I didn't post this since then the structure won't be expandable for new fields and that's
+> > probably the reason for why it wasn't done in this manner initially.
+> 
+> With a busy waiting on tx waiting side ?
+> If so, it would be unacceptable.
 
-For 10BASE-T1L deployments, SQI is a reliable indicator of link
-modulation quality once the link is established, but it does not
-indicate whether autonegotiation pulses will be correctly received
-in marginal conditions. MSE provides a direct measurement of slicer
-error rate that can be used to evaluate if autonegotiation is likely
-to succeed under a given cable length and condition. In practice,
-testing such scenarios often requires forcing a fixed-link setup to
-isolate MSE behaviour from the autonegotiation process.
+Ohh, I forgot about the need for async completion here. Nevermind that
+solution, sorry.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/dp83td510.c | 44 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+> 
+> > 
+> >  drivers/net/wireless/realtek/rtw89/core.c | 15 ++++++++---
+> > drivers/net/wireless/realtek/rtw89/core.h | 32 ++++++++++++++---------
+> > drivers/net/wireless/realtek/rtw89/pci.c  |  6 +++--
+> >  3 files changed, 36 insertions(+), 17 deletions(-)
+> > 
+> > diff --git a/drivers/net/wireless/realtek/rtw89/core.c
+> > b/drivers/net/wireless/realtek/rtw89/core.c
+> > index 57590f5577a3..826540319027 100644
+> > --- a/drivers/net/wireless/realtek/rtw89/core.c
+> > +++ b/drivers/net/wireless/realtek/rtw89/core.c
+> > @@ -1088,6 +1088,7 @@ int rtw89_core_tx_kick_off_and_wait(struct rtw89_dev *rtwdev,
+> > struct sk_buff *sk
+> >         struct rtw89_tx_skb_data *skb_data = RTW89_TX_SKB_CB(skb);
+> >         struct rtw89_tx_wait_info *wait;
+> >         unsigned long time_left;
+> > +       bool free_wait = true;
+> >         int ret = 0;
+> > 
+> >         wait = kzalloc(sizeof(*wait), GFP_KERNEL); @@ -1097,7 +1098,8 @@ int
+> > rtw89_core_tx_kick_off_and_wait(struct rtw89_dev *rtwdev, struct sk_buff *sk
+> >         }
+> > 
+> >         init_completion(&wait->completion);
+> > -       rcu_assign_pointer(skb_data->wait, wait);
+> > +       spin_lock_init(&wait->owner_lock);
+> > +       skb_data->wait = wait;
+> > 
+> >         rtw89_core_tx_kick_off(rtwdev, qsel);
+> >         time_left = wait_for_completion_timeout(&wait->completion,
+> > @@ -1107,8 +1109,15 @@ int rtw89_core_tx_kick_off_and_wait(struct rtw89_dev *rtwdev,
+> > struct sk_buff *sk
+> >         else if (!wait->tx_done)
+> >                 ret = -EAGAIN;
+> > 
+> > -       rcu_assign_pointer(skb_data->wait, NULL);
+> > -       kfree_rcu(wait, rcu_head);
+> 
+> Please consider the following.
+> (moving "rcu_assign_pointer(skb_data->wait, NULL)" to be under "if (time_left == 0)")
+> 
 
-diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-index 23af1ac194fa..094c070f3f96 100644
---- a/drivers/net/phy/dp83td510.c
-+++ b/drivers/net/phy/dp83td510.c
-@@ -249,6 +249,47 @@ struct dp83td510_priv {
- #define DP83TD510E_ALCD_COMPLETE			BIT(15)
- #define DP83TD510E_ALCD_CABLE_LENGTH			GENMASK(10, 0)
+There is still a tiny race window. Suppose wait_for_completion_timeout()
+exits with a timeout, so time_left is 0. If completing side goes on in
+parallel just after that, it has a chance to proceed and free skb_data
+before the below if (time_left == 0) fragment is executed.
 
-+static int dp83td510_get_mse_config(struct phy_device *phydev,
-+				    struct phy_mse_config *config)
-+{
-+	/* The DP83TD510E datasheet does not specify peak MSE values.
-+	 * It only provides a single MSE value which is used to derive SQI.
-+	 * Therefore, we only support the average MSE capability.
-+	 */
-+	config->supported_caps = PHY_MSE_CAP_AVG | PHY_MSE_CAP_LINK |
-+		PHY_MSE_CAP_CHANNEL_A;
-+	config->max_average_mse = 0xFFFF;
-+
-+	/* The datasheet does not specify the refresh rate or symbol count,
-+	 * but based on similar PHYs and standards, we can assume a common
-+	 * value. For 10BaseT1L, the symbol rate is 7.5 MBd. A common
-+	 * diagnostic interval is around 1ms.
-+	 * 7.5e6 symbols/sec * 0.001 sec = 7500 symbols.
-+	 */
-+	config->refresh_rate_ps = 1000000000; /* 1 ms */
-+	config->num_symbols = 7500;
-+
-+	return 0;
-+}
-+
-+static int dp83td510_get_mse_snapshot(struct phy_device *phydev, u32 channel,
-+				      struct phy_mse_snapshot *snapshot)
-+{
-+	int ret;
-+
-+	if (channel != PHY_MSE_CHANNEL_LINK &&
-+	    channel != PHY_MSE_CHANNEL_A)
-+		return -EOPNOTSUPP;
-+
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_MSE_DETECT);
-+	if (ret < 0)
-+		return ret;
-+
-+	snapshot->average_mse = ret;
-+
-+	return 0;
-+}
-+
- static int dp83td510_led_brightness_set(struct phy_device *phydev, u8 index,
- 					enum led_brightness brightness)
- {
-@@ -893,6 +934,9 @@ static struct phy_driver dp83td510_driver[] = {
- 	.get_phy_stats	= dp83td510_get_phy_stats,
- 	.update_stats	= dp83td510_update_stats,
+>     if (time_left == 0) {
+>         rcu_assign_pointer(skb_data->wait, NULL);
+>         ret = -ETIMEDOUT;
+>     } else if (!wait->tx_done) {
+>         ret = -EAGAIN;
+>     }
+> 
+>     kfree_rcu(wait, rcu_head);
+> 
+> If completing side does run as expected (potential racing mentioned in this patch),
+> there is no real need to assign NULL back.
 
-+	.get_mse_config	= dp83td510_get_mse_config,
-+	.get_mse_snapshot = dp83td510_get_mse_snapshot,
-+
- 	.led_brightness_set = dp83td510_led_brightness_set,
- 	.led_hw_is_supported = dp83td510_led_hw_is_supported,
- 	.led_hw_control_set = dp83td510_led_hw_control_set,
---
-2.39.5
+Actually the race happens regardless of wait_for_completion_timeout() exit
+status, it's briefly mentioned in the race diagram inside commit message
+(but the diagram can show only one possible concurrency scenario). I agree
+this may be improved and described more explicitly though.
 
+As for the patch itself, currently I can't see another way of fixing that
+other than introducing locks on both waiting and completing side.
 
