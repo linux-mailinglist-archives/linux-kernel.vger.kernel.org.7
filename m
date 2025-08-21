@@ -1,201 +1,202 @@
-Return-Path: <linux-kernel+bounces-780717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B67B30849
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:23:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3747B30818
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3681E1888F4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:22:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE93D17BC11
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9882C0282;
-	Thu, 21 Aug 2025 21:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4861BFE00;
+	Thu, 21 Aug 2025 21:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="E7Ze60CN"
-Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="krKYgNiB"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFE52BD001;
-	Thu, 21 Aug 2025 21:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755811316; cv=pass; b=aaORIOpLJVEA+8B8f+l1Eguax2mXDzlPiHWtbIqIX7uUr8BD0wIaolgJPN3EhfigLKe2vQU5NIBVaRzSHzXITieA1NG6a8y2A41NlBTn/tqo2tD54EW4KsErJLhxdMIauW85TWKf1GVfdohWw8W1YKONeLihrfgcynLQp8aIH0U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755811316; c=relaxed/simple;
-	bh=gHc9N+sPNmbFdoVvlcXaXBnEUwSsL2C2pPfbjITtm2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T24ZERiKtkukb2gip27u04p3LUQ2LzdbRX0C7Q7gHbl6my40KWs8SMPfIl1Qe3ffqIclOMSQzuc2POlhxgQ5Zybfc171Mpr/qb0aUFeRICrvAFE5BlSU/y+k/ewng1EPNnhJXrQ48gD2LoLe0isoUAuS8XhPYYpoiFODy4IS5BA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=E7Ze60CN; arc=pass smtp.client-ip=23.83.212.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 67DB02C60D5;
-	Thu, 21 Aug 2025 21:02:47 +0000 (UTC)
-Received: from pdx1-sub0-mail-a254.dreamhost.com (trex-blue-3.trex.outbound.svc.cluster.local [100.96.37.67])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id BB8372C6073;
-	Thu, 21 Aug 2025 21:02:44 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1755810165; a=rsa-sha256;
-	cv=none;
-	b=VA395R/iBN/iOB+2AT3Sx/h1V57sN4gvPNEF/dlZq+Ge5opPfCJ/TpPnVatyDp0CHNJxEv
-	tfDOgcPj/9I3SSVqRyD5TEldt/tqv/xweW+60BgBStohBbFv8e2ynhrglN2nyyxh25jZQA
-	YORnb92Kh16oV1zpUf9tESKgdmeBarvhIeE7vF0+64eZYgtrrOlVucRk0kDNPxv7OQ5qY/
-	E2N1+scnJbeXWvTnXGmf8uS0oFkgbmIM+zJq5T0ul1As2+W1OWWVvNCUD+YIrVnck8t/2A
-	ji//1hdJ9dZfNDYeeIgIAVsb/CjjUaJAfb6JHpd7XAcTnKIglfss8ZWkvQuNWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1755810165;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=PiRdnVkb3Mdck8rf90p7+DnOfB9A+JduUXfai72Z7+4=;
-	b=fvPcQG0GmaTFX0s1SvnPmsgzy7jrpdnnof5z+FJUBRcZNz6Yrb7EjpplCBztg5XKo8l85X
-	vHXX5ehr9qCvBYjGuVtmUvNX7211fZM0R9Xql2poMvPoFXHnoBmEFYsyNj4CC5rM9SmwHO
-	EAPh/w93JrVjFX3ybeA5SbFS+CvE6mYStAXAMcPUXA2p3YmsqIRTR+lWEtDtz6xxqipg7a
-	wI/lpLAQAIurkhZwCy7PSEzAmul2gk48lwVbObDJY/IKmMwgd9RSptaiYI45tUTfv3K7ml
-	HcRlx8kRl3opZw0WLx0xmQEJVlTb7vOavtegGw4yurw/8Zt+PJG4G0s6aM2eNg==
-ARC-Authentication-Results: i=1;
-	rspamd-b597879cf-ngsbq;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
-X-MailChannels-Auth-Id: dreamhost
-X-Macabre-Bubble: 2f8dd21033f8e097_1755810167283_2720825162
-X-MC-Loop-Signature: 1755810167283:381200934
-X-MC-Ingress-Time: 1755810167283
-Received: from pdx1-sub0-mail-a254.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.96.37.67 (trex/7.1.3);
-	Thu, 21 Aug 2025 21:02:47 +0000
-Received: from [IPV6:2607:fb90:faae:51e1:d9d4:2e42:ae75:9827] (unknown [172.58.14.113])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: rob@landley.net)
-	by pdx1-sub0-mail-a254.dreamhost.com (Postfix) with ESMTPSA id 4c7G431Sm7zDF;
-	Thu, 21 Aug 2025 14:02:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
-	s=dreamhost; t=1755810164;
-	bh=PiRdnVkb3Mdck8rf90p7+DnOfB9A+JduUXfai72Z7+4=;
-	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
-	b=E7Ze60CNKAiVA+WD8T4gncR5kdArdw1idFuny3yPyKtIHpxERaG5Sb3tizBAEbBL/
-	 1rZpQo1GhUTePym7uXRlMqKbqQScRPDFlva0DiRf+aR0LSjS/M+i/0OSjzvlYfTtCd
-	 IgsnjyNyyunyCtWVkBI/altwWbggCNtHJGZ7XJ3zZhXH203GZsTE7otLwmIRNL/uUV
-	 Fjdx1AxvsaHevwhNKe1sIfhj+tUt6JSudtond1NWpomo1JJ7C5lGodn70E5f4LSu22
-	 96C1BYubVxQ4CfoUOIKdH3ZsHxphuqfLytr7+LmMt956XvMF7DNvFXe8gaUzBPpzRP
-	 pM+ZgqBhRFNkw==
-Message-ID: <4df745a6-2997-4eee-87b1-0c77ff46cfdd@landley.net>
-Date: Thu, 21 Aug 2025 16:02:41 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05166393DC5;
+	Thu, 21 Aug 2025 21:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755810615; cv=none; b=NavUehFz4x9JM3g8JcksCcv3joAb982MtqkwP4qQPvBQwp7rhDhpONQB8UmG72LHf21AxsNslADLktipg09XzdeP4ecYLXerS4++AsDUJAf5N/WitgHAzHyb5WQWrWgJ7wy9i6lhhJR9AYjM5THfiUaGIhmHlRI8Vj9KO4H3+t0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755810615; c=relaxed/simple;
+	bh=vIXDGsM34sDEsl3qyHxmGWOvjGUTj+tyo6z/hKeM7/Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MZ12Rb+KRUtEOk1r3z/Sgj3MahLYDpzLduMNNyjujk61JcyDT2hfEr0OlaGgoqTbLEXMDQ9ogoeivVWtKHxNsVt3FIrFtO5qvG4QcS8FcmjoXMZfZa74Aq4osWvKTSG64h8aInOzr8neEV9YRv26xryrnuMFQ6u6twvqK/PdjPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=krKYgNiB; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vIXDGsM34sDEsl3qyHxmGWOvjGUTj+tyo6z/hKeM7/Q=; b=krKYgNiBmczVq23OldJ9FX8AAP
+	R12QpjQ/PX+opMWJH2b79koqkjX9hx/dIthM8IG3OYA61BIiu3BpJTwltC9Y3QaSNSfHL2hgAtlMb
+	3holbrZrQYecWVZL6zVBI3v13q+BE/T0fBVwfw88yz5IxAK+Z32qatqhHENxJ9T/S10+RdTCAiOta
+	mn0uczU1+OWKrh5z0n5j/KCtebp7OUKvX6ZCWsflqHUYlyHF9w+W8dSECJbtSsKIGwGDYgwDOMXap
+	PP/Qkx4rRgi0HfPesNIZPMKdbdfdqavnw9taKM6hCOOEI5PMpLKOXvNKpB7C8Ib4EwKuzm7+aaIyk
+	UhGGvbYA==;
+Received: from 54-240-197-233.amazon.com ([54.240.197.233] helo=freeip.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1upCXt-0000000DsVV-0CJQ;
+	Thu, 21 Aug 2025 21:10:05 +0000
+Message-ID: <fdcc635f13ddf5c6c2ce3d5376965c81ce4c1b70.camel@infradead.org>
+Subject: Re: [PATCH v2 0/3] Support "generic" CPUID timing leaf as KVM guest
+ and host
+From: David Woodhouse <dwmw2@infradead.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner
+ <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,  x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,  graf@amazon.de, Ajay
+ Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov
+ <alexey.makhalov@broadcom.com>, Colin Percival <cperciva@tarsnap.com>
+Date: Thu, 21 Aug 2025 22:10:04 +0100
+In-Reply-To: <aKeGBkv6ZjwM6V9T@google.com>
+References: <20250816101308.2594298-1-dwmw2@infradead.org>
+	 <aKdIvHOKCQ14JlbM@google.com>
+	 <933dc95ead067cf1b362f7b8c3ce9a72e31658d2.camel@infradead.org>
+	 <aKdzH2b8ShTVeWhx@google.com>
+	 <6783241f1bfadad8429f66c82a2f8810a74285a0.camel@infradead.org>
+	 <aKeGBkv6ZjwM6V9T@google.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-LARYG9DR3J/vmJrj6PBX"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: net: Add support for J-Core EMAC
-To: Rob Herring <robh@kernel.org>, "D. Jeff Dionne" <jeff@coresemi.io>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Artur Rojek <contact@artur-rojek.eu>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250815194806.1202589-3-contact@artur-rojek.eu>
- <aa6bdc05-81b0-49a2-9d0d-8302fa66bf35@kernel.org>
- <cab483ef08e15d999f83e0fbabdc4fdf@artur-rojek.eu>
- <CAMuHMdVGv4UHoD0vbe3xrx8Q9thwrtEaKd6X+WaJgJHF_HXSaQ@mail.gmail.com>
- <26699eb1-26e8-4676-a7bc-623a1f770149@kernel.org>
- <295AB115-C189-430E-B361-4A892D7528C9@coresemi.io>
- <bc96aab8-fbb4-4869-a40a-d655e01bb5c7@kernel.org>
- <CAMuHMdW0NZHCX1V01N4oay-yKuOf+RR5YV3kjNFiM6X6aVAvdw@mail.gmail.com>
- <0784109c-bb3e-4c4e-a516-d9e11685f9fb@kernel.org>
- <CB2BF943-8629-4D01-8E52-EEC578A371B5@coresemi.io>
- <20250820213959.GA1242641-robh@kernel.org>
-Content-Language: en-US
-From: Rob Landley <rob@landley.net>
-In-Reply-To: <20250820213959.GA1242641-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On 8/20/25 16:39, Rob Herring wrote:
-> On Mon, Aug 18, 2025 at 10:55:51PM +0900, D. Jeff Dionne wrote:
->> J-Core SoCs are assembled with an SoC generator tool from standard
->> components.  An SoC has a ROM from soc_gen with a Device Tree binary
->> included.  Therefore, J-Core SoC devices are designed to ‘just work’
->> with linux, but this means the DT entires are generic, slightly
->> different than standard device tree practice.
-> 
-> Yes. Though doesn't the SoC generator evolve/change? New features in the
-> IP blocks, bug fixes, etc. Soft IP for FPGAs is similar I think.
 
-The j-core guys almost never change the hardware interface on a deployed 
-I/O device: when the existing interface is too limiting they do a new 
-design with a different interface. (You'll notice in the github soc_top, 
-components/ has ddr and ddr2, and components/misc has aic and aic2 from 
-when the interrupt controller changed, for example. Those aren't version 
-numbers, those are rewrites.)
+--=-LARYG9DR3J/vmJrj6PBX
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Outputting a different constellation of devices/busses from the SOC 
-generator is more akin to running "make menuconfig". There isn't an 
-ancestor/descendant relationship there, it's a generator working from a 
-configuration to instantiate and connect existing components.
+On Thu, 2025-08-21 at 13:48 -0700, Sean Christopherson wrote:
+> =C2=A0
+> > I think I'm a lot happier with the explicit CPUID leaf exposed by the
+> > hypervisor.
+>=20
+> Why?=C2=A0 If the hypervisor is ultimately the one defining the state, wh=
+y does it
+> matter which CPUID leaf its in?
 
-> There
-> we typically just require the versioning schema be documented and
-> correlate to the IP versions (vs. made up v1, v2, v3).
+It matters to the guest. If there's any hypervisor anywhere which
+allows the bogus Skylake CPUID contents to show through to a guest, or
+which allows the native hardware contents of the 0x15/0x16 leaves to
+show even when TSC scaling is in force, then the guest cannot trust
+those leaves.
 
-There hasn't been a new version of the 100baseT specification recently.
+If you tell me that 0x15 is *never* wrong when seen by a KVM guest, and
+that it's OK to extend the hardware CPUID support up to 0x15 even on
+older CPUs and there'll never be any adverse consequences from weird
+assumptions in guest operating systems if we do the latter... well, for
+a start, I won't believe you. And even if I do, I won't think it's
+worth the risk. Just use a hypervisor leaf :)
 
-The same chunk of bitstream is still driving the same PHY chips on the 
-boards (or compatible, long out of patent) via the same small parallel 
-bus at 50mhz. The engineers are no more interested in changing the 
-kernel side interface than they are in changing the PHY side interface.
+--=-LARYG9DR3J/vmJrj6PBX
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-> This is all pretty niche I think, so I'm not too concerned about what 
-> you do here.
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDgyMTIxMTAw
+NFowLwYJKoZIhvcNAQkEMSIEIKZ7RLlKejTkoTNygWhTBV1hsdn1B8A8l7pOTcox5RJWMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAmDLtCgp1kRpB
+h16PL/LIhpwPRsMjww8wf1nxdKusEEZne6bjggJqT36k625te/aa5gLLVkYbliRk4CEMVhm/hIkz
+o/DOgquGo3YcaSnUcb15t4QhRO4I+k+c/mwfYEfRrBquC1VDCxd4Gows4M+n2TuyPDeU/lGJ1SV7
+IGbKxAZ/4wZjKEqN2qxT37JidO7XNuu7iT+grkv0UGPtrR49SsQ5+ESTgTPGoGHUVWyOIoaB/Ybi
+Q6ISJiJL9Iu2soy7Jf99xxb51/4yxza9SKsC7aN14cgNwY/kjGd3HYcZrFNX9iwy+aigX3DTBDQ3
+sDFCjOD1ZdDhzOru72Ceo9Cp3qao+NulZrnRq7DSqhFNwMj43cK1MDjR2H6YF+bEX1YiCgthCkgn
+OjQIbUIvR/bztVrTcGQ1svBQaXzDd6UntgXXU2PWMxrBc3z8rxl4fZ9aODm9+GwBcnTfJtz0XifB
+3TukRobOmFrXU6cPWY7HBK2YfggpA8RVL7emOok8gT/YprLJIHA8r4l6ZwnelNE6khf/cheDzBcW
+9ptIiYb0rxWYbaXXW42Rqyhf5jkXLgcaJyO6ExqorT+mVd32vHvMXhc7w2g6x80sYT65ZCRyDo+B
+LiBEHpWJ3rilo6fEvSgyy1dfSKMM18LHC6b6rEPanZOj5RG7qeODpPfNGP/niSUAAAAAAAA=
 
-Eh, not that niche. Just hardware development culture rather than 
-software development culture. What's the model number on your microwave? 
-If you need to replace it, how many versions will you advance?
 
-Chip model numbers tend to be assigned by marketing well after the fact, 
-and don't necessarily have a linear relationship even for the big boys 
-making central components other people build entire systems around:
-
-https://en.wikipedia.org/wiki/List_of_Qualcomm_Snapdragon_systems_on_chips
-
-The Pentium II's development name was Kalmath, Pentium III was Katmai, 
-then Pentium 4 was a space heater and everybody backed up and switched 
-to "Pentium M" (which was MEANT to be a mobile chip but was instead a 
-"not stupid" chip) and then they did "Core"... And then "Core 2" and 
-"Core Duo" were different things and "Core 2 Duo" was both of those 
-things, and then they had i3 and i5 and i7 but they all came out at the 
-same time...
-
-Jeep produced a "Cherokee" for 50 years and expected the user to step 
-from a 1973 model to a 2023 model and be able to drive it the same 
-(modulo major flag day changes like stick shift or leaded gasoline) with 
-zero learning curve. Hardware developers of today go "here's an sd card, 
-it goes click-click into your device and it just works, the only numbers 
-you really need to know are price and capacity" (modulo microsd, but 
-they still provide adapter sleds).
-
-Software developers think that "DOS 2.0" and "DOS 3.0" or "Windows 3.0" 
-and "Windows 3.1" being profoundly different and largely incompatible is 
-just normal, and track that stuff minutely.
-
-Different culture.
-
-Rob
+--=-LARYG9DR3J/vmJrj6PBX--
 
