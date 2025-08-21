@@ -1,208 +1,128 @@
-Return-Path: <linux-kernel+bounces-779103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96002B2EF21
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:12:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88244B2EF2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ACC51BC68B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:12:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DC4F174936
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FB028031C;
-	Thu, 21 Aug 2025 07:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="irO0xXAu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E9428031D;
+	Thu, 21 Aug 2025 07:12:46 +0000 (UTC)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CFD279DC0;
-	Thu, 21 Aug 2025 07:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11561EA7D2;
+	Thu, 21 Aug 2025 07:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755760338; cv=none; b=RclSg5+On8VDdD5CbB8nDEz3bYaBY3qtjrf2E6fO50Uag3SgIg+PmMWxPsEuQ0RGF/LpQPsXSEGjTNaS9PwOsctoxEg2Fz8owVAoI/f5TCjg0JG4GW3R1Kvj2nj4JSc1INSW4ieVGDL5oIuxJi+YwJGU1TntwIrSwzOqbNYUaiQ=
+	t=1755760365; cv=none; b=FzuuAXR7LSNK69l1BQpJ6l057OJGwqi075THuLtn6VZ039S1y343yw2wPA7KBo2aqHPXgSC1mXH0s3+u6XAIxrYJeWwyMVsHFTeeZB6YtRMHM7KuVgEPno7ikucUQI08s1HxBLQokRdxAB29zVV75PFEjjy1hyBfgSJgtLDWf2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755760338; c=relaxed/simple;
-	bh=lr4D5fV6cnI7hsQ5qLXAT96WUbLBpR119AG6A5Mz2TA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JsRtLbFErHmHR4vCSdladg7DATWMSHs9ykiysbKq9LFhIJLXgWs/4F1xhJRls/ZekGU6tSKtCn5hk1mDlhMs0hq4qHeDk2szVDKCjPvqoKEwpUTzJTT4KeYwWzy3ifDtPZs4RyMIDlNwSFT0bdskI91b9DegGpK731kMRojzkMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=irO0xXAu; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755760337; x=1787296337;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lr4D5fV6cnI7hsQ5qLXAT96WUbLBpR119AG6A5Mz2TA=;
-  b=irO0xXAuXRpd12RlegxghA5ho4d+heos006BtQ0ENvwQcGIqfxWTRH1x
-   VgNvFdc9mKgjo4KzLKyAJfHpDHeH7dp9mHE9iS2wb+vRQhX+YEUHFbmsS
-   fxmGZuwuUDUAAmXzMc/OW2mU/nyZqtEoFgbQLwOguXjshkaZVXAMjWOWt
-   Z6+Mp7k2dhfeYMzIKj0yvUumDmvcSP938r+eBhaC6t/1rjJeUL3CRaSi4
-   Fhex7g1aeVEzJYs/39F1QSZqbIUe79gQBmDD4BfOA69AbYtgjysGuNEFM
-   J4x0kfk/qbWgkB0SbKWJBtn1rY1xqs34qmVYmnFHNEVLvUJsJt72SW6sP
-   Q==;
-X-CSE-ConnectionGUID: sB+3UW04TN65ppKihMz3Hg==
-X-CSE-MsgGUID: /dL4vzMLRTucuddBoPoowQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57955715"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="57955715"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 00:12:15 -0700
-X-CSE-ConnectionGUID: o5XmDyGLSHq8vHC5nX00Fg==
-X-CSE-MsgGUID: J3CLriOXT2WsFDZUwvOT7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="167557895"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa010.jf.intel.com with SMTP; 21 Aug 2025 00:12:11 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 21 Aug 2025 10:12:10 +0300
-Date: Thu, 21 Aug 2025 10:12:10 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: amitsd@google.com
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: Re: [PATCH v2 2/2] usb: typec: maxim_contaminant: re-enable cc
- toggle if cc is open and port is clean
-Message-ID: <aKbGyj5eoP0xzUK4@kuha.fi.intel.com>
-References: <20250815-fix-upstream-contaminant-v2-0-6c8d6c3adafb@google.com>
- <20250815-fix-upstream-contaminant-v2-2-6c8d6c3adafb@google.com>
+	s=arc-20240116; t=1755760365; c=relaxed/simple;
+	bh=I0BZ/WEff0RkimR1T0MhwO0o6umktB6ZMOOp9QGaa7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HaOkjI2EWhycWwBiWIpPgJy5Y+cIWWUh+yVu2sNY8ciAQTRdLCZ9PD8Sc7SPKX7QWlqbZKnQqx0zmujSPGNrY9iHDhfywmz/3QriCGUDpRQ0j5lip2bNd6lR+4ikQAgQcKjfgHoR6v2ZjUpmTbkt83wkYkjkf8SnDZTyyZ8mQp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-89021b256d1so160841241.1;
+        Thu, 21 Aug 2025 00:12:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755760363; x=1756365163;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R+XyJvS29M9jObsU5Dm5+mqIU3v/ZCQA9ib8OZRdEvw=;
+        b=cRcPhi7tY/sCl58rZ7c42DeUF1PjnAJl5ejur83oKiX11DCmNMrgne5ZAR6XT2y3nX
+         Rqa8OzTQYr8/ey8D0RFLdobKusMxJJe3nPW5IurUxlc6CT9ynHmCAdm90lsEho7QOk02
+         drNSPvJJpyF6ANAjBVV4dggIaWt5cEZN+oVYF+hUJzO7IKFDworf03JCinnUM7aHHZmp
+         SGkEwZRF19E/DceoYgzQfinyaJR+HfXk2M2sHG3EiVjsn9j1bW6HhrCCDDnymhIFk8xs
+         i3DIjPlCWZMe3P93TFzfWoIKup0Hl+rdtZRjvqhebFJ4y6lJ6baJt6tfji+9H8i9+Yt1
+         GeoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfEbO9qwBoudTtWqG3e9KugHChYp+V7NqTQsi7Si0nUc9lQnkhfQ5ZdBoeFmxDWrnIE/u5Nkt0FIo+HH8=@vger.kernel.org, AJvYcCVjKU8dRveVNzTayWZu9h4lHibyLx9/8WATpESapVHbn4tYJ7g87L6pFTG/bzj85cX/OMRC/t2yKndGcKUHTAC6duY=@vger.kernel.org, AJvYcCW1sCnRdZqryQjWtvdPHVnEV1VzeROdrXa7YBZsAswenMCAPdmLylHPcMlVD7XakGdgdGxxg0V+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVZP4iFjv/5Fwrjp9C4eHc+1k9gb/dfQcei7ka/77pRTDGF3tm
+	AXUxwwCVUaE9CyNz4lHdClJ/dpL+d49NOquzUip5lv5/shiDV0/1ZgbNRO7N94Lu
+X-Gm-Gg: ASbGncuIdF5YzCxAZkYK+Id+/1KOD7nSlDO4JdHNtxSk4BZR0oo8xNuwwVZFhr3P3NN
+	WCOxpQdUTYy0ZRnpe5Ao40z0OgIvqRJfApkxRKI/JBuZwe1B6mxEBq8urbrq2jVdkyNjYZF2qUv
+	mEIWtK89f++ASe/8JKBu1YNooqX4hzLekpNcE0Ws1x6sKITwvYSeU7jbt8o9UB6C9ykLlD+RF1/
+	MBL4j2fjzyZJS96QwYLmu3HNKgiOA/X/3X/Hkb+MYoNFHlwC83c9jHc0d4xb8YW3DYmuk3aZ89r
+	TDNO83wep9GVZwz4OJucHXR0MvA50AuBWwkD5a02DelMCW5vWW+t+OJoK7Nd94FuujOGKK6LQnc
+	R0Q/Gwb/pDuMWmaLBNVQCT/GNepymPaZO3GDjscIdHYI0FZ4aBNUTAtRebJfX
+X-Google-Smtp-Source: AGHT+IEu1x/ojD8RY/mYRSSla9DhE56VoxavjH5IPOni1i/DXYnWiggK7FCMZEliHu4PKiLT5H+S5g==
+X-Received: by 2002:a05:6102:5111:b0:4eb:53ca:3cfb with SMTP id ada2fe7eead31-51be13b5e02mr348729137.25.1755760362683;
+        Thu, 21 Aug 2025 00:12:42 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-51c55f1b913sm45765137.5.2025.08.21.00.12.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 00:12:42 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-89021b256d1so160837241.1;
+        Thu, 21 Aug 2025 00:12:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0BDZKCNAsWlhC/Xvdr//HTyT1CMdxq+q2f58YU6S4VsPSjffWZU3W0IxYwptxX/f37pt0KYsFsSEQgcQa77De4MA=@vger.kernel.org, AJvYcCVk5n9idouaOI3d7tQrVP2N2KRdnxThVg20BQix+qosL0AfdnEubCYLlQYjE6f68PUD6LV2EZyrYwE4vGY=@vger.kernel.org, AJvYcCWWlnUXFF2q0gGAd0IGzFDk7JXN7ZUwmfWnHjMlishLSVqrWftbp0hvN7aqKpLXfJ3ypGEvoM/J@vger.kernel.org
+X-Received: by 2002:a05:6102:5346:b0:4f6:25fd:7ed3 with SMTP id
+ ada2fe7eead31-51be0c3cb22mr330848137.22.1755760361875; Thu, 21 Aug 2025
+ 00:12:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815-fix-upstream-contaminant-v2-2-6c8d6c3adafb@google.com>
+References: <20250820170913.2037049-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250820170913.2037049-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 21 Aug 2025 09:12:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXRw4HU+eoO=ttj3YDEbi9UdHKtZqC1UT2E251UMh0WyA@mail.gmail.com>
+X-Gm-Features: Ac12FXwXG_8NGNoZINWQzhw9Gs7sTvVLOc6_H3t9avyHMg8cxxSqyey1mBXkMvc
+Message-ID: <CAMuHMdXRw4HU+eoO=ttj3YDEbi9UdHKtZqC1UT2E251UMh0WyA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] net: pcs: rzn1-miic: Correct MODCTRL register offset
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
+	Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, stable@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 15, 2025 at 11:31:52AM -0700, Amit Sunil Dhamne via B4 Relay wrote:
-> From: Amit Sunil Dhamne <amitsd@google.com>
-> 
-> Presently in `max_contaminant_is_contaminant()` if there's no
-> contaminant detected previously, CC is open & stopped toggling and no
-> contaminant is currently present, TCPC.RC would be programmed to do DRP
-> toggling. However, it didn't actively look for a connection. This would
-> lead to Type-C not detect *any* new connections. Hence, in the above
-> situation, re-enable toggling & program TCPC to look for a new
-> connection.
-> 
-> Also, return early if TCPC was looking for connection as this indicates
-> TCPC has neither detected a potential connection nor a change in
-> contaminant state.
-> 
-> In addition, once dry detection is complete (port is dry), restart
-> toggling.
-> 
-> Fixes: 02b332a06397e ("usb: typec: maxim_contaminant: Implement check_contaminant callback")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+On Wed, 20 Aug 2025 at 19:09, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Correct the Mode Control Register (MODCTRL) offset for RZ/N MIIC.
+> According to the R-IN Engine and Ethernet Peripherals Manual (Rev.1.30)
+> [0], Table 10.1 "Ethernet Accessory Register List", MODCTRL is at offset
+> 0x8, not 0x20 as previously defined.
+>
+> Offset 0x20 actually maps to the Port Trigger Control Register (PTCTRL),
+> which controls PTP_MODE[3:0] and RGMII_CLKSEL[4]. Using this incorrect
+> definition prevented the driver from configuring the SW_MODE[4:0] bits
+> in MODCTRL, which control the internal connection of Ethernet ports. As
+> a result, the MIIC could not be switched into the correct mode, leading
+> to link setup failures and non-functional Ethernet ports on affected
+> systems.
+>
+> [0] https://www.renesas.com/en/document/mah/rzn1d-group-rzn1s-group-rzn1l-group-users-manual-r-engine-and-ethernet-peripherals?r=1054571
+>
+> Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
+> Cc: stable@kernel.org
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> ---
->  drivers/usb/typec/tcpm/maxim_contaminant.c | 53 ++++++++++++++++++++++++++++++
->  1 file changed, 53 insertions(+)
-> 
-> diff --git a/drivers/usb/typec/tcpm/maxim_contaminant.c b/drivers/usb/typec/tcpm/maxim_contaminant.c
-> index 818cfe226ac7716de2fcbce205c67ea16acba592..af8da6dc60ae0bc5900f6614514d51f41eded8ab 100644
-> --- a/drivers/usb/typec/tcpm/maxim_contaminant.c
-> +++ b/drivers/usb/typec/tcpm/maxim_contaminant.c
-> @@ -329,6 +329,39 @@ static int max_contaminant_enable_dry_detection(struct max_tcpci_chip *chip)
->  	return 0;
->  }
->  
-> +static int max_contaminant_enable_toggling(struct max_tcpci_chip *chip)
-> +{
-> +	struct regmap *regmap = chip->data.regmap;
-> +	int ret;
-> +
-> +	/* Disable dry detection if enabled. */
-> +	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCLPMODESEL,
-> +				 FIELD_PREP(CCLPMODESEL,
-> +					    LOW_POWER_MODE_DISABLE));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL1, CCCONNDRY, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = max_tcpci_write8(chip, TCPC_ROLE_CTRL, TCPC_ROLE_CTRL_DRP |
-> +			       FIELD_PREP(TCPC_ROLE_CTRL_CC1,
-> +					  TCPC_ROLE_CTRL_CC_RD) |
-> +			       FIELD_PREP(TCPC_ROLE_CTRL_CC2,
-> +					  TCPC_ROLE_CTRL_CC_RD));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(regmap, TCPC_TCPC_CTRL,
-> +				 TCPC_TCPC_CTRL_EN_LK4CONN_ALRT,
-> +				 TCPC_TCPC_CTRL_EN_LK4CONN_ALRT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return max_tcpci_write8(chip, TCPC_COMMAND, TCPC_CMD_LOOK4CONNECTION);
-> +}
-> +
->  bool max_contaminant_is_contaminant(struct max_tcpci_chip *chip, bool disconnect_while_debounce,
->  				    bool *cc_handled)
->  {
-> @@ -345,6 +378,12 @@ bool max_contaminant_is_contaminant(struct max_tcpci_chip *chip, bool disconnect
->  	if (ret < 0)
->  		return false;
->  
-> +	if (cc_status & TCPC_CC_STATUS_TOGGLING) {
-> +		if (chip->contaminant_state == DETECTED)
-> +			return true;
-> +		return false;
-> +	}
-> +
->  	if (chip->contaminant_state == NOT_DETECTED || chip->contaminant_state == SINK) {
->  		if (!disconnect_while_debounce)
->  			msleep(100);
-> @@ -377,6 +416,12 @@ bool max_contaminant_is_contaminant(struct max_tcpci_chip *chip, bool disconnect
->  				max_contaminant_enable_dry_detection(chip);
->  				return true;
->  			}
-> +
-> +			ret = max_contaminant_enable_toggling(chip);
-> +			if (ret)
-> +				dev_err(chip->dev,
-> +					"Failed to enable toggling, ret=%d",
-> +					ret);
->  		}
->  	} else if (chip->contaminant_state == DETECTED) {
->  		if (!(cc_status & TCPC_CC_STATUS_TOGGLING)) {
-> @@ -384,6 +429,14 @@ bool max_contaminant_is_contaminant(struct max_tcpci_chip *chip, bool disconnect
->  			if (chip->contaminant_state == DETECTED) {
->  				max_contaminant_enable_dry_detection(chip);
->  				return true;
-> +			} else {
-> +				ret = max_contaminant_enable_toggling(chip);
-> +				if (ret) {
-> +					dev_err(chip->dev,
-> +						"Failed to enable toggling, ret=%d",
-> +						ret);
-> +					return true;
-> +				}
->  			}
->  		}
->  	}
-> 
-> -- 
-> 2.51.0.rc1.167.g924127e9c0-goog
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-heikki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
