@@ -1,149 +1,181 @@
-Return-Path: <linux-kernel+bounces-780122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BD91B2FDF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:14:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D22B2FDEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5DA17EAD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C6F3B589E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA23F26CE0F;
-	Thu, 21 Aug 2025 15:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkP+L5A4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD3626C393;
+	Thu, 21 Aug 2025 15:07:30 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B21D265606;
-	Thu, 21 Aug 2025 15:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCF726B756
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755788767; cv=none; b=S7hZmHHedSAi8OTvq1eemyodXNQE0r5F5aCv7zgw4T9AnTK6YeJB/ZZINZqKbguOZZrOJrhn9cQ+ZTVR/BufF1VZiPsgXFan4ZFXB5/c3ZETeHC7EtMiaEw7dwNw6/VBq1Qrcwt9B2jO6QMN0JSlnCloxK6NpZFdYHhhqOFGg9U=
+	t=1755788850; cv=none; b=Ed1e4jzO4dAZ1XB8LzyTsNozNF9EvfLsehQi2ZrHc05djbpYYTJIci6oL1rKBnj2T98ltPRKurLvBET9XRoEL8jLf+PHLX2ftamHOX3VDzi7BilQ4ThlUVzarF6r0HwvzXXyMHd5flSVi7Ojeg+s/IGhym+aPatRWIlk817Rz6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755788767; c=relaxed/simple;
-	bh=9c+DmefedBCjSps1/tVd1qVVcibiDPyr2DDXDxuPlSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i0KJe3Izr9tFscQI4MfWowpraRGPHEEZYHOAfn3NkxlYr48BZAC7hE9dIn9TNqFTfidng5pDcLOc9tryUPPEVoUcg0gfF2QH3rt40ym4uf3d5GzRP6Nqi5JifX8VQ8lFQXKafuEe99gxeOyPo9kAbac0o4K29NuCHyiXS+6XBTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkP+L5A4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DD6CC4CEEB;
-	Thu, 21 Aug 2025 15:06:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755788764;
-	bh=9c+DmefedBCjSps1/tVd1qVVcibiDPyr2DDXDxuPlSY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jkP+L5A4ajl1eI9D8jrZEkScbDIVfmlZFgtnjDYeG5Jx30+moGq3efcCB5w/Lohsx
-	 s3Xji2vaMf14OPdkg5ATWWBUJKfrfCeOY4foWGk78wnmgHbLlr2NUMnxwXpzqZiKIs
-	 QGC1QWkBoEXEak3REj4vJMJKp4MHFbM1J9h204ZNuQsKxaO7A+hJ412sCITMe4FC1w
-	 ntUdBQE1NP4ZkDPlmr7Raxw66c+ox17FzzOGq33F2MQuJIjl/HN+ZNv2B/WeCXrgbh
-	 7cm6TaijwQGJ7Zb8Gmi1cq3yDqR4JZjURop7PwSoZbq4aBrRkQF4FOX/POqcQNUjQP
-	 sazLv0JqX2Alw==
-Message-ID: <4a60c3d3-11fb-40fb-8686-3d83539f250b@kernel.org>
-Date: Thu, 21 Aug 2025 17:05:59 +0200
+	s=arc-20240116; t=1755788850; c=relaxed/simple;
+	bh=wLCQfXPnhvLkYuBg8hqLLP00b/P1oOwsU3cSsSqJQ1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hXn8g+eU4Xbvhj/3C0B4q0sHEnRP3p8Ek0DdMoUPC3mC6soiAw6MYxkA8PZzxtDW6kUOgMbKRBmd9WnQA7/QFUdf7xlczzhh6lIJ1bMYEXRIyzuT3sSmY1wvyinmA6IHP+00dvObi8Zt4AmiT3gnlgkCOKVPNxHJjF2Rxaxq/DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id C3159B9730;
+	Thu, 21 Aug 2025 15:07:20 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 06A4B20028;
+	Thu, 21 Aug 2025 15:07:18 +0000 (UTC)
+Date: Thu, 21 Aug 2025 11:07:23 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Sasha Levin <sashal@kernel.org>
+Subject: [for-linus][PATCH] fgraph: Copy args in intermediate storage with
+ entry
+Message-ID: <20250821110723.4395212a@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/11] firmware: qcom_scm: Add
- qcom_scm_pas_get_rsc_table() to get resource table
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <20250819165447.4149674-8-mukesh.ojha@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250819165447.4149674-8-mukesh.ojha@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 06A4B20028
+X-Stat-Signature: qa14phsgfncffo8hfz7d5f3xyyzqi6ge
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/u3cbP8boSLiSmeOy3ubL+9Hfz1EFcOjU=
+X-HE-Tag: 1755788838-548787
+X-HE-Meta: U2FsdGVkX1+r7GON3oHQhMXsQgqYxuaDgQ5sZ0ZVYjmTM7OV2ZIYbre+wkjc6dQyjAejQPwEMS2noSKzwGpJD8SkEpLwIa5zyu5JtdO2xpLtelAr2FjBleUaJHYTYDRJHdIftbD4I5HQfPHQGp5qrmdlc2Mmrsuc3iWhGAWaPcACA/vW6IwcDZm/rgDWIc2gSqArrrO4E5/qrTiquNc4k28FJf6bG04DoCZnKUlk2EKd4JLBIyzqBqOUHcdtbPYWm0C3EAEFiwAFusC/Bp6EFC+TtY0ehRrj7tunb7bC81vFUlsjwNhw0nzWKF8AUr+GAgVbeMJXGH9IzbnF2ykUidMDxKy44vIYcTB8L7fjnA6UVIm/WGXRmlNGxdu5SssN5wsIAwcyqX5oXfjKCDpf8aaDrhrf73rJo6yprudKdetWJhywMffadXarcmPp1eqvlojK4AU12pIDLTXqBgI8ZE1+D92x74XpqE+Je6cXMNgp9EK7thnx3a+avVEpYcZ57cnEO3+lnWM=
 
-On 19/08/2025 18:54, Mukesh Ojha wrote:
-> Qualcomm remote processor may rely on both static and dynamic resources
-> for its functionality. Static resources typically refer to memory-mapped
-> addresses required by the subsystem and are often embedded within the
-> firmware binary and dynamic resources, such as shared memory in DDR
-> etc., are determined at runtime during the boot process.
-> 
-> On Qualcomm Technologies devices, it's possible that static resources
 
-It is possible? Only possible?
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/fixes
 
-> are not embedded in the firmware binary and instead are provided by
-> TrustZone However, dynamic resources are always expected to come from
+Head SHA1: b7b6a20aa4ab811f598793210b4ea62885b40e18
 
-So dynamic are always in TZ?
 
-> TrustZone. This indicates that for Qualcomm devices, all resources
-> (static and dynamic) will be provided by TrustZone via the SMC call.
+Steven Rostedt (1):
+      fgraph: Copy args in intermediate storage with entry
 
-And now all of them are by TZ? Previously it was only possible?
+----
+ kernel/trace/trace_functions_graph.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+---------------------------
+commit b7b6a20aa4ab811f598793210b4ea62885b40e18
+Author: Steven Rostedt <rostedt@goodmis.org>
+Date:   Wed Aug 20 19:55:22 2025 -0400
 
-Srsly, what sort of AI hallucinated slop it is?
+    fgraph: Copy args in intermediate storage with entry
+    
+    The output of the function graph tracer has two ways to display its
+    entries. One way for leaf functions with no events recorded within them,
+    and the other is for functions with events recorded inside it. As function
+    graph has an entry and exit event, to simplify the output of leaf
+    functions it combines the two, where as non leaf functions are separate:
+    
+     2)               |              invoke_rcu_core() {
+     2)               |                raise_softirq() {
+     2)   0.391 us    |                  __raise_softirq_irqoff();
+     2)   1.191 us    |                }
+     2)   2.086 us    |              }
+    
+    The __raise_softirq_irqoff() function above is really two events that were
+    merged into one. Otherwise it would have looked like:
+    
+     2)               |              invoke_rcu_core() {
+     2)               |                raise_softirq() {
+     2)               |                  __raise_softirq_irqoff() {
+     2)   0.391 us    |                  }
+     2)   1.191 us    |                }
+     2)   2.086 us    |              }
+    
+    In order to do this merge, the reading of the trace output file needs to
+    look at the next event before printing. But since the pointer to the event
+    is on the ring buffer, it needs to save the entry event before it looks at
+    the next event as the next event goes out of focus as soon as a new event
+    is read from the ring buffer. After it reads the next event, it will print
+    the entry event with either the '{' (non leaf) or ';' and timestamps (leaf).
+    
+    The iterator used to read the trace file has storage for this event. The
+    problem happens when the function graph tracer has arguments attached to
+    the entry event as the entry now has a variable length "args" field. This
+    field only gets set when funcargs option is used. But the args are not
+    recorded in this temp data and garbage could be printed. The entry field
+    is copied via:
+    
+      data->ent = *curr;
+    
+    Where "curr" is the entry field. But this method only saves the non
+    variable length fields from the structure.
+    
+    Add a helper structure to the iterator data that adds the max args size to
+    the data storage in the iterator. Then simply copy the entire entry into
+    this storage (with size protection).
+    
+    Cc: Masami Hiramatsu <mhiramat@kernel.org>
+    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+    Cc: Mark Rutland <mark.rutland@arm.com>
+    Link: https://lore.kernel.org/20250820195522.51d4a268@gandalf.local.home
+    Reported-by: Sasha Levin <sashal@kernel.org>
+    Closes: https://lore.kernel.org/all/aJaxRVKverIjF4a6@lappy/
+    Fixes: ff5c9c576e75 ("ftrace: Add support for function argument to graph tracer")
+    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-I think this is pretty close to proof that your submission does not meet
-criteria of open source contribution.
-
-Did you run any of this through your legal process in Qualcomm?
-
-I don't trust any part of this code.
-
-Best regards,
-Krzysztof
-
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 66e1a527cf1a..a7f4b9a47a71 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -27,14 +27,21 @@ struct fgraph_cpu_data {
+ 	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
+ };
+ 
++struct fgraph_ent_args {
++	struct ftrace_graph_ent_entry	ent;
++	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
++	unsigned long			args[FTRACE_REGS_MAX_ARGS];
++};
++
+ struct fgraph_data {
+ 	struct fgraph_cpu_data __percpu *cpu_data;
+ 
+ 	/* Place to preserve last processed entry. */
+ 	union {
+-		struct ftrace_graph_ent_entry	ent;
++		struct fgraph_ent_args		ent;
++		/* TODO allow retaddr to have args */
+ 		struct fgraph_retaddr_ent_entry	rent;
+-	} ent;
++	};
+ 	struct ftrace_graph_ret_entry	ret;
+ 	int				failed;
+ 	int				cpu;
+@@ -627,10 +634,13 @@ get_return_for_leaf(struct trace_iterator *iter,
+ 			 * Save current and next entries for later reference
+ 			 * if the output fails.
+ 			 */
+-			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT))
+-				data->ent.rent = *(struct fgraph_retaddr_ent_entry *)curr;
+-			else
+-				data->ent.ent = *curr;
++			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
++				data->rent = *(struct fgraph_retaddr_ent_entry *)curr;
++			} else {
++				int size = min((int)sizeof(data->ent), (int)iter->ent_size);
++
++				memcpy(&data->ent, curr, size);
++			}
+ 			/*
+ 			 * If the next event is not a return type, then
+ 			 * we only care about what type it is. Otherwise we can
 
