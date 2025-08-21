@@ -1,170 +1,157 @@
-Return-Path: <linux-kernel+bounces-778886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B43B2EC70
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:53:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6372B2EC76
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EA065C44BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:52:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119551CC4D94
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24EA2E8884;
-	Thu, 21 Aug 2025 03:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XuRE/tty"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017C32E11C3;
+	Thu, 21 Aug 2025 03:53:01 +0000 (UTC)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABBD2E7F3E;
-	Thu, 21 Aug 2025 03:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2114F217F24;
+	Thu, 21 Aug 2025 03:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755748316; cv=none; b=f7OR3OqAIkPhMspKSpT63QZbETeAhalQBsj9E7uT0xUpquZf4EWrs9BQ0yNWqcnSmvojtauQ1LrBpzIkaT9K1xj5XY2O4TZBn0kcVBlh7Ar87Puwf/aBbwDmzVPv4thDuj613ljZnN49ZaYpaVeWmEANGFlGg/7O7Bjzg3NkBlE=
+	t=1755748380; cv=none; b=oXz5YvESgt487d0COMpp4flg+pV6B3toaZyXR0Q0rDWyTIGAXMU926IOrqcryMw+bry21pUstYMlfritsfIVyJFe7fTrG0+92OaoHynL9yNPwF9fOj/AEN78u75v842AfNSSI3cfhMGoWo4TvrnlZstbhV9mVREr0Qt4iK3OiHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755748316; c=relaxed/simple;
-	bh=AUVo76PWlr0EWxclNeZcyo6xV9nFnkPuUQKtyGQwIoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lnRyxYzzKVjUSDiNaIVVQCEyEB/+A07nNqHouye0RcD5Tx2fNFNHqdRfEnyH9GpBxtL019jPVo/tyTBG19Ng2jIrmCy3TJ2lVCSgrjYNzrEJrQSP00jfC+6VQvGRJx5z8QALwraDT9CVKXeJiqNzCm41vSVhdaBltgF/m5dGXV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XuRE/tty; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-323266d2d9eso438982a91.0;
-        Wed, 20 Aug 2025 20:51:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755748313; x=1756353113; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=SXxswA8fj5FkcY/2ax+ewvXqc7samX9gc8sogWliBdQ=;
-        b=XuRE/tty2PrUhSzVWlyXCNlUF45IZjnq1q0ESgXM+Uol9jBzHhTO81Zk6/zjJmyHxM
-         urTyusezMGja4WmN05fZZhTiJmLZ234UvvAQJceZ2ymqoxioJt+EeqdfSvMj1GMqV/+s
-         8n045VXEF4ecnGbQ/EZjLDaWzo0YlAqiiBtWRiWhMuKFkkGDu1wzx8bdSjmb5Tq4Kv3L
-         fHHR/PLJVja5E7Md81S2UfesKzjxgC91tiIj45MmE47yw/H5oI9R1nxboYM6CBAOvgNf
-         8BUzc2c/yHisSHUdbNtAM3OmSQLa1yQf9rBCiFjSce7kXLDm3wq9ymrDhKxfsvv5Zd5W
-         pMJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755748313; x=1756353113;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SXxswA8fj5FkcY/2ax+ewvXqc7samX9gc8sogWliBdQ=;
-        b=PvR5JDyFFCaz/6SNkk2hYADi/YWRYYZV8NHdmrB5+4yeWJdrVkzeigNGLRlNWmh2nn
-         SrphY5BWHgvIStp11hYZMUjojQYsMf9Eg7SV8b+3z9b2Wdc+O5gR5nIShYU4pPd3KyH5
-         /rioJatr0GxgoiQ8IyS0CioVxSaxyGq/zwIUZAnQrPwI5Eo+YtKzbknRPB5k6UeEtPkC
-         WvJvgkFEiYAsA/HKgmLvN9NvwLMoEmvtIW/1DEsxTMggNdoFLr8K8awfC8+fGdJ3yANn
-         n3SATjHGg2G3AjN03dQqrDzMVLpbLOk4jBO0vB5YTIX2+oAwc1qKwqTr92Xc4ESPZJvH
-         YTXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUe1RXaddsheWdZN7U6tL1aM4n/jyaHc+ZLeWU4sU7V7I47FsY9HW0+QBsmwMU5wy5l7v1TGG9BnuPaJLepvz2jlcE=@vger.kernel.org, AJvYcCVjtPb7+wm5llCfeQQe2G7MjWc2dUEEPz46o7dOZw1wpJ1bjiHAI50c5wnPOyfWPtrMuXnTzp/ZFDPKQBYg@vger.kernel.org, AJvYcCXAkiBteo0dDV/9JaqGfoDPvzpVHz81ujL8R9H+d0mdtUEpleoEXH9a3XdgXvur/EhLkO3OJLqwaWT1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbdXtqxfG2yWCzJ95sKI8uNq3KMYxf0UfVCYPLxUPyMx8n+Xkq
-	AxlG6I1S2AIHqbah17Gh9mYkAmK77MCE75IHJfWXod2fWpYeJXndOl9D
-X-Gm-Gg: ASbGnct/gXoXTTQHykWyyFKN4pqILQkxZ9AgV7SxfpaDnGUx7DsObXahHusvPSCQONb
-	dmnKTOCedUcKX757WFam7FM8C1aTPprfETgABibZptv2A710GVdMfgyfzsw6+K5IS5raUPGL45j
-	fGFLTzj+ywR9Iv0J4enlKqiw5NCdI98PB2kOAKVi3upGkjdJL9kY0in9IpWHqIoIK26/Diyd7F+
-	eGV06fC507kndNpJYAc5KGzgkvNsW0oW/swA6l/OjQjII+xzAR5HA51Kjwn/G/mOwIPZalADV5F
-	52vTMJO4VAb9DP3DA3LhQIbxNSxPqzKX0NkNa4fPmja4x7oFmzUZelLOqAKmZxuBwgN5Otg74KK
-	nUy8+DQf1iIKd6VjsaqVooc9G9OSbwELSvKPFAIJOyPGA43TxaZ+uZqqguNrX8ylYv34gLRB2LE
-	bd+lDvLg==
-X-Google-Smtp-Source: AGHT+IEwdG7b/zyrxugqxS19jjdhBSYJ8MGE9COorTJ3ktwcBVABH+KcfX8Fy3glx6jvHwaNnW8pwA==
-X-Received: by 2002:a17:90b:3504:b0:321:cf49:2c04 with SMTP id 98e67ed59e1d1-324ed073647mr1277524a91.9.1755748313341;
-        Wed, 20 Aug 2025 20:51:53 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47640d508esm3632171a12.58.2025.08.20.20.51.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 20:51:52 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e4aee9b2-5085-4424-a7c6-0b7e2e63ccc3@roeck-us.net>
-Date: Wed, 20 Aug 2025 20:51:51 -0700
+	s=arc-20240116; t=1755748380; c=relaxed/simple;
+	bh=c+dzYgwegckKBE8DwdjCoqLZMH/ed06q6NOgQtARQeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k52BHopfl49BafcFGRwToNEP0/TvqwrLtqyAzl6yvi5qC0J0RE2GDoeQ9LpJdkAxKs4SG9Fya0pKR215NdUGuOShbSYhN/EjSu52S+ruU8wq/YMhxi4wtK+EZAPAS6Q5abEs39ce+Y5cs2p+Ozmi5yHjtJ7FOPq9Beu73o8leDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpgz4t1755748320t06463bcc
+X-QQ-Originating-IP: BnGfIoXIObhF7yKbto78D0xs0V9ppX65sKZt2uAFk+o=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 21 Aug 2025 11:51:58 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 4102684638845518998
+Date: Thu, 21 Aug 2025 11:51:58 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] net: rnpgbe: Add basic mbx ops support
+Message-ID: <135DA1E6DB034659+20250821035158.GC1754449@nic-Precision-5820-Tower>
+References: <20250818112856.1446278-1-dong100@mucse.com>
+ <20250818112856.1446278-4-dong100@mucse.com>
+ <5cced097-52db-41c9-93e4-927aab5ffb2e@lunn.ch>
+ <6981CF6C1312658E+20250821014411.GB1742451@nic-Precision-5820-Tower>
+ <f0c9aee0-0e57-429e-8918-d91bf307018e@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] watchdog: rzv2h: Add support for RZ/T2H
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Magnus Damm <magnus.damm@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250820202322.2051969-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250820202322.2051969-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250820202322.2051969-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f0c9aee0-0e57-429e-8918-d91bf307018e@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Ni5aFAKuSzLJcv5aOOhV+g1tJGB+bZ4wf363XGQ4BA2ydw33KoAv7o7H
+	J2W6AjWdMSxnga/+VY7nm3XDk8OngZ3XfnJU955pE/lupI0sxOa5Ms2h9uRuesPehmFrLii
+	QDnqZFyrwNB93821oqB5hjl2hHrC5cuUKfWxUcvsq0WieGR8VdhKRxnZA4yUhbsH5aUtM0S
+	8bXkGCjs9PqVpJGS/RYdIyapDNm63r+HMJX3dV10lzlkRU7p/ewVyGDzUo+5cW29ErHNVB9
+	TKIUuwtTAxFVBsDnin73zZNMmG6Z0oiWgIcnKBFEHtjlQw91B/UdPeKNzqdVVeuCo5sX5nU
+	tj6sJ/M6Nmd3oqY9gTrHAppTF+oV95l8daLFj+30dLGyppWbEr4MRSExXJrGd0lr30rcFRx
+	3hRWK90PnoLq7ltMTty1i45Td7Q4UuajBY/58iIG8Me8Cmu/69wzTqUyQu0sX7lj9ZHFeMa
+	rhfmMhpr0k+9nMvfH9eQtx4Zd4YKwlMiaQeiIXw6rfcElCV7akNlg7mFBDs7oyfXutOxg49
+	XIsiV7dWP8FSMu7jCGIbHZ9UR8Kifc0ua2K39O7HepFH2NgKWAxt6wjCImT882XEmUsWvvA
+	3oUa6tTIGEs3pLdhYsX93T2oEBKwNPSHmgovi9bHhdDnLg6qCfg5Jpisc5EXr/aGsJorfP5
+	B3DqltAjM2v+NOrDcTkwDR607SHX84INuYGU0X67n2LINnkX1iVmaDlM5/4vqb+rxEJ9adZ
+	/UZEF8VUTT746PqDi+leUTSw06KDpEQ21GFL/I67fzPXtB9x0lCdcyWIGi/9u9blKK9q8a9
+	QltbZ7E0zP20JeSxKHEA2X+aGALGHm5hxjOn9i+fn/5v9BW0uIapozqdElpDzRQExjhU7o8
+	kS6u1EXfhpQKyqcT4uhJ2lwqi1MD9r4dUggsN2wM4+mZIBpYzKnt1YAX1K3pbxZxQnGLEDl
+	8B61Fgt5WGi40TVslQfZJPC4xHJCYiaHYWkspGabwjurQnK7no4f/pGRHM1G301y7wOtI9k
+	Qej+cctK/l6V1sTR8nz7iHhggUjIFmjDiVEtP6mSmRQ0RH1kc565+mY+yAAyQ=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-On 8/20/25 13:23, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Aug 21, 2025 at 05:06:50AM +0200, Andrew Lunn wrote:
+> On Thu, Aug 21, 2025 at 09:44:11AM +0800, Yibo Dong wrote:
+> > On Wed, Aug 20, 2025 at 10:23:44PM +0200, Andrew Lunn wrote:
+> > > > +/**
+> > > > + * mucse_mbx_get_ack - Read ack from reg
+> > > > + * @mbx: pointer to the MBX structure
+> > > > + * @reg: register to read
+> > > > + *
+> > > > + * @return: the ack value
+> > > > + **/
+> > > > +static u16 mucse_mbx_get_ack(struct mucse_mbx_info *mbx, int reg)
+> > > > +{
+> > > > +	return (mbx_data_rd32(mbx, reg) >> 16);
+> > > > +}
+> > > 
+> > > > +static int mucse_check_for_ack_pf(struct mucse_hw *hw)
+> > > > +{
+> > > > +	struct mucse_mbx_info *mbx = &hw->mbx;
+> > > > +	u16 hw_fw_ack;
+> > > > +
+> > > > +	hw_fw_ack = mucse_mbx_get_ack(mbx, MBX_FW2PF_COUNTER);
+> > > 
+> > > > +int mucse_write_mbx_pf(struct mucse_hw *hw, u32 *msg, u16 size)
+> > > > +{
+> > > > +	struct mucse_mbx_info *mbx = &hw->mbx;
+> > > > +	int size_inwords = size / 4;
+> > > > +	u32 ctrl_reg;
+> > > > +	int ret;
+> > > > +	int i;
+> > > > +
+> > > > +	ctrl_reg = PF2FW_MBOX_CTRL(mbx);
+> > > > +	ret = mucse_obtain_mbx_lock_pf(hw);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	for (i = 0; i < size_inwords; i++)
+> > > > +		mbx_data_wr32(mbx, MBX_FW_PF_SHM_DATA + i * 4, msg[i]);
+> > > > +
+> > > > +	/* flush msg and acks as we are overwriting the message buffer */
+> > > > +	hw->mbx.fw_ack = mucse_mbx_get_ack(mbx, MBX_FW2PF_COUNTER);
+> > > 
+> > > It seems like the ACK is always at MBX_FW2PF_COUNTER. So why pass it
+> > > to mucse_mbx_get_ack()? Please look at your other getters and setters.
+> > > 
+> > 
+> > 'mucse_mbx_get_ack' is always at MBX_FW2PF_COUNTER now, just for pf-fw mbx. 
+> > But, in the future, there will be pf-vf mbx with different input.
+> > Should I move 'MBX_FW2PF_COUNTER' to function 'mucse_mbx_get_ack', and
+> > update the function when I add vf relative code in the future?
 > 
-> Add support for the RZ/T2H watchdog timer. The RZ/T2H requires control of
-> the watchdog counter using the WDT Debug Control Register (WDTDCR), which
-> allows explicitly stopping and starting the counter. This behavior differs
-> from RZ/V2H, which doesn't have WDTDCR, so the driver is extended to handle
-> this requirement.
+> Maybe add mucse_mbx_get_pf_ack() so you can later add
+> mucse_mbx_get_vf_ack()?
 > 
-> To support this, a new `wdtdcr` flag is introduced in the `rzv2h_of_data`
-> structure. When set, the driver maps the WDTDCR register and uses it to
-> control the watchdog counter in the start, stop, and restart callbacks.
-> Additionally, the clock divisor and count source for RZ/T2H are defined
-> to match its hardware configuration.
+> The problem is, our crystal ball about what will come next is not very
+> good. So we review the code we see now, and make comments about it
+> now. You can add comments explaining why something is the way it is
+> because in the future it needs to be more generic to handle additional
+> use cases, etc. Or explain in the commit message.
 > 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 	Andrew
+> 
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Got it, I will move MBX_FW2PF_COUNTER to mucse_mbx_get_ack and rename
+the fucntion. And add new function later.
+
+Thanks for your feedback.
+
+
+Thanks for your feedback.
 
