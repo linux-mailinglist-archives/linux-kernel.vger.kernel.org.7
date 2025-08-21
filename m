@@ -1,103 +1,279 @@
-Return-Path: <linux-kernel+bounces-780115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FDCB2FDCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:08:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DE5B2FDE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3F3D1BC136A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA947AC362A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BD321B9F5;
-	Thu, 21 Aug 2025 15:02:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14D32EC57C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E452D3EEB;
+	Thu, 21 Aug 2025 15:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F/oPIkoz"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179B8258CCE;
+	Thu, 21 Aug 2025 15:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755788538; cv=none; b=H3FelbC+nXwHF8PaBEcBbkH0/qs6Z5sr58Ocqhw4eHgKDQW3Ze50IeXci8Hh7M8V1PLtgp5VtgH5BptNX1RSBqW+Z8DoQeaA3R+V+LaQTZktfDWEoWC8tKafQDB4WGEI2/aIa8JJnb5JWn4TYSW81HXN9Izm39C6ATxSBwLe3P8=
+	t=1755788623; cv=none; b=miu56zdXSWIBfa6Ryb+mSP63TtgLVmI2HGCuHCpDGdsNUFk9qqR3nr92lzIfsaKP83b+CU+iSX2AjuZ0+6Zw7egWz6xqd6Bm1AQ3c70+6uBjP5Zy2F5VLc2hXia2l2NMoaVsEYv4nlBjBDcVDet106u2GzR7vchM8AnKcgfkUnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755788538; c=relaxed/simple;
-	bh=vC3CLgnF8Pd6UZr4opBua66AiWCZArbSVC6s099569k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WYsIXoJEVg0zOgkMchEAKIdII4IJQPuefl1xI3JrZ49HOgTK2/Dv2r0mhsy5UswU8mM/I1x+I72WHdWREVPHhf/6Eht5I6Odu5kPQEeZpk0Ynocydl0ZYXkj0o6lW/hSWCdqRNZGd0p0Sz567W9Ix5UFDJTjn7UtoTnVamIe8PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6539152B;
-	Thu, 21 Aug 2025 08:02:07 -0700 (PDT)
-Received: from [10.1.36.29] (e122027.cambridge.arm.com [10.1.36.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1591A3F59E;
-	Thu, 21 Aug 2025 08:02:10 -0700 (PDT)
-Message-ID: <9445754d-28d2-4c95-a2f8-b850032b99d1@arm.com>
-Date: Thu, 21 Aug 2025 16:02:09 +0100
+	s=arc-20240116; t=1755788623; c=relaxed/simple;
+	bh=h371o2hzH3tZKoqACDWOVEr36SHsFleFuZ1OPZTfAcY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rif2vW86uqOKL+hd9PE614DfqUGqVtdE8QJxfwfsY8KAc61sDE49lJFUxtDC9HHIapsUlPYfoENzAGB0v8fEYBqUBKfs3PsCbI+gdl7NHA2bRPMQ8vUHlFpSfGgDizbw9xr6O+nTJ6uOz551Uyk9eRQYXh2YADdHw8fj22Aym2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F/oPIkoz; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-321cfa7ad29so1695755a91.1;
+        Thu, 21 Aug 2025 08:03:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755788621; x=1756393421; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a2XqFRw9eH+6wkvyUC3rjDH+my91KUOFvRO62mw4XIM=;
+        b=F/oPIkozA0SMc7khg7b7JhN6ZYvkLtN2OL+YJMDNGilKQmTs8tXtIjIuu9qT9HotgC
+         KszP2tnVyn3suAgh0EOVXypsi0tT9xm8n/BkCslJfQmNv3q0O2Y2p9xsED2pWl0SqngZ
+         wfpv8Yg6nKG9px1p76eeMkwKwxhCpZbE/ksjGDJgCa2cCHVO0qAVxOsc3w8CDrr1scRt
+         a00qSAk80BQKmMjBl2G3xVAuK4z5pRQaz7Th3rkMrWErQpI24CbvbAg/dMKit8YJZhxa
+         T0K9OYqczw4r7TIQ3kP5n4xm0DYYLFavIvhogzghdNM9PNELwbn38QSSDBrDhiMRajYY
+         BtvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755788621; x=1756393421;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a2XqFRw9eH+6wkvyUC3rjDH+my91KUOFvRO62mw4XIM=;
+        b=dpSqrOLaL0jA+Pa+1iy88qopDwCGNfSta/1Jn2GHRAB/BrKWeb+QoYMD3AbNl6Ck9O
+         G3wCvl1z3QoEjhz0Bkku2ABsFnfdzyF69Gu/Jwg+8+6nht2CIO2TgHMxQG03ADBxPHLk
+         BSddfJ+IFD5Bj2MYHmTYRrTJ5UWSAN/BUC2aNIT4j4V1UFjPJOWU8lB6QcIytLTJU0CO
+         gtiY2mg69fWg0GBCF61Z9yrqGebKsmh4xqgLSMG8K5IFHigSSWkRzEuU9gs1Jb2TKsTo
+         hkqpnp38otNHm0lu/NkMkoURfyQXFUuiV5+Q3dmLoFHDEINZYmZlq4oFX5MhD03FzghU
+         uiFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUivplRwVNjrNNnfP3esMrxvhsL0cVBlmCsQ2cp7QPL/Gu1b+a1UizmcQFmbPXLtNgnRp7QcrOwh5kx74wl@vger.kernel.org, AJvYcCV0XPLxPyY/H54mSyDl+XcudTIDmAN74Z2oAU2OPSPBbC4k5Kp+pp8nYSev8k567qi5DPyTgFEQDtXP@vger.kernel.org, AJvYcCVE5DnPQaenmxCP347ZsFHvxhDqnnEq70eER4zAjQCvlhyOKaplZVq9IDkDl1ZD2oTgX2rIm90beX3j@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS/SvV8ZT+TsuMNZAgjDDRXv7O3lwuC9LshxIVgH4/HQ57x8zF
+	bDZhQuKrAz5ILhUTy0bLnTb7Nes73IpBEYpJ1AOnsshtKyLoY1f7uNefdJFsnQ==
+X-Gm-Gg: ASbGnctBI6PdJMN0GzzV8x+Xn/YOnTeFC1RB87iNWrFvf7oXkwGt7rOnGOA+r/cpQWa
+	Qp85wDF7tLdOHZ4z94Ji8vKwkJkjroJ00U3kP42rhj1vKXD2HBivo/w9vhw0NIV/Lb73tCGSSzc
+	ejI5EjhN/UvtWRTSx0c0pWJQ+CKE/IBkPOb1k9lNjo+RkAjxGWKqaZPaBuAmYeI+tXXaRJxYgLt
+	OFnaHcEsdF4jGUItk+xH1uMKQEJD6tIwdnYeKvSmv2cc3hVvZITF8K2ysxiPV6OWH/n0zQ5f9Lw
+	Mr9D9ST/s4S81AcMxWcY6oPNEr+T6TX8R7+QsrPGBf7/DJ19s77PMzWiLdkZS+C9NUdjGinefDw
+	cM9+kDwccsH52fkeD3slcP92OUosAGKGzJ4y5ro57iprUBYkZXJK/eA==
+X-Google-Smtp-Source: AGHT+IGo51RnWNkJJqoY3Tb/drct9JSrKqU6imDiOlEGu0tkpF0QxW7Ed4K86cDj1q3P/AkaZXvv0Q==
+X-Received: by 2002:a17:90b:4d06:b0:321:82a0:fe50 with SMTP id 98e67ed59e1d1-324eed1c184mr3024224a91.5.1755788620319;
+        Thu, 21 Aug 2025 08:03:40 -0700 (PDT)
+Received: from 100ask.localdomain ([116.234.74.152])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32512d83c22sm30254a91.9.2025.08.21.08.03.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 08:03:39 -0700 (PDT)
+From: Nino Zhang <ninozhang001@gmail.com>
+To: vkoul@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nino Zhang <ninozhang001@gmail.com>
+Subject: [PATCH] dt-bindings: dma: img-mdc-dma: convert to DT schema
+Date: Thu, 21 Aug 2025 23:02:55 +0800
+Message-ID: <20250821150255.236884-1-ninozhang001@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/7] drm/panthor: Add support for atomic page table
- updates
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Caterina Shablia <caterina.shablia@collabora.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
- Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, asahi@lists.linux.dev,
- Asahi Lina <lina@asahilina.net>
-References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
- <d4a6208b-a4a4-451f-9799-7b9f5fb20c37@arm.com> <2813151.QOukoFCf94@xps>
- <2434159.cojqenx9y0@xps> <0108b3cd-dfdd-4e4c-a2d8-157458e26f77@arm.com>
- <20250821135127.2827abfb@fedora>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250821135127.2827abfb@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21/08/2025 12:51, Boris Brezillon wrote:
-> On Wed, 16 Jul 2025 16:43:24 +0100
-> Steven Price <steven.price@arm.com> wrote:
-[...]
->> Although in general I'm a bit wary of relying on the whole lock region
->> feature - previous GPUs have an errata. But maybe I'm being over
->> cautious there.
-> 
-> We're heavily relying on it already to allow updates of the VM while
-> the GPU is executing stuff. If that's problematic on v10+, I'd rather
-> know early :D.
+Convert the img-mdc-dma binding from txt to YAML schema.
+No functional changes except dropping the consumer node
+(spi@18100f00) from the example, which belongs to the
+consumer binding instead.
 
-I think I'm just scarred by my experiences over a decade ago... ;)
+Tested with 'make dt_binding_check'.
 
-I'm not aware of any issues with the modern[1] GPUs. The issue used to
-be that the lock region could get accidentally unlocked by a cache flush
-from another source - specifically the cache flush on job start flag.
+Signed-off-by: Nino Zhang <ninozhang001@gmail.com>
+---
+ .../devicetree/bindings/dma/img-mdc-dma.txt   | 57 -----------
+ .../devicetree/bindings/dma/img-mdc-dma.yaml  | 98 +++++++++++++++++++
+ 2 files changed, 98 insertions(+), 57 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/dma/img-mdc-dma.txt
+ create mode 100644 Documentation/devicetree/bindings/dma/img-mdc-dma.yaml
 
-It's also not a major issue if you keep the page tables consistent, the
-lock region in theory allows a region to be in an inconsistent state -
-but generally there's no need for that. AFAIK we mostly keep the tables
-consistent anyway.
-
-Thanks,
-Steve
-
-[1] Which in this context means well over a decade - it's somewhat scary
-how long I've been doing this!
-
-> Regards,
-> 
-> Boris
+diff --git a/Documentation/devicetree/bindings/dma/img-mdc-dma.txt b/Documentation/devicetree/bindings/dma/img-mdc-dma.txt
+deleted file mode 100644
+index 28c1341db346..000000000000
+--- a/Documentation/devicetree/bindings/dma/img-mdc-dma.txt
++++ /dev/null
+@@ -1,57 +0,0 @@
+-* IMG Multi-threaded DMA Controller (MDC)
+-
+-Required properties:
+-- compatible: Must be "img,pistachio-mdc-dma".
+-- reg: Must contain the base address and length of the MDC registers.
+-- interrupts: Must contain all the per-channel DMA interrupts.
+-- clocks: Must contain an entry for each entry in clock-names.
+-  See ../clock/clock-bindings.txt for details.
+-- clock-names: Must include the following entries:
+-  - sys: MDC system interface clock.
+-- img,cr-periph: Must contain a phandle to the peripheral control syscon
+-  node which contains the DMA request to channel mapping registers.
+-- img,max-burst-multiplier: Must be the maximum supported burst size multiplier.
+-  The maximum burst size is this value multiplied by the hardware-reported bus
+-  width.
+-- #dma-cells: Must be 3:
+-  - The first cell is the peripheral's DMA request line.
+-  - The second cell is a bitmap specifying to which channels the DMA request
+-    line may be mapped (i.e. bit N set indicates channel N is usable).
+-  - The third cell is the thread ID to be used by the channel.
+-
+-Optional properties:
+-- dma-channels: Number of supported DMA channels, up to 32.  If not specified
+-  the number reported by the hardware is used.
+-
+-Example:
+-
+-mdc: dma-controller@18143000 {
+-	compatible = "img,pistachio-mdc-dma";
+-	reg = <0x18143000 0x1000>;
+-	interrupts = <GIC_SHARED 27 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 28 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 29 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 30 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 31 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 32 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 33 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 34 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 35 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 36 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 37 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 38 IRQ_TYPE_LEVEL_HIGH>;
+-	clocks = <&system_clk>;
+-	clock-names = "sys";
+-
+-	img,max-burst-multiplier = <16>;
+-	img,cr-periph = <&cr_periph>;
+-
+-	#dma-cells = <3>;
+-};
+-
+-spi@18100f00 {
+-	...
+-	dmas = <&mdc 9 0xffffffff 0>, <&mdc 10 0xffffffff 0>;
+-	dma-names = "tx", "rx";
+-	...
+-};
+diff --git a/Documentation/devicetree/bindings/dma/img-mdc-dma.yaml b/Documentation/devicetree/bindings/dma/img-mdc-dma.yaml
+new file mode 100644
+index 000000000000..b635125d7ae3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/img-mdc-dma.yaml
+@@ -0,0 +1,98 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/img-mdc-dma.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: IMG Multi-threaded DMA Controller (MDC)
++
++maintainers:
++  - Vinod Koul <vkoul@kernel.org>
++
++allOf:
++  - $ref: /schemas/dma/dma-controller.yaml#
++
++properties:
++  compatible:
++    description: Must be "img,pistachio-mdc-dma".
++    const: img,pistachio-mdc-dma
++
++  reg:
++    description:
++      Must contain the base address and length of the MDC registers.
++    minItems: 1
++
++  interrupts:
++    description:
++      Must contain all the per-channel DMA interrupts.
++
++  clocks:
++    description: |
++      Must contain an entry for each entry in clock-names.
++      See clock/clock.yaml for details.
++
++  clock-names:
++    description: |
++      Must include the following entries:
++        - sys: MDC system interface clock.
++    minItems: 1
++    contains: { const: sys }
++
++  img,cr-periph:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: |
++      Must contain a phandle to the peripheral control syscon node
++      which contains the DMA request to channel mapping registers.
++
++  img,max-burst-multiplier:
++    description: |
++      Must be the maximum supported burst size multiplier.
++      The maximum burst size is this value multiplied by the
++      hardware-reported bus width.
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  "#dma-cells":
++    description: |
++      Must be 3:
++        - The first cell is the peripheral's DMA request line.
++        - The second cell is a bitmap specifying to which channels the DMA request
++          line may be mapped (i.e. bit N set indicates channel N is usable).
++        - The third cell is the thread ID to be used by the channel.
++    const: 3
++
++  dma-channels:
++    description: |
++      Number of supported DMA channels, up to 32. If not specified
++      the number reported by the hardware is used.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 32
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - "img,cr-periph"
++  - "img,max-burst-multiplier"
++  - "#dma-cells"
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/mips-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    mdc: dma-controller@18143000 {
++      compatible = "img,pistachio-mdc-dma";
++      reg = <0x18143000 0x1000>;
++      interrupts = <GIC_SHARED 27 IRQ_TYPE_LEVEL_HIGH>,
++            <GIC_SHARED 28 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&system_clk>;
++      clock-names = "sys";
++
++      img,max-burst-multiplier = <16>;
++      img,cr-periph = <&cr_periph>;
++
++      #dma-cells = <3>;
++    };
+-- 
+2.43.0
 
 
