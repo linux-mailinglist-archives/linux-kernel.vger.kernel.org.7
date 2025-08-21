@@ -1,195 +1,120 @@
-Return-Path: <linux-kernel+bounces-779452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D17DB2F443
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F55B2F419
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49967AA3EE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:40:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7700DAA104A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2C12ED149;
-	Thu, 21 Aug 2025 09:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FCC2DFA25;
+	Thu, 21 Aug 2025 09:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="x54WHZWt"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1vKrktd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9191DF74F;
-	Thu, 21 Aug 2025 09:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FE21F3BAE;
+	Thu, 21 Aug 2025 09:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769215; cv=none; b=f5RXo6tgRaV07xYzbFw4RQjhU6mUPlV27A27/OO+iR2E5bqbFlf0K/GGz3titHPF8IzfphuqC3U1K78I++vtcwC+7xdg62xOGfgQkQeJw6px0fPUSV2Q8L50DwZC6QfGYNpjJha9YJhtzcDbszWMskIlf4SfTs4ClhYqAITpCrY=
+	t=1755768940; cv=none; b=S0HRhBw+PkZYLcNQstyeGyY+pRKM9tjw+EeYC83+XWFSp0aDzJcA0hdM38WoIs2d0WTEzffnkTQcN6ckVZree1BxUY5LLgHqBfKVxvchEZd9cjAqs2Lzu07cJRoLd/JdojYY7W/sm9LvTa3xaVNzISnnld7JyN5sO8yEBAfrpZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769215; c=relaxed/simple;
-	bh=fW45PNHK/J993qQlytHQ9XXEMMWn/NrRcHqFiD5whj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=j8UY+b6SLq8dBIlVIUynUIOpfqaqQJ4cCiDi7G6srzUK8Q8sxtsasl8HdqKwA+hLGkEzAKTLl7bJ7PaVtu1n7WZ+DrGFY4yjwL49Zsv0Wbsl5rh4BNWK8WfK7d2q+hn93PqdVL6+ppXZo/69aZOhffkvyAZX5+h+jpKlzkcTYTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=x54WHZWt; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L8uf03028719;
-	Thu, 21 Aug 2025 11:39:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	kHxcorhp5czLlBBNNIvPxeZEYbfShmd+8rRbKqHVLQc=; b=x54WHZWtHoVtnKSh
-	GwXIq32qEehSt5QN4pnCvtl8/TiFHUGkCVxLDpTAaQktot64B36wulxk1ei+r5EB
-	q4oJU0m5ApNcrcGtHJTtGKf8JmVGtpf2P+Nqv7T7elfSWoaqyewnWBbT/y30hkyM
-	QztQ5odjdA0mMraCkgbl+w7JGJlgWV4xAyEG9fI/kLcwVxziU/qGhGPxTAw20d6i
-	hM/4vG1IQ1AxUrf3PLjbdmzhAQKlbABlritN7UG4B85uzMmfNcd9IrPQzWD/XlfS
-	/PHF7fjxPPYQDRwv1ACERxT7tPpV8bBLheQgLG2lpZ+jXslc/76fxC3S4Xlo4gTt
-	cUUJxA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48n81wnyun-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 11:39:25 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 50FE64002D;
-	Thu, 21 Aug 2025 11:36:50 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C3FF873DB4E;
-	Thu, 21 Aug 2025 11:35:26 +0200 (CEST)
-Received: from [10.48.87.178] (10.48.87.178) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
- 2025 11:35:25 +0200
-Message-ID: <ea6b8999-4f5d-4cc2-b92b-b0776c2b1363@foss.st.com>
-Date: Thu, 21 Aug 2025 11:35:24 +0200
+	s=arc-20240116; t=1755768940; c=relaxed/simple;
+	bh=ZjiGxCZuZ5D/qhyN6SKndZUgyDFoMxTM7TM5ZGn3tGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b7hUZwbISLLJXC5Wp/ScXPLKi0bHUNJ9AgQrol0AtqOUi7BqxX7bgrqEgZacuKZ811G0io2tAf2cPjW7QLU04sFyUu6FGAfl4zGPRTo/QZt9FnTgELXqaf7mtfcB7RcrP1HvuOmJ5bnsCqcFKk1IGhdcAnyvAP+/V0NwES+B/aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1vKrktd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225BDC4CEEB;
+	Thu, 21 Aug 2025 09:35:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755768938;
+	bh=ZjiGxCZuZ5D/qhyN6SKndZUgyDFoMxTM7TM5ZGn3tGk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W1vKrktdHgmMgPy7XJfoy8Yjzp8I/GFL04O/tPQO+CDjUdKaudsxFNspO0eYTwhhi
+	 kGFJ4wCPJiYSXAKVxXo6dwEEV7HfYsdFojp+pMenSzuth/quMKya9mn7yUQY929s+g
+	 WvgS4FIY198yj7ycxsICtx5lrjxXOhTilij2ngYSODhrf9/Hw5+JaRewspEyCH50Up
+	 UcKzkEzy71HJJdDPJ4ulHCLAUgET07RwXE/PoIIXN4SmmDptYyZjQ7qlcKi0z9pivW
+	 T/DBo3Zs5fa+P/0OfLLIYlE2Sm/M2Ir/L0ztuOfPNs9uM7GdwVoXkwUTImBJa4rFsh
+	 l07Ab9fnwkQrA==
+Date: Thu, 21 Aug 2025 15:05:31 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Masahisa Kojima <kojima.masahisa@socionext.com>
+Subject: Re: [PATCH 1/3] efi: stmm: Fix incorrect buffer allocation method
+Message-ID: <aKboY9oBmHJJb2Pc@sumit-X1>
+References: <cover.1755285161.git.jan.kiszka@siemens.com>
+ <37ba67b97d55c49a7c6a1597f104b30b31a4a395.1755285161.git.jan.kiszka@siemens.com>
+ <CAC_iWjL84EFiKh0ETb7LwYjMRgLAZA8hFKy-YDS4=YQ1LRwg9A@mail.gmail.com>
+ <75db5f5e-9e0c-4c48-a3c8-034414276036@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/9] drm/stm/dw_mipi_dsi-stm: convert from round_rate()
- to determine_rate()
-To: Brian Masney <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Shawn Guo
-	<shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "Pengutronix
- Kernel Team" <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Clark
-	<robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        "Abhinav
- Kumar" <abhinav.kumar@linux.dev>,
-        Jessica Zhang
-	<jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Raphael Gallais-Pou
-	<raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai
-	<wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland
-	<samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <freedreno@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-sunxi@lists.linux.dev>
-References: <20250811-drm-clk-round-rate-v2-0-4a91ccf239cf@redhat.com>
- <20250811-drm-clk-round-rate-v2-6-4a91ccf239cf@redhat.com>
-Content-Language: en-US
-From: Yannick FERTRE <yannick.fertre@foss.st.com>
-In-Reply-To: <20250811-drm-clk-round-rate-v2-6-4a91ccf239cf@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <75db5f5e-9e0c-4c48-a3c8-034414276036@siemens.com>
 
-Hi Brian,
+Hi Jan,
 
-thanks for the patch.
+On Wed, Aug 20, 2025 at 05:05:43PM +0200, Jan Kiszka wrote:
+> On 20.08.25 09:29, Ilias Apalodimas wrote:
+> > (++cc Sumit and Kojima-san on their updated emails)
+> > 
+> > On Fri, 15 Aug 2025 at 22:12, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> >>
+> >> From: Jan Kiszka <jan.kiszka@siemens.com>
+> >>
+> >> The communication buffer allocated by setup_mm_hdr is later on passed to
+> >> tee_shm_register_kernel_buf. The latter expects those buffers to be
+> >> contiguous pages, but setup_mm_hdr just uses kmalloc. That can cause
+> >> various corruptions or BUGs, specifically since 9aec2fb0fd5e, though it
+> >> was broken before as well.
+> >>
+> >> Fix this by using alloc_pages_exact instead of kmalloc.
+> >>
+> >> Fixes: c44b6be62e8d ("efi: Add tee-based EFI variable driver")
+> >> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> >> ---
+> > 
+> > [...]
+> > 
+> >>         const efi_guid_t mm_var_guid = EFI_MM_VARIABLE_GUID;
+> >>         struct efi_mm_communicate_header *mm_hdr;
+> >> @@ -173,9 +174,12 @@ static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func,
+> >>                 return NULL;
+> >>         }
+> >>
+> >> -       comm_buf = kzalloc(MM_COMMUNICATE_HEADER_SIZE +
+> >> -                                  MM_VARIABLE_COMMUNICATE_SIZE + payload_size,
+> >> -                          GFP_KERNEL);
+> >> +       *nr_pages = roundup(MM_COMMUNICATE_HEADER_SIZE +
+> >> +                           MM_VARIABLE_COMMUNICATE_SIZE + payload_size,
+> >> +                           PAGE_SIZE) / PAGE_SIZE;
+> >> +
+> >> +       comm_buf = alloc_pages_exact(*nr_pages * PAGE_SIZE,
+> >> +                                    GFP_KERNEL | __GFP_ZERO);
+> > 
+> > Rename nr_pages to something else and skip division, multiplying.
+> > Unless there's a reason I am missing?
+> > Also doesn't alloc_pages_exact() already rounds things up?
+> 
+> I was looking at tee_dyn_shm_alloc_helper and the dance it does to
+> calculate the pages from the size parameter.
 
-Acked-by: Yannick Fertre <yannick.fertre@foss.st.com>
+The rework of tee_shm_register_kernel_buf() is directly accept kernel
+pages instead of buffer pointers is already due. If you are willing to
+fix existing TEE client drivers and the API then I will be happy to
+review them.
 
-Le 11/08/2025 à 12:56, Brian Masney a écrit :
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Acked-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->   drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 14 ++++++++------
->   1 file changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-> index 2c7bc064bc66c6a58903a207cbe8091a14231c2b..58eae6804cc82d174323744206be7046568b905c 100644
-> --- a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-> +++ b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-> @@ -274,8 +274,8 @@ static unsigned long dw_mipi_dsi_clk_recalc_rate(struct clk_hw *hw,
->   	return (unsigned long)pll_out_khz * 1000;
->   }
->   
-> -static long dw_mipi_dsi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> -				       unsigned long *parent_rate)
-> +static int dw_mipi_dsi_clk_determine_rate(struct clk_hw *hw,
-> +					  struct clk_rate_request *req)
->   {
->   	struct dw_mipi_dsi_stm *dsi = clk_to_dw_mipi_dsi_stm(hw);
->   	unsigned int idf, ndiv, odf, pll_in_khz, pll_out_khz;
-> @@ -283,14 +283,14 @@ static long dw_mipi_dsi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->   
->   	DRM_DEBUG_DRIVER("\n");
->   
-> -	pll_in_khz = (unsigned int)(*parent_rate / 1000);
-> +	pll_in_khz = (unsigned int)(req->best_parent_rate / 1000);
->   
->   	/* Compute best pll parameters */
->   	idf = 0;
->   	ndiv = 0;
->   	odf = 0;
->   
-> -	ret = dsi_pll_get_params(dsi, pll_in_khz, rate / 1000,
-> +	ret = dsi_pll_get_params(dsi, pll_in_khz, req->rate / 1000,
->   				 &idf, &ndiv, &odf);
->   	if (ret)
->   		DRM_WARN("Warning dsi_pll_get_params(): bad params\n");
-> @@ -298,7 +298,9 @@ static long dw_mipi_dsi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->   	/* Get the adjusted pll out value */
->   	pll_out_khz = dsi_pll_get_clkout_khz(pll_in_khz, idf, ndiv, odf);
->   
-> -	return pll_out_khz * 1000;
-> +	req->rate = pll_out_khz * 1000;
-> +
-> +	return 0;
->   }
->   
->   static int dw_mipi_dsi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -351,7 +353,7 @@ static const struct clk_ops dw_mipi_dsi_stm_clk_ops = {
->   	.disable = dw_mipi_dsi_clk_disable,
->   	.is_enabled = dw_mipi_dsi_clk_is_enabled,
->   	.recalc_rate = dw_mipi_dsi_clk_recalc_rate,
-> -	.round_rate = dw_mipi_dsi_clk_round_rate,
-> +	.determine_rate = dw_mipi_dsi_clk_determine_rate,
->   	.set_rate = dw_mipi_dsi_clk_set_rate,
->   };
->   
->
+-Sumit
 
