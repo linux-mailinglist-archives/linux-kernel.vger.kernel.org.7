@@ -1,181 +1,439 @@
-Return-Path: <linux-kernel+bounces-780123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D22B2FDEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:13:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF0F4B2FDED
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C6F3B589E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:07:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 710061BA186D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD3626C393;
-	Thu, 21 Aug 2025 15:07:30 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427E027E1B1;
+	Thu, 21 Aug 2025 15:08:17 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCF726B756
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA26267729;
+	Thu, 21 Aug 2025 15:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755788850; cv=none; b=Ed1e4jzO4dAZ1XB8LzyTsNozNF9EvfLsehQi2ZrHc05djbpYYTJIci6oL1rKBnj2T98ltPRKurLvBET9XRoEL8jLf+PHLX2ftamHOX3VDzi7BilQ4ThlUVzarF6r0HwvzXXyMHd5flSVi7Ojeg+s/IGhym+aPatRWIlk817Rz6Y=
+	t=1755788896; cv=none; b=GMaQNt4Ep7cxKecrqjHdDCOaab8lLMKMZrfjVM6sn0tKU3qf9DKPeUUD0xehHZBjpHmN2YNcdy5NiQzjH4YfEbugRyp2W25i4KnTgooROIwa2JntTcNXEw3xPjbng1huH5mtOHtqSOpruMJfKetsmLtr8sSudOh/G4GBQ8YWDkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755788850; c=relaxed/simple;
-	bh=wLCQfXPnhvLkYuBg8hqLLP00b/P1oOwsU3cSsSqJQ1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hXn8g+eU4Xbvhj/3C0B4q0sHEnRP3p8Ek0DdMoUPC3mC6soiAw6MYxkA8PZzxtDW6kUOgMbKRBmd9WnQA7/QFUdf7xlczzhh6lIJ1bMYEXRIyzuT3sSmY1wvyinmA6IHP+00dvObi8Zt4AmiT3gnlgkCOKVPNxHJjF2Rxaxq/DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id C3159B9730;
-	Thu, 21 Aug 2025 15:07:20 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 06A4B20028;
-	Thu, 21 Aug 2025 15:07:18 +0000 (UTC)
-Date: Thu, 21 Aug 2025 11:07:23 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
- Sasha Levin <sashal@kernel.org>
-Subject: [for-linus][PATCH] fgraph: Copy args in intermediate storage with
- entry
-Message-ID: <20250821110723.4395212a@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755788896; c=relaxed/simple;
+	bh=TGvGGfv39AQnpMpmLvE3mmd5FvcT3FttZTFkgvHVX+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YLOXyyqEhtq2fpY5d/fFgf1lJEWZv9AX4XN5nN1dRXpCYwyY72WElLSM9TmlZ/VShGFzcoYTgryCSfuH5uxsN5ewmfEO9gUU+VPlSexcN7tcYbPci+fO3yeEpTukENfbZZbfsHoO2cog47pz7kYa5cx7Dd2DNWAejinZczMkpGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [192.168.2.54] (unknown [98.97.63.12])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id B4381B4E29EB;
+	Thu, 21 Aug 2025 17:08:01 +0200 (CEST)
+Message-ID: <ec1c2ad0-7483-410e-8026-b09eb5e33ee4@freeshell.de>
+Date: Thu, 21 Aug 2025 08:07:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 2/3] riscv: dts: starfive: jh7110-common: Move out some
+ nodes to the board dts
+To: Hal Feng <hal.feng@starfivetech.com>, Conor Dooley <conor+dt@kernel.org>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250821100930.71404-1-hal.feng@starfivetech.com>
+ <20250821100930.71404-3-hal.feng@starfivetech.com>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <20250821100930.71404-3-hal.feng@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 06A4B20028
-X-Stat-Signature: qa14phsgfncffo8hfz7d5f3xyyzqi6ge
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/u3cbP8boSLiSmeOy3ubL+9Hfz1EFcOjU=
-X-HE-Tag: 1755788838-548787
-X-HE-Meta: U2FsdGVkX1+r7GON3oHQhMXsQgqYxuaDgQ5sZ0ZVYjmTM7OV2ZIYbre+wkjc6dQyjAejQPwEMS2noSKzwGpJD8SkEpLwIa5zyu5JtdO2xpLtelAr2FjBleUaJHYTYDRJHdIftbD4I5HQfPHQGp5qrmdlc2Mmrsuc3iWhGAWaPcACA/vW6IwcDZm/rgDWIc2gSqArrrO4E5/qrTiquNc4k28FJf6bG04DoCZnKUlk2EKd4JLBIyzqBqOUHcdtbPYWm0C3EAEFiwAFusC/Bp6EFC+TtY0ehRrj7tunb7bC81vFUlsjwNhw0nzWKF8AUr+GAgVbeMJXGH9IzbnF2ykUidMDxKy44vIYcTB8L7fjnA6UVIm/WGXRmlNGxdu5SssN5wsIAwcyqX5oXfjKCDpf8aaDrhrf73rJo6yprudKdetWJhywMffadXarcmPp1eqvlojK4AU12pIDLTXqBgI8ZE1+D92x74XpqE+Je6cXMNgp9EK7thnx3a+avVEpYcZ57cnEO3+lnWM=
 
+On 8/21/25 03:09, Hal Feng wrote:
+> Some node in this file are not used by the upcoming VisionFive 2 Lite
+> board. Move them to the board dts to prepare for adding the new
+> VisionFive 2 Lite device tree.
+> 
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> ---
+>  .../boot/dts/starfive/jh7110-common.dtsi      | 22 ---------
+>  .../jh7110-deepcomputing-fml13v01.dts         | 49 +++++++++++++++++++
+>  .../boot/dts/starfive/jh7110-milkv-mars.dts   | 49 +++++++++++++++++++
+>  .../dts/starfive/jh7110-pine64-star64.dts     | 49 +++++++++++++++++++
+>  .../jh7110-starfive-visionfive-2.dtsi         | 46 +++++++++++++++++
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi      | 16 ------
+>  6 files changed, 193 insertions(+), 38 deletions(-)
+> 
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> index 2eaf01775ef5..8332622420ca 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> @@ -281,15 +281,9 @@ &mmc0 {
+>  	assigned-clock-rates = <50000000>;
+>  	bus-width = <8>;
+>  	bootph-pre-ram;
+> -	cap-mmc-highspeed;
+> -	mmc-ddr-1_8v;
+> -	mmc-hs200-1_8v;
+> -	cap-mmc-hw-reset;
+>  	post-power-on-delay-ms = <200>;
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc0_pins>;
+> -	vmmc-supply = <&vcc_3v3>;
+> -	vqmmc-supply = <&emmc_vdd>;
+>  	status = "okay";
+>  };
+>  
+> @@ -299,12 +293,7 @@ &mmc1 {
+>  	assigned-clock-rates = <50000000>;
+>  	bus-width = <4>;
+>  	bootph-pre-ram;
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace/fixes
+> -	no-sdio;
 
-Head SHA1: b7b6a20aa4ab811f598793210b4ea62885b40e18
+drop no-sdio, it is not there in riscv-dt-for-next branch
+ref: https://lore.kernel.org/lkml/20250819-sushi-change-1254c2d2a08d@spud/
 
+> -	no-mmc;
 
-Steven Rostedt (1):
-      fgraph: Copy args in intermediate storage with entry
+similar, I think we should now drop no-mmc unless you can say there is a
+defect which requires it. I have tested with Star64 and Milk-V Mars
+CM(/-Lite);  if you can confirm with boards you have access to that
+'no-mmc' can be dropped then we should just drop it. The correct reason
+for having this 'no-mmc' would only be if the controller has an error
+when receiving these commands.
 
-----
- kernel/trace/trace_functions_graph.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
----------------------------
-commit b7b6a20aa4ab811f598793210b4ea62885b40e18
-Author: Steven Rostedt <rostedt@goodmis.org>
-Date:   Wed Aug 20 19:55:22 2025 -0400
+> -	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> -	disable-wp;
+>  	cap-sd-highspeed;
 
-    fgraph: Copy args in intermediate storage with entry
-    
-    The output of the function graph tracer has two ways to display its
-    entries. One way for leaf functions with no events recorded within them,
-    and the other is for functions with events recorded inside it. As function
-    graph has an entry and exit event, to simplify the output of leaf
-    functions it combines the two, where as non leaf functions are separate:
-    
-     2)               |              invoke_rcu_core() {
-     2)               |                raise_softirq() {
-     2)   0.391 us    |                  __raise_softirq_irqoff();
-     2)   1.191 us    |                }
-     2)   2.086 us    |              }
-    
-    The __raise_softirq_irqoff() function above is really two events that were
-    merged into one. Otherwise it would have looked like:
-    
-     2)               |              invoke_rcu_core() {
-     2)               |                raise_softirq() {
-     2)               |                  __raise_softirq_irqoff() {
-     2)   0.391 us    |                  }
-     2)   1.191 us    |                }
-     2)   2.086 us    |              }
-    
-    In order to do this merge, the reading of the trace output file needs to
-    look at the next event before printing. But since the pointer to the event
-    is on the ring buffer, it needs to save the entry event before it looks at
-    the next event as the next event goes out of focus as soon as a new event
-    is read from the ring buffer. After it reads the next event, it will print
-    the entry event with either the '{' (non leaf) or ';' and timestamps (leaf).
-    
-    The iterator used to read the trace file has storage for this event. The
-    problem happens when the function graph tracer has arguments attached to
-    the entry event as the entry now has a variable length "args" field. This
-    field only gets set when funcargs option is used. But the args are not
-    recorded in this temp data and garbage could be printed. The entry field
-    is copied via:
-    
-      data->ent = *curr;
-    
-    Where "curr" is the entry field. But this method only saves the non
-    variable length fields from the structure.
-    
-    Add a helper structure to the iterator data that adds the max args size to
-    the data storage in the iterator. Then simply copy the entire entry into
-    this storage (with size protection).
-    
-    Cc: Masami Hiramatsu <mhiramat@kernel.org>
-    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    Cc: Mark Rutland <mark.rutland@arm.com>
-    Link: https://lore.kernel.org/20250820195522.51d4a268@gandalf.local.home
-    Reported-by: Sasha Levin <sashal@kernel.org>
-    Closes: https://lore.kernel.org/all/aJaxRVKverIjF4a6@lappy/
-    Fixes: ff5c9c576e75 ("ftrace: Add support for function argument to graph tracer")
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> -	post-power-on-delay-ms = <200>;
 
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 66e1a527cf1a..a7f4b9a47a71 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -27,14 +27,21 @@ struct fgraph_cpu_data {
- 	unsigned long	enter_funcs[FTRACE_RETFUNC_DEPTH];
- };
- 
-+struct fgraph_ent_args {
-+	struct ftrace_graph_ent_entry	ent;
-+	/* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entries */
-+	unsigned long			args[FTRACE_REGS_MAX_ARGS];
-+};
-+
- struct fgraph_data {
- 	struct fgraph_cpu_data __percpu *cpu_data;
- 
- 	/* Place to preserve last processed entry. */
- 	union {
--		struct ftrace_graph_ent_entry	ent;
-+		struct fgraph_ent_args		ent;
-+		/* TODO allow retaddr to have args */
- 		struct fgraph_retaddr_ent_entry	rent;
--	} ent;
-+	};
- 	struct ftrace_graph_ret_entry	ret;
- 	int				failed;
- 	int				cpu;
-@@ -627,10 +634,13 @@ get_return_for_leaf(struct trace_iterator *iter,
- 			 * Save current and next entries for later reference
- 			 * if the output fails.
- 			 */
--			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT))
--				data->ent.rent = *(struct fgraph_retaddr_ent_entry *)curr;
--			else
--				data->ent.ent = *curr;
-+			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
-+				data->rent = *(struct fgraph_retaddr_ent_entry *)curr;
-+			} else {
-+				int size = min((int)sizeof(data->ent), (int)iter->ent_size);
-+
-+				memcpy(&data->ent, curr, size);
-+			}
- 			/*
- 			 * If the next event is not a return type, then
- 			 * we only care about what type it is. Otherwise we can
+I would like to know the reason for this delay configuration? Is it
+described somewhere in technical documentation or discussion why we have
+this?
+
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc1_pins>;
+>  	status = "okay";
+> @@ -448,17 +437,6 @@ GPOEN_SYS_I2C6_DATA,
+>  	};
+>  
+>  	mmc0_pins: mmc0-0 {
+> -		 rst-pins {
+> -			pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> -					      GPOEN_ENABLE,
+> -					      GPI_NONE)>;
+> -			bias-pull-up;
+> -			drive-strength = <12>;
+> -			input-disable;
+> -			input-schmitt-disable;
+> -			slew-rate = <0>;
+> -		};
+> -
+>  		mmc-pins {
+>  			pinmux = <PINMUX(PAD_SD0_CLK, 0)>,
+>  				 <PINMUX(PAD_SD0_CMD, 0)>,
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+> index f2857d021d68..5a2a41a7e8c3 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+> @@ -11,6 +11,55 @@ / {
+>  	compatible = "deepcomputing,fml13v01", "starfive,jh7110";
+>  };
+>  
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz = /bits/ 64 <375000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz = /bits/ 64 <500000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz = /bits/ 64 <750000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz = /bits/ 64 <1500000000>;
+> +		opp-microvolt = <1040000>;
+> +	};
+> +};
+> +
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply = <&vcc_3v3>;
+> +	vqmmc-supply = <&emmc_vdd>;
+> +};
+> +
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength = <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate = <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	no-sdio;
+> +	no-mmc;
+> +	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +	post-power-on-delay-ms = <200>;
+> +};
+> +
+>  &pcie1 {
+>  	perst-gpios = <&sysgpio 21 GPIO_ACTIVE_LOW>;
+>  	phys = <&pciephy1>;
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> index fdaf6b4557da..96f6b2f072d4 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> @@ -11,6 +11,25 @@ / {
+>  	compatible = "milkv,mars", "starfive,jh7110";
+>  };
+>  
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz = /bits/ 64 <375000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz = /bits/ 64 <500000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz = /bits/ 64 <750000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz = /bits/ 64 <1500000000>;
+> +		opp-microvolt = <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+>  	assigned-clock-parents = <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
+> @@ -22,6 +41,36 @@ &i2c0 {
+>  	status = "okay";
+>  };
+>  
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply = <&vcc_3v3>;
+> +	vqmmc-supply = <&emmc_vdd>;
+> +};
+> +
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength = <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate = <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	no-sdio;
+> +	no-mmc;
+> +	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +	post-power-on-delay-ms = <200>;
+> +};
+> +
+>  &pcie0 {
+>  	status = "okay";
+>  };
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> index 31e825be2065..c9677aef9ff0 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> @@ -14,6 +14,25 @@ aliases {
+>  	};
+>  };
+>  
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz = /bits/ 64 <375000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz = /bits/ 64 <500000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz = /bits/ 64 <750000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz = /bits/ 64 <1500000000>;
+> +		opp-microvolt = <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	starfive,tx-use-rgmii-clk;
+>  	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+> @@ -44,6 +63,36 @@ &i2c0 {
+>  	status = "okay";
+>  };
+>  
+> +&mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply = <&vcc_3v3>;
+> +	vqmmc-supply = <&emmc_vdd>;
+> +};
+> +
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength = <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate = <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	no-sdio;
+> +	no-mmc;
+> +	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +	post-power-on-delay-ms = <200>;
+> +};
+> +
+>  &pcie1 {
+>  	status = "okay";
+>  };
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> index 5f14afb2c24d..d1e4206f1251 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> @@ -13,6 +13,25 @@ aliases {
+>  	};
+>  };
+>  
+> +&cpu_opp {
+> +	opp-375000000 {
+> +		opp-hz = /bits/ 64 <375000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-500000000 {
+> +		opp-hz = /bits/ 64 <500000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-750000000 {
+> +		opp-hz = /bits/ 64 <750000000>;
+> +		opp-microvolt = <800000>;
+> +	};
+> +	opp-1500000000 {
+> +		opp-hz = /bits/ 64 <1500000000>;
+> +		opp-microvolt = <1040000>;
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	status = "okay";
+>  };
+> @@ -38,9 +57,36 @@ &i2c0 {
+>  };
+>  
+>  &mmc0 {
+> +	cap-mmc-highspeed;
+> +	cap-mmc-hw-reset;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	vmmc-supply = <&vcc_3v3>;
+> +	vqmmc-supply = <&emmc_vdd>;
+>  	non-removable;
+>  };
+>  
+> +&mmc0_pins {
+> +	rst-pins {
+> +		pinmux = <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+> +				      GPOEN_ENABLE,
+> +				      GPI_NONE)>;
+> +		bias-pull-up;
+> +		drive-strength = <12>;
+> +		input-disable;
+> +		input-schmitt-disable;
+> +		slew-rate = <0>;
+> +	};
+> +};
+> +
+> +&mmc1 {
+> +	no-sdio;
+> +	no-mmc;
+> +	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +	post-power-on-delay-ms = <200>;
+> +};
+> +
+>  &pcie0 {
+>  	status = "okay";
+>  };
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> index 0ba74ef04679..d2463399b959 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> @@ -200,22 +200,6 @@ core4 {
+>  	cpu_opp: opp-table-0 {
+>  			compatible = "operating-points-v2";
+>  			opp-shared;
+> -			opp-375000000 {
+> -					opp-hz = /bits/ 64 <375000000>;
+> -					opp-microvolt = <800000>;
+> -			};
+> -			opp-500000000 {
+> -					opp-hz = /bits/ 64 <500000000>;
+> -					opp-microvolt = <800000>;
+> -			};
+> -			opp-750000000 {
+> -					opp-hz = /bits/ 64 <750000000>;
+> -					opp-microvolt = <800000>;
+> -			};
+> -			opp-1500000000 {
+> -					opp-hz = /bits/ 64 <1500000000>;
+> -					opp-microvolt = <1040000>;
+> -			};
+>  	};
+>  
+>  	thermal-zones {
+
+With that,
+
+Reviewed-by: E Shattow <e@freeshell.de>
 
