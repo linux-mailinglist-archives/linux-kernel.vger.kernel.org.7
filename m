@@ -1,120 +1,128 @@
-Return-Path: <linux-kernel+bounces-780139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE329B2FE23
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:20:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF91B2FE32
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E580170A76
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:15:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9595CA0359D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE27A26CE20;
-	Thu, 21 Aug 2025 15:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175C72701B6;
+	Thu, 21 Aug 2025 15:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pgMcV0Sa"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h/rTY/Vq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1dQumtV7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F575188CC9
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB627230D14;
+	Thu, 21 Aug 2025 15:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755789327; cv=none; b=YNX11609dCoKUWxzYks0p4SYKMUAF2y9EofmRSxSPHvkPF00d7cgbHZzzgcjJZlfQg8WzRmlJOD11anzm0VZ9NZhyrovnOmBflf4KR4PZoy1mdXZiE3CDYFuPbIpeUmTYSLhmMblGEMxIbj8LsHlljczmoO4HFfB8EG0tvuZKMk=
+	t=1755789328; cv=none; b=n8jsgvWKvgXKjKllK4KsU3QRprt+bN0e3ffN4GPyoc1IaOiPsmZ3TcS8/eXIeXCARiaIpiDXvGeUMxSmyV6/yAOHteYa82ZO/leaGant7NfWTsDMeinRhdkRx1u/6ktP5ZhmEEr53fnzOadge7SjVtCKQTYm5avAbX3BFBPnKSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755789327; c=relaxed/simple;
-	bh=Q6X/pDQCrW8V5E526AsgaNDv1ZMZazNafyiDPfLqCnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sLdQ7nqNMMO+uImg+czQyftbPOlyGJtLyFEQ3EwAvwFL+vk2dWLG32S65Gw47lU30IHEqGpriDe00dyF0l5l4nSlQkHQ6zt3iaLenO54zFcAWkE1Dhb7LqYGYMMGCBK7PsZBEXFGmI6KX2ivTEcnCNcJmvWujannT/s/YgviVMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pgMcV0Sa; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755789323;
-	bh=Q6X/pDQCrW8V5E526AsgaNDv1ZMZazNafyiDPfLqCnw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pgMcV0Sawp8POxaZoCb/t4273+4RBY2gGdJer9gi1oNiZLgBjvP7OmkHEO9yrMtZ2
-	 brBsWuS5D7QXgL5DJniS1Esdwy1J+Yb63NgqFOSPsIxBSefgWziipwR7/TJjccop0N
-	 3DUJoQ4yA6uC0w6MVseX7TV6pLv0ZMZYyxbaIGKKG1715Fjq+BCRb3aInTS/GiZMOd
-	 H8N6BvdJSRkBZ7fJDdzTyg1qlkuedTsk7VE6F1w1Ol4DQIDY1xj1wOs1JAz43zCEFW
-	 uZp+TbzagsgmorkwdSxd2FonOnPuxTVcNILzj4DI/HvsMlhhO11I9p04QHkeopX8s0
-	 r8j6bQHXJDGuw==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9DB2517E01F5;
-	Thu, 21 Aug 2025 17:15:22 +0200 (CEST)
-Date: Thu, 21 Aug 2025 17:15:19 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Caterina Shablia <caterina.shablia@collabora.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Frank Binns <frank.binns@imgtec.com>, Matt
- Coster <matt.coster@imgtec.com>, Karol Herbst <kherbst@redhat.com>, Lyude
- Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, Liviu Dudau
- <liviu.dudau@arm.com>, Lucas De Marchi <lucas.demarchi@intel.com>, Thomas
- =?UTF-8?B?SGVsbHN0csO2bQ==?= <thomas.hellstrom@linux.intel.com>, Rodrigo
- Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, asahi@lists.linux.dev, Asahi Lina
- <lina@asahilina.net>
-Subject: Re: [PATCH v4 1/7] drm/panthor: Add support for atomic page table
- updates
-Message-ID: <20250821171519.7224f470@fedora>
-In-Reply-To: <9445754d-28d2-4c95-a2f8-b850032b99d1@arm.com>
-References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
-	<d4a6208b-a4a4-451f-9799-7b9f5fb20c37@arm.com>
-	<2813151.QOukoFCf94@xps>
-	<2434159.cojqenx9y0@xps>
-	<0108b3cd-dfdd-4e4c-a2d8-157458e26f77@arm.com>
-	<20250821135127.2827abfb@fedora>
-	<9445754d-28d2-4c95-a2f8-b850032b99d1@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755789328; c=relaxed/simple;
+	bh=vuNCIW14U2DEqNlJHN+NgKUyC5263dGLiepJKDGhlP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9USsEhPAfXlA8rHqvHBVwCKlHKwbgiqlhaJG2q5wb9raB5U4VsQtGjh2lkzYqjARzGWMazBB63608TGBgqQ0L8RqlFP16mqYHcOAk6r6m3Sg0tn6ZaDrTN/koaaX+UolGl3RS/mrgqbB7UCdJ+w4bYF2WRg4BrFJCfkiZd7E5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h/rTY/Vq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1dQumtV7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 21 Aug 2025 17:15:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755789323;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cw8N6hmObeXfDdp1fjFs/HmRNVaPrSP2f/odEGJMvjs=;
+	b=h/rTY/Vq5t9GVKV+Y+KuojedSSnGVoLdhv6gI00pmw+rM9BqpPWJUbtUW3Pvv+WZ4BpEDO
+	69QpoGl1zDYLFIukQRQl+Ngn9SWnyDbNHU5PP1M8HZYzOb+bKGJ13rvSKnKIJme73xRwXP
+	hQWPl3ssayl92i0pnLHzmJ+LlSiD1m7x1IlwZ5h4J/x/FI2qCfmIQl4e62Dg32vH0H1VO5
+	4Me6lcyXPIi6lTdYRP8PDbkAfhtsVsbx2vALPBkJmuxqc11ibeCTFCghvDhlPUUWVVLAd2
+	o6t15nZxqDkz46OGH5MelvQEhja2sbbWFo0wq+Eg2U4up8GpmAXkC3raYLQCcw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755789323;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cw8N6hmObeXfDdp1fjFs/HmRNVaPrSP2f/odEGJMvjs=;
+	b=1dQumtV71iy5rmH6rkaDIFYL6PfN4nqHAN0rCNAOQ+qJ3JTMKuJ8QL9UgrIjiCEFc62Ky8
+	on51mp6sw2L+EnAA==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [RFC PATCH 09/17] verification/rvgen: Allow spaces in and events
+ strings
+Message-ID: <20250821151520.nc0hALIW@linutronix.de>
+References: <20250814150809.140739-1-gmonaco@redhat.com>
+ <20250814150809.140739-10-gmonaco@redhat.com>
+ <20250821122210.B9iAsUFG@linutronix.de>
+ <a87d09f61a873778fe9f737ea4ab7c62dc43e950.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a87d09f61a873778fe9f737ea4ab7c62dc43e950.camel@redhat.com>
 
-On Thu, 21 Aug 2025 16:02:09 +0100
-Steven Price <steven.price@arm.com> wrote:
-
-> On 21/08/2025 12:51, Boris Brezillon wrote:
-> > On Wed, 16 Jul 2025 16:43:24 +0100
-> > Steven Price <steven.price@arm.com> wrote:  
-> [...]
-> >> Although in general I'm a bit wary of relying on the whole lock region
-> >> feature - previous GPUs have an errata. But maybe I'm being over
-> >> cautious there.  
+On Thu, Aug 21, 2025 at 03:22:23PM +0200, Gabriele Monaco wrote:
+> On Thu, 2025-08-21 at 14:22 +0200, Nam Cao wrote:
+> > On Thu, Aug 14, 2025 at 05:08:01PM +0200, Gabriele Monaco wrote:
+> > > Currently the automata parser assumes event strings don't have any
+> > > space, this stands true for event names, but can be a wrong
+> > > assumption
+> > > if we want to store other information in the event strings (e.g.
+> > > constraints for hybrid automata).
+> > > 
+> > > Adapt the parser logic to allow spaces in the event strings.
 > > 
-> > We're heavily relying on it already to allow updates of the VM while
-> > the GPU is executing stuff. If that's problematic on v10+, I'd rather
-> > know early :D.  
+> > The current parser does have a few problems. Not all valid .dot files
+> > are accepted.
+> > 
+> > I have a patch buried somewhere which removes the custom parser and
+> > instead uses a library. But then it adds a new dependency, so I'm not
+> > sure if it is worth..
 > 
-> I think I'm just scarred by my experiences over a decade ago... ;)
+> Yeah it isn't really robust, I tried to improve it a bit but sure
+> something is still failing it.
+> We don't need full dot capabilities, but just extract some keywords,
+> I'd avoid pulling in a dependency for that.
 > 
-> I'm not aware of any issues with the modern[1] GPUs. The issue used to
-> be that the lock region could get accidentally unlocked by a cache flush
-> from another source - specifically the cache flush on job start flag.
-> 
-> It's also not a major issue if you keep the page tables consistent, the
-> lock region in theory allows a region to be in an inconsistent state -
-> but generally there's no need for that. AFAIK we mostly keep the tables
-> consistent anyway.
+> I'm imagining users would either generate graphs from the
+> Waters/Supremica tool [1] or copy/edit existing ones, so I'm not sure
+> they can go that far.
 
-Right, it's not a problem until we introduce sparse binding support, at
-which point atomicity becomes important, and given remapping is not a
-thing the io-pagetable layer provides (remap has to be unmap+map), I
-need to rely on region locking to make it work, or we'll have to eat the
-fault-but-not-really-because-its-being-remapped overhead/complexity.
-Honestly, I'd rather rely on region locking if it's working, because
-it's far simpler ;-).
+When I tried out the DA monitor, I edited the .dot files directly.
+
+> Still that's hacky because some things are just lightly implied by the
+> code (e.g. initial/final states, edges labels, etc.), so one day we
+> should at the very least say what DOT is valid and what not.
+
+We could also rewrite the parser using ply with a well-defined grammar and
+tokenizer, like how the LTL parser is implemented. Doing it this way would
+be easier to validate as well, because the grammar would be mostly
+copy-pasted from the specification.
+
+> Do you have specific examples of what doesn't work?
+
+Two things that I can remember:
+
+  - breaking long lines
+
+  - C-style and C++-style comments
+
+Not really relevant if you do not edit the .dot files directly like I did.
+But these things are valid according to https://graphviz.org/doc/info/lang.html
+
+Nam
 
