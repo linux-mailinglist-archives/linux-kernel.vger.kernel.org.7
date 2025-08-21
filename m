@@ -1,189 +1,153 @@
-Return-Path: <linux-kernel+bounces-779629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323E6B2F65F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:21:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC002B2F68E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0096C4E5D09
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23791AC4155
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1199730F551;
-	Thu, 21 Aug 2025 11:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1A130DD34;
+	Thu, 21 Aug 2025 11:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="cowfdV/1"
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CO4IqZYJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02470222599;
-	Thu, 21 Aug 2025 11:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481962DCF68
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755775253; cv=none; b=LA3rBaggaZ1Ea9xKsjfVwGkPQQaHz1HQHEkpipscjfDyvEbX1WpXOYTqX6W59vAwWV9EAhAcCNJdTJfk2EyQStj/gI2fUTPJHWKiwUICVUJ7AccPGLHzkTPulF4Qw4C7vTL9Ndjv5ko2Q/WNvVOwpHRM2Fu3z4gUIZiMBV938jg=
+	t=1755775313; cv=none; b=Ez0PL+TySqcmEDerRbVJ2gPA+m77/HyFUaHpxd7yfI7LSCv2NiVgp2e2fDC2bbDLR4/i/ugrJrXjiOgXoeFBaqLHPEpazpUWHgApJDHY0BDmQy4AoR06V/vowKX99aAOKhJv2ejUkne2wF9/zKh+RnDmmB3q5k6N8TTGuFI+gxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755775253; c=relaxed/simple;
-	bh=Q4npPNa8PUekFYlhJuH6KQeooA2aD9xYG1c6BK+8yj8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z2bmSPxtjo74r9ieUb2qAxtQA+VTNlnZwWeIp28BvzhvoM3F91PrA4CGit9xn2NWFmG/QGZ0/65RCPkE+YrbYiExv9Tv81dDdanI8CQyiD4Hbg74//Lf+7/XCwpHpreT+qcj3sic1LqJjI7+qdQd4lE5LKRnlPnJSYXtxkOHcdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=cowfdV/1; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
-DKIM-Signature: a=rsa-sha256; bh=hV9FzOpgihOnkSeldoBzR9nbpx8CCTOhTT8mRX0CqQI=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1755775246; v=1; x=1756207246;
- b=cowfdV/1xWy8OF9JxuuKIIxhf998Dis9BV22MSYmvarRIaWSIFoCbkWdFatf4avZ5a4kMKSs
- QpY+qKBW1frKW4dhV3Sp5daip8J/AljYGssjMSkMvhhxWduGnTKz0fgl9Y2ZOX6zwH/Zi3m9/yn
- gR5un5ORIhAWKYaFip5hvpioJymbxm9JvcbgXLx2KvcL6ht+vXiM5e9FfcA44WgQ5AjWcjqXjl0
- 805MoKTGsmeA613rlNM7xIcblmgAhZFQWYPvlJh05NyceF5rPVj+hlCsoJM484HjIVQG8Wqy2+z
- 1PnAQo1pc5f9LhH+yIjbHgglodsx/w018f5tG4ZAV3K2g==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id 9f9f6c40; Thu, 21 Aug 2025 13:20:46 +0200
-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Date: Thu, 21 Aug 2025 13:20:36 +0200
-Subject: [PATCH v4 2/2] mmc: sdhci-pxav3: add state_uhs pinctrl setting
+	s=arc-20240116; t=1755775313; c=relaxed/simple;
+	bh=g3qpW+yJzy5s7Kd00X4jbSHN+zhfm0nv4cFtjBHJDa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDuqzsGTi472xd1evuMrK50NSnhS2mUWLXbDL6bgqR9+7ZEvegBIyl6lNYAeBpZi0cC2TlsVMPO5GNZ4F5P6zc3lnUPaaGESpOWBMwsb1xH1DiDaBiFC4p/1h660Q2FljABDFSL/wvt/mCcpcO48e7q5VTUi/4CZUVpmhq4/PVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CO4IqZYJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9b8es003637
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:21:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=zonI9zf6V3fVEPfNtYwfqKy0
+	ZS/GQ3VH3Sfpylh+OmU=; b=CO4IqZYJPlfAJVErHKpC2/oi7tq3LS7dJ7xyiha1
+	EJdrRGUKno3AoK77n0wm7ZJ1zerKjWqcaeQ4kRA42l8XbTI5vhWlUMlxVj8f+unT
+	YGMu/QQL6CAnj4CYWoJYIybqJug57vvMFMpqSB/sXPZYBxbmKe4fSUVYB5rU0bbc
+	hwCinx4/cx+/r+ZR8fYwnpcQOacju5cENe7j2zZYAjPg/j2plHPdeE4RS9OGpImx
+	0YKdlRlNTU9F7W5n2uISfaZshRcPYtcM7iYgkTDaiqr2RH2RIv8YAW5E3S6CVN0Q
+	0TdNzPjViD14jSSr5lQl66fJc6skX/tuBgpn+87Ry5Wh1w==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ngtdk25h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:21:51 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70bc9937844so21374386d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:21:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755775310; x=1756380110;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zonI9zf6V3fVEPfNtYwfqKy0ZS/GQ3VH3Sfpylh+OmU=;
+        b=miBRTeCiOo2vaLLhjJe/+NrRvkB8FPiA7fweFrxkQlZvI5Ux3gztR3WZFZEwUjBBS5
+         MXetIE7ThzFebaCXrAUN26nXYYSk48HtvhB1eRgFRMBjThbqQhUpta1AvmfdB5ufUmRd
+         ygBK/anWrztFgxSiIuiTmbyZD/60L5/T6J5c1pZnTKhrFQZeTl2v7Fq5VNWtUkA8kGnS
+         f2O26XcHVR87x6dsmUps1R5mlqYRQqzaT6A6i1claBRMNBhaQUG77z3ex3UeJcaS+LMM
+         jZGT226gjul2ld8xyp6tqrMp+olPomh5fgq6u6+AcvcpybYVMUYShdMIQo/haXckWuWI
+         Bc8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWxAPAa1J22XHz5eXdUbpF/5WjSdER/ut2TYdR2GNR83OHfuIniAI1+oLCMLD6UxReB+COj8uTfTErN55s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/OCRmKec9w044u6v4Zl5AM06Pq4ch25U0Wr0L7b+aIk3AmEFH
+	tHHaW684gt6l+HbzRLZ9kiAVs9s4RVirolXfxWQ4RKDMimOWjWT3q+ES2UuAf6aQ58s/rOArXvB
+	JBWFJd+C9oe+RjQh0W89rNhI9nXzhbVdyhCrd6P6xelEPmWkZ06f5zTftg6duSUctlT18bBMs8r
+	g=
+X-Gm-Gg: ASbGncsbCYEY/+daik4rDn4vp88MJkpli5WvWKZELKoM/zT28sqlWu8xEhE/+zheKpA
+	ZG3w4lqLPc5O86xPYE2QZhVRNtGrNM7l6QHpImx4zw3kD7Oq5SiCcwkNOKU3uIev/nYAsv3pHhX
+	3JhBGR90AijIuDNk754hy3cFC1JPtwmJyl9OYqijx0w68H/T+V+cecv+Gtl8e1OdUgrKcFOmx6O
+	4QrVIKxI1rqvz/4WBlc6WRGIIYQVTmzR0PzpqgF3z2QwPMRzW1LaulSrYDLVK+jDfeNuVK1vwTZ
+	qxHdXtecaIFqy2m8XpK6jTSC9jyXPFJ7UhmQqMedhaMJW90H16Ia9f5NrdJWtS38odlFa5cuU0k
+	MLHncHGWPn4aZQ/1LcH0tCAZBo62KXi/lNwL7PW7tpaEpoNwqH71s
+X-Received: by 2002:a05:6214:2249:b0:70d:657:e6a5 with SMTP id 6a1803df08f44-70d88fde89dmr18528506d6.47.1755775309774;
+        Thu, 21 Aug 2025 04:21:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFF/C+D5ck8SnHsMpLfWrHvRO2/uQ1fp+kAA7zaA6wAh315PaUy9SeWMpDSUALjBQx2xcDCuA==
+X-Received: by 2002:a05:6214:2249:b0:70d:657:e6a5 with SMTP id 6a1803df08f44-70d88fde89dmr18528116d6.47.1755775309221;
+        Thu, 21 Aug 2025 04:21:49 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef36acffsm3000969e87.66.2025.08.21.04.21.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 04:21:48 -0700 (PDT)
+Date: Thu, 21 Aug 2025 14:21:46 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+        airlied@gmail.com, simona@ffwll.ch, jani.nikula@intel.com,
+        ville.syrjala@linux.intel.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/tests: modeset: Add drm connector
+ atomic_[duplicate/destroy]_state
+Message-ID: <nr5dbddxfr24c2g3ybq3pkg45krjlqrs3wjovaglu75ofvz6r4@q4qdfg76ngvr>
+References: <20250811063403.98739-1-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250821-pxav3-uhs-v4-2-bb588314f3c3@dujemihanovic.xyz>
-References: <20250821-pxav3-uhs-v4-0-bb588314f3c3@dujemihanovic.xyz>
-In-Reply-To: <20250821-pxav3-uhs-v4-0-bb588314f3c3@dujemihanovic.xyz>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>
-Cc: Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, 
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3563;
- i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
- bh=Q4npPNa8PUekFYlhJuH6KQeooA2aD9xYG1c6BK+8yj8=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDBnLGblDO9+pKPFvn5NrKP1kT9x6l9DVHJ2TJhT0P9Rat
- HG/ZsObjlIWBjEuBlkxRZbc/47XeD+LbN2evcwAZg4rE8gQBi5OAZjIT1NGhgMnrxXYrN5UyxVp
- njhxR8Qd/iWzLjrcjl69wzeSkYf9iAYjw0Sdc+JCmqpGobt+9lv92/vRLl5RRiu00tBq95aWKc6
- abAA=
-X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
- fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811063403.98739-1-xiaolei.wang@windriver.com>
+X-Authority-Analysis: v=2.4 cv=LexlKjfi c=1 sm=1 tr=0 ts=68a7014f cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=t7CeM3EgAAAA:8 a=EUspDBNiAAAA:8 a=r0MfjTZIDPvKbUZ3oGwA:9
+ a=CjuIK1q_8ugA:10 a=1HOtulTD9v-eNWfpl4qZ:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: atLwkGlPgzRFXODztFfZ8tDj8Z5njpv_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDEzNSBTYWx0ZWRfX/R9n8G/vLHOd
+ kxdDqDbdZCwapvOtUnYo9Ff39iEuB0hvNw8as+A7tB1WOt+xgUOYnupyj18KSETx6nfrMKuxjoM
+ CP9dtLnMKkhUt8c6yKPRpTJTCMERnE72N0Ie1sti9zDMklucG3oglDgDPrJKslwXI3G1eUwk+1z
+ FXKBVJJs3IIMSH0IKt4xRLtZ2lkV+9r/rYG/mrtNjHoEKEQo9EGYHoIikEoEQ5ALGYZilF2Afx3
+ V0IzDc8Wfv2k8a5Af1zhMZFaZiS/kA64TkGEOENVk3KDQNx7StNF4HB8uE+jvO5hzMLIjDCV6cu
+ UTrADi+rZGPh1Z9AJXT5h7S1WL79tMWLkMbOvEgtd0q2EgsNWE7uzuXADc5wdyncU0gKKfTScug
+ tPWq4EwMrwcLsXxNO8KElWdeObzr3Q==
+X-Proofpoint-ORIG-GUID: atLwkGlPgzRFXODztFfZ8tDj8Z5njpv_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 malwarescore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200135
 
-Different bus clocks require different pinctrl states to remain stable.
-Add support for selecting between a default and UHS state according to
-the bus clock.
+On Mon, Aug 11, 2025 at 02:34:03PM +0800, Xiaolei Wang wrote:
+> Commit 66671944e176 ("drm/tests: helpers: Add atomic helpers")
+> added the atomic state path, so adding the drm connector
+> atomic_[duplicate/destroy]_state is also necessary.
+> 
+> WARNING: CPU: 0 PID: 96 at drivers/gpu/drm/drm_connector.c:234 drm_connector_init_only+0x934/0xee0
+>  Call trace:
+>   drm_connector_init_only+0x934/0xee0 (P)
+>   drmm_connector_init+0xe0/0x1b0
+>   drm_client_modeset_test_init+0x290/0x534
+>   kunit_try_run_case+0x110/0x3b4
+>   kunit_generic_run_threadfn_adapter+0x80/0xec
+>   kthread+0x3b8/0x6c0
+>   ret_from_fork+0x10/0x20
+> 
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> ---
+>  drivers/gpu/drm/tests/drm_client_modeset_test.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
----
-Changes in v4:
-- Fix cosmetic issue
-- Update trailers
+Fixes: 66671944e176 ("drm/tests: helpers: Add atomic helpers")
 
-Changes in v3:
-- Move pinctrl stuff out of platdata
-- Add helper for pinstate lookup
-- Thanks to Adrian for the suggestions
-
-Changes in v2:
-- Don't attempt to lookup pinstates if getting pinctrl fails
-- Only select pinstates if both of them are valid
-- dev_warn() -> dev_dbg()
----
- drivers/mmc/host/sdhci-pxav3.c | 41 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 40 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
-index 1371960e34ebbb955ba2334451ed4734041a7b1b..238f508f2fb0bd1194e42c77420d3748c952039e 100644
---- a/drivers/mmc/host/sdhci-pxav3.c
-+++ b/drivers/mmc/host/sdhci-pxav3.c
-@@ -20,9 +20,11 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
- #include <linux/mbus.h>
-+#include <linux/units.h>
- 
- #include "sdhci.h"
- #include "sdhci-pltfm.h"
-@@ -51,6 +53,9 @@ struct sdhci_pxa {
- 	struct clk *clk_io;
- 	u8	power_mode;
- 	void __iomem *sdio3_conf_reg;
-+	struct pinctrl *pinctrl;
-+	struct pinctrl_state *pins_default;
-+	struct pinctrl_state *pins_uhs;
- };
- 
- /*
-@@ -313,8 +318,20 @@ static void pxav3_set_power(struct sdhci_host *host, unsigned char mode,
- 		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
- }
- 
-+static void pxav3_set_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+	struct sdhci_pltfm_host *phost = sdhci_priv(host);
-+	struct sdhci_pxa *pxa = sdhci_pltfm_priv(phost);
-+	struct pinctrl_state *pins = clock < 100 * HZ_PER_MHZ ? pxa->pins_default : pxa->pins_uhs;
-+
-+	if (pins)
-+		pinctrl_select_state(pxa->pinctrl, pins);
-+
-+	sdhci_set_clock(host, clock);
-+}
-+
- static const struct sdhci_ops pxav3_sdhci_ops = {
--	.set_clock = sdhci_set_clock,
-+	.set_clock = pxav3_set_clock,
- 	.set_power = pxav3_set_power,
- 	.platform_send_init_74_clocks = pxav3_gen_init_74_clocks,
- 	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
-@@ -366,6 +383,19 @@ static inline struct sdhci_pxa_platdata *pxav3_get_mmc_pdata(struct device *dev)
- }
- #endif
- 
-+static struct pinctrl_state *pxav3_lookup_pinstate(struct device *dev, struct pinctrl *pinctrl,
-+						   const char *name)
-+{
-+	struct pinctrl_state *pins = pinctrl_lookup_state(pinctrl, name);
-+
-+	if (IS_ERR(pins)) {
-+		dev_dbg(dev, "could not get pinstate '%s': %ld\n", name, PTR_ERR(pins));
-+		return NULL;
-+	}
-+
-+	return pins;
-+}
-+
- static int sdhci_pxav3_probe(struct platform_device *pdev)
- {
- 	struct sdhci_pltfm_host *pltfm_host;
-@@ -440,6 +470,15 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
- 			host->mmc->pm_caps |= pdata->pm_caps;
- 	}
- 
-+	pxa->pinctrl = devm_pinctrl_get(dev);
-+	if (!IS_ERR(pxa->pinctrl)) {
-+		pxa->pins_default = pxav3_lookup_pinstate(dev, pxa->pinctrl, "default");
-+		if (pxa->pins_default)
-+			pxa->pins_uhs = pxav3_lookup_pinstate(dev, pxa->pinctrl, "state_uhs");
-+	} else {
-+		dev_dbg(dev, "could not get pinctrl handle: %ld\n", PTR_ERR(pxa->pinctrl));
-+	}
-+
- 	pm_runtime_get_noresume(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, PXAV3_RPM_DELAY_MS);
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 -- 
-2.50.1
-
+With best wishes
+Dmitry
 
