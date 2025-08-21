@@ -1,504 +1,130 @@
-Return-Path: <linux-kernel+bounces-780044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E5AB2FCD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:35:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C778B2FD02
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A890F6403A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:26:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E21E1C2228F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EED2EDD5C;
-	Thu, 21 Aug 2025 14:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B30A311C39;
+	Thu, 21 Aug 2025 14:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYKypHZ/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="0QvVRV21"
+Received: from mx1.secunet.com (mx1.secunet.com [62.96.220.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0AE28AB0B;
-	Thu, 21 Aug 2025 14:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D776F2FB62D
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755786100; cv=none; b=RR/CP2Eup3K6XuXBQa0T4hI3JHLaWsK9A9U+teEGhYGW60J5ZKfsZFppLFTCQQMnWpA6PDYxrOFTILlLWmS9eGsqFf49K50d8MDiI7n6nkmEOmZ6rORfJa3vhm1NRHoxnF51wuSVtkzYzEps0Qn1PSOW0BkycRKFei2tQpxZDN4=
+	t=1755786113; cv=none; b=lqhlCx4KqMLCBCgiy2frDsmvm6geqa+hgu5AM8P/tKc9nuH5Fe1FT/C0UR31Gwx5cLRssngQ9zkkT5hhJWaXa2AGY/P2eT8nzlIdcKBhyVB8sTWJhgNknT92jbR/7tG94Fm3/ZnuUyz8uV/czZ8qqc2G06ZzthBaCK5DzZ+Sm1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755786100; c=relaxed/simple;
-	bh=uYEK1a2ZG5UzKHVraa8W5O9cCQbPaE3FbRWgQy8mxrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VM6Bgr1A/iQu7NqVe/bNMmW06GQmJ+GGLa+j6DIhtTzh7OD7E53r9XLf6hqVP+9O3wUIbJYnlIGaDpNc/SG2a86mSU0AacSoJKrOzaUvfGwmFZPZaZCOoE/75lN/2FkOeZVaeKshrjYeesngUR36b2+wqzJtlsiHIFrXzXK5/i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYKypHZ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C5FFC16AAE;
-	Thu, 21 Aug 2025 14:21:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755786100;
-	bh=uYEK1a2ZG5UzKHVraa8W5O9cCQbPaE3FbRWgQy8mxrI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BYKypHZ/p75IMUVHV2u1aeOlh/lFPeeUMsCfZP8rey7YwoACZ0n8h3ZQh1cZxNNIt
-	 u9+y8UykM5RNnBnG9A6UqEVNuf6umgGmEeblRhJQ0ciUFv8IVJxEHVGdqHSJ3HkD6/
-	 RlfgexA0Fq47+1g/jP2bBx4/pZ3GN2tokd9NdiY/gc91beWj5dO0OYR28yEYbX389n
-	 F0EfglEi0Pb/7mn0Ffyq1HAkXkWuPs8eM4YG9fbXgd09yHwSUXseVGYta1CZUM81li
-	 nXetHbQCfzUvgEw+tt6J6+ZKmBw15zHKVbLUyRFh7iP8CBBhXBaMiPytWizJqKRxmo
-	 FdCLGFrrfFbtQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1up6Ab-0000000BT9Y-2XwE;
-	Thu, 21 Aug 2025 16:21:37 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 24/24] docs: sphinx: drop parse-headers.pl
-Date: Thu, 21 Aug 2025 16:21:30 +0200
-Message-ID: <cd825f90abec4828725e8143af010bd0d802c3ca.1755784930.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1755784929.git.mchehab+huawei@kernel.org>
-References: <cover.1755784929.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1755786113; c=relaxed/simple;
+	bh=IGSVEUhw3KS9OViN0YA5llbQX0U0Ew/Koagt/GO9fAk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGxH4BseFp7DaSbZokSNxArSsDIGHEQW5QGJxKWMO4vka/LiF4sJE6lngU7GGRixYywURJw+3KTDCiZdkmr/by2UFM0CuX9SkHe/Z0vj9D0sdvgoooFsPhWF/jL+GNX9uL4MskZngSCv+2KsujBuFCHO/O3eQCiqqTaRiUkZjms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=0QvVRV21; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
+Received: from localhost (localhost [127.0.0.1])
+	by mx1.secunet.com (Postfix) with ESMTP id 8CD9320890;
+	Thu, 21 Aug 2025 16:21:43 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from mx1.secunet.com ([127.0.0.1])
+ by localhost (mx1.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id O0v0MIfmKoIl; Thu, 21 Aug 2025 16:21:43 +0200 (CEST)
+Received: from EXCH-02.secunet.de (unknown [10.32.0.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.secunet.com (Postfix) with ESMTPS id 03F662088E;
+	Thu, 21 Aug 2025 16:21:43 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.secunet.com 03F662088E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1755786103;
+	bh=IG1S4f0ZLBcta+pgtT/MmOkkmpatwuZ5bkW22UFsx0Q=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
+	b=0QvVRV21mQSIRqynA7ylHYqkQHUWoiaTjXWUnKUJ0VOUFMTGIMEEOTLIYOf6ZY7Gi
+	 Uzz6p9024z94a78lKXl2DNt9PN+ujw/LT+Jl8FYatWQpJfJ112Sj4ENob+yzzGZX/X
+	 C80i4+NziYm1DbZ5IjE+OD22ETnBuwsuGeFtc5GSMzx5nYegtES9BJGdJ1MUbN12fU
+	 8aaAPtIVaUk8pOJJGeCyNKD8lc3bYLS14VzQ35RZc5T/wCx0DkMoBKXmjlSow+lJ4Q
+	 wkTiqq3PF5WGwxwTOfsjyWtECZ2GIm9AoRERTraJaTSVseNT6nA9QvJ8zF81hX8lcr
+	 vKT77j58idSmg==
+Received: from secunet.com (10.182.7.193) by EXCH-02.secunet.de (10.32.0.172)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Thu, 21 Aug
+ 2025 16:21:42 +0200
+Received: (nullmailer pid 2403903 invoked by uid 1000);
+	Thu, 21 Aug 2025 14:21:41 -0000
+Date: Thu, 21 Aug 2025 16:21:41 +0200
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: syzbot <syzbot+b6ae1c4eede4e0ea287f@syzkaller.appspotmail.com>,
+	<ajay.kaher@broadcom.com>, <alexey.makhalov@broadcom.com>,
+	<bcm-kernel-feedback-list@broadcom.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <jgross@suse.com>,
+	<linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
+	<syzkaller-bugs@googlegroups.com>, <tglx@linutronix.de>,
+	<virtualization@lists.linux.dev>, <x86@kernel.org>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+	Aakash Kumar S <saakashkumar@marvell.com>
+Subject: Re: [syzbot] [x86?] BUG: soft lockup in xfrm_timer_handler
+Message-ID: <aKcrddsfOz5G1yVW@secunet.com>
+References: <68a2dd64.050a0220.e29e5.0096.GAE@google.com>
+ <95833405-18aa-48ad-a5d6-4f659dfbf08a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <95833405-18aa-48ad-a5d6-4f659dfbf08a@intel.com>
+X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
+ EXCH-02.secunet.de (10.32.0.172)
 
-Now that we have a replacement in place, drop the old version.
+On Tue, Aug 19, 2025 at 07:46:35AM -0700, Dave Hansen wrote:
+> On 8/18/25 00:59, syzbot wrote:
+> > Call Trace:
+> >  <IRQ>
+> ...
+> >  spin_lock include/linux/spinlock.h:351 [inline]
+> >  __xfrm_state_delete+0xba/0xca0 net/xfrm/xfrm_state.c:818
+> >  xfrm_timer_handler+0x18f/0xa00 net/xfrm/xfrm_state.c:716
+> >  __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
+> >  __hrtimer_run_queues+0x52c/0xc60 kernel/time/hrtimer.c:1825
+> >  hrtimer_run_softirq+0x187/0x2b0 kernel/time/hrtimer.c:1842
+> >  handle_softirqs+0x283/0x870 kernel/softirq.c:579
+> >  __do_softirq kernel/softirq.c:613 [inline]
+> >  invoke_softirq kernel/softirq.c:453 [inline]
+> >  __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
+> >  irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
+> >  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
+> >  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
+> 
+> >From that call trace, I'd suspect a deadlock from the xfrm code not
+> releasing the lock somewhere, not x86 code.
+> 
+> One thing that stands out is that of the ~20 or so uses of
+> '->xfrm.xfrm_state_lock', the call site in the trace is the only one
+> that uses spin_lock() instead of spin_lock_bh(). I didn't look at it for
+> long, so maybe there's a good reason for it. But it did catch my eye.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/sphinx/parse-headers.pl | 419 --------------------------
- 1 file changed, 419 deletions(-)
- delete mode 100755 Documentation/sphinx/parse-headers.pl
+That's the one in __xfrm_state_delete. This function has 3 callers,
+one ist xfrm_timer_handler itself and two others that disabled
+bottom halves bevore calling. That should be save.
 
-diff --git a/Documentation/sphinx/parse-headers.pl b/Documentation/sphinx/parse-headers.pl
-deleted file mode 100755
-index 560685926cdb..000000000000
---- a/Documentation/sphinx/parse-headers.pl
-+++ /dev/null
-@@ -1,419 +0,0 @@
--#!/usr/bin/env perl
--# SPDX-License-Identifier: GPL-2.0
--# Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@kernel.org>.
--
--use strict;
--use Text::Tabs;
--use Getopt::Long;
--use Pod::Usage;
--
--my $debug;
--my $help;
--my $man;
--
--GetOptions(
--	"debug" => \$debug,
--	'usage|?' => \$help,
--	'help' => \$man
--) or pod2usage(2);
--
--pod2usage(1) if $help;
--pod2usage(-exitstatus => 0, -verbose => 2) if $man;
--pod2usage(2) if (scalar @ARGV < 2 || scalar @ARGV > 3);
--
--my ($file_in, $file_out, $file_exceptions) = @ARGV;
--
--my $data;
--my %ioctls;
--my %defines;
--my %typedefs;
--my %enums;
--my %enum_symbols;
--my %structs;
--
--#
--# read the file and get identifiers
--#
--
--my $is_enum = 0;
--my $is_comment = 0;
--open IN, $file_in or die "Can't open $file_in";
--while (<IN>) {
--	$data .= $_;
--
--	my $ln = $_;
--	if (!$is_comment) {
--		$ln =~ s,/\*.*(\*/),,g;
--
--		$is_comment = 1 if ($ln =~ s,/\*.*,,);
--	} else {
--		if ($ln =~ s,^(.*\*/),,) {
--			$is_comment = 0;
--		} else {
--			next;
--		}
--	}
--
--	if ($is_enum && $ln =~ m/^\s*([_\w][\w\d_]+)\s*[\,=]?/) {
--		my $s = $1;
--		my $n = $1;
--		$n =~ tr/A-Z/a-z/;
--		$n =~ tr/_/-/;
--
--		$enum_symbols{$s} =  "\\ :ref:`$s <$n>`\\ ";
--
--		$is_enum = 0 if ($is_enum && m/\}/);
--		next;
--	}
--	$is_enum = 0 if ($is_enum && m/\}/);
--
--	if ($ln =~ m/^\s*#\s*define\s+([_\w][\w\d_]+)\s+_IO/) {
--		my $s = $1;
--		my $n = $1;
--		$n =~ tr/A-Z/a-z/;
--
--		$ioctls{$s} = "\\ :ref:`$s <$n>`\\ ";
--		next;
--	}
--
--	if ($ln =~ m/^\s*#\s*define\s+([_\w][\w\d_]+)\s+/) {
--		my $s = $1;
--		my $n = $1;
--		$n =~ tr/A-Z/a-z/;
--		$n =~ tr/_/-/;
--
--		$defines{$s} = "\\ :ref:`$s <$n>`\\ ";
--		next;
--	}
--
--	if ($ln =~ m/^\s*typedef\s+([_\w][\w\d_]+)\s+(.*)\s+([_\w][\w\d_]+);/) {
--		my $s = $2;
--		my $n = $3;
--
--		$typedefs{$n} = "\\ :c:type:`$n <$s>`\\ ";
--		next;
--	}
--	if ($ln =~ m/^\s*enum\s+([_\w][\w\d_]+)\s+\{/
--	    || $ln =~ m/^\s*enum\s+([_\w][\w\d_]+)$/
--	    || $ln =~ m/^\s*typedef\s*enum\s+([_\w][\w\d_]+)\s+\{/
--	    || $ln =~ m/^\s*typedef\s*enum\s+([_\w][\w\d_]+)$/) {
--		my $s = $1;
--
--		$enums{$s} =  "enum :c:type:`$s`\\ ";
--
--		$is_enum = $1;
--		next;
--	}
--	if ($ln =~ m/^\s*struct\s+([_\w][\w\d_]+)\s+\{/
--	    || $ln =~ m/^\s*struct\s+([[_\w][\w\d_]+)$/
--	    || $ln =~ m/^\s*typedef\s*struct\s+([_\w][\w\d_]+)\s+\{/
--	    || $ln =~ m/^\s*typedef\s*struct\s+([[_\w][\w\d_]+)$/
--	    ) {
--		my $s = $1;
--
--		$structs{$s} = "struct $s\\ ";
--		next;
--	}
--}
--close IN;
--
--#
--# Handle multi-line typedefs
--#
--
--my @matches = ($data =~ m/typedef\s+struct\s+\S+?\s*\{[^\}]+\}\s*(\S+)\s*\;/g,
--	       $data =~ m/typedef\s+enum\s+\S+?\s*\{[^\}]+\}\s*(\S+)\s*\;/g,);
--foreach my $m (@matches) {
--	my $s = $m;
--
--	$typedefs{$s} = "\\ :c:type:`$s`\\ ";
--	next;
--}
--
--#
--# Handle exceptions, if any
--#
--
--my %def_reftype = (
--	"ioctl"   => ":ref",
--	"define"  => ":ref",
--	"symbol"  => ":ref",
--	"typedef" => ":c:type",
--	"enum"    => ":c:type",
--	"struct"  => ":c:type",
--);
--
--if ($file_exceptions) {
--	open IN, $file_exceptions or die "Can't read $file_exceptions";
--	while (<IN>) {
--		next if (m/^\s*$/ || m/^\s*#/);
--
--		# Parsers to ignore a symbol
--
--		if (m/^ignore\s+ioctl\s+(\S+)/) {
--			delete $ioctls{$1} if (exists($ioctls{$1}));
--			next;
--		}
--		if (m/^ignore\s+define\s+(\S+)/) {
--			delete $defines{$1} if (exists($defines{$1}));
--			next;
--		}
--		if (m/^ignore\s+typedef\s+(\S+)/) {
--			delete $typedefs{$1} if (exists($typedefs{$1}));
--			next;
--		}
--		if (m/^ignore\s+enum\s+(\S+)/) {
--			delete $enums{$1} if (exists($enums{$1}));
--			next;
--		}
--		if (m/^ignore\s+struct\s+(\S+)/) {
--			delete $structs{$1} if (exists($structs{$1}));
--			next;
--		}
--		if (m/^ignore\s+symbol\s+(\S+)/) {
--			delete $enum_symbols{$1} if (exists($enum_symbols{$1}));
--			next;
--		}
--
--		# Parsers to replace a symbol
--		my ($type, $old, $new, $reftype);
--
--		if (m/^replace\s+(\S+)\s+(\S+)\s+(\S+)/) {
--			$type = $1;
--			$old = $2;
--			$new = $3;
--		} else {
--			die "Can't parse $file_exceptions: $_";
--		}
--
--		if ($new =~ m/^\:c\:(data|func|macro|type)\:\`(.+)\`/) {
--			$reftype = ":c:$1";
--			$new = $2;
--		} elsif ($new =~ m/\:ref\:\`(.+)\`/) {
--			$reftype = ":ref";
--			$new = $1;
--		} else {
--			$reftype = $def_reftype{$type};
--		}
--		if (!$reftype) {
--		    print STDERR "Warning: can't find ref type for $type";
--		}
--		$new = "$reftype:`$old <$new>`";
--
--		if ($type eq "ioctl") {
--			$ioctls{$old} = $new if (exists($ioctls{$old}));
--			next;
--		}
--		if ($type eq "define") {
--			$defines{$old} = $new if (exists($defines{$old}));
--			next;
--		}
--		if ($type eq "symbol") {
--			$enum_symbols{$old} = $new if (exists($enum_symbols{$old}));
--			next;
--		}
--		if ($type eq "typedef") {
--			$typedefs{$old} = $new if (exists($typedefs{$old}));
--			next;
--		}
--		if ($type eq "enum") {
--			$enums{$old} = $new if (exists($enums{$old}));
--			next;
--		}
--		if ($type eq "struct") {
--			$structs{$old} = $new if (exists($structs{$old}));
--			next;
--		}
--
--		die "Can't parse $file_exceptions: $_";
--	}
--}
--
--if ($debug) {
--	my @all_hashes = (
--		{ioctl      => \%ioctls},
--		{typedef    => \%typedefs},
--		{enum       => \%enums},
--		{struct     => \%structs},
--		{define     => \%defines},
--		{symbol     => \%enum_symbols}
--	);
--
--	foreach my $hash (@all_hashes) {
--		while (my ($name, $hash_ref) = each %$hash) {
--			next unless %$hash_ref;  # Skip empty hashes
--
--			print "$name:\n";
--			for my $key (sort keys %$hash_ref) {
--				print "  $key -> $hash_ref->{$key}\n";
--			}
--			print "\n";
--		}
--	}
--}
--
--#
--# Align block
--#
--$data = expand($data);
--$data = "    " . $data;
--$data =~ s/\n/\n    /g;
--$data =~ s/\n\s+$/\n/g;
--$data =~ s/\n\s+\n/\n\n/g;
--
--#
--# Add escape codes for special characters
--#
--$data =~ s,([\_\`\*\<\>\&\\\\:\/\|\%\$\#\{\}\~\^]),\\$1,g;
--
--$data =~ s,DEPRECATED,**DEPRECATED**,g;
--
--#
--# Add references
--#
--
--my $start_delim = "[ \n\t\(\=\*\@]";
--my $end_delim = "(\\s|,|\\\\=|\\\\:|\\;|\\\)|\\}|\\{)";
--
--foreach my $r (keys %ioctls) {
--	my $s = $ioctls{$r};
--
--	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
--
--	print "$r -> $s\n" if ($debug);
--
--	$data =~ s/($start_delim)($r)$end_delim/$1$s$3/g;
--}
--
--foreach my $r (keys %defines) {
--	my $s = $defines{$r};
--
--	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
--
--	print "$r -> $s\n" if ($debug);
--
--	$data =~ s/($start_delim)($r)$end_delim/$1$s$3/g;
--}
--
--foreach my $r (keys %enum_symbols) {
--	my $s = $enum_symbols{$r};
--
--	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
--
--	print "$r -> $s\n" if ($debug);
--
--	$data =~ s/($start_delim)($r)$end_delim/$1$s$3/g;
--}
--
--foreach my $r (keys %enums) {
--	my $s = $enums{$r};
--
--	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
--
--	print "$r -> $s\n" if ($debug);
--
--	$data =~ s/enum\s+($r)$end_delim/$s$2/g;
--}
--
--foreach my $r (keys %structs) {
--	my $s = $structs{$r};
--
--	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
--
--	print "$r -> $s\n" if ($debug);
--
--	$data =~ s/struct\s+($r)$end_delim/$s$2/g;
--}
--
--foreach my $r (keys %typedefs) {
--	my $s = $typedefs{$r};
--
--	$r =~ s,([\_\`\*\<\>\&\\\\:\/]),\\\\$1,g;
--
--	print "$r -> $s\n" if ($debug);
--	$data =~ s/($start_delim)($r)$end_delim/$1$s$3/g;
--}
--
--$data =~ s/\\ ([\n\s])/\1/g;
--
--#
--# Generate output file
--#
--
--my $title = $file_in;
--$title =~ s,.*/,,;
--
--open OUT, "> $file_out" or die "Can't open $file_out";
--print OUT ".. -*- coding: utf-8; mode: rst -*-\n\n";
--print OUT "$title\n";
--print OUT "=" x length($title);
--print OUT "\n\n.. parsed-literal::\n\n";
--print OUT $data;
--close OUT;
--
--__END__
--
--=head1 NAME
--
--parse_headers.pl - parse a C file, in order to identify functions, structs,
--enums and defines and create cross-references to a Sphinx book.
--
--=head1 SYNOPSIS
--
--B<parse_headers.pl> [<options>] <C_FILE> <OUT_FILE> [<EXCEPTIONS_FILE>]
--
--Where <options> can be: --debug, --help or --usage.
--
--=head1 OPTIONS
--
--=over 8
--
--=item B<--debug>
--
--Put the script in verbose mode, useful for debugging.
--
--=item B<--usage>
--
--Prints a brief help message and exits.
--
--=item B<--help>
--
--Prints a more detailed help message and exits.
--
--=back
--
--=head1 DESCRIPTION
--
--Convert a C header or source file (C_FILE), into a ReStructured Text
--included via ..parsed-literal block with cross-references for the
--documentation files that describe the API. It accepts an optional
--EXCEPTIONS_FILE with describes what elements will be either ignored or
--be pointed to a non-default reference.
--
--The output is written at the (OUT_FILE).
--
--It is capable of identifying defines, functions, structs, typedefs,
--enums and enum symbols and create cross-references for all of them.
--It is also capable of distinguish #define used for specifying a Linux
--ioctl.
--
--The EXCEPTIONS_FILE contain two rules to allow ignoring a symbol or
--to replace the default references by a custom one.
--
--Please read Documentation/doc-guide/parse-headers.rst at the Kernel's
--tree for more details.
--
--=head1 BUGS
--
--Report bugs to Mauro Carvalho Chehab <mchehab@kernel.org>
--
--=head1 COPYRIGHT
--
--Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@kernel.org>.
--
--License GPLv2: GNU GPL version 2 <https://gnu.org/licenses/gpl.html>.
--
--This is free software: you are free to change and redistribute it.
--There is NO WARRANTY, to the extent permitted by law.
--
--=cut
--- 
-2.50.1
+We had a recent patch that changed xfrm_alloc_spi, this function
+changed the locking behaviour and shows up in the trace:
 
+commit 94f39804d891 ("xfrm: Duplicate SPI Handling")
+
+I don't see an obvious problem, but it changed the locking
+used here.
+
+I've Cced the author.
 
