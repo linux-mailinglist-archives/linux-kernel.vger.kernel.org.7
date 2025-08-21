@@ -1,78 +1,128 @@
-Return-Path: <linux-kernel+bounces-780436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D1AB301E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:20:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41FB0B30206
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60189606ED5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8173C1CE5BE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B574343D63;
-	Thu, 21 Aug 2025 18:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2CD34DCE9;
+	Thu, 21 Aug 2025 18:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="atC7rdDP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="qQWoMkSH"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77012E62B3;
-	Thu, 21 Aug 2025 18:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C0B34DCFB;
+	Thu, 21 Aug 2025 18:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755800434; cv=none; b=VaNbCZUg1CGoKVSvaO9lXX5hul7jX2Wypg/Whelplt7RHw8YiTxZu3at5G2cWq66LPKReRkqFYDi05sWqX26tvdpiNgTDdiuo6vsi2pLgYO1d4hcFhZVGl9uPreTelz7BY8A2VIlknTYYTPo1dNmEBKQHNkjt21HROjaRKlZhoc=
+	t=1755800652; cv=none; b=Bf16Mu2CYdLwNBUQBjr5PypqVnRabmNX4FYwMfP18GhIS2bpXfKGCA5wtbT6KpxdUr2sMpzDNYGbHhFF3y7LZxT4ZC3llxoIdqGRy4s2npRsUTzXXqLY80PiT56Nn2Zac29MYQJWSQOVsyg5Ab+C7DSxhpY3NtPLJ4aVPmoEzAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755800434; c=relaxed/simple;
-	bh=4hrLo4L+G1zUcmSSW/67SSpyLfiydKVmvlj+/64Owh4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=WFKDPM5vE4Glh0LtrFiN0EFkSUTEWw75A+TIEZBZkhzEyTFbW+/B3/TTpBhP6/7Ir4sTapiDKkUQuc4CTkutL56loMx7y+h5XSdyA3EHFRj1yCTk4DdhJNXJEPjzVrgWuL92czCWf7NdHA/Qju/zvXToCoCQTpCBEAhmFVojkHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=atC7rdDP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C351FC4CEEB;
-	Thu, 21 Aug 2025 18:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755800433;
-	bh=4hrLo4L+G1zUcmSSW/67SSpyLfiydKVmvlj+/64Owh4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=atC7rdDP5tN+XGRGhesealtEJXcd6suasB+wttw0wuUaZPkkf+r/OZQCPhSAG1daa
-	 YG6YZGbDHyA9LhSiUkAYtN+l5tuRmYmY4JE6OpVErlNIroPZIpHOpB1lon3Ni10DKD
-	 DznyP+q083OCHmCDzT+J1wsEt5XdUQ5K3gai5y8g8CUfNl05+dJSrOLsM8kt1x5xxH
-	 EY1nod4JbwytuybapeUXSlJYv2cJG41fxVpwG83EOX0oNGsqiDS7XwdOdr59G2aPjz
-	 zbbqwZpTwnTfYhfgifgJQQY3XYVTM7fwGpGVkaxN0hgtoNS1XELUF5dBSfkpG3ZZNA
-	 mDy+n7uVJsi6Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3405F383BF5B;
-	Thu, 21 Aug 2025 18:20:44 +0000 (UTC)
-Subject: Re: [GIT PULL] Networking for v6.17-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250821171641.2435897-1-kuba@kernel.org>
-References: <20250821171641.2435897-1-kuba@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250821171641.2435897-1-kuba@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.17-rc3
-X-PR-Tracked-Commit-Id: 91a79b792204313153e1bdbbe5acbfc28903b3a5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6439a0e64c355d2e375bd094f365d56ce81faba3
-Message-Id: <175580044275.1140263.17914941560586894452.pr-tracker-bot@kernel.org>
-Date: Thu, 21 Aug 2025 18:20:42 +0000
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
+	s=arc-20240116; t=1755800652; c=relaxed/simple;
+	bh=CluilFXim51uC9dpk32ZYt2i2sJtqps2NUq6ZJiEyEw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=A8w0kXJv2aLxgTLI+xWAbaeybo3mYLE+ZZT7kimZUoghp4sE+3LOTfC2SEGXqGuxBfvgf5yZMzLvJY50GJfLMFwHUQGnNqViwwGujzdiJgRbpE6baPiNxBeI96MvD3P6npXioNV3CYk6YxBnyzQJP/MNTAgUxSklGDf3EMBuRsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=qQWoMkSH; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=rMFoG+5Rskqk1f1Gs6Z/NvhqC82WqoYSX248NZpvzG8=; b=qQWoMkSHGfF1J+/ZQKC1+VDcaZ
+	hrmFmd7fVAZwu2Hdv4fFMcxj73l50YvhyHkhmJTk3zLih+uPxSpV6u6i/smv1pifAMkV8LtO7BaQS
+	MSHQZa/rCgrRQungnowet+7qRpBXb+nW2ZxNl1KnQrZ5ZyAV53glDiHxVsu0RjaS7fvsNTNEubz91
+	W4yQiio8livg6mo+8u4gmKmwystpb+8K08OFKQ9/TTppFLU4MqJopEqhJ4s/sIclktPdy6hvkuLxr
+	vDmOBR/lybfABPo5oPujc3rabTgLm5l5ivNCyqLbj880SazZX+Gx60MRZN8nx2wUWhAc5XeA5nBeD
+	IdLPxiNA==;
+From: Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v3 0/3] power: supply: add charger for BD71828
+Date: Thu, 21 Aug 2025 20:23:33 +0200
+Message-Id: <20250821-bd71828-charger-v3-0-cc74ac4e0fb9@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACZkp2gC/3XNwQrCMAwG4FcZPVtpUrd2nnwP8bCt6VbEVlopy
+ ti72+0kipfAn598mVmi6CixYzWzSNklF3wJclexYer8SNyZkhkKrIWGhvdGgUbNSxtHirw1oJU
+ 8NLYMVq7ukax7buL5UvLk0iPE1/Ygw7r9b2XggivoAXpD9aDk6Uo33xnaO28DW7mMHwSKXwILI
+ dEObSNQUYtfxLIsb9VzYmX0AAAA
+X-Change-ID: 20250816-bd71828-charger-9d187346f734
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Andreas Kemnade <andreas@kemnade.info>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>
+X-Mailer: b4 0.15-dev-87983
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1923; i=andreas@kemnade.info;
+ h=from:subject:message-id; bh=CluilFXim51uC9dpk32ZYt2i2sJtqps2NUq6ZJiEyEw=;
+ b=owGbwMvMwCEm/rzkS6lq2x3G02pJDBnLU8ymddcopRWskfezuFd291bCh8PR04PPR3GKHy7i+
+ db3yaG8o5SFQYyDQVZMkeWXtYLbJ5VnucFTI+xh5rAygQxh4OIUgIkUijH8M5CY/O9B73O+CfuW
+ H5hhYHpLQKz68dFdS16ccGxdpfwzrpyRYfHhHod5K+flXJ/OP+0D2/blb5L6nT/LSgTE5ZYs059
+ 8nxMA
+X-Developer-Key: i=andreas@kemnade.info; a=openpgp;
+ fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
 
-The pull request you sent on Thu, 21 Aug 2025 10:16:41 -0700:
+Add basic charger which does just read out simple registers without
+doing any sophisticated things. 
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.17-rc3
+This is a stripped down version of
+https://lore.kernel.org/lkml/dbd97c1b0d715aa35a8b4d79741e433d97c562aa.1637061794.git.matti.vaittinen@fi.rohmeurope.com/
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6439a0e64c355d2e375bd094f365d56ce81faba3
+That version includes all the bells-and-whistles you might imagine
+around coloumb counter handling and capacity measurement which includes
+changes no the power supply core.
+Rather do a step by step approach to keep that reviewable.
 
-Thank you!
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+Changes in v3:
+- remove unused defines
+- some minor style nits
+- add MAINTAINER entry
+- Link to v2: https://lore.kernel.org/r/20250820-bd71828-charger-v2-0-32fc96027e92@kemnade.info
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Changes in v2:
+- fix some be16 handling reported by bots
+- fix some style issues
+- do not sneak in additional chip ids
+- remove useless debug output 
+- remove wrong/useless alias
+- remove fuel gauge remains
+- fix error checks in temperature reading
+- sync properties in switch/case with list
+- Link to v1: https://lore.kernel.org/r/20250816-bd71828-charger-v1-0-71b11bde5c73@kemnade.info
+
+---
+Andreas Kemnade (2):
+      power: supply: Add bd718(15/28/78) charger driver
+      MAINTAINERS: Add entry for BD71828 charger
+
+Matti Vaittinen (1):
+      mfd: bd71828, bd71815 prepare for power-supply support
+
+ MAINTAINERS                          |    6 +
+ drivers/mfd/rohm-bd71828.c           |   44 +-
+ drivers/power/supply/Kconfig         |    9 +
+ drivers/power/supply/Makefile        |    1 +
+ drivers/power/supply/bd71828-power.c | 1060 ++++++++++++++++++++++++++++++++++
+ include/linux/mfd/rohm-bd71828.h     |   63 ++
+ 6 files changed, 1174 insertions(+), 9 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250816-bd71828-charger-9d187346f734
+
+Best regards,
+--  
+Andreas Kemnade <andreas@kemnade.info>
+
 
