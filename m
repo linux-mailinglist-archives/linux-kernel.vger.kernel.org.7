@@ -1,134 +1,99 @@
-Return-Path: <linux-kernel+bounces-780541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305D1B30339
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:52:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BFD1B3033A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E68E5A2924
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 656E51C83043
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C01834AB15;
-	Thu, 21 Aug 2025 19:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC79F3451B0;
+	Thu, 21 Aug 2025 19:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXL975h4"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o1yC6A/4"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6D82E8B80;
-	Thu, 21 Aug 2025 19:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C632E8B80
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 19:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755805928; cv=none; b=fzGf1htHOQY/MaXTLvzRNO6KGWzNOAIWn8h9Xur4/soFw0bSw12yE8uBgTPJYwbwfoxW63yjRQfND1F+nl2NnFbeMu9k651j1MAuP6CgF0qUZ9tbYs8INHZdmKVQxW0itabLl6fNPAGFkVI8mNslIps4+JLaq+hLiBozvXgOXO4=
+	t=1755805992; cv=none; b=R3qmBqdv0GOuYWnU4blN4ixafwKsrDvneJNhwlNDTkP/mu4FL1+CKdzLeBVnaLd7WXdvWlAbYo7Bl8D8ScNjvtZAxGviv/oqVCke5gAQ3WiIA0FsLuNqRh2vyo52pqQ/YaxnaAqqmpSAs7JEebCWBu396LgVs2FlDL80cuD7Z3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755805928; c=relaxed/simple;
-	bh=7yfRVH0Exkcd8xeLJq3hMuK4KEE+AmC9kn+l/e51Szk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SO4e8wqkvRNuWtAYthgBAsL5mrIUe/A0F2gwovZbZoJ1d4JhMWT0l7+CX8CEK/usHe+Fr5ljleX1EKZRFSb1aeiGNHIwRGxzwlNeg+xINI+5XxXq35lEV0kLlIiS5UBfbRsJ5DoLWYYRgESiML+Dp5tmzjTqRtf3jbTKXmIeuqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXL975h4; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6188b70abdfso1696992a12.2;
-        Thu, 21 Aug 2025 12:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755805924; x=1756410724; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tzR/Xe8h3Jn6NuxNeYxIa3+YKBUyNP35PoWSLkLcgJ8=;
-        b=UXL975h4+STne1k5BzaT1JGveNTNVDVv6WdJPI50d1XjLVr0bg5ZlWMUBZKRpQ3Y39
-         clwy6kei7Hg2X+frS0Y3NuCiaRLWTRy+sM8ibA5vXsZ9PmPzNMEHEn+iwceCr4UMQBDw
-         svnAsVNsNHf23sfMiVct5t6L/S3IFQVQEn50n8+KNY2Ljf1q2flJZPFs4s0ZoUoQwpRl
-         TL0UtOt/L1DbuBQdhvYQ/6tR/EdbyR0j4FwbeR66mlvOPh160Ykw5voFzt2iNVt5X6p1
-         ylg9lTpNCSm4Zo9zmrpkm9p/c+DsSkM4URGJVHyc8jeadGumf5pJ0rlJX9DiudK7YSQr
-         Qswg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755805924; x=1756410724;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tzR/Xe8h3Jn6NuxNeYxIa3+YKBUyNP35PoWSLkLcgJ8=;
-        b=kblh+8sJEmIypCVy9j/DZ4carz+iOl9OP/hc1xjNQfADFMktM+0wMEwGy19Ys4041a
-         lF1wkelJCHo2OhEL+ET7xYGT25qSmF0PY3Pl/DYRLy5B5EUaIfp8pOfL9N298703DK7+
-         oResXlMdjiC5jmsphKWu7fGqC1SzBgV0fdLQsxNY/ZC2p5jwKFpEg7tLCxcW6f5ztIME
-         NMI3W+yT/i/bFIS5YlYMMk5RUnrEzo8qOcwFwm90T54k1hscgmS7z0nq9hYKJP8Oo2Mp
-         zFCr84SZqLlefQsQw9qNvp1tlo37P4iLpc/B/dpuucVoAwxm2cq2/8HGcOMPCSpuW5Es
-         Bpmw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1iMx4pd+h9uDhkTQkSWQqkzhksxLwwhA2d7nazg9eK3rUCWhiyRuG3FJqZm7dvDfD2MJ3LDSmz/G0dX8z@vger.kernel.org, AJvYcCWNxnPEFqwt/Ju1KhZD1vhFyYS3TQNNKiNyDyEOVZfM5uaZjs5C/KkZ4cQ3FlbZfTzUwzk=@vger.kernel.org, AJvYcCX4YYJ2lSk4s4RL8trXdehPxHzSjt+Lt/dB0nKwcKXvwtalr8E3zc4IRZPciuJkKreEwAyua8WYqPB63GRhPjtMstG+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDYxhn3nFZ0R6RcvkyFrXgCs7qo+6sVvZHXwD+piazLrHvHPsa
-	Z1hER8dp3by6a9mu8C7TCDHWbDwEXfQMZROGsEFfSzSb0VFKldE5qXJ4
-X-Gm-Gg: ASbGncunu1rGLLS2SnmR2NS0HwRaTJhTYY+FTt1FfaqoR8obob21Tn2HLGhsZXl6Tei
-	G4eQEkkJZAmhAcL3P9MfMfzI+kFaBgq50xdqKf96HPtRT3N1nS7t/T8Auvleou0NPXe+IcXL91V
-	6AjpIlrGLwvR5L9FgN2E8hKZatFQH2FslMFU2anweDU00cpkuUtLGkigXEEg+XFFWhXK4LuFpkS
-	DxTIu9NdNc+AO+idy88Fu2UCL6kgr1o6wXz6LgOSGDQdYUfzQqDi+EWeU3+cB6pMi/haPS1dIQ1
-	/kjIVODFhyTqbvxvU8oCZdtDynjy7HZM2X4XW2blDcjJ2H6pkWlop2BRGx0PmapRd+7PSgugaDY
-	HfE60IMDMp0w=
-X-Google-Smtp-Source: AGHT+IH778s67WtruPY+IS73DW+rHO3RZ7KXDei0AMh8p7I9gPgsWz0IrJBn7b7ETcvr8u6oY3Ri+g==
-X-Received: by 2002:a17:907:7f89:b0:aec:5a33:1549 with SMTP id a640c23a62f3a-afe2953976cmr27483966b.40.1755805923456;
-        Thu, 21 Aug 2025 12:52:03 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afdf63c85efsm359520966b.10.2025.08.21.12.52.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 12:52:03 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 21 Aug 2025 21:52:00 +0200
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "olsajiri@gmail.com" <olsajiri@gmail.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"songliubraving@fb.com" <songliubraving@fb.com>,
-	"alx@kernel.org" <alx@kernel.org>,
-	"alan.maguire@oracle.com" <alan.maguire@oracle.com>,
-	"mhiramat@kernel.org" <mhiramat@kernel.org>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@kernel.org" <mingo@kernel.org>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"David.Laight@aculab.com" <David.Laight@aculab.com>,
-	"yhs@fb.com" <yhs@fb.com>, "oleg@redhat.com" <oleg@redhat.com>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"eyal.birger@gmail.com" <eyal.birger@gmail.com>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	"thomas@t-8ch.de" <thomas@t-8ch.de>,
-	"haoluo@google.com" <haoluo@google.com>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 0/6] uprobes/x86: Cleanups and fixes
-Message-ID: <aKd44ArsaKg9kl73@krava>
-References: <20250821122822.671515652@infradead.org>
- <aKcqm023mYJ5Gv2l@krava>
- <a11bdc1f59609073f182c2c04dbd72cecde61788.camel@intel.com>
+	s=arc-20240116; t=1755805992; c=relaxed/simple;
+	bh=u96Uv83YnGa8eeJgKmSXSyAJdR8Al8WgTTQ1XdualO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNlyrvmZz1u5XFV9Gocbh7NweMUD+EWZkBM4bpNLXFXfxKwYHiJ4EnhvahPPp5WeGjBQ4sDVSHaY6SYPeuyv7B6N6qqr9RpunsQO0awpfiYl30hHl0SBqXOkhSENKi3IlOV6B7V+hENUuyRqlH+LbqXtXAuirLnJqKZ06zuVZ4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o1yC6A/4; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 21 Aug 2025 12:53:03 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755805987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UpvhqNtwaoyMgWmFR5mwGylcVpnj0fZDmJSFlxK6MrA=;
+	b=o1yC6A/4MYpDYec+ATsSlQvU4cv7FEoHdPAkutVaf6y41WvCnonOpwaNPIZ97ErDDm5LNT
+	MbP9JeKXJj3IbIorKChzLj6Svci8zwwRjZERbaM8OhmfRR6dc6z3DQEGh8D7Fy3v1XLk4v
+	Lg0l76RFV4mxF0xN285lCCqY6CO/o2U=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Yueyang Pan <pyyjason@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+Message-ID: <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+References: <cover.1755190013.git.pyyjason@gmail.com>
+ <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
+ <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a11bdc1f59609073f182c2c04dbd72cecde61788.camel@intel.com>
+In-Reply-To: <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 21, 2025 at 06:27:23PM +0000, Edgecombe, Rick P wrote:
-> On Thu, 2025-08-21 at 16:18 +0200, Jiri Olsa wrote:
-> > hi,
-> > sent the selftest fix in here:
-> >   https://lore.kernel.org/bpf/20250821141557.13233-1-jolsa@kernel.org/T/#u
+On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
+> On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
+> > On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
+> > > Right now in the oom_kill_process if the oom is because of the cgroup 
+> > > limit, we won't get memory allocation infomation. In some cases, we 
+> > > can have a large cgroup workload running which dominates the machine. 
+> > > The reason using cgroup is to leave some resource for system. When this 
+> > > cgroup is killed, we would also like to have some memory allocation 
+> > > information for the whole server as well. This is reason behind this 
+> > > mini change. Is it an acceptable thing to do? Will it be too much 
+> > > information for people? I am happy with any suggestions!
+> > 
+> > For a single patch, it is better to have all the context in the patch
+> > and there is no need for cover letter.
 > 
-> I tried for a bit to run the BPF selftests, and ran into various issues. Did you
-> have access to CET HW to test?
+> Thanks for your suggestion Shakeel! I will change this in the next version.
+> 
+> > 
+> > What exact information you want on the memcg oom that will be helpful
+> > for the users in general? You mentioned memory allocation information,
+> > can you please elaborate a bit more.
+> > 
+> 
+> As in my reply to Suren, I was thinking the system-wide memory usage info 
+> provided by show_free_pages and memory allocation profiling info can help 
+> us debug cgoom by comparing them with historical data. What is your take on 
+> this?
+> 
 
-yes,
-
-  # cat /proc/cpuinfo  | grep user_shstk | head -1
-  flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb intel_pt sha_ni xsaveopt xsavec xgetbv1 xsaves split_lock_detect user_shstk avx_vnni dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req hfi vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid bus_lock_detect movdiri movdir64b fsrm md_clear serialize pconfig arch_lbr ibt flush_l1d arch_capabilities
-
-
-also I had to merge in bpf-next/master to be able to build it,
-what issues did you see?
-
-jirka
+I am not really sure about show_free_areas(). More specifically how the
+historical data diff will be useful for a memcg oom. If you have a
+concrete example, please give one. For memory allocation profiling, is
+it possible to filter for the given memcg? Do we save memcg information
+in the memory allocation profiling?
 
