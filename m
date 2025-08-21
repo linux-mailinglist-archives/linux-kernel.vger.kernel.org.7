@@ -1,238 +1,221 @@
-Return-Path: <linux-kernel+bounces-780510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304F5B302EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:32:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75528B302E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7D3567884
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:32:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EA607AF303
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37441341662;
-	Thu, 21 Aug 2025 19:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBB82E9EC3;
+	Thu, 21 Aug 2025 19:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H+lfUFqK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hYSJNLyV"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013050.outbound.protection.outlook.com [52.101.83.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879F51A9FAB;
-	Thu, 21 Aug 2025 19:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755804744; cv=none; b=h+xZ50T+wvGKEQTxLb4HNBkQ5m/X0XEAAMl8IJpCG63Jglp/1KDYw7tC7K7DkISTTAPA+LstLisxAyJlLMadN0qOBJN/622Ce67uBBaDaMRHHAT8cyw9FSMg1TpHxlLMHjTZFEmU5zPGmcZ8ROuy7YhxGqneE7rQ2Xu8RMmwy2c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755804744; c=relaxed/simple;
-	bh=0frOgS9WIcvtIG2b13AfgNHG9HYu1+yVQ2P6qgQCUbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iHpJhAx4FsUdRmYuNALlcWNZ//jzs2o2NuJry1SUhJkbzEhXV38GRd9C541Gu/h+mCKChyySZsNffv5C/wFbuUb9fT2BfwofgNt8DItjCwB8dcr2LUQM015X1xdVF6l4p8yPLndMHquP692fLge6TyXzuge7NsKOE3v5iwoO7og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H+lfUFqK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LI9sAu008967;
-	Thu, 21 Aug 2025 19:31:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tYpWCcbISjCNUzk4vHLgNXmnOMo66w5kv2nzcQwVeHo=; b=H+lfUFqKGGg8M2J5
-	WVJlM29tMWt/LolQvFZmYxbpSdErl8a8vVIz9Mclp+gnf/aXul4Mo9R1/ybdW4YF
-	XjgKac13UrX0/dcKgFKuFYdUccKG+/BmWBtQL7j/mchcstQ9XEJ6/i7mOMuE6kh/
-	ySndJwnRf5VuaOXQC5BlWABS0khPtKx2LujBAmFAiygPUP6p1EGjxl6xqty2R5Bt
-	Ro5OnJ1NF76v+27ZGkxKh1B1F8qTkP6BhNhyEduQdh7vTgpNk4UB1nIAp2kkz3ST
-	gdO/7mIsOM0kevZ4Z6vJAthBbOVP3ndkk/uorhM8/925TYLU/enQd+7ct0B87MEW
-	ckmQAQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52cpmsp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 19:31:55 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57LJVtmK019161
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 19:31:55 GMT
-Received: from [10.216.47.227] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 21 Aug
- 2025 12:31:51 -0700
-Message-ID: <37563dd8-341f-4db4-8a4b-c7f96dbfebff@quicinc.com>
-Date: Fri, 22 Aug 2025 01:01:47 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403F71A3167;
+	Thu, 21 Aug 2025 19:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755804724; cv=fail; b=hnLGIEchGArtVP4lvH9lSc9L/Zf3sEZeYWecKUKprOGCCAlFiZTaes8TDY4Piq21C6U6//lT4LeWk3fMId3aXoF3QICirmdHwCheGWlYtce87wAjkKO18JCVjPXA80Tgj7JGEnB4mjrFIrla04L/pkppwIfnLMLferCdrrFcDUo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755804724; c=relaxed/simple;
+	bh=D3jJARsWv5yDvntYfcCVR84dhrzoP2Os8AShTbzlPqE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CDxX8qlw+0ql1zi8oeX/x4WQ5uCSZp0OqPfuwa90a4K83kEegfoJwd726bAXbwuaRlDd1h4KPT1JA8fRi3mQkormdXW6unv3VRcTHFO2tHc05SjOYDrYBtFyYSzApWTRFys8MypisXvZLODH7SXXw2n5POIDDXL8JrRwHuJUTrE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hYSJNLyV; arc=fail smtp.client-ip=52.101.83.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dVNXzlgK8pR0zK/t7kIzMIieoV2hcpVfz/kV1F/rGRQiBKoRhjPP/FiMD5qV7YJmvaDur3HtiTEPBYDaSYVvIwMe4X9wMN8FTpaDOW8eLmuTfcgxNHE3FTr0tVjdhc9XniCCiV25l2eJcfsYZXBkKdKxA7riIp5bH2/QcahFETFO/VPgHblgfVXWNlrgpnViFrywtdW2s2zZSfxuQeVGu/Xb5+XDE/DCWJwtXyXxeB8nQAzMbeyO7ZJajXfGai/Qe6n7d/4BqLWyjST1atO8Fr7Fvp/ykNqjGYdpM8zATrIny+xMuzFrNBIN4Xm43ssEB7gKWt0HM5Y3xkaKyJs4Sw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=csRJa47nXpRn8x999GPPBP0wWdRnWmDFXQNIeS8IJRE=;
+ b=GyIyIFbrNOnXMHRPjQZZAXoNPlqdhP+g3Wf/dqQBO57TyrX2NdTIy8GPxmQhyrteXdyDGu8IqYT++ujJYNa9qSVTWlx6XKCgbJq91GB8sRFckiWAYlVVK6pPcZxaZLmQVSI0MFMORJzCE4pHo6Vssc5DJRbLPeam36nLbTJCfBvV+0aREhHAnacPrLLjoVeNAcCHRGf9lRdDuXIqZoAaXXGL9swezw9/f+GcRBdTeP31S6AjKzAQD352bCAcUwK+aB3Hdfmbuutqlxr6LztSNbEPS79TkhUNv5EIeSD6Lg7tuaRXKwpbUWKwFNIUcGIVnrTYfT4aQeC6rpkQB4qRAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=csRJa47nXpRn8x999GPPBP0wWdRnWmDFXQNIeS8IJRE=;
+ b=hYSJNLyVVY6GGEmHrZ5Aa31lebsZP5+AhKh+IEVQMxL3Tz4LdeuElvDPO08taoVkvCk1tHOTJipsfCNelRxupq2BRYiAYqtmrQ9vAwsHH2C2aJ+W0N7ZLij7SwMbvwO+3iUvS+pgTFkoNWG/+wqh0FqxDy96b+CkGFF09HMkcDrj+HU8yRnR+7JDlPck80AfHu9yxgkg/aIoJVsSlHRaQcdq+uF686z6+iX4S0WyO85GQhb6cjbJvnYoU0SijCImgLjCPlh6hxUCCHtIGXTetgkaHxRuU1sds16cslfwbtoNS6TGbJ8E0AG5Yc38/wqGO4bg/EgmxzNEacnAmr5gHA==
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
+ by AM8PR04MB7348.eurprd04.prod.outlook.com (2603:10a6:20b:1db::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Thu, 21 Aug
+ 2025 19:31:57 +0000
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612%7]) with mapi id 15.20.9052.011; Thu, 21 Aug 2025
+ 19:31:57 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Wei Fang <wei.fang@nxp.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+	Clark Wang <xiaoning.wang@nxp.com>, Stanislav Fomichev <sdf@fomichev.me>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v2 net-next 1/5] net: fec: use a member variable for
+ maximum buffer size
+Thread-Topic: [PATCH v2 net-next 1/5] net: fec: use a member variable for
+ maximum buffer size
+Thread-Index: AQHcEtJCJxYBf9CJDk2TgKvoSjcLCA==
+Date: Thu, 21 Aug 2025 19:31:57 +0000
+Message-ID:
+ <PAXPR04MB9185014A230A36245436F01B8932A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+References: <20250821183336.1063783-1-shenwei.wang@nxp.com>
+ <20250821183336.1063783-2-shenwei.wang@nxp.com>
+ <12144026-130a-422a-8280-9e0b25b22562@lunn.ch>
+In-Reply-To: <12144026-130a-422a-8280-9e0b25b22562@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|AM8PR04MB7348:EE_
+x-ms-office365-filtering-correlation-id: bd9dd3f0-4205-4097-b386-08dde0e9649e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|19092799006|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?FQYt1YLYCc3XfLegHYjbA5Xss/S1xEvsmhUZVLX41DalgbuJlmS/dVubQFrZ?=
+ =?us-ascii?Q?T8biS4f5Z2sfYdJd6XTdry3l7r5klpL0/91d4MVyoDm9/lOpRGSGRrgohe7V?=
+ =?us-ascii?Q?/kF6ETrZsOUdFVp1GRYzW60bEbQy0RWPGRQMVgwu4shykOEUBWp+jmxc0PgR?=
+ =?us-ascii?Q?KvvMIojdDLoW/j8xucaJ/gF6hHxH/HNysdqEaCp3LFvbdbgMvpFecSlhSEtc?=
+ =?us-ascii?Q?NxX5uOyD57W575gDRd1QuAv30wKCD5LVTWUNGSUiXMIq+0GbVaWS66gcHRWx?=
+ =?us-ascii?Q?7oBtb+Z4DIn87AaSSanO/pl9CKd+2zB5OhGFdeAXOrKYeh6qkxxLzT8Ybdzr?=
+ =?us-ascii?Q?ns2hV+TXB89s7CsR1L13vGZwE1RDItQXTz1huxzXoiaZIzc1OpLakheojGri?=
+ =?us-ascii?Q?uAshp4UGb/O6cjf9TqIfYQ7xFFAE7fD5ogvMjeHdQFp2QJCCydq1naoH3Uzo?=
+ =?us-ascii?Q?egUYPCL0ISGG3vuG9xBq2w29lG+xtbRHpalhYXBEK4e3fblFRQpAIgERDEsN?=
+ =?us-ascii?Q?OHhYl4X0E0pf1WKGLmQVzUwZAStOUiWPVITynMIRP+BO3RpA/hRz82UYZOYF?=
+ =?us-ascii?Q?PY49Evy7fX0PlxTGYo18IYi2Df4NkD42isWT9z+/VkpTbyAJrMPpjEGcUggv?=
+ =?us-ascii?Q?8kRE97/wW1J3ovCOsdqST3jx3/cw7e0E6LYpkZ7f0L/sDXrOYJPW8a/wYTYA?=
+ =?us-ascii?Q?gLsonMqUbVCe0MtJY38EaX6FwFW7W63fzYP5bH0NqterfhFVu0wgdN++WCRl?=
+ =?us-ascii?Q?badO5E4UMToswqk0HNLfxOJahIMp2PiHZzwlbEUtPnd+uweKl2tFmPHc15LY?=
+ =?us-ascii?Q?fonRYPiMaEi7TOT3UjQNkjLAXYtw7KBAWWBT2kphdPMXDzStUTecGQQ2Flj5?=
+ =?us-ascii?Q?9tbcbtmEryRb9+HJOzv2PKYwtk5ykEFQSx8dsdUxLEaWOXCWLcSEbF8992fJ?=
+ =?us-ascii?Q?lQ1eRnvBkr7MggRjTQe7gNi2oJiyACbRq1bO+MpbydhDrYqnOWEkVZbA5jx7?=
+ =?us-ascii?Q?orHeDz2EfWfDcr5UzoSQF3iSHppu+QgWnl8I/9vB/pqmqXf64IaaPOcFI/bm?=
+ =?us-ascii?Q?4oYmYwpJrSSOqAjtoVdWk+jAbESrh3mc+9cGS7ALkRy5rqFi6p5ymHnURrhE?=
+ =?us-ascii?Q?7ix0XXcah7yPypKyDlnUf1WVpAsx8SAlndF/z3uuPpjLvLxYsexGnSWAGl8x?=
+ =?us-ascii?Q?k4Wa+l+iENR2vHXbxJVu1u0cvjcTlUCkODBR/8gJHRupiPBUSSIbLug+OcRr?=
+ =?us-ascii?Q?FxKyhn0iQqRsUDP65SQUFBzX/K8Ggge8Z8FijRQLAXL6XjdK4wB5JMbT0vdt?=
+ =?us-ascii?Q?bB1zhmSytes1uT1i5Ks9jcPtODadhgVlJLLp531/9PTLNKlP6Sb8HDVygO53?=
+ =?us-ascii?Q?mJm9pZiNeCyuw8iOgrlpfY7C0KYSYGQ9zl/YcODzJ6/Ji98djtU2SO7v1Sja?=
+ =?us-ascii?Q?aS8Pk/5tN+DYgjjCqUnp5leblgvNmV1WsfJJLzVARmwRbw4lECWC6g=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?92EXW7zaLo/gzFxaZeiQCav8tCMPlmEfSaXLsioI/iFe6wZmwg5VVz+MPi/1?=
+ =?us-ascii?Q?GhlvEo7hr1uzvNa6MbClWa5rAI+9YaqdrfK96t7WtXUln842xNEfnRu/xa2p?=
+ =?us-ascii?Q?1l8Ir8tUpuzV5I2DXD0r+9MHELFEn/oJW+u6DlQO7ZgI03K4iX7eIhgFOQM0?=
+ =?us-ascii?Q?uraluRyDDGFkecHTqWDj1absE04GRQ3/YGIVEhePvv9YknW0iFcQKBMxiND4?=
+ =?us-ascii?Q?5mu2D9R78u1m21u3xDF7sHOFZzcMGPy1dEKxQ97gC2PQp25UsKNT69uqQf4n?=
+ =?us-ascii?Q?j/YDGxQhc+tfdfjZ73NHHh+eC6pXDLuMKg5t8uHmPANhauIkwkhaakQ8gBNF?=
+ =?us-ascii?Q?KpJ432x73bdFPFqn5P14vdwoA8mh7e1Tzfh6wXSUJJiVrrD4Kh4ITZklcR6M?=
+ =?us-ascii?Q?82JGd8b+GQ93f+JBxgjrGkEIqEGZDdVpXZI6gl3WeQIjhLsfK64jj79z8a4l?=
+ =?us-ascii?Q?7lqvOFyWehroFg/uzXav0CMgngwOYVTOhUQ8Lg6o6PkCPJ9Zw8R3KL9stutS?=
+ =?us-ascii?Q?bdxn2rw1Nby5SErnBlk3RtALFtOYiACDW1xHYnuWcDu4Cm0jB2+4cCyoQD9q?=
+ =?us-ascii?Q?vEU3jsuAgth4U8IQ+XhLH0SU2gq5mtg2TRO4fo+EBun5UZF9ihVLTqARhQYZ?=
+ =?us-ascii?Q?QCFfEHBALAgSjnghAqAkBHZBod9Wo7DfpW2oW1eYqtPvAI6rt4r5i7X9wJ1K?=
+ =?us-ascii?Q?/TGJRBsz+GbaKqsNMmN5dMCJU+sAF8YqdcZcwKdSXB9q2uirg9A9siTvSSQq?=
+ =?us-ascii?Q?0iYDT685kkq3DO7guYSjUHCpegX5ZMpQ/aTXVj7RbPeYEltRfgI+/vZUrLKM?=
+ =?us-ascii?Q?durPWhlNkBMf+KZDujdkl+4ieucq5dYOyNC9oHg/bYZeOrp35yLo1s3DgZB7?=
+ =?us-ascii?Q?QnzgfWUbADrb2zDh0fumzRYDRMmA+n4UgkqE0Q3OXlRvXf3cgilbtsZ3ZKIP?=
+ =?us-ascii?Q?x+m5CJK+S6SNH4XZ9AhMhAbl3AIAjfejZjOzrthwCHeECsB71JC7e3RSk/3z?=
+ =?us-ascii?Q?cMhN2Y8l2WBCr0z1qKA/lt/S1KwHv5rtH9UPEhlEAiv3FHzjcmmvwrQidtwf?=
+ =?us-ascii?Q?sqk12X9xeyLXeBdXiCNR7FuOeTGeiAn7CJdwIc3jGPLZwZH1TXy3Y8sQ+1Hh?=
+ =?us-ascii?Q?hlS98jo91Ud2GzcdQx08gvVB7cBMM4J61gFHkbkhY1Lv5FBFVs3V1sDdkdcT?=
+ =?us-ascii?Q?+lYZkbKUQMFJWmsbij5s0z4gNXZWur54LHXuXG7Af32I842ccuW3JbHeO1SN?=
+ =?us-ascii?Q?071e0J77j65qHIW8fK2PqOVNV6Jto92Mq4fosYi+tSDwGr3IZtcfw6g41ym6?=
+ =?us-ascii?Q?m0gKQLjFkgx20b/9jfxwx6AbRfN528rFExsSLyjVZsneHLwIvze/I4xs10Uy?=
+ =?us-ascii?Q?BGVGq0PbzLJ/XM8Rb7cjdNaAJvAbJ7v54KHoTib6MJQRMPYiG3IdASarMyjb?=
+ =?us-ascii?Q?1y4227JqiYt+hqZ2IAyGEeu2lJF5voekIMG2IA6Hn0X3MipTb0kqaW6dur3X?=
+ =?us-ascii?Q?YYht+KzGvYECKQrk/gr//Bbl3j+58JaTHo6r0hKi96/ZfmISx67x94ekh4zm?=
+ =?us-ascii?Q?+WaLuy9wRj6ETlEecjs=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] ufs: ufs-qcom: Fix ESI null pointer dereference
-To: <mani@kernel.org>, <James.Bottomley@HansenPartnership.com>,
-        <martin.petersen@oracle.com>, <bvanassche@acm.org>,
-        <neil.armstrong@linaro.org>, <konrad.dybcio@oss.qualcomm.com>,
-        <tglx@linutronix.de>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-References: <20250811073330.20230-1-quic_nitirawa@quicinc.com>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <20250811073330.20230-1-quic_nitirawa@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kgP4i14-hbJhaFOxUebTEomm4VdDMgRK
-X-Proofpoint-ORIG-GUID: kgP4i14-hbJhaFOxUebTEomm4VdDMgRK
-X-Authority-Analysis: v=2.4 cv=Xpij+VF9 c=1 sm=1 tr=0 ts=68a7742b cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8
- a=bLk-5xynAAAA:8 a=COk6AnOGAAAA:8 a=oc46TbI3oXTmutG3ynwA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22 a=zSyb8xVVt2t83sZkrLMb:22 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX5k8QbofMx7l3
- gLXsxr8OzxCQR7tLyR7oFzuhNY07cqdZ/zg0xxMNPREyePvv8iSO0hB0i/YFrQun4RSB6Nj7w9e
- eOiVgGqe/Dz80UUtkop2qUbCWEn3UqoIezdBeelxgdJLwoVmymR/uwO9nj1cOmUDL1e79F4w0/z
- u0fu6XWGOfB1kgoSb2G40CMDnaxb5NOzbOEGKSaXCAd56Qc/7jZqLJNCOcERWoQtPUgW3mZrXkH
- BPaxr3TL7lTNBWbmRxQ8Jvz+Xmvrk6shGcJuC/L8AWS4nqTokR+Qnxhl4udXGkTGFO1zLEmRtxl
- XoGT5Gj5u7jcD53aX2529/kAKttZnnp6imv5a9Ogj7Oua1JmL+SU7B8ztY0C+lhL0JqgxdOs9af
- 3GOAM+3GawpGXYaGLT/pcoPChWiUJg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0 impostorscore=0
- adultscore=0 spamscore=0 phishscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd9dd3f0-4205-4097-b386-08dde0e9649e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2025 19:31:57.6542
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Je5SH9zZMcAVvqcSC9gpKVaXqYZ3slkAn3tHtSvnkT+OfTKLjFXPznvjGz3U9VNEg23tJl2ux76j8eXaEksJQg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7348
 
 
 
-On 8/11/2025 1:03 PM, Nitin Rawat wrote:
-> ESI/MSI is a performance optimization feature that provides dedicated
-> interrupts per MCQ hardware queue . This is optional feature and
-> UFS MCQ should work with and without ESI feature.
-> 
-> Commit e46a28cea29a ("scsi: ufs: qcom: Remove the MSI descriptor abuse")
-> brings a regression in ESI (Enhanced System Interrupt) configuration
-> that causes a null pointer dereference when Platform MSI allocation
-> fails.
-> 
-> The issue occurs in when platform_device_msi_init_and_alloc_irqs()
-> in ufs_qcom_config_esi() fails (returns -EINVAL) but the current
-> code uses __free() macro for automatic cleanup free MSI resources
-> that were never successfully allocated.
-> 
-> Unable to handle kernel NULL pointer dereference at virtual
-> address 0000000000000008
-> 
->    Call trace:
->    mutex_lock+0xc/0x54 (P)
->    platform_device_msi_free_irqs_all+0x1c/0x40
->    ufs_qcom_config_esi+0x1d0/0x220 [ufs_qcom]
->    ufshcd_config_mcq+0x28/0x104
->    ufshcd_init+0xa3c/0xf40
->    ufshcd_pltfrm_init+0x504/0x7d4
->    ufs_qcom_probe+0x20/0x58 [ufs_qcom]
-> 
-> Fix by restructuring the ESI configuration to try MSI allocation
-> first, before any other resource allocation and instead use
-> explicit cleanup instead of __free() macro to avoid cleanup
-> of unallocated resources.
-> 
-> Tested on SM8750 platform with MCQ enabled, both with and without
-> Platform ESI support.
-> 
-> Fixes: e46a28cea29a ("scsi: ufs: qcom: Remove the MSI descriptor abuse")
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: Thursday, August 21, 2025 1:56 PM
+> To: Shenwei Wang <shenwei.wang@nxp.com>
+> Cc: Wei Fang <wei.fang@nxp.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
+> David S. Miller <davem@davemloft.net>; Eric Dumazet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; Alexei Starovoitov <ast@kernel.org>; Daniel Borkmann
+> <daniel@iogearbox.net>; Jesper Dangaard Brouer <hawk@kernel.org>; John
+> Fastabend <john.fastabend@gmail.com>; Clark Wang
+> <xiaoning.wang@nxp.com>; Stanislav Fomichev <sdf@fomichev.me>;
+> imx@lists.linux.dev; netdev@vger.kernel.org; linux-kernel@vger.kernel.org=
+; dl-
+> linux-imx <linux-imx@nxp.com>
+> Subject: [EXT] Re: [PATCH v2 net-next 1/5] net: fec: use a member variabl=
+e for
+> maximum buffer size
+>=20
+> > @@ -1145,9 +1145,12 @@ static void
+> >  fec_restart(struct net_device *ndev)
+> >  {
+> >       struct fec_enet_private *fep =3D netdev_priv(ndev);
+> > -     u32 rcntl =3D OPT_FRAME_SIZE | FEC_RCR_MII;
+> > +     u32 rcntl =3D FEC_RCR_MII;
+> >       u32 ecntl =3D FEC_ECR_ETHEREN;
+> >
+> > +     if (fep->max_buf_size =3D=3D OPT_FRAME_SIZE)
+> > +             rcntl |=3D (fep->max_buf_size << 16);
+>=20
+> I was expecting something like s/OPT_FRAME_SIZE/fep->max_buf_size/g
+>=20
+
+We can't simply replace the value here because it needs to be left-shifted =
+by 16 bits. I intentionally=20
+preserved the original logic for consistency. In patch #3, the max_buf_size=
+ may become a different
+one for Jumbo frame mode and the condition is updated to:
++	if (OPT_FRAME_SIZE !=3D 0)
+
+Thanks,
+Shenwei
+
+> This is introducing extra logic. I think the if (...) belongs in another =
+patch. The
+> assignment is however what i expected.
+>=20
+>     Andrew
+>=20
 > ---
-> Changes from v1:
-> 1. Added correct sha1 of change id which caused regression.
-> 2. Address Markus comment to add fixes: and Cc: tags.
-> ---
->   drivers/ufs/host/ufs-qcom.c | 39 ++++++++++++++-----------------------
->   1 file changed, 15 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 4bbe4de1679b..bef8dc12de20 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -2078,17 +2078,6 @@ static irqreturn_t ufs_qcom_mcq_esi_handler(int irq, void *data)
->   	return IRQ_HANDLED;
->   }
-> 
-> -static void ufs_qcom_irq_free(struct ufs_qcom_irq *uqi)
-> -{
-> -	for (struct ufs_qcom_irq *q = uqi; q->irq; q++)
-> -		devm_free_irq(q->hba->dev, q->irq, q->hba);
-> -
-> -	platform_device_msi_free_irqs_all(uqi->hba->dev);
-> -	devm_kfree(uqi->hba->dev, uqi);
-> -}
-> -
-> -DEFINE_FREE(ufs_qcom_irq, struct ufs_qcom_irq *, if (_T) ufs_qcom_irq_free(_T))
-> -
->   static int ufs_qcom_config_esi(struct ufs_hba *hba)
->   {
->   	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> @@ -2103,18 +2092,18 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
->   	 */
->   	nr_irqs = hba->nr_hw_queues - hba->nr_queues[HCTX_TYPE_POLL];
-> 
-> -	struct ufs_qcom_irq *qi __free(ufs_qcom_irq) =
-> -		devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
-> -	if (!qi)
-> -		return -ENOMEM;
-> -	/* Preset so __free() has a pointer to hba in all error paths */
-> -	qi[0].hba = hba;
-> -
->   	ret = platform_device_msi_init_and_alloc_irqs(hba->dev, nr_irqs,
->   						      ufs_qcom_write_msi_msg);
->   	if (ret) {
-> -		dev_err(hba->dev, "Failed to request Platform MSI %d\n", ret);
-> -		return ret;
-> +		dev_warn(hba->dev, "Platform MSI not supported or failed, continuing without ESI\n");
-> +		return ret; /* Continue without ESI */
-> +	}
-> +
-> +	struct ufs_qcom_irq *qi = devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
-> +
-> +	if (!qi) {
-> +		platform_device_msi_free_irqs_all(hba->dev);
-> +		return -ENOMEM;
->   	}
-> 
->   	for (int idx = 0; idx < nr_irqs; idx++) {
-> @@ -2125,15 +2114,17 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
->   		ret = devm_request_irq(hba->dev, qi[idx].irq, ufs_qcom_mcq_esi_handler,
->   				       IRQF_SHARED, "qcom-mcq-esi", qi + idx);
->   		if (ret) {
-> -			dev_err(hba->dev, "%s: Fail to request IRQ for %d, err = %d\n",
-> +			dev_err(hba->dev, "%s: Failed to request IRQ for %d, err = %d\n",
->   				__func__, qi[idx].irq, ret);
-> -			qi[idx].irq = 0;
-> +			/* Free previously allocated IRQs */
-> +			for (int j = 0; j < idx; j++)
-> +				devm_free_irq(hba->dev, qi[j].irq, qi + j);
-> +			platform_device_msi_free_irqs_all(hba->dev);
-> +			devm_kfree(hba->dev, qi);
->   			return ret;
->   		}
->   	}
-> 
-> -	retain_and_null_ptr(qi);
-> -
->   	if (host->hw_ver.major >= 6) {
->   		ufshcd_rmwl(hba, ESI_VEC_MASK, FIELD_PREP(ESI_VEC_MASK, MAX_ESI_VEC - 1),
->   			    REG_UFS_CFG3);
-> --
-> 2.48.1
-> 
-
-Gentle Reminder!!
-
+> pw-bot: cr
 
