@@ -1,126 +1,156 @@
-Return-Path: <linux-kernel+bounces-779833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917C0B2F9DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:16:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39D3B2F9DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D782C3BAAEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:09:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3238607CA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5732C11C1;
-	Thu, 21 Aug 2025 13:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A763436CDE1;
+	Thu, 21 Aug 2025 13:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="s+jGAUic"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pp4z3Qr8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CF036CDE1
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86F131E105;
+	Thu, 21 Aug 2025 13:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755781768; cv=none; b=bJJFh1w9ACuX6W/f7FBIcSSZ3lzfHTZNYawRJvdAW0kZxrjG1GrPnpjmjCThsc1Ebkgz3r+b/afJLVzpEPljbw8XG4/Sb22Z8Jaw4Jxj9wQx5B+irN8P4URdcLhRSmltfAXfSgVoBMjmpF5AeIQxWdiRZn0VX1K09Qbc9jUt6SI=
+	t=1755781790; cv=none; b=mMHgqfvsI6z2BGqGUm5t2+Qrcwy9yBGVmIIBWqALhyi2o+8TrgF4uhaBOJPSxQmpugDVOdjk9z0cw+8GctakGNFi0XNj2LBO6KKx2lPuI5/+b9KC/WNR4lnRIZC3SndTWVCkAZp7e8BiAaFrGcKQqdKUNh0NdMS60R/fxUjlV+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755781768; c=relaxed/simple;
-	bh=MeQEZv8XM24OgU4ggYQjZ95ovNGDRXHKtmzcUdqWP5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Oq2QiUmDwc/x9MRVHsKyOkb1OFIlmJUqVmcPJngq+v0wEB6EqlBcboz9oPiUq+APPlA2UfpIbBBFPU/l2GNZ/Y7MA6dCMjzgZdTtLDsAHRngHbgPhUvx3y8bVUeLX8/mFPGjWEqqE3btvbo6b2msCf646073kyxeWPjrwfyRjk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=s+jGAUic; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4c73Yv1V1cz9tJx;
-	Thu, 21 Aug 2025 15:09:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
-	t=1755781763;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=52AW3vX2G/gONvQRliEmju8kdN4K7aQivHGiuzDOHmM=;
-	b=s+jGAUic/ET4f3uS8kGl/sLr8obP/gvQlWLnXAU7A/5pRIpCSJuw48ObfQD4kqqOL2GWxy
-	okDa/fq/dfTkmxuxZGxqfTW1YStwNU9pitzLoWRItb35yCYOeNZjMVn2U7C+KtwpKZgMAq
-	SuG3NpGCf6zIegVozyX/xbCcj7kbngzhX3JZ1nmEgz8CTggPBDOYItayjbsGX6teJD2eKv
-	NXl4JtrUYVAmDUkuKHWM28BE7A9uPGrsGUCpxXwCDGXkAuR79vu8/St1YARB8QhzRDcbPZ
-	PTTLyADBSHraW+k936OhCXcYglKh8quexx+XSBhGvk4juDSYBxjSNqzk6W8jzg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of listout@listout.xyz designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=listout@listout.xyz
-From: Brahmajit Das <listout@listout.xyz>
-To: alexander.deucher@amd.com
-Cc: Christian.Koenig@amd.com,
-	Jun.Lei@amd.com,
-	Qingqing.Zhuo@amd.com,
-	alexdeucher@gmail.com,
-	amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	listout@listout.xyz
-Subject: [PATCH v2] drm/amd/display: clean-up dead code in dml2_mall_phantom
-Date: Thu, 21 Aug 2025 18:39:09 +0530
-Message-ID: <20250821130909.25428-1-listout@listout.xyz>
-In-Reply-To: <BL1PR12MB5144269A278EED9AC3CCEE7EF733A@BL1PR12MB5144.namprd12.prod.outlook.com>
-References: <BL1PR12MB5144269A278EED9AC3CCEE7EF733A@BL1PR12MB5144.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1755781790; c=relaxed/simple;
+	bh=MhO8vmk/1Z8Jjft4FMGPZtCgY39MJ+NaHCMG5a9KDpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hqd8kRJenNs0JKs2UcVirUp21e+E4dFKLyVEDcQiVPdp2oDsEyIEcIm4Tp8pjZNp0hp0WeQzT2bYKFBNuY9GcRfSzo9F1y+PSfY4HawVjicqujBIB7N6nvVN0PWS2rHBFMUuJ+LbyvooCay/ZbFABoVUP4DQK6T/2sobUdRwQ38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pp4z3Qr8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 595B7C4CEED;
+	Thu, 21 Aug 2025 13:09:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755781789;
+	bh=MhO8vmk/1Z8Jjft4FMGPZtCgY39MJ+NaHCMG5a9KDpg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pp4z3Qr8yNX9qXMe4teETxZo+C3BrlwRUBx1dJv9wo23+nP8Dtrrrs4L1WDZyIfyr
+	 vF4wYHOVHjQsm7Qqz4UVkkeSzd6pXVf9/esNqm4PIVY62dwb26WmanygehuwJGt1uP
+	 GV6eyV0k8Sh6Iu/CnO1rqls58IELUr77vp51dGdOTS3310/ueXCfgd1ZCWYoDci9P2
+	 JmAyo0Wpl4N3WPm5ae9mWa878+iFIjRUfEj1ts59rc9IbFAO9Mi3OUJYU6ToBS6BkR
+	 CJqLBHQxDEiB+R3jjA0y6I2HUtup+kE8d4EswkdZrSQV+mE7Swm4e8Iq7Yqh2HVGBC
+	 jO+7BuBol+08A==
+Message-ID: <12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org>
+Date: Thu, 21 Aug 2025 15:09:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/9] dt-bindings: nvme: apple,nvme-ans: Add Apple A11
+To: Sven Peter <sven@kernel.org>, Nick Chan <towinchenmi@gmail.com>
+Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, iommu@lists.linux.dev,
+ linux-nvme@lists.infradead.org
+References: <20250818-t8015-nvme-v2-0-65648cd189e0@gmail.com>
+ <20250818-t8015-nvme-v2-6-65648cd189e0@gmail.com>
+ <20250819-polite-papaya-catfish-1a9d1a@kuoka>
+ <8ac418ae-7ff0-4d5c-9f11-c24e36618ac1@kernel.org>
+ <b3cd1b3f-fa0e-4a98-84c7-e4271f262795@kernel.org>
+ <8279536d-c4f4-477a-9823-3e7b452c3c33@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <8279536d-c4f4-477a-9823-3e7b452c3c33@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4c73Yv1V1cz9tJx
+Content-Transfer-Encoding: 7bit
 
-pipe_idx in funtion dml2_svp_validate_static_schedulabilit, although set
-is never actually used. While building with GCC 16 this gives a warning:
+On 21/08/2025 12:25, Sven Peter wrote:
+> 
+> 
+> 1) For situations like this one where the generic one just doesn't make 
+> any sense we deprecate "apple,nvme-ans2" in the binding and use
+> "apple,t8103-nvme-ans2" as the fallback instead, i.e. just
+> "apple,t8103-nvme-ans2" for M1, "apple,t6000-nvme-ans2", 
+> "apple,t8103-nvme-ans2" for M1 Pro, and just "apple,t8015-nvme-ans2" for 
+> A11.
+> 
+> We keep the generic one in the driver for now but also add
+> "apple,t8103-nvme-ans2". We then remove the generic one from all 
+> upstream DTS files but keep it inside the downstream files we ship to 
+> users for now to avoid pain with kernel upgrades/downgrades.
+> A year or two from now we can then delete the deprecated generic 
+> compatibles everywhere. This all has to be synced with OpenBSD and 
+> u-boot as well since both also use these bindings.
+> It's gonna be rather painful but this would clean up the entire mess.
+> 
+> 
+> 2) We keep using the ones that are already upstream and just accept that 
+> the situation is a mess and add comment above all the bindings that we 
+> messed up and that this should not be used as pattern.
+> In this case that means it'll just be "apple,t8015-nvme-ans2" for A11 
+> without any fallback and we keep everything else the way it is.
+> 
+> I prefer option (2) but if you really want to get rid of all this mess 
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml2_mall_phantom.c: In function ‘set_phantom_stream_timing’:
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml2_mall_phantom.c:657:25: warning: variable ‘pipe_idx’ set but not used [-Wunused-but-set-variable=]
-  657 |         unsigned int i, pipe_idx;
-      |                         ^~~~~~~~
 
-Signed-off-by: Brahmajit Das <listout@listout.xyz>
----
-v1 -> v2: leaving declaration above
----
- drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+I also prefer option (2). That's the least disruptive option for users
+and inconsistency in bindings naming is just inconsistency, no big deal.
+You just need to remember not to grow the old items/pattern with generic
+compatible.
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c b/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c
-index a56e75cdf712..c59f825cfae9 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c
-@@ -654,14 +654,14 @@ static void set_phantom_stream_timing(struct dml2_context *ctx, struct dc_state
- 				     unsigned int svp_height,
- 				     unsigned int svp_vstartup)
- {
--	unsigned int i, pipe_idx;
-+	unsigned int i;
- 	double line_time, fp_and_sync_width_time;
- 	struct pipe_ctx *pipe;
- 	uint32_t phantom_vactive, phantom_bp, pstate_width_fw_delay_lines;
- 	static const double cvt_rb_vblank_max = ((double) 460 / (1000 * 1000));
- 
- 	// Find DML pipe index (pipe_idx) using dc_pipe_idx
--	for (i = 0, pipe_idx = 0; i < ctx->config.dcn_pipe_count; i++) {
-+	for (i = 0; i < ctx->config.dcn_pipe_count; i++) {
- 		pipe = &state->res_ctx.pipe_ctx[i];
- 
- 		if (!pipe->stream)
-@@ -669,8 +669,6 @@ static void set_phantom_stream_timing(struct dml2_context *ctx, struct dc_state
- 
- 		if (i == dc_pipe_idx)
- 			break;
--
--		pipe_idx++;
- 	}
- 
- 	// Calculate lines required for pstate allow width and FW processing delays
--- 
-2.51.0
-
+Best regards,
+Krzysztof
 
