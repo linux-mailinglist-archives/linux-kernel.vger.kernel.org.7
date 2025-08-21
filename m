@@ -1,268 +1,130 @@
-Return-Path: <linux-kernel+bounces-779657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB43B2F6DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:37:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA489B2F6E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 517ED5E732B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:37:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 688B11884CAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6151B30E824;
-	Thu, 21 Aug 2025 11:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XuDbmp0P"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCB43054DA
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C0430F53E;
+	Thu, 21 Aug 2025 11:38:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656FF235BE2;
+	Thu, 21 Aug 2025 11:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755776229; cv=none; b=d5FsLEpHae/JHZcI3z7gdRvGGibNi7DQ54McyVimLeTvQi1JcSyrq5EdLn61BZ64OChHcqANJE4BDiphAr3S3SInnhHzc69lz0FvmDuwLz9qDOJE9uwD0T5OWdX487wcG366Qi1+sInhkFX1nhhzbDf5MvO/G8dwoCjg53CiG6g=
+	t=1755776310; cv=none; b=nIiArXxbs0JMhSwxJUIlPWJ4aZTq6CgCrNz/iSWsQNSyl8C1u2Y1pu7ouZ/PClwa8wF17tskKdBzD3bQvzKZr3VXSa6h5t3KVKO978QRemFMEwU8dul+hKm9Tj6tMX0TLafI0MOZAkIJ1l1JBwGy9fOf1vb2rdrctrlepO/iLvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755776229; c=relaxed/simple;
-	bh=vTIYuqFFI4lufFZfI23A07GetKlFA8GCweCd9qK6Ro0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sZd8x/p7LfaOH6kEnByijVHwIOqbn5EVzQdjGOSSx/w+c+0J0vZ8tuHdFkxWbdv9LQkAkvyNrFjuXRPWbpsgbqrS/hnoam/6GeV7IyPy8YemMkwpi98Mf69d0NueIBA23Xj6DA2sxI1VthXoaTtg81gHBcDg+8lW2EL+igUD+tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XuDbmp0P; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755776225;
-	bh=vTIYuqFFI4lufFZfI23A07GetKlFA8GCweCd9qK6Ro0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XuDbmp0PP5xX0tZW7+Mbj0yv6W+PwUq5hd7UoOaCmWS9ADwhLPFD6qfKWbXCa288J
-	 teGG1gjZW4wCb9yXtIjjal6au7K+WjHWEujL07gB6ILVMB1zz4JSdcCT4u+nbSxSLR
-	 hEYuxGX8uQCljyW7zOIoppotCG67ajl9llCITO8jIr9dQRaOeFYdFJldcrY0uS07X7
-	 mVzkxhHKy4BgNqd2HR/UO5Fg8qRK7Ms6T1o092SiM5J4Nhlh1sRQ3wuv/KVvwgJfgr
-	 HKg3Wv+TYlORHLF5KW7kagiAWgQPlaj7NtQ5sBJbEPhjKfs1JzPqmkV0B4xP5rdkHr
-	 9ahW0JG6F3moQ==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EA87217E0DE3;
-	Thu, 21 Aug 2025 13:37:04 +0200 (CEST)
-Date: Thu, 21 Aug 2025 13:36:59 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Caterina Shablia <caterina.shablia@collabora.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Frank Binns <frank.binns@imgtec.com>, Matt
- Coster <matt.coster@imgtec.com>, Karol Herbst <kherbst@redhat.com>, Lyude
- Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, Liviu Dudau
- <liviu.dudau@arm.com>, Lucas De Marchi <lucas.demarchi@intel.com>, Thomas
- =?UTF-8?B?SGVsbHN0csO2bQ==?= <thomas.hellstrom@linux.intel.com>, Rodrigo
- Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, asahi@lists.linux.dev, Asahi Lina
- <lina@asahilina.net>
-Subject: Re: [PATCH v4 1/7] drm/panthor: Add support for atomic page table
- updates
-Message-ID: <20250821133659.5e7d0cd2@fedora>
-In-Reply-To: <d4a6208b-a4a4-451f-9799-7b9f5fb20c37@arm.com>
-References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
-	<20250707170442.1437009-2-caterina.shablia@collabora.com>
-	<d4a6208b-a4a4-451f-9799-7b9f5fb20c37@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755776310; c=relaxed/simple;
+	bh=dwfFFTxnT3+RxXaGP5LcRR7WXqd3mZLyP67DYAXnMWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+mS39G2f1SzEGTz7el0T2rPezkcd+8elyZTUxbrYjliNbVNQ/ZafM+f4b59+r7P6KP1/3jvVzkOEAbn+xPeThjxWapPIrSKx+MMGE0qUW8BYX3UUeZks9oH9k6nhfJ/rggxN/xmrX5fAYvkH3BXa1tpqRv9+7aidIDl5CKE4HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26002152B;
+	Thu, 21 Aug 2025 04:38:19 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF6043F58B;
+	Thu, 21 Aug 2025 04:38:26 -0700 (PDT)
+Date: Thu, 21 Aug 2025 12:38:25 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: arm64: Sync ESR_ELx_EC_* macros in
+ arm64_exception_types.h with esr.h
+Message-ID: <20250821113825.GA745271@e132581.arm.com>
+References: <20250814151452.618765-2-ysk@kzalloc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814151452.618765-2-ysk@kzalloc.com>
 
-On Fri, 11 Jul 2025 14:30:21 +0100
-Steven Price <steven.price@arm.com> wrote:
+Hi,
 
-> On 07/07/2025 18:04, Caterina Shablia wrote:
-> > From: Boris Brezillon <boris.brezillon@collabora.com>
-> > 
-> > Move the lock/flush_mem operations around the gpuvm_sm_map() calls so
-> > we can implement true atomic page updates, where any access in the
-> > locked range done by the GPU has to wait for the page table updates
-> > to land before proceeding.
-> > 
-> > This is needed for vkQueueBindSparse(), so we can replace the dummy
-> > page mapped over the entire object by actual BO backed pages in an atomic
-> > way.
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
-> > ---
-> >  drivers/gpu/drm/panthor/panthor_mmu.c | 65 +++++++++++++++++++++++++--
-> >  1 file changed, 62 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > index b39ea6acc6a9..9caaba03c5eb 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > @@ -387,6 +387,15 @@ struct panthor_vm {
-> >  	 * flagged as faulty as a result.
-> >  	 */
-> >  	bool unhandled_fault;
-> > +
-> > +	/** @locked_region: Information about the currently locked region currently. */
-> > +	struct {
-> > +		/** @locked_region.start: Start of the locked region. */
-> > +		u64 start;
-> > +
-> > +		/** @locked_region.size: Size of the locked region. */
-> > +		u64 size;
-> > +	} locked_region;
-> >  };
-> >  
-> >  /**
-> > @@ -775,6 +784,10 @@ int panthor_vm_active(struct panthor_vm *vm)
-> >  	}
-> >  
-> >  	ret = panthor_mmu_as_enable(vm->ptdev, vm->as.id, transtab, transcfg, vm->memattr);
-> > +	if (!ret && vm->locked_region.size) {
-> > +		lock_region(ptdev, vm->as.id, vm->locked_region.start, vm->locked_region.size);
-> > +		ret = wait_ready(ptdev, vm->as.id);
-> > +	}  
+On Thu, Aug 14, 2025 at 03:14:53PM +0000, Yunseong Kim wrote:
+> Update perf util arm64_exception_types.h to match the exception class
+> macros defined in tools/arch/arm64/include/asm/esr.h. This ensures
+> consistency between perf tooling and the kernel header definitions for
+> ESR_ELx_EC_* values.
 > 
-> Do we need to do this? It seems odd to restore a MMU context and
-> immediately set a lock region. Is there a good reason we can't just
-> WARN_ON if there's a lock region set in panthor_vm_idle()?
-> 
-> I think we need to briefly take vm->op_lock to ensure synchronisation
-> but that doesn't seem a big issue. Or perhaps there's a good reason that
-> I'm missing?
+> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
 
-Hm, I wish I had written a big fat comment along this change, because
-indeed, it seems simpler to take the op_lock to ensure any in-flight PT
-update is flushed before we make the AS active, and I definitely don't
-remember why I didn't do that. Could be some locking order inversion of
-some sort between the slot lock, or maybe I overthought this at the
-time. In any case, it looks like it's worth a try.
+Thanks for working on this.
 
-> 
-> >  
-> >  out_make_active:
-> >  	if (!ret) {
-> > @@ -902,6 +915,9 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
-> >  	struct io_pgtable_ops *ops = vm->pgtbl_ops;
-> >  	u64 offset = 0;
-> >  
-> > +	drm_WARN_ON(&ptdev->base,
-> > +		    (iova < vm->locked_region.start) ||
-> > +		    (iova + size > vm->locked_region.start + vm->locked_region.size));
-> >  	drm_dbg(&ptdev->base, "unmap: as=%d, iova=%llx, len=%llx", vm->as.id, iova, size);
-> >  
-> >  	while (offset < size) {
-> > @@ -915,13 +931,12 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
-> >  				iova + offset + unmapped_sz,
-> >  				iova + offset + pgsize * pgcount,
-> >  				iova, iova + size);
-> > -			panthor_vm_flush_range(vm, iova, offset + unmapped_sz);
-> >  			return  -EINVAL;
-> >  		}
-> >  		offset += unmapped_sz;
-> >  	}
-> >  
-> > -	return panthor_vm_flush_range(vm, iova, size);
-> > +	return 0;
-> >  }
-> >  
-> >  static int
-> > @@ -938,6 +953,10 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
-> >  	if (!size)
-> >  		return 0;
-> >  
-> > +	drm_WARN_ON(&ptdev->base,
-> > +		    (iova < vm->locked_region.start) ||
-> > +		    (iova + size > vm->locked_region.start + vm->locked_region.size));
-> > +
-> >  	for_each_sgtable_dma_sg(sgt, sgl, count) {
-> >  		dma_addr_t paddr = sg_dma_address(sgl);
-> >  		size_t len = sg_dma_len(sgl);
-> > @@ -985,7 +1004,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
-> >  		offset = 0;
-> >  	}
-> >  
-> > -	return panthor_vm_flush_range(vm, start_iova, iova - start_iova);
-> > +	return 0;
-> >  }
-> >  
-> >  static int flags_to_prot(u32 flags)
-> > @@ -1654,6 +1673,38 @@ static const char *access_type_name(struct panthor_device *ptdev,
-> >  	}
-> >  }
-> >  
-> > +static int panthor_vm_lock_region(struct panthor_vm *vm, u64 start, u64 size)
-> > +{
-> > +	struct panthor_device *ptdev = vm->ptdev;
-> > +	int ret = 0;
-> > +
-> > +	mutex_lock(&ptdev->mmu->as.slots_lock);
-> > +	drm_WARN_ON(&ptdev->base, vm->locked_region.start || vm->locked_region.size);
-> > +	vm->locked_region.start = start;
-> > +	vm->locked_region.size = size;
-> > +	if (vm->as.id >= 0) {
-> > +		lock_region(ptdev, vm->as.id, start, size);
-> > +		ret = wait_ready(ptdev, vm->as.id);
-> > +	}
-> > +	mutex_unlock(&ptdev->mmu->as.slots_lock);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static void panthor_vm_unlock_region(struct panthor_vm *vm)
-> > +{
-> > +	struct panthor_device *ptdev = vm->ptdev;
-> > +
-> > +	mutex_lock(&ptdev->mmu->as.slots_lock);
-> > +	if (vm->as.id >= 0) {
-> > +		write_cmd(ptdev, vm->as.id, AS_COMMAND_FLUSH_MEM);
-> > +		drm_WARN_ON(&ptdev->base, wait_ready(ptdev, vm->as.id));
-> > +	}
-> > +	vm->locked_region.start = 0;
-> > +	vm->locked_region.size = 0;
-> > +	mutex_unlock(&ptdev->mmu->as.slots_lock);
-> > +}  
-> 
-> Do we need to include a drm_dev_enter() somewhere here? I note that
-> panthor_vm_flush_range() has one and you've effectively replaced that
-> code with the above.
-> 
-> Thanks,
-> Steve
-> 
-> > +
-> >  static void panthor_mmu_irq_handler(struct panthor_device *ptdev, u32 status)
-> >  {
-> >  	bool has_unhandled_faults = false;
-> > @@ -2179,6 +2230,11 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
-> >  
-> >  	mutex_lock(&vm->op_lock);
-> >  	vm->op_ctx = op;
-> > +
-> > +	ret = panthor_vm_lock_region(vm, op->va.addr, op->va.range);
-> > +	if (ret)
-> > +		goto out;
-> > +
-> >  	switch (op_type) {
-> >  	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP:
-> >  		if (vm->unusable) {
-> > @@ -2199,6 +2255,9 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
-> >  		break;
-> >  	}
-> >  
-> > +	panthor_vm_unlock_region(vm);
-> > +
-> > +out:
-> >  	if (ret && flag_vm_unusable_on_failure)
-> >  		vm->unusable = true;
-> >    
-> 
+This patch still misses couple macros, please see below.
 
+> ---
+>  tools/perf/arch/arm64/util/arm64_exception_types.h | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/arch/arm64/util/arm64_exception_types.h b/tools/perf/arch/arm64/util/arm64_exception_types.h
+> index 27c981ebe401..29931bf19062 100644
+> --- a/tools/perf/arch/arm64/util/arm64_exception_types.h
+> +++ b/tools/perf/arch/arm64/util/arm64_exception_types.h
+> @@ -33,7 +33,7 @@
+>  #define ESR_ELx_EC_PAC		(0x09)	/* EL2 and above */
+>  /* Unallocated EC: 0x0A - 0x0B */
+
+#define ESR_ELx_EC_OTHER	(0x0A)
+
+>  #define ESR_ELx_EC_CP14_64	(0x0C)
+> -/* Unallocated EC: 0x0d */
+> +#define ESR_ELx_EC_BTI		(0x0D)
+>  #define ESR_ELx_EC_ILL		(0x0E)
+>  /* Unallocated EC: 0x0F - 0x10 */
+>  #define ESR_ELx_EC_SVC32	(0x11)
+> @@ -46,7 +46,10 @@
+>  #define ESR_ELx_EC_SYS64	(0x18)
+>  #define ESR_ELx_EC_SVE		(0x19)
+>  #define ESR_ELx_EC_ERET		(0x1a)	/* EL2 only */
+> -/* Unallocated EC: 0x1b - 0x1E */
+> +/* Unallocated EC: 0x1B */
+> +#define ESR_ELx_EC_FPAC		(0x1C)	/* EL1 and above */
+> +#define ESR_ELx_EC_SME		(0x1D)
+> +/* Unallocated EC: 0x1E */
+>  #define ESR_ELx_EC_IMP_DEF	(0x1f)	/* EL3 only */
+>  #define ESR_ELx_EC_IABT_LOW	(0x20)
+>  #define ESR_ELx_EC_IABT_CUR	(0x21)
+> @@ -55,7 +58,7 @@
+>  #define ESR_ELx_EC_DABT_LOW	(0x24)
+>  #define ESR_ELx_EC_DABT_CUR	(0x25)
+>  #define ESR_ELx_EC_SP_ALIGN	(0x26)
+> -/* Unallocated EC: 0x27 */
+> +#define ESR_ELx_EC_MOPS		(0x27)
+>  #define ESR_ELx_EC_FP_EXC32	(0x28)
+>  /* Unallocated EC: 0x29 - 0x2B */
+>  #define ESR_ELx_EC_FP_EXC64	(0x2C)
+
+#define ESR_ELx_EC_GCS		(0x2D)
+
+Thanks,
+Leo
+
+> -- 
+> 2.50.0
+> 
 
