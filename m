@@ -1,174 +1,156 @@
-Return-Path: <linux-kernel+bounces-780003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BFEB2FC3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:20:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2F4B2FC41
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C246160BD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:15:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D801747B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7232EDD70;
-	Thu, 21 Aug 2025 14:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68883239E88;
+	Thu, 21 Aug 2025 14:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TB+Z8put"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="OF5LdvWf";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="Jf2Wgg3J"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6C12EDD40;
-	Thu, 21 Aug 2025 14:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5394F2949E0
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755785676; cv=none; b=Aws7dfKMj/6SzVH3J/bsmyBCcqidzmXF3Eje4VhXasNsXq5eFHZm1JxvKzNR4JYY1184jKP867mkiSjPnJ1amwnHZk/E2Xwkpna7lcD8iahInH2PCkQNKun0GdC/RvLiYIVK1W3wrZKgrC+JdaazoSb3XvdR01GSsZO69/VldsY=
+	t=1755785731; cv=none; b=Y7qRGKFjrcVi0wS124RwuvydYsfLkcnLKrH9a/SGwTpolKfet0mQWptyKdt11XoHmu8ph+KI3gNUdN+kdbZrJB9hR3rwkx1uKKeyJpnXP79c18/ptNdJ7lmYyliYst0CwZ/7zgg43k4Ys55enaueMq1+fvyS0HBe5yEmjvOpKhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755785676; c=relaxed/simple;
-	bh=gw18hevqmIxFwrZV1sIG6fUjWbi1i9XDyZT3qrIxT7g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nYinrv4xJVWdF+4BOG6zOskdTMOh6SCi1KiIqFB/Kd56sKEKGd+HALXu2e92RE0Yi0+zxkhwu6TN4aKhpiGthkNf+2jolz5s0nUDyCumR3D29xjS1saUzrM0JpnKfr204K+qlMYMG9MazBmqCo0gvq4wuiQ+eBVTboc9exzcgas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TB+Z8put; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9d41bfa35so832657f8f.0;
-        Thu, 21 Aug 2025 07:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755785673; x=1756390473; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fvOUlOSPPOsXB/3zWThy1pwPfkK9g4MWMHVB27lxX6I=;
-        b=TB+Z8put/XZHbxn1OMU+cyi4MuO35XZzhk4HAvRA0NiGGiN8bBlYdGyENzqfKCSYtk
-         J6HLaT3BcmDtn+oJSzC1bJCEpX9wYIkWKGpo0y3/gSEM6Dkx4etYaWt1UA2Eq7dWtvLW
-         TR3wYV3zMPnlV/j3BxNfpyFyVDM6n9tA1GCFhrFohpAm+8GCl1TxQTSclg2c2IqCTG1b
-         5hynb949GEw8swXQPQ+eDs0FfpPxxOvFQLTzs7DNUcslauQ08vpcqAwB/Px3iW5LUmyN
-         cepyNau38NqNIIzqyTX619vcIb97HAM2nXArr/HudTS9nbiQtZuaqnYoOZ8RxfvoYC32
-         qd4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755785673; x=1756390473;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fvOUlOSPPOsXB/3zWThy1pwPfkK9g4MWMHVB27lxX6I=;
-        b=QwIYrfCwQIoFYhp1cbzN9gR+jQsLFET65rppNpJNNIsd0oYa9rjAxhweymPfIcEIh7
-         DSNG79/bAIv+M9Oa94DS2UsmpmYEUepEJejXLKghAtjYVAjQMFOdD6dvpqDqSgx16u0y
-         CGeJ/ZnYvLBlElGJscUcrZbUHgEzNptxOdRZ6C0f1lq+2mDGoZCSZ6xBe4KtfZiiUaQb
-         SntKZDyetzfqUgZvTsUtZ0dJ4R39820VKOIb2cchQmoVRK0nDsGBwwvoQidmyeBYl1jc
-         lK5HYJWlVl2ta7ngaN1yFG/sGC1ZokZ6B/qRrGzXl+FxGUs8WEytJzA+tEQFWGX/xTu7
-         Klpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsv1RB1+JIomkbDX4J4yEK3nxvxTsJJZPwT2JrdGlyJHs7KOB5AOEqM+hTtSgC2ZnLcI25/Mb6bcP7otQKsrcnxzw=@vger.kernel.org, AJvYcCW2iH3ufa50m9GKsAmwkiSromoTt/iJWggsQB2kEp8nX0pDGIjXcBGULW5gqFQ8jDQ4ei/4HtnOzvM=@vger.kernel.org, AJvYcCWU585Z8u/8VhwKtmNk8RR4s4TSnB1qId/15ct4U2bhd+esQIXcOFCBxkvAe4sz+qKj1mwlBTneEWOHfuAL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Y9R8YvbkI5SRuOfu76CN7Sxlwh+ndaMPJ4bV5xukSWkSgu28
-	hIbl3pJeyRlWZtBf6TlMlnYVRKjllwiG2bUxKf3gPfmjjM81d64jaf4O
-X-Gm-Gg: ASbGncsUJ1lPxLu80yjiXfPvpiryqkA6g3JXROspimxqOzGNI+PrnkpJ6cgvaISDKMI
-	+lVXzW3NbiqQ0i3h99JsJVC3rMxSQ0C6/90XDE4wkTLkv8RKGWkmrL2s85/eZyeME9teyznblui
-	J2LRc08knB+flxGBun7qLtHxa84IOYOFMNV0eiXCp8CH0Hl1LXp9bZxuLdK67+l7uZHyw00SJAF
-	HO5XPjf+cgNlrDeIj6XKJ31ukvFGhEvIKPbQRUYEQi4OtE/Zc+s74/T5RS/fhF5e7feB5TP/gbN
-	pM2SK1x1SUDnI7Ok8Odgo00LHhmSlqFvFxyS/OIu/ezUbjVc3RyxkETJLQBM10r75dJU1ptVB5L
-	nBtDmRucZMsPWPTs/IWpQlO+kdE4PpsXLPI9YkNJwxOJ4sErKUkVrRb1Hxhw7v0VvqJl3XBwehA
-	==
-X-Google-Smtp-Source: AGHT+IFO54QOz/DgXpOL4k9NcnTJZl5Mpjp4u748get5hxocrDQP/h9xWALOdO6Iipr/C4XNKv2vrw==
-X-Received: by 2002:a05:6000:2901:b0:3b9:16e5:bd03 with SMTP id ffacd0b85a97d-3c49405d32fmr2356062f8f.6.1755785673210;
-        Thu, 21 Aug 2025 07:14:33 -0700 (PDT)
-Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4db1be3csm33203505e9.1.2025.08.21.07.14.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 07:14:32 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-can@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 4/4] can: rcar_canfd: Simplify data bit rate config
-Date: Thu, 21 Aug 2025 15:14:24 +0100
-Message-ID: <20250821141429.298324-5-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250821141429.298324-1-biju.das.jz@bp.renesas.com>
-References: <20250821141429.298324-1-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1755785731; c=relaxed/simple;
+	bh=efamSLhfQLINOtv7uJR+tW76sMP7oqxge0e3J1PCnDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uO7ov3qLb7qWLNRw8FVqE8n9R3Akg61Qf5N4I1l9NdHQJ0KakuF2LtqPSt/z7oV4Mq/B7a/ad/3B43JrC3uovJENods6Gida7VuOo67a6qNkGN89MESYL+J9KFfY0Ye3WaSDtfgskZPRb9uDKB9gpbcP3mUtqIsF/m5VbjhUs/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=OF5LdvWf; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=Jf2Wgg3J; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1755785727; x=1756390527;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=GsvDeHWgZc93f0po8wwYyN06rP47fEkn9doFP/7K+wk=;
+	b=OF5LdvWfkSvMzcTHcMlUF39vdcWjEzEDTmzloomgJ6NfyC6x8w6taLxUYXvAByTttkJKQD5QjRlSm
+	 EaoZkzevvggjEJPic7NGw2lN3GI5UT+AI2wJ2bxqjSN+PgIWhoGrjGUe/Mrk55Ut+grkQWZosTLXHH
+	 lJdN8MmfSVJPGAblL52nE7sIY2HmD1ZNhGh1Me7Xvjrls7zVtKHxLgJpYCmZ50cx0wqMKEF4//8cVU
+	 HvHqFM3BHr7pI4tpdAe3WORP9WmVeX+q21pgKE6Pq4RqGTg/zke3m824Kkab0LRw2atV2AJ5tTcgMf
+	 u0ARy3Eu0cAEbR27bCBQczKJZnQEjPg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1755785727; x=1756390527;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=GsvDeHWgZc93f0po8wwYyN06rP47fEkn9doFP/7K+wk=;
+	b=Jf2Wgg3JfJiS9bqME6Trr5NLTaI9eMvGOUZD4OsL7dogfQDVtmITkVTHCwPUwC7kaPB/xm9tFfMlt
+	 8dMiRIXBw==
+X-HalOne-ID: 4883bd8a-7e99-11f0-ba34-4f541c8bf1cc
+Received: from [192.168.10.245] (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
+	by mailrelay3.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id 4883bd8a-7e99-11f0-ba34-4f541c8bf1cc;
+	Thu, 21 Aug 2025 14:15:26 +0000 (UTC)
+Message-ID: <27139676-8470-4067-b259-f01022751bbc@konsulko.se>
+Date: Thu, 21 Aug 2025 16:15:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] rust: zpool: add abstraction for zpool drivers
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Uladzislau Rezki <urezki@gmail.com>, Alice Ryhl <aliceryhl@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Miguel Ojeda
+ <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>, Johannes Weiner <hannes@cmpxchg.org>,
+ Yosry Ahmed <yosry.ahmed@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
+ linux-mm@kvack.org
+References: <20250821111718.512936-1-vitaly.wool@konsulko.se>
+ <DC83A2M3G8EH.12FRM3C05ABCR@kernel.org>
+ <DC83WSYHY3K1.1D3XEES0BIKGS@kernel.org>
+Content-Language: en-US
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <DC83WSYHY3K1.1D3XEES0BIKGS@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Introduce rcar_canfd_compute_data_bit_rate_cfg() for simplifying data bit
-rate configuration by replacing function-like macros.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Split from patch#3 for computing data bit rate config separate.
-   separate.
- * Replaced RCANFD_DCFG_DBRP->RCANFD_DCFG_DBRP_MASK and used FIELD_PREP to
-   extract value.
----
- drivers/net/can/rcar/rcar_canfd.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+On 8/21/25 14:32, Danilo Krummrich wrote:
+> On Thu Aug 21, 2025 at 2:03 PM CEST, Danilo Krummrich wrote:
+>> On Thu Aug 21, 2025 at 1:17 PM CEST, Vitaly Wool wrote:
+>>> +    /// preferred NUMA node `nid`. If the allocation is successful, an opaque handle is returned.
+>>> +    fn malloc(
+>>> +        pool: <Self::Pool as ForeignOwnable>::BorrowedMut<'_>,
+>>> +        size: usize,
+>>> +        gfp: Flags,
+>>> +        nid: NumaNode,
+>>> +    ) -> Result<usize>;
+>>
+>> I still think we need a proper type representation of a zpool handle that
+>> guarantees validity and manages its lifetime.
+>>
+>> For instance, what prevents a caller from calling write() with a random handle?
+>>
+>> Looking at zsmalloc(), if I call write() with a random number, I will most
+>> likely oops the kernel. This is not acceptable for safe APIs.
+>>
+>> Alternatively, all those trait functions have to be unsafe, which would be very
+>> unfortunate.
+> 
+> I just noticed that I confused something here. :)
+> 
+> So, for the backend driver this trait is obviously fine, since you have to implement
+> the C ops -- sorry for the confusion.
+> 
+> However, you still have to mark all functions except alloc() and total_pages()
+> as unsafe and document and justify the corresponding safety requirements.
 
-diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 944b960c0b5e..f56ed8967212 100644
---- a/drivers/net/can/rcar/rcar_canfd.c
-+++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -169,15 +169,7 @@
- #define RCANFD_CERFL_ERR(x)		((x) & (0x7fff)) /* above bits 14:0 */
- 
- /* RSCFDnCFDCmDCFG */
--#define RCANFD_DCFG_DSJW(gpriv, x)	(((x) & ((gpriv)->info->data_bittiming->sjw_max - 1)) << 24)
--
--#define RCANFD_DCFG_DTSEG2(gpriv, x) \
--	(((x) & ((gpriv)->info->data_bittiming->tseg2_max - 1)) << (gpriv)->info->sh->dtseg2)
--
--#define RCANFD_DCFG_DTSEG1(gpriv, x) \
--	(((x) & ((gpriv)->info->data_bittiming->tseg1_max - 1)) << (gpriv)->info->sh->dtseg1)
--
--#define RCANFD_DCFG_DBRP(x)		(((x) & 0xff) << 0)
-+#define RCANFD_DCFG_DBRP_MASK		GENMASK(7, 0)
- 
- /* RSCFDnCFDCmFDCFG */
- #define RCANFD_GEN4_FDCFG_CLOE		BIT(30)
-@@ -1406,6 +1398,19 @@ static inline u32 rcar_canfd_compute_nominal_bit_rate_cfg(struct rcar_canfd_chan
- 	return (ntseg1 | nbrp | nsjw | ntseg2);
- }
- 
-+static inline u32 rcar_canfd_compute_data_bit_rate_cfg(const struct rcar_canfd_hw_info *info,
-+						       u16 tseg1, u16 brp, u16 sjw, u16 tseg2)
-+{
-+	u32 dtseg2, dtseg1, dsjw, dbrp;
-+
-+	dtseg2 = (tseg2 & (info->data_bittiming->tseg2_max - 1)) << info->sh->dtseg2;
-+	dtseg1 = (tseg1 & (info->data_bittiming->tseg1_max - 1)) << info->sh->dtseg1;
-+	dsjw = (sjw & (info->data_bittiming->sjw_max - 1)) << 24;
-+	dbrp = FIELD_PREP(RCANFD_DCFG_DBRP_MASK, brp);
-+
-+	return (dtseg1 | dbrp | dsjw | dtseg2);
-+}
-+
- static void rcar_canfd_set_bittiming(struct net_device *ndev)
- {
- 	u32 mask = RCANFD_FDCFG_TDCO | RCANFD_FDCFG_TDCE | RCANFD_FDCFG_TDCOC;
-@@ -1435,10 +1440,7 @@ static void rcar_canfd_set_bittiming(struct net_device *ndev)
- 	sjw = dbt->sjw - 1;
- 	tseg1 = dbt->prop_seg + dbt->phase_seg1 - 1;
- 	tseg2 = dbt->phase_seg2 - 1;
--
--	cfg = (RCANFD_DCFG_DTSEG1(gpriv, tseg1) | RCANFD_DCFG_DBRP(brp) |
--	       RCANFD_DCFG_DSJW(gpriv, sjw) | RCANFD_DCFG_DTSEG2(gpriv, tseg2));
--
-+	cfg = rcar_canfd_compute_data_bit_rate_cfg(gpriv->info, tseg1, brp, sjw, tseg2);
- 	writel(cfg, &gpriv->fcbase[ch].dcfg);
- 
- 	/* Transceiver Delay Compensation */
--- 
-2.43.0
+How is destroy() different from alloc() in terms of safety? I believe 
+it's only free, read_{begin|end}, write that should be marked as unsafe.
+
+>>> +    /// Free a previously allocated from the `pool` object, represented by `handle`.
+>>> +    fn free(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, handle: usize);
+>>
+>> What happens if I forget to call free()?
+>>
+>>> +    /// Make all the necessary preparations for the caller to be able to read from the object
+>>> +    /// represented by `handle` and return a valid pointer to the `handle` memory to be read.
+>>> +    fn read_begin(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, handle: usize)
+>>> +        -> NonNull<u8>;
+>>
+>> Same for this, making it a NonNull<u8> is better than a *mut c_void, but it's
+>> still a raw pointer. Nothing prevents users from using this raw pointer after
+>> read_end() has been called.
+>>
+>> This needs a type representation that only lives until read_end().
+>>
+>> In general, I think this design doesn't really work out well. I think the design
+>> should be something along the lines of:
+>>
+>>    (1) We should only provide alloc() on the Zpool itself and which returns a
+>>        Zmem instance. A Zmem instance must not outlive the Zpool it was allocated
+>>        with.
+>>
+>>    (2) Zmem should call free() when it is dropped. It should provide read_begin()
+>>        and write() methods.
+>>
+>>    (3) Zmem::read_begin() should return a Zslice which must not outlive Zmem and
+>>        calls read_end() when dropped.
+> 
+> This design is obiously for when you want to use a Zpool, but not implement its
+> backend. :)
+
 
 
