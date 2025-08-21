@@ -1,199 +1,144 @@
-Return-Path: <linux-kernel+bounces-780738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CEAB30895
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:45:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9FFB3089D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3471162405B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:45:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F32B624424
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4AB2EA74C;
-	Thu, 21 Aug 2025 21:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CACF2E9737;
+	Thu, 21 Aug 2025 21:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dRqQIkhv"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K8Ah7uDh"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3D62E9EC2
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267DE2857F6
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755812727; cv=none; b=qWycmi7oxZ6QLvJywG6FcGcdJ9Q8dk5Zed+dnIq4YYzPY5jEsmRmPoK8Igs5DGz4cR6M4q1LLRN2Qp+FoQbkjtXaDRPU3u8K8fHZ3MPeya49P93FkcuW0w3YcDvr8rVudj71WXdz3nWdplWaWNNVMz+15TLx2mG47mLUP3eREkU=
+	t=1755812790; cv=none; b=gdJwMTfKg69DTo0D+H70DBwGkseF6msPIIFYa7yfJJ5L2TFmjluPjb4PqYyce6MpufnSHHfCT9NyOS2dPY64t8FElwMVW2MvuSZ1icYN0NmsizFog9UPGGZSy+rUO2+irAi2d8ME8C97me1WPKdnjaiEgYz0BtfVCdrxux5Taws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755812727; c=relaxed/simple;
-	bh=fUaBHZHAJdUQk9eKwml7s0QHGPPoV73wuBZAYASLp2c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=L1bthaCmsNiO+74Zql6X0mtjNJTKUMB9o/2XGffSFOFLY17giweZ4BnVdAs6bbev878fSO4GPB9IZiIP9/iV0i6Mwti2gpR4Vrv8UuIg9i4DO1QTqjH8mPWyz3Q8TwC+jQ3jYxQ5z/eOUKpeFy3w3egFkKZ84XEBIFq3GwUnJtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dRqQIkhv; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1755812790; c=relaxed/simple;
+	bh=WjMsQZzuysaDV6R+P3ZzyoCh1QHeYreJxscNPZJrjvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=evfjIdGA4M1ohJ+43Wbdy1PxP2l67NeO9JV679WywMru64Qjz8NMuShQdMuijdLio6S1h7MChUZdlZbLgstj+jXqp8VjQw6eYF3YpICUrbljtrmAw/dZISPgVDb4MT0cuOAlD5Sb2NUAir8aOwW5SO8kr0URAeoiSb0t3tR8mvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K8Ah7uDh; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755812724;
+	s=mimecast20190719; t=1755812788;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xgU+Z5k4KPqEraeKDWCOzJcpc8HGVmW4oZxLQRmx6Ws=;
-	b=dRqQIkhvznsxHhME/+IsWavrsBXHmsqA0USw2cVx2/8Cna6y7TDXT7A4V4YY0RH+Vyq445
-	cqT9YJffSaWiz53FMiq5lWOj7T5uEy3nhzvy3Lhlxxc+eG9yvep4UwD5yR53gAaUEx77Qt
-	8YtGULrUxS3zsblyXIHRYH0/wkdNEZw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=UOEidWIYFOcPQc5k2cWSdnWss7AqeJmy+kRLikq18m4=;
+	b=K8Ah7uDhCPqerNmb4nVEJWvyZZyKKUflA1cziygM+Ve249/l3ZGLl0TvvteiC9CWnLSe/x
+	vE1yJrRTtG2RgqcEjgiY67nZ95glF0HthDVB77wIeXy0mDgUlFPkJQaIfIJmP/+YdAd/P5
+	9H53nhE9FSWOgdCF7WLqqo1+UpkJw/c=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-388-BFnPvGOlNGGqUApkbl3Rqw-1; Thu, 21 Aug 2025 17:45:23 -0400
-X-MC-Unique: BFnPvGOlNGGqUApkbl3Rqw-1
-X-Mimecast-MFC-AGG-ID: BFnPvGOlNGGqUApkbl3Rqw_1755812722
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3c380aa1ad1so542127f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:45:23 -0700 (PDT)
+ us-mta-348-p8SLx1UVPtmE3TDZ8jIbEA-1; Thu, 21 Aug 2025 17:46:27 -0400
+X-MC-Unique: p8SLx1UVPtmE3TDZ8jIbEA-1
+X-Mimecast-MFC-AGG-ID: p8SLx1UVPtmE3TDZ8jIbEA_1755812786
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b295536c25so28573461cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:46:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755812722; x=1756417522;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xgU+Z5k4KPqEraeKDWCOzJcpc8HGVmW4oZxLQRmx6Ws=;
-        b=BWW3Udk0xh2zllWekDq3vnpfPj2Bfzr/+gfjhTyvy9z6iKDHHFUwoChT//6O09+BdV
-         srgnYdUZmrtAAeb2Bq8UQ+A55PcLnMl1D+WSTW7YjA7Emp2efsjJ0CXO0SjUOfslw9X4
-         s3rNV8o2BBDZPiRDQvnmssSjBZCNqrggH79r7e34uQ5QPclSCSf9mFI5h4IOKVM2IvHI
-         SgU24sknr+gTWyMfd5O5jYgEd6eQ8CYWsWjGg+80ybunPBSYjhByqrOXaA4n4/LBGCr8
-         m5Owgfc13dYUbllj+Kg5hqueNxceFC/KGq71MjicD63cV2Z228+llNvtHtI8N7bUhuvN
-         rnew==
-X-Gm-Message-State: AOJu0YwE5tnfYmxuyZIk27ib342ENi4LB/vIEqO68JXGkXtw84g42wja
-	PV3pq/aQrpYJ3MP3sLWIJ4tNS3cb2F5l5hTvQMRVmigJmMPHHhBJjoqnBp3uHds+9h6EuMUuXVa
-	CAPgYf6fMvX/v9hATz423vtEzSys3+vMRtrtHNouiPqjQ4wen3T5eDZlrJq94g6VIT+RI/HcVbo
-	tQphpyv9q3WrzUCTg6pFCC5DxpzzhZI+eOQvA5XOqhW5sNO44e
-X-Gm-Gg: ASbGncsUzDNkXR1YgSpo/bJWewuXL9ChJ8+Rbn4uzVYXckcX58fwNY+ibYOK0mNGAEH
-	5c/0A/O3Bm8uokz5xFXygGnMzcdwnZE8RW0Fg3nfpM5pPtJevcOyM3eaE6SCvtmqUqbe+/jCpRk
-	DCEV0Knm9IKJb2U4+Rq+6xEt+bM+uzC9lrBp7w6xTYBZfK9KPrjkcVluNQ2jPrjo6sMBKeL/VCq
-	zdVyTcfeV7FH+57QXe9A44i7KFcDuZSxldTs1QjqqQs/oqJUWMJm9e9iWn+SgMafq/3E7yfvOEW
-	CCff3t/D9ipzliASDuSYXfaPROzDnJ5MQ6KF+8p0ifxWOIV7Qa/ZXCmc5iHlCiMCo0foCBG2hB3
-	HkZG2pkv135ULdrxE7K5SBC4I91TrCP87vAEW8ukPmIYa+iZbWdMTa2awsyvJkQ==
-X-Received: by 2002:a05:6000:2902:b0:3b8:f925:8d4 with SMTP id ffacd0b85a97d-3c5db2da00amr300101f8f.26.1755812721964;
-        Thu, 21 Aug 2025 14:45:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEfnhl0R8ZwVLuxUZYmGD7nMrbthuKRx51tD/iqNpCQL5sxy24UygUdE3xc6j7fC/B+t7+yTQ==
-X-Received: by 2002:a05:6000:2902:b0:3b8:f925:8d4 with SMTP id ffacd0b85a97d-3c5db2da00amr300045f8f.26.1755812721421;
-        Thu, 21 Aug 2025 14:45:21 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f26:ba00:803:6ec5:9918:6fd? (p200300d82f26ba0008036ec5991806fd.dip0.t-ipconnect.de. [2003:d8:2f26:ba00:803:6ec5:9918:6fd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4e25da97sm22067085e9.1.2025.08.21.14.45.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 14:45:20 -0700 (PDT)
-Message-ID: <b09b7ef4-5b06-4bb8-9be3-1194e3904c92@redhat.com>
-Date: Thu, 21 Aug 2025 23:45:18 +0200
+        d=1e100.net; s=20230601; t=1755812786; x=1756417586;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UOEidWIYFOcPQc5k2cWSdnWss7AqeJmy+kRLikq18m4=;
+        b=qik2O7fcd9fVq2ZDaAY6aWnQn5Xwgr+gRy5I78DQYqgT5ooyoOKc+2J8zOyTcZNvbz
+         Hgv6uQw23km8mP3t21k3AEZrNkBnqJBT+cfSdyVoSfwRdeqLN9gHBicpYFbfvwuqGBzD
+         nD1kejG5Zopxtv1rHPsykkxcxkyB30bfo2+bB0QV7ZCk64eID717An4ZMzFyg/U1rRjW
+         Qa/kFkyDyvf2zCXsEjBW+ouOXnRtPZ+Mlv4S/bDIkYGiVmL8K4+4n0uUoQZa4F19CPUT
+         I/TK+vkU5ETj5hM8icg4r7cbuHqFb7/1DSDpVC9cZy304XHabihd6HmBhNm4oowQU530
+         a6KA==
+X-Gm-Message-State: AOJu0Yw820Wi+SWNtYGc8hY1QgOuiW6gW69cNe4bSn3q7QLAW04NmIqU
+	OufGMzlUtSTQqXpSwsstlWhC+8iw4ElI7wGojq9q3IDM5CsKOO2flstwYBxAIBuYlfiNN3orzX9
+	2PYNGEsNPhMi45cA5wgVU8HQ56wtVjM7+0zQLuzyrng0CXqByM5RA0eXa84pA2U20pg==
+X-Gm-Gg: ASbGncvOOS4PFdEbzlHLPjBFtCMIo4EuQouDsBLWO3rs/syHOQWYvFj4e6eVzWEyY63
+	IjoowUbpW7gYlZRRNNLmu/EsHe4Qk/1mhob7KQ6otTnRc6uTmuL/8aJfaH0BuNbGq1SVHMZK847
+	HBnyfUOctaBuALd/l5d0iTaYjuCkqHbpUg3GLTuMU7g03kBTYqO+1Vob7ukuU6PXCNy6Bd0yJjM
+	BVq6TbRV6kb4YEjP89dsNwc8CJjOklrjuJrER4bSADEvkN7j79A4UMbFtxYsx1VRZ1IKmJ7SEuj
+	YSvHoaMC7iLxK6TfqRlV3lWDz9IUgyeCr+Ac8RiAEjOAfxqzXvjN823VpfLq0ARkdP0zMkYhrUn
+	D9FUK+v1hWK7+reXVAm4=
+X-Received: by 2002:ac8:5812:0:b0:4b0:73db:f81b with SMTP id d75a77b69052e-4b2aaa1a378mr10332791cf.10.1755812786475;
+        Thu, 21 Aug 2025 14:46:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGM/f6AWKsD/uiuSUkJzb9jNkg9oqjjxZOXqxlVkr171nvQa2lEbcNla+IOhlEltLwBQr891g==
+X-Received: by 2002:ac8:5812:0:b0:4b0:73db:f81b with SMTP id d75a77b69052e-4b2aaa1a378mr10332491cf.10.1755812786097;
+        Thu, 21 Aug 2025 14:46:26 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e020514sm1201852885a.17.2025.08.21.14.46.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 14:46:25 -0700 (PDT)
+Date: Thu, 21 Aug 2025 17:46:19 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 02/21] clk: remove unneeded 'fast_io' parameter in
+ regmap_config
+Message-ID: <aKeTq1lJ549a2jnQ@x1>
+References: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
+ <20250813161517.4746-3-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 33/35] kfence: drop nth_page() usage
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
- Dmitry Vyukov <dvyukov@google.com>, Andrew Morton
- <akpm@linux-foundation.org>, Brendan Jackman <jackmanb@google.com>,
- Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
- Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
- virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-34-david@redhat.com>
- <1a13a5cb-4312-4c01-827b-fa8a029df0f1@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <1a13a5cb-4312-4c01-827b-fa8a029df0f1@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813161517.4746-3-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On 21.08.25 22:32, David Hildenbrand wrote:
-> On 21.08.25 22:06, David Hildenbrand wrote:
->> We want to get rid of nth_page(), and kfence init code is the last user.
->>
->> Unfortunately, we might actually walk a PFN range where the pages are
->> not contiguous, because we might be allocating an area from memblock
->> that could span memory sections in problematic kernel configs (SPARSEMEM
->> without SPARSEMEM_VMEMMAP).
->>
->> We could check whether the page range is contiguous
->> using page_range_contiguous() and failing kfence init, or making kfence
->> incompatible these problemtic kernel configs.
->>
->> Let's keep it simple and simply use pfn_to_page() by iterating PFNs.
->>
+Hi Wolfram,
+
+On Wed, Aug 13, 2025 at 06:14:48PM +0200, Wolfram Sang wrote:
+> When using MMIO with regmap, fast_io is implied. No need to set it
+> again.
 > 
-> Fortunately this series is RFC due to lack of detailed testing :P
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> No dependencies, can be applied directly to the subsystem tree. Buildbot is
+> happy, too.
 > 
-> Something gives me a NULL-pointer pointer here (maybe the virt_to_phys()).
-> 
-> Will look into that tomorrow.
+>  drivers/clk/actions/owl-common.c  | 1 -
+>  drivers/clk/clk-axm5516.c         | 1 -
+>  drivers/clk/nxp/clk-lpc32xx.c     | 1 -
+>  drivers/clk/qcom/a53-pll.c        | 1 -
+>  drivers/clk/qcom/a7-pll.c         | 1 -
+>  drivers/clk/qcom/apss-ipq-pll.c   | 1 -
+>  drivers/clk/qcom/clk-cbf-8996.c   | 1 -
+>  drivers/clk/qcom/clk-cpu-8996.c   | 1 -
+>  drivers/clk/qcom/hfpll.c          | 1 -
+>  drivers/clk/qcom/ipq-cmn-pll.c    | 1 -
+>  drivers/clk/thead/clk-th1520-ap.c | 1 -
+>  11 files changed, 11 deletions(-)
 
-Okay, easy: relying on i but not updating it /me facepalm
+These all look good to me.
 
--- 
-Cheers
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-David / dhildenb
+Should drivers/clk/sprd/common.c also be updated as well?
+
+Brian
 
 
