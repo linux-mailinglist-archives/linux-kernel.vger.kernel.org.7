@@ -1,191 +1,238 @@
-Return-Path: <linux-kernel+bounces-778991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED5E8B2ED8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:24:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB144B2ED90
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 879411C84CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:24:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D7F3BED01
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BD328C011;
-	Thu, 21 Aug 2025 05:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D392B2BE650;
+	Thu, 21 Aug 2025 05:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4qqx5pjk"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2042.outbound.protection.outlook.com [40.107.244.42])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OC3rk993"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B73D2D47EE
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755753853; cv=fail; b=LuQOd+rGXxwzIGsicBm3IvTheRJO80OCbstu9L6X9OwhQes73UyMphp+0mNIEDu7uzl7BXdh9zoGQgnEz8ekPZPMrEOEFICLoZdCPKPmptEMoLiYHGOXH7dxYWsP0Kn3vSWq6c6JvsAyjzViIfmkM3z0lO8agpYCOz5AbpwK/To=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755753853; c=relaxed/simple;
-	bh=k2Gts107ghKFrzGRZEwkkfxJhXhmQeQC2SMSfwoDZPQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eh8xY7f8hHuIqX34GbiGKsdgKlO1ERROZOJTyVn6yWgUHHnF0W3cEZOIOSF8RhQFK8GCSsVmcnXuJJ5hhNsg17Fp9OPodmBV+tLIqqPyFCSX/WJwoI3bNQV0tEjNJedusvPvF6jyfKyFxGVYQF/gi/AVRQ/TXGCAnVXSFoPctdU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4qqx5pjk; arc=fail smtp.client-ip=40.107.244.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i8ndw0CYuoAuMyNFUiS7FrPcXGzhrUcvqe3n0pJ+zjY7ZCLqjVm7IQg4eoyPod2KDZI5f9ntgJsNAmQAEjKahYgT6K2XBgBRKN3pcL0YWbRFBRL22/4ObW/vp+FkhLShVrnLR+aX07fA09rRk6Pgkj+2vai2fVrC0l6yRuK512bY8ApmmwGO7W4IFIPTRSjiPN3tFGSAvXNZnBd89bBI4oi56C6dNTiE3gpIdFP/LQOVM/X1vusiHAzvS+QUUHJ74hVH55xETIEVNZe2eDFe6twRK+wW+KGMDVKv+ApW+4Z2RmK5mseJR5aaIPrn+SMXaqF+HLsT1nkUvXsk1zXwsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PYkC079gJIRyqWSvV/F2cuot3vItD8khVwFDuLMGWsA=;
- b=fwmjukLHU4ptbPm/1wukMS4gQrvLK0/LsDZlSUQPshi5D5LSxYMrvI1u/8ldbktudx81iv8K3R9SUkUix7f5wiBJkXFmwkzn3sQPq4hL8VOF5SnwpIzUwve1TJD4LX1+YU7F2PhjBJixU5BadO/uWK1IO7BosgNODofiJhdqNhjNRuNLX0hFKFxAE6gcWzXecMz3sqz1/zpG16c9jClSTakszwR7zjgw+dmmJvPXKBCv+iert02ysvk2sV2H3H2M0dqYIpRy+eejBQij1OtnzwavQlQPk8rawtv+gx2m2/lIOKGD201bKVerrIT39phDpOJxJ1wqR3WE8rQu9eug/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PYkC079gJIRyqWSvV/F2cuot3vItD8khVwFDuLMGWsA=;
- b=4qqx5pjkgxxO9QHOqUSgS5itWpHY8bU1cTdI91laqVCtzdUuausI1igf+2QKuz2IdIDy/Eb6y0CK0UobApG/uqn7x0pgPqVyfzaH7HFxSCS1v3625DvXP9tRR9y2Td2fhFQx4GveiLAHtRsKNZHYBY3n+ovYH5VG6BlIWJJyzrY=
-Received: from SJ0PR03CA0279.namprd03.prod.outlook.com (2603:10b6:a03:39e::14)
- by MN0PR12MB6318.namprd12.prod.outlook.com (2603:10b6:208:3c1::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Thu, 21 Aug
- 2025 05:24:03 +0000
-Received: from CO1PEPF000044FA.namprd21.prod.outlook.com
- (2603:10b6:a03:39e:cafe::8b) by SJ0PR03CA0279.outlook.office365.com
- (2603:10b6:a03:39e::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.14 via Frontend Transport; Thu,
- 21 Aug 2025 05:24:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044FA.mail.protection.outlook.com (10.167.241.200) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.0 via Frontend Transport; Thu, 21 Aug 2025 05:24:02 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
- 2025 00:23:57 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
- 2025 00:23:57 -0500
-Received: from amd.com (10.180.168.240) by SATLEXMB04.amd.com (10.181.40.145)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39 via Frontend
- Transport; Thu, 21 Aug 2025 00:23:55 -0500
-Date: Thu, 21 Aug 2025 05:23:50 +0000
-From: Ankit Soni <Ankit.Soni@amd.com>
-To: David Laight <david.laight.linux@gmail.com>
-CC: Xichao Zhao <zhao.xichao@vivo.com>, <joro@8bytes.org>, <will@kernel.org>,
-	<suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iommu/amd: use str_plural() to simplify the code
-Message-ID: <4pryydyzfpvb75mityltxvj6blfdcvsdngwmnzprnqjlldhxog@kpsf5mx3coi7>
-References: <20250818035331.393560-1-zhao.xichao@vivo.com>
- <20250820190359.2680af50@pumpkin>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A11D49620;
+	Thu, 21 Aug 2025 05:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755753845; cv=none; b=Af8fjuzi0kFk1JL+XsDLST8tgyAUXOM09D+Hu/p5GIHL1m1cHJDkHqNRw4PgRgjURN2sRucuC0bBdCKrIQYDRkMMOp2nS5VYVyhbn4CdyltR32GS5NcvYwNJ7H0EDwtYeGQqDRn/DcpJ4+U8LvpUm8pGMKOsnon0IIiZgM4FFKA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755753845; c=relaxed/simple;
+	bh=aRxjhvMv7K3+zEEb1KjJOi47ZdXTCG7tkrSzxnqsbB0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=j+HALP17yzBMpj4cbFMVUO4jSEoCjNZmx3zlqAQfW+5V3uyu3nikNcVG/OXouq1gWsE39VENryieyslgrVmbRgN4AEU9irP5jt2i343z+CERJ1pbyJHVzx2iV+7esNArMfkyoiq9WcdtNrYCB6fmEYw9LKzlOWDmFa4QISRKKHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OC3rk993; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755753844; x=1787289844;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=aRxjhvMv7K3+zEEb1KjJOi47ZdXTCG7tkrSzxnqsbB0=;
+  b=OC3rk993Jw+NfWUKtXKmhMevXmaDK5aAYsFkLojJ4uAjvUPaDA5CSBxH
+   xCBvXEveLW/ybTivWByvK96L0cVruJyTUGxnXOEqdAYVmSi25anQ3v9Oj
+   0TBqrgV0SuURw/Vr1VhVEEYuRdTwbOGN8VA6h1CXSzb+Wdo0JlXvcFAxQ
+   GTJdknzM8W4LyDZVZl8yrRbvmxzw1au/vJJ7dRE6Dq+VcyTYKTGfj3nMR
+   3gOkP7o4NtPaMsia7AkFELNZJPRy7w8tQrO/lcf9/zbBMRo31w4ERcIQs
+   zx8SKm3VHjx7O1Nn7c2h43IJ7bszfi1ssvYQk5dJTQlfMecbJmSh91jR1
+   Q==;
+X-CSE-ConnectionGUID: zuNrf0PgSkWtZGkkhd0+5w==
+X-CSE-MsgGUID: B/jPkF+bRT6hCx3XzPEerQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58101254"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="58101254"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 22:24:03 -0700
+X-CSE-ConnectionGUID: dSauImomRY+Qa3SbBJGH+A==
+X-CSE-MsgGUID: Q86G0S2DTVKRycJnMGuFEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="168572953"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 22:23:58 -0700
+Message-ID: <f1ec8527-322d-4bdb-9a38-145fd9f28e4b@linux.intel.com>
+Date: Thu, 21 Aug 2025 13:23:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250820190359.2680af50@pumpkin>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FA:EE_|MN0PR12MB6318:EE_
-X-MS-Office365-Filtering-Correlation-Id: 74948836-a439-40ce-6df1-08dde072f0e1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZUXdFZRzEaiJrMANHblKNzJ09/6+pG8BlgpLdL1ENJVBo2+kxwGnxhdVGV4u?=
- =?us-ascii?Q?Q0U5rusrzey7SlP1jOcnCVloYDGHEgBQwSUjQ6p7kSy3mKNQScev5k++hesn?=
- =?us-ascii?Q?j2j4B3Q7QCd2TZEF8OC0d1uTqyoq+bgTjXf4Fe8eXWT6/rlIADhbJxLYF5aU?=
- =?us-ascii?Q?vOGmOOl0wdjNMlLTfKFXgHxq2PJZX/rE1EEmhR3kwsDTGt5DbpDmNBz9zJnK?=
- =?us-ascii?Q?bSRbjkaeNJODtcpUEXYx1cFeO3BxISDSvvkrfTihSuD33wKUUGwBE2qLy0xd?=
- =?us-ascii?Q?zye0slXc50hQ+wesfV2F6j3SY1SpSAnPQXv+Q7v3FdVfJtSW5czA+NmO/RoW?=
- =?us-ascii?Q?KvsXtCoLshh/i2CRckZpNQfK1qqRu0ssxoL49YxFv4q0RM9BqFHYuZflEnhb?=
- =?us-ascii?Q?QIJhIwzipgvQm9Hg4Sx3ioV3HwnbRuv2VPDm2SCXXgasAja4SRbxB3FW5RCl?=
- =?us-ascii?Q?qX8YR3UKRG2+wgGEdcb9mpuAt7p43oEsVycW2FGxIRFI4cbV5VP0/0AhsSWt?=
- =?us-ascii?Q?1s1VZdcJKV9qKG04wjo3PFGbzKj3Sff8+vZVs1as62r/IDKJX4y3v4E8EBkL?=
- =?us-ascii?Q?n+gUgpzSd7hzae5CP9x8HPdMvcn/56jxLIDdTA7hxYb/GqkTRcBlZAtrsM6p?=
- =?us-ascii?Q?gbkmnssDzm9n27bk+Ed39DLsu3YZN9G3Q/y8hAnbRQNyr/94tP3Th+C3Lu7f?=
- =?us-ascii?Q?+DmZavN8Olw6Xmy/sG5OpO/KlQYQeKk5UpkXXeJtfilGB5WdygqJVLg7/usL?=
- =?us-ascii?Q?5QbMXOFyzp3oTPj4b4fdTemPnkZA05c/Fq65r2r8me+12rZQos/mAfQt7OLj?=
- =?us-ascii?Q?1cO0nxQWWlYTDe96iI8h7WWxWDZom/C/oh0K56W27Dp8B9s3x0nFRYV60GYq?=
- =?us-ascii?Q?ecVb7u89cfHwLP9hmNg6RWstaai2eEcCIJOgnKZ5Xds0/t+5VaO1tUTfgbIb?=
- =?us-ascii?Q?E1c+8Khll7EJdodXFNiqkoO7n1zu+WJ0tNjx1Zd1KTOgwtXMcElpSkf6WQkc?=
- =?us-ascii?Q?oHhxDa6vqYyYhwc4qm/bm1fGbtpuUi+BiNKYMLGrgnvgQ3X+DtaTeb1GyOrW?=
- =?us-ascii?Q?N4KO4bhexFoEmGQ/uKuol8LtLJAbCcVQAAISuRIJjcwOsYahjgVw/FnXAeo6?=
- =?us-ascii?Q?guMMNjPB/g1peZujbttBpFdXSxut9lg+wqWuWTeVDv60YfnaPnq9nbcjk3MA?=
- =?us-ascii?Q?y312s8H1tye0D7RO09pwNly3tkoFVZ92Qsa5jn7gVei2oX18dSpzvePklUYh?=
- =?us-ascii?Q?zGZ2c7sBlieIf8viCyVs1hkXNvNda5Pvd2+FwySD+8HZ8u/YDBS5iYt9V5lt?=
- =?us-ascii?Q?/OwCd1nLlyXYZeoJIGk7oEHJME2N9uG4WDCLizOQSNy91jaseb1p7+NN1w+R?=
- =?us-ascii?Q?eDg+T+EoUaUNXpCc7Xpg0z4y4MRltSUYjClo7eWyNH5qln0cjt7uCYtwfrdQ?=
- =?us-ascii?Q?7pTMyODx964FH2vFNoeoobO4mfNeRrABDAsYMiofEY3QlDI9oGg9XrfxMGWB?=
- =?us-ascii?Q?gMz5V1t2CDKHM4qSi11lJ+lMM4eXsvVKoS/i?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 05:24:02.7327
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74948836-a439-40ce-6df1-08dde072f0e1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044FA.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6318
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
+From: Binbin Wu <binbin.wu@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>,
+ Vishal Annapurve <vannapurve@google.com>
+Cc: Nikolay Borisov <nik.borisov@suse.com>, Jianxiong Gao <jxgao@google.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Dionna Glaze <dionnaglaze@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ jgross@suse.com, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com,
+ Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, jiewen.yao@intel.com
+References: <CAMGD6P1Q9tK89AjaPXAVvVNKtD77-zkDr0Kmrm29+e=i+R+33w@mail.gmail.com>
+ <0dc2b8d2-6e1d-4530-898b-3cb4220b5d42@linux.intel.com>
+ <4acfa729-e0ad-4dc7-8958-ececfae8ab80@suse.com> <aIDzBOmjzveLjhmk@google.com>
+ <550a730d-07db-46d7-ac1a-b5b7a09042a6@linux.intel.com>
+ <aIeX0GQh1Q_4N597@google.com>
+ <ad616489-1546-4f6a-9242-a719952e19b6@linux.intel.com>
+ <CAGtprH9EL0=Cxu7f8tD6rEvnpC7uLAw6jKijHdFUQYvbyJgkzA@mail.gmail.com>
+ <20641696-242d-4fb6-a3c1-1a8e7cf83b18@linux.intel.com>
+ <697aa804-b321-4dba-9060-7ac17e0a489f@linux.intel.com>
+ <aKYMQP5AEC2RkOvi@google.com>
+ <d84b792e-8d26-49c2-9e7c-04093f554f8a@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <d84b792e-8d26-49c2-9e7c-04093f554f8a@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 07:03:59PM +0100, David Laight wrote:
-> On Mon, 18 Aug 2025 11:53:31 +0800
-> Xichao Zhao <zhao.xichao@vivo.com> wrote:
-> 
-> > Use the string choice helper function str_plural() to simplify the code.
-> 
-> This also changes (maybe fixes) the code my adding "s" for zero.
-> 
-> Although I'd define it as ("s" + !!count) - almost certainly generates
-> better code.
-> 
-> 	David
-> 
 
-Hi,
-In case of hid_count is 0, below condition (before fw_bug check) will hit.
-		if (!p1)
-	                return -EINVAL;
 
-Apart from this, i dont see hid_count will remain 0.
+On 8/21/2025 11:30 AM, Binbin Wu wrote:
+>
+>
+> On 8/21/2025 1:56 AM, Sean Christopherson wrote:
+>> On Wed, Aug 20, 2025, Binbin Wu wrote:
+[...]
+>>> Hi Sean,
+>>>
+>>> Since guest_force_mtrr_state() also supports to force MTRR variable ranges,
+>>> I am wondering if we could use guest_force_mtrr_state() to set the legacy PCI
+>>> hole range as UC?
+>>>
+>>> Is it less hacky?
+>> Oh!  That's a way better idea than my hack.  I missed that the kernel would still
+>> consult MTRRs.
+>>
+>> Compile tested only, but something like this?
+>>
+>> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+>> index 8ae750cde0c6..45c8871cdda1 100644
+>> --- a/arch/x86/kernel/kvm.c
+>> +++ b/arch/x86/kernel/kvm.c
+>> @@ -933,6 +933,13 @@ static void kvm_sev_hc_page_enc_status(unsigned long pfn, int npages, bool enc)
+>>     static void __init kvm_init_platform(void)
+>>   {
+>> +       u64 tolud = e820__end_of_low_ram_pfn() << PAGE_SHIFT;
+>> +       struct mtrr_var_range pci_hole = {
+>> +               .base_lo = tolud | X86_MEMTYPE_UC,
+>> +               .mask_lo = (u32)(~(SZ_4G - tolud - 1)) | BIT(11),
+>> +               .mask_hi = (BIT_ULL(boot_cpu_data.x86_phys_bits) - 1) >> 32,
+>> +       };
+>> +
+>
+> This value of tolud  may not meet the range size and alignment requirement for
+> variable MTRR.
+>
+> Variable MTRR has requirement for range size and alignment:
+> For ranges greater than 4 KBytes, each range must be of length 2^n and its base
+> address must be aligned on a 2^n boundary, where n is a value equal to or
+> greater than 12. The base-address alignment value cannot be less than its length.
 
--Ankit
+Wait, Linux kernel converts MTRR register values to MTRR state (base and size) and
+cache it for later lookups (refer to map_add_var()). I.e., in Linux kernel,
+only the cached state will be used.
 
-> > 
-> > Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> > ---
-> >  drivers/iommu/amd/iommu.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-> > index eb348c63a8d0..b5c829f89544 100644
-> > --- a/drivers/iommu/amd/iommu.c
-> > +++ b/drivers/iommu/amd/iommu.c
-> > @@ -265,7 +265,7 @@ static inline int get_acpihid_device_id(struct device *dev,
-> >  		return -EINVAL;
-> >  	if (fw_bug)
-> >  		dev_err_once(dev, FW_BUG "No ACPI device matched UID, but %d device%s matched HID.\n",
-> > -			     hid_count, hid_count > 1 ? "s" : "");
-> > +			     hid_count,  str_plural(hid_count));
-> >  	if (hid_count > 1)
-> >  		return -EINVAL;
-> >  	if (entry)
-> 
+These MTRR register values are never programmed when using
+guest_force_mtrr_state() , so even the values doesn't meet the
+requirement from hardware perspective, Linux kernel can still get the right base and size.
+
+No bothering to force the base and size alignment.
+But a comment would be helpful.
+Also, BIT(11) could be replaced by MTRR_PHYSMASK_V.
+
+How about:
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 90097df4eafd..a9582ffc3088 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -934,9 +934,15 @@ static void kvm_sev_hc_page_enc_status(unsigned long pfn, int npages, bool enc)
+  static void __init kvm_init_platform(void)
+  {
+         u64 tolud = e820__end_of_low_ram_pfn() << PAGE_SHIFT;
++       /*
++        * The range's base address and size may not meet the alignment
++        * requirement for variable MTRR. However, Linux guest never
++        * programs MTRRs when forcing guest MTRR state, no bothering to
++        * enforce the base and range size alignment.
++        */
+         struct mtrr_var_range pci_hole = {
+                 .base_lo = tolud | X86_MEMTYPE_UC,
+-               .mask_lo = (u32)(~(SZ_4G - tolud - 1)) | BIT(11),
++               .mask_lo = (u32)(~(SZ_4G - tolud - 1)) | MTRR_PHYSMASK_V,
+                 .mask_hi = (BIT_ULL(boot_cpu_data.x86_phys_bits) - 1) >> 32,
+         };
+
+
+I tested it in my setup, it can fix the issue of TPM driver failure with the
+modified ACPI table for TPM in QEMU.
+
+
+Hi Vishal,
+Could you test it with google's VMM?
+
+
+>
+> In my setup, the value of tolud is 0x7FF7C000, it requires 3 variable MTRRs to
+> meet the requirement, i.e.,
+> - 7FF7 C000  ~   7FF8 0000
+> - 7FF8 0000  ~   8000 0000
+> - 8000 0000  ~ 1 0000 0000
+>
+> I checks the implementation in EDK2, in order to fit the legacy PCI hole into
+> one variable MTRR, it has some assumption to truncate the size and round up the
+> base address in PlatformQemuUc32BaseInitialization():
+>     ...
+>     ASSERT (
+>       PlatformInfoHob->HostBridgeDevId == INTEL_Q35_MCH_DEVICE_ID ||
+>       PlatformInfoHob->HostBridgeDevId == INTEL_82441_DEVICE_ID
+>       );
+>     ...
+>     //
+>     // Start with the [LowerMemorySize, 4GB) range. Make sure one
+>     // variable MTRR suffices by truncating the size to a whole power of two,
+>     // while keeping the end affixed to 4GB. This will round the base up.
+>     //
+>     PlatformInfoHob->Uc32Size = GetPowerOfTwo32 ((UINT32)(SIZE_4GB - PlatformInfoHob->LowMemory));
+>     PlatformInfoHob->Uc32Base = (UINT32)(SIZE_4GB - PlatformInfoHob->Uc32Size);
+>     //
+>     // Assuming that LowerMemorySize is at least 1 byte, Uc32Size is at most 2GB.
+>     // Therefore Uc32Base is at least 2GB.
+>     //
+>     ASSERT (PlatformInfoHob->Uc32Base >= BASE_2GB);
+>
+> I am not sure if KVM can do such assumption.
+> Otherwise, KVM needs to calculate the ranges to meet the requirement. :(
+>
+>
+>>          if (cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT) &&
+>> kvm_para_has_feature(KVM_FEATURE_MIGRATION_CONTROL)) {
+>>                  unsigned long nr_pages;
+>> @@ -982,8 +989,12 @@ static void __init kvm_init_platform(void)
+>>          kvmclock_init();
+>>          x86_platform.apic_post_init = kvm_apic_init;
+>>   -       /* Set WB as the default cache mode for SEV-SNP and TDX */
+>> -       guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
+>> +       /*
+>> +        * Set WB as the default cache mode for SEV-SNP and TDX, with a single
+>> +        * UC range for the legacy PCI hole, e.g. so that devices that expect
+>> +        * to get UC/WC mappings don't get surprised with WB.
+>> +        */
+>> +       guest_force_mtrr_state(&pci_hole, 1, MTRR_TYPE_WRBACK);
+>>   }
+>>     #if defined(CONFIG_AMD_MEM_ENCRYPT)
+>
+>
+
 
