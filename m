@@ -1,178 +1,124 @@
-Return-Path: <linux-kernel+bounces-780497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2E0B302B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:14:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31891B302BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B137223A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:14:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9761CE4120
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9743834AAE0;
-	Thu, 21 Aug 2025 19:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7A127A456;
+	Thu, 21 Aug 2025 19:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dv6WW0dC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVPUZeYw"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4902345759;
-	Thu, 21 Aug 2025 19:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ABB19539F
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 19:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755803659; cv=none; b=m1FE2Ud4T982oQf6xqvh0JSq4VlEDVvdJ8viUuKB8J923AtyWJcNut00RCdPe6AcXgj75DY9L0Cgtbp8ZTbn1ilanC28NWFnAstIMcouJ3QIjmcMy9saCjSzoqioI3Qo2GrVkDm2UsJXyeyAYwtmbyDH0gT4KwyTq8wdUTRjZb4=
+	t=1755803885; cv=none; b=qc0iU0tqMlflEhbdiRm2lWijChuZmCbt+NpMI+cdI/R5jqT1JT0MSI+hdVd8wOJkFUHRtRdVqSvqGTurGA4BlQkpK9Wvg9PeBijBsBE9F7pt/FC8wdq2DY7cw+yWPyUzFLpPhqco7P03JyLC69uA9uMHA2mC05GNPdFFmB80IwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755803659; c=relaxed/simple;
-	bh=yVm//5XN8ja5rrlrG36rYU2fnADH3Fsp2qlhmWfFs8k=;
+	s=arc-20240116; t=1755803885; c=relaxed/simple;
+	bh=KAFpepcrog08PKjGcqCrxufg2PjJ+TTIjpUBSlX06Rk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I5YbRy0LRRgptvhI5FJwUejUknpiXm8z6SkYvgd8IeCYe+KaalQmLyivRh9leOgejCHm/3DKckuAkjP5j7vOPSI8R0djAfuc6cE/Uu9ynG/u8uhu65sPmwV5jPwS4uzzJOJjWoiG+ZQotemPTPxrFhuGbEdPWzPZl7575kIB5Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dv6WW0dC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52DC2C4CEEB;
-	Thu, 21 Aug 2025 19:14:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755803658;
-	bh=yVm//5XN8ja5rrlrG36rYU2fnADH3Fsp2qlhmWfFs8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dv6WW0dCcx7llbhzcExU6VtZK5lNX+L0Ap14hibXoI97KnSZ0Wx2WhA/tsDBk32Fy
-	 ScDOwibVVKa5e8SzdVt50IytExVFAIeXKyrioD1k9jRU3hw1HWNbTp5yHmU34V6mcS
-	 qSS0JoWiphbfKrFrARmGLgen0P9de3olxQqhSBUaisIaWwz689xXVMTq0iyLlLxh/L
-	 N+cmyGNFI+uM9JCJrGU/6WEgwPph6zmUC0RYWX/WBnXIqYTm7UGyq6AtJNnAbTHiXe
-	 GS5JDsMzysRhM/TuflPRphB0Mq8oaPHiMlMctIwtAVSlTXirMqb6lkpJzJtb64jG3U
-	 ByFBHGGX4tnuA==
-Date: Thu, 21 Aug 2025 21:14:11 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v5 2/3] man/man2/prctl.2, PR_FUTEX_HASH_SET_SLOTS.2const:
- Document PR_FUTEX_HASH_SET_SLOTS
-Message-ID: <wygherozbi27pom3xgfcev6pweliuap44cli2vuqhyaqth3dkf@vrkh2iu75tyn>
-References: <20250819071728.1431543-1-bigeasy@linutronix.de>
- <20250819071728.1431543-3-bigeasy@linutronix.de>
- <c5yimoxm73uwq7xhparfqhohrgk7hznzawgajntbmz3nx6337l@ukuiw4n2hfqh>
- <v5luee7avc6ayyox7hn4lwb6wfvezv52by7noffwejvksypord@kx26fel62kan>
- <20250821140851.z1FYafVm@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnGeCNmG3Noq20j2vupUHig3SMr23vPbzw6oRw6sEvcYkEzPMHhdbpPcOJt1o3ZC+64ANXoaJdHDtbttmNsR+K8PkyvLsjSQuVnX/BbvdUAiM5v8yKUwuNJsWfkanaha/T6Mh46IQ++zTpOvLRs8HTOqhTOW/PZ5/QCmJNLxdBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EVPUZeYw; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9e415a68fso1165597f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:18:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755803882; x=1756408682; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OIUfadtyrX+885VNIhzlz6298Jbid8a7B3cqJAhGNyw=;
+        b=EVPUZeYwvHISA4hulNeiyXhs5dG1abSK7PD9PvVM7SB08IqAC8ei88l9g5ZNRwVszn
+         S/k4x2fSxD6lzAd8rvWbwHwxE+ie/j2Kz7xXIPfxSYV2/SXzgTpji64+Vx5yXp/fMopQ
+         gsFoEy4mQ/Pt3Q1gKggGtzSiZVbm4dKUZRhPSU+p1DFWoqN+6cq3LOO06/SfzU6Xnto5
+         xD7Bgi6y9DB4t1Ryp9m1aYUgRgGDhojTad0/FzMXBpGVLxiYe450Y0wOjdrj2PFMFg+B
+         TVZ62ghRu3Nl9B3Rspi6b0HXznK5jFdbn++ytfelVGU2qFVXejT1vPpUvjWN8Sajr1wu
+         ulVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755803882; x=1756408682;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OIUfadtyrX+885VNIhzlz6298Jbid8a7B3cqJAhGNyw=;
+        b=BGDn4EBJkxm2zHO+i+7ObEjE7vbdukvn/PNQay1mbo69HOr9dTNe8iP6TsRZxqmNH7
+         z/4JHuXS+oopi6rM3JoM+P06Fqh/PD8ffODmUVlTVsFMu0guFEDyM54x89ZguxTwnUkV
+         IGBSJPXkryB4OH8V3IxzcAThxsOVjIrkmTW2TnR/ZNQgmzump2W42PoP0oWB5uNFhNGN
+         12B/zdxTy/YpeqfM65szOvq9PwqyW8oLBSCX/JI9n8bpkwSQDMQ6Uv33HWdSdxX3DaCD
+         R1NdFeESKr1HmeM+B2K9NNx1PfS2SM879xvl/eYV3+Z6Zl/Mre1Sp3pqFJpCz4MuQyYx
+         vyGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJs2TMnPkSld5XUKh7gKziNjPkE7AZYASfrdaP1uHjza7edeF0HwaISN37eRFvMhvd4GLRulUaKvkprK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBg3T93VSeB1EZyyR65AkYgYUg6jKaVAp0TVTCW/kYBkAfBrJX
+	F3e8UlCA7nXL2malCndCOeEBUy1r6wGpyKlK8ale2dBcQUBTwpfrODjD
+X-Gm-Gg: ASbGncvMhHH2Mt0WBbjNpsP7hGBfbgW0o3nBCb/Cjwa0fyNmwyCQyhPGjFzmE7bm0WF
+	C+pgLp67Y8DWHJIrXSzj7CXJ+MP7NNwiHiFuXc1PomcOyLbp/GIuI836EGKwZvCV7LnV2Xy+8vH
+	Yiw9Nu6/zDT5GeZ+tF7CX3I6Arg3IsuuT7peYAvaO4uupOVXYnrsKteUvPg3O6bR5UrobT5aWN2
+	NR3zfWK3Gmq44dMw4/0lFQ1rFApAVX74nUjMDE9sKa92ibCh3uQpvEBW9GQLpr5IS60GqGVLHue
+	ew+YaOuVlgpa1ExEIsX8InwvYEKWgMzZMoMf0hc4ywy490TI5WsibfzqVN7w2TLeuuMxRnasf/l
+	9IChW2fam1ttK7OxL0Jpl2y9qyROJdplik3ArtXE=
+X-Google-Smtp-Source: AGHT+IHjaDlr+iR209Oc/z6JbUmzDrJHC9V+eZOuu4bHyOSAYWtRWU7bYzUgOQc1ufCzQDegRKL3yA==
+X-Received: by 2002:a5d:64cf:0:b0:3c4:39cc:366 with SMTP id ffacd0b85a97d-3c5daa292d1mr128606f8f.15.1755803882226;
+        Thu, 21 Aug 2025 12:18:02 -0700 (PDT)
+Received: from devbig569.cln6.facebook.com ([2a03:2880:31ff:4e::])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077789d1dsm12574809f8f.49.2025.08.21.12.18.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 12:18:01 -0700 (PDT)
+Date: Thu, 21 Aug 2025 12:18:00 -0700
+From: Yueyang Pan <pyyjason@gmail.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+Message-ID: <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
+References: <cover.1755190013.git.pyyjason@gmail.com>
+ <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cou4xdlowmbhnx7f"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250821140851.z1FYafVm@linutronix.de>
+In-Reply-To: <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
 
+On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
+> On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
+> > Right now in the oom_kill_process if the oom is because of the cgroup 
+> > limit, we won't get memory allocation infomation. In some cases, we 
+> > can have a large cgroup workload running which dominates the machine. 
+> > The reason using cgroup is to leave some resource for system. When this 
+> > cgroup is killed, we would also like to have some memory allocation 
+> > information for the whole server as well. This is reason behind this 
+> > mini change. Is it an acceptable thing to do? Will it be too much 
+> > information for people? I am happy with any suggestions!
+> 
+> For a single patch, it is better to have all the context in the patch
+> and there is no need for cover letter.
 
---cou4xdlowmbhnx7f
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v5 2/3] man/man2/prctl.2, PR_FUTEX_HASH_SET_SLOTS.2const:
- Document PR_FUTEX_HASH_SET_SLOTS
-References: <20250819071728.1431543-1-bigeasy@linutronix.de>
- <20250819071728.1431543-3-bigeasy@linutronix.de>
- <c5yimoxm73uwq7xhparfqhohrgk7hznzawgajntbmz3nx6337l@ukuiw4n2hfqh>
- <v5luee7avc6ayyox7hn4lwb6wfvezv52by7noffwejvksypord@kx26fel62kan>
- <20250821140851.z1FYafVm@linutronix.de>
-MIME-Version: 1.0
-In-Reply-To: <20250821140851.z1FYafVm@linutronix.de>
+Thanks for your suggestion Shakeel! I will change this in the next version.
 
-On Thu, Aug 21, 2025 at 04:08:51PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-08-19 13:19:15 [+0200], Alejandro Colomar wrote:
-> > Hi Sebastian,
-> Hi Alejandro,
+> 
+> What exact information you want on the memcg oom that will be helpful
+> for the users in general? You mentioned memory allocation information,
+> can you please elaborate a bit more.
+> 
 
-Hi Sebastian,
+As in my reply to Suren, I was thinking the system-wide memory usage info 
+provided by show_free_pages and memory allocation profiling info can help 
+us debug cgoom by comparing them with historical data. What is your take on 
+this?
 
-> > > > +.B int prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS,
-> > > > +.BI "          unsigned long " hash_size ", unsigned long " hash_f=
-lags ");
-> >=20
-> > I see that it is implemented in the kernel as
-> >=20
-> > 	static int
-> > 	futex_hash_allocate(unsigned int hash_slots, unsigned int flags)
-> > 	{
-> > 		...
-> > 	}
-> >=20
-> > But PR_FUTEX_HASH is implemented as
-> >=20
-> > 	int
-> > 	futex_hash_prctl(unsigned long arg2, unsigned long arg3,
-> > 	    unsigned long arg4)
-> > 	{
-> > 		...
-> > 	}
-> >=20
-> > Should we document is as a u_int, or a u_long?  Is that mismatch a bug,
-> > or is it on purpose?
->=20
-> The prctl() interface is long so I started with that. Internally we keep
-> it as an int since we don't need it that big and it avoids a hole
-> otherwise (but then there is a hole towards the end of the structure).
-> Realistically speaking 1 << 31 is the largest value that can be
-> specified (atm) and it will very likely lead to ENOMEM. If the user
-> tries the next higher value, 1 << 32, then the upper bits will be
-> truncated and the global hash will be requested and this will succeed.
->=20
-> The bug could be based on the argument type 1 << 32 will succeed but
-> it should not. Using 1 << 25 will request ~2GiB of memory and is a bit
-> far from sane.
-> I am bit forth and back between forcing an error for anything > 1 << 30,
-> or updating the docs to int. But this will be the easiest ;)
-> Any recommendations based on similar cases?
-
-I don't remember any similar cases atm.
-
-I guess we should document it as long, because in ABIs where it matters,
-users should pass a long.  People should probably not be passing such
-huge values, so we can leave it as an undocumented bug, which can be
-fixed later if we ever find it to be important.
-
-Changing the implementation from int to long if we ever need it should
-be easy, as it doesn't break user space (it would rather fix it).
-
-
-Have a lovely night!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---cou4xdlowmbhnx7f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAminb/wACgkQ64mZXMKQ
-wqkq3BAAgeEd5u4Ipv7CBqVvqTXv0tvZ+qY04pNMgMUj0HuQsTYt63VExc7+6wq2
-Kj/YRW2jPGCSLiFBv/4TgBxLF1gQtPveRfeogVWBaCrvJsWGVI2+amYoCelmf969
-xmiaBp0eA3vd56Nb6V7YXREmS02GXvsM+YuqDW4hmenZmhbLsWCX1AU4snvcdNy4
-XWgOUbEZjmGnbgqFC1/rIJxe8+09lmGXwdALH2pjiZUn4U4q8jEup1ByisO0v1H6
-DL07Z+51aFig1IajwDT1oWQzQVJaLMtbNqVwdPAyuMzYOEwVUZjhxTSi1L7S1CZS
-v5qv/Oo1l9SX4sJZbvdYb6zV/359tYy0pYX1a+W4VpHCLylltuREibKO1geCMsbl
-L3i2UEad52BOPi2ZcQ3h1m5+lWctNQbNkWYHHRkDGxN00CV/hfhzPeCUXEgF4jbC
-uMxlcpkwWFGgVX+HrEy5XrEKCAMPcfb/CnT0kPzHUdJEX4AdCi1SZvWOmqJwyiTe
-UDKgk8EY8ORl9rrsNstKiRVoId+GGUsMIQ7X/Bc6HoyATZNEeJTlv+2gweT5xRZX
-M6DvsKwnl5uJ0+oGv6RFrDW8TOQSydqBumsXCZsaUf1EzUeb3bD6UyVrUSgg73+q
-MZjTnxTSbSHwiMnSSkeCI9PJ2XRaCB+75I8w8fXZI94GkYIbdNg=
-=SSNB
------END PGP SIGNATURE-----
-
---cou4xdlowmbhnx7f--
+Thanks,
+Pan
 
