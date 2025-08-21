@@ -1,124 +1,157 @@
-Return-Path: <linux-kernel+bounces-779527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82498B2F53E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:25:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 624E3B2F537
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0031D5E6691
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:24:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B20A601CFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BBC2FE581;
-	Thu, 21 Aug 2025 10:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4772F90D3;
+	Thu, 21 Aug 2025 10:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dcitShqS"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="qz2uZROb"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3A32FDC3C;
-	Thu, 21 Aug 2025 10:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F69C2F7477;
+	Thu, 21 Aug 2025 10:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755771757; cv=none; b=icPcxL/7ygMUt8zQp5VqvoI32Y+EKWQAaKIofGpOZWQxaH2KgynarWnLmp4QpfsGYdxm8DRqMViVgm4D2KVvjpXO81BZzOkIlZiSM8wovZKT8KzwfjeBsLAt6wlaNlnSDHm+7MzUQ1cGdymwYhwdpd8VzHBKz1tlNDL47mBw0Ew=
+	t=1755771742; cv=none; b=C6bOmI7ZTEVVjimOgpZC28aJuRK+Iym5Nlof7tc7uX55PDa8GexWyNuPKGVqqrgWq3JQCzgBDlRxD/mClC2WDYCurMwZpz/FTdIQRfje4jJTbAd3KYKgD5V/x1ReQWEax7eGp4LVEdYTxwbpPaBMi5zrGH4moVBcSCgsVTwQ3+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755771757; c=relaxed/simple;
-	bh=wvaUmALRQLnARKD+yeMOhpT7bXS/e9AoONMp4b6P1Vg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=O0dhufU5uxImO8DAgvnQ16n/CWFZFEH6BvN3jE7aNgXaPsUKBb1LW5SZaLfb+7JlFuER3MiwR+ScbKq6iuvIFO4NCRySiwB7bgyxq86JJ4teeX5qOndQ5cETzigxSmib7t9LxskT5pJ9HLFzw+b08pvfjEKoAF0mSyZ5shiV8bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dcitShqS; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	s=arc-20240116; t=1755771742; c=relaxed/simple;
+	bh=ke0Mxr0+ImBybm5HcDHtBUz1ItD/FtBXs42PEiftTSA=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=Le0cTAnlfnIHeznNRxgzxn1A41EKD4iy14PKSlWKcAfYy5xj+BuELLo0lt63vyJUT/492eYR7ezR571VT++8SV4uXzJa00OZ8+Av1SqplzimWSG1A71gZXpHIFPxQ7SABlpdtic8H9kRFRSrex9zBJ0uRBRBXGssTymAuMtrRF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=qz2uZROb; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=VqJEmr/n09REC8+UBB9VEKt7Poxqe/QefzeRVIsvj6A=; b=dcitShqSPUuBBKA4+9P37TcOhG
-	u7PqftO+reDMPuDKrTaP4COiidnrQNYhqrUuz9RukvpTJp2gJpPv4W/YtsqtSG8g8AquTq3IprFER
-	VxAVoVW8/k2sFNeNg2R2p8YJ8JKugf02aO5keT0AxLXt3mr54ivsCOMEcnqJK3qUhTk/zjAW6CArQ
-	MwBPbyfWOrwyFPUlTSmn6W9xU4xiVNNafCN6t7gVsnlmxzmgx7THcsJOtBGW9CqoZFda7OcOYQ33K
-	g1cHk59nVGk+2UdcdyIUxwskYIMot9FQ3Yy4WLFfhaArAJQK0uzyMDmz/GUy0GnrA1Q/FJW5aEmo4
-	7JXrWb/A==;
-Received: from [223.233.68.152] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1up2RD-00HBmV-Hy; Thu, 21 Aug 2025 12:22:31 +0200
-From: Bhupesh <bhupesh@igalia.com>
-To: akpm@linux-foundation.org
-Cc: bhupesh@igalia.com,
-	kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	oliver.sang@intel.com,
-	lkp@intel.com,
-	laoar.shao@gmail.com,
-	pmladek@suse.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com,
-	andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl,
-	peterz@infradead.org,
-	willy@infradead.org,
-	david@redhat.com,
-	viro@zeniv.linux.org.uk,
-	keescook@chromium.org,
-	ebiederm@xmission.com,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-trace-kernel@vger.kernel.org,
-	kees@kernel.org,
-	torvalds@linux-foundation.org
-Subject: [PATCH v8 5/5] include: Replace BUILD_BUG_ON with static_assert in 'set_task_comm()'
-Date: Thu, 21 Aug 2025 15:51:52 +0530
-Message-Id: <20250821102152.323367-6-bhupesh@igalia.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250821102152.323367-1-bhupesh@igalia.com>
-References: <20250821102152.323367-1-bhupesh@igalia.com>
+	bh=MP8TZmTt1aO0rpPA1VlRUx+vlzVRWV5nJEBr4K4uwl0=; b=qz2uZRObXNze480DbNKjv5VPkW
+	YLo9HqggwTP8dZEICRHFewux8E07N0TBIU5w/8BTYnnffMxo8cFxSMQFe0SRy9oSEaxi33XTtOKtD
+	MXsL7ZvbvzkoMQYLm5d2nbOthDU6MHPR8kSuPTI3yQuzWT8GkpbXSWiUCvVqntGKF7aH2P4+q3DuV
+	adYAf3QzqqcjC1YUQOpxbnTpoKJ+Z+3WI1XiCM4BD0b4/U1AtS3fi294mb62emLGR83Ewao7/o8CF
+	df38ChQn9qVjHEm113uAnE4dV0i+WJSPVN53eKbVrxm3ofBKaJ/BUInqskoCT4DRcQBP/SPyl1qSX
+	Azz7/mmg==;
+Received: from [122.175.9.182] (port=17203 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1up2Qu-0000000H5N8-2MGl;
+	Thu, 21 Aug 2025 06:22:13 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id 3ECC81781F9F;
+	Thu, 21 Aug 2025 15:52:06 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id 159FC17823D4;
+	Thu, 21 Aug 2025 15:52:06 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id vjuA_uO9NEBg; Thu, 21 Aug 2025 15:52:05 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id B84611781F9F;
+	Thu, 21 Aug 2025 15:52:05 +0530 (IST)
+Date: Thu, 21 Aug 2025 15:52:05 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: kuba <kuba@kernel.org>
+Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
+	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	pabeni <pabeni@redhat.com>, robh <robh@kernel.org>, 
+	krzk+dt <krzk+dt@kernel.org>, conor+dt <conor+dt@kernel.org>, 
+	ssantosh <ssantosh@kernel.org>, 
+	richardcochran <richardcochran@gmail.com>, 
+	m-malladi <m-malladi@ti.com>, s hauer <s.hauer@pengutronix.de>, 
+	afd <afd@ti.com>, jacob e keller <jacob.e.keller@intel.com>, 
+	horms <horms@kernel.org>, johan <johan@kernel.org>, 
+	m-karicheri2 <m-karicheri2@ti.com>, s-anna <s-anna@ti.com>, 
+	glaroque <glaroque@baylibre.com>, 
+	saikrishnag <saikrishnag@marvell.com>, 
+	kory maincent <kory.maincent@bootlin.com>, 
+	diogo ivo <diogo.ivo@siemens.com>, 
+	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
+	basharath <basharath@couthit.com>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	ALOK TIWARI <alok.a.tiwari@oracle.com>, 
+	Bastien Curutchet <bastien.curutchet@bootlin.com>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
+	mohan <mohan@couthit.com>
+Message-ID: <641170813.212171.1755771725482.JavaMail.zimbra@couthit.local>
+In-Reply-To: <20250820081713.2d243c55@kernel.org>
+References: <20250812110723.4116929-1-parvathi@couthit.com> <20250812133534.4119053-5-parvathi@couthit.com> <20250815115956.0f36ae06@kernel.org> <1969814282.190581.1755522577590.JavaMail.zimbra@couthit.local> <20250818084020.378678a7@kernel.org> <1714979234.207867.1755695297667.JavaMail.zimbra@couthit.local> <20250820081713.2d243c55@kernel.org>
+Subject: Re: [PATCH net-next v13 4/5] net: ti: prueth: Adds link detection,
+ RX and TX support.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: prueth: Adds link detection, RX and TX support.
+Thread-Index: 0Ddp1f2DlVt3suYoV83jhextCZCwAQ==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Replace BUILD_BUG_ON() with static_assert() inside
-'set_task_comm()', to benefit from the error message available
-with static_assert().
+Hi,
 
-Signed-off-by: Bhupesh <bhupesh@igalia.com>
----
- include/linux/sched.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> On Wed, 20 Aug 2025 18:38:17 +0530 (IST) Parvathi Pudi wrote:
+>> > On Mon, 18 Aug 2025 18:39:37 +0530 (IST) Parvathi Pudi wrote:
+>> >> +       if (num_rx_packets < budget && napi_complete_done(napi, num_rx_packets))
+>> >>                 enable_irq(emac->rx_irq);
+>> >> -       }
+>> >>  
+>> >>         return num_rx_packets;
+>> >>  }
+>> >> 
+>> >> We will address this in the next version.
+>> > 
+>> > Ideally:
+>> > 
+>> >	if (num_rx < budget && napi_complete_done()) {
+>> >		enable_irq();
+>> >		return num_rx;
+>> >	}
+>> > 
+>> > 	return budget;
+>> 
+>> However, if num_rx < budget and if napi_complete_done() is false, then
+>> instead of returning the num_rx the above code will return budget.
+>> 
+>> So, unless I am missing something, the previous logic seems correct to me.
+>> Please let me know otherwise.
+> 
+> IIRC either way is fine, as long as num_rx doesn't go over budget.
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index d26d1dfb9904..2603a674ee22 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1972,7 +1972,8 @@ extern void kick_process(struct task_struct *tsk);
- 
- extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec);
- #define set_task_comm(tsk, from) ({			\
--	BUILD_BUG_ON(sizeof(from) < TASK_COMM_LEN);	\
-+	static_assert(sizeof(from) >= TASK_COMM_LEN,	\
-+		"tsk->comm size being set should be >= TASK_COMM_LEN");	\
- 	__set_task_comm(tsk, from, false);		\
- })
- 
--- 
-2.38.1
+Sure. We will address this in the next version.
 
+
+Thanks and Regards,
+Parvathi.
 
