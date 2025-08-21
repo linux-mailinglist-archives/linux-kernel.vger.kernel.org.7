@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-780431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40876B301D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:16:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C47B301D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 121C07AF386
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:14:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C4514E4F7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC9525B30E;
-	Thu, 21 Aug 2025 18:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5922929BDAA;
+	Thu, 21 Aug 2025 18:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="HHzuGsNT"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYp9AWFY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EBE3C33;
-	Thu, 21 Aug 2025 18:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0D54C6E;
+	Thu, 21 Aug 2025 18:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755800157; cv=none; b=mCAyEi3KTyxj+uZ8rPd+CqOjgHLt0ykcUl8vO5UjXQQNvzOjaGV1fx4UNMAtqhot9f34LRK2Cj0mvSxf54x65SyCL+13kKCQtvp0wDeIclyneLW08eX8DbV4KthhOWs6+rWFNTfZeF/21LKieFRRgiEs5IgLbxKG2SkR683h0Jg=
+	t=1755800168; cv=none; b=FBoq7QBwU2rfXtMYxppRz1l12UwH+47cAyqG+0qoVSRGBq7l1hPyPGp0uEp+pSH3zvv6URGW4rmiH1q6M31NWsf8IrtifXhBWhI1ZpFj7BCo5wH8icb0RuR5JW+KerMCBJnJXQvEz2KhqbZnXjqdprdl2MQY/Gwcup/SsgNJlwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755800157; c=relaxed/simple;
-	bh=J72lOg1jhfsoirN+WNSxylyB1lH5ze5gjHkKjCx4rtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YmI3Cda6DsOtNy1by+nGiSB8hV5GSaOINlnwebRLKV8HbZwlDKO0T131Ovi58D9YIKhtx0Mi823NshCJKlVW7bO+rXV8DBogDytwwmPGhuxcNxsk/LXYq5vWg4+HQn3mfKTaZXSrRmwJtWdRm40fsmCaXk23zLYkGogs1j+tmzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=HHzuGsNT; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=Pi+yQYK1CHO97Sg/9EQVKEHFHoaJqzqRipLawqydhEE=; b=HHzuGsNTsPcUSlUgQQj0JpYlA2
-	H2D7R6nGQZbnbrrICfqhma6isVrlwBQMTQ1xZy73xHmrakI0ghNh9DGQyHss1jke2fQalRlGwJUew
-	s8E+I13svIobYvFpwTTagNTxpSF0BAd7NDY2KbgRQbL2bDWEwLAPWfDPATek9GJnjL0B7vWwmOEzC
-	ieRCkrkDhWMtqq+hhxtqFAMBkZxIgpzkwFt7kpA4fyQ/iEqhJjcbTW7qWNlPVnrvjcQF5gNChny4L
-	p0XlVo3qSd8SjdYdybqzP/u5Sbo99EbqI5Gi6DIL+UebWriQR4f7MjgGQ84q9XI1QccexCrNnoLJN
-	1Gu7UbSw==;
-Date: Thu, 21 Aug 2025 20:15:44 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Jerry Lv <Jerry.Lv@axis.com>, Pali
- =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
- stable@vger.kernel.org, kernel@pyra-handheld.com
-Subject: Re: [PATCH] power: supply: bq27xxx: fix error return in case of no
- bq27000 hdq battery
-Message-ID: <20250821201544.047e54e9@akair>
-In-Reply-To: <bc405a6f782792dc41e01f9ddf9eadca3589fcdc.1753101969.git.hns@goldelico.com>
-References: <bc405a6f782792dc41e01f9ddf9eadca3589fcdc.1753101969.git.hns@goldelico.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755800168; c=relaxed/simple;
+	bh=veW0qVFrmP47n0MUNc/joNwN/5xsR0WE60fQR3ZiOZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GF64UauMTBESS5MHbXMlEwWC+OqWuT4cVyZ96j4mMfrugHi6ev92iA7NgamuiqmrrYuS3PtgdIAzyYJIvWfPtt/tvLkiiJ+yEGTE/nD2s3RC3OTRTuD67AuZAF17o1BmsrAXwDBprbsZnKejO44ajmGa/pIdf1hv4SaSOmQJogE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYp9AWFY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C45BCC4CEEB;
+	Thu, 21 Aug 2025 18:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755800168;
+	bh=veW0qVFrmP47n0MUNc/joNwN/5xsR0WE60fQR3ZiOZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hYp9AWFYRh3mF7NBTTSLlPoJwwxzpv25iOtNzhRzubHXstr/DOdqulCQZku3uk/jK
+	 06P3dfIOcjm/M2pdaPVTrhlZitfvwtEgaoBctkDJSCnVHRc7ysQ5/mi9JE3kWBK7VV
+	 7sUsQyv5eGwkFG/I1XIYUbo7T/d/tMtQJhQFKl0ORVnzrk52GEebLcreIsDWjQL417
+	 lcQr48Dt7kxy0etfmqWrwGcuaQU6wryRmP7ThyHrkxQR+havRdB4bbmCym+5EuAvnp
+	 QzLOP7I5ScwuC5aI1+t8HwNsEEiYFt31HfBZQknW9+7PSvOQJFYeY6aGNh+S2tWpPt
+	 7KO+Bft3YJRnQ==
+Date: Thu, 21 Aug 2025 19:16:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "biju.das.au" <biju.das.au@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"magnus.damm" <magnus.damm@gmail.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
+Message-ID: <20250821-arrange-exhume-aed87b75305c@spud>
+References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
+ <20250820171812.402519-7-biju.das.jz@bp.renesas.com>
+ <20250820-onyx-salad-c5c96f6bd480@spud>
+ <TY3PR01MB113464F2ED8BFBB823B038C038632A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7GlMQwMLMmaJG8we"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB113464F2ED8BFBB823B038C038632A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-Hi,
 
-Am Mon, 21 Jul 2025 14:46:09 +0200
-schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
+--7GlMQwMLMmaJG8we
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Since commit
-> 
-> commit f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when busy")
-> 
-> the console log of some devices with hdq but no bq27000 battery
-> (like the Pandaboard) is flooded with messages like:
-> 
-> [   34.247833] power_supply bq27000-battery: driver failed to report 'status' property: -1
-> 
-> as soon as user-space is finding a /sys entry and trying to read the
-> "status" property.
-> 
-> It turns out that the offending commit changes the logic to now return the
-> value of cache.flags if it is <0. This is likely under the assumption that
-> it is an error number. In normal errors from bq27xxx_read() this is indeed
-> the case.
-> 
-> But there is special code to detect if no bq27000 is installed or accessible
-> through hdq/1wire and wants to report this. In that case, the cache.flags
-> are set (historically) to constant -1 which did make reading properties
-> return -ENODEV. So everything appeared to be fine before the return value was
-> fixed. Now the -1 is returned as -ENOPERM instead of -ENODEV, triggering the
-> error condition in power_supply_format_property() which then floods the
-> console log.
-> 
-> So we change the detection of missing bq27000 battery to simply set
-> 
-> 	cache.flags = -ENODEV
-> 
-> instead of -1.
-> 
-This all is a bit inconsistent, the offending commit makes it worse. 
-Normally devices appear only in /sys if they exist. Regarding stuff in
-/sys/class/power_supply, input power supplies might be there or not,
-but there you can argument that the entry in /sys/class/power_supply
-only means that there is a connector for connecting a supply.
-But having the battery entry everywhere looks like waste. If would
-expect the existence of a battery bay in the device where the common
-battery is one with a bq27xxx.
+On Thu, Aug 21, 2025 at 07:15:59AM +0000, Biju Das wrote:
+> Hi Conor,
+>=20
+> Thanks for the feedback.
+>=20
+> > -----Original Message-----
+> > From: Conor Dooley <conor@kernel.org>
+> > Sent: 20 August 2025 21:11
+> > Subject: Re: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E US=
+B3HOST
+> >=20
+> > On Wed, Aug 20, 2025 at 06:17:53PM +0100, Biju wrote:
+> > > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > >
+> > > Document the Renesas RZ/G3E USB3.2 Gen2 Host Controller (a.k.a USB3HO=
+ST).
+> > > The USB3HOST is compliant with the Universal Serial Bus 3.2
+> > > Specification Revision 1.0.
+> > >  - Supports 1 downstream USB receptacles
+> > >      - Number of SSP Gen2 or SS ports: 1
+> > >      - Number of HS or FS or LS ports: 1
+> > >  - Supports Super Speed Plus Gen2x1 (10 Gbps), Super Speed (5 Gbps),
+> > >    High Speed (480 Mbps), Full Speed (12Mbps), and Low Speed (1.5 Mbp=
+s).
+> > >  - Supports all transfer-types: Control, Bulk, Interrupt, Isochronous=
+, and
+> > >    these split-transactions.
+> > >  - Supports Power Control and Over Current Detection.
+> > >
+> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >=20
+> > > +---
+> > > +$id: http://devicetree.org/schemas/usb/renesas,rzg3e-xhci.yaml#
+> >=20
+> > > +    const: renesas,r9a09g047-xhci
+> >=20
+> > How come these don't match? I don't understand your naming scheme at al=
+l, so idk which is even correct!
+>=20
+> r9a09g047 is SoC part number which also known as RZ/G3E SoC.
+>=20
+> I just followed the convention used in [1] and [2].
+> Please let me know I should change rzg3e-xhci.yaml->r9a09g047-xhci.yaml ?
 
-Regards,
-Andreas
+What's the benefit of using that instead of the compatible, other than
+confusing me?
+
+>=20
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commi=
+t/Documentation/devicetree/bindings?h=3Dnext-20250820&id=3D44b91d61c505863b=
+8ae90b7094aee5ca0dce808f
+>=20
+> [2]
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commi=
+t/Documentation/devicetree/bindings?h=3Dnext-20250820&id=3Db2d25905366b4e67=
+91f60e6bc76a636d1b88e6f8
+>=20
+> Cheers,
+> Biju
+
+--7GlMQwMLMmaJG8we
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKdiYwAKCRB4tDGHoIJi
+0hSPAPoDdOTqCsOU1Lt3flNQYSPU1t6vbvU4LII0fUo2sw2JvAEA4rYPc7+ZtKBS
+xeByEQ0cVKS3bqvr0RWjOxjWXs2GRwA=
+=hwrx
+-----END PGP SIGNATURE-----
+
+--7GlMQwMLMmaJG8we--
 
