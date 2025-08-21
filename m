@@ -1,245 +1,108 @@
-Return-Path: <linux-kernel+bounces-778847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD65B2EBF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:30:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB65AB2EC02
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66BF6A264C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D97DA27E1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383A32E6121;
-	Thu, 21 Aug 2025 03:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EolSgQFA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF3021D3F5;
+	Thu, 21 Aug 2025 03:34:00 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E922E5B03;
-	Thu, 21 Aug 2025 03:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56612236FA;
+	Thu, 21 Aug 2025 03:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755747036; cv=none; b=u9C4WYoM/GX4hS1BLOXz+CIoc2oxugBiv4rnu58QIs84kXgvMVZU4Lrcj+ZpLCEk8rad/8BSqw0JlYvqASKZg0FVAizEmuCSIUqFFKVX8RbTzSJfsNAY+i+NejX+c8jwd+0GSYB4FPR3bSNvmHb8V1RAt2jupSQm+bxejfmVe68=
+	t=1755747240; cv=none; b=L5diK9NMXclvnljB42kjDOueRCJWRn+mgKwQGwjviLimp7DIdCEkmedWEY+6tJhS1p5USWpm/vogvcXHNpsepNchTESviAjsSyTrlhgLTN496ns6uGmFTqRvLFqOqUfgL3Y1JGD9huYs5JQhkBWnUWxPkjXdHDaT8D8RdJhmm9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755747036; c=relaxed/simple;
-	bh=hGZnT5MfWeTZd2SOXfqoQAwccyPDnsuXk0ZwAoQRF5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YhxPuALF/qFPENXwJhnTCRW6baeLcDnPAOZqNURiJxe87NJRwuMFsbCJT8eOiwBGu+QcNmiiV9Gb58W5B1fjajGVOeSoCj/Fn+rPmjkO1fraH659SvwJbGuohFL0h8UxSaBhDM3QUXDLBPodYLt4O0MbA1voZmBnoB2k4PdEXTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EolSgQFA; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755747035; x=1787283035;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hGZnT5MfWeTZd2SOXfqoQAwccyPDnsuXk0ZwAoQRF5c=;
-  b=EolSgQFAViq1murkZ7iKgLAvrKyi7WanJgCPODQstOMuMHU8p94uCJL/
-   uFhLjeeV9tdhAdgKnOlVTip4LVZO51JDPYesOQnuVNmrJV+2emLPHWXT8
-   1+GNXj8nVjfcfK77+iiAmdSxanPTjPHDpyV3Na9KSqKnXj2mIqr/cJuuq
-   wVKsz4uoQ4cA91aKfjqSSGguRAOvQuk02F7Ral/SXeC81QCMz7XygLJyL
-   JtWd1pmXZ3qA3H5erqEFuQqPECxssnLemNl8tOC5hfgJZiUmd0XSYggqE
-   L9k8eHS41GFRFoBMrydjW7w+VPB/y4mv3QOpdbl6w5SgbNh67al67OxYe
-   Q==;
-X-CSE-ConnectionGUID: TyPb6Gx2TwShSA0LRbBh/g==
-X-CSE-MsgGUID: Dvr5pBsrRfWSQTGK7eormQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61854988"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="61854988"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 20:30:34 -0700
-X-CSE-ConnectionGUID: BjYSIxRBS9S7SxhZiPa1Gg==
-X-CSE-MsgGUID: Q4gvv4UxT6mmQBCIdPa+0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="167806701"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 20:30:29 -0700
-Message-ID: <d84b792e-8d26-49c2-9e7c-04093f554f8a@linux.intel.com>
-Date: Thu, 21 Aug 2025 11:30:27 +0800
+	s=arc-20240116; t=1755747240; c=relaxed/simple;
+	bh=4LFcMDfo/zbUYfGKlorYccLY9PwrEh1kqHEyrvJizI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqUpxfzAkxEbwtHZTHpRv0ibH8TqoZn8Dzuo8qXOVRH3IWiUi/mpJlc3CCSUzqQhKpZo/j+8hXbtb+8Xn4lJfSK/1LUxy5b7CgyaNjhVV8IYcbQj4RweJcJeoGquKI/olcL1NmL0PN7V3RmFEwUShSbZ7xxJLF/yeqC5wYPZ3aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpsz8t1755747174t1aeda2f3
+X-QQ-Originating-IP: B3BZVKqW3jX07jw0veN9lGFzHwGmjdz36KID2sMYiu0=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 21 Aug 2025 11:32:52 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 9983899224186391793
+Date: Thu, 21 Aug 2025 11:32:53 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <7FCBCC1F18AFE0F3+20250821033253.GA1754449@nic-Precision-5820-Tower>
+References: <20250818112856.1446278-1-dong100@mucse.com>
+ <20250818112856.1446278-5-dong100@mucse.com>
+ <39262c11-b14f-462f-b9c0-4e7bd1f32f0d@lunn.ch>
+ <458C8E59A94CE79B+20250821024916.GF1742451@nic-Precision-5820-Tower>
+ <47aa140e-552b-4650-9031-8931475f0719@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
-To: Sean Christopherson <seanjc@google.com>
-Cc: Vishal Annapurve <vannapurve@google.com>,
- Nikolay Borisov <nik.borisov@suse.com>, Jianxiong Gao <jxgao@google.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Dionna Glaze <dionnaglaze@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
- jgross@suse.com, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com,
- Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Tom Lendacky <thomas.lendacky@amd.com>,
- Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, jiewen.yao@intel.com
-References: <CAMGD6P1Q9tK89AjaPXAVvVNKtD77-zkDr0Kmrm29+e=i+R+33w@mail.gmail.com>
- <0dc2b8d2-6e1d-4530-898b-3cb4220b5d42@linux.intel.com>
- <4acfa729-e0ad-4dc7-8958-ececfae8ab80@suse.com> <aIDzBOmjzveLjhmk@google.com>
- <550a730d-07db-46d7-ac1a-b5b7a09042a6@linux.intel.com>
- <aIeX0GQh1Q_4N597@google.com>
- <ad616489-1546-4f6a-9242-a719952e19b6@linux.intel.com>
- <CAGtprH9EL0=Cxu7f8tD6rEvnpC7uLAw6jKijHdFUQYvbyJgkzA@mail.gmail.com>
- <20641696-242d-4fb6-a3c1-1a8e7cf83b18@linux.intel.com>
- <697aa804-b321-4dba-9060-7ac17e0a489f@linux.intel.com>
- <aKYMQP5AEC2RkOvi@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <aKYMQP5AEC2RkOvi@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <47aa140e-552b-4650-9031-8931475f0719@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OQNQM5UP8StMDdmKQ4cRpMLnC0k46CBi0zEzzNyRSLR/BE1SaKY5q1S5
+	K2ciQrHPMZWVMGLWSPv2RPzvZUoHtkmM727bE3FIvzcaj640sji/YkyObHfR/zTYTvTTXrM
+	WajR/GvMSxvFWai706RlPJsdQVovluBoUnPXZrYljKLIHaSviX/OIxI51dYZu7jvGwxlpWm
+	GN1ZzGpEyZ39BBeu/zObz28Pt8y9MpOzsx5A683DPj158Tv9z2JL78WUqOKyC/PYQRjWT4F
+	T8Ja1q3KQ65zTmvV5p0YA0TkGazHHWk7nWxpup69emVymgV3SvKfKejewonNLCoGdyrrlEL
+	y9Gq10EFBAKY1KrFXLobEGSG/ZUg0vev0B6Rkfb0szg4CxI/JN506iqbE9mWb5Vzyo7d9EX
+	3iZvTR5XIDtejL7NbCVQcrwG9oK0kREzXGANpnpddUUj8j1chaaGUEIeTLvZV1MggEEjSiu
+	z2txRmyqTJlb1LhXOb2riTM6/gJx+0CqorB0Py/wxf5VHvMcCH3LLpcp5/ebqb5nGUyfNiN
+	Q0BkHu0vUjb8z1hCbJTPnSFHFhaFUmCXkhdDvqHBEz2J+xm+QPFeLju0vU/SA+w6VZGPQBw
+	geDL4hVZc8v0agMLuW2QHgp49ahWMX30g9kC8Q91shRIjSTzJLJCldyPWbqv44zV7lafl6V
+	dgDx/+7KVF8XpSZqqxGabMzbnJDNYG7SLnt5oTLSk5F22t5VtoN5zi1Yy4QmmeO5g/Mwcpf
+	IHhPgVOZm6D6nwAGVa83/EqJJq67LVFcwIiR966M3T0Xnj5mxSzgHWg87zYANAnV7ivgk9O
+	/OZ7MJjfcPgHLYpNWhWT4binXdpge6dh+MR1GRgqtjdgUcgNr+nPZfdIfr5hUztsbplykJ6
+	YYivsi+QkLtqQvWK1wLiKO2mRFYPzJ9AIb8e3idBV6DyUrrV5yTgt22hsoD7iRlIoEARGVp
+	slTz8m/AwIX3akMbtGTnQ6dU5vye6hk8xqagUAxxXf3LnUojoUhLPA+/2fgpcyKl25RI4vE
+	NJdMh0L7xuUxQmerNO8t7OKi4NCqRTpy4/KGcSRQ==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
+On Thu, Aug 21, 2025 at 05:13:27AM +0200, Andrew Lunn wrote:
+> > 'mucse_mbx_fw_post_req' is designed can be called by 'cat /sys/xxx',
+> 
+> It is pretty unusual for ethernet drivers to export data in /sys,
+> except via standard APIs, like statistics, carrier, address, opstate
+> etc.  I don't know how well the core will handle EINTR. It is not
+> something most drivers do. -ETIMEDOUT is more likely when the firmware
+> has crashed and does not respond in time.
+> 
+> Do you have any operations which take a long time when things are
+> working correctly?
+> 
+> 	Andrew
+> 
 
-
-On 8/21/2025 1:56 AM, Sean Christopherson wrote:
-> On Wed, Aug 20, 2025, Binbin Wu wrote:
->> On 8/20/2025 6:03 PM, Binbin Wu wrote:
->>>>>> Presumably this an EDK2 bug?  If it's not an EDK2 bug, then how is the kernel's
->>>>>> ACPI driver supposed to know that some ranges of SystemMemory must be mapped UC?
->>> Checked with Jiewen offline.
->>>
->>> He didn't think there was an existing interface to tell the OS to map a
->>> OperationRegion of SystemMemory as UC via the ACPI table. He thought the
->>> OS/ACPI driver still needed to rely on MTRRs for the hint before there was an
->>> alternative way.
->>>
->>>>> According to the ACPI spec 6.6, an operation region of SystemMemory has no
->>>>> interface to specify the cacheable attribute.
->>>>>
->>>>> One solution could be using MTRRs to communicate the memory attribute of legacy
->>>>> PCI hole to the kernel.
-> So IIUC, there are no bugs anywhere, just a gap in specs that has been hidden
-> until now :-(
->
->>>>> But during the PUCK meeting last week, Sean mentioned
->>>>> that "long-term, firmware should not be using MTRRs to communicate anything to
->>>>> the kernel." So this solution is not preferred.
->>>>>
->>>>> If not MTRRs, there should be an alternative way to do the job.
->>>>> 1. ACPI table
->>>>>       According to the ACPI spec, neither operation region nor 32-Bit Fixed Memory
->>>>>       Range Descriptor can specify the cacheable attribute.
->>>>>       "Address Space Resource Descriptors" could be used to describe a memory range
->>>>>       and the they can specify the cacheable attribute via "Type Specific Flags".
->>>>>       One of the Address Space Resource Descriptors could be added to the ACPI
->>>>>       table as a hint when the kernel do the mapping for operation region.
->>>>>       (There is "System Physical Address (SPA) Range Structure", which also can
->>>>>       specify the cacheable attribute. But it's should be used for NVDIMMs.)
->>>>> 2. EFI memory map descriptor
->>>>>       EFI memory descriptor can specify the cacheable attribute. Firmware can add
->>>>>       a EFI memory descriptor for the TPM TIS device as a hint when the kernel do
->>>>>       the mapping for operation region.
->>>>>
->>>>> Operation region of SystemMemory is still needed if a "Control Method" of APCI
->>>>> needs to access a field, e.g., the method _STA. Checking another descriptor for
->>>>> cacheable attribute, either "Address Space Resource Descriptor" or "EFI memory
->>>>> map descriptor" during the ACPI code doing the mapping for operation region
->>>>> makes the code complicated.
->>>>>
->>>>> Another thing is if long-term firmware should not be using MTRRs to to
->>>>> communicate anything to the kernel. It seems it's safer to use ioremap() instead
->>>>> of ioremap_cache() for MMIO resource when the kernel do the mapping for the
->>>>> operation region access?
->>>>>
->>>> Would it work if instead of doubling down on declaring the low memory
->>>> above TOLUD as WB, guest kernel reserves the range as uncacheable by
->>>> default i.e. effectively simulating a ioremap before ACPI tries to map
->>>> the memory as WB?
->>> It seems as hacky as this patch set?
->>>
->>>
->> Hi Sean,
->>
->> Since guest_force_mtrr_state() also supports to force MTRR variable ranges,
->> I am wondering if we could use guest_force_mtrr_state() to set the legacy PCI
->> hole range as UC?
->>
->> Is it less hacky?
-> Oh!  That's a way better idea than my hack.  I missed that the kernel would still
-> consult MTRRs.
->
-> Compile tested only, but something like this?
->
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 8ae750cde0c6..45c8871cdda1 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -933,6 +933,13 @@ static void kvm_sev_hc_page_enc_status(unsigned long pfn, int npages, bool enc)
->   
->   static void __init kvm_init_platform(void)
->   {
-> +       u64 tolud = e820__end_of_low_ram_pfn() << PAGE_SHIFT;
-> +       struct mtrr_var_range pci_hole = {
-> +               .base_lo = tolud | X86_MEMTYPE_UC,
-> +               .mask_lo = (u32)(~(SZ_4G - tolud - 1)) | BIT(11),
-> +               .mask_hi = (BIT_ULL(boot_cpu_data.x86_phys_bits) - 1) >> 32,
-> +       };
-> +
-
-This value of tolud  may not meet the range size and alignment requirement for
-variable MTRR.
-
-Variable MTRR has requirement for range size and alignment:
-For ranges greater than 4 KBytes, each range must be of length 2^n and its base
-address must be aligned on a 2^n boundary, where n is a value equal to or
-greater than 12. The base-address alignment value cannot be less than its length.
-
-In my setup, the value of tolud is 0x7FF7C000, it requires 3 variable MTRRs to
-meet the requirement, i.e.,
-- 7FF7 C000  ~   7FF8 0000
-- 7FF8 0000  ~   8000 0000
-- 8000 0000  ~ 1 0000 0000
-
-I checks the implementation in EDK2, in order to fit the legacy PCI hole into
-one variable MTRR, it has some assumption to truncate the size and round up the
-base address in PlatformQemuUc32BaseInitialization():
-     ...
-     ASSERT (
-       PlatformInfoHob->HostBridgeDevId == INTEL_Q35_MCH_DEVICE_ID ||
-       PlatformInfoHob->HostBridgeDevId == INTEL_82441_DEVICE_ID
-       );
-     ...
-     //
-     // Start with the [LowerMemorySize, 4GB) range. Make sure one
-     // variable MTRR suffices by truncating the size to a whole power of two,
-     // while keeping the end affixed to 4GB. This will round the base up.
-     //
-     PlatformInfoHob->Uc32Size = GetPowerOfTwo32 ((UINT32)(SIZE_4GB - PlatformInfoHob->LowMemory));
-     PlatformInfoHob->Uc32Base = (UINT32)(SIZE_4GB - PlatformInfoHob->Uc32Size);
-     //
-     // Assuming that LowerMemorySize is at least 1 byte, Uc32Size is at most 2GB.
-     // Therefore Uc32Base is at least 2GB.
-     //
-     ASSERT (PlatformInfoHob->Uc32Base >= BASE_2GB);
-
-I am not sure if KVM can do such assumption.
-Otherwise, KVM needs to calculate the ranges to meet the requirement. :(
-
-
->          if (cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT) &&
->              kvm_para_has_feature(KVM_FEATURE_MIGRATION_CONTROL)) {
->                  unsigned long nr_pages;
-> @@ -982,8 +989,12 @@ static void __init kvm_init_platform(void)
->          kvmclock_init();
->          x86_platform.apic_post_init = kvm_apic_init;
->   
-> -       /* Set WB as the default cache mode for SEV-SNP and TDX */
-> -       guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
-> +       /*
-> +        * Set WB as the default cache mode for SEV-SNP and TDX, with a single
-> +        * UC range for the legacy PCI hole, e.g. so that devices that expect
-> +        * to get UC/WC mappings don't get surprised with WB.
-> +        */
-> +       guest_force_mtrr_state(&pci_hole, 1, MTRR_TYPE_WRBACK);
->   }
->   
->   #if defined(CONFIG_AMD_MEM_ENCRYPT)
+'Update firmware operation' will take long time, maybe more than
+10s. If user use 'ethtool -f' to update firmware, and ^C before done?
+If ^C before mucse_write_mbx, return as soon as possible. If after mucse_write_mbx,
+wait until fw true response.
 
 
