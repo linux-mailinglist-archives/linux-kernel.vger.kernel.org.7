@@ -1,224 +1,210 @@
-Return-Path: <linux-kernel+bounces-780318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207D6B30042
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:41:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6FAB30067
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 213427A1DB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 049E63B8907
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3B52E2DF4;
-	Thu, 21 Aug 2025 16:41:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3FD2E2F12;
+	Thu, 21 Aug 2025 16:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQaijEAQ"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644712E22BB
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 16:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A3E2E2F00;
+	Thu, 21 Aug 2025 16:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755794466; cv=none; b=AigSDdnPugnKSdP/jY6gOYlpfY5nsAsq8IrjxjBhBevCkmHUdB+ks0L5mgvBMJHRjYxhiyA5u+G1FfMDUzIljroe47b35r0Phg09unvpeyaI3mqcIsfpDbocyz6mCw9ZxjmfOenOzkwMy8XSZnZIvAqpv+CiNYV/MOHhu61iYMg=
+	t=1755794545; cv=none; b=o8lp1b7KY5Nhuj8UWImqZ6w85vlC+Vt14H1q4OLIENr48nrb1acCePgF21PgKqj1iz+Dqz+e76t/IsgOep03ir//zXjaPx3dGzSOtBZ+A8CSLyNtTIVYZVOWbk/OQOYkSyqIIiirYR4Q2q+zmFy7FNG6K1xYA++YrqynYi1UaDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755794466; c=relaxed/simple;
-	bh=ZYwP6EYTgnjg6HxsD+JN38KqBRb7MMX62ihDx21HQa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELt92i4nd8tjJL7zGBIz8qm99Hcdcb1sj6avMOnsbGg+CL/YRWd6li5PUl8OyyeI/PRnLx3MDXIykHZcnk5k9iSLR80xp4HsRMLYVSVw3SVudSqwmdQS37+FdRbHvLnkN5f7ElUpEpmjhnCTb8/Og8RbddqxStOEgvKr/IwWlOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1up8LQ-0005mb-J7; Thu, 21 Aug 2025 18:40:56 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1up8LQ-001ROr-19;
-	Thu, 21 Aug 2025 18:40:56 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1up8LQ-0085kK-0l;
-	Thu, 21 Aug 2025 18:40:56 +0200
-Date: Thu, 21 Aug 2025 18:40:56 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Johan Hovold <johan@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH 0/3] USB-Serial serdev support
-Message-ID: <20250821164056.6j7spi3vnu66i6bt@pengutronix.de>
-References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
- <Zt7kCxawoszunWq3@hovoldconsulting.com>
- <20240917044948.i2eog4ondf7vna7q@pengutronix.de>
- <Z8_wcASfJ8SeAQ8l@hovoldconsulting.com>
- <20250313194044.t2t3c7j6ktvshjhs@pengutronix.de>
+	s=arc-20240116; t=1755794545; c=relaxed/simple;
+	bh=g4VQNKmSnAC9DQfCVPgHsw+XDHu7efI6T9ypGVxALUY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=N8KJHy2afZF0hR6itFeeiVYo/gB4C7VKoGRoOtbu3g1T9T2Lah0j01xuTDdyon7//yz04aloN6b39XBUb4Ix6xK36X9T+KFG597lbT5X6VjY4RYabwBUEAT7R/uAexvsrea8AmlFCs4v+jaefhyFM2HdFwEg/CE0OwfotCXR+gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQaijEAQ; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e870689dedso87597685a.3;
+        Thu, 21 Aug 2025 09:42:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755794542; x=1756399342; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eDjfXTLIXvHyku6eeA6JQrBMgI3q0b62hMZfcvENsN4=;
+        b=YQaijEAQI+l2c/HctjHmPt2G07sC9rkjkpsKuPyXviy370dOOlbWi5Zu3F7SEgAOOc
+         i7YGel+j/wzBHPS3Wp18ZR3jNwRTdKdpcq0HPOPUh1l83/vgy+SBisX2/T8MChb6O49a
+         2chAaD4bxyBe8ve7yY+LY0rKQpcDcyQO6eUkMLq/itcuy8/BZdHxTwa0/B1xvRkJAGC5
+         29hiUQxsqI7W5aBhulwaJv3XhzrHuQhT+cAIolX2fTTXT5xrc61eWVP1T05pIqd73/eG
+         qGuC41DabGjo+DtGuw+cWPJQCESBnkVDp8HS3S9/gJpLSdeuc/BNz8YJrMcg0gPtzX53
+         RkWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755794542; x=1756399342;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eDjfXTLIXvHyku6eeA6JQrBMgI3q0b62hMZfcvENsN4=;
+        b=A7GAX0y2j+Yw5EMwE74OtZ7Ozq+rJuLIrbW7VSJ/4sIRPTtJ4Xod41vpO1rFoBef++
+         8wqJzVABEX3wNpjSQS4+qz8DF+PBlrU9IsyCpPX0TVmTFkzEZR6k310Q7vfN8LkiZHRb
+         v2FhCTDf8sCgKKUJd36ogx8tSjK8QytKCr9fhEZhY+ZI3YJRGmSuCr8aeWBEp0jk37xV
+         1LzfjwFuKkkgxK2jpaV8sD4VOYduMxEUFHDbScV3ujlZFYEm0Dp0YusrneizJWDKaXLG
+         pvJVsha7fJ6HNZ5Lo+PgsWQcd5NZuu+0IeeJ+vdkxvK0H0IEbGJtCwraifRlebL4+5G4
+         Nq9g==
+X-Forwarded-Encrypted: i=1; AJvYcCW252ctHqURFeABnjPOy5wDFEDkegbvfn+/RZj57D7ADdfH3x/FWZcEaaDCh3jycqyDPhWO6Q+Zr8St@vger.kernel.org, AJvYcCWmNWDThGk3Y6UZy1rYWBytSo0hS6yV28kDgHMO7m/Vx8TNwIVZlEfUSMKzICZ5iE5vH+UfiyxsFgNQ8g==@vger.kernel.org, AJvYcCWvr7O5lXB3g1zYPYKt/FZdILhxq+JGxPF/7hYXZ3pQ5XECYujB+2I4i4cGF+NM0GyTtI1uF3S0qwmyBGNx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8/kwfaoCxd1EI+ms3yMVD0O4GqehYdZIS/QenqI2rNMQKXi/K
+	7ZOxiEIW5YqBHHE8B+FiYQR6JIe9uZx9ZCSYpLsOZYsSIKoUJR43MESRQmVapwia
+X-Gm-Gg: ASbGncuZXZORoBqOwscsznK+tWZK1eBZgfWpSrt4oXPRzY18WivAzEv3ktl7WON7d8I
+	fIRwzJcbi/RjuoL3WfofE1S/4U3b9pkxlq2RkUIHIu9bs4Y51q0MywusUslmzzNwW7SW923Xujr
+	a1DvsDqDsbTxY1CpIArzzo+h9f847RoulZXs5txWXANlD4rC2VmSP+qw40kcECTLsaqIoTXbUvG
+	VqGbhKTzJ2ZKLY+8XBl9YbUK8xd3EbTeezYJq2iKP9ybTsW+dchz/5h4CeA3yKZU0jIjBCpmkd6
+	GUO02+dFhbpXBU39V9MHTxsxW0+tNBY8P862XIMtY+NThOHWtzKMx7FfGuEVGwu0lSdZ+xb5TX0
+	6NI1yHgZ39dtoIfwEd61wFCYtIKSM9Uz9/q0WbSp/fvQ4BNFUCT0AADsC8W8iuJgi9OdfHg==
+X-Google-Smtp-Source: AGHT+IGMn0Sig5qE7OmBL7SDQ5NFdbsvx+ZhiNSfvAOYyUYwJGPdtiOiIJBwNmWcekndGoeT1JQ5JQ==
+X-Received: by 2002:a05:620a:4002:b0:7e6:9e25:df13 with SMTP id af79cd13be357-7ea11049b6fmr3132385a.51.1755794542364;
+        Thu, 21 Aug 2025 09:42:22 -0700 (PDT)
+Received: from [127.0.0.1] (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e020b25sm1145947185a.13.2025.08.21.09.42.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 09:42:22 -0700 (PDT)
+Date: Thu, 21 Aug 2025 12:42:21 -0400
+From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, devicetree@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>,
+ Boris Gjenero <boris.gjenero@gmail.com>,
+ Christian Hewitt <christianshewitt@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Paolo Sabatino <paolo.sabatino@gmail.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_3/4=5D_auxdisplay=3A_Add_TM16xx_7-?=
+ =?US-ASCII?Q?segment_LED_matrix_display_controllers_driver?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <20250821-passionate-mouse-of-essence-2c5af4@kuoka>
+References: <20250820163120.24997-1-jefflessard3@gmail.com> <20250820163120.24997-4-jefflessard3@gmail.com> <20250821-passionate-mouse-of-essence-2c5af4@kuoka>
+Message-ID: <13E7CEAE-6865-485B-9486-7EBEEE46E285@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313194044.t2t3c7j6ktvshjhs@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Le 21 ao=C3=BBt 2025 03 h 43 min 51 s HAE, Krzysztof Kozlowski <krzk@kernel=
+=2Eorg> a =C3=A9crit=C2=A0:
+>On Wed, Aug 20, 2025 at 12:31:16PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
+e:
+>> +/**
+>> + * tm16xx_map_seg7_store() - Sysfs: set 7-segment character map (binar=
+y blob)
+>> + * @dev: pointer to device
+>> + * @attr: device attribute (unused)
+>> + * @buf: new mapping (must match size of map_seg7)
+>> + * @cnt: buffer length
+>> + *
+>> + * Return: cnt on success, negative errno on failure
+>> + */
+>> +static ssize_t tm16xx_map_seg7_store(struct device *dev,
+>> +				     struct device_attribute *attr,
+>> +				     const char *buf, size_t cnt)
+>> +{
+>> +	if (cnt !=3D sizeof(map_seg7))
+>> +		return -EINVAL;
+>> +	memcpy(&map_seg7, buf, cnt);
+>> +	return cnt;
+>> +}
+>> +
+>> +static DEVICE_ATTR(value, 0644, tm16xx_value_show, tm16xx_value_store)=
+;
+>> +static DEVICE_ATTR(num_digits, 0444, tm16xx_num_digits_show, NULL);
+>> +static DEVICE_ATTR(map_seg7, 0644, tm16xx_map_seg7_show, tm16xx_map_se=
+g7_store);
+>
+>Where did you document the ABI?
+>
 
-gentle ping.
+Currently, there is no formal ABI documentation for the TM16xx sysfs attri=
+butes=2E
+While map_seg7 follows existing auxdisplay conventions (which lack ABI doc=
+s),
+I plan to add TM16xx-specific ABI documentation under
+Documentation/ABI/testing/sysfs-class-leds-tm16xx in the v4 submission=2E
 
-Regards,
-  Marco
+>> +
+>> +static struct attribute *tm16xx_main_led_attrs[] =3D {
+>> +	&dev_attr_value=2Eattr,
+>> +	&dev_attr_num_digits=2Eattr,
+>> +	&dev_attr_map_seg7=2Eattr,
+>> +	NULL,
+>> +};
+>> +ATTRIBUTE_GROUPS(tm16xx_main_led);
+>> +
+>
+>=2E=2E=2E
+>
+>> +#if IS_ENABLED(CONFIG_I2C)
+>> +/**
+>> + * tm16xx_i2c_probe() - Probe callback for I2C-attached controllers
+>> + * @client: pointer to i2c_client
+>> + *
+>> + * Return: 0 on success, negative error code on failure
+>> + */
+>> +static int tm16xx_i2c_probe(struct i2c_client *client)
+>> +{
+>> +	const struct tm16xx_controller *controller;
+>> +	struct tm16xx_display *display;
+>> +	int ret;
+>> +
+>> +	controller =3D i2c_get_match_data(client);
+>> +	if (!controller)
+>> +		return -EINVAL;
+>> +
+>> +	display =3D devm_kzalloc(&client->dev, sizeof(*display), GFP_KERNEL);
+>> +	if (!display)
+>> +		return -ENOMEM;
+>> +
+>> +	display->client=2Ei2c =3D client;
+>> +	display->dev =3D &client->dev;
+>> +	display->controller =3D controller;
+>> +
+>> +	i2c_set_clientdata(client, display);
+>> +
+>> +	ret =3D tm16xx_probe(display);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * tm16xx_i2c_remove() - Remove callback for I2C-attached controllers
+>> + * @client: pointer to i2c_client
+>
+>Please don't ever add comments, especially kerneldocs, for such obvious
+>driver API=2E This function cannot be anything else than what you
+>described=2E Why? Linux core driver model tells that=2E You never have to
+>repeat what Linux core driver model is=2E=2E=2E
+>
 
-On 25-03-13, Marco Felsch wrote:
-> On 25-03-11, Johan Hovold wrote:
-> > On Tue, Sep 17, 2024 at 06:49:48AM +0200, Marco Felsch wrote:
-> > > On 24-09-09, Johan Hovold wrote:
-> > > > On Wed, Aug 07, 2024 at 04:08:47PM +0200, Marco Felsch wrote:
-> > > > > this patchset is based on Johan's patches [1] but dropped the need of
-> > > > > the special 'serial' of-node [2].
-> > > > 
-> > > > That's great that you found and referenced my proof-of-concept patches,
-> > > > but it doesn't seem like you tried to understand why this hasn't been
-> > > > merged yet.
-> > 
-> > > > First, as the commit message you refer to below explain, we need some
-> > > > way to describe multiport controllers. Just dropping the 'serial' node
-> > > > does not make that issue go away.
-> > > 
-> > > Sorry for asking but isn't the current OF abstraction [1] enough? As far
-> > > as I understood we can describe the whole USB tree within OF. I used [1]
-> > > and the this patchset to describe the following hierarchy:
-> > > 
-> > >  usb-root -> usb-hub port-1 -> usb-serial interface-0 -> serial
-> > >                                                          bt-module
-> > > 
-> > > [1] Documentation/devicetree/bindings/usb/usb-device.yaml
-> > 
-> > Again, you still need to consider devices with multiple serial ports
-> > (and they do not always map neatly to one port per interface either).
-> 
-> We use a dual-port FTDI and our USB tree looks as followed:
-> 
-> /:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=xhci-hcd/1p, 480M
->     ID 1d6b:0002 Linux Foundation 2.0 root hub
->     |__ Port 001: Dev 002, If 0, Class=Hub, Driver=hub/4p, 480M
->         ID 0424:2514 Microchip Technology, Inc. (formerly SMSC) USB 2.0 Hub
->         |__ Port 001: Dev 003, If 0, Class=Vendor Specific Class, Driver=ftdi_sio, 480M
->             ID 0403:6010 Future Technology Devices International, Ltd FT2232C/D/H Dual UART/FIFO IC
->         |__ Port 001: Dev 003, If 1, Class=Vendor Specific Class, Driver=ftdi_sio, 480M
->             ID 0403:6010 Future Technology Devices International, Ltd FT2232C/D/H Dual UART/FIFO IC
-> 
-> interface-0 is used for the bt-module which is served by the serdev
-> driver.
-> 
-> interface-1 is used by an userspace driver which makes use of the
-> /dev/ttyUSB1 port.
-> 
-> So we do have the multiple serial ports use-case already. Can you please
-> explain what I miss?
-> 
-> > > > Second, and more importantly, you do not address the main obstacle for
-> > > > enabling serdev for USB serial which is that the serdev cannot handle
-> > > > hotplugging.
-> > > 
-> > > Hotplugging is a good point but out-of-scope IMHO (at least for now)
-> > > since the current serdev implementation rely on additional firmware
-> > > information e.g OF node to be present. E.g. if the above mentioned setup
-> > > would connect the "serial bt-module" directly to the UART port you still
-> > > need an OF node to bind the serdev driver. If the node isn't present
-> > > user-space would need to do the hci handling.
-> > 
-> > There's nothing preventing you from adding a devicetree node for a USB
-> > device that can be unplugged.
-> 
-> I see and I have to admit that I didn't test this :/ But since you
-> pointed it out I tested it now!
-> 
-> So as explained, our USB tree looks as above and our DTS looks like the
-> one in the cover letter. Of course I run on an embedded system but the
-> USB FTDI based module is powered by the VBUS of the hub. Therefore I
-> ran the test by disabling the downstream port which in turn disabled the
-> VBUS supply. This should come very close to a physical unplug event.
-> 
-> 8<----------------------------------------------------------------
-> 
-> ## The test system before the "unplug"
-> 
-> root@test:~# ls -al /sys/class/bluetooth/
-> total 0
-> drwxr-xr-x  2 root root 0 Jan  8 18:31 .
-> drwxr-xr-x 62 root root 0 Jan  8 18:31 ..
-> lrwxrwxrwx  1 root root 0 Jan  8 18:31 hci0 -> ../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0/bluetooth/hci0
-> 
-> root@test:~# ls -al /sys/bus/serial/devices/
-> total 0
-> drwxr-xr-x 2 root root 0 Jan  8 18:31 .
-> drwxr-xr-x 4 root root 0 Jan  8 18:28 ..
-> lrwxrwxrwx 1 root root 0 Jan  8 18:31 serial0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0
-> lrwxrwxrwx 1 root root 0 Jan  8 18:31 serial0-0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0
-> 
-> ## The "unplug" event and the system after the event
-> 
-> root@test:~# echo 1 > /sys/bus/usb/devices/usb1/1-1/1-1\:1.0/1-1-port1/disable
-> 
-> root@test:~# ls -al /sys/class/bluetooth/
-> total 0
-> drwxr-xr-x  2 root root 0 Jan  8 18:40 .
-> drwxr-xr-x 62 root root 0 Jan  8 18:31 ..
-> 
-> root@test:~# ls -al /sys/bus/serial/devices/
-> total 0
-> drwxr-xr-x 2 root root 0 Jan  8 18:40 .
-> drwxr-xr-x 4 root root 0 Jan  8 18:28 ..
-> 
-> ## The "plug" event and the system after the event
-> 
-> root@test:~# echo 0 > /sys/bus/usb/devices/usb1/1-1/1-1\:1.0/1-1-port1/disable
-> root@test:~# [ 1121.297918] btnxpuart serial0-0: supply vcc not found, using dummy regulator
-> 
-> root@test:~# ls -al /sys/class/bluetooth/
-> total 0
-> drwxr-xr-x  2 root root 0 Jan  8 18:41 .
-> drwxr-xr-x 62 root root 0 Jan  8 18:31 ..
-> lrwxrwxrwx  1 root root 0 Jan  8 18:41 hci0 -> ../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0/bluetooth/hci0
-> 
-> root@test:~# ls -al /sys/bus/serial/devices/
-> total 0
-> drwxr-xr-x 2 root root 0 Jan  8 18:41 .
-> drwxr-xr-x 4 root root 0 Jan  8 18:28 ..
-> lrwxrwxrwx 1 root root 0 Jan  8 18:41 serial0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0
-> lrwxrwxrwx 1 root root 0 Jan  8 18:41 serial0-0 -> ../../../devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/usb1/1-1/1-1.1/1-1.1:1.0/ttyUSB0/serial0/serial0-0
-> 
-> 8<----------------------------------------------------------------
-> 
-> > > So from my POV the serdev abstraction is for manufacturers which make
-> > > use of "onboard" usb-devices which are always present at the same USB
-> > > tree location. Serdev is not made for general purpose USB ports (yet)
-> > > where a user can plug-in all types of USB devices.
-> > 
-> > Right, but someone need to make sure that serdev can handle devices
-> > going away first as nothing is currently preventing that from happening.
-> 
-> Can you please check my above tests? Maybe I do miss something but for
-> me it looks like it's working. Looking forwards for your input.
-> 
-> Regards,
->   Marco
-> 
-> 
-> > > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/log/?h=usb-serial-of
-> > > > > [2] https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/commit/?h=usb-serial-of&id=b19239022c92567a6a9ed40e8522e84972b0997f
-> > 
-> > Johan
-> > 
+Well received, thank you=2E I will drop these trivial kernel-doc comments=
+=2E
+
+>Best regards,
+>Krzysztof
+>
+
+Best regards,
+
+Jean-Fran=C3=A7ois Lessard
 
