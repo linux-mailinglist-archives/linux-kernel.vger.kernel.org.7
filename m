@@ -1,226 +1,128 @@
-Return-Path: <linux-kernel+bounces-779399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044FCB2F3AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:20:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6811B2F3B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0351A04641
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:16:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF3817CC14
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F342EF653;
-	Thu, 21 Aug 2025 09:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="st9OtkkV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426272EFD9E;
+	Thu, 21 Aug 2025 09:16:49 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC9A2EE608;
-	Thu, 21 Aug 2025 09:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4DA2E9ED4
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755767775; cv=none; b=dBEusaANfOqZLLNvGuGxZ62rflpUn1RtH9wD52yN3IAM1pgTxLxYy66f00ohoLcpGPUM6xbdMo5RLgwNMbg5pVn0FN4B76BGHWonzBTtZkjNRBysXrAKlo1VrJ26i6xiynlHThrfpk0EwUvOiqn9Hoa7g7sOmCkKTXINPwOaaGI=
+	t=1755767808; cv=none; b=Ut8SLcEkAAKsV9Gk3h729iyS1fBkanpCKXi507GYWi2ksDaIJhEKICu2BYeeWSwa4gHKT3lxPtChsRAwWfPJDRppPuZ7Z402ShD0w+BABioxbOcn+xmWQp/EBwxMYGjdiyT+77K0spNSMpQkTcFFshNUHHjhWo0AYzjsQuRJgPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755767775; c=relaxed/simple;
-	bh=IlBbD7/2oGs6Lk8SfFRvt28SijXC66fJ1NtknqYDkus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VVsUQ4jzjHBbo4giQXpoKSBhvzyfj6DZmsHoopOXnMes7W8UNL2W4b/tS7ajhlYXrHItVxn9yxccDchKOI4XCSaaC4OQH1UHoIrkzxmevBD3GelmXg9wqoSmnprvYRDQ2ZL+Mz0HXtCATVNERG97JCHk+LLCWphWMST0UoEYWxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=st9OtkkV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C03C4CEEB;
-	Thu, 21 Aug 2025 09:16:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755767773;
-	bh=IlBbD7/2oGs6Lk8SfFRvt28SijXC66fJ1NtknqYDkus=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=st9OtkkVMeEbhLP7hFmGaBqvP669DHm9wEkEvTVzgI47xye8cZEtrnuq2dgWF3yAJ
-	 5290eIihqNF/CGNT78N+CE5kc88ichZ5fnxpITOQ7mQmm0RDal6/dnoiMwNkxtQYHZ
-	 7cXNtqMHXq5yiLBZA2hI9VRo3FAjCmJN8ITAuoUz981+IfcO+gpHgeH+Jo2U0wcxQ2
-	 n6sewcW6NjcceyKoATHS7zMDcDNecJmeMWj7gimxhBvwDEIuouW0hrw0zjDIHgV1wS
-	 Snj+sNSIjj495JPcbGhyn1GRPhSK88OOKkttpt6jqtwXL6mImr8NsLhn7pH65yL939
-	 pwAM4ibF6IrBw==
-Date: Thu, 21 Aug 2025 17:16:08 +0800
-From: Coly Li <colyli@kernel.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, neil@brown.name, akpm@linux-foundation.org, 
-	linux-block@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	xni@redhat.com, yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com, 
-	johnny.chenyi@huawei.com
-Subject: Re: [PATCH] block: fix disordered IO in the case recursive split
-Message-ID: <7dro5o7u5t64d6bgiansesjavxcuvkq5p2pok7dtwkav7b7ape@3isfr44b6352>
-References: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1755767808; c=relaxed/simple;
+	bh=ropEjBSHDX8p61vp/pJarLywi5mA3DJAdMEbN9E5QIU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=E26N3RpVqk7mRsv6TUXWgpJf0qEpsIwh0F+ABh8q47UezjcQpAO++X+3VzqYSCHqjNQUGK38e6Ngpo0+/HzmGSxzjHLxLK9drK4o++Mf1cSQLhZj1SHoZpp1QsSzBQ3u+lBX9Q3c6uQznz7DPUCawahONLgff6i72nMPHr4GfEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [114.241.87.235])
+	by APP-01 (Coremail) with SMTP id qwCowADXAqfv46ZovXADDg--.14435S2;
+	Thu, 21 Aug 2025 17:16:31 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: [PATCH v2 0/5] riscv: Use __riscv_has_extension_{likely,unlikely}
+Date: Thu, 21 Aug 2025 17:16:30 +0800
+Message-Id: <20250821-riscv-altn-helper-wip-v2-0-9586fa702f78@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO7jpmgC/4WOTQ6CMBCFr0Jm7ZC2BDCuvIdhUcdBJuHPtlYN4
+ e5WOIDLb/LNe28Bz07YwylbwHEUL9OYwBwyoM6Od0a5JQajTKmORqETTxFtH0bsuJ/Z4UtmVMq
+ 2hS1LQ0UN6Xd23Mp7y700Ozt+PFN82I9wtZ6RpmGQcMpilesaHWn4yZ34MLnPtinqzf5THzUqp
+ IIqU5Fua67OSbM+t5TTCM26rl8IVKXC6QAAAA==
+X-Change-ID: 20250820-riscv-altn-helper-wip-00af3a552c37
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Yury Norov <yury.norov@gmail.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Charlie Jenkins <charlie@rivosinc.com>, 
+ Xiao Wang <xiao.w.wang@intel.com>, 
+ =?utf-8?q?Christoph_M=C3=BCllner?= <christoph.muellner@vrull.eu>, 
+ Vivian Wang <wangruikang@iscas.ac.cn>, Vivian Wang <uwu@dram.page>, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-CM-TRANSID:qwCowADXAqfv46ZovXADDg--.14435S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw17Xr4UArW3Zw4xJw1DZFb_yoW8ZF43pF
+	43Cr9I9Fn5G34Sq3Z3Ar12vr40vF4rWw1aqrsIgry8X3y2yryIgryqkw1rZryDtFZ7Zryq
+	kw13Cr1xuF17C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Thu, Aug 21, 2025 at 03:47:06PM +0800, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Currently, split bio will be chained to original bio, and original bio
-> will be resubmitted to the tail of current->bio_list, waiting for
-> split bio to be issued. However, if split bio get split again, the IO
-> order will be messed up, for example, in raid456 IO will first be
-> split by max_sector from md_submit_bio(), and then later be split
-> again by chunksize for internal handling:
-> 
-> For example, assume max_sectors is 1M, and chunksize is 512k
-> 
-> 1) issue a 2M IO:
-> 
-> bio issuing: 0+2M
-> current->bio_list: NULL
-> 
-> 2) md_submit_bio() split by max_sector:
-> 
-> bio issuing: 0+1M
-> current->bio_list: 1M+1M
-> 
-> 3) chunk_aligned_read() split by chunksize:
-> 
-> bio issuing: 0+512k
-> current->bio_list: 1M+1M -> 512k+512k
-> 
-> 4) after first bio issued, __submit_bio_noacct() will contuine issuing
-> next bio:
-> 
-> bio issuing: 1M+1M
-> current->bio_list: 512k+512k
-> bio issued: 0+512k
-> 
-> 5) chunk_aligned_read() split by chunksize:
-> 
-> bio issuing: 1M+512k
-> current->bio_list: 512k+512k -> 1536k+512k
-> bio issued: 0+512k
-> 
-> 6) no split afterwards, finally the issue order is:
-> 
-> 0+512k -> 1M+512k -> 512k+512k -> 1536k+512k
-> 
-> This behaviour will cause large IO read on raid456 endup to be small
-> discontinuous IO in underlying disks. Fix this problem by placing chanied
-> bio to the head of current->bio_list.
-> 
-> Test script: test on 8 disk raid5 with 64k chunksize
-> dd if=/dev/md0 of=/dev/null bs=4480k iflag=direct
-> 
-> Test results:
-> Before this patch
-> 1) iostat results:
-> Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz  aqu-sz  %util
-> md0           52430.00   3276.87     0.00   0.00    0.62    64.00   32.60  80.10
-> sd*           4487.00    409.00  2054.00  31.40    0.82    93.34    3.68  71.20
-> 2) blktrace G stage:
->   8,0    0   486445    11.357392936   843  G   R 14071424 + 128 [dd]
->   8,0    0   486451    11.357466360   843  G   R 14071168 + 128 [dd]
->   8,0    0   486454    11.357515868   843  G   R 14071296 + 128 [dd]
->   8,0    0   486468    11.357968099   843  G   R 14072192 + 128 [dd]
->   8,0    0   486474    11.358031320   843  G   R 14071936 + 128 [dd]
->   8,0    0   486480    11.358096298   843  G   R 14071552 + 128 [dd]
->   8,0    0   486490    11.358303858   843  G   R 14071808 + 128 [dd]
-> 3) io seek for sdx:
-> Noted io seek is the result from blktrace D stage, statistic of:
-> ABS((offset of next IO) - (offset + len of previous IO))
-> 
-> Read|Write seek
-> cnt 55175, zero cnt 25079
->     >=(KB) .. <(KB)     : count       ratio |distribution                            |
->          0 .. 1         : 25079       45.5% |########################################|
->          1 .. 2         : 0            0.0% |                                        |
->          2 .. 4         : 0            0.0% |                                        |
->          4 .. 8         : 0            0.0% |                                        |
->          8 .. 16        : 0            0.0% |                                        |
->         16 .. 32        : 0            0.0% |                                        |
->         32 .. 64        : 12540       22.7% |#####################                   |
->         64 .. 128       : 2508         4.5% |#####                                   |
->        128 .. 256       : 0            0.0% |                                        |
->        256 .. 512       : 10032       18.2% |#################                       |
->        512 .. 1024      : 5016         9.1% |#########                               |
-> 
-> After this patch:
-> 1) iostat results:
-> Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz  aqu-sz  %util
-> md0           87965.00   5271.88     0.00   0.00    0.16    61.37   14.03  90.60
-> sd*           6020.00    658.44  5117.00  45.95    0.44   112.00    2.68  86.50
-> 2) blktrace G stage:
->   8,0    0   206296     5.354894072   664  G   R 7156992 + 128 [dd]
->   8,0    0   206305     5.355018179   664  G   R 7157248 + 128 [dd]
->   8,0    0   206316     5.355204438   664  G   R 7157504 + 128 [dd]
->   8,0    0   206319     5.355241048   664  G   R 7157760 + 128 [dd]
->   8,0    0   206333     5.355500923   664  G   R 7158016 + 128 [dd]
->   8,0    0   206344     5.355837806   664  G   R 7158272 + 128 [dd]
->   8,0    0   206353     5.355960395   664  G   R 7158528 + 128 [dd]
->   8,0    0   206357     5.356020772   664  G   R 7158784 + 128 [dd]
-> 2) io seek for sdx
-> Read|Write seek
-> cnt 28644, zero cnt 21483
->     >=(KB) .. <(KB)     : count       ratio |distribution                            |
->          0 .. 1         : 21483       75.0% |########################################|
->          1 .. 2         : 0            0.0% |                                        |
->          2 .. 4         : 0            0.0% |                                        |
->          4 .. 8         : 0            0.0% |                                        |
->          8 .. 16        : 0            0.0% |                                        |
->         16 .. 32        : 0            0.0% |                                        |
->         32 .. 64        : 7161        25.0% |##############                          |
-> 
-> BTW, this looks like a long term problem from day one, and large
-> sequential IO read is pretty common case like video playing.
-> 
-> And even with this patch, in this test case IO is merged to at most 128k
-> is due to block layer plug limit BLK_PLUG_FLUSH_SIZE, increase such
-> limit and cat get even better performance. However, we'll figure out
-> how to do this properly later.
-> 
-> Fixes: d89d87965dcb ("When stacked block devices are in-use (e.g. md or dm), the recursive calls")
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+There are about a dozen uses of asm goto in arch/riscv just to select
+between two code paths with the alternative mechanism. Convert them to
+the existing helpers __riscv_has_extension_{likely,unlikely}.
 
-BTW, this issue was not originally caught by me, my colleague Tie Ren found it.
+In each case, I have preserved the existing code's choice of asm goto
+pattern while picking between "likely" and "unlikely", namely:
 
-Please consider to add,
-	Reported-by: Tie Ren <tieren@fnnas.com>
+  ALTERNATIVE("j %l[no]", "nop", ...)   -> "likely"
+  ALTERNATIVE("nop", "j %l[yes]", ...)  -> "unlikely"
 
-Thanks.
+Since the helpers are just implementations of these patterns, the
+performance should be the same as before.
 
-Coly Li
+These patches are also available at:
 
-> ---
->  block/blk-core.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index 4201504158a1..0d46d10edb22 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -745,12 +745,16 @@ void submit_bio_noacct_nocheck(struct bio *bio)
->  	 * to collect a list of requests submited by a ->submit_bio method while
->  	 * it is active, and then process them after it returned.
->  	 */
-> -	if (current->bio_list)
-> -		bio_list_add(&current->bio_list[0], bio);
-> -	else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
-> +	if (current->bio_list) {
-> +		if (bio_flagged(bio, BIO_CHAIN))
-> +			bio_list_add_head(&current->bio_list[0], bio);
-> +		else
-> +			bio_list_add(&current->bio_list[0], bio);
-> +	} else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO)) {
->  		__submit_bio_noacct_mq(bio);
-> -	else
-> +	} else {
->  		__submit_bio_noacct(bio);
-> +	}
->  }
->  
->  static blk_status_t blk_validate_atomic_write_op_size(struct request_queue *q,
-> -- 
-> 2.39.2
-> 
-> 
+https://github.com/dramforever/linux/tree/riscv/altn-helper/v2
+
+---
+Changes in v2:
+- Cc'd authors who initially introduced the asm goto blocks
+- Use existing __riscv_has_extension_{likely,unlikely} instead
+- Remove bogus comment for Zbb being likely (checksum)
+- Restructured patch to minimize diff (bitops, hweight, cmpxchg)
+- Link to v1: https://lore.kernel.org/r/20250820-riscv-altn-helper-wip-v1-0-c3c626c1f7e6@iscas.ac.cn
+
+---
+Vivian Wang (5):
+      riscv: pgtable: Use __riscv_has_extension_unlikely
+      riscv: checksum: Use __riscv_has_extension_likely
+      riscv: hweight: Use __riscv_has_extension_likely
+      riscv: bitops: Use __riscv_has_extension_likely
+      riscv: cmpxchg: Use __riscv_has_extension_likely
+
+ arch/riscv/include/asm/arch_hweight.h | 24 ++++++----------
+ arch/riscv/include/asm/bitops.h       | 32 ++++++---------------
+ arch/riscv/include/asm/checksum.h     | 13 +++------
+ arch/riscv/include/asm/cmpxchg.h      | 12 +++-----
+ arch/riscv/include/asm/pgtable.h      | 15 +++++-----
+ arch/riscv/lib/csum.c                 | 53 ++++++++---------------------------
+ arch/riscv/mm/pgtable.c               | 22 +++++++--------
+ 7 files changed, 53 insertions(+), 118 deletions(-)
+---
+base-commit: 062b3e4a1f880f104a8d4b90b767788786aa7b78
+change-id: 20250820-riscv-altn-helper-wip-00af3a552c37
+
+Best regards,
+-- 
+Vivian "dramforever" Wang
+
 
