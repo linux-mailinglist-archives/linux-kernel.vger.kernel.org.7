@@ -1,142 +1,157 @@
-Return-Path: <linux-kernel+bounces-780323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75988B3006F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:50:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9847B30072
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E61EE585EDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:45:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 461971C209B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700AF2E5417;
-	Thu, 21 Aug 2025 16:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FEE2E427B;
+	Thu, 21 Aug 2025 16:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X6SET56j"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="Ng7N4n9h";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OSYTZMdM"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764482E4258
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 16:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AE92E54BA;
+	Thu, 21 Aug 2025 16:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755794746; cv=none; b=FBgzSQa+WPpLI641jz9L+hPhL8kZajiUeBsHOKD3sQEshU9s3wX4GLczBHl9N9f3Ozes6tZJhg8dGACyDAz6IyZFYBbwbmjrRJpojrTJhtXpcSDoFoCHhscbcy32dISmG69rQcvtP2a2G4thrfvwMf2OksttZAnneESiaY15o64=
+	t=1755794774; cv=none; b=ovCrO5WV5WulXZKoBcfuzlkW9zKzy6XY8+wUjb79woH8moAmPL7ZA2FHS0IM0eJxnwEFB4fqqevOHdF65ZpHS2dtNabAL/CnqITNWEEIl4cjBQnnf4AOreak7anQSuy4N0MjWJX6UMmPXlfRJ8LJENL5uaGCu1+fZ6YMvvw+ruw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755794746; c=relaxed/simple;
-	bh=MhG6HxqKpezhCtJQ2gfazEz5am5SvJZx5BGlHvwcFv0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zq/6kb+ckBawGOI8mSQE06tSwNOM9fW/gDfpDBH0x4Jofr3zvZyFnQfuxjmEzs6yMJGiUwXctbkQ1uAd7dplJm22OFqktujnFkjQCD824YtwLu2c1rZOBJmrbe5GS3k9uTvur+ai9oUGyqLiMG5W/VmnFUVw95/Ly4KviroYBt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X6SET56j; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24611734e50so845ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755794745; x=1756399545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dtcRwK56gAR8ZwI/7e//HivvdSeZfhowhjhRYyj31VI=;
-        b=X6SET56jXmXBmRB20NuZDESqGfovDMkNsS5DWNA6lF8y+neLUqTEuhvXMVkgVA3YzZ
-         UV5MzUHdsRngbq33zKqDNlTQRY/p4Y4ukH5FrEy3G6QflyKu+6Y92BWCQoFHVgfMC/ow
-         2yDsVRFe8l2FMKwKBgFEZ7bdAQIebtWmEvsU0IB2Yz4ZAh/GyUMBhu0LDMPerAwIv4so
-         h9BqfcFlMaGyszRrwkhqdw/UyT5yNddaGfAM/getCRA2lIqeJGwJyShpxyvVnEU+bQde
-         Vq4g4jhbSVEYtHb0oc0UG9+3nAN3Jjf0UHBdxiWJ4SY+eQHPttTcdrgrl7Fy173gdMiZ
-         FRCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755794745; x=1756399545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dtcRwK56gAR8ZwI/7e//HivvdSeZfhowhjhRYyj31VI=;
-        b=icY7DpBl8mxp2olD1X/ZmhLnwEe/OmGevJEbzZqTI2HxbwFFMmSgIVD9o499wmXaKu
-         cIb0lM53AeS4zshNkn+XJkmdr7VvYXuirmonEEeDaHufGmSlT9QoGnj18ACE04L2OOkk
-         O74ZzKSLg/C/TF0qifrDoc9xYek7BpPdqTzM/00YHkz48+UVzxQt2g8b4OL1G1R2eV15
-         RNuKSkWvwbkv/2xz2thodMK/FBfAtme9Q/eQ0uwm3kEgSHy+lMJ804gItBaD3xfG6+wT
-         Pl/2EQRzoYFeXbZtJyEtJWPS4/PrMuCv1OrvO3Da02OYJ7WngsaCVIy011S1Ps/9PM0/
-         v3ng==
-X-Forwarded-Encrypted: i=1; AJvYcCXp+ifdxCm1lORuIt6cXqE/TERGPxTJqIGmOjfYTeyztsMj1xSOl7tJtl7Iq37kuJkEEybTbGBkSG3pIYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSjjYIv1vYuYAI0W66GduuCmpiKWRfr5iIq+k6UaAORxul8Way
-	7OiHhh55es/heibOhCkv4u8Hyc/IbkO7yToBctcPVrNH3nEChL7Y7bsLe9foKcgFlxZrkTpT3m1
-	62l5PUA2Xs5O7Rv0NZ2P0v/gxdGY2rV7bHwyhkaWM
-X-Gm-Gg: ASbGncvDrNajNxm/xNR+redDGgcYbbkSVAGoPK4hpODG7aZh1lv2mci2jop2v/EMFhh
-	U33aVcTitKYttdmnBCLEAgA2pqRv1iqScEWoJ7p9ESHBsZzq5OJc+k2Ar9ZWLYhg3OskqiFMOL9
-	xekiNIy8bw1meveeheAUU34U4Cee9/m7ZkGsA4/LCxK/Bmxxg6yQmfGCPWqFnpLQPAsUwdcN3Ns
-	9OUidLFZh0kHu9km1xOyVYgNuKwXorZtEpMrbe+6+o=
-X-Google-Smtp-Source: AGHT+IGc5M2pH+JuphSt7Wrta4P/SsO44cJ6Mc9+TzDooWaV+WIJJPFwCe1ixQlSizXmDs/0AaMxJ6grKNm5ZGhx0QA=
-X-Received: by 2002:a17:902:f552:b0:245:f7a8:bc60 with SMTP id
- d9443c01a7336-245ffa76584mr4413645ad.16.1755794744597; Thu, 21 Aug 2025
- 09:45:44 -0700 (PDT)
+	s=arc-20240116; t=1755794774; c=relaxed/simple;
+	bh=DcrE6+JxXxbNj6GZ08XgNzzMqLYDnItWhUBIpf2DxRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k2GJMttrqpyqmfByUaYwGPoI/+X2Z+Q6eZeFowKDqB8WTbQmx9f1qKnJlvLje93TQkOXxgw5/RsHKKxL+IJfyNzfEvk/EK9L3xuQtPKkuW51MWQO1G00DkTyJBGeaGX2V8a5WreL9t1MUKjFiruSUcIHfHEKO3iDQ8ov3HWkLDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=Ng7N4n9h; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OSYTZMdM; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4A4F0EC0787;
+	Thu, 21 Aug 2025 12:46:12 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Thu, 21 Aug 2025 12:46:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1755794772; x=1755881172; bh=0L3vM6YLmg
+	9pq/ypW1IqncbW6S6DkPhBxKBhDP3z0o0=; b=Ng7N4n9hWaKAXoCUELKodmIoji
+	oDL3Zzpv7nQCCsaclA0XaLOjXCyXp5c6tn54FhoT3QrxEtGRpF/P4Z/CAcq14OJR
+	/BLDh4Y5OVUvMxcE8qZnzEEjzq+hjmbbY8fMuyc6bCWqPpYWmYlpfeWZHXnAOWA8
+	+Zt2E4RTMAbjOp1yReYdCwymgE2UXV1FQ8/a12O+RrQK3pjZMyxEnKQG6Gs2YJhs
+	wWmw5COkxZzWq5tlC225WBY77NwedNmQJhZyTR0eFntmo7rBe7ANiHYI5t2Zn4vl
+	SVLYkck3kIP1XfGIZRCRei4h5rfFtbqQ516kp5whyjPCnKlUD/q5EwXfdV/A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1755794772; x=1755881172; bh=0L3vM6YLmg9pq/ypW1IqncbW6S6DkPhBxKB
+	hDP3z0o0=; b=OSYTZMdMAIaG24G5LpRZuVxYDMHEnqIZNPTIkiKpV/6nKgIx49S
+	fGLl2phjvaJ+Bubu2ZbsSY2QBZk3KM0i4LCiwnRhsDjrEiW1pX93GFLxU69c0wWc
+	IrgqarCbu5oyv4l2qFxIsRrg8ywScwMbubQZXMiOCJRL1yq9FpQmKjbyINYoB41a
+	5CggNO9p9DkUw/qSm3Sd03LZhuSkvQU3KKlM97fvw44hNWQeJMaB9U53pUAiwm1v
+	TIaNkV6sae5rNkwvfPDu/ujAOXX4cR5GFAZp4rvmcg9jP8dfeZhzk/X8iUH8Y3fJ
+	1AbOkF2uDxu95rhV7uMbpbnbQ72PVesZM/w==
+X-ME-Sender: <xms:U02naD1N0U4V6oV3luaKuJXxkv0zi0v6MnhWUXbm4UcDjFzVZxDjtA>
+    <xme:U02naPyX0r1a-0rYWFWGTsV2EhBJAIpcy3nqA9cDzCFN1SB-DE0AjmF5g2KC2e_RB
+    8kD-gYPmUflUcm_Iyw>
+X-ME-Received: <xmr:U02naFoI-v70Z4EWn51BxGS4H7ZZec5W_gZOC-ALfJEclI_XWcD_ZE51OBloEypSOPEhYljIIoCGZ2YGgcF0HiW-zm2KGAWsSqo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedujeehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcu
+    ifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgvd
+    ffveelgedujeeffeehheekheelheefgfejffeftedugeethfeuudefheefteenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruh
+    drnhgvthdpnhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehsvhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlih
+    hnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggrlhgs
+    iheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlhihsshgrsehrohhsvghniiifvg
+    highdrihhopdhrtghpthhtohepnhgvrghlsehgohhmphgrrdguvghvpdhrtghpthhtohep
+    vhhkohhulheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:U02naFUjWm7bqMbHMqhQOCBhCTseEZUUqtqp52JO8fKZz8P1qoCuSg>
+    <xmx:U02naMr_1gCuchPPYb_lPU7gPd33-HA5ykGlwbhi5ub0OkizlWaajQ>
+    <xmx:U02naJGGXIlio0tWiw2kv2dxlo_bRfyM7IUSQTIlc135VcoQnhlV6w>
+    <xmx:U02naOtFBjO-D_11veXXRj35ifrFUX03GuGhNW1JFbdYuu5srvLD5A>
+    <xmx:VE2naLhO1Uz_DBEYnjSUo92ko0qwruBAvn3Kka33EQIKTm_9aTB1P2JV>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Aug 2025 12:46:11 -0400 (EDT)
+Date: Thu, 21 Aug 2025 18:46:10 +0200
+From: Janne Grunau <j@jannau.net>
+To: Sven Peter <sven@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH RFC 13/22] usb: typec: tipd: Read USB4, Thunderbolt and
+ DisplayPort status for cd321x
+Message-ID: <20250821164610.GF1270980@robin.jannau.net>
+References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
+ <20250821-atcphy-6-17-v1-13-172beda182b8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250519232539.831842-1-namhyung@kernel.org> <CAH0uvohxb4gvHYswCZMvCrrOn=0qSOeOaYyDVPEFb4GPhwntgw@mail.gmail.com>
- <CAP-5=fWZectSpLzkfJUj-W-_oxhDJdnnOE18ET_iPb+bjmTdHw@mail.gmail.com> <aCz-wD2Syq8mj2_0@google.com>
-In-Reply-To: <aCz-wD2Syq8mj2_0@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 21 Aug 2025 09:45:33 -0700
-X-Gm-Features: Ac12FXwUBrTyS3oSzZtgEAH-YrEQkY0lFhTx9npzI33o1HnplYpkYxpBT8BeAbM
-Message-ID: <CAP-5=fVNgN5Budwaao_GqrZRN2wSrvo7CQySU-D9eEpnwBhY2A@mail.gmail.com>
-Subject: Re: [PATCH] perf trace: Increase syscall handler map size to 1024
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Howard Chu <howardchu95@gmail.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250821-atcphy-6-17-v1-13-172beda182b8@kernel.org>
 
-On Tue, May 20, 2025 at 3:14=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hi Ian,
->
-> On Tue, May 20, 2025 at 08:05:37AM -0700, Ian Rogers wrote:
-> > On Mon, May 19, 2025 at 4:36=E2=80=AFPM Howard Chu <howardchu95@gmail.c=
-om> wrote:
-> > >
-> > > Hello Namhyung,
-> > >
-> > > On Mon, May 19, 2025 at 4:25=E2=80=AFPM Namhyung Kim <namhyung@kernel=
-.org> wrote:
-> > > >
-> > > > The syscalls_sys_{enter,exit} map in augmented_raw_syscalls.bpf.c h=
-as
-> > > > max entries of 512.  Usually syscall numbers are smaller than this =
-but
-> > > > x86 has x32 ABI where syscalls start from 512.
-> > > >
-> > > > That makes trace__init_syscalls_bpf_prog_array_maps() fail in the m=
-iddle
-> > > > of the loop when it accesses those keys.  As the loop iteration is =
-not
-> > > > ordered by syscall numbers anymore, the failure can affect non-x32
-> > > > syscalls.
-> > > >
-> > > > Let's increase the map size to 1024 so that it can handle those ABI=
-s
-> > > > too.  While most systems won't need this, increasing the size will =
-be
-> > > > safer for potential future changes.
-> >
-> > Do we need to worry about MIPS where syscalls can be offset by 1000s?
-> > https://lore.kernel.org/lkml/8ed7dfb2-1e4d-4aa4-a04b-0397a89365d1@app.f=
-astmail.com/
->
-> Argh..
->
-> > We could do with a map that combines BPF_MAP_TYPE_HASH with the tails
-> > calls of BPF_MAP_TYPE_PROG_ARRAY.
->
-> Right, it'd complicate things but I think it's doable.
+On Thu, Aug 21, 2025 at 03:39:05PM +0000, Sven Peter wrote:
+> CD321x supports various alternate modes and stores information once
+> these are entered into separate status registers. Read those when they
+> are active when reading TPS_DATA_STATUS to prepare supporting these.
+> 
+> Signed-off-by: Sven Peter <sven@kernel.org>
+> ---
+>  drivers/usb/typec/tipd/core.c | 81 ++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 77 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+> index 51b0f3be8b66a743ddc3ea96c1b25f597a1e8f6c..59d270eb50ea3dc49ad32ff71f8354e23c1083c9 100644
+> --- a/drivers/usb/typec/tipd/core.c
+> +++ b/drivers/usb/typec/tipd/core.c
+> @@ -35,14 +35,19 @@
+>  #define TPS_REG_INT_MASK2		0x17
+>  #define TPS_REG_INT_CLEAR1		0x18
+>  #define TPS_REG_INT_CLEAR2		0x19
+> -#define TPS_REG_SYSTEM_POWER_STATE	0x20
+>  #define TPS_REG_STATUS			0x1a
+> +#define TPS_REG_SYSTEM_POWER_STATE	0x20
+> +#define TPS_REG_USB4_STATUS		0x24
+> +#define TPS_REG_DP_SID_STATUS		0x58
 
-Should we merge the x32 fix while waiting for the hash fix?
+TPS_REG_DP_SID_STATUS is added twice, below in the correct order
 
-Thanks,
-Ian
+>  #define TPS_REG_SYSTEM_CONF		0x28
+>  #define TPS_REG_CTRL_CONF		0x29
+>  #define TPS_REG_BOOT_STATUS		0x2D
+>  #define TPS_REG_POWER_STATUS		0x3f
+>  #define TPS_REG_PD_STATUS		0x40
+>  #define TPS_REG_RX_IDENTITY_SOP		0x48
+> +#define TPS_REG_CF_VID_STATUS		0x5e
+> +#define TPS_REG_DP_SID_STATUS		0x58
+
+here
+
+Janne
 
