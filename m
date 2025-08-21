@@ -1,102 +1,196 @@
-Return-Path: <linux-kernel+bounces-779543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E870B2F569
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:35:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64871B2F57A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F27F87BF15D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CEF016F2DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C35305062;
-	Thu, 21 Aug 2025 10:34:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B541C701F;
-	Thu, 21 Aug 2025 10:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A343054EE;
+	Thu, 21 Aug 2025 10:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Zzu56/8X"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2FC20D4E9;
+	Thu, 21 Aug 2025 10:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755772492; cv=none; b=ivEA+oDihvjt1H/4IGxQZEg0hXvdtN1JS+Jp+mOV8xpZAEu8uVKa0TTMRc2pAB3MURnKF2uLdwUj+knRadjiC6NpuC1sxonovOTE4poi/px1xXfFqtk9WqhH23q+xrRfsSIJjG2TZW4xqd5C+/1rMPIv24bbRJkO8nxKR1F1XYE=
+	t=1755772564; cv=none; b=VaQpUXJvVQO012vrdrKV4+c1aJyX3E9PKb7iHxgHfQBg/ei8z1Si9DZ1Zh28c/s6zkfVpfEIiZnQdHNSLP3iIo4kk8G1KzGGnJpFzbHTQ4b5TY2z3wbY3NmfXJW5XafmQP+iBcCnRihHCvNFfXKM+yQAQYTyGkwvVjLXEE2pHMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755772492; c=relaxed/simple;
-	bh=red0dGa++TOzVhe/hYcvQlEOP59ONxx+JtjyD02D1/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JJrHIMapd7mX8R0MqQnHwXqrGBaEBNQxndzuOcl/HySu8X0TV9mqFajWvUI6fupgx5Serw3F9SAa8OwJvadrZIbCPm+TCYqxPCgDm81oWoH3unlp3ye2fQyWU2SjO1yhDtQTHpEU0QrNUt4kbtxGDtCmq+ioCQMEAcTMKzDgzFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3830C152B;
-	Thu, 21 Aug 2025 03:34:42 -0700 (PDT)
-Received: from [10.57.91.188] (unknown [10.57.91.188])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 334CD3F63F;
-	Thu, 21 Aug 2025 03:34:44 -0700 (PDT)
-Message-ID: <f997a8ec-26aa-45f3-a757-d221321c8607@arm.com>
-Date: Thu, 21 Aug 2025 12:34:41 +0200
+	s=arc-20240116; t=1755772564; c=relaxed/simple;
+	bh=3eiXtDFL+TiNhIYNwcA17FNhl8ql+o1EmOT6uDEdQhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JkNPXJihFMDa/RRts+XRDP9EHhkoLOpdhJ9YiGvZyAJZnxrOuQyjBG6nZpIRL6+n0dvX57uc+7P8yz6q+hp7qNBSUI5zFK5TWV30iRK2fhO6uAUInZftojYYVcp3+R6viiBaoLZEXSk3snsICSB5sDzZEUkA4aeXS0bhtwSyobU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Zzu56/8X; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L6WhGX007291;
+	Thu, 21 Aug 2025 10:35:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=p/B2y/2toKUTDV+0i8ur2afBFLuK9+
+	7m6jozN7zkskE=; b=Zzu56/8Xd7rWEycqLXBrmMmsiSvR1Z9OP1rlzvoX1r39ou
+	P7XS2SMvf6bjXL5odogK/6+hhBVL/M9sThHYV6TAhAFHvde9AaxeY/TZH6ofEmwO
+	jAMi9Sb847mjGpaMo3vBNsOcaaQvybBumZ4plNRQdNN92tEmjSuDQ83Mw0T15BZ5
+	O17KesFhcz+jYQSTk4tAfBpaO4VLLyj/zzr8XtckXr8dtCszqmKmVNtZDcDB2CAf
+	A6n24rSF7NajU73bHz28rHBDCXIFTGWSFAIbNX/TDaa/mvHQ84HGCT9v1N2beJvp
+	rzQlO+eNk5btLgXWDLT1CjK5yz1s/CKAghhy4xsQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38w0092-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 10:35:52 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57LAJHK4006441;
+	Thu, 21 Aug 2025 10:35:51 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38w008y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 10:35:51 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57L6pSOj024786;
+	Thu, 21 Aug 2025 10:35:50 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48my5vyupd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 10:35:50 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57LAZmAN41812236
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Aug 2025 10:35:48 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A66C220043;
+	Thu, 21 Aug 2025 10:35:48 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8D16D20040;
+	Thu, 21 Aug 2025 10:35:46 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 21 Aug 2025 10:35:46 +0000 (GMT)
+Date: Thu, 21 Aug 2025 16:05:44 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        john.g.garry@oracle.com, tytso@mit.edu, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v4 01/11] common/rc: Add _min() and _max() helpers
+Message-ID: <aKb2gB9WC8mdez6e@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1754833177.git.ojaswin@linux.ibm.com>
+ <43f45a0885f28fd1d1a88122a42830dd9eeb7e2c.1754833177.git.ojaswin@linux.ibm.com>
+ <20250813132034.6d0771de@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] selftests/mm: Add -Wunreachable-code and fix
- warnings
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Peter Xu <peterx@redhat.com>, Leon Romanovsky <leon@kernel.org>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, Shuah Khan <shuah@kernel.org>
-Cc: kernel@collabora.com
-References: <20250731160132.1795351-1-usama.anjum@collabora.com>
- <20250731160132.1795351-2-usama.anjum@collabora.com>
- <c09a2a13-8571-44e5-b780-c704598df764@arm.com>
- <46dce2ac-adb5-4a6b-8847-fe214c1599a7@collabora.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <46dce2ac-adb5-4a6b-8847-fe214c1599a7@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813132034.6d0771de@pumpkin>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: vECXwCi-SPoW-pZk6aQNMll0Be370F7r
+X-Proofpoint-GUID: bkkIkRjOvtNhHZyKpktEU6OsgE2YOM6v
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfX2NJ2ouscLGit
+ 16q1JnD8uHPR7fKGC/tGNCONy/Ca8vCC32v28rvm3UvtGat3A74clzQupwwRybm0WSJf4Q8Q2vu
+ QQySN1r0HyL136jGlE/j1WAmX31bC5NEJnicaIFYhaXUxqObyGEPrbs9BtwkB9Ui5TUW0VqzNAd
+ 1MXTwXzVj+N1MGK7A5aeQa0r7u/spcqekda1y4VCyE0d4Mczm+HVwIxyHNsgYZSBsJ3XDc/yyVu
+ NgP0J4jPQX1TCZbN+LlgmrwpDyJ0PkpvRzFPix8DVwE5+xLhBMublFZFZcqPbw2+eIMWYL+Jtsn
+ DIkxCpXydy4Vyi1RKvggazetOyw906Lc/H1AXCoNFh51qjBhO9h6zMX5y34iw7EuEZKMSz6CnFU
+ ttSp3cQzw9edJQoWDu5TdCIpAyjUFw==
+X-Authority-Analysis: v=2.4 cv=a9dpNUSF c=1 sm=1 tr=0 ts=68a6f688 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
+ a=TSqor-If1qTvfEId-wcA:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 adultscore=0 impostorscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190222
 
-On 21/08/2025 08:19, Muhammad Usama Anjum wrote:
->>> [...]
->>>
->>> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
->>> index 05de1fc0005b7..a85b2e393e4e8 100644
->>> --- a/tools/testing/selftests/mm/split_huge_page_test.c
->>> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
->>> @@ -296,10 +296,8 @@ void split_file_backed_thp(int order)
->>>  		ksft_exit_fail_msg("Unable to create a tmpfs for testing\n");
->>>  
->>>  	status = snprintf(testfile, INPUT_MAX, "%s/thp_file", tmpfs_loc);
->>> -	if (status >= INPUT_MAX) {
->>> +	if (status >= INPUT_MAX)
->>>  		ksft_exit_fail_msg("Fail to create file-backed THP split testing file\n");
->>> -		goto cleanup;
->> At that point the mount() call has succeeded so I think we do want to
->> keep the goto and just print the error message instead of calling
->> replace ksft_exit_fail_msg().
-> The cleanup tag does cleanup and then calls ksft_exit_fail_msg() without printing the
-> actual reason of failure. So current flow seems good where information about the error
-> is being printed.
+On Wed, Aug 13, 2025 at 01:20:34PM +0100, David Laight wrote:
+> On Sun, 10 Aug 2025 19:11:52 +0530
+> Ojaswin Mujoo <ojaswin@linux.ibm.com> wrote:
+> 
+> > Many programs open code these functionalities so add it as a generic helper
+> > in common/rc
+> > 
+> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > ---
+> >  common/rc | 22 ++++++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> > 
+> > diff --git a/common/rc b/common/rc
+> > index 96578d15..3858ddce 100644
+> > --- a/common/rc
+> > +++ b/common/rc
+> > @@ -5873,6 +5873,28 @@ _require_program() {
+> >  	_have_program "$1" || _notrun "$tag required"
+> >  }
+> >  
+> > +_min() {
+> > +	local ret
+> > +
+> > +	for arg in "$@"; do
+> > +		if [ -z "$ret" ] || (( $arg < $ret )); then
+> > +			ret="$arg"
+> > +		fi
+> > +	done
+> > +	echo $ret
+> > +}
+> 
+> Perhaps:
+> 	local ret="$1"
+> 	shift
+> 	for arg in "$@"; do
+> 		ret=$(((arg) < (ret) ? (arg) : (ret)))
+> 	done;
+> 	echo "$ret"
+> that should work for 'min 10 "2 + 3"' (with bash, but not dash).
+> 
+> 	David
 
-My point is that with this patch, ksft_exit_fail_msg() still causes the
-test to exit right away without the cleanup steps (i.e.
-unmounting/removing the directory) being executed. Printing a specific
-error message is good but we should also run the cleanup steps.
+Hi David,
 
-- Kevin
+Thanks for the feedback. I agree that your way is slightly better but i
+would like to keep the current patch as is since we already have some
+reviews on it and I would prefer to keep the code as is (especially
+since both ways are close enough). Hope this is okay.
+
+Also, we can always do 
+
+_min 10 $((2 + 3)) 
+
+which is a bit more intuitive imo
+
+Regards,
+ojaswin
+
+> 
+> > +
+> > +_max() {
+> > +	local ret
+> > +
+> > +	for arg in "$@"; do
+> > +		if [ -z "$ret" ] || (( $arg > $ret )); then
+> > +			ret="$arg"
+> > +		fi
+> > +	done
+> > +	echo $ret
+> > +}
+> > +
+> >  ################################################################################
+> >  # make sure this script returns success
+> >  /bin/true
+> 
 
