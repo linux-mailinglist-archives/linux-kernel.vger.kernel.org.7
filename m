@@ -1,213 +1,119 @@
-Return-Path: <linux-kernel+bounces-779433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7CDB2F415
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:36:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5360FB2F40C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC581A2777A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE591BC1C19
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69722D9788;
-	Thu, 21 Aug 2025 09:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BB92D9ED8;
+	Thu, 21 Aug 2025 09:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e060DsRR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="Ui9zIsF2"
+Received: from 9.mo533.mail-out.ovh.net (9.mo533.mail-out.ovh.net [188.165.47.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D7619007D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672871DF74F
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.47.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755768895; cv=none; b=qCKhaZXP+URVm1zG94CT3Dbea+xSIsDJ2AQA19hm9jpif3V5AEluMMWoEtCEpv133sKiYJO6lbXlzH/CpjpKp/NVqxs+J2v+BtCdejDgeCRP+pyE8A87YUlPpkMuBa2j4loh7EnisyBm9SwMFdj3GNiYugcJXRbkkkvAhqlA1xk=
+	t=1755768910; cv=none; b=NzpvU0V8Ed33aiXxv9qbt2tnKl5kpf9GjH1I+aVd0gximXcfVO1OeYOAl2CTrncH783pdx4wgEdkrbxOEkjR2W6k/fR38K4eAx67WrHGg3C4MRWjdCEZK+dMkBoIl1JSiGqVT3CIRGgd+HWwJtKW88UOKEtf/NqH0oq3/32c/0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755768895; c=relaxed/simple;
-	bh=6Vk2rNv6sQPb2ve7Pj2mP/GF1p2TJt4JFMI53lJXfL8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kHMU5NVrtgNbA5uxhppO5xMBqMp51KadCe0NSN6sLoK2hV902Xb6oeY2DKUhQFddYfplQ/Uch0SB8ZGQQXO0D0CuhYLYuZ8BelJ80bzIrP7LZodP6jtE/cLu+w1GF7DDgYAWcmy69gaY6gTsupXg9SwFshqQnSjuYuRVQC2630Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e060DsRR; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755768893; x=1787304893;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=6Vk2rNv6sQPb2ve7Pj2mP/GF1p2TJt4JFMI53lJXfL8=;
-  b=e060DsRRG+6ceEXyKtBuiE/PaJW+FzC3V4VF6BI5Gr1qxLumn3rbfGt6
-   5CrlS5dU26wffayxyJF0MRfJcmstZzAIggmUbrsJmBZSeuYInGLSCBz3n
-   UEk25uMOE1YZ1nIoHYSd9geNxi7uC1veX8RHUNokFxqOmGojU5OA4Ovns
-   cYmI3j14Jp+7wArEoB/mSWrplVLq4/hURinqB+/0QUS6GV3dzBuJqQ7WH
-   nnEaTJJdrSDYsCaZ/RDRvoT22NvylG6Cel8zyf1H82iDHwRaKYTa8ElbR
-   UrX01uCu1WBgwOjwsIf/ANH2wZ2HjXkFTN2vBnoDAXPg+CKkFMuVpoqQx
-   Q==;
-X-CSE-ConnectionGUID: aauKTFn4RhSb/jit2fgX+g==
-X-CSE-MsgGUID: HfWJ+AFnSq2Pi2NHOXjYPA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="57978877"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="57978877"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 02:34:52 -0700
-X-CSE-ConnectionGUID: Y0heiNaWTYy4UVfXra6P2w==
-X-CSE-MsgGUID: N5zt3aWDSC2Q5n+oE/9ILg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="172786862"
-Received: from johunt-mobl9.ger.corp.intel.com (HELO [10.245.245.201]) ([10.245.245.201])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 02:34:31 -0700
-Message-ID: <05360f1a920afe31ddd743d21f217d7bf8ff1c45.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 1/6] mm/mmu_notifier: Allow multiple struct
- mmu_interval_notifier passes
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Matthew Brost <matthew.brost@intel.com>
-Cc: Alistair Popple <apopple@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	intel-xe@lists.freedesktop.org, Andrew Morton <akpm@linux-foundation.org>, 
- Simona Vetter <simona.vetter@ffwll.ch>, Dave Airlie <airlied@gmail.com>,
- dri-devel@lists.freedesktop.org, 	linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Christian =?ISO-8859-1?Q?K=F6nig?=	
- <christian.koenig@amd.com>
-Date: Thu, 21 Aug 2025 11:34:25 +0200
-In-Reply-To: <aKSZ1JduQwAFSFQn@lstrano-desk.jf.intel.com>
-References: <20250809135137.259427-1-thomas.hellstrom@linux.intel.com>
-	 <20250809135137.259427-2-thomas.hellstrom@linux.intel.com>
-	 <20250818160726.GH599331@ziepe.ca>
-	 <aKNT8GUu0r3i4Ikq@lstrano-desk.jf.intel.com>
-	 <20250818163617.GI599331@ziepe.ca>
-	 <aKNYUaPS0PiRk/yj@lstrano-desk.jf.intel.com>
-	 <20250818164655.GJ599331@ziepe.ca>
-	 <4lsv2lcd7lssyvcjvkqe4t2foubxbhuxrt2ptzee3csymz5gg3@jwrg3xow72lm>
-	 <e96dcfd4ce7c84a5b66ff9d5f082ea209266ce48.camel@linux.intel.com>
-	 <aKSZ1JduQwAFSFQn@lstrano-desk.jf.intel.com>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1755768910; c=relaxed/simple;
+	bh=vSy0u5rqzbAcHiM6ktr8vOBdqjdwmzLfCOVwg8VHRFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vvoh6/ITktGHrERNH+qFA0MfS/a3WPLingx+8mspOhnKCMij4YQySU57mHCa1q70InSuPdgMBt813flNzA5lpqnH7RrSP+Md9xn7qkC1x7U+Ri703/TpVQ+X5wysvGnmwY6xrNFZVw9TfJ6H5DoipoMaDyZ+F06mcI/Y1jAFVN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=Ui9zIsF2; arc=none smtp.client-ip=188.165.47.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
+	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4c6ypb1vrqz5xHk;
+	Thu, 21 Aug 2025 09:35:03 +0000 (UTC)
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
+        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <bp@alien8.de>; Thu, 21 Aug 2025 09:35:02 +0000 (UTC)
+Received: from mta2.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.101.166])
+	by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c6ypZ4SsHz5xT4;
+	Thu, 21 Aug 2025 09:35:02 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.6])
+	by mta2.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 6E42A3E32C5;
+	Thu, 21 Aug 2025 09:35:00 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-106R0066d340cff-da3a-45d0-bbaf-3a55200613d7,
+                    684E78C7C579463DAB27E2CA1F9C4E28A39E1181) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:79.117.22.109
+Message-ID: <77c08318-f67d-42e0-8745-6a999e2e9f62@orca.pet>
+Date: Thu, 21 Aug 2025 11:35:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86: add hintable NOPs emulation
+To: "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Brian Gerst <brgerst@gmail.com>,
+ Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+ David Kaplan <david.kaplan@amd.com>, "Ahmed S. Darwish"
+ <darwi@linutronix.de>, Kees Cook <kees@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Andrew Cooper <andrew.cooper3@citrix.com>, Oleg Nesterov <oleg@redhat.com>,
+ "Xin Li (Intel)" <xin@zytor.com>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+References: <20250820013452.495481-1-marcos@orca.pet>
+ <08A1B314-C015-4EE9-A13D-3D712FD274C4@zytor.com>
+Content-Language: es-ES
+From: Marcos Del Sol Vives <marcos@orca.pet>
+In-Reply-To: <08A1B314-C015-4EE9-A13D-3D712FD274C4@zytor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 16737065066167359156
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedtkeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpeeffeelueevgeeijeehgfegfeeltdetteeifeevtedtudehffeuudekgeevheeitdenucffohhmrghinhepuggvsghirghnrdhorhhgpdhkvghrnhgvlhdrohhrghenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepuggrvhhiugdrkhgrphhlrghnsegrmhgurdgtohhmpdhrtghpthhtoheprghnughrvgifrdgtohhophgvrhefsegtihhtrhhigidrtghomhdprhgtphhtthhopegsrhhgvghrshhtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhnohhvihhtohhllhesghhmrghilhdrtghomhdprhgtphhtthhopehusghiiihjrghkse
+ hgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhg
+DKIM-Signature: a=rsa-sha256; bh=vSy0u5rqzbAcHiM6ktr8vOBdqjdwmzLfCOVwg8VHRFA=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755768904;
+ v=1;
+ b=Ui9zIsF2Sh9TwEx/m7ijXoxNSpqYaBodi32hrDbx9deQOWBxB2PU24xemyvA2Qo/iomwZKou
+ zqG28bdhoM259vVjcmAJy364UVJ7DM1VT7SNSHSeix734jlwEM5fJVBS+D46CltMq+uKE6mIXpp
+ 9iKXTcSnOpS1JZVAASKy3cGLpJ7f/VVvtn1rHNOb7icJWNcjJar5EXjMXgM2SQh4tpKi6XOy1ze
+ 17RsVkS0+nd6wlsAIKKnJudqww0b6UbqY1ZKZ90Z8OOahIf2RkVOqgqG+xUsDi76kXgFPOAblJ9
+ 0J24bV3BHyHzJceQPcY41tLxYZJWY5TUNYd94bNKpMDmQ==
 
-On Tue, 2025-08-19 at 08:35 -0700, Matthew Brost wrote:
-> On Tue, Aug 19, 2025 at 01:33:40PM +0200, Thomas Hellstr=C3=B6m wrote:
-> > On Tue, 2025-08-19 at 19:55 +1000, Alistair Popple wrote:
-> > > On Mon, Aug 18, 2025 at 01:46:55PM -0300, Jason Gunthorpe wrote:
-> > > > On Mon, Aug 18, 2025 at 09:44:01AM -0700, Matthew Brost wrote:
-> > > > > On Mon, Aug 18, 2025 at 01:36:17PM -0300, Jason Gunthorpe
-> > > > > wrote:
-> > > > > > On Mon, Aug 18, 2025 at 09:25:20AM -0700, Matthew Brost
-> > > > > > wrote:
-> > > > > > > I think this choice makes sense: it allows embedding the
-> > > > > > > wait
-> > > > > > > state from
-> > > > > > > the initial notifier call into the pass structure. Patch
-> > > > > > > [6]
-> > > > > > > shows this
-> > > > > > > by attaching the issued TLB invalidation fences to the
-> > > > > > > pass.
-> > > > > > > Since a
-> > > > > > > single notifier may be invoked multiple times with
-> > > > > > > different
-> > > > > > > ranges but
-> > > > > > > the same seqno,
-> > > > > >=20
-> > > > > > That should be explained, but also seems to be a bit of a
-> > > > > > different
-> > > > > > issue..
-> > > > > >=20
-> > > > > > If the design is really to only have two passes and this
-> > > > > > linked
-> > > > > > list
-> > > > > > is about retaining state then there should not be so much
-> > > > > > freedom to
-> > > > > > have more passes.
-> > > > >=20
-> > > > > I=E2=80=99ll let Thomas weigh in on whether we really need more t=
-han
-> > > > > two
-> > > > > passes;
-> > > > > my feeling is that two passes are likely sufficient. It=E2=80=99s
-> > > > > also
-> > > > > worth
-> > > > > noting that the linked list has an added benefit: the
-> > > > > notifier
-> > > > > tree only
-> > > > > needs to be walked once (a small time-complexity win).
-> > > >=20
-> > > > You may end up keeping the linked list just with no way to add
-> > > > a
-> > > > third
-> > > > pass.
-> > >=20
-> > > It seems to me though that linked list still adds unnecessary
-> > > complexity. I
-> > > think this would all be much easier to follow if we just added
-> > > two
-> > > new callbacks
-> > > - invalidate_start() and invalidate_end() say.
-> >=20
-> > One thing that the linked list avoids, though, is traversing the
-> > interval tree two times. It has O(n*log(n)) whereas the linked list
-> > overhead is just O(n_2pass).
-> >=20
-> > >=20
-> > > Admitedly that would still require the linked list (or something
-> > > similar) to
-> > > retain the ability to hold/pass a context between the start and
-> > > end
-> > > callbacks.
-> > > Which is bit annoying, it's a pity we need to allocate memory in
-> > > a
-> > > performance
-> > > sensitive path to effectively pass (at least in this case) a
-> > > single
-> > > pointer. I
-> > > can't think of any obvious solutions to that though.
-> >=20
-> > One idea is for any two-pass notifier implementation to use a small
-> > pool. That would also to some extent mitigate the risk of out-of-
-> > memory
-> > with GFP_NOWAIT.
-> >=20
->=20
-> I think we can attach a preallocated list entry to the driver-side
-> notifier state; then you=E2=80=99d only need to allocate (or block) if th=
-at
-> notifier is invoked more than once while a wait action (e.g., a TLB
-> invalidation) is outstanding. Multiple invocations are technically
-> possible, but in practice I=E2=80=99d expect them to be rare.
->=20
-> I=E2=80=99m not sure how much of a win this is, though. On Intel hardware=
-,
-> TLB
-> invalidations are several orders of magnitude slower than the
-> software
-> steps our notifiers perform. Ultimately, whether to allocate or
-> preallocate is a driver-side choice.
+El 21/08/2025 a las 3:43, H. Peter Anvin escribió:
+> On August 19, 2025 6:34:46 PM PDT, Marcos Del Sol Vives <marcos@orca.pet> wrote:
+>> One such software is sudo in Debian bookworm, which is compiled with
+>> GCC -fcf-protection=branch and contains ENDBR32 instructions. It crashes
+>> on my Vortex86DX3 processor and VIA C3 Nehalem processors [1].
+>>
+>> This patch is a much simplified version of my previous patch for x86
+>> instruction emulation [2], that only emulates hintable NOPs.
+>>
+>> [1]: https://lists.debian.org/debian-devel/2023/10/msg00118.html
+>> [2]: https://lore.kernel.org/all/20210626130313.1283485-1-marcos@orca.pet/
+>
+> Do those processors support FCOMI?
 
-I agree we shouldn't enforce anything at this point. But if we envision
-a situation where multiple subsystem two-pass notifiers subscribe, the
-GFP_NOWAIT memory might be exhausted by the notifiers called first. A
-greedy behavior that might eventually cause serialization anyway.
+The Vortex86DX3, at the very least, does. Unlike the Vortex86MX I wrote the
+previous patch for, this one seems to support all standard i686
+instructions. It's modern enough to support SSE1, even.
 
-So to behave nicely towards other notifier subscriptions, an
-implementation should ideally have something pre-allocated.
+I have tested it using the program I wrote for testing it on the -MX
+last time: https://lore.kernel.org/all/b69e0c78-81eb-0d4d-dce5-076b5f239e28@orca.pet/.
 
-/Thomas
+> marcos@vdx3:~$ LANG=C gcc -Wall fucomi-test.c -o fucomi-test
+> marcos@vdx3:~$ ./fucomi-test
+> Float value: 6.210000
+> FPU status: 3800 EFLAGS: 00000242
 
+Which matches 1:1 my current desktop Ryzen 8645H.
 
->=20
-> Matt
->=20
-> > /Thomas
-> >=20
-> >=20
-> > >=20
-> > > > Jason
-> > > >=20
-> >=20
-
+Greetings,
+Marcos
 
