@@ -1,113 +1,113 @@
-Return-Path: <linux-kernel+bounces-780718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E85B3084F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:27:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C70B30850
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949DCA06551
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:26:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EF0C1C868B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9382C028D;
-	Thu, 21 Aug 2025 21:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614452C027F;
+	Thu, 21 Aug 2025 21:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pD1PJctA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nRBfV4DJ"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5B3393DFA;
-	Thu, 21 Aug 2025 21:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E20393DC2
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755811556; cv=none; b=SmqGKCdGADQGxE32L6Z6AEjMkMI/mIWhfs+iU8kpFbtEK2n6gdkU+Z0DtJQC1P3nU/av+9Ang7HBlgj8l5xIvFo6nsf5JH9SH+GxY2NohiQkPwX3uDtStifiDl93Vvreosky7LeJm/feMReheR6T9xdHjoasUUXhfFnr9m1mcJY=
+	t=1755811614; cv=none; b=D1/PY3FgGv0sClBhQgcdrjY30zEkYF8j9mD6CycBmdMB0m0x+j0A645Ur/Zw5+p9LMyJJTxg+YPtY3r/GPUR7pdBMnn6woxPsnG5djE1OZhs3V6qhJkSkxNE1iXNn9oG6v9G5C+wAk5gUQkrAFUdHnUoV5r6rXMC1abV+vICTqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755811556; c=relaxed/simple;
-	bh=+Q8r/IpJLSBFIgkrEyE128JdbLX+nx0vcUqeZBoKrNo=;
+	s=arc-20240116; t=1755811614; c=relaxed/simple;
+	bh=1M5fQXY9LFpVUn/kNz5UCd6/90ssbQi+Zm8hDFl9FWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/cP0c/JPOqQteImQPUTwiJAPnu8hDOUdgnGW56mL9kIkelSFDF6Js+qYNYVFy/FKPzPwVf4yWgVD8Oon97YJKw9fvaYpZB8mYN2s4BYPLlgHpEpXcqgwg4GaVRxmsOnWAe3W70uxgRcdqQUvTTptOpuQ0MHJ7lbHKSMgOhRg4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pD1PJctA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD5AC4CEEB;
-	Thu, 21 Aug 2025 21:25:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755811555;
-	bh=+Q8r/IpJLSBFIgkrEyE128JdbLX+nx0vcUqeZBoKrNo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pD1PJctAFEJ69To4v41TtyclO/w7OOhbzdeShybQoY78IUYgi9InihindHlQPz1mS
-	 RDWYt+k9zmChtVD2neeSodbbnaxjWfLFMJJRGOt0J1JJcPjyYAtY5eG1ZUoIj+wuJ4
-	 6ldPPkw1V+FD1dSlPxZiGt+TI3XA/wB99EW0kfmMrtqh69XokRelVhjNpuTXxju5e6
-	 ZtTgjgUYLYQe7TiGes/+yuss9HqB3fQsC6J7xRzfh+EKBAC1GzDXxo/1xAgQ8De1QF
-	 KrSuFURxk0QIlT4gCka0fv/vjpfjp8nvDmKIrcPRizyBJ4BJhptt2MdCn9AikQaCqz
-	 OySzkfFMZy/hA==
-Date: Thu, 21 Aug 2025 22:25:50 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v15 3/6] KVM: arm64: Forward GCS exceptions to nested
- guests
-Message-ID: <e1c3bee5-6521-4dbd-a207-4ec3e4ff19fe@sirena.org.uk>
-References: <20250820-arm64-gcs-v15-0-5e334da18b84@kernel.org>
- <20250820-arm64-gcs-v15-3-5e334da18b84@kernel.org>
- <87ldndk5c2.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V5AQl/eHjxXJGVIeV10I0RZ7XfYhgQeYP9+deKfgZGWG/zINDgHGstf8XNGpN70FsSeb24EtXEScpkoCxYn9QDYzDQP78mpIhT4KBEZfkPBoJd7fVFtIemb4M07OkpLLKhcLIm7TkmWpJZ6y08tuL0s9aNu9Ypr1GtJ4dSACBt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nRBfV4DJ; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 21 Aug 2025 14:26:42 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755811609;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E24ReIpbujFlBQVR2Mugo0ODX1BdUsz5lvQufosPcvU=;
+	b=nRBfV4DJDNoIQxkoYBSQaChCTGmadsYlnewjDld2fzur0xiZxZCR/iIA/nTBsZSlaCUsRD
+	o7gv6ZvYoAW2Dd2KVll7GoWVNKIZ/xul1ll5zKJy/6oKf83OZSROddfyGH/4ztARr0P4Ng
+	0OI0MZlVkdbGJmflc1julyPOZdZxdaI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Yueyang Pan <pyyjason@gmail.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+Message-ID: <gxildlinmmimk7rd4olsz4rstsiapttbjbtbtzbekrmfxbvuhh@cmio2ckbyzxn>
+References: <cover.1755190013.git.pyyjason@gmail.com>
+ <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
+ <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
+ <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+ <CAJuCfpFKNQrjtoctVt0N=r1cABeyPjpwrzP6M=OTpp1Rq_0QaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="llrqpkiErFSNNE6q"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87ldndk5c2.wl-maz@kernel.org>
-X-Cookie: Warp 7 -- It's a law we can live with.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpFKNQrjtoctVt0N=r1cABeyPjpwrzP6M=OTpp1Rq_0QaQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Thu, Aug 21, 2025 at 01:00:36PM -0700, Suren Baghdasaryan wrote:
+> On Thu, Aug 21, 2025 at 12:53 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
+> > > On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
+> > > > On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
+> > > > > Right now in the oom_kill_process if the oom is because of the cgroup
+> > > > > limit, we won't get memory allocation infomation. In some cases, we
+> > > > > can have a large cgroup workload running which dominates the machine.
+> > > > > The reason using cgroup is to leave some resource for system. When this
+> > > > > cgroup is killed, we would also like to have some memory allocation
+> > > > > information for the whole server as well. This is reason behind this
+> > > > > mini change. Is it an acceptable thing to do? Will it be too much
+> > > > > information for people? I am happy with any suggestions!
+> > > >
+> > > > For a single patch, it is better to have all the context in the patch
+> > > > and there is no need for cover letter.
+> > >
+> > > Thanks for your suggestion Shakeel! I will change this in the next version.
+> > >
+> > > >
+> > > > What exact information you want on the memcg oom that will be helpful
+> > > > for the users in general? You mentioned memory allocation information,
+> > > > can you please elaborate a bit more.
+> > > >
+> > >
+> > > As in my reply to Suren, I was thinking the system-wide memory usage info
+> > > provided by show_free_pages and memory allocation profiling info can help
+> > > us debug cgoom by comparing them with historical data. What is your take on
+> > > this?
+> > >
+> >
+> > I am not really sure about show_free_areas(). More specifically how the
+> > historical data diff will be useful for a memcg oom. If you have a
+> > concrete example, please give one. For memory allocation profiling, is
+> > it possible to filter for the given memcg? Do we save memcg information
+> > in the memory allocation profiling?
+> 
+> No, memory allocation profiling is not cgroup-aware. It tracks
+> allocations and their code locations but no other context.
 
---llrqpkiErFSNNE6q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Aug 20, 2025 at 11:15:25PM +0100, Marc Zyngier wrote:
-> Mark Brown <broonie@kernel.org> wrote:
-
-> > GCS can generate exceptions with an EC of 0x2D (GCS Data Check
-> > Exception) when data validation checks fail.  When running a nested
-> > guest which has access to GCS such exceptions can be directed from EL0
-> > to EL2 and therefore need to be forwarded to the guest hypervisor, add
-> > handling for this.
-
-> Why is it so? A GCS exception from EL0 should be routed to EL1, no
-> matter what (either this is an L1 guest with EL1 pretending to be EL2,
-> or this is an L2 guest that has its own EL1).
-
-> Can you describe the case where we need to reinject the exception?
-
-I think I'd got myself confused while looking at the HCR_EL2.TGE case
-thinking we enabled that in some case.  I can't now see what I was
-looking at there, pretty sure I'm just mistaken - thanks for spotting
-that, unless I work out what I was thinking I'll drop this.
-
---llrqpkiErFSNNE6q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAminjt0ACgkQJNaLcl1U
-h9DhBgf/W05P5KDqWX/JqdJjThleyVH7QJ1ZUGO+5QIqs7ZnsqlHdGl/KPWFFIc7
-jqQBGtJ4BPARkr60Wcq/G1DI3kuGD/61a0PktBxAAMZvtfabDeRgKftQVMrBfa/U
-zf88E/l6oAFCZQClYX4xprBoUSrG71rk4QemvoJrEbwkHXFIBptOEkRXPdWBcaHP
-rjKiN7sSW6HxLsTuLXlLVN66V7D3RI03Fyw2Sj17wofhOUEd+5P5bET5RLeXSxRN
-hEYPQqaF9t745NIwsmvD8b60HGUqOdEfAG9ZO+cW3enju+765GAqlajE8vMLxbeb
-kNvV7xm23iBrTHRFUXxDOwhXIb75+g==
-=3kBM
------END PGP SIGNATURE-----
-
---llrqpkiErFSNNE6q--
+Thanks for the info. Pan, will having memcg info along with allocation
+profile help your use-case? (Though adding that might not be easy or
+cheaper)
 
