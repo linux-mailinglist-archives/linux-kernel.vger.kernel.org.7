@@ -1,176 +1,215 @@
-Return-Path: <linux-kernel+bounces-780183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF13B2FEA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 412B3B2FEA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01BE1891E41
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5D9E1D21EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E463277B3;
-	Thu, 21 Aug 2025 15:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70603376AE;
+	Thu, 21 Aug 2025 15:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nY2rt5KH"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fcyS3MDc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C524322754
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABC1270553
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755790042; cv=none; b=RC5B0ix+AK93RtFFHuGBBYIEUIHRarEg5zHetCnTz4P+fv/PghblByo0v+WcgGp7dn9nUD4u0jqvbo21QyXa6uuLSfNsy2DfHfDCV3uoQuwJK6edrJPGTMqZGyj0jo8oStWEMijarMssM92kyohJwyPcycSUhw6Z1XJjEsYpQEs=
+	t=1755790071; cv=none; b=VWqvy+6yTYsaOyVbYNoDe1b2mEm5AIVJdYtCSHHulN8ZhB5G+KAfwYliqr73mNpIWhYxkUlZQaj0nuBwuo9nhcVYUZymjzNwyvTb2AnCF4vPOXIq1CYT3DZbL8wcK972VEEDXl/4AWAW0RAv6TUGA+khGTsQ4auLPPyQ/HzmKkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755790042; c=relaxed/simple;
-	bh=RuVd6VhLx/ESvjcEdKEJ0sQssvWWc/dXK+bjffFMlDU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kwRKpNI6aYOb3oBLoNxTqbUGrSGJBXYvVOAytPRnXxid+y06vdxGCrNc/hi35bBpYApiyxTu3DI+HJvzb4q8YKbamUbL6+yY1txBW+uhq/uZvghRWKWL8L8e+V9fWaeZ6iIN6zIly1yUs3MPTmhWM/aLg2FBrILovniTDmDq4+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nY2rt5KH; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3235e45b815so1324921a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:27:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755790040; x=1756394840; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J0nOEic8CcwY+6hpqmum6A9VNU65AINFJfOA9KBUaPg=;
-        b=nY2rt5KHHZ9Yy4NlUbKvDYneBU+HGEc0nCkNzpr7/PgG07v61rggWtSBy0BiFA/PyH
-         B69LrsO4qc0npVOq0+FsJ/fDodVZitvoradAjktb84Exbp0V3vTAHtKuR9naLYSMwj8I
-         Y6yGEU1cY7vU3qEQEuBtZMwy5+PWJ3SvkrTrTvs3lwCxMSe9OOOsxzNtweOhj+D1OmVR
-         uze0DBliPIuvxoUlQtW86l2BVAuoxCryvYk/i0O5b+3LtFh8AKV8J8wgZx9ewlMWAmLG
-         zXTFlrKIUrEcfnuIHju9QEKyKwgnD1/T8yMfAdtPHgAFaz3oDfAsr2/a3ggpGV1qcxTN
-         ohbA==
+	s=arc-20240116; t=1755790071; c=relaxed/simple;
+	bh=Eyf6DeidULNnQGCkA+/IU+Rn3dkvyFy2QYD+Ym0aiIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Usw7A5j5VRuRtNK4Krf3z3j7dMv5oUxgAw1p/etVvOJN7BT8636TWxtSU73saRq3mGXF66TRMORqzkindoP6vrQTiLaV7G/uiFMr1HOjc4aSlVPacsk3CzRSN+yc6XukDVUN+C36ka5CH8POPGP9KzbYyIKzJ7XcuFM3hrsapWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fcyS3MDc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755790068;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RTgtJ49Xu9MWkFK2EAlVwrx17FYOOV7VldaM8h9Pwt4=;
+	b=fcyS3MDcH86b/VIUXvtM3XwWEKEJtJghTkZongf1nUoF8JtqRbIRrkJYKoBKDsuQ+vgrMg
+	vDxZiqDsDeHOJgwQKOvoWd2shRSsC/o9zPOs2CdwMR6OHjnsn+6QOayomOtdy2sF6Khr1Z
+	bnBcmZyY0IaMi867FXSQW0XzgA+Ay0Y=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-328-ajmlJ2OcNdOCVUas3YAIpw-1; Thu, 21 Aug 2025 11:27:47 -0400
+X-MC-Unique: ajmlJ2OcNdOCVUas3YAIpw-1
+X-Mimecast-MFC-AGG-ID: ajmlJ2OcNdOCVUas3YAIpw_1755790066
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-71fbb9572fdso15620957b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:27:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755790040; x=1756394840;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=J0nOEic8CcwY+6hpqmum6A9VNU65AINFJfOA9KBUaPg=;
-        b=OPF+Wy4zSYAOEYKOAUjCpUpeUUteRFUk6qH/MxsgqC+weqBmqxy4S0usDRjbO6VndA
-         OFOX12y0BD7fIRutvkoU7Z9Dy8HblCZTBBhm37KY3GVoFQo/ByfA8gAjJ3fZMU1jQJfU
-         0KSobp2J6OflNY8yKbuIebuDJ52xYLDxKHDeteIJcr4dKh3HHCyEimEABttJL8Wfs8/Y
-         MaI5K/9qdgK1daPO4H2JNEqdtUA5cJuqaYCrE+VamtLBpFl+fDxhATkD0p3u2mmpn7I+
-         RsNfXDO1gNy7goivyvAzMKNp5VCMbIJLugRmf9ROZkF0f5KBhwb09x8M2boomb02TLqJ
-         KvMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfP6psn0znqaOvoWfhSQlYXo5cKMHMkKELKzv/dY5SELIXJc8DMn7Ilw/WZfLcLae06+pkS4EmG9l3Qv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo8/NdzGn7/bHb+1B+IDklX8LtNKQLbWx1g9mWo7E+N7jtRCo6
-	7IrIfaeDYJDZhp8RG8qZQ50dJwOEzgHK3u/bwbqbervDkttMp3ZWv+Bj/JNw1eloRK4FZQbnKYz
-	aggPwQA==
-X-Google-Smtp-Source: AGHT+IErn+S7Lo3tcvkDcjWls4tKiHbQGQvkGoFOV+v791Vf8loaYFkjMjAYIe9Wb0EbdLX8P8wL1dPep+E=
-X-Received: from pjbdb4.prod.google.com ([2002:a17:90a:d644:b0:324:e309:fc3d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d83:b0:31f:2bd7:a4d2
- with SMTP id 98e67ed59e1d1-324ed15c158mr4291122a91.35.1755790040396; Thu, 21
- Aug 2025 08:27:20 -0700 (PDT)
-Date: Thu, 21 Aug 2025 08:27:19 -0700
-In-Reply-To: <f1ec8527-322d-4bdb-9a38-145fd9f28e4b@linux.intel.com>
+        d=1e100.net; s=20230601; t=1755790066; x=1756394866;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RTgtJ49Xu9MWkFK2EAlVwrx17FYOOV7VldaM8h9Pwt4=;
+        b=saCAOHgY+EncJDEej4bFxhSnPs/M0bcqRM0NSVhHgFiMaaklfvEysWOXXimYfy6vhy
+         jNPYpi3+9xmsjoUnqqpn7qA+zNQMfpQp6k1lvo0HoOOUT1sbHqqk6tU0Tgce91vaAWU2
+         96ne01cOvmVrUuDDzu0FgJzOFg+0AeoUKllcE39Xi+4YY4zRi4wUWWOon4XqRAR5A2kh
+         R1R+o12XlwpVKZogo5dbuPXjra/fsGdZTKrEQw1y9/YkaxXvnIGEyA2IvqBhrpEQxUpJ
+         Rs+3nXotTASeapbprnYEubM9VL3YGxLqvcn8mVThqA2xmAamf4hOt/+zPuIfpdPOTq8K
+         9mPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFK1AIRfJv18fruNt/LGrHglF5oB7QbZUCbAGjOmVk7q4+7eC/MDCRvP+R0VyA050oSI/nwwcvx1kJ0wA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdDStDZFsWkA1+RVCb+TwpCIzSnRL5+ens8Fos3SGxsCFkenkQ
+	eu8HI0/NtB7w/cWTEJaeONeyj/RzJx1+sXbX25erfISWbi5aEeTzli7XPUJDKhbg8ekHWwhmv+W
+	Bd2svbNK7WWvnioHEhIeX0WUCSi+a0CDkHEiAST6mje8iFjQzj2Lun93swImxB77zll94fTdAjY
+	xxT1P1YeikDlz7X56syxoC4MLLYycNg/E8B+vTPcTp
+X-Gm-Gg: ASbGncsfaRGkcdoyXpXl9dsLSiS9tIKA1qRHGJaIvpo+BimfL96vh0/Z7JRvhyz2EIa
+	7Xee49iPy/Up9gVnsPdASbHnVr042XgLToMkumNC70EcZjLSI3yhFt8FqCnW9Khb2bCMQqD+Y6y
+	faXUnZv32GLBDQAcinwjvWzcs=
+X-Received: by 2002:a05:690c:3606:b0:71f:c5f0:337b with SMTP id 00721157ae682-71fc88e8a3bmr32433217b3.1.1755790066394;
+        Thu, 21 Aug 2025 08:27:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFc5TqILdLWzdl1VIfMGwn0VK5fkAbHYWIlUJd1eTuGNqYvohCQdcedJXpukc5CDWRWTZRM1EwqOto/rJviUU=
+X-Received: by 2002:a05:690c:3606:b0:71f:c5f0:337b with SMTP id
+ 00721157ae682-71fc88e8a3bmr32432717b3.1.1755790065938; Thu, 21 Aug 2025
+ 08:27:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aIDzBOmjzveLjhmk@google.com> <550a730d-07db-46d7-ac1a-b5b7a09042a6@linux.intel.com>
- <aIeX0GQh1Q_4N597@google.com> <ad616489-1546-4f6a-9242-a719952e19b6@linux.intel.com>
- <CAGtprH9EL0=Cxu7f8tD6rEvnpC7uLAw6jKijHdFUQYvbyJgkzA@mail.gmail.com>
- <20641696-242d-4fb6-a3c1-1a8e7cf83b18@linux.intel.com> <697aa804-b321-4dba-9060-7ac17e0a489f@linux.intel.com>
- <aKYMQP5AEC2RkOvi@google.com> <d84b792e-8d26-49c2-9e7c-04093f554f8a@linux.intel.com>
- <f1ec8527-322d-4bdb-9a38-145fd9f28e4b@linux.intel.com>
-Message-ID: <aKc61y0_tvGLmieC@google.com>
-Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Vishal Annapurve <vannapurve@google.com>, Nikolay Borisov <nik.borisov@suse.com>, 
-	Jianxiong Gao <jxgao@google.com>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Dionna Glaze <dionnaglaze@google.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, jgross@suse.com, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com, 
-	Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, jiewen.yao@intel.com
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250819134205.622806-1-npache@redhat.com> <e971c7e0-70f0-4ce0-b288-4b581e8c15d3@lucifer.local>
+ <38b37195-28c8-4471-bd06-951083118efd@arm.com> <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
+ <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
+In-Reply-To: <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
+From: Nico Pache <npache@redhat.com>
+Date: Thu, 21 Aug 2025 09:27:19 -0600
+X-Gm-Features: Ac12FXw32JsJSfHSBfYcPkLsEOjNfM5l-nBIkC40qTwdDNq4sNQAax1B3J0lGVw
+Message-ID: <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
+Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
+	Liam.Howlett@oracle.com, ryan.roberts@arm.com, corbet@lwn.net, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org, 
+	peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com, 
+	sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
+	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
+	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
+	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
+	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025, Binbin Wu wrote:
-> On 8/21/2025 11:30 AM, Binbin Wu wrote:
-> > Variable MTRR has requirement for range size and alignment:
-> > For ranges greater than 4 KBytes, each range must be of length 2^n and =
-its base
-> > address must be aligned on a 2^n boundary, where n is a value equal to =
-or
-> > greater than 12. The base-address alignment value cannot be less than i=
-ts length.
->=20
-> Wait, Linux kernel converts MTRR register values to MTRR state (base and =
-size) and
-> cache it for later lookups (refer to map_add_var()). I.e., in Linux kerne=
-l,
-> only the cached state will be used.
->=20
-> These MTRR register values are never programmed when using
-> guest_force_mtrr_state() , so even the values doesn't meet the requiremen=
-t
-> from hardware perspective, Linux kernel can still get the right base and
-> size.
+On Thu, Aug 21, 2025 at 9:25=E2=80=AFAM Nico Pache <npache@redhat.com> wrot=
+e:
+>
+> On Thu, Aug 21, 2025 at 9:20=E2=80=AFAM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > On Thu, Aug 21, 2025 at 08:43:18PM +0530, Dev Jain wrote:
+> > >
+> > > On 21/08/25 8:31 pm, Lorenzo Stoakes wrote:
+> > > > OK so I noticed in patch 13/13 (!) where you change the documentati=
+on that you
+> > > > essentially state that the whole method used to determine the ratio=
+ of PTEs to
+> > > > collapse to mTHP is broken:
+> > > >
+> > > >     khugepaged uses max_ptes_none scaled to the order of the enable=
+d
+> > > >     mTHP size to determine collapses. When using mTHPs it's recomme=
+nded
+> > > >     to set max_ptes_none low-- ideally less than HPAGE_PMD_NR / 2 (=
+255
+> > > >     on 4k page size). This will prevent undesired "creep" behavior =
+that
+> > > >     leads to continuously collapsing to the largest mTHP size; when=
+ we
+> > > >     collapse, we are bringing in new non-zero pages that will, on a
+> > > >     subsequent scan, cause the max_ptes_none check of the +1 order =
+to
+> > > >     always be satisfied. By limiting this to less than half the cur=
+rent
+> > > >     order, we make sure we don't cause this feedback
+> > > >     loop. max_ptes_shared and max_ptes_swap have no effect when
+> > > >     collapsing to a mTHP, and mTHP collapse will fail on shared or
+> > > >     swapped out pages.
+> > > >
+> > > > This seems to me to suggest that using
+> > > > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none as som=
+e means
+> > > > of establishing a 'ratio' to do this calculation is fundamentally f=
+lawed.
+> > > >
+> > > > So surely we ought to introduce a new sysfs tunable for this? Perha=
+ps
+> > > >
+> > > > /sys/kernel/mm/transparent_hugepage/khugepaged/mthp_max_ptes_none_r=
+atio
+> > > >
+> > > > Or something like this?
+> > > >
+> > > > It's already questionable that we are taking a value that is expres=
+sed
+> > > > essentially in terms of PTE entries per PMD and then use it implici=
+tly to
+> > > > determine the ratio for mTHP, but to then say 'oh but the default v=
+alue is
+> > > > known-broken' is just a blocker for the series in my opinion.
+> > > >
+> > > > This really has to be done a different way I think.
+> > > >
+> > > > Cheers, Lorenzo
+> > >
+> > > FWIW this was my version of the documentation patch:
+> > > https://lore.kernel.org/all/20250211111326.14295-18-dev.jain@arm.com/
+> > >
+> > > The discussion about the creep problem started here:
+> > > https://lore.kernel.org/all/7098654a-776d-413b-8aca-28f811620df7@arm.=
+com/
+> > >
+> > > and the discussion continuing here:
+> > > https://lore.kernel.org/all/37375ace-5601-4d6c-9dac-d1c8268698e9@redh=
+at.com/
+> > >
+> > > ending with a summary I gave here:
+> > > https://lore.kernel.org/all/8114d47b-b383-4d6e-ab65-a0e88b99c873@arm.=
+com/
+> > >
+> > > This should help you with the context.
+> > >
+> > >
+> >
+> > Thanks and I"ll have a look, but this series is unmergeable with a brok=
+en
+> > default in
+> > /sys/kernel/mm/transparent_hugepage/khugepaged/mthp_max_ptes_none_ratio
+> > sorry.
+> >
+> > We need to have a new tunable as far as I can tell. I also find the use=
+ of
+> > this PMD-specific value as an arbitrary way of expressing a ratio prett=
+y
+> > gross.
+> The first thing that comes to mind is that we can pin max_ptes_none to
+> 255 if it exceeds 255. It's worth noting that the issue occurs only
+> for adjacently enabled mTHP sizes.
+>
+> ie)
+> if order!=3DHPAGE_PMD_ORDER && khugepaged_max_ptes_none > 255
+>       temp_max_ptes_none =3D 255;
+Oh and my second point, introducing a new tunable to control mTHP
+collapse may become exceedingly complex from a tuning and code
+management standpoint.
+> >
+> > Thanks, Lorenzo
+> >
 
-Yeah.  I forget what happens if the ranges don't meet the power-of-2 requir=
-ements,
-but the mask+match logic should work jus tfine.
-
-> No bothering to force the base and size alignment.
-> But a comment would be helpful.
-> Also, BIT(11) could be replaced by MTRR_PHYSMASK_V.
-
-Ha!  I spent a good 5 minutes looking for a #define couldn't find one.  Wha=
-t a
-bizarre name...
-
-> How about:
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 90097df4eafd..a9582ffc3088 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -934,9 +934,15 @@ static void kvm_sev_hc_page_enc_status(unsigned long=
- pfn, int npages, bool enc)
-> =C2=A0static void __init kvm_init_platform(void)
-> =C2=A0{
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 u64 tolud =3D e820__end_of_low_ram_pfn() << P=
-AGE_SHIFT;
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0/*
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * The range's base address and size may not =
-meet the alignment
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * requirement for variable MTRR. However, Li=
-nux guest never
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * programs MTRRs when forcing guest MTRR sta=
-te, no bothering to
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * enforce the base and range size alignment.
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 */
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct mtrr_var_range pci_hole =3D {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .base_lo =3D tolu=
-d | X86_MEMTYPE_UC,
-> -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mask_lo =3D (u32=
-)(~(SZ_4G - tolud - 1)) | BIT(11),
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mask_lo =3D (u32=
-)(~(SZ_4G - tolud - 1)) | MTRR_PHYSMASK_V,
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .mask_hi =3D (BIT=
-_ULL(boot_cpu_data.x86_phys_bits) - 1) >> 32,
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 };
->=20
->=20
-> I tested it in my setup, it can fix the issue of TPM driver failure with =
-the
-> modified ACPI table for TPM in QEMU.
->=20
->=20
-> Hi Vishal,
-> Could you test it with google's VMM?
-
-Vishal is OOO for a few days.  I pinged our internal bug tracker, I'll find
-someone to test.
-
-Thanks much!
 
