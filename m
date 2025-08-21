@@ -1,124 +1,126 @@
-Return-Path: <linux-kernel+bounces-779758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5D1B2F846
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:41:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA982B2F812
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15A59AC316F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE621CC37ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53AE31A042;
-	Thu, 21 Aug 2025 12:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A538B19E97B;
+	Thu, 21 Aug 2025 12:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bqzsp/nW"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LlJCwPyH"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914BB319844
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2BE19D8A7
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780041; cv=none; b=tVsMmFIIltgofDRKaQKg639EY2FrzIAQTOVZjfUH+lyG1UZaKa4U/oKS48SD2HgAiiXkWXWoFIEvA/+5L1BaY/W/VZBX2fofvZbekz6kPtZ4NtURtV8xswat2XFqXKj7XlXZp6N1GG/QU0ybtKO3G5uOausX0GBVJWtk1SlkS4M=
+	t=1755779577; cv=none; b=jUeoMYjE4Y9RjxmRm/VwLMwy921WCNCt6TRRu7nsjrBhfXVF3K5/qwyOQwj66fjY5G4HsAKSpyJzFf2fG2bmXSlmdhLasFrcOdDMuAuka9NnO0eKxNp+1pZ8JP4UT7Avqq5lieqnp0wXdyW9ujcxD6m7ArNYjaDFv3B/qa9Vrzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780041; c=relaxed/simple;
-	bh=GnLrMbyDZW2GgpeykyrH1UvFDRtqnTH8x708+d6ZIJE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=RAj0KJvsEgEuneSET5fj6kVqPKRftN24eMfEpdWSU1GwdklJG8K8Jt6CX19bQJfFSVLbxn6hil82tGyaDSbnvlCDqsphZnOTwmJ2Pq4im/qTIrrru3qVZRCmDjC904uPhEnrExhazjqLl8XrzAV9cbMm1C2Ipqmp8ULiARpODLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bqzsp/nW; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250821124037epoutp0283103f784020733a75f88e6257c5a94f~dyKRVBdUu0273302733epoutp02x
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:40:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250821124037epoutp0283103f784020733a75f88e6257c5a94f~dyKRVBdUu0273302733epoutp02x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755780037;
-	bh=PE3v8D25w1NSW00QvTsGVwt89i4GMdjJys8VXXhPJ7s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bqzsp/nWGhnOupn8PiRThHgaEVHAWMxfuhNXT/Nl87ykYBZlpRCMeAKhb6Hfp5Ou2
-	 ROJz2tw1G+oPTdfj4UBvrMykzEi8WQN68Meo3HQXOvpvD3sDwn4V6mHl6y6i68M+Z4
-	 NOdXj9AXU7K3qd0q3aAyU2QyvphMrMPyhzFiae+Y=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250821124036epcas5p23d4b1358a0f10a01045f50880154c3e0~dyKP1or6v1778717787epcas5p27;
-	Thu, 21 Aug 2025 12:40:36 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4c72wg2Ddgz2SSKZ; Thu, 21 Aug
-	2025 12:40:35 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250821124034epcas5p350aeb42b9065fcbc3d9f713df1649574~dyKOZMGE41856118561epcas5p3J;
-	Thu, 21 Aug 2025 12:40:34 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250821124029epsmtip2a1ba9abee1996f1a7280719efaf5a2f6~dyKJ3_XqU2369523695epsmtip2e;
-	Thu, 21 Aug 2025 12:40:29 +0000 (GMT)
-From: Ravi Patel <ravi.patel@samsung.com>
-To: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
-	linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com,
-	will@kernel.org, arnd@arndb.de
-Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
-	gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
-	smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
-	ravi.patel@samsung.com, inbaraj.e@samsung.com, swathi.ks@samsung.com,
-	hrishikesh.d@samsung.com, dj76.yang@samsung.com, hypmean.kim@samsung.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, soc@lists.linux.dev
-Subject: [PATCH v2 04/10] dt-bindings: pinctrl: samsung: Add compatible for
- ARTPEC-8 SoC
-Date: Thu, 21 Aug 2025 18:02:48 +0530
-Message-ID: <20250821123310.94089-5-ravi.patel@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250821123310.94089-1-ravi.patel@samsung.com>
+	s=arc-20240116; t=1755779577; c=relaxed/simple;
+	bh=ocQ3d5j9vIq4dGBBuOr8WswQdXME9A/E4gyt+hUQqp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Fl2LPm+k3ET6HbZvYqsEFP32KX7SdVMHL625aA0qrwd53rp3MM5XF882EwjSC8d/LrAHfHmO2ofVP7wa7lBo6SrVL3t/YerHl8RPpPUm5y7I6OZsJgBvzDtFwSNm0/4y1ExxZVroCEW/FR16TKZl6FfMlrR8vwlFPMct72eotQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LlJCwPyH; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3bea24519c0so991983f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:32:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755779574; x=1756384374; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MdIRAKr2cN8G91t8BLxjz7Gzji0/85KCNwhJJjiYkCg=;
+        b=LlJCwPyH7wQd7hGdjBPPo9QpbeOqt6GOUinJqkXNvJrdyvYw+tzGITSaJy+a2cURXP
+         OuXCCFUh9SXzjyjv3ky9IY/HFZlVj2tPyWQ4uuFZgCry/Al31k8WTAY/lAUPJO9W1Kvo
+         tX/pgcycrK0qmi9bgAbjSwsWTMHZLF1VKuOA7NYh3GvzmPGe3yYhlLG7rKWdOdrkapLW
+         aJaokVdsat/5G25fiZyfZHBPPBF5FL18tb7UGokIzj8hTbYQCD8cVlOR9cwkI4HBqV5U
+         pqBn81D7s2PeU0W2GNBw9HC+YbQ+vZJza9IT5bq53I7FHeLSJa7+UghKqAC2lmZs2kqv
+         EhSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755779574; x=1756384374;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MdIRAKr2cN8G91t8BLxjz7Gzji0/85KCNwhJJjiYkCg=;
+        b=E3MX+O3Cu/wS7HiNphqcvU0QVa6xh6cFCVH5NR4bd6Ksp+U9wQ0+2WoD804X3ogm1t
+         yyCGjbikLjss6WAenM2ZqMcEvI2hOp15LqV+8KqLN/UgjNP/ekyzQN4FecWYTDNoubcf
+         tCzJBNCqP2gFhoTXq/aUGwmeuTXwGzcGKXwmzQyzNB8xLcceOr1rpPIzt2AKqaIo734c
+         mMASfwu13IcGkqSBe1DoWqk9tsXnmdpiBLsbMNpa0ttrF3WJDOT28K9ZE3HZVw8fQujt
+         oRDYL5Rn4aUme+g216E9OLXS+hZ0nq+Bgt6leiTNBS7VsaLJnDpcwXQxgZ3tyMG//+rx
+         Errw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNSvMfRT1F0lqMZUO4Ycv701DMBbKS7aKVyn7dHruycjq/s1+UsCtexzhXwESpnW8lwIuzLdGrT3gG4oU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOGo0eSSKwrymNG4X1ijf/0cSXxWibOeksO1v5dv/3g5zh+Eao
+	YqDHpzT6SWXwJ+Maly3xE07gFRz96bI4vMzzzuw8Du1Oeu79fY3UEDJYmY5myRPK4iM=
+X-Gm-Gg: ASbGnctba57jrNFQYfvgsukhVxabRPWvJi7gj/2Muh4evZSHP9XACBMqQgqDElejLDT
+	c99Pu0BxHcEJYcZSY4i2/pGt80iE4PmDsmlXcIO6XzgfjHAJKFsZn2lbFe9Qd+MCOdUjSkNWHfi
+	eR7yupmlRg16ZZEFYUIQmwIJ4Hr+yZdHUkn/ZhbjCxOQy361qbwcsssUM1x2KBzsQRI3wW0NWk3
+	YJNU4a03B3oHF5a3PzFXIwP1tvV76cUT10+aBui/+lAX0FoQrVrTFwzf694lRR1gJAiGAnuj5Sp
+	NRzUKJkmU0DRUFhyagZZZu0zvKT28Go9JpQZ/+JcmfeGcX+YITqB0tYCXsrfp6IML/tNwZp3C4S
+	5tgqHfehMY8Kvn0wwhgdVpZ0kQMfSAfzUC037VQ==
+X-Google-Smtp-Source: AGHT+IGLOFZokM+L1YFBETmJ+c1HGUrKFAr5zBcd3i6pzbkvpmwIxEYCoRLXatleLwvbvzJVH4ODSg==
+X-Received: by 2002:adf:9b97:0:b0:3b7:94ad:ef50 with SMTP id ffacd0b85a97d-3c4b4256c02mr1669280f8f.2.1755779573600;
+        Thu, 21 Aug 2025 05:32:53 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c077788df7sm11530384f8f.48.2025.08.21.05.32.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 05:32:53 -0700 (PDT)
+Date: Thu, 21 Aug 2025 15:32:49 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ricky Wu <ricky_wu@realtek.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Avri Altman <avri.altman@sandisk.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Binbin Zhou <zhoubinbin@loongson.cn>, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] mmc: rtsx_usb_sdmmc: Fix uninitialized variable issue
+Message-ID: <aKcR8QD81TjVqIhl@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250821124034epcas5p350aeb42b9065fcbc3d9f713df1649574
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250821124034epcas5p350aeb42b9065fcbc3d9f713df1649574
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
-	<20250821123310.94089-1-ravi.patel@samsung.com>
-	<CGME20250821124034epcas5p350aeb42b9065fcbc3d9f713df1649574@epcas5p3.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-From: SeonGu Kang <ksk4725@coasia.com>
+If rtsx_usb_get_card_status() fails then "val" isn't initialized.
+Move the use of "val" until after the error checking.
 
-Document the compatible string for ARTPEC-8 SoC pinctrl block,
-which is similar to other Samsung SoC pinctrl blocks.
-
-Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+Fixes: d2e6fb2c31a0 ("misc: rtsx: usb card reader: add OCP support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/host/rtsx_usb_sdmmc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-index de8460856141..9386dcd418c2 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-@@ -35,6 +35,7 @@ properties:
+diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
+index e1ed39c657c3..70bd21084b97 100644
+--- a/drivers/mmc/host/rtsx_usb_sdmmc.c
++++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
+@@ -785,13 +785,13 @@ static int sdmmc_get_cd(struct mmc_host *mmc)
  
-   compatible:
-     enum:
-+      - axis,artpec8-pinctrl
-       - google,gs101-pinctrl
-       - samsung,s3c2412-pinctrl
-       - samsung,s3c2416-pinctrl
+ 	mutex_unlock(&ucr->dev_mutex);
+ 
+-	/* get OCP status */
+-	host->ocp_stat = (val >> 4) & 0x03;
+-
+ 	/* Treat failed detection as non-exist */
+ 	if (err)
+ 		goto no_card;
+ 
++	/* get OCP status */
++	host->ocp_stat = (val >> 4) & 0x03;
++
+ 	if (val & SD_CD) {
+ 		host->card_exist = true;
+ 		return 1;
 -- 
-2.49.0
+2.47.2
 
 
