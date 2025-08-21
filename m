@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-778804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBCDBB2EB5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:42:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8E9B2EB5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA3D1C88B72
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E85A062F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24937275AE4;
-	Thu, 21 Aug 2025 02:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E40258ED9;
+	Thu, 21 Aug 2025 02:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WI/FUjgW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jgKP9woY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804232561B9;
-	Thu, 21 Aug 2025 02:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E715F252910;
+	Thu, 21 Aug 2025 02:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755744006; cv=none; b=ZZP7jQf7FGautmVqhwZd36hLyNhyYbUWWV5OLBg5kIqrZKqPD6J2bssj/nRi54XmWX1TmcZBHYIwNVE6mK1B0c4uhArid8dgzJ+UsAZtwNT+dV8mIqIRF1CZ10jMPBfX1QP3X7IR/zn1Pf/8p/S3IHziS8yiGQKofT0puDoHw1I=
+	t=1755744026; cv=none; b=mHvvS1lS24PDyHMOaeuecZFLOlfgoixpdGnr+OA5IWWwX1G++Jca0wlpcVm6CygGZeZyTtB5ENzbsWtgOKATZUrjBWoffdwGJerPeDEhBeHL65dsNw7mTvH2m3xyltR9kIA7vpVLUssg5QANEtceBsZDZoBi0RdyKDAxLbyc9h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755744006; c=relaxed/simple;
-	bh=IQQl3uPLmAi32Q2Bvg56TiUJC3QWqyAVb7proeiZAvs=;
+	s=arc-20240116; t=1755744026; c=relaxed/simple;
+	bh=9o/c4Ykf1FXVHZSL8h2+vsayOJyjbxiOwpDKgqJnfWc=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=n/k9tm5oWEYb0go/GfHKLFhw9igfqCVdGiJILp0/DyNB6lSgkJV54FAdsHDN+X3Qo0kE/pJgMm6soW66Qk/E9MEsq0lAY3vKyHZsJxhuGll9G5WBTDbUZ5e7y4/DF5uEqEITAffkHVY0K4Vg6OoSoXIblPiQOBTwUKD/cwndKzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WI/FUjgW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512A8C4CEE7;
-	Thu, 21 Aug 2025 02:40:06 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=RunyoHjhjPLyAvtMZcUovISjqWHcLO44jLgTrwVtX8tOtKafyn3TuaSzBTwS48W54jyF+KP0P+xNXDbaRPGoamPYozefNUwol8MhqeR49VyTpXj0dtmiUE1YKqz1UxuNxb8q1q/xAkMVZ8BMeGpmlII4UWBFozJ/pC0iqBQ0Nng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jgKP9woY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54266C4CEE7;
+	Thu, 21 Aug 2025 02:40:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755744006;
-	bh=IQQl3uPLmAi32Q2Bvg56TiUJC3QWqyAVb7proeiZAvs=;
+	s=k20201202; t=1755744025;
+	bh=9o/c4Ykf1FXVHZSL8h2+vsayOJyjbxiOwpDKgqJnfWc=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WI/FUjgWxG8j5JXbG4S8A9R9WZG0bR+DllZDF90wLbpsxxjQKgfdAwk/B66nzAzsO
-	 dqgbm9Qhota2VyXDAPEsOWM0hYsJUBlP0J6xqYYYmvvgPhP+CX9IzIYHYpfc2lFfbb
-	 eiRJLq1Oii33/g20FQHbIOth0DYa0CmKVmNqeMRe7CiHYxaL36VgAyhHfKdjt59TqZ
-	 F8NWdrlVFaROVheGp9Jc51lxrh8zYbkFme1yhNk9kEpaPo6kgtAxDhVhW8r2sUh4Lp
-	 SQ+gS88T0D6WDZSnKIlcm/t7nXBc9ikqaX9LC5094/FvbdTCNsb9Azilv6tWPedWaS
-	 B6DOahwkMFXrg==
+	b=jgKP9woYL27+rNaY9DgTwkEX+Wg9JZgEHo0dpF3zjC8QOhUVeRRaZBldyuS9n064O
+	 Z5/mNN0z55Q5N7A0+CCDWPLQal70NwmGl3+ArepfWasZcPBHfFFn06lWo7ymRJvvwh
+	 YJ8D+K5vagggWfJRO3ftI+D8dwoSZQvd73Sc3hMPb1djFg+4o9AcO2GG3Sbz/Z1Gtm
+	 l5HnlrzMb6Jia9WSAPE2Yvthh3wv89f7ACs7/jrbA21piAuX0uMu2nNJXlp+doeeep
+	 /bmQyh/tck6D3F3vWRCsYF0rJOgzqd2Ltmh6noF/+getuyly1qHZYfpguoxtAq4Pu5
+	 vtLbEhvkw9G7g==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD8D383BF4E;
-	Thu, 21 Aug 2025 02:40:16 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB03D383BF4E;
+	Thu, 21 Aug 2025 02:40:35 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,40 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Revert "net: cadence: macb: sama7g5_emac: Remove USARIO
- CLKEN
- flag"
+Subject: Re: [PATCH net-next] selftests: net: bpf_offload: print loaded
+ programs
+ on mismatch
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175574401549.482952.17654850296504288897.git-patchwork-notify@kernel.org>
-Date: Thu, 21 Aug 2025 02:40:15 +0000
-References: <20250819163236.100680-1-Ryan.Wanner@microchip.com>
-In-Reply-To: <20250819163236.100680-1-Ryan.Wanner@microchip.com>
-To: Ryan Wanner <Ryan.Wanner@microchip.com>
-Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <175574403449.482952.12532476837961479515.git-patchwork-notify@kernel.org>
+Date: Thu, 21 Aug 2025 02:40:34 +0000
+References: <20250819073348.387972-1-liuhangbin@gmail.com>
+In-Reply-To: <20250819073348.387972-1-liuhangbin@gmail.com>
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
+ hawk@kernel.org, john.fastabend@gmail.com, bigeasy@linutronix.de,
+ lorenzo@kernel.org, andriin@fb.com, joamaki@gmail.com, jv@jvosburgh.net,
+ andy@greyhouse.net, corbet@lwn.net, andrew+netdev@lunn.ch,
+ razor@blackwall.org, toke@redhat.com, horms@kernel.org, fmaurer@redhat.com,
+ vmalik@redhat.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 19 Aug 2025 09:32:30 -0700 you wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On Tue, 19 Aug 2025 07:33:48 +0000 you wrote:
+> The test sometimes fails due to an unexpected number of loaded programs. e.g
 > 
-> This reverts commit db400061b5e7cc55f9b4dd15443e9838964119ea.
-> 
-> This commit can cause a Devicetree ABI break for older DTS files that rely this
-> flag for RMII configuration. Adding this back in ensures that the older
-> DTBs will not break.
+>   FAIL: 2 BPF programs loaded, expected 1
+>     File "/usr/libexec/kselftests/net/./bpf_offload.py", line 940, in <module>
+>       progs = bpftool_prog_list(expected=1)
+>     File "/usr/libexec/kselftests/net/./bpf_offload.py", line 187, in bpftool_prog_list
+>       fail(True, "%d BPF programs loaded, expected %d" %
+>     File "/usr/libexec/kselftests/net/./bpf_offload.py", line 89, in fail
+>       tb = "".join(traceback.extract_stack().format())
 > 
 > [...]
 
 Here is the summary with links:
-  - Revert "net: cadence: macb: sama7g5_emac: Remove USARIO CLKEN flag"
-    https://git.kernel.org/netdev/net/c/c42be534547d
+  - [net-next] selftests: net: bpf_offload: print loaded programs on mismatch
+    https://git.kernel.org/netdev/net-next/c/eacb6e408dc8
 
 You are awesome, thank you!
 -- 
