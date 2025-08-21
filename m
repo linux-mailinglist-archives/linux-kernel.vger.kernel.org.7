@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-780341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3483BB300AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:02:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B1F8B3006B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E85188DC76
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:02:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D841BC42AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88982FB621;
-	Thu, 21 Aug 2025 17:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3429B2E5432;
+	Thu, 21 Aug 2025 16:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OL94fan1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jjf6gZiu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242AE1E8333;
-	Thu, 21 Aug 2025 17:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC802E425F;
+	Thu, 21 Aug 2025 16:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755795733; cv=none; b=MbeFUDXWRrgBoLmPHHU162CWKcLk7qs9yWWMGQ9Nx89pRF5XnH69Eodqxg6IUI4rcW18iffJNiAiPP+WVsH+vD8Dw4nAwo+M0Klar1Gmhparpw1w0rvga9vm8DlaUvIBOm5hYktcoqA9+n7KRcGZqUbfGcavQ+d1hbT4X5VBctg=
+	t=1755794725; cv=none; b=Wfv3ltIYWw6I7DxMOEFjX3omZBZT7LiFgoNjPDmBjxbGRUymZdJ/rZICiSGDjbiahX+MWVRg93dfXBQZxvvcUDfyY6rI84N99fkng/zuu8HJMR5igqTCDJsbedq087HOZLqVA34SrfZGKKv+a+umkUyfCPjXeNtfThicG6z6ehg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755795733; c=relaxed/simple;
-	bh=QlyP+EybHdG/BjvDs4e1GOTfEiPxKwv1SmW3xs+WcNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PMNqmwDKNSiMv1wsR6lcHVsV1XMQfG9w2zwmX/hl833HI8oChYm7Pk5CNy/+pYeS8Czb1Cd1jmdXfWC3bpSSeJAyqDcky2CU2mzpYSalmezhwrIGFrhOyBi4R/4i/3k/DJHvnon1nOyAcwTVhs5/XAMGrwKNE9zmJHAO6hJ2U9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OL94fan1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F21C4CEEB;
-	Thu, 21 Aug 2025 17:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755795732;
-	bh=QlyP+EybHdG/BjvDs4e1GOTfEiPxKwv1SmW3xs+WcNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OL94fan15xuckPr35axKla7h8MZtGA8yIcVd+buWXzAQSG05oIGUBiqEBb53XRhle
-	 JmeFYsuGXJGOunPKsS1Lbfbr70a40ig3+CNUml+LCM4CLjRStOkv9+PzortwXBztYv
-	 RkypUQ7qLmOuK0P5rdvLNOi1hBU/5yZ+GdWob8NfDtHKYfXYdCVz9UH0/XTolmBFCh
-	 kZoIzbEGtG9kun8xTlL20/iCNyBFn13AtJsXb/uF+eLHMoMU+MHvFu8nOb9qMCU/zR
-	 RqEipU7pPALnBOKvCOhPuQVSUaCq7k2Miy1P5EUFNH+taITrJVdEsun71ru50sR1kH
-	 9W8Udw2mBmj2A==
-Date: Fri, 22 Aug 2025 00:44:54 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Michael =?utf-8?B?QsO8c2No?= <mb@bues.ch>,
-	Doug Berger <opendmb@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Michael Buesch <m@bues.ch>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Andy Shevchenko <andy@kernel.org>, Daniel Palmer <daniel@thingy.jp>,
-	Romain Perier <romain.perier@gmail.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux@ew.tq-group.com
-Subject: Re: [PATCH 01/16] gpio: dwapb: Use modern PM macros
-Message-ID: <aKdNBhpNofchexgb@xhacker>
-References: <20250820154037.22228-1-jszhang@kernel.org>
- <20250820154037.22228-2-jszhang@kernel.org>
- <CAHp75VfxSBPzvohrW4tywd4VS0r1_mp8WLvdKcN_yn=zNS49HQ@mail.gmail.com>
- <20250820191039.4f8af41e@barney>
- <CAHp75Vdpgf3DUMQw0mYqhG=9UrYG8KWrobbd387QZapBor_LHg@mail.gmail.com>
+	s=arc-20240116; t=1755794725; c=relaxed/simple;
+	bh=WyKn3BDOpcCAD6Fuy69UuDdyk4y6Ek+DhsMO5uPWEQY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bwHhm9wKaqw75lt0v8Wh2/1yUSFLWUZYI2CS12AtghBpiFM96WZ2wZrNeXCV/veLrR6R2tlwe3UBipGRdITRzCpyPkgaUXhnvLkfVWhVQGDXkuMPwnFzFCX897UjNoHOjUdV9/Oq9baxtU0R9VdDQmHKauZLPqRZMdsCBRA1OEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jjf6gZiu; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755794724; x=1787330724;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=WyKn3BDOpcCAD6Fuy69UuDdyk4y6Ek+DhsMO5uPWEQY=;
+  b=Jjf6gZiuO0ZZHuBo8kN0yvMqh2pSpIai7RS/G1mhuEqzwt0vor5UijHG
+   tGq3HUJ5nFjaQ2s7r6gKFotUJNPwCycmFiOt58Zinrl+tO9hDuiucemwC
+   kvMDd0rCjLHcbLlHm2pWg/9p7+xgXfkrci8cExYWkm2FOsdgJh9jqax8m
+   vf7RsGn/3elapWoBsZQtInUPGtf5J85ZyhQCBqw2x4E0mNR1cKqDUYRdp
+   OKX7C2gDmS7tXAEu7d9q8F7bSWsd9UbJGL1KxpEGQHR0zdt/AHWmOxjNI
+   2L0nWEdjlA2m2FVp+Pqlf+xLnMx03Zd65SLXYtsdH1ULnS0mdDMBVQlmK
+   w==;
+X-CSE-ConnectionGUID: ZPZTHoKJQbm7KJNDik3z4g==
+X-CSE-MsgGUID: 4eTO7RlDR1u6scdwebCy1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69531221"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="69531221"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 09:45:23 -0700
+X-CSE-ConnectionGUID: HVt0nzi6TyKGfYzTGLP0Uw==
+X-CSE-MsgGUID: EJjiqd8UQcSWgWGcjQABNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
+   d="scan'208";a="168879136"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.192])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 09:45:19 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 21 Aug 2025 19:45:17 +0300 (EEST)
+To: Markus Elfring <Markus.Elfring@web.de>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    stable@vger.kernel.org, tudor.ambarus@linaro.org, 
+    LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    D Scott Phillips <scott@os.amperecomputing.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Rio Liu <rio@r26.me>
+Subject: Re: [PATCH v2 1/3] PCI: Relaxed tail alignment should never increase
+ min_align
+In-Reply-To: <8e9936e5-d720-4ded-8961-b9475aeb2ac7@web.de>
+Message-ID: <21e11870-f125-e9e7-04f3-ade94d6be6b1@linux.intel.com>
+References: <20250630142641.3516-2-ilpo.jarvinen@linux.intel.com> <8e9936e5-d720-4ded-8961-b9475aeb2ac7@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75Vdpgf3DUMQw0mYqhG=9UrYG8KWrobbd387QZapBor_LHg@mail.gmail.com>
+Content-Type: multipart/mixed; boundary="8323328-1152484891-1755794717=:933"
 
-On Wed, Aug 20, 2025 at 10:04:39PM +0300, Andy Shevchenko wrote:
-> On Wed, Aug 20, 2025 at 8:11 PM Michael Büsch <mb@bues.ch> wrote:
-> >
-> > On Wed, 20 Aug 2025 19:54:44 +0300
-> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> >
-> > > > The dwapb_context structure is always embedded into struct
-> > > > dwapb_gpio_port to simplify code. Sure this brings a tiny 36 bytes
-> > > > data overhead for !CONFIG_PM_SLEP.
-> > >
-> > > I don't think it's a good approach to add a lot of data for peanuts in
-> > > case of PM_SLEEP=n.
-> >
-> > It wastes 36 bytes in case of PM=n.
-> 
-> ...per port.
-> 
-> > The driver currently allocates the struct with kzalloc and stores a pointer to it
-> > in case of PM=y.
-> > So this probably has an overhead in the same order of magnitude (pointer +
-> > malloc overhead/alignment/fragmentation) in case of PM=y now.
-> 
-> ...per driver.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Before the patch, struct dwapb_context *ctx is also per port.
+--8323328-1152484891-1755794717=:933
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> 
-> So, I can't say it's equal, but I leave this to maintainers to decide,
+On Thu, 21 Aug 2025, Markus Elfring wrote:
 
-What in my mind now: this is linux rather than RTOS. After greping the
-the arm/arm64/riscv dts dir, the max port number is 6, the berlin2q
-soc families, so this means current we have wasted 216 bytes memory which
-is trivial compared to the system memory.
+> =E2=80=A6
+> > Ensure min_align is not increased by the relaxed tail alignment.
+> =E2=80=A6
+>=20
+>=20
+> =E2=80=A6
+> +++ b/drivers/pci/setup-bus.c
+> =E2=80=A6
+> @@ -1261,8 +1263,9 @@ static int pbus_size_mem(struct pci_bus *bus, unsig=
+ned long mask,
+>  =09=09if (bus->self && size1 &&
+>  =09=09    !pbus_upstream_space_available(bus, mask | IORESOURCE_PREFETCH=
+, type,
+>  =09=09=09=09=09=09   size1, add_align)) {
+> -=09=09=09min_align =3D 1ULL << (max_order + __ffs(SZ_1M));
+> -=09=09=09min_align =3D max(min_align, win_align);
+> +=09=09=09relaxed_align =3D 1ULL << (max_order + __ffs(SZ_1M));
+> +=09=09=09relaxed_align =3D max(min_align, win_align);
+> =E2=80=A6
+>=20
+> I wonder why a variable content would be overwritten here
+> without using the previous value.
+> https://cwe.mitre.org/data/definitions/563.html
+
+Hi Markus,
+
+This looks a very good catch. I think it too should have been:
+
+relaxed_align =3D max(relaxed_align, win_align);
+
+=2E..like in the other case.
+
+--=20
+ i.
+
+--8323328-1152484891-1755794717=:933--
 
