@@ -1,139 +1,147 @@
-Return-Path: <linux-kernel+bounces-779466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC8EB2F469
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:46:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BAAB2F47C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92FD37A3963
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:44:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A1831CE1E92
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5C62D9781;
-	Thu, 21 Aug 2025 09:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I3M3RD8T"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5062DCF57;
+	Thu, 21 Aug 2025 09:45:42 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB87287266
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92C42DA74D;
+	Thu, 21 Aug 2025 09:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769527; cv=none; b=TKXuZWdHImeC0pWuE/W8uEe+iiYLZVAN0oeuySeCFC3UF5HL+2RpZJD2doZsURRVsyILX8lrTUwZ8R2s5VXsvQTk4TR+0rlz0IGphKRjR30aRatZQl6V/IkKvjkJ9PReFascGRzF92Vq9cQvvUR4X/4MoQHUfXz0tmgWbXOgO6k=
+	t=1755769541; cv=none; b=rmYHwFYMrieVHTNOUjf71VZX1A48v91xqMr0vctatiUpduLScaGSBvlSJ6ItumSAv5S7ebiiF6f/C1KGnFipQLp8k8NJYlcIsKNu5yzUjUCnPg9+QWsEGbn2OAZBlcB1CyfyIdsYflytVybYOYVVmto3ZsEzg2Ut1Dw7AnCXHks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769527; c=relaxed/simple;
-	bh=+KxGB/dKJ4pb+tY+o0803YJCfK/BgA6DR2F3Eml0X7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LxGXb8i36NjL00jhad0HmiVuUg7q/SDhZkHVKsct5lDKwiAHqOJXVQGSCqfTBgshxXwhTqal9yTFU24TvZluif8jdQXbnHCc2Pj6eQu/hlD41Lz00DPtFTXHFPfp9jcwpPB3HTC17y0oqTFsh436K3UUhqRi/2iQ6pX5K8m/bh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I3M3RD8T; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3bea24519c0so900145f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:45:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755769524; x=1756374324; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DYYHIISUuCy2JfQNPh+L51Upj+t6+AJZfjbcWAfxVxk=;
-        b=I3M3RD8TSi3NMGsheq8q8Al1puWs9W3t63Cl27Arf3dNwQQK7GtaduGQHEgt46YDHA
-         9xX2hfIVjXngTseehuNGZXp/YdgMu0LqXBlPnhTjC86+YgeYVagMBlN+TE+kuqJRUc8X
-         RZiqkhmEncZI4RXf/JJhyKtjselwx3Mp6QouNAKanbKdjW0obSzF+fgHhM6hA89Ve9kz
-         8cKjc1olS1rjL4Xf6Bg0Az1pwlSrdL1zPeUQutMY32mie5u0pcRQ6V0wiJ1mhkts3LgU
-         oqBvGQ8x9VO9Knd7DJBpcRoIzL9vFu1lxeskCVJjNtTJnoZWWOgA+Md7FU42U7sigwOc
-         HOcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755769524; x=1756374324;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DYYHIISUuCy2JfQNPh+L51Upj+t6+AJZfjbcWAfxVxk=;
-        b=mNIA8k8TLcuij42YBGsAUm6UQX6mZROhLOOJpWuONSOiiQ9UDVis7225DaE54inqhC
-         8OGK8LRRtmoa+W5s2bhzMMgF6fPNJe24oOY8vxQeVw7Xoo+KATAKcNqQKAnil5UvtJbU
-         qJVKNmNPku0WuNbS0qmoOVxsCpKoGYERynzDYwgYfjknWvZYErSxrbRS0C5MrJmVaDfe
-         vxn2o5GL+jsZ5dDJZNT4LSt5MGU0KjKBcBlwW580KXIiU73n9HQBkkpz3mawdOc/6A8u
-         Q3v6H6vX2S5bLqgBoVsV/cEPkuX+KyzSGeVhPCXk08tRBnX+3Sglmi/rS138NVC34osy
-         H20w==
-X-Forwarded-Encrypted: i=1; AJvYcCUHv6zYv/FUxydIj2OnJFRG/SCmVb7oqZgTpydB7cGe23oKptjG/qV/5HMoPuQb7ZqNzYfC2zFIsS+Zz5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEinGUPd/H8pxZPkNPKQg7urfOuqgY+SKGYcX4budQboL6tzUe
-	xyKSlmn0R1ZgYWNbS9rIHRjn8/gyxSfE3PB78Ii9xJAcEgxgb9PXcQEyFTO9IMDr68pz7mmBVaU
-	bPctzmSU83vwUVONzV3nFUcKkfZLlmOv0ypt5Lbfe
-X-Gm-Gg: ASbGncs7AkS37Y4/wbR0wWoaITk9YkK4hxb23n9gs8D9B+7AkbVywTm1K3kpeqj1FF9
-	zDF3Zv+L7mZDt0i+rFljgNYKh7tZ10v2Z2YXBbOT65O0keQgp4v5R1zzTf7I+PQng4PTE/eqVnf
-	km9VculpnphdLergdtenhQIhzGc1LnhdePG4Th0+PtF99vBm/EZ5kSWOViNXm9w79SvIyhMgPGW
-	F87OLmbgXMY8EB8+UmIR4+YmeKD6bS4P+sD2yXQ+4TC
-X-Google-Smtp-Source: AGHT+IGn/wQOgVGJFmdB5PCUsV9/j1HIemTZs47Lm99Ax8kZZi+0rJsXvH9qzrIslE8FnssJag3hkMGPPm2tMopx1XE=
-X-Received: by 2002:adf:a19c:0:b0:3a4:e231:8632 with SMTP id
- ffacd0b85a97d-3c4b4c0f1c4mr1130278f8f.12.1755769523630; Thu, 21 Aug 2025
- 02:45:23 -0700 (PDT)
+	s=arc-20240116; t=1755769541; c=relaxed/simple;
+	bh=JCE4eD09R2Kzy3VA6o7eJI35KvE9PttQ2K4NiKhvUGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q886htd3ylfVEGQPekXIU1dq1+WO9d6/Q/YS5GWxwbUyWL5ZY5RlA5tGEialoGGLg1N8Y8iEMmbVp8v02MEttyUO+C7STQVKFoh+UbLht/IxSXy0snDTxuUvt2a8BFbNdHrEQL7kjRZcSa2kkOTsAqgE770AcuGvPuTHf8r5fyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 915e9a8c7e7311f0b29709d653e92f7d-20250821
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:77ea37a4-dee0-4272-83ce-18724bd0cbb4,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:183395a8de58174fc9f9b764b8bf8282,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 915e9a8c7e7311f0b29709d653e92f7d-20250821
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 462410041; Thu, 21 Aug 2025 17:45:27 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 335B0E008FA3;
+	Thu, 21 Aug 2025 17:45:27 +0800 (CST)
+X-ns-mid: postfix-68A6EAB6-113887902
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id B26CFE008FA2;
+	Thu, 21 Aug 2025 17:45:25 +0800 (CST)
+Message-ID: <b72c666e-b286-45b6-92d9-7c6dfe5753eb@kylinos.cn>
+Date: Thu, 21 Aug 2025 17:45:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812132712.61007-1-baptiste.lepers@gmail.com> <20250820162927.34201cfb395ec7319b15920a@linux-foundation.org>
-In-Reply-To: <20250820162927.34201cfb395ec7319b15920a@linux-foundation.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 21 Aug 2025 11:45:11 +0200
-X-Gm-Features: Ac12FXwc6xuQOhVNEpGEy9nGpcxRQ0IxCgJJo1p3FE9jDQG2LnUgqbP8cpbBPG0
-Message-ID: <CAH5fLghx7K1fsdx15VsaTT1i3DRQD8zH2Yd-sEwumiByefTVAQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: mm: Mark VmaNew as transparent
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Baptiste Lepers <baptiste.lepers@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
-	linux-mm@kvack.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] cpufreq: simplify setpolicy/target check in driver
+ verification
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "rafael J . wysocki" <rafael@kernel.org>,
+ zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250821090020.167786-1-zhangzihuan@kylinos.cn>
+ <20250821090020.167786-3-zhangzihuan@kylinos.cn>
+ <20250821091716.x7y76wfvvez6g7el@vireshk-i7>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250821091716.x7y76wfvvez6g7el@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 1:29=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Tue, 12 Aug 2025 15:26:56 +0200 Baptiste Lepers <baptiste.lepers@gmail=
-.com> wrote:
->
-> > Unsafe code in VmaNew's methods assumes that the type has the same
-> > layout as the inner `bindings::vm_area_struct`. This is not guaranteed =
-by
-> > the default struct representation in Rust, but requires specifying the
-> > `transparent` representation.
-> >
-> > ...
-> >
-> > +++ b/rust/kernel/mm/virt.rs
-> > @@ -209,6 +209,7 @@ pub fn vm_insert_page(&self, address: usize, page: =
-&Page) -> Result {
-> >  ///
-> >  /// For the duration of 'a, the referenced vma must be undergoing init=
-ialization in an
-> >  /// `f_ops->mmap()` hook.
-> > +#[repr(transparent)]
-> >  pub struct VmaNew {
-> >      vma: VmaRef,
-> >  }
->
-> Alice suggests that I add a cc:stable to this.  But I see nothing in
-> the changelog which explains why we're proposing a backport.
->
-> So please send us a description of the userspace-visible runtime
-> impact of this flaw and I'll paste it into the changelog, thanks.
 
-I don't think it has any userspace-visible runtime impact. But I've
-seen many things get backported when they are incorrect even if it
-works in practice, so that is why I suggested to backport it anyway.
+=E5=9C=A8 2025/8/21 17:17, Viresh Kumar =E5=86=99=E9=81=93:
+> On 21-08-25, 17:00, Zihuan Zhang wrote:
+>> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+>> index a067b5447fe8..92633ff2c4f3 100644
+>> --- a/drivers/cpufreq/cpufreq.c
+>> +++ b/drivers/cpufreq/cpufreq.c
+>> @@ -2908,6 +2908,8 @@ static int cpuhp_cpufreq_offline(unsigned int cp=
+u)
+>>   int cpufreq_register_driver(struct cpufreq_driver *driver_data)
+>>   {
+>>   	unsigned long flags;
+> driver_data can be NULL here. It is checked at a later point.
+>
+Thanks for your feedback. I did think about the case where driver_data=20
+is NULL, but I didn=E2=80=99t think it through properly at the time.
 
-The annotation makes it so that VmaNew is guaranteed to have the same
-layout and ABI as struct vm_area_struct, which is required for
-correctness. Without the annotation, rustc doesn't *guarantee* that
-the layout/ABI is identical, but in this case, they are identical in
-practice even if the annotation is missing.
+You are right =E2=80=94 this clearly can cause issues.
 
-Alice
+>> +	bool has_setpolicy =3D driver_data->setpolicy;
+> This is a pointer and ..
+>
+>> +	bool has_target =3D driver_data->target_index || driver_data->target=
+;
+> .. this is bool.
+>
+> Their comparison will always fail. Did you actually try this with both
+> setpolicy and target() set for a cpufreq driver to check if it really
+> fails ?
+>
+> What you need is:
+>
+> 	bool has_setpolicy =3D !!driver_data->setpolicy;
+Sorry about that. I only tested the case where driver registration succee=
+ds.
+
+Do you have any suggestions on how to better test or handle the cases=20
+where driver registration could fail?
+>>   	int ret;
+>>  =20
+>>   	if (cpufreq_disabled())
+>> @@ -2921,10 +2923,7 @@ int cpufreq_register_driver(struct cpufreq_driv=
+er *driver_data)
+>>   		return -EPROBE_DEFER;
+>>  =20
+>>   	if (!driver_data || !driver_data->verify || !driver_data->init ||
+>> -	    !(driver_data->setpolicy || driver_data->target_index ||
+>> -		    driver_data->target) ||
+>> -	     (driver_data->setpolicy && (driver_data->target_index ||
+>> -		    driver_data->target)) ||
+>> +	     (has_setpolicy =3D=3D has_target) ||
+> I would rather do:
+>
+> 	(!!driver_data->setpolicy =3D=3D (driver_data->target_index || driver_=
+data->target))
+
+The current version of the code is much better and safer.
+
+Thanks for pointing this out.
+
+I will carefully test all cases, including potential failure paths, and=20
+send a next version accordingly.
+
+>>   	     (!driver_data->get_intermediate !=3D !driver_data->target_inte=
+rmediate) ||
+>>   	     (!driver_data->online !=3D !driver_data->offline) ||
+>>   		 (driver_data->adjust_perf && !driver_data->fast_switch))
+>> --=20
+>> 2.25.1
 
