@@ -1,97 +1,87 @@
-Return-Path: <linux-kernel+bounces-778918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD88B2ECBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:25:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC0A5B2ECB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B59F67B6C24
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:23:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A8A01CC3D2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BBC727CCF0;
-	Thu, 21 Aug 2025 04:24:31 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67588283C87;
+	Thu, 21 Aug 2025 04:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="f8fCfwFh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58782BEC31
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A3523A564
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755750270; cv=none; b=Fjmf+hMd0jSxayC7alO2meXXpRQ9FMDLISl/xUtxp/Hk6s8T5NyUnwVPtUh5OVgOIDFgiBgyPtuxSD/uVMDQLlZOL+Z8Io5gPRCUbkzsO5qZ0Dg4mH52tA+c3UyUcf77sB4LyI4I58jHKL7+mJv1vTuuqquGaCLug6k5DlX0aBk=
+	t=1755750264; cv=none; b=rbcBy2oYFnt51u3fpdgMsmk6yfsOG2aYXnJpFnl1J+LawbJFyIwT8nXvYaIWp6Cfbg/zgJXwHAshKbBQh+oSKwbL5elPP1QmbdD1/HjxLMKW+33insOTLWAjfzgjUtzC5vroRgzOkpyR8XQPYAEC/6E12hi3n8csbB3TM+g7Eh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755750270; c=relaxed/simple;
-	bh=FnPAcNFU8zPBbmw/p356FXVqrBzY4y7BG59zjo96mmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EdVY+Uac9GUf4otrZq0thj2OwMJol+DjY/WWbGr5VR6fWoFvAoct/lAZEgq4u3nqR/H70Ti9uUaYlUkd7EVZpIzFdqyV3jQvdjQUpaFUuoxCjk/NHc1mmRJLVZumP4avJONtU7uiU5mtEUeDSDOBbsUfJNTaw625rIFhOjTZ4Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uowqZ-0005UK-S7; Thu, 21 Aug 2025 06:24:19 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uowqZ-001M4N-0a;
-	Thu, 21 Aug 2025 06:24:19 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uowqZ-007ub5-0F;
-	Thu, 21 Aug 2025 06:24:19 +0200
-Date: Thu, 21 Aug 2025 06:24:19 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	Kyle Swenson <kyle.swenson@est.tech>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH ethtool v3 2/3] ethtool: pse-pd: Add PSE priority support
-Message-ID: <aKafc9yAiMPoNNTx@pengutronix.de>
-References: <20250820-b4-feature_poe_pw_budget-v3-0-c3d57362c086@bootlin.com>
- <20250820-b4-feature_poe_pw_budget-v3-2-c3d57362c086@bootlin.com>
+	s=arc-20240116; t=1755750264; c=relaxed/simple;
+	bh=yEbxrMCEYmcIooCbdM8kiby0WKYLYX/mSci3aAy4yVM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=qv4AR+i2oVqWnEYNTDpa40SlKgAGm5UdxvJh5He7M9/G//SLNVnK0VunTDaAaCOeLUFKkxaJg4FgM1dFB1HKBhnNp3o91yALqQWNrLMG4Hk3IwdR+p08u2vE7dDPQxYlN9Ab9skHYIVMsKNgFiIyr7BfIO2s7VsmTuA921+TUc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=f8fCfwFh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D09BEC113CF;
+	Thu, 21 Aug 2025 04:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1755750264;
+	bh=yEbxrMCEYmcIooCbdM8kiby0WKYLYX/mSci3aAy4yVM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f8fCfwFh4Z1og95qFf//8M53G5+NpB0yLPawo58P+nEJ33AB0QDoMmwRNquGqfk1S
+	 tsu4nuflWvmc2k2+b/tD4Yo2VUE6pT7IUR7ZuBev1amEvdmaRaGakAhitSeYTBEzes
+	 Yn3DvWs4xjELaW3Hr13oWRpJRwYQUcg2i4cxPTps=
+Date: Wed, 20 Aug 2025 21:24:23 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: david@redhat.com, surenb@google.com, aarcange@redhat.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/userfaultfd: fix kmap_local LIFO ordering for
+ CONFIG_HIGHPTE
+Message-Id: <20250820212423.fbac2b17eb4f6a9667a8c979@linux-foundation.org>
+In-Reply-To: <aI04CQZZzgCDO2A5@lappy>
+References: <20250731144431.773923-1-sashal@kernel.org>
+	<20250801141101.9f3555a172609cb64fde7f71@linux-foundation.org>
+	<aI04CQZZzgCDO2A5@lappy>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250820-b4-feature_poe_pw_budget-v3-2-c3d57362c086@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 20, 2025 at 11:07:33AM +0200, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On Fri, 1 Aug 2025 17:56:25 -0400 Sasha Levin <sashal@kernel.org> wrote:
+
+> >> Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> >> Co-developed-by: Claude claude-opus-4-20250514
+> >
+> >Well this is innovative.  I doubt if Co-developed-by: is appropriate
+> >for this (where's Claude's Signed-off-by:?)
 > 
-> Add support for PSE (Power Sourcing Equipment) priority management:
-> - Add priority configuration parameter (prio) for port priority management
-> - Display power domain index, maximum priority, and current priority
+> Claude (or any other AI) can't legally sign off on code :)
 > 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> >I'd support creating a new changelog tag for this case.
+> 
+> This is in the context of a proposal on workflows@:
+> https://lore.kernel.org/workflows/20250728105634.GF787@pendragon.ideasonboard.com/T/#t
+> 
+> The Co-developed-by: usage wasn't my proposal, but it looked like the
+> majority of folks were okay with it.
+> 
 
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+I need to do something about this and the discussion over on
+ksummit@lists.linux.dev has been as beer-addled as one would expect.
 
-Thank you! 
+Oh well.  I guess for now we can welcome Claude to the kernel
+development team.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
