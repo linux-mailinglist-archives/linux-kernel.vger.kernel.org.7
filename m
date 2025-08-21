@@ -1,118 +1,150 @@
-Return-Path: <linux-kernel+bounces-779743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A722B2F810
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:32:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFAEFB2F814
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED7141CC36F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:33:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1271E68013B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6F719E97B;
-	Thu, 21 Aug 2025 12:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559A52C11DA;
+	Thu, 21 Aug 2025 12:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qSFNqRVz"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCQggHcA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280431388
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA93A2F5E;
+	Thu, 21 Aug 2025 12:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755779553; cv=none; b=LrVNY1JABqLe5huWvmYlvGP+7NjLeDiAWYVjMg4qLxA4/0vNAr7EbveVme1kQxvF1ihiCF9LJP62DnRNTlFTtc7HvIWvD/o3UAYB7LWYkwLOaTLnx5UR3gohtxG1cXMIRQtLnR6PLW4Txb9p9tlj4gBox5MvTDu2RtCSV80Vg1I=
+	t=1755779570; cv=none; b=FaKFQCBPugfdqh4U68CwxKBVMVApsdkh9CREEDxdm1XMWU8/lFBB6gmBHAscwYGIqXaRfn6+NW4Na52faffgKzYbZekak644uLrjIg8Qe0JtHPN1JAWaMDC7upR6opBwoHy3saesEU+4eS/kiU5YxFHn0gEumEhgXYZm8haQ924=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755779553; c=relaxed/simple;
-	bh=i4ivNoJA/XYa4j8URBoVuQOwoj5jbAtHTh2CVRUNL98=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S4q0g8+TTvhQOU4kC1oyRhtzESRq9kTsk4YYXKnhR8brC+ujBiXT2iZ2LnoBytjuXD25KKqLb4JeOqRmsKN68yURI+pXQDtW4zhAffj4lX6uc6BdJNJkj1+3Dq1+CdqblTlgWMqaYL3aCzj2LkP4eYl1QbInXhETAY5gwYnU4Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qSFNqRVz; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a20c51c40so7747685e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:32:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755779550; x=1756384350; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3YxbukuAzSacGXrM6lqlSlHSwuWfZD3gHN6r3X8UJRE=;
-        b=qSFNqRVzxpYKMyE1QC6KxqSoQWvVw0pW04O36qfvu+Fv9AMM6y2I7o+EtEeroIKx5f
-         xn06yIk8ngZsSvaBbsEOFW4Ni4gVFrB7W0ev7J9CMdVKuWhNM1idSkFw2Ulpqjlyvvg6
-         lh9pAYC/CrukmwOamp4fbJUfPILgHsXPK9xYuVaQtXlN+09nzZcazkaPdt0e63RxHNiv
-         n3XmaGswzWoV/Dzp5zLdrjFmOmHvZVRKQdI1wC/RUL2LGpPHNTAb+gYDl8vGBeEFend3
-         lDu0UIiWhVOvURAxEtwdN/QgO2UOP7uuW0Ddz0M3kzHuYoFvjNfLn8KPb9+qpLk5lR2p
-         jmng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755779550; x=1756384350;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3YxbukuAzSacGXrM6lqlSlHSwuWfZD3gHN6r3X8UJRE=;
-        b=VNovAihIcq5PcSUsNs40utQ4fUeT7MhMdfRfYwVAxcc4T5RqpnKa3t0XmJo9/4aZfA
-         hQQ68JqPT/+qjQfLDQ2E/szunrNr2PkOZXsq7/mX1LdDg//KAmavLrTmTYUclLf4A05i
-         EaH+AFqbcbvUAOhoW9WEIpu45wetTMWLpUzwS+2QXk2Cm2wS0lLpxh1ab1XR0jq+P6LF
-         Fnp3QmpnLAOCcxy+DEWo+JtxYp70WTNC72v3jiH/fruCxryv91Qr2XycQ7mcyDNtzvBM
-         MnmgY8kdlYLI5wwtWoeXKV3hxlPRxzxNaMNrFZ1fnOD8101g3v1Mbgi6GIJ0PGqnp5xh
-         DQ3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWSjzDZcrQ4Zma0UyTaPLXYbAyznw8aIPWZ1HLG3SaACxqdXPG+0Jd5Hp1k8etp0QMj1BcS5EagNH0olOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK4/Y/CNXZoWpZC7YWJ3vAZH0tcvy1L5vWZuwSDfEkkpya0KwV
-	t1r8eO0q1SOObhb/SgzVoo09AC5xafPY48sPJER0JZcwUoEYb4tKNHQbn7Nd4rklJR4=
-X-Gm-Gg: ASbGncsjsnzvBkA9OefS4mJoCzpGWqHmN6oeApZg+DjKdnjoC3zj7edgNGT6+eENs/l
-	FSn6Fm3shfwotmYlwOeLwIW7ZHgm/ugh4rXEugTVC5iwuvJ2/LFrND4NXMLUtA0h1nanmWDDqwg
-	1ECI/RXgH9o717WL6gYI91Yn+i4T5voo3cprWIk2G8WM0ppUxEbsW/gXt0iwICRVBJzNEuAIby9
-	O9IhssgZGUL3dmVWbvTJxkqozPIkArORvnAj5Hu6dmTMp9CwD8tzeXl7XcWZjBTZrTDvJwEYKIC
-	/PYv52pI1aArPJwMh1y4fE/0Xaa6gGa2FzTaA376MVQcKFRTNu3QwG9g+jv8qrNcCCMGumVnvKf
-	YJzlGQyl+dg7AsQK9tx5g6cCfEVWJGmKm5wKQXA==
-X-Google-Smtp-Source: AGHT+IF4re4JMKqmwW7eC8Vyez+RBY3Ot24DyU7VwP7W6aNkCpKu4qpBngC8551+g/vQCfP2k/8E9w==
-X-Received: by 2002:a05:600c:458d:b0:459:e200:67e0 with SMTP id 5b1f17b1804b1-45b4d7dcc58mr19978705e9.10.1755779549700;
-        Thu, 21 Aug 2025 05:32:29 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b4dc255f9sm29273285e9.21.2025.08.21.05.32.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 05:32:29 -0700 (PDT)
-Date: Thu, 21 Aug 2025 15:32:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Rex Chen <rex.chen_1@nxp.com>, Huacai Chen <chenhuacai@kernel.org>,
-	Binbin Zhou <zhoubinbin@loongson.cn>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mmc: mmc_spi: remove unnecessary check in
- mmc_spi_setup_data_message()
-Message-ID: <aKcR2ea747xkw_it@stanley.mountain>
+	s=arc-20240116; t=1755779570; c=relaxed/simple;
+	bh=SrTqUvmK+NpBlB3NybcMH+08tW6CxEGC7b7hfNmTs+o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=qaD7D2GP3USc/1HFnE4wr6yhZr31qV3io1hKVwb5FMCXA7f0nanFyZPF2coBW9mMmZFtBI873RQx89CSmLo9DEkrU6kYzuJNDOHZOI+Gcuvc/287WbNwaHmk5HqVJkrNW2D/flmJbqK/zcYPcC2c68SqaKFdqDZQy9b9qIScx8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCQggHcA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADD5AC4CEEB;
+	Thu, 21 Aug 2025 12:32:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755779570;
+	bh=SrTqUvmK+NpBlB3NybcMH+08tW6CxEGC7b7hfNmTs+o=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=uCQggHcA5Li5qLEFUvSJkmHidXQNxNdMzvaTqeAw29JRR9pkLETXDXfe08yyby1cU
+	 jVDiELhFQAVMpMSslcmgWwO8sHb6M0J9GqGT29uI0UB2ILITqHU5Hr9u/n+2xxzUZt
+	 RsqrBROsXWPY03PYjVcFjbBF/otcl0NvdUtvnJZnDTuZMNmFcIpYRuFzhMkcwuziQJ
+	 tuNs4MMlFfsLQVZG7dhWb0lRWYDNt6pEwhmL299fAMqRKPu8oj7zrcJ9ZX+mrAUmzQ
+	 TT7MYIYJK6aMRtQap+bRB7fBadnrIesb6mDbR84FskI7npl1Rswn+1gv8kLsChp6t/
+	 hIPmY9joAf4TQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 21 Aug 2025 14:32:44 +0200
+Message-Id: <DC83WSYHY3K1.1D3XEES0BIKGS@kernel.org>
+Subject: Re: [PATCH v2] rust: zpool: add abstraction for zpool drivers
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ "Uladzislau Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
+ Roy Baron" <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor Gross"
+ <tmgross@umich.edu>, "Johannes Weiner" <hannes@cmpxchg.org>, "Yosry Ahmed"
+ <yosry.ahmed@linux.dev>, "Nhat Pham" <nphamcs@gmail.com>,
+ <linux-mm@kvack.org>
+To: "Vitaly Wool" <vitaly.wool@konsulko.se>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250821111718.512936-1-vitaly.wool@konsulko.se>
+ <DC83A2M3G8EH.12FRM3C05ABCR@kernel.org>
+In-Reply-To: <DC83A2M3G8EH.12FRM3C05ABCR@kernel.org>
 
-An earlier commit changed the outer if statement from
-"if (multiple || write) {" to "if (write) {" so now we know that "write"
-is true and no longer need to check.  Delete the unnecessary check.
+On Thu Aug 21, 2025 at 2:03 PM CEST, Danilo Krummrich wrote:
+> On Thu Aug 21, 2025 at 1:17 PM CEST, Vitaly Wool wrote:
+>> +    /// preferred NUMA node `nid`. If the allocation is successful, an =
+opaque handle is returned.
+>> +    fn malloc(
+>> +        pool: <Self::Pool as ForeignOwnable>::BorrowedMut<'_>,
+>> +        size: usize,
+>> +        gfp: Flags,
+>> +        nid: NumaNode,
+>> +    ) -> Result<usize>;
+>
+> I still think we need a proper type representation of a zpool handle that
+> guarantees validity and manages its lifetime.
+>
+> For instance, what prevents a caller from calling write() with a random h=
+andle?
+>
+> Looking at zsmalloc(), if I call write() with a random number, I will mos=
+t
+> likely oops the kernel. This is not acceptable for safe APIs.
+>
+> Alternatively, all those trait functions have to be unsafe, which would b=
+e very
+> unfortunate.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/mmc/host/mmc_spi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I just noticed that I confused something here. :)
 
-diff --git a/drivers/mmc/host/mmc_spi.c b/drivers/mmc/host/mmc_spi.c
-index 95a32ff29ee1..42936e248c55 100644
---- a/drivers/mmc/host/mmc_spi.c
-+++ b/drivers/mmc/host/mmc_spi.c
-@@ -566,7 +566,7 @@ mmc_spi_setup_data_message(struct mmc_spi_host *host, bool multiple, bool write)
- 	if (write) {
- 		t = &host->early_status;
- 		memset(t, 0, sizeof(*t));
--		t->len = write ? sizeof(scratch->status) : 1;
-+		t->len = sizeof(scratch->status);
- 		t->tx_buf = host->ones;
- 		t->rx_buf = scratch->status;
- 		t->cs_change = 1;
--- 
-2.47.2
+So, for the backend driver this trait is obviously fine, since you have to =
+implement
+the C ops -- sorry for the confusion.
 
+However, you still have to mark all functions except alloc() and total_page=
+s()
+as unsafe and document and justify the corresponding safety requirements.
+
+>> +    /// Free a previously allocated from the `pool` object, represented=
+ by `handle`.
+>> +    fn free(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, handle:=
+ usize);
+>
+> What happens if I forget to call free()?
+>
+>> +    /// Make all the necessary preparations for the caller to be able t=
+o read from the object
+>> +    /// represented by `handle` and return a valid pointer to the `hand=
+le` memory to be read.
+>> +    fn read_begin(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, h=
+andle: usize)
+>> +        -> NonNull<u8>;
+>
+> Same for this, making it a NonNull<u8> is better than a *mut c_void, but =
+it's
+> still a raw pointer. Nothing prevents users from using this raw pointer a=
+fter
+> read_end() has been called.
+>
+> This needs a type representation that only lives until read_end().
+>
+> In general, I think this design doesn't really work out well. I think the=
+ design
+> should be something along the lines of:
+>
+>   (1) We should only provide alloc() on the Zpool itself and which return=
+s a
+>       Zmem instance. A Zmem instance must not outlive the Zpool it was al=
+located
+>       with.
+>
+>   (2) Zmem should call free() when it is dropped. It should provide read_=
+begin()
+>       and write() methods.
+>
+>   (3) Zmem::read_begin() should return a Zslice which must not outlive Zm=
+em and
+>       calls read_end() when dropped.
+
+This design is obiously for when you want to use a Zpool, but not implement=
+ its
+backend. :)
 
