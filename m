@@ -1,151 +1,257 @@
-Return-Path: <linux-kernel+bounces-779056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE54B2EE81
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:46:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BD8B2EE8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72076189C35F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:46:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89AE25C5B87
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D0B2E266E;
-	Thu, 21 Aug 2025 06:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC0C27A12C;
+	Thu, 21 Aug 2025 06:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXujOBQa"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K1uks7Iz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D3119047F;
-	Thu, 21 Aug 2025 06:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B382472BD
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755758763; cv=none; b=PhVlBI+k9+4nHCbxY7O2ZpXlaJ4KMTP4hGwiAW8/8R8s1w4NCWNuy2TRzVyoI7xKtBhoeGMJr9yIM9diKHUmsJto4kCX36/AaJFSS8hrQIcoD49E6DzTQhCbY8AeTMOravKEw+qKOErLmSV7PgxTWkyMY1+zJXQH8+m10PWUQFY=
+	t=1755758816; cv=none; b=jqxoqYjHHKHtk7zPTSIDzJ9QGPyY++0pwfi14/jQqpGamex2eqqo6WcR24x0HdGWtQYLf4bq03dIpoylhAslPM+ZtZJ1IQrG2SS/fPN4Q5slvN/TJuNpbUqBofziH5gMyfvZwu/ltD3oVs5TEZLV8FG8ZGBPy7J5YjpwXghCvWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755758763; c=relaxed/simple;
-	bh=oBwPDZXX3KOkpIoUmCaMcfZGJPlZNWTmlwvi8mY8yv8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X0uDIkLC+CRc8MOR7C3CQTf65C1gC9T3pKt4+9BjT6wIHrpC74B7Kp2I9BrN6GXN7Bo6jmk89fdwSrZ7/1ofMJdv8y1kWE/bcj1o7wHbgAPbbB6mYXO1YjVpGA+84JNTCWgq8QHPP2rhmB+reGruKDLFyMq0LL2yxeJ+r2A7Dwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SXujOBQa; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45a15fd04d9so11358505e9.1;
-        Wed, 20 Aug 2025 23:46:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755758760; x=1756363560; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vySJJlycB8sAhA00gy1auHre6+C0cbwZ/xtdefFT+k8=;
-        b=SXujOBQag3Lzuh7c7nibUyBm/mL2eT4gFaPqcCVI56alwiKmAwwNqsx/F85svQ9qL8
-         NK+ICk7o8DuRpPPZHQ+rqG43i6qgySbqYJ1m9GrE5vvzAp62z1Z7CdhXJLR+YAiejIS8
-         Cj7p05abRE4MT/i5WVZNbbOd2PZt7YDli5L1FYl0P9cjF1l4BR/JBL5FwD6IhAr9qQ3P
-         s5/5czRVC56pu+9piZACf1d+ZtmrMLZtn/d2PtcrYu+65Od0iWSl0eKkamOPEjtfepBB
-         sP7TZhnnNgd0gyMUR1HcaCFrLjQ15H4wYAv5diJcOogW7riZJlnISpkEBA6gvsw0AxC0
-         ubXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755758760; x=1756363560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vySJJlycB8sAhA00gy1auHre6+C0cbwZ/xtdefFT+k8=;
-        b=l8KptdLW+w45GrvnuFvj4hMDRHBR8gksna+LsbIqFz3l20x1wImnLKiapfsjxbHVjU
-         zaAtjJgOZS6pJKRneQsUDUQwdQJBIYaraTuWRNieMpJbg9TnRCrW1RKsmXukhk9E1UgX
-         9UKGUIsE8LFRJ6Duf1tRxvHyo357K8556ox9ybkYchPC4F+wxk+PXnObNMLo6RE51Yjv
-         aWQOZC/AqeiPoTkwg/rYe1xLWip8h47ZMoY9ZJ4SqbINciTRUlFHrwkAcFkiUph2lTVk
-         UFAuvJQdwN4/cg78r5RmvaWmzNVo/yB590sHJaeVuP1dazfZSrFkUxPjhgW3ZLoPjNdF
-         mr1A==
-X-Forwarded-Encrypted: i=1; AJvYcCU0I/Tw1nFBedwgxz4Br1tWs+3PhCrweOTEDLCa6bx9kaC8k0FJPazoRFvHbnraLA9FVPEH4BbCzszdXKFO@vger.kernel.org, AJvYcCUuec2yfNtIcQTOSwwRY/fFXmQiYpRgaW9wYZglIC9I6iO+VBmculJqXLir93u1Qr6CnQj4DcuAdnP3Xps=@vger.kernel.org, AJvYcCVcQOl5/fPhN7bAYuGvNfXa3xX2wciN+DfHVMB4Z4rrWq2dThwIK4Gzj0/9Tt/t3uQQxzaSBJVODaw=@vger.kernel.org, AJvYcCWPlX6ekCxI5vk8gy5bNgJPVptNuD3aVXSOqLVP5AR/FW+ewMjIjalqrQ9IjeVhRB+tOjxIEmGkSapo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy+qdGr3OviF01zqCgrC9Z1IavTsoWYkEbjw8PlpICj7I3yV3y
-	otbwtWom1g+68PGHy7WLmcTQwqg8/3ORIdl0QXjllEdXi8/cwAOUWHBeOPHlJybC40KdMopyb+0
-	jXa2nn5fL/rERD5BPTAt4RhII2Ym+iBw=
-X-Gm-Gg: ASbGnctuA3LLd9GLA89xdpaU2spDJZkIJz9FheYzWL76zi6pnuZxblSZ8QvBUiFbgH/
-	XeypOKRLOmk3Z6rA3Mnecv/pNN38vho/f3tsBzNniu7rmy+m79ZWNtVUwLC59hSIW/CQkvs7S8o
-	DCfnBqvNPhE9lStL1+497C40OaecAod6KNYOrLefjm9f1Cu2BpSDwdAw1MZnea/RFoG0MQBCQGU
-	Ljj3LVA
-X-Google-Smtp-Source: AGHT+IGXWzA0eS0R61Nf3Ndtr7L0dAU4ibk8l1naE99zl3Xmp3m5QQ7zPsDbMVQxHdfBBrCs0Rs7rWmMy9G6zGgH5X0=
-X-Received: by 2002:a05:6000:440b:b0:3b9:53b:ee91 with SMTP id
- ffacd0b85a97d-3c4b50e1e6amr586739f8f.17.1755758759776; Wed, 20 Aug 2025
- 23:45:59 -0700 (PDT)
+	s=arc-20240116; t=1755758816; c=relaxed/simple;
+	bh=d7RhC2fsTWwVhobWw3PonU9nT5IyDG5yahvZlbUImeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFbsmvt9gOGF3ZCgsbW9PhIcL+vdx68gohNMoFVNaTTu77MRWdDQHbBMk9jArLXh4gVsFyAjJZputnrigviZc/0HUpWjJYo5pS5y0vQMOlV3AxgPTQ/oikdV9WaaXsfmyp5V41eM3BmrT3RPibi45oTxcihfRgsVPWlEHWrNC7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K1uks7Iz; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755758814; x=1787294814;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=d7RhC2fsTWwVhobWw3PonU9nT5IyDG5yahvZlbUImeI=;
+  b=K1uks7IzAyOtO6slu3nEgN7pe6Q5/sHGYBTBAfTFCzCHN+JmuQmvbMPA
+   /MWL3ykHZN49n1s6Jj94p5nAhekjialcmcPNA02BqAp47ANbzcu6PeNyw
+   4RgFx1/qB3K4u1DwgbGZErqZbI+rlGcJuTxONRX7KrpcCsWzoCA//76/V
+   KOargSr39AGnzGzjqAjCnyhI++idASLrPzxiImGxUnH6odEzZN1W0m+hN
+   FrG+bUbC8LOyHFZjTAD4Jrp8moFI8pxbjqyZhpVCab63oKfzzQ6u8ijOn
+   G/M2uUNYjBhJnI+3BLeqy3P3XUHwBUX93Xh5uWiEA4JAKViu0x6grYanI
+   w==;
+X-CSE-ConnectionGUID: Q0W5aPLZSr6nk6RMPOox7w==
+X-CSE-MsgGUID: eCnN5G8dTNuf4mK09+MW1Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="68741533"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="68741533"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 23:46:53 -0700
+X-CSE-ConnectionGUID: k1/lA4lDR/mP90NzjvyyuA==
+X-CSE-MsgGUID: 1mSzPClsREmtMFAev7O/HQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="205500084"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 20 Aug 2025 23:46:50 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uoz48-000K1D-1V;
+	Thu, 21 Aug 2025 06:46:42 +0000
+Date: Thu, 21 Aug 2025 14:46:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mike Looijmans <mike.looijmans@topic.nl>,
+	dri-devel@lists.freedesktop.org
+Cc: oe-kbuild-all@lists.linux.dev, Mike Looijmans <mike.looijmans@topic.nl>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
+Message-ID: <202508211421.aYwuLvvk-lkp@intel.com>
+References: <20250820144128.17603-3-mike.looijmans@topic.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820114231.150441-1-clamor95@gmail.com> <20250820114231.150441-5-clamor95@gmail.com>
- <4683661.LvFx2qVVIh@senjougahara>
-In-Reply-To: <4683661.LvFx2qVVIh@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 21 Aug 2025 09:45:48 +0300
-X-Gm-Features: Ac12FXzzH6qdl35BE9pgAbfUkoPCC90SJxU_f0DKbt596WihCit9QQ_DfDsklT8
-Message-ID: <CAPVz0n3pfaY9SboHhiG6NqPBjwvA4KvSeOvfadjH2DQJtcpcjw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] dt-bindings: thermal: tegra: add Tegra114 soctherm header
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820144128.17603-3-mike.looijmans@topic.nl>
 
-=D1=87=D1=82, 21 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 09:3=
-9 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wednesday, August 20, 2025 8:42=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > This adds header for the Tegra114 SOCTHERM device tree node.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../dt-bindings/thermal/tegra114-soctherm.h   | 20 +++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> >  create mode 100644 include/dt-bindings/thermal/tegra114-soctherm.h
-> >
-> > diff --git a/include/dt-bindings/thermal/tegra114-soctherm.h
-> > b/include/dt-bindings/thermal/tegra114-soctherm.h new file mode 100644
-> > index 000000000000..b605e53284fe
-> > --- /dev/null
-> > +++ b/include/dt-bindings/thermal/tegra114-soctherm.h
-> > @@ -0,0 +1,20 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > +/*
-> > + * This header provides constants for binding nvidia,tegra114-soctherm=
-.
-> > + */
-> > +
-> > +#ifndef _DT_BINDINGS_THERMAL_TEGRA114_SOCTHERM_H
-> > +#define _DT_BINDINGS_THERMAL_TEGRA114_SOCTHERM_H
-> > +
-> > +#define TEGRA114_SOCTHERM_SENSOR_CPU 0
-> > +#define TEGRA114_SOCTHERM_SENSOR_MEM 1
-> > +#define TEGRA114_SOCTHERM_SENSOR_GPU 2
-> > +#define TEGRA114_SOCTHERM_SENSOR_PLLX 3
-> > +#define TEGRA114_SOCTHERM_SENSOR_NUM 4
-> > +
-> > +#define TEGRA_SOCTHERM_THROT_LEVEL_NONE 0
-> > +#define TEGRA_SOCTHERM_THROT_LEVEL_LOW  1
-> > +#define TEGRA_SOCTHERM_THROT_LEVEL_MED  2
-> > +#define TEGRA_SOCTHERM_THROT_LEVEL_HIGH 3
->
-> Please use the TEGRA114 prefix for these as well. I see that it's missing=
- in
-> the Tegra124 header, which is unfortunate.
->
+Hi Mike,
 
-Sure. I assume decision not to use TEGRA124 was intentional since
-these defines are used in Tegra124, Tegra132 and Tegra210 device
-trees.
+kernel test robot noticed the following build warnings:
 
-> > +
-> > +#endif
->
->
->
->
+[auto build test WARNING on 53e760d8949895390e256e723e7ee46618310361]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mike-Looijmans/dt-bindings-drm-bridge-ti-tmds181-Add-TI-TMDS181-and-SN65DP159-bindings/20250820-224316
+base:   53e760d8949895390e256e723e7ee46618310361
+patch link:    https://lore.kernel.org/r/20250820144128.17603-3-mike.looijmans%40topic.nl
+patch subject: [PATCH v3 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250821/202508211421.aYwuLvvk-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250821/202508211421.aYwuLvvk-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508211421.aYwuLvvk-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/gpu/drm/bridge/ti-tmds181.c:292:9: warning: cast to smaller integer type 'enum tmds181_chip' from 'const void *' [-Wvoid-pointer-to-enum-cast]
+     292 |         chip = (enum tmds181_chip)of_device_get_match_data(&client->dev);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning generated.
+
+
+vim +292 drivers/gpu/drm/bridge/ti-tmds181.c
+
+   252	
+   253	static int tmds181_probe(struct i2c_client *client)
+   254	{
+   255		struct tmds181_data *data;
+   256		struct gpio_desc *oe_gpio;
+   257		enum tmds181_chip chip;
+   258		int ret;
+   259		u32 param;
+   260		u8 val;
+   261	
+   262		/* Check if the adapter supports the needed features */
+   263		if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
+   264			return -EIO;
+   265	
+   266		data = devm_drm_bridge_alloc(&client->dev, struct tmds181_data, bridge,
+   267					     &tmds181_bridge_funcs);
+   268		if (IS_ERR(data))
+   269			return PTR_ERR(data);
+   270	
+   271		data->client = client;
+   272		i2c_set_clientdata(client, data);
+   273		data->regmap = devm_regmap_init_i2c(client, &tmds181_regmap_config);
+   274		if (IS_ERR(data->regmap))
+   275			return PTR_ERR(data->regmap);
+   276	
+   277		/* The "OE" pin acts as a reset */
+   278		oe_gpio = devm_gpiod_get_optional(&client->dev, "oe", GPIOD_OUT_LOW);
+   279		if (IS_ERR(oe_gpio)) {
+   280			ret = PTR_ERR(oe_gpio);
+   281			if (ret != -EPROBE_DEFER)
+   282				dev_err(&client->dev, "failed to acquire 'oe' gpio\n");
+   283			return ret;
+   284		}
+   285		if (oe_gpio) {
+   286			/* Need at least 100us reset pulse */
+   287			usleep_range(100, 200);
+   288			gpiod_set_value_cansleep(oe_gpio, 1);
+   289		}
+   290	
+   291		/* Reading the ID also provides enough time for the reset */
+ > 292		chip = (enum tmds181_chip)of_device_get_match_data(&client->dev);
+   293		ret = tmds181_check_id(data, &chip);
+   294		if (ret)
+   295			return ret;
+   296	
+   297		/*
+   298		 * We take care of power control, so disable the chips PM functions, and
+   299		 * allow the DDC to run at 400kHz
+   300		 */
+   301		regmap_update_bits(data->regmap, TMDS181_REG_CTRL9,
+   302				TMDS181_CTRL9_SIG_EN | TMDS181_CTRL9_PD_EN |
+   303				TMDS181_CTRL9_HPD_AUTO_PWRDWN_DISABLE |
+   304				TMDS181_CTRL9_I2C_DR_CTL,
+   305				TMDS181_CTRL9_PD_EN |
+   306				TMDS181_CTRL9_HPD_AUTO_PWRDWN_DISABLE |
+   307				TMDS181_CTRL9_I2C_DR_CTL);
+   308	
+   309		/* Apply configuration changes */
+   310		if (of_property_read_bool(client->dev.of_node, "ti,source-mode"))
+   311			regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
+   312					   TMDS181_CTRLA_MODE_SINK, 0);
+   313		if (of_property_read_bool(client->dev.of_node, "ti,sink-mode"))
+   314			regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
+   315					   TMDS181_CTRLA_MODE_SINK, TMDS181_CTRLA_MODE_SINK);
+   316	
+   317		/*
+   318		 * Using the automatic modes of the chip uses considerable power as it
+   319		 * will keep the PLL running at all times. So instead, define our own
+   320		 * threshold for the pixel rate. This also allows to use a sane default
+   321		 * of 200MHz pixel rate for the redriver-retimer crossover point, as the
+   322		 * modes below 3k don't show any benefit from the retimer.
+   323		 */
+   324		data->retimer_threshold_khz = 200000;
+   325		if (!of_property_read_u32(client->dev.of_node,
+   326					  "ti,retimer-threshold-hz", &param))
+   327			data->retimer_threshold_khz = param / 1000;
+   328	
+   329		/* Default to low-power redriver mode */
+   330		regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
+   331				   TMDS181_CTRLA_DEV_FUNC_MODE, 0x00);
+   332	
+   333		if (of_property_read_bool(client->dev.of_node, "ti,adaptive-equalizer"))
+   334			regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
+   335					   TMDS181_CTRLA_EQ_EN | TMDS181_CTRLA_EQ_ADA_EN,
+   336					   TMDS181_CTRLA_EQ_EN | TMDS181_CTRLA_EQ_ADA_EN);
+   337		if (of_property_read_bool(client->dev.of_node, "ti,disable-equalizer"))
+   338			regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
+   339					   TMDS181_CTRLA_EQ_EN | TMDS181_CTRLA_EQ_ADA_EN,
+   340					   0);
+   341	
+   342		switch (chip) {
+   343		case dp159:
+   344			val = 0;
+   345			if (!of_property_read_u32(client->dev.of_node,
+   346						  "ti,slew-rate", &param)) {
+   347				if (param > 3) {
+   348					dev_err(&client->dev, "invalid slew-rate\n");
+   349					return -EINVAL;
+   350				}
+   351				/* Implement 0 = slow, 3 = fast slew rate */
+   352				val = FIELD_PREP(TMDS181_CTRLB_SLEW_CTL, (3 - param));
+   353			}
+   354			if (of_property_read_bool(client->dev.of_node, "ti,dvi-mode"))
+   355				val |= TMDS181_CTRLB_HDMI_SEL_DVI;
+   356			break;
+   357		default:
+   358			val = TMDS181_CTRLB_DDC_DR_SEL;
+   359			break;
+   360		}
+   361	
+   362		/* Default to low-speed termination */
+   363		val |= FIELD_PREP(TMDS181_CTRLB_TX_TERM_CTL, TMDS181_CTRLB_TX_TERM_150_300_OHMS);
+   364	
+   365		ret = regmap_write(data->regmap, TMDS181_REG_CTRLB, val);
+   366		if (ret < 0) {
+   367			dev_err(&client->dev, "regmap_write(B) failed\n");
+   368			return ret;
+   369		}
+   370	
+   371		/* Find next bridge in chain */
+   372		data->next_bridge = devm_drm_of_get_bridge(&client->dev, client->dev.of_node, 1, 0);
+   373		if (IS_ERR(data->next_bridge))
+   374			return dev_err_probe(&client->dev, PTR_ERR(data->next_bridge),
+   375					     "Failed to find next bridge\n");
+   376	
+   377		/* Register the bridge. */
+   378		data->bridge.of_node = client->dev.of_node;
+   379	
+   380		return devm_drm_bridge_add(&client->dev, &data->bridge);
+   381	}
+   382	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
