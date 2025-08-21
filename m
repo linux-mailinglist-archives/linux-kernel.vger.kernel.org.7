@@ -1,68 +1,63 @@
-Return-Path: <linux-kernel+bounces-779725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC06B2F7D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:23:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F116EB2F7D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA3563AA6BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C225B1BC5A8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1B72DEA8F;
-	Thu, 21 Aug 2025 12:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8EF30BF7D;
+	Thu, 21 Aug 2025 12:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y5CTjjVr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kHqscCRc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bfm8/3wy"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F1B26F2B2;
-	Thu, 21 Aug 2025 12:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7D91DF26B;
+	Thu, 21 Aug 2025 12:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755778934; cv=none; b=oQ8TMRJSopddw+u3vCrGXdzw1PLXMIYKmutnWaQ6qAZhMjaStnqTxK3lW8fZa8xR/aJ0uMg+LtjfsLidSDZq6lzxjQdtTFETIwZvmjSA0DS6Yd10dB17s3f9sa30kXagBknpe+Xn8EqqRLTqS9XXItOzonLR7nZ5h4dEhrYw+dg=
+	t=1755779006; cv=none; b=HVIYphJ+eOI2tA6G5C/pZ3gXPbsbN3HUr9gj4o+ecnkH9LfqafkIvacRTezNTM/Zq4akTEuBO/B42y1w7I1pIvDIoJY0IRRWauknk6IqRhJLkokLdtmCjFxEmGsM1OEzu2iI6L/gTzc271ffUxXwM0hGtkFUAuyrXlYC29oIw7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755778934; c=relaxed/simple;
-	bh=lBEjdKy9yQabFSqInWTXFRzH25uJEOMHVsj3xj5Oj4E=;
+	s=arc-20240116; t=1755779006; c=relaxed/simple;
+	bh=l2yz/a69BmD4Ap543b3wumRHAgCXRYK9lk2peNqvSic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rXVwg2kPg+uVW5qxqQXWaszna5dP3TGZ9MAbbWLN+eBg5EDEB3wXfQP3fSwQVpTeCDeEbQfGByirlEt7vNbnS4tf3CUvxjkATt2AAEVbQgRdmuokLDgmlPEFSki0iK9cgLIfLDG5AA4imfqYTcKBMhOBncnjZEGnYz+CSdBpJkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y5CTjjVr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kHqscCRc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 21 Aug 2025 14:22:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755778931;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vw4cKZs259ZSqnWcEQVQVDScYmUQQCML6GAeQxTOIKs=;
-	b=Y5CTjjVrwvOyHlLAxxUH5VFDLTAp1hM16t9yjzoaUcSws15QugCYviGihNy5O5sO1qYnje
-	26s9vzreSHdBGT+bX70BVV57rw+lx0BTZl7mrVS5utS12klpyFe3UOpUTzRhPU99jfSw8e
-	3hugEX20HJDcI8LTshm1KdvM6ZWxyENaiJnQT3jZZajKRzvFYH6K9DCoRqQTrnvydWm6Ta
-	elPW7dJO+QWnqI+exMPHZyw2ZwkT8gv05Jln28bVgDhIyUui7ceyFTC0WgsZSboIj8F297
-	Old5DcELUVdU3qTdhmB/klWG1qsEE5moqY46r8H57Uo/J5XOts1BzF69xmS8Tw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755778931;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vw4cKZs259ZSqnWcEQVQVDScYmUQQCML6GAeQxTOIKs=;
-	b=kHqscCRcWCnMA6HAZ+LK7nJVWR0KNnYcZttZC/7Gwf3o99yR4rbsl4HWGdydpod9hwdm5l
-	unwuytZAHbx+s7Dg==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [RFC PATCH 09/17] verification/rvgen: Allow spaces in and events
- strings
-Message-ID: <20250821122210.B9iAsUFG@linutronix.de>
-References: <20250814150809.140739-1-gmonaco@redhat.com>
- <20250814150809.140739-10-gmonaco@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DuofQT+u+KoGIrLpP/0/qRopbrNNqSwX/lNuSWLfQNKsgq2TDfUHC0UZPe6YNulG3WNNOyQf7t9U3BlRtCTaHk02Ct74qOCNLVt4XoO31QfBhX1DZkHblQDq/WQGkPTx0KfVbhhGt+cCC22wou8cL/7N4W+NhA/qHaLkxjEcYk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bfm8/3wy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=2q2P01PAZaHRC8b63asCNXKZdiT130xikH730RPz13M=; b=bfm8/3wymYYWrDTTgNV6ri/Ql/
+	rm93ez6iCzuiHPaZUiyavg76FknwamCULF7ZRSZqIBvDt/HCQrb5sZj1fGCr+g5ubLWdjzBJnpnIs
+	x0GnhYG6A79W27WACTgdaYDSVmPfsmtwbBYHuuKbYR0ivoVtWGpFs/05Wu8j12lpqwyA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1up4K5-005RtG-Qj; Thu, 21 Aug 2025 14:23:17 +0200
+Date: Thu, 21 Aug 2025 14:23:17 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: David Yang <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net-next v5 2/3] net: dsa: tag_yt921x: add support for
+ Motorcomm YT921x tags
+Message-ID: <5c5d3ef2-cb58-423b-b57c-737b01ba482d@lunn.ch>
+References: <20250820075420.1601068-1-mmyangfl@gmail.com>
+ <20250820075420.1601068-3-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,22 +66,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250814150809.140739-10-gmonaco@redhat.com>
+In-Reply-To: <20250820075420.1601068-3-mmyangfl@gmail.com>
 
-On Thu, Aug 14, 2025 at 05:08:01PM +0200, Gabriele Monaco wrote:
-> Currently the automata parser assumes event strings don't have any
-> space, this stands true for event names, but can be a wrong assumption
-> if we want to store other information in the event strings (e.g.
-> constraints for hybrid automata).
+On Wed, Aug 20, 2025 at 03:54:15PM +0800, David Yang wrote:
+> Add support for Motorcomm YT921x tags, which includes a proper
+> configurable ethertype field (default to 0x9988).
 > 
-> Adapt the parser logic to allow spaces in the event strings.
+> Signed-off-by: David Yang <mmyangfl@gmail.com>
 
-The current parser does have a few problems. Not all valid .dot files are
-accepted.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-I have a patch buried somewhere which removes the custom parser and instead
-uses a library. But then it adds a new dependency, so I'm not sure if it is
-worth..
-
-Nam
+    Andrew
 
