@@ -1,111 +1,143 @@
-Return-Path: <linux-kernel+bounces-779144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3E1B2EFAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:31:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B603B2EFAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0944B1CC409F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5F4188882F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CDA2E9722;
-	Thu, 21 Aug 2025 07:29:36 +0000 (UTC)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D5B27C842;
+	Thu, 21 Aug 2025 07:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q97ul9Oz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD4A2E8E06;
-	Thu, 21 Aug 2025 07:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343A4A31;
+	Thu, 21 Aug 2025 07:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755761375; cv=none; b=b5yYEWf3UTgDKCqXnIMg11OMqqii1m4XDEWKkfVq+lFpAtzz1zfCiaRI5uOfE8WqdfknaIoGHry+du1Xq+BBXdOhs/qCc2CVNqRqFk1Da+RaJcnnAVyXdMKoi2q7iEPDHnjQgP2rEeS71is/ftGY3dT1LacxQ9QRN5lg/qLTfVE=
+	t=1755761417; cv=none; b=lUgJ2McTJ0gW9BcEH5/HRzyGbYma0Kgw8xfqmFbzqAA3ljUPtKT5mGDzFWj/JoRd19ophllCSJdl+rDgiy3HPj2Y2e6pIO75Si1SlAO/RitQWMY1tXXse1ZD8qfA6pn3jaiUtpvYoLHcu7Xge0F1vaV806cD9gJ2BNRNblGr+xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755761375; c=relaxed/simple;
-	bh=iV/sgvKsdc6jfoRmC3wV6sOvcmm8K914VALqkOHJAJ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XyQHZ+8JqWfk5qpEit1DrogSfTlapdEz1h6Cfb6XeMnSpLTPE/ZGFYovw2A4mo+DEHJAjz9U07dgTgSPTNJhppgidauiZYZZZC+uBCIQrqQ/h+zIb/RXb+dP/SlNm0Ug5YrzuooK+Z+uVOkP5enEMo71/3aOLoxq+THIA/vtx3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-53b1754a419so586457e0c.3;
-        Thu, 21 Aug 2025 00:29:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755761373; x=1756366173;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H3Q9L9dp7ToLZeiw2ARDJHGLAzrOLFLICMnW+u6D2Rw=;
-        b=xTCbR7mps5NbUUEJmCGxSN0mt+pbfNQoY1hlcE7kZW9JNOBOJim/UFjqMiRBWn1dp8
-         q70PQHZp+arxq8atPf/IxMi3ZedbUm5gqc5HHBgetzs9WKALQkkGVcJv5H+Tx4WVwiJN
-         xzGC7gvR/favIgrwPcrj7vD1k15yspaNQmrf9FSqy9qeMDfolhzE13I6lqEt+PvidJfY
-         vNZeEcnC9QcW0a3tL9e+a+NJWGUxjhqvfapYzvcpDs895NtY0VJJ9RwD36Ctkdcf99St
-         40bto0L5oVFhVckkdP/pOqE/I8MK5W3TgwxccaLHvbyhQ22kN1sXZ8g3ZzAjgHkAg4hR
-         1KoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSA2istuozV0tSCax1VWij8NIwudjo0eWvp1gOi86V12zY7Ze5Zlu72rAYJn2GPCGnUxsSXdh09k9p@vger.kernel.org, AJvYcCXGIJ5CSHQ2XEgiV92VrjAgC48uzVdw8m6oDFFSQWT/llFciPVgwc7XwBfgmZS+ChcFlPfgYRjzYD7HpH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxymgOjhmgX6WlRGqBPHHL4s1dppKuCj/xnlf1cIx1ZndHy+VCn
-	SISGv8BnNO7FLmRO5tU5AoOlPCNbu0c5l0U2VMUTMUVVj5d0GZbUXeR75qKtTim1
-X-Gm-Gg: ASbGnctvnd5o0QOAvcC78DdheiCQslD79D91b7IR6WbRX5R2xtvPxgmqZRJLAdT50zK
-	s+Scffi2zUcv0UlIoIOPKpXaR8HyhugVFPyPdYuiVdOz60z2SpqNjET3xqoPgMT1f6w8iwuwEy9
-	1MtVTdiSp6EsMsnv9zM59KRcutfj2QPLpmK641Q+youyF4UOnkwwhElMnbGFqB/NBd83X5x1b0y
-	09pjeEcqWvE1jj6hFQOdWLNaminhD3J/dTN4Xuk0EozXNc0dQAu/5DwKdm0ClCByIwL8XzN7vhT
-	XBOMd63upVPg7c5chZcz/B2mu+on/mG7y4tZNMiMuhiJg5TaQN5z/18dcdtnIUjQKKN0rSiRZwe
-	tdcRO/sgVs78A9LMYY7us6BPcssnXy41sya0QdBn0Lhh7pbTI95Bl8AZ9i4Ue
-X-Google-Smtp-Source: AGHT+IGW5DIJ6meUaMGpqvIZHGeyIB8V9KtykIzPN6bUPVovymxdCHm2i99qX5TQ1WEgvQkmWoeUKg==
-X-Received: by 2002:a05:6122:1350:b0:539:3524:2138 with SMTP id 71dfb90a1353d-53c7d845b6cmr450903e0c.4.1755761372832;
-        Thu, 21 Aug 2025 00:29:32 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bd552c1sm3625470e0c.3.2025.08.21.00.29.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 00:29:32 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-890190b1aabso490299241.2;
-        Thu, 21 Aug 2025 00:29:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUiie51e1sRF290volOekXAtzdDO8J1Sq0pRA8F3X+/1l0A4yReS/kI1LCaimOwRXN/6W0nxaYps500Nsw=@vger.kernel.org, AJvYcCVPX02+ZWHLx2rgqTEF9wojXaZ7qRjJ8d4HE+prW2BM86Bn19J73PEna3R14Mlv9WKOiGD7z/0/Lnl8@vger.kernel.org
-X-Received: by 2002:a05:6102:835c:10b0:51c:77b:297c with SMTP id
- ada2fe7eead31-51c077b2a0emr191728137.27.1755761372172; Thu, 21 Aug 2025
- 00:29:32 -0700 (PDT)
+	s=arc-20240116; t=1755761417; c=relaxed/simple;
+	bh=vxlY/X8dtM1EGO1feIikldcljazKbwBz1ntaXK3cUpU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UmdpJ74uuWt/PwD71l1zQh+jlt4QkOwgfDTW/NVDI3+Wy3ttD2BbeQlPuSZowjacV8sOc3SacofqT8NyuuoC18mSmh0LxY62dT5J6huZdfZTuQz2M3DGEboZZ5jFajx1CRW98WEIzU3XRbQ3/5wI7jYJy1wsKwvfzTyN3VZFqOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q97ul9Oz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D869C4CEED;
+	Thu, 21 Aug 2025 07:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755761417;
+	bh=vxlY/X8dtM1EGO1feIikldcljazKbwBz1ntaXK3cUpU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=q97ul9Ozfed6vNpxwGCGCpJMgRcuiAvswkhCRQbdWAFXt4dVe1ucLVPd4Mdmjv8Q6
+	 FV+Egb9unFMjK3NlU2eiA9LRsUonhKNDhF0iLQormve3cdIM0PXHTJP0DGpbfXu0H3
+	 aPpkqbqQglfni0SyYuPI9Ym4BhcSNPQFig+CrxXS51+LKYt+eQ4LAZZKIIlrf8/RaE
+	 k3xE7clHFNWfX4vFDpZm8nEnHS2yUmdyWUYc/nzrkpDmDUNIQC1RYp9igzIaLMD3/O
+	 j4M/OFbOp8t/YQYCpG7rqItsqn2++bZj2ulhgTnNJ8TldYriooq4B68EcbLulA16CK
+	 k0vj578P3qyyg==
+Message-ID: <376a8f00-e803-4ab1-a54e-6535e41ebaee@kernel.org>
+Date: Thu, 21 Aug 2025 09:30:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820180310.9605-1-rgallaispou@gmail.com>
-In-Reply-To: <20250820180310.9605-1-rgallaispou@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 21 Aug 2025 09:29:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXU6rSgdJ0z+ngWJ4F085OvkTSLJhJMx5jj29-4wqXktg@mail.gmail.com>
-X-Gm-Features: Ac12FXyG__rwqKq6a2oYbz45RCyvpIcB9Sm2YdsLsERtwJw3UkULSn-9yzVLQ9A
-Message-ID: <CAMuHMdXU6rSgdJ0z+ngWJ4F085OvkTSLJhJMx5jj29-4wqXktg@mail.gmail.com>
-Subject: Re: [PATCH] spi: st: fix PM macros to use CONFIG_PM instead of CONFIG_PM_SLEEP
-To: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: mediatek: Add power-domains
+ property
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Julien Massot <julien.massot@collabora.com>
+Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Ikjoon Jang <ikjn@chromium.org>,
+ Enric Balletbo i Serra <eballetbo@kernel.org>,
+ Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>,
+ Eugen Hristev <eugen.hristev@linaro.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
+ <20250820-mtk-dtb-warnings-v2-1-cf4721e58f4e@collabora.com>
+ <20250821-whimsical-mustang-of-champagne-ca7a7d@kuoka>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250821-whimsical-mustang-of-champagne-ca7a7d@kuoka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 20 Aug 2025 at 20:03, Raphael Gallais-Pou <rgallaispou@gmail.com> wrote:
-> pm_sleep_ptr() depends on CONFIG_PM_SLEEP while pm_ptr() depends on
-> CONFIG_PM.  Since ST SSC4 implements runtime PM it makes sense using
-> pm_ptr() here.
->
-> For the same reason replace PM macros that use CONFIG_PM.  Doing so
-> prevents from using __maybe_unused attribute of runtime PM functions.
->
-> Link: https://lore.kernel.org/lkml/CAMuHMdX9nkROkAJJ5odv4qOWe0bFTmaFs=Rfxsfuc9+DT-bsEQ@mail.gmail.com
-> Fixes: 6f8584a4826f ("spi: st: Switch from CONFIG_PM_SLEEP guards to pm_sleep_ptr()")
->
-> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+On 21/08/2025 09:16, Krzysztof Kozlowski wrote:
+> On Wed, Aug 20, 2025 at 03:44:52PM +0200, Julien Massot wrote:
+>> The mt8183-mfgcfg node uses a power domain in its device tree node.
+>> To prevent schema validation warnings, add the optional `power-domains`
+>> property to the binding schema for mediatek syscon clocks.
+>>
+>> Fixes: 1781f2c46180 ("arm64: dts: mediatek: mt8183: Add power-domains property to mfgcfg")
+> 
+> Checkpatch complains here, but more important - where is explanation of
+> dropped tag?
+> 
+>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 
+> But this tag appeared? It wasn't even given!
+> 
+> You remove public tags and add tags never given on the lists.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I found Angelo's tag, but still dropping other acks is not explained.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
 
