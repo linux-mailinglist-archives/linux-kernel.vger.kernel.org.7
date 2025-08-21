@@ -1,126 +1,227 @@
-Return-Path: <linux-kernel+bounces-779745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA982B2F812
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:33:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26733B2F859
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE621CC37ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C9F16AD00
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A538B19E97B;
-	Thu, 21 Aug 2025 12:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353E431DD98;
+	Thu, 21 Aug 2025 12:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LlJCwPyH"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XuuV2fbC"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2BE19D8A7
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AD6311979
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755779577; cv=none; b=jUeoMYjE4Y9RjxmRm/VwLMwy921WCNCt6TRRu7nsjrBhfXVF3K5/qwyOQwj66fjY5G4HsAKSpyJzFf2fG2bmXSlmdhLasFrcOdDMuAuka9NnO0eKxNp+1pZ8JP4UT7Avqq5lieqnp0wXdyW9ujcxD6m7ArNYjaDFv3B/qa9Vrzg=
+	t=1755780046; cv=none; b=BW0NF1wUi/MIODAM1Xr+Vr2o6WYDeXwJ8PMORnzP9fuI/w+Oe95NwUtnuSK69gibREbT3WTD8FhIEp0F7d1j8RsTyDLhc2zi4FMV8iPFebJse3bdu2Y/K0m3nOIqn93pl4+pVG6UPVPmw+8cJowWVr3ZBkpCVyQrV5ZExRLvIfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755779577; c=relaxed/simple;
-	bh=ocQ3d5j9vIq4dGBBuOr8WswQdXME9A/E4gyt+hUQqp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Fl2LPm+k3ET6HbZvYqsEFP32KX7SdVMHL625aA0qrwd53rp3MM5XF882EwjSC8d/LrAHfHmO2ofVP7wa7lBo6SrVL3t/YerHl8RPpPUm5y7I6OZsJgBvzDtFwSNm0/4y1ExxZVroCEW/FR16TKZl6FfMlrR8vwlFPMct72eotQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LlJCwPyH; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3bea24519c0so991983f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:32:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755779574; x=1756384374; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MdIRAKr2cN8G91t8BLxjz7Gzji0/85KCNwhJJjiYkCg=;
-        b=LlJCwPyH7wQd7hGdjBPPo9QpbeOqt6GOUinJqkXNvJrdyvYw+tzGITSaJy+a2cURXP
-         OuXCCFUh9SXzjyjv3ky9IY/HFZlVj2tPyWQ4uuFZgCry/Al31k8WTAY/lAUPJO9W1Kvo
-         tX/pgcycrK0qmi9bgAbjSwsWTMHZLF1VKuOA7NYh3GvzmPGe3yYhlLG7rKWdOdrkapLW
-         aJaokVdsat/5G25fiZyfZHBPPBF5FL18tb7UGokIzj8hTbYQCD8cVlOR9cwkI4HBqV5U
-         pqBn81D7s2PeU0W2GNBw9HC+YbQ+vZJza9IT5bq53I7FHeLSJa7+UghKqAC2lmZs2kqv
-         EhSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755779574; x=1756384374;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MdIRAKr2cN8G91t8BLxjz7Gzji0/85KCNwhJJjiYkCg=;
-        b=E3MX+O3Cu/wS7HiNphqcvU0QVa6xh6cFCVH5NR4bd6Ksp+U9wQ0+2WoD804X3ogm1t
-         yyCGjbikLjss6WAenM2ZqMcEvI2hOp15LqV+8KqLN/UgjNP/ekyzQN4FecWYTDNoubcf
-         tCzJBNCqP2gFhoTXq/aUGwmeuTXwGzcGKXwmzQyzNB8xLcceOr1rpPIzt2AKqaIo734c
-         mMASfwu13IcGkqSBe1DoWqk9tsXnmdpiBLsbMNpa0ttrF3WJDOT28K9ZE3HZVw8fQujt
-         oRDYL5Rn4aUme+g216E9OLXS+hZ0nq+Bgt6leiTNBS7VsaLJnDpcwXQxgZ3tyMG//+rx
-         Errw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNSvMfRT1F0lqMZUO4Ycv701DMBbKS7aKVyn7dHruycjq/s1+UsCtexzhXwESpnW8lwIuzLdGrT3gG4oU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOGo0eSSKwrymNG4X1ijf/0cSXxWibOeksO1v5dv/3g5zh+Eao
-	YqDHpzT6SWXwJ+Maly3xE07gFRz96bI4vMzzzuw8Du1Oeu79fY3UEDJYmY5myRPK4iM=
-X-Gm-Gg: ASbGnctba57jrNFQYfvgsukhVxabRPWvJi7gj/2Muh4evZSHP9XACBMqQgqDElejLDT
-	c99Pu0BxHcEJYcZSY4i2/pGt80iE4PmDsmlXcIO6XzgfjHAJKFsZn2lbFe9Qd+MCOdUjSkNWHfi
-	eR7yupmlRg16ZZEFYUIQmwIJ4Hr+yZdHUkn/ZhbjCxOQy361qbwcsssUM1x2KBzsQRI3wW0NWk3
-	YJNU4a03B3oHF5a3PzFXIwP1tvV76cUT10+aBui/+lAX0FoQrVrTFwzf694lRR1gJAiGAnuj5Sp
-	NRzUKJkmU0DRUFhyagZZZu0zvKT28Go9JpQZ/+JcmfeGcX+YITqB0tYCXsrfp6IML/tNwZp3C4S
-	5tgqHfehMY8Kvn0wwhgdVpZ0kQMfSAfzUC037VQ==
-X-Google-Smtp-Source: AGHT+IGLOFZokM+L1YFBETmJ+c1HGUrKFAr5zBcd3i6pzbkvpmwIxEYCoRLXatleLwvbvzJVH4ODSg==
-X-Received: by 2002:adf:9b97:0:b0:3b7:94ad:ef50 with SMTP id ffacd0b85a97d-3c4b4256c02mr1669280f8f.2.1755779573600;
-        Thu, 21 Aug 2025 05:32:53 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c077788df7sm11530384f8f.48.2025.08.21.05.32.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 05:32:53 -0700 (PDT)
-Date: Thu, 21 Aug 2025 15:32:49 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ricky Wu <ricky_wu@realtek.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Avri Altman <avri.altman@sandisk.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] mmc: rtsx_usb_sdmmc: Fix uninitialized variable issue
-Message-ID: <aKcR8QD81TjVqIhl@stanley.mountain>
+	s=arc-20240116; t=1755780046; c=relaxed/simple;
+	bh=z6j1nR4KJKZuleYHsasBBvZSxaivQ9ouzjA7W/o4mwk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=cyfk+2VClLt9wWg/lEKC2XvhkHW1eXR7s5YbxX/u0Wa0HETpls3803MwGR2xTAoYr2Z7gqgmJedYONbnsSu9IK08tk2IupYapYzqbWApmkytXjyAbYFGkrA6RjMoYwU/XffuroW45qMH4vbWgHARW5+qeKM8FIGsrQa1beIJFBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XuuV2fbC; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250821124042epoutp0242648c3388b6841e7cf591da4ccc1bb5~dyKWA6dNc0401604016epoutp02I
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:40:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250821124042epoutp0242648c3388b6841e7cf591da4ccc1bb5~dyKWA6dNc0401604016epoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755780042;
+	bh=w9yDLCCLCw+tK8GSqcz/nsmzouIxiXisbZAg1I23lHI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XuuV2fbCrvXsfo5zkkCIjbpMmbBmwFFJKSjR0NrtNhGDRE7Y4VlIGY6+kKr0oumrS
+	 vUFrgWoBTkdscVIlQ0g4Uc/HtEr1wACThl791yAAQkNuRFQ/1aXlypDfZIcMnrPw18
+	 tOx/CxEcz1vssk9F7kosS5CLeDpu3mwpmAhRvLgw=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250821124041epcas5p4120b41b61655c1bf57230491215ad84d~dyKU1qtJm1533315333epcas5p4r;
+	Thu, 21 Aug 2025 12:40:41 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4c72wm4nHDz6B9m5; Thu, 21 Aug
+	2025 12:40:40 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250821124039epcas5p34b77813c9936b8b70c801e0e1b67891a~dyKTTiHbx1592915929epcas5p3U;
+	Thu, 21 Aug 2025 12:40:39 +0000 (GMT)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250821124034epsmtip21555e0539f51b6fc02e0a2bfa9d069c7~dyKOojV2e2624826248epsmtip2N;
+	Thu, 21 Aug 2025 12:40:34 +0000 (GMT)
+From: Ravi Patel <ravi.patel@samsung.com>
+To: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
+	linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com,
+	will@kernel.org, arnd@arndb.de
+Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
+	gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+	smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+	ravi.patel@samsung.com, inbaraj.e@samsung.com, swathi.ks@samsung.com,
+	hrishikesh.d@samsung.com, dj76.yang@samsung.com, hypmean.kim@samsung.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, soc@lists.linux.dev, Priyadarsini G
+	<priya.ganesh@samsung.com>
+Subject: [PATCH v2 05/10] pinctrl: samsung: Add ARTPEC-8 SoC specific
+ configuration
+Date: Thu, 21 Aug 2025 18:02:49 +0530
+Message-ID: <20250821123310.94089-6-ravi.patel@samsung.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250821123310.94089-1-ravi.patel@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250821124039epcas5p34b77813c9936b8b70c801e0e1b67891a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250821124039epcas5p34b77813c9936b8b70c801e0e1b67891a
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+	<20250821123310.94089-1-ravi.patel@samsung.com>
+	<CGME20250821124039epcas5p34b77813c9936b8b70c801e0e1b67891a@epcas5p3.samsung.com>
 
-If rtsx_usb_get_card_status() fails then "val" isn't initialized.
-Move the use of "val" until after the error checking.
+From: SeonGu Kang <ksk4725@coasia.com>
 
-Fixes: d2e6fb2c31a0 ("misc: rtsx: usb card reader: add OCP support")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Add Axis ARTPEC-8 SoC specific configuration data to enable pinctrl.
+
+Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
+Signed-off-by: Priyadarsini G <priya.ganesh@samsung.com>
+Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
 ---
- drivers/mmc/host/rtsx_usb_sdmmc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 50 +++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-exynos.h      | 10 ++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |  2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |  1 +
+ 4 files changed, 63 insertions(+)
 
-diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
-index e1ed39c657c3..70bd21084b97 100644
---- a/drivers/mmc/host/rtsx_usb_sdmmc.c
-+++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
-@@ -785,13 +785,13 @@ static int sdmmc_get_cd(struct mmc_host *mmc)
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+index dd07720e32cc..ee3b488b00ff 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+@@ -76,6 +76,15 @@ static const struct samsung_pin_bank_type exynos8895_bank_type_off  = {
+ 	.reg_offset = { 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, },
+ };
  
- 	mutex_unlock(&ucr->dev_mutex);
- 
--	/* get OCP status */
--	host->ocp_stat = (val >> 4) & 0x03;
--
- 	/* Treat failed detection as non-exist */
- 	if (err)
- 		goto no_card;
- 
-+	/* get OCP status */
-+	host->ocp_stat = (val >> 4) & 0x03;
++/*
++ * Bank type for non-alive type. Bit fields:
++ * CON: 4, DAT: 1, PUD: 4, DRV: 4
++ */
++static const struct samsung_pin_bank_type artpec_bank_type_off = {
++	.fld_width = { 4, 1, 4, 4, },
++	.reg_offset = { 0x00, 0x04, 0x08, 0x0c, },
++};
 +
- 	if (val & SD_CD) {
- 		host->card_exist = true;
- 		return 1;
+ /* Pad retention control code for accessing PMU regmap */
+ static atomic_t exynos_shared_retention_refcnt;
+ 
+@@ -1814,3 +1823,44 @@ const struct samsung_pinctrl_of_match_data gs101_of_data __initconst = {
+ 	.ctrl		= gs101_pin_ctrl,
+ 	.num_ctrl	= ARRAY_SIZE(gs101_pin_ctrl),
+ };
++
++/* pin banks of artpec8 pin-controller (FSYS0) */
++static const struct samsung_pin_bank_data artpec8_pin_banks0[] __initconst = {
++	ARTPEC_PIN_BANK_EINTG(5, 0x000, "gpf0", 0x00),
++	ARTPEC_PIN_BANK_EINTG(4, 0x020, "gpf1", 0x04),
++	ARTPEC_PIN_BANK_EINTG(8, 0x040, "gpf2", 0x08),
++	ARTPEC_PIN_BANK_EINTG(4, 0x060, "gpf3", 0x0c),
++	ARTPEC_PIN_BANK_EINTG(7, 0x080, "gpf4", 0x10),
++	ARTPEC_PIN_BANK_EINTG(8, 0x0a0, "gpe0", 0x14),
++	ARTPEC_PIN_BANK_EINTG(8, 0x0c0, "gpe1", 0x18),
++	ARTPEC_PIN_BANK_EINTG(6, 0x0e0, "gpe2", 0x1c),
++	ARTPEC_PIN_BANK_EINTG(8, 0x100, "gps0", 0x20),
++	ARTPEC_PIN_BANK_EINTG(8, 0x120, "gps1", 0x24),
++};
++
++/* pin banks of artpec8 pin-controller (PERIC) */
++static const struct samsung_pin_bank_data artpec8_pin_banks1[] __initconst = {
++	ARTPEC_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
++	ARTPEC_PIN_BANK_EINTG(8, 0x020, "gpa1", 0x04),
++	ARTPEC_PIN_BANK_EINTG(8, 0x040, "gpa2", 0x08),
++	ARTPEC_PIN_BANK_EINTG(2, 0x060, "gpk0", 0x0c),
++};
++
++static const struct samsung_pin_ctrl artpec8_pin_ctrl[] __initconst = {
++	{
++		/* pin-controller instance 0 FSYS data */
++		.pin_banks	= artpec8_pin_banks0,
++		.nr_banks	= ARRAY_SIZE(artpec8_pin_banks0),
++		.eint_gpio_init	= exynos_eint_gpio_init,
++	}, {
++		/* pin-controller instance 1 PERIC data */
++		.pin_banks	= artpec8_pin_banks1,
++		.nr_banks	= ARRAY_SIZE(artpec8_pin_banks1),
++		.eint_gpio_init	= exynos_eint_gpio_init,
++	},
++};
++
++const struct samsung_pinctrl_of_match_data artpec8_of_data __initconst = {
++	.ctrl		= artpec8_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(artpec8_pin_ctrl),
++};
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
+index b483270ddc53..6bc04cb5ac9f 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.h
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+@@ -216,6 +216,16 @@
+ 		.name			= id				\
+ 	}
+ 
++#define ARTPEC_PIN_BANK_EINTG(pins, reg, id, offs)			\
++	{								\
++		.type			= &artpec_bank_type_off,	\
++		.pctl_offset		= reg,				\
++		.nr_pins		= pins,				\
++		.eint_type		= EINT_TYPE_GPIO,		\
++		.eint_offset		= offs,				\
++		.name			= id				\
++	}
++
+ /**
+  * struct exynos_weint_data: irq specific data for all the wakeup interrupts
+  * generated by the external wakeup interrupt controller.
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 2896eb2de2c0..993efba5a9ad 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1468,6 +1468,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ 		.data = &s5pv210_of_data },
+ #endif
+ #ifdef CONFIG_PINCTRL_EXYNOS_ARM64
++	{ .compatible = "axis,artpec8-pinctrl",
++		.data = &artpec8_of_data },
+ 	{ .compatible = "google,gs101-pinctrl",
+ 		.data = &gs101_of_data },
+ 	{ .compatible = "samsung,exynos2200-pinctrl",
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index 3cf758df7d69..bfd88ad2f3ff 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -377,6 +377,7 @@ struct samsung_pmx_func {
+ };
+ 
+ /* list of all exported SoC specific data */
++extern const struct samsung_pinctrl_of_match_data artpec8_of_data;
+ extern const struct samsung_pinctrl_of_match_data exynos2200_of_data;
+ extern const struct samsung_pinctrl_of_match_data exynos3250_of_data;
+ extern const struct samsung_pinctrl_of_match_data exynos4210_of_data;
 -- 
-2.47.2
+2.49.0
 
 
