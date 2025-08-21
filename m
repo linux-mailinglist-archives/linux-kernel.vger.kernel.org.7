@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-780721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949DFB30858
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:30:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91ABB3085F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F4305E433E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:29:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA371CE35A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F70F2C028E;
-	Thu, 21 Aug 2025 21:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6762C2C029E;
+	Thu, 21 Aug 2025 21:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EOvzX4yZ"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K29NIjwk"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52478393DC3;
-	Thu, 21 Aug 2025 21:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E432D2C0279;
+	Thu, 21 Aug 2025 21:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755811761; cv=none; b=ucT0eZ641+gs+TTGMPh0t6jgt/UUHTXQf9M2myUJHSgd+TNLW6ZPXkAtdfsNLs0+O+K0hGqim0FA42sByRMy0+sGFsSB8h+eFX6EzexYwM9vQDfWQN/qL/fXCeITyz8j/gWmmMVAcVwQ+kx5GKoaSEFemkPEYQnQcLcYYGybqyU=
+	t=1755811770; cv=none; b=uRzhkx0TFnzKDzS84AlIkPBSZKGUW1EgU5HExlbjf1mox4RxIeQQIZwQ+XyoS576tjfsMIrJzjgMjSkTYc4CUaXDPbkydBSD3H1Vv5QVbkPMqNyrPrq0SvAhT+MxX4BzC2QO5c04G4N+pE2OE4fCIgFkpjwAuakdlcyRW1zQIdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755811761; c=relaxed/simple;
-	bh=Y8bpOfrh8QUVsCFSG/Z0WpruykVMjh/Y6T1rXLAfTq0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sm+Z9N2wK9WAHlIsrWh+aKTJnIYF3OHS6MZXNC0gQWDCrk0ekGPqFCicHU+yfyMbn7EeWa2oh/j0BPV3FfhpDPyX9lKY7fsrBhAsxussk8E8GYD3ADNOxcE6ShYOUyC6pJfvtfX4NhK31GfifwevPUSxTA/v7fHk8lwcSsH+KrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EOvzX4yZ; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1755811770; c=relaxed/simple;
+	bh=MGkMWVojBi4DcnkqKXLZiZPVzHADNI9Vaw8JwD0VVeA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LY/HEFm/Y0v+XY2WH2MnUgLMTXtuBrNnAwnmn8MFtsYNcTx5o4LFJG6YN1ESkVeDWn48HQCtNBrWIktzZejpgYLU6TCHs0MN3Ya0uftRpxo+NR8KRngwPrNxNP6XZ7BtZFVclaDxfCy7HOtij5UhMHfbs4v1rnPSZ+dnaIl+u+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K29NIjwk; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a1b05a59fso10828395e9.1;
-        Thu, 21 Aug 2025 14:29:19 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3c43399ea42so1020143f8f.1;
+        Thu, 21 Aug 2025 14:29:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755811757; x=1756416557; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y9MVEYh20Ft9l0A8AKMc0WvT3MnzTDP+LI/4aJOCeSg=;
-        b=EOvzX4yZLrk7ywt4q/3h2lNlD+qevRMrJaAzsuLERCO238aPJE61fib+LhoEnLu9jS
-         cIlrSE0x/ah7yYM0TmS6VrGQiCl5rK7wyjcStdRcf+jd1vA2o4CDFGCDGOfZ1KzzNm2F
-         CAGndaz008YXwlYTeSUB897s7JLxQcmngx4N9vt+nWU7uGirdzu5z5WRPTHLlKi3im68
-         ZfkjgDcNnMOQ0fdXTUT5WM++wuSybJqGdwgHowLi+A4SPxM2eFH3xPj5keSmpVfDqBsB
-         F0LRkJUyhI3wCVmwWIk2opNWMSLG9RdxsGwVq8wRA5kKz0sE7YOiouq+moaLLAzQ/ynA
-         a3nw==
+        d=gmail.com; s=20230601; t=1755811767; x=1756416567; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ARVHRfZ+bnQXEr3530WhZ1gxls6jH4IGcbh0pM6grxc=;
+        b=K29NIjwkXqZyB9nsFeARJ2dlj5Aw4xaDtl9Tfm3EX1gjAlxX0r4I/gOCbN4/LO3if7
+         KKTE6yNFl1utfyGey9rnZwJCDmqQCfUE+P3ZEmmIVg/tMMHXHe1BICflR6H+KPHn/7A6
+         rqn2iLBR5PG2PjMxtk/aLxlHW99XXfDDqzhgupFlJ93qa7yl0TjCk94NHn8TmezWg0hr
+         nlH5wEcY1ZAmUWHRl+K65NdVViMgYWtx5yAKsJD6ALjiJoYVDaZ1Q47vs5QTwC7iy1hE
+         EJ5eT7MEj2nTlxF31WBMhxJLIDW7/ajXj5ABfuTveyX5txIcKXJNwQu8RGgkA7YyNB6I
+         h70Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755811758; x=1756416558;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y9MVEYh20Ft9l0A8AKMc0WvT3MnzTDP+LI/4aJOCeSg=;
-        b=KS3bxwrFzKR5JAyRenBD9Opg7X6i9xk7Zt22nOjmh1vIRQuX7br6wjzRpPNHMSYP14
-         S7ghTGusLnvsjAnBoGd00Jq06u8KXHKddkp5TpzhRTNK3axElMxYGG3WGWHkGz0Sm6u1
-         SG8na+Bo0nS+12OynwBQl+wveyzv0EcwJlrseQStwAj8mP7dBf6afd+mcS1W4VXMgYuY
-         iONUywJAFi4n4QUv5BEeMqXXBWojmJUMyv3DZc5oXqHSb4ETqXGFbkNH42xz9zvLVd8A
-         afT50xiCcIYaNnPO3SlMcBcel7ajX0qVPmJrQQ72uR43XVCrZ8mLngvbnoFgGnlaM2Ze
-         WFxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZAiVAHrfKxv7aXcZR8WpvVqh0RObuOHFSby3r0rZcCwu+6ErEH+nHSkbLKASyKSPLQ15+AMVOY7ir@vger.kernel.org, AJvYcCW73xN1YC/GuXQUgKW4ntdUsiYSGkR5JYPUp+XGlYIaGjZc+6hmJh7n9/4WcC+OluNLAYXZcuivWDk/KNb9@vger.kernel.org, AJvYcCW7ezU+9x/Sfnp/9HtnnoIU9sluIWUu0qVW/NtOVVgzuEcOnSodjuGKkv6k7QEpnoQ4xshtGgNoInz4@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNHA/834++7eDAHwAX+Xy6Y6wEUN8tUKxqcPq8XVHsRyNLS5JN
-	57qihYwnzJ+pQU21id9K38kzQUusH+TAsNfEUXhmoFq6MD4lqgy0UoR9JpdN
-X-Gm-Gg: ASbGncsG9ZzpmVTpz0fbUpebSIfPo0gd2SSyTy6sCogfy6u2olowvCjYmkUbSiUNc6W
-	Wl3VN49tgMOCkoOC4XJcgSY5w4bpsJA85HoCDcVFA53GeM+K2+DIl2+VRZW4L7baJ+NzivjgJbj
-	FsYRUuwjVU2Hc4vQwBi+8KdZi1o/iDV4LcrBa4ABrF2PHSgJx8NZ8qJEb8UeJF0y1U3ZEegnYOQ
-	IRQaz5qjDM6VseAc7v7mXo2e89/SZ1xPg1WPK1TPUwCh9ISCaLrpX21Khr/3K7yXIriLYTbXUND
-	3704f2IBY7KWREh+a82HE61ZQ0Hdb5Cj2aqkTTVkZ0sIX5cW4fdNzKIPhT8VNzLA+QvX9QCoRa2
-	N/OEu9c/ZaCXCpsnCF73b/aZZTF2wz+7wInBPxSXUFmm/xjc=
-X-Google-Smtp-Source: AGHT+IF7NjppryrDewWlvu1eEyKNNNzLXx6iF7nyTLD5ca97e6Zk/RkkYapHKhd48DC54IyHfzIb4A==
-X-Received: by 2002:a05:600c:c87:b0:459:dd34:52fb with SMTP id 5b1f17b1804b1-45b5179ebb2mr4904115e9.12.1755811756598;
-        Thu, 21 Aug 2025 14:29:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755811767; x=1756416567;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ARVHRfZ+bnQXEr3530WhZ1gxls6jH4IGcbh0pM6grxc=;
+        b=rudY6EN0LTpKRgczj9UU1XKXuAr4PmNPQGgMqopiceCb7ojQ2nDMUL/ZH/WpmlZCjE
+         LBt69SJrblk9uYAf0ZG7Q0M5sPiZgnW8sjcCRq9YtNqmL5kZEUkg8dU/Kxd4svwp6lWI
+         hRiH+xmuiTMGjtLl3Z/NABV7nABjNK8RK4HsujGA4CBczBwkERrQUuBADaS3rFlKdST7
+         JQ4v5iFUvKBbdiYN/h5O54Uim0/IQYDIJxOfJ1CBJ0+8T1HadteYD7m3E30S3X8MzcoZ
+         /FPeXanT4LchrVOCaxGLuRrBO+fu4I8A/2jvN3p094vOsTBuWn3cryQVatR1MpBbl9ho
+         IPyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwTj83osUqiTELbqgQsU3IsCblfGfPWvtGS1thbfR0brdcNTHxcEPHrT1XtuAUbdcn1dgHxuyTtt9c@vger.kernel.org, AJvYcCVLEwEBW/xaGJf/KrursJ8U/K7H5bCmwZfLYlj7XhFtSxOduHCea+1FpEnw0fqXylq7Vbs9iWfofNNq@vger.kernel.org, AJvYcCVpg4MbdZy7UZ7l2G1bp+x4huA5ETHSJ51V4elV+CNy5WQXebB/JwMVVm0/NHnbrPIuLMU0Syh7O53/xzMc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGr5Zj4ziOE3ss+VX0m8i1B6rUgLNYcIbm7fw2kv+hB7dQorzS
+	/cg1xuBk0dMdiD6bniBUK4IF7VOfrvJOtMp8RVUcmIASjsaSztI89fs=
+X-Gm-Gg: ASbGncs8xlyQCfp5wEcQ3DI2DuNBXgLT7aORbxFU1Hlxe1cMYeSeBSmja4D6TWGmXcH
+	ysg2knhBpj/EyN2OTV2kaTUvh1xPmCvptsBM8+X5fjX/t3Vy9eAGme8VU8kubx+7x4gkT0h+Ml9
+	eqOkEal7aD/GthYuKQ43BgAppWJgAIrvkFcD1mP0QGPu+KX5E5WkyzYQbtb/OSdHdDPIoK5oziu
+	CHu42DjiKWNbRdA7s6cmsTNiJ6AgEqKFiUS9lKe253MJ9LvMsgtzY98NatfJDW95mqLu+NasGV+
+	5omDGSwcil6daJg7dMq2ubozP3QeDUmrrhz01BrEPrPqDvx69m2nVe/UTUXZzuT99jMKr7GE9rP
+	qnEg2pRfskUY1EiSvpzwJK0DGflOWGxtP8EvNrY4nQv1Ig1k=
+X-Google-Smtp-Source: AGHT+IEiDzxFdVgLh23klK3CW+TV6wMTaDQQPmg0KzEnRFvBy0KD4LNe0iJ34cCv5FhUbNwY6rJ8EA==
+X-Received: by 2002:a05:6000:18ad:b0:3b7:8892:ed8d with SMTP id ffacd0b85a97d-3c5da54ed40mr315187f8f.6.1755811767186;
+        Thu, 21 Aug 2025 14:29:27 -0700 (PDT)
 Received: from localhost.localdomain ([2a0d:e487:142f:8982:f293:902e:d51a:6b6f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c4c218c62asm3945798f8f.64.2025.08.21.14.29.15
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c4c218c62asm3945798f8f.64.2025.08.21.14.29.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 14:29:16 -0700 (PDT)
+        Thu, 21 Aug 2025 14:29:26 -0700 (PDT)
 From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
 To: robh@kernel.org
 Cc: gregkh@linuxfoundation.org,
@@ -81,10 +83,12 @@ Cc: gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
 	shuah@kernel.org,
 	jihed.chaibi.dev@gmail.com
-Subject: [PATCH v5 0/2] usb: dt-bindings: ti,twlxxxx-usb: convert to DT schema
-Date: Thu, 21 Aug 2025 23:28:22 +0200
-Message-Id: <20250821212824.70569-1-jihed.chaibi.dev@gmail.com>
+Subject: [PATCH v5 1/2] usb: dt-bindings: ti,twl4030-usb: convert to DT schema
+Date: Thu, 21 Aug 2025 23:28:23 +0200
+Message-Id: <20250821212824.70569-2-jihed.chaibi.dev@gmail.com>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250821212824.70569-1-jihed.chaibi.dev@gmail.com>
+References: <20250821212824.70569-1-jihed.chaibi.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,14 +97,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series converts the legacy TXT bindings for the TI TWL4030
-and TWL6030 USB modules to the modern YAML DT schema format.
+Convert the legacy TXT binding for the TWL4030 USB module
+to the modern YAML DT schema format. This adds formal validation
+and improves documentation using a conditional schema.
+
+Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
 
 ---
 Changes in v5:
- - Split combined twlxxxx-usb binding into two dedicated files
-   for TWL4030 and TWL6030 per maintainer feedback.
- - Used more accurate header file for interrupt macros.
+
+ - Split combined twlxxxx-usb binding into a dedicated file for
+   twl4030-usb per maintainer feedback.
+ - Used more accurate header for interrupt macros.
  - Improved formatting in the examples.
 
 Changes in v4:
@@ -118,20 +126,93 @@ Changes in v3:
 
 Changes in v2:
  - Added '#phy-cells' property to support PHY framework integration.
-
-
-Jihed Chaibi (2):
-  usb: dt-bindings: ti,twl4030-usb: convert to DT schema
-  usb: dt-bindings: ti,twl6030-usb: convert to DT schema
-
+---
  .../bindings/usb/ti,twl4030-usb.yaml          | 76 +++++++++++++++++++
- .../bindings/usb/ti,twl6030-usb.yaml          | 51 +++++++++++++
- .../devicetree/bindings/usb/twlxxxx-usb.txt   | 43 -----------
- 3 files changed, 127 insertions(+), 43 deletions(-)
+ 1 file changed, 76 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/usb/ti,twl4030-usb.yaml
- create mode 100644 Documentation/devicetree/bindings/usb/ti,twl6030-usb.yaml
- delete mode 100644 Documentation/devicetree/bindings/usb/twlxxxx-usb.txt
 
+diff --git a/Documentation/devicetree/bindings/usb/ti,twl4030-usb.yaml b/Documentation/devicetree/bindings/usb/ti,twl4030-usb.yaml
+new file mode 100644
+index 000000000..a2d3c5f60
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/ti,twl4030-usb.yaml
+@@ -0,0 +1,76 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/ti,twl4030-usb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments TWL4030 USB PHY and Comparator
++
++maintainers:
++  - Peter Ujfalusi <peter.ujfalusi@gmail.com>
++
++description:
++  Bindings for the USB PHY and comparator module found within the
++  TWL4030 family of companion chips. If a sibling node is compatible with
++  "ti,twl4030-bci", the driver for that node will query this device for
++  USB power status.
++
++properties:
++  compatible:
++    const: ti,twl4030-usb
++
++  interrupts:
++    description:
++      Interrupt numbers to the CPU for ID and VBUS events. The first interrupt
++      is the OTG interrupt for both ID and VBUS events. The second interrupt
++      is optional.
++    minItems: 1
++    maxItems: 2
++
++  usb1v5-supply:
++    description: Phandle to the vusb1v5 regulator.
++
++  usb1v8-supply:
++    description: Phandle to the vusb1v8 regulator.
++
++  usb3v1-supply:
++    description: Phandle to the vusb3v1 regulator.
++
++  usb_mode:
++    description: |
++      The mode used by the PHY to connect to the controller:
++        1: ULPI mode
++        2: CEA2011_3PIN mode
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [1, 2]
++
++  '#phy-cells':
++    const: 0
++
++required:
++  - compatible
++  - interrupts
++  - usb1v5-supply
++  - usb1v8-supply
++  - usb3v1-supply
++  - usb_mode
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    usb-phy {
++        compatible = "ti,twl4030-usb";
++
++        interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-parent = <&gic>;
++
++        usb1v5-supply = <&reg_vusb1v5>;
++        usb1v8-supply = <&reg_vusb1v8>;
++        usb3v1-supply  = <&reg_vusb3v1>;
++        usb_mode = <1>;
++
++        #phy-cells = <0>;
++    };
 -- 
 2.39.5
 
