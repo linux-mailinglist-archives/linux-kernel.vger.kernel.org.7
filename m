@@ -1,94 +1,95 @@
-Return-Path: <linux-kernel+bounces-780405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C221B3016F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:49:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF6BB3017A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D16D7B4802
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:48:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7D5A1889BD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F052E267C;
-	Thu, 21 Aug 2025 17:49:32 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4CA341677;
+	Thu, 21 Aug 2025 17:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="gT/RNrnP"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB2A4AEE2
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 17:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C252DF3CF;
+	Thu, 21 Aug 2025 17:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755798572; cv=none; b=Zz0Z0kFmnbWy76m/k96bJG+ltfwC06yTbjnsUkVgN6jvgDcIRijq1VZGxAt7evzQH450oMa0S6DsmqU62IOXPIZkEr2OPcESRh1AtwKGUQFvaOqNmmWvktnOateyCM/cHDWq+RbUNETemvaywF6Uaxc+wuO39vaLDtm2gQQVW1Q=
+	t=1755798685; cv=none; b=mHPz0KDEWFJQcUzy0IYNJgdD3ixDzJ6dPmYHlDyxHoQMW2sP+sojH1O+S285R6KOqT8pzsqZjZpgc59BQYmCagv6jHq0Z861DGgj8SuhZjYpivdPlsk0XrAqx7j/LH7vHtWiBzaM0cdm/r0s5HBksaPdv9phlzGBnfvs9QqYZLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755798572; c=relaxed/simple;
-	bh=kMD4SJVNodiFHkp+mCkRlHqWUz2tnVCcqL+x+WIx/Jg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BcCYQpOIh/p7bj2tM5NWFDN7c4+Ivoj/NdmzshIqwSJgBoVDvL9XLhtZyBymeX+bf1E9KtQ/a8ia3/0E8KB2YoxWwMqXI4gZXjYMAfGKzm4d+l0SuHjj9+SH9H3FhyRYE8O8hzzifdPybJH6Nt/k/+JtZZq38wolFTWhcI2GG5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.104] (unknown [114.241.87.235])
-	by APP-01 (Coremail) with SMTP id qwCowAB3Z6scXKdo5lsdDg--.19280S2;
-	Fri, 22 Aug 2025 01:49:17 +0800 (CST)
-Message-ID: <871ca57a-2f0a-4b21-be8f-7a26a76fd58d@iscas.ac.cn>
-Date: Fri, 22 Aug 2025 01:49:16 +0800
+	s=arc-20240116; t=1755798685; c=relaxed/simple;
+	bh=wCAFsgAQdAjADY6fv4y4Kojg0L7QZpmm1WOfbOukUP4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u4gY6iAtJXP5d28sD7jmuQkYKmATmdHmNWR9QQSCc6xZqtM5qfwnY3fm+YMYRF/5uvQ6jxoNihwR5hITRnhd1jPvYVxhFBLOzYOaKkYexBQgg1APerBDoIHX3CTcBlUsHNJarVnGsFAGyobayDvYOKAzFIz9K5KwfGIw9T8spxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=gT/RNrnP; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6C4D340AB4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755798683; bh=hBwRWuKw3Z3dZICd18TkYfxbhcfBicekVpzn2o+lql8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=gT/RNrnPVvetSoiiy0kOUBIgUSfIdoY1gUINWdsu8TxG6FpOT8Kz3oTB8lz9NnCl5
+	 fVqxTQmtcGmQbokDePhl+mNxKcG0mED+PSA4xhOSHHdLRB03LrA2nNeMBzxX2QfHJu
+	 R8f6Qn4KxBAgh9161bNlOF9VA6lKcJ7hp4fShqnqpf16JsRzUTecHcAa5BLEoBwtkU
+	 1iUCzXKDvUPgot14Ishg9x8xOepJiButZXUTuSedRNQ6ZM/dEDvaz9pk0lNd5PccEU
+	 MJdSwtZYzhYCk3ad0UCYiwz7QXviKCzun4rv9vSFbz2IR+M7M8qDDmMvtnjpcfPjwZ
+	 CjsV7G0hRwQ/A==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 6C4D340AB4;
+	Thu, 21 Aug 2025 17:51:23 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>, Linux USB <linux-usb@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Re: [PATCH] Documentation: driver-api: usb: Limit toctree depth
+In-Reply-To: <20250820050416.25219-1-bagasdotme@gmail.com>
+References: <20250820050416.25219-1-bagasdotme@gmail.com>
+Date: Thu, 21 Aug 2025 11:51:22 -0600
+Message-ID: <87jz2w7ecl.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] riscv: bitops: Use __riscv_has_extension_likely
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, Charlie Jenkins <charlie@rivosinc.com>,
- Xiao Wang <xiao.w.wang@intel.com>,
- =?UTF-8?Q?Christoph_M=C3=BCllner?= <christoph.muellner@vrull.eu>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Vivian Wang <uwu@dram.page>
-References: <20250821-riscv-altn-helper-wip-v2-0-9586fa702f78@iscas.ac.cn>
- <20250821-riscv-altn-helper-wip-v2-4-9586fa702f78@iscas.ac.cn>
- <aKcwtXDJKRf4O_tF@yury> <4dba27c4-e7a5-4ffc-8073-08a83c68e527@iscas.ac.cn>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <4dba27c4-e7a5-4ffc-8073-08a83c68e527@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qwCowAB3Z6scXKdo5lsdDg--.19280S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYq7k0a2IF6w1UM7kC6x804xWl14x267AK
-	xVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
-	A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j
-	6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr
-	0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvE
-	ncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I
-	8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIE
-	c7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GF
-	yl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUz_MaUUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain
 
-On 8/22/25 01:46, Vivian Wang wrote:
+Bagas Sanjaya <bagasdotme@gmail.com> writes:
 
-> [...]
+> toctree index in USB driver api docs currently spoils the entire docs
+> headings due to lack of :maxdepth: option. Add the option to limit
+> toctree depth to 1, mirroring usb subsystem docs in
+> Documentation/usb/index.rst.
 >
-> And, codegen-wise:
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+>  Documentation/driver-api/usb/index.rst | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> ALTERNATIVE("j %l[no_alt]", "nop", ...) -> likely() ALTERNATIVE("nop",
-> "j %l[has_alt]", ...) -> unlikely()
->
-I messed up the formatting, should be:
+> diff --git a/Documentation/driver-api/usb/index.rst b/Documentation/driver-api/usb/index.rst
+> index cfa8797ea6144b..fcb24d0500d91d 100644
+> --- a/Documentation/driver-api/usb/index.rst
+> +++ b/Documentation/driver-api/usb/index.rst
+> @@ -3,6 +3,7 @@ Linux USB API
+>  =============
+>  
+>  .. toctree::
+> +   :maxdepth: 1
+>  
 
-    ALTERNATIVE("j %l[no_alt]", "nop", ...) -> likely()
-    ALTERNATIVE("nop", "j %l[has_alt]", ...) -> unlikely()
+It's still kind of a mess, but that does make it better.  Applied,
+thanks.
 
-Vivian "dramforever" Wang
-
+jon
 
