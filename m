@@ -1,140 +1,238 @@
-Return-Path: <linux-kernel+bounces-780508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC04AB302E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 304F5B302EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FB72601C68
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:27:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7D3567884
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB2434AB11;
-	Thu, 21 Aug 2025 19:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37441341662;
+	Thu, 21 Aug 2025 19:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dmwy8ech"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H+lfUFqK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1674A205E25
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 19:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879F51A9FAB;
+	Thu, 21 Aug 2025 19:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755804451; cv=none; b=WKi02xUvZzK3eETFAWbDr085CIvbntESCuGiJTdsLz87SEH/6Vwloz0FKFxjm2i2JQGxHtJ5J217vwMJ2aNJ2YzR8YyldkT93c4l2MJLU/spBG2YSxtaJv50i8UVww7MkDeK5zd/HolDGlMlnntHgxNJ1Hy+jjiXYVuQgo1J5rU=
+	t=1755804744; cv=none; b=h+xZ50T+wvGKEQTxLb4HNBkQ5m/X0XEAAMl8IJpCG63Jglp/1KDYw7tC7K7DkISTTAPA+LstLisxAyJlLMadN0qOBJN/622Ce67uBBaDaMRHHAT8cyw9FSMg1TpHxlLMHjTZFEmU5zPGmcZ8ROuy7YhxGqneE7rQ2Xu8RMmwy2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755804451; c=relaxed/simple;
-	bh=lOUKtSAZ4iupwypocHdXzytWd18DxAtEEIyeYib0aBs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WBDpNmD2pllQ5enoMMMfLfZdPVGLlfSLabIzGUyxgB4ZK9q4V4EjBH7pVVNYFgo81EqauXJHe1e3eDmdGuM6r9mDNbxGbyQobeaHZvFptWGAdJg7u7Dhhisc8vs4XdUl0HKB5nWnvTKLqx9zib4HeTeAkKr55XoNbmPlKgdFIUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dmwy8ech; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32515e8e4cbso435575a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:27:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755804449; x=1756409249; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F1WG539BFfyXprn2bVLibkaFh6lh376RBX3TpUomP+A=;
-        b=Dmwy8echBkqWaNXCkW5352ACjVLCZ2amwEnldzZnZQO5GK6gKuQGbCXmMIB89nXq8t
-         UFWzbesaJhro8P2vnYND8ZpUieg3zJ5s3OcuYj0jWL6zzpn6NVUd03SJWvq3q+EkU6T1
-         hdMAspsQUc/NCaGw6ndwPvtZaTkINtsaQJTXwms8LGl+j/bemB3Hh5FCNQmnhj1etoae
-         vzXkfOgQhwKhyhLa2BNAmMzen7kdiy1R8vSET1GB9bZ8AzHcyorRB3WKn7fv6dPD6hKG
-         aPvThv0LI9VYCzOmkOdPFDb8GPxewfKg5e+OjOhqw+CcnPm/foLxCv4+eAQVtPnvhXoc
-         bGfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755804449; x=1756409249;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=F1WG539BFfyXprn2bVLibkaFh6lh376RBX3TpUomP+A=;
-        b=Q+YfpaC8i1RkFn+ZVE2q0bYZdHp+1eS3aW1MR5pJ9eO7DcWWmAEReG89FvaFtslHnl
-         K+niT2u6/0pZtDU9vcErtYSVcVGgmuLGuaPicvcvr5a5XVwxFWPsjOmq6VwzWe3ZvdlT
-         bydwselfFisb7Xu6NioDCNofY1ezCESf7oo+iUQM1BWTJKpBHFkOkO6Jtt79AgRaWiAb
-         ssbW2BBmMse2yba4HLHfu5vhZ+64vWaWN/FrrtsZfb088qLPdWYiz2QALGCOT2FkOO3X
-         c1pnjZDjLMugDZbizDU5Cd0szHzpY3UGdMHt9ocn3zChvu+Y9yl+sG+YymNQzv02Ooql
-         uz+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXkBwaFE6eNFk5v/mLnVLNikGHFzpdu9RXbd7GrGJc9kFU5OSFuEIaYDF/c44s5nPZbpsata2uiMZ9lYaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmUO/1oDMLk+JvgXMXTdh5aiblOkryJckjtCOywr4ngGIvjPbZ
-	BnhZOjw2rPObDsWGKT5+cC3lkiCMPV9r1W6ieDR7kvWEE2FXukRcR21oUBeUxRHcFEY6ZoR61No
-	LRyiWqg==
-X-Google-Smtp-Source: AGHT+IFjjOVdCzUMSrPQOTtvzRTU30p+KCG2TZ40l1JyMAUGmGOpdOZaL41+Jz4ysVNohi6+GLl248r7Afk=
-X-Received: from pjae15.prod.google.com ([2002:a17:90a:118f:b0:324:eb0d:70e8])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38c3:b0:311:e8cc:4253
- with SMTP id 98e67ed59e1d1-32515e221c4mr804326a91.2.1755804449299; Thu, 21
- Aug 2025 12:27:29 -0700 (PDT)
-Date: Thu, 21 Aug 2025 12:27:27 -0700
-In-Reply-To: <933dc95ead067cf1b362f7b8c3ce9a72e31658d2.camel@infradead.org>
+	s=arc-20240116; t=1755804744; c=relaxed/simple;
+	bh=0frOgS9WIcvtIG2b13AfgNHG9HYu1+yVQ2P6qgQCUbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iHpJhAx4FsUdRmYuNALlcWNZ//jzs2o2NuJry1SUhJkbzEhXV38GRd9C541Gu/h+mCKChyySZsNffv5C/wFbuUb9fT2BfwofgNt8DItjCwB8dcr2LUQM015X1xdVF6l4p8yPLndMHquP692fLge6TyXzuge7NsKOE3v5iwoO7og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H+lfUFqK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LI9sAu008967;
+	Thu, 21 Aug 2025 19:31:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tYpWCcbISjCNUzk4vHLgNXmnOMo66w5kv2nzcQwVeHo=; b=H+lfUFqKGGg8M2J5
+	WVJlM29tMWt/LolQvFZmYxbpSdErl8a8vVIz9Mclp+gnf/aXul4Mo9R1/ybdW4YF
+	XjgKac13UrX0/dcKgFKuFYdUccKG+/BmWBtQL7j/mchcstQ9XEJ6/i7mOMuE6kh/
+	ySndJwnRf5VuaOXQC5BlWABS0khPtKx2LujBAmFAiygPUP6p1EGjxl6xqty2R5Bt
+	Ro5OnJ1NF76v+27ZGkxKh1B1F8qTkP6BhNhyEduQdh7vTgpNk4UB1nIAp2kkz3ST
+	gdO/7mIsOM0kevZ4Z6vJAthBbOVP3ndkk/uorhM8/925TYLU/enQd+7ct0B87MEW
+	ckmQAQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52cpmsp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 19:31:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57LJVtmK019161
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 19:31:55 GMT
+Received: from [10.216.47.227] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 21 Aug
+ 2025 12:31:51 -0700
+Message-ID: <37563dd8-341f-4db4-8a4b-c7f96dbfebff@quicinc.com>
+Date: Fri, 22 Aug 2025 01:01:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250816101308.2594298-1-dwmw2@infradead.org> <aKdIvHOKCQ14JlbM@google.com>
- <933dc95ead067cf1b362f7b8c3ce9a72e31658d2.camel@infradead.org>
-Message-ID: <aKdzH2b8ShTVeWhx@google.com>
-Subject: Re: [PATCH v2 0/3] Support "generic" CPUID timing leaf as KVM guest
- and host
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, graf@amazon.de, 
-	Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov <alexey.makhalov@broadcom.com>, 
-	Colin Percival <cperciva@tarsnap.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] ufs: ufs-qcom: Fix ESI null pointer dereference
+To: <mani@kernel.org>, <James.Bottomley@HansenPartnership.com>,
+        <martin.petersen@oracle.com>, <bvanassche@acm.org>,
+        <neil.armstrong@linaro.org>, <konrad.dybcio@oss.qualcomm.com>,
+        <tglx@linutronix.de>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>
+References: <20250811073330.20230-1-quic_nitirawa@quicinc.com>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <20250811073330.20230-1-quic_nitirawa@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kgP4i14-hbJhaFOxUebTEomm4VdDMgRK
+X-Proofpoint-ORIG-GUID: kgP4i14-hbJhaFOxUebTEomm4VdDMgRK
+X-Authority-Analysis: v=2.4 cv=Xpij+VF9 c=1 sm=1 tr=0 ts=68a7742b cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8
+ a=bLk-5xynAAAA:8 a=COk6AnOGAAAA:8 a=oc46TbI3oXTmutG3ynwA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=zSyb8xVVt2t83sZkrLMb:22 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX5k8QbofMx7l3
+ gLXsxr8OzxCQR7tLyR7oFzuhNY07cqdZ/zg0xxMNPREyePvv8iSO0hB0i/YFrQun4RSB6Nj7w9e
+ eOiVgGqe/Dz80UUtkop2qUbCWEn3UqoIezdBeelxgdJLwoVmymR/uwO9nj1cOmUDL1e79F4w0/z
+ u0fu6XWGOfB1kgoSb2G40CMDnaxb5NOzbOEGKSaXCAd56Qc/7jZqLJNCOcERWoQtPUgW3mZrXkH
+ BPaxr3TL7lTNBWbmRxQ8Jvz+Xmvrk6shGcJuC/L8AWS4nqTokR+Qnxhl4udXGkTGFO1zLEmRtxl
+ XoGT5Gj5u7jcD53aX2529/kAKttZnnp6imv5a9Ogj7Oua1JmL+SU7B8ztY0C+lhL0JqgxdOs9af
+ 3GOAM+3GawpGXYaGLT/pcoPChWiUJg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ adultscore=0 spamscore=0 phishscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On Thu, Aug 21, 2025, David Woodhouse wrote:
-> On Thu, 2025-08-21 at 09:26 -0700, Sean Christopherson wrote:
-> > On Sat, Aug 16, 2025, David Woodhouse wrote:
-> > > In https://lkml.org/lkml/2008/10/1/246=C2=A0VMware proposed a generic=
- standard
-> > > for harmonising CPUID between hypervisors. It was mostly shot down in
-> > > flames, but the generic timing leaf at 0x4000_0010 didn't quite die.
-> > >=20
-> > > Mostly the hypervisor leaves at 0x4000_0xxx are very hypervisor-speci=
-fic,
-> > > but XNU and FreeBSD as guests will look for 0x4000_0010 unconditional=
-ly,
-> > > under any hypervisor. The EC2 Nitro hypervisor has also exposed TSC
-> > > frequency information in this leaf, since 2020.
-> > >=20
-> > > As things stand, KVM guests have to reverse-calculate the TSC frequen=
-cy
-> > > from the mul/shift information given to them in the KVM clock to conv=
-ert
-> > > ticks into nanoseconds, with a corresponding loss of precision.
-> >=20
-> > I would rather have the VMM use the Intel-define CPUID.0x15 to enumerat=
-e the
-> > TSC frequency.=C2=A0
->=20
-> The problem with that is that it's been quite unreliable. The kernel
-> doesn't trust it even on chips as recent (hah) as Skylake. I'd be
-> happier to trust what the hypervisor explicitly gives us. But yes, it
-> should be *one* of the sources of information before we reverse-
-> calculate it from the pvclock.=20
 
-Sorry, by "the VMM use" I mean have the host, e.g. QEMU, explicitly define =
-TSC
-frequency in CPUID.0x15 and CPU frequency in CPUID.0x16.  And then on the
-KVM-as-a-guest side of things, trust those leaves when they're available.
 
-So same idea as having the VMM fill 0x4000_0010, but piggyback the Intel-de=
-fined
-leaves instead of the VMware-defined leaf.  One of the reasons I'd like to =
-go
-that route is to avoid having to choose one or the other when running under=
- TDX,
-where CPUID.{0x15,0x16} are provided by the "trusted" TDX-Module, but any P=
-V
-leaf is not.
+On 8/11/2025 1:03 PM, Nitin Rawat wrote:
+> ESI/MSI is a performance optimization feature that provides dedicated
+> interrupts per MCQ hardware queue . This is optional feature and
+> UFS MCQ should work with and without ESI feature.
+> 
+> Commit e46a28cea29a ("scsi: ufs: qcom: Remove the MSI descriptor abuse")
+> brings a regression in ESI (Enhanced System Interrupt) configuration
+> that causes a null pointer dereference when Platform MSI allocation
+> fails.
+> 
+> The issue occurs in when platform_device_msi_init_and_alloc_irqs()
+> in ufs_qcom_config_esi() fails (returns -EINVAL) but the current
+> code uses __free() macro for automatic cleanup free MSI resources
+> that were never successfully allocated.
+> 
+> Unable to handle kernel NULL pointer dereference at virtual
+> address 0000000000000008
+> 
+>    Call trace:
+>    mutex_lock+0xc/0x54 (P)
+>    platform_device_msi_free_irqs_all+0x1c/0x40
+>    ufs_qcom_config_esi+0x1d0/0x220 [ufs_qcom]
+>    ufshcd_config_mcq+0x28/0x104
+>    ufshcd_init+0xa3c/0xf40
+>    ufshcd_pltfrm_init+0x504/0x7d4
+>    ufs_qcom_probe+0x20/0x58 [ufs_qcom]
+> 
+> Fix by restructuring the ESI configuration to try MSI allocation
+> first, before any other resource allocation and instead use
+> explicit cleanup instead of __free() macro to avoid cleanup
+> of unallocated resources.
+> 
+> Tested on SM8750 platform with MCQ enabled, both with and without
+> Platform ESI support.
+> 
+> Fixes: e46a28cea29a ("scsi: ufs: qcom: Remove the MSI descriptor abuse")
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> ---
+> Changes from v1:
+> 1. Added correct sha1 of change id which caused regression.
+> 2. Address Markus comment to add fixes: and Cc: tags.
+> ---
+>   drivers/ufs/host/ufs-qcom.c | 39 ++++++++++++++-----------------------
+>   1 file changed, 15 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 4bbe4de1679b..bef8dc12de20 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -2078,17 +2078,6 @@ static irqreturn_t ufs_qcom_mcq_esi_handler(int irq, void *data)
+>   	return IRQ_HANDLED;
+>   }
+> 
+> -static void ufs_qcom_irq_free(struct ufs_qcom_irq *uqi)
+> -{
+> -	for (struct ufs_qcom_irq *q = uqi; q->irq; q++)
+> -		devm_free_irq(q->hba->dev, q->irq, q->hba);
+> -
+> -	platform_device_msi_free_irqs_all(uqi->hba->dev);
+> -	devm_kfree(uqi->hba->dev, uqi);
+> -}
+> -
+> -DEFINE_FREE(ufs_qcom_irq, struct ufs_qcom_irq *, if (_T) ufs_qcom_irq_free(_T))
+> -
+>   static int ufs_qcom_config_esi(struct ufs_hba *hba)
+>   {
+>   	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+> @@ -2103,18 +2092,18 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+>   	 */
+>   	nr_irqs = hba->nr_hw_queues - hba->nr_queues[HCTX_TYPE_POLL];
+> 
+> -	struct ufs_qcom_irq *qi __free(ufs_qcom_irq) =
+> -		devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
+> -	if (!qi)
+> -		return -ENOMEM;
+> -	/* Preset so __free() has a pointer to hba in all error paths */
+> -	qi[0].hba = hba;
+> -
+>   	ret = platform_device_msi_init_and_alloc_irqs(hba->dev, nr_irqs,
+>   						      ufs_qcom_write_msi_msg);
+>   	if (ret) {
+> -		dev_err(hba->dev, "Failed to request Platform MSI %d\n", ret);
+> -		return ret;
+> +		dev_warn(hba->dev, "Platform MSI not supported or failed, continuing without ESI\n");
+> +		return ret; /* Continue without ESI */
+> +	}
+> +
+> +	struct ufs_qcom_irq *qi = devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
+> +
+> +	if (!qi) {
+> +		platform_device_msi_free_irqs_all(hba->dev);
+> +		return -ENOMEM;
+>   	}
+> 
+>   	for (int idx = 0; idx < nr_irqs; idx++) {
+> @@ -2125,15 +2114,17 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+>   		ret = devm_request_irq(hba->dev, qi[idx].irq, ufs_qcom_mcq_esi_handler,
+>   				       IRQF_SHARED, "qcom-mcq-esi", qi + idx);
+>   		if (ret) {
+> -			dev_err(hba->dev, "%s: Fail to request IRQ for %d, err = %d\n",
+> +			dev_err(hba->dev, "%s: Failed to request IRQ for %d, err = %d\n",
+>   				__func__, qi[idx].irq, ret);
+> -			qi[idx].irq = 0;
+> +			/* Free previously allocated IRQs */
+> +			for (int j = 0; j < idx; j++)
+> +				devm_free_irq(hba->dev, qi[j].irq, qi + j);
+> +			platform_device_msi_free_irqs_all(hba->dev);
+> +			devm_kfree(hba->dev, qi);
+>   			return ret;
+>   		}
+>   	}
+> 
+> -	retain_and_null_ptr(qi);
+> -
+>   	if (host->hw_ver.major >= 6) {
+>   		ufshcd_rmwl(hba, ESI_VEC_MASK, FIELD_PREP(ESI_VEC_MASK, MAX_ESI_VEC - 1),
+>   			    REG_UFS_CFG3);
+> --
+> 2.48.1
+> 
 
-Dunno how feasible it is to get non-Linux guests on board though...
+Gentle Reminder!!
+
 
