@@ -1,184 +1,314 @@
-Return-Path: <linux-kernel+bounces-779108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB411B2EF2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:13:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84DA8B2EF32
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E69F1C2283F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 675205A3DB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22A32C11E0;
-	Thu, 21 Aug 2025 07:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231BD287275;
+	Thu, 21 Aug 2025 07:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qzQVGyZt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CKZi9mUi";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qzQVGyZt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CKZi9mUi"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="knxq+tVi"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679F1279DC0
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06258F54
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755760423; cv=none; b=F7xwF/5LnhVnH9+HWhp7FrCvCv9d8vUloOHyjuggUAN6h2BkLTANuvOtKp3CjENFQfV7gDetxPReBjRJ2sVqkmK/wbRrmPyzaILRWsigmF55RFY+WZkYP4QURrnuLWu5hrVwhLvkesqUkye3CrybS9VDIEa2XxG5Cc9HJnI7th0=
+	t=1755760540; cv=none; b=iH36h9ROpbL1nZfBz1yHzr0g4gmPs3MM5+pnp878EtSLK7Zm2vS082WcX306GgIhTEXMw4quhDdQaW2A07TykE08pnQtg5XUhpb/Zcr7cCfkAkp3f5j2sONWpaamQDnU2WsTudBXI8cH6IuFY6yjavhjW++49FXKrP/998wriJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755760423; c=relaxed/simple;
-	bh=6Ho901v7Yuv0giLjJQ9df2Slo/KdObDQP9ZDyeA78v4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CIPUthR0l8HM3pIFnznNSORIY8iog0IG+wnUdprgqsLOJf+g/tea3Ox7a4dlq0ZLr7sLAr2k94v652U64r36PC6EvO6V2jJZPko14jd2wNmoszoTgZJCmd90iSnl+su9eyRbDWQZJnewVw4ArMqVr78ucdrMIHyHB4yVioPXBzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qzQVGyZt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CKZi9mUi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qzQVGyZt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CKZi9mUi; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1ED211F7C7;
-	Thu, 21 Aug 2025 07:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755760414; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1755760540; c=relaxed/simple;
+	bh=mBgYXcM+87FWaUtyCH5Q27VePGEs0N0aX3g5KEB5/k4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GMFOUk95EVgPWBzVvWLhrslwGEqTUWDMg3nbVGD/p82XcqnAFCgg0cUyj8OE6BZxzyyicL9nj9pVFKVt8CZYxP3NGoAx25EO44+vpA0c+WQy78UAv/3hqMkdWr257FJsGm/gcPzDxUV69y18yQkuDtwlkaHSCYp5qJk2wCzMgxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=knxq+tVi; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <284a663f-3bdd-4dcc-b017-b1b3fe6d9eb1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755760526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AhNWJQZWsc7PSXphoLrI7blVNvFaUxzl3Hv0jDX/Gak=;
-	b=qzQVGyZtK1fRyOAeLsQ2VS4ibk2BOapybh9EvUI8LdCnVrGMzFyzoEhXMrowX76wktEWLB
-	8c9Z791bgCWLPJfur5+TSKUftplom306oKrotbsuWbNgR3Kccs8Ppz7TX+pMarGyb7dhXy
-	kOhMFBJjY7K0p6f2KjMpRJo9mDrZoaE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755760414;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AhNWJQZWsc7PSXphoLrI7blVNvFaUxzl3Hv0jDX/Gak=;
-	b=CKZi9mUi/oOxuYX3a76H4g6X4v92EMfeWNmhUwqOwgjw6pDB+LamMoMU6rQgY0CQInIno0
-	J5vXy2fX4oo4IkBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755760414; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AhNWJQZWsc7PSXphoLrI7blVNvFaUxzl3Hv0jDX/Gak=;
-	b=qzQVGyZtK1fRyOAeLsQ2VS4ibk2BOapybh9EvUI8LdCnVrGMzFyzoEhXMrowX76wktEWLB
-	8c9Z791bgCWLPJfur5+TSKUftplom306oKrotbsuWbNgR3Kccs8Ppz7TX+pMarGyb7dhXy
-	kOhMFBJjY7K0p6f2KjMpRJo9mDrZoaE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755760414;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AhNWJQZWsc7PSXphoLrI7blVNvFaUxzl3Hv0jDX/Gak=;
-	b=CKZi9mUi/oOxuYX3a76H4g6X4v92EMfeWNmhUwqOwgjw6pDB+LamMoMU6rQgY0CQInIno0
-	J5vXy2fX4oo4IkBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3DFF13867;
-	Thu, 21 Aug 2025 07:13:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id D/xWNh3HpmjGfgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 21 Aug 2025 07:13:33 +0000
-Date: Thu, 21 Aug 2025 09:13:33 +0200
-Message-ID: <87ect56tb6.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Dewei Meng <mengdewei@cqsoftware.com.cn>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ivan.orlov0322@gmail.com
-Subject: Re: [PATCH] ALSA: timer: fix ida_free call while not allocated
-In-Reply-To: <20250821014317.40786-1-mengdewei@cqsoftware.com.cn>
-References: <20250821014317.40786-1-mengdewei@cqsoftware.com.cn>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	bh=hAJlHDvRqPXZP6gjpMtCItfPezDjP3bZ9+iZXylcguQ=;
+	b=knxq+tVimd9IbWYeagAu12XA+IPT9X5xTur4GrkRgf067Tk/mT3o5S0OPrDr0B1l9PKhga
+	52EcIZ52FIgtIwgx/QZTcynLtOlcpA+PLTsRbTdL4qA9kjrvZFC9x1RW5a3riqeJWzp5Qz
+	OKJI161XwmCJRjhiLChhKQj4WusaqA4=
+Date: Thu, 21 Aug 2025 15:14:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,vger.kernel.org,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -1.80
+MIME-Version: 1.0
+Subject: Re: [PATCH v2 3/5] LoongArch/kexec_file: Support loading ELF binary
+ file
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
+ Yao Zi <ziyao@disroot.org>, kexec@lists.infradead.org,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Youling Tang <tangyouling@kylinos.cn>
+References: <20250820055700.24344-1-youling.tang@linux.dev>
+ <20250820055700.24344-4-youling.tang@linux.dev>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <20250820055700.24344-4-youling.tang@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 21 Aug 2025 03:43:17 +0200,
-Dewei Meng wrote:
-> 
-> In the snd_utimer_create() function, if the kasprintf() function return
-> NULL, snd_utimer_put_id() will be called, finally use ida_free()
-> to free the unallocated id 0.
-> 
-> the syzkaller reported the following information:
->   ------------[ cut here ]------------
->   ida_free called for id=0 which is not allocated.
->   WARNING: CPU: 1 PID: 1286 at lib/idr.c:592 ida_free+0x1fd/0x2f0 lib/idr.c:592
->   Modules linked in:
->   CPU: 1 UID: 0 PID: 1286 Comm: syz-executor164 Not tainted 6.15.8 #3 PREEMPT(lazy)
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-4.fc42 04/01/2014
->   RIP: 0010:ida_free+0x1fd/0x2f0 lib/idr.c:592
->   Code: f8 fc 41 83 fc 3e 76 69 e8 70 b2 f8 (...)
->   RSP: 0018:ffffc900007f79c8 EFLAGS: 00010282
->   RAX: 0000000000000000 RBX: 1ffff920000fef3b RCX: ffffffff872176a5
->   RDX: ffff88800369d200 RSI: 0000000000000000 RDI: ffff88800369d200
->   RBP: 0000000000000000 R08: ffffffff87ba60a5 R09: 0000000000000000
->   R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
->   R13: 0000000000000002 R14: 0000000000000000 R15: 0000000000000000
->   FS:  00007f6f1abc1740(0000) GS:ffff8880d76a0000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: 00007f6f1ad7a784 CR3: 000000007a6e2000 CR4: 00000000000006f0
->   Call Trace:
->    <TASK>
->    snd_utimer_put_id sound/core/timer.c:2043 [inline] [snd_timer]
->    snd_utimer_create+0x59b/0x6a0 sound/core/timer.c:2184 [snd_timer]
->    snd_utimer_ioctl_create sound/core/timer.c:2202 [inline] [snd_timer]
->    __snd_timer_user_ioctl.isra.0+0x724/0x1340 sound/core/timer.c:2287 [snd_timer]
->    snd_timer_user_ioctl+0x75/0xc0 sound/core/timer.c:2298 [snd_timer]
->    vfs_ioctl fs/ioctl.c:51 [inline]
->    __do_sys_ioctl fs/ioctl.c:907 [inline]
->    __se_sys_ioctl fs/ioctl.c:893 [inline]
->    __x64_sys_ioctl+0x198/0x200 fs/ioctl.c:893
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0x7b/0x160 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->   [...]
-> 
-> The utimer->id should be set properly before the kasprintf() function,
-> ensures the snd_utimer_put_id() function will free the allocated id.
-> 
-> Fixes: 37745918e0e75 ("ALSA: timer: Introduce virtual userspace-driven timers")
-> Signed-off-by: Dewei Meng <mengdewei@cqsoftware.com.cn>
+On 2025/8/20 13:56, Youling Tang wrote:
 
-Applied now.  Thanks.
+> From: Youling Tang <tangyouling@kylinos.cn>
+>
+> This patch creates kexec_elf_ops to load ELF binary file
+> for kexec_file_load() syscall.
+>
+> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+> ---
+>   arch/loongarch/Kconfig                     |   1 +
+>   arch/loongarch/include/asm/kexec.h         |   1 +
+>   arch/loongarch/kernel/Makefile             |   2 +-
+>   arch/loongarch/kernel/kexec_elf.c          | 105 +++++++++++++++++++++
+>   arch/loongarch/kernel/machine_kexec_file.c |   1 +
+>   5 files changed, 109 insertions(+), 1 deletion(-)
+>   create mode 100644 arch/loongarch/kernel/kexec_elf.c
+>
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 490dc6eed749..bf2664ed7ce3 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -632,6 +632,7 @@ config ARCH_SELECTS_KEXEC_FILE
+>   	def_bool y
+>   	depends on KEXEC_FILE
+>   	select HAVE_IMA_KEXEC if IMA
+> +	select KEXEC_ELF
+>   	select RELOCATABLE
+>   
+>   config ARCH_SUPPORTS_CRASH_DUMP
+> diff --git a/arch/loongarch/include/asm/kexec.h b/arch/loongarch/include/asm/kexec.h
+> index 34799db933fb..fecfb3015abc 100644
+> --- a/arch/loongarch/include/asm/kexec.h
+> +++ b/arch/loongarch/include/asm/kexec.h
+> @@ -43,6 +43,7 @@ struct kimage_arch {
+>   
+>   #ifdef CONFIG_KEXEC_FILE
+>   extern const struct kexec_file_ops kexec_efi_ops;
+> +extern const struct kexec_file_ops kexec_elf_ops;
+>   
+>   int arch_kimage_file_post_load_cleanup(struct kimage *image);
+>   #define arch_kimage_file_post_load_cleanup arch_kimage_file_post_load_cleanup
+> diff --git a/arch/loongarch/kernel/Makefile b/arch/loongarch/kernel/Makefile
+> index dd6183f353e6..001924877772 100644
+> --- a/arch/loongarch/kernel/Makefile
+> +++ b/arch/loongarch/kernel/Makefile
+> @@ -62,7 +62,7 @@ obj-$(CONFIG_MAGIC_SYSRQ)	+= sysrq.o
+>   obj-$(CONFIG_RELOCATABLE)	+= relocate.o
+>   
+>   obj-$(CONFIG_KEXEC_CORE)	+= machine_kexec.o relocate_kernel.o
+> -obj-$(CONFIG_KEXEC_FILE)	+= machine_kexec_file.o kexec_efi.o
+> +obj-$(CONFIG_KEXEC_FILE)	+= machine_kexec_file.o kexec_efi.o kexec_elf.o
+>   obj-$(CONFIG_CRASH_DUMP)	+= crash_dump.o
+>   
+>   obj-$(CONFIG_UNWINDER_GUESS)	+= unwind_guess.o
+> diff --git a/arch/loongarch/kernel/kexec_elf.c b/arch/loongarch/kernel/kexec_elf.c
+> new file mode 100644
+> index 000000000000..d41ee5fd7cef
+> --- /dev/null
+> +++ b/arch/loongarch/kernel/kexec_elf.c
+> @@ -0,0 +1,105 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Load ELF vmlinux file for the kexec_file_load syscall.
+> + *
+> + * Author: Youling Tang <tangyouling@kylinos.cn>
+> + * Copyright (C) 2025 KylinSoft Corporation.
+> + */
+> +
+> +#define pr_fmt(fmt)	"kexec_file(ELF): " fmt
+> +
+> +#include <linux/elf.h>
+> +#include <linux/kexec.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+> +#include <linux/memblock.h>
+> +#include <asm/image.h>
+> +#include <asm/setup.h>
+> +
+> +static int loongarch_kexec_elf_load(struct kimage *image, struct elfhdr *ehdr,
+> +			 struct kexec_elf_info *elf_info,
+> +			 struct kexec_buf *kbuf,
+> +			 unsigned long *text_offset)
+> +{
+> +	int ret = -1;
+> +	size_t i;
+> +
+> +	/* Read in the PT_LOAD segments. */
+> +	for (i = 0; i < ehdr->e_phnum; i++) {
+> +		size_t size;
+> +		const struct elf_phdr *phdr;
+> +		struct loongarch_image_header *header;
+> +
+> +		phdr = &elf_info->proghdrs[i];
+> +		if (phdr->p_type != PT_LOAD)
+> +			continue;
+> +
+> +		size = phdr->p_filesz;
+> +		if (size > phdr->p_memsz)
+> +			size = phdr->p_memsz;
+> +
+> +		kbuf->buffer = (void *)elf_info->buffer + phdr->p_offset;
+> +		kbuf->bufsz = size;
+> +		kbuf->buf_align = phdr->p_align;
+> +		header = (struct loongarch_image_header *)kbuf->buffer;
+> +		*text_offset = le64_to_cpu(header->text_offset);
+> +		kbuf->buf_min = *text_offset;
+> +		kbuf->memsz = le64_to_cpu(header->image_size);
+Elf kernel resolution should not be used to struct loongarch_image_header,
+members of the content contained in the inner world of CONFIG_EFI_STUB in
+the arch/loongarch/kernel/head.S, should use the content inside the elf
+header information, The kexec-tools tool should also be fixed.
 
+However, there is certain content in the elf header information, and the
+general kexec_elf_load() function cannot be used. Special processing of
+kbuf->memsz and kbuf->memsz is required.
 
-Takashi
+$ readelf -l vmlinux
+...
+   Type           Offset             VirtAddr           PhysAddr
+                  FileSiz            MemSiz              Flags Align
+   LOAD           0x0000000000010000 0x9000000000200000 0x9000000000200000
+                  0x0000000002747a00 0x000000000287a0d8  RWE 0x10000
+   NOTE           0x0000000000000000 0x0000000000000000 0x0000000000000000
+                  0x0000000000000000 0x0000000000000000  R      0x8
+
+phdr->p_paddr should have been a physical address, but it is a virtual
+address on the current LoongArch. This will cause kexec_file to fail
+when loading the kernel and need to be converted to a physical address.
+Another patch is working to fix this issue[1].
+
+ From the above MemSiz, it can be seen that 0x287a0d8 has not been aligned.
+Although kexec_add_buffer() will perform PAGE_SIZE alignment on kbuf->memsz,
+there is still a stampeding in the loaded kernel space and initrd space.
+The initrd resolution failed when starting the second kernel.
+
+It can be known from the link script vmlinux.lds.S that,
+    BSS_SECTION(0, SZ_64K, 8)
+    . = ALIGN(PECOFF_SEGMENT_ALIGN);
+
+It needs to be aligned according to the SZ_64K size, so that after 
+alignment,
+its size is consistent with _kernel_asize 
+(loongarch_image_header->image_size).
+
+The following modifications will be used in the next version to fix it，
+
+--- a/arch/loongarch/kernel/kexec_elf.c
++++ b/arch/loongarch/kernel/kexec_elf.c
+@@ -28,7 +28,6 @@ static int loongarch_kexec_elf_load(struct kimage 
+*image, struct elfhdr *ehdr,
+         for (i = 0; i < ehdr->e_phnum; i++) {
+                 size_t size;
+                 const struct elf_phdr *phdr;
+-               struct loongarch_image_header *header;
+
+                 phdr = &elf_info->proghdrs[i];
+                 if (phdr->p_type != PT_LOAD)
+@@ -41,10 +40,9 @@ static int loongarch_kexec_elf_load(struct kimage 
+*image, struct elfhdr *ehdr,
+                 kbuf->buffer = (void *)elf_info->buffer + phdr->p_offset;
+                 kbuf->bufsz = size;
+                 kbuf->buf_align = phdr->p_align;
+-               header = (struct loongarch_image_header *)kbuf->buffer;
+-               *text_offset = le64_to_cpu(header->text_offset);
+-               kbuf->buf_min = *text_offset;
+-               kbuf->memsz = le64_to_cpu(header->image_size);
++               *text_offset = __pa(phdr->p_paddr);
++               kbuf->buf_min = _*text_offset;
++               kbuf->memsz = ALIGN(phdr->p_memsz, SZ_64K);
+                 kbuf->mem = KEXEC_BUF_MEM_UNKNOWN;
+
+[1]: 
+https://lore.kernel.org/loongarch/00651F3A-6649-4C69-B365-352C8D323902@flygoat.com/T/#t
+
+Thanks,
+Youling.
+> +		kbuf->mem = KEXEC_BUF_MEM_UNKNOWN;
+> +		ret = kexec_add_buffer(kbuf);
+> +		if (ret)
+> +			break;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static void *elf_kexec_load(struct kimage *image, char *kernel_buf,
+> +			    unsigned long kernel_len, char *initrd,
+> +			    unsigned long initrd_len, char *cmdline,
+> +			    unsigned long cmdline_len)
+> +{
+> +	int ret;
+> +	unsigned long text_offset = 0, kernel_segment_number;
+> +	struct elfhdr ehdr;
+> +	struct kexec_elf_info elf_info;
+> +	struct kexec_segment *kernel_segment;
+> +	struct kexec_buf kbuf;
+> +
+> +	ret = kexec_build_elf_info(kernel_buf, kernel_len, &ehdr, &elf_info);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	/* Load the kernel */
+> +	kbuf.image = image;
+> +	kbuf.buf_max = ULONG_MAX;
+> +	kbuf.top_down = false;
+> +
+> +	kernel_segment_number = image->nr_segments;
+> +
+> +	ret = loongarch_kexec_elf_load(image, &ehdr, &elf_info, &kbuf, &text_offset);
+> +	if (ret)
+> +		goto out;
+> +
+> +	/* Load additional data */
+> +	kernel_segment = &image->segment[kernel_segment_number];
+> +	ret = load_other_segments(image, kernel_segment->mem, kernel_segment->memsz,
+> +				  initrd, initrd_len, cmdline, cmdline_len);
+> +	if (ret)
+> +		goto out;
+> +
+> +	/* Make sure the second kernel jumps to the correct "kernel_entry". */
+> +	image->start = kernel_segment->mem + __pa(ehdr.e_entry) - text_offset;
+> +
+> +	kexec_dprintk("Loaded kernel at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
+> +		      kernel_segment->mem, kbuf.bufsz, kernel_segment->memsz);
+> +
+> +out:
+> +	kexec_free_elf_info(&elf_info);
+> +	return ret ? ERR_PTR(ret) : NULL;
+> +}
+> +
+> +const struct kexec_file_ops kexec_elf_ops = {
+> +	.probe = kexec_elf_probe,
+> +	.load  = elf_kexec_load,
+> +};
+> diff --git a/arch/loongarch/kernel/machine_kexec_file.c b/arch/loongarch/kernel/machine_kexec_file.c
+> index a713acf32db8..dc6e37457559 100644
+> --- a/arch/loongarch/kernel/machine_kexec_file.c
+> +++ b/arch/loongarch/kernel/machine_kexec_file.c
+> @@ -22,6 +22,7 @@
+>   
+>   const struct kexec_file_ops * const kexec_file_loaders[] = {
+>   	&kexec_efi_ops,
+> +	&kexec_elf_ops,
+>   	NULL
+>   };
+>   
 
