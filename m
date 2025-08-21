@@ -1,195 +1,107 @@
-Return-Path: <linux-kernel+bounces-779383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20704B2F365
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:12:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DB0B2F3A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 870055E8131
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:08:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CEE96881B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D282E9EC8;
-	Thu, 21 Aug 2025 09:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F622EE615;
+	Thu, 21 Aug 2025 09:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ao1n+ecf"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="fSRHEBjT"
+Received: from forward202d.mail.yandex.net (forward202d.mail.yandex.net [178.154.239.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0572D3A6A;
-	Thu, 21 Aug 2025 09:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757472ED872;
+	Thu, 21 Aug 2025 09:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755767228; cv=none; b=f22Uy2s8e6LRcRnd4xfUKAELwWSEWVKDT6x0/oJbV1sE/FwchapFTLsLnRsMF5qmewaDMbZMerHjLgX4U8pRLP8eOkeUXuyO+qrs3/bUlAREPSQ1oPPBzTqXASL2o+DeOOQk2WeDpdf/m0IxCksiCsWFXBJ6QCeTsZHRfqUKrMg=
+	t=1755767738; cv=none; b=s/p/Cucy1eJbRZbJU36jQf9mNVX6KNH4T/+EFKuXkXUoOdsxDuFmq55zI45YJyT1mKdBOJncRU8xIo3sc8xK255DXtoDyVMlbl5Gyk6GzOangfkUglC9GKZbLDqiOgJKWPuSLWfENVVhVqK+chByeKPMattTPKaxR7buEJpkpO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755767228; c=relaxed/simple;
-	bh=6Lh4b5LMBBzYETFNUKgsMw+Mg8slBT6PgN9WlZyKi/I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RQ3OlDwRM0txVK9HnyN0N8pfzQfWCxaxriKaIl39MvMw/P4UmDziwqxMAV3RKsMi6SfZDt6+1It/KrA1yNou0ST5MnJ7XiBqWw63sWTKFtStuIcgjGfi77q9fcT+40dToHEku0epKoSC5kxxkHNCJd1q4eU+lt/+8qD9y8ZMwo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ao1n+ecf; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso729468b3a.1;
-        Thu, 21 Aug 2025 02:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755767226; x=1756372026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qA6vzGkbuWAEnBwZb/6LL/xPx2BmZVoZP3qls2M6vww=;
-        b=Ao1n+ecfl6Q43XMXVjN2memkN7Ay8VLhMyhZTFIxkqu1Sm2suh84xXLQtFCi2Vr8zr
-         HT/Yd4XG6d4m5YwPZDdYggk5YMNPIpaSPID1/Nnoko098FdZjqevmgthdcuDoV14hqDe
-         Jnxj32Qyg/nwcFdTzyEnnZXodufdm7/9N7EWpf4SvBic4+pY5FULUXzOEw4C/4eVsos7
-         AwYOT5QSVtR+xZT+2TDFlcT3tFyJk/cYY6KzAvm4sHQ0QxSfZErgdl2FviRObjwUFhsw
-         neLyJabsR9g0chB+yAKl+w2bFPmipQcgs2a8eDWZruPIqF0EuuczEkC1RcIPJKz78LjM
-         8C2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755767226; x=1756372026;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qA6vzGkbuWAEnBwZb/6LL/xPx2BmZVoZP3qls2M6vww=;
-        b=YV3lyBvM8y6OxXLro501VdU8zGXDasO2rxYSJ1WHZe88jrJTcsEXk/Z8hlLerKzK7d
-         eQaJSWshQSpzFVjfJTz5GaLv8vIdTqsfltbx+zfSwRZf22hmIbVLOjr2rAF8QE9Vhumh
-         cB6pgaTIpoZhkfwKlBGv/T2dZK9qVro/lcUagLCqf8usX1ZGd3lNHV5kMsae7YBAWsKf
-         4VYTc6mlIeLMXCTAl+ElsXnI3pkGrN8JKKsLv6h2/g/IaFcMrbyHhaQOLy+kpanlMowX
-         RarpPuMp+TpGIdCdin+5SmHQ3Sr5S47fU3r9YuoaLIg274l/Urx79HxeCVixCUF2ixtw
-         Mjug==
-X-Forwarded-Encrypted: i=1; AJvYcCUYt4qww6PttfpzUV+SLtHqtLjXuxLnCyuIrCUt3HiB6lyOFS/KwVYuUr6GSh3+W5PRlIAxJjC5yFW3jRkc@vger.kernel.org, AJvYcCVrv4vD8oO6IHt/KpDSEFLo0eIbXTbdaDFDgauOkhJpn3GkxxpDUKAHZNWI6GNp9F1duEJy@vger.kernel.org, AJvYcCWjtACkGMJW1xXQSFoWWr7XstjfP0DcQMpST0k/E//5oj/hoSdHJfQHdNj7rJBiyE9Fbx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuG/fo4nY0nXKYjlyNAxHXodcHJddhTYBpTcCOHaBKI8MnpSq7
-	Cl0RxoP5+sofzdKiEV31b0R7h6D5zCxWAab8pMRo53AwDpuk9B5gWhCj
-X-Gm-Gg: ASbGncuvSx11eqtFIzzq8ij2cbn17cpNlFygZ42so8QHWtEf7egdLAD20mikjKroZ7/
-	1A4NMRs5h1wMsrKvK4picAzjW/aHa5IG105U0yByjY30G5xMN9m33kiRyD37R8uS1ZCEI1kSW2l
-	TodcAhK/aDMCA0yVXLp1nAWc2y2yXRG/bGY3T6hqObsmj2eDSl0633zmK0N6MoTo2oFNvjIwrF5
-	sYKiQ2BohAUWxOh2ynrp3CdQWov062l4iBwH9o5PGheKgBiXbDjts0AWZGpNHZIHo1houGRoQ5c
-	+oBIVqm/RHq1PmAGffGp29DBUA/L9YQmvySsilu/DMU39nKNivbmHOgbXPntkBm1Uz2U+b9C0RG
-	IbooPvRXEeSjdd361LgeKazA=
-X-Google-Smtp-Source: AGHT+IFAxs155WkEAovxKXV2Qp7o7Ce69E4eJSaP9vrtG7bqjEQH//jftMOatslb46rp0Rv4pxscWQ==
-X-Received: by 2002:a05:6a00:190a:b0:76b:f73a:4457 with SMTP id d2e1a72fcca58-76ea314f59fmr2162223b3a.6.1755767226418;
-        Thu, 21 Aug 2025 02:07:06 -0700 (PDT)
-Received: from 7940hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76ea0c16351sm1708937b3a.14.2025.08.21.02.07.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 02:07:06 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: ast@kernel.org,
-	paulmck@kernel.org
-Cc: frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com,
-	josh@joshtriplett.org,
+	s=arc-20240116; t=1755767738; c=relaxed/simple;
+	bh=efoQrj7bXWgexhd3BHD2Qhn1VZWqg4JM11GT3VNhmWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HgGbSQRMmvViVylr3xGVD2rOqSlVb+UJa3besk9pYv4Xx5NuMwHD/vhZGtblUunc6AOhkBpVBFj3y5AAwgkrLiBUevcq9NuzaYShSkCjU7Hm6+9pqG7Jdl2GNJRAo9TjqnnZZlNRADC8szE7bPSamBV4UoRBgveeKqL6plIOIEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=fSRHEBjT; arc=none smtp.client-ip=178.154.239.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from forward103d.mail.yandex.net (forward103d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d103])
+	by forward202d.mail.yandex.net (Yandex) with ESMTPS id C12AE841F1;
+	Thu, 21 Aug 2025 12:07:52 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:3928:0:640:8b00:0])
+	by forward103d.mail.yandex.net (Yandex) with ESMTPS id A854BC0097;
+	Thu, 21 Aug 2025 12:07:44 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id M7PNAONL5Sw0-zNXIiSp1;
+	Thu, 21 Aug 2025 12:07:43 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1755767264;
+	bh=D2NoTGbvCME0hV3MUX25OOiQBe7Hg6+IxESPay1AqjU=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=fSRHEBjT9+aPADLJ6r3ovdVXRiCoZa6wDsW+yJ/GSKVqWfAUNk0LQKvQcYHiEdvC1
+	 mxeiHHh5xyY+/IPijQl19dEDwfJnCGWdCUk/WkwcbteR4AH9xyxqXSJX4HRdsALZ+r
+	 p8IEh3tKoDr65AIAIcVP1kfG1bBTWVGNt3sBu8mA=
+Authentication-Results: mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: rust-for-linux@vger.kernel.org
+Cc: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
 	boqun.feng@gmail.com,
-	urezki@gmail.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	rcu@vger.kernel.org,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
 	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH bpf-next v3 7/7] bpf: use rcu_read_lock_dont_migrate() for trampoline.c
-Date: Thu, 21 Aug 2025 17:06:09 +0800
-Message-ID: <20250821090609.42508-8-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250821090609.42508-1-dongml2@chinatelecom.cn>
-References: <20250821090609.42508-1-dongml2@chinatelecom.cn>
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+Subject: [PATCH] rust: regulator: use `to_result` for error handling
+Date: Thu, 21 Aug 2025 12:07:20 +0300
+Message-ID: <20250821090720.23939-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Use rcu_read_lock_dont_migrate() and rcu_read_unlock_migrate() in
-trampoline.c to obtain better performance when PREEMPT_RCU is not enabled.
+Simplifies error handling by replacing the manual check
+of the return value with the `to_result` helper.
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+Signed-off-by: Onur Özkan <work@onurozkan.dev>
 ---
-v2:
-- use rcu_read_lock_dont_migrate() instead of rcu_migrate_disable()
----
- kernel/bpf/trampoline.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ rust/kernel/regulator.rs | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-index 0e364614c3a2..5949095e51c3 100644
---- a/kernel/bpf/trampoline.c
-+++ b/kernel/bpf/trampoline.c
-@@ -899,8 +899,7 @@ static __always_inline u64 notrace bpf_prog_start_time(void)
- static u64 notrace __bpf_prog_enter_recur(struct bpf_prog *prog, struct bpf_tramp_run_ctx *run_ctx)
- 	__acquires(RCU)
- {
--	rcu_read_lock();
--	migrate_disable();
-+	rcu_read_lock_dont_migrate();
- 
- 	run_ctx->saved_run_ctx = bpf_set_run_ctx(&run_ctx->run_ctx);
- 
-@@ -949,8 +948,7 @@ static void notrace __bpf_prog_exit_recur(struct bpf_prog *prog, u64 start,
- 
- 	update_prog_stats(prog, start);
- 	this_cpu_dec(*(prog->active));
--	migrate_enable();
--	rcu_read_unlock();
-+	rcu_read_unlock_migrate();
- }
- 
- static u64 notrace __bpf_prog_enter_lsm_cgroup(struct bpf_prog *prog,
-@@ -960,8 +958,7 @@ static u64 notrace __bpf_prog_enter_lsm_cgroup(struct bpf_prog *prog,
- 	/* Runtime stats are exported via actual BPF_LSM_CGROUP
- 	 * programs, not the shims.
- 	 */
--	rcu_read_lock();
--	migrate_disable();
-+	rcu_read_lock_dont_migrate();
- 
- 	run_ctx->saved_run_ctx = bpf_set_run_ctx(&run_ctx->run_ctx);
- 
-@@ -974,8 +971,7 @@ static void notrace __bpf_prog_exit_lsm_cgroup(struct bpf_prog *prog, u64 start,
- {
- 	bpf_reset_run_ctx(run_ctx->saved_run_ctx);
- 
--	migrate_enable();
--	rcu_read_unlock();
-+	rcu_read_unlock_migrate();
- }
- 
- u64 notrace __bpf_prog_enter_sleepable_recur(struct bpf_prog *prog,
-@@ -1033,8 +1029,7 @@ static u64 notrace __bpf_prog_enter(struct bpf_prog *prog,
- 				    struct bpf_tramp_run_ctx *run_ctx)
- 	__acquires(RCU)
- {
--	rcu_read_lock();
--	migrate_disable();
-+	rcu_read_lock_dont_migrate();
- 
- 	run_ctx->saved_run_ctx = bpf_set_run_ctx(&run_ctx->run_ctx);
- 
-@@ -1048,8 +1043,7 @@ static void notrace __bpf_prog_exit(struct bpf_prog *prog, u64 start,
- 	bpf_reset_run_ctx(run_ctx->saved_run_ctx);
- 
- 	update_prog_stats(prog, start);
--	migrate_enable();
--	rcu_read_unlock();
-+	rcu_read_unlock_migrate();
- }
- 
- void notrace __bpf_tramp_enter(struct bpf_tramp_image *tr)
--- 
-2.50.1
+diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
+index 65f3a125348f..73ad4ad4747d 100644
+--- a/rust/kernel/regulator.rs
++++ b/rust/kernel/regulator.rs
+@@ -267,11 +267,8 @@ pub fn set_voltage(&self, min_voltage: Voltage, max_voltage: Voltage) -> Result
+     pub fn get_voltage(&self) -> Result<Voltage> {
+         // SAFETY: Safe as per the type invariants of `Regulator`.
+         let voltage = unsafe { bindings::regulator_get_voltage(self.inner.as_ptr()) };
+-        if voltage < 0 {
+-            Err(kernel::error::Error::from_errno(voltage))
+-        } else {
+-            Ok(Voltage::from_microvolts(voltage))
+-        }
++
++        to_result(voltage).map(|()| Voltage::from_microvolts(voltage))
+     }
+
+     fn get_internal(dev: &Device, name: &CStr) -> Result<Regulator<T>> {
+--
+2.50.0
 
 
