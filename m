@@ -1,107 +1,163 @@
-Return-Path: <linux-kernel+bounces-779790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D5F8B2F8CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:51:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF90B2F8F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82A78B63EA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:49:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A13AC73B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2E831DDB5;
-	Thu, 21 Aug 2025 12:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3374432277F;
+	Thu, 21 Aug 2025 12:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OqLsjddJ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lkw0uhHK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162F431DDA7
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB88321F2D
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780494; cv=none; b=QBJJKwgryST/uYNWFBDQfccQa/+MwG0ZEsl17zqLyhiMchRwH2zXwLhzLEgohYWbDmL2tKUT2hX3P8T4uiOsNgs81oWHy/2Vyyu8WqVjaqYPJEWIw/2GS2CwjIMELr3olWAZvxFjj+OdNWptAMKtQXQgihFqIgN3cU11NgtqX2M=
+	t=1755780517; cv=none; b=hkmj7MfLaKxhtL2UvdTxcFXFVfKvthmhn9kXskB+Ntt5qdc+BwPnSomVk2wXxrnk1dZo+WeG+oYGV6bVzpVTgA2hHT9P4h014jbE5ediLtqXZxJsABHcNM83c28myeJjamMOpXtyWO/aCk34Zya5oPi7QYce1xVVBUgt1oDeTFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780494; c=relaxed/simple;
-	bh=Do0j0v5kNYzW3LiK4jyAkZwTHofjmZdzcjqQZHywvEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LUJsOiG2fcCrrLlmfikxZaUMLFfl9b8Sgu4BK/egC/bMWcV22BuzRu+W2Q82vdH1d40UyHgtVF06usqVNR3SwLfINycnOXnUbhhDAp+OH1MH/xHYwRjVsiR94E0wme9jZX4KcWxF6AUeuJuwpnEBFB0YKeRKK48k/jtCm4GWjAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OqLsjddJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/KUgYQxH7a7g1wbBy1/HJEg7pdhs92wukvyptpmXFfY=; b=OqLsjddJGMaYiOFyOIWabawzt9
-	grkWipNRy4T9+PT97g3+7Y8AkEXhl8I6aPg/I3bpNYnOzfd4YN36VefHXWbU+nQydva3ZDhf1DfPn
-	/Oa1n/zzUcLmam2SRmU/lcs6YIhjQW4P5AwSFZcM4PbyCius+H0uCxgade6xUTsTmH5U3cduQa6rY
-	Ta79Lq4K7gJNk8ioe6662Ce1LfI19dLwr56l+gaNL7xr/5hxtud0VGqg5lmYfayDUcWQ/R2lkV+RP
-	b/YpQL2wZAq3bRjlYkg03D3vO2G86Y0yA0827qaX38iY1H4O/Dk3y0iu+G+pZvuqWBak19K71u9xz
-	tEbDaPiQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1up4i4-00000007CjP-1SHt;
-	Thu, 21 Aug 2025 12:48:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8E6573002ED; Thu, 21 Aug 2025 14:48:04 +0200 (CEST)
-Date: Thu, 21 Aug 2025 14:48:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Marcos Del Sol Vives <marcos@orca.pet>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
-	Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	David Kaplan <david.kaplan@amd.com>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Oleg Nesterov <oleg@redhat.com>, "Xin Li (Intel)" <xin@zytor.com>,
-	Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-Message-ID: <20250821124804.GP3289052@noisy.programming.kicks-ass.net>
-References: <20250820013452.495481-1-marcos@orca.pet>
+	s=arc-20240116; t=1755780517; c=relaxed/simple;
+	bh=ywe9PAENkpsG/lb1PRHlt2Cm4TQuC7VjkL3tA0Q+BfU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZlYAJcfRgMHyQV6Kyl+G6SQnOSu7XG5GeMsGxAGh+okpisLXB1EB7dLc+BwUIkCS/05GS5jJvJY0Qd+8cyJWTGgkIk1mFbU3kMkuudcJvOZZooLpDzLE/p2+UvQaQmsDaOswYhZLPPDVK28caMRzJo2wVM4CyE6njFg9U3St4PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lkw0uhHK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADA54C113CF;
+	Thu, 21 Aug 2025 12:48:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755780516;
+	bh=ywe9PAENkpsG/lb1PRHlt2Cm4TQuC7VjkL3tA0Q+BfU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=lkw0uhHKH0DjxChL+3RoH8cCefgGS6+l8W1Pe984+gry1NdW1oKyOhScOvo+5OHwQ
+	 nUK4vlAIFwJLMVg8UHnedNY4HRPtV2+cImTiQuvb9rUsF7x6QOthr7EYS2hCfVZg75
+	 zCANODihUp3XHptyrbS+b5RTuBhOO8XrZ4+7DNg2dqkGtPcPuGCLbFOc74qdpLNvQB
+	 0sLgvmw50ULi9H8/SzDqcKRBOB46+aFoT5CGGcGwQ17ChQMEhBNVoAazB71YJ+1bI0
+	 ZZzvbFEADC7K4tWIjMaw6iU/7kUl5gOv3QxrqoXCeNCUd3/fV06OltFtdJjhPlkpxV
+	 BjHTSLCFg4Gig==
+From: Daniel Wagner <wagi@kernel.org>
+Date: Thu, 21 Aug 2025 14:48:32 +0200
+Subject: [PATCH] nvmet-fc: move lsop put work to nvmet_fc_ls_req_op
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820013452.495481-1-marcos@orca.pet>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250821-fix-nvmet-fc-v1-1-3349da4f416e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAJ8Vp2gC/x2MQQqAIBAAvyJ7bkGlQPtKdBBbaw9ZaEgg/j3pO
+ AwzFTIlpgyzqJCocOYrdlCDAH+4uBPy1hm01JM0WmHgF2M56cHgUblgjbVq1CZAT+5E3f+7ZW3
+ tA2zG5cheAAAA
+X-Change-ID: 20250821-fix-nvmet-fc-1af98991428f
+To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, 
+ Keith Busch <kbusch@kernel.org>, Daniel Wagner <dwagner@suse.de>
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Wed, Aug 20, 2025 at 03:34:46AM +0200, Marcos Del Sol Vives wrote:
-> +static bool handle_hnop(struct pt_regs *regs)
-> +{
-> +	struct thread_struct *t = &current->thread;
-> +	unsigned char buf[MAX_INSN_SIZE];
-> +	unsigned long nr_copied;
-> +	struct insn insn;
-> +
-> +	nr_copied = insn_fetch_from_user(regs, buf);
-> +	if (nr_copied <= 0)
-> +		return false;
-> +
-> +	if (!insn_decode_from_regs(&insn, regs, buf, nr_copied))
-> +		return false;
-> +
-> +	/* Hintable NOPs cover 0F 18 to 0F 1F */
-> +	if (insn.opcode.bytes[0] != 0x0F ||
-> +		insn.opcode.bytes[1] < 0x18 || insn.opcode.bytes[1] > 0x1F)
-> +		return false;
+It’s possible for more than one async command to be in flight from
+__nvmet_fc_send_ls_req. For each command, a tgtport reference is taken.
 
-FWIW, you need to check for insn.opcode.nbytes == 2.
+In the current code, only one put work item is queued at a time, which
+results in a leaked reference.
 
-> +	if (!t->hnop_warn) {
-> +		pr_warn_ratelimited("%s[%d] emulating hintable NOP, ip:%lx\n",
-> +		       current->comm, task_pid_nr(current), regs->ip);
-> +		t->hnop_warn = 1;
-> +	}
-> +
-> +	regs->ip += insn.length;
-> +	return true;
-> +}
+To fix this, move the work item to the nvmet_fc_ls_req_op struct, which
+already tracks all resources related to the command.
+
+Fixes: 710c69dbaccd ("nvmet-fc: avoid deadlock on delete association path")
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
+---
+ drivers/nvme/target/fc.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
+index a9b18c051f5bd830a6ae45ff0f4892c3f28c8608..6725c34dd7c90ae38f8271368e609fd0ba267561 100644
+--- a/drivers/nvme/target/fc.c
++++ b/drivers/nvme/target/fc.c
+@@ -54,6 +54,8 @@ struct nvmet_fc_ls_req_op {		/* for an LS RQST XMT */
+ 	int				ls_error;
+ 	struct list_head		lsreq_list; /* tgtport->ls_req_list */
+ 	bool				req_queued;
++
++	struct work_struct		put_work;
+ };
+ 
+ 
+@@ -111,8 +113,6 @@ struct nvmet_fc_tgtport {
+ 	struct nvmet_fc_port_entry	*pe;
+ 	struct kref			ref;
+ 	u32				max_sg_cnt;
+-
+-	struct work_struct		put_work;
+ };
+ 
+ struct nvmet_fc_port_entry {
+@@ -235,12 +235,13 @@ static int nvmet_fc_tgt_a_get(struct nvmet_fc_tgt_assoc *assoc);
+ static void nvmet_fc_tgt_q_put(struct nvmet_fc_tgt_queue *queue);
+ static int nvmet_fc_tgt_q_get(struct nvmet_fc_tgt_queue *queue);
+ static void nvmet_fc_tgtport_put(struct nvmet_fc_tgtport *tgtport);
+-static void nvmet_fc_put_tgtport_work(struct work_struct *work)
++static void nvmet_fc_put_lsop_work(struct work_struct *work)
+ {
+-	struct nvmet_fc_tgtport *tgtport =
+-		container_of(work, struct nvmet_fc_tgtport, put_work);
++	struct nvmet_fc_ls_req_op *lsop =
++		container_of(work, struct nvmet_fc_ls_req_op, put_work);
+ 
+-	nvmet_fc_tgtport_put(tgtport);
++	nvmet_fc_tgtport_put(lsop->tgtport);
++	kfree(lsop);
+ }
+ static int nvmet_fc_tgtport_get(struct nvmet_fc_tgtport *tgtport);
+ static void nvmet_fc_handle_fcp_rqst(struct nvmet_fc_tgtport *tgtport,
+@@ -367,7 +368,7 @@ __nvmet_fc_finish_ls_req(struct nvmet_fc_ls_req_op *lsop)
+ 				  DMA_BIDIRECTIONAL);
+ 
+ out_putwork:
+-	queue_work(nvmet_wq, &tgtport->put_work);
++	queue_work(nvmet_wq, &lsop->put_work);
+ }
+ 
+ static int
+@@ -388,6 +389,7 @@ __nvmet_fc_send_ls_req(struct nvmet_fc_tgtport *tgtport,
+ 	lsreq->done = done;
+ 	lsop->req_queued = false;
+ 	INIT_LIST_HEAD(&lsop->lsreq_list);
++	INIT_WORK(&lsop->put_work, nvmet_fc_put_lsop_work);
+ 
+ 	lsreq->rqstdma = fc_dma_map_single(tgtport->dev, lsreq->rqstaddr,
+ 				  lsreq->rqstlen + lsreq->rsplen,
+@@ -447,8 +449,6 @@ nvmet_fc_disconnect_assoc_done(struct nvmefc_ls_req *lsreq, int status)
+ 	__nvmet_fc_finish_ls_req(lsop);
+ 
+ 	/* fc-nvme target doesn't care about success or failure of cmd */
+-
+-	kfree(lsop);
+ }
+ 
+ /*
+@@ -1410,7 +1410,6 @@ nvmet_fc_register_targetport(struct nvmet_fc_port_info *pinfo,
+ 	kref_init(&newrec->ref);
+ 	ida_init(&newrec->assoc_cnt);
+ 	newrec->max_sg_cnt = template->max_sgl_segments;
+-	INIT_WORK(&newrec->put_work, nvmet_fc_put_tgtport_work);
+ 
+ 	ret = nvmet_fc_alloc_ls_iodlist(newrec);
+ 	if (ret) {
+
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250821-fix-nvmet-fc-1af98991428f
+
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
+
 
