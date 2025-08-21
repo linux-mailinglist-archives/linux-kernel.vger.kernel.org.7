@@ -1,95 +1,91 @@
-Return-Path: <linux-kernel+bounces-780406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF6BB3017A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:51:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72327B3017C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7D5A1889BD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:51:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C3264E193E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4CA341677;
-	Thu, 21 Aug 2025 17:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43513341673;
+	Thu, 21 Aug 2025 17:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="gT/RNrnP"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rf/wFcWQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C252DF3CF;
-	Thu, 21 Aug 2025 17:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F2920B80B;
+	Thu, 21 Aug 2025 17:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755798685; cv=none; b=mHPz0KDEWFJQcUzy0IYNJgdD3ixDzJ6dPmYHlDyxHoQMW2sP+sojH1O+S285R6KOqT8pzsqZjZpgc59BQYmCagv6jHq0Z861DGgj8SuhZjYpivdPlsk0XrAqx7j/LH7vHtWiBzaM0cdm/r0s5HBksaPdv9phlzGBnfvs9QqYZLM=
+	t=1755798720; cv=none; b=j81zIQuTRrtmg/P+1a49vDKtTIQipS5e9r/P1iLaIpGsFeSLKwg5Q2C3R6X59RJdRsHbMw/Y0SWskG4WBqjSfNhH//wwpWgiGpCcNJnOHXaGrFijymocGnrtyA3WdAEAdypuxFqT0thC/WzpuO6tXKqj1rtO40l4PZj+Iun8nu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755798685; c=relaxed/simple;
-	bh=wCAFsgAQdAjADY6fv4y4Kojg0L7QZpmm1WOfbOukUP4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=u4gY6iAtJXP5d28sD7jmuQkYKmATmdHmNWR9QQSCc6xZqtM5qfwnY3fm+YMYRF/5uvQ6jxoNihwR5hITRnhd1jPvYVxhFBLOzYOaKkYexBQgg1APerBDoIHX3CTcBlUsHNJarVnGsFAGyobayDvYOKAzFIz9K5KwfGIw9T8spxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=gT/RNrnP; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6C4D340AB4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755798683; bh=hBwRWuKw3Z3dZICd18TkYfxbhcfBicekVpzn2o+lql8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gT/RNrnPVvetSoiiy0kOUBIgUSfIdoY1gUINWdsu8TxG6FpOT8Kz3oTB8lz9NnCl5
-	 fVqxTQmtcGmQbokDePhl+mNxKcG0mED+PSA4xhOSHHdLRB03LrA2nNeMBzxX2QfHJu
-	 R8f6Qn4KxBAgh9161bNlOF9VA6lKcJ7hp4fShqnqpf16JsRzUTecHcAa5BLEoBwtkU
-	 1iUCzXKDvUPgot14Ishg9x8xOepJiButZXUTuSedRNQ6ZM/dEDvaz9pk0lNd5PccEU
-	 MJdSwtZYzhYCk3ad0UCYiwz7QXviKCzun4rv9vSFbz2IR+M7M8qDDmMvtnjpcfPjwZ
-	 CjsV7G0hRwQ/A==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 6C4D340AB4;
-	Thu, 21 Aug 2025 17:51:23 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux USB <linux-usb@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: Re: [PATCH] Documentation: driver-api: usb: Limit toctree depth
-In-Reply-To: <20250820050416.25219-1-bagasdotme@gmail.com>
-References: <20250820050416.25219-1-bagasdotme@gmail.com>
-Date: Thu, 21 Aug 2025 11:51:22 -0600
-Message-ID: <87jz2w7ecl.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755798720; c=relaxed/simple;
+	bh=EAiMVGfZpwWbfNqfC6/9BaIdVSxGmCT+aYtWsrPjhiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PctrR5/k+7xnVwBh1zODbW2cjqR3a5gdB3B7YD/wc4Qcvn0YJVaN4QdgVN2y/oiVOklNxUCjwMJWLSGyULlBryoQZhe6+uNsw8lLUZFYUA6B+K+by6TVx0QqAJTdfGP+rQow65qemUEajijbUDilHjUmKw53Ihmyg69X8vfrbD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rf/wFcWQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2963EC4CEF4;
+	Thu, 21 Aug 2025 17:51:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755798720;
+	bh=EAiMVGfZpwWbfNqfC6/9BaIdVSxGmCT+aYtWsrPjhiQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rf/wFcWQ0oVxCbPg8aMxu8vtJPzX044cHIIOjWJsLl4gSV8E68vUXzCY1A5b5Mmdd
+	 y3JmZ7Km6/hPOa1Ulbs7fZx7UmgJPHkvlc6Mm8B0DPf45f56Az4uTb57YxPgei1QQ+
+	 6enyGQa4FQsVVqer1/iGMmERRx1KWjQ5PJZjLQhyL33IAuzZa+XD5Q/swjazBn34SZ
+	 TpRru/HapVai/rZ7x25lPN0bvg4WkAVCZEYiFNZS2+ZUsL7AJjUmYq5ww4pyZ4sXLN
+	 vLmeebk5w09P4sDPNuHmNI+A2t4CJy0CjRWIp8fxkpcRit1bY0lknHx7kJs/Z2Wxkh
+	 lWJlTqyF5mTqQ==
+Date: Thu, 21 Aug 2025 10:51:58 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Richard Gobert <richardbgobert@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com,
+ tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org,
+ ecree.xilinx@gmail.com, dsahern@kernel.org, ncardwell@google.com,
+ kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me,
+ aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
+ willemdebruijn.kernel@gmail.com, alexander.duyck@gmail.com,
+ linux-kernel@vger.kernel.org, linux-net-drivers@amd.com
+Subject: Re: [PATCH net-next v3 0/5] net: gso: restore outer ip ids
+ correctly
+Message-ID: <20250821105158.6f2fc95e@kernel.org>
+In-Reply-To: <20250821073047.2091-1-richardbgobert@gmail.com>
+References: <20250821073047.2091-1-richardbgobert@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Bagas Sanjaya <bagasdotme@gmail.com> writes:
+On Thu, 21 Aug 2025 09:30:42 +0200 Richard Gobert wrote:
+> GRO currently ignores outer IPv4 header IDs for encapsulated packets
+> that have their don't-fragment flag set. GSO, however, always assumes
+> that outer IP IDs are incrementing. This results in GSO mangling the
+> outer IDs when they aren't incrementing. For example, GSO mangles the
+> outer IDs of IPv6 packets that were converted to IPv4, which must
+> have an ID of 0 according to RFC 6145, sect. 5.1.
+> 
+> GRO+GSO is supposed to be entirely transparent by default. GSO already
+> correctly restores inner IDs and IDs of non-encapsulated packets. The
+> tx-tcp-mangleid-segmentation feature can be enabled to allow the
+> mangling of such IDs so that TSO can be used.
+> 
+> This series fixes outer ID restoration for encapsulated packets when
+> tx-tcp-mangleid-segmentation is disabled. It also allows GRO to merge
+> packets with fixed IDs that don't have their don't-fragment flag set.
 
-> toctree index in USB driver api docs currently spoils the entire docs
-> headings due to lack of :maxdepth: option. Add the option to limit
-> toctree depth to 1, mirroring usb subsystem docs in
-> Documentation/usb/index.rst.
->
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/driver-api/usb/index.rst | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/driver-api/usb/index.rst b/Documentation/driver-api/usb/index.rst
-> index cfa8797ea6144b..fcb24d0500d91d 100644
-> --- a/Documentation/driver-api/usb/index.rst
-> +++ b/Documentation/driver-api/usb/index.rst
-> @@ -3,6 +3,7 @@ Linux USB API
->  =============
->  
->  .. toctree::
-> +   :maxdepth: 1
->  
 
-It's still kind of a mess, but that does make it better.  Applied,
-thanks.
+This series appears to break GSO_PARTIAL:
 
-jon
+https://netdev-3.bots.linux.dev/vmksft-fbnic-qemu/results/263201/6-tso-py/stdout
+-- 
+pw-bot: cr
 
