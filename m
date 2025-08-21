@@ -1,119 +1,206 @@
-Return-Path: <linux-kernel+bounces-780494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC5EB302AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:12:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C085B3023E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C6E17F034
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:11:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D55E7BF10A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D66C3469EE;
-	Thu, 21 Aug 2025 19:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6189E3451DE;
+	Thu, 21 Aug 2025 18:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="aFAOahdz"
-Received: from sonic311-21.consmr.mail.sg3.yahoo.com (sonic311-21.consmr.mail.sg3.yahoo.com [106.10.244.38])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WQRbTMyV"
+Received: from mail-qt1-f227.google.com (mail-qt1-f227.google.com [209.85.160.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5A56BFCE
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 19:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B783431EC
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 18:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755803490; cv=none; b=Zs7XK24GzZNrKoVFPPR6poi/7WmXY1E59EPxZpRYnQx0S3JNpftBTJfcGWqBuyKItocnOsMcm4+oLj7R9n6JBHuJXOlZNtMTCRbhMPG0cE4DKclIzQwJQfR2WpKDJ/Sjgovt1SXWczRb8BjAmcIWFi2LzjwqyP6pSX33D3QPNo0=
+	t=1755801868; cv=none; b=lG2GeOeUAQ2JguellDd9JjAt4IatGpiULxslboR0Jbk7JXyRLnDDIlzhEaHBPFkQcGjlaAO9GxjhS2Mpwj1jZLheinbrqtM3gcKYevTpAC53nPn260BtRkC6vtq3JVAgA7mL6zorZX+ztyLr9ux7KqJbI1p7eXOOSpLad9b24FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755803490; c=relaxed/simple;
-	bh=79qMtTR4pCr7m4hgzi1TMnj2YF1DzyvB2hWRPAcN4nQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PJ8xOnAWCi/Idv0KxYr3Ef72WaF+0RR6PWGdPmhKwWKbb9CHjSm4Y8EXE02IafutHlBnBwMdgU3GaLH2s3iwRH+o2HjQ8CgDCtgr9m+631gucJySzRZaoqXmIMl3mkolK+MrmFV1IGik0JofsVU8cEA9i9D99pjzZBbnjfAj9oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=aFAOahdz; arc=none smtp.client-ip=106.10.244.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755803486; bh=79qMtTR4pCr7m4hgzi1TMnj2YF1DzyvB2hWRPAcN4nQ=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=aFAOahdz9+ZrXwLvq4YssNBcD66BBzL0GSUmR16FROpllHSArHmIRRqdpa1ZhYj4Jn8/6P46q7nOGdy8dKmUy6IPMckW8RB6VihJdBXcKZ93uMNPKpIYxCFS6qtH+dY9qUSxtdD4mwQoeoXdou0dbZekPoq1B9kqcy0ylC8QuhKt3H+jMpwCqwqVXIeaTTVUGX2TR7BnnomoyzOkMgk73rcwcCwB3+PlOkSX9lGur5izSTbNJNsGrzwAIlnXdMZsBktu3+hRdVLBmTG7r1lTXtQf6KNgIZ8yqzNrnaUC6hSIFJXnCzSN2YV2LzJhuy3YMRoqiogINgipQzArAi+O9Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755803486; bh=iKVvppsSsgI9xWSFQ3ND8FR8LOYm8rJg6QVehQmI7hE=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=SrQrh8JOPTfc/Wg2WAVc8wCprZh/exIj+LdGIWzGMkKgmNui8M7eOqcKpSLDMNzD1dg/ent6TtLNQEPUDtJMO7CyxHICh3ZWa2J01nN2K+aHCwec/typrRYCkwcYJwBmsuHtVTlqHDLYNDPJ96WvoUV4l/QaI4KC53jYisfiFma921o6Cswe5RPyyCSyr74sHYRdRy6nd6z6OLsEc9mjmGozwO+lRmlPSULKQmgUuKT0v19nWo3U1xTVz3RETUpvP7+DlwAeOWdrKOfopzPl6xXCY1x3GMKwhL6gsOFD3LVQ1ED4hvuvgyhVcS26Bu4HOkBf9X2Vj4w7Q2j/V/KP7w==
-X-YMail-OSG: TGkLaP4VM1nLSGOtAxOAS8DHyIaqeUWcqNZOPGYGG0qgGc88Piy6.qOfB8krpn4
- 90cTgZMSR4yOSsmNxBT.HafiRoj8pv38t.FJMAnNGxlaYJQjsiQgOdPFJo.jucGY95rwD4meJyW_
- _ICSRtIiwstQHuUft5rhAOkzLQMk3p2C4bRxHk2GXQktP5s_eYkuFEgToAGnPmFM4QYzzfjpPwbL
- LKqACYkAQWTHaH86ooHOoa7ewdi_B4JvOBmxlAx7No5ZrbrqP2YegiS39Zxx67zFiJnbvxZpsCRh
- Ka0xxrjZQGfA1sHpz2q70VKMpCZJHuVkk6_LI48NU9zXH_.mOA8AdzxohkfssObl.4mG5q7fsorX
- dY4pl8U5wWt8Ak81icHDxClNLnw9lMBFd_PL6j8Ii0AcJxN5woq.WxNSjzcgY5EM6qSiFQer32T2
- BU_TDi6v5xhsSMbyroX8CqZqHO5mnLB20rS2YTs2C0eoAK.XCX8p8Oyhz4z7crXmmEXb.1EckWA_
- RZ97d0l_0ylunFvLADeua.m5jmI2agmyIWV6BVpvdZ99i8daqStJWrIdDlZjgmC16VUMEEAE4Q2S
- SaLa_aIIy7eLlqHuWRn5yhWitVtfYRN94gCAYVyRBAyeJIneuCFsRXTDx21O_bcBi4kYbgWYQzv.
- P5ASZewYO6S.cmTHczJMz.T77PBxGi6DkTie5TydnbncrIjSO72AwgzHtdYyNhr7I5ObAaaO5ts4
- UJBCShAQnm6vg3PcpWV5TbiGlTBrV.RMLIgy87Ew3v_oe4rbSh1lnF4y3udBIsYjXjtVhizSdFDK
- tsRs4tOHcOUnuCOiU1sjBmix37lcrTCTFnaZbbtsKjj7HBovxc9AivUPC.wdTTp5RvExZJWR85q.
- PF1cAFesb9oBSco.BO6_CZcDNIwvyXPve1EPRokx9ONUitNyoDiZ9Z7yU4C38zmjXaJLvcE48AJF
- S7LEyTtfZ9u6O4Ck_MBcY0H0yLKt2VPceQ_Z4k59HNbGkTWFEGcdvnbET3TjCGhEeKLQVH3U6hsa
- v.GC94Xt3nbKnIYbY17eoPgMTqMTP1BmPX78g1otx2_SGi.atWRjOsiX6U4jOlDkya5e5GbMRJr8
- ouXiFrT4SYP76iPwAdagYQDpAs._Gjw450rsJFOkff_gQalXDQTA35gBc6tbbDFrTL_jhc5qwKAx
- 28EjdroxkhlasGuc3dBZ5fN48UPBCt4lHTj5hfGfwTfL8QzjQemkyOLps1XRTGWROmuoRrM32TA7
- ND5o2z647VXd0v6A61k4G6j38pn0oQInKKbRzzxHMg.rK2nPyfb2cOo71V6ZCw5IOMmWeezaSoAQ
- qkCqjW7XKdp9h_eYUF56Qo41wikuKywBrd96WSjOC6K.4xvL69Sim8FU9B_kfrvWDAwG7HSStiEI
- IwfMqVQomTM.T6r6eslCdSkysJwmQdvc4y7HBUI2syg1_86iavOM1b0YSMWyoz9y89gVf6k8C0It
- eEZAWaVnO8GIStST1AyR2GrQdg66L.FJxxPI_FK8g1sTMdj3oDACjKJhqBxF_aANlhV54yRmSZ89
- mDNAtfsv2Mgxl9OBFjE7nU1jTXogGD8ZtUU.ECQR.r7L1lipScsUpl0ruQ_qAcgGlJK6EFW_wmBc
- _mEEaYjA_6zbwp1ZB4o5cMHatO9FKpKYoF8KL4ggG_JbNsp4j_Mu_dtJ1cwuV1gijA1NKNbrqE3q
- KGdWcOm6ABXRKyW3v0nNta_fspuOdraxvb.FnofKYMtJvCIC3Q6cUuRlrRZXh7iHkYyJEh3ZIPnt
- vKnob3ixMwGHJbjt_t37mqmU9uHoxC.rVcXvAKnddyO2VQPd2FllepKL5REbkcJO_cr8zZiTGGMR
- YHaJf_M9tj5jQ4JePF5DDojWWKmcnn0Dd.1Y87L6sqJba9BpNwFl6649i_iLbCbA1G8IdT5c0hrp
- FzphVREkqdLWHDJM9GzV77eEVovGPUHqNovpDEwjGNuvuKeuKSTkSoPIBI9x6dDf5Ub9zSvUEitI
- .3IzsmzCEoM.UpzTRIfHffnWDRxHy.6V4Bb6NSbaRcyLsFQZd0fWe.ayWaxvAcW_oUF68EjMVGnm
- 58Sq0a5iBZD.S1YYYo1AuEYp4G9JIG.Dqhccs8njbCiK.DiPR43APsPHxrE_8vEndyNK5hxKBs3k
- 59h1ujBOoZwhIgILrHa_GkbfviOod.z_hOtj1fyK4fHq85Z5KU30enyehPtZq4bhn_EbaIxdWN45
- dE1IskItp9eUX5_g.qI_qLRDsVWcmbdtOG_hLhyY1iyrpeN7sPH0JqpC1mu.H9Ih1tjuRdWHwPdi
- MA6htqxlmboKpzVMKkA--
-X-Sonic-MF: <sumanth.gavini@yahoo.com>
-X-Sonic-ID: 5ed3eba4-7b80-485b-9dff-9c2729790cd5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.sg3.yahoo.com with HTTP; Thu, 21 Aug 2025 19:11:26 +0000
-Received: by hermes--production-ne1-9495dc4d7-dbtfw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d67fb2e8a117233158f28e86817b6c53;
-          Thu, 21 Aug 2025 18:40:59 +0000 (UTC)
-From: Sumanth Gavini <sumanth.gavini@yahoo.com>
-To: sumanth.gavini@yahoo.com
-Cc: boqun.feng@gmail.com,
-	clingutla@codeaurora.org,
-	elavila@google.com,
-	gregkh@linuxfoundation.org,
-	jstultz@google.com,
-	kprateek.nayak@amd.com,
-	linux-kernel@vger.kernel.org,
-	mhiramat@kernel.org,
-	mingo@kernel.org,
-	rostedt@goodmis.org,
-	ryotkkr98@gmail.com,
-	sashal@kernel.org,
-	stable@vger.kernel.org,
-	tglx@linutronix.de
-Subject: [PATCH 6.1] softirq: Add trace points for tasklet entry/exit
-Date: Thu, 21 Aug 2025 13:40:54 -0500
-Message-ID: <20250821184055.1710759-1-sumanth.gavini@yahoo.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250812161755.609600-1-sumanth.gavini@yahoo.com>
-References: <20250812161755.609600-1-sumanth.gavini@yahoo.com>
+	s=arc-20240116; t=1755801868; c=relaxed/simple;
+	bh=KQ79PtgU+urHOW0anVaHifb3uHHkNRuVJRuMkIiem5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rt4pdNVUNeeAdFFGClSg71/43tRjPLu+2n/OrUdbgDrm9Z7C6yLyYXf5615o0xU1MrEIUZq4Rw8UkETv3psGFShrOIqvx0KrzI+1X2N9auUwSIhySeVMKb4vZJs8AdqNrNp0u3vfGhb/SNxm5Je88JZUwc/3g97uEko59+/LbsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=WQRbTMyV; arc=none smtp.client-ip=209.85.160.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f227.google.com with SMTP id d75a77b69052e-4b109c58e29so21280651cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:44:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755801866; x=1756406666;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h3Vdinbv+yzCiaF+6xaTYU4lTVi63vniwlAs0d8gpeI=;
+        b=Wr8k1ji6sxDtsETKyAS2vAEFaFQj5FRFRW70bL8nTKIJXHSk8lldohw2fNQvBDbxlH
+         X3ih77D2skKM1409IsPWHiqqvMKxYQh2JTDOe8yzLQKgUskXtps4KgszANz07Mk4/s1y
+         pOT6XKGbyPFMlsXi8ZrGX/J6HhEGXNO2olfwAGHeQnJ896l1gwH8pJXCEKEIX2KH1iCu
+         Fx47T/WZpLTgorXlp6HOep5Uh/j4xL+xu2PYnGVhcjD4LRX40FhH99bI3RavGOg9SGqa
+         dxzJpUeJeLCGN0/Jp8wG0PNHt3ylGxyuzpPW8DpyzKG5FPpijs0fiJJAcTnSl2skcIW3
+         LD4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUuHLyp4jwvU6cWF85dYeLxQk4qgYHp/t73H+fDIUM4uKvFwqRXe2wxki6JKnI1zbvjlBRUZ/khk6mv1YM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7pBZ3XmFFS7h9zJSX2R44xgH9LMI33g8yPoZZeWI1L0K1ZXoK
+	sHj7D3UN2TTGvBOE+rDBn5FkOFsluUXuuNiKkIFvPyYVN2co/H+BOcDKD3vvwaoq80Iyz/CtXbG
+	s4wm7p8nEvXctAKLXqvHVIbBNOLraWWODNZZ/IxBG+PHow/5oBsh5s3tbDQbcg2MXuIlwj2ErpW
+	IOjIGs/ManVndM0pe88DvNRCN9yO6TZnJwbYm41ngoNhs56vcpGevUHkuw60a6mDDTdXcqCJKh+
+	N8rBt3foCVN6EeyVCPZXQM+MQ==
+X-Gm-Gg: ASbGncsFhMA6eC2vl8iygpW/Z1JqAz5NrPMxvC0wxvcO3EqgpV7kwJ1e+sqCyGMD4v2
+	gH5BHlneO9YzmcyqgsAqf0xJOpB5tMevzWcpuLg2y3uqgiGGaSG2L30mjTKGK4dz0xcrY4TneJr
+	oxF2ZQvWZQ3SZYnsWhAq0Lt672iQPP+QAu2czUlJdp5GM0qsaWybczokUJhRpPHm6oBPjffOXwy
+	5vZoyJdFWztIWVs+8qc8Tr2k2q+hdxuuTsLq72s/VUzHrzHJkW480v/qORrzasZc4tK0lK5Gts8
+	wKpTI5K0ej4cV2FS4JljNV+XD+I52+C6p668Yf68NT51nnbPT/vsy9zdk3FCvB3TieKQqzoRHD0
+	AxHPsFi0Ea7yegIU+dLW05X9Hx/2Eooo0Lj11iDG1qjwUUygN9YvLnpWN1QlpzFyKxp7BsGi1Y5
+	KBq0idEw==
+X-Google-Smtp-Source: AGHT+IHuN5eJezHSLZzauqMRBZ9u59jhSAhOJeBlQdlztrueRLSKC8O3QRtVBD8HGxRxCqKnKYVAOL9Ya771
+X-Received: by 2002:ac8:7f4d:0:b0:4b2:8ac4:f078 with SMTP id d75a77b69052e-4b2aab8a7e6mr3954281cf.74.1755801865426;
+        Thu, 21 Aug 2025 11:44:25 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
+        by smtp-relay.gmail.com with ESMTPS id d75a77b69052e-4b11da027easm6948941cf.1.2025.08.21.11.44.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Aug 2025 11:44:25 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-61a8a9ea4d5so1164817a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:44:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1755801863; x=1756406663; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=h3Vdinbv+yzCiaF+6xaTYU4lTVi63vniwlAs0d8gpeI=;
+        b=WQRbTMyVWLF7PGhw9fFzVkdcoCjZhlmqpexp9d6JiFneFh9nD49Zyt91xieDApXM/h
+         vrhK0HvRrP37KqfgAsq0Yu2fAb2ZK8+fHT2t2pkUZBk7AlELXQK1c2AX0CX38IZnOfsw
+         qg5+c0VuKhE9ACrzKhm8sIRSBeFYXzxBkM4Mg=
+X-Forwarded-Encrypted: i=1; AJvYcCVSDHbIyYmtlnMMtvit/lYKck2ZSPzvUlp1ETfwLkShc8ZeQfbFHmSPRcXF0zIT6/IOWKPwtPxSQdrSRCk=@vger.kernel.org
+X-Received: by 2002:a05:6402:40cd:b0:61a:2fc5:debc with SMTP id 4fb4d7f45d1cf-61c1b6e8a93mr97469a12.32.1755801863501;
+        Thu, 21 Aug 2025 11:44:23 -0700 (PDT)
+X-Received: by 2002:a05:6402:40cd:b0:61a:2fc5:debc with SMTP id 4fb4d7f45d1cf-61c1b6e8a93mr97444a12.32.1755801863068;
+        Thu, 21 Aug 2025 11:44:23 -0700 (PDT)
+Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a755d9b37sm5634601a12.7.2025.08.21.11.44.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 11:44:22 -0700 (PDT)
+Message-ID: <d071faf8-e800-4169-a670-8971d57b6997@broadcom.com>
+Date: Thu, 21 Aug 2025 20:44:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] brcmfmac: btcoex: Fix use-after-free when rescheduling
+ brcmf_btcoex_info work
+To: Duoming Zhou <duoming@zju.edu.cn>, brcm80211@lists.linux.dev
+Cc: brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de
+References: <20250821043202.21263-1-duoming@zju.edu.cn>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <20250821043202.21263-1-duoming@zju.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-Hi All,
+On 8/21/2025 6:32 AM, Duoming Zhou wrote:
+> The brcmf_btcoex_detach() only shuts down the btcoex timer, if the
+> flag timer_on is false. However, the brcmf_btcoex_timerfunc(), which
+> runs as timer handler, sets timer_on to false. This creates a critical
+> race condition:
+> 
+> 1.If brcmf_btcoex_detach() is called while brcmf_btcoex_timerfunc()
+> is executing, it may observe timer_on as false and skip the call to
+> timer_shutdown_sync().
+> 
+> 2.The brcmf_btcoex_timerfunc() may then reschedule the brcmf_btcoex_info
+> worker after the cancel_work_sync() has been executed.
+> 
+> 3.Subsequently, the brcmf_btcoex_info structure is freed.
+> 
+> 4.Finally, the rescheduled worker attempts to execute, leading to
+> use-after-free bugs by accessing the freed brcmf_btcoex_info object.
 
-Just following up on my patch submitted with subject "Subject: [PATCH 6.1] softirq: Add trace points for tasklet entry/exit".
+Thanks for the patch. Being a nit picker just wanted to day that the 
+use-after-free happens a bit earlier as the worker itself is contained 
+in struct brcmf_btcoex_info. Also the diagram below does not add much 
+more than the textual description above.
 
-Original message: https://lore.kernel.org/all/20250812161755.609600-1-sumanth.gavini@yahoo.com/
+> The following diagram illustrates this sequence of events:
+> 
+> cpu0                            cpu1
+> brcmf_btcoex_detach          |  brcmf_btcoex_timerfunc
+>                               |    bt_local->timer_on = false;
+>    if (cfg->btcoex->timer_on) |
+>      ...                      |
+>    cancel_work_sync();        |
+>    ...                        |    schedule_work() //reschedule
+>    kfree(cfg->btcoex);//free  |
+>                               |    brcmf_btcoex_handler() //worker
+>                               |    btci-> //use
+> 
+> To resolve this race condition, drop the conditional check and call
+> timer_shutdown_sync() directly. It can deactivate the timer reliably,
+> regardless of its current state. Once stopped, the timer_on state is
+> then set to false.
 
-Would you have any feedback on this change? I'd be happy to address any comments or concerns.
+However, no reason to stop this patch from going in so...
 
-This patch fixes this three bugs
-1. https://syzkaller.appspot.com/bug?extid=5284a86a0b0a31ab266a
-2. https://syzkaller.appspot.com/bug?extid=296695c8ae3c7da3d511
-3. https://syzkaller.appspot.com/bug?extid=97f2ac670e5e7a3b48e4
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-Thank you for your time and consideration.
-
-Regards,
-Sumanth Gavini
+> Fixes: 61730d4dfffc ("brcmfmac: support critical protocol API for DHCP")
+> Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+> ---
+>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/btcoex.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
 
