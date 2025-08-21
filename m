@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-779800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BC9B2F90E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:58:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DFEB2F913
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1511E1CE5EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:53:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6FD1883499
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F4F3176EB;
-	Thu, 21 Aug 2025 12:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6A9315761;
+	Thu, 21 Aug 2025 12:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igTA85yF"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="tFrD9DRD"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757522D320D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9232531A064;
+	Thu, 21 Aug 2025 12:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780766; cv=none; b=uUgRvBf+Dxq/P3GXVEG6hXtu/1LQjcHgWVea4pIriNqgeFasitSD4L6NFXjnIqaQJKdryYbVXeDyXxqHMxv3hIO3fM4k6eykuHh2cTmq9AoM+C26ZpqRh2VnfooP/5iF+RnQTQAT31ufR/ku13iEWJKsCp3XCq+pXWgyEFLeC70=
+	t=1755780862; cv=none; b=heDwWwME91Faj1BouG69FBBBg0d0tQ7iDE+DQUc+UmVr1KJFx84XcMEFduBUEHWGqDck7frosoQRbxMuDBaR5EjwFyZ3b3UwV4n1Egj6I2oO2H9y4npCH9gLt62SbnUrFd+VPpo3jfbWagVAOHfBuGwsOkxfmR34piGjhcg4Z88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780766; c=relaxed/simple;
-	bh=7tofv9IHJynFoIS4ob9uheWq03zdnIpwJ8zDq59EoIg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=udMGbQ5P3nNIHSNjTwkTUkMlIUbK6FXFSsmg1ZUFeZIwLyfhic0aWBSCvK+Q9PS6MEKSHqdbpkI1DNxZ3agV8sTS24YZOOWDVUzAGvJaDwHgQRbj9psULdS0FKvUMt+aIN44OJdEa97bMYhiq0NZeSb8ASJTp0jKV4loHS+Kjxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=igTA85yF; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-244580692f3so1522725ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:52:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755780765; x=1756385565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M5NFJHJToPY5c0jfPG6MrwrcNdfj7hp17HoGeXCaC+Y=;
-        b=igTA85yF73Vwx3ARIqRrexSB+AxgL9RHh9PY7rdmoLyJerHgffR7L5yWR87k6Lr0T3
-         izfCTQRbmjRb42YdrlXHOsd6qGEbrQiIAaiASugkPjw2nJvIy61Qo0JWyQY2YAZD9DlU
-         9ygL6B4hTwBDgNHIdGvZHK2hBY/FnJ0YWMkSPco9qUx33+bqei7NxPbdSkrROiJMYnZ9
-         Az6+cPhiG8hn1Dqg2oK08gxB1W4HdpkHQmOUUG+5pdPgKNxe6KmegnudxTsMTerh08jO
-         +kiC1KQdekryN0gSecJb3sxy847lgiOv3kADzWVHOtIJQ9mVjz+RETpPb+Lfcv/0ZlmX
-         /t0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755780765; x=1756385565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M5NFJHJToPY5c0jfPG6MrwrcNdfj7hp17HoGeXCaC+Y=;
-        b=TakljmJug4Fr2NdwzL3iX5qRZy+tBn76Z9QuKMafqsg8vPb/nC4FgTOF4a44N4MtsH
-         VOaYqAdEDOM4k8sqyByBMjWphGfCr1Y9I6+JLo/JMMzOm4EFIAZjNDj3n+JRgf6JezJh
-         YFlQRCqmRNM9DqvBhVIXqyVXYYCJqjbjySj/F8/7jB0qevqRDE/TQrB8YLONGvd6AsN9
-         G4Tepg9ZHwMzsvtoQHqxd6y+OGaTtzRgrcngplkbDHYanwrupud4q8PCIx6AEHpLdukd
-         lY6kQJEbGTTuiC/3qHFP3vByZV5k+yfaZDU7RtlitSucQaVWr0RQI+bbL2KZqXmycg28
-         jWXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXXblbTb1iyKbE4JGLMwDKeK1MOETrQVRGKvniwKjL53ywP4p85z2SdkTXAzM/MMXTPNxraPbxYLHFFgFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPpDPjiO6x6U5YhpcBRzmTry+Q4i5XfXw2LtPMDCFG6+FhuWKp
-	Zhuoe4TQMVwoZ2KqYCMS+R0khJw3DLZ4nRBKPXtvAXoaEYP2Aaa30eWdXwZJqiSFi6ID1M5BuHq
-	mmrN1nQwxHB3EoSvCOoL987l/y8hcmqo=
-X-Gm-Gg: ASbGncuy6QAPjvMu0sOgr+0DlC/eM71Pw3lBnD1SmU9vxB6zGOXySYG49+7HuNb0zsI
-	JjenGBM7ohH84FB7fdcITFbC/2FmHvDUNNwHFPPo8dA0DX/YLmtP2Lox8J4+VaOWO66Z1rlPIJj
-	jtdDhxhPzTbj+8wasxes9/2Etnl0MHu6YTbGRabuGuzQ92f5sUydZCIy4n9CthEfbBBh16MYGGn
-	owNlZ4=
-X-Google-Smtp-Source: AGHT+IE1R9pueAdp5VMLQpWl5CC+yKc4/2DL/OI76SVE9etO8cB6WdqmjzEBP8sVRhoWzSGG4UVBbmPvRTfJRCqssdY=
-X-Received: by 2002:a17:903:610:b0:240:764e:afab with SMTP id
- d9443c01a7336-245ff89cafdmr13185205ad.6.1755780764612; Thu, 21 Aug 2025
- 05:52:44 -0700 (PDT)
+	s=arc-20240116; t=1755780862; c=relaxed/simple;
+	bh=yPYXsMvMZwuv5LYXBpJH2Br7t6U0f2hpP77PO6BRizY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q/5L+rv/1i7afbPe/2vkniwvnanQz95kZgX5YszlESmF7DaT7t86RtyomllFqKovVuKlLhfnyZ8q1fIjYPCuiZV0paqMYMh0Re95tpT8rHMVc9suiKHioBb+MuYCVOoZt7n19WSaZHqEBE/MSLy9sqW/g/jepnWITOh9x7OAcB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=tFrD9DRD; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=oPmbTFgKwmws/imMERrk5+csIAfdPrepxIOhDHih7fk=; b=tFrD9DRDe1N9rs+3EymWJKnzqp
+	38dsX6wz13pmCgC9XmBjyyKuDdR3VrA6ewwFMHKFEuqsAl2pdIxXDXdHmoIs0Z7lJFmlS4Pgr2L/K
+	jev80vziBX8ufdlRUep4ierc5hVPi4TPz/r57MhkAURYKVi3yHpiCtEoT4JK48E0IToKC0qMpQG//
+	TtY2N14pEYWbSTtVzkV/MQpqhK35ohSYJQ51nCt1yKWm4UkGJqXmBAJC+xmIQoMmMHFNHEyIr8gkm
+	YyizSBFPrfa4Y+VHJvpJFfTzWq491KG51hi3kB2xprpAGAm3NW1pMun2s/4Eagio91w/mGwY+hW7W
+	jY14wyHA==;
+Received: from i53875bd9.versanet.de ([83.135.91.217] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1up4o0-0006JL-2C; Thu, 21 Aug 2025 14:54:12 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: dmitry.torokhov@gmail.com, Xichao Zhao <zhao.xichao@vivo.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Xichao Zhao <zhao.xichao@vivo.com>
+Subject: Re: [PATCH] Input: Remove dev_err_probe() if error is -ENOMEM
+Date: Thu, 21 Aug 2025 14:54:10 +0200
+Message-ID: <25449163.kmuVQn2iE0@diego>
+In-Reply-To: <20250821094751.573411-1-zhao.xichao@vivo.com>
+References: <20250821094751.573411-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820233817.4050006-1-lizhi.hou@amd.com>
-In-Reply-To: <20250820233817.4050006-1-lizhi.hou@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 21 Aug 2025 08:52:32 -0400
-X-Gm-Features: Ac12FXwhzdJf225YIiSFvoai9KNyKZln0etB11o5p81pX9w3DGHzvfztlQg-ZAE
-Message-ID: <CADnq5_NjpN79sWt9t9Zw2u=OkzpGOfMqjhUxSyyLNaFesdjObw@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: accel: amdxdna: Update compiler information
-To: Lizhi Hou <lizhi.hou@amd.com>
-Cc: ogabbay@kernel.org, quic_jhugo@quicinc.com, 
-	jacek.lawrynowicz@linux.intel.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com, 
-	mario.limonciello@amd.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Aug 20, 2025 at 8:03=E2=80=AFPM Lizhi Hou <lizhi.hou@amd.com> wrote=
-:
->
-> The compiler information is outdated. Update it to the latest.
->
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+Am Donnerstag, 21. August 2025, 11:47:51 Mitteleurop=C3=A4ische Sommerzeit =
+schrieb Xichao Zhao:
+> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+> Therefore, remove the useless call to dev_err_probe(), and just
+> return the value instead.
+>=20
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+
+=46unnily enough, it seems I "messed up" in both drivers - just with a
+decade in between :-)
+
+
+Heiko
 
 > ---
->  Documentation/accel/amdxdna/amdnpu.rst | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/accel/amdxdna/amdnpu.rst b/Documentation/accel=
-/amdxdna/amdnpu.rst
-> index fbe0a7585345..42e54904f9a8 100644
-> --- a/Documentation/accel/amdxdna/amdnpu.rst
-> +++ b/Documentation/accel/amdxdna/amdnpu.rst
-> @@ -223,13 +223,13 @@ Userspace components
->  Compiler
->  --------
->
-> -Peano is an LLVM based open-source compiler for AMD XDNA Array compute t=
-ile
-> -available at:
-> +Peano is an LLVM based open-source single core compiler for AMD XDNA Arr=
-ay
-> +compute tile. Peano is available at:
->  https://github.com/Xilinx/llvm-aie
->
-> -The open-source IREE compiler supports graph compilation of ML models fo=
-r AMD
-> -NPU and uses Peano underneath. It is available at:
-> -https://github.com/nod-ai/iree-amd-aie
-> +IRON is an open-source array compiler for AMD XDNA Array based NPU which=
- uses
-> +Peano underneath. IRON is available at:
-> +https://github.com/Xilinx/mlir-aie
->
->  Usermode Driver (UMD)
->  ---------------------
-> --
-> 2.34.1
->
+>  drivers/input/misc/qnap-mcu-input.c   | 2 +-
+>  drivers/input/touchscreen/zforce_ts.c | 3 +--
+>  2 files changed, 2 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/input/misc/qnap-mcu-input.c b/drivers/input/misc/qna=
+p-mcu-input.c
+> index 76e62f0816c1..3be899bfc114 100644
+> --- a/drivers/input/misc/qnap-mcu-input.c
+> +++ b/drivers/input/misc/qnap-mcu-input.c
+> @@ -103,7 +103,7 @@ static int qnap_mcu_input_probe(struct platform_devic=
+e *pdev)
+> =20
+>  	input =3D devm_input_allocate_device(dev);
+>  	if (!input)
+> -		return dev_err_probe(dev, -ENOMEM, "no memory for input device\n");
+> +		return -ENOMEM;
+> =20
+>  	idev->input =3D input;
+>  	idev->dev =3D dev;
+> diff --git a/drivers/input/touchscreen/zforce_ts.c b/drivers/input/touchs=
+creen/zforce_ts.c
+> index df42fdf36ae3..a360749fa076 100644
+> --- a/drivers/input/touchscreen/zforce_ts.c
+> +++ b/drivers/input/touchscreen/zforce_ts.c
+> @@ -747,8 +747,7 @@ static int zforce_probe(struct i2c_client *client)
+> =20
+>  	input_dev =3D devm_input_allocate_device(&client->dev);
+>  	if (!input_dev)
+> -		return dev_err_probe(&client->dev, -ENOMEM,
+> -				     "could not allocate input device\n");
+> +		return -ENOMEM;
+> =20
+>  	ts->client =3D client;
+>  	ts->input =3D input_dev;
+>=20
+
+
+
+
 
