@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-779960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8A9B2FB95
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:00:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ECE1B2FBB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7D111D20CAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591E0AE6C1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880E7230981;
-	Thu, 21 Aug 2025 13:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BF023B632;
+	Thu, 21 Aug 2025 13:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sTpXBVtC"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="grMyMztK"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0CC2EC56A
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EC31F9A89
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755784414; cv=none; b=S72tywaimMxPhMxDAo228uvS6BzsTgJsePTKQT41YrY8GhFwcrKzrVvRPir5Aiz1w/Uk2DsP3cUrl1NmXI01f+iGq4OdlKdaSzp+XuZJrU349NV+zKU2sDSaMkCLecOXQIaVRDF/lnyCIRNuVCOPGTm8laAB83eNz6IrU3Ki26Q=
+	t=1755784415; cv=none; b=WiVGkwoM2ShMs3pZSf6/sT2dDIZsSajMWQLWDrzDSXa/wXl6aVhlAI8aEwNr+tVIC5AX7/UR39ZU3fqdmlAVBVos4UMirg2MdYEEQPXXCGtwO8+oVCPYTJRODjSgm6UQ8NWlXFkIcp9oTkTfxMr8CCLXhQUYg1YOM0C0tQw0ks4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755784414; c=relaxed/simple;
-	bh=pyH/63l8u2jxoznNAi489bH4KgxW+yncyv7Dzzy0ooQ=;
+	s=arc-20240116; t=1755784415; c=relaxed/simple;
+	bh=tlCxLe1DFF2OuAcur7Af9DM9bWyADwFZbOJxRmADTao=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=T9kcc4A7lDlHABYHwSjihJ8C9M3KDQGF8EPQUlA1tf5AgbjlWx5racF7IFOalpz78+G2gL0pkfwrosWenfB/j51fYvnz9uRGC96Q7whculu1OFc/l6GNmUarSy4eEY8GCgt2GIohgsCDPvNd+UZg7KW5xcHMiQdzYyKeKELswj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sTpXBVtC; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:To:Cc; b=NHO3PIOSZMv+9KWOlZSJwBsCnXh1TaSgF77FippsfFsUGLuqi+7BWiG1EFxWzLrG0CmEp2CqUIfmMNrHid1NYPuLp/D4dR8VYzZs6DB8zntTQ/2aBBI27Pd8ivAQgWdnhtGmop8niQ+VhPUzxEmEhDdU5O3aIg4y8xnSoPinAy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=grMyMztK; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a1b0c52f3so6255145e9.3
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b00797dso7858645e9.0
         for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:53:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1755784411; x=1756389211; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=e1ILbTWVVpwSmSFNMNdMYlh6Zb0YmwB9OaOmacH3ozk=;
-        b=sTpXBVtCu+D4oUsyTrdbP25FjZdnpJYc8+RzxJGw1nTejs7JmXTTodv3FAitU5x4gj
-         ZzrJiawmEdMayV2eqAd+A1Z/6NxHQT021Hv330i772apU/y7fGpd2gHVJiVAgxhdTR18
-         DlK/K4txS95CqHRbiqOZuckR6J3ecHu8c9VlqGz4/YSmxHaGg2ZqCoTqDMRFPE0V5MOJ
-         wfBQWpebW8PTIKQfbeuUVuepGPJ+0n7WxTnSarBbCnxHN/W0IYXdO3ZC7ymguTEymfOa
-         42aPnwHtkmmJ9PPJ7wYtKRX2T0nB/kLbRAIxTohWXk68LuFCUjPQ+vkg3kLCYijvlNbY
-         c7eQ==
+        bh=79lhMe3N1476pckXeeXS42RAJ+SKWb/dkO509Wt+tFo=;
+        b=grMyMztKzcotI+fWzx2zsufCoR+RNOcq9QNytE16HXmZvGRAnW2GSL+hPEHXE6iWTs
+         Slo0BNEr8H5wDivMK16mv447WSvc3lxFv7uMIXaK4pqrMrbr/xFQaQR4sZsMiB8UXkUo
+         b6lIN3RVQUeMPVkHoZqb+/hJKOPQ6litWHOyskXO+n1fbWTX89hRNK4/aWUcRXlOE9F7
+         seSUsFzc6sZl6FdHNwyo/j80Y5OcMPRhDuM4AaZv37s2fCpuF/W6ddQ4jCdUVLkEtkNm
+         ZuOHYvSrIm98YiDvv+/C/Z/Rkjl1q8JkvoyfGa3fGqTUmUC1ZH7qIblCAqOSDbmzpV+O
+         7+xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1755784411; x=1756389211;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=e1ILbTWVVpwSmSFNMNdMYlh6Zb0YmwB9OaOmacH3ozk=;
-        b=ZykxM2d9Pkmes6XIEwKjTComa9Q9GUAQ1Wmpk6pUVEOCEPsQBdoUeRwJSk6+lE3ErI
-         19RlUrPqSpiBNNGHCZE2WmS9VWfuaPCgbqDAmlfQizNvnQtmEVxATRt2h+WoMLdIm5TH
-         H5g51JrHjjpecljxmgp9/Mk7l47FLr5/Vhd1obV4sjJb8CXevhkb1ikS8/IboJqF357s
-         4Ijmus62w7Buz0bv1M8YcrLy4D/vX3ZiwqrUIQO/CjAfWFpi1/ZUzhrPwTVN9HVJnbQc
-         vDs6RXSz8lQzIz60oXXcnxzTb/FqQ6MFU6tzEEq4fVj1zM4+63b2bmuaAXJLQIZeBqNL
-         7lcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvPR26ayD5wl3pUKGsnYHwGdimI+qq+C0kwnDxa44GIdF3LNFtX+uGT8hqhvGGA6fCzHiutkjPFgmuGlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy2fetlysa/lVnXeCtOSdBxpNussiy2XggcCHnrre+sG/6qDUj
-	olJnwhLBMHucmKWujWjo3Lc7itBN87uFTKHsid4LCxGnh9ETtGoK3oQBy0EkFeUle+M=
-X-Gm-Gg: ASbGncuj0S3SjIhlIAwckQU+EehFIB+X5ilN2I3KpYtTXEYGqy7rzKikQYFpvF4mvFk
-	84rGjvgDR/JyIi+fgDu0J1Y+0dk3kaG6jzhelqD23urbeJeWW3cY0WVMrvgjf0EJU3IIgwtbchH
-	mZVXKl1y3ribBVw4aN0nJZqoNBl8oQY4p51s7oHz98N+EbE1mVaAbLp9r4OtJPEKwC+rXLG51Dc
-	8RyHiu6WCHQBFaCVEvS/P6UwX3hnpgVW05TUH/XDmd710qwG5AaPna5QRuglkfqwO31icYNuv1u
-	2k1xL/zO50Hj2+93oSnOSqUwLgSwcfQWf9XJaizASu/2Q0B01rS2puUzu61owtxGrFOOB696RYD
-	02LyW6Bvb+nHnY5o6JN1dUS05g5QKGpBU+6FzJl1XCdE=
-X-Google-Smtp-Source: AGHT+IHzxFhZ5bX07Dc56gfIt9C/HteSV73uQJi38+JQ7zvs/0J0ficW3iAyseTimoWe+tg8LI3jWw==
-X-Received: by 2002:a05:600c:1f0e:b0:456:19b2:6aa8 with SMTP id 5b1f17b1804b1-45b4d84c455mr22092775e9.19.1755784410744;
-        Thu, 21 Aug 2025 06:53:30 -0700 (PDT)
+        bh=79lhMe3N1476pckXeeXS42RAJ+SKWb/dkO509Wt+tFo=;
+        b=OyOHqacm1gBkDcp4lxc/ccJnpf5s1Q75ef1H0zvQBqbzzJwo75d4re+AAgZH2jZgll
+         KtRohxwWKdDnRFq8Q2VwWU9uqBFQ/zhto/xMNdBp2zwJK8xbnfHLKg0BPVeEB0SoqkNR
+         Vg8PlO4ysoG1slsadUDQICgYOloTtYWtX50B3rvDukTKfX0crHgJcQMMYbGDP18qDh2J
+         Vttav2loDeH34A2MJipjLkvqhCn0iuws1J6X7oh9vQYRPKeP1RMxqE7SK8YOkUu1gVC/
+         s4fBqTbdC2eR3Fg37Ct3S7Hwcdn1vMd5ST7qqhQkRxX0KTBW3JZO19P8/slRmtO6rAOL
+         IQIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXU4eefeSlxgqJiCVaiH5LS/qh5W4iVbSFuF5fdoQx1ghnGKKEmHpsUoG8IT4VYWYdrA91uSxefi0uj5Qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKS5/IlRx+qr0AcgmgVcV5NYzw65KS35L/KbiaqIIRcTejwRjV
+	GChZ1BWOqdUyhxVO7BcUeRCNZHsXdOug4xz2dkKrM1sI0bkhD2RFDACq1hlpzz8q9uY=
+X-Gm-Gg: ASbGncu0SGr4fX54vo9wf21K8boUHpeic7/eSDAX6lSCvzQoE1/N97JI3w8b1SmrHPj
+	lkK8TJv5rvg/G8Ew1/BknZmZyhvCZTCXqiWaKHP4ohR1AlbDTch+aRLxIiu8fJb5XaYKwFkdkYz
+	3spdudR1lK8OiUAXxv/ZLAS50Q/VZNn+XAI5y11wB6Fyi40Y1kJBkKW2tyZQ8phlGyvQdynj82e
+	OL3byzaIwDL/lrvqlXdwBoPw0Bvam3DGWpO5YCW1d43qBl4hUebJOBTj+5XiS9uRI4IsWAmyl11
+	A374QWhYJ9H8tD3j7ItgjuGXps+wj/jImeJ8/xzpWM2TAoBaackyCUGDEujGxSQuxhtN+4g/9Wl
+	lcOmaDJsHIUMh+x7u3Oe9ee2QKIkklmECk1z+NWGN660=
+X-Google-Smtp-Source: AGHT+IGZInLhSbfoffh4Cx0aYiBL1T1B3t2zh263M5ezMVnk9vGA87GDTnKwdEgBYTpxeSw+hfF8vg==
+X-Received: by 2002:a05:600c:1c9b:b0:45a:269f:3a29 with SMTP id 5b1f17b1804b1-45b4d7dd465mr22121955e9.12.1755784411409;
+        Thu, 21 Aug 2025 06:53:31 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4e269d20sm14825015e9.2.2025.08.21.06.53.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 06:53:30 -0700 (PDT)
+        Thu, 21 Aug 2025 06:53:31 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Thu, 21 Aug 2025 15:53:27 +0200
-Subject: [PATCH RFC 2/3] phy: qcom: qmp-combo: get default qmpphy_mode from
- DT
+Date: Thu, 21 Aug 2025 15:53:28 +0200
+Subject: [PATCH RFC 3/3] arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s:
+ add HDMI nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250821-topic-x1e80100-hdmi-v1-2-f14ad9430e88@linaro.org>
+Message-Id: <20250821-topic-x1e80100-hdmi-v1-3-f14ad9430e88@linaro.org>
 References: <20250821-topic-x1e80100-hdmi-v1-0-f14ad9430e88@linaro.org>
 In-Reply-To: <20250821-topic-x1e80100-hdmi-v1-0-f14ad9430e88@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -96,93 +96,111 @@ Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2458;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2350;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=pyH/63l8u2jxoznNAi489bH4KgxW+yncyv7Dzzy0ooQ=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBopyTXxH8cN7bUQsx2ZIWRdTEbt3s4adIu96+85UQQ
- fLvZ5muJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaKck1wAKCRB33NvayMhJ0TLhD/
- 93xZ6P1uVT6kCXpqkhY/UQNa/NPxUJX9u7kDYnffn2/GBILFXp+woumwdl+2flJztSwB0+KfdQzyKu
- KJPGQaruufOfFYr05BehiOOe2kbjgvNnmn9yyWw4zTo5VrXkFOoHQ4iuTzKHYk32F8uMqG10/RO5qQ
- /nNbVvOKEvs8amuanTT0MbET2lkXyydwwLgXB3gti3aB7c9QmyEBOtwetV0NOdJimpZdnmO2mWtWTe
- I9TX6bZo9RAvOLyE6oB/hn7EXwdrFDuNuoidurmQABLnYeRJOdNZshmKuyFBBxDGz+d7MP2TACSBbs
- UyH1NEHvvHpI3CgO/vr7toDmSb/eJYK+B0M9b+UIBcPo1cKaUPWLXmRMC6arMI4HaznMZIPo3sAt3t
- wUTLPwaJVTff7rE4/Up2VO2xHUfc3kROJUG5hTA8+4Uz8VgDYCl1TwWOWhRS2yqYz+EW7KpqSXboiZ
- R4kC/2X5BpVou+Gq7CiK5JtNLT1LZuQ0v4MNRoE4nFRGwre+lRi1ItlCjx1gv6fPWYHmdrnMhHYyel
- woXs3YXppSdI5a/ui3pEv2bPe6ccbqZOOOlTqKizqJV1fOGBymr1drs04raN77W2x3RD7PSvjy9uSO
- wiJtNpDh1FpTLwa6id8vxMoB0E/UHnyxqUbaDJvw4tnxLs9s9yRxu82YpRXg==
+ bh=tlCxLe1DFF2OuAcur7Af9DM9bWyADwFZbOJxRmADTao=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBopyTYR5nHv+daCaqncnC2vX+bVmM2jIZmKVW1gh2r
+ dsbT37KJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaKck2AAKCRB33NvayMhJ0VeUEA
+ CFnzGV6UjRVo8/SqcgVuP86HUFK6rq4oxUfe1zvtGXG+COagM8ASnSQ7xxsOFhJd6jpH5VSUegsb79
+ FaRHR1HLTGmx0BHHx7KUD4n4Sp/5ltMxo3FaIHfLxoBgWJYO8z0JnZuuAbFympMZyxx3edchjeSr4J
+ OwaA9CUDtoDVTLDmAYWwOAd3KcIzlJ28w7t8Unj5hqJOoaN1xGtc9To4vEDIpfzMgXg8gGFGqiue5v
+ EDIwUMSonSCghsSntyDiG7Ez6t7fkufZqlORnF5i5mm9PgDo+p0YmHpPLQAnLDTmPhREmhUe3bqfMf
+ CSUcP03xrwpnRBquax99eqzpUTciq2gUDdGW0UoTTXYgwNeWqrwTOca6S/IZL79ML//FK5XaqfKI50
+ TL23QDxxMnt3zrKLJRWyuvmYm+8VjPPhg+qQX+Cx2rjt6/lf8JxIS/cC0oFVyBsYr1sDWfyBzEbx2J
+ oNEOIqCZ0atqEwPIm7WRuZeeVaWstADVRJYwM9FgQ/iis0qBKJBOeqPR/jHxc0EdFfQ5vZ0T8RL3B5
+ MzGB1cEzQo28oIx8NSxA7Wiaocwrj9r9iYV8NKL9XWLHk72QNJl9/0WJi+Hc49yBOn+6cLl9PrjSZi
+ cOpRlf+l34NjQb7Ss2ZWPuQC3dcp0Ww5WAw6nqeXRZP6UdhaKLGQ5RrEQtgA==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
-of a combo glue to route either lanes to the 4 shared physical lanes.
+The Thinkpad T14s embeds a transparent 4lanes DP->HDMI transceiver
+connected to the third QMP Combo PHY 4 lanes.
 
-The routing of the lanes can be:
-- 2 DP + 2 USB3
-- 4 DP
-- 2 USB3
-
-And the layout of the lanes can be swpped depending of an
-eventual USB-C connector orientation.
-
-Nevertheless those QMP Comby PHY can be statically used to
-drive a DisplayPort connector, DP->HDMI bridge, USB3 A Connector...
-
-But if a 4lanes DP->HDMI bridge is directly connected to the
-QMP Comby PHY lanes, in the default routing 2 or the 4 lanes would
-probbaly be USB3, making the DP->HDMI bridge non functional.
-
-Support the property to set in which layout mode the QMP Comby PHY
-should be as startup.
+Add all the data routing, disable mode switching and specify the
+QMP Combo PHY should be in DP-Only mode to route the 4 lanes to
+the underlying DP phy.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
-index 7b5af30f1d028c592500e723ecd27b54ed554709..622db8a204d3c7c95f110e59cab96b07eadabade 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
-@@ -4117,13 +4117,19 @@ static struct phy *qmp_combo_phy_xlate(struct device *dev, const struct of_phand
- 	return ERR_PTR(-EINVAL);
- }
+diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+index 4cf61c2a34e31233b1adc93332bcabef22de3f86..5b62b8c3123633360f249e3ecdc8ea23f44e8e09 100644
+--- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+@@ -62,6 +62,20 @@ switch-lid {
+ 		};
+ 	};
  
-+static const char * const qmpphy_mode_str[] = {
-+	[QMPPHY_MODE_USB3DP] = "usb3+dp",
-+	[QMPPHY_MODE_DP_ONLY] = "dp",
-+	[QMPPHY_MODE_USB3_ONLY] = "usb3",
++
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
++		pinctrl-0 = <&hdmi_hpd_default>;
++		pinctrl-names = "default";
++
++		port {
++			hdmi_con: endpoint {
++				remote-endpoint = <&usb_1_ss2_qmpphy_out>;
++			};
++		};
++	};
++
+ 	pmic-glink {
+ 		compatible = "qcom,x1e80100-pmic-glink",
+ 			     "qcom,sm8550-pmic-glink",
+@@ -1007,6 +1021,14 @@ &mdss_dp1_out {
+ 	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+ };
+ 
++&mdss_dp2 {
++	status = "okay";
 +};
 +
- static int qmp_combo_probe(struct platform_device *pdev)
- {
- 	struct qmp_combo *qmp;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *dp_np, *usb_np;
- 	struct phy_provider *phy_provider;
--	int ret;
-+	int ret, i;
- 
- 	qmp = devm_kzalloc(dev, sizeof(*qmp), GFP_KERNEL);
- 	if (!qmp)
-@@ -4195,6 +4201,18 @@ static int qmp_combo_probe(struct platform_device *pdev)
- 	 */
- 	qmp->qmpphy_mode = QMPPHY_MODE_USB3DP;
- 
-+	/* Replace with DT provided mode */
-+	if (of_find_property(dev->of_node, "qcom,combo-initial-mode", NULL)) {
-+		for (i = 0; i < ARRAY_SIZE(qmpphy_mode_str); ++i) {
-+			ret = of_property_match_string(dev->of_node, "qcom,combo-initial-mode",
-+						       qmpphy_mode_str[i]);
-+			if (!ret) {
-+				qmp->qmpphy_mode = i;
-+				break;
-+			}
-+		}
-+	}
++&mdss_dp2_out {
++	data-lanes = <0 1 2 3>;
++};
 +
- 	qmp->usb_phy = devm_phy_create(dev, usb_np, &qmp_combo_usb_phy_ops);
- 	if (IS_ERR(qmp->usb_phy)) {
- 		ret = PTR_ERR(qmp->usb_phy);
+ &mdss_dp3 {
+ 	/delete-property/ #sound-dai-cells;
+ 
+@@ -1263,6 +1285,12 @@ &tlmm {
+ 			       <72 2>, /* Secure EC I2C connection (?) */
+ 			       <238 1>; /* UFS Reset */
+ 
++	hdmi_hpd_default: hdmi-hpd-default-state {
++		pins = "gpio126";
++		function = "usb2_dp";
++		bias-disable;
++	};
++
+ 	eusb3_reset_n: eusb3-reset-n-state {
+ 		pins = "gpio6";
+ 		function = "gpio";
+@@ -1486,6 +1514,22 @@ &usb_1_ss0_qmpphy_out {
+ 	remote-endpoint = <&retimer_ss0_ss_in>;
+ };
+ 
++&usb_1_ss2_qmpphy {
++	vdda-phy-supply = <&vreg_l2j_1p2>;
++	vdda-pll-supply = <&vreg_l2d_0p9>;
++
++	qcom,combo-initial-mode = "dp";
++
++	/delete-property/ mode-switch;
++	/delete-property/ orientation-switch;
++
++	status = "okay";
++};
++
++&usb_1_ss2_qmpphy_out {
++	remote-endpoint = <&hdmi_con>;
++};
++
+ &usb_1_ss1_hsphy {
+ 	vdd-supply = <&vreg_l3j_0p8>;
+ 	vdda12-supply = <&vreg_l2j_1p2>;
 
 -- 
 2.34.1
