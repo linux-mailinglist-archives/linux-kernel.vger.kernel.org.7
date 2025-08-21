@@ -1,147 +1,122 @@
-Return-Path: <linux-kernel+bounces-779681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB40EB2F735
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:54:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4106B2F739
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AF441C21FB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:52:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA6F686DAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A439F2DE6E5;
-	Thu, 21 Aug 2025 11:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E27D2DE6FB;
+	Thu, 21 Aug 2025 11:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nJbdbHwy"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UCGwqeU5"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01715223335
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA142DE6F2
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755777098; cv=none; b=b4VNkAq8VCULTQzxzqAZcRHtg6woQIqqOcE8+XXAuqUnK53eYIiY80OUr+MPzkF33rugSZdAWjip02lVqB5/0xX6ejomjJCzcGgetDGhXi8cRLGUoyegxL3pfkWq1SFQxh9tzZsQWMDL9rReMAxpyNv/wbjEJgmJkWZ4zLfK7kE=
+	t=1755777139; cv=none; b=Hu08sRvFTaDgndJwbZb4vrIY579ZlL5JS9k0Dp0EqFmismc2c5TadLCNZ3NddUNMfrmaB0wP+tA0n8VhVhyoOME4tIEj+WWjNxIYyMA81r16jveVOhuLmf6sTOo/IXkU+sAWbqlPqKjyKHfDJh61HfW276WUaTNn0SBSUCpmtEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755777098; c=relaxed/simple;
-	bh=d03XXEvqiRt/RNkOzV4BVA6T1osymnw/eikOpnxXhQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JaxovVUY8VGJy/TWuvQOnasuwIDl02lpUdUXowvC/PmYp6wk1ME5ugOuppj6p/pGd2rYp7iesRuLCj39Wyfl2KLJMEIXfrPtz/srOSxlHdNqbhjmU9hV+AtInsV3N/V2zk+mMx3zJUP8+z9/j/0YJ7ilkL8P6KlRFHhrj4kdUvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nJbdbHwy; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755777094;
-	bh=d03XXEvqiRt/RNkOzV4BVA6T1osymnw/eikOpnxXhQE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nJbdbHwyWai/8mIFSnwaC9HM44wQpqPpRb1BELwpuYoz6JnapEGqWDbkZ63uo9N9s
-	 L9ujkuH43wg3Wj+ybkOyk9UKGbBT9fsMpp46cJ/VYGW7K+fjWo7x2pbqmXR7YA9ope
-	 8Dy7Wg7pAblhNdH0mvRtBNWtwlATYrhEnIU69Z65ld21HyG34ZsXpMbFqtrTmOwABD
-	 lMcPsP+uTHN48N3a8G7jPm9oxmmqtuBL+PzAfuUJgnmiunUYTRrHOwRCjUweP8IsuJ
-	 GMcRpQgZNo4cMZ9dXT/wNK72VRRzTg6Th5dOKbsSAyzB25+Y/slBseKS6bL4HfaAXP
-	 sJdXqP+H/+pMw==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2F6A917E0458;
-	Thu, 21 Aug 2025 13:51:33 +0200 (CEST)
-Date: Thu, 21 Aug 2025 13:51:27 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Caterina Shablia <caterina.shablia@collabora.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Frank Binns <frank.binns@imgtec.com>, Matt
- Coster <matt.coster@imgtec.com>, Karol Herbst <kherbst@redhat.com>, Lyude
- Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, Liviu Dudau
- <liviu.dudau@arm.com>, Lucas De Marchi <lucas.demarchi@intel.com>, Thomas
- =?UTF-8?B?SGVsbHN0csO2bQ==?= <thomas.hellstrom@linux.intel.com>, Rodrigo
- Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, asahi@lists.linux.dev, Asahi Lina
- <lina@asahilina.net>
-Subject: Re: [PATCH v4 1/7] drm/panthor: Add support for atomic page table
- updates
-Message-ID: <20250821135127.2827abfb@fedora>
-In-Reply-To: <0108b3cd-dfdd-4e4c-a2d8-157458e26f77@arm.com>
-References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
-	<d4a6208b-a4a4-451f-9799-7b9f5fb20c37@arm.com>
-	<2813151.QOukoFCf94@xps>
-	<2434159.cojqenx9y0@xps>
-	<0108b3cd-dfdd-4e4c-a2d8-157458e26f77@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755777139; c=relaxed/simple;
+	bh=1HfvgkKViBDBmpYljJpo0E9vtsQUhTJ9vwqBCEaAPZ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kMn5WSUzYPK2PAal0S4RR9IV9OF1N+iuL8ufDnKtIDu3cALWNhtc8GimNLiloRp2YXY+nr42ITcwTF69v+++UPh2oWjALmaJyZz635WITzMVgLyrMpALKKpSk0yJyAHSMvBA9n8yZSejlEYIb0trTRh1/NkbFl3iMorI50kWr/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UCGwqeU5; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-333f92d682bso7588351fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:52:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755777136; x=1756381936; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1HfvgkKViBDBmpYljJpo0E9vtsQUhTJ9vwqBCEaAPZ4=;
+        b=UCGwqeU5t1LakJHmSvOrQse5imuLR96fw5i6jBiJ8aSZsV5UfDUgxWhnDUd67XXE83
+         new2c11eEQNra+3JhGPan7E8GboCddGqXUEST0VgrgpOJdf/a4sBOueLqb3Oxd8NI+IR
+         2CrmxMHs0Jci3N2MsQ5R5klnydqfR4UjQMZKkSbLIdhxuiCpDvYhc3TR5UDbKCllfGdl
+         uBElR99Qc1roTCmJo2dPDiQxbff6ZjO4ECpGwgU8JOocvTtuT5cskR7D/CwP2XY9NANJ
+         WG8pYufjZBby/fxpGgI5L0nd29HEyWfUMgf1iFkcJtyvE+6bPyJNou58D4Z1tt/tCtSw
+         kZoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755777136; x=1756381936;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1HfvgkKViBDBmpYljJpo0E9vtsQUhTJ9vwqBCEaAPZ4=;
+        b=CYMs00zfitPk4g7lCpOR8pbDVh4ryYDw0tt0HrB2C/f92kG3cC397ENk8rvvTOwy7y
+         4VNSZLntwOoZrJU9D0mBK3etxS2ptukUwn/Q7If+pgFMxIlz3GH9nKcJoYWyIuk0aj4N
+         4pF5cefODCZRBHSqfq83TTSkL8qoBuvRuymxstIlp96TMATi3shkcuL9qrqvMfZ4sJ5H
+         kMBcaDzyBtRLVRhS6S63dBgiVx7p+G978a7obvRq7jG6KNlOsbywRoCzJ00hcEa7Z3Rw
+         WCQPxU2iOh4nucoKl61MX/4Qa3GU2hcxmxH6IfUJH6bbgQLyezE7w3DwU1gxqtFwBSUL
+         pr0w==
+X-Forwarded-Encrypted: i=1; AJvYcCV95O+WMWFUeXjD/q30uG5pE90OzJYKbbapqzxyeW9TtKE/RzMkWHcz6hBXBq+YhhPMjnHAL6eEOIA4uts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySHInhuJy8qIKIXtLv8ONjsGaR0gRNgSzK/2Vbbs0E4BNylthk
+	J5eUQvZYQn8HC1mm9JxEjc87M+0a5OxdY8+EnEfIhN8SyFwKxIhvl2GMhKSWZ7RsnKu3RcdKfs7
+	6EPVqnBuN+B+A6EolFSafcvV8NTC43m0Iltb/pWXTYA==
+X-Gm-Gg: ASbGncvHwiDGAq5G2O41gjKWdNIv3pGmFCx+qmBmqvsqAcKsahwWacYyuRSL0RtTu0/
+	pMVdd7RJMp9gMDn5HQQ4CiGNkVBRIfTBQAsI22HYupaGhIzwbFloBvbmAINO8xvFjsaYPuiFfIv
+	sHXN7IeUXkSdfXKcKoluVoXFpCI37rlMe9AwvmwfZpNkRJIb7OeIiGQELmJUjUH4+0H028yIO3j
+	ggKpkQ=
+X-Google-Smtp-Source: AGHT+IE7DsV+WQk14KSKY0ALtymqoUNW021ikvEa1U5yioRxACQmRRzQMDDiUa3zI76UT8Ua7qd03ScrDSQ9aaYIYQI=
+X-Received: by 2002:a05:651c:235a:10b0:32c:bc69:e926 with SMTP id
+ 38308e7fff4ca-33549e3a7e2mr4759881fa.7.1755777135941; Thu, 21 Aug 2025
+ 04:52:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250820154037.22228-1-jszhang@kernel.org> <20250820154037.22228-6-jszhang@kernel.org>
+In-Reply-To: <20250820154037.22228-6-jszhang@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 21 Aug 2025 13:52:05 +0200
+X-Gm-Features: Ac12FXyaf06rfmzUvXDVHS6gsoqtOPyc_OHXCIqFKQWuBvT2rlmZGUdGjdqba8o
+Message-ID: <CACRpkdYQLqDxh=zqrZ+wK_Ky2wD5AUoVLmCV_JDfmaqJC4Yzqg@mail.gmail.com>
+Subject: Re: [PATCH 05/16] gpio: pl061: Use modern PM macros
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Doug Berger <opendmb@gmail.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Michael Buesch <m@bues.ch>, Hoan Tran <hoan@os.amperecomputing.com>, 
+	Andy Shevchenko <andy@kernel.org>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, 
+	Srinivas Neeli <srinivas.neeli@amd.com>, Michal Simek <michal.simek@amd.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-omap@vger.kernel.org, linux@ew.tq-group.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 16 Jul 2025 16:43:24 +0100
-Steven Price <steven.price@arm.com> wrote:
+On Wed, Aug 20, 2025 at 5:58=E2=80=AFPM Jisheng Zhang <jszhang@kernel.org> =
+wrote:
 
-> >>> I think we need to briefly take vm->op_lock to ensure synchronisation
-> >>> but that doesn't seem a big issue. Or perhaps there's a good reason that
-> >>> I'm missing?  
-> >>
-> >> I think you're right, all other accesses to locked_region are guarded by
-> >> op_lock. GPU job submit poke vm_active concurrently with vm_bind jobs doing
-> >> region {,un}locks.  
-> > Actually no, that's not necessary. Access to locked_region is protected by 
-> > slots_lock, which is held here. Trying to lock vm->op_lock would also be 
-> > detrimental here, because these locks are often taken together and slots_lock 
-> > is taken after op_lock is taken, so taking op_lock here would be extremely 
-> > deadlockful.  
-> 
-> It would obviously be necessary to acquire vm->op_lock before
-> as.slots_lock as you say to avoid deadlocks. Note that as soon as
-> as.slots_lock is held vm->op_lock can be dropped.
+> Use the modern PM macros for the suspend and resume functions to be
+> automatically dropped by the compiler when CONFIG_PM or
+> CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
+>
+> This has the advantage of always compiling these functions in,
+> independently of any Kconfig option. Thanks to that, bugs and other
+> regressions are subsequently easier to catch.
+>
+> The pl061_context_save_regs structure is always embedded into struct
+> pl061 to simplify code, so this brings a tiny 8 bytes memory overhead
+> for !CONFIG_PM_SLEP.
+>
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 
-Yeah, lock ordering is not an issue, because we take slots_lock in this
-function, so we're in full control of the ordering. And I wouldn't even
-consider releasing op_lock as soon as we acquire slots_lock because
+Hm true, 8 bytes is not a big deal.
 
-- that make things harder to reason about
-- the locked section is not blocking on any sort of external event
-- the locked section is pretty straightforward (so no excessive delays
-expected here)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> 
-> I just find the current approach a little odd, and unless there's a good
-> reason for it would prefer that we don't enable a VM on a new address
-> space while there's an outstanding vm_bind still running. Obviously if
-> there's a good reason (e.g. we really do expect long running vm_bind
-> operations) then that just need documenting in the commit message. But
-> I'm not aware that's the case here.
-
-I fully agree here. If there's no obvious reason to not serialize
-vm_active() on VM bind ops, I'd opt for taking the VM op_lock and
-calling it a day. And I honestly can't think of any:
-
-- the VM op logic is all synchronous/non-blocking
-- it's expected to be fast
-- AS rotation is something I hope is not happening too often, otherwise
-  we'll have other things to worry about (the whole CSG slot scheduling
-  logic is quite involved, and I'd expect the
-  BIND-while-making-AS-active to be rare enough that it becomes noise
-  in the overall overhead of kernel-side GPU scheduling happening in
-  Panthor)
-
-> 
-> Although in general I'm a bit wary of relying on the whole lock region
-> feature - previous GPUs have an errata. But maybe I'm being over
-> cautious there.
-
-We're heavily relying on it already to allow updates of the VM while
-the GPU is executing stuff. If that's problematic on v10+, I'd rather
-know early :D.
-
-Regards,
-
-Boris
+Yours,
+Linus Walleij
 
