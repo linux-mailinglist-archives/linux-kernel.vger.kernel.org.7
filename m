@@ -1,176 +1,156 @@
-Return-Path: <linux-kernel+bounces-779505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8005B2F4F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:16:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F751B2F4F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3022A1C23419
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:16:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73D821C282B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F182E9743;
-	Thu, 21 Aug 2025 10:16:07 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE102F1FC3;
+	Thu, 21 Aug 2025 10:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="huQDxywL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GlaR8Wcr"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF30C21770C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3702459C9
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755771366; cv=none; b=gKGnVJjhra2BIixgDqlwYCqGxtrAMoGGvDTtxVykgCCgkSCDYsCQVqlfBsa2zAk6q5u4JbSBsO1sfp5FrNEHrYyIWZmqfMfLWLEdBzfiSNrCVBFrXJe5kbAV3WceqW4h2PtmTbf7WsWs0pWbwH7soDhv1Sy4E1kj8tdygbZg4N8=
+	t=1755771377; cv=none; b=HjbOoAmL6RQtUkppagyO0Gmsr0e3XjDmDN7t0INS8De1Pk3mGKTZjh3k2XrRkhVEdDkgz+MmbOIZErSRo51fdeH8sJYcsm8OPVLGbXLY0MwmJbSe1RlkAENW47zBMwcFxQ9QLgmdM8hok48zm0nVaogM8g1XiF1MeFQnBwxl/9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755771366; c=relaxed/simple;
-	bh=GBwCNdsSPTgkl6+MZ/58UzFmAiMnptb1wekxJ049+9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IHajzmVQZbxG/f7f66SCXg/gVfAviA+JykrmeDfM5UnDZ3nVROlI5v6Z/efY6xVaDwRcUCiaQy3oV/tnD/VIq2U9BauPpU5nBF3WvMwiKqyWPc8OUkwxH7og6NrJglQdZtmyr+EtSWMenWkpdDqRGEMn16sjdU4t2xfuy6WONy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1up2Kk-0001Yg-Jm; Thu, 21 Aug 2025 12:15:50 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1up2Ki-001OYX-0t;
-	Thu, 21 Aug 2025 12:15:48 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1up2Ki-00805O-0T;
-	Thu, 21 Aug 2025 12:15:48 +0200
-Date: Thu, 21 Aug 2025 12:15:48 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk <roan@protonic.nl>
-Subject: Re: [PATCH net-next v4 2/5] ethtool: netlink: add
- ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
-Message-ID: <aKbx1EoO0iWe2bMU@pengutronix.de>
-References: <20250821091101.1979201-1-o.rempel@pengutronix.de>
- <20250821091101.1979201-3-o.rempel@pengutronix.de>
- <20250821115830.3a231885@kmaincent-XPS-13-7390>
+	s=arc-20240116; t=1755771377; c=relaxed/simple;
+	bh=auWALS/dLuHWQDeiIFyYlRDyLX6NaNs8haeqQs75+vM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Rpshttf4KPBnZST3l7H79Of4tUMRbq1Uuc1eu4qw3kKyKtQWD2td20urAAl8rkmcBjJmMPjxp7AxBHXaXVeaj/BTY3IuC+RB60FEA4XhGrOoUU5W56W+ryqv3MxvUCWmykSJrKq9MW1ENRWVKOaOz+OalVv8JGe2OwR3AabzAVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=huQDxywL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GlaR8Wcr; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 16CEFEC02C6;
+	Thu, 21 Aug 2025 06:16:14 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Thu, 21 Aug 2025 06:16:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1755771374; x=1755857774; bh=lW
+	lZ1B7dnoL4FI5VN9DHIWsW/7JnMjvkUJjcADTwd90=; b=huQDxywLfHt+W+uIEO
+	5gagn2RXv1C7a4LvBK+0Pdq3pi7SCACOlo4xm2pvIE7vpt2kEwB5Q0M3l3q19kMx
+	AO1gvSdHKkzMCn91bja+4zSjr7foPE6/+I90crEKiCdfaVIJTVZPWxds8z9vxzaG
+	Cre6I76ZEsSbvO0XmiLjKxg6tsZcp3dn+4+VqgNzUBrJutrP84GAXiA5Zf6XEQpD
+	RIheiXlZBHyXIjTK1DQ2qmFi4pmnkx5cJxdLefIEvOIrX/gZWWKmNzhAoe01iI4x
+	Cg6F/gx3RKwdddQQjhFCuwGeYsy6+Dxwwk1ugf+LD8AL/za4Ad9nv/ht/6blm9e8
+	kvrQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1755771374; x=1755857774; bh=lWlZ1B7dnoL4FI5VN9DHIWsW/7Jn
+	MjvkUJjcADTwd90=; b=GlaR8Wcr7x31iyLKiURP7vS88qLsQ5M8025shevtxFGY
+	zwZcYIAUdO/pFf+kuxDsPhLpGVOZ8tpDYbH+4jFAwZPg5qBsfptfwfVHgujJRRF0
+	Gu+qS7KMf/MQEB5w6D6S7/u7td+g0sjlK41qr4gk4cwF87WmcGghGyoznKYmkw4E
+	MoIkiylXS+m3xz3/jV+5sD8PeV4yydpJL20AALUsnNglzJMtdbVbFsfq7r4+l2M+
+	caW5k42FIqw1kDKZxbaCxOhz+cVVMNnerjCbRkj2SW3KYHzJAyjuje6RTW9fF+eT
+	aNQifwrikqxNTESLPr7orc9HGfAlmYg1KHtWUYU7pA==
+X-ME-Sender: <xms:7PGmaCFdo0R34itlpGy5C-S4a7NOSqdu33ZMg-3FmNPsjgDX6rohRA>
+    <xme:7PGmaJRulvTTTr7E0_F5_Z1PNrYI5R1-qSBSnsElMHat7NklsAD-30Ny1oci0XfaU
+    Q-_v4XV3uFmS8FfDOI>
+X-ME-Received: <xmr:7PGmaJSsQ_ly5zSo8z4oDaI-jLbfAz11LvpAkqDFq2riFqKJevoPP0WPLYRvPNqTgOWkSG1mwGaro68dj_qlm355sgDrRwGOvWTBhw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedtleejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpeflrghnnhgvucfi
+    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepueelgf
+    fhfedvgeelfeduuefhfefhjeeihfffueefjeeihffhheeuteeuvdeuhffhnecuffhomhgr
+    ihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnhgvthdpnhgspghrtghpthhtohepuddv
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsvhgvnheskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinh
+    hfrhgruggvrggurdhorhhgpdhrtghpthhtohepjhesjhgrnhhnrghurdhnvghtpdhrtghp
+    thhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsihhnrdhmuh
+    hrphhhhiesrghrmhdrtghomhdprhgtphhtthhopehjohhroheskegshihtvghsrdhorhhg
+    pdhrtghpthhtohepihhomhhmuheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtth
+    hopegrshgrhhhisehlihhsthhsrdhlihhnuhigrdguvghv
+X-ME-Proxy: <xmx:7PGmaM19N_gPBLyS-ZA-APYQAIWaRj9ttkDptLk77aIe8x6chZ11vg>
+    <xmx:7PGmaDwKTVeIWou-EhCwXFRx8OyLY1jTO4bBbTRaQk5HMYXUd1Vifw>
+    <xmx:7PGmaIwmPVR-CKkG4T6L4VfXY1gZxM_5Fd4QcdXBJYX21B0oQ9-GPQ>
+    <xmx:7PGmaP8kgV3aT1K__hUzITgOsMWC5m4IrfoSEKzdGQplPfrTmOVgcA>
+    <xmx:7vGmaFXMF_UyvY6jzdtOtSSW0qYTfkpGjUoqP4oaysw2h3pvEHrIwcgy>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Aug 2025 06:16:12 -0400 (EDT)
+From: Janne Grunau <j@jannau.net>
+Subject: [PATCH v2 0/3] iommu/apple-dart: Four level page table support
+Date: Thu, 21 Aug 2025 12:15:57 +0200
+Message-Id: <20250821-apple-dart-4levels-v2-0-e39af79daa37@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821115830.3a231885@kmaincent-XPS-13-7390>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN7xpmgC/22NQQrCMBBFr1Jm7UgSI42uvId0MTZTGylpSGpQS
+ u5uLLhz+R7891dIHB0nODcrRM4uudlXULsG+pH8ndHZyqCEOgojJVIIE6OluKCeOPOU0AwnYkO
+ 9POgW6jBEHtxri167yqNLyxzf20eWX/vL6X+5LFGgvSklNbWmF+byIO/pufe8QFdK+QAluDO+t
+ QAAAA==
+X-Change-ID: 20250811-apple-dart-4levels-8f9ae8ac1347
+To: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Neal Gompa <neal@gompa.dev>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Janne Grunau <j@jannau.net>, Hector Martin <marcan@marcan.st>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1294; i=j@jannau.net;
+ s=yk2024; h=from:subject:message-id;
+ bh=auWALS/dLuHWQDeiIFyYlRDyLX6NaNs8haeqQs75+vM=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhoxlH1/ODIq+/zfwTPXple+sF8ZPVFPt1L7lVv29Vkm2V
+ demT42no5SFQYyLQVZMkSVJ+2UHw+oaxZjaB2Ewc1iZQIYwcHEKwESOP2JkmHPZzIV1bsH1fNbF
+ 26W6NmwPV5Hm7FOawCrz4Me99OLPGQz/Uy+87ruWJZ0gIPDqh0KvevicXcXtOzhlNU44Tn6x/Hg
+ FKwA=
+X-Developer-Key: i=j@jannau.net; a=openpgp;
+ fpr=8B336A6BE4E5695E89B8532B81E806F586338419
 
-Hello Kory,
+The DART instances found in T602x based SoCs (Apple's M2 Pro/Max/Ultra)
+indicate an IAS of 42 bit. This results in alloc_io_pgtable_ops()
+failing as io-pgtable-dart supports at most 36-bit IAS.
+The t8110 DART design supports 4-level page tables. Implement support
+for this in io-pgtable-dart and mark DART stream with more than 36-bit
+IAS as 4-level page tables.
 
-On Thu, Aug 21, 2025 at 11:59:14AM +0200, Kory Maincent wrote:
-> Hello Oleksij,
-> 
-> Le Thu, 21 Aug 2025 11:10:58 +0200,
-> Oleksij Rempel <o.rempel@pengutronix.de> a écrit :
-> 
-> > Introduce the userspace entry point for PHY MSE diagnostics via
-> > ethtool netlink. This exposes the core API added previously and
-> > returns both configuration and one or more snapshots.
-> > 
-> > Userspace sends ETHTOOL_MSG_MSE_GET with an optional channel
-> > selector. The reply carries:
-> >   - ETHTOOL_A_MSE_CONFIG: scale limits, timing, and supported
-> >     capability bitmask
-> >   - ETHTOOL_A_MSE_SNAPSHOT+: one or more snapshots, each tagged
-> >     with the selected channel
-> > 
-> > If no channel is requested, the kernel returns snapshots for all
-> > supported selectors (per‑channel if available, otherwise WORST,
-> > otherwise LINK). Requests for unsupported selectors fail with
-> > -EOPNOTSUPP; link down returns -ENOLINK.
-> > 
-> > Changes:
-> >   - YAML: add attribute sets (mse, mse-config, mse-snapshot) and
-> >     the mse-get operation
-> >   - UAPI (generated): add ETHTOOL_A_MSE_* enums and message IDs,
-> >     ETHTOOL_MSG_MSE_GET/REPLY
-> >   - ethtool core: add net/ethtool/mse.c implementing the request,
-> >     register genl op, and hook into ethnl dispatch
-> >   - docs: document MSE_GET in ethtool-netlink.rst
-> > 
-> > The include/uapi/linux/ethtool_netlink_generated.h is generated
-> > from Documentation/netlink/specs/ethtool.yaml.
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> 
-> ...
-> 
-> > +MSE Configuration
-> > +-----------------
-> > +
-> > +This nested attribute contains the full configuration properties for the MSE
-> > +measurements
-> > +
-> > +  ===============================================  ======
-> > ====================
-> > +  ETHTOOL_A_MSE_CONFIG_MAX_AVERAGE_MSE             u32     max avg_mse scale
-> > +  ETHTOOL_A_MSE_CONFIG_MAX_PEAK_MSE                u32     max peak_mse scale
-> > +  ETHTOOL_A_MSE_CONFIG_REFRESH_RATE_PS             u64     sample rate (ps)
-> > +  ETHTOOL_A_MSE_CONFIG_NUM_SYMBOLS                 u64     symbols per sample
-> > +  ETHTOOL_A_MSE_CONFIG_SUPPORTED_CAPS              bitset  capability bitmask
-> > +  ===============================================  ======
-> > ==================== +
-> 
-> Why did you remove the kernel doc identifiers to phy_mse_config?
-> It was useful for the documentation.
-> 
-> > +MSE Snapshot
-> > +------------
-> > +
-> > +This nested attribute contains an atomic snapshot of MSE values for a
-> > specific +channel or for the link as a whole.
-> > +
-> > +  ===============================================  ======
-> > ======================
-> > +  ETHTOOL_A_MSE_SNAPSHOT_CHANNEL                   u32     channel enum value
-> > +  ETHTOOL_A_MSE_SNAPSHOT_AVERAGE_MSE               u32     average MSE value
-> > +  ETHTOOL_A_MSE_SNAPSHOT_PEAK_MSE                  u32     current peak MSE
-> > +  ETHTOOL_A_MSE_SNAPSHOT_WORST_PEAK_MSE            u32     worst-case peak
-> > MSE
-> > +  ===============================================  ======
-> 
-> Same question here for phy_mse_snapshot.
+Signed-off-by: Janne Grunau <j@jannau.net>
+---
+Changes in v2:
+- simplified 4 page table level use in apple_dart_hw_enable_translation()
+- use "iommu/{apple,io-pgtable}-dart:" as commit subject prefix
+- added Sven's Rb:
+- Link to v1: https://lore.kernel.org/r/20250814-apple-dart-4levels-v1-0-db2214a78c08@jannau.net
 
-I had following warnings:
-Documentation/networking/ethtool-netlink:2499: ./include/linux/phy.h:3: WARNING: Duplicate C declaration, also defined at kapi:892. 
-Declaration is '.. c:struct:: phy_mse_config'. 
-Documentation/networking/ethtool-netlink:2515: ./include/linux/phy.h:3: WARNING: Duplicate C declaration, also defined at kapi:915.
-Declaration is '.. c:struct:: phy_mse_snapshot'
+---
+Hector Martin (3):
+      iommu/apple-dart: Make the hw register fields u32s
+      iommu/io-pgtable-dart: Add 4-level page table support
+      iommu/apple-dart: Add 4-level page table support
 
-I didn't found proper was to solve it, so I removed them.
+ drivers/iommu/apple-dart.c      |  50 +++++++++-----
+ drivers/iommu/io-pgtable-dart.c | 143 ++++++++++++++++++++++++----------------
+ include/linux/io-pgtable.h      |   1 +
+ 3 files changed, 121 insertions(+), 73 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250811-apple-dart-4levels-8f9ae8ac1347
 
+Best regards,
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Janne Grunau <j@jannau.net>
+
 
