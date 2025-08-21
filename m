@@ -1,225 +1,109 @@
-Return-Path: <linux-kernel+bounces-779607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E07D8B2F637
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:16:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 166CDB2F622
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93114B60371
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:13:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5B17167330
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19E331DD90;
-	Thu, 21 Aug 2025 11:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="QNXOCIca"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B6F30C359;
+	Thu, 21 Aug 2025 11:11:07 +0000 (UTC)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476D331197A;
-	Thu, 21 Aug 2025 11:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BCB1DF271;
+	Thu, 21 Aug 2025 11:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755774771; cv=none; b=SATzyhu/94BYFRBmrUE6bRi2z0i879v64IkQm90luZO0SE4ZoDJO5zO1tXfIb2ZGouE3BkBut3O8yDrWqjh3iPkZ9+N4Qw7c41pdrYKSTlC9ff9F9EQuVyD4UB+3dmqGVKRGZmK/6j4K9eOxMR4c3lKTEtYabcskFABezY/un6w=
+	t=1755774666; cv=none; b=Klqi2pMpCiXppy0iiFFhLo0QElKTYzz4lFS4y+0AnNQ++UmMKuhjouY9tougv76PqcBD2HOjXpagen5W0gxyhUskBmE3U50GpTWOUluFIo4lwgcDRFa77ztMKAI5CaMRPUzjHuspG9oG32TXrqzDw3Ki0PxZU94476B5VOVUEos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755774771; c=relaxed/simple;
-	bh=j90S7zRkOK0KEdr9XGcvSgNiiiQSjlH2Hm0mT6w9F7o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=S2WzfU3nQzk/mxEwbHpK+rjxAxSXpCV1gWdAAS6kk6LTg+GbY80XvGIZWDDvnHqVmYMkJnLDFcf+uZaTfx3Ypg1/H7ibcjlGDO3EawCOhiBIEWGduq5h/U8R+uYjN9B/B9zkVqw8/poFg4qAVh136ex7G7jCPgvUmkNxd9gz9sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=QNXOCIca; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LAJcpt012185;
-	Thu, 21 Aug 2025 13:12:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	akrsF+rqanN9h/weZbTUYAjXWW1c35UUR7IDQhJggDk=; b=QNXOCIca+Wxn6KMO
-	wn0FbIUF/hBavRlBfOdQiDS3v9HjYD+sSvoSHfqZPy0KicuPCye6hr9TCr0VOxtF
-	KIh8bboLxdPcrV8TsQ3lDpZ18mXcf9ruDSpfb8/7x2NzkF7PhO/ISLCFQvhPgd4A
-	uD7DUJFDrtyoU3juMhdic6iYsxiWX8epgjHikHa3kO38Ju9X1/J2msSpCEotAgjH
-	hYf9LKEw5L7R83xGOByWHMGUcoAipVnkmRkAW/5pmPLU++re9ht9FgH13DT9OL+8
-	LDCSL/XPFv7cu9mAM09GkzN+4dXs5NIjdpDwafo/JzzcSsOJ9GXarFbbfJ8vnDat
-	ZNbK3g==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48nj3v3n93-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 13:12:32 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BE65340045;
-	Thu, 21 Aug 2025 13:11:03 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5CEFD74EF13;
-	Thu, 21 Aug 2025 13:10:03 +0200 (CEST)
-Received: from localhost (10.252.7.99) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
- 2025 13:10:02 +0200
-From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-Date: Thu, 21 Aug 2025 13:09:03 +0200
-Subject: [PATCH v4 13/13] arm64: dts: st: enable display support on
- stm32mp257f-ev1 board
+	s=arc-20240116; t=1755774666; c=relaxed/simple;
+	bh=5nX/zcVXQAgMnVKqSFbkHKigVcgU4LM3Apz8U7h+GIw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YE8gM8VzyQMdMUoZa+ql3NiHLHoWpiIUDt5tHIhkRoUQNOVYtyuSiutT5mzbA4aXrC0NqYgoJSP5qXDdk6xLQSN4GGfE0Cvu54nirKZqs0vJgj9tyjG4+1mE7ktM6hjiZ2zPPbWD9WUF4MjFPDJ7VsrQQ9h5AYpEYIa20oey0g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn; spf=pass smtp.mailfrom=chainsx.cn; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chainsx.cn
+X-QQ-mid: zesmtpip2t1755774589t73dceb9d
+X-QQ-Originating-IP: MKW7FV7OJTG4N2Nkof6plwcSoT2xUJFMGQvmD+IFAqo=
+Received: from chainsx-ubuntu-server.lan ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 21 Aug 2025 19:09:46 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8973447282876745434
+EX-QQ-RecipientCnt: 16
+From: Hsun Lai <i@chainsx.cn>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: i@chainsx.cn,
+	heiko@sntech.de,
+	andrew@lunn.ch,
+	inindev@gmail.com,
+	quentin.schulz@cherry.de,
+	jonas@kwiboo.se,
+	sfr@canb.auug.org.au,
+	nicolas.frattaroli@collabora.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH v1 0/2] Add support for 100ASK DShanPi A1
+Date: Thu, 21 Aug 2025 19:09:40 +0800
+Message-Id: <20250821110942.172150-1-i@chainsx.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250821-drm-misc-next-v4-13-7060500f8fd3@foss.st.com>
-References: <20250821-drm-misc-next-v4-0-7060500f8fd3@foss.st.com>
-In-Reply-To: <20250821-drm-misc-next-v4-0-7060500f8fd3@foss.st.com>
-To: Yannick Fertre <yannick.fertre@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:chainsx.cn:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: M182XWJxg1fqOo2MLb5Y51CQLe7R6WopGMf3DLzStRbwUsJyMMqOAvnt
+	pEsDAqK2FXl+JueHkhtig3r18JgSrl4KY8L12FH95ZbsY9Kyu59OCmGtaCj1n5g6eaGa1mc
+	UJ7FML8AExgu+9r2MMXBdjVELNTJHEzHjeRzYNIGXMm1mYixcGs39ORDS2FfhOlsp/GNOIr
+	biU4OER9qx+KM5XwsLfF/EKHgxygS54bNg0llNMpNbep8VkmYQvfsWES7sID9+cF4HUOtdg
+	EyQdvr3l9SZp7PrD0jnpAHW+Gydv6+mWv72TH2qof/1Wuq15/NO2XvrUg5GwYnGUDgPLsGp
+	25lVxXQWsAnYqKQBEWl49j6QePc4rv4HixRMHHlYiNm1lrDRsd/WgTNV947lNETUxv5ejx4
+	Gtr99oyY1uoQMMlhMDLajM9Oixwg/Ofm/EG5EOpfukp2HNA08jqHzBpBrR1HppT5UJ0gKyo
+	TIoAryqb48R5k+YrMTznL7+woZ72ej46Z9GY/bq0PbADIcAPMxzCdyW4lQaSR7kM0vpeDnV
+	5w5hg/uvDUBKVdBwH1U90VMyEyKt4tdVTIX1LM3D4JCmiYGg0q3JcVIfonAt+h6AWCTK6ed
+	g0jK4QFymfzU+Qidz4uF2pzIIjF64/sBfvwEmDXLzkRWYsWtKeIGrNH8/Acs2GUBaozCN+m
+	nVPTv045mucfLfA2I3V7pJKKT+O6Fy0KRjcgDdsDsa5GxF0OIrCPVDiailXmBEror9fvBX8
+	bfZHuSKyCGNOUfpjcQblDqUfnGe4Set/qv5u+vf8qwNXPahWFGsIXCqqYXtwrKugHOebLKZ
+	pb54gXRzcHtEW8c/k/O0XZMW42RfinXLnzV6z+CS4unC9mUnxPx9DouCPAxM2MGS2pGT7lU
+	efL8YXaE2oaTqPHNJu45q6A+/YlTqTD2JmAPeRFvb/8C36//lfY5hRcTZyniqZQ202WV6EJ
+	xDlxA4QCBhZm6d/R+NTUnB2wea10z2bDsXQEMkrRV6GV0pCdyGcQoFIKntLWy7qea8Y0aZ/
+	Vs2xvA3Q==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-Enable the following IPs on stm32mp257f-ev1 in order to get display:
-   * LTDC
-   * LVDS
-   * WSVGA LVDS panel (1024x600)
-   * Panel LVDS backlight as GPIO backlight
-   * ILI2511 i2c touchscreen
+This series add support for 100ASK DShanPi A1.
 
-Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 79 ++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+Info of device can be found at:
+https://wiki.dshanpi.org/en/docs/DshanPi-A1/intro/
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 836b1958ce65fb72c99d634a92af3efaf9844d76..2958ad413b0675575d84942e193a16f80197b88e 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -86,6 +86,43 @@ mm_ospi1: mm-ospi@60000000 {
- 			no-map;
- 		};
- 	};
-+
-+	panel_lvds: display {
-+		compatible = "edt,etml0700z9ndha", "panel-lvds";
-+		enable-gpios = <&gpiog 15 GPIO_ACTIVE_HIGH>;
-+		backlight = <&panel_lvds_backlight>;
-+		power-supply = <&scmi_v3v3>;
-+		status = "okay";
-+
-+		width-mm = <156>;
-+		height-mm = <92>;
-+		data-mapping = "vesa-24";
-+
-+		panel-timing {
-+			clock-frequency = <54000000>;
-+			hactive = <1024>;
-+			vactive = <600>;
-+			hfront-porch = <150>;
-+			hback-porch = <150>;
-+			hsync-len = <21>;
-+			vfront-porch = <24>;
-+			vback-porch = <24>;
-+			vsync-len = <21>;
-+		};
-+
-+		port {
-+			lvds_panel_in: endpoint {
-+				remote-endpoint = <&lvds_out0>;
-+			};
-+		};
-+	};
-+
-+	panel_lvds_backlight: backlight {
-+		compatible = "gpio-backlight";
-+		gpios = <&gpioi 5 GPIO_ACTIVE_HIGH>;
-+		default-on;
-+		status = "okay";
-+	};
- };
- 
- &arm_wdt {
-@@ -183,6 +220,15 @@ imx335_ep: endpoint {
- 			};
- 		};
- 	};
-+
-+	ili2511: ili2511@41 {
-+		compatible = "ilitek,ili251x";
-+		reg = <0x41>;
-+		interrupt-parent = <&gpioi>;
-+		interrupts = <13 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpiog 14 GPIO_ACTIVE_LOW>;
-+		status = "okay";
-+	};
- };
- 
- &i2c8 {
-@@ -230,6 +276,39 @@ timer {
- 	};
- };
- 
-+&ltdc {
-+	status = "okay";
-+
-+	port {
-+		ltdc_ep0_out: endpoint {
-+			remote-endpoint = <&lvds_in>;
-+		};
-+	};
-+};
-+
-+&lvds {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			lvds_in: endpoint {
-+				remote-endpoint = <&ltdc_ep0_out>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			lvds_out0: endpoint {
-+				remote-endpoint = <&lvds_panel_in>;
-+			};
-+		};
-+	};
-+};
-+
- &rtc {
- 	status = "okay";
- };
+Changes in v1:
+- Add support for 100ASK DShanPi A1
+
+Hsun Lai (2):
+  dt-bindings: arm: rockchip: Add 100ASK DShanPi A1
+  arm64: dts: rockchip: add DTs for 100ASK DShanPi A1
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../dts/rockchip/rk3576-100ask-dshanpi-a1.dts | 841 ++++++++++++++++++
+ 3 files changed, 847 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dts
 
 -- 
-2.25.1
+2.34.1
 
 
