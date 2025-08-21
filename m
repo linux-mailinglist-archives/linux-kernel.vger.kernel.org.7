@@ -1,101 +1,143 @@
-Return-Path: <linux-kernel+bounces-780009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D3DB2FC47
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:22:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54BBB2FC4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B36721411
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D6AAA5CC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9FC26B2C8;
-	Thu, 21 Aug 2025 14:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7641B277CB2;
+	Thu, 21 Aug 2025 14:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hX8XqX8c"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HlHq5C8s"
 Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B040248865
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D2825C70D
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755785800; cv=none; b=DSrEDU56qoe6CeBUNVibHUwrdid9dS1HxnXYhO53T66elcF9HganO/MxaxUp1+0IXhSsMjjNxo2BGwvZdz2d2XLT7DvI/hWCijmV+1UZ9gNv0K3C9dQKl0Ry8Bf3VMDFSWqRpAGxA0suQqRKqqcohcUucIGrqskQY5GDCtxk91o=
+	t=1755785801; cv=none; b=P967yJI7gcstwFRjRMXG7YaXAvIUjV98Uw4SC9Wof2Au+lECjmwUdagISF9CM5A8kb21e1GJkXab/BYTXGjgho28lP+Bf5ocmW1xdHoV1PRMuRgyQHFsNNdrkWBTBZwblPAzhLxk1Zx0/ZuIB1C9H+8iG2KUhmDTTZEGRhTIqys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755785800; c=relaxed/simple;
-	bh=6GrnujQLloiv85HLdi3xqRilZz8RU14igxohRDRKuAo=;
+	s=arc-20240116; t=1755785801; c=relaxed/simple;
+	bh=1tkAWHqYiQdAV0OaRcTNZKiGmz33b9jBGHqk56CS5E4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HCp27+KEzRWo5147lF2MXxhtVbFUBg/mI6/yqCHbTCiEmJcH1WgR4ffGsLm0sEBNptSQwqw95GYIE95jIglTLtfSIiMkmotw9HlHFx9bOyoHppOG82DmCfq3gU8lNhSrXHGKWhse8kk11F9k31LiEJqnOD5Xn+B2zD8FQl9/7QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hX8XqX8c; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=LfJzpxXIdal/DIUXNkNS4ANgUQEc7hKy47qK1gVQhnX5CNCl2JorB7DdAkR3qeB1MEa+oVQja5ms7u/YHxQlkG3+v6KiDC1oXbL8QQp1NptcR7uxNBgT+Ht87b8NQkYR/INHQ2xI4XXcY4jj8Zj3rJAmANgM4cQP7LmPuWKoCBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HlHq5C8s; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32326e72dfbso1863871a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:16:38 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-324e6a1a414so1798251a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755785798; x=1756390598; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6GrnujQLloiv85HLdi3xqRilZz8RU14igxohRDRKuAo=;
-        b=hX8XqX8cjQDXWvg02mW3eUUWhp56Z6MWmhDfkjLy44MiJdKsdUzytwKp91A3e2McYj
-         NA+USpdumAlM8HIyNR37BvOIzpyAIvOoN3YXNWRdxEvvxmA800ICfRLP6GyAzukbKsme
-         eQaQ1TFT6Vphnvx5FxSf9fXg0Oec4C/r6w3vjO+DY7sw5FjKPWEsQSw2CJBLYFuKGDmY
-         HF4vLSwAnPqskKRUux+Wrtw2goQZTyPM2JQ7ng/BDV1BWX0H5efvUcnm747TzFl1jVUq
-         Oe/ogn9XyIumXeZEWj5HPQ9kEVu5vb4j5QLg6agfQ4hCFpNrglMlAmzhgJc98r0xYYf+
-         DZow==
+        d=google.com; s=20230601; t=1755785799; x=1756390599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v60JnRg43/Z/SuzdqiagGE6Nvy+KddNpyWfmrQQQLtg=;
+        b=HlHq5C8s7NbR0Tjf89lTfqkmWLHSx1U0rsApbUGsfHRUgZnDCAyzCSkwOOguhGl34g
+         GkFcwM7Uiji4ZV8F/T4RTKtwuV/yO0yu+E0dEXDDdcQoNE6gbkKkeM+Yv73dbxGra9Nn
+         RmJPGFAXlYIHCquDaPcaqKAqgqMa+muAklL3VeAq3gFkfI4YvemJuebjD+gbxrPxvXCS
+         PX/oBIg28SyIPXsb7GlKB2B7rcg5wAxb2yZdRTW7aEaS/JZzM9kDcFqqxeARcSpM5A+N
+         4/pc5/CKVCohSJa1cXDSoBv7MfBehhPPgB0UiAfpL9wk0O6A/tLo8IPkIz1aQXaBGB3W
+         GECg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755785798; x=1756390598;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6GrnujQLloiv85HLdi3xqRilZz8RU14igxohRDRKuAo=;
-        b=DWdQ8qrjNf9xzKCFx3UnLzsEcUay9n+B280vfWdXeGHuqjrphdcmVh3aW9hgxk+oW7
-         q5umpYEE9yvS85Q3TRD1OIgB1sDY6IAKRkRpr8wNh7pPIEAhQBuC6UBrr3Pw7jOy87os
-         WAIY/WPTtFDJtr+I1sm2jkeNF9VWE62aI9kaedJvDQ5L7fcj28q0eEaEAzAA0kyjI0K7
-         g6z4rYs0drcOj/A/uo2f2w8+7yUPpQ2njR7awRPOCRl7lUiRCzm7BVMHWhN4KpSbJWDc
-         4mfUdANlxw8/ykv07r0a5vpNOcWbCLtQu2fiogb8lgndPubqoH74sNgMyEYBkXd2+izm
-         fDXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxmWQtPvHBgkT0TFhXIvTbgx+uKFguUO9u2iZW3mXnUs4GgNwq/4bpws7NM/qcAKrNxFZbrIg1DY8+wI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOHN/+6Ok75NFb5XLdBPAB6Vvq/4W8i8eup2xcYb2EkcAKa3ql
-	KjlQAGCiYVjrVL6zlVWPyxXv9kMU7aRdQoayVZG9FRpmEKmnjf99vtLZsUM8xYXgMf7VUAqKaL2
-	CpNCS2g==
-X-Google-Smtp-Source: AGHT+IFwgalIbtRABlLOHlpKify6KGBP/os4lTVekK7e7XeW4den+TP+VDgQAETfScMeohffbl/PKvnkxB0=
-X-Received: from pjs15.prod.google.com ([2002:a17:90a:c0f:b0:325:2de:8b77])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2248:b0:31f:22f:a221
- with SMTP id 98e67ed59e1d1-324ed1c0298mr3587232a91.29.1755785798238; Thu, 21
- Aug 2025 07:16:38 -0700 (PDT)
-Date: Thu, 21 Aug 2025 07:16:36 -0700
-In-Reply-To: <20250821042915.3712925-2-sagis@google.com>
+        d=1e100.net; s=20230601; t=1755785799; x=1756390599;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v60JnRg43/Z/SuzdqiagGE6Nvy+KddNpyWfmrQQQLtg=;
+        b=RnI6c8xUQjntEp8nPnM/OfaOjJhlbqLRoUVPTU9Q/ya3HM3A57kwIEHU/3byVtFZaU
+         i90jdWCGZ+SbQ7A6P5eaoB4DCeZ8tTwy7v1hbiGcX1yXzGHc4FcIJ09/BuRltPQ/N4tB
+         s49Din+03ktE762FQzkmilq0ojxy0KSX9qPMB4d57mkQkalO1EeGoXPaK/jWH4UoLrY+
+         AxYQeb4nx0DUwqQ9fksLkAVLJEorZzAV+dgmiH2ZiI3XAfS6jR3hC7RnecuNxSyg80eA
+         C03j6XI4+n35pGVV7beDs4947XpCXU5fqu4enqZZJ3H96LuYilEQdN8OmVTPFVtJMvP1
+         oD+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXodcCxL/DAgHdsz5yddASHjes+OxXxR2J6vzoPDEKAHAlp1rm2kV3/lbGFaaxgZwuXH2fheEPJrsMSOsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw39hsZvxV5yjBiWQZ9zxCUs6yjy3wnMeqMqzqF7yQViHn0wA18
+	wDSD4KsL0aaxIvauP3vwBkDA4k62+CB8TJYJb4qjYImbC6OeooyTSov3kuwqBUF5UQ1QuJE0+/Q
+	js+B7Iw==
+X-Google-Smtp-Source: AGHT+IGJFYsu9NhtkqxOZSEJ2yGsjpjSkQ2KDspOo3rp7QmvJlQ/0/W4t/AOd8NImtz2JDxixI4rcFtOMY8=
+X-Received: from pjbsl4.prod.google.com ([2002:a17:90b:2e04:b0:31e:dd67:e98])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5848:b0:31f:ecf:36f
+ with SMTP id 98e67ed59e1d1-324eecf94b1mr3373124a91.1.1755785799306; Thu, 21
+ Aug 2025 07:16:39 -0700 (PDT)
+Date: Thu, 21 Aug 2025 07:16:37 -0700
+In-Reply-To: <46cf87e2-8100-47ef-b19e-f6a1b76f660d@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-2-sagis@google.com>
-Message-ID: <aKcqRFWuGZQQ3v3y@google.com>
-Subject: Re: [PATCH v9 01/19] KVM: selftests: Include overflow.h instead of
- redefining is_signed_type()
+References: <cover.1755721927.git.ashish.kalra@amd.com> <95abc49edfde36d4fb791570ea2a4be6ad95fd0d.1755721927.git.ashish.kalra@amd.com>
+ <5dff05c1-474e-4fff-a19b-7c17b4db6173@infradead.org> <7eed1970-4e7d-4b3a-a3c1-198b0a6521d5@amd.com>
+ <922eaff1-b2dc-447c-9b9c-ac1281ee000d@amd.com> <db253af8-1248-4d68-adec-83e318924cd8@amd.com>
+ <46cf87e2-8100-47ef-b19e-f6a1b76f660d@amd.com>
+Message-ID: <aKcpu-EilR04YAxX@google.com>
+Subject: Re: [PATCH v9 2/2] KVM: SEV: Add SEV-SNP CipherTextHiding support
 From: Sean Christopherson <seanjc@google.com>
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>, 
-	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+To: Kim Phillips <kim.phillips@amd.com>
+Cc: Ashish Kalra <ashish.kalra@amd.com>, Randy Dunlap <rdunlap@infradead.org>, corbet@lwn.net, 
+	pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	thomas.lendacky@amd.com, herbert@gondor.apana.org, akpm@linux-foundation.org, 
+	rostedt@goodmis.org, paulmck@kernel.org, michael.roth@amd.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025, Sagi Shahar wrote:
-> Redefinition of is_signed_type() causes compilation warning for tests
-> which use kselftest_harness. Replace the definition with linux/overflow.h
+On Thu, Aug 21, 2025, Kim Phillips wrote:
+> On 8/21/25 5:58 AM, Kalra, Ashish wrote:
+> > On 8/21/2025 5:30 AM, Kim Phillips wrote:
+> > > On 8/20/25 6:23 PM, Kalra, Ashish wrote:
+> > > > On 8/20/2025 5:45 PM, Randy Dunlap wrote:
+> > > > > On 8/20/25 1:50 PM, Ashish Kalra wrote:
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * If cipherte=
+xt hiding is enabled, the joint SEV-ES/SEV-SNP
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * ASID range =
+is partitioned into separate SEV-ES and SEV-SNP
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * ASID ranges=
+, with the SEV-SNP range being [1..max_snp_asid]
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * and the SEV=
+-ES range being [max_snp_asid..max_sev_es_asid].
+> > > > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 [max_snp_asid + 1..max_sev_es_asid]
+> > > > > ?
+> > > > Yes.
+> > > So why wouldn't you have left Sean's original "(max_snp_asid..max_sev=
+_es_asid]" as-is?
+> > >=20
+> > > Kim
+> > >=20
+> > Because that i believe is a typo and the correct SEV-ES range is
+> > [max_snp_asid + 1..max_sev_es_asid].
+>=20
+> It's not, though.
+>=20
+> [max_snp_asid..max_sev_es_asid]
+>=20
+> and
+>=20
+> (max_snp_asid..max_sev_es_asid]
+>=20
+> are two completely different things.
 
-Heh, tried that:
+Yeah, inclusive versus exclusive (I'm quite proud that I remembered which w=
+as
+which, _and_ that I got it right :-D).
 
-https://lore.kernel.org/all/18f2ea68-0f7c-465e-917e-e079335995c1@sirena.org.uk
+> You also modified Sean's Documentation/ changes.=C2=A0 A consistent "join=
+t
+> SEV-ES+SEV-SNP" is preferred.
 
-There's now a fix in kvm-x86/fixes and thus kvm-x86/next, so if you base something
-off kvm-x86/next, the warnings should be gone.
+FWIW, I don't have a strong preference on the exact verbiage, so long as it=
+'s
+consistent.
 
