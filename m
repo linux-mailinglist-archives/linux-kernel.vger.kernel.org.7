@@ -1,115 +1,68 @@
-Return-Path: <linux-kernel+bounces-779318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA730B2F28C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44256B2F28B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5091886324
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:36:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7A1B1CE1299
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F1E222582;
-	Thu, 21 Aug 2025 08:35:44 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CAF13D51E;
+	Thu, 21 Aug 2025 08:35:53 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53753594F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3954146A66
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755765344; cv=none; b=h+Pwtp3dJ15ez/CmcmJ9p8HwQWQ0shZgw6x2do8BcB80khNKmPt65sj5fXh3NqxRVVa6EpLyrLF4fwGf/o7e5bUrSqlWsTG/Sx5jN/6jJwDTrFcYlU6pUKUXj8n80sgEyPEQ/UhzUrLmwHQkIHfXi8jWiEyXrrYE9x2ZnXkAexg=
+	t=1755765353; cv=none; b=hm3fJjnu4u/+DOXtTBXSLKSRSJYC9pMonBgU+/tSjZf7eTQ5XUZC/TBbDz/NU17Slh3nxA6a6K6//MvGJrV7wTfKsU8S0Us/TsYcOqVrbrHCvdUFOal0xO52iZeBBngV8XY67QWn1iGcrPHDqrzIWPLCQc+CJdS1O8zVmRo19Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755765344; c=relaxed/simple;
-	bh=UaFhU0ASekfjt+7a2TVZKefNXSuYXrZL2vLsDrzLMU4=;
+	s=arc-20240116; t=1755765353; c=relaxed/simple;
+	bh=lysEUEk7RrDtr0FUv+P4PfID5/YBMrJFBdUZXQ7wN2s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=krqLndY4e1Yo7FWdHfgBhV+upM3rmIArjwKRGiFyLxh5e4oJD9qJ2EyfKR7AjJ1+Q4tFPly7WY4m+dW4eVVAycrAc+vUNDDPpdgPB9ka8gfq36YcxXrprNo6lc/RLZ3CNjr32Oqyfj3LtaWpLX1ozKq2jfF98qftOT2nIGPaRC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61a1c6a5338so1185974a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:35:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755765340; x=1756370140;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TLTaYQKz+L6mS60IaQHO0FlbZom6v0EylZjn5fadR0E=;
-        b=pfShcT6Ya5VxHoO2ckTMYL0Cu4upUo1UxNV4MT3EU+jsh77Q9SUz6k8hVjncxHsl7x
-         d+HtS+w5jrJOVIzNH7iCQ822MXCvSodpWEMJ4abYzHTdZkF/1xJVSkAChS7BdGbvlhTD
-         hcdI3gPwp0orYdcdH6A8tYQylgk71wdWMFHUamBPoUwNA9CpMaIi8SX/YS8h1FbxY8je
-         8UBLvjX3za+M9eSZVcxpndbUE7duv79ok94Dp8MJEHa6XQMP1YYpQ/N6H5c0YoKlfsLH
-         gnihShMP+XuwYcK9zjCFt+4LFs9WfdiGrJ1TjfT2xx4PkxQq9xtwiTVtmWY2tOD06y+h
-         R60A==
-X-Forwarded-Encrypted: i=1; AJvYcCWKT7gy0Qkp9NGo2Vu4Y5mG2Evv76wzdB8JR3mV/ZkrkXtsbq+oTXnKeclGivHaMkxsytivBfyH/pYqJWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCA1wcaRKY6tieh4EFig00u8aNDbUnxre3ddrHThpDbe1gqhgk
-	Yy1VOm2BPVZH2ghpPJlH4twLL7oo2XuN7FVi0z8aqqsa/PH252GFFbAf
-X-Gm-Gg: ASbGnct0wgb4j76P57xqy9ajlQJtjVFxEP8MUvLOvccq5JgjhaY1irK3Qcf/I/Zt8Rf
-	U2KhxPfoSwyoE2d5iFaG9jhd4lz/H8EjXbK0T9hT6QtVnY4B/A+UgTrTg9H1g91KXYzYViyeo0c
-	OtNkVyBGdbi4nS6JkXBlwGfTvv+NrK13xkDIq8WZ0HDuFLY/uFKb09vPLYchxstXzInv3rBmHOw
-	Mri2mTUN/Kwtohmvqfn9DzLUmmI9z6SBP9SZRGfqmUHE8I05uL6LpI8Otq+E2PslfleDmiGAK/P
-	EKOa82Ztf1mSkgAnufWIrOQRir9bAzYYALx07ggopjhIdYoRI79Xjt8ZUbl/hcm+wdPdN7vbg5H
-	0YKQ5ZaEHXsTr+J/hhgXa7OM=
-X-Google-Smtp-Source: AGHT+IEkJdR4ZytuF3ou0QnN9dqwsgDB4fi3WpC1cU6D2DxADi2r+x6LKDLki93uSdw4v8TOHeihdg==
-X-Received: by 2002:a05:6402:354a:b0:618:20c1:7e43 with SMTP id 4fb4d7f45d1cf-61bf8736398mr1310328a12.29.1755765339676;
-        Thu, 21 Aug 2025 01:35:39 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:8::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61bfb41b760sm727145a12.16.2025.08.21.01.35.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 01:35:38 -0700 (PDT)
-Date: Thu, 21 Aug 2025 01:35:35 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Jiri Bohac <jbohac@suse.cz>
-Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org, akpm@linux-foundation.org, 
-	Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>, 
-	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <dhildenb@redhat.com>, Michal Hocko <mhocko@suse.cz>
-Subject: Re: [PATCH v5 0/5] kdump: crashkernel reservation from CMA
-Message-ID: <lofhq3bgtl2bcbrbkgctyyg2gl7ef2naqdrplyb37jyde2xoeh@twcwhwthnzxd>
-References: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
- <airxp44zdyxskfwrhhveis7gd2vsz5m4f3ipidsghi2x55h64c@s37v5rkuoega>
- <aKX1vbE5jWVUr298@dwarf.suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o6EHGOtGRe7vGjngdeyKDDogQZZgd0J1m4KfkU/CePFTGBt+HOekowh5qQcgQK5P2g3IxuhvP7VcnCKgz7vw6ZSFmpMFWFOM9m3T3culHi2/6tZGwDfAqjhamYKmCFVm63r/xM3tC37BnyEhyRUBABSN181G5BVO+j/CeNNrUWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 17E06227A88; Thu, 21 Aug 2025 10:35:38 +0200 (CEST)
+Date: Thu, 21 Aug 2025 10:35:37 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	tytso@mit.edu, nilay@linux.ibm.com, martin.petersen@oracle.com,
+	djwong@kernel.org, mcgrof@infradead.org
+Subject: Re: [RFC PATCH] nvme: add an opt-in to use AWUPF
+Message-ID: <20250821083537.GB29224@lst.de>
+References: <20250820150220.1923826-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aKX1vbE5jWVUr298@dwarf.suse.cz>
+In-Reply-To: <20250820150220.1923826-1-john.g.garry@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hello Jiri,
+On Wed, Aug 20, 2025 at 03:02:20PM +0000, John Garry wrote:
+> As described at [0], many parts of the atomic write specification are
+> lacking.
 
-On Wed, Aug 20, 2025 at 06:20:13PM +0200, Jiri Bohac wrote:
-> On Wed, Aug 20, 2025 at 08:46:54AM -0700, Breno Leitao wrote:
-> > First, thank you for making this change; it’s very helpful.
-> > I haven’t come across anything regarding arm64 support. Is this on
-> > anyone’s to-do list?
-> 
-> Yes, I plan to implement this at least for ppc64, arm64 and s390x,
-> hopefully in time for 6.18.
+I like your british understatement.
 
-Thanks!
+> +	list_for_each_entry(tmp, &subsys->ctrls, subsys_entry)
+> +		nvme_queue_scan(tmp);
 
-I have another question. I assume it’s not possible to allocate only the
-CMA crashkernel area for the kdump kernel, since we need to keep the
-loaded kernel in the crashkernel area while the system is running.
-Therefore, specifying crashkernel=X (without ',cma') is necessary.
+queueing a full rescan here seems expensive.  What about just keeping
+the awupf value in our internal data structures and always use it
+for the physical block size calculation, but only apply it to the
+atomic limits based on a flag?
 
-At the same time, since the crashdump environment will use CMA, the
-crashkernel area itself doesn’t need to be very large, as the CMA space
-will be allocated later.
-
-With that in mind, how do I find what is the recommended size for the
-crashkernel area, assuming the CMA area will be more than sufficient at
-runtime?
-
-Does it need ot be much higher than the size of kdump kernel and initrd?
-
-Thanks
---breno
 
