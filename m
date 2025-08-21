@@ -1,56 +1,79 @@
-Return-Path: <linux-kernel+bounces-779100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358D6B2EF19
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C32FCB2EF1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0FD1BC5109
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:10:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4FC1BC5B1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B4D27B4F2;
-	Thu, 21 Aug 2025 07:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8013E27E041;
+	Thu, 21 Aug 2025 07:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="B4Ps3rxA"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5ezfTYU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805021EA7D2;
-	Thu, 21 Aug 2025 07:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA431E7C12;
+	Thu, 21 Aug 2025 07:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755760223; cv=none; b=ZJYH2DLQTEZvYN7UXmEF6L6MS3Soqu517BpVt7ZHcPoSxdYdcW/CG+4tqFvrq6ZqFyQ+qZ4hLDILXpNNODlmjqDOkzwzIqv2xxxT1fYziPWOyo7Z4OvLEIykTPcMK1tR8hnHqP66y/j9eH5JMSwVWYz2mhfYkV6+HibndTy0UZk=
+	t=1755760271; cv=none; b=mXCVniVZV+XhvUksrVHSYgeOxiOuh878yuGsHJyrpImzGoo2YeKIenJypSW6eLjQtZJ8BtS3haX3+RKAiyrCJPjYWob+MVkFNk1BVKb6eT/az30sDEfsOrTQ384IXLL3UqO1mvtF8aWZa+yuIEMUI2iDoY2ii2iTFAclhfOzXbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755760223; c=relaxed/simple;
-	bh=TzFoYkNr5uKeSEk4nj8rTmur2plu1IDT7LnjbDvYEWs=;
+	s=arc-20240116; t=1755760271; c=relaxed/simple;
+	bh=OUn2H5750HvrMtA7wkc7vbkYR2d2MeCJuYsZZvXJOB4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4WYb76+xa4+GyaD8pesA9nlIxutGglocF3IywDyWxVfhoDnBMu6aiAmpf+PuvQA69WkD21xsb+CnxtV7VkCE5P9YnJo0cMb3s8Y3Rzih+XGrxe8EsJA6Rj0Y/JNfgk8YdZzjVEiVb+3OHYK6z/9m8T0kp//y30eHoUgDksK2lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=B4Ps3rxA; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=RfPOWbVRUC2ftEQ8/ZhtZEj1I9GSOS1lR3GmPpWbzms=;
-	b=B4Ps3rxA5lTLKOMX9qz4KLmfQrRInSuwWyASzKpE8BzdORqUVxYMRs7LRTHMd7
-	SAziTySrOi108CliGQfaDT4Jng65U7PMGDioaXIl/eTKtTdsMJYgjIf4kMP7bXMD
-	JW8f3za/C4lYET9Jp2+PH+kM1G2bjYBqw+5h88X9xYpJY=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgAHe3sUxqZoZKcNAw--.5607S3;
-	Thu, 21 Aug 2025 15:09:10 +0800 (CST)
-Date: Thu, 21 Aug 2025 15:09:08 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Martin Kepplinger <martink@posteo.de>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	kernel@pengutronix.de, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: imx8mp: add idle cooling devices to cpu
- core
-Message-ID: <aKbGFMnmM4OHiimg@dragon>
-References: <20250715055903.1806961-1-martink@posteo.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VQV/QE586pBB9fM3+BUplLLwVd00ORQzzits/jfD2/Fhp0p0QisfB/6iZqIglIvABHfGcJbmgjB0yfqQOasugyQVd2JB/fyAjWsmm1qpRl1dl2JLQ6r1jJiFPR5RrCJ4mADjxQu2NaWNPe5YJZoZCUz7PPuhLlyzw9vBxirg3gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5ezfTYU; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755760270; x=1787296270;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OUn2H5750HvrMtA7wkc7vbkYR2d2MeCJuYsZZvXJOB4=;
+  b=e5ezfTYUq27U/PzS1XPEvel5waeBuv78OgCHwS7Om1lA7BG4odnCDZCa
+   jgmPqtGKdtwHXb1D4SwfR3K46tgnSKecbJxx6wIkHEuDwKNYbejOD/Wzn
+   WbUBq8QnVJWt/oCIStRPvtSKs7Fe9ZnHlg0vanSq8zZ7Sh8nLJl9qzP0J
+   d36z9GLWhGDbGcuJgyQ5ksx8BfcC9bIj4wWUkiRjGCrEi8C69oi7rZhx0
+   mT2bRwg2XPQ3tuTQqyRJupW/2HMmzACbM2q3ZSDAibIU1VOeaqbz9cabK
+   cy5pbDQNVyYN+/Wkm01nxkTiGuic94HPvawbTjG+ECV9TcdbeeDsyMhYT
+   A==;
+X-CSE-ConnectionGUID: BNAVKzZARiWgt1d2WXZ6dg==
+X-CSE-MsgGUID: BE/5ZXugRd+t4+Pei8qQQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="61678741"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="61678741"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 00:11:10 -0700
+X-CSE-ConnectionGUID: OlO3aYLHTdOuly0hquwMZg==
+X-CSE-MsgGUID: wmLH5BeDSTiVvUVSelVnwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="168591804"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa008.jf.intel.com with SMTP; 21 Aug 2025 00:11:06 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 21 Aug 2025 10:11:04 +0300
+Date: Thu, 21 Aug 2025 10:11:04 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: amitsd@google.com
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Badhri Jagan Sridharan <badhri@google.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: Re: [PATCH v2 1/2] usb: typec: maxim_contaminant: disable low power
+ mode when reading comparator values
+Message-ID: <aKbGiLh2FrCM4dLk@kuha.fi.intel.com>
+References: <20250815-fix-upstream-contaminant-v2-0-6c8d6c3adafb@google.com>
+ <20250815-fix-upstream-contaminant-v2-1-6c8d6c3adafb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,86 +82,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250715055903.1806961-1-martink@posteo.de>
-X-CM-TRANSID:Mc8vCgAHe3sUxqZoZKcNAw--.5607S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tF13XF18WFy8Xw1Uuw48JFb_yoW8ZrWUpr
-	48uwn5W3Wvgr47C3yaqwnYkrnY9ws5tFW5Wr12gryfK345Zr90gayYyF13Wr18Xw18ua1f
-	ZF4avryI9r4DJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UyCJQUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNhZ632imxhaGowAA3+
+In-Reply-To: <20250815-fix-upstream-contaminant-v2-1-6c8d6c3adafb@google.com>
 
-On Tue, Jul 15, 2025 at 05:59:22AM +0000, Martin Kepplinger wrote:
-> The thermal framework can use the cpu-idle-states as
-> described for imx8mp as an alternative or in parallel to
-> cpufreq.
+On Fri, Aug 15, 2025 at 11:31:51AM -0700, Amit Sunil Dhamne via B4 Relay wrote:
+> From: Amit Sunil Dhamne <amitsd@google.com>
 > 
-> Add the DT node to the cpu so the cooling devices will be present
-> and the thermal zone descriptions can use them.
+> Low power mode is enabled when reading CC resistance as part of
+> `max_contaminant_read_resistance_kohm()` and left in that state.
+> However, it's supposed to work with 1uA current source. To read CC
+> comparator values current source is changed to 80uA. This causes a storm
+> of CC interrupts as it (falsely) detects a potential contaminant. To
+> prevent this, disable low power mode current sourcing before reading
+> comparator values.
 > 
-> Signed-off-by: Martin Kepplinger <martink@posteo.de>
+> Fixes: 02b332a06397 ("usb: typec: maxim_contaminant: Implement check_contaminant callback")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+>  drivers/usb/typec/tcpm/maxim_contaminant.c | 5 +++++
+>  drivers/usb/typec/tcpm/tcpci_maxim.h       | 1 +
+>  2 files changed, 6 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> index bb24dba7338ea..66e1a27d6eed9 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -80,6 +80,11 @@ A53_0: cpu@0 {
->  			operating-points-v2 = <&a53_opp_table>;
->  			#cooling-cells = <2>;
->  			cpu-idle-states = <&cpu_pd_wait>;
-> +			cpu0_therm: thermal-idle {
-
-Have a newline between properties and child node.
-
-Shawn
-
-> +				#cooling-cells = <2>;
-> +				duration-us = <10000>;
-> +				exit-latency-us = <700>;
-> +			};
->  		};
+> diff --git a/drivers/usb/typec/tcpm/maxim_contaminant.c b/drivers/usb/typec/tcpm/maxim_contaminant.c
+> index 0cdda06592fd3cc34e2179ccd49ef677f8ec9792..818cfe226ac7716de2fcbce205c67ea16acba592 100644
+> --- a/drivers/usb/typec/tcpm/maxim_contaminant.c
+> +++ b/drivers/usb/typec/tcpm/maxim_contaminant.c
+> @@ -188,6 +188,11 @@ static int max_contaminant_read_comparators(struct max_tcpci_chip *chip, u8 *ven
+>  	if (ret < 0)
+>  		return ret;
 >  
->  		A53_1: cpu@1 {
-> @@ -98,6 +103,11 @@ A53_1: cpu@1 {
->  			operating-points-v2 = <&a53_opp_table>;
->  			#cooling-cells = <2>;
->  			cpu-idle-states = <&cpu_pd_wait>;
-> +			cpu1_therm: thermal-idle {
-> +				#cooling-cells = <2>;
-> +				duration-us = <10000>;
-> +				exit-latency-us = <700>;
-> +			};
->  		};
->  
->  		A53_2: cpu@2 {
-> @@ -116,6 +126,11 @@ A53_2: cpu@2 {
->  			operating-points-v2 = <&a53_opp_table>;
->  			#cooling-cells = <2>;
->  			cpu-idle-states = <&cpu_pd_wait>;
-> +			cpu2_therm: thermal-idle {
-> +				#cooling-cells = <2>;
-> +				duration-us = <10000>;
-> +				exit-latency-us = <700>;
-> +			};
->  		};
->  
->  		A53_3: cpu@3 {
-> @@ -134,6 +149,11 @@ A53_3: cpu@3 {
->  			operating-points-v2 = <&a53_opp_table>;
->  			#cooling-cells = <2>;
->  			cpu-idle-states = <&cpu_pd_wait>;
-> +			cpu3_therm: thermal-idle {
-> +				#cooling-cells = <2>;
-> +				duration-us = <10000>;
-> +				exit-latency-us = <700>;
-> +			};
->  		};
->  
->  		A53_L2: l2-cache0 {
+> +	/* Disable low power mode */
+> +	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCLPMODESEL,
+> +				 FIELD_PREP(CCLPMODESEL,
+> +					    LOW_POWER_MODE_DISABLE));
+> +
+>  	/* Sleep to allow comparators settle */
+>  	usleep_range(5000, 6000);
+>  	ret = regmap_update_bits(regmap, TCPC_TCPC_CTRL, TCPC_TCPC_CTRL_ORIENTATION, PLUG_ORNT_CC1);
+> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.h b/drivers/usb/typec/tcpm/tcpci_maxim.h
+> index 76270d5c283880dc49b13cabe7d682f2c2bf15fe..b33540a42a953dc6d8197790ee4af3b6f52791ce 100644
+> --- a/drivers/usb/typec/tcpm/tcpci_maxim.h
+> +++ b/drivers/usb/typec/tcpm/tcpci_maxim.h
+> @@ -21,6 +21,7 @@
+>  #define CCOVPDIS                                BIT(6)
+>  #define SBURPCTRL                               BIT(5)
+>  #define CCLPMODESEL                             GENMASK(4, 3)
+> +#define LOW_POWER_MODE_DISABLE                  0
+>  #define ULTRA_LOW_POWER_MODE                    1
+>  #define CCRPCTRL                                GENMASK(2, 0)
+>  #define UA_1_SRC                                1
+> 
 > -- 
-> 2.39.5
+> 2.51.0.rc1.167.g924127e9c0-goog
 > 
 
+-- 
+heikki
 
