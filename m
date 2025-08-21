@@ -1,199 +1,139 @@
-Return-Path: <linux-kernel+bounces-779900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C0BB2FAE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:45:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F65B2FADC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BBA2AE16AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:38:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89D1418901EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F792DF713;
-	Thu, 21 Aug 2025 13:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4ECA335BBD;
+	Thu, 21 Aug 2025 13:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EBMcGnCG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5SS4t7j"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90A535A2AE;
-	Thu, 21 Aug 2025 13:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B785B1E7C05;
+	Thu, 21 Aug 2025 13:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755783135; cv=none; b=ags1BBj/k71bGrcUFHYeOvzuDetH5iIgwDqZ4h16fZ5U7PKNftgFK5W/sdU5E0rFUgsGiGTS8stZtiwD2Fr6zS9whBOUZo0WDCeo+cR1oOxz8D/9T6zHcghyZKOQrLLjY56pquhBOWXiggCd7n8imKIkcS2E0417SCCRJTwwrSU=
+	t=1755783213; cv=none; b=GhEUo/djnuXOim+XR2oBq+sOXZYKJFXZATnIRKv+yQ+/pKqxCRhVRcpUAtXn6MvO1u1Jec8TJS+vlJkZU43j9rIqdRX1XzMYiZJTIfVrwK+DqSRN9cvMq/hyqfeM6YXIrJ+uo9jPpXTETmWLTvdYegJR/xovDXF4Ik22fOlHB8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755783135; c=relaxed/simple;
-	bh=l7haChJ78imCpKftjoInXbwL2PEsUuJWzy/NxujNchU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WNMuZPIHh/AFpq0YrF5fV8d1tsYwuouo7z8kPZ2oyBnJyQDWpvCVOH8a5jIkV9DmW+Mi9cFK0ONus0560WEWKJjWw0woOZMvnlS+Ou+DW9HtXexyYN2kYLKohBq4h+3HUKsdyX5oHYUwv1x4r+26x/8mnrj21fOUrvUgkfaZLjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EBMcGnCG; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755783134; x=1787319134;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=l7haChJ78imCpKftjoInXbwL2PEsUuJWzy/NxujNchU=;
-  b=EBMcGnCGjwgkpNqU9qbNBv+Px4b9vGOjVWxBDol22+MzstbDxSOWvEIt
-   H3QtsI8HmzodBzYur3z3Ij+gAvA1B9tGzDqgRm5UGv9XcKVeLLeOVPOeU
-   ymDw8k3hcLr9/rVxMnU6Kx+VmhofBrNKN0tk6b6oaI/7EdRd6tRwDDWsf
-   9igRDCXf+7++ZGFLsBKixzw+HOh9q6hk+o94dbw9C6QBy43dLzqJOLckm
-   QfBXKFYuD1hTOU+B8a5FoAegJBefvSfU9iNhR7dLA8KihD143htQ7L+eZ
-   9jFIzolliBMcrMmhAUf9POT6qu7kwvLCqQP1fgYgAaBbMK8UC1f0RJKR4
-   Q==;
-X-CSE-ConnectionGUID: mW890sw+T3CviqsXrA0P7w==
-X-CSE-MsgGUID: 3mb9j+YUS+Wg3NLccqnd8Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69446246"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="69446246"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 06:32:04 -0700
-X-CSE-ConnectionGUID: GorXoETKRbqosfJGfk3OXg==
-X-CSE-MsgGUID: M78ceGyDQLOd/yONsp4fCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="199285455"
-Received: from 984fee019967.jf.intel.com ([10.165.54.94])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 06:32:03 -0700
-From: Chao Gao <chao.gao@intel.com>
-To: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: chao.gao@intel.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	john.allen@amd.com,
-	mingo@redhat.com,
-	minipli@grsecurity.net,
-	mlevitsk@redhat.com,
-	pbonzini@redhat.com,
-	rick.p.edgecombe@intel.com,
-	seanjc@google.com,
-	tglx@linutronix.de,
-	weijiang.yang@intel.com,
-	x86@kernel.org,
-	xin@zytor.com,
-	Shuah Khan <shuah@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	"Pratik R. Sampat" <prsampat@amd.com>
-Subject: [PATCH v13 21/21] KVM: selftest: Add tests for KVM_{GET,SET}_ONE_REG
-Date: Thu, 21 Aug 2025 06:30:55 -0700
-Message-ID: <20250821133132.72322-22-chao.gao@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250821133132.72322-1-chao.gao@intel.com>
-References: <20250821133132.72322-1-chao.gao@intel.com>
+	s=arc-20240116; t=1755783213; c=relaxed/simple;
+	bh=ekjoLLvd+gdePODFcTvZOLsqmOsc4ETLQT/D/x7qjo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lnbCqJlUj8ZiF41/O2AmZIOzVjNidOGoMpdeMnc+OK9SMjlIRWdz2r1OMPqrqJVM9ghE38n2qQjMzfHNEWCuClstHilPTq3fiVXu5nVUIpSDp9fVYwlJK6Iq8mwNMpUhktfcLj28otxHb3qcvhPWe5HPPK3GyrT/gFT9z3YL4ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5SS4t7j; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b476985479bso134576a12.2;
+        Thu, 21 Aug 2025 06:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755783211; x=1756388011; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eBxFLGvGtKMlnx45gYA4Cz7A7SuVyCHmLHRhQN6QlRU=;
+        b=E5SS4t7j5L8RnByc28Xa2T7bbO6FKr0LB76geVC6RgXGeOnd7Ag4Ci4OU92T2+BMu8
+         RHyXaRxKOt6mzmkqsl8j25wSipNISjE0eLkxzzQ5rnQloZUEjaQ4VgTkVawttXA8eZ2C
+         jAtQ4eXcOoPHDhNzHSluhKtE0eSC9+ENpvPX7yPjuTfERciVkRraRKbWAbfh48ROP0yv
+         RBjUmHv4CLVUHneaSxkCoEUNys11N6aXy+OEUR7Kore3NbX6i8ptUVUa0cpgsjaxNWaE
+         hsE+RIULCwrh6rjo+STXD+4hyNfaIkxPun1D0GLJAooMCwlBOPtQ9k42Rt7wuYGhX16u
+         wIqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755783211; x=1756388011;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eBxFLGvGtKMlnx45gYA4Cz7A7SuVyCHmLHRhQN6QlRU=;
+        b=KZaHLCmmMnZz4X76OT1Y8sDdQaLE1AFrnOXME5JUBt5ki+Rlq641+j6NU3Uyh9gsd6
+         7nkOsvjcvIZQTK9Fp/j1utorp7213ZdpjlqxqtDOrZ9Nk97wGno0u+ng2pdSrZlVROQg
+         eRPkGpjQ10G1XL/vPAhB6yNrvQNKZoa/VKUS/4p5ML4XCH1HHFBV06rWsTC7lXTYXXRs
+         UX/PwcfTPeD7+ndRHdilOXXZHPP/Zjkpmc0ZLjXdrdiHsnq7VJL/xeBmNdOT3cWw8j/M
+         yyI+BnjX9BefYA+NwuLG7R2I1B+gF6m0xAdvcPuynjQMfa3NHjuJzLZRD8NFl8ONlbPu
+         ezvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCymXIsx1+YZKjnnJnHeqXpzTw+SnazWrowBDKlq0MXWczv4hY2uX4QcqisjvhyiF3yEsnHq2CTp9cyuRU@vger.kernel.org, AJvYcCXzxeM4sfHwIntRGFKaNacNYOvYyL717wXNFBEAshROOCEbK1pPlBrOi38z12jknHE1QASygDiMcXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNe8czSgH523Co7IOs+3JsEKtdTF6tTixi6cGyDJV9Lksot0JV
+	TGEpgrZkLXIKyKiGDo0ybm78dihuBzl446Nez4AniurSPnAKo2jyrHGiQhfNYdj73dvIIleCBWW
+	FouEclxUzFPF+4OB2GDXfwi+gDk6cXGA=
+X-Gm-Gg: ASbGncsoGlEKEkY6LcMFWVdtPomtNdn0DVZpQ+wC/dtO6EqHJ5xzMOmVFUwFuU9w68j
+	UoOTUjHG+rdkbTNgT7lvb6u5XsdoP1Shg2SCostEbdCr+XTQ85w0nYNcAD6KUsVFlaQ0b/nYlEm
+	MYz9BsMaxr+GaSvt2+OHRZ/R2Z40vPcZVPtqum5HYn4Jh7TYo/PIOW96EWWLgDMr4UDyPaUiHjs
+	iQ670U=
+X-Google-Smtp-Source: AGHT+IEuCQ6k8cNE+8sXidC6dTieVXzmZcwZNDvgdItA/Y3JbANb5UvxKWSYjqg/c7kzUg+S2Z0QM3uU5S2Y9I5QyhQ=
+X-Received: by 2002:a17:902:c40c:b0:243:589d:148e with SMTP id
+ d9443c01a7336-245fec1d6e3mr18972085ad.5.1755783210910; Thu, 21 Aug 2025
+ 06:33:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250821025957.22546-1-rakuram.e96@gmail.com> <20250821025957.22546-2-rakuram.e96@gmail.com>
+ <0254008f-1cdf-480f-ad6f-8f002b35d754@infradead.org>
+In-Reply-To: <0254008f-1cdf-480f-ad6f-8f002b35d754@infradead.org>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 21 Aug 2025 09:33:19 -0400
+X-Gm-Features: Ac12FXzO09gUoAEeRmxWArYXJpVeci5zNo9-7QWsRLPt3DMdtEe9qdrBP4alMe4
+Message-ID: <CADnq5_NdRc+c18V7FuL+U4=C3zUUoAgP15rzu1wZ-U9hNzjcXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] docs: gpu: amdgpu: Fix spelling in amdgpu documentation
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Rakuram Eswaran <rakuram.e96@gmail.com>, linux-doc@vger.kernel.org, 
+	alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com, 
+	corbet@lwn.net, tzimmermann@suse.de, mripard@kernel.org, 
+	maarten.lankhorst@linux.intel.com, simona@ffwll.ch, siqueira@igalia.com, 
+	harry.wentland@amd.com, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add tests for newly added KVM_{GET,SET}_ONE_REG support for x86. Verify the
-new ioctls can read and write real MSRs and synthetic MSRs.
+Applied.  Thanks!
 
-Signed-off-by: Chao Gao <chao.gao@intel.com>
----
- tools/arch/x86/include/uapi/asm/kvm.h         | 24 +++++++++++++
- tools/testing/selftests/kvm/Makefile.kvm      |  1 +
- .../selftests/kvm/x86/get_set_one_reg.c       | 35 +++++++++++++++++++
- 3 files changed, 60 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86/get_set_one_reg.c
+Alex
 
-diff --git a/tools/arch/x86/include/uapi/asm/kvm.h b/tools/arch/x86/include/uapi/asm/kvm.h
-index 6f3499507c5e..590762820a61 100644
---- a/tools/arch/x86/include/uapi/asm/kvm.h
-+++ b/tools/arch/x86/include/uapi/asm/kvm.h
-@@ -411,6 +411,30 @@ struct kvm_xcrs {
- 	__u64 padding[16];
- };
- 
-+#define KVM_X86_REG_TYPE_MSR		2
-+#define KVM_X86_REG_TYPE_SYNTHETIC_MSR	3
-+
-+#define KVM_X86_REG_TYPE_SIZE(type)						\
-+({										\
-+	__u64 type_size = (__u64)type << 32;					\
-+										\
-+	type_size |= type == KVM_X86_REG_TYPE_MSR ? KVM_REG_SIZE_U64 :		\
-+		     type == KVM_X86_REG_TYPE_SYNTHETIC_MSR ? KVM_REG_SIZE_U64 :\
-+		     0;								\
-+	type_size;								\
-+})
-+
-+#define KVM_X86_REG_ENCODE(type, index)				\
-+	(KVM_REG_X86 | KVM_X86_REG_TYPE_SIZE(type) | index)
-+
-+#define KVM_X86_REG_MSR(index)					\
-+	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_MSR, index)
-+#define KVM_X86_REG_SYNTHETIC_MSR(index)			\
-+	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_SYNTHETIC_MSR, index)
-+
-+/* KVM synthetic MSR index staring from 0 */
-+#define KVM_SYNTHETIC_GUEST_SSP 0
-+
- #define KVM_SYNC_X86_REGS      (1UL << 0)
- #define KVM_SYNC_X86_SREGS     (1UL << 1)
- #define KVM_SYNC_X86_EVENTS    (1UL << 2)
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index f6fe7a07a0a2..9a375d5faf1c 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -136,6 +136,7 @@ TEST_GEN_PROGS_x86 += x86/max_vcpuid_cap_test
- TEST_GEN_PROGS_x86 += x86/triple_fault_event_test
- TEST_GEN_PROGS_x86 += x86/recalc_apic_map_test
- TEST_GEN_PROGS_x86 += x86/aperfmperf_test
-+TEST_GEN_PROGS_x86 += x86/get_set_one_reg
- TEST_GEN_PROGS_x86 += access_tracking_perf_test
- TEST_GEN_PROGS_x86 += coalesced_io_test
- TEST_GEN_PROGS_x86 += dirty_log_perf_test
-diff --git a/tools/testing/selftests/kvm/x86/get_set_one_reg.c b/tools/testing/selftests/kvm/x86/get_set_one_reg.c
-new file mode 100644
-index 000000000000..8b069155ddc7
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/get_set_one_reg.c
-@@ -0,0 +1,35 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <fcntl.h>
-+#include <stdint.h>
-+#include <sys/ioctl.h>
-+
-+#include "test_util.h"
-+#include "kvm_util.h"
-+#include "processor.h"
-+
-+int main(int argc, char *argv[])
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+	u64 data;
-+	int r;
-+
-+	TEST_REQUIRE(kvm_has_cap(KVM_CAP_ONE_REG));
-+
-+	vm = vm_create_with_one_vcpu(&vcpu, NULL);
-+
-+	TEST_ASSERT_EQ(__vcpu_get_reg(vcpu, KVM_X86_REG_MSR(MSR_EFER), &data), 0);
-+	TEST_ASSERT_EQ(__vcpu_set_reg(vcpu, KVM_X86_REG_MSR(MSR_EFER), data), 0);
-+
-+	if (kvm_cpu_has(X86_FEATURE_SHSTK)) {
-+		r = __vcpu_get_reg(vcpu, KVM_X86_REG_SYNTHETIC_MSR(KVM_SYNTHETIC_GUEST_SSP),
-+				   &data);
-+		TEST_ASSERT_EQ(r, 0);
-+		r = __vcpu_set_reg(vcpu, KVM_X86_REG_SYNTHETIC_MSR(KVM_SYNTHETIC_GUEST_SSP),
-+				   data);
-+		TEST_ASSERT_EQ(r, 0);
-+	}
-+
-+	kvm_vm_free(vm);
-+	return 0;
-+}
--- 
-2.47.3
-
+On Wed, Aug 20, 2025 at 11:13=E2=80=AFPM Randy Dunlap <rdunlap@infradead.or=
+g> wrote:
+>
+>
+>
+> On 8/20/25 7:59 PM, Rakuram Eswaran wrote:
+> > Fixed following typos reported by Codespell
+> >
+> > 1. propogated =3D=3D> propagated
+> >    aperatures =3D=3D> apertures
+> > In Documentation/gpu/amdgpu/debugfs.rst
+> >
+> > 2. parition =3D=3D> partition
+> > In Documentation/gpu/amdgpu/process-isolation.rst
+> >
+> > 3. conections =3D=3D> connections
+> > In Documentation/gpu/amdgpu/display/programming-model-dcn.rst
+> >
+> > In addition to above,
+> > Fixed wrong bit-partition naming in gpu/amdgpu/process-isolation.rst
+> > from "fourth" partition to "third" partition.
+> >
+> > Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+> > Suggested-by: Alexander Deucher <Alexander.Deucher@amd.com>
+> > Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
+>
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+>
+> Thanks.
+>
+> > ---
+> >  Documentation/gpu/amdgpu/debugfs.rst                       | 4 ++--
+> >  Documentation/gpu/amdgpu/display/programming-model-dcn.rst | 2 +-
+> >  Documentation/gpu/amdgpu/process-isolation.rst             | 2 +-
+> >  3 files changed, 4 insertions(+), 4 deletions(-)
+>
+>
+> --
+> ~Randy
 
