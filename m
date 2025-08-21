@@ -1,62 +1,59 @@
-Return-Path: <linux-kernel+bounces-779182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96F5B2F027
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:54:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADD7B2F02D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEDD55C4160
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:54:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD4A5C3909
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60E32DCBE6;
-	Thu, 21 Aug 2025 07:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE652D4B4E;
+	Thu, 21 Aug 2025 07:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aW1yJ47z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0p16hky"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3474B27CB0A;
-	Thu, 21 Aug 2025 07:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C513146A66;
+	Thu, 21 Aug 2025 07:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755762851; cv=none; b=akfdY2EbnyIVp9X+Sll/5LyEUZYgztOvIvUi5wtZCfQnkKdiS1V+qOvouung8stOEgN/RCmiz5N/Jn5/6twPJEfslT8SRoa8rkHoCMrDSgYN9njyjtJLBWvJVnDarLeVGnwJvywAu85zjgzBB3/lAj8Q4KzS4F0kHJfU60b0Vy0=
+	t=1755762926; cv=none; b=umlr7gDOPY4V3jVrpeU2/lFim9YjrwZzJXtHLGu69PGCmxsjF8Ov6SmoEzsXJmZPRsX4OOikVysiT6TweeDJSNzM4qNaPvCyA/rGQUfA/OLPwSWlNS79EeegiSMjNhuFSq8/8ps+bubme4A4TkAx3JVZELIRqQj6kzltF8XxXeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755762851; c=relaxed/simple;
-	bh=IPUilLuvpTBBH6sPGlI6idGeP+t2/3AiJ5bzLQuzi4w=;
+	s=arc-20240116; t=1755762926; c=relaxed/simple;
+	bh=pMS9gP/Ze9Ud12GLJb+Dmughd0PMFtQsq8Kbf0UAy34=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pywbDtF1C5nptXj5LoRx7y6bUniGvlHsiIRBOA3R29okwSVmG61/14hR97GCXi6cyFgft/xIJi6dPCpFD9hqeZaUv98bbGQpmHxewEVm4LYjgyMT0o0D85qov/WEu2qXxZjPWNJLZCAWDPKXMFo8zho5qnaJObZX1b+d+eKYnuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aW1yJ47z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A3D8C4CEED;
-	Thu, 21 Aug 2025 07:54:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YM8C51V4wlNvL++NwmiumY7JYrLCuCkDJiOO0LpaEkabJUIJG2iOxc4RW4gh5jlv++iv6TFaUhFkHRKCG4udoJznTmF4sMOmCD4pQXiKBVyCkbLan39LRUIODxTp3FbYXLfHmBmCWmLgQMh0S5Z26qf0cL4Voeyeo9QCyLmuB/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0p16hky; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4016CC4CEF4;
+	Thu, 21 Aug 2025 07:55:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755762850;
-	bh=IPUilLuvpTBBH6sPGlI6idGeP+t2/3AiJ5bzLQuzi4w=;
+	s=k20201202; t=1755762925;
+	bh=pMS9gP/Ze9Ud12GLJb+Dmughd0PMFtQsq8Kbf0UAy34=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aW1yJ47zmSPUHgdPC4EYbN1/1lCNd7kl9uuDMieVhuOo43n8Y8ivXbxNTbx+f4x8p
-	 DXu4NBjGWGCZLDxpjoSBAaQmx5Rkop/kE6zIpIkvhBdKSNloW4mZGc3ISRCBdzUX/U
-	 tQJATBa3WsYkw6cpQhAyzByLzczEWiY1VuepkbS/TTL16HsKKEwntMdRpCzAcfolpC
-	 TwuXXqqbVKX0Io2Aq7NULsbcJs73hT+s5G/AbRFPS/JvVpEHJrUnH6Rfyz98nCWhi1
-	 Y6k0Kf88lVBi249eXJVqcO+1Qr0N/SMZ9pDd2iiEbbqzOeR6hyJK6vuY6P8mefHbSS
-	 5yX5bpfUxoekQ==
-Date: Thu, 21 Aug 2025 09:54:08 +0200
+	b=d0p16hkyE+Eg6qGPHp5MPJ/nwO/uk5BcFw6OGLAEsEcv/Bv4EWX9MRb9P7N6fNBMR
+	 DglM0SXOJhJxSTDkEhIl3IGd965bdK2+Kk1trtPtTxoSlyDTGU5sXFkHR9yMt2zc31
+	 FzJ/VgWm/ZQdyupUbFl9zjXhNc5PQFUleXde9bpLBl8BL04Q5UyAogrJzrWbpc1BjG
+	 IzIVVxR1KRsNyWFuLHwjgV9q3tgNWpmos8K7Ulqh2maHXtr9pu+Iq+GXh0H7+YVjh5
+	 TngHLh/clLjA0x17o6wj5MSBM2wwUbrMIVAsaR+X1fVXeAGBCyju8TbLSBjyHFRnQG
+	 2U7Vwep2GWMqA==
+Date: Thu, 21 Aug 2025 09:55:23 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Icenowy Zheng <uwu@icenowy.me>, Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: reset: Scope the compatible to VO
- subsystem explicitly
-Message-ID: <20250821-bizarre-pigeon-of-unity-5a2d5d@kuoka>
-References: <20250820074245.16613-1-ziyao@disroot.org>
- <20250820074245.16613-2-ziyao@disroot.org>
+To: Yulin Lu <luyulin@eswincomputing.com>
+Cc: dlemoal@kernel.org, cassel@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-ide@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, vkoul@kernel.org, 
+	kishon@kernel.org, linux-phy@lists.infradead.org, ningyu@eswincomputing.com, 
+	zhengyu@eswincomputing.com, linmin@eswincomputing.com, huangyifeng@eswincomputing.com, 
+	fenglin@eswincomputing.com, lianghujun@eswincomputing.com
+Subject: Re: [PATCH v2 2/3] dt-bindings: phy: eswin: Document for EIC7700 SoC
+ SATA PHY
+Message-ID: <20250821-precise-delightful-lyrebird-6b4275@kuoka>
+References: <20250819134722.220-1-luyulin@eswincomputing.com>
+ <20250820092758.803-1-luyulin@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,69 +62,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250820074245.16613-2-ziyao@disroot.org>
+In-Reply-To: <20250820092758.803-1-luyulin@eswincomputing.com>
 
-On Wed, Aug 20, 2025 at 07:42:43AM +0000, Yao Zi wrote:
-> The reset controller driver for the TH1520 was using the generic
-> compatible string "thead,th1520-reset". However, the controller
-> described by this compatible only manages the resets for the Video
-> Output (VO) subsystem.
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
+On Wed, Aug 20, 2025 at 05:27:58PM +0800, Yulin Lu wrote:
+> Add document for the SATA phy on the EIC7700 SoC platform,
+> describing its usage.
 > 
-> Using a generic compatible is confusing as it implies control over all
-> reset units on the SoC. This could lead to conflicts if support for
+> Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
 
-No, it won't lead to conflicts. Stop making up reasons.
-
-> other reset controllers on the TH1520 is added in the future like AP.
-> 
-> Let's introduce a new compatible string, "thead,th1520-reset-vo", to
-> explicitly scope the controller to VO-subsystem. The old one is marked
-> as deprecated.
-> 
-> Fixes: 30e7573babdc ("dt-bindings: reset: Add T-HEAD TH1520 SoC Reset Controller")
-> Cc: stable@vger.kernel.org
-
-Especially for backporting... Describe the actual bug being fixed here.
-
-> Reported-by: Icenowy Zheng <uwu@icenowy.me>
-> Co-developed-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> ---
->  .../bindings/reset/thead,th1520-reset.yaml      | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml b/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
-> index f2e91d0add7a..3930475dcc04 100644
-> --- a/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
-> +++ b/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
-> @@ -15,8 +15,11 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - thead,th1520-reset
-> +    oneOf:
-> +      - enum:
-> +          - thead,th1520-reset-vo
-> +      - const: thead,th1520-reset
-> +        deprecated: true
-
-This you can do, but none of this is getting to backports and your DTS
-is a NAK. This basically means that this is kind of pointless.
-
-Compatibles do not have particular meanings, so entire explanation that
-it implies something is not true. We have been here, this was discussed
-for other SoCs and you were told in v1 - don't do that.
-
-You are stuck with the old compatible. Is here an issue to fix? No.
+You already sent this patch separately (!!!) and received review.
 
 Best regards,
 Krzysztof
