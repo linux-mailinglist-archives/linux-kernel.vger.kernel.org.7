@@ -1,90 +1,126 @@
-Return-Path: <linux-kernel+bounces-779297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96394B2F254
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:37:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BB4B2F24E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6F041CE1890
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:30:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B3AA17FD15
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B6C2EB5C0;
-	Thu, 21 Aug 2025 08:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C602EBB85;
+	Thu, 21 Aug 2025 08:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2pS1jnG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YvpjYnCD"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C3F2E88AB;
-	Thu, 21 Aug 2025 08:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048B92EB861;
+	Thu, 21 Aug 2025 08:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755764881; cv=none; b=JhAqDQTUIESRr4ySjrNUeWAk11Opb5sOmb2TVU4dIuxL1mNXeyhKqsG349nxQfOJ0oMsK149CunbJRevvc7Kh7WdZp4gNy9h6VsxN2wfGPwEP3kkuTXFNFGb2NQhupz7Q7pQYrrL8UvCYqdNUTS64TRE0fUMotsz+xqMZKas3Pg=
+	t=1755764940; cv=none; b=H+4z6cS9VH12z+bYsTY6zJKKB+OynKKFhwKptuPCbbTMYTDMvmj9JWVBRuifOoil1c4R9Hx0/qnaZW6dtNY96vcvhjfwdydQgX7jY6TWvcY0KFg7xYAxhj/XoETH9hCmvV1jTYFpTLowyQHiEK0RYerkIKeX11Yin9raoGsWJys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755764881; c=relaxed/simple;
-	bh=KmPFflUGGHgNKUpzXR9Rv2GkGs+cOyXwfBnp1iZo0jU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DrwV2Ed49wFP8emhxv7w7gE5SMugqMN3wEPipCJI8fjAYs3i0Imt7H2Zv03n6OihLAiLpg1rl/zB29VJJ145XuCG/EDmiC/8jsup40xE/hmUKyUk2RX//FM6ksEAKHInn4Ncw6WdJpt2387h+c2DYzuEdShz5gZ7VknagNLAeb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2pS1jnG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6040C4CEEB;
-	Thu, 21 Aug 2025 08:27:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755764880;
-	bh=KmPFflUGGHgNKUpzXR9Rv2GkGs+cOyXwfBnp1iZo0jU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q2pS1jnGDI+htkKLDZiAuH5UtRY6PffoEozEGAxd+sMIgwzmFnmJ6Ye/CJjMkM+p+
-	 kB4/VKWUY3Er5I1ULKrWfFMqmTBDAaMSrMIEkiHcwbUInT7u4o6IjK1ZF47/b1mBnz
-	 8CBH9hINM2tHSUjdJKvVS2w4zhlGSkG4U6xXtZD/FMKfwkFa915L4q3VosFSb9q6t5
-	 CxD81GyEcZ2eASxbVA1ozGsQZeSlQhY5+ZicuhFDvbtyq0fUGLcy1VJicTLdHC5wyi
-	 g5RUDz97h8V2qp6+Hz2Mjir8OeJKPoJUJ5wVhmQmL6KFMRqiaG57ghWIaMrZ42Dc0r
-	 rksUmxH+dJ7Lw==
-From: Christian Brauner <brauner@kernel.org>
-To: Guopeng Zhang <zhangguopeng@kylinos.cn>
-Cc: Christian Brauner <brauner@kernel.org>,
-	festevam@denx.de,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: fix indentation style
-Date: Thu, 21 Aug 2025 10:27:50 +0200
-Message-ID: <20250821-rangliste-gattung-31eb0838c6a1@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250820133424.1667467-1-zhangguopeng@kylinos.cn>
-References: <20250820133424.1667467-1-zhangguopeng@kylinos.cn>
+	s=arc-20240116; t=1755764940; c=relaxed/simple;
+	bh=jH1hutM5AnkBX/bpIXkHgthMbiBJU2SdnIuhANxvH+8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rLHBuFXzEJy3bw33w5FVVwyPnEDL+pL8e8fS9c7fkPoWKjv5mbPMTLLCcw7F+fNwX8R2LcCZXrvmpLZzJyvPr9MoCkW5kvrWRiNqHjaarrraCRpQSXjER+rN0jac36oVZ2NEZAiO9nYws4Bs/MeoxKB7viiEm4rREDxwt65zVDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YvpjYnCD; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1755764939; x=1787300939;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jH1hutM5AnkBX/bpIXkHgthMbiBJU2SdnIuhANxvH+8=;
+  b=YvpjYnCDr7EKBMHLceWuIg7bgH6Ymkwp31v8Wtd8qFttNqLZd+L74EN3
+   0Loiclo2eL5LmYSAqXOrjCxwROX8d5JVVMiB4BZ1fhEnnFR3S6cNM+cQz
+   tkF3+YIZgl8cypROzO88RaJY6HsbJA2vrakYriIFE2NDWR1Rfe1dx66Dz
+   gw1ElrS4NxG71Cppn1oSdHlTVJwwlMPdmzNjoWBIAUh0M40heY7H8Im8v
+   AJ2ocxmGZoBeeQtabhEVnFOykodKMJiZShAswVyMGYFu2hj9xSWc1x6yX
+   dC7uid6m8pRx9gWB17nnm8QLox9TyNrKn1rjAjxqHQHPAaiT0SA1FdY4F
+   g==;
+X-CSE-ConnectionGUID: IVCZus4uRhWp81WseQpWbA==
+X-CSE-MsgGUID: gIp++s86RLyLDUfl1zDHMA==
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="276868160"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Aug 2025 01:28:52 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 21 Aug 2025 01:28:39 -0700
+Received: from che-ll-i17164.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Thu, 21 Aug 2025 01:28:36 -0700
+From: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Parthiban
+ Veerasooran" <parthiban.veerasooran@microchip.com>
+Subject: [PATCH net] microchip: lan865x: fix missing ndo_eth_ioctl handler to support PHY ioctl
+Date: Thu, 21 Aug 2025 13:58:32 +0530
+Message-ID: <20250821082832.62943-1-parthiban.veerasooran@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=876; i=brauner@kernel.org; h=from:subject:message-id; bh=KmPFflUGGHgNKUpzXR9Rv2GkGs+cOyXwfBnp1iZo0jU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQsu9ETvu7EJ3u5EofKma+PhKlcYHzrslPnI8/2mMZt0 ifsGxPPdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExEYj3DH34f0YQLe/fM9Htw wiW5bvZD0YnlBdYhmzfdmjeHl3ct+xyG/xkZ0hZa2fsj8hNPRia13ym4vJR9hR6je5KSr/mu96c 5eAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, 20 Aug 2025 21:34:24 +0800, Guopeng Zhang wrote:
-> Replace 8 leading spaces with a tab to follow kernel coding style.
-> 
-> 
+The LAN865x Ethernet driver is missing an .ndo_eth_ioctl implementation,
+which is required to handle standard MII ioctl commands such as
+SIOCGMIIREG and SIOCSMIIREG. These commands are used by userspace tools
+(e.g., ethtool, mii-tool) to access and configure PHY registers.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+This patch adds the lan865x_eth_ioctl() function to pass ioctl calls to
+the PHY layer via phy_mii_ioctl() when the interface is up.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Without this handler, MII ioctl operations return -EINVAL, breaking PHY
+diagnostics and configuration from userspace.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Fixes: 5cd2340cb6a3 ("microchip: lan865x: add driver support for Microchip's LAN865X MAC-PHY")
+Signed-off-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+---
+ drivers/net/ethernet/microchip/lan865x/lan865x.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+diff --git a/drivers/net/ethernet/microchip/lan865x/lan865x.c b/drivers/net/ethernet/microchip/lan865x/lan865x.c
+index dd436bdff0f8..09e6a0406350 100644
+--- a/drivers/net/ethernet/microchip/lan865x/lan865x.c
++++ b/drivers/net/ethernet/microchip/lan865x/lan865x.c
+@@ -314,12 +314,22 @@ static int lan865x_net_open(struct net_device *netdev)
+ 	return 0;
+ }
+ 
++static int lan865x_eth_ioctl(struct net_device *netdev, struct ifreq *rq,
++			     int cmd)
++{
++	if (!netif_running(netdev))
++		return -EINVAL;
++
++	return phy_mii_ioctl(netdev->phydev, rq, cmd);
++}
++
+ static const struct net_device_ops lan865x_netdev_ops = {
+ 	.ndo_open		= lan865x_net_open,
+ 	.ndo_stop		= lan865x_net_close,
+ 	.ndo_start_xmit		= lan865x_send_packet,
+ 	.ndo_set_rx_mode	= lan865x_set_multicast_list,
+ 	.ndo_set_mac_address	= lan865x_set_mac_address,
++	.ndo_eth_ioctl          = lan865x_eth_ioctl,
+ };
+ 
+ static int lan865x_probe(struct spi_device *spi)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+base-commit: 62a2b3502573091dc5de3f9acd9e47f4b5aac9a1
+-- 
+2.34.1
 
-[1/1] fs: fix indentation style
-      https://git.kernel.org/vfs/vfs/c/41a86f62424a
 
