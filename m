@@ -1,71 +1,112 @@
-Return-Path: <linux-kernel+bounces-780430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8156BB301CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:14:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40876B301D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D9A2AC6EAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:14:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 121C07AF386
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2581C343D82;
-	Thu, 21 Aug 2025 18:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC9525B30E;
+	Thu, 21 Aug 2025 18:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="d/SgxerG"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="HHzuGsNT"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A98343D6C;
-	Thu, 21 Aug 2025 18:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EBE3C33;
+	Thu, 21 Aug 2025 18:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755800088; cv=none; b=uO4pKoqaHBUS1joUBUcF8D+azf2dAWYtjgJEW1boMQUMJoTgqj7S7gCX0Q3W9wowY7Z4XOFc7aokZ6ZyEmT8svGO+qBKYVbyOUhC/KnxiOQXUNmyQxwW1M5+HubgPrc9yjc6q+e+wBR1Ug4i9zmp07pRJQwt4uF0MiPH9CgjRQg=
+	t=1755800157; cv=none; b=mCAyEi3KTyxj+uZ8rPd+CqOjgHLt0ykcUl8vO5UjXQQNvzOjaGV1fx4UNMAtqhot9f34LRK2Cj0mvSxf54x65SyCL+13kKCQtvp0wDeIclyneLW08eX8DbV4KthhOWs6+rWFNTfZeF/21LKieFRRgiEs5IgLbxKG2SkR683h0Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755800088; c=relaxed/simple;
-	bh=BlIhmFIuN848Eppi5VFP1f1vfeBq1TZ13he0llJdM1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YkhJoby/22yDtmB3Z61yeZSz/mlOHtJrtqIPBml3uYNpsv9ttkjKonahnNUAeWi/QxKWV4s02TuqAey2CTqmGq1Ubkcq8D487x+1GilR51fqO8lhAdRTUgcasfXxIbz04dn3hzKxmfxq8NWW+gFjET2fWGTq26/PEkNdW9T9HG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=d/SgxerG; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1755800157; c=relaxed/simple;
+	bh=J72lOg1jhfsoirN+WNSxylyB1lH5ze5gjHkKjCx4rtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YmI3Cda6DsOtNy1by+nGiSB8hV5GSaOINlnwebRLKV8HbZwlDKO0T131Ovi58D9YIKhtx0Mi823NshCJKlVW7bO+rXV8DBogDytwwmPGhuxcNxsk/LXYq5vWg4+HQn3mfKTaZXSrRmwJtWdRm40fsmCaXk23zLYkGogs1j+tmzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=HHzuGsNT; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BlIhmFIuN848Eppi5VFP1f1vfeBq1TZ13he0llJdM1o=; b=d/SgxerGGc94AjqYIldpG8RsXK
-	a4m2D298ZSsNAnmVcNH4AsDI/3q8UimblcNio4qzXfMiMaVkXLA+HsgWvqYvNun6dGOtiyuNoORUX
-	vvMaDlvw+DNyXr/gHC3y2H7KB7Rt3wHE+TjyglljHt1Ik9R7eMNfQdPHeE7jjguQd0AXmmbSqrFqM
-	1dykSpB5v69ft2AGwcEZ4pH7A6ACEvAsryxI/qqENc/XE09O7hgQWFNtB5gNk+EZpQ5LiuEmv4jvt
-	sz+4LTZt5Zc2Vijw4YNJjvjbD3LsTj7gyXDPXAQ8g261HGhHkSzm3L7BnLdqhKLO/RImuQnz3SPcX
-	sub0Vdqg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1up9oB-0000000HADP-3NTT;
-	Thu, 21 Aug 2025 18:14:43 +0000
-Date: Thu, 21 Aug 2025 19:14:43 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Pavan Bobba <opensource206@gmail.com>
-Cc: shuah@kernel.org, cvam0000@gmail.com, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kselftests:grammer correction
-Message-ID: <20250821181443.GB39973@ZenIV>
-References: <20250820125836.14464-1-opensource206@gmail.com>
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=Pi+yQYK1CHO97Sg/9EQVKEHFHoaJqzqRipLawqydhEE=; b=HHzuGsNTsPcUSlUgQQj0JpYlA2
+	H2D7R6nGQZbnbrrICfqhma6isVrlwBQMTQ1xZy73xHmrakI0ghNh9DGQyHss1jke2fQalRlGwJUew
+	s8E+I13svIobYvFpwTTagNTxpSF0BAd7NDY2KbgRQbL2bDWEwLAPWfDPATek9GJnjL0B7vWwmOEzC
+	ieRCkrkDhWMtqq+hhxtqFAMBkZxIgpzkwFt7kpA4fyQ/iEqhJjcbTW7qWNlPVnrvjcQF5gNChny4L
+	p0XlVo3qSd8SjdYdybqzP/u5Sbo99EbqI5Gi6DIL+UebWriQR4f7MjgGQ84q9XI1QccexCrNnoLJN
+	1Gu7UbSw==;
+Date: Thu, 21 Aug 2025 20:15:44 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Jerry Lv <Jerry.Lv@axis.com>, Pali
+ =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+ stable@vger.kernel.org, kernel@pyra-handheld.com
+Subject: Re: [PATCH] power: supply: bq27xxx: fix error return in case of no
+ bq27000 hdq battery
+Message-ID: <20250821201544.047e54e9@akair>
+In-Reply-To: <bc405a6f782792dc41e01f9ddf9eadca3589fcdc.1753101969.git.hns@goldelico.com>
+References: <bc405a6f782792dc41e01f9ddf9eadca3589fcdc.1753101969.git.hns@goldelico.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820125836.14464-1-opensource206@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 20, 2025 at 06:28:36PM +0530, Pavan Bobba wrote:
-> correct a minor grammer mistake
+Hi,
 
-Demonstrations of the Muphry's law are amusing, but this is the the
-6th copy (all with unique Message-ID, at that) all with the same patch.
-You might at least vary the misspelling...
+Am Mon, 21 Jul 2025 14:46:09 +0200
+schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
+
+> Since commit
+> 
+> commit f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when busy")
+> 
+> the console log of some devices with hdq but no bq27000 battery
+> (like the Pandaboard) is flooded with messages like:
+> 
+> [   34.247833] power_supply bq27000-battery: driver failed to report 'status' property: -1
+> 
+> as soon as user-space is finding a /sys entry and trying to read the
+> "status" property.
+> 
+> It turns out that the offending commit changes the logic to now return the
+> value of cache.flags if it is <0. This is likely under the assumption that
+> it is an error number. In normal errors from bq27xxx_read() this is indeed
+> the case.
+> 
+> But there is special code to detect if no bq27000 is installed or accessible
+> through hdq/1wire and wants to report this. In that case, the cache.flags
+> are set (historically) to constant -1 which did make reading properties
+> return -ENODEV. So everything appeared to be fine before the return value was
+> fixed. Now the -1 is returned as -ENOPERM instead of -ENODEV, triggering the
+> error condition in power_supply_format_property() which then floods the
+> console log.
+> 
+> So we change the detection of missing bq27000 battery to simply set
+> 
+> 	cache.flags = -ENODEV
+> 
+> instead of -1.
+> 
+This all is a bit inconsistent, the offending commit makes it worse. 
+Normally devices appear only in /sys if they exist. Regarding stuff in
+/sys/class/power_supply, input power supplies might be there or not,
+but there you can argument that the entry in /sys/class/power_supply
+only means that there is a connector for connecting a supply.
+But having the battery entry everywhere looks like waste. If would
+expect the existence of a battery bay in the device where the common
+battery is one with a bq27xxx.
+
+Regards,
+Andreas
 
