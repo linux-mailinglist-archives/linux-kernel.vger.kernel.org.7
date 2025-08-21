@@ -1,136 +1,183 @@
-Return-Path: <linux-kernel+bounces-779568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5BDEB2F5BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:57:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC16B2F5C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 116A26020C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:57:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85FC8AA541C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DB230E0E3;
-	Thu, 21 Aug 2025 10:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128E730AAC4;
+	Thu, 21 Aug 2025 10:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jB1IOAov"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ub132h5w"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22EA30DD1B;
-	Thu, 21 Aug 2025 10:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54AD30AABC
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755773817; cv=none; b=Roa+IPQ+6bKUSfbPLlhWHz9Mtu9UtUFAk65I1mMIUAFJ1tlLAZGmyLZfio4qF+vEoJs/shHRP5UIRarDWyK+8LuaUkpwofKgG2jgIHFx6G2MKFZaJpQfJ6i2KZIEPqKGjcxkHfomtotZfPWFuHvHkCslftk74M4KHzWfS0dMqYc=
+	t=1755773829; cv=none; b=ucpKZwxP66/al6JwqB5Z3MC4ijlM4rxExZ74kjK+pVIoe2S37W0Xs6KuwiuNVKXYBdm+nkCrdlbI1Dr4l28/Dp7jD/W+nl6sEeR6FDA0UvLU1cPmabTNBT8Ib00iAtw3lY7Nf+DTONlnLUOYd7pzXDvnNYa9H8ElK1msxxEJ6Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755773817; c=relaxed/simple;
-	bh=iaHOGptznAcaiLxedhi+fdj7JOV3h3QH9q5o9VE+Lqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V3UkoQNlZ5cc1gG2c+2JF5wMj5AyKYSu2lJj1oUfGBKJFIiX4VndmmXPMqFVzTaxSKzZMWe+Te5CMWkCoF5nYY9ds5+mNdYeJWAMACr4mgMxFsEcU6oFxjPTua9QF30W7Py99fgCHs21hgpkxHUkuAEbz8BX/wsc84k3VQnU9ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jB1IOAov; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb78fb04cso114106666b.1;
-        Thu, 21 Aug 2025 03:56:55 -0700 (PDT)
+	s=arc-20240116; t=1755773829; c=relaxed/simple;
+	bh=GKkrz4iTgMP3imRBkVGMq2ugMtvxmgGCSinBgcoSxj0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=opHfZhnx8UQO01OK7e78nUjRhg95/d7XFPfvZXeB0fb1FO89tZzvnk0YwFhotKOqW6YSZCgQjzATCqio0goCGOXu4nLYQI18Ju/55mhekq9jTdpUbPF4jzgqx3pvISnACfqzxJQ7wIqpcy3JEhjxdXRW00mCtfK6gZOQKqnDBrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ub132h5w; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-244581c3b43so7444955ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 03:57:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755773814; x=1756378614; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vjhHptinaxWWJO0WWsGKsxwtJOMywvKfSlqr/lw9SPs=;
-        b=jB1IOAovM9B4S5bZkecUdZSUcwdxdRQHqL32VKeZSOSNQZixVzsAqG8TcpHrR3MM73
-         hQHSA05zUUQoJfjjXCuP64og44hjawxalyCT90b3Id6crW1MFsWd7xfQsF0uc5gfPLcl
-         FBmEmhbkh2Tz9NATh4f0R45lRhuOITDD9O+2fMMmtfjXUS1yiLYFX7Fjr6G0aS9Popb3
-         bchx7EwfXRNosZx6WqwgKvZTUaQN4yw4FMpa/epy/TecU3rjpPUEhsPyWbbPJ+u+NwBM
-         rX/qtQmls6bNt8s3tQzvuUS4NRbvecgsUnPzACY6lQ6UhByC4xoGUO9FfMSMtXsEJAr1
-         tbVA==
+        d=linaro.org; s=google; t=1755773826; x=1756378626; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BXsydsgT+UVZBwSeBHcvaKFCB1p8eK/mNY2QWJNzsz4=;
+        b=Ub132h5wLZljsceEqWrqYBoiEsksJnjp9idY//OntJWF+Y3Fbv84Jdwr3ZS2yi8gQb
+         OvTgeTa/xhsP1m7hJIWI6HsUkqPEjangqFFXiC/hXNHja9hrkTXW0O4Gw+dBh+3WVh33
+         VsIlcN2xx9eE+6xuldQxj+A/SYtFJVe2JMOYgNEEJueTSEgKmmj4mJkDsgZWQlhcn2LG
+         JReW2S8/fJtUeCIcVB+V7W2ojXF39AUJdX+U5qMxckgPyaeKT3Cbrq9b8ChozbKMlbOL
+         x2I91SFfFevszOZlu5In52jME6bCM+2XJfnGWxVE1XIq1m/RRquPa1XZ7GA58r/vIKdy
+         f4GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755773814; x=1756378614;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vjhHptinaxWWJO0WWsGKsxwtJOMywvKfSlqr/lw9SPs=;
-        b=L6uNFsfslnehbzIyQ82Cf5nSrjSV0ruNTjLEpAd2fiDjncaWtQWqZ7Y1CyMcZD46nS
-         NNvjgR6c33QZuBaNV/QtX5s5ZEae9geuQmMeYJIxuV7HuToA26UD7nhSr1kOAENnMz/C
-         paf7pNObJCuu+fCWD+kYYYZqSj2qIpChd5tJbFogJzEXqPcZNCLuMHQF1K3ez1pecFUS
-         VllBiLYg9fpBdZIo2fobd4KLTaBD+Tvp20KfFYlzA+cbNLvWuJH0xhpdFwr9L0IoUepD
-         NY3UXR8o1miBy193nebaG1+xzlX0b/RzQYX/zRzkW5i4DpP7ks9DRwTVNUExGS0flgis
-         T2IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqfHQbvxuhzxzu2wAQidCdi93s30368078YSthcoQYhbrmUpFOHcY/GUlqQNJgVhkgb1zQYnG6NU5HuClF@vger.kernel.org, AJvYcCXpWWQRc+0XysxS7Laenxa4YIs5KL36aBqc9W6BIOiEBf8xQxh4VN1JUPRv1MfN1gp62XE+kDSIaxz3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQfqR/Yke9cip/xvVvwbHg2+nW63nF33PzA2unZATR1f2Qi8pG
-	pLbeZXKs63lIzkQGqFGd8QvpZOgHBEclFkfStX9XKmymkhWbV+xNqMq1
-X-Gm-Gg: ASbGncvTiosPiBF1urv2ppPQGxmZngL/M7sGNDNfqBrgXkcCaM85WF4/Ul161cpim9S
-	XCZHUp6htd76+q00o2dE0SERsaJmyyAzzGTAjjhmiV08lUCYk0dD9/KBKhhGsJ1bHVjdGVnLZ3S
-	UjxBS0RdXz1h8rrx0A8AemlbeKE0JxQ27PlfnJyD/nsV1GmsCLL2xrGWriEbEBQB7WFjNfNQ6rq
-	BjNLHjZxPvpPm1yESVJVwq3bsZ7G57uXb6wYq820PgPXyud0wbSHDLDDdHIt29ZgPQcOCt6fwz0
-	trvStjXpZgp95SnAS/5iqXbirZRBtEj7MQRg0qZkPgqqykT+1fam8MH7Y20gzew6DxlMSAXFBGD
-	AoUMnaq/9dXNXMStP6nlkLKVBHtd1U3jGbXqaF5uMg21YsfOSV8uv
-X-Google-Smtp-Source: AGHT+IFh9B4wg+Jo7EUBE7+NvFrwXNN/AeIRkW8yHoL/KgrlM8+Hu4y+F1NmIGfgsp2QuK8PovS6Lg==
-X-Received: by 2002:a17:907:7fa4:b0:afd:eb4f:d5cf with SMTP id a640c23a62f3a-afe07d4c63amr191037866b.63.1755773814070;
-        Thu, 21 Aug 2025 03:56:54 -0700 (PDT)
-Received: from DESKTOP-TTOGB9M.localdomain ([92.120.5.3])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-afded4790bbsm373602866b.56.2025.08.21.03.56.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 03:56:53 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] arm64: dts: imx8mp: make 'dsp' node depend on 'aips5'
-Date: Thu, 21 Aug 2025 13:56:34 +0300
-Message-ID: <20250821105634.1893-5-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250821105634.1893-1-laurentiumihalcea111@gmail.com>
-References: <20250821105634.1893-1-laurentiumihalcea111@gmail.com>
+        d=1e100.net; s=20230601; t=1755773826; x=1756378626;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BXsydsgT+UVZBwSeBHcvaKFCB1p8eK/mNY2QWJNzsz4=;
+        b=Tr12JfuyB/XhcxmEJLLzXHCKhL5RAq/Ft4FoJwyMkQRW2VYo2NDXPdAbEIVpxsR0Lp
+         qiSby7gyO//s7lH+Se2cefpa4JdBJHxovF4/dTwDinqfdh2uRpyQSerQxiOlJ8wPT4mV
+         zA6lMa+mWnz4+XFV7k73CgFyUNzMicH1Qbd2KVgcycpI9/qXKrNZkGnu7QVw5yhQzM6l
+         8u+IIFlO/vjM+e+tuf0awYySiRiz5s8ycfW2d1+VI6UzbJJ44bmi2CQ2b0G08GxSLwpN
+         3HYNYDfjboYMogxa2abgnV+4L9idg9IC4AI4caVbJSZTG7Fi2rxtFuvXgHnBg+Rz2jEK
+         9aCQ==
+X-Gm-Message-State: AOJu0Yz50ogK5+4y5HqrFAGq3yP9VN25KfI9GxBFFfDbbqujLdqT5ats
+	wiQO57Uoywlaxb5iVsd7AaWRDKrB3vTh59CTMkAN5IHMt0FcevQQr7Vz6HYyrIiJO7SMdzZQXYo
+	c/Fmkd4dGQirmrItbosKTKJbcAqcY1K9yOsrfg7IiE9vxDRGL/W8IXZE=
+X-Gm-Gg: ASbGncvXcW4Y1oDHfzujHz2jGppDX8kzhV6IN1Tq/fX0qjYTv7F2YjNFsfK8MBdTeUT
+	KwNGoa9ULJVVi1pcBq9BlWIZimxPLH/yNh8zc1HWjZ0NLbCr5zhuoBtb40WJpkH47UqJ60BuNxJ
+	mIkWzBZ8xzL2XessQ7hsBCQBcaVta72Cq8XPseD1upBegtyDKHNF1jULK7wSHKE9yJba8EZv7fe
+	uRI99WnbNKmXS3Pb1FefpSDgf51n8ij1cyrOQ==
+X-Google-Smtp-Source: AGHT+IFA9JWo/za7RvCQ3N8qUZg3xh+FzJDUXahmuU7qDSv65XS/0qQKuLW50NG6gdpjZGNKx/9zfTkOGpG5BzWpnok=
+X-Received: by 2002:a17:903:b50:b0:240:6fd0:25b7 with SMTP id
+ d9443c01a7336-245fede05e2mr27786565ad.38.1755773826455; Thu, 21 Aug 2025
+ 03:57:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 21 Aug 2025 16:26:55 +0530
+X-Gm-Features: Ac12FXwxxHIFgYcRpbKhe10fmgTcb2IwuVwDMdkZzGeMc7x8TUDiIvJE5OkVtOk
+Message-ID: <CA+G9fYthMAr3w=U_GmbLPgMb7xNdjbqmxYWF0iUEuJzxnw3dxg@mail.gmail.com>
+Subject: next-20250821 cacheflush.h:61:3: error: incompatible pointer types
+ passing 'memdesc_flags_t *' to parameter of type 'volatile unsigned long *' [-Werror,-Wincompatible-pointer-types]
+To: open list <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+The following build warnings / errors noticed with mips defconfig with
+clang-20 and gcc-12 toolchains.
 
-The DSP needs to access peripherals on AIPSTZ5 (to communicate with
-the AP using AUDIOMIX MU, for instance). To do so, the security-related
-registers of the bridge have to be configured before the DSP is started.
-Enforce a dependency on AIPSTZ5 by adding the 'access-controllers'
-property to the 'dsp' node.
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mp.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Build regression: next-20250821 cacheflush.h:61:3: error: incompatible
+pointer types passing 'memdesc_flags_t *' to parameter of type
+'volatile unsigned long *' [-Werror,-Wincompatible-pointer-types]
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index afcd8c785cfd..841d155685ee 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -2437,6 +2437,11 @@ dsp: dsp@3b6e8000 {
- 			firmware-name = "imx/dsp/hifi4.bin";
- 			resets = <&audio_blk_ctrl IMX8MP_AUDIOMIX_DSP_RUNSTALL>;
- 			reset-names = "runstall";
-+			access-controllers = <&aips5
-+				IMX8MP_AIPSTZ_HIFI4
-+				IMX8MP_AIPSTZ_MASTER
-+				(IMX8MP_AIPSTZ_MPL | IMX8MP_AIPSTZ_MTW | IMX8MP_AIPSTZ_MTR)
-+			>;
- 			status = "disabled";
- 		};
- 	};
--- 
-2.34.1
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+* mips, build
+  - clang-nightly-allnoconfig
+  - clang-nightly-defconfig
+  - clang-nightly-lkftconfig-hardening
+  - clang-nightly-lkftconfig-lto-full
+  - clang-nightly-lkftconfig-lto-thing
+  - clang-nightly-tinyconfig
+  - gcc-12-allnoconfig
+  - gcc-12-ath79_defconfig
+  - gcc-12-bcm47xx_defconfig
+  - gcc-12-bcm63xx_defconfig
+  - gcc-12-cavium_octeon_defconfig
+  - gcc-12-defconfig
+  - gcc-12-malta_defconfig
+  - gcc-12-rt305x_defconfig
+  - gcc-12-tinyconfig
+  - gcc-13-lkftconfig-hardening
+  - gcc-8-allnoconfig
+  - gcc-8-ath79_defconfig
+  - gcc-8-bcm47xx_defconfig
+  - gcc-8-bcm63xx_defconfig
+  - gcc-8-cavium_octeon_defconfig
+  - gcc-8-defconfig
+  - gcc-8-lkftconfig-hardening
+  - gcc-8-malta_defconfig
+  - gcc-8-rt305x_defconfig
+  - gcc-8-tinyconfig
+
+
+## Build error mips
+In file included from include/linux/cacheflush.h:5:
+arch/mips/include/asm/cacheflush.h:61:3: error: incompatible pointer
+types passing 'memdesc_flags_t *' to parameter of type 'volatile
+unsigned long *' [-Werror,-Wincompatible-pointer-types]
+   61 |                 folio_set_dcache_dirty(folio);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+arch/mips/include/asm/cacheflush.h:42:27: note: expanded from macro
+'folio_set_dcache_dirty'
+   42 |         set_bit(PG_dcache_dirty, &(folio)->flags)
+      |                                  ^~~~~~~~~~~~~~~
+arch/mips/include/asm/bitops.h:89:70: note: passing argument to
+parameter 'addr' here
+   89 | static inline void set_bit(unsigned long nr, volatile unsigned
+long *addr)
+      |                                                                      ^
+
+In file included from include/linux/cacheflush.h:5:
+arch/mips/include/asm/cacheflush.h:70:3: error: incompatible pointer
+types passing 'memdesc_flags_t *' to parameter of type 'volatile
+unsigned long *' [-Werror,-Wincompatible-pointer-types]
+   70 |                 folio_set_dcache_dirty(page_folio(page));
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+arch/mips/include/asm/cacheflush.h:42:27: note: expanded from macro
+'folio_set_dcache_dirty'
+   42 |         set_bit(PG_dcache_dirty, &(folio)->flags)
+      |                                  ^~~~~~~~~~~~~~~
+arch/mips/include/asm/bitops.h:89:70: note: passing argument to
+parameter 'addr' here
+   89 | static inline void set_bit(unsigned long nr, volatile unsigned
+long *addr)
+      |                                                                      ^
+2 errors generated.
+
+## Source
+* Kernel version: 6.17.0-rc2
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: next-20250821
+* Git commit: 7fa4d8dc380fbd81a9d702a855c50690c9c6442c
+* Architectures: mips
+* Toolchains: clang-20 gcc-12
+* Kconfigs: defconfig
+
+## Build
+* Build log: https://qa-reports.linaro.org/api/testruns/29616797/log_file/
+* Build details mips:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250821/build/clang-nightly-defconfig/
+* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/31aRYnoYJbpEW0zZyTGvO2w7OCn
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31aRYnoYJbpEW0zZyTGvO2w7OCn/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/31aRYnoYJbpEW0zZyTGvO2w7OCn/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
