@@ -1,117 +1,135 @@
-Return-Path: <linux-kernel+bounces-780774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA65CB30938
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:32:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5A5B3093F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88D9D1D03DAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:32:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF99716FB24
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16022283C9E;
-	Thu, 21 Aug 2025 22:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A22B2E11C9;
+	Thu, 21 Aug 2025 22:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hjrNecBB"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J3D5ZTQv"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B537925C6EC
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA4325C6EC
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755815524; cv=none; b=gX4Kk8k8suW+XkqbjItT0UrZdeEodFokjA0VQP/gwfpEEDUQ55O7LNamhFGFx648sXxR6ywSEbrxCpMDttPr0vgrOe5PrjOyx+J/PuNo5vGGc7qluwn2kTMl23/4bE7+WZ/KHzJrB8gowJHd/BMkjhQoY1f/zFoS1g4DOGB+cfU=
+	t=1755815617; cv=none; b=ReC/OnhrBiFNgk6wcSBYOsmNHsM/CYtOgGsvC80/rv5iUCnI6qH7ovDghIR4kVCZMoPwnxWBi+BW1Q6ZhUrjVY42qRMavINdrjPVIwZXlA+TE5XePhKE7eIB82bb7NO69y8PWSEefoTebdIZh5Z9MS5mMZgDuW/MhPBC9M0m6Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755815524; c=relaxed/simple;
-	bh=FZXiEO9ymqRTyNyhHt9aCurnaIp5/0aDjY/zutzCCDQ=;
+	s=arc-20240116; t=1755815617; c=relaxed/simple;
+	bh=SnZKxn3/SMbjs4aOcSRemCcoa3UrhMIbtGqm7h9md8s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l2i+E4Kz7ECj0ykwdgYpU76mfrIS0q+Z5LPuI1usvuePDtCTb9Bys8NK1fwsoI/ZI9O9M/ye4MxP0JtV8IECByv2p7bBMyjEACa9wOKUhzSsh8tWxquOYZxHjst9Nl6BLnA8W9O29wBjqIif2vIa4mbvU97vWoBJa1rVqecIykY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hjrNecBB; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 21 Aug 2025 15:31:52 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755815520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oFEGbbG9vuv1+XubWypEttTMi6N6Jq7oeRJFb4KHVfY=;
-	b=hjrNecBBoBWsKWTqEpFNnL+iVXrbWpNYn9MFE86Hjj9HjdbamZiTL06lrzvtFamG9v4Wv4
-	rrSvmoyOB+TWNaAkyALNXOJrbgAhJE2dmzauDVGvPIYJRfdYheZw6vDXdaaOZycSw47tIB
-	7Yv9fNk7SuYSS+W/V0ht2XEqKPoiXHA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	James Houghton <jthoughton@google.com>
-Subject: Re: [RFC PATCH 05/16] KVM: arm64: Introduce "struct kvm_page_fault"
- for tracking abort state
-Message-ID: <aKeeRynpwFTSONfm@linux.dev>
-References: <20250821210042.3451147-1-seanjc@google.com>
- <20250821210042.3451147-6-seanjc@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kt9adtVPpt9oHQDMaZlLL6BQ6PwjCnIBbSVbO1mvWj5VqJSUQIC4RckG1ckqD8pP6ME9VtezWeytuYmcTUuPPh+ezUroGzNPBJ5ZOfxZ3ZKLAb3QqBoy0c0J60KXnzGrPdd5QW4zjFa32fMrSmMrcKcNJXH+oEBtsPGJsk2S2F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J3D5ZTQv; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3e669190664so12181875ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:33:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755815615; x=1756420415; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SnZKxn3/SMbjs4aOcSRemCcoa3UrhMIbtGqm7h9md8s=;
+        b=J3D5ZTQv8fb6X0YUBgcYcQASaIY13cXvtB30Opm6bQD8V59DGv5wD1QqXbZ4SLdvTa
+         PeWoCR3unJScqdN6+zmE4tDbDyMXuzu0QNZQWmkxaK1k4Mj6zCLDSrxD4DDRLs2eIv3Y
+         qqPz8UdFNEflfuFFkfRkIMb6S543crBj+Ft4Ha2eefkPZJ7bJknVgOfYktl7o/3+Oh86
+         /kd3vwSKZiItMC8iYSqu8hgigioY1kLNW4m4LjI0a+H5ygvIUhMDPKDajhRaCcSTMq5V
+         TxDwyW/Vzk2at3zL9hnZzs95vsaiVgqNn2D+XEs0bhw82aFZC2PqhYP9yfxEOKB5+OKX
+         ILyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755815615; x=1756420415;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SnZKxn3/SMbjs4aOcSRemCcoa3UrhMIbtGqm7h9md8s=;
+        b=C/x/5wIIxgm8ksfizScTqHg4+5WuV7FbLK8cgAvW/HscIDS5O8yk9z3Hrk2d7dsOyq
+         us65/G2kcJnzDiHoMeVQXzzp/pmlBKKxNMSx+pk3sr37kv4TjAQVmTE3/SDSkoJbAGnS
+         uFJsyZUMedYDiujY+bDhDdGlUksnLgkLI39zpM6PmgOaNnXVfgkufqircD1v2fg5M/HH
+         HqKVjmVf0qbFLAyA2hJ0JmKByxxvRGLxDXITmEm0Xi+vYgTd+8xaNTS0aboGSAVgaGcE
+         2fMqIPT4+yFH8JBhEApfNndBo5IudndqiXzHhe0eRPBWk1Dp0ElOfUWyG4LAw47pnOu8
+         d9Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCU0iPyFosfURPyGT/4ERLOzdfQaC9+OVz9GKmappi7PX2JsDpye66x8d0h7/2vCiRfxRYNtFFGxhE/fCsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycF72uCynlDhSactfyvjls9pBSLgRF61KUt7ceGnIFXla0hMYM
+	LIpRJMsDJq3la5gKGRcqQIEYlUb1KULTHLkizo3drdRYjkdUFhMjimUzw+stBVV2KQ==
+X-Gm-Gg: ASbGncs8iA9ORYIvZJF1mWLkMAd5GSYPz7U+1ZZubuWywFWivOHn66zkdkJhxRcD5QG
+	p8NmH8qCNfO4CIwE8EJYpJui0qi375ZlmwmuYUMB93Ez9DkfM5zi2+2aFOyFjD0WyAqHLAokObl
+	H5IB70nGjnej4JnznME84qhD+5QdVZxYyKw3oo5HIVBXoWPk+CcqHtf8KkoDBFVyNbt3i6JKJtp
+	aJbLUywH/JBwIInyQp+qGq54gpqmYhPeBEArNm/X4+d0HLnC1NTxH7ZGDNB6rbQnQ7e6fwBw1sX
+	WoIP+bnzepAFNjr9k3I91p+6XGWHhQ6d7VNf1fRrwqdpDpxXDzq3gyDSS+sCfspToRw/VPtHtu+
+	xVI4dupY6fh1/2LfCJOAtQuKdx+9UO6tRICrWYnWynuhiYOJaMCEnnFklDKzz/7QCQw==
+X-Google-Smtp-Source: AGHT+IEGzbbJOOBIn6TC2Tb+WI7UDDv9xLsePcm3E8uJTuF+vAY06pBGbAB+hdY1ZUNYILsPBsWGow==
+X-Received: by 2002:a92:cd88:0:b0:3e5:4816:8bca with SMTP id e9e14a558f8ab-3e921a5d7a2mr20072225ab.12.1755815615067;
+        Thu, 21 Aug 2025 15:33:35 -0700 (PDT)
+Received: from google.com (189.227.72.34.bc.googleusercontent.com. [34.72.227.189])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e57e6a6c3bsm80502205ab.41.2025.08.21.15.33.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 15:33:34 -0700 (PDT)
+Date: Thu, 21 Aug 2025 22:33:32 +0000
+From: Neill Kapron <nkapron@google.com>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>,
+	kernel-team@android.com, selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selinux: enable per-file labeling for functionfs
+Message-ID: <aKeevPJ0TDcp1T8W@google.com>
+References: <20250820212302.2325779-1-nkapron@google.com>
+ <CAEjxPJ4Vi9rXXkvPUoS-tjHks_6oevdkhrjvSeX_Rh5VV5gBBw@mail.gmail.com>
+ <CAEjxPJ6iFrfVxbRM71b9G0+59L+vxNiJ1mpeXSGwuG_n+D15Lw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250821210042.3451147-6-seanjc@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEjxPJ6iFrfVxbRM71b9G0+59L+vxNiJ1mpeXSGwuG_n+D15Lw@mail.gmail.com>
 
-Hey Sean,
+On Thu, Aug 21, 2025 at 09:03:49AM -0400, Stephen Smalley wrote:
+> On Thu, Aug 21, 2025 at 8:59 AM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > Did you confirm that functionfs is safe wrt genfscon-based and
+> > userspace labeling, as per:
+> > https://github.com/SELinuxProject/selinux-kernel/issues/2
 
-On Thu, Aug 21, 2025 at 02:00:31PM -0700, Sean Christopherson wrote:
-> Add and use a kvm_page_fault structure to track state when handling a
-> guest abort.  Collecting everything in a single structure will enable a
-> variety of cleanups (reduce the number of params passed to helpers), and
-> will pave the way toward using "struct kvm_page_fault" in arch-neutral KVM
-> code, e.g. to consolidate logic for KVM_EXIT_MEMORY_FAULT.
-> 
-> No functional change intended.
-> 
-> Cc: James Houghton <jthoughton@google.com>
-> Link: https://lore.kernel.org/all/20250618042424.330664-1-jthoughton@google.com
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/arm64/include/asm/kvm_host.h |  18 ++++
->  arch/arm64/kvm/mmu.c              | 143 ++++++++++++++----------------
->  2 files changed, 87 insertions(+), 74 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 2f2394cce24e..4623cbc1edf4 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -413,6 +413,24 @@ struct kvm_vcpu_fault_info {
->  	u64 disr_el1;		/* Deferred [SError] Status Register */
->  };
->  
-> +struct kvm_page_fault {
-> +	const u64 esr;
-> +	const bool exec;
-> +	const bool write;
-> +	const bool is_perm;
+Yes, I believe this is safe - FunctionFS is a filesystem which
+exclusively exists in memory. The kernel creates an EP0 file to which
+userspace writes usb endpoint descriptors to, and the kernel
+sequentially creates the endpoint files for each descriptor.
+.create/.link/.rename methods are not supported for the root directory
+or any of the file inodes. So userspace can control the number of files
+created in this directory, but does not have control of their naming or
+anything else.
 
-Hmm... these might be better represented as predicates that take a
-pointer to this struct and we just compute it based on ESR. That'd have
-the benefit in the arch-neutral code where 'struct kvm_page_fault' is an
-opaque type and we don't need to align field names/types.
+In Android, we further restrict permissions to the directory and control
+endpoint EP0 to specific system processes. Our goal with this patch is
+to maintain this restriction, while providing more permissive labels to
+the endpoints created by the system process.
 
-> +	phys_addr_t fault_ipa; /* The address we faulted on */
-> +	phys_addr_t ipa; /* Always the IPA in the L1 guest phys space */
+> >
+> > Also as per that longstanding open issue, we'd welcome patches to
+> > generalize the current hardcoded list of filesystem types to
+> > instead lookup the filesystem type in the policy to see if it should
+> > support genfscon and/or userspace labeling.
+>
 
-NYC, but this also seems like a good opportunity to rename + retype
-these guys. Specifically:
+Unfortunately, that is outside my expertise at this time and I don't
+have a solid understanding of how this would be accomplished.
 
-	fault_ipa => ipa
-	ipa => canonical_ipa
+> Also, do we need a new policycap to conditionally enable this new
+> labeling behavior to avoid any regressions?
+> See the corresponding checks for cgroup labeling and
+> https://github.com/SELinuxProject/selinux-kernel/wiki/Getting-Started#adding-a-new-selinux-policy-capability
 
-would clarify these and align with the verbiage we currently use to talk
-about nested.
-
-Thanks,
-Oliver
+Thanks, I will send a V2 which adds a new policycap for this.
 
