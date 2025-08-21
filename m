@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-780802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5716B30982
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:45:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B590B30998
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1D1D7B113D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8421893A15
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F912ED14B;
-	Thu, 21 Aug 2025 22:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E9E2F3636;
+	Thu, 21 Aug 2025 22:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWroQvBl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yb3myAfS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEC42ECE9E;
-	Thu, 21 Aug 2025 22:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E982F360E;
+	Thu, 21 Aug 2025 22:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755815992; cv=none; b=X6yp4AbV5syVCy/d3CtRABb9rYOHO9FS938fEoyK+kn0sjNVI9i+7RyIS5Zht9Bjiu3vlmW/Y8X7D3IPToAmgsAJQTjWBUlXu6l8tBFZScQ2TcQ05HtCh07AbY+kA1y+bMqxKjN51CWEgBz7Q4QR2Dsexs7GkpKxQz7zjmzw3Rg=
+	t=1755815994; cv=none; b=siFUJ3dcqYbygOAUoQc87fnO+fs5B2DnfKTfQeb1kz2UXu4moymcPDQzy96FeybgTLIKf2YcZjyC8hmRElFHy6q26brQkz3H5DX+1IJV04T7czvsZ3Cu3EhhSJ7mUjHqX/J9exGrZex2ts5l8yeQdoc4c3UpK6EzA2YYEnwr+Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755815992; c=relaxed/simple;
-	bh=6+cneP8xDnuU5FHp6ZE4wpE6pWPQvWdqGAQj+wxVZj8=;
+	s=arc-20240116; t=1755815994; c=relaxed/simple;
+	bh=GD7PJkZToLyN/G6cbgeaBFRiaVPlRrInWRqkwNMGA5A=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=nlqQbuLV73MMOd7oVzvJJrPtxgMuIMLkVlj/IVkBjOV7CGMwokpLLu/b602n4NlRjBWb2AcTR/L9DMtyrwVTRVxqer/BaO4OSk3QwyFCxL1bSgwueywtvT/5kMWt7wkuvIdMZE4p5tsRsgSXsLEjcDRLc389aEfM5mJeKlCl/Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWroQvBl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6D8C116C6;
-	Thu, 21 Aug 2025 22:39:52 +0000 (UTC)
+	 Message-Id:Subject; b=qqYAMNHYD8uBeRZpbZkkeZ3h3OHhWUYSBze6exh5VKOONYq8M+Gv4IwkjdBdweJEEQCW91vtESBaAt0lPo8x+cZhSjr9XLd7LolBAyWweyHR+N2nxNmCLR63Lnigqn3Yn8gitUjOlUGCSF6tYNsFHXLBRY4fkvJZX0xM6rCgHXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yb3myAfS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1335BC4CEEB;
+	Thu, 21 Aug 2025 22:39:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755815992;
-	bh=6+cneP8xDnuU5FHp6ZE4wpE6pWPQvWdqGAQj+wxVZj8=;
+	s=k20201202; t=1755815993;
+	bh=GD7PJkZToLyN/G6cbgeaBFRiaVPlRrInWRqkwNMGA5A=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=JWroQvBlvJj3n3GQj85XFCVw1RomjL3x/nkCU4RTbgYO65e9E7eN8T3+QPp8VPUDi
-	 5rUdQz4i7YpZV3cCkF7fVvd7pwkI3tNbYHvFIXRy6kzneXEeRzPwmgcq9Izgv+1Oin
-	 DYtwhazNI783UY+RndJ8i50KtG02lJ9LORgbBg4URyKshly+QMkwzjoku368tF3oaZ
-	 PV3k43WFiYPE7Y++y+OTu+0uMBSP/3l5S9OJPdkyW4Abcy/2DT/Pf4bj95pe5H6liF
-	 DiK8e+cKE+CBABkBpqThiec+t13OK8+NseaAbugSa7K8jOzA6hreQ1LeUfYpPCllxW
-	 aST3CoSeeDmUA==
-Date: Thu, 21 Aug 2025 17:39:51 -0500
+	b=Yb3myAfSJfILtlMiaszHClJxxkXZ/Ultvs3mR7J9CqIP/z5wf+Q+VV8xV2mB7QtYa
+	 lKxj+Ia0ox6sV6AkZ/SbA01BNTer2ER7hqcDX59Q8seqkSdHjCZYbX0nqWBXop1sbH
+	 /lo4hRoYzz7p9JTJVxVKAwJPAOWmKwWhGRWXNXXltewAGNs1itzUmdsGjOYs2siaX/
+	 DjbILz797hYqIg1DwLGJbzagSL82A2zGYPk706ZxQUmXoaR+NRAejIpSe05ZCQQUQO
+	 j6bBRkdHutGkLdqHnFrz0/ln2tLn9tTc4xP5ntfuKxZ2/wyiZu7J4jCAIf4pVHLa6j
+	 NSpF0t2DgaXjg==
+Date: Thu, 21 Aug 2025 17:39:52 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,52 +50,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Neal Gompa <neal@gompa.dev>, 
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Janne Grunau <j@jannau.net>, Felipe Balbi <balbi@kernel.org>, 
+ linux-usb@vger.kernel.org, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Neal Gompa <neal@gompa.dev>, linux-arm-kernel@lists.infradead.org, 
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
  Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org, 
- Felipe Balbi <balbi@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Janne Grunau <j@jannau.net>, devicetree@vger.kernel.org, 
- Vinod Koul <vkoul@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org
+ Kishon Vijay Abraham I <kishon@kernel.org>, asahi@lists.linux.dev
 To: Sven Peter <sven@kernel.org>
-In-Reply-To: <20250821-atcphy-6-17-v1-2-172beda182b8@kernel.org>
+In-Reply-To: <20250821-atcphy-6-17-v1-3-172beda182b8@kernel.org>
 References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
- <20250821-atcphy-6-17-v1-2-172beda182b8@kernel.org>
-Message-Id: <175581575858.1136316.14856911628324128636.robh@kernel.org>
-Subject: Re: [PATCH RFC 02/22] dt-bindings: usb: Add Apple dwc3
+ <20250821-atcphy-6-17-v1-3-172beda182b8@kernel.org>
+Message-Id: <175581575975.1136737.15772006298653971684.robh@kernel.org>
+Subject: Re: [PATCH RFC 03/22] dt-bindings: phy: Add Apple Type-C PHY
 
 
-On Thu, 21 Aug 2025 15:38:54 +0000, Sven Peter wrote:
-> Apple Silicon uses Synopsys DesignWare dwc3 based USB controllers for
-> their Type-C ports.
+On Thu, 21 Aug 2025 15:38:55 +0000, Sven Peter wrote:
+> Apple's Type-C PHY (ATCPHY) is a PHY for USB 2.0, USB 3.x,
+> USB4/Thunderbolt, and DisplayPort connectivity found in Apple Silicon
+> SoCs.
+> 
+> The PHY handles muxing between these different protocols and also provides
+> the reset controller for the attached dwc3 USB controller.
 > 
 > Signed-off-by: Sven Peter <sven@kernel.org>
 > ---
->  .../devicetree/bindings/usb/apple,dwc3.yaml        | 82 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 83 insertions(+)
+>  .../devicetree/bindings/phy/apple,atcphy.yaml      | 210 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 211 insertions(+)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
-./Documentation/devicetree/bindings/usb/apple,dwc3.yaml:33:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/usb/apple,dwc3.yaml:40:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/apple,dwc3.example.dtb: usb@82280000 (apple,t8103-dwc3): 'resets' is a required property
-	from schema $id: http://devicetree.org/schemas/usb/apple,dwc3.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/apple,dwc3.example.dtb: usb@82280000 (apple,t8103-dwc3): 'power-domains' is a required property
-	from schema $id: http://devicetree.org/schemas/usb/apple,dwc3.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/apple,atcphy.yaml: properties:power-domains: 'anyOf' conditional failed, one must be fixed:
+	'minItems' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'minItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	1 is less than the minimum of 2
+		hint: Arrays must be described with a combination of minItems/maxItems/items
+	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
+	from schema $id: http://devicetree.org/meta-schemas/power-domain.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/apple,atcphy.example.dtb: phy@383000000 (apple,t8103-atcphy): reg: [[3, 2197815296], [0, 311296], [3, 2198142976], [0, 32768], [3, 2147483648], [0, 16384], [3, 2192113664], [0, 16384], [3, 2192064512], [0, 16384]] is too long
+	from schema $id: http://devicetree.org/schemas/phy/apple,atcphy.yaml#
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250821-atcphy-6-17-v1-2-172beda182b8@kernel.org
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250821-atcphy-6-17-v1-3-172beda182b8@kernel.org
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
