@@ -1,142 +1,127 @@
-Return-Path: <linux-kernel+bounces-779557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC421B2F59B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:49:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD73BB2F5A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02F8587DC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:49:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0CEC587E0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B387F307AE7;
-	Thu, 21 Aug 2025 10:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BCD3090CC;
+	Thu, 21 Aug 2025 10:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kvtVQWY4"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnkrqOXH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD93307AD5;
-	Thu, 21 Aug 2025 10:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DB3308F02;
+	Thu, 21 Aug 2025 10:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755773352; cv=none; b=JB7TnT99V9L1b6b1/w/H5TJru9nhFkE95cW10Tbh1vL/KDq8ESrU/KsnFtjrlDY+f5fRxT2lfxvBoX1sIqwVt0Wu19++8V3HCyJEOfo5SB0UmfugJmtbxtkxcLBrJzAG8mQA/fP0yEUiFektcpMZ+tiFEnm1AiH9y0ch3F4DbN0=
+	t=1755773414; cv=none; b=g+2W7wWTLH8GicqRyQEOeulhllSTxl2djV55e2b2y8piKkbjBj8SFBis4dkCKZ5WyMjx8zUaJ4qbTO09u2qZhoH3FUdZAt2lIXWsIILNYCmYDuevfWwS4nH3Vc/Sh3xgmgqjHI2Yku9lZa2wHqKOHCJaVRICYC3b9fXgZrFcbKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755773352; c=relaxed/simple;
-	bh=rG5esXl5MyyU9ccbkRzn255OdRwlFHNiQdQoQp112nU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rVOdyLNEHUyZjwcVKgkqePmyzga3zY1yQ73Mq22IxFJD02z7RU03CKsNr5jDGXPP3gE6uuoRHsWba1G2ySUCI29LDlu7ypEKSrT7ugt7+lSGJUc5HAdKjRNROewVa9gtN291uflANujAN8UJ2jzC+nsrYT+Mnl3uzTXOnSYsqXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kvtVQWY4; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57LAmFE23352350;
-	Thu, 21 Aug 2025 05:48:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755773295;
-	bh=ZdcQq0ODeLvFcyZ8c1y1bdz85c9KQB/TPqgiMZRTnJo=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=kvtVQWY40B45uP1NmaZBuN+EuM78tEdP7xLQ47B+vp4LKGI78Io5SaBPkCqJ+Z+wV
-	 W8nk7I5i+I3rRLA8ddtPkKMkx9rO/yrAOGXKsHUHmjnGXGEX2mXXHw6gFAdzq63b5a
-	 +RcjA8x5Rb48WrKrmNNPxDoweF4ily0EFQPOIJTE=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57LAmFl81899798
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 21 Aug 2025 05:48:15 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 21
- Aug 2025 05:48:14 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 21 Aug 2025 05:48:14 -0500
-Received: from [10.24.69.13] (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57LAm7OG2038086;
-	Thu, 21 Aug 2025 05:48:08 -0500
-Message-ID: <d2015724-416b-4222-aa85-88c0c5f9160c@ti.com>
-Date: Thu, 21 Aug 2025 16:18:07 +0530
+	s=arc-20240116; t=1755773414; c=relaxed/simple;
+	bh=3pWLHc7LmGxgUyl74J5LFWhSFK0KCYRgf/oJ2btTLDI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=JNA90HiKf8ce6WalzuRukEfdlyVPe2oONvNREXJ5JzqE1MKXPS6VUxb2QXoyLT9aZCYUKa6iAXARrBpnHH0zHn5PshkvvSg/AMEd5t/hE7vIgM/lp+eoUOMe83Oq64Lnve0sMd/6gf1eVEoDKEiRx3f/9jGb3ybdO2hnB6DdDGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnkrqOXH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF9EC4CEEB;
+	Thu, 21 Aug 2025 10:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755773414;
+	bh=3pWLHc7LmGxgUyl74J5LFWhSFK0KCYRgf/oJ2btTLDI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=mnkrqOXHzIRqsY8fvy/vAHAEDK9+sT2XcxY9xn12xK8HxrmGkTImR/ebMLe6Xg81K
+	 9NQTFTqJSFPSMl1S6PaYn/sges8X/7fUeBexkwwPwHhijE5L4pVmhP32LC2miHSKKv
+	 o+nLUJVkitI9LhycxaVByhD0TBaA+/bYlJ5rmOgbjzMVrrRuj7hzj900DDSYfFA7eT
+	 F9UxuUaKuim+ajVoK30suue2H+MhKvSxNCJNYqnW9EAKC+lFh2QLnm4RDGRI1Y470n
+	 k2u/PlhV7243xai0eq/2QifGsf0oVFHbar0dCoNJwDLXufGu6cV0nNGGqblMvlI0MU
+	 VMsNbFt4ZU3Fw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F05383BF5B;
+	Thu, 21 Aug 2025 10:50:24 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 5/6] net: ti: icssg-prueth: Add AF_XDP zero copy
- for RX
-To: Jakub Kicinski <kuba@kernel.org>
-CC: <namcao@linutronix.de>, <jacob.e.keller@intel.com>,
-        <christian.koenig@amd.com>, <sumit.semwal@linaro.org>,
-        <sdf@fomichev.me>, <john.fastabend@gmail.com>, <hawk@kernel.org>,
-        <daniel@iogearbox.net>, <ast@kernel.org>, <pabeni@redhat.com>,
-        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>,
-        <linaro-mm-sig@lists.linaro.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-media@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-References: <20250818112424.3068643-1-m-malladi@ti.com>
- <20250818112424.3068643-6-m-malladi@ti.com>
- <20250819073558.2c996b6d@kernel.org>
-Content-Language: en-US
-From: Meghana Malladi <m-malladi@ti.com>
-In-Reply-To: <20250819073558.2c996b6d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v8 00/14] Add PPE driver for Qualcomm IPQ9574 SoC
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175577342325.986145.13841394351982921726.git-patchwork-notify@kernel.org>
+Date: Thu, 21 Aug 2025 10:50:23 +0000
+References: <20250818-qcom_ipq_ppe-v8-0-1d4ff641fce9@quicinc.com>
+In-Reply-To: <20250818-qcom_ipq_ppe-v8-0-1d4ff641fce9@quicinc.com>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, quic_leiwei@quicinc.com, quic_suruchia@quicinc.com,
+ quic_pavir@quicinc.com, horms@kernel.org, corbet@lwn.net, kees@kernel.org,
+ gustavoars@kernel.org, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-hardening@vger.kernel.org, quic_kkumarcs@quicinc.com,
+ quic_linchen@quicinc.com
 
-Hi Jakub,
+Hello:
 
-On 8/19/25 20:05, Jakub Kicinski wrote:
-> On Mon, 18 Aug 2025 16:54:23 +0530 Meghana Malladi wrote:
->> @@ -1332,6 +1350,13 @@ static int prueth_xsk_wakeup(struct net_device *ndev, u32 qid, u32 flags)
->>   		}
->>   	}
->>   
->> +	if (flags & XDP_WAKEUP_RX) {
->> +		if (!napi_if_scheduled_mark_missed(&emac->napi_rx)) {
->> +			if (likely(napi_schedule_prep(&emac->napi_rx)))
->> +				__napi_schedule(&emac->napi_rx);
->> +		}
->> +	}
->> +
->>   	return 0;
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 18 Aug 2025 21:14:24 +0800 you wrote:
+> The PPE (packet process engine) hardware block is available in Qualcomm
+> IPQ chipsets that support PPE architecture, such as IPQ9574 and IPQ5332.
+> The PPE in the IPQ9574 SoC includes six Ethernet ports (6 GMAC and 6
+> XGMAC), which are used to connect with external PHY devices by PCS. The
+> PPE also includes packet processing offload capabilities for various
+> networking functions such as route and bridge flows, VLANs, different
+> tunnel protocols and VPN. It also includes an L2 switch function for
+> bridging packets among the 6 Ethernet ports and the CPU port. The CPU
+> port enables packet transfer between the Ethernet ports and the ARM
+> cores in the SoC, using the Ethernet DMA.
 > 
-> I suspect this series is generated against old source or there's
-> another conflicting series in flight, because git ends up applying
-> this chunk to prueth_xsk_pool_disable() :S
-> 
+> [...]
 
-That's interesting. I have directly applied these patches locally on the 
-tip of net-next (62a2b3502573 "net: openvswitch: Use for_each_cpu() 
-where appropriate") And everything gets applied cleanly and I couldn't 
-reproduce the issue you mentioned above. Can you tell me on top of which 
-commit you tried applying this series ? Or I wonder if this happened 
-because I posted this series from my net tree instead of net-next. Does 
-it make sense to re-post the same patches from net-next tree ?
+Here is the summary with links:
+  - [net-next,v8,01/14] dt-bindings: net: Add PPE for Qualcomm IPQ9574 SoC
+    https://git.kernel.org/netdev/net-next/c/1898fc572118
+  - [net-next,v8,02/14] docs: networking: Add PPE driver documentation for Qualcomm IPQ9574 SoC
+    https://git.kernel.org/netdev/net-next/c/6b9f301985a3
+  - [net-next,v8,03/14] net: ethernet: qualcomm: Add PPE driver for IPQ9574 SoC
+    https://git.kernel.org/netdev/net-next/c/353a0f1d5b27
+  - [net-next,v8,04/14] net: ethernet: qualcomm: Initialize PPE buffer management for IPQ9574
+    https://git.kernel.org/netdev/net-next/c/8a971df98c4e
+  - [net-next,v8,05/14] net: ethernet: qualcomm: Initialize PPE queue management for IPQ9574
+    https://git.kernel.org/netdev/net-next/c/806268dc7efd
+  - [net-next,v8,06/14] net: ethernet: qualcomm: Initialize the PPE scheduler settings
+    https://git.kernel.org/netdev/net-next/c/331227983814
+  - [net-next,v8,07/14] net: ethernet: qualcomm: Initialize PPE queue settings
+    https://git.kernel.org/netdev/net-next/c/7a23a8af179d
+  - [net-next,v8,08/14] net: ethernet: qualcomm: Initialize PPE service code settings
+    https://git.kernel.org/netdev/net-next/c/73d05bdaf01e
+  - [net-next,v8,09/14] net: ethernet: qualcomm: Initialize PPE port control settings
+    https://git.kernel.org/netdev/net-next/c/8821bb0f6262
+  - [net-next,v8,10/14] net: ethernet: qualcomm: Initialize PPE RSS hash settings
+    https://git.kernel.org/netdev/net-next/c/1c46c3c0075c
+  - [net-next,v8,11/14] net: ethernet: qualcomm: Initialize PPE queue to Ethernet DMA ring mapping
+    https://git.kernel.org/netdev/net-next/c/fa99608a9a9e
+  - [net-next,v8,12/14] net: ethernet: qualcomm: Initialize PPE L2 bridge settings
+    https://git.kernel.org/netdev/net-next/c/8cc72c6c9236
+  - [net-next,v8,13/14] net: ethernet: qualcomm: Add PPE debugfs support for PPE counters
+    https://git.kernel.org/netdev/net-next/c/a2a7221dbd2b
+  - [net-next,v8,14/14] MAINTAINERS: Add maintainer for Qualcomm PPE driver
+    https://git.kernel.org/netdev/net-next/c/ad5cef7ef01c
 
-> Before you proceed with AF_XDP could you make this driver build under
-> COMPILE_TEST on x86? This is very easy to miss, luckily we got an off
-> list report but its pure luck. And obviously much more effort for the
-> maintainers to investigate than if it was caught by the CI.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-I have tried what you have suggested and these are the logs for the 
-same: 
-https://gist.github.com/MeghanaMalladiTI/8a3f64773d96e58aec48aca78c1bc98c
-
-ICSSG driver as a module has been compiled without any errors but 
-encountered few linking errors due to some missing symbols from another 
-module (CONFIG_TI_K3_UDMA). I included this module in the next iteration 
-and tried compiling but facing some build failures, logs: 
-https://gist.github.com/MeghanaMalladiTI/f7ed3958b5ab2b2be479151254015ff0
-
-I think it is safe to assume ICSSG as a driver build on x86 doesn't have 
-build regressions, thoughts ? Also is this something which needs to be 
-done by us everytime we are posting some feature upstream or does Kernel 
-CI take care of it ?
 
 
