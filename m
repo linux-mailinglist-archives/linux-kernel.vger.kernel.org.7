@@ -1,363 +1,163 @@
-Return-Path: <linux-kernel+bounces-778887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D931B2EC74
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:53:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0B3B2EC72
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D84E5E5169
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4314D3B4BFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289782E7F34;
-	Thu, 21 Aug 2025 03:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74282E8896;
+	Thu, 21 Aug 2025 03:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="LBtsbJLq"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLga+w5X"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD562E7F0E;
-	Thu, 21 Aug 2025 03:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7902F2E7F00;
+	Thu, 21 Aug 2025 03:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755748325; cv=none; b=Ie1cjwR0uZAElxIRePL0B+VoQAu6Vo5wVbFxFN27d7bF1CCJerXnKSEM5J71gILGx8aMi9IQ6zD02te+8TB7ZQxdTaMVfHq2nEQV3HR+r3cS6ndBXQoyXPIlhDUk4C8ehvqxH9sYvt3DQFQ4mPLSaAcdKfsNZ0moktASWYuobIk=
+	t=1755748331; cv=none; b=lg5/krCfxdFv+QLSkd36Sx17HC+aGnmyfftKgWARIB57phrxpbMSMRdJI5oR6NYd+6uBbFwpbRiof8jwAI+9kiZs0EUEF4rRDsTJO5YTYBEs0GcCr56z1Hjro/NRz7LWnJIRHCSCYhkGhtDr+V8FLKDGHc5Pc4gdEl3+4MuGevQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755748325; c=relaxed/simple;
-	bh=D6XroiM0gJV0WhKzOpzC3jsrMzOwR9rtyTbykVkhfjg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kyYc7GALnz2ioWcx76vAeZtmH+0wqWAMTDMiN+Af6APMjIELMGfH3cRFU686+EkHXuwexhC6V4SVWsf20ghllR5pabG6KPtecwLaw3MrHYYNbRGY/pdvnvJH7G9WVMndYr+Azm2wLc6rpSLs8WsJ9Q/CUOnER0ypCTKNs7bnBP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=LBtsbJLq; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1755748320; x=1756353120; i=efault@gmx.de;
-	bh=lT2XgMK46M0i4BHPZ8NixOE47L4gXl3+5/G/rpH8SY8=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:Content-Transfer-Encoding:MIME-Version:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LBtsbJLqLk0q61dWZBn7La2YUHAfzBZnD8t5NoXbSP6ZrskjFLrYCD0U7WVG08xE
-	 CdFGbp7qun8JoQr1zsuryqELx40pF5Ta6XzjEfvJuQICS8fdqYfuOmBmIumJNeENl
-	 B4KoD14DrKZ1xpNZVmlt6NFMXsRiYLQRNtJmM9QGqk6uDTLLisjDEHqeFHBbxpHCD
-	 YtWzlUI20elhegdsezeE4pXPcfqG+C9z+sMCe8RVHxLz3GZCTdVxSWBOun6cR68wP
-	 ZpH65I/+23OG/Yu4HpdkhWJ/YhaoivhwwctFGO63nvULYAmTpQKiFflg8pxXptyeX
-	 t1iq2VPSmH6R/s3KkA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([185.146.50.96]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MnakX-1u60bV1F5x-00ea5j; Thu, 21
- Aug 2025 05:52:00 +0200
-Message-ID: <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-From: Mike Galbraith <efault@gmx.de>
-To: Breno Leitao <leitao@debian.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski
- <kuba@kernel.org>,  Johannes Berg <johannes@sipsolutions.net>,
- paulmck@kernel.org, LKML <linux-kernel@vger.kernel.org>, 
- netdev@vger.kernel.org, boqun.feng@gmail.com
-Date: Thu, 21 Aug 2025 05:51:59 +0200
-In-Reply-To: <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
-References: <fb38cfe5153fd67f540e6e8aff814c60b7129480.camel@gmx.de>
-	 <oth5t27z6acp7qxut7u45ekyil7djirg2ny3bnsvnzeqasavxb@nhwdxahvcosh>
-	 <20250814172326.18cf2d72@kernel.org>
-	 <3d20ce1b-7a9b-4545-a4a9-23822b675e0c@gmail.com>
-	 <20250815094217.1cce7116@kernel.org>
-	 <isnqkmh36mnzm5ic5ipymltzljkxx3oxapez5asp24tivwtar2@4mx56cvxtrnh>
-	 <3dd73125-7f9b-405c-b5cd-0ab172014d00@gmail.com>
-	 <hyc64wbklq2mv77ydzfxcqdigsl33leyvebvf264n42m2f3iq5@qgn5lljc4m5y>
-	 <b2qps3uywhmjaym4mht2wpxul4yqtuuayeoq4iv4k3zf5wdgh3@tocu6c7mj4lt>
-	 <4c4ed7b836828d966bc5bf6ef4d800389ba65e77.camel@gmx.de>
-	 <otlru5nr3g2npwplvwf4vcpozgx3kbpfstl7aav6rqz2zltvcf@famr4hqkwhuv>
-	 <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
-Autocrypt: addr=efault@gmx.de;
- keydata=mQGiBE/h0fkRBACJWa+2g5r12ej5DQZEpm0cgmzjpwc9mo6Jz7PFSkDQGeNG8wGwFzFPKQrLk1JRdqNSq37FgtFDDYlYOzVyO/6rKp0Iar2Oel4tbzlUewaYWUWTTAtJoTC0vf4p9Aybyo9wjor+XNvPehtdiPvCWdONKZuGJHKFpemjXXj7lb9ifwCg7PLKdz/VMBFlvbIEDsweR0olMykD/0uSutpvD3tcTItitX230Z849Wue3cA1wsOFD3N6uTg3GmDZDz7IZF+jJ0kKt9xL8AedZGMHPmYNWD3Hwh2gxLjendZlcakFfCizgjLZF3O7k/xIj7Hr7YqBSUj5Whkbrn06CqXSRE0oCsA/rBitUHGAPguJfgETbtDNqx8RYJA2A/9PnmyAoqH33hMYO+k8pafEgXUXwxWbhx2hlWEgwFovcBPLtukH6mMVKXS4iik9obfPEKLwW1mmz0eoHzbNE3tS1AaagHDhOqnSMGDOjogsUACZjCJEe1ET4JHZWFM7iszyolEhuHbnz2ajwLL9Ge8uJrLATreszJd57u+NhAyEW7QeTWlrZSBHYWxicmFpdGggPGVmYXVsdEBnbXguZGU+iGIEExECACIFAk/h0fkCGyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEMYmACnGfbb41A4AnjscsLm5ep+DSi7Bv8BmmoBGTCRnAJ9oXX0KtnBDttPkgUbaiDX56Z1+crkBDQRP4dH5EAQAtYCgoXJvq8VqoleWvqcNScHLrN4LkFxfGkDdqTyQe/79rDWr8su+8TH1ATZ/k+lC6W+vg7ygrdyOK7egA5u+T/GBA1VN+KqcqGqAEZqCLvjorKVQ6mgb5FfXouSGvtsblbRMireEEhJqIQPndq3DvZbKXHVkKrUBcco4MMGDVucABAsEAKXKCwGVEVuYcM/KdT2htDpziRH4JfUn3Ts2EC6F7rXIQ4NaIA6gAvL6HdD3q
-	y6yrWaxyqUg8CnZF/J5HR+IvRK+vu85xxwSLQsrVONH0Ita1jg2nhUW7yLZer8xrhxIuYCqrMgreo5BAA3+irHy37rmqiAFZcnDnCNDtJ4sz48tiEkEGBECAAkFAk/h0fkCGwwACgkQxiYAKcZ9tvgIMQCeIcgjSxwbGiGn2q/cv8IvHf1r/DIAnivw+bGITqTU7rhgfwe07dhBoIdz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1755748331; c=relaxed/simple;
+	bh=HO+iKLe8HlT2pb6fd5e3H9BdROezL8fWqlMIHvgy/Kc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EUzDV7uZRY3OeD2Wp0dg7vWPVCrc5HsCKhB5+DxwgR2DUGwiJ0ZPb2fSu7Cgnvwc72bPtxTvrAdN4kkMvK7/n/LvNFAaCCzNtxrzOM9ja4tk5EEjmlicpG3+hdlzUrNf+yomqDcm+AkHUnODQafDPVgBZsvRphwQuBsI9+XFg7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OLga+w5X; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2445811e19dso4479145ad.1;
+        Wed, 20 Aug 2025 20:52:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755748330; x=1756353130; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=JyMYwN8hLYvWAiCmCjc2sLRiji+vi2/IY5OYZOqnCHI=;
+        b=OLga+w5XJaM9XA3vIJ1Sh/E/J9m/Zku1x9XrppoJqV42//Sc0FUhKOSgl9MEwnuCPv
+         P2GJ194qzggm3DvrHFUfRV9F+LmwX6S1qCz9F2BrwxLBg3fphkUc2aTtRGpXlLhF62Vi
+         A/qWJNhOrka9ck4DuUGam1tlUDj+QrI8x4HlfZcs+839cyb4+5EIAOowMMe4RUAaVUUg
+         xGLVqPWyKs6Ly7H7BHljjLCHMSaEyWcM+gCoOVm9vk2jd4W+5bQ0UuerqiQsG3OEGbbE
+         YSmzNcrteC6jxg9iG8BVPglrHWvpU2Ms4LVZWvXhmc7Gmo9WJcvgWv90LnADK/snVznP
+         CWow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755748330; x=1756353130;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JyMYwN8hLYvWAiCmCjc2sLRiji+vi2/IY5OYZOqnCHI=;
+        b=vBpnsWqDLOIZJrYA0MUDr9L6bVZaFsvojHdoxYFGsnDLxXAGej2js1NdxFsgtlKKhW
+         01dwDGXrJ6rP6Pj5f5eSfm4MM3uozZv/Az2oVdfMBmoI58uL1DnE8Pewo1uTOnScTgIg
+         FJkIaSc1iTZl+cJVWbNW73xHzZCKUKb0vwyheY9xorX6NbWuKG1t1+lVGmJ27TB2h/fo
+         A+TtZj8+McK3Ddpkm5igVVuTwGbs0EXz5uVeFKmYw4c5uxmMKZY/aHKC+qQbYOcvzaEl
+         kSWc2EqCFhmIreqQjSxxx7RUb8bg9RtRjP1tPhduJzQgHLgIgubRqVq3QKFPRLb73xkx
+         MKOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmbwoNhVeL11uzbXv5tEPuztrPQomrl2ghWcbkMI3QjqBZGnfWtURlgJWdsQ5CHS9JDiUmyPndtWKfjnjP@vger.kernel.org, AJvYcCW+2f84fZSkoLNN3zcBAw6w/vGQ20zyYjjz0J3GtIg6O3l0p6VGwW6pK8G46+3ASiXOSw5CHG/yLFLP@vger.kernel.org, AJvYcCW5cVSOc7tE3O7+sRCPeFBLzgvEebo8iyat9sSd5axQQQ508JxHjy4QX44xKckHJs231pCHrlF0Tk0J0Ima86moJ4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXJlrQlkgmTybx+6M2b0d3PofF5KlZQRYLNS6Z3zzDOdGYHZru
+	kw56tyPibU/Zin/8gX2sj3Vm22WILXJH8jRendSjDCX26WqrE+KCuRKd
+X-Gm-Gg: ASbGncti4Hxv5qNf9EK7m80IFUPNZXcEoIxWFJPhk0I5OF55DdxW7xb6x1koXRovR02
+	xtbnDASg6WRIAph4mAcuogoBnUxz8rKOeku45JkPfkvoE462jkEJEpbIteexJuK5b53/agp6vhy
+	NVCn6Y+QWlWEVpM/PM3GSw62FDUHglUCO2rG7YCpfShAXVI9ZIUEMW9oRP/tWPY2fVr7VeX+QS4
+	RmSydJW9zf03pyked/aYLt3aUiOZ/zThp1fK45JrdBn7WudGf+m1GRaanJB7b12wj/lozDq3CMe
+	SbgQd3GETcQPyGY6X/TKyBil/4QC2I2ClNGE89YQx3sp0osjfasufBhlh3yAthwXdN1stJZFmdm
+	vDGA6UKZDA738oStr5f9a5kOchAx/ripZ+QmFoNwnuvkvJc5A+3EyNcKTVHSuFxLH3GF+XzM=
+X-Google-Smtp-Source: AGHT+IFdrBOlIZ1KC6ZocldPQNsAuSVc4siyM4M9qVomvcrP+Sm16xq8ocBgPOsSrRoaZL0c/B9wlg==
+X-Received: by 2002:a17:902:f684:b0:240:6aad:1c43 with SMTP id d9443c01a7336-245ff865cadmr17423075ad.48.1755748329666;
+        Wed, 20 Aug 2025 20:52:09 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c707csm40992795ad.69.2025.08.20.20.52.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 20:52:09 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <fa916e30-581b-4454-92b6-2c2614661e79@roeck-us.net>
+Date: Wed, 20 Aug 2025 20:52:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Provags-ID: V03:K1:vcgNMC2xXPgdCBT4V4iOq35JcGjWlCy56Qjuxei0qICvuJYTm44
- tUSyo8xdNqac7Ksg6CnkJ8EwYMRrIakomtJ62PUws/Gg2CKE/Zc1iaiDb8+xii1U5etCRN0
- ruuLqR/EDgdK/l4kYD5wPirgwsk0g+tJEyauNv8FRZ4df5RVnIhbNCA2gzYcsP9n092+xFl
- Pe66oWDSiWxHRWUbCjy/A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:QNvlsP2c/5s=;ZgeJYT40KvNiGiUwN/bO5069G31
- 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
- wgGCqeDHPYOg7YfP55ktcB8HV59v
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/6] watchdog: rzv2h: Improve error strings and add
+ newlines
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250820202322.2051969-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250820202322.2051969-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250820202322.2051969-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-08-21 at 05:37 +0200, Mike Galbraith wrote:
->=20
-> > What is this patch you have?
->=20
-> Make boxen stop bitching at NETCONSOLE_NBCON version below.
+On 8/20/25 13:23, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Update rzv2h_wdt_probe() to provide clearer error strings when retrieving
+> the pclk, oscclk, and reset controller, and append missing newline
+> characters to dev_err_probe() and dev_warn() calls for proper log
+> formatting.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Grr, whitespace damaged. Doesn't really matter given it's not a
-submission, but it annoys me when I meet it on lkml, so take2.
-
-netpoll: Make it RT friendly
-
-PREEMPT_RT cannot alloc/free memory when not preemptible, making
-disabling of IRQs across transmission an issue for RT.
-
-Use local_bh_disable() to provide local exclusion for RT (via
-softirq_ctrl.lock) for normal and fallback transmission paths
-instead of disabling IRQs. Since zap_completion_queue() callers
-ensure pointer stability, replace get_cpu_var() therein with
-this_cpu_ptr() to keep it preemptible across kfree().
-
-Disable a couple warnings for RT, and we're done.
-
-v0.kinda-works -> v1:
-    remove get_cpu_var() from zap_completion_queue().
-    fix/test netpoll_tx_running() to work for RT/!RT.
-    fix/test xmit fallback path for RT.
-
-Signed-off-by: Mike Galbraith <efault@gmx.de>
----
- drivers/net/netconsole.c |    4 ++--
- include/linux/netpoll.h  |    4 +++-
- net/core/netpoll.c       |   47 ++++++++++++++++++++++++++++++++++++------=
------
- 3 files changed, 41 insertions(+), 14 deletions(-)
-
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -1952,12 +1952,12 @@ static void netcon_write_thread(struct c
- static void netconsole_device_lock(struct console *con, unsigned long *fla=
-gs)
- {
- 	/* protects all the targets at the same time */
--	spin_lock_irqsave(&target_list_lock, *flags);
-+	spin_lock(&target_list_lock);
- }
-=20
- static void netconsole_device_unlock(struct console *con, unsigned long fl=
-ags)
- {
--	spin_unlock_irqrestore(&target_list_lock, flags);
-+	spin_unlock(&target_list_lock);
- }
- #endif
-=20
---- a/include/linux/netpoll.h
-+++ b/include/linux/netpoll.h
-@@ -100,9 +100,11 @@ static inline void netpoll_poll_unlock(v
- 		smp_store_release(&napi->poll_owner, -1);
- }
-=20
-+DECLARE_PER_CPU(int, _netpoll_tx_running);
-+
- static inline bool netpoll_tx_running(struct net_device *dev)
- {
--	return irqs_disabled();
-+	return this_cpu_read(_netpoll_tx_running);
- }
-=20
- #else
---- a/net/core/netpoll.c
-+++ b/net/core/netpoll.c
-@@ -58,6 +58,29 @@ static void zap_completion_queue(void);
- static unsigned int carrier_timeout =3D 4;
- module_param(carrier_timeout, uint, 0644);
-=20
-+DEFINE_PER_CPU(int, _netpoll_tx_running);
-+EXPORT_PER_CPU_SYMBOL(_netpoll_tx_running);
-+
-+#define netpoll_tx_begin(flags)					\
-+	do {							\
-+		if (IS_ENABLED(CONFIG_PREEMPT_RT) ||		\
-+		    IS_ENABLED(CONFIG_NETCONSOLE_NBCON))	\
-+			local_bh_disable();			\
-+		else						\
-+			local_irq_save(flags);			\
-+		this_cpu_write(_netpoll_tx_running, 1);		\
-+	} while (0)
-+
-+#define netpoll_tx_end(flags)					\
-+	do {							\
-+		this_cpu_write(_netpoll_tx_running, 0);		\
-+		if (IS_ENABLED(CONFIG_PREEMPT_RT) ||		\
-+		    IS_ENABLED(CONFIG_NETCONSOLE_NBCON))	\
-+			local_bh_enable();			\
-+		else						\
-+			local_irq_restore(flags);		\
-+	} while (0)
-+
- static netdev_tx_t netpoll_start_xmit(struct sk_buff *skb,
- 				      struct net_device *dev,
- 				      struct netdev_queue *txq)
-@@ -90,7 +113,7 @@ static void queue_process(struct work_st
- 	struct netpoll_info *npinfo =3D
- 		container_of(work, struct netpoll_info, tx_work.work);
- 	struct sk_buff *skb;
--	unsigned long flags;
-+	unsigned long __maybe_unused flags;
-=20
- 	while ((skb =3D skb_dequeue(&npinfo->txq))) {
- 		struct net_device *dev =3D skb->dev;
-@@ -102,7 +125,7 @@ static void queue_process(struct work_st
- 			continue;
- 		}
-=20
--		local_irq_save(flags);
-+		netpoll_tx_begin(flags);
- 		/* check if skb->queue_mapping is still valid */
- 		q_index =3D skb_get_queue_mapping(skb);
- 		if (unlikely(q_index >=3D dev->real_num_tx_queues)) {
-@@ -115,13 +138,13 @@ static void queue_process(struct work_st
- 		    !dev_xmit_complete(netpoll_start_xmit(skb, dev, txq))) {
- 			skb_queue_head(&npinfo->txq, skb);
- 			HARD_TX_UNLOCK(dev, txq);
--			local_irq_restore(flags);
-+			netpoll_tx_end(flags);
-=20
- 			schedule_delayed_work(&npinfo->tx_work, HZ/10);
- 			return;
- 		}
- 		HARD_TX_UNLOCK(dev, txq);
--		local_irq_restore(flags);
-+		netpoll_tx_end(flags);
- 	}
- }
-=20
-@@ -246,7 +269,7 @@ static void refill_skbs(struct netpoll *
- static void zap_completion_queue(void)
- {
- 	unsigned long flags;
--	struct softnet_data *sd =3D &get_cpu_var(softnet_data);
-+	struct softnet_data *sd =3D this_cpu_ptr(&softnet_data);
-=20
- 	if (sd->completion_queue) {
- 		struct sk_buff *clist;
-@@ -267,8 +290,6 @@ static void zap_completion_queue(void)
- 			}
- 		}
- 	}
--
--	put_cpu_var(softnet_data);
- }
-=20
- static struct sk_buff *find_skb(struct netpoll *np, int len, int reserve)
-@@ -319,7 +340,9 @@ static netdev_tx_t __netpoll_send_skb(st
- 	/* It is up to the caller to keep npinfo alive. */
- 	struct netpoll_info *npinfo;
-=20
-+#if (!defined(CONFIG_PREEMPT_RT) && !defined(CONFIG_NETCONSOLE_NBCON))
- 	lockdep_assert_irqs_disabled();
-+#endif
-=20
- 	dev =3D np->dev;
- 	rcu_read_lock();
-@@ -356,9 +379,11 @@ static netdev_tx_t __netpoll_send_skb(st
- 			udelay(USEC_PER_POLL);
- 		}
-=20
-+#if (!defined(CONFIG_PREEMPT_RT) && !defined(CONFIG_NETCONSOLE_NBCON))
- 		WARN_ONCE(!irqs_disabled(),
- 			"netpoll_send_skb_on_dev(): %s enabled interrupts in poll (%pS)\n",
- 			dev->name, dev->netdev_ops->ndo_start_xmit);
-+#endif
-=20
- 	}
-=20
-@@ -399,16 +424,16 @@ static void netpoll_udp_checksum(struct
-=20
- netdev_tx_t netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
- {
--	unsigned long flags;
-+	unsigned long __maybe_unused flags;
- 	netdev_tx_t ret;
-=20
- 	if (unlikely(!np)) {
- 		dev_kfree_skb_irq(skb);
- 		ret =3D NET_XMIT_DROP;
- 	} else {
--		local_irq_save(flags);
-+		netpoll_tx_begin(flags);
- 		ret =3D __netpoll_send_skb(np, skb);
--		local_irq_restore(flags);
-+		netpoll_tx_end(flags);
- 	}
- 	return ret;
- }
-@@ -501,7 +526,7 @@ int netpoll_send_udp(struct netpoll *np,
- 	int total_len, ip_len, udp_len;
- 	struct sk_buff *skb;
-=20
--	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && !IS_ENABLED(CONFIG_NETCONSOLE_NBCON=
-))
- 		WARN_ON_ONCE(!irqs_disabled());
-=20
- 	udp_len =3D len + sizeof(struct udphdr);
-
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
