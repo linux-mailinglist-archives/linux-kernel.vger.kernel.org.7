@@ -1,135 +1,247 @@
-Return-Path: <linux-kernel+bounces-778908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57D0B2EC94
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:06:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B57B2EAEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABE417BFDD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65B385E2847
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03A324EA90;
-	Thu, 21 Aug 2025 04:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BEF2475C2;
+	Thu, 21 Aug 2025 01:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b="JQ8+1MeG"
-Received: from mail-m49207.qiye.163.com (mail-m49207.qiye.163.com [45.254.49.207])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="KDFEDnU6"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD19B22A4CC;
-	Thu, 21 Aug 2025 04:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF48246786
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755749156; cv=none; b=lGo1oHZgCn6BidYz6FHYIyWA8F9MWxrfnkedMOVIJN+dySQxeGSgyBSTl7mOACaMoMQqZkzydBFV//KbfLBDEXmD6CtlQDkD+08T++TjyNAvbFc8EGvIM7xwotyZiVhu+KxCX8Yq2+fDSU84Cw2vXaJlczRZxpEMVUJmqtXXtlc=
+	t=1755740666; cv=none; b=crhK7m+wE2D4XYLPJn7lfearTR5lBVDPIKka0yz8w7jpPgQoDGcE58aPJoOVY5RmbzCMQW6qaCO9Hi/CeIAfl4cjc+gz0iLpkTlj095BG3EusFD3qIqp0Xnb1zlMQQAk4BMOmu2dVJgKGkUCeeeym6qWnub9Kjp7g7X9WWR5lf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755749156; c=relaxed/simple;
-	bh=vU/7DfLIzVQlb2KsyyZUZ8QbhmpI+WLM+loYFKQYEmw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bkk3F1BEe1agYEOAYzugFiUmFKecp6ct8JKtnoqpwBillv+XvgTws3oYW/Fx9VIcFNBcZE8Xe1mIhhJTWoKid5P3WqtEiR05AZzq5Y55T34CkXtf+M7/L7BqseZY8yPDbQNm08CbDQC8+l6diqmu/C48yxgNwrnvqovasBRs4mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn; spf=pass smtp.mailfrom=cqsoftware.com.cn; dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b=JQ8+1MeG; arc=none smtp.client-ip=45.254.49.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cqsoftware.com.cn
-Received: from localhost.lan (unknown [1.193.56.173])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 201320bad;
-	Thu, 21 Aug 2025 09:43:20 +0800 (GMT+08:00)
-From: Dewei Meng <mengdewei@cqsoftware.com.cn>
-To: perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ivan.orlov0322@gmail.com,
-	Dewei Meng <mengdewei@cqsoftware.com.cn>
-Subject: [PATCH] ALSA: timer: fix ida_free call while not allocated
-Date: Thu, 21 Aug 2025 09:43:17 +0800
-Message-ID: <20250821014317.40786-1-mengdewei@cqsoftware.com.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1755740666; c=relaxed/simple;
+	bh=pLQg269TfdCVaD9lGtWIua8jPvdmfueDTx/b93nQE2Q=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=WKwt9wzJL3ulismG4//5G+ldS2Bqqp85ipWBwEZDQ6ABlMpXg0weWwHYJWHhIKTlfPoPoLsxLUXGyA13ccXf5GwmsXnL7csQ+1ZIwflK+qz5LBBc8Z980t70SigeA8KSjPLrnLkBItHGkGclMCUYL8m+sBaBPIQeZQUM5c6Qtpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=KDFEDnU6; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57L1hcn3019985
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 20 Aug 2025 18:43:39 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57L1hcn3019985
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1755740620;
+	bh=6R6baGc7vDkaqNJuT5B7LJhMdkDSAFTZII1u9c00wH8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=KDFEDnU60Y1Ba/jQD+Y5a0Gsv0MS8i0uNJwjv9NaQsIxa/jQP6iUbtBmx4y6kT2HX
+	 LkZyxkIoV+KSaN6s3+NJWr6FCw0RWt8FowuLZrX0+O0jQlmyUbf7vGOMaMwcVoRUAx
+	 nW2N66I8De0kaeUYlU+CinR7owdVzDVTQRdSnuSm/1r6jEZiQFUOsaZC5QjveauA/6
+	 fsNH7dKiRqUm/deAQf5r9YlujOUInzzHsBsW+UvbH7s47abX4jdAEqg93NjoChSpsj
+	 ThFloSgaS7n/I00myQjtdWm1rPFI3Kn6ld92/+IUhwpVhTldjWX/TGo4DOK65VPOV/
+	 3Yv+ClVC4kMvA==
+Date: Wed, 20 Aug 2025 18:43:35 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Marcos Del Sol Vives <marcos@orca.pet>, linux-kernel@vger.kernel.org
+CC: marcos@orca.pet, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Brian Gerst <brgerst@gmail.com>, Uros Bizjak <ubizjak@gmail.com>,
+        Ard Biesheuvel <ardb@kernel.org>, David Kaplan <david.kaplan@amd.com>,
+        "Ahmed S. Darwish" <darwi@linutronix.de>, Kees Cook <kees@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Oleg Nesterov <oleg@redhat.com>, "Xin Li (Intel)" <xin@zytor.com>,
+        Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Subject: Re: [PATCH] x86: add hintable NOPs emulation
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250820013452.495481-1-marcos@orca.pet>
+References: <20250820013452.495481-1-marcos@orca.pet>
+Message-ID: <08A1B314-C015-4EE9-A13D-3D712FD274C4@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98ca4b78a003abkunm6b477d99c436a3
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDT0kYVkxPGUMeQ04ZQxpKS1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKVUpCSFVOTVVKTEhZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSktLVU
-	pCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=JQ8+1MeGkZdij7eihC7l8Q4zvMaties06cko9zs2sDnqczuBv7e+cffoAN7XEd0cjte7BFs1/k+59SUfctz5WVSH07Jr8sASmjduC8nVzKPkv+QIUZzPqS4w3modEF5OE2wKHvhxdy+Ifkyo4UzXLlTcx7pEpIKjI8boYBFuH7w=; c=relaxed/relaxed; s=default; d=cqsoftware.com.cn; v=1;
-	bh=it3PEl0g7u8iEnUcpVXvvyK9eW0H/7fi+YnwNQNqrjI=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-In the snd_utimer_create() function, if the kasprintf() function return
-NULL, snd_utimer_put_id() will be called, finally use ida_free()
-to free the unallocated id 0.
+On August 19, 2025 6:34:46 PM PDT, Marcos Del Sol Vives <marcos@orca=2Epet>=
+ wrote:
+>Hintable NOPs are a series of instructions introduced by Intel with the
+>Pentium Pro (i686), and described in US patent US5701442A=2E
+>
+>These instructions were reserved to allow backwards-compatible changes
+>in the instruction set possible, by having old processors treat them as
+>variable-length NOPs, while having other semantics in modern processors=
+=2E
+>
+>Some modern uses are:
+> - Multi-byte/long NOPs
+> - Indirect Branch Tracking (ENDBR32)
+> - Shadow Stack (part of CET)
+>
+>Some processors advertising i686 compatibility lack full support for
+>them, which may cause #UD to be incorrectly triggered, crashing software
+>that uses then with an unexpected SIGILL=2E
+>
+>One such software is sudo in Debian bookworm, which is compiled with
+>GCC -fcf-protection=3Dbranch and contains ENDBR32 instructions=2E It cras=
+hes
+>on my Vortex86DX3 processor and VIA C3 Nehalem processors [1]=2E
+>
+>This patch is a much simplified version of my previous patch for x86
+>instruction emulation [2], that only emulates hintable NOPs=2E
+>
+>When #UD is raised, it checks if the opcode corresponds to a hintable NOP
+>in user space=2E If true, it warns the user via the dmesg and advances th=
+e
+>instruction pointer, thus emulating its expected NOP behaviour=2E
+>
+>[1]: https://lists=2Edebian=2Eorg/debian-devel/2023/10/msg00118=2Ehtml
+>[2]: https://lore=2Ekernel=2Eorg/all/20210626130313=2E1283485-1-marcos@or=
+ca=2Epet/
+>
+>Signed-off-by: Marcos Del Sol Vives <marcos@orca=2Epet>
+>---
+> arch/x86/Kconfig                 | 29 +++++++++++++++++++++++++
+> arch/x86/include/asm/processor=2Eh |  4 ++++
+> arch/x86/kernel/process=2Ec        |  3 +++
+> arch/x86/kernel/traps=2Ec          | 36 ++++++++++++++++++++++++++++++++
+> 4 files changed, 72 insertions(+)
+>
+>diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>index 58d890fe2100=2E=2Ea6daebdc2573 100644
+>--- a/arch/x86/Kconfig
+>+++ b/arch/x86/Kconfig
+>@@ -1286,6 +1286,35 @@ config X86_IOPL_IOPERM
+> 	  ability to disable interrupts from user space which would be
+> 	  granted if the hardware IOPL mechanism would be used=2E
+>=20
+>+config X86_HNOP_EMU
+>+	bool "Hintable NOPs emulation"
+>+	depends on X86_32
+>+	default y
+>+	help
+>+	  Hintable NOPs are a series of instructions introduced by Intel with
+>+	  the Pentium Pro (i686), and described in US patent US5701442A=2E
+>+
+>+	  These instructions were reserved to allow backwards-compatible
+>+	  changes in the instruction set possible, by having old processors
+>+	  treat them as variable-length NOPs, while having other semantics in
+>+	  modern processors=2E
+>+
+>+	  Some modern uses are:
+>+	   - Multi-byte/long NOPs
+>+	   - Indirect Branch Tracking (ENDBR32)
+>+	   - Shadow Stack (part of CET)
+>+
+>+	  Some processors advertising i686 compatibility (such as Cyrix MII,
+>+	  VIA C3 Nehalem or DM&P Vortex86DX3) lack full support for them,
+>+	  which may cause SIGILL to be incorrectly raised in user space when
+>+	  a hintable NOP is encountered=2E
+>+
+>+	  Say Y here if you want the kernel to emulate them, allowing programs
+>+	  that make use of them to run transparently on such processors=2E
+>+
+>+	  This emulation has no performance penalty for processors that
+>+	  properly support them, so if unsure, enable it=2E
+>+
+> config TOSHIBA
+> 	tristate "Toshiba Laptop support"
+> 	depends on X86_32
+>diff --git a/arch/x86/include/asm/processor=2Eh b/arch/x86/include/asm/pr=
+ocessor=2Eh
+>index bde58f6510ac=2E=2Ec34fb678c4de 100644
+>--- a/arch/x86/include/asm/processor=2Eh
+>+++ b/arch/x86/include/asm/processor=2Eh
+>@@ -499,6 +499,10 @@ struct thread_struct {
+>=20
+> 	unsigned int		iopl_warn:1;
+>=20
+>+#ifdef CONFIG_X86_HNOP_EMU
+>+	unsigned int		hnop_warn:1;
+>+#endif
+>+
+> 	/*
+> 	 * Protection Keys Register for Userspace=2E  Loaded immediately on
+> 	 * context switch=2E Store it in thread_struct to avoid a lookup in
+>diff --git a/arch/x86/kernel/process=2Ec b/arch/x86/kernel/process=2Ec
+>index 1b7960cf6eb0=2E=2E6ec8021638d0 100644
+>--- a/arch/x86/kernel/process=2Ec
+>+++ b/arch/x86/kernel/process=2Ec
+>@@ -178,6 +178,9 @@ int copy_thread(struct task_struct *p, const struct k=
+ernel_clone_args *args)
+> 	p->thread=2Eio_bitmap =3D NULL;
+> 	clear_tsk_thread_flag(p, TIF_IO_BITMAP);
+> 	p->thread=2Eiopl_warn =3D 0;
+>+#ifdef CONFIG_X86_HNOP_EMU
+>+	p->thread=2Ehnop_warn =3D 0;
+>+#endif
+> 	memset(p->thread=2Eptrace_bps, 0, sizeof(p->thread=2Eptrace_bps));
+>=20
+> #ifdef CONFIG_X86_64
+>diff --git a/arch/x86/kernel/traps=2Ec b/arch/x86/kernel/traps=2Ec
+>index 36354b470590=2E=2E2dcb7d7edf8a 100644
+>--- a/arch/x86/kernel/traps=2Ec
+>+++ b/arch/x86/kernel/traps=2Ec
+>@@ -295,12 +295,48 @@ DEFINE_IDTENTRY(exc_overflow)
+> 	do_error_trap(regs, 0, "overflow", X86_TRAP_OF, SIGSEGV, 0, NULL);
+> }
+>=20
+>+#ifdef CONFIG_X86_HNOP_EMU
+>+static bool handle_hnop(struct pt_regs *regs)
+>+{
+>+	struct thread_struct *t =3D &current->thread;
+>+	unsigned char buf[MAX_INSN_SIZE];
+>+	unsigned long nr_copied;
+>+	struct insn insn;
+>+
+>+	nr_copied =3D insn_fetch_from_user(regs, buf);
+>+	if (nr_copied <=3D 0)
+>+		return false;
+>+
+>+	if (!insn_decode_from_regs(&insn, regs, buf, nr_copied))
+>+		return false;
+>+
+>+	/* Hintable NOPs cover 0F 18 to 0F 1F */
+>+	if (insn=2Eopcode=2Ebytes[0] !=3D 0x0F ||
+>+		insn=2Eopcode=2Ebytes[1] < 0x18 || insn=2Eopcode=2Ebytes[1] > 0x1F)
+>+		return false;
+>+
+>+	if (!t->hnop_warn) {
+>+		pr_warn_ratelimited("%s[%d] emulating hintable NOP, ip:%lx\n",
+>+		       current->comm, task_pid_nr(current), regs->ip);
+>+		t->hnop_warn =3D 1;
+>+	}
+>+
+>+	regs->ip +=3D insn=2Elength;
+>+	return true;
+>+}
+>+#endif
+>+
+> #ifdef CONFIG_X86_F00F_BUG
+> void handle_invalid_op(struct pt_regs *regs)
+> #else
+> static inline void handle_invalid_op(struct pt_regs *regs)
+> #endif
+> {
+>+#ifdef CONFIG_X86_HNOP_EMU
+>+	if (user_mode(regs) && handle_hnop(regs))
+>+		return;
+>+#endif
+>+
+> 	do_error_trap(regs, 0, "invalid opcode", X86_TRAP_UD, SIGILL,
+> 		      ILL_ILLOPN, error_get_trap_addr(regs));
+> }
 
-the syzkaller reported the following information:
-  ------------[ cut here ]------------
-  ida_free called for id=0 which is not allocated.
-  WARNING: CPU: 1 PID: 1286 at lib/idr.c:592 ida_free+0x1fd/0x2f0 lib/idr.c:592
-  Modules linked in:
-  CPU: 1 UID: 0 PID: 1286 Comm: syz-executor164 Not tainted 6.15.8 #3 PREEMPT(lazy)
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-4.fc42 04/01/2014
-  RIP: 0010:ida_free+0x1fd/0x2f0 lib/idr.c:592
-  Code: f8 fc 41 83 fc 3e 76 69 e8 70 b2 f8 (...)
-  RSP: 0018:ffffc900007f79c8 EFLAGS: 00010282
-  RAX: 0000000000000000 RBX: 1ffff920000fef3b RCX: ffffffff872176a5
-  RDX: ffff88800369d200 RSI: 0000000000000000 RDI: ffff88800369d200
-  RBP: 0000000000000000 R08: ffffffff87ba60a5 R09: 0000000000000000
-  R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
-  R13: 0000000000000002 R14: 0000000000000000 R15: 0000000000000000
-  FS:  00007f6f1abc1740(0000) GS:ffff8880d76a0000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 00007f6f1ad7a784 CR3: 000000007a6e2000 CR4: 00000000000006f0
-  Call Trace:
-   <TASK>
-   snd_utimer_put_id sound/core/timer.c:2043 [inline] [snd_timer]
-   snd_utimer_create+0x59b/0x6a0 sound/core/timer.c:2184 [snd_timer]
-   snd_utimer_ioctl_create sound/core/timer.c:2202 [inline] [snd_timer]
-   __snd_timer_user_ioctl.isra.0+0x724/0x1340 sound/core/timer.c:2287 [snd_timer]
-   snd_timer_user_ioctl+0x75/0xc0 sound/core/timer.c:2298 [snd_timer]
-   vfs_ioctl fs/ioctl.c:51 [inline]
-   __do_sys_ioctl fs/ioctl.c:907 [inline]
-   __se_sys_ioctl fs/ioctl.c:893 [inline]
-   __x64_sys_ioctl+0x198/0x200 fs/ioctl.c:893
-   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-   do_syscall_64+0x7b/0x160 arch/x86/entry/syscall_64.c:94
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  [...]
-
-The utimer->id should be set properly before the kasprintf() function,
-ensures the snd_utimer_put_id() function will free the allocated id.
-
-Fixes: 37745918e0e75 ("ALSA: timer: Introduce virtual userspace-driven timers")
-Signed-off-by: Dewei Meng <mengdewei@cqsoftware.com.cn>
----
- sound/core/timer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/core/timer.c b/sound/core/timer.c
-index 3ce12264eed8..d9fff5c87613 100644
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -2139,14 +2139,14 @@ static int snd_utimer_create(struct snd_timer_uinfo *utimer_info,
- 		goto err_take_id;
- 	}
- 
-+	utimer->id = utimer_id;
-+
- 	utimer->name = kasprintf(GFP_KERNEL, "snd-utimer%d", utimer_id);
- 	if (!utimer->name) {
- 		err = -ENOMEM;
- 		goto err_get_name;
- 	}
- 
--	utimer->id = utimer_id;
--
- 	tid.dev_sclass = SNDRV_TIMER_SCLASS_APPLICATION;
- 	tid.dev_class = SNDRV_TIMER_CLASS_GLOBAL;
- 	tid.card = -1;
--- 
-2.43.5
-
+Do those processors support FCOMI?
 
