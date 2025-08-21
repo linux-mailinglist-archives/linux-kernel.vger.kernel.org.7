@@ -1,157 +1,200 @@
-Return-Path: <linux-kernel+bounces-779054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F4B3B2EE7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F505B2EE7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14F355E009F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:45:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB375C827D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2F92E7196;
-	Thu, 21 Aug 2025 06:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DA821A437;
+	Thu, 21 Aug 2025 06:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lOs7W9fM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BWichBKC"
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132662E266E
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E1557C9F
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755758702; cv=none; b=anixuf+on1EZ00HjACdjppgshHobiyuA8ihGPaMc6UTG2/1bmGJbu3wCADvEhcXCrWpD/ICzwlgV4nk2lQg0rtxYkx0YPJ5OiEuicOv3JaGetkwa0J0+xAqQdeIXpGGu/vBTI5j0D4rhxWcFqKMWVAFRehLrb8H0hiixIjGWo9E=
+	t=1755758743; cv=none; b=QJAV366jESdWXRd3QdHz47j3S5hjQ3lXz7HoHUEcXS0n4FWCOq44ra0+I5vv0VE4vD2BlbV/tuBB5fPz8Uen1nz1qwwASDVLTOlmfUFh7LDanYfP2GPKMPuIYnzLcVlX+g3m1ROmjNDtbZXTsgbLkDA0y2LlvYFCZDsoYd5jcLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755758702; c=relaxed/simple;
-	bh=limPWQWRS82UE9S5O0lLb4msGufN3y2kIqx6S5HAEJI=;
-	h=Content-Type:Date:Message-Id:Subject:From:To:References:
-	 In-Reply-To; b=UW4JPnK1DqtIK76EMdgWm1fcTEAdaSHvT+fL62Bu0aT9Ak9e14y146MWfpPwQdScDjrAqrfjIlM+WzZ7r2pnX5c4IdYfMglI4AtVjMAe16aXM9RT336Odilmz/wtAazZUHadJpB6GhcmcBZS7Gu72WNrm6V2h+wlDQpdnmRR2gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lOs7W9fM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3AF1C4CEED;
-	Thu, 21 Aug 2025 06:45:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755758701;
-	bh=limPWQWRS82UE9S5O0lLb4msGufN3y2kIqx6S5HAEJI=;
-	h=Date:Subject:From:To:References:In-Reply-To:From;
-	b=lOs7W9fMzeq5uO555itwKY1W9TAJ6BjkCZwElhJmcO13hAHQPGaouIkIrnyKHFqrJ
-	 l8C3PJfb9HS0ENGch9FIozeWQMITmjq2R4tBBr3hOsYwsK2Z0H+eHeSInsjiB0EYED
-	 N5V+9Nv1evyBMKoqW/InMxHTSDRRja3qbSSTNP8gYfqP8Qauc2aEiE4pKvaOqWsIyk
-	 hniJdJkyRqrsAVYmFqheqUNpWr0y51PGRJizdq56UUMT+dONGAw+yj3CakduZ9iMvn
-	 8l8xSDIAT4/hd21bB7i+J4meKPdmidxv16LRXPrRZjRqvWGOrrSoZIm0TV22FahCy5
-	 lIRGmyXjtrF6w==
-Content-Type: multipart/signed;
- boundary=030571e0ecaeb27a9a0dae0023b5712f16fb971faa06dab3bc8b8719f87f;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 21 Aug 2025 08:44:57 +0200
-Message-Id: <DC7WIIFZQ448.3RW1U45I41129@kernel.org>
-Subject: Re: [PATCH v3 1/1] mtd: spi-nor: core: Prevent oops during driver
- removal with active read or write operations
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Romli, Khairul Anuar" <khairul.anuar.romli@altera.com>, "Tudor Ambarus"
- <tudor.ambarus@linaro.org>, "Pratyush Yadav" <pratyush@kernel.org>, "Miquel
- Raynal" <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>, "open list:SPI NOR SUBSYSTEM"
- <linux-mtd@lists.infradead.org>, "open list"
- <linux-kernel@vger.kernel.org>, "Gerlach, Matthew"
- <matthew.gerlach@altera.com>
-X-Mailer: aerc 0.16.0
-References: <cover.1753839339.git.khairul.anuar.romli@altera.com>
- <566fc1168db723672ab0bc6482ec7b72b4b8fe2b.1753839339.git.khairul.anuar.romli@altera.com> <DBP7P3RWX17B.14Q27IBS3T3FL@kernel.org> <MN2PR03MB49271E2D022D305BC149BA4FC624A@MN2PR03MB4927.namprd03.prod.outlook.com> <DBP84FIUUQO7.369TFNTJFELMW@kernel.org> <MN2PR03MB4927D29E06586CCE7D0547FEC632A@MN2PR03MB4927.namprd03.prod.outlook.com>
-In-Reply-To: <
- <MN2PR03MB4927D29E06586CCE7D0547FEC632A@MN2PR03MB4927.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1755758743; c=relaxed/simple;
+	bh=RYDU1+gPbuO4Va/MXhU5wCxRuUZkK4Sc7nFG3u5YgTk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JhCAyku+ZKCHtw9ZmPp44n3jznHhCQV2Wh1UfegNiZv0ZGlwWAmhm/+GkekRLuIPFC/469HqrMLbkMmU6ILc3o1ErgpazcwMfPUKOPxn5ox0lMQeteTrdIl10EiHXo+sOd2Vk4/UAkpXcyyg3F0OK0h1NA8btse08A7hRXN1FaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BWichBKC; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-8901911d598so171859241.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 23:45:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755758741; x=1756363541; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g7Smd8gSEHvUxLDgOcYmY68eshiwJkxa2AO+F+xW3LA=;
+        b=BWichBKChNqPvgcY92Xg1phq0NwPhnyF7i3FzwVF0MGW0PXHp8gQcxvB936yy6s9ui
+         7s2dKx6dkBEwNXgeeOPw3pA/fvWvDoc8Pz7+jXcOQZnaKUgslsl639BecOfRrHRGl3YU
+         Ul01B5I3MhQTdJB/5KhhvuURxd0okOtreE+F6CKrR85lV1SfIbX63Kz8aQEd03XHm3L1
+         qd03y4Ic37QE/Afm5PXAavCTHpOGuLCMRLze+67sUMyCQEIOZ/WM0TLkK46Wc3dWb4zh
+         efyD6mWXQUQScUKqC5o4f/TsH/vJcAar/zCVtkOKIKhH59XoNgTqRaVjEfNNw6xsIvSU
+         MhJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755758741; x=1756363541;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g7Smd8gSEHvUxLDgOcYmY68eshiwJkxa2AO+F+xW3LA=;
+        b=ktuI1gz+5GnLVXs5XBFmqUKiKP1HNYWoTXYDx/2aJJihpY7Zx+AoM8O23VamE5QOpI
+         R1s/J75iqqglIo4WGJi/NNo2dxzSive6bAASchJhdIG7GiOuQFDGqeNvx3qXg2viPVkq
+         DZPPkSsLRpLdrzjWnlEaJV1ZlO3TumfllMt/zAv5FsVPOQXT285T/ZKtxbKDGoTNFm8a
+         q11O+MsZ7pzkC6vE4XOfdSAq3tRQ4fL7ccCFyh8n3IG7XX5dyCc0oHVjiE2ovfLROyJj
+         5l1lGupUfUVODqoTsL9qRu1svRmR4BQIAlQ/T70Txnkp4ENDsTudTj5jIU9QYB3NUjPM
+         hKaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5dkvBKC14DfBJvf0t+E/LVQw6FxPoRMrjCfCquirgSQqXDlA8GZzggdQGc8ECarGoSguu7AxRWTicCdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5TXJPglRzcgP0FFUstoZiHINZJh3RDHdvfSFtBbBIzpYequYs
+	V0k1fTqIBHg1swF2XTyT7Oz26T4GeEoGrCHlWOpBwFCCkYC+KiS1lWwX9713oC1SSnUy9Z/Ed2C
+	7y3xBqzBhrhDNRe5R+Wj9RhyeQ2vsVAkn5VagwVMV
+X-Gm-Gg: ASbGncvicdHzbvlqqXr0FY2Skj5+nP9JI4zgTaPdMktHjz7t9iydbpfQRXxWr2wj07f
+	cTrAOS9UcSmjwsiv0ivo5Ave7QuFmHRnn+iUgsbGZXdrryDWp8emktrSa57s5Ip6faH8ppbQGIw
+	kGfLLcAHuXtzCe4PH8ZtJLHkATKnpHuYEUzHunDiYquBjwFPz0tbvhnj8XpqS+X2EhIHcF+HdWN
+	lfHjrnZrWMB
+X-Google-Smtp-Source: AGHT+IGa1X3jkTBzp4++TY3s5fwvJa235FzeZy18kCkNQD6aqFLh83CJJj0vSfQraUgBiNuA2fsRjmWJQ5jEJ0z+zcs=
+X-Received: by 2002:a05:6102:6894:b0:519:534a:6c21 with SMTP id
+ ada2fe7eead31-51be13bc648mr306063137.31.1755758740796; Wed, 20 Aug 2025
+ 23:45:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---030571e0ecaeb27a9a0dae0023b5712f16fb971faa06dab3bc8b8719f87f
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250821004237.2712312-1-wusamuel@google.com> <20250821004237.2712312-4-wusamuel@google.com>
+In-Reply-To: <20250821004237.2712312-4-wusamuel@google.com>
+From: Saravana Kannan <saravanak@google.com>
+Date: Wed, 20 Aug 2025 23:45:03 -0700
+X-Gm-Features: Ac12FXzDTIflvmHbWTz4s_kpP9_TjDsECLoSs_L-xRlMthFUHwBgXLYgoXIErWY
+Message-ID: <CAGETcx-7qkHPQdUXf_SQMzZbTdcxF3oMk4nqfRnb6=wf0QQzcQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] PM: Support abort during fs_sync of back-to-back suspends
+To: Samuel Wu <wusamuel@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi,
-
-On Thu Aug 21, 2025 at 2:32 AM CEST, Khairul Anuar Romli wrote:
-> Sorry for taking very long time to reply. Could you advise me what
-> kind of analysis do you want me to provide?
-
-Please don't top-post, see [1]. An explanation what is going wrong
-and why (and no, a backtrace is not an explanation). Why is
-dev->driver->owner NULL? Shouldn't it be guarded by a lock or
-something? And esp. why is owner NULL in put_device().
-
--michael
-
+On Wed, Aug 20, 2025 at 5:43=E2=80=AFPM Samuel Wu <wusamuel@google.com> wro=
+te:
 >
-> > -----Original Message-----
-> > From: Michael Walle <mwalle@kernel.org>
-> > Sent: Wednesday, 30 July, 2025 3:50 PM
-> > To: Romli, Khairul Anuar <khairul.anuar.romli@altera.com>; Tudor Ambaru=
-s
-> > <tudor.ambarus@linaro.org>; Pratyush Yadav <pratyush@kernel.org>; Mique=
-l
-> > Raynal <miquel.raynal@bootlin.com>; Richard Weinberger <richard@nod.at>=
-;
-> > Vignesh Raghavendra <vigneshr@ti.com>; open list:SPI NOR SUBSYSTEM
-> > <linux-mtd@lists.infradead.org>; open list <linux-kernel@vger.kernel.or=
-g>;
-> > Gerlach, Matthew <matthew.gerlach@altera.com>
-> > Subject: Re: [PATCH v3 1/1] mtd: spi-nor: core: Prevent oops during dri=
-ver
-> > removal with active read or write operations
-> >=20
-> > Hi,
-> >=20
-> > > > On Wed Jul 30, 2025 at 3:39 AM CEST, Khairul Anuar Romli wrote:
-> > > > > From: kromli <khairul.anuar.romli@altera.com>
-> > > > >
-> > > > > Ensure that the pointer passed to module_put() in
-> > > > > spi_nor_put_device() is not NULL before use. This change adds a
-> > > > > guard clause to return early, preventing the kernel crash below
-> > > > > when the cadence-qspi driver is removed during a dd operation:
-> > > >
-> > > > As already asked in v2. This needs a (more detailed) description
-> > > > what is going on and what is going wrong.
-> > > >
-> > > > -michael
-> > >
-> > > Hi,
-> > >
-> > > We just run the following test we observe the crash.
-> > >
-> > > time dd if=3D/dev/mtd1 of=3Dout.img bs=3D1MB count=3D1000 & echo spi0=
-.0 >
-> > > /sys/bus/spi/drivers/spi-nor/unbind
-> > > echo spi0.0 > /sys/bus/spi/drivers/spi-nor/bind
-> > >
-> > > From the observation, the dd is not entirely terminated when the unbi=
-nd
-> > took place.
-> > > Maybe there is other changes require to ensure the dd operation gets
-> > > terminated when driver unbind/remove.
-> >=20
-> > I'd expect an analysis what's going wrong in the kernel to judge the co=
-rrectness
-> > of the patch.
-> >=20
-> > Thanks,
-> > -michael
+> There is extra care needed to account for back-to-back suspends while
+> still maintaining functionality to immediately abort during the
+> filesystem sync stage.
+>
+> This patch handles this by serializing the filesystem sync sequence with
+> an invariant; a subsequent suspend's filesystem sync operation will only
+> start when the previous suspend's filesystem sync has finished. While
+> waiting for the previous suspend's filesystem sync to finish, the
+> subsequent suspend will still abort early if a wakeup event is
+> triggered, solving the original issue of filesystem sync blocking abort.
+>
+> Suggested-by: Saravana Kannan <saravanak@google.com>
+> Signed-off-by: Samuel Wu <wusamuel@google.com>
+> Reviewed-by: Saravana Kannan <saravanak@google.com>
 
-[1] https://subspace.kernel.org/etiquette.html
+I think you meant to add my Reviewed-by: to all 3 patches.
 
---030571e0ecaeb27a9a0dae0023b5712f16fb971faa06dab3bc8b8719f87f
-Content-Type: application/pgp-signature; name="signature.asc"
+Rafael,
 
------BEGIN PGP SIGNATURE-----
+Feel free to add it when you pick up these patches.
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaKbAaRIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/i0AAF/TEoMr4W7YmQFJcoQEnP9+hkbiBM7Kuxq
-1sC33x9rbxIUAhJKM2ekjOz/a8Zy27IhAYD6QoVjyIYBKQGMvI1YkekQaZnXJHXw
-CphM5+Of64+HjUY2giF6c7dHSGOi74d4KKE=
-=0u7V
------END PGP SIGNATURE-----
-
---030571e0ecaeb27a9a0dae0023b5712f16fb971faa06dab3bc8b8719f87f--
+-Saravana
+> ---
+>  kernel/power/suspend.c | 30 +++++++++++++++++++++++++++++-
+>  1 file changed, 29 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+> index edacd2a4143b..514c590ec383 100644
+> --- a/kernel/power/suspend.c
+> +++ b/kernel/power/suspend.c
+> @@ -75,6 +75,8 @@ bool pm_suspend_default_s2idle(void)
+>  }
+>  EXPORT_SYMBOL_GPL(pm_suspend_default_s2idle);
+>
+> +static bool suspend_fs_sync_queued;
+> +static DEFINE_SPINLOCK(suspend_fs_sync_lock);
+>  static DECLARE_COMPLETION(suspend_fs_sync_complete);
+>
+>  /**
+> @@ -85,7 +87,9 @@ static DECLARE_COMPLETION(suspend_fs_sync_complete);
+>   */
+>  void suspend_abort_fs_sync(void)
+>  {
+> +       spin_lock(&suspend_fs_sync_lock);
+>         complete(&suspend_fs_sync_complete);
+> +       spin_unlock(&suspend_fs_sync_lock);
+>  }
+>
+>  void s2idle_set_ops(const struct platform_s2idle_ops *ops)
+> @@ -420,7 +424,11 @@ void __weak arch_suspend_enable_irqs(void)
+>  static void sync_filesystems_fn(struct work_struct *work)
+>  {
+>         ksys_sync_helper();
+> +
+> +       spin_lock(&suspend_fs_sync_lock);
+> +       suspend_fs_sync_queued =3D false;
+>         complete(&suspend_fs_sync_complete);
+> +       spin_unlock(&suspend_fs_sync_lock);
+>  }
+>  static DECLARE_WORK(sync_filesystems, sync_filesystems_fn);
+>
+> @@ -432,8 +440,26 @@ static DECLARE_WORK(sync_filesystems, sync_filesyste=
+ms_fn);
+>   */
+>  static int suspend_fs_sync_with_abort(void)
+>  {
+> +       bool need_suspend_fs_sync_requeue;
+> +
+> +Start_fs_sync:
+> +       spin_lock(&suspend_fs_sync_lock);
+>         reinit_completion(&suspend_fs_sync_complete);
+> -       schedule_work(&sync_filesystems);
+> +       /*
+> +        * Handle the case where a suspend immediately follows a previous
+> +        * suspend that was aborted during fs_sync. In this case, wait fo=
+r the
+> +        * previous filesystem sync to finish. Then do another filesystem=
+ sync
+> +        * so any subsequent filesystem changes are synced before suspend=
+ing.
+> +        */
+> +       if (suspend_fs_sync_queued) {
+> +               need_suspend_fs_sync_requeue =3D true;
+> +       } else {
+> +               need_suspend_fs_sync_requeue =3D false;
+> +               suspend_fs_sync_queued =3D true;
+> +               schedule_work(&sync_filesystems);
+> +       }
+> +       spin_unlock(&suspend_fs_sync_lock);
+> +
+>         /*
+>          * Completion is triggered by fs_sync finishing or a suspend abor=
+t
+>          * signal, whichever comes first
+> @@ -441,6 +467,8 @@ static int suspend_fs_sync_with_abort(void)
+>         wait_for_completion(&suspend_fs_sync_complete);
+>         if (pm_wakeup_pending())
+>                 return -EBUSY;
+> +       if (need_suspend_fs_sync_requeue)
+> +               goto Start_fs_sync;
+>
+>         return 0;
+>  }
+> --
+> 2.51.0.261.g7ce5a0a67e-goog
+>
 
