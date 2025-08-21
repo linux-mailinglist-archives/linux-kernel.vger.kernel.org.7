@@ -1,132 +1,213 @@
-Return-Path: <linux-kernel+bounces-778740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B653B2E9A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:46:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43965B2E9CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B3E1CC2B37
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:47:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0865E4E2B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738681DE8AE;
-	Thu, 21 Aug 2025 00:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788FC1E493C;
+	Thu, 21 Aug 2025 00:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYLLNtjG"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VeQ/g63d"
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A41B610B;
-	Thu, 21 Aug 2025 00:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F331804A;
+	Thu, 21 Aug 2025 00:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755737202; cv=none; b=JJ9r8YXG/Lm9v9s6vJIGAwBz5EyIYDPctPY974W2t9BbXY55EzrbDEkhdahRzPkcJU3yxT+fExbSkw9HmSGsEbyRc92FAQnhnX3Pq1Vr3rA7K8sMHUfm6YiNz5o1YOHd7O6zuBX6G4vbdPilMxeexUsVTNIctXbkZhBgTBsdTk4=
+	t=1755737701; cv=none; b=sziBKrB6Cpm4K1XngzakOAsA2Ck0ONXjTfqkbAHUKa/FvHR7CNpCAd3IDGlAnmPu2B9nBmb5JOnrxRDQgOJ2nBhjy8YMHNct6aRbIodueH15Y8XR4Ls0zcJYrt850iaCbKaR/kWKmzUUFaaaggGKBxB5gfjUoM+81r1K6yfvxMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755737202; c=relaxed/simple;
-	bh=ZYe5JE5AzYcba781Xa+Tyj5qUu469y8s0aRLOaLmMDw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qz9YyLWrPT76Z08oKjA+RBCL+sfq/lZjAloO0nR8UiLks8/Bb18xAkasMAb8f4+W5huaU7Jqxbr5quJHOenwWhn/sZD4Gy5IqXlYL1exqQ8gicrhbyTwFUjLrT7fOq0109Y1WMxbH78ZThDoYTZfSBqz9i6h2NLS3VvD4lWgVc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kYLLNtjG; arc=none smtp.client-ip=209.85.215.180
+	s=arc-20240116; t=1755737701; c=relaxed/simple;
+	bh=zEKH0whlqLewLZsL8A8sZUR/hXkcaQSTvtaOJ3AF/CY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e2CuRpFLX2Ev7xiVSMI9hGgbmdoULpLhMmyKF6/vD3IuH/9aSfltzho9hIOxy6qbw60coZqcHF78RagSm0AyhrfJg6PQb5moab513bPW/SyJGYNjbA3wKyEVyJbfQMUKT1k8j9Lp3iJLVrLPWtFxDMXBarM3WN7KHk4XPzeUgFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VeQ/g63d; arc=none smtp.client-ip=209.85.208.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b476cfc2670so266359a12.3;
-        Wed, 20 Aug 2025 17:46:41 -0700 (PDT)
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-61a94bd82a5so849696a12.1;
+        Wed, 20 Aug 2025 17:54:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755737201; x=1756342001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kMVT+kKZTHe2OyEbS0gfrhGsxk3Z5Axh7St6QKerpQg=;
-        b=kYLLNtjGH3j4FCOsq5zsAXHtOoPD5q/+ss50m3nTZ2foM/TSChBAn2yQJ9FwySYrGr
-         2Fz2lF8W7FACuHyF9I4zTCUJjiO61xR00o65pJnFCJ3us0PA6R3M+FQp23JPI+/f36KP
-         O6vUtSrd68mxDFUPquxKcqYDjAEsgD5PtYA9Izi+TgIIoBqUqCyRAYYNRmBOrfMf8iDw
-         7HFqcxLSKaM/27I+pUswGQHEglU1zckyzpGvTwz8UheGh23sVY0CV5XEV4ozkUzWQuvf
-         yV7WtgvcJhOYmAxKE52za3BhYtg+EWayQ6/VIT1EJYMjsJkEORzPpcLSmPYa1vCFlqzS
-         PtKA==
+        d=gmail.com; s=20230601; t=1755737698; x=1756342498; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ECt6+t5ZFrrfkRkr0o7E1VCkPJWhGAI+xLcJ6W+PWtc=;
+        b=VeQ/g63dz+YuNBBWe12yaleoR/xvwjE/lPB7i/eemdByNiu78d2BzOolJkj6VVZ4kV
+         6s4Xv1EMy1SRMgYe1DHawb8F9ATscYLA+1sN0RgWxwuLyG3HspBlRm/BhdbnXYWJHvan
+         zyCCFnO5f9E7AqrKX1kyJwHxLYeWe+UKhWJfzc2tU/lJYVU0rHNydLz9Hle4az9SBPpo
+         DyoTZXHRn+jN/RR7mVCVMwLtFPXntPNE2ynI6C5zVDGHMJSJmim8baxlbzpcXaDFXJsL
+         mVQXNXDa8Rc4WBeamWYM9wbU2jytyQfllyH1Bq2BklGO4VkLi1yFNyVj2pK19qeVyxT3
+         sosA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755737201; x=1756342001;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kMVT+kKZTHe2OyEbS0gfrhGsxk3Z5Axh7St6QKerpQg=;
-        b=U6ng+ParioBoUrpQXZYApgpDyDkVUgq/OqMJJAbXd7ZGYWFsoE15V6sRtYolOp7MPZ
-         2PXLYTaJXaaFWuC9HRMjRw/pj8oujaAJEVgamvmj/vY1vdrecpYrd0gcoYPae75zAPIK
-         EiaSzczietew9T2bEvJdqjh5+KtD3wLNo7f+fbEb1o8PWIWvj6WJ/5yZgR9KoQTHAaOB
-         h2mhuxvSrT/sLzaYyrEdoVC7jGLHH2UPCxRTK0OW/0BgrktLdc5Axu5LE3i+h7BXsXwW
-         Gofi3Fy4/C3AcIG8S3Z0DYvGt21Ib5hanagiwggwGrHXRq/Ee+QxnfECrjK7UI9stm4R
-         /5jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbSPDK3ukwdje3q8CQwhiEBNtrSoH5bR6L298Las4I/EUmXh1BcE22jYSpPCcHVqPbLWMLI74bOGsV1GR3mQ==@vger.kernel.org, AJvYcCWqvSOcRgCyV1Uomkp7SxKEqof+C6JneVkYOgqV/tPsiTeVVWU4wHays2zuS2Qn/HkWBtbGVHGxeyOx@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe4+9llmf52wnT95/3pywNmECq4xzQkh1NkSWHuXHLRsCxPdBd
-	LeO23rUkZQ6eX1r5CDVcnSSenefK03dno8K3YeXAXRQSPRxkeYGK4YGi
-X-Gm-Gg: ASbGnctL7jEgZUESCxnGKQnqDoGu6cxEWCTQxvNBLDDVZ+tP8oOBRV6ytPNifBAbhZe
-	/gv69sFMnNmc0Z07vIa0fj2VFPqPkIiRmfkhkJsOIuGD6JxnFH1dQKOo5xcEmX3EC3naWrKYSYw
-	6fZX3iq55a3oa0R3VQHyXvjHSzt3QkU6/eLMTjduiVSjUwZJQt/NENvU74P0CqwKQKfe+xMXGaZ
-	bZcFwtde4X/JaCQ486IYqVMy2fchajWaf3MispxHITGHIwkQsBt0vM8BnvD+5GB0QdxiUc8XEZp
-	qVxcuUIZ/bv5yQFHj3MlhAKN8hAQN2Awp6EANxSl4UXWWS5PGasA17liMJJjhN41hF1ZoRVJd+P
-	0sRpt//4LjkPSkCXGM6tGNA==
-X-Google-Smtp-Source: AGHT+IG5X1O4EUAyYLH751+5LmCK1uRJZoilG8Hq5W9rsLq9nVtEeldXX2hkyouM0xAPeeSn9g8YEw==
-X-Received: by 2002:a17:902:ce12:b0:240:981d:a4f5 with SMTP id d9443c01a7336-245fedb8cdamr8288585ad.42.1755737200526;
-        Wed, 20 Aug 2025 17:46:40 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed35a632sm38471705ad.38.2025.08.20.17.46.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 17:46:39 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 8A083419B2BE; Thu, 21 Aug 2025 07:46:37 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux bcachefs <linux-bcachefs@vger.kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH v2] Documentation: bcachefs: Add explicit title for idle work design doc
-Date: Thu, 21 Aug 2025 07:46:21 +0700
-Message-ID: <20250821004620.10772-2-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20230601; t=1755737698; x=1756342498;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ECt6+t5ZFrrfkRkr0o7E1VCkPJWhGAI+xLcJ6W+PWtc=;
+        b=u7uIdhsTeOYDlNRG3adA7X1MDAthb4/HJZK59HeZ/lBCRKbdGfne5ThE4/nIr7I4tO
+         oDcDci9ffOJE2gEGBIUiDpxgIW31bhApo/q2npksImHG8xS3GqAglv3ruwtyZsOJVtTm
+         2x8lPitw5ntyvwDjlXdB430g0lFAj55WmSLGXLaDT+wEwKXUqfC13ls3PSq2zWJglNx3
+         IG66Ya/SSLekW51F/C7xBghgm3+NpANFOxY+fUOBB7GyTb2SIP8jlEisKDLnaO7TJBdD
+         63Bq6ylD1oVwxsKx7IMPJtPRh8qUYWfNCFarELmS5Vze2/NSQOFNP/kBcfn4+Vv9kRFc
+         Rkcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGaPNnEHeYbUrM0JEeh+7nECO5zyy7fsXUD+g1iCOlawnpjZTSJke45qP1Sjn+n5enCIO7Gx4kHfA=@vger.kernel.org, AJvYcCWOOiLGndnlmRZjiicq5KFIub7TSK4iudwwN1UtcP0xWAhIHyIIzL4Tc07d8wIl4RnHWYKLv3LI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrgavGVUEPhevK3vin9pomkumzK6DGdngvmuIm8z4NSbfkbfVq
+	Lt7T+JakzHpJNUCYh1xTFvLDr8ihInjzSP7Gag9X+uyHRV99B0NIBicb
+X-Gm-Gg: ASbGncsZlicflViyan75LqUOCll9K0pvawGqxhWiC+DkqF0uEZRKUsd3/pU1v8o9gEA
+	o75RGM3c/5YUYDu0IzJEzUmE1sz2RgvkjROY32niYTotKu8bVcY2orHShOeOvruHCHWsuD19A9G
+	lOYq9SmkzbUb9xG0kKd9HrdpwK6a2YznskTPZ8TF6qzS16ezIIrg3Y1w6Uw65wV5XPur5GAHZyv
+	vTsFsHy8QDgGAPciha5rWM+0TyvjFcFqXW4p28CXzYir5BiaGHnKDSoEBhw7m9Z1LRn/QqL1CpR
+	QU6ea4WBgPjIUWxuaGAiEH7dqjSUI9AiGJNLpPLt08B0WXgfuYRcYmKTEUtKCHOLy+bjT/gDyMS
+	6cdcNNBQjns4IrCSSiqRKiJtcTPOI81/UpJVczmYgL8drOlVtz1Yc92DadNvOPcire06qgVBPqm
+	M1H2T8vc+Xfdh7kzrYruai
+X-Google-Smtp-Source: AGHT+IGqhADzawZRc4KqXqlNcb31shVNdQejYqkinActEiOhb/cOrOXHd0P2GElngi4E1XNG9BHO5g==
+X-Received: by 2002:a17:907:6d24:b0:af9:5b1f:b87a with SMTP id a640c23a62f3a-afe07b08fdemr68615666b.20.1755737698151;
+        Wed, 20 Aug 2025 17:54:58 -0700 (PDT)
+Received: from [26.26.26.1] (95.112.207.35.bc.googleusercontent.com. [35.207.112.95])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded30bf00sm281725666b.30.2025.08.20.17.54.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 17:54:56 -0700 (PDT)
+Message-ID: <dfdc655e-1e06-42df-918f-7d56f26a7473@gmail.com>
+Date: Thu, 21 Aug 2025 08:54:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1368; i=bagasdotme@gmail.com; h=from:subject; bh=ZYe5JE5AzYcba781Xa+Tyj5qUu469y8s0aRLOaLmMDw=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBnLskueXZ7H6PBuxYnd30onX2+beivsVOBDxQXrTLh6O m5d9NzJ31HKwiDGxSArpsgyKZGv6fQuI5EL7WsdYeawMoEMYeDiFICJzLvKyDBFrWtmQPLWT42t 8QpfQyS2TZh4OmrSIdZ4ZY69jZ/8DTsYGdYVm8sbTD9xZb7Ing3BryWDbj+ZKFG2j9U/TVT2mJl nNh8A
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
+To: Brian Norris <briannorris@chromium.org>,
+ Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ Brian Norris <briannorris@google.com>, stable@vger.kernel.org
+References: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
+Content-Language: en-US
+From: Ethan Zhao <etzhao1900@gmail.com>
+In-Reply-To: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Commit 9e260e4590e044 ("docs: bcachefs: idle work scheduling design
-doc") adds design doc for idle work scheduling, but misses explicit
-title heading, causing its two section headings to be toctree entries
-instead.
 
-Add the title.
 
-Fixes: 9e260e4590e0 ("docs: bcachefs: idle work scheduling design doc")
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
-Changes since v1 [1]:
+On 8/21/2025 1:26 AM, Brian Norris wrote:
+> From: Brian Norris <briannorris@google.com>
+> 
+> max_link_speed, max_link_width, current_link_speed, current_link_width,
+> secondary_bus_number, and subordinate_bus_number all access config
+> registers, but they don't check the runtime PM state. If the device is
+> in D3cold, we may see -EINVAL or even bogus values. 
+My understanding, if your device is in D3cold, returning of -EINVAL is
+the right behavior.  >
+> Wrap these access in pci_config_pm_runtime_{get,put}() like most of the
+> rest of the similar sysfs attributes.
+> 
+> Fixes: 56c1af4606f0 ("PCI: Add sysfs max_link_speed/width, current_link_speed/width, etc")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Brian Norris <briannorris@google.com>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+> 
+>   drivers/pci/pci-sysfs.c | 32 +++++++++++++++++++++++++++++---
+>   1 file changed, 29 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 5eea14c1f7f5..160df897dc5e 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -191,9 +191,16 @@ static ssize_t max_link_speed_show(struct device *dev,
+>   				   struct device_attribute *attr, char *buf)
+>   {
+>   	struct pci_dev *pdev = to_pci_dev(dev);
+> +	ssize_t ret;
+> +
+> +	pci_config_pm_runtime_get(pdev);
+This function would potentially change the power state of device,
+that would be a complex process, beyond the meaning of
+max_link_speed_show(), given the semantics of these functions (
+max_link_speed_show()/max_link_width_show()/current_link_speed_show()/
+....),
+this cannot be done !
 
-  * Keep original "design doc" title (Kent)
-
-[1]: https://lore.kernel.org/linux-doc/20250820002218.11547-1-bagasdotme@gmail.com/
-
- Documentation/filesystems/bcachefs/future/idle_work.rst | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/filesystems/bcachefs/future/idle_work.rst b/Documentation/filesystems/bcachefs/future/idle_work.rst
-index 59a332509dcd97..8519fdcaa5ff49 100644
---- a/Documentation/filesystems/bcachefs/future/idle_work.rst
-+++ b/Documentation/filesystems/bcachefs/future/idle_work.rst
-@@ -1,4 +1,5 @@
--Idle/background work classes design doc:
-+Idle/background work classes design doc
-+=======================================
- 
- Right now, our behaviour at idle isn't ideal, it was designed for servers that
- would be under sustained load, to keep pending work at a "medium" level, to
-
-base-commit: 37c52167b007d9d0bb8c5ed53dd6efc4969a1356
--- 
-An old man doll... just what I always wanted! - Clara
+Thanks,
+Ethan>
+> -	return sysfs_emit(buf, "%s\n",
+> -			  pci_speed_string(pcie_get_speed_cap(pdev)));
+> +	ret = sysfs_emit(buf, "%s\n",
+> +			 pci_speed_string(pcie_get_speed_cap(pdev)));
+> +
+> +	pci_config_pm_runtime_put(pdev);
+> +
+> +	return ret;
+>   }
+>   static DEVICE_ATTR_RO(max_link_speed);
+>   
+> @@ -201,8 +208,15 @@ static ssize_t max_link_width_show(struct device *dev,
+>   				   struct device_attribute *attr, char *buf)
+>   {
+>   	struct pci_dev *pdev = to_pci_dev(dev);
+> +	ssize_t ret;
+> +
+> +	pci_config_pm_runtime_get(pdev);
+> +
+> +	ret = sysfs_emit(buf, "%u\n", pcie_get_width_cap(pdev));
+>   
+> -	return sysfs_emit(buf, "%u\n", pcie_get_width_cap(pdev));
+> +	pci_config_pm_runtime_put(pdev);
+> +
+> +	return ret;
+>   }
+>   static DEVICE_ATTR_RO(max_link_width);
+>   
+> @@ -214,7 +228,10 @@ static ssize_t current_link_speed_show(struct device *dev,
+>   	int err;
+>   	enum pci_bus_speed speed;
+>   
+> +	pci_config_pm_runtime_get(pci_dev);
+>   	err = pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &linkstat);
+> +	pci_config_pm_runtime_put(pci_dev);
+> +
+>   	if (err)
+>   		return -EINVAL;
+>   
+> @@ -231,7 +248,10 @@ static ssize_t current_link_width_show(struct device *dev,
+>   	u16 linkstat;
+>   	int err;
+>   
+> +	pci_config_pm_runtime_get(pci_dev);
+>   	err = pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &linkstat);
+> +	pci_config_pm_runtime_put(pci_dev);
+> +
+>   	if (err)
+>   		return -EINVAL;
+>   
+> @@ -247,7 +267,10 @@ static ssize_t secondary_bus_number_show(struct device *dev,
+>   	u8 sec_bus;
+>   	int err;
+>   
+> +	pci_config_pm_runtime_get(pci_dev);
+>   	err = pci_read_config_byte(pci_dev, PCI_SECONDARY_BUS, &sec_bus);
+> +	pci_config_pm_runtime_put(pci_dev);
+> +
+>   	if (err)
+>   		return -EINVAL;
+>   
+> @@ -263,7 +286,10 @@ static ssize_t subordinate_bus_number_show(struct device *dev,
+>   	u8 sub_bus;
+>   	int err;
+>   
+> +	pci_config_pm_runtime_get(pci_dev);
+>   	err = pci_read_config_byte(pci_dev, PCI_SUBORDINATE_BUS, &sub_bus);
+> +	pci_config_pm_runtime_put(pci_dev);
+> +
+>   	if (err)
+>   		return -EINVAL;
+>   
 
 
