@@ -1,118 +1,155 @@
-Return-Path: <linux-kernel+bounces-780324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1009B30077
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:51:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FEFB30064
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47478A081D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:46:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E212C5A1C97
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C962E4278;
-	Thu, 21 Aug 2025 16:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452882E2F0F;
+	Thu, 21 Aug 2025 16:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="OIhElBT3"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PtigyZr5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B241F3FE9;
-	Thu, 21 Aug 2025 16:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A152DFA2A
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 16:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755794769; cv=none; b=fS3li68+wKB01fwvqtoOTOO7hMdL0EO1+X/srXynni/Gpo3eNQKvcQWqA44XBLGUGStzv57C4xhFAVfyP1CVGpU6lG1NWZT0cehoLfhpbllmZfVrywFK8mnuk+M9eHF74Y7nR+F8agkXOOQCfUIbc3DMrBdYYyS7g+bT7RG7jNc=
+	t=1755794577; cv=none; b=iBthLyY9muPR+a+ZQfseFtSNHaoyR84DSMvb0fnV2GxCTEGmVsYPwFSX4K/KL9F++oXTSHVVCLin0uQojM/ZimNne6VCUCmA2wgMFXnl7VjNQkgjOc2uu2b+hm2c/dCKk+4vV/GuuAzGZPzjCfWe5FNBMTprkL8LMydUHtIzf4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755794769; c=relaxed/simple;
-	bh=I/Tl34IQszPYSGu6Nc7bOPUdLV3x2lP0DOwDq/ZmU88=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JsFzPgAJuCLpm4VB8v41FkBahoZFglv6+5uDFOHvAUxQ3ptHmAnZLVgKd+8DDRdE3AKWA3ksQrHFb3FTJ3nKYCE57dPm8eYtWEtiqliZFxiTv1SaHdjPpdKM+e3NU3vpwcfydA2ahXF+LJbpzjdJriSs9wDEV1tj/C/f1ZCKPQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=OIhElBT3; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=nT6M89BssGCI89Lp5Hc0EB9rr0lMk+OkaA5nBVCLuZI=; t=1755794766;
-	x=1756399566; b=OIhElBT3NlE8Jxm+g1GD/tv/bsBhJgI4rEFjPCco/gJn44HL8a38MR4j7hK79
-	cq7ydmtN++FSJbwrSSNeSIq2RlCPgsWvDDxfRLYjeDy7JFzlvqWpBOdDVBpfDW/SJ7WP4rJG9q3Xj
-	okiykpTNX7+XfGSRH0C+2noHhRQnh69Fqzw4I4qrVRpsxWCQKAg+56qe7nENDUd8TKNKsOgxoWiqF
-	OrgjFfvqZPLygxEclPKCvpiIF+tZgIify4W0HWQregvp5EotexsYIBmt/MsPXVZSS74CyE9EPWrE0
-	UVfMA3FQz+VY4+JAXqVt5dl5GV1W5yhiPLVMQHpKLAPTH9Egog==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1up8N2-00000002OiL-0eUG; Thu, 21 Aug 2025 18:42:36 +0200
-Received: from dynamic-077-183-203-224.77.183.pool.telefonica.de ([77.183.203.224] helo=[192.168.178.50])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1up8N1-00000000urE-3mkh; Thu, 21 Aug 2025 18:42:36 +0200
-Message-ID: <dcc3a478c4f31059686dca38691c4d135d16dc7d.camel@physik.fu-berlin.de>
-Subject: Re: Found it - was: Re: [PATCH] sparc64: fix hugetlb for sun4u
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "andreas@gaisler.com"	
- <andreas@gaisler.com>, "anthony.yznaga@oracle.com"
- <anthony.yznaga@oracle.com>,  "davem@davemloft.net"	 <davem@davemloft.net>,
- "david@redhat.com" <david@redhat.com>,  "sparclinux@vger.kernel.org"	
- <sparclinux@vger.kernel.org>
-Cc: "agordeev@linux.ibm.com" <agordeev@linux.ibm.com>, "osalvador@suse.de"
-	 <osalvador@suse.de>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, "will@kernel.org" <will@kernel.org>, 
- "mroos@linux.ee"
-	 <mroos@linux.ee>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>
-Date: Thu, 21 Aug 2025 18:42:35 +0200
-In-Reply-To: <611a33b02282130d4015b5b8feeda8c46d249320.camel@intel.com>
-References: <20250716012446.10357-1-anthony.yznaga@oracle.com>
-		 <35f5ec4eda8a7dbeeb7df9ec0be5c0b062c509f7.camel@physik.fu-berlin.de>
-		 <7e1e9aa5-0529-4fb5-84fb-557b5cc1cd50@oracle.com>
-		 <38f4469f48e6d36fa92b445c8ecef7a440be43e6.camel@physik.fu-berlin.de>
-		 <b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de>
-		 <fc1555550f7a9b3c9aa5fb651769cf41ed859c77.camel@physik.fu-berlin.de>
-		 <ff3d87634aedec28e7103f16a35031bfe86ca501.camel@physik.fu-berlin.de>
-		 <b5b75976c94b7b46f86a5af4675a1a570aaf20cc.camel@physik.fu-berlin.de>
-		 <2bcb018c8b237f7ab2356f4459e14ae81a6fec8b.camel@physik.fu-berlin.de>
-		 <2daaa0648e9bcca42bf7a76d90580725f44fb4bc.camel@physik.fu-berlin.de>
-		 <c50091bdbb0556ee74ec501381f1efc14a4e5929.camel@physik.fu-berlin.de>
-		 <cd3c4a6a-abc5-4f4f-b829-72f86cfb5bde@redhat.com>
-	 <611a33b02282130d4015b5b8feeda8c46d249320.camel@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1755794577; c=relaxed/simple;
+	bh=+7mhn9TtTfm/kyXTVM/gPpkPWNTyUYagzUfpYWDVCno=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SDqHx2JEAXLzvYbjz+bpta77udBYffto0tLsWctwxwUrZlTc6K+nra3Lji6g/yEkS6UPfTLOSPYaMbJibomd0yvAXcZfSoOpfZk3+leY5glGz0xv1q3Kd58p+dR9skcVYDIb0Lyy2aFVlH0Zk6/e1dNTgClmpZa7sU+jgdqhnRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PtigyZr5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0797C4CEEB;
+	Thu, 21 Aug 2025 16:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755794576;
+	bh=+7mhn9TtTfm/kyXTVM/gPpkPWNTyUYagzUfpYWDVCno=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PtigyZr5UtnLZHybJXh+Bmm2p4gSlJQ0+l5TzEB8yopkOAr5ZxK3Hzbywf9nU41LS
+	 H4JuCSgzb/6x+rV7uuuDiU0d+Azyp7qMHIr2NyCpoRanWpXM3qNxmuX3UR0gSYSCQ8
+	 EgO9BPEGAjAPzl5oAF87lTunOEosNg7DI9JjVwGZOwf1P/K3YOkcQYriJPzwUz9iZw
+	 5kEjo68MIHENuqtemNC9786yK0I75BN5i3jCjQUdJBvlnbrJuKI5nHFdReLvgjJn2D
+	 YZcym0uBv6nrkjkfjFnLkscUgzqoI4xA1gQWBtILJ/SB+BDygvf1Vsr2crkSHL/y9m
+	 gh03F2HfSasFA==
+From: SeongJae Park <sj@kernel.org>
+To: Barry Song <21cnbao@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Takero Funaki <flintglass@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Baoquan He <bhe@redhat.com>,
+	Chris Li <chrisl@kernel.org>,
+	Kairui Song <kasong@tencent.com>
+Subject: Re: [PATCH v4] mm/zswap: store <PAGE_SIZE compression failed page as-is
+Date: Thu, 21 Aug 2025 09:42:55 -0700
+Message-Id: <20250821164255.78596-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAGsJ_4yLDLvOZ2=3iVcQhu2jnbWQ+iTQsqVefJsx4_YT4bnEZg@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On Thu, 21 Aug 2025 18:27:52 +0800 Barry Song <21cnbao@gmail.com> wrote:
 
-On Thu, 2025-08-21 at 15:03 +0000, Edgecombe, Rick P wrote:
-> And actually one of the architectures that was broken was sparc, which go=
-t fixed in
-> d3c976c14ad8 ("sparc64: Fix regression in non-hypervisor TLB flush xcall"=
-). John
-> was going to explore whether the fix might have been incomplete.
+> On Thu, Aug 21, 2025 at 1:33 AM Nhat Pham <nphamcs@gmail.com> wrote:
+> >
+> > On Tue, Aug 19, 2025 at 6:37 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> > >
+> > > On Wed, Aug 20, 2025 at 01:34:01PM +1200, Barry Song wrote:
+> > > >
+> > > > We might want to revisit the old thread to check whether it is now safe for us
+> > > > to move to PAGE_SIZE in zswap now.
+> > >
+> > > It's perfectly safe as LZO was fixed months ago.
+> >
+> > Perfect. Then I'll revive Chengming's patch (see [1]) to reduce the
+> > compression buffer :)
+> 
+> Nice!
+> 
+> But perhaps we should wait until SeongJae sends a new version that
+> addresses the counter issue?
 
-Investigations regarding the origin of the problem are still ongoing. The i=
-ssue is
-definitely related to SPARC-specific mm code, more specifically the TLB man=
-agement
-code on Cheetah-based UltraSPARC systems.
+Is there a reason to wait?  I was thinking those are orthogonal problems?
 
-Adrian
+Anyway, for the counter (crypto_compress_fail), I don't have a strong opinion.
+To my understanding, the options for path forward are...
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+1. remove it,
+2. keep it as is, or
+3. keep it, but account only -EINPROGRESS[1]
+
+If I'm not missing other options, I'm tempted to the first option (remove it)
+since it doesn't change any existing things, and we can revisit later.
+
+Please let me know if I'm missing another options or you have other preferrence
+on what option to take.
+
+> Also, I noticed the following code may
+> have problems with the patch:
+> 
+>         if (comp_ret == -ENOSPC || alloc_ret == -ENOSPC)
+>                 zswap_reject_compress_poor++;
+> 
+> Can we still reach the code comp_ret == -ENOSPC since we already
+> handled comp_ret by ...
+> 
+> +       if (comp_ret || !dlen) {
+> +               zswap_crypto_compress_fail++;
+> +               dlen = PAGE_SIZE;
+> +       }
+> +       if (dlen >= PAGE_SIZE) {
+> +               if (!mem_cgroup_zswap_writeback_enabled(
+> +                                       folio_memcg(page_folio(page)))) {
+> +                       comp_ret = -EINVAL;
+> +                       goto unlock;
+> +               }
+> +               comp_ret = 0;
+> +               dlen = PAGE_SIZE;
+> +               dst = kmap_local_page(page);
+> +       }
+
+Nice catch, thank you Berry.  Actually there was a check for keeping the code
+reachable, but I forgot keeping it while updating the version from v3[2] to
+this one.  I will make below change on the next version to restore it.
+
+    @@ -992,7 +992,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
+            if (dlen >= PAGE_SIZE) {
+                    if (!mem_cgroup_zswap_writeback_enabled(
+                                            folio_memcg(page_folio(page)))) {
+    -                       comp_ret = -EINVAL;
+    +                       comp_ret = comp_ret ? comp_ret : -EINVAL;
+                            goto unlock;
+                    }
+                    comp_ret = 0;
+
+[1] https://lore.kernel.org/CAF8kJuPPsLzWu8+xm2A_UPHMBhb7OTjJNErM1Kp3hPmvHXNDUQ@mail.gmail.com
+[2] https://lore.kernel.org/20250815213020.89327-1-sj@kernel.org
+
+
+Thanks,
+SJ
 
