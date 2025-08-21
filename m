@@ -1,204 +1,134 @@
-Return-Path: <linux-kernel+bounces-779204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA20B2F073
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:04:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF4BB2F06E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF2C5E2935
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A8D372511C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABA92F4A;
-	Thu, 21 Aug 2025 08:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XDYl1nBG"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B552EA48F;
+	Thu, 21 Aug 2025 08:02:20 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DD336CE06
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D440A2E9EC7;
+	Thu, 21 Aug 2025 08:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763329; cv=none; b=B9q9+LJqY4+91eVItpC9wpBpLXDfR9m0gdVtJKFHTCKAe/dyWHvd93448YWk1fDZfbQZgEJjqfD7OMHL+/L13MMnFNqE/gdUd0aKOXmqqytvaZ+YGIvosSdbFjFTdCbwbPDF8vXpaoLcyreq9pMYTcAjB34MWqvCkeWnMLMIjKg=
+	t=1755763340; cv=none; b=B0g8ohK3c6wh8axgLyQA2WTHJTLE3flvvNosSygRZcIyPxvBBEDEhUM7FO+MWct1ZnTjrfeATMo/6/U3R91QzZpJ4l1SmfetqhxHxxAUuKNtObBHkMixL/FmYqRhzDy+IkRf2hhLvLfE/CiHKGeHkUQYBrHBOyaaCC8v5x9lXCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763329; c=relaxed/simple;
-	bh=zt6yiLOQI7rD9+6jP0vFg/flZSuMXk7SuTB5NlV0LnU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DtsLRiYXkpGT1kLICW0KKhFXBFwxS/Hlt/PEJTMaade4eiYqiPwzt/LdoGEFCJ/f/qjTVIub2dK7IDO8KtKCMf3INQ8TPUqY7+76x5/E111UmBUUtrG0qM2E+fOXKfXnEn4xji64Nna/75lCxEHjW7qCdEGRTRSNAS8/Kg6+VHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XDYl1nBG; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a1b0d231eso3623445e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:02:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755763326; x=1756368126; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hn27vZnhIqBSicegyUAo/osnGXFM0EzIXplvQ6HEFls=;
-        b=XDYl1nBGC7cgi4GNwJ6oo8gQVwBT6qbeiQHbkUbkgGjRicCK9AG0XNOl3GDuGsM5FC
-         qE104L5ZQ6AWQxI8+StKkGobp+DXNH0a6CxX8SXH6/sbHsUb6+h8wAeOOqnADYsGNuOh
-         qig02b3sALChrzn92ul+zfulw009/lHiQTjX17d3G85TGfkia3a+B09PY6wiZ1q8Q9ND
-         0S3hWVoW3fvoBRqmOWcecl+XSlYfDVzDLhfCiQDd/yHOx+wkDsZeaHS3D4OyOtZlzyEf
-         pIQqKP+k3/cx4kj3yYo+DNTt9y0ejXdcdIHDYftZtcYmvmIhozuwgiEAbYbb0diE49+5
-         CJJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755763326; x=1756368126;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hn27vZnhIqBSicegyUAo/osnGXFM0EzIXplvQ6HEFls=;
-        b=UgHUwz1nZLXplzoaYHw4eiPhejL/eJsiqSwKvGfy6699M0+lntjKWJDhFU6jL5nJL/
-         8wA0QCokR05eRCHnE/N/brnCKCgs5LIM4+BtokL3kaHMlxyPfv87Fhg9leErSkJrBfK3
-         xg/RxzlD5+ezjdLN2x6/hKx3gVK03RRlP+CqwTNSmJGsoUn6PwXgGhtR/e5fX71dj2tR
-         zMLQUvSGuuEW3bvNIecXkrPfytQCwrQB5RYPoK6+JPMbbOl4hyBePfdL/ira1lAdvYEn
-         IS8m7tbFlVJUt1CT7ajQ4tRZPpePeRwezAt7Lk2ft7QybCKE0rP6LHgFRcOCe8YKEQNi
-         I4lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUqxvzT/nRZd+ruYTm7Pt2y9nZ6gVa9JaErqGG0+6L0qyjXT4kv4RTYmHTjxIK7wKY/fh0ynXtk0bnvlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHVIgu75KD1tncgRFdmiTsYJm5TsZjCXB28ZgCmjdtm3ktUyZK
-	pwn3roPFzutOZXrQvG8kYbus3zwZMBKS0+uhXo2faFySfasUxePF2iIg57LEokN3lUs=
-X-Gm-Gg: ASbGncvHh2KsybSFsCVvLowYDeHSwwpp1LBPOeKmNwwN+QLQYrAFOQYOMWlf7LPYJrZ
-	FEdGq+8WqI20y+SELE6Bn+QF6jNCXord2Hy1pt9/Nw2SO6YbMdDL8C2Z2kA7WjWpL2aIXtcQrht
-	YY6XFUBO7TxFZVE/gv+z41ESChUhy0RR/J0XSTXMWeCEdwNPh5iORVahiyfVfxym2q0zQQuET19
-	bOHpBAqaqBTl4OsexPskRzPH4o+hWZaRl49fkEbcWsF4fd66dzWw4Ha/Pfxag57fj5xlh+jtjq/
-	oNijUEKOZ1l4T8r5IiVF7Q61h5uvrakGiXj5yg/gBc0ynMt9qNgJ1aO4TFk5y7zzTrfmrJgrDU2
-	BEz+LgFmukZTDR4UXfLH+snFN+MESH4UEnUob
-X-Google-Smtp-Source: AGHT+IFyf4GxZUgfH24ON3BuA2aO3p7JoOEyz8RGPT602L+yh2FycWNW4H1ldr6Xsp2nsN+1IQ/uyQ==
-X-Received: by 2002:a05:600c:138f:b0:456:1824:4808 with SMTP id 5b1f17b1804b1-45b4d8779camr9361005e9.32.1755763325420;
-        Thu, 21 Aug 2025 01:02:05 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:a59f:f2cf:3ca3:965])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4dc28fc8sm16337285e9.24.2025.08.21.01.02.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 01:02:05 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Thu, 21 Aug 2025 10:01:47 +0200
-Subject: [PATCH v3] phy: qcom: qmp-pcie: Fix PHY initialization when
- powered down by firmware
+	s=arc-20240116; t=1755763340; c=relaxed/simple;
+	bh=JZp7LFApI8yjMSm+Z2eSIwyw3B8o8Xfyb4+OaCIPpXU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cdVMw7duP+2Xadf4/IlQH5tTtSlyxXECtTGaS9AOhQCy3hqts025oaeKVeERzz/uS4EUlkLLEJIy17WJJJqpTVCZMqxoQ+F1pq+GAM1sTG1F8ojY3iF1azRzUbp16kjAgSLQ6ndLsvRV0Lsb9gFbWmPjPCEzXJGbHa72x5hpCF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 21 Aug
+ 2025 16:02:14 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Thu, 21 Aug 2025 16:02:14 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson
+	<bjorn.andersson@oss.qualcomm.com>, Geert Uytterhoeven
+	<geert@linux-m68k.org>, Nishanth Menon <nm@ti.com>,
+	<nfraprado@collabora.com>, Taniya Das <quic_tdas@quicinc.com>, Lad Prabhakar
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Kuninori Morimoto
+	<kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@google.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<soc@lists.linux.dev>, Mo Elbadry <elbadrym@google.com>, Rom Lemarchand
+	<romlem@google.com>, William Kennington <wak@google.com>, Yuxiao Zhang
+	<yuxiaozhang@google.com>, <wthai@nvidia.com>, <leohu@nvidia.com>,
+	<dkodihalli@nvidia.com>, <spuranik@nvidia.com>
+Subject: [PATCH v4 0/5] Introduce ASPEED AST2700 BMC SoC
+Date: Thu, 21 Aug 2025 16:02:09 +0800
+Message-ID: <20250821080214.513090-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250821-phy-qcom-qmp-pcie-nocsr-fix-v3-1-4898db0cc07c@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAGrSpmgC/43NsQ6DIBSF4VcxzL0NXIXWTn2PpgMCKkkVhIbUG
- N+96NQuTcf/DN9ZSDTBmkguxUKCSTZaN+YoDwVRvRw7A1bnJkiR0zND8P0Mk3IDTIMHr6yB0ak
- YoLUvYIKWjAqsK6VJFnwwed712z13b+PThXk/S2xb/3MTAwa1PGkqucamEteHHWVwRxc6ssEJP
- 7HqN4YZaw0X2HBNUbIvbF3XN3EVRhcUAQAA
-X-Change-ID: 20250812-phy-qcom-qmp-pcie-nocsr-fix-1603106294cd
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Wenbin Yao <quic_wenbyao@quicinc.com>, Qiang Yu <qiang.yu@oss.qualcomm.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Commit 0cc22f5a861c ("phy: qcom: qmp-pcie: Add PHY register retention
-support") added support for using the "no_csr" reset to skip configuration
-of the PHY if the init sequence was already applied by the boot firmware.
-The expectation is that the PHY is only turned on/off by using the "no_csr"
-reset, instead of powering it down and re-programming it after a full
-reset.
+This introduces initial support for the Aspeed AST2700 SoC and the AST2700
+Evaluation Board (EVB) to the Linux kernel. The AST27XX is the 7th
+generation Baseboard Management Controller (BMC) SoC from Aspeed,
+featuring improved performance, enhanced security, and expanded I/O
+capabilities compared to previous generations.
 
-The boot firmware on X1E does not fully conform to this expectation: If the
-PCIe3 link fails to come up (e.g. because no PCIe card is inserted), the
-firmware powers down the PHY using the QPHY_PCS_POWER_DOWN_CONTROL
-register. The QPHY_START_CTRL register is kept as-is, so the driver assumes
-the PHY is already initialized and skips the configuration/power up
-sequence. The PHY won't come up again without clearing the
-QPHY_PCS_POWER_DOWN_CONTROL, so eventually initialization fails:
+AST27XX SOC Family
+ - https://www.aspeedtech.com/server_ast2700/
+ - https://www.aspeedtech.com/server_ast2720/
+ - https://www.aspeedtech.com/server_ast2750/
 
-  qcom-qmp-pcie-phy 1be0000.phy: phy initialization timed-out
-  phy phy-1be0000.phy.0: phy poweron failed --> -110
-  qcom-pcie 1bd0000.pcie: cannot initialize host
-  qcom-pcie 1bd0000.pcie: probe with driver qcom-pcie failed with error -110
+Bindings Dependencies:
+- intc-ic: Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
+- scu/silicon-id: Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+- gpio: Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
+- mdio: Documentation/devicetree/bindings/net/aspeed,ast2600-mdio.yaml
 
-This can be reliably reproduced on the X1E CRD, QCP and Devkit when no card
-is inserted for PCIe3.
+v4:
+- make CHECK_DTBS=y arch/arm64/boot/dts/aspeed/ fix.
+- modify commit message remove itemlize.
+- remove modify aspeed,ast2700-intc.yaml patch.
+- aspeed.yaml
+ - Add AST2700 board compatible.
+- aspeed-g7.dtsi
+ - modify all size-cells from 1 to 2.
+ - add serial aliases, gpio, mdio, uart0 ~ 14.
+ - add firmware for optee, reserved memory for atf and optee.
+ - modify cpu@0 to cpu0: cpu@0.
+ - fix intc-ic for yaml dependency.
+- ast2700-evb.dts
+ - update stdout-path = "serial12:115200n8";
 
-Fix this by checking the QPHY_PCS_POWER_DOWN_CONTROL register in addition
-to QPHY_START_CTRL. If the PHY is powered down with the register, it
-doesn't conform to the expectations for using the "no_csr" reset, so we
-fully re-initialize with the normal reset sequence.
+v3:
+- https://lore.kernel.org/all/20241212155237.848336-1-kevin_chen@aspeedtech.com/
+- Split clk and reset driver to other commits, which are in series of
+  "Add support for AST2700 clk driver".
+- For BMC console by UART12, add uart12 using ASPEED INTC architecture.
 
-Also check the register more carefully to ensure all of the bits we expect
-are actually set. A simple !!(readl()) is not enough, because the PHY might
-be only partially set up with some of the expected bits set.
+aspeed,ast2700-intc.yaml
+- Add minItems to 1 to fix the warning by "make dtbs_check W=1".
+- Add intc1 into example.
 
-Cc: stable@vger.kernel.org
-Fixes: 0cc22f5a861c ("phy: qcom: qmp-pcie: Add PHY register retention support")
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
-Changes in v3:
-- Move up existing comment block and clarify it, so that it is more obvious
-  what the additional checks really do (Bjorn)
-- Link to v2: https://lore.kernel.org/r/20250814-phy-qcom-qmp-pcie-nocsr-fix-v2-1-fe562b5d02a1@linaro.org
+Kconfig.platforms
+  - Remove MACH_ASPEED_G7.
 
-Changes in v2:
-- Ensure that all expected bits are set (Konrad)
-- Link to v1: https://lore.kernel.org/r/20250812-phy-qcom-qmp-pcie-nocsr-fix-v1-1-9a7d0a5d2b46@linaro.org
----
- drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+Ryan Chen (5):
+  dt-bindings: arm: aspeed: Add AST2700 board compatible
+  arm64: Kconfig: Add Aspeed SoC family (ast27XX) Kconfig support
+  arm64: dts: aspeed: Add initial AST2700 SoC device tree
+  arm64: dts: aspeed: Add AST2700 Evaluation Board
+  arm64: configs: Update defconfig for AST2700 platform support
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-index 95830dcfdec9b1f68fd55d1cc3c102985cfafcc1..0fa63b734b67b8f44580b56555950bb5d74ef94c 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-@@ -3067,6 +3067,14 @@ struct qmp_pcie {
- 	struct clk_fixed_rate aux_clk_fixed;
- };
- 
-+static bool qphy_checkbits(const void __iomem *base, u32 offset, u32 val)
-+{
-+	u32 reg;
-+
-+	reg = readl(base + offset);
-+	return (reg & val) == val;
-+}
-+
- static inline void qphy_setbits(void __iomem *base, u32 offset, u32 val)
- {
- 	u32 reg;
-@@ -4339,16 +4347,21 @@ static int qmp_pcie_init(struct phy *phy)
- 	struct qmp_pcie *qmp = phy_get_drvdata(phy);
- 	const struct qmp_phy_cfg *cfg = qmp->cfg;
- 	void __iomem *pcs = qmp->pcs;
--	bool phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
- 	int ret;
- 
--	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
- 	/*
--	 * We need to check the existence of init sequences in two cases:
--	 * 1. The PHY doesn't support no_csr reset.
--	 * 2. The PHY supports no_csr reset but isn't initialized by bootloader.
--	 * As we can't skip init in these two cases.
-+	 * We can skip PHY initialization if all of the following conditions
-+	 * are met:
-+	 *  1. The PHY supports the nocsr_reset that preserves the PHY config.
-+	 *  2. The PHY was started (and not powered down again) by the
-+	 *     bootloader, with all of the expected bits set correctly.
-+	 * In this case, we can continue without having the init sequence
-+	 * defined in the driver.
- 	 */
-+	qmp->skip_init = qmp->nocsr_reset &&
-+		qphy_checkbits(pcs, cfg->regs[QPHY_START_CTRL], SERDES_START | PCS_START) &&
-+		qphy_checkbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], cfg->pwrdn_ctrl);
-+
- 	if (!qmp->skip_init && !cfg->tbls.serdes_num) {
- 		dev_err(qmp->dev, "Init sequence not available\n");
- 		return -ENODATA;
+ .../bindings/arm/aspeed/aspeed.yaml           |   5 +
+ arch/arm64/Kconfig.platforms                  |   6 +
+ arch/arm64/boot/dts/Makefile                  |   1 +
+ arch/arm64/boot/dts/aspeed/Makefile           |   4 +
+ arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi     | 452 ++++++++++++++++++
+ arch/arm64/boot/dts/aspeed/ast2700-evb.dts    |  22 +
+ arch/arm64/configs/defconfig                  |   1 +
+ 7 files changed, 491 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
+ create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+ create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
 
----
-base-commit: aac1256a41cfbbaca12d6c0a5753d1e3b8d2d8bf
-change-id: 20250812-phy-qcom-qmp-pcie-nocsr-fix-1603106294cd
-
-Best regards,
 -- 
-Stephan Gerhold <stephan.gerhold@linaro.org>
+2.34.1
 
 
