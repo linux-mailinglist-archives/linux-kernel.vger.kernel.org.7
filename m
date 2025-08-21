@@ -1,123 +1,100 @@
-Return-Path: <linux-kernel+bounces-779343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF880B2F2DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:52:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0267B2F2DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0303C18853EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:50:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC231BC3E1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFEC2EBB83;
-	Thu, 21 Aug 2025 08:49:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDE12EBDF2;
-	Thu, 21 Aug 2025 08:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAB42E7F2A;
+	Thu, 21 Aug 2025 08:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ab32gm+y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7902D2641FC;
+	Thu, 21 Aug 2025 08:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755766180; cv=none; b=OYe6mOShC4Y+LW6FlkRwleRvWjE7Q5/bGtNOZJ+x0yytDp7TwIhXcABX1J7lV3S+TW49lJOixNLM6iRM85p5WF4VXBO1E6ogaId0ScmyeogjzbcjxyC8pBtbA0N+bCsoo+Bfb+Z1z0sb2/PvrzbxChGzp3PoFvXRrKnOnvTyQkQ=
+	t=1755766203; cv=none; b=GaedEey3I+x5Dvz2u2/erylHhaAa+njPIgaOkIPr4I16pRagxghVwmAnnzXGER0XPAZ1pkqc5/MpTTyXY1LW35y8TlzSkO0f9O64YMVDiinhGui4napI8CfGOojlSESA5KS7hPOW7ok1a+fU4wazHPYQ+8HOwk21p3azb1Y9HyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755766180; c=relaxed/simple;
-	bh=/uHmHhKxYlq+fxaWsGuUmxJWh36N61W88YagYGHZ0C4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H9WLvWsodoGoC3i2KHpz611OuxKyy6T+y75kVPCMDNMO4wvuzoHhtWmPGU1V6GoaLRrWh71Q5fay9H7G+pVWjhBK5ejsUNLuIfPOzha4obAIFUEViJz4sOw+xST9EUL/dPf+PavDTaIEtrORUpUgi20PbVcXOmF/didJlALYkhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ADD04168F;
-	Thu, 21 Aug 2025 01:49:27 -0700 (PDT)
-Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA33F3F63F;
-	Thu, 21 Aug 2025 01:49:34 -0700 (PDT)
-Message-ID: <9fd90f29-72c4-42b7-bd28-08e2cbc9a472@arm.com>
-Date: Thu, 21 Aug 2025 09:49:31 +0100
+	s=arc-20240116; t=1755766203; c=relaxed/simple;
+	bh=uorD+s6RTCZK6xWgBvrtaRd33UyFWBIPNmlokBD8v60=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=D2IwDrhLs+w5HzFrBxe57Jbo50LyPDAGLmtrdlL7WcUmYsMy+JgWPPebJv8Hchhm3q1KFFMe/DDtsrKUYkcpG7Q67AOqUQH67bNKFrPtFMRcF5ZWdyPZ6AUBRsq0VsB84MyFpirYL8SqfVDDbL80KbVhRCPYUD6XhCD8Uq9UHkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ab32gm+y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6026C4CEEB;
+	Thu, 21 Aug 2025 08:50:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755766203;
+	bh=uorD+s6RTCZK6xWgBvrtaRd33UyFWBIPNmlokBD8v60=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ab32gm+yDbtJM/o4sXTqtD48EqvCP5OfEKo54d4wSLRdZuRmbYdQ7nZZT40dGDGRG
+	 SFLFRek3Nh2nL0am9ic0Z2EC6WfogipbZWoBf46sIU1usG/q0kx1Egls+P71sNxEav
+	 JcrvsfCs3XOy49HP2sn2CTWmjX39YhnmbDcopoiPrMVn/snsYK+Uv0eeLDvz82pP+2
+	 8xBmVJckFKQVExJ0IlzAVxHvxhIHY4+JEeJiG+IwCSkcF27EW8KHx5a+EjaLYZWWyA
+	 Z2SRTXw3T6A/C6nZ0VGmG/H5/2oarwYAwjooEhPuOolD2N4gWV4Hy3iGpJoCwyK9dX
+	 lO40SSaFFTh0Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C1B383BF5B;
+	Thu, 21 Aug 2025 08:50:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cpuidle: menu: find the typical interval by a
- heuristic classification method
-To: =?UTF-8?B?5pyx5oG65Lm+?= <zhukaiqian@xiaomi.com>,
- "rafael@kernel.org" <rafael@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- "quic_zhonhan@quicinc.com" <quic_zhonhan@quicinc.com>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <ec528693bdf84a61829427c4988bfa85@xiaomi.com>
- <f2bab6677d4b4fe585f7e01b1e490717@xiaomi.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <f2bab6677d4b4fe585f7e01b1e490717@xiaomi.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v5 0/4] net: phy: micrel: Add support for lan8842
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175576621125.946325.3157798502826280312.git-patchwork-notify@kernel.org>
+Date: Thu, 21 Aug 2025 08:50:11 +0000
+References: <20250818075121.1298170-1-horatiu.vultur@microchip.com>
+In-Reply-To: <20250818075121.1298170-1-horatiu.vultur@microchip.com>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ richardcochran@gmail.com, o.rempel@pengutronix.de, alok.a.tiwari@oracle.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 8/21/25 02:54, 朱恺乾 wrote:
-> Menu governor relies on get_typical_interval() to find the repeating
-> idle interval from the history, but it can not handle the case when
-> there're two or more repeating patterns. The calculation of deviation
-> always leads to a single closely connected intervals.
-> 
-> In order to find all the possible repeating intervals and choose the
-> most promising one for the next idle. This algorithm is classifying
-> the idle histories heuristically by the state it is in. It changes
-> the behavior of the function to look for the repeating state actually,
-> but it still meets the goal of choosing an idle state.
-> 
-> The occurrence of each state is counted and their average is calculated.
-> The average value of each state would be taken as a repeating pattern.
-> To find the one most likely to happen, weights are added to the
-> histories by the order of time, so the state has the highest weight, or
-> occurs most often in the recent history, is selected, and it's average
-> is returned as the typical interval.
-> 
-> Considering the fact that some idle intervals may be very close to another
-> state, the algorithm calculates the distance to each average, and do the
-> re-classification once by putting the history into the state closer to it.
-> It makes the state average possible to derive an average under or above the
-> state residency.
-> 
-> Comparing with the deviation calculation, this method
-> 1) can find multiple patterns from the history and choose from them
-> 2) can be more sensitive to the changing workload as the threshold is
-> lowered
-> 3) puts time into consideration, so prediction won't stuck in the stale
-> histories
-> 
-> Signed-off-by: Kaiqian Zhu <zhukaiqian@xiaomi.com>
-> ---
->  drivers/cpuidle/governors/menu.c | 172 ++++++++++++++++---------------
->  1 file changed, 89 insertions(+), 83 deletions(-)
-> 
-> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-> index 81306612a5c6..5b279ae07b16 100644
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -107,109 +107,115 @@ static void menu_update_intervals(struct menu_device *data, unsigned int interva
-> 
->  static void menu_update(struct cpuidle_driver *drv, struct cpuidle_device *dev);
-> 
-> +static int get_actual_state(struct cpuidle_driver *drv,
-> +    struct cpuidle_device *dev,
-> +    int duration_us)
-> +{
-> +int actual;
-> +
-> +for (int i = 0; i < drv->state_count; i++) {
-> +if (duration_us < drv->states[i].target_residency)
-> +break;
-> +
-> +actual = i;
-> +}
-> +
-> +return actual;
-> +}
-> +
+Hello:
 
-FYI Something went wrong witch the patch here...
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 18 Aug 2025 09:51:17 +0200 you wrote:
+> Add support for LAN8842 which supports industry-standard SGMII.
+> While add this the first 3 patches in the series cleans more the
+> driver, they should not introduce any functional changes.
+> 
+> v4->v5:
+> - implement inband_caps and config_inband ops
+> - remove unused defines
+> - use reverse x-mas tree in lan8842_get_stat function
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v5,1/4] net: phy: micrel: Start using PHY_ID_MATCH_MODEL
+    https://git.kernel.org/netdev/net-next/c/54e974c71524
+  - [net-next,v5,2/4] net: phy: micrel: Introduce lanphy_modify_page_reg
+    https://git.kernel.org/netdev/net-next/c/a0de636ed7a2
+  - [net-next,v5,3/4] net: phy: micrel: Replace hardcoded pages with defines
+    https://git.kernel.org/netdev/net-next/c/d471793a9b67
+  - [net-next,v5,4/4] net: phy: micrel: Add support for lan8842
+    https://git.kernel.org/netdev/net-next/c/5a774b64cd6a
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
