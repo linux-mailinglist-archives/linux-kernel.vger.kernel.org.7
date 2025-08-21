@@ -1,244 +1,181 @@
-Return-Path: <linux-kernel+bounces-779519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8C6B2F522
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:22:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0223B2F519
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87AAA1C24BF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:20:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 852937AFA3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA932F1FC8;
-	Thu, 21 Aug 2025 10:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D2C2F1FF6;
+	Thu, 21 Aug 2025 10:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="Xaev/zgv"
-Received: from 9.mo533.mail-out.ovh.net (9.mo533.mail-out.ovh.net [188.165.47.174])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BLWEMZoB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F012472B5
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.47.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67DD26F476
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755771599; cv=none; b=nZJc5OCt3VptfKOBSj2EUqsYiAuzAKlpUmBRDbmhwwZtUP3DCUxwDeJ5kT8PQImPfDzHW6C01CKeMbs//G54+5qiwjvVeYRWgwavWxQ59zx6JEV20LWYgnwxEIh42Z3aK4DA6vkQ2NVZpKG8sJzzcPubuw9ySy2XKTr50D2DLZM=
+	t=1755771572; cv=none; b=tQg07uo1W9VIj2p2tpO+Bn9rVE5Dt8jnQLC0J+vq4vOLVQKBa/P1wBMVWRNqFOdj7itGn1YgHUWl2+Vne5JJegZ9EyOi89AAd0PYSFSwvAsz3vAR0gzbGPLRh+rQunbc6AC5kc3uIUYhKqsLuWRlF2fUtAbmOKvMzjM5/J8YC/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755771599; c=relaxed/simple;
-	bh=QE6s/0lAW6AiPaa0sSBUwamHMoawMGEWdM9hqsudp50=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PCMbCoi8yLN695VCifnkj2tVQYIFbRs2tymG1HZiuoaTOqchOaTVnsV1Pb//+6/09Jpu7wAzb8mEGcuo61Yz+Am5/YSmJ3l9WWoYdXYXhwGPwOv+iLLuAYUYCbqGXKhmrEvSqCcrffV64AjAOHCViDuJkmGaS8KQUMf+MTZRuss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=Xaev/zgv; arc=none smtp.client-ip=188.165.47.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net [79.137.60.36])
-	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4c6zpG2kb8z5x0H;
-	Thu, 21 Aug 2025 10:19:50 +0000 (UTC)
-Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net. [127.0.0.1])
-        by director2.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <brgl@bgdev.pl>; Thu, 21 Aug 2025 10:19:50 +0000 (UTC)
-Received: from mta7.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.109.254.198])
-	by director2.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c6zpG1Z2nz1xnd;
-	Thu, 21 Aug 2025 10:19:50 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.9])
-	by mta7.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 23DE0B832BF;
-	Thu, 21 Aug 2025 10:19:49 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-97G0025494fe06-fc45-4a28-81e9-f834ace860e6,
-                    684E78C7C579463DAB27E2CA1F9C4E28A39E1181) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:147.156.42.5
-From: Marcos Del Sol Vives <marcos@orca.pet>
-To: linux-kernel@vger.kernel.org
-Cc: Marcos Del Sol Vives <marcos@orca.pet>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Michael Walle <mwalle@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-gpio@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH v3 3/3] mfd: vortex: implement new driver for Vortex southbridges
-Date: Thu, 21 Aug 2025 12:18:59 +0200
-Message-Id: <20250821101902.626329-4-marcos@orca.pet>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250821101902.626329-1-marcos@orca.pet>
-References: <20250821101902.626329-1-marcos@orca.pet>
+	s=arc-20240116; t=1755771572; c=relaxed/simple;
+	bh=8U+1N8shakGM/vV89T8/5P0L7ugNzq0oe+JNJ1XQQ6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OTgJr3EspWquSPesbmKazXgWoJZTPo3wesAJQwlHM/xyWlGrnjUs60NQzPySHavzFetY2rdnPyBELUY2+KfZQAxnTRLao73fCPs9qNJ5pGKQ7Nb4D7QVF4hGJx4XD3TOPe1WHBY6iHIgBugU+bRrKLUehq3p75iZ1CLUbATrSlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BLWEMZoB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9b6Un014666
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:19:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Uoq3hV35IcU7uY4Ov76moRej
+	5YDOR8ZK6zl7rWMs9yM=; b=BLWEMZoBa8sTAGbVhorRYwP0QTfGVF7nluuj3RWr
+	1ACssFpLK0HoWvU3B5GM+bl0pClPsW6HfuMaTb0ZAB36nj5ovnlbyfZggBtHf/14
+	NuILvpl1PqMAIkKozlPnfifIgsAYx/ml1QudZ+LOS+j2yaiGJK7zbmPxC7L+h2sE
+	l9NPCVZHhGtT8rfryvh4X8phHH6Yop8DwflMLNpLIIVqeRbH7cFblFA2/XqxL8h4
+	K8c1ImBRrhdPkrJ7f/aIaPTN8SBEeAjgaqb6TVh1v3os4nfBFrPiYuMMTbryDp+s
+	xDIVP28XwSV8b3PuE/i+FXsrIVfrxqsiBzhn/Ogha1cRBQ==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n528w0e1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:19:29 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70a9f534976so26387076d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 03:19:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755771569; x=1756376369;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uoq3hV35IcU7uY4Ov76moRej5YDOR8ZK6zl7rWMs9yM=;
+        b=Da6A0Rsp2gtDzYo+d3eZMVqCO6ShXV3rCFtYN9DeuryEFzVOQ6ztLlD2C4DXZCDp9t
+         uskHOy0DOn0DgzLnkg1A+EWANDjdJS8KFX5Zk1WAPnK5dTMPRYjMJkw10nVx5g4Daebr
+         eOTGTRywPhiAIPOs51v5P2SZ+nEK9VYIioRlELYrBtuH9M9Pibj5PWOS6ndsINbRoLyA
+         TIRiA4DXWDNqf5tI864hNe64EGzx8wEvwWRX9TZIfRc7KvhJIiZVvKhXwov3/W6RbTwn
+         cHYAF6ODfCD4iM+8FHTUej1xWb2qdCLKWZK5Y6TGfpyusJVcwdHyuyZjLUYWVT09rQHH
+         uMyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAoZ9uVv+GRbEyG9Vg9Luo3jeeR0oS20L7krN+FLtEnMuuVS0TgEJ5E068MI+HDc9BnXmNMfswGmmccWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6iTIu0TMdGOJRSdWEfAXpLkJQwPL3nSsaorBc3d/mQLkiIB5J
+	aOuVdpIhebH/5Mrs5pvhHRXJ84bMfQr6BqOVhVZGWrhc87QS+XtTD7ziu29IHo3/a8OZTUgzAQC
+	f70D/jrpsNXhERxqSgRZLV5KCX7CJUAsqmXTTLtUdteSKpTr/rp+fgLH3V23TXP+HB18=
+X-Gm-Gg: ASbGnctOeL2pOAYds//8C/nKvp/QM/qLESG//7wafWDZWL8tKu6DoWwLF8nhCN7iKa3
+	8fF07qqmYIChZzoaW9tY3eA+f35dTF6FwlD4dbxickqSfRreSEqtzWxmeDf3/9cqCIHZQmUTIUy
+	JAPOMr3MCya7A3Ay11wNo0vM2Q72tq09rJGd7OPxiJDSIg/toSApkrzPJQA7yss36AHZxMhxeex
+	GrIcAMyngxZg6Jd6sfMCL3pn6+EzNAowacBih7T8oDz+iW9DEvUksy1F29EiL29CuiF8yeVsMsd
+	sZ7/ok6LhC0S4ferQX9tnuwPaIU2U+wvLVlX5jckDplbVC9+XlJbUgF7DzwpB1kaxLuieYYww9E
+	8LX8c6w41l+9l0xKbqROZulyoqr8Ob3dffArdwSazmxLBPXa7932D
+X-Received: by 2002:a05:6214:3005:b0:6fa:ab49:4482 with SMTP id 6a1803df08f44-70d88f9b87emr15996646d6.35.1755771568995;
+        Thu, 21 Aug 2025 03:19:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHF6WPBsgznhHt+ts7DhqqaGYYvO9aU0zVdhS4+riVCnl7vdR8eHXlreLz13JV2r3MGZN4QFw==
+X-Received: by 2002:a05:6214:3005:b0:6fa:ab49:4482 with SMTP id 6a1803df08f44-70d88f9b87emr15996376d6.35.1755771568433;
+        Thu, 21 Aug 2025 03:19:28 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef4425fbsm2950888e87.154.2025.08.21.03.19.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 03:19:27 -0700 (PDT)
+Date: Thu, 21 Aug 2025 13:19:25 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH 5/6] arm64: dts: qcom: sm8550: Additionally manage MXC
+ power domain in camcc
+Message-ID: <eaxppztxjggd7kdg3p5actz5rcsiy7czw7lnv5jrvnab26gxdj@pwmwlupaievv>
+References: <20250821-topic-sm8x50-upstream-pll-multi-pd-voting-dt-v1-0-a510c72da096@linaro.org>
+ <20250821-topic-sm8x50-upstream-pll-multi-pd-voting-dt-v1-5-a510c72da096@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 17493669805666293350
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedtleekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrrhgtohhsucffvghlucfuohhlucggihhvvghsuceomhgrrhgtohhssehorhgtrgdrphgvtheqnecuggftrfgrthhtvghrnhepudffudeutdejudeffeeugeehveevgfefiefgueejueejheevtefgtdffvddukeelnecukfhppeduvdejrddtrddtrddupddugeejrdduheeirdegvddrheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepledprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepmhgrrhgtohhssehorhgtrgdrphgvthdprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdroh
- hrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhptghisehvghgvrhdrkhgvrhhnvghlrdhorhhg
-DKIM-Signature: a=rsa-sha256; bh=X/42sBBdS5U7O2cvVD41aAwhluwIH1nuwQLgzreoPFM=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755771590;
- v=1;
- b=Xaev/zgvZj+ULtrtrlK/R/tTC2D6mgvOYWpZjKg5b5JK6xFzDWKLG7oR3Rd1GNcubedOEan7
- HHVCVqJDniLBJwdte3hq66CsyHSvmFz1LKUfA3c0VKfhrhhIWUEZjFT+XiobJof9VtH4GhbVYnM
- 0gJGfB/K9NtSQD3DriVbiMfQy1rV4cnxgiHoZPW1/jo2kwcF7fhuZj0A4I+6otH+m/WQSu36Cie
- qAJmT5jjy/JVEh3Yf5doDe5BLx+oQSWzC92g4CnjYqubROTgyw9CVQADkf5YpC5RAIJcb68ufI4
- ypLjuExxIYxw+Rkpgfdbd/vfJhjbmTDHHtfYOq1PHAT5Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-topic-sm8x50-upstream-pll-multi-pd-voting-dt-v1-5-a510c72da096@linaro.org>
+X-Authority-Analysis: v=2.4 cv=fpOFpF4f c=1 sm=1 tr=0 ts=68a6f2b1 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=eIWQzYl4t5esjhT04gkA:9 a=NqO74GWdXPXpGKcKHaDJD/ajO6k=:19 a=CjuIK1q_8ugA:10
+ a=OIgjcC2v60KrkQgK7BGD:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: Cs0IKO_Uss2yYNoTEo0Duamf_JlxURE4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX+YdkY2wnE4i4
+ HE16FNbkU1/bb6pObih6LQBzPV9nLW1CmvFSh61ey7VuvhM3lD8H7Xwiq6ufMYNsERkbdT17iCt
+ xKKaXBBAmtKJLW0dzVvO17Q1za+xMr8e7vzF+fBkgjzt3Pu7Q7Qht15r1T1Iu9XMWCEo5lsxrH5
+ KxYMv8wjFgifKWIngry7aq5ZzcdkMHQEYagzE5GvZ6sPAJdorJ7Rhc9RRlA6AN74QS9ydHQgsT7
+ QKQIsfK+V4zZXbaBoP6Duv2sHXcydG9ZK7lfLWkvhws5p4ZCq4TTdF3Lsbm+niXao9MZsBwsQ0j
+ 6W3PzRU01zOjd2sTOze8tJsVrQ3VvGD+pe7uMAuhqV3TpzmGkQ4Nna5N7uWTRG/iQzIB5RTJd2X
+ r67YOVaxpVRjKutFD88Bg4MlFPTXlQ==
+X-Proofpoint-ORIG-GUID: Cs0IKO_Uss2yYNoTEo0Duamf_JlxURE4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 priorityscore=1501 spamscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-This new driver loads resources related to southbridges available in DM&P
-Vortex devices, currently only the GPIO pins.
+On Thu, Aug 21, 2025 at 09:16:38AM +0200, Neil Armstrong wrote:
+> From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> 
+> Camcc requires both MMCX and MXC rails to be powered ON to configure
+> the camera PLLs on SM8550 platform. Hence add MXC power domain to
+> camcc node on SM8550. While at it, update SM8550_MMCX macro to RPMHPD_MMCX
+> to align towards common macros.
 
-Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>
----
- MAINTAINERS             |  1 +
- drivers/mfd/Kconfig     |  9 +++++
- drivers/mfd/Makefile    |  1 +
- drivers/mfd/vortex-sb.c | 81 +++++++++++++++++++++++++++++++++++++++++
- include/linux/pci_ids.h |  1 +
- 5 files changed, 93 insertions(+)
- create mode 100644 drivers/mfd/vortex-sb.c
+The last phrase no longer applies.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8c3098a39411..bc0c541309dd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26957,6 +26957,7 @@ VORTEX HARDWARE SUPPORT
- R:	Marcos Del Sol Vives <marcos@orca.pet>
- S:	Maintained
- F:	drivers/gpio/gpio-vortex.c
-+F:	drivers/mfd/vortex-sb.c
- 
- VRF
- M:	David Ahern <dsahern@kernel.org>
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 425c5fba6cb1..fe54bb22687d 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -2008,6 +2008,15 @@ config MFD_VX855
- 	  VIA VX855/VX875 south bridge. You will need to enable the vx855_spi
- 	  and/or vx855_gpio drivers for this to do anything useful.
- 
-+config MFD_VORTEX_SB
-+	tristate "Vortex southbridge"
-+	select MFD_CORE
-+	depends on PCI
-+	help
-+	  Say yes here if you want to have support for the southbridge
-+	  present on Vortex SoCs. You will need to enable the vortex-gpio
-+	  driver for this to do anything useful.
-+
- config MFD_ARIZONA
- 	select REGMAP
- 	select REGMAP_IRQ
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index f7bdedd5a66d..2504ba311f1a 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -202,6 +202,7 @@ obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
- obj-$(CONFIG_MFD_TPS6586X)	+= tps6586x.o
- obj-$(CONFIG_MFD_VX855)		+= vx855.o
- obj-$(CONFIG_MFD_WL1273_CORE)	+= wl1273-core.o
-+obj-$(CONFIG_MFD_VORTEX_SB)	+= vortex-sb.o
- 
- si476x-core-y := si476x-cmd.o si476x-prop.o si476x-i2c.o
- obj-$(CONFIG_MFD_SI476X_CORE)	+= si476x-core.o
-diff --git a/drivers/mfd/vortex-sb.c b/drivers/mfd/vortex-sb.c
-new file mode 100644
-index 000000000000..ef9bbe2d3870
---- /dev/null
-+++ b/drivers/mfd/vortex-sb.c
-@@ -0,0 +1,81 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ *  MFD southbridge driver for Vortex SoCs
-+ *
-+ *  Author: Marcos Del Sol Vives <marcos@orca.pet>
-+ *
-+ *  Based on the RDC321x MFD driver by Florian Fainelli and Bernhard Loos
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/pci.h>
-+#include <linux/mfd/core.h>
-+
-+static const struct resource vortex_gpio_resources[] = {
-+	{
-+		.name	= "dat",
-+		.start	= 0x78,
-+		.end	= 0x7C,
-+		.flags	= IORESOURCE_IO,
-+	}, {
-+		.name	= "dir",
-+		.start	= 0x98,
-+		.end	= 0x9C,
-+		.flags	= IORESOURCE_IO,
-+	}
-+};
-+
-+static const struct mfd_cell vortex_sb_cells[] = {
-+	{
-+		.name		= "vortex-gpio",
-+		.resources	= vortex_gpio_resources,
-+		.num_resources	= ARRAY_SIZE(vortex_gpio_resources),
-+	},
-+};
-+
-+static int vortex_sb_probe(struct pci_dev *pdev,
-+					const struct pci_device_id *ent)
-+{
-+	int err;
-+
-+	/*
-+	 * In the Vortex86DX3, the southbridge appears twice (on both 00:07.0
-+	 * and 00:07.1). Register only once for .0.
-+	 *
-+	 * Other Vortex boards (eg Vortex86MX+) have the southbridge exposed
-+	 * only once, also at 00:07.0.
-+	 */
-+	if (PCI_FUNC(pdev->devfn) != 0)
-+		return -ENODEV;
-+
-+	err = pci_enable_device(pdev);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to enable device\n");
-+		return err;
-+	}
-+
-+	return devm_mfd_add_devices(&pdev->dev, -1,
-+				    vortex_sb_cells,
-+				    ARRAY_SIZE(vortex_sb_cells),
-+				    NULL, 0, NULL);
-+}
-+
-+static const struct pci_device_id vortex_sb_table[] = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_RDC, PCI_DEVICE_ID_RDC_R6035) },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(pci, vortex_sb_table);
-+
-+static struct pci_driver vortex_sb_driver = {
-+	.name		= "vortex-sb",
-+	.id_table	= vortex_sb_table,
-+	.probe		= vortex_sb_probe,
-+};
-+
-+module_pci_driver(vortex_sb_driver);
-+
-+MODULE_AUTHOR("Marcos Del Sol Vives <marcos@orca.pet>");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Vortex MFD southbridge driver");
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index 92ffc4373f6d..2ff8a593ef72 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -2412,6 +2412,7 @@
- #define PCI_VENDOR_ID_RDC		0x17f3
- #define PCI_DEVICE_ID_RDC_R6020		0x6020
- #define PCI_DEVICE_ID_RDC_R6030		0x6030
-+#define PCI_DEVICE_ID_RDC_R6035		0x6035
- #define PCI_DEVICE_ID_RDC_R6040		0x6040
- #define PCI_DEVICE_ID_RDC_R6060		0x6060
- #define PCI_DEVICE_ID_RDC_R6061		0x6061
+> 
+> Fixes: e271b59e39a6f ("arm64: dts: qcom: sm8550: Add camera clock controller")
+> Reviewed-by: Taniya Das <quic_tdas@quicinc.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8550.dtsi | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> index d4bffcc244c98e87464cb2a4075c21f3cd368482..54ea21e1778a7c104cdf6865f84a7f8b5a8691ca 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> @@ -3625,8 +3625,10 @@ camcc: clock-controller@ade0000 {
+>  				 <&bi_tcxo_div2>,
+>  				 <&bi_tcxo_ao_div2>,
+>  				 <&sleep_clk>;
+> -			power-domains = <&rpmhpd RPMHPD_MMCX>;
+> -			required-opps = <&rpmhpd_opp_low_svs>;
+> +			power-domains = <&rpmhpd RPMHPD_MMCX>,
+> +					<&rpmhpd RPMHPD_MXC>;
+> +			required-opps = <&rpmhpd_opp_low_svs>,
+> +					<&rpmhpd_opp_low_svs>;
+>  			#clock-cells = <1>;
+>  			#reset-cells = <1>;
+>  			#power-domain-cells = <1>;
+> 
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
