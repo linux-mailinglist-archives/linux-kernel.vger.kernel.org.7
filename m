@@ -1,504 +1,181 @@
-Return-Path: <linux-kernel+bounces-779357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498CDB2F310
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:59:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F3AB2F303
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD465C30CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:57:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB68B4E5ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2110A2ED858;
-	Thu, 21 Aug 2025 08:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428601AE844;
+	Thu, 21 Aug 2025 08:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cdaXMzcn";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="OSWeydiO"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ka18AQYl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GrQ80cyk"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7762EE617
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755766612; cv=fail; b=BWas5DwV8v/ftXVLp6Ka51L/0KgvX4yr/UfjW0QzqfbPcvF+99+e9EeZNHwlK3ZYfnxdGwE4byjimPt16oNiEWgZTAmWV3OZnja5sz+RBcboIWOXMipsu6f4uaKDELtn2d4smau9MjvSM/vI02aGR2T9L0m8wozPq33QczicFYI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755766612; c=relaxed/simple;
-	bh=c3w9muYcMpPQSAYJ+jAE+DPi01e1XUFEjw+fruUNFBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FxWqqmKfaE0UFpI9M7eRDsRDPByN+6Y8p6ManL6KgglyH9GAOqgfS3EwhE3ok0ABo5+hg8XQXoh2tUFfYlm6KLGHr3ALqq99jhIZcO4Fh8g7Z3IzCGDlciLebff7WWAT7zg+PCvYP10S++ifZvLozSJTFvbIVNXNW3YciPLGpps=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cdaXMzcn; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=OSWeydiO; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L82iLM007718;
-	Thu, 21 Aug 2025 08:55:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=i3ATrHly6nUgjsehLE
-	IzzR+xUMzaX+f0FvEtvBmYqpA=; b=cdaXMzcnO33rUXZgn//Edb6+npww7lVyU3
-	iOemtxWR+Wa6ai2eJ7xMt0QPHusZ/8MtyZzGtt7u37+1Ez8cCXPHWTz7j7KF+UUC
-	2C+FsawumtOymAMzRwjOJT7aECmV3ThsZNTVcQKFOMvMP7xXJGqwHh+xRB1dONDC
-	YqG4QZzb9fi4SzGI1JUP4M3Gw7pCsRj1sXcAGxol7iQCVDP+IFLXNRLFQCxp3BZ0
-	LorlDGQ9P+rwWVaxgXJHi14Y6KfBsKRfkbTDRAtVMSN3UCC7e6VoZAfGV2/om2p4
-	v3/sqp/NgYgtP88k+Ii+mKm+o3LymkNsOBZdbHvjLuigvAQW+5uw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48n0tsb213-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 08:55:35 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57L8PiFg026402;
-	Thu, 21 Aug 2025 08:55:34 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2071.outbound.protection.outlook.com [40.107.223.71])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48n3sx9ssr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 08:55:34 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CZIqV8YTYgpsqsdGaRAYAhnXsusvvUegNomAW1fFegU2uUhnjzn+CAJt2ueCNomUplyG5uQX/3gPL/VniyfBdQHDsdviHhq8mjxtKaGAUYdTy/Ct9maj+/QY5siGuK2DjbhD75WOHNYyrDrNzSbnXkwSeeVl8njZIrg51+KVqU4pHG0XjkdL17yoCofE7P7dBYtCl+p+NeaaTQUhM3NnE1+HxTJqp0zJIgfyxy+uouEMtYDsykhAsROrHeqH4UwDBPe6zvvFj2mYfohf1GxAWSFSjzkf+wYMNqyYpuQKqNm+j56KeakdwymztmKq8alKau92K2BUxvdHNq9WyP4+nQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i3ATrHly6nUgjsehLEIzzR+xUMzaX+f0FvEtvBmYqpA=;
- b=xkzsnqoRIG3iPHWHAhLMkeoo2ziT780F/u8WLVhuRLIWwvIS2n52Cnvkj+bu0L0tEnWAkudVB/TPaxBwb3XLaFgNeBfbCsUGK4017QNQSIEI8HCgYp9lzpwrO6QpIOPZEnt2qWHjK8ZvuX+ZKl6p2ZfUbdWG9GAFCG2XS7t7MY170driRJ3D4gB+Da2tTcx8Qz3Ie4whKCW7i7yWusaFRJR2sVX2r7iWZXNMUgEhyPKaQiI+seigRnIP5kgfsyfm1aK/sD3T3PxA5hWlgND6vQuHOwOz4C+3y3NoJb+ZfSN3p3qQ4SNWZkhnC3YtKXzzupN9Ay+Joq2ydYeiAiaXyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i3ATrHly6nUgjsehLEIzzR+xUMzaX+f0FvEtvBmYqpA=;
- b=OSWeydiOcmOJHbwWPBcexB3dQVWAXEoG/75C6Akh+1mCzp/MXrk5UkTLqo795+7VcQCQD+A5pruHrRJfgg7nKO2v1veOYQEB8Pv5jVejunKPMAuTFyy88Xu6GGs5+T2rXvMQY6yR3fEr7PwyxHR0zfVGI1g3O9/PN+GmrZ1hLvQ=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by CO1PR10MB4724.namprd10.prod.outlook.com (2603:10b6:303:96::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
- 2025 08:55:31 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9031.024; Thu, 21 Aug 2025
- 08:55:31 +0000
-Date: Thu, 21 Aug 2025 09:55:27 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: peterz@infradead.org, bp@alien8.de, dave.hansen@linux.intel.com,
-        mingo@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org,
-        david@redhat.com, derkling@google.com, junaids@google.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, reijiw@google.com,
-        rientjes@google.com, rppt@kernel.org, vbabka@suse.cz, x86@kernel.org,
-        yosry.ahmed@linux.dev, Matthew Wilcox <willy@infradead.org>,
-        Liam Howlett <liam.howlett@oracle.com>,
-        "Kirill A. Shutemov" <kas@kernel.org>,
-        Harry Yoo <harry.yoo@oracle.com>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>
-Subject: Re: [Discuss] First steps for ASI (ASI is fast again)
-Message-ID: <cdccc1a6-c348-4cae-ab70-92c5bd3bd9fd@lucifer.local>
-References: <20250812173109.295750-1-jackmanb@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812173109.295750-1-jackmanb@google.com>
-X-ClientProxiedBy: MM0P280CA0100.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:9::18) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAC92D9EDA
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755766607; cv=none; b=udUjSf/O1oRDda1uZp2U/CKxXyJ8cI/7n43EjmQ37N92rlBNirMEInXO6mgxXjDwMhlilbr72Z4meKx/qGgSmEUCCLn0BVWItk9XVY7vZRGVxMNFfjVESXGOdoUEicNocheKgkQKdrP3sw38F+an20GhmEVCKSJmzdvta9mDdt8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755766607; c=relaxed/simple;
+	bh=a1gg61GveMK37Vgat4p5xGihJXs2sVoy0t3OQ7BH/2A=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=PKoaP9nBwLps4cfJsuv64FKUgcUVq/xFHfCeL1dOmCdYNSdtB9Lw8QzBNfrCRLvD61ddhQD8VAErgojHxzOE5GiG81V8ekbTqO7LvlwmTPxtAlq8oqxSr5JDK+oTTViPVon2U/if8BLkFFQt4eE4nFNNZhfROEGORFhwf14H9lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ka18AQYl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GrQ80cyk; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id D49E1EC007C;
+	Thu, 21 Aug 2025 04:56:43 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 21 Aug 2025 04:56:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1755766603;
+	 x=1755853003; bh=PWUJOpVst/YmMMRlLpZwMEFvROh86/hNVtmyCtTvurw=; b=
+	ka18AQYlhBDAu0f0gGvasfnP7Gx4ZkscfHtofGo7wXTdZRpCy212fX5SWsewEwo4
+	qSDcO/DoohtC1kUngNakGflIf9cJIF+dr4bm9OON2PZ7zPf0Oswc4kbw8obrEW18
+	ZJ/a+Y8RsFi7ywGioMhP6n3f//aNLc8+sUV6ByI8rCZJsEE0iQLLmzhlqDmmbRGU
+	jIk3VRK/as38x6mGilROBeHX4dRwB8/ivy4QgtHeFk0xe3ThA05hU2uZrOiJtbys
+	ezvMKztRmzk07vAdQn2YDnW9sfvUBiF3m6BecZ84FskqbRf99L5EJO/FgARKhDBM
+	XrOTAJ33R69+RLRBr2IxLg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755766603; x=
+	1755853003; bh=PWUJOpVst/YmMMRlLpZwMEFvROh86/hNVtmyCtTvurw=; b=G
+	rQ80cykBTpscz+0cte7aixSEKdpEleELfCJbR+AOsCZyBws8Zvol3u1fZ8Was10c
+	4qbmNp6MqUp0ZufnVJJW8P6A983ErEgyTVKYyYeqAWF+qoXaMOrxMvso6L+60aap
+	VwH/6f6zyg6qoUzp1P0gj2MK9sWyr9n53E/hpioHusgDpZyUdPqGPjDNa0dRZPxd
+	OyD89ri6upLpZ4GGRMHwkESrZ2Rlw9l5A26CfRPYLZeNKiDHgTHkIaN/IhpLUzl/
+	tS4/nasrMe66ZOhWaQqckaYLembyaFH9yTIYZY0mQ7g/NikG97RFKnZU7Vzar6d/
+	1OemTpBIjip+JV1WkyZAQ==
+X-ME-Sender: <xms:S9-maL8pmu64l9nEtKTGP1Z_c2z0MECdFrFst-KkU7KjxuL0AlDG6A>
+    <xme:S9-maHt8L3-tFafCR_g7iRdWVuNiM1B2lLTMiziKlOxVdhyK07o7yfTkLR9cIKIjv
+    NEvqF09S39XK_mY-gU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedtkeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopegtrhhishhtihgrnhdrmhgrrhhushhsihesrghrmhdrtghomhdprh
+    gtphhtthhopehsuhguvggvphdrhhholhhlrgesrghrmhdrtghomhdprhgtphhtthhopehf
+    vghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopehshhgrfihnghhuoheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehl
+    ihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepihhmgieslhhishhtsh
+    drlhhinhhugidruggvvhdprhgtphhtthhopehpvghnghdrfhgrnhesnhigphdrtghomhdp
+    rhgtphhtthhopehpvghnghdrfhgrnhesohhsshdrnhigphdrtghomhdprhgtphhtthhope
+    hkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
+X-ME-Proxy: <xmx:S9-maOCrP5OE2BCPwQrHUwLMCXuy82-ITAilNRTItJOIwLDeSlthvA>
+    <xmx:S9-maOAEkt86365ksOCQbqB8S3f5ZAsbj15tdoOhHEycoWaDomj20w>
+    <xmx:S9-maAolDEsGL_wpYjXy7a8YjvVcy8EKHPz8hLy7ixr4CcuRsD0jAQ>
+    <xmx:S9-maBHPQ3gnUyk7DSxjdL98zBCCfH7l4UV_om2sWqnuwh_dOKrkFg>
+    <xmx:S9-maOXTQFC_sPO9vJCFBxjut-TQnhsM8RCraBoVTttupZ4j0wxVELf5>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4FF34700068; Thu, 21 Aug 2025 04:56:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CO1PR10MB4724:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11cd83e9-d310-4572-6942-08dde0907bb9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?robJVKQbV9sxVJJ+OHf734CUMs5dyjFXAjdOVVSdm43PgCI9F2RjH2bFmbLx?=
- =?us-ascii?Q?rx/6yx/ZGM0Y8+wsx959ypkZai05JYst33nPLMbUnbXd2YhtOKOEq6Spi9BS?=
- =?us-ascii?Q?GKkVlcJ4kzdubXvWoLpZbVQ7l8GxoGn/9OHjOT1EjL9Mj2Gr+u/tJm71o37K?=
- =?us-ascii?Q?STIYU6TSnScXE8hKh/Q0S4/tCSty/A6eMVb09zf9xcHipL5hMkgOQHEGFbyW?=
- =?us-ascii?Q?g8M71A8pFEnViOTkKes/cgMCAz0q47AM7wYCk5A4or/V5NsNZSJTUCrzKIGT?=
- =?us-ascii?Q?UIpoPWKMd+W8iAAuvQ/xhcTg7vBB4qZWEh7cEjtyPqgLyQGqtgPuRgkfaFxq?=
- =?us-ascii?Q?tQkCfkTz/Y4N/mssDNOcH+ylFAIbVzrK3ZSDJvqaY3vhHHqz3f1+cIkplBJo?=
- =?us-ascii?Q?17Po8QT79I0mHuVXMC69t/pZtj7kiDnr2FD53pcu0HPIBrd6I+pZ1tF9aiGN?=
- =?us-ascii?Q?9xW5ivPUiHJlz5MawzSDp7f0wuVH2odhmYgRky7wTmufNGWDXf9lBbHiTjkc?=
- =?us-ascii?Q?aIqod4wtJWzHVR8LuF7DYdz9QScLDg5b1y7Y4z+OehFbl7FJwL1bq16YjpS1?=
- =?us-ascii?Q?GsyNtGYzmtIp0XpIy19UDK6WIomYm49ON79bjX2OJN/4Y7NCb6oFq3dmW66r?=
- =?us-ascii?Q?uR3XZky8HfZqq84qOzdEsfjl5DTU+cK8Pb0DH6hoqrcOXODujJs6fN838h0N?=
- =?us-ascii?Q?oYJSd/R3ld2nFauWtBhWSM0xgN8v8ZixYLjgHfGhDC63PD0hD++fqasAQhsQ?=
- =?us-ascii?Q?S+SxkNz9N4qDjs+npUK4qhLXU8uBG34K1CKqPTVHsCfDsIRjyvOiadbHd662?=
- =?us-ascii?Q?CeBwwTlw9Xgu86D252fUbmAGXQ4mUKN1OX5mllkx6OLSkk3tCLY05KJn/yJ4?=
- =?us-ascii?Q?uaEMuv6NIK6XaadqFvcptwVPWGgExm/6VQEaZYZJSeemRLyKNmIsm133MM/q?=
- =?us-ascii?Q?fMwAClZnMSt7pIYGA9s47a6Kv0OIYd1T9RKSgRaAPLIK6iDZNzzxBeAHKIdD?=
- =?us-ascii?Q?Pk5ARfOwraM3DJS9E1nMCitFM6C4sURD5zgoFlsjs9VHrQdc4ngm7Jfdsh4/?=
- =?us-ascii?Q?yMrtySfcdOTEwFCr2C6ARaX4sLZakAO/yzrnxUUPE35mTwdWQ+vqNGW9TIXK?=
- =?us-ascii?Q?aoda0QAyVh7DcOsI6qqcGj+wx8nqY0rR/eObnbSZwPTbV54K2uq2WV2B9vqZ?=
- =?us-ascii?Q?9NA1/rffjJPpkfXPmAThe5tV5Ug42DBvISkyGJbcOKlzmtZT15c3pIccqCkp?=
- =?us-ascii?Q?AI4hIo3OGZjXBSban1cSw5AIPwKslYxzmVlbJdmWmwSVZQE/ID3swcMQuhej?=
- =?us-ascii?Q?lnk4+ClKTh/LiEOmzuibgvErpDfEe+3NvPjlcFMx1Fc4lSjAVmFCzPC9nxAF?=
- =?us-ascii?Q?yDEAP5ACA68E+tx/Ye03vz84AwYTBm+yM4+JKhB+0YWMP4xk1zK6+iMX1WXL?=
- =?us-ascii?Q?f3+4Q7KAOps=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pmNJqevhagDIuMqXStxiZG4n3RYgP2eyYbTg5FcZ84U+CLntH47saGieWcAB?=
- =?us-ascii?Q?jJUsLHm6FDJRk2qs0Lw/WTfGUgaKp2Vn4RHTq9OhsCCZMb7YxW8pMjN5Z3au?=
- =?us-ascii?Q?v9AOY3vA+l5+pjh04+Ou/WiE8Ms+9pVEAOQC98ILBBky1S0gW+gxT7+WvkhL?=
- =?us-ascii?Q?fNEElfD/eF5nb5dxL22r+xUHiVqnpqxYcBmAY5fTxMfcq0+q8S8nE4E6Wce6?=
- =?us-ascii?Q?9KzbREO3min1lhodbBucTcguppEnZ9xg+LfFl+CE811DJAlwuUbS74jrZYE8?=
- =?us-ascii?Q?5iQAMUOSWBiSatvt8TCjsNzsC1Z3Tx6tlBVX2QlrKs32lJtDmlkdLJNgO9km?=
- =?us-ascii?Q?tM4vPKEYF64HXb6jDpIoOJahFyEqV2d3FtZ76Vou5a69X+NqyP3TaImHrxoY?=
- =?us-ascii?Q?2ohPNjFmlhgMu4H2A6qtwU6LFZOW1wAUIG2cI1AjrYYwza72o6xKVZAOtWuZ?=
- =?us-ascii?Q?zopnJN4+gNqfZX4o6BieYNGAASbOIxeX8HRZoSrWa692wuIDRkjvupMTuJJJ?=
- =?us-ascii?Q?3PNTEUvGimHcESDw8nuUF0K4Mu9u5pU+Syo4Oz9J5Zv2X6agKt/MhETduRYO?=
- =?us-ascii?Q?OkT78ce0ht68IMco36DejYQ5CJUo4edZu9nDOlh6KI+iSUdZEucpeaOOMBak?=
- =?us-ascii?Q?8F/Cjw+rWvsBhkne+iNnOcTX2Xgl4ElP1ZDZJ2Ffm9xwi5Xx+rj+204NrKVT?=
- =?us-ascii?Q?GUaXAOc0lkKoqbeOXenU+O2Ydj3wDvZk/+AYmQe4VcOnQ23EkDZPVN6vxVKD?=
- =?us-ascii?Q?+uW8vfxcAqnvbEbLQtRrt2h95pH8gg4xp0ykV0QkOQpTsUamocIaRE1m/6bb?=
- =?us-ascii?Q?apPQyMuF3U/fjg+LOANX0d9kRaYf2NEg+QmJOjNNJDHS+pUo9pj6OFgWtKUZ?=
- =?us-ascii?Q?nFTOVLsnRsFNN06l3VtYHcq2O2dtMGIKjqZnm5jP/o4us3liIqRbSamU/orR?=
- =?us-ascii?Q?FNIAD6I4K/e1inWYwoltyD0+uFxndEZnXXhngAZr3rSSKVQ0W4N800/bLEvE?=
- =?us-ascii?Q?WXYhyn1gCtDfKjk90gvNb8VqXRG9kMZ2vkIkutUguh4J4XKFBzw/9Nn36azq?=
- =?us-ascii?Q?CEQ1dLS6NnPa82+q3GEfFuMVF4kMsgbT/vbJ0UFa+UldyJGwHk0D4qok1IlX?=
- =?us-ascii?Q?9HLiIdmQJkeZbjkyKeZrySegAQwJ7tqWLezVP8DTFPAq43RXSMILbj9fou+p?=
- =?us-ascii?Q?lThjlMWzqWkWxwYBol3OFm3So04MrmmWHc0mvxOsLKfsq8dJG/PnoHbslM8Z?=
- =?us-ascii?Q?McOX+f/+7FqfGsX5Sd7e8RpJIqsFhxYELdSxNKZVH7DRgYpJNzgxoYgs7HM4?=
- =?us-ascii?Q?+bXjuXIKnZ23tw55kLYsR12Gz1xW/9ll8M9FuNLjtDZ1klvZ8wq5lrvoaBEn?=
- =?us-ascii?Q?Xp8fcUzBTzHMIE82Bjtbuns+Puno3NLGjxEYng694Z61zNuY8dn+KSWKJcmW?=
- =?us-ascii?Q?5TI6Talit+PEq6EDWDWrIlLxneiHLrNv1t4FMrnh58e13SrK0Lmvm3nhB/nJ?=
- =?us-ascii?Q?bszqGjBcc0ufAtiXK4BcipSdH2LRkInrAPnDujtC38PKcnE5xsBvxqVq98v1?=
- =?us-ascii?Q?FqFX0O80KGTediasOjufKtxe54611KiK2CLbhccKkz8DKJxInmpZX/PjeHRZ?=
- =?us-ascii?Q?8g=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Up4eNhgbB1e43qIOTNUPEWDBo4DKlgaRfio84bzKIFVBdsNUkW/ytz8B8/2kz1yu4vFFxMaFgZaalQGa+EnZuruEL3NfanhKcMvibfGYdypL1D52RKINihzb8jNMhyvYqT6bAKqIlRyl8GzNDy6WWVlxVt2G5YlXtF7n+YroZAEzWfmhvfPwcm/D8p86FnVTghGuewOeyvgNGc/0pLVn7V6CtrCK5jgGRvjp3yIbLeNe4a/Hq0KGf59A/H315VO+3o0l4aVoqJcCpj7vnnGFpxhABYZZMSzntbh5HqaySQsvMnDGhMILFP2EJ7O4FfTS1b5sCAjVF8oCihOyoF7E9NE9Ch8sl2t9EFTt22V573wd8GMvIHv2nL5dM8EQLbo7nqTeNbA1pX2yNyP+n7ISj1CMURYr3xhILM6jCuQAtQOnB33teH/L+as+PtIe4R0SSNoBQ2sOCFXuJdEMB0PiTNxtRPpWnDOKjHWvGv7S5CCi04NBD2ZrnBAajr9GV+/Cm3/YMEdwwOeZdEO9cUnNgoAb0lkoTh5vfScsEY9nk7FuwJErgH62EKdYeFaIxexCQ4P6vaNoOW8NpLlGmDBcngCGsFpOhfzthxNsqBg2hr8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11cd83e9-d310-4572-6942-08dde0907bb9
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 08:55:31.4802
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dkavRbo1ghjXYq5sZ+wUhLHObZFYW9/tJBb19PRbLtsm0Fo+yxHjMFGpT+gpFEkyXOTU6h720svowuyXMzkWPf0l4bUAC0mE1GraTfWHg8Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4724
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 suspectscore=0
- spamscore=0 phishscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508210069
-X-Proofpoint-GUID: MxNV5-EtyGvb67A88C7Sd4ZKbuj1JJNi
-X-Proofpoint-ORIG-GUID: MxNV5-EtyGvb67A88C7Sd4ZKbuj1JJNi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NyBTYWx0ZWRfX504FgkvUbi6D
- o1ECISVsBGwv01N06R7fc4teHbHZh5khxBS3poKwc/EqB4+TwBaiT+R9WkMBM7Fu/YO7o0ZpU8N
- YJzhzyQUeyICqZ04TpbTqKU2zwlF7qUs2gFfOtv37Nhd/Ik0uw3uw/kAkoB/u/QUzuzqVXrSVT4
- 01uG9SgFN7mvdg0UBwr0GP+/N5JEoR+Uy+hSGurQPFZPP3q6e+uS7QRPrkfuKdATttjl9tS0zet
- koiRfwoc9bFC5b7k/t5QsR0QRKOqUeUxeMhfCV9Eq0kEh8KYhSqQb4heYkf29b+BJLV5iEJnGIA
- jVRPJJmfS6AhXxqGvGLrexlcFXlzfVvXmPYomZqhJkFi+VnnEJ0DB4a4l5wFUGMlkjpugGEfJ/9
- c1R6rolYgZpY/jz9oIYJOQUvR8DYNQ==
-X-Authority-Analysis: v=2.4 cv=HKOa1otv c=1 sm=1 tr=0 ts=68a6df07 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
- a=1XWaLZrsAAAA:8 a=NEAV23lmAAAA:8 a=RmfY8Sjn0mIEeRol1GEA:9 a=CjuIK1q_8ugA:10
- a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-ThreadId: A6YapAphagno
+Date: Thu, 21 Aug 2025 10:56:23 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Peng Fan" <peng.fan@oss.nxp.com>
+Cc: "Peng Fan" <peng.fan@nxp.com>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Fabio Estevam" <festevam@gmail.com>, "Sudeep Holla" <sudeep.holla@arm.com>,
+ "Cristian Marussi" <cristian.marussi@arm.com>, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-Id: <b92218a6-e30c-4163-b441-1187d2e429d0@app.fastmail.com>
+In-Reply-To: <20250821095657.GB19763@nxa18884-linux.ap.freescale.net>
+References: <20250807-imx9-sm-v1-0-3489e41a6fda@nxp.com>
+ <20250807-imx9-sm-v1-1-3489e41a6fda@nxp.com>
+ <2ff85fec-b571-4423-9161-674f88a32e18@app.fastmail.com>
+ <20250821095657.GB19763@nxa18884-linux.ap.freescale.net>
+Subject: Re: [PATCH 1/3] firmware: imx: Add stub functions for SCMI MISC API
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-+cc Matthew for page cache side
-+cc Other memory mapping folks for mapping side
-+cc various x86 folks for x86 side
-+cc Kees for security side of things
-
-On Tue, Aug 12, 2025 at 05:31:09PM +0000, Brendan Jackman wrote:
-> .:: Intro
+On Thu, Aug 21, 2025, at 11:56, Peng Fan wrote:
+> On Wed, Aug 20, 2025 at 03:55:20PM +0200, Arnd Bergmann wrote:
+>>On Thu, Aug 7, 2025, at 03:47, Peng Fan wrote:
+>>
+>>
+>>When a caller of this function is in a built-in driver but the
+>>IMX_SCMI_MISC_DRV code is in a loadable module, you still
+>>get a link failure, see 514b2262ade4 ("firmware: arm_scmi:
+>>Fix i.MX build dependency") for an example.
+>>
+>>As you still need the correct Kconfig dependencies, I
+>>think your patch here is not helpful.
 >
-> Following up to the plan I posted at [0], I've now prepared an up-to-date ASI
-> branch that demonstrates a technique for solving the page cache performance
-> devastation I described in [1]. The branch is at [5].
-
-Have looked through your branch at [5], note that the exit_mmap() code is
-changing very soon see [ljs0]. Also with regard to PGD syncing, Harry introduced
-a hotfix series recently to address issues around this generalising this PGD
-sync code which may be usefully relevant to your series.
-
-[ljs0]:https://lore.kernel.org/linux-mm/20250815191031.3769540-1-Liam.Howlett@oracle.com/
-[ljs1]:https://lore.kernel.org/linux-mm/20250818020206.4517-1-harry.yoo@oracle.com/
-
+> The consumer driver still needs Kconfig dependcies, such as
+>   depends on IMX_SCMI_MISC_DRV || !IMX_SCMI_MISC_DRV
 >
-> The goal of this prototype is to increase confidence that ASI is viable as a
-> broad solution for CPU vulnerabilities. (If the community still has to develop
-> and maintain new mitigations for every individual vuln, because ASI only works
-> for certain use-cases, then ASI isn't super attractive given its complexity
-> burden).
+> So when IMX_SCMI_MISC_DRV is module built, the consumer driver will
+> also be module built.
 >
-> The biggest gap for establishing that confidence was that Google's deployment
-> still only uses ASI for KVM workloads, not bare-metal processes. And indeed the
-> page cache turned out to be a massive issue that Google just hasn't run up
-> against yet internally.
+> But if IMX_SCMI_MISC_DRV is n, the consumer driver is y, there will be
+> link error.
 >
-> .:: The "ephmap"
+> The consumer driver is to support platform A and platform B.
 >
-> I won't re-hash the details of the problem here (see [1]) but in short: file
-> pages aren't mapped into the physmap as seen from ASI's restricted address space.
-> This causes a major overhead when e.g. read()ing files. The solution we've
-> always envisaged (and which I very hastily tried to describe at LSF/MM/BPF this
-> year) was to simply stop read() etc from touching the physmap.
+> Platform A does not require the real API in IMX_SCMI_MISC_DRV.
+> Platform B requires the real API in IMX_SCMI_MISC_DRV.
 >
-> This is achieved in this prototype by a mechanism that I've called the "ephmap".
-> The ephmap is a special region of the kernel address space that is local to the
-> mm (much like the "proclocal" idea from 2019 [2]). Users of the ephmap API can
-> allocate a subregion of this, and provide pages that get mapped into their
-> subregion. These subregions are CPU-local. This means that it's cheap to tear
-> these mappings down, so they can be removed immediately after use (eph =
-> "ephemeral"), eliminating the need for complex/costly tracking data structures.
-
-OK I had a bunch of questions here but looked at the code :)
-
-So the idea is we have a per-CPU buffer that is equal to the size of the largest
-possible folio, for each process.
-
-I wonder by the way if we can cache page tables rather than alloc on bring
-up/tear down? Or just zap? That could help things.
-
+> So when producing an image for platform A, IMX_SCMI_MISC_DRV could set
+> to n to make Image smaller. Introducing the stub API is mainly for this
+> case.
 >
-> (You might notice the ephmap is extremely similar to kmap_local_page() - see the
-> commit that introduces it ("x86: mm: Introduce the ephmap") for discussion).
+> Hope this is clear
 
-I do wonder if we need to have a separate kmap thing or whether we can just
-adjust what already exists?
+I see. In this case the stub helpers are not wrong, but I
+still find them more error-prone than not having them and
+using IS_ENABLED() checks as in commit 101c9023594a
+("ASoC: fsl_mqs: Support accessing registers by scmi interface"):
 
-Presumably we will restrict ASI support to 64-bit kernels only (starting with
-and perhaps only for x86-64), so we can avoid the highmem bs.
++static int fsl_mqs_sm_read(void *context, unsigned int reg, unsigned int *val)
++{
++       struct fsl_mqs *mqs_priv = context;
++       int num = 1;
++
++       if (IS_ENABLED(CONFIG_IMX_SCMI_MISC_DRV) &&
++           mqs_priv->soc->ctrl_off == reg)
++               return scmi_imx_misc_ctrl_get(SCMI_IMX_CTRL_MQS1_SETTINGS, &num, val);
++
++       return -EINVAL;
++};
 
->
-> The ephmap can then be used for accessing file pages. It's also a generic
-> mechanism for accessing sensitive data, for example it could be used for
-> zeroing sensitive pages, or if necessary for copy-on-write of user pages.
->
-> .:: State of the branch
->
-> The branch contains:
->
-> - A rebased version of my "ASI integration for the page allocator" RFC [3]. (Up
->   to "mm/page_alloc: Add support for ASI-unmapping pages")
-> - The rest of ASI's basic functionality (up to "mm: asi: Stop ignoring asi=on
->   cmdline flag")
-> - Some test and observability conveniences (up to "mm: asi: Add a tracepoint for
->   ASI page faults")
-> - A prototype of the new performance improvements (the remainder of the
->   branch).
->
-> There's a gradient of quality where the earlier patches are closer to "complete"
-> and the later ones are increasingly messy and hacky. Comments and commit message
-> describe lots of the hacky elements but the most important things are:
->
-> 1. The logic to take advantage of the ephmap is stuck directly into mm/shmem.c.
->    This is just a shortcut to make its behaviour obvious. Since tmpfs is the
->    most extreme case of the read/write slowdown this should give us some idea of
->    the performance improvements but it obviously hides a lot of important
->    complexity wrt how this would be integrated "for real".
+The logic is the same here in the end, but the link failure
+is easier to trigger and repair if someone gets it wrong.
 
-Right, at what level do you plan to put the 'real' stuff?
+Also, for drivers that actually need the exported interface,
+the dependency becomes the simpler 'depends on IMX_SCMI_MISC_DRV'.
 
-generic_file_read_iter() + equivalent or something like this? But then you'd
-miss some fs obv., so I guess filemap_read()?
+Which driver using this symbol are you actually looking
+at? I see you have three similar patches for a couple of
+interfaces, and want to make sure the added complexity is
+really needed here. I do a lot of randconfig build tests,
+so quite often I end up being the one that runs into
+the subtle link failures from these.
 
->
-> 2. The ephmap implementation is extremely stupid. It only works for the simple
->    shmem usecase. I don't think this is really important though, whatever we end
->    up with needs to be very simple, and it's not even clear that we actually
->    want a whole new subsystem anyway. (e.g. maybe it's better to just adapt
->    kmap_local_page() itself).
-
-Right just testing stuff out, fair enough. Obviously not an upstremable thing
-but sort of test case right?
-
->
-> 3. For software correctness, the ephmap only needs to be TLB-flushed on the
->    local CPU. But for CPU vulnerability mitigation, flushes are needed on other
->    CPUs too. I believe these flushes should only be needed very infrequently.
->    "Add ephmap TLB flushes for mitigating CPU vulns" is an illustrative idea of
->    how these flushes could be implemented, but it's a bit of a simplistic
->    implementation. The commit message has some more details.
-
-Yeah, I am no security/x86 expert so you'll need insight from those with a
-better understanding of both, but I think it's worth taking the time to have
-this do the minimum possible that we can prove is necessary in any real-world
-scenario.
-
-It's good to start super conservative though.
-
->
-> .:: Performance
->
-> This data was gathered using the scripts at [4]. This is running on a Sapphire
-> Rapids machine, but with setcpuid=retbleed. This introduces an IBPB in
-> asi_exit(), which dramatically amplifies the performance impact of ASI. We don't
-> know of any vulns that would necessitate this IBPB, so this is basically a weird
-> selectively-paranoid configuration of ASI. It doesn't really make sense from a
-> security perspective. A few years from now (once the security researchers have
-> had their fun) we'll know what's _really_ needed on this CPU, it's very unlikely
-> that it turns out to be exactly an IBPB like this, but it's reasonably likely to
-> be something with a vaguely similar performance overhead.
-
-I mean, this all sounds like you should drop this :)
-
-What do the numbers look like without it?
-
->
-> Native FIO randread IOPS on tmpfs (this is where the 70% perf degradation was):
-> +---------+---------+-----------+---------+-----------+---------------+
-> | variant | samples |      mean |     min |       max | delta mean    |
-> +---------+---------+-----------+---------+-----------+---------------+
-> | asi-off |      10 | 1,003,102 | 981,813 | 1,036,142 |               |
-> | asi-on  |      10 |   871,928 | 848,362 |   885,622 | -13.1%        |
-> +---------+---------+-----------+---------+-----------+---------------+
->
-> Native kernel compilation time:
-> +---------+---------+--------+--------+--------+-------------+
-> | variant | samples |   mean |    min |    max | delta mean  |
-> +---------+---------+--------+--------+--------+-------------+
-> | asi-off |       3 | 34.84s | 34.42s | 35.31s |             |
-> | asi-on  |       3 | 37.50s | 37.39s | 37.58s | 7.6%        |
-> +---------+---------+--------+--------+--------+-------------+
->
-> Kernel compilation in a guest VM:
-> +---------+---------+--------+--------+--------+-------------+
-> | variant | samples |   mean |    min |    max | delta mean  |
-> +---------+---------+--------+--------+--------+-------------+
-> | asi-off |       3 | 52.73s | 52.41s | 53.15s |             |
-> | asi-on  |       3 | 55.80s | 55.51s | 56.06s | 5.8%        |
-> +---------+---------+--------+--------+--------+-------------+
-
-(tiny nit but I think the bottom two are meant to be negative or the first
-postiive :P)
-
->
-> Despite my title these numbers are kinda disappointing to be honest, it's not
-> where I wanted to be by now, but it's still an order-of-magnitude better than
-> where we were for native FIO a few months ago. I believe almost all of this
-> remaining slowdown is due to unnecessary ASI exits, the key areas being:
-
-Nice, this broad approach does seem simple.
-
-Obviously we really do need to see these numbers come down significantly for
-this to be reasonably workable, as this kind of perf impact could really add up
-at scale.
-
-But from all you say it seems very plausible that we can in fact significant
-reduce this.
-
-Am guessing the below are general issues that are holding back ASI as a whole
-perf-wise?
-
->
-> - On every context_switch(). Google's internal implementation has fixed this (we
->   only really need it when switching mms).
-
-How did you guys fix this?
-
->
-> - Whenever zeroing sensitive pages from the allocator. This could potentially be
->   solved with the ephmap but requires a bit of care to avoid opening CPU attack
->   windows.
-
-Right, seems that having a per-CPU mapping is a generally useful thing. I wonder
-if we can actually generalise this past ASI...
-
-By the way a random thought, but we really do need some generic page table code,
-there's mm/pagewalk.c which has install_pte(), but David and I have spoken quite
-few times about generalising past this (watch this space).
-
-I do intend to add install_pmd() and install_pud() also for the purposes of one
-of my currently many pending series :P
-
->
-> - In copy-on-write for user pages. The ephmap could also help here but the
->   current implementation doesn't support it (it only allows one allocation at a
->   time per context).
-
-Hmm, CoW generally a pain. Could you go into more detail as to what's the issue
-here?
-
->
-> .:: Next steps
->
-> Here's where I'd like to go next:
->
-> 1. Discuss here and get feedback from x86 folks. Dave H said we need "line of
->    sight" to a version of ASI that's viable for sandboxing native workloads. I
->    don't consider a 13% slowdown "viable" as-is, but I do think this shows we're
->    out of the "but what about the page cache" black hole. It seems provably
->    solvable now.
-
-Yes I agree.
-
-Obviously it'd be great to get some insight from x86 guys, but strikes me we're
-still broadly in mm territory here.
-
-I do think the next step is to take the original ASI series, make it fully
-upstremable, and simply introduce the CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
-flag, default to N of course, without the ephmap work yet in place, rather a
-minimal implementation.
-
-And in the config/docs/commit msgs etc. you can indicate its limitations and
-perf overhead.
-
-I think with numerous RFC's and talks we're good for you to just send that as a
-normal series and get some proper review going and ideally some bots running
-with ASI switched on also (all* + random configs should do that for free) + some
-syzbot action.
-
-That way we have the roots in place and can build further upon that, but nobody
-is impacted unless they decide to consciously opt in despite the documented
-overhead + limitations.
-
->
-> 2. Once we have some x86 maintainers saying "yep, it looks like this can work
->    and it's something we want", I can start turning my page_alloc RFC [3] into a
->    proper patchset (or maybe multiple if I can find a way to break things down
->    further).
->
-> Note what I'm NOT proposing is to carry on working on this branch until ASI is
-> as fast as I am claiming it eventually will be. I would like to avoid doing that
-> since I believe the biggest unknowns on that path are now solved, and it would
-> be more useful to start getting down to nuts and bolts, i.e. reviewing real,
-> PATCH-quality code and merging precursor stuff. I think this will lead to more
-> useful discussions about the overall design, since so far all my postings have
-> been so long and rarefied that it's been hard to really get a good conversation
-> going.
-
-Yes absolutely agreed.
-
-Send the ASI core series as normal series and let's get the base stuff in tree
-and some serious review going.
-
->
-> .:: Conclusion
->
-> So, x86 folks: Does this feel like "line of sight" to you? If not, what would
-> that look like, what experiments should I run?
-
-From an mm point of view, I think obviously the ephmap stuff you have now is
-hacky (as you point out clearly in [5] yourself :) but the general approach
-seems sensible.
-
->
-> ---
->
-> [0] https://lore.kernel.org/lkml/DAJ0LUX8F2IW.Q95PTFBNMFOI@google.com/
-> [1] https://lore.kernel.org/linux-mm/20250129144320.2675822-1-jackmanb@google.com/
-> [2] https://lore.kernel.org/linux-mm/20190612170834.14855-1-mhillenb@amazon.de/
-> [3] https://lore.kernel.org/lkml/20250313-asi-page-alloc-v1-0-04972e046cea@google.com/
-> [4] https://github.com/bjackman/nixos-flake/commit/be42ba326f8a0854deb1d37143b5c70bf301c9db
-> [5] https://github.com/bjackman/linux/tree/asi/6.16
->
-
-Cheers, Lorenzo
+      Arnd
 
