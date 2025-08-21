@@ -1,137 +1,187 @@
-Return-Path: <linux-kernel+bounces-779483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E90B2F4A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 662BAB2F4AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0DD05E3B76
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:53:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB3A43A4E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5326A2DC327;
-	Thu, 21 Aug 2025 09:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lK4+KyC/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tsWgcySR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E6E2DCF57;
+	Thu, 21 Aug 2025 09:55:33 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482DE2DA76D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1A42DAFAE
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755770026; cv=none; b=ez5ZWjwNW7kjGoQSKdim2HGdWsKwdvREgNeBd6DhTdKflT9XufnwJV1v+H7ifUA3QvU8XtgVMvAkPWHyAom1j3c4XAbc/FObxDX8GxfAjL4sKbeKtJpjd9zWH6HxpjH1fGuH/ncTXOE/13ji1wXRoLWShuNzBZhFEaJuwllDKpU=
+	t=1755770132; cv=none; b=m6UO9/biUpxxFBOplY8jB6KuZnFwWd38G5O7gL7kqFHS4uWFAO7m0KzKzuIvEhrRFhtZk4KFzPdfdBiaPhVB5A5cxLoMDPF8svo0+W+JuDKzrkyLpYGO3T6LLrgLFnq4tFNeXLOZbAzIOvwRA8LGZ/yDFg4U8AWiIMOfx1+Aqcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755770026; c=relaxed/simple;
-	bh=Kw933jXbLorysRey7gN+vZiHMPJ9xddyIJCcqssbuhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9iJElzIPSa6UtuVE2iVsR29jDEcc9B1KNg8joRDHO9GHinhtqpqa1PPAAB/hivYS9U2R2P2tOJrhCASBbx7kQek3VFRJljkMv4dxrsj4c2NQ/ZyV5pPEUIsI2mE0mlH0UiB4YEbH0zxVzQVAVgLBBS3s/VEnCFJa9jXgOAJC1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lK4+KyC/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tsWgcySR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 21 Aug 2025 11:53:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755770023;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CihmxdU4Ms1mqx70T+KZ5W8aGesd/p/F8CWha+o07Dk=;
-	b=lK4+KyC/zfPncJJYE2xfIzlp3F/F3hoRjd6RflaxcdAsv5k0s3964vcqK+3W/yTxJnhXvd
-	ZXoK23MjqI0Ajm4ZVMJY8I770D7rc3mk/k8EUGAVLGKfhsRItSBvoTN/Rp5/16xdVo9XNH
-	WNmbaSH3jux1x8lpzwZU8eGxkH6mzdFxnsA0YUaLlYSa8n7Q6VpYX6SqSeMUmPmTa1jgQ3
-	TiLCfZBKrV3DZXkfKBsw28RS+otC5dE4VMCPlSstXy/UMbgR/kbgpzR+mga0rSwaopLf1r
-	ASGSw2qSpXwsTSxG8X7tYFeWUBG+2XOqaq3STmdzoXcy8LFpDQ4kOaSQaEARXg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755770023;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CihmxdU4Ms1mqx70T+KZ5W8aGesd/p/F8CWha+o07Dk=;
-	b=tsWgcySRHLUte7GIwJFfNuUvyyO0PPRXuYc14uXl20wjecgUr12uGEJgvpOskt4IMxkQWf
-	ffC7IqxzyOJkjQBA==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH 0/2] x86/cpu/cacheinfo: Simplify llc_id calculation on
- AMD platforms
-Message-ID: <aKbspRcrEWBiox8c@lx-t490>
-References: <20250821051910.7351-1-kprateek.nayak@amd.com>
+	s=arc-20240116; t=1755770132; c=relaxed/simple;
+	bh=bNC84wX9VbuKkp3Xk8CymGb8jOoIPWrXBqmjlKAHW58=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HZ4qSZeAu7724Z931rpkWO5agzSAASSCkxZQQ0VxtWUDe87yrAtkfqpnb0WiESLkiSrd6nhQvLxw53Tm4SAxXNKW+OhW6/9dfQtrSNysGZrijLN1MvNuKsWTCl7Nu7bevFVJi7PRAn4xLIUXR0lxBOVy/+3MBOrFYmJ//4hvGhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-886b58db928so38449339f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:55:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755770130; x=1756374930;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MKWfvnqfyZafY2UKt97D9JqmTwGSaSHAeKRW8S7fgRM=;
+        b=jSQcLu7w5VU5+RSgpDJZ+a3HW/zoxVPSePGA0qSkBgRCG3Yu7IDMJDIq8GpWz6b75G
+         B+MgbmTWfVQ8kUvIJ75y3sYpZs6+Af7HjV6Zz6ZHxEhq9lz/8wwPw6X/paUgozw1rv6o
+         XqHJGwCiydlLtQ9BWf7y0ReVse5A+XqbLqLRyyxS0B3nejA5nSSaYVTJ8UHLgeUvZbyW
+         alWHjMNprfvvyvetRrkbIhRp2XnntofqQzGbrRLEDycTGxNK7XOh+PwdJ4yXmDhgxO9t
+         gDAn2dZ/fFZpG6ZHHOf5rwrgnUjzOGtI08nl6FkfbM5qahgrkavb7sPPJmWe+3FIuRVS
+         sIMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqwMbi4hn7c/+EfcDqdal95GOhVOLxpJMv8iLFHyimTX2vDu9qSJ00ctwCgt8ub5MdtH6e3EDuJ8AYOAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzezbc8oGxTjNd+jgHv6gpP5B4alq7M940yG60F7JS2Cgb9lqJl
+	RwCLGpaYVnZOK11meuTNdhsSk7FXAk91A+zjVrOw977KMf6+GDjoU0ha7k+LFFgXI2TeoRn5bbz
+	JUx3fVB9dcVmC82X3yQeDXj2K3UqWe38dcrCP+WbGak5D7h/bclgxhg+Fct8=
+X-Google-Smtp-Source: AGHT+IFmleAzs6h/ycjcn0VigOYLdPhAdOw0gh90cCVW99o0DYePvGNAasuwcBuV4XqAr3kEtRQyNJIIxrAri+bIPKsvETNy3C2q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821051910.7351-1-kprateek.nayak@amd.com>
+X-Received: by 2002:a05:6e02:228e:b0:3e5:5e09:4484 with SMTP id
+ e9e14a558f8ab-3e6d4160132mr33220915ab.6.1755770130116; Thu, 21 Aug 2025
+ 02:55:30 -0700 (PDT)
+Date: Thu, 21 Aug 2025 02:55:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a6ed12.050a0220.3d78fd.0021.GAE@google.com>
+Subject: [syzbot] [netfilter?] WARNING in nf_reject_fill_skb_dst
+From: syzbot <syzbot+b17c05ecb64771a892d1@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, dsahern@kernel.org, 
+	edumazet@google.com, fw@strlen.de, horms@kernel.org, kadlec@netfilter.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
+	sdf@fomichev.me, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-On Thu, 21 Aug 2025, K Prateek Nayak wrote:
->
-> Reuse the available cacheinfo helpers instead of open-coding masks and
-> shifts in cacheinfo_amd_init_llc_id().
->
-> This series has been tested on top of tip:x86/cpu at commit 6a42c31ef324
-> ("x86/cpu: Rename and move CPU model entry for Diamond Rapids") with no
-> changes being observed in "/sys/kernel/debug/x86/topo/" on a 3rd
-> Generation EPYC platform.
->
+syzbot found the following issue on:
 
-I had to merge the diff of the two patches to get what was going on.
+HEAD commit:    5c69e0b395c1 Merge branch 'stmmac-stop-silently-dropping-b..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=128597a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5b2fdcd062d798f6
+dashboard link: https://syzkaller.appspot.com/bug?extid=b17c05ecb64771a892d1
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12175442580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124c16f0580000
 
-My only comment would be:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ef95b68de898/disk-5c69e0b3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/70d343b8a3cf/vmlinux-5c69e0b3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/55dad8818bb6/bzImage-5c69e0b3.xz
 
-> --- a/arch/x86/kernel/cpu/cacheinfo.c
-> +++ b/arch/x86/kernel/cpu/cacheinfo.c
-> ...
-> +/*
-> + * The max shared threads number comes from CPUID(0x4) EAX[25-14] with input
-> + * ECX as cache index. Then right shift apicid by the number's order to get
-> + * cache id for this cache node.
-> + */
-> +static unsigned int get_cache_id(u32 apicid, struct _cpuid4_info *id4)
-> +{
-> +	unsigned long num_threads_sharing;
-> +	int index_msb;
-> +
-> +	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
-> +	index_msb = get_count_order(num_threads_sharing);
-> +	return apicid >> index_msb;
-> +}
-> +
-...
-> -/*
-> - * The max shared threads number comes from CPUID(0x4) EAX[25-14] with input
-> - * ECX as cache index. Then right shift apicid by the number's order to get
-> - * cache id for this cache node.
-> - */
-> -static void get_cache_id(int cpu, struct _cpuid4_info *id4)
-> -{
-> -	struct cpuinfo_x86 *c = &cpu_data(cpu);
-> -	unsigned long num_threads_sharing;
-> -	int index_msb;
-> -
-> -	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
-> -	index_msb = get_count_order(num_threads_sharing);
-> -	id4->id = c->topo.apicid >> index_msb;
-> -}
-> -
-...
+The issue was bisected to:
 
-Since you don't write to 'id4' anymore, please make the pointer constant.
-It helps with code comprehension: from a quick glance, one knows that the
-function does not write to the passed structure.
+commit a890348adcc993f48d1ae38f1174dc8de4c3c5ac
+Author: Stanislav Fomichev <sdf@fomichev.me>
+Date:   Mon Aug 18 15:40:32 2025 +0000
 
-Other than that, and possibly merging the two patches (if you want to):
+    net: Add skb_dst_check_unset
 
-Acked-by: Ahmed S. Darwish <darwi@linutronix.de>
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12d1b7a2580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11d1b7a2580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16d1b7a2580000
 
-Thanks!
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b17c05ecb64771a892d1@syzkaller.appspotmail.com
+Fixes: a890348adcc9 ("net: Add skb_dst_check_unset")
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 1038 at ./include/linux/skbuff.h:1165 skb_dst_check_unset include/linux/skbuff.h:1164 [inline]
+WARNING: CPU: 1 PID: 1038 at ./include/linux/skbuff.h:1165 skb_dst_set include/linux/skbuff.h:1211 [inline]
+WARNING: CPU: 1 PID: 1038 at ./include/linux/skbuff.h:1165 nf_reject_fill_skb_dst+0x2a4/0x330 net/ipv4/netfilter/nf_reject_ipv4.c:234
+Modules linked in:
+CPU: 1 UID: 0 PID: 1038 Comm: kworker/u8:5 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: ipv6_addrconf addrconf_dad_work
+RIP: 0010:skb_dst_check_unset include/linux/skbuff.h:1164 [inline]
+RIP: 0010:skb_dst_set include/linux/skbuff.h:1211 [inline]
+RIP: 0010:nf_reject_fill_skb_dst+0x2a4/0x330 net/ipv4/netfilter/nf_reject_ipv4.c:234
+Code: 8b 0d 10 6f 8b 08 48 3b 8c 24 e0 00 00 00 75 5d 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc cc e8 fd ca aa f7 90 <0f> 0b 90 e9 38 ff ff ff 44 89 f9 80 e1 07 fe c1 38 c1 0f 8c 2b fe
+RSP: 0018:ffffc90000a08360 EFLAGS: 00010246
+RAX: ffffffff8a14e133 RBX: ffff888079c898c0 RCX: ffff8880266ada00
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90000a08490 R08: ffffffff8fa37e37 R09: 1ffffffff1f46fc6
+R10: dffffc0000000000 R11: fffffbfff1f46fc7 R12: ffff88807be46101
+R13: dffffc0000000001 R14: 1ffff92000141070 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff888125d1b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f95283b6088 CR3: 000000000df36000 CR4: 00000000003526f0
+Call Trace:
+ <IRQ>
+ nf_send_unreach+0x17b/0x6e0 net/ipv4/netfilter/nf_reject_ipv4.c:325
+ nft_reject_inet_eval+0x4bc/0x690 net/netfilter/nft_reject_inet.c:27
+ expr_call_ops_eval net/netfilter/nf_tables_core.c:237 [inline]
+ nft_do_chain+0x40c/0x1920 net/netfilter/nf_tables_core.c:285
+ nft_do_chain_inet+0x25d/0x340 net/netfilter/nft_chain_filter.c:161
+ nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
+ nf_hook_slow+0xc5/0x220 net/netfilter/core.c:623
+ nf_hook include/linux/netfilter.h:273 [inline]
+ NF_HOOK+0x206/0x3a0 include/linux/netfilter.h:316
+ __netif_receive_skb_one_core net/core/dev.c:5979 [inline]
+ __netif_receive_skb+0x143/0x380 net/core/dev.c:6092
+ process_backlog+0x60e/0x14f0 net/core/dev.c:6444
+ __napi_poll+0xc7/0x360 net/core/dev.c:7494
+ napi_poll net/core/dev.c:7557 [inline]
+ net_rx_action+0x707/0xe30 net/core/dev.c:7684
+ handle_softirqs+0x283/0x870 kernel/softirq.c:579
+ do_softirq+0xec/0x180 kernel/softirq.c:480
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:407
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ rcu_read_unlock_bh include/linux/rcupdate.h:910 [inline]
+ __dev_queue_xmit+0x1d79/0x3b50 net/core/dev.c:4740
+ neigh_output include/net/neighbour.h:547 [inline]
+ ip6_finish_output2+0x11fb/0x16a0 net/ipv6/ip6_output.c:141
+ NF_HOOK include/linux/netfilter.h:318 [inline]
+ ndisc_send_skb+0xb96/0x1470 net/ipv6/ndisc.c:512
+ ndisc_send_ns+0xcb/0x150 net/ipv6/ndisc.c:670
+ addrconf_dad_work+0xaae/0x14b0 net/ipv6/addrconf.c:4282
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
