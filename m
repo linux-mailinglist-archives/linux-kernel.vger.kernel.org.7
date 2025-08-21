@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-778819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF0BB2EB8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:01:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB28B2EB98
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75783B54D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:01:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B30A1C87E99
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F842D4B61;
-	Thu, 21 Aug 2025 03:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4957B2D5410;
+	Thu, 21 Aug 2025 03:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gaSDnzkH"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GU1Pn1w3"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF4328466E;
-	Thu, 21 Aug 2025 03:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B631DFE12;
+	Thu, 21 Aug 2025 03:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755745263; cv=none; b=L97nFO3U3a9rXq18TEpP7TnWlBxi8Zm1EPm2JNs/uks5RhG6/+Qd235aMH4utsCXN9b8POHx2l67xOmQjIAWsc0Cz7k5kIRJ+M4iRs55Y0N37/FGr2Z+2b2wbFlG8a2xMlfD0IcWKgnPmegWw2J6O5M+hP5N3dDMINCf7PLTurE=
+	t=1755745297; cv=none; b=BOcIm7VnjuHzRQTfTOtDVVi8Wc96rQFxUopz6hCFIQvw0u7FJN6ZDIj7L6GBhi/YL1AhLTLAAOvun2YJH+ydmjpT1R2nSZbGZh7otGCd0mzcK0BHknLTXpeQGA6wp9o9jnluKjSu22sTdvbJoipNOLFTqbjSF9Gud261gJIheu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755745263; c=relaxed/simple;
-	bh=Wnj4zpvupDfJwbDnmrVHBhHb2H+f2JtBrQtLkPCOY9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=imWcuum4dREZog3aErTxOAhLHn6cqcJQRdvvAfeU0IDqVFfT/4KXxoHEifPHTdOu11GW+cPvbRlUBh36IaZQpR1KRiVaF7Xe6llg9D68qP/t2yw0VZ8sBmnlqtb8XVXo6GoMtLoJVO7vYoVgCF95v6iOp86L5IP/GDzOJV5WOtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gaSDnzkH; arc=none smtp.client-ip=209.85.215.176
+	s=arc-20240116; t=1755745297; c=relaxed/simple;
+	bh=QFApcwOgKWEd9R8/HCG0mqwLQtvWC+pKwVKJG/IsTPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HDDIaUcCr4W/GNKNNgKdkoEKrzPRjDrxFvc+itvH7PVwgJXAVjXkvptjZG/zL5jBIi7Z4SeWPjT0XfjJbkHzsUYuujpnBzhwa2qdTY4/a6kUGPpLaAin64fwKxiKVnf+PMpeXRoJgimFq3hfyJG0x0hBC/3/ec2R+tnKFMDHjyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GU1Pn1w3; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b472fd93b4aso406032a12.0;
-        Wed, 20 Aug 2025 20:01:01 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24458263458so4903005ad.3;
+        Wed, 20 Aug 2025 20:01:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755745261; x=1756350061; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uLIq0IXj0ljbI/uh1YhQvF3IAqw8jhRLNek2lIEpThg=;
-        b=gaSDnzkHkLJiIiV7nkTEjsmaY4FbUGUKggA0GctCAN5coQG8j/RNgGS4W0iFz1mD+D
-         SAnUEj1JhN9O0YZjHynAEeq0Kz3kr/aWjiTTuaj2A2rUEExiy81ahNCW8Q+c0YkWnuxB
-         icC9mAy1Vc5IZMjhRSoLtBumUVH1+a+5E1ROzUtCzVmKHiVcbhQOEUC+PMVC98f7mZcc
-         0zrsDKHmwmwiO5LKe1vojFne9o4QkyElQooV6o+w2UYvaJ8K03Ica0NiJU6m7AYpVOP5
-         AcGDkQF+ancKnSWpqe4M1oZbF1yMWeuZI8rh/RUjB83lBSz/fdrOlnlEBWiAYFSRcN4Q
-         0dSA==
+        d=gmail.com; s=20230601; t=1755745295; x=1756350095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2VBfgPDwHJj9xeq+UdTpIXwDQvBU8YAhfbNleYLr6cA=;
+        b=GU1Pn1w3o6pv7cl6+9xKNnv/1fFvIx5glK6+YGwudKIsEmhS7WLlhrAShnuOq8E61l
+         2AaQS+BIAW//+NQLlGf2Yto9nDJy9QMRyXK12ZwsKkBzXbJf8DeRI7wXu2A4EX7fLE5U
+         /TxFWHMjqmK0P7B1Pyr7d25LY9mPI+TynSvFx3lOigKiXK6Irs2+oQsShQgomhD5YYrW
+         vs9uy0lD9Gs+XsyaJp0HYqhslBbJweZddZAEIyxaDFUycRiC8RMjNvNJsmQ3LD36bbUw
+         57Qj57HR1f8ePh51iN8slCP8uQwWhN1qTrjHB1FVBrbe6P5bf/NAARgp9Xz5UyRqE2By
+         NkZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755745261; x=1756350061;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uLIq0IXj0ljbI/uh1YhQvF3IAqw8jhRLNek2lIEpThg=;
-        b=SPGzo+OA3Y8ghgqWEvhiV176JPBY+O/rbqOOtfUrSrqjLG9Gt0R9s7glUNUNl/EolI
-         ZEib+X3KI++2WIqMCnDsaYM00sGPHiWZUrt6zZWOd2Sbw/zwyx7SZvJi0XcY76XzSp3u
-         szFeCZjPr2tFnzPMFLyMT+CmhTOW4ei3HBWTXrQVgY+u1Tff+2hIKOHL3tlMXBFoBG8U
-         QBBg6NfnGmc+S3Ls+O4nsVQhM3t7/JWi5ClXFxF62twswKHcXymLNKb/99Q5r++Azy5F
-         JszmIU0cZjjyqRoVP2alUWu6eXvIJCprhA2mS+dqs/k7eUauotGKm9v4H6a9q/Op9APB
-         F8EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9K2+NzpkK47T5Z93tzsIBldNxSaQpIWy34JkE1Arh6gsPIXHL86rLWSHxMSnrF8uhcha+Z6Wv2RNG+gM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvp1nB7wGnAnWv4oS/2iDk1oHUSry9Osysem4Nag93LU7D4AMF
-	lLdzu3Qp7xjIGvYLJCpyEBEyijgS1oug3Ql7uY5eRC3IZgzxlOc8ARd8kXXRqQtImkw=
-X-Gm-Gg: ASbGncsabaH89b3IpTmHCN7LbvX62SwKe9C6buIdXb3828fSabejgLKZAk55Zt73Ufs
-	S4nM1i3pOfvof/ZFZ2HWFkQZ0drFlKc+wD67TY0w66YsL/vR966lG8ZqIpJntk+wAkWH7AzVuT7
-	7vZodpSCRSmdwquCWHqzTvFulcUnMWPvPW5R7NxXC2rs7M91DP6Dl48fCqhjLUdjgK6FJWN8Anw
-	fKM0HPyyzpVoODCY+DhnOqGI2S/E4HMVQOojV6uZVT5oLxLnOqBcaF0hD3LK6Rn3xWuS/P/WHib
-	Fa0AgskMizHWt0J/wMskqtpYUlqg+xPt49BNcsHCHUTyrNmE8pGIlhge6QaQ8hiDfEcvCu/TgI0
-	sjE5s3G7lPFyrl6hkarbGHWnm+jWAOgkJtn7CFg==
-X-Google-Smtp-Source: AGHT+IFvneYPfHw10OoTjF7DG4R4kNeVCtXde9LOb10gF9Bf3fn+/lBg5GgGDr671XjIvWiL9/bblQ==
-X-Received: by 2002:a17:902:f706:b0:240:1953:f9a with SMTP id d9443c01a7336-245febe9311mr14910865ad.2.1755745260921;
-        Wed, 20 Aug 2025 20:01:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755745295; x=1756350095;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2VBfgPDwHJj9xeq+UdTpIXwDQvBU8YAhfbNleYLr6cA=;
+        b=ayuuL3nhOH4yAqVCaqtNXqHofglOVxn32zcYyb7XG2ZfD1qjqHTTCzon3+fvZkgeXm
+         Kn/9o8hKQnyJEzQfedrN4b/+E8dSqHQEYAOp2vkjETKXZla0FczZCwceYtiK/Glwifyo
+         v0l7IGQ1maNHIFOU1NBq+lDmw4jjyuL8c9S2FawH9N/xt9aWMTzN+CW8CZ56pZkFJ4jM
+         CCtmr5qKo+zr769zP+bmD106+5e/dA4K1GDz67nLITPPj4nBfFjorf1w20PhdVHSWvul
+         7DIpkN6mzl3x03f/HuXM5VyP/1L0AtLjldZiN6U3yBwAhd1grBi5/PZIzWVAcowf6XC2
+         ay4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ9gbQCIw8uVMAFPo7C979hcrE1vzMh6jYAGuWRmdopuHXi1KxLvkwZugQOwdwrukQXC0IK1e9kNXV744=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxufIufJRoNTvWaCabhawixNRVAVmqEFwCYh1AnM5W/cSynWzVr
+	S+lhiToIQf5WjObFJObZ0lai73S9wZ4/Q9nxXPEYGb8JCNhGnxxcvb2NMGpE6yt/kUk=
+X-Gm-Gg: ASbGncv5LNFcI+I1IL0YuT5cDP638PdZfUai8P7I4u/JgDqz63IlwtPMjnVxmTWNc2j
+	aVC8QjenI7HhTUd8ISdr7xe7K/vcELOqYXaCM4iuXI9EwCt38gsf7oYOE6LV42PrLuECX4q4NNo
+	i+2cLl+As6YMcN09g52vP36qWd/g+D2MqPmYMHDkCqYPKV0vr1W+uvJWGNuu5V6ijcvIpmdBdK2
+	MUY4L02weA+Zye+uPshboRRATPF+P/T03ec5h0g5TqbZZRYosB5Et+e6OZIo5dsD5x+Pedp7Tl6
+	1kAgeU5b7hu+fbS4+YxwmGg0RiuLXtna0EhRsPqZ60n/MeA5LVCgvw9ZV14GQPRoE5k3R1ZXnYn
+	4pQc2xieVlcbZq7FJMVmCDthwVNGoQRaX2+cpCg==
+X-Google-Smtp-Source: AGHT+IEV1Zcxig6B84KjoGLmnQxYJfI8WE6NEw3RyN2c/rW4MMbT3R26Q1g5buZcviTpIuDd25neeA==
+X-Received: by 2002:a17:902:db07:b0:234:9656:7db9 with SMTP id d9443c01a7336-245fedcc650mr13272515ad.32.1755745294859;
+        Wed, 20 Aug 2025 20:01:34 -0700 (PDT)
 Received: from lkmp.. ([49.37.161.210])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c73f2sm40160695ad.94.2025.08.20.20.00.56
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c73f2sm40160695ad.94.2025.08.20.20.01.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 20:01:00 -0700 (PDT)
+        Wed, 20 Aug 2025 20:01:34 -0700 (PDT)
 From: Rakuram Eswaran <rakuram.e96@gmail.com>
 To: linux-doc@vger.kernel.org,
 	alexander.deucher@amd.com,
@@ -87,11 +89,15 @@ Cc: tzimmermann@suse.de,
 	linux-kernel@vger.kernel.org,
 	linux-kernel-mentees@lists.linuxfoundation.org,
 	skhan@linuxfoundation.org,
-	rakuram.e96@gmail.com
-Subject: [PATCH v2 0/2] docs: gpu: fix typo
-Date: Thu, 21 Aug 2025 08:29:54 +0530
-Message-ID: <20250821025957.22546-1-rakuram.e96@gmail.com>
+	rakuram.e96@gmail.com,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Alexander Deucher <Alexander.Deucher@amd.com>
+Subject: [PATCH v2 1/2] docs: gpu: amdgpu: Fix spelling in amdgpu documentation
+Date: Thu, 21 Aug 2025 08:29:55 +0530
+Message-ID: <20250821025957.22546-2-rakuram.e96@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250821025957.22546-1-rakuram.e96@gmail.com>
+References: <20250821025957.22546-1-rakuram.e96@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,27 +106,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fixed multiple typos in GPU documentation reported by Codespell.
+Fixed following typos reported by Codespell
 
-This series touches both amdgpu- and drm-related files.
+1. propogated ==> propagated
+   aperatures ==> apertures
+In Documentation/gpu/amdgpu/debugfs.rst
 
-Changelog:
+2. parition ==> partition
+In Documentation/gpu/amdgpu/process-isolation.rst
 
-Changes since v1:
-- Dropped fix for drm-mm.rst (was included in v1)
-- Split into a patch series targeting both amdgpu and drm
+3. conections ==> connections
+In Documentation/gpu/amdgpu/display/programming-model-dcn.rst
 
-Rakuram Eswaran (2):
-  docs: gpu: amdgpu: Fix spelling in amdgpu documentation
-  docs: gpu: Fix spelling in gpu documentation
+In addition to above,
+Fixed wrong bit-partition naming in gpu/amdgpu/process-isolation.rst
+from "fourth" partition to "third" partition.
 
+Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+Suggested-by: Alexander Deucher <Alexander.Deucher@amd.com>
+Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
+---
  Documentation/gpu/amdgpu/debugfs.rst                       | 4 ++--
  Documentation/gpu/amdgpu/display/programming-model-dcn.rst | 2 +-
  Documentation/gpu/amdgpu/process-isolation.rst             | 2 +-
- Documentation/gpu/drm-uapi.rst                             | 2 +-
- Documentation/gpu/todo.rst                                 | 4 ++--
- 5 files changed, 7 insertions(+), 7 deletions(-)
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/gpu/amdgpu/debugfs.rst b/Documentation/gpu/amdgpu/debugfs.rst
+index 5150d0a95658..151d8bfc79e2 100644
+--- a/Documentation/gpu/amdgpu/debugfs.rst
++++ b/Documentation/gpu/amdgpu/debugfs.rst
+@@ -94,7 +94,7 @@ amdgpu_error_<name>
+ -------------------
+ 
+ Provides an interface to set an error code on the dma fences associated with
+-ring <name>.  The error code specified is propogated to all fences associated
++ring <name>.  The error code specified is propagated to all fences associated
+ with the ring.  Use this to inject a fence error into a ring.
+ 
+ amdgpu_pm_info
+@@ -165,7 +165,7 @@ GTT memory.
+ amdgpu_regs_*
+ -------------
+ 
+-Provides direct access to various register aperatures on the GPU.  Used
++Provides direct access to various register apertures on the GPU.  Used
+ by tools like UMR to access GPU registers.
+ 
+ amdgpu_regs2
+diff --git a/Documentation/gpu/amdgpu/display/programming-model-dcn.rst b/Documentation/gpu/amdgpu/display/programming-model-dcn.rst
+index c1b48d49fb0b..bc7de97a746f 100644
+--- a/Documentation/gpu/amdgpu/display/programming-model-dcn.rst
++++ b/Documentation/gpu/amdgpu/display/programming-model-dcn.rst
+@@ -100,7 +100,7 @@ represents the connected display.
+    For historical reasons, we used the name `dc_link`, which gives the
+    wrong impression that this abstraction only deals with physical connections
+    that the developer can easily manipulate. However, this also covers
+-   conections like eDP or cases where the output is connected to other devices.
++   connections like eDP or cases where the output is connected to other devices.
+ 
+ There are two structs that are not represented in the diagram since they were
+ elaborated in the DCN overview page  (check the DCN block diagram :ref:`Display
+diff --git a/Documentation/gpu/amdgpu/process-isolation.rst b/Documentation/gpu/amdgpu/process-isolation.rst
+index 6b6d70e357a7..25b06ffefc33 100644
+--- a/Documentation/gpu/amdgpu/process-isolation.rst
++++ b/Documentation/gpu/amdgpu/process-isolation.rst
+@@ -26,7 +26,7 @@ Example of enabling enforce isolation on a GPU with multiple partitions:
+     $ cat /sys/class/drm/card0/device/enforce_isolation
+     1 0 1 0
+ 
+-The output indicates that enforce isolation is enabled on zeroth and second parition and disabled on first and fourth parition.
++The output indicates that enforce isolation is enabled on zeroth and second partition and disabled on first and third partition.
+ 
+ For devices with a single partition or those that do not support partitions, there will be only one element:
+ 
 -- 
 2.43.0
 
