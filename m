@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-779213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E638B2F081
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:05:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB574B2F086
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E436EA01937
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26426A05C25
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238E12EA168;
-	Thu, 21 Aug 2025 08:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC152EA480;
+	Thu, 21 Aug 2025 08:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ue0uQc6g"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XTHU4SQS"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EC72E9ED7
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21A32EA46E
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763435; cv=none; b=k43wDyVvFNHzvxHL65CpGg8bk9dwif04T3GagPIEYMXOwCERJ/x3tXRGrw9iP0re2uo/UZdVIZUQ8JD3r9m0oKHt1prQdh2dys/kG7izW6YS4Bd9d8+ruhhza8DY/BqAKzuIyz/ZN4KgDgKSCZtkvaX5q0GdawdIg4KIV4aNdF4=
+	t=1755763436; cv=none; b=Vlrndx3A1IaSpWRGKUu7exl+xftREJ7MOpmgbgV54TARRDh1uPNhZS+m9NJBT0Msk6ALszHeOuUF+61LXkyFFoz9A0qU8ZsWHxQAX6cWe06OhGyybfvuBmOK7AmeUiUVBl8g5MvKaI/8uIwrW1CBG99fNtLxk4sPy/o28nl19Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763435; c=relaxed/simple;
-	bh=UgZqJPI03azHfavD3Y+z6reHEnmYzpFLbpmicXpKdUI=;
+	s=arc-20240116; t=1755763436; c=relaxed/simple;
+	bh=zl9urWICH9QOFxPuxMWozGp3K4sPsX6l4y0Be2Ifb5Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AoqZZxC6/wm1vfl1yW/5szsK+w8eC/oU4m6r1bNwHecgqTHjXNPH1kvHD2l9qhFmhwANGLA2SzBXR4hgrEXmdNXMFa+c4sQMJB8O0qe3kPbzFTwlJpa1dl1o2yugbbBAEPRKYXRnnm0P0S7/RgUE0n/kiKnA1DN+1231aZ4GQ24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ue0uQc6g; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version; b=Yexgtlf4YM6xwituryplXCzy37U6udYcQ291uE9368024Nc3rxT2hmMrsEVTlF7DJkhSstcCWVQTtQlEvTBAAa/6zaMS9SDRYA+UQ4SS22IXXX4EV2Kp3wFIRyPate/TrQx5rK+wYKLSMRUg0NZ+EIPQKYJsaC9t5/jiKuBsHPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XTHU4SQS; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c44dfa7739so177395f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:03:53 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9e414ef53so490210f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:03:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1755763432; x=1756368232; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1755763433; x=1756368233; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2XjehKGt2s9Iw0S60/WJtSyoiI8bGy2dbzPpshFFO9Q=;
-        b=Ue0uQc6gMYDbCbCxfNRlT8vnqxxtmV2bCMvUb1Fh3Q+BHQf2uZg4axVRjvTQdmxYTH
-         EP1T+6Cbd65juppz89cycqCVXYglTsV7cA88xU1zsy9ABai90IKkN0ryuZixMrlhYB+H
-         qd9NRG0FN8bb0lRHd5Xr6zY2BsI/4iV95sSsLPhKl8wUTxZ+9Kq3u8YQ6me4+LVRfvtm
-         GmO9kuZb1a3qT5GY1ZhUAdtzqbwQaS00nFmxtDZK5HP9cDuM/gkzqjq5iab059oKIH8J
-         3ShP7oMDmusYkSmcP3jc+bfWLUMd2UzK0McpWpvQo4r8ojkfbw8iPitsxEJMD/MyWvmv
-         2J2w==
+        bh=8tkCmPvwD0G55+3Hz+PGIRzqfrV4CwxtOzw2jRg+jCU=;
+        b=XTHU4SQS8brkMB/L5kn43Zo/gIu9ZBK1iLkFyvNKw7rbQ3i9Jau6fDNRYUlYUyAvbZ
+         MXXgaHy68RL6C1c9LDrXVQkMmz4AWmzA74fa46XsqTLqAE0P+M3zeBvruF9w/YJvOkF4
+         oxJ2Y2b1cIqeIb4L7SThXWTbZx+B1+4tEuK0G4h60XHBA/UP7QGWYQAbAApGxVMuJmAS
+         4Q4zEUMohKD7bd9sBTL+r9iLIQ54LyYOGBeE6r1fAnHxiH5nJLOSfUn+XHUTqnNZN+uu
+         sTOLJUORe6Romk9FKqSp6qKFwG0kjhXj3GZnhiKKjaPjRFch4gglcgW3LGNp6nJ4d9Qu
+         KTnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755763432; x=1756368232;
+        d=1e100.net; s=20230601; t=1755763433; x=1756368233;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2XjehKGt2s9Iw0S60/WJtSyoiI8bGy2dbzPpshFFO9Q=;
-        b=EUtFlPOJabEecsXHCgn+0b3PIKtXikonHgr/7lFSXuxFO2m8yhCmex+VWSATycshOC
-         vOYsyAs3xxRSukY/A8x+E2RQdJRBr+BYIdFZRZnAbNs+d5Vo92YnUcYSPhLt6hLny5jm
-         b0lrlW4b9rm7vVoVv4NEM5vkWKAd4CIOkoXAbaWHNXMhP2hxYq6T0nia5gdN0roatRX9
-         Ozr1tUVy/Kg02HttirMctW8p7btIqrcmSob+TQmMNhvKczKLmTEMH7hdVUX489u+LOFS
-         1fcfr/s3+tDe6QpdQVjnN0Zxfl4m1N98o3arHF3u0DXDn+BryoVINmXjnTRI89IrfyZn
-         zO3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWIPy8vwzRdSqhT6xckwUBJ5o2Ai24F3zqL1qTzWWLSNZr8ImdLVvrNO7l0FOPaDanzFxUV92G1gkPTp1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGDyKJwdv4Ipgef2WSU3vn06WEnF/XvzODv2U5Xi54rgs0M3zg
-	/sD1LXsYh5gxM/RncuWL+TVs8QW+TQS29iA6xeSzcYztZ07uTup7HcMECvsTnNVs6Pg=
-X-Gm-Gg: ASbGnct2omY4ioVjU6uhlsnO+WfoEa1cbfk5TF0s66yJU8ehev8dOc3UMV7QUtRPVOH
-	71tfO8SHR9Qzhk10I55HN3PQvYUfOXzFjiQXhd/sSmYxU1jQqQpeAoMTjY6mK6e8Y7ohfZOF7Z5
-	4Ymn7PbGuxzcRrJrecEHe9ocA2PKan/FRk5ov0poHwmR1pOd80mjqe1KRVpLaTzn+5K39oparlA
-	yv9C62kunsoGoGUmNGI5UcS+jZw9g7n4bdb3tBulSJXbNK1iB42hHTi5mLe2i6w8L0OmzvuYZ2m
-	x4lEodlAtMAJ+HGXoMdv767iWYo47FMbC6JQw0JKNMHTDuOrHFsng5sdtRvzuoB2Imkkbtmrf34
-	4bwrZsPlbDzL1pB+Fm0qhoG7auUclYCX7OCev422U+IkAIVGkG3w=
-X-Google-Smtp-Source: AGHT+IHc431XLCYaF8pLi9lptfBNKV1wKndQFd3h8KySRGUYBaDuLZGptDhbLDqZIqPusEPqY1JIQg==
-X-Received: by 2002:a5d:5f56:0:b0:3c4:9c59:52e2 with SMTP id ffacd0b85a97d-3c4aec25ae2mr1116773f8f.7.1755763431534;
-        Thu, 21 Aug 2025 01:03:51 -0700 (PDT)
+        bh=8tkCmPvwD0G55+3Hz+PGIRzqfrV4CwxtOzw2jRg+jCU=;
+        b=POzAIR95eWUnU4AkmjS84P/l6hMX7+vumSCUGvSQLxwK67dyBVbeRMwmREWrgjnfvj
+         QV26+KGH0TD5HdR3ggGL6uSODmGi4QypSe06jmmea0W4EctxsJjfzAenbBNQ/ZGWnrHl
+         4N8rd7mmy7ATkLUPnkRSar6cdmEu1gkFiZovpqCkfoWo8DqXqgs2/gZ1VVt6AS9grCg9
+         QEYvlk+UtcADTAu6xgh8irofVZ/FEglantCyQp1bDU8S8uap8Ayyg+eHPj89u5z+mHDv
+         k+3NrEMlmTsG4bmkgEwkpEC22ifADNiCVHnxkfEySubI5d2ophpaNzPQr4pDBbuhv6y1
+         DWjg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5gDIbIU6E2uWlHwwOlBzDuYyOHYPMPSib0VZX7uXIXwFxpPDWa6DGF7OYjq3SOukDhdFg2/qGQXGFKoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUbzxmWrr2g1IANdxJQeLeWEtQkSrIyLdMylcvWaPv8qy7hYrn
+	p2awKlBUJkMN/u3B3RkB6+OnPT3ug0TfswL5PlBVfNWVbuIujaDW6WljvrwWT/9McnU=
+X-Gm-Gg: ASbGnctQ8n0qwBoEzQbq9tBy/Nof1hPhfahEvFKfUCjaIVyBhyQZiEeLlBf4bFcd1vX
+	mODuTD7IzDNWL3Z3IpmlwlfihMraN+lRCPjVxUJChsbFqBcnEQyOJcKNSP0vV36yfyzTBKRkfza
+	jd4wG3/sG9L/txROcLv2hplO8ybY+ttHhDQuu/ECuWnGRum6AfzRG47wXs1rLvI+uUowUfMwQNF
+	RcAI9ecJ6/1EE8CJzpJTlE8l3C4CIDo82MbAbFXr5EN6zxgDTOl0gDemucuj+hBZ1xFHYi5NiJ/
+	hN08TOqMXaIBBuh7/d733sy1x59mBcOgvmQHGEMrNpW3Ve3qAQdcMGrPnVhq7drrbeVyWDg56ak
+	GXdtT0qbHj47K5ehQiCrhKWgLXUPD4YvpYoqJUXpg8mDr0obuiVY=
+X-Google-Smtp-Source: AGHT+IHxOvjpSJKD0XjWYHq10XV3QIWqZ96+Xmdgfaum7aOTVRU/X6sQmyVkYJBCNcnnXqHOGX0gTQ==
+X-Received: by 2002:a05:6000:2483:b0:3b8:d30c:885f with SMTP id ffacd0b85a97d-3c496316b13mr1240711f8f.53.1755763433031;
+        Thu, 21 Aug 2025 01:03:53 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.81])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4dc155b8sm17356225e9.19.2025.08.21.01.03.50
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4dc155b8sm17356225e9.19.2025.08.21.01.03.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 01:03:50 -0700 (PDT)
+        Thu, 21 Aug 2025 01:03:52 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: mturquette@baylibre.com,
@@ -84,9 +84,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 1/2] clk: Export clk_disable_unused()
-Date: Thu, 21 Aug 2025 11:03:31 +0300
-Message-ID: <20250821080333.27049-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 2/2] clk: renesas: rzg2l: Register PM notifier to disable unused clocks
+Date: Thu, 21 Aug 2025 11:03:32 +0300
+Message-ID: <20250821080333.27049-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250821080333.27049-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250821080333.27049-1-claudiu.beznea.uj@bp.renesas.com>
@@ -100,105 +100,88 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The Renesas RZ/G3S SoC has a suspend mode where power to most components is
-turned off and RAM is switched to self-refresh. Resuming from this
-low-power mode is done with the help of the bootloader. During resume, the
-bootloader re-enables the clocks for the modules needed in the resume
-process (e.g. SDHI or serial). After that, control is passed to Linux.
+Register a PM notifier to disable unused clocks after system resume.
+This is necessary when resuming from a low-power mode where the bootloader
+re-enables certain module clocks for its own use.
 
-If Linux has not probed a driver for one of the modules enabled by the
-bootloader, or if the module was previously in a runtime-suspended state,
-the corresponding clocks remain enabled after resume, even though they have
-no consumers or they were previously disabled.
-
-To avoid keeping these clocks enabled unnecessarily, make the
-clk_disable_unused() function available to other drivers. Drivers can then
-call it during resume to disable any unused clocks.
+To avoid keeping these clocks enabled after control is passed back to
+Linux, call clk_disable_unused() from a PM_POST_SUSPEND notifier.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/clk.c   |  9 +++++----
- include/linux/clk.h | 12 ++++++++++++
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b821b2cdb155..5278030b0ad8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1460,7 +1460,7 @@ static void clk_core_disable_unprepare(struct clk_core *core)
- 	clk_core_unprepare_lock(core);
- }
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 187233302818..2ca32d7acaf7 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -24,6 +24,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
++#include <linux/notifier.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_clock.h>
+@@ -31,6 +32,7 @@
+ #include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/string_choices.h>
++#include <linux/suspend.h>
+ #include <linux/units.h>
  
--static void __init clk_unprepare_unused_subtree(struct clk_core *core)
-+static void clk_unprepare_unused_subtree(struct clk_core *core)
- {
- 	struct clk_core *child;
- 
-@@ -1485,7 +1485,7 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
- 	}
- }
- 
--static void __init clk_disable_unused_subtree(struct clk_core *core)
-+static void clk_disable_unused_subtree(struct clk_core *core)
- {
- 	struct clk_core *child;
- 	unsigned long flags;
-@@ -1526,7 +1526,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
- 		clk_core_disable_unprepare(core->parent);
- }
- 
--static bool clk_ignore_unused __initdata;
-+static bool clk_ignore_unused;
- static int __init clk_ignore_unused_setup(char *__unused)
- {
- 	clk_ignore_unused = true;
-@@ -1534,7 +1534,7 @@ static int __init clk_ignore_unused_setup(char *__unused)
- }
- __setup("clk_ignore_unused", clk_ignore_unused_setup);
- 
--static int __init clk_disable_unused(void)
-+int clk_disable_unused(void)
- {
- 	struct clk_core *core;
- 	int ret;
-@@ -1574,6 +1574,7 @@ static int __init clk_disable_unused(void)
- 	return 0;
- }
- late_initcall_sync(clk_disable_unused);
-+EXPORT_SYMBOL_GPL(clk_disable_unused);
- 
- static int clk_core_determine_round_nolock(struct clk_core *core,
- 					   struct clk_rate_request *req)
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index b607482ca77e..7eb0e5eb9aba 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -950,6 +950,13 @@ int clk_save_context(void);
+ #include <dt-bindings/clock/renesas-cpg-mssr.h>
+@@ -150,6 +152,7 @@ struct rzg2l_pll5_mux_dsi_div_param {
+  * @info: Pointer to platform data
+  * @genpd: PM domain
+  * @mux_dsi_div_params: pll5 mux and dsi div parameters
++ * @pm_notifier: PM notifier
   */
- void clk_restore_context(void);
+ struct rzg2l_cpg_priv {
+ 	struct reset_controller_dev rcdev;
+@@ -168,6 +171,8 @@ struct rzg2l_cpg_priv {
+ 	struct generic_pm_domain genpd;
  
-+/**
-+ * clk_disable_unused - disable unused clocks
-+ *
-+ * Disable unused clocks at boot or resume time.
-+ */
-+int clk_disable_unused(void);
+ 	struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;
 +
- #else /* !CONFIG_HAVE_CLK */
++	struct notifier_block pm_notifier;
+ };
  
- static inline struct clk *clk_get(struct device *dev, const char *id)
-@@ -1136,6 +1143,11 @@ static inline int clk_save_context(void)
+ static void rzg2l_cpg_del_clk_provider(void *data)
+@@ -1879,6 +1884,21 @@ static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
+ 	return of_genpd_add_provider_simple(np, genpd);
+ }
  
- static inline void clk_restore_context(void) {}
- 
-+static inline int clk_disbale_unused(void)
++static int rzg2l_pm_notifier(struct notifier_block *nb, unsigned long action,
++			     void *data)
 +{
-+	return 0;
++	int ret;
++
++	if (action != PM_POST_SUSPEND)
++		return 0;
++
++	ret = clk_disable_unused();
++	if (ret)
++		return NOTIFY_BAD;
++
++	return NOTIFY_OK;
 +}
 +
- #endif
+ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -1948,6 +1968,10 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+ 		return error;
  
- /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
+ 	debugfs_create_file("mstop", 0444, NULL, priv, &rzg2l_mod_clock_mstop_fops);
++
++	priv->pm_notifier.notifier_call = rzg2l_pm_notifier;
++	register_pm_notifier(&priv->pm_notifier);
++
+ 	return 0;
+ }
+ 
 -- 
 2.43.0
 
