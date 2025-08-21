@@ -1,134 +1,141 @@
-Return-Path: <linux-kernel+bounces-779313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2DCB2F26E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:40:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1BCB2F270
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0DB6AA4DCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:34:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A413A9903
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B1F2E9737;
-	Thu, 21 Aug 2025 08:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AAA2EA16D;
+	Thu, 21 Aug 2025 08:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GUIHk8Q8"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJ36OBuJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BA42C2ABF
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3022EB10;
+	Thu, 21 Aug 2025 08:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755765165; cv=none; b=mZ/IsswiBZBklayL2/kCea0gmsF4Gr8zSmBlM5quup1togFWRlsrwPXRnlCyY20aQ8S4jJxRimUCdbHVEe4idmZKXAtHseKaiGQ7sPwTXsAmmWqD2pmO51HScKe/uyip0v/zU60EJm4aIRG2RnG4GSxX97hhnSd8C1wXjfthlF0=
+	t=1755765204; cv=none; b=qWRjucSj3zAE8f0iUy8BXIjeYB1DeUY2K2+6HOrN0LKXSXsIGbZjsvI9egiCaGAymsbIJhTh3AEjaqMIyA8XjsWBE8zxI918rYaHCx1X2TD7c7RG15pHDJ2TVUf+HPrJ0gPScTvxifIkeBgL1oHNxMp9Gdn5OMZLjS2RsMEvge8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755765165; c=relaxed/simple;
-	bh=pYJlHN1aERKTD5dn6eMI8EEOmAFnx8MCipfdGKyQVys=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jHMKv3E6tgmXUte2EsvXe+0gJGBpkGHkPUn1rBaXNKJWOxg4ytRFspUUcAPTJ0b3UuwFoJrQAQiNyE3tDjM3ixGjZKf0/9B9unQ6XZ2DpjBdMEM2L7gnwcEz0e55B4HOLgKdLz5ER2isGwHeExkpXcLuehPKnWKG0B0UeDMyn5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GUIHk8Q8; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6188b657548so70614a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:32:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755765162; x=1756369962; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TWfMwGwxSPE+2RYXTJKDSKqavznnU40dko/mHK1XUnc=;
-        b=GUIHk8Q8uzrawSNaSNks8XMdrfr6Ts0Q3QcjmWhilg69aqytqdtNdYY7VQIJgYfkhB
-         QYVuduOi+zadC7OirmacGltHbV7Ly5qEL4hhLrsbH99xqRXgyrKi8sYT9prjTunUe8q8
-         7beSdyF5bWUcfx8Kd2KPUaKMTUdGaH6lxUfUb0gm2iqc2Tlhe3DLuLZBM5zaesG+kjUc
-         O0Y9bq4uYhl+aJVjtdXNr7iojB0md7TQEhx1nJDlAXWkkolRWo5Mhbfqz8luOr64voz9
-         pIL/IlzCN9tzeGcmYZ1AO95b3yuX049uS/6ywXQkAs+uRuJA285YCQlz4bjTMZghP1i4
-         /vng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755765162; x=1756369962;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TWfMwGwxSPE+2RYXTJKDSKqavznnU40dko/mHK1XUnc=;
-        b=X9XauAiMdOl/qbBUCAPf6pBn+QUwduGCQJa6KEHHqWVTkGlehS5KUPE8xA10h91slF
-         NJZjhdAk/9Epfn5VfE58oH+nU4SnMDokJWyTnieWivHrx1A0J8EALjtyftlvWAHhJ71o
-         URtgorSlfiWji8bFmSwxbdRYXIppE2IpFiO+sw6k17gN6WssKlhYKB8bRb/3XaSoXm33
-         qFVDy37xUihAin/uHWWdRw3AlLjW88yEDoawaUW0ZXvQ5X+fzWJ5Ae0nasnplaLYZ2X2
-         RHUZOVd/GRsxw4IcznABF7Sf4P+ptNdGcv9a63OZQb6HiE39U+Sx+EZgdpvMg2GW4IEB
-         9PQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTNwZGSbNXYciv8wqSzj/IMsNn0jzIsvuKVGBewnhcdcs/aLRa1/7NOzf1FTNpCkOANfV/OyfFSr7S5xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy974wgqt1wqUczbk4ikVFIz0iL/6xIEyldSkcNbeZiczrOgNqF
-	YnYxBq4vP6jGaOWS2BBpa0uNW2QgjEA2KZ9VcHz7yFFsYEtMTRrh5JuW3qZUQ1QqeZE=
-X-Gm-Gg: ASbGnctN9PuzW1RKsicMI6pMG9cv94/ab6qkDdDTcgsXxeLyG6uuAPAiP81vNzNprLL
-	WvSpLQGKJc/VQmJtO5lJ28eUE2k6UXmhNEUr4Ib/Gfqm74KL/NHvNQUl73K71z+yd2GL0KvpUCm
-	pPbVGyeeRV28z4EtkPZZ14qy7jMPq447Zy4pLt4vcW4eiUGaDYYXo9lxjeXSl8v4UPWpzD6FVjC
-	m3X2kFVnDkKKTBLdLhhU26q97+zBj7OdJrbM2/3LQ+KpMJCSFyp5/fWNB2y1Ii8ezlbv/BooM7C
-	jy5lTrOZA21eUOXW6o9dClDTPW6alm3twCWml32V6zjsrosmOWb4DNjObNmi8fWo21jYvYETxRX
-	KFFHr9KhQkHu3Wku8twWFffWIE2pu9G7x8g==
-X-Google-Smtp-Source: AGHT+IGMnezZ6ckgY8AKdVlLCLh1IVSQUiVwR7g1JhcEMXYzft+A2GYQmT0QzedKEJaajR/pCpytUg==
-X-Received: by 2002:a05:6402:40d6:b0:61b:1d72:d429 with SMTP id 4fb4d7f45d1cf-61bf8960fffmr672345a12.8.1755765162387;
-        Thu, 21 Aug 2025 01:32:42 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61a755d9cfasm4919714a12.9.2025.08.21.01.32.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 01:32:41 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: ata: highbank: Minor whitespace cleanup in example
-Date: Thu, 21 Aug 2025 10:32:40 +0200
-Message-ID: <20250821083239.46726-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1755765204; c=relaxed/simple;
+	bh=dxd46luNit58LMdAutjc9LabNsuuF+LIvVeUx5hPyAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UXx1CMxRErL+vGklJEu8M45fIGVMe2E5woKfZpfid6GeJ5kSO04tLE955Qaa8qkVrEdVEtYzyqt0hqrw1LbEvA9yGwTzyvQLqzt9Tlfm4nNypuTVcwbddhxBQ7ydc6e3q44nYKmI2AbQUqyKFd/kc9bCmA5XmWL26fQD/DRfFik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJ36OBuJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A20C4CEEB;
+	Thu, 21 Aug 2025 08:33:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755765203;
+	bh=dxd46luNit58LMdAutjc9LabNsuuF+LIvVeUx5hPyAY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VJ36OBuJBSjw/Zrlwe7Kkw5XxLlDl/AqaeKCYT81qi0lK8rRQQdoHKq3jsP9P1RRR
+	 CIAhb7WKIgK4RGq6Y66manRio1nOMw9SmSAftgO7PHB1wh80GccxEAsnrPqKSFLEQx
+	 iI7e+RLSt+3XdYadE+zRWkyvBME/uQ16/kSrz0EqievlTpzbczAXvSrR/RLIjb/tEC
+	 Uv+6rmeUNL3F7nCJtj1kd9pK1m0F1t1nEz7ZOhqMrIohrHhjmjad4QjTTTU8ULbv/U
+	 mxjHiSzm0T68W+GBj4u+8sp6j0cb1xTdFMHA6qF+4nx4OgijBiRJVb2FeQxL7knAO9
+	 JoUWtKM0V++Iw==
+Message-ID: <2ad7377b-19df-412f-9925-40bcc232cafb@kernel.org>
+Date: Thu, 21 Aug 2025 09:33:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1052; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=pYJlHN1aERKTD5dn6eMI8EEOmAFnx8MCipfdGKyQVys=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoptmnsTovpUp0/NauL0CHLJrtigRtcK3WY3a+/
- +Q903kTARWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKbZpwAKCRDBN2bmhouD
- 1ygQD/4wWi7NB8P+MQ2AyI/JSFdOU1h/YYw29UEPWzuMTWFcmqHeLdj2Npff8h8CMSl0dE6SvWG
- PLhx0k+HaPIZiW+pxfQVj4EpgefcFbmHv5VuITuxkg3WWStP4gYUDv5kQn1sTPlaB26VpG4FGwD
- oYl+qhoUy5WlFbm1tYlkpe3DjaYKZ7Byyvyir9zntsHqLZUVCFZGsphbh12pY5gY4ttAWr3eemZ
- fceBs0eGlWh/mXs//X6IW5FGgySw6y/8ciVcxvPmuDq1SB0L0tm63LgyNpT/NeaBIOKK+GnpdSD
- BNjHVzIDtc8f+/D0sQOFRpZpReKcpiAzFHRAMP5QDx4tnhHxl4q6Y7v46SEhtfT8+7qpiYHFihd
- iV+mf+GvfNAMYqO44n3Hh0Rhue8Wo1bxR0V6nNBHVDrlqdT3nUl/WfD1xw08OWpDq4wTceIVCmw
- ShSSvU1Kkje/pl7tPzBBGQATvz/G94AoVtp5sQXY4ApRbdviwZi91TtYKS0wJB5favXGJDBnxaH
- CeUICh3xRXXN3UO+S8d5pN9ilN/2KMKAfiXm3oDOz9SAmJ7FkgnYlHyRqA7RK1wknuTVmXhBNIQ
- IQ/ro/vIhdcyWHPeu1BhpgsxJLkIzQWECGRIOgVtKHKp6W/eyuZnonrKrzpXmA68QS6YCX6wZz7 Hw+byCKApNq0cKA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] media: ov02c10: Support hflip and vflip
+To: Sebastian Reichel <sre@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+ Hans Verkuil <hverkuil@kernel.org>
+Cc: Frederic Stuyk <fstuyk@runbox.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250820-ov02c10-fix-v1-0-3fcca2cfbfbf@kernel.org>
+ <RfuRq5FvTHQXv-BHz4cV7Ctpw8jXz94O7_Go72rkAMrcIyHWRfT0BYOvQidHfpbTiI2VssTEw_hMcpk4PFAgLw==@protonmail.internalid>
+ <20250820-ov02c10-fix-v1-2-3fcca2cfbfbf@kernel.org>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250820-ov02c10-fix-v1-2-3fcca2cfbfbf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The DTS code coding style expects exactly one space around '='
-character.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/ata/sata_highbank.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/ata/sata_highbank.yaml b/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-index f23f26a8f21c..48bdca0f5577 100644
---- a/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-+++ b/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-@@ -85,7 +85,7 @@ examples:
-         dma-coherent;
-         calxeda,port-phys = <&combophy5 0>, <&combophy0 0>, <&combophy0 1>,
-                              <&combophy0 2>, <&combophy0 3>;
--        calxeda,sgpio-gpio =<&gpioh 5 1>, <&gpioh 6 1>, <&gpioh 7 1>;
-+        calxeda,sgpio-gpio = <&gpioh 5 1>, <&gpioh 6 1>, <&gpioh 7 1>;
-         calxeda,led-order = <4 0 1 2 3>;
-         calxeda,tx-atten = <0xff 22 0xff 0xff 23>;
-         calxeda,pre-clocks = <10>;
--- 
-2.48.1
-
+On 20/08/2025 01:13, Sebastian Reichel wrote:
+> Support horizontal and vertical flip, which is necessary to handle
+> upside-down mounted sensors.
+> 
+> Suggested-by: Bryan O'Donoghue <bod@kernel.org>
+> Signed-off-by: Sebastian Reichel <sre@kernel.org>
+> ---
+>   drivers/media/i2c/ov02c10.c | 25 ++++++++++++++++++++++++-
+>   1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/ov02c10.c b/drivers/media/i2c/ov02c10.c
+> index 3a02fce0a9bc0ca3ab87defe3eefd04efb4012e7..103d007415348a8bd31a09e518de23f5fd77c618 100644
+> --- a/drivers/media/i2c/ov02c10.c
+> +++ b/drivers/media/i2c/ov02c10.c
+> @@ -384,6 +384,8 @@ struct ov02c10 {
+>   	struct v4l2_ctrl *vblank;
+>   	struct v4l2_ctrl *hblank;
+>   	struct v4l2_ctrl *exposure;
+> +	struct v4l2_ctrl *hflip;
+> +	struct v4l2_ctrl *vflip;
+> 
+>   	struct clk *img_clk;
+>   	struct gpio_desc *reset;
+> @@ -462,6 +464,16 @@ static int ov02c10_set_ctrl(struct v4l2_ctrl *ctrl)
+>   		ret = ov02c10_test_pattern(ov02c10, ctrl->val);
+>   		break;
+> 
+> +	case V4L2_CID_HFLIP:
+> +		cci_update_bits(ov02c10->regmap, OV02C10_ROTATE_CONTROL,
+> +				BIT(3), ov02c10->hflip->val << 3, &ret);
+> +		break;
+> +
+> +	case V4L2_CID_VFLIP:
+> +		cci_update_bits(ov02c10->regmap, OV02C10_ROTATE_CONTROL,
+> +				BIT(4), ov02c10->vflip->val << 4, &ret);
+> +		break;
+> +
+>   	default:
+>   		ret = -EINVAL;
+>   		break;
+> @@ -486,7 +498,7 @@ static int ov02c10_init_controls(struct ov02c10 *ov02c10)
+>   	s64 exposure_max, h_blank, pixel_rate;
+>   	int ret;
+> 
+> -	v4l2_ctrl_handler_init(ctrl_hdlr, 10);
+> +	v4l2_ctrl_handler_init(ctrl_hdlr, 12);
+> 
+>   	ov02c10->link_freq = v4l2_ctrl_new_int_menu(ctrl_hdlr,
+>   						    &ov02c10_ctrl_ops,
+> @@ -537,6 +549,17 @@ static int ov02c10_init_controls(struct ov02c10 *ov02c10)
+>   					      exposure_max,
+>   					      OV02C10_EXPOSURE_STEP,
+>   					      exposure_max);
+> +
+> +	ov02c10->hflip = v4l2_ctrl_new_std(ctrl_hdlr, &ov02c10_ctrl_ops,
+> +					   V4L2_CID_HFLIP, 0, 1, 1, 0);
+> +	if (ov02c10->hflip)
+> +		ov02c10->hflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+> +
+> +	ov02c10->vflip = v4l2_ctrl_new_std(ctrl_hdlr, &ov02c10_ctrl_ops,
+> +					   V4L2_CID_VFLIP, 0, 1, 1, 0);
+> +	if (ov02c10->vflip)
+> +		ov02c10->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+> +
+>   	v4l2_ctrl_new_std_menu_items(ctrl_hdlr, &ov02c10_ctrl_ops,
+>   				     V4L2_CID_TEST_PATTERN,
+>   				     ARRAY_SIZE(ov02c10_test_pattern_menu) - 1,
+> 
+> --
+> 2.50.1
+> 
+Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
 
