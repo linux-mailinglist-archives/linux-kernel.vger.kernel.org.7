@@ -1,147 +1,377 @@
-Return-Path: <linux-kernel+bounces-779467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55BAAB2F47C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:48:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7149B2F47B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A1831CE1E92
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:47:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EADC4AA44E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5062DCF57;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E767E2EFD83;
 	Thu, 21 Aug 2025 09:45:42 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="j8sHD9+r"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92C42DA74D;
-	Thu, 21 Aug 2025 09:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD062DAFC9;
+	Thu, 21 Aug 2025 09:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769541; cv=none; b=rmYHwFYMrieVHTNOUjf71VZX1A48v91xqMr0vctatiUpduLScaGSBvlSJ6ItumSAv5S7ebiiF6f/C1KGnFipQLp8k8NJYlcIsKNu5yzUjUCnPg9+QWsEGbn2OAZBlcB1CyfyIdsYflytVybYOYVVmto3ZsEzg2Ut1Dw7AnCXHks=
+	t=1755769541; cv=none; b=UoTsu2/EeAPG81vb3FWW9/S3a5QnsbTd2sD0PIhWZsG7cnkvyEqmBTNREfq5X881GdRs6NZwypVHWzoLveqzRnSztcjMxGx8z7XLbwJUsXVRZDAb/PV4K8rchmeSZtB/cXtlOcqDkAP/o65XfDYS2C0PhALFjVWudyRjGEJo+bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755769541; c=relaxed/simple;
-	bh=JCE4eD09R2Kzy3VA6o7eJI35KvE9PttQ2K4NiKhvUGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q886htd3ylfVEGQPekXIU1dq1+WO9d6/Q/YS5GWxwbUyWL5ZY5RlA5tGEialoGGLg1N8Y8iEMmbVp8v02MEttyUO+C7STQVKFoh+UbLht/IxSXy0snDTxuUvt2a8BFbNdHrEQL7kjRZcSa2kkOTsAqgE770AcuGvPuTHf8r5fyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 915e9a8c7e7311f0b29709d653e92f7d-20250821
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:77ea37a4-dee0-4272-83ce-18724bd0cbb4,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:183395a8de58174fc9f9b764b8bf8282,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 915e9a8c7e7311f0b29709d653e92f7d-20250821
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 462410041; Thu, 21 Aug 2025 17:45:27 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 335B0E008FA3;
-	Thu, 21 Aug 2025 17:45:27 +0800 (CST)
-X-ns-mid: postfix-68A6EAB6-113887902
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id B26CFE008FA2;
-	Thu, 21 Aug 2025 17:45:25 +0800 (CST)
-Message-ID: <b72c666e-b286-45b6-92d9-7c6dfe5753eb@kylinos.cn>
-Date: Thu, 21 Aug 2025 17:45:24 +0800
+	bh=GHYBwVRKayplJxIt6mk36xNkPFzw+yBEuHRmZmt66SU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMAxHU4lETY3XAuixIGGRTH8uyL8NP8IJluWH1nDZVBrL0ekU63x0ALEwraMcRlmUBNsE4DRVkj712E4gEDr8ug5dQQxVRfqnl4/20oXUOk0kyadToXZrgxXPkGbvGtClhzBElv/PfqGnPs3Qd1XCxmvMBZYE6s3cgvP5xua9vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=j8sHD9+r; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KK3q03026005;
+	Thu, 21 Aug 2025 09:45:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=UhM3mEjjk5DZtBRTAhXSE7VrcYFGe6
+	9UApfW9dbbB2g=; b=j8sHD9+rWWovYqh/bGy24dmh5BakWqOYdOH0Zt5Tis3qjN
+	D2k+zKLA+pIWBllQfyGw7g1TikRIw5AFmFWS8AtmGEpv1sV08UxIJEnHeJn8quf4
+	hHR/OTvNJNMdrgDNuAPmEISnbIHH+8ZmExpOy166BUdobY31npX91250BQVmxqdc
+	ShVZTBuNP8FCQDxkyQ71w4MV+nS967JHGYclAB7qwfe5PF735tmsjtTux2cHRtCC
+	FnBXdvsE3MAt48y5TRjjGUdxyzQ6oAn45ShlR1rx/Z8D2/xK3JjbNUczH1FmVn7/
+	y7sfqQ2uXe/BINpyQnXavWEQ6Tw2Xgy/T4mmatXA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vfxn2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 09:45:32 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57L9eKFL015747;
+	Thu, 21 Aug 2025 09:45:32 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vfxmy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 09:45:32 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57L6rQu2031881;
+	Thu, 21 Aug 2025 09:45:31 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48my5y7pxd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 09:45:31 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57L9jTse19530138
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Aug 2025 09:45:29 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6AD262004E;
+	Thu, 21 Aug 2025 09:45:29 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 235E920043;
+	Thu, 21 Aug 2025 09:45:27 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 21 Aug 2025 09:45:26 +0000 (GMT)
+Date: Thu, 21 Aug 2025 15:15:24 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v4 03/11] ltp/fsx.c: Add atomic writes support to fsx
+Message-ID: <aKbqtJEfsI4iFY-E@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1754833177.git.ojaswin@linux.ibm.com>
+ <8b3c42eb321b4a1a4850b7e76d53191cb20ffa41.1754833177.git.ojaswin@linux.ibm.com>
+ <6cf3dc1e-919d-42b1-a8c0-cfd9bb158966@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] cpufreq: simplify setpolicy/target check in driver
- verification
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "rafael J . wysocki" <rafael@kernel.org>,
- zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250821090020.167786-1-zhangzihuan@kylinos.cn>
- <20250821090020.167786-3-zhangzihuan@kylinos.cn>
- <20250821091716.x7y76wfvvez6g7el@vireshk-i7>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250821091716.x7y76wfvvez6g7el@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6cf3dc1e-919d-42b1-a8c0-cfd9bb158966@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfXxBayxs0uRmZk
+ deY4eGwynkc1nnwA8HsxShYOKNPqPZKbV3H7QluKM6HcElM5JfJMx8bqTn49naiuIE9HVUi1+AW
+ kWVNlS3/teDzpNG6TCevjvxmz4nle0HE4+A2qOZIMknehQCp17lAH/Zy/JmbJCX/rZekptVBmNg
+ NNeOkLBd1dWf4T62aKxMFl5lqc5wJhno4hRxTxnSl6dHBvtmAGy4L03Hen1DzkV5M/LPSnldHM/
+ zYmxLCskcUAltEL+KpRlUprIoEkY+54+ewyNHR02Ue3RagFoJMPWjKADOEmkiN93E4kY7bM/xCF
+ dUT5JdTrWTOR1FgPmKFvyiHRGWoaQpVFMSidKuqVWuTCb+Yz2veUPdAyiAwP/J7zThYnB2AG07m
+ piRVgEvjdmkFst5LNv4COwyfb/Io+w==
+X-Authority-Analysis: v=2.4 cv=PMlWOfqC c=1 sm=1 tr=0 ts=68a6eabc cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+ a=VnNF1IyMAAAA:8 a=2n9UC11wNmDO3C5zd8gA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: s4kl0o4uwA3kNEyu0UkPSvtz-MZQkf0r
+X-Proofpoint-ORIG-GUID: lN_wrrKj12Xe6rctE8CUqv2d05e2Q2V-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
+ definitions=main-2508190222
 
+On Wed, Aug 13, 2025 at 02:42:09PM +0100, John Garry wrote:
+> On 10/08/2025 14:41, Ojaswin Mujoo wrote:
+> > Implement atomic write support to help fuzz atomic writes
+> > with fsx.
+> > 
+> > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> 
+> this looks ok, but I am not familiar with fsx.
+> 
+> BTW, you guarantee O_DIRECT with RWF_ATOMIC only, right?
 
-=E5=9C=A8 2025/8/21 17:17, Viresh Kumar =E5=86=99=E9=81=93:
-> On 21-08-25, 17:00, Zihuan Zhang wrote:
->> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
->> index a067b5447fe8..92633ff2c4f3 100644
->> --- a/drivers/cpufreq/cpufreq.c
->> +++ b/drivers/cpufreq/cpufreq.c
->> @@ -2908,6 +2908,8 @@ static int cpuhp_cpufreq_offline(unsigned int cp=
-u)
->>   int cpufreq_register_driver(struct cpufreq_driver *driver_data)
->>   {
->>   	unsigned long flags;
-> driver_data can be NULL here. It is checked at a later point.
->
-Thanks for your feedback. I did think about the case where driver_data=20
-is NULL, but I didn=E2=80=99t think it through properly at the time.
+So right now the user will have to pass in -Z to enable O_DIRECT.
 
-You are right =E2=80=94 this clearly can cause issues.
+So if the underlying stack has atomic support, fsx will try to do atomic
+IO but if -Z is not passed it will fail the writes.
 
->> +	bool has_setpolicy =3D driver_data->setpolicy;
-> This is a pointer and ..
->
->> +	bool has_target =3D driver_data->target_index || driver_data->target=
-;
-> .. this is bool.
->
-> Their comparison will always fail. Did you actually try this with both
-> setpolicy and target() set for a cpufreq driver to check if it really
-> fails ?
->
-> What you need is:
->
-> 	bool has_setpolicy =3D !!driver_data->setpolicy;
-Sorry about that. I only tested the case where driver registration succee=
-ds.
+I think I will change this to switch atomic writes off if -Z is not
+passed for convinience right now. Later if we have buffered support we
+can lift this off. That's what you were asking about right?
 
-Do you have any suggestions on how to better test or handle the cases=20
-where driver registration could fail?
->>   	int ret;
->>  =20
->>   	if (cpufreq_disabled())
->> @@ -2921,10 +2923,7 @@ int cpufreq_register_driver(struct cpufreq_driv=
-er *driver_data)
->>   		return -EPROBE_DEFER;
->>  =20
->>   	if (!driver_data || !driver_data->verify || !driver_data->init ||
->> -	    !(driver_data->setpolicy || driver_data->target_index ||
->> -		    driver_data->target) ||
->> -	     (driver_data->setpolicy && (driver_data->target_index ||
->> -		    driver_data->target)) ||
->> +	     (has_setpolicy =3D=3D has_target) ||
-> I would rather do:
->
-> 	(!!driver_data->setpolicy =3D=3D (driver_data->target_index || driver_=
-data->target))
+Regards,
+ojaswin
 
-The current version of the code is much better and safer.
-
-Thanks for pointing this out.
-
-I will carefully test all cases, including potential failure paths, and=20
-send a next version accordingly.
-
->>   	     (!driver_data->get_intermediate !=3D !driver_data->target_inte=
-rmediate) ||
->>   	     (!driver_data->online !=3D !driver_data->offline) ||
->>   		 (driver_data->adjust_perf && !driver_data->fast_switch))
->> --=20
->> 2.25.1
+> 
+> Thanks,
+> John
+> 
+> > ---
+> >   ltp/fsx.c | 109 +++++++++++++++++++++++++++++++++++++++++++++++++++---
+> >   1 file changed, 104 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > index 163b9453..ea39ca29 100644
+> > --- a/ltp/fsx.c
+> > +++ b/ltp/fsx.c
+> > @@ -40,6 +40,7 @@
+> >   #include <liburing.h>
+> >   #endif
+> >   #include <sys/syscall.h>
+> > +#include "statx.h"
+> >   #ifndef MAP_FILE
+> >   # define MAP_FILE 0
+> > @@ -49,6 +50,10 @@
+> >   #define RWF_DONTCACHE	0x80
+> >   #endif
+> > +#ifndef RWF_ATOMIC
+> > +#define RWF_ATOMIC	0x40
+> > +#endif
+> > +
+> >   #define NUMPRINTCOLUMNS 32	/* # columns of data to print on each line */
+> >   /* Operation flags (bitmask) */
+> > @@ -110,6 +115,7 @@ enum {
+> >   	OP_READ_DONTCACHE,
+> >   	OP_WRITE,
+> >   	OP_WRITE_DONTCACHE,
+> > +	OP_WRITE_ATOMIC,
+> >   	OP_MAPREAD,
+> >   	OP_MAPWRITE,
+> >   	OP_MAX_LITE,
+> > @@ -200,6 +206,11 @@ int	uring = 0;
+> >   int	mark_nr = 0;
+> >   int	dontcache_io = 1;
+> >   int	hugepages = 0;                  /* -h flag */
+> > +int	do_atomic_writes = 1;		/* -a flag disables */
+> > +
+> > +/* User for atomic writes */
+> > +int awu_min = 0;
+> > +int awu_max = 0;
+> >   /* Stores info needed to periodically collapse hugepages */
+> >   struct hugepages_collapse_info {
+> > @@ -288,6 +299,7 @@ static const char *op_names[] = {
+> >   	[OP_READ_DONTCACHE] = "read_dontcache",
+> >   	[OP_WRITE] = "write",
+> >   	[OP_WRITE_DONTCACHE] = "write_dontcache",
+> > +	[OP_WRITE_ATOMIC] = "write_atomic",
+> >   	[OP_MAPREAD] = "mapread",
+> >   	[OP_MAPWRITE] = "mapwrite",
+> >   	[OP_TRUNCATE] = "truncate",
+> > @@ -422,6 +434,7 @@ logdump(void)
+> >   				prt("\t***RRRR***");
+> >   			break;
+> >   		case OP_WRITE_DONTCACHE:
+> > +		case OP_WRITE_ATOMIC:
+> >   		case OP_WRITE:
+> >   			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
+> >   			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+> > @@ -1073,6 +1086,25 @@ update_file_size(unsigned offset, unsigned size)
+> >   	file_size = offset + size;
+> >   }
+> > +static int is_power_of_2(unsigned n) {
+> > +	return ((n & (n - 1)) == 0);
+> > +}
+> > +
+> > +/*
+> > + * Round down n to nearest power of 2.
+> > + * If n is already a power of 2, return n;
+> > + */
+> > +static int rounddown_pow_of_2(int n) {
+> > +	int i = 0;
+> > +
+> > +	if (is_power_of_2(n))
+> > +		return n;
+> > +
+> > +	for (; (1 << i) < n; i++);
+> > +
+> > +	return 1 << (i - 1);
+> > +}
+> > +
+> >   void
+> >   dowrite(unsigned offset, unsigned size, int flags)
+> >   {
+> > @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
+> >   	offset -= offset % writebdy;
+> >   	if (o_direct)
+> >   		size -= size % writebdy;
+> > +	if (flags & RWF_ATOMIC) {
+> > +		/* atomic write len must be inbetween awu_min and awu_max */
+> > +		if (size < awu_min)
+> > +			size = awu_min;
+> > +		if (size > awu_max)
+> > +			size = awu_max;
+> > +
+> > +		/* atomic writes need power-of-2 sizes */
+> > +		size = rounddown_pow_of_2(size);
+> > +
+> > +		/* atomic writes need naturally aligned offsets */
+> > +		offset -= offset % size;
+> > +
+> > +		/* Skip the write if we are crossing max filesize */
+> > +		if ((offset + size) > maxfilelen) {
+> > +			if (!quiet && testcalls > simulatedopcount)
+> > +				prt("skipping atomic write past maxfilelen\n");
+> > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
+> > +			return;
+> > +		}
+> > +	}
+> >   	if (size == 0) {
+> >   		if (!quiet && testcalls > simulatedopcount && !o_direct)
+> >   			prt("skipping zero size write\n");
+> > @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
+> >   		return;
+> >   	}
+> > -	log4(OP_WRITE, offset, size, FL_NONE);
+> > +	if (flags & RWF_ATOMIC)
+> > +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
+> > +	else
+> > +		log4(OP_WRITE, offset, size, FL_NONE);
+> >   	gendata(original_buf, good_buf, offset, size);
+> >   	if (offset + size > file_size) {
+> > @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
+> >   		       (monitorstart == -1 ||
+> >   			(offset + size > monitorstart &&
+> >   			(monitorend == -1 || offset <= monitorend))))))
+> > -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
+> > -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
+> > +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
+> > +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
+> > +		    (flags & RWF_ATOMIC) != 0);
+> >   	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
+> >   	if (iret != size) {
+> >   		if (iret == -1)
+> > @@ -1785,6 +1842,30 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
+> >   }
+> >   #endif
+> > +int test_atomic_writes(void) {
+> > +	int ret;
+> > +	struct statx stx;
+> > +
+> > +	ret = xfstests_statx(AT_FDCWD, fname, 0, STATX_WRITE_ATOMIC, &stx);
+> > +	if (ret < 0) {
+> > +		fprintf(stderr, "main: Statx failed with %d."
+> > +			" Failed to determine atomic write limits, "
+> > +			" disabling!\n", ret);
+> > +		return 0;
+> > +	}
+> > +
+> > +	if (stx.stx_attributes & STATX_ATTR_WRITE_ATOMIC &&
+> > +	    stx.stx_atomic_write_unit_min > 0) {
+> > +		awu_min = stx.stx_atomic_write_unit_min;
+> > +		awu_max = stx.stx_atomic_write_unit_max;
+> > +		return 1;
+> > +	}
+> > +
+> > +	fprintf(stderr, "main: IO Stack does not support "
+> > +			"atomic writes, disabling!\n");
+> > +	return 0;
+> > +}
+> > +
+> >   #ifdef HAVE_COPY_FILE_RANGE
+> >   int
+> >   test_copy_range(void)
+> > @@ -2356,6 +2437,12 @@ have_op:
+> >   			goto out;
+> >   		}
+> >   		break;
+> > +	case OP_WRITE_ATOMIC:
+> > +		if (!do_atomic_writes) {
+> > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
+> > +			goto out;
+> > +		}
+> > +		break;
+> >   	}
+> >   	switch (op) {
+> > @@ -2385,6 +2472,11 @@ have_op:
+> >   			dowrite(offset, size, 0);
+> >   		break;
+> > +	case OP_WRITE_ATOMIC:
+> > +		TRIM_OFF_LEN(offset, size, maxfilelen);
+> > +		dowrite(offset, size, RWF_ATOMIC);
+> > +		break;
+> > +
+> >   	case OP_MAPREAD:
+> >   		TRIM_OFF_LEN(offset, size, file_size);
+> >   		domapread(offset, size);
+> > @@ -2511,13 +2603,14 @@ void
+> >   usage(void)
+> >   {
+> >   	fprintf(stdout, "usage: %s",
+> > -		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
+> > +		"fsx [-adfhknqxyzBEFHIJKLORWXZ0]\n\
+> >   	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
+> >   	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
+> >   	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
+> >   	   [-A|-U] [-D startingop] [-N numops] [-P dirpath] [-S seed]\n\
+> >   	   [--replay-ops=opsfile] [--record-ops[=opsfile]] [--duration=seconds]\n\
+> >   	   ... fname\n\
+> > +	-a: disable atomic writes\n\
+> >   	-b opnum: beginning operation number (default 1)\n\
+> >   	-c P: 1 in P chance of file close+open at each op (default infinity)\n\
+> >   	-d: debug output for all operations\n\
+> > @@ -3059,9 +3152,13 @@ main(int argc, char **argv)
+> >   	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+> >   	while ((ch = getopt_long(argc, argv,
+> > -				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> > +				 "0ab:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> >   				 longopts, NULL)) != EOF)
+> >   		switch (ch) {
+> > +		case 'a':
+> > +			prt("main(): Atomic writes disabled\n");
+> > +			do_atomic_writes = 0;
+> > +			break;
+> >   		case 'b':
+> >   			simulatedopcount = getnum(optarg, &endp);
+> >   			if (!quiet)
+> > @@ -3475,6 +3572,8 @@ main(int argc, char **argv)
+> >   		exchange_range_calls = test_exchange_range();
+> >   	if (dontcache_io)
+> >   		dontcache_io = test_dontcache_io();
+> > +	if (do_atomic_writes)
+> > +		do_atomic_writes = test_atomic_writes();
+> >   	while (keep_running())
+> >   		if (!test())
+> 
 
