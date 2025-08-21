@@ -1,104 +1,129 @@
-Return-Path: <linux-kernel+bounces-779783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9A3B2F8EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:54:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC537B2F8EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 281521890824
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:49:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC9451CE40C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98419327799;
-	Thu, 21 Aug 2025 12:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C043320CC7;
+	Thu, 21 Aug 2025 12:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hU/yT1ub"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uS4YbnOG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P2nbp3qR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CC6321F53;
-	Thu, 21 Aug 2025 12:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7178131A079;
+	Thu, 21 Aug 2025 12:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780349; cv=none; b=SWzxo7ZxsbA/4Ufrl1i8Xvekq6G2XqsXeOMjvXFyzs86uz2k7SikRMVAF2c4BgzyH8hSF6OwkHgaFk5x0mjxcTObizjJ9NyopEtUf9oZnFI73toz/A/ZC2h60ngDSCn385e9RRacLIF8f+niOSzs2YInsKiykBCPtnvsDmC1cpc=
+	t=1755780400; cv=none; b=KQIvNi34Ewt4HQn8VPyMCo66hr3PksXCBAg9zgrTBbzQC4wRnF98MdYHiMFMujo68p8B3IObD94aZJM4IMSg2hl6FTzPQURhb5D1thR7BYT5L4u2H7WevcvmzfyPeU77zWcpxWfvvD3RnEq8L6ssJtnYaPqgc0TxdkT9eLTF28g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780349; c=relaxed/simple;
-	bh=7ft+E496A/veAqJoBKSUqOrgUmpIro4+MsMCXnzju8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eicem2xJ6viNk6SUY0hACW++kuoddLxWqKt8nLI/IALiy00Ne8z5QYXTCZ2qXmVtPJPvNp/TN7v/OHkMz2Wsg/1E6Hxqqsl0/EPdTsQ96Y6o1C/tR99kKqvx3qMWWg8QxBvYiKQZWX0nxUSVgjHk86zyf+HvKlxYop4VChyCaDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hU/yT1ub; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755780348; x=1787316348;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7ft+E496A/veAqJoBKSUqOrgUmpIro4+MsMCXnzju8c=;
-  b=hU/yT1ubkGO04TNahg+yGxGKgLj8rlrUXhlHAEBHkXF8bhG0mWHeB2Z2
-   rLEn8ijlVznP9Ga/yA9Rnwnty92BWhrVVkUlTtb5NiqgVMvx4tKBC6wkJ
-   tB5tpGdBsKcqoE860kgAfhWdR0nfP3IaQ5gehbdXvDqtUtK6fyEpudPq5
-   75KW4Z4N78DKEkboXxGIOmVWz5qc0tD8Dcyn35ldm+lQ4i0eJ+2fBTCSm
-   arN33PPVzCgZTiJSCrq9YnXi+rz1w0a8SWQstJcZwQfZVrRw9swM8uyvI
-   mkTbMW1GsljTiJ0QMi0GL5KbrV5tWo9vLSIXO8lbdpiFhNNJONIDTos03
-   w==;
-X-CSE-ConnectionGUID: AFoXna+uTqC4ZMdOS5Zl3Q==
-X-CSE-MsgGUID: uuZ7YuvVRIyk236TKrIVXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="75518612"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="75518612"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 05:45:47 -0700
-X-CSE-ConnectionGUID: yriHNaxcRaOix0BmtKBA0A==
-X-CSE-MsgGUID: LlhTI8CXSzGloTQSHERMWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="168761875"
-Received: from mylly.fi.intel.com (HELO [10.237.72.51]) ([10.237.72.51])
-  by fmviesa008.fm.intel.com with ESMTP; 21 Aug 2025 05:45:44 -0700
-Message-ID: <7198221a-1f12-49cf-9d35-7498ae7389cd@linux.intel.com>
-Date: Thu, 21 Aug 2025 15:45:43 +0300
+	s=arc-20240116; t=1755780400; c=relaxed/simple;
+	bh=JHUbwupkBB4e8j72louEqTZysm+vZuo/Ao9YiEuygeY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=n11jRfzCYdyNSNZ9i0sESjz4h+ivxoo8rqd8j4qCITaT7QdRvhGkZ2/S4p+Tf/pwYw+tVZdk2efbLlTrUpdG1A/pnQ9O13XH1dk/jnQljx4s6xZwwvox84N9SpSGGtYGmtAv7CAnupT0UMC2LuHIziZvlcwOKf3dGU+LSz8ao3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uS4YbnOG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P2nbp3qR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 21 Aug 2025 12:46:35 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755780396;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pjn2gTJ6q0ehI5pMNErg7W74xKdq1TiDGfyfDw+sylE=;
+	b=uS4YbnOGXNXKJmDC09IP4RiA4Nfl4YowaKbGsZCGPvELDFsbT8pdyFuYWFxA3KTwkwu8pB
+	BKwH3q1WCym0F16+KDffxzoMSjWnuNCTg7CIoB9rmbTyUJ9+SUksRIMq/JCihM8jNIVATp
+	VH9mqZvscl1qOWwAAC51F+a80VqZgM/dwmSA9SVPkMfiCtJVP0T2WGxf4taiCkQ4v2OJ7v
+	e7OTUWPotSHlkdickaCmnaJcxpQJxKptj9isTRepQRveJD4JxePtGg36RA6vsqt1UKmR8k
+	zFEvsJqzTSMjqgBDQ4082UXFjEfRsdSg5BQBtRwD9Sdu4uu7j07WmDtf848bUQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755780396;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pjn2gTJ6q0ehI5pMNErg7W74xKdq1TiDGfyfDw+sylE=;
+	b=P2nbp3qRszrCrkiMXZtB3s3KlyEJiYp8t9czRKM/XvwH9qMeLfTVpY4ERnLDJnMqR+STdh
+	/Q+c4D7qgCFg57Aw==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] x86/kconfig: Remove CONFIG_AS_AVX512
+Cc: Uros Bizjak <ubizjak@gmail.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250819085855.333380-4-ubizjak@gmail.com>
+References: <20250819085855.333380-4-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] i2c: designware: Avoid taking clk_prepare mutex in PM
- callbacks
-To: Jisheng Zhang <jszhang@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20250820153125.22002-1-jszhang@kernel.org>
- <20250820153125.22002-2-jszhang@kernel.org>
- <aKXyVvFOvpsaAEAB@smile.fi.intel.com> <aKX4xEYE29JC_g14@xhacker>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <aKX4xEYE29JC_g14@xhacker>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <175578039523.1420.15391075810271564548.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/20/25 7:33 PM, Jisheng Zhang wrote:
-> On Wed, Aug 20, 2025 at 07:05:42PM +0300, Andy Shevchenko wrote:
->> On Wed, Aug 20, 2025 at 11:31:24PM +0800, Jisheng Zhang wrote:
->>> This is unsafe, as the runtime PM callbacks are called from the PM
->>> workqueue, so this may deadlock when handling an i2c attached clock,
->>> which may already hold the clk_prepare mutex from another context.
->>
->> Can you be more specific? What is the actual issue in practice?
->> Do you have traces and lockdep warnings?
-> 
-> Assume we use i2c designware to control any i2c based clks, e.g the
-> clk-si5351.c driver. In its .clk_prepare, we'll get the prepare_lock
-> mutex, then we call i2c adapter to operate the regs, to runtime resume
-> the i2c adapter, we call clk_prepare_enable() which will try to get
-> the prepare_lock mutex again.
-> 
-I'd also like to see the issue here. I'm blind to see what's the 
-relation between the clocks managed by the clk-si5351.c and clocks to 
-the i2c-designware IP.
+The following commit has been merged into the x86/cleanups branch of tip:
+
+Commit-ID:     ae7c0996c0e0f7d3bd3665020e1fbb4d99b7373e
+Gitweb:        https://git.kernel.org/tip/ae7c0996c0e0f7d3bd3665020e1fbb4d99b=
+7373e
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Tue, 19 Aug 2025 10:57:52 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Thu, 21 Aug 2025 14:35:01 +02:00
+
+x86/kconfig: Remove CONFIG_AS_AVX512
+
+Commit
+
+  5f5305dea066 ("raid6: skip avx512 checks")
+
+and commit
+
+  bc23fe6dc172 ("crypto: x86 - Remove CONFIG_AS_AVX512 handling")
+
+removed all uses of CONFIG_AS_AVX512.
+
+Remove check for assembler support of AVX-512 instructions.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250819085855.333380-4-ubizjak@gmail.com
+---
+ arch/x86/Kconfig.assembler | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/arch/x86/Kconfig.assembler b/arch/x86/Kconfig.assembler
+index ea0e9df..b1c59fb 100644
+--- a/arch/x86/Kconfig.assembler
++++ b/arch/x86/Kconfig.assembler
+@@ -1,11 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Copyright (C) 2020 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserv=
+ed.
+=20
+-config AS_AVX512
+-	def_bool $(as-instr,vpmovm2b %k1$(comma)%zmm5)
+-	help
+-	  Supported by binutils >=3D 2.25 and LLVM integrated assembler
+-
+ config AS_WRUSS
+ 	def_bool $(as-instr64,wrussq %rax$(comma)(%rbx))
+ 	help
 
