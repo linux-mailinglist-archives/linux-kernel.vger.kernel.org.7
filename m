@@ -1,156 +1,138 @@
-Return-Path: <linux-kernel+bounces-779904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443ABB2FAE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:45:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5A2B2FAE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34BD1889AF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:40:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53781188FB0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B968D33CE8E;
-	Thu, 21 Aug 2025 13:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCD5340D85;
+	Thu, 21 Aug 2025 13:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M6v/z7bN"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kz37d744"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313AB33A015;
-	Thu, 21 Aug 2025 13:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17E533EAE2
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755783327; cv=none; b=pY18knpDwI3Vl7GC5bDHtMgvnvQWVT9mBXKW/a1Z/b11pCSFLGybxO3TtXGVnk1EjfnrlqdPUjYB3KsUapI012KNsHQZqgnPEB+pSB3J0CfAftRNDjDumgmU/Y4uCe9imP2Lc1LSQHgLGhBZ4LCPQSX5iCdev2aRRLHk821m6lc=
+	t=1755783338; cv=none; b=ZN/8UH55R5PscwC58S1squW5bI4CoG+qDao4GFVZt+43GVqQvvZFZzZdDLN4VpvnQqaFfDHYIOHZOciX/igvbsarImUcVses944QCpfSmbwac0KOlsjfOj6pLDUgS+2DbfZshC+jyzhoOJevD/o0z00TOWepceusFh0KcgiiCdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755783327; c=relaxed/simple;
-	bh=w7nIIDkRK9t5nLFkzgF1a+WYngfQaEmyXr2OHfJvdak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DBZgDpumM7eYNBeJzmIU4HfsZwZvNREWHycU63KL5wKAY7Yskr7xd7g795XyjL1NdRbg+ofstbh2BYHo6EAtYkhfqDd7UrcDY25yHLqueKgmus2kQnx+6vfz7sH73hQ8xnewOI9JdOFdc9zCurtx2J0YcqIHsXH7r25RqdG+H5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M6v/z7bN; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=b//6ITwUdDd18oQHJucKsAo4DJTBu0O+Y4/SsZ6tjY0=; b=M6v/z7bNxTDGdWvzEQNNazzGYh
-	0LDod8tbH4YCxdVYtkY2euXXbWX7lBRiQS/7z2cQGwzz7F4nmJQAt5SuALER8Pr99BHH9D3CuxhOD
-	T+mY8NTehTJuPcfe8pPr8GAl+aL/+6W8GTbVJ1pVSSyQE7NsIyPEQSZBrudpbcln3hkv8OYceZjld
-	ik9orMzkaP9ThNsvAKZoq7nnmTyTgfVSwFGNsg5WxvEdPaTFFxxE3iJZd/nNY3yuZRbNG38R+r4mg
-	0vT1NRd0cpwfxt5ZdbGiIRus64ep2sZM5x8FNZh8j7+JPJB/aVf1jEJmEo9O8GV6aw/VULg5Iq472
-	fI4B0zVQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1up5Rk-00000000ZYq-00wv;
-	Thu, 21 Aug 2025 13:35:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id F1F1F3002ED; Thu, 21 Aug 2025 15:35:14 +0200 (CEST)
-Date: Thu, 21 Aug 2025 15:35:14 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: Re: [Patch v3 3/7] perf/x86: Check if cpuc->events[*] pointer exists
- before accessing it
-Message-ID: <20250821133514.GP4067720@noisy.programming.kicks-ass.net>
-References: <20250820023032.17128-1-dapeng1.mi@linux.intel.com>
- <20250820023032.17128-4-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1755783338; c=relaxed/simple;
+	bh=wc++2Oy6r3s/7kL3+UoefnxPfMBadpuQu0bcTemREeE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cI54KOyY7d6fGnJNHtQv6qUdduSyGyTLDs6PFh+zENzjSmNJ3RxYnvLJulKpsrxT9D/W0k/b5Keab9sOguS5TxjlI0C/SRNDTS5mqd4NtbohPcf1LCQYXgLTOwu8jdn7SqkCOTiOupYvsRE+bVv7NhyPbYv+Nd9HlmO5F99o1d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kz37d744; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b0b2b5cso7821315e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:35:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755783335; x=1756388135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r5c8q0Ky8ajlAkdaKgOXiGJui2dC0wizBAr85LUc6gA=;
+        b=kz37d744NrdOyXVt4ywwCIlngOizaUpqthab55FvcLhE7u7oSq/6Ls9dH2UUMGhARu
+         XHp+Aosf4dYqfXJkLyAtguPLUpQeJNYzIxIJbesQRFUqFzpopNEYwDNwKMzb3BNKUDWP
+         P1j1tP6Fn7Q3GGUMw8gbqz/N+5joPJ3ne8GZrYYnbdwdRJIR8n64V0/oRCvE2EghlTT6
+         kKj0S1bqMpN3SLpBAyLYEz0QPH5bZYxzqGK8AakPAA95mcwYpoklF5Gx7rdZxmUcV2vU
+         4EPFjbkHDTixVC/KxswkxaprmhgRaasUvqt6TSo+Iz7OYsMJumdZjqlgBcPYGnhS0kk2
+         iw5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755783335; x=1756388135;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r5c8q0Ky8ajlAkdaKgOXiGJui2dC0wizBAr85LUc6gA=;
+        b=ucj6sAI9Yo+e1L/8zzs1vgmIupuDAGOPX9yFO10KUHRSv76MAzDN4E1iP+EmvQxS64
+         eLBr+n85+Wx+pOqn/C4ayLDEM1fxBm51ZPeP6FJdOoUXzw8XadsH1aHEgjv/3N9pYg/o
+         0cFfXvYN5DAbg7yoHUXVSSt9ND45mGzL95LO5vWHQLpAR4fiRHmkVYqnIvB5pSRyjZp9
+         1NTojAdfEB8u5JrLbcGZgY7BZjXN/jrcq/f15+a/DpXxklKS/qnrf5i5YneLqdeZZ0Z9
+         rjHLG7q7t+xNP7duwJNjNun2LQ1mLDgim64PR2cJmL5cddMvmzit/3D5NHfDeNy/LAxd
+         b+9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWL0CYIGkFMilOLuLBc5ILXGj8F5f7fLFOmUeU4sh6uYQtp6a2TNt6fROwLWQ/QoU3eJBudRN02auAZqb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ/REfIf1o3MwP6n4a2a8QYPgKwPtJy2t33xpBM4KVLPUU+fuH
+	BCo/QqRZta+3IbexQLA5xEPRWAgyRgMSUeXAC2tueC09cHaSeyX6b009r6XiHvOj7VWfTlcSkIz
+	4uNbhL25ZAg==
+X-Google-Smtp-Source: AGHT+IHIRg6I19eGyKLDXrDhVh5Q1QDPm2jvIQ9GUlLEMDNmDUHP1uq8W2QMfP2fIkEEXeSTbRaTO5YZvqrI
+X-Received: from wmbbi16.prod.google.com ([2002:a05:600c:3d90:b0:458:bea8:57ef])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1d1c:b0:458:a992:6f1e
+ with SMTP id 5b1f17b1804b1-45b4d7dc73amr28165345e9.5.1755783334885; Thu, 21
+ Aug 2025 06:35:34 -0700 (PDT)
+Date: Thu, 21 Aug 2025 13:35:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820023032.17128-4-dapeng1.mi@linux.intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
+Message-ID: <20250821133521.2665734-1-abarnas@google.com>
+Subject: [PATCH v3 1/3] staging: media: atomisp: Remove unnecessary forward
+ declaration in gdc.c
+From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+To: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-staging@lists.linux.dev
+Cc: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 10:30:28AM +0800, Dapeng Mi wrote:
-> When intel_pmu_drain_pebs_icl() is called to drain PEBS records, the
-> perf_event_overflow() could be called to process the last PEBS record.
-> 
-> While perf_event_overflow() could trigger the interrupt throttle and
-> stop all events of the group, like what the below call-chain shows.
-> 
-> perf_event_overflow()
->   -> __perf_event_overflow()
->     ->__perf_event_account_interrupt()
->       -> perf_event_throttle_group()
->         -> perf_event_throttle()
->           -> event->pmu->stop()
->             -> x86_pmu_stop()
-> 
-> The side effect of stopping the events is that all corresponding event
-> pointers in cpuc->events[] array are cleared to NULL.
-> 
-> Assume there are two PEBS events (event a and event b) in a group. When
-> intel_pmu_drain_pebs_icl() calls perf_event_overflow() to process the
-> last PEBS record of PEBS event a, interrupt throttle is triggered and
-> all pointers of event a and event b are cleared to NULL. Then
-> intel_pmu_drain_pebs_icl() tries to process the last PEBS record of
-> event b and encounters NULL pointer access.
-> 
-> Since the left PEBS records have been processed when stopping the event,
-> check and skip to process the last PEBS record if cpuc->events[*] is
-> NULL.
-> 
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
-> Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Tested-by: kernel test robot <oliver.sang@intel.com>
-> ---
->  arch/x86/events/intel/ds.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-> index c0b7ac1c7594..dcf29c099ad2 100644
-> --- a/arch/x86/events/intel/ds.c
-> +++ b/arch/x86/events/intel/ds.c
-> @@ -2663,6 +2663,16 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
->  			continue;
->  
->  		event = cpuc->events[bit];
-> +		/*
-> +		 * perf_event_overflow() called by below __intel_pmu_pebs_last_event()
-> +		 * could trigger interrupt throttle and clear all event pointers of the
-> +		 * group in cpuc->events[] to NULL. So need to re-check if cpuc->events[*]
-> +		 * is NULL, if so it indicates the event has been throttled (stopped) and
-> +		 * the corresponding last PEBS records have been processed in stopping
-> +		 * event, don't need to process it again.
-> +		 */
-> +		if (!event)
-> +			continue;
->  
->  		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
->  					    counts[bit], setup_pebs_adaptive_sample_data);
+Get rid of gdc_reg_store() forward declaration because it brings no value.
 
+Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
+---
+ .../pci/hive_isp_css_common/host/gdc.c        | 24 ++++---------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
 
-So if this is due to __intel_pmu_pebs_last_event() calling into
-perf_event_overflow(); then isn't intel_pmu_drain_pebs_nhm() similarly
-affected?
-
-And worse, the _nhm() version would loose all events for that counter,
-not just the last.
-
-I'm really thinking this isn't the right thing to do.
-
-
-How about we audit the entirety of arch/x86/events/ for cpuc->events[]
-usage and see if we can get away with changing x86_pmu_stop() to simply
-not clearing that field.
-
-Or perhaps move the setting and clearing into x86_pmu_{add,del}() rather
-than x86_pmu_{start,stop}(). After all, the latter don't affect the
-counter placement, they just stop/start the event.
+diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc=
+.c b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc.c
+index 8bb78b4d7c677..bfda3cd13306e 100644
+--- a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc.c
++++ b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc.c
+@@ -11,13 +11,11 @@
+=20
+ #include "assert_support.h"
+=20
+-/*
+- * Local function declarations
+- */
+-static inline void gdc_reg_store(
+-    const gdc_ID_t		ID,
+-    const unsigned int	reg,
+-    const hrt_data		value);
++static inline void gdc_reg_store(const gdc_ID_t ID, const unsigned int reg=
+,
++				 const hrt_data value)
++{
++	ia_css_device_store_uint32(GDC_BASE[ID] + reg * sizeof(hrt_data), value);
++}
+=20
+ #ifndef __INLINE_GDC__
+ #include "gdc_private.h"
+@@ -92,15 +90,3 @@ int gdc_get_unity(
+ 	(void)ID;
+ 	return (int)(1UL << HRT_GDC_FRAC_BITS);
+ }
+-
+-/*
+- * Local function implementations
+- */
+-static inline void gdc_reg_store(
+-    const gdc_ID_t		ID,
+-    const unsigned int	reg,
+-    const hrt_data		value)
+-{
+-	ia_css_device_store_uint32(GDC_BASE[ID] + reg * sizeof(hrt_data), value);
+-	return;
+-}
+--=20
+2.51.0.rc2.233.g662b1ed5c5-goog
 
 
