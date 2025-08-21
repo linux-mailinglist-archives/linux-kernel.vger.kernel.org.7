@@ -1,247 +1,185 @@
-Return-Path: <linux-kernel+bounces-778779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B57B2EAEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:44:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF73B2EAF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65B385E2847
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782611C871A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BEF2475C2;
-	Thu, 21 Aug 2025 01:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="KDFEDnU6"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B6D255248;
+	Thu, 21 Aug 2025 01:45:44 +0000 (UTC)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF48246786
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0770E5FEE6;
+	Thu, 21 Aug 2025 01:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755740666; cv=none; b=crhK7m+wE2D4XYLPJn7lfearTR5lBVDPIKka0yz8w7jpPgQoDGcE58aPJoOVY5RmbzCMQW6qaCO9Hi/CeIAfl4cjc+gz0iLpkTlj095BG3EusFD3qIqp0Xnb1zlMQQAk4BMOmu2dVJgKGkUCeeeym6qWnub9Kjp7g7X9WWR5lf4=
+	t=1755740744; cv=none; b=RljBiRvkMWnIY+bNSGqKxnAn7HwUvCsymscAJtKexbZze/UIDoiWZxn2vV59A46U6m+DFyYCqdLZ/0gHJtTr07ZbOXgxsw/OTOLjqiGXAuVtHEaogmNidKNKcdIjGlNa0KnBCZBFmwDpUs4wUs6KVdRRwI5x8o+Uh2PZUmZCrrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755740666; c=relaxed/simple;
-	bh=pLQg269TfdCVaD9lGtWIua8jPvdmfueDTx/b93nQE2Q=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=WKwt9wzJL3ulismG4//5G+ldS2Bqqp85ipWBwEZDQ6ABlMpXg0weWwHYJWHhIKTlfPoPoLsxLUXGyA13ccXf5GwmsXnL7csQ+1ZIwflK+qz5LBBc8Z980t70SigeA8KSjPLrnLkBItHGkGclMCUYL8m+sBaBPIQeZQUM5c6Qtpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=KDFEDnU6; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57L1hcn3019985
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 20 Aug 2025 18:43:39 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57L1hcn3019985
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1755740620;
-	bh=6R6baGc7vDkaqNJuT5B7LJhMdkDSAFTZII1u9c00wH8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=KDFEDnU60Y1Ba/jQD+Y5a0Gsv0MS8i0uNJwjv9NaQsIxa/jQP6iUbtBmx4y6kT2HX
-	 LkZyxkIoV+KSaN6s3+NJWr6FCw0RWt8FowuLZrX0+O0jQlmyUbf7vGOMaMwcVoRUAx
-	 nW2N66I8De0kaeUYlU+CinR7owdVzDVTQRdSnuSm/1r6jEZiQFUOsaZC5QjveauA/6
-	 fsNH7dKiRqUm/deAQf5r9YlujOUInzzHsBsW+UvbH7s47abX4jdAEqg93NjoChSpsj
-	 ThFloSgaS7n/I00myQjtdWm1rPFI3Kn6ld92/+IUhwpVhTldjWX/TGo4DOK65VPOV/
-	 3Yv+ClVC4kMvA==
-Date: Wed, 20 Aug 2025 18:43:35 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Marcos Del Sol Vives <marcos@orca.pet>, linux-kernel@vger.kernel.org
-CC: marcos@orca.pet, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        Brian Gerst <brgerst@gmail.com>, Uros Bizjak <ubizjak@gmail.com>,
-        Ard Biesheuvel <ardb@kernel.org>, David Kaplan <david.kaplan@amd.com>,
-        "Ahmed S. Darwish" <darwi@linutronix.de>, Kees Cook <kees@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Oleg Nesterov <oleg@redhat.com>, "Xin Li (Intel)" <xin@zytor.com>,
-        Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250820013452.495481-1-marcos@orca.pet>
-References: <20250820013452.495481-1-marcos@orca.pet>
-Message-ID: <08A1B314-C015-4EE9-A13D-3D712FD274C4@zytor.com>
+	s=arc-20240116; t=1755740744; c=relaxed/simple;
+	bh=/spv7jWo69UbbuIZnbqkbS+7Kk/f7i+A+U1mM8kITus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mwz2Cm7bYBjhrbuASHplkm6Ck/dQRw+qOKJ2Q6kO+E6eCWF9VCYGOF0dOrfm61tysUQbXrOKQNJyS37yOfDurhMd19kudaGs5LDcpdx+4g0Gb6h/lIeNVIx0JSjNPvkjcn1jZQ01tbwUcWwirSPZZaP40/aaTIn70uqPIqyFGcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpgz16t1755740653t744f92ac
+X-QQ-Originating-IP: sSkp9uld1sPBcAjgjwrJDFdHIEDs46stzol3q4J49GU=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 21 Aug 2025 09:44:11 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11662485468357027338
+Date: Thu, 21 Aug 2025 09:44:11 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] net: rnpgbe: Add basic mbx ops support
+Message-ID: <6981CF6C1312658E+20250821014411.GB1742451@nic-Precision-5820-Tower>
+References: <20250818112856.1446278-1-dong100@mucse.com>
+ <20250818112856.1446278-4-dong100@mucse.com>
+ <5cced097-52db-41c9-93e4-927aab5ffb2e@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5cced097-52db-41c9-93e4-927aab5ffb2e@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Nc4Sv39/e83WJDUNsElZp8KdUH0jeXE/sPOeNjm+0sZ/xAW2aIY6Utqj
+	bD8E8tE7jmtG3oCw8CqmFW4WWTpYxJntUgesWl/czFrN1uFdNgT+hLJ3/Idkn9Rr7EE2oAf
+	lS9lfAKN7wo3e/p/0opR/IUK2QE0kGkbWkO3vBn9tyM1zxFzqtMO5lbki3pl6sVX0Kbf1Cw
+	TtrQrvI3Daeey0Ku5zP2HXoDL4UrFbR8VPiygep0I8lqIgbz9hMrMPS4bLmehxx6MV2w8qA
+	XOrJSmZl+8vMMVAO1m4rOlnqBMk1iELATjeY2tz6ZWCRV0lVcJPOO7IGATP0+Bm8MDqBlCn
+	rXsX5UZTDrnTAvZ6gPm5bAFIP+Y8AJ3vB8f8+qCcRVt6ekbmks6Ymo1MkQ7G92XrmVG3TxZ
+	63XbjELWKxCMAJdDVHdE0qfhlNr9/wL+Zq+0GvaOY0oxEhwxPMewNVOGZHl7zMwbv8eikk1
+	sovBbNJ18xBtor3jogRhryJn4W5UcXO4Z2mKoHcxfY5B4xjSy0I3Vs5tq/rhkl7aCAWirxa
+	N10sUyWviZmlMErVVbpWDxtqlnhfYxl2ZXdoZ7hCqA3cmk8Gq9W6vYVlAtE7yjyg7laz0Uo
+	Jpa6WKnQEmY6oI/aFsAW6rnhaRHDa+XJc8AbLZ5zuXlbb1wqmgz3pWWa5lXPjEI13n4fGit
+	ONsbRaS9huoA/uzgg2K1eADgiQl4gP/YY4jmc7MNlGWWek7l+XmTAtQYLo3ewy9kV7gYNl8
+	lAbO+Uwe4BycVFt7LPLNrZ1l5gWpamt/aH9UwuFHRVN8NOyX3EJhxW2JCZb20AhNBLdXfzu
+	clzLy2S2YNpYxJMrsz8kJZ0rjogqzvbeRgCvIGHOKA/MQ6j76sWrwwm0qxJQ4qjHDm7XnRO
+	xX00g0NpicOKB8a6dbNBKaveWQGit3KoHSfwTKilciQCOxgfMcnwMsmutEJkchgONcZoQJ9
+	LUZFBQUyGglDQ+M0aOU50g2lri7SnVrPCKDQPahsQOhbmIKxQFFCTPU19mpZkeYITVIwnL+
+	e6Ssq7M8sU4qXZ5GXk7O4Zl5KlsJI=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On August 19, 2025 6:34:46 PM PDT, Marcos Del Sol Vives <marcos@orca=2Epet>=
- wrote:
->Hintable NOPs are a series of instructions introduced by Intel with the
->Pentium Pro (i686), and described in US patent US5701442A=2E
->
->These instructions were reserved to allow backwards-compatible changes
->in the instruction set possible, by having old processors treat them as
->variable-length NOPs, while having other semantics in modern processors=
-=2E
->
->Some modern uses are:
-> - Multi-byte/long NOPs
-> - Indirect Branch Tracking (ENDBR32)
-> - Shadow Stack (part of CET)
->
->Some processors advertising i686 compatibility lack full support for
->them, which may cause #UD to be incorrectly triggered, crashing software
->that uses then with an unexpected SIGILL=2E
->
->One such software is sudo in Debian bookworm, which is compiled with
->GCC -fcf-protection=3Dbranch and contains ENDBR32 instructions=2E It cras=
-hes
->on my Vortex86DX3 processor and VIA C3 Nehalem processors [1]=2E
->
->This patch is a much simplified version of my previous patch for x86
->instruction emulation [2], that only emulates hintable NOPs=2E
->
->When #UD is raised, it checks if the opcode corresponds to a hintable NOP
->in user space=2E If true, it warns the user via the dmesg and advances th=
-e
->instruction pointer, thus emulating its expected NOP behaviour=2E
->
->[1]: https://lists=2Edebian=2Eorg/debian-devel/2023/10/msg00118=2Ehtml
->[2]: https://lore=2Ekernel=2Eorg/all/20210626130313=2E1283485-1-marcos@or=
-ca=2Epet/
->
->Signed-off-by: Marcos Del Sol Vives <marcos@orca=2Epet>
->---
-> arch/x86/Kconfig                 | 29 +++++++++++++++++++++++++
-> arch/x86/include/asm/processor=2Eh |  4 ++++
-> arch/x86/kernel/process=2Ec        |  3 +++
-> arch/x86/kernel/traps=2Ec          | 36 ++++++++++++++++++++++++++++++++
-> 4 files changed, 72 insertions(+)
->
->diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->index 58d890fe2100=2E=2Ea6daebdc2573 100644
->--- a/arch/x86/Kconfig
->+++ b/arch/x86/Kconfig
->@@ -1286,6 +1286,35 @@ config X86_IOPL_IOPERM
-> 	  ability to disable interrupts from user space which would be
-> 	  granted if the hardware IOPL mechanism would be used=2E
->=20
->+config X86_HNOP_EMU
->+	bool "Hintable NOPs emulation"
->+	depends on X86_32
->+	default y
->+	help
->+	  Hintable NOPs are a series of instructions introduced by Intel with
->+	  the Pentium Pro (i686), and described in US patent US5701442A=2E
->+
->+	  These instructions were reserved to allow backwards-compatible
->+	  changes in the instruction set possible, by having old processors
->+	  treat them as variable-length NOPs, while having other semantics in
->+	  modern processors=2E
->+
->+	  Some modern uses are:
->+	   - Multi-byte/long NOPs
->+	   - Indirect Branch Tracking (ENDBR32)
->+	   - Shadow Stack (part of CET)
->+
->+	  Some processors advertising i686 compatibility (such as Cyrix MII,
->+	  VIA C3 Nehalem or DM&P Vortex86DX3) lack full support for them,
->+	  which may cause SIGILL to be incorrectly raised in user space when
->+	  a hintable NOP is encountered=2E
->+
->+	  Say Y here if you want the kernel to emulate them, allowing programs
->+	  that make use of them to run transparently on such processors=2E
->+
->+	  This emulation has no performance penalty for processors that
->+	  properly support them, so if unsure, enable it=2E
->+
-> config TOSHIBA
-> 	tristate "Toshiba Laptop support"
-> 	depends on X86_32
->diff --git a/arch/x86/include/asm/processor=2Eh b/arch/x86/include/asm/pr=
-ocessor=2Eh
->index bde58f6510ac=2E=2Ec34fb678c4de 100644
->--- a/arch/x86/include/asm/processor=2Eh
->+++ b/arch/x86/include/asm/processor=2Eh
->@@ -499,6 +499,10 @@ struct thread_struct {
->=20
-> 	unsigned int		iopl_warn:1;
->=20
->+#ifdef CONFIG_X86_HNOP_EMU
->+	unsigned int		hnop_warn:1;
->+#endif
->+
-> 	/*
-> 	 * Protection Keys Register for Userspace=2E  Loaded immediately on
-> 	 * context switch=2E Store it in thread_struct to avoid a lookup in
->diff --git a/arch/x86/kernel/process=2Ec b/arch/x86/kernel/process=2Ec
->index 1b7960cf6eb0=2E=2E6ec8021638d0 100644
->--- a/arch/x86/kernel/process=2Ec
->+++ b/arch/x86/kernel/process=2Ec
->@@ -178,6 +178,9 @@ int copy_thread(struct task_struct *p, const struct k=
-ernel_clone_args *args)
-> 	p->thread=2Eio_bitmap =3D NULL;
-> 	clear_tsk_thread_flag(p, TIF_IO_BITMAP);
-> 	p->thread=2Eiopl_warn =3D 0;
->+#ifdef CONFIG_X86_HNOP_EMU
->+	p->thread=2Ehnop_warn =3D 0;
->+#endif
-> 	memset(p->thread=2Eptrace_bps, 0, sizeof(p->thread=2Eptrace_bps));
->=20
-> #ifdef CONFIG_X86_64
->diff --git a/arch/x86/kernel/traps=2Ec b/arch/x86/kernel/traps=2Ec
->index 36354b470590=2E=2E2dcb7d7edf8a 100644
->--- a/arch/x86/kernel/traps=2Ec
->+++ b/arch/x86/kernel/traps=2Ec
->@@ -295,12 +295,48 @@ DEFINE_IDTENTRY(exc_overflow)
-> 	do_error_trap(regs, 0, "overflow", X86_TRAP_OF, SIGSEGV, 0, NULL);
-> }
->=20
->+#ifdef CONFIG_X86_HNOP_EMU
->+static bool handle_hnop(struct pt_regs *regs)
->+{
->+	struct thread_struct *t =3D &current->thread;
->+	unsigned char buf[MAX_INSN_SIZE];
->+	unsigned long nr_copied;
->+	struct insn insn;
->+
->+	nr_copied =3D insn_fetch_from_user(regs, buf);
->+	if (nr_copied <=3D 0)
->+		return false;
->+
->+	if (!insn_decode_from_regs(&insn, regs, buf, nr_copied))
->+		return false;
->+
->+	/* Hintable NOPs cover 0F 18 to 0F 1F */
->+	if (insn=2Eopcode=2Ebytes[0] !=3D 0x0F ||
->+		insn=2Eopcode=2Ebytes[1] < 0x18 || insn=2Eopcode=2Ebytes[1] > 0x1F)
->+		return false;
->+
->+	if (!t->hnop_warn) {
->+		pr_warn_ratelimited("%s[%d] emulating hintable NOP, ip:%lx\n",
->+		       current->comm, task_pid_nr(current), regs->ip);
->+		t->hnop_warn =3D 1;
->+	}
->+
->+	regs->ip +=3D insn=2Elength;
->+	return true;
->+}
->+#endif
->+
-> #ifdef CONFIG_X86_F00F_BUG
-> void handle_invalid_op(struct pt_regs *regs)
-> #else
-> static inline void handle_invalid_op(struct pt_regs *regs)
-> #endif
-> {
->+#ifdef CONFIG_X86_HNOP_EMU
->+	if (user_mode(regs) && handle_hnop(regs))
->+		return;
->+#endif
->+
-> 	do_error_trap(regs, 0, "invalid opcode", X86_TRAP_UD, SIGILL,
-> 		      ILL_ILLOPN, error_get_trap_addr(regs));
-> }
+On Wed, Aug 20, 2025 at 10:23:44PM +0200, Andrew Lunn wrote:
+> > +/**
+> > + * mucse_mbx_get_ack - Read ack from reg
+> > + * @mbx: pointer to the MBX structure
+> > + * @reg: register to read
+> > + *
+> > + * @return: the ack value
+> > + **/
+> > +static u16 mucse_mbx_get_ack(struct mucse_mbx_info *mbx, int reg)
+> > +{
+> > +	return (mbx_data_rd32(mbx, reg) >> 16);
+> > +}
+> 
+> > +static int mucse_check_for_ack_pf(struct mucse_hw *hw)
+> > +{
+> > +	struct mucse_mbx_info *mbx = &hw->mbx;
+> > +	u16 hw_fw_ack;
+> > +
+> > +	hw_fw_ack = mucse_mbx_get_ack(mbx, MBX_FW2PF_COUNTER);
+> 
+> > +int mucse_write_mbx_pf(struct mucse_hw *hw, u32 *msg, u16 size)
+> > +{
+> > +	struct mucse_mbx_info *mbx = &hw->mbx;
+> > +	int size_inwords = size / 4;
+> > +	u32 ctrl_reg;
+> > +	int ret;
+> > +	int i;
+> > +
+> > +	ctrl_reg = PF2FW_MBOX_CTRL(mbx);
+> > +	ret = mucse_obtain_mbx_lock_pf(hw);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	for (i = 0; i < size_inwords; i++)
+> > +		mbx_data_wr32(mbx, MBX_FW_PF_SHM_DATA + i * 4, msg[i]);
+> > +
+> > +	/* flush msg and acks as we are overwriting the message buffer */
+> > +	hw->mbx.fw_ack = mucse_mbx_get_ack(mbx, MBX_FW2PF_COUNTER);
+> 
+> It seems like the ACK is always at MBX_FW2PF_COUNTER. So why pass it
+> to mucse_mbx_get_ack()? Please look at your other getters and setters.
+> 
 
-Do those processors support FCOMI?
+'mucse_mbx_get_ack' is always at MBX_FW2PF_COUNTER now, just for pf-fw mbx. 
+But, in the future, there will be pf-vf mbx with different input.
+Should I move 'MBX_FW2PF_COUNTER' to function 'mucse_mbx_get_ack', and
+update the function when I add vf relative code in the future?
+
+> > +/**
+> > + * mucse_write_mbx - Write a message to the mailbox
+> > + * @hw: pointer to the HW structure
+> > + * @msg: the message buffer
+> > + * @size: length of buffer
+> > + *
+> > + * @return: 0 on success, negative on failure
+> > + **/
+> > +int mucse_write_mbx(struct mucse_hw *hw, u32 *msg, u16 size)
+> > +{
+> > +	return mucse_write_mbx_pf(hw, msg, size);
+> > +}
+> 
+> This function does not do anything useful. Why not call
+> mucse_write_mbx_pf() directly?
+> 
+
+Yes, I should call it directly. 
+
+> > +/**
+> > + * mucse_check_for_msg - Check to see if fw sent us mail
+> > + * @hw: pointer to the HW structure
+> > + *
+> > + * @return: 0 on success, negative on failure
+> > + **/
+> > +int mucse_check_for_msg(struct mucse_hw *hw)
+> > +{
+> > +	return mucse_check_for_msg_pf(hw);
+> > +}
+> > +
+> > +/**
+> > + * mucse_check_for_ack - Check to see if fw sent us ACK
+> > + * @hw: pointer to the HW structure
+> > + *
+> > + * @return: 0 on success, negative on failure
+> > + **/
+> > +int mucse_check_for_ack(struct mucse_hw *hw)
+> > +{
+> > +	return mucse_check_for_ack_pf(hw);
+> > +}
+> 
+> These as well.
+
+Got it, I will update it.
+
+> 
+> 	Andrew
+> 
+
+Thanks for your feedback.
+
 
