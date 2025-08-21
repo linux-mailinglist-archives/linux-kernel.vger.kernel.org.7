@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-779089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E79CB2EEF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:01:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F9A6B2EEFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2ED93A8A04
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:01:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4528E1BA51DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACCA258ED1;
-	Thu, 21 Aug 2025 07:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CF027C154;
+	Thu, 21 Aug 2025 07:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hcOblnxD"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VXUMw92o"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E296F347D0
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018CC2475E3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755759698; cv=none; b=pA88tiDfH8izhw1T2Czkd1gBYcNPJ1Czg5mn6w/1QoTD0e3Y2iABRvirVh+BTchTArnpkR8teYkOnWlAuj9GG+ZQ1+ILZ/UhwuuSugsUKzX+D2NcVIy+enZ/oFltOpnGWSbAR73RCuWkH3cFV/VSYFSJPKirdcotExWwKl+4EIE=
+	t=1755759699; cv=none; b=AiaU7Z+wgZR422GDjqnWNJVhzuZrlqsEwUF/cNFnfJtH2+9o2gbx31QMee+CZKVZPD5rs20F3jEjevrV8JO48kkv9IsLKrVMvF2mgMVy7p8IUH4Ey/4PEdJxwvz2hoTXpzapkuyGwr2F9VVx2kSipbBFCLIRdx/53kMDo7EpuTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755759698; c=relaxed/simple;
-	bh=xAbwWeBBjg9N+cdieYDjYzALaVmrwO5vpPTMIUPytzk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nNN2u8ZGbqq1QWL5nC/Y5GjHleeRxJcIGO4Cd3bsl6P3I871RooxzI8ksP1WFRc4hppeJ3eQKQpNlsaavJp8Q1c1UnxnEPd53SwsvMWrBXPTcrWm/qhU0lUlnUgXhPCV9FzsfcKkdM8EpkjKcTtlooexpdCnH+2uUPAZ+GNYWUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hcOblnxD; arc=none smtp.client-ip=209.85.128.73
+	s=arc-20240116; t=1755759699; c=relaxed/simple;
+	bh=Lwh49xgm8E8hyfnJwvscG8id7WBz9JOebvAR2zKXZl8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=I24u8OCB6m4XTYZ21Xt3pu85Fu3Nu/R/mXMJseYU1chdT7H4tmzDYf0vkJx2PA5USaRfmOkikf5FIr4ikK0G3tu0jmUgrvOKHlQ5rWQcOo7o/FPita5fQXzjMrm3g0srmBdgX85ByuMmeM0JM3oOtIRhiUw3x8F3Daxc2r14o5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VXUMw92o; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a15fd6b45so7328025e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:01:35 -0700 (PDT)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b9edf80ddcso242853f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:01:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755759694; x=1756364494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GIUE2PmBqOrrYO7GAV3V+fHhCJGdLaC9xCv0zLUGcNE=;
-        b=hcOblnxDNap8aX9N5LLgAqTZZ/cNLjESpPbIG4uCd+JkcOHVsKsvPAs/C6Hj/rhxCr
-         UWN6ibRxIhMkVLyz5ewTVRa6PRM5xy7esS0qeaEspX6jII+Yq7QQLAlBhVm4rwIgLUBN
-         A2VkYa4mTt79NKa8/fx8G1NPSUMiCTvl8M6BWNLm/ZAwRvQu3D1yQBsxvFCKnYiiWVKF
-         PBTNjPxX/edQt26xGii0csEdCL9JlggABmWJdcwA8zUhDcKPZnYZMdRlBvBKVWMcpsjl
-         mZTjD9nu1nC5Z8bFE4P3v+Bn5PVAUA27MvaN7CDTvQBjVebJZFgFS+odiTaJxVaFMafX
-         UmTg==
+        d=google.com; s=20230601; t=1755759696; x=1756364496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rWHak7BTTuUjCdYO75xAv1rLY7D54sU+2w+NwPKTwUE=;
+        b=VXUMw92o8qRu7SbSe4pQBR1nEyAmAMYpCvjRKN1YMlJpXB45tBMACaApGrN4x6NUl0
+         qSb/lBVO+1yP2bAc0OGYccPjdEWweqKHQmRV/GGyY2/c4GX0SMfnwR+NciyCB336gn0B
+         MzpAWFS9zy7Tcqz5Loe7FFPEPLt9X/XJ7RI8ohqW9Niyi8dPf6lL1mHpE0E3mQ0ITuk0
+         hlON7N7PqJkDBRNaGxF28353c/h/3SF6bJwf60dDWSYAgbLKHOyyqxzNCfQbJso9C4oJ
+         n+ku10DFM55aUhcQNPE4jIwYo20KGeon2oaUgtavB2Gha7iE0sQIt+5YWR85AxNC1Tyv
+         SmQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755759694; x=1756364494;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GIUE2PmBqOrrYO7GAV3V+fHhCJGdLaC9xCv0zLUGcNE=;
-        b=JCVg7vUopg2ZhZXSOmnTYaQ9Lw9cu0gtutgjQIojC5bEiQQVx9r7FfJWd0hds7nBB8
-         ZcyGlm9x6uafJOL2j7yBxsC5v1pxnM4Lo+0Zc6n7dXWfFZ9+0WllBNYZLuqTzhc2oO59
-         0J4oqXkSErm5cjiwTLUBpPdgbd1BfpZqX0UzjZgJPxi+hXFUPCU5MDsTQLSrOMBnIikb
-         elGeqDeviCZMUtlVxAvB1COMXJc8yMCuSUbak7Bv66VVNxzpLgJI23hSfE2s+KDWDEcQ
-         5aejf1MdLkhS8DAEmZ+9/UXQwF3l+zqxa65Er11Wh3WdlBoiYwxD1zrLRyB4KN4K/U6D
-         991w==
-X-Forwarded-Encrypted: i=1; AJvYcCU75PrM8a/GvADJC0NjMCEhIrbpRNkml0jeDOZZ9tWLmhYHv44RtROQJQ4eL961/WDrzGCBs4KYCMs0vjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3r6s6WowiU0vAlLg85+SCbiQ+in7QXpKhXYo78+zYUyTCkvyV
-	efkYwJF01spq4sgcuVHxURmi0V6qsq6Xo9uFOzyqiVuFWTvVHOg/7EWAQNENaBIPT1NYW5fCTOD
-	Jf51ILDZnMg==
-X-Google-Smtp-Source: AGHT+IGlH2xw1DoBwNhaE0zN8l2SvWcW/Lug5/2eb+mUXE7rWPWReBJndxbSGekbGMY8ZvWt/3V02e08ioCL
-X-Received: from wmbee17.prod.google.com ([2002:a05:600c:6411:b0:459:6a64:4582])
- (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:c0d2:20b0:459:dd1d:2ee0
- with SMTP id 5b1f17b1804b1-45b4d70e0f1mr6209805e9.0.1755759694320; Thu, 21
- Aug 2025 00:01:34 -0700 (PDT)
-Date: Thu, 21 Aug 2025 07:01:28 +0000
+        d=1e100.net; s=20230601; t=1755759696; x=1756364496;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rWHak7BTTuUjCdYO75xAv1rLY7D54sU+2w+NwPKTwUE=;
+        b=GS4zrfZuv/KWmv+aJhfONlUucAP5bsYcETk2UuSSe/yqo+BhY2svE8JxrBy0P9xHoB
+         SBTBiGBIYmBlZO2g8QO+tm1da6L7rzx4dwHSmkYj+07NSqOqV5HshvBkaIfiA8S1e0/E
+         b3nsX1Mpc1X8g/M9JWcoDykIJwIxTH7d7rNQkPSAq2aVfX/zdaFyigqCH7fR08Rtb9ev
+         enGQmPb1CBf6PXybGqHVNeorIv05G8i5o8Fb5WOzA+GfOR4xhzcmRZ07fP99BFnn+KCz
+         GmaiOX5EpmFwdyEWo/6xz0RSCsBKO8T7l5F17STDkl0u5LGt3WdY1+t3hSh7obMooN+f
+         eFnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBMhXHMy7NoDFi/q4KZxBQYmfEyLW0NBIv9JfLMcQ/Khyuu4lLh5o4ES+5kBnu/bU17guHm9ZygM94EzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwtcKP9v6yhFp+C/+d4/MFFebDcYTP94W534YRaE3s3p9Y4YAf
+	DUfS0sFLq2QWQb2TcHsTNJNhd08N8w22PnmUjbtgbzJeRSv6RCyQb33nocfzOsLsqRa9mrOuyG8
+	ZIUdWh6xhYA==
+X-Google-Smtp-Source: AGHT+IF7hlrAjiNuM/KEHKAFY8yyo63CcT8LWrl4yHVQAKYWdCNBYFgKuNHYzShQe6cb3WgyW1zJUwj7YKrw
+X-Received: from wrbdk16.prod.google.com ([2002:a05:6000:b50:b0:3b7:d75e:c4a7])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:250e:b0:3b8:d1a4:bab9
+ with SMTP id ffacd0b85a97d-3c497369e98mr1055445f8f.45.1755759696323; Thu, 21
+ Aug 2025 00:01:36 -0700 (PDT)
+Date: Thu, 21 Aug 2025 07:01:29 +0000
+In-Reply-To: <20250821070130.2581766-1-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250821070130.2581766-1-abarnas@google.com>
 X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
-Message-ID: <20250821070130.2581766-1-abarnas@google.com>
-Subject: [PATCH v2 1/3] staging: media: atomisp: Remove unnecessary inline
- declaration in gdc.c
+Message-ID: <20250821070130.2581766-2-abarnas@google.com>
+Subject: [PATCH v2 2/3] staging: media: atomisp: Whitespaces style cleanup in gdc.c
 From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
 To: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
 	Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
@@ -84,54 +87,69 @@ Cc: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Get rid of gdc_reg_store() forward declaration because it brings no value
+Clean up coding style whitespace issues
+in drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc.c
+
+Fixes include:
+ - removal of unnecessary line breaks
+ - correcting spacing around operators
+ - correcting spaces between types and names
 
 Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
 ---
- .../pci/hive_isp_css_common/host/gdc.c        | 24 ++++---------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+ .../pci/hive_isp_css_common/host/gdc.c        | 21 +++++++------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc=
 .c b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc.c
-index 8bb78b4d7c677..bfda3cd13306e 100644
+index bfda3cd13306e..bd44410729bb4 100644
 --- a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc.c
 +++ b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/gdc.c
-@@ -11,13 +11,11 @@
-=20
- #include "assert_support.h"
-=20
--/*
-- * Local function declarations
-- */
--static inline void gdc_reg_store(
+@@ -24,9 +24,7 @@ static inline void gdc_reg_store(const gdc_ID_t ID, const=
+ unsigned int reg,
+ /*
+  * Exported function implementations
+  */
+-void gdc_lut_store(
 -    const gdc_ID_t		ID,
--    const unsigned int	reg,
--    const hrt_data		value);
-+static inline void gdc_reg_store(const gdc_ID_t ID, const unsigned int reg=
-,
-+				 const hrt_data value)
-+{
-+	ia_css_device_store_uint32(GDC_BASE[ID] + reg * sizeof(hrt_data), value);
-+}
+-    const int			data[4][HRT_GDC_N])
++void gdc_lut_store(const gdc_ID_t ID, const int data[4][HRT_GDC_N])
+ {
+ 	unsigned int i, lut_offset =3D HRT_GDC_LUT_IDX;
 =20
- #ifndef __INLINE_GDC__
- #include "gdc_private.h"
-@@ -92,15 +90,3 @@ int gdc_get_unity(
- 	(void)ID;
- 	return (int)(1UL << HRT_GDC_FRAC_BITS);
+@@ -34,15 +32,13 @@ void gdc_lut_store(
+ 	assert(HRT_GDC_LUT_COEFF_OFFSET <=3D (4 * sizeof(hrt_data)));
+=20
+ 	for (i =3D 0; i < HRT_GDC_N; i++) {
+-		hrt_data	entry_0 =3D data[0][i] & HRT_GDC_BCI_COEF_MASK;
+-		hrt_data	entry_1 =3D data[1][i] & HRT_GDC_BCI_COEF_MASK;
+-		hrt_data	entry_2 =3D data[2][i] & HRT_GDC_BCI_COEF_MASK;
+-		hrt_data	entry_3 =3D data[3][i] & HRT_GDC_BCI_COEF_MASK;
++		hrt_data entry_0 =3D data[0][i] & HRT_GDC_BCI_COEF_MASK;
++		hrt_data entry_1 =3D data[1][i] & HRT_GDC_BCI_COEF_MASK;
++		hrt_data entry_2 =3D data[2][i] & HRT_GDC_BCI_COEF_MASK;
++		hrt_data entry_3 =3D data[3][i] & HRT_GDC_BCI_COEF_MASK;
+=20
+-		hrt_data	word_0 =3D entry_0 |
+-				     (entry_1 << HRT_GDC_LUT_COEFF_OFFSET);
+-		hrt_data	word_1 =3D entry_2 |
+-				     (entry_3 << HRT_GDC_LUT_COEFF_OFFSET);
++		hrt_data word_0 =3D entry_0 | (entry_1 << HRT_GDC_LUT_COEFF_OFFSET);
++		hrt_data word_1 =3D entry_2 | (entry_3 << HRT_GDC_LUT_COEFF_OFFSET);
+=20
+ 		gdc_reg_store(ID, lut_offset++, word_0);
+ 		gdc_reg_store(ID, lut_offset++, word_1);
+@@ -83,8 +79,7 @@ void gdc_lut_convert_to_isp_format(const int in_lut[4][HR=
+T_GDC_N],
+ 	}
  }
--
--/*
-- * Local function implementations
-- */
--static inline void gdc_reg_store(
--    const gdc_ID_t		ID,
--    const unsigned int	reg,
--    const hrt_data		value)
--{
--	ia_css_device_store_uint32(GDC_BASE[ID] + reg * sizeof(hrt_data), value);
--	return;
--}
+=20
+-int gdc_get_unity(
+-    const gdc_ID_t		ID)
++int gdc_get_unity(const gdc_ID_t ID)
+ {
+ 	assert(ID < N_GDC_ID);
+ 	(void)ID;
 --=20
 2.51.0.rc2.233.g662b1ed5c5-goog
 
