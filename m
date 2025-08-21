@@ -1,177 +1,196 @@
-Return-Path: <linux-kernel+bounces-780589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD58B3059C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:32:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E89EB3058B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24BF43BFE12
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FCF51D0137D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB1B2D7DD0;
-	Thu, 21 Aug 2025 20:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A932E8E0F;
+	Thu, 21 Aug 2025 20:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzzx2DPw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rWOf8Uyg"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D21E2D7DC1;
-	Thu, 21 Aug 2025 20:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170DE2C0285;
+	Thu, 21 Aug 2025 20:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755807112; cv=none; b=LBxKfmlD6Dj1tU7LUlogj0X8MeMjdUfEmOedS711RtTbMNVxDPuOMZUrb/+W5UPfmJiQXCwY4z0KR7L749qQMwTfnUniXsXBH/w4Ml0n0q56OQfUfcE5IAbm8gUT0to8/A5oJfA3GaGB1tjhtoef0J1MSL8kv8S4/9f/XaXnBmg=
+	t=1755807179; cv=none; b=leEPL+BZDAVzuZ6tfYaINbRUgminCEv5JPH/V9HAfzeI4ZR7mKWUygTWaBcVtdIMGealYwEfwikDnabCH0DTMLrlwvpEJUoYjY/fEMTsCXnNzZYWMwajCcNzv7CaGlvqA960lTUJyn9Tf5tu5U1G4upKnIhGDdtaXkOy+SkqGjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755807112; c=relaxed/simple;
-	bh=7UOumc/dJtyyg/QHnSWjD+BJvJ9yDJg2TGgCVbIk6CM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUWfjXs53Ket06dTowXE1WvdWTATldTHmHq0BNp2PmurdlM+8agbSQS5bY1vUblXg3aF/PjQtqAgSQMMNK4ZqKFP9/DQIXgAtxsii8Iwzxm4LXg26j+YLTSkeYNxehT89dF+GIDnSIs0LL7uJgEHWpdIiubuklRaF+iQ+mp9XZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzzx2DPw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDEADC113CF;
-	Thu, 21 Aug 2025 20:11:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755807112;
-	bh=7UOumc/dJtyyg/QHnSWjD+BJvJ9yDJg2TGgCVbIk6CM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fzzx2DPw9mcPZMFjVVeE3vDfbB+KsTvTOnjiRss1yZIQQxDOGeQpx3470+JJWdfsO
-	 i1sriDdf22FFpp1If8dgdkNQL4vNBD4Cn5YKOPkKmm0KtBBoWaU13VzG/Zmxjehg8Q
-	 fNR+hoVptU7F4jnjPJ+lJ0sSYjpd5MOeiMuWnY3UImZtXq1Hrxtx72eDNAKimjhO1F
-	 XXth8RidvFkZmsKxU3c1knwY4UBeSmKZYRBZ79V3005xl8WsVLeuk0pzz7zBNps05W
-	 Fz2hQUQaw7Vw9LBHELUopkY2fTVbb0uAe+wJNQRaS12AIzxsan3ATUJjt/YmFOA3Y2
-	 RMAIs7/8XrHSA==
-Date: Thu, 21 Aug 2025 21:11:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Boris Gjenero <boris.gjenero@gmail.com>,
-	Christian Hewitt <christianshewitt@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Paolo Sabatino <paolo.sabatino@gmail.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v3 4/4] MAINTAINERS: Add entry for TM16xx driver
-Message-ID: <20250821-hardener-underpay-e30d1eb6de6b@spud>
-References: <20250820163120.24997-1-jefflessard3@gmail.com>
- <20250820163120.24997-5-jefflessard3@gmail.com>
- <CAHp75VfyR0cjnC6C6Xy8x9nTREdAgbjo18RLYNRzoLc6KmXnTA@mail.gmail.com>
- <20250820-clock-easiness-850342f716f3@spud>
- <CAHp75Ve-bM5ax3=0JkmaU-Kx1ME3VW34=Eqp2bRBA6mO6nZHmg@mail.gmail.com>
- <20250821-diminish-landlord-653a876e3cec@spud>
- <CAHp75VcDDCjt4vTpnSCprfAzK+czJiB_PRDXuLkvtuHZg4SLEw@mail.gmail.com>
- <CAHp75VfVYkmYFHdQgs1+3=jy50SuOaEXcT8Q8qXS34ctxRYKbg@mail.gmail.com>
+	s=arc-20240116; t=1755807179; c=relaxed/simple;
+	bh=Gt4kvNq3TwjewAaGjCsWVdpvg2PXkC+KlGQc3DaUCZk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cN1rOoIIf+0d2gy7xJ23qXKau1uBDNEETQVCRWpeqESXG0gnq3ZMRTFAbLhIVvxITpSVyUa6gIhVtmcbPlDFumnwh+Ez9ADb1ZNxLNOgBUpROH7dqlTJpGcU7ONbOBlGKiJp2yiW0yRTd3l94l1SFABxhclF5NNsydLPrQiPz4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rWOf8Uyg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Gt4kvNq3TwjewAaGjCsWVdpvg2PXkC+KlGQc3DaUCZk=; b=rWOf8UygtYyyAHBCXVjz6q/zG7
+	FmSCkNFJlitNCxgQW4cOzlpX/7X7HiiT5R0Z5tVl3bDEe53R+UBWkoR7ZqJfUpioxiH2xbmO/5RW7
+	BxuRHpjn2o5Pam/deqbd+fL/v//PDrrdJCGGtHAn0p3FRLj5nSDgeLGSC/OcU3rufBnBhoEc3sNuK
+	tA4bu2PUs7cRRZm0m//z/3K28+Lk0o9yM8vhHifaZ/JA4wbypBlRyDaJbY+F0TqJBnrB8967axUXM
+	pI6djPQEz7Zy/sdJBvhghRyYNf6V39253xl78AKulI7Ikkr11Nkl5yxJSdZUZPJqJMcyRZiogxUOU
+	ZFTsOdhA==;
+Received: from 54-240-197-225.amazon.com ([54.240.197.225] helo=freeip.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1upBeS-0000000D6F5-2pUw;
+	Thu, 21 Aug 2025 20:12:49 +0000
+Message-ID: <91008c3cd2502b3726992b0f490aac54a1efa186.camel@infradead.org>
+Subject: Re: [PATCH net-next v4] ptp: add Alibaba CIPU PTP clock driver
+From: David Woodhouse <dwmw2@infradead.org>
+To: Richard Cochran <richardcochran@gmail.com>, Jakub Kicinski
+ <kuba@kernel.org>
+Cc: Wen Gu <guwen@linux.alibaba.com>, andrew+netdev@lunn.ch, 
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+ xuanzhuo@linux.alibaba.com, dust.li@linux.alibaba.com,
+ netdev@vger.kernel.org,  linux-kernel@vger.kernel.org, Thomas Gleixner
+ <tglx@linutronix.de>
+Date: Thu, 21 Aug 2025 21:12:48 +0100
+In-Reply-To: <aKd8AtiXq0o09pba@hoboy.vegasvil.org>
+References: <20250812115321.9179-1-guwen@linux.alibaba.com>
+	 <20250815113814.5e135318@kernel.org> <aKd8AtiXq0o09pba@hoboy.vegasvil.org>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-CfPXHiyIKvjiTwFs/JVA"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="knF+Ka0cSC/ofLUy"
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfVYkmYFHdQgs1+3=jy50SuOaEXcT8Q8qXS34ctxRYKbg@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
 
---knF+Ka0cSC/ofLUy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+--=-CfPXHiyIKvjiTwFs/JVA
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 10:35:07PM +0300, Andy Shevchenko wrote:
-> On Thu, Aug 21, 2025 at 10:33=E2=80=AFPM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Thu, Aug 21, 2025 at 8:40=E2=80=AFPM Conor Dooley <conor@kernel.org>=
- wrote:
-> > > On Wed, Aug 20, 2025 at 11:29:47PM +0300, Andy Shevchenko wrote:
-> > > > On Wed, Aug 20, 2025 at 10:52=E2=80=AFPM Conor Dooley <conor@kernel=
-=2Eorg> wrote:
-> > > > > On Wed, Aug 20, 2025 at 10:08:06PM +0300, Andy Shevchenko wrote:
-> > > > > > On Wed, Aug 20, 2025 at 7:31=E2=80=AFPM Jean-Fran=C3=A7ois Less=
-ard
-> > > > > > <jefflessard3@gmail.com> wrote:
-> > > > > >
-> > > > > > Besides the missing commit message, the main part of this patch=
- should
-> > > > > > be merged with the patch 2 where the YAML file is being added.
-> > > > > > Otherwise it will be a dangling file. I dunno if DT tooling has=
- its
-> > > > > > own concept of a maintainer database, though.
-> > > > >
-> > > > > get_maintainer.pl will pull the maintainer out of the file, so it=
- won't be
-> > > > > truly dangling without a way to associate Jean-Fran=C3=A7ois with=
- this file, if
-> > > > > that;s what you mean.
-> > > >
-> > > > Let's assume patch 2 is applied and patch 4 is not, what will be the
-> > > > result of get_maintainer.pl for the YAML file?
-> > >
-> > > Andy Shevchenko <andy@kernel.org> (maintainer:AUXILIARY DISPLAY DRIVE=
-RS)
-> > > Geert Uytterhoeven <geert@linux-m68k.org> (reviewer:AUXILIARY DISPLAY=
- DRIVERS)
-> > > Rob Herring <robh@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED=
- DEVICE TREE BINDINGS)
-> > > Krzysztof Kozlowski <krzk+dt@kernel.org> (maintainer:OPEN FIRMWARE AN=
-D FLATTENED DEVICE TREE BINDINGS)
-> > > Conor Dooley <conor+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLAT=
-TENED DEVICE TREE BINDINGS)
-> > > "Jean-Fran=C3=A7ois Lessard" <jefflessard3@gmail.com> (commit_signer:=
-1/1=3D100%,authored:1/1=3D100%,added_lines:471/471=3D100%,in file)
-> > >                                                                      =
-                                               ^^^^^^^
-> >
-> > Which is a git lookup heuristics. If you disable that, there is no
-> > maintainer for the file. Try with --m and --no-git (IIRC the option
-> > name).
+On Thu, 2025-08-21 at 13:05 -0700, Richard Cochran wrote:
+> On Fri, Aug 15, 2025 at 11:38:14AM -0700, Jakub Kicinski wrote:
+>=20
+> > Maybe it's just me, but in general I really wish someone stepped up
+> > and created a separate subsystem for all these cloud / vm clocks.
+> > They have nothing to do with PTP. In my mind PTP clocks are simple HW
+> > tickers on which we build all the time related stuff. While this driver
+> > reports the base year for the epoch and leap second status via sysfs.
+>=20
+> Yeah, that is my feeling as well.
 
-Also, I think linewrap might done some fuckery cos it was the
-"in file" I was pointing to, pretty sure that's not coming from git.
-I tried ./scripts/get_maintainer.pl --nogit --nogit-fallback -f Documentati=
-on/devicetree/bindings/auxdisplay/titanmec,tm16xx.yaml
-(I think --nogit-fallback is the salient option, --nogit is a default
-actually) and I got:
-Andy Shevchenko <andy@kernel.org> (maintainer:AUXILIARY DISPLAY DRIVERS)
-Geert Uytterhoeven <geert@linux-m68k.org> (reviewer:AUXILIARY DISPLAY DRIVE=
-RS)
-Rob Herring <robh@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVIC=
-E TREE BINDINGS)
-Krzysztof Kozlowski <krzk+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLAT=
-TENED DEVICE TREE BINDINGS)
-Conor Dooley <conor+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED =
-DEVICE TREE BINDINGS)
-"Jean-Fran=C3=A7ois Lessard" <jefflessard3@gmail.com> (in file)
-                                                  ^^^^^^^
-and the in file still appears.
-devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TR=
-EE BINDINGS)
-linux-kernel@vger.kernel.org (open list)
-AUXILIARY DISPLAY DRIVERS status: Odd Fixes
+Agreed. While vmclock is presented as a PTP clock for compatibility,
+it's more than that because it can do better than simply giving a
+single precise point in time. It actually tells the guest the precise
+relationship between the hardware counter and real time, much like the
+private data structure exposed from the kernel to vDSO gettimeofday.
 
-> Actually doesn't checkpatch complain in this case?
+We should work on having the kernel consume that *directly* and feed
+its CLOCK_REALTIME with it. Having hundreds of guests on the same host
+all recalculate the same thing based on a set of points in time,
+obtained through /dev/ptpX or otherwise, is just daft.
 
-The usual warning about MAINTAINERS appears ye, the one that appears
-whenever a file is moved, created or deleted. I personally don't care
-about that, as long as the end result of a series deals with it since
-the file will produce the correct maintainer list in a bisection etc
-anyway. Of course, your subsystem your prerogative.
+--=-CfPXHiyIKvjiTwFs/JVA
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
---knF+Ka0cSC/ofLUy
-Content-Type: application/pgp-signature; name="signature.asc"
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDgyMTIwMTI0
+OFowLwYJKoZIhvcNAQkEMSIEINLpOUB3n9nzL+ofEzf6CqlH44XKmxIVzCYTyU8j3wNGMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAR+K8Ppwx4ftK
+fA78Yodun8PK9SQZlsYBIwIgkDJTWbmKQPno3Sq+lA95TN2PuOqCiRPlhPmSkT74t40GCjeaStJm
+oGHpwXS5QKf6wm6llCMGkx4RKXTaBYMMxP6X+kKc4KpZZ41fQuOAvZywHkJ9pkQXXX8NelHG2ST2
+an6bHvrntbtZodMgaN8vZ7AhDy+TqotNcoeiv6s07oiQQsfP7YO/UyKOKJwmCnClH9/XaPs2gT5p
+jD7SPfPDSyLBybR7q/75978zx8Nw3ecU0BRGZ1cvJK4rju56RGKCLn1EP477tz6kTyyGrxTzeJs8
+NL/y0M6tDNX/4TY31wFXAEx6JwI4BI3DttWef3paVNALA0Y3lyQnHtLXa9JYSkdN+23NlgJZgMGB
+kh/vLhTFkwQ63q/xwr+/ZlFbuIG5fkdlwFinzRIUwOGP06Sw+ty5JExmfxk1SM4jJZyQOEqbs6OG
+R4saeD3tWcNOvkBQXKjSOlxf0yXpe6pm0ip6NVpYirtbT+lA9IIbXqLhhNJUDlLkRzP47a804W2H
+mtvHm1VsVZPd+lTsEo/UOAbH8GsAtZDjZsFvvoJ/scW8m/fQmewhXDQb2U6iUhiKAgiYtKMJM1Ao
+C838+9aEvf6kZZMEq7Q4u4kk03A2NUXLzQR65GAMCeIuitxqU1G5LdsRC7nTyfkAAAAAAAA=
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKd9ggAKCRB4tDGHoIJi
-0rumAP9De46/73MOVgngZyV5AK9LyWOXePmU5X0dCUT8/XjpKwEAnsRD5eJ+kjTt
-lmla59yRJHpp9dIezZkkESz+KLp6rg0=
-=Lif/
------END PGP SIGNATURE-----
-
---knF+Ka0cSC/ofLUy--
+--=-CfPXHiyIKvjiTwFs/JVA--
 
