@@ -1,261 +1,191 @@
-Return-Path: <linux-kernel+bounces-780081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74045B2FD42
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:49:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929B0B2FD82
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719A3A0780C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:43:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1ABB1BA0521
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19052BDC38;
-	Thu, 21 Aug 2025 14:43:13 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637F3215175;
-	Thu, 21 Aug 2025 14:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F4A2E2DDE;
+	Thu, 21 Aug 2025 14:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pv0Yj+yW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D412DF714
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755787392; cv=none; b=hDmUR0VVlNLjAgKil5tsluDib/AsJvILzFhRohAEIpLb1FnGTWFfm7qWyatkRRS4YM9tyYYiOAywp48favCukWOy7Ew0yWe2zPpN+5eWk7HPMqCKrYD9XFo+VJ5Gq9QqOMHUu7KlxGxfSts3VNvtBs3H33VZ+nxIb9QKaGl6He0=
+	t=1755787755; cv=none; b=PHDGcxDsqljgEOwHN5nvD+A804cTYd/SFY7Az++1kCkXIvm5R5I7YYD4WrT+dFd3iO6kghCkjvMHMoPNEgGCPWApu3zkMwCYw4rtQYe5YA2RMad0dmOLs5sPSdrr0iYdaYrSRQcYb0PFwobzpdNzJZhc12uGkQjXKSH82b23t9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755787392; c=relaxed/simple;
-	bh=nqN0eKRTGHrfWvACIIjuTnOAdlvzHw7y/Yc2sXNZMY8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EBRemhbBmVPNGmF5cE/VhPfQH28TyUokXr2LR4vWPdUm7lZWrNr2KhlUm7BIHapuA2dXQAKMVlE4WtG0VG5QWkDuAcr6TaQ6VVCnzlnJj5eDryfJAOCTsJcU6nBtNrEI3HK2jN4k6NSLuW3w2Wbl3S4FUN7eHyXj8vANPMqwd8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8Bx1tB6MKdoBXkBAA--.2734S3;
-	Thu, 21 Aug 2025 22:43:06 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJBxzsF3MKdo0NpdAA--.294S4;
-	Thu, 21 Aug 2025 22:43:06 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Hengqi Chen <hengqi.chen@gmail.com>
-Cc: loongarch@lists.linux.dev,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v2 2/2] LoongArch: BPF: Add 12 function arguments support for trampoline
-Date: Thu, 21 Aug 2025 22:43:02 +0800
-Message-ID: <20250821144302.14010-3-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20250821144302.14010-1-yangtiezhu@loongson.cn>
-References: <20250821144302.14010-1-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1755787755; c=relaxed/simple;
+	bh=16DvelkAtFnwqhYJXv8yjuKzkcAxxRe34gF8gj1uVWw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=HWhl9mGGm6e1bkn/aEbTHWPdrNQw8K6EjQrTA4CijNsU68JUd9qQCtqR+u9eBOS2rZRtlXPU7zaTVilPS4spbBfMHEvIsU8HDb3QhT17xbK3hwWdIcSJ96Rj9t4RoZFDKcWV81AJD8kXj4Q4U5PpRdQGBDLIp6q050lgdCjVx4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pv0Yj+yW; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755787755; x=1787323755;
+  h=date:from:to:cc:subject:message-id;
+  bh=16DvelkAtFnwqhYJXv8yjuKzkcAxxRe34gF8gj1uVWw=;
+  b=Pv0Yj+yWzRuIO5Pi4ivWSz56PPGsg8ljcTv7RZDGirsOkARm3vhA2zMg
+   oiwiEdvHqG8t216u7b/oSaKjv7C0tB8HhOvLcOulPflS+LZXUoMgpc2T3
+   OVwZosczgm3Mbs0zD5vGbSNbMVAxihL2ltUrLSyKpHEelZHd5JCapLhNJ
+   SJs7Yih+OSL4Fy43uI7u5wD7WXDEZHXVbUlRv8qR3kSU+paMDjUtxkisi
+   i+HkZLAEHnM9bjh1ceIH5C9sNOxPSmf587ksIqgFzQcTLs2AEjTNk+D4g
+   TP30YYZlGsmWstlyHA0yXtn7+cRmXIEViFxF8tFjnGQsOpdaWHFAiisw4
+   g==;
+X-CSE-ConnectionGUID: +7hLwJS7R6KwzIBZe/WC0Q==
+X-CSE-MsgGUID: vhN8vuz5REuPgpCVM3n/hg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="75663510"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="75663510"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 07:49:14 -0700
+X-CSE-ConnectionGUID: Kiz6ExWcRUy67Tfa0YnMkg==
+X-CSE-MsgGUID: LIMnNTvkSZSSGA/32dPPRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="205606684"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 21 Aug 2025 07:49:12 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1up6bG-000KNn-0Z;
+	Thu, 21 Aug 2025 14:49:10 +0000
+Date: Thu, 21 Aug 2025 22:43:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/microcode] BUILD SUCCESS
+ 952df63ef426b21d6da14bb48748f12b0ae2fe36
+Message-ID: <202508212222.DxtAdSkW-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxzsF3MKdo0NpdAA--.294S4
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Gr15uw4DWF4DuFW7WF1fXwc_yoWxWrW8pF
-	1qkan09F18tFW7WaykJF4Uur1YkFs3A3yYgrW7Ja92gw45ur98XayrKFnIkFy5Gr1kAr1x
-	Aws0vrWYyF1xJwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r126r13M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v2
-	6F4j6r4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwNVyUUUUU
 
-Currently, LoongArch bpf trampoline supports up to 8 function arguments.
-According to the statistics from commit 473e3150e30a ("bpf, x86: allow
-function arguments up to 12 for TRACING"), there are over 200 functions
-accept 9 to 12 arguments, so add 12 arguments support for trampoline.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/microcode
+branch HEAD: 952df63ef426b21d6da14bb48748f12b0ae2fe36  x86/microcode/intel: Refresh the revisions that determine old_microcode
 
-The initial aim is to pass the following related testcases:
+elapsed time: 962m
 
-  sudo ./test_progs -a tracing_struct/struct_many_args
-  sudo ./test_progs -a fentry_test/fentry_many_args
-  sudo ./test_progs -a fexit_test/fexit_many_args
+configs tested: 99
+configs skipped: 119
 
-but there exist some other problems now, maybe it is related with
-the following failed testcase:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-  sudo ./test_progs -t module_attach
+tested configs:
+alpha                             allnoconfig    clang-22
+alpha                               defconfig    gcc-15.1.0
+arc                               allnoconfig    clang-22
+arc                   randconfig-001-20250821    clang-22
+arc                   randconfig-002-20250821    clang-22
+arm                               allnoconfig    clang-22
+arm                     am200epdkit_defconfig    gcc-15.1.0
+arm                   randconfig-001-20250821    clang-22
+arm                   randconfig-002-20250821    clang-22
+arm                   randconfig-003-20250821    clang-22
+arm                   randconfig-004-20250821    clang-22
+arm                           sama7_defconfig    gcc-15.1.0
+arm                       spear13xx_defconfig    gcc-15.1.0
+arm                           spitz_defconfig    gcc-15.1.0
+arm64                             allnoconfig    clang-22
+arm64                 randconfig-001-20250821    clang-22
+arm64                 randconfig-002-20250821    clang-22
+arm64                 randconfig-003-20250821    clang-22
+arm64                 randconfig-004-20250821    clang-22
+csky                              allnoconfig    clang-22
+hexagon                           allnoconfig    clang-22
+i386                             allmodconfig    clang-20
+i386                              allnoconfig    clang-20
+i386                             allyesconfig    clang-20
+i386        buildonly-randconfig-001-20250821    gcc-12
+i386        buildonly-randconfig-002-20250821    gcc-12
+i386        buildonly-randconfig-003-20250821    clang-20
+i386        buildonly-randconfig-003-20250821    gcc-12
+i386        buildonly-randconfig-004-20250821    gcc-12
+i386        buildonly-randconfig-005-20250821    gcc-12
+i386        buildonly-randconfig-006-20250821    clang-20
+i386        buildonly-randconfig-006-20250821    gcc-12
+i386                                defconfig    clang-20
+i386                  randconfig-011-20250821    gcc-12
+i386                  randconfig-012-20250821    gcc-12
+i386                  randconfig-013-20250821    gcc-12
+i386                  randconfig-014-20250821    gcc-12
+i386                  randconfig-015-20250821    gcc-12
+i386                  randconfig-016-20250821    gcc-12
+i386                  randconfig-017-20250821    gcc-12
+loongarch                         allnoconfig    clang-22
+m68k                              allnoconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-15.1.0
+nios2                               defconfig    gcc-15.1.0
+openrisc                          allnoconfig    clang-22
+parisc                            allnoconfig    clang-22
+parisc                              defconfig    gcc-15.1.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                           allnoconfig    clang-22
+powerpc                 mpc8315_rdb_defconfig    gcc-15.1.0
+powerpc                      ppc6xx_defconfig    gcc-15.1.0
+riscv                             allnoconfig    clang-22
+riscv                 randconfig-001-20250821    clang-18
+riscv                 randconfig-002-20250821    clang-18
+s390                              allnoconfig    clang-22
+s390                  randconfig-001-20250821    clang-18
+s390                  randconfig-002-20250821    clang-18
+sh                                allnoconfig    gcc-15.1.0
+sh                         apsh4a3a_defconfig    gcc-15.1.0
+sh                    randconfig-001-20250821    clang-18
+sh                    randconfig-002-20250821    clang-18
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250821    clang-18
+sparc                 randconfig-002-20250821    clang-18
+sparc64               randconfig-001-20250821    clang-18
+sparc64               randconfig-002-20250821    clang-18
+um                                allnoconfig    clang-22
+um                    randconfig-001-20250821    clang-18
+um                    randconfig-002-20250821    clang-18
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250821    clang-20
+x86_64      buildonly-randconfig-002-20250821    clang-20
+x86_64      buildonly-randconfig-003-20250821    clang-20
+x86_64      buildonly-randconfig-004-20250821    clang-20
+x86_64      buildonly-randconfig-004-20250821    gcc-12
+x86_64      buildonly-randconfig-005-20250821    clang-20
+x86_64      buildonly-randconfig-006-20250821    clang-20
+x86_64                              defconfig    clang-20
+x86_64                                  kexec    clang-20
+x86_64                randconfig-001-20250821    clang-20
+x86_64                randconfig-002-20250821    clang-20
+x86_64                randconfig-003-20250821    clang-20
+x86_64                randconfig-004-20250821    clang-20
+x86_64                randconfig-005-20250821    clang-20
+x86_64                randconfig-006-20250821    clang-20
+x86_64                randconfig-007-20250821    clang-20
+x86_64                randconfig-008-20250821    clang-20
+x86_64                               rhel-9.4    clang-20
+x86_64                          rhel-9.4-func    clang-20
+x86_64                    rhel-9.4-kselftests    clang-20
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250821    clang-18
+xtensa                randconfig-002-20250821    clang-18
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/net/bpf_jit.c | 79 +++++++++++++++++++++++++-----------
- 1 file changed, 55 insertions(+), 24 deletions(-)
-
-diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-index 2bdc0e535468..805fa6dba2d8 100644
---- a/arch/loongarch/net/bpf_jit.c
-+++ b/arch/loongarch/net/bpf_jit.c
-@@ -1340,26 +1340,48 @@ int bpf_arch_text_invalidate(void *dst, size_t len)
- 	return ret;
- }
- 
--static void store_args(struct jit_ctx *ctx, int nregs, int args_off)
-+static void store_args(struct jit_ctx *ctx, int nr_arg_slots, int args_off)
- {
- 	int i;
- 
--	for (i = 0; i < nregs; i++) {
--		emit_insn(ctx, std, LOONGARCH_GPR_A0 + i, LOONGARCH_GPR_FP, -args_off);
-+	for (i = 0; i < nr_arg_slots; i++) {
-+		if (i < LOONGARCH_MAX_REG_ARGS) {
-+			emit_insn(ctx, std, LOONGARCH_GPR_A0 + i, LOONGARCH_GPR_FP, -args_off);
-+		} else {
-+			/* skip slots for T0 and FP of traced function */
-+			emit_insn(ctx, ldd, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP,
-+				  16 + (i - LOONGARCH_MAX_REG_ARGS) * 8);
-+			emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -args_off);
-+		}
- 		args_off -= 8;
- 	}
- }
- 
--static void restore_args(struct jit_ctx *ctx, int nregs, int args_off)
-+static void restore_args(struct jit_ctx *ctx, int nr_reg_args, int args_off)
- {
- 	int i;
- 
--	for (i = 0; i < nregs; i++) {
-+	for (i = 0; i < nr_reg_args; i++) {
- 		emit_insn(ctx, ldd, LOONGARCH_GPR_A0 + i, LOONGARCH_GPR_FP, -args_off);
- 		args_off -= 8;
- 	}
- }
- 
-+static void restore_stk_args(struct jit_ctx *ctx, int nr_stk_args,
-+			       int args_off, int stk_arg_off)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr_stk_args; i++) {
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP,
-+			  -(args_off - LOONGARCH_MAX_REG_ARGS * 8));
-+		emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP,
-+			  -stk_arg_off);
-+		args_off -= 8;
-+		stk_arg_off -= 8;
-+	}
-+}
-+
- static int invoke_bpf_prog(struct jit_ctx *ctx, struct bpf_tramp_link *l,
- 			   const struct btf_func_model *m, int args_off,
- 			   int retval_off, int run_ctx_off, bool save_ret)
-@@ -1477,7 +1499,7 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 					 void *func_addr, u32 flags)
- {
- 	int i, ret, save_ret;
--	int stack_size = 0, nregs = m->nr_args;
-+	int stack_size = 0, nr_arg_slots = 0, stk_arg_off;
- 	int retval_off, args_off, nregs_off, ip_off, run_ctx_off, sreg_off, tcc_ptr_off;
- 	bool is_struct_ops = flags & BPF_TRAMP_F_INDIRECT;
- 	void *orig_call = func_addr;
-@@ -1511,25 +1533,27 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	 * FP - sreg_off    [ callee saved reg  ]
- 	 *
- 	 * FP - tcc_ptr_off [ tail_call_cnt_ptr ]
-+	 *
-+	 *                  [ stack_argN        ]
-+	 *                  [ ...               ]
-+	 * FP - stk_arg_off [ stack_arg1        ] BPF_TRAMP_F_CALL_ORIG
- 	 */
- 
-+	if (m->nr_args > MAX_BPF_FUNC_ARGS)
-+		return -ENOTSUPP;
-+
- 	/* extra regiters for struct arguments */
- 	for (i = 0; i < m->nr_args; i++) {
--		if (m->arg_flags[i] & BTF_FMODEL_STRUCT_ARG) {
--			/*
--			 * The struct argument size is at most 16 bytes,
--			 * enforced by the verifier. The struct argument
--			 * may be passed in a pair of registers if its
--			 * size is more than 8 bytes and no more than 16
--			 * bytes.
--			 */
--			nregs += round_up(m->arg_size[i], 8) / 8 - 1;
--		}
-+		/*
-+		 * The struct argument size is at most 16 bytes,
-+		 * enforced by the verifier. The struct argument
-+		 * may be passed in a pair of registers if its
-+		 * size is more than 8 bytes and no more than 16
-+		 * bytes.
-+		 */
-+		nr_arg_slots += round_up(m->arg_size[i], 8) / 8;
- 	}
- 
--	if (nregs > LOONGARCH_MAX_REG_ARGS)
--		return -ENOTSUPP;
--
- 	if (flags & (BPF_TRAMP_F_ORIG_STACK | BPF_TRAMP_F_SHARE_IPMODIFY))
- 		return -ENOTSUPP;
- 
-@@ -1546,7 +1570,7 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	}
- 
- 	/* Room of trampoline frame to store args */
--	stack_size += nregs * 8;
-+	stack_size += nr_arg_slots * 8;
- 	args_off = stack_size;
- 
- 	/* Room of trampoline frame to store args number */
-@@ -1572,8 +1596,14 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 		tcc_ptr_off = stack_size;
- 	}
- 
-+	if ((flags & BPF_TRAMP_F_CALL_ORIG) && (nr_arg_slots - LOONGARCH_MAX_REG_ARGS > 0))
-+		stack_size += (nr_arg_slots - LOONGARCH_MAX_REG_ARGS) * 8;
-+
- 	stack_size = round_up(stack_size, 16);
- 
-+	/* Room for args on stack must be at the top of stack */
-+	stk_arg_off = stack_size;
-+
- 	if (is_struct_ops) {
- 		/*
- 		 * For the trampoline called directly, just handle
-@@ -1615,10 +1645,10 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	}
- 
- 	/* store arg regs count */
--	move_imm(ctx, LOONGARCH_GPR_T1, nregs, false);
-+	move_imm(ctx, LOONGARCH_GPR_T1, nr_arg_slots, false);
- 	emit_insn(ctx, std, LOONGARCH_GPR_T1, LOONGARCH_GPR_FP, -nregs_off);
- 
--	store_args(ctx, nregs, args_off);
-+	store_args(ctx, nr_arg_slots, args_off);
- 
- 	/* To traced function */
- 	/* Ftrace jump skips 2 NOP instructions */
-@@ -1650,7 +1680,8 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	}
- 
- 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
--		restore_args(ctx, nregs, args_off);
-+		restore_args(ctx, min_t(int, nr_arg_slots, LOONGARCH_MAX_REG_ARGS), args_off);
-+		restore_stk_args(ctx, nr_arg_slots - LOONGARCH_MAX_REG_ARGS, args_off, stk_arg_off);
- 
- 		if (flags & BPF_TRAMP_F_TAIL_CALL_CTX)
- 			emit_insn(ctx, ldd, REG_TCC, LOONGARCH_GPR_FP, -tcc_ptr_off);
-@@ -1687,7 +1718,7 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	}
- 
- 	if (flags & BPF_TRAMP_F_RESTORE_REGS)
--		restore_args(ctx, nregs, args_off);
-+		restore_args(ctx, min_t(int, nr_arg_slots, LOONGARCH_MAX_REG_ARGS), args_off);
- 
- 	if (save_ret) {
- 		emit_insn(ctx, ldd, LOONGARCH_GPR_A0, LOONGARCH_GPR_FP, -retval_off);
--- 
-2.42.0
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
