@@ -1,174 +1,118 @@
-Return-Path: <linux-kernel+bounces-780326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76079B30073
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3483BB300AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EFF21886B03
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:47:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E85188DC76
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A900C2DA767;
-	Thu, 21 Aug 2025 16:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88982FB621;
+	Thu, 21 Aug 2025 17:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="cUSP42xE"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OL94fan1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542112E5415;
-	Thu, 21 Aug 2025 16:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242AE1E8333;
+	Thu, 21 Aug 2025 17:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755794811; cv=none; b=dXGQW1oBDfzqsiRVtc89xkH6EXh7j+ThOWH4DIF4Y2TpOj28zQcG3PP9lIca657GUXoQcZpiKiSpgnFu0AEe0s322yC7CPq5QISfskbZn4/kk30Mdx+PFgRrzkDZh25mOaLhEC8PtOan8gO9N3DhSSv58cm2W/in8fNRmetxrkA=
+	t=1755795733; cv=none; b=MbeFUDXWRrgBoLmPHHU162CWKcLk7qs9yWWMGQ9Nx89pRF5XnH69Eodqxg6IUI4rcW18iffJNiAiPP+WVsH+vD8Dw4nAwo+M0Klar1Gmhparpw1w0rvga9vm8DlaUvIBOm5hYktcoqA9+n7KRcGZqUbfGcavQ+d1hbT4X5VBctg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755794811; c=relaxed/simple;
-	bh=ujRqxGyBZMDrdRao5SiFmxd42YAaRWDp2QZB9SyY/pU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K427CkVvN5z00Ai66UQLZ39TGTKoQvhxszGdGMsGI5NBmFTkDc3BoQaRxml/aIrUKbj6R3ZSjJXcXGpV2DIVBM8RMgomrOh8FuM70wkZ91MAmGZ5wTinsceyIOla8fyd0BxoacLvsRfhBo7zpbOb0butSZ611DlVqyMaSuEnVLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=cUSP42xE; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LDWkwk032561;
-	Thu, 21 Aug 2025 16:46:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pps0720; bh=fUnaSevVJbXkTgu4uFDDfhr9K+M8eQzc/Tf4C
-	x+wAoU=; b=cUSP42xEqwFjRXaOMpKctocd+FI7jJym7/qx2Uadv26jo5Q4yUXjV
-	AsyJSMQWLlDO7HzEdRP3I42oW4s0nYBXY+ctcJ7s11drqtQYipv5y7duHeZu7XKs
-	unKW+CFDAvPukAXl1U0uAqhbActnEZOZDVTcPatTeAjBWwsPZiIb1kLISFughU3R
-	CjBJ668cRGGHcVdxIdo6BRI2tnDcIe2AhyiN5wRz6iiK7SKSDDvGuIPZymUha5ML
-	6TvQ0H2Ig7KolGJ8eQc/rker6LOGry/zRR3LITfrGepxzHz0AMn64e+ZMdYflBvq
-	XgO0nPOUu9BOM+qxkFboUEs30OyWbmd3A==
-Received: from p1lg14879.it.hpe.com ([16.230.97.200])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48nyktcgks-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 16:46:03 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id BE8681317E;
-	Thu, 21 Aug 2025 16:46:01 +0000 (UTC)
-Received: from dog.eag.rdlabs.hpecorp.net (unknown [16.231.227.36])
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTP id 227BB806495;
-	Thu, 21 Aug 2025 16:46:00 +0000 (UTC)
-Received: by dog.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
-	id 9F9EF300A7CBA; Thu, 21 Aug 2025 11:45:59 -0500 (CDT)
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: akpm@linux-foundation.org, david@redhat.com, tony.luck@intel.com,
-        bp@alien8.de, linmiaohe@huawei.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-        rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-        nao.horiguchi@gmail.com, jane.chu@oracle.com, osalvador@suse.de,
-        Kyle Meyer <kyle.meyer@hpe.com>
-Subject: [PATCH] mm/memory-failure: Do not call action_result() on already poisoned pages
-Date: Thu, 21 Aug 2025 11:44:45 -0500
-Message-Id: <20250821164445.14467-1-kyle.meyer@hpe.com>
-X-Mailer: git-send-email 2.26.2
+	s=arc-20240116; t=1755795733; c=relaxed/simple;
+	bh=QlyP+EybHdG/BjvDs4e1GOTfEiPxKwv1SmW3xs+WcNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PMNqmwDKNSiMv1wsR6lcHVsV1XMQfG9w2zwmX/hl833HI8oChYm7Pk5CNy/+pYeS8Czb1Cd1jmdXfWC3bpSSeJAyqDcky2CU2mzpYSalmezhwrIGFrhOyBi4R/4i/3k/DJHvnon1nOyAcwTVhs5/XAMGrwKNE9zmJHAO6hJ2U9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OL94fan1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F21C4CEEB;
+	Thu, 21 Aug 2025 17:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755795732;
+	bh=QlyP+EybHdG/BjvDs4e1GOTfEiPxKwv1SmW3xs+WcNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OL94fan15xuckPr35axKla7h8MZtGA8yIcVd+buWXzAQSG05oIGUBiqEBb53XRhle
+	 JmeFYsuGXJGOunPKsS1Lbfbr70a40ig3+CNUml+LCM4CLjRStOkv9+PzortwXBztYv
+	 RkypUQ7qLmOuK0P5rdvLNOi1hBU/5yZ+GdWob8NfDtHKYfXYdCVz9UH0/XTolmBFCh
+	 kZoIzbEGtG9kun8xTlL20/iCNyBFn13AtJsXb/uF+eLHMoMU+MHvFu8nOb9qMCU/zR
+	 RqEipU7pPALnBOKvCOhPuQVSUaCq7k2Miy1P5EUFNH+taITrJVdEsun71ru50sR1kH
+	 9W8Udw2mBmj2A==
+Date: Fri, 22 Aug 2025 00:44:54 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Michael =?utf-8?B?QsO8c2No?= <mb@bues.ch>,
+	Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Michael Buesch <m@bues.ch>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Andy Shevchenko <andy@kernel.org>, Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux@ew.tq-group.com
+Subject: Re: [PATCH 01/16] gpio: dwapb: Use modern PM macros
+Message-ID: <aKdNBhpNofchexgb@xhacker>
+References: <20250820154037.22228-1-jszhang@kernel.org>
+ <20250820154037.22228-2-jszhang@kernel.org>
+ <CAHp75VfxSBPzvohrW4tywd4VS0r1_mp8WLvdKcN_yn=zNS49HQ@mail.gmail.com>
+ <20250820191039.4f8af41e@barney>
+ <CAHp75Vdpgf3DUMQw0mYqhG=9UrYG8KWrobbd387QZapBor_LHg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIxMDEzNyBTYWx0ZWRfX86dp1AjTaBTA
- vsn7i9VNlVA9yRA8b1YVFhpaYrGPhPzIQnvytlwiWnECD4mOv0sHCsfY5+GIV3yx+22gXDxtCFK
- 9ApcUlDdssy1HrKYc99CdopWpiVNCqmulZYWZKxul1+FKILvLh0hfK1BYn7MoNLyOyR+PZIQDvm
- jXEgsc6qhrDYk37vncCTI4lEe/jgoliJYj5lWyZAV/OMBhA4qg2JQArmvHrvgFHUFr7H0x3oHCt
- YUoBfLltvwhhbourVvz8njeslmAZmHq4j5HL/ex3VW6IaI7FrGv1wIgCtrrriBVDKtR4A9r98NG
- 8cNsldJ193kA4Slsbt9IgR7Qaxc+tQFOEvRiyXMnfl22ElvT5l1aYLZzELtzLSJDRZveQwUAKfG
- kXDcqAKzjv+K2T0tp1VvQ2vghQ9WN7pawdsz1PhGvdyPlj1dTGgCarVktK+Pdt+x9cYfEyyh
-X-Authority-Analysis: v=2.4 cv=Ke2LcQYD c=1 sm=1 tr=0 ts=68a74d4b cx=c_pps
- a=5jkVtQsCUlC8zk5UhkBgHg==:117 a=5jkVtQsCUlC8zk5UhkBgHg==:17
- a=2OwXVqhp2XgA:10 a=MvuuwTCpAAAA:8 a=t3O-YQAXfeJ1jdMRbXsA:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: Q9Y7qVEh7pnZNRpL-0IN5rxEWREnYZUd
-X-Proofpoint-GUID: Q9Y7qVEh7pnZNRpL-0IN5rxEWREnYZUd
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 adultscore=0 suspectscore=0
- lowpriorityscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0 malwarescore=0
- spamscore=0 phishscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2508110000 definitions=main-2508210137
+In-Reply-To: <CAHp75Vdpgf3DUMQw0mYqhG=9UrYG8KWrobbd387QZapBor_LHg@mail.gmail.com>
 
-Calling action_result() on already poisoned pages causes issues:
+On Wed, Aug 20, 2025 at 10:04:39PM +0300, Andy Shevchenko wrote:
+> On Wed, Aug 20, 2025 at 8:11 PM Michael Büsch <mb@bues.ch> wrote:
+> >
+> > On Wed, 20 Aug 2025 19:54:44 +0300
+> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> >
+> > > > The dwapb_context structure is always embedded into struct
+> > > > dwapb_gpio_port to simplify code. Sure this brings a tiny 36 bytes
+> > > > data overhead for !CONFIG_PM_SLEP.
+> > >
+> > > I don't think it's a good approach to add a lot of data for peanuts in
+> > > case of PM_SLEEP=n.
+> >
+> > It wastes 36 bytes in case of PM=n.
+> 
+> ...per port.
+> 
+> > The driver currently allocates the struct with kzalloc and stores a pointer to it
+> > in case of PM=y.
+> > So this probably has an overhead in the same order of magnitude (pointer +
+> > malloc overhead/alignment/fragmentation) in case of PM=y now.
+> 
+> ...per driver.
 
-* The amount of hardware corrupted memory is incorrectly incremented.
-* NUMA node memory failure statistics are incorrectly updated.
-* Redundant "already poisoned" messages are printed.
+Before the patch, struct dwapb_context *ctx is also per port.
 
-Do not call action_result() on already poisoned pages and drop unused
-MF_MSG_ALREADY_POISONED.
+> 
+> So, I can't say it's equal, but I leave this to maintainers to decide,
 
-Fixes: b8b9488d50b7 ("mm/memory-failure: improve memory failure action_result messages")
-Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
----
- include/linux/mm.h      | 1 -
- include/ras/ras_event.h | 1 -
- mm/memory-failure.c     | 3 ---
- 3 files changed, 5 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 1ae97a0b8ec7..09ce81ef7afc 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4005,7 +4005,6 @@ enum mf_action_page_type {
- 	MF_MSG_BUDDY,
- 	MF_MSG_DAX,
- 	MF_MSG_UNSPLIT_THP,
--	MF_MSG_ALREADY_POISONED,
- 	MF_MSG_UNKNOWN,
- };
- 
-diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-index c8cd0f00c845..f62a52f5bd81 100644
---- a/include/ras/ras_event.h
-+++ b/include/ras/ras_event.h
-@@ -374,7 +374,6 @@ TRACE_EVENT(aer_event,
- 	EM ( MF_MSG_BUDDY, "free buddy page" )				\
- 	EM ( MF_MSG_DAX, "dax page" )					\
- 	EM ( MF_MSG_UNSPLIT_THP, "unsplit thp" )			\
--	EM ( MF_MSG_ALREADY_POISONED, "already poisoned" )		\
- 	EMe ( MF_MSG_UNKNOWN, "unknown page" )
- 
- /*
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index e2e685b971bb..7839ec83bc1d 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -948,7 +948,6 @@ static const char * const action_page_types[] = {
- 	[MF_MSG_BUDDY]			= "free buddy page",
- 	[MF_MSG_DAX]			= "dax page",
- 	[MF_MSG_UNSPLIT_THP]		= "unsplit thp",
--	[MF_MSG_ALREADY_POISONED]	= "already poisoned",
- 	[MF_MSG_UNKNOWN]		= "unknown page",
- };
- 
-@@ -2090,7 +2089,6 @@ static int try_memory_failure_hugetlb(unsigned long pfn, int flags, int *hugetlb
- 		if (flags & MF_ACTION_REQUIRED) {
- 			folio = page_folio(p);
- 			res = kill_accessing_process(current, folio_pfn(folio), flags);
--			action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
- 		}
- 		return res;
- 	} else if (res == -EBUSY) {
-@@ -2283,7 +2281,6 @@ int memory_failure(unsigned long pfn, int flags)
- 			res = kill_accessing_process(current, pfn, flags);
- 		if (flags & MF_COUNT_INCREASED)
- 			put_page(p);
--		action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
- 		goto unlock_mutex;
- 	}
- 
--- 
-2.50.1
-
+What in my mind now: this is linux rather than RTOS. After greping the
+the arm/arm64/riscv dts dir, the max port number is 6, the berlin2q
+soc families, so this means current we have wasted 216 bytes memory which
+is trivial compared to the system memory.
 
