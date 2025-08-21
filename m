@@ -1,84 +1,112 @@
-Return-Path: <linux-kernel+bounces-780087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A8EB2FD79
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FCBB2FD81
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B688D1C20BBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:48:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F8DB64291D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20EB2E3363;
-	Thu, 21 Aug 2025 14:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945312E7F3F;
+	Thu, 21 Aug 2025 14:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdVvUYzQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iE80OWAW"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558E22E092D;
-	Thu, 21 Aug 2025 14:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BE22DC322;
+	Thu, 21 Aug 2025 14:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755787682; cv=none; b=tPVjcNgnj0dJek3bPCvkFsLdwpIDm08xRuBDMf3o0n0WSt5NsdLM9iTry9bv6kn4W8DjKWVEngkSTy9YwVdVck7N3MF9NVFoWj+ee1X62zxfsyYInl4zEs74IEfzxid9eZPdEQoTld0KywcBI5QcSFDmE8Aetf/pxBTTU3X7p7s=
+	t=1755787696; cv=none; b=ssrDbw/xc1rnnAeX27/5/E3xSS9sSSnEHJtdRzxeh6XxPI5SWSeM9DM7D4mMeCz5lhCXD+Tk1aQUh6zu/PfwVtCqVkjWkRFy+ZxOFzeR7+g0KaMoZ/j6C0rpWdJYewqVBk4yAbGPLP0XVwgnn/AAPFQbz2G+1+B1GXR+ubi4WCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755787682; c=relaxed/simple;
-	bh=tB7QtdU0NteP+l/nGwCklPPyZMU+e1CWu4so91o586A=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=eyXx99VlcpojiFKInqS/H5a3Q1BYqpuO8kR1jfMt0fK/yMUlWH9/ReeMnqb/6znq+wI7G+xxXPuTrDv57U8UBrPxCj/M9RmU7L7rFj3s79R8EWGNf2hT5o1SJ4Q+3v4q9vuLp9kPR2Zi8+rHMj6vVe/BY7Sov3J9FvXXeKUZ9Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdVvUYzQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4687EC4CEF4;
-	Thu, 21 Aug 2025 14:47:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755787682;
-	bh=tB7QtdU0NteP+l/nGwCklPPyZMU+e1CWu4so91o586A=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=OdVvUYzQRrZEGgK//Y4nFymFQ5F7TCs6nhQ5PooKRMxPVo1OVBB/T4VdpBV660B/1
-	 f3Ogx1FjJjXzKwyimeyFSZ58icpJq6pgPtKcZohJtMrHD6YlxdzsT4SZ1GV9gKUvVn
-	 pX6IAsWwX9UvkvcrIj04vccU6mLLC1eKZ1mg4eQmz0Aj9qwnkDwIw7wJ35MBWlfgOx
-	 5pwcAMJGNcC3w9SiFdUGuMWrNPKnQyJD6mvfiINtleLKVmf6i0JB3auKe+Bu6JiUjz
-	 IK4RV9LwTVQE+tG69CLeseSh3OV7o1O2I8kLHXRGtPbezSD9K/ju8W1AucL+tKzBRl
-	 jwqIyq51xAobg==
+	s=arc-20240116; t=1755787696; c=relaxed/simple;
+	bh=r0EJ+QDYEK58wxXorFrnXARW0Dw1H+iE79HhQ7biUhI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FR0ksZBwbxr3eph+NS7h8GLNWTIudxNyw+z0+J9xeH35uJPRtgkca+q0TATxtqMya6RyK9kfjEBhru46H/Kx4gNaBENKdkGzfhzQdViEytyZkNzgSsYrEb+ejAGAHbiipbukGw5zAz7VRw7QrADZJghU5Xb0pG1fPFSD1u7WXK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iE80OWAW; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-244581eab34so2188515ad.2;
+        Thu, 21 Aug 2025 07:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755787694; x=1756392494; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=reaan4HiyJD6kst2BoAhgABOgavP9PeNK2hSKp1XYMw=;
+        b=iE80OWAWmCR9f38qLR8g3XvkcJ/PTML9UaH820S0GKggvArXztVurBEit00BEi+LH0
+         K+y/l0wz1g3iEKLJcA6/nx8GdGQYdWZ4BoX4DVmVEiWsafW/ZJ6b3OwXjDCwWbQcwFfv
+         SciQHqrPutD4zPyPKzb1ovxhlEzszL5OS0r2en7yHza+nk2qBwlC3wShVb9p7lVo4WNn
+         E4C1oAAePkWJmX85ojOabC87rsinjB/mMdWSOQjmhrdQOUhvPayhgMqFPqPeF5M1SQaS
+         Kzc7NwvfsllNnAOI7yZQLl6NcR91dSc6GTOGnGgRVCaIJjfH3bMR6i0GHT2kalwH8T3D
+         9L4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755787694; x=1756392494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=reaan4HiyJD6kst2BoAhgABOgavP9PeNK2hSKp1XYMw=;
+        b=MFkfAGnUc3T6Gp0P3pLb/5MxXp/stOPAoPxtGPwP0RNr8f2Ve9RERlqEB1xBHb4CWD
+         7b5rZ4Py4gSjJVJhIjFKQA56Ibm3XeB+AN1bqaR9Gzo4MFrIX5js1ogsYgYvv5K7XwoK
+         UUXbPlctge36H99KxzbKg8EZMHBkB2O8g4EPpzhMAOBOSusXNfafwH8a2YhlZRrNH7aM
+         61YPmRjqXhMfKge0smiJw/BY75WWAZOLMwZYbr47zNX+9eHK3oZiDHBwtamH/JxsFB0H
+         Qd02+Sro3xJ/BQl5RmmWv6wtsG7ZjYmcSfSmeq9DmNx0r2rk9hGU/svQDacGLLEUAIaU
+         UQeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVt7a3iLP5KkY130CJ3X51Y2TPy5CYOrQ2AzFVKaqiIgpp6eugkAvcQZ/uSUTuD16nCCZkwIrL1QjcUo4Y=@vger.kernel.org, AJvYcCXxFUu1R5eaG4mFC2SMB2vTEXL0Zx9Ns9S2zMyHrXb+/WcZWMEcIBVWzIqDI7lASlayODzKR4Mq9I/3HVhC3Oo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7E6NvQPWyxR3scsH/Sf4tfjVYddI7vjtIsQXCA227+7woOkQ/
+	sNy7eq+LfvPajxg1XnyJ33kQ/Nqste00FRP4RHWAgh4dMAY2iVOYCaoKCfR3VrCvYLAoKnScFYs
+	T5PxsYXDoWHo8Ov2NHxr8HUm8iwHMeC0=
+X-Gm-Gg: ASbGncsnGlp8Yr6zUWmTqv/FcWdByN+Z/Evte6pkGQL1x2jE0qEAFQ3hgTPqLU9ATjS
+	oUdEnRHAhlM9iWPhe9YNLRTS6wFXtBfW6ZM6bKV4nXCLCYZ6cnVSKrJ0geYJX2Qx07MHE5bbYKv
+	uAK/pWw7wuZBfq2UyL3aVlGTlBO4DraW8W3/joBWo1cS+Ws9Y8LcLM9bgpkQH0WfqJHQxAm5rte
+	KAz3d7iaA/qCxZWbt4=
+X-Google-Smtp-Source: AGHT+IEsHKyQrAD63gSNI/LC3sifQUA4fe7CtQqeng2rumieUeyfruWmeT8Ilb+5Mz7ko+187xuq2c13SAz9CUXS664=
+X-Received: by 2002:a17:903:2f85:b0:22e:62c3:8c5d with SMTP id
+ d9443c01a7336-245ff8de159mr19322105ad.8.1755787693699; Thu, 21 Aug 2025
+ 07:48:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250818135846.133722-1-ryasuoka@redhat.com> <20250818135846.133722-2-ryasuoka@redhat.com>
+ <2025081836-unbraided-justness-4b43@gregkh> <aKQHQ4av5ZqfQ8Q1@zeus>
+ <2025081935-railcar-playing-eb9d@gregkh> <aKSGW1SXcYleSdph@zeus>
+In-Reply-To: <aKSGW1SXcYleSdph@zeus>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 21 Aug 2025 16:48:02 +0200
+X-Gm-Features: Ac12FXxBFYbLlcdpa2LM94AF4JEKXpd7rOoEG8zd-NmjQaAriUujV9krNAxe9zQ
+Message-ID: <CANiq72m0DJ4jtc9c-2NusjXu96anVfu1LR5gGZAoyP12a5b-dA@mail.gmail.com>
+Subject: Re: [PATCH rust-next 1/2] rust: miscdevice: add llseek support
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, arnd@arndb.de, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, lee@kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 21 Aug 2025 16:47:57 +0200
-Message-Id: <DC86SBUYSPYP.IRM1O8GC6CAR@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- "Uladzislau Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
- Roy Baron" <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor Gross"
- <tmgross@umich.edu>
-To: "Vitaly Wool" <vitaly.wool@konsulko.se>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v3] rust: alloc: implement Box::pin_slice()
-References: <20250811101456.2901694-1-vitaly.wool@konsulko.se>
-In-Reply-To: <20250811101456.2901694-1-vitaly.wool@konsulko.se>
 
-On Mon Aug 11, 2025 at 12:14 PM CEST, Vitaly Wool wrote:
-> From: Alice Ryhl <aliceryhl@google.com>
+On Tue, Aug 19, 2025 at 4:12=E2=80=AFPM Ryosuke Yasuoka <ryasuoka@redhat.co=
+m> wrote:
 >
-> Add a new constructor to Box to facilitate Box creation from a pinned
-> slice of elements. This allows to efficiently allocate memory for e.g.
-> slices of structrures containing spinlocks or mutexes. Such slices may
-> be used in kmemcache like or zpool API implementations.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> Got it. I'll try to include an in-tree user for it next time.
 
-Applied to alloc-next, thanks!
+Thanks! Yeah, please see:
 
-    [ Add empty lines after struct definitions in the example; end sentence=
-s
-      with a period. - Danilo ]
+    https://rust-for-linux.com/contributing#submitting-new-abstractions-and=
+-modules
+
+for some more context on the "in-tree user" rule and ideas on how to
+possibly provide one.
+
+I hope that helps.
+
+Cheers,
+Miguel
 
