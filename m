@@ -1,182 +1,193 @@
-Return-Path: <linux-kernel+bounces-780586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82327B30580
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:31:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA33B30479
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 351F8AE52B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:26:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1CE64E647C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE53F3819C8;
-	Thu, 21 Aug 2025 20:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C1236298F;
+	Thu, 21 Aug 2025 20:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e1JSg2B2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="jpXHWhf5"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2093.outbound.protection.outlook.com [40.107.92.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BAF35337B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755806931; cv=none; b=kukkksEmSduuYvaTkHMKhdSgUupWlFRb+d4Iwp6ZJdqnuAJyHXRq/lCb9Hf8KTvvkL69JZB1to90M94FxdaORFRO6kON4iWFrW0tCosPRpRELzOSG0fOoyJPQxGuryIXMm/HH/Ha8zshmTPgEQ+dL2SNBCSISnN0r3AJ64o6cbQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755806931; c=relaxed/simple;
-	bh=vBZZGz0SB0V7Hvywd1N29mvuGT2dBN/lU5Bb9Xz8Q6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nYeodm6E9uk9+5Ov/86Du1RpreZoWz3XQIGM1KbvEn8oLvlRuTyJGqtFWiSOVmbn0c9f8cB2X9i2gnkdMnrtxZCpHPMYschPpxUkOKAN9uUM8ANZgQfui8HIsTqHe8HIUxp3hTZ4kizPdDnMv0LtEALi+iSkcdQ/cuQ0Ug8oHUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e1JSg2B2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755806928;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8aQmj/0+AYT4mPx/DatgQPPbmq0Lkvm9KCqKkKCdC9Q=;
-	b=e1JSg2B2zYR4/k9MYnGN1wDcaVC0eaxaiLJohSY7QvdYHyg4VRv+llTGlQa4rwq5tW0NC5
-	d9/gP1NklKkwL0k06r9F7aLwoefh2d/vgLLQbqgpE6xsiDSjZh7lOltjT5v2OJLwsEIq+J
-	9PrzJIojvoLP/Q7Xbp8qcgcl6dtJiFA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-347-mkHwqqXmN4KyIumOv3qXGg-1; Thu, 21 Aug 2025 16:08:46 -0400
-X-MC-Unique: mkHwqqXmN4KyIumOv3qXGg-1
-X-Mimecast-MFC-AGG-ID: mkHwqqXmN4KyIumOv3qXGg_1755806926
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45a1b0071c1so6423095e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:08:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755806925; x=1756411725;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8aQmj/0+AYT4mPx/DatgQPPbmq0Lkvm9KCqKkKCdC9Q=;
-        b=b9nqb15ENTOLShHdePS24lFZrDGZqFpJlwfTbDkuA8zzybDxpVo4ALUqhEPPs+AdzR
-         bu6OPOfxl4yRGqsnjPu2fGg/n2CQHKD3ZEx2nv6rQq978qdQjIQu7/89+OCTlwdWbmmg
-         bKkAHR8+NP+EX6KCMd7kXLJiUi3bQs02tlGqworxfa+ZDbT6a5HbcwEHGMOeUrGNUZTG
-         5+q0gT5gy3v9PrrjdDC2HqL/lvF9Mpew7ZE39j/eW33G5kvCo0lZd1rKlMjH3AIxuhNN
-         VIKvCs+eQ62kvTfhUGJ8GETwV1n5vG6PUMh8S/2ZEoI5KGpDTtyOkAdy382v/gtOegbD
-         3sAg==
-X-Gm-Message-State: AOJu0YwHAhCqnIsOYRzmRFYyL5pcpRFm2oFICJr59+uQZtyk9K6BWZiJ
-	SSBsGyAh0+jCoeCg/wR51EN5PhH/ZrOk8HVNcZ1kgyuTz+HDV2RaX8JTTYXAgkVDsqGDk/7BwwC
-	SVpjqYdP5yEt0rJdWFK2JbJZn3bTEC6g4RzoamDsv0Nr61F20n/FFIMp6J0H4qucrvNIv6VK0Et
-	XBCZW035/J+QkETW/kZuZWQoGfHNOO3R8WYB94RPPAREhVbZDt
-X-Gm-Gg: ASbGncsD0R9kJC6VEca3XdSTSPSTNgIGseNEc25qDUo0Z5m/72vKz3a3TDwG8dEQbHp
-	Z7FEJbY1PG/zdXS4cMmkM/+rnB4mjNrGbHEGPTKMOVRaFG2/5N3Al1W4WgAN3dQoAbRRpIqKfYk
-	yecABTb0zVOB+i2S2cqh5+7LdJk9ow4ct/qTH5FbNZuRhudsF7SeDhszzWZLRBmMd258KH6uJIQ
-	AUCYYcL3x7RziMcW+AXHQigyFH+AytfVcLbh3WPBbb/zo89vPhtCcQPxrBpfnf24pMo1w+0xeVd
-	TfWjJer2umbfdgJuStzsauDeAZnK8RM7ima/iKcmOoRmJHrsOekaUy+Nivb0ZTcC7pQxxfdjt9y
-	LRGci9ulV5crE0swn9Ta5yg==
-X-Received: by 2002:a05:600c:3b25:b0:459:da89:b06 with SMTP id 5b1f17b1804b1-45b517b008dmr3774665e9.16.1755806925619;
-        Thu, 21 Aug 2025 13:08:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHDDv+I9AWZPVyKVFD2prHDmQqsK3mzEWwP5yNf0oRJXtHjmqgi3hMC3hwAmszm5rTAtK85Rg==
-X-Received: by 2002:a05:600c:3b25:b0:459:da89:b06 with SMTP id 5b1f17b1804b1-45b517b008dmr3774035e9.16.1755806925116;
-        Thu, 21 Aug 2025 13:08:45 -0700 (PDT)
-Received: from localhost (p200300d82f26ba0008036ec5991806fd.dip0.t-ipconnect.de. [2003:d8:2f26:ba00:803:6ec5:9918:6fd])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b50e0a479sm8895255e9.21.2025.08.21.13.08.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 13:08:44 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: David Hildenbrand <david@redhat.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>,
-	Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	iommu@lists.linux.dev,
-	io-uring@vger.kernel.org,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev,
-	Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com,
-	x86@kernel.org,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH RFC 35/35] mm: remove nth_page()
-Date: Thu, 21 Aug 2025 22:07:01 +0200
-Message-ID: <20250821200701.1329277-36-david@redhat.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250821200701.1329277-1-david@redhat.com>
-References: <20250821200701.1329277-1-david@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F4C35FC10;
+	Thu, 21 Aug 2025 20:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755806881; cv=fail; b=F783yTGKzQHdJ6TywbUGXfjNORCJgXrEgEWS28lxmn3JZjm3RT4Z0h4iOsuslcqXTAsHiVvXNCVw+FLuGQ8zpqbf/LD7561Hg/ZyElljvyjgmpVyARDRJVdYzhpcFhlcSnJj2hMJ0GxAnpjCMQLbJ5cdmewt24zGnyiwqmlf6+U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755806881; c=relaxed/simple;
+	bh=V6IYRrIJVaz8j/NBH5b4Ydgi+A5f1DjeTUAup4PVBZo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I5HZVbDiyQcqiNuUc/VhD+Fb8e1UvfT+yN1Wl2Vw3k7AvhKVvPJ3WMmd+A+mpI/qfaSUQBK63bkyPN2Emcq7AITT39WlsD7SUm5NNYusmaEooaJbIFLB4dMxib6kaUz57EvVva/8YXtIjOG21PZrGI/21DO4Zi0obdD12MvEU+Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=jpXHWhf5; arc=fail smtp.client-ip=40.107.92.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QO161KxaaUi0E+OFkLF4O2/DXhNcZZLBh3ml/iqspKAgrCG5JC0GhJhLe/e4t40gB6bwV+RsBA6Okgo+pCrm2ZPqpWAMwf4hAwpNlPEBprE1xUcM/Jo1T0eJLgpcvv0jcK+ofAzrEP1QTGw6BklenMoyxTvZXeG8ciijCJFDgW20b150Oe/kfdZEd/7hdTlIf8m22tEmM+GVYgf9tCuqZXb3wJ0R89RmuwAE47wR4fflrGdWGinVeWfg9730ECA88CXAzXEnDJ8Zsu312sNvhJIPNnaBRG5r857QDnDRmLzV5On2GtA3Z9cWdrPweNcqZtTJ/R2QCy/wwmSTMEyk3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hAZKIl7VFsJA7T3DhrwuzSXASjRuY7aTSJnOGFZNr3c=;
+ b=Z4AMCNJoKFkqb9QpBTpiWs5PAw+ufpa0tgzZOpsAw6ufXOHZWjXbbW+ADbhQN6uaWKtnuFcKhk/RehCtiZiddP1EUhVh8q0hFvd26ndQZ0WjkWqxJnEOwPrBI8vKA9eXbH4qzOBSM/Q9O37Xp5HtY3x0ERXjP4PfixUmODg9G4+GCpRc0K6kmBrN7Yi2qyBAPi8bWQ9j/PAI1Yle0zxt49NqWct2qwFpQRIhr/tJIWUUYBpux6LV/GojqnKGb9THI+Hu526WTCIIZ1GJpYcGxS7ZFFpOLmxtwiCeJxN5barVb4uLnnLdnazmj4zPiu63fSeMZHPiKXTy8tMZJchHLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 50.233.182.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axiado.com;
+ dmarc=none action=none header.from=axiado.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hAZKIl7VFsJA7T3DhrwuzSXASjRuY7aTSJnOGFZNr3c=;
+ b=jpXHWhf5c2IotDn2TedD/3O9583mohIEaEHFr7xqwQavgMW7CRg5O69IorjDjhJID/hhFGuk8z2fFRRyjHxABdaMWpGvc+FGLBLlpKqV23dQUKEfrurnLG+vXHQoOQbyjh0yHvQ4Scm4y2fgCepjdvBWCduxMMO79PaWz5LzDz/xeTYqIMLfaDTY+92WDsO9eV8ME+GNGUSABh66BAGtJdINt3HpS/ZXYaINsvg9SbIIXricln8NTI19hfw7LHHSiQhaBz7FPD4tLKRGaLtn3rQ4W/nPNZSjxYIlI2QT/fv7C6MUeNhBFQM4lmbHCHP/nuiclWU75m2ktnuAwpSa5A==
+Received: from MW4PR03CA0219.namprd03.prod.outlook.com (2603:10b6:303:b9::14)
+ by BL4PR18MB6432.namprd18.prod.outlook.com (2603:10b6:208:5a7::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
+ 2025 20:07:54 +0000
+Received: from BY1PEPF0001AE19.namprd04.prod.outlook.com
+ (2603:10b6:303:b9:cafe::a0) by MW4PR03CA0219.outlook.office365.com
+ (2603:10b6:303:b9::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.16 via Frontend Transport; Thu,
+ 21 Aug 2025 20:07:54 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
+ smtp.mailfrom=axiado.com; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axiado.com;
+Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
+ designate 50.233.182.194 as permitted sender)
+ receiver=protection.outlook.com; client-ip=50.233.182.194; helo=[127.0.1.1];
+Received: from [127.0.1.1] (50.233.182.194) by
+ BY1PEPF0001AE19.mail.protection.outlook.com (10.167.242.101) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.8
+ via Frontend Transport; Thu, 21 Aug 2025 20:07:54 +0000
+From: Harshit Shah <hshah@axiado.com>
+Date: Thu, 21 Aug 2025 13:07:44 -0700
+Subject: [PATCH] arm64: dts: axiado: Add missing UART aliases
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250821-axiado-ax3000-missing-serial-alias-v1-1-527d979c3ea0@axiado.com>
+X-B4-Tracking: v=1; b=H4sIAI98p2gC/y2NQQ6CQAxFr0K6tklhJDJexbCoULEJDjpVQ0K4u
+ xVd/by/eG8Bk6xicCwWyPJW0yk5lLsCuiunQVB7Z6ioqqkpA/Ks3E8+gYjwpmaaBvxaeEQelQ1
+ D7PZNDAc6cwQX3bNcdN4ip/bHWR4vbz3/57p+AIvTkUiJAAAA
+X-Change-ID: 20250813-axiado-ax3000-missing-serial-alias-39c489370ba9
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Harshit Shah <hshah@axiado.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=929; i=hshah@axiado.com;
+ h=from:subject:message-id; bh=V6IYRrIJVaz8j/NBH5b4Ydgi+A5f1DjeTUAup4PVBZo=;
+ b=owEB7QES/pANAwAKAfFYcxGhMtX7AcsmYgBop3yW6oNfUZsuN8AzgM4L4eM95icW6V5pxi/GX
+ wkIh/xATqiJAbMEAAEKAB0WIQRO3pC/7SkLS2viWOvxWHMRoTLV+wUCaKd8lgAKCRDxWHMRoTLV
+ +0xAC/90XyxfM7F6i58VlfHWvJfJ/5FFw1HjNOyhguRd6YIxM7vNm+ERPJG2+u6GAc4ag1bbQtI
+ oUXxjEinz07Ro31XKNsvHaqG3vyJQ+PwJlIYzed1zy5PJiWNMJy/x6rOpZCl91dsojWNR1EoSU7
+ h8emdqdsmKvxBI3FnA2iyqlkBLwmpvadjwl5FdTDWQJIB+6PLM1MfvnmLyvOy6uoL/hZZhMxYNu
+ eZeO3VPGMB3235wi7wQPNkaxz3EexCwrg2dcV5Hl4fHgQbyqIfrAZSdfD9G0aQnR5D4a148BeB4
+ sq5LhATwJorWPBabEC17Bi3SRzTs3a3uMxhoUdLWHAxDqMYah/yr75PI1xEwe+a+f9HQUQYCr0x
+ FAjiM7TudLmcq3quNoOjYhzSiM7JHSIwEJttQUkhrDfDxjljolj5PyNv2FYIKtluCJ/lpDFYf8S
+ l4QY+/WX2IGH25BDVPpnBhbg8l8tmjPf0UCv588izYWF7Asjehw2mFAei2tbWXP7vTqCo=
+X-Developer-Key: i=hshah@axiado.com; a=openpgp;
+ fpr=4EDE90BFED290B4B6BE258EBF1587311A132D5FB
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE19:EE_|BL4PR18MB6432:EE_
+X-MS-Office365-Filtering-Correlation-Id: d01f2c56-5bd9-449d-6b9c-08dde0ee69fd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SXpRcFZMcVNGSkUwNGFmSDBGS2tiaDdGcGZ3K2RQeDl4Ly9wU2laenNQK2Fn?=
+ =?utf-8?B?NU53QlBWREVmL3VwdytOZ2UwMHdlZ3FOSlBFSDBVNk9YS3FJeldicVJLdy9q?=
+ =?utf-8?B?U05lSkpGNFg1Y2lqYzgzUUFMYzBNOTRieTJZVDhFTDhiWU55aFhxa25lWXdh?=
+ =?utf-8?B?ZzAzYjQvTndLMlllS1I3Q3JWR0xpdXRQR2JzWjNNM2ZqVWdJaGF3SFVlK016?=
+ =?utf-8?B?bzdSTGFHMTdxVUU3NnAzOTE0SFkrWlRRWS9kSnpQRVNpTTJYcDFiMjdsaTVv?=
+ =?utf-8?B?amtnc1pFMTlwY1NYOTh5aWYrTURQQTQrNUQ2c3FSSWtLWG9tbDZSWi9qT2Rt?=
+ =?utf-8?B?VEhkTWc5QlJxN1I3RTRDZGxWcGZuWnBuNVFSS0g2Qk81OTN5VHdZNUlFL1pT?=
+ =?utf-8?B?VER6a2V5c1A3VnNLUjJiVUI0NHh4L3l0d2Y0U2hDdHMzZlppSEhwUjhpMG1X?=
+ =?utf-8?B?Q0RodUlYeXBGZVRyUDg4UUZhTTFpVERrdWpESCtvUm51aHJWdnJxM1F0V1Jn?=
+ =?utf-8?B?aVN1Ty9MUmo1aUhTYnlCRmMzMTV3c2ErdTNJMlRNNWNrSStwRWcydGVjY2xH?=
+ =?utf-8?B?TklXYnh4Wnl3Q3RWS0xKWENEOW9lU2syKzhyQWNaMnlhQUVGOFVJcjVSZTE5?=
+ =?utf-8?B?aklYSDNZS0JHSEJmV2VObXNJN2lHVGhlcllCSDZ3YlhERTJxMjNHMmRzRnZk?=
+ =?utf-8?B?VDV6SnRKd3pZUnNraDNUYXErWmw2SVNJRDdPNW5LcStvTmVHTzJ0Y3gzeXBl?=
+ =?utf-8?B?bmhxT1dmUEswcWtNTjJoUlZjL3NkcmRUNFdBTFUwY2RhdWZ0VUU2WG5nYTZU?=
+ =?utf-8?B?Y3ZnbnN1SkVKdkRRbW1EcTJ2MlRFb25wTDhSMFlDdWljcXdlUXhHZGlJMnVL?=
+ =?utf-8?B?V0I0T1pTeTRyWStuK3RxWHBDME54MG0yNnJ4TVpib0VSYnVtbmRjNnh5MUVH?=
+ =?utf-8?B?eG4wa3FKb1VLYmk1aGMrR201cjEwbnhiRUE1YU91MFl4UnprNWo0SHVKMWNm?=
+ =?utf-8?B?Ky9aTkhQSlFEVklTVWFESGNZY1pTRTIzOEVuYjVrRnU3Q2VkSXZJUjIyd3lH?=
+ =?utf-8?B?RFJ6RlJHNzFLMk5KeTVhaTAxaXNHSTZLRFRxVDFrUTFJZlFoQ3JBYjdyalVD?=
+ =?utf-8?B?WFE5RVc4WXpncG5CVW1PNExVb3JSNjZoNWt0a2Voc2NjRmFITk1CaDByZW96?=
+ =?utf-8?B?MDI2dTRIZjM5QXNWSEdTTm5lbUtpdEwvRjk0UGs4S0MzKzJmWGYrS3d1RU1V?=
+ =?utf-8?B?WDJocklpdWtoL2x1NTBEOWhOMXpHRWpQUjhucEhJMG9pS2J3NEVqcWxJZ1Mz?=
+ =?utf-8?B?SWx6OWt1aW5jcDZqQk1YWUVwazgyYzg4OUVlRXJEWVlpaTR2a1Y4ZWdzYzRV?=
+ =?utf-8?B?c21DTFpkN0hvenQ2cFVDNnlwSFRuUTZOUHBkcUdpYXNRdi8rM1FQSWQ1ZU5q?=
+ =?utf-8?B?dngvc0w4ekF2RWlQQklPeis0WnhqSlRjUllZVTJ0ZmxUYXltZHVxVWljZThB?=
+ =?utf-8?B?TW44TGhBMEFlWDhBTEQzaC9HSXRaZEVRWXUyeW51MFoxcjNieGNJbll2ZmR5?=
+ =?utf-8?B?YlZ1OGJibGo1dEJETnFKeUx3RkNhWU52K0tSWlM4bCtxNDBGM2xFMWRqcDFr?=
+ =?utf-8?B?eVcra2V1SnFWSXFCL1dOSWtlTy8rREhqUjR3MWlLYXB6ZzN6ckRDZEw3TStI?=
+ =?utf-8?B?TGVDYjA5SkRrNFIzWEl1ZCsxUHNtOU9LczlSVHFSMC9OUmxTNWluQlVJVC81?=
+ =?utf-8?B?L3o0TFhvTk9icWhUT1lLT2g4UG94K3J3MXAybXBLdlhMVGk2ZDNJMmVNQVVp?=
+ =?utf-8?B?QmZCYnp0SG52OXJaY0U2aHVTRWtTaUYxNlVuMDNnUy9DWWxYZ2ZBTk45VDZy?=
+ =?utf-8?B?akZMeWFzTHRnY0dCL21hYWg0V2QwckpDWG4zOW5YRDZaYTB5d0pLOVQ0Z3RH?=
+ =?utf-8?B?WVlVeU1QZUloZk12cXBPWDFsK2Uwb3B5bXpvdUxYb2JzUW9uNXA2NFFsMXc2?=
+ =?utf-8?B?aE44aWQyMW94YlBjNzVMRW1FRGFvdkp2M1V4bzh0RkpFcjBqMlA5N2JvL0pO?=
+ =?utf-8?Q?c36eLt?=
+X-Forefront-Antispam-Report:
+	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:[127.0.1.1];PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: axiado.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 20:07:54.1271
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d01f2c56-5bd9-449d-6b9c-08dde0ee69fd
+X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[[127.0.1.1]]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BY1PEPF0001AE19.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR18MB6432
 
-Now that all users are gone, let's remove it.
+Axiado AX3000 EVK has total of 4 UART ports. Add missing alias for uart0,
+uart1, uart2.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
+This fixes the probe failures on the remaining UARTs.
+
+Signed-off-by: Harshit Shah <hshah@axiado.com>
 ---
- include/linux/mm.h                   | 2 --
- tools/testing/scatterlist/linux/mm.h | 1 -
- 2 files changed, 3 deletions(-)
+ arch/arm64/boot/dts/axiado/ax3000-evk.dts | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index f59ad1f9fc792..3ded0db8322f7 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -210,9 +210,7 @@ extern unsigned long sysctl_admin_reserve_kbytes;
+diff --git a/arch/arm64/boot/dts/axiado/ax3000-evk.dts b/arch/arm64/boot/dts/axiado/ax3000-evk.dts
+index 92101c5b534bfac8b463adaa1c4f0d4367d01e21..b86e969625573bf92bdd5e4435ea571dd7500de2 100644
+--- a/arch/arm64/boot/dts/axiado/ax3000-evk.dts
++++ b/arch/arm64/boot/dts/axiado/ax3000-evk.dts
+@@ -14,6 +14,9 @@ / {
+ 	#size-cells = <2>;
  
- #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
- bool page_range_contiguous(const struct page *page, unsigned long nr_pages);
--#define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
- #else
--#define nth_page(page,n) ((page) + (n))
- static inline bool page_range_contiguous(const struct page *page,
- 		unsigned long nr_pages)
- {
-diff --git a/tools/testing/scatterlist/linux/mm.h b/tools/testing/scatterlist/linux/mm.h
-index 5bd9e6e806254..121ae78d6e885 100644
---- a/tools/testing/scatterlist/linux/mm.h
-+++ b/tools/testing/scatterlist/linux/mm.h
-@@ -51,7 +51,6 @@ static inline unsigned long page_to_phys(struct page *page)
+ 	aliases {
++		serial0 = &uart0;
++		serial1 = &uart1;
++		serial2 = &uart2;
+ 		serial3 = &uart3;
+ 	};
  
- #define page_to_pfn(page) ((unsigned long)(page) / PAGE_SIZE)
- #define pfn_to_page(pfn) (void *)((pfn) * PAGE_SIZE)
--#define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
- 
- #define __min(t1, t2, min1, min2, x, y) ({              \
- 	t1 min1 = (x);                                  \
+
+---
+base-commit: 8742b2d8935f476449ef37e263bc4da3295c7b58
+change-id: 20250813-axiado-ax3000-missing-serial-alias-39c489370ba9
+
+Best regards,
 -- 
-2.50.1
+Harshit Shah <hshah@axiado.com>
 
 
