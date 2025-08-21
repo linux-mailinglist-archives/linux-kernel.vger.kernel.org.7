@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-779314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC1BCB2F270
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:40:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D46CB2F285
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A413A9903
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DAD7188664E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AAA2EA16D;
-	Thu, 21 Aug 2025 08:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D1C2EA755;
+	Thu, 21 Aug 2025 08:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJ36OBuJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="enVuY8+7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3022EB10;
-	Thu, 21 Aug 2025 08:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17156277CB4
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755765204; cv=none; b=qWRjucSj3zAE8f0iUy8BXIjeYB1DeUY2K2+6HOrN0LKXSXsIGbZjsvI9egiCaGAymsbIJhTh3AEjaqMIyA8XjsWBE8zxI918rYaHCx1X2TD7c7RG15pHDJ2TVUf+HPrJ0gPScTvxifIkeBgL1oHNxMp9Gdn5OMZLjS2RsMEvge8=
+	t=1755765226; cv=none; b=PmRDWmN36aKnHecx7YzuKulKVIHGu2HFzSl1KyUq8V4H3AfR6kFUUK3L2QzHPEnEaQbBUpDJVtFJ6pM9z8ahXPyCojprt0PDtNlsJp04b1KT0tsvoqu+s8CzOOyvRJoKa3kIhwJd5VeBr3Xn9MX2gZGGEUBtjphnpAuII/A9O2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755765204; c=relaxed/simple;
-	bh=dxd46luNit58LMdAutjc9LabNsuuF+LIvVeUx5hPyAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UXx1CMxRErL+vGklJEu8M45fIGVMe2E5woKfZpfid6GeJ5kSO04tLE955Qaa8qkVrEdVEtYzyqt0hqrw1LbEvA9yGwTzyvQLqzt9Tlfm4nNypuTVcwbddhxBQ7ydc6e3q44nYKmI2AbQUqyKFd/kc9bCmA5XmWL26fQD/DRfFik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJ36OBuJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A20C4CEEB;
-	Thu, 21 Aug 2025 08:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755765203;
-	bh=dxd46luNit58LMdAutjc9LabNsuuF+LIvVeUx5hPyAY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VJ36OBuJBSjw/Zrlwe7Kkw5XxLlDl/AqaeKCYT81qi0lK8rRQQdoHKq3jsP9P1RRR
-	 CIAhb7WKIgK4RGq6Y66manRio1nOMw9SmSAftgO7PHB1wh80GccxEAsnrPqKSFLEQx
-	 iI7e+RLSt+3XdYadE+zRWkyvBME/uQ16/kSrz0EqievlTpzbczAXvSrR/RLIjb/tEC
-	 Uv+6rmeUNL3F7nCJtj1kd9pK1m0F1t1nEz7ZOhqMrIohrHhjmjad4QjTTTU8ULbv/U
-	 mxjHiSzm0T68W+GBj4u+8sp6j0cb1xTdFMHA6qF+4nx4OgijBiRJVb2FeQxL7knAO9
-	 JoUWtKM0V++Iw==
-Message-ID: <2ad7377b-19df-412f-9925-40bcc232cafb@kernel.org>
-Date: Thu, 21 Aug 2025 09:33:20 +0100
+	s=arc-20240116; t=1755765226; c=relaxed/simple;
+	bh=dUiKgRAI3A9prYuCnQ9p9wAtGjplO7hUq0Q2if+VdEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g1fUaDB2X2aCc6/coYMGX8ycYAit8l5uVZup0QcfXMG40oePEL8gA7X8zvvrVS6XJfx2IEykiIsYjpGP3Wq6FSdnn8RB/xgWFmudzANLce0Bun1/A4vR11S43Poc8qULMiCKCPNdsQBs742C5l7YwWZBuBpS5RDKPMSDO2sGGd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=enVuY8+7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755765221;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iHkbj41Kh3yJaLj8nTXZWWFLEJs9EarVkmAtxTUg4F8=;
+	b=enVuY8+7GWHqah6VuIrStl6NIETfJNgJg6lk1WLO8mj1BMAS/crPRoOcrd69+QSXHbmbd3
+	C3sS1cREc7LI9jS3tf799zrrbMt8as4B5muwmD3a2Lr3RrkYQzG26cnUyNwZAC3CwJpR/F
+	JkgEEqGrWn1mGkTa/iIiGSgrlPttd7s=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-156-W112auD0NF6QiV5OPsKlWA-1; Thu,
+ 21 Aug 2025 04:33:37 -0400
+X-MC-Unique: W112auD0NF6QiV5OPsKlWA-1
+X-Mimecast-MFC-AGG-ID: W112auD0NF6QiV5OPsKlWA_1755765215
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A25D019560B2;
+	Thu, 21 Aug 2025 08:33:34 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.99])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9E6BE180029D;
+	Thu, 21 Aug 2025 08:33:32 +0000 (UTC)
+Date: Thu, 21 Aug 2025 16:33:26 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Brian Mak <makb@juniper.net>
+Cc: Dave Young <dyoung@redhat.com>, Alexander Graf <graf@amazon.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>, x86@kernel.org,
+	kexec@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] kexec: Add KEXEC_FILE_NO_CMA as a legal flag
+Message-ID: <aKbZ1h5mjtfoFMh8@MiWiFi-R3L-srv>
+References: <20250805211527.122367-1-makb@juniper.net>
+ <20250805211527.122367-2-makb@juniper.net>
+ <20250820214756.5c7b551e4723d9f0b5dd55e3@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: ov02c10: Support hflip and vflip
-To: Sebastian Reichel <sre@kernel.org>, Hans de Goede <hansg@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
- Hans Verkuil <hverkuil@kernel.org>
-Cc: Frederic Stuyk <fstuyk@runbox.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250820-ov02c10-fix-v1-0-3fcca2cfbfbf@kernel.org>
- <RfuRq5FvTHQXv-BHz4cV7Ctpw8jXz94O7_Go72rkAMrcIyHWRfT0BYOvQidHfpbTiI2VssTEw_hMcpk4PFAgLw==@protonmail.internalid>
- <20250820-ov02c10-fix-v1-2-3fcca2cfbfbf@kernel.org>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250820-ov02c10-fix-v1-2-3fcca2cfbfbf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820214756.5c7b551e4723d9f0b5dd55e3@linux-foundation.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 20/08/2025 01:13, Sebastian Reichel wrote:
-> Support horizontal and vertical flip, which is necessary to handle
-> upside-down mounted sensors.
+On 08/20/25 at 09:47pm, Andrew Morton wrote:
+> On Tue, 5 Aug 2025 14:15:26 -0700 Brian Mak <makb@juniper.net> wrote:
 > 
-> Suggested-by: Bryan O'Donoghue <bod@kernel.org>
-> Signed-off-by: Sebastian Reichel <sre@kernel.org>
-> ---
->   drivers/media/i2c/ov02c10.c | 25 ++++++++++++++++++++++++-
->   1 file changed, 24 insertions(+), 1 deletion(-)
+> > Commit 07d24902977e ("kexec: enable CMA based contiguous allocation")
+> > introduces logic to use CMA-based allocation in kexec by default. As
+> > part of the changes, it introduces a kexec_file_load flag to disable the
+> > use of CMA allocations from userspace. However, this flag is broken
+> > since it is missing from the list of legal flags for kexec_file_load.
+> > kexec_file_load returns EINVAL when attempting to use the flag.
+> > 
+> > Fix this by adding the KEXEC_FILE_NO_CMA flag to the list of legal flags
+> > for kexec_file_load.
+> > 
+> > Fixes: 07d24902977e ("kexec: enable CMA based contiguous allocation")
 > 
-> diff --git a/drivers/media/i2c/ov02c10.c b/drivers/media/i2c/ov02c10.c
-> index 3a02fce0a9bc0ca3ab87defe3eefd04efb4012e7..103d007415348a8bd31a09e518de23f5fd77c618 100644
-> --- a/drivers/media/i2c/ov02c10.c
-> +++ b/drivers/media/i2c/ov02c10.c
-> @@ -384,6 +384,8 @@ struct ov02c10 {
->   	struct v4l2_ctrl *vblank;
->   	struct v4l2_ctrl *hblank;
->   	struct v4l2_ctrl *exposure;
-> +	struct v4l2_ctrl *hflip;
-> +	struct v4l2_ctrl *vflip;
+> A description of the userspace-visible runtime effects of this bug
+> would be very helpful, please.  A lot more than "is broken"!
 > 
->   	struct clk *img_clk;
->   	struct gpio_desc *reset;
-> @@ -462,6 +464,16 @@ static int ov02c10_set_ctrl(struct v4l2_ctrl *ctrl)
->   		ret = ov02c10_test_pattern(ov02c10, ctrl->val);
->   		break;
+> Also, could we please have some reviewer input on this change?
+
+I didn't receive this patchset, and kexec mailing list is not in CC.
+I don't know what happened.
+
 > 
-> +	case V4L2_CID_HFLIP:
-> +		cci_update_bits(ov02c10->regmap, OV02C10_ROTATE_CONTROL,
-> +				BIT(3), ov02c10->hflip->val << 3, &ret);
-> +		break;
-> +
-> +	case V4L2_CID_VFLIP:
-> +		cci_update_bits(ov02c10->regmap, OV02C10_ROTATE_CONTROL,
-> +				BIT(4), ov02c10->vflip->val << 4, &ret);
-> +		break;
-> +
->   	default:
->   		ret = -EINVAL;
->   		break;
-> @@ -486,7 +498,7 @@ static int ov02c10_init_controls(struct ov02c10 *ov02c10)
->   	s64 exposure_max, h_blank, pixel_rate;
->   	int ret;
 > 
-> -	v4l2_ctrl_handler_init(ctrl_hdlr, 10);
-> +	v4l2_ctrl_handler_init(ctrl_hdlr, 12);
+> > --- a/include/linux/kexec.h
+> > +++ b/include/linux/kexec.h
+> > @@ -460,7 +460,8 @@ bool kexec_load_permitted(int kexec_image_type);
+> >  
+> >  /* List of defined/legal kexec file flags */
+> >  #define KEXEC_FILE_FLAGS	(KEXEC_FILE_UNLOAD | KEXEC_FILE_ON_CRASH | \
+> > -				 KEXEC_FILE_NO_INITRAMFS | KEXEC_FILE_DEBUG)
+> > +				 KEXEC_FILE_NO_INITRAMFS | KEXEC_FILE_DEBUG | \
+> > +				 KEXEC_FILE_NO_CMA)
+> >  
+> >  /* flag to track if kexec reboot is in progress */
+> >  extern bool kexec_in_progress;
+> > -- 
+> > 2.25.1
+> > 
 > 
->   	ov02c10->link_freq = v4l2_ctrl_new_int_menu(ctrl_hdlr,
->   						    &ov02c10_ctrl_ops,
-> @@ -537,6 +549,17 @@ static int ov02c10_init_controls(struct ov02c10 *ov02c10)
->   					      exposure_max,
->   					      OV02C10_EXPOSURE_STEP,
->   					      exposure_max);
-> +
-> +	ov02c10->hflip = v4l2_ctrl_new_std(ctrl_hdlr, &ov02c10_ctrl_ops,
-> +					   V4L2_CID_HFLIP, 0, 1, 1, 0);
-> +	if (ov02c10->hflip)
-> +		ov02c10->hflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-> +
-> +	ov02c10->vflip = v4l2_ctrl_new_std(ctrl_hdlr, &ov02c10_ctrl_ops,
-> +					   V4L2_CID_VFLIP, 0, 1, 1, 0);
-> +	if (ov02c10->vflip)
-> +		ov02c10->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-> +
->   	v4l2_ctrl_new_std_menu_items(ctrl_hdlr, &ov02c10_ctrl_ops,
->   				     V4L2_CID_TEST_PATTERN,
->   				     ARRAY_SIZE(ov02c10_test_pattern_menu) - 1,
-> 
-> --
-> 2.50.1
-> 
-Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
+
 
