@@ -1,259 +1,342 @@
-Return-Path: <linux-kernel+bounces-779995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2467EB2FC29
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:18:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2C9B2FC2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4105A6E69
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:09:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8454A605600
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A362459CD;
-	Thu, 21 Aug 2025 14:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52832DAFCF;
+	Thu, 21 Aug 2025 14:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iZBGhG7N"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2061.outbound.protection.outlook.com [40.107.100.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="M/b3gb9K";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LGC4zeGC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yAqnGrED";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yDgcAsut"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2593239085;
-	Thu, 21 Aug 2025 14:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755785362; cv=fail; b=GX4+rru6dwf3OaCzUGCtw/tj3X9v3G2jn0mjw/vFiVnbHV4P9gssF5rJZCjcixOg+QZKJJAKFaamMOiTQh5duhDLw6PVkCWXu/epy4VOJPmS5UHzNGfAmHNLU+kJ3avv63smv26ePnwBOlMbrIKb8NsVHI4kzT8ZzNVDrJgJvC8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755785362; c=relaxed/simple;
-	bh=Mp2NujqSTv9eeACU/4gOgPxc9S3m+lzWD9s3pnzIyus=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=evNSBQFrMGLcY8fjifwPoJcxQ1BiP/A/4jyV172SFtoXlRDHq/gHSuryYT2ylh2G9BfexGKkRhNP24rgIxcUcr4L41JOl8qKC8oR07UI/u3CSpDv7IOtNJFsZhviOdnFjNY1mWQIS8MDz3BV8qUw3h/1waXoB48Izy2sg1v11dg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iZBGhG7N; arc=fail smtp.client-ip=40.107.100.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i2J9j4odN06x3dtWvlkFJcKrh7jOVaukrxPnvHoc9ETRHxPuOL1YV/r5BTmrt/OGo4iBGUj2fJd+AQ3+P9DsL3L5PYZow1pw5J4ZIO3MaOXx7PkYGAJamsAM6G54VKFc06JcutOkI7h73S1IV5fUfVNr6SH6t++Nrc67yBXP3ylPLHQ1BAFOWml1g0uPlQfVbWIp63bWsr9nGP7b3AcQfacgIF5vcL6qRWKH4a5JMBOa6Lf2Ogpe613QB0OyuZ5yN7XnZVdHd+a83tQqlp6613CV6fpisM3IujGgloRZ5ZRHNJtJgE/mLCQZsKN0B7HdC4Uo4KVPxqGWUxa4ArRn8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hasAr54uZs9NE+L3166euCaWwbiyzuItp1W/FLZiwII=;
- b=Y/veTc49Rx8IOQ9zzCt9yQd0DwJHn8nDCjxzPZR7ZkBBYrOh7CNU2KWv6bGB0p8mtiZCXLDcrw6+mDV/SVBAodn1F4mJdNYyf8B+WlBTsScOmJwc4C/h6KMewmzDPI4hEwRsOGwExk8TD4IkLO4yh0cXPcPIC/Qz6pIrvhe9cCyBqN1JD8i8arrQk2X1V5IiQLco8eNLOdHLJopMU0LLsenK/UrSk3LC5YosfB6ulb+PTn6yaggdsGhI0iKkl+pU+kwr3mhxwHr/zl0pgceJaw8277oid05aWhN02/B8epmrBBe4a1Jc+fJHDyHoxAHrpw+TGs2dE5vIr/tSHlD6Ew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hasAr54uZs9NE+L3166euCaWwbiyzuItp1W/FLZiwII=;
- b=iZBGhG7N2wixdmpviJeWhzp9btIoC/YA+ihLa+PirpB9OORoI/IzaextUzo0bGN08k3vw2hKf58qBafbDqvmSy9Lz1KGDYWI+hG5ZKqRc8FhG3SBE+mkv5dQ2z+2iXlQ/5IltWoNF6PF+iUVYOY3ZUuzVtTwF9BCdNqsR6adwyre3qUfqEsb//mJ/YWUmO890pSqgHVHFIeu6Pt2b1h0n8fYyrTmCvFyrpCFAnQjPviLewmqbzuF40AGuyFJNoDG3ZlAH4j0k7Ix8+eQKP76etg3fDqBjhVkicf0g243tXsHoLZavy/0MdyqKtRBSjXDHv6QvCEHzLP7vNmcwydszQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- SJ0PR12MB7006.namprd12.prod.outlook.com (2603:10b6:a03:486::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
- 2025 14:09:15 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9052.013; Thu, 21 Aug 2025
- 14:09:14 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: Nico Pache <npache@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, david@redhat.com,
- baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org,
- willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com,
- usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
- will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com
-Subject: Re: [PATCH v10 03/13] khugepaged: generalize hugepage_vma_revalidate
- for mTHP support
-Date: Thu, 21 Aug 2025 10:09:10 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <1D4FF375-08FF-41E0-9B59-CDFCA6293438@nvidia.com>
-In-Reply-To: <20250821034153.uyxjy5yvxx5no5sf@master>
-References: <20250819134205.622806-1-npache@redhat.com>
- <20250819134205.622806-4-npache@redhat.com>
- <cd4dd743-679f-4c55-9635-6d32e6fa5ff7@lucifer.local>
- <CAA1CXcDORXqm4JoHn4ZSEhT3ajsuY2MAPwefMXk3+YMXcpvqkw@mail.gmail.com>
- <20250821034153.uyxjy5yvxx5no5sf@master>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BN8PR07CA0027.namprd07.prod.outlook.com
- (2603:10b6:408:ac::40) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989281805E
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755785452; cv=none; b=LRbcsfPmHB0xOmfeu5/dnNopAhQNvrRRXfPOLGI7nzWNcAcEIfhSfXYjq5TESiFqV9M+mWRvTV5dt21TxaK2LjXo1fs2E/zz3X7Yjnaw80q0gpJfHk+/DWulFLpJeVHfP/3sZKroLm20eoXIBDGjGzD84qs25T3/HI5plqYo/fo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755785452; c=relaxed/simple;
+	bh=0pReoKMz2Vn7eLN7zqygcpnA9mke79QNosCjGsjhhfo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hahEPO36JntMxb07var25BAQIh9GYIMfAZSgMVwaLon3pXeOtkEmF5B7ZHR4ymKF9mXZp0KKPfUGwnt3gzC+Q11YZ7NaZa2ZkABhlHOJkjmmqWVmMuS6ZHFMHD5NS6l0gKwPg/gxbxlK8JH8vG1gplG3sX6lYOqyFrGUjjNB71g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=M/b3gb9K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LGC4zeGC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yAqnGrED; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yDgcAsut; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5A3C321F10;
+	Thu, 21 Aug 2025 14:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755785447; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Jmm3Rcgx45Ek6+6JOc9UdX6C5lNjJzPeNBj+B3KBHSY=;
+	b=M/b3gb9KaYn+zgSZBCrWoZy9gYsN1SytbN4WLLljsbYIBCO0FLUaVth30knSJeAm/BRn9s
+	jBFQagENcGz8AuBHBFn8NTmejzpCer5jA2O4nmhydlFulsuJUZAuXRYz5s6EWOVF4O11gu
+	Tah/3cnM8GeArDURRe+Rfy0yiE/WGSM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755785447;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Jmm3Rcgx45Ek6+6JOc9UdX6C5lNjJzPeNBj+B3KBHSY=;
+	b=LGC4zeGC+rWkFcXT4TIxucWDlKtBRqg4kPI5eBDA9QydlKDoh7pMgzjBipJi3fuD6fDEET
+	+8oxl6FDNEEZBeAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yAqnGrED;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yDgcAsut
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755785446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Jmm3Rcgx45Ek6+6JOc9UdX6C5lNjJzPeNBj+B3KBHSY=;
+	b=yAqnGrEDV1/qNKKLM/r92HaigufAqe/1hjYNLOo5g2pOtDG0g5gkosQ5kVxni6fbJtRbm4
+	OB1MX3Y6A2qDP7kdq4noz8S1mqaNAGdSxsrThxUPgrr8iYoCpIL8qM/gGfhBO9Evyervxj
+	F32w/0TRvLO8cembLa+UYclsO33mNKo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755785446;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Jmm3Rcgx45Ek6+6JOc9UdX6C5lNjJzPeNBj+B3KBHSY=;
+	b=yDgcAsutsJJ4VK9wRHIw303rhsFxxyJDnyy/uVzVcZwKfLD/IJbJjTmNd86GkT2zNRcUBK
+	83vACgJrqiE21zBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E52CF13867;
+	Thu, 21 Aug 2025 14:10:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id XhlQNuUop2g8eQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 21 Aug 2025 14:10:45 +0000
+Message-ID: <37cacb29-e382-400c-b4fb-bed733ce480b@suse.de>
+Date: Thu, 21 Aug 2025 16:10:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SJ0PR12MB7006:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d9c570a-e1d1-4f3e-3ad9-08dde0bc4f66
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fx7YdiJ5KQYtnfRH/Qu7X1BkhKFE12lPF/+AaWi+dddzyamcRLfbqOX0lI05?=
- =?us-ascii?Q?BvkMNBKpUVpXIWN+0LFtyJYQfm7f5ZMKW3tyEQ9RxNYEO+8uVB1TKPKXhgZt?=
- =?us-ascii?Q?TrFvq6YmEW1vQrpikvc+gQlk7CGLIkRUm+5FyUk2Ci4APoJDI5KpH06oGUnM?=
- =?us-ascii?Q?3T1A5SIWEOCqGB6Jp/XQRsAYWGuTNUpVaDl8zt66R1aGKJdwtz5u3KozwmQH?=
- =?us-ascii?Q?h2UgbkpHEHVJUOKUORgNYC0gV5e3IbJLPprNbPhK3ASNJW+aEyqQlpnkBT7G?=
- =?us-ascii?Q?/5FhtTOl4JC1tLewHk/hvPxMacFLrL0xavd2QaVBjH1RHXgWU5gtUp6c47rg?=
- =?us-ascii?Q?M/faGP8347oXKaN5VPnCiIAQUHzv2SjKFsSjL2bnGSNh3siAFS23HFlx2OwZ?=
- =?us-ascii?Q?XpoJx4Ki4XdK7v0WK9ylp5s6PtDEhWz2HnLNQTIgYqIhs7y9idpN7EIX3WUQ?=
- =?us-ascii?Q?VOnWy+vv+iDSJoUziaiSHWkZvE8QakNoT5IUbmiWPSAKJkjIPQ8Aw3TW4hfO?=
- =?us-ascii?Q?c4k+aZIvBdpigTN5HpvKEZyVSKU4uQQvZzDLYepwczwGOYf9luTKS/KSfl3K?=
- =?us-ascii?Q?4DbA8Ot5tBZ1o6Wj4eopLDtm6vUwpraQt4jMy2FLU4Wb3YAsAn80pN4RjS43?=
- =?us-ascii?Q?xSWlZQYTGubtwpq2driej0E0AD9mT7vayDcv/xb57saJKpi4VDbftfE6rnzq?=
- =?us-ascii?Q?FvaR01tgO0K0u4hr7L4pHyugxTEpFPbxM6l21IM5t38renXFEl6W00epAI9E?=
- =?us-ascii?Q?QFdrCx2t5lwbygmFcYXi91SjcYEMToP3beP4ohPVwnklKWyWrwAeRfPYWIVY?=
- =?us-ascii?Q?eQt0FuPsG9LZPlHDKyi3j8028csYCdivljQYDS+KcJ2IbbLxPg2GvbfisWig?=
- =?us-ascii?Q?qevL2HcX4oRwYJpxQMqT5yvYyvOzQJPzCDsfzjeDkAr7UbP5aJcmjYd3mzFc?=
- =?us-ascii?Q?XihDTPMvSQVSFeEUTErlubEIUPpiBJ9SwNU4ZUtHEhU5hlp28JoJIpT9MAaI?=
- =?us-ascii?Q?TYF+zeJXgVjfYjntaIJPW8SdBvrHULZhUmUTYVhmptr6EpbBvdkTgF6Uwnff?=
- =?us-ascii?Q?4GDQ6IzXDN6YCGuBO3CNvK6b8WAXby4qkOKKR4ffAqzIC+i6iAUNqtVZFATS?=
- =?us-ascii?Q?92/r5KERpEwNoNo8g/VX7d9dlQpow8rEqYYcq1lI5xIfZWqwoRL6OlYUZ82/?=
- =?us-ascii?Q?MgRfGnkYECuDBUm2tFsx55J7+f28JbQkg4i8MYriNwuR9/Vwt13X1ebtmIU9?=
- =?us-ascii?Q?zXZxe5Z3XmWemYpwnvsZA2x6m4gOMrsIBaujJ4kcKflrlKAqKhaJPW3uJ5+o?=
- =?us-ascii?Q?GEiR5PO9TXYxJkgbk4Zalgbn4j6EassupmKW3Loa/+HJ2yo6vHtZ1Ku2HZhG?=
- =?us-ascii?Q?dP/c6IQi+drvrXzy/LQz58+VuioBZvoPYbRPPXYef5GcsIg0okby66Tsq2D1?=
- =?us-ascii?Q?WHR+OVKtNqs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nI0PBEWlvm3Zrj77AM9zIu1HpS3w1pVGt4CpchvhWFMPzg+BoH/N1WJlWmgL?=
- =?us-ascii?Q?BuH5U9iBlQCQeFw7jVMz5fqlRblCOclp70UAWCuwUCit/ylHPtBQQmLmXSzP?=
- =?us-ascii?Q?yU9RYxFHh975+7YtQSCwST1v8AdAiTJlMz2QkMrbqu5SoTpNPme2shuyjlOW?=
- =?us-ascii?Q?Tn8lTiz2UpHJtQovXcwITYI9qCheldE/IqNE+aTheJHWkKotbSHgDLz+wVYs?=
- =?us-ascii?Q?MAR9Thgk2Iqz3R9ZtRThwyOg+sfZPUNQZ/8g+50J+k0iyUMSKck7zfDJQE8b?=
- =?us-ascii?Q?F34pvBH3qCbDL0gvE3RYjPQAEWgXf9o7jSz2sWfvmcXtavCGZI9ancdLu+ru?=
- =?us-ascii?Q?MKU19WezHmqELtqSuWgPergQXq8Q0YQviBsjiW9Pi4ToVXlly8IE4fxczp2q?=
- =?us-ascii?Q?Ewx7jePddxlZuQn4c0Co6Jw8K1EYH6jhf2GdpDDVPj07oNIKZe9DLGfyuBy4?=
- =?us-ascii?Q?Ok9tg/RgAsfCqyCq1ChDd8DffAqmd6EKHABB0ffRBeXK4SW3CNnCiI/MYNmR?=
- =?us-ascii?Q?CQ9D+6cXKzHg69csZN/vWqjb3wWL0hjxMRgzbA5VUTU9cRwiN0GfQwJz1bFI?=
- =?us-ascii?Q?zIT3xsqlAJwGrF5gSZXc2Qld5Knkva9C7AoppeVICpFPBBFq42gr93D9Iki9?=
- =?us-ascii?Q?BA3qR8A+KjdAg8936kqwv8gTGadPauhi3uMlcmoh8YxZDBTapBPwZGE2wCoM?=
- =?us-ascii?Q?Szs8ROoXhmy2CEMOu6dr/qgKgro5SdjDPjYPixFVFsWXvRtARwHIPqdnpnOF?=
- =?us-ascii?Q?uS9hVOs2+Q+gtFU6vOZ03kJVDYHPM39d7rbvk8Pq0Rbh6e/kLagtKUsRnsEg?=
- =?us-ascii?Q?g2H02wOtRiylmEty6QYfvmWu4rvOHlAzVq+gGaCMaaTWi4Zy9nzapTr47Aa8?=
- =?us-ascii?Q?7rJ4st3iFiDdX9DijBsdDLpPItydv8WC8tePoT8QzoJYsCDnOu1M8P4nSfkb?=
- =?us-ascii?Q?bIfQQdr4lBOt10bMtCXvc6E+irPfs92lkSiRevPfomwR0hgFRUn/eawS85P2?=
- =?us-ascii?Q?0LiDYtoOWr95jD8cwl3HS62PYgeIw6xYvubBx1o9HKP7POfL5MSw+zQwFmOa?=
- =?us-ascii?Q?R9N3itzjGINRY3uDAthPv2xzeEHHYr35kEHwbOUPm3KNhwn+XypfsK0dNHGt?=
- =?us-ascii?Q?SI8tO7VBPwsLc5UF4Cr8+QCKdBnSbY81B/w/4Jv3StlOX4JWL9fD5sGfqcPx?=
- =?us-ascii?Q?BlE9Aihl72e7lEFirWrUAKzmH5+IW6XXwzL1QiiGb7tVRjqWA2Ll5JIZX0v8?=
- =?us-ascii?Q?X+jlkFxCg2qtbe42m+lOb/NgqKqSvVWWrDSrc8ppyjOZYWxk3oYiIteIKX5n?=
- =?us-ascii?Q?SR7V2dUS2F8yU6ejpjAM9Zru8QvTenxVtJKP8Qvhd+j59zGZwaKYGEU/3XNA?=
- =?us-ascii?Q?1aP1oDUe6UPXxP494DvcGGAspJ2fKnnHa5+LQrgZYKsT+rCUpdXiVGjw1xig?=
- =?us-ascii?Q?Vm5uMY0hrD5OFWijIoXKF1hMgAkDkD4XT+5t5DWJnK8xGD4HsKXjseW4t61v?=
- =?us-ascii?Q?I1Ou9sdqNz67RO7H7LR1u1x80y8MUO4dfnZJAiYRX2h0EWev8xcm+Yl1SjOL?=
- =?us-ascii?Q?Fz6fHx8x+aWKG3Fkt8hOV/PrHpK1RsDiT7hSEcYX?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d9c570a-e1d1-4f3e-3ad9-08dde0bc4f66
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 14:09:14.8440
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0JNwGKTXvTVUtiPQLVmCZv+O2qEJ28w9qQg7mT9KwskNSQMNqL3qrz3dEcQp9PpK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7006
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Linaro-mm-sig] Re: [PATCH v3] drm/amdgpu: Pin buffers while
+ vmap'ing exported dma-buf objects
+To: Alex Deucher <alexdeucher@gmail.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: sumit.semwal@linaro.org, oushixiong@kylinos.cn,
+ alexander.deucher@amd.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org
+References: <20250821064031.39090-1-tzimmermann@suse.de>
+ <b92c072b-a302-47c8-b2c2-f4b2e3954165@amd.com>
+ <CADnq5_PxpsXkzzpa8KJoZL-pBaM2ViVBOaXuYkYyd_xHBNLt9A@mail.gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <CADnq5_PxpsXkzzpa8KJoZL-pBaM2ViVBOaXuYkYyd_xHBNLt9A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FREEMAIL_TO(0.00)[gmail.com,amd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linaro.org,kylinos.cn,amd.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org,lists.linaro.org];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,amd.com:email,linaro.org:email,suse.de:mid,suse.de:dkim,suse.de:email];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 5A3C321F10
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-On 20 Aug 2025, at 23:41, Wei Yang wrote:
+Hi
 
-> On Wed, Aug 20, 2025 at 09:40:40AM -0600, Nico Pache wrote:
-> [...]
->>>
->>>>       if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
->>>>               return SCAN_ADDRESS_RANGE;
->>>> -     if (!thp_vma_allowable_order(vma, vma->vm_flags, type, PMD_ORD=
-ER))
->>>> +     if (!thp_vma_allowable_orders(vma, vma->vm_flags, type, orders=
-))
->>>>               return SCAN_VMA_CHECK;
->>>>       /*
->>>>        * Anon VMA expected, the address may be unmapped then
->>>> @@ -1134,7 +1135,8 @@ static int collapse_huge_page(struct mm_struct=
- *mm, unsigned long address,
->>>>               goto out_nolock;
->>>>
->>>>       mmap_read_lock(mm);
->>>> -     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc=
-);
->>>> +     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc=
-,
->>>> +                                      BIT(HPAGE_PMD_ORDER));
->>>
->>> Shouldn't this be PMD order? Seems equivalent.
->> Yeah i'm actually not sure why we have both... they seem to be the
->> same thing, but perhaps there is some reason for having two...
->
-> I am confused with these two, PMD_ORDER above and HPAGE_PMD_ORDER from =
-here.
->
-> Do we have a guide on when to use which?
-
-Looking at the definition of HPAGE_PMD_SHIFT in huge_mm.h, it will cause =
-a
-build bug when PMD level huge page is not supported. So I think
-HPAGE_PMD_ORDER should be used for all huge pages (both THP and hugetlb).=
-
-
->
->>>
->>>>       if (result !=3D SCAN_SUCCEED) {
->>>>               mmap_read_unlock(mm);
->>>>               goto out_nolock;
->>>> @@ -1168,7 +1170,8 @@ static int collapse_huge_page(struct mm_struct=
- *mm, unsigned long address,
->>>>        * mmap_lock.
->>>>        */
->>>>       mmap_write_lock(mm);
->>>> -     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc=
-);
->>>> +     result =3D hugepage_vma_revalidate(mm, address, true, &vma, cc=
-,
->>>> +                                      BIT(HPAGE_PMD_ORDER));
->>>>       if (result !=3D SCAN_SUCCEED)
->>>>               goto out_up_write;
->>>>       /* check if the pmd is still valid */
->>>> @@ -2807,7 +2810,7 @@ int madvise_collapse(struct vm_area_struct *vm=
-a, unsigned long start,
->>>>                       mmap_read_lock(mm);
->>>>                       mmap_locked =3D true;
->>>>                       result =3D hugepage_vma_revalidate(mm, addr, f=
-alse, &vma,
->>>> -                                                      cc);
->>>> +                                                      cc, BIT(HPAGE=
-_PMD_ORDER));
->>>>                       if (result  !=3D SCAN_SUCCEED) {
->>>>                               last_fail =3D result;
->>>>                               goto out_nolock;
->>>> --
->>>> 2.50.1
->>>>
->>>
+Am 21.08.25 um 15:13 schrieb Alex Deucher:
+> On Thu, Aug 21, 2025 at 4:52 AM Christian König
+> <christian.koenig@amd.com> wrote:
 >>
+>>
+>> On 21.08.25 08:40, Thomas Zimmermann wrote:
+>>> Current dma-buf vmap semantics require that the mapped buffer remains
+>>> in place until the corresponding vunmap has completed.
+>>>
+>>> For GEM-SHMEM, this used to be guaranteed by a pin operation while creating
+>>> an S/G table in import. GEM-SHMEN can now import dma-buf objects without
+>>> creating the S/G table, so the pin is missing. Leads to page-fault errors,
+>>> such as the one shown below.
+>>>
+>>> [  102.101726] BUG: unable to handle page fault for address: ffffc90127000000
+>>> [...]
+>>> [  102.157102] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
+>>> [...]
+>>> [  102.243250] Call Trace:
+>>> [  102.245695]  <TASK>
+>>> [  102.2477V95]  ? validate_chain+0x24e/0x5e0
+>>> [  102.251805]  ? __lock_acquire+0x568/0xae0
+>>> [  102.255807]  udl_render_hline+0x165/0x341 [udl]
+>>> [  102.260338]  ? __pfx_udl_render_hline+0x10/0x10 [udl]
+>>> [  102.265379]  ? local_clock_noinstr+0xb/0x100
+>>> [  102.269642]  ? __lock_release.isra.0+0x16c/0x2e0
+>>> [  102.274246]  ? mark_held_locks+0x40/0x70
+>>> [  102.278177]  udl_primary_plane_helper_atomic_update+0x43e/0x680 [udl]
+>>> [  102.284606]  ? __pfx_udl_primary_plane_helper_atomic_update+0x10/0x10 [udl]
+>>> [  102.291551]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
+>>> [  102.297208]  ? lockdep_hardirqs_on+0x88/0x130
+>>> [  102.301554]  ? _raw_spin_unlock_irq+0x24/0x50
+>>> [  102.305901]  ? wait_for_completion_timeout+0x2bb/0x3a0
+>>> [  102.311028]  ? drm_atomic_helper_calc_timestamping_constants+0x141/0x200
+>>> [  102.317714]  ? drm_atomic_helper_commit_planes+0x3b6/0x1030
+>>> [  102.323279]  drm_atomic_helper_commit_planes+0x3b6/0x1030
+>>> [  102.328664]  drm_atomic_helper_commit_tail+0x41/0xb0
+>>> [  102.333622]  commit_tail+0x204/0x330
+>>> [...]
+>>> [  102.529946] ---[ end trace 0000000000000000 ]---
+>>> [  102.651980] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
+>>>
+>>> In this stack strace, udl (based on GEM-SHMEM) imported and vmap'ed a
+>>> dma-buf from amdgpu. Amdgpu relocated the buffer, thereby invalidating the
+>>> mapping.
+>>>
+>>> Provide a custom dma-buf vmap method in amdgpu that pins the object before
+>>> mapping it's buffer's pages into kernel address space. Do the opposite in
+>>> vunmap.
+>>>
+>>> Note that dma-buf vmap differs from GEM vmap in how it handles relocation.
+>>> While dma-buf vmap keeps the buffer in place, GEM vmap requires the caller
+>>> to keep the buffer in place. Hence, this fix is in amdgpu's dma-buf code
+>>> instead of its GEM code.
+>>>
+>>> A discussion of various approaches to solving the problem is available
+>>> at [1].
+>>>
+>>> v3:
+>>> - try (GTT | VRAM); drop CPU domain (Christian)
+>>> v2:
+>>> - only use mapable domains (Christian)
+>>> - try pinning to domains in preferred order
+>>>
+>>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>> Fixes: 660cd44659a0 ("drm/shmem-helper: Import dmabuf without mapping its sg_table")
+>>> Reported-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>> Closes: https://lore.kernel.org/dri-devel/ba1bdfb8-dbf7-4372-bdcb-df7e0511c702@suse.de/
+>>> Cc: Shixiong Ou <oushixiong@kylinos.cn>
+>>> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+>>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>>> Cc: Maxime Ripard <mripard@kernel.org>
+>>> Cc: David Airlie <airlied@gmail.com>
+>>> Cc: Simona Vetter <simona@ffwll.ch>
+>>> Cc: Sumit Semwal <sumit.semwal@linaro.org>
+>>> Cc: "Christian König" <christian.koenig@amd.com>
+>>> Cc: dri-devel@lists.freedesktop.org
+>>> Cc: linux-media@vger.kernel.org
+>>> Cc: linaro-mm-sig@lists.linaro.org
+>>> Link: https://lore.kernel.org/dri-devel/9792c6c3-a2b8-4b2b-b5ba-fba19b153e21@suse.de/ # [1]
+>> Reviewed-by: Christian König <christian.koenig@amd.com>
+> Thomas did you want to take this through drm-misc or do you want me to
+> pick this up?
+
+If you haven't send out this week's fixes for amdgpu, you're welcome to 
+pick it up. Otherwise I can merge it via drm-misc-fixes next week.
+
+Best regards
+Thomas
+
 >
-> -- =
+> Thanks,
+>
+> Alex
+>
+>>> ---
+>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c | 34 +++++++++++++++++++--
+>>>   1 file changed, 32 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+>>> index 5743ebb2f1b7..ce27cb5bb05e 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+>>> @@ -285,6 +285,36 @@ static int amdgpu_dma_buf_begin_cpu_access(struct dma_buf *dma_buf,
+>>>        return ret;
+>>>   }
+>>>
+>>> +static int amdgpu_dma_buf_vmap(struct dma_buf *dma_buf, struct iosys_map *map)
+>>> +{
+>>> +     struct drm_gem_object *obj = dma_buf->priv;
+>>> +     struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+>>> +     int ret;
+>>> +
+>>> +     /*
+>>> +      * Pin to keep buffer in place while it's vmap'ed. The actual
+>>> +      * domain is not that important as long as it's mapable. Using
+>>> +      * GTT and VRAM should be compatible with most use cases.
+>>> +      */
+>>> +     ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_GTT | AMDGPU_GEM_DOMAIN_VRAM);
+>>> +     if (ret)
+>>> +             return ret;
+>>> +     ret = drm_gem_dmabuf_vmap(dma_buf, map);
+>>> +     if (ret)
+>>> +             amdgpu_bo_unpin(bo);
+>>> +
+>>> +     return ret;
+>>> +}
+>>> +
+>>> +static void amdgpu_dma_buf_vunmap(struct dma_buf *dma_buf, struct iosys_map *map)
+>>> +{
+>>> +     struct drm_gem_object *obj = dma_buf->priv;
+>>> +     struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+>>> +
+>>> +     drm_gem_dmabuf_vunmap(dma_buf, map);
+>>> +     amdgpu_bo_unpin(bo);
+>>> +}
+>>> +
+>>>   const struct dma_buf_ops amdgpu_dmabuf_ops = {
+>>>        .attach = amdgpu_dma_buf_attach,
+>>>        .pin = amdgpu_dma_buf_pin,
+>>> @@ -294,8 +324,8 @@ const struct dma_buf_ops amdgpu_dmabuf_ops = {
+>>>        .release = drm_gem_dmabuf_release,
+>>>        .begin_cpu_access = amdgpu_dma_buf_begin_cpu_access,
+>>>        .mmap = drm_gem_dmabuf_mmap,
+>>> -     .vmap = drm_gem_dmabuf_vmap,
+>>> -     .vunmap = drm_gem_dmabuf_vunmap,
+>>> +     .vmap = amdgpu_dma_buf_vmap,
+>>> +     .vunmap = amdgpu_dma_buf_vunmap,
+>>>   };
+>>>
+>>>   /**
+>> _______________________________________________
+>> Linaro-mm-sig mailing list -- linaro-mm-sig@lists.linaro.org
+>> To unsubscribe send an email to linaro-mm-sig-leave@lists.linaro.org
 
-> Wei Yang
-> Help you, Help me
-
-
+-- 
 --
-Best Regards,
-Yan, Zi
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
