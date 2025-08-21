@@ -1,130 +1,185 @@
-Return-Path: <linux-kernel+bounces-780667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7ADCB307E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC6FB307D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D85BEAC7F83
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16C86AC761E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B49362076;
-	Thu, 21 Aug 2025 20:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C876352FE8;
+	Thu, 21 Aug 2025 20:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCgTS1FU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAE835334F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iR3TX5Di"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00CE350838;
+	Thu, 21 Aug 2025 20:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755809384; cv=none; b=E7CdqjE1kUwWsEYGoO2j5oOijTUcdjAZ6R+bTGUX6eKQEHePS6gYHOKu9ez9niEMbmVOXoUW3ozylM673dSMEpmUMups7RnE16JZuEhOVhBMwZpOHNMhG977T3i4XFQomZUK0JUxNd3jgDpCJ8Ueu4XJ6uMFXu2SCtmdHeIpdfs=
+	t=1755809375; cv=none; b=ZORQHJkJMRhyegkrIwL8Kyfwcher9GLy+TJTN5K1mrHHZR8z7hpjvKW/Kd5BxOCYWSodOIYasz0WTydnCRuSP3esu5ip7nUkU80AE1+FtbUn6GvBaxsTWRkeRfFHTiiQPs35qSM/3FYOpxqDodiAoMVZUqvIS/vrnEsvjEa9Lhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755809384; c=relaxed/simple;
-	bh=KoIUInjX6RJEpDrGgIm4Hycfp7oY5456rd0zqjDmfjs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pEigUssiE7usoitUWsmqX5mojIoGv/XnykPd64xXKLIfl5HMKWpnm/BrocVKlzCxcGKPiUumEOMPO4JWtxwBpv6wjA7AvUy+9M26801HApjUTyo/tyvP6hOxI/jnMCDfAV8CsO84hY9TcT8OiYIgDbzUvUHbHwSNIXPsMfGQU9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tCgTS1FU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18307C19422
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755809384;
-	bh=KoIUInjX6RJEpDrGgIm4Hycfp7oY5456rd0zqjDmfjs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tCgTS1FUJED5X7BKRr1G1uHmLLdl2HxWV5HWRiudFUmEweu/0jCZzpVj982pmN3wF
-	 gfbUDV19byGg11HLjIC5AfMnYxgUY0L1tgD/fSWTRJ6I3UoJsMxFBZ/fQrDHdJvTIu
-	 9OWEVWE8BSh7wJSI0KcSbmH2xyGYUlRUMkKsNbxWjrs4Yysis6wjO5KQExw7xGsSoQ
-	 N0h1ax18NzJuLok/Pdp+GDtqhqyFwbrJWSWluiJLAHNypBucs1ID6K25VIcRm40Yrs
-	 cQwUFKd3RNpYQIthqljoUWy/M91EqpwgQCtsrrpv2cWo8VpgbTtb5tjayZvwzXJQ3P
-	 EvUEBo5C56kxg==
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so20665e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:49:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX8o70YzaW+pgr0cSuKdOwWgG+O6yUaneZWSkK9ubjKo2a6zj6FNm5wsSsojEPwXU3c5Bm9eVWSQVfr6Vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLOIMF2s6HH8wdKTOoIVSkInO6TpUFrY9+Z3M/vvfw/TNpagx1
-	TfQ3qH0ayJq4B3+iSvoSeZCC8k3GMHgAGUh20NxVUnyl+pUPLGAmjZHKVa7zTNKBgo813mhC4Tx
-	vu0jxPnAfgJOxskX5S+QRm9xy06FVmRmBu2DwRKOf
-X-Google-Smtp-Source: AGHT+IHl0pS9R9FTkQgIv/5Hdf1X8d4Nj3rq1y1QABgTLUekN9baPu7Uk8DZ+Euo3lzu+Y1TgqaNMZRejMKp976OXZ4=
-X-Received: by 2002:a05:600c:2d47:b0:45b:4acd:836d with SMTP id
- 5b1f17b1804b1-45b52128850mr12145e9.5.1755809382698; Thu, 21 Aug 2025 13:49:42
- -0700 (PDT)
+	s=arc-20240116; t=1755809375; c=relaxed/simple;
+	bh=I59Q4gykP3nqMoFvbLVoMlB+6BLq+OxabvM5FCSpuBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ik10Wqi66LwAGIaQ3u9mhj+33P59ZsoV4PKPtxUHFpFekF/UuHVXCSFfLJKvruLHNOXjO3k/8ZnEHH/pGB6hjYTngsL/Tm7JoAluXexRCxrU+zptPZqpwxHWCR1eT3VASMzV5u50yfWjy00rgPCq0nl5CfKSNdxzs5BlgZlcoDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iR3TX5Di; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5B6E12116B43;
+	Thu, 21 Aug 2025 13:49:32 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B6E12116B43
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1755809372;
+	bh=Ycm3d82ILDOuIJ8hMr//WBLCYjeAS3iT+HhalDzwCNI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iR3TX5DiGU2T6HNdy0NyHU9wj0GRO2W5G3OV225D12mX2KOmTjLtgX2+5IhENQPBS
+	 utB1IDBbW5XdAHUpTfZ3L0C/r6omtOW19xtz+y3tZXaGqv9OAdk64qkagySMgyEkJ4
+	 GZRhM2RwnihXW1mGMP7Uf0vsEP1GXDlH22bl6DO4=
+Message-ID: <833a0c96-470f-acff-72e7-cc82995fbc2f@linux.microsoft.com>
+Date: Thu, 21 Aug 2025 13:49:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGsJ_4yLDLvOZ2=3iVcQhu2jnbWQ+iTQsqVefJsx4_YT4bnEZg@mail.gmail.com>
- <20250821164255.78596-1-sj@kernel.org>
-In-Reply-To: <20250821164255.78596-1-sj@kernel.org>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 21 Aug 2025 13:49:31 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuM++mc5PjcN_bxjZjbByT7QpVdOqRQte=vGJnuQxSTVfw@mail.gmail.com>
-X-Gm-Features: Ac12FXyGjYZaF6MgM88P2QEJUWcwgSvwYevAX28lXk8lha2JfaULLr54VhuGvAI
-Message-ID: <CAF8kJuM++mc5PjcN_bxjZjbByT7QpVdOqRQte=vGJnuQxSTVfw@mail.gmail.com>
-Subject: Re: [PATCH v4] mm/zswap: store <PAGE_SIZE compression failed page as-is
-To: SeongJae Park <sj@kernel.org>
-Cc: Barry Song <21cnbao@gmail.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Takero Funaki <flintglass@gmail.com>, 
-	David Hildenbrand <david@redhat.com>, Baoquan He <bhe@redhat.com>, Kairui Song <kasong@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v3 1/7] Drivers: hv: Introduce hv_hvcall_*() functions for
+ hypercall arguments
+Content-Language: en-US
+To: Michael Kelley <mhklinux@outlook.com>,
+ "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "arnd@arndb.de" <arnd@arndb.de>
+Cc: "x86@kernel.org" <x86@kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+References: <20250415180728.1789-1-mhklinux@outlook.com>
+ <20250415180728.1789-2-mhklinux@outlook.com>
+ <f711d4ad-87a8-9cb3-aabc-a493ff18986a@linux.microsoft.com>
+ <33b59cc4-2834-b6c7-5ffd-7b9d620a4ce5@linux.microsoft.com>
+ <SN6PR02MB4157376DD06C1DC2E28A76B7D432A@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Mukesh R <mrathor@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157376DD06C1DC2E28A76B7D432A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 21, 2025 at 9:43=E2=80=AFAM SeongJae Park <sj@kernel.org> wrote=
-:
->
-> On Thu, 21 Aug 2025 18:27:52 +0800 Barry Song <21cnbao@gmail.com> wrote:
->
-> > On Thu, Aug 21, 2025 at 1:33=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> w=
-rote:
-> > >
-> > > On Tue, Aug 19, 2025 at 6:37=E2=80=AFPM Herbert Xu <herbert@gondor.ap=
-ana.org.au> wrote:
-> > > >
-> > > > On Wed, Aug 20, 2025 at 01:34:01PM +1200, Barry Song wrote:
-> > > > >
-> > > > > We might want to revisit the old thread to check whether it is no=
-w safe for us
-> > > > > to move to PAGE_SIZE in zswap now.
-> > > >
-> > > > It's perfectly safe as LZO was fixed months ago.
-> > >
-> > > Perfect. Then I'll revive Chengming's patch (see [1]) to reduce the
-> > > compression buffer :)
-> >
-> > Nice!
-> >
-> > But perhaps we should wait until SeongJae sends a new version that
-> > addresses the counter issue?
->
-> Is there a reason to wait?  I was thinking those are orthogonal problems?
->
-> Anyway, for the counter (crypto_compress_fail), I don't have a strong opi=
-nion.
-> To my understanding, the options for path forward are...
->
-> 1. remove it,
-> 2. keep it as is, or
-> 3. keep it, but account only -EINPROGRESS[1]
->
-> If I'm not missing other options, I'm tempted to the first option (remove=
- it)
-> since it doesn't change any existing things, and we can revisit later.
+On 8/21/25 12:24, Michael Kelley wrote:
+> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Wednesday, August 20, 2025 7:58 PM
+>>
+>> On 8/20/25 17:31, Mukesh R wrote:
+>>> On 4/15/25 11:07, mhkelley58@gmail.com wrote:
+>>>> From: Michael Kelley <mhklinux@outlook.com>
+>>>>
+>>>>
+<snip>
+>>>
+>>>
+>>> IMHO, this is unnecessary change that just obfuscates code. With status quo
+>>> one has the advantage of seeing what exactly is going on, one can use the
+>>> args any which way, change batch size any which way, and is thus flexible.
+> 
+> I started this patch set in response to some errors in open coding the
+> use of hyperv_pcpu_input/output_arg, to see if helper functions could
+> regularize the usage and reduce the likelihood of future errors. Balancing
+> the pluses and minuses of the result, in my view the helper functions are
+> an improvement, though not overwhelmingly so. Others may see the
+> tradeoffs differently, and as such I would not go to the mat in arguing the
+> patches must be taken. But if we don't take them, we need to go back and
+> clean up minor errors and inconsistencies in the open coding at some
+> existing hypercall call sites.
 
-I am fine with 1) removing it. Maybe add a log once print error on the
-error code if -EINPROGRESS, just to know such extreme error has been
-triggered.
->
-> Please let me know if I'm missing other options or if you have other pref=
-erences.
+Yes, definitely. Assuming Nuno knows what issues you are referring to,
+I'll work with him to get them addressed asap. Thanks for noticing them.
+If Nuno is not aware, I'll ping you for more info.
 
-I just don't want to hide the extreme error case but I am also fine
-with just removing it. It is your call.
 
-Chris
+>>> With time these functions only get more complicated and error prone. The
+>>> saving of ram is very minimal, this makes analyzing crash dumps harder,
+>>> and in some cases like in your patch 3/7 disables unnecessarily in error case:
+>>>
+>>> - if (count > HV_MAX_MODIFY_GPA_REP_COUNT) {
+>>> -  pr_err("Hyper-V: GPA count:%d exceeds supported:%lu\n", count,
+>>> -   HV_MAX_MODIFY_GPA_REP_COUNT);
+>>> + local_irq_save(flags);      <<<<<<<
+>>> ...
+> 
+> FWIW, this error case is not disabled. It is checked a few lines further down as:
+
+I meant disabled interrupts. The check moves after disabling interrupts, so
+it runs "disabled" in traditional OS terminology :).
+
+> 
+> +       if (count > batch_size) {
+> +               pr_err("Hyper-V: GPA count:%d exceeds supported:%u\n", count,
+> +                      batch_size);
+> 
+>>>
+>>> So, this is a nak from me. sorry.
+>>>
+>>
+>> Furthermore, this makes us lose the ability to permanently map
+>> input/output pages in the hypervisor. So, Wei kindly undo.
+>>
+> 
+> Could you elaborate on "lose the ability to permanently map
+> input/output pages in the hypervisor"? What specifically can't be
+> done and why?
+
+Input and output are mapped at fixed GPA/SPA always to avoid hyp
+having to map/unmap every time.
+
+> <snip>
+> 
+>>>
+>>>> +/*
+>>>> + * Allocate one page that is shared between input and output args, which is
+>>>> + * sufficient for all current hypercalls. If a future hypercall requires
+>>>
+>>> That is incorrect. We've iommu map hypercalls that will use up entire page
+>>> for input. More coming as we implement ram withdrawl from the hypervisor.
+> 
+> At least some form of ram withdrawal is already implemented upstream as
+> hv_call_withdraw_memory(). The hypercall has a very small input using the
+> hv_setup_in() helper, but the output list of PFNs must go to a separately
+> allocated page so it can be retained with interrupts enabled while
+> __free_page() is called. The use of this separate output page predates the
+> introduction of the hv_setup_in() helper.
+
+Yeah, I am talking about hyp memory that loader gives it, and during the
+lifetime it accumulates for VMs. We are opening the flood gates, so you
+will see lots patches very soon.
+
+
+> For iommu map hypercalls, what do the input and output look like? Is the
+> paradigm different from the typical small fixed portion plus a variable size
+> array of values that are fed into a rep hypercall? Is there also a large amount
+> of output from the hypercall? Just curious if there's a case that's fundamentally
+> different from the current set of hypercalls.
+
+Patches coming soon, but at high level, hypercall includes list of SPAs
+that hypevisor will map into the iommu. These can get large. We will be
+exploring what we can do better to pass them, perhaps multiple pages, not
+sure yet, but for now it's single page.
+
+Thanks,
+-Mukesh
+
 
