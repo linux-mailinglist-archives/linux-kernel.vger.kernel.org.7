@@ -1,342 +1,175 @@
-Return-Path: <linux-kernel+bounces-779996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2C9B2FC2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130C8B2FC2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8454A605600
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:11:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5D73B88A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52832DAFCF;
-	Thu, 21 Aug 2025 14:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A132D9ECD;
+	Thu, 21 Aug 2025 14:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="M/b3gb9K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LGC4zeGC";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yAqnGrED";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yDgcAsut"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aOYb0Q0u"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989281805E
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73802E0B45;
+	Thu, 21 Aug 2025 14:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755785452; cv=none; b=LRbcsfPmHB0xOmfeu5/dnNopAhQNvrRRXfPOLGI7nzWNcAcEIfhSfXYjq5TESiFqV9M+mWRvTV5dt21TxaK2LjXo1fs2E/zz3X7Yjnaw80q0gpJfHk+/DWulFLpJeVHfP/3sZKroLm20eoXIBDGjGzD84qs25T3/HI5plqYo/fo=
+	t=1755785661; cv=none; b=tiz4iUoKky5uK3S2HDiNqFsxBntVIeqXPkrYSo1Zxm8E8b7dmSByLxgZKTg65+BiKGQYVr9ICLWvEumQ29CFD5ozewKkgEKRdk7zixP/NR3hPIuq+o+L7PeU0WlB4oCEuUxUVbMTD4ttoOOyy0zz/dlv1SqqNcgcGiqWeOUm6j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755785452; c=relaxed/simple;
-	bh=0pReoKMz2Vn7eLN7zqygcpnA9mke79QNosCjGsjhhfo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hahEPO36JntMxb07var25BAQIh9GYIMfAZSgMVwaLon3pXeOtkEmF5B7ZHR4ymKF9mXZp0KKPfUGwnt3gzC+Q11YZ7NaZa2ZkABhlHOJkjmmqWVmMuS6ZHFMHD5NS6l0gKwPg/gxbxlK8JH8vG1gplG3sX6lYOqyFrGUjjNB71g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=M/b3gb9K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LGC4zeGC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yAqnGrED; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yDgcAsut; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5A3C321F10;
-	Thu, 21 Aug 2025 14:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755785447; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jmm3Rcgx45Ek6+6JOc9UdX6C5lNjJzPeNBj+B3KBHSY=;
-	b=M/b3gb9KaYn+zgSZBCrWoZy9gYsN1SytbN4WLLljsbYIBCO0FLUaVth30knSJeAm/BRn9s
-	jBFQagENcGz8AuBHBFn8NTmejzpCer5jA2O4nmhydlFulsuJUZAuXRYz5s6EWOVF4O11gu
-	Tah/3cnM8GeArDURRe+Rfy0yiE/WGSM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755785447;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jmm3Rcgx45Ek6+6JOc9UdX6C5lNjJzPeNBj+B3KBHSY=;
-	b=LGC4zeGC+rWkFcXT4TIxucWDlKtBRqg4kPI5eBDA9QydlKDoh7pMgzjBipJi3fuD6fDEET
-	+8oxl6FDNEEZBeAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yAqnGrED;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yDgcAsut
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755785446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jmm3Rcgx45Ek6+6JOc9UdX6C5lNjJzPeNBj+B3KBHSY=;
-	b=yAqnGrEDV1/qNKKLM/r92HaigufAqe/1hjYNLOo5g2pOtDG0g5gkosQ5kVxni6fbJtRbm4
-	OB1MX3Y6A2qDP7kdq4noz8S1mqaNAGdSxsrThxUPgrr8iYoCpIL8qM/gGfhBO9Evyervxj
-	F32w/0TRvLO8cembLa+UYclsO33mNKo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755785446;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jmm3Rcgx45Ek6+6JOc9UdX6C5lNjJzPeNBj+B3KBHSY=;
-	b=yDgcAsutsJJ4VK9wRHIw303rhsFxxyJDnyy/uVzVcZwKfLD/IJbJjTmNd86GkT2zNRcUBK
-	83vACgJrqiE21zBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E52CF13867;
-	Thu, 21 Aug 2025 14:10:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XhlQNuUop2g8eQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 21 Aug 2025 14:10:45 +0000
-Message-ID: <37cacb29-e382-400c-b4fb-bed733ce480b@suse.de>
-Date: Thu, 21 Aug 2025 16:10:45 +0200
+	s=arc-20240116; t=1755785661; c=relaxed/simple;
+	bh=ixalp0w2CUYHQ5NQlNHwr+bj0kQmtH2DORccmekLrgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gf95fQMKuv2Hpnv32AJ4p4UgWSyu1I05b3GmXKDk72Qk5a0r+LnGuk87TvpGwHBqRy2w+PvDcg8BZDyw8UXOpCSA6a2wfbWY/n1xt+FEeOnM/rjtV8u8jKr+0lD2ojKqF0l1EMElPZh17l/WZWLOXdLiIrSoRG8KdFb7z3EeRdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aOYb0Q0u; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755785660; x=1787321660;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ixalp0w2CUYHQ5NQlNHwr+bj0kQmtH2DORccmekLrgk=;
+  b=aOYb0Q0unQvrqxc9gLyDQBtN2dcik+wNlTIwTw3U1J/cZcwAXhVDvnpE
+   0t/MpV0OZco4ySTtmlTnVp8OMFcPfrKaIapZGiK4g98rGrSOuPloSHNXz
+   My6YbJBGDbogG5wgbvR2sx/RYn0q770psNympa8JVQoXr0N3TyeBb/11z
+   +QMvXiJFSwORH2KCn0Pur6/YrNLj3efPw/MT0TXLvunXfqDcXhXoTsZrI
+   PX1kvVoLvm4Z7i/wleLtg0H8vNSaYJWtMJ54E9oLlvIve1yMiPH6DFmRI
+   qVoGxJfsfA5toGcsvw9/miEN9NyrGI69qL2UtEu7b//n9mcQ9uVPkrxCT
+   g==;
+X-CSE-ConnectionGUID: mcXUjriHQXmKOsnGcOi77g==
+X-CSE-MsgGUID: llXZzQeMSz2HLHrOXdXg8g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69513878"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="69513878"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 07:14:20 -0700
+X-CSE-ConnectionGUID: J5U2KbXiQ22QVCBBSZm3ww==
+X-CSE-MsgGUID: nNNaBNWlSaSC0tsi88AAcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="199401653"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 21 Aug 2025 07:14:14 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1up620-000KLP-2Z;
+	Thu, 21 Aug 2025 14:13:31 +0000
+Date: Thu, 21 Aug 2025 22:11:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shenwei Wang <shenwei.wang@nxp.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: Re: [PATCH 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+Message-ID: <202508212119.gamkDcXG-lkp@intel.com>
+References: <20250818204420.794554-4-shenwei.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linaro-mm-sig] Re: [PATCH v3] drm/amdgpu: Pin buffers while
- vmap'ing exported dma-buf objects
-To: Alex Deucher <alexdeucher@gmail.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: sumit.semwal@linaro.org, oushixiong@kylinos.cn,
- alexander.deucher@amd.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org
-References: <20250821064031.39090-1-tzimmermann@suse.de>
- <b92c072b-a302-47c8-b2c2-f4b2e3954165@amd.com>
- <CADnq5_PxpsXkzzpa8KJoZL-pBaM2ViVBOaXuYkYyd_xHBNLt9A@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <CADnq5_PxpsXkzzpa8KJoZL-pBaM2ViVBOaXuYkYyd_xHBNLt9A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	FREEMAIL_TO(0.00)[gmail.com,amd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linaro.org,kylinos.cn,amd.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org,lists.linaro.org];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,amd.com:email,linaro.org:email,suse.de:mid,suse.de:dkim,suse.de:email];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 5A3C321F10
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818204420.794554-4-shenwei.wang@nxp.com>
 
-Hi
+Hi Shenwei,
 
-Am 21.08.25 um 15:13 schrieb Alex Deucher:
-> On Thu, Aug 21, 2025 at 4:52 AM Christian König
-> <christian.koenig@amd.com> wrote:
->>
->>
->> On 21.08.25 08:40, Thomas Zimmermann wrote:
->>> Current dma-buf vmap semantics require that the mapped buffer remains
->>> in place until the corresponding vunmap has completed.
->>>
->>> For GEM-SHMEM, this used to be guaranteed by a pin operation while creating
->>> an S/G table in import. GEM-SHMEN can now import dma-buf objects without
->>> creating the S/G table, so the pin is missing. Leads to page-fault errors,
->>> such as the one shown below.
->>>
->>> [  102.101726] BUG: unable to handle page fault for address: ffffc90127000000
->>> [...]
->>> [  102.157102] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
->>> [...]
->>> [  102.243250] Call Trace:
->>> [  102.245695]  <TASK>
->>> [  102.2477V95]  ? validate_chain+0x24e/0x5e0
->>> [  102.251805]  ? __lock_acquire+0x568/0xae0
->>> [  102.255807]  udl_render_hline+0x165/0x341 [udl]
->>> [  102.260338]  ? __pfx_udl_render_hline+0x10/0x10 [udl]
->>> [  102.265379]  ? local_clock_noinstr+0xb/0x100
->>> [  102.269642]  ? __lock_release.isra.0+0x16c/0x2e0
->>> [  102.274246]  ? mark_held_locks+0x40/0x70
->>> [  102.278177]  udl_primary_plane_helper_atomic_update+0x43e/0x680 [udl]
->>> [  102.284606]  ? __pfx_udl_primary_plane_helper_atomic_update+0x10/0x10 [udl]
->>> [  102.291551]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
->>> [  102.297208]  ? lockdep_hardirqs_on+0x88/0x130
->>> [  102.301554]  ? _raw_spin_unlock_irq+0x24/0x50
->>> [  102.305901]  ? wait_for_completion_timeout+0x2bb/0x3a0
->>> [  102.311028]  ? drm_atomic_helper_calc_timestamping_constants+0x141/0x200
->>> [  102.317714]  ? drm_atomic_helper_commit_planes+0x3b6/0x1030
->>> [  102.323279]  drm_atomic_helper_commit_planes+0x3b6/0x1030
->>> [  102.328664]  drm_atomic_helper_commit_tail+0x41/0xb0
->>> [  102.333622]  commit_tail+0x204/0x330
->>> [...]
->>> [  102.529946] ---[ end trace 0000000000000000 ]---
->>> [  102.651980] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
->>>
->>> In this stack strace, udl (based on GEM-SHMEM) imported and vmap'ed a
->>> dma-buf from amdgpu. Amdgpu relocated the buffer, thereby invalidating the
->>> mapping.
->>>
->>> Provide a custom dma-buf vmap method in amdgpu that pins the object before
->>> mapping it's buffer's pages into kernel address space. Do the opposite in
->>> vunmap.
->>>
->>> Note that dma-buf vmap differs from GEM vmap in how it handles relocation.
->>> While dma-buf vmap keeps the buffer in place, GEM vmap requires the caller
->>> to keep the buffer in place. Hence, this fix is in amdgpu's dma-buf code
->>> instead of its GEM code.
->>>
->>> A discussion of various approaches to solving the problem is available
->>> at [1].
->>>
->>> v3:
->>> - try (GTT | VRAM); drop CPU domain (Christian)
->>> v2:
->>> - only use mapable domains (Christian)
->>> - try pinning to domains in preferred order
->>>
->>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
->>> Fixes: 660cd44659a0 ("drm/shmem-helper: Import dmabuf without mapping its sg_table")
->>> Reported-by: Thomas Zimmermann <tzimmermann@suse.de>
->>> Closes: https://lore.kernel.org/dri-devel/ba1bdfb8-dbf7-4372-bdcb-df7e0511c702@suse.de/
->>> Cc: Shixiong Ou <oushixiong@kylinos.cn>
->>> Cc: Thomas Zimmermann <tzimmermann@suse.de>
->>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
->>> Cc: Maxime Ripard <mripard@kernel.org>
->>> Cc: David Airlie <airlied@gmail.com>
->>> Cc: Simona Vetter <simona@ffwll.ch>
->>> Cc: Sumit Semwal <sumit.semwal@linaro.org>
->>> Cc: "Christian König" <christian.koenig@amd.com>
->>> Cc: dri-devel@lists.freedesktop.org
->>> Cc: linux-media@vger.kernel.org
->>> Cc: linaro-mm-sig@lists.linaro.org
->>> Link: https://lore.kernel.org/dri-devel/9792c6c3-a2b8-4b2b-b5ba-fba19b153e21@suse.de/ # [1]
->> Reviewed-by: Christian König <christian.koenig@amd.com>
-> Thomas did you want to take this through drm-misc or do you want me to
-> pick this up?
+kernel test robot noticed the following build warnings:
 
-If you haven't send out this week's fixes for amdgpu, you're welcome to 
-pick it up. Otherwise I can merge it via drm-misc-fixes next week.
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on brgl/gpio/for-next shawnguo/for-next linus/master v6.17-rc2 next-20250820]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Best regards
-Thomas
+url:    https://github.com/intel-lab-lkp/linux/commits/Shenwei-Wang/dt-bindings-remoteproc-imx_rproc-Add-rpmsg-subnode-support/20250819-044803
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20250818204420.794554-4-shenwei.wang%40nxp.com
+patch subject: [PATCH 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250821/202508212119.gamkDcXG-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250821/202508212119.gamkDcXG-lkp@intel.com/reproduce)
 
->
-> Thanks,
->
-> Alex
->
->>> ---
->>>   drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c | 34 +++++++++++++++++++--
->>>   1 file changed, 32 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
->>> index 5743ebb2f1b7..ce27cb5bb05e 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
->>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
->>> @@ -285,6 +285,36 @@ static int amdgpu_dma_buf_begin_cpu_access(struct dma_buf *dma_buf,
->>>        return ret;
->>>   }
->>>
->>> +static int amdgpu_dma_buf_vmap(struct dma_buf *dma_buf, struct iosys_map *map)
->>> +{
->>> +     struct drm_gem_object *obj = dma_buf->priv;
->>> +     struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
->>> +     int ret;
->>> +
->>> +     /*
->>> +      * Pin to keep buffer in place while it's vmap'ed. The actual
->>> +      * domain is not that important as long as it's mapable. Using
->>> +      * GTT and VRAM should be compatible with most use cases.
->>> +      */
->>> +     ret = amdgpu_bo_pin(bo, AMDGPU_GEM_DOMAIN_GTT | AMDGPU_GEM_DOMAIN_VRAM);
->>> +     if (ret)
->>> +             return ret;
->>> +     ret = drm_gem_dmabuf_vmap(dma_buf, map);
->>> +     if (ret)
->>> +             amdgpu_bo_unpin(bo);
->>> +
->>> +     return ret;
->>> +}
->>> +
->>> +static void amdgpu_dma_buf_vunmap(struct dma_buf *dma_buf, struct iosys_map *map)
->>> +{
->>> +     struct drm_gem_object *obj = dma_buf->priv;
->>> +     struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
->>> +
->>> +     drm_gem_dmabuf_vunmap(dma_buf, map);
->>> +     amdgpu_bo_unpin(bo);
->>> +}
->>> +
->>>   const struct dma_buf_ops amdgpu_dmabuf_ops = {
->>>        .attach = amdgpu_dma_buf_attach,
->>>        .pin = amdgpu_dma_buf_pin,
->>> @@ -294,8 +324,8 @@ const struct dma_buf_ops amdgpu_dmabuf_ops = {
->>>        .release = drm_gem_dmabuf_release,
->>>        .begin_cpu_access = amdgpu_dma_buf_begin_cpu_access,
->>>        .mmap = drm_gem_dmabuf_mmap,
->>> -     .vmap = drm_gem_dmabuf_vmap,
->>> -     .vunmap = drm_gem_dmabuf_vunmap,
->>> +     .vmap = amdgpu_dma_buf_vmap,
->>> +     .vunmap = amdgpu_dma_buf_vunmap,
->>>   };
->>>
->>>   /**
->> _______________________________________________
->> Linaro-mm-sig mailing list -- linaro-mm-sig@lists.linaro.org
->> To unsubscribe send an email to linaro-mm-sig-leave@lists.linaro.org
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508212119.gamkDcXG-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/gpio/gpio-imx-rpmsg.c:419:6: warning: variable 'port' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     419 |         if (msg)
+         |             ^~~
+   drivers/gpio/gpio-imx-rpmsg.c:421:7: note: uninitialized use occurs here
+     421 |         if (!port)
+         |              ^~~~
+   drivers/gpio/gpio-imx-rpmsg.c:419:2: note: remove the 'if' if its condition is always true
+     419 |         if (msg)
+         |         ^~~~~~~~
+     420 |                 port = drvdata->channel_devices[msg->port_idx];
+   drivers/gpio/gpio-imx-rpmsg.c:415:34: note: initialize the variable 'port' to silence this warning
+     415 |         struct imx_rpmsg_gpio_port *port;
+         |                                         ^
+         |                                          = NULL
+   drivers/gpio/gpio-imx-rpmsg.c:503:10: error: incompatible function pointer types assigning to 'void (*)(struct gpio_chip *, unsigned int, int)' from 'int (struct gpio_chip *, unsigned int, int)' [-Wincompatible-function-pointer-types]
+     503 |         gc->set = imx_rpmsg_gpio_set;
+         |                 ^ ~~~~~~~~~~~~~~~~~~
+   1 warning and 1 error generated.
+
+
+vim +419 drivers/gpio/gpio-imx-rpmsg.c
+
+   409	
+   410	static int imx_rpmsg_gpio_callback(struct rpmsg_device *rpdev,
+   411		void *data, int len, void *priv, u32 src)
+   412	{
+   413		struct gpio_rpmsg_data *msg = (struct gpio_rpmsg_data *)data;
+   414		unsigned long flags;
+   415		struct imx_rpmsg_gpio_port *port;
+   416		struct imx_rpmsg_driver_data *drvdata;
+   417	
+   418		drvdata = dev_get_drvdata(&rpdev->dev);
+ > 419		if (msg)
+   420			port = drvdata->channel_devices[msg->port_idx];
+   421		if (!port)
+   422			return -ENODEV;
+   423	
+   424		if (msg->header.type == GPIO_RPMSG_REPLY) {
+   425			port->info.reply_msg = msg;
+   426			complete(&port->info.cmd_complete);
+   427		} else if (msg->header.type == GPIO_RPMSG_NOTIFY) {
+   428			port->info.notify_msg = msg;
+   429			local_irq_save(flags);
+   430			generic_handle_domain_irq(port->domain, msg->pin_idx);
+   431			local_irq_restore(flags);
+   432		} else
+   433			dev_err(&rpdev->dev, "wrong command type!\n");
+   434	
+   435		return 0;
+   436	}
+   437	
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
