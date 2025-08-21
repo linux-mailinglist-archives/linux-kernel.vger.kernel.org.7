@@ -1,185 +1,200 @@
-Return-Path: <linux-kernel+bounces-778761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E33DB2EAAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:29:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3932B2EAAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98FF5C2EF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:29:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 974924E5371
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAA2229B18;
-	Thu, 21 Aug 2025 01:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tftl5mEg"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEC121B195;
+	Thu, 21 Aug 2025 01:29:35 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3118421A43B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7012204C36
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755739783; cv=none; b=RYHZdC9KCxcKc46cn9B9xx39a/+cf4wixTs+xpD58EkolKuUEm/NGeR8pYYH9lvDOd7IG0IHK/7K8bYlrm5dqGiufyOPnHwHH/feM+ADzKxFRRx1s1oQhcF+06gPpy2v0AXSxiF9ZCYDKat3O5+i0tfFqVMEjQJPKQoLLAJglfo=
+	t=1755739774; cv=none; b=rdXGCNlNz8lcFmkkNmjjXPtJN+rkj8EL3P3JVi4aFs4cQK8hJN+HPpOeRn2lRFzAOY2vvDomz36YpQ/0Z5o2lS2LFuLhNqED1dRP+gb3ireDLRtW37887Nsr7fpKBJM2nTN6Qzaiayl586xXpNj4LVO7OetpIFXyn7mve42crfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755739783; c=relaxed/simple;
-	bh=e10SbWCMoETMH3pPxsIwRdmXQgN63e98cpuLujyrvek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XyIdDVMhPBmD0vXblCwlZFIUDc6V5f79vSzDPnTUQqMABoCdfylj52AYHr3R22i6pedOuVaeHvAdh6FbMn7Cieh10aQekS7+GtcbOVVth/6NtaqaYjtLss1d/QGz3tEONIi79HDKL771CXqDrCL7vwL1y+G0zF+mHeei5Sn7GhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tftl5mEg; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e2eb4a171so638748b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 18:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755739781; x=1756344581; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qB3jMA9nyR5VDq12DEWdcvkghIiM/hajb+LZQ1DXaUM=;
-        b=Tftl5mEghCWHLEGi1mm/tumkwFza4wqka5lEt5974DWbqw1Df4yUQIoBrk2xj1I3tS
-         cQxZvs0r7gj5ZqSS+dd3OUQ4/BP1f39+ORUcc/bb7ZTIqxOFZRnmudnv3y7zvZJFzhYJ
-         MDNZlUsL9xxVFVPalxP6Qiy6ggXWIe32yMX7Jxlmy3RfeCXJRiEu9yvuBZ9a171vesHq
-         YEUSaC0mfWj8BrKvxyAC1XQfA+hZsQeK+3eTQ586mSrZlJTapkK3mb3+LMpCTyXulTPX
-         uVdi2sNB/gNBTq7Jn5HH1LMS6phxDO6da3Kv8OB8R2JyrumrKV+IzfQ21htyhUEY9I42
-         m2Ww==
+	s=arc-20240116; t=1755739774; c=relaxed/simple;
+	bh=2AyQe38wuFbh3oc8vBdjcieL0B9vhqrNZIJ9Jr6eZAo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MJ075GDrkSit39/+lweovvVIo3bE6hkIoZU63YwN76Mpf1AxkdpMvKzLS2QHsNz3KHG4OsiMqtPYDZg0ZWlrj2K9KB4WhF5hnq/ATexv2DbgNPIb0QK7JPXq1DrzgKeDb7zXmYThSewajmfnDl8wclkfhszCrFtbKkwdKvtqSU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e67a472461so13962075ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 18:29:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755739781; x=1756344581;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qB3jMA9nyR5VDq12DEWdcvkghIiM/hajb+LZQ1DXaUM=;
-        b=qBoVcVQ+w4lxN/R+egQ8/QY6YvFD0dtE01leHhdmYnNnurwkRDEf3He+0RosheB5Xc
-         8ByQ8M/lA0GeJAviPPhoKC8sNW58U6/+GW2CUQ0p8QGMqNiLBBSkz1JnvwWswoBcyxkY
-         fQX/MgB6cV2D5Yle3VDmtvb8RyLyTWjGmEx4b0xPLCvnFK+O6o0TXe/irWMgqiJixENJ
-         sw4ukaihe6XQd+yMBBqTnn3uCmueYFY0iT5uisqDkdPsMnjKJUKzm07Kr6ta+ZDsNcTO
-         6LQCMDbYQ+0A7fI0HhOjKtPXY3YgExN8RLMyB6qG2JYtNLIlCZmc+7VXBImqoF4Fd1/l
-         Ubvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBjDXC2AM4UvSUZJ1wdYyf7URCMijpNa1QW4ebB75KYzPOaeDqf0pZLDXGvt/8PArTPCo/Y46gNQnSBjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLcL3ZVsXkMKpnZBmfkFYw54TlQVauHuYui1oAw2iAcsTMfM3s
-	dHwUy0CRvBBVn9xCPeoiFs3GZjdZ4i/EqNHJyynsjpW0cpk8T47EB+XN
-X-Gm-Gg: ASbGncsBpyI6aZSWxWU6TxmVSa5JDeDu7X6onl4c9vyQYE4zh2jrm3PYXZErJjVbcbs
-	Zsaqvjka5B4/bK+IrquGAbddDBbjy12wsjOAY+LFounaCcvwH71USurjl4KeeQbC+c4oxRCiQsH
-	FX7sTjWylvVVrPZKYzHH3vHRqFcbnVwkIlzQfndE8jpLduPxTn6NpjZ/q8y57+0lYOLtQAhdpNp
-	cwyH27hYpdsIiURUdST0zXap03+h+E7sOPSR3hEydGh7IDNgUB/t5FI0qCkuvFrfn4YUK8I4oiv
-	X0Oak9yy4pk0iS2HPF9W0iLZdFFuNsZiFKKK0umnzPosU8NBzuQPBF2V0ImjPdI2ae4bb4Am3ad
-	OJCON4FCrwOjGoELpgea9
-X-Google-Smtp-Source: AGHT+IEePCnxqJFqkjx6e4uSVtDp4OTUjWx0mguKFsRGvJHjDPSeJqnrLiqm41F2WSktl+oKdl15iA==
-X-Received: by 2002:a05:6a20:7fa8:b0:243:15b9:7662 with SMTP id adf61e73a8af0-24330b6b477mr820141637.60.1755739781103;
-        Wed, 20 Aug 2025 18:29:41 -0700 (PDT)
-Received: from [127.0.0.1] ([2403:2c80:17::10:40f3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d0d1a44sm6642219b3a.1.2025.08.20.18.29.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 18:29:40 -0700 (PDT)
-Message-ID: <05757005-b0c7-4475-88db-8d8b274c7600@gmail.com>
-Date: Thu, 21 Aug 2025 09:29:29 +0800
+        d=1e100.net; s=20230601; t=1755739772; x=1756344572;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DDDUwweEt5CCd+NSsUOZDQdN0QeGl5ZGvD33oDEbmCk=;
+        b=nWG+BbFdl/4MKQ7T27pAUMrUb6nJ2nRhXHs6A1+JNeDJ1SzjDldfQXtp2xATrgVdfA
+         ta3fsp3HG53bj95OfdtfQRsRC7P6pH7fDDlhqH2ZEySaDNpLCTyJzSNpiX2OONDiYZQO
+         uyeCcIZjOxSFZajzsAlGKGCjfjWtiLLfhB/kGKR7XUVVeIqLDBsWs1W971sXGbTKqwst
+         trRl2wCvGH5ECpJB8iHMFuHDUszt+f8WjTyI/lDW16Qk3DCImGc2/MZ1uTxD2ymF3e48
+         6u6B4zlpSJLZVsPfxDqGWALGNVUJkmEI1JaI488fQW/PBwS0yVknhvs+6KQ5/gm4t08d
+         HbHw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5h0ATJUkSo1g4E8hD9WE6tPDtOdU1Qwk1NudkMPT3AtcyOvM5t+ZOSVV37gll4P+c5ysr2MfCTh2qRJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUg2kJ1P0cNne04CtybHBnObbnWxB47ZIdPXleQz9yavvKnxYN
+	Eg8KW56dXV3XxWOcXfZXs/ML4udM4ET5VlG46PI3WPsKWD01VxNz4wEimLWtY2c/1i8SCLDZpjL
+	9M5OcPaGOdXI6LGcGG1v5Pm1yXJLZBrnf6Bs4f/ulmH0acOWBYK8CanxbC4o=
+X-Google-Smtp-Source: AGHT+IHNOwVvk2PeMAMs3bQuaVhoaGE598Sj396bxSRDOxaIyZDEgmCEXF3S/Q7rpSiveHunvxMpHFZ/UooAbyANX+X7oMs++Ab+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] watchdog: skip checks when panic is in progress
-To: Yury Norov <yury.norov@gmail.com>
-Cc: pmladek@suse.com, akpm@linux-foundation.org,
- Douglas Anderson <dianders@chromium.org>, Ingo Molnar <mingo@kernel.org>,
- Li Huafei <lihuafei1@huawei.com>, Yicong Yang <yangyicong@hisilicon.com>,
- Thorsten Blum <thorsten.blum@linux.dev>, linux-kernel@vger.kernel.org,
- feng.tang@linux.alibaba.com, joel.granados@kernel.org,
- john.ogness@linutronix.de, namcao@linutronix.de, sravankumarlpu@gmail.com,
- Will Deacon <will@kernel.org>
-References: <20250820091702.512524-1-wangjinchao600@gmail.com>
- <20250820091702.512524-2-wangjinchao600@gmail.com>
- <20250820091702.512524-3-wangjinchao600@gmail.com>
- <20250820091702.512524-4-wangjinchao600@gmail.com>
- <20250820091702.512524-5-wangjinchao600@gmail.com>
- <20250820091702.512524-6-wangjinchao600@gmail.com>
- <20250820091702.512524-7-wangjinchao600@gmail.com>
- <20250820091702.512524-8-wangjinchao600@gmail.com>
- <20250820091702.512524-9-wangjinchao600@gmail.com>
- <20250820091702.512524-10-wangjinchao600@gmail.com> <aKXnOTq9ZYeVYqH5@yury>
-Content-Language: en-US
-From: Jinchao Wang <wangjinchao600@gmail.com>
-In-Reply-To: <aKXnOTq9ZYeVYqH5@yury>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3e89:b0:3e5:6313:4562 with SMTP id
+ e9e14a558f8ab-3e6d69d9a48mr11042105ab.14.1755739772090; Wed, 20 Aug 2025
+ 18:29:32 -0700 (PDT)
+Date: Wed, 20 Aug 2025 18:29:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68a6767c.050a0220.3d78fd.0011.GAE@google.com>
+Subject: [syzbot] [atm?] general protection fault in atmtcp_c_send
+From: syzbot <syzbot+1741b56d54536f4ec349@syzkaller.appspotmail.com>
+To: 3chas3@gmail.com, bigeasy@linutronix.de, gregkh@linuxfoundation.org, 
+	linux-atm-general@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/20/25 23:18, Yury Norov wrote:
-> On Wed, Aug 20, 2025 at 05:14:54PM +0800, Jinchao Wang wrote:
->> Both watchdog_buddy_check_hardlockup() and
->> watchdog_overflow_callback() may trigger
->> during a panic. This can lead to recursive
->> panic handling.
->>
->> Add panic_in_progress() checks so watchdog
->> activity is skipped once a panic has begun.
->>
->> This prevents recursive panic and keeps the
->> panic path more reliable.
->>
->> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
->> ---
->>   kernel/watchdog_buddy.c | 5 +++++
->>   kernel/watchdog_perf.c  | 3 +++
->>   2 files changed, 8 insertions(+)
->>
->> diff --git a/kernel/watchdog_buddy.c b/kernel/watchdog_buddy.c
->> index ee754d767c21..79a85623028c 100644
->> --- a/kernel/watchdog_buddy.c
->> +++ b/kernel/watchdog_buddy.c
->> @@ -93,6 +93,11 @@ void watchdog_buddy_check_hardlockup(int hrtimer_interrupts)
->>   	 */
->>   	if (hrtimer_interrupts % 3 != 0)
->>   		return;
->> +	/*
->> +	 * pass the buddy check if a panic is in process
->> +	 */
->> +	if (panic_in_progress())
->> +		return;
->>   
->>   	/* check for a hardlockup on the next CPU */
->>   	next_cpu = watchdog_next_cpu(smp_processor_id());
->> diff --git a/kernel/watchdog_perf.c b/kernel/watchdog_perf.c
->> index 9c58f5b4381d..7641de750ca5 100644
->> --- a/kernel/watchdog_perf.c
->> +++ b/kernel/watchdog_perf.c
->> @@ -12,6 +12,7 @@
->>   
->>   #define pr_fmt(fmt) "NMI watchdog: " fmt
->>   
->> +#include <linux/panic.h>
->>   #include <linux/nmi.h>
->>   #include <linux/atomic.h>
->>   #include <linux/module.h>
->> @@ -110,6 +111,8 @@ static void watchdog_overflow_callback(struct perf_event *event,
->>   
->>   	if (!watchdog_check_timestamp())
->>   		return;
->> +	if (panic_in_progress())
->> +		return;
-> 
-> It looks like watchdog_check_timestamp() does some real work, like
-> updates last_timestamp and so on. Under the panic condition all this
-> may be unreliable, right?
-> 
-> Maybe it's worth to make panic_in_progress() the first check in the
-> chain?
-> 
-That's a good point. Thank you.
-> With that,
-> 
-> Reviewed-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> 
->>   
->>   	watchdog_hardlockup_check(smp_processor_id(), regs);
->>   }
->> -- 
->> 2.43.0
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    bab3ce404553 Merge branch '100GbE' of git://git.kernel.org..
+git tree:       net-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=164893a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=412ee2f8b704a5e6
+dashboard link: https://syzkaller.appspot.com/bug?extid=1741b56d54536f4ec349
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1769faf0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100eaba2580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1d9c704d6fbe/disk-bab3ce40.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/96883727f8e4/vmlinux-bab3ce40.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/69625976cd6e/bzImage-bab3ce40.xz
+
+The issue was bisected to:
+
+commit 5b2fabf7fe8f745ff214ff003e6067b64f172271
+Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Date:   Thu Feb 13 14:50:20 2025 +0000
+
+    kernfs: Acquire kernfs_rwsem in kernfs_node_dentry().
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=132b9234580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10ab9234580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=172b9234580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1741b56d54536f4ec349@syzkaller.appspotmail.com
+Fixes: 5b2fabf7fe8f ("kernfs: Acquire kernfs_rwsem in kernfs_node_dentry().")
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc00200000ab: 0000 [#1] SMP KASAN PTI
+KASAN: probably user-memory-access in range [0x0000000100000558-0x000000010000055f]
+CPU: 0 UID: 0 PID: 5865 Comm: syz-executor331 Not tainted 6.17.0-rc1-syzkaller-00215-gbab3ce404553 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:atmtcp_recv_control drivers/atm/atmtcp.c:93 [inline]
+RIP: 0010:atmtcp_c_send+0x1da/0x950 drivers/atm/atmtcp.c:297
+Code: 4d 8d 75 1a 4c 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0 0f 85 15 06 00 00 41 0f b7 1e 4d 8d b7 60 05 00 00 4c 89 f0 48 c1 e8 03 <42> 0f b6 04 20 84 c0 0f 85 13 06 00 00 66 41 89 1e 4d 8d 75 1c 4c
+RSP: 0018:ffffc90003f5f810 EFLAGS: 00010203
+RAX: 00000000200000ab RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff88802a510000 RSI: 00000000ffffffff RDI: ffff888030a6068c
+RBP: ffff88802699fb40 R08: ffff888030a606eb R09: 1ffff1100614c0dd
+R10: dffffc0000000000 R11: ffffffff8718fc40 R12: dffffc0000000000
+R13: ffff888030a60680 R14: 000000010000055f R15: 00000000ffffffff
+FS:  00007f8d7e9236c0(0000) GS:ffff888125c1c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000045ad50 CR3: 0000000075bde000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ vcc_sendmsg+0xa10/0xc60 net/atm/common.c:645
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:729
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2614
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
+ __sys_sendmsg net/socket.c:2700 [inline]
+ __do_sys_sendmsg net/socket.c:2705 [inline]
+ __se_sys_sendmsg net/socket.c:2703 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2703
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8d7e96a4a9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f8d7e923198 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f8d7e9f4308 RCX: 00007f8d7e96a4a9
+RDX: 0000000000000000 RSI: 0000200000000240 RDI: 0000000000000005
+RBP: 00007f8d7e9f4300 R08: 65732f636f72702f R09: 65732f636f72702f
+R10: 65732f636f72702f R11: 0000000000000246 R12: 00007f8d7e9c10ac
+R13: 00007f8d7e9231a0 R14: 0000200000000200 R15: 0000200000000250
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:atmtcp_recv_control drivers/atm/atmtcp.c:93 [inline]
+RIP: 0010:atmtcp_c_send+0x1da/0x950 drivers/atm/atmtcp.c:297
+Code: 4d 8d 75 1a 4c 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0 0f 85 15 06 00 00 41 0f b7 1e 4d 8d b7 60 05 00 00 4c 89 f0 48 c1 e8 03 <42> 0f b6 04 20 84 c0 0f 85 13 06 00 00 66 41 89 1e 4d 8d 75 1c 4c
+RSP: 0018:ffffc90003f5f810 EFLAGS: 00010203
+RAX: 00000000200000ab RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff88802a510000 RSI: 00000000ffffffff RDI: ffff888030a6068c
+RBP: ffff88802699fb40 R08: ffff888030a606eb R09: 1ffff1100614c0dd
+R10: dffffc0000000000 R11: ffffffff8718fc40 R12: dffffc0000000000
+R13: ffff888030a60680 R14: 000000010000055f R15: 00000000ffffffff
+FS:  00007f8d7e9236c0(0000) GS:ffff888125c1c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000045ad50 CR3: 0000000075bde000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	4d 8d 75 1a          	lea    0x1a(%r13),%r14
+   4:	4c 89 f0             	mov    %r14,%rax
+   7:	48 c1 e8 03          	shr    $0x3,%rax
+   b:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax
+  10:	84 c0                	test   %al,%al
+  12:	0f 85 15 06 00 00    	jne    0x62d
+  18:	41 0f b7 1e          	movzwl (%r14),%ebx
+  1c:	4d 8d b7 60 05 00 00 	lea    0x560(%r15),%r14
+  23:	4c 89 f0             	mov    %r14,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 0f b6 04 20       	movzbl (%rax,%r12,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 13 06 00 00    	jne    0x64a
+  37:	66 41 89 1e          	mov    %bx,(%r14)
+  3b:	4d 8d 75 1c          	lea    0x1c(%r13),%r14
+  3f:	4c                   	rex.WR
 
 
--- 
-Best regards,
-Jinchao
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
