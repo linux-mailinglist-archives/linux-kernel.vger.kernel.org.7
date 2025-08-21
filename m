@@ -1,167 +1,105 @@
-Return-Path: <linux-kernel+bounces-778852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE478B2EC06
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:35:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495CEB2EC09
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2041CC07B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:36:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 248CF7B06CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42048296BB0;
-	Thu, 21 Aug 2025 03:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543AA2C21E6;
+	Thu, 21 Aug 2025 03:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLcGmS7H"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="P3+GrhxA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C293214204;
-	Thu, 21 Aug 2025 03:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F080214204;
+	Thu, 21 Aug 2025 03:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755747338; cv=none; b=P78MBd1/S1WFAFiKpNIcLiubnEQk0qM6zzdm1O5pojqMwmF/DkCVdVxYvOgLfFSTLgdmbvuZtvLnodZYEg9ahkWb8xdr6qDqVbE3iprelG1mfMYV9tIooqM2dRW+K4T+J4OfkImxv/VMp65/22dvycoL+GBOugsKTe1ZFDkw06Q=
+	t=1755747350; cv=none; b=jp42bnu3K32iEDKzt/ljuvmDSA37Vr2i+nyaRaC8TZIYbkBygmO1I2qs+H+1nGabQD2xxt8FjSHm8Pzm7cU9NXcuAcn5sub4IUOf8SKDYkuTvTL6Y2QgPaX49UuKnE6idKV2oHA1Ww6F0uH4FfJeb+Xd954RQMQsFe/oGLJmuco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755747338; c=relaxed/simple;
-	bh=oljhjadL/Buna9k+WRKs4g8qPWTUw7dpVhvCw03v08g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GdxCdMGgRKUw9ydN34/wML1o9azokV7Q5c2dxgS8WfIinPfbqk1SP9WrDigk0p2R5FkKc6eOnbJECocf1Fk7Ahd2ynbT16MN04ZOBd4xSxBJzFJfjrpnQue6pzvM9BMCnyMlhw/iKAiKN82RSYHJqbO/gKiQcdpUv6S0gLlFP38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OLcGmS7H; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e2eb49b83so426304b3a.3;
-        Wed, 20 Aug 2025 20:35:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755747336; x=1756352136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ymfisBflbqft/TxLVjjjf4WbXXR7TyRwORuuchlD424=;
-        b=OLcGmS7Hw1CzbPRqWboqqjjdbVFGAxi3b44GjHNglP+qe/GcCoLV/GniTKNALmY8Af
-         WV6i4s5QtQ1/lghmPLfbnZh3gclZ9r4A+qFa7PxtYOBw0TO7ZdNj0Pyf8K4NeDHagzAj
-         RoHVB7OHsqcqmwu7LWKHk9N0xzGQwvbNU8M9v72z3ol9FGISKalBaCOB4nIAefMmKGtq
-         sccY5uiMc79wgMF5/9EdUrotKLcfkcNB/79gpv/hQvJ057om/9FDrcbC1IBcv+L8hjJL
-         AX21ulwUOHcjQ1c9vADwRRkNjwlJ0tPjidt/hPmTQAHyObFsKGcPhXpZw7e3fIaT1daM
-         jewQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755747336; x=1756352136;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ymfisBflbqft/TxLVjjjf4WbXXR7TyRwORuuchlD424=;
-        b=oks4ONfDcj4ACQi+7pEBEIBSP64YMiDphVv5KLmZ7bkSfOfR2p4tH7nmtmYkzt2nMX
-         cMAGg+twfebgW4LyxBjQev+2AoDphrFtH6eVFk+IJWNYkHrMH9fy+1mg7qr9Av9U8kU/
-         iT4v4/J7OyoTSWo81rh3nvNdSEcUI5HBAKNd21yIvAeDXPYbRE3OwTE1yMDtvMnSBzkH
-         OQjnJZowLQq8+D51PwiJbx0Mmxup5Y53UhNrNegwED3koEGwrOuYqGKsZkv0++Q2MmdO
-         fg/5rzFDkwtPvcZLMhLEhbXZ0Q4PPJXQSrdG6I15OYrQTitRMulpbz6V4TeQdhbsnVQA
-         L4Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKj3AhpZaKW13tM/CRA3MOkzjQ80JqvNMs2bF2BbvXYHFGev4pGpqDf7eZmkPLw0vdKxw6mRlChfEruZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdr60sP9S0Y7OBg8vvw+kzhuZPyXj5r3Y4qiALN5TJp9IAS5gH
-	EXbb/hwICgB6nuZsgk0pmnU5p87UsMsm3FrrpokjSUk2oH+HXjixHj8zo4LIIg==
-X-Gm-Gg: ASbGncu+2jT2hO/nSWUa18YAWX+O2UjwmgH5DPRi5N8/ygrJL3J53kpKwKKypC+0VS0
-	ssfn/tP5irOQ78uC4tLnR3SZF7YkdVJLSdbkEXlSBQz+zLdjEPneFG4j/LHrLAgO+a4of8uSLfI
-	vI37zYzgbgpyybzFqL/LuvCnADAgJd1oKwAmvJCnumaGP9olvKIdIjLg/OaRQc09s9bCsGTmvcD
-	Qj5iIo2SC3d0GjtevMhWjAfV0Ez4+Ceg8tjiUyP1tXDL1JEEQMuOJFldAhEKe8t15b3HOb7qAp+
-	FnZzAwlwG+vwsVxdDmIcF9qzm9p6PnFwsv3yOPHgbGuSiE1qLqB0ejpQahzns2DycdOrFB8tB3B
-	8nCte
-X-Google-Smtp-Source: AGHT+IFD9R7PCO+Oz0qUeBhyM0TKCnroRDC8Ee3gpNqV+UVwBwq14pP2Palir5VUy+LHWrBvYulOHQ==
-X-Received: by 2002:a05:6a00:ccc:b0:76b:dcc6:8138 with SMTP id d2e1a72fcca58-76ea3267e92mr946036b3a.22.1755747336190;
-        Wed, 20 Aug 2025 20:35:36 -0700 (PDT)
-Received: from archlinux.lan ([2601:644:8200:acc7::1f6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e8ab7b100sm4449019b3a.40.2025.08.20.20.35.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 20:35:35 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-spi@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] spi: rb4xx: add COMPILE_TEST support
-Date: Wed, 20 Aug 2025 20:35:34 -0700
-Message-ID: <20250821033534.638157-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755747350; c=relaxed/simple;
+	bh=3IfwOdcIMRM/TlEGGMXSCZl1y/qIcxYpZNnEJ8Xn75E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RRn+AFiTmQFCE6Tv+OFugNhlvO1RNrLD82plGMl8FP8MGieYiFRm2VbzMiBNXp3yoGMUKDy2ENF6sp/qt+nXcCcEVG6e4547XG21Vrb7pDK/uHfoeNaA7B1ahiQxwgaOqyxDctBYEaK30YCCOu9G0CSKYktH0I209eJDHSLK8+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=P3+GrhxA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755747342;
+	bh=1AKuf7vxx8IeHIhpQuTZq8jiosjOGEqTIkKTv6PxRs0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=P3+GrhxAIBPNPn+zw4qVZPknRcJwjnxqWw+WwGevuEzBDBzLu4hCH9pa4UOhoSLZ6
+	 EA+eu6vlNF628RYJUSb/a3Q1vIGlyjxu7fev8E+75cHlAuKUE/8ak64dxXTTtQqKdE
+	 8NIuouscHGTKVXRE28BexQ5GH4KuJOACmdb8ARK38jSJy/wDzwBlcxNgXPbRhlopxK
+	 gB2dV62gE89wRAbxGXZYCs+PKSuE8Kky+gvF0Bwbq+P4AaeVp7uVLKW+n+GfnaqcXx
+	 dH8YceJs4rfvuiTn+dtoQrvUblCEZde7TPrYiiuWp572aJKDn4F3/fpuZfg6jslCc6
+	 LRhfmGfITk04Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c6pqx2d1lz4x7B;
+	Thu, 21 Aug 2025 13:35:41 +1000 (AEST)
+Date: Thu, 21 Aug 2025 13:35:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, Himal Prasad Ghimiray
+ <himal.prasad.ghimiray@intel.com>, Matthew Brost <matthew.brost@intel.com>,
+ Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
+ <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the drm-misc tree
+Message-ID: <20250821133539.03aa298e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/MerbLpHnCb_izFKYbRB=67x";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Copy macros from ath79 SPI driver to allow compilation on all platforms
-and remove ath79 specific header.
+--Sig_/MerbLpHnCb_izFKYbRB=67x
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/spi/Kconfig     |  2 +-
- drivers/spi/spi-rb4xx.c | 19 ++++++++++++++-----
- 2 files changed, 15 insertions(+), 6 deletions(-)
+Hi all,
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 891729c9c564..2c1e60ae1680 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -916,7 +916,7 @@ config SPI_ROCKCHIP_SFC
- 
- config SPI_RB4XX
- 	tristate "Mikrotik RB4XX SPI master"
--	depends on SPI_MASTER && ATH79
-+	depends on SPI_MASTER && ATH79 || COMPILE_TEST
- 	help
- 	  SPI controller driver for the Mikrotik RB4xx series boards.
- 
-diff --git a/drivers/spi/spi-rb4xx.c b/drivers/spi/spi-rb4xx.c
-index e71d3805b150..417823e907f8 100644
---- a/drivers/spi/spi-rb4xx.c
-+++ b/drivers/spi/spi-rb4xx.c
-@@ -16,7 +16,16 @@
- #include <linux/spi/spi.h>
- #include <linux/of.h>
- 
--#include <asm/mach-ath79/ar71xx_regs.h>
-+#define AR71XX_SPI_REG_FS		0x00	/* Function Select */
-+#define AR71XX_SPI_REG_CTRL		0x04	/* SPI Control */
-+#define AR71XX_SPI_REG_IOC		0x08	/* SPI I/O Control */
-+#define AR71XX_SPI_REG_RDS		0x0c	/* Read Data Shift */
-+
-+#define AR71XX_SPI_FS_GPIO		BIT(0)	/* Enable GPIO mode */
-+
-+#define AR71XX_SPI_IOC_DO		BIT(0)	/* Data Out pin */
-+#define AR71XX_SPI_IOC_CLK		BIT(8)	/* CLK pin */
-+#define AR71XX_SPI_IOC_CS(n)		BIT(16 + (n))
- 
- struct rb4xx_spi {
- 	void __iomem *base;
-@@ -63,7 +72,7 @@ static inline void do_spi_clk_two(struct rb4xx_spi *rbspi, u32 spi_ioc,
- 	if (value & BIT(1))
- 		regval |= AR71XX_SPI_IOC_DO;
- 	if (value & BIT(0))
--		regval |= AR71XX_SPI_IOC_CS2;
-+		regval |= AR71XX_SPI_IOC_CS(2);
- 
- 	rb4xx_write(rbspi, AR71XX_SPI_REG_IOC, regval);
- 	rb4xx_write(rbspi, AR71XX_SPI_REG_IOC, regval | AR71XX_SPI_IOC_CLK);
-@@ -89,7 +98,7 @@ static void rb4xx_set_cs(struct spi_device *spi, bool enable)
- 	 */
- 	if (enable)
- 		rb4xx_write(rbspi, AR71XX_SPI_REG_IOC,
--			    AR71XX_SPI_IOC_CS0 | AR71XX_SPI_IOC_CS1);
-+			    AR71XX_SPI_IOC_CS(0) | AR71XX_SPI_IOC_CS(1));
- }
- 
- static int rb4xx_transfer_one(struct spi_controller *host,
-@@ -109,10 +118,10 @@ static int rb4xx_transfer_one(struct spi_controller *host,
- 	 */
- 	if (spi_get_chipselect(spi, 0) == 2)
- 		/* MMC */
--		spi_ioc = AR71XX_SPI_IOC_CS0;
-+		spi_ioc = AR71XX_SPI_IOC_CS(0);
- 	else
- 		/* Boot flash and CPLD */
--		spi_ioc = AR71XX_SPI_IOC_CS1;
-+		spi_ioc = AR71XX_SPI_IOC_CS(1);
- 
- 	tx_buf = t->tx_buf;
- 	rx_buf = t->rx_buf;
--- 
-2.50.1
+After merging the drm-misc tree, today's linux-next build (htmldocs)
+produced this warning:
 
+WARNING: include/drm/drm_gpuvm.h:1059 struct member 'map' not described in =
+'drm_gpuvm_map_req'
+
+Introduced by commit
+
+  000a45dce7ad ("drm/gpuvm: Pass map arguments through a struct")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/MerbLpHnCb_izFKYbRB=67x
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmimlAsACgkQAVBC80lX
+0GyRIAf7BHOuRQZf/Orkw0SVZ3FevVsN9zBulFjPOaUxUnZJuEH9YDaJZWJpNG54
+Ln2SyRaKVTwR/T/ks9iSpxICnmWbjAjYrA8C4AMrhItTAWHcWiibuNUwx16UzvHz
+V0QDkQ6rWIzyrn1Wtm2/7KikbsSpot7yt3okcSGIUQjn1dYkCr4/4J9HsVgNCXwr
+9PfFFGRv4UZ+ssQkpCMMZBA/bAQDn9+dpoWLhrO38EnY9l55y7HK0MtL8PfWZ9UP
+tBU+KifXlUeknNVOim4YDo4cCkUiRtB+16rhIdkUPzFaMGCq0XDgugS03fOkDrlv
+GfbxQyar5j/w9tgzkLujOmO39MLM9Q==
+=yPRe
+-----END PGP SIGNATURE-----
+
+--Sig_/MerbLpHnCb_izFKYbRB=67x--
 
