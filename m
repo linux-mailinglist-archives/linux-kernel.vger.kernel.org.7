@@ -1,235 +1,251 @@
-Return-Path: <linux-kernel+bounces-779030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B37B2EE1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:23:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15368B2EE2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F342B7BB99E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:21:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E04195C7C0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B356B2765E8;
-	Thu, 21 Aug 2025 06:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731E72D4B4E;
+	Thu, 21 Aug 2025 06:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EV6mFJY0"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="h9brIErO"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25B1263C7F;
-	Thu, 21 Aug 2025 06:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261E9243374;
+	Thu, 21 Aug 2025 06:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755757363; cv=none; b=brND3u9WWpRYfO2BRoM1p0GcoLZMnbE2LRt+S/Ih6wx3/kHUlPmzE8agZeJA23lJIgab1uhs5Md855+ZTjPwCTi0HiH9toWb1IZMvBXxXuS+kr/zkvZKVOSxwlH+SBwNGdlHVO8RP7Y+kxIFbLjvdh8lvEX2ACVxu3Zk8jCVV+M=
+	t=1755757551; cv=none; b=geOg583z9Dh5AaUlpKAs2i9vYek3zKyqRotkBBUrR4xLELQnGidMfUhDR/guHvpIVjPcCouwG6TjwhzSLZXdBNw8jhhxxkImAxjk33qMdpZor67pBMupeEL3lJ1Wpnzt6i1ieH1bCwYRMFB9gdk4Pf84KyT+GMdADRDOOLnPvMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755757363; c=relaxed/simple;
-	bh=nQx/iQvnZ+I2T0GIhyLovy+j/Ynj0Tg3BFgTsn0i5tM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=r7mRCuNgAL30sCtgFGXMk20PL6FoeVE1ipxdAGaNQCm30ZCeEdHVVX6x/r2lQ0zztNy7nAkueoXpPsGttGoa+iOWQlYK7EtkJOQ2+qmLx5GZsbcwJFk0q0y1XTp96jVb6OiAxapwyn1uxBntUVICAg5Gj+q5oRRouILGjS/LH3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EV6mFJY0; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57L6M54V3305637;
-	Thu, 21 Aug 2025 01:22:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755757325;
-	bh=+vJVxTr5AHSZEu8bxIlDbDhn59zoNQNyPn9xBd8vgkw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=EV6mFJY0jKsNYOvj+LkyWYmlQiR0z+RfMJTyn6mtrobEWLhqTAOM/l2HrxQgwB4ga
-	 RlJhC/rhP57hNj7qIvob6ub/14sj5yt8A/0Z1kmM0Kwr1eYPlPNncfLn9S+GoJrBPd
-	 DKwBN7IDuEOwKykQ6eRk+uK/g30ycMQdKPACzkjM=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57L6M5LE2331658
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 21 Aug 2025 01:22:05 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 21
- Aug 2025 01:22:04 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 21 Aug 2025 01:22:04 -0500
-Received: from [172.24.233.149] (ws.dhcp.ti.com [172.24.233.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57L6LvC51423337;
-	Thu, 21 Aug 2025 01:21:58 -0500
-Message-ID: <9fa2e0ab-fed1-4d19-a735-e5458014f549@ti.com>
-Date: Thu, 21 Aug 2025 11:51:57 +0530
+	s=arc-20240116; t=1755757551; c=relaxed/simple;
+	bh=BT6UtkZw4VncDF3vHkIsVNwWKvyG74pL2K93zvteJ6c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FiWWoEJ14R58GYAXdLd9o0HdyfLJm2SsPmiTUJzJb2YbVJ9VcoRGD8lIR4moQrb84FDRDG3B+V0+B0WOpdEIXvXaHMKNoEl04PLawZye9wGuwuJWdUxTIvw1zjb5ivROQwL+W7yCFAKKCKW3vvKYay3EDTdv6FSEpb9If+QBSJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=h9brIErO; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L68OEq018176;
+	Wed, 20 Aug 2025 23:25:38 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=vzvMYbfn3b4yJVgp8V2rzVy
+	hZtovYpJxMv2PXHImTk4=; b=h9brIErO2zQvD49fATrVtlyJNjR5SQX8Gwm7KO5
+	OxwdE+PsUrnK5MdxCOD7EkWeWjbqAnNr0kCLfYbPZnnQwdeghhYMEeQErDOWuVLK
+	HxrGM0ZIcmlszeixbviBlHZhPNBzLfO/CJNuoiUmPShPMv1P9J9DdH4HYFvTrNCX
+	+4ryUpNPgT38fBZeJND7UqdQPf6OilUWhorSl+6QPXMYzEpNYqxtPCq/j6tKjDtE
+	3wZ5iINkvnyr+h9lU5wNQteS45JRVk2qiIOKXddpgwP2/YL/Om4oChV28zoPAa6F
+	mU7LMsDdnO8CbcgGnyjtsneB2aNgUHS2UdU8wmQz8p9+efA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48nwx380w2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Aug 2025 23:25:37 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 20 Aug 2025 23:25:41 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Wed, 20 Aug 2025 23:25:41 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id AE5663F708F;
+	Wed, 20 Aug 2025 23:25:31 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hariprasad Kelam <hkelam@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        "Subbaraya
+ Sundeep" <sbhatta@marvell.com>,
+        Bharat Bhushan <bbhushan2@marvell.com>,
+        "Andrew Lunn" <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Tomasz Duszynski
+	<tduszynski@marvell.com>,
+        Simon Horman <horms@kernel.org>
+Subject: [net PatchV5] Octeontx2-vf: Fix max packet length errors
+Date: Thu, 21 Aug 2025 11:55:28 +0530
+Message-ID: <20250821062528.1697992-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 11/12] media: ti: j721e-csi2rx: Submit all available
- buffers
-To: Sjoerd Simons <sjoerd@collabora.com>, <jai.luthra@linux.dev>,
-        <laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>,
-        Julien Massot
-	<jmassot@collabora.com>
-CC: <y-abhilashchandra@ti.com>, <devarsht@ti.com>, <vaishnav.a@ti.com>,
-        <s-jain1@ti.com>, <vigneshr@ti.com>, <mchehab@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <sakari.ailus@linux.intel.com>, <hverkuil-cisco@xs4all.nl>,
-        <tomi.valkeinen@ideasonboard.com>, <jai.luthra@ideasonboard.com>,
-        <changhuang.liang@starfivetech.com>, <jack.zhu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, "Liu (EP), Bin"
-	<b-liu@ti.com>
-References: <20250514112527.1983068-1-r-donadkar@ti.com>
- <20250514112527.1983068-12-r-donadkar@ti.com>
- <ab421c6f9fc804a6f03833d824d5776c7272e6bb.camel@collabora.com>
-Content-Language: en-US
-From: Rishikesh Donadkar <r-donadkar@ti.com>
-In-Reply-To: <ab421c6f9fc804a6f03833d824d5776c7272e6bb.camel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain
+X-Proofpoint-GUID: YmnnbFaafeMCfs6WKyOyc8ENWJMUMXiS
+X-Authority-Analysis: v=2.4 cv=JJtic8Kb c=1 sm=1 tr=0 ts=68a6bbe1 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=f3LP5gomXtjGGsWn-KkA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: YmnnbFaafeMCfs6WKyOyc8ENWJMUMXiS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIxMDA0NyBTYWx0ZWRfXzCHGYsFVz+Mf OpASQ5wTzpVpH0RyDzRJxLtCKBQ3JMDWnQKKzUddQK72fiu7AtAhjE4S8F6znGZsUAf7x9lI6Rs /hY+7PFCT43p2BNcKRu/sz86gCWWWoC5rLv5260NJ8kk1NCNFsFQhORB3QKbw7CZWAJk/t3H04D
+ jgcULbXz8RfYDE1sIxR+WWTt6H0jbZvyEhusv1a4vcovUBdy5aoyTovTtkSkLiVEFQ9M8WO/4ex YKnnDeNu07MT1IewfoWITjhn6IXB1gYnzOOI+DwrEcQKXaqhIIDrmBCiDUIHnF0egkulJXzMFwH oNl7lkgLCbssOFJ4I9mIRac/VrGivX0P2A7K1A62uZ9tKQPSJcv9N6YsH+5QkghXFb9XGrzJTCu
+ 0c4HC/em5qCGxw87OLTsOg3Zk7BbhhsxYqgmxzNw3Z0KH5ETSYMSm3oVpsgjoS24Zv5kRVyg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_01,2025-08-20_03,2025-03-28_01
 
+Once driver submits the packets to the hardware, each packet
+traverse through multiple transmit levels in the following
+order:
+	SMQ -> TL4 -> TL3 -> TL2 -> TL1
 
-On 01/07/25 13:39, Sjoerd Simons wrote:
-> Hey,
+The SMQ supports configurable minimum and maximum packet sizes.
+It enters to a hang state, if driver submits packets with
+out of bound lengths.
 
+To avoid the same, implement packet length validation before
+submitting packets to the hardware. Increment tx_dropped counter
+on failure.
 
-Hi Sjoerd,
+Fixes: 3184fb5ba96e ("octeontx2-vf: Virtual function driver support")
+Fixes: 22f858796758 ("octeontx2-pf: Add basic net_device_ops")
+Fixes: 3ca6c4c882a7 ("octeontx2-pf: Add packet transmission support")
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+---
+v5 * use atomic_long_t for tx_discards counter
 
->
-> On Wed, 2025-05-14 at 16:55 +0530, Rishikesh Donadkar wrote:
->> From: Jai Luthra <j-luthra@ti.com>
->>
->> We already make sure to submit all available buffers to DMA in each DMA
->> completion callback.
->>
->> Move that logic in a separate function, and use it during stream start
->> as well, as most application queue all their buffers before stream on.
->>
->> Signed-off-by: Jai Luthra <j-luthra@ti.com>
->> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
->> ---
->>   .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 43 +++++++++++--------
->>   1 file changed, 24 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
->> b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
->> index 7986f96c5e11b..ba2a30bfed37d 100644
->> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
->> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
->> @@ -651,6 +651,27 @@ static int ti_csi2rx_drain_dma(struct ti_csi2rx_ctx *ctx)
->>   	return ret;
->>   }
->>   
->> +static int ti_csi2rx_dma_submit_pending(struct ti_csi2rx_ctx *ctx)
->> +{
->> +	struct ti_csi2rx_dma *dma = &ctx->dma;
->> +	struct ti_csi2rx_buffer *buf;
->> +	int ret = 0;
->> +
->> +	/* If there are more buffers to process then start their transfer. */
->> +	while (!list_empty(&dma->queue)) {
->> +		buf = list_entry(dma->queue.next, struct ti_csi2rx_buffer,
->> list);
->> +		ret = ti_csi2rx_start_dma(ctx, buf);
->> +		if (ret) {
->> +			dev_err(ctx->csi->dev,
->> +				"Failed to queue the next buffer for DMA\n");
->> +			vb2_buffer_done(&buf->vb.vb2_buf,
->> VB2_BUF_STATE_ERROR);
->> +			break;
-> The break here seems wrong and does change the previous logic; It means once *a*
-> buffer fails to start DMA, you'll no longer try to submit the other (queued)
-> buffers. If this was called from the DMA callback of the last submitted buffer
-> and userspace doesn't re-queue the error buffer, then capturing will stop, even
-> if there were still queued up buffers from a userspace pov.
->
->
-> For a potential next iteration you probably also want to wrap in the changes
-> from to fix list_del corruption:
-> https://lore.kernel.org/all/20250630-j721e-dma-fixup-v1-1-591e378ab3a8@collabora.com/
+v4 * Update commit description with hardware limitation details.
 
+v3 * Define driver specific counter for storing dropped packets.
 
-Thank you for the pointer !
+v2 * Add the packet length check for rep dev
+     Increment tx_dropped counter on failure
 
-I will make these changes in the next revision
+ .../ethernet/marvell/octeontx2/nic/otx2_common.c    |  4 +++-
+ .../ethernet/marvell/octeontx2/nic/otx2_common.h    |  1 +
+ .../net/ethernet/marvell/octeontx2/nic/otx2_pf.c    |  3 +++
+ .../net/ethernet/marvell/octeontx2/nic/otx2_vf.c    | 10 ++++++++++
+ drivers/net/ethernet/marvell/octeontx2/nic/rep.c    | 13 ++++++++++++-
+ drivers/net/ethernet/marvell/octeontx2/nic/rep.h    |  1 +
+ 6 files changed, 30 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+index f674729124e6..aff17c37ddde 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+@@ -124,7 +124,9 @@ void otx2_get_dev_stats(struct otx2_nic *pfvf)
+ 			       dev_stats->rx_ucast_frames;
+ 
+ 	dev_stats->tx_bytes = OTX2_GET_TX_STATS(TX_OCTS);
+-	dev_stats->tx_drops = OTX2_GET_TX_STATS(TX_DROP);
++	dev_stats->tx_drops = OTX2_GET_TX_STATS(TX_DROP) +
++			       (unsigned long)atomic_long_read(&dev_stats->tx_discards);
++
+ 	dev_stats->tx_bcast_frames = OTX2_GET_TX_STATS(TX_BCAST);
+ 	dev_stats->tx_mcast_frames = OTX2_GET_TX_STATS(TX_MCAST);
+ 	dev_stats->tx_ucast_frames = OTX2_GET_TX_STATS(TX_UCAST);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+index e3765b73c434..1c8a3c078a64 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+@@ -153,6 +153,7 @@ struct otx2_dev_stats {
+ 	u64 tx_bcast_frames;
+ 	u64 tx_mcast_frames;
+ 	u64 tx_drops;
++	atomic_long_t tx_discards;
+ };
+ 
+ /* Driver counted stats */
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+index b23585c5e5c2..5027fae0aa77 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+@@ -2220,6 +2220,7 @@ static netdev_tx_t otx2_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	struct otx2_nic *pf = netdev_priv(netdev);
+ 	int qidx = skb_get_queue_mapping(skb);
++	struct otx2_dev_stats *dev_stats;
+ 	struct otx2_snd_queue *sq;
+ 	struct netdev_queue *txq;
+ 	int sq_idx;
+@@ -2232,6 +2233,8 @@ static netdev_tx_t otx2_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	/* Check for minimum and maximum packet length */
+ 	if (skb->len <= ETH_HLEN ||
+ 	    (!skb_shinfo(skb)->gso_size && skb->len > pf->tx_max_pktlen)) {
++		dev_stats = &pf->hw.dev_stats;
++		atomic_long_inc(&dev_stats->tx_discards);
+ 		dev_kfree_skb(skb);
+ 		return NETDEV_TX_OK;
+ 	}
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+index 5589fccd370b..7ebb6e656884 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+@@ -417,9 +417,19 @@ static netdev_tx_t otx2vf_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	struct otx2_nic *vf = netdev_priv(netdev);
+ 	int qidx = skb_get_queue_mapping(skb);
++	struct otx2_dev_stats *dev_stats;
+ 	struct otx2_snd_queue *sq;
+ 	struct netdev_queue *txq;
+ 
++	/* Check for minimum and maximum packet length */
++	if (skb->len <= ETH_HLEN ||
++	    (!skb_shinfo(skb)->gso_size && skb->len > vf->tx_max_pktlen)) {
++		dev_stats = &vf->hw.dev_stats;
++		atomic_long_inc(&dev_stats->tx_discards);
++		dev_kfree_skb(skb);
++		return NETDEV_TX_OK;
++	}
++
+ 	sq = &vf->qset.sq[qidx];
+ 	txq = netdev_get_tx_queue(netdev, qidx);
+ 
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+index 25af98034e2e..b476733a0234 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+@@ -371,7 +371,8 @@ static void rvu_rep_get_stats(struct work_struct *work)
+ 	stats->rx_mcast_frames = rsp->rx.mcast;
+ 	stats->tx_bytes = rsp->tx.octs;
+ 	stats->tx_frames = rsp->tx.ucast + rsp->tx.bcast + rsp->tx.mcast;
+-	stats->tx_drops = rsp->tx.drop;
++	stats->tx_drops = rsp->tx.drop +
++			  (unsigned long)atomic_long_read(&stats->tx_discards);
+ exit:
+ 	mutex_unlock(&priv->mbox.lock);
+ }
+@@ -418,6 +419,16 @@ static netdev_tx_t rvu_rep_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	struct otx2_nic *pf = rep->mdev;
+ 	struct otx2_snd_queue *sq;
+ 	struct netdev_queue *txq;
++	struct rep_stats *stats;
++
++	/* Check for minimum and maximum packet length */
++	if (skb->len <= ETH_HLEN ||
++	    (!skb_shinfo(skb)->gso_size && skb->len > pf->tx_max_pktlen)) {
++		stats = &rep->stats;
++		atomic_long_inc(&stats->tx_discards);
++		dev_kfree_skb(skb);
++		return NETDEV_TX_OK;
++	}
+ 
+ 	sq = &pf->qset.sq[rep->rep_id];
+ 	txq = netdev_get_tx_queue(dev, 0);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+index 38446b3e4f13..5bc9e2c7d800 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+@@ -27,6 +27,7 @@ struct rep_stats {
+ 	u64 tx_bytes;
+ 	u64 tx_frames;
+ 	u64 tx_drops;
++	atomic_long_t tx_discards;
+ };
+ 
+ struct rep_dev {
+-- 
+2.34.1
 
-Regards,
-
-Rishikesh
-
->
->
->
->> +		}
->> +		list_move_tail(&buf->list, &dma->submitted);
->> +	}
->> +	return ret;
->> +}
->> +
->>   static void ti_csi2rx_dma_callback(void *param)
->>   {
->>   	struct ti_csi2rx_buffer *buf = param;
->> @@ -671,18 +692,7 @@ static void ti_csi2rx_dma_callback(void *param)
->>   	vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_DONE);
->>   	list_del(&buf->list);
->>   
->> -	/* If there are more buffers to process then start their transfer. */
->> -	while (!list_empty(&dma->queue)) {
->> -		buf = list_entry(dma->queue.next, struct ti_csi2rx_buffer,
->> list);
->> -
->> -		if (ti_csi2rx_start_dma(ctx, buf)) {
->> -			dev_err(ctx->csi->dev,
->> -				"Failed to queue the next buffer for DMA\n");
->> -			vb2_buffer_done(&buf->vb.vb2_buf,
->> VB2_BUF_STATE_ERROR);
->> -		} else {
->> -			list_move_tail(&buf->list, &dma->submitted);
->> -		}
->> -	}
->> +	ti_csi2rx_dma_submit_pending(ctx);
->>   
->>   	if (list_empty(&dma->submitted))
->>   		dma->state = TI_CSI2RX_DMA_IDLE;
->> @@ -941,7 +951,6 @@ static int ti_csi2rx_start_streaming(struct vb2_queue *vq,
->> unsigned int count)
->>   	struct ti_csi2rx_ctx *ctx = vb2_get_drv_priv(vq);
->>   	struct ti_csi2rx_dev *csi = ctx->csi;
->>   	struct ti_csi2rx_dma *dma = &ctx->dma;
->> -	struct ti_csi2rx_buffer *buf;
->>   	unsigned long flags;
->>   	int ret = 0;
->>   
->> @@ -980,16 +989,13 @@ static int ti_csi2rx_start_streaming(struct vb2_queue
->> *vq, unsigned int count)
->>   	ctx->sequence = 0;
->>   
->>   	spin_lock_irqsave(&dma->lock, flags);
->> -	buf = list_entry(dma->queue.next, struct ti_csi2rx_buffer, list);
->>   
->> -	ret = ti_csi2rx_start_dma(ctx, buf);
->> +	ret = ti_csi2rx_dma_submit_pending(ctx);
->>   	if (ret) {
->> -		dev_err(csi->dev, "Failed to start DMA: %d\n", ret);
->>   		spin_unlock_irqrestore(&dma->lock, flags);
->> -		goto err_pipeline;
->> +		goto err_dma;
->>   	}
->>   
->> -	list_move_tail(&buf->list, &dma->submitted);
->>   	dma->state = TI_CSI2RX_DMA_ACTIVE;
->>   	spin_unlock_irqrestore(&dma->lock, flags);
->>   
->> @@ -1004,7 +1010,6 @@ static int ti_csi2rx_start_streaming(struct vb2_queue
->> *vq, unsigned int count)
->>   
->>   err_dma:
->>   	ti_csi2rx_stop_dma(ctx);
->> -err_pipeline:
->>   	video_device_pipeline_stop(&ctx->vdev);
->>   	writel(0, csi->shim + SHIM_CNTL);
->>   	writel(0, csi->shim + SHIM_DMACNTX(ctx->idx));
 
