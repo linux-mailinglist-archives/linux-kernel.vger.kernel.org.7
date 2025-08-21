@@ -1,205 +1,164 @@
-Return-Path: <linux-kernel+bounces-779714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26E1B2F7A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:15:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9D4B2F7B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 511E558399B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:15:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83B0C7B91AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5A61E25EB;
-	Thu, 21 Aug 2025 12:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B58226F2B2;
+	Thu, 21 Aug 2025 12:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="el6/I4/F"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2075.outbound.protection.outlook.com [40.107.95.75])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rZzgZOHD"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E782D4C9D;
-	Thu, 21 Aug 2025 12:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755778529; cv=fail; b=B8YWNp/SPVMh0URb/ytcpOB/0OVABI1kW7LbaPLzFp4FhJ3+na5EuBBNYzFFiy1rr4PbsvOjSiBj5uNi3tPdl6Z0qcLzx9FPHlDyrn/YKitF90PzgaiKV9L+SwpZW9O9ExJc8eIG/UclhDWxprtQ10Nr67x563+TdW2SVa4XAkk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755778529; c=relaxed/simple;
-	bh=URpenvV9Rt+T8G69Ur3IgNWDY5yw4LiL9+8zAjpJDmg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D1zrP2Rc5CCMKmrv1YshPKwGLbTYjUKIjIpRP7htBxD1B1xUAfWyWt0LCRjaUQU7j57ALv1bbg7oFZYOYVAvodVPL0/9dtyqjNWZX+C3hSYM9yont08IS009qYm6HBAE7uDGqEMGZOikMhw9+esWOdA9rQRQ0aP27cJMUPOcHu8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=el6/I4/F; arc=fail smtp.client-ip=40.107.95.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R0SCSm4Xw3JoMxe7sjIax18TfesoOuScQTxwHPcjgqDl+UDSJuqHQiMsYD3AyrBW4BowEdhQalSiVbTNo8cA/0EOhHcjNaimHglxcHtvQSAuptjpVI+GDA3Bpow5YiYC1f6oX9x3iDpwKQneMQLX4XODlh13ukpMlWCsh0FJ05svJ/e+E+c7KqwBbf8VgMzEII6QuhcPzomCBfcTZByTqSp5B1AWYPJ13/67Jn+8rhoXPd/ntAIurX+4cO+xSnnQMwZeslQ9MjPU2MM48IxViarI+jbl7FOGc9VfIXhL28c/zQKOEd6am3cfbeEuPV+tZ2HjoX8w3BhQRqGWQYD4Wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8WLIQyD5br9RP8KB4jPqS7G6JoITfgiVDYjNQ2KW8PI=;
- b=vN8gqqgFRx7cxjfwdDVmjx3dD9dp6orT8+BnRX4fiGJ0Ab31Uo8aU3e9KdPq0uFGw26XiByESux1vym9NVQWg0yr7ZpYDYGlj+nw9HWWFQZ/rAKwkId6/6ZFL0wtuLkbIRqUA/T/jhhP1cqk3jruwN/bDP+MtWRkOsneduyXER0KNqokLu96dCQ3aiP6kSZVmAehpzHVH6KwbOAdubn8iGzEIkBMbLx6hYKjDKon+BFSPpe0PCElvQZAA/XQPbmA2fTzOvpm4ID3B726o2PqJ729YC49zWltId4htXZPXwdpkUFVLr+eSjrHP7lWJKqJIdCq0rl/mMUKn9qlZQvICw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8WLIQyD5br9RP8KB4jPqS7G6JoITfgiVDYjNQ2KW8PI=;
- b=el6/I4/Fn2f4AchaPsChUkbWNxzKHp8M/N7OmDwGOzPMbEFGVIQowjeBA2a9HFEp6esFuT4wDqORI4Uv0tBCDaiNKOKGlqRQAFk9Ia5uj9ya2VTWd7/t0nXTGzNQShWEr3XmvfbmFEXKfP+owHux3PsIf1nei/S+R8hWWlpylhA=
-Received: from MW4PR03CA0232.namprd03.prod.outlook.com (2603:10b6:303:b9::27)
- by DS7PR12MB5958.namprd12.prod.outlook.com (2603:10b6:8:7d::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
- 2025 12:15:19 +0000
-Received: from MWH0EPF000971E4.namprd02.prod.outlook.com
- (2603:10b6:303:b9:cafe::e4) by MW4PR03CA0232.outlook.office365.com
- (2603:10b6:303:b9::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.15 via Frontend Transport; Thu,
- 21 Aug 2025 12:15:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- MWH0EPF000971E4.mail.protection.outlook.com (10.167.243.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Thu, 21 Aug 2025 12:15:17 +0000
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
- 2025 07:15:08 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Thu, 21 Aug
- 2025 05:15:08 -0700
-Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 21 Aug 2025 07:15:06 -0500
-From: Devendra K Verma <devverma@amd.com>
-To: <mani@kernel.org>, <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, <michal.simek@amd.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: [RESEND PATCH] dmaengine: dw-edma: Set status for callback_result
-Date: Thu, 21 Aug 2025 17:45:05 +0530
-Message-ID: <20250821121505.318179-1-devverma@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E27727F16C;
+	Thu, 21 Aug 2025 12:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755778754; cv=none; b=PcJEe3ttXCW7aL6xjF6MohxUxDDMrwxDUarpjQF06vaYL7zgtZCDt48rnKtTkSyOfakZL0mWFATO8seQj10GEl0bnMRZv4PSt5fHSSzhzEqIAIx6yZKeIyOw+bL0g3mYEQiQ0Gicd9XYZBHJH5/dviQtQVlQ7Y6hDNah9pNpsRM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755778754; c=relaxed/simple;
+	bh=GJXV9IwdbHELpPd1iqWlbQOye/lVA2wHMGvLjKuCdn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U2in2C4KHVLfYMguoR7y9Gxywm37qLWvBry2gTIEFBB5qdoZh1WZKMbHDrwDWI84XWQXLVTgg2oj4RWvu8mJHbGEASHUTjI3AsxvK76/1hIqYkJuoSCVkpL9EaOQLAPSetQjdPZD6V5UgH2jKhXBxGItTyC+QPK/IJy/vGSZb28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rZzgZOHD; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LAvUWC009423;
+	Thu, 21 Aug 2025 12:18:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=7RTv4cHvCYuthGaYXQWkCkqFkgugsY
+	NJ/YEXJhNu4Ec=; b=rZzgZOHD4SNL/QNJvM25Wd9aYOh676R/VYZk90yYtQ2wel
+	TZb3FOyumi27l0Uzzw+1wBo5PeiJflMe2BtcVN2uGeoAsURwIZdeXRAG1hhSjuSb
+	dAijuOMIc8AZ7mUXW0WGjb2STMKpHOr1jJac3XzkjgMXsaV8qXgDYeO9EsOObg6j
+	BoznDyXU/h1efXyRYEnbh2mEsWcVcoKeCd06JYGRxwxf0+B9iKnNEmSQK3OUXfy7
+	F/YWT1OnCp9XpQveJ/bV69ZM6wxUR0Mg+yuJegkgCH1TPc7dUCSuEnBmwq7YfKz2
+	YKKWke0oRqfuRLgOg0RikoCl4E9JJOEEShx8UKgQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38w0d7v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 12:18:59 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57LCIwgt021533;
+	Thu, 21 Aug 2025 12:18:58 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38w0d7m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 12:18:58 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57LAhceS015619;
+	Thu, 21 Aug 2025 12:18:57 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48my4286sn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 12:18:57 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57LCIusc44237306
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Aug 2025 12:18:56 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 04D2D2004B;
+	Thu, 21 Aug 2025 12:18:56 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0B43F20040;
+	Thu, 21 Aug 2025 12:18:54 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 21 Aug 2025 12:18:53 +0000 (GMT)
+Date: Thu, 21 Aug 2025 17:48:42 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v4 04/11] generic: Add atomic write test using fio crc
+ check verifier
+Message-ID: <aKcOou4LLl3aQqLq@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1754833177.git.ojaswin@linux.ibm.com>
+ <783e950d8b5ad80672a359a19ede4faeb64e3dd7.1754833177.git.ojaswin@linux.ibm.com>
+ <f9ae3870-f6c5-4ab0-924e-261f4ec3b5cc@oracle.com>
+ <aKbb2XhcsMMhBlgb@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <4572fcd8-6364-4827-af9b-d11728c39c78@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E4:EE_|DS7PR12MB5958:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40ccab72-78f9-4cfe-c65f-08dde0ac641c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TAG9S3KkcRPMnwn9/ynrCo20rqsovFiFoaH0oXr/X1W9k18lEJzVJgNfGdzr?=
- =?us-ascii?Q?i/tXs6NpI2rntJFfaK7unQQIDO4OKAk6VFBWcYqYA/TEx6ygllemyll1j/Wy?=
- =?us-ascii?Q?U9ifKsH5RnQPeTO+T/QUOcGx6kk+pYQan73UDW1Gue/T+O5YBm5Bpbn7A2qI?=
- =?us-ascii?Q?L++BXRYMaw4CjNj52A0UInjQphSQqIeS7FBuAs18deuctKiihuMCyQ0XeTSt?=
- =?us-ascii?Q?5baFd8wsun2N/tFMu5q7rGfk6ha8cVJvLihTZgwOwNz5rmWXfqs0laQGcrL+?=
- =?us-ascii?Q?P3n8lW2H2IvLdXlwsYFfUacVMiJwHviEHI+bk+X2N/TJqi5syjH+9TZCKMvi?=
- =?us-ascii?Q?RVpP8Kipqnklff3OuxqnM5hFO2J1rCR+FzEKwDsNZklUq5FBLStzBiBT8G98?=
- =?us-ascii?Q?Exaa0u7nErsUoP2zFx83EETdP3uOaavCHY6hE2eV7jtnoYx90S7BV80El94k?=
- =?us-ascii?Q?s+GjAhIXznflSVDIZ2cTnL06kvoVOrzjJP2LxAYd+DkR4b/C5Wr7+evpkE4q?=
- =?us-ascii?Q?88W71KotB7/b1lc1wSAMrSyrHJfjYqb9LOw2GvtB0U2iEURYGQbnpfM6mO+V?=
- =?us-ascii?Q?r+JFTPsIW4NPHVPY0EfrJ/La48r6wFP14m5o0KYuXaReNisMTvEPndkP4wja?=
- =?us-ascii?Q?NbcKq5B9U2nDPlreTGTI0J2u1JL15F4mHr8BZhGkd9j+pQScqc2ZfXw07s2O?=
- =?us-ascii?Q?8kwCpDJ4XU+JTgd5WY6b0HFQhfXdDkoNnPSXsDdbk8pxB9qorFliYORVCotd?=
- =?us-ascii?Q?sH4RUQ8C5dvE0wrTW/AnLtdzHKarPri+S67lbCYTPy/FaMVzjahJjMYicnTH?=
- =?us-ascii?Q?b4jrMRr603LE6ax1bDhVcOkF87IbkIIpC068cUF2MhPt7unoqCkt0eFutD/e?=
- =?us-ascii?Q?MQFC7eZvrZE2r5VbdNxcmVcLzYqA6UYgkuFs65S7H4lzqdJQifT3aaePY1hY?=
- =?us-ascii?Q?jRiFeiA8cRGu3SIWdauLn8xlLBoCq5ctrUuBHeEUNFZqf3pGs14m2H5RuCmC?=
- =?us-ascii?Q?F3Y4QC3odrdG75ghHbrUbkc26uoWuFYAe9sN5sAr4AhCEhctU41zmV9mw5rO?=
- =?us-ascii?Q?Jobg9fdMPyOLiDna6rMzjidp8PqrpxrRai34yqIzHRvL/Xp6XRCKU+Fcyzn8?=
- =?us-ascii?Q?fPrpSS0Uto60SSCP67Mo+AQohYcNlI7LHGFvq3eX8EAjdOj/z0LUaGUCo154?=
- =?us-ascii?Q?3IzgCQxuuQTGcZcPVjxSSk7nBPuLa2r53MN/X60pw+mSpFJ7Ox7fR1lzjEJ6?=
- =?us-ascii?Q?HJg++UxFG3iHo1Ey3a9nRZbIlu2SIhw2dVRtYJlC8EhrwJ6T0CtAjkQwm4hZ?=
- =?us-ascii?Q?/dmDLUDVPfWUA3jgrmsDgCS/dt4kbLXoZAsZ9dmipXBLo1peF2Qch25arL+0?=
- =?us-ascii?Q?O47XTRNDoj+yUQC1elgJdxFNtKEhcv2Bzgt03fUZAadtTJhmL+AOP+FUhUg7?=
- =?us-ascii?Q?r8pnokQ9uvqDcYFmqTf2yqHpDY19yv8g2PR/zmyqG8rZxeMqapcFywyy7xWn?=
- =?us-ascii?Q?wIGi8phPz0drEbA4QIS90FKf+bmIcSSSlAJH?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 12:15:17.4325
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40ccab72-78f9-4cfe-c65f-08dde0ac641c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E4.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5958
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4572fcd8-6364-4827-af9b-d11728c39c78@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: dDD9tmTdv6twEE1s6hstAlszRkAck6wC
+X-Proofpoint-GUID: RWw4PfjNydTSolXyYX07QT-9Siyzbb6f
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfX0ZStzglO+bbm
+ VNnLLaJa0T0quiL2Gis+kgryHHI9qdBGasqX3hnZ56LE1X3M+p0uYXpPkWdEULd2z/HMBGX1HRg
+ 2xZw1oqA0Fc6Z0gwzCXYt7Q7Fa9K38wmfsVsySizIH5oGfdAGSX7eb+66TZOmuE/Ujhd8eOrsYI
+ jAvQRfI6dpuJdlRcukIc4as27fK9hRNusoEiWbr3jnaDU/g6+vYVYC3j6ey8TWTnu6g1tIre96R
+ Gflg+UZVgS44cDpzS3gWSgQnKxCvLAYXOnRMU5SfD9pY4DhC/a01CKtf/H0W95T92E1wJd9XM6X
+ 6KcA9REc6PVk4xIUi9QqIZiTuWwQ8BJfrfeq+9tNhnojB0YXkLUqId1BEEV+ZeaQx/DuLrGJGV3
+ TNcC0Hi2QN7aSGC8foqs5f1Y39CGag==
+X-Authority-Analysis: v=2.4 cv=a9dpNUSF c=1 sm=1 tr=0 ts=68a70eb3 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=Popbfe6uXnL6BILChUUA:9
+ a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 adultscore=0 impostorscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190222
 
-DMA Engine has support for the callback_result which provides
-the status of the request and the residue. This helps in
-determining the correct status of the request and in
-efficient resource management of the request.
-The 'callback_result' method is preferred over the deprecated
-'callback' method.
+On Thu, Aug 21, 2025 at 10:24:58AM +0100, John Garry wrote:
+> On 21/08/2025 09:42, Ojaswin Mujoo wrote:
+> > On Wed, Aug 13, 2025 at 02:39:40PM +0100, John Garry wrote:
+> > > On 10/08/2025 14:41, Ojaswin Mujoo wrote:
+> > > > This adds atomic write test using fio based on it's crc check verifier.
+> > > > fio adds a crc for each data block. If the underlying device supports
+> > > > atomic write then it is guaranteed that we will never have a mix data from
+> > > > two threads writing on the same physical block.
+> > > > 
+> > > > Avoid doing overlapping parallel atomic writes because it might give
+> > > > unexpected results. Use offset_increment=, size= fio options to achieve
+> > > > this behavior.
+> > > > 
+> > > You are not really describing what the test does.
+> > > 
+> > > In the first paragraph, you state what fio verify function does and then
+> > > describe what RWF_ATOMIC means when we only use HW support, i.e. serialises.
+> > > In the second you mention that we guarantee no inter-thread overlapping
+> > > writes.
+> > Got it John, I will add better commit messages for the fio tests.
+> > >  From a glance at the code below, in this test each thread writes to a
+> > > separate part of the file and then verifies no crc corruption. But even with
+> > > atomic=0, I would expect no corruption here.
+> > Right, this is mostly a stress test that is ensuring that all the new
+> > atomic write code paths are not causing anything to break or
+> > introducing any regressions. This should pass with both atomic or non
+> > atomic writes but by using RWF_ATOMIC we excercise the atomic specific
+> > code paths, improving the code coverage.
+> 
+> I am not sure really how much value this has. At least it should be
+> documented what we are doing here and what value there is in this test.
 
-Signed-off-by: Devendra K Verma <devverma@amd.com>
----
- drivers/dma/dw-edma/dw-edma-core.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Got it John, I'll add it with information about what we are doing and
+what we are trying to stress.
 
-diff --git a/drivers/dma/dw-edma/dw-edma-core.c b/drivers/dma/dw-edma/dw-edma-core.c
-index b43255f914f3..8e5f7defa6b6 100644
---- a/drivers/dma/dw-edma/dw-edma-core.c
-+++ b/drivers/dma/dw-edma/dw-edma-core.c
-@@ -584,6 +584,25 @@ dw_edma_device_prep_interleaved_dma(struct dma_chan *dchan,
- 	return dw_edma_device_transfer(&xfer);
- }
- 
-+static void dw_hdma_set_callback_result(struct virt_dma_desc *vd,
-+					enum dmaengine_tx_result result)
-+{
-+	u32 residue = 0;
-+	struct dw_edma_desc *desc;
-+	struct dmaengine_result *res;
-+
-+	if (!vd->tx.callback_result)
-+		return;
-+
-+	desc = vd2dw_edma_desc(vd);
-+	if (desc)
-+		residue = desc->alloc_sz - desc->xfer_sz;
-+
-+	res = &vd->tx_result;
-+	res->result = result;
-+	res->residue = residue;
-+}
-+
- static void dw_edma_done_interrupt(struct dw_edma_chan *chan)
- {
- 	struct dw_edma_desc *desc;
-@@ -597,6 +616,8 @@ static void dw_edma_done_interrupt(struct dw_edma_chan *chan)
- 		case EDMA_REQ_NONE:
- 			desc = vd2dw_edma_desc(vd);
- 			if (!desc->chunks_alloc) {
-+				dw_hdma_set_callback_result(vd,
-+							    DMA_TRANS_NOERROR);
- 				list_del(&vd->node);
- 				vchan_cookie_complete(vd);
- 			}
-@@ -633,6 +654,7 @@ static void dw_edma_abort_interrupt(struct dw_edma_chan *chan)
- 	spin_lock_irqsave(&chan->vc.lock, flags);
- 	vd = vchan_next_desc(&chan->vc);
- 	if (vd) {
-+		dw_hdma_set_callback_result(vd, DMA_TRANS_ABORTED);
- 		list_del(&vd->node);
- 		vchan_cookie_complete(vd);
- 	}
--- 
-2.43.0
+Regards,
+ojaswin
 
+> 
+> Thanks,
+> John
 
