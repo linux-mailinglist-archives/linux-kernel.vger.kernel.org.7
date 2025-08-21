@@ -1,61 +1,79 @@
-Return-Path: <linux-kernel+bounces-779878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760B5B2FA96
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:36:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E214B2FA70
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8629D1896744
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:32:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B79FE189732F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1B1343D95;
-	Thu, 21 Aug 2025 13:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B9F334392;
+	Thu, 21 Aug 2025 13:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sbWEZzS9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ej46kqb5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eNvgPcH2"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52DD34165C;
-	Thu, 21 Aug 2025 13:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9443D334378
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755782987; cv=none; b=s5lFQj/px0K6kVUsorqqfGHiU6iwwe/Jwz4iOfuefz2RWCeuUEAoDzrAunaCxM77gjS0g/W7ztASRbqVvAfg0Uwav64DlPiM+tOdIMuEclcZ/abDfkXe8Wvn7oiUdwhwEW5ks6ZMlUgYCq40Qr0y5EzvjaVrjerQLtImLWswr3o=
+	t=1755782905; cv=none; b=OY2EJmzQ0yJat2pbLkEc5IkqQkCQgedMmBr4OTH39qkzL7VYw/xOb2cwTN6o8CJlgQ+caOm1nKy/Qmta3XBbIY6eBgvmT8pZNZkCAu3gIvAdXQj+2ejz1UK5qvzrG00lUbjSRF/cbR1bwk7r45jOSj+RniKBlcMGB3m8kBDYhOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755782987; c=relaxed/simple;
-	bh=lRNEtqcrtlw74Q5TFa9XsODgun9hFWArZJOwnOWoo2E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FjhLpSUkGudlOaPcR4q48N6lrhSzbU55fDpOLB9sXMHfY2606h60QEbnwULvMDLEmUSr7rDSsJxnni4NmAKY/XNqo3Qo8o+TsERDXsemQagMogcVA/y+YuF4FFrFLDoEYssg1n/Bgbg1XGA/9i+Ysp9DuiiQ0oTRWuzHAJ9betY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sbWEZzS9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ej46kqb5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755782983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/IFfXb2Gts/wINwWBJRkteFrwzlStBGHf9GvRYuutbo=;
-	b=sbWEZzS9RpijCcTfWGULdNkOaitzT7INtDE+7XhR76hdc3RdH7lQe3J0T+0slwNnrUSJS7
-	TDP7BuP8pXIcqbq5n7fxBRfaw2kPQjYbD5lXkh/tdmlUMGCbuVL+KspzwYkfRNigqgURYx
-	hNq+qHTkoJysQe2PwIlscKD8js5IUolD2/wYCU0sGmZagCgtQ92/9Kp/TzNVs78vysanYA
-	iHCsYcktO58z+mBvDR8egjaXjnCs+t3Pkm7S2V9C6Qq8KV4kooeDooSaJ1HA5nbo8jRqCW
-	S2W5r5QkPsO6AK2fho514PoA+zfwrUD++MTZ3U1f/mDA0SqHRdNrplLkfwGvkA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755782983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/IFfXb2Gts/wINwWBJRkteFrwzlStBGHf9GvRYuutbo=;
-	b=Ej46kqb5WCNAosfV2HN79ixwnaFLactfkbLvZsHJCyzAJ2P1Y24yz0l2D6XhrKcOBjJwFz
-	Cn0mdygi2Gc9MGCg==
-Date: Thu, 21 Aug 2025 15:28:16 +0200
-Subject: [PATCH v2 9/9] hrtimer: Reorder branches in
- hrtimer_clockid_to_base()
+	s=arc-20240116; t=1755782905; c=relaxed/simple;
+	bh=uBtIogbSOsIbkE4R4niciJeJE+S7iTtvZxRDaPAge9A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r6LbSFeI+1Yeti9K4dTW5IphNs+edtZWGkvuOZbvQVehUBb2Zx8UxM0bxuNjks6xM7z29080Qg5kQbScR8Ew4ERmcF/0cQdOUpvfa7vI3gifUXbSrR7VNAkPJf+qbWVm3dxo33UMo7GOQfntIpNDMtYlBUWz2l3vSQo1Y9R9aR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eNvgPcH2; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b9d41c1963so614331f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:28:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755782902; x=1756387702; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d8T31mCfWW90OKBE5TgdxVP07GBpIWXUZaFTrUQ7T0g=;
+        b=eNvgPcH2mvccST7yomJhSaiOtQ4QywpazjVtPqKCneWttUxku10PW8OgPEuNNTnyxl
+         fck8412vRX+gTnjWS64iM9remCSOTRKx73GgVxvEzGcKPRca4eMdaL7F6Qaz+dg9dmRh
+         qifsrNB3KWkRrXLiGbK+E6Qm5tnWKKqFwWIfxGwiU71Pkolwg3pYcCAjOowboOtfC1Dg
+         Lz2Y0us5mhyDYKjAoI689+Pdk+ei4nFmfoWAP0/rjBT2c4RJ2/8gD+bIehLak1ohQaRR
+         /25jpeRikac4IG5HmmsLrn1dqpUbhe/x5JwiE/oAI04usERIBgS3thz0URuhd++c03cT
+         j06w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755782902; x=1756387702;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d8T31mCfWW90OKBE5TgdxVP07GBpIWXUZaFTrUQ7T0g=;
+        b=HPULQmBF6GLvpUuJyWRqaeBxM+HNKDtyZpaw0FSq7vk+Vq6JfSa1t9JRxHfG+/l0cs
+         tcdflQR8FNthv9Bw/ZrTNes861aSzZJMnJqwanGkjjSugh/45ETpllAlLtrd+Iocqqt9
+         YJuvsq9lQXw2QMGoXfOOUqSf1nLW1HXSTNHxB6IwfybEjgHfjPSuCEXkja5/+kVPZagu
+         3qClrrKYbvorhM0kEdfnoeiw/UX3KAAYIO7zhayFNl1lGSk8ibfHWQQiox6EbMSof2GT
+         7ls3dhXvprhetpJsIsV40bj179zqSgs4UoFxde+gH1MdWItH4MMJTs8pFAdb2Kb/lTl8
+         d9qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzojeLh+9ou7UpHbSx3FgbdmRfpSKWnHqCxzWmg9boo0M23DwBNNMX7jZNudqS20itsxi008x3Eorvq2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMSls7qGpmwqGFx58lV4YKxDXb5c5Jp5ZGGO/M79s1oJimqJK9
+	saIvjUfY4m0Y7DNPZ67XcvVrgRwBSz24nUvEL9TJ1nXEFsAX4KlVl0Mjtut0O9B5YO0=
+X-Gm-Gg: ASbGncvINBOkvn5zMZy6MrjBRZtBs+ngCujHIVMCqd+Y24SoH/1caPETokdt0nLCYFl
+	usWa6LPy/2prQFn884vPfm29uhLpZr1cjvr9HJKbd9oJChHmV/YXGmlckULpQDdLqgu8cAW0TeY
+	43cHn3/7qBE4zrbgPlUK2sboAwxN6zxMPz9PV+m5QGUytqO8iF9zst0QLB6LWZzLyWOg174wMD+
+	Ozh/63JgQO6Iy6YI/EtfXmkG68jZbkwTFM1mMFswfeBnvOB2ipmUcfpgZmjH1uGljcaACInMGw4
+	vAcRMi1US4DqlIoNCWmW+ZNU42mW8nf2BRXm28ftVPICZAymcOjZ/Gzx0imzzsmc7lbDfznKH0V
+	nGQHcro2R+xqfL5X44ZRXTv2ZbZXcP0sQDC5Wc6Kx6j/odDDe2dE4dqHP1D8f2C6+UlaFN4h8Mc
+	5fnWpJWlvsvA4S
+X-Google-Smtp-Source: AGHT+IHOk+jQ+Wc1ajIsPeOQSauihlXX1jqWqmrDAgPp4glmc0IjdS3XEeisSeIe/xP/WO4p4q+GUw==
+X-Received: by 2002:a05:6000:4382:b0:3a6:d349:1b52 with SMTP id ffacd0b85a97d-3c49452a39dmr2007478f8f.21.1755782901781;
+        Thu, 21 Aug 2025 06:28:21 -0700 (PDT)
+Received: from ta2.c.googlers.com (219.43.233.35.bc.googleusercontent.com. [35.233.43.219])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4db1be3csm31540135e9.1.2025.08.21.06.28.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 06:28:21 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Date: Thu, 21 Aug 2025 13:28:19 +0000
+Subject: [PATCH] firmware: exynos-acpm: fix PMIC returned errno
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,63 +81,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250821-hrtimer-cleanup-get_time-v2-9-3ae822e5bfbd@linutronix.de>
-References: <20250821-hrtimer-cleanup-get_time-v2-0-3ae822e5bfbd@linutronix.de>
-In-Reply-To: <20250821-hrtimer-cleanup-get_time-v2-0-3ae822e5bfbd@linutronix.de>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
- Matt Wu <wuqiang.matt@bytedance.com>, 
- Andrew Morton <akpm@linux-foundation.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Sean Young <sean@mess.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
- linux-media@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755782976; l=898;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=lRNEtqcrtlw74Q5TFa9XsODgun9hFWArZJOwnOWoo2E=;
- b=vqkNbf2HDc9MrwNYTlgNZcaXjPwKmO8nzmctb1RJqQ7MWtSVWXM+JlSG1p27AZCkXGbENtHUi
- pzFWlcUBNJbA9pAFtazbmHpBdCfoY1IMbm5HzMzCgTDf4tSQdjuFN7Q
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250821-acpm-pmix-fix-errno-v1-1-771a5969324c@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAPMep2gC/x2MSwqAMAwFryJZG2grfq8iLrSNmoW1pCCCeHeDi
+ 1kMw3sPZBKmDEPxgNDFmc+oYssC/D7HjZCDOjjjatM5g7NPB6aDb1wVEokn9m6pqCHbBruALpO
+ Qxv91nN73AxVDRlplAAAA
+X-Change-ID: 20250820-acpm-pmix-fix-errno-92b3e6e17d1b
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org, 
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com, 
+ Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755782901; l=3666;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=uBtIogbSOsIbkE4R4niciJeJE+S7iTtvZxRDaPAge9A=;
+ b=1nMwO7SPbvVV2Ic1y0bLWWFDpBvHQZlBekOmTvTQEbZx+2RjXPdcqhD6YnT+0MGs1ddVLnyky
+ J4OcImc4x67CzaIkz3H3GahGRXSxX7N+V5IUctoqE+OAraYZLLQo/Yc
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Align the ordering to the one used for hrtimer_bases.
+ACPM PMIC command handlers returned a u8 value when they should
+have returned either zero or negative error codes.
+Translate the APM PMIC errno to linux errno.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-input/aElHlTApXj-W_o1r@stanley.mountain/
+Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
-v2: New patch
----
- kernel/time/hrtimer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/firmware/samsung/exynos-acpm-pmic.c | 36 +++++++++++++++++++++++++----
+ 1 file changed, 31 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index fedd1d793f6cdf8923cc8a6707ff793f36b77f26..f383df28c5325919b4d22df383d7fb286ea05874 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1567,10 +1567,10 @@ u64 hrtimer_next_event_without(const struct hrtimer *exclude)
- static inline int hrtimer_clockid_to_base(clockid_t clock_id)
+diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
+index 39b33a356ebd240506b6390163229a70a2d1fe68..a355ee194027c09431f275f0fd296f45652af536 100644
+--- a/drivers/firmware/samsung/exynos-acpm-pmic.c
++++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
+@@ -5,6 +5,7 @@
+  * Copyright 2024 Linaro Ltd.
+  */
+ #include <linux/bitfield.h>
++#include <linux/errno.h>
+ #include <linux/firmware/samsung/exynos-acpm-protocol.h>
+ #include <linux/ktime.h>
+ #include <linux/types.h>
+@@ -33,6 +34,26 @@ enum exynos_acpm_pmic_func {
+ 	ACPM_PMIC_BULK_WRITE,
+ };
+ 
++enum acpm_pmic_error_codes {
++	ACPM_PMIC_SUCCESS = 0,
++	ACPM_PMIC_ERR_READ = 1,
++	ACPM_PMIC_ERR_WRITE = 2,
++	ACPM_PMIC_ERR_MAX
++};
++
++static int acpm_pmic_linux_errmap[ACPM_PMIC_ERR_MAX] = {
++	0, /* ACPM_PMIC_SUCCESS */
++	-EACCES, /* Read register can't be accessed or issues to access it. */
++	-EACCES, /* Write register can't be accessed or issues to access it. */
++};
++
++static inline int acpm_pmic_to_linux_errno(int errno)
++{
++	if (errno >= ACPM_PMIC_SUCCESS && errno < ACPM_PMIC_ERR_MAX)
++		return acpm_pmic_linux_errmap[errno];
++	return -EIO;
++}
++
+ static inline u32 acpm_pmic_set_bulk(u32 data, unsigned int i)
  {
- 	switch (clock_id) {
--	case CLOCK_REALTIME:
--		return HRTIMER_BASE_REALTIME;
- 	case CLOCK_MONOTONIC:
- 		return HRTIMER_BASE_MONOTONIC;
-+	case CLOCK_REALTIME:
-+		return HRTIMER_BASE_REALTIME;
- 	case CLOCK_BOOTTIME:
- 		return HRTIMER_BASE_BOOTTIME;
- 	case CLOCK_TAI:
+ 	return (data & ACPM_PMIC_BULK_MASK) << (ACPM_PMIC_BULK_SHIFT * i);
+@@ -79,7 +100,8 @@ int acpm_pmic_read_reg(const struct acpm_handle *handle,
+ 
+ 	*buf = FIELD_GET(ACPM_PMIC_VALUE, xfer.rxd[1]);
+ 
+-	return FIELD_GET(ACPM_PMIC_RETURN, xfer.rxd[1]);
++	return acpm_pmic_to_linux_errno(FIELD_GET(ACPM_PMIC_RETURN,
++						  xfer.rxd[1]));
+ }
+ 
+ static void acpm_pmic_init_bulk_read_cmd(u32 cmd[4], u8 type, u8 reg, u8 chan,
+@@ -110,7 +132,8 @@ int acpm_pmic_bulk_read(const struct acpm_handle *handle,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = FIELD_GET(ACPM_PMIC_RETURN, xfer.rxd[1]);
++	ret = acpm_pmic_to_linux_errno(FIELD_GET(ACPM_PMIC_RETURN,
++						 xfer.rxd[1]));
+ 	if (ret)
+ 		return ret;
+ 
+@@ -150,7 +173,8 @@ int acpm_pmic_write_reg(const struct acpm_handle *handle,
+ 	if (ret)
+ 		return ret;
+ 
+-	return FIELD_GET(ACPM_PMIC_RETURN, xfer.rxd[1]);
++	return acpm_pmic_to_linux_errno(FIELD_GET(ACPM_PMIC_RETURN,
++						  xfer.rxd[1]));
+ }
+ 
+ static void acpm_pmic_init_bulk_write_cmd(u32 cmd[4], u8 type, u8 reg, u8 chan,
+@@ -190,7 +214,8 @@ int acpm_pmic_bulk_write(const struct acpm_handle *handle,
+ 	if (ret)
+ 		return ret;
+ 
+-	return FIELD_GET(ACPM_PMIC_RETURN, xfer.rxd[1]);
++	return acpm_pmic_to_linux_errno(FIELD_GET(ACPM_PMIC_RETURN,
++						  xfer.rxd[1]));
+ }
+ 
+ static void acpm_pmic_init_update_cmd(u32 cmd[4], u8 type, u8 reg, u8 chan,
+@@ -220,5 +245,6 @@ int acpm_pmic_update_reg(const struct acpm_handle *handle,
+ 	if (ret)
+ 		return ret;
+ 
+-	return FIELD_GET(ACPM_PMIC_RETURN, xfer.rxd[1]);
++	return acpm_pmic_to_linux_errno(FIELD_GET(ACPM_PMIC_RETURN,
++						  xfer.rxd[1]));
+ }
 
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250820-acpm-pmix-fix-errno-92b3e6e17d1b
+
+Best regards,
 -- 
-2.50.1
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
 
