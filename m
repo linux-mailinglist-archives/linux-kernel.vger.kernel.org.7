@@ -1,141 +1,103 @@
-Return-Path: <linux-kernel+bounces-779420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF68DB2F3D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:26:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B09B2F3EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25D99B631AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0417E1643BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87962F28F8;
-	Thu, 21 Aug 2025 09:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2369B2EFD9E;
+	Thu, 21 Aug 2025 09:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbw0NxOo"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ixQnr5sM"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA262F1FC3;
-	Thu, 21 Aug 2025 09:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2D82F1FEB;
+	Thu, 21 Aug 2025 09:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755768385; cv=none; b=s5i4L95uuXaqp2QHupAFrb9EEPPiGFAomd2bO0MSxz6SVKSTmKb9mCBZpli81Z7uiwMjnNzAhFpkmoUMLny9D0BU5uOdPZ5BqF6+XJZkbwPoEKahvjI3/zmaQxYFLCT9GYO/BqVbQ30k9bHyZBrV9zTOtwE2s8X/rFJSJQBrF/U=
+	t=1755768383; cv=none; b=qZC5KT6DrTpgESJP+XEw0o0nTQxdIi/L1pHH67oIyzfL6/18hQJpp4vLZiUKDBBuAfWV/hLXs7THx+BeO7B+Rbl9KGn2v1cqrQB81mbvOstWYgFpxpNFOtubFmO5Fbf59mnkaReEPm7uUhp95w18nWd47MYaVO+i8NSVzR89HmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755768385; c=relaxed/simple;
-	bh=0CVLq6osmPq96XDq28hoHnc4Cidg3ilPC8598ZST/DE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qD4q/j8uM95Rtxn6A6e5a/bKHOQ/uE9V1kytQ0I0pBhmx/vgHy7g3C4IWNKsIxpMLEm/6Dowm5yBVHsmwx0f+jo9gP8cv4lHa+EcBW+1W3mpI7x+Yl8NDtMc0nHUrucvOwhmr36vBNXZ/er04Qnp94E8aJCF02+9vlFrYX0swTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nbw0NxOo; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24457f581aeso5406145ad.0;
-        Thu, 21 Aug 2025 02:26:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755768383; x=1756373183; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hz2c6fH0PegEG0/euJ35zwk7H0Lkoqr89To/8warP7g=;
-        b=nbw0NxOorZFk5v8QyUoDqsdNp4PTJ2phn6E7p3RsO9FAbxgVsrk2tiSpe05oehqtOb
-         zmSHWFfuWMCA4xR7MzkchQWRigwPENlrSLqo3a9+gYKnbUY1nkjBowxLtCcBG7cEbwyi
-         RbsXYw3RCB8zo27YQcxd+4wN+aJh3+n8tik7ZJsOE5BXgUlfsR75mYVVx9WW014d/PkC
-         QL2538ZfHcij+43SbEy8j6834PXWVVMHTnHKBPmGmlbuw6JMZUANOtRSi7/O25BrCVKO
-         nGdl6dLeDtwmb+ReFjfhpd/UsQZ1MTaJ88YgHuWZ+y1lp5PGuI4WiZZ8e54Cb1OBJHKQ
-         HAkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755768383; x=1756373183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hz2c6fH0PegEG0/euJ35zwk7H0Lkoqr89To/8warP7g=;
-        b=vevDa8Ab3eQhlCIb69zUxdml/ZtgELQ7kIyqbOh8ubSQvFT8uttXS8VmgFbr270Ko6
-         BD6YyxcmA1PzDYZGGrUJczhKZ5V0j+eecufvvUUQFYXQubhti8MGDE7Y0e8fuXmmrKLb
-         8RSyN95i/BIKGWJyBpg2tDQxRPOKNbqVB+VrLPdNJ0KuXS0QJrmZJ2W2cDupt39OtCIG
-         VlSMuVV1re+jQ5JMSVkDemYmNkmErxG9rSk/m6Uyb528lvs6Hp7J4JPIebAuS/j9pcDt
-         fhW+FvmoR3lgOmD4/q1aTRaGVzuZg0iSfUJHRdFuyMTcGvmSXmqcqPmzJ2IdqjdQQW1M
-         af6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWUAibW58dpd+oWRLicOlCpv/AHAkGFQpwuSO7H0NmH6TLO4dgZEERTSJp+EJCOQf9V/xFbMFbCjeuu@vger.kernel.org, AJvYcCXygyXEjZZ9vn3v6QKYx06XR796PvgclKHpe9UYOK5/e/1jwDLAyt91UK8uCCcSPEoXa7iOZYKeXhrR3crM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs45xLCxfIZQbWedOsqhH6b1vxkk9E7Xrwy0A/KjT+I3ttx3/B
-	56/GpbcJIjffXffTrIaDxFH7S/6U5uHKpeKVtblOhwA/DSOtgIG8IRtsQ5yAyP2599FAC+44sD9
-	0mcASy/dUaBToflZfzMaK1HEgHaIXq0/orEnbxNc=
-X-Gm-Gg: ASbGncssKpsFZDjkQu76jo+QdZMxmip/+wYNLMk7Et7R1mTNHUI+z9k7chsyKywrpxc
-	2FhI5XAJSH+2YCYXF00GBsecbS/rqBd6MxSsh8YlQD64BcZHwLJVrmLwfNpFZhLN3SjZkeONk8/
-	sv8vWZgpVKJbwZ8oCw6fE0pOBnwJ2k79INycp86V7aYFgB/Kf72aVe/a8AKRE7vsGVC76D3UVyv
-	jkLIxb5VCpwwTuOO2ycAMFdlzWodHJGPw7sMI5X+xNQnomfHnQ=
-X-Google-Smtp-Source: AGHT+IE+gi3iryZSMoTSVIeW4YDQiq118LFo6hCsd6U78hkvx+WdbKZDScdgD7b8SXK81gsL07DYxCnPjnP+slSfqGc=
-X-Received: by 2002:a17:902:e5c2:b0:246:163b:3bcf with SMTP id
- d9443c01a7336-246163b40e5mr7368645ad.55.1755768383077; Thu, 21 Aug 2025
- 02:26:23 -0700 (PDT)
+	s=arc-20240116; t=1755768383; c=relaxed/simple;
+	bh=0Yz6pkIFcToOCZztAf8Vm4vvQOU8Nn9k9Tki6XA3csA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cLzivyMvK9igHlzAwbmWju0Nevud8f66H2f75Dl0NsnjpQukyz8P+0Md6LulbKxjYL7DwgdEHleWTuDJMCO6rvIa5h6+BkU86NoeI4i2lRwAVdjJCIPUpE8u2yvpbkq6JnZcgQnWlcoLfr2Ne2OAtl8OaW9QbOtfT39Tb11aftI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ixQnr5sM; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755768372; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=YT0No5sUM1cts6WMJicqOCsJpqe2idZjE5DEkCBK7/s=;
+	b=ixQnr5sMSBJJmmdTrP1Xpamne4KZJOm0pQn9cuosT8dnwXc6bKYPcSs9O7bnlh25hAAwezpxqEmTRZhST8vzPWqTH09DOfs71G2Y0dGWzSnZvaKuuBChsTALkh6GN6vcONPzsqoEX04/DAhtHexm2tJNFhHxhSyFHPC1ci0uaKU=
+Received: from 30.221.115.63(mailfrom:chengyou@linux.alibaba.com fp:SMTPD_---0WmFdo7C_1755768371 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 21 Aug 2025 17:26:11 +0800
+Message-ID: <4dbdf24b-f725-e194-f1ec-f1510759a24c@linux.alibaba.com>
+Date: Thu, 21 Aug 2025 17:26:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820075420.1601068-1-mmyangfl@gmail.com> <20250820075420.1601068-4-mmyangfl@gmail.com>
- <aKbZM6oYhIN6cBQb@shell.armlinux.org.uk>
-In-Reply-To: <aKbZM6oYhIN6cBQb@shell.armlinux.org.uk>
-From: Yangfl <mmyangfl@gmail.com>
-Date: Thu, 21 Aug 2025 17:25:46 +0800
-X-Gm-Features: Ac12FXwMQQM0me3KQLrYFCfyH8I5wZ2VAlw5jYW0DKrweHz-xQ0RjH8kCQ4zynw
-Message-ID: <CAAXyoMMGCRZTuhYG0zxTgKdDdgB1brU7BAUiCVR_MheFK-n5Yw@mail.gmail.com>
-Subject: Re: [net-next v5 3/3] net: dsa: yt921x: Add support for Motorcomm YT921x
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.1
+Subject: Re: [PATCH v2] RDMA/erdma: Use vcalloc() instead of vzalloc()
+Content-Language: en-US
+To: Qianfeng Rong <rongqianfeng@vivo.com>,
+ Kai Shen <kaishen@linux.alibaba.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Markus.Elfring@web.de
+References: <20250821072209.510348-1-rongqianfeng@vivo.com>
+From: Cheng Xu <chengyou@linux.alibaba.com>
+In-Reply-To: <20250821072209.510348-1-rongqianfeng@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 4:30=E2=80=AFPM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> On Wed, Aug 20, 2025 at 03:54:16PM +0800, David Yang wrote:
-> > +static int
-> > +yt921x_port_config(struct yt921x_priv *priv, int port, unsigned int mo=
-de,
-> > +                const struct phylink_link_state *state)
-> > +{
-> > +     const struct yt921x_info *info =3D priv->info;
-> > +     struct device *dev =3D to_device(priv);
-> > +     enum yt921x_fixed fixed;
-> > +     bool duplex_full;
-> > +     u32 mask;
-> > +     u32 ctrl;
-> > +     int res;
-> > +
-> > +     if (state->interface !=3D PHY_INTERFACE_MODE_INTERNAL &&
-> > +         !yt921x_info_port_is_external(info, port)) {
-> > +             dev_err(dev, "Wrong mode %d on port %d\n",
-> > +                     state->interface, port);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     fixed =3D YT921X_FIXED_NOTFIXED;
-> > +     ctrl =3D YT921X_PORT_LINK;
-> > +     if (mode =3D=3D MLO_AN_FIXED)
-> > +             switch (state->speed) {
->
-> Someone clearly doesn't believe in reading the documentation before
-> writing code. This also hasn't been tested in any way. Sorry, but
-> I'm going to put as much effort into this review as you have into
-> understanding the phylink API, and thus my review ends here.
->
-> NAK.
->
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
-Sorry I'm quite new here. I don't understand very clearly why a
-different set of calls is involved in dsa_switch_ops, so I referred to
-other dsa drivers and made a working driver (at least tested on my
-device), but I would appreciate it much if you could point it out in
-an earlier version of series.
 
-Sorry for any disturbance.
+On 8/21/25 3:22 PM, Qianfeng Rong wrote:
+> Replace vzalloc() with vcalloc() in vmalloc_to_dma_addrs().  As noted
+> in the kernel documentation [1], open-coded multiplication in allocator
+> arguments is discouraged because it can lead to integer overflow.
+> 
+> Use vcalloc() to gain built-in overflow protection, making memory
+> allocation safer when calculating allocation size compared to explicit
+> multiplication.
+> 
+> [1]: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
+> 
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
+> v2: change sizeof(dma_addr_t) to sizeof(*pg_dma) to improve code
+>     robustness as suggested by Markus.
+> ---
+>  drivers/infiniband/hw/erdma/erdma_verbs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+
+Thanks.
+
+Reviewed-by: Cheng Xu <chengyou@linux.alibaba.com>
+
+> diff --git a/drivers/infiniband/hw/erdma/erdma_verbs.c b/drivers/infiniband/hw/erdma/erdma_verbs.c
+> index 996860f49b2f..109a3f3de911 100644
+> --- a/drivers/infiniband/hw/erdma/erdma_verbs.c
+> +++ b/drivers/infiniband/hw/erdma/erdma_verbs.c
+> @@ -671,7 +671,7 @@ static u32 vmalloc_to_dma_addrs(struct erdma_dev *dev, dma_addr_t **dma_addrs,
+>  
+>  	npages = (PAGE_ALIGN((u64)buf + len) - PAGE_ALIGN_DOWN((u64)buf)) >>
+>  		 PAGE_SHIFT;
+> -	pg_dma = vzalloc(npages * sizeof(dma_addr_t));
+> +	pg_dma = vcalloc(npages, sizeof(*pg_dma));
+>  	if (!pg_dma)
+>  		return 0;
+>  
 
