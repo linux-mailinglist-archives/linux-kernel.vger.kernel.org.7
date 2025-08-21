@@ -1,173 +1,151 @@
-Return-Path: <linux-kernel+bounces-779966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8C9B2FB86
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:59:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74BFB2FBA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BD7BB6723C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D093D1D02ABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CA523D7C5;
-	Thu, 21 Aug 2025 13:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gjm8FrmB"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9AA23D7F2;
+	Thu, 21 Aug 2025 13:56:16 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01977230981
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA4D2EC55D;
+	Thu, 21 Aug 2025 13:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755784529; cv=none; b=qVHVqcdaLy6zBi5YlyE6Psp46+EPCSVkgh+UQLI7TkSNdvdVCgVxgtkNOgKZGfrwu5eVbweLxuCyjBau35x/q8T4ZLyUHHqauH3Su6dW4J5SMLs/IYWltafJnhPyajE/K2+4Ub08ga0cGhFpvZAgWPUKRGiYwR1ki+DiMPD3hHo=
+	t=1755784576; cv=none; b=Gp69b4lQA4T1djo4Pk9XAtGuFLENz3oW3br9pn6QS2rliN0KnlXugqg21eW16KW2SjmXwn82+KVMdfuHX6MGTSiC/opsS6JSfmgd55ednGIBpWJkT92JQ2fW1ws570hWR83MgJddpvOmDkrc+w/E4i3rHD7ISKJ6ve9DoL1LSzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755784529; c=relaxed/simple;
-	bh=wHspB9lP9ytZ5qoP/apoEbwEudQSgCr+8Ne7IMCn/0k=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ommOzFEVs5Ygwt4nHfTHM2aHEAelQ85Db7A1VIRtHGJo7ryQ66MMtQHZDatjBitHk3DM6jcSbunlxVr5L72q8Yp82n8aAnnECWNkXzlUzCv5Xtt6e5Hh84jLmrqc+lzY+LEpC4JApGRgD/dVhAcV/uprC+3kWiGqmKFHfmJKh74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gjm8FrmB; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-323267915ebso2284025a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:55:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755784527; x=1756389327; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lKdnyTkgvffM7mkS2a96ehAiqGPtNgTkiNVc3WNtEtY=;
-        b=gjm8FrmBbQp7asF8cKHCZUMTFFwFuB9vQb/JAj3PN17eht+yeIorCau16Il27U+U1I
-         JJ5dsZ+vYoFJIMM14w3HOaCqGWIWPhgvSU5gjPL1KADWM7Av6UU1BpuwFlU5CSw5YuYg
-         TOCXPp13NYpJyRxKzxff8A9kHDxttawP0AyxDm97h23VZKHk2UxpmYxllJrKJqZhDGWX
-         NpM9UgaAOXi157/QiJP14kSTVhYxT4kKzGlKa9RFyo3U4QSYDdlNCP3PqbETuPONjZpV
-         b0G3hdifBWN+RYY1Zlj8C6/k0v+dxtmYqD7tzs9rw/2B1dA/I60ysOZU5uJ/lXDLD5+Q
-         kw+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755784527; x=1756389327;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lKdnyTkgvffM7mkS2a96ehAiqGPtNgTkiNVc3WNtEtY=;
-        b=wj4MzYfFuzjBljN6/D2IMpoS7/i0Hf6RlLAihY3r2X5nBlOv3VKJKFoSu5jviFzzRS
-         NTVzYEObD4MYYOL/GU2wEfC34VB4XCMp6NI3Ynwa6Jo0CLY+tHqXR066wX58pkIEy6yi
-         F2Kzs4oLn/l6wzFtZg2Q1rYdR9KwBfq8pELc2ONnStEsDB3Y52oVJZ859hq9zgveEwLP
-         QZecBCxN7mNoRZEqYlryBEDs+oqkpQ4xGij03RtKqk+Sebv34eTugbtw5tIztwC5f1sB
-         IQDp56qEJ/t65vS/mifFJGQDVA/tyk0WSBrIBFrWvjOSKdTsOcwLMISeiZwomrWuNRAa
-         l2RA==
-X-Forwarded-Encrypted: i=1; AJvYcCViH3C4mVHPy83gQgiby4w818G7hAggTX/vTk0htzUoFQcmvCcqJLS2nW8AR91msebBr5IamBCC1I0wozU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqtT3nVAoVnplfYeAyV7rMKy83VEu1YrQiVBF6KJwRyP32YTRX
-	1pHdXBCyt1ZbiZI6a2FkqSXurqTJGKzI59ThWb5sANBJfRNk+VFDxZraaNY5A5kwgKo2g4hLjbK
-	euoBNzUkVtp8YSw==
-X-Google-Smtp-Source: AGHT+IHsMqhR+FC1Vaoc1hCDg2gMTNywVUl9RwkU/LLcAQVairjJf0TCsVawP0vFsJexqsUgLxEVKVJAb9sjRQ==
-X-Received: from pljc15.prod.google.com ([2002:a17:903:3b8f:b0:243:31a:f8e2])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:2f85:b0:242:cf0b:66cd with SMTP id d9443c01a7336-245fed69268mr38021605ad.34.1755784527309;
- Thu, 21 Aug 2025 06:55:27 -0700 (PDT)
-Date: Thu, 21 Aug 2025 13:55:21 +0000
+	s=arc-20240116; t=1755784576; c=relaxed/simple;
+	bh=3oc/IJQWBfYXXDjTK4ag+YVXoDkcvRedFhQypw2sN3w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Sq8+OPY4kr1WRr173DzmhSolzfCb2gaxlCVahdGVaWengbl9nIt0cy4s6g4LXEBbZXcM6LP+/XtaNx5xC9dI7/hE1WLQua193Plvcr/oGRQ0bgvNDudXoIUj5pvIWZBogH63imQKEmLqTTG3BcIfsX/Y9Pe/EGQ7pl7xb8peGLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from ROG.lan (unknown [118.251.176.166])
+	by APP-03 (Coremail) with SMTP id rQCowAAngIFZJadoCYkTDg--.22571S2;
+	Thu, 21 Aug 2025 21:55:39 +0800 (CST)
+From: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	anup@brainfault.org,
+	pbonzini@redhat.com,
+	shuah@kernel.org,
+	cyan.yang@sifive.com,
+	cleger@rivosinc.com,
+	charlie@rivosinc.com,
+	cuiyunhui@bytedance.com,
+	samuel.holland@sifive.com,
+	namcao@linutronix.de,
+	jesse@rivosinc.com,
+	inochiama@gmail.com,
+	yongxuan.wang@sifive.com,
+	ajones@ventanamicro.com,
+	parri.andrea@gmail.com,
+	mikisabate@gmail.com,
+	yikming2222@gmail.com,
+	thomas.weissschuh@linutronix.de
+Cc: linux-riscv@list.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	pincheng.plct@isrc.iscas.ac.cn
+Subject: [PATCH 0/5] RISC-V: Add Zilsd/Zclsd support in hwprobe and KVM
+Date: Thu, 21 Aug 2025 21:55:22 +0800
+Message-Id: <20250821135527.224044-1-pincheng.plct@isrc.iscas.ac.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.rc1.193.gad69d77794-goog
-Message-ID: <20250821135522.2878772-1-cmllamas@google.com>
-Subject: [PATCH] netlink: specs: binder: replace underscores with dashes in names
-From: Carlos Llamas <cmllamas@google.com>
-To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Li Li <dualli@google.com>
-Cc: Tiffany Yang <ynaffit@google.com>, John Stultz <jstultz@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>, 
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAngIFZJadoCYkTDg--.22571S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur1kJF1xGr15GFy8Gw1xXwb_yoW8trW5pa
+	n5Cw15KF1kXFy7C34fAr48ur1rKF4ru393Jrn3t348WFW3Cr95Jr9ak3ZxZF18ArZ29ry0
+	93WrKw1I93Z7AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUWVWUuwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUU0JmUUUUUU==
+X-CM-SenderInfo: pslquxhhqjh1xofwqxxvufhxpvfd2hldfou0/
 
-The usage of underscores is no longer allowed for the 'name' format in
-the yaml spec. Instead, dashes should be used. This fixes the build
-issue reported by Thorsten that showed up on linux-next.
+Hi all,
 
-Note this change has no impact on C code.
+This patch series adds support for the recently ratified Zilsd
+(Load/Store pair instructions) and Zclsd (Compressed Load/Store pair
+instructions) extensions to the RISC-V Linux kernel. It covers device tree
+binding,ISA string parsing, hwprobe exposure, KVM guest handling and selftests.
 
-Cc: Jakub Kicinski <kuba@kernel.org>
-Reported-by: Thorsten Leemhuis <linux@leemhuis.info>
-Closes: https://lore.kernel.org/all/e21744a4-0155-40ec-b8c1-d81b14107c9f@leemhuis.info/
-Fixes: 63740349eba7 ("binder: introduce transaction reports via netlink")
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- Documentation/netlink/specs/binder.yaml | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Zilsd and Zclsd allow more efficient memory access sequences on RV32. My
+goal is to enable glibc and other user-space libraries to detect these
+extensions via hwprobe and make use of them for optimized
+implementations of common routines. To achieve this, the Linux kernel
+needs to recognize and expose the availability of these extensions
+through the device tree bindings, ISA string parsing and hwprobe
+interfaces. KVM support is also required to correctly virtualize these
+features for guest environments.
 
-diff --git a/Documentation/netlink/specs/binder.yaml b/Documentation/netlink/specs/binder.yaml
-index 140b77a6afee..0f0575ad1265 100644
---- a/Documentation/netlink/specs/binder.yaml
-+++ b/Documentation/netlink/specs/binder.yaml
-@@ -26,27 +26,27 @@ attribute-sets:
-         type: string
-         doc: The binder context where the transaction occurred.
-       -
--        name: from_pid
-+        name: from-pid
-         type: u32
-         doc: The PID of the sender process.
-       -
--        name: from_tid
-+        name: from-tid
-         type: u32
-         doc: The TID of the sender thread.
-       -
--        name: to_pid
-+        name: to-pid
-         type: u32
-         doc: |
-           The PID of the recipient process. This attribute may not be present
-           if the target could not be determined.
-       -
--        name: to_tid
-+        name: to-tid
-         type: u32
-         doc: |
-           The TID of the recipient thread. This attribute may not be present
-           if the target could not be determined.
-       -
--        name: is_reply
-+        name: is-reply
-         type: flag
-         doc: When present, indicates the failed transaction is a reply.
-       -
-@@ -58,7 +58,7 @@ attribute-sets:
-         type: u32
-         doc: The application-defined code from the transaction.
-       -
--        name: data_size
-+        name: data-size
-         type: u32
-         doc: The transaction payload size in bytes.
- 
-@@ -78,14 +78,14 @@ operations:
-         attributes:
-           - error
-           - context
--          - from_pid
--          - from_tid
--          - to_pid
--          - to_tid
--          - is_reply
-+          - from-pid
-+          - from-tid
-+          - to-pid
-+          - to-tid
-+          - is-reply
-           - flags
-           - code
--          - data_size
-+          - data-size
- 
- mcast-groups:
-   list:
+The series is structured as follows:
+- Patch 1: Add device tree bindings documentation for Zilsd and Zclsd
+- Patch 2: Extend RISC-V ISA extension string parsing to recognize them.
+- Patch 3: Export Zilsd and Zclsd via riscv_hwprobe
+- Patch 4: Allow KVM guests to use them.
+- Patch 5: Add KVM selftests.
+
+This series of patches is a preparatory step toward enabling user-space
+optimizations in glibc that leverage Zilsd and Zclsd, by providing the
+necessary kernel-side support.
+
+Please review, and let me know if any adjustments are needed.
+
+Thanks,
+Pincheng Wang
+
+
+Pincheng Wang (5):
+  dt-bidings: riscv: add Zilsd and Zclsd extension descriptions
+  riscv: add ISA extension parsing for Zilsd and Zclsd
+  riscv: hwprobe: export Zilsd and Zclsd ISA extensions
+  riscv: KVM: allow Zilsd and Zclsd extensions for Guest/VM
+  KVM: riscv: selftests: add Zilsd and Zclsd extension to get-reg-list
+    test
+
+ Documentation/arch/riscv/hwprobe.rst          |  8 ++++
+ .../devicetree/bindings/riscv/extensions.yaml | 39 +++++++++++++++++++
+ arch/riscv/include/asm/hwcap.h                |  2 +
+ arch/riscv/include/uapi/asm/hwprobe.h         |  2 +
+ arch/riscv/include/uapi/asm/kvm.h             |  2 +
+ arch/riscv/kernel/cpufeature.c                | 24 ++++++++++++
+ arch/riscv/kernel/sys_hwprobe.c               |  2 +
+ arch/riscv/kvm/vcpu_onereg.c                  |  2 +
+ .../selftests/kvm/riscv/get-reg-list.c        |  6 +++
+ 9 files changed, 87 insertions(+)
+
 -- 
-2.51.0.rc1.193.gad69d77794-goog
+2.39.5
 
 
