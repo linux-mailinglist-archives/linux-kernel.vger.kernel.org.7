@@ -1,210 +1,118 @@
-Return-Path: <linux-kernel+bounces-780319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6FAB30067
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1009B30077
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 049E63B8907
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:42:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47478A081D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3FD2E2F12;
-	Thu, 21 Aug 2025 16:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C962E4278;
+	Thu, 21 Aug 2025 16:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQaijEAQ"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="OIhElBT3"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A3E2E2F00;
-	Thu, 21 Aug 2025 16:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B241F3FE9;
+	Thu, 21 Aug 2025 16:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755794545; cv=none; b=o8lp1b7KY5Nhuj8UWImqZ6w85vlC+Vt14H1q4OLIENr48nrb1acCePgF21PgKqj1iz+Dqz+e76t/IsgOep03ir//zXjaPx3dGzSOtBZ+A8CSLyNtTIVYZVOWbk/OQOYkSyqIIiirYR4Q2q+zmFy7FNG6K1xYA++YrqynYi1UaDE=
+	t=1755794769; cv=none; b=fS3li68+wKB01fwvqtoOTOO7hMdL0EO1+X/srXynni/Gpo3eNQKvcQWqA44XBLGUGStzv57C4xhFAVfyP1CVGpU6lG1NWZT0cehoLfhpbllmZfVrywFK8mnuk+M9eHF74Y7nR+F8agkXOOQCfUIbc3DMrBdYYyS7g+bT7RG7jNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755794545; c=relaxed/simple;
-	bh=g4VQNKmSnAC9DQfCVPgHsw+XDHu7efI6T9ypGVxALUY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=N8KJHy2afZF0hR6itFeeiVYo/gB4C7VKoGRoOtbu3g1T9T2Lah0j01xuTDdyon7//yz04aloN6b39XBUb4Ix6xK36X9T+KFG597lbT5X6VjY4RYabwBUEAT7R/uAexvsrea8AmlFCs4v+jaefhyFM2HdFwEg/CE0OwfotCXR+gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQaijEAQ; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e870689dedso87597685a.3;
-        Thu, 21 Aug 2025 09:42:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755794542; x=1756399342; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eDjfXTLIXvHyku6eeA6JQrBMgI3q0b62hMZfcvENsN4=;
-        b=YQaijEAQI+l2c/HctjHmPt2G07sC9rkjkpsKuPyXviy370dOOlbWi5Zu3F7SEgAOOc
-         i7YGel+j/wzBHPS3Wp18ZR3jNwRTdKdpcq0HPOPUh1l83/vgy+SBisX2/T8MChb6O49a
-         2chAaD4bxyBe8ve7yY+LY0rKQpcDcyQO6eUkMLq/itcuy8/BZdHxTwa0/B1xvRkJAGC5
-         29hiUQxsqI7W5aBhulwaJv3XhzrHuQhT+cAIolX2fTTXT5xrc61eWVP1T05pIqd73/eG
-         qGuC41DabGjo+DtGuw+cWPJQCESBnkVDp8HS3S9/gJpLSdeuc/BNz8YJrMcg0gPtzX53
-         RkWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755794542; x=1756399342;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eDjfXTLIXvHyku6eeA6JQrBMgI3q0b62hMZfcvENsN4=;
-        b=A7GAX0y2j+Yw5EMwE74OtZ7Ozq+rJuLIrbW7VSJ/4sIRPTtJ4Xod41vpO1rFoBef++
-         8wqJzVABEX3wNpjSQS4+qz8DF+PBlrU9IsyCpPX0TVmTFkzEZR6k310Q7vfN8LkiZHRb
-         v2FhCTDf8sCgKKUJd36ogx8tSjK8QytKCr9fhEZhY+ZI3YJRGmSuCr8aeWBEp0jk37xV
-         1LzfjwFuKkkgxK2jpaV8sD4VOYduMxEUFHDbScV3ujlZFYEm0Dp0YusrneizJWDKaXLG
-         pvJVsha7fJ6HNZ5Lo+PgsWQcd5NZuu+0IeeJ+vdkxvK0H0IEbGJtCwraifRlebL4+5G4
-         Nq9g==
-X-Forwarded-Encrypted: i=1; AJvYcCW252ctHqURFeABnjPOy5wDFEDkegbvfn+/RZj57D7ADdfH3x/FWZcEaaDCh3jycqyDPhWO6Q+Zr8St@vger.kernel.org, AJvYcCWmNWDThGk3Y6UZy1rYWBytSo0hS6yV28kDgHMO7m/Vx8TNwIVZlEfUSMKzICZ5iE5vH+UfiyxsFgNQ8g==@vger.kernel.org, AJvYcCWvr7O5lXB3g1zYPYKt/FZdILhxq+JGxPF/7hYXZ3pQ5XECYujB+2I4i4cGF+NM0GyTtI1uF3S0qwmyBGNx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8/kwfaoCxd1EI+ms3yMVD0O4GqehYdZIS/QenqI2rNMQKXi/K
-	7ZOxiEIW5YqBHHE8B+FiYQR6JIe9uZx9ZCSYpLsOZYsSIKoUJR43MESRQmVapwia
-X-Gm-Gg: ASbGncuZXZORoBqOwscsznK+tWZK1eBZgfWpSrt4oXPRzY18WivAzEv3ktl7WON7d8I
-	fIRwzJcbi/RjuoL3WfofE1S/4U3b9pkxlq2RkUIHIu9bs4Y51q0MywusUslmzzNwW7SW923Xujr
-	a1DvsDqDsbTxY1CpIArzzo+h9f847RoulZXs5txWXANlD4rC2VmSP+qw40kcECTLsaqIoTXbUvG
-	VqGbhKTzJ2ZKLY+8XBl9YbUK8xd3EbTeezYJq2iKP9ybTsW+dchz/5h4CeA3yKZU0jIjBCpmkd6
-	GUO02+dFhbpXBU39V9MHTxsxW0+tNBY8P862XIMtY+NThOHWtzKMx7FfGuEVGwu0lSdZ+xb5TX0
-	6NI1yHgZ39dtoIfwEd61wFCYtIKSM9Uz9/q0WbSp/fvQ4BNFUCT0AADsC8W8iuJgi9OdfHg==
-X-Google-Smtp-Source: AGHT+IGMn0Sig5qE7OmBL7SDQ5NFdbsvx+ZhiNSfvAOYyUYwJGPdtiOiIJBwNmWcekndGoeT1JQ5JQ==
-X-Received: by 2002:a05:620a:4002:b0:7e6:9e25:df13 with SMTP id af79cd13be357-7ea11049b6fmr3132385a.51.1755794542364;
-        Thu, 21 Aug 2025 09:42:22 -0700 (PDT)
-Received: from [127.0.0.1] (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e020b25sm1145947185a.13.2025.08.21.09.42.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 09:42:22 -0700 (PDT)
-Date: Thu, 21 Aug 2025 12:42:21 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, devicetree@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>,
- Boris Gjenero <boris.gjenero@gmail.com>,
- Christian Hewitt <christianshewitt@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Paolo Sabatino <paolo.sabatino@gmail.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_3/4=5D_auxdisplay=3A_Add_TM16xx_7-?=
- =?US-ASCII?Q?segment_LED_matrix_display_controllers_driver?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <20250821-passionate-mouse-of-essence-2c5af4@kuoka>
-References: <20250820163120.24997-1-jefflessard3@gmail.com> <20250820163120.24997-4-jefflessard3@gmail.com> <20250821-passionate-mouse-of-essence-2c5af4@kuoka>
-Message-ID: <13E7CEAE-6865-485B-9486-7EBEEE46E285@gmail.com>
+	s=arc-20240116; t=1755794769; c=relaxed/simple;
+	bh=I/Tl34IQszPYSGu6Nc7bOPUdLV3x2lP0DOwDq/ZmU88=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JsFzPgAJuCLpm4VB8v41FkBahoZFglv6+5uDFOHvAUxQ3ptHmAnZLVgKd+8DDRdE3AKWA3ksQrHFb3FTJ3nKYCE57dPm8eYtWEtiqliZFxiTv1SaHdjPpdKM+e3NU3vpwcfydA2ahXF+LJbpzjdJriSs9wDEV1tj/C/f1ZCKPQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=OIhElBT3; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=nT6M89BssGCI89Lp5Hc0EB9rr0lMk+OkaA5nBVCLuZI=; t=1755794766;
+	x=1756399566; b=OIhElBT3NlE8Jxm+g1GD/tv/bsBhJgI4rEFjPCco/gJn44HL8a38MR4j7hK79
+	cq7ydmtN++FSJbwrSSNeSIq2RlCPgsWvDDxfRLYjeDy7JFzlvqWpBOdDVBpfDW/SJ7WP4rJG9q3Xj
+	okiykpTNX7+XfGSRH0C+2noHhRQnh69Fqzw4I4qrVRpsxWCQKAg+56qe7nENDUd8TKNKsOgxoWiqF
+	OrgjFfvqZPLygxEclPKCvpiIF+tZgIify4W0HWQregvp5EotexsYIBmt/MsPXVZSS74CyE9EPWrE0
+	UVfMA3FQz+VY4+JAXqVt5dl5GV1W5yhiPLVMQHpKLAPTH9Egog==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1up8N2-00000002OiL-0eUG; Thu, 21 Aug 2025 18:42:36 +0200
+Received: from dynamic-077-183-203-224.77.183.pool.telefonica.de ([77.183.203.224] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1up8N1-00000000urE-3mkh; Thu, 21 Aug 2025 18:42:36 +0200
+Message-ID: <dcc3a478c4f31059686dca38691c4d135d16dc7d.camel@physik.fu-berlin.de>
+Subject: Re: Found it - was: Re: [PATCH] sparc64: fix hugetlb for sun4u
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "andreas@gaisler.com"	
+ <andreas@gaisler.com>, "anthony.yznaga@oracle.com"
+ <anthony.yznaga@oracle.com>,  "davem@davemloft.net"	 <davem@davemloft.net>,
+ "david@redhat.com" <david@redhat.com>,  "sparclinux@vger.kernel.org"	
+ <sparclinux@vger.kernel.org>
+Cc: "agordeev@linux.ibm.com" <agordeev@linux.ibm.com>, "osalvador@suse.de"
+	 <osalvador@suse.de>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "will@kernel.org" <will@kernel.org>, 
+ "mroos@linux.ee"
+	 <mroos@linux.ee>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>
+Date: Thu, 21 Aug 2025 18:42:35 +0200
+In-Reply-To: <611a33b02282130d4015b5b8feeda8c46d249320.camel@intel.com>
+References: <20250716012446.10357-1-anthony.yznaga@oracle.com>
+		 <35f5ec4eda8a7dbeeb7df9ec0be5c0b062c509f7.camel@physik.fu-berlin.de>
+		 <7e1e9aa5-0529-4fb5-84fb-557b5cc1cd50@oracle.com>
+		 <38f4469f48e6d36fa92b445c8ecef7a440be43e6.camel@physik.fu-berlin.de>
+		 <b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de>
+		 <fc1555550f7a9b3c9aa5fb651769cf41ed859c77.camel@physik.fu-berlin.de>
+		 <ff3d87634aedec28e7103f16a35031bfe86ca501.camel@physik.fu-berlin.de>
+		 <b5b75976c94b7b46f86a5af4675a1a570aaf20cc.camel@physik.fu-berlin.de>
+		 <2bcb018c8b237f7ab2356f4459e14ae81a6fec8b.camel@physik.fu-berlin.de>
+		 <2daaa0648e9bcca42bf7a76d90580725f44fb4bc.camel@physik.fu-berlin.de>
+		 <c50091bdbb0556ee74ec501381f1efc14a4e5929.camel@physik.fu-berlin.de>
+		 <cd3c4a6a-abc5-4f4f-b829-72f86cfb5bde@redhat.com>
+	 <611a33b02282130d4015b5b8feeda8c46d249320.camel@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Le 21 ao=C3=BBt 2025 03 h 43 min 51 s HAE, Krzysztof Kozlowski <krzk@kernel=
-=2Eorg> a =C3=A9crit=C2=A0:
->On Wed, Aug 20, 2025 at 12:31:16PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
-e:
->> +/**
->> + * tm16xx_map_seg7_store() - Sysfs: set 7-segment character map (binar=
-y blob)
->> + * @dev: pointer to device
->> + * @attr: device attribute (unused)
->> + * @buf: new mapping (must match size of map_seg7)
->> + * @cnt: buffer length
->> + *
->> + * Return: cnt on success, negative errno on failure
->> + */
->> +static ssize_t tm16xx_map_seg7_store(struct device *dev,
->> +				     struct device_attribute *attr,
->> +				     const char *buf, size_t cnt)
->> +{
->> +	if (cnt !=3D sizeof(map_seg7))
->> +		return -EINVAL;
->> +	memcpy(&map_seg7, buf, cnt);
->> +	return cnt;
->> +}
->> +
->> +static DEVICE_ATTR(value, 0644, tm16xx_value_show, tm16xx_value_store)=
-;
->> +static DEVICE_ATTR(num_digits, 0444, tm16xx_num_digits_show, NULL);
->> +static DEVICE_ATTR(map_seg7, 0644, tm16xx_map_seg7_show, tm16xx_map_se=
-g7_store);
->
->Where did you document the ABI?
->
+Hi,
 
-Currently, there is no formal ABI documentation for the TM16xx sysfs attri=
-butes=2E
-While map_seg7 follows existing auxdisplay conventions (which lack ABI doc=
-s),
-I plan to add TM16xx-specific ABI documentation under
-Documentation/ABI/testing/sysfs-class-leds-tm16xx in the v4 submission=2E
+On Thu, 2025-08-21 at 15:03 +0000, Edgecombe, Rick P wrote:
+> And actually one of the architectures that was broken was sparc, which go=
+t fixed in
+> d3c976c14ad8 ("sparc64: Fix regression in non-hypervisor TLB flush xcall"=
+). John
+> was going to explore whether the fix might have been incomplete.
 
->> +
->> +static struct attribute *tm16xx_main_led_attrs[] =3D {
->> +	&dev_attr_value=2Eattr,
->> +	&dev_attr_num_digits=2Eattr,
->> +	&dev_attr_map_seg7=2Eattr,
->> +	NULL,
->> +};
->> +ATTRIBUTE_GROUPS(tm16xx_main_led);
->> +
->
->=2E=2E=2E
->
->> +#if IS_ENABLED(CONFIG_I2C)
->> +/**
->> + * tm16xx_i2c_probe() - Probe callback for I2C-attached controllers
->> + * @client: pointer to i2c_client
->> + *
->> + * Return: 0 on success, negative error code on failure
->> + */
->> +static int tm16xx_i2c_probe(struct i2c_client *client)
->> +{
->> +	const struct tm16xx_controller *controller;
->> +	struct tm16xx_display *display;
->> +	int ret;
->> +
->> +	controller =3D i2c_get_match_data(client);
->> +	if (!controller)
->> +		return -EINVAL;
->> +
->> +	display =3D devm_kzalloc(&client->dev, sizeof(*display), GFP_KERNEL);
->> +	if (!display)
->> +		return -ENOMEM;
->> +
->> +	display->client=2Ei2c =3D client;
->> +	display->dev =3D &client->dev;
->> +	display->controller =3D controller;
->> +
->> +	i2c_set_clientdata(client, display);
->> +
->> +	ret =3D tm16xx_probe(display);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return 0;
->> +}
->> +
->> +/**
->> + * tm16xx_i2c_remove() - Remove callback for I2C-attached controllers
->> + * @client: pointer to i2c_client
->
->Please don't ever add comments, especially kerneldocs, for such obvious
->driver API=2E This function cannot be anything else than what you
->described=2E Why? Linux core driver model tells that=2E You never have to
->repeat what Linux core driver model is=2E=2E=2E
->
+Investigations regarding the origin of the problem are still ongoing. The i=
+ssue is
+definitely related to SPARC-specific mm code, more specifically the TLB man=
+agement
+code on Cheetah-based UltraSPARC systems.
 
-Well received, thank you=2E I will drop these trivial kernel-doc comments=
-=2E
+Adrian
 
->Best regards,
->Krzysztof
->
-
-Best regards,
-
-Jean-Fran=C3=A7ois Lessard
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
