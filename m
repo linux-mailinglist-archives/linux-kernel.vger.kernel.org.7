@@ -1,210 +1,158 @@
-Return-Path: <linux-kernel+bounces-779561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DE7B2F5AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:52:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B30B2F599
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 684167AEABE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:50:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 724041CC5DEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C23430AAC6;
-	Thu, 21 Aug 2025 10:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6F6307AD5;
+	Thu, 21 Aug 2025 10:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="iUzuca7u"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cNv6Ofge"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA576308F35;
-	Thu, 21 Aug 2025 10:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30ED2DA767
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755773494; cv=none; b=laNydgR40UO/yFp+LOCBSuJDiWqDHtjKAg6zolzqKo779+u8fhN+/TwNT5A4Hvb6MjjREO/iyknNY3lk0tvd6tPSXmmZBWZio7mKb9IRhvtKzsglPotEhb0Q8oDUfcu6E2pNhxgWkYhZ/XEXJWdyFZy654p5N7kUzONpPRm6SBg=
+	t=1755773273; cv=none; b=Ek4vA3uOgZCv5zM196NrtuQEMBbXfcneRzpT/wRUTjJkKWMFoGEikLvidjGqyaNlVL1OCo2Q1WLq+WGQBLBnV97egIMgn3mCVqryw/XKqBvDQMMwDeRX5Ki1CETe37Cw8t0zN8s5BaFWeWG43ebcEHyoZG4r1iqozIB4dZ2pVas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755773494; c=relaxed/simple;
-	bh=KHvuHVpT8XLrB8kkvREiSYcjY5lHv8A1nlW+gWH/5H8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m5NTxZB+CYir41SvY35gj4se9u91A/kGSAiRWFU6JR8YvtMs1iMHx5r+nrVXawl7e+wlhPHlT/IuZIlUu8ba4UnBGzR1t0v286D3krDh3JvbjSauVpIgF4Fs5q8r/h8YIxzGElQUgF6PUX0xhuVcnJGGpGcg3cb5WfO5IoUmonM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=iUzuca7u; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1755773492; x=1787309492;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=KHvuHVpT8XLrB8kkvREiSYcjY5lHv8A1nlW+gWH/5H8=;
-  b=iUzuca7uruZLMUAiio2XuCgKMu+6lV9GtR+sZRBHuQp6D/y9x82N/ge2
-   s3A+gIqQmf4hGeBZad6hGW6x4FilynMXGPZjWYI2tNvdd3PWTz0lZdfBR
-   9Pk/rX2e0bYnbM+WYn92JOHwGtB+7Zh8nX91Owex4CBBB73+/I0FbKz64
-   3hlyvONMO//DemUhJ+KYF7EeGqXjX7tJYJaIsDrpAlxFosauYko2VO83Q
-   6pEtLVp3Gjg4CLIQDMLcmaw/eO/WqLG9Vt9Vjjr2rjs4ksIRALZgKUuM6
-   Obnt7qlqlz4KXHvvFLvPBABwgd/pfnIIWVcHr5vc+WqaZ9KCnP/u9UBWE
-   w==;
-X-CSE-ConnectionGUID: +qjVfyXuTYuMLQY71/8fbw==
-X-CSE-MsgGUID: aNC6yLbjRH6jginZxGGdSg==
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="212904275"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Aug 2025 03:51:25 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 21 Aug 2025 03:50:44 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Thu, 21 Aug 2025 03:50:41 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vadim.fedorenko@linux.dev>,
-	<vladimir.oltean@nxp.com>, <rmk+kernel@armlinux.org.uk>, <rosenp@gmail.com>,
-	<christophe.jaillet@wanadoo.fr>, <viro@zeniv.linux.org.uk>,
-	<atenart@kernel.org>, <quentin.schulz@bootlin.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net] phy: mscc: Fix when PTP clock is register and unregister
-Date: Thu, 21 Aug 2025 12:46:28 +0200
-Message-ID: <20250821104628.2329569-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755773273; c=relaxed/simple;
+	bh=d6mlwhT2su9qa8vix4Pan6BLcJvWfn4JYlKfBmKvXS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f+QA4VoJZFY9XaP5sSy9voGXQcGMu25xVQab43M4p6kA9KS9RPOapQvRGyEuidZHbE37Ra7V5qz8P0nvDyty4eX45mhbzQVyLKoCs2cpzGL6bNogsErcKzPHOuPSrICs6WQgVJyl3P4rWMXNgVhD1Ua6RG5ivj3rd7oDBj3Tqqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cNv6Ofge; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afe0a80f3fcso11542166b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 03:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755773270; x=1756378070; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=dVbp5VEevIzU+DOmYmf8+fiHHpxEQNhrQHq+gJJCu9U=;
+        b=cNv6OfgehJQH6SN2/yRzwROwput5m0FKZakJ8DGt9C+WTNPd5SFeRZwRriED23526R
+         SmJIT9exRLHdZ9+zd4lMz3WK6xdKPparDWInTghRJHHrjkHnDnXxqavG2q2PvyooND0g
+         rOUHrt40kcNOk61nxYFY/OxpBYpJ3gNnBL1XQywIU9qR/SnZgxxss2hVc8tZkV9R0mdl
+         wFfETOnV1yB/M0yNP30WWBqVJIbPj/yOv9Bq1QecMmX7fAhociocQtNqjNL37y+6kS/q
+         Y+XjzPUNULdTZd7vyEOKa4anUQSJoQpScJ1zZPrga0TYX/rc+/UK/cOM+8moie1R5+Lr
+         /MAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755773270; x=1756378070;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dVbp5VEevIzU+DOmYmf8+fiHHpxEQNhrQHq+gJJCu9U=;
+        b=aAMapuForT69NmdQqYm8Yt+mYgyIHHtZSpsT0mB4R70C2zgjzMmRUE5718oCDAA+rc
+         uJFwwZqFbhr8cdI7apCAU6qkVd9EBW/r9B/E6d3SnMqftJWFieqOBIpGTlBzpvB04dFg
+         a7/0pIIUJmDSoa+1QfLr3+l9Nsabeu2w8B3zthHCgCJDDEsjWAl+dDnG3MCyLUmkmuh3
+         hJMM+ZKeV75Rn1gz1Vs+dx22VNnJ1m20uhAHRmX5BXqqKpwYiJ1zbJyqVRxRT5OjoMdU
+         O/IthjJt6cjkd0BJdDfv7OtQu/7IKDWk25i99w2Ro7pdtvAfhs/8DqMH1LyLHlhkAJb/
+         omFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUm9DP8KqULb35IdYuleInBAy0/sQjVvTQ6g/xR8JdhtDwqSyCeagv51zx+q6sqJowcpAHYhFTPtHqGUY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGdg5rJQFJA/DjBSas0zFEPkFatn46Ryvd3XYBoBbhyddB9Jcc
+	secqvbsnRX1l3kKASkaGaNMZ52Bo0rkRfLO3PnnI2uRo5+tof/COQUTSnJj1Pqw57cU=
+X-Gm-Gg: ASbGncuLkdRUMiMZpc9eXeAr7yd7XzkKrI19v9ZOvBRhtk2CjfESgD6phLF2/mUT9rC
+	WfhTc22DC5eXyjgunkEf70Rh3W82D0cUWmJlky3iqiXNs1TmCCP491eLQcce92PLbcvoQ2W2uQM
+	5IldyadvTi9RJCOGoMSz4OgHfAyUqIC+LSgv2HbKgvp0Ck0rzKzj51TCZe2rPMQoWbW3IL1/4/3
+	qP+7NWNgd5KJt6sb2I6DKKa/STlBK+B1Mi9KXOwYDdpEfSIEy0nIkl2+TbQ/15FTzS1P4Xc8voJ
+	YyPAiZpSHmtP9LsaW+ROlyD8OtgnHwxH6NowKAtj8pr4jGEEVt8v+6c3GcNBDSK1sI6awBthVxx
+	J/q8YdfmQ+3WuIFugkaNvlf+VLbzLC2Mmd7Y+0Jj1J5k=
+X-Google-Smtp-Source: AGHT+IHCAOX4dEbN4jo7tRSriMB8agTClON+dVRCCbViFG7GF5YhsPbQI02bBpWrMm6OfuU6BlXntg==
+X-Received: by 2002:a17:906:f584:b0:ae3:63fd:c3b4 with SMTP id a640c23a62f3a-afe07b03c9amr106481966b.5.1755773269885;
+        Thu, 21 Aug 2025 03:47:49 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded2bc3e0sm375390866b.22.2025.08.21.03.47.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 03:47:49 -0700 (PDT)
+Message-ID: <1b5425bf-a84f-4bc7-9975-fb7b1260df8c@linaro.org>
+Date: Thu, 21 Aug 2025 12:47:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sm8750-mtp: Add speaker Soundwire port
+ mapping
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250820141233.216713-2-krzysztof.kozlowski@linaro.org>
+ <wbjvk52opr574rlmsd7whmtfcrubsbcufsthqpmxdejbcjhtv5@mbz4hj6ronwl>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <wbjvk52opr574rlmsd7whmtfcrubsbcufsthqpmxdejbcjhtv5@mbz4hj6ronwl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-It looks like that every time when the interface was set down and up the
-driver was creating a new ptp clock. On top of this the function
-ptp_clock_unregister was never called.
-Therefore fix this by calling ptp_clock_register and initialize the
-mii_ts struct inside the probe function and call ptp_clock_unregister when
-driver is removed.
+On 21/08/2025 12:37, Dmitry Baryshkov wrote:
+> On Wed, Aug 20, 2025 at 04:12:34PM +0200, Krzysztof Kozlowski wrote:
+>> Add appropriate mappings of Soundwire ports of WSA883x speaker
+>> to correctly map the Speaker ports to the WSA macro ports.
+> 
+> Would it make sense to define constants for these values?
 
-Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/net/phy/mscc/mscc.h      |  4 ++++
- drivers/net/phy/mscc/mscc_main.c |  4 +---
- drivers/net/phy/mscc/mscc_ptp.c  | 40 +++++++++++++++++++++++---------
- 3 files changed, 34 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/phy/mscc/mscc.h b/drivers/net/phy/mscc/mscc.h
-index b8c6ba7c7834e..2d8eca54c40a2 100644
---- a/drivers/net/phy/mscc/mscc.h
-+++ b/drivers/net/phy/mscc/mscc.h
-@@ -484,6 +484,7 @@ static inline void vsc8584_config_macsec_intr(struct phy_device *phydev)
- void vsc85xx_link_change_notify(struct phy_device *phydev);
- void vsc8584_config_ts_intr(struct phy_device *phydev);
- int vsc8584_ptp_init(struct phy_device *phydev);
-+void vsc8584_ptp_deinit(struct phy_device *phydev);
- int vsc8584_ptp_probe_once(struct phy_device *phydev);
- int vsc8584_ptp_probe(struct phy_device *phydev);
- irqreturn_t vsc8584_handle_ts_interrupt(struct phy_device *phydev);
-@@ -498,6 +499,9 @@ static inline int vsc8584_ptp_init(struct phy_device *phydev)
- {
- 	return 0;
- }
-+static inline void vsc8584_ptp_deinit(struct phy_device *phydev)
-+{
-+}
- static inline int vsc8584_ptp_probe_once(struct phy_device *phydev)
- {
- 	return 0;
-diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
-index 800da302ae632..a034a8a8dde51 100644
---- a/drivers/net/phy/mscc/mscc_main.c
-+++ b/drivers/net/phy/mscc/mscc_main.c
-@@ -2370,9 +2370,7 @@ static int vsc85xx_probe(struct phy_device *phydev)
- 
- static void vsc85xx_remove(struct phy_device *phydev)
- {
--	struct vsc8531_private *priv = phydev->priv;
--
--	skb_queue_purge(&priv->rx_skbs_list);
-+	vsc8584_ptp_deinit(phydev);
- }
- 
- /* Microsemi VSC85xx PHYs */
-diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
-index de6c7312e8f29..827c399d9d30f 100644
---- a/drivers/net/phy/mscc/mscc_ptp.c
-+++ b/drivers/net/phy/mscc/mscc_ptp.c
-@@ -1298,7 +1298,6 @@ static void vsc8584_set_input_clk_configured(struct phy_device *phydev)
- 
- static int __vsc8584_init_ptp(struct phy_device *phydev)
- {
--	struct vsc8531_private *vsc8531 = phydev->priv;
- 	static const u32 ltc_seq_e[] = { 0, 400000, 0, 0, 0 };
- 	static const u8  ltc_seq_a[] = { 8, 6, 5, 4, 2 };
- 	u32 val;
-@@ -1515,17 +1514,15 @@ static int __vsc8584_init_ptp(struct phy_device *phydev)
- 
- 	vsc85xx_ts_eth_cmp1_sig(phydev);
- 
--	vsc8531->mii_ts.rxtstamp = vsc85xx_rxtstamp;
--	vsc8531->mii_ts.txtstamp = vsc85xx_txtstamp;
--	vsc8531->mii_ts.hwtstamp = vsc85xx_hwtstamp;
--	vsc8531->mii_ts.ts_info  = vsc85xx_ts_info;
--	phydev->mii_ts = &vsc8531->mii_ts;
-+	return 0;
-+}
- 
--	memcpy(&vsc8531->ptp->caps, &vsc85xx_clk_caps, sizeof(vsc85xx_clk_caps));
-+static void __vsc8584_deinit_ptp(struct phy_device *phydev)
-+{
-+	struct vsc8531_private *vsc8531 = phydev->priv;
- 
--	vsc8531->ptp->ptp_clock = ptp_clock_register(&vsc8531->ptp->caps,
--						     &phydev->mdio.dev);
--	return PTR_ERR_OR_ZERO(vsc8531->ptp->ptp_clock);
-+	ptp_clock_unregister(vsc8531->ptp->ptp_clock);
-+	skb_queue_purge(&vsc8531->rx_skbs_list);
- }
- 
- void vsc8584_config_ts_intr(struct phy_device *phydev)
-@@ -1552,6 +1549,18 @@ int vsc8584_ptp_init(struct phy_device *phydev)
- 	return 0;
- }
- 
-+void vsc8584_ptp_deinit(struct phy_device *phydev)
-+{
-+	switch (phydev->phy_id & phydev->drv->phy_id_mask) {
-+	case PHY_ID_VSC8572:
-+	case PHY_ID_VSC8574:
-+	case PHY_ID_VSC8575:
-+	case PHY_ID_VSC8582:
-+	case PHY_ID_VSC8584:
-+		return __vsc8584_deinit_ptp(phydev);
-+	}
-+}
-+
- irqreturn_t vsc8584_handle_ts_interrupt(struct phy_device *phydev)
- {
- 	struct vsc8531_private *priv = phydev->priv;
-@@ -1612,7 +1621,16 @@ int vsc8584_ptp_probe(struct phy_device *phydev)
- 
- 	vsc8531->ptp->phydev = phydev;
- 
--	return 0;
-+	vsc8531->mii_ts.rxtstamp = vsc85xx_rxtstamp;
-+	vsc8531->mii_ts.txtstamp = vsc85xx_txtstamp;
-+	vsc8531->mii_ts.hwtstamp = vsc85xx_hwtstamp;
-+	vsc8531->mii_ts.ts_info  = vsc85xx_ts_info;
-+	phydev->mii_ts = &vsc8531->mii_ts;
-+
-+	memcpy(&vsc8531->ptp->caps, &vsc85xx_clk_caps, sizeof(vsc85xx_clk_caps));
-+	vsc8531->ptp->ptp_clock = ptp_clock_register(&vsc8531->ptp->caps,
-+						     &phydev->mdio.dev);
-+	return PTR_ERR_OR_ZERO(vsc8531->ptp->ptp_clock);
- }
- 
- int vsc8584_ptp_probe_once(struct phy_device *phydev)
--- 
-2.34.1
+I am not aware of new findings here, so same answer as last time:
+https://lore.kernel.org/all/dd271e8c-e430-4e6d-88ca-95eabe61ce94@oss.qualcomm.com/
 
+Best regards,
+Krzysztof
 
