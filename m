@@ -1,313 +1,304 @@
-Return-Path: <linux-kernel+bounces-778902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0623B2EC8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C895EB2EC8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D37171B4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 980265C6F3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93ACB2EA492;
-	Thu, 21 Aug 2025 03:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1657217F24;
+	Thu, 21 Aug 2025 04:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lbbk+hrn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="PMi0jtq1"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240252EA176;
-	Thu, 21 Aug 2025 03:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137C2111A8;
+	Thu, 21 Aug 2025 04:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755748796; cv=none; b=iiwEY5Sqmk0f7BEBUvw8LFDd587m95QexjSbiSKWpEqacAGmBvpvtSv6YAc49hznJyodTj/SpmYLm/WH/2PBqmyavuxBIoUAg0SEc8pWAFdQ5DBLgK6f4L4WTBxswFFyshtvyxNO7vTxtwf+gzwpynvZQAxIgC21I4lsgWy747c=
+	t=1755748911; cv=none; b=rVHFhhQkuyqSMmd3ZSNx2KH8eJMb1Nc+lR/BAGIrYTmHNFsqJAoxE8awR6oRjtlkVMZf+1nIDOV7hFR+3VfKouzVRjeQs1FtTkf7G7VvwL0GxlFD1ZtBGM+dz1/jZy+KMKt0QekNbafaR4rpN//aNT0AiFm4CVuNidaed6C7SHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755748796; c=relaxed/simple;
-	bh=9faie22239VbGmyd7/biTIdAQfN9CS5T5sjAIgFmx5w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c+rpE1aXiQXrJysKftz5Oimyaclb1M6BNmWA2e6N9IGw7UkKGCBsmrPqd18PkoTz/nDKmikJnMudpslQcpcrUqOvRGt3DYj/WiOWylH9ZUmCo5TcbmJl78huwRcHl755K+QoBRKYEU9JPMY5jInl39yF+GNdX1+nbaYiNXoyS/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lbbk+hrn; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755748795; x=1787284795;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9faie22239VbGmyd7/biTIdAQfN9CS5T5sjAIgFmx5w=;
-  b=lbbk+hrnNVyUXciSlIsXOncObKNp7S8dCHLeM6zWibwdNt2YxN0bWGGe
-   WhUV7P7tkPq6uIV5FSG+Vy41/zvLgtKsGVv69Bku5Wt1CTm8WBReHupoR
-   G28Atd4Ae2AY4iEYb3vfVj6fVDXYcC7DZxfN/lPejAqB/RB3t8wRMt77G
-   dpnUqqUiCALT9hb8Bldbt/xALPp94PWFGUA6PBqmKSteUN+NC4takKJEw
-   KseP7OyGWv/1mOrjWCdwF62GukEkpTHQoisydqH/jWPQ3/EgyNoRf7GUN
-   6KUBKpnjCjVt/q4ICtZgnxoCSfoKXIT5DNattklGywEMoCaH2T9s3X1TY
-   Q==;
-X-CSE-ConnectionGUID: vi03YlEbTKeCJImGlMVUzA==
-X-CSE-MsgGUID: XBTL9NQBSV++VZp2zFOO6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="68732016"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="68732016"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 20:59:55 -0700
-X-CSE-ConnectionGUID: K4AtrDpJQKW1DHKG+1B7OQ==
-X-CSE-MsgGUID: TpD5+4D2SrCB+xXNgRl0hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="168713157"
-Received: from spr.sh.intel.com ([10.112.229.196])
-  by fmviesa009.fm.intel.com with ESMTP; 20 Aug 2025 20:59:51 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v6 10/10] perf/x86/intel: Add counter group support for arch-PEBS
-Date: Thu, 21 Aug 2025 11:58:05 +0800
-Message-Id: <20250821035805.159494-11-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250821035805.159494-1-dapeng1.mi@linux.intel.com>
-References: <20250821035805.159494-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1755748911; c=relaxed/simple;
+	bh=hq6BmYJKUGrsbZPK4lPRsFbIo7hndZQGkUXL3NsnNTE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DYzrhvBF7Zbz/vYUAFYY5kR4Vua/ycCY6uXj00obzwO8tvtiKv1hBFhepEEuaK04TLuyjmlBEIGpFq/Bdt1D4dUPVZB4fJZKmvqnSBpQi81WI/EZwTFCrHWT38uNJ/+Ok7dVj1frSPqERUiO1iLKvw/rD0ylhOIZkBxAT+zACYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=PMi0jtq1; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 57L41LpQ41400304, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1755748881; bh=uR/6QHusaHtBAfpIVj55/WMIiB+GPeYFJmtAnm//QFo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=PMi0jtq1KlrqxxiXPTBRYsbe07EV96KjwoJY6BsYQU4vmkt0F/dCEMIp+KVKCcFir
+	 tZbaNKRTSwwtFKeBYDVSAQn0bAB1smK02r9uUKp4D+v/InVbnijeu3BKBSukT8C1OH
+	 +bjd7ZBW7Vx0LXb+Z5T4/TC8mmbVCLrBL4n+PL2fc75nxPo75NEX8oUyrVyYCOVVlm
+	 L5ps27tSMDqFrBSAL2H0YvRAVctM0qNFdLAfjRdMt0222sABduwsSxW5RP9t1jnqIP
+	 lEYpF2bGFa8uM2sjW44Rt0sV9VcN72Z5ftZE7JJfXxw+X+h9B/HCxpjvbh1ltqaV9N
+	 BTaUit6jVrnvA==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 57L41LpQ41400304
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Aug 2025 12:01:21 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Thu, 21 Aug 2025 12:01:21 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Thu, 21 Aug 2025 12:01:21 +0800
+Received: from RTEXMBS03.realtek.com.tw ([fe80::982b:42ba:82a4:f1d]) by
+ RTEXMBS03.realtek.com.tw ([fe80::982b:42ba:82a4:f1d%2]) with mapi id
+ 15.01.2507.035; Thu, 21 Aug 2025 12:01:21 +0800
+From: Zong-Zhe Yang <kevin_yang@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>, Ping-Ke Shih <pkshih@realtek.com>
+CC: Bernie Huang <phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>,
+        "stable@vger.kernel.org"
+	<stable@vger.kernel.org>
+Subject: RE: [PATCH rtw-next 1/2] wifi: rtw89: fix use-after-free in rtw89_core_tx_kick_off_and_wait()
+Thread-Topic: [PATCH rtw-next 1/2] wifi: rtw89: fix use-after-free in
+ rtw89_core_tx_kick_off_and_wait()
+Thread-Index: AQHcEd2TXgTNv1RIp0yyOkAvjkku2rRsb/bQ
+Date: Thu, 21 Aug 2025 04:01:21 +0000
+Message-ID: <b4ec58864e544b0295ddb02ed408199b@realtek.com>
+References: <20250820141441.106156-1-pchelkin@ispras.ru>
+ <20250820141441.106156-2-pchelkin@ispras.ru>
+In-Reply-To: <20250820141441.106156-2-pchelkin@ispras.ru>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Base on previous adaptive PEBS counter snapshot support, add counter
-group support for architectural PEBS. Since arch-PEBS shares same
-counter group layout with adaptive PEBS, directly reuse
-__setup_pebs_counter_group() helper to process arch-PEBS counter group.
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+>=20
+> There is a bug observed when rtw89_core_tx_kick_off_and_wait() tries to a=
+ccess already
+> freed skb_data:
+>=20
+>  BUG: KFENCE: use-after-free write in rtw89_core_tx_kick_off_and_wait
+> drivers/net/wireless/realtek/rtw89/core.c:1110
+>=20
+>  CPU: 6 UID: 0 PID: 41377 Comm: kworker/u64:24 Not tainted  6.17.0-rc1+ #=
+1 PREEMPT(lazy)
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS edk2-20250523=
+-14.fc42
+> 05/23/2025
+>  Workqueue: events_unbound cfg80211_wiphy_work [cfg80211]
+>=20
+>  Use-after-free write at 0x0000000020309d9d (in kfence-#251):
+>  rtw89_core_tx_kick_off_and_wait drivers/net/wireless/realtek/rtw89/core.=
+c:1110
+>  rtw89_core_scan_complete drivers/net/wireless/realtek/rtw89/core.c:5338
+>  rtw89_hw_scan_complete_cb drivers/net/wireless/realtek/rtw89/fw.c:7979
+>  rtw89_chanctx_proceed_cb drivers/net/wireless/realtek/rtw89/chan.c:3165
+>  rtw89_chanctx_proceed drivers/net/wireless/realtek/rtw89/chan.h:141
+>  rtw89_hw_scan_complete drivers/net/wireless/realtek/rtw89/fw.c:8012
+>  rtw89_mac_c2h_scanofld_rsp drivers/net/wireless/realtek/rtw89/mac.c:5059
+>  rtw89_fw_c2h_work drivers/net/wireless/realtek/rtw89/fw.c:6758
+>  process_one_work kernel/workqueue.c:3241  worker_thread kernel/workqueue=
+.c:3400
+> kthread kernel/kthread.c:463  ret_from_fork arch/x86/kernel/process.c:154
+> ret_from_fork_asm arch/x86/entry/entry_64.S:258
+>=20
+>  kfence-#251: 0x0000000056e2393d-0x000000009943cb62, size=3D232,
+> cache=3Dskbuff_head_cache
+>=20
+>  allocated by task 41377 on cpu 6 at 77869.159548s (0.009551s ago):
+>  __alloc_skb net/core/skbuff.c:659
+>  __netdev_alloc_skb net/core/skbuff.c:734  ieee80211_nullfunc_get
+> net/mac80211/tx.c:5844  rtw89_core_send_nullfunc
+> drivers/net/wireless/realtek/rtw89/core.c:3431
+>  rtw89_core_scan_complete drivers/net/wireless/realtek/rtw89/core.c:5338
+>  rtw89_hw_scan_complete_cb drivers/net/wireless/realtek/rtw89/fw.c:7979
+>  rtw89_chanctx_proceed_cb drivers/net/wireless/realtek/rtw89/chan.c:3165
+>  rtw89_chanctx_proceed drivers/net/wireless/realtek/rtw89/chan.c:3194
+>  rtw89_hw_scan_complete drivers/net/wireless/realtek/rtw89/fw.c:8012
+>  rtw89_mac_c2h_scanofld_rsp drivers/net/wireless/realtek/rtw89/mac.c:5059
+>  rtw89_fw_c2h_work drivers/net/wireless/realtek/rtw89/fw.c:6758
+>  process_one_work kernel/workqueue.c:3241  worker_thread kernel/workqueue=
+.c:3400
+> kthread kernel/kthread.c:463  ret_from_fork arch/x86/kernel/process.c:154
+> ret_from_fork_asm arch/x86/entry/entry_64.S:258
+>=20
+>  freed by task 1045 on cpu 9 at 77869.168393s (0.001557s ago):
+>  ieee80211_tx_status_skb net/mac80211/status.c:1117  rtw89_pci_release_tx=
+wd_skb
+> drivers/net/wireless/realtek/rtw89/pci.c:564
+>  rtw89_pci_release_tx_skbs.isra.0 drivers/net/wireless/realtek/rtw89/pci.=
+c:651
+>  rtw89_pci_release_tx drivers/net/wireless/realtek/rtw89/pci.c:676
+>  rtw89_pci_napi_poll drivers/net/wireless/realtek/rtw89/pci.c:4238
+>  __napi_poll net/core/dev.c:7495
+>  net_rx_action net/core/dev.c:7557 net/core/dev.c:7684  handle_softirqs
+> kernel/softirq.c:580
+>  do_softirq.part.0 kernel/softirq.c:480
+>  __local_bh_enable_ip kernel/softirq.c:407  rtw89_pci_interrupt_threadfn
+> drivers/net/wireless/realtek/rtw89/pci.c:927
+>  irq_thread_fn kernel/irq/manage.c:1133
+>  irq_thread kernel/irq/manage.c:1257
+>  kthread kernel/kthread.c:463
+>  ret_from_fork arch/x86/kernel/process.c:154  ret_from_fork_asm
+> arch/x86/entry/entry_64.S:258
+>=20
+> It is a consequence of a race between the waiting and the signalling side=
+ of the completion:
+>=20
+>             Thread 1                                    Thread 2
+> rtw89_core_tx_kick_off_and_wait()
+>   rcu_assign_pointer(skb_data->wait, wait)
+>   /* start waiting */
+>   wait_for_completion_timeout()
+>                                                 rtw89_pci_tx_status()
+>                                                   rtw89_core_tx_wait_comp=
+lete()
+>                                                     rcu_read_lock()
+>                                                     /* signals completion=
+ and
+>                                                      * proceeds further
+>                                                      */
+>=20
+> complete(&wait->completion)
+>                                                     rcu_read_unlock()
+>                                                   ...
+>                                                   /* frees skb_data */
+>                                                   ieee80211_tx_status_ni(=
+)
+>   /* returns (exit status doesn't matter) */
+>   wait_for_completion_timeout()
+>   ...
+>   /* accesses the already freed skb_data */
+>   rcu_assign_pointer(skb_data->wait, NULL)
+>=20
+> The signalling side might proceed and free the underlying skb even before=
+ the waiting side is
+> fully awoken and run to execution.
+>=20
+> RCU synchronization here would work well if the signalling side didn't go=
+ on and release skb
+> on its own.  Thus the waiting side should be told somehow about what is h=
+appening on the
+> completion side.
 
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
----
- arch/x86/events/intel/core.c      | 38 ++++++++++++++++++++++++++++---
- arch/x86/events/intel/ds.c        | 29 ++++++++++++++++++++---
- arch/x86/include/asm/msr-index.h  |  6 +++++
- arch/x86/include/asm/perf_event.h | 13 ++++++++---
- 4 files changed, 77 insertions(+), 9 deletions(-)
+I reread the flow and am thinking about it a bit.
+Actually, only when signaling side doesn't run on time, waiting side should=
+ update skb_data->wait.
+(see code comments below)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index c8cd490aa539..52bf3b4bc938 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3014,6 +3014,17 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
- 
- 			if (pebs_data_cfg & PEBS_DATACFG_LBRS)
- 				ext |= ARCH_PEBS_LBR & cap.caps;
-+
-+			if (pebs_data_cfg &
-+			    (PEBS_DATACFG_CNTR_MASK << PEBS_DATACFG_CNTR_SHIFT))
-+				ext |= ARCH_PEBS_CNTR_GP & cap.caps;
-+
-+			if (pebs_data_cfg &
-+			    (PEBS_DATACFG_FIX_MASK << PEBS_DATACFG_FIX_SHIFT))
-+				ext |= ARCH_PEBS_CNTR_FIXED & cap.caps;
-+
-+			if (pebs_data_cfg & PEBS_DATACFG_METRICS)
-+				ext |= ARCH_PEBS_CNTR_METRICS & cap.caps;
- 		}
- 
- 		if (cpuc->n_pebs == cpuc->n_large_pebs)
-@@ -3038,6 +3049,9 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
- 		}
- 	}
- 
-+	if (is_pebs_counter_event_group(event))
-+		ext |= ARCH_PEBS_CNTR_ALLOW;
-+
- 	if (cpuc->cfg_c_val[hwc->idx] != ext)
- 		__intel_pmu_update_event_ext(hwc->idx, ext);
- }
-@@ -4323,6 +4337,20 @@ static bool intel_pmu_is_acr_group(struct perf_event *event)
- 	return false;
- }
- 
-+static inline bool intel_pmu_has_pebs_counter_group(struct pmu *pmu)
-+{
-+	u64 caps;
-+
-+	if (x86_pmu.intel_cap.pebs_format >= 6 && x86_pmu.intel_cap.pebs_baseline)
-+		return true;
-+
-+	caps = hybrid(pmu, arch_pebs_cap).caps;
-+	if (x86_pmu.arch_pebs && (caps & ARCH_PEBS_CNTR_MASK))
-+		return true;
-+
-+	return false;
-+}
-+
- static inline void intel_pmu_set_acr_cntr_constr(struct perf_event *event,
- 						 u64 *cause_mask, int *num)
- {
-@@ -4471,8 +4499,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 	}
- 
- 	if ((event->attr.sample_type & PERF_SAMPLE_READ) &&
--	    (x86_pmu.intel_cap.pebs_format >= 6) &&
--	    x86_pmu.intel_cap.pebs_baseline &&
-+	    intel_pmu_has_pebs_counter_group(event->pmu) &&
- 	    is_sampling_event(event) &&
- 	    event->attr.precise_ip)
- 		event->group_leader->hw.flags |= PERF_X86_EVENT_PEBS_CNTR;
-@@ -5420,6 +5447,8 @@ static inline void __intel_update_large_pebs_flags(struct pmu *pmu)
- 	x86_pmu.large_pebs_flags |= PERF_SAMPLE_TIME;
- 	if (caps & ARCH_PEBS_LBR)
- 		x86_pmu.large_pebs_flags |= PERF_SAMPLE_BRANCH_STACK;
-+	if (caps & ARCH_PEBS_CNTR_MASK)
-+		x86_pmu.large_pebs_flags |= PERF_SAMPLE_READ;
- 
- 	if (!(caps & ARCH_PEBS_AUX))
- 		x86_pmu.large_pebs_flags &= ~PERF_SAMPLE_DATA_SRC;
-@@ -7133,8 +7162,11 @@ __init int intel_pmu_init(void)
- 	 * Many features on and after V6 require dynamic constraint,
- 	 * e.g., Arch PEBS, ACR.
- 	 */
--	if (version >= 6)
-+	if (version >= 6) {
- 		x86_pmu.flags |= PMU_FL_DYN_CONSTRAINT;
-+		x86_pmu.late_setup = intel_pmu_late_setup;
-+	}
-+
- 	/*
- 	 * Install the hw-cache-events table:
- 	 */
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 8e1523969341..60871c484717 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1530,13 +1530,20 @@ pebs_update_state(bool needed_cb, struct cpu_hw_events *cpuc,
- 
- u64 intel_get_arch_pebs_data_config(struct perf_event *event)
- {
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	u64 pebs_data_cfg = 0;
-+	u64 cntr_mask;
- 
- 	if (WARN_ON(event->hw.idx < 0 || event->hw.idx >= X86_PMC_IDX_MAX))
- 		return 0;
- 
- 	pebs_data_cfg |= pebs_update_adaptive_cfg(event);
- 
-+	cntr_mask = (PEBS_DATACFG_CNTR_MASK << PEBS_DATACFG_CNTR_SHIFT) |
-+		    (PEBS_DATACFG_FIX_MASK << PEBS_DATACFG_FIX_SHIFT) |
-+		    PEBS_DATACFG_CNTR | PEBS_DATACFG_METRICS;
-+	pebs_data_cfg |= cpuc->pebs_data_cfg & cntr_mask;
-+
- 	return pebs_data_cfg;
- }
- 
-@@ -2441,6 +2448,24 @@ static void setup_arch_pebs_sample_data(struct perf_event *event,
- 		}
- 	}
- 
-+	if (header->cntr) {
-+		struct arch_pebs_cntr_header *cntr = next_record;
-+		unsigned int nr;
-+
-+		next_record += sizeof(struct arch_pebs_cntr_header);
-+
-+		if (is_pebs_counter_event_group(event)) {
-+			__setup_pebs_counter_group(cpuc, event,
-+				(struct pebs_cntr_header *)cntr, next_record);
-+			data->sample_flags |= PERF_SAMPLE_READ;
-+		}
-+
-+		nr = hweight32(cntr->cntr) + hweight32(cntr->fixed);
-+		if (cntr->metrics == INTEL_CNTR_METRICS)
-+			nr += 2;
-+		next_record += nr * sizeof(u64);
-+	}
-+
- 	/* Parse followed fragments if there are. */
- 	if (arch_pebs_record_continued(header)) {
- 		at = at + header->size;
-@@ -3097,10 +3122,8 @@ static void __init intel_ds_pebs_init(void)
- 			break;
- 
- 		case 6:
--			if (x86_pmu.intel_cap.pebs_baseline) {
-+			if (x86_pmu.intel_cap.pebs_baseline)
- 				x86_pmu.large_pebs_flags |= PERF_SAMPLE_READ;
--				x86_pmu.late_setup = intel_pmu_late_setup;
--			}
- 			fallthrough;
- 		case 5:
- 			x86_pmu.pebs_ept = 1;
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 737d51629c03..41852e8690d7 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -331,12 +331,18 @@
- #define ARCH_PEBS_INDEX_WR_SHIFT	4
- 
- #define ARCH_PEBS_RELOAD		0xffffffff
-+#define ARCH_PEBS_CNTR_ALLOW		BIT_ULL(35)
-+#define ARCH_PEBS_CNTR_GP		BIT_ULL(36)
-+#define ARCH_PEBS_CNTR_FIXED		BIT_ULL(37)
-+#define ARCH_PEBS_CNTR_METRICS		BIT_ULL(38)
- #define ARCH_PEBS_LBR_SHIFT		40
- #define ARCH_PEBS_LBR			(0x3ull << ARCH_PEBS_LBR_SHIFT)
- #define ARCH_PEBS_VECR_XMM		BIT_ULL(49)
- #define ARCH_PEBS_GPR			BIT_ULL(61)
- #define ARCH_PEBS_AUX			BIT_ULL(62)
- #define ARCH_PEBS_EN			BIT_ULL(63)
-+#define ARCH_PEBS_CNTR_MASK		(ARCH_PEBS_CNTR_GP | ARCH_PEBS_CNTR_FIXED | \
-+					 ARCH_PEBS_CNTR_METRICS)
- 
- #define MSR_IA32_RTIT_CTL		0x00000570
- #define RTIT_CTL_TRACEEN		BIT(0)
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 3b3848f0d339..7276ba70c88a 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -141,16 +141,16 @@
- #define ARCH_PERFMON_EVENTS_COUNT			7
- 
- #define PEBS_DATACFG_MEMINFO	BIT_ULL(0)
--#define PEBS_DATACFG_GP	BIT_ULL(1)
-+#define PEBS_DATACFG_GP		BIT_ULL(1)
- #define PEBS_DATACFG_XMMS	BIT_ULL(2)
- #define PEBS_DATACFG_LBRS	BIT_ULL(3)
--#define PEBS_DATACFG_LBR_SHIFT	24
- #define PEBS_DATACFG_CNTR	BIT_ULL(4)
-+#define PEBS_DATACFG_METRICS	BIT_ULL(5)
-+#define PEBS_DATACFG_LBR_SHIFT	24
- #define PEBS_DATACFG_CNTR_SHIFT	32
- #define PEBS_DATACFG_CNTR_MASK	GENMASK_ULL(15, 0)
- #define PEBS_DATACFG_FIX_SHIFT	48
- #define PEBS_DATACFG_FIX_MASK	GENMASK_ULL(7, 0)
--#define PEBS_DATACFG_METRICS	BIT_ULL(5)
- 
- /* Steal the highest bit of pebs_data_cfg for SW usage */
- #define PEBS_UPDATE_DS_SW	BIT_ULL(63)
-@@ -603,6 +603,13 @@ struct arch_pebs_lbr_header {
- 	u64 ler_info;
- };
- 
-+struct arch_pebs_cntr_header {
-+	u32 cntr;
-+	u32 fixed;
-+	u32 metrics;
-+	u32 reserved;
-+};
-+
- /*
-  * AMD Extended Performance Monitoring and Debug cpuid feature detection
-  */
--- 
-2.34.1
+>=20
+> It seems the only correct way is to use standard locking primitives with =
+owner tracking, like
+> was originally published in one [1] of the versions of the patch mentione=
+d in Fixes.
+>=20
+> [1]: https://lore.kernel.org/linux-wireless/20230404025259.15503-3-pkshih=
+@realtek.com/
+>=20
+> Found by Linux Verification Center (linuxtesting.org).
+>=20
+> Fixes: 1ae5ca615285 ("wifi: rtw89: add function to wait for completion of=
+ TX skbs")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> ---
+>=20
+> The bug is tricky because the waiter-completer interaction isn't simple h=
+ere.  I've tried to
+> come up with something that wouldn't require taking additional locks at
+> rtw89_core_tx_wait_complete() but these ideas don't eliminate the possibl=
+e race entirely, to
+> my mind.
 
+Thank you for finding the potential race condition.
+
+>=20
+> Though one solution that _works_ currently is to get rid of 'struct rtw89=
+_tx_wait_info' and
+> replace it with the only field it is used for - 'bool tx_done'.  Then it =
+can be stored at 'struct
+> ieee80211_tx_info::status::status_driver_data' directly without the need =
+for allocating an
+> extra dynamic object and tracking its lifecycle.
+> I didn't post this since then the structure won't be expandable for new f=
+ields and that's
+> probably the reason for why it wasn't done in this manner initially.
+
+With a busy waiting on tx waiting side ?
+If so, it would be unacceptable.
+
+>=20
+>  drivers/net/wireless/realtek/rtw89/core.c | 15 ++++++++---
+> drivers/net/wireless/realtek/rtw89/core.h | 32 ++++++++++++++---------
+> drivers/net/wireless/realtek/rtw89/pci.c  |  6 +++--
+>  3 files changed, 36 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw89/core.c
+> b/drivers/net/wireless/realtek/rtw89/core.c
+> index 57590f5577a3..826540319027 100644
+> --- a/drivers/net/wireless/realtek/rtw89/core.c
+> +++ b/drivers/net/wireless/realtek/rtw89/core.c
+> @@ -1088,6 +1088,7 @@ int rtw89_core_tx_kick_off_and_wait(struct rtw89_de=
+v *rtwdev,
+> struct sk_buff *sk
+>         struct rtw89_tx_skb_data *skb_data =3D RTW89_TX_SKB_CB(skb);
+>         struct rtw89_tx_wait_info *wait;
+>         unsigned long time_left;
+> +       bool free_wait =3D true;
+>         int ret =3D 0;
+>=20
+>         wait =3D kzalloc(sizeof(*wait), GFP_KERNEL); @@ -1097,7 +1098,8 @=
+@ int
+> rtw89_core_tx_kick_off_and_wait(struct rtw89_dev *rtwdev, struct sk_buff =
+*sk
+>         }
+>=20
+>         init_completion(&wait->completion);
+> -       rcu_assign_pointer(skb_data->wait, wait);
+> +       spin_lock_init(&wait->owner_lock);
+> +       skb_data->wait =3D wait;
+>=20
+>         rtw89_core_tx_kick_off(rtwdev, qsel);
+>         time_left =3D wait_for_completion_timeout(&wait->completion,
+> @@ -1107,8 +1109,15 @@ int rtw89_core_tx_kick_off_and_wait(struct rtw89_d=
+ev *rtwdev,
+> struct sk_buff *sk
+>         else if (!wait->tx_done)
+>                 ret =3D -EAGAIN;
+>=20
+> -       rcu_assign_pointer(skb_data->wait, NULL);
+> -       kfree_rcu(wait, rcu_head);
+
+Please consider the following.
+(moving "rcu_assign_pointer(skb_data->wait, NULL)" to be under "if (time_le=
+ft =3D=3D 0)")
+
+    if (time_left =3D=3D 0) {
+        rcu_assign_pointer(skb_data->wait, NULL);
+        ret =3D -ETIMEDOUT;
+    } else if (!wait->tx_done) {
+        ret =3D -EAGAIN;
+    }
+
+    kfree_rcu(wait, rcu_head);
+
+If completing side does run as expected (potential racing mentioned in this=
+ patch),
+there is no real need to assign NULL back.
 
