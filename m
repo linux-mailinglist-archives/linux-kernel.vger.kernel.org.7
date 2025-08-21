@@ -1,159 +1,217 @@
-Return-Path: <linux-kernel+bounces-780523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB565B3030A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:38:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32D7B3030E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CBAD1CE7B42
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:36:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 634EC6071F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924A434DCD9;
-	Thu, 21 Aug 2025 19:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1779834AAEA;
+	Thu, 21 Aug 2025 19:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="doPq8bt+"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="pN+Cg84+"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892E634DCCD;
-	Thu, 21 Aug 2025 19:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF6D2C21E8;
+	Thu, 21 Aug 2025 19:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755804956; cv=none; b=ctEx1hXMtVLruwvLlM/y2Xa/6y/cxLWiyo4ZyBtDrjvrQdhwoNQbxo34t7MlS8TLBevUjzgnOQmkiCmz7EvkLf8wi41LY+zVFkSW4AFu9Mn1v0c4Ulprc/2y5MOPW5dzrW8fr5TuXNaf9hBSx4eQQZR3AEiRBEiN0Ge58ZYcQFo=
+	t=1755805034; cv=none; b=djESNiWaW1UD4kv2rePGC4zTyyFgFiCwBkviVMJQx0q9npqdz9QwId3z77yDh7dCFAoMwKDiiAgYRpKOKBFF5QJ8F0Z7sdJu5OQeSBBRQ3tyBUllF4jkBAm64kLO8/VoQSHx6qQWuxVhCUb8nryPGuiHPn1YbInkSCqzmUMR1OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755804956; c=relaxed/simple;
-	bh=nVkPWeM2VTlHY43nH/D6kyxCbKpvtPzXtt4o4wawSbY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=dE/tuWGQPbkC4AUWJG3mDzjwu2LHmXZghV/t1MFtHWfuNg3gpj+qoZMkzPmxTrhui+Lz11YVUCqw7W4K5ByGjLlGMdznkJQDZvYlbg7Z1rU8CnTF17TjYsrW/F9qfBW4efLUm4BI+BMFTvVLQgCekhyw9h8VboLNkMFE5KYMKZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=doPq8bt+; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-70a928cca6aso8469926d6.2;
-        Thu, 21 Aug 2025 12:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755804952; x=1756409752; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IaH0BrwjcupFM4YBlCoOWLYie+AkezFRRXk9KpS8wBE=;
-        b=doPq8bt+gxy3D+CqXDeK/DikiGZSnTA6Cw7/axK2viGlTT9DLFAoqCSmwg329lNZDb
-         HmlJllkzkjotmo60D2z5rWc0WqDmRU8v1ReymqcE+LKhPPGGkSkxrZrDiDurKsQhfK/p
-         5VSYSmBlUPmx9kokqy2GIZV2bPQj8U5QfibvqPMqbh0Tw9R/9zjnX0Plggwdk64iDQCC
-         N8URcEI92zqmCQ7YuTqKPxH208y/oQ5r8q31GLoVHaMAQLFV0oGgkD0mhqnqnmc/G5n8
-         FemM+vpKUFjsxCQNP/d0AVGuO57ZwlGIzvBwQ3mpZUn9Tx/8p4vFu4Mq/5Jj9fgTMq8m
-         /1/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755804952; x=1756409752;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IaH0BrwjcupFM4YBlCoOWLYie+AkezFRRXk9KpS8wBE=;
-        b=JQMIdTm9N/PHT0n1llHk79vBAyOOPckIcUX27desngv7Nd++C9LfRQ6gJDH0qfoMtM
-         ssy9qOWAPsoLJQpx31nqWhDuDIKi4MsAPoU2Nfll+7RFbGUEmljHJInaffIe8d2M96u4
-         x7wORr0b9+mGK1IkXn+5fmyFSnK4C14K0BDrtccsDZXuy4DqKU4vrEDN3L6G7d+cb+OH
-         Z6vBmbGdSQKEER3pPsnRUGrTXv+8xj/lPC0swbUSBbY/BJB+cyN6msVjFJ8sl49o3F/O
-         xeh3M/qcBQshvI4/WcCiK9PhF6oBciuxSUnvfywF0pWVmPWrQPrOm1MCwXG6Muf7PEde
-         ck0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWlL7obTkBhEg/d5rjstxelBUw5CsWvpCv0i0u9SckaXPNf/jTZLdhm/xkoERXKXUUn0Kc98wL4Ob2aJA==@vger.kernel.org, AJvYcCXEHiwVbS+D3CJ+Xx4mvLkGUsC4Hrnv/hsT9DVAIzTQNXBjAZGdxiRjezHiYmwXK7kCqo6+BuweR8WRdzon@vger.kernel.org, AJvYcCXPq1QQBMfASJoE781Ns2Cp3J2rHESJqmRMUow9MwgRnmU02LIHDMMpC6drFcIXQuJXxm/vbWaEHaLp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRSmGg5SLZgUqY1o1UWZx5Z+9Qwr1R9GqyEc8b1ckX+wOz6ISQ
-	UU6UqfTa0NZXvd8gl5CzCzLW+VukK+JCRa6GeilSoJfqSiOELZOYhzDW
-X-Gm-Gg: ASbGncuUJ1VNImyt0QcYYWqqTJv9HWGZUZOJIQ1DfIbSNWSH64HdsXe29AchynnGftg
-	NvWmV0W/HdXS0IP9IWZBpp2QU+KbUjDd8M+YJVxoztIDH/eLXjViuSpFQwpJsinddIgIYav141c
-	+Temd9E/vY+GuSBvb/ywmLxWtxn99fiCsZfktLpUp894sd2T1i2MukcwI+gM7M1JVrYWWpwFEEY
-	FEXO8IjTGEx0VrKN00VonuV9LHmPg3ud9EXv3OmwWolc1ih6rwLza7HT+tZq2TKdn5kmXHNAsnM
-	6Ot6O2jizpjpL0Jj/KTb5XtGM+37BkKs5ReJiPhoUkUZ55KP+l1wAskuP82cLesvP24YMtf4Dvj
-	Gv78JASYP8/mOYy77YpH7VH5j5OCixaNEC7Uy8JwBTrNdZ8DdtZF1GawwQ2uhfYhW/KbDtQ==
-X-Google-Smtp-Source: AGHT+IGWB7NFk3FzkekiVSwBjYkxzG0QVyrijDOcfSqNrRumwsCj2qCbwErx67O+FrGq2MwdU0wTxQ==
-X-Received: by 2002:ad4:5ae7:0:b0:70d:6df3:9a8a with SMTP id 6a1803df08f44-70d9740287emr8981486d6.58.1755804951898;
-        Thu, 21 Aug 2025 12:35:51 -0700 (PDT)
-Received: from [127.0.0.1] (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba902f819sm111603336d6.9.2025.08.21.12.35.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 12:35:51 -0700 (PDT)
-Date: Thu, 21 Aug 2025 15:35:51 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, devicetree@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>,
- Boris Gjenero <boris.gjenero@gmail.com>,
- Christian Hewitt <christianshewitt@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Paolo Sabatino <paolo.sabatino@gmail.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_1/4=5D_dt-bindings=3A_vendor-prefixes=3A_?=
- =?US-ASCII?Q?Add_fdhisi=2C_titanmec=2C_princeton=2C_winrise=2C_wxicore?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <20250820-wired-deserve-421d76bdd1c9@spud>
-References: <20250820163120.24997-1-jefflessard3@gmail.com> <20250820163120.24997-2-jefflessard3@gmail.com> <20250820-wired-deserve-421d76bdd1c9@spud>
-Message-ID: <6A80188C-5108-4DE0-9D69-F492FD7E6B8E@gmail.com>
+	s=arc-20240116; t=1755805034; c=relaxed/simple;
+	bh=KLLf9VyDfAK4FWoUs75vwIko48STkzdu8JSJfszwCuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+h++wBjTgf54RDGGOmLamW+B1osVpqYq53ZQ9095eqNj9RO/OWsziLZpuhNBVvPf3PzbYrz7Os3slmmfEiWTuzMTN3bXy3U3ua9J36SUdy0huCcpN1TEtTXAkFDpSTxl5VPMN059HJxIkd83VJu3tYqMOEYHq7RGCXp1BkaiQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=pN+Cg84+; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0134420.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57LIGo25019507;
+	Thu, 21 Aug 2025 19:36:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pps0720; bh=Wa
+	8/iqYdFpX8MJDTCXt3R7g1KRe65oEz4/7rMZKRdyY=; b=pN+Cg84+5+u0N6DOIP
+	GwTc5IaeL20gcPm4Ev/zqIkEXIDgWfypgqcHEpGHguLRySZ2ai05WIte7Cm++yqh
+	vpIFFvYthn5gDIdOQ5SHR95CpedzAiun25h3cmskmsF6nBwdvZ033979gXTLSzkF
+	LLXpCgRTnw7KDD6orr6ThDI+TqyELXCzwYb5dlOkXExlAZnJPdSAZf91U6EBPIz8
+	wNuVIGFJr+ccz30mXqMPOvBkabXM+M2cEOhb1UO3ArSNHinbvI0hXBu3KbIdz/Ue
+	/3Dwdot56ix6hKYb5qJorfQ7SA318hqNcVm5EIzLpjy3LWZ+WC6RaHUCr6tD+8Mw
+	6ZDA==
+Received: from p1lg14881.it.hpe.com ([16.230.97.202])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48p10evsb0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 19:36:17 +0000 (GMT)
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 3B86B805E18;
+	Thu, 21 Aug 2025 19:36:16 +0000 (UTC)
+Received: from HPE-5CG20646DK.localdomain (unknown [16.231.227.36])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 67945805E5B;
+	Thu, 21 Aug 2025 19:36:13 +0000 (UTC)
+Date: Thu, 21 Aug 2025 14:36:11 -0500
+From: Kyle Meyer <kyle.meyer@hpe.com>
+To: Jiaqi Yan <jiaqiyan@google.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, tony.luck@intel.com,
+        bp@alien8.de, linmiaohe@huawei.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+        rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+        nao.horiguchi@gmail.com, jane.chu@oracle.com, osalvador@suse.de
+Subject: Re: [PATCH] mm/memory-failure: Do not call action_result() on
+ already poisoned pages
+Message-ID: <aKd1K3ueTacGTf1W@hpe.com>
+References: <20250821164445.14467-1-kyle.meyer@hpe.com>
+ <CACw3F53KmKRJyH+ajicyDUgGbPZT=U3VE4n+Jt3E62BxEiiCGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACw3F53KmKRJyH+ajicyDUgGbPZT=U3VE4n+Jt3E62BxEiiCGA@mail.gmail.com>
+X-Proofpoint-GUID: ZsbMeJ8F2AyD1J_S0CWBl-FkjT0scDay
+X-Proofpoint-ORIG-GUID: ZsbMeJ8F2AyD1J_S0CWBl-FkjT0scDay
+X-Authority-Analysis: v=2.4 cv=X9oL6GTe c=1 sm=1 tr=0 ts=68a77531 cx=c_pps
+ a=FAnPgvRYq/vnBSvlTDCQOQ==:117 a=FAnPgvRYq/vnBSvlTDCQOQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=MvuuwTCpAAAA:8 a=yW6kyvSLy8IxsXRRQqMA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIxMDE2NSBTYWx0ZWRfXweS0z0IijUjv
+ TR5xEPl57yRTGITviQj7VxIoB/dhthyPhn3Caj5YbwX+GC6OYnvX99pN+Moi+jnFIzqflNUfAx1
+ nVVN0mYFsxaB7/FmjOe9Hyr9suVi+Yj7m+ihVNQtmcQKRBzuV3OnqTQrvxRAXD4nuJQqvJhat2S
+ Dt6Wwq87akgo5EK9miGGi7t9ISMpoNqKz30QF14/qO7CHBIckrso9IVUly3vGzZVwnie5WFG/1C
+ 1TrUwSNZVHF1Ep7Hox1jV/J4B9pDqIh6cez5UOUKzn1B0Uv0uxFngbIGUzkzCn2DnPHQViY3CGb
+ lmKRjiW1lq4gyiSCP6/YbV1cAc/Xoq69zgAifbVWB5pC/13+GLevXr77zpCKqHz8UF56PKl7N/P
+ nhFW2WU1zPAaa05SsRivOpoC0k2xRJtnqaU4a4cztznNj/ZXP7k7Fgd0p+hbZfSocDjOo0HI
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
+ spamscore=0 adultscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
+ suspectscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
+ definitions=main-2508210165
 
-Le 20 ao=C3=BBt 2025 16 h 08 min 01 s HAE, Conor Dooley <conor@kernel=2Eorg=
-> a =C3=A9crit=C2=A0:
->On Wed, Aug 20, 2025 at 12:31:14PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
-e:
->> Add vendor prefixes:
->> - fdhisi: Fuzhou Fuda Hisi Microelectronics Co=2E, Ltd=2E
->> - titanmec: Shenzhen Titan Micro Electronics Co=2E, Ltd=2E
->> - princeton: Princeton Technology Corp=2E
->> - winrise: Shenzhen Winrise Technology Co=2E, Ltd=2E
->> - wxicore: Wuxi i-Core Electronics Co=2E, Ltd=2E
->>=20
->> The titanmec prefix is based on the company's domain name titanmec=2Eco=
-m=2E
->> The remaining prefixes are based on company names, as these manufacture=
-rs either
->> lack active =2Ecom domains or their =2Ecom domains are occupied by unre=
-lated
->> businesses=2E
->>=20
->> The fdhisi and titanmec prefixes were originally identified by Andreas =
-F=C3=A4rber=2E
->>=20
->> CC: Andreas F=C3=A4rber <afaerber@suse=2Ede>
->> Signed-off-by: Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail=2Ecom>
->
->Acked-by: Conor Dooley <conor=2Edooley@microchip=2Ecom>
+On Thu, Aug 21, 2025 at 11:23:48AM -0700, Jiaqi Yan wrote:
+> On Thu, Aug 21, 2025 at 9:46 AM Kyle Meyer <kyle.meyer@hpe.com> wrote:
+> >
+> > Calling action_result() on already poisoned pages causes issues:
+> >
+> > * The amount of hardware corrupted memory is incorrectly incremented.
+> > * NUMA node memory failure statistics are incorrectly updated.
+> > * Redundant "already poisoned" messages are printed.
+> 
+> All agreed.
+> 
+> >
+> > Do not call action_result() on already poisoned pages and drop unused
+> > MF_MSG_ALREADY_POISONED.
+> 
+> Hi Kyle,
+> 
+> Patch looks great to me, just one thought...
+> 
+> Alternatively, have you thought about keeping MF_MSG_ALREADY_POISONED
+> but changing action_result for MF_MSG_ALREADY_POISONED?
+> - don't num_poisoned_pages_inc(pfn)
+> - don't update_per_node_mf_stats(pfn, result)
+> - still pr_err("%#lx: recovery action for %s: %s\n", ...)
+> - meanwhile remove "pr_err("%#lx: already hardware poisoned\n", pfn)"
+> in memory_failure and try_memory_failure_hugetlb
 
-Thanks for your acknowledgement, I will include it in the v4 submission=2E
+I did consider that approach but I was concerned about passing
+MF_MSG_ALREADY_POISONED to action_result() with MF_FAILED. The message is a
+bit misleading.
 
->but some reason why all these are being added together would be nice=2E
+How about introducing a new MF action result? Maybe MF_NONE? The message could
+look something like:
 
-Do you mean repeating this cover letter v3 changelog note in this patch:
+Memory failure: 0xXXXXXXXX: recovery action for already poisoned page: None
 
-v3:
-- Update vendor prefixes with documented rationale, in a single patch,
-  per maintainer feedback
+> This way, all the MF recovery result kernel logs out will be sitting
+> in one place, action_result, instead of scattering around all over the
+> place.
 
-See https://lore=2Ekernel=2Eorg/linux-devicetree/491ec8dd-8ca5-45bb-b5f4-d=
-fd08a10e8de@kernel=2Eorg/#t
-
-Or do you mean the relationship between these vendors being added here,
-such as replacing the fist line of the commit message to:
-
-Add vendor prefixes of chip manufacturers supported by the TM16xx 7-segmen=
-t
-LED matrix display controllers driver:
-- fdhisi=2E=2E=2E
-
->
->> ---
-=2E=2E=2E
-
-Best regards,
-Jean-Francois Lessard
-
+That sounds better to me.
+ 
+> >
+> > Fixes: b8b9488d50b7 ("mm/memory-failure: improve memory failure action_result messages")
+> > Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+> > ---
+> >  include/linux/mm.h      | 1 -
+> >  include/ras/ras_event.h | 1 -
+> >  mm/memory-failure.c     | 3 ---
+> >  3 files changed, 5 deletions(-)
+> >
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 1ae97a0b8ec7..09ce81ef7afc 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -4005,7 +4005,6 @@ enum mf_action_page_type {
+> >         MF_MSG_BUDDY,
+> >         MF_MSG_DAX,
+> >         MF_MSG_UNSPLIT_THP,
+> > -       MF_MSG_ALREADY_POISONED,
+> >         MF_MSG_UNKNOWN,
+> >  };
+> >
+> > diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+> > index c8cd0f00c845..f62a52f5bd81 100644
+> > --- a/include/ras/ras_event.h
+> > +++ b/include/ras/ras_event.h
+> > @@ -374,7 +374,6 @@ TRACE_EVENT(aer_event,
+> >         EM ( MF_MSG_BUDDY, "free buddy page" )                          \
+> >         EM ( MF_MSG_DAX, "dax page" )                                   \
+> >         EM ( MF_MSG_UNSPLIT_THP, "unsplit thp" )                        \
+> > -       EM ( MF_MSG_ALREADY_POISONED, "already poisoned" )              \
+> >         EMe ( MF_MSG_UNKNOWN, "unknown page" )
+> >
+> >  /*
+> > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> > index e2e685b971bb..7839ec83bc1d 100644
+> > --- a/mm/memory-failure.c
+> > +++ b/mm/memory-failure.c
+> > @@ -948,7 +948,6 @@ static const char * const action_page_types[] = {
+> >         [MF_MSG_BUDDY]                  = "free buddy page",
+> >         [MF_MSG_DAX]                    = "dax page",
+> >         [MF_MSG_UNSPLIT_THP]            = "unsplit thp",
+> > -       [MF_MSG_ALREADY_POISONED]       = "already poisoned",
+> >         [MF_MSG_UNKNOWN]                = "unknown page",
+> >  };
+> >
+> > @@ -2090,7 +2089,6 @@ static int try_memory_failure_hugetlb(unsigned long pfn, int flags, int *hugetlb
+> >                 if (flags & MF_ACTION_REQUIRED) {
+> >                         folio = page_folio(p);
+> >                         res = kill_accessing_process(current, folio_pfn(folio), flags);
+> > -                       action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
+> >                 }
+> >                 return res;
+> >         } else if (res == -EBUSY) {
+> > @@ -2283,7 +2281,6 @@ int memory_failure(unsigned long pfn, int flags)
+> >                         res = kill_accessing_process(current, pfn, flags);
+> >                 if (flags & MF_COUNT_INCREASED)
+> >                         put_page(p);
+> > -               action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
+> >                 goto unlock_mutex;
+> >         }
+> >
+> > --
+> > 2.50.1
+> >
+> >
 
