@@ -1,94 +1,52 @@
-Return-Path: <linux-kernel+bounces-780182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9735B2FEBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:41:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75257B2FEC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EF83643C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3651AE53F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339103218B1;
-	Thu, 21 Aug 2025 15:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E4333EAEB;
+	Thu, 21 Aug 2025 15:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="gnoBmmDW"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2CD31DDA2
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cgQNZGcv"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B702773C1;
+	Thu, 21 Aug 2025 15:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755790027; cv=none; b=U7747UhJIcHvZP3aF2eFTag484PPjGNNZgtk8osyY5SCxl9J3zR4xrGrkgpwVDS1UekuVb9wRPFMZ9L7Q5+DWsatUi22mGX+sra+Sdli6GrLu05mEuP6XZaxQrtMI3ZuANuPbnkU7hR6x57teDc/5lTrF3kMVLAxYCn5k8jdhcU=
+	t=1755790078; cv=none; b=vDNS37HBiBcc2n+AusstiuWp8z5k6UXKquc/gI47MOClCwdI/stJpikyT2eqCD2FIIyG8k/h5U2rDaJ3m/8QiE34IqxvQxg7Jt+7Y/l9k6+xRMMjhcuW+NgDSEnFzacdvv5YE3qQ31baUw+ghHVfUg3yL/FwO4yKWZEL+GYa1rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755790027; c=relaxed/simple;
-	bh=pTn8q9gyy4U3k5WPUfs8ClUunMArOq9kWVVYSQNm6jA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sZM/9+/M7rdqwf6iYjTywH2GpqTUPZi5OjPdItQflWAGYd1CLOrDtALud1qQZyPSsxqt/AAyt1fcI4Ll6bfQvOwKwEK/o5z9aD/1gFcEeLbraP8TwYSIm25nrFy0Ie62YSfAHSIMCp7lkq9x4MLC9zGyQ19npQI9PVC6NfPacgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=gnoBmmDW; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b05a59fso8529195e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:27:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1755790022; x=1756394822; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2sjxBGydTfjruOh7OE8E/RbRzU+dSv4jaJNJXDHUfdU=;
-        b=gnoBmmDWQOf7vNbixaZb+sQS5JjFEtmhwwO727V9nzEmjlapGR91d+H+ibEr03d9cV
-         r2KVJodElLav1BSrB8gxAgpDQo7nTKxLx3pkgmJ7pipp7Ye79i6pC5B2wxosafyFjghz
-         hljLwo6jFiUY7lEGiIaMU0w3MXcksDtS+ctA+wog/f5rRn8USoQWvW+g0kfn9PxCSsWm
-         qeu4Ck72KFfyMPFTUBceU66HDjdgTWKxS7XE7OU2W0HvHVdbyRZDmlbIk4VU/K77Ncti
-         DfV9XuveGEfXmeOw3u7pcOGNXd1DMK9Hz33rw0uPnXhzecA3cjSq+3TYVYGW4m6Ozlj+
-         WL1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755790022; x=1756394822;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2sjxBGydTfjruOh7OE8E/RbRzU+dSv4jaJNJXDHUfdU=;
-        b=NwNqvAlUve7GsBVkYrPL3FrHGX8VTIrQF4u//yVt/hCZ6k6Kh1Ad3qO+a1sf3Prazf
-         /KJeGpMx7HNoU7ZCbeqqpZ3dzk95SLGtmfqiJ4JGN6yORci8penNXQwa8QpQ+lveervf
-         XuY8oPwak863mQHVij1nm79uXSrlJaatXCs03asSDaz8j8UnmhZhUG3TW+3tgNbXbD3U
-         UZwZNoP0m4rpk2VFE3IaE6Z0TCQhqRhlqVA3keHuChP4+gVQ61WgB990iMkqMdFCFSr/
-         uXoobhV0eyfG5CtrijF7mbCgtnZmxspmKeyrcLS6lJxaYbyWn2idYvMtx0cZJHdgJKne
-         hebg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHhx95giXwcgZ8Nz1PkI1QgY148Y6MhOq6EHe+75bRb7njlPoo1KEbPR6uVCvkRyxqIe15w6OFxYr54TE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx27btaneFoPB6UXmm3iTeq4VYc2LI9GdqNwggVLGXZhRcZ/wHG
-	FJfztRtBaM4GOAyAIx0KTCrOMZlDnawLUeeI445WYUTdk7jCYYK2ysXd6Dh3u0VfP1I=
-X-Gm-Gg: ASbGncsyA/gDGt/6G05/KOp5lOjoiSQLk6h5vmBIfXWVcuCpsS5kI+6khDbwecW+xjS
-	jsqT6tc4pSHdfnPiBUlSalo0BGBCysxqlMoyZuFjF3BS63zEz9KnbJwYdzDs/NHBKx2q1WhYMsw
-	A6ElGvmb5AKj6eP3T7WKLbD8nwQfqErDFDG390mOY3txfrbiRKeczsTFM/vqIe8YjkfRn1sKlu+
-	gwgNVVGrV3iHOwIucSiPyCSwhw/EjynWAUy/GwdYfbkWDKNPrp5BY4M6NRq3DBuxicPP9CXdRT3
-	e1V70jtmQSaAbUTbxbZQejKLesiO1vR973d7v/VExJJSSmf0gnPlzGMei6067Ds+HcbVVlsc1dn
-	5Ue2WDvcdJKc/PbLtYmjSFHxFUqW13thvnJCI8lB4pyzApD7liw==
-X-Google-Smtp-Source: AGHT+IE+4ute/Nv5CZt5NNaDUwvVYtWu4YiNVI45PLItPoW2P50dq71Gb9k2LF4AVVqf2Lr512IxQQ==
-X-Received: by 2002:a05:600c:1c90:b0:45b:4282:7b60 with SMTP id 5b1f17b1804b1-45b4fcc3244mr15901095e9.34.1755790022155;
-        Thu, 21 Aug 2025 08:27:02 -0700 (PDT)
-Received: from pop-os.telenet.be ([2a02:1807:2a00:3400:f5e3:b428:f4bc:eb5f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50dc00b6sm1538345e9.2.2025.08.21.08.27.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 08:27:01 -0700 (PDT)
-From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-To: dlan@gentoo.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Subject: [PATCH v2] riscv: dts: spacemit: add UART resets for Soc K1
-Date: Thu, 21 Aug 2025 17:26:19 +0200
-Message-ID: <20250821152619.597051-1-hendrik.hamerlinck@hammernet.be>
+	s=arc-20240116; t=1755790078; c=relaxed/simple;
+	bh=qveROCb1jqFcARQi80Bs/V5F/j2TDtrLagytZ5PnDXw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pt5fZYjLMg0z5Qjnai6OAGlk1us3MKLCAn4l+mPMORp9xn76EGJ6g2ym/Fplvzm1mWpCB2O8tquCKzzwTv1Pzasp61U4hFk2EV9q9RGIzab9AxwsbYTHaC/Ungq1CIn0yfRkemexJEudpqe7ljqitA2hXxuashsF7paTb9E7VOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cgQNZGcv; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=DH
+	SeSHtwB8V8kUoEVwfKEysMnX/Hu1i0nJOEXvYCXXA=; b=cgQNZGcv5BOwP3j0vT
+	PCbBdV6337EAScySVElAibtBmltg3hVTCnQO9xnbiZwnQGOdU5RffHCm9CvT9n8w
+	uJyTLe4OCqnCJ/Ap6j+vgh7NlDxbgvfwmFWe/4dHqzyErS36YZwXJnsSlCSvsoXw
+	ae+Gb3ETPXgZ6BgMVm2D/COGo=
+Received: from phoenix.. (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDnLGHROqdon1G_DQ--.32608S2;
+	Thu, 21 Aug 2025 23:27:15 +0800 (CST)
+From: Jiawei Zhao <phoenix500526@163.com>
+To: ast@kernel.org
+Cc: daniel@iogearbox.net,
+	andrii@kernel.org,
+	yonghong.song@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v12 0/2] libbpf: fix USDT SIB argument handling causing unrecognized register error
+Date: Thu, 21 Aug 2025 15:27:10 +0000
+Message-ID: <20250821152713.1024982-1-phoenix500526@163.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -97,102 +55,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnLGHROqdon1G_DQ--.32608S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWw4ktFy5Zr1xJr4UGF1UGFg_yoW5ArWfpF
+	WrGws8trWDtas7GFsxXr42yw43WFs5GFWUJFn2qw1Yvr4rGFnrJrWxKw15JFnxGa97X34Y
+	vF4qyFs8Gas5AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jopBfUUUUU=
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBax2wiGinLsHhFwAAsY
 
-The UARTs in the SpacemiT K1 device tree are probed by the 8250_of driver,
-but without reset lines they remain non-functional.
+When using GCC on x86-64 to compile an usdt prog with -O1 or higher
+optimization, the compiler will generate SIB addressing mode for global
+array and PC-relative addressing mode for global variable,
+e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
 
-Add reset control entries so that the UARTs can operate when mapped to
-devices. UART0 is already de-asserted by the bootloader, but include its
-reset as well to avoid relying on bootloader state.
+The current USDT implementation in libbpf cannot parse these two formats,
+causing `bpf_program__attach_usdt()` to fail with -ENOENT
+(unrecognized register).
 
-Tested on Orange Pi RV2 and Banana Pi BPI-F3 boards, with UART9 enabled
-and verified functional.
+This patch series adds support for SIB addressing mode in USDT probes.
+The main changes include:
+- add correct handling logic for SIB-addressed arguments in
+  `parse_usdt_arg`.
+- add an usdt_o2 test case to cover SIB addressing mode.
 
-Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
----
-Changes in v2:
-- Improved changelog
-- Omitted current-speed property for UART0
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Testing shows that the SIB probe correctly generates 8@(%rcx,%rax,8) 
+argument spec and passes all validation checks.
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index abde8bb07c95..6c68b2e54675 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -667,6 +667,7 @@ uart0: serial@d4017000 {
- 				clocks = <&syscon_apbc CLK_UART0>,
- 					 <&syscon_apbc CLK_UART0_BUS>;
- 				clock-names = "core", "bus";
-+				resets = <&syscon_apbc RESET_UART0>;
- 				interrupts = <42>;
- 				reg-shift = <2>;
- 				reg-io-width = <4>;
-@@ -680,6 +681,7 @@ uart2: serial@d4017100 {
- 				clocks = <&syscon_apbc CLK_UART2>,
- 					 <&syscon_apbc CLK_UART2_BUS>;
- 				clock-names = "core", "bus";
-+				resets = <&syscon_apbc RESET_UART2>;
- 				interrupts = <44>;
- 				reg-shift = <2>;
- 				reg-io-width = <4>;
-@@ -693,6 +695,7 @@ uart3: serial@d4017200 {
- 				clocks = <&syscon_apbc CLK_UART3>,
- 					 <&syscon_apbc CLK_UART3_BUS>;
- 				clock-names = "core", "bus";
-+				resets = <&syscon_apbc RESET_UART3>;
- 				interrupts = <45>;
- 				reg-shift = <2>;
- 				reg-io-width = <4>;
-@@ -706,6 +709,7 @@ uart4: serial@d4017300 {
- 				clocks = <&syscon_apbc CLK_UART4>,
- 					 <&syscon_apbc CLK_UART4_BUS>;
- 				clock-names = "core", "bus";
-+				resets = <&syscon_apbc RESET_UART4>;
- 				interrupts = <46>;
- 				reg-shift = <2>;
- 				reg-io-width = <4>;
-@@ -719,6 +723,7 @@ uart5: serial@d4017400 {
- 				clocks = <&syscon_apbc CLK_UART5>,
- 					 <&syscon_apbc CLK_UART5_BUS>;
- 				clock-names = "core", "bus";
-+				resets = <&syscon_apbc RESET_UART5>;
- 				interrupts = <47>;
- 				reg-shift = <2>;
- 				reg-io-width = <4>;
-@@ -732,6 +737,7 @@ uart6: serial@d4017500 {
- 				clocks = <&syscon_apbc CLK_UART6>,
- 					 <&syscon_apbc CLK_UART6_BUS>;
- 				clock-names = "core", "bus";
-+				resets = <&syscon_apbc RESET_UART6>;
- 				interrupts = <48>;
- 				reg-shift = <2>;
- 				reg-io-width = <4>;
-@@ -745,6 +751,7 @@ uart7: serial@d4017600 {
- 				clocks = <&syscon_apbc CLK_UART7>,
- 					 <&syscon_apbc CLK_UART7_BUS>;
- 				clock-names = "core", "bus";
-+				resets = <&syscon_apbc RESET_UART7>;
- 				interrupts = <49>;
- 				reg-shift = <2>;
- 				reg-io-width = <4>;
-@@ -758,6 +765,7 @@ uart8: serial@d4017700 {
- 				clocks = <&syscon_apbc CLK_UART8>,
- 					 <&syscon_apbc CLK_UART8_BUS>;
- 				clock-names = "core", "bus";
-+				resets = <&syscon_apbc RESET_UART8>;
- 				interrupts = <50>;
- 				reg-shift = <2>;
- 				reg-io-width = <4>;
-@@ -771,6 +779,7 @@ uart9: serial@d4017800 {
- 				clocks = <&syscon_apbc CLK_UART9>,
- 					 <&syscon_apbc CLK_UART9_BUS>;
- 				clock-names = "core", "bus";
-+				resets = <&syscon_apbc RESET_UART9>;
- 				interrupts = <51>;
- 				reg-shift = <2>;
- 				reg-io-width = <4>;
+The modification history of this patch series:
+Change since v1:
+- refactor the code to make it more readable
+- modify the commit message to explain why and how
+
+Change since v2:
+- fix the `scale` uninitialized error
+
+Change since v3:
+- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
+  and pass all test cases.
+
+Change since v4:
+- split the patch into two parts, one for the fix and the other for the
+  test
+
+Change since v5:
+- Only enable optimization for x86 architecture to generate SIB addressing
+  usdt argument spec.
+
+Change since v6:
+- Add an usdt_o2 test case to cover SIB addressing mode.
+- Reinstate the usdt.c test case.
+
+Change since v7:
+- Refactor modifications to __bpf_usdt_arg_spec to avoid increasing its size,
+  achieving better compatibility
+- Fix some minor code style issues
+- Refactor the usdt_o2 test case, removing semaphore and adding GCC attribute
+  to force -O2 optimization
+
+Change since v8:
+- Refactor the usdt_o2 test case, using assembly to force SIB addressing mode.
+
+Change since v9:
+- Only enable the usdt_o2 test case on x86_64 and i386 architectures since the
+  SIB addressing mode is only supported on x86_64 and i386.
+
+Change since v10:
+- Replace `__attribute__((optimize("O2")))` with `#pragma GCC optimize("O1")`
+  to fix the issue where the optimized compilation condition works improperly. 
+- Renamed test case usdt_o2 and relevant files name to usdt_o1 in that O1
+  level optimization is enough to generate SIB addressing usdt argument spec.
+
+Change since v11:
+- Replace `STAP_PROBE1` with `STAP_PROBE_ASM`
+- Use bit fields instead of bit shifting operations
+- Merge the usdt_o1 test case into the usdt test case
+
+Jiawei Zhao (2):
+  libbpf: fix USDT SIB argument handling causing unrecognized register
+    error
+  selftests/bpf: Enrich subtest_basic_usdt case in selftests to cover
+    SIB handling logic
+
+ tools/lib/bpf/usdt.bpf.h                      | 47 ++++++++++++++-
+ tools/lib/bpf/usdt.c                          | 58 +++++++++++++++++--
+ tools/testing/selftests/bpf/prog_tests/usdt.c | 44 +++++++++++++-
+ tools/testing/selftests/bpf/progs/test_usdt.c | 30 ++++++++++
+ 4 files changed, 170 insertions(+), 9 deletions(-)
+
 -- 
 2.43.0
 
