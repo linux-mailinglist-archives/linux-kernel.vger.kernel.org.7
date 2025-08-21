@@ -1,288 +1,127 @@
-Return-Path: <linux-kernel+bounces-779821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF99B2F990
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:10:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB48B2F943
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA7F3A99AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:03:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF2297AE78F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F4531DD9C;
-	Thu, 21 Aug 2025 13:03:37 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535E531DDA1;
+	Thu, 21 Aug 2025 13:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h45gp5bF"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2303E1F4CAC
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604952E7176;
+	Thu, 21 Aug 2025 13:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755781416; cv=none; b=cAsM0Xx5J5LZfYeRh5oGjifwHrnEH5Ds/II0vv26G4Dr/sEI1H9xgYoBx/3K8iZ5peVuaK1QaYnNwcOTgOnxnhVvKQeu9Ssyyoe3Ajd7YbXTmIKqezKNejSIkgRLdlU/ITu67OqERQF38aMDb1EM9dZaLRLNIFK5u8RYPu/6yUI=
+	t=1755781442; cv=none; b=k5X18HrZ6mA0Y7/BGf9bT74uR8LYOh/AEBEodmE1Gga8fu6KwY9psXWsRDG5oRdRCPoWYyJAXGj3jblfNWs9yqm/f0PTTo1tusm4J2JdtiyAKgcKdbus5vx38/qea4dsbbm4Ra4PrI4SBBOsdOF/kYEPIkbvctetR5D2U7EkgBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755781416; c=relaxed/simple;
-	bh=btE0F6kikJhl2rYvwbMq4EB60Ii4f4Fy2lLuOKFGS2c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dU+HQnt7znXaP5DDTtwXPtysnZ9wBBE5CaBc80xyyvmfFhrPhm9v4WnCIWDzULkQFG0ocW/+KJRHnsWhUZPaNQO9O0HnABgH7uFIpNjAEJStD9MYBr4uBB1o0T2ScRVZgNYr0feuj8obOrzrk9rMvHESRyT3m/kMXtwQey52Vxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e665379e84so16741625ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:03:34 -0700 (PDT)
+	s=arc-20240116; t=1755781442; c=relaxed/simple;
+	bh=IQffsHkJjkPaPl5FrEI5X3ZwB3AQ4jhcAdzezNY01fQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mm1eyPXfRNs1gtUvKgphnUudirVpz/k27qMvyIxw0f67RPCVKNbfEyYLOz3lwsuGEVFmcwxG4IPtLKuckgZ3ysi1IaZZ6J1CuoaOi9oL4t/NvjKh7y65HlM77LzM05b9tEN4slphKgnV6foVEHdJZGqeGI7Rj1C3amvwEPysu8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h45gp5bF; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32326e2f0b3so780100a91.2;
+        Thu, 21 Aug 2025 06:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755781440; x=1756386240; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IQffsHkJjkPaPl5FrEI5X3ZwB3AQ4jhcAdzezNY01fQ=;
+        b=h45gp5bFIf2/wIECEgJxmRHAfz65bTCcjL81cxaNgjSQWMKJmsYNu7Ecxye8++LcIS
+         RbIn2VOY7AUVnRTlV8otxEOD9EGkLRkYdBBqMYr2sQO7j9flSByO+U/MjNOSkYdieh3y
+         jZwwgtaK3aIVCtrn2vMLJFFFPir6PhtkVNR4r5T9kL2JJyMYDu/AS4fAx891gZkRe2NW
+         VF1HtHICA64DCah9tdbFZrGdnqe2H/NdKcdXn6sEWK2dgmQj6SlsrJSWyvWRauvMhT07
+         bncVQFlrHAyHvdIShH801ME2kaa/rdCm11KMN+P/IKNNybN8IbXe8qO3xv3RwgzeFMiN
+         7OsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755781414; x=1756386214;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l689Uj8nPRK7CV4a0+e0NJooZGxup9TaeXN8cC4mJCI=;
-        b=qHx+iZT0YAHP1zJaD5CGebtWKFGkkkKddyMolteR29AMeiJ8c51XyfJFhtW6R7KrrD
-         HRkzV3i0JdzahhjpRrxPPkCvzRuVdPxAZM3NEkdP0fOOqJLcyplRIOFoY194KXXRXK69
-         TRWabfqCML2z7M6gBmIWiw4QIttthea61BSbJD79FuHyfcTfwyPBT3npk6TUoKZMhsJs
-         LJrt6UGKvPK8aURSkoYenr+JS5ett1H3GiQ0EyEbwJ4qOU9iPFdAJTSrJ3/F4soa/Hgr
-         3h/NBfSWBe7DDBWubhc87TIZ9AIW3bIck5wGUbd/SeIXVX9nICwgOVd3s5TbpzZA2B6W
-         E5tA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyrXbLsG9ehr0vD+r8dfdUhMCg/EFUngcVdZyNd7y0GdqhEk+uWXwC4aO+aFFI2HWx+aMWebLbW7tLjL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhg41MN7zWvA0gZMhF/gle7vlyTpoCkyNqOjxYAq0IYH8A0ggS
-	1SInq3cmjMUdQoHP0VP+APyAoOKwWMJGnBrlQQYQdMXWiHOjaH7WzMlmeYSZ0y9NaT4EIyaFvdu
-	CUE0vaqboNLNL6m1tGS7FuYh/X3Vpi5TD1l8MzEsHLCzMUx+gj3V741x0QWo=
-X-Google-Smtp-Source: AGHT+IHeriFa3NlWYLLfCkleetm0h8/OmuyMwoRnI/W8O02OF/z+R6fyX89x6L3maypgszyJm8Narp+Jr9gGe91MFPcNxgVVVrTK
+        d=1e100.net; s=20230601; t=1755781440; x=1756386240;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IQffsHkJjkPaPl5FrEI5X3ZwB3AQ4jhcAdzezNY01fQ=;
+        b=Wqrd4yianFJGthM9Arqqm70jdEKqdO9d5YhkMzlv36I0HglJSGdENOucA80+XIj6ci
+         NM3m0Ls5CwwjtljMwU30x2g3q2N+g/9TnaESMt4entP6kPlyDpItPJMkGJveaYL271W8
+         m420eV3SlOKIJVBobLeK/hnIhOtNfQ4KvK/qKT19SkKC2iwPReKX6EDAsMtTQ4WUSJTI
+         Ksa4bMjstfWN6lTxvftQw75IrZixGFfnkwZvPQW+UahDpJwzC22URL6+fmzwt37V21Sx
+         UdEnO8o1qbt/y//1XcWrtSqH8UKtT9EhQiyLcaWzwOq2MlAT22kKHwhQqRi0Sp2MX/3p
+         D5Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEOOMfExY6Xee8yV4d/p948kCQ4SFt+Hx6u7t9pudwnFNh2bX7tU7mw7wzpRO6C5psT1TEdhpjuQ==@vger.kernel.org, AJvYcCWIJwu1+AOrZy9eO6XpvPAG7hgI9M4/lH97wHXGTxKxjKlycSdExh/Ub1qJmbB3yn682f8kH527dZs1zoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze8wrnbH1sb1ISSCJbbP/H6hLwEc91lqpi8WTrDliGQHxOPhhN
+	BQoc2Nabco5EZnmIDnB7GW96RZO4CnbvTlsxkUQPCB2czYDGtxBL3cUhY5jpfvjAQQDFFgzDtb3
+	VGDn+O+q9YMwe+iO+uFatcqbzDk6AMcE=
+X-Gm-Gg: ASbGnctMvRvk9cV15UUgdQp1mV2pyGu2pbpK5Wy47OYzcY5hr4htIlWsD8tn2PjNFMd
+	ADBxaeLkRPzBLL8s/T/uSpP9CED47mdr00PAVLzWFYi89xrzd1UNqwFVZMSSUyQXfJWYhzMgvvn
+	bvTnY+91VjIs/0LMNyYFCj14/UT/nTynYqKTLJ11dXxj0kkv3CFbbYl7yyxeA0rLSC2MPa1zboM
+	+egTWo=
+X-Google-Smtp-Source: AGHT+IHOjUwVveUGbP1H2bxrM5RrKXU+JZeOkQ7ZUMDMifja+D7IyxwPy44Ft2eopE0YxtdZo+taUU4v2YR39f27RMk=
+X-Received: by 2002:a17:90b:5446:b0:31e:f193:1822 with SMTP id
+ 98e67ed59e1d1-324ed1bfa86mr3177405a91.28.1755781440315; Thu, 21 Aug 2025
+ 06:04:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4512:b0:3e6:7d1a:8f22 with SMTP id
- e9e14a558f8ab-3e6d9de6790mr34561235ab.6.1755781414226; Thu, 21 Aug 2025
- 06:03:34 -0700 (PDT)
-Date: Thu, 21 Aug 2025 06:03:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a71926.050a0220.3d78fd.0028.GAE@google.com>
-Subject: [syzbot] [xfs?] KASAN: slab-use-after-free Read in xlog_cil_push_work
-From: syzbot <syzbot+95170b2e7d9e80b8a7d7@syzkaller.appspotmail.com>
-To: cem@kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250820212302.2325779-1-nkapron@google.com> <CAEjxPJ4Vi9rXXkvPUoS-tjHks_6oevdkhrjvSeX_Rh5VV5gBBw@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4Vi9rXXkvPUoS-tjHks_6oevdkhrjvSeX_Rh5VV5gBBw@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 21 Aug 2025 09:03:49 -0400
+X-Gm-Features: Ac12FXyNDcrIGqyYmrQU68rMn6r9BjZGRzXSs0MDpowUWDoVliBgb9j83DE2580
+Message-ID: <CAEjxPJ6iFrfVxbRM71b9G0+59L+vxNiJ1mpeXSGwuG_n+D15Lw@mail.gmail.com>
+Subject: Re: [PATCH] selinux: enable per-file labeling for functionfs
+To: Neill Kapron <nkapron@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>, kernel-team@android.com, 
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Aug 21, 2025 at 8:59=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Wed, Aug 20, 2025 at 5:23=E2=80=AFPM Neill Kapron <nkapron@google.com>=
+ wrote:
+> >
+> > This patch adds support for genfscon per-file labeling of functionfs
+> > files as well as support for userspace to apply labels after new
+> > functionfs endpoints are created.
+> >
+> > This allows for separate labels and therefore access control on a
+> > per-endpoint basis. An example use case would be for the default
+> > endpoint EP0 used as a restricted control endpoint, and additional
+> > usb endpoints to be used by other more permissive domains.
+> >
+> > It should be noted that if there are multiple functionfs mounts on a
+> > system, genfs file labels will apply to all mounts, and therefore will =
+not
+> > likely be as useful as the userspace relabeling portion of this patch -
+> > the addition to selinux_is_genfs_special_handling().
+> >
+> > Signed-off-by: Neill Kapron <nkapron@google.com>
+>
+> Did you confirm that functionfs is safe wrt genfscon-based and
+> userspace labeling, as per:
+> https://github.com/SELinuxProject/selinux-kernel/issues/2
+>
+> Also as per that longstanding open issue, we'd welcome patches to
+> generalize the current hardcoded list of filesystem types to
+> instead lookup the filesystem type in the policy to see if it should
+> support genfscon and/or userspace labeling.
 
-syzbot found the following issue on:
-
-HEAD commit:    931e46dcbc7e Add linux-next specific files for 20250814
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16f92ba2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a286bd75352e92fa
-dashboard link: https://syzkaller.appspot.com/bug?extid=95170b2e7d9e80b8a7d7
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16db8ba2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111f7af0580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fb896162d550/disk-931e46dc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/45f6f857b82c/vmlinux-931e46dc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0f16e70143e1/bzImage-931e46dc.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/9e084238f7d7/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=16b113a2580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+95170b2e7d9e80b8a7d7@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in __list_del_entry_valid_or_report+0xb5/0x190 lib/list_debug.c:65
-Read of size 8 at addr ffff88805f82f850 by task kworker/u8:5/1029
-
-CPU: 1 UID: 0 PID: 1029 Comm: kworker/u8:5 Not tainted 6.17.0-rc1-next-20250814-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Workqueue: xfs-cil/loop4 xlog_cil_push_work
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- __list_del_entry_valid_or_report+0xb5/0x190 lib/list_debug.c:65
- __list_del_entry_valid include/linux/list.h:124 [inline]
- __list_del_entry include/linux/list.h:215 [inline]
- list_del_init include/linux/list.h:287 [inline]
- xlog_cil_build_lv_chain fs/xfs/xfs_log_cil.c:1246 [inline]
- xlog_cil_push_work+0x11c0/0x2570 fs/xfs/xfs_log_cil.c:1374
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Allocated by task 3859:
- kasan_save_stack mm/kasan/common.c:56 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:77
- unpoison_slab_object mm/kasan/common.c:339 [inline]
- __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:365
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4180 [inline]
- slab_alloc_node mm/slub.c:4229 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4236
- xfs_buf_item_init+0x66/0x670 fs/xfs/xfs_buf_item.c:878
- _xfs_trans_bjoin+0x46/0x110 fs/xfs/xfs_trans_buf.c:75
- xfs_trans_read_buf_map+0x28f/0x8e0 fs/xfs/xfs_trans_buf.c:325
- xfs_trans_read_buf fs/xfs/xfs_trans.h:210 [inline]
- xfs_btree_read_buf_block+0x290/0x470 fs/xfs/libxfs/xfs_btree.c:1402
- xfs_btree_lookup_get_block+0x28d/0x500 fs/xfs/libxfs/xfs_btree.c:1907
- xfs_btree_lookup+0x4e1/0x1410 fs/xfs/libxfs/xfs_btree.c:2018
- xfs_alloc_lookup fs/xfs/libxfs/xfs_alloc.c:166 [inline]
- xfs_alloc_lookup_le fs/xfs/libxfs/xfs_alloc.c:212 [inline]
- xfs_free_ag_extent+0x25d/0x1760 fs/xfs/libxfs/xfs_alloc.c:2080
- __xfs_free_extent+0x2f1/0x470 fs/xfs/libxfs/xfs_alloc.c:4048
- xfs_extent_free_finish_item+0x28b/0x670 fs/xfs/xfs_extfree_item.c:555
- xfs_defer_finish_one+0x5c8/0xcf0 fs/xfs/libxfs/xfs_defer.c:595
- xfs_defer_finish_noroll+0x910/0x12d0 fs/xfs/libxfs/xfs_defer.c:707
- xfs_defer_finish+0x1c/0x180 fs/xfs/libxfs/xfs_defer.c:741
- xfs_bunmapi_range+0xc4/0x140 fs/xfs/libxfs/xfs_bmap.c:6178
- xfs_itruncate_extents_flags+0x306/0x990 fs/xfs/xfs_inode.c:1066
- xfs_itruncate_extents fs/xfs/xfs_inode.h:604 [inline]
- xfs_inactive_truncate+0x125/0x1b0 fs/xfs/xfs_inode.c:1168
- xfs_inactive+0x949/0xcd0 fs/xfs/xfs_inode.c:1454
- xfs_inodegc_inactivate fs/xfs/xfs_icache.c:1944 [inline]
- xfs_inodegc_worker+0x31b/0x7c0 fs/xfs/xfs_icache.c:1990
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Freed by task 10:
- kasan_save_stack mm/kasan/common.c:56 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:77
- __kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:587
- kasan_save_free_info mm/kasan/kasan.h:406 [inline]
- poison_slab_object mm/kasan/common.c:252 [inline]
- __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:284
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2417 [inline]
- slab_free mm/slub.c:4680 [inline]
- kmem_cache_free+0x18f/0x400 mm/slub.c:4782
- __xfs_buf_ioend+0x29c/0x6f0 fs/xfs/xfs_buf.c:1202
- xfs_buf_iowait+0x167/0x480 fs/xfs/xfs_buf.c:1384
- _xfs_buf_read fs/xfs/xfs_buf.c:646 [inline]
- xfs_buf_read_map+0x335/0xa50 fs/xfs/xfs_buf.c:712
- xfs_trans_read_buf_map+0x1d7/0x8e0 fs/xfs/xfs_trans_buf.c:304
- xfs_trans_read_buf fs/xfs/xfs_trans.h:210 [inline]
- xfs_btree_read_buf_block+0x290/0x470 fs/xfs/libxfs/xfs_btree.c:1402
- xfs_btree_lookup_get_block+0x28d/0x500 fs/xfs/libxfs/xfs_btree.c:1907
- xfs_btree_lookup+0x4e1/0x1410 fs/xfs/libxfs/xfs_btree.c:2018
- xfs_alloc_lookup fs/xfs/libxfs/xfs_alloc.c:166 [inline]
- xfs_alloc_lookup_le fs/xfs/libxfs/xfs_alloc.c:212 [inline]
- xfs_free_ag_extent+0x25d/0x1760 fs/xfs/libxfs/xfs_alloc.c:2080
- __xfs_free_extent+0x2f1/0x470 fs/xfs/libxfs/xfs_alloc.c:4048
- xfs_extent_free_finish_item+0x28b/0x670 fs/xfs/xfs_extfree_item.c:555
- xfs_defer_finish_one+0x5c8/0xcf0 fs/xfs/libxfs/xfs_defer.c:595
- xfs_defer_finish_noroll+0x910/0x12d0 fs/xfs/libxfs/xfs_defer.c:707
- xfs_defer_finish+0x1c/0x180 fs/xfs/libxfs/xfs_defer.c:741
- xfs_bunmapi_range+0xc4/0x140 fs/xfs/libxfs/xfs_bmap.c:6178
- xfs_itruncate_extents_flags+0x306/0x990 fs/xfs/xfs_inode.c:1066
- xfs_itruncate_extents fs/xfs/xfs_inode.h:604 [inline]
- xfs_inactive_truncate+0x125/0x1b0 fs/xfs/xfs_inode.c:1168
- xfs_inactive+0x949/0xcd0 fs/xfs/xfs_inode.c:1454
- xfs_inodegc_inactivate fs/xfs/xfs_icache.c:1944 [inline]
- xfs_inodegc_worker+0x31b/0x7c0 fs/xfs/xfs_icache.c:1990
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-The buggy address belongs to the object at ffff88805f82f7e0
- which belongs to the cache xfs_buf_item of size 272
-The buggy address is located 112 bytes inside of
- freed 272-byte region [ffff88805f82f7e0, ffff88805f82f8f0)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5f82f
-anon flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801ef9a140 0000000000000000 0000000000000001
-raw: 0000000000000000 00000000800c000c 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 6113, tgid 6113 (syz.1.18), ts 84620086100, free_ts 84595180484
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2487 [inline]
- allocate_slab+0x8a/0x370 mm/slub.c:2655
- new_slab mm/slub.c:2709 [inline]
- ___slab_alloc+0xbeb/0x1410 mm/slub.c:3891
- __slab_alloc mm/slub.c:3981 [inline]
- __slab_alloc_node mm/slub.c:4056 [inline]
- slab_alloc_node mm/slub.c:4217 [inline]
- kmem_cache_alloc_noprof+0x283/0x3c0 mm/slub.c:4236
- xfs_buf_item_init+0x66/0x670 fs/xfs/xfs_buf_item.c:878
- xlog_recover_validate_buf_type+0xa2e/0xdb0 fs/xfs/xfs_buf_item_recover.c:452
- xlog_recover_buf_commit_pass2+0xe2b/0x1a10 fs/xfs/xfs_buf_item_recover.c:1098
- xlog_recover_items_pass2+0xe6/0x130 fs/xfs/xfs_log_recover.c:2009
- xlog_recover_commit_trans+0x658/0x8a0 fs/xfs/xfs_log_recover.c:2078
- xlog_recovery_process_trans+0xab/0x1c0 fs/xfs/xfs_log_recover.c:2309
- xlog_recover_process_ophdr+0x2f5/0x380 fs/xfs/xfs_log_recover.c:2455
- xlog_recover_process_data+0x1a5/0x430 fs/xfs/xfs_log_recover.c:2500
- xlog_do_recovery_pass+0x9cd/0xc30 fs/xfs/xfs_log_recover.c:3235
-page last free pid 6113 tgid 6113 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
- pagetable_free include/linux/mm.h:2917 [inline]
- pagetable_dtor_free include/linux/mm.h:3015 [inline]
- __tlb_remove_table+0x2d2/0x3b0 include/asm-generic/tlb.h:220
- __tlb_remove_table_free mm/mmu_gather.c:227 [inline]
- tlb_remove_table_rcu+0x85/0x100 mm/mmu_gather.c:290
- rcu_do_batch kernel/rcu/tree.c:2605 [inline]
- rcu_core+0xca8/0x1770 kernel/rcu/tree.c:2861
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-
-Memory state around the buggy address:
- ffff88805f82f700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88805f82f780: fb fb fb fb fc fc fc fc fc fc fc fc fa fb fb fb
->ffff88805f82f800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                 ^
- ffff88805f82f880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
- ffff88805f82f900: fc fc fc fc fc fc fa fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Also, do we need a new policycap to conditionally enable this new
+labeling behavior to avoid any regressions?
+See the corresponding checks for cgroup labeling and
+https://github.com/SELinuxProject/selinux-kernel/wiki/Getting-Started#addin=
+g-a-new-selinux-policy-capability
 
