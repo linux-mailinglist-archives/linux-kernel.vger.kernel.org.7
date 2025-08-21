@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-780256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4BAB2FF90
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:04:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD50B2FF93
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88BC4189194D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:57:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CE2B1BA187E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F14D2E1F1E;
-	Thu, 21 Aug 2025 15:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5022E1F1B;
+	Thu, 21 Aug 2025 15:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SbuG7NyA"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmjJNJmv"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4012E1F1B;
-	Thu, 21 Aug 2025 15:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592A9275B0D;
+	Thu, 21 Aug 2025 15:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755791839; cv=none; b=fD8UWwWy64LM5WqVAF2IRuYs/cVeqiYNjWNm3dHqoZFdV7x6PJUvh1Ifs0pKw0Nn64BMiJs+uLbk3plemK8aDZMvD5aGNnH+QGsEj4U530vulBO7yxNF12bYNZsKXCe2AHt1S2M9e6j/s3B7lXOHxLnCNVYQmQJrKLLP5CIDg3M=
+	t=1755791844; cv=none; b=YItlyHo9orhIVLr26W93cAbshuDmQX5hUjx0YS6afl+OasAzK6Fk69cCWg+B1zXchDW8Y8H3pLAQ2mLk9FyI6QQ1bD/7Fav9DjgPvhDfBEHXrepfvxA48i30tvVSnvB/D/HtAB3DG/xAyYMhd687JU9TISiHu3O58j/U6fnvK54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755791839; c=relaxed/simple;
-	bh=iUK4B/CmqL3+Q73zw9YIpvF6fPa74yfaI3WOfamJS8k=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qR9GnOmUccb0zmj5EXQIiaUUnFvIGq+A720h2q8AYnRgFnkWP+yZOb+eo4fLfTniA9w4RIC6dyofwjqn+RJOzHqAmthiD2gidRFjXIa3IysdWafR6LX1kf6Ag+05bMBsU+EDwYq6pLIOouz+QFytAM2VOdo53h4t2OhuCTO4Z4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SbuG7NyA; arc=none smtp.client-ip=209.85.216.50
+	s=arc-20240116; t=1755791844; c=relaxed/simple;
+	bh=aT4t5F2y67HWgbmENf4vzAFYl2ef4GaofSdzJe/3ZlA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=MGY8J4mzlgcw+6N51SMVMLF14+lS83463zSrgfakSeRK4UUxjyCoBZXazSp4iJ7Isps5uhR/MUC3LVB41kt0YoEY/j+xlfIHnZjxUNAuS61N0awaGi9whvEAnN5YTKJCe54FNvWhCo3U+VoIrzB6I8aKF1ZvfBsGLrZlC3A2Ss4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmjJNJmv; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32326e8005bso1344936a91.3;
-        Thu, 21 Aug 2025 08:57:16 -0700 (PDT)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-321cfa7ad29so1747731a91.1;
+        Thu, 21 Aug 2025 08:57:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755791836; x=1756396636; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EqlRTlA4R1X2+J6LfIK/nlbcP+4L+ArUw8i4qlAeNpY=;
-        b=SbuG7NyAGhPhxWgeK2bHC7ug7KlOJuuOigIuOnDiZYNNX1VNUVVaghCdfN6H5QVoua
-         GjfYEfurNkU33Br6COuSRBvMdrll4i6jEC3g8WUf9dHzUGloFT8+8OU03f6dUegplysM
-         y4GO44n39SGpwCrLbZ7i3F5E5ckgIaNXcr0tTaK8udQbC0w4+QhgsP6kW9qPRYlPS985
-         6M68hIYPADE9ZXkeHo29YNVYi28PYA84BDTVzBqR+yTwkq5GLzyDjSw+g472b66m7fwu
-         4AsbP/tOAIk95eT2iNtjUCUhHa6UWMG5YZtURPmj5lPNUZNMhzOI5tMXMOU+5lO52AfE
-         AHlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755791836; x=1756396636;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1755791843; x=1756396643; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EqlRTlA4R1X2+J6LfIK/nlbcP+4L+ArUw8i4qlAeNpY=;
-        b=GwIsLSQm8QgsBQES//R2s4pI3lyDBWmLSYHgBFgn3/Cp6G/Ayfl3FMvhjbRe+Ew77V
-         2VgnUjMEv8JiBkegvXbQKArP/+d6bqtyXsaXLAKpR8bPSAYkvZYEGunchqDX/QulEthn
-         azkIndCKx393qPmlZyv8tfwW9lHOl1ta2pCPmeJB/fvCuZFIB8fvCCWYjD6B5pRkSHbk
-         o4l3OFjuqxNbl5DAJUGEIEC9Z7YAfWCDQpn3A2jh6VaGbOthFfHbu8v7ZpwRU1qWP2cK
-         Scz6RxN65kAgHb6AXC+MqI2PXwi3KpeGXmcsH6nzRfdFyC134BfGJm0Tw4QKo7F7MRdZ
-         NZ1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUSQSAu1Vy62xRrfTgPDfmRHabRjjvQrLlZqDaIs1EFv1huonKwRIvkzlILH+l+pLSkUyQt4WEaJ06B@vger.kernel.org, AJvYcCUjQ/kpuqyNEmaGXwl2eSdC1gBUXwTmsBVZZE1+BnpmQpGOzgZdM1qx3hoW7iliV3Smynaq1MUQ/utWSkFh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr/UA/EnPT9BVX5d7D/RW2VmGGMIt6u9yAKYe/mFw4teMFwMv+
-	V1INZEWMO81mkJnnNuc2kkMBVjX7t4u93wr+NNmJLhmeQybPJ0U0KwQy
-X-Gm-Gg: ASbGnctaygFEEqrj63lUg1JIHZxLqdCSFgEhlLEkPUQFh4UzWLIaydyDbJlM0/kIsrj
-	yHf0X8Ny6zwjN5yfGASx8CSCzFhSzMRVB6mgRlNIyhP9NF4TffUYd869MlX4H7+qjafDkWpIDSe
-	s0sLJfgpEq7xMWb6S8nB2XTQowIOz1VDmD7h8CpFrhCEc3s+vE1Dej49FDlmJ0o/LGQi2tUI4zh
-	vsK7r5mJfEZCq1u4/s/FTPmLvlsLdYrU8tzTO/5aK9afoMQJxj+p7KiWyJ2xb15Iw9bDkMqRu8a
-	NdYnOdksVok/lj6uxM5Zw+NLht/jZOxpjtiy6YoITGljmBG5zIi0VFVr731xId/UIA9EEZW4dLv
-	haAafzNUv01mU2RABHvihLEK5ZtnzZ60arofbdkf30fFhqzc=
-X-Google-Smtp-Source: AGHT+IGY/0LdDkG3WlHhoiU3i1jzAfuDrGRNnzLZsjyafdBsIPbZDEnKdNCzVy+LG9syFh6upBaBLA==
-X-Received: by 2002:a17:90a:d404:b0:312:1d2d:18e2 with SMTP id 98e67ed59e1d1-32515ec1334mr26076a91.20.1755791836352;
-        Thu, 21 Aug 2025 08:57:16 -0700 (PDT)
+        bh=4j3UGmCjPkpS1tmosPSouCHG7oP/SURnr100ibkxKMQ=;
+        b=hmjJNJmvaY3f3f00j/nlRicgkt+bk1+yqT92l3rxFC2ZV2rPoL6P9QplKW+cBE5XXd
+         BgYXoX025gZE0FUGv82LIV7XrMBwqGN3JswrOcK5xMGhSAwpKeRsp9QTwQsxHQsnmAQ6
+         iWaZGw2ib/q2geqehjMmH706wvSABJxqTgee30PTn/ETb16LJNx/nh+6svZRz9iq5mg+
+         EnEQP5bC5NdjDlmSt16kRqZQ9El4fqr3RLYvPA4T7b1ofcALQ5VsIH3N/glfZAmwShQU
+         P7Gsio1O7EG8P5lJK4acWvR5XwuAHm+2M0NEpmsw//Lo7MsOlLMHwUfC3LVV07mfik8v
+         nPRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755791843; x=1756396643;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4j3UGmCjPkpS1tmosPSouCHG7oP/SURnr100ibkxKMQ=;
+        b=dgtAoS04YGKKDV9caC3478P9zAEf8EGVyGusluLysUHUrnFDSD2liPOB/MwIl7ZBZl
+         7rULrz2oCh13KKs/vGhb6ubzjEH8I2uuJqeWgQFT63DWucX3I5e1kHR7wHLTMeNGWZAN
+         JIq0YUgbdO6IxcGCqh0INE2Zr55B0VVoirevqeHFVmHFD9ymjteqLkOdpqIrXZa5epCx
+         VFJvfM6hckBtPRMYerK+m8ggF4hVbge13jeKQugSHxQOx8UIugR3QILXS111wll6+wo9
+         vJo01yBovPJ1Cnu9L5Ystz+e/wsoL8lXaUNkXs4sYnKut30jnVRVNd1J5A/p4ChEQmSn
+         HPDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWu6F+LCZkRrCEJUnlx6HmMNKPcSDLpj13PGKSLj03IFCTXpxDMvyZFq/uQ8ljtzTpsdJSmF/PMXu2wlqBD@vger.kernel.org, AJvYcCX3SuCVKHmzzPWA7YOxykSuE4a4+5kmOsHAFgo/NZqVcvlTgwbqMWj702fVomTvK9QkbGfSRdv1XElz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq2OUmAR0pW5ByzmpZVG5IqkSUokLw3L2dv6lAJIQfKTvEq7qk
+	hBgGO0zAVGwGFOarfJeAAwMi4MePPM4qULlekOtMER9K+XljQmafpRCa
+X-Gm-Gg: ASbGncv8JVqYRT0QJeFwf6eFG4fgSlMvUaQ6xT47o0V3R/KQhjZSkwuq/hvAufxajMo
+	KnXjnrm9VSRifWjON/xTHgRDIxrNGOBTDXYjLAe6lfcTjz2gEas66rp8Dt5LUDCRPnnjd6YofPY
+	RsrNw//4h0upo41TwBOCjxbcGfBWfRCdFXwC/0ndX9W3t+UzsnFjWauvjoRhocy+PdtZ7cEFrm0
+	xiyUBWP7fyW3yRIHwGRJqywwTULlW3gzyJ5fh6SRGtQOFffe2PTlt13ptP+6dYphgR0zypZTDwp
+	pLe/AFXrAXwS52YCMcTPrTTjazbTToQKbj1XqfZ3ZiZAKn7kS7KPsWs9yzpnRLgPST2F2ieE31q
+	8GqOTjasB3/WqFl+lOy1UoFocM4GBasXYbJ6sXUcKhvlMpeQ=
+X-Google-Smtp-Source: AGHT+IF9e73V5L0GJ4m8c/wyYuFTuRvWMYZBEUvb8sVuZ4sk4ob+Qxwo84ji2NVWtD5/HFf92Hoh8Q==
+X-Received: by 2002:a17:90b:3d09:b0:31e:f30f:6d3b with SMTP id 98e67ed59e1d1-324eecf9b08mr3700392a91.2.1755791842544;
+        Thu, 21 Aug 2025 08:57:22 -0700 (PDT)
 Received: from [127.0.1.1] (061092221177.ctinets.com. [61.92.221.177])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b47640afb33sm5094320a12.38.2025.08.21.08.57.09
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b47640afb33sm5094320a12.38.2025.08.21.08.57.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 08:57:15 -0700 (PDT)
+        Thu, 21 Aug 2025 08:57:21 -0700 (PDT)
 From: Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH v3 0/9] Add support ANS2 NVMe on Apple A11
-Date: Thu, 21 Aug 2025 23:56:37 +0800
-Message-Id: <20250821-t8015-nvme-v3-0-14a4178adf68@gmail.com>
+Date: Thu, 21 Aug 2025 23:56:38 +0800
+Subject: [PATCH v3 1/9] dt-bindings: mailbox: apple,mailbox: Add ASC
+ mailboxes on Apple A11 and T2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,11 +84,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALVBp2gC/1WOQQqDMBBFr1Jm3ZRJNBq76j1KFyEZdaBqSSS0i
- HdvlC7s8n14j79ApMAU4XpaIFDiyNOYoTifwPV27EiwzwwKlUaDRswGpRZjGkjUhS1b563S3kM
- WXoFafu+x+yNzz3GewmdvJ7mtv4yUx0ySAgW1jVOIVJe2vnWD5efFTQNsmaSO6t+DpLJa6ao0z
- kvTEB7VdV2/kjB/D98AAAA=
-X-Change-ID: 20250808-t8015-nvme-73a4fcda25dd
+Message-Id: <20250821-t8015-nvme-v3-1-14a4178adf68@gmail.com>
+References: <20250821-t8015-nvme-v3-0-14a4178adf68@gmail.com>
+In-Reply-To: <20250821-t8015-nvme-v3-0-14a4178adf68@gmail.com>
 To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
  Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
  Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
@@ -101,90 +101,53 @@ Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
  iommu@lists.linux.dev, linux-nvme@lists.infradead.org, 
  Nick Chan <towinchenmi@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3117; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=iUK4B/CmqL3+Q73zw9YIpvF6fPa74yfaI3WOfamJS8k=;
- b=owEBbQKS/ZANAwAKAQHKCLemxQgkAcsmYgBop0HOLQWhVWXbaGc0BzFZVP9f/db2mKxsmWbHT
- 9Fs8JqKVcKJAjMEAAEKAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCaKdBzgAKCRABygi3psUI
- JEpREACw1A07RdsR5Kch8lz/TYoO2c2/cr6rKNdpFHUNRYoKSVzpHzJq/CcFTMSa2dygiXmFfqS
- Sj2mZgt8ht24uJwjnCb57ETwEovCfCDGovUQNM4AiLK3VPQIvWNNDwzPVd4kUUozSoDwNCJm1lv
- zLKjN+L0GUuMCSJDdybD3oKpeKJhW6xc7szELbdh/f4S2BtKI4NL5U8BKs4a3NDxJI9nt1dmj9o
- 5pR6USYp/56avbgcDjzmxxpdMqjdSmvzLArJBdFn5JKIXLKfV+VVRkKVmq7oWTmPJJx67mN12Pl
- LZZTgJMtSxvEJAwLx33rXs+37v59BHH7ZA+FBW9T8h3tx2Yw0ml/nKcVHoH/7fUgNYh1lEHHENS
- LBghUUrpEKW2JnFzkT+oXQj0YWkaj8zoCOH+SbEy595B/274nXqoEflHWbaTibgJulEtHSBa4rX
- 1aLaJqA0WcJmlKNt3+m0wd1zwOamCqhbe4Dbw0j+AwiGo9ok1aRQ+EXlPF0Edbc5HBhP3tKhGIt
- tzhn9rFqwuQTgHwapzdeZ6RYQ6NTaQIcDdFkROyd9g86X6EhWqJjcifwLYKquolcPqaQJnj7q3V
- iNs5ABIsDuxlumXhSAt5KknZurOdsAP4n4oIQc43f169Qk8bsJSQZNaR3CroHRlDlIV3ESd02zn
- khOxWVzrkMWUlkQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1364; i=towinchenmi@gmail.com;
+ h=from:subject:message-id; bh=aT4t5F2y67HWgbmENf4vzAFYl2ef4GaofSdzJe/3ZlA=;
+ b=owEBbQKS/ZANAwAKAQHKCLemxQgkAcsmYgBop0HUUPbE15NZosT3IEFTJW+24ZWMhyU+JoV2Q
+ WVUeBbwX+iJAjMEAAEKAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCaKdB1AAKCRABygi3psUI
+ JGkXD/94d1kksoerwXSsMGQTysYOmWY5f/NO8PwqSESSbEBiHoUzVpro88j7yHlZRZPsLcHVgEJ
+ fV3x+1Cx+oG8xSCvCMNjXkAog2MeESRudOKu1Ci2lJTAPOpqqDqwwXisGo4z8cyYqUcnrwBEItc
+ UBgM+DbloO6ILChq0OLXgqRdrPKNBe79MljNt7/lDE5jOaNAv6O6gXwpisv2Hv1CrosG4DnzqdM
+ ojiv21uaEkKAATAOBonffdQ8hCdiAUBNSOZ94s4vq0sewDAYLsNTJKbGvTerIXlZWHXv8wSP98o
+ qXoCBS2HVRiUG3K0/oSJSTwGyCZKvQcAgDrmgVi+v6oUuX+7zmzU7CZziPDn6b54EQAR9SlDaCQ
+ oZ9U8vQxAFyY6SH1j6siKQlLpONcSCCrwtaDZIS/KGGa1iWforS7wdL8SKUchqx0rN8fhI6xkFS
+ 2Ja6Z+0X/kwzFk1/1cUHj6hzczTN++6Bj03CUax0Zdu045eHn0o9F+ibkL2zVctLyUyqGYBuse4
+ nRizdxC2T4CzG5yi7Pkix+hlXQaJF8qH8E8xcL5r1MLXI7IH0HYaCwrmOaRDmENWk3jNzZ1votX
+ gJQT0L8qelm1fG43gboJ6BTIIW+wO0lpILMEWoshhZoeH8VCty0DQ5SJRKDaKUnVCJBZ5+s9E5L
+ Twjq02ZQc7UuNog==
 X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
  fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
 
-Apple A11 SoC comes with an NVMe controller that is similar to the
-NVMe controller in M1, but less customized. Notably, it does not
-have NVMMU or Linear SQ.
+Add bindings for ASC mailboxes as found on Apple A11 and T2 SoCs. These
+mailboxes are used for coprocessors including Secure Enclave Processor
+(SEP), the NVMe coprocessor and the system management controller.
 
-The controller is wired to an older variant of the SART address filter,
-and uses an older variant of ASC mailbox, so add support for them too.
-
-This variant of mailbox is also present on Apple T2 SoC.
-
-This series has everything required to support NVMe on Apple A11 SoC.
-However, due to RTKit protocol version support limitation, it will
-only work when booted with at least iOS 14 iBoot.
-
-Tested on A11 as well as M1 Pro (to make sure nothing broke).
-
-Patch 1-2 adds support for the older mailbox
-Patch 3-5 adds support for the older SART
-Patch 6-7 adds support for the NVMe controller found in Apple A11 SoC
-Patch 8-9 adds the required device tree nodes.
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Nick Chan <towinchenmi@gmail.com>
 ---
-Changes in v3:
-- Update comment about enabling NVMMU and Linear submission queues. It is
-  required since T6000 and much of the comment has been removed as it was
-  stating the T8015 (A11) code path as a possible alternative.
-- Make sure all the code changes are within 80 columns
-- Simplify apple_nvme_submit_cmd_t8015()
-- Remove unnecessary cast of of_device_get_match_data()
-- Use direct function calls for command submission
-- Use existing enum in apple,sart binding when adding the "apple,t8015-sart"
-  compatible.
-- Link to v2: https://lore.kernel.org/r/20250818-t8015-nvme-v2-0-65648cd189e0@gmail.com
+ Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Changes in v2:
-- Remove bogus command_id decrement followed by increment in apple_nvme_handle_cqe()
-- Split apple_nvme_submit_cmd() into two functions for t8015 and t8103 since these
-  two code paths were not sharing much code.
-- Link to v1: https://lore.kernel.org/r/20250811-t8015-nvme-v1-0-ef9c200e74a7@gmail.com
+diff --git a/Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml b/Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
+index 474c1a0f99f34777e1bed7fc0a34f89320a93b7c..bdf58f03b84833ecd93a34b91f6262d1706a002d 100644
+--- a/Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
+@@ -33,6 +33,13 @@ properties:
+               - apple,t6000-asc-mailbox
+           - const: apple,asc-mailbox-v4
+ 
++      - description:
++          An older ASC mailbox interface found on T2 and A11 that is also
++          used for the NVMe coprocessor and the system management
++          controller.
++        items:
++          - const: apple,t8015-asc-mailbox
++
+       - description:
+           M3 mailboxes are an older variant with a slightly different MMIO
+           interface still found on the M1. It is used for the Thunderbolt
 
----
-Nick Chan (9):
-      dt-bindings: mailbox: apple,mailbox: Add ASC mailboxes on Apple A11 and T2
-      soc: apple: mailbox: Add Apple A11 and T2 mailbox support
-      dt-bindings: iommu: apple,sart: Add Apple A11
-      soc: apple: sart: Make allow flags SART version dependent
-      soc: apple: sart: Add SARTv0 support
-      dt-bindings: nvme: apple,nvme-ans: Add Apple A11
-      nvme: apple: Add Apple A11 support
-      arm64: dts: apple: t8015: Fix PCIE power domains dependencies
-      arm64: dts: apple: t8015: Add NVMe nodes
-
- .../devicetree/bindings/iommu/apple,sart.yaml      |   1 +
- .../devicetree/bindings/mailbox/apple,mailbox.yaml |   7 +
- .../devicetree/bindings/nvme/apple,nvme-ans.yaml   |  15 +-
- arch/arm64/boot/dts/apple/t8015-pmgr.dtsi          |   1 +
- arch/arm64/boot/dts/apple/t8015.dtsi               |  34 ++++
- drivers/nvme/host/apple.c                          | 196 ++++++++++++++-------
- drivers/soc/apple/mailbox.c                        |  19 ++
- drivers/soc/apple/sart.c                           |  60 ++++++-
- 8 files changed, 264 insertions(+), 69 deletions(-)
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250808-t8015-nvme-73a4fcda25dd
-
-Best regards,
 -- 
-Nick Chan <towinchenmi@gmail.com>
+2.50.1
 
 
