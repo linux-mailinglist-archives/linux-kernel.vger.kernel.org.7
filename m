@@ -1,107 +1,107 @@
-Return-Path: <linux-kernel+bounces-780233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D663B2FF49
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:55:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D690BB2FF3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83AA76454E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:48:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 936EC1D23A01
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37F62E1744;
-	Thu, 21 Aug 2025 15:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AA2353355;
+	Thu, 21 Aug 2025 15:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QMDIBxQ4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Wn4rSLgA"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677232E2F0E;
-	Thu, 21 Aug 2025 15:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464B62D12EE;
+	Thu, 21 Aug 2025 15:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755790853; cv=none; b=BNN8a2egn+VIvunZ9taH6j6ir4WwDziaklS2lfoRqpcR6beVwTziiw6XUsl4/942TfcGptAx3WpZW4E5FIGaCUj4elW9qNGpl4fjAlMT+yW0rxR7NuFfp2wJXzARhYC82BRISLDz9leLRezchka3vMVzrUOlWOSshKQtoxmY5rY=
+	t=1755790839; cv=none; b=ZNE7yVUt4cubS5yGvuyt7qK91yqg42NR3OWZbC9B1MRXQRORPeOG4LjSz+qW5CaJzyQ7ufJkken9jv7Bn96cg9WamunN2HmPqqeZJBtC463T3J4jDaM+GAzXEmcAK89to7j+jLu+lmYoVfgWkQtjWi+yUhVRRsAvI2m6SXvWKRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755790853; c=relaxed/simple;
-	bh=yuP5NjNY6ORzDi4IxT8giX54EGDttf6YI229VJ4Axnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U2k/MilulsQFMyq2/jQxsAdKaACV4KvIQQNdhP8MWl/PJmVzXBklWYlvWZxHS1vHFZSlQN0iYWvgrh2XeCEh/lSmKpIWYG0Y/e1QtAxKN23C7t3VYfE38QL0eJsrOJQX2NvWG4L8MvFRgpCarHgcYBZ0nwR50Slv9VIdyjToED4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QMDIBxQ4; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755790851; x=1787326851;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yuP5NjNY6ORzDi4IxT8giX54EGDttf6YI229VJ4Axnk=;
-  b=QMDIBxQ4ECZjUKz4Mz4DUr/jPY6ZVqZe1ngMMpvFJ3zbBDU5zpgDPAB1
-   li5IwmohgKDPeA7z9ZRd1pVKKAsM7yUT1eJT0KDwWU86cMcLQRR/qGRMb
-   S7UU3uvOCAzpE5x5po8uhXBgcHilmqVc/w1pLHYko2CV6spTb6Py41ps9
-   p4wS18sHAmwtBFX1mj4EVrBs5Ts1xgSR2aLeK8eDIWbLlIXqg3RUDDLC+
-   N6Wo5h1TRVcxRvMbP1iS/hJvrRk3FS0DyShkxoNYCMBVXrzC2U9wXrCLf
-   yLAP2s/f1v0cN3xmyrFc24kzI8dFGqaC3HNaZHGrAjC7ciX5szDDSpTSS
-   w==;
-X-CSE-ConnectionGUID: 7HdqX8c7Sd6oo3aUpplb4A==
-X-CSE-MsgGUID: DVgeBHEJRnioTP/v+eiNFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58182657"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="58182657"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 08:40:36 -0700
-X-CSE-ConnectionGUID: 3extm1kgS9yZL4W7U6g66w==
-X-CSE-MsgGUID: LZPTUFqjQ6+3alyt9nWXkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="172699000"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 08:40:33 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1up7Ow-00000007H61-2Zmh;
-	Thu, 21 Aug 2025 18:40:30 +0300
-Date: Thu, 21 Aug 2025 18:40:30 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jack Xu <jack.xu@intel.com>,
-	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
-	Colin Ian King <colin.i.king@gmail.com>, qat-linux@intel.com,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] crypto: qat - use kcalloc() in
- qat_uclo_map_objs_from_mof()
-Message-ID: <aKc97iuDAiIacRiL@smile.fi.intel.com>
-References: <20250821142028.33256-1-rongqianfeng@vivo.com>
+	s=arc-20240116; t=1755790839; c=relaxed/simple;
+	bh=EDi7kgFTFGG9Vox1cVUjyMOtC59OypbC935AUmppWQM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=thQhzF/ox51G/JGMSxKC/FXB9xtbIbqiNxRTs/MLoBMDSNEezQsCQaOh8SmR3pu4vwVyyyzxJjaBh5xfi7cFdeomk10VbD5n6TAIIM9Gymx0wuSw+8Do+OsOn9Su+KNrjucxNGIi2z1vKSgT+DksoPjVgeYZc0Iqgp4LZrjxjAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Wn4rSLgA; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1755790835;
+	bh=EDi7kgFTFGG9Vox1cVUjyMOtC59OypbC935AUmppWQM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Wn4rSLgAtBESNTpqj4tuLfgY95Xb0GTw1j3Yjf1aWIl+QbESxXrkWN+oq/d1EkFGt
+	 sNthlD3h7gTF7wnD8mNtzl69KvFjL4BwpGQUqZKpJJnS10BiLLybmqBS2txPp2FNC1
+	 KsY+eqDn92GhYEQ0FJKP9nzDDHezyltqFPr7Gm+s=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 0/7] tools/nolibc: reduce __nolibc_enosys() fallbacks
+Date: Thu, 21 Aug 2025 17:40:31 +0200
+Message-Id: <20250821-nolibc-enosys-v1-0-4b63f2caaa89@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821142028.33256-1-rongqianfeng@vivo.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAO89p2gC/x3MQQqAIBBA0avIrBN0QIiuEi3UphoIDQeiEO+et
+ HyL/ysIFSaBSVUodLNwTh12UBAPn3bSvHYDGnRmRKtTPjlETSnLKxoDUjTBGRc89OYqtPHz/+a
+ ltQ+QOsuCXwAAAA==
+X-Change-ID: 20250821-nolibc-enosys-2b2ec0b505ba
+To: Willy Tarreau <w@1wt.eu>, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755790835; l=1762;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=EDi7kgFTFGG9Vox1cVUjyMOtC59OypbC935AUmppWQM=;
+ b=IWi1WXyurTh7V5K7rWfEYUuPalw0ndbYdqh6apShuST0cLYoa1D/Ii+IMbwJFHiFj7eau7szJ
+ aZbpUT8VPeYAaNLfOyw9Uqpz9yDKCnzYiCoI0jqlT91qHoe4fU4/1Hi
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Thu, Aug 21, 2025 at 10:20:26PM +0800, Qianfeng Rong wrote:
-> As noted in the kernel documentation [1], open-coded multiplication in
-> allocator arguments is discouraged because it can lead to integer overflow.
-> 
-> Use kcalloc() to gain built-in overflow protection, making memory
-> allocation safer when calculating allocation size compared to explicit
-> multiplication.  Similarly, use size_add() instead of explicit addition
-> for 'uobj_chunk_num + sobj_chunk_num'.
+The __nolibc_enosys() fallback is used when the UAPI headers do not
+provide a certain syscall number or any possible fallback syscall.
+This is either because the syscall definition is fairly new and nolibc
+tries to be compatible with old UAPI headers or an architecture does not
+support a syscall at all.
+Many of these __nolibc_enosys() fallbacks have become unnecessary.
+Either because the "new" syscalls or not so new anymore or real
+fallbacks have been implemented in the meantime.
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Unnecessary usages of __nolibc_enosys() as it is not obvious anymore if
+a given function is really implemented on all architectures.
 
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (7):
+      tools/nolibc: remove __nolibc_enosys() fallback from time64-related functions
+      tools/nolibc: remove __nolibc_enosys() fallback from *at() functions
+      tools/nolibc: remove __nolibc_enosys() fallback from dup2()
+      tools/nolibc: remove __nolibc_enosys() fallback from fork functions
+      tools/nolibc: fold llseek fallback into lseek()
+      kselftest/arm64: tpidr2: Switch to waitpid() over wait4()
+      tools/nolibc: drop wait4() support
+
+ tools/include/nolibc/poll.h                |  4 +-
+ tools/include/nolibc/sys.h                 | 90 +++++++++---------------------
+ tools/include/nolibc/sys/timerfd.h         |  8 +--
+ tools/include/nolibc/sys/wait.h            | 17 ------
+ tools/include/nolibc/time.h                |  8 +--
+ tools/testing/selftests/arm64/abi/tpidr2.c |  6 +-
+ 6 files changed, 34 insertions(+), 99 deletions(-)
+---
+base-commit: 850047b19741490631855a475ccaa3ed29316039
+change-id: 20250821-nolibc-enosys-2b2ec0b505ba
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Thomas Weißschuh <linux@weissschuh.net>
 
 
