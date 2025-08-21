@@ -1,162 +1,139 @@
-Return-Path: <linux-kernel+bounces-779260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41D3B2F162
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:24:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67384B2F16C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16EC5A3F43
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:19:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6627B1CC7811
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613982F60DA;
-	Thu, 21 Aug 2025 08:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36156286425;
+	Thu, 21 Aug 2025 08:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hM0UtY8/"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TlaJWLiv"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E767C2F5334
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15B1223DCE
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755764100; cv=none; b=t9U9E94qp77zVrl9MJLmMNsZQNTDpLekqKOPp8Vh+8R8l/E3raijaXIfNUfb6tvK85PcmBDwRT3i9m5V5sAOJ8CqFQAuc59QS1pFBOP0y7Pg6NHYweP5ithJuE24YkHyB747r6v/6yyOV4bMlACWPGmnPYe7DnqgCSOyt8qD54M=
+	t=1755764123; cv=none; b=RfxKhrbBonAGkC5PhNyje56WN/OBs27cP3Ua6T0vrkThC9f8+7uRFEGVitqE7w13oQjtq+iqzLJm2mZJNt6ur0MinUU9u75PB82Em0Te5xYYZTrWr1731p3evjrsXcxqKC/xQ1FjGVKqUMcmWshxWk7n9DYm8xeVHTdsb/lrLBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755764100; c=relaxed/simple;
-	bh=3KMoWYrKCS9iXFyZU23vQdmkGsH1bjakmfocPm6yigk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sM7p2yN0g0irgKwP1uyea5SCxzqHjK02h4zqTdvRZzE2EjtNIqMFHCUGsvjHjdx6VyRZtK4hUvz0bKMGBByEUH0kGn3wJN7vXcMksffe9eXzmTcZyBqwaoD3zXeyNEWxH/YoARTXS/m3M6zseNwytPXhihg5guJgM+/fCie1oDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hM0UtY8/; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b0511b3so3703475e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:14:57 -0700 (PDT)
+	s=arc-20240116; t=1755764123; c=relaxed/simple;
+	bh=vbt1tqWXbFfAK6B5ZYBim9Em4IvHCLkqexMFE5GgN+Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R9F6zwiA61BxRbaPbToj42niP5L2Mku5hRTcIaNAFgClPkbXzKStfFaGqmTMK7t4qdQflD80WukJ6pVH+9gTTSkvpwjrYi3FHK4V64dijU8aycYdsC/46+H8z7Hmfl6NSCWC2QOgE5lPPFDXg5o7ONK1w4u3BPs6PIBIEi9bwvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TlaJWLiv; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b9e414ef53so499341f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:15:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755764096; x=1756368896; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lXmeaJhI9e99CmL9wkkDfiednrjI4qTS7gtaFJx7Vrs=;
-        b=hM0UtY8/PDxLvU684ct/gumgTLbeTeQm8/iI37L77iHdMsdCmx9css7YopzJmmniVO
-         1R4pd6QNIM1fu1o1z9kyaLS5DRjS9Q/FN4oI2TPopv+2erXcwNtRpfVTOc0USIfFbGYv
-         3yWqg2+c0mmPKsbEbF6wO56HneUz/I3aX8b727tmFomieVEKKGglITHu3HfRoaZV9zfR
-         nXYnMNy2JPggizwZfD6yLr+skdPBeRYHSaJsZkH51cDuCCWbfPNrouze1Qb++Q23jcWT
-         yXvrtWq/HV+NDArRW1sAYevoN/Qk46HEzFFCU3oNO1x5ukH5HzvjU3+TX5VNwCApSKNf
-         QwHw==
+        d=linaro.org; s=google; t=1755764120; x=1756368920; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L8HSFHjzyPcrkbwgrBZxmVieuYCxR5QQsHAxl0KSDro=;
+        b=TlaJWLivKT5rlAmabl3+tPeLlI2c+E0+q9BDTQaPDGJYjbzmpI5RXg4BgVjbPK2W81
+         Ng6nnQfv3Aa4c3CDkwAB3x5CpJILY6fviKeby3ckPxRULlGivrbGv93COZwYrEDbgzQl
+         GhoB+b0+MBrEAWR1N7Ett6LUJEfhD5XtdEEuFfRD+PUUpnXkqnPu1qremdtQyALdua1q
+         9L6rZxw70jCHv9zAHIY8L2/UJo3RkD65rrTKtM/zn87A3n4KwF0sqYziOYBvTklOr0JG
+         TAZA5Z0f3hb2AS/0HKRDN131okuCIEPW4muiXd5+q4Y6llPgX5oOH7t4kB9gPo/kC9wd
+         mbag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755764096; x=1756368896;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lXmeaJhI9e99CmL9wkkDfiednrjI4qTS7gtaFJx7Vrs=;
-        b=s6yGpjaELkEQgD3EBF2D8EaJB1vSIIvMD1Li7lskq7grCzUCxl23yhTZWT4mZBHlK0
-         Zxr1PhTbhewV7zbD2GSCz7iGrcCPIdBskf/RhQiQz3v4HELZtJw3oaA6dug//9b7bbux
-         OSTIHXl216Tx2BjK4fjVZ08GdmoKnGgBBDIr3psnBEh9uarBexad58TucHSbOjzoUfk6
-         rSNS7w2OR9LcO5mt8MJCBh6Twoa08V1wqLj7EBRl1Xl34w7Lm8KznmiZR9nO33oYa0LC
-         PdYfiYO0ncz3JTI4i/Geqj5w0XeKIFRteAXT4Cx2WLjrBPPNDH2mDdW2BhHaLpjHEuId
-         BT4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVtlLuyLflkJfq5IGysEanbMj/EvVJjprKfoMRsy8SHbQtdvHsEIplW1jxRq0KFsHdiSsZfEyLqws6jU2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwPiJQ1nbPmSvvjN4XEpg6xeqUX1pum8i+ZK+fui0uZlHS4baz
-	WgmPURdEBdL8mU+4VXCAvehd87JAqVPg7M04yvezRpYjJ20i437NG6UXXjXSFJt4pS3ye7sZuyO
-	QkCnU/1UIONFxtUEClOPqcg==
-X-Google-Smtp-Source: AGHT+IHVkLSbuPXaBGbeYxLB8Apzj2J/LjIQ1ACzqcVV+IhVmKpANZi8n0fKVREaY1XDOmHvrY0P+LX9S3g8rjan
-X-Received: from wmcn3-n2.prod.google.com ([2002:a05:600c:c0c3:20b0:45b:4777:8063])
- (user=vdonnefort job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:a46:b0:45b:47e1:ef79 with SMTP id 5b1f17b1804b1-45b4d869ceemr12017085e9.36.1755764096134;
- Thu, 21 Aug 2025 01:14:56 -0700 (PDT)
-Date: Thu, 21 Aug 2025 09:14:12 +0100
-In-Reply-To: <20250821081412.1008261-1-vdonnefort@google.com>
+        d=1e100.net; s=20230601; t=1755764120; x=1756368920;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L8HSFHjzyPcrkbwgrBZxmVieuYCxR5QQsHAxl0KSDro=;
+        b=JHx9ULW36Ywx4QZO57B0omqsDRNx+qXgy8qae1/by11uchx6HyFs7dv7RmL1xcaEBj
+         xznDCKwclkzZjXKbVcnfaKu84xTCuZxE/UXxdYvj05q6G1KIU+hQPO5MVpbQ1a5vTnhB
+         le0VaeK3ju6CJV3u2jG3bNVBgrinrWqJqk0yjVPPKx7UJV0lbB8k5iTX6vuOAVUdJmCO
+         ab+GRhfY0KdncgLxk0+mWadVHZPzINbrJ1wYv15JfDnQkp6MejuC3u5FcSecg3ytMaGq
+         VfHAXyUljHLiBx2nQaJVPuV4aT+wKhXef2Cx19qZjHVGNCJ/9ZFJGub0hGDBkPWmsoDa
+         1Y2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUshwLmhCzN/O8xLdYTLj/6xQ/4UyUFB8LRY561hVSk6PoNsznOhdwxF6Dr8g/N+yTXprJ8XBh0EfMmFQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5BZ5pCzu70ap/dWMIMq6mwMxq+5xMbEffMAHv7XmomjqNHI0X
+	K5IxKCIYkMyZaRdndfv9tAo2D91LbuAYcxscFhPw78sLCexUlhKVNKbWDsuuYnpJxxE=
+X-Gm-Gg: ASbGnctNK0/2hu2HBpDvZgwTRV86/uMYiw3icScd6lJLOfOTLucxVqor3NLo3AGxO0j
+	iBnAFP2mHJkyfgsa8arTlLh5Abfln5WZqcqD32+DbO3IDxLbfMQ+kY+IeOF4Nf+bTh8dbLo5tj0
+	GtclIAXV96ddDQTnP7QLVUPdVQD86ewDFhEUo8BgWKQqtuDAn3ITVp9JbQBl0CkWwFB9gRkiPHb
+	nBZz/fFrGJWb+8NB6AFkT4AMp+qYvdSxNJGnA5rI8CFmxfI5lAX/fjTKroZOXbRbHHhlyvxmysd
+	N3RJ/DQgOG6xQKjTQmxrQ2DUrnlkHTdH1fGYELCSHMBOFhDeNY9Uu9YCFMnbgkCImZj1+7/eRm9
+	0nH5cm56ffcRwrJBHgsRveh8n2d05BWsqcExJ
+X-Google-Smtp-Source: AGHT+IEfsa76mxwpI1mrE8C+XPfI0wQymO/M6OmtRNn6x49Iow6tML+yuHZ/KY6s376hy9gytb5+9g==
+X-Received: by 2002:a05:6000:230b:b0:3b8:d14b:8f86 with SMTP id ffacd0b85a97d-3c49622263dmr1061603f8f.45.1755764119857;
+        Thu, 21 Aug 2025 01:15:19 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:a59f:f2cf:3ca3:965])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c074e38d7dsm10536232f8f.26.2025.08.21.01.15.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 01:15:19 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Date: Thu, 21 Aug 2025 10:15:09 +0200
+Subject: [PATCH] arm64: dts: qcom: sdm845: Fix slimbam num-channels/ees
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250821081412.1008261-1-vdonnefort@google.com>
-X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
-Message-ID: <20250821081412.1008261-25-vdonnefort@google.com>
-Subject: [PATCH v6 24/24] tracing: selftests: Add pKVM trace remote tests
-From: Vincent Donnefort <vdonnefort@google.com>
-To: rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
-	linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com
-Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	jstultz@google.com, qperret@google.com, will@kernel.org, 
-	aneesh.kumar@kernel.org, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, Vincent Donnefort <vdonnefort@google.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250821-sdm845-slimbam-channels-v1-1-498f7d46b9ee@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAIzVpmgC/x2MQQqAIBAAvxJ7bkEtSfpKdLDaaiEtXIgg+nvWc
+ WBmbhBKTAJtcUOik4X3mEGXBYyrjwshT5nBKGOVMxplCq62KBuHwQf8pEibYDNUqnZWN4YIcn0
+ kmvn6z13/PC+fFg9eaQAAAA==
+X-Change-ID: 20250821-sdm845-slimbam-channels-7b30485172ee
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+ Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-Run the trace remote selftests with the pKVM trace remote "hypervisor".
+Reading the hardware registers of the &slimbam on RB3 reveals that the BAM
+supports only 23 pipes (channels) and supports 4 EEs instead of 2. This
+hasn't caused problems so far since nothing is using the extra channels,
+but attempting to use them would lead to crashes.
 
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+The bam_dma driver might warn in the future if the num-channels in the DT
+are wrong, so correct the properties in the DT to avoid future regressions.
 
-diff --git a/tools/testing/selftests/ftrace/test.d/remotes/pkvm/buffer_size.tc b/tools/testing/selftests/ftrace/test.d/remotes/pkvm/buffer_size.tc
-new file mode 100644
-index 000000000000..383ef7a84274
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/remotes/pkvm/buffer_size.tc
-@@ -0,0 +1,10 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Test pkvm hypervisor tracing buffer size
-+
-+SOURCE_REMOTE_TEST=1
-+. $TEST_DIR/remotes/buffer_size.tc
-+
-+set -e
-+setup_remote "hypervisor"
-+test_buffer_size
-diff --git a/tools/testing/selftests/ftrace/test.d/remotes/pkvm/reset.tc b/tools/testing/selftests/ftrace/test.d/remotes/pkvm/reset.tc
-new file mode 100644
-index 000000000000..679e31257d0b
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/remotes/pkvm/reset.tc
-@@ -0,0 +1,10 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Test pkvm hypervisor tracing reset
-+
-+SOURCE_REMOTE_TEST=1
-+. $TEST_DIR/remotes/reset.tc
-+
-+set -e
-+setup_remote "hypervisor"
-+test_reset
-diff --git a/tools/testing/selftests/ftrace/test.d/remotes/pkvm/trace_pipe.tc b/tools/testing/selftests/ftrace/test.d/remotes/pkvm/trace_pipe.tc
-new file mode 100644
-index 000000000000..4c77431e884f
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/remotes/pkvm/trace_pipe.tc
-@@ -0,0 +1,10 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Test pkvm hypervisor tracing pipe
-+
-+SOURCE_REMOTE_TEST=1
-+. $TEST_DIR/remotes/trace_pipe.tc
-+
-+set -e
-+setup_remote "hypervisor"
-+test_trace_pipe
-diff --git a/tools/testing/selftests/ftrace/test.d/remotes/pkvm/unloading.tc b/tools/testing/selftests/ftrace/test.d/remotes/pkvm/unloading.tc
-new file mode 100644
-index 000000000000..059c7ad1c008
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/remotes/pkvm/unloading.tc
-@@ -0,0 +1,10 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Test pkvm hypervisor tracing buffer unloading
-+
-+SOURCE_REMOTE_TEST=1
-+. $TEST_DIR/remotes/unloading.tc
-+
-+set -e
-+setup_remote "hypervisor"
-+test_unloading
+Cc: stable@vger.kernel.org
+Fixes: 27ca1de07dc3 ("arm64: dts: qcom: sdm845: add slimbus nodes")
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 828b55cb6baf10458feae8f53c04663ef958601e..02536114edb88b86fedcc9be50c2205d2018e975 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -5396,11 +5396,11 @@ slimbam: dma-controller@17184000 {
+ 			compatible = "qcom,bam-v1.7.4", "qcom,bam-v1.7.0";
+ 			qcom,controlled-remotely;
+ 			reg = <0 0x17184000 0 0x2a000>;
+-			num-channels = <31>;
++			num-channels = <23>;
+ 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+ 			#dma-cells = <1>;
+ 			qcom,ee = <1>;
+-			qcom,num-ees = <2>;
++			qcom,num-ees = <4>;
+ 			iommus = <&apps_smmu 0x1806 0x0>;
+ 		};
+ 
+
+---
+base-commit: 1aa50d938e88fcad1312467bd09be4037bfe68ff
+change-id: 20250821-sdm845-slimbam-channels-7b30485172ee
+
+Best regards,
 -- 
-2.51.0.rc2.233.g662b1ed5c5-goog
+Stephan Gerhold <stephan.gerhold@linaro.org>
 
 
