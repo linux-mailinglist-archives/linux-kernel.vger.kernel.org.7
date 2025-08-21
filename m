@@ -1,236 +1,182 @@
-Return-Path: <linux-kernel+bounces-780151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CDBB2FE58
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:29:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53638B2FE67
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E332417CD10
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:21:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C79C2AE33A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD3E274669;
-	Thu, 21 Aug 2025 15:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DB22FB60E;
+	Thu, 21 Aug 2025 15:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cmaQU1XR"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2068.outbound.protection.outlook.com [40.107.244.68])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JlHq1wRh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE9C25A33F;
-	Thu, 21 Aug 2025 15:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755789669; cv=fail; b=lGaERc3l8eKIFCVOElnKuXsEZVwI5SbmMK9JT9SYHFxBh3mOcgELNdB4+bNfUNbhrpJW00vwHdJ0e/2ZdqVB3tYUyO9z15kuu2/Q/mnN5maq64M3wizNCtPD7j1EwICIVk/OoalFDOUfctBgK5SlkwVbMqJ+zdLdMAb4gJrnSk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755789669; c=relaxed/simple;
-	bh=0b0Fbrmcxw3IUIZBMsnvVlEh2+MIbOzaT5qATFkRGFE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Q7Yd1EQjLzwBH0Am+F8Nl5r1aNuTugLj7evRzNoWJ9ucvTrHopPjBzWJhKlDl5t9Ti8mfYYVwt79kvJp8MdWgJ3rK7w5CiP3eMy9TPx+p+6COnBK8Yvt2rVHrWPdyB8kFW9lxXlFSG82R3xWLepa4O4gBuismMephX3/Ag4LdS8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cmaQU1XR; arc=fail smtp.client-ip=40.107.244.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SmbdJUPpjd5HK8loxNvaw/mf7qskk6kvpDinnOZ0KVhYPdLXVuiCQKVlwzEH3DktfYgOm+sMAy+62IiciMGSl2ZlZi6THsHiqAino5cBTYDcmqHI+9CcTv4fMYoICTmX1EBEg2icQmmASBKDnnALzh78S+/Ipkfzkmu318z9SKyFYxPTJ2a1UFnB3TIeEwV2yibzwcjVjTdmq8JM3HnW0L653WfGiS8CLfLTWHI0lhx4kR50pK6L+J7tmbLRJLadT+dm876QIj2wDrAtabv79kHphoqobjj9GqffHMmrIY1HoQoO7bu0f7aL6dbdtBUKbSGYsVRvw5/3O9x7sCL6XA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aWNX293L3gXfJona+ntdNT2rRv2Xd3NtVd19oojKliE=;
- b=FJl7e28yzNSizk8apAIxlSqFN+ySfezYTGbjstI8CWbrwo/UIvbtpZjs12MUCBTfFSFhOy8p4vTdOvqVjR9cvjXjimUYMuPsZtWUuCX7KgaYBHIPVfeY5sS6ANe2eKdTU64lgfxqWDExru4B99bOtmebm7h6uekfQz9y4SD9OkhbaZ7asnA6O41V973m1tSEIozXGRxWMNottMp7GOT5Hlo6RLO70W7J2mkg0szlOIenvrstMp2c6dyJR/W+34L4zrESHCRwSMh1ozI8he/n+Yw9bWtoYE4x/0JU8kwOSjfnwMzJGMtJ2sT8xJvBURFgs4tQvNdcy5lyn0iHqiLUEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aWNX293L3gXfJona+ntdNT2rRv2Xd3NtVd19oojKliE=;
- b=cmaQU1XRAMVcNkvj2OKN+pVWw2AKOwROm99dwBurhybqQ5CYa9HDNGDBDZ2cG0S8MDAiMGkafmdfugq+KavBPM4t9Ma5JRD3Tdhbr0baC2NsfNF90uxq/Jr/lmFWJqhPniIzP3ur5pLmzDFUGuelF6l0cTnL7XwvCDxKM76tk5w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21)
- by DS7PR12MB5815.namprd12.prod.outlook.com (2603:10b6:8:77::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
- 2025 15:21:05 +0000
-Received: from BL3PR12MB9049.namprd12.prod.outlook.com
- ([fe80::ae6a:9bdd:af5b:e9ad]) by BL3PR12MB9049.namprd12.prod.outlook.com
- ([fe80::ae6a:9bdd:af5b:e9ad%6]) with mapi id 15.20.8989.018; Thu, 21 Aug 2025
- 15:21:05 +0000
-Message-ID: <24fde6d2-6676-48ca-bc2b-c43b87aa1468@amd.com>
-Date: Thu, 21 Aug 2025 10:21:01 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/2] KVM: SEV: Add SEV-SNP CipherTextHiding support
-To: Sean Christopherson <seanjc@google.com>,
- Kim Phillips <kim.phillips@amd.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, corbet@lwn.net,
- pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- thomas.lendacky@amd.com, herbert@gondor.apana.org,
- akpm@linux-foundation.org, rostedt@goodmis.org, paulmck@kernel.org,
- michael.roth@amd.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <cover.1755721927.git.ashish.kalra@amd.com>
- <95abc49edfde36d4fb791570ea2a4be6ad95fd0d.1755721927.git.ashish.kalra@amd.com>
- <5dff05c1-474e-4fff-a19b-7c17b4db6173@infradead.org>
- <7eed1970-4e7d-4b3a-a3c1-198b0a6521d5@amd.com>
- <922eaff1-b2dc-447c-9b9c-ac1281ee000d@amd.com>
- <db253af8-1248-4d68-adec-83e318924cd8@amd.com>
- <46cf87e2-8100-47ef-b19e-f6a1b76f660d@amd.com> <aKcpu-EilR04YAxX@google.com>
-Content-Language: en-US
-From: "Kalra, Ashish" <ashish.kalra@amd.com>
-In-Reply-To: <aKcpu-EilR04YAxX@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA1P222CA0075.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2c1::22) To BL3PR12MB9049.namprd12.prod.outlook.com
- (2603:10b6:208:3b8::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2319C29BD81;
+	Thu, 21 Aug 2025 15:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755789695; cv=none; b=MPzPP5dz30Ld2NQB2Fjk5Wa1PVU1g5fqXpkOi40OaYiD9UUkI2eh2lK6vNFlYlv7f5ROo7I4/cYggoGTzXyp4wksjJkyPWuqap0rWHQFG6VMPVst5c0lTcj7aOO4F/Exlcw0reU9CrstfxRV7qk+wU7Mb3P3ZU/41oXAFph+v7I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755789695; c=relaxed/simple;
+	bh=KRJpPaNYZhuGdhMZHfEbshMmS3KzIhWRjBm1+wRJIDQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=myYyTsKLurjSwpLVxm7SlV4bEQQtEkC2g/sxB5OEU9ndcrckaNM/wnpBTLx+tPrHjThSIFgG1SdTGbEyg0xaYap4exLjtPFIojhSpIo3HfzfqTRUR+XlAWnXIgUtQMTFpKrP5ReP9sFtNJZRHbKwAPtAKn7LA6acReqdmScyKYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JlHq1wRh; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755789690; x=1787325690;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=KRJpPaNYZhuGdhMZHfEbshMmS3KzIhWRjBm1+wRJIDQ=;
+  b=JlHq1wRh7xS1Ex5rt8l0zI17FNwStLoCca1qHd+nQKmq1wG1F8GQ+CNK
+   YcmiQ16Eweuyl6xIQz9goQTDNJWJX7CLfl8ZOD9cGMvnEmPNwqwYc/ac7
+   idWOeRYSrIq796nHP3sv93w91EFWtd8bM7j2A9VlSe0VARWFC9NVsDmBd
+   vwfdXKGGXwPNEqrfPJkNJQ6ODp/HF4OpM8vwnI/DIjLV6TkTHfojIsWlH
+   879jcH4oXYcVG6fmFg+39BqdmL2MI37Dd6k0b0qUzoKtmQN/owCfPp4Ro
+   nc+xH09bd5HQ81bcUfnGEJ2VnEKzKCJE4IHdg1A7Z2HCI2oAyQ80oMpuq
+   Q==;
+X-CSE-ConnectionGUID: N20LMCStRmC/lDxBe4dG6w==
+X-CSE-MsgGUID: HoG4C70wSAag/++gwLWPsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="61894117"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="61894117"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 08:21:29 -0700
+X-CSE-ConnectionGUID: G9CIAg6ySKqgmvSiYsmibA==
+X-CSE-MsgGUID: JclRp2AdS2WCMxuKEWk/JA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="168056557"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.192])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 08:21:25 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 21 Aug 2025 18:21:22 +0300 (EEST)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Tudor Ambarus <tudor.ambarus@linaro.org>, Rio <rio@r26.me>, 
+    D Scott Phillips <scott@os.amperecomputing.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] PCI: Fix pdev_resources_assignable() disparity
+In-Reply-To: <20250821151132.GA674480@bhelgaas>
+Message-ID: <b873e7dc-8cbe-3370-4b47-8c1cb2e6da6e@linux.intel.com>
+References: <20250821151132.GA674480@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR12MB9049:EE_|DS7PR12MB5815:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd50654b-53e4-4ccf-9f99-08dde0c6588a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RmpBcFphREFzZGxFUnRkK0o1VVlMMUxDUDRMM0crTmowK0ptaUhteGpPRnR5?=
- =?utf-8?B?R0VtSUJpTVVOK0RaU0M5SER0ZUIzOEhrOGNhNHdOUVZabHhJa1lrUHFlc3FC?=
- =?utf-8?B?QXRXYjlTNHd2QmlUZTYwdmQ2eElLOHZFdlJWMjdmOGdkN05jR25OVmcvVnds?=
- =?utf-8?B?KzdSOVo1OFQ3VnNhWFNGd1JIU1JEeCtTVGE0czZwMWVFaGliV1IrbUVmYnB4?=
- =?utf-8?B?cnBDRm1yd245dlFxTXJnamFYM2VvcFppaGdPYVlnZURaQXVLb0R3emNpTE9J?=
- =?utf-8?B?TjBlVVE1cGlQRnBLVWgrU2wyakRUN2wxdXVrbVZ1ejVHcGphVlFLYUJZVitj?=
- =?utf-8?B?U1psb2VRRVZwaUdDQUNwN1MxZTZXWVlNNE0zb1RSMTFYdXEzdzZjVFNBTUd4?=
- =?utf-8?B?TjlFcjI5RkFFWE81WDVya1BFM0RBSEVya2tZamxaT0FhbTF2NWRYU29zRmFz?=
- =?utf-8?B?VlhUWFdHQ3pmVGZhRTBkUFZYeHRKcHMwVy9sbUpPdnVJaGptMU1tenlvKzV0?=
- =?utf-8?B?Uldnamd2YzN6cmk0dDVqM3Bvd2lobmc2UzNSZnR4V3BRa0kwdFRoWElqSFhk?=
- =?utf-8?B?TTM3OVhTYUpKYUtteVBNam9zVEV6ZVVQRkFaVlhuQ29Qa3hlNXNKV2JUME52?=
- =?utf-8?B?MjA2cU5wVEN2UkZucytZM2pPc3dhQUZSQk42NWJFdGNRNGNJd2lDc3o3aDhx?=
- =?utf-8?B?WG9TTTFrSmtyd21zYXhBcnd4Y3BUd0QrdVFseXl5VHNyVkdIaEFoMGRnZG0r?=
- =?utf-8?B?b3BjcXlJUEpkTmF2cjYyNnN2Y3ZidUVnZmNvTkkvL1crNlRDeDJYZTJZZ29K?=
- =?utf-8?B?b3dYeDVvUlBMNi9Xdit6ZnhoMW43VUMyZWZDTDdveFRLRWJPcTY0WXVBN3Vq?=
- =?utf-8?B?RlQ2ejlTY0N0aFpJWVA1d2t3TkVSTG45d2h5RnkrWkNhbnIvNzMyZkNjNERp?=
- =?utf-8?B?WHg2aWlmMDlRTE5QdU95ZUtsbzI2ZWxjcHdhT3lMMnJDQnNiS2QyeHRzUXhN?=
- =?utf-8?B?NlBlTnFyNW51VHlRK0tTSG83czA2TG1reEJGTmdKVDJwdkZUeVRaNUtxYWVn?=
- =?utf-8?B?blg4dG9wdjJmbEo1RGFuUHBRc2I4OGlxN3JDK0hBOEcwUkxhVmhhWXdxU2Zu?=
- =?utf-8?B?UUkxWGVtQzB3b3JoMnZUR3RBTUpTbGpCWDUxbzBqQUQ1MnRKQXdXUTNHMkVE?=
- =?utf-8?B?d2dnQU16MjhhdGhCWDVhcldkU21JRFJnUUxybjRMNW91OEtZM3hRS0dkaUlr?=
- =?utf-8?B?SkJwOXZjUjJUYzFYU1JiZFRiSEc5ZEF6eTZONDZCRGpxVVRjRFBwbGlSdmda?=
- =?utf-8?B?USswbFRKTjY4TFRKQTVZU3ZMZUxiRG8xTXpyYXRrZkNJUlBJT2U3R0xEZThT?=
- =?utf-8?B?TlNDSUJQeTlzTEk4RjBldHlRdmZHUkhYNE5ldWk4VkVRNkZua3ZRbm1pNUpr?=
- =?utf-8?B?THdTMDFiWGx2b296K082cGdsS3JyUUQzaXJRSEV1VGFSaUVSUDd2QzJ1aVl6?=
- =?utf-8?B?VVZHYzhiSENkRmZKOHBScktVTG9Lay8yOEJjNTlIN25GZXFGKzdHVU1hZ3lE?=
- =?utf-8?B?cDV5dXA3SnkyWk9heEl5TTIzS01wOS9UTm5odis2MkxycXJzZ3M0YmEwS1U5?=
- =?utf-8?B?Y3VvNkMrNG8zR3VKSk5nbmEwZWxNTko4ZGZHQ0hUd2JjN1BockF3d2ZzVzB5?=
- =?utf-8?B?U25GUVFIY2RDMEkrTFpHek93QTU2KzM1U3dwZE8zbUxDQ3I1UzEyeGdCQWd1?=
- =?utf-8?B?M3RxRVpBa1ZkR2liZVFFOTdnWDJXaHJmY2drc1RTcUd5TXpURUZ4bUZmRDht?=
- =?utf-8?B?TFkrUzg4b0ZQTTFyYWxvMzdDVW8vdm9JUFlYak05REJvWDVGQkRJOG9iL2l5?=
- =?utf-8?B?MVpFNjhhdFJINmxVaUY1OEdwSHpPZGZIN05SREdHSUhubW9OQXJ0c1JrOGJw?=
- =?utf-8?Q?sr1GtCnT68Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB9049.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RGJrYXBVK1RGbjZmNExYVGFkd0JTdVhMbWdoaWpab1BIM29MTFdOTjhHZ1B2?=
- =?utf-8?B?ekM4QWl1ZkpFbk9nRC93elBjUmRqVGVjelpJcVRZMXlJNUlPc2ZmQzNJMHJm?=
- =?utf-8?B?c20xOG4ySmE0Y3JjU1NTaU02bU5DVkZoVi9RVWlNNWtQSXVNSStFM1V0QUs4?=
- =?utf-8?B?a1pVZldsMmwwTWhrY2NJVWE5QzkvQVIzMldrQUxRT1BFQTJkNmMxc01jUmx6?=
- =?utf-8?B?UUovaTdBMVI4Y3BRcUJhYWwyS09QZDNmZ0d5OUg0ME8yQkkyNW93L0dyZ0F0?=
- =?utf-8?B?c0VWRHAxSXVUU0dSQjN2RUgxdFV3Q1QyTVBTR0NFYU9QK1htWTN4anRnZ1JL?=
- =?utf-8?B?UiswUmNsVmVxTWJWV3d2OWt5OHl2WTY5c3Q2bXgzUWVtMTRYOXowSFdqdHNm?=
- =?utf-8?B?eForZ0pJWnZHVWtGbk1YbmVOQUtuSlNjZFNGclRmK09NNkxmRnUydTFOM3hR?=
- =?utf-8?B?UmVSUWY4SVZuSXd1NWJqT3VhNEg3bkp0NlhVMzRwRGRlK3lDc2ZuaWZXR3VT?=
- =?utf-8?B?ZStWSnNRTG5uM0M1Z3BuM2RmckphdVdsWmxBaXh1OVRzajE4VG04QzJPK1E3?=
- =?utf-8?B?MHFkekQxTXNaOUkwb1o4aDBoYktHMjRtN0tRY2hJenhIcW4wM3NxaUJXWFZ1?=
- =?utf-8?B?dTlacWlITEdXeHZQdG9TZ3BCTkpORkt5RDZvZzdYQ2xZTWJIREQ4SFp1SzIz?=
- =?utf-8?B?Z0dPbmlKbUlySFdJMFUrdkJwZXJzY0lneWlMbmo4TVZnaVJ1aDA2NURvSmdy?=
- =?utf-8?B?M3NhaGZyR1cva2Q0b3oxVWVPcEFtR01IdUdLTi90R1NMNlVBaEZoTFY0ZmtZ?=
- =?utf-8?B?amNaY3VlVG5sODFhK0xwdld4RW1ZYUNUd1JrVzNvQnBqN3JrRlZydEF4ZE8x?=
- =?utf-8?B?NEJLZnFCNUVJSnFwdHlhV29vcGE4VUVndVgyUVFvMjBkVEdiQ1A3RktIWUpo?=
- =?utf-8?B?Kzg3SjdGNzlRck1TTjVnZFFYVk5qSnFaVG9SMS9jY3UydVlQbUw1d1V3UURa?=
- =?utf-8?B?VTBWTmlJMlp0S2kwVmlqdk1BWXNsOS9yTTU2UnpnY1JUUVdLTldmL1k0WjRS?=
- =?utf-8?B?OE9sanA2dStxM2pNWmV3SkIwWWVrQnM0eGZGcEFoY2c3OUZZRkx4M2hNd3Fx?=
- =?utf-8?B?aUZUQkwwZ2VoajUxNURZekpDQmk0OTRlcFdvTnpkMkZTenJpeTcwOVp3YWZk?=
- =?utf-8?B?c0x6Y3dieW9pUGY5bVMxazZBQ1kxZkJFbDNOL1JUYUtrUGpha0crYmx4ZXJy?=
- =?utf-8?B?YWY3RERnKzJNRnhnUnF5U1VYdlZVL01hRDFQMkZ0a3VGajFROHRNVnBadi9y?=
- =?utf-8?B?Zm5lSzR3R0xHbDRqOHNLRW9iMVRJamRvRkRxNndIVlZ6QlRmMkpuYUNRM0pY?=
- =?utf-8?B?WFp0TGR0NkVrSXFhUklGL29yVEdFTUZhcllrZWRaSzRDeTgzbWs1TnlBKzU5?=
- =?utf-8?B?c1VhQ1h3cXFyZThGVkFEUFJUSS9Ha2Y1dS9CMEh3RFZGMmxSRFEvWXhZQ1Fz?=
- =?utf-8?B?S3NEZFF0NDArRGdLUlE3b2hBQW5NRGFIb3QrUDZtZC9VTEVTME5IQ3RmNUZN?=
- =?utf-8?B?NDJGSmJtMG9UYjhlM2FXSXlqRXpOeGF4T1VmZFIrK3lNeU1MQmpyN215K3N4?=
- =?utf-8?B?WDAwMG4ySG1mQ21FZlBzdHg4RzF4NVE1bzg1S0xkNE1SOVJvZWM1c2JITGJE?=
- =?utf-8?B?Z002RmFFMXFmc2RMY0JjekRpbnJqSzJlaGpVTHhaRmNpTTZ4Y2hyck53NWx1?=
- =?utf-8?B?T3NFbVhMWmJMQ2gyWG1nN3JtYXpvMVArREhrZGlVbUlEOUtLVEtqWHR3NFlD?=
- =?utf-8?B?NzlhaG9mVzVGQ2l0WHdvVlVFWldXWkJHWjc4TjZPaTlzVlM4Qk41S2oxQWpV?=
- =?utf-8?B?cVRNaW1LaVFDQUdRRTYxd1NDTmxkaEVObHF5dXo0eXFuak9NZ0d2WWJycmtG?=
- =?utf-8?B?TkpqWlkvZlYxSkpQOU5jMm5KSENPRm14RGozNW5KNW9xLzJKMzg1S0R6QVBu?=
- =?utf-8?B?ZnpZNUFwVnFoWEE5ekpsczRlL2ZoM3NKNFdQSlhjUlM2dE56NlFkbFhFRmxY?=
- =?utf-8?B?WmkwSXBhMCs0OS9IZkdQTm42U29NTXlKMmh6a1J2WjdkYjRUeTVsTm5uRTBF?=
- =?utf-8?Q?ha2WFYAA/p69BiHhYg/gJccen?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd50654b-53e4-4ccf-9f99-08dde0c6588a
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB9049.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 15:21:05.2433
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kl0a3I80Yn0WSvl/e0DweTHefV75cmi1gnRkz03j+GwV5fEvFn13N1N+Qwmae5cTB/rnbLQqgLL3duqO9Kr3bA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5815
+Content-Type: multipart/mixed; boundary="8323328-1567600272-1755789682=:933"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-1567600272-1755789682=:933
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On 8/21/2025 9:16 AM, Sean Christopherson wrote:
-> On Thu, Aug 21, 2025, Kim Phillips wrote:
->> On 8/21/25 5:58 AM, Kalra, Ashish wrote:
->>> On 8/21/2025 5:30 AM, Kim Phillips wrote:
->>>> On 8/20/25 6:23 PM, Kalra, Ashish wrote:
->>>>> On 8/20/2025 5:45 PM, Randy Dunlap wrote:
->>>>>> On 8/20/25 1:50 PM, Ashish Kalra wrote:
->>>>>>> +        /*
->>>>>>> +         * If ciphertext hiding is enabled, the joint SEV-ES/SEV-SNP
->>>>>>> +         * ASID range is partitioned into separate SEV-ES and SEV-SNP
->>>>>>> +         * ASID ranges, with the SEV-SNP range being [1..max_snp_asid]
->>>>>>> +         * and the SEV-ES range being [max_snp_asid..max_sev_es_asid].
->>>>>>                                        [max_snp_asid + 1..max_sev_es_asid]
->>>>>> ?
->>>>> Yes.
->>>> So why wouldn't you have left Sean's original "(max_snp_asid..max_sev_es_asid]" as-is?
->>>>
->>>> Kim
->>>>
->>> Because that i believe is a typo and the correct SEV-ES range is
->>> [max_snp_asid + 1..max_sev_es_asid].
->>
->> It's not, though.
->>
->> [max_snp_asid..max_sev_es_asid]
->>
->> and
->>
->> (max_snp_asid..max_sev_es_asid]
->>
->> are two completely different things.
-> 
-> Yeah, inclusive versus exclusive (I'm quite proud that I remembered which was
-> which, _and_ that I got it right :-D).
->
+On Thu, 21 Aug 2025, Bjorn Helgaas wrote:
 
-Thanks for that explanation.
- 
->> You also modified Sean's Documentation/ changes.  A consistent "joint
->> SEV-ES+SEV-SNP" is preferred.
-> 
-> FWIW, I don't have a strong preference on the exact verbiage, so long as it's
-> consistent.
+> On Mon, Jun 30, 2025 at 05:26:40PM +0300, Ilpo J=C3=A4rvinen wrote:
+> > pdev_sort_resources() uses pdev_resources_assignable() helper to decide
+> > if device's resources cannot be assigned. pbus_size_mem(), on the other
+> > hand, does not do the same check. This could lead into a situation
+> > where a resource ends up on realloc_head list but is not on the head
+> > list, which is turn prevents emptying the resource from the
+> > realloc_head list in __assign_resources_sorted().
+> >=20
+> > A non-empty realloc_head is unacceptable because it triggers an
+> > internal sanity check as show in this log with a device that has class
+> > 0 (PCI_CLASS_NOT_DEFINED):
+>=20
+> Is the class relevant here?
 
-I have consistently modified all "SEV-ES+SEV-SNP" to "SEV-ES and SEV-SNP" inline/Documentation and commit logs.
+It actually is, because pdev_resources_assignable() checks for it. In case=
+=20
+of this particular device there was 0 there causing leading eventually to=
+=20
+this internal sanity check problem.
 
-I will post a revision fixing the comment above (if it is needed, unless this can be fixed during merge).
+> > pci 0001:01:00.0: [144d:a5a5] type 00 class 0x000000 PCIe Endpoint
+> > pci 0001:01:00.0: BAR 0 [mem 0x00000000-0x000fffff 64bit]
+> > pci 0001:01:00.0: ROM [mem 0x00000000-0x0000ffff pref]
+> > pci 0001:01:00.0: enabling Extended Tags
+> > pci 0001:01:00.0: PME# supported from D0 D3hot D3cold
+> > pci 0001:01:00.0: 15.752 Gb/s available PCIe bandwidth, limited by 8.0 =
+GT/s PCIe x2 link at 0001:00:00.0 (capable of 31.506 Gb/s with 16.0 GT/s PC=
+Ie x2 link)
+> > pcieport 0001:00:00.0: bridge window [mem 0x00100000-0x001fffff] to [bu=
+s 01-ff] add_size 100000 add_align 100000
+> > pcieport 0001:00:00.0: bridge window [mem 0x40000000-0x401fffff]: assig=
+ned
+> > ------------[ cut here ]------------
+> > kernel BUG at drivers/pci/setup-bus.c:2532!
+> > Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+> > ...
+> > Call trace:
+> >  pci_assign_unassigned_bus_resources+0x110/0x114 (P)
+> >  pci_rescan_bus+0x28/0x48
+> >=20
+> > Use pdev_resources_assignable() also within pbus_size_mem() to skip
+> > processing of non-assignable resources which removes the disparity in
+> > between what resources pdev_sort_resources() and pbus_size_mem()
+> > consider. As non-assignable resources are no longer processed, they are
+> > not added to the realloc_head list, thus the sanity check no longer
+> > triggers.
+> >=20
+> > This disparity problem is very old but only now became apparent after
+> > the commit 2499f5348431 ("PCI: Rework optional resource handling") that
+> > made the ROM resources optional when calculating bridge window sizes
+> > which required adding the resource to the realloc_head list.
+> > Previously, bridge windows were just sized larger than necessary.
+> >=20
+> > Fixes: 2499f5348431 ("PCI: Rework optional resource handling")
+> > Reported-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>=20
+> Any URL we can include here for the report?
 
-Thanks,
-Ashish 
+This was discussed in the thread of the original patch/series:
+
+Link: https://lore.kernel.org/all/5f103643-5e1c-43c6-b8fe-9617d3b5447c@lina=
+ro.org/
+
+> > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > Cc: <stable@vger.kernel.org>
+> > ---
+> >  drivers/pci/setup-bus.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> > index f90d49cd07da..24863d8d0053 100644
+> > --- a/drivers/pci/setup-bus.c
+> > +++ b/drivers/pci/setup-bus.c
+> > @@ -1191,6 +1191,7 @@ static int pbus_size_mem(struct pci_bus *bus, uns=
+igned long mask,
+> >  =09=09=09resource_size_t r_size;
+> > =20
+> >  =09=09=09if (r->parent || (r->flags & IORESOURCE_PCI_FIXED) ||
+> > +=09=09=09    !pdev_resources_assignable(dev) ||
+> >  =09=09=09    ((r->flags & mask) !=3D type &&
+> >  =09=09=09     (r->flags & mask) !=3D type2 &&
+> >  =09=09=09     (r->flags & mask) !=3D type3))
+> > --=20
+> > 2.39.5
+> >=20
+>=20
+
+--=20
+ i.
+
+--8323328-1567600272-1755789682=:933--
 
