@@ -1,144 +1,414 @@
-Return-Path: <linux-kernel+bounces-780144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29FBB2FE38
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E33C2B2FE3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D91EAC35D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFF793AF13E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FD8270553;
-	Thu, 21 Aug 2025 15:16:31 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC0226CE20;
+	Thu, 21 Aug 2025 15:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cek13Oj5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F6726CE04
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D31A26B764
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755789390; cv=none; b=caJRjVg/vfxuwlGLKqUBhmrKB9P5bLK/iT2t+UrbEh5v8XXQygKtcMN83fykpjWqeBBIzcTXRJO/ODF6T25EXTfNQ427MvMWl5Aay8uxFmnfZRfysNQHyPOAPbNlb1ZF4J7odg3gg8MCeg1P5wy1GLO3p+fKKGUCttC4KFCWljU=
+	t=1755789435; cv=none; b=K3Xggm4k4pZkDvNZh6GrNqFciYfnHxbnjys0USwMwx+uJE4R1RmivpuqEgOkAL0LwxpAhlOBU/FIpYPgtvyCUXAmgkBVv0TLyRtzrBsUauK5S7jSIm2gFdeWYKZSs6FPtk/6UOtZv3hN5TgkIg2W5P9l5eUIIQ87gwawlHHnkyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755789390; c=relaxed/simple;
-	bh=LNbjqvG7LJsRajT5yTZqU8haJdLm5LrGPihmKsKpR0Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ICZdgD7JXm8lQVJYNAspl5zHZTsXdwAojYsYj9k0EnhwFXrYgyTwj0lManMI2WsGaZxeeq6pNJgFMJCxUhLTkAVmbFKNhRXS5Gx5gF1VrYOJvUqeUhL1HKn7Ie4y4HBIo6jR0k657ZsLNWg7u0ExbCXLZ8EtWB/Ra9K2m4zYnZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e5d398a912so13108895ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:16:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755789388; x=1756394188;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O92ULdLlOMhMBsZaIW/XrHMimBdSXPVNNUtybxQYuBg=;
-        b=H3nC/4R5FNbL+oNUCq0q0+L9cSDrceS9EZy74lHwAuA7QSjjV517ycu5NzKKtehdvi
-         mwpuY/t2MxEsRl+6JkPGzSld4gEY8uYF6tN1cGlHtoCjYvL2MfPBxUvPF3JDSB5XISYn
-         MLpFF7KSEuEvQGxZSZg6eOxkT08ROdp0F+1I8ocAx8rXM0FVWAB7e+ODlFlxNuyT0APS
-         d4BHZ41HXASMR4EpPO/JY6sKqh2idlc+Pl9JiytWA1OHtIEalCcl5LbiQAEKz03g8Asr
-         vfXU8FqHn7zecfou0Cy0Z9BFZTr/+s/lwcFNoOOcrMad7bsyuaMqILlwBqiTbEa/jylW
-         LzOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv00FSSLkaKoLJGGDMAXDqNhqOdzFrm69nn8IvWc6QxJCUcHcDXomb9BHk9QmZYYgokysWyfMFn457kXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt4ESuS91wZGj0HVTh2DguVxr18g5n6Xl9vYd52nf0TJ7FwKj4
-	hKwJSEOwv711xhxfxQ4ywPQTSBugVFTv3imO5EzIULLUXkt+hzjfJ8lizEz2E2wJwf656PZHZno
-	CC3a2NFgYr7ZHu6HFF6T4/w5TpwnwJm8YXqEWcBUvVtosus/E63atINniHuE=
-X-Google-Smtp-Source: AGHT+IECnpZs4zeS7UU209W8Ab5lvMXkV/Aq4dr+bonM9fktxtF5NDv8N1aneoM3N0ll/hnX/Voa8+q6hOdwXfsrX4rxFNWTpHsP
+	s=arc-20240116; t=1755789435; c=relaxed/simple;
+	bh=0SlTH8DzYKTd5bC9/K7EPoIykb1RZYTurVkLTi5AST0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XovRvodacGMFbOdmby36p7zFpD12CDesbw5YgazJ7sgNJSLJ5yUD8ur9kK8MlpG8hVYHx3cdm2pdEDh5ZWtEm53Uyg8TeGqZj7Pnv7x+C2sSzI5L9EQDoeSKGtM6MUV5HAz+dI43Ou1+JUiElmdSSfpm1B3p67bktpK7FknuIqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cek13Oj5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755789432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9MHI9cmaSGzsUAHu3JeD3WxOHSfcmFEXlgGpdm5OhPI=;
+	b=cek13Oj5qvzqO3JlZWp1XQNBXRVDwjml84iR3GFFyaLi4awp5IF2TkMV6g/Ojlqbutq8Gb
+	B/16zQH5ieqpTcTPY51pLiPIpOXZtzSVZ5S9ltW1yiIvUAZzrW7zkr2cpUWfcspUkamPYt
+	hmduWe9Xk3wJKhXLPLVkOHCD52yCtTE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-277-wWaMV3iKNaaarbOPVHtjPg-1; Thu,
+ 21 Aug 2025 11:17:08 -0400
+X-MC-Unique: wWaMV3iKNaaarbOPVHtjPg-1
+X-Mimecast-MFC-AGG-ID: wWaMV3iKNaaarbOPVHtjPg_1755789426
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DBC321800296;
+	Thu, 21 Aug 2025 15:17:05 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.33.131])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 19B00197768C;
+	Thu, 21 Aug 2025 15:17:01 +0000 (UTC)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: linux-hyperv@vger.kernel.org,
+	Michael Kelley <mhklinux@outlook.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	Tianyu Lan <tiala@microsoft.com>,
+	Li Tian <litian@redhat.com>,
+	Philipp Rudo <prudo@redhat.com>
+Subject: [PATCH v3] x86/hyperv: Fix kdump on Azure CVMs
+Date: Thu, 21 Aug 2025 17:16:55 +0200
+Message-ID: <20250821151655.3051386-1-vkuznets@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cc:b0:3e3:fe52:e576 with SMTP id
- e9e14a558f8ab-3e6d4630735mr44044905ab.9.1755789387910; Thu, 21 Aug 2025
- 08:16:27 -0700 (PDT)
-Date: Thu, 21 Aug 2025 08:16:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a7384b.050a0220.3d78fd.002c.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in btrfs_put_transaction (4)
-From: syzbot <syzbot+62f59a3655c0df0581cd@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello,
+Azure CVM instance types featuring a paravisor hang upon kdump. The
+investigation shows that makedumpfile causes a hang when it steps on a page
+which was previously share with the host
+(HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY). The new kernel has no
+knowledge of these 'special' regions (which are Vmbus connection pages,
+GPADL buffers, ...). There are several ways to approach the issue:
+- Convey the knowledge about these regions to the new kernel somehow.
+- Unshare these regions before accessing in the new kernel (it is unclear
+if there's a way to query the status for a given GPA range).
+- Unshare these regions before jumping to the new kernel (which this patch
+implements).
 
-syzbot found the following issue on:
+To make the procedure as robust as possible, store PFN ranges of shared
+regions in a linked list instead of storing GVAs and re-using
+hv_vtom_set_host_visibility(). This also allows to avoid memory allocation
+on the kdump/kexec path.
 
-HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=13792ba2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-dashboard link: https://syzkaller.appspot.com/bug?extid=62f59a3655c0df0581cd
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
+The patch skips implementing weird corner case in hv_list_enc_remove()
+when a PFN in the middle of a region is unshared. First, it is unlikely
+that such requests happen. Second, it is not a big problem if
+hv_list_enc_remove() doesn't actually remove some regions as this will
+only result in an extra hypercall doing nothing upon kexec/kdump; there's
+no need to be perfect.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+62f59a3655c0df0581cd@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 7838 at fs/btrfs/transaction.c:144 btrfs_put_transaction+0x4b8/0x520 fs/btrfs/transaction.c:144
-Modules linked in:
-CPU: 1 UID: 0 PID: 7838 Comm: btrfs-transacti Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : btrfs_put_transaction+0x4b8/0x520 fs/btrfs/transaction.c:144
-lr : btrfs_put_transaction+0x4b8/0x520 fs/btrfs/transaction.c:144
-sp : ffff8000b41a7a70
-x29: ffff8000b41a7a80 x28: 1fffe0001f3374a0 x27: dfff800000000000
-x26: ffff0000c621a000 x25: dfff800000000000 x24: 1fffe00018c43404
-x23: ffff0000c621a000 x22: ffff0000f99b8d38 x21: 0000000000000001
-x20: ffff0000c621a358 x19: ffff0000dfc5b2a4 x18: 00000000ffffffff
-x17: ffff800093507000 x16: ffff800080535980 x15: 0000000000000001
-x14: 1fffe00018c43402 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff600018c43403 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000e01edb80 x7 : ffff80008235f5e4 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800082358eec
-x2 : 0000000000000001 x1 : 0000000000000001 x0 : 0000000000000001
-Call trace:
- btrfs_put_transaction+0x4b8/0x520 fs/btrfs/transaction.c:144 (P)
- btrfs_commit_transaction+0x1d24/0x2ce4 fs/btrfs/transaction.c:2583
- transaction_kthread+0x200/0x430 fs/btrfs/disk-io.c:1592
- kthread+0x5fc/0x75c kernel/kthread.c:463
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
-irq event stamp: 123680
-hardirqs last  enabled at (123679): [<ffff80008b028df8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
-hardirqs last  enabled at (123679): [<ffff80008b028df8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
-hardirqs last disabled at (123680): [<ffff80008b001bfc>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (123658): [<ffff800080201608>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (123656): [<ffff8000802015d4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-
-
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changes since v2 [Michael Kelley]:
+ - Rebase to hyperv-next.
+ - Move hv_ivm_clear_host_access() call to hyperv_cleanup(). This also
+   makes ARM stub unneeded.
+ - Implement the missing corner case in hv_list_enc_remove(). With this,
+   the math should (hopefully!) always be correct so we don't rely on
+   the idempotency of HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY
+   hypercall. As the case is not something we see, I tested the code
+   with a few synthetic tests.
+ - Fix the math in hv_list_enc_remove() (count -> ent->count).
+ - Typos.
+---
+ arch/x86/hyperv/hv_init.c       |   3 +
+ arch/x86/hyperv/ivm.c           | 213 ++++++++++++++++++++++++++++++--
+ arch/x86/include/asm/mshyperv.h |   2 +
+ 3 files changed, 210 insertions(+), 8 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 2979d15223cf..4bb1578237eb 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -596,6 +596,9 @@ void hyperv_cleanup(void)
+ 	union hv_x64_msr_hypercall_contents hypercall_msr;
+ 	union hv_reference_tsc_msr tsc_msr;
+ 
++	/* Retract host access to shared memory in case of isolation */
++	hv_ivm_clear_host_access();
++
+ 	/* Reset our OS id */
+ 	wrmsrq(HV_X64_MSR_GUEST_OS_ID, 0);
+ 	hv_ivm_msr_write(HV_X64_MSR_GUEST_OS_ID, 0);
+diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
+index 3084ae8a3eed..0d74156ad6a7 100644
+--- a/arch/x86/hyperv/ivm.c
++++ b/arch/x86/hyperv/ivm.c
+@@ -462,6 +462,188 @@ void hv_ivm_msr_read(u64 msr, u64 *value)
+ 		hv_ghcb_msr_read(msr, value);
+ }
+ 
++/*
++ * Keep track of the PFN regions which were shared with the host. The access
++ * must be revoked upon kexec/kdump (see hv_ivm_clear_host_access()).
++ */
++struct hv_enc_pfn_region {
++	struct list_head list;
++	u64 pfn;
++	int count;
++};
++
++static LIST_HEAD(hv_list_enc);
++static DEFINE_RAW_SPINLOCK(hv_list_enc_lock);
++
++static int hv_list_enc_add(const u64 *pfn_list, int count)
++{
++	struct hv_enc_pfn_region *ent;
++	unsigned long flags;
++	u64 pfn;
++	int i;
++
++	for (i = 0; i < count; i++) {
++		pfn = pfn_list[i];
++
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		/* Check if the PFN already exists in some region first */
++		list_for_each_entry(ent, &hv_list_enc, list) {
++			if ((ent->pfn <= pfn) && (ent->pfn + ent->count - 1 >= pfn))
++				/* Nothing to do - pfn is already in the list */
++				goto unlock_done;
++		}
++
++		/*
++		 * Check if the PFN is adjacent to an existing region. Growing
++		 * a region can make it adjacent to another one but merging is
++		 * not (yet) implemented for simplicity. A PFN cannot be added
++		 * to two regions to keep the logic in hv_list_enc_remove()
++		 * correct.
++		 */
++		list_for_each_entry(ent, &hv_list_enc, list) {
++			if (ent->pfn + ent->count == pfn) {
++				/* Grow existing region up */
++				ent->count++;
++				goto unlock_done;
++			} else if (pfn + 1 == ent->pfn) {
++				/* Grow existing region down */
++				ent->pfn--;
++				ent->count++;
++				goto unlock_done;
++			}
++		}
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++
++		/* No adjacent region found -- create a new one */
++		ent = kzalloc(sizeof(struct hv_enc_pfn_region), GFP_KERNEL);
++		if (!ent)
++			return -ENOMEM;
++
++		ent->pfn = pfn;
++		ent->count = 1;
++
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		list_add(&ent->list, &hv_list_enc);
++
++unlock_done:
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++	}
++
++	return 0;
++}
++
++static void hv_list_enc_remove(const u64 *pfn_list, int count)
++{
++	struct hv_enc_pfn_region *ent, *t;
++	struct hv_enc_pfn_region new_region;
++	unsigned long flags;
++	u64 pfn;
++	int i;
++
++	for (i = 0; i < count; i++) {
++		pfn = pfn_list[i];
++
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		list_for_each_entry_safe(ent, t, &hv_list_enc, list) {
++			if (pfn == ent->pfn + ent->count - 1) {
++				/* Removing tail pfn */
++				ent->count--;
++				if (!ent->count) {
++					list_del(&ent->list);
++					kfree(ent);
++				}
++				goto unlock_done;
++			} else if (pfn == ent->pfn) {
++				/* Removing head pfn */
++				ent->count--;
++				ent->pfn++;
++				if (!ent->count) {
++					list_del(&ent->list);
++					kfree(ent);
++				}
++				goto unlock_done;
++			} else if (pfn > ent->pfn && pfn < ent->pfn + ent->count - 1) {
++				/*
++				 * Removing a pfn in the middle. Cut off the tail
++				 * of the existing region and create a template for
++				 * the new one.
++				 */
++				new_region.pfn = pfn + 1;
++				new_region.count = ent->count - (pfn - ent->pfn + 1);
++				ent->count = pfn - ent->pfn;
++				goto unlock_split;
++			}
++
++		}
++unlock_done:
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++		continue;
++
++unlock_split:
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++
++		ent = kzalloc(sizeof(struct hv_enc_pfn_region), GFP_KERNEL);
++		/*
++		 * There is no apparent good way to recover from -ENOMEM
++		 * situation, the accouting is going to be wrong either way.
++		 * Proceed with the rest of the list to make it 'less wrong'.
++		 */
++		if (WARN_ON_ONCE(!ent))
++			continue;
++
++		ent->pfn = new_region.pfn;
++		ent->count = new_region.count;
++
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		list_add(&ent->list, &hv_list_enc);
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++	}
++}
++
++void hv_ivm_clear_host_access(void)
++{
++	struct hv_gpa_range_for_visibility *input;
++	struct hv_enc_pfn_region *ent;
++	unsigned long flags;
++	u64 hv_status;
++	int batch_size, cur, i;
++
++	if (!hv_is_isolation_supported())
++		return;
++
++	raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++
++	batch_size = MIN(hv_setup_in_array(&input, sizeof(*input),
++					   sizeof(input->gpa_page_list[0])),
++			 HV_MAX_MODIFY_GPA_REP_COUNT);
++	if (unlikely(!input))
++		goto unlock;
++
++	list_for_each_entry(ent, &hv_list_enc, list) {
++		for (i = 0, cur = 0; i < ent->count; i++) {
++			input->gpa_page_list[cur] = ent->pfn + i;
++			cur++;
++
++			if (cur == batch_size || i == ent->count - 1) {
++				input->partition_id = HV_PARTITION_ID_SELF;
++				input->host_visibility = VMBUS_PAGE_NOT_VISIBLE;
++				input->reserved0 = 0;
++				input->reserved1 = 0;
++				hv_status = hv_do_rep_hypercall(
++					HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY,
++					cur, 0, input, NULL);
++				WARN_ON_ONCE(!hv_result_success(hv_status));
++				cur = 0;
++			}
++		}
++
++	};
++
++unlock:
++	raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++}
++EXPORT_SYMBOL_GPL(hv_ivm_clear_host_access);
++
+ /*
+  * hv_mark_gpa_visibility - Set pages visible to host via hvcall.
+  *
+@@ -476,24 +658,33 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
+ 	u64 hv_status;
+ 	int batch_size;
+ 	unsigned long flags;
++	int ret;
+ 
+ 	/* no-op if partition isolation is not enabled */
+ 	if (!hv_is_isolation_supported())
+ 		return 0;
+ 
++	if (visibility == VMBUS_PAGE_NOT_VISIBLE) {
++		hv_list_enc_remove(pfn, count);
++	} else {
++		ret = hv_list_enc_add(pfn, count);
++		if (ret)
++			return ret;
++	}
++
+ 	local_irq_save(flags);
+ 	batch_size = hv_setup_in_array(&input, sizeof(*input),
+ 					sizeof(input->gpa_page_list[0]));
+ 	if (unlikely(!input)) {
+-		local_irq_restore(flags);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto unlock;
+ 	}
+ 
+ 	if (count > batch_size) {
+ 		pr_err("Hyper-V: GPA count:%d exceeds supported:%u\n", count,
+ 		       batch_size);
+-		local_irq_restore(flags);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto unlock;
+ 	}
+ 
+ 	input->partition_id = HV_PARTITION_ID_SELF;
+@@ -502,12 +693,18 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
+ 	hv_status = hv_do_rep_hypercall(
+ 			HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY, count,
+ 			0, input, NULL);
+-	local_irq_restore(flags);
+-
+ 	if (hv_result_success(hv_status))
+-		return 0;
++		ret = 0;
+ 	else
+-		return -EFAULT;
++		ret = -EFAULT;
++
++unlock:
++	local_irq_restore(flags);
++
++	if (ret)
++		hv_list_enc_remove(pfn, count);
++
++	return ret;
+ }
+ 
+ /*
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index abc4659f5809..6a988001e46f 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -263,10 +263,12 @@ static inline int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip,
+ void hv_vtom_init(void);
+ void hv_ivm_msr_write(u64 msr, u64 value);
+ void hv_ivm_msr_read(u64 msr, u64 *value);
++void hv_ivm_clear_host_access(void);
+ #else
+ static inline void hv_vtom_init(void) {}
+ static inline void hv_ivm_msr_write(u64 msr, u64 value) {}
+ static inline void hv_ivm_msr_read(u64 msr, u64 *value) {}
++static inline void hv_ivm_clear_host_access(void) {}
+ #endif
+ 
+ static inline bool hv_is_synic_msr(unsigned int reg)
+-- 
+2.50.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
