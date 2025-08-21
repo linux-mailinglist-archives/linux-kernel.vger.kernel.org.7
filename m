@@ -1,164 +1,135 @@
-Return-Path: <linux-kernel+bounces-780824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245C6B309D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:05:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F62B309D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 01:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D85C36217E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:05:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 960AB1D0016E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A35A2877CB;
-	Thu, 21 Aug 2025 23:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3E72D97AA;
+	Thu, 21 Aug 2025 23:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kJJE1KJP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f1+wL8hp"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CCF18C933;
-	Thu, 21 Aug 2025 23:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B01272E43
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 23:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755817545; cv=none; b=D5G4Zw+aE/CYHyxQXiYI9fD8x+NLySojSS4E5iKHXGWkQ/TTd/UCobs4MivVlO13qpXn6Pi8S8E9eYfR+1VqNaO9Ca0XbR9hx32eCoZNaSpqXDk2qvyTb3gEKztHtzVvFqvY/1mU5+6O6pJsOizn9ZKf26ppq7Tee7hV6kgFSvo=
+	t=1755817741; cv=none; b=ZhHzZozaO1HwRDZhi6JA8PqgT58QyWxxSuShdGgToyl+lqRA9gta47HINca7M5939cExTPI5RHsWv81RVHhq/3LhdxevrFiTiYJeV9y9+Ni+kMlUhSqMwBt0DmUgioJukoCjfWwkO6YAKsIk4S7ayUBlkHW2N0K9u5k1g2ejGC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755817545; c=relaxed/simple;
-	bh=2+YrDbJHJ6ygCGQFcn0zz9RbDVUhv1XPLIL40BOyUuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P3eXvR8BR1G2xh6Uxe6IhRcp3PoPRPk7WbaElzl4K/U3aPflButRC63VS7ZvjHt+Z69JqFxxGskvD/SUB1TovePY9FVbLD4YYirn3SXlNVB94/0tkDODpmqNJbcBifqnMhckDuF5AG6gzzFYTST0n/n5UptEhSIMDze4ZvPzFNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kJJE1KJP; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755817544; x=1787353544;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2+YrDbJHJ6ygCGQFcn0zz9RbDVUhv1XPLIL40BOyUuk=;
-  b=kJJE1KJPlJDLNnMFN8q30f8qMguv9kVqnfon8Zq5/TqE/LKujdaBLFRt
-   64O4Nd0FTgLmlhWGr9y3wkxsP56FL7+nT0b7hRlff7iP2tcwZpfxneqlt
-   3Icsht+BLAOs4SuW+OWa85x0ZWkSjZojeLTsTlo+d5pkdMbQOlIWueheU
-   UQHGsqMjFMb3I65gvfyDQOyDAvoa/7uTZ3TZfZ26gZFlaayxD6e75TvfZ
-   6baYeC2pBE7qSi05+B7tJo2olXppM6lCK8ZE36owKSLXknWud5N7O1rA0
-   nuFtKJdB7joE+ofiM+XGfPuiHBbD+w7FOK9jiPqmaN2svHF4t/+c8QNMe
-   A==;
-X-CSE-ConnectionGUID: w9b0VNtHQpu7OOC7Ully4g==
-X-CSE-MsgGUID: TKEesTD6SNWLc15IdsTblQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57833739"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="57833739"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 16:05:43 -0700
-X-CSE-ConnectionGUID: M8twliceRxyteHULedGk3w==
-X-CSE-MsgGUID: Hh71QzBrR1Ky0LLD+65Rrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="173814619"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.210]) ([10.247.119.210])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 16:05:39 -0700
-Message-ID: <bc336eeb-2456-4321-92fa-3be9eba15f4e@intel.com>
-Date: Thu, 21 Aug 2025 16:05:34 -0700
+	s=arc-20240116; t=1755817741; c=relaxed/simple;
+	bh=Y5H03yME9tlnPLL7pIW9/OtSVagb7ZuTcfQ9D/jsVzE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m/s+MC/VwEX/buIXyv/PZFYRgREpVyfSdYcCW+pLy/N5YFja5YYKZi+2m/t+8VnMCB3Gwd4KxAjDDsQjGhnkgMaZ6RnqDjKxrDyZfzLi0ZyeJdD1Gc+9U+FYwTIGPVWQj1xZhsC/1dvzRNas+n7rwUJd08yhlqCXWzSi9RL24Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f1+wL8hp; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459fbca0c95so30215e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 16:08:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755817738; x=1756422538; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L77xUDEmyoLvrX97o1nUFPtOyxF9ceXHsdzlmWuagMQ=;
+        b=f1+wL8hp10nXEpikMhrN6pPpEwGZ86riTLt+yad4l6gSVC/di9lH9M+OfAf6G5kqbc
+         uxtALhJrHW49d/0AeiIAYJKQPOAaZB6GtfvIRTjBp/Vyl9mLmNylYUtyVR/If3KOWYuo
+         EmalhNWSVwEFLXzqLCy+V2rjy3AWRxrRvCLEUMgEp4PMTMjEowIktiHCmH7XIKPeHpGX
+         97dbeIw81IbP2gHvKLlArUVyG2hPK6OO9/gmt2h4aNiaQHx5pvksrtJ33iYw0eAyb63v
+         +O//5bDIzzPLynz2iKo7JP1lZlGPBtWi5hoOahNJzJuoupZVPA2HcUI+HAhC3Wq8FZuq
+         1zjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755817738; x=1756422538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L77xUDEmyoLvrX97o1nUFPtOyxF9ceXHsdzlmWuagMQ=;
+        b=lAhu1g5OFQMIZZl2MTU7YTrOfotu/P+J/kGJ+wfSUtpNI8DQ3R3eoKtAvjbYQhC+l7
+         D4vE0PbrZzCj9U1GpAwuW5LibxjzV9bQs4MmzLMRzdQiaWDmpD3gMJ+M3SW47G0TKyJ6
+         hYRGczQzDiwK+Qe1ZcAiuOItiFP6gHyvSMcCWpucczpjdw01rdIQ21pD/5wK7CYpxyc+
+         t7UHu+UG01L7po/rkVFMFQgBauj6rJKHAixMTdOhGc0w720W9g9gzUdhY5Qx1GsNItvf
+         g7CXHL/AZJzaK86MWX2AKzx33uQD5DNUfQrSfuz3MBe81/dnHnOuCqo3JZh6YkB7RrO6
+         VcKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjXcK2OhBDDKqO8HaDwLA8t87sicW4hO9i+msWMTpqLcbm/ecA9MrY9SXn/LRkdhRIZNPuK+IuS4LvxGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw15me5UtNCEM3fJpdg/WYSxfexaxqgcQD2///4EanxmeipGvzd
+	OHs0nMnTGhEdp/Z5tk9Vj9gnhF9Mwvr4crFm18szFN1e7TYSFnZuRBfCz/bM5NxsZiNQdZ59zEb
+	dUcfM8w/QmlNV/PO/3m8LMmo/pFHYOO5ATeM/tpnW
+X-Gm-Gg: ASbGncsXoKDWtcfO1v433wMIGW9yhTfsEKgaMy05QmUH1XSo/tT7+HT0FtfsBuLSSeK
+	7kHr8pgnv18b+kgqpD33X6qfCvFSDhB6wf8pnfqqC47VggH8jTwlnMchapQ6Er7N5ZwCoKemhNE
+	6uw6+QNlhTXkLFCNGhlqrYloScU3gsiqDODNtfKBTJiLKk+KGmtI94C3aUyUX2WBP9SS6U2NycA
+	c5JtVvhMXCv1B353XQXO1WefDUyKKsT19kv8/cQan39+Nw=
+X-Google-Smtp-Source: AGHT+IHqxqiVwocOp0r5efeFXaRCBSd7tvJuGa3xj5Uo4LzMOxVOD2dlJdtT3gkdTDsuidX4F2vR/Ty1h77VkFuwobg=
+X-Received: by 2002:a05:600c:8b01:b0:453:79c3:91d6 with SMTP id
+ 5b1f17b1804b1-45b52119c8dmr234265e9.1.1755817737631; Thu, 21 Aug 2025
+ 16:08:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/10] dmaengine: idxd: Fix lockdep warnings when
- calling idxd_device_config()
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250821-idxd-fix-flr-on-kernel-queues-v3-v2-0-595d48fa065c@intel.com>
- <20250821-idxd-fix-flr-on-kernel-queues-v3-v2-1-595d48fa065c@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250821-idxd-fix-flr-on-kernel-queues-v3-v2-1-595d48fa065c@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250821030349.705244-1-almasrymina@google.com>
+In-Reply-To: <20250821030349.705244-1-almasrymina@google.com>
+From: Samiullah Khawaja <skhawaja@google.com>
+Date: Thu, 21 Aug 2025 16:08:44 -0700
+X-Gm-Features: Ac12FXyYskNcdVHna1U4upva43G1arYBWxE-pS5te9bEvcxkDP-4_Li1vcDBayc
+Message-ID: <CAAywjhQ7ySv_Bu4EFxxYnDL5Di4ur0wbFYyVR0bKP6ggMfdXHg@mail.gmail.com>
+Subject: Re: [PATCH net v1] page_pool: fix incorrect mp_ops error handling
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 8/21/25 3:59 PM, Vinicius Costa Gomes wrote:
-> Move the check for IDXD_FLAG_CONFIGURABLE and the locking to "inside"
-> idxd_device_config(), as this is common to all callers, and the one
-> that wasn't holding the lock was an error (that was causing the
-> lockdep warning).
-> 
-> Suggested-by: Dave Jiang <dave.jiang@intel.com>
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+On Wed, Aug 20, 2025 at 8:03=E2=80=AFPM Mina Almasry <almasrymina@google.co=
+m> wrote:
+>
+> Minor fix to the memory provider error handling, we should be jumping to
+> free_ptr_ring in this error case rather than returning directly.
+>
+> Found by code-inspection.
+>
+> Cc: skhawaja@google.com
+>
+> Fixes: b400f4b87430 ("page_pool: Set `dma_sync` to false for devmem memor=
+y provider")
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+>
 > ---
->  drivers/dma/idxd/device.c | 17 +++++++----------
->  drivers/dma/idxd/init.c   | 10 ++++------
->  2 files changed, 11 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
-> index 5cf419fe6b46..ac41889e4fe1 100644
-> --- a/drivers/dma/idxd/device.c
-> +++ b/drivers/dma/idxd/device.c
-> @@ -1107,7 +1107,11 @@ int idxd_device_config(struct idxd_device *idxd)
->  {
->  	int rc;
->  
-> -	lockdep_assert_held(&idxd->dev_lock);
-> +	guard(spinlock)(&idxd->dev_lock);
-> +
-> +	if (!test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags))
-> +		return 0;
-> +
->  	rc = idxd_wqs_setup(idxd);
->  	if (rc < 0)
->  		return rc;
-> @@ -1434,11 +1438,7 @@ int idxd_drv_enable_wq(struct idxd_wq *wq)
->  		}
->  	}
->  
-> -	rc = 0;
-> -	spin_lock(&idxd->dev_lock);
-> -	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags))
-> -		rc = idxd_device_config(idxd);
-> -	spin_unlock(&idxd->dev_lock);
-> +	rc = idxd_device_config(idxd);
->  	if (rc < 0) {
->  		dev_dbg(dev, "Writing wq %d config failed: %d\n", wq->id, rc);
->  		goto err;
-> @@ -1534,10 +1534,7 @@ int idxd_device_drv_probe(struct idxd_dev *idxd_dev)
->  	}
->  
->  	/* Device configuration */
-> -	spin_lock(&idxd->dev_lock);
-> -	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags))
-> -		rc = idxd_device_config(idxd);
-> -	spin_unlock(&idxd->dev_lock);
-> +	rc = idxd_device_config(idxd);
->  	if (rc < 0)
->  		return -ENXIO;
->  
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index f98aa41fa42e..c25bd0595561 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -1092,12 +1092,10 @@ static void idxd_reset_done(struct pci_dev *pdev)
->  	idxd_device_config_restore(idxd, idxd->idxd_saved);
->  
->  	/* Re-configure IDXD device if allowed. */
-> -	if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags)) {
-> -		rc = idxd_device_config(idxd);
-> -		if (rc < 0) {
-> -			dev_err(dev, "HALT: %s config fails\n", idxd_name);
-> -			goto out;
-> -		}
-> +	rc = idxd_device_config(idxd);
-> +	if (rc < 0) {
-> +		dev_err(dev, "HALT: %s config fails\n", idxd_name);
-> +		goto out;
->  	}
->  
->  	/* Bind IDXD device to driver. */
-> 
+>  net/core/page_pool.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index 343a6cac21e3..ba70569bd4b0 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -287,8 +287,10 @@ static int page_pool_init(struct page_pool *pool,
+>         }
+>
+>         if (pool->mp_ops) {
+> -               if (!pool->dma_map || !pool->dma_sync)
+> -                       return -EOPNOTSUPP;
+> +               if (!pool->dma_map || !pool->dma_sync) {
+> +                       err =3D -EOPNOTSUPP;
+> +                       goto free_ptr_ring;
+> +               }
+>
+>                 if (WARN_ON(!is_kernel_rodata((unsigned long)pool->mp_ops=
+))) {
+>                         err =3D -EFAULT;
+>
+> base-commit: c42be534547d6e45c155c347dd792b6ad9c24def
+> --
+> 2.51.0.rc1.193.gad69d77794-goog
+>
 
+Reviewed-by: Samiullah Khawaja <skhawaja@google.com>
 
