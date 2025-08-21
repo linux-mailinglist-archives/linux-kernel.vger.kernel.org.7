@@ -1,107 +1,181 @@
-Return-Path: <linux-kernel+bounces-779397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1DB0B2F3A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:19:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C7C7B2F360
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CEE96881B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:15:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40327B60390
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F622EE615;
-	Thu, 21 Aug 2025 09:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809562D47F5;
+	Thu, 21 Aug 2025 09:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="fSRHEBjT"
-Received: from forward202d.mail.yandex.net (forward202d.mail.yandex.net [178.154.239.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CCurtE+I"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757472ED872;
-	Thu, 21 Aug 2025 09:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324AF2D3ED2
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755767738; cv=none; b=s/p/Cucy1eJbRZbJU36jQf9mNVX6KNH4T/+EFKuXkXUoOdsxDuFmq55zI45YJyT1mKdBOJncRU8xIo3sc8xK255DXtoDyVMlbl5Gyk6GzOangfkUglC9GKZbLDqiOgJKWPuSLWfENVVhVqK+chByeKPMattTPKaxR7buEJpkpO4=
+	t=1755767420; cv=none; b=qoo8orurGwmZvJr5F9AWc8xU5LVpRqzLavdhqMHePiH2F49L32D1EJOa/df6nOp5a8SSpvPbHtZOExvvOayL071Wtc8igFYeoGI8XdUTe8vrYrZXKb7o2ItABDKIOYkKlJ1H2B5b+UnmxEWYiP5Wy8XqICDjZ0qwxUnQqssF0Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755767738; c=relaxed/simple;
-	bh=efoQrj7bXWgexhd3BHD2Qhn1VZWqg4JM11GT3VNhmWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HgGbSQRMmvViVylr3xGVD2rOqSlVb+UJa3besk9pYv4Xx5NuMwHD/vhZGtblUunc6AOhkBpVBFj3y5AAwgkrLiBUevcq9NuzaYShSkCjU7Hm6+9pqG7Jdl2GNJRAo9TjqnnZZlNRADC8szE7bPSamBV4UoRBgveeKqL6plIOIEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=fSRHEBjT; arc=none smtp.client-ip=178.154.239.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from forward103d.mail.yandex.net (forward103d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d103])
-	by forward202d.mail.yandex.net (Yandex) with ESMTPS id C12AE841F1;
-	Thu, 21 Aug 2025 12:07:52 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:3928:0:640:8b00:0])
-	by forward103d.mail.yandex.net (Yandex) with ESMTPS id A854BC0097;
-	Thu, 21 Aug 2025 12:07:44 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id M7PNAONL5Sw0-zNXIiSp1;
-	Thu, 21 Aug 2025 12:07:43 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1755767264;
-	bh=D2NoTGbvCME0hV3MUX25OOiQBe7Hg6+IxESPay1AqjU=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=fSRHEBjT9+aPADLJ6r3ovdVXRiCoZa6wDsW+yJ/GSKVqWfAUNk0LQKvQcYHiEdvC1
-	 mxeiHHh5xyY+/IPijQl19dEDwfJnCGWdCUk/WkwcbteR4AH9xyxqXSJX4HRdsALZ+r
-	 p8IEh3tKoDr65AIAIcVP1kfG1bBTWVGNt3sBu8mA=
-Authentication-Results: mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: rust-for-linux@vger.kernel.org
-Cc: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH] rust: regulator: use `to_result` for error handling
-Date: Thu, 21 Aug 2025 12:07:20 +0300
-Message-ID: <20250821090720.23939-1-work@onurozkan.dev>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1755767420; c=relaxed/simple;
+	bh=D82VoRC7SRWylLufDqwtIwGR8ekpdUz9FEgCnO2WFbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SxgPbFwygBhIshVI953n9eRm6gQTou8+VSrCYbgJV3aA+w1v/Pby4phIUhxyoe5riIbRyeW1eosyhpgO7jLsnUzQA1KuyiAwPxdp+jZ7nJ0HQEVI6ievk1Eimh5vOfmIcNAxpbEvAZgk23dGSITpV+hddRjtmYUSNjQj/+cgwik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CCurtE+I; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71d608e34b4so6475817b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755767417; x=1756372217; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=q1lvOZzEeeYujPTiqMkU/SfYwhQqH+4WeDtoyp2UpLg=;
+        b=CCurtE+IKk3lcEafwRYm4YRP382FLnrshMZnWAtk5oCwjKnLjcVG2KaDeAjiKSZPnA
+         /P3G/vXxakZk0yIqxHW/T1G4UZlHaj3Hx5xus/3znvoxlFsFLZlbqg7qy3bIwrkHCMnu
+         OdOCYQHcoVPFvqWuBDp6jiYM7yV8yAnBAXmSZ3lFeHFXeIpiZfCrP6kMaHagmomw//vK
+         FpL79rJ2Rh3O9MC0yUx3MRmUBqcC7n5fGTudZxzlyy6uhuR8g/bCWogiWYE8YcPC7ze1
+         a+MkE+m5VroGgXhcXT3Gi3hZ7na1nG+XVZIjDkNOtoQRloQa/2gyS23X7M/4SOXbTDKq
+         dDPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755767417; x=1756372217;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q1lvOZzEeeYujPTiqMkU/SfYwhQqH+4WeDtoyp2UpLg=;
+        b=SZACYMTkAO6e0s165m8ZJyW/nnIAnUzD/ElhjGp2JV7siDQ5HiB025f7LF3NhL271a
+         K8nX5aN7MofN6KKjL/2jHDEHFjnmrChrP0CFIYlKxseqJ32DFcqx6Uciv5+1PvD9oSWq
+         n8MSlq/hdhrnHByICddWEt7BDbXvvTR4YqHvVUR7midgnYrHCDfeE6wb/NIxunaNJQNM
+         fKk5UK9emRBwEkuDx1XSs2ptYUqbnLs+O6+rBq1e2bXbvdMHuLBSDbJ/G3UvXYL/yljP
+         qssgmO5e0kGXMLBBvbSF/6AsSDOEQL8sWDaWObI0qw/CXOxdJh/T7tqFcRTinRPfkFnc
+         Xayw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJafJOSjaB3YlegfgqUot0YJ9l1c4Z+tjtP5CqkPvXKHWTXt1T9S97w4KmTRskXIagtSWlVCQN4aMQ5ok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLrzPq019Y5dUhShQldua+Mqw6/DEUP4PlR8ptItA+uJfw5f+3
+	zhmaWzjvUcJ+ne1RO75/OggIj8zAZwE3mFec3JwzrtzIsPvZG9WpaxZDi/tdsagiMd1y2QEYV9D
+	gAaTaYSlq2ocAEO5VPg0vBphX0rEJIo+8kHehWhHwiA==
+X-Gm-Gg: ASbGncuA1BkD2fEx9jYCi1I/v0U9lkamYt6+dm5WcZRGGgDox74BH12McrKqKNs2n0X
+	/gTUZ6j69K35C3+geP/xBQtIzq5thHgYPX/FRdB20gwNrMNe+f4BQWzT0nmSooHn7QDdC4M+1oY
+	37NhJEhzHMOelpDaqTrI/JKBd9wgqNk+fAlasPE4zcUsdFBHIYlfyVSy6ZESowuf6I/5fNOrsH6
+	Jj069Rq
+X-Google-Smtp-Source: AGHT+IE3XPrdY1rmSoGIfTQNp7AUzGanhZ4zCUcabEi/3a6ztGvU4JGCxFLz/vEHwGrmJU6OeC1mGQpm8phPeetSBnQ=
+X-Received: by 2002:a05:690c:4b90:b0:71d:5782:9d4c with SMTP id
+ 00721157ae682-71fc898b54emr19133007b3.28.1755767416917; Thu, 21 Aug 2025
+ 02:10:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250820193047.4064142-1-jm@ti.com>
+In-Reply-To: <20250820193047.4064142-1-jm@ti.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 21 Aug 2025 11:09:40 +0200
+X-Gm-Features: Ac12FXz4cH776JgD7usSy98yaTqfXnx9d_ZVcbURZjgYhcQZQ3WKM_XhUMd5FsQ
+Message-ID: <CAPDyKFqvf6CJfm52F0_wJj8xxCKDv18b1T+i8zm2rsdBiAqUJg@mail.gmail.com>
+Subject: Re: [PATCH v5] mmc: sdhci_am654: Disable HS400 for AM62P SR1.0 and SR1.1
+To: Judith Mendez <jm@ti.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andrew Davis <afd@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Simplifies error handling by replacing the manual check
-of the return value with the `to_result` helper.
+On Wed, 20 Aug 2025 at 21:30, Judith Mendez <jm@ti.com> wrote:
+>
+> This adds SDHCI_AM654_QUIRK_DISABLE_HS400 quirk which shall be used
+> to disable HS400 support. AM62P SR1.0 and SR1.1 do not support HS400
+> due to errata i2458 [0] so disable HS400 for these SoC revisions.
+>
+> [0] https://www.ti.com/lit/er/sprz574a/sprz574a.pdf
+> Fixes: 37f28165518f ("arm64: dts: ti: k3-am62p: Add ITAP/OTAP values for MMC")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> Reviewed-by: Andrew Davis <afd@ti.com>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Signed-off-by: Onur Özkan <work@onurozkan.dev>
----
- rust/kernel/regulator.rs | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Applied for fixes, thanks!
 
-diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
-index 65f3a125348f..73ad4ad4747d 100644
---- a/rust/kernel/regulator.rs
-+++ b/rust/kernel/regulator.rs
-@@ -267,11 +267,8 @@ pub fn set_voltage(&self, min_voltage: Voltage, max_voltage: Voltage) -> Result
-     pub fn get_voltage(&self) -> Result<Voltage> {
-         // SAFETY: Safe as per the type invariants of `Regulator`.
-         let voltage = unsafe { bindings::regulator_get_voltage(self.inner.as_ptr()) };
--        if voltage < 0 {
--            Err(kernel::error::Error::from_errno(voltage))
--        } else {
--            Ok(Voltage::from_microvolts(voltage))
--        }
-+
-+        to_result(voltage).map(|()| Voltage::from_microvolts(voltage))
-     }
+Kind regards
+Uffe
 
-     fn get_internal(dev: &Device, name: &CStr) -> Result<Regulator<T>> {
---
-2.50.0
-
+> ---
+> This patch was separated from [1] since it will be merged to
+> different trees anyways.
+>
+> Links:
+> v4: https://lore.kernel.org/linux-mmc/20250819152854.3117844-1-jm@ti.com/
+> v3: https://lore.kernel.org/linux-mmc/20250818203310.3066985-1-jm@ti.com/
+> v2: [1] https://lore.kernel.org/linux-mmc/20250807225138.1228333-1-jm@ti.com
+>
+> Changes since v4:
+> - Add fixes tag and cc stable as per Ulf's review comment in v4
+> ---
+>  drivers/mmc/host/sdhci_am654.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+> index 8a099508b939..ffc45930c240 100644
+> --- a/drivers/mmc/host/sdhci_am654.c
+> +++ b/drivers/mmc/host/sdhci_am654.c
+> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
+>
+>  #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
+>  #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
+> +#define SDHCI_AM654_QUIRK_DISABLE_HS400 BIT(2)
+>  };
+>
+>  struct window {
+> @@ -764,6 +765,7 @@ static int sdhci_am654_init(struct sdhci_host *host)
+>  {
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>         struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+> +       struct device *dev = mmc_dev(host->mmc);
+>         u32 ctl_cfg_2 = 0;
+>         u32 mask;
+>         u32 val;
+> @@ -819,6 +821,12 @@ static int sdhci_am654_init(struct sdhci_host *host)
+>         if (ret)
+>                 goto err_cleanup_host;
+>
+> +       if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_DISABLE_HS400 &&
+> +           host->mmc->caps2 & (MMC_CAP2_HS400 | MMC_CAP2_HS400_ES)) {
+> +               dev_info(dev, "HS400 mode not supported on this silicon revision, disabling it\n");
+> +               host->mmc->caps2 &= ~(MMC_CAP2_HS400 | MMC_CAP2_HS400_ES);
+> +       }
+> +
+>         ret = __sdhci_add_host(host);
+>         if (ret)
+>                 goto err_cleanup_host;
+> @@ -882,6 +890,12 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
+>         return 0;
+>  }
+>
+> +static const struct soc_device_attribute sdhci_am654_descope_hs400[] = {
+> +       { .family = "AM62PX", .revision = "SR1.0" },
+> +       { .family = "AM62PX", .revision = "SR1.1" },
+> +       { /* sentinel */ }
+> +};
+> +
+>  static const struct of_device_id sdhci_am654_of_match[] = {
+>         {
+>                 .compatible = "ti,am654-sdhci-5.1",
+> @@ -969,6 +983,10 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+>         if (ret)
+>                 return dev_err_probe(dev, ret, "parsing dt failed\n");
+>
+> +       soc = soc_device_match(sdhci_am654_descope_hs400);
+> +       if (soc)
+> +               sdhci_am654->quirks |= SDHCI_AM654_QUIRK_DISABLE_HS400;
+> +
+>         host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
+>         host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+>
+> --
+> 2.49.0
+>
 
