@@ -1,105 +1,80 @@
-Return-Path: <linux-kernel+bounces-778907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29783B2EC93
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:05:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF15B2EC7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B4317BFD4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB525882A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA46283C87;
-	Thu, 21 Aug 2025 04:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBBF2D5C67;
+	Thu, 21 Aug 2025 03:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4muNqPI"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JsHkRYFh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ECD26E70D;
-	Thu, 21 Aug 2025 04:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1449217F24;
+	Thu, 21 Aug 2025 03:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755749058; cv=none; b=BmZVEXubY+S4mtoR416QOolKfCXaBJDgtY45StbSJ0yvuxi1JR01VO2wSL/hxM/E05c4nd/C9I+KrfdusaRiSjdlvSM8M+uhBZCQpP6T63qMyn4l1JOJwV0W4I2y2LmPxeTOC1glDz3Isxl5hoiIXIjcaj4ZHFoaH/8qTGJgUBM=
+	t=1755748763; cv=none; b=ElnCB1jU6y/Jfbjc7Rkmcfn7gf+2TixGiYXeoAdtD/dv1zXhHghLpfrY42vp0TWXvGcu5pg+VvGcUtbqdfV/ZK+CBFNQsz0oXOFhgaY/Ok3oAS7f+l14pG41D3Eok89oeU7YWeWYqPr/kZo3ea43Ez7oA5wXER+Kt4+RYjXXHFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755749058; c=relaxed/simple;
-	bh=oZrbey5yx5uEbRq203YjlNLnmKksdSRfJ5gsdDLrF5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rDA40CNWJ5lxvhRnaWeMBDU7YqeguUVqJw8yPKYwc1o9/H6tZXenlIWOBzw4HR9qSTBHccIfjTQ43WiwEPKqFM+m1t8wWm4QKxWIl8UFxa3CbuuiP3j1P5edz5UEUpI0ypcmyAOHDVxYtADWJG7U9FzZSX2/BqbCWWD3KXG4y0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4muNqPI; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e93370ab8so626450b3a.1;
-        Wed, 20 Aug 2025 21:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755749056; x=1756353856; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A2CqWIv3qh+ScjnQTvA5REeLwnT0B8P9nNd5NsH69v4=;
-        b=b4muNqPIOiBam3t7NzPnQmsOKm7WWFadI6Mo6FzNIKn0bRnW3BL2xr5wjMTLdTsiJg
-         dkGiJTmMi7m9orbL5k1GU+qktsaJY7ffKzE49EYhs0ql3K4APeJji5RRjJIxIAG244Pe
-         rM2Mqcg+8q6ifVa7u0qK3z9GBa+PRaC1HCmCRR6HYu4eQBv1KDJ+nTSxyCld7pGg05fm
-         kjOnZTu6dqMx9oleVzGRtYY/yh8zPPTytcUKG7UkHjlDHoNVYoJhhNNUPjv0Bp8eDKL4
-         x6EfmkNTymkO6e7nNY0gEu6HMKoiJQJJNGAACfGIfbHdMbAK1TvpjWNQ6Pi6Wga2EE4U
-         OU2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755749056; x=1756353856;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A2CqWIv3qh+ScjnQTvA5REeLwnT0B8P9nNd5NsH69v4=;
-        b=EccCnZbj0BVAo/ZTJR34EZ5eeFKlH2XtcHeWoIRCi/pOICb4vuUxweaFIgMjD8pnHu
-         4/c/f/UrfEwg32VvJ13f81JL4tyAClIc43rJoTz73bAgeD29VPzSI5E+8zobygqjNYdB
-         J6JiPpj+F88yusV+tihFlimRkveMiHp3ljkkp1c86MPZvvaicZlArhEaEQjnYx1tPa2s
-         eNCL58LyUssZ5Vb5o0ixOY/fjUYurvZ2dSuthcI4sSpcswDEi0/bGkOHbz1TPgb5WhOW
-         KpLiP4IXwDPnpumX+27acEaC7qBF+VsTVlrvTcxMzMXDovivhs09ZkPzRQxy2AkFfDN/
-         HUTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVybRVEp+AQQFCgKmS6Op+uPhmSl/w794XXF72EUxVVi8tFXftrVhQgxSpiULL+DYXCneMhJLtRV4d/HWQ=@vger.kernel.org, AJvYcCX3gsBnlXwb++FP1K9bPiWzRCMbIO9IsszAGmDJao3wJRtFV70Dog99bQNeCOW9ldvx+O+CIjCrpCNlisrnLjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzhAFMUEyr10v53IeOAdn4cP39Ineeuz/RSibYfcxTth7m07c6
-	593/7ftkhV3HENcoGTBGNgdllct2acZ7BeFyzD3E2+QB3JS51tIK5mU6
-X-Gm-Gg: ASbGncsPhld+QCTbqL2mgUii0be0GSCNi3ulEHyEyI2LY7mXjjcFurwsQcpetNcYLLj
-	Oe/cccS++PCTyejIVH1155T1BPE1tfhTTgg7pvrLJCM33w+osqEBRlVEHS6QnB1SGMwmKn3Lk2/
-	YUnPN5sS1zjusEbekba7qFHkWJxopFtkY9GJDkl0GGkrE0wIXmBUqamAxwCBrPW0pOE5qv2Gy9q
-	scGEikAIv+iy3rFxa5sP+pqSoeYJrDLvfMabJyDgHtf9OuLxnCBxR4P9VIZX652Mnfob42De5xg
-	mBbvooJ9OiirwqCRwSDEWEdFYdn+s+oqKhlw3oojpdGI4zWEhjCxwMBNBtPVX4584yGXWYkcwR8
-	XATW+J2cPEUTura19uSYpykUdJDlgF2CCwFuaFGh9csSaR7a1G1tLBSzatfl+Ha45EepV3WRrZ8
-	AqdL1I/g==
-X-Google-Smtp-Source: AGHT+IEBfOJPnqgYMjq415no3AtOarEE5p+Rcwd8wZf+szgzK1jEJbd2gn6h5ZkuPh7tbclLp/2K/w==
-X-Received: by 2002:a05:6a00:1302:b0:76b:d746:733a with SMTP id d2e1a72fcca58-76ea31e3adbmr1412349b3a.21.1755749055698;
-        Wed, 20 Aug 2025 21:04:15 -0700 (PDT)
-Received: from bee.. (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7f0b4f0esm6538714b3a.90.2025.08.20.21.04.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 21:04:15 -0700 (PDT)
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-To: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	ojeda@kernel.org
-Cc: aliceryhl@google.com,
-	anna-maria@linutronix.de,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@kernel.org,
-	frederic@kernel.org,
-	gary@garyguo.net,
-	jstultz@google.com,
-	linux-kernel@vger.kernel.org,
-	lossin@kernel.org,
-	lyude@redhat.com,
-	rust-for-linux@vger.kernel.org,
-	sboyd@kernel.org,
-	tglx@linutronix.de,
-	tmgross@umich.edu,
-	acourbot@nvidia.com,
-	daniel.almeida@collabora.com
-Subject: [PATCH v1 2/2] rust: Add read_poll_timeout_atomic function
-Date: Thu, 21 Aug 2025 12:57:10 +0900
-Message-ID: <20250821035710.3692455-3-fujita.tomonori@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250821035710.3692455-1-fujita.tomonori@gmail.com>
-References: <20250821035710.3692455-1-fujita.tomonori@gmail.com>
+	s=arc-20240116; t=1755748763; c=relaxed/simple;
+	bh=PjEpKSGkFX2AcsB5hdqQvR+5Y4sYsFLp6sTNJua2DgM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uU6mlfDRaHLRNyqJxFpkEsVtt4RLXJG87PKHT72DGGEWCE7Bjaj7zj7eGqsZivwYiq/9ev7BhrtiCr+RYuQZqskkxUJReUvP316Mn5CbbGD5M/3RTR+QG0VPV8nwCZkP3Fs1JPbQ4999gTu20qhIW7uPirjO8HTVpGIJQk1q3S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JsHkRYFh; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755748762; x=1787284762;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=PjEpKSGkFX2AcsB5hdqQvR+5Y4sYsFLp6sTNJua2DgM=;
+  b=JsHkRYFhRUWhonMF55kIMiARu0kKF/o4FTKzUIL6AfjzI92ZydR6nC96
+   pG6acb5RjbVcLeNkojKCdwHUXXVZy+oagEgCs5LV5Kyfdkpu1SDpRlsY2
+   EBjdH80GVqhrLRHDAJEWAwOTwHw1PgTxOWyZpAVCuy6wbuAJqXYiSA4IE
+   ayhl1eIfdmn6pxL/7fYCjw8cJ0nNzEfu/LL8f1CUpKsjWLutjsWy59wkJ
+   GVWjNADXxyCF0ckAYjiWnmsVFP/CdKhwrOjdgWDW6l+mhPdmuAH6qCV9b
+   5qPoZsNDlTeuMw8ZGVC8EQ0n3arzcAeNo8TV+Cit3s49ck7yDtgaY4gSv
+   w==;
+X-CSE-ConnectionGUID: 8uXJD18DTP+uxT+jSWPL2A==
+X-CSE-MsgGUID: 5zloBmS8T+6iag8eqfzbPA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="68731943"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="68731943"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 20:59:21 -0700
+X-CSE-ConnectionGUID: L3mc8fVeSAmCFjdpEvnNog==
+X-CSE-MsgGUID: NWPWkd84TTGzCVTai5HDsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="168712985"
+Received: from spr.sh.intel.com ([10.112.229.196])
+  by fmviesa009.fm.intel.com with ESMTP; 20 Aug 2025 20:59:18 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [Patch v6 00/10] arch-PEBS enabling for Intel platforms
+Date: Thu, 21 Aug 2025 11:57:55 +0800
+Message-Id: <20250821035805.159494-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,127 +83,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add read_poll_timeout_atomic function which polls periodically until a
-condition is met, an error occurs, or the timeout is reached.
-
-The C's read_poll_timeout_atomic (include/linux/iopoll.h) is a
-complicated macro and a simple wrapper for Rust doesn't work. So this
-implements the same functionality in Rust.
-
-The delay_before_read argument isn't supported since there is no user
-for now. It's rarely used in the C version.
-
-Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
----
- rust/kernel/io/poll.rs | 90 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 89 insertions(+), 1 deletion(-)
-
-diff --git a/rust/kernel/io/poll.rs b/rust/kernel/io/poll.rs
-index 7af1934e397a..71c2c0e0d8b4 100644
---- a/rust/kernel/io/poll.rs
-+++ b/rust/kernel/io/poll.rs
-@@ -8,7 +8,10 @@
-     error::{code::*, Result},
-     processor::cpu_relax,
-     task::might_sleep,
--    time::{delay::fsleep, Delta, Instant, Monotonic},
-+    time::{
-+        delay::{fsleep, udelay},
-+        Delta, Instant, Monotonic,
-+    },
- };
+Changes:
+v5 -> v6:
+  * Rebase code to last tip perf/core tree + "x86 perf bug fixes and
+    optimization" patchset
  
- /// Polls periodically until a condition is met, an error occurs,
-@@ -102,3 +105,88 @@ pub fn read_poll_timeout<Op, Cond, T>(
-         cpu_relax();
-     }
- }
-+
-+/// Polls periodically until a condition is met, an error occurs,
-+/// or the timeout is reached.
-+///
-+/// The function repeatedly executes the given operation `op` closure and
-+/// checks its result using the condition closure `cond`.
-+///
-+/// If `cond` returns `true`, the function returns successfully with the result of `op`.
-+/// Otherwise, it performs a busy wait for a duration specified by `delay_delta`
-+/// before executing `op` again.
-+///
-+/// This process continues until either `op` returns an error, `cond`
-+/// returns `true`, or the timeout specified by `timeout_delta` is
-+/// reached.
-+///
-+/// # Errors
-+///
-+/// If `op` returns an error, then that error is returned directly.
-+///
-+/// If the timeout specified by `timeout_delta` is reached, then
-+/// `Err(ETIMEDOUT)` is returned.
-+///
-+/// # Examples
-+///
-+/// ```no_run
-+/// use kernel::io::{Io, poll::read_poll_timeout_atomic};
-+/// use kernel::time::Delta;
-+///
-+/// const HW_READY: u16 = 0x01;
-+///
-+/// fn wait_for_hardware<const SIZE: usize>(io: &Io<SIZE>) -> Result<()> {
-+///     match read_poll_timeout_atomic(
-+///         // The `op` closure reads the value of a specific status register.
-+///         || io.try_read16(0x1000),
-+///         // The `cond` closure takes a reference to the value returned by `op`
-+///         // and checks whether the hardware is ready.
-+///         |val: &u16| *val == HW_READY,
-+///         Delta::from_micros(50),
-+///         Delta::from_micros(300),
-+///     ) {
-+///         Ok(_) => {
-+///             // The hardware is ready. The returned value of the `op` closure
-+///             // isn't used.
-+///             Ok(())
-+///         }
-+///         Err(e) => Err(e),
-+///     }
-+/// }
-+/// ```
-+pub fn read_poll_timeout_atomic<Op, Cond, T>(
-+    mut op: Op,
-+    mut cond: Cond,
-+    delay_delta: Delta,
-+    timeout_delta: Delta,
-+) -> Result<T>
-+where
-+    Op: FnMut() -> Result<T>,
-+    Cond: FnMut(&T) -> bool,
-+{
-+    let mut left_ns = timeout_delta.as_nanos();
-+    let delay_ns = delay_delta.as_nanos();
-+
-+    loop {
-+        let val = op()?;
-+        if cond(&val) {
-+            // Unlike the C version, we immediately return.
-+            // We know the condition is met so we don't need to check again.
-+            return Ok(val);
-+        }
-+
-+        if left_ns < 0 {
-+            // Unlike the C version, we immediately return.
-+            // We have just called `op()` so we don't need to call it again.
-+            return Err(ETIMEDOUT);
-+        }
-+
-+        if !delay_delta.is_zero() {
-+            udelay(delay_delta);
-+            left_ns -= delay_ns;
-+        }
-+
-+        cpu_relax();
-+        left_ns -= 1;
-+    }
-+}
+v4 -> v5:
+  * Rebase code to 6.16-rc3
+  * Allocate/free arch-PEBS buffer in callbacks *prepare_cpu/*dead_cpu
+    (patch 07/10, Peter)
+  * Code and comments refine (patch 09/10, Peter)
+
+Please notice this patch set is based on tip perf/core tree (448f97fba901)
++ the patch series "x86 perf bug fixes and optimization"[1].
+
+This patchset introduces architectural PEBS support for Intel platforms
+like Clearwater Forest (CWF) and Panther Lake (PTL). The detailed
+information about arch-PEBS can be found in chapter 11
+"architectural PEBS" of "Intel Architecture Instruction Set Extensions
+and Future Features".
+
+This patch set doesn't include the SSP and SIMD regs (OPMASK/YMM/ZMM)
+sampling support for arch-PEBS to avoid the dependency for the basic
+SIMD regs sampling support patch series[2]. Once the basic SIMD regs
+sampling is supported, the arch-PEBS based SSP and SIMD regs
+(OPMASK/YMM/ZMM) sampling would be supported in a later patch set.
+
+Tests:
+  Run below tests on Clearwater Forest and Pantherlake, no issue is
+  found.
+
+  1. Basic perf counting case.
+    perf stat -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
+
+  2. Basic PMI based perf sampling case.
+    perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
+
+  3. Basic PEBS based perf sampling case.
+    perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}:p' sleep 1
+
+  4. PEBS sampling case with basic, GPRs, vector-registers and LBR groups
+    perf record -e branches:p -Iax,bx,ip,xmm0 -b -c 10000 sleep 1
+
+  5. User space PEBS sampling case with basic, GPRs and LBR groups
+    perf record -e branches:p --user-regs=ax,bx,ip -b -c 10000 sleep 1
+
+  6 PEBS sampling case with auxiliary (memory info) group
+    perf mem record sleep 1
+
+  7. PEBS sampling case with counter group
+    perf record -e '{branches:p,branches,cycles}:S' -c 10000 sleep 1
+
+  8. Perf stat and record test
+    perf test 96; perf test 125
+
+
+History:
+  v4: https://lore.kernel.org/all/20250620103909.1586595-1-dapeng1.mi@linux.intel.com/
+  v3: https://lore.kernel.org/all/20250415114428.341182-1-dapeng1.mi@linux.intel.com/
+  v2: https://lore.kernel.org/all/20250218152818.158614-1-dapeng1.mi@linux.intel.com/
+  v1: https://lore.kernel.org/all/20250123140721.2496639-1-dapeng1.mi@linux.intel.com/
+
+Ref:
+  [1]: https://lore.kernel.org/all/20250820023032.17128-1-dapeng1.mi@linux.intel.com/
+  [2]: https://lore.kernel.org/all/20250815213435.1702022-1-kan.liang@linux.intel.com/
+
+Dapeng Mi (10):
+  perf/x86/intel: Replace x86_pmu.drain_pebs calling with static call
+  perf/x86/intel: Correct large PEBS flag check
+  perf/x86/intel: Initialize architectural PEBS
+  perf/x86/intel/ds: Factor out PEBS record processing code to functions
+  perf/x86/intel/ds: Factor out PEBS group processing code to functions
+  perf/x86/intel: Process arch-PEBS records or record fragments
+  perf/x86/intel: Allocate arch-PEBS buffer and initialize PEBS_BASE MSR
+  perf/x86/intel: Update dyn_constranit base on PEBS event precise level
+  perf/x86/intel: Setup PEBS data configuration and enable legacy groups
+  perf/x86/intel: Add counter group support for arch-PEBS
+
+ arch/x86/events/core.c            |  21 +-
+ arch/x86/events/intel/core.c      | 268 ++++++++++++-
+ arch/x86/events/intel/ds.c        | 615 ++++++++++++++++++++++++------
+ arch/x86/events/perf_event.h      |  40 +-
+ arch/x86/include/asm/intel_ds.h   |  10 +-
+ arch/x86/include/asm/msr-index.h  |  20 +
+ arch/x86/include/asm/perf_event.h | 116 +++++-
+ 7 files changed, 940 insertions(+), 150 deletions(-)
+
 -- 
-2.43.0
+2.34.1
 
 
