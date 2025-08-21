@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-778825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17989B2EBA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:04:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F00DB2EBA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E9C724117
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:04:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03F837AEA0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3622D540D;
-	Thu, 21 Aug 2025 03:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFAE2D5410;
+	Thu, 21 Aug 2025 03:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QxTbJJqq"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d7HeN6U1"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B80372625
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 03:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4D0277C90;
+	Thu, 21 Aug 2025 03:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755745437; cv=none; b=jZeL4nS1bFqkS61PxZsNbAJwkrqAJ4XZBD6KRT/xG6mJLJL5IKVosVRvwSgMQw/shlVeVZJyleRdOxhBiBPRxIb9uONRa6WJ8zV9qy/hMxUFzpHrrMx2CeQAqzQazld0RbaQaNGyLlZko5e5QuSLvKnzziDMcwWuyakiutV+O1s=
+	t=1755745593; cv=none; b=Eoc4aciwSzqM2MKnCItzcuZec9odHAXjy1RqeY8XUoFT1MddASiDPDqR3q0gNBeJeVOH9nWA1X4UMeh7VytA4PXML8J4LCQfnO/2EPlzcQoYNTSWgv7uHE1AmMWFyQsi9BKcCAbU8BbI49lGlDdOjPAcHndBE5f66+g/3UUsUkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755745437; c=relaxed/simple;
-	bh=WQxV8eCKHDLNTYuB8FbxXXtqUtwpbbCpHsCWGZ5+d4c=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LeDXLvwJrLv8ZPnSk1N4TdU/5irjDJRQnAWUfQRrD58+rHF3kimgEZnAqmN27kBoBYweqNanZlgkLqlcLJLDzRaqaU8n23A4Lrn3+AS8FZItLttizmCHby1gJ6gKgr9piiWvE05aYrr4CLm7bZqWnBQPsBRxZgRIZVKZe+fLUqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QxTbJJqq; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-244581187c6so7412965ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 20:03:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755745435; x=1756350235; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xsyX6nC2qbqoa3IXoqz2x0SSkvlofANuq+KCkgDhw1s=;
-        b=QxTbJJqq9OFEoSbSAmDvGDR+vK9UrFvowhqeRG5QcbTiYp9LDhOCvcnUOOMKxklpci
-         MZoukyNKWHtH47c79aRZMigr3xdrcDhHmZI4RG4JycFEUnvkt3/ykVWGxN/6sdOW6urf
-         wQQ/Pipr3DrXQsNcDFNVSQyPJgotV8GGJgW3fYdTAvF0nxZlx10AUxpFaBYbGIhPEwG+
-         mH6pZKXmdc4BeLgOhzR14953CVEmwfp7uZxdaTnqkAknh9XdEPGjjlPvbzAdFsaIPAUi
-         EbvF8UXl/cjpV9ST9BiRTNTHjIVswtcAdlYQqvk7Nmty50RghoFJyhtjln9dnHga5t5N
-         HcNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755745435; x=1756350235;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xsyX6nC2qbqoa3IXoqz2x0SSkvlofANuq+KCkgDhw1s=;
-        b=wjst1EMoUgiWtvgwrjkkzAxwf5OJJAjoG2CaVuEaXOH/YQKbP/+1n2IfXviFL1plyG
-         BhZfBurscBICbCFabQ2onOHH7UaqdJoKVURmA956UQBTtURtz5L9Ss+QQgLaVDi1DiD/
-         WWfDziQfutDnC+JhLGtbIKcfctKDKB3djNMPfvQ9cWnqB62z6AqXtgzFyAvsPkWEf6z+
-         mihbMBV7LFkr/+CnDwJxLNH1k1Kkw4vIbGux2zSKL8DG6Tiu4K+J5KjHuXQuXYfclVUz
-         Iszspwin3585YEFWLe+Fe5jkhpJDGHCZpQrp3qrXDr+SE9rti/mpwTvYNCt++vJ4z9/n
-         N8iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzxivyZIqXjPdcB3Fmke4BILEguItCqqpjdbY6qIpGGT85wnR55iHDurFIHn7LB26lJBgWHXnPM15T6UI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT8uAd9cwcMgTQ4x1T98Cs0uIn6YKpsuSMcJQigE/ouSpfYmrc
-	+Ckk53kWYSGq2zKXYrewpjnCFWKP1PqRJYCHbobhKa6Za/0gjLcb3QzdWJDXRnBrG6w4ANKfVoW
-	U/++fJz+Nd/Weotz6WPaSjrdpOA==
-X-Google-Smtp-Source: AGHT+IF0xP14Kr/6iRhQeskJ7eOXNJ0cD0inA3ghPz9y2YArBHaAeKeUcbp0uSaUE723wItGWda/EaS2MDoc0Rymdw==
-X-Received: from plhv13.prod.google.com ([2002:a17:903:238d:b0:240:5505:5286])
- (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:15c3:b0:245:fb83:25da with SMTP id d9443c01a7336-245fec07a9dmr12898165ad.22.1755745435498;
- Wed, 20 Aug 2025 20:03:55 -0700 (PDT)
-Date: Thu, 21 Aug 2025 03:03:46 +0000
+	s=arc-20240116; t=1755745593; c=relaxed/simple;
+	bh=/CQU+pgB2TsyKM5TEeSk4WJeYgiQiaAeoxcIf4oo4J8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rja4HVblwPZJWb3fJ3igHt179b7YLfhkk8UIvw0Ph6yLq9a66DRKBep0ArLxAPDLkKg6wK4zPCF4gZEsCcnxPLwsoq7fOfRa5hLNiRXjEnGFQgOMZGzMjzWZB2PB/NhLjDs8S3jWrRgMa+N6/vaiRBmvOd2gTj3V1ezkBBnWUMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d7HeN6U1; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=hyX8lYPAronULWeVXJ+quZoKMwRITcvWkFrMcTYt3L4=; b=d7HeN6U1qx7JRmLdDoHfTDeEQL
+	ozU0H8deFujGarIRqlpaRlA3847cObTumeb/HMHK+k8/3P5fcjDJsMp9wu9n64nfbIcJuiAbkP9ZY
+	Hk7toPD+Z11Ss5F/wQ02z12RaXemmkuW6qg4DhvdUb6x+nkNdaN/7K2WmqtYsxjN+Sn2MV/EvS+cI
+	fBwkEjVZDl3ivJmXvUHrGJIjH09JbzehGu8bW6m9vVdaNGqddEjVz7cppfLo1aSltyXoK2uFGWFZG
+	FeA7T2B4wJHkCzqEPnYCUsYXMpS+z7qHtU8KAIyGj6KEIwyo8VrTqlfIEH4RyJnq7eAiw2X+OHiSS
+	LxY5lnLw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uovd9-0000000Fayb-3xBh;
+	Thu, 21 Aug 2025 03:06:23 +0000
+Message-ID: <0254008f-1cdf-480f-ad6f-8f002b35d754@infradead.org>
+Date: Wed, 20 Aug 2025 20:06:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.rc1.193.gad69d77794-goog
-Message-ID: <20250821030349.705244-1-almasrymina@google.com>
-Subject: [PATCH net v1] page_pool: fix incorrect mp_ops error handling
-From: Mina Almasry <almasrymina@google.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mina Almasry <almasrymina@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, skhawaja@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] docs: gpu: amdgpu: Fix spelling in amdgpu
+ documentation
+To: Rakuram Eswaran <rakuram.e96@gmail.com>, linux-doc@vger.kernel.org,
+ alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com,
+ corbet@lwn.net
+Cc: tzimmermann@suse.de, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, simona@ffwll.ch, siqueira@igalia.com,
+ harry.wentland@amd.com, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org
+References: <20250821025957.22546-1-rakuram.e96@gmail.com>
+ <20250821025957.22546-2-rakuram.e96@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250821025957.22546-2-rakuram.e96@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Minor fix to the memory provider error handling, we should be jumping to
-free_ptr_ring in this error case rather than returning directly.
 
-Found by code-inspection.
 
-Cc: skhawaja@google.com
+On 8/20/25 7:59 PM, Rakuram Eswaran wrote:
+> Fixed following typos reported by Codespell
+> 
+> 1. propogated ==> propagated
+>    aperatures ==> apertures
+> In Documentation/gpu/amdgpu/debugfs.rst
+> 
+> 2. parition ==> partition
+> In Documentation/gpu/amdgpu/process-isolation.rst
+> 
+> 3. conections ==> connections
+> In Documentation/gpu/amdgpu/display/programming-model-dcn.rst
+> 
+> In addition to above,
+> Fixed wrong bit-partition naming in gpu/amdgpu/process-isolation.rst
+> from "fourth" partition to "third" partition.
+> 
+> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+> Suggested-by: Alexander Deucher <Alexander.Deucher@amd.com>
+> Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
 
-Fixes: b400f4b87430 ("page_pool: Set `dma_sync` to false for devmem memory provider")
-Signed-off-by: Mina Almasry <almasrymina@google.com>
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
----
- net/core/page_pool.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Thanks.
 
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 343a6cac21e3..ba70569bd4b0 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -287,8 +287,10 @@ static int page_pool_init(struct page_pool *pool,
- 	}
- 
- 	if (pool->mp_ops) {
--		if (!pool->dma_map || !pool->dma_sync)
--			return -EOPNOTSUPP;
-+		if (!pool->dma_map || !pool->dma_sync) {
-+			err = -EOPNOTSUPP;
-+			goto free_ptr_ring;
-+		}
- 
- 		if (WARN_ON(!is_kernel_rodata((unsigned long)pool->mp_ops))) {
- 			err = -EFAULT;
+> ---
+>  Documentation/gpu/amdgpu/debugfs.rst                       | 4 ++--
+>  Documentation/gpu/amdgpu/display/programming-model-dcn.rst | 2 +-
+>  Documentation/gpu/amdgpu/process-isolation.rst             | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
 
-base-commit: c42be534547d6e45c155c347dd792b6ad9c24def
+
 -- 
-2.51.0.rc1.193.gad69d77794-goog
-
+~Randy
 
