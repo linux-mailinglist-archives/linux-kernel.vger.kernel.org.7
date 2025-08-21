@@ -1,157 +1,132 @@
-Return-Path: <linux-kernel+bounces-780744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A317FB308DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:01:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084A1B308DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A15A27F6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:01:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9060B625C64
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2905285CBA;
-	Thu, 21 Aug 2025 22:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481A62E9EB9;
+	Thu, 21 Aug 2025 22:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WtXJ9JKg"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JA7/0yvQ"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBC25C88
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57B8252910
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755813660; cv=none; b=q1S86PvrVte6VN7ILjjSzTH171LWinhSckupeo2/uuHRtB/F2AegqL8wrmZprhcK9+RSzK6KwbxwsbePFrhOIVPDpVtv+hDp6SMpwU+lhR6CsMSB7goR1zr6aQqLp73r6CmnLE8C14EywZ6gYS5y3DxU5M4sEg7wxYuH2ODg3iA=
+	t=1755813787; cv=none; b=hGgnzsbxYwTnyE+2fkjf311kUOPxtE9/Z8z+YIBk3jSmBA7ETio4xSj+XKkww4gyXtBQMHZ9Axcl4seHteVCSinD8pu+QHeOHYhrozjZBUrC4X+7WDX3rv+JCnmrqnjsG7BwCyNMX6lrgEimDofGZoT3Va6UNdhMHCRZsQvzz8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755813660; c=relaxed/simple;
-	bh=1nvJxYXQwUIpsHiqMhVuXkaYGDPfbGX9Sou5hYTfpxc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=K/xoVy6u+uoWLpS3aISeOR51AHSV9uMFF6XAf0fWQAJo+ZxVU/ZT/FFNn3cji8a3sDjVbu+oboAroZgysK4WBA6UkEFrCH8cOZ62Yvu7kZpwSKay2EU7lc21K/Zs0C5xCxeNVvK+XMLoaKQuAHYRGtP/L+8hluI/WOzGCSgwaus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WtXJ9JKg; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e2eb6d2baso3316236b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755813658; x=1756418458; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4cLlpuHdBM/UdMtUWDBy4/i+9L6ubcblOqSNe/mP7/k=;
-        b=WtXJ9JKgK5U43kaiLGj8MLy4TPyWre4+vBeRU7aLUbR41eCW5WqujKjAdHvTCn+1+J
-         fI72HID+CxPt8HBHPVOUzk5alXO2xiEpJDJSJvufeUKWzUIqzScNmUMJ0kCXm2T6LuUw
-         j3Kn71FBqda6nZK8PZge/IMNISjjGT7dV5CmSOLF0bFyGAJnLceeQsCWZMn7Oe8AT4dg
-         87JYrWwHPnuv8PPht5cXinwdUUUC+X6y3+yy81GdusQEuNSvDgHi3txm6RcJHfXPPtNi
-         bzxRaTsUAuMmvo0WcxxV7ydef8EOneslaGFtU1TOMxDcMtP6GXx2fVfb9mNhrDmjjVHV
-         OEWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755813658; x=1756418458;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4cLlpuHdBM/UdMtUWDBy4/i+9L6ubcblOqSNe/mP7/k=;
-        b=j4akfvfQ5Ts02ZWfI4m9q2vEsLZr3CKqm9rKXtJdfKPkqRL0lqFATd0oYt4/1BWmdA
-         g/W7yTr7mqdmh0dtz3KeD0UPxpHDdq724WfdfgFkjmWTj+fms5Vc5+Wt9SSTWtmppx+T
-         b/G3d6Aol0hETVnE8MRqaQjyrX2bWv1hTriKqm3QuIqZSExJtGtM2ol4h+MK3vukVz3h
-         Kmk7vIbMjDsK7H5zkh6ndQdyojRvPrM1TR1NJpiRB7/sRjU1zS+0Ng24c5qjb2CIsNeu
-         NvkVeDVXkWIy1YFqRK5Y0PvNKy9yG0k3YDhBssIY2AjvDXsYZTTnknSPS18UK8DMul74
-         gJYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWxO28znyfkMOcA5prEICg3sPwKTFbvlLvFMaW8vhiAUmAR+4sy5BZpUAnGBPNdIzzm4ANQzeMmpnNRjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCAE2lliSciaEzc1D5kU1oV4cjIEJ+4fQVOB/+65Ofl1mkD0eb
-	12vydJra0pHXVld6/BT90qG479BYzg9MdA5zPz7lDhxu+gpwEU4d1yyb1ZeG4lnFDyc7F67oe/B
-	DrhZviy6oFSxHDA==
-X-Google-Smtp-Source: AGHT+IEAbdE+rBrrN9gQKjiTu1VWCSa69pr7H1Wqyou0ZlgqSmruqcwdp3/7Db/srMjoEdDP7SkVIJMHghXH9A==
-X-Received: from pfop21.prod.google.com ([2002:a05:6a00:b55:b0:746:1931:952a])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:3d0e:b0:76e:885a:c1cd with SMTP id d2e1a72fcca58-7702fc472d4mr1141804b3a.31.1755813658055;
- Thu, 21 Aug 2025 15:00:58 -0700 (PDT)
-Date: Thu, 21 Aug 2025 22:00:53 +0000
-In-Reply-To: <v5j6nxynzvvlcxu3m3mkeyjv5dlozzp7ixkgc6u6hdzh7en6jh@zvzqm5n7njfd>
+	s=arc-20240116; t=1755813787; c=relaxed/simple;
+	bh=oR65Qj7SH0G+S4Zh+xG1a/LnHeuQCPAES3C3P0NuiYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=VzlkzxWZ9X+Xk8DJfdQK2HgRZbqNHhOsw/D7g0tOLc2bnAwbvfIrwv834g+HYP8+/CzJiy9yHTkh66IX/Bt9gDTwGSoNcLMogjdpHvxO6ssiIzPma09EFnMOZLRm7tyyhc29oCOAhPRNskOf68G2VK8WlzoJb+5pMH6zm0faQQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JA7/0yvQ; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250821220257euoutp023fca77dc1da7b458fa93ab40aaa9f65b~d51QImr_A1174111741euoutp02D
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:02:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250821220257euoutp023fca77dc1da7b458fa93ab40aaa9f65b~d51QImr_A1174111741euoutp02D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755813777;
+	bh=FhMuLkPlqfOoY3HIjX51+kKhFnIWCP0l9JSXpliABCM=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=JA7/0yvQ9bCoZF7Gao2nrxDRcUPghZ/NnCzteaYJ3z8KWW17iOhcIqkflQLcbCGke
+	 JoSwhBZpTny62tt11p3bJesDP5T7I8CrHVkS9lnGecvQVVA1hEn14jVVuMhdXmZRhm
+	 XzkOGQNI4ARvYpm/Vo/b+NXer98BSONe8U6Ucw6w=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250821220256eucas1p2c4854f72c98d23d6b8a6247712430482~d51OvRzKh0715107151eucas1p2U;
+	Thu, 21 Aug 2025 22:02:56 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250821220255eusmtip12f604debb503f4c26d3d8ae003a6c9a1~d51Nw2j0p2648126481eusmtip1c;
+	Thu, 21 Aug 2025 22:02:55 +0000 (GMT)
+Message-ID: <1b7b1e78-e94c-4d5b-a023-61852d2f7951@samsung.com>
+Date: Fri, 22 Aug 2025 00:02:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <v5j6nxynzvvlcxu3m3mkeyjv5dlozzp7ixkgc6u6hdzh7en6jh@zvzqm5n7njfd>
-X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
-Message-ID: <20250821220054.3700783-1-cmllamas@google.com>
-Subject: [PATCH v2] drm/xe: switch to local __basename() helper
-From: Carlos Llamas <cmllamas@google.com>
-To: Lucas De Marchi <lucas.demarchi@intel.com>, 
-	"=?UTF-8?q?Thomas=20Hellstr=C3=B6m?=" <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matt Atwood <matthew.s.atwood@intel.com>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Carlos Llamas <cmllamas@google.com>, Tiffany Yang <ynaffit@google.com>, 
-	"open list:INTEL DRM XE DRIVER (Lunar Lake and newer)" <intel-xe@lists.freedesktop.org>, 
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 1/4] drm/imagination: Use pwrseq for TH1520 GPU
+ power management
+To: Matt Coster <Matt.Coster@imgtec.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Frank Binns <Frank.Binns@imgtec.com>, Maarten
+	Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Drew Fustini <fustini@kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <27d70d29-9e37-4905-9d22-0266c8a290a2@imgtec.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250821220256eucas1p2c4854f72c98d23d6b8a6247712430482
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250820085609eucas1p2938d69999f4d7c9654d5d2a12a20c906
+X-EPHeader: CA
+X-CMS-RootMailID: 20250820085609eucas1p2938d69999f4d7c9654d5d2a12a20c906
+References: <CGME20250820085609eucas1p2938d69999f4d7c9654d5d2a12a20c906@eucas1p2.samsung.com>
+	<20250820-apr_14_for_sending-v12-0-4213ccefbd05@samsung.com>
+	<20250820-apr_14_for_sending-v12-1-4213ccefbd05@samsung.com>
+	<CAPDyKFqeOUwTbZEUFmHS2Onyj5LZ1b26vGgC4=UHUOxhwbzjRw@mail.gmail.com>
+	<27d70d29-9e37-4905-9d22-0266c8a290a2@imgtec.com>
 
-Commit b0a2ee5567ab ("drm/xe: prepare xe_gen_wa_oob to be multi-use")
-introduced a call to basename(). The GNU version of this function is not
-portable and fails to build with alternative libc implementations like
-musl or bionic. This causes the following build error:
 
-  drivers/gpu/drm/xe/xe_gen_wa_oob.c:130:12: error: assignment to =E2=80=98=
-const char *=E2=80=99 from =E2=80=98int=E2=80=99 makes pointer from integer=
- without a cast [-Wint-conversion]
-    130 |         fn =3D basename(fn);
-        |            ^
 
-While a POSIX version of basename() could be used, it would require a
-separate header plus the behavior differs from GNU version in that it
-might modify its argument. Not great.
+On 8/21/25 11:02, Matt Coster wrote:
+> On 20/08/2025 18:08, Ulf Hansson wrote:
+>> On Wed, 20 Aug 2025 at 10:56, Michal Wilczynski
+>>> +#endif /* IS_ENABLED(CONFIG_POWER_SEQUENCING) */
+>>
+>> Yeah, this looks really messy to me.
+>>
+>> If there is something missing in the pwrseq interface to make this
+>> simpler, let's add that instead of having to keep this if/def hacks
+>> around.
+> 
+> Agreed (now that I've actually done my homework), I see no reason to
+> keep the IS_ENABLED(...) checks around.
+> 
+> Cheers,
+> Matt
 
-Instead, implement a local __basename() helper based on strrchr() that
-provides the same functionality and avoids portability issues.
+Thank you both for the feedback, I haven't noticed that there are stubs
+already. Will re-roll the patchset.
 
-Fixes: b0a2ee5567ab ("drm/xe: prepare xe_gen_wa_oob to be multi-use")
-Suggested-by: Lucas De Marchi <lucas.demarchi@intel.com>
-Reviewed-by: Tiffany Yang <ynaffit@google.com>
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
-v2:
- - Wrap changes in a helper function per Luca's feedback.
- - Fix typo in commit log: s/avoid/avoids/ per Tiffany.
- - Update commit log.
- - Collect tags.
+> 
+>>
+>> [...]
+>>
+>> Other than the if/def hacks, I think this looks good to me!
+>>
+>> Kind regards
+>> Uffe
+> 
+> 
 
-v1:
-https://lore.kernel.org/all/20250820201612.2549797-1-cmllamas@google.com/
-
- drivers/gpu/drm/xe/xe_gen_wa_oob.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe_gen=
-_wa_oob.c
-index 6581cb0f0e59..c18faccdeb90 100644
---- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-+++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-@@ -123,11 +123,19 @@ static int parse(FILE *input, FILE *csource, FILE *ch=
-eader, char *prefix)
- 	return 0;
- }
-=20
-+/* Avoid GNU vs POSIX basename() discrepancy, just use our own */
-+static const char *__basename(const char *s)
-+{
-+	const char *p =3D strrchr(s, '/');
-+
-+	return p ? p + 1 : s;
-+}
-+
- static int fn_to_prefix(const char *fn, char *prefix, size_t size)
- {
- 	size_t len;
-=20
--	fn =3D basename(fn);
-+	fn =3D __basename(fn);
- 	len =3D strlen(fn);
-=20
- 	if (len > size - 1)
---=20
-2.51.0.rc2.233.g662b1ed5c5-goog
-
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
