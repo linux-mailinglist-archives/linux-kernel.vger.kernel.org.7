@@ -1,97 +1,115 @@
-Return-Path: <linux-kernel+bounces-779045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08AA7B2EE50
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:38:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2832BB2EE4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D68F568815
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779E6568731
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42E52E7F29;
-	Thu, 21 Aug 2025 06:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E51D2D9EEF;
+	Thu, 21 Aug 2025 06:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WPMKTlPM"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sun3t1hh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA033255248
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8CF2BEFE8;
+	Thu, 21 Aug 2025 06:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755758267; cv=none; b=KPvHceOngE5qXpMqVeGcUE4YW1tkFj7rEfukpvhTXHCW/OtJuz7MWiEEZ/uIIQTTfkhpNoRqQd5XQKooHKeo20xMHIjgwZPkMI+vk38/19okhDCeedzL4R6PX81Gqt/S4pLs66zsoRzZBUUc63lMuHz3FVNgDAYG6FFEfJ3yPFo=
+	t=1755758262; cv=none; b=T8V7cHBwhPJupqG3uEMDdBkgOQWvztl7zadZpbgeKiPdu2pVrKNCRcK3o3TgdbOIlLiMyqA2K3r7VdN3VAlYDotazXq8Izx9hgwwTa+GtcDq3AV7OFDHMuWGxK0ZoMx1lC0FSpL25UnyJXjCTRzU/pqmtHTtBlgNgT6ivqqL7ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755758267; c=relaxed/simple;
-	bh=PhYPqA6hOPWR2DVP4gF6Ag53GcEYP5E9kKRpJSRcAGw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=lP0P1+mjmkvaCKAVXLaxSaXIrdk5o3uXuLE3UMC5VLu5WAoRXu3eWtVHtCnsy87kYOy8Tw05hP5QQTChzP+A+IxyJ5maiRp57isGyuxioDx4htt+OmdBZ7sMBkW4B1OUMmTjoNEguIhrWj3FWks6ruE7jvu2+I5k3h1VRS4nUMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WPMKTlPM; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2461864f7f8so4365ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 23:37:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755758265; x=1756363065; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PhYPqA6hOPWR2DVP4gF6Ag53GcEYP5E9kKRpJSRcAGw=;
-        b=WPMKTlPMcvVMCG2+eFRxtTmgscvQgQsU21CE3l+GURBbFyqbMJb6+DAOwSJimc0e3i
-         6Nd6QZ8nmMOAdOM4Y5p6ReOxyE4IZyW9aIpqLtFQ0c4sM6d98kbCdTX7zvJ8k4n2IPtL
-         rZcNQuyFJaLKFOstL5vTzm5XZT7RPwOdrHfHuTfBixztb634Rofykzz/lN0fIbz3R9JR
-         wnEBb5JlGQVyOBaFtCrPhz+2jc6w3XN7xbVKo7NrLQK1x2/yFNqZ0R/W/wSjjpEfFF6x
-         syixE37qXnxSn54cEDPMXGaplUFoFfct+xr3cTtY9yx5jtN/6aryjL4rjXFpi9i/d2//
-         VfqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755758265; x=1756363065;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PhYPqA6hOPWR2DVP4gF6Ag53GcEYP5E9kKRpJSRcAGw=;
-        b=pVZkCeyZSM994k8DpivthlK2CjnTrQYeIykqctut+x1pmXIANgVOSXEDqt0MjohRZR
-         B26h7IOVi+UqrhSWDEt4DQPxIMTRPurH72h6+WLpKilB+iDCCm/rLdZjNKLtZtRkhpNR
-         dCkdz11zKZzrFJAhYz1WRMLoCZ9utsAM3XzMHJ9y8+UaF6sjb46NsW6TwLIH0HdrNmbP
-         qNMEWyS1D8QVhOoTZjyQ7mxWg1TrARRgElMnIRt98a0HEOAnDhSRjGgQFBdXSxbX9Exf
-         lqpTNOMvyZbuHQU683xEf8aNc9DMvnEVn4pniMWavpbYtkHGko4F8RniVWnAq6Pbf58E
-         PERw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWnWjfP1AyiOi5c+yaWS+a66fPm5/h78Kf3PfzHoeeTt2oO3eY2L4O79p41JBSIW/b0hVGVZzrt8xd2ok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6+tWkhX6jhOiQUCwv1WSxaa6deQu2bTySXUJMqsEym9uNgE7T
-	FmXQReyLDo2dry0ikEDLVMCnz48Or3LmSii4z4fq/alCYG1KdWNdmUArsbKE2yR0Xp7vdDb/tUJ
-	P0PnlUD2WgjLZouwE7z7LTPxzc0jBJZJ+l4jYbrQXx2YOsm6cep9B6PLZvtY=
-X-Gm-Gg: ASbGncvp1PBP/YfMihFXK6zZp9xlUhqcA12Qd9qzb2P7cyzk0zX62X1jdM21cgwKZzX
-	chPqTEDIZpamNlXwPVvwHc9U7NaF7KybDmGi9Hn5F0Z3Y1SksA3YqENm8Rjj6hy3cBFG/E8BiLa
-	fccjAFN/i1je1gxF/+dReR+zWo5AA3bYxsMfV0J80Tmt48EAoVWYk+CkN8VDgTBH9ALRtLCACEh
-	1AmgqM6wFKgDqNUyj1duBTdYp3/6eezAqo4sQLmJ1LATuH4knylKh9NzO6hRUzL
-X-Google-Smtp-Source: AGHT+IHcXpaYUvuvHbg97J7ktgYhoFhHlSK61tRa5Gn2HGyAhLpvnvBPUNwdFiKjC1PzNYk9gIJ7lsruTzjTfjL24bQ=
-X-Received: by 2002:a17:902:c945:b0:246:61c:a67b with SMTP id
- d9443c01a7336-246061cab36mr14478945ad.58.1755758264921; Wed, 20 Aug 2025
- 23:37:44 -0700 (PDT)
+	s=arc-20240116; t=1755758262; c=relaxed/simple;
+	bh=AXMmQlL5kvjii97BT5wuk1EpAnCzrmI+u1fqWegbaGU=;
+	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
+	 In-Reply-To; b=mK1ZfyWp2sjq/VVOhdWknL6sOcC3wewa6jnNVNvAX6l4DgixOiz7xgKbZM4XVqTyom0POoQ1tcmP/gcXGNgPHNC1dSX77VZ2NpFXilnACi/Mj9G+AW71qpGWgT1x1sL1gZsqA5K5Eo04BxFJUSwkMaXLOlII5+tE9tveFHsJ7Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sun3t1hh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 830CEC4CEED;
+	Thu, 21 Aug 2025 06:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755758261;
+	bh=AXMmQlL5kvjii97BT5wuk1EpAnCzrmI+u1fqWegbaGU=;
+	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
+	b=sun3t1hh94JMitWYhgzcEdQC+GHnoLg1ovIto7FsMhRP1PUlJNaDUccJ3SzuWnlkF
+	 EfDQhEGK8dIlRQCuhX26NC1uDqIVr3aWizuBSmnCgZOO2Amz1Z+p0iPX2ViDlcxM6l
+	 IuF2uMc6hJc4DAFxX/aTkd03u4/mUJvElnTuOPHExjUWDaLOgIklK5W/0e5f1qlLjX
+	 b04JaLEaE1jqjX7b5xeCGqgXqL2//bW6UAMOBfHv6rdqC6qyVI9M/0DwvU7VYNAYT1
+	 C/0n3Gg+3SROzv0Uyd4yZwO7NV2+N7S1NOqMZBtfmkCa+Pw/M4uyfSkjAxAonZie+I
+	 oXaWAqWI0DGQQ==
+Content-Type: multipart/signed;
+ boundary=6e0bd8a8b640f082cfb6850cca9df390417e4a46f66449d7859a78f39371;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Thu, 21 Aug 2025 08:37:37 +0200
+Message-Id: <DC7WCWIUD576.1YXDRIK1OSR8G@kernel.org>
+Cc: "Mathew McBride" <matt@traverse.com.au>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Benson Leung" <bleung@chromium.org>,
+ "Guenter Roeck" <groeck@chromium.org>, "Tim Harvey"
+ <tharvey@gateworks.com>, "Lee Jones" <lee@kernel.org>,
+ <devicetree@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: mfd: Move embedded controllers to own
+ directory
+X-Mailer: aerc 0.16.0
+References: <20250821062840.9383-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250821062840.9383-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250820124519.2287171-1-abarnas@google.com> <aKXIoFpHUjSdCbHY@smile.fi.intel.com>
- <CAATBrPGqkuLrVhKi8aj-tugZNVMD3kqv5_v3WB=kJvt4FVtFzw@mail.gmail.com>
-In-Reply-To: <CAATBrPGqkuLrVhKi8aj-tugZNVMD3kqv5_v3WB=kJvt4FVtFzw@mail.gmail.com>
-From: =?UTF-8?Q?Adrian_Barna=C5=9B?= <abarnas@google.com>
-Date: Thu, 21 Aug 2025 08:37:33 +0200
-X-Gm-Features: Ac12FXx_26dv5aIj5KUUthDo_hXrvOsEk58zD74CpJhjgeW2kMIsNLP7aELjdNM
-Message-ID: <CAATBrPHZHtW0Omp=KRskunP_2QFezb5DRRQXiCFzW0YzQcr7mA@mail.gmail.com>
-Subject: Fwd: [PATCH] staging: media: atomisp: Whitespaces style cleanup in gdc.c
-To: linux-staging@lists.linux.dev, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+
+--6e0bd8a8b640f082cfb6850cca9df390417e4a46f66449d7859a78f39371
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Hi Dan, Greg, Andy
+On Thu Aug 21, 2025 at 8:28 AM CEST, Krzysztof Kozlowski wrote:
+> Move ChromeOS Embedded Controller, Gateworks System Controller and
+> Kontron sl28cpld Board Management Controller to new subdirectory
+> "embedded-controller" matching their purpose.  MFD is coming from Linux
+> and does not really fit the actual purpose of this hardware.
+>
+> Rename Gateworks GSC filename to match compatible, as preferred for
+> bindings.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Will fix the message and replace the tab I missed. Also will refactor
-the unnecessary forward declaration.
+Not sure if I can even ack that, if not, disregard it:
 
-Thank you for review
-Adrian Barna=C5=9B
+Acked-by: Michael Walle <mwalle@kernel.org> # for sl28cpld
+
+> ---
+>
+> Cc: Mathew McBride <matt@traverse.com.au>
+>
+> Lee,
+> Can you take it via MFD?
+
+That would be good, as I also have a new patch series (planned for
+this week) for a sl28cpld compatible "sa67mcu" embedded controller,
+which touches that file. As it also contains MFD patches, I'd expect
+that the DT changes of that series also go through the MFD tree then.
+
+-michael
+
+--6e0bd8a8b640f082cfb6850cca9df390417e4a46f66449d7859a78f39371
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaKa+shIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/hl1wGAtUsFu6ERO54ALkWdfzQLlwDcBnVp8Qzs
+3YXN76+ZzparZalD55wi9eO5sumO8DyOAYDvDL2SA+j//XLuslZjZ1elBrLRuo4Y
+kwPLZdkE5CigSMCUCcxk0SAcP5S1T+eSAf0=
+=t/V2
+-----END PGP SIGNATURE-----
+
+--6e0bd8a8b640f082cfb6850cca9df390417e4a46f66449d7859a78f39371--
 
