@@ -1,111 +1,151 @@
-Return-Path: <linux-kernel+bounces-779796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40329B2F907
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:57:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D246B2F939
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93AB17C33B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC981CE3BF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D333C322743;
-	Thu, 21 Aug 2025 12:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82915321447;
+	Thu, 21 Aug 2025 12:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5com0r5"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=debanilchowdhury.com header.i=@debanilchowdhury.com header.b="FqdcS1LB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y9XkwSiW"
+Received: from flow-b5-smtp.messagingengine.com (flow-b5-smtp.messagingengine.com [202.12.124.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAC7315779;
-	Thu, 21 Aug 2025 12:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B94319844;
+	Thu, 21 Aug 2025 12:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780657; cv=none; b=CbHG92oTHcBEF7QMsHPGNsEbmJ5KtWEgkZVDJjvhtFnLtyE5s0SaHArEj7f047KQJBWv1Wzj0nEWBR1oY2zwCEn1AuuH5jLOeOAKVL5sCr291utYm3PUZn6asfwSZFrBD3brov4NQJLBkt6g1z0OwojyjL+6VI4Rn2xiZ/iEU+o=
+	t=1755780976; cv=none; b=eGIFG+VEzCI1jUHX+KTVhaiwI8n6VeynMzztPXtOUTwuzzqS+JAtqkztRYQ0jP216ycjghOHj3FqUo4kVyv8Mq+gwhntOumwVbAHtcWJN9xSiv9EFED+u6s/cjkUge+V8Yft4QvHFKZyLNyuUid3jX4uSTa4+kT/0Q7OWQrqckY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780657; c=relaxed/simple;
-	bh=jGT8s5zSIKA+32oR2OuC9O7ATTgHr/3h4vyMVjynHOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kYyYkILrqstP+ayRflD01Lfik/TWd7NFLlKbaFbWvmz94jfgamj4poMLGhn/fDpfsdGB2+sn+iiMUB4hPrdkJMKueJzxNcrnf5JuYJy2fliBvzC0BNWhbiqfBvAbSXpchrk/eJz/yBVUAFBMLpMvF1jWKWUhWNpLbKsEAWx0jcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D5com0r5; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-245f2a8fa81so13760905ad.0;
-        Thu, 21 Aug 2025 05:50:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755780655; x=1756385455; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9foK9Kd0CNIBHKg4DH+R7erYEYhgm3gn2u+8dPgiJQg=;
-        b=D5com0r5Azq0CSiX6beJHOkXcRcyQEFGPikyr6x0h/Yq8uRWNznk1JvEdXWzIAFDSo
-         YH3ld637J3MY8FRlfQNyb3v/WLLUqqhjTNX5VqiFSZpUs0WqCjuAWHwiEmLlZ28f5xQF
-         9MBX12GJspK63wNbzVl+UTcrPvoH+/yoe7SuWjlgnS2Obbm+QyxibE062HdfhmUCPC7f
-         FB8HGUTROSIyv4b/zL0JGhlwi6Ya4hlS3sUH2QiheQdWpcvsWyZlMfRVjWXOyY+5nRuO
-         BKc0rwYMm2grpgnCz8K7klhDQcSpeYoMmRNplpF6/6Ly1Zm7mUzgsQFodyzJewbVEuYX
-         CWLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755780655; x=1756385455;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9foK9Kd0CNIBHKg4DH+R7erYEYhgm3gn2u+8dPgiJQg=;
-        b=MkeA9YeTBVp4zmpqZqtVQCTzxEFL8VyKpGFyqHxq8A8doEhn73Wg21dicCkH5HJU8Y
-         lIgPTAShTsFMBSQGYQ2bXV3BFGSt5wfRJdzMA2uFQ62+Fm8/+6LF346gPu7dKuDuMq08
-         C3m9n4ITk7xzDmSuOewQwZk7cXHt2LPKBr5xouOgiutMUkJU0tzgZm6Jx0pcDRxe79Wv
-         K8zaZ+RirvfdFSiGyoUkwlEBOpdAuRSahjtB64K6Cp8e47lE3KQkLelRiziFlvg4wz3m
-         mfZAjdMoYzyp0wtdU3wybzzCRFfE7mhQ/cEsDtTJ1VAfWQ5OrWexPf0u62uVmi31HMM2
-         nIfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVD2tZpn20bnQkovWJRgLmPaAzb30VWF3sQSJ+Zt2XbPwwn+rkX1v9TSphPfTCaeyQO9nWcZITFlEPj@vger.kernel.org, AJvYcCXEUBup9Jg1ScqrIzlbYCKR4e6/6N2gTSkQPABHo6VJYty4K95Q4zcl/D/+vyaUt2yQldrp3P5zIk7q6dCt@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzrFMvagaQk7sq1hYDKn5ox+d0uB2sNqe7KTnB/kRcDmlFnAGe
-	mtcUpuwovG4Ga/DjSwiAqzh9OeACTSv3SUF0AT8w4sOMbaSt1Ij6yEJh2fWL6m4Oj4hQ8Ub+k/2
-	m3dmSOUPv4UNfbbkQfCbvpUXlaDdwflg=
-X-Gm-Gg: ASbGncvRMdjBe6kkez0fVzrmldBD7r66I4wNPmsPdjdyNdk7kKwFQQYxPO2nyh32GzB
-	tKJx66hjafF6U2+tPet8JHs2++FQAbjXppjrHKrf51S00BWPL9WyYQRrurxeYqCqdrGZNY2/OqY
-	6Ybr5730Dza40pnkQ7Z8JlpSkcnlctesCJxIFUgEhZNgQEFq57iRMJl35t7VYv1P9OQAibmj/T6
-	fZF7pd+Ezgql9uf4KlqK1ky76Z3s/MchaFTw+t4
-X-Google-Smtp-Source: AGHT+IFqVqOPssPGblynM3TvvWkBT6OODcOeZZiexLuzjkVsZq4nfaUJACCBtZMiYlZawr/SC4jDqihfyCN+1+16EOM=
-X-Received: by 2002:a17:902:d4cd:b0:242:b138:8119 with SMTP id
- d9443c01a7336-246024c22f2mr26833665ad.26.1755780655118; Thu, 21 Aug 2025
- 05:50:55 -0700 (PDT)
+	s=arc-20240116; t=1755780976; c=relaxed/simple;
+	bh=whkJEqsTOCyePNjD7NYZqFQXAji21QPdY2r46YSe06w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OZhx5drUCeTg1okG/9go1NGHMwA6qbyw+sifCys1ow8ZQ43YO0h8TorPC24s3aNcxwZEjyZkwTbdF19q18Lilu4WD3sUI5p0HpYu2eXaOBcFnVszTl3yCiBdSmi+T3Z4rySDeTtqgHorwbr/ZTxDZ2JvJpCdZ25d9zFM2wGgQ3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debanilchowdhury.com; spf=pass smtp.mailfrom=debanilchowdhury.com; dkim=pass (2048-bit key) header.d=debanilchowdhury.com header.i=@debanilchowdhury.com header.b=FqdcS1LB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y9XkwSiW; arc=none smtp.client-ip=202.12.124.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debanilchowdhury.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debanilchowdhury.com
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailflow.stl.internal (Postfix) with ESMTP id 784BA1300595;
+	Thu, 21 Aug 2025 08:56:11 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Thu, 21 Aug 2025 08:56:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	debanilchowdhury.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:from:from:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm1;
+	 t=1755780971; x=1755784571; bh=yBewjbsnFCVygw4nugjy4355G6givRfy
+	7NgyrPli+2A=; b=FqdcS1LB2GklU63pvDvxbGY3hYnvGEPRIB1dXcrlMcld8lsz
+	Y0prwgvAg0AtlWiWblqQM285FIx4ynBMRUsx58RK6k/M8tHuvr4QfuX4Cg1Glzgj
+	X4sRYitrxAB7awuamTDxq4Fo9qDDhE0KfpVlpD3B/aHZGCnmtOENczbVzbcBbpCV
+	ZhRzMeZvSCWwiVJqxWA8kw/Ut6lDmm7FRFNtTSrliB4wqdkIw92xVcE7AcL7fKum
+	tKTL2WvkKqUpTUozONVGOzxm4DZ+R1VRUw51/KvtcdgMrC5nKCvx1TJjEa5OvRjD
+	N7VOr9fGVUOmgwlvjgC+mtl+YT+XXFLteq1nUA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1755780971; x=1755784571; bh=yBewjbsnFCVygw4nugjy4355G6gi
+	vRfy7NgyrPli+2A=; b=Y9XkwSiWw2oKIrsGmOYdovQrZP/myCrInJVy/wWNVcoE
+	g1BGRYhToWe65vXU0UMwYZIvvg45ts+v0GayJoCkHsdDjAgDHtyosSGJ/pNH3raL
+	5prr4UGWqL1iuj24YRa3QFReZUXeyM3WwY0HZ04r+j39P9aQfYhmEA5DaUvxl3d3
+	oa4Q1ihYLMO0D+iF1k1yIIXc/2b5CrYF1u+Bf6/lrDwMdnOGKfDSmrXWGaf7WTMd
+	nX8ot8yubYtKnKeTLMkS1s6DSGdLK+B/EFZMPLpmFdlj5NpcW/UwMCRW94c4FUaN
+	Nn1NYEgw9X+G/d7ghYGHotKUUU26qjaRjTjR7TUaTQ==
+X-ME-Sender: <xms:ahenaFT-UyARaEYh9hqMmKXXcfeap6glqh-ApRDcBi6WNUxSJDbl4A>
+    <xme:ahenaHYFAX_l_p3HqPykRK7wRf8UH8ZURF9KzSo3gJYFJEdQiuQMGxp3OiPCNzXCm
+    pgSU0fUMYwfTTiJOrw>
+X-ME-Received: <xmr:ahenaCQqBFLqhdalGjPKx3Hz9hnWrE450AoOOe5wMDZ8jvNB-nMI5qsbj7KtisYEBewLF6nJ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieduvdelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffogggtgfesthekredtre
+    dtjeenucfhrhhomhepffgvsggrnhhilhcuvehhohifughhuhhrhicuoehkvghrnhgvlhgu
+    vghvseguvggsrghnihhltghhohifughhuhhrhidrtghomheqnecuggftrfgrthhtvghrnh
+    epuddtfefgffffiefgtddugeefvdeuteefhfeltdeuieejvdeludetveettdetheefnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvg
+    hluggvvhesuggvsggrnhhilhgthhhofiguhhhurhihrdgtohhmpdhnsggprhgtphhtthho
+    pedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhkhhgrnheslhhinhhugi
+    hfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehjuggvlhhvrghrvgesshhushgv
+    rdgtohhmpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhnvghtpdhrtghpth
+    htoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlqdhmvghnthgvvghssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepnh
+    hinhgrugeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehlihhnuhigqdhhfihm
+    ohhnsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqughotg
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:ahenaG9knYorJgkQYRgz7YM3p3lyPRV3cqoNG12IkcW2WVDJd2_z6Q>
+    <xmx:ahenaCjoxALiQ0LkmrMCoGmxime9ZmmBJowKr7VgggAgf00oRPz2Tg>
+    <xmx:ahenaHYCnJMsyND4BYWUig_CWYyeOONuPqY9VPKx8vJEq8xdDe_NxQ>
+    <xmx:ahenaH9NGc_jfnMYr0cNHSJU4u0xP9zIJvp2SeDU0pd0idND-FKhpw>
+    <xmx:axenaDWR-9T882OJpeI-NS_0A7OeDipszvLn5FjvJKT-cuJ90gvuDVdd>
+Feedback-ID: i77364836:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Aug 2025 08:56:07 -0400 (EDT)
+From: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
+To: skhan@linuxfoundation.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	corbet@lwn.net
+Cc: linux-kernel-mentees@lists.linux.dev,
+	ninad@linux.ibm.com,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Debanil Chowdhury <kerneldev@debanilchowdhury.com>
+Subject: [PATCH v2] Fix typos in hwmon docs
+Date: Thu, 21 Aug 2025 18:20:24 +0530
+Message-ID: <20250821125539.58313-1-kerneldev@debanilchowdhury.com>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820075420.1601068-1-mmyangfl@gmail.com> <20250820075420.1601068-2-mmyangfl@gmail.com>
- <ce66b757-f17d-458c-83f4-e8f2785c271c@lunn.ch>
-In-Reply-To: <ce66b757-f17d-458c-83f4-e8f2785c271c@lunn.ch>
-From: Yangfl <mmyangfl@gmail.com>
-Date: Thu, 21 Aug 2025 20:50:18 +0800
-X-Gm-Features: Ac12FXwwLwr2bCMna7pQhcpT1kCIgGZcsfwaI-LHJtYXN3OTqXnIVYFOWK6UbYw
-Message-ID: <CAAXyoMMpf9u7aZO204moF5DHd+QR4aAxxdtEdTx-iU77DKhBDg@mail.gmail.com>
-Subject: Re: [net-next v5 1/3] dt-bindings: net: dsa: yt921x: Add Motorcomm
- YT921x switch support
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 8:41=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > +        switch@1d {
-> > +            compatible =3D "motorcomm,yt9215";
-> > +            /* default 0x1d, alternate 0x0 */
-> > +            reg =3D <0x1d>;
->
-> Just curious, what does alternative 0x0 mean? Does this switch have
-> only one strapping pin for address, so it either uses address 0x1d or
-> 0x0?
->
->         Andrew
+Fixed some typos ("Critial" → "Critical") in hwmon documentation.
 
-Yes. I've seen this approach on other chips (offering two MDIO
-phyaddrs), so this should be a common practice.
+Reported-by: codespell
+Signed-off-by: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
+---
+changed in v2:
+- In previous patch "From" header did not have my name in it. Fixed
+  that.
+
+ Documentation/hwmon/crps.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/hwmon/crps.rst b/Documentation/hwmon/crps.rst
+index 87380b496..d42ea59d2 100644
+--- a/Documentation/hwmon/crps.rst
++++ b/Documentation/hwmon/crps.rst
+@@ -43,7 +43,7 @@ curr1_label		"iin"
+ curr1_input		Measured input current
+ curr1_max		Maximum input current
+ curr1_max_alarm		Input maximum current high alarm
+-curr1_crit		Critial high input current
++curr1_crit		Critical high input current
+ curr1_crit_alarm	Input critical current high alarm
+ curr1_rated_max		Maximum rated input current
+ 
+@@ -51,7 +51,7 @@ curr2_label		"iout1"
+ curr2_input		Measured output current
+ curr2_max		Maximum output current
+ curr2_max_alarm		Output maximum current high alarm
+-curr2_crit		Critial high output current
++curr2_crit		Critical high output current
+ curr2_crit_alarm	Output critical current high alarm
+ curr2_rated_max		Maximum rated output current
+ 
+-- 
+2.49.1
+
 
