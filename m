@@ -1,121 +1,213 @@
-Return-Path: <linux-kernel+bounces-780353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4C8B300C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:14:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867ADB300CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAE9A3A8F9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8551882E74
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B25A2FB631;
-	Thu, 21 Aug 2025 17:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBBC2FB63C;
+	Thu, 21 Aug 2025 17:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="cIX1aJ8R"
-Received: from smtpout8.mo534.mail-out.ovh.net (smtpout8.mo534.mail-out.ovh.net [54.36.140.179])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HUQ9vodE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5752F261B91
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 17:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783032FB633
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 17:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755796466; cv=none; b=bd6+F/q8qnzhL7ZxMBrFWdiJxoqcau8d3xhkBXccIKoLWkhGEG0qdfmGWxiSMIALzscx6iB50KTwiX/Tny8aAWybwJAYam8tXB8/DIhQVHwWYSKyZ3PxsG9WmDjG6zxOaRsB+EeB4lo93XVUcs4gNALj4S4H57yzptd45CwSkzw=
+	t=1755796480; cv=none; b=BepoVsfB0t3FjNc8LmEE+c50gI5cXetxtM4tSSWcVt1v5LByJnRvUUqHyCzyEZtgshWC9PZsxZz+LBSxdi+bpJpVPJSSyBr/nx/6iOJvjaNDjU9+Os4TglyfOywR2tlO8MSLDEckMj2aazB/IwWYjoZfwWjfFtSnsAPAjhfCKKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755796466; c=relaxed/simple;
-	bh=4s2SgBDIfhuiX/36eQkP9IdC8nSh5GIVHNKeKDZPuTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BBp2Jc7/iMdxY+ya9biZBdSXCPOInRY1m6kwWyfQ3eni8ujdIBLfSycYfo5GhikFZJ9CWNYa/8utOEtLWhXogUz7M8lsuSlp+5dHwt2Ntn79ThPOFkIWL0lFn+zlj4ZO6T8F7yP7QxLG9JAs0q/uaR9GSwV3Qq6akIZ43VtB7u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=cIX1aJ8R; arc=none smtp.client-ip=54.36.140.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net [152.228.215.222])
-	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4c790Z2Sy3z6GJ0;
-	Thu, 21 Aug 2025 17:14:22 +0000 (UTC)
-Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net. [127.0.0.1])
-        by director3.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <brgl@bgdev.pl>; Thu, 21 Aug 2025 17:14:22 +0000 (UTC)
-Received: from mta11.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.54.94])
-	by director3.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c790Z0rWTz5wDd;
-	Thu, 21 Aug 2025 17:14:22 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.4])
-	by mta11.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 99F9C9A32E2;
-	Thu, 21 Aug 2025 17:14:20 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-105G00640d7eefc-a407-4406-bc8f-45b6a2a3f3a6,
-                    684E78C7C579463DAB27E2CA1F9C4E28A39E1181) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.22.109
-Message-ID: <b11fe036-ff94-4226-a5c7-067a195196aa@orca.pet>
-Date: Thu, 21 Aug 2025 19:14:21 +0200
+	s=arc-20240116; t=1755796480; c=relaxed/simple;
+	bh=HvO73xghbnjLzeJQc4Ld6soKlGU8P0XEpJRkCn4ZrNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYyBtgGymo28zQNyyYiXByLnZoJYIRPj96PObND3sCAQPZz+Qrwz2dfcDSrBajgB4bE0r6wzJ8h/9blaN4+6IPu/5lzqwq6+16evvT/c7/pv0R9SsRqoJQIXaLEpzPVg7VGabnT9+VUGKj/n0TZpaycuvO5BhuD8zY5qY84wEKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HUQ9vodE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2A02C4CEEB;
+	Thu, 21 Aug 2025 17:14:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755796480;
+	bh=HvO73xghbnjLzeJQc4Ld6soKlGU8P0XEpJRkCn4ZrNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HUQ9vodEOmrxTeBzvSDhn5f9QlL7AsaYk/ow707hwThTJKYQpPoQBuA+DfcFXQBi3
+	 moijcC0vB8QsehPr+RkI5lqMOI0NUdb+HKBT2cQNQItzCj8AWhl+l4eo4i4uj32hjj
+	 MBi0S4BfUDb6HaOlwK3YCe5Q9ICcecWmXjT2BaOo=
+Date: Thu, 21 Aug 2025 19:14:35 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Gabriele Paoloni <gpaoloni@redhat.com>
+Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
+	safety-architecture@lists.elisa.tech
+Subject: Re: [RFC PATCH] /dev/mem: Add initial documentation of memory_open()
+ and mem_fops
+Message-ID: <2025082120-emptiness-pencil-6d28@gregkh>
+References: <20250821170419.70668-1-gpaoloni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] gpio: gpio-regmap: add flags to control some
- behaviour
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Michael Walle <mwalle@kernel.org>,
- Lee Jones <lee@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250821143220.GA672670@bhelgaas>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <20250821143220.GA672670@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 6047771352983492198
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedukeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepledprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehhvghlghgrrghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrh
- hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-DKIM-Signature: a=rsa-sha256; bh=BBIMNKbgu0l71xtJeZDmDYq3dcY9gm17qcm0ICLyhI0=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755796462;
- v=1;
- b=cIX1aJ8RDgxXLQp6xwSGz6JSEQdBXA/ZjesSGA1AbTHwJIdSXQd4yvvb8/vBfVQM0UkcvepE
- Wg26iAD3aMQEzQhEyFg9AIg/kvdSHpr7/ew9SXDthdRLguvkZTnQ5jiWPPzuutCJq7JryCJq0pC
- l9BMaP3oc7w3DXSYPgz6rEEIcWmIUiKKqIkmtNUqz8CiHt3JMs09WBNhHlQl+QPEKNfgzhAvNK4
- Q5t9x/01kAD0VSnwFdjz4Ve+46XvF8mC58vm614e9Uz+gm3bKIuOqa9ROW+g+t9+puBJUyELGGX
- zfiBNtEWLQqQmhwkOVdHGPvN4qoHRtGW1GFY27E8IevlA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821170419.70668-1-gpaoloni@redhat.com>
 
-El 21/08/2025 a las 16:32, Bjorn Helgaas escribió:
-> Not my area, but consider making the subject more specific, e.g.,
-> "add flag to set direction before value"
+On Thu, Aug 21, 2025 at 07:04:19PM +0200, Gabriele Paoloni wrote:
+> This patch proposes initial kernel-doc documentation for memory_open()
+> and most of the functions in the mem_fops structure.
+
+You are adding kerneldoc documentation for static functions, are you
+sure the tools will work with that?
+
+> The format used for the **Description** intends to define testable
+> function's expectations and Assumptions of Use to be met by the
+> user of the function.
+
+Where is this "format" documented?  Who will be parsing it?
+
+> Signed-off-by: Gabriele Paoloni <gpaoloni@redhat.com>
+> ---
+> I have a couple of comments from this documentation activity:
+> 1) Shouldn't the check in read_mem() <<if (p != *ppos)>> return
+>    -EFBIG (as done in write_mem())?
+> 2) There is a note in memory_lseek() that states the return value
+>    to be (0) for negative addresses, however I cannot see how that
+>    would happen in the current implementation...
+> ---
 > 
-> On Thu, Aug 21, 2025 at 12:18:57PM +0200, Marcos Del Sol Vives wrote:
->> The Vortex86 family of SoCs need the direction set before the value, else
->> writes to the DATA ports are ignored.
->>
->> This commit adds a new "flags" field plus a flag to change the default
->> behaviour, which is to set first the direction and then the value.
+>  drivers/char/mem.c | 209 +++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 203 insertions(+), 6 deletions(-)
 > 
-> This sounds like the default behavior is to set direction, then value.
-> But from the patch, it looks like:
-> 
->   - default: set value, then direction
-> 
->   - with GPIO_REGMAP_DIR_BEFORE_SET: set direction, then value
-> 
+> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+> index 48839958b0b1..96d59066e8dc 100644
+> --- a/drivers/char/mem.c
+> +++ b/drivers/char/mem.c
+> @@ -75,9 +75,49 @@ static inline bool should_stop_iteration(void)
+>  	return signal_pending(current);
+>  }
+>  
+> -/*
+> - * This funcion reads the *physical* memory. The f_pos points directly to the
+> - * memory location.
+> +/**
+> + * read_mem - read from physical memory (/dev/mem).
+> + * @file: file structure for the device.
 
-Noted, thanks for the feedback! I've amended the commit and now it reads:
+What do you mean by "device"?  It's a file pointer, no devices here.
 
-> gpio: gpio-regmap: add flag to set direction before value
->
-> When configuring a pin as an output, the gpio-regmap driver by default
-> writes first to the the value register, and then configures the direction.
->
-> The Vortex86 family of SoCs, however, need the direction set before the
-> value, else writes to the data ports are ignored.
->
-> This commit adds a new "flags" field plus a flag to reverse that order,
-> allowing the direction to be set before the value.
+> + * @buf: user-space buffer to copy data to.
+> + * @count: number of bytes to read.
+> + * @ppos: pointer to the current file position, representing the physical
+> + *        address to read from.
+> + *
+> + * Function's expectations:
+> + *
+> + * - This function shall check if the value pointed by ppos exceeds the
+> + *   maximum addressable physical address;
+> + *
+> + * - This function shall check if the physical address range to be read
+> + *   is valid (i.e. it falls within a memory block and if it can be mapped
+> + *   to the kernel address space);
+> + *
+> + * - For each memory page falling in the requested physical range
+> + *   [ppos, ppos + count - 1]:
+> + *   - this function shall check if user space access is allowed;
 
-Hope that looks more clear!
+What does "shall check" mean?  That it does do this, or that you are
+asserting that it MUST do it?  Again, documentation for how you are
+wording all of this and most importantly, WHY you are wording it this
+way is key.
 
-Thanks,
-Marcos
+Actually, why is any of this needed at all?  What is this for?  Is this
+going to be some requirement of all new functions in the kernel?
 
+I think I know the context here, but I bet no one else does, please fix
+that.
+
+> + *
+> + *   - if access is allowed, the memory content from the page range falling
+> + *     within the requested physical range shall be copied to the user space
+> + *     buffer;
+> + *
+> + *   - zeros shall be copied to the user space buffer (for the page range
+> + *     falling within the requested physical range):
+> + *     - if access to the memory page is restricted or,
+> + *     - if the current page is page 0 on HW architectures where page 0 is not
+> + *       mapped.
+> + *
+> + * - The file position '*ppos' shall be advanced by the number of bytes
+> + *   successfully copied to user space (including zeros).
+
+Why is 0 special?
+
+> + *
+> + * Context: process context.
+> + *
+> + * Return:
+> + * * the number of bytes copied to user on success
+> + * * %-EFAULT - the requested address range is not valid or a fault happened
+> + *   when copying to user
+
+"userspace"?
+
+> + * * %-EPERM - access to any of the required pages is not allowed
+
+Which pages?  userspace or kernel?
+
+> + * * %-ENOMEM - out of memory error for auxiliary kernel buffers supporting
+> + *   the operation of copying content from the physical pages
+>   */
+>  static ssize_t read_mem(struct file *file, char __user *buf,
+>  			size_t count, loff_t *ppos)
+> @@ -166,6 +206,48 @@ static ssize_t read_mem(struct file *file, char __user *buf,
+>  	return err;
+>  }
+>  
+> +/**
+> + * write_mem - write to physical memory (/dev/mem).
+> + * @file: file structure for the device.
+> + * @buf: user-space buffer containing the data to write.
+> + * @count: number of bytes to write.
+> + * @ppos: pointer to the current file position, representing the physical
+> + *        address to write to.
+> + *
+> + * Function's expectations:
+
+Expectation normally means "stuff that should be done before this is
+called", not "what this function is going to do" which is what you have
+documented here.
+
+> + * - This function shall check if the value pointed by ppos exceeds the
+> + *   maximum addressable physical address;
+> + *
+> + * - This function shall check if the physical address range to be written
+> + *   is valid (i.e. it falls within a memory block and if it can be mapped
+> + *   to the kernel address space);
+> + *
+> + * - For each memory page falling in the physical range to be written
+> + *   [ppos, ppos + count - 1]:
+> + *   - this function shall check if user space access is allowed;
+> + *
+> + *   - the content from the user space buffer shall be copied to the page range
+> + *     falling within the physical range to be written if access is allowed;
+> + *
+> + *   - the data to be copied from the user space buffer (for the page range
+> + *     falling within the range to be written) shall be skipped:
+> + *     - if access to the memory page is restricted or,
+> + *     - if the current page is page 0 on HW architectures where page 0 is not
+> + *       mapped.
+> + *
+> + * - The file position '*ppos' shall be advanced by the number of bytes
+> + *   successfully copied from user space (including skipped bytes).
+
+No short summary first of what the function is supposed to do normally?
+Or are you relying on the few words at the top to summarize that?
+
+thanks,
+
+gre gk-h
 
