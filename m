@@ -1,140 +1,152 @@
-Return-Path: <linux-kernel+bounces-780546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC7DB3034E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:01:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76294B30350
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F76B1BC89A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:01:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65FF1BC8602
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A66C27E041;
-	Thu, 21 Aug 2025 20:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5052E8B6C;
+	Thu, 21 Aug 2025 20:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z3iMPlAt"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnOkk3xb"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3341B21BF
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B431B21BF;
+	Thu, 21 Aug 2025 20:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755806452; cv=none; b=Nw+d30y6zqeVz0VtvTFjZYZCkgWadmkpKWU0GZOQQAWSHlMoScSomJKuU5CENNEUjT3EwciuNcVt26qFQgcRzADv5vVO5fXvpZHteyk2jZXi5qcTFRu1OZlWkcadKbQFFHuoCDY6fCBFXuYSRrUcJ7vbhSWSrgSkM4g7z8Lssuw=
+	t=1755806500; cv=none; b=D8yb+OqCIPPMUvAk+C3KXRTuDBKYiOaDynMLir8dpvvda/7HcfAVVyif+TCeJUD4ShOYh1LwxBA9Tmx/ReSK9yIWeYCxs2RlZr7DXO4h3crlq3ucyBvRXdpGuTccj1LgudTgkAA8PuX9BxCr6nmmBn/m9f/sb6B3JlN8i72G10c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755806452; c=relaxed/simple;
-	bh=h7gJCHVPk1eVDB8ZTXpaMfDlbr0NY9UdnbibKYbMlLY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R6/aufhy3VymV03bfi9PHH/X1EQ7XTPMtTZWCbPNTIx3vrA2PXNEdyzgErTuzIE5uH4aqpabWReQCBUvTJAa0p95/mu01tqSxkc5RkvBU7R/EDrGL4TW0orsi65M2xIAtOPDEKXHz2lKfsDI5JFbzCd8CKY2DTsGUc66nkXkohs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z3iMPlAt; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b0bd88ab8fso84741cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:00:50 -0700 (PDT)
+	s=arc-20240116; t=1755806500; c=relaxed/simple;
+	bh=XMyIeJLm8ezYlEHsz6RdEKqN6MAhCnnVT77tGeihO/Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lr80h5/XKt6BKRRGuJe7hlbhiR2kiuiyr/Y71HpcRIfkyt/gEQ1mf6u5jr2N1RQO19t9pfOo7d2BVRn1yz2Zk4GsT0ap3LXt61et5Yl2G2Y8uRmtXHbos2TVYye2/HYmK/Nj7A/dtZ3diBIedPgRCagkNANSqCigRFmxhwOCU/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnOkk3xb; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so7736105e9.1;
+        Thu, 21 Aug 2025 13:01:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755806449; x=1756411249; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h7gJCHVPk1eVDB8ZTXpaMfDlbr0NY9UdnbibKYbMlLY=;
-        b=z3iMPlAt2of/fHX8JwvBT+AHj83A/nMXVa6Px9qmIvXXJZHd/EjM7rXwpJwq6MBFwt
-         Qez5WxmZN0E2SwlWf+PNd3wjnLY7XJrMhiwhm6pMvPYwqezlWVYBoLM5hk2+9W9R2q4N
-         sG7rAlmDJsxIb7/jmnZtWHK4ItJ54f5BrNUBsUP+A4P51xEPDj3QK7hAglFc0/M5HpT2
-         KQcWN1MIOGE5AIEuWv5xDYu9QnhQYLOAbsbKv14ahvzca4e0Isampk/3E3+Un6LGhTIJ
-         KVLjZ6r2HBiwXnhVVdY8i4HScNqVjSAY6wCEdLT17zUie0517EXpSPOzslJ3gLJFDde0
-         kqcQ==
+        d=gmail.com; s=20230601; t=1755806497; x=1756411297; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oTMM88/02+mT4NxUBWUjIecblms1GSJIloGllm1Pvs8=;
+        b=EnOkk3xbkCJmav/IgObBQooMM+AxB0FMKSaN73s3NcQVoY6ojkiURm8rShvw4nSl7i
+         wXzV/AdIl6Q0m8PmK/DE89thmMrIC0KSG5BgxLNkYMjl7KcBNpwbHwLlBbjIV+sOmdsS
+         kPmvzui+xlRC0QZ3PSIzcjEFHqc1c4dLTemDpD5qmlhL0+7Xp4XwGBpMwy8pPeNIlFnU
+         LyFlIlMwFP5cjWEbSEmgGUJybOmH8cFmSWa7sXsIgZLr0kmeqrydYkfiiT1IxUORuztu
+         oencDBtwPkWDcWLKjVLYuHzZJk5GokDZ7dBgJtCaT777njZeGfNNuQdQ0OCdzA1PpFAK
+         rhDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755806449; x=1756411249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h7gJCHVPk1eVDB8ZTXpaMfDlbr0NY9UdnbibKYbMlLY=;
-        b=tjA3JzaitBBOF1dtHhhT+p+EgqXP7Ei4m1feZWC2ntxu14EipagGzY5vnpHwWtDhcY
-         FQBwYADi9pYRo953tt6gbWBmbHItQ+UXtMO21LrkDj0Z/2Dc9cUsn52DaiEqoV7WFSTc
-         gcjF/JfnxgfHkNY902MsG9png0X8F7JsVbTvqx+c4U2xnFgXrEPwQm36wJly644Gc1Xz
-         CE+MdX0itTcgRoaq1zEEBiucPV7gQxh+Tgc37GMyF5edJjbaCq0Eq5KVikH+RhLZOzme
-         FOGkp0dS7AUTSj6KI//ocdO5PsN39fM1pZSNNcHdwL6w0jt6nX2cbVZD4/mQ0Rv4zRSx
-         AQvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYPgVYcf1t8AmEj/57EXku0vZX29Tsasj9Qz8rD8q1FPCbGVdOy3DQzQ24AqDfowkd21XHLHGUOW7TUwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0BJx06kffKUcQ5+Vx1T0wHIj+EtfZDv9Qs2gL+b4Wb8wjZ+f5
-	pM6adE6asGJJNJHgSRanpX5hd+qOsDn8yWIWlGA+wIMNo4PHmN7QqyDSOs8BqGwKGwRubd3JzmK
-	5Y4I4krpCpkGMSkDhPOlKLZ8sZ66jWFHWWvuoNO/3
-X-Gm-Gg: ASbGnctWlHfytySaTtZc1+6gsPlEUvDUoM9MfTOcMKJoIwPvfOpC4+5EvuqhW76vaLi
-	6cvtL/WPuLs0g0MZbQiwYKd5TDRO+K+lw5cyZIR6+3S4R/d4uOaeRCI7mC6XOXDc7MlQ1LgLUCJ
-	chzqOhmmYTeNGfc5Fj4gM9Hdj8Z9KiMhwZldYhvYbOr5RICjgZjQR7OfGZ+fYx6xJdFfzkbKbOI
-	LEqhzBTDSZcfJgSwkWl0NuFW2+DJfyH6N3wIxqq/imn
-X-Google-Smtp-Source: AGHT+IEzwI8DU6U71/goi7II6qT6paOqU3wRI481Im9qvHexJ8TSWQvjEUvaTQ3LFEGgVCkz44r9UzcLBG34+vGrxao=
-X-Received: by 2002:a05:622a:7690:b0:4ae:d28f:b259 with SMTP id
- d75a77b69052e-4b2aae5802cmr801011cf.1.1755806448915; Thu, 21 Aug 2025
- 13:00:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755806497; x=1756411297;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oTMM88/02+mT4NxUBWUjIecblms1GSJIloGllm1Pvs8=;
+        b=oYRGTB49mN03FoJRNtsinARka3tG/FB0rmbv/A11boXaOgRoD3g8IKrJaL3C4gRjki
+         F8oTcuMlXf80luN0BBHRwy7noyzTrhumNjcOf4zmI3zFFZjvs+VfWfaVM+DLJYYXe/WX
+         dHbZdA5H2/XrPyXzPeo1Sil/tOiy2O7zvYJDYxn+BJGJFhPeesm7JhNb5WhiDlxNy5Gn
+         4BZ1S0JTTww48SeTP8YrmIuqKVB70/tLa37kN/o6ggZctqyBMVIWRBJtqd6Q0NO0jKPi
+         BWlzZ8RlLTzeAU+TVTJdBz83lzeFAvSH3TNMv4CdAxcjSTU1ZBQsrejekutY8o85D0e3
+         +MjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6pShwJCBHP0ENEnXMK9sj1g1vDjlDyKTDi5DehwGWScGdkj2gByM63gDr4/j5c90DW2OMrLsqXyaPvIccTZI=@vger.kernel.org, AJvYcCX0JxWefx0oZQ6N0rG99qZLNklbepHHpLOAxqRYPiCnL7L1IV+fyE71GNKaDI/oXqZjjbX3VujLRymEW8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeWgaWEqIACZHh7U/c2dMfxtcON9QknzgN8el/Jz+TW+jQhMib
+	/aK6EP8tL6jpE/fMQ3Swn/5fKU5QXrwu4Pvg7mku6wZKotAX2TdI1DWY
+X-Gm-Gg: ASbGnctdQmzgYY/uLExcMT/XKh2o7u6mLUa2oFZcFrZyLuS4+kkvf+l9bG4wzW52bzd
+	j2AW6rfb77r8X0aM4eV8+ZC4vojEfHfoF2NRUpTsPjtZ/7XmN48RTDTNdu3ODxlE3p5DKE7XJ3z
+	3M+1IXcS+c/aUOtKpoiPqjnyOi65c4G87gmB4eKfCpcZmo7QkXvaFPDRoHT9IGQTXDsd7Y+NNLV
+	u/jR0fL3gv0hWKygaUNxlcVEK+matt3gAIsBvpYgG3G9xzdASp1F0aeqgjDoDo6JQ7jBGJbr5HE
+	6pGU5kIW8r6YrZ7WTj/t1w8E19dJEih6TPMRgi7crMEPLzPL4zCdubI3i5cO+7hS1uYZdE12icT
+	Bwgypkmu0oXNVbMvw60BVYxe3hKTx/joFt/EYT9Sl4vo=
+X-Google-Smtp-Source: AGHT+IG4Kyto5Gj0d+797jRnzEa0Rw23zyv1XapBHJWTmtoAyXPo2UksJpn3Bru45jvjd4XrOZGqeQ==
+X-Received: by 2002:a05:600c:a09:b0:459:dde3:1a55 with SMTP id 5b1f17b1804b1-45b517c2f63mr2370555e9.24.1755806496380;
+        Thu, 21 Aug 2025 13:01:36 -0700 (PDT)
+Received: from localhost.localdomain ([46.10.223.24])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b51589647sm4454665e9.2.2025.08.21.13.01.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 13:01:36 -0700 (PDT)
+From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
+To: broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	shuah@kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>
+Subject: [PATCH] selftests/alsa: remove 0/NULL global variable assignment
+Date: Thu, 21 Aug 2025 23:01:32 +0300
+Message-ID: <20250821200132.1218850-1-zlatistiv@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755190013.git.pyyjason@gmail.com> <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
- <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com> <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
-In-Reply-To: <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 21 Aug 2025 13:00:36 -0700
-X-Gm-Features: Ac12FXxXz1-TZ7MbO-XRQDMLid0u_XKSnOpxwqfbdP9x7yILSDSP16_dnK5pKCc
-Message-ID: <CAJuCfpFKNQrjtoctVt0N=r1cABeyPjpwrzP6M=OTpp1Rq_0QaQ@mail.gmail.com>
-Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Yueyang Pan <pyyjason@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 12:53=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.d=
-ev> wrote:
->
-> On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
-> > On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
-> > > On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
-> > > > Right now in the oom_kill_process if the oom is because of the cgro=
-up
-> > > > limit, we won't get memory allocation infomation. In some cases, we
-> > > > can have a large cgroup workload running which dominates the machin=
-e.
-> > > > The reason using cgroup is to leave some resource for system. When =
-this
-> > > > cgroup is killed, we would also like to have some memory allocation
-> > > > information for the whole server as well. This is reason behind thi=
-s
-> > > > mini change. Is it an acceptable thing to do? Will it be too much
-> > > > information for people? I am happy with any suggestions!
-> > >
-> > > For a single patch, it is better to have all the context in the patch
-> > > and there is no need for cover letter.
-> >
-> > Thanks for your suggestion Shakeel! I will change this in the next vers=
-ion.
-> >
-> > >
-> > > What exact information you want on the memcg oom that will be helpful
-> > > for the users in general? You mentioned memory allocation information=
-,
-> > > can you please elaborate a bit more.
-> > >
-> >
-> > As in my reply to Suren, I was thinking the system-wide memory usage in=
-fo
-> > provided by show_free_pages and memory allocation profiling info can he=
-lp
-> > us debug cgoom by comparing them with historical data. What is your tak=
-e on
-> > this?
-> >
->
-> I am not really sure about show_free_areas(). More specifically how the
-> historical data diff will be useful for a memcg oom. If you have a
-> concrete example, please give one. For memory allocation profiling, is
-> it possible to filter for the given memcg? Do we save memcg information
-> in the memory allocation profiling?
+Remove 0/NULL global variable assignment in mixer-test.c and pcm-test.c
 
-No, memory allocation profiling is not cgroup-aware. It tracks
-allocations and their code locations but no other context.
+Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
+---
+ tools/testing/selftests/alsa/mixer-test.c | 8 ++++----
+ tools/testing/selftests/alsa/pcm-test.c   | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/tools/testing/selftests/alsa/mixer-test.c b/tools/testing/selftests/alsa/mixer-test.c
+index 2a4b2662035e..e113dafa5c24 100644
+--- a/tools/testing/selftests/alsa/mixer-test.c
++++ b/tools/testing/selftests/alsa/mixer-test.c
+@@ -53,10 +53,10 @@ struct ctl_data {
+ 	struct ctl_data *next;
+ };
+ 
+-int num_cards = 0;
+-int num_controls = 0;
+-struct card_data *card_list = NULL;
+-struct ctl_data *ctl_list = NULL;
++int num_cards;
++int num_controls;
++struct card_data *card_list;
++struct ctl_data *ctl_list;
+ 
+ static void find_controls(void)
+ {
+diff --git a/tools/testing/selftests/alsa/pcm-test.c b/tools/testing/selftests/alsa/pcm-test.c
+index dbd7c222ce93..ce92548670c8 100644
+--- a/tools/testing/selftests/alsa/pcm-test.c
++++ b/tools/testing/selftests/alsa/pcm-test.c
+@@ -30,7 +30,7 @@ struct card_data {
+ 	struct card_data *next;
+ };
+ 
+-struct card_data *card_list = NULL;
++struct card_data *card_list;
+ 
+ struct pcm_data {
+ 	snd_pcm_t *handle;
+@@ -43,10 +43,10 @@ struct pcm_data {
+ 	struct pcm_data *next;
+ };
+ 
+-struct pcm_data *pcm_list = NULL;
++struct pcm_data *pcm_list;
+ 
+-int num_missing = 0;
+-struct pcm_data *pcm_missing = NULL;
++int num_missing;
++struct pcm_data *pcm_missing;
+ 
+ snd_config_t *default_pcm_config;
+ 
+-- 
+2.50.1
+
 
