@@ -1,180 +1,211 @@
-Return-Path: <linux-kernel+bounces-779991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E801B2FC11
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6129B2FC15
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E9D7260E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E481CA26F4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32543246BA4;
-	Thu, 21 Aug 2025 14:08:36 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888CE25524C;
+	Thu, 21 Aug 2025 14:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="aGlFqsgF"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013027.outbound.protection.outlook.com [52.101.127.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7415239085
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755785315; cv=none; b=EMaSqKHE+aXfUgHC2pHEeOYTE7Xh815XzHhMuhzKP7vQLg2XfcGQR6mecn6iDFiEgJIMnGIcEGa+YIke3TIGxSziVxpCWviB3Jedq+i9J+lwebYZUp3zUBtsq/HRVMzhj46BKVg69tHaMBi8mfwSNp2kHYERnXruXb9xAIHCSGM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755785315; c=relaxed/simple;
-	bh=znPykkbROliSjpvxuccxv6Ye409UsS8f7zOe/B+5JBQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dBPD+JED1cSTLQUO/mieDtmx8uMHneNrbxt8NwkFLAgp8t3ZvQ/C/ZAV0fDcvsW5dgOFhYLk/uL5cvSfgreOOeoLKs0N/zNw8PglY4H3fmhBhnN8ZETnO9IXb1f/aH7mxgsl6wbMFEb+zyVxHm0cedMWGOdDJ+MRjVnIQW2Qn70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e67189ba24so10623635ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:08:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755785313; x=1756390113;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w/enU3klx7bfkpNDi5dMuC8pF4in7LDDV9JxB6hf48k=;
-        b=ZIFFAoCJbsKtONk6OLh7HI5qOvI6AUrFk4Zbpgizxc6V1WXhSsUlnyfTewyKHXFzv6
-         Z4/Dkg62dS7YYWknyErhNQisK9azBDeHXZJ9RNES62pO018WIHo2b1/R4Ktr9Jl7CGHP
-         Gj0KDfNJ5sTrs1Rph9Edbo5UEQl8PPGne0GJ22u5DmuhJz0+SbbxCUrRYnjFoDu4R+Ol
-         e+JE7jI0zbJg91HI6SPqVNCbvmgt1AH8YdrXueFG7I5m7HoDw5G3ZyMeXYS9xIOLkhNo
-         JWn2FKAL+FdxSLxZhsdUkw4ixxe8hyNZMMibPbBKIcisVtNeObqYuebO6n5ZieV4nNRV
-         ktlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpDeFq3beiCAvp6SwbuBGLiguCdnEJYqT7dOwxyjMemg5JDBUVPKyK8EFhRIIyN2Zb9NlOuEmZfLRe21s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/dN7AWkoxNalZBRcWL07n+HmZyX/CnN58JXQB5JhMdR6pWCjU
-	liUeERDe7Cp2KcEdW863jri3h7xpX71gerhzM3P3M3vpKYniTAstVZJZb/eh29V3NC4r4It+cIy
-	N3BUfDV0+clrkpGbk/zFN/ItmtMK4Nt1cWVEvuDa4Js53fe8tgKd1NNUCBsc=
-X-Google-Smtp-Source: AGHT+IFxlZweowjB6dvQbH/PChzOLYG9iOSjfbeXU6zgQTKb9IwQSUWLKbNDNnQXv6sY2dPdDJrPl/H3ZUDDbUxILYOJ9slBOF2D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0349923D7C9
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755785329; cv=fail; b=JdKawf2NW/0ofC3yCdqtVxPT3jqZn+zYT1AzSqlyb5gpnvLvCiNA41TDi/4+AZvkuD8RgotgXYfenqky7X/GRgTy5kZVWSDuPqkaxmqbtLjFQA8sbevjjahCLzqZugIW1kyB2yFNEqgVhgCJ5KP4ktXEq0kcidIOCOHZBAmkjh4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755785329; c=relaxed/simple;
+	bh=v0iHeDbo+UddWyCynN2C+2QIhb1dG00L8V0SPjcemVE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=K5BNHOhp+sqhDwnpAi1WiOM7Vry/6mNnFSL1uPAP/qPxKgjFoP6oXcaebcklF//Zmeb/SDP8mXGUdYEOj3q1ctyWUROf7Z4VZ+s9zpFZeivTZs1LwHsVqHtixx1Hf+2YCV0j0ixEv13uv0umEJAfcN2T0zF78HuZNWVJZ0WfGo8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=aGlFqsgF; arc=fail smtp.client-ip=52.101.127.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gx4V55s0aUosmayizArK7lWyAbMjjFj7dhr4DSAE/gi6ziNPj5KcvDf4N1w3snzxmMCRutPNYKfF70i52AJ3ZxbRvPcsSstSVtcdapRqdhVnYy/1s4l48XoBBjXFQKEW/4bmVXxU2Jg8xJ7EKiMTmhpc0pXTEiUsCIH0AaO1NWrSJcaH8n+GqiQpTRa7DeXf3HgG4sdabZ18eVB7htwT9Dj1NRohrbq5pVXEsABwkL1ZDhXRr9ziaTpxsn7Yjb17lOEprt493V/65b9+kkvasR/yqCiFRSYP+4efWpT8Hso0WMVx+g3imvPzZCZ0g2ZIZ3heHAPN5Z5tMmFPLgBqjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m6mnNn0cFnfQ7XMp1UhdHlZqFznPYY9rc+dMlsUHEjE=;
+ b=spMNN6FYBbNqRvBAz6xxXjrhcdnPVhwhLKSVdkC3DhynQSrhBGt/UQn6C3tQAcFyRwt7tSmF58D7reJXtiw2dA0xmJKD8idbNwZXfKYoGPaWBdMz62fFsL0DWuGuCSeoBW89BOhNRlh/EtpEpQ1Nb3vAdyXSHryEYxMFkIaNCHprgVcd/B3GnXE0FhvSmgEJ00qYZWSDzCRpw6txS8FY+XXROGKxhfBladRUWxDqk98GvLl/iuKe8JqRS8Tdu5Yi49Zalakcn3t3dkdVWmPnoSuotkuOiJj6DMfsBQmw0tb/okLUTmSOJtZAtbHj1tTRXlygC1IQdn6wCut1VoTq3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m6mnNn0cFnfQ7XMp1UhdHlZqFznPYY9rc+dMlsUHEjE=;
+ b=aGlFqsgFwo8oi/BcdRYr7NF6bcTCGFVg7zQ30BnNXmH6C2NaHGKaWu/IZvHUZHmPrb80c6s7u41jy40mCHkZNBaSOlR02FThozj0VCVe+/fI9owtez6yCMIuB+ZMgqoVt814Ddbm7MQrIQnw1VUXYwgBi+Pbb57HQranetUvq3+tjBirJNf+c/3X+rqfaNH6fcwbX73GBy79OxUxJqDpHMflTsPH2EtuXYvzGjovSM3x7rhBkEE6GSD6WYAgpOeYUCO5CG7GacOmqWtGayFKTVRcLjJVxYISuGhUcmuxldmWF0af9yDRDInqceQ4YifuVLWYK9NxuwQtx9VIdQ14cA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ TY0PR06MB5126.apcprd06.prod.outlook.com (2603:1096:400:1b1::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.14; Thu, 21 Aug 2025 14:08:44 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9052.013; Thu, 21 Aug 2025
+ 14:08:44 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] sched/topology: Use kcalloc() in sched_init_numa()
+Date: Thu, 21 Aug 2025 22:08:32 +0800
+Message-Id: <20250821140833.24791-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0203.apcprd04.prod.outlook.com
+ (2603:1096:4:187::22) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2703:b0:3e8:ec53:1e7a with SMTP id
- e9e14a558f8ab-3e8ec533da4mr5274285ab.15.1755785312942; Thu, 21 Aug 2025
- 07:08:32 -0700 (PDT)
-Date: Thu, 21 Aug 2025 07:08:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a72860.050a0220.3d78fd.002a.GAE@google.com>
-Subject: [syzbot] [exfat?] [ext4?] WARNING in __rt_mutex_slowlock_locked
-From: syzbot <syzbot+a725ab460fc1def9896f@syzkaller.appspotmail.com>
-To: bigeasy@linutronix.de, brauner@kernel.org, jack@suse.cz, 
-	linkinjeon@kernel.org, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TY0PR06MB5126:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6185babe-1642-4f83-f7b0-08dde0bc3d72
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|366016|52116014|7416014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?g0I/bCqA9Q5BAZIfx22p1yIIFO6ZSG8BJQCawCg/6SVd9+0O1gSnzkDVr7t7?=
+ =?us-ascii?Q?PX50fZhYgyG1wdj1UcN+xr4km4UyG9VNL8h4kJyrORN4yTtlqppzpiMyNQgp?=
+ =?us-ascii?Q?UMtyDvXN3d1guTeJrLU+VtgCQ4n9JK/D3RzOAA6MhR40bFFsQAeyiOCDzP9p?=
+ =?us-ascii?Q?cCyGcYibOGPZPasTNhKaOxZQSzJK1glyWKC6xBHdqS254bITCULInr4CXDu0?=
+ =?us-ascii?Q?0kkWITtRNXubCuzsKZeOjKxXeEIyyFtL1HKQNM+nt6HfvNwcrhMOjM46KwMn?=
+ =?us-ascii?Q?cEIXWe5ZHe6tF49XjvNSpjiJX9KZv5/LEj+KeLgMkZ0wHfiVhvqfivJWBSlJ?=
+ =?us-ascii?Q?GVeJSOdoCCSZDzYy+cul6CQ39mc+FuKg2DrPF+oDK/rNYGcLAoCNVVRqMGG7?=
+ =?us-ascii?Q?eLV5evLQFRoiMjBAlnmtC9ndvHWG1FsxpSUvXGyKHNe0amJnY8x8UuCn8M+V?=
+ =?us-ascii?Q?tlxACr6zlwdjPxciy2PkkINW/3GCDhkWqIGimp+giRTyX3+B+mYA27Hog6iD?=
+ =?us-ascii?Q?ciq4e9KbG2795pCcJAGB6mpD7533yU8iN291ZWUe4tTZHO9v61xxdqAZzBYk?=
+ =?us-ascii?Q?jBLmYrMJ/kceSUAo4545h6v3RC1Q9uJBkpkhc3GQhY8AG8QXAo/OFsLmrK9O?=
+ =?us-ascii?Q?BHcnGDYPL4VJFUI15EuBPWiVajs6fArYkuFcYewZrDTnE37XaoirsliiUltj?=
+ =?us-ascii?Q?9d0805BfJRhdYBLhunJCiVewblZIxx3KAniOUExP9nxEDU50IcyGcMvyAtsB?=
+ =?us-ascii?Q?XSQioLkMJP1R9Ab1OmXPo28h0eOwecGdlDXp9g7ExN+CaP+dffhrNpKddW7R?=
+ =?us-ascii?Q?ZlSfei0TyZXSC1PKXaxMwOQ+IPY7gyCeHZYK/ok3MnXoep772gIhg0HNUuU0?=
+ =?us-ascii?Q?Nmk7/RqvnWMWKsxX3DCXQQ/0Jixytf5bDZyQk7TczbTt6vqoR7hOW12Vo1bO?=
+ =?us-ascii?Q?IsooM/qrxIp3yrWcIqtuGYemYmq5PCe5C0QRT87MRjHaMj3zLdGDg5ywwXUO?=
+ =?us-ascii?Q?+XDeZ78y54K4UbzE5rF2uZIkMLOiiGOL4tuOUbubvM2W6nx/Gjv/AzwvC1DW?=
+ =?us-ascii?Q?5yuxGnDJSktFCFCwtL0MoiyfyY39y3ESL5ffCEgCd47XwxHervqYIOZjZ0En?=
+ =?us-ascii?Q?sfSkGyKipSNrrYNTvw9Z1dtTvebgexfgfaY1Kl2+4c7Bwcda+YHukwSJhFLJ?=
+ =?us-ascii?Q?FMqFgSXbI5CHyEUzXYJxtgOULfetQjEFxX98eTJbw3xxsxYHdftuk/n1Fh3U?=
+ =?us-ascii?Q?ZB8MUurCY98WMq6X4rvFjVy9bPVZPoJbLt2db0zoxqsbTlP3rVr0wy5lsnD2?=
+ =?us-ascii?Q?14wN5eizsUEziaR9Xs7SJ086G6tE24uN9ec6WguHRAgFuE5pZxr2QbYO91gv?=
+ =?us-ascii?Q?WvkqB3LLKlznVOjRJcCTX21JdszP6AJ8U+gvI5mZqccUtVJdQ1WKjBmXm8/w?=
+ =?us-ascii?Q?FLnauhnfkE+5FqRfjH6P7VBMxG3scopbWHde2shUfHU1zK8Ov5w/5gKbiWRM?=
+ =?us-ascii?Q?v5jmrXIjTHFmpOU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(52116014)(7416014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lFiYF18qOBNkL6+Sanz9aJBJ8hydCiZQ34k8hUAcKUAsn6nXeZnCGA/ZfFaN?=
+ =?us-ascii?Q?xX1Ubt2pljlqbxt0wr7k0cEfx16KfWJOn4CW8Q3sVKh1IqJp/WGDTr9/8z1d?=
+ =?us-ascii?Q?D6S7EcVUKjNll00DHW8CBnYmwQXrKpN1eEupzBpZe5xwUFQsakC0mNwmDwPv?=
+ =?us-ascii?Q?P1ybIiZPILBo52W8bjuemG0yrD411wLV747/0oKxkgmVF4LMYfqk+4DCObuA?=
+ =?us-ascii?Q?kRuDsHg9a/lQKDMKujySgvmJrIg4T/GnIwKBUpmK8vo04F/nDhdsmY4mqwvK?=
+ =?us-ascii?Q?acAomlxOY/YEbETKlfDXjsnWiutuRoq07OTyaUFnxQU78vMDpoFdxNj3ZNPu?=
+ =?us-ascii?Q?85nlpLbR5E2yos5h8rZcA3YW77FaVpV1AeRX9V5Z9Z9v/MX5+L5KtBGeURdI?=
+ =?us-ascii?Q?x/xO4ii+jG4lJQwgid0GwE1yC6m/N5uv6+0jXNpJzlK1k1Q9Mzmu+hsy03as?=
+ =?us-ascii?Q?YgLnM1/KqaLuwTigjDdBIKqn15BZ8Sh22z6ADxdoD8YICY1GiuT2bEJmbwhJ?=
+ =?us-ascii?Q?TLM8SQ3MfltNHTkKWFhZTTvlDXCVfiT4usrQPzW61N5hy131OKGmZWIyiU+s?=
+ =?us-ascii?Q?D9VPxE3C8VotbDV0JwBczJlrIXuwJSMAaQcRVHuMHQMy+yAuj0lq4NGDLllK?=
+ =?us-ascii?Q?QXaSwy040GhRijkWpgZcqpaCx3kQ9bZqtJB8SQZ5bv4rVdgqhfpVLI3X7Wtv?=
+ =?us-ascii?Q?PqwLcG5WwiX3XsMFFyLfH/9DtjsFz+QnN8XxWm5fPOnh5SDCmAxw8NP2cauy?=
+ =?us-ascii?Q?TKWBILZ/ooJ8Pl5ewN+c7uUAnoyvc14RwkeP2weK7S7KrEhRL5R4fSWGK7Ny?=
+ =?us-ascii?Q?7JMK3pjCg2sEpjOYEWhSA6Y9pYBPY+mkMvn6KtzAH7niVt29YVcveZaVixvK?=
+ =?us-ascii?Q?Ao+pbDPu7aCFiwEjmTbmA+RdHqtK5UKbYnR2VHiIuRTdzVsZLfLtgZqyijLl?=
+ =?us-ascii?Q?RsXp8qq0cpnVwEemOKXUhVr7tw2O0Tol4scS3GhBP6aZ9LlnTOYLmsfl64mP?=
+ =?us-ascii?Q?mKsrkiYqFUAwjZH4nf7TLP8+FyKBuVlvpMhQz2FcKh+3yQE3tMnWPIFbtmuT?=
+ =?us-ascii?Q?u6FLZmeyF3dW/Gz0ovD41RXvE80qztuoslsPT8vdd2jZVyquqmKlf12Ca4Tx?=
+ =?us-ascii?Q?0hRmmy5DelcSbB/y8kpZnHbnjMiuC+jOOrZfzGlDefPVlCaskEBVRaxxsHYX?=
+ =?us-ascii?Q?lT2+lsWbbexjPsMa9sIx0aHiseoV9Dwle4UzO12tUGE1P2BAiYiYPPISszf4?=
+ =?us-ascii?Q?mI6dkyclbGP2Kwy3tkBpqNR2I9QwdvO1UULNjoGHuZXA/Z7n6Qw8/Pt/ic2M?=
+ =?us-ascii?Q?TOe6/5zpeTbrD+Gyys8s+GqhHpAUHuXEYAhAC/+IWPM92AmgcWt3zLItYSoM?=
+ =?us-ascii?Q?6rtCDzigiJFxWr3lY8JoS9h8Fu+9y/myl+CMMdWJCw+pYhwD4iDtSbVK4MZt?=
+ =?us-ascii?Q?HzVe7eRjh5QhRdbJrXwvzDtQ3pKQSDjfwxVaaCMpzBQ3nlzTtJfUsiqWfQTc?=
+ =?us-ascii?Q?USizWJmQE7FkuUI0cy5fh4ehxFQkzKEXM78x5ZmdGjNNu2GtGuTekNm+xTH+?=
+ =?us-ascii?Q?vgntpqP4SZAf1C8pf/wtgmn5DmQbaZTvnae5bDBE?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6185babe-1642-4f83-f7b0-08dde0bc3d72
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 14:08:44.7910
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hFUNIy9//rLAw0+L3rMvl19Ig09ZZFoVbHhT75fNE4QrFROB0qU+Dx9/51/cPHwLxhVcBRbw6AiU6oa7sNCT/Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5126
 
-Hello,
+Replace kzalloc() with kcalloc() in sched_init_numa().  As noted in
+the kernel documentation [1], open-coded multiplication in allocator
+arguments is discouraged because it can lead to integer overflow.
 
-syzbot found the following issue on:
+Use kcalloc() to gain built-in overflow protection, making memory
+allocation safer when calculating allocation size compared to explicit
+multiplication. Similarly, use size_add() instead of explicit addition
+for 'i + nr_levels + 1'.
 
-HEAD commit:    41cd3fd15263 Merge tag 'pci-v6.17-fixes-2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ef37a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-dashboard link: https://syzkaller.appspot.com/bug?extid=a725ab460fc1def9896f
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a857a2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c916f0580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/bc397a2f4204/disk-41cd3fd1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5291086f4669/vmlinux-41cd3fd1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1099e6ad84b5/bzImage-41cd3fd1.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/c1980868ad6b/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=10e28fa2580000)
-
-The issue was bisected to:
-
-commit d2d6422f8bd17c6bb205133e290625a564194496
-Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Date:   Fri Sep 6 10:59:04 2024 +0000
-
-    x86: Allow to enable PREEMPT_RT.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16cf8fa2580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15cf8fa2580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11cf8fa2580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a725ab460fc1def9896f@syzkaller.appspotmail.com
-Fixes: d2d6422f8bd1 ("x86: Allow to enable PREEMPT_RT.")
-
-exFAT-fs (loop0): Medium has reported failures. Some data may be lost.
-exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0xe5674ec2, utbl_chksum : 0xe619d30d)
-------------[ cut here ]------------
-rtmutex deadlock detected
-WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 rt_mutex_handle_deadlock kernel/locking/rtmutex.c:1674 [inline]
-WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 __rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
-WARNING: CPU: 0 PID: 6000 at kernel/locking/rtmutex.c:1674 __rt_mutex_slowlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
-Modules linked in:
-CPU: 0 UID: 0 PID: 6000 Comm: syz.0.17 Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:rt_mutex_handle_deadlock kernel/locking/rtmutex.c:1674 [inline]
-RIP: 0010:__rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
-RIP: 0010:__rt_mutex_slowlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
-Code: 7c 24 20 dd 4c 8b b4 24 98 00 00 00 0f 85 fd 0a 00 00 48 8b 7c 24 10 e8 2c ee 5d 09 90 48 c7 c7 00 ed 0a 8b e8 df 89 e7 ff 90 <0f> 0b 90 90 48 8b 9c 24 80 00 00 00 43 80 3c 3e 00 74 08 4c 89 e7
-RSP: 0018:ffffc900048df840 EFLAGS: 00010246
-RAX: e12880a9366a4400 RBX: ffff8880324663e0 RCX: ffff888032465940
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc900048dfa30 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed1017104863 R12: ffff888032467060
-R13: ffff888032465958 R14: 1ffff1100648ce0c R15: dffffc0000000000
-FS:  0000555557981500(0000) GS:ffff8881268c5000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000035be0000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- rt_mutex_slowlock+0xb5/0x160 kernel/locking/rtmutex.c:1800
- __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
- rwbase_write_lock+0x14f/0x750 kernel/locking/rwbase_rt.c:244
- inode_lock_nested include/linux/fs.h:914 [inline]
- vfs_rename+0x68f/0xf00 fs/namei.c:5092
- do_renameat2+0x6ce/0xa80 fs/namei.c:5278
- __do_sys_renameat2 fs/namei.c:5312 [inline]
- __se_sys_renameat2 fs/namei.c:5309 [inline]
- __x64_sys_renameat2+0xce/0xe0 fs/namei.c:5309
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc9cdd7ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe70cc6ad8 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
-RAX: ffffffffffffffda RBX: 00007fc9cdfa5fa0 RCX: 00007fc9cdd7ebe9
-RDX: 0000000000000004 RSI: 00002000000001c0 RDI: 0000000000000004
-RBP: 00007fc9cde01e19 R08: 0000000000000004 R09: 0000000000000000
-R10: 0000200000000140 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fc9cdfa5fa0 R14: 00007fc9cdfa5fa0 R15: 0000000000000005
- </TASK>
-
-
+Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments #1
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ kernel/sched/topology.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 977e133bb8a4..0500146f9c1f 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1956,7 +1956,7 @@ void sched_init_numa(int offline_node)
+ 	 */
+ 	sched_domains_numa_levels = 0;
+ 
+-	masks = kzalloc(sizeof(void *) * nr_levels, GFP_KERNEL);
++	masks = kcalloc(nr_levels, sizeof(void *), GFP_KERNEL);
+ 	if (!masks)
+ 		return;
+ 
+@@ -1965,7 +1965,7 @@ void sched_init_numa(int offline_node)
+ 	 * CPUs of nodes that are that many hops away from us.
+ 	 */
+ 	for (i = 0; i < nr_levels; i++) {
+-		masks[i] = kzalloc(nr_node_ids * sizeof(void *), GFP_KERNEL);
++		masks[i] = kcalloc(nr_node_ids, sizeof(void *), GFP_KERNEL);
+ 		if (!masks[i])
+ 			return;
+ 
+@@ -1994,8 +1994,8 @@ void sched_init_numa(int offline_node)
+ 	/* Compute default topology size */
+ 	for (i = 0; sched_domain_topology[i].mask; i++);
+ 
+-	tl = kzalloc((i + nr_levels + 1) *
+-			sizeof(struct sched_domain_topology_level), GFP_KERNEL);
++	tl = kcalloc(size_add(size_add(i, nr_levels), 1),
++		     sizeof(struct sched_domain_topology_level), GFP_KERNEL);
+ 	if (!tl)
+ 		return;
+ 
+-- 
+2.34.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
