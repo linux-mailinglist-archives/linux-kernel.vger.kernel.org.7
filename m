@@ -1,92 +1,66 @@
-Return-Path: <linux-kernel+bounces-780196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DBBFB2FECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:43:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D22B2FEF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF2A31CC0D3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:36:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C906410B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B50276056;
-	Thu, 21 Aug 2025 15:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3326127814A;
+	Thu, 21 Aug 2025 15:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJd7+HOL"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BiARebMo"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1962749D2;
-	Thu, 21 Aug 2025 15:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E218A20E6;
+	Thu, 21 Aug 2025 15:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755790543; cv=none; b=BYr/qUWoNVwjMnXnUZUrPwsG4246g7aRFBzhA0xlfrOadgZYKiT2EyiLlWOYJWvEYLxJqKA77gJNxpsVT1/gwhO9uZqInEz9Fp4b8QQFdHyxj9hSY+EYdRAE4lLA/2uZkFUisT2TlvqsvuGJ1w/0qSIL6CttDNEUJ4xleVNtraY=
+	t=1755790558; cv=none; b=iw4Ft+3huBEU7c/3MiFPUJuNNtWogDad2c30WpoocaPq6j0bDlz2rVY9y33XdcDlc3R+5C0hA0i7UGWG6ybnM5dDFMSsTUsETQIw64LbyObr4K7uWNBBdgZykGi0Dka9Ntpj7/oOmGzpP4eamjWdjo2TDeyGuSaIm3tagug5OSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755790543; c=relaxed/simple;
-	bh=TA5nLH9FettIz/NX5rkBkdZrNFHIEynhmykHMfiu3qc=;
+	s=arc-20240116; t=1755790558; c=relaxed/simple;
+	bh=td56PTEpZ1mg4CIJlNkSc4T2AMSz0KTd2tuX5U2g0is=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NroECaltOY5hADE9XMo6rkUHOUa31cNL1HAw6pEPcEKODYvs7vxQ12fWr9P2ZsjDzFC/nEeVD5FOlitEQW1KaHPqO095zWHnP6hyDyc6bZMDRQf3unKguyuma/+WgibDihckwlEvdzLna3NYTaYlJRxM3znbICWR50tKdTIVTuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJd7+HOL; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-32326793a85so870379a91.1;
-        Thu, 21 Aug 2025 08:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755790541; x=1756395341; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eNbtJkl9CbiQnQE9KMMi2+OI3EANu4Z2H3R0mQsMgOs=;
-        b=TJd7+HOLfQGDCNEv7DFGETLkhOl9WvVhCjI2v986LOzTO5+J0r/Lnj8e3MP+Wu40TU
-         GIKxnviJa69cGzaIo2Fgg+CCM5/ZoTTw56JMFvEYHdos2mibOzKczbodlYibIJkv/KvH
-         pLFCE/fEI0tJ2evQ/akCHxZOgeL6bYDT4AH0nBIK1OZk9VyZcxy0DM6qowblJ+ARgmZ6
-         Wlffk0PMCn1aHYW9tPMSx7rbRv78M/Qq47Xb2H5GJBY/ln7f7bGeJQZOyTOph8WA0kbE
-         fsHM2nPDrFyzdfbNgbFOqnEnmK61DPwXSJaJXJJ087oL0fZFwHCT6fG0U01xgrFGXK50
-         30wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755790541; x=1756395341;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eNbtJkl9CbiQnQE9KMMi2+OI3EANu4Z2H3R0mQsMgOs=;
-        b=tYaVCriPIkz2tNH7CwraCYma8epVHC01lLJEpkdvNip/Et25kbTwIfS7TfFhW+qAyV
-         L+HDJruvVTuSLlT/ufnJJWSCEd3vlZBihhjuUfpMVsQpvsnxtf8WFAQhI42zP+iANotU
-         VW7x+8lD3ZwDUbHgG5NbxBlYzuBESSiYzx3//NI/dIEIW4AnnzjBymviWo9jI1W3VUh6
-         g+xRiy0OvoZ0unkcT24svRlJVZ1WEquzt2qCDT+v9w6EeUh04PTgmyBmnCCoLD717kcY
-         7ibtdm90/RYJBBDMcYsFfxyLGdjKkuGWzjHOExyD2kz/epbVLkmEMKHKIZX2w/uqu/BW
-         N/Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXt7Mc5yd8l15Jt3AuEsltmU1Mtz5MBXmsdltAozogiK5zi/qhMRss1EyjAhwF/uIhF1rt9Xx5pWXrd5h4Atz/qU4=@vger.kernel.org, AJvYcCWbC2TJ/HoBnPSm2tuxlhoQd/KZO4n7WmIqRrjEhv3m8Vth37GptC1XWyEqm7r0TQ9H6Sb1wIvq4t/1ei4=@vger.kernel.org, AJvYcCWsZmCg6ZRlt9sIdJgtMHvByBgTNsOWG4vHdp1Mfe5VLvPsXsmxZKnsHkuzxp5c8+t81rHE2uiswiWYx9pIHkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc15mxY8xh1/Tx9LenLugZImQtYb1hFoJTz/DIsx4EGUJFpM0a
-	U8ccKEuDw6bLm3K7/EJwCrauTxViBCmA3f0KXnaXr9mZbXVmVr+Cs2EA
-X-Gm-Gg: ASbGncsGJ4X+NsH5Ry2A/uo+iEc8YeHY7HoMJCxX2+QQxRg1ay51KMZhShGckKDjE12
-	Nn6W7E/0fxP2VsGLlL1DahexNNkhwbuZajtnJwnrX8nHFF+wJhMzmFWzXIFSt4Wt8mmC5PvWAXc
-	pXektAtqc3bRQTmXwONDCkMm4NtiZW7EqmAoW/z9Bqf4o3+EcjsmzRQOT8EmRe8Fh2TWncXaT8q
-	3vWC6eoWX4JVAXzEk7eyXm9gPITjjde9r3lpROYlXVodJbxh5KuxMohM70dENLRA9AtydGjsDfS
-	wvQfghyzUxC3ZSebxG0VpBe0sqTnt+a3+Pj1NrpPaIe/ilMtY7KDR6sxSqZXHDT6ztIzxz2ZX9k
-	bu0EgYbP4OHzufY8iVpV80GKTQd+0Q73Iwk0=
-X-Google-Smtp-Source: AGHT+IHFGccMI4lnf99eQXSJ79WIr7CQog+uTRFdduTinDQOubPQFn2xjjcR2aWXeoHOPY0FZODa3w==
-X-Received: by 2002:a17:90b:3dcf:b0:311:b413:f5e1 with SMTP id 98e67ed59e1d1-324ed15b898mr4012790a91.32.1755790540864;
-        Thu, 21 Aug 2025 08:35:40 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-325123e7879sm98778a91.1.2025.08.21.08.35.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 08:35:40 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 21 Aug 2025 08:35:39 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Sangwook Shin <sw617.shin@samsung.com>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org,
-	semen.protsenko@linaro.org, dongil01.park@samsung.com,
-	khwan.seo@samsung.com, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 4/5] watchdog: s3c2410_wdt: exynosautov920: Enable
- QUIRK_HAS_32BIT_CNT
-Message-ID: <ee1907af-108a-421f-8f99-fa04261ca351@roeck-us.net>
-References: <20250818021826.623830-1-sw617.shin@samsung.com>
- <CGME20250818022433epcas2p4fec1cccd280fc73dccc5b00e2236f836@epcas2p4.samsung.com>
- <20250818021826.623830-5-sw617.shin@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=irS3jfrrwFDAUKfE7U+FG/IVS8582zb+yiQxNGNPu2xUtFnIFEyeVYY69IFDIplcYmsrt1rSWGbbEz0NP1QOSvspbNbXZJZYctpEN9U1O6q8Q1UIaa++gxT5eXeSoLKIiLygzD5BsJGt5ueY4V2Q6dMEj+q8LBtl15lJucnoBuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BiARebMo; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=6xsxG03JNmvC6eJU0SQIi8DQjG9PZNKQMY+Mtw3NEPY=; b=BiARebMoPEt9DgTUA6GRf89fg4
+	24BMngjfsKAFMS29H6P+frfSn8cNaM9ZfhfcIWPgthWEhswJLyGUbsWw04DX1djQ4wHYKaXzBAXu7
+	W5b7GsCOmAuBwa2NW7vcCUyQLiKHaJ8CYqVzRx9p/oVljb3EIJ2pvo7JQDJWQEOSt04A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1up7KJ-005TEY-3H; Thu, 21 Aug 2025 17:35:43 +0200
+Date: Thu, 21 Aug 2025 17:35:43 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>, linux-kernel@vger.kernel.org,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Robert Marko <robimarko@gmail.com>,
+	=?utf-8?B?UGF3ZcWC?= Owoc <frut3k7@gmail.com>,
+	Sean Anderson <sean.anderson@seco.com>,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH net-next 01/15] net: phy: aquantia: rename AQR412 to
+ AQR412C and add real AQR412
+Message-ID: <162ae90f-d233-4415-ba98-d4292be41c21@lunn.ch>
+References: <20250821152022.1065237-1-vladimir.oltean@nxp.com>
+ <20250821152022.1065237-2-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,43 +69,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250818021826.623830-5-sw617.shin@samsung.com>
+In-Reply-To: <20250821152022.1065237-2-vladimir.oltean@nxp.com>
 
-On Mon, Aug 18, 2025 at 11:18:25AM +0900, Sangwook Shin wrote:
-> Enable QUIRK_HAS_32BIT_CNT to ExynosAutov920 SoC which has 32-bit WTCNT.
+On Thu, Aug 21, 2025 at 06:20:08PM +0300, Vladimir Oltean wrote:
+> I have noticed from schematics and firmware images that the PHY for
+> which I've previously added support in commit 973fbe68df39 ("net: phy:
+> aquantia: add AQR112 and AQR412 PHY IDs") is actually an AQR412C, not
+> AQR412.
 > 
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> These are actually PHYs from the same generation, and Marvell documents
+> them as differing only in the size of the FCCSP package: 19x19 mm for
+> the AQR412, vs 14x12mm for the Compact AQR412C.
+> 
+> I don't think there is any point in backporting this to stable kernels,
+> since the PHYs are identical in capabilities, and no functional
+> difference is expected regardless of how the PHY is identified.
+> 
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> ---
->  drivers/watchdog/s3c2410_wdt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index d983cbcb975c..915d3c88565a 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -357,7 +357,7 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 = {
->  	.cnt_en_bit = 8,
->  	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
->  		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> -		  QUIRK_HAS_DBGACK_BIT,
-> +		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
->  };
->  
->  static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
-> @@ -370,7 +370,7 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
->  	.cnt_en_bit = 8,
->  	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
->  		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> -		  QUIRK_HAS_DBGACK_BIT,
-> +		  QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_CNT,
->  };
->  
->  static const struct of_device_id s3c2410_wdt_match[] = {
-> -- 
-> 2.25.1
-> 
+    Andrew
 
