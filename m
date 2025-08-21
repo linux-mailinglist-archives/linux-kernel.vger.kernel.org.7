@@ -1,239 +1,163 @@
-Return-Path: <linux-kernel+bounces-779057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02002B2EE8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:47:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1B9B2EE96
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68621580B50
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:46:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1B93AEFC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1642E7F3C;
-	Thu, 21 Aug 2025 06:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E912E88B9;
+	Thu, 21 Aug 2025 06:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWVE8Im2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iXeTNRi/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5834457C9F;
-	Thu, 21 Aug 2025 06:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E352E339C
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755758780; cv=none; b=P2iFu1yzayqrxbIFj4sT8giwJ4qQhDKMgpjnUM3toAdEeJ3R1Z17Fg0RSPOHTo0ffNkH0Bz8QQjOhDxg55yapeiqf01zbGFt1O993qSSpvFXfLH4iRnrtYWhDJpMsYwZN5rvda4yIBHdmATiuBFhFp5D/0xW2sRJa9CqPMSE4CQ=
+	t=1755758818; cv=none; b=quiInpIs4tqLKKRgnVSnNWCbmrO0tO8T1wVb/TNLzuqK/83NAHIZUrN5U50V461zNXq8tUlN8F381maESRGhxkvdBGoR/CGZDUPnwzPQWZB/llE5kj+Le4nbnjMnd0DQdqtLPUxw8OyWj5AoIExzCrwq7hPJmQD4Ovgbi0fbIGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755758780; c=relaxed/simple;
-	bh=i+n/4B/MiYix4PhRatm6mvUq8Z++Ah+iaPndzC5npow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KYnrBq6VQOWENEe/r3xgk3C/S7z6PPYxig4VbIEndkXENOskmGpMIgLBPrQFHjb0vQGKXS3mAHDDRSN6P9g+o4oGbdxFaE4tf7+VcHjtSwTwFmzlWxG2V8Ul7yRppqUE5zcqiRsiOAoF25/jFwOwetiufPZ9MQgiobp0gpBUjUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWVE8Im2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44E33C4CEED;
-	Thu, 21 Aug 2025 06:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755758777;
-	bh=i+n/4B/MiYix4PhRatm6mvUq8Z++Ah+iaPndzC5npow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qWVE8Im28bcNByDb4nmbii+MVUYW1gsPh1TPxiVjMbVj3iGap2s3VVKOPiLVFPKnd
-	 4Eu+45zODx7dsxT4FLsoLUe0zDJrLe5xa06Y4lRzGAeJkKV+7Q3eT3SmSmt7R0F38z
-	 ra0pegJVHDO71R+XeH/4/xx8U4aL3pNN3wGmeUw2uRh0CQ0qpXe4RFtix1Xr1djnbJ
-	 MJGnBfQGKhAyz67jrXPCbdi1Q5DUERLN2mJz5bq4a9VH+9MpAN986KJJnQD3D9pdrV
-	 POjph9k+6aZgMrrQ5ZAoMjAy48TcKN2O+H2a4/6p5ClojOr7JIlJnE6/E4UsYZ4wFd
-	 c5wAQG7EG7dcg==
-Date: Thu, 21 Aug 2025 08:46:15 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch, 
-	andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com, broonie@kernel.org, 
-	chunkuang.hu@kernel.org, ck.hu@mediatek.com, conor+dt@kernel.org, davem@davemloft.net, 
-	dmitry.torokhov@gmail.com, edumazet@google.com, flora.fu@mediatek.com, 
-	houlong.wei@mediatek.com, jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com, 
-	krzk+dt@kernel.org, kuba@kernel.org, kyrie.wu@mediatek.corp-partner.google.com, 
-	lgirdwood@gmail.com, linus.walleij@linaro.org, louisalexis.eyraud@collabora.com, 
-	maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com, mchehab@kernel.org, 
-	minghsiu.tsai@mediatek.com, mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com, 
-	robh@kernel.org, sean.wang@kernel.org, simona@ffwll.ch, 
-	support.opensource@diasemi.com, tiffany.lin@mediatek.com, tzimmermann@suse.de, 
-	yunfei.dong@mediatek.com, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v1 01/14] media: dt-bindings: Convert MediaTek mt8173-mdp
- bindings to YAML
-Message-ID: <20250821-silky-slug-of-novelty-e4bb64@kuoka>
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-2-ariel.dalessandro@collabora.com>
+	s=arc-20240116; t=1755758818; c=relaxed/simple;
+	bh=+6yvn0YKKNDiUHlCWquUONeWP3JYOVSD0tnUrZBOAb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dAG6yXMPmT7xZ8e2nc0jqRcyKo6PUViPOoLBpp6XQw3cZexQu95RQvAI7wTygFFXXoc8kDOxZDcMiaJbg0W/vJ7AftCDbDTo8xBqYHY9xtPvF4I19te/ZJXRtUjKrrJxyt8Jf0Yt8Xu379oFPAe12FGhjI9t2FiI59gTnrxnbKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iXeTNRi/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755758815;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1LNt7Lxc+ABGXS8RVj1hI9eGxGKQG1KQTnyDB4zLACI=;
+	b=iXeTNRi/u+oPCv1LweV5jeoE4hDrw+1fi7qDsJ7EXtz7qxWowGRBOZ/OuyihelHweNlFVM
+	6ZUtLBXrTz9AwtWO5EatlxjZ6lEuaJy5WwVXgQQUiXBvJqBfl7D5ZzXhY/wlFlEOC4PW05
+	s4fJIBGIToFsaCY0FOMu/KeD1dCn5x0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-10-d-dkKdJSMwSeqqROXS1tPw-1; Thu,
+ 21 Aug 2025 02:46:52 -0400
+X-MC-Unique: d-dkKdJSMwSeqqROXS1tPw-1
+X-Mimecast-MFC-AGG-ID: d-dkKdJSMwSeqqROXS1tPw_1755758811
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7AAB71956088;
+	Thu, 21 Aug 2025 06:46:50 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.130])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7766A19560B0;
+	Thu, 21 Aug 2025 06:46:45 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com
+Cc: virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	hch@infradead.org
+Subject: [PATCH V6 0/9] Refine virtio mapping API
+Date: Thu, 21 Aug 2025 14:46:32 +0800
+Message-ID: <20250821064641.5025-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250820171302.324142-2-ariel.dalessandro@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Aug 20, 2025 at 02:12:49PM -0300, Ariel D'Alessandro wrote:
-> Convert the existing text-based DT bindings for MediaTek MT8173 Media Data Path
-> to a YAML schema.
+Hi all:
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+Virtio used to be coupled with DMA API. This works fine for the device
+that do real DMA but not the others. For example, VDUSE nees to craft
+with DMA API in order to let the virtio-vdpa driver to work.
 
-> 
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> ---
->  .../bindings/media/mediatek,mt8173-mdp.yaml   | 174 ++++++++++++++++++
->  .../bindings/media/mediatek-mdp.txt           |  95 ----------
->  2 files changed, 174 insertions(+), 95 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
->  delete mode 100644 Documentation/devicetree/bindings/media/mediatek-mdp.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
-> new file mode 100644
-> index 0000000000000..f3a08afc305b1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
-> @@ -0,0 +1,174 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/mediatek,mt8173-mdp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT8173 Media Data Path
-> +
-> +maintainers:
-> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> +
-> +description:
-> +  Media Data Path is used for scaling and color space conversion.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
+This series tries to solve this issue by introducing the mapping API
+in the virtio core. So transport like vDPA can implement their own
+mapping logic without the need to hack with DMA API. The mapping API
+are abstracted with a new map operations in order to be re-used by
+transprot or device. So device like VDUSE can implement its own
+mapping loigc.
 
-Just enum, no items here
+For device that uses DMA (for example PCI device), the virtio core
+will still call DMA API directly without the need of implementing map
+ops per device/transport.
 
+Please review.
 
-> +          - enum:
-> +              - mediatek,mt8173-mdp-rdma
-> +              - mediatek,mt8173-mdp-rsz
-> +              - mediatek,mt8173-mdp-wdma
-> +              - mediatek,mt8173-mdp-wrot
-> +      - items:
-> +          - enum:
-> +              - mediatek,mt8173-mdp-rdma
-> +              - mediatek,mt8173-mdp-rsz
-> +              - mediatek,mt8173-mdp-wdma
-> +              - mediatek,mt8173-mdp-wrot
-> +          - const: mediatek,mt8173-mdp
+Changes since V5:
 
-This makes no sense. How devices can be compatible and can not be
-compatible.
+- Rename mapping_token to virtio_map
+- Do not use opaque void * pointer, just use a forward decalration of
+  vduse_iova_domain
+- Remove unused variable and typo fixes
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks: true
+Changes since V4:
 
-No, there's no such syntax. Look at other bindings.
+- Rename map_token to mapping_token
+- Introduce a union container for opaque token as well as the DMA
+  device so we won't lose the type safety
+- Do not try to set DMA mask for VDUSE device
+- Introduce a new mapper_error op for API completeness
+
+Changes since V3:
+
+- Fix build error of PDS vDPA driver
+
+Changes since V2:
+
+- Drop VDUSE dependenct for HAS_DMA and ARCH_HAS_DMA_OPS
+
+Changes since V1:
+
+- Fix build error of mlx5_vdpa driver
 
 
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  iommus:
-> +    description: |
+Jason Wang (9):
+  virtio_ring: constify virtqueue pointer for DMA helpers
+  virtio_ring: switch to use dma_{map|unmap}_page()
+  virtio: rename dma helpers
+  virtio: introduce virtio_map container union
+  virtio_ring: rename dma_handle to map_handle
+  virtio: introduce map ops in virtio core
+  vdpa: support virtio_map
+  vdpa: introduce map ops
+  vduse: switch to use virtio map API instead of DMA API
 
-Drop |
+ drivers/net/virtio_net.c                 |  28 +-
+ drivers/vdpa/Kconfig                     |   8 +-
+ drivers/vdpa/alibaba/eni_vdpa.c          |   5 +-
+ drivers/vdpa/ifcvf/ifcvf_main.c          |   5 +-
+ drivers/vdpa/mlx5/core/mr.c              |   4 +-
+ drivers/vdpa/mlx5/net/mlx5_vnet.c        |  15 +-
+ drivers/vdpa/octeon_ep/octep_vdpa_main.c |   6 +-
+ drivers/vdpa/pds/vdpa_dev.c              |   5 +-
+ drivers/vdpa/solidrun/snet_main.c        |   8 +-
+ drivers/vdpa/vdpa.c                      |   5 +-
+ drivers/vdpa/vdpa_sim/vdpa_sim.c         |   4 +-
+ drivers/vdpa/vdpa_user/iova_domain.c     |   2 +-
+ drivers/vdpa/vdpa_user/iova_domain.h     |   2 +-
+ drivers/vdpa/vdpa_user/vduse_dev.c       |  79 ++--
+ drivers/vdpa/virtio_pci/vp_vdpa.c        |   5 +-
+ drivers/vhost/vdpa.c                     |   6 +-
+ drivers/virtio/virtio_ring.c             | 459 ++++++++++++++---------
+ drivers/virtio/virtio_vdpa.c             |  20 +-
+ include/linux/vdpa.h                     |  25 +-
+ include/linux/virtio.h                   |  46 ++-
+ include/linux/virtio_config.h            |  72 ++++
+ include/linux/virtio_ring.h              |   7 +-
+ 22 files changed, 531 insertions(+), 285 deletions(-)
 
-> +      This property should point to the respective IOMMU block with master port as argument,
-> +      see Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
-
-Drop entire description, completely redundant. I don't know why my patch
-fixing this was not applied, so you keep repeating same mistakes...
-
-> +    maxItems: 1
-> +
-> +  mediatek,vpu:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Describes point to vpu.
-
-Useless description. We see that from the property name. Explain the
-purpose in the hardware.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - power-domains
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: mediatek,mt8173-mdp-rdma
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: Main clock
-> +            - description: Mutex clock
-> +    else:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: Main clock
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt8173-mdp-rdma
-> +              - mediatek,mt8173-mdp-wdma
-> +              - mediatek,mt8173-mdp-wrot
-> +    then:
-> +      required:
-> +        - iommus
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: mediatek,mt8173-mdp
-
-This makes no sense either.
-
-> +    then:
-> +      required:
-> +        - mediatek,vpu
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/mt8173-clk.h>
-> +    #include <dt-bindings/memory/mt8173-larb-port.h>
-> +    #include <dt-bindings/power/mt8173-power.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        mdp_rdma0: rdma@14001000 {
-
-One example is enough. Two could be fine if they differ significantly.
-
-Best regards,
-Krzysztof
+-- 
+2.31.1
 
 
