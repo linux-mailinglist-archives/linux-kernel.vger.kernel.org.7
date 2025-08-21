@@ -1,833 +1,280 @@
-Return-Path: <linux-kernel+bounces-780057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D767B2FCB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:32:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783F1B2FCBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 517BD4E4422
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:32:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21976B6449E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DBF2EC57D;
-	Thu, 21 Aug 2025 14:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BCA2857F7;
+	Thu, 21 Aug 2025 14:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KoWVb4Q7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Oel95M0c";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Oel95M0c"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013033.outbound.protection.outlook.com [52.101.72.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4669E223DC6;
-	Thu, 21 Aug 2025 14:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755786611; cv=none; b=EYqLdqK15+PnNy2RY8iZig1MUnGcMgzWvs73n8Vh+9T0eS4Em3abEi7Af27YSZHRNwvV8n1U6TfDNznALCa1aRz6l0uGqBVQ+mMAbQNd/ccZmDL4VXn6lCglDoYm6ekVDWU8MyV8WfA537yBo9WFHrKe7FKdFeFMBucQTlJelwE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755786611; c=relaxed/simple;
-	bh=171YN9oS89feifoGx1r0j0QafdKTNjIdfxZtZtvAWKk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Rnru+QxbsFwZZ5nNr0cTJsnUdZXxMSmNwWtIsegH0hbZCOpFTOIg1BtHH2lPT3E8t/lEEvPJcA1b3fQOgWzz8uqTrTGLb0roMyoFbZReo6+i4NNVf1dSuGXraRs38JJ1mD6rz+XSl4uZoLanbHpn97ZeqmXWu+fR0wOFMj1dWjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KoWVb4Q7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E9FC4CEEB;
-	Thu, 21 Aug 2025 14:30:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755786609;
-	bh=171YN9oS89feifoGx1r0j0QafdKTNjIdfxZtZtvAWKk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=KoWVb4Q7efd4vcYZzzqohUYkceBmDC1X50LylOiB8UYn+cvuxzaRPfZpG6gPkvgNk
-	 ZSJyt3SmdHGst5XVkXLY4zG02aRJXANpeXu/1Ayjd93kR8rjXRkFayZO1Uf1NaP288
-	 r0kwE9UbpG34jvLLesFo+E6CyaHYp/OgHcaCgQLysZcQyeNB/rfh5zKq+my2TqDtT0
-	 ZrVVDBrJKv7QwDEQ+0VpnKn5CuPNLaq9h0J+eGxtnVkSpRfnqMDKNI4CQjiPBaBfki
-	 JI7iKyNKojtfeBtI87DxJtwxo9Hv8KwbVX8MstT6fspg6w8hb9t7ZoiAG/WIxMC/12
-	 SUCmXPyC9BmRA==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Thu, 21 Aug 2025 16:29:55 +0200
-Subject: [PATCH] selftests/hid: update vmtest.sh for virtme-ng
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC03A27F182;
+	Thu, 21 Aug 2025 14:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.33
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755786681; cv=fail; b=i8zEZjzAQL/h96/NZW5cOxZieZg7tvdBac8ojA2wwJD8MJDMGiwvSm7TyY+xEJVHnDW+c1gu5tIPDOzvxV+7Bny+4FzXEZckwL7eXPfyxlUpoa3PAL4Gwt52EyT7p5NjxhRV6j+Ydvcf2CQNYQDz8R2uCvIjv0XIiKP+sPrtAnk=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755786681; c=relaxed/simple;
+	bh=8l8/xl/hEULB3i0FlfcbY7YQvlaqAq9ytrla4Csu5zQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=m+Qv4uSektVbkHzog5WxmGLopYeKrgnwkSFUxWO/EOUNAkBsNkJZBDCte2AWhPEa53cuuhA8yMxespN/D9LxE9LxT2BwujzEP+rST8l8z5VC1XJ8OJ2qGPJm02cj5uiEQcCIqK08xuVqcleFA9TN8FOp70zInDrH6Dce0iuF0ZE=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Oel95M0c; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Oel95M0c; arc=fail smtp.client-ip=52.101.72.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=KE4AvAigMM+cCUew1u2awn6pzk7U/WLr0HmN9Za4k2aRTEqDsQCCwnVeWGy1ruNnJmGZlm08pQRWbCvmFpNN5lpL37wsFvys2mVKPIXGBlu/Rtl9ZpZntCBw6xWwamoNbSCNaQTHVPIETcC1Po3+CIX4OSLeTrywUesvscPEWvyS6WTJPXRna0RGYicBSnbCvKIdblG+EykVOBJr+6SW+kc5LU9020PPyC5BDEPbVBDgp5ag0v4SvIfEO8yzOZb/tYqJ0tnVqSSJTg3Y3LYCSFwibH1qhRKxtwsLqP0KcZfE/2UvoMg1sb6ikFKFgDIt9oGsQ7UrHO8xuuKQZiHbFg==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0YAaQpN8SasQefWgNfGjOFLbctX2/HktuXOWTy87R7U=;
+ b=xDCau0R+R73mvfW29acN9E8Q9tYb1CcCyG6Vi+l12Vk1rxTPZbXwxExgNrnGked6AfPAL3IJ9e/T0Fq8b68cxo6FdK1AV+aRxkE6irgslq2BRSEi1DvGw5haVdn48E+aQcnAzTIBXk4ktfrdi2P7C+AQwI0t1JxoHM3Jam8DMkb7hRPGkPIbuUYf+7+uBplYlR9ex3Yz5wHMb3R+mKJEhnJIOWLVZE+7vHvloTkVRL1f8Cnc7xnHvuRNijlZB9WqtvK/EehO/q8Mhc0/we9NusivA0dpEygDdMD+PqQTxN69JX4NEnVCIMpGHktM7ITPFe9Kgzw6LWCoQh0HjNj8lg==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=googlegroups.com smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0YAaQpN8SasQefWgNfGjOFLbctX2/HktuXOWTy87R7U=;
+ b=Oel95M0cbtinKYLDMSxFrT40AKZXbwLXqf5dP7aQkbxgV/r2vjAZhWPPy9Mi8sFHiu9kGE4PqgiQ0B3g6BS8QKFgTtjxcynqWOGfrtSM0T9MhRQv92PIo+LDwZgJ/22gR02dl8Uaj4BlxUqccKuce7xca8ZLu7mWsL/r9PLGImg=
+Received: from AS4P191CA0050.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:657::26)
+ by PAVPR08MB9186.eurprd08.prod.outlook.com (2603:10a6:102:30c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Thu, 21 Aug
+ 2025 14:31:12 +0000
+Received: from AM2PEPF0001C711.eurprd05.prod.outlook.com
+ (2603:10a6:20b:657:cafe::32) by AS4P191CA0050.outlook.office365.com
+ (2603:10a6:20b:657::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.15 via Frontend Transport; Thu,
+ 21 Aug 2025 14:31:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AM2PEPF0001C711.mail.protection.outlook.com (10.167.16.181) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.8
+ via Frontend Transport; Thu, 21 Aug 2025 14:31:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CnNOoa/ngTKKgGKghT+0BQACKetOQeOFgpCBaaiFtPUPMRObWpcYwmyad2hFSIacrngh+0ct9OLs0gZbrBtQEQu/kQE7nj/vafow6TIo0IqTZCVnpb26tHxK94zNvcx+Vv0ABYb3L7kiP6OAJ/ici7KnjPj9KABIKomSFagGsHg8HuAHb3GQ9g3LGmYTRhi+i/zqBgYUgFmeFC24Vbi3F2zDDpVLw7PERJS4vfPPPzQ+0B9ZAADdQCsN9LEPbGXlLvhJrYb/9B6VukiA1XQuSsdxL03IYaLZyRppPxlCzXwkmirFCkbV/3RzQwWf0GZljAxNEq4U5QhKmnU6tgYD4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0YAaQpN8SasQefWgNfGjOFLbctX2/HktuXOWTy87R7U=;
+ b=cjYMBhNFfOLW6TaaoOYO8S8s+4LyUfoEovbhbOJtY7ILl+/cJl2tjqmK9vmNia+J/7jhs1droF1WnLBlR7LtYnSxPXsqzVBP5pOiaHwbCV2MAla+ggPZ2T77yKowsCdnG2ujSqgaq4WZAcXz9zlBTr1YHVlRbLsOQoGRMNRivL1L6D2Ojevx26V4sAo8CCgeEbrOMRjhnX2Ea1+8DyXlv6BbAc0mPIvJJ6juUOzmxaP5uqapXaHDnow69zdDWGMeMucPx6uFtWV2JdNK2GAvJVYocaX4Vk4LnOHQK1JpINmDdqmUUKAwaNCMdQg1bG2Ga2nloNPO3jNM0qZJd63snA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0YAaQpN8SasQefWgNfGjOFLbctX2/HktuXOWTy87R7U=;
+ b=Oel95M0cbtinKYLDMSxFrT40AKZXbwLXqf5dP7aQkbxgV/r2vjAZhWPPy9Mi8sFHiu9kGE4PqgiQ0B3g6BS8QKFgTtjxcynqWOGfrtSM0T9MhRQv92PIo+LDwZgJ/22gR02dl8Uaj4BlxUqccKuce7xca8ZLu7mWsL/r9PLGImg=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by VE1PR08MB5597.eurprd08.prod.outlook.com
+ (2603:10a6:800:1b3::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
+ 2025 14:30:38 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%7]) with mapi id 15.20.9052.012; Thu, 21 Aug 2025
+ 14:30:37 +0000
+Date: Thu, 21 Aug 2025 15:30:34 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+Cc: kasan-dev@googlegroups.com, Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Marco Elver <elver@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michael Ellerman <mpe@ellerman.id.au>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] kasan: fix GCC mem-intrinsic prefix with sw tags
+Message-ID: <aKctip0/nVuirL4U@e129823.arm.com>
+References: <20250821120735.156244-1-ada.coupriediaz@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821120735.156244-1-ada.coupriediaz@arm.com>
+X-ClientProxiedBy: LO2P123CA0081.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:138::14) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250821-virtme-ng-v1-1-0e6359872bf3@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAGItp2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDC0ML3bLMopLcVN28dN00c+OUJPNUM0MjY1MloPqCotS0zAqwWdGxtbU
- AhuhWeFsAAAA=
-X-Change-ID: 20250818-virtme-ng-f73db7e61235
-To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755786608; l=20560;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=171YN9oS89feifoGx1r0j0QafdKTNjIdfxZtZtvAWKk=;
- b=a6+jALH0FilOQ/3n3VM739eO6H+1gZpUjnL4bgLk0+0EMzmrynt0Jj3wdACdkuT6gD8/B0X90
- P9Px+FnChYHAqGkWYiePgpsVPo74WK5V3uCkYOVkjfv1DzivUxsuCiJ
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|VE1PR08MB5597:EE_|AM2PEPF0001C711:EE_|PAVPR08MB9186:EE_
+X-MS-Office365-Filtering-Correlation-Id: 512497b5-4c43-47f3-39e1-08dde0bf5fc1
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?lDrijyGYgE6kV6wL2CHrzNeKcmVZw2w8sIgLw8nIjTYisptEZ3Hkp0dFpuZV?=
+ =?us-ascii?Q?X/mgSrA1nYicpsN0HMz+Q6AVz+N2eoOleisqcIr0unJGwEEGv+Whl6kaVFUq?=
+ =?us-ascii?Q?RsiI1TmkbmTN6A3UXjTmLTfH3WNPKYGV/U/v4T9vaMKEsXQal49Y04MYDUep?=
+ =?us-ascii?Q?sA7u/PYJDXckaqoqvYDyBOw7NXJ3Vv7iGzWjDMz76yZi8zmGUsxClzyhtAJ0?=
+ =?us-ascii?Q?iHUrQOg6nZq9rWQv73Kgd7+Y4itqLCI2XSuZWdqO2h8XhckfBqHSLx+ZvURT?=
+ =?us-ascii?Q?iO5ybmi1MuxYXqn/zoXTO40NIo6l4Gw4plVTqB1ie8E7z8sJFNXKM4N2B/Ix?=
+ =?us-ascii?Q?hCsH42atgsTjPoV0ODwEmAUwIP8jSZmnZr5z7tL2OQKbRdo9EG7utpyjdrrJ?=
+ =?us-ascii?Q?dAKbzS3Vhi5fBkPoOQp07jreXMTOksG5SDO+y+/GF2aG49ZPdhyeM1qrh7/g?=
+ =?us-ascii?Q?joREVuDxjQHXon46cLvTDzbkcDNtdCJ+bhQhOmWhHfCgiKjtbk2LQayLpZhJ?=
+ =?us-ascii?Q?1PbtdOmtDlM0//L+thFjxRc1R3JKS77AufPLvaort++l1ljDN0p1VN/a6rNS?=
+ =?us-ascii?Q?rCvx76yoPLJIZoc4T/KYPF5wZTvu5F/+8IyjtawEL2aGEs08mCJ4J2e7tJyi?=
+ =?us-ascii?Q?GbbHrJkTQdB92Wd/H2p0y/UhNm80rq37MwgGH73YvZfADXVFOiWGKNoPOmuE?=
+ =?us-ascii?Q?oyxCYKyJrWUqcvTNWJkNVrJkD8mbkbCgpCY/ISwZQTuDoS+Vit/D91h5S2OW?=
+ =?us-ascii?Q?7ZDyF6ZCUaUyYE4Fn89Q/Dp0TriLFQwZHpaDfppih5HRk6arqAVkiDtIALt9?=
+ =?us-ascii?Q?FvzVqr5lM9U0aMj6kVcf55+9aZmYS2mgXDwPdDNATTsePEsLfM2fZkOsJ6Ds?=
+ =?us-ascii?Q?SWaZvBPjRks5VxTMvNYlO/eySGI2KkHJ1R/oOjoCptXMatW+zGklajNrmVLb?=
+ =?us-ascii?Q?XKoTKO9qgQ68P4ca70hIGam6Wxw6G+yOTk405AewZ69XdMX97E0ecRDky325?=
+ =?us-ascii?Q?qE0voh1Uo2JakQ0UGFNXIc9iq3rLIKxXxjORBTo3ONcdhxknYeTwz72Jdcpg?=
+ =?us-ascii?Q?VRTWaDFk+B0HyThz/CkWGQiKEdFNcRSIdyhKADkMIlkPQhpYjS24GEFg6XoQ?=
+ =?us-ascii?Q?WxjxZTXXEI3m3SClxNBaI2fiATiTmJBJuObEthixj8WczfJwuGS5Sb5jqBiC?=
+ =?us-ascii?Q?yeTdF6qGSO8IhpM4RicvaTRT2r9gxklKUIs5txISoQ1gaotlsrDuOATEkAic?=
+ =?us-ascii?Q?dhPd/dL4gEGk02VFpIZAToQkP1W0YRW0fkTsP1EQeyfWC0HdfuCJPgOGQtJO?=
+ =?us-ascii?Q?KCwbreWcpLSlSnUOVoWEmJ9FhxoJQD1PkQfSPdOzvB+i9JuuCO0cxjE4ndlD?=
+ =?us-ascii?Q?KN77f3fNfMLEf9IShakD7uqS3KQFSEMECU91cYfTPFi6yr+YHcjEAxev73t5?=
+ =?us-ascii?Q?Hto9eai9h8Q=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5597
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM2PEPF0001C711.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	3a5fa8b7-8727-4bf6-7818-08dde0bf4c0f
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|14060799003|35042699022|36860700013|82310400026|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ULoMaGXbsRygXx3Ag7XfZosJbjLgng5EH3kxgJsGaDzeGjbdBDcF36wQQxlt?=
+ =?us-ascii?Q?vpVfZS4GyZECOyWPyTvXWQp/Wl2GMxV3v1nR2hC9Ld6H2IiNGNGApIeR0fzu?=
+ =?us-ascii?Q?wb3bPidK2YnHCwWZGtrRBgO9tZ9AZClFlpUp41BoGCEx0RSITgLPLwmpar5j?=
+ =?us-ascii?Q?RggVsfH71PvJHLbgGUDBL3TU1u7hQmJ3HCerQdOk7/CbXFNiIjdfR72jXQOi?=
+ =?us-ascii?Q?NzsIuur/iW/JuU1C9BLll0csNQniql/UHwtkaF1vNeP0Sovxgpded9gbms1L?=
+ =?us-ascii?Q?d7xTeGrFA+FifPbkwH/lH3Q4/B44QWgiLrk4VOoMzvl68qMteje1pohcFmlH?=
+ =?us-ascii?Q?fx6AqJwS+3ctbx3dwwDM/yjHp4MhHSBm5Mi5SUNpHeMAt7xIu8TlquTzjzVC?=
+ =?us-ascii?Q?tMCaLhD2GNV4PZRuldSGTaZV8/5dN44FrlPptz6cvw2i5AGjo3RI5ffyEOSJ?=
+ =?us-ascii?Q?dtn/jjX9QaDxnNfbmwIcTj5fVNN0bG2FdYuJHh+Y5nhHEw1iE/bZRJIE89z4?=
+ =?us-ascii?Q?/epkyt/SYYxCbRvsVl2XePIem122ZrybN8LdKlDJ5OkpxEqJukdZJHyWxSzM?=
+ =?us-ascii?Q?fBgtJ2+MuOvdv/9hkbdP7iQhnkrFq5fYtwno/aGLQcUvjHsWt6Xm5r2hTa7F?=
+ =?us-ascii?Q?9NoGssejlQzEbb4Sy2gwdvyhwkrnTKzIrk2ZEAaaFBcwznoRnPPZ0bNs2TEO?=
+ =?us-ascii?Q?coRalT5H/o6Bh3CXxWIw/5yv9QxevO46sjmNCtQWrCx/cZJybFSUJBwdo59o?=
+ =?us-ascii?Q?UO+HViD038r3Oq8xwtR/kn2YampKWKOXn14TTKLCYZOV9Kfhrna06tIF4gHN?=
+ =?us-ascii?Q?w6DnCEdxYL4xXBFCdj4bCyTY9a69zIH3da8RGimtwZa8a8CuoJo07nHTbEdU?=
+ =?us-ascii?Q?v6m3erl+dOimbE6Wtwfj0Uv49QX3eyKhefn78GPTP4rIPbaJ1ZzUWiGWdnDT?=
+ =?us-ascii?Q?S2rnFjBQH76nTghph2Jh6i9AtuYUgtYk3ow1cVflBIgF2XWXRyLYiNUAR4XG?=
+ =?us-ascii?Q?E+pOFB1uux967ZT8A5GgLvc999Ulzsnn/6/2mYQ2aJRJcZ+ODac/63iT4M8X?=
+ =?us-ascii?Q?1ucBo/sg1Jcaj4vp8b1gsEXvzzAb02YyUq9YwpYT/rLSYdAj4hTfWnDkJDcP?=
+ =?us-ascii?Q?8SRrsLtZ5B4fcpeOuJ6VezddEGsJ4QCL9Pvc5n8CxhE1t92MZPAzMGIVFNAO?=
+ =?us-ascii?Q?aRcl1WxSUIY/bhM58O1IOz6JfmxB8LXt+iEhtuvJJ/HV3EyBPCzjklAxaF97?=
+ =?us-ascii?Q?StMKDB7SGnnpzKnP06H1RSsF2ABV9GHGYas/7xEXnnzgKrc1Hm8U5Ak2UIvY?=
+ =?us-ascii?Q?OshNtpNdC49JZ9L4k+1WaBbRzDffq/rD6Zu2Nal1UbL+Cwt0gba0ddiPjHS7?=
+ =?us-ascii?Q?zewZxIuD1HgnfubrbYVWxJk/+S9BCwotN63XBlIErNTXc+tz5j0cTSyNnPWV?=
+ =?us-ascii?Q?IY1vfXdKQb293hYjW7jYeVEnchE5eJwyGF8tcwv/hHF72YHi6vH9AAac4OBY?=
+ =?us-ascii?Q?A3HyVWIQH9Tx1gU0nh6Gu38VkrnpEafWZ5ZnO3M6T2X0J1Irs0SBGENIsA?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(14060799003)(35042699022)(36860700013)(82310400026)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 14:31:10.5227
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 512497b5-4c43-47f3-39e1-08dde0bf5fc1
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM2PEPF0001C711.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR08MB9186
 
-This commit is a rewrite almost from scratch of vmtest.sh.
+Reviewed-by: Yeoreum Yun <yeoreum.yun@arm.com>
 
-By relying on virtme-ng, we get rid of boot2container, reducing the
-total bootup time (and network requirements). That means that we are
-relying on the programs being installed on the host, but that shouldn't
-be an issue. The generation of the kconfig is also now handled by
-virtme-ng, so that's one less thing to worry.
+On Thu, Aug 21, 2025 at 01:07:35PM +0100, Ada Couprie Diaz wrote:
+> GCC doesn't support "hwasan-kernel-mem-intrinsic-prefix", only
+> "asan-kernel-mem-intrinsic-prefix"[0], while LLVM supports both.
+> This is already taken into account when checking
+> "CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX", but not in the KASAN Makefile
+> adding those parameters when "CONFIG_KASAN_SW_TAGS" is enabled.
+>
+> Replace the version check with "CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX",
+> which already validates that mem-intrinsic prefix parameter can be used,
+> and choose the correct name depending on compiler.
+>
+> GCC 13 and above trigger "CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX" which
+> prevents `mem{cpy,move,set}()` being redefined in "mm/kasan/shadow.c"
+> since commit 36be5cba99f6 ("kasan: treat meminstrinsic as builtins
+> in uninstrumented files"), as we expect the compiler to prefix
+> those calls with `__(hw)asan_` instead.
+> But as the option passed to GCC has been incorrect, the compiler has
+> not been emitting those prefixes, effectively never calling
+> the instrumented versions of `mem{cpy,move,set}()`
+> with "CONFIG_KASAN_SW_TAGS" enabled.
+>
+> If "CONFIG_FORTIFY_SOURCES" is enabled, this issue would be mitigated
+> as it redefines `mem{cpy,move,set}()` and properly aliases the
+> `__underlying_mem*()` that will be called to the instrumented versions.
+>
+> [0]: https://gcc.gnu.org/onlinedocs/gcc-13.4.0/gcc/Optimize-Options.html
+>
+> Signed-off-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+> Fixes: 36be5cba99f6 ("kasan: treat meminstrinsic as builtins in uninstrumented files")
+> ---
+>  scripts/Makefile.kasan | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
+> index 693dbbebebba..0ba2aac3b8dc 100644
+> --- a/scripts/Makefile.kasan
+> +++ b/scripts/Makefile.kasan
+> @@ -86,10 +86,14 @@ kasan_params += hwasan-instrument-stack=$(stack_enable) \
+>  		hwasan-use-short-granules=0 \
+>  		hwasan-inline-all-checks=0
+>
+> -# Instrument memcpy/memset/memmove calls by using instrumented __hwasan_mem*().
+> -ifeq ($(call clang-min-version, 150000)$(call gcc-min-version, 130000),y)
+> -	kasan_params += hwasan-kernel-mem-intrinsic-prefix=1
+> -endif
+> +# Instrument memcpy/memset/memmove calls by using instrumented __(hw)asan_mem*().
+> +ifdef CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX
+> +	ifdef CONFIG_CC_IS_GCC
+> +		kasan_params += asan-kernel-mem-intrinsic-prefix=1
+> +	else
+> +		kasan_params += hwasan-kernel-mem-intrinsic-prefix=1
+> +	endif
+> +endif # CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX
+>
+>  endif # CONFIG_KASAN_SW_TAGS
+>
+>
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> --
+> 2.43.0
+>
 
-I used tools/testing/selftests/vsock/vmtest.sh as a base and modified it
-to look mostly like my previous script:
-- removed the custom ssh handling
-- make use of vng for compiling, which allows to bring remote
-  compilation (and potentially remote compilation on a remote container)
-- change the verbosity logic by having 2 levels:
-  - first one shows the tests outputs
-  - second level also shows the VM logs
-- instead of only running the compiled kernel when it is built, if we
-  are in the kernel tree, use the kernel artifacts there (and complain
-  if they are not built)
-- adapted the tests list to match the HID subsystem tests
-
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
----
-I have switched my workflow to make use of virtme-ng for a few months.
-Now it's time to automate the manual commands I've been running in
-vmtest.sh.
----
- tools/testing/selftests/hid/vmtest.sh | 668 +++++++++++++++++++++-------------
- 1 file changed, 423 insertions(+), 245 deletions(-)
-
-diff --git a/tools/testing/selftests/hid/vmtest.sh b/tools/testing/selftests/hid/vmtest.sh
-index db534e9099a8a4684346eed0067d397ffa6f80cf..ecbd57f775a044b4d076b4800ca0068f9533056c 100755
---- a/tools/testing/selftests/hid/vmtest.sh
-+++ b/tools/testing/selftests/hid/vmtest.sh
-@@ -1,296 +1,474 @@
- #!/bin/bash
- # SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (c) 2025 Red Hat
-+# Copyright (c) 2025 Meta Platforms, Inc. and affiliates
-+#
-+# Dependencies:
-+#		* virtme-ng
-+#		* busybox-static (used by virtme-ng)
-+#		* qemu	(used by virtme-ng)
-+
-+readonly SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-+readonly KERNEL_CHECKOUT=$(realpath "${SCRIPT_DIR}"/../../../../)
-+
-+source "${SCRIPT_DIR}"/../kselftest/ktap_helpers.sh
-+
-+readonly HID_BPF_TEST="${SCRIPT_DIR}"/hid_bpf
-+readonly HIDRAW_TEST="${SCRIPT_DIR}"/hidraw
-+readonly HID_BPF_PROGS="${KERNEL_CHECKOUT}/drivers/hid/bpf/progs"
-+readonly SSH_GUEST_PORT=22
-+readonly WAIT_PERIOD=3
-+readonly WAIT_PERIOD_MAX=60
-+readonly WAIT_TOTAL=$(( WAIT_PERIOD * WAIT_PERIOD_MAX ))
-+readonly QEMU_PIDFILE=$(mktemp /tmp/qemu_hid_vmtest_XXXX.pid)
-+
-+readonly QEMU_OPTS="\
-+	 --pidfile ${QEMU_PIDFILE} \
-+"
-+readonly KERNEL_CMDLINE=""
-+readonly LOG=$(mktemp /tmp/hid_vmtest_XXXX.log)
-+readonly TEST_NAMES=(vm_hid_bpf vm_hidraw vm_pytest)
-+readonly TEST_DESCS=(
-+	"Run hid_bpf tests in the VM."
-+	"Run hidraw tests in the VM."
-+	"Run the hid-tools test-suite in the VM."
-+)
-+
-+VERBOSE=0
-+SHELL_MODE=0
-+BUILD_HOST=""
-+BUILD_HOST_PODMAN_CONTAINER_NAME=""
-+
-+usage() {
-+	local name
-+	local desc
-+	local i
-+
-+	echo
-+	echo "$0 [OPTIONS] [TEST]... [-- tests-args]"
-+	echo "If no TEST argument is given, all tests will be run."
-+	echo
-+	echo "Options"
-+	echo "  -b: build the kernel from the current source tree and use it for guest VMs"
-+	echo "  -H: hostname for remote build host (used with -b)"
-+	echo "  -p: podman container name for remote build host (used with -b)"
-+	echo "      Example: -H beefyserver -p vng"
-+	echo "  -q: set the path to or name of qemu binary"
-+	echo "  -s: start a shell in the VM instead of running tests"
-+	echo "  -v: more verbose output (can be repeated multiple times)"
-+	echo
-+	echo "Available tests"
-+
-+	for ((i = 0; i < ${#TEST_NAMES[@]}; i++)); do
-+		name=${TEST_NAMES[${i}]}
-+		desc=${TEST_DESCS[${i}]}
-+		printf "\t%-35s%-35s\n" "${name}" "${desc}"
-+	done
-+	echo
- 
--set -u
--set -e
--
--# This script currently only works for x86_64
--ARCH="$(uname -m)"
--case "${ARCH}" in
--x86_64)
--	QEMU_BINARY=qemu-system-x86_64
--	BZIMAGE="arch/x86/boot/bzImage"
--	;;
--*)
--	echo "Unsupported architecture"
- 	exit 1
--	;;
--esac
--SCRIPT_DIR="$(dirname $(realpath $0))"
--OUTPUT_DIR="$SCRIPT_DIR/results"
--KCONFIG_REL_PATHS=("${SCRIPT_DIR}/config" "${SCRIPT_DIR}/config.common" "${SCRIPT_DIR}/config.${ARCH}")
--B2C_URL="https://gitlab.freedesktop.org/gfx-ci/boot2container/-/raw/main/vm2c.py"
--NUM_COMPILE_JOBS="$(nproc)"
--LOG_FILE_BASE="$(date +"hid_selftests.%Y-%m-%d_%H-%M-%S")"
--LOG_FILE="${LOG_FILE_BASE}.log"
--EXIT_STATUS_FILE="${LOG_FILE_BASE}.exit_status"
--CONTAINER_IMAGE="registry.freedesktop.org/bentiss/hid/fedora/39:2023-11-22.1"
--
--TARGETS="${TARGETS:=$(basename ${SCRIPT_DIR})}"
--DEFAULT_COMMAND="pip3 install hid-tools; make -C tools/testing/selftests TARGETS=${TARGETS} run_tests"
--
--usage()
--{
--	cat <<EOF
--Usage: $0 [-j N] [-s] [-b] [-d <output_dir>] -- [<command>]
--
--<command> is the command you would normally run when you are in
--the source kernel direcory. e.g:
--
--	$0 -- ./tools/testing/selftests/hid/hid_bpf
--
--If no command is specified and a debug shell (-s) is not requested,
--"${DEFAULT_COMMAND}" will be run by default.
--
--If you build your kernel using KBUILD_OUTPUT= or O= options, these
--can be passed as environment variables to the script:
--
--  O=<kernel_build_path> $0 -- ./tools/testing/selftests/hid/hid_bpf
--
--or
--
--  KBUILD_OUTPUT=<kernel_build_path> $0 -- ./tools/testing/selftests/hid/hid_bpf
--
--Options:
--
--	-u)		Update the boot2container script to a newer version.
--	-d)		Update the output directory (default: ${OUTPUT_DIR})
--	-b)		Run only the build steps for the kernel and the selftests
--	-j)		Number of jobs for compilation, similar to -j in make
--			(default: ${NUM_COMPILE_JOBS})
--	-s)		Instead of powering off the VM, start an interactive
--			shell. If <command> is specified, the shell runs after
--			the command finishes executing
--EOF
- }
- 
--download()
--{
--	local file="$1"
-+die() {
-+	echo "$*" >&2
-+	exit "${KSFT_FAIL}"
-+}
- 
--	echo "Downloading $file..." >&2
--	curl -Lsf "$file" -o "${@:2}"
-+vm_ssh() {
-+	# vng --ssh-client keeps shouting "Warning: Permanently added 'virtme-ng%22'
-+	# (ED25519) to the list of known hosts.",
-+	# So replace the command with what's actually called and add the "-q" option
-+	stdbuf -oL ssh -q \
-+		       -F ${HOME}/.cache/virtme-ng/.ssh/virtme-ng-ssh.conf \
-+		       -l root virtme-ng%${SSH_GUEST_PORT} \
-+		       "$@"
-+	return $?
- }
- 
--recompile_kernel()
--{
--	local kernel_checkout="$1"
--	local make_command="$2"
-+cleanup() {
-+	if [[ -s "${QEMU_PIDFILE}" ]]; then
-+		pkill -SIGTERM -F "${QEMU_PIDFILE}" > /dev/null 2>&1
-+	fi
- 
--	cd "${kernel_checkout}"
-+	# If failure occurred during or before qemu start up, then we need
-+	# to clean this up ourselves.
-+	if [[ -e "${QEMU_PIDFILE}" ]]; then
-+		rm "${QEMU_PIDFILE}"
-+	fi
-+}
-+
-+check_args() {
-+	local found
- 
--	${make_command} olddefconfig
--	${make_command} headers
--	${make_command}
-+	for arg in "$@"; do
-+		found=0
-+		for name in "${TEST_NAMES[@]}"; do
-+			if [[ "${name}" = "${arg}" ]]; then
-+				found=1
-+				break
-+			fi
-+		done
-+
-+		if [[ "${found}" -eq 0 ]]; then
-+			echo "${arg} is not an available test" >&2
-+			usage
-+		fi
-+	done
-+
-+	for arg in "$@"; do
-+		if ! command -v > /dev/null "test_${arg}"; then
-+			echo "Test ${arg} not found" >&2
-+			usage
-+		fi
-+	done
-+}
-+
-+check_deps() {
-+	for dep in vng ${QEMU} busybox pkill ssh pytest; do
-+		if [[ ! -x $(command -v "${dep}") ]]; then
-+			echo -e "skip:    dependency ${dep} not found!\n"
-+			exit "${KSFT_SKIP}"
-+		fi
-+	done
-+
-+	if [[ ! -x $(command -v "${HID_BPF_TEST}") ]]; then
-+		printf "skip:    %s not found!" "${HID_BPF_TEST}"
-+		printf " Please build the kselftest hid_bpf target.\n"
-+		exit "${KSFT_SKIP}"
-+	fi
-+
-+	if [[ ! -x $(command -v "${HIDRAW_TEST}") ]]; then
-+		printf "skip:    %s not found!" "${HIDRAW_TEST}"
-+		printf " Please build the kselftest hidraw target.\n"
-+		exit "${KSFT_SKIP}"
-+	fi
- }
- 
--update_selftests()
--{
--	local kernel_checkout="$1"
--	local selftests_dir="${kernel_checkout}/tools/testing/selftests/hid"
-+check_vng() {
-+	local tested_versions
-+	local version
-+	local ok
- 
--	cd "${selftests_dir}"
--	${make_command}
-+	tested_versions=("1.36" "1.37")
-+	version="$(vng --version)"
-+
-+	ok=0
-+	for tv in "${tested_versions[@]}"; do
-+		if [[ "${version}" == *"${tv}"* ]]; then
-+			ok=1
-+			break
-+		fi
-+	done
-+
-+	if [[ ! "${ok}" -eq 1 ]]; then
-+		printf "warning: vng version '%s' has not been tested and may " "${version}" >&2
-+		printf "not function properly.\n\tThe following versions have been tested: " >&2
-+		echo "${tested_versions[@]}" >&2
-+	fi
- }
- 
--run_vm()
--{
--	local run_dir="$1"
--	local b2c="$2"
--	local kernel_bzimage="$3"
--	local command="$4"
--	local post_command=""
--
--	cd "${run_dir}"
--
--	if ! which "${QEMU_BINARY}" &> /dev/null; then
--		cat <<EOF
--Could not find ${QEMU_BINARY}
--Please install qemu or set the QEMU_BINARY environment variable.
--EOF
-+handle_build() {
-+	if [[ ! "${BUILD}" -eq 1 ]]; then
-+		return
-+	fi
-+
-+	if [[ ! -d "${KERNEL_CHECKOUT}" ]]; then
-+		echo "-b requires vmtest.sh called from the kernel source tree" >&2
- 		exit 1
- 	fi
- 
--	# alpine (used in post-container requires the PATH to have /bin
--	export PATH=$PATH:/bin
-+	pushd "${KERNEL_CHECKOUT}" &>/dev/null
- 
--	if [[ "${debug_shell}" != "yes" ]]
--	then
--		touch ${OUTPUT_DIR}/${LOG_FILE}
--		command="mount bpffs -t bpf /sys/fs/bpf/; set -o pipefail ; ${command} 2>&1 | tee ${OUTPUT_DIR}/${LOG_FILE}"
--		post_command="cat ${OUTPUT_DIR}/${LOG_FILE}"
--	else
--		command="mount bpffs -t bpf /sys/fs/bpf/; ${command}"
-+	if ! vng --kconfig --config "${SCRIPT_DIR}"/config; then
-+		die "failed to generate .config for kernel source tree (${KERNEL_CHECKOUT})"
- 	fi
- 
--	set +e
--	$b2c --command "${command}" \
--	     --kernel ${kernel_bzimage} \
--	     --workdir ${OUTPUT_DIR} \
--	     --image ${CONTAINER_IMAGE}
-+	local vng_args=("-v" "--config" "${SCRIPT_DIR}/config" "--build")
- 
--	echo $? > ${OUTPUT_DIR}/${EXIT_STATUS_FILE}
-+	if [[ -n "${BUILD_HOST}" ]]; then
-+		vng_args+=("--build-host" "${BUILD_HOST}")
-+	fi
- 
--	set -e
-+	if [[ -n "${BUILD_HOST_PODMAN_CONTAINER_NAME}" ]]; then
-+		vng_args+=("--build-host-exec-prefix" \
-+			   "podman exec -ti ${BUILD_HOST_PODMAN_CONTAINER_NAME}")
-+	fi
- 
--	${post_command}
--}
-+	if ! vng "${vng_args[@]}"; then
-+		die "failed to build kernel from source tree (${KERNEL_CHECKOUT})"
-+	fi
- 
--is_rel_path()
--{
--	local path="$1"
-+	if ! make -j$(nproc) -C "${HID_BPF_PROGS}"; then
-+		die "failed to build HID bpf objects from source tree (${HID_BPF_PROGS})"
-+	fi
- 
--	[[ ${path:0:1} != "/" ]]
-+	if ! make -j$(nproc) -C "${SCRIPT_DIR}"; then
-+		die "failed to build HID selftests from source tree (${SCRIPT_DIR})"
-+	fi
-+
-+	popd &>/dev/null
- }
- 
--do_update_kconfig()
--{
--	local kernel_checkout="$1"
--	local kconfig_file="$2"
-+vm_start() {
-+	local logfile=/dev/null
-+	local verbose_opt=""
-+	local kernel_opt=""
-+	local qemu
- 
--	rm -f "$kconfig_file" 2> /dev/null
-+	qemu=$(command -v "${QEMU}")
- 
--	for config in "${KCONFIG_REL_PATHS[@]}"; do
--		local kconfig_src="${config}"
--		cat "$kconfig_src" >> "$kconfig_file"
--	done
--}
-+	if [[ "${VERBOSE}" -eq 2 ]]; then
-+		verbose_opt="--verbose"
-+		logfile=/dev/stdout
-+	fi
- 
--update_kconfig()
--{
--	local kernel_checkout="$1"
--	local kconfig_file="$2"
--
--	if [[ -f "${kconfig_file}" ]]; then
--		local local_modified="$(stat -c %Y "${kconfig_file}")"
--
--		for config in "${KCONFIG_REL_PATHS[@]}"; do
--			local kconfig_src="${config}"
--			local src_modified="$(stat -c %Y "${kconfig_src}")"
--			# Only update the config if it has been updated after the
--			# previously cached config was created. This avoids
--			# unnecessarily compiling the kernel and selftests.
--			if [[ "${src_modified}" -gt "${local_modified}" ]]; then
--				do_update_kconfig "$kernel_checkout" "$kconfig_file"
--				# Once we have found one outdated configuration
--				# there is no need to check other ones.
--				break
--			fi
--		done
--	else
--		do_update_kconfig "$kernel_checkout" "$kconfig_file"
-+	# If we are running from within the kernel source tree, use the kernel source tree
-+	# as the kernel to boot, otherwise use the currently running kernel.
-+	if [[ "$(realpath "$(pwd)")" == "${KERNEL_CHECKOUT}"* ]]; then
-+		kernel_opt="${KERNEL_CHECKOUT}"
- 	fi
--}
- 
--main()
--{
--	local script_dir="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
--	local kernel_checkout=$(realpath "${script_dir}"/../../../../)
--	# By default the script searches for the kernel in the checkout directory but
--	# it also obeys environment variables O= and KBUILD_OUTPUT=
--	local kernel_bzimage="${kernel_checkout}/${BZIMAGE}"
--	local command="${DEFAULT_COMMAND}"
--	local update_b2c="no"
--	local debug_shell="no"
--	local build_only="no"
--
--	while getopts ':hsud:j:b' opt; do
--		case ${opt} in
--		u)
--			update_b2c="yes"
--			;;
--		d)
--			OUTPUT_DIR="$OPTARG"
--			;;
--		j)
--			NUM_COMPILE_JOBS="$OPTARG"
--			;;
--		s)
--			command="/bin/sh"
--			debug_shell="yes"
--			;;
--		b)
--			build_only="yes"
--			;;
--		h)
--			usage
--			exit 0
--			;;
--		\? )
--			echo "Invalid Option: -$OPTARG"
--			usage
--			exit 1
--			;;
--		: )
--			echo "Invalid Option: -$OPTARG requires an argument"
--			usage
--			exit 1
--			;;
--		esac
--	done
--	shift $((OPTIND -1))
--
--	# trap 'catch "$?"' EXIT
--	if [[ "${build_only}" == "no" && "${debug_shell}" == "no" ]]; then
--		if [[ $# -eq 0 ]]; then
--			echo "No command specified, will run ${DEFAULT_COMMAND} in the vm"
--		else
--			command="$@"
--
--			if [[ "${command}" == "/bin/bash" || "${command}" == "bash" ]]
--			then
--				debug_shell="yes"
--			fi
-+	vng \
-+		--run \
-+		${kernel_opt} \
-+		${verbose_opt} \
-+		--qemu-opts="${QEMU_OPTS}" \
-+		--qemu="${qemu}" \
-+		--user root \
-+		--append "${KERNEL_CMDLINE}" \
-+		--ssh "${SSH_GUEST_PORT}" \
-+		--rw  &> ${logfile} &
-+
-+	local vng_pid=$!
-+	local elapsed=0
-+
-+	while [[ ! -s "${QEMU_PIDFILE}" ]]; do
-+		if ! kill -0 "${vng_pid}" 2>/dev/null; then
-+			echo "vng process (PID ${vng_pid}) exited early, check logs for details" >&2
-+			die "failed to boot VM"
- 		fi
--	fi
- 
--	local kconfig_file="${OUTPUT_DIR}/latest.config"
--	local make_command="make -j ${NUM_COMPILE_JOBS} KCONFIG_CONFIG=${kconfig_file}"
-+		if [[ ${elapsed} -ge ${WAIT_TOTAL} ]]; then
-+			echo "Timed out after ${WAIT_TOTAL} seconds waiting for VM to boot" >&2
-+			die "failed to boot VM"
-+		fi
- 
--	# Figure out where the kernel is being built.
--	# O takes precedence over KBUILD_OUTPUT.
--	if [[ "${O:=""}" != "" ]]; then
--		if is_rel_path "${O}"; then
--			O="$(realpath "${PWD}/${O}")"
-+		sleep 1
-+		elapsed=$((elapsed + 1))
-+	done
-+}
-+
-+vm_wait_for_ssh() {
-+	local i
-+
-+	i=0
-+	while true; do
-+		if [[ ${i} -gt ${WAIT_PERIOD_MAX} ]]; then
-+			die "Timed out waiting for guest ssh"
- 		fi
--		kernel_bzimage="${O}/${BZIMAGE}"
--		make_command="${make_command} O=${O}"
--	elif [[ "${KBUILD_OUTPUT:=""}" != "" ]]; then
--		if is_rel_path "${KBUILD_OUTPUT}"; then
--			KBUILD_OUTPUT="$(realpath "${PWD}/${KBUILD_OUTPUT}")"
-+		if vm_ssh -- true; then
-+			break
- 		fi
--		kernel_bzimage="${KBUILD_OUTPUT}/${BZIMAGE}"
--		make_command="${make_command} KBUILD_OUTPUT=${KBUILD_OUTPUT}"
-+		i=$(( i + 1 ))
-+		sleep ${WAIT_PERIOD}
-+	done
-+}
-+
-+vm_mount_bpffs() {
-+	vm_ssh -- mount bpffs -t bpf /sys/fs/bpf
-+}
-+
-+__log_stdin() {
-+	stdbuf -oL awk '{ printf "%s:\t%s\n","'"${prefix}"'", $0; fflush() }'
-+}
-+
-+__log_args() {
-+	echo "$*" | awk '{ printf "%s:\t%s\n","'"${prefix}"'", $0 }'
-+}
-+
-+log() {
-+	local verbose="$1"
-+	shift
-+
-+	local prefix="$1"
-+
-+	shift
-+	local redirect=
-+	if [[ ${verbose} -le 0 ]]; then
-+		redirect=/dev/null
-+	else
-+		redirect=/dev/stdout
-+	fi
-+
-+	if [[ "$#" -eq 0 ]]; then
-+		__log_stdin | tee -a "${LOG}" > ${redirect}
-+	else
-+		__log_args "$@" | tee -a "${LOG}" > ${redirect}
- 	fi
-+}
- 
--	local b2c="${OUTPUT_DIR}/vm2c.py"
-+log_setup() {
-+	log $((VERBOSE-1)) "setup" "$@"
-+}
- 
--	echo "Output directory: ${OUTPUT_DIR}"
-+log_host() {
-+	local testname=$1
- 
--	mkdir -p "${OUTPUT_DIR}"
--	update_kconfig "${kernel_checkout}" "${kconfig_file}"
-+	shift
-+	log $((VERBOSE-1)) "test:${testname}:host" "$@"
-+}
- 
--	recompile_kernel "${kernel_checkout}" "${make_command}"
--	update_selftests "${kernel_checkout}" "${make_command}"
-+log_guest() {
-+	local testname=$1
- 
--	if [[ "${build_only}" == "no" ]]; then
--		if [[ "${update_b2c}" == "no" && ! -f "${b2c}" ]]; then
--			echo "vm2c script not found in ${b2c}"
--			update_b2c="yes"
--		fi
-+	shift
-+	log ${VERBOSE} "# test:${testname}" "$@"
-+}
- 
--		if [[ "${update_b2c}" == "yes" ]]; then
--			download $B2C_URL $b2c
--			chmod +x $b2c
--		fi
-+test_vm_hid_bpf() {
-+	local testname="${FUNCNAME[0]#test_}"
- 
--		run_vm "${kernel_checkout}" $b2c "${kernel_bzimage}" "${command}"
--		if [[ "${debug_shell}" != "yes" ]]; then
--			echo "Logs saved in ${OUTPUT_DIR}/${LOG_FILE}"
--		fi
-+	vm_ssh -- "${HID_BPF_TEST}" \
-+		2>&1 | log_guest "${testname}"
-+
-+	return ${PIPESTATUS[0]}
-+}
-+
-+test_vm_hidraw() {
-+	local testname="${FUNCNAME[0]#test_}"
-+
-+	vm_ssh -- "${HIDRAW_TEST}" \
-+		2>&1 | log_guest "${testname}"
-+
-+	return ${PIPESTATUS[0]}
-+}
-+
-+test_vm_pytest() {
-+	local testname="${FUNCNAME[0]#test_}"
- 
--		exit $(cat ${OUTPUT_DIR}/${EXIT_STATUS_FILE})
-+	shift
-+
-+	vm_ssh -- pytest ${SCRIPT_DIR}/tests --color=yes "$@" \
-+		2>&1 | log_guest "${testname}"
-+
-+	return ${PIPESTATUS[0]}
-+}
-+
-+run_test() {
-+	local vm_oops_cnt_before
-+	local vm_warn_cnt_before
-+	local vm_oops_cnt_after
-+	local vm_warn_cnt_after
-+	local name
-+	local rc
-+
-+	vm_oops_cnt_before=$(vm_ssh -- dmesg | grep -c -i 'Oops')
-+	vm_error_cnt_before=$(vm_ssh -- dmesg --level=err | wc -l)
-+
-+	name=$(echo "${1}" | awk '{ print $1 }')
-+	eval test_"${name}" "$@"
-+	rc=$?
-+
-+	vm_oops_cnt_after=$(vm_ssh -- dmesg | grep -i 'Oops' | wc -l)
-+	if [[ ${vm_oops_cnt_after} -gt ${vm_oops_cnt_before} ]]; then
-+		echo "FAIL: kernel oops detected on vm" | log_host "${name}"
-+		rc=$KSFT_FAIL
-+	fi
-+
-+	vm_error_cnt_after=$(vm_ssh -- dmesg --level=err | wc -l)
-+	if [[ ${vm_error_cnt_after} -gt ${vm_error_cnt_before} ]]; then
-+		echo "FAIL: kernel error detected on vm" | log_host "${name}"
-+		vm_ssh -- dmesg --level=err | log_host "${name}"
-+		rc=$KSFT_FAIL
- 	fi
-+
-+	return "${rc}"
- }
- 
--main "$@"
-+QEMU="qemu-system-$(uname -m)"
-+
-+while getopts :hvsbq:H:p: o
-+do
-+	case $o in
-+	v) VERBOSE=$((VERBOSE+1));;
-+	s) SHELL_MODE=1;;
-+	b) BUILD=1;;
-+	q) QEMU=$OPTARG;;
-+	H) BUILD_HOST=$OPTARG;;
-+	p) BUILD_HOST_PODMAN_CONTAINER_NAME=$OPTARG;;
-+	h|*) usage;;
-+	esac
-+done
-+shift $((OPTIND-1))
-+
-+trap cleanup EXIT
-+
-+PARAMS=""
-+
-+if [[ ${#} -eq 0 ]]; then
-+	ARGS=("${TEST_NAMES[@]}")
-+else
-+	ARGS=()
-+	COUNT=0
-+	for arg in $@; do
-+		COUNT=$((COUNT+1))
-+		if [[ x"$arg" == x"--" ]]; then
-+			break
-+		fi
-+		ARGS+=($arg)
-+	done
-+	shift $COUNT
-+	PARAMS="$@"
-+fi
-+
-+if [[ "${SHELL_MODE}" -eq 0 ]]; then
-+	check_args "${ARGS[@]}"
-+	echo "1..${#ARGS[@]}"
-+fi
-+check_deps
-+check_vng
-+handle_build
-+
-+log_setup "Booting up VM"
-+vm_start
-+vm_wait_for_ssh
-+vm_mount_bpffs
-+log_setup "VM booted up"
-+
-+if [[ "${SHELL_MODE}" -eq 1 ]]; then
-+	log_setup "Starting interactive shell in VM"
-+	echo "Starting shell in VM. Use 'exit' to quit and shutdown the VM."
-+	CURRENT_DIR="$(pwd)"
-+	vm_ssh -t -- "cd '${CURRENT_DIR}' && exec bash -l"
-+	exit "$KSFT_PASS"
-+fi
-+
-+cnt_pass=0
-+cnt_fail=0
-+cnt_skip=0
-+cnt_total=0
-+for arg in "${ARGS[@]}"; do
-+	run_test "${arg}" "${PARAMS}"
-+	rc=$?
-+	if [[ ${rc} -eq $KSFT_PASS ]]; then
-+		cnt_pass=$(( cnt_pass + 1 ))
-+		echo "ok ${cnt_total} ${arg}"
-+	elif [[ ${rc} -eq $KSFT_SKIP ]]; then
-+		cnt_skip=$(( cnt_skip + 1 ))
-+		echo "ok ${cnt_total} ${arg} # SKIP"
-+	elif [[ ${rc} -eq $KSFT_FAIL ]]; then
-+		cnt_fail=$(( cnt_fail + 1 ))
-+		echo "not ok ${cnt_total} ${arg} # exit=$rc"
-+	fi
-+	cnt_total=$(( cnt_total + 1 ))
-+done
-+
-+echo "SUMMARY: PASS=${cnt_pass} SKIP=${cnt_skip} FAIL=${cnt_fail}"
-+echo "Log: ${LOG}"
-+
-+if [ $((cnt_pass + cnt_skip)) -eq ${cnt_total} ]; then
-+	exit "$KSFT_PASS"
-+else
-+	exit "$KSFT_FAIL"
-+fi
-
----
-base-commit: b80a75cf6999fb79971b41eaec7af2bb4b514714
-change-id: 20250818-virtme-ng-f73db7e61235
-
-Best regards,
--- 
-Benjamin Tissoires <bentiss@kernel.org>
-
+--
+Sincerely,
+Yeoreum Yun
 
