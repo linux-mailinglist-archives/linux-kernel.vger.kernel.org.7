@@ -1,178 +1,87 @@
-Return-Path: <linux-kernel+bounces-780499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11666B302C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:19:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84339B302C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D80A21CE4206
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:19:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6B95E6A04
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E4C3451A4;
-	Thu, 21 Aug 2025 19:18:49 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A8134AAE1;
+	Thu, 21 Aug 2025 19:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfXC6fjE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0852FE56A;
-	Thu, 21 Aug 2025 19:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28361341672
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 19:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755803929; cv=none; b=C1Jp8aCyNHY5OHSpSPualyyfRGWYY6lqNx942mnHxXxWW5vGmeXLJkx/8KN7AyLl6EVfzccchmPMV7wBTDA30u7YTkVlg7lCkRnn24sUE5LYivJBQ3S2rhDgKKoVeB50b+0NrLTILT1cxQNafLDKBOb8acHbhGuj3PmiPyM+EZk=
+	t=1755804081; cv=none; b=DQcXRMGgmSnq1w4Srlr/Zbf4sj+wZn+uCtdK1A16P1+fIyYfBlW+fSBZ774UbtN6ezBJhNbufoQm/H+Gh2Zg1YehYWZvu25Xib3T+f4o27g90qbl/MQkqUOgSUdN8AxaGH0C4jNS/XF1d1JOnjU37NKdn3j7m6Wla8cfdGPMM3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755803929; c=relaxed/simple;
-	bh=dbuMZlgv4kPnPvJIMQukOYPjt/HO1WKuwLWhDZMMlH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GB5BmyO2CiIePISxXsnFLhuf3CvkFfzIybedBWZtwS3zzWx+h0ubMLCzKFAZ2yxTVzoPsoYs58KkdJqlho5Do3XKjNHiRuJ75AeX32MlQoi00D65NSU9B4Qnf5X3umXJq7h/5zwHSX9+FH+0J266dy4JPi790ytMaKAC9mr6DMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1upAo4-000000001O7-2KmP;
-	Thu, 21 Aug 2025 19:18:40 +0000
-Date: Thu, 21 Aug 2025 20:18:34 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-Cc: "hauke@hauke-m.de" <hauke@hauke-m.de>,
-	"olteanv@gmail.com" <olteanv@gmail.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"andrew@lunn.ch" <andrew@lunn.ch>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"arkadis@mellanox.com" <arkadis@mellanox.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"john@phrozen.org" <john@phrozen.org>,
-	"Stockmann, Lukas" <lukas.stockmann@siemens.com>,
-	"yweng@maxlinear.com" <yweng@maxlinear.com>,
-	"fchan@maxlinear.com" <fchan@maxlinear.com>,
-	"lxu@maxlinear.com" <lxu@maxlinear.com>,
-	"jpovazanec@maxlinear.com" <jpovazanec@maxlinear.com>,
-	"Schirm, Andreas" <andreas.schirm@siemens.com>,
-	"Christen, Peter" <peter.christen@siemens.com>,
-	"ajayaraman@maxlinear.com" <ajayaraman@maxlinear.com>,
-	"bxu@maxlinear.com" <bxu@maxlinear.com>,
-	"lrosu@maxlinear.com" <lrosu@maxlinear.com>
-Subject: Re: [PATCH RFC net-next 22/23] net: dsa: add driver for MaxLinear
- GSW1xx switch family
-Message-ID: <aKdxCpOEsX--ESpB@pidgin.makrotopia.org>
-References: <aKDikYiU-88zC6RF@pidgin.makrotopia.org>
- <59f32c924cd8ebd02483dfd19c2788cf09d9ab75.camel@siemens.com>
+	s=arc-20240116; t=1755804081; c=relaxed/simple;
+	bh=tTMLN1hLL7mzTvUXYmqK/xzvHH7ZwyHy0lG3dgPosTw=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=vEPmmR1cFrcoZr2Mnf3RU3ovkaW5h/t0b51gsvg6mIdcsasREXDtb+XrBh7CWfbGFjRY7LfnlckoaIAhw8hmS/OKto7bW/sXfyZsFFufKsv55We8keexmq4HMEF7/hXq2tWmvO2xiDI4QEt6w2iohchvGBOHUuXe9P1U46128TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfXC6fjE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D0E5C4CEEB;
+	Thu, 21 Aug 2025 19:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755804079;
+	bh=tTMLN1hLL7mzTvUXYmqK/xzvHH7ZwyHy0lG3dgPosTw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LfXC6fjEWqZzJdQUzHVkCRabahb2SJOez+NIOlg0Xto1bOPhMdV4Wsu6bdWAfeFq5
+	 WdQOMv+XDPB7bXBT3fii1LXVQXZAmmLEnUAM/DXqDtqbLyQJEphdSnOfPTvIkZsWFh
+	 KQPKFWL+gRHyVNXlzGcSpiBPz1oHP4bN8TW2nAp8dvYT/ogELyVlTcmDSiU90TiPTe
+	 xJT2TBEwoTOYCirWvrDYDrITFYuo0pu/PRi3hX6wXSb+W5+WI7a8RfL/BEkMW7Epco
+	 M5DcPfsCYyfsQ3EDptKltq1/WIpkWKArfaU3jJND21IKY11uS74fl6TUHx8uVG3M8e
+	 npzT2IDPcYrRg==
+Message-ID: <a9cdd0f4b5e54e9caecde69764cc7ecc.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regulator fixes for v6.17-rc2
+Date: Thu, 21 Aug 2025 20:20:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <59f32c924cd8ebd02483dfd19c2788cf09d9ab75.camel@siemens.com>
 
-On Thu, Aug 21, 2025 at 06:53:22PM +0000, Sverdlin, Alexander wrote:
-> Hi Daniel,
-> 
-> On Sat, 2025-08-16 at 20:57 +0100, Daniel Golle wrote:
-> > Add driver for the MaxLinear GSW1xx family of Ethernet switch ICs which
-> > are based on the same IP as the Lantiq/Intel GSWIP found in the Lantiq VR9
-> > and Intel GRX MIPS router SoCs. The main difference is that instead of
-> > using memory-mapped I/O to communicate with the host CPU these ICs are
-> > connected via MDIO (or SPI, which isn't supported by this driver).
-> > Implement the regmap API to access the switch registers over MDIO to allow
-> > reusing lantiq_gswip_common for all core functionality.
-> > 
-> > The GSW1xx also comes with a SerDes port capable of 1000Base-X, SGMII and
-> > 2500Base-X, which can either be used to connect an external PHY or SFP
-> > cage, or as the CPU port. Support for the SerDes interface is implemented
-> > in this driver using the phylink_pcs interface.
-> 
-> ...
-> 
-> > --- /dev/null
-> > +++ b/drivers/net/dsa/mxl-gsw1xx.c
-> 
-> ...
-> 
-> > static int gsw1xx_sgmii_pcs_config(struct phylink_pcs *pcs,
-> > +				   unsigned int neg_mode,
-> > +				   phy_interface_t interface,
-> > +				   const unsigned long *advertising,
-> > +				   bool permit_pause_to_mac)
-> > +{
-> > +	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
-> > +	bool sgmii_mac_mode = dsa_is_user_port(priv->gswip.ds, GSW1XX_SGMII_PORT);
-> > +	u16 txaneg, anegctl, val, nco_ctrl;
-> > +	int ret;
-> > +
-> > +	/* Assert and deassert SGMII shell reset */
-> > +	ret = regmap_set_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
-> > +			      GSW1XX_RST_REQ_SGMII_SHELL);
-> 
-> Can this be moved into gsw1xx_probe() maybe?
-> 
-> The thing is, if the switch is bootstrapped in
-> "Self-start Mode: Managed Switch Sub-Mode", SGMII will be already
-> brought out of reset (by bootloader?) (GSWIP_CFG register), refer
-> to "Table 12 Registers Configuration for Self-start Mode: Managed Switch Sub-Mode"
-> in datasheet. And nobody would disable SGMII if it's unused otherwise.
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-What you say is true if the SGMII interface is used as the CPU port or
-to connect a (1000M/100M/10M) PHY. However, it can also be used to connect
-SFP modules, which can be hot-plugged. Or a 2500M/1000M/100M/10M PHY which
-requires switching to 2500Base-X mode in case of a 2500M link on the UTP
-interface comes up, but uses SGMII for all lower speeds.
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-We can probably do this similar to drivers/net/pcs/pcs-mtk-lynxi.c and
-only do a full reconf including reset if there are major changes which
-actually require that, but as the impact is minimal and the vendor
-implementation also carries out a reset as the first thing when
-configuring the SGMII interface, I'd just keep it like that for now.
-Optimization can come later if actually required.
+are available in the Git repository at:
 
-Another good thing would probably be to implement pcs_enable() and
-pcs_disable() ops which put the whole SGMII port into a low-power state
-(stopping clocks, maybe asserting reset as you suggest...) and bring it
-back up. However, also this can be done after initial support has been
-merged and verified to work in all cases (I only got the MxL8611x
-evaluation board on which GSW145 is connected to MxL86111, so I can't
-really do anything too fancy with the SGMII interface other than making
-sure it works with that PHY with both, enabled and disabled SGMII in-band
-negotiation).
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.17-rc2
 
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	ret = regmap_clear_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
-> > +				GSW1XX_RST_REQ_SGMII_SHELL);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	/* Hardware Bringup FSM Enable  */
-> > +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_HWBU_CTRL,
-> > +			   GSW1XX_SGMII_PHY_HWBU_CTRL_EN_HWBU_FSM |
-> > +			   GSW1XX_SGMII_PHY_HWBU_CTRL_HW_FSM_EN);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	/* Configure SGMII PHY Receiver */
-> > +	val = FIELD_PREP(GSW1XX_SGMII_PHY_RX0_CFG2_EQ,
-> > +			 GSW1XX_SGMII_PHY_RX0_CFG2_EQ_DEF) |
-> > +	      GSW1XX_SGMII_PHY_RX0_CFG2_LOS_EN |
-> > +	      GSW1XX_SGMII_PHY_RX0_CFG2_TERM_EN |
-> > +	      FIELD_PREP(GSW1XX_SGMII_PHY_RX0_CFG2_FILT_CNT,
-> > +			 GSW1XX_SGMII_PHY_RX0_CFG2_FILT_CNT_DEF);
-> > +
-> > +	// if (!priv->dts.sgmii_rx_invert)
->         ^^
-> There is still a room for some cleanup ;-)
+for you to fetch changes up to 11cd7a5c21db020b8001aedcae27bd3fa9e1e901:
 
-Ooops... I forgot about that, it should become a vendor DT property.
+  regulator: tps65219: regulator: tps65219: Fix error codes in probe() (2025-08-19 16:51:03 +0100)
 
+----------------------------------------------------------------
+regulator: Fixes for v6.17
+
+A couple of fairly minor device specific fixes that came in over the
+past week or so, plus the addition of an actual maintainer for the
+IR38060.
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      regulator: tps65219: regulator: tps65219: Fix error codes in probe()
+
+Krzysztof Kozlowski (1):
+      regulator: dt-bindings: infineon,ir38060: Add Guenter as maintainer from IBM
+
+Peng Fan (1):
+      regulator: pca9450: Use devm_register_sys_off_handler
+
+ .../devicetree/bindings/regulator/infineon,ir38060.yaml     |  2 +-
+ drivers/regulator/pca9450-regulator.c                       | 13 +++++--------
+ drivers/regulator/tps65219-regulator.c                      | 12 ++++++------
+ 3 files changed, 12 insertions(+), 15 deletions(-)
 
