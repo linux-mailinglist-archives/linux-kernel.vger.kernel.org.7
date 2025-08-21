@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-778749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08CBEB2EA27
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:12:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D675B2EA6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B93CB1BC6B16
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:10:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96A373B1D11
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7911EDA26;
-	Thu, 21 Aug 2025 01:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE24E1FF7D7;
+	Thu, 21 Aug 2025 01:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="thwDuOnS"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wlZnw6kv"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1841A9F9F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0333636CE02;
+	Thu, 21 Aug 2025 01:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755738596; cv=none; b=HyQOhCjs5Dcan615nM8n0mMD+JeF9E+VeRctoc8rVJF4mL51WdXdZpl/OrsGxi2MI5BaTxZHvhPYL2PHTqeEPRTbWgwEIdErhSOHG4r0pd8KG2zljml0qv3NsuNoNwob0P4bLp1TwNP61dQKNC3nRM8cXp3AW7FmNO6mN1unnzg=
+	t=1755739038; cv=none; b=W2TaNZr5ZZgH1ZvBqUqcAARdq21G9fKxAPLPhvPuR5aTHz3nR69KMMI0du0a7HfoKGiM/U9n5w25yvrIWRndYhUQNPvkzh0rA56a0yrVDMOD9YCHgHO37BdHCHBt+jY/OzZjMIWTapX4AssdDs+l+X+2S/123g79D08RHP90nM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755738596; c=relaxed/simple;
-	bh=NS3L7tpukwWlKOZXJFuJ1Ne5Bf/gTtM2S1i5c+3ugJw=;
+	s=arc-20240116; t=1755739038; c=relaxed/simple;
+	bh=w/mhTWUbr6/K3ZpBOw6iFBOZ7tUKFPr+Fy1MPDtZFyY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dayksMnaIi0caje8PJ7w7Hm9MFL9HrUvf+/ETkzZFs6lrcaOp2PCEj5BA4tDt1rfHuL419P8ggye1r4o1LdarulIN65g46JMGd6r/JGSxRk8VTB605GIGZuFl4ILauGIdhOlpyiXmFeGcu9CDXmH9Ark6EBdTdE7ZYK2FQ+vukE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=thwDuOnS; arc=none smtp.client-ip=115.124.30.110
+	 In-Reply-To:Content-Type; b=Ut72dnrZ4FcY/0Id5LCkncZyJCxTrWv6AOzdsB1x7n8Nl2Zt30hD/Q3/W8adiqAxK+4zDdoRlYJysXgUvwivRJM8Q+t22yIDY0KPSbpIL4+losRhT7B2jQnTjPNpP2x7Ht+umol0O0p70TVR2suCb5nYI0pF7qpRaHvVBDd+UTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wlZnw6kv; arc=none smtp.client-ip=115.124.30.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1755738589; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Ugai3oMT+pd1xA9AQN1G7wC+lJHlwcdm3P9RGa1xruM=;
-	b=thwDuOnS/Qh7NfWIek1UpSVs0dgP+jXEIcwh0DfQ0/DxcIfU/IBgMkqF6P/+ScbToEgvi2dAFbJuoumWx4AFhWt9/yRZF6NzlV1GuyNkXo7Gjmi998IkSB5StXBqFVu0zBcpKmDKhe0RaWTGlnw58uZqgbY08spcWd7z/PsYqz0=
-Received: from 30.74.144.114(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmDtqcc_1755738588 cluster:ay36)
+	t=1755739027; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Kcy4kiDvfXjZXkr3p+YJ3IZARRcGWf8p3DtdKNM7Prw=;
+	b=wlZnw6kv3L93IuGWKFpgFpZrvNt6crSxCtPi/QEu8b3ZHojHqNCD0Gh+jWq2Q0WDFPVw4wEHL0ooB0rLKL74LibaRUWTtODZ0K7kUZ31h2cFb2aSQT7x86F14zvhOT/lOtokuLcx9NAZFY7bOIDaJCOUUKkpz3tBL5tdmDzUIYQ=
+Received: from 30.74.144.114(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmE-6ch_1755738705 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Thu, 21 Aug 2025 09:09:48 +0800
-Message-ID: <d735a408-1bf8-4c43-94fc-6e3fa1068bab@linux.alibaba.com>
-Date: Thu, 21 Aug 2025 09:09:47 +0800
+          Thu, 21 Aug 2025 09:11:46 +0800
+Message-ID: <816d77f1-aa8f-4580-b1cd-b8c81f929fdd@linux.alibaba.com>
+Date: Thu, 21 Aug 2025 09:11:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,65 +47,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 01/11] mm: khugepaged: add khugepaged_max_ptes_none
- check in collapse_file()
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, hughd@google.com,
- david@redhat.com, lorenzo.stoakes@oracle.com
-Cc: ziy@nvidia.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, baohua@kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1755677674.git.baolin.wang@linux.alibaba.com>
- <aa2db6af6bb2124ef59ad5665951e47806c00a6e.1755677674.git.baolin.wang@linux.alibaba.com>
- <9e816c30-8ce9-46dd-99c0-e747df445be9@arm.com>
+Subject: Re: [PATCH v5 4/5] selftests/mm: add check_after_split_folio_orders()
+ helper.
+To: Zi Yan <ziy@nvidia.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
+ David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250818184622.1521620-1-ziy@nvidia.com>
+ <20250818184622.1521620-5-ziy@nvidia.com>
+ <a81b7fd3-c466-45c9-9374-361b780ce09b@linux.alibaba.com>
+ <A5A3C9E5-7E90-4EB4-878F-D5143FE0F349@nvidia.com>
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <9e816c30-8ce9-46dd-99c0-e747df445be9@arm.com>
+In-Reply-To: <A5A3C9E5-7E90-4EB4-878F-D5143FE0F349@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-On 2025/8/20 18:13, Dev Jain wrote:
+On 2025/8/20 21:49, Zi Yan wrote:
+> On 20 Aug 2025, at 5:22, Baolin Wang wrote:
 > 
-> On 20/08/25 2:37 pm, Baolin Wang wrote:
->> Similar to the anonymous folios collapse, we should also check the 
->> 'khugepaged_max_ptes_none'
->> when trying to collapse shmem/file folios.
+>> On 2025/8/19 02:46, Zi Yan wrote:
+>>> The helper gathers a folio order statistics of folios within a virtual
+>>> address range and checks it against a given order list. It aims to provide
+>>> a more precise folio order check instead of just checking the existence of
+>>> PMD folios.
+>>>
+>>> The helper will be used the upcoming commit.
+>>>
+>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>>> ---
 >>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   mm/khugepaged.c | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index 5a3386043f39..5d4493b77f3c 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -2125,6 +2125,13 @@ static int collapse_file(struct mm_struct *mm, 
->> unsigned long addr,
->>                       }
->>                   }
->>                   nr_none++;
->> +
->> +                if (cc->is_khugepaged && nr_none > 
->> khugepaged_max_ptes_none) {
->> +                    result = SCAN_EXCEED_NONE_PTE;
->> +                    count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
->> +                    goto xa_locked;
->> +                }
->> +
->>                   index++;
->>                   continue;
->>               }
+>> I tested this patch, and it works for me.
+>> Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 > 
-> Isn't this already being checked in collapse_scan_file(), in the block
-> if (cc->is_khugepaged && present < HPAGE_PMD_NR - 
-> khugepaged_max_ptes_none)?
+> Thanks.
+> 
+>>
+>> By the way, I moved gather_after_split_folio_orders() to the vm_util.c file as a helper for mTHP collapse checks in my patchset[1]. I'm not sure whether you need to move gather_after_split_folio_orders() to vm_util.c in this patch, or if I should move it in my patchset.
+> 
+> Feel free to move it in your patchset. My initial version has it in vm_util.c, but
+> I realized that its implementation is very limited to folio split check and moved
+> it to split_huge_page_test.c. If you find it suitable for your test cases, feel
+> free to move it. Just note that the code does not handle memremapped THP, since
+> it only checks page flags without checking the PFN. So when a vaddr range is mapped
+> to a THP/mTHP head page and some other THP/mTHP tail pages, the code just treats
+> the whole vaddr range as if it is mapped to a single THP/mTHP and gets a wrong
+> order. After-split folios do not have this concern, so
+> gather_after_split_folio_orders() is simplified to not handle such cases.
 
-Yes, as I said in the commit message, this follows the same behavior as 
-for anonymous folios, by checking the folio’s present state again before 
-isolating it, since the folio's present state could change after the 
-check in collapse_scan_file().
-
-In addition, and importantly, this prepares for the mTHP collapse check, 
-see patch 4.
+Thanks for the information. khugepaged also does not have this case, so 
+it works well for me.
 
