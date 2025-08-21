@@ -1,128 +1,126 @@
-Return-Path: <linux-kernel+bounces-780711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E4BB3083C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:21:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B01AB30831
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4EF01D02946
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:18:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EE76188B110
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341AE2EB5A6;
-	Thu, 21 Aug 2025 21:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B35C2C11D7;
+	Thu, 21 Aug 2025 21:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDZDpVuf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1A72EAD16;
-	Thu, 21 Aug 2025 21:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MmbzMTXj"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C18C2C027F;
+	Thu, 21 Aug 2025 21:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755810988; cv=none; b=FdizWoHrnXRv+64MxsVwiK2NT0h1MbkUIIYvTt2xFw/PYeFI/m8dBLBanboRi2RZjcKd+2YxnEUPiS1d45GOlMOFPK4TrvVdG7u88yg9MOJZLBADteC0BwJ7aSPBLq86+ZNI33gN58q/TGJy/QYX2JZRlikrQO88X1wi1k3m468=
+	t=1755810959; cv=none; b=l6WS5qCxnyrWfGZ/odq+nk4NxdONgOQohNkPKDATVGZkPfXHF0Vk/wNlOUxLPFUfr1Yc4gtfF83ADfwxf7w6l5ffPBkX0kluJjDmUjPZEjsDEjfBK4Feo5abWzI3XTfLWa8yGPYEd5mVkcRoxrji+5ZnDK06nOBbZVNUnSIrapo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755810988; c=relaxed/simple;
-	bh=/FaxCgWn3QZynXYwl6BT/KtUuhJScaSVbC/LfUVi4W0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d+cNOFvYApJB85gZ89tgYq5ywTfqegLNYH8Ek3p0EMIv4z0ViCa6bkR99r1ItMoXFxu6aCEUGy2ng4jCwWrgQXG60D655T2HkjLvItuTvQS8U3SklSb1PGfIshL113erCA3MKGhLQjzpcIf5wENFKhRd3apj3EC92u5ZctgmLBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDZDpVuf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A358C4CEEB;
-	Thu, 21 Aug 2025 21:16:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755810988;
-	bh=/FaxCgWn3QZynXYwl6BT/KtUuhJScaSVbC/LfUVi4W0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=gDZDpVuffNi0v19lwBN+668IPRSI9pXSGKcj8YgR1I/mooCWzH1KcC3mLeymG6ipu
-	 MlUYE9GPfOHYZxJRF9xwT52Qh7+DlO7opTuWA6Y3XazZhG8KjdXu8+ugvNIwotnMyE
-	 GgVFrN5UgVgh8ulOfs8p1TXq5xopkxRm8EPOTys0CySKRQmxK7MGlPxlh2BBHLAG/4
-	 dXRQve0ubBmwwkPpaHDLCzPYYfjob0j8ECMcS/MsQtNCjbo02kO6UarYLITiD1vVmt
-	 SdsRXIcQn1ULK6tA6e7ZuxxqkZgnxldiJZQ18j1lxuYNko7LD6p3G3ki/FjKHYayf1
-	 5X1bM/NPMSrlQ==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Thu, 21 Aug 2025 14:15:49 -0700
-Subject: [PATCH v2 12/12] KMSAN: Remove tautological checks
+	s=arc-20240116; t=1755810959; c=relaxed/simple;
+	bh=/LtxeeKPRImp78W2TR6vIVSLcbv7tvKQoP6i1qODnso=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NgBYU4BdWjyNcncEdOuUXYA5fkUc9XMRrFvllXooyVrb8zY5wc2wyui95/WOd0+D/UZQSw4MkrnWw36rU4tzMhZV2NANcb8C9XqLqzKndlZ0nLR+CJyUuB/28eSFzJ0gbzn2VMms8JHO6PsVzGmMb8Kmj7M3nVq6jDIrPqVrhu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MmbzMTXj; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0396C2116DDF;
+	Thu, 21 Aug 2025 14:15:56 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0396C2116DDF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1755810957;
+	bh=9k/HBrc2eL3SVYbPGTnCn1yplm2kaM62dC/fS9pAUa0=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=MmbzMTXjeeXoXX4DnWVqX+lPzZnKSDli4hJbpJkvWyRsdM2OBNVZQTHhGsoEN03iU
+	 lvRSuL7xZNu7G4xgDY6jn6xTQt8Lfj+8iknipsuvNyYSsL2PnnIXxQpWESRUw04ueE
+	 P6aACUQXi7gr+NRboSNAO7S/+6c7YHyi8v/FrKDk=
+Message-ID: <133c9897-12a8-619a-6cf4-334bc2036755@linux.microsoft.com>
+Date: Thu, 21 Aug 2025 14:15:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v3 1/7] Drivers: hv: Introduce hv_hvcall_*() functions for
+ hypercall arguments
+Content-Language: en-US
+From: Mukesh R <mrathor@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>,
+ "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "arnd@arndb.de" <arnd@arndb.de>
+Cc: "x86@kernel.org" <x86@kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+References: <20250415180728.1789-1-mhklinux@outlook.com>
+ <20250415180728.1789-2-mhklinux@outlook.com>
+ <f711d4ad-87a8-9cb3-aabc-a493ff18986a@linux.microsoft.com>
+ <33b59cc4-2834-b6c7-5ffd-7b9d620a4ce5@linux.microsoft.com>
+ <SN6PR02MB4157376DD06C1DC2E28A76B7D432A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <833a0c96-470f-acff-72e7-cc82995fbc2f@linux.microsoft.com>
+In-Reply-To: <833a0c96-470f-acff-72e7-cc82995fbc2f@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250821-bump-min-llvm-ver-15-v2-12-635f3294e5f0@kernel.org>
-References: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
-In-Reply-To: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Kees Cook <kees@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- llvm@lists.linux.dev, patches@lists.linux.dev, 
- Marco Elver <elver@google.com>, Nathan Chancellor <nathan@kernel.org>, 
- kasan-dev@googlegroups.com
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1830; i=nathan@kernel.org;
- h=from:subject:message-id; bh=/FaxCgWn3QZynXYwl6BT/KtUuhJScaSVbC/LfUVi4W0=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBnLe1pcPUNm9W6MDuLs/myrJcfNFJTLWv9E/6ZRWI+r5
- 4pje5w7SlkYxLgYZMUUWaofqx43NJxzlvHGqUkwc1iZQIYwcHEKwER0OBj+157XEo/zEZQ9YZU8
- z15PkJ858EdhvfS/qz6rSs+b7NykzfDfXe6x0fb3Xy5P/1MXV231eo2pntlbyVJlX8s71sbm1gb
- sAA==
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Now that the minimum supported version of LLVM for building the kernel
-has been bumped to 15.0.0, two KMSAN checks can be cleaned up.
+On 8/21/25 13:49, Mukesh R wrote:
+> On 8/21/25 12:24, Michael Kelley wrote:
+>> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Wednesday, August 20, 2025 7:58 PM
+>>>
+>>> On 8/20/25 17:31, Mukesh R wrote:
+>>>> On 4/15/25 11:07, mhkelley58@gmail.com wrote:
+>>>>> From: Michael Kelley <mhklinux@outlook.com>
+>>>>>
+>>>>>
+> <snip>
+>>>>
+>>>>
+>>>> IMHO, this is unnecessary change that just obfuscates code. With status quo
+>>>> one has the advantage of seeing what exactly is going on, one can use the
+>>>> args any which way, change batch size any which way, and is thus flexible.
+>>
+>> I started this patch set in response to some errors in open coding the
+>> use of hyperv_pcpu_input/output_arg, to see if helper functions could
+>> regularize the usage and reduce the likelihood of future errors. Balancing
+>> the pluses and minuses of the result, in my view the helper functions are
+>> an improvement, though not overwhelmingly so. Others may see the
+>> tradeoffs differently, and as such I would not go to the mat in arguing the
+>> patches must be taken. But if we don't take them, we need to go back and
+>> clean up minor errors and inconsistencies in the open coding at some
+>> existing hypercall call sites.
+> 
+> Yes, definitely. Assuming Nuno knows what issues you are referring to,
+> I'll work with him to get them addressed asap. Thanks for noticing them.
+> If Nuno is not aware, I'll ping you for more info.
 
-CONFIG_HAVE_KMSAN_COMPILER will always be true when using clang so
-remove the cc-option test and use a simple check for CONFIG_CC_IS_CLANG.
+Talked to Nuno, he's not aware of anything pending or details. So if you
+can kindly list them out here, I will make sure it gets addressed right
+away.
 
-CONFIG_HAVE_KMSAN_PARAM_RETVAL will always be true so it can be removed
-outright.
+Thanks,
+-Mukesh
 
-Acked-by: Marco Elver <elver@google.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
-Cc: kasan-dev@googlegroups.com
----
- lib/Kconfig.kmsan | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/lib/Kconfig.kmsan b/lib/Kconfig.kmsan
-index 0541d7b079cc..7251b6b59e69 100644
---- a/lib/Kconfig.kmsan
-+++ b/lib/Kconfig.kmsan
-@@ -3,10 +3,7 @@ config HAVE_ARCH_KMSAN
- 	bool
- 
- config HAVE_KMSAN_COMPILER
--	# Clang versions <14.0.0 also support -fsanitize=kernel-memory, but not
--	# all the features necessary to build the kernel with KMSAN.
--	depends on CC_IS_CLANG && CLANG_VERSION >= 140000
--	def_bool $(cc-option,-fsanitize=kernel-memory -mllvm -msan-disable-checks=1)
-+	def_bool CC_IS_CLANG
- 
- config KMSAN
- 	bool "KMSAN: detector of uninitialized values use"
-@@ -28,15 +25,9 @@ config KMSAN
- 
- if KMSAN
- 
--config HAVE_KMSAN_PARAM_RETVAL
--	# -fsanitize-memory-param-retval is supported only by Clang >= 14.
--	depends on HAVE_KMSAN_COMPILER
--	def_bool $(cc-option,-fsanitize=kernel-memory -fsanitize-memory-param-retval)
--
- config KMSAN_CHECK_PARAM_RETVAL
- 	bool "Check for uninitialized values passed to and returned from functions"
- 	default y
--	depends on HAVE_KMSAN_PARAM_RETVAL
- 	help
- 	  If the compiler supports -fsanitize-memory-param-retval, KMSAN will
- 	  eagerly check every function parameter passed by value and every
-
--- 
-2.50.1
-
+>>
+<deleted>
+>>
 
