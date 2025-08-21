@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-779539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43075B2F55B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:32:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D592B2F562
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B525624BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A92CFAA7D87
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C378C304BD8;
-	Thu, 21 Aug 2025 10:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D04305059;
+	Thu, 21 Aug 2025 10:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="j686JQrA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ELkRK+/u"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtytdtCm"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CE817A2F6;
-	Thu, 21 Aug 2025 10:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2248B27815F;
+	Thu, 21 Aug 2025 10:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755772291; cv=none; b=e1e38FqDSROJwWQec5/HcaXXQTqYT367FVOGnwg45KfF/n1LqhAwPagD/WUBUnGt3Jj3Jz8nY666ByYS+edHfs/VN92Ot7EsdId5aw4qwCE/yC6YVl0OdQItlqittj3nqWCkKQG4Q2OyYH9e2o20OnTidPHTfDFC9F4amc5r8eQ=
+	t=1755772308; cv=none; b=JiCGuRVBZA8PXPqHZt0F7aqufiCz/kWov16V/QFe9sdcvg9vq/pOF0AfuKFXx5lqt/oqLafCmCHqj0ugMzJkETTXk4QpmqPvK728OwwzapVLlS2okYzMd5aHa1c3MLAw/nx1GEVDGykXGtvszsitLnza272JGuCeoMlXHbbaPto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755772291; c=relaxed/simple;
-	bh=L2n256knK+5dIW7WpN0KI9rFJ2kkJpRTU1MxJYBy+A8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J23N4uN5drBCtS1874l4mIxyS6ykh95N4NbULuSc8sva0fP8lo46jRPP4Pfu7HJykXGokeYh3J/Q27orjYt9/3/0ET+dMmxwlyub19/qphXAWEBYTUukAq9RtMegp1ofyAyN7BAGiwfqmm/UQ5KbSdNrYcZLWPBga1LodG88TSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=j686JQrA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ELkRK+/u; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1EFD614000F8;
-	Thu, 21 Aug 2025 06:31:28 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Thu, 21 Aug 2025 06:31:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1755772288; x=1755858688; bh=PXKKI4OnXo
-	7t/YcWii3j+mJxOzhErP8TYu8TKKt71MY=; b=j686JQrAisvABfKcShupGMSwRS
-	br5RiBNpoR/5x/WdLoCsWaE/jZbUCa0bdiMZoP8mQfbjnZSrZngUR+0xsK/+9R90
-	wnNIQ3oqulZFKR90W+jPHHkKqgzBvI/HnfCYpuvSEe2jqKDyV4lpfOEyuNL2/qr3
-	C/w+alqMrRgqk7sRvi9VkQCqta3F/Z/ahkvTKfTY45NAFdRGqovXJ46Vbz6VZNRn
-	ojUgTKpF8k56vFEsN71kcY02sYT0YEhkuM6BnJeREhrM1EHAUnlVsvhw88vB9H+T
-	hUBojEAjlrZNpJNx4a2X3tdTOsQ1P/jXvbw9JhHVnuNBMIVXtkNxrnCMz8DA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1755772288; x=1755858688; bh=PXKKI4OnXo7t/YcWii3j+mJxOzhErP8TYu8
-	TKKt71MY=; b=ELkRK+/u7cZsOZClFlftg0BLd8LFmFzLPKpEarwFmg1S5qlVmXP
-	jCnWIQsQ5re3AlrADDTlfDvvLq2lUbhkEUZY8VYwX95WNmJNloY7bJNEcaUTKPwR
-	hvJYt2js+Up/64jJdK7jlgapUVrbM547UZbXiXO3hob5/jHiqlYJj304p6fS7tZa
-	cmXKKPhmxQqubAcI49zWX9GTg14F3dhRreEivjNtCxAmvSJfnr/10nVk11BflRsJ
-	SVZQAPqPqMmxwbYQrhl3/c7PjwtCjB/zivyn3wL460o1TZGfJnq93VlvuaDc9WcL
-	XJ3vmupyXBkw7cBrVya/IYk+qkPGIIhmR5Q==
-X-ME-Sender: <xms:f_WmaHZb7-9Xi55LSqFbgdhaZxNCe8RPzgyDMEu0jh5xKUPhpzohdQ>
-    <xme:f_WmaMUWzlarwwy7d5hhkGAqOeqsIStx-YHGL1kqb1sb6CIrECYpVUREYXPZLa55O
-    ZNnnEB35t7ltJFqhwY>
-X-ME-Received: <xmr:f_WmaHFPPlcnIyX62t4Lg-Sv5v2kWxUDHwpPgd3_PQZmi_JGfy2q9ZWSwJWE4OPHLwuDslf9D0t_Vplq-ccysQyfBjRBDmJz8-0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedutddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcu
-    ifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgvd
-    ffveelgedujeeffeehheekheelheefgfejffeftedugeethfeuudefheefteenucevlhhu
-    shhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruh
-    drnhgvthdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhvvghnsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdp
-    rhgtphhtthhopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtthhopehkrhiikhdoug
-    htsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepkhgvthhtvghnihhssehophgvnhgsshgurdhorhhgpdhrtg
-    hpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtoheprghsrghhihes
-    lhhishhtshdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:f_WmaOZj_fNrTtNvP0lOwNRNBC3qfZShIW1IjIFRoj0EzONnzKcrKg>
-    <xmx:f_WmaOF4ViS7Ns38LIbqcmqU-JXKpiAsrjJ6_rS2y6kMC9jm3NcBDg>
-    <xmx:f_WmaM2AxTDvLAgkj7is4jeLWe8gIPYp0c71bcBG4rkGeM5R2l-MhA>
-    <xmx:f_WmaKz4kVZWeMZGdnwhZPLVprAZ9p-TB9-8cpNELntu2Z2ChhqsdQ>
-    <xmx:gPWmaHJIvsyYvtbRZcgHsJBj1t34ZPnZbGKcUktHp4tQA-6YcPP_M_2M>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Aug 2025 06:31:27 -0400 (EDT)
-Date: Thu, 21 Aug 2025 12:31:26 +0200
-From: Janne Grunau <j@jannau.net>
-To: Rob Herring <robh@kernel.org>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mark Kettenis <kettenis@openbsd.org>,
-	Hector Martin <marcan@marcan.st>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: arm: apple: Add t8112 j415 compatible
-Message-ID: <20250821103126.GD1270980@robin.jannau.net>
-References: <20250813-apple-dt-sync-6-17-v1-0-209f15d10aa0@jannau.net>
- <20250813-apple-dt-sync-6-17-v1-4-209f15d10aa0@jannau.net>
- <20250820190708.GA538860-robh@kernel.org>
+	s=arc-20240116; t=1755772308; c=relaxed/simple;
+	bh=D+MQDeuGUXz+FTfr0de9kkuoW88p7ikUCgiDz+RsYic=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=limE83WvMPv6jnZw6flcExIiUGl7oGfCI/ivnZoTj2fQJ574qVKttmHfepBIBoLFXmJeU1hcGdBX+DJe6dyALe0lmXG6ihHmnGHYfvGbzoPIb1VN6ysfP2hlYTjUvolXIT7TOXXwgiNeVfa38csXZecYOw0so2Tpc3g8Re5Mcts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JtytdtCm; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e2ea94c7cso840324b3a.2;
+        Thu, 21 Aug 2025 03:31:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755772305; x=1756377105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D+MQDeuGUXz+FTfr0de9kkuoW88p7ikUCgiDz+RsYic=;
+        b=JtytdtCm1YWc2YYH8r86bF8XbctEgeVlAi+Z/ehO1j/puhQcY5RYwH/DZ/ZZUjFZ6e
+         d1Vq24cltS/gvhu8C0maaYVGLmXYljEhMbqHzy/g/YYBIShF4nY+OH3Va0FdyYOZwwy8
+         2I10Hx/6W2z+UpNIn9rwwLaSu1EVY4iAR/Y4XKyUJ6cJsU0oqXJ7c7A44waxawoZuLi5
+         gMQSVaUjfUf7Wm8zcSS0hBeIqoQGkExOMOS4AKdNOK3GByOTT89/WadRUe1Yxqv8rnD9
+         7w5ehnQtoLoJk6TXEZpd94l6a9kajJyab4BqZy3iJLPgABJei7od6TQVksl/E5c+yAKc
+         R1gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755772305; x=1756377105;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D+MQDeuGUXz+FTfr0de9kkuoW88p7ikUCgiDz+RsYic=;
+        b=N9vNpcC4bOiV+8y2DRBFNYWLyJ9I+ZTPZolaON9Id+ONKRQcDrS5AdVGaaa85HdfAC
+         4L8xdoPGC/ZEc+AUyqrZB5Do96YX1mPX/cABdpBh2WW3JqUUSz2MLl/rJcamP6+4lQs4
+         JaWjKC8kLM956FUbnvcU+XSVKVt6hTJQFkbMkMbmTrnZwn0xwsavpftVsn79hNTe9woS
+         VhSzZcgJwasV417fGpl5PlKfAb/7vqSISulfWNAc3MdNLBn+CTAyFAWrrKRPlUOZAQ97
+         37mMlmRAGFQ3yuyR7l6TblY0XBTjIwxeD66CU8nLy5+E1aKabdKcXLcIcUWEWZTGapJ4
+         +thg==
+X-Forwarded-Encrypted: i=1; AJvYcCVX0eEv1Ve61F11Tmb1cS+Mn5luDhptR6SXKNFI4Dy/tsl1yKYEQ9Ujw/fPp3bcfT/N32zXCEBAhU4PJkgktg5R@vger.kernel.org, AJvYcCW7gN98zJqlaHieCxQhkrhuqLgZ3vEsCddMHY8dU/F7LEIDVRTHWtWMEiUEL+KNSS3KOE3Tj+GtPOLZ8mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc3Rv0SpjBr0TNy4pWUtAOpwel1XooChZfAs2rCdW7rv/KRcod
+	zPbfez5UM6A7rqgAXYlEp2wh5MDMLvlJhun3ipA2wyMVQQXcGgmWaUD600VfGoeNSGs=
+X-Gm-Gg: ASbGncs6TqwpiDBonWHBiA7kDme9CtKDcRDMPiMQ9nk2w+5LwU6/Uj/Ld57NM84oCIE
+	b4jH3hQ/zWuK3u49XbaYQNbaIavMoNtsAoNpBYpIefZTD0iB6geuZ602JdB/dMQybxUSmtUX7IG
+	YhpM9LT3hZcNHe/hpG07p+SJnEHKQmow5Y1QUDYE8ZBLahXq7Q16yLgBNKE1PCdAEBW/AOFQ8nW
+	/785cDt+xRUlu29pFKxxnh06t/VtSIECNOBMr9vpBxnDlMfTSBBxIx/Fqc7VXFgWoSEIOVQnN3e
+	D2KRGLwtL2SybjZOU9Bc2zFOM8rWz+rniH0lxI4IE+aLLsWkb+VF5rNr+qXOrHanJa7ql/SVBpB
+	ILkjuofAiBy3Qj8VYZ91oW1h2KDSxElZ8NA==
+X-Google-Smtp-Source: AGHT+IEtzUOLCMK5h6DyeoMF7OKkpgcvIbMKbLedXsYunfHMl4dYg4T5SZ69QlizjHs38NTW9w2KTQ==
+X-Received: by 2002:a05:6a00:1399:b0:76b:f6ef:9729 with SMTP id d2e1a72fcca58-76ea3240a45mr2817610b3a.21.1755772305196;
+        Thu, 21 Aug 2025 03:31:45 -0700 (PDT)
+Received: from server.. ([103.250.145.167])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7d1314a4sm7883419b3a.41.2025.08.21.03.31.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 03:31:44 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	reddybalavignesh9979@gmail.com,
+	rppt@kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	surenb@google.com
+Subject: Re: [PATCH] selftests: proc: mark vsyscall strings maybe-unused
+Date: Thu, 21 Aug 2025 16:01:39 +0530
+Message-ID: <20250821103139.2872-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250820143954.33d95635e504e94df01930d0@linux-foundation.org>
+References: <20250820143954.33d95635e504e94df01930d0@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250820190708.GA538860-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 02:07:08PM -0500, Rob Herring wrote:
-> On Wed, Aug 13, 2025 at 11:53:36AM +0200, Janne Grunau wrote:
-> > This adds the "apple,j415" (MacBook Air (15-inch, M2, 2023) to the
-> > apple,t8112 platform.
-> > 
-> > Signed-off-by: Janne Grunau <j@jannau.net>
-> > ---
-> >  Documentation/devicetree/bindings/arm/apple.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/apple.yaml b/Documentation/devicetree/bindings/arm/apple.yaml
-> > index da60e9de1cfbd0151e973c3aafba6d0880fc21aa..3b90b5df60507b245de387de104a4e64f234139a 100644
-> > --- a/Documentation/devicetree/bindings/arm/apple.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/apple.yaml
-> > @@ -93,6 +93,7 @@ description: |
-> >  
-> >    - MacBook Air (M2, 2022)
-> >    - MacBook Pro (13-inch, M2, 2022)
-> > +  - MacBook Pro (15-inch, M2, 2023)
-> 
-> s/Pro/Air/?
+Hi Andrew,
 
-yes, thanks. changed moved the added entry below "MacBook Air (M2, 2022)"
+Thanks for your feedback, I didn't notice that __maybe_unused is
+defined repeatedly in selftests directory.
 
-Janne
+Following your suggestions, I've submitted a cleanup patch that centralise
+the __maybe_unused definition in tools/testing/selftests/kselftest.h and
+removed the redundant copies across the selftests subdirectories.
+I've tested it with gcc and clang, and it builds cleanly.
+
+Patch Link:
+https://lore.kernel.org/lkml/20250821101159.2238-1-reddybalavignesh9979@gmail.com/
+
+Will also look into build system, to tackle including kselftest.h everywhere
+
+Thanks,
+Bala Vignesh
 
