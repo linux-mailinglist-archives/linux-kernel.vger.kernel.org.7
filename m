@@ -1,146 +1,87 @@
-Return-Path: <linux-kernel+bounces-778757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C83B2EAA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:26:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EA7B2EAAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0001C8433C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:26:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E72511C869A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14ABE21E0BA;
-	Thu, 21 Aug 2025 01:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097F921B8E7;
+	Thu, 21 Aug 2025 01:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8YE/1v+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pv2bELXf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E64821A43B;
-	Thu, 21 Aug 2025 01:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4A918991E;
+	Thu, 21 Aug 2025 01:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755739572; cv=none; b=QOMS0yvUIZ2x8lG9K6J3FR+dOyWrWSc1/4vsysUvTBPqNlaXhVzh4uXmt/ToHltwCNFBEj5gBEFHEzWkk43HMB/ZKbk0VCvWFgWX61Z3DKPlGfCMGZWqARpHq4P7aYIxlXUcn6DtfGZmvsBiENtrkzxyYrVBJhYBjPR3EZUqrRI=
+	t=1755739594; cv=none; b=O0uLPbtiLmXXfWlU74HsPMCEBnkfm/SEzGs/nATbqAGyQcChKrpUYwTTONUQf0CQStJRoRD1ESzW0Ox07Qjf2kCrJhqK0kB7con+0g5djZJlF0ZCqIxqbxlucoGa5WMjvPVioo3uUpKy2iQgeJemjR7J3yODaf41W78T8u92kSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755739572; c=relaxed/simple;
-	bh=LnGSf8eZmzHDX4YDDFfdF9dk8w7H2oiMRfMTk8c1EfA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dT2OCVYZNG6zP/X0+b0i5rQfVwx52Ri/u51lPdLIbPLVtKNyekc873X/oTzPc/dRUDTg+GK4dob48O7AiXYlawLqAkPfg4LMXp9aY00FkEblDJqjD/rjcfpNCOIYVxqhQTzHb1K6kQhWMxnEk/g1QxWyV1yKq1z3OpMtwaBZZGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8YE/1v+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4EBAC19421;
-	Thu, 21 Aug 2025 01:26:11 +0000 (UTC)
+	s=arc-20240116; t=1755739594; c=relaxed/simple;
+	bh=nt1wmkMzdycDN1HariQos43upByKwX/rxUM0DpMe4/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SuxTio3SEx6dFFUqWYKO1pWGCToANszhfZtH77T+6UUxpTG5ZnXqyfUxVVA216r17uU5nF+5cSGpsFNLiiCuYlPny1QT/IBM1ob4M+Jez8zn2Zze82S8xJnclaK5+R+g6bMEDuOv/004THn0RHMZxqPLG6HOM+uwDbLWgJeQje0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pv2bELXf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6247C4CEE7;
+	Thu, 21 Aug 2025 01:26:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755739571;
-	bh=LnGSf8eZmzHDX4YDDFfdF9dk8w7H2oiMRfMTk8c1EfA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=I8YE/1v+bejfpeH18NyslQeyZvi5Gm6qOWIV82ssje3PsZan9NQbRysM78XIgyZ84
-	 e5yPLdyy637cXc+Mr5qBMbWeI7ej8RLjCrgxmj+gBPzqUYXbOsxxuP6G4+1E+0kLRL
-	 BhY7ONBhjfKR4ToJaJry0S1Cqv7pgxPnm4OKLVV08uqE+s7MGtqBAlslBxHtF87olo
-	 pWQf/CpL1FSAIvTevEzRs5ISS/llcboVq/tUhX8gCUct1ufogWrklFDkSUVNmEbcvT
-	 4WXIf0Lz2iuEeptqfA1DnFwBVk7cjCrAkrKZqlMhtUF1t+yjpP1VyfjyN040l0Ni8k
-	 qglLM3+jGzn1Q==
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a15fd04d9so10345255e9.1;
-        Wed, 20 Aug 2025 18:26:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVODySg9xth1kjFOhw1JxAsMX+n0ViKpx3FkqpirbvG26IgaXXO/9JmkdwEi2tABeNsI2OlKOkxLZ09NUtY@vger.kernel.org, AJvYcCVlUHTi49vKNNBDTErKhJGejeWsAToCW3gcsw6Xam4+8zwNxvnj8z21sZ4g9NMQbd8+YXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVFwm+L56ysP3l+qx7bAvhti4ZTePrr7wRDmgVLpGaPYK/95Sh
-	tswcfMELzcylRIZbbD0X+b/ZbZOD8E2y9hJWbx5m6/efKqdLz6QVJkAUlI5D4we9FcmHBIz+hX9
-	/E+8xiO2MBdlQaYp21Z+UfzqAcKKAIgs=
-X-Google-Smtp-Source: AGHT+IGGICOecBkmHwgRKDE56lZRP6wcugcHJo0gEL4zRiu7fL+DOBskg/CVonknskbdGs/GTh/1B8yqRjR156fE548=
-X-Received: by 2002:a05:6000:24c3:b0:3b7:590d:ac7d with SMTP id
- ffacd0b85a97d-3c4b4256002mr256638f8f.1.1755739570486; Wed, 20 Aug 2025
- 18:26:10 -0700 (PDT)
+	s=k20201202; t=1755739594;
+	bh=nt1wmkMzdycDN1HariQos43upByKwX/rxUM0DpMe4/0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Pv2bELXfWtTeYycHKkro4DewMzQ4mvDaEtTv7yJLs2P9xCZt1Sv8asex3zLsxMiK5
+	 zoCsNk/MHlRPWOllAjCWahRoL0I6W06AvNn0PSF1MZjI9LpNmTvNWnvo/JTBL48mo+
+	 BIrki7sBA7bhCflLXuJxmD/ylw3a6QeGG5ln3R+VpsPxRzTQ4uxp6DInswsu+V6bLV
+	 M2Pa3zUGK3LcsNO5BAYoWfwT8WRNZMQKbL8ue0XUPYbqnmT/KAHa4tCJpmI+GTcfMY
+	 hGqXCfwSG1q/FUFluvmKYHXE84I2hgkQ8KR3H1RXM5vtBQJvHtiZYW9dDpu0vOO3cB
+	 iBE3t/Rs9/5JQ==
+Date: Wed, 20 Aug 2025 18:26:33 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org, Eric
+ Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch, horms@kernel.org,
+ davem@davemloft.net, sdf@fomichev.me, dw@davidwei.uk,
+ michael.chan@broadcom.com, dtatulea@nvidia.com, ap420073@gmail.com,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH net-next v3 00/23][pull request] Queue configs and large
+ buffer providers
+Message-ID: <20250820182633.71e991a5@kernel.org>
+In-Reply-To: <CAHS8izP2odYCfEfB_JMdT26nUzniXRdp5MaZgqozYd7wV9Z-gg@mail.gmail.com>
+References: <cover.1755499375.git.asml.silence@gmail.com>
+	<20250819193126.2a4af62b@kernel.org>
+	<fb85866c-3890-41d2-9d5c-27549c4b7aa3@gmail.com>
+	<CAHS8izP2odYCfEfB_JMdT26nUzniXRdp5MaZgqozYd7wV9Z-gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820125952.71689-1-fangyu.yu@linux.alibaba.com>
- <20250820125952.71689-3-fangyu.yu@linux.alibaba.com> <aKXeXd4pZvoQmYB9@troy-wujie14pro-arch>
-In-Reply-To: <aKXeXd4pZvoQmYB9@troy-wujie14pro-arch>
-From: Guo Ren <guoren@kernel.org>
-Date: Thu, 21 Aug 2025 09:25:58 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTRR0LTO-CbUMkyXisov3BeftN+UJzv99GX7KfqCxWxmUg@mail.gmail.com>
-X-Gm-Features: Ac12FXxvAMsRQPy1tVyPjpoJutYOXESvM1svIIzMRusXPOnriqM8rsnzuEUEwNg
-Message-ID: <CAJF2gTRR0LTO-CbUMkyXisov3BeftN+UJzv99GX7KfqCxWxmUg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] RISC-V KVM: Remove unnecessary HGATP csr_read
-To: Troy Mitchell <troy.mitchell@linux.dev>
-Cc: fangyu.yu@linux.alibaba.com, anup@brainfault.org, atish.patra@linux.dev, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 20, 2025 at 10:40=E2=80=AFPM Troy Mitchell <troy.mitchell@linux=
-.dev> wrote:
->
-> On Wed, Aug 20, 2025 at 08:59:52PM +0800, fangyu.yu@linux.alibaba.com wro=
-te:
-> > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
-> >
-> > The HGATP has been set to zero in gstage_mode_detect(), so there
-> > is no need to save the old context. Unify the code convention
-> > with gstage_mode_detect().
-> >
-> > Signed-off-by: Guo Ren (Alibaba DAMO Academy) <guoren@kernel.org>
-> > Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
-> > ---
-> >  arch/riscv/kvm/vmid.c | 5 +----
-> >  1 file changed, 1 insertion(+), 4 deletions(-)
-> >
-> > diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
-> > index 5f33625f4070..abb1c2bf2542 100644
-> > --- a/arch/riscv/kvm/vmid.c
-> > +++ b/arch/riscv/kvm/vmid.c
-> > @@ -25,15 +25,12 @@ static DEFINE_SPINLOCK(vmid_lock);
-> >
-> >  void __init kvm_riscv_gstage_vmid_detect(void)
-> >  {
-> > -     unsigned long old;
-> > -
-> >       /* Figure-out number of VMID bits in HW */
-> > -     old =3D csr_read(CSR_HGATP);
-> >       csr_write(CSR_HGATP, (kvm_riscv_gstage_mode << HGATP_MODE_SHIFT) =
-| HGATP_VMID);
-> >       vmid_bits =3D csr_read(CSR_HGATP);
-> >       vmid_bits =3D (vmid_bits & HGATP_VMID) >> HGATP_VMID_SHIFT;
-> >       vmid_bits =3D fls_long(vmid_bits);
-> > -     csr_write(CSR_HGATP, old);
-> > +     csr_write(CSR_HGATP, 0);
-> Is setting HGATP to 0 in gstage_mode_detect meaningless now?
-> If so, it might be better to drop it and just keep the one here.
-Sorry, I misunderstood here.
+On Wed, 20 Aug 2025 06:59:51 -0700 Mina Almasry wrote:
+> We could make sure anything touching io_uring/zcrx. and anything using
+> netmem_ref/net_iov goes to netdev. I think roughly adding something
+> like this to general networking entry?
+> 
+> F: io_uring/zcrx.*
+> K: \bnet(mem_ref|_iov)\b
 
-1. kvm_riscv_gstage_vmid_detect() & gstage_mode_detect() are indepent
-function, so keep csr_write(CSR_HGATP, 0) is considerable.
+Right, I think clearest would be to add a new entry for this, and copy
+the real metadata (Jens as the maintainer, his tree etc.). If we just
+add the match to netdev it will look like the patches will flow via
+net-next. No strong preference, tho. As long as get_maintainer suggests
+CCing netdev I'll be happy.
 
-2. But your idea is good, because csr_write(CSR_HGATP, 0) would cause
-TLB flush in some micro-arch, which reduces the IPC. So, removing
-unnecessary CSR_write (CSR_HGATP, 0) is also considerable.
-
-I would update V4 to merge kvm_riscv_gstage_vmid_detect() &
-gstage_mode_detect() into a single function, inspired by your idea.
-
->
->                 - Troy
->
-> >
-> >       /* We polluted local TLB so flush all guest TLB */
-> >       kvm_riscv_local_hfence_gvma_all();
-> > --
-> > 2.49.0
-> >
-> >
-> > _______________________________________________
-> > linux-riscv mailing list
-> > linux-riscv@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-riscv
-
-
-
---=20
-Best Regards
- Guo Ren
+> I had suggested this before but never had time to suggest the actual
+> changes, and in the back of my mind was a bit weary of spamming the
+> maintainers, but it seems this is not as much a concern as the patches
+> not getting to netdev.
 
