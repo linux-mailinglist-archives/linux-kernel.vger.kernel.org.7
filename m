@@ -1,139 +1,131 @@
-Return-Path: <linux-kernel+bounces-780732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13ABAB3087F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:38:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E11CB30885
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DED931D003F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:39:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E77958804D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE152D7DC2;
-	Thu, 21 Aug 2025 21:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9012D837E;
+	Thu, 21 Aug 2025 21:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZVWFsfya"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZvB6nlq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6BB393DC3
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215842D7DF3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755812325; cv=none; b=hpzQkM0gV6eHX3IPIiXwh433Z8SOwl74KA1AfR9oZgSv427pL0UNOsmy1D1rMRl+Bgpz9CE50SZvrPp+AcRLY779/ART16lZOfgwS4p++8Nz0GqiPACKINqyELF6nA4WMZPbWBRLRj/K/KQtVJDVL7FY2bUIa1ISfg0cSpTOpVg=
+	t=1755812513; cv=none; b=fgwXPI4Mu3NdYGNymQXeZskjT5HfPm6KGTMEjLfQfJ+mjqPMA0YPYtSXQzrRbDqlXac8LbeysbcKBWx3gdPR7W0SWlVogic1h7TVjPON9zD774KW4RsgLf7YEQv/x0H0IrlYsKDyANn+g+FI3UgEXmNTCdze7+lifnOZaUE0hwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755812325; c=relaxed/simple;
-	bh=9IigR4Wlagg6xhLm9hN1vALyc5QXNqvJf+sepyZxpOU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=c/Bj/uVRh+FdYH9gFYsiV9tDKM6b+7mexfyvR0USHQALgkYV07iiluyu/n2g4fDyyp1L5+HgLHH37CSTLNXq0X8nPEATbsAjHu3hYmwNc8YTQnyYKWhgrQcY+hRoLCGlp6yXJhIHd1DkssvdAuoEYJRCQz5i+2jqzc2+/E7y2CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZVWFsfya; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e55665b05so1351113b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755812324; x=1756417124; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vHVEfAKtxAdzAcGw4A2fKIX4sGvGDOZHuTt9dFxqKbs=;
-        b=ZVWFsfyap49n437Lwfl51JA0FjQlKlC7qi5cHbds5Anq6kcHmvlRP27Yki/ix2upuJ
-         20WYGXhRQi1UrpAyVFQqv/SeV06+wR1aMT+9YRz+/5P9Y3fQrO0M2+8R+VxL5lAs+typ
-         6bqZJg8vKtS94WO/d7rrNlDc0VRLjCE4nktOUOhF/WvC7KJUqpGP9BzuXOR95h7UEXpw
-         kWkbr4wTRC71IhZZp7glR9+nSiML8h1c8aA4gIm4JaE5licjU0ywdwvb2CymAFJEKCo4
-         aIZ4smPlBSF7IJdiV/t1nKUKqFYfsVAXlMXyBDh1A61p+hlrUVEVK70OxtRlwKqReaQg
-         12bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755812324; x=1756417124;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vHVEfAKtxAdzAcGw4A2fKIX4sGvGDOZHuTt9dFxqKbs=;
-        b=DQ0SHft6ihaNPC5+lPEle+89MzAeXxL8jyHr3EmqIg+ORc1SH/4YVbKoKWtkT019n5
-         +gjEPSLvRGa3mFE7QwAua1b3SY8sf9qJ2J19aunAntCjiePb5ebqAhavQ5/K59yrDWWP
-         js3RCEjsuGHgp16k8+NoFebasQCWkzztFMrOE4GfkLeU0GxWVDKbomY0UpnmGUlwugut
-         EShvT6Ze+2D0exSPmXM1Kv6p1c0zITxjoO8JzhTBgzK+RHy/3nVnOnxxISnLuvalpNIe
-         X/g5fn+3EEJiZ4HXy17Cu/FvnWY7TMvJVCingrhHOjYJefyDmzZIlapbaIEWL+Nsc05p
-         eChQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXz4z9L/pCciReKMJmPeS4Bsx2XVhfcj5pxR2D0vD04oN1+Q3lXUd0Fda+4Ik/ymtEteqL/H5m81MdwJU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmJhlfaYHMpFoeSrhELdmNB9Ccs/kopl0bBlsuznxB2iaI4fbN
-	t9YnhKFNE5iOwvGQh5hjHh4cUPZpidQ8ptZuIMniuERoglogOjv4nxpjc7rFz+8YuqPH5h7MQUB
-	oT1xnbw==
-X-Google-Smtp-Source: AGHT+IHFQiSefcTlno7Uq/XGi8nI9plpgfoEU78HL5FBciMulA4rlZ4sbQS82vcym6ASk7rbb+I7gPlrtRg=
-X-Received: from pggr14.prod.google.com ([2002:a63:d90e:0:b0:b42:373b:8dfc])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d87:b0:243:78a:82be
- with SMTP id adf61e73a8af0-24340da7cefmr889872637.56.1755812323689; Thu, 21
- Aug 2025 14:38:43 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 21 Aug 2025 14:38:41 -0700
+	s=arc-20240116; t=1755812513; c=relaxed/simple;
+	bh=dN2haf/5HOTLTD8G28EiqnCMdgRUmDTwnhod7N/s36k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n2wnLaGJr2hHywvnv8MULmH8LYk4NgECUmTIAC+Ov6lOzW4VOAqDajeH//p4NEGS1g0mytaZiy1ySE2dhgM8jO7wNKmxTYUdoMLKaPpID8r+cLLLefWGjqdASP6gM8tV6TDEn9Air7JnFx3JLqq++TuCNpe9+KI58ZW9B3bYFvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZvB6nlq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8962AC4CEEB;
+	Thu, 21 Aug 2025 21:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755812512;
+	bh=dN2haf/5HOTLTD8G28EiqnCMdgRUmDTwnhod7N/s36k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fZvB6nlq1xfjgHLIGy2a+G5b3O1Vf62M+K3G0ySm9RFVhVvORhyqGntOIHjF2lyWq
+	 CWD0h1c9HfC/YrcxGWGFKBRLIEmwWOhcAEoUnnFAES7bj/ZaQoOSZDIaRvVERvj6B/
+	 jpwjmyqTh3ZrH/HGWqqw2WT/YwSPUQIj+ZUA07AzkzH0TpRESnpETMzjltIUSjhKD7
+	 MAIfCiwHW9Ho/WdX5yxqi69kkBSvlnBnkIkOIetdrRHwmHSQnVPaLlZAZN4fsgT4eW
+	 G3NUAf10RQpWUg18T/hTt/2U+H+c548KnRu/lwyBzf8koyJL6QLiXVBvfBGMelm7db
+	 bfq7/OBLD1Xuw==
+From: SeongJae Park <sj@kernel.org>
+To: Chris Li <chrisl@kernel.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Takero Funaki <flintglass@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Baoquan He <bhe@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Kairui Song <kasong@tencent.com>
+Subject: Re: [PATCH v4] mm/zswap: store <PAGE_SIZE compression failed page as-is
+Date: Thu, 21 Aug 2025 14:41:50 -0700
+Message-Id: <20250821214150.1911-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAF8kJuO7vQS3TB34dDZ6reTfeDpfSL9CNQqEwZWjZsGdhirs7Q@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
-Message-ID: <20250821213841.3462339-1-seanjc@google.com>
-Subject: [PATCH] KVM: SEV: Save the SEV policy if and only if LAUNCH_START succeeds
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Kim Phillips <kim.phillips@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Wait until LAUNCH_START fully succeeds to set a VM's SEV/SNP policy so
-that KVM doesn't keep a potentially stale policy.  In practice, the issue
-is benign as the policy is only used to detect if the VMSA can be
-decrypted, and the VMSA only needs to be decrypted if LAUNCH_UPDATE and
-thus LAUNCH_START succeeded.
+On Thu, 21 Aug 2025 14:21:11 -0700 Chris Li <chrisl@kernel.org> wrote:
 
-Fixes: 962e2b6152ef ("KVM: SVM: Decrypt SEV VMSA in dump_vmcb() if debugging is enabled")
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/sev.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> On Tue, Aug 19, 2025 at 12:34 PM SeongJae Park <sj@kernel.org> wrote:
+[...]
+> > Historically, writeback disabling was introduced partially as a way to
+> > solve the LRU order issue.  Yosry pointed out[4] this is still suboptimal
+> > when the incompressible pages are cold, since the incompressible pages
+> > will continuously be tried to be zswapped out, and burn CPU cycles for
+> > compression attempts that will anyway fail.  One imaginable solution for
+> > the problem is reusing the swapped-out page and its struct page to store
+> > in the zswap pool.  But that's out of the scope of this patch.
+> >
+> > [1] https://github.com/sjp38/eval_zswap/blob/master/run.sh
+> > [2] https://lore.kernel.org/20231017003519.1426574-3-nphamcs@gmail.com
+> > [3] https://lore.kernel.org/20240706022523.1104080-6-flintglass@gmail.com
+> > [4] https://lore.kernel.org/CAJD7tkZXS-UJVAFfvxJ0nNgTzWBiqepPYA4hEozi01_qktkitg@mail.gmail.com
+[...]
+> > +       /*
+> > +        * If a page cannot be compressed into a size smaller than PAGE_SIZE,
+> > +        * save the content as is without a compression, to keep the LRU order
+> > +        * of writebacks.  If writeback is disabled, reject the page since it
+> > +        * only adds metadata overhead.  swap_writeout() will put the page back
+> > +        * to the active LRU list in the case.
+> > +        */
+> > +       if (comp_ret || !dlen) {
+> 
+> Looks good other than the feedback provided by Barry as well. Need to
+> handle the -ENOSPC.
+> Other errors will depend on your plan to drop this counter or not. I
+> will wait for your next version.
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index f4381878a9e5..65b59939754c 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -583,8 +583,6 @@ static int sev_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 	if (copy_from_user(&params, u64_to_user_ptr(argp->data), sizeof(params)))
- 		return -EFAULT;
- 
--	sev->policy = params.policy;
--
- 	memset(&start, 0, sizeof(start));
- 
- 	dh_blob = NULL;
-@@ -632,6 +630,7 @@ static int sev_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 		goto e_free_session;
- 	}
- 
-+	sev->policy = params.policy;
- 	sev->handle = start.handle;
- 	sev->fd = argp->sev_fd;
- 
-@@ -2201,8 +2200,6 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 		start.desired_tsc_khz = kvm->arch.default_tsc_khz;
- 	}
- 
--	sev->policy = params.policy;
--
- 	sev->snp_context = snp_context_create(kvm, argp);
- 	if (!sev->snp_context)
- 		return -ENOTTY;
-@@ -2218,6 +2215,7 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 		goto e_free_context;
- 	}
- 
-+	sev->policy = params.policy;
- 	sev->fd = argp->sev_fd;
- 	rc = snp_bind_asid(kvm, &argp->error);
- 	if (rc) {
+Ack.  The next version will keep -ENOSPC comp_ret value so that
+reject_compress_poor counter is not broken, like I replied to Barry.
 
-base-commit: ecbcc2461839e848970468b44db32282e5059925
--- 
-2.51.0.261.g7ce5a0a67e-goog
+> 
+> 
+> > +               zswap_crypto_compress_fail++;
+> > +               dlen = PAGE_SIZE;
+> > +       }
+> > +       if (dlen >= PAGE_SIZE) {
+> > +               if (!mem_cgroup_zswap_writeback_enabled(
+> > +                                       folio_memcg(page_folio(page)))) {
+> > +                       comp_ret = -EINVAL;
+> > +                       goto unlock;
+> I saw you mention this in the cover letter, so just to confirm we are
+> on the same page. Current patch still has the issue [4] of write back
+> disabled cases, the incompressible page will stay in the page LRU and
+> possibly attempt to reclaim over and over again, right?
 
+You are correct.  This patch is not making a change for writeback disabled
+cases.
+
+
+Thanks,
+SJ
+
+[...]
 
