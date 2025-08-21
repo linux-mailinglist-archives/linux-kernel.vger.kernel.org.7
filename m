@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-779265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A181B2F17E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:26:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A078B2F0DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059281CE02F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:21:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E5644E55A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3C02EBDF6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3E12ECD15;
 	Thu, 21 Aug 2025 08:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aq29AYcK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W75ChgpJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9819F2EA755;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F3E2EB850;
 	Thu, 21 Aug 2025 08:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755764224; cv=none; b=BdCXz2QMt6r+ze8SQOxWse2ywATIcJCS9FDxSWGBfPOekqUGYJTB3iKfBi55sNNwzC8S2hFYWo1iB+yrTeLYVJzuUxNypIE2wImTsM/zacpkAFxBK4t5VrAbw8cyeemxjtKTt36gbj3g9pbaiwVJ1gpZiYheOt0ZeS+k7pc8Ico=
+	t=1755764224; cv=none; b=ud5eXs6kFpHszOsZycbDxqP9algNRgtw2p1pe4UsZVjTjZGVelSAykkqM/RlALuUt1hICf2+IOtGkuF63nm9XPdYKy1O8V6Tdd0908QaAFjHpy7RwjJFqeWXf5C9Bcmi+LLhr5Y8Yl9MZ+vzY0t8zeuZG2n1P7+L+aJ2Cn2z+HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755764224; c=relaxed/simple;
-	bh=x7MW3bRve0BOOp4971V2uJ3c3u7EbdqpTM9d9SjBZLs=;
+	bh=zMOHwhAKrRV4C5jWXOxsmB8Ttf0MQwEXFsiqcts/lkQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IckyZqkBLeulE0vU8yO6ohcHTKqMs+etBqHmRFoXDUOOYWXUb9Cj9u3zjothDwX8sb3MKxR56+K2ZbWukw0cDGeTm/ynilaQPpoF+qJrnFqvMNE7ez1SV3mHn7wqNXJAfDhnWl8Bj3kbTYZVijoHhPgGB1jFPThQ4JWJ6HBr0Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aq29AYcK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA2DC4AF09;
+	 MIME-Version; b=YCibjF7lFcBG8v/HrKcG5BV3yn4zBSkbasfe0HAMky44XNa0TaF5DI5xZVrJJRvC+YIU3agYf2nNGdMGBmAAdYTP+EgahT5M+UjLBW8nxBI2kg8om/Kj2H9J2XLCFsKJh2K845jmObwU7w2qrQk0NnlWy6SXnryaO3uLBFa1lxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W75ChgpJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE92C116B1;
 	Thu, 21 Aug 2025 08:17:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755764224;
-	bh=x7MW3bRve0BOOp4971V2uJ3c3u7EbdqpTM9d9SjBZLs=;
+	bh=zMOHwhAKrRV4C5jWXOxsmB8Ttf0MQwEXFsiqcts/lkQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Aq29AYcK3/fmmD1mm67PX9D3SOq1g6qwRFR1B2cM4yrDtQy4M+eYCLzs5zn8Cwmww
-	 ZTzWFccbaHQ4gK/nzOcA1RY0DmF/mO8affn7NFkL7sOQ1M/E48UjJXg5K2CBriXrwR
-	 TazNrQCvI1Y0mhzVoGym9p5ecMAC+7oo0Hz8SK1FWBq4adyh7SwFnLpKkBJqP3SWWB
-	 lNwPZGxvhGCjgDrrP74CiVKwlLJVZGQ0SPPryUmJnIzatkaaAYUNriu55WUrFPWwEO
-	 GJeH8amUIBrFgZM9aQ7OwS9mCxdv1EDPaHSH1ho4ueyX0Vmz26g2EU/arzE5llBxEU
-	 2OewrTHgmeczg==
+	b=W75ChgpJj0xZM7futsdm6rUJEnYZHpoxcAXMEytGpMxm5iza7FndC182xp7zrfA4W
+	 XP/2UKxPvkKrB3RfRAzyazD9XzOR5XK/72afgRRVG018n+MQnFFWNFUi2/jZO5+nFQ
+	 OXFUpp5T1tmzyT5pj7oJLEpEblVxbLMMl7MoyfRRNW0Nqu6YSyCL3SCtkpuCmasP9a
+	 dOEXMxPZ+hmufSaZd5+WN3mSiYC9TqiPyrFBUcsSRYcaLtWpAYGthICIXVHlAL5snx
+	 RwJZWJzSQ+2E5oLKgw2JuN/HwTMXgLtLjBzMb8Tx0H4EPNQ145LPNGcYTBXtIH57ML
+	 xfWo1c8dbtEbA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1up0Tm-0000000BLg9-2WXv;
+	id 1up0Tm-0000000BLgD-2dJF;
 	Thu, 21 Aug 2025 10:17:02 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
@@ -50,9 +50,9 @@ To: Jonathan Corbet <corbet@lwn.net>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/14] docs: conf.py: better handle latex documents
-Date: Thu, 21 Aug 2025 10:16:38 +0200
-Message-ID: <de23b35a770210950c609deaa32b98cb3673a53a.1755763127.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 03/14] docs: conf.py: fix doc name with SPHINXDIRS
+Date: Thu, 21 Aug 2025 10:16:39 +0200
+Message-ID: <183f630643eacf414cfa8d892f03dd1b1055c21e.1755763127.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755763127.git.mchehab+huawei@kernel.org>
 References: <cover.1755763127.git.mchehab+huawei@kernel.org>
@@ -65,105 +65,42 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The original logic assumed that app.srcdir is identical to the
-current working dir. This is the case for a normal build, but,
-when SPHINXDIRS="some dir" is used, this is not the case anymore.
+When SPHINXDIRS is used, the current logic produces a wrong
+list of files, as it will not pick the SPHINXDIRS directory,
+picking instead their children.
 
-Adjust the logic to fill the LaTeX documents considering
-app.srcdir, in a way that it will work properly on all cases.
+Add a rule to detect it and create the PDF doc with the right
+name.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/conf.py | 54 +++++++++++++++++++++----------------------
- 1 file changed, 26 insertions(+), 28 deletions(-)
+ Documentation/conf.py | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/Documentation/conf.py b/Documentation/conf.py
-index f9828f3862f9..2c1be59fd54b 100644
+index 2c1be59fd54b..c8401ed75402 100644
 --- a/Documentation/conf.py
 +++ b/Documentation/conf.py
-@@ -51,11 +51,13 @@ else:
-     dyn_exclude_patterns.append("devicetree/bindings/**.yaml")
-     dyn_exclude_patterns.append("core-api/kho/bindings/**.yaml")
+@@ -91,6 +91,19 @@ def config_init(app, config):
+     # LaTeX and PDF output require a list of documents with are dependent
+     # of the app.srcdir. Add them here
  
--# Properly handle include/exclude patterns
--# ----------------------------------------
-+# Properly handle directory patterns and LaTeX docs
-+# -------------------------------------------------
- 
--def update_patterns(app, config):
-+def config_init(app, config):
-     """
-+    Initialize path-dependent variabled
-+
-     On Sphinx, all directories are relative to what it is passed as
-     SOURCEDIR parameter for sphinx-build. Due to that, all patterns
-     that have directory names on it need to be dynamically set, after
-@@ -86,6 +88,25 @@ def update_patterns(app, config):
- 
-         config.exclude_patterns.append(rel_path)
- 
-+    # LaTeX and PDF output require a list of documents with are dependent
-+    # of the app.srcdir. Add them here
-+
-+    for fn in os.listdir(app.srcdir):
-+        doc = os.path.join(fn, "index")
-+        if not os.path.exists(os.path.join(app.srcdir, doc + ".rst")):
-+            continue
-+
-+        has = False
-+        for l in latex_documents:
-+            if l[0] == doc:
-+                has = True
-+                break
-+
-+        if not has:
-+            latex_documents.append((doc, fn + ".tex",
-+                                    "Linux %s Documentation" % fn.capitalize(),
++    # When SPHINXDIRS is used, we just need to get index.rst, if it exists
++    if not os.path.samefile(doctree, app.srcdir):
++        doc = "index"
++        doc_name = os.path.basename(app.srcdir)
++        if os.path.exists(os.path.join(app.srcdir, doc + ".rst")):
++            latex_documents.append((doc, doc_name + ".tex",
++                                    "Linux %s Documentation" % doc_name.capitalize(),
 +                                    "The kernel development community",
 +                                    "manual"))
- 
- # helper
- # ------
-@@ -456,32 +477,9 @@ latex_elements["preamble"] += """
-         \\input{kerneldoc-preamble.sty}
- """
- 
--# Grouping the document tree into LaTeX files. List of tuples
--# (source start file, target name, title,
--#  author, documentclass [howto, manual, or own class]).
--# Sorted in alphabetical order
-+# This will be filled up by config-inited event
- latex_documents = []
- 
--# Add all other index files from Documentation/ subdirectories
--for fn in os.listdir("."):
--    doc = os.path.join(fn, "index")
--    if os.path.exists(doc + ".rst"):
--        has = False
--        for l in latex_documents:
--            if l[0] == doc:
--                has = True
--                break
--        if not has:
--            latex_documents.append(
--                (
--                    doc,
--                    fn + ".tex",
--                    "Linux %s Documentation" % fn.capitalize(),
--                    "The kernel development community",
--                    "manual",
--                )
--            )
--
- # The name of an image file (relative to this directory) to place at the top of
- # the title page.
- # latex_logo = None
-@@ -577,4 +575,4 @@ loadConfig(globals())
- def setup(app):
-     """Patterns need to be updated at init time on older Sphinx versions"""
- 
--    app.connect('config-inited', update_patterns)
-+    app.connect('config-inited', config_init)
++            return
++
++    # When building all docs, or when a main index.rst doesn't exist, seek
++    # for it on subdirectories
+     for fn in os.listdir(app.srcdir):
+         doc = os.path.join(fn, "index")
+         if not os.path.exists(os.path.join(app.srcdir, doc + ".rst")):
 -- 
 2.50.1
 
