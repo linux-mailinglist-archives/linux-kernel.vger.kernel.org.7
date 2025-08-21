@@ -1,120 +1,262 @@
-Return-Path: <linux-kernel+bounces-779296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DF6B2F24B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:36:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95364B2F245
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E0C91CE17A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:30:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDBCD606878
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521FB2EAB82;
-	Thu, 21 Aug 2025 08:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2DB2E9ECF;
+	Thu, 21 Aug 2025 08:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KB/twgsA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mhaR019h"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940BA2EA49E;
-	Thu, 21 Aug 2025 08:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E99286426;
+	Thu, 21 Aug 2025 08:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755764774; cv=none; b=BKSPd2hBuVjsXZMr4uddGSRrQ0Of3Ntzj8GMENmaHdfm01KrQA6AQRnTDBeSDByISR/MzpNeg4CgPjyOj64wYTzc5V7aYX5WdA+uQfrSKjg7gLsDP5z2ukC5Atg8ALnAE8VtCYwwA33P1kH6L+4t/IcdUYhZIZPPoxZMTQkP4UM=
+	t=1755764752; cv=none; b=tHvA525Oz70Pp9W8HPwysIbrowue2KQq1VbwxIcvRPwKq7puoqgP+se1dpaUFSVceG6oHRjkGy1chaVv+wmVTlxcqbii1tQVqQ0akODeyi1op8GpCNI0OLWxrkkI/qnHTuN31rX82fkYFHU9OY8Qdh6C1sXBNhng/Mb2AGA5DNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755764774; c=relaxed/simple;
-	bh=cLUbOqUr6cTb/vKgSfC31FXfcobLn5rCi7Usx5zRpc0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DJQ2g9VMLuSvJYwZILZ7Y/6/Hml00r+uii6JP38shCEttNUYpCMdJDCfHKNJxTUjArrTPel75lwHXUM05/Snhj2vIhNt9a6Iiw7kOygfbt4mDbclU9lg/Qf9Y9sl+qS0A6+Lax+dOjzG20Z+q7CUD1USilCI1NdXvoRTt39vYu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KB/twgsA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD01C4CEEB;
-	Thu, 21 Aug 2025 08:26:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755764774;
-	bh=cLUbOqUr6cTb/vKgSfC31FXfcobLn5rCi7Usx5zRpc0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KB/twgsA/CTVnp586RP3GyuIdvA0EyWAAu+91jwzNtpbYbFOXHSU+jhu4roGlyYaB
-	 BxV+AOwx9I0X+6uSH1kDHGrWRCz5VW4AjFllgPvHKsWA5GjEhBoTsBtmc2sQ09hzK5
-	 jQuxubCyXuxk/Fe2zDo0iQi/7yW6zxEmdnetP1tMY7f7jUGykW5edx68Zmf5wRLqM1
-	 AaGdKlxJfMGHLS7Dw6iFgcgxUCI0acFJ+cmRXj/ME/nXBKoswdmAChcBH49jSUT7AT
-	 nNClgUYNQbD/ibAssVpOs7cjGiJbe9NxlKJR5WwEypQ96O8gqU8pcz1UxbhkZGpIi3
-	 Vsg9b0HqcCtvA==
-From: Christian Brauner <brauner@kernel.org>
-To: Lichen Liu <lichliu@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	safinaskar@zohomail.com,
-	kexec@lists.infradead.org,
-	rob@landley.net,
-	weilongchen@huawei.com,
-	cyphar@cyphar.com,
-	linux-api@vger.kernel.org,
-	zohar@linux.ibm.com,
-	stefanb@linux.ibm.com,
-	initramfs@vger.kernel.org,
-	corbet@lwn.net,
-	linux-doc@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz
-Subject: Re: [PATCH v2] fs: Add 'rootfsflags' to set rootfs mount options
-Date: Thu, 21 Aug 2025 10:24:11 +0200
-Message-ID: <20250821-zirkel-leitkultur-2653cba2cd5b@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250815121459.3391223-1-lichliu@redhat.com>
-References: <20250815121459.3391223-1-lichliu@redhat.com>
+	s=arc-20240116; t=1755764752; c=relaxed/simple;
+	bh=YH8f9LuYue17HimZLwRrZ2dKi4buVG2w+XdqQClGQTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oz6fikEac03T/rYf/Zj2mcB+iQnCwRyS5YI7a3mnbkHRLyT7buUSM5ZEeQYJEY7SYIRZdTTxcIpNhyDB+PBKAdA17OamdE58Rnaq0IOk6NOCreqcqVMs5WVA+yQTK1zsEWzxPk6YVelkhBqe8eYTNE4oTq7IJgtVmb8my/zVpf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mhaR019h; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KKqpu9011904;
+	Thu, 21 Aug 2025 08:25:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=2H/MrotFsMZx/RFMlPb99IUFWAskJX
+	X6bnnRaUEyK0Y=; b=mhaR019hNgG444l/N1WAzPdx8i/UdM/RiFZ5lTPBO5VeHn
+	QKOnmnGq53JGIVv/awqpwNLz2VGGRl+0IIYDORFIdfcOpi+CIJ2VIIwyirt49k4Y
+	ytYkMNwjNGqh8YbwDo5oIqZgJAKvCR5PpDLMbhYgmh4NubtAprvXVnypjQHFMzxI
+	8zxPw0oKyxg/3dHbFw7WuJkIMaDAIC8wnSpn9Ll98rsmGzNnBek2jhrGd3u1iHAu
+	UxgRnSdokYHDXUk43ZlxsLlxzzWiXsKbzrjnXrLMmOolWS3cYf2qwW868QW6JdcT
+	Xtt5QnHqVqluOj0m1SY+2PsnT3sDDoHAGTrwVB/g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vfjru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 08:25:35 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57L8PYdx005612;
+	Thu, 21 Aug 2025 08:25:34 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vfjrs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 08:25:34 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57L6m8lP027145;
+	Thu, 21 Aug 2025 08:25:33 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48my4w7ds6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 08:25:33 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57L8PVDK51642802
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Aug 2025 08:25:31 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4B0E12004B;
+	Thu, 21 Aug 2025 08:25:31 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1ADDC20040;
+	Thu, 21 Aug 2025 08:25:29 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 21 Aug 2025 08:25:28 +0000 (GMT)
+Date: Thu, 21 Aug 2025 13:55:29 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v4 11/11] ext4: Atomic write test for extent split across
+ leaf nodes
+Message-ID: <aKbX-dBzSC1pmPuh@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1754833177.git.ojaswin@linux.ibm.com>
+ <2c241ea2ede39914d29aa59cd06acfc951aed160.1754833177.git.ojaswin@linux.ibm.com>
+ <0eb2703b-a862-4a40-b271-6b8bb27b4ad4@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1905; i=brauner@kernel.org; h=from:subject:message-id; bh=cLUbOqUr6cTb/vKgSfC31FXfcobLn5rCi7Usx5zRpc0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQsuyF9J8I8+ZPI912RyxZ9nXK0nUlMZilruGDJHpOm7 9cirH4HdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE5BbDX+kbB6buCWFhtarJ sWE8wewxpUXp9twbsTPVd/5ZsXix9k9GhvNr7pbsmytTaOiSs/k6/9MrFlk+jBf5/2xw5Z0eo9v QwAcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0eb2703b-a862-4a40-b271-6b8bb27b4ad4@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: wx2NctUtzfC2yHY7-KjOM1LWGayoQw7J
+X-Authority-Analysis: v=2.4 cv=IrhHsL/g c=1 sm=1 tr=0 ts=68a6d7ff cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=GWIc7fT3pVVaNgT2m1IA:9
+ a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfX663KAyLHuNC3
+ AAIR5yR03i4dSzBzKXNy5rzLYF3XJ7OLEzHeoU5pulcVzfSawXJdjxdYgQAlYS57RFruBD+xV+g
+ m+t/8YbAm+FESeQ0cdLTcJkhxQRx7HfY22ygMZoIFabyk2cFA1tslbqyQNyxGH8h17383zm839v
+ voKDRpWKnwkpNBTh5NP3ukty/mg49R5NB8L8iCBsbjAL83fcxNW9kTizgT4MHiemNg/jj5Wn6Nz
+ 82QoOPeSuNwN8/265PyY+6Y3RSwP12zUo+9rBBGF31SQBGBTwVXSyP81CLEqEFo4MdVbBysUVui
+ TkV3ifhJv9DsUAW3iKn0t9vq1lrA0q9++ekw3r5//lSXFP3tU7y4XKMjGQS/t75i2eNVE7QL9aH
+ NK9ot6H83BwWYyzoOoygihoq58JZpg==
+X-Proofpoint-ORIG-GUID: nfPn7lHfX-UZtQMoOIlWYEXF4EazgGlC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_01,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 bulkscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 priorityscore=1501
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
+ definitions=main-2508190222
 
-On Fri, 15 Aug 2025 20:14:59 +0800, Lichen Liu wrote:
-> When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
-> By default, a tmpfs mount is limited to using 50% of the available RAM
-> for its content. This can be problematic in memory-constrained
-> environments, particularly during a kdump capture.
+On Wed, Aug 13, 2025 at 02:54:04PM +0100, John Garry wrote:
+> On 10/08/2025 14:42, Ojaswin Mujoo wrote:
+> > In ext4, even if an allocated range is physically and logically
+> > contiguous, it can still be split into 2 extents. This is because ext4
+> > does not merge extents across leaf nodes. This is an issue for atomic
+> > writes since even for a continuous extent the map block could (in rare
+> > cases) return a shorter map, hence tearning the write. This test creates
+> > such a file and ensures that the atomic write handles this case
+> > correctly
+> > 
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > ---
+> >   tests/ext4/063     | 129 +++++++++++++++++++++++++++++++++++++++++++++
+> >   tests/ext4/063.out |   2 +
+> >   2 files changed, 131 insertions(+)
+> >   create mode 100755 tests/ext4/063
+> >   create mode 100644 tests/ext4/063.out
+> > 
+> > diff --git a/tests/ext4/063 b/tests/ext4/063
+> > new file mode 100755
+> > index 00000000..40867acb
+> > --- /dev/null
+> > +++ b/tests/ext4/063
+> > @@ -0,0 +1,129 @@
+> > +#! /bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
+> > +#
+> > +# In ext4, even if an allocated range is physically and logically contiguous,
+> > +# it can still be split into 2 extents.
 > 
-> In a kdump scenario, the capture kernel boots with a limited amount of
-> memory specified by the 'crashkernel' parameter. If the initramfs is
-> large, it may fail to unpack into the tmpfs rootfs due to insufficient
-> space. This is because to get X MB of usable space in tmpfs, 2*X MB of
-> memory must be available for the mount. This leads to an OOM failure
-> during the early boot process, preventing a successful crash dump.
+> Nit: I assume that you mean "2 or more extents"
 > 
-> [...]
+> > +# This is because ext4 does not merge
+> > +# extents across leaf nodes. This is an issue for atomic writes since even for
+> > +# a continuous extent the map block could (in rare cases) return a shorter map,
+> > +# hence tearning the write. This test creates such a file and ensures that the
+> 
+> tearing
+> 
+> > +# atomic write handles this case correctly
+> > +#
+> > +. ./common/preamble
+> > +. ./common/atomicwrites
+> > +_begin_fstest auto atomicwrites
+> > +
+> > +_require_scratch_write_atomic_multi_fsblock
+> > +_require_atomic_write_test_commands
+> > +_require_command "$DEBUGFS_PROG" debugfs
+> > +
+> > +prep() {
+> > +	local bs=`_get_block_size $SCRATCH_MNT`
+> > +	local ex_hdr_bytes=12
+> > +	local ex_entry_bytes=12
+> > +	local entries_per_blk=$(( (bs - ex_hdr_bytes) / ex_entry_bytes ))
+> > +
+> > +	# fill the extent tree leaf with bs len extents at alternate offsets.
+> > +	# The tree should look as follows
+> > +	#
+> > +	#                    +---------+---------+
+> > +	#                    | index 1 | index 2 |
+> > +	#                    +-----+---+-----+---+
+> > +	#                   +------+         +-----------+
+> > +	#                   |                            |
+> > +	#      +-------+-------+---+---------+     +-----+----+
+> > +	#      | ex 1  | ex 2  |   |  ex n   |     |  ex n+1  |
+> > +	#      | off:0 | off:2 |...| off:678 |     |  off:680 |
+> > +	#      | len:1 | len:1 |   |  len:1  |     |   len:1  |
+> > +	#      +-------+-------+---+---------+     +----------+
+> > +	#
+> > +	for i in $(seq 0 $entries_per_blk)
+> > +	do
+> > +		$XFS_IO_PROG -fc "pwrite -b $bs $((i * 2 * bs)) $bs" $testfile > /dev/null
+> > +	done
+> > +	sync $testfile
+> > +
+> > +	echo >> $seqres.full
+> > +	echo "Create file with extents spanning 2 leaves. Extents:">> $seqres.full
+> > +	echo "...">> $seqres.full
+> > +	$DEBUGFS_PROG -R "ex `basename $testfile`" $SCRATCH_DEV |& tail >> $seqres.full
+> > +
+> > +	# Now try to insert a new extent ex(new) between ex(n) and ex(n+1).
+> > +	# Since this is a new FS the allocator would find continuous blocks
+> > +	# such that ex(n) ex(new) ex(n+1) are physically(and logically)
+> > +	# contiguous. However, since we dont merge extents across leaf we will
+> 
+> don't
+> 
+> > +	# end up with a tree as:
+> > +	#
+> > +	#                    +---------+---------+
+> > +	#                    | index 1 | index 2 |
+> > +	#                    +-----+---+-----+---+
+> > +	#                   +------+         +------------+
+> > +	#                   |                             |
+> > +	#      +-------+-------+---+---------+     +------+-----------+
+> > +	#      | ex 1  | ex 2  |   |  ex n   |     |  ex n+1 (merged) |
+> > +	#      | off:0 | off:2 |...| off:678 |     |      off:679     |
+> > +	#      | len:1 | len:1 |   |  len:1  |     |      len:2       |
+> > +	#      +-------+-------+---+---------+     +------------------+
+> > +	#
+> > +	echo >> $seqres.full
+> > +	torn_ex_offset=$((((entries_per_blk * 2) - 1) * bs))
+> > +	$XFS_IO_PROG -c "pwrite $torn_ex_offset $bs" $testfile >> /dev/null
+> > +	sync $testfile
+> > +
+> > +	echo >> $seqres.full
+> > +	echo "Perform 1 block write at $torn_ex_offset to create torn extent. Extents:">> $seqres.full
+> > +	echo "...">> $seqres.full
+> > +	$DEBUGFS_PROG -R "ex `basename $testfile`" $SCRATCH_DEV |& tail >> $seqres.full
+> > +
+> > +	_scratch_cycle_mount
+> > +}
+> > +
+> 
+> Out of curiosity, for such a file with split extents, what would filefrag
+> output look like? An example would be nice.
 
-This seems rather useful but I've renamed "rootfsflags" to
-"initramfs_options" because "rootfsflags" is ambiguous and it's not
-really just about flags.
+Hey John thanks for the review. Sorry for the late reply i had a mini
+vacation followed by lei suddenly not pulling emails :/
 
-Other than that I think it would make sense to just raise the limit to
-90% for the root_fs_type mount. I'm not sure why this super privileged
-code would only be allowed 50% by default.
+Anyways, yes I've added the $DEBUGFS command so we can observe the
+extent structure, but the filefrag would look something like this (last
+few extents):
 
----
+ ...
+ 337:      674..     674:      10130..     10130:      1:
+ 338:      676..     676:      10132..     10132:      1:
+ 339:      678..     678:      10134..     10134:      1:
+ 340:      679..     680:      10135..     10136:      2:             last,eof
 
-Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+Notice that the last 2 extents are logically and physically continuous
+but not merged.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Reards,
+ojaswin
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.misc
-
-[1/1] fs: Add 'rootfsflags' to set rootfs mount options
-      https://git.kernel.org/vfs/vfs/c/278033a225e1
+> 
+> Thanks,
+> John
 
