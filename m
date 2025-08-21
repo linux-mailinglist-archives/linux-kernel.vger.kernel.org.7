@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-780274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8722B2FFB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:12:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A7A6B2FFCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070D65644F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:07:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A682A215CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CAB2D3ECF;
-	Thu, 21 Aug 2025 16:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38682D3A70;
+	Thu, 21 Aug 2025 16:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L09ve3g5"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="gfIEbxyK"
+Received: from mx4.sberdevices.ru (mx5.sberdevices.ru [95.181.183.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6432D3745;
-	Thu, 21 Aug 2025 16:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111B4285CB6;
+	Thu, 21 Aug 2025 16:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.181.183.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755792394; cv=none; b=shI5NQXpLc0ewb4bMhYrJkuB4RQ2nQB+CPa1L60Z9wgpsa2Vb2SmkukbtGwmJM5aDVOo6uHvzgtNMjeouGrftjnhEDHjSZyB6/6iFnJaeTPiDnW+xP01a0vxlNCxKjZjNm2Lq7drm/biAsA4W52eJ1ZWKIbjh1UtXedHwSC34N8=
+	t=1755792880; cv=none; b=J4emsELgzJdM2J3olxYz3s/O/jxTG9WKOFM1WBRG/RP33UiGyspmkYXeZ7ZB7Pd2lhy0e9GbWgdWYXKr/KYy46+EJDKXdw28Qn+EfTYeEk1Y5g6kZ2+cny+ayzlVE8rBp4GcZatsVu5MltjJbr/E4bZsBby2iTmJh2kHchqtmwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755792394; c=relaxed/simple;
-	bh=wcbuo+3AyQiSAOlwL37GqZNp7kSPC8hi55kPJHMirsU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Rqtq1/8hRG+tbMKObMVB7hEcLZ2PVwoEIMUl5/IpT26ySgoyg27yE1z5PubQCYzwHTEFN4cv2zo/4u5yH0nX33mDrx2Sm5aHVpj+HyTR3HUoQMSsrHF03HegJLS6Fut26NpjnMJQE9ARyYr560c98cgGoiK/JiVzWpm+y4WJLcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L09ve3g5; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb7a16441so173160966b.2;
-        Thu, 21 Aug 2025 09:06:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755792391; x=1756397191; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q9dk1yp1rV4JBOFv12CvKzNbPaa/5Em4ZRaChGbcovk=;
-        b=L09ve3g5WC0zBlbxQ1/QCPQLQpnNbfrsH5A26+i5sZbURpR0OJ7ewCuAGbTUR728s6
-         zX00FrduE4DSzk0+RNNIZZiRqVQblDu7e5LzQL4mQdObXu/4IcPRnlOkD0JhgE3YxNC3
-         u43zz1zH924VdRhrMBVm7rkpGP6bRMUOOI5+AAzZ+fUAnzVTogDVxEu/Zs9jxK60amvV
-         0lPvytHir1Q/J6P6UkntOE8qMbmQyz+9H4XEI1RBG21ZpbJ6WFz49J9FUu6MFei3hFpN
-         uxZ6h/v58OffmTHGFJUXcOcBm4LXnoxZ6/HwThk8QOn2d2Cy1EKwo2XQrPUAWvRJ7Lwe
-         xuvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755792391; x=1756397191;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=q9dk1yp1rV4JBOFv12CvKzNbPaa/5Em4ZRaChGbcovk=;
-        b=lzxim12W9X83z1d9RfWZt6h1IUqhWB0ZztW74DJHEkZdUTUevT2nTqBOBuFmkv6Ecf
-         bHoRjAFnZAQBMLbA0YrxlNTNQXmHU2TeSOxwfnYNEY8T+5FtlYg85DQ7KHuQWZajbd3Q
-         1gzl/tC4rb8J+cOtPikpuZOI4H2M71bT85R1xvDnNuiq//XWtMSLW4wnedwrcFrWbibr
-         /Guwr4oyAIi/KFXVTajBhcGVaFahOCvwEFkESPGnlYB1a6Sv3/MJdOFfk3lQhrlObTwF
-         f8NykjlTVvfoJfq+El+yz/2RsxAwzck73zaNJe4ewUsuvh94RlY25covGXBsl+d3Pqh3
-         GREw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmotBR/5CK296cjBlQJzZKp0QjjwXYSNAT9pOHis4WMKTm7FaLkcacbdd1dGFfjweaG2aYIhb+jUkOei0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzASfy/oOlIu7K7TeQ2d0/1MMrzYLh163+D1vh6QhGBrI1pRJLv
-	XKXqaMs6YUVoy05b3ohd86wjjepO3yROM2mOLpb970noq1ZeYwYACpiPNn8RbfhN
-X-Gm-Gg: ASbGncskNTjOOuckXiutL7wYFyF6QVcUHjQyuavtrk7MW65B75FsfU831I7VaS3jH2D
-	1nymVT53BLV4A2b5rqI0+/vOvwdSt3CSdBb/k1Gm2E7zN5lu5X5NbOzVnuHoUJa1qcNblAZjWl/
-	il7qi+l1r5Ycn1Hk2h94vv9vycLeo/BXcCDDv2a66DeBjojwJiXFl0kKxcq39DJsuXHJVJuIPN6
-	LHMeuNi6XYatW3SRlVEnPcM/AJs6uDi53m0TR1qsk9Gwu27p63Gzf4tG3YC9Dk9mJdJQ0wMz+0e
-	knoq0uq6tSTpxgCnXIjpiP+lqJfqmjJdJEk6XdC3DZlDyBUL3eSjv4xal8AuPF6rrW7J9zOKmiv
-	el/62lK1RyBykwMWADzTDQ3SKshGkIVUPc+bYj++MXcb4QPZ2VPvXm0jb9ybupTNbDw94aZyuOL
-	3/t8ltHCaLJQ==
-X-Google-Smtp-Source: AGHT+IGKXeMeNQVsD7I3Q41pa0/1sqAvoMwsxsmgB21YXcBn7EBXZ6SIqmeKxjoEvA32/r19jYIiAQ==
-X-Received: by 2002:a17:907:3f90:b0:afd:d9e3:9541 with SMTP id a640c23a62f3a-afe07d7f373mr291307466b.65.1755792390777;
-        Thu, 21 Aug 2025 09:06:30 -0700 (PDT)
-Received: from [192.168.1.171] (host-95-252-189-221.retail.telecomitalia.it. [95.252.189.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded2badd9sm408882466b.20.2025.08.21.09.06.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 09:06:30 -0700 (PDT)
-Message-ID: <7514c681-1020-4b31-b195-ebbc3e4a611f@gmail.com>
-Date: Thu, 21 Aug 2025 18:06:29 +0200
+	s=arc-20240116; t=1755792880; c=relaxed/simple;
+	bh=bZiwXTpwcqNwm9g4f0YuLhxRtNXA5I/Zd4XNEgKoyxo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r1afO4GZCNDvHZbsdwmoMHxAWa7uYmt/BYQVkkfzhLOUr/3DI7f1zLRbdOewc6QvtY1AYLWs52QVsIvcwfIu9N/dB5NTSew6Z+ZuHZLv6fEMWLlY5PtevBEeKDs7w2NYHNpE0Mi1wMlP9ttsWlDmM+M8TZmQsRk712VwISWG/Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=gfIEbxyK; arc=none smtp.client-ip=95.181.183.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+Received: from p-antispam-ksmg-gc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx4.sberdevices.ru (Postfix) with ESMTP id A2B8A240006;
+	Thu, 21 Aug 2025 19:08:34 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx4.sberdevices.ru A2B8A240006
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=post; t=1755792514;
+	bh=ghlDS7gss6+NjsK++AcAfUV0LXrKhx7Crx9UHunrNXw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=gfIEbxyKyrSMvEQdQR0POGTgG7QbSgqsiZc3MmkbuvYbp7CcDOwGMCIu0dzTycwfR
+	 WbkV2VF38f8ljdpbD89pdwwUY0AQ1YfKybdwDR6bOCsnQSzGOSUiuZp1HNrhQzGMe4
+	 tqp+EBP9zRzZHFlD9RXMAYg3t1VTO02lZTxOXkHBCKb8Broy0ju8ZOMnXEVkYvPpvu
+	 LGCHO/IQZYzk1F38H4ngPvEgxF6tf1EiIqPwmJwwSXRPKwrSLJkgR5TPwsIRTfmkhW
+	 AC+h9jWbF91A0bNI8a9XIHKFUw2refm6vmzQt6kLugeL5uYwV+9mjAWythLZ1EwDiU
+	 xJSOrDQmVS47Q==
+Received: from smtp.sberdevices.ru (p-exch-cas-s-m1.sberdevices.ru [172.16.210.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "sberdevices.ru", Issuer "R11" (verified OK))
+	by mx4.sberdevices.ru (Postfix) with ESMTPS;
+	Thu, 21 Aug 2025 19:08:33 +0300 (MSK)
+From: Pavel Shpakovskiy <pashpakovskii@salutedevices.com>
+To: <marcel@holtmann.org>, <johan.hedberg@gmail.com>, <luiz.dentz@gmail.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <brian.gix@intel.com>
+CC: <linux-bluetooth@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>, Pavel Shpakovskiy
+	<pashpakovskii@salutedevices.com>
+Subject: [PATCH v1] Bluetooth: hci_sync: fix set_local_name race condition
+Date: Thu, 21 Aug 2025 19:07:47 +0300
+Message-ID: <20250821160747.1423191-1-pashpakovskii@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US, it
-From: Massimo Giambona <massimo.giambona@gmail.com>
-Subject: [HID][asus] Fn+Esc not handled on ASUS ProArt P16
-To: jikos@kernel.org, bentiss@kernel.org
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-exch-cas-a-m2.sberdevices.ru (172.24.201.210) To
+ p-exch-cas-s-m1.sberdevices.ru (172.16.210.2)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: pashpakovskii@sberdevices.ru
+X-KSMG-AntiSpam-Info: LuaCore: 64 0.3.64 96c1edcdaeab4cf6c1fd6858be74d3893179d628, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1;sberdevices.ru:7.1.1,5.0.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, FromAlignment: n
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 195702 [Aug 21 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/08/21 14:56:00 #27681497
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-Hello,
+Function set_name_sync() uses hdev->dev_name field to send
+HCI_OP_WRITE_LOCAL_NAME command, but copying from data to
+hdev->dev_name is called after mgmt cmd was queued, so it
+is possible when function set_name_sync() will read old name
+value.
 
-on ASUS ProArt P16 laptops the Fn+Esc key is not handled by the hid-asus
-driver.
+This change adds name as a parameter for function
+hci_update_name_sync() to avoid race condition.
 
-When pressing Fn+Esc, dmesg shows:
+Fixes: 6f6ff38a1e14 ("Bluetooth: hci_sync: Convert MGMT_OP_SET_LOCAL_NAME")
+Signed-off-by: Pavel Shpakovskiy <pashpakovskii@salutedevices.com>
+---
+ include/net/bluetooth/hci_sync.h | 2 +-
+ net/bluetooth/hci_sync.c         | 6 +++---
+ net/bluetooth/mgmt.c             | 5 ++++-
+ 3 files changed, 8 insertions(+), 5 deletions(-)
 
-   [21348.413951] asus 0003:0B05:19B6.0002: Unmapped Asus vendor 
-usagepage code 0x4e
-   [21348.498405] asus 0003:0B05:19B6.0002: Unmapped Asus vendor 
-usagepage code 0x4e
+diff --git a/include/net/bluetooth/hci_sync.h b/include/net/bluetooth/hci_sync.h
+index 72558c826aa1b..eef12830eaec9 100644
+--- a/include/net/bluetooth/hci_sync.h
++++ b/include/net/bluetooth/hci_sync.h
+@@ -93,7 +93,7 @@ int hci_update_class_sync(struct hci_dev *hdev);
+ 
+ int hci_update_eir_sync(struct hci_dev *hdev);
+ int hci_update_class_sync(struct hci_dev *hdev);
+-int hci_update_name_sync(struct hci_dev *hdev);
++int hci_update_name_sync(struct hci_dev *hdev, const u8 *name);
+ int hci_write_ssp_mode_sync(struct hci_dev *hdev, u8 mode);
+ 
+ int hci_get_random_address(struct hci_dev *hdev, bool require_privacy,
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index e56b1cbedab90..c2a6469e81cdf 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -3412,13 +3412,13 @@ int hci_update_scan_sync(struct hci_dev *hdev)
+ 	return hci_write_scan_enable_sync(hdev, scan);
+ }
+ 
+-int hci_update_name_sync(struct hci_dev *hdev)
++int hci_update_name_sync(struct hci_dev *hdev, const u8 *name)
+ {
+ 	struct hci_cp_write_local_name cp;
+ 
+ 	memset(&cp, 0, sizeof(cp));
+ 
+-	memcpy(cp.name, hdev->dev_name, sizeof(cp.name));
++	memcpy(cp.name, name, sizeof(cp.name));
+ 
+ 	return __hci_cmd_sync_status(hdev, HCI_OP_WRITE_LOCAL_NAME,
+ 					    sizeof(cp), &cp,
+@@ -3471,7 +3471,7 @@ int hci_powered_update_sync(struct hci_dev *hdev)
+ 			hci_write_fast_connectable_sync(hdev, false);
+ 		hci_update_scan_sync(hdev);
+ 		hci_update_class_sync(hdev);
+-		hci_update_name_sync(hdev);
++		hci_update_name_sync(hdev, hdev->dev_name);
+ 		hci_update_eir_sync(hdev);
+ 	}
+ 
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index 46b22708dfbd2..da662e1823ae5 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -3876,8 +3876,11 @@ static void set_name_complete(struct hci_dev *hdev, void *data, int err)
+ 
+ static int set_name_sync(struct hci_dev *hdev, void *data)
+ {
++	struct mgmt_pending_cmd *cmd = data;
++	struct mgmt_cp_set_local_name *cp = cmd->param;
++
+ 	if (lmp_bredr_capable(hdev)) {
+-		hci_update_name_sync(hdev);
++		hci_update_name_sync(hdev, cp->name);
+ 		hci_update_eir_sync(hdev);
+ 	}
+ 
+-- 
+2.34.1
 
-One message is for press, the other for release.
-
-According to USB PCap traces (see 
-https://gitlab.com/asus-linux/asusctl/-/issues/585),
-Fn+Esc sends:
-
-   - 0x5ad04e01 (enable)
-   - 0x5ad04e00 (disable)
-
-It would be useful to map this to KEY_FN_ESC (or another appropriate 
-keycode)
-in drivers/hid/hid-asus.c so that it becomes available to userspace.
-
-System information:
-- Model: ASUS ProArt P16 H7606 (BIOS 319)
-- Kernel version: Linux 6.15.10-200.fc42.x86_64
-- evtest: no event generated
-- dmesg: "Unmapped Asus vendor usagepage code 0x4e"
-- Distribution: Fedora 42 Workstation
-
-Additional notes:
-- I tested a local modification of hid-asus.c:
-
-     case 0x4e:
-         asus_map_key_clear(KEY_FN_ESC);
-
-   With this, Fn+Esc is mapped correctly.
-- I also tried sending the raw reports to enable/disable the FnLock feature
-   from the driver, but hit an error:
-     "BUG: scheduling while atomic"
-- I wrote a small tool: https://github.com/m4ss1m0g/proart_p16_fnlock
-
-Could you please consider adding support for this key to the driver?
-
-Thanks for your work,
-
-Massimo
-
-P.S. Other unmapped vendor codes were also observed on this machine:
-- Fn+F8  (emoji): dmesg code 0x7e
-- Fn+F12 (ProArt): dmesg code 0x8b
-- Fn+F10 (Camera toggle): dmesg codes 0x85, 0x01 (but work)
-These may also deserve mapping, but Fn+Esc is the most important one.
 
