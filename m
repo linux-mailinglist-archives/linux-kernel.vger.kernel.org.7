@@ -1,108 +1,93 @@
-Return-Path: <linux-kernel+bounces-780507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564D7B302DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:25:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6950B3030B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005BEAC55FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:25:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29A8D1CE7E4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0721934AB03;
-	Thu, 21 Aug 2025 19:25:16 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5D234AB0B;
+	Thu, 21 Aug 2025 19:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="pQD8KtWs"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4724A1F948;
-	Thu, 21 Aug 2025 19:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6852EAB62;
+	Thu, 21 Aug 2025 19:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755804315; cv=none; b=RiYvaGqTsWBWStynGOECMG0+LZm+T+Du++SozCfu6y94oczLok09Vwx3ZMIBNFOJ+Iybyh6L65iZjak/HEFO5FijsAboovDixiEubI2LBGZceOU94ujq0W0UBuYTc6sTimDyTQoY+QMWEGqeXmryJkT76wsPeyGFZgylwc9+U+0=
+	t=1755804967; cv=none; b=BmlSfvG5tzFiMk1msu9sPaOohEsxPzjnQHAZAZjFRM8x8WLO10e7jm4jPZ77VWYsfgPN/C/ZC7v9QmpxkzuAgdv2gXfMgEpxTAAwFiciOBQ4ne9Z7f4ST3ULUJHwts2J2ofFzfaKQmnGiOKMiAHy4bKlFo0Iml7UVM8PCtnR0js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755804315; c=relaxed/simple;
-	bh=hGBRAm2pJ2TGTxPHI6wNV37hN/B9Cqnijx7TVlmJ478=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dOWvvh6W/7jLz8KUoKlRpvnSg8V1W7XHwDrtzJ6UPVaAm1CFDyKROXQSHW0E0iKEDHV8ztp3I1zPxIH3BCMMrptJX8dMQqLzGt8sGY7s3vVD3DiEcaVGQAY0Ccsxf/BdMB/h2yVSNQSZD+LOqptbR6w1Y9vv3QzH2XJQDzloyNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id DFB08591EC;
-	Thu, 21 Aug 2025 19:25:09 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 09C846000A;
-	Thu, 21 Aug 2025 19:25:04 +0000 (UTC)
-Date: Thu, 21 Aug 2025 15:25:09 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
- <luto@kernel.org>, Borislav Petkov <bp@alien8.de>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Daniel Gomez <da.gomez@samsung.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Liam
- R. Howlett" <Liam.Howlett@oracle.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen
- <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, Yann
- Ylavic <ylavic.dev@gmail.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-modules@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v3 8/8] x86/ftrace: enable EXECMEM_ROX_CACHE for ftrace
- allocations
-Message-ID: <20250821152509.391c1ebe@gandalf.local.home>
-In-Reply-To: <aKa4otIF6AbhD2X3@kernel.org>
-References: <20250713071730.4117334-1-rppt@kernel.org>
-	<20250713071730.4117334-9-rppt@kernel.org>
-	<20250820184743.0302a8b5@gandalf.local.home>
-	<aKa4otIF6AbhD2X3@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755804967; c=relaxed/simple;
+	bh=0SJB2v2gnL/Ty/M+FYm1s0jKKPqo60UFMV5aWzfBzH4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ncjkda4bZX0EdvDpklzXQPebRtsYfmakMvvPkDscrqGVdXMhW7ad2NvutpwG4Zs8X2w3lha+08Fj+I+iJC7rw3ydTlUZo+Dxb8SL7zIllIzXvNuhM+DvsBz8KzMyez2LMpl2CjDKQhwTn2NwYvLukYX4V3H3HQB2ZTWLW4RFIzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=pQD8KtWs; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BBF26E68DC;
+	Thu, 21 Aug 2025 21:25:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1755804357; h=from:subject:date:message-id:to:mime-version:content-type;
+	bh=8HtAzJOKy99kZ4M8XY1PFEll6+EjUDg37Eg7mWEU3BM=;
+	b=pQD8KtWsp2960vwZGjyL1dXg/4AnOH79oSFBxspqlvMawYsIyzgQvLzIIkvBgouUtJh+xw
+	BsEOORYTNcbDlLcPeWk3TInYeZTHyWQBJ2PfnZXcdRQKnMvRwWxNGXwsh1H7ErR8dbTvp7
+	rDaNcP5fPC8143TtXEoUA/HtAicQeX5ZSnGRgXcyJPV3QA4vEwQ8I8hncJyO21u5UiQbaG
+	+2ELs94qaS9nZ2B8+WQCJI9RBAXEMgHyjxMFiHG/6gE+o3tKqEs714hIMnkqvV3Y5PSCTP
+	7WqKPdsuj7BC42dYHi8MgpvIeHw7D6MO9NB5AAVz+IkuNYfblBBM8UOSUhZMmw==
+Date: Thu, 21 Aug 2025 21:25:52 +0200
+From: Daniel Wagner <wagi@monom.org>
+To: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, 
+	stable-rt@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Tom Zanussi <tom.zanussi@linux.intel.com>, Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 6.12.43-rt12
+Message-ID: <175580420905.334958.3029444147013610727@nitrogen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: cyn6qk3us8ocdtde5jpyb3zckzedttjn
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 09C846000A
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+CMQG1BETxfdgNxC+cxIEgpiTvO2qKdGo=
-X-HE-Tag: 1755804304-494471
-X-HE-Meta: U2FsdGVkX184fcxufunVUclfn8DfVrb7JSHS5xeDl0+1DGaNCkqXSAQB78+nX+M9qFzJ+XEGE2xq2wEmhekhDhz0ls29PxPTia0KyCKj2DS3zUHhUKuOG29rvKqA+da4TRvTzYXkmRMxM9yYhP18JaBtbtIBqbDN8KtB5JlbHT5fUu9woGnAPIAoY03eAKVC7nP20wT5veRaNV7o/14O3bY+RR1I2T2s4pkHB1P2h+mTipvoybEfHmn99WxpnapDf4+skh9FOH6Xu6SLdfXz2koCvyMhzz1Aqg8laodsKkDWG+QUPEdGygjNSu+CKwtFaktA/6OzKZRKcuRIwbXZLnWXVDAgIOzhUUC3b75/yXlYBgamghT2isHwhNVCZfb5pWzA9SRRaB2BrM3UVRUBdg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 21 Aug 2025 09:11:46 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
+Hello RT-list!
 
-> maple tree is initialized after ftrace, so the patch below should fix it:
-> 
-> diff --git a/init/main.c b/init/main.c
-> index 0ee0ee7b7c2c..5753e9539ae6 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -956,6 +956,7 @@ void start_kernel(void)
->  	sort_main_extable();
->  	trap_init();
->  	mm_core_init();
-> +	maple_tree_init();
->  	poking_init();
->  	ftrace_init();
->  
-> @@ -973,7 +974,6 @@ void start_kernel(void)
->  		 "Interrupts were enabled *very* early, fixing it\n"))
->  		local_irq_disable();
->  	radix_tree_init();
-> -	maple_tree_init();
->  
->  	/*
->  	 * Set up housekeeping before setting up workqueues to allow the unbound
->  
+I'm pleased to announce the 6.12.43-rt12 stable release. This updates
+the tree to the latest stable release.There are no RT specific changes.
 
-Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+You can get this release via the git tree at:
 
-Thanks,
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
--- Steve
+  branch: v6.12-rt
+  Head SHA1: 627b83a89e0f4118ae7a279ca6e3cb8f5183b0cc
+
+Or to build 6.12.43-rt12 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.12.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.12.43.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/6.12/older/patch-6.12.43-rt12.patch.xz
+
+Signing key fingerprint:
+
+  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Daniel
+
 
