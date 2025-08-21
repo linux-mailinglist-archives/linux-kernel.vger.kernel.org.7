@@ -1,155 +1,117 @@
-Return-Path: <linux-kernel+bounces-780773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9A5B30936
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA65CB30938
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Aug 2025 00:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A175AC4511
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:31:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88D9D1D03DAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC122EA75F;
-	Thu, 21 Aug 2025 22:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16022283C9E;
+	Thu, 21 Aug 2025 22:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w9Yx9iYq"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hjrNecBB"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61216279DCB
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B537925C6EC
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 22:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755815456; cv=none; b=DwOmyFQJQ5zm5m9vN4yie/XG16A4Gn3D3Re+6uBFZZ/hsny99sccAlx40DLImK8iP+F+BpepVcIczy8VrmcrW70a5tJ0jqMUKi00xhlur20QzpvpeBmj0sXw9GnybWxqH0mJ54Bf7Lj7ZGUgQbFak3AUuO94SFdIcEjU3w1JdaU=
+	t=1755815524; cv=none; b=gX4Kk8k8suW+XkqbjItT0UrZdeEodFokjA0VQP/gwfpEEDUQ55O7LNamhFGFx648sXxR6ywSEbrxCpMDttPr0vgrOe5PrjOyx+J/PuNo5vGGc7qluwn2kTMl23/4bE7+WZ/KHzJrB8gowJHd/BMkjhQoY1f/zFoS1g4DOGB+cfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755815456; c=relaxed/simple;
-	bh=qrwTnPicyp9tNZ7V+qU5Qj6zOAnVLlyHrsqGuz2C1tQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=irOKwkJjshwZU/vIfcRPDax8hJ72+bnMas7zY4mVWWJ/Y9BrKTQjcoLq1+hv9Gy3RS8r3dKAGDMGun6DwFgeN8dR/qg8UCU5rb5XsZKdOvHtrIw0kRWg8MuR5S/eCkWjKOgUrrRZX0NsdLOikedwMqU/vypCQoicroESQcOc06U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w9Yx9iYq; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b29b714f8cso61461cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:30:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755815453; x=1756420253; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k8MDguIpfB1tiwDQTj5aE/No4Z7doxG64RXtusp1FLM=;
-        b=w9Yx9iYqWBuSxOxsfFF8k8P/YvFLmMjH9VYE1To1EKuzjCehrtfnhYR4pH/ZTQU+8i
-         aS6Leayi2A8rqF2PKKNC16tQDJQWekVg0WT3myNJ44D5xb6WltMUJGK/UVlm+46sagQS
-         HskVeDEvN2LcgZzg7XDJ2vv/DrdKAIvh1ZvZVf/W14lu+49O7IIE1sN0WouAJeuT1fKm
-         VkrANHHl8rB9PosTYXqvfUJvQ+PtKndvcLpiHh9uxYZpSVVdv8tZQbAMQhKuxefXT3CR
-         rReJInk76peqEellH39kHWgias42ULdQKpZBPU/75sjH5aADVUYoP41S2JT1nF4JljVX
-         xgLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755815453; x=1756420253;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k8MDguIpfB1tiwDQTj5aE/No4Z7doxG64RXtusp1FLM=;
-        b=A2gMPazFPScQb9f2mwZg93SFWw7zDyrqeP49zWixfy/rtGuYnyvN1CdFbhB21GItOO
-         waFetXVqbcpcywgVdMTLIerg20XOLAmbqERX4Dgxp4VlZ0MgS1nUISPcOAiE3jmMTWvh
-         F6yzmdiCbvja931WbevczdmSCuBhTRwmdgZrgSVbsBSn0dKYudz178UQmfU/9JspGmwz
-         wLXXevI4NLnIpI6nQ+ft0v62gPKcwBfEm3aSsJzm6jfYnPhy1uwCdTUEvMwSyw3m8fj4
-         VKCO51kalltsc8jIID2pQkRFqwEd5TzIB59d6EOz0TyuDUc0qx6llDt7rf6nyEzMM4WU
-         TnHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVK/I/PY8aH3iy/O4wypWVK+GxhBnjOicoflhLQ1GVXc6JCyIoWzppGBniefl8NAsSlBK7ueDKgPyftBGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUtmqsvh3xl0fsIKE0oBDwZmHa035m0u5vdwNgK30dWQeCdk2D
-	2+uxtTXEFpm4RMRAP78Tp4ftlULZcELUcV8ibBh6S5RoVaKbY7g2G4wLijDHut5Jyel3LlAhjdH
-	ikyN9vzMPaInegy6ueRD4+7qi8QHAXLzya/TNxoAF
-X-Gm-Gg: ASbGncujbO1HmLKGILf8NazxuU1lmdZgyccvGPprch+3hJmKKX9TVHRylrSm8hxco0y
-	gpdNHQTq4z2115hpWfksbhi859eFHqTF+s7HdbsaKn56ZXAeRcFwPncFBT2lc0cIZBnbIaUQbux
-	uzEsL8nn7/T/W9xENyidIBbTfDU/eysK86EI25FK807ggzIGKgmH1qLHsLIrfx1QTGXQwDuTVZ3
-	p6NLfj/QXtsJ86R9usZJZI6jlYBR2yjag24tLxRVChm/BVeXgzZLCHZoQ==
-X-Google-Smtp-Source: AGHT+IH2EHxRIc2XvOSnuoiOX6o9qCXNTtLKbVBQdBlpUCSlcPy+O7Gq5C+KP9ymQxWBlUK9RRR1skGgBYxWmAR+Khc=
-X-Received: by 2002:a05:622a:118c:b0:4b0:82e5:946b with SMTP id
- d75a77b69052e-4b2aacd5a4emr2026071cf.4.1755815452896; Thu, 21 Aug 2025
- 15:30:52 -0700 (PDT)
+	s=arc-20240116; t=1755815524; c=relaxed/simple;
+	bh=FZXiEO9ymqRTyNyhHt9aCurnaIp5/0aDjY/zutzCCDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2i+E4Kz7ECj0ykwdgYpU76mfrIS0q+Z5LPuI1usvuePDtCTb9Bys8NK1fwsoI/ZI9O9M/ye4MxP0JtV8IECByv2p7bBMyjEACa9wOKUhzSsh8tWxquOYZxHjst9Nl6BLnA8W9O29wBjqIif2vIa4mbvU97vWoBJa1rVqecIykY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hjrNecBB; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 21 Aug 2025 15:31:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755815520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oFEGbbG9vuv1+XubWypEttTMi6N6Jq7oeRJFb4KHVfY=;
+	b=hjrNecBBoBWsKWTqEpFNnL+iVXrbWpNYn9MFE86Hjj9HjdbamZiTL06lrzvtFamG9v4Wv4
+	rrSvmoyOB+TWNaAkyALNXOJrbgAhJE2dmzauDVGvPIYJRfdYheZw6vDXdaaOZycSw47tIB
+	7Yv9fNk7SuYSS+W/V0ht2XEqKPoiXHA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+	James Houghton <jthoughton@google.com>
+Subject: Re: [RFC PATCH 05/16] KVM: arm64: Introduce "struct kvm_page_fault"
+ for tracking abort state
+Message-ID: <aKeeRynpwFTSONfm@linux.dev>
+References: <20250821210042.3451147-1-seanjc@google.com>
+ <20250821210042.3451147-6-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-6-sagis@google.com>
- <68a7981019500_2be23a294ba@iweiny-mobl.notmuch>
-In-Reply-To: <68a7981019500_2be23a294ba@iweiny-mobl.notmuch>
-From: Sagi Shahar <sagis@google.com>
-Date: Thu, 21 Aug 2025 17:30:42 -0500
-X-Gm-Features: Ac12FXz2B1VmOXVRyb0Ok0u4rwStMH2RK2jNtJZ5p7yUkaK07yoWYHQtSWixBO4
-Message-ID: <CAAhR5DGEUqHGvYztLZJKfY+Re-aq5ACC4++m_7+yeMsL+1E11g@mail.gmail.com>
-Subject: Re: [PATCH v9 05/19] KVM: selftests: Update kvm_init_vm_address_properties()
- for TDX
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821210042.3451147-6-seanjc@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 21, 2025 at 5:03=E2=80=AFPM Ira Weiny <ira.weiny@intel.com> wro=
-te:
->
-> Sagi Shahar wrote:
-> > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> >
-> > Let kvm_init_vm_address_properties() initialize vm->arch.{s_bit, tag_ma=
-sk}
-> > similar to SEV.
-> >
-> > TDX sets the shared bit based on the guest physical address width and
-> > currently supports 48 and 52 widths.
-> >
-> > Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
-> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> > Co-developed-by: Sagi Shahar <sagis@google.com>
-> > Signed-off-by: Sagi Shahar <sagis@google.com>
-> > ---
-> >  .../selftests/kvm/include/x86/tdx/tdx_util.h       | 14 ++++++++++++++
-> >  tools/testing/selftests/kvm/lib/x86/processor.c    | 12 ++++++++++--
-> >  2 files changed, 24 insertions(+), 2 deletions(-)
-> >  create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdx_uti=
-l.h
-> >
-> > diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/t=
-ools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> > new file mode 100644
-> > index 000000000000..286d5e3c24b1
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> > @@ -0,0 +1,14 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +#ifndef SELFTESTS_TDX_TDX_UTIL_H
-> > +#define SELFTESTS_TDX_TDX_UTIL_H
-> > +
-> > +#include <stdbool.h>
-> > +
-> > +#include "kvm_util.h"
-> > +
-> > +static inline bool is_tdx_vm(struct kvm_vm *vm)
-> > +{
-> > +     return vm->type =3D=3D KVM_X86_TDX_VM;
-> > +}
->
-> NIT: Might have been better to define this in 4/19 and use it there.  But
-> looks like that logic is changed later on somewhere.  So...  meh.
+Hey Sean,
 
-We can skip the check for KVM_X86_TDX_VM entirely in 4/19 since like
-you said, it's replaced with something different later on.
+On Thu, Aug 21, 2025 at 02:00:31PM -0700, Sean Christopherson wrote:
+> Add and use a kvm_page_fault structure to track state when handling a
+> guest abort.  Collecting everything in a single structure will enable a
+> variety of cleanups (reduce the number of params passed to helpers), and
+> will pave the way toward using "struct kvm_page_fault" in arch-neutral KVM
+> code, e.g. to consolidate logic for KVM_EXIT_MEMORY_FAULT.
+> 
+> No functional change intended.
+> 
+> Cc: James Houghton <jthoughton@google.com>
+> Link: https://lore.kernel.org/all/20250618042424.330664-1-jthoughton@google.com
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/arm64/include/asm/kvm_host.h |  18 ++++
+>  arch/arm64/kvm/mmu.c              | 143 ++++++++++++++----------------
+>  2 files changed, 87 insertions(+), 74 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 2f2394cce24e..4623cbc1edf4 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -413,6 +413,24 @@ struct kvm_vcpu_fault_info {
+>  	u64 disr_el1;		/* Deferred [SError] Status Register */
+>  };
+>  
+> +struct kvm_page_fault {
+> +	const u64 esr;
+> +	const bool exec;
+> +	const bool write;
+> +	const bool is_perm;
 
->
-> Ira
->
-> [snip]
+Hmm... these might be better represented as predicates that take a
+pointer to this struct and we just compute it based on ESR. That'd have
+the benefit in the arch-neutral code where 'struct kvm_page_fault' is an
+opaque type and we don't need to align field names/types.
+
+> +	phys_addr_t fault_ipa; /* The address we faulted on */
+> +	phys_addr_t ipa; /* Always the IPA in the L1 guest phys space */
+
+NYC, but this also seems like a good opportunity to rename + retype
+these guys. Specifically:
+
+	fault_ipa => ipa
+	ipa => canonical_ipa
+
+would clarify these and align with the verbiage we currently use to talk
+about nested.
+
+Thanks,
+Oliver
 
