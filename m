@@ -1,346 +1,116 @@
-Return-Path: <linux-kernel+bounces-780238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1DDB2FF58
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:57:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC47B2FF6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0114F1BC1692
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:50:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CE38625876
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32873307AF2;
-	Thu, 21 Aug 2025 15:43:57 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FE93375B4;
+	Thu, 21 Aug 2025 15:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LT7kgDlY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F872253A1;
-	Thu, 21 Aug 2025 15:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8F13277A4;
+	Thu, 21 Aug 2025 15:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755791036; cv=none; b=jW6OE4BUz0N+KaVn0Vbe3SYGD/H8G/xvz4NeRY0pABLwMb4QdVMQhecbvh0+T3Fk5VYlrUBTmUor6pHCYmxiBnoFHRz4ERxXOeGLncbmdB4d6k6UeDKRupcOw1ObGVWS6NnBMb3Ie4Hxcmf7nQ3eIUz9Mn3/l4xf5LCHyRacaz8=
+	t=1755791073; cv=none; b=MUfCiTPdodOy7f7Fdr7WhKfMfNljTLGv1ZOfzJ/tlKpZu5dkdNYM7W8MaojIH1Ela7JPvRJHuw+DZZLEwTM+Mi5cV/UOdLYMHTrCINS9ma4VEM4NHH0CsOj4jxrP8J+GpShfW1vP0K7CFmn6CsunE8ALQrqcbJSQztCaylfJIWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755791036; c=relaxed/simple;
-	bh=zkseqED+prKWKv8WhHs4A4hZi+XUkEv7BDHGRt5TJ7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U5M+kaFDLdD4QBmLCR0NDVetGz48W3JnaNmgJtBzUfFNYxJtOe9O7odou20510l2QBScwok9yvoDzhDO2vyIn9i+xeFE44bg3YET0TShHP/wxjP/8Lp8h00R7wa2PSXt7TH7MYv5UYAabhqafMZsQZpa+O0lQRZnK60IsDJ/lsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 87D4513884E;
-	Thu, 21 Aug 2025 15:43:52 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id C9CAB2000F;
-	Thu, 21 Aug 2025 15:43:50 +0000 (UTC)
-Date: Thu, 21 Aug 2025 11:43:55 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Elijah Wright <git@elijahs.space>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: move buffer in trace_seq to end of struct
-Message-ID: <20250821114355.6ee546b0@gandalf.local.home>
-In-Reply-To: <20250821053917.23301-1-git@elijahs.space>
-References: <20250821053917.23301-1-git@elijahs.space>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755791073; c=relaxed/simple;
+	bh=sV+9DsTJ0Fp/TKXtugaNMSX791BGhITPp66IoPgge20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZ1kLCxH0fnjRKY9ZdU0HVbVMsLg9540OyX4sNq4vQUy0Xfz8lIboZ8UaGOZGkKJmRdHT1I4y3fcTl+2O7kRPbdh+S6r284kIDSxGlMJnzzjFlcrCyt3rk3ULvtD1CDpjdanLO90NX0F5P/XvGYHRa7k+nDHEFVhWw/jC/YGG4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LT7kgDlY; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755791072; x=1787327072;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sV+9DsTJ0Fp/TKXtugaNMSX791BGhITPp66IoPgge20=;
+  b=LT7kgDlY5vjcxJ1oYlJDsugH9JZizU8T58gc81GuF/FmT6H+I3U69yLI
+   QuCt8Dy/M84+qeMqytjslG3Vo0prd+gWBnvovkP3egQdsStOMBHWwtNjX
+   DOt+bOM7E+gogqJTyBhIpnNLeuNW87LsDhsIk2f57GLHKmEGKQCFRfqji
+   e0tbBLOwVkmZfdLXpB7mRgtvcOODjundreZ8Z9rjBrwrpNPv5k1NVX/+U
+   fKBVZn0+iXRpvgVdklZYIP9YUSn+wKUd9zd3II3WftWROAwXVmtUVhW6r
+   Wjs5iwmtvZ4KQpBoucFhqwYYQNVNHElsr5dTaBknLxJrUi8Nz+t6XZvVz
+   A==;
+X-CSE-ConnectionGUID: t+y4rVO3RDaQgAsacOJnLg==
+X-CSE-MsgGUID: QkqZIxhVSDWpZqyWF3XK5A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58183067"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="58183067"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 08:44:31 -0700
+X-CSE-ConnectionGUID: YdCsIL4bRcOJDXxhJCHFEQ==
+X-CSE-MsgGUID: eNVvE/FxQUOKfy85Xu4V6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="168807569"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 08:44:28 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1up7Sj-00000007H9g-3drd;
+	Thu, 21 Aug 2025 18:44:25 +0300
+Date: Thu, 21 Aug 2025 18:44:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: dimitri.fedrau@liebherr.com
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Li peiyu <579lpy@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Chris Lesiak <chris.lesiak@licorbio.com>
+Subject: Re: [PATCH 1/2] iio: humditiy: hdc3020: fix units for temperature
+ and humidity measurement
+Message-ID: <aKc-2WHDTtGcXmCJ@smile.fi.intel.com>
+References: <20250821-hdc3020-units-fix-v1-0-6ab0bc353c5e@liebherr.com>
+ <20250821-hdc3020-units-fix-v1-1-6ab0bc353c5e@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: C9CAB2000F
-X-Stat-Signature: gcugpctkwzmdeup33w6qrqwu8wd8c3ng
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/lb36+2aRzw445qXokpmmncYLfT8XTzYU=
-X-HE-Tag: 1755791030-252035
-X-HE-Meta: U2FsdGVkX1+Q2mGo1qDzaEsBPrG0VpVYOkzTvU97uxaWdfda+dgpcZOyxFqQWlB0bI3aaG+TpOuOUOtUn6j8bmXlwQMDZx2oCL06y4LCz/LIs9B+Hg5+T3Yoz/ZyseBZR/JXcdQ/THwN/v9e/mVB71tSZmONINHMeWXiV1Mf88h0EEbPozYjYKQXeZ71ayg5TuF3D3fHu5/IDc51z8rea90AEwEMnjG/Q46gi66k/M6QYFGm5imxTDuq4qBkjWjnJjwf3LVFXePIuwW2AViJAQrYEprzRFdo0P2LcTJUskP45m46Zc10kW5pxH0Jd6dS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-hdc3020-units-fix-v1-1-6ab0bc353c5e@liebherr.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, 20 Aug 2025 22:39:07 -0700
-Elijah Wright <git@elijahs.space> wrote:
+On Thu, Aug 21, 2025 at 05:23:54PM +0200, Dimitri Fedrau via B4 Relay wrote:
+> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> 
+> According to the ABI the units after application of scale and offset are
+> milli degrees for temperature measurements and milli percent for relative
+> humidity measurements. Change scale factor to fix this issue.
 
-> TRACE_SEQ_BUFFER_SIZE is dependent on the architecture for its size. on 64-bit
-> systems, it is 8148 bytes. forced 8-byte alignment in size_t and seq_buf means
-> that trace_seq is 8200 bytes on 64-bit systems. moving the buffer to the end
-> of the struct fixes the issue. there shouldn't be any side effects, i.e.
-> pointer arithmetic on trace_seq
+...
 
-I don't remember why I had the buffer at the beginning. I think I did do
-some crazy typecasting when I first developed this, as the buffer field
-being first goes all the way back to the first commit (which doesn't
-include prototypes before it).
+>  		if (chan->type == IIO_TEMP)
+> -			*val = 175;
+> +			*val = 175000;
+>  		else
+> -			*val = 100;
+> +			*val = 100000;
 
-I guess I'm fine with the change. Probably even makes the cache better, as
-now the seq is now at the start of the buffer.
+Perhaps  use " * MILL" uin both cases?
 
-And that 'full' variable could actually be replaced as the seq does handle
-those cases too. But it can't just be removed. I think the patch below
-could be the answer to get rid of it.
-
-Thanks,
-
--- Steve
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
-index a93ed5ac3226..92364deb39a5 100644
---- a/include/linux/trace_seq.h
-+++ b/include/linux/trace_seq.h
-@@ -24,14 +24,12 @@ struct trace_seq {
- 	char			buffer[TRACE_SEQ_BUFFER_SIZE];
- 	struct seq_buf		seq;
- 	size_t			readpos;
--	int			full;
- };
- 
- static inline void
- trace_seq_init(struct trace_seq *s)
- {
- 	seq_buf_init(&s->seq, s->buffer, TRACE_SEQ_BUFFER_SIZE);
--	s->full = 0;
- 	s->readpos = 0;
- }
- 
-@@ -77,7 +75,7 @@ trace_seq_buffer_ptr(struct trace_seq *s)
-  */
- static inline bool trace_seq_has_overflowed(struct trace_seq *s)
- {
--	return s->full || seq_buf_has_overflowed(&s->seq);
-+	return seq_buf_has_overflowed(&s->seq);
- }
- 
- /*
-diff --git a/kernel/trace/trace_seq.c b/kernel/trace/trace_seq.c
-index c158d65a8a88..bcb4cf1307f8 100644
---- a/kernel/trace/trace_seq.c
-+++ b/kernel/trace/trace_seq.c
-@@ -24,9 +24,6 @@
- #include <linux/seq_file.h>
- #include <linux/trace_seq.h>
- 
--/* How much buffer is left on the trace_seq? */
--#define TRACE_SEQ_BUF_LEFT(s) seq_buf_buffer_left(&(s)->seq)
--
- /*
-  * trace_seq should work with being initialized with 0s.
-  */
-@@ -64,6 +61,37 @@ int trace_print_seq(struct seq_file *m, struct trace_seq *s)
- 	return ret;
- }
- 
-+/* If buffer has overflowed, nul terminate the old end */
-+static inline void reset_buf_cond(struct trace_seq *s, unsigned int end)
-+{
-+	if (likely(!seq_buf_has_overflowed(&s->seq)))
-+		return;
-+
-+	/* If we can't write it all, don't bother writing anything */
-+	if (end >= s->seq.size)
-+		end = s->seq.size - 1;
-+	s->buffer[end] = '\0';
-+}
-+
-+static inline bool len_overflows_buf(struct trace_seq *s, unsigned int len)
-+{
-+	unsigned int end;
-+
-+	if (len < seq_buf_buffer_left(&(s)->seq))
-+		return false;
-+
-+	/* Buffer is full, end it */
-+	end = seq_buf_used(&s->seq);
-+	if (end >= s->seq.size)
-+		end = s->seq.size - 1;
-+	s->buffer[end] = '\0';
-+
-+	/* Make the buffer overflowed */
-+	seq_buf_set_overflow(&s->seq);
-+
-+	return true;
-+}
-+
- /**
-  * trace_seq_printf - sequence printing of trace information
-  * @s: trace sequence descriptor
-@@ -80,20 +108,13 @@ void trace_seq_printf(struct trace_seq *s, const char *fmt, ...)
- 	unsigned int save_len = s->seq.len;
- 	va_list ap;
- 
--	if (s->full)
--		return;
--
- 	__trace_seq_init(s);
- 
- 	va_start(ap, fmt);
- 	seq_buf_vprintf(&s->seq, fmt, ap);
- 	va_end(ap);
- 
--	/* If we can't write it all, don't bother writing anything */
--	if (unlikely(seq_buf_has_overflowed(&s->seq))) {
--		s->seq.len = save_len;
--		s->full = 1;
--	}
-+	reset_buf_cond(s, save_len);
- }
- EXPORT_SYMBOL_GPL(trace_seq_printf);
- 
-@@ -110,17 +131,11 @@ void trace_seq_bitmask(struct trace_seq *s, const unsigned long *maskp,
- {
- 	unsigned int save_len = s->seq.len;
- 
--	if (s->full)
--		return;
--
- 	__trace_seq_init(s);
- 
- 	seq_buf_printf(&s->seq, "%*pb", nmaskbits, maskp);
- 
--	if (unlikely(seq_buf_has_overflowed(&s->seq))) {
--		s->seq.len = save_len;
--		s->full = 1;
--	}
-+	reset_buf_cond(s, save_len);
- }
- EXPORT_SYMBOL_GPL(trace_seq_bitmask);
- 
-@@ -140,18 +155,11 @@ void trace_seq_vprintf(struct trace_seq *s, const char *fmt, va_list args)
- {
- 	unsigned int save_len = s->seq.len;
- 
--	if (s->full)
--		return;
--
- 	__trace_seq_init(s);
- 
- 	seq_buf_vprintf(&s->seq, fmt, args);
- 
--	/* If we can't write it all, don't bother writing anything */
--	if (unlikely(seq_buf_has_overflowed(&s->seq))) {
--		s->seq.len = save_len;
--		s->full = 1;
--	}
-+	reset_buf_cond(s, save_len);
- }
- EXPORT_SYMBOL_GPL(trace_seq_vprintf);
- 
-@@ -174,19 +182,11 @@ void trace_seq_bprintf(struct trace_seq *s, const char *fmt, const u32 *binary)
- {
- 	unsigned int save_len = s->seq.len;
- 
--	if (s->full)
--		return;
--
- 	__trace_seq_init(s);
- 
- 	seq_buf_bprintf(&s->seq, fmt, binary);
- 
--	/* If we can't write it all, don't bother writing anything */
--	if (unlikely(seq_buf_has_overflowed(&s->seq))) {
--		s->seq.len = save_len;
--		s->full = 1;
--		return;
--	}
-+	reset_buf_cond(s, save_len);
- }
- EXPORT_SYMBOL_GPL(trace_seq_bprintf);
- 
-@@ -204,15 +204,10 @@ void trace_seq_puts(struct trace_seq *s, const char *str)
- {
- 	unsigned int len = strlen(str);
- 
--	if (s->full)
--		return;
--
- 	__trace_seq_init(s);
- 
--	if (len > TRACE_SEQ_BUF_LEFT(s)) {
--		s->full = 1;
-+	if (len_overflows_buf(s, len))
- 		return;
--	}
- 
- 	seq_buf_putmem(&s->seq, str, len);
- }
-@@ -230,15 +225,10 @@ EXPORT_SYMBOL_GPL(trace_seq_puts);
-  */
- void trace_seq_putc(struct trace_seq *s, unsigned char c)
- {
--	if (s->full)
--		return;
--
- 	__trace_seq_init(s);
- 
--	if (TRACE_SEQ_BUF_LEFT(s) < 1) {
--		s->full = 1;
-+	if (len_overflows_buf(s, len))
- 		return;
--	}
- 
- 	seq_buf_putc(&s->seq, c);
- }
-@@ -256,15 +246,10 @@ EXPORT_SYMBOL_GPL(trace_seq_putc);
-  */
- void trace_seq_putmem(struct trace_seq *s, const void *mem, unsigned int len)
- {
--	if (s->full)
--		return;
--
- 	__trace_seq_init(s);
- 
--	if (len > TRACE_SEQ_BUF_LEFT(s)) {
--		s->full = 1;
-+	if (len_overflows_buf(s, len))
- 		return;
--	}
- 
- 	seq_buf_putmem(&s->seq, mem, len);
- }
-@@ -285,16 +270,11 @@ void trace_seq_putmem_hex(struct trace_seq *s, const void *mem,
- {
- 	unsigned int save_len = s->seq.len;
- 
--	if (s->full)
--		return;
--
- 	__trace_seq_init(s);
- 
- 	/* Each byte is represented by two chars */
--	if (len * 2 > TRACE_SEQ_BUF_LEFT(s)) {
--		s->full = 1;
-+	if (len_overflows_buf(s, len * 2))
- 		return;
--	}
- 
- 	/* The added spaces can still cause an overflow */
- 	seq_buf_putmem_hex(&s->seq, mem, len);
-@@ -328,10 +308,8 @@ int trace_seq_path(struct trace_seq *s, const struct path *path)
- 
- 	__trace_seq_init(s);
- 
--	if (TRACE_SEQ_BUF_LEFT(s) < 1) {
--		s->full = 1;
--		return 0;
--	}
-+	if (len_overflows_buf(s, 1))
-+		return;
- 
- 	seq_buf_path(&s->seq, path, "\n");
- 
-@@ -387,10 +365,8 @@ int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
- 
- 	__trace_seq_init(s);
- 
--	if (TRACE_SEQ_BUF_LEFT(s) < 1) {
--		s->full = 1;
--		return 0;
--	}
-+	if (len_overflows_buf(s, 1))
-+		return;
- 
- 	seq_buf_hex_dump(&(s->seq), prefix_str,
- 		   prefix_type, rowsize, groupsize,
 
