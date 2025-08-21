@@ -1,98 +1,113 @@
-Return-Path: <linux-kernel+bounces-779825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D507CB2F99F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD01B2F9A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 722351616AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:05:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4AB6AC1869
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778ED322747;
-	Thu, 21 Aug 2025 13:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E339320CD7;
+	Thu, 21 Aug 2025 13:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="AXQ7SPKx"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9wflG+3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053A836CDE1;
-	Thu, 21 Aug 2025 13:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755781527; cv=pass; b=u6qHI0OGSQlo4vs7DTyaH0tko/H6GViMUn47N9NMipMAN06vJtjK0avJskb5KL5uOrxUVnvKl4XG8bc/gvUrI+3AuL3jYb2QfoQdjv39tuiQgWtEhvqocwvEqXCqBBKYH8QXSJ9cU6k2XmRdU35RjeLZXSx/eRmNHq5A3uzZ+cg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755781527; c=relaxed/simple;
-	bh=+8sGKMRZCJWLdmy/DkF91IGc5BVarEzYoIFTWH7RXXw=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=LOrFw20DKcbTFWWKGmQKyz14Erss5VwPZYYBW1HwQxAluTsEnlt/ttR6OsciFlEuw+mDJI6cYZpuor1Fyh/Oy3I/wtRcqnEOYeIoeNYCoe/cXqHSLE7DINvnb1nxB81PY8uaPuWZ89IEalWwheRqe/MRJbHu1FYoJ4O/QYKGfng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=AXQ7SPKx; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1755781475; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=i7Wggr5HBYWBGUd1xe6bh1Ol5XBy0xuiYXMGjM/ux/SsG7ULhZMJeq6sOPDK8+C3fImCCbM5Vv8f5XXDM8RcTe0KKF8ROT2alww190aXSohBq9IUNOKu22MshDdjGtaHfq1SpLT9MMeR/qDICFaA7pSaw396lyLv0bfGQVo/RhI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755781475; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SYHuj7Wjx5qXUTPgXJD1D8Eca4emv02OFlDqdIAxWXg=; 
-	b=La0rFyDmhqKUYNKXoHgy/2RIceLK9RCjNqIdMCFI7uRY8LX9RPJ2eGtKytCGNuhKlyQZ7iSvyO/eL/vE/GEvtKq61b1Nl/YZMP/0tiYalzN+cwnMJaJjCVc04Q831rwtyyKUVZmGH4ZSNtCxx2d4PVlLf7wodS7gumlZs07q+tk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755781475;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=SYHuj7Wjx5qXUTPgXJD1D8Eca4emv02OFlDqdIAxWXg=;
-	b=AXQ7SPKxUUopWeIvF7qQBZ7U4g0taKulTETxsoQoPfyom1vx/YMhl6nP5YCcK/zj
-	b74nczifLvROCOVksSFURwJTZ3ZGTInNUeJDjCipy7k9oHM2h3DDmi9gQ5QHA1GIQ/4
-	If6GaO7AjDGG5/1MAVWnSjteaxHi7J92Pi6jJ8vY=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1755781473954167.9696619074616; Thu, 21 Aug 2025 06:04:33 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Thu, 21 Aug 2025 06:04:33 -0700 (PDT)
-Date: Thu, 21 Aug 2025 17:04:33 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Christian Brauner" <brauner@kernel.org>
-Cc: "Lichen Liu" <lichliu@redhat.com>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"kexec" <kexec@lists.infradead.org>, "rob" <rob@landley.net>,
-	"weilongchen" <weilongchen@huawei.com>, "cyphar" <cyphar@cyphar.com>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"zohar" <zohar@linux.ibm.com>, "stefanb" <stefanb@linux.ibm.com>,
-	"initramfs" <initramfs@vger.kernel.org>, "corbet" <corbet@lwn.net>,
-	"linux-doc" <linux-doc@vger.kernel.org>,
-	"viro" <viro@zeniv.linux.org.uk>, "jack" <jack@suse.cz>
-Message-ID: <198ccbb2694.d3fad31887413.1131652624698180933@zohomail.com>
-In-Reply-To: <20250821-zirkel-leitkultur-2653cba2cd5b@brauner>
-References: <20250815121459.3391223-1-lichliu@redhat.com> <20250821-zirkel-leitkultur-2653cba2cd5b@brauner>
-Subject: Re: [PATCH v2] fs: Add 'rootfsflags' to set rootfs mount options
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0FF13A41F;
+	Thu, 21 Aug 2025 13:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755781495; cv=none; b=Z/rVLTMsrq59Tt5Rr8ejiSYqKQrj8DdYN3Uf06xBrezntnOw+Lb91C4uaAmz/jcYxKhxovaTMK7J7t4O6OUMV+AdNqV6RIOyktahEh4adnwjbqb3XJwJohL88R1dWxsI5niDdx2xoLkgbJOIVPhdPG3RF2j4PzGc7/dv79RNOWI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755781495; c=relaxed/simple;
+	bh=afNeEt1xEIocZL5b/k7qATVzHSM7KVBgB9ZGL4lIsuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PT4ImDkQnIjeBXSHpMm2lJBQUqWhMC0KqNdzoalOkU4igilpss4AsJWuPl6LEO36RiAm7jaU7rSHSv8qRpML4Df1MfIDEpHEU/3j7sEy9/5HiMsktwxfh3UOZupaMtkGGY4InvPu0vlhjNU+FTjbWPzEaS3AkQI8deByumTJGTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9wflG+3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86F7FC4CEEB;
+	Thu, 21 Aug 2025 13:04:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755781494;
+	bh=afNeEt1xEIocZL5b/k7qATVzHSM7KVBgB9ZGL4lIsuA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k9wflG+3N1h8gqB+XnE+COeD536k9o98/BStH3ltto9n+BGberzNanAp/XKcq6psC
+	 VjboWYzTCfvwqeaoWLwT8M+l/RxNBJenkRcnQ1O4IkGUZUUr8AmIhypECc142GJOVm
+	 O8fwegSwmXg7DjmJCw81EeFe9hXnPnCZnHY7EOiDVoRmpIuNAlnC6innPrgfBhxgy2
+	 dh97W43SRNw8FljCkgfRAyK9KB9WGwG47doiTTjB02FUjjrTdiHbPM1jRy5J3PiliG
+	 iihONR8huulx+2yVat3Q9YIpGBGKO66j0ewyU1+txOUuTG6UeheyYmG3FsPjkAzXlA
+	 GjNWOBee/Y54A==
+Date: Thu, 21 Aug 2025 09:04:53 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Chanho Min <chanho.min@lge.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+	Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
+	stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>
+Subject: Re: [PATCH] ipv6: mcast: extend RCU protection in igmp6_send()
+Message-ID: <aKcZdaEtye817DgO@laps>
+References: <20250818092453.38281-1-chanho.min@lge.com>
+ <062219ff-6abf-4289-84da-67a5c731564e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr080112273e22f1786581338e49b7e07e000001104afa9c15ad2a122830cf688da2c59c8afe72e8c650ac99:zu080112272dfa6be1a67c778365ab64e5000011cfac17ec895c53b99647dbd1d7d4ef18c9ec956b108d8a70:rf0801122b9f962294dd4be519c8bf7647000010f904f79ddee4b424b1c5dbfae154f5453192b76d9278235c9b24def2:ZohoMail
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <062219ff-6abf-4289-84da-67a5c731564e@redhat.com>
 
- ---- On Thu, 21 Aug 2025 12:24:11 +0400  Christian Brauner <brauner@kernel.org> wrote --- 
- > Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
- > Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+On Thu, Aug 21, 2025 at 11:23:23AM +0200, Paolo Abeni wrote:
+>On 8/18/25 11:24 AM, Chanho Min wrote:
+>> From: Eric Dumazet <edumazet@google.com>
+>>
+>> [ Upstream commit 087c1faa594fa07a66933d750c0b2610aa1a2946 ]
+>>
+>> igmp6_send() can be called without RTNL or RCU being held.
+>>
+>> Extend RCU protection so that we can safely fetch the net pointer
+>> and avoid a potential UAF.
+>>
+>> Note that we no longer can use sock_alloc_send_skb() because
+>> ipv6.igmp_sk uses GFP_KERNEL allocations which can sleep.
+>>
+>> Instead use alloc_skb() and charge the net->ipv6.igmp_sk
+>> socket under RCU protection.
+>>
+>> Cc: stable@vger.kernel.org # 5.4
+>> Fixes: b8ad0cbc58f7 ("[NETNS][IPV6] mcast - handle several network namespace")
+>> Signed-off-by: Eric Dumazet <edumazet@google.com>
+>> Reviewed-by: David Ahern <dsahern@kernel.org>
+>> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+>> Link: https://patch.msgid.link/20250207135841.1948589-9-edumazet@google.com
+>> [ chanho: Backports to v5.4.y. v5.4.y does not include
+>> commit b4a11b2033b7(net: fix IPSTATS_MIB_OUTPKGS increment in OutForwDatagrams),
+>> so IPSTATS_MIB_OUTREQUESTS was changed to IPSTATS_MIB_OUTPKGS defined as
+>> 'OutRequests'. ]
+>> Signed-off-by: Chanho Min <chanho.min@lge.com>
+>> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>
+>FWIW, the SoB chain above looks incorrect, as I think that neither Jakub
+>nor Sasha have touched yet this patch.
 
-Applied version contains this:
-> Specify mount options for for the initramfs mount
+It's a backport of an older backport where there already exists a commit with
+both Jakub's any my signoff:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=81b25a07ebf53f9ef4ca8f3d96a8ddb94561dd5a
 
-I. e. "for" two times.
+But yes, the SoB chain is wrong because Chanho Min's SoB should come after
+ours, not before.
 
---
-Askar Safin
-https://types.pl/@safinaskar
-
+-- 
+Thanks,
+Sasha
 
