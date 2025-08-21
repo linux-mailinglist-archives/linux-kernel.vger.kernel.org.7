@@ -1,250 +1,461 @@
-Return-Path: <linux-kernel+bounces-779164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCAAB2EFDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:36:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375E6B2EFE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BF7E7B2E3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:35:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7193E1895366
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B368296BA6;
-	Thu, 21 Aug 2025 07:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D8142AA9;
+	Thu, 21 Aug 2025 07:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hsyOGwXA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pB7CCaxA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74432475E3;
-	Thu, 21 Aug 2025 07:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE822475E3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755761795; cv=none; b=qgpTJFxNjXUnPM/AhhRFg1qV/TPGv3HV+GYLX2+8uJd/a9M6VIRmFDCYeTs36nDz1RN2KjJj1Szdt+5QN/pAakYs5yMygNPmaD8llQOqSGdwdc832+RZxq7wszvjuRxek/buAPkmLMnIO/JtGzKIEARkv0eJH15B44EfSTdstVo=
+	t=1755761799; cv=none; b=G2tVClOC2j0cOyl/py66PAusUbyucLjIejZl6j8eqCUaxcBCgoU9YtpQQlAyhZ8pi0oWryhRtdPRAGNC9i2EitFFG0CQXr0eVvbrNjfCdprozd7QrMjzCcOqpCelIDCKh4rzqxjmrJmQhpBZBYBEk7SkgDsdwioPMdVerj0+iUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755761795; c=relaxed/simple;
-	bh=YZkwDPYNk80itruFLYL1PliWkKr5+IoGi3ov2d0PhyY=;
+	s=arc-20240116; t=1755761799; c=relaxed/simple;
+	bh=Eo5YMJYbmgQg2bC0J3ToTc3e2+A7HXfcxWf0OWKuNdU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uO/73E8+bJkN9XCaSii79c7k2n4l01Veeyos4hrNZ8HD5rR/Zwt9rvRn/h95YBX0GCC4sjLm/8TyrmqSVXY3xOqRuT4l2tBFfHfp4HNeJVAa+3hzx7BTm+nqNX8JUlYe+FoxYQN3UVTkLq1c2Zs8X9mg43oONwOOC4E6tty+G9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hsyOGwXA; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755761794; x=1787297794;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YZkwDPYNk80itruFLYL1PliWkKr5+IoGi3ov2d0PhyY=;
-  b=hsyOGwXAR5WCIenRNV5mmN2eo3NInGvrz0NfJab54fozxR4yp8+8mxxA
-   No1CWft58NCD1RU3/TlNAirOVNySnvG0SYd+LGr4WQjVsF/Obb5DJYbRx
-   kQm4fq3aKNG/1nbIukuaAR2J6H990/uEpE3WV+AQwn7YxPeFEnb/1EVsI
-   Q7LJYmusZL5Hp8omSS4l/RO5cT84kTdaH/a2T4GULK44/oyiNajI/JQgU
-   TOgOlc3bRyFsFO3C0JvqJXqmWAxtpY7y4FQ2eIY8LM62DVrRrZnj6t12o
-   1+uE/D2nlHlsqsIPWbAAeJtX8suDbThO7kEOod2mtxSfK9un3OMN7V1rY
-   A==;
-X-CSE-ConnectionGUID: Eil3ozniTsag+8hhFWem6g==
-X-CSE-MsgGUID: iCIX7lNxT5y0wlN5ONh+KQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="68638815"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="68638815"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 00:36:33 -0700
-X-CSE-ConnectionGUID: 2dMsqFG0QcSzB+3gJFySTw==
-X-CSE-MsgGUID: tqeg8/XVQSytM7etCX/cZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="172757008"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa004.jf.intel.com with SMTP; 21 Aug 2025 00:36:26 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 21 Aug 2025 10:36:25 +0300
-Date: Thu, 21 Aug 2025 10:36:25 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Andrei Kuchynski <akuchynski@chromium.org>
-Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	Guenter Roeck <groeck@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	"Christian A. Ehrhardt" <lk@c--e.de>,
-	Venkat Jayaraman <venkat.jayaraman@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 5/5] usb: typec: Expose alternate mode priority via
- sysfs
-Message-ID: <aKbMeSCHf-ZhbcvT@kuha.fi.intel.com>
-References: <20250814184455.723170-1-akuchynski@chromium.org>
- <20250814184455.723170-6-akuchynski@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KZ46VTzNXVsDanfNguHuUSkg44UUy70S1xEjAHI72XO7QTB+MHvnJFw5LcVz4MbEsdWYVRuJVEIqonXXoFrbaOjnndRWa85PlCTTz9kd5ssXNHlJ8u7cDgJzd6PARoKrt+a4XWR4wr9pMOVibGV2eV/7gX47LbKg2TPd0nXyC6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pB7CCaxA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3684C4CEED;
+	Thu, 21 Aug 2025 07:36:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755761799;
+	bh=Eo5YMJYbmgQg2bC0J3ToTc3e2+A7HXfcxWf0OWKuNdU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pB7CCaxAMBi+yKG7eEFjwWvSOZ+nS5BLXlDYKUAB4QMmk9HCmIQIFyHrU1kiai+mQ
+	 tZ6Tl6LziMqqs1Y06HaopyMIQZHghkQyy18pA7k9Fo9Yx0Fy7ckxn5gcXKCig2u66y
+	 INtht0otG6SnOzesfSqxiPl+HKjg44HFPJP4ljQKk3+KaR8TKMkQ7v8Cg7K//8vezo
+	 768fO+ST36XEZDHAr80gDDx7jgGV4nYrgpbncW551rrAlhaAO4tQZAmwm2F55IFYMz
+	 gDuP2elAfGqX6dyYTGbyGFo2VJj+uGlUrPRLYBOaWHfOokzI9hslOJhRwjo7O5Uqec
+	 h/CuWlWD7plcQ==
+Date: Thu, 21 Aug 2025 09:36:36 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: dri-devel@lists.freedesktop.org, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, David Airlie <airlied@gmail.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
+Message-ID: <20250821-ivory-pegasus-of-aurora-c5c400@kuoka>
+References: <20250820144128.17603-1-mike.looijmans@topic.nl>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.51b271ba-97e3-4830-97f9-7b6b4e0d202f@emailsignatures365.codetwo.com>
+ <20250820144128.17603-3-mike.looijmans@topic.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250814184455.723170-6-akuchynski@chromium.org>
+In-Reply-To: <20250820144128.17603-3-mike.looijmans@topic.nl>
 
-Hi Andrei,
-
-On Thu, Aug 14, 2025 at 06:44:55PM +0000, Andrei Kuchynski wrote:
-> This patch introduces a priority sysfs attribute to the USB Type-C
-> alternate mode port interface. This new attribute allows user-space to
-> configure the numeric priority of alternate modes managing their preferred
-> order of operation.
+On Wed, Aug 20, 2025 at 04:40:35PM +0200, Mike Looijmans wrote:
+> The tmds181 and sn65dp159 are "retimers" and hence can be considered
+> HDMI-to-HDMI bridges. Typical usage is to convert the output of an
+> FPGA into a valid HDMI signal, and it will typically be inserted
+> between an encoder and hdmi-connector.
 > 
-> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 > ---
->  Documentation/ABI/testing/sysfs-class-typec | 12 ++++++
->  drivers/usb/typec/class.c                   | 47 ++++++++++++++++++++-
->  2 files changed, 58 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
-> index 38e101c17a00..001202d651fa 100644
-> --- a/Documentation/ABI/testing/sysfs-class-typec
-> +++ b/Documentation/ABI/testing/sysfs-class-typec
-> @@ -162,6 +162,18 @@ Description:	Lists the supported USB Modes. The default USB mode that is used
->  		- usb3 (USB 3.2)
->  		- usb4 (USB4)
+> Changes in v3:
+> Lower-case hex values and use defines for EYESCAN registers
+> Remove equalizer code (unlikely to be used)
+> Remove attributes (no longer useful, undocumented)
+> Fix build for 6.17 kernel
+> Use devm_drm_bridge_alloc
+> Sort includes and add linux/bitfield.h
+> Check chip type and complain on mismatch
+> 
+> Changes in v2:
+> Use atomic_enable/disable
+> Use #defines for bit fields in registers
+> Allow HDMI 2 compliance
+> Filter modes on clock range
+> Use cross-over pixel frequency instead of manual overides
+> Devicetree bindings according to standards
+> 
+>  drivers/gpu/drm/bridge/Kconfig      |  11 +
+>  drivers/gpu/drm/bridge/Makefile     |   1 +
+>  drivers/gpu/drm/bridge/ti-tmds181.c | 409 ++++++++++++++++++++++++++++
+>  3 files changed, 421 insertions(+)
+>  create mode 100644 drivers/gpu/drm/bridge/ti-tmds181.c
+> 
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index b9e0ca85226a..753177fc9b50 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -430,6 +430,17 @@ config DRM_TI_SN65DSI86
+>  	help
+>  	  Texas Instruments SN65DSI86 DSI to eDP Bridge driver
 >  
-> +		What:		/sys/class/typec/<port>/<alt-mode>/priority
-> +Date:		July 2025
-> +Contact:	Andrei Kuchynski <akuchynski@chromium.org>
-> +Description:
-> +		Displays and allows setting the priority for a specific alt-mode.
-> +		When read, it shows the current integer priority value. Lower numerical
-> +		values indicate higher priority (0 is the highest priority).
-> +		If the new value is already in use by another mode, the priority of the
-> +		conflicting mode and any subsequent modes will be incremented until they
-> +		are all unique.
-> +		This attribute is visible only if the kernel supports mode selection.
-
-I was expecting this to be already used in this series.
-
-IMO this file should be the only thing the user space needs to use by
-default at least.
-
->  USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
->  
->  What:		/sys/class/typec/<port>-partner/accessory_mode
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index a72325ff099a..708f3487222a 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -19,6 +19,7 @@
->  #include "bus.h"
->  #include "class.h"
->  #include "pd.h"
-> +#include "mode_selection.h"
->  
->  static DEFINE_IDA(typec_index_ida);
->  
-> @@ -445,11 +446,41 @@ svid_show(struct device *dev, struct device_attribute *attr, char *buf)
->  }
->  static DEVICE_ATTR_RO(svid);
->  
-> +static ssize_t priority_store(struct device *dev,
-> +			       struct device_attribute *attr,
-> +			       const char *buf, size_t size)
+> +config DRM_TI_TMDS181
+> +        tristate "TI TMDS181 and SN65DP159 HDMI retimer bridge driver"
+> +	depends on OF
+> +	select DRM_KMS_HELPER
+> +	select REGMAP_I2C
+> +	help
+> +	  Enable this to support the TI TMDS181 and SN65DP159 HDMI retimers.
+> +	  The SN65DP159 provides output into a cable (source) whereas the
+> +	  TMDS181 is meant to forward a cable signal into a PCB (sink). Either
+> +	  can be set up as source or sink though.
+> +
+>  config DRM_TI_TPD12S015
+>  	tristate "TI TPD12S015 HDMI level shifter and ESD protection"
+>  	depends on OF
+> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> index 245e8a27e3fc..f4b5089e903c 100644
+> --- a/drivers/gpu/drm/bridge/Makefile
+> +++ b/drivers/gpu/drm/bridge/Makefile
+> @@ -39,6 +39,7 @@ obj-$(CONFIG_DRM_TI_SN65DSI83) += ti-sn65dsi83.o
+>  obj-$(CONFIG_DRM_TI_SN65DSI86) += ti-sn65dsi86.o
+>  obj-$(CONFIG_DRM_TI_TDP158) += ti-tdp158.o
+>  obj-$(CONFIG_DRM_TI_TFP410) += ti-tfp410.o
+> +obj-$(CONFIG_DRM_TI_TMDS181) += ti-tmds181.o
+>  obj-$(CONFIG_DRM_TI_TPD12S015) += ti-tpd12s015.o
+>  obj-$(CONFIG_DRM_NWL_MIPI_DSI) += nwl-dsi.o
+>  obj-$(CONFIG_DRM_ITE_IT66121) += ite-it66121.o
+> diff --git a/drivers/gpu/drm/bridge/ti-tmds181.c b/drivers/gpu/drm/bridge/ti-tmds181.c
+> new file mode 100644
+> index 000000000000..8ac3eb808d5b
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/ti-tmds181.c
+> @@ -0,0 +1,409 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * TI tmds181 and sn65dp159 HDMI redriver and retimer chips
+> + *
+> + * Copyright (C) 2018 - 2025 Topic Embedded Products <www.topic.nl>
+> + *
+> + * based on code
+> + * Copyright (C) 2007 Hans Verkuil
+> + * Copyright (C) 2016, 2017 Leon Woestenberg <leon@sidebranch.com>
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/i2c.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +
+> +#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_bridge.h>
+> +#include <drm/drm_crtc.h>
+> +#include <drm/drm_print.h>
+> +#include <drm/drm_probe_helper.h>
+> +
+> +MODULE_DESCRIPTION("I2C device driver for DP159 and TMDS181 redriver/retimer");
+> +MODULE_AUTHOR("Mike Looijmans");
+> +MODULE_LICENSE("GPL");
+> +
+> +#define TMDS181_REG_ID		0
+> +#define TMDS181_REG_REV		0x8
+> +#define TMDS181_REG_CTRL9	0x9
+> +/* Registers A and B have a volatile bit, but we don't use it, so cache is ok */
+> +#define TMDS181_REG_CTRLA	0xa
+> +#define TMDS181_REG_CTRLB	0xb
+> +#define TMDS181_REG_CTRLC	0xc
+> +#define TMDS181_REG_EQUALIZER	0xd
+> +/* EYESCAN registers don't appear to deserve separate names */
+> +#define TMDS181_REG_EYESCAN_E	0xe
+> +#define TMDS181_REG_EYESCAN_F	0xf
+> +#define TMDS181_REG_EYESCAN_15	0x15
+> +#define TMDS181_REG_EYESCAN_17	0x17
+> +#define TMDS181_REG_EYESCAN_1F	0x1f
+> +#define TMDS181_REG_AUX		0x20
+> +
+> +
+> +#define TMDS181_CTRL9_SIG_EN			BIT(4)
+> +#define TMDS181_CTRL9_PD_EN			BIT(3)
+> +#define TMDS181_CTRL9_HPD_AUTO_PWRDWN_DISABLE	BIT(2)
+> +#define TMDS181_CTRL9_I2C_DR_CTL		GENMASK(1, 0)
+> +
+> +#define TMDS181_CTRLA_MODE_SINK			BIT(7)
+> +#define TMDS181_CTRLA_HPDSNK_GATE_EN		BIT(6)
+> +#define TMDS181_CTRLA_EQ_ADA_EN			BIT(5)
+> +#define TMDS181_CTRLA_EQ_EN			BIT(4)
+> +#define TMDS181_CTRLA_AUX_BRG_EN		BIT(3)
+> +#define TMDS181_CTRLA_APPLY			BIT(2)
+> +#define TMDS181_CTRLA_DEV_FUNC_MODE		GENMASK(1, 0)
+> +
+> +#define TMDS181_CTRLB_SLEW_CTL			GENMASK(7, 6)
+> +#define TMDS181_CTRLB_HDMI_SEL_DVI		BIT(5)
+> +#define TMDS181_CTRLB_TX_TERM_CTL		GENMASK(4, 3)
+> +#define TMDS181_CTRLB_DDC_DR_SEL		BIT(2)
+> +#define TMDS181_CTRLB_TMDS_CLOCK_RATIO_STATUS	BIT(1)
+> +#define TMDS181_CTRLB_DDC_TRAIN_SET		BIT(0)
+> +
+> +#define TMDS181_CTRLB_TX_TERM_150_300_OHMS	1
+> +#define TMDS181_CTRLB_TX_TERM_75_150_OHMS	3
+> +
+> +#define TMDS181_CTRLC_VSWING_DATA		GENMASK(7, 5)
+> +#define TMDS181_CTRLC_VSWING_CLK		GENMASK(4, 2)
+> +#define TMDS181_CTRLC_HDMI_TWPST1		GENMASK(1, 0)
+> +
+> +#define TMDS181_EQ_DATA_LANE			GENMASK(5, 3)
+> +#define TMDS181_EQ_CLOCK_LANE			GENMASK(2, 1)
+> +#define TMDS181_EQ_DIS_HDMI2_SWG		BIT(0)
+> +
+> +/* Above this data rate HDMI2 standards apply (TX termination) */
+> +#define HDMI2_PIXEL_RATE_KHZ	340000
+> +
+> +enum tmds181_chip {
+> +	tmds181,
+> +	dp159,
+> +};
+> +
+> +struct tmds181_data {
+> +	struct i2c_client *client;
+> +	struct regmap *regmap;
+> +	struct drm_bridge *next_bridge;
+> +	struct drm_bridge bridge;
+> +	u32 retimer_threshold_khz;
+> +};
+> +
+> +static inline struct tmds181_data *
+> +drm_bridge_to_tmds181_data(struct drm_bridge *bridge)
 > +{
+> +	return container_of(bridge, struct tmds181_data, bridge);
+> +}
+> +
+> +static int tmds181_attach(struct drm_bridge *bridge, struct drm_encoder *encoder,
+> +			  enum drm_bridge_attach_flags flags)
+> +{
+> +	struct tmds181_data *data = drm_bridge_to_tmds181_data(bridge);
+> +
+> +	return drm_bridge_attach(encoder, data->next_bridge, bridge, flags);
+> +}
+> +
+> +static enum drm_mode_status
+> +tmds181_mode_valid(struct drm_bridge *bridge, const struct drm_display_info *info,
+> +		   const struct drm_display_mode *mode)
+> +{
+> +	/* Clock limits: clk between 25 and 350 MHz, clk is 1/10 of bit clock */
+> +	if (mode->clock < 25000)
+> +		return MODE_CLOCK_LOW;
+> +
+> +	/* The actual HDMI clock (if provided) cannot exceed 350MHz */
+> +	if (mode->crtc_clock > 350000)
+> +		return MODE_CLOCK_HIGH;
+> +
+> +	/*
+> +	 * When in HDMI 2 mode, the clock is 1/40th of the bitrate. The limit is
+> +	 * then the data rate of 6Gbps, which would use a 600MHz pixel clock.
+> +	 */
+> +	if (mode->clock > 600000)
+> +		return MODE_CLOCK_HIGH;
+> +
+> +	return MODE_OK;
+> +}
+> +
+> +static void tmds181_enable(struct drm_bridge *bridge, struct drm_atomic_state *state)
+> +{
+> +	struct tmds181_data *data = drm_bridge_to_tmds181_data(bridge);
+> +	const struct drm_crtc_state *crtc_state;
+> +	const struct drm_display_mode *mode;
+> +	struct drm_connector *connector;
+> +	struct drm_crtc *crtc;
 > +	unsigned int val;
-> +	int err = kstrtouint(buf, 10, &val);
 > +
-> +	if (!err) {
-> +		err = typec_mode_set_priority(to_typec_altmode(dev), val);
-> +		if (!err)
-> +			return size;
-> +	}
+> +	/*
+> +	 * Retrieve the CRTC adjusted mode. This requires a little dance to go
+> +	 * from the bridge to the encoder, to the connector and to the CRTC.
+> +	 */
+> +	connector = drm_atomic_get_new_connector_for_encoder(state,
+> +							     bridge->encoder);
+> +	crtc = drm_atomic_get_new_connector_state(state, connector)->crtc;
+> +	crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
+> +	mode = &crtc_state->adjusted_mode;
 > +
-> +	return err;
+> +	/* Set retimer/redriver mode based on pixel clock */
+> +	val = mode->clock > data->retimer_threshold_khz ? TMDS181_CTRLA_DEV_FUNC_MODE : 0;
+> +	regmap_update_bits(data->regmap, TMDS181_REG_CTRLA,
+> +			   TMDS181_CTRLA_DEV_FUNC_MODE, val);
+> +
+> +	/* Configure TX termination based on pixel clock */
+> +	val = mode->clock > HDMI2_PIXEL_RATE_KHZ ?
+> +				TMDS181_CTRLB_TX_TERM_75_150_OHMS :
+> +				TMDS181_CTRLB_TX_TERM_150_300_OHMS;
+> +	regmap_update_bits(data->regmap, TMDS181_REG_CTRLB,
+> +			   TMDS181_CTRLB_TX_TERM_CTL,
+> +			   FIELD_PREP(TMDS181_CTRLB_TX_TERM_CTL, val));
+> +
+> +	regmap_update_bits(data->regmap, TMDS181_REG_CTRL9,
+> +			   TMDS181_CTRL9_PD_EN, 0);
 > +}
 > +
-> +static ssize_t priority_show(struct device *dev,
-> +			      struct device_attribute *attr, char *buf)
+> +static void tmds181_disable(struct drm_bridge *bridge, struct drm_atomic_state *state)
 > +{
-> +	int val;
-> +	const int err = typec_mode_get_priority(to_typec_altmode(dev), &val);
+> +	struct tmds181_data *data = drm_bridge_to_tmds181_data(bridge);
 > +
-> +	if (err)
-> +		return err;
-> +
-> +	return sprintf(buf, "%d\n", val);
+> +	/* Set the PD_EN bit */
+> +	regmap_update_bits(data->regmap, TMDS181_REG_CTRL9,
+> +			   TMDS181_CTRL9_PD_EN, TMDS181_CTRL9_PD_EN);
 > +}
-> +static DEVICE_ATTR_RW(priority);
 > +
->  static struct attribute *typec_altmode_attrs[] = {
->  	&dev_attr_active.attr,
->  	&dev_attr_mode.attr,
->  	&dev_attr_svid.attr,
->  	&dev_attr_vdo.attr,
-> +	&dev_attr_priority.attr,
->  	NULL
->  };
->  
-> @@ -458,7 +489,7 @@ static umode_t typec_altmode_attr_is_visible(struct kobject *kobj,
->  {
->  	struct typec_altmode *adev = to_typec_altmode(kobj_to_dev(kobj));
->  
-> -	if (attr == &dev_attr_active.attr)
-> +	if (attr == &dev_attr_active.attr) {
->  		if (!is_typec_port(adev->dev.parent)) {
->  			struct typec_partner *partner =
->  				to_typec_partner(adev->dev.parent);
-> @@ -469,6 +500,15 @@ static umode_t typec_altmode_attr_is_visible(struct kobject *kobj,
->  				!adev->ops->activate)
->  				return 0444;
->  		}
-> +	} else if (attr == &dev_attr_priority.attr) {
-> +		if (is_typec_port(adev->dev.parent))  {
-> +			struct typec_port *port = to_typec_port(adev->dev.parent);
+> +static const struct drm_bridge_funcs tmds181_bridge_funcs = {
+> +	.attach		= tmds181_attach,
+> +	.mode_valid	= tmds181_mode_valid,
+> +	.atomic_enable	= tmds181_enable,
+> +	.atomic_disable	= tmds181_disable,
 > +
-> +			if (!port->alt_mode_override)
-> +				return 0;
-> +		} else
-> +			return 0;
+> +	.atomic_reset = drm_atomic_helper_bridge_reset,
+> +	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+> +	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+> +};
+> +
+> +static const u8 tmds181_id_tmds181[8] __nonstring = "TMDS181 ";
+> +static const u8 tmds181_id_dp159[8]   __nonstring = "DP159   ";
+> +
+> +static int tmds181_check_id(struct tmds181_data *data, enum tmds181_chip *chip)
+> +{
+> +	int ret;
+> +	int retry;
+> +	u8 buffer[8];
+> +
+> +	for (retry = 0; retry < 20; ++retry) {
+> +		ret = regmap_bulk_read(data->regmap, TMDS181_REG_ID, buffer,
+> +				       sizeof(buffer));
+> +		if (!ret)
+> +			break;
+> +
+> +		/* Compensate for very long OE power-up delays due to the cap */
+> +		usleep_range(5000, 10000);
+> +	}
+> +
+> +	if (ret) {
+> +		dev_err(&data->client->dev, "I2C read ID failed\n");
+> +		return ret;
+> +	}
+> +
+> +	if (memcmp(buffer, tmds181_id_tmds181, sizeof(buffer)) == 0) {
+> +		if (*chip != tmds181) {
+> +			dev_warn(&data->client->dev, "Detected: TMDS181\n");
+> +			*chip = tmds181;
+> +		}
+> +		return 0;
+> +	}
+> +
+> +	if (memcmp(buffer, tmds181_id_dp159, sizeof(buffer)) == 0) {
+> +		if (*chip != dp159) {
+> +			dev_warn(&data->client->dev, "Detected: DP159\n");
+> +			*chip = dp159;
+> +		}
+> +		return 0;
+> +	}
+> +
+> +	dev_err(&data->client->dev, "Unknown ID: %*pE\n", (int)sizeof(buffer), buffer);
+> +
+> +	return -ENODEV;
+> +}
+> +
+> +static bool tmds181_regmap_is_volatile(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	/* IBERT result and status registers, not used yet */
+> +	case TMDS181_REG_EYESCAN_15:
+> +	case TMDS181_REG_EYESCAN_17 ... TMDS181_REG_EYESCAN_1F:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +static const struct regmap_config tmds181_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.cache_type = REGCACHE_RBTREE,
+> +	.max_register = TMDS181_REG_AUX,
+> +	.volatile_reg = tmds181_regmap_is_volatile,
+> +};
+> +
+> +static int tmds181_probe(struct i2c_client *client)
+> +{
+> +	struct tmds181_data *data;
+> +	struct gpio_desc *oe_gpio;
+> +	enum tmds181_chip chip;
+> +	int ret;
+> +	u32 param;
+> +	u8 val;
+> +
+> +	/* Check if the adapter supports the needed features */
+> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
+> +		return -EIO;
+> +
+> +	data = devm_drm_bridge_alloc(&client->dev, struct tmds181_data, bridge,
+> +				     &tmds181_bridge_funcs);
+> +	if (IS_ERR(data))
+> +		return PTR_ERR(data);
+> +
+> +	data->client = client;
+> +	i2c_set_clientdata(client, data);
+> +	data->regmap = devm_regmap_init_i2c(client, &tmds181_regmap_config);
+> +	if (IS_ERR(data->regmap))
+> +		return PTR_ERR(data->regmap);
+> +
+> +	/* The "OE" pin acts as a reset */
+> +	oe_gpio = devm_gpiod_get_optional(&client->dev, "oe", GPIOD_OUT_LOW);
+> +	if (IS_ERR(oe_gpio)) {
+> +		ret = PTR_ERR(oe_gpio);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(&client->dev, "failed to acquire 'oe' gpio\n");
+
+Heh, nice...
+
+> +		return ret;
 > +	}
 
-If we have the local port variable, this should be enough:
+...
 
-                if (!is_typec_port(adev->dev.parent) || !port->alt_mode_override)
-                        return 0;
-
->  	return attr->mode;
->  }
-> @@ -2029,6 +2069,7 @@ static void typec_release(struct device *dev)
->  	typec_mux_put(port->mux);
->  	typec_retimer_put(port->retimer);
->  	kfree(port->cap);
-> +	typec_mode_selection_destroy(port);
->  	kfree(port);
->  }
->  
-> @@ -2496,6 +2537,8 @@ typec_port_register_altmode(struct typec_port *port,
->  		to_altmode(adev)->retimer = retimer;
->  	}
->  
-> +	typec_mode_set_priority(adev, -1);
-
-This really should not be necessary. Why can't we set the priority
-based on the order the drives registers the altmodes for the port?
-
->  	return adev;
->  }
->  EXPORT_SYMBOL_GPL(typec_port_register_altmode);
-> @@ -2645,6 +2688,8 @@ struct typec_port *typec_register_port(struct device *parent,
->  	port->con.attach = typec_partner_attach;
->  	port->con.deattach = typec_partner_deattach;
->  
-> +	INIT_LIST_HEAD(&port->mode_list);
 > +
->  	if (cap->usb_capability & USB_CAPABILITY_USB4)
->  		port->usb_mode = USB_MODE_USB4;
->  	else if (cap->usb_capability & USB_CAPABILITY_USB3)
+> +static const struct i2c_device_id tmds181_id[] = {
+> +	{ "tmds181", tmds181 },
+> +	{ "sn65dp159", dp159 },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(i2c, tmds181_id);
+> +
+> +#if IS_ENABLED(CONFIG_OF)
+> +static const struct of_device_id tmds181_of_match[] = {
+> +	{ .compatible = "ti,tmds181", .data = (void *)tmds181 },
+> +	{ .compatible = "ti,sn65dp159", .data = (void *)dp159 },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, tmds181_of_match);
+> +#endif
+> +
+> +static struct i2c_driver tmds181_driver = {
+> +	.driver = {
+> +		.owner = THIS_MODULE,
 
-thanks,
+Nice coincidence - this stars in one of my talks on OSSE
+(https://sched.co/25VoV) as my litmus test for crazy old, vendor code.
+Please come to the session if you are around or just check the slides
+afterwards.
 
--- 
-heikki
+The open-coding dev_err_probe() is another great example.
+
+Best regards,
+Krzysztof
+
 
