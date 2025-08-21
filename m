@@ -1,203 +1,199 @@
-Return-Path: <linux-kernel+bounces-780181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17607B2FE9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:38:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9735B2FEBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382201D2037F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EF83643C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6CD3054EE;
-	Thu, 21 Aug 2025 15:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339103218B1;
+	Thu, 21 Aug 2025 15:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YvvpiNFM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="gnoBmmDW"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544BF27511F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2CD31DDA2
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755789973; cv=none; b=sUe/RoWblCxexZHCcIg2o8s9UD7HLpgYJ5xTDt8edONnNS3B8cMLVFzx092OjV9qIQAuTuA7kjypQottQoA33nOQupjWUn4UEptLs47mQ+1wswFjNKmP1mPDvKOYVEZAVH3oTR0yrastcpTQVnMX4HqpS0y2XNxGEcH+LCaO/Sw=
+	t=1755790027; cv=none; b=U7747UhJIcHvZP3aF2eFTag484PPjGNNZgtk8osyY5SCxl9J3zR4xrGrkgpwVDS1UekuVb9wRPFMZ9L7Q5+DWsatUi22mGX+sra+Sdli6GrLu05mEuP6XZaxQrtMI3ZuANuPbnkU7hR6x57teDc/5lTrF3kMVLAxYCn5k8jdhcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755789973; c=relaxed/simple;
-	bh=8moJCROeW1MwwauO6xq63NCG7+noaOTOnQ79nf4Lx80=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o+dxRO888j7PUxYqjb4kSAViptbX59OXe1iEAhzyrvXZ3jOu27i35fJEuAsOOlhdBc1FindLHtMj+jou0WeO0tw5Y8Ix4+oaOSORHz5OzkcUq3cisJNaNC4h0eS8scYzgQj4/wkhDL/d6foo6WuEliic+3MsBk7lKo6QEhJFHO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YvvpiNFM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755789971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JEKkDobB8vwmnFpvY8PoyUMJCycz91A8IkaT8DFK9XU=;
-	b=YvvpiNFMPeyo+Diq7WO+z/dX4WVekcOuPLOTQC1obdairmSUKDZ66ChNMvCg2YXasSTP/X
-	v3VSHPrep6oXp2brhGD+Aq1mDN6TNUw1Oor1h5bNbvppkA9XPsgUUeIW/H7UQF8Nh+ahPW
-	hJbT+jh9vqXXVJKIzcITuhg/FS/jIWg=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-547-zILca9TZOz2vU4kQIYHwZQ-1; Thu, 21 Aug 2025 11:26:10 -0400
-X-MC-Unique: zILca9TZOz2vU4kQIYHwZQ-1
-X-Mimecast-MFC-AGG-ID: zILca9TZOz2vU4kQIYHwZQ_1755789969
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-71f964bac5dso15971377b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:26:09 -0700 (PDT)
+	s=arc-20240116; t=1755790027; c=relaxed/simple;
+	bh=pTn8q9gyy4U3k5WPUfs8ClUunMArOq9kWVVYSQNm6jA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sZM/9+/M7rdqwf6iYjTywH2GpqTUPZi5OjPdItQflWAGYd1CLOrDtALud1qQZyPSsxqt/AAyt1fcI4Ll6bfQvOwKwEK/o5z9aD/1gFcEeLbraP8TwYSIm25nrFy0Ie62YSfAHSIMCp7lkq9x4MLC9zGyQ19npQI9PVC6NfPacgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=gnoBmmDW; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b05a59fso8529195e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:27:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1755790022; x=1756394822; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2sjxBGydTfjruOh7OE8E/RbRzU+dSv4jaJNJXDHUfdU=;
+        b=gnoBmmDWQOf7vNbixaZb+sQS5JjFEtmhwwO727V9nzEmjlapGR91d+H+ibEr03d9cV
+         r2KVJodElLav1BSrB8gxAgpDQo7nTKxLx3pkgmJ7pipp7Ye79i6pC5B2wxosafyFjghz
+         hljLwo6jFiUY7lEGiIaMU0w3MXcksDtS+ctA+wog/f5rRn8USoQWvW+g0kfn9PxCSsWm
+         qeu4Ck72KFfyMPFTUBceU66HDjdgTWKxS7XE7OU2W0HvHVdbyRZDmlbIk4VU/K77Ncti
+         DfV9XuveGEfXmeOw3u7pcOGNXd1DMK9Hz33rw0uPnXhzecA3cjSq+3TYVYGW4m6Ozlj+
+         WL1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755789969; x=1756394769;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JEKkDobB8vwmnFpvY8PoyUMJCycz91A8IkaT8DFK9XU=;
-        b=QDPA30HAmkOkqAfcwUqXDBBgGCEBhi/RSt34NtG14IBvnOtLWGAFU0LfDTHMvlQm1U
-         XSxhXoOTLoIjd5+legf79XzY9tEfeRxXy6hU0vSIsDb/wz9DSZQEeommma/N1nAUyTxe
-         AXSrQFfVQF0tHXAUvW1Rem1SPH9PhVzQmXWCziOccqbxxE9EFvvhmAHEnLmf8LXw+gQM
-         V6S2BYJOwvvjiS3c8ZqfyxIdup45bUuhJ2+1j7WyJqIf/77QL0IZxSvvFBMAj8E7XFxM
-         Xg6C/VmC2rt3Mt1V14JsGoxxf7E7L3LxcSyrQZKUTeqUQ/RChlFL12f3vznPBDG2xzHc
-         FI6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUj9K9wSVig6nbEa4EQp/BSXLjSe+BuwqMz2g0SwRVkkdlqx7UT9VgLe8y841nrAt0rhUK7be6TF871ErY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzat+q0XCbQRA46JDZINfsDBJrW2iA6oYGxQkVoUuDVQrWRftK1
-	NDFClWqlVDXyGzc0dHqQhgAasyFXHt5HFZ2VOWeCeEzQTAdjPeqHo0fL+JmCwxVN0kY8vqdVmZ6
-	2TkeFKC39N8oe2+HFymBV++W2CSA18tuMibzXz5fPnS9bo0JxYFT8deBsqodr80HkjYtR9HRXCT
-	SdOlXio7hM1xBwvz+KS09hOgmxMixI6fq6Uo4t57AT
-X-Gm-Gg: ASbGncuwyWfl7qKuKTek2IMikouxopyRg77JxMqxiJ7Nam1+duDQUeZu46mxD/Kq2SF
-	I27+mT040A3c/rJ/n3jnCVUmr0DItWbME5q7LQRHYCRwkzao3QVTv7XzG82BAtRekKirqsLG02V
-	n7qFKkqvd2o5R2KVGtgZwbqQo=
-X-Received: by 2002:a05:6902:100b:b0:e93:b92c:ee20 with SMTP id 3f1490d57ef6-e95088e66fdmr2698997276.6.1755789969230;
-        Thu, 21 Aug 2025 08:26:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEA0f6PQCn0aQQ73DO5x40Ev9z93mEJijQRhHTNYum23X09DqH0vh6LBZKUrLyYzx7jARY0Uu5ScQ6B+4yOKuI=
-X-Received: by 2002:a05:6902:100b:b0:e93:b92c:ee20 with SMTP id
- 3f1490d57ef6-e95088e66fdmr2698871276.6.1755789968301; Thu, 21 Aug 2025
- 08:26:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755790022; x=1756394822;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2sjxBGydTfjruOh7OE8E/RbRzU+dSv4jaJNJXDHUfdU=;
+        b=NwNqvAlUve7GsBVkYrPL3FrHGX8VTIrQF4u//yVt/hCZ6k6Kh1Ad3qO+a1sf3Prazf
+         /KJeGpMx7HNoU7ZCbeqqpZ3dzk95SLGtmfqiJ4JGN6yORci8penNXQwa8QpQ+lveervf
+         XuY8oPwak863mQHVij1nm79uXSrlJaatXCs03asSDaz8j8UnmhZhUG3TW+3tgNbXbD3U
+         UZwZNoP0m4rpk2VFE3IaE6Z0TCQhqRhlqVA3keHuChP4+gVQ61WgB990iMkqMdFCFSr/
+         uXoobhV0eyfG5CtrijF7mbCgtnZmxspmKeyrcLS6lJxaYbyWn2idYvMtx0cZJHdgJKne
+         hebg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHhx95giXwcgZ8Nz1PkI1QgY148Y6MhOq6EHe+75bRb7njlPoo1KEbPR6uVCvkRyxqIe15w6OFxYr54TE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx27btaneFoPB6UXmm3iTeq4VYc2LI9GdqNwggVLGXZhRcZ/wHG
+	FJfztRtBaM4GOAyAIx0KTCrOMZlDnawLUeeI445WYUTdk7jCYYK2ysXd6Dh3u0VfP1I=
+X-Gm-Gg: ASbGncsyA/gDGt/6G05/KOp5lOjoiSQLk6h5vmBIfXWVcuCpsS5kI+6khDbwecW+xjS
+	jsqT6tc4pSHdfnPiBUlSalo0BGBCysxqlMoyZuFjF3BS63zEz9KnbJwYdzDs/NHBKx2q1WhYMsw
+	A6ElGvmb5AKj6eP3T7WKLbD8nwQfqErDFDG390mOY3txfrbiRKeczsTFM/vqIe8YjkfRn1sKlu+
+	gwgNVVGrV3iHOwIucSiPyCSwhw/EjynWAUy/GwdYfbkWDKNPrp5BY4M6NRq3DBuxicPP9CXdRT3
+	e1V70jtmQSaAbUTbxbZQejKLesiO1vR973d7v/VExJJSSmf0gnPlzGMei6067Ds+HcbVVlsc1dn
+	5Ue2WDvcdJKc/PbLtYmjSFHxFUqW13thvnJCI8lB4pyzApD7liw==
+X-Google-Smtp-Source: AGHT+IE+4ute/Nv5CZt5NNaDUwvVYtWu4YiNVI45PLItPoW2P50dq71Gb9k2LF4AVVqf2Lr512IxQQ==
+X-Received: by 2002:a05:600c:1c90:b0:45b:4282:7b60 with SMTP id 5b1f17b1804b1-45b4fcc3244mr15901095e9.34.1755790022155;
+        Thu, 21 Aug 2025 08:27:02 -0700 (PDT)
+Received: from pop-os.telenet.be ([2a02:1807:2a00:3400:f5e3:b428:f4bc:eb5f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b50dc00b6sm1538345e9.2.2025.08.21.08.27.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 08:27:01 -0700 (PDT)
+From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+To: dlan@gentoo.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+Subject: [PATCH v2] riscv: dts: spacemit: add UART resets for Soc K1
+Date: Thu, 21 Aug 2025 17:26:19 +0200
+Message-ID: <20250821152619.597051-1-hendrik.hamerlinck@hammernet.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819134205.622806-1-npache@redhat.com> <e971c7e0-70f0-4ce0-b288-4b581e8c15d3@lucifer.local>
- <38b37195-28c8-4471-bd06-951083118efd@arm.com> <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
-In-Reply-To: <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
-From: Nico Pache <npache@redhat.com>
-Date: Thu, 21 Aug 2025 09:25:42 -0600
-X-Gm-Features: Ac12FXxfRB0-YWz05cxs6Jud7daM5CQrb2gQwUVzVsT0dS5nUzi2PQuSgYs9--g
-Message-ID: <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
-Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
-	Liam.Howlett@oracle.com, ryan.roberts@arm.com, corbet@lwn.net, 
-	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
-	akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org, 
-	peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com, 
-	sunnanyong@huawei.com, vishal.moola@gmail.com, 
-	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
-	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
-	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
-	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
-	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 9:20=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Thu, Aug 21, 2025 at 08:43:18PM +0530, Dev Jain wrote:
-> >
-> > On 21/08/25 8:31 pm, Lorenzo Stoakes wrote:
-> > > OK so I noticed in patch 13/13 (!) where you change the documentation=
- that you
-> > > essentially state that the whole method used to determine the ratio o=
-f PTEs to
-> > > collapse to mTHP is broken:
-> > >
-> > >     khugepaged uses max_ptes_none scaled to the order of the enabled
-> > >     mTHP size to determine collapses. When using mTHPs it's recommend=
-ed
-> > >     to set max_ptes_none low-- ideally less than HPAGE_PMD_NR / 2 (25=
-5
-> > >     on 4k page size). This will prevent undesired "creep" behavior th=
-at
-> > >     leads to continuously collapsing to the largest mTHP size; when w=
-e
-> > >     collapse, we are bringing in new non-zero pages that will, on a
-> > >     subsequent scan, cause the max_ptes_none check of the +1 order to
-> > >     always be satisfied. By limiting this to less than half the curre=
-nt
-> > >     order, we make sure we don't cause this feedback
-> > >     loop. max_ptes_shared and max_ptes_swap have no effect when
-> > >     collapsing to a mTHP, and mTHP collapse will fail on shared or
-> > >     swapped out pages.
-> > >
-> > > This seems to me to suggest that using
-> > > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none as some =
-means
-> > > of establishing a 'ratio' to do this calculation is fundamentally fla=
-wed.
-> > >
-> > > So surely we ought to introduce a new sysfs tunable for this? Perhaps
-> > >
-> > > /sys/kernel/mm/transparent_hugepage/khugepaged/mthp_max_ptes_none_rat=
-io
-> > >
-> > > Or something like this?
-> > >
-> > > It's already questionable that we are taking a value that is expresse=
-d
-> > > essentially in terms of PTE entries per PMD and then use it implicitl=
-y to
-> > > determine the ratio for mTHP, but to then say 'oh but the default val=
-ue is
-> > > known-broken' is just a blocker for the series in my opinion.
-> > >
-> > > This really has to be done a different way I think.
-> > >
-> > > Cheers, Lorenzo
-> >
-> > FWIW this was my version of the documentation patch:
-> > https://lore.kernel.org/all/20250211111326.14295-18-dev.jain@arm.com/
-> >
-> > The discussion about the creep problem started here:
-> > https://lore.kernel.org/all/7098654a-776d-413b-8aca-28f811620df7@arm.co=
-m/
-> >
-> > and the discussion continuing here:
-> > https://lore.kernel.org/all/37375ace-5601-4d6c-9dac-d1c8268698e9@redhat=
-.com/
-> >
-> > ending with a summary I gave here:
-> > https://lore.kernel.org/all/8114d47b-b383-4d6e-ab65-a0e88b99c873@arm.co=
-m/
-> >
-> > This should help you with the context.
-> >
-> >
->
-> Thanks and I"ll have a look, but this series is unmergeable with a broken
-> default in
-> /sys/kernel/mm/transparent_hugepage/khugepaged/mthp_max_ptes_none_ratio
-> sorry.
->
-> We need to have a new tunable as far as I can tell. I also find the use o=
-f
-> this PMD-specific value as an arbitrary way of expressing a ratio pretty
-> gross.
-The first thing that comes to mind is that we can pin max_ptes_none to
-255 if it exceeds 255. It's worth noting that the issue occurs only
-for adjacently enabled mTHP sizes.
+The UARTs in the SpacemiT K1 device tree are probed by the 8250_of driver,
+but without reset lines they remain non-functional.
 
-ie)
-if order!=3DHPAGE_PMD_ORDER && khugepaged_max_ptes_none > 255
-      temp_max_ptes_none =3D 255;
->
-> Thanks, Lorenzo
->
+Add reset control entries so that the UARTs can operate when mapped to
+devices. UART0 is already de-asserted by the bootloader, but include its
+reset as well to avoid relying on bootloader state.
+
+Tested on Orange Pi RV2 and Banana Pi BPI-F3 boards, with UART9 enabled
+and verified functional.
+
+Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+---
+Changes in v2:
+- Improved changelog
+- Omitted current-speed property for UART0
+---
+ arch/riscv/boot/dts/spacemit/k1.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+index abde8bb07c95..6c68b2e54675 100644
+--- a/arch/riscv/boot/dts/spacemit/k1.dtsi
++++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+@@ -667,6 +667,7 @@ uart0: serial@d4017000 {
+ 				clocks = <&syscon_apbc CLK_UART0>,
+ 					 <&syscon_apbc CLK_UART0_BUS>;
+ 				clock-names = "core", "bus";
++				resets = <&syscon_apbc RESET_UART0>;
+ 				interrupts = <42>;
+ 				reg-shift = <2>;
+ 				reg-io-width = <4>;
+@@ -680,6 +681,7 @@ uart2: serial@d4017100 {
+ 				clocks = <&syscon_apbc CLK_UART2>,
+ 					 <&syscon_apbc CLK_UART2_BUS>;
+ 				clock-names = "core", "bus";
++				resets = <&syscon_apbc RESET_UART2>;
+ 				interrupts = <44>;
+ 				reg-shift = <2>;
+ 				reg-io-width = <4>;
+@@ -693,6 +695,7 @@ uart3: serial@d4017200 {
+ 				clocks = <&syscon_apbc CLK_UART3>,
+ 					 <&syscon_apbc CLK_UART3_BUS>;
+ 				clock-names = "core", "bus";
++				resets = <&syscon_apbc RESET_UART3>;
+ 				interrupts = <45>;
+ 				reg-shift = <2>;
+ 				reg-io-width = <4>;
+@@ -706,6 +709,7 @@ uart4: serial@d4017300 {
+ 				clocks = <&syscon_apbc CLK_UART4>,
+ 					 <&syscon_apbc CLK_UART4_BUS>;
+ 				clock-names = "core", "bus";
++				resets = <&syscon_apbc RESET_UART4>;
+ 				interrupts = <46>;
+ 				reg-shift = <2>;
+ 				reg-io-width = <4>;
+@@ -719,6 +723,7 @@ uart5: serial@d4017400 {
+ 				clocks = <&syscon_apbc CLK_UART5>,
+ 					 <&syscon_apbc CLK_UART5_BUS>;
+ 				clock-names = "core", "bus";
++				resets = <&syscon_apbc RESET_UART5>;
+ 				interrupts = <47>;
+ 				reg-shift = <2>;
+ 				reg-io-width = <4>;
+@@ -732,6 +737,7 @@ uart6: serial@d4017500 {
+ 				clocks = <&syscon_apbc CLK_UART6>,
+ 					 <&syscon_apbc CLK_UART6_BUS>;
+ 				clock-names = "core", "bus";
++				resets = <&syscon_apbc RESET_UART6>;
+ 				interrupts = <48>;
+ 				reg-shift = <2>;
+ 				reg-io-width = <4>;
+@@ -745,6 +751,7 @@ uart7: serial@d4017600 {
+ 				clocks = <&syscon_apbc CLK_UART7>,
+ 					 <&syscon_apbc CLK_UART7_BUS>;
+ 				clock-names = "core", "bus";
++				resets = <&syscon_apbc RESET_UART7>;
+ 				interrupts = <49>;
+ 				reg-shift = <2>;
+ 				reg-io-width = <4>;
+@@ -758,6 +765,7 @@ uart8: serial@d4017700 {
+ 				clocks = <&syscon_apbc CLK_UART8>,
+ 					 <&syscon_apbc CLK_UART8_BUS>;
+ 				clock-names = "core", "bus";
++				resets = <&syscon_apbc RESET_UART8>;
+ 				interrupts = <50>;
+ 				reg-shift = <2>;
+ 				reg-io-width = <4>;
+@@ -771,6 +779,7 @@ uart9: serial@d4017800 {
+ 				clocks = <&syscon_apbc CLK_UART9>,
+ 					 <&syscon_apbc CLK_UART9_BUS>;
+ 				clock-names = "core", "bus";
++				resets = <&syscon_apbc RESET_UART9>;
+ 				interrupts = <51>;
+ 				reg-shift = <2>;
+ 				reg-io-width = <4>;
+-- 
+2.43.0
 
 
