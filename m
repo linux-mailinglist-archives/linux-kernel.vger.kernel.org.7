@@ -1,152 +1,101 @@
-Return-Path: <linux-kernel+bounces-780593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0995FB30595
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:32:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F499B30598
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CB281D019C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:29:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C1E1BC16CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771AA2FC01D;
-	Thu, 21 Aug 2025 20:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29E22FC03C;
+	Thu, 21 Aug 2025 20:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4qGd/TI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prvdqZIV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C886B2FC018;
-	Thu, 21 Aug 2025 20:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F322F362E;
+	Thu, 21 Aug 2025 20:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755807229; cv=none; b=JPx219xkxQHmj8pSNTV8ukCXv0bPKb3WJfROVQpBtEgS9YRa1VHOovPu9WZh/47e3iZVVva1uXgngwg91bgqFMuSt2A4Ip4f9AW17Mswz1hVyFIEOoGmx986ExCa7rikTiSrBk0Mt28AgVvFF8SmIN4Pgoczm1kYq/wIRnHPVuI=
+	t=1755807262; cv=none; b=cSk74giqcSVhX2WumhfypAGr70tc7/Yh/wez1L8tdG6PkSPiaMt1TUCmVnxYKeKYT+3YIbTLSD2SF4IorJ+3ih6FLaJgLocN02Ui8wAIzUtkOUAvD40cfW0lAC9fQZzrB2Lg8LXrQT6zoP4gyL9GXt5SQCyTjIb/+NvpqeN5nAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755807229; c=relaxed/simple;
-	bh=s4LoT5n040GO8mBDRhl3vBScJMZhpF+PUxxv6WBk2NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+6pFFsBo1tVJ7s9jmJ2DbpyZGM6lY/r/4mgwIc6bDbbBXXiG1i+UDR9032qgvLfm5VM+FoJcJ7DT83c3fJfRIpdusBAsz9jgHPocBw5o0hACEwSmBSa38TN38xaUyLRgrv7WVPn7UoD7pcgXVpT9Tct0UYrXstZGht40g96jRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4qGd/TI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A24C4CEEB;
-	Thu, 21 Aug 2025 20:13:46 +0000 (UTC)
+	s=arc-20240116; t=1755807262; c=relaxed/simple;
+	bh=QMBXSzK2U64jz96+ZN/QYNMpcwS4a7Az2XADNkpLqeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XHH4EINdlBJ83eb/6AvNnxtccUGysy3VAFmojzHvcFgXFk3i+NOscBXNn5nTaptEpZfIlI9YVMnDBOhJWPksRp94F03SiBFpuPWQCom7NSbVjLn99VI1PlM0zh2bvhYQ9M8mMZcXFiFbGQCqomMLq3oaHfwLysvDcnNHrAqbS2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prvdqZIV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6EF9C4CEEB;
+	Thu, 21 Aug 2025 20:14:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755807229;
-	bh=s4LoT5n040GO8mBDRhl3vBScJMZhpF+PUxxv6WBk2NE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I4qGd/TInaoV8wMobkvYQKcLgGlaSROXY1sGYIJ8Mp2sPVQrLTC/cr+RsdaqVbCsL
-	 ZdNgyM67nVycmxa0XHiTBVAmAFjLX7N7VpHUWo8953WOeu7E1637nATfmTG87JqVXk
-	 uCLhDPb0PfC3UTm99WADYILDQjQnhz44ANpJSRnM3s6/jGXtrXo1f8klirDofFjRDj
-	 MizsCqehEeyygSbPHmswS7GmDEHIp0iku838IKzBfZRg5kFaX70lhbkP8vCP/wzGR4
-	 0wJF9oNT1LVDUOmcLSZfZjEUT+D1Y/6u8KgfA6TsnwjEsT/SznDUtCIGuGCfHrXEDJ
-	 /UZj86Y0AKrFA==
-Date: Thu, 21 Aug 2025 21:13:44 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Boris Gjenero <boris.gjenero@gmail.com>,
-	Christian Hewitt <christianshewitt@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Paolo Sabatino <paolo.sabatino@gmail.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: vendor-prefixes: Add fdhisi,
- titanmec, princeton, winrise, wxicore
-Message-ID: <20250821-contour-debtor-9e3196a724b9@spud>
-References: <20250820163120.24997-1-jefflessard3@gmail.com>
- <20250820163120.24997-2-jefflessard3@gmail.com>
- <20250820-wired-deserve-421d76bdd1c9@spud>
- <6A80188C-5108-4DE0-9D69-F492FD7E6B8E@gmail.com>
+	s=k20201202; t=1755807260;
+	bh=QMBXSzK2U64jz96+ZN/QYNMpcwS4a7Az2XADNkpLqeY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=prvdqZIVXfJgjz/jlv8qz2CTmf+b0QhS3fsGh07xKo+2NODK0WRSZS7plhZc/OGaq
+	 KCu5o76UvH1/5ewXlm9MqWnuPavahYAp32VK68DdTQduwn+9kXyk1q40ZaSlDZN4Jr
+	 9vk21IC60/H9XSiWBa+IcEDFmCXrVndY1/WolBKJDViFDbu0UCBONwZ2cjzhIiAddh
+	 3jLagXshcz8CCpnvlI5eV+YBkZ1f91mPN6y4YKoiLYTc6gQ6coc4iPA6r7tLcFe2Bz
+	 yiaFWs/+6CpNnD1mbtwtAFkeXilJzFECpAHNRpyAY5sfOJM0nt6YnOiQFLPHTqFtF0
+	 A3mAvnLaaSg1Q==
+Date: Thu, 21 Aug 2025 10:14:19 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org
+Subject: [GIT PULL] cgroup: Fixes for v6.17-rc2
+Message-ID: <aKd-G9DuRlPJdQgv@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gBKYytYB9If8rHvK"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6A80188C-5108-4DE0-9D69-F492FD7E6B8E@gmail.com>
 
+The following changes since commit 561c80369df0733ba0574882a1635287b20f9de2:
 
---gBKYytYB9If8rHvK
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  Merge tag 'tty-6.16-rc1-2' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty (2025-08-09 18:12:23 +0300)
 
-On Thu, Aug 21, 2025 at 03:35:51PM -0400, Jean-Fran=E7ois Lessard wrote:
-> Le 20 ao=FBt 2025 16 h 08 min 01 s HAE, Conor Dooley <conor@kernel.org> a=
- =E9crit=A0:
-> >On Wed, Aug 20, 2025 at 12:31:14PM -0400, Jean-Fran=E7ois Lessard wrote:
-> >> Add vendor prefixes:
-> >> - fdhisi: Fuzhou Fuda Hisi Microelectronics Co., Ltd.
-> >> - titanmec: Shenzhen Titan Micro Electronics Co., Ltd.
-> >> - princeton: Princeton Technology Corp.
-> >> - winrise: Shenzhen Winrise Technology Co., Ltd.
-> >> - wxicore: Wuxi i-Core Electronics Co., Ltd.
-> >>=20
-> >> The titanmec prefix is based on the company's domain name titanmec.com.
-> >> The remaining prefixes are based on company names, as these manufactur=
-ers either
-> >> lack active .com domains or their .com domains are occupied by unrelat=
-ed
-> >> businesses.
-> >>=20
-> >> The fdhisi and titanmec prefixes were originally identified by Andreas=
- F=E4rber.
-> >>=20
-> >> CC: Andreas F=E4rber <afaerber@suse.de>
-> >> Signed-off-by: Jean-Fran=E7ois Lessard <jefflessard3@gmail.com>
-> >
-> >Acked-by: Conor Dooley <conor.dooley@microchip.com>
->=20
-> Thanks for your acknowledgement, I will include it in the v4 submission.
->=20
-> >but some reason why all these are being added together would be nice.
->=20
-> Do you mean repeating this cover letter v3 changelog note in this patch:
->=20
-> v3:
-> - Update vendor prefixes with documented rationale, in a single patch,
->   per maintainer feedback
->=20
-> See https://lore.kernel.org/linux-devicetree/491ec8dd-8ca5-45bb-b5f4-dfd0=
-8a10e8de@kernel.org/#t
->=20
-> Or do you mean the relationship between these vendors being added here,
-> such as replacing the fist line of the commit message to:
+are available in the Git repository at:
 
-Ye, this. The relation between the vendors.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/ tags/cgroup-for-6.17-rc2-fixes
 
->=20
-> Add vendor prefixes of chip manufacturers supported by the TM16xx 7-segme=
-nt
-> LED matrix display controllers driver:
-> - fdhisi...
->=20
-> >
-> >> ---
-> ...
->=20
-> Best regards,
-> Jean-Francois Lessard
->=20
+for you to fetch changes up to 6563623e604e3e235b2cee71190a4972be8f986b:
 
---gBKYytYB9If8rHvK
-Content-Type: application/pgp-signature; name="signature.asc"
+  docs: cgroup: fixed spelling mistakes in documentation (2025-08-12 10:52:28 -1000)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+cgroup: Fixes for v6.17-rc2
 
-iHQEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKd9+AAKCRB4tDGHoIJi
-0oawAPjutDyPXVFQQwndSwRYNAjcjoQRbOfjt2m0woyD9CDSAP9scbZElO/+AT2H
-knUNeoPzE+TlKap9gRIwJmVsIKiBDQ==
-=Qlhc
------END PGP SIGNATURE-----
+- Fix NULL de-ref in css_rstat_exit() which could happen after allocation
+  failure.
 
---gBKYytYB9If8rHvK--
+- Fix a cpuset partition handling bug and a couple other misc issues.
+
+- Doc spelling fix.
+
+----------------------------------------------------------------
+JP Kobryn (1):
+      cgroup: avoid null de-ref in css_rstat_exit()
+
+Soham Metha (1):
+      docs: cgroup: fixed spelling mistakes in documentation
+
+Waiman Long (3):
+      cgroup/cpuset: Use static_branch_enable_cpuslocked() on cpusets_insane_config_key
+      cgroup/cpuset: Fix a partition error with CPU hotplug
+      cgroup/cpuset: Remove the unnecessary css_get/put() in cpuset_partition_write()
+
+ Documentation/admin-guide/cgroup-v2.rst |  4 ++--
+ kernel/cgroup/cpuset.c                  | 11 +++++------
+ kernel/cgroup/rstat.c                   |  3 +++
+ 3 files changed, 10 insertions(+), 8 deletions(-)
+
+-- 
+tejun
 
