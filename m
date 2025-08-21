@@ -1,124 +1,177 @@
-Return-Path: <linux-kernel+bounces-780588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EA4B3057F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:31:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD58B3059C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C2D188DC3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24BF43BFE12
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184352C0287;
-	Thu, 21 Aug 2025 20:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB1B2D7DD0;
+	Thu, 21 Aug 2025 20:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="UOr11Y00"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzzx2DPw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20A31A5BBA;
-	Thu, 21 Aug 2025 20:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D21E2D7DC1;
+	Thu, 21 Aug 2025 20:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755807069; cv=none; b=F6ibk/jYRQo9yW0Yvh8sI7nxWtu5NY4lxpgKrC1pUmZjwMP3jMzLOYD4tlDT5ujBnuaIqKPsWYi7tfkXLtCxfkISIjZ5pCudoQOzUyuIXndZT9uuXYG2ch8+dDz9OxjB+madqXY5WSnUhViHVmCihmjVv+bgrFngm8Ui6mBpXJM=
+	t=1755807112; cv=none; b=LBxKfmlD6Dj1tU7LUlogj0X8MeMjdUfEmOedS711RtTbMNVxDPuOMZUrb/+W5UPfmJiQXCwY4z0KR7L749qQMwTfnUniXsXBH/w4Ml0n0q56OQfUfcE5IAbm8gUT0to8/A5oJfA3GaGB1tjhtoef0J1MSL8kv8S4/9f/XaXnBmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755807069; c=relaxed/simple;
-	bh=BW9M6QtRAnKMxrAdqHnhS/5ceZZdiYkdOJf9jymxcWc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gU3sFMvZ5lHUm+GtdjxdcoArEsGHQmut96/VLa0H6UGmRSTB0RkY85kiQ7LSF/o75r2KTOA/kpLWVPiGchE65K+88sCiwJvsTNYNcod112m2WnOVhgbC2ILiK8tpX1658CYQS5eX4si7FEYntjIBrqq232aAHhgzxFVwf0cE4X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=UOr11Y00; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E40D440AD5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755807067; bh=zHY28aIE5Hj5uxH18e1m7ctBV4BADozo7+hcXs3760I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=UOr11Y00fL2g7/x4VTDhE3aMiuf4f0xaWV9Fx80YREoEuMSIJmWJZ7a4kRKmNH6O5
-	 4xPr1aFKrG8NF05w2JpcClMjXs8+L0y+WCD90nsE+yq1fihC745uPeEiUo0PNIQIFG
-	 SKR/keZWkfVJZnU5CR8keZiKP9ru1R1mlgRvhUR7wlqYTlGbFADsu4Aw+ucoSphDGK
-	 Mum/DQ28j9HSm/C/2tcOJYVQUCP54Edc1RJjiDP1oDndBVG3EuNljvEZywfvE0fVmK
-	 xXbB4x1PW+YKw3AKreGCO6SdsOi00zhnPN2KZDbmUmuQu79S8Hy5r2DhYSQM3+kiBG
-	 rIs9cNDqwxlBg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id E40D440AD5;
-	Thu, 21 Aug 2025 20:11:06 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, =?utf-8?Q?Bj=C3=B6r?=
- =?utf-8?Q?n?= Roy Baron
- <bjorn3_gh@protonmail.com>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Alice
- Ryhl <aliceryhl@google.com>, Andreas Hindborg <mchehab+huawei@kernel.org>,
- Benno Lossin <mchehab+huawei@kernel.org>, Boqun Feng
- <boqun.feng@gmail.com>, Danilo Krummrich <mchehab+huawei@kernel.org>, Gary
- Guo <gary@garyguo.net>, Miguel Ojeda <mchehab+huawei@kernel.org>, Trevor
- Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 04/11] scripts: sphinx-build-wrapper: add a wrapper for
- sphinx-build
-In-Reply-To: <88a95c7f6996cafb247d6706060173b17a46d570.1755258303.git.mchehab+huawei@kernel.org>
-References: <cover.1755258303.git.mchehab+huawei@kernel.org>
- <88a95c7f6996cafb247d6706060173b17a46d570.1755258303.git.mchehab+huawei@kernel.org>
-Date: Thu, 21 Aug 2025 14:11:06 -0600
-Message-ID: <87plco5tb9.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755807112; c=relaxed/simple;
+	bh=7UOumc/dJtyyg/QHnSWjD+BJvJ9yDJg2TGgCVbIk6CM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUWfjXs53Ket06dTowXE1WvdWTATldTHmHq0BNp2PmurdlM+8agbSQS5bY1vUblXg3aF/PjQtqAgSQMMNK4ZqKFP9/DQIXgAtxsii8Iwzxm4LXg26j+YLTSkeYNxehT89dF+GIDnSIs0LL7uJgEHWpdIiubuklRaF+iQ+mp9XZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzzx2DPw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDEADC113CF;
+	Thu, 21 Aug 2025 20:11:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755807112;
+	bh=7UOumc/dJtyyg/QHnSWjD+BJvJ9yDJg2TGgCVbIk6CM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fzzx2DPw9mcPZMFjVVeE3vDfbB+KsTvTOnjiRss1yZIQQxDOGeQpx3470+JJWdfsO
+	 i1sriDdf22FFpp1If8dgdkNQL4vNBD4Cn5YKOPkKmm0KtBBoWaU13VzG/Zmxjehg8Q
+	 fNR+hoVptU7F4jnjPJ+lJ0sSYjpd5MOeiMuWnY3UImZtXq1Hrxtx72eDNAKimjhO1F
+	 XXth8RidvFkZmsKxU3c1knwY4UBeSmKZYRBZ79V3005xl8WsVLeuk0pzz7zBNps05W
+	 Fz2hQUQaw7Vw9LBHELUopkY2fTVbb0uAe+wJNQRaS12AIzxsan3ATUJjt/YmFOA3Y2
+	 RMAIs7/8XrHSA==
+Date: Thu, 21 Aug 2025 21:11:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Boris Gjenero <boris.gjenero@gmail.com>,
+	Christian Hewitt <christianshewitt@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Paolo Sabatino <paolo.sabatino@gmail.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v3 4/4] MAINTAINERS: Add entry for TM16xx driver
+Message-ID: <20250821-hardener-underpay-e30d1eb6de6b@spud>
+References: <20250820163120.24997-1-jefflessard3@gmail.com>
+ <20250820163120.24997-5-jefflessard3@gmail.com>
+ <CAHp75VfyR0cjnC6C6Xy8x9nTREdAgbjo18RLYNRzoLc6KmXnTA@mail.gmail.com>
+ <20250820-clock-easiness-850342f716f3@spud>
+ <CAHp75Ve-bM5ax3=0JkmaU-Kx1ME3VW34=Eqp2bRBA6mO6nZHmg@mail.gmail.com>
+ <20250821-diminish-landlord-653a876e3cec@spud>
+ <CAHp75VcDDCjt4vTpnSCprfAzK+czJiB_PRDXuLkvtuHZg4SLEw@mail.gmail.com>
+ <CAHp75VfVYkmYFHdQgs1+3=jy50SuOaEXcT8Q8qXS34ctxRYKbg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="knF+Ka0cSC/ofLUy"
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfVYkmYFHdQgs1+3=jy50SuOaEXcT8Q8qXS34ctxRYKbg@mail.gmail.com>
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-> There are too much magic inside docs Makefile to properly run
-> sphinx-build. Create an ancillary script that contains all
-> kernel-related sphinx-build call logic currently at Makefile.
->
-> Such script is designed to work both as an standalone command
-> and as part of a Makefile. As such, it properly handles POSIX
-> jobserver used by GNU make.
->
-> It should be noticed that, when running the script alone,
-> it will only take care of sphinx-build and cleandocs target.
-> As such:
->
-> - it won't run "make rustdoc";
-> - no extra checks.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  .pylintrc                    |   2 +-
->  scripts/sphinx-build-wrapper | 627 +++++++++++++++++++++++++++++++++++
->  2 files changed, 628 insertions(+), 1 deletion(-)
->  create mode 100755 scripts/sphinx-build-wrapper
+--knF+Ka0cSC/ofLUy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As a whole I like the idea of this - I would rather be reading code in
-Python than in makefilese.  But I have some overall notes...
+On Thu, Aug 21, 2025 at 10:35:07PM +0300, Andy Shevchenko wrote:
+> On Thu, Aug 21, 2025 at 10:33=E2=80=AFPM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Thu, Aug 21, 2025 at 8:40=E2=80=AFPM Conor Dooley <conor@kernel.org>=
+ wrote:
+> > > On Wed, Aug 20, 2025 at 11:29:47PM +0300, Andy Shevchenko wrote:
+> > > > On Wed, Aug 20, 2025 at 10:52=E2=80=AFPM Conor Dooley <conor@kernel=
+=2Eorg> wrote:
+> > > > > On Wed, Aug 20, 2025 at 10:08:06PM +0300, Andy Shevchenko wrote:
+> > > > > > On Wed, Aug 20, 2025 at 7:31=E2=80=AFPM Jean-Fran=C3=A7ois Less=
+ard
+> > > > > > <jefflessard3@gmail.com> wrote:
+> > > > > >
+> > > > > > Besides the missing commit message, the main part of this patch=
+ should
+> > > > > > be merged with the patch 2 where the YAML file is being added.
+> > > > > > Otherwise it will be a dangling file. I dunno if DT tooling has=
+ its
+> > > > > > own concept of a maintainer database, though.
+> > > > >
+> > > > > get_maintainer.pl will pull the maintainer out of the file, so it=
+ won't be
+> > > > > truly dangling without a way to associate Jean-Fran=C3=A7ois with=
+ this file, if
+> > > > > that;s what you mean.
+> > > >
+> > > > Let's assume patch 2 is applied and patch 4 is not, what will be the
+> > > > result of get_maintainer.pl for the YAML file?
+> > >
+> > > Andy Shevchenko <andy@kernel.org> (maintainer:AUXILIARY DISPLAY DRIVE=
+RS)
+> > > Geert Uytterhoeven <geert@linux-m68k.org> (reviewer:AUXILIARY DISPLAY=
+ DRIVERS)
+> > > Rob Herring <robh@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED=
+ DEVICE TREE BINDINGS)
+> > > Krzysztof Kozlowski <krzk+dt@kernel.org> (maintainer:OPEN FIRMWARE AN=
+D FLATTENED DEVICE TREE BINDINGS)
+> > > Conor Dooley <conor+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLAT=
+TENED DEVICE TREE BINDINGS)
+> > > "Jean-Fran=C3=A7ois Lessard" <jefflessard3@gmail.com> (commit_signer:=
+1/1=3D100%,authored:1/1=3D100%,added_lines:471/471=3D100%,in file)
+> > >                                                                      =
+                                               ^^^^^^^
+> >
+> > Which is a git lookup heuristics. If you disable that, there is no
+> > maintainer for the file. Try with --m and --no-git (IIRC the option
+> > name).
 
-I am a bit dismayed by the size of it; this is many times the amount of
-code it allows us to remove from the makefile.  Perhaps there's nothing
-to be done for that, but ...
+Also, I think linewrap might done some fuckery cos it was the
+"in file" I was pointing to, pretty sure that's not coming from git.
+I tried ./scripts/get_maintainer.pl --nogit --nogit-fallback -f Documentati=
+on/devicetree/bindings/auxdisplay/titanmec,tm16xx.yaml
+(I think --nogit-fallback is the salient option, --nogit is a default
+actually) and I got:
+Andy Shevchenko <andy@kernel.org> (maintainer:AUXILIARY DISPLAY DRIVERS)
+Geert Uytterhoeven <geert@linux-m68k.org> (reviewer:AUXILIARY DISPLAY DRIVE=
+RS)
+Rob Herring <robh@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVIC=
+E TREE BINDINGS)
+Krzysztof Kozlowski <krzk+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLAT=
+TENED DEVICE TREE BINDINGS)
+Conor Dooley <conor+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED =
+DEVICE TREE BINDINGS)
+"Jean-Fran=C3=A7ois Lessard" <jefflessard3@gmail.com> (in file)
+                                                  ^^^^^^^
+and the in file still appears.
+devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TR=
+EE BINDINGS)
+linux-kernel@vger.kernel.org (open list)
+AUXILIARY DISPLAY DRIVERS status: Odd Fixes
 
-Is there value in the SphinxBuilder class?  Just because you can create
-classes in Python doesn't mean that you have to; I'm not sure why you
-would create one here rather than just doing it all at the module level.
+> Actually doesn't checkpatch complain in this case?
 
-Is the "search for a newer Python" code really going to be useful for
-anybody?  It seems like a lot of work (and code) to try to quietly patch
-things up for somebody who has some sort of a strange setup.
+The usual warning about MAINTAINERS appears ye, the one that appears
+whenever a file is moved, created or deleted. I personally don't care
+about that, as long as the end result of a series deals with it since
+the file will produce the correct maintainer list in a bisection etc
+anyway. Of course, your subsystem your prerogative.
 
-Please, no "except Exception:"  (or the equivalent bare "except:").
-That bit of locale tweaking shows up in enough places that it should
-maybe go into a little helper module rather than being repeatedly
-open-coded?
+--knF+Ka0cSC/ofLUy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-jon
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKd9ggAKCRB4tDGHoIJi
+0rumAP9De46/73MOVgngZyV5AK9LyWOXePmU5X0dCUT8/XjpKwEAnsRD5eJ+kjTt
+lmla59yRJHpp9dIezZkkESz+KLp6rg0=
+=Lif/
+-----END PGP SIGNATURE-----
+
+--knF+Ka0cSC/ofLUy--
 
