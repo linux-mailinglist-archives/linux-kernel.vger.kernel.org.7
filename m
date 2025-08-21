@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-778788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0362B2EB06
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:56:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C05B2EB08
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4F95C75A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:56:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF11C5C74AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DCC292B4D;
-	Thu, 21 Aug 2025 01:56:37 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1E8296BCB;
+	Thu, 21 Aug 2025 01:58:28 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3292A288504;
-	Thu, 21 Aug 2025 01:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54013223708;
+	Thu, 21 Aug 2025 01:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755741396; cv=none; b=kYA7dTVBt8ygtvLbU93Pk0qzRDhIFXQBvXtv9r/e3IUkxDJChu60TqofloNRmXZr/bUtxYK842YAkD1BN0lZTgIaGB4Ue99ALhiMcdEl8SSurpLgAO7cibQTnVtdiB1Btx1PIrJ6FcFUQFm02Ox5jfiF4M+qhN3c0lF/OZM+G9E=
+	t=1755741507; cv=none; b=nhyUkKnMvTZF+aYeE/2IPZG6631giKkLdR+c7Be6AeIZwkelfb+LKynMS7dpI3nNdE5gIx4wD6hBcjnXX9BvifaJ0paZX95fnl2ufLvKuvTnob9VkharaojYHzZvErE9izESIV+tsXwSjpzRin+BmA35ByK1y8DylInES8mNk8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755741396; c=relaxed/simple;
-	bh=rB1BGf26IEIKquulbtzHM2s9bSe26Cv/iAmfPf+I+1c=;
+	s=arc-20240116; t=1755741507; c=relaxed/simple;
+	bh=K2AcjJV7qdbGxHlJRZpcZQl1H7ZWHNMo8atQSbIRip8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G4q2pYqLwNnT8lIFqrM5hTHgormSxZ1kl0/YxecLrrXYknudztNahiAjEs5qC4GP/TGJcjVEtL0zVQiz3INQT77BEivpSxUXI+7lTozVb7vmRHFN7MQh3IMcjFsE/P4Rz3F3hNTj5xrLyuJg9OEapJ6bIgPqpagHsAHpRMkQPI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	 In-Reply-To:Content-Type; b=G/VxvRaEdqbZbGCQpD/MU6D6PucUEy4W5ZroNuuCG5xfpxvXBY2eu9p+4P6n4q3Ay6sdknt4rQR+X2jU/blnzeX3XJ0gA228HYS5tXiDN4B8B4zbZwXINsJY6m63rkW6uFkbRjMVQOMb5J1bG2UXZfmn6eqwjqbEqNdh5Mw15o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c6mXR14Snzdcfc;
-	Thu, 21 Aug 2025 09:52:07 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 750DC180B63;
-	Thu, 21 Aug 2025 09:56:30 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c6mZb2hNYz2CgSl;
+	Thu, 21 Aug 2025 09:53:59 +0800 (CST)
+Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6BA0F180044;
+	Thu, 21 Aug 2025 09:58:22 +0800 (CST)
+Received: from [10.67.109.184] (10.67.109.184) by
+ kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 21 Aug 2025 09:56:29 +0800
-Message-ID: <80706fff-ca22-45f5-ac0b-ff84e1ba6a8b@huawei.com>
-Date: Thu, 21 Aug 2025 09:56:27 +0800
+ 15.2.1544.11; Thu, 21 Aug 2025 09:58:21 +0800
+Message-ID: <9cbdefd6-a757-44b3-a1db-69ca8117aacb@huawei.com>
+Date: Thu, 21 Aug 2025 09:58:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,96 +47,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] netfilter: br_netfilter: reread nf_conn from skb
- after confirm()
-To: Florian Westphal <fw@strlen.de>
-CC: <pablo@netfilter.org>, <kadlec@netfilter.org>, <razor@blackwall.org>,
-	<idosch@nvidia.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
-	<bridge@lists.linux.dev>, <netdev@vger.kernel.org>,
+Subject: Re: [PATCH] riscv: bpf: Fix uninitialized symbol 'retval_off'
+Content-Language: en-US
+To: Chenghao Duan <duanchenghao@kylinos.cn>
+CC: <ast@kernel.org>, <bjorn@kernel.org>, <puranjay@kernel.org>,
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<daniel@iogearbox.net>, <andrii@kernel.org>, <martin.lau@linux.dev>,
+	<eddyz87@gmail.com>, <song@kernel.org>, <yonghong.song@linux.dev>,
+	<john.fastabend@gmail.com>, <kpsingh@kernel.org>, <sdf@fomichev.me>,
+	<haoluo@google.com>, <jolsa@kernel.org>, <alex@ghiti.fr>,
+	<bpf@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>
-References: <20250820043329.2902014-1-wangliang74@huawei.com>
- <aKWyImI9qxi6GDIF@strlen.de>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <aKWyImI9qxi6GDIF@strlen.de>
+References: <20250820062520.846720-1-duanchenghao@kylinos.cn>
+ <8b836b6e-103a-41c2-b111-0417d8db4dce@huawei.com>
+ <20250820092628.GA1289807@chenghao-pc>
+ <239193b7-7dab-45b0-ab13-06bfe3f96f22@huawei.com>
+ <20250820103530.GA1475460@chenghao-pc>
+From: Pu Lehui <pulehui@huawei.com>
+In-Reply-To: <20250820103530.GA1475460@chenghao-pc>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemf100007.china.huawei.com (7.202.181.221)
 
 
-在 2025/8/20 19:31, Florian Westphal 写道:
-> Wang Liang <wangliang74@huawei.com> wrote:
->> Previous commit 2d72afb34065 ("netfilter: nf_conntrack: fix crash due to
->> removal of uninitialised entry") move the IPS_CONFIRMED assignment after
->> the hash table insertion.
-> How is that related to this change?
-> As you write below, the bug came in with 62e7151ae3eb.
 
-
-Before the commit 2d72afb34065, __nf_conntrack_confirm() set
-'ct->status |= IPS_CONFIRMED;' before check hash, the warning will not
-happen, so I put it here.
-
-As you say, the bug came in with 62e7151ae3eb. I will delete this paragraph
-in next patch.
-
->> To solve the hash conflict, nf_ct_resolve_clash() try to merge the
->> conntracks, and update skb->_nfct. However, br_nf_local_in() still use the
->> old ct from local variable 'nfct' after confirm(), which leads to this
->> issue. Fix it by rereading nfct from skb.
+On 2025/8/20 18:35, Chenghao Duan wrote:
+> On Wed, Aug 20, 2025 at 06:10:07PM +0800, Pu Lehui wrote:
 >>
->> Fixes: 62e7151ae3eb ("netfilter: bridge: confirm multicast packets before passing them up the stack")
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->> ---
->>   net/bridge/br_netfilter_hooks.c | 1 +
->>   1 file changed, 1 insertion(+)
 >>
->> diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hooks.c
->> index 94cbe967d1c1..55b1b7dcb609 100644
->> --- a/net/bridge/br_netfilter_hooks.c
->> +++ b/net/bridge/br_netfilter_hooks.c
->> @@ -626,6 +626,7 @@ static unsigned int br_nf_local_in(void *priv,
->>   		break;
->>   	}
->>   
->> +	nfct = skb_nfct(skb);
->>   	ct = container_of(nfct, struct nf_conn, ct_general);
->>   	WARN_ON_ONCE(!nf_ct_is_confirmed(ct));
-> There is a second bug here, confirm can return NF_DROP and
-> nfct will be NULL.
+>> On 2025/8/20 17:26, Chenghao Duan wrote:
+>>> On Wed, Aug 20, 2025 at 02:52:01PM +0800, Pu Lehui wrote:
+>>>>
+>>>>
+>>>> On 2025/8/20 14:25, Chenghao Duan wrote:
+>>>>> In __arch_prepare_bpf_trampoline(), retval_off is only meaningful when
+>>>>> save_ret is true, so the current logic is correct. However, in the
 
+OK, I think we should make commit msg more explicit. Such like the 
+follow. wdyt?
 
-Thanks for your suggestion!
+`However, in the fmod_ret logic, the compiler is not aware that the 
+flags of the fmod_ret prog have set BPF_TRAMP_F_CALL_ORIG, resulting in 
+an uninitialized symbol compilation warning.`
 
-Do you mean that ct may be deleted in confirm and return NF_DROP, so we can
-not visit it in br_nf_local_in() and need to add 'case NF_DROP:' here?
-
-I cannot find somewhere set skb->_nfct to NULL and return NF_DROP. Can you
-give some hints?
-
-------
-Best regards
-Wang Liang
-
->
-> Can you make this change too? (or something similar)?
->
-> diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hooks.c
-> index 94cbe967d1c1..69b7b7c7565e 100644
-> --- a/net/bridge/br_netfilter_hooks.c
-> +++ b/net/bridge/br_netfilter_hooks.c
-> @@ -619,8 +619,9 @@ static unsigned int br_nf_local_in(void *priv,
->          nf_bridge_pull_encap_header(skb);
->          ret = ct_hook->confirm(skb);
->          switch (ret & NF_VERDICT_MASK) {
-> +       case NF_DROP:
->          case NF_STOLEN:
-> -               return NF_STOLEN;
-> +               return ret;
->
->
-> nfct reload seems correct, thanks for catching this.
+>>>>
+>>>> lgtm, and same for `ip_off`, pls patch it together.
+>>>
+>>> I also checked at the time that ip_off is only initialized and assigned
+>>> when flags & BPF_TRAMP_F_IP_ARG is true. However, I noticed that the use
+>>> of ip_off also requires this condition, so the compiler did not issue a
+>>> warning.
+>>>
+>>> Chenghao
+>>>
+>>>>
+>>>>> original logic, retval_off is only initialized under certain
+>>
+>> Can you show how to replay this warning? I guess the warning path is as
+>> follow. Compiler didn't know fmod_ret prog need BPF_TRAMP_F_CALL_ORIG.
+>>
+>> ```
+>> if (fmod_ret->nr_links) {
+>> 	...
+>> 	emit_sd(RV_REG_FP, -retval_off, RV_REG_ZERO, ctx);
+>> }
+>> ```
+>>
+> 
+> Exactly, the compiler sees the unconditional use of retval_off.
+> 
+> Chenghao
+> 
+>>>>> conditions, which may cause a build warning.
+>>>>>
+>>>>> So initialize retval_off unconditionally to fix it.
+>>>>>
+>>>>> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+>>>>> ---
+>>>>>     arch/riscv/net/bpf_jit_comp64.c | 5 ++---
+>>>>>     1 file changed, 2 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
+>>>>> index 10e01ff06312..49bbda8372b0 100644
+>>>>> --- a/arch/riscv/net/bpf_jit_comp64.c
+>>>>> +++ b/arch/riscv/net/bpf_jit_comp64.c
+>>>>> @@ -1079,10 +1079,9 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im,
+>>>>>     	stack_size += 16;
+>>>>>     	save_ret = flags & (BPF_TRAMP_F_CALL_ORIG | BPF_TRAMP_F_RET_FENTRY_RET);
+>>>>> -	if (save_ret) {
+>>>>> +	if (save_ret)
+>>>>>     		stack_size += 16; /* Save both A5 (BPF R0) and A0 */
+>>>>> -		retval_off = stack_size;
+>>>>> -	}
+>>>>> +	retval_off = stack_size;
+>>>>>     	stack_size += nr_arg_slots * 8;
+>>>>>     	args_off = stack_size;
 
