@@ -1,126 +1,118 @@
-Return-Path: <linux-kernel+bounces-780700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B01AB30831
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:19:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF73B3083B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EE76188B110
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:16:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D3F176EEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B35C2C11D7;
-	Thu, 21 Aug 2025 21:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C13296BC9;
+	Thu, 21 Aug 2025 21:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MmbzMTXj"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C18C2C027F;
-	Thu, 21 Aug 2025 21:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mm2EDa+P"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7163393DD3;
+	Thu, 21 Aug 2025 21:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755810959; cv=none; b=l6WS5qCxnyrWfGZ/odq+nk4NxdONgOQohNkPKDATVGZkPfXHF0Vk/wNlOUxLPFUfr1Yc4gtfF83ADfwxf7w6l5ffPBkX0kluJjDmUjPZEjsDEjfBK4Feo5abWzI3XTfLWa8yGPYEd5mVkcRoxrji+5ZnDK06nOBbZVNUnSIrapo=
+	t=1755811049; cv=none; b=QC2oXQel2nNj6rxYPkecCjNUR7LibAymGVAXqEtAf82+CidTB+nTn34gyjAKtwtYA0RUn5GJxpA/jxVMh5h42jqCuuD5/VBZ7y4aIgo+HbGcCSTAK1+jseBebDUCPommfscFXKlzby7Tw7wIOAA4MZ+JwOeLzpoUQA8KBMlqwMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755810959; c=relaxed/simple;
-	bh=/LtxeeKPRImp78W2TR6vIVSLcbv7tvKQoP6i1qODnso=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NgBYU4BdWjyNcncEdOuUXYA5fkUc9XMRrFvllXooyVrb8zY5wc2wyui95/WOd0+D/UZQSw4MkrnWw36rU4tzMhZV2NANcb8C9XqLqzKndlZ0nLR+CJyUuB/28eSFzJ0gbzn2VMms8JHO6PsVzGmMb8Kmj7M3nVq6jDIrPqVrhu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MmbzMTXj; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0396C2116DDF;
-	Thu, 21 Aug 2025 14:15:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0396C2116DDF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1755810957;
-	bh=9k/HBrc2eL3SVYbPGTnCn1yplm2kaM62dC/fS9pAUa0=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=MmbzMTXjeeXoXX4DnWVqX+lPzZnKSDli4hJbpJkvWyRsdM2OBNVZQTHhGsoEN03iU
-	 lvRSuL7xZNu7G4xgDY6jn6xTQt8Lfj+8iknipsuvNyYSsL2PnnIXxQpWESRUw04ueE
-	 P6aACUQXi7gr+NRboSNAO7S/+6c7YHyi8v/FrKDk=
-Message-ID: <133c9897-12a8-619a-6cf4-334bc2036755@linux.microsoft.com>
-Date: Thu, 21 Aug 2025 14:15:56 -0700
+	s=arc-20240116; t=1755811049; c=relaxed/simple;
+	bh=wIvWJcJ2qicBpEyhg+T9O62WoWdENAS0bcC5e9CSn1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lLqsysqdvzAUhV7xefmCIXhbHw+y5M4VoI1+2Nj3GZHF2TEnJqhVcfxNAskW0hpxXYpEFRbMuafF3aIJtyjR3vZX6pxbIUTYl8t/w6Al2BxXydTrTewiVClJXR1cZEqA1xMjLAVYT/VtEaUYCTKCdnpt4OJF4n0BVLjAPAVfr5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mm2EDa+P; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71d603658e3so11848457b3.1;
+        Thu, 21 Aug 2025 14:17:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755811047; x=1756415847; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M0A+kRlT2FglN/8Bz1t/135C//i0Oe25IbMxPqDCh20=;
+        b=Mm2EDa+Pc53AY9wnEsDV4fn5KbcPOqxznX1jixgFxi4TFbIA5ul3MstbV3krdKWN1v
+         DS3IL+bGyLQycMJnCro7hfzXdW6VX+CbWUQ6ETB0NJtRzKv/Vh5iG7ZUA3eIzI6CiCmC
+         4ZoAthWlUWsce6MrviwMEiMr+UYHzxt/dmMOYQBjSxyDJa03Gsa+pP+QBGrB0u0MtFW6
+         N60grxzBZkz192aEIasRaYCSF8bGXUvElSDasqEaqA9BQRwqwXj1EvwNM9XUYqDhJW7u
+         7s+iC4uDHRBfFfxu6pYJDHPFrBF1X24xVJqYLfGekcMQLimGRmiJTxuF9cd54rF6H+JP
+         qEDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755811047; x=1756415847;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M0A+kRlT2FglN/8Bz1t/135C//i0Oe25IbMxPqDCh20=;
+        b=mp0INznmqT3MABkTH36ucge+dod8WiMHJG0zj7IUqCFzMEPGr6e5Qt7oJ/gbw5ZMlw
+         +OFXNCzvqwI/kVUuuNp2o1fUx3hUD61qhDxFXj7zU3MjjYHwwCaMhK/jxYwhDGSgRklt
+         HtdkEtpjykHRXYkcEdsCuVpPTpLqgXI9A//X1d64VdmIAOi+RO6hnZTnXpu1f3tWDl+U
+         tRD7ZH/z/2yI+TlWnoATRJP93mnFyrbSzZN7GlfyFkvaNhF/Tq0RoxCsnhup4PussBD4
+         9doi59DY7Qok0mEJC8/CNnsqEjvHbFbakcEAOOfKmdyAwiSxmoh8ENuQWGNXL7cgG4O0
+         3+hw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1X/RJm2UBxomZP+DZrhqQgR//+vrKEQ4DsairQSLLPWc1EPEnviJtnDhkACtswaN4fXMM4fk6ASje940=@vger.kernel.org, AJvYcCW3262NyAw3RpEeXtNhwBjzEnTAsbxVdQPDuya1XzvIEMlsuVAfUtwRhdPsb8dBQbhwJWPRI8v/e6Qsic4=@vger.kernel.org, AJvYcCXTHYF78EUNXLq2M98oVk9TqKJSErx8mzrLtHx1loa+110SeWjKjmhBCAXXQiVl9NBCMp2vdPyFzxhA7lA/q9iI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSmf+kF8iZyR5XcDBjVpZR6zuyhicpqqs99TiWbpl1hzs2659e
+	Mdr1Dt5+GTSnHeRMpS/Rl3BHAzmxKO1kcSxCrj7/1cbNAiS3Kj5cGcNUbruLAOjptd1c/qAdmZD
+	3+rCzNAVKMTAe03D3QMafwa3k6Djav98fOw==
+X-Gm-Gg: ASbGncvE+5xTYMcJ7I+Jwu/n6V9Q73LyOjgvULk24+hOcDMFOGgaUjgw8b0TujZbKye
+	QYCRRgd3ZChlfN5m78SF4IIOSenLnOljh1gEmfQN1BfPRpJFpm2sJfruqfc/tMbYdfRBxb6wBxv
+	ZhvquFwJREJMVr8JyniET0d7laMcTuK+w+Ox1HsX6e4ho8IgtplwGX9iZJ01eho6wTVXps8HApw
+	UM583ZzkgtdfoZhTiN4KwOTpg6wsxBoM72WvWnqN1qKohmUzo2kIyWa7lc=
+X-Google-Smtp-Source: AGHT+IG6//TXCd7HWmIFgh2CoCFbe0b7gysAa1lfgSeo97MehCuFJS9JIpTBAgiJE6ZQ+0LnbnlXHEBegv61Kx3lmJQ=
+X-Received: by 2002:a05:690c:4c05:b0:71d:bc04:a615 with SMTP id
+ 00721157ae682-71fdc307ab4mr7570467b3.15.1755811046697; Thu, 21 Aug 2025
+ 14:17:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v3 1/7] Drivers: hv: Introduce hv_hvcall_*() functions for
- hypercall arguments
-Content-Language: en-US
-From: Mukesh R <mrathor@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>,
- "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "hpa@zytor.com" <hpa@zytor.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
- <kw@linux.com>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "bhelgaas@google.com" <bhelgaas@google.com>, "arnd@arndb.de" <arnd@arndb.de>
-Cc: "x86@kernel.org" <x86@kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-References: <20250415180728.1789-1-mhklinux@outlook.com>
- <20250415180728.1789-2-mhklinux@outlook.com>
- <f711d4ad-87a8-9cb3-aabc-a493ff18986a@linux.microsoft.com>
- <33b59cc4-2834-b6c7-5ffd-7b9d620a4ce5@linux.microsoft.com>
- <SN6PR02MB4157376DD06C1DC2E28A76B7D432A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <833a0c96-470f-acff-72e7-cc82995fbc2f@linux.microsoft.com>
-In-Reply-To: <833a0c96-470f-acff-72e7-cc82995fbc2f@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250821200132.1218850-1-zlatistiv@gmail.com> <9c310ab7-0f0b-412f-8df7-71730a2d2caa@sirena.org.uk>
+In-Reply-To: <9c310ab7-0f0b-412f-8df7-71730a2d2caa@sirena.org.uk>
+From: Nikola Ivanov <zlatistiv@gmail.com>
+Date: Fri, 22 Aug 2025 00:17:14 +0300
+X-Gm-Features: Ac12FXyzv06cBuZ62BErId8wrKWN93hUseTYhtMGTtt1blvR1AUlAbdCKMTekFc
+Message-ID: <CAHjv_as7m7UbSLAPU6hX_=tAvLZYR_7Q=1n+Xq-nW-6OJ237PA@mail.gmail.com>
+Subject: Re: [PATCH] selftests/alsa: remove 0/NULL global variable assignment
+To: Mark Brown <broonie@kernel.org>
+Cc: perex@perex.cz, tiwai@suse.com, shuah@kernel.org, 
+	linux-sound@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/21/25 13:49, Mukesh R wrote:
-> On 8/21/25 12:24, Michael Kelley wrote:
->> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Wednesday, August 20, 2025 7:58 PM
->>>
->>> On 8/20/25 17:31, Mukesh R wrote:
->>>> On 4/15/25 11:07, mhkelley58@gmail.com wrote:
->>>>> From: Michael Kelley <mhklinux@outlook.com>
->>>>>
->>>>>
-> <snip>
->>>>
->>>>
->>>> IMHO, this is unnecessary change that just obfuscates code. With status quo
->>>> one has the advantage of seeing what exactly is going on, one can use the
->>>> args any which way, change batch size any which way, and is thus flexible.
->>
->> I started this patch set in response to some errors in open coding the
->> use of hyperv_pcpu_input/output_arg, to see if helper functions could
->> regularize the usage and reduce the likelihood of future errors. Balancing
->> the pluses and minuses of the result, in my view the helper functions are
->> an improvement, though not overwhelmingly so. Others may see the
->> tradeoffs differently, and as such I would not go to the mat in arguing the
->> patches must be taken. But if we don't take them, we need to go back and
->> clean up minor errors and inconsistencies in the open coding at some
->> existing hypercall call sites.
-> 
-> Yes, definitely. Assuming Nuno knows what issues you are referring to,
-> I'll work with him to get them addressed asap. Thanks for noticing them.
-> If Nuno is not aware, I'll ping you for more info.
+On Thu, Aug 21, 2025 at 09:49:29PM +0100, Mark Brown wrote:
+> On Thu, Aug 21, 2025 at 11:01:32PM +0300, Nikola Z. Ivanov wrote:
+> > Remove 0/NULL global variable assignment in mixer-test.c and pcm-test.c
+>
+> Why?
+>
+> > --- a/tools/testing/selftests/alsa/mixer-test.c
+> > +++ b/tools/testing/selftests/alsa/mixer-test.c
+> > @@ -53,10 +53,10 @@ struct ctl_data {
+> >     struct ctl_data *next;
+> >  };
+> >
+> > -int num_cards = 0;
+> > -int num_controls = 0;
+> > -struct card_data *card_list = NULL;
+> > -struct ctl_data *ctl_list = NULL;
+> > +int num_cards;
+> > +int num_controls;
+> > +struct card_data *card_list;
+> > +struct ctl_data *ctl_list;
+>
+> Nothing now sets initial values for these variables so they all have
+> undefined values which is buggy.  The code is relying on the default
+> values.
 
-Talked to Nuno, he's not aware of anything pending or details. So if you
-can kindly list them out here, I will make sure it gets addressed right
-away.
-
-Thanks,
--Mukesh
-
-
->>
-<deleted>
->>
+Checkpatch reports it as an error, it looks to be part of the C
+standard that all compilers must initialize globals to 0.
+Though I suppose it helps with readability to see
+the num_ counters assigned 0.
 
