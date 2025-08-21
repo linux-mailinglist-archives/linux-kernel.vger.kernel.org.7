@@ -1,125 +1,135 @@
-Return-Path: <linux-kernel+bounces-780130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAC7AB2FDDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:11:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24515B2FE10
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA2BB7B181F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:10:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9836B6402E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7438D2D8362;
-	Thu, 21 Aug 2025 15:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468A627E1B1;
+	Thu, 21 Aug 2025 15:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="du1VaMzg"
-Received: from smtpout6.mo534.mail-out.ovh.net (smtpout6.mo534.mail-out.ovh.net [54.36.140.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQu2IUt3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BD827F759
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8793E2E3B0E;
+	Thu, 21 Aug 2025 15:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755789088; cv=none; b=Mxn1l7EZCLc6Vttv0ZXaxLvj7h04tGHyqO0ymqVT25X+JEbtYVBUh5tVsPDEvq2GiELmhlfcZdZmsbl0UOHiznUlMT7pmda/EhNlBu3Eqky2tRN6uwxBLazpjnEi7eM3ezkxAEFqaanT7/cyvKirVf91SFKJEB1gSh5YOfZUvW0=
+	t=1755789094; cv=none; b=kgpgH2K8uK4m+Y/dGDZx7aH0jr4JhV87Djeb2q+suJD7YyyJxGPIZCHCFsLVXeQX5vVpy5X8G5ErvNc9gtxrcn8a9G9OdxyPWKFhpatqhNzAeA/IDATG8csPJIvPxXWMakPJ4y4/VxE/Gx7SMO6cq8DhlNvvHm6C1ZTE9Hsok58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755789088; c=relaxed/simple;
-	bh=SyDcBCjUl2UTge3XmRjuH2AcNa9i01d108k6ueOFmr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dSwFpK9nnHAMwRGWelqPCk9oSpm3hYG523xJyy01MlZKU33JQJLjR0HMttIkBzcRW7Zuy2PpHqWub8Xh3/hRcwR+TRI0NZ8t61FwSg7egOKM4kZi7xc4vgLy4A0rsVAyiPlbPUA6FigSezye4j3/9o0bnA+IWDMLHOtWhkdyh3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=du1VaMzg; arc=none smtp.client-ip=54.36.140.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
-Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net [79.137.60.37])
-	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4c76Gf2TDRz6GTv;
-	Thu, 21 Aug 2025 15:11:22 +0000 (UTC)
-Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net. [127.0.0.1])
-        by director4.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <bp@alien8.de>; Thu, 21 Aug 2025 15:11:21 +0000 (UTC)
-Received: from mta10.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.101.31])
-	by director4.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4c76Gd6Btpz1xpJ;
-	Thu, 21 Aug 2025 15:11:21 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.5])
-	by mta10.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 736EE7832E2;
-	Thu, 21 Aug 2025 15:11:19 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-97G0023f322332-2362-4479-94ea-bf9a870d9e19,
-                    684E78C7C579463DAB27E2CA1F9C4E28A39E1181) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.22.109
-Message-ID: <2e7029bd-5e3b-4c4b-b969-b1a3794b2fec@orca.pet>
-Date: Thu, 21 Aug 2025 17:11:20 +0200
+	s=arc-20240116; t=1755789094; c=relaxed/simple;
+	bh=VRY5/t9bBx5F1ZJ3h2WUXpcGEFMoaQ/KLoUkTd93Dc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=MwsS2g7PMjNbrRjDiGue5yIuTB93e8ODlbBFo982Xb4o6VG/6jFzQDd1lxS1cWkbzL2dzFLe8Y6Pwdt9h62juVUI4GoyNPQdqaRjIFgdmcqKcEsNQh7Szh5AQMG4Xyeyx5SDO1IKXfsoGZG1V619AR/47OeUwIPa3ijXQYu9m3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQu2IUt3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E104FC4CEEB;
+	Thu, 21 Aug 2025 15:11:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755789094;
+	bh=VRY5/t9bBx5F1ZJ3h2WUXpcGEFMoaQ/KLoUkTd93Dc0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=fQu2IUt363kg7f3k7qtdmvSCtqHijJq99NfY96PQdJhtSpHX6YqPbdDNNoNbd+NYg
+	 bvoy4Tzx6pX1h3UEXAMmI6g0Whp23ceyqrpDvtOCKRzCFDMt+Owl2pAaHkfrjHjeyP
+	 +nNL218Fs8XNEL4kKixho8c04NDy7+qHbgynP/NWoDw5i4dcEXy53s0vItsAHQDJIH
+	 Liy2qI/lb4SdgPL+UN6mFgQpeDR/wwIZ8JTPFCUOE064skdFKTA8fdbnOfglKnrgzH
+	 BI3Z3Fhe467MfAx164Q+wjjx0R4RH8ZRWeS/OidBTBVyKhhiv38fxYt7yq6ZOl8PWP
+	 SWjQtEjaurR0g==
+Date: Thu, 21 Aug 2025 10:11:32 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Rio <rio@r26.me>,
+	D Scott Phillips <scott@os.amperecomputing.com>,
+	linux-kernel@vger.kernel.org,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] PCI: Fix pdev_resources_assignable() disparity
+Message-ID: <20250821151132.GA674480@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-To: David Laight <david.laight.linux@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
- Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
- David Kaplan <david.kaplan@amd.com>, "Ahmed S. Darwish"
- <darwi@linutronix.de>, Kees Cook <kees@kernel.org>,
- Andrew Cooper <andrew.cooper3@citrix.com>, Oleg Nesterov <oleg@redhat.com>,
- "Xin Li (Intel)" <xin@zytor.com>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-References: <20250820013452.495481-1-marcos@orca.pet>
- <20250820090733.GJ3245006@noisy.programming.kicks-ass.net>
- <20250821132807.0a898dfa@pumpkin>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <20250821132807.0a898dfa@pumpkin>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 3970204548927149748
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieduheeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrddvvddruddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepuggrvhhiugdrkhgrphhlrghnsegrmhgurdgtohhmpdhrtghpthhtoheprghnughrvgifrdgtohhophgvrhefsegtihhtrhhigidrtghomhdprhgtphhtthhopegsrhhgvghrshhtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhnohhvihhtohhllhesghhmrghilhdrtghomhdprhgtphhtthhopehusg
- hiiihjrghksehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrgh
-DKIM-Signature: a=rsa-sha256; bh=Fvb1hrWI5rhNu+9c7aAjt4RYLlhbLkm3O1wYlqc0QI4=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1755789082;
- v=1;
- b=du1VaMzgDuMjOKup93F0kROKhUtkIzJr1hOyYZgrY91X+qF9JaX6C825J8XiQWwm0ComAR+c
- 3fON26zP0UFObtWWUT86T+a6FovEwmeCjBcG6sb8rc1zxKc0mLnISr2RRdcDNGnlbtvzIxn4/mL
- QILJDN8YGKZwmcPIjUkQ7HijTh+lZnYJjH/Ru27eyDGXSRjkI7Up4HYDMnPJseve5r550k6fSBE
- zCS45KOt+nm9biaMLyx55HlSECZVbVPn7P0EvcjWoQM6gwKyMqFWAPMsXmsA+doQLl6r5QM9w5G
- 4Q+DsnEp29420qN8iByOsgDR8+oayayvSnOY6VLBku24g==
+In-Reply-To: <20250630142641.3516-3-ilpo.jarvinen@linux.intel.com>
 
-El 21/08/2025 a las 14:28, David Laight escribió:
->> This is going to be terribly slow if there's a significant number of
->> traps (like with endbr32), but yeah, this ought to work.
+On Mon, Jun 30, 2025 at 05:26:40PM +0300, Ilpo Järvinen wrote:
+> pdev_sort_resources() uses pdev_resources_assignable() helper to decide
+> if device's resources cannot be assigned. pbus_size_mem(), on the other
+> hand, does not do the same check. This could lead into a situation
+> where a resource ends up on realloc_head list but is not on the head
+> list, which is turn prevents emptying the resource from the
+> realloc_head list in __assign_resources_sorted().
 > 
-> Could you patch the memory resident page to contain a supported nop?
-> (without marking it 'dirty')
-> Then the same function wouldn't trap until the code page was reloaded
-> from the source file.
+> A non-empty realloc_head is unacceptable because it triggers an
+> internal sanity check as show in this log with a device that has class
+> 0 (PCI_CLASS_NOT_DEFINED):
+
+Is the class relevant here?
+
+> pci 0001:01:00.0: [144d:a5a5] type 00 class 0x000000 PCIe Endpoint
+> pci 0001:01:00.0: BAR 0 [mem 0x00000000-0x000fffff 64bit]
+> pci 0001:01:00.0: ROM [mem 0x00000000-0x0000ffff pref]
+> pci 0001:01:00.0: enabling Extended Tags
+> pci 0001:01:00.0: PME# supported from D0 D3hot D3cold
+> pci 0001:01:00.0: 15.752 Gb/s available PCIe bandwidth, limited by 8.0 GT/s PCIe x2 link at 0001:00:00.0 (capable of 31.506 Gb/s with 16.0 GT/s PCIe x2 link)
+> pcieport 0001:00:00.0: bridge window [mem 0x00100000-0x001fffff] to [bus 01-ff] add_size 100000 add_align 100000
+> pcieport 0001:00:00.0: bridge window [mem 0x40000000-0x401fffff]: assigned
+> ------------[ cut here ]------------
+> kernel BUG at drivers/pci/setup-bus.c:2532!
+> Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+> ...
+> Call trace:
+>  pci_assign_unassigned_bus_resources+0x110/0x114 (P)
+>  pci_rescan_bus+0x28/0x48
 > 
+> Use pdev_resources_assignable() also within pbus_size_mem() to skip
+> processing of non-assignable resources which removes the disparity in
+> between what resources pdev_sort_resources() and pbus_size_mem()
+> consider. As non-assignable resources are no longer processed, they are
+> not added to the realloc_head list, thus the sanity check no longer
+> triggers.
+> 
+> This disparity problem is very old but only now became apparent after
+> the commit 2499f5348431 ("PCI: Rework optional resource handling") that
+> made the ROM resources optional when calculating bridge window sizes
+> which required adding the resource to the realloc_head list.
+> Previously, bridge windows were just sized larger than necessary.
+> 
+> Fixes: 2499f5348431 ("PCI: Rework optional resource handling")
+> Reported-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-While I had thought of that, to be honest I'm not knowledgeable enough
-in kernel development to pull that off without being 100% sure I did not
-introduce any compatibility or security issues, so I preferred for the
-time being to play it safe.
+Any URL we can include here for the report?
 
-Anyhow, I made a simple benchmark running "sudo" with NOPASSWD as provided
-by Debian bookworm i686, and another version compiled without ENDBR32s, and
-the overhead does not seem to be too high:
-
-# time for i in {1..100}; do ./sudo-nocet echo "" >/dev/null; done
-real    0m6,001s
-user    0m3,664s
-sys     0m1,576s
-
-# time for i in {1..100}; do sudo echo "" >/dev/null; done
-real    0m5,983s
-user    0m3,546s
-sys     0m1,717s
-
-The original binary has 203 "endbr32"s, and they result in a 0.3% slowdown
-for this binary in particular, which is totally acceptable IMO.
-
-Greetings,
-Marcos
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Cc: <stable@vger.kernel.org>
+> ---
+>  drivers/pci/setup-bus.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index f90d49cd07da..24863d8d0053 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -1191,6 +1191,7 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
+>  			resource_size_t r_size;
+>  
+>  			if (r->parent || (r->flags & IORESOURCE_PCI_FIXED) ||
+> +			    !pdev_resources_assignable(dev) ||
+>  			    ((r->flags & mask) != type &&
+>  			     (r->flags & mask) != type2 &&
+>  			     (r->flags & mask) != type3))
+> -- 
+> 2.39.5
+> 
 
