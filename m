@@ -1,70 +1,60 @@
-Return-Path: <linux-kernel+bounces-780376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9A1B30102
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:28:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A512B30104
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF831BA1B07
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:25:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6350C1BA7704
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E6531DDBD;
-	Thu, 21 Aug 2025 17:24:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041C031813A;
-	Thu, 21 Aug 2025 17:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A44B30F813;
+	Thu, 21 Aug 2025 17:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaXP/rtT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DBB3090D4;
+	Thu, 21 Aug 2025 17:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755797075; cv=none; b=qYR1JlKLY8vZy7kVDzjPiYmACt0SD5VObMHw0qfQJxTEDKCrPj3R5y42fAxt3eQyE/qAQWZFDos2GC+SEgAolCl7cOJL5HIlvDU0IsJLCR9H778ZWOKrxSY/WnlkIUQ/8QzLODP3LakCZjrRiBMkUKtt+5gT5p3kakvm20BH4f8=
+	t=1755797087; cv=none; b=Rwku63dGEUNoeG4vUcf40QGK27QACiFrwLjZpyffgIS6S/JEdk4ybau2GQuZyxM01zmVftfPX3HCJbF82dIg2q7SFn1A0XDtrkenf7+BMDjQUmwT43x0Myz7tD2vjRgfh211qApo4vDk5Ba8ZHo+xpnhhM+FyGtzwe0FZqa9eQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755797075; c=relaxed/simple;
-	bh=jpG4OioajyvO9e69rzujynWFs3I89Xv/VGW/yDdnHLY=;
+	s=arc-20240116; t=1755797087; c=relaxed/simple;
+	bh=zvag0ItsqVk++H/ShYx94vCt9ir2zllvDThN1dD+mBg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FhYZEwUBZIEZF/nCL+JztY31E/f/mFz4iAQMuUTExw6XNCa2iB//oyOOx3/0KHLgn2m/HcFCb9SnxKnV9tnrN6pxpWDIbJqCCCFScrs7la72mKl+fAxFajpoeuYZafEp2w9XpQvAkyRvfIQmAN7o9lu4cK27bzByMneC2RRedBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C4A4152B;
-	Thu, 21 Aug 2025 10:24:25 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D7F023F59E;
-	Thu, 21 Aug 2025 10:24:29 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	oliver.upton@linux.dev,
-	anshuman.khandual@arm.com,
-	robh@kernel.org,
-	james.morse@arm.com,
-	mark.rutland@arm.com,
-	joey.gouly@arm.com,
-	Dave.Martin@arm.com,
-	ahmed.genidi@arm.com,
-	kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com,
-	mbenes@suse.cz,
-	james.clark@linaro.org,
-	frederic@kernel.org,
-	rafael@kernel.org,
-	pavel@kernel.org,
-	ryan.roberts@arm.com,
-	suzuki.poulose@arm.com,
-	maz@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+	 MIME-Version; b=gwmEm203NgEyEZlP0Sovg1flFKmzgYuMxZL4C1ITvTkPX5ZXyydCBRLstY6MMcjcwAdg8pcS41mwtMKj9T6NUfdZosEOLcjWVUtF7VMvcbIQNJ5J370LN4eoOV10G3Ojyi84HrIRGCH+jbXpAf9AV92N8oK900ludVVL0WSNfPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaXP/rtT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D50A4C4CEEB;
+	Thu, 21 Aug 2025 17:24:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755797087;
+	bh=zvag0ItsqVk++H/ShYx94vCt9ir2zllvDThN1dD+mBg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OaXP/rtTLlvEoaQqa1Dn+8YDGCh29zSrfDZeUKHufdVMfC3FOWf2+DJ7xGtOaTJt1
+	 PqgBJZLfae67EW8bEpGXCVCPIYR/s5wowwRc7W0KFusJ6U0C27fAyV5J0dnqxplY/L
+	 7d2Wu0yUfw+tN+YtxgVRKUJqxB8uRIKgQD3FWzsc5mIrli5QnFFY9LlO6Wnr9i0BLp
+	 yvsRtkbP0aj0NHNkpvIM4XVRd9JwDqHkNs1aURCbwNzyiC5ABeTPvlwhjaTTLZvr6g
+	 qPo2Yt7sP9dqSJ6bCs02Q0nel9gzQh42RX7i0vhHaMh02pCWsBJmxGXd2LrODeDj28
+	 443+eEjWdScQQ==
+From: SeongJae Park <sj@kernel.org>
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v4 5/5] arm64: make the per-task SCTLR2_EL1
-Date: Thu, 21 Aug 2025 18:24:08 +0100
-Message-Id: <20250821172408.2101870-6-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250821172408.2101870-1-yeoreum.yun@arm.com>
-References: <20250821172408.2101870-1-yeoreum.yun@arm.com>
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com
+Subject: Re: [PATCH 10/11] Docs/ABI/damon: document addr_unit file
+Date: Thu, 21 Aug 2025 10:24:44 -0700
+Message-Id: <20250821172444.82455-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250821105159.2503894-11-yanquanmin1@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,69 +63,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some bits in SCTLR2_EL1 that control system behavior can be
-configured on a per-task basis (e.g., fields related to FEAT_CPA2).
-To support future use of these fields, SCTLR2_EL1 is maintained
-per task.
+On Thu, 21 Aug 2025 18:51:58 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
 
-On platforms without FEAT_SCTLR2 support, there is no functional
-change and only minimal performance overhead.
+> From: SeongJae Park <sj@kernel.org>
+> 
+> Document addr_unit DAMON sysfs file on DAMON ABI document.
+> 
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/include/asm/processor.h | 3 +++
- arch/arm64/kernel/process.c        | 9 +++++++++
- 2 files changed, 12 insertions(+)
+Reviewed-by: SeongJae Park <sj@kernel.org>
 
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 61d62bfd5a7b..e066116735c6 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -184,6 +184,7 @@ struct thread_struct {
- 	u64			mte_ctrl;
- #endif
- 	u64			sctlr_user;
-+	u64			sctlr2_user;
- 	u64			svcr;
- 	u64			tpidr2_el0;
- 	u64			por_el0;
-@@ -258,6 +259,8 @@ static inline void task_set_sve_vl_onexec(struct task_struct *task,
- 	(SCTLR_ELx_ENIA | SCTLR_ELx_ENIB | SCTLR_ELx_ENDA | SCTLR_ELx_ENDB |   \
- 	 SCTLR_EL1_TCF0_MASK)
- 
-+#define SCTLR2_USER_MASK	(0)
-+
- static inline void arch_thread_struct_whitelist(unsigned long *offset,
- 						unsigned long *size)
- {
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index 96482a1412c6..e54f192c0629 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -698,6 +698,11 @@ void update_sctlr_el1(u64 sctlr)
- 	isb();
- }
- 
-+static void update_sctlr2_el1(u64 sctlr2)
-+{
-+	sysreg_clear_set_s(SYS_SCTLR2_EL1, SCTLR2_USER_MASK, sctlr2);
-+}
-+
- /*
-  * Thread switching.
-  */
-@@ -737,6 +742,10 @@ struct task_struct *__switch_to(struct task_struct *prev,
- 	if (prev->thread.sctlr_user != next->thread.sctlr_user)
- 		update_sctlr_el1(next->thread.sctlr_user);
- 
-+	if (alternative_has_cap_unlikely(ARM64_HAS_SCTLR2) &&
-+	    prev->thread.sctlr2_user != next->thread.sctlr2_user)
-+		update_sctlr2_el1(next->thread.sctlr2_user);
-+
- 	/* the actual thread switch */
- 	last = cpu_switch_to(prev, next);
- 
--- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
+Thanks,
+SJ
+
+[...]
 
