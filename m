@@ -1,177 +1,99 @@
-Return-Path: <linux-kernel+bounces-779780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DCD2B2F8C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:51:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7445B2F8C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8411CE112C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD675A6D17
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDB931A064;
-	Thu, 21 Aug 2025 12:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053CC315763;
+	Thu, 21 Aug 2025 12:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WHhp+HVG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ydnd4lN1"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948CD31985A;
-	Thu, 21 Aug 2025 12:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C3D31159D
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780219; cv=none; b=rm3mnjlLTb6HiCbRhTSIYAG3gAWhGs190a/Og1PvouRMJ9rky3b//Wm3SfNXZZe97SKBAz20AQ493l3Hr15hDvXklnKao+OADYsTdVQhqMfMOI8pDMWnZzQ1UUjQcqzX3Sx/1nCHo6iyJ3iysZxn4ezzIliKZN0AoDET5UbdVf4=
+	t=1755780258; cv=none; b=iWGvK1ynquEVyk+7tBHtZOZNiXPTjunQiPF6mOLkDI7OMDtSEa9ewpbYrMZhd8kZGbpqu5Isi3pZhnGdMJo0CLGxYVzPBoy0Q4cBFy85jwXEOAJSE/UUfVXWwTHd3tspQjsHvc25Mf4+/V+vNGeZUUIno8aGuddkxwHJiQm4B3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780219; c=relaxed/simple;
-	bh=G2/2c80p8n9B1lsiqUL/VHUKEGaBjvzvFKFMlgmgbwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KWFekMfYWQ4HDZlF52ipOT1izGkxa7v1c/UoZhO44BgkYTaSMrKG6GuuIslz2XZ8ao8BDHLryp9n6IfilRzZAcD7igH8bRDCTW76Sr3USI5USHVCcSL5G8kg60VyIs1PYrSXIbL0Z43q0X2rVjYA0v92WqsZo4ALdM2Rwq/xEZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WHhp+HVG; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L6xFRI012155;
-	Thu, 21 Aug 2025 12:43:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=d97PCBN2Mxcf1G3G9AAb1UIrmlS+H3
-	GNt0ptuWZnCQY=; b=WHhp+HVGEZd37dzp23AaHYjs5XhRjb4gqo1PgkzYqID8mY
-	nBiJNUnMLrPDgEkjSDBsUhk0OHQd4EhiTl6Opp5v8I3DYRLZNHtjblPuPzA+kG7y
-	GVy9eIASvUk3LD13t0H4kWCsPV1ghHtasS2tI8P2R2ft9q+ECNHAXoTn3hAan88R
-	4wID8bjmeHD7XgGogEM/wXKnSa35vagwkd3mbNtRb7TXhLfhR3DHDRr+GWmdNRrr
-	HB4nJQuUa+hmt+eSC+QXkIZNELTCeTgpkMoKR+7IEbuGgVHH4MoDWDU5zmo7vZnh
-	/X6HUhsZY0LeJK6FAmTHNFq36EjghwIuRmklvyhA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vrhpm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 12:43:32 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57LCbp68002952;
-	Thu, 21 Aug 2025 12:43:31 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vrhpk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 12:43:31 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57LAvdb3024782;
-	Thu, 21 Aug 2025 12:43:30 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48my5w092c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 12:43:30 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57LChQSZ18350366
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 12:43:26 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EE5BE20049;
-	Thu, 21 Aug 2025 12:43:25 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A72AC20040;
-	Thu, 21 Aug 2025 12:43:25 +0000 (GMT)
-Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.155.202.194])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 21 Aug 2025 12:43:25 +0000 (GMT)
-Date: Thu, 21 Aug 2025 14:43:24 +0200
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, richard.weiyang@gmail.com,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH v4] mm: fix accounting of memmap pages
-Message-ID: <aKcUbInGFUiwCgrw@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-References: <20250807183545.1424509-1-sumanthk@linux.ibm.com>
- <687b556e-0196-4a38-986a-2e7b0308e03d@redhat.com>
+	s=arc-20240116; t=1755780258; c=relaxed/simple;
+	bh=kh5QYdAh6nAxq3wHVmiK83eqHqd1Ae70oDTSD42Qpis=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iVByoV+DEH/0eKNz9gk8w92sb5MMJSQT0Ko2cR7aWqi/+Ye665ix8O+dlu7Ss+tlQ5d+xr9NM9D4FT3T768OK4iB4ODtqRnHvXNcw2pU6tbO8qXr0hIZkmVXYfE/KFcPVscriokgCIL36F9MXESFYJyzJe9jFRqd7g6HBPJaCoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ydnd4lN1; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b05d8d0so5999495e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755780255; x=1756385055; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kh5QYdAh6nAxq3wHVmiK83eqHqd1Ae70oDTSD42Qpis=;
+        b=Ydnd4lN1En21y6x+e1isqj/cIcMMtWZFAQoxdfTfR3Ym8KmNOLjq6P4ps5EriWuPyC
+         zeZrvnt7jIwr1mMDp3Rh7ilssQTysRVB8T34OHZpEHGbUgUDb9Rmslo92YSNoam6VvkJ
+         ZNpWxXg6XFOanGpr1uGgzWPT0HxVjsooRoei0sSQNAhUaANqcc/FAVLh34VyLmIMEZDm
+         kN1K8ms3c9GD3DjAua4s/V4TYENif3m0tqO6CkMG0rxx4QCjoyXt3HxAdbQfSsErzAj+
+         bzNtq5+gXk8h+xPkNlNj+JVuwFA8HIQzrbrJk7YEzDPMmjn6zaWR9owHnz2FAZQt3Csm
+         eNxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755780255; x=1756385055;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kh5QYdAh6nAxq3wHVmiK83eqHqd1Ae70oDTSD42Qpis=;
+        b=BApPT8CAKDE22B5/o+ZYm+VRGD/7sm9L59GpZaRivEwcmIaXiGmfeZzLIUErljgD64
+         eAMX6cm1dWIaygik2PH7oZLBGgqV2v2A57oq6t0tnk/+VUOiolvaLkJhccBspPLUhaLy
+         4uTS9CThsC+ISp+reC0QUNsHDX8bz7dGaUngLpLm2mEXDU12pUEzYG/yN4Bi/4lhbcFO
+         6cIn3VitfuMkRP9TgbGy/Fd4mUCoy1wYNs9ZLdQ2SgTHvQHmbPP66Cy/Yio13W7+HpSy
+         iePj2RWXaFAofFLzooJvZubLfLyMxAGaLWCqSHpRexSxXbPQbCFgihJ6sGS2+7TOdzrs
+         s7Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9mjwP1w9Hcqvyky3jaw34fEJtkU48pyOAN0B/cf6sbjGCYlphpcOK0b8Vabp3bcGE1DPhSLzPOAoD8sY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydrzvbRg4f+791vpbvzx604g0LFRtjI2/GMtMo7gA/xwv0Daz1
+	dRHi4E/JXNFzo1mwwR6Jkq0wqEmKONx1BpfKGh/M1iHFLKFp+Xf/Pk/ojbP04V4C47wRXBUbHZK
+	KReDMBNDbaXORDw==
+X-Google-Smtp-Source: AGHT+IHAROi3MrtrJw/aU/9ZmYqp2tOlukwY3bYbBdELumt2D0HPjVm8FpMPMoJokOc2rHfbgvTz5uNpauUQ3Q==
+X-Received: from wmqa19.prod.google.com ([2002:a05:600c:3493:b0:459:dbaa:93a6])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3541:b0:459:dc81:b189 with SMTP id 5b1f17b1804b1-45b4d8587a7mr22616175e9.31.1755780255050;
+ Thu, 21 Aug 2025 05:44:15 -0700 (PDT)
+Date: Thu, 21 Aug 2025 12:44:14 +0000
+In-Reply-To: <20250817065211.855-1-ujwal.kundur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <687b556e-0196-4a38-986a-2e7b0308e03d@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfX029ekrewtJmY
- ww6QxLB3XPyK7ozqdFd0htWAU+zhYGhrJW8GE5tUvR1O84vO31XihtYybo+RHWn19eaNjWmpVpJ
- TRrV+iI/iqGOjYqXtlnjHsYWTYny/uIa3q2p9jeIKQbJKL9vwUCnF8cnaYiD2suOolptm0qOt4f
- Ad4784HoubASlYgbnGcQCt8w7bgIhKkih2hXWEu4JRJxG+nTKqbIW9LAD7oxhtl8/gLe/PiMbcf
- upoQP17bSUnXOt4CGIpp8SQ/AwswvoZGSOkW8FG9Hy+Hi8HCNCaYVYF7A8/PltAZ2fKr/MkkISx
- JDPZKacQJOpZIvJT37iMC1hKFMxrgUocKYnO91NijJDkx5DaKa8basqAxmHcj7m6/CF8uzGXCX4
- U6zrs3/aYks6fWVCl+zdl6P9qe1fuQ==
-X-Proofpoint-ORIG-GUID: tuiJ1kOYy3Fj02YDJPICwUxi5SgNcJEc
-X-Authority-Analysis: v=2.4 cv=T9nVj/KQ c=1 sm=1 tr=0 ts=68a71474 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=ItlAY4iKiLxSNNkFt-cA:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: k1Y4_EmX4WIVx7zjsJrzB7zq2DAIfDDd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 phishscore=0 spamscore=0 clxscore=1015
- bulkscore=0 suspectscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190222
+Mime-Version: 1.0
+References: <20250817065211.855-1-ujwal.kundur@gmail.com>
+X-Mailer: aerc 0.20.1
+Message-ID: <DC845LPNX9EW.248S4JXKRUJAP@google.com>
+Subject: Re: [PATCH v7 1/1] selftests/mm/uffd: Refactor non-composite global
+ vars into struct
+From: Brendan Jackman <jackmanb@google.com>
+To: Ujwal Kundur <ujwal.kundur@gmail.com>, <akpm@linux-foundation.org>, 
+	<peterx@redhat.com>, <david@redhat.com>, <lorenzo.stoakes@oracle.com>, 
+	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <rppt@kernel.org>, 
+	<surenb@google.com>, <mhocko@suse.com>, <shuah@kernel.org>
+Cc: <linux-mm@kvack.org>, <linux-kselftest@vger.kernel.org>, 
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-> > diff --git a/mm/sparse.c b/mm/sparse.c
-> > index 066cbf82acb8..24323122f6cb 100644
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -454,9 +454,6 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
-> >   	 */
-> >   	sparsemap_buf = memmap_alloc(size, section_map_size(), addr, nid, true);
-> >   	sparsemap_buf_end = sparsemap_buf + size;
-> > -#ifndef CONFIG_SPARSEMEM_VMEMMAP
-> > -	memmap_boot_pages_add(DIV_ROUND_UP(size, PAGE_SIZE));
-> > -#endif
-> >   }
-> >   static void __init sparse_buffer_fini(void)
-> > @@ -567,6 +564,8 @@ static void __init sparse_init_nid(int nid, unsigned long pnum_begin,
-> >   				sparse_buffer_fini();
-> >   				goto failed;
-> >   			}
-> > +			memmap_boot_pages_add(DIV_ROUND_UP(PAGES_PER_SECTION * sizeof(struct page),
-> > +							   PAGE_SIZE));
-> 
-> IIRC, we can have partially populated boot sections, where only some
-> subsections actually have a memmap ... so this calculation is possibly wrong
-> in some cases.
+On Sun Aug 17, 2025 at 6:52 AM UTC, Ujwal Kundur wrote:
+> Refactor macros and non-composite global variable definitions into a
+> struct that is defined at the start of a test and is passed around
+> instead of relying on global vars.
 
-In section_activate():
+Hey sorry for the delayed response here.
 
-/*
- * The early init code does not consider partially populated initial
- * sections, it simply assumes that memory will never be referenced.  If
- * we hot-add memory into such a section then we do not need to populate
- * the memmap and can simply reuse what is already there.
- */
-if (nr_pages < PAGES_PER_SECTION && early_section(ms))
-        return pfn_to_page(pfn);
+Based on doing a range-diff vs the v4 that I reviewed this LGTM,
+thanks!
 
-The patch ignores the accounting here, based on the comments
-described above for partially populated initial sections.
-
-memmap = populate_section_memmap(pfn, nr_pages, nid, altmap, pgmap);
-if (!memmap) {
-        section_deactivate(pfn, nr_pages, altmap);
-        return ERR_PTR(-ENOMEM);
-}
-memmap_pages_add(DIV_ROUND_UP(nr_pages * sizeof(struct page), PAGE_SIZE));
-
-only bookkeeping for newly allocated memmap is performed.
-
-Also before this patch, __populate_section_memmap() did memmap
-accounting for !NULL usecases. This patch also does similar change,
-but covers memmap accounting for both CONFIG_SPARSEMEM_VMEMMAP +
-!CONFIG_SPARSEMEM_VMEMMAP usecases and memmap accounting based on
-allocation resource. 
-
-Let me know, if this sounds right.
-
-Thank you.
+Reviewed-By: Brendan Jackman <jackmanb@google.com>
 
