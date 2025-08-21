@@ -1,211 +1,158 @@
-Return-Path: <linux-kernel+bounces-779124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36032B2EF68
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:22:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB18B2EF5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C1E7601169
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:19:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDC8A25696
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21052E8B86;
-	Thu, 21 Aug 2025 07:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529A82E8B75;
+	Thu, 21 Aug 2025 07:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="sdMLfugk"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010030.outbound.protection.outlook.com [52.101.229.30])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3OComlg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93082E88B3;
-	Thu, 21 Aug 2025 07:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755760744; cv=fail; b=nOO3zOb4cIq3USDy2W2oSK+EKaus80kekyRHFB+jEZviZ2cDYy0/f1/qez6xS/jqcjPM42YCLtJjJiFJUfEG3s8SjH3vndYsSzOECaecNMt0xOqLGPM2aj68bYqBgfCn94paozPz9T0nIsvuXOSmzEOngrcF8HdlcuU6mKVX16o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755760744; c=relaxed/simple;
-	bh=FM4g6jTNvY7hG2OOLETg46AU90xAlSeA5tJqIeIZsvE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jG021wFOErHuIbHBbMwBJCBy3W2m/a7kdoVP9niVmg1NA2QISz/ZLEX+uoesP0r0VeAN7NOzQySxhS1ZIxOIkVwmdc0XH5GBji7KYWpZBNPJQ3Z8YS9+DHvUP9o7OxHEuwg0z9sJGRfoWjgPVKhxmPyXWbLzOqHwNE0DmepZY28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=sdMLfugk; arc=fail smtp.client-ip=52.101.229.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O/nFOAZ6obCAi4dFWLNS1ocFgGxRorowBthHCTaUs0rorrfKmlkXuKK6PtEC/4pW7sTmPciRdcoFnVot+wmeLfgvdEbuHqls2ZcFI1YM/XYD2zxWu3TvmwEM+0pmprYt2eGkHDEOtyy7wzO3Sb70B8jXF3M8djcsdwDX6zlBruuv1u/pR3+1PYJ/3E+vcjZ4CREAGryqconltUdnvIeWapamZZMXpskVMObLYj6B+VlXRbEiPFmGW/rdgBbyzyz0KOFzGoX1rg+S5VTy5W7TNPnBMZuUohR7kCWLF7S7XnvqRCGesSQhTqUA01E//pP8uggwCHjFOPtgr4h4ftReOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FM4g6jTNvY7hG2OOLETg46AU90xAlSeA5tJqIeIZsvE=;
- b=FQ8rkTwDIXnVFeMDIIOPGUbhG8ARlDA+Rr7dNM4ukiLLj6AGjooWwX0e6wmGZz/SBkgWQME95/LeWqmemz4eaLlIgH6wEs2JbWqooKuS83k7yOiHnu461UfV5Q6pzdn5sOvuVRbR6DLvZc++s/lZ3XLqC1y8MznwsdwHW14KwO+3udrG42y4oHrUp1V1WGTwJBCMeYwdSWRviFP6HEYke/RwYjBggShI4M5EORE/kTCrJG8CO5Uzcen+J6a1WI4pRI4OWX7AwgNx71iwI8oLmKwgAUrw1km9D/+yAyeedYMUl5dIrHE7bcFkFE9RN/6JVDQXwquGCXTOu7nQJNUMOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FM4g6jTNvY7hG2OOLETg46AU90xAlSeA5tJqIeIZsvE=;
- b=sdMLfugk5f/llLlA8SlbWkMDHawR2pumlGJuQlAk7QlT388HRM8nrQW/FqPcFAqV6g6e13RMq0ZeFv4rTHY9LL6cQGEe+CuGzyvbH4uCL5Bswkjzc4ehZGKlzUryPcUzgRNPT0EDyzbyv/EQSvA3Bj2i0uKjA8ZrZxmYQzH5vIc=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS3PR01MB8667.jpnprd01.prod.outlook.com (2603:1096:604:19b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Thu, 21 Aug
- 2025 07:18:59 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%7]) with mapi id 15.20.9052.013; Thu, 21 Aug 2025
- 07:18:59 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Conor Dooley <conor@kernel.org>, biju.das.au <biju.das.au@gmail.com>
-CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, magnus.damm <magnus.damm@gmail.com>,
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 03/11] dt-bindings: phy: renesas: Document Renesas RZ/G3E
- USB3.0 PHY
-Thread-Topic: [PATCH 03/11] dt-bindings: phy: renesas: Document Renesas RZ/G3E
- USB3.0 PHY
-Thread-Index: AQHcEfZu+pwZcXU5REy+jNNS6IB9qrRr+OuAgAAArICAALl0wA==
-Date: Thu, 21 Aug 2025 07:18:59 +0000
-Message-ID:
- <TY3PR01MB113467039A598C0EDC284AE198632A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
- <20250820171812.402519-4-biju.das.jz@bp.renesas.com>
- <20250820-primer-shaded-66da9fa4bcae@spud>
- <20250820-commodity-curator-1f580789885b@spud>
-In-Reply-To: <20250820-commodity-curator-1f580789885b@spud>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB8667:EE_
-x-ms-office365-filtering-correlation-id: 67a34074-8e02-4695-ec60-08dde082ffac
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?D7GIrHQS1GI7uxd+L8WFTKzPB1H6RlmeRyZo4HKwDj7CVZLWJ2Ln1C/5+5fj?=
- =?us-ascii?Q?4JJmlpQLGlqGhiO1kVCtxbM+a7qm17aM/A3m88mUSqQr2Iod0blVXmRALTWS?=
- =?us-ascii?Q?oRKt3I+uqjQ15yiA7LuxAReIHVYuO999reGZVSBzs+DPZmWbE53sR+s85KcX?=
- =?us-ascii?Q?/CFDU9rCC0i8QwlTA0gn2K/nmyRSdhTSzeWxWQL3IeW+4YK9lTSC42C18BRi?=
- =?us-ascii?Q?QwgF4FcnA7LkSid7s5h0J+BnvxoscXxLuLgT6yWn/UjIYeuw4AvtBL1WxR+0?=
- =?us-ascii?Q?PLxSUSjcSi52OudHFQZluBfhVB+15wRYrtvgmet/3d7tn4SyuEwGLYKxxHYu?=
- =?us-ascii?Q?6qGCWGE9BrkyLI5GqX9uWOgt8UgxXe11Bp7Yd6U8T74q61HglYvf1m0i5TBv?=
- =?us-ascii?Q?yNwQ0aHN37T638y4NkNJxHnxj5UGfBzQU7BiVi3b7BJ7B0iChbmd7woO62Ek?=
- =?us-ascii?Q?NEAO2XF1sJR2MToxvjDq+B8lE1Tltp2B4UqDtzRQU9j8JtagT1Ara+kUECYB?=
- =?us-ascii?Q?kHK1WJt0hEha+Jk5WmR5NJA+2yLw7c6hlklnVTeplmk+VlEH39O+z3XOrPjl?=
- =?us-ascii?Q?rHJdPr/guj61EgVTx97vHVEVoM3nU9Sa1qVleIxOyxsT+S3Qci87d5eP6jsf?=
- =?us-ascii?Q?kdnir1b9liKlL0/ZZkEHeGhF2yCzvcRAeSlJTenbQTwnp5XjApP0FZjcrobZ?=
- =?us-ascii?Q?iRNyLDWoUxFx+DQQSpFOG/M9SO36rub1LMf+S+GFUNbx19KLiVaqFo+2+aXb?=
- =?us-ascii?Q?JSXchVflgpxgv3A9INuvfyNsHIb2K339hKyYOqkI32kTztku1sROSj1r2nLF?=
- =?us-ascii?Q?4qqWe4wy6jbb9kYG+63d938NNqf6cD4JYeNVbk8vfrgaXdLG7WrzxK9WB+Nu?=
- =?us-ascii?Q?Llw6SoKRLgg+AKEGLHbs6DlmisI2nGaDQ0zBwj0Pcl6a29TO7/Hy4iC814E8?=
- =?us-ascii?Q?3HQLrL27nT0SdMvSMOmtz2Hc9WKQJnRu0EzWJAh5EY73hnLGCsnnQnmqhZ54?=
- =?us-ascii?Q?cBT5Ua30pPFZpdz7fNRr1mWdewBOwDVm39MsrV7PMQqsc+JHaWj1kLBlBTpc?=
- =?us-ascii?Q?cDVydSvl6J7AdRBoxHgSNIBekqNLWOPhbKHE3sMSFi7a78p4bqqtFDj5NXVt?=
- =?us-ascii?Q?jVZqe8PyZZ2yOc26I1oFcMR0XW1G3F989TdYIZAmAqDJFo95sbsqyhBp2IIp?=
- =?us-ascii?Q?y7DdUENI5w/X8glshkyZM03ZEIuWqTr0S5jb+tOSCi9NIlOFGLJxXgPhSCrD?=
- =?us-ascii?Q?cxfKdqF7X+LX8gj+8GVjnbRpC22zmSnZIpM8QBtn1wDpHrN1MdbKhfCkRCEJ?=
- =?us-ascii?Q?qu7EJy7cgIK3RrdyOW70hQhDV5SL2rBiAEHRFgGyJu3p5xpGpCH1gaj+30y3?=
- =?us-ascii?Q?jcSmyWk93tvEs5kciGaMIjGSpuwVvcgDU1eybJZcv5xcA625H4SLowItEHzx?=
- =?us-ascii?Q?65R2zvsxjWK/7i26kPzv3tzg4/aXnWWkSSi4OF+fnQJYv95lAs87a6UmHSO7?=
- =?us-ascii?Q?IpRCZ6EC1OxlcWY=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?ZlTGJA0Bgnq+mclcy3aF4OcJ/oppeVZ9HNlPodtX9yey5n0f+bX0z7JqXyrv?=
- =?us-ascii?Q?ZEs+hmARLz7rVSjPHRkdiRh7KgdpfzDI4sNpjjEa7E6jsmsia1f73tYmVO+6?=
- =?us-ascii?Q?sDgobIuvwSgK8qhaxUX3lDLfxXBV+ukdJuXLbSfn2ZTd5pw/vNaMsHMk4+cq?=
- =?us-ascii?Q?IMoVpyKrthUjc4VNUrrpnrRo5Juqki8hnmXCjb/pcjIo1ZO9yhEZaxWegisa?=
- =?us-ascii?Q?FVLMWBlk/bG7BB37xvJbSy+wP+srl0ZP3+CmxZlpP54xS1mHDvrKKoDCySKi?=
- =?us-ascii?Q?e6PD9w41+S9riavWPvCR2niol5xOYibh9/DBQb56R1LoHM3a4tVbWfSkT1vF?=
- =?us-ascii?Q?tI+TwQy1pGXkhKdwL18ROHN7TUnd1xsYrwv9/jZA9FX1LWcQuS349GOLYSf9?=
- =?us-ascii?Q?jPsfkJr0DQNl14t+NLEFt1u6Xtw4mjbyifzcTXYkuzElsl1Vdpga0j4XKWnh?=
- =?us-ascii?Q?EFK260l8U+V0Rvsn7V0QDgA6Dw9C/Bk9mra4LimV/w27njLgxlFQMVpcBhy4?=
- =?us-ascii?Q?UWkJ3+rR46G3Uom9fxdudpi3fzLR/1WqsTv35CSlmlNKKSvxDLbYXWV3wIlJ?=
- =?us-ascii?Q?BiAkxbMEvk1VqTHjUZFR6Lgvaq1wivkhJvGuhqaPtHi9+d3PHAf03M8bKmIe?=
- =?us-ascii?Q?lloVCpidnNJRCuKNGC8Jac/KZF45gGUXJPKOuv/kk94GPuwKSOPNc+XOpp3k?=
- =?us-ascii?Q?jQ9BGUDDY1cvdBvn2QR3algkxlolI5Pazu+48XvKvuTwJKgxZN5j29qlc9U1?=
- =?us-ascii?Q?oF+0Hr63G96dtQtimDgypsL6RxQxPPSXL9xCFouWpUjqD9QI/FlQ87YeL0xH?=
- =?us-ascii?Q?qaymzfHDYuYicLmDPykC8WdbrKqFUC4dJBx1Gecuxum+JOB0+Y2kGhfPRgc8?=
- =?us-ascii?Q?USvNLMmxfyfYNIEEr4bF7kbgHDOZiJ5DOIaqdAZmr+2kTu5uBvfIoB+EFOyg?=
- =?us-ascii?Q?hkjN//ULn6CkK1xTSIlBvALtLyXhk2zFMi/AiLjO7yM2eCy3ZUePO6OAgtkr?=
- =?us-ascii?Q?o05ATGlhr6aGpnLnm9B/eA/3xwgrNunfSznxJz1fU6Gx2mJZ+aFtjWXpMXna?=
- =?us-ascii?Q?N0S4VyNZk3LY8EO49mNHNRUBSoSGoUL411RXilG4zJAyxKGe1RETlLV3lCJU?=
- =?us-ascii?Q?oCZVdDW6LQYHPc7dpHk3gnlWPHrQxGLMQcAMlBkhmEsgJwbRRMiI/TikOONk?=
- =?us-ascii?Q?qTdpr5Nr+Vt8jOYyC/kOVpcxgLrx0TwzaoxzO7W8aqP7l4p8GdHeUr35Qjja?=
- =?us-ascii?Q?b/0L8Hldn0EztFHrCB5JLBV0IGqAyH4OypjHrDSxSrTRXvBYEvk2V5N//9R3?=
- =?us-ascii?Q?C8bhVEI+eKUFS2qdHK5Db7qmmOa4Hf6OWIFTDlokDGbn+6VZ+NlA+Jt8/7b3?=
- =?us-ascii?Q?4ldy1+zQGu+lat0FhCCpUjH1MFfadLhkNjgGWCwRHW/cJjz90ka4hvP5Bspp?=
- =?us-ascii?Q?tI3K+n+nBypGQs83yk+Uyo84wtXIKl0QBFVxjg/Nz/x4sj7sScx8U+KXec6O?=
- =?us-ascii?Q?92vd3ir7qFAqsagz2oPjDSY0exjCibodEEYq1WuWCy8PQmSr0y6VyDSWgFgp?=
- =?us-ascii?Q?c0uCSDsDXc4lRMfvRPGjfJZUmFQO8Vvci7h9uLLX9vpj0SEq/0XBRpd3x8pc?=
- =?us-ascii?Q?+A=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230222D97A9;
+	Thu, 21 Aug 2025 07:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755760823; cv=none; b=MFyor3PDKzB2I9PIPeWODdFKhz80BTgDfOeKmJL/w9sN3/ovLUp8RU88//5gcUpS17mAB8mHHxkJ1WGb3N95JAVuBxTQ2wDNFj7aJlApbRQwfTuS1GZOwTO1mBN+im/7IxIdi/XywlL3t5Wqssq4EfhegkouGgrhTgL/fMQWOEs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755760823; c=relaxed/simple;
+	bh=Xc4DeUvPlwL/X3t5tUIDgqbcUa1hfQSPHd61UdxsmOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YzKWBdf36ddJCgSq2/Yp8XP5LXTJ5GcOkci0o8HmWY4G+M7piLEAa+RvelDJJteGJaKkCQSvHFhRIzF2CCuImNpvz7/TZUFgYqEsAxsgiWCkqRIDXdqNR1tyQIh0EAp20a7UgpqYu0vd8sbTUQWvV0HJsuhxakoZD8rFWm5DxX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3OComlg; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755760823; x=1787296823;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Xc4DeUvPlwL/X3t5tUIDgqbcUa1hfQSPHd61UdxsmOc=;
+  b=h3OComlgEVwMA+QQKEQ6Ku7fxGsSnUsMMcrzCAvOJIyg61bVZP5sH9Ni
+   a/uI48uAGZdeSPLcelR/dp+hpyhb643M+GIUOVOFSGpXIMzhhN8ml3MhP
+   2py/cyHQtbwl+n/OWVBuwYk84uKs4b3vzQHVkS4BeaoN+dl9biRUIzkeC
+   fwIzM1JeieaRfI8/hxfwTapWkGgxQ6HRCDeZ4174fb/HRElyMBmP8WMN8
+   DJxzhto/eMM06ylKjWrvJnZi4MKXxOZrkunQyHQwz2NQKFH/5L9nPItPe
+   6b/tG5LyklzIpUD/hJGoAibc3cZAYeBVPPU6icfa10USJRXCLHwWqbYyI
+   A==;
+X-CSE-ConnectionGUID: jNKa4L97RqKTS7fgS8unrA==
+X-CSE-MsgGUID: MY0dLeYxQzmgMyo8Bhm1Yg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58185534"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="58185534"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 00:19:06 -0700
+X-CSE-ConnectionGUID: 7VGpz8mcSvGH+prbD7CmsQ==
+X-CSE-MsgGUID: f5GzOVavRwGAW3sDIppezA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="168697277"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa008.fm.intel.com with SMTP; 21 Aug 2025 00:19:02 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 21 Aug 2025 10:19:01 +0300
+Date: Thu, 21 Aug 2025 10:19:01 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yongbo Zhang <giraffesnn123@gmail.com>,
+	Hans de Goede <hansg@kernel.org>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH] usb: typec: fusb302: Revert incorrect threaded irq fix
+Message-ID: <aKbIZSCIK5mOB3Vz@kuha.fi.intel.com>
+References: <20250818-fusb302-unthreaded-irq-v1-1-3a9a11a9f56f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67a34074-8e02-4695-ec60-08dde082ffac
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2025 07:18:59.6126
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mGl/cUJvPe97frKAWRPhXBF+WYDSPwpsuHQNUfRP8dL6TETbzV8CL1pF3rUUvHmosku1imrnDZvwY8Fuv/rXOljAZuoOUgfDDp8E7Ir1gIs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8667
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818-fusb302-unthreaded-irq-v1-1-3a9a11a9f56f@kernel.org>
 
-Hi Conor,
+On Mon, Aug 18, 2025 at 06:50:19PM +0200, Sebastian Reichel wrote:
+> The fusb302 irq handler has been carefully optimized by Hans de Goede in
+> commit 207338ec5a27 ("usb: typec: fusb302: Improve suspend/resume
+> handling"). A recent 'fix' undid most of that work to avoid a virtio-gpio
+> driver bug.
+> 
+> This reverts the incorrect fix, since it is of very low quality. It
+> reverts the quirks from Hans change (and thus reintroduces the problems
+> fixed by Hans) while keeping the overhead from the original change.
+> 
+> The proper fix to support using fusb302 with an interrupt line provided
+> by virtio-gpio must be implemented in the virtio driver instead, which
+> should support disabling the IRQ from the fusb302 interrupt routine.
+> 
+> Cc: Hans de Goede <hansg@kernel.org>
+> Cc: Yongbo Zhang <giraffesnn123@gmail.com>
+> Fixes: 1c2d81bded19 ("usb: typec: fusb302: fix scheduling while atomic when using virtio-gpio")
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Thanks for the feedback.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-> -----Original Message-----
-> From: Conor Dooley <conor@kernel.org>
-> Sent: 20 August 2025 21:13
-> Subject: Re: [PATCH 03/11] dt-bindings: phy: renesas: Document Renesas RZ=
-/G3E USB3.0 PHY
->=20
-> On Wed, Aug 20, 2025 at 09:10:07PM +0100, Conor Dooley wrote:
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
->=20
-> Now that I look again, same applies here with the different filename and =
-compatible. Copypaste mistake?
-> Or why does the compatible not match the filename?
->=20
+> ---
+> Note, that the referenced patch is in 6.17-rc, but not yet in any
+> released kernel. It breaks boot for Radxa ROCK 5B when fusb302 is
+> enabled in its device tree (strictly speaking that's not a regression,
+> since upstream DT does not yet describe fusb302).
+> ---
+>  drivers/usb/typec/tcpm/fusb302.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
+> index a4ff2403ddd66fb7aaa27fd890533c7aff1dc163..870a71f953f6cd8dfc618caea56f72782e40ee1c 100644
+> --- a/drivers/usb/typec/tcpm/fusb302.c
+> +++ b/drivers/usb/typec/tcpm/fusb302.c
+> @@ -1485,6 +1485,9 @@ static irqreturn_t fusb302_irq_intn(int irq, void *dev_id)
+>  	struct fusb302_chip *chip = dev_id;
+>  	unsigned long flags;
+>  
+> +	/* Disable our level triggered IRQ until our irq_work has cleared it */
+> +	disable_irq_nosync(chip->gpio_int_n_irq);
+> +
+>  	spin_lock_irqsave(&chip->irq_lock, flags);
+>  	if (chip->irq_suspended)
+>  		chip->irq_while_suspended = true;
+> @@ -1627,6 +1630,7 @@ static void fusb302_irq_work(struct work_struct *work)
+>  	}
+>  done:
+>  	mutex_unlock(&chip->lock);
+> +	enable_irq(chip->gpio_int_n_irq);
+>  }
+>  
+>  static int init_gpio(struct fusb302_chip *chip)
+> @@ -1751,10 +1755,9 @@ static int fusb302_probe(struct i2c_client *client)
+>  		goto destroy_workqueue;
+>  	}
+>  
+> -	ret = devm_request_threaded_irq(dev, chip->gpio_int_n_irq,
+> -					NULL, fusb302_irq_intn,
+> -					IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+> -					"fsc_interrupt_int_n", chip);
+> +	ret = request_irq(chip->gpio_int_n_irq, fusb302_irq_intn,
+> +			  IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+> +			  "fsc_interrupt_int_n", chip);
+>  	if (ret < 0) {
+>  		dev_err(dev, "cannot request IRQ for GPIO Int_N, ret=%d", ret);
+>  		goto tcpm_unregister_port;
+> @@ -1779,6 +1782,7 @@ static void fusb302_remove(struct i2c_client *client)
+>  	struct fusb302_chip *chip = i2c_get_clientdata(client);
+>  
+>  	disable_irq_wake(chip->gpio_int_n_irq);
+> +	free_irq(chip->gpio_int_n_irq, chip);
+>  	cancel_work_sync(&chip->irq_work);
+>  	cancel_delayed_work_sync(&chip->bc_lvl_handler);
+>  	tcpm_unregister_port(chip->tcpm_port);
 
-r9a09g047 is SoC part number which also known as RZ/G3E SoC.
-
-I just followed the convention used in [1] and [2].
-Please let me know, should I change rzg3e-usb3-phy.yaml.yaml-> r9a09g047-us=
-b3-phy.yaml ?
-
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/=
-Documentation/devicetree/bindings?h=3Dnext-20250820&id=3D44b91d61c505863b8a=
-e90b7094aee5ca0dce808f
-
-[2]
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/=
-Documentation/devicetree/bindings?h=3Dnext-20250820&id=3Db2d25905366b4e6791=
-f60e6bc76a636d1b88e6f8
-
-Cheers,
-Biju
-
+-- 
+heikki
 
