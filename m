@@ -1,93 +1,71 @@
-Return-Path: <linux-kernel+bounces-779718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90DEB2F7BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D10B2F7C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D3627B3469
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B820AAA72BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BD32E1749;
-	Thu, 21 Aug 2025 12:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657493112C6;
+	Thu, 21 Aug 2025 12:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fEm2R/rs"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UQcg3t+6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13265275B05;
-	Thu, 21 Aug 2025 12:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E26C30FF09;
+	Thu, 21 Aug 2025 12:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755778787; cv=none; b=o+67mkouvoTHA6Ru+gVVcO0oLveu92Zzpz98vYgSiJNZyBHpJovYW6r/l5Jwl8PrZ1k1+v6hgtqf+RO9Uo92CtnckD4SFHDMVpHspg27HzNJ+gS3WnRcZIISSpon9ez38tVI9wS3/v4qKsBeosNfYLf7CQVdVl5wXfpugfvMc2M=
+	t=1755778790; cv=none; b=Mi4TBBUAVu2UNi3NZEgroQ62GIMAmevFEysnYOkuP/jyfdBcYMoQMr7/oX1XN++KqtrYHH3N69K8ezzH5NQBtP2tZcMNso+qgKuXkbs8X2g4kLfPPbzbK9TouCDZ4LIMSC4tiD2Z0/mSz1KiDhiPUNpft+fOY2oo6nI4fusBm9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755778787; c=relaxed/simple;
-	bh=9nrwNazOC064iJN5DaK4WKws0OYdf/Neuy1zVI88R2k=;
+	s=arc-20240116; t=1755778790; c=relaxed/simple;
+	bh=WogvDi0r85d7kj4DsfJxqY9POVZ7xh8jiErYhA/jon0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WLkY113MFGen/PjWJ9H4MrS1T6w+/Czk6DpInNkYUShMzFDLbFdrh1eyEB6OYflOwMgBkcA8r2op7y0vmpoIhQ7BgxBs83l3mgAmOJDdB+Z0ixhdLpAFZ5k40rIFtdNww2uxPD8sZ95gYqen0rSPFEXQa4gHWKv12ySg1eMuUTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fEm2R/rs; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L0SOVG014376;
-	Thu, 21 Aug 2025 12:19:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=jabod7imMIYKgTg5L+VE3q6C2cbhQL
-	J3Zp4FnaW2Ujw=; b=fEm2R/rs7fC1k1UeOaQJNYy4J1+LGLELXKz7ofcGqBuPRB
-	BV0wn+T9cQE7PTOE3BJJXSdCAxKNx4EYCujlFDSoPvckaap1f3mGBKSAbMt1Rk3A
-	2Yr25yX3xI3gXJVM9A3cEU+prefBRKKc2C4DABmAb7+x8NpJxvycnV4B5O57J2z8
-	yzAyv08Ydro0dZDviUVRd2rDYzolEXyDyAbJOHpxaGs0y6XPxuKBu4ul50TQJH1U
-	6SK/zFqxrV6IKtPN0R0DnUJINgHkeRiwMhtLC7wxg6vW15yiIKrZUKs6kBnzznt1
-	T6LdgA+oDIu6/3bVR0YalzV2If7evaAHlSwK77jg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38w0dfd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 12:19:39 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57LCIwgv021533;
-	Thu, 21 Aug 2025 12:19:39 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38w0df4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 12:19:39 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57LAnwNN026916;
-	Thu, 21 Aug 2025 12:19:38 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48my4w87jw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 12:19:38 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57LCJa1x34013696
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 12:19:36 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 71E222004B;
-	Thu, 21 Aug 2025 12:19:36 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4CE2F20043;
-	Thu, 21 Aug 2025 12:19:34 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 21 Aug 2025 12:19:34 +0000 (GMT)
-Date: Thu, 21 Aug 2025 17:49:23 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 10/11] ext4: Atomic writes test for bigalloc using fio
- crc verifier on multiple files
-Message-ID: <aKcOy9xCfdC_skbZ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1754833177.git.ojaswin@linux.ibm.com>
- <48873bdce79f491b8b8948680afe041831af08cd.1754833177.git.ojaswin@linux.ibm.com>
- <7c4824a6-8922-470d-915c-e783a4e0e9cc@oracle.com>
- <aKbYvubsS8xUG88d@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <8b39d392-0a10-47fd-ac3c-b73a1e341e86@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=glA9fvRTalL6rp7129OqLK5BFFKaX70Ueh0icPVsArcIh6eH93hdEGWVAwiFwrGTGXWk1+li0HAsYrpzUx7sAMpY1JXpC65Oqxpper0/tonHLXzEhPySCXLWzv5VMqgw3M5UuA4JjvchFpX5GMDHtnBCNBoEKKxcLCsy9aE+Dvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UQcg3t+6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D223C4CEEB;
+	Thu, 21 Aug 2025 12:19:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755778790;
+	bh=WogvDi0r85d7kj4DsfJxqY9POVZ7xh8jiErYhA/jon0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UQcg3t+6Oq0Gnwjfg6zo5Qz9jY49O7XuYQskyEZxpMyh95MW8MQ0PeSHTzlw6pIAE
+	 rddukuDZg2Lar/PVmhOWRp0cvmA7yc3djlIQKfSUXA5EZgnCHbUGUAi7D+LMt9f5rR
+	 nrbcYp3Y45HLrG3NVXdOqMZugwSMXN5+Y1+zOT3g=
+Date: Thu, 21 Aug 2025 14:19:46 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Li Li <dualli@google.com>, Tiffany Yang <ynaffit@google.com>,
+	John Stultz <jstultz@google.com>, Shai Barack <shayba@google.com>,
+	=?iso-8859-1?Q?Thi=E9baud?= Weksteen <tweek@google.com>,
+	kernel-team@android.com, linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Todd Kjos <tkjos@android.com>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+	Martijn Coenen <maco@android.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Linux kernel regressions list <regressions@lists.linux.dev>,
+	Carlos Llamas <cmllamas@google.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH v20 3/5] binder: introduce transaction reports via netlink
+Message-ID: <2025082145-crabmeat-ounce-e71f@gregkh>
+References: <20250727182932.2499194-1-cmllamas@google.com>
+ <20250727182932.2499194-4-cmllamas@google.com>
+ <e21744a4-0155-40ec-b8c1-d81b14107c9f@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,46 +74,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8b39d392-0a10-47fd-ac3c-b73a1e341e86@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: dyZJ_10eRNb3lcZEqCzJXfu4Awl0VyMi
-X-Proofpoint-GUID: bDxMBs5j8jVRMbRC-yHjsSbFMMcf2KGS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfX7oE01YfJtAi2
- BK0BlrEHM4S0h7WvRrMykrZW34ljFdFsBiadvTNEEN+55qkNg6RIYR9vrA6LpYFQWK4fPofZl53
- vt+8/bFhvEzlmHQeeLOBA4fdh5rjB2IuE3DZ+8JygOYpY02IS3VZSuk+IU1aUiYnLo3k29d6qF2
- 8z3fhJ0SBvcq05vn1VM98UBjDdIcHNtVoJolYLXRhrElo47nh5G+G8flVstrsa5uSMM5o4wRgbt
- XieN1l322X3mUEfwGQvrUg3mkUvx4vGEoLHtfzkhY30bMl/WvRzQvgsJ2WTekKAtLY3PGbwvPTD
- ZWCd7TDJazFLQ0ibUimqPn03jm2Ymjjpy7cNKRSurXOoGWhAveWYp5qUsgRb+9sgvJ0dKRPMfGw
- eRkeg4X+0KlVx0XqD7mgrn56DPGYcw==
-X-Authority-Analysis: v=2.4 cv=a9dpNUSF c=1 sm=1 tr=0 ts=68a70edb cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=tBZCFxjrRziQfJ6o_zoA:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 adultscore=0 impostorscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190222
+In-Reply-To: <e21744a4-0155-40ec-b8c1-d81b14107c9f@leemhuis.info>
 
-On Thu, Aug 21, 2025 at 10:28:56AM +0100, John Garry wrote:
-> On 21/08/2025 09:28, Ojaswin Mujoo wrote:
-> > Yes these 2 tests are similar however 061 uses fallocate=native +
-> > _scratch_mkfs_ext4 to test whether atomic writes on preallocated file
-> > via multiple threads works correctly.
+On Thu, Aug 21, 2025 at 10:49:09AM +0200, Thorsten Leemhuis wrote:
+> On 27.07.25 20:29, Carlos Llamas wrote:
+> > From: Li Li <dualli@google.com>
 > > 
-> > The 062 uses fallocate=truncate + _scratch_mkfs_sized 360MB +
-> > 'multiple jobs each writing to a different file' to ensure we are
-> > extensively stressing the allocation logic in low space scenarios.
+> > Introduce a generic netlink multicast event to report binder transaction
+> > failures to userspace. This allows subscribers to monitor these events
+> > and take appropriate actions, such as stopping a misbehaving application
+> > that is spamming a service with huge amount of transactions.
+> > 
+> > The multicast event contains full details of the failed transactions,
+> > including the sender/target PIDs, payload size and specific error code.
+> > This interface is defined using a YAML spec, from which the UAPI and
+> > kernel headers and source are auto-generated.
 > 
-> I see, please at least fully document this in the commit messages.
+> It seems to me like this patch (which showed up in -next today after
+> Greg merged it) caused a build error for me in my daily -next builds
+> for Fedora when building tools/net/ynl:
 > 
-> Thanks
+> """
+> make[1]: Entering directory '/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/lib'
+> gcc -std=gnu11 -O2 -W -Wall -Wextra -Wno-unused-parameter -Wshadow   -c -MMD -c -o ynl.o ynl.c
+>         AR ynl.a
+> make[1]: Leaving directory '/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/lib'
+> make[1]: Entering directory '/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/generated'
+>         GEN binder-user.c
+> Traceback (most recent call last):
+>   File "/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/generated/../pyynl/ynl_gen_c.py", line 3673, in <module>
+>     main()
+>     ~~~~^^
+>   File "/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/generated/../pyynl/ynl_gen_c.py", line 3382, in main
+>     parsed = Family(args.spec, exclude_ops)
+>   File "/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/generated/../pyynl/ynl_gen_c.py", line 1205, in __init__
+>     super().__init__(file_name, exclude_ops=exclude_ops)
+>     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>   File "/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/pyynl/lib/nlspec.py", line 462, in __init__
+>     jsonschema.validate(self.yaml, schema)
+>     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+>   File "/usr/lib/python3.13/site-packages/jsonschema/validators.py", line 1307, in validate
+>     raise error
+> jsonschema.exceptions.ValidationError: 'from_pid' does not match '^[0-9a-z-]+$'
+> 
+> Failed validating 'pattern' in schema['properties']['attribute-sets']['items']['properties']['attributes']['items']['properties']['name']:
+>     {'pattern': '^[0-9a-z-]+$', 'type': 'string'}
+> 
+> On instance['attribute-sets'][0]['attributes'][2]['name']:
+>     'from_pid'
+> make[1]: *** [Makefile:48: binder-user.c] Error 1
+> make[1]: Leaving directory '/home/kbuilder/ark-vanilla/linux-knurd42/tools/net/ynl/generated'
+> make: *** [Makefile:25: generated] Error 2
+> """
 
-Will do.
+Odd, this works for me.
 
-Regards,
-ojaswin
+How exactly are you building this?
+
+thanks,
+
+greg k-h
 
