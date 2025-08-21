@@ -1,80 +1,113 @@
-Return-Path: <linux-kernel+bounces-779727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F116EB2F7D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:23:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADFF4B2F7DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C225B1BC5A8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:23:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E538917BF05
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8EF30BF7D;
-	Thu, 21 Aug 2025 12:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FB02EE60A;
+	Thu, 21 Aug 2025 12:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bfm8/3wy"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfbDKG4F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7D91DF26B;
-	Thu, 21 Aug 2025 12:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4362E0916
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755779006; cv=none; b=HVIYphJ+eOI2tA6G5C/pZ3gXPbsbN3HUr9gj4o+ecnkH9LfqafkIvacRTezNTM/Zq4akTEuBO/B42y1w7I1pIvDIoJY0IRRWauknk6IqRhJLkokLdtmCjFxEmGsM1OEzu2iI6L/gTzc271ffUxXwM0hGtkFUAuyrXlYC29oIw7M=
+	t=1755779031; cv=none; b=MiS6RLE7vHg7d8Qdts0HVxcPaQV/jlJamF6+GjJJ+tjdYSNRgVgtV9pljCffvbWs3NAxDkEBzjwfnU9VP4S/hPYoOhizkjY5zDxXpblOVwK0bcKmeeIx1LqzLcLIaLinYMeC4dJFK+UZ3+PgCty4O3bu90rRpvwZHL/uuHyoG/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755779006; c=relaxed/simple;
-	bh=l2yz/a69BmD4Ap543b3wumRHAgCXRYK9lk2peNqvSic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DuofQT+u+KoGIrLpP/0/qRopbrNNqSwX/lNuSWLfQNKsgq2TDfUHC0UZPe6YNulG3WNNOyQf7t9U3BlRtCTaHk02Ct74qOCNLVt4XoO31QfBhX1DZkHblQDq/WQGkPTx0KfVbhhGt+cCC22wou8cL/7N4W+NhA/qHaLkxjEcYk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bfm8/3wy; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2q2P01PAZaHRC8b63asCNXKZdiT130xikH730RPz13M=; b=bfm8/3wymYYWrDTTgNV6ri/Ql/
-	rm93ez6iCzuiHPaZUiyavg76FknwamCULF7ZRSZqIBvDt/HCQrb5sZj1fGCr+g5ubLWdjzBJnpnIs
-	x0GnhYG6A79W27WACTgdaYDSVmPfsmtwbBYHuuKbYR0ivoVtWGpFs/05Wu8j12lpqwyA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1up4K5-005RtG-Qj; Thu, 21 Aug 2025 14:23:17 +0200
-Date: Thu, 21 Aug 2025 14:23:17 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [net-next v5 2/3] net: dsa: tag_yt921x: add support for
- Motorcomm YT921x tags
-Message-ID: <5c5d3ef2-cb58-423b-b57c-737b01ba482d@lunn.ch>
-References: <20250820075420.1601068-1-mmyangfl@gmail.com>
- <20250820075420.1601068-3-mmyangfl@gmail.com>
+	s=arc-20240116; t=1755779031; c=relaxed/simple;
+	bh=fu4IgbUI1aWnDqu2U8QHmg6JXGWx/FGi7D/ezNpYCbE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NACQh8AZ6+g63AK0VNHcIq2wK2cFVSvwccR6dr90d1Z57OUhOhkvGYsGuQp5VvRrA3Qr1okGAtuOpO7kgMWHHleBNRnDiKAAhivWtNqXVPVN0TrX0EvdmvVbxI+t3bGtldMzQdmzyRseKIpho31075qMYcajz7OIRHIop+Ue5Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfbDKG4F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B8CC4CEEB;
+	Thu, 21 Aug 2025 12:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755779031;
+	bh=fu4IgbUI1aWnDqu2U8QHmg6JXGWx/FGi7D/ezNpYCbE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MfbDKG4F0pApMw5RvgN6EpZ2msOsGTlMN5BOb8A3xLi4TWpBJbBI09IlK2y/2wCqJ
+	 +XkDgXz3rDwoNmWDTrJCmbpKU9SFvyc/LqtZKn8xQ+MPq+yJqTdHLiPZR4wcVtcm4M
+	 s59kszYyOHy7fEgKIX5ysTx2JEjM8wnMtzvkyhD5cXBqu9dEhRFM1iHynUe24wfUw1
+	 mNB+zI7b/kTRzqvWoM2h1hIdDkhU2kIrqgL0t/jq1E5EDmUMbeoBQehxaacktpT++h
+	 Y+Tl1FznVaxYOUjlPLgJXmgBgRlfm0RszIP8ZHJTkAzGf0mOCwcOeWMQe7s9tgbqgZ
+	 CEuUnoZnGZSWg==
+From: Michael Walle <mwalle@kernel.org>
+To: Douglas Anderson <dianders@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Jayesh Choudhary <j-choudhary@ti.com>,
+	Michael Walle <mwalle@kernel.org>
+Subject: [PATCH v2] drm/bridge: ti-sn65dsi86: fix REFCLK setting
+Date: Thu, 21 Aug 2025 14:23:41 +0200
+Message-Id: <20250821122341.1257286-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820075420.1601068-3-mmyangfl@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 20, 2025 at 03:54:15PM +0800, David Yang wrote:
-> Add support for Motorcomm YT921x tags, which includes a proper
-> configurable ethertype field (default to 0x9988).
-> 
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
+The bridge has three bootstrap pins which are sampled to determine the
+frequency of the external reference clock. The driver will also
+(over)write that setting. But it seems this is racy after the bridge is
+enabled. It was observed that although the driver write the correct
+value (by sniffing on the I2C bus), the register has the wrong value.
+The datasheet states that the GPIO lines have to be stable for at least
+5us after asserting the EN signal. Thus, there seems to be some logic
+which samples the GPIO lines and this logic appears to overwrite the
+register value which was set by the driver. Waiting 20us after
+asserting the EN line resolves this issue.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+---
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-    Andrew
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index 464390372b34..ae0d08e5e960 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -392,6 +392,17 @@ static int __maybe_unused ti_sn65dsi86_resume(struct device *dev)
+ 
+ 	gpiod_set_value_cansleep(pdata->enable_gpio, 1);
+ 
++	/*
++	 * After EN is deasserted and an external clock is detected, the bridge
++	 * will sample GPIO3:1 to determine its frequency. The driver will
++	 * overwrite this setting in ti_sn_bridge_set_refclk_freq(). But this is
++	 * racy. Thus we have to wait a couple of us. According to the datasheet
++	 * the GPIO lines has to be stable at least 5 us (td5) but it seems that
++	 * is not enough and the refclk frequency value is still lost or
++	 * overwritten by the bridge itself. Waiting for 20us seems to work.
++	 */
++	usleep_range(20, 30);
++
+ 	/*
+ 	 * If we have a reference clock we can enable communication w/ the
+ 	 * panel (including the aux channel) w/out any need for an input clock
+-- 
+2.39.5
+
 
