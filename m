@@ -1,150 +1,268 @@
-Return-Path: <linux-kernel+bounces-779656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BA9B2F6EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:40:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB43B2F6DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D52473BE5BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:36:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 517ED5E732B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D66E8248B;
-	Thu, 21 Aug 2025 11:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6151B30E824;
+	Thu, 21 Aug 2025 11:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pLgrUQ8U"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XuDbmp0P"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704D227A44C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCB43054DA
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755776192; cv=none; b=vCFzjaWkL2C9GF7YEXjwj1rL/3xl55aJdTLMQasl7Y3Qj8ATY3cD159rE/zTnih1qcypMbXBOOOLiyv5jODsqjXTUD65aNX022Uji13V96j3qBV83jeg9AB8/B5/kcx4SV2WAHQtA+im0Yb1p1UfX7J7+mQtVUR/4gaSeFTfyvA=
+	t=1755776229; cv=none; b=d5FsLEpHae/JHZcI3z7gdRvGGibNi7DQ54McyVimLeTvQi1JcSyrq5EdLn61BZ64OChHcqANJE4BDiphAr3S3SInnhHzc69lz0FvmDuwLz9qDOJE9uwD0T5OWdX487wcG366Qi1+sInhkFX1nhhzbDf5MvO/G8dwoCjg53CiG6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755776192; c=relaxed/simple;
-	bh=w5kLktYo7kKSQ70KXaOXwLHYgkNc/yQyqKIs7fbVPNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LFACtcBqGvz8IMqGrKN+osWN+EtxxoiHWhoAlhP0l0b3Fp50v4T3DcqtI0D4qaPtU99pxJ3wPgin43y6XVS0NBsAWJtFG7WH5sf5+RkIGpHU2ylsizM5ruLHK05xL6ExcCZQEeJEAIuJc/Gc0nEBAZH5aWOtkTXx293fds0pl7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pLgrUQ8U; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9bBaI003699
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:36:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=+oRchL+ZGiIm6AbmB6F+/gh0
-	suQo1rfvXtM2Pmnn/tc=; b=pLgrUQ8UwRDGgkxhghdJLrIo1NxVJOOqX7qU90bN
-	vI/JwszjzYwjPdZhF0MbqFeiQcpMQIwV6vQJWHUwjQ345GV7G45MfY/YOYMNGSoz
-	3i7GEONr2sY0bl1NSvUNGPk75Qc/P73kUIYdg6yLV63xQ1+DA58rJw1LQ2ZZNCKq
-	CBztzVy/m3Dnmm43zUPCaUXTqIVKUiIVreSxGSi1Hxzvhh8ebZg6GRvWrVTDIUQm
-	II4t1izcldKcSzC58UHVIC2ohrqew12NSlz7ndjT+vurdehSx7NX0kOF6cFBJook
-	6sK8efsNDNbzDUVOtzhn6Pnl9UiMp7QiYidL4c+CJ8oPew==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ngtdk3fy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:36:30 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70a9f57f950so19906196d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:36:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755776189; x=1756380989;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+oRchL+ZGiIm6AbmB6F+/gh0suQo1rfvXtM2Pmnn/tc=;
-        b=Cu5aygocoziy9KCM2mH8RdlRVYrtqrnxo5S8S1P0+2oCy06K3chxWKu6zV3f/JvCHg
-         zQsBSBGktk2Q7gW8I7H4zzuD203ox8kshu7LhiVfCYi7HlJfpT3ZQBL7X+mvi2wGByDg
-         9CFvmVaE5Q8qwVYA9d2S4XS950beUhsDs2ntZ/rO9TgFjLThjy1gBMFxhRNuzMRaBPRC
-         zmaMawL42u8onUqv6lj8583sr3ToC2kI8qTrzNeDVfZnEl5VvJenRJrPOCw2nCIfcAtl
-         hrSJpZhWU9EoL1pUQ9FegAZDSWcJE57Yyd0zbw4xpKLZB7WkGR3dWQCrDzc9qXsQq9mH
-         hc0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXqi5tv6nP9e3FGxNfls8TaKLykbfwpQTn0/TNso9zMRZ7q/yO02hjh+bZ5XiOloX7d31ebd3QcDww4t94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR09ADYpPSZktbDXmxkzVBb3WDzabUFncLw3KsAvwtqrRqJSok
-	/JFmYq8Sl9nnbwhWr95iVCI9OiZVvx5eA3SF602pUE+zxuECAKjIxAMj+na2s0XVwYku8WOkbDj
-	2nMQQXEE42NPrQFicaEzrg3j7cg9yNsqaIWX3+pWcW4tNxkUKJpiHkRDQ04foR0h4rrw=
-X-Gm-Gg: ASbGncs7noDLiTLkES5jf8wKB2No4srL+4h8jYUQy0grwFWzqs7zCsHfG8gzlzpcJlv
-	vkZ3FluVjtJ2v8JbW1p4RxD89K7QSlHcgPBmzrGGBKNL2ifK7vzPsXQQAwMEH8qbu+IZmKJei6J
-	ywfyCi2lMqPT39yDk4MQ/B8xL6qLKYEJWNGMpJTiW8nSSN+YNhslgHmZQudSFlmO/eeBvNE/0+x
-	mGKj61Yy4fMh+gRpTvqXtze8WLG2FufJAO10wIvyhvR83vN/HfGLMv+FoSF8gxP5ZWDNAGBYydz
-	99QJRvcjt58/dwsokEnETKshILKqnzS10Cc27FhGguoTijeKpz9ScB7QVa1RibUg6lDiVxSxRkI
-	Uzz4yprpVWqw8WxtHZ1Jiqbqkj93x90wtUtgNS5j8evG5oJEg7pz5
-X-Received: by 2002:a05:6214:d08:b0:709:d518:74fe with SMTP id 6a1803df08f44-70d88f6c1b8mr21455356d6.38.1755776189092;
-        Thu, 21 Aug 2025 04:36:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFc4pz99CtfcFnUf3vsu43oB3VrYZHY0a8u+w/WlSr/OGxDRM13tso2usgrGww5C5aEQRhY4g==
-X-Received: by 2002:a05:6214:d08:b0:709:d518:74fe with SMTP id 6a1803df08f44-70d88f6c1b8mr21455026d6.38.1755776188614;
-        Thu, 21 Aug 2025 04:36:28 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef3f361asm2967476e87.116.2025.08.21.04.36.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 04:36:27 -0700 (PDT)
-Date: Thu, 21 Aug 2025 14:36:26 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Andy Yan <andyshrk@163.com>
-Cc: heiko@sntech.de, hjc@rock-chips.com, mripard@kernel.org, naoki@radxa.com,
-        stephen@radxa.com, cristian.ciocaltea@collabora.com,
-        neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com,
-        yubing.zhang@rock-chips.com, krzk+dt@kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, robh@kernel.org,
-        sebastian.reichel@collabora.com, Andy Yan <andy.yan@rock-chips.com>
-Subject: Re: [PATCH v6 06/10] drm/birdge: simple-bridge: Add support for
- radxa ra620
-Message-ID: <4qs65cbi2u777ykgial37gsyzosj5znduxwvcuwbxi3kxzy5dd@k7tcgcyepjoz>
-References: <20250728082846.3811429-1-andyshrk@163.com>
- <20250728082846.3811429-7-andyshrk@163.com>
+	s=arc-20240116; t=1755776229; c=relaxed/simple;
+	bh=vTIYuqFFI4lufFZfI23A07GetKlFA8GCweCd9qK6Ro0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sZd8x/p7LfaOH6kEnByijVHwIOqbn5EVzQdjGOSSx/w+c+0J0vZ8tuHdFkxWbdv9LQkAkvyNrFjuXRPWbpsgbqrS/hnoam/6GeV7IyPy8YemMkwpi98Mf69d0NueIBA23Xj6DA2sxI1VthXoaTtg81gHBcDg+8lW2EL+igUD+tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XuDbmp0P; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755776225;
+	bh=vTIYuqFFI4lufFZfI23A07GetKlFA8GCweCd9qK6Ro0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XuDbmp0PP5xX0tZW7+Mbj0yv6W+PwUq5hd7UoOaCmWS9ADwhLPFD6qfKWbXCa288J
+	 teGG1gjZW4wCb9yXtIjjal6au7K+WjHWEujL07gB6ILVMB1zz4JSdcCT4u+nbSxSLR
+	 hEYuxGX8uQCljyW7zOIoppotCG67ajl9llCITO8jIr9dQRaOeFYdFJldcrY0uS07X7
+	 mVzkxhHKy4BgNqd2HR/UO5Fg8qRK7Ms6T1o092SiM5J4Nhlh1sRQ3wuv/KVvwgJfgr
+	 HKg3Wv+TYlORHLF5KW7kagiAWgQPlaj7NtQ5sBJbEPhjKfs1JzPqmkV0B4xP5rdkHr
+	 9ahW0JG6F3moQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EA87217E0DE3;
+	Thu, 21 Aug 2025 13:37:04 +0200 (CEST)
+Date: Thu, 21 Aug 2025 13:36:59 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: Caterina Shablia <caterina.shablia@collabora.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Frank Binns <frank.binns@imgtec.com>, Matt
+ Coster <matt.coster@imgtec.com>, Karol Herbst <kherbst@redhat.com>, Lyude
+ Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, Liviu Dudau
+ <liviu.dudau@arm.com>, Lucas De Marchi <lucas.demarchi@intel.com>, Thomas
+ =?UTF-8?B?SGVsbHN0csO2bQ==?= <thomas.hellstrom@linux.intel.com>, Rodrigo
+ Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, asahi@lists.linux.dev, Asahi Lina
+ <lina@asahilina.net>
+Subject: Re: [PATCH v4 1/7] drm/panthor: Add support for atomic page table
+ updates
+Message-ID: <20250821133659.5e7d0cd2@fedora>
+In-Reply-To: <d4a6208b-a4a4-451f-9799-7b9f5fb20c37@arm.com>
+References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
+	<20250707170442.1437009-2-caterina.shablia@collabora.com>
+	<d4a6208b-a4a4-451f-9799-7b9f5fb20c37@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728082846.3811429-7-andyshrk@163.com>
-X-Authority-Analysis: v=2.4 cv=LexlKjfi c=1 sm=1 tr=0 ts=68a704be cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=s8YR1HE3AAAA:8 a=EUspDBNiAAAA:8 a=HhVUBrKwW8KbpwAMqUoA:9
- a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-GUID: f-3vcI03HzW692juWk7gBBb20-wRPC4O
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDEzNSBTYWx0ZWRfXwEgi17wR0RJM
- uFv/+8mJDlq6cuDYMpRkjHv2hzM9aY+c/MlhAoecfSuWSvYhHF6fDgTLjJhekPTYTvZz55Vw8Pm
- nQGAFvjuNx2pzOjn9aKu0TDKiCpXxUgjLosi/2QJQBEbaqO0KiGKFrZaSXxzmTiszFk7gileQjp
- R2IkxiuM6fAZol0lkNdmx0gIviHDQu6z89SCJCU+z0iDow0mwrVQiNviiS08rmWA+iJRzDm4EZv
- ORCDU93Ul2FzVOka9nnKv/r85LaVrIUgxQE10RXYkVVIy3eb3KzrN0GpAisCKohlZG1GyixHayb
- rMtQ2NvsSoHYqeOBYwM+nByyTraqj+/TsjT6r/eLmvTty902dHYoVQhF9EV89gxplHobgtpctQv
- AvQawCMUCiP+YPglorGVs9ZfSlHEuQ==
-X-Proofpoint-ORIG-GUID: f-3vcI03HzW692juWk7gBBb20-wRPC4O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 malwarescore=0
- spamscore=0 priorityscore=1501 suspectscore=0 clxscore=1015 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200135
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 28, 2025 at 04:28:31PM +0800, Andy Yan wrote:
-> From: Andy Yan <andy.yan@rock-chips.com>
+On Fri, 11 Jul 2025 14:30:21 +0100
+Steven Price <steven.price@arm.com> wrote:
+
+> On 07/07/2025 18:04, Caterina Shablia wrote:
+> > From: Boris Brezillon <boris.brezillon@collabora.com>
+> > 
+> > Move the lock/flush_mem operations around the gpuvm_sm_map() calls so
+> > we can implement true atomic page updates, where any access in the
+> > locked range done by the GPU has to wait for the page table updates
+> > to land before proceeding.
+> > 
+> > This is needed for vkQueueBindSparse(), so we can replace the dummy
+> > page mapped over the entire object by actual BO backed pages in an atomic
+> > way.
+> > 
+> > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
+> > ---
+> >  drivers/gpu/drm/panthor/panthor_mmu.c | 65 +++++++++++++++++++++++++--
+> >  1 file changed, 62 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > index b39ea6acc6a9..9caaba03c5eb 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > @@ -387,6 +387,15 @@ struct panthor_vm {
+> >  	 * flagged as faulty as a result.
+> >  	 */
+> >  	bool unhandled_fault;
+> > +
+> > +	/** @locked_region: Information about the currently locked region currently. */
+> > +	struct {
+> > +		/** @locked_region.start: Start of the locked region. */
+> > +		u64 start;
+> > +
+> > +		/** @locked_region.size: Size of the locked region. */
+> > +		u64 size;
+> > +	} locked_region;
+> >  };
+> >  
+> >  /**
+> > @@ -775,6 +784,10 @@ int panthor_vm_active(struct panthor_vm *vm)
+> >  	}
+> >  
+> >  	ret = panthor_mmu_as_enable(vm->ptdev, vm->as.id, transtab, transcfg, vm->memattr);
+> > +	if (!ret && vm->locked_region.size) {
+> > +		lock_region(ptdev, vm->as.id, vm->locked_region.start, vm->locked_region.size);
+> > +		ret = wait_ready(ptdev, vm->as.id);
+> > +	}  
 > 
-> The RA620 is an active DP to HDMI converter chip, basically
-> no software is involved to drive it.
+> Do we need to do this? It seems odd to restore a MMU context and
+> immediately set a lock region. Is there a good reason we can't just
+> WARN_ON if there's a lock region set in panthor_vm_idle()?
 > 
-> Add it to simple bridge to make it can be find by the drm bridge chain.
+> I think we need to briefly take vm->op_lock to ensure synchronisation
+> but that doesn't seem a big issue. Or perhaps there's a good reason that
+> I'm missing?
+
+Hm, I wish I had written a big fat comment along this change, because
+indeed, it seems simpler to take the op_lock to ensure any in-flight PT
+update is flushed before we make the AS active, and I definitely don't
+remember why I didn't do that. Could be some locking order inversion of
+some sort between the slot lock, or maybe I overthought this at the
+time. In any case, it looks like it's worth a try.
+
 > 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> >  
+> >  out_make_active:
+> >  	if (!ret) {
+> > @@ -902,6 +915,9 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+> >  	struct io_pgtable_ops *ops = vm->pgtbl_ops;
+> >  	u64 offset = 0;
+> >  
+> > +	drm_WARN_ON(&ptdev->base,
+> > +		    (iova < vm->locked_region.start) ||
+> > +		    (iova + size > vm->locked_region.start + vm->locked_region.size));
+> >  	drm_dbg(&ptdev->base, "unmap: as=%d, iova=%llx, len=%llx", vm->as.id, iova, size);
+> >  
+> >  	while (offset < size) {
+> > @@ -915,13 +931,12 @@ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+> >  				iova + offset + unmapped_sz,
+> >  				iova + offset + pgsize * pgcount,
+> >  				iova, iova + size);
+> > -			panthor_vm_flush_range(vm, iova, offset + unmapped_sz);
+> >  			return  -EINVAL;
+> >  		}
+> >  		offset += unmapped_sz;
+> >  	}
+> >  
+> > -	return panthor_vm_flush_range(vm, iova, size);
+> > +	return 0;
+> >  }
+> >  
+> >  static int
+> > @@ -938,6 +953,10 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
+> >  	if (!size)
+> >  		return 0;
+> >  
+> > +	drm_WARN_ON(&ptdev->base,
+> > +		    (iova < vm->locked_region.start) ||
+> > +		    (iova + size > vm->locked_region.start + vm->locked_region.size));
+> > +
+> >  	for_each_sgtable_dma_sg(sgt, sgl, count) {
+> >  		dma_addr_t paddr = sg_dma_address(sgl);
+> >  		size_t len = sg_dma_len(sgl);
+> > @@ -985,7 +1004,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
+> >  		offset = 0;
+> >  	}
+> >  
+> > -	return panthor_vm_flush_range(vm, start_iova, iova - start_iova);
+> > +	return 0;
+> >  }
+> >  
+> >  static int flags_to_prot(u32 flags)
+> > @@ -1654,6 +1673,38 @@ static const char *access_type_name(struct panthor_device *ptdev,
+> >  	}
+> >  }
+> >  
+> > +static int panthor_vm_lock_region(struct panthor_vm *vm, u64 start, u64 size)
+> > +{
+> > +	struct panthor_device *ptdev = vm->ptdev;
+> > +	int ret = 0;
+> > +
+> > +	mutex_lock(&ptdev->mmu->as.slots_lock);
+> > +	drm_WARN_ON(&ptdev->base, vm->locked_region.start || vm->locked_region.size);
+> > +	vm->locked_region.start = start;
+> > +	vm->locked_region.size = size;
+> > +	if (vm->as.id >= 0) {
+> > +		lock_region(ptdev, vm->as.id, start, size);
+> > +		ret = wait_ready(ptdev, vm->as.id);
+> > +	}
+> > +	mutex_unlock(&ptdev->mmu->as.slots_lock);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static void panthor_vm_unlock_region(struct panthor_vm *vm)
+> > +{
+> > +	struct panthor_device *ptdev = vm->ptdev;
+> > +
+> > +	mutex_lock(&ptdev->mmu->as.slots_lock);
+> > +	if (vm->as.id >= 0) {
+> > +		write_cmd(ptdev, vm->as.id, AS_COMMAND_FLUSH_MEM);
+> > +		drm_WARN_ON(&ptdev->base, wait_ready(ptdev, vm->as.id));
+> > +	}
+> > +	vm->locked_region.start = 0;
+> > +	vm->locked_region.size = 0;
+> > +	mutex_unlock(&ptdev->mmu->as.slots_lock);
+> > +}  
 > 
-> ---
+> Do we need to include a drm_dev_enter() somewhere here? I note that
+> panthor_vm_flush_range() has one and you've effectively replaced that
+> code with the above.
 > 
-> (no changes since v3)
+> Thanks,
+> Steve
+> 
+> > +
+> >  static void panthor_mmu_irq_handler(struct panthor_device *ptdev, u32 status)
+> >  {
+> >  	bool has_unhandled_faults = false;
+> > @@ -2179,6 +2230,11 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
+> >  
+> >  	mutex_lock(&vm->op_lock);
+> >  	vm->op_ctx = op;
+> > +
+> > +	ret = panthor_vm_lock_region(vm, op->va.addr, op->va.range);
+> > +	if (ret)
+> > +		goto out;
+> > +
+> >  	switch (op_type) {
+> >  	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP:
+> >  		if (vm->unusable) {
+> > @@ -2199,6 +2255,9 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
+> >  		break;
+> >  	}
+> >  
+> > +	panthor_vm_unlock_region(vm);
+> > +
+> > +out:
+> >  	if (ret && flag_vm_unusable_on_failure)
+> >  		vm->unusable = true;
+> >    
 > 
 
-Nit: typo in the subject, should be 'bridge'
-
--- 
-With best wishes
-Dmitry
 
