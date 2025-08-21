@@ -1,246 +1,143 @@
-Return-Path: <linux-kernel+bounces-779509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A033B2F500
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:17:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CDEB2F506
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B4727B019D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:15:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5F165C3C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BCD2F5326;
-	Thu, 21 Aug 2025 10:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38952F3C2A;
+	Thu, 21 Aug 2025 10:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="MwylDu/r";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HiXiqU1w"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oaT58RzG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3684A2F5311
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D952F0C40;
+	Thu, 21 Aug 2025 10:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755771382; cv=none; b=IaRmF/vy89yHfzmhvQ7lC3tjeU2BeeQsKDLI0sv7xx61h6BtPuspf3mkpKSueJUiu0tzH+h2ex1rqKOSVI7ie6+83zl8W2ke1vkVfj3lcT9I0Wd6OvfPIeWwu8s8WSWN/lCTRs9gFMmI5j+HjCvZbBSvjAGs0x3OVrdkzAmI1Xs=
+	t=1755771404; cv=none; b=u8EUc93a+nCGYv4F+nxPpDxoRJoS1EpaLKo2NVulF3CZf451NPfGrOnZxt9GyOC/KZlnXyONBV1+On9pHJ7o6lV8Rcqkb189mK9kQ1L+7panZeNADlcQp0rBS6OlHaj6gTf+S5AmzOW/wHdXnHZUCCQSSXC8o6SYmGNL3y67vxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755771382; c=relaxed/simple;
-	bh=955+AUWu9skz+kriF8KT3uMZVKR0SG4949Rhbtt/u3M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qlKyadregrAjwqp+Gywizg6IIKV9117w82tb+YtgVR6DgaGctOXw8/z8RKiplVI7KGYpxYxMeuKZa7IDm43nUHETDY8xNJIrKB8dXOvcCnoCqwq8T2hGwjZuh/JE4KGIlIVV6mXQ3F2LnNCThOfAIGweMTAzCc+U0UWYEMER+Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=MwylDu/r; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HiXiqU1w; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6AEDCEC01DC;
-	Thu, 21 Aug 2025 06:16:20 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Thu, 21 Aug 2025 06:16:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1755771380;
-	 x=1755857780; bh=iMvMUbqwzYMs+NFv5DBsdmg4oCEeEiFeKnSlIqNtn8M=; b=
-	MwylDu/r6/thFNHVvnFnXsv7H0tisLf3i64yPJl73lFhkX0K89OwIp7z5L/0qpAo
-	c4IGg94aw+j/Ah/iNQjbMH3oeOdsRwOt7SssyssdO3GZEcCJNzydLfxzPFtQvtoP
-	cOCkf/0xlW1jVTKavsrP8mZuZblAFHILmd+oM8AFmxjRKy6vcVNzkgvnpXuB5gxG
-	0S5QLIX2NK3nLL/v82ffaGhjUhqOjed7zUjLuqfXbMpz1k6THUTRDihtmq5ff22R
-	vjD/K6naJuoGFN8F6thKc6pZhKeX3ATz8zKEk7ATve2e54XgT9OBeOGliHy/lGcJ
-	gTb6XKwpwZvmyURE147g9Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755771380; x=
-	1755857780; bh=iMvMUbqwzYMs+NFv5DBsdmg4oCEeEiFeKnSlIqNtn8M=; b=H
-	iXiqU1wXWz5ivEAQmabDd4c+zBB8necoB+R0whgu8QVOnB+/sBttD7iy+muxVGpl
-	2HC5LoUoiuPheSF/yr54WQgGvi56yrjLoHGD8S7l6YGBYdLlGR1TjysQb0OlnoR0
-	smxHTkVlj7oZstm0VbCSzdEwkezC1874Q/biftOLkRq71B9GeWwXTqGPYcA1qM/V
-	LXwTmSoX6sdMGqqtpsYiKHcddhPs2CgvOdiGM/mXPvAbmu++4mb22LdSR/0UArui
-	sMisLRDCixhlMniYRlpiKeuffrPwUqLDjH2Do2D1AqLK9Ez7d0RoRWtMf/Irn0og
-	zqWn6lzLa+/uLA2s4lOBw==
-X-ME-Sender: <xms:9PGmaHrmw-TWHOL2cLm9lQSlBZgxz6JiiB_SpM8Bk8jeRtg8cRgAnA>
-    <xme:9PGmaHnf4ikb6zHI94n1VvASJ2DKGOu0ZHxnBxY7Q-kr68OIppVpEuAgzAV57j-qD
-    ZZMME_uEz3esrB7lNE>
-X-ME-Received: <xmr:9PGmaBV8WQEMQTBoMRayPDfsk8sQLErP4V5eGX9uVENlj7Aw45Pl9daeC1RJmeikFdKrxvOAV6RAqyJBNJbnpOwmTagnv9MHnC4_LQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedtleejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeflrghnnhgv
-    ucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    ehheeileduffehteeihfdvtdelffdutdeludduiedutedvfeffheekhefgtedtnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrg
-    hurdhnvghtpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepshhvvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgr
-    rhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtth
-    hopehjsehjrghnnhgruhdrnhgvthdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheprhhosghinhdrmhhurhhphhihsegrrhhmrdgtohhmpdhrtghpth
-    htohepjhhorhhoseeksgihthgvshdrohhrghdprhgtphhtthhopehiohhmmhhusehlihhs
-    thhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheprghsrghhiheslhhishhtshdrlhhinh
-    hugidruggvvh
-X-ME-Proxy: <xmx:9PGmaLq92ipQEc0rknsPUOXNqpa2lh_TjutJTRtwL37Jwi-qN5Uhbg>
-    <xmx:9PGmaCUwugZBJ04YATvGtOgO6UQiCG5KwoZNaJ_6YHIT3WRuy2tqbw>
-    <xmx:9PGmaMGgkRahoRXSAcjwO4_woYoMKSI5RPbP1CYKHx_UmNMFaoR6hg>
-    <xmx:9PGmaJDLIKA4CqeTrdi-gqbNmnVMCMT3ed35-Ie2bxYOHOxI3gAafw>
-    <xmx:9PGmaM4J45ooUzlZLLphkNhNwBHBJ9xL_Rfbt4QcuI9ksRmyN8F8b9Ff>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Aug 2025 06:16:19 -0400 (EDT)
-From: Janne Grunau <j@jannau.net>
-Date: Thu, 21 Aug 2025 12:16:00 +0200
-Subject: [PATCH v2 3/3] iommu/apple-dart: Add 4-level page table support
+	s=arc-20240116; t=1755771404; c=relaxed/simple;
+	bh=sfAhUgeS5s0r1RIkkZlzAowK+T0GKo6mu/F3FrB2y+E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LxxhluDLs7oBG8Q0bn6inqYnwUMfE+ttUlAHfbRFBTgqz/KE321s1+C48aAJdWktmYpjR/iJVEkeiRIhT61NacDbkmlG+abowRgHDY3Sb7fhpYpalaLiQskvwufHRw4k85Sbb0QwrUkSRpoM4LRJgOJsxWbCVpr1++W98Q9hTe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oaT58RzG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9b8X4003637;
+	Thu, 21 Aug 2025 10:16:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=xO17CGSm7MfGPLbc4UydaG
+	gv98jwTBkBtyeXnZH5mNA=; b=oaT58RzGkEi9hR0KRRk78qOkPi9TZdrtGoOYus
+	wY3ulim3+n2SsZS4h6kc7BSwfhwtv/WX/iaoxKUs08UN6k4TKscWjrKJn7UGxQSL
+	qpHcIgQzW5eH4+Q/KSHcCHz6StuqG2YER5GYhuct+lHGj0oDVLxVa8bqErAvqCok
+	CuJeeoySJiWC/J2PZOHImwHJjwjqHmq0KAx6ddpHVenERK/oPZSInb8oBc7CjAhm
+	//OjGgM+iDlYxGuPNiOmfOwCeDbDDedpzKXV+xV8k+p69KwzftKFqvg1kx6R0aQ9
+	sLpvWhiyUok5q3IxMlD6dgVhUVZpxW46pmOV6bgs0Qx1ZC5Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ngtdjvtc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 10:16:30 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57LAGTkj014313
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 10:16:29 GMT
+Received: from hu-rdwivedi-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 21 Aug 2025 03:16:24 -0700
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+To: <mani@kernel.org>, <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
+        <bvanassche@acm.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <agross@kernel.org>,
+        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V2 0/4] Add DT-based gear and rate limiting support
+Date: Thu, 21 Aug 2025 15:46:05 +0530
+Message-ID: <20250821101609.20235-1-quic_rdwivedi@quicinc.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250821-apple-dart-4levels-v2-3-e39af79daa37@jannau.net>
-References: <20250821-apple-dart-4levels-v2-0-e39af79daa37@jannau.net>
-In-Reply-To: <20250821-apple-dart-4levels-v2-0-e39af79daa37@jannau.net>
-To: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Janne Grunau <j@jannau.net>, Hector Martin <marcan@marcan.st>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4651; i=j@jannau.net;
- s=yk2024; h=from:subject:message-id;
- bh=X3gkHJGczXXUrwmJq+dtwcmyPTUZEqB4c8Tpzbc+JsA=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhoxlH1/xWwoWGDCeWaNb09pjxp9hpzx3CcsZoS0vtoUz7
- 1dlfs/QUcrCIMbFICumyJKk/bKDYXWNYkztgzCYOaxMIEMYuDgFYCIxXxj+x/DvNxQ/Ii9w4d/c
- Nfm3WKe3Jc0Ue3u++33B87yzGtqtRxj+Wc/97DX/2c9nzcl2u6X5oy6sifpesWuyWUmMz+RLcY5
- 3GQA=
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=LexlKjfi c=1 sm=1 tr=0 ts=68a6f1fe cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=P4RA78Fcj83t06hIkt4A:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: xC_B_8Q-S0mhTOggwtpkYcu8Q7z-ZaEN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDEzNSBTYWx0ZWRfX6sVydOZPw2en
+ jcnaZ7tOwwS/UkhVVqO6iJ1MIKe+TnI4su/aQ7n8Lzq+LivQ2GYpf4eJndY6b9N3xca5LQDn4Dw
+ fH4b3oBmNpQvT31Jzvnl1jajudBxm/JAzLmhJC6J1nFHJ+K5YkRiQq/Zf2qsv2DyXzlSX2DrQo3
+ 1A+vlZW7OBVgRCTx2nbyFsHCVYpAh+pKhhsTvDgjaFiQZSD9KZT8wsYs38uEtYbXMPGO+3MWa8A
+ 3n8Xi84zx+wT9IT6ND+wPZ+STRiBRSvpPMQTn2/WzBS02ANkqhyuFMNvk3GaBziBycxSCLbKeUy
+ IJdHMeiUsGC6lLDxDk11U+ZxxJI+kGrLn1mFziNwd0h2RLmOi2YsxMDYa1a40Ew7+4o3Uj4SEm4
+ xfLfow0NL0iRRNUeP1m8zijXV/losg==
+X-Proofpoint-ORIG-GUID: xC_B_8Q-S0mhTOggwtpkYcu8Q7z-ZaEN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 malwarescore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200135
 
-From: Hector Martin <marcan@marcan.st>
+This patch series adds support for limiting the maximum high-speed
+gear and rate used by the UFS controller via device tree properties.
 
-The T8110 variant DART implementation on T602x SoCs indicates an IAS of
-42, which requires an extra page table level. The extra level is
-optional, but let's implement it.
+Some platforms may have signal integrity, clock configuration, or
+layout issues that prevent reliable operation at higher gears or rates.
+This is especially critical in automotive and other platforms where
+stability is prioritized over peak performance.
 
-Later it might be useful to restrict this based on the actual attached
-devices, since most won't need that much address space anyway.
+The series follows this logical progression:
+1. Document the new DT properties in the common UFS binding
+2. Clean up existing redundant code in the qcom driver
+3. Add platform-level parsing support for the new properties
+4. Integrate the platform support in the qcom driver
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Signed-off-by: Janne Grunau <j@jannau.net>
-Reviewed-by: Sven Peter <sven@kernel.org>
----
- drivers/iommu/apple-dart.c | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+This approach makes the functionality available to other UFS host
+drivers and provides a cleaner, more maintainable implementation.
 
-diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
-index e72a93e78e26ca61b233c83d439dbdfadf040fc6..9696c8f143876416b10f812423aa5bd8986bfc88 100644
---- a/drivers/iommu/apple-dart.c
-+++ b/drivers/iommu/apple-dart.c
-@@ -133,6 +133,7 @@
- #define DART_T8110_TCR                  0x1000
- #define DART_T8110_TCR_REMAP            GENMASK(11, 8)
- #define DART_T8110_TCR_REMAP_EN         BIT(7)
-+#define DART_T8110_TCR_FOUR_LEVEL       BIT(3)
- #define DART_T8110_TCR_BYPASS_DAPF      BIT(2)
- #define DART_T8110_TCR_BYPASS_DART      BIT(1)
- #define DART_T8110_TCR_TRANSLATE_ENABLE BIT(0)
-@@ -177,6 +178,7 @@ struct apple_dart_hw {
- 	u32 tcr_enabled;
- 	u32 tcr_disabled;
- 	u32 tcr_bypass;
-+	u32 tcr_4level;
- 
- 	u32 ttbr;
- 	u32 ttbr_valid;
-@@ -217,6 +219,7 @@ struct apple_dart {
- 	u32 pgsize;
- 	u32 num_streams;
- 	u32 supports_bypass : 1;
-+	u32 four_level : 1;
- 
- 	struct iommu_group *sid2group[DART_MAX_STREAMS];
- 	struct iommu_device iommu;
-@@ -305,13 +308,19 @@ static struct apple_dart_domain *to_dart_domain(struct iommu_domain *dom)
- }
- 
- static void
--apple_dart_hw_enable_translation(struct apple_dart_stream_map *stream_map)
-+apple_dart_hw_enable_translation(struct apple_dart_stream_map *stream_map, int levels)
- {
- 	struct apple_dart *dart = stream_map->dart;
-+	u32 tcr = dart->hw->tcr_enabled;
- 	int sid;
- 
-+	if (levels == 4)
-+		tcr |= dart->hw->tcr_4level;
-+
-+	WARN_ON(levels != 3 && levels != 4);
-+	WARN_ON(levels == 4 && !dart->four_level);
- 	for_each_set_bit(sid, stream_map->sidmap, dart->num_streams)
--		writel(dart->hw->tcr_enabled, dart->regs + DART_TCR(dart, sid));
-+		writel(tcr, dart->regs + DART_TCR(dart, sid));
- }
- 
- static void apple_dart_hw_disable_dma(struct apple_dart_stream_map *stream_map)
-@@ -569,7 +578,8 @@ apple_dart_setup_translation(struct apple_dart_domain *domain,
- 	for (; i < stream_map->dart->hw->ttbr_count; ++i)
- 		apple_dart_hw_clear_ttbr(stream_map, i);
- 
--	apple_dart_hw_enable_translation(stream_map);
-+	apple_dart_hw_enable_translation(stream_map,
-+					 pgtbl_cfg->apple_dart_cfg.n_levels);
- 	stream_map->dart->hw->invalidate_tlb(stream_map);
- }
- 
-@@ -614,7 +624,7 @@ static int apple_dart_finalize_domain(struct apple_dart_domain *dart_domain,
- 	dart_domain->domain.pgsize_bitmap = pgtbl_cfg.pgsize_bitmap;
- 	dart_domain->domain.geometry.aperture_start = 0;
- 	dart_domain->domain.geometry.aperture_end =
--		(dma_addr_t)DMA_BIT_MASK(dart->ias);
-+		(dma_addr_t)DMA_BIT_MASK(pgtbl_cfg.ias);
- 	dart_domain->domain.geometry.force_aperture = true;
- 
- 	dart_domain->finalized = true;
-@@ -807,6 +817,8 @@ static int apple_dart_of_xlate(struct device *dev,
- 	if (cfg_dart) {
- 		if (cfg_dart->pgsize != dart->pgsize)
- 			return -EINVAL;
-+		if (cfg_dart->ias != dart->ias)
-+			return -EINVAL;
- 	}
- 
- 	cfg->supports_bypass &= dart->supports_bypass;
-@@ -1137,6 +1149,7 @@ static int apple_dart_probe(struct platform_device *pdev)
- 		dart->ias = FIELD_GET(DART_T8110_PARAMS3_VA_WIDTH, dart_params[2]);
- 		dart->oas = FIELD_GET(DART_T8110_PARAMS3_PA_WIDTH, dart_params[2]);
- 		dart->num_streams = FIELD_GET(DART_T8110_PARAMS4_NUM_SIDS, dart_params[3]);
-+		dart->four_level = dart->ias > 36;
- 		break;
- 	}
- 
-@@ -1169,9 +1182,9 @@ static int apple_dart_probe(struct platform_device *pdev)
- 
- 	dev_info(
- 		&pdev->dev,
--		"DART [pagesize %x, %d streams, bypass support: %d, bypass forced: %d] initialized\n",
-+		"DART [pagesize %x, %d streams, bypass support: %d, bypass forced: %d, AS %d -> %d] initialized\n",
- 		dart->pgsize, dart->num_streams, dart->supports_bypass,
--		dart->pgsize > PAGE_SIZE);
-+		dart->pgsize > PAGE_SIZE, dart->ias, dart->oas);
- 	return 0;
- 
- err_sysfs_remove:
-@@ -1292,6 +1305,7 @@ static const struct apple_dart_hw apple_dart_hw_t8110 = {
- 	.tcr_enabled = DART_T8110_TCR_TRANSLATE_ENABLE,
- 	.tcr_disabled = 0,
- 	.tcr_bypass = DART_T8110_TCR_BYPASS_DAPF | DART_T8110_TCR_BYPASS_DART,
-+	.tcr_4level = DART_T8110_TCR_FOUR_LEVEL,
- 
- 	.ttbr = DART_T8110_TTBR,
- 	.ttbr_valid = DART_T8110_TTBR_VALID,
+Changes from V1: 
+- Restructured patch series for better logical flow and maintainability.
+- Moved DT bindings to ufs-common.yaml making it available for all UFS 
+  controllers.
+- Added platform-level support in ufshcd-pltfrm.c for code reusability.
+- Separated the cleanup patch to remove redundant hs_rate assignment in
+  qcom driver.
+- Removed SA8155 DTS changes to keep the series focused on core
+  functionality.
+- Improved commit messages with better technical rationale.
+
+Ram Kumar Dwivedi (4):
+  ufs: dt-bindings: Document gear and rate limit properties
+  ufs: ufs-qcom: Remove redundant re-assignment to hs_rate
+  ufs: pltfrm: Allow limiting HS gear and rate via DT
+  ufs: ufs-qcom: Add support for limiting HS gear and rate
+
+ .../devicetree/bindings/ufs/ufs-common.yaml   | 16 ++++++++++
+ drivers/ufs/host/ufs-qcom.c                   | 21 ++++++++++----
+ drivers/ufs/host/ufshcd-pltfrm.c              | 29 +++++++++++++++++++
+ drivers/ufs/host/ufshcd-pltfrm.h              |  1 +
+ 4 files changed, 61 insertions(+), 6 deletions(-)
 
 -- 
 2.50.1
