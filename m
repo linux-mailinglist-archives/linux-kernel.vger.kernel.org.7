@@ -1,162 +1,199 @@
-Return-Path: <linux-kernel+bounces-779324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30DAB2F27B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:40:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43EAB2F2A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AD087AD937
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:39:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 907C11672C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4F82EA49E;
-	Thu, 21 Aug 2025 08:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2EE2EACE2;
+	Thu, 21 Aug 2025 08:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fNekpbkQ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lqyJqDqX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF292EA498
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CAB2EA73B;
+	Thu, 21 Aug 2025 08:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755765645; cv=none; b=J4Puy0gIf2AERZ2gPccHqb8gi4eOom4N2u2+qgrQk+BzfUP9EeuEgfBfJjAfTeELnLPIA9yLcyi7aVnI0uHm/Ryy6h6OtmpqaGj5EEW4lyDrl+EwV3EBm3OMudW3kZwPFz3yZktLe9ZY8Ca/ETeD8tMf33VVsJFKeDUngJwz2JA=
+	t=1755765684; cv=none; b=hvhsKPLYFpxtp3Ps3D34/kWrUPHBtTIetlQzfaDa7LkGtHhMGeYAp4HK/rD+a7ofMjFhR42vdJvBOmyi90Swthdv4XeD7R7nza1G4/+UQVtU4Rf5+awa1b6H5cXmD7EXl4ZuntxkT3kKiW9VVo28TP8C7/Bn0/j0WZdA629tBdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755765645; c=relaxed/simple;
-	bh=7aK4/SU1Ct1ml2JjaK30nU4voYerLKo+nKBBvu21qzs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=StArRTBkTQZA3JzCwDPrvFJPwyFq7L1H41YWT9IjlKt+p0WofTyYwSEOyeHvd8VI70R6+eBuPJO/2j8PNZ2NROzmQgg4mgyqE//VwJK7T/K1NTauqyaDTeYXO+mljuzHL4wtjK6D6+roc2dOYnujUlBvhyiJmYPzCwzcA5sJ31w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fNekpbkQ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55e041f6da0so551630e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755765641; x=1756370441; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7aK4/SU1Ct1ml2JjaK30nU4voYerLKo+nKBBvu21qzs=;
-        b=fNekpbkQEswZSRy+HpqFCpgFME+DtSf1+CWf0gog0xhyASnCIDC0PCFve8hb5i9VEO
-         X+F8NrkQj2BTFynVdUpaPX9soblZh7HbqxNcinGaEx5kh5LDsiCJmAurEG1aFImhly7e
-         31ZK3xQg+dUyQmlSn37YwY8uw7XeUh3Qx3VUl266Rird7pnZPTt6mwV1rP65jIkpGmEf
-         ret39wqY1zfZH1nGoWPVbRYcSFuumqXKFNGQa/3a6T0F+CIXys2Tg/TMAG7C9H/hNYws
-         bTZwPL9LCg3NAM1ISV3N5tnSqNmf30oVifE7bCB6InEWKjNaCPRtM3lR19dXA2Xy+vWG
-         oTsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755765641; x=1756370441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7aK4/SU1Ct1ml2JjaK30nU4voYerLKo+nKBBvu21qzs=;
-        b=R7gO9aLYBhLYLMFe9jOj5KHTdgw5x/gsjHASUxWBUByAJeh2RASwEa1JLeBc4uPevk
-         GSlvFsHBG5O7TbOcLxbFXI060HhtzXX6ay8ug//GZPuf3VJzpMyCqm4JMOkWrw3T/ezr
-         gFpNd/R6MIzjiyEbIEXMwqCWC67DBWjW5azzQW55BJF4nmMmZQvlkQKOEfgf7wmU7+Zo
-         WurLQFTnZQoNUV9OfnvwEQjT69VD762/7Cp5O+ibMbTmp2yduEObRXJZ0eo+j9MEv46f
-         tD0yUBMSKp+S86IiuZpaJJWwsOk8ElrrDE53Kxw5jIdD9ZFFxcxF1WQmPdiORI+sEBcR
-         8tzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgPtsyNAl1g8RBe4V6BVIVtOT8syX7+WsB0ZHJXJhZfaMgfMPOpuopRUXjejo+eWQXO5IBlJrp3RVe5iE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsijf1V1WgpTk81AYNuyjcM9bKVwjpL4xvTLbjfG0vA4NXBXwN
-	PfJiurE2KlubsiOsIAKZX2i2v3tfDSf7lBP/NODj5xh/dpPu/1fAeXSpytX881pOFWa9Vtl9hV0
-	HsOR0W6HZrKihKH2OigawtxavvgZE5/kC9+HWZMGU6A==
-X-Gm-Gg: ASbGnct7Jr/CCMoGnn9EsuUK40N7r4X28fprX2UwRU6fnDoXEkIhvf3jbY9rO9VSK6p
-	Z4nAXYycKFZjjVYjfonZp67+nGkJ/uFIjtVstGJz0B8wQu5UQB4hUDpU3j7GMoNEAcxhtE73PlV
-	Y68e5Inuo0SQye/INkNymTKNXV9lcEMUxUViUacBiDdMn87z3iWZU+xdcNnLrDCQULWsLYPwbo7
-	X+tf9IWUZi0ax7LcL9l55HUyP++kTQrOTcX9t5a
-X-Google-Smtp-Source: AGHT+IGgkgUVrYJh6cowLH/Xf85rezoYs0gPmYvYPm2kVgw5F3I7DKXeEtyDDjY4aMK/wF347JSTD21kdGX08a9avRo=
-X-Received: by 2002:a05:6512:405b:b0:55e:64f:c10b with SMTP id
- 2adb3069b0e04-55e0d57be7fmr635522e87.43.1755765641291; Thu, 21 Aug 2025
- 01:40:41 -0700 (PDT)
+	s=arc-20240116; t=1755765684; c=relaxed/simple;
+	bh=KtT8TscMuMza33UUIFFQPhrRCIrbqTRqWw56j6zQ3yc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cyhwAA60f8mw6jTBxKBQysv2Ba2gVDmx21YCe+hwa3igElkCFj02ToyXHpIt7s3H+U6cxNk76XMkKl6PDjFZHr5aEz47XFcZHqXjYzx+RJUzEDjxJJDfXIqZV0jI/qmnirad/RfgVN7/Dox0QKgbahRu91PaTXQFxj519HJVfxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lqyJqDqX; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755765683; x=1787301683;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KtT8TscMuMza33UUIFFQPhrRCIrbqTRqWw56j6zQ3yc=;
+  b=lqyJqDqXWyE2wI0K6oTAsPdsbSRqNiud2MXsSUSjekPy9St2BQcOo8Xi
+   yIdE3NN50/MPA8mb8MNemRF71htZuZ7YHkASWZneqKFu18CLErfLtaJiv
+   xZFIxVnR3I8hTEKiMuptC7ckh398VyeVkSP4I/1MM3OpQAwFrJ/jknck5
+   b6+lFATXmID8P+N4KLIrCnl7AESZgypz9KJGt8vBUb5hlSzqPTR7Hcp+K
+   Ioj/HG/hbDja7tAwyhDkZQBfRq8Fa6FfLuW4QrV767vk95iKKBk1/O7Kr
+   lgKSbBx6x0qqh6U2xC9WHCKUrbUdYmo4exi1IYzA1BHD6o2MEQPu92yyT
+   g==;
+X-CSE-ConnectionGUID: EVqCl9XFRvaoLEhRwJyjow==
+X-CSE-MsgGUID: ZWXM14OYQYaY6fzovaRBSw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="69488920"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="69488920"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 01:41:22 -0700
+X-CSE-ConnectionGUID: VcnuS50NTQCGJ5qwqqfKZA==
+X-CSE-MsgGUID: s8qtbVRzSrOlunfa07343w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="167583174"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 21 Aug 2025 01:41:20 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1up0rF-000K6h-0m;
+	Thu, 21 Aug 2025 08:41:17 +0000
+Date: Thu, 21 Aug 2025 16:41:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+	platform-driver-x86@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Derek John Clark <derekjohn.clark@gmail.com>,
+	=?iso-8859-1?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: Re: [PATCH v1 4/5] platform/x86: ayaneo-ec: Add controller power and
+ modules attributes
+Message-ID: <202508211626.9Cxkta6K-lkp@intel.com>
+References: <20250820160628.99678-5-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250815094715.54121-1-marco.crivellari@suse.com>
- <20250819-maden-beteuern-82c84504d0b3@brauner> <aKZZCrE7IxtQz8kG@slm.duckdns.org>
-In-Reply-To: <aKZZCrE7IxtQz8kG@slm.duckdns.org>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Thu, 21 Aug 2025 10:40:30 +0200
-X-Gm-Features: Ac12FXwtUbJSE-4GZ8lMu1Pn8yfjCHJKqnSEQMiF1BToSDIc6ZD-kGe87ijkcds
-Message-ID: <CAAofZF4SKz8UDmWuaiVkNVw5NYf0ZfDacdcOxSFYUNOyJ0=-KA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Workqueue: fs: replace use of system_wq and add
- WQ_PERCPU to alloc_workqueue users
-To: Tejun Heo <tj@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820160628.99678-5-lkml@antheas.dev>
 
-Hello Tejun and Christian,
+Hi Antheas,
 
-> I believe all the prerequisites were already in -rc1 and you should be ab=
-le
-> to apply the series without pulling anything else. Marco, please correct =
-me
-> if I'm mistaken.
+kernel test robot noticed the following build errors:
 
-Yes the prerequisites are in rc1.
+[auto build test ERROR on c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9]
 
-But there are changes introduced in
-https://lore.kernel.org/all/20250815094510.52360-4-marco.crivellari@suse.co=
-m/
-("Workqueue: WQ_PERCPU added to all the remaining users") that in my
-opinion should be present as well when this series and the others are
-merged.
+url:    https://github.com/intel-lab-lkp/linux/commits/Antheas-Kapenekakis/platform-x86-ayaneo-ec-Add-Ayaneo-Embedded-Controller-platform-driver/20250821-002525
+base:   c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+patch link:    https://lore.kernel.org/r/20250820160628.99678-5-lkml%40antheas.dev
+patch subject: [PATCH v1 4/5] platform/x86: ayaneo-ec: Add controller power and modules attributes
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250821/202508211626.9Cxkta6K-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250821/202508211626.9Cxkta6K-lkp@intel.com/reproduce)
 
-For example, there are changes in __alloc_workqueue(), and also
-changes inside queue_work() (include/kernel/workqueue.h) that were
-added only in the "core" patches / series.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508211626.9Cxkta6K-lkp@intel.com/
 
-About queue_work() and the other functions, changes are made by
-("Workqueue: replace use of system_unbound_wq with system_dfl_wq") and
-the related patch (about system_percpu_wq): it is mostly about add a
-pr_warn_once() if the old wq is used, and redirect on the new one.
+All errors (new ones prefixed by >>):
 
-Btw: in this fs branch I only have the prerequisites and this series,
-and I can compile and boot.
-
-Thank you!
+   drivers/platform/x86/ayaneo-ec.c: In function 'ayaneo_ec_probe':
+>> drivers/platform/x86/ayaneo-ec.c:497:49: error: implicit declaration of function 'MKDEV' [-Werror=implicit-function-declaration]
+     497 |                                                 MKDEV(0, 0), NULL, "%s",
+         |                                                 ^~~~~
+   cc1: some warnings being treated as errors
 
 
-On Thu, Aug 21, 2025 at 1:23=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello,
->
-> On Tue, Aug 19, 2025 at 01:23:26PM +0200, Christian Brauner wrote:
-> > > If you agree with these changes, one option is pull the preparation c=
-hanges from
-> > > Tejun's wq branch [1].
-> >
-> > I'll take it through the vfs-6.18.workqueue branch.
-> > Can I just pull the series from the list so we have all the lore links
-> > and the cover letter?
->
-> I believe all the prerequisites were already in -rc1 and you should be ab=
-le
-> to apply the series without pulling anything else. Marco, please correct =
-me
-> if I'm mistaken.
->
-> Thanks.
->
-> --
-> tejun
+vim +/MKDEV +497 drivers/platform/x86/ayaneo-ec.c
 
+   459	
+   460	static int ayaneo_ec_probe(struct platform_device *pdev)
+   461	{
+   462		const struct dmi_system_id *dmi_entry;
+   463		struct ayaneo_ec_platform_data *data;
+   464		struct device *hwdev;
+   465		int ret;
+   466	
+   467		dmi_entry = dmi_first_match(dmi_table);
+   468		if (!dmi_entry)
+   469			return -ENODEV;
+   470	
+   471		data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+   472		if (!data)
+   473			return -ENOMEM;
+   474	
+   475		data->pdev = pdev;
+   476		data->quirks = dmi_entry->driver_data;
+   477		platform_set_drvdata(pdev, data);
+   478	
+   479		if (data->quirks->has_fan_control) {
+   480			hwdev = devm_hwmon_device_register_with_info(
+   481				&pdev->dev, "ayaneo_ec", NULL, &ayaneo_ec_chip_info, NULL);
+   482			if (IS_ERR(hwdev))
+   483				return PTR_ERR(hwdev);
+   484		}
+   485	
+   486		if (data->quirks->has_charge_control) {
+   487			data->battery_hook.add_battery = ayaneo_add_battery;
+   488			data->battery_hook.remove_battery = ayaneo_remove_battery;
+   489			data->battery_hook.name = "Ayaneo Battery";
+   490			ret = devm_battery_hook_register(&pdev->dev, &data->battery_hook);
+   491			if (ret)
+   492				return ret;
+   493		}
+   494	
+   495		if (data->quirks->has_magic_modules || data->quirks->has_controller_power) {
+   496			data->fw_attrs_dev = device_create(&firmware_attributes_class, NULL,
+ > 497							MKDEV(0, 0), NULL, "%s",
+   498							DRIVER_NAME);
+   499			if (IS_ERR(data->fw_attrs_dev))
+   500				return PTR_ERR(data->fw_attrs_dev);
+   501	
+   502			ret = devm_add_action_or_reset(&data->pdev->dev,
+   503						ayaneo_fw_attrs_dev_unregister,
+   504						data->fw_attrs_dev);
+   505			if (ret)
+   506				return ret;
+   507	
+   508			data->fw_attrs_kset = kset_create_and_add("attributes", NULL,
+   509								&data->fw_attrs_dev->kobj);
+   510			if (!data->fw_attrs_kset)
+   511				return -ENOMEM;
+   512	
+   513			ret = devm_add_action_or_reset(&data->pdev->dev, ayaneo_kset_unregister,
+   514						data->fw_attrs_kset);
+   515	
+   516			if (data->quirks->has_magic_modules) {
+   517				ret = ayaneo_fw_attr_init(
+   518					data, AYANEO_ATTR_CONTROLLER_MODULES, true);
+   519				if (ret)
+   520					return ret;
+   521			}
+   522	
+   523			if (data->quirks->has_controller_power) {
+   524				ret = ayaneo_fw_attr_init(
+   525					data, AYANEO_ATTR_CONTROLLER_POWER, false);
+   526				if (ret)
+   527					return ret;
+   528			}
+   529		}
+   530	
+   531		return 0;
+   532	}
+   533	
 
-
---=20
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
-
-
-
-
-marco.crivellari@suse.com
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
