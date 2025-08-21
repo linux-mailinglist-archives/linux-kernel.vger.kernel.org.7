@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-778735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B33CB2E984
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:43:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01868B2E98B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC0A1BA326B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:43:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AE5C686BA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D7D1F1505;
-	Thu, 21 Aug 2025 00:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872A31E260C;
+	Thu, 21 Aug 2025 00:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rQffoihc"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TBQX82mx"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016F91E9B19
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440A11F4C89
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755736976; cv=none; b=jAW9KPk3T7Krcl4tUGZStxLcMWBSZBZQA7SgNxdnW+HXqauUKgxAnO2S4dRUa6c5GooHsFgtEVt2tBnLOwSsp6NNXsAmDrOLT2Cwa8LWo1pkGfnEXXByaTAjznKxhnL2qfSKXyGiVQ+D9JjdLybOkyeXk6Tmmtsm1GGDghf7Rfk=
+	t=1755736980; cv=none; b=DMftfHJ3cLNBakizTCzPIVPh76c+Oh2RyaBFehfWA0/ZAlsWAJaLGr+k4G6pmMlVi6I5rgwmSvtFQs6tH5aX5Ulwrp8W1+C1LY9SI1wwtK8XKCPQ5h/WAJE/wxmhqAbM40+qPP29XO/nSDyeGnJnZNBaNCbv7xwvRulPDiiJ63Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755736976; c=relaxed/simple;
-	bh=2lP2MUQuOgx41bHQcQY3UUFM4RqOiMsYu1XcW3FaZ8I=;
+	s=arc-20240116; t=1755736980; c=relaxed/simple;
+	bh=sjhaA9PbdBoDlY1RpJKGBmhcFyttPUwGKRyPs1/dR4M=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=n9AiLGJo29olVzb2OoxBmeR0tLlOKtwAm9tgaeJU8zar/vzXd/fR5BIbVKS5g4T7q7mLvjEKDZZpiiUL1pQS2XtMQfli1NtWl/f9Sxt3rVfnsMg+BEBQlidYeuUxcB5xYsx49pyq37EqeZiGjMbW/XyMmrQGhTRyDcN0ZmMLqlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wusamuel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rQffoihc; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=GwyXzroFNwT1tSQg58T3/VlMJlHu3HUDbuB+VqriXr8Zl0mDd2f/ARKht0ri9GNfglpWuIWT0eVuzdZWkqeSPnRLQcDptsuXf/38TSYgwWWoXAQWyK8S/L/Y2sUa/dekA+BwfcqZLZDxV9YoskLZgkimoUw+nWYx95ypBr4q6QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wusamuel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TBQX82mx; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wusamuel.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e2eb6d2baso1201134b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:42:54 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b47253319b8so246747a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:42:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755736974; x=1756341774; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755736978; x=1756341778; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=whxbRvyrG2R6Ou7PNckHYEhGY8IAGr6EflBJLkvDYbA=;
-        b=rQffoihc5Zlo5diIPKBE3DkHdiAMxW2/QNuuch4dnRTJHb5ksS85d6Y5+tUjmMRVRE
-         D1MoKP4Wa14XoxkOyXZsUAQGHtaKV26OkhdS/8De4tFcAkvwNW/IkEhSRHHZrP7wfymN
-         vqY+rTWIWh+9wRYQmy5baqrCcBO89aGfFHICCDGB8cM0LWxSQ7RJKwt2UNcdC7qLosFH
-         zepM5H0p0+Ysl4omECTgjO2zJFMq9cUC1/cPgWZXHzI8g+1dsn4kvG17j74P+vwL1evs
-         pWFhTVmW21t1X1ZMt3rXbE64h5uz3mfqyJU0/t0rtuADcSpY7rf5uQz56ESw6sdywvgU
-         KLgA==
+        bh=QEEDFLzdkJxsA5MFxQRzqAGK72ATrZ5Rpvk68XckeHw=;
+        b=TBQX82mxYJap+ImMwrlzT4+VOE/XHCjF8KW0b0AOkpK2GRpwdQ9VhecoyGqSS0Pwv1
+         iBgih4e39sDs1BrFXIQOOQ8SUQPXsLKGmjvoytK6OugW1RnaD+D5tbg8anhlb7OYV/jl
+         wLv8ny8JG70FpW850lwnma+pL7O3gVPJACaBPAO10yvyA+DmbOB418LCAaNNDetEzOtT
+         hWIMfNww/Uu2S9xnkjYqkoUjEskEB6I2E+jaY18fsjfQf5exZzVVMU2T9a2zomQckDSQ
+         +Tx+G+xKdkLZjcHkL/o2bnXDKll8/psYHz0YA3gt1F1err44KRiR4Gx6fVLdEb3dS1+N
+         S+rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755736974; x=1756341774;
+        d=1e100.net; s=20230601; t=1755736978; x=1756341778;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=whxbRvyrG2R6Ou7PNckHYEhGY8IAGr6EflBJLkvDYbA=;
-        b=u++z6VEBjLDesy6WUetBVGlyCF3jYBHnV69S5KP9R4YXfrZyNeupQ/Gw6Q+WaZyEMv
-         blMjafmLiDHr4+EEzWt/oj3WsC0yh9bJQQjbU1596pmZD/xui5YRZD1fFmU216io+dH8
-         c4XoG/fLGUlcyB2DA/pv00X1PBXMyQogdz1n3N+OGFtOViy08JqThavCm/C6rk88x2m4
-         m3TDyHhSqmfttvBb+1XDrD2JUx4tfFjyEOFcjcw5Xe5RJLRjM2MWL51CyOWgFCxIy/ro
-         cGVCYC1fzAsMHOwjF1JPNEVaaLEngskyHE+PVqsIazDPkLf/sjQFZaTGXw5crGQH5t5T
-         HtMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtCDzTp0p30FRVdxA61458H26cODS+m+eauQS++UYBIzMQeOkysjAH+MoHvLXj3ehbG6ZE4OSQh277Oro=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv2qKImK6Z3CpF7wBX95CotSw8210f/0S5NYNuPX8psUSoIJp2
-	2dXa8f3t8PG8isblEEIFROo373rS0GBeEhsbH6THIZs357KYc4yeBygie2HWlzy2j8OFwG672+M
-	cbLgwfTdKH8kSlQ==
-X-Google-Smtp-Source: AGHT+IGiw2oiWfhdnXju/fyAVoDAT9Nlowj94H89J/6yKp/tBjPFanTJHaBE2jWVd3ljUK9vgOw61mk3YqX/Wg==
-X-Received: from pjbtd3.prod.google.com ([2002:a17:90b:5443:b0:31e:fac4:4723])
+        bh=QEEDFLzdkJxsA5MFxQRzqAGK72ATrZ5Rpvk68XckeHw=;
+        b=fYew5tfN+borKvPeluXNg5fJolk74NdOu1s1NtunIKzsN60cQkCRbM5AOvcRlph4mX
+         FWSuiYtuRN1QDYJNtHzxJBc4Ncj283LIwDqtBWccU56BXv4TDeM6smxGBzgyEUVUeIyn
+         Z/pCF2i0CwNIxpKjXwhCz4aajWrto2WXBWeN4yx1kY7Ekl8oJ8sUNlBEM6C/ge4kONf7
+         FLBWx6xsU64cJzYzfXLF5Cp50RgMlngw7+voJO8mnBFjFp/WtWMnNJw8sh5ZrV55R17S
+         n0tZ89aa3WNCkdnrvW3HoC1q+30QCYxtlFffA/f8ocvWW1cJkhqX9HVCFWJuawxFPI65
+         54bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMQA4aPo9cHyryHEr3/AIvgq0Uj+BIXYyFee7P90+OQaxmbbZAJs4NkeTEygC3+6kgGdweHLY1IYv8RdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3mMDX48ncmafcM/PWlqZ8JCvQiKM0NUZ0vYWQFT/jF2pcWmFq
+	ybCwY6f6dfDjXry/dYpRHMvGVzZ4UAL/orGH7jugWWy7vAzoD+XPMyZdCFptUQzh7Y4dsbBU8N4
+	md3gq+LBtBdD3lA==
+X-Google-Smtp-Source: AGHT+IFRX4CzFsLvpYCXo2bF56Mrj1NmbuOZ6oMEZbAVvMBhPKevVDn1/bBzt5cMhmFdXtqW2LvHc5LTpOh3YQ==
+X-Received: from pgou3.prod.google.com ([2002:a63:b543:0:b0:b46:d6fa:dd42])
  (user=wusamuel job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:9183:b0:243:15b9:7656 with SMTP id adf61e73a8af0-24330af16d3mr629567637.48.1755736974379;
- Wed, 20 Aug 2025 17:42:54 -0700 (PDT)
-Date: Wed, 20 Aug 2025 17:42:33 -0700
+ 2002:a05:6a20:7488:b0:231:acae:1977 with SMTP id adf61e73a8af0-243307c1a45mr607077637.15.1755736978591;
+ Wed, 20 Aug 2025 17:42:58 -0700 (PDT)
+Date: Wed, 20 Aug 2025 17:42:34 -0700
 In-Reply-To: <20250821004237.2712312-1-wusamuel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250821004237.2712312-1-wusamuel@google.com>
 X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
-Message-ID: <20250821004237.2712312-2-wusamuel@google.com>
-Subject: [PATCH v3 1/3] PM: Make pm_wakeup_clear() call more clear
+Message-ID: <20250821004237.2712312-3-wusamuel@google.com>
+Subject: [PATCH v3 2/3] PM: Support aborting suspend during filesystem sync
 From: Samuel Wu <wusamuel@google.com>
 To: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>
@@ -82,44 +82,157 @@ Cc: Samuel Wu <wusamuel@google.com>, kernel-team@android.com, linux-pm@vger.kern
 	linux-kernel@vger.kernel.org, Saravana Kannan <saravanak@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Move pm_wakeup_clear() to the same location as other functions that do
-bookkeeping prior to suspend_prepare(). Since calling pm_wakeup_clear()
-is a prerequisite to setting up for suspend and enabling functionalities
-of suspend (like aborting during suspend), moving pm_wakeup_clear()
-higher up the call stack makes its intent more clear and obvious that it
-is called prior to suspend_prepare().
+At the start of suspend, filesystems will sync to save the current state
+of the device. However, the long tail of the filesystem sync can take
+upwards of 25 seconds. If during this filesystem sync there is some
+wakeup or abort signal, it will not be processed until the sync is
+complete; from a user's perspective, this looks like the device is
+unresponsive to any form of input.
 
-With this patch, there is a slightly larger window when abort events
-can be registered, but otherwise suspend functionality is the same.
+This patch adds functionality to handle a suspend abort signal when in
+the filesystem sync phase of suspend. This topic was first discussed by
+Saravana Kannan at LPC 2024 [1], where the general consensus was to
+allow filesystem sync on a parallel thread.
+
+[1]: https://lpc.events/event/18/contributions/1845/
 
 Suggested-by: Saravana Kannan <saravanak@google.com>
 Signed-off-by: Samuel Wu <wusamuel@google.com>
 ---
- kernel/power/process.c | 1 -
- kernel/power/suspend.c | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ drivers/base/power/wakeup.c |  8 +++++++
+ include/linux/suspend.h     |  2 ++
+ kernel/power/suspend.c      | 48 +++++++++++++++++++++++++++++++++++--
+ 3 files changed, 56 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/power/process.c b/kernel/power/process.c
-index dc0dfc349f22..8ff68ebaa1e0 100644
---- a/kernel/power/process.c
-+++ b/kernel/power/process.c
-@@ -132,7 +132,6 @@ int freeze_processes(void)
- 	if (!pm_freezing)
- 		static_branch_inc(&freezer_active);
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index d1283ff1080b..af4cf3e6ba44 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -570,6 +570,13 @@ static void wakeup_source_activate(struct wakeup_source *ws)
  
--	pm_wakeup_clear(0);
- 	pm_freezing = true;
- 	error = try_to_freeze_tasks(true);
- 	if (!error)
+ 	/* Increment the counter of events in progress. */
+ 	cec = atomic_inc_return(&combined_event_count);
++	/*
++	 * wakeup_source_activate() aborts suspend only if events_check_enabled
++	 * is set (see pm_wakeup_pending()). Similarly, abort suspend during
++	 * fs_sync only if events_check_enabled is set.
++	 */
++	if (events_check_enabled)
++		suspend_abort_fs_sync();
+ 
+ 	trace_wakeup_source_activate(ws->name, cec);
+ }
+@@ -899,6 +906,7 @@ EXPORT_SYMBOL_GPL(pm_wakeup_pending);
+ void pm_system_wakeup(void)
+ {
+ 	atomic_inc(&pm_abort_suspend);
++	suspend_abort_fs_sync();
+ 	s2idle_wake();
+ }
+ EXPORT_SYMBOL_GPL(pm_system_wakeup);
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index 317ae31e89b3..68d2e8a7eeb1 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -276,6 +276,7 @@ extern void arch_suspend_enable_irqs(void);
+ 
+ extern int pm_suspend(suspend_state_t state);
+ extern bool sync_on_suspend_enabled;
++extern void suspend_abort_fs_sync(void);
+ #else /* !CONFIG_SUSPEND */
+ #define suspend_valid_only_mem	NULL
+ 
+@@ -296,6 +297,7 @@ static inline bool idle_should_enter_s2idle(void) { return false; }
+ static inline void __init pm_states_init(void) {}
+ static inline void s2idle_set_ops(const struct platform_s2idle_ops *ops) {}
+ static inline void s2idle_wake(void) {}
++static inline void suspend_abort_fs_sync(void) {}
+ #endif /* !CONFIG_SUSPEND */
+ 
+ static inline bool pm_suspend_in_progress(void)
 diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index b4ca17c2fecf..4bb4686c1c08 100644
+index 4bb4686c1c08..edacd2a4143b 100644
 --- a/kernel/power/suspend.c
 +++ b/kernel/power/suspend.c
-@@ -595,6 +595,7 @@ static int enter_state(suspend_state_t state)
+@@ -31,6 +31,7 @@
+ #include <linux/compiler.h>
+ #include <linux/moduleparam.h>
+ #include <linux/fs.h>
++#include <linux/workqueue.h>
+ 
+ #include "power.h"
+ 
+@@ -74,6 +75,19 @@ bool pm_suspend_default_s2idle(void)
+ }
+ EXPORT_SYMBOL_GPL(pm_suspend_default_s2idle);
+ 
++static DECLARE_COMPLETION(suspend_fs_sync_complete);
++
++/**
++ * suspend_abort_fs_sync - Abort fs_sync to abort suspend early
++ *
++ * This function aborts the fs_sync stage of suspend so that suspend itself can
++ * be aborted early.
++ */
++void suspend_abort_fs_sync(void)
++{
++	complete(&suspend_fs_sync_complete);
++}
++
+ void s2idle_set_ops(const struct platform_s2idle_ops *ops)
+ {
+ 	unsigned int sleep_flags;
+@@ -403,6 +417,34 @@ void __weak arch_suspend_enable_irqs(void)
+ 	local_irq_enable();
+ }
+ 
++static void sync_filesystems_fn(struct work_struct *work)
++{
++	ksys_sync_helper();
++	complete(&suspend_fs_sync_complete);
++}
++static DECLARE_WORK(sync_filesystems, sync_filesystems_fn);
++
++/**
++ * suspend_fs_sync_with_abort - Trigger fs_sync with ability to abort
++ *
++ * Return 0 on successful file system sync, otherwise returns -EBUSY if file
++ * system sync was aborted.
++ */
++static int suspend_fs_sync_with_abort(void)
++{
++	reinit_completion(&suspend_fs_sync_complete);
++	schedule_work(&sync_filesystems);
++	/*
++	 * Completion is triggered by fs_sync finishing or a suspend abort
++	 * signal, whichever comes first
++	 */
++	wait_for_completion(&suspend_fs_sync_complete);
++	if (pm_wakeup_pending())
++		return -EBUSY;
++
++	return 0;
++}
++
+ /**
+  * suspend_enter - Make the system enter the given sleep state.
+  * @state: System sleep state to enter.
+@@ -588,14 +630,16 @@ static int enter_state(suspend_state_t state)
+ 	if (state == PM_SUSPEND_TO_IDLE)
+ 		s2idle_begin();
+ 
++	pm_wakeup_clear(0);
+ 	if (sync_on_suspend_enabled) {
+ 		trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+-		ksys_sync_helper();
++		error = suspend_fs_sync_with_abort();
+ 		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
++		if (error)
++			goto Unlock;
  	}
  
  	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
-+	pm_wakeup_clear(0);
+-	pm_wakeup_clear(0);
  	pm_suspend_clear_flags();
  	error = suspend_prepare(state);
  	if (error)
