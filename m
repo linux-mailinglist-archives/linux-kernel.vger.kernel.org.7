@@ -1,121 +1,104 @@
-Return-Path: <linux-kernel+bounces-779641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0C9B2F697
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:29:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228F1B2F6C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D0241CE0504
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:27:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE661AC4FA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6F23054E0;
-	Thu, 21 Aug 2025 11:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD70311955;
+	Thu, 21 Aug 2025 11:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ACKT920q"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Z6w1GR4O"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1828A30DD36
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755775638; cv=none; b=Uwa0HngpYh87Tm+Orkh0Wo28F61uPFJcBDxcwByZixqRYNqFYhCB4SYlDcagJU461m3Y40E6wJSzh0q89HMcfFDkWfQOcSXMTzwIj8kbRnogEckuqts9a2Ghbymt9jNLqx+GCgKoOGZ0Szky+sYKfh+EV8kpYRghxb8wtRcaR8U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755775638; c=relaxed/simple;
-	bh=2iuhQehcGJ/STLL1wVwziWidGXccPhxvPLuOUY7+u3Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rBFq+GxtyaD5j3GPfqHxCzHtLTzqboDA17h9Pm0xvdp73lRiZgf/zB4KfJ9pxpHNMr/4+QTXOBmf1VKOZoJUqDrFvg1UQqsbYqSL1dVrL5NcoiORmKJQqh9pp94PBZdiRokfw2e+LkfFIRUarlqgpY85pn2FNOw7uLvrfgc25Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ACKT920q; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55ce5247da6so896945e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755775635; x=1756380435; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2iuhQehcGJ/STLL1wVwziWidGXccPhxvPLuOUY7+u3Q=;
-        b=ACKT920qQiAd6VgrDZoeSP9T5ju8bLYhTZQVbegXxugi68H7x9K3HNxnB5qfatoho4
-         9Uc9HqfLTeBngZRWRYZNufcm3st5bEqU/cHCxcCzzPq5L6DtN6mJQzFgIkZhwgWXso6/
-         Qfg1ovAePCbYdYQZaZF3P0qV/OJRad1WDvDvW3RyPRMn/hp2t99np+dyIuNTFvhqE5+v
-         yXijG82JAdK03KNicdw9RJ81ebZZISm9FJHBX/bwifACDlANFkqL14TDECxWHzClSek3
-         8Avha6w1N5awtfvIb/pU39z1/rxaqrC2ROkbTiv8rojq7XbM0u5lqxAGPEy1DU4B1CUZ
-         foxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755775635; x=1756380435;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2iuhQehcGJ/STLL1wVwziWidGXccPhxvPLuOUY7+u3Q=;
-        b=IGUV+9Kz8+PCJYKvwP0y02+kLIjdA7MUsCuWuVJLMAgBUfsjDFpkgCvNvP3+YiLiY9
-         VGzdqqNPnkAgfHZC5KcigX5zFgU/DVaFUzZxuVm24OXK9rFEj0cugWJaZ4daRILHCVl6
-         pwrNOqEK3EYz0LqMPkr//MXweOunRHfmiycNXedos41p7XJytnJJJPj8OBslwElg3ZB0
-         XdDPFlJ4MJdhuDoJs5Ml57ZLLD/xUNt9bSdsz+SfEMBBP7BfRJyAwZW0PrmpzTdVaycH
-         yYJ+ux6CCk9oD+N3URy7tMQ3Ei3hPdJJMIu+d3zIc2V5s3C1xODkuCEEKXgQXWcKR+Sm
-         EIoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOJ9QlCE8VCkL2hjJUrhOIt3qPR8wegxVbhjG1zOPaO4MVsKOxbk7pgTmauLfe/weVd/clUlmi62BYFnE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydkB6qQVAZvSg/pBbxbyDp/V66kKk/8G9nUy7C86YBDd1Vgsz0
-	Jn2vXNhHo0ilW/CP8XrPn1LAdw1YfJHz6grKkj0xExT2zzrDFJ8oUauOLnzRM/pJ4FWcXpVy5Ns
-	erwwEidJYLqNFxIwnRNNsDyN9Ae+Qhe1zq3gLkdO1Fg==
-X-Gm-Gg: ASbGncuzE/CxnLlt1RWpNkP0aq75Enbsuwfw8WsGcMNrV1cYJo075v/Pk29meDHKcns
-	RYECkTB4YxJBxw1nUrOe2wBW3Gc5T88sZNt2aEyRVmn/u8FrHNXaFHQVf3YmWs9MR3gP/JEIWvQ
-	AKAeoq5Q20/f5oWu2MnbRlJ551+d7be1NpFTLzF9DkfNGl/TOLT9zrbYlz0NjcJl8wsgD2CxwRq
-	W+WqDk=
-X-Google-Smtp-Source: AGHT+IHfxoqcChsLfygBUpUWn2PCNNKaUpVfkw0VSrAeJy75AQZfqbB6MGhf72lV5Y0Gxx16LXjumAnruYNQwdN8gFk=
-X-Received: by 2002:a05:6512:2284:b0:553:d702:960c with SMTP id
- 2adb3069b0e04-55e0d5c59f0mr805985e87.56.1755775635103; Thu, 21 Aug 2025
- 04:27:15 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8C230DD31;
+	Thu, 21 Aug 2025 11:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755775675; cv=pass; b=bL3NyX3E8V3P35oA3U9kQgTLZpqK0yIPw8M/AhN7oI+1sHV2uuplyepJhtBR78goluvHDoLzag10AwzWgN7JS1cq1smMgUZMsjYGwrP8WZ2p7XQfSLj8XH1p+h1TVBnIe+j69z4GO5Jqo2Qbi1RCOh2ntlK+Lwirs90ayPR84Kk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755775675; c=relaxed/simple;
+	bh=Ml6qAqGr9DYYMdLrrFQDTK7UsSw87+JjZwOQ3nNOSD4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=FowvV/bBYlkwff9C+fBgObbWYXh0ZwgnXuXuzSMeEhytmVYPp5SWZQW74z+4a4fqwI5VEpv4gyM1OViVJgap6eK5nRJ6eQsXMhgG5d86NIrmQXEgPUs7OfxshPXYdSPIIfWI/z+4M1Skx6yjMDkDrFcp52wSfgSx0Vwj+VHWPEQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Z6w1GR4O; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1755775647; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=A1HkbTK4TtvbxICeYyEQtnlcg3q57I7V/5FCFzHoFFnZ75IAFBqC06qZXgYKp3w75p5puMt/xety39tnEl+pSlFgZV2CGz0ehn6WGW+/xbJtfsdYdqeaz8Idmc4hbZNQrK4ArCGPqLQLKBuxWvf1yREjZoyY/mr6GUhO4jh7BVw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755775647; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Ml6qAqGr9DYYMdLrrFQDTK7UsSw87+JjZwOQ3nNOSD4=; 
+	b=lTgYc8cZ8xjami4XN54cXBa7/45QWWcmINNci9Awnzzk8J5uN/Z9SJYWwpKiPsCqH3Y9O/uisIJ+yeSpcfvinYox8WEYUlwyXntxq30IdKN7WZUnO0NHzccwwaEHoOwsZfQX6Mjz6JNcpGX/4KFHc5EmIZUsqj2j0zBQuTDP/RA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755775647;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=Ml6qAqGr9DYYMdLrrFQDTK7UsSw87+JjZwOQ3nNOSD4=;
+	b=Z6w1GR4OqdcZ7Me4vC2zea+3bDAYuTKz68c+hrfmzDUrD3L1+RJRyrIo07UE+cBJ
+	p1PhGQqsLZMHHM6KNFlP1Qz8lUXBYepsb9zMQBj0JtUWN+oJyw+sIzKvExHWDyhCZZD
+	rJ3lYj/e6Dj16tCbL2vB5kSEhvmXU1JIx97zgZCU=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1755775646035655.8159490659623; Thu, 21 Aug 2025 04:27:26 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Thu, 21 Aug 2025 04:27:26 -0700 (PDT)
+Date: Thu, 21 Aug 2025 15:27:26 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Alejandro Colomar" <alx@kernel.org>,
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
+	"Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Jan Kara" <jack@suse.cz>,
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
+	"linux-man" <linux-man@vger.kernel.org>,
+	"linux-api" <linux-api@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"David Howells" <dhowells@redhat.com>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <198cc623944.11ea2eb5d86377.2604785241030508275@zohomail.com>
+In-Reply-To: <20250809-new-mount-api-v3-9-f61405c80f34@cyphar.com>
+References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com> <20250809-new-mount-api-v3-9-f61405c80f34@cyphar.com>
+Subject: Re: [PATCH v3 09/12] man/man2/open_tree.2: document "new" mount API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811163749.47028-2-ziyao@disroot.org> <20250811163749.47028-4-ziyao@disroot.org>
- <CACRpkdZp8FLrxgkeZ=xzSPgny51iDZ3KRCrxpoSdgF8_=df=KQ@mail.gmail.com> <aKRw1pEUUwd4cQoW@pie>
-In-Reply-To: <aKRw1pEUUwd4cQoW@pie>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 21 Aug 2025 13:27:03 +0200
-X-Gm-Features: Ac12FXx9O5o9dI7NgdWBP_7YslWNrW827bj2s6nLtLSzojwBRCZi2QrMsWTrODw
-Message-ID: <CACRpkdZCs6u6Tyos_ufBoeZ9V+51btEQ2wbPv1GRp5RNGZcUyA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: ls2k0300: Support Loongson 2K0300 SoC
-To: Yao Zi <ziyao@disroot.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr0801122738b9ca616885b96e6a346c1b000029f7d176fcbc0ca6387c04737e069b0cfc026959ea99ad7bbb:zu0801122795be1e590bd6c0f3fda4f0830000be25aa7391ade2b7b4a40b275e24eefd5e10390916a417795f:rf0801122c49854dd2868c08e73faf045b0000366dfca0d6a36b3bb26432695356d1edaba2834ff4a4d30e1ed51fa16dab:ZohoMail
 
-On Tue, Aug 19, 2025 at 2:41=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
+man open_tree says:
+> mount propagation
+> (as described in
+> .BR mount_namespaces (7))
+> will not be applied to bind-mounts created by
+> .BR open_tree ()
+> until the bind-mount is attached with
+> .BR move_mount (2),
 
-> > Which is fine if the pins actually cannot be used for GPIO, but if they
-> > can, and this is just implicit for unconfigured pins ... then add
-> > functions and groups for GPIO.
->
-> For 2K0300, we want these pins to be able to multiplexed as GPIOs, but
-> since this pinctrl driver could configure nothing for GPIO mode pins, I
-> think it's enough to implement only the gpio_request_enable() callback
-> and do the multiplexing work here, is this correct?
+It seems this is wrong, because this commit exists: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=06b1ce966e3f8bfef261c111feb3d4b33ede0cd8 .
+I'm not sure about this. (I didn't test this.)
 
-Yes that is the quick and elegant solution.
 
-> I originally thought it's okay to multiplex pins as GPIO with an usual
-> pinctrl configuration, and didn't realize that it causes conflicts on
-> strict controllers since the pin will be claimed by both pincontroller
-> and GPIO controller. Thanks for the reminder.
 
-This is true as well, some drivers use an explicit "gpio" function
-and for these the the new .function_is_gpio() callback is especially
-helpful.
+--
+Askar Safin
+https://types.pl/@safinaskar
 
-I think it is helpful if you're using the callbacks too (we can
-determine if we're already in GPIO mode) but it's not necessary.
-
-Yours,
-Linus Walleij
 
