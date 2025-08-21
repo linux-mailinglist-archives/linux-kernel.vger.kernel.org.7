@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-778702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673BCB2E91D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:02:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFF4B2E918
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D499D1BC7C23
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:00:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53BA37BBE95
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Aug 2025 23:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871E41E5B73;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B7B1E47CC;
 	Thu, 21 Aug 2025 00:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LanWacx1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIz7akjk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2746DF76;
-	Thu, 21 Aug 2025 00:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26FF1D6AA
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755734411; cv=none; b=ZT9ZnGLCcsqUJZpohhEtW2I19Zi1fY1yDJ7A9ujrRjEMR9pbuE0q2S71HiEBOvGusZ/jks64OfvcCD565DICnNwRXG1c0n7ISNyDQ/L67ghnDBzX8GnMtjbQS2ToLnr8+eis8MpqGfuqmaJ0G71XQ6Huf6GYzemaA/0AJjIyTdo=
+	t=1755734411; cv=none; b=qui5rRfFNjPbltZSeqLPPyF+43P09cU8sy92+XCNGcHwaLHOiiMRMhXD7yfnA1BP2qIll5Ee8VrI32in7G/FZ9dQcHJXrusmcj8ezMOUw+tL/WtESanbuLU4Fb5D82PoLMi06Q/5NqUn8nt58vIuQE8kMbfExJxC9w4g7Dm1Vmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755734411; c=relaxed/simple;
-	bh=qM0M8s3MHhu7f4tMuCurJwd+EN9+GJIDPE7Cse4PGIs=;
+	bh=I+PodtOuCXjwGq7xmfuORZTJZ5SmG6Oq6SFUXChaQbY=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=lOoJ5qAS5c2JJChvZAs7sfp0nW8pNylBaQ0kApndqFFDmDJyjvlj4JfRsUKfVeuw+xMgGlD4XlO3bPjPe1QmXHPLzmbND4z/kXGrknighwe2P53qXi0Xfj3novacYx5Fa9eTPhf3M2E0tQ/8ooF5VQqOV2nO6OHUe8NaH/wzvpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LanWacx1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AD50C16AAE;
+	 Content-Type; b=rB94C8va4XBGdrx2iLjvP89MprnpSax5JmtPr+50DNOe2iuXxGuSMK+ssESJ8S+0wwxNrGyFgqbgX1EL/vU3Rnt9O767ZEsTCDEyNDE/mcYHu9AFW/IOR7WE+4WaE4OvrFfV4v2c5oLDf+lECv8yFeDtvhV38Umvx7CQlS+bZ7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIz7akjk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84A20C116D0;
 	Thu, 21 Aug 2025 00:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755734411;
-	bh=qM0M8s3MHhu7f4tMuCurJwd+EN9+GJIDPE7Cse4PGIs=;
+	bh=I+PodtOuCXjwGq7xmfuORZTJZ5SmG6Oq6SFUXChaQbY=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=LanWacx1J2ziGQIyrOfW5W60VavFaSVuuWs4YjTMStEFpI82FMeDx4pBhaNY2ugYO
-	 h/oZ7jWJfeL0fkKzTLN20X/AGXckiJMPrqrbxm7/xUTrmksJp6tx1PuhiAoeDXYMV4
-	 0N7fTqwN3HYdFwBHnjrIUtM7thQ8JGahiR9weBKhxpDU9z5vUMdiYYXu0Djvq6bEzX
-	 mJ/T2IQVUzL1VuP3tYCC2ZBbpwNUnTnzwfwia/NCe0etzdMU2THoXxTjazTWz9GURz
-	 ZLOP/zIN/4PnTUXj1eVVzbbEeacPsXfPdGwbQ1pQs36ykLCXOoFeVvrWNhU2ADjmdC
-	 IL0sBkAJtsBvQ==
+	b=LIz7akjkVhArnNtfy32J/Iaiw3jRsKFxfhuhBj93mw7QDH1ucM/LO/9E8zrrwWiG+
+	 ujXdYi+e67odtFCBRsHRARHcppskKicAUTbgDfNdkJD1qOTlqXaSrx1upE1oNX+8Xk
+	 f12jv5Q7AFQgz96l48acsfk8QyQcyvdDykonDAs5VcJlkuPCVe3IlzBUVbyrkgEaKk
+	 GmG7oaxhFKjX0B9uP4DHH44DyaZBfGupD+wbnVkivBXaYLhWyA8SYSXLyL5WTKoAql
+	 3BAlH0+pe/cPihlzKwgXVaMhwMPEmsw+9Q/2SbY0TGOrdXi53pgJ4PNCATzxx4NhZV
+	 /ln6YJKmK8tzA==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1uosj0-000000013dk-3Kq4;
+	id 1uosj0-000000013eE-42AN;
 	Wed, 20 Aug 2025 20:00:14 -0400
-Message-ID: <20250821000014.647378837@kernel.org>
+Message-ID: <20250821000014.815252249@kernel.org>
 User-Agent: quilt/0.68
-Date: Wed, 20 Aug 2025 20:00:03 -0400
+Date: Wed, 20 Aug 2025 20:00:04 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- stable@vger.kernel.org,
- Pu Lehui <pulehui@huawei.com>
-Subject: [for-linus][PATCH 3/6] tracing: Limit access to parser->buffer when trace_get_user failed
+ Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [for-linus][PATCH 4/6] ring-buffer: Remove redundant semicolons
 References: <20250821000000.210778097@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,140 +64,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Pu Lehui <pulehui@huawei.com>
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
 
-When the length of the string written to set_ftrace_filter exceeds
-FTRACE_BUFF_MAX, the following KASAN alarm will be triggered:
+Remove unnecessary semicolons.
 
-BUG: KASAN: slab-out-of-bounds in strsep+0x18c/0x1b0
-Read of size 1 at addr ffff0000d00bd5ba by task ash/165
-
-CPU: 1 UID: 0 PID: 165 Comm: ash Not tainted 6.16.0-g6bcdbd62bd56-dirty
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- show_stack+0x34/0x50 (C)
- dump_stack_lvl+0xa0/0x158
- print_address_description.constprop.0+0x88/0x398
- print_report+0xb0/0x280
- kasan_report+0xa4/0xf0
- __asan_report_load1_noabort+0x20/0x30
- strsep+0x18c/0x1b0
- ftrace_process_regex.isra.0+0x100/0x2d8
- ftrace_regex_release+0x484/0x618
- __fput+0x364/0xa58
- ____fput+0x28/0x40
- task_work_run+0x154/0x278
- do_notify_resume+0x1f0/0x220
- el0_svc+0xec/0xf0
- el0t_64_sync_handler+0xa0/0xe8
- el0t_64_sync+0x1ac/0x1b0
-
-The reason is that trace_get_user will fail when processing a string
-longer than FTRACE_BUFF_MAX, but not set the end of parser->buffer to 0.
-Then an OOB access will be triggered in ftrace_regex_release->
-ftrace_process_regex->strsep->strpbrk. We can solve this problem by
-limiting access to parser->buffer when trace_get_user failed.
-
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/20250813040232.1344527-1-pulehui@huaweicloud.com
-Fixes: 8c9af478c06b ("ftrace: Handle commands when closing set_ftrace_filter file")
-Signed-off-by: Pu Lehui <pulehui@huawei.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://lore.kernel.org/20250813095114.559530-1-liaoyuanhong@vivo.com
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 18 ++++++++++++------
- kernel/trace/trace.h |  8 +++++++-
- 2 files changed, 19 insertions(+), 7 deletions(-)
+ kernel/trace/ring_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 4283ed4e8f59..8d8935ed416d 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1816,7 +1816,7 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index bb71a0dc9d69..43460949ad3f 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -7666,7 +7666,7 @@ static __init int test_ringbuffer(void)
+ 	rb_test_started = true;
  
- 	ret = get_user(ch, ubuf++);
- 	if (ret)
--		return ret;
-+		goto fail;
+ 	set_current_state(TASK_INTERRUPTIBLE);
+-	/* Just run for 10 seconds */;
++	/* Just run for 10 seconds */
+ 	schedule_timeout(10 * HZ);
  
- 	read++;
- 	cnt--;
-@@ -1830,7 +1830,7 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		while (cnt && isspace(ch)) {
- 			ret = get_user(ch, ubuf++);
- 			if (ret)
--				return ret;
-+				goto fail;
- 			read++;
- 			cnt--;
- 		}
-@@ -1848,12 +1848,14 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 	while (cnt && !isspace(ch) && ch) {
- 		if (parser->idx < parser->size - 1)
- 			parser->buffer[parser->idx++] = ch;
--		else
--			return -EINVAL;
-+		else {
-+			ret = -EINVAL;
-+			goto fail;
-+		}
- 
- 		ret = get_user(ch, ubuf++);
- 		if (ret)
--			return ret;
-+			goto fail;
- 		read++;
- 		cnt--;
- 	}
-@@ -1868,11 +1870,15 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		/* Make sure the parsed string always terminates with '\0'. */
- 		parser->buffer[parser->idx] = 0;
- 	} else {
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto fail;
- 	}
- 
- 	*ppos += read;
- 	return read;
-+fail:
-+	trace_parser_fail(parser);
-+	return ret;
- }
- 
- /* TODO add a seq_buf_to_buffer() */
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 1dbf1d3cf2f1..be6654899cae 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1292,6 +1292,7 @@ bool ftrace_event_is_function(struct trace_event_call *call);
-  */
- struct trace_parser {
- 	bool		cont;
-+	bool		fail;
- 	char		*buffer;
- 	unsigned	idx;
- 	unsigned	size;
-@@ -1299,7 +1300,7 @@ struct trace_parser {
- 
- static inline bool trace_parser_loaded(struct trace_parser *parser)
- {
--	return (parser->idx != 0);
-+	return !parser->fail && parser->idx != 0;
- }
- 
- static inline bool trace_parser_cont(struct trace_parser *parser)
-@@ -1313,6 +1314,11 @@ static inline void trace_parser_clear(struct trace_parser *parser)
- 	parser->idx = 0;
- }
- 
-+static inline void trace_parser_fail(struct trace_parser *parser)
-+{
-+	parser->fail = true;
-+}
-+
- extern int trace_parser_get_init(struct trace_parser *parser, int size);
- extern void trace_parser_put(struct trace_parser *parser);
- extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 	kthread_stop(rb_hammer);
 -- 
 2.50.1
 
