@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-778905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 145AFB2EC90
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:04:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29783B2EC93
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1448A17DF3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:04:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B4317BFD4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427D1261B8A;
-	Thu, 21 Aug 2025 04:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA46283C87;
+	Thu, 21 Aug 2025 04:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QgL9uLpz"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4muNqPI"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B43D213E6D;
-	Thu, 21 Aug 2025 04:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ECD26E70D;
+	Thu, 21 Aug 2025 04:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755749053; cv=none; b=kIIFfEYcFQqccaYP2fyalVQ3FNrkAoiWv6RgAfsdDdKtrjFJaN8hvO2XFsZhD/L5HHO8/Lc3hY6gY+YYMvRWAAjZscutTvqgogWq8uED4Ms8sBcxfbEH1AM4QTf/Cmy27WOv8ESPSPvJEY3OmIQZPMd9hlmbQjSCzmHAucHz0To=
+	t=1755749058; cv=none; b=BmZVEXubY+S4mtoR416QOolKfCXaBJDgtY45StbSJ0yvuxi1JR01VO2wSL/hxM/E05c4nd/C9I+KrfdusaRiSjdlvSM8M+uhBZCQpP6T63qMyn4l1JOJwV0W4I2y2LmPxeTOC1glDz3Isxl5hoiIXIjcaj4ZHFoaH/8qTGJgUBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755749053; c=relaxed/simple;
-	bh=z5IPIVFJ5P4uauSXsspK8uJ9CpGbYRCkm1eFW6FH/Js=;
+	s=arc-20240116; t=1755749058; c=relaxed/simple;
+	bh=oZrbey5yx5uEbRq203YjlNLnmKksdSRfJ5gsdDLrF5E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eswX2LWU2YxHFizIRLgZmaXNr2RbHjYu0AHhU+Hu96S7k1adMPmbn+io2c15B0WGGbHZnthW+u9NA6DDIPJPxCN2siqa8ERZJ+y6Z3RhBbeycGW6MnVNPj7SDNb6uoNLoywESM4wR+Wlw0IHd657/bDgbYDvPUZN7gEcouLtjjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QgL9uLpz; arc=none smtp.client-ip=209.85.216.51
+	 MIME-Version; b=rDA40CNWJ5lxvhRnaWeMBDU7YqeguUVqJw8yPKYwc1o9/H6tZXenlIWOBzw4HR9qSTBHccIfjTQ43WiwEPKqFM+m1t8wWm4QKxWIl8UFxa3CbuuiP3j1P5edz5UEUpI0ypcmyAOHDVxYtADWJG7U9FzZSX2/BqbCWWD3KXG4y0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4muNqPI; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32326e71c31so473480a91.3;
-        Wed, 20 Aug 2025 21:04:11 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e93370ab8so626450b3a.1;
+        Wed, 20 Aug 2025 21:04:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755749051; x=1756353851; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755749056; x=1756353856; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aow/wVVK5zyGepx6G6zDTJH4x3+PA9yxQeTlb+kbXW8=;
-        b=QgL9uLpzKbk90ge1gCe0p/HW2BEQngSRI2j41PHmlcjR7544V5vL22PGuo4y4c7gPH
-         cTDl+ZUEFgmfaR0gJcjZmnjtlF/p8RgRAr7Slfwx7icBVJutGrZPFz2xduOuAsf7qLJH
-         l7H6A0pKsI/B6jSNV7/Hdx5jAmifJKXouUfVfQMeOPvjR3HAczxcdCH/DoTpBjpjVk0r
-         wepzt/erd3jl93f0t8b8VzDlOhlPFZM2aP4dGb7PvLjccSSapQmxasKKNzbKMVhUuX5f
-         sNCJmmGguXq1hv3tNsPVGX8/d0R6jUh082PYK0WDUyjh82MeXzryIvaFqMyfbJNU4atY
-         ri2Q==
+        bh=A2CqWIv3qh+ScjnQTvA5REeLwnT0B8P9nNd5NsH69v4=;
+        b=b4muNqPIOiBam3t7NzPnQmsOKm7WWFadI6Mo6FzNIKn0bRnW3BL2xr5wjMTLdTsiJg
+         dkGiJTmMi7m9orbL5k1GU+qktsaJY7ffKzE49EYhs0ql3K4APeJji5RRjJIxIAG244Pe
+         rM2Mqcg+8q6ifVa7u0qK3z9GBa+PRaC1HCmCRR6HYu4eQBv1KDJ+nTSxyCld7pGg05fm
+         kjOnZTu6dqMx9oleVzGRtYY/yh8zPPTytcUKG7UkHjlDHoNVYoJhhNNUPjv0Bp8eDKL4
+         x6EfmkNTymkO6e7nNY0gEu6HMKoiJQJJNGAACfGIfbHdMbAK1TvpjWNQ6Pi6Wga2EE4U
+         OU2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755749051; x=1756353851;
+        d=1e100.net; s=20230601; t=1755749056; x=1756353856;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aow/wVVK5zyGepx6G6zDTJH4x3+PA9yxQeTlb+kbXW8=;
-        b=YgDGWYFJCtJ9AfoeuTNqH4HOs1ZG+zt99apep/Ss3VytguwLT8uF73pKv/gj3y4w4N
-         azI4/KDsAaFLU1n3cQFr6slPIgwknZtUSemyBnMnkVASx/tWQ7dwOZ6w1bJIt0Sz/BUn
-         9y5EjJ6+Pp+vAGnD06ZWY/zDNLVjSTEueMB7NKxQSPr4e8U2ibPKC3w741GmqslaSCIk
-         gBcHHpQeekEleo653X/zMgYS58ZscI5hDtHsmm+98EvR4+rOSh9Jkek7njnOzZUgLC70
-         DzAc44VF1YyKNofpBN7zh7Zd5hYN9VZV/F0cZHan+vV/lfwnHSG2d86kRzZRa3eEaW5r
-         EgsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQhe6/wT+TQunP51zZc2zkJy33lfwK280FNqg61xSVtQPtDVrLfOAUodKYW2C8XJNdVWlhvTYHdchPHN+bF9o=@vger.kernel.org, AJvYcCVYjz4gDOQ3+gtLQ7eqgGRDtc/2VAhoVhAks6DFjv5wR3uHfLMBgzBUnMB346QmtGywZOsiUxDr1QRCMKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxDUw4D3USFnzuxGTyUehB3N9I5IjX4aEHzhvQZE9a+dYUr0yz
-	TRIGOTniIq7gpweFtb9L9lXbtpQP7i580eRERqNH5pHdV1Zhh7FLs2kS
-X-Gm-Gg: ASbGncubahJlUtc8YNAput3Vpb1p5vhQSkv/soN3huZ/8MTjciK8Txvkh4imVPdqvS4
-	td983vjAlkiVM5JyTRvhJWzXfkXcbdjBj7126Tw2s80JUg+5LfcjpjEgrxrQp9T7ddACnN93png
-	s3AGEoY6gEmY+y5sGtsqXecg73VVA22W34cGQ38F9UjG5e/UkpLwrf8/3XQfRG6hqcH8QX1ff9b
-	UKskijL5Trfq0+BWCJIQpApt3RN0k2J0L9nhaZQcCPDAy5e5R1axngO53OfLi7Im0LmqniUCoeY
-	SRxrid0Uh3tcOL2C1TTAwNWBWA+kkkFwj7nBHXEOZKsvZU3vNwGwjdLBtUZ5aMCgmIvN8oSsdBi
-	xUQDgtjZCs8aJJlZmh2r3pmjeOTQ6RJeP3TwnF30nf3ECEPn17btGg0x7XIolZKMFoziNHYM=
-X-Google-Smtp-Source: AGHT+IG17sK4ZqV0+USpIV/Pp4EDCs3ugaJowmwsoe/CxEoiT+0xsA2J9l75V34kShYyIYG1a2SOWQ==
-X-Received: by 2002:a17:90b:314a:b0:31e:ec02:2297 with SMTP id 98e67ed59e1d1-324ed10b558mr1582339a91.19.1755749051259;
-        Wed, 20 Aug 2025 21:04:11 -0700 (PDT)
+        bh=A2CqWIv3qh+ScjnQTvA5REeLwnT0B8P9nNd5NsH69v4=;
+        b=EccCnZbj0BVAo/ZTJR34EZ5eeFKlH2XtcHeWoIRCi/pOICb4vuUxweaFIgMjD8pnHu
+         4/c/f/UrfEwg32VvJ13f81JL4tyAClIc43rJoTz73bAgeD29VPzSI5E+8zobygqjNYdB
+         J6JiPpj+F88yusV+tihFlimRkveMiHp3ljkkp1c86MPZvvaicZlArhEaEQjnYx1tPa2s
+         eNCL58LyUssZ5Vb5o0ixOY/fjUYurvZ2dSuthcI4sSpcswDEi0/bGkOHbz1TPgb5WhOW
+         KpLiP4IXwDPnpumX+27acEaC7qBF+VsTVlrvTcxMzMXDovivhs09ZkPzRQxy2AkFfDN/
+         HUTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVybRVEp+AQQFCgKmS6Op+uPhmSl/w794XXF72EUxVVi8tFXftrVhQgxSpiULL+DYXCneMhJLtRV4d/HWQ=@vger.kernel.org, AJvYcCX3gsBnlXwb++FP1K9bPiWzRCMbIO9IsszAGmDJao3wJRtFV70Dog99bQNeCOW9ldvx+O+CIjCrpCNlisrnLjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzhAFMUEyr10v53IeOAdn4cP39Ineeuz/RSibYfcxTth7m07c6
+	593/7ftkhV3HENcoGTBGNgdllct2acZ7BeFyzD3E2+QB3JS51tIK5mU6
+X-Gm-Gg: ASbGncsPhld+QCTbqL2mgUii0be0GSCNi3ulEHyEyI2LY7mXjjcFurwsQcpetNcYLLj
+	Oe/cccS++PCTyejIVH1155T1BPE1tfhTTgg7pvrLJCM33w+osqEBRlVEHS6QnB1SGMwmKn3Lk2/
+	YUnPN5sS1zjusEbekba7qFHkWJxopFtkY9GJDkl0GGkrE0wIXmBUqamAxwCBrPW0pOE5qv2Gy9q
+	scGEikAIv+iy3rFxa5sP+pqSoeYJrDLvfMabJyDgHtf9OuLxnCBxR4P9VIZX652Mnfob42De5xg
+	mBbvooJ9OiirwqCRwSDEWEdFYdn+s+oqKhlw3oojpdGI4zWEhjCxwMBNBtPVX4584yGXWYkcwR8
+	XATW+J2cPEUTura19uSYpykUdJDlgF2CCwFuaFGh9csSaR7a1G1tLBSzatfl+Ha45EepV3WRrZ8
+	AqdL1I/g==
+X-Google-Smtp-Source: AGHT+IEBfOJPnqgYMjq415no3AtOarEE5p+Rcwd8wZf+szgzK1jEJbd2gn6h5ZkuPh7tbclLp/2K/w==
+X-Received: by 2002:a05:6a00:1302:b0:76b:d746:733a with SMTP id d2e1a72fcca58-76ea31e3adbmr1412349b3a.21.1755749055698;
+        Wed, 20 Aug 2025 21:04:15 -0700 (PDT)
 Received: from bee.. (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7f0b4f0esm6538714b3a.90.2025.08.20.21.04.07
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e7f0b4f0esm6538714b3a.90.2025.08.20.21.04.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 21:04:10 -0700 (PDT)
+        Wed, 20 Aug 2025 21:04:15 -0700 (PDT)
 From: FUJITA Tomonori <fujita.tomonori@gmail.com>
 To: a.hindborg@kernel.org,
 	alex.gaynor@gmail.com,
@@ -93,9 +94,9 @@ Cc: aliceryhl@google.com,
 	tmgross@umich.edu,
 	acourbot@nvidia.com,
 	daniel.almeida@collabora.com
-Subject: [PATCH v1 1/2] rust: add udelay() function
-Date: Thu, 21 Aug 2025 12:57:09 +0900
-Message-ID: <20250821035710.3692455-2-fujita.tomonori@gmail.com>
+Subject: [PATCH v1 2/2] rust: Add read_poll_timeout_atomic function
+Date: Thu, 21 Aug 2025 12:57:10 +0900
+Message-ID: <20250821035710.3692455-3-fujita.tomonori@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250821035710.3692455-1-fujita.tomonori@gmail.com>
 References: <20250821035710.3692455-1-fujita.tomonori@gmail.com>
@@ -107,68 +108,124 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add udelay() function, inserts a delay based on microseconds with busy
-waiting, in preparation for supporting read_poll_timeout_atomic().
+Add read_poll_timeout_atomic function which polls periodically until a
+condition is met, an error occurs, or the timeout is reached.
+
+The C's read_poll_timeout_atomic (include/linux/iopoll.h) is a
+complicated macro and a simple wrapper for Rust doesn't work. So this
+implements the same functionality in Rust.
+
+The delay_before_read argument isn't supported since there is no user
+for now. It's rarely used in the C version.
 
 Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 ---
- rust/helpers/time.c       |  5 +++++
- rust/kernel/time/delay.rs | 34 ++++++++++++++++++++++++++++++++++
- 2 files changed, 39 insertions(+)
+ rust/kernel/io/poll.rs | 90 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 89 insertions(+), 1 deletion(-)
 
-diff --git a/rust/helpers/time.c b/rust/helpers/time.c
-index a318e9fa4408..67a36ccc3ec4 100644
---- a/rust/helpers/time.c
-+++ b/rust/helpers/time.c
-@@ -33,3 +33,8 @@ s64 rust_helper_ktime_to_ms(const ktime_t kt)
- {
- 	return ktime_to_ms(kt);
- }
-+
-+void rust_helper_udelay(unsigned long usec)
-+{
-+	udelay(usec);
-+}
-diff --git a/rust/kernel/time/delay.rs b/rust/kernel/time/delay.rs
-index eb8838da62bc..baae3238d419 100644
---- a/rust/kernel/time/delay.rs
-+++ b/rust/kernel/time/delay.rs
-@@ -47,3 +47,37 @@ pub fn fsleep(delta: Delta) {
-         bindings::fsleep(delta.as_micros_ceil() as c_ulong)
+diff --git a/rust/kernel/io/poll.rs b/rust/kernel/io/poll.rs
+index 7af1934e397a..71c2c0e0d8b4 100644
+--- a/rust/kernel/io/poll.rs
++++ b/rust/kernel/io/poll.rs
+@@ -8,7 +8,10 @@
+     error::{code::*, Result},
+     processor::cpu_relax,
+     task::might_sleep,
+-    time::{delay::fsleep, Delta, Instant, Monotonic},
++    time::{
++        delay::{fsleep, udelay},
++        Delta, Instant, Monotonic,
++    },
+ };
+ 
+ /// Polls periodically until a condition is met, an error occurs,
+@@ -102,3 +105,88 @@ pub fn read_poll_timeout<Op, Cond, T>(
+         cpu_relax();
      }
  }
 +
-+/// Inserts a delay based on microseconds with busy waiting.
++/// Polls periodically until a condition is met, an error occurs,
++/// or the timeout is reached.
 +///
-+/// Equivalent to the C side [`udelay()`], which delays in microseconds.
++/// The function repeatedly executes the given operation `op` closure and
++/// checks its result using the condition closure `cond`.
 +///
-+/// `delta` must be within `[0, `MAX_UDELAY_MS`]` in milliseconds;
-+/// otherwise, it is erroneous behavior. That is, it is considered a bug to
-+/// call this function with an out-of-range value, in which case the function
-+/// will insert a delay for at least the maximum value in the range and
-+/// may warn in the future.
++/// If `cond` returns `true`, the function returns successfully with the result of `op`.
++/// Otherwise, it performs a busy wait for a duration specified by `delay_delta`
++/// before executing `op` again.
 +///
-+/// The behavior above differs from the C side [`udelay()`] for which out-of-range
-+/// values could lead to an overflow and unexpected behavior.
++/// This process continues until either `op` returns an error, `cond`
++/// returns `true`, or the timeout specified by `timeout_delta` is
++/// reached.
 +///
-+/// [`udelay()`]: https://docs.kernel.org/timers/delay_sleep_functions.html#c.udelay
-+pub fn udelay(delta: Delta) {
-+    const MAX_UDELAY_DELTA: Delta = Delta::from_millis(bindings::MAX_UDELAY_MS as i64);
++/// # Errors
++///
++/// If `op` returns an error, then that error is returned directly.
++///
++/// If the timeout specified by `timeout_delta` is reached, then
++/// `Err(ETIMEDOUT)` is returned.
++///
++/// # Examples
++///
++/// ```no_run
++/// use kernel::io::{Io, poll::read_poll_timeout_atomic};
++/// use kernel::time::Delta;
++///
++/// const HW_READY: u16 = 0x01;
++///
++/// fn wait_for_hardware<const SIZE: usize>(io: &Io<SIZE>) -> Result<()> {
++///     match read_poll_timeout_atomic(
++///         // The `op` closure reads the value of a specific status register.
++///         || io.try_read16(0x1000),
++///         // The `cond` closure takes a reference to the value returned by `op`
++///         // and checks whether the hardware is ready.
++///         |val: &u16| *val == HW_READY,
++///         Delta::from_micros(50),
++///         Delta::from_micros(300),
++///     ) {
++///         Ok(_) => {
++///             // The hardware is ready. The returned value of the `op` closure
++///             // isn't used.
++///             Ok(())
++///         }
++///         Err(e) => Err(e),
++///     }
++/// }
++/// ```
++pub fn read_poll_timeout_atomic<Op, Cond, T>(
++    mut op: Op,
++    mut cond: Cond,
++    delay_delta: Delta,
++    timeout_delta: Delta,
++) -> Result<T>
++where
++    Op: FnMut() -> Result<T>,
++    Cond: FnMut(&T) -> bool,
++{
++    let mut left_ns = timeout_delta.as_nanos();
++    let delay_ns = delay_delta.as_nanos();
 +
-+    let delta = if (Delta::ZERO..=MAX_UDELAY_DELTA).contains(&delta) {
-+        delta
-+    } else {
-+        // TODO: Add WARN_ONCE() when it's supported.
-+        MAX_UDELAY_DELTA
-+    };
++    loop {
++        let val = op()?;
++        if cond(&val) {
++            // Unlike the C version, we immediately return.
++            // We know the condition is met so we don't need to check again.
++            return Ok(val);
++        }
 +
-+    // SAFETY: It is always safe to call `udelay()` with any duration.
-+    unsafe {
-+        // Convert the duration to microseconds and round up to preserve
-+        // the guarantee; `udelay()` inserts a delay for at least
-+        // the provided duration, but that it may delay for longer
-+        // under some circumstances.
-+        bindings::udelay(delta.as_micros_ceil() as c_ulong)
++        if left_ns < 0 {
++            // Unlike the C version, we immediately return.
++            // We have just called `op()` so we don't need to call it again.
++            return Err(ETIMEDOUT);
++        }
++
++        if !delay_delta.is_zero() {
++            udelay(delay_delta);
++            left_ns -= delay_ns;
++        }
++
++        cpu_relax();
++        left_ns -= 1;
 +    }
 +}
 -- 
