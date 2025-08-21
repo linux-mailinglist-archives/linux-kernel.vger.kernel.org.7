@@ -1,108 +1,137 @@
-Return-Path: <linux-kernel+bounces-779472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8233B2F48A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:49:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59FAB2F49A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388261CE13BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D59281CE16BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B851128B7EA;
-	Thu, 21 Aug 2025 09:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1D62D9788;
+	Thu, 21 Aug 2025 09:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="J2bWGm7x"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RsechFQF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2129A1F3BAE
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4766B224B1B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769784; cv=none; b=TN407tRWFBuLAGXIFcpzTjB9+/TcuZJ0t+L027RIw6xh6FmNXlm1epxBCmgxaxtjwh/VNqm0/frGhewx4ntGQ7xPcba/4Ue9MnslMR0aj52OeWNPz6x/xtOOkeqRrXPrFDPdyPmWMJFC1Oz38zuq1jvF3yZz7toL+ek4Q+5PzOQ=
+	t=1755769924; cv=none; b=prP8VCLyLFgtgBoX7rMVIfA6FkmjtlrGWFwNodbVg7z8vp6buyvmc1Hw/x/QCdHXEmBdUxMvdEL7pEEO13dLg1dppHCoUT7BZnTpBOaTe3Q0bYX91YwImPxZY7NDiZv3ET/EO+fz+fRea+f6gDb/yPAdxXy+CXoBoRktrPs8oVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769784; c=relaxed/simple;
-	bh=KGnr7mlsNJ9SOoLjBMKZob7b5N+Dnsa+6ff9WZFvsvw=;
+	s=arc-20240116; t=1755769924; c=relaxed/simple;
+	bh=hyl906W6gTJkr/mdeLDIIKMynuKNYSjbTvvir+DVDog=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISl+0VyDLPQc7LE5OVQoNbdYYs0h3j2G/skhM+S3J6oWBVRKH1W8WGfkchndjlOZmknJn2++SZHZhiuqX0UHtanWAaMBpzx5jJXx15dgmrNDOORmKZK4NfXMeppKclcdYbRf+AmvPYvcCaG/kn9VpG7hHc1elVYTrZAGGzosHx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=J2bWGm7x; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=KGnr
-	7mlsNJ9SOoLjBMKZob7b5N+Dnsa+6ff9WZFvsvw=; b=J2bWGm7xe/lVqqk2bJKM
-	aZQikBKT7zuo+QvCFnXTTSzE5Kl5pfFiv0e5KMDm38B/TGWW19vpBGUcgTkjd48K
-	LuVQm6XrxNLNKKbyffFnEEaw87qlVIpwbvaQtObZrfkClPFlb5DBJujxMqKmbkcS
-	aEjZN0Uej4KiAig7HTG8adMGqjrl5lMpSwpi2mSlXkbX3QZuB5hi+zV8pe69UPkT
-	Vtcdx45HX7pUUqUmQCeQXpZGaRLZRB3WzKAyg7dXuHKq5N+aSEMB6cJWak7cESMl
-	HVJgKb3cZNDWL5BYLst5nI2XAYEGbJ8Wcg6Uoqu0yNSpIwIlSTVzVrHXLkdYM+mn
-	wg==
-Received: (qmail 3463395 invoked from network); 21 Aug 2025 11:49:38 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Aug 2025 11:49:38 +0200
-X-UD-Smtp-Session: l3s3148p1@aojxAd080rbUtcd1
-Date: Thu, 21 Aug 2025 11:49:35 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Biju <biju.das.au@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] mmc: host: renesas_sdhi: Replace magic number '0xff' in
- renesas_sdhi_set_clock()
-Message-ID: <aKbrr0I7KuTeYdNY@shikoro>
-References: <20250820104808.94562-1-biju.das.jz@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGXA8e/DIISuQIuHql4itNt693DPHeZfpwDFDajWQRGCIgPEtN08ibWiRm99RRAHIuKZlX1RqoFbSvn3kJ4uOPudh4Zm3qM9LjFkia0GT7VQSjY5WOyH8K7yrQ9ZHaCbKrXfkf30mqDKBPWnRcsfh2QL3KqxjNkssq2851Lk7FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RsechFQF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755769922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lBPu2qZvmk+4D7+wKx7fg2twokVDOknDGsSEmODUJvI=;
+	b=RsechFQFuUduKrRcZZnRdzL/QWitx7NP2GOTPXcVu3vJdWfV/uJu1xFsOMsfIGoiPk/7TI
+	o7uN4FF+9oi4K7y+AI4grhcLaHPIW4iUqWwCZ26DrMMccJ6aODVFuO30vTyAuEyQY+6Spl
+	NjPokYQhJyTGb32XElV1/zvlxWOYPso=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-27-f3bKeXooNSqgkNedtNeEIg-1; Thu,
+ 21 Aug 2025 05:51:58 -0400
+X-MC-Unique: f3bKeXooNSqgkNedtNeEIg-1
+X-Mimecast-MFC-AGG-ID: f3bKeXooNSqgkNedtNeEIg_1755769916
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E4A8119541A0;
+	Thu, 21 Aug 2025 09:51:55 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.227])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 965AE180028F;
+	Thu, 21 Aug 2025 09:51:51 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 21 Aug 2025 11:50:36 +0200 (CEST)
+Date: Thu, 21 Aug 2025 11:50:30 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Mark Brown <broonie@kernel.org>, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/process: fix the misleading comment about
+ PF_USER_WORKERs in copy_thread()
+Message-ID: <20250821095030.GA1923@redhat.com>
+References: <20250820164651.GA18799@redhat.com>
+ <7996ef64-59af-4146-be76-95a8aeccfc7a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Okd/WNIiif9UVfeC"
-Content-Disposition: inline
-In-Reply-To: <20250820104808.94562-1-biju.das.jz@bp.renesas.com>
-
-
---Okd/WNIiif9UVfeC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7996ef64-59af-4146-be76-95a8aeccfc7a@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, Aug 20, 2025 at 11:48:01AM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> Replace the magic number '0xff' with CLK_CTL_DIV_MASK macro for finding
-> actual clock in renesas_sdhi_set_clock().
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+On 08/20, Dave Hansen wrote:
+>
+> On 8/20/25 09:46, Oleg Nesterov wrote:
+> >  	if (unlikely(args->fn)) {
+> >  		/*
+> > -		 * A user space thread, but it doesn't return to
+> > -		 * ret_after_fork().
+> > +		 * A non-PF_KTHREAD thread, but it doesn't return from
+> > +		 * ret_from_fork().
+> > +		 *
+> > +		 * Either a PF_USER_WORKER kernel thread, in this case
+> > +		 * arg->fn() must not return.
+> > +		 * Or a user space task created by user_mode_thread(), in
+> > +		 * this case arg->fn() can only return after a successful
+> > +		 * kernel_execve().
+> >  		 *
+> >  		 * In order to indicate that to tools like gdb,
+> >  		 * we reset the stack and instruction pointers.
+> >  		 *
+> >  		 * It does the same kernel frame setup to return to a kernel
+> > -		 * function that a kernel thread does.
+> > +		 * function that a PF_KTHREAD thread does.
+> >  		 */
+>
+> I'm not sure that comment clarifies things,
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+OK, lets forger this patch then. But note that the 1st paragraph is
+obviously wrong.
 
+> especially the new
+> paragraph.
 
---Okd/WNIiif9UVfeC
-Content-Type: application/pgp-signature; name="signature.asc"
+I was going to fix the typos in the 1st paragraph, then decided to add more
+details to clarify "doesn't return" and to "sync" this comment with the
+related comment in ret_from_fork().
 
------BEGIN PGP SIGNATURE-----
+And to make it clear that PF_USER_WORKER can never return to usermode, this
+connects to the recent discussion about PF_USER_WORKER && shstk.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmim668ACgkQFA3kzBSg
-Kbbu6A/9HUajXMEY4wIt4hhluNYp7gc887lMKQ4NzKrOqXU+X9xgPsXvOzEPZdmy
-3Hwdi+Kkae35ycVwRTL/pR5AAE9oTRmBw8TMgM4Ogyg5uNZjRhmEUPkzgF8Av7MZ
-hvtHTz49//7CHQ6UB+hnNpKHOJsqQ3m5oiWwkkSkl3cv774HzItfldwf88hjW6Fi
-4m/YQ7QjuRJ+n3wBuGWZ1ZhV2RihHGeHPtYQwC/T22GsqUiq9GcAKd2wFCfnuA6N
-kr+suzGtbKPymRfYm4+O6lmCSDH6Vdxip7JSB4+NFjAkIvAcGt8e4rMjs43ri/d0
-93I8chudB6hVD9rV3TPfGvbrYhcS/JQFQNTuwWrSrFs3jt3SyLeENSe1VyQwH0Dp
-YLVKTcOVXx6fpIMB2O/eml4+egDKge8OirOnDdVXehsi1WfkXDF1CETFrG2TybYv
-XHvxHGy4SpOScOe4Msmg/KsY1T+7mx7DdgqTi3BltjDxa6hd+0AcxDqsnJIeDtPB
-i96xsnm9Y76I1F6WgnKKkVCQB211xtYT5AtL0mxFqGMYoA1+SnQmdmHdQ7Yy5XUA
-iUKShltmESTVEIum622avla6OnfN6ZW6IcNjZ8X4nOKON1M6hLpz0zeKbvrlbqDf
-N9Wu+9uqIRW3vtRRICRrw1Sq6e7lSMDueM0dbNkJ+xVYTHTMc9k=
-=llvT
------END PGP SIGNATURE-----
+> This does _not_ seem like the place to me to be explaining
+> what the conventions are around arg->fn(). It would be better to put it
+> near the definition or 'kernel_clone_args' or the place the function
+> gets called, but not here.
 
---Okd/WNIiif9UVfeC--
+Not sure. To me this comment is more about kthread_frame_init() and
+ret_from_fork(). But I won't argue.
+
+Oleg.
+
 
