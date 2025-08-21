@@ -1,91 +1,95 @@
-Return-Path: <linux-kernel+bounces-779329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2271B2F2A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:46:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8EFB2F2B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BA00189BB1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:42:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1112D16ECFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873482EAD01;
-	Thu, 21 Aug 2025 08:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876C12EACF9;
+	Thu, 21 Aug 2025 08:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Qg9/7gZg"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KhnOeq+4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCE62EB5A6;
-	Thu, 21 Aug 2025 08:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228732AE72
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755765744; cv=none; b=sfPidjCxmgfBxxQJc//RVdJcKYIVK1bNb1UQpWWuSqOEin6yPHzrirdkTxxXO0yWHx66W3+PwwqcBc9yG8vXyuQ3ndyMTjlaxPnKrB9NV21UoDLgKdESkJ/aL8GJjDMAM6E4qKBDTjhFNAvGaBMZL9EclkfFliSDed7pmBblHO8=
+	t=1755765779; cv=none; b=WI4T/ag7CkQgZJgtR3tR9551wgJyNZZjCy9u2DkirfnNyisWXBEoPoKDgzy15za10VJf95DAgiFQcsEP860tZs2LyXoKtvMQGZkt6p6I9lO9R75YSK+QMH14keUwG62/jCzpz+1vcZQiWqB6TXDtctnl2tfI4JGbQNI2ri6QoQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755765744; c=relaxed/simple;
-	bh=U7o8rwfHF81UoPKsuLzzM0LgeQ+gMhkKcYm92kLcf6U=;
+	s=arc-20240116; t=1755765779; c=relaxed/simple;
+	bh=I5NofY1I/J3cD2I9Jah37QRoad7PVZJEMc37nY7nYhA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WD+mQMJkTfACDSPp8gLky5bTR6WvnZaotoELelbF8BjuGC8oEQRDHuLFjtl98ba9rxm1g7UGsmrQm6gq2p+OkN9WkTY9vF42PV4C1Wwowgo2whUviPIlouh+uNSXkPcdiKd8Sr6NFNIGDf+nBmr7/MekVra7D2nCh+AOLeek1vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Qg9/7gZg; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KLgXw1008282;
-	Thu, 21 Aug 2025 08:42:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=DoH6jjMOVVQqjC8hJd1SZQxhWKPQqR
-	XJy/DUtMTNNHU=; b=Qg9/7gZgKbPmpjC4j1OrNKrqkx33/7qNMIYhUYSH0m7dpZ
-	FsNH20JtK5fvFk+C/kFL6gnNtxULaF5dKLhgdzXQaeochKGrqR+91i6zErpG7PMi
-	Q5enUUE7qSlCEI+9hzAKf+Y3BU7Q/N7RVbWQozQ5rkAFxLvZ0zUPffEYByDgEdzD
-	2G3VZrdgFHHB90un+UgEi3vtbsaA9TTJA5KyO5Mc878htdEhY0KoUibo5GGcqhWl
-	rGA0PtBgX2akBLvsjMnT6XbTtQ3W6vcl9B2GS/8Q/7C877GqXBC47Odi23lYMyBq
-	YIzUoekq4nXTm/v1KkC/9lz20enuOVz/6M/o/ILg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vygsd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 08:42:09 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57L8bfRq026627;
-	Thu, 21 Aug 2025 08:42:08 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vygs8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 08:42:08 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57L6lutU008742;
-	Thu, 21 Aug 2025 08:42:08 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48my427f11-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 08:42:08 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57L8g5QD54985010
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 08:42:06 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E1B8120040;
-	Thu, 21 Aug 2025 08:42:05 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C97522004B;
-	Thu, 21 Aug 2025 08:42:03 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 21 Aug 2025 08:42:03 +0000 (GMT)
-Date: Thu, 21 Aug 2025 14:12:01 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 04/11] generic: Add atomic write test using fio crc
- check verifier
-Message-ID: <aKbb2XhcsMMhBlgb@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1754833177.git.ojaswin@linux.ibm.com>
- <783e950d8b5ad80672a359a19ede4faeb64e3dd7.1754833177.git.ojaswin@linux.ibm.com>
- <f9ae3870-f6c5-4ab0-924e-261f4ec3b5cc@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjUcNfIMQCIEb3eVhCEwG+OjsM3tUmpnzmWSpyl9TUpTZjfx3FC2y4lecx19S4R3FQRAP6mQ2cdH0mYiaYLezQry8pXq2ZyEVyyU7/IVwk2fdR1KuZSf6iomRCDXcrrSbuilGCodWQD+pJT+nu5INaZeuZ5uO6nwBScK+3oYJZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KhnOeq+4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755765776;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BGmAixpDDtSx5//pjZh8mD9uLe+6T7TvnJDxd1HMKKM=;
+	b=KhnOeq+439Je504Nn0UfA31a0+Miac3447z32OzbH6XVVlx8c/kitq8oAkwvGsqRrSW5BQ
+	iXojWqlZpmTgw/Mv0GWojBiyWfQFBgR3QDsO7Owec1valaS3Ta0pq2kinm5Ro5Vc8pwQto
+	DI3V0AO2Jd+8tCvHBxjJxTW8/HWsau0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-278-J_fkF5NUPDaMrZIvIbTjRw-1; Thu, 21 Aug 2025 04:42:54 -0400
+X-MC-Unique: J_fkF5NUPDaMrZIvIbTjRw-1
+X-Mimecast-MFC-AGG-ID: J_fkF5NUPDaMrZIvIbTjRw_1755765773
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45a15f10f31so10374865e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:42:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755765773; x=1756370573;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BGmAixpDDtSx5//pjZh8mD9uLe+6T7TvnJDxd1HMKKM=;
+        b=kf5kUHEsuYYeeFjXIlmNi4rzyfUjv/yUzeg31OElMPgUq1oGqlZrPBFtbP3yqIiK6T
+         ptLvjhtTXNBMd0JJlsRnuW6pu0pm0EA22FIPr4kZwA9emvlM8Yez05NSjlxZCbCVNLJT
+         oVLFJNkgv5/DWjV+s+mIJMFA9j/iZOm+/+V2+utzTlNWOi21JoCHdILzvsYlajSpBI83
+         y44kAouzbjSwLomvhdRkVAJyEbwGSMwN5C6rmicbQ79qyHXBE5Q8EWImrzGThxBm7OWN
+         e6EVqX+l7aKG1vcZSewLRnRytig6f3zy0M+0O83VFNN+kUDzQUex9bkRdT9/kLVY1JN0
+         SqmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUB6WBxVFkpkTq8stx4qYL+nYqtLhbZU98oR/jOOnLpW/JNirLlabKgL+2NwuHk0Da7T4kK3kmFeHufm6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuFGSEyOBz0O3G4X+/3dGvOs1luds//qSyA0RkXEr5B5WK1jai
+	MHP7VjDSYpUMzpm9wgHTWZgxgasMSufCNRY5aRId+hrf73D7BSKhDswKRRpr5O8WyVTPdgqnY1Z
+	csZt6EKZ0Qd+hzysJX3ZD+aFyRMLqRRwD6AchWGHG3I6xXQWbzkuXtNgaQVE+yN8bIQ==
+X-Gm-Gg: ASbGncuV/4z51KSVVb6MGXcsv6oTms/Fm3BCMjiBZ0ZM5z5o/eqB5el8obT1oiQw+jJ
+	3ykUn2t8QXaogq7KAWjDt74+DlTFhTF9L7h6zON7gF7aLuKhU2+Z11ScFQAzSk8rVfDLiTdadQR
+	qBStjDineiDynknAnDmUpbov2f3ovi5TAVMN6unVGEnC0olQyOc6sZ7WJVqO3eTGj/5DsOWcLAW
+	GDGbcIbMnLjv3d0IJZ6RHm8IDTwUvlsM/FGmPapnKIf9Omxo20iUcaSTKj73sOeuZHQAC9+qo02
+	EouiY4hf7vtB0hj+U1ES1vmdAgLAAwRS
+X-Received: by 2002:a05:600c:a07:b0:459:443e:b18a with SMTP id 5b1f17b1804b1-45b4d9f41f4mr14568645e9.14.1755765773201;
+        Thu, 21 Aug 2025 01:42:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFwZkrl5fXD20Znm+tAZTWUxfgrHTe58SkGcqEtQUMP3n+ZiDjZ6JOOe6sj+jRr77tMsBIMLg==
+X-Received: by 2002:a05:600c:a07:b0:459:443e:b18a with SMTP id 5b1f17b1804b1-45b4d9f41f4mr14568225e9.14.1755765772624;
+        Thu, 21 Aug 2025 01:42:52 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1515:7300:62e6:253a:2a96:5e3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4db2ab4asm18352405e9.8.2025.08.21.01.42.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 01:42:52 -0700 (PDT)
+Date: Thu, 21 Aug 2025 04:42:49 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Haixu Cui <quic_haixcui@quicinc.com>
+Cc: andriy.shevchenko@intel.com, harald.mommer@oss.qualcomm.com,
+	quic_msavaliy@quicinc.com, broonie@kernel.org,
+	virtio-dev@lists.linux.dev, viresh.kumar@linaro.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	hdanton@sina.com, qiang4.zhang@linux.intel.com,
+	alex.bennee@linaro.org, quic_ztu@quicinc.com
+Subject: Re: [PATCH v4 2/3] virtio-spi: Add virtio-spi.h
+Message-ID: <20250821044231-mutt-send-email-mst@kernel.org>
+References: <20250820084944.84505-1-quic_haixcui@quicinc.com>
+ <20250820084944.84505-3-quic_haixcui@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,197 +98,233 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f9ae3870-f6c5-4ab0-924e-261f4ec3b5cc@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qImmq9QxMRzvUnKkpVYxbq5R5CaNQg06
-X-Proofpoint-GUID: w-yAqVCg8Bi8Rjz58-GbpZglv8YwQ9lm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfXzVCsz1aGOlsv
- w/J+WZ+gsoHrq4L/5muSp48Mb3RZ8CtnLXsTLACZ0wtYCbCgMQZOr3EYFH5ttyBaApuD9Aff0ZA
- BsTSCg3J1paDseayzyWABldGxPSneTwksUrDbLDNEGq1giU15F9PXspwqhQoS6GeUjDYtuUaKkZ
- utjgRTN5ZULrMyB0x+DRBZkb7h/s85Xsm5OGfPN2JRbKgqxA0yvuRKxLnm5zWG0mfDAytPgBjuo
- PpOZ1dOSQRgZV55+Lj0WFJezYpgxFeEwKIPZVVrTHVuyElfMvu3RepI6ZsgrYlVEBPgCwXC/hFf
- HhBIKiaXQ5YMgv6lREweEjc+XP7qm1jQqrAT5i4HAKOX4DJzCOxork5g8p4h1FCaPmq1ZkOWpxi
- T+G38ChOgzjhh4Y14rVlrZV7vsZTKQ==
-X-Authority-Analysis: v=2.4 cv=a9dpNUSF c=1 sm=1 tr=0 ts=68a6dbe1 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
- a=KAgCPwNrzRmOdRwMPFMA:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_01,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 adultscore=0 impostorscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190222
+In-Reply-To: <20250820084944.84505-3-quic_haixcui@quicinc.com>
 
-On Wed, Aug 13, 2025 at 02:39:40PM +0100, John Garry wrote:
-> On 10/08/2025 14:41, Ojaswin Mujoo wrote:
-> > This adds atomic write test using fio based on it's crc check verifier.
-> > fio adds a crc for each data block. If the underlying device supports
-> > atomic write then it is guaranteed that we will never have a mix data from
-> > two threads writing on the same physical block.
-> > 
-> > Avoid doing overlapping parallel atomic writes because it might give
-> > unexpected results. Use offset_increment=, size= fio options to achieve
-> > this behavior.
-> > 
+On Wed, Aug 20, 2025 at 04:49:43PM +0800, Haixu Cui wrote:
+> Add virtio-spi.h header for virtio SPI.
 > 
-> You are not really describing what the test does.
+> Signed-off-by: Haixu Cui <quic_haixcui@quicinc.com>
+> ---
+>  MAINTAINERS                     |   5 +
+>  include/uapi/linux/virtio_spi.h | 185 ++++++++++++++++++++++++++++++++
+>  2 files changed, 190 insertions(+)
+>  create mode 100644 include/uapi/linux/virtio_spi.h
 > 
-> In the first paragraph, you state what fio verify function does and then
-> describe what RWF_ATOMIC means when we only use HW support, i.e. serialises.
-> In the second you mention that we guarantee no inter-thread overlapping
-> writes.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index daf520a13bdf..3e289677ca18 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -26760,6 +26760,11 @@ S:	Maintained
+>  F:	include/uapi/linux/virtio_snd.h
+>  F:	sound/virtio/*
+>  
+> +VIRTIO SPI DRIVER
+> +M:	Haixu Cui <quic_haixcui@quicinc.com>
+> +S:	Maintained
+> +F:	include/uapi/linux/virtio_spi.h
+> +
 
-Got it John, I will add better commit messages for the fio tests.
-> 
-> From a glance at the code below, in this test each thread writes to a
-> separate part of the file and then verifies no crc corruption. But even with
-> atomic=0, I would expect no corruption here.
+I would add a mailing list:
 
-Right, this is mostly a stress test that is ensuring that all the new
-atomic write code paths are not causing anything to break or
-introducing any regressions. This should pass with both atomic or non
-atomic writes but by using RWF_ATOMIC we excercise the atomic specific
-code paths, improving the code coverage.
+virtualization@lists.linux-foundation.org
 
-Regards,
-ojaswin
+
+>  VIRTUAL BOX GUEST DEVICE DRIVER
+>  M:	Hans de Goede <hansg@kernel.org>
+>  M:	Arnd Bergmann <arnd@arndb.de>
+> diff --git a/include/uapi/linux/virtio_spi.h b/include/uapi/linux/virtio_spi.h
+> new file mode 100644
+> index 000000000000..b55877b3e525
+> --- /dev/null
+> +++ b/include/uapi/linux/virtio_spi.h
+> @@ -0,0 +1,185 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause */
+> +/*
+> + * Copyright (C) 2023 OpenSynergy GmbH
+> + * Copyright (C) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +#ifndef _LINUX_VIRTIO_VIRTIO_SPI_H
+> +#define _LINUX_VIRTIO_VIRTIO_SPI_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/virtio_config.h>
+> +#include <linux/virtio_ids.h>
+> +#include <linux/virtio_types.h>
+> +
+> +/* Sample data on trailing clock edge */
+> +#define VIRTIO_SPI_CPHA			_BITUL(0)
+> +/* Clock is high when IDLE */
+> +#define VIRTIO_SPI_CPOL			_BITUL(1)
+> +/* Chip Select is active high */
+> +#define VIRTIO_SPI_CS_HIGH			_BITUL(2)
+> +/* Transmit LSB first */
+> +#define VIRTIO_SPI_MODE_LSB_FIRST		_BITUL(3)
+> +/* Loopback mode */
+> +#define VIRTIO_SPI_MODE_LOOP			_BITUL(4)
+> +
+> +/**
+> + * struct virtio_spi_config - All config fields are read-only for the
+> + * Virtio SPI driver
+> + * @cs_max_number: maximum number of chipselect the host SPI controller
+> + *   supports.
+> + * @cs_change_supported: indicates if the host SPI controller supports to toggle
+> + *   chipselect after each transfer in one message:
+> + *   0: unsupported, chipselect will be kept in active state throughout the
+> + *      message transaction;
+> + *   1: supported.
+> + *   Note: Message here contains a sequence of SPI transfers.
+> + * @tx_nbits_supported: indicates the supported number of bit for writing:
+> + *   bit 0: DUAL (2-bit transfer), 1 for supported
+> + *   bit 1: QUAD (4-bit transfer), 1 for supported
+> + *   bit 2: OCTAL (8-bit transfer), 1 for supported
+> + *   other bits are reserved as 0, 1-bit transfer is always supported.
+> + * @rx_nbits_supported: indicates the supported number of bit for reading:
+> + *   bit 0: DUAL (2-bit transfer), 1 for supported
+> + *   bit 1: QUAD (4-bit transfer), 1 for supported
+> + *   bit 2: OCTAL (8-bit transfer), 1 for supported
+> + *   other bits are reserved as 0, 1-bit transfer is always supported.
+> + * @bits_per_word_mask: mask indicating which values of bits_per_word are
+> + *   supported. If not set, no limitation for bits_per_word.
+> + * @mode_func_supported: indicates the following features are supported or not:
+> + *   bit 0-1: CPHA feature
+> + *     0b00: invalid, should support as least one CPHA setting
+> + *     0b01: supports CPHA=0 only
+> + *     0b10: supports CPHA=1 only
+> + *     0b11: supports CPHA=0 and CPHA=1.
+> + *   bit 2-3: CPOL feature
+> + *     0b00: invalid, should support as least one CPOL setting
+> + *     0b01: supports CPOL=0 only
+> + *     0b10: supports CPOL=1 only
+> + *     0b11: supports CPOL=0 and CPOL=1.
+> + *   bit 4: chipselect active high feature, 0 for unsupported and 1 for
+> + *     supported, chipselect active low is supported by default.
+> + *   bit 5: LSB first feature, 0 for unsupported and 1 for supported,
+> + *     MSB first is supported by default.
+> + *   bit 6: loopback mode feature, 0 for unsupported and 1 for supported,
+> + *     normal mode is supported by default.
+> + * @max_freq_hz: the maximum clock rate supported in Hz unit, 0 means no
+> + *   limitation for transfer speed.
+> + * @max_word_delay_ns: the maximum word delay supported, in nanoseconds.
+> + *   A value of 0 indicates that word delay is unsupported.
+> + *   Each transfer may consist of a sequence of words.
+> + * @max_cs_setup_ns: the maximum delay supported after chipselect is asserted,
+> + *   in ns unit, 0 means delay is not supported to introduce after chipselect is
+> + *   asserted.
+> + * @max_cs_hold_ns: the maximum delay supported before chipselect is deasserted,
+> + *   in ns unit, 0 means delay is not supported to introduce before chipselect
+> + *   is deasserted.
+> + * @max_cs_incative_ns: maximum delay supported after chipselect is deasserted,
+> + *   in ns unit, 0 means delay is not supported to introduce after chipselect is
+> + *   deasserted.
+> + */
+> +struct virtio_spi_config {
+> +	/* # of /dev/spidev<bus_num>.CS with CS=0..chip_select_max_number -1 */
+> +	__u8 cs_max_number;
+> +	__u8 cs_change_supported;
+> +#define VIRTIO_SPI_RX_TX_SUPPORT_DUAL		_BITUL(0)
+> +#define VIRTIO_SPI_RX_TX_SUPPORT_QUAD		_BITUL(1)
+> +#define VIRTIO_SPI_RX_TX_SUPPORT_OCTAL		_BITUL(2)
+> +	__u8 tx_nbits_supported;
+> +	__u8 rx_nbits_supported;
+> +	__le32 bits_per_word_mask;
+> +#define VIRTIO_SPI_MF_SUPPORT_CPHA_0		_BITUL(0)
+> +#define VIRTIO_SPI_MF_SUPPORT_CPHA_1		_BITUL(1)
+> +#define VIRTIO_SPI_MF_SUPPORT_CPOL_0		_BITUL(2)
+> +#define VIRTIO_SPI_MF_SUPPORT_CPOL_1		_BITUL(3)
+> +#define VIRTIO_SPI_MF_SUPPORT_CS_HIGH		_BITUL(4)
+> +#define VIRTIO_SPI_MF_SUPPORT_LSB_FIRST		_BITUL(5)
+> +#define VIRTIO_SPI_MF_SUPPORT_LOOPBACK		_BITUL(6)
+> +	__le32 mode_func_supported;
+> +	__le32 max_freq_hz;
+> +	__le32 max_word_delay_ns;
+> +	__le32 max_cs_setup_ns;
+> +	__le32 max_cs_hold_ns;
+> +	__le32 max_cs_inactive_ns;
+> +};
+> +
+> +/*
+> + * @chip_select_id: chipselect index the SPI transfer used.
+> + *
+> + * @bits_per_word: the number of bits in each SPI transfer word.
+> + *
+> + * @cs_change: whether to deselect device after finishing this transfer
+> + *     before starting the next transfer, 0 means cs keep asserted and
+> + *     1 means cs deasserted then asserted again.
+> + *
+> + * @tx_nbits: bus width for write transfer.
+> + *     0,1: bus width is 1, also known as SINGLE
+> + *     2  : bus width is 2, also known as DUAL
+> + *     4  : bus width is 4, also known as QUAD
+> + *     8  : bus width is 8, also known as OCTAL
+> + *     other values are invalid.
+> + *
+> + * @rx_nbits: bus width for read transfer.
+> + *     0,1: bus width is 1, also known as SINGLE
+> + *     2  : bus width is 2, also known as DUAL
+> + *     4  : bus width is 4, also known as QUAD
+> + *     8  : bus width is 8, also known as OCTAL
+> + *     other values are invalid.
+> + *
+> + * @reserved: for future use.
+> + *
+> + * @mode: SPI transfer mode.
+> + *     bit 0: CPHA, determines the timing (i.e. phase) of the data
+> + *         bits relative to the clock pulses.For CPHA=0, the
+> + *         "out" side changes the data on the trailing edge of the
+> + *         preceding clock cycle, while the "in" side captures the data
+> + *         on (or shortly after) the leading edge of the clock cycle.
+> + *         For CPHA=1, the "out" side changes the data on the leading
+> + *         edge of the current clock cycle, while the "in" side
+> + *         captures the data on (or shortly after) the trailing edge of
+> + *         the clock cycle.
+> + *     bit 1: CPOL, determines the polarity of the clock. CPOL=0 is a
+> + *         clock which idles at 0, and each cycle consists of a pulse
+> + *         of 1. CPOL=1 is a clock which idles at 1, and each cycle
+> + *         consists of a pulse of 0.
+> + *     bit 2: CS_HIGH, if 1, chip select active high, else active low.
+> + *     bit 3: LSB_FIRST, determines per-word bits-on-wire, if 0, MSB
+> + *         first, else LSB first.
+> + *     bit 4: LOOP, loopback mode.
+> + *
+> + * @freq: the transfer speed in Hz.
+> + *
+> + * @word_delay_ns: delay to be inserted between consecutive words of a
+> + *     transfer, in ns unit.
+> + *
+> + * @cs_setup_ns: delay to be introduced after CS is asserted, in ns
+> + *     unit.
+> + *
+> + * @cs_delay_hold_ns: delay to be introduced before CS is deasserted
+> + *     for each transfer, in ns unit.
+> + *
+> + * @cs_change_delay_inactive_ns: delay to be introduced after CS is
+> + *     deasserted and before next asserted, in ns unit.
+> + */
+> +struct spi_transfer_head {
+> +	__u8 chip_select_id;
+> +	__u8 bits_per_word;
+> +	__u8 cs_change;
+> +	__u8 tx_nbits;
+> +	__u8 rx_nbits;
+> +	__u8 reserved[3];
+> +	__le32 mode;
+> +	__le32 freq;
+> +	__le32 word_delay_ns;
+> +	__le32 cs_setup_ns;
+> +	__le32 cs_delay_hold_ns;
+> +	__le32 cs_change_delay_inactive_ns;
+> +};
+> +
+> +struct spi_transfer_result {
+> +#define VIRTIO_SPI_TRANS_OK	0
+> +#define VIRTIO_SPI_PARAM_ERR	1
+> +#define VIRTIO_SPI_TRANS_ERR	2
+> +	__u8 result;
+> +};
+> +
+> +#endif /* #ifndef _LINUX_VIRTIO_VIRTIO_SPI_H */
+> -- 
+> 2.34.1
 > 
-> Thanks,
-> John
-> 
-> > Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> >   tests/generic/1226     | 107 +++++++++++++++++++++++++++++++++++++++++
-> >   tests/generic/1226.out |   2 +
-> >   2 files changed, 109 insertions(+)
-> >   create mode 100755 tests/generic/1226
-> >   create mode 100644 tests/generic/1226.out
-> > 
-> > diff --git a/tests/generic/1226 b/tests/generic/1226
-> > new file mode 100755
-> > index 00000000..efc360e1
-> > --- /dev/null
-> > +++ b/tests/generic/1226
-> > @@ -0,0 +1,107 @@
-> > +#! /bin/bash
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
-> > +#
-> > +# FS QA Test 1226
-> > +#
-> > +# Validate FS atomic write using fio crc check verifier.
-> > +#
-> > +. ./common/preamble
-> > +. ./common/atomicwrites
-> > +
-> > +_begin_fstest auto aio rw atomicwrites
-> > +
-> > +_require_scratch_write_atomic
-> > +_require_odirect
-> > +_require_aio
-> > +
-> > +_scratch_mkfs >> $seqres.full 2>&1
-> > +_scratch_mount
-> > +_require_xfs_io_command "falloc"
-> > +
-> > +touch "$SCRATCH_MNT/f1"
-> > +awu_min_write=$(_get_atomic_write_unit_min "$SCRATCH_MNT/f1")
-> > +awu_max_write=$(_get_atomic_write_unit_max "$SCRATCH_MNT/f1")
-> > +
-> > +blocksize=$(_max "$awu_min_write" "$((awu_max_write/2))")
-> > +threads=$(_min "$(($(nproc) * 2 * LOAD_FACTOR))" "100")
-> > +filesize=$((blocksize * threads * 100))
-> > +depth=$threads
-> > +io_size=$((filesize / threads))
-> > +io_inc=$io_size
-> > +testfile=$SCRATCH_MNT/test-file
-> > +
-> > +fio_config=$tmp.fio
-> > +fio_out=$tmp.fio.out
-> > +
-> > +fio_aw_config=$tmp.aw.fio
-> > +fio_verify_config=$tmp.verify.fio
-> > +
-> > +function create_fio_configs()
-> > +{
-> > +	create_fio_aw_config
-> > +	create_fio_verify_config
-> > +}
-> > +
-> > +function create_fio_verify_config()
-> > +{
-> > +cat >$fio_verify_config <<EOF
-> > +	[verify-job]
-> > +	direct=1
-> > +	ioengine=libaio
-> > +	rw=read
-> > +	bs=$blocksize
-> > +	filename=$testfile
-> > +	size=$filesize
-> > +	iodepth=$depth
-> > +	group_reporting=1
-> > +
-> > +	verify_only=1
-> > +	verify=crc32c
-> > +	verify_fatal=1
-> > +	verify_state_save=0
-> > +	verify_write_sequence=0
-> > +EOF
-> > +}
-> > +
-> > +function create_fio_aw_config()
-> > +{
-> > +cat >$fio_aw_config <<EOF
-> > +	[atomicwrite-job]
-> > +	direct=1
-> > +	ioengine=libaio
-> > +	rw=randwrite
-> > +	bs=$blocksize
-> > +	filename=$testfile
-> > +	size=$io_inc
-> > +	offset_increment=$io_inc
-> > +	iodepth=$depth
-> > +	numjobs=$threads
-> > +	group_reporting=1
-> > +	atomic=1
-> > +
-> > +	verify_state_save=0
-> > +	verify=crc32c
-> > +	do_verify=0
-> > +EOF
-> > +}
-> > +
-> > +create_fio_configs
-> > +_require_fio $fio_aw_config
-> > +
-> > +cat $fio_aw_config >> $seqres.full
-> > +cat $fio_verify_config >> $seqres.full
-> > +
-> > +$XFS_IO_PROG -fc "falloc 0 $filesize" $testfile >> $seqres.full
-> > +
-> > +$FIO_PROG $fio_aw_config >> $seqres.full
-> > +ret1=$?
-> > +$FIO_PROG $fio_verify_config >> $seqres.full
-> > +ret2=$?
-> > +
-> > +[[ $ret1 -eq 0 && $ret2 -eq 0 ]] || _fail "fio with atomic write failed"
-> > +
-> > +# success, all done
-> > +echo Silence is golden
-> > +status=0
-> > +exit
-> > diff --git a/tests/generic/1226.out b/tests/generic/1226.out
-> > new file mode 100644
-> > index 00000000..6dce0ea5
-> > --- /dev/null
-> > +++ b/tests/generic/1226.out
-> > @@ -0,0 +1,2 @@
-> > +QA output created by 1226
-> > +Silence is golden
-> 
+
 
