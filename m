@@ -1,139 +1,107 @@
-Return-Path: <linux-kernel+bounces-779902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F65B2FADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:44:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC00B2FAE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89D1418901EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:40:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B9F1D009FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4ECA335BBD;
-	Thu, 21 Aug 2025 13:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22465334382;
+	Thu, 21 Aug 2025 13:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5SS4t7j"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBkuTnPA"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B785B1E7C05;
-	Thu, 21 Aug 2025 13:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B53338F46
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755783213; cv=none; b=GhEUo/djnuXOim+XR2oBq+sOXZYKJFXZATnIRKv+yQ+/pKqxCRhVRcpUAtXn6MvO1u1Jec8TJS+vlJkZU43j9rIqdRX1XzMYiZJTIfVrwK+DqSRN9cvMq/hyqfeM6YXIrJ+uo9jPpXTETmWLTvdYegJR/xovDXF4Ik22fOlHB8o=
+	t=1755783296; cv=none; b=tz4mlbOE5MNfxSmN1niJiRxys0yBJzaNxPFCffkqTmJeuMUTyY2EOpyWDsIwxm2oe5TIae0lPjRIhj/KYNEf0FKv+Gv3y/Nh/E4Ui5LtBvyIPlW0PmP28ySk/8lfj9dr5g+pvUzMS16NC6I+jvXyRVWxX+FVqAL3WrJHTgiiDMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755783213; c=relaxed/simple;
-	bh=ekjoLLvd+gdePODFcTvZOLsqmOsc4ETLQT/D/x7qjo0=;
+	s=arc-20240116; t=1755783296; c=relaxed/simple;
+	bh=kv6n6GOVWTADV8kGP5+6GEG5ThL+6nnGm9DljXi3Qxg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lnbCqJlUj8ZiF41/O2AmZIOzVjNidOGoMpdeMnc+OK9SMjlIRWdz2r1OMPqrqJVM9ghE38n2qQjMzfHNEWCuClstHilPTq3fiVXu5nVUIpSDp9fVYwlJK6Iq8mwNMpUhktfcLj28otxHb3qcvhPWe5HPPK3GyrT/gFT9z3YL4ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5SS4t7j; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b476985479bso134576a12.2;
-        Thu, 21 Aug 2025 06:33:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=chG+qxJof20N/Hql0YxP2nNkEfmj0Mz5yzaLQTiMCv3faH7LlcEwBFnClzv8JRAPEF7DeZsqHQTZ2haJmZBOVBK77IWg7wzys6evQDNf7T0Y5a6vdhC/5B9ZnFDSKvsXrIayijKwpJD17CrX/g3d5efNxEg47RupoxZv9PFK5Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QBkuTnPA; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-333f8ef379dso8761391fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:34:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755783211; x=1756388011; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755783293; x=1756388093; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eBxFLGvGtKMlnx45gYA4Cz7A7SuVyCHmLHRhQN6QlRU=;
-        b=E5SS4t7j5L8RnByc28Xa2T7bbO6FKr0LB76geVC6RgXGeOnd7Ag4Ci4OU92T2+BMu8
-         RHyXaRxKOt6mzmkqsl8j25wSipNISjE0eLkxzzQ5rnQloZUEjaQ4VgTkVawttXA8eZ2C
-         jAtQ4eXcOoPHDhNzHSluhKtE0eSC9+ENpvPX7yPjuTfERciVkRraRKbWAbfh48ROP0yv
-         RBjUmHv4CLVUHneaSxkCoEUNys11N6aXy+OEUR7Kore3NbX6i8ptUVUa0cpgsjaxNWaE
-         hsE+RIULCwrh6rjo+STXD+4hyNfaIkxPun1D0GLJAooMCwlBOPtQ9k42Rt7wuYGhX16u
-         wIqQ==
+        bh=dnk1CgahWWI41MJxVYInV4yTmBrTqgMN7PmBauKY3jg=;
+        b=QBkuTnPANj3BZINlJazP7frVb5LANa77kiv1wlh6sdJ1Rocs65TYZFopzIXJ7Gpo4E
+         bt6XHcKCfPzrwWd26qjSGCGOD0OjzXiZTJ0uj5i1lBkPsIxheHzsRJnDnkKWTasUnh98
+         w+xweOAbIQHvTKl0Y6B2wJsyMZ7sqxz6Ec85xNOUBKF60rZ2gc3Wc4/5Y/+p8uZtQJUc
+         mv1JfcJ0DfZ122AHny8DVZSch22ZlQUos0ZzKopjrYJNr9+PM0BWvZgEet6VbEOQD8sM
+         ELG1MnACc3LwbBnbAAYJv8VRmXmQ1e9pB8tUINj6oYmnnxhzxpG9Lr0zW4A9M93/d+y2
+         QLPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755783211; x=1756388011;
+        d=1e100.net; s=20230601; t=1755783293; x=1756388093;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eBxFLGvGtKMlnx45gYA4Cz7A7SuVyCHmLHRhQN6QlRU=;
-        b=KZaHLCmmMnZz4X76OT1Y8sDdQaLE1AFrnOXME5JUBt5ki+Rlq641+j6NU3Uyh9gsd6
-         7nkOsvjcvIZQTK9Fp/j1utorp7213ZdpjlqxqtDOrZ9Nk97wGno0u+ng2pdSrZlVROQg
-         eRPkGpjQ10G1XL/vPAhB6yNrvQNKZoa/VKUS/4p5ML4XCH1HHFBV06rWsTC7lXTYXXRs
-         UX/PwcfTPeD7+ndRHdilOXXZHPP/Zjkpmc0ZLjXdrdiHsnq7VJL/xeBmNdOT3cWw8j/M
-         yyI+BnjX9BefYA+NwuLG7R2I1B+gF6m0xAdvcPuynjQMfa3NHjuJzLZRD8NFl8ONlbPu
-         ezvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCymXIsx1+YZKjnnJnHeqXpzTw+SnazWrowBDKlq0MXWczv4hY2uX4QcqisjvhyiF3yEsnHq2CTp9cyuRU@vger.kernel.org, AJvYcCXzxeM4sfHwIntRGFKaNacNYOvYyL717wXNFBEAshROOCEbK1pPlBrOi38z12jknHE1QASygDiMcXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNe8czSgH523Co7IOs+3JsEKtdTF6tTixi6cGyDJV9Lksot0JV
-	TGEpgrZkLXIKyKiGDo0ybm78dihuBzl446Nez4AniurSPnAKo2jyrHGiQhfNYdj73dvIIleCBWW
-	FouEclxUzFPF+4OB2GDXfwi+gDk6cXGA=
-X-Gm-Gg: ASbGncsoGlEKEkY6LcMFWVdtPomtNdn0DVZpQ+wC/dtO6EqHJ5xzMOmVFUwFuU9w68j
-	UoOTUjHG+rdkbTNgT7lvb6u5XsdoP1Shg2SCostEbdCr+XTQ85w0nYNcAD6KUsVFlaQ0b/nYlEm
-	MYz9BsMaxr+GaSvt2+OHRZ/R2Z40vPcZVPtqum5HYn4Jh7TYo/PIOW96EWWLgDMr4UDyPaUiHjs
-	iQ670U=
-X-Google-Smtp-Source: AGHT+IEuCQ6k8cNE+8sXidC6dTieVXzmZcwZNDvgdItA/Y3JbANb5UvxKWSYjqg/c7kzUg+S2Z0QM3uU5S2Y9I5QyhQ=
-X-Received: by 2002:a17:902:c40c:b0:243:589d:148e with SMTP id
- d9443c01a7336-245fec1d6e3mr18972085ad.5.1755783210910; Thu, 21 Aug 2025
- 06:33:30 -0700 (PDT)
+        bh=dnk1CgahWWI41MJxVYInV4yTmBrTqgMN7PmBauKY3jg=;
+        b=AOShuyK7hiuS9sgOcNG4/IFOh85PkK6idpv2dTT5ATsncpygOkqem7zs2yroLBLzni
+         K/Wn6qHfZGBke3zpxTPJQ0675ts9t/973DyDoAhS96B1E80EB/86ieHrUw0ja7LYGQp4
+         oeb87aU+pgocyFrGxlwK4lbtkIDwauUQFd4UopvX07tXawsKzjagDLKz1nyT7bLTO0nE
+         cH2G/2oppZ/7X/7Cz6w7i5Y3MQ3dc4epe5zUiSsB/3YlZrHJ4IefyLXl5zdrlxNjd7b0
+         xlwuAYUDjQ8PL5mF4IiMu87VdmU2lxhKY/LIDVzP+fi1s1CmS9zCr0FSgHtnEkk4rwsM
+         rgfw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+f2+Ykfm1jpX7pjp+OPZyniiDQvDn4DX+XEVuxK8ZaAW+lYDS8c7p+TG3fCCWLyQJleSfyjQPovTR7DU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcwpdEfLyuS5BHxh4AxEH/EgVfPEu8owd2nc2mdKeDhisB+yxB
+	1p0mNaGhk0BuYRFibPuQ4LGAZWdOtDDOf/BUQY4HSJVlicIgR0AUzgwHU7nz//jvzJfmLH8f0yj
+	M+Mlg+Fq5dvKqUN4d7M12mckib6dvR92tTGi2u6ZwtQ==
+X-Gm-Gg: ASbGnctTXBh9P6vzzy/fGw+T9XZdfs+1hbzklkogfft3njou6uPePQ8k4i72JW1vsA4
+	dYJQXD32SGFvOJWi0kqwcTNgsJDXBmW0rK8JTUczPuSjDA1Zgtl7hl1BPphQqAUno3NJK5KYyng
+	jV56ZMFv+rsoUNBA21WPoXRikISrnvmeci2XEjEji6+TsZxRTncStX7Io2FAPJUjaJND5J+SEU4
+	2p3cKE=
+X-Google-Smtp-Source: AGHT+IGKufYc8VS+JVO/RTN7GptvxunMWcIXqzHM88cXAswfPy/+XrvyTDd4OoGPmr6RyZIf76Xo3OAHmqvX/1JjcQo=
+X-Received: by 2002:a05:651c:2112:b0:32e:aaa0:b06a with SMTP id
+ 38308e7fff4ca-33549e41fd1mr7866791fa.8.1755783292895; Thu, 21 Aug 2025
+ 06:34:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821025957.22546-1-rakuram.e96@gmail.com> <20250821025957.22546-2-rakuram.e96@gmail.com>
- <0254008f-1cdf-480f-ad6f-8f002b35d754@infradead.org>
-In-Reply-To: <0254008f-1cdf-480f-ad6f-8f002b35d754@infradead.org>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 21 Aug 2025 09:33:19 -0400
-X-Gm-Features: Ac12FXzO09gUoAEeRmxWArYXJpVeci5zNo9-7QWsRLPt3DMdtEe9qdrBP4alMe4
-Message-ID: <CADnq5_NdRc+c18V7FuL+U4=C3zUUoAgP15rzu1wZ-U9hNzjcXQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] docs: gpu: amdgpu: Fix spelling in amdgpu documentation
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Rakuram Eswaran <rakuram.e96@gmail.com>, linux-doc@vger.kernel.org, 
-	alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com, 
-	corbet@lwn.net, tzimmermann@suse.de, mripard@kernel.org, 
-	maarten.lankhorst@linux.intel.com, simona@ffwll.ch, siqueira@igalia.com, 
-	harry.wentland@amd.com, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org
+References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
+In-Reply-To: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 21 Aug 2025 15:34:41 +0200
+X-Gm-Features: Ac12FXzZfdEuIXlDJunjHifIf2iPhc7L3Fxydb1EWGcglhWvXkLWa6PHYXSvLu0
+Message-ID: <CACRpkdYEzbM33HBAhHEmAg9f4Zpi=2WvqPdZ35=M2eVCqcTTFg@mail.gmail.com>
+Subject: Re: [PATCH v8 0/9] Enable audio on qcs6490-RB3Gen2 and qcm6490-idp boards
+To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, kernel@oss.qualcomm.com, 
+	Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Applied.  Thanks!
+On Thu, Aug 21, 2025 at 6:49=E2=80=AFAM Prasad Kumpatla
+<quic_pkumpatl@quicinc.com> wrote:
 
-Alex
+> Mohammad Rafi Shaik (9):
+>   dt-bindings: pinctrl: qcom,sc7280-lpass-lpi-pinctrl: Document the
+>     clock property
 
-On Wed, Aug 20, 2025 at 11:13=E2=80=AFPM Randy Dunlap <rdunlap@infradead.or=
-g> wrote:
->
->
->
-> On 8/20/25 7:59 PM, Rakuram Eswaran wrote:
-> > Fixed following typos reported by Codespell
-> >
-> > 1. propogated =3D=3D> propagated
-> >    aperatures =3D=3D> apertures
-> > In Documentation/gpu/amdgpu/debugfs.rst
-> >
-> > 2. parition =3D=3D> partition
-> > In Documentation/gpu/amdgpu/process-isolation.rst
-> >
-> > 3. conections =3D=3D> connections
-> > In Documentation/gpu/amdgpu/display/programming-model-dcn.rst
-> >
-> > In addition to above,
-> > Fixed wrong bit-partition naming in gpu/amdgpu/process-isolation.rst
-> > from "fourth" partition to "third" partition.
-> >
-> > Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-> > Suggested-by: Alexander Deucher <Alexander.Deucher@amd.com>
-> > Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
->
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
->
-> Thanks.
->
-> > ---
-> >  Documentation/gpu/amdgpu/debugfs.rst                       | 4 ++--
-> >  Documentation/gpu/amdgpu/display/programming-model-dcn.rst | 2 +-
-> >  Documentation/gpu/amdgpu/process-isolation.rst             | 2 +-
-> >  3 files changed, 4 insertions(+), 4 deletions(-)
->
->
-> --
-> ~Randy
+Can I just apply this one patch to the pinctrl tree?
+
+Yours,
+Linus Walleij
 
