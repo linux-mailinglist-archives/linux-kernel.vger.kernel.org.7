@@ -1,92 +1,119 @@
-Return-Path: <linux-kernel+bounces-780013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC0CB2FC54
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:24:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14A00B2FC56
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE5F1797E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F02ABAC4E0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E83281538;
-	Thu, 21 Aug 2025 14:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20608279DCF;
+	Thu, 21 Aug 2025 14:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nT2dFNMT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REj0gCpe"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBF926B761;
-	Thu, 21 Aug 2025 14:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB492264A8;
+	Thu, 21 Aug 2025 14:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755785861; cv=none; b=TXu1jqbDKbuA3EILCizOHmAMwJPl6YJvMXgZWTHkrdUIIccjEMFK0z+2oozPrIcjZOcUMLOvbl6ldRgNMsMUwyQNcPeYuUh1g2ojldB9cLIeZE8LP9j0WHtObGoeGqo3LEVZXTQVyIVTCoC8AAvs27o84cYJOvpA+YOkVRpMkcc=
+	t=1755785889; cv=none; b=Zyr4HaBpLAaYQtUi3WMOqeRi/POEgMUSX/yEpFe21Rb6njrtSL/MrVn2iOKClZmzyopuyIPCvMZzV7C+5Oz8wTUPSlkN6p6r0r+mEMDpS0JOO/45jl4Th4Qqs24IswMw+coeTWpFDpnqVlzxbG4bRMhFAI0Y6nw1HsN1ekhJLiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755785861; c=relaxed/simple;
-	bh=gW7zqHt7cuAakYbLK9BQKAYcDbTeaMYBUi5199VFuWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lr108co+fp5b1AkA15R8+Kfoe8NZTat2nyRpuoKTI1TbPWABwKuE8bBo7ABz9H9TWsEWu+OMv0I6uR0u1mu/KvwfHCHCrmuTcoVVMeTZ9fw3lCkUs9HqPb/bE4MImFTKmBaZPgqi+LFhk3cehuNfUwvCac71FBkuaXrqiooawuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nT2dFNMT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 186A6C4CEEB;
-	Thu, 21 Aug 2025 14:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755785860;
-	bh=gW7zqHt7cuAakYbLK9BQKAYcDbTeaMYBUi5199VFuWI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nT2dFNMTdJafnR8SCtfTZ4mri3Lbf6Uobpr9VzI6B7WWWTWueKS2GpZsfOM4W5Nul
-	 jI3GCEU11vPSdLCtvy/MjJMPT8dny8Rwe4zbyNeKnHr7WHKP5mK5SdOIcYajHvymgT
-	 tW3YMrkNocdSeWpD4xypEwihTB9ldMoEaAKjOtBBSXxoRYrr1lsfkzqut+JG3kNJ4D
-	 YLmM0mIA/lEam7fPLNtPjInCYoGmaIxE7K7Lgdf4UT4vwjb81vIbXKKc9u7722DLm5
-	 x80sH/px/HKkEYCDcx1FDetplKayERaM+BZoFgVpNE8rFtH8FqIst1UYrvSwV0d0Bo
-	 H/fk60AGBEorQ==
-Date: Thu, 21 Aug 2025 07:17:39 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
-Cc: Rohan G Thomas via B4 Relay
- <devnull+rohan.g.thomas.altera.com@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Serge Semin <fancer.lancer@gmail.com>,
- Romain Gantois <romain.gantois@bootlin.com>, Jose Abreu
- <Jose.Abreu@synopsys.com>, Ong Boon Leong <boon.leong.ong@intel.com>,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
- Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next v2 3/3] net: stmmac: Set CIC bit only for TX
- queues with COE
-Message-ID: <20250821071739.2e05316a@kernel.org>
-In-Reply-To: <feb15456-2a16-4323-9d69-16aa842603f2@altera.com>
-References: <20250816-xgmac-minor-fixes-v2-0-699552cf8a7f@altera.com>
-	<20250816-xgmac-minor-fixes-v2-3-699552cf8a7f@altera.com>
-	<20250819182207.5d7b2faa@kernel.org>
-	<22947f6b-03f3-4ee5-974b-aa4912ea37a3@altera.com>
-	<20250820085446.61c50069@kernel.org>
-	<20250820085652.5e4aa8cf@kernel.org>
-	<feb15456-2a16-4323-9d69-16aa842603f2@altera.com>
+	s=arc-20240116; t=1755785889; c=relaxed/simple;
+	bh=owjS78g7Ralnh9lSopUuSCuHjZ9PN3Tk5H2DmbuSA3k=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WqTRRWpGkNh+0gRJwPfIJ1cfVlF9OE8XK0eoKqh1H1oBbC+b7nCbbhr95cSQutEzuwqrA55qwMpbqVZP4Xkd45pShzIQh6Arot08gjfrBvmx9+7cCF9NoLL/HLWdOpXJpftIKMRog0VGmSOFa+90pk9IIL5+q+HrZx2lF5eVni0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REj0gCpe; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1abf5466so7132825e9.0;
+        Thu, 21 Aug 2025 07:18:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755785886; x=1756390686; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+XTXcI0LkWh1hCjxmTkr6WUsK2779uimR5uOiEjNsrg=;
+        b=REj0gCperml8fDaqVbysaiXzIc2QJ2HV2J34G8/BIs+dy4vcYvj1h8DVZIfTzeVQ0v
+         bEaOQtMpDFXj7dHr0+d1kvVYISzfA8xKCgkXhHLsnvOQvvFU4WalURUI/gBJ58KgCST2
+         Thi7f86pM7008eopHx1ISrLcpivG7YN1W9Xj5lzm3kvAqJPkYB2s1Z2DoX4UQVLPTTar
+         WRzxotFAz+j6Zz1wDSO6xb0uz0Xgw4sARt4o2UTjY7rb3xFQ7hlOHTbmSNwtJVPIpoDh
+         /Ul0FVekNDGiyKPhJWaKBVCejykJYGcEcVMPip+7u4Ftxv5igxJYVo+M/FqJ3BY0shL8
+         Zzfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755785886; x=1756390686;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+XTXcI0LkWh1hCjxmTkr6WUsK2779uimR5uOiEjNsrg=;
+        b=neXZfhNUHJxQwlQSallMsM0sEeNx5Be9bRUa3gyJEEgtjDN/TTAntIr2OPCEtXLaOL
+         4LIOYAp8XNqCuu3NsmZK4gbpzhMd0iGQsYKzfq/s62kaZVPMh9HnuhogQRngBqnmKm5c
+         631ettiSmzgYa8L6xeu47Yb5On3h2yGdB28ulcsoCcOsfe/x56ve6+Cw1ZHujrStj8eb
+         EJNwe3fd9jDoI0naZpo2zHpoHKf/Q/yk9oUktsvHN8M3JoXwrRxWyN2Tozz9d2O3sbys
+         UI4vDQrw8JBa++OQCNswDa0iGgix1KY90uICXua3Id0vyczdARNcJtGiix6grIoJ7FAc
+         73Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIizTnEdKiBGCAnkvBb2qBuou1rEtYB9n3Dw6mnbq9+Mj2cRMOpijamHxuhRsWxKvS2Q3a4gz+BSrV/o/+@vger.kernel.org, AJvYcCVn7GS9u2hkREz+95CKbgaHKX7Cob7eTYaarYMOavMqihfsGbts7ln+ZFZ+XLU1kLDMGnk=@vger.kernel.org, AJvYcCWve5fUOTJUL3LTQN8hqwyuIL4u8C8JDq23137lurdHUgVYRsqcXGbA6oitoMSSGznKhTMe5pJPzaGqF7Cu9XRjFDa0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyks01P3NblCLgW7kpJiZ3CH4+Q4v45DbNvSKCQvct0hB2beece
+	gneSfdrq84eftWoUizwc0hq2wHHJyL1k7oUw+XNscif0+/0jsKPIo2LmoWHxNQ==
+X-Gm-Gg: ASbGnctmND0aFaAhDWPzqxj2JOeALYfJ4eP11vFXRPKdjOJ/lr0j5IizTuy8RV0odvi
+	77hqzYmXGS6p/khFlu82anK6hfvbHIM+5RJnnrOTUjwQPpM/5LjBfMr2wNZpvA86W8rU0eUQt7x
+	yA2oOjIF36u/IWLYYZqB9CEQU1OHBtouliajyjLUPnkaNwhKGDn7TBNaA33g3ULJ0Z4guDtvNA9
+	CY1pBAu85MfXaoBnP96TqmPq6Sbbnd0Ps7sRvlCR0TTPhGSltKSBEHhjFoXSHeL4TKv4EH16RO3
+	KWsJoJptw/RhQXGKIJxdOrc5QLgUb0l/F8YAyKZOqnFECTmEuM1ufTTfKG7M6OEJSsWVuCe4
+X-Google-Smtp-Source: AGHT+IFkomTMapOtSMVfYWyHPv6ruKXKshWDpEEgQzLg5CxAW2El+loBhHUAmZPgBVKFPy5LiIBBqA==
+X-Received: by 2002:a05:600c:1988:b0:45b:47e1:ef7c with SMTP id 5b1f17b1804b1-45b4da17153mr21390005e9.18.1755785886001;
+        Thu, 21 Aug 2025 07:18:06 -0700 (PDT)
+Received: from krava ([2a02:8308:a00c:e200::31e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4db1ba89sm31302345e9.3.2025.08.21.07.18.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 07:18:05 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 21 Aug 2025 16:18:03 +0200
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: oleg@redhat.com, andrii@kernel.org, mhiramat@kernel.org,
+	linux-kernel@vger.kernel.org, alx@kernel.org, eyal.birger@gmail.com,
+	kees@kernel.org, bpf@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+	songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+	haoluo@google.com, rostedt@goodmis.org, alan.maguire@oracle.com,
+	David.Laight@aculab.com, thomas@t-8ch.de, mingo@kernel.org,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH 0/6] uprobes/x86: Cleanups and fixes
+Message-ID: <aKcqm023mYJ5Gv2l@krava>
+References: <20250821122822.671515652@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821122822.671515652@infradead.org>
 
-On Thu, 21 Aug 2025 19:20:02 +0530 G Thomas, Rohan wrote:
-> > To be clear -- this is just for context. I don't understand the details
-> > of what the CIC bit controls, so the final decision is up to you.  
+On Thu, Aug 21, 2025 at 02:28:22PM +0200, Peter Zijlstra wrote:
+> Hi,
 > 
-> Currently, in the stmmac driver, even though tmo_request_checksum is not
-> implemented, checksum offloading is still effectively enabled for AF_XDP
-> frames, as CIC bit for tx desc are set, which implies checksum
-> calculation and insertion by hardware for IP packets. So, I'm thinking
-> it is better to keep it as false only for queues that do not support
-> COE.
+> These are cleanups and fixes that I applied on top of Jiri's patches:
+> 
+>   https://lkml.kernel.org/r/20250720112133.244369-1-jolsa@kernel.org
+> 
+> The combined lot sits in:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/core
+> 
+> Jiri was going to send me some selftest updates that might mean rebasing that
+> tree, but we'll see. If this all works we'll land it in -tip.
+> 
 
-Oh, so the device parses the packet and inserts the checksum whether
-user asked for it or not? Damn, I guess it may indeed be too late
-to fix, but that certainly _not_ how AF_XDP is supposed to work.
-The frame should not be modified without user asking for it..
+hi,
+sent the selftest fix in here:
+  https://lore.kernel.org/bpf/20250821141557.13233-1-jolsa@kernel.org/T/#u
+
+thanks,
+jirka
 
