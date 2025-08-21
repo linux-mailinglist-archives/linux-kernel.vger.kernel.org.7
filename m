@@ -1,101 +1,125 @@
-Return-Path: <linux-kernel+bounces-779834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F099EB2F988
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3E4B2F954
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E32DE4E5F3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B70AC707C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858A23218AC;
-	Thu, 21 Aug 2025 13:09:47 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1372231DD94;
+	Thu, 21 Aug 2025 12:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CWXAkW8k"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2C613A41F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CFE31A063;
+	Thu, 21 Aug 2025 12:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755781787; cv=none; b=s64YcemlZQvKHw4jrxSFY1h/MGd/mPuPaCbAk7tqC0vJgjoNwGI8EW/VV7djj2IyToJ1OhQcuTo/BfBQdp3N0rrDp0B/HQBOGOMh3nZlvSWCDpeB/Ok6m6zHhqj44N9u+FS/yb9DoXPYdQWMjK7++2Hz8HmMcKVydnG+sHkr7aY=
+	t=1755781024; cv=none; b=DRBWLvrX+zWwBPX2PFIjGWHQjUFoN9t2YmVCvLshiF3VD9Nyzjg44dLfcerMbV+VRGz8OMheaK6TrYUIZBIRhrxMSnbKl3CZbRgQUf0mpfsS3S6jcS/rIRG4gheonAXO3b1ZTA09+wmEp2Kbj62RF1JYQWGzfCIm8Jks592TpFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755781787; c=relaxed/simple;
-	bh=eRKJxjY+hu42snqIEcrqCtyGtXKpWtzJWTzuArrTnPE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IFwD6p0NaeoSGPO+mNliDG4YckI+VBt2lqNIdJtbuYaENkMNrq1IGdQGddLTBjbVMrs+evLOtSIUy6211hTSmo2svW0BW9kJnFxJH5uEy/Bydp6BcxiIewqGuLik41b1KAB60Yk8zciHBwEctxdaAmfSlzoSfYcW7T+ts6nUOQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c73T74K8Yz2CgDF;
-	Thu, 21 Aug 2025 21:05:15 +0800 (CST)
-Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id DCE4C1A0188;
-	Thu, 21 Aug 2025 21:09:38 +0800 (CST)
-Received: from huawei.com (10.50.85.135) by dggpemf200018.china.huawei.com
- (7.185.36.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 21 Aug
- 2025 21:09:38 +0800
-From: Quanmin Yan <yanquanmin1@huawei.com>
-To: <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<yanquanmin1@huawei.com>, <wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>,
-	<apanyaki@amazon.com>
-Subject: [PATCH] mm/damon/core: prevent unnecessary overflow in damos_set_effective_quota()
-Date: Thu, 21 Aug 2025 20:55:55 +0800
-Message-ID: <20250821125555.3020951-1-yanquanmin1@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755781024; c=relaxed/simple;
+	bh=uHJd7Pb5ae2gpz/lAOltjUou5PKEACTRLIkY9GFloXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=to9v8njiGZbWBVx9cc0kTv4xiKhMxm5MKfrWEKuybGhQ+yfeFluTPZts6tGA9VD1iXZ19tupsHmIet0ngsvL7sFy74eyyUTqYyPeBVmODiwlP6XqF920aV8KgV8k+Y96FWXiIjhNhI8stjj6ah70NrDxnT1iFPKb18aUgrFL4AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CWXAkW8k; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755781023; x=1787317023;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uHJd7Pb5ae2gpz/lAOltjUou5PKEACTRLIkY9GFloXw=;
+  b=CWXAkW8kI6AtT72XCwOsIZbgxMspH08EpkSS8U4Zh83vClXgs30kPtee
+   wlTyL+i5VbR/u3CbQMa+IaGzvMSY75y/Q4Xa05QNJpc70AiEcFLHJrmmF
+   ZhY8Jk+GmVhpDyrQclhEsIMNLKiWigLF7bXufB9a3nmVEvfdTGGPRkaSm
+   UqaFOPaMq5EqrycgP/z3+V0T/u3rp+3TecXfqTSPrRmgqXb6nbGvdufzN
+   /0yce7apIU+KixWcAlIfgBnEqTeZveqtnOFe2JX2Tf8adTrGqmRqpeYTJ
+   MUr5TbqqumK8MxtTZokYV5G2E1wDzXNxnIz3oq4wk3kDIOZNRD6ER9R62
+   A==;
+X-CSE-ConnectionGUID: XIXvF1MmSc+aeZDpPS5CuQ==
+X-CSE-MsgGUID: H+y+gUzvTA6jO3CTiyUOAQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="60696496"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="60696496"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 05:57:02 -0700
+X-CSE-ConnectionGUID: 0/9YlzXFSuaO7mVcP18Dkg==
+X-CSE-MsgGUID: +06T7zzhTMOF6d0UpO2kOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="199388543"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 05:56:59 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1up4qe-00000007EjG-1UbI;
+	Thu, 21 Aug 2025 15:56:56 +0300
+Date: Thu, 21 Aug 2025 15:56:55 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jack Xu <jack.xu@intel.com>,
+	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
+	Colin Ian King <colin.i.king@gmail.com>, qat-linux@intel.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: qat - use kcalloc() in
+ qat_uclo_map_objs_from_mof()
+Message-ID: <aKcXlxNRDr5IQYwh@smile.fi.intel.com>
+References: <20250821123544.629821-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf200018.china.huawei.com (7.185.36.31)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821123544.629821-1-rongqianfeng@vivo.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 32-bit systems, the throughput calculation in function
-damos_set_effective_quota() is prone to unnecessary multiplication
-overflow. Using mult_frac() to fix it.
+On Thu, Aug 21, 2025 at 08:35:42PM +0800, Qianfeng Rong wrote:
+> As noted in the kernel documentation [1], open-coded multiplication in
+> allocator arguments is discouraged because it can lead to integer overflow.
+> 
+> Use kcalloc() to gain built-in overflow protection, making memory
+> allocation safer when calculating allocation size compared to explicit
+> multiplication.
 
-Andrew Paniakin also recently found and privately reported this
-issue, on 64 bit systems. This can also happen on 64-bit systems,
-once the charged size exceeds ~17 TiB. On systems running for long
-time in production, this issue can actually happen.
+> [1]: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
+> 
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 
-More specifically, when a DAMOS scheme having the time quota run
-for longtime, throughput calculation can overflow and set esz too
-small. As a result, speed of the scheme get unexpectedly slow.
+Make it a Link tag.
 
-Fixes: 1cd243030059 ("mm/damon/schemes: implement time quota")
-Cc: <stable@vger.kernel.org> # 5.16.x
-Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
-Reported-by: Andrew Paniakin <apanyaki@amazon.com>
-Closes: N/A # privately reported
----
- mm/damon/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments #1
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 831a9afc6cf6..fe1c19307ddd 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -2103,8 +2103,8 @@ static void damos_set_effective_quota(struct damos_quota *quota)
- 
- 	if (quota->ms) {
- 		if (quota->total_charged_ns)
--			throughput = quota->total_charged_sz * 1000000 /
--				quota->total_charged_ns;
-+			throughput = mult_frac(quota->total_charged_sz, 1000000,
-+							quota->total_charged_ns);
- 		else
- 			throughput = PAGE_SIZE * 1024;
- 		esz = min(throughput * quota->ms, esz);
+(also note no blank lines in tag block)
+
+...
+
+> -	mobj_hdr = kzalloc((uobj_chunk_num + sobj_chunk_num) *
+> +	mobj_hdr = kcalloc(uobj_chunk_num + sobj_chunk_num,
+
+size_add() ?
+
+>  			   sizeof(*mobj_hdr), GFP_KERNEL);
+>  	if (!mobj_hdr)
+>  		return -ENOMEM;
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
