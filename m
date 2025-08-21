@@ -1,202 +1,111 @@
-Return-Path: <linux-kernel+bounces-780191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D066B2FEC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:42:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD5FB2FED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B011D23183
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:34:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2000645A65
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCC028504C;
-	Thu, 21 Aug 2025 15:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEE4275B02;
+	Thu, 21 Aug 2025 15:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vErziw+i"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2061.outbound.protection.outlook.com [40.107.102.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Km1tZPmS"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AA1274FF5
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755790296; cv=fail; b=rT42C5qXpz67pXJ5VKi9xrIfZ5iI20yzYSUPC+j1xLYsRehuSDodYRc/MLgpNW4Ogd5FI8yOXHgDBiO5U1FrV39zcU1GfFe95hoUmD69d5aJHR66hJ6xU5r+vUOGFuYuvW0F6OPmcmSB/ruGkUFkfcvN3FHh7w3BFwKXSA5ycQw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755790296; c=relaxed/simple;
-	bh=QlRddd7oj/4j9btrT93aPybQ0tgY4vKl1o0j5i1i55k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=D68/LaFWtLiREeSdQCDJCv17IM8/7Ej2oPsapeVfcInVc3Vp0iqy3tzwI2h8qBKdvKDg/R6A5sfyIPKEc0+dt9WDkp93HczmPSI+X5Ddu17CwveFnAoI4G8trjEnAjKtrwjHlTE1T5mmBA9sNVjC3uAzTvuaViRIbEKSOS/Bmh8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vErziw+i; arc=fail smtp.client-ip=40.107.102.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IzyJ0AxsDk0KnMkS9yqivqYCDufEtxeVcvEMj40tt8pEP5ufazR9rkqfCoGXdlMF+ZwRgUC5BEPZuhU54h4ZxERXYxzCriQssyTkGFk7Jdj+4S+meqPs15pWn402JqahloZRbi1wF1YLc2ddethuVvshik3cb+Y+Fy6+tjPgWwaobtXCD7cnf6ATEtLd+0PPBUchoqhtBIOiNGhMUwYyQskP+t/0LZwn2n9w23m8d+E0sUr6mn1oASamd+v3BFxUh5+j9mdOrJD9PvLxw7JGUTho+Hrb02DGV098u6oX5a2hGf5GOEFJk3Fe5D6UWv/Atj9ck5G4q1I832+fuBSjvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uX5itkZlCN/XTKlCvbZSsSljdVvVf0XKf6HDbpDZxBQ=;
- b=KRRwBB+ISORa9Li5mNe2Cebcqi9lJU/AzS6+DEkcBxAdOAFu3WVk5H5qNzYn1HgD+gk/f5mtLcdjU9r3eqeU0Gpm1FQey+F2j6pkX4fmzgTxVA0lZgy31tuO0C2np/6YGFHc1lmaJb+mFoRQpI4NhY7G07wkDStjRTnBULPpNmhfwo5hKk8Z5GF7zxIc01t7JqmR8oPcmonMoLcM/5aumFOE/+6aXBgxjP8/FJ+0+uexbksYrS6e609GC4sTUI6ZomSqDWYzOksbUv/YvHmdjYZFwpEZydDru/QbGPidT610e7h+xPe2oHHoV5N5o8l3GTlIeRFIg7H+BQKvQjv8PA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uX5itkZlCN/XTKlCvbZSsSljdVvVf0XKf6HDbpDZxBQ=;
- b=vErziw+imBdkPB/Ig39x2LfwtVo7IvCo3aJ//EssvgPqpdjAoJ/IYlSntmKmtJ7VnumNL8qWEfhXO8AkBxUjuXN/7mXZrkBeJP7RASyFyH1mpejXkPDm4H6czRUUbIxDygSY+CPyJLepVLUh9/pUquoRSRyPU/LCmvB78JJt6Ko=
-Received: from SA1P222CA0145.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c2::29)
- by CH1PPF5EBD457EF.namprd12.prod.outlook.com (2603:10b6:61f:fc00::610) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
- 2025 15:31:32 +0000
-Received: from SN1PEPF0002BA4D.namprd03.prod.outlook.com
- (2603:10b6:806:3c2:cafe::c0) by SA1P222CA0145.outlook.office365.com
- (2603:10b6:806:3c2::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.16 via Frontend Transport; Thu,
- 21 Aug 2025 15:31:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002BA4D.mail.protection.outlook.com (10.167.242.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Thu, 21 Aug 2025 15:31:31 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
- 2025 10:31:31 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Thu, 21 Aug
- 2025 08:31:31 -0700
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 21 Aug 2025 10:31:30 -0500
-Message-ID: <9ccb22cb-1441-53ea-8a96-3e71aa6dc484@amd.com>
-Date: Thu, 21 Aug 2025 08:31:25 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FCD21770B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 15:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755790353; cv=none; b=khrufgawp3uPmp56VdlCjxQJcac9l5YO6DCh0arOJ6YeN6okXqadn9NwsHqg7Nb7LkkMtoBLjW53vo/qdcCI6ZNI2C2kDks8r+kSwLJJj/3xY2GY1zAoHYe3bkT6YvrYewmXnxBg58bwpFBXh0NxPAB8lMWz1NMwXk+D1sNkPfM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755790353; c=relaxed/simple;
+	bh=VFuK0HZ5YajTRhhHOInukTlZ+ae2YwEgdLKTLBpKFB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rqPNZJ2hlelDlyCdANWbhEqCdFHFAyfTKU895vQMMK3GtRPL5nYnJMtQvqm2dGCND1m9yqrd/ddKhjwNCGBrhVkye67D5HN8KuDX7oXzcJFh/T2DRCUg4C6XGl8IzGBCJDtLhcScHmkVGbVkF7e/0Q0+Oc9WJ3NYQqniOvQkAkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Km1tZPmS; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b47475cf8ecso794491a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755790350; x=1756395150; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9tGCA33N4Dbht2srt6gVgLCTUDFdfO0g2tZNWCaei38=;
+        b=Km1tZPmSoSoAac2nCquNxMPqCWk0daVdom4ZcaxveSLneReSzQpZsfKDnnhUYHIRb0
+         QDEguQ6sgBYZfvOYu4qsNCMsRCetnMV1Vbo5JvI3DOmrVzzBviAKrUK0Bg+WvuiDcjr5
+         A8b5IkDThIyztc9At/Q97/H1Nj7vfl8ZDwf/E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755790350; x=1756395150;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9tGCA33N4Dbht2srt6gVgLCTUDFdfO0g2tZNWCaei38=;
+        b=xKB+zU+9rz2i4RTaYIqAWqsebyzE+3VqxNwMxdWmwnOWmoHWdtiBFxJCqgfJVB3WC/
+         j2zYCDst8Yq8iqcwQMNJFmH23fJ+O2O6uLnzuPtBdL3byNQ3cOQpdPHOaPeD51IWeexy
+         CyYGvv5EcVWDdOdzFVB0f/qxNWQ7snXqq4zM0GIrVs8ctpfCQ4b/OQHeROAXJylh2BAI
+         RWUk25zxNOCOT4f50WODu2k8pJz5ZKP0AyYCbWn9P27eqyO/rMqKRs+F2LjsBqFlNWxi
+         qdbwDmGb5ZiCS3UZV/OiofdPZPFABrmL2RyGg4P3eN/6Mo/9I3QUxwO0GhjvRCs6NQYB
+         HbTA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2FzXyCREIOY9K/N2y1pXxtf8i6UiAqHSsIx6gSSQvfA/7uZfR79LBoxxo6+6HGWZWILbDYTxAX+3IdcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXoWlhwFDbDKS7xJS1I+TSaFJW/QN6RtPbxrpJmtf6lDx8Nnem
+	Nbjj7uAOpkw18c8reBAK+eblcEPqX6mXZq08C2OULMq6jXi+mShvxaTVRoU+y2QbtQ==
+X-Gm-Gg: ASbGncvYjKEvwtMxjSwToNdjRiHT7rtVeuYuckyqQCaeSYHeCB/Z05Gt6gfUMDzbUaR
+	6nAhpbO56ZbqmpesowTktaXZYRQEY9KXd/vvhzTY5GwLKz6gIV4Mno0rg8r8SHJaksGU1UBTOe+
+	TfH4VWcIjfIX4ylqZ56QYWc++iivFaViRoPobk4xbnfZZ/9VyyDfckQTM/UXKc6aML/GBV06LLM
+	g6WpGQEpEYQAn+kFAYzJVEE34FVyWeTYloyLvEdQuIr3SxiBbfnzhaDYFTBO6gCbrUPSMGpuQ2M
+	fJjKdzX50Wqfw6AKxZxMbSdGx+zZA/IqVLQ7Sgg7VDLF/CO3dNwTsuJPKDpvVR4jphY8mfA9xqp
+	mQemFCo8u6nkCSOk3woNs2KSLh1Cc4Xid85inYFIbsjktzHY3IG6UEEVNUASq
+X-Google-Smtp-Source: AGHT+IHa2avgM8a5/Xy2bsYAac5GNu+UWEoSX1GkGxwuwPgkP0F1CSFF0V/GPznubUbho1ZSK9eeng==
+X-Received: by 2002:a17:903:2411:b0:234:f4da:7eeb with SMTP id d9443c01a7336-245febef1e3mr46702255ad.7.1755790348778;
+        Thu, 21 Aug 2025 08:32:28 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:2283:604f:d403:4841])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-245ed339fbesm58918775ad.15.2025.08.21.08.32.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 08:32:28 -0700 (PDT)
+Date: Thu, 21 Aug 2025 08:32:27 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: David Gow <davidgow@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
+	kunit-dev@googlegroups.com
+Subject: Re: [PATCH 0/6] genirq/test: Platform/architecture fixes
+Message-ID: <aKc8Cz4hgMoJ1v-C@google.com>
+References: <20250818192800.621408-1-briannorris@chromium.org>
+ <CABVgOSkUT_yYqBvk2-+OozKEBybj-07mcRAVECNYQiw+1P67eA@mail.gmail.com>
+ <aKYEVTRhzbXvwlbD@google.com>
+ <CABVgOSkfADJGnMekV9Zz4x_Ana2uZYMnca1SDXoJnWjvPRGv8Q@mail.gmail.com>
+ <CAMuHMdVichNH4VKGEfDJWB5MTBZMFdh4HXtusb2N_-97RARrbA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] Documentation: accel: amdxdna: Update compiler
- information
-Content-Language: en-US
-To: Alex Deucher <alexdeucher@gmail.com>
-CC: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<jacek.lawrynowicz@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
-	<mario.limonciello@amd.com>
-References: <20250820233817.4050006-1-lizhi.hou@amd.com>
- <CADnq5_NjpN79sWt9t9Zw2u=OkzpGOfMqjhUxSyyLNaFesdjObw@mail.gmail.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <CADnq5_NjpN79sWt9t9Zw2u=OkzpGOfMqjhUxSyyLNaFesdjObw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4D:EE_|CH1PPF5EBD457EF:EE_
-X-MS-Office365-Filtering-Correlation-Id: 417d38b5-e424-46e7-c88f-08dde0c7ce0c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SHQyT0k4QlJKcEN4OUNBQmdDcmJMUDNRRWdrU3hvRzNWZi9XbUJVZElTajFK?=
- =?utf-8?B?RzAxeVRMNmdJdFZHUlpaYU5vTzN5UG5iODFJdG1NVGZmRUxtdFF6b2tKMWF6?=
- =?utf-8?B?U01vengyYUN2Yzk0dENKNGJQOCtPVDRrcGRzSmhxQkRNTGlIMXFIMnpwNmIy?=
- =?utf-8?B?YlhTS1hRZUtmbVllL2FjRFd2MnJPcjZqcngxeHY2YkRQWnIxNEJIMjUvVzlq?=
- =?utf-8?B?QmpnQnY4dHkraldPdjM2T3FnZHlmUG9KRTBVQmtjTzJZak1zMFhGWU4wKzNt?=
- =?utf-8?B?TEcybDMyZGI5U3ZwK3hMZUQ0WlZwTTRlQm5QelpHWjRsU0RCZVZDUWpNUWZX?=
- =?utf-8?B?eXdHLzBMa0dMeHhJbmU5UEJGaEt6TXB2bXZacVJWaTFiRmdDWjdRLzVFOGln?=
- =?utf-8?B?cWJJM1hCWXpoREN6VjliaWdBc0FJc2Mrd0Q0ZEtnLytEOGhJc1VCZXJEUUJW?=
- =?utf-8?B?UWY1Z0JGKzJFL09vc09ocTZyWlBhS3UvMm5HMTdLM3V0c1RpZ01CMGRBa2xq?=
- =?utf-8?B?cWNPaG1aTGtFS1g3Zzk1ZVN3cjV5NUNidkg2TkxUb2VlRHIrK0h4VkdkOGdN?=
- =?utf-8?B?OEV6akEzMDRJSzA2bjF2SStjVlpUZHhUWWJlV1l3RjFPZzAwcEtEREJwNVEv?=
- =?utf-8?B?ZlBDRkhEMEhNdC8wM1drYTFYWk9FVUl6MmNnd1F1emtaSlhPQ1BhTkxMamJG?=
- =?utf-8?B?NDFKYTV1TUZ2dE85OXhHU0xIUk9vMFRGNms0SGVOSTczbnlTbTg0NDQ2bGx1?=
- =?utf-8?B?NVFzdHQ3K3h4NW9ueEI0TFZzWnVIYXVnNVU0dklGWXVldnpxK2hhVjhMMGh6?=
- =?utf-8?B?YURiOXU0dUV4TGJRK2s3aFpvK05aWlBUQXJPaFRWbXZTN2U5YU1HRS90SjN5?=
- =?utf-8?B?QTMzbFp3VU9MRFBYeWZpdkZrL3ErM2dnVkZ5V01QZFdZc2tlbHNEZzh1b1hU?=
- =?utf-8?B?QWRHN2pjSXV4ZUtsckcrQkpsRWJrREVpSVRtY2xrYnVlLzRLNTNGWU5aY0FM?=
- =?utf-8?B?bmFnZkttQlR3YVpYc0ZRbjhwN3RGQjFZdm1Kbkh3Sk5ya1FpaU03RW1HRWZl?=
- =?utf-8?B?TmM0cXB3NVJXZHRJdVZKSEs2cW4zQ3JsZzgrTHBPVGZNaUVYQ1hJK3Fud242?=
- =?utf-8?B?MFVXZUVOUi9BcWU2cXB1N3lQMm5qeFd2d0pQa21hRWVpVlRoV3ZzRXBWTFg5?=
- =?utf-8?B?WnVrbFl3WHV0VXIrV2JoTDdndFNTRmV3Mklxdm9DYVVPVWNPQmVSWitvaTQz?=
- =?utf-8?B?NUIwb3hTM0tYcjNESnoyMFB1TDNBTzNHcW9DdDV6ZlIvUkNoZmVsQ1pmblRU?=
- =?utf-8?B?VG9FNy9vcnV4Y1p3NlgrbWorc28vcFpSWFpwQzJ6ZWwzblRUMEFjd293ZW9J?=
- =?utf-8?B?c3R0M0RtK1Q3V2pjQ3BMT1VvK0pDWGZQQkJndkpVWlB3Q2RXaitZSnE3OFI4?=
- =?utf-8?B?SWZPTGJ5cHFiYXhDTWE3d0pnUk9hd1M3TzZYazhNMmdhUVUza0VGY21COSsr?=
- =?utf-8?B?Z2dZcDZIOVZaaVFDUTlJUTdLZllTbW5pMGRYbUhrMWJhdFVGd3czSm81eGd4?=
- =?utf-8?B?V2pUT2J6YXpLT3c3RmpaUEZIbkltdnFsMXYyYTFjWkZ5cFFicTJJT3owS1By?=
- =?utf-8?B?Q0ZQTVN4anFkS1dMZG1QY2RTaFVpbDRmWFlNbnYraEYyUUR6ZTBPS1hjaEtC?=
- =?utf-8?B?MzJrTHo5Wm9QZ1NmOTVyQ2ViT1JUQ3FmWE8xRGNXNW9WcWZJNTc4S1I3T2Jq?=
- =?utf-8?B?T3RZak1BR2VXbWZ0dUU0dGsxMHZqRUJXeDk5UTE3VTQwVjJpMExyT2t0RHlw?=
- =?utf-8?B?MXBKZ1IzQzlSeVcxeU83eURlNTlHY2dHcjFkOFRpaHlVNEFZSk9rUjFqTWJK?=
- =?utf-8?B?UERQMDhnWUtjYmhXZDFEOUhGSzhHSW5lNlQxSWJrcVltbHg5NnlXYXErNm8r?=
- =?utf-8?B?ZFpSZk8rMDNxTXdmVk9uNG5rcVZKam4wVVhaZmNlUEx0ZEY1WFd1L0NLbXYv?=
- =?utf-8?B?YTBYRHNTZG9PaUVYQ1NMdnVDYWtHSnlMcW1FalVoMzZuVE9LYU9Nc0dDajBO?=
- =?utf-8?B?V2EyZ3hMUDN4ekRLSGNzd0VWOWFXZGI1RGFCZz09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 15:31:31.5797
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 417d38b5-e424-46e7-c88f-08dde0c7ce0c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA4D.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF5EBD457EF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVichNH4VKGEfDJWB5MTBZMFdh4HXtusb2N_-97RARrbA@mail.gmail.com>
 
-Applied to drm-misc-next.
+Hi Geert,
 
-Lizhi
+On Thu, Aug 21, 2025 at 09:05:03AM +0200, Geert Uytterhoeven wrote:
+> So probably the test should depend on SPARSE_IRQ?  Increasing NR_IRQS
+> everywhere when IRQ_KUNIT_TEST is enabled sounds rather invasive to me.
 
-On 8/21/25 05:52, Alex Deucher wrote:
-> On Wed, Aug 20, 2025 at 8:03 PM Lizhi Hou <lizhi.hou@amd.com> wrote:
->> The compiler information is outdated. Update it to the latest.
->>
->> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
->
->> ---
->>   Documentation/accel/amdxdna/amdnpu.rst | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/accel/amdxdna/amdnpu.rst b/Documentation/accel/amdxdna/amdnpu.rst
->> index fbe0a7585345..42e54904f9a8 100644
->> --- a/Documentation/accel/amdxdna/amdnpu.rst
->> +++ b/Documentation/accel/amdxdna/amdnpu.rst
->> @@ -223,13 +223,13 @@ Userspace components
->>   Compiler
->>   --------
->>
->> -Peano is an LLVM based open-source compiler for AMD XDNA Array compute tile
->> -available at:
->> +Peano is an LLVM based open-source single core compiler for AMD XDNA Array
->> +compute tile. Peano is available at:
->>   https://github.com/Xilinx/llvm-aie
->>
->> -The open-source IREE compiler supports graph compilation of ML models for AMD
->> -NPU and uses Peano underneath. It is available at:
->> -https://github.com/nod-ai/iree-amd-aie
->> +IRON is an open-source array compiler for AMD XDNA Array based NPU which uses
->> +Peano underneath. IRON is available at:
->> +https://github.com/Xilinx/mlir-aie
->>
->>   Usermode Driver (UMD)
->>   ---------------------
->> --
->> 2.34.1
->>
+Yeah, I was leaning to 'depends on SPARSE_IRQ'
+
+> BTW, given the test calls irq_domain_alloc_descs(), I think it should
+> also depend on IRQ_DOMAIN.
+
+Right, that's in patch 1.
+
+I'll resend the series with a 'depends on SPARSE_IRQ'.
+
+Thanks,
+Brian
 
