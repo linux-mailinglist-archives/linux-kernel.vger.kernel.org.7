@@ -1,277 +1,173 @@
-Return-Path: <linux-kernel+bounces-780288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6C4B2FFEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:23:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD77BB2FFF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86F31188A68A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:21:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA2FEAA732B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE012E0B64;
-	Thu, 21 Aug 2025 16:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89342DE6EE;
+	Thu, 21 Aug 2025 16:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQjoKhXp"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScTQ41bp"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898B92E03F1;
-	Thu, 21 Aug 2025 16:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9BE2DCF64;
+	Thu, 21 Aug 2025 16:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755793201; cv=none; b=jayApoPXIpgO1XLjuXnbXXjRDpshn8l4blDasz9PdI8ZBdrpziUNgKj1q6ODg2CqVT3bsuj36fcM0OmORQqRSlr5vDJc+9K+iqsr4NfMx1FHctUpxVvzH1l0Kdw8VqMwnH75Mqwzf2ySvWdJQ323mnS7lwGxH3wQLCqR1ZFhB8Q=
+	t=1755793230; cv=none; b=EWFpfWL6QCRm50c2OxY2/jHI9QQaE5GS3xndhPbZQHO7LOzaEjrBSfOLqZCTyPE+oOB7FgJuhjIGDDVuxosrgIdsD68MO7rLlQTVA1jUJugOQyL3U+Db2F+hFWvrCXOnd6/f2v1hd6pX5tc1M6+F+VcQWBeLWdq1jgpWG0MTFI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755793201; c=relaxed/simple;
-	bh=ZfDfAV0fw+CxOSYaDy2UJtAi01sCWQXxJ3dBO1z+mY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Om0c+055y3JxRupry/UQumWq6zN49W1YUUyWpqrkHjWIPQEYybL1CKO1tU24vcYrTN9W7eWLgdPXZd7MZVN78U6Fjk0aV3d1jlVOrQlRDfJeqBAJn9erfN0t1uv6c86xow0XQxQrMNkKcVMcsqxEAZmqXcu2GrPDpb1fFWw6PTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQjoKhXp; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1755793230; c=relaxed/simple;
+	bh=sMZvPRmxIzLZOBsAaxdk8g3K8/DQ1bF2jN04/GYPUYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OTQejEqrWfjWKar6IMN8nDd1g7z4mQR7SAQMMl9/nHilCRComNBPi59tR1hzAf1mBfn1t8UG+rXxwQf1+UFAz44v3UgtH+QOrjG2sACs7FviU2q816gEZK4YVppddr5EyZ4rkXoGGr+qcEmq1ODGpDKmCfL2dWD26NuyXtMpZHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScTQ41bp; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a15fd04d9so15446825e9.1;
-        Thu, 21 Aug 2025 09:19:59 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a15fd04d9so15449745e9.1;
+        Thu, 21 Aug 2025 09:20:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755793198; x=1756397998; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fUwl4lHULbuFZyTdNB8HgG3miIV3jmFvUoA4fTcloX8=;
-        b=BQjoKhXpFE7OtPRuj9VZaNojb8NT4hNVUFjBbukgzlIxfiYINGE8TW9zVMPlpm9RLL
-         rwF+9e1DCMdR5iktIecF341GyuuRlLj5BtspL9LSXV+JBpMIsXTL5OCwOXwpznjXn2Bm
-         Ap1ftnEQfzoSaHdeqnOFb5m1Pk2Aii/N57GhusKU0RbEKKKHuVf9nG2CRCKUlP3poK6q
-         hDtwvqOiqpsIb4CtXK7HkCibzwvz1tvt7mTSYhNdNTzSioxsNz3ZoJ2Fg8/HMOKHPbGJ
-         H3sBUX8sh1CxCVgXVJbGEVNQT5Sg/0IleH3lHUYOpL+oQy6mD8kB214rPnwOaxAcpZDq
-         FGgw==
+        d=gmail.com; s=20230601; t=1755793227; x=1756398027; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C1DDXfK0JQI8YQ8TIQurDiZk7xuap/EpVtq0nF7fNZQ=;
+        b=ScTQ41bpYPEhyjHr0iRr71KZR4FTrrYeAWjaeYZBqfpvSMlIH/IT8yZF4O2Z9yUwYP
+         q9xAyNE1cMZEiIV+OSf/RmdNLKI+CiV7nUuzDuwBLSZbqSTr0FJF/fIOOqkazI1gRX3Z
+         yqaD3z33+CcnJ/QmbzxFdMNyEDxhUM5RW7PSVRY3qtOnenio++UCmWBKMdl6ocUaqq0P
+         Vfy4oRaIhLpfV/2b2R78ls2roHj5LqfRGjvnqGOnDPpL0/V89K54QbGid8JGNxOT1yZt
+         XFjXD+GHsJ/ql45tvolyZvaS5RvXQoatbtcqr2MvKpi9G/NQ0sF4wCGzouMYluNijG1H
+         ktbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755793198; x=1756397998;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fUwl4lHULbuFZyTdNB8HgG3miIV3jmFvUoA4fTcloX8=;
-        b=JHJNvtutftEnYRfJheYcxtdfsa9LQ0tYoPiCPx0iYfUaGuodXcfX4KRMjv4lewzFBp
-         ShSXivhJ4ZLOlzXtfsF2Adk8z+s0LvE7zRf4QsAnuLj/HbzqpX56f8JMwNuIE3N0KPzM
-         Xou5FL6ZXep8rxnUI8b/H2cuV0jW/+/LFAlNnTXwBB0lbLrKzdbNkZNZzYeaklMtFfQm
-         HoDRGWW3A8Tdrj1I0NFD/6Gj+PS8qqhi4m4aCPMj6fPkQVr6buOtP9OmQr0LIk9Vjgnf
-         twafH27ExB7AYIiZfkk1zlBsk6HjvySybJnmmNHf7gm7DjJTOoW3emFYlmmW1DUhAs07
-         Rk0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVcWQdbqPm3wJarDxiIjtupb3bOevnk+XPSQOmHSUibhTJPQxSxuf6ZOUqQ/kKe32v9iggsS1du6KKU9D0/@vger.kernel.org, AJvYcCXz4ZU8eCGRduXloGy+pZZ9Qq/SvmzomU632pmTpOmm9Rib3DFLcsR5gzkYm4zU2LVomeE2QTYYKil1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9WovGxa4pchZjka7F+X7CXnZUG8LV16G6EsYQbk5B4FKHPlRu
-	w3NWla+F+FOcL7F+Yjvlpmith6d1ByQZFJ2zmJm4w1hLjY/c7snedSDL
-X-Gm-Gg: ASbGncv2VDTNW7oUmzULVMsRvB+Zu5VZgCb8zsC06Vut4LHnMqFNCICaUs/a0r9/Xpb
-	zpWmsagKh/F0rjb6KjkL9keqbfsnRwLWZI/XMtLM7iErtcAavWMxUfKrU82m+8Dy5ZB0kIWLnpg
-	QlrA++D2JUs2RsbXTPEulae2rLA8qvAqfm/d4eNdyxv0a58OTD2eTFJAgxGRdk361H9aF8dLEBs
-	k/ppJLvjMIVBZXUoaIolyDTKUKCqJURJ0spHICbiYsCVM9nBQNFvou4yM7nBuFpf2ZaUF0fC1s1
-	5gUHaQwv8TDGlGda5EUkrGkhyYqt6CFBquLRega6lBKxoIxyvBD5FPAdfLoQ2SzsucCs/q1k6ys
-	jSer2KWm/J3DRSVRoq+mFl84QRt/SZri65WL41QFIkTCF31LTnhzrjMdY
-X-Google-Smtp-Source: AGHT+IEGayJpj9nTFFyGvSf6RL68PjeNxrg5hrK0DqjA3ihENtnuj5/kASPFF0jPAQxpDnDVD0y1tQ==
-X-Received: by 2002:a05:6000:24c3:b0:3b7:590d:ac7d with SMTP id ffacd0b85a97d-3c4b4256002mr2058205f8f.1.1755793197600;
-        Thu, 21 Aug 2025 09:19:57 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:9ed2:95cd:69a:8d10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c4f77e969asm2316464f8f.20.2025.08.21.09.19.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 09:19:56 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6/6] arm64: dts: renesas: rzt2h-n2h-evk: Enable USB2.0 support
-Date: Thu, 21 Aug 2025 17:19:46 +0100
-Message-ID: <20250821161946.1096033-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250821161946.1096033-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250821161946.1096033-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1755793227; x=1756398027;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C1DDXfK0JQI8YQ8TIQurDiZk7xuap/EpVtq0nF7fNZQ=;
+        b=QHo/X0NHjxRlZsx5EmAcsK046COQjyjTPq850K0J9EfhMFTFiS/vtaHk8eUwf9jOkg
+         VM36/KYAr+hwlPNnhgx1ypl75KK3YkWpDydYULxkmr6+OXw8r7vd2AbQd0xron823Ldf
+         ckRSFBYscnxxtU/FdiSOqOGA57cCSqlqbTHTL6/VU6woe6800k9oBBW1OLqgTzkNdtMi
+         CSadbp/1d63L8iUlFCb1rAyJcsI5RMvY/nQTZdK2OGCcDDzSfGEFNpJgjlfaVqjzDeUO
+         b1xPgXhQqH5837tKxbYG3h1rACPqEt/9LLlbRllZxIAl0DbwKK6eor9e/ZonhQ5NjRyo
+         3fLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVd+vLsCqV9n7kBhJVpEJuy45kezMcko/hMw68PzgjHmsODV3znKoJ2dPy+p224PPEvBx85hgif@vger.kernel.org, AJvYcCX0Raj7jwQIdJI26Sk5qfsVSJBPLqbFhiDUqTmINO4UQX+zOI4pyV1j97zUK7RX8tM8qNa2/RzHd1Hn6K0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3JF1OoXQ76QLiviyC9naEEzl6swEH9ikONYplZ8buZnhbh+V+
+	/D0R5ISzJ3VhikOYd3og+B8+a23ci9TxkAAaglu8gGuFRkVqdBPB0020
+X-Gm-Gg: ASbGncuTVE3q78P8Jgj96PzQKf6ZNj/WPBmr3OPaThmYEQLkj6hSV8SUnbpMk//l1pA
+	xDvm8kgtpSbMHmJrQATpFusX9geqcSQ3aOS1x1oW02S7tIHCxOP5JxOFWyWETLiH6ZBYWwekl1N
+	sBTb1LLyNfw+EH7afVbFBmyoGTAVfdu3QeBUY1YsT6g7/2SFJiF/xKX/Fv8PgOr/uk0R2Ut+cmE
+	5jAorBNF3pqqKTAhJ+hb3Ozf6GNohCsF2ZN6UlkHu+pXgoX+1ulPJbZmgBsvMOHckuMXVKTi3t8
+	NYfgSQSHM/RQ9cbnWAs+P/uWSSkPj7wR7+OYr81rqv4MIBjfDD6ACEGSMTq16PVsheqwv2l5YPz
+	pGUujqubMklKd1nG/JvbkyLJTnluOvdLv8FkUIfDicFX0ZlG4ASJUsClDGiDyp+EzqxgijzaSOw
+	SFEZ/qNQcno5+M9J2qWtYg
+X-Google-Smtp-Source: AGHT+IE775LkVT8louURxsf2Sd7VsARCIMMo7L27xzQM2BghtfUSr5azScgz3G+lycxEHM+X9kOuyg==
+X-Received: by 2002:a05:600c:5249:b0:439:4b23:9e8e with SMTP id 5b1f17b1804b1-45b4d8de696mr30103365e9.3.1755793226461;
+        Thu, 21 Aug 2025 09:20:26 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c1a97sm12123415f8f.31.2025.08.21.09.20.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 09:20:25 -0700 (PDT)
+Message-ID: <73927f0c-f6aa-464b-ab20-559196e015a8@gmail.com>
+Date: Thu, 21 Aug 2025 17:20:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 3/5] net: gso: restore ids of outer ip headers
+ correctly
+To: Richard Gobert <richardbgobert@gmail.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com,
+ tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org, dsahern@kernel.org,
+ ncardwell@google.com, kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me,
+ aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
+ willemdebruijn.kernel@gmail.com, alexander.duyck@gmail.com,
+ linux-kernel@vger.kernel.org, linux-net-drivers@amd.com
+References: <20250821073047.2091-1-richardbgobert@gmail.com>
+ <20250821073047.2091-4-richardbgobert@gmail.com>
+Content-Language: en-GB
+From: Edward Cree <ecree.xilinx@gmail.com>
+In-Reply-To: <20250821073047.2091-4-richardbgobert@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 21/08/2025 08:30, Richard Gobert wrote:
+> Currently, NETIF_F_TSO_MANGLEID indicates that the inner-most ID can
+> be mangled. Outer IDs can always be mangled.
+> 
+> Make GSO preserve outer IDs by default, with NETIF_F_TSO_MANGLEID allowing
+> both inner and outer IDs to be mangled. In the future, we could add
+> NETIF_F_TSO_MANGLEID_INNER to provide more granular control to
+> drivers.
+> 
+> This commit also modifies a few drivers that use SKB_GSO_FIXEDID directly.
+> 
+> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+...
+> diff --git a/drivers/net/ethernet/sfc/ef100_tx.c b/drivers/net/ethernet/sfc/ef100_tx.c
+> index e6b6be549581..4efd22b44986 100644
+> --- a/drivers/net/ethernet/sfc/ef100_tx.c
+> +++ b/drivers/net/ethernet/sfc/ef100_tx.c
+> @@ -189,7 +189,8 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
+>  {
+>  	bool gso_partial = skb_shinfo(skb)->gso_type & SKB_GSO_PARTIAL;
+>  	unsigned int len, ip_offset, tcp_offset, payload_segs;
+> -	u32 mangleid = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
+> +	u32 mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
+> +	u32 mangleid_inner = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
+>  	unsigned int outer_ip_offset, outer_l4_offset;
+>  	u16 vlan_tci = skb_vlan_tag_get(skb);
+>  	u32 mss = skb_shinfo(skb)->gso_size;
+> @@ -201,7 +202,9 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
+>  	u32 paylen;
+>  
+>  	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
+> -		mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+> +		mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+> +	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID_INNER)
+> +		mangleid_inner = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+>  	if (efx->net_dev->features & NETIF_F_HW_VLAN_CTAG_TX)
+>  		vlan_enable = skb_vlan_tag_present(skb);
+>  
+> @@ -239,14 +242,13 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
+>  			      ESF_GZ_TX_TSO_CSO_INNER_L4, 1,
+>  			      ESF_GZ_TX_TSO_INNER_L3_OFF_W, ip_offset >> 1,
+>  			      ESF_GZ_TX_TSO_INNER_L4_OFF_W, tcp_offset >> 1,
+> -			      ESF_GZ_TX_TSO_ED_INNER_IP4_ID, mangleid,
+> +			      ESF_GZ_TX_TSO_ED_INNER_IP4_ID, mangleid_inner,
+>  			      ESF_GZ_TX_TSO_ED_INNER_IP_LEN, 1,
+>  			      ESF_GZ_TX_TSO_OUTER_L3_OFF_W, outer_ip_offset >> 1,
+>  			      ESF_GZ_TX_TSO_OUTER_L4_OFF_W, outer_l4_offset >> 1,
+>  			      ESF_GZ_TX_TSO_ED_OUTER_UDP_LEN, udp_encap && !gso_partial,
+>  			      ESF_GZ_TX_TSO_ED_OUTER_IP_LEN, encap && !gso_partial,
+> -			      ESF_GZ_TX_TSO_ED_OUTER_IP4_ID, encap ? mangleid :
+> -								     ESE_GZ_TX_DESC_IP4_ID_NO_OP,
+> +			      ESF_GZ_TX_TSO_ED_OUTER_IP4_ID, mangleid_outer,
+>  			      ESF_GZ_TX_TSO_VLAN_INSERT_EN, vlan_enable,
+>  			      ESF_GZ_TX_TSO_VLAN_INSERT_TCI, vlan_tci
+>  		);
 
-Enable USB2.0 support on RZ/T2H and RZ/N2H EVKs.
+AFAICT this will now, in the case when FIXEDID isn't set, set
+ ESF_GZ_TX_TSO_ED_OUTER_IP4_ID on non-encapsulated frames, for which
+ ESF_GZ_TX_TSO_OUTER_L3_OFF_W has been set to 0.  I'm not 100% sure,
+ but I think that will cause the NIC to do an INC_MOD16 on octets 4
+ and 5 of the packet, corrupting the Ethernet header.
+Please retain the existing logic whereby ED_OUTER_IP4_ID is set to
+ NO_OP in the !encap case.
+Note that the EF100 host interface's semantics take the view that an
+ unencapsulated packet has an INNER and no OUTER header, which AIUI
+ is the opposite to how your new gso_type flags are defined, so I
+ think for !encap you also need to set mangleid_inner based on
+ SKB_GSO_TCP_FIXEDID, rather than SKB_GSO_TCP_FIXEDID_INNER.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    | 36 ++++++++++++++++
- .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    | 41 +++++++++++++++++++
- .../dts/renesas/rzt2h-n2h-evk-common.dtsi     | 22 ++++++++++
- 3 files changed, 99 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-index 264f7ddb8cc5..bcd779cd51a2 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-@@ -29,6 +29,28 @@
-  */
- #define SD1_MICRO_SD	1
- 
-+/*
-+ * USB Pin Configuration:
-+ *
-+ * This board is equipped with three USB connectors: Type-A (CN80), Mini-B (CN79),
-+ * and Micro-AB (CN33). The RZ/T2H SoC has a single USB channel, so either the USB
-+ * host interface or the USB function interface can be used, but not both at the
-+ * same time.
-+ *
-+ * By default, the Type-A (CN80) and Mini-B (CN79) connectors are enabled.
-+ * Configure the switches as follows:
-+ *   - P00_0 - P00_2 (control signals for USB power supply): SW1[5] = ON
-+ *   - USB_VBUSIN (used for USB function): SW7[7] = OFF; SW7[8] = ON
-+ *   - USB_VBUSEN (used for USB_HF_VBUSEN): SW7[9] = OFF; SW7[10] = ON
-+ *
-+ * To enable the Micro-AB (CN33) USB OTG connector, set the following macro to 1
-+ * and configure the switches as follows:
-+ *   - P00_0 - P00_2 (control signals for USB power supply): SW1[5] = ON
-+ *   - USB_VBUSIN (used for USB OTG): SW7[7] = ON; SW7[8] = OFF
-+ *   - USB_VBUSEN (used for USB_OTG_VBUSEN): SW7[9] = ON; SW7[10] = OFF
-+ */
-+#define USB_OTG		0
-+
- #include "rzt2h-n2h-evk-common.dtsi"
- 
- / {
-@@ -145,4 +167,18 @@ i2c1_pins: i2c1-pins {
- 		pinmux = <RZT2H_PORT_PINMUX(5, 0, 0x17)>, /* SDA */
- 			 <RZT2H_PORT_PINMUX(4, 7, 0x17)>; /* SCL */
- 	};
-+
-+#if USB_OTG
-+	usb-exicen-hog {
-+		gpio-hog;
-+		gpios = <RZT2H_GPIO(0, 2) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "usb_exicen_a";
-+	};
-+#endif
-+
-+	usb_pins: usb-pins {
-+		pinmux = <RZT2H_PORT_PINMUX(0, 0, 0x13)>, /* VBUS */
-+			 <RZT2H_PORT_PINMUX(0, 1, 0x13)>; /* OVRCUR */
-+	};
- };
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-index 80f358fb2d74..b98b0f7c1128 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-@@ -33,6 +33,33 @@
-  */
- #define SD1_MICRO_SD	1
- 
-+/*
-+ * USB Pin Configuration:
-+ *
-+ * This board is equipped with three USB connectors: Type-A (CN7), Mini-B (CN8),
-+ * and Micro-AB (CN9). The RZ/N2H SoC has a single USB channel, so either the USB
-+ * host interface or the USB function interface can be used, but not both at the
-+ * same time.
-+ *
-+ * By default, the Type-A (CN7) and Mini-B (CN8) connectors are enabled.
-+ * Configure the switches as follows:
-+ *   - P02_2 - P02_3 (control signals for USB power supply): DSW2[6] = OFF;
-+ *     - P02_2 (used for VBUSEN): DSW14[5] = OFF; DSW14[6] = ON
-+ *     - P02_3 (used for USB_OVRCUR): DSW14[1] = OFF; DSW14[2] = ON
-+ *   - USB_VBUSIN (used for VBUS of CN8 for function): DSW16[1] = OFF; DSW16[2] = ON
-+ *   - USB_VBUSEN (used for USB_HF_VBUSEN): DSW16[3] = OFF; DSW16[4] = ON
-+ *
-+ * To enable the Micro-AB (CN9) USB OTG connector, set the following macro to 1
-+ * and configure the switches as follows:
-+ *   - P02_2 - P02_3 (control signals for USB power supply): DSW2[6] = OFF;
-+ *     - P02_2 (used for VBUSEN): DSW14[5] = OFF; DSW14[6] = ON
-+ *     - P02_3 (used for USB_OVRCUR): DSW14[1] = OFF; DSW14[2] = ON
-+ *   - USB_VBUSIN (used for VBUS of CN9 for OTG): DSW16[1] = ON; DSW16[2] = OFF
-+ *   - USB_VBUSEN (used for USB_OTG_VBUSEN): DSW16[3] = ON; DSW16[4] = OFF
-+ *   - USB_EXICEN (used for USB OTG EXICEN): DSW14[3] = OFF; DSW14[4] = ON
-+ */
-+#define USB_OTG		0
-+
- #include "rzt2h-n2h-evk-common.dtsi"
- 
- /*
-@@ -185,4 +212,18 @@ i2c1_pins: i2c1-pins {
- 		pinmux = <RZT2H_PORT_PINMUX(3, 3, 0x17)>,
- 			 <RZT2H_PORT_PINMUX(3, 4, 0x17)>;
- 	};
-+
-+#if USB_OTG
-+	usb-exicen-hog {
-+		gpio-hog;
-+		gpios = <RZT2H_GPIO(2, 4) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "usb_exicen_a";
-+	};
-+#endif
-+
-+	usb_pins: usb-pins {
-+		pinmux = <RZT2H_PORT_PINMUX(2, 2, 0x13)>, /* VBUS */
-+			 <RZT2H_PORT_PINMUX(2, 3, 0x13)>; /* OVRCUR */
-+	};
- };
-diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-index 91068042bec0..5c91002c99c4 100644
---- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-@@ -65,10 +65,20 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
- #endif
- };
- 
-+&ehci {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
- &extal_clk {
- 	clock-frequency = <25000000>;
- };
- 
-+&hsusb {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	eeprom: eeprom@50 {
- 		compatible = "renesas,r1ex24016", "atmel,24c16";
-@@ -77,6 +87,11 @@ eeprom: eeprom@50 {
- 	};
- };
- 
-+&ohci {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
- &pinctrl {
- 	/*
- 	 * SCI0 Pin Configuration:
-@@ -218,6 +233,13 @@ &sdhi1 {
- };
- #endif
- 
-+&usb2_phy {
-+	pinctrl-0 = <&usb_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &wdt2 {
- 	status = "okay";
- 	timeout-sec = <60>;
--- 
-2.51.0
-
+My apologies for not spotting this in earlier versions.
 
