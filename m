@@ -1,175 +1,261 @@
-Return-Path: <linux-kernel+bounces-779193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25AC8B2F048
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:57:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB01B2F04D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD5FD7B7982
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EA2C1698F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966512E9EB9;
-	Thu, 21 Aug 2025 07:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779E62E8E12;
+	Thu, 21 Aug 2025 07:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dA7PoDtW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qxk9Yt7J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576EA2E92D6;
-	Thu, 21 Aug 2025 07:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDD928315A;
+	Thu, 21 Aug 2025 07:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763006; cv=none; b=cxRS/HQ++0CS9evm4tIgprf1XMiUpAW8XC3zmW3Au3i6v6h9SHEuJI5Xa6Zi2Zo+KDqTtvymdnLz9uyqW82hSHWUBFxF+LiUm/ot+bi6op1tTuaujd/HbrKYF/BrFrsp6hugNO2YDgIKrRs+/IQBbBnc1I/ef+yyP1jjDQ+oVVI=
+	t=1755763002; cv=none; b=eFI5/PQDhjbM2U77mnUvd0qAHv3uJIaywFkl2r6djWTfQd+kTLuCBetx8CK/Do9inosUFXEfWXAPKBGET8zccksR9UeMgsMhDfb2CjQeZVzWZkvoDUA1dzIg0GDCYA9mzEsPuGZrmNysCQ8DS0D2zllpP0HEtTe15LldYGmVvCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763006; c=relaxed/simple;
-	bh=XoCpPVB5wOAtJ7m6MaTrQOLr2oFV7hOj0Lum1iwDtxU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YaxTW0HMiq2Z8AqTZ/dYnUNLNH58SJd9s8k9bCgakNrGnTElx04rVrekJc79hkzodeb9R6qv+5aYPEh/tnX0NV6L3AHdAbb7k+3nR3m/WafteQK+2Fixmg+I7/7xgjcLhquZCXNY4A8LUluFyAOfQqKG9HC77BoYJ9yz0wvIpTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dA7PoDtW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L7kSve020839;
-	Thu, 21 Aug 2025 07:56:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qIJ8sGJ241dgJr/7UiTgj7Fpjrs1hEGq9F6pHGgt3Mg=; b=dA7PoDtWgU0xFjOG
-	d1uVW3s1BqkUAISUghRkRi2mtmRJVHeNXPDshgFAnuggnwV90pD55bD5TCkt1W5S
-	S4JK6zPggVFIvtgIZasunmhuOuY+KlQ2tYSb+RsTBxbqTmfoZCs3X+MPFBUWGZcD
-	RrDBGrzAkVismrg9uAOmXavjjLaw7i1yDijMkqqSJ4SsDW1e4sR4k2qYEu9eGvdi
-	9sa57WmEEN0xh9+vGSj/smYB2aVp8OBeHe3fZ2Kj9elm+eS3xfQ6xIqUFG92FEzX
-	MilW5j6q98xUFVAkBIA7dl1EzwIgzpXWKXRbdvzxjYDAAQa8qIz18YYZV9db16Ee
-	lUNeGg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5294hdt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 07:56:39 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57L7uc3N020678
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 07:56:38 GMT
-Received: from [10.216.5.63] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 21 Aug
- 2025 00:56:34 -0700
-Message-ID: <f104c9d8-16ae-64c6-4494-49981ef950ea@quicinc.com>
-Date: Thu, 21 Aug 2025 13:26:31 +0530
+	s=arc-20240116; t=1755763002; c=relaxed/simple;
+	bh=al2HgMvixL4DhM3Vv6wS8bxJ0NVBLNWxsvmiKZ2jAj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lMZi/zRHqaLgwMTneODsZrkWWbY0ZMZnoNmX94OIdzgpsp5vOLc60n6SD6jRqSA6iBdpYOZWPx6fDGFeZFBKe8GJhpNx6eF5b30jgLMaYhWG9MInS7PZJmysJ69O3CfGYgugrHKrN0fbnmzqXayszHuP3oXt4mQyKgvtuWOf8fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qxk9Yt7J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CA5C4CEED;
+	Thu, 21 Aug 2025 07:56:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755763001;
+	bh=al2HgMvixL4DhM3Vv6wS8bxJ0NVBLNWxsvmiKZ2jAj0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Qxk9Yt7JNe9dCaXigKMrkvOAbGMEwINyljQdIKVUdSK8X3RsQOcOs7HGQtWHbzAMI
+	 QcsqnQrF6bo1KCE0ahBASGzak7bvmQe5Ptk157isWhx7sWIf58pkwfk8ONuo/+sFWW
+	 PUNNuj/4Zl0N6U5MR5p5vJQ0N91F9O/ZaoyXxy1WsruN2yGzakvqgIjFdyslwz5vYr
+	 QYLMTr/bmiPzRPQ2xjX3fBtUbgYVjJnZ3jBLss+JK2h16Ph4JmsgFAe1YeAuYXLK8w
+	 dSbuzN1tt2ehlOKFtFRfASRgAs5WrA+TO5yUloYkuwO4WLHUOThglaTlOiOb90G3sf
+	 BJK6KNuYMhP5Q==
+Date: Thu, 21 Aug 2025 09:56:37 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] Fix PDF doc builds on major distros
+Message-ID: <20250821095637.5dbe9533@foz.lan>
+In-Reply-To: <20250821095221.5e6510f5@foz.lan>
+References: <20250817154544.78d61029@foz.lan>
+	<b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
+	<87y0rg7e35.fsf@trenco.lwn.net>
+	<16b48826-6634-4ec9-86a0-7ddb59ce3bed@gmail.com>
+	<20250819030239.41a2e97f@foz.lan>
+	<142b209d-613a-4659-a0f7-27efa8c6be85@gmail.com>
+	<20250819153200.3c2b2ff6@foz.lan>
+	<08c3a7eb-0425-4709-a3ea-6d1d726fd3c8@gmail.com>
+	<20250820091530.068c4b62@foz.lan>
+	<3990f1c5-2108-44fe-913f-97ae3bb1ff42@gmail.com>
+	<xik6a2kb3mge5xh2mbdtc4p3ikbr4mnjlkk4ujc4sfztb3iqnr@tc76jva4smpm>
+	<526d1aee-d401-4f04-8ddc-122f1fef7905@gmail.com>
+	<5fb6ce64-747b-46e4-b135-0d987334a12c@gmail.com>
+	<20250821095221.5e6510f5@foz.lan>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 00/26] Enable H.264/H.265 encoder support and fixes in
- iris driver common code
-Content-Language: en-US
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        "Vedang
- Nagar" <quic_vnagar@quicinc.com>,
-        Hans Verkuil <hverkuil@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Renjiang Han <quic_renjiang@quicinc.com>,
-        Wangao Wang <quic_wangaow@quicinc.com>
-References: <20250820-iris-video-encoder-v3-0-80ab0ba58b3d@quicinc.com>
- <9584a286-7d8a-48b0-a65c-7a37ced78ac6@linaro.org>
- <38d56655-cfea-ef3d-46ff-a77d81e35297@quicinc.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <38d56655-cfea-ef3d-46ff-a77d81e35297@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: coqtGhz_i8faQO0kYJcT4v4KLTBE27P-
-X-Proofpoint-ORIG-GUID: coqtGhz_i8faQO0kYJcT4v4KLTBE27P-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX62ksjgec8+4J
- a0yg17uHEBxaLJhqkjCEzhR2UXrHS+/L3Eov4e5edOys/wcd/JKZWa0XpBamJ41fvIMyjrT1WnA
- RqB2c4lhKqZUWfy4Ji3dVSCQGs7hg2nIloWHWiVBXNtxFy8cMGmdJCQPFl/BwZ5QDyKfokYELBV
- TIt8edelrg+6BuLe+I2oRVv1D48LGV6gnvJMlhEiOM8gwGJWAjqhNUoN3n7IyObKPvod/PhsBO9
- 4/bTlFoRTwD8r7XddEN7EMiFsVBfz67q6CE8lxR7MdtV2WcYSjyTfwBqE0Sda/hLUJWJTYbgTUT
- +P3Mq5SVyw/o6iAJfgB1MZghfhjjoexK3Yz7OvCC6EsD4gGXquiYSgYYipsyuXQ+qe725AzJYRV
- mYynnLpxgyUqG0DaZ1u6aAkblh21Cw==
-X-Authority-Analysis: v=2.4 cv=SPkblOvH c=1 sm=1 tr=0 ts=68a6d137 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=s6u6a83h0psUokLNlGwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_01,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
- impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1011
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+Em Thu, 21 Aug 2025 09:52:21 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
 
-On 8/21/2025 12:51 PM, Dikshita Agarwal wrote:
->> The change occurs around Aug 14 2024, So I checked the downstream driver
->> and I found that fixes the encoding:
->> ===========================><=================================================
->> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
->> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
->> @@ -863,9 +863,18 @@ static inline
->>  u32 size_vpss_line_buf(u32 num_vpp_pipes_enc, u32 frame_height_coded,
->>                        u32 frame_width_coded)
->>  {
->> -       return ALIGN(((((((8192) >> 2) << 5) * (num_vpp_pipes_enc)) + 64) +
->> -                     (((((max_t(u32, (frame_width_coded),
->> -                                (frame_height_coded)) + 3) >> 2) << 5) +
->> 256) * 16)), 256);
->> +       u32 vpss_4tap_top = 0, vpss_4tap_left = 0, vpss_div2_top = 0,
->> vpss_div2_left = 0, vpss_top_lb = 0, vpss_left_lb = 0, size_left = 0,
->> size_top = 0;
->> +
->> +       vpss_4tap_top = ((((max_t(u32, frame_width_coded,
->> frame_height_coded) * 2) + 3) >> 2) << 4) + 256;
->> +       vpss_4tap_left = (((8192 + 3) >> 2) << 5) + 64;
->> +       vpss_div2_top = (((max_t(u32,frame_width_coded, frame_height_coded)
->> + 3) >> 2) << 4) + 256;
->> +       vpss_div2_left = ((((max_t(u32, frame_width_coded,
->> frame_height_coded)* 2) + 3) >> 2) << 5) + 64;
->> +       vpss_top_lb = (frame_width_coded + 1) << 3;
->> +       vpss_left_lb = (frame_height_coded << 3) * num_vpp_pipes_enc;
->> +       size_left = (vpss_4tap_left + vpss_div2_left) * 2 * num_vpp_pipes_enc;
->> +       size_top = (vpss_4tap_top + vpss_div2_top) * 2;
->> +
->> +       return ALIGN(size_left + size_top + vpss_top_lb + vpss_left_lb,
->> DMA_ALIGNMENT);
->>  }
-> Seems this calculation is different for iris3 and iris33, hence you see
-> this issue on SM8650.
+> Em Thu, 21 Aug 2025 09:09:41 +0900
+> Akira Yokosawa <akiyks@gmail.com> escreveu:
 > 
-> Updating this calculation in common code will increase the buffer size with
-> from ~400KB to ~2.2 MBs (for 640x480) and even more for higher resolution.
+> > Hi,
+> > 
+> > Let me do a quick follow up.
+> > I messed up the table.
+> > 
+> > On Thu, 21 Aug 2025 08:53:04 +0900, Akira Yokosawa wrote:
+> > > Hi,
+> > > 
+> > > Commenting on your observation quoted below.
+> > > 
+> > > On Wed, 20 Aug 2025 18:48:10 +0200, Mauro Carvalho Chehab wrote:
+> > > [...]
+> > >   
+> > >> If you want a more comprehensive answer:
+> > >>
+> > >> LaTeX is highly dependent lots of packages, including fonts. The
+> > >> reason why you can't reproduce the font issues with Docker
+> > >> (I wasn't able to reproduce with Docker here as well) is
+> > >> probably due to either packaging differences between the
+> > >> two containers, due to different environment technologies
+> > >> or even due to the way Docker and LXC handles OS virtualization.
+> > >>  
+> > > 
+> > > I'm not saying there is no difference between Docker and LXC.
+> > > 
+> > > Can you fill in ???? cells in the table below ?  
+> > I mean                                          with this series applied
+> > 
+> > > Docker column is my observation of "FROM ubuntu:plucky" podman runs.
+> > > 
+> > >  "make SPHINXDIRS=gpu pdfdocs" under Ubuntu Plucky
+> > >   
+> > 
+> > I meant:
+> > 
+> >      --------------- --------- ----------
+> >      SVG --> PDF     Docker    LXC
+> >      --------------- --------- ----------
+> >      imagemagick     FAIL      ????
+> >      inkscape        SUCCESS   ????
+> >      imagemagick [*] FAIL      ????
+> >      --------------- --------- ----------
 > 
-> @vikash, pls comment if we should update in common code or have this
-> implemented specific for iris33 separately using some ops.
+> This is after my series, with doesn't deal with imagemagick/inkscape,
+> it only fixes broken texlive dependencies and fix font handling:
+> 
+> # (dpkg -l |grep -i magick; dpkg -l |grep inkscape)|grep ii
+> ii  imagemagick                   8:7.1.1.43+dfsg1-1                    amd64        image manipulation programs -- binaries
+> ii  imagemagick-7-common          8:7.1.1.43+dfsg1-1                    all          image manipulation programs -- infrastructure
+> ii  imagemagick-7.q16             8:7.1.1.43+dfsg1-1                    amd64        image manipulation programs -- quantum depth Q16
+> ii  libmagickcore-7.q16-10:amd64  8:7.1.1.43+dfsg1-1                    amd64        low-level image manipulation library -- quantum depth Q16
+> ii  libmagickwand-7.q16-10:amd64  8:7.1.1.43+dfsg1-1                    amd64        image manipulation library -- quantum depth Q16
+> 
+> # make SPHINXDIRS=gpu pdfdocs
+> 
+> Summary
+> =======
+> gpu: gpu/pdf/gpu.pdf
+> 
+> All PDF files were built.
+> 
+> # rm -rf Documentation/output/gpu/*
+> # (dpkg -l |grep -i magick; dpkg -l |grep inkscape)|grep ii
+> ii  imagemagick                     8:7.1.1.43+dfsg1-1                    amd64        image manipulation programs -- binaries
+> ii  imagemagick-7-common            8:7.1.1.43+dfsg1-1                    all          image manipulation programs -- infrastructure
+> ii  imagemagick-7.q16               8:7.1.1.43+dfsg1-1                    amd64        image manipulation programs -- quantum depth Q16
+> ii  libimage-magick-perl            8:7.1.1.43+dfsg1-1                    all          Perl interface to the ImageMagick graphics routines
+> ii  libimage-magick-q16-perl        8:7.1.1.43+dfsg1-1                    amd64        Perl interface to the ImageMagick graphics routines -- Q16 version
+> ii  libmagickcore-7.q16-10:amd64    8:7.1.1.43+dfsg1-1                    amd64        low-level image manipulation library -- quantum depth Q16
+> ii  libmagickwand-7.q16-10:amd64    8:7.1.1.43+dfsg1-1                    amd64        image manipulation library -- quantum depth Q16
+> ii  inkscape                   
+> 
+> # rm -rf Documentation/output/gpu/*
+> # (dpkg -l |grep -i magick; dpkg -l |grep inkscape)|grep ii
+> ii  inkscape                        1.2.2-8build1                         amd64        vector-based drawing program
+> 
+> # make SPHINXDIRS=gpu pdfdocs
+> 
+> Summary
+> =======
+> gpu: gpu/pdf/gpu.pdf
+> 
+> > >     --------------- --------- ----------
+> > >     SVG --> PDF     Docker    LXC
+> > >     --------------- --------- ----------
+> > >     imagemagick     FAIL      FAIL
+> > >     inkscape        SUCCESS   ????
+> > >     imagemagick [*] FAIL      ????
+> > >     --------------- --------- ----------
+> > > 
+> > > [*] after installing both inkscape and imagemagick, remove inkscape
+> > >     with all its dependencies kept.
+> > > 
+> > > Do you see any difference between Docker and LXC columns in the table?
+> > > I'm all ears.
+> 
+> Yes. After having texlive dependencies fixed, and addressing the broken
+> conf.py file that is not aligned with modern Sphinx practices, it passed
+> on all three scenarios.
+> 
+> Please notice that addressing image was not the intent of this series.
+> 
+> The goal was *just* to fix texlive dependencies and fix text font
+> mapping that were causing troubles on Ubuntu and on other distros.
+> 
+> 
+> Thanks,
+> Mauro
 
-increasing 1.8 MBs for VGA and assuming it grows further for higher resolution,
-i would recommend to separate it out for line buffer alone.
+Thanks,
+Mauro
 
-Neil,
-We are doing something similar as a preparation for enabling an upcoming SOC,
-maybe let me share the pseudo code offline with you. When you add encode support
-for SM8650, you can raise that change to extend the line buffer calculation for
-iris33.
+Hmm.. I ended doing the above tests with this patch on my pile.
+It could be affecting the results, as it prevents kfigure.py to
+crash when writing PDF output.
 
-Regards,
-Vikash
+
+commit df1602df0da3a6254d58a782654e7f2e60512dc8
+Author: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Date:   Wed Aug 20 09:17:50 2025 +0200
+
+    docs: kfigure.py: don't crash during read/write
+    
+    By default, Python does a very bad job when reading/writing
+    from files, as it tries to enforce that the character is < 128.
+    Nothing prevents a SVG file to contain, for instance, a comment
+    with an utf-8 accented copyright notice - or even an utf-8
+    invalid char.
+    
+    While testing PDF and html builds, I recently faced one build
+    that got an error at kfigure.py saying that a char was > 128,
+    crashing PDF output.
+    
+    To avoid such issues, let's use PEP 383 subrogate escape encoding
+    to prevent read/write errors on such cases.
+    
+    Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+diff --git a/Documentation/sphinx/kfigure.py b/Documentation/sphinx/kfigure.py
+index ad495c0da270..8ba07344a1c8 100644
+--- a/Documentation/sphinx/kfigure.py
++++ b/Documentation/sphinx/kfigure.py
+@@ -88,7 +88,7 @@ def mkdir(folder, mode=0o775):
+         os.makedirs(folder, mode)
+ 
+ def file2literal(fname):
+-    with open(fname, "r") as src:
++    with open(fname, "r", encoding='utf8', errors='surrogateescape') as src:
+         data = src.read()
+         node = nodes.literal_block(data, data)
+     return node
+@@ -355,7 +355,7 @@ def dot2format(app, dot_fname, out_fname):
+     cmd = [dot_cmd, '-T%s' % out_format, dot_fname]
+     exit_code = 42
+ 
+-    with open(out_fname, "w") as out:
++    with open(out_fname, "w", encoding='utf8', errors='surrogateescape') as out:
+         exit_code = subprocess.call(cmd, stdout = out)
+         if exit_code != 0:
+             logger.warning(
+@@ -533,7 +533,7 @@ def visit_kernel_render(self, node):
+     literal_block = node[0]
+ 
+     code      = literal_block.astext()
+-    hashobj   = code.encode('utf-8') #  str(node.attributes)
++    hashobj   = code.encode('utf-8', errors='surrogateescape')) #  str(node.attributes)
+     fname     = path.join('%s-%s' % (srclang, sha1(hashobj).hexdigest()))
+ 
+     tmp_fname = path.join(
+@@ -541,7 +541,7 @@ def visit_kernel_render(self, node):
+ 
+     if not path.isfile(tmp_fname):
+         mkdir(path.dirname(tmp_fname))
+-        with open(tmp_fname, "w") as out:
++        with open(tmp_fname, "w", encoding='utf8', errors='surrogateescape') as out:
+             out.write(code)
+ 
+     img_node = nodes.image(node.rawsource, **node.attributes)
+
+
 
