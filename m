@@ -1,133 +1,223 @@
-Return-Path: <linux-kernel+bounces-779571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF7DB2F5C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:58:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 715BCB2F5CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DD92601EBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:58:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53B73AA0CD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3616D3093AF;
-	Thu, 21 Aug 2025 10:58:51 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5971430AAB3;
+	Thu, 21 Aug 2025 10:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="V7D8BXKw"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7DC2ED17C;
-	Thu, 21 Aug 2025 10:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755773930; cv=none; b=E6qZU/TAUOncw/RXXsSm6F4FLIi/L7qN9doi0bL14ztuBrlZOrl+l+DqlC+kIWZslG09BZWWxzujPjUGtTEM7NLtNUZoi3dGU7SV96nG0O1/K6bNJjtOPfYoP7kMNHNibj4vXXycUZL3idkXIzEMB8zP6OItJFmSU0U96n7mZgU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755773930; c=relaxed/simple;
-	bh=/UrVtg1jA2CXUsGcO4I6cJSGJyssZLggxJl6w2WHg4c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Im39VdyEqEeN6Bes7kfCEvD9yypaOphlweM+5u6gaLch08VTotykT10jBB2aW1SLjq5hvAcPKZPQnP/bPb31KfvMi5DSVtVaAzNGROFCy9if3mZHMWZv6hFmW54ILZlDdbaC2VAHcTsxlCx+awGikxtR7fmE/wVsdgmvQdJMzyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57LAvf9g053153;
-	Thu, 21 Aug 2025 19:57:41 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57LAvfw2053149
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 21 Aug 2025 19:57:41 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <23498435-ee11-4eb9-9be9-8460a6fa17f1@I-love.SAKURA.ne.jp>
-Date: Thu, 21 Aug 2025 19:57:40 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBDA2ED17C;
+	Thu, 21 Aug 2025 10:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755773944; cv=fail; b=nRmt6vxuYKQ+D6zgfJTa7ZcqBQij82TwfF/fcMInNZaQFYFq1UL569z6LZfpRucvQIhFhKz1cmNU7FvqpEzUrMUJ3aYID578Vqqj+N2SXMzLdCRB2l+kzKIUnlxa5NwVWq9qjqpdBpQPdc1hMiDueGH0SfZ05Myd84pM0LlcWnA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755773944; c=relaxed/simple;
+	bh=DwjH+gFgAKJ3cUrwp/Y37UuQKNWy83IOZmoWXDqQLwA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=e5vUOi/g3Jn+ctp1Gazc64K+W0JCuo5qQoNIH2ew8xjPd+X9VrJl9so+1b3BEg1C7jRjm2H6Iy6r62ijjTzcXl8zHB6EIv15tJIPu6a+gamQ9iBeEwxO/9+F9TzISq/gVrjZTISCmaQSInrxMVYyRWX5d2d2C9fO2hIwliqGJhA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=V7D8BXKw; arc=fail smtp.client-ip=40.107.92.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Xq4txUP2YM4ggAnoTEjFBv/tLdZkbAIFASFw6cbuzgThdlYmWfFka5GE0YYiPVBfQZ9VdeEvQvWzGMdzolp+ghnySVpKYxU5RQXc83bmrBfd7f3bDvJj4tgCLFrfXkDgjr5KIYb9Eef21KKSYfFsvDLfkc7uvewI/UozAgC64oSC+BdtGmL35pzb2u+fK1bnJaxdSPjuQnkk3hkESzO9ZM7eO4JySUGtqUd2gHO71vPG2qGZLNqCQ3Rla3/HRb8uE2WSy9iU+3RxKqQoP4ezu7AfV8r2/Zx/Wvg7Nmwl0up/p3RsdcEHKkTTzuot0dSRWFLGYY8QEfrLegG+TlA+bA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PLRHRBJhLl7yl60qhINGcd+d4NJPe1glgNabJHahmeY=;
+ b=VzgPrSECT/7ryVqsiFXo05MP1wg4bAaaQpURAyMt4JDF2PzQUBVerOyKtLzZQJwUIR55VtKnKTZbfgOKx37lebu0VGQTwSsz0rfr0nCCuhFJbKKaUKL491IqH7PfMuYOL3AK8BOSEh12FvYEd+eVaqfmwpoqYgjJMRiMXyhzPaAxqDwrSYua59imZZpR7kuvh1mQyZ8MAHNPaRcQGOa2bklGy4C71g/Ecw2oXYmyJjHFmlR4DNL5L4N7bePJj87Kd6/TfZY+O95Ibk3tCy7aqm/3GRMmjuqYLLVsJ+dGVAvJgKVaov9ALBWRec2CAyCfoiW3kHmY4z9oCma92UD7LQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PLRHRBJhLl7yl60qhINGcd+d4NJPe1glgNabJHahmeY=;
+ b=V7D8BXKw9+jvBDgJT7CXKG4GJ5wGZvbkAd5GEK+2QXGIAyYI2y5rSSCB5N9ODwaVnoj094N4kiD4kSDqKAYQxwiBT/vSk2WZPbWfUF3PNjR3eBLQwwKfho4cdxAPf/oEluHhbvuIHpzWASVPX8tr4DiY7c/DxFofWxVzap6TP+0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21)
+ by DM6PR12MB4451.namprd12.prod.outlook.com (2603:10b6:5:2ab::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.16; Thu, 21 Aug
+ 2025 10:59:00 +0000
+Received: from BL3PR12MB9049.namprd12.prod.outlook.com
+ ([fe80::ae6a:9bdd:af5b:e9ad]) by BL3PR12MB9049.namprd12.prod.outlook.com
+ ([fe80::ae6a:9bdd:af5b:e9ad%6]) with mapi id 15.20.8989.018; Thu, 21 Aug 2025
+ 10:58:59 +0000
+Message-ID: <db253af8-1248-4d68-adec-83e318924cd8@amd.com>
+Date: Thu, 21 Aug 2025 05:58:56 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/2] KVM: SEV: Add SEV-SNP CipherTextHiding support
+To: Kim Phillips <kim.phillips@amd.com>, Randy Dunlap
+ <rdunlap@infradead.org>, corbet@lwn.net, seanjc@google.com,
+ pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ thomas.lendacky@amd.com, herbert@gondor.apana.org
+Cc: akpm@linux-foundation.org, rostedt@goodmis.org, paulmck@kernel.org,
+ michael.roth@amd.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <cover.1755721927.git.ashish.kalra@amd.com>
+ <95abc49edfde36d4fb791570ea2a4be6ad95fd0d.1755721927.git.ashish.kalra@amd.com>
+ <5dff05c1-474e-4fff-a19b-7c17b4db6173@infradead.org>
+ <7eed1970-4e7d-4b3a-a3c1-198b0a6521d5@amd.com>
+ <922eaff1-b2dc-447c-9b9c-ac1281ee000d@amd.com>
+Content-Language: en-US
+From: "Kalra, Ashish" <ashish.kalra@amd.com>
+In-Reply-To: <922eaff1-b2dc-447c-9b9c-ac1281ee000d@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA0PR12CA0011.namprd12.prod.outlook.com
+ (2603:10b6:806:6f::16) To BL3PR12MB9049.namprd12.prod.outlook.com
+ (2603:10b6:208:3b8::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] hfs: update sanity check of the root record
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "leocstone@gmail.com" <leocstone@gmail.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "brauner@kernel.org" <brauner@kernel.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
- <d4abeee2-e291-4da4-9e0e-7880a9c213e3@I-love.SAKURA.ne.jp>
- <650d29da-4f3a-4cfe-b633-ea3b1f27de96@I-love.SAKURA.ne.jp>
- <6db77f5cb0a35de69a5b6b26719e4ffb3fdac8c5.camel@ibm.com>
- <1779f2ad-77da-40e3-9ee0-ef6c4cd468fa@I-love.SAKURA.ne.jp>
- <12de16685af71b513f8027a8bfd14bc0322eb043.camel@ibm.com>
- <0b9799d4-b938-4843-a863-8e2795d33eca@I-love.SAKURA.ne.jp>
- <427fcb57-8424-4e52-9f21-7041b2c4ae5b@I-love.SAKURA.ne.jp>
- <5498a57ea660b5366ef213acd554aba55a5804d1.camel@ibm.com>
- <57d65c2f-ca35-475d-b950-8fd52b135625@I-love.SAKURA.ne.jp>
- <f0580422d0d8059b4b5303e56e18700539dda39a.camel@ibm.com>
- <5f0769cd-2cbb-4349-8be4-dfdc74c2c5f8@I-love.SAKURA.ne.jp>
- <06bea1c3fc9080b5798e6b5ad1ad533a145bf036.camel@ibm.com>
- <98938e56-b404-4748-94bd-75c88415fafe@I-love.SAKURA.ne.jp>
- <a3d1464ee40df7f072ea1c19e1ccf533e34554ca.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <a3d1464ee40df7f072ea1c19e1ccf533e34554ca.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav104.rs.sakura.ne.jp
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB9049:EE_|DM6PR12MB4451:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1b111e0-f51f-4e2d-8fff-08dde0a1bb76
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SXJrajMzclZ3Y1I4cFpSQTRJQXVxUFZFTmhreU5aY2ZIcUdvTWp0ZkJZSHNv?=
+ =?utf-8?B?WTAvdGZ3NWd5L0owWWxOUjc5aDFTMXlGT2tSUGpIVjN2RDV1QWttblZvQVZQ?=
+ =?utf-8?B?eG52QUcwbjdmTjUvbmxuS3RKckhnbFpoUzZzMGJndld2UndoNmp6NVpsajJv?=
+ =?utf-8?B?RWRjNDZkRUQzK25DNGpmUG9paTQxUDNyZlNGU1cyNnZWQ1RmZXpxOXhkZWVu?=
+ =?utf-8?B?bUJTMkhZVlRjWVhIWEI0WklkTXZCOW1nTHBJV1pmMUlDdnNjQUgrSGd3eVZG?=
+ =?utf-8?B?SXZueXpUVnBxWDRJZ2Fvd1UxVXZjM1VuT0ZYTmVRN1VXQkdIcURIZjJqOGdZ?=
+ =?utf-8?B?QjltcmFrQlJtbkxLQ3huV2ZVRldJNy9ucE5RVk1WNXRyZHBTSHJBSklzbUlj?=
+ =?utf-8?B?NThMTHBJbnZ3S1lDa3NmTU9rWmxNZ1hxamk0M0N4RjJ0b2tPdlhxUWFnaUZo?=
+ =?utf-8?B?Y2E4S0FuZXUrVFNuOG8yZzloY05FdHpZbk9QMk5aQncxaTBTVDdGcGQxYlRK?=
+ =?utf-8?B?bEw5amZqejRuMkIzeXl4VzM1RURsUHE1NWI0bkxGYmRxc3ZXbkZpTXRIWWlY?=
+ =?utf-8?B?aExFcThud05FckNPY1VLektLZU1SMXdXMUNrUDFySzlRN21SQXBRZVRuNXZV?=
+ =?utf-8?B?RU80QnNjK1ZjRWh0SDlBY3l3YmFpZVE1bjQ5cHR2OTZuTkRKVWtBR2RMQnJ3?=
+ =?utf-8?B?bVcrMUlSUFI2ajZTNVI1QzJqSkpVaHlucmxBck5SanFIeUEvdjVZZENCc0JT?=
+ =?utf-8?B?aG9nRVlqRUpHMDZ1OHZNc1NlLzFsUjdnYzcrMWlnRWRPaGQ0LzF4eDZ6NzRG?=
+ =?utf-8?B?OVhudmxHTVBORDlkTHMySWpEaW5qQ2dWTXVnOGZ6MnROeGovM1BkWldhYWJM?=
+ =?utf-8?B?QWFiOGVBTTdhZ080cmtzbkZXRkJ3cFJCcTFvZUdpSWpjdDNVWU8xV2NwOUIx?=
+ =?utf-8?B?MWdWTGMvK2drc3BrakNVaGhzemZYcjlHZXI5a3NRZTJvNGpYS1pabzR5d2VQ?=
+ =?utf-8?B?WjV2bFVwcWN5V3Zvd1RoQ3E5UENaUFRKVjkweWxjSEx0cVpXSkhRem1EQWdM?=
+ =?utf-8?B?Zy9SM3QvRysrM2gvQlRFQ0xDMXdFSWVJQTFDb0VGUGNaQWxOZ0QzQm5RUVJP?=
+ =?utf-8?B?WklFOTQ1NTg2enNtRHNNTGl1S3VHc0s2RUlYMXNGWVBGKzZWeG5TN3Q5b2kw?=
+ =?utf-8?B?NGF0Vk9xM2doZm1mZE9sTGRYcVVFRWFBSi8veG5meTBwU1ZJUFpqa1RqSDly?=
+ =?utf-8?B?WEVrNWZIaUd6b1JNQk1MZlRyMVUyRytnNEw5Z3kxS1dsM3BPQWRXTXVmTTZq?=
+ =?utf-8?B?eDBVT1pZSXBPb1JVWmdlNHgySHl4YndHSlRmUmhrbVROZlJDS2tKM0ZQckJX?=
+ =?utf-8?B?c0xCY2tDek1SM2htTi9JWm1qZ3RtN0d2VWpJT25wR250R3dDbmFEemJSd3RD?=
+ =?utf-8?B?bGp0VzF0YXFmbUJMUmRQSjRwMzJHSUxVV0xvazZTNElqMFhreis3TEs3ODVr?=
+ =?utf-8?B?MFlLZlFsOHpocHZjaC9MZ0NaUzFDRlVLZkZxSlBncE9FY2dRUVV0YStIWVRY?=
+ =?utf-8?B?SGN3Uk5mejVuSHB0OTZDZi9WRG0ySGZqM1I0amJwMHBma1RRdXRYY1BqMXhS?=
+ =?utf-8?B?L1krVmdtVGgySlgyQlJ6MmZGRTkrbFR2ZTlodGNCSU1pVzhlQ0J0a0pLckZK?=
+ =?utf-8?B?NEtyb1hQVzM1dWJJVWc4dHNGSDUyaXYyc3ZvdXBldGFWUmpmNkY3WnNyalVa?=
+ =?utf-8?B?OExEVUNWTTBRTTl3MFBUT0VhK2YrbjltNkRaK3Axd3NFWTZXbThuQm5UU05z?=
+ =?utf-8?B?RGZKTXRYZFFMMGp2S0hyRE9DZ2J1eEdsNSt0ZFZKTVNZVm5hZVYwQjlNd2NB?=
+ =?utf-8?B?aVhxa0o0UHc4ZmMzSDhlREN6Q2EvYitBNUFQY0tyc3JmQUNqVUtMdmxBTndm?=
+ =?utf-8?B?dGNwK09menBWL2NySUh0OGQ0djRMVWR1VnpHQ0ducHM3WW5mMHRmV2t2NXNz?=
+ =?utf-8?B?UG4vVEpBMkt3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB9049.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UUY5aGk1ZnY3aWpzdVd6Ympad0swMW9VVkNpYzUyVXBpMnVscEVGS05rR3du?=
+ =?utf-8?B?OHZCMzh5dUk4b05XNkRsZno2Wkw1K0l6d0E3T3RYTG1ab2ExQlJIekVXbkhL?=
+ =?utf-8?B?WW92czdwa2N0VkdtNnhTSGxDS0lNOVBIbzQ2Q3JyckNydVkzYzFVVm92b1Zh?=
+ =?utf-8?B?SXJheHB6YWVvVDlmT240c2JFaGdhVURneDFmSHRReHkxVDJ3N2l4ZWFUSDVR?=
+ =?utf-8?B?aHRjMmFCb1JmR21DQ0JYSFlVZzMrK1BhL0lGT2ZHRCszTUd6Y0ticm0reHor?=
+ =?utf-8?B?aVBiYkNDOVpjT2JnVnY4ZEZORGhiWkFycUNPS3FSTEtLUG5CaUFYYjhvNWEr?=
+ =?utf-8?B?aGtaUHpYNnd1bUJjZThXRGVIOFBxemljSWpWQjcvSE14YmhkUlM5WnlJQXBY?=
+ =?utf-8?B?dXpMcm9EdlhRQmxvY2NkZVpTQ1F2bEt5ODhSY2FicUhQWGROWU1NQUJhcjhv?=
+ =?utf-8?B?Vkd2c1U5elB0bVpNMEZpUkcvM0k5WjhWYVJoV24vVEhYTkxYdmEvemZMRDYx?=
+ =?utf-8?B?aTNWY0V3b2hGSmtySXB6d3ZGQ2lOZm5KUTBEdUorbTJNYzZ4S2ZLQUJyTU1Z?=
+ =?utf-8?B?M0RFeUVReHJCUW1xYXZJN0x2TTJPVXpMKzNxc3NhVURQVXAxVVFhK1BMUU1W?=
+ =?utf-8?B?UlBzOWRBNi9yaktOSlBlMk12NXNNWFozWEdzd2pGa2dkdS9NWVBKWkpJUjh2?=
+ =?utf-8?B?eVhrcWRNMEVnV0VoanBrbGhFN0hmcVhwWlhEaThncjh5b2xFaURBa0FPb3pW?=
+ =?utf-8?B?Y01IbUpqeEc5MkphUEp3Y2FqbGJqbkVaZ0IxblE4SEx2dmZ0WWxtU1FkQllF?=
+ =?utf-8?B?OXUycWZZbU4rRitnZVdsenIzWWFPaUoxQ0t4aDRXZFZKODdrU0JaWkF3S1FE?=
+ =?utf-8?B?cTdwOUFlWnlUaGlBblR4WDZvTWxJVVVPQjI2T25GRmRlL0xlYmkrRkY5T3ZR?=
+ =?utf-8?B?T3F2eVRyMEduT3p0U2JGOUlNT0dwazBlcEZnRXFFamVZZDhsc05WaWFVNTJ0?=
+ =?utf-8?B?YTJSTkREM0VlZXd3R0U1ZnB1VmtKV1ovVjJ3RDQ1ZnEwQlhRUTF5ZGdVdkJk?=
+ =?utf-8?B?RzZSTVhNRnRoN3dIUkNneVh1QW40TkpxbDFnNktnUE1MQ3dhMzMzVSs2N1ZX?=
+ =?utf-8?B?T3dFUXZkdWxLYVJVZ093ZUIydmpLbDFQZzFKZkFtNnJPY1I4bkJoRUVoTlNw?=
+ =?utf-8?B?aCszbDByTUlpTmprOWNFLzM3ODV1SGR3YXJqWDE5SVQvdDkrcTliZlVqVjhJ?=
+ =?utf-8?B?d0pGdjEySDQ1T2pzYXBKS1BySUg2ZnUrUklrS1NNQlhDQWREa3dCNmNLUThH?=
+ =?utf-8?B?a1BWWjdzSE5JME9CSFBVOVlrcDVsTGNQWk15UlJ5ZTQ1QkdaQTQvQ0pXa1Bs?=
+ =?utf-8?B?QUZESWQyeUNnY3J5cFRLMTBybm1hem9lOERsT1dhSHl0TXFBb1dDNXpESFY2?=
+ =?utf-8?B?Vjk0QmNFcWhOaVJGeXVteWttVXRybUtkZ2tSaUw4S2drVXhTc2JIZGxOVkZJ?=
+ =?utf-8?B?TmJveXFtMFdQQVJZdXVQdlpHU2FmRFFSZEZobjY2VTZPZnE1WU53YUhBOHdq?=
+ =?utf-8?B?dEw2QlNiall4a3I4cDhvbFNrZk5kaXB1SUY2NWJheC9zK3p3L0lPbGgwdmE5?=
+ =?utf-8?B?dWtSOXBlWXgvNXdKeHMxaERpa1RuM25PZzJ2VllDMUwyQ0xZRHBjd2cxenJn?=
+ =?utf-8?B?cHhLUWY0OXZ2aEo5SUdqKzBid3FseXpKRm92S1k3MGxmdjk0N3h5UTdRdG15?=
+ =?utf-8?B?WDVNQTIrZTduNHJ1ZVd6UnRsckJMVWNFMFpjZ3dPUVc1NlhIdmZOeUlEN2d3?=
+ =?utf-8?B?YUVSa3hqVnhDR256akhKY0Y5dXY1VkxpWFVTbU5ZRTFvWXpFb1daWWpkV2Fz?=
+ =?utf-8?B?aUE3N2hkS1o1dEVTVWptVHNmdE1nQU1FVzBlQ1Z4bUtZSmN0ell2UzVnUXRz?=
+ =?utf-8?B?N291WE5hSEJsTmxkdEw0aXpCeFdWbjNIcnlaQzdoYjdKQnQveGw3YU9XMCtj?=
+ =?utf-8?B?ZGxBdW1PU25iaCt1b3labkF2TTR1L1dxN0tFQU8yNzBrdGMrUG44bExEcG5W?=
+ =?utf-8?B?ME9yUXM4cExrYnJoWTJDdHk4Sjhpb3lrRGZnZWZtS2VKbDlNRDdvQVA0MlRF?=
+ =?utf-8?Q?/+IJfd7tk/gAevNAnAYOlmGLQ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1b111e0-f51f-4e2d-8fff-08dde0a1bb76
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB9049.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 10:58:59.7522
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1OhbbBfpFi84usNhF3KWqqFdEb0Z4Cc6C1VUVMCVwVYYpa8i88tvocZr9ILq4RDbWfnTpkFSBqtRLQTI8bRaZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4451
 
-On 2025/08/05 7:00, Viacheslav Dubeyko wrote:
->> Please show us your patch that solves your issue.
+
+
+On 8/21/2025 5:30 AM, Kim Phillips wrote:
+> On 8/20/25 6:23 PM, Kalra, Ashish wrote:
+>> On 8/20/2025 5:45 PM, Randy Dunlap wrote:
+>>> On 8/20/25 1:50 PM, Ashish Kalra wrote:
+>>>> @@ -3064,10 +3070,32 @@ void __init sev_hardware_setup(void)
+>>>>   out:
+>>>>       if (sev_enabled) {
+>>>>           init_args.probe = true;
+>>>> +
+>>>> +        if (sev_is_snp_ciphertext_hiding_supported())
+>>>> +            init_args.max_snp_asid = min(nr_ciphertext_hiding_asids,
+>>>> +                             min_sev_asid - 1);
+>>>> +
+>>>>           if (sev_platform_init(&init_args))
+>>>>               sev_supported = sev_es_supported = sev_snp_supported = false;
+>>>>           else if (sev_snp_supported)
+>>>>               sev_snp_supported = is_sev_snp_initialized();
+>>>> +
+>>>> +        if (sev_snp_supported)
+>>>> +            nr_ciphertext_hiding_asids = init_args.max_snp_asid;
+>>>> +
+>>>> +        /*
+>>>> +         * If ciphertext hiding is enabled, the joint SEV-ES/SEV-SNP
+>>>> +         * ASID range is partitioned into separate SEV-ES and SEV-SNP
+>>>> +         * ASID ranges, with the SEV-SNP range being [1..max_snp_asid]
+>>>> +         * and the SEV-ES range being [max_snp_asid..max_sev_es_asid].
+>>>                                       [max_snp_asid + 1..max_sev_es_asid]
+>>> ?
+>> Yes.
 > 
-> OK. It will be faster to write my own patch. It works for me.
+> So why wouldn't you have left Sean's original "(max_snp_asid..max_sev_es_asid]" as-is?
+> 
+> Kim
+> 
 
-I haven't heard from you about your own patch.
+Because that i believe is a typo and the correct SEV-ES range is [max_snp_asid + 1..max_sev_es_asid].
 
-I guess that your patch will include
-
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index bf4cb7e78396..8d033ffeb8af 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -361,6 +361,10 @@ static int hfs_read_inode(struct inode *inode, void *data)
- 		break;
- 	case HFS_CDR_DIR:
- 		inode->i_ino = be32_to_cpu(rec->dir.DirID);
-+		if (inode->i_ino < HFS_FIRSTUSER_CNID && inode->i_ino != HFS_ROOT_CNID) {
-+			make_bad_inode(inode);
-+			break;
-+		}
- 		inode->i_size = be16_to_cpu(rec->dir.Val) + 2;
- 		HFS_I(inode)->fs_blocks = 0;
- 		inode->i_mode = S_IFDIR | (S_IRWXUGO & ~hsb->s_dir_umask);
-
-change, which results in the following.
-
-----------
-The root inode's i_ino is 0 or 1 = fail with EINVAL
-The root inode's i_ino is 2 = success
-The root inode's i_ino is 3 or 4 = fail with ENOTDIR
-The root inode's i_ino is 5 to 15 = fail with EINVAL
-The root inode's i_ino is 16 and beyond = success
-----------
-
-But my patch has extra validation on the root inode's i_ino,
-which results in the following.
-
-----------
-The root inode's i_ino is 2 = success
-The root inode's i_ino is all (i.e. including 16 and beyond) but 2 = fail with EIO
-----------
-
-Therefore, while you can propose your patch,
-I consider that there is no reason to defer my patch.
-
+Ashish
 
