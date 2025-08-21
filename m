@@ -1,230 +1,290 @@
-Return-Path: <linux-kernel+bounces-778963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B4DB2ED40
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:50:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C749B2ED4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE04FAA00E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:50:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F39903A6F9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E652E2E92DE;
-	Thu, 21 Aug 2025 04:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD2B2D979F;
+	Thu, 21 Aug 2025 04:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q7EhPCLb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hYHZvP1L"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2062.outbound.protection.outlook.com [40.107.101.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370DB2C21EB;
-	Thu, 21 Aug 2025 04:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755751769; cv=none; b=MLYpzV6T/aJyVXLVGic7qQsdgXn2yNYAmD9y0d7VADsWkE/aiBpwkFIltKvsvERuZhFD6lMaoa0uHa9hDHirpY5jj7Q18IZM41uDSaH3iGjLpkeJrxYpM2/ZTeBFAahzvGLBDfhXQilUDtyiVnIDoDn5oJiJmds3R9oYz6lIVUc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755751769; c=relaxed/simple;
-	bh=S+9vUXeeoLmZU0el5AUi0Iv2XV5huSwC7mL0NCniyUc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V7TLq7foglJ0bNAx+Qw+l6qUOa5GHdZpGgxKEGYr0iBZjspLzuowP0HJs+UmtDXzpf44C7UhBpYd25hxnpy1Mz6/OG4h0GHFpsWOigx54oyVBY+poCEmtuyPUy8we1Zdi/YkqkBHywHkzZuem5Gu4oy5rWBTwqBvFwKLGO+zg3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q7EhPCLb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L3ZJXH021483;
-	Thu, 21 Aug 2025 04:49:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=dRXdR2GuLj9
-	wZzFFhpaJZan7/AsXjlsHzNDXSkWyYsw=; b=Q7EhPCLbQyNS9yrKQVcSxsD3uTy
-	BJ3qTtd6scI8pJAf1rKyg8hcAqtWpoN77sgJraWVig472FNLMPsMd7a0SPdph9GI
-	HLmRhcCo1iq5kFYpFlazQIa3w4bA0c6oF2wwRPWIirpbmv9x4wOscvkMTNuqAZPK
-	SbQipDsR5LBS2rVz1rdxIwGl+K1QaV58EBSJXjDdPV1R8atlyMwvf6HwyJRhFF2q
-	gEpwEcb9unKeBUKvDOqNQdpYcwxb5kpfdwY9FXb4iLysEIg41nPtYmDdDOHlDgF0
-	Vw1GRxwd9MknjwETJhDL6oiV4ZjXjghV9VINrppG4VkomLqlVngC9e44Hkw==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ngtdhuvg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 04:49:22 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57L4nJO6022016;
-	Thu, 21 Aug 2025 04:49:19 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 48jk2m9977-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 04:49:19 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57L4nHdp021922;
-	Thu, 21 Aug 2025 04:49:19 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 57L4nIuN021966
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 04:49:19 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
-	id 8FDE95D6; Thu, 21 Aug 2025 10:19:16 +0530 (+0530)
-From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
-        quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com,
-        Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v8 9/9] arm64: dts: qcom: qcm6490-idp: Add sound card
-Date: Thu, 21 Aug 2025 10:19:14 +0530
-Message-Id: <20250821044914.710044-10-quic_pkumpatl@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
-References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECAB2C2372;
+	Thu, 21 Aug 2025 04:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755751790; cv=fail; b=N0eMzF3eIiqTi3+/A33OLuBYvwsYDZp0S37PySFoD3FnVtGk1iv08zjnpMjxQ/ehK+6LLIiQcc/qAX9cKeIpTQbdV0VKhW86RsmdYCHPAKRG1vFfooxaA2PFFv7KAWWisw/IIlcw1hiLDAKbJBwu8v/LKgMP+vmLl7yvow09pls=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755751790; c=relaxed/simple;
+	bh=6dw5xxVc/YknyEwq0BSwo5G9sDDkQMLUGPocE0TDVW0=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=q60pReEXnMebn819myMdwNMs8ssrGHSBnQC+aiVdaBV4bcOUv013g+6uI4jefi1Axwc/sJVaBnyBkvTY5G2cwGJSFGCR9nV1XGtnh1BGjQwyjvgbm4F8ZFWwk/b072DfhAkCR21YyaHFH8Vx/1uQulhXDWypkp8WlwzLi8+SKfY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hYHZvP1L; arc=fail smtp.client-ip=40.107.101.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wv51CEA1H0J4R08CuNTFQdFJ6/bVjlLYNeqJ24la5u94Qi8Rn+WFC0uGnqOd9zvYQAnmMZ7fIN2/CT4JwfSbK/bXC70i09pr47dKUHO1iubss2uXdvaBWWtkGcOkL3h06CZFm0NTE2TaJtLmMscxu9uSksj0/+LF3o77BuHviS+UsdtJPtDCyXSuH/RB2rFagM4ctG4bPCMpQnx69cN9X3ClDX3yZw64lIoQUFSCFz8fwB3GWr51ARCJTmqu8ktA+HvK9qeRyKZwphRhUvLM46NXYr0TG3nbvv/ubJ6B7cuYHXglv11HA3/u6oIv8aBsXzHUdoJ2VqSMEq5emVF9EQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yCCLTvcOu0+kDB3C5rLZPeBjiwpKAHsSig9hBnUSeZ8=;
+ b=QAxOem0/pq8vwhFlysSgDFYccaoeJZsbZ8HO7xGpZx+XaVQOrOoA4lkqEUcHwhapmFznLEoHW7T+EkIdDgnZGKwi+tPR0+OO9DzNMNZL+Xn+9ntOcjwuxkZF9iOwj+IsbxO+UfFxCvVWUpfLmU5cL2B7fafPO0aICIdkgHTitYerxTnv7fIf6i53pUYvSzVI2gYGfCCh5qROwdizzl7R0vftFJ1SeBYa7a1ZMJckR7u4vH68cl8bbZYvOEQvZvfqApe6i9AO0K+HKGQyH9snTu+by4xKCpEcBkCcL4Mc0PZE0aVusS5mB9/iJHLv1vOPMkiB7uVnqmxfNDOjWi7pRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yCCLTvcOu0+kDB3C5rLZPeBjiwpKAHsSig9hBnUSeZ8=;
+ b=hYHZvP1L8Lk+moXICpBKOxL3rk0Yo9a0lxbJGzKBTYFSD5YHwbUl/ExSgS1NlWSHfcsuM2g74elmnBTbwCzDvZ8mIS7bBvjVn5JSdQkN//aidx9RP4qIiEj9wA28dHb0DYhda+ye1GiJwKbTeIXIrKUGtwxtXcKRBi5+BTGf5AO7nXbNo/ZC5SAaLTw0lp4FjQQ02fY/5Y5eulX4jVBe3D6BIGgSLO1AGz/RiPoy1tMJ+5zOdcH4MdJ0H0pc/UvzqbMt06S5FPQT4J32SjH2lUqFDX3sWUDa65GhNDjqPukadOHQ5sarPxY7GjxrcRfv6OQfv72KFpb7Jq7G4o/KUA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by PH7PR12MB9126.namprd12.prod.outlook.com (2603:10b6:510:2f0::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
+ 2025 04:49:46 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9031.023; Thu, 21 Aug 2025
+ 04:49:45 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Date: Thu, 21 Aug 2025 13:49:32 +0900
+Subject: [PATCH v2] gpu: nova-core: falcon: align DMA transfers to 256
+ bytes
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250821-falcondma_256b-v2-1-83e8647a24b5@nvidia.com>
+X-B4-Tracking: v=1; b=H4sIAFulpmgC/3WMQQrCMBBFr1JmbaQJRlNX3kOKpMmMHbCJJBKUk
+ rsbu5e/eh/eWyFjYsxw7lZIWDhzDA3UrgM323BHwb4xqF7p3vRGkH24GPxib0ofJ6FpMlYZ9Op
+ 0gCY9ExK/t+B1bDxzfsX02fpF/t6/qSJFm6ZBSm8GIn8JhT3bvYsLjLXWL4yBrIatAAAA
+X-Change-ID: 20250808-falcondma_256b-5fb8a28ed274
+To: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: TYCPR01CA0176.jpnprd01.prod.outlook.com
+ (2603:1096:400:2b2::18) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=LexlKjfi c=1 sm=1 tr=0 ts=68a6a553 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=yo8woGbAw4EISn_yZD4A:9
- a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: 92XSdq5Nt4GDb-rc4e4w1k2htVzp7Tel
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDEzNSBTYWx0ZWRfX0dzkXJFDYnrb
- +Zqf2YWhHxg47NJyTNHInEtf1HoIX1oR6EEAJNzK+taNwr+GrUsS40pOzOhBTB2CV/JkdqshPtp
- kHBmxnqLsnpmB31ZKpZ9zEb40GY0h7/vu5kh4AwLM1v3LNb+LFdrC7EVYOtFt0GKF+VPfRYhpPm
- kquO1fJ+X6ZWR3QhREZWespgfQdansN6hbukLBZ8VrCB66JGrbtu6JX62rH378o19PsHTMe+1It
- y7vXbR1sEU/X/Vre7GvcJLSOiJ/ytO8QLMX/e4ZnOhd+fmPbSb1DYeHbOFYYoQlnPY+kd8WoZ15
- bSe8AcjGnt6gTvmky/OBfOpPlE+I+CQ7KnCa89PsxRTfAP0406Mc2CYeMPLoHmE4uo2bhS0TcL9
- coMnMIG2gCmvkQHaHSsYcct8DLv/BQ==
-X-Proofpoint-ORIG-GUID: 92XSdq5Nt4GDb-rc4e4w1k2htVzp7Tel
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_06,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 malwarescore=0
- spamscore=0 priorityscore=1501 suspectscore=0 clxscore=1015 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200135
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH7PR12MB9126:EE_
+X-MS-Office365-Filtering-Correlation-Id: eada7c04-9824-4ab8-c229-08dde06e266b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|10070799003|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c3RxYWhzN0JMU3ZGTG1PVkJVaG1scDFPdjkyQmJ0RjlVd01kMUM5NS9yZytQ?=
+ =?utf-8?B?dHEwTVA0c3F1WHNXeFV2ajZLbDI1b1BNc2JkSnROV09tdy9hL0lFVkp4REI5?=
+ =?utf-8?B?Uy9iaFNraDlCU1pSZC9nUGVYN21XOUozY043aGtPb05YOHFMSHgvc0pRY0Zh?=
+ =?utf-8?B?dG82RzdVTy9DSzlxRlQxTUZrd28wL1dSK1BkcWoyM21VWkNJcExRTlJ3dyt3?=
+ =?utf-8?B?cUFXT1NtSjhUTVhGU1lwRkxNbklrdnZCRUNIV2hQODlIR29lMDE1dktCN2pY?=
+ =?utf-8?B?dk9YN3lSRnBpd0JMR0NNQnE2eWdsOHVyVXpuTFAxbURKVklITmJwRTBjVjV5?=
+ =?utf-8?B?MHBYSGdXVzhVQmR0U3ZueGF2M0tzOUtVK0JycU1xdzV1Z3FobGJLZ0ZKeVk5?=
+ =?utf-8?B?b3JaTE9UNXpMeUJ3bzRrOGYxWGtYL3A1RU9oUXRaK2FSRGJ6TE9GVVJkMXpZ?=
+ =?utf-8?B?eG12SGRsL2k1UFZZb2ttNEpXVjZZWXZhRlg1WEFsTW14a0twb3hTRUZlWFly?=
+ =?utf-8?B?eUxkN2g0ZDJOUk91Z3FYdFNmZGRsL0RRTnBlYzlRem9ZSzVxR3gzbk1lYnN3?=
+ =?utf-8?B?eVo5SDZoRUt2UEpFcFBUSERMVmk5cFY3dHR0UTlEUVpzdmVmOEhZNStiSDYv?=
+ =?utf-8?B?MlBZYzZDbnkyZmZXTGV0cjVVUVZBelhXbjJFMWJzSTZVRzVSUkJDVzd3Tllq?=
+ =?utf-8?B?enBSWElnbVM0VitkeDNYUkR4by8xU0VkRUF3eEZZbStaREs3WGJ3UWFERzNl?=
+ =?utf-8?B?Ym1pUk1QTGt4b0l3b0ZnZVJRcW52c2dRYk1ZSFJNYUkzWkVtYlNBclBMcmsw?=
+ =?utf-8?B?NlJEQ2tSN0FZYXg5NWdPdzEzd2RzREVzdFdGYUhUc0xkTFlOaE0xcEhWbFV2?=
+ =?utf-8?B?YXhKci9wQ1ZBNjFiZmR5WlRwekdxRzNJOHVWZzdrbmRxWnBLV1RnaURwTkF5?=
+ =?utf-8?B?akliV2RKREFianpQYU1yVEFvb2NQQ3M1N01xTGNhMGx4aGw4Y2FKSStYQWRx?=
+ =?utf-8?B?bXdXMnc1MkRYdjJWS3pEdEUvUm1XRmI2Ym5PUjBuWURCRHd6WGN4UVVDZjF5?=
+ =?utf-8?B?eVVqV0U3Z0FCbFp5R0Rna2RCVmV5RExuTFNTa3hYNzhGZDhEeDY2WnJBTStJ?=
+ =?utf-8?B?QnpIb1IvWjlGYUMxdnEreUlhZDFiTlh5L3BKOExmbnNmYmJNUE1GazVPRkUz?=
+ =?utf-8?B?dzVqQ214NlZaWjRZUXIvY3JKSVdhalFkbGVqOWRua0hVMjJJc0I4aEtpRVp4?=
+ =?utf-8?B?N015ZkkyR2pKbld1KzZJenN3dGg5SXhjd003bm9sTE4rT2NZVk5OcElFQVNK?=
+ =?utf-8?B?cEppRlY4cndVRFFma0QybTQ1MmRQMFhDYjcrQmZNaGkwWm0vaXdMSTFlRUlR?=
+ =?utf-8?B?UzhoWVVwUFJzbE8vc3Jwck5namd3RUdGVUVET0ZxeXBRSm04eEs1bnZ1ZEND?=
+ =?utf-8?B?MlZiemJpczhOQTF4MC9xZHFhMWNTTGRCMWlZcGs1dE42UzBGWEZnVSswYVE2?=
+ =?utf-8?B?QVFobUZScURoakppWGk0WG9sRldscTRDRE9wVFVLYVdreStwM3hJaW40UlVH?=
+ =?utf-8?B?b1lhNTBQWmFvSkpHdXRKNDJObzF0TGhDblYxeTk0Uzdqc1ZrNGFxSGhHK3V3?=
+ =?utf-8?B?NHpUKzNrdmNXRUlBdXV4bk9SVnc3VFpkV01Wbm9HQ2NjSDZMSHcrazRjVFZp?=
+ =?utf-8?B?eitsbFpUTmN4ejYzSnFxV1JkdXpVL3l3MXBTeEFDMENuTDMzNFNIT3k4TUZI?=
+ =?utf-8?B?QmQyOVArSE5EU0tvaFBjaG9XYVJpekFiWVRKT0NEWWQ5UUtBU2xDcno2MXda?=
+ =?utf-8?B?a2xGZUFzczVkY2l2TE9pT25OUkxSc3VEN0tsWnl2RVByWGRLQnR4L3Q5M3h1?=
+ =?utf-8?B?d2NFUFJKOWJoZW8xSElGaGxRVWlRYnNyVWx4TzlCR2VSUko0dWJMNkRmUUJS?=
+ =?utf-8?Q?ec30yBS1+C0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MmhDRmNPVjQwSkQvaWtwbURySTBUY3RTbTFhN2gvTEZ4ZUZ1emJKY1oxak9j?=
+ =?utf-8?B?TTM1dzNZcjQ1K3ZtMEJhYTMzai8xdnhhMUNrZWhUZy9qWUZLNnIyVU5zRTMv?=
+ =?utf-8?B?TFlZQ0FBTDlSMnRaZFUyYVJiUU0zNFVmRlhITk5EdGdjdUR2VTJvWkg0U245?=
+ =?utf-8?B?N3pjWWV6Z1R0Y2k2cVE5SEZnZ29udXlMUXZxTW9mWlh0bVZhSTFRZkFDZHVK?=
+ =?utf-8?B?WkJ3dUo3NEZkVWQzVmhweXZEWEd3cEJpaHYrVU96Mk5LaFA4YVRTSFZUL1hR?=
+ =?utf-8?B?UlY2d2VGNXBPak1hVCtFVVdzQ2QrNXE3Vnh1UzhoVStvNXNnem10blF5Qzl2?=
+ =?utf-8?B?UnR3M2lxajAwcU9iQ2JsTWk3K0V5dkpKSnpGRkVGNFpTelZzbmdyN2lMVXZr?=
+ =?utf-8?B?dExIMkljNE1Sd0plTmllWDJoSlpWZmxoSjlkb2U3NjM1VmxiOURYK3A2RWVR?=
+ =?utf-8?B?TUtucE1NRGNJVTl2Nk9KUFJBTHR3SXlCeVZIU0RtYnpoQm9KNU4wVUZZSlN4?=
+ =?utf-8?B?V1A1dVo1N3ZTdGllU1pUQkRvTzNVdUl0OHhlYkpGWFgrUXlBUFZqL2p1RDJl?=
+ =?utf-8?B?bXFwdHdaMnJKUTlnQ3NBTFZJZ0tjTTFvR1UvVy8rK1hPcnhzd2FvZmlUY1I0?=
+ =?utf-8?B?aktPQnExVHhibjhOcXEyNklmWUJNKzVGZnJMa09tVzNGR2I2SFVOL2NHMlhX?=
+ =?utf-8?B?WjRLNjMzYlNVZlBiWDhCbW1HTTVEbkhGUndEMjF4UU13WTlLV3lhYWx6ZVVr?=
+ =?utf-8?B?K1RYRmpkaks0bW5vQkxkY1h3a1pjK2pPdWhJQWV5S3R4WVhIdmpHNUJyc1Bt?=
+ =?utf-8?B?SWZiQ2QyV0hJV1lWazZTUnhCSW5qb0pHc0lSZ1lRVTBmVTgxdmV0V1d0ZzBI?=
+ =?utf-8?B?d1NxN1k5RFUwRmx1WEg4b1Z0Ui84V3hOOVgyVkRHTnpWL1Y4MGY4RG0yUFR5?=
+ =?utf-8?B?UW5uVEFEYndmU0dDVm1SdFNwR3pXeHl3KzVPUXpEZHhDQUZLSFU0WUF5dlIw?=
+ =?utf-8?B?cHMrU251ZmRYaWQ3WHhQOVZPVGhBNU5HbDNrRXhzaHB5S3k5UjlkZTlGZHpN?=
+ =?utf-8?B?UFY4MU9qd040Z2UrUnRseXJlKy9zcStkUkpEOXlzTENHbjJ5UGZhd3Z3c1Bp?=
+ =?utf-8?B?MW5Db1BwWWFNaUVxZFZpM2E0SHdpaCs1WlUrOXZ1MXdTK0xYZzd5aHB2NCsr?=
+ =?utf-8?B?emoycFVCRjhRMlBnTnVldVAyOWg0MTFpaGVoYXQ2ZEdwUEpTcE1BMzJYRkNY?=
+ =?utf-8?B?ako0THVMWEd1MFVVM3E3Y0JoKzRUZms0bEE3bnlrV0R3TVA5bEZtTGY4RzdZ?=
+ =?utf-8?B?ODQ1V0pqYWh5YjdtM09CZFpCN284Q01JaUM2aWxPUDlMUzBEL0ExQmo5aVRV?=
+ =?utf-8?B?K3JLOXA2RCsxQ2VGSW9UWVZYb0FrZ3BpTzlEQitwZk5PSlRTbmNaZFp4RlJi?=
+ =?utf-8?B?S2FOK2ozTWpVcE1BUGc2VjcxalBzL3NyT0d5WkVmazVkSis0UTZyQmVCbFhT?=
+ =?utf-8?B?R3hFN1BmOFRzQTRJdXE1Z1BsVkp4RENqYjdIQzVKMndheFlCN0w1ejM5MndD?=
+ =?utf-8?B?WUpMYys1OVpwWHRHdE5tTEhIaWs5S29rOS9vY1g4MExueFhPQUNzb1lWdzlp?=
+ =?utf-8?B?bkRMQXZvcVRhY2hRTUNsUXg1c2crcXY1emhxSzVSd0FKN2tqQWJsT3hXOVRH?=
+ =?utf-8?B?Q2t0WTAvbStSV0g2UjExem54ODFxOUp5S29kS09RVHNMNU9OK1FKcWN4b2Vo?=
+ =?utf-8?B?WE8vZUU2Umw2K0pkUndEWUVwS1Q5cG5JVTFERU1Mb0FSQ2R4QVkwcE0wb1N6?=
+ =?utf-8?B?clZteS9KenlxZEtnYXZIWnpoK0N0RmZqZlQ1YWp6U1J6Lytpem9mR3ZpbmlW?=
+ =?utf-8?B?aXd4YStLeDBlTDBLNUUzTFN2VTRBbjRsSmJqUFdXZHRGeCtBTlFRengxV3o5?=
+ =?utf-8?B?YmtwTXZSUjFoSFQ1Y1E5SXhIZ2cyY2pIV2tROGZRWGJpWGtsUlhiMFQ0dFVv?=
+ =?utf-8?B?Rk1LZmxRMDFyb3JxalphYS9Vd0Z5eDRzVHdoTkVnWnFZYUhpRW1wRncvTEcx?=
+ =?utf-8?B?bHJRVUZ0ajBJQ1JjY210WisvYzZ6YW43c3lka0ptK2dCM29acEdFYWFPb1hZ?=
+ =?utf-8?B?dzhVS1dPK0EvY2tBWFY3SzZ6M1lSZVVESGpEamMwRC8rcE84dDVLWTg1S0pR?=
+ =?utf-8?Q?upsj8L0EAlEohoCIgii5nEiiuVi1jjsvGtEDnn2H6Aqz?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eada7c04-9824-4ab8-c229-08dde06e266b
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 04:49:45.3797
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hzS4COnUnQBBnm8Y1UMMhVglHZhWEHluJ4tt4kh3PbU9+LEwt8nHMtCg+dohVVV1PQzkiFBZ+0I5ezVFRgc2Ag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9126
 
-From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+Falcon DMA transfers are done in 256 bytes increments, and the method
+responsible for initiating the transfer checked that the required length
+was indeed a multiple of 256. While correct, this also requires callers
+to specifically account for this limitation of DMA transfers, and we had
+for instance the fwsec code performing a seemingly arbitrary (and
+potentially overflowing) upwards alignment of the DMEM load size to
+match this requirement.
 
-Add the sound card node with tested playback over WSA8835 speakers,
-digital on-board mics along with wcd9370 headset playabck and record.
+Let's move that alignment into the loading code itself instead: since it
+is working in terms of number of transfers, we can turn this upwards
+alignment into a non-overflowing operation, and check that the requested
+transfer remains into the limits of the DMA object. This also allows us
+to remove a DMA-specific constant in the fwsec code.
 
-Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 84 ++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+This came up as I was writing the next iteration of the `Alignment`
+patchset: the alignment operation done in `fwsec.rs` would have required
+an unsightly unwrap, so let's fix it beforehand.
+---
+Changes in v2:
+- Remove `unsafe` block by checking transfer bounds ourselves.
+- Link to v1: https://lore.kernel.org/r/20250808-falcondma_256b-v1-1-15f911d89ffd@nvidia.com
+---
+ drivers/gpu/nova-core/falcon.rs         | 31 ++++++++++++++++++++++---------
+ drivers/gpu/nova-core/firmware/fwsec.rs |  9 +--------
+ 2 files changed, 23 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-index 379ee346a33a..73fce639370c 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-@@ -757,6 +757,90 @@ &sdhc_2 {
- 	cd-gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
- };
+diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
+index d235a6f9efca452cc46e2d13c61789eb00252de2..c71c1cb4144200a612cc6bd615ccc5d13192a209 100644
+--- a/drivers/gpu/nova-core/falcon.rs
++++ b/drivers/gpu/nova-core/falcon.rs
+@@ -463,14 +463,27 @@ fn dma_wr<F: FalconFirmware<Target = E>>(
+             );
+             return Err(EINVAL);
+         }
+-        if load_offsets.len % DMA_LEN > 0 {
+-            dev_err!(
+-                self.dev,
+-                "DMA transfer length must be a multiple of {}",
+-                DMA_LEN
+-            );
+-            return Err(EINVAL);
+-        }
++
++        // DMA transfers can only be done in units of 256 bytes. Compute how many such transfers we
++        // need to perform.
++        let num_transfers = load_offsets.len.div_ceil(DMA_LEN);
++
++        // Check that the area we are about to transfer is within the bounds of the DMA object.
++        // Upper limit of transfer is `(num_transfers * DMA_LEN) + load_offsets.src_start`.
++        match num_transfers
++            .checked_mul(DMA_LEN)
++            .and_then(|size| size.checked_add(load_offsets.src_start))
++        {
++            None => {
++                dev_err!(self.dev, "DMA transfer length overflow");
++                return Err(EOVERFLOW);
++            }
++            Some(upper_bound) if upper_bound as usize > fw.size() => {
++                dev_err!(self.dev, "DMA transfer goes beyond range of DMA object");
++                return Err(EINVAL);
++            }
++            Some(_) => (),
++        };
  
-+&sound {
-+	compatible = "qcom,qcm6490-idp-sndcard";
-+	model = "QCM6490-IDP";
-+
-+	audio-routing = "SpkrLeft IN", "WSA_SPK1 OUT",
-+			"SpkrRight IN", "WSA_SPK2 OUT",
-+			"IN1_HPHL", "HPHL_OUT",
-+			"IN2_HPHR", "HPHR_OUT",
-+			"AMIC2", "MIC BIAS2",
-+			"TX DMIC0", "MIC BIAS1",
-+			"TX DMIC1", "MIC BIAS2",
-+			"TX DMIC2", "MIC BIAS3",
-+			"TX SWR_ADC1", "ADC2_OUTPUT",
-+			"VA DMIC0", "VA MIC BIAS3",
-+			"VA DMIC1", "VA MIC BIAS3",
-+			"VA DMIC2", "VA MIC BIAS1",
-+			"VA DMIC3", "VA MIC BIAS1";
-+
-+	wsa-dai-link {
-+		link-name = "WSA Playback";
-+
-+		codec {
-+			sound-dai = <&left_spkr>, <&right_spkr>,
-+				    <&swr2 0>, <&lpass_wsa_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+
-+	wcd-playback-dai-link {
-+		link-name = "WCD Playback";
-+
-+		codec {
-+			sound-dai = <&wcd9370 0>, <&swr0 0>, <&lpass_rx_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+
-+	wcd-capture-dai-link {
-+		link-name = "WCD Capture";
-+
-+		codec {
-+			sound-dai = <&wcd9370 1>, <&swr1 0>, <&lpass_tx_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+
-+	va-dai-link {
-+		link-name = "VA Capture";
-+
-+		codec {
-+			sound-dai = <&lpass_va_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+};
-+
- &swr0 {
- 	status = "okay";
+         // Set up the base source DMA address.
  
+@@ -486,7 +499,7 @@ fn dma_wr<F: FalconFirmware<Target = E>>(
+             .set_imem(target_mem == FalconMem::Imem)
+             .set_sec(if sec { 1 } else { 0 });
+ 
+-        for pos in (0..load_offsets.len).step_by(DMA_LEN as usize) {
++        for pos in (0..num_transfers).map(|i| i * DMA_LEN) {
+             // Perform a transfer of size `DMA_LEN`.
+             regs::NV_PFALCON_FALCON_DMATRFMOFFS::default()
+                 .set_offs(load_offsets.dst_start + pos)
+diff --git a/drivers/gpu/nova-core/firmware/fwsec.rs b/drivers/gpu/nova-core/firmware/fwsec.rs
+index 0dff3cfa90afee0cd4c3348023c8bfd7edccdb29..47f5e4524072888cc3f89520ff4beea766071958 100644
+--- a/drivers/gpu/nova-core/firmware/fwsec.rs
++++ b/drivers/gpu/nova-core/firmware/fwsec.rs
+@@ -202,9 +202,6 @@ pub(crate) struct FwsecFirmware {
+     ucode: FirmwareDmaObject<Self, Signed>,
+ }
+ 
+-// We need to load full DMEM pages.
+-const DMEM_LOAD_SIZE_ALIGN: u32 = 256;
+-
+ impl FalconLoadParams for FwsecFirmware {
+     fn imem_load_params(&self) -> FalconLoadTarget {
+         FalconLoadTarget {
+@@ -218,11 +215,7 @@ fn dmem_load_params(&self) -> FalconLoadTarget {
+         FalconLoadTarget {
+             src_start: self.desc.imem_load_size,
+             dst_start: self.desc.dmem_phys_base,
+-            // TODO[NUMM]: replace with `align_up` once it lands.
+-            len: self
+-                .desc
+-                .dmem_load_size
+-                .next_multiple_of(DMEM_LOAD_SIZE_ALIGN),
++            len: self.desc.dmem_load_size,
+         }
+     }
+ 
+
+---
+base-commit: 0988099646cfc6c72a4448cad39d4ee22ad457a7
+change-id: 20250808-falcondma_256b-5fb8a28ed274
+
+Best regards,
 -- 
-2.34.1
+Alexandre Courbot <acourbot@nvidia.com>
 
 
