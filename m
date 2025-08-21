@@ -1,457 +1,156 @@
-Return-Path: <linux-kernel+bounces-779549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F4BB2F57E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:39:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6807B2F582
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3868B617F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:36:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80DFF175493
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A973054E7;
-	Thu, 21 Aug 2025 10:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1637305E24;
+	Thu, 21 Aug 2025 10:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFxjXaCX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DOwsiioD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C94C38DF9;
-	Thu, 21 Aug 2025 10:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17C43054ED
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755772689; cv=none; b=JcawnnfyDz/ZfejORzVIQp/W+9wI09if1quYbpE0jlQUvUVTu9fnPitAJs3Nsw5IlZiqNV6wALRHc8db4jS8njslOtH9KFt36V0ar8a5nsel+MOA4hZc+tAitJb15OzbMGEfJrccP/Bz8tbqf53p1P7AiQZISEa75WOmaDPARaE=
+	t=1755772692; cv=none; b=N2Pb1cf8Dzr+LiCrHJUizSGy4CGdLRjGdfZdaio/3avprjf+8hLMFBlQ3CEUsyGQm+6jd9TbhYWjPeU1w3l7kHcsXPbTh1mj5INJw9QgNz95RUld7mlS58aLeJAPP8xGUiLmVJ0MWBBuAh2PDl4k5e1kWduAWYI2corwXc0hXJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755772689; c=relaxed/simple;
-	bh=G9mJnjqmrtvpPM0zJWEXYJ8JaOtAlFKXs3kwxTdD7S4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G+YOiuUcRJ4WTWbi2KBJ516cduVftOY35h8dqqunNy8AaZ+XlAbb0BqJBronk2QsNkXaU4+v32rxY3mOzJG0IPbsllK6uritjkLA+Fnj1NFsSpJUzNN5I14SLIMjX1vAiT0jYVAnbcUnvywGQR9cLsD2Kve0tpqDpEOIXDYQYsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFxjXaCX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8993C113CF;
-	Thu, 21 Aug 2025 10:38:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755772688;
-	bh=G9mJnjqmrtvpPM0zJWEXYJ8JaOtAlFKXs3kwxTdD7S4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FFxjXaCXPuykXr+BPJETgYLs2UNKUF1LRG5OYKD6uQWHhWw+lcxuVFcXjfDOSNFET
-	 9yECXxLXWsrIsRRnwaeGy4SWpNhLcVuQEQ895mO78tAtsyHBGg6OiYzG9dsKv0Bqpt
-	 Fjdega+uNLbj7s8szAlj6NtSY3WtM2eEZvrY8q2SOD9e0SDRjWs1zL4OJvPvT6lt7Z
-	 xK+9hYDv0Eo9zQ2bhbedy8tckq+NArEYWLjkopdsAonFp/2MmcVIv+ynMoSr6gsjGq
-	 R7sBW3T/8QeAfAsKKCDZdBjNDp5Wz7fRV0NfxADu1q+dl12z/8yRmhfHUWmZ1XWgUP
-	 jflBVmzj2iidw==
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-435de7aebb7so572424b6e.2;
+	s=arc-20240116; t=1755772692; c=relaxed/simple;
+	bh=6B2gofMQeXaFIxttJOCL+Zl7gixeHkUQAMPgca1dQAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tP2iOAIDhJOIBR9ANQPd/R/JXto39ugfeM56LWv37JNYaRwBUgfadmn0h4vRE7rG5M1rI/gk0iIRhs6U2rE5t8hTI+or8bgJkZHBwVk6fjU4dNxEQ6I8HRpGeFXpFqTHaIwykBiOCFosTcQaZA8R4vQQKzigrZIppge5bDMMgNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DOwsiioD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9bIOH013281
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:38:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=r914EYN2oHqG39oPT8nQaNOs
+	AXvKl/bytIkZsYAvQVY=; b=DOwsiioDOlsSL104WqMxnj2XV3DqmzE7CeRShTyE
+	wDqeftQd3Vz+ACmdeVP4+HwfkhmMH0U9ORUHKNVFrnko+HNulb7/LJpiWofgCspD
+	lSgjAqB1LNfXPRLwx1MSKoWCshW+ZDYJ2oNc77x7fuLc7vrK5ZxMUl34yy6zjOqD
+	kQscF2TreHZ3msQmxZQJYfThzTCw9H/7BK2r2E6VSp2aUT6dcQPhl70t/gxygUgd
+	WWLoDKfB1tbQl3VyEetdumST3BYf4+aPMQsdKkuRmYLh3dIM5BAYuh2Yk42DUBfq
+	WGz5lhraaGeHq/FTlarD9ZFn9vXeAfdRfRBWkVk4iPzMPg==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52dn18y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 10:38:09 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70a88de1e26so26603386d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 03:38:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755772688; x=1756377488;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r914EYN2oHqG39oPT8nQaNOsAXvKl/bytIkZsYAvQVY=;
+        b=TjkW8jDvhwbrdJUAIDSKNqcDWLRAHwdx4fD3xMXPo6ehyjQirAqQBYkNIPSHxn78IC
+         lbmHBzrzqBK0+Cr3vqhzwDqI8E6x8J1ZTYvkReufMF6+TdaiPmtrgMXRi0eu3uj4H1Bg
+         Zv0EXnRMFDZDSxac8M2ohLpdTfBBnG9LC+9MvQCExxzewKZ95oz4DbjZ/mmGe609sdWc
+         WZ0CFMJKa5Vk6Wo0YnHBFr8ruzidCxw7lzpcB7xKghrKRFj2e7mkx9uLFpvPbpuRrDrX
+         DETF/yvecNGKD4wglCAfv3Pe7TKPeD4M+3hqstYGdVP0WvXaXOXB8prgxtSh92finUoH
+         eBDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWk1O59hnYSJYFTgwYgHsgo3dcThCWCXuHKTQUyZn5GZv7hVxoS6G/m1t8LPz8AxFXBPnCWRaA33hPeQQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsRdiJzgI2KZk22yc/NmJtyYGF7/d0q+SrMsborHsBOsdeIefk
+	M1KwkOh1d0C6gYgr+IwuNjNbRmAW0RLnlAvyogaRqmwlonGKD+lqeJ45EIBCZGPSXazCbn+9Q6c
+	UI0ly2pPei94rFczGQWWf2rX+9hvq/PkkbnY24MwA+mw1sQZKWUGbW2iN4uwV8N199wF8FkxEAo
+	I=
+X-Gm-Gg: ASbGncsBA5r2He2CFtwkM1mds0l0CLXduNX4zHLs6p/nrc6Kyp2MJL89nCvfdMrhTge
+	P5XGswoWZ9OpghsMcFO0JW4DSGrVxe0M04mg+nlgNlmdYsDYb2tQiWtaSNviCPaxLiLPpJBJv0q
+	74+SR9ZvJnww5LZwOp1aHU4+wHVD8I8NgrtYHwNSc1AuVOOq1l/xlOZk2qyj8Onwpe/kVNs2W+B
+	XsVtz2+ji+aSN0XqrR7Wgzw4r49+3CWj2/cd95eioEv3DsfwgEBthnZT2lLQ8CsTTg5DcNELwpz
+	75I73mGu8/aS6VwZBZs0Ktpcro5dCewbzq7h0zebCCouGEpZJ/UT1Fs63wdmOyHhxWnExM6hfQF
+	lmPICbwnnawkQMlrDsBwkGAC1vDZ8XD1LqrTyB0WUQ2ombPR2wxVU
+X-Received: by 2002:ad4:5c88:0:b0:706:f753:6b14 with SMTP id 6a1803df08f44-70d88e3741emr15983666d6.4.1755772688275;
         Thu, 21 Aug 2025 03:38:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUpaLycMl/eheG4hQNV2rq/g6EbH0wpOeKXthDIYY3eTrQYhIOSUyHXjBils9ZOfKFq79kQnFXKO3wGZ+o=@vger.kernel.org, AJvYcCXgJmlmUtIRm8lr1EtlFWM13Mo5UJQ28ifvunfDURyVk6dYxskqtPiKKZ05tU3m8JMQ/BhTdxPLyMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUu9qR59LY38QIwF1nlCy9woyX5Xe/hPrQPZPCWAhOlUi8wE/6
-	QF0qkT5RpaUIm/mKbREl2ZWBRZBtEifNB96qE6g0wbiXJcSanCPFI73AI4vKJobJldF9Wfb1M5M
-	rS0XTGcJ0A436cYpueXYd639W3Lcz4A8=
-X-Google-Smtp-Source: AGHT+IEckl+WlyJY3nspWaWPPtapd2m0T16J777lmKFZjrclTqeAeL6u50agJ/OwYkAYDpiC4GPsO8M3+3/XW5jjevQ=
-X-Received: by 2002:a05:6808:2393:b0:434:ca4:aa0e with SMTP id
- 5614622812f47-4377d6b1ecemr819758b6e.1.1755772688005; Thu, 21 Aug 2025
- 03:38:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHEa7hNzXAx5DgTP1u13ijsgfOsTyYMteNBIqzj5N6IcVZ3PMpHJWc/EQSHJlepAFEYsq9ykw==
+X-Received: by 2002:ad4:5c88:0:b0:706:f753:6b14 with SMTP id 6a1803df08f44-70d88e3741emr15983356d6.4.1755772687617;
+        Thu, 21 Aug 2025 03:38:07 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cef368d34sm2973505e87.58.2025.08.21.03.38.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 03:38:06 -0700 (PDT)
+Date: Thu, 21 Aug 2025 13:38:05 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Liao Yuanhong <liaoyuanhong@vivo.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Antonino Maniscalco <antomani103@gmail.com>,
+        "open list:DRM DRIVER for Qualcomm display hardware" <linux-arm-msm@vger.kernel.org>,
+        "open list:DRM DRIVER for Qualcomm display hardware" <dri-devel@lists.freedesktop.org>,
+        "open list:DRM DRIVER for Qualcomm display hardware" <freedreno@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm/mdp4: remove the use of dev_err_probe()
+Message-ID: <kefrdoyd5dr4rjvz4lmtznxw552wzuspk3pdse63zm2kmtnpvi@wzzddue2acrm>
+References: <20250820131300.499727-1-liaoyuanhong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721124104.806120-1-quic_zhonhan@quicinc.com> <20250721124104.806120-2-quic_zhonhan@quicinc.com>
-In-Reply-To: <20250721124104.806120-2-quic_zhonhan@quicinc.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 21 Aug 2025 12:37:56 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0heLbA5Bfa2NqAGeOn_=N2+CMEQ8HWRgp25Ob0bGYDLZQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyHfNWxX3vClRTcxiceZdF3Lavemo2zfOmhvSrDjeKdUaRSRd2ATAsaIdY
-Message-ID: <CAJZ5v0heLbA5Bfa2NqAGeOn_=N2+CMEQ8HWRgp25Ob0bGYDLZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] PM: QoS: Add support for CPU affinity latency PM QoS
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: rafael@kernel.org, lenb@kernel.org, pavel@kernel.org, tony.luck@intel.com, 
-	reinette.chatre@intel.com, Dave.Martin@arm.com, james.morse@arm.com, 
-	ulf.hansson@linaro.org, amit.kucheria@linaro.org, christian.loehle@arm.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820131300.499727-1-liaoyuanhong@vivo.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX9lpplUtcdN2k
+ noarrfYkW+j9RfZDR5kgrnXoKp0EUoptY/5JA1xGf+adPpjnxsq7o8bUU1TcMBHqOEorVokTu95
+ WsCHVIpg2rFpoao90ZnllFe08SzQPMvjrWT0XIVHLFsEuUgPJF3Dm9mMNBTRwbavpyvgbgtSPHi
+ 1BUHWuvbpy5RVthuEQ4rQkxTsRw/vHgYYx/6UNIldDyY6gzenLV36UKW0nCx7V3r8ArauW/8kkK
+ avv6gi6GzHLEUzFacHIURErz1oDbitdf/XVxZWCh0sZzXa0PuxQgeJlTSG69dMvdQMZUN905l8a
+ 6UOYATDRCwXcIwWOmuwrnSPNjDkMpDhxmWJhZoErb67DPf5lRvBbXiiPedYWYpn/1onzMT/4aIc
+ L9EEI1EZX4sW6xV8J68pGqx+PztHSg==
+X-Proofpoint-ORIG-GUID: YCVPuRgjyU152sOBXNMtK5sksphdsciQ
+X-Proofpoint-GUID: YCVPuRgjyU152sOBXNMtK5sksphdsciQ
+X-Authority-Analysis: v=2.4 cv=SoXJKPO0 c=1 sm=1 tr=0 ts=68a6f711 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=1WtWmnkvAAAA:8 a=EUspDBNiAAAA:8
+ a=i0mAgyhDueMVXABGR-YA:9 a=CjuIK1q_8ugA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On Mon, Jul 21, 2025 at 2:41=E2=80=AFPM Zhongqiu Han <quic_zhonhan@quicinc.=
-com> wrote:
->
-> Currently, the PM QoS framework supports global CPU latency QoS and
-> per-device CPU latency QoS requests. An example of using global CPU
-> latency QoS is a commit 2777e73fc154 ("scsi: ufs: core: Add CPU latency
-> QoS support for UFS driver") that improved random io performance by 15%
-> for ufs on specific device platform.
->
-> However, this prevents all CPUs in the system from entering C states.
-> Typically, some threads or drivers know which specific CPUs they are
-> interested in. For example, drivers with IRQ affinity only want interrupt=
-s
-> to wake up and be handled on specific CPUs. Similarly, kernel thread boun=
-d
-> to specific CPUs through affinity only care about the latency of those
-> particular CPUs.
->
-> This patch introduces support for partial CPUs PM QoS using a CPU affinit=
-y
-> mask, allowing flexible and more precise latency QoS settings for specifi=
-c
-> CPUs. This can help save power, especially on heterogeneous platforms wit=
-h
-> big and little cores, as well as some power-conscious embedded systems fo=
-r
-> example:
->
->                         driver A       rt kthread B      module C
->   CPU IDs (mask):         0-3              2-5              6-7
->   target latency(us):     20               30               100
->                           |                |                |
->                           v                v                v
->                           +---------------------------------+
->                           |        PM  QoS  Framework       |
->                           +---------------------------------+
->                           |                |                |
->                           v                v                v
->   CPU IDs (mask):        0-3            2-3,4-5            6-7
->   runtime latency(us):   20             20, 30             100
->
-> Implement this support based on per-device CPU latency PM QoS.
-
-I have a few concerns regarding this patch.
-
-The first one is the naming.
-
-You want to be able to set wakeup latency QoS limits for multiple CPUs
-at the same time.  Fair enough, but what does it have to do with
-affinity of any sort?
-
-Why don't you call the functions cpu_latency_qos_add_multiple() and so on?
-
-> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+On Wed, Aug 20, 2025 at 09:12:56PM +0800, Liao Yuanhong wrote:
+> Logging messages that show some type of "out of memory" error are generally
+> unnecessary as there is a generic message and a stack dump done by the
+> memory subsystem. These messages generally increase kernel size without
+> much added value[1].
+> 
+> The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
+> remove the useless call to dev_err_probe(), and just return the value
+> instead.
+> 
+> [1]: https://lore.kernel.org/lkml/1402419340.30479.18.camel@joe-AO725/
+> 
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 > ---
->  include/linux/pm_qos.h |  40 +++++++++++
->  kernel/power/qos.c     | 160 +++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 200 insertions(+)
->
-> diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
-> index 4a69d4af3ff8..2dbad825f8bd 100644
-> --- a/include/linux/pm_qos.h
-> +++ b/include/linux/pm_qos.h
-> @@ -131,6 +131,15 @@ enum pm_qos_req_action {
->         PM_QOS_REMOVE_REQ       /* Remove an existing request */
->  };
->
-> +/* cpu affinity pm latency qos request handle */
-> +struct cpu_affinity_qos_req {
-> +       struct list_head list;
+>  drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Is the list really an adequate data structure here?
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-The number of CPUs in the mask is known at the request addition time
-and it fails completely if the request cannot be added for one CPU
-IIUC, so why don't you use an array of requests instead?
 
-> +       union {
-> +               struct dev_pm_qos_request req;
-> +               void *req_ptr;
-> +       };
-
-Why do you need the union here?
-
-Checking if the request is active only requires inspecting one CPU
-involved in it AFAICS.
-
-> +};
-> +
->  static inline int dev_pm_qos_request_active(struct dev_pm_qos_request *r=
-eq)
->  {
->         return req->dev !=3D NULL;
-> @@ -208,6 +217,13 @@ static inline s32 dev_pm_qos_raw_resume_latency(stru=
-ct device *dev)
->                 PM_QOS_RESUME_LATENCY_NO_CONSTRAINT :
->                 pm_qos_read_value(&dev->power.qos->resume_latency);
->  }
-> +
-> +int cpu_affinity_latency_qos_add(struct cpu_affinity_qos_req *pm_req,
-> +                                 const cpumask_t *affinity_mask, s32 lat=
-ency_value);
-> +int cpu_affinity_latency_qos_remove(struct cpu_affinity_qos_req *pm_req)=
-;
-> +int cpu_affinity_latency_qos_release(struct cpu_affinity_qos_req *pm_req=
-);
-
-Why is a separate release function needed?
-
-Also, why don't you think that a separate function for updating an
-existing request would be useful?
-
-> +bool cpu_affinity_latency_qos_active(struct cpu_affinity_qos_req *pm_req=
-);
-> +void wakeup_qos_affinity_idle_cpu(int cpu);
->  #else
->  static inline enum pm_qos_flags_status __dev_pm_qos_flags(struct device =
-*dev,
->                                                           s32 mask)
-> @@ -289,6 +305,30 @@ static inline s32 dev_pm_qos_raw_resume_latency(stru=
-ct device *dev)
->  {
->         return PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
->  }
-> +
-> +static inline int cpu_affinity_latency_qos_add(struct cpu_affinity_qos_r=
-eq *pm_req,
-> +                                               const cpumask_t *affinity=
-_mask,
-> +                                               s32 latency_value)
-> +{
-> +       return 0;
-> +}
-> +
-> +static inline int cpu_affinity_latency_qos_remove(
-> +                  struct cpu_affinity_qos_req *pm_req)
-> +{
-> +       return 0;
-> +}
-> +static inline int cpu_affinity_latency_qos_release(
-> +                  struct cpu_affinity_qos_req *pm_req)
-> +{
-> +       return 0;
-> +}
-> +static inline bool cpu_affinity_latency_qos_active(
-> +                   struct cpu_affinity_qos_req *pm_req)
-> +{
-> +       return false;
-> +}
-> +static inline void wakeup_qos_affinity_idle_cpu(int cpu) {}
->  #endif
->
->  static inline int freq_qos_request_active(struct freq_qos_request *req)
-> diff --git a/kernel/power/qos.c b/kernel/power/qos.c
-> index 4244b069442e..5e507ed8d077 100644
-> --- a/kernel/power/qos.c
-> +++ b/kernel/power/qos.c
-> @@ -335,6 +335,166 @@ void cpu_latency_qos_remove_request(struct pm_qos_r=
-equest *req)
->  }
->  EXPORT_SYMBOL_GPL(cpu_latency_qos_remove_request);
->
-> +#ifdef CONFIG_PM
-> +
-> +/**
-> + * wakeup_qos_affinity_idle_cpu - break one specific cpu out of idle.
-> + * @cpu: the CPU to be woken up from idle.
-> + */
-> +void wakeup_qos_affinity_idle_cpu(int cpu)
-> +{
-> +       preempt_disable();
-> +       if (cpu !=3D smp_processor_id() && cpu_online(cpu))
-> +               wake_up_if_idle(cpu);
-> +       preempt_enable();
-> +}
-
-This duplicates code from wake_up_all_idle_cpus() that duplication is
-easily avoidable.
-
-> +
-> +/**
-> + * cpu_affinity_latency_qos_add - Add new CPU affinity latency QoS reque=
-st.
-> + * @pm_req: Pointer to a preallocated handle.
-> + * @affinity_mask: Mask to determine which CPUs need latency QoS.
-> + * @latency_value: New requested constraint value.
-> + *
-> + * Use @latency_value to initialize the request handle pointed to by @pm=
-_req,
-> + * insert it as a new entry to the CPU latency QoS list and recompute th=
-e
-> + * effective QoS constraint for that list, @affinity_mask determine whic=
-h CPUs
-> + * need the latency QoS.
-> + *
-> + * Callers need to save the handle for later use in updates and removal =
-of the
-> + * QoS request represented by it.
-> + *
-
-It would be good to also say that callers are responsible for
-synchronizing the calls to add and remove functions for the same
-request.
-
-> + * Returns 0 or a positive value on success, or a negative error code on=
- failure.
-> + */
-> +int cpu_affinity_latency_qos_add(struct cpu_affinity_qos_req *pm_req,
-> +                                 const cpumask_t *affinity_mask,
-> +                                 s32 latency_value)
-> +{
-> +       int cpu;
-> +       cpumask_t actual_mask;
-> +       struct cpu_affinity_qos_req *cpu_pm_req;
-> +       int ret =3D 0;
-> +
-> +       if (!pm_req) {
-> +               pr_err("%s: invalid PM Qos request\n", __func__);
-> +               return -EINVAL;
-> +       }
-> +
-> +       if (cpu_affinity_latency_qos_active(pm_req)) {
-> +               WARN(1, "%s called for already added request\n", __func__=
-);
-> +               return -EBUSY;
-> +       }
-
-The usual pattern for checks like this is
-
-if (WARN(cpu_affinity_latency_qos_active(pm_req), message))
-         return error;
-
-And, which is not related to the above, if a function is defined in
-the same file as its caller, I prefer it to be defined before its
-caller.
-
-> +
-> +       INIT_LIST_HEAD(&pm_req->list);
-> +
-> +       if (!affinity_mask || cpumask_empty(affinity_mask) ||
-> +           latency_value < 0) {
-> +               pr_err("%s: invalid PM Qos request value\n", __func__);
-> +               return -EINVAL;
-> +       }
-> +
-> +       for_each_cpu(cpu, affinity_mask) {
-> +               cpu_pm_req =3D kzalloc(sizeof(struct cpu_affinity_qos_req=
-),
-> +                                    GFP_KERNEL);
-> +               if (!cpu_pm_req) {
-> +                       ret =3D -ENOMEM;
-> +                       goto out_err;
-> +               }
-> +               ret =3D dev_pm_qos_add_request(get_cpu_device(cpu),
-> +                                            &cpu_pm_req->req,
-> +                                            DEV_PM_QOS_RESUME_LATENCY,
-> +                                            latency_value);
-> +               if (ret < 0) {
-> +                       pr_err("failed to add latency req for cpu%d", cpu=
-);
-
-Why do you want to print an error message here?  Is this anything that
-the sysadmin should know about?  If not, then maybe dev_dbg() should
-be sufficient?
-
-> +                       kfree(cpu_pm_req);
-> +                       goto out_err;
-> +               } else if (ret > 0) {
-> +                       wakeup_qos_affinity_idle_cpu(cpu);
-> +               }
-> +
-> +               cpumask_set_cpu(cpu, &actual_mask);
-> +               list_add(&cpu_pm_req->list, &pm_req->list);
-> +       }
-> +
-> +       pr_info("PM Qos latency: %d added on cpus %*pb\n", latency_value,
-> +               cpumask_pr_args(&actual_mask));
-
-I'm not sure why the actual_mask variable is needed.  AFAICS, the
-function fails anyway if the request cannot be added for any CPU in
-the original mask.
-
-> +       pm_req->req_ptr =3D pm_req;
-> +       return ret;
-> +
-> +out_err:
-> +       cpu_affinity_latency_qos_release(pm_req);
-> +       pr_err("failed to add PM QoS latency req, removed all added reque=
-sts\n");
-
-A message about this has already been printed.  Why print another one?
-
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(cpu_affinity_latency_qos_add);
-> +
-> +
-> +/**
-> + * cpu_affinity_latency_qos_remove - Remove an existing CPU affinity lat=
-ency QoS.
-> + * @pm_req: Handle to the QoS request to be removed.
-> + *
-> + * Remove the CPU latency QoS request represented by @pm_req from the CP=
-U latency
-> + * QoS list. This handle must have been previously initialized and added=
- via
-> + * cpu_affinity_latency_qos_add().
-> + */
-> +int cpu_affinity_latency_qos_remove(struct cpu_affinity_qos_req *pm_req)
-> +{
-> +       if (!pm_req) {
-> +               pr_err("%s: invalid PM Qos request value\n", __func__);
-> +               return -EINVAL;
-> +       }
-> +
-> +       if (!cpu_affinity_latency_qos_active(pm_req)) {
-> +               WARN(1, "%s called for unknown object\n", __func__);
-> +               return -EINVAL;
-> +       }
-
-Same pattern comment as above applies here.
-
-> +
-> +       return cpu_affinity_latency_qos_release(pm_req);
-> +}
-> +EXPORT_SYMBOL_GPL(cpu_affinity_latency_qos_remove);
-> +
-> +/**
-> + * cpu_affinity_latency_qos_release - Release pm_reqs latency QoS resour=
-ce.
-> + * @pm_req: QoS request to be released.
-> + *
-> + * Release pm_reqs managed CPU affinity latency QoS resource.
-> + *
-> + * Returns a negative value indicates failure.
-> + */
-> +int cpu_affinity_latency_qos_release(struct cpu_affinity_qos_req *pm_req=
-)
-> +{
-> +       int ret =3D 0;
-> +       struct cpu_affinity_qos_req *cpu_pm_req, *next;
-> +
-> +       list_for_each_entry_safe(cpu_pm_req, next, &pm_req->list, list) {
-> +               ret =3D dev_pm_qos_remove_request(&cpu_pm_req->req);
-> +               if (ret < 0)
-> +                       pr_err("failed to remove qos request for %s\n",
-> +                              dev_name(cpu_pm_req->req.dev));
-> +               list_del(&cpu_pm_req->list);
-> +               kfree(cpu_pm_req);
-> +               cpu_pm_req =3D NULL;
-> +       }
-> +
-> +       memset(pm_req, 0, sizeof(*pm_req));
-> +       return ret;
-> +}
-> +
-> +/**
-> + * cpu_affinity_latency_qos_active - Check if a CPU affinity latency QoS
-> + * request is active.
-> + * @pm_req: Handle to the QoS request.
-> + *
-> + * Return: 'true' if @pm_req has been added to the CPU latency QoS list,
-> + * 'false' otherwise.
-> + */
-> +bool cpu_affinity_latency_qos_active(struct cpu_affinity_qos_req *pm_req=
-)
-> +{
-> +       return pm_req->req_ptr =3D=3D pm_req;
-> +}
-> +EXPORT_SYMBOL_GPL(cpu_affinity_latency_qos_active);
-> +
-> +#endif /* CONFIG_PM */
-> +
->  /* User space interface to the CPU latency QoS via misc device. */
->
->  static int cpu_latency_qos_open(struct inode *inode, struct file *filp)
-> --
-
-I'll look at the rest of the series whey all of my comments on this
-patch have been addressed.
-
-Thanks!
+-- 
+With best wishes
+Dmitry
 
