@@ -1,152 +1,160 @@
-Return-Path: <linux-kernel+bounces-778814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4BBB2EB81
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:56:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F96B2EB84
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E05FA4E450B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:56:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2401C87505
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6622D46B7;
-	Thu, 21 Aug 2025 02:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B912D4B61;
+	Thu, 21 Aug 2025 02:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LYXHujI8"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jk+B531y"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3941C4A10
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC3E2D3ECE
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755744996; cv=none; b=NJ0AbEERDZpupkk0Zy1LpsIV91euCtu2sBHSRwa761fj71nLOQy/GqTbo2pmImO318XcvnAB7+uLuuwhtzbLjOjQhVKXaIBcSZ1R1gA/pK2cCF+bwucGi7u3pwOdqKHSELBnEICl8xxI3GIs+uCpYIvUzYNa7sTGjmNx/qdn7Q4=
+	t=1755744997; cv=none; b=ts+2kg9CCujvpTnIwi8YJcQcUOG1mpTO33s257sIYUqIgaKoeB/wAnwpjKBk5gf08ONuIRRhdJgLsd3RcJLctN98ZWR/dm/IRWIDHwoCQqxdsS5lhEDhbtI4rEjuRczKkCT5xvK2RV2DT2S4UdZY8nq8leTe1j4wbdqC99gnXt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755744996; c=relaxed/simple;
-	bh=balfMEORisG0GrrKqsodEt+jiqQAngx3v2OR69BFcPY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gcT8VRywGrQLXqWejtcvcjXV85HH+G/SN5TEbVYuYsGpBOPQ1bdjx4Je/dcHi0/UAXbbzXDO19o4icvTWxMt932qK2te86TZL9xqPhtR1GygRGh8pEVUKx/hMGbgUm9b5/4z1NW2dXUWPrdSn4s0BD1OLYunSlr7jULjOhuGajE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LYXHujI8; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2445806b2beso16385065ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:56:34 -0700 (PDT)
+	s=arc-20240116; t=1755744997; c=relaxed/simple;
+	bh=XHwx3T0vj4Lv+s2Y6qqwZiObkh2r7IivbMwDx2b9V+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HcL4RZoImo36EvbhRnQaabbsrG3gMqgbxmagVJ5Iigb+eJz9B8hRLYnHYSBpHlEN89XpbS9GYaFbpzGOByvH0qlfvgYQbyNmNiPiXWHkoCck9xnXChTMPiL5w5XQHRy4O/iE69rHlRbETYQY1c7r/WNmh32W9X2qE4OXjeX7Bs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jk+B531y; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2445824dc27so4871115ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:56:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755744994; x=1756349794; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XBaK+uDkb1FKWMnsKSy6ZhbJaoQabX0cbuYGiNdtzlM=;
-        b=LYXHujI87+IlJ7ShNwMEIaWA0S5GM6sbWmOZVMdNLwdd69wHTCNTDYaUfcZoYfG/+I
-         4NuAdvw1U7ajbcrTPlFmLJP++Vr5RSbJAxc1jE7sYLhEjy0ZrJW5eqysbKXCmmFbBFku
-         T3Xw6ZSgoyZeWIMONesdFamrUimkHv//Xy0agQSaEQWw5Dsr/BdV0C6DxJp/SABnQx7y
-         LMOJBS4Sppav0lP+BVhWsBXy6a2QX04B6DvN1Rp6r86Z322MCqbs2VynjtxFHaN2fdW5
-         BLAXDBzQmm8GHhx3GozwGQH7Mbzu4Ss3HidfYi2MM9RvFHcdsiYisTSt+W3kFSdN5hip
-         YYZA==
+        d=chromium.org; s=google; t=1755744995; x=1756349795; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H996zq4Ef8LWOErXtNjqGqwGdLBd8tccS6w3vtc0ofM=;
+        b=jk+B531yo+tDFD0GgYH9CPrdGm4F0E8ZaMTy3+3IZduxdZqHtIgSghwYVADFBsnF4W
+         B6+JxtFkdUV3FSz3FWaYdOPd8dgkSSC8ShNaMYm1RXAFMdgXe7AGtpH0DCvxI64ifNhT
+         1SwXI4i5NAZ8pKkOUcKWymv6DhbR2D4txZT0A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755744994; x=1756349794;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XBaK+uDkb1FKWMnsKSy6ZhbJaoQabX0cbuYGiNdtzlM=;
-        b=ejCXKZBDutUbtnCCGZZwly/yqBELrfACix82Z375kWShDKSeMPWh3etUe4JTmQOX/b
-         DEz6VQilWAZNcEUxqUA11Tul9g6eg5NC1Y5UlpMaWQlQ/gySUpV1YNAsX29GtJFxWFFZ
-         4f3mgyfowofdAxVwsIoV7+SbJXVxyX3S+ypcQGQvMuyBqPFv7DgjyonHsmrXclEvNtKE
-         eNBUfP4LNsBONkCmqP2Em0sL2wIxc3OZYJ2u8bc16pWy/2I25C71cHOciydus4YGC6jF
-         P3pzlRqqH3uLEmhGwCmmYLhZ69iho5ZE2Kb62w3c8VvY8HNsXQohaieWb+BObOleIldJ
-         XiIA==
-X-Gm-Message-State: AOJu0YycvqkZbww7YIeyWz7nMGAoDawxwe+VjwCSCkMdfuhnGiEwsEuS
-	0KkWOHRHdTPIUsamUZtCE2SY+ibUEvpCIosSerWxKp5EjZj0k3kDCLQbP80gYyVToofNFinzmwJ
-	SrayYzC6wX+re+h7WSY+PIbAvoWn1Eb6KwW40Eg/m3juKOGaqB3KkObcXlS6p+oUqDRfpgeRVyh
-	fAuIei6/jy1R/gAq0GMEQxxj0EXO094p/xoxAnaAyznfrPxyjOj42MGQevnQQRWPrOG29OrTg=
-X-Google-Smtp-Source: AGHT+IHOUOftlFA6gwO5touzHJxQk7/q1lypr8Q4vbHBqJ26hjGPhbxSN2SE73bXv0muunHuQFwlQukp1KrVN5ncmw==
-X-Received: from plbkx11.prod.google.com ([2002:a17:902:f94b:b0:240:3ec9:aa82])
- (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:2f85:b0:242:cf0b:66cd with SMTP id d9443c01a7336-245fed69268mr14788835ad.34.1755744994361;
- Wed, 20 Aug 2025 19:56:34 -0700 (PDT)
-Date: Thu, 21 Aug 2025 02:56:16 +0000
+        d=1e100.net; s=20230601; t=1755744995; x=1756349795;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H996zq4Ef8LWOErXtNjqGqwGdLBd8tccS6w3vtc0ofM=;
+        b=LGTKQkffOcYoTCK51sQKi5rl8fWEGSX8ih4QOjoe16vxbwu6iHOlQJ9o1H+d2FKImh
+         avNSH4qpkU9CpoMovL1r5XKXm8xbQR85v7Gt9XIT08JQt+8cvnkkKSvWdn3IEOZVLc3o
+         tyD3avOBDQqqYlJrrjVCYAIiCQEkoNVFcxxrSNjaaK0bY0S9RwVD6abdkG9bhDiFCJzv
+         1iRKLUnIWpuLFKrF4lEbTpDjPcFGlW0rdGpVTlhCmTo7leAR/luH3oCYj0l4GEET2BrE
+         mjZxg5HmhYjdxZbfDsVHjHlBm7u5olW284B229qRJqJHjzcCTxUnJiPYvX23w8fH213Z
+         u0RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXUB0rGs8yhc2gykjZj1EpPPKTOiC4mLGwcqfkiQ9KdkyeFMPB+DDRCo+MXqMCV1bFjisnqH2vlG/q18s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/N01zFf9VfGPyXriN1DYkqCCrVDwO0OPVg+oOZppcME/PxXyN
+	2IMXKj8Xo4NPqZr8jLRhqjVXQrbfhuS9IZv3uvG/o8vsPEMFjxQC27BH60taABF9rw==
+X-Gm-Gg: ASbGncvYowvTfXCdHorhAS9fYSIATPXme8colQtXofpMlYRVJrZ+umfN2Lan02fdbV+
+	AAvk7Gebb533xJyiEQrLBqszNfOAH9Yv99sMArmRv9+ax+uESXtxSK/zq91gSeoCNrERa1hvb1Z
+	KCXKkG9HJHt2C9Cc1gfg3JnpOPQrmLLgNo3NzZyP+P7sBG8KnZRGWt66bP1TA/hs5tDoLYjh4KF
+	icJRxVrrQ0auRbyGrFqWdJK7liPdo3ySSFR8mo4fyOks+Q9P5WfFth6eqbuc3arKuGHYVJiwBC8
+	FUcNMzF7KxaPnlBY7B/64FgzYW5cRVxFmfnMsxhWeljNES2YN2zrxEfUgD1rBiIcARn9FzPLogI
+	urzo9WNdS53VMQDS7jsXK+ykt7rwwJU54pAM6KFxRDiBo5tBKe1Ngt5ARPNJx
+X-Google-Smtp-Source: AGHT+IFfmuP/LFF7jXoz31JRLaGXSHGr8GvB67Fhz5PVKoovm91wDMvqkaL2E7H6MP4gZJtQNndaNg==
+X-Received: by 2002:a17:903:3bcc:b0:240:49e8:1d3c with SMTP id d9443c01a7336-245fed7d21amr10502565ad.35.1755744995342;
+        Wed, 20 Aug 2025 19:56:35 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:2283:604f:d403:4841])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-245ed4c7588sm40352175ad.101.2025.08.20.19.56.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 19:56:34 -0700 (PDT)
+Date: Wed, 20 Aug 2025 19:56:33 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Ethan Zhao <etzhao1900@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
+Message-ID: <aKaK4WS0pY0Nb2yi@google.com>
+References: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
+ <dfdc655e-1e06-42df-918f-7d56f26a7473@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.rc1.193.gad69d77794-goog
-Message-ID: <20250821025620.552728-1-almasrymina@google.com>
-Subject: [PATCH RFC net-next v1] net: Add maintainer entry for netmem & friends
-From: Mina Almasry <almasrymina@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mina Almasry <almasrymina@google.com>, kuba@kernel.org, asml.silence@gmail.com, 
-	sdf@fomichev.me, byungchul@sk.com, io-uring@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dfdc655e-1e06-42df-918f-7d56f26a7473@gmail.com>
 
-There is some needless friction with regards to whether netmem_ref,
-net_iov, and memory provider patches being CC'd to netdev or not. Add
-clear policy and put it in the MAINTAINERS file so get_maintainer.pl
-does the right thing by default.
+On Thu, Aug 21, 2025 at 08:54:52AM +0800, Ethan Zhao wrote:
+> On 8/21/2025 1:26 AM, Brian Norris wrote:
+> > From: Brian Norris <briannorris@google.com>
+> > 
+> > max_link_speed, max_link_width, current_link_speed, current_link_width,
+> > secondary_bus_number, and subordinate_bus_number all access config
+> > registers, but they don't check the runtime PM state. If the device is
+> > in D3cold, we may see -EINVAL or even bogus values.
+> My understanding, if your device is in D3cold, returning of -EINVAL is
+> the right behavior.
 
-All changes to current and future memory providers should be CC'd to
-netdev. The devmem memory provider happens to be under net so is
-covered by 'NETWORKING [GENERAL]' as-is. The io_uring memory provider
-happens to be outside of net/ though, so add an explicit file entry
-for that.
+That's not the guaranteed result though. Some hosts don't properly
+return PCIBIOS_DEVICE_NOT_FOUND, for one. But also, it's racy -- because
+we don't even try to hold a pm_runtime reference, the device could
+possibly enter D3cold while we're in the middle of reading from it. If
+you're lucky, that'll get you a completion timeout and an all-1's
+result, and we'll return a garbage result.
 
-Note that the memory provider changes need _not_ be merged through net
-or net-next, but the changes should be CC'd to netdev. Target the
-appropriate tree using the [PATCH ...] prefix.
+So if we want to purposely not resume the device and retain "I can't
+give you what you asked for" behavior, we'd at least need a
+pm_runtime_get_noresume() or similar.
 
-All changes using or modifying netmem_ref or struct net_iov should also
-be sent to netdev, so add a content regex for that. Patches modifying
-the netmem_ref or net_iov infra should also target net or net-next
-([PATCH net] or [PATCH net-next]). This is already the convention.
+> > Wrap these access in pci_config_pm_runtime_{get,put}() like most of the
+> > rest of the similar sysfs attributes.
+> > 
+> > Fixes: 56c1af4606f0 ("PCI: Add sysfs max_link_speed/width, current_link_speed/width, etc")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Brian Norris <briannorris@google.com>
+> > Signed-off-by: Brian Norris <briannorris@chromium.org>
+> > ---
+> > 
+> >   drivers/pci/pci-sysfs.c | 32 +++++++++++++++++++++++++++++---
+> >   1 file changed, 29 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> > index 5eea14c1f7f5..160df897dc5e 100644
+> > --- a/drivers/pci/pci-sysfs.c
+> > +++ b/drivers/pci/pci-sysfs.c
+> > @@ -191,9 +191,16 @@ static ssize_t max_link_speed_show(struct device *dev,
+> >   				   struct device_attribute *attr, char *buf)
+> >   {
+> >   	struct pci_dev *pdev = to_pci_dev(dev);
+> > +	ssize_t ret;
+> > +
+> > +	pci_config_pm_runtime_get(pdev);
+> This function would potentially change the power state of device,
+> that would be a complex process, beyond the meaning of
+> max_link_speed_show(), given the semantics of these functions (
+> max_link_speed_show()/max_link_width_show()/current_link_speed_show()/
+> ....),
+> this cannot be done !
 
-Note that no maintainers or reviewers are dedicated to this entry.
-We don't presume to overburden existing maintainers or add new ones; let
-the maintainers nominate folks whenever they feel appropriate. But make
-sure changes are sent to the correct lists.
+What makes this different than the 'config' attribute (i.e., "read
+config register")? Why shouldn't that just return -EINVAL? I don't
+really buy your reasoning -- "it's a complex process" is not a reason
+not to do something. The user asked for the link speed; why not give it?
+If the user wanted to know if the device was powered, they could check
+the 'power_state' attribute instead.
 
-Tested by creating a couple of trivial changes in io_uring/zcrx.[h|c]
-and adding netmem_ref and net_iov in other subsystems, and looking at
-the get_maintainer.pl results.
+(Side note: these attributes don't show up anywhere in Documentation/,
+so it's also a bit hard to declare "best" semantics for them.)
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
+To flip this question around a bit: if I have a system that aggressively
+suspends devices when there's no recent activity, how am I supposed to
+check what the link speed is? Probabilistically hammer the file while
+hoping some other activity wakes the device, so I can find the small
+windows of time where it's RPM_ACTIVE? Disable runtime_pm for the device
+while I check?
 
----
-
-Cc: kuba@kernel.org
-Cc: asml.silence@gmail.com
-Cc: sdf@fomichev.me
-Cc: byungchul@sk.com
-Cc: io-uring@vger.kernel.org
-Cc: netdev@vger.kernel.org
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4dcce7a5894b..22c50aeefaa5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17853,6 +17853,17 @@ F:	include/uapi/linux/unix_diag.h
- F:	net/unix/
- F:	tools/testing/selftests/net/af_unix/
- 
-+NETWORKING [NETMEM, NET_IOV & MEMORY PROVIDERS]
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+Q:	https://patchwork.kernel.org/project/netdevbpf/list/
-+B:	mailto:netdev@vger.kernel.org
-+P:	Documentation/process/maintainer-netdev.rst
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-+F:	io_uring/zcrx.*
-+K:	\bnet(mem_ref|_iov)\b
-+
- NETXEN (1/10) GbE SUPPORT
- M:	Manish Chopra <manishc@marvell.com>
- M:	Rahul Verma <rahulv@marvell.com>
-
-base-commit: 62a2b3502573091dc5de3f9acd9e47f4b5aac9a1
--- 
-2.51.0.rc1.193.gad69d77794-goog
-
+Brian
 
