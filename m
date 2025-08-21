@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-780005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C47B2FC3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:21:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28A5B2FC4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06230A00B7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:16:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02F745E322F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5D12D9EFB;
-	Thu, 21 Aug 2025 14:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE7B1DE8B2;
+	Thu, 21 Aug 2025 14:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="U2+oXM9f"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oihZH/KS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52E523D7ED;
-	Thu, 21 Aug 2025 14:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED421E51FA;
+	Thu, 21 Aug 2025 14:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755785755; cv=none; b=d62DQBim+BrrG/XqCZczPgKEJyuIl8YcvGYdP2RIyoG1pIpzf7s7S8jiInjkzw4qSMh4zBa73OUNJ9HRAG+6i+BRecfzRyIwLOBIRLuiSWZMao0WYpcM77hX1q4saW8ak6pPmePjZ4Z17XD90IZpbLKkRQOGt75eSou1bgUbrR4=
+	t=1755785768; cv=none; b=QCaWmHDQ1DkuLg0MRwULAyFd1xX1QPPygfp3z0AxFSaMWMwMAzl6bb/pIWxrq/Lz1wEjK5f8MkxJyIFofkHlYIlQB4wmhMi1dh9B+SrANa3c4/HRe09xAoGgjJGA9k/4a88+k1fnVRm9BwJpjrcNDavTdH+NdomFfO2Zz9kAv1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755785755; c=relaxed/simple;
-	bh=aGTiUaE6wgWfeBsp7D9zWiVk9Ot/eVVN9KU/GJLEIwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HR6DlwJKMw67owQeYAd6yy3tlvRs/QGY7qxTaXINRHSAZCxeGxTDBjm3jigFqFvkypZpgQDenp56Svt3XepnvDXCpZKyfxDNCLezWKWq1BnZaQI9xaxnsee3tsR8XESlK0PzPoDeJpd4zcktDJyRlSK8KQo93t5UXtHD90qT+50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=U2+oXM9f; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=xU+9vDUiNjllQZALNS0DJDtz8AB80KXzT3XORAL0N2g=; b=U2+oXM9f0IyReIgrGiTjSkyrGy
-	HODDwMdacAre75sfqY4NhMzFpvBKzTOctCAnAze1Q+z8ExOJRZM9TJWeb0puDNEd2kfs21RRsvLp+
-	6eLoCMTQ12VeXJYNWW56EdEBecqyGYGW9ZLzwe4gsLt3UmVr5fDTN8VRtP+zYblb0QbA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1up64i-005SZd-CQ; Thu, 21 Aug 2025 16:15:32 +0200
-Date: Thu, 21 Aug 2025 16:15:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v3 7/8] net: dsa: lantiq_gswip: store switch API
- version in priv
-Message-ID: <8eb20dee-162f-47ea-8596-be71a3aa653b@lunn.ch>
-References: <cover.1755654392.git.daniel@makrotopia.org>
- <88e9ca073e31cdd54ef093053731b32947e8bc67.1755654392.git.daniel@makrotopia.org>
- <aKZg3TviLUDgKgLz@pidgin.makrotopia.org>
- <58d31b56-8145-419e-b7be-1fd48cfeda88@lunn.ch>
- <aKb59jMfDIJIK0KP@pidgin.makrotopia.org>
+	s=arc-20240116; t=1755785768; c=relaxed/simple;
+	bh=yTMUV4/eAHNW0xAJzqb/lh+W1hlD3KfGD1uIJ0E71Vc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c4xm9cbLIm9Mrps1Atsi6IC2zqGqXB0nAfLHapHWJsClOKrBJ0LPoZ5e+wCZAae0sZWKiDkqn+zZ0tZAmZ8bWtJh0cxc51W/SpEcMCo8Sk2a/klz+T4S0huO/mw3uTj2nSkYomsCUkW99Lh3ZC3HnlDKbpLuL0oqekMmCuen4QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oihZH/KS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317CBC4CEEB;
+	Thu, 21 Aug 2025 14:16:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755785768;
+	bh=yTMUV4/eAHNW0xAJzqb/lh+W1hlD3KfGD1uIJ0E71Vc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oihZH/KSEEw0IYGZ72N/z+vLnlXFHqXieAUmJ74Jow8zoInpON827HZ1vlcVRykXV
+	 APQa+zgEGQI8M5jJxZZu0868QEh+BUwi/EQkVpLLiwG2HOtj3RM12pSO55yGYgh7vq
+	 WM6P9JXhfd0aySmZ+RUWVu2t7sPhCkE7inWmWA8f1ioTdTyvHJfGjk/tI494rqlEVw
+	 +5JsDlGX4CHxkQb2YPs5Eim7G0azwOhf44YLoiVMKszrpEnNm99UIJjGLDg7Ug0B/G
+	 sM4LvMT1qAdxADCjxJoomCwduF9fraz0IftGa5O0sXJRNP0p1Dh21NGGyMn0xSr6r0
+	 FSU25nahlmwIQ==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] selftests/bpf: Fix uprobe syscall shadow stack test
+Date: Thu, 21 Aug 2025 16:15:57 +0200
+Message-ID: <20250821141557.13233-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKb59jMfDIJIK0KP@pidgin.makrotopia.org>
+Content-Transfer-Encoding: 8bit
 
-> The (anyway public) datasheets I have access to don't describe the VERSION
-> register at all. In the existing precompiler macros, however, you can see
-> that most-significant and least-significant byte are swapped. REV is
-> more significant than MOD:
-> 
-> #define GSWIP_VERSION                   0x013
-> #define  GSWIP_VERSION_REV_SHIFT        0
-> #define  GSWIP_VERSION_REV_MASK         GENMASK(7, 0)
-> #define  GSWIP_VERSION_MOD_SHIFT        8
-> #define  GSWIP_VERSION_MOD_MASK         GENMASK(15, 8)
-> #define   GSWIP_VERSION_2_0             0x100
-> #define   GSWIP_VERSION_2_1             0x021
-> #define   GSWIP_VERSION_2_2             0x122
-> #define   GSWIP_VERSION_2_2_ETC         0x022
-> 
-> Now I'd like to add
-> #define   GSWIP_VERSION_2_3             0x023
-> 
-> and then have a simple way to make features available starting from a
-> GSWIP_VERSION. Now in order for GSWIP_VERSION_2_3 to be greater than
-> GSWIP_VERSION_2_2, and GSWIP_VERSION_2_1 to be greater than
-> GSWIP_VERSION_2_0, the bytes need to be swapped.
-> 
-> I don't think the vendor even considered any specific order of the two
-> bytes but just defines them as separate 8-bit fields, considering it a
-> 16-bit unsigned integer is my interpretation which came from the need for
-> comparability.
+Now that we have uprobe syscall working properly with shadow stack,
+we can remove testing limitations for shadow stack tests and make
+sure uprobe gets properly optimized.
 
-It would be good to put some of this into the commit message and
-comments in the code. That the hardware has the 'major/minor' version
-bytes in the wrong order preventing numerical comparisons. To make it
-obvious, rather than use swap16(), maybe actually extract the major
-and minor, and then construct the version in the form you want?
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+sending fix for changes posted in here [1]
 
-    Andrew
+[1] https://lore.kernel.org/bpf/20250821122822.671515652@infradead.org/T/#m571d8b1975e1f4ade55aa972940d8568647ac113
+
+ .../selftests/bpf/prog_tests/uprobe_syscall.c | 24 +++++--------------
+ 1 file changed, 6 insertions(+), 18 deletions(-)
+
+diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+index c1f945cacebc..5da0b49eeaca 100644
+--- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
++++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+@@ -403,8 +403,6 @@ static void *find_nop5(void *fn)
+ 
+ typedef void (__attribute__((nocf_check)) *trigger_t)(void);
+ 
+-static bool shstk_is_enabled;
+-
+ static void *check_attach(struct uprobe_syscall_executed *skel, trigger_t trigger,
+ 			  void *addr, int executed)
+ {
+@@ -413,7 +411,6 @@ static void *check_attach(struct uprobe_syscall_executed *skel, trigger_t trigge
+ 		__s32 raddr;
+ 	} __packed *call;
+ 	void *tramp = NULL;
+-	__u8 *bp;
+ 
+ 	/* Uprobe gets optimized after first trigger, so let's press twice. */
+ 	trigger();
+@@ -422,17 +419,11 @@ static void *check_attach(struct uprobe_syscall_executed *skel, trigger_t trigge
+ 	/* Make sure bpf program got executed.. */
+ 	ASSERT_EQ(skel->bss->executed, executed, "executed");
+ 
+-	if (shstk_is_enabled) {
+-		/* .. and check optimization is disabled under shadow stack. */
+-		bp = (__u8 *) addr;
+-		ASSERT_EQ(*bp, 0xcc, "int3");
+-	} else {
+-		/* .. and check the trampoline is as expected. */
+-		call = (struct __arch_relative_insn *) addr;
+-		tramp = (void *) (call + 1) + call->raddr;
+-		ASSERT_EQ(call->op, 0xe8, "call");
+-		ASSERT_OK(find_uprobes_trampoline(tramp), "uprobes_trampoline");
+-	}
++	/* .. and check the trampoline is as expected. */
++	call = (struct __arch_relative_insn *) addr;
++	tramp = (void *) (call + 1) + call->raddr;
++	ASSERT_EQ(call->op, 0xe8, "call");
++	ASSERT_OK(find_uprobes_trampoline(tramp), "uprobes_trampoline");
+ 
+ 	return tramp;
+ }
+@@ -440,7 +431,7 @@ static void *check_attach(struct uprobe_syscall_executed *skel, trigger_t trigge
+ static void check_detach(void *addr, void *tramp)
+ {
+ 	/* [uprobes_trampoline] stays after detach */
+-	ASSERT_OK(!shstk_is_enabled && find_uprobes_trampoline(tramp), "uprobes_trampoline");
++	ASSERT_OK(find_uprobes_trampoline(tramp), "uprobes_trampoline");
+ 	ASSERT_OK(memcmp(addr, nop5, 5), "nop5");
+ }
+ 
+@@ -642,7 +633,6 @@ static void test_uretprobe_shadow_stack(void)
+ 	}
+ 
+ 	/* Run all the tests with shadow stack in place. */
+-	shstk_is_enabled = true;
+ 
+ 	test_uprobe_regs_equal(false);
+ 	test_uprobe_regs_equal(true);
+@@ -655,8 +645,6 @@ static void test_uretprobe_shadow_stack(void)
+ 
+ 	test_regs_change();
+ 
+-	shstk_is_enabled = false;
+-
+ 	ARCH_PRCTL(ARCH_SHSTK_DISABLE, ARCH_SHSTK_SHSTK);
+ }
+ 
+-- 
+2.50.1
+
 
