@@ -1,66 +1,62 @@
-Return-Path: <linux-kernel+bounces-780432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C47B301D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:16:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33562B301D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C4514E4F7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:16:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D16F601163
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5922929BDAA;
-	Thu, 21 Aug 2025 18:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB792D5408;
+	Thu, 21 Aug 2025 18:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYp9AWFY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIJT2L0F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0D54C6E;
-	Thu, 21 Aug 2025 18:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2110919EED3;
+	Thu, 21 Aug 2025 18:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755800168; cv=none; b=FBoq7QBwU2rfXtMYxppRz1l12UwH+47cAyqG+0qoVSRGBq7l1hPyPGp0uEp+pSH3zvv6URGW4rmiH1q6M31NWsf8IrtifXhBWhI1ZpFj7BCo5wH8icb0RuR5JW+KerMCBJnJXQvEz2KhqbZnXjqdprdl2MQY/Gwcup/SsgNJlwg=
+	t=1755800254; cv=none; b=atatcyAQoj9Vn3WiFlQEzOvOuO+/uDLHZLh57hZVGbHDUd8hWaPeyREAgKpvDIzeaGowp3K7oQApkGpNkdm4jyHLBhz5tKgNyL1hFX9RqpdUUNqEH/DBuRo30/1zL5H7RER70k96dbtn8hYU7div6gw3Wf8rk/EQBaivL0lpNcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755800168; c=relaxed/simple;
-	bh=veW0qVFrmP47n0MUNc/joNwN/5xsR0WE60fQR3ZiOZE=;
+	s=arc-20240116; t=1755800254; c=relaxed/simple;
+	bh=sdpk9kvumjyelyuunnszIrhJPZRwr5hdsLnxeXdH7BQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GF64UauMTBESS5MHbXMlEwWC+OqWuT4cVyZ96j4mMfrugHi6ev92iA7NgamuiqmrrYuS3PtgdIAzyYJIvWfPtt/tvLkiiJ+yEGTE/nD2s3RC3OTRTuD67AuZAF17o1BmsrAXwDBprbsZnKejO44ajmGa/pIdf1hv4SaSOmQJogE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYp9AWFY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C45BCC4CEEB;
-	Thu, 21 Aug 2025 18:16:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gj3a2TpTKuOLq4e1saoDE7z0Up2WEId4BnNu/Dey1r4yJj4RX3D30xybHaHgKx55PC/DOXnznBwuRMc6JD14RWgL5EpCJ/gYKpMoc7ESOWI+eCHDrPmYrv1qKmmOFxxZM6ZH/T/HQ4or8N/lDBrDOhGclXRUSFO23KQ2F7uZ1ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIJT2L0F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F39C4CEEB;
+	Thu, 21 Aug 2025 18:17:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755800168;
-	bh=veW0qVFrmP47n0MUNc/joNwN/5xsR0WE60fQR3ZiOZE=;
+	s=k20201202; t=1755800253;
+	bh=sdpk9kvumjyelyuunnszIrhJPZRwr5hdsLnxeXdH7BQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hYp9AWFYRh3mF7NBTTSLlPoJwwxzpv25iOtNzhRzubHXstr/DOdqulCQZku3uk/jK
-	 06P3dfIOcjm/M2pdaPVTrhlZitfvwtEgaoBctkDJSCnVHRc7ysQ5/mi9JE3kWBK7VV
-	 7sUsQyv5eGwkFG/I1XIYUbo7T/d/tMtQJhQFKl0ORVnzrk52GEebLcreIsDWjQL417
-	 lcQr48Dt7kxy0etfmqWrwGcuaQU6wryRmP7ThyHrkxQR+havRdB4bbmCym+5EuAvnp
-	 QzLOP7I5ScwuC5aI1+t8HwNsEEiYFt31HfBZQknW9+7PSvOQJFYeY6aGNh+S2tWpPt
-	 7KO+Bft3YJRnQ==
-Date: Thu, 21 Aug 2025 19:16:03 +0100
+	b=lIJT2L0FSMpseoLQ0+azuxnY7re9vD45CWlyFkUf5KGOjSs11ay6BXQ2J5P7NDh9r
+	 ujfEASp89P0CMuf5YLOXV4DnWzF6zD52AWHvx5pXUkbrVCif3WDR6QQ3RC4OhQM7ID
+	 PPocC+Nw3hnzR6liRsVPae/W0KEIQL6CqQtUBp9CcDacjXIo4CS5lwstTmtxXO4EBw
+	 22PYMKalPeitWjNSgp0T+L/fTEeWS4oJcBXm2Q3TRxs4m5NyBGDNdyvKnb1UEgSoOh
+	 2v9YDj8qLHNr9aolk8wQpNpy1ExwLjQBTBBeSUyxm2oLJt69sXinsoAdausPY+9tvW
+	 xnP7B8M9KITew==
+Date: Thu, 21 Aug 2025 19:17:29 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "biju.das.au" <biju.das.au@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To: Hal Feng <hal.feng@starfivetech.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"magnus.damm" <magnus.damm@gmail.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
-Message-ID: <20250821-arrange-exhume-aed87b75305c@spud>
-References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
- <20250820171812.402519-7-biju.das.jz@bp.renesas.com>
- <20250820-onyx-salad-c5c96f6bd480@spud>
- <TY3PR01MB113464F2ED8BFBB823B038C038632A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 1/3] dt-bindings: riscv: Add StarFive JH7110S SoC and
+ VisionFive 2 Lite board
+Message-ID: <20250821-pencil-anguished-6b8467adbd38@spud>
+References: <20250821100930.71404-1-hal.feng@starfivetech.com>
+ <20250821100930.71404-2-hal.feng@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,88 +64,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7GlMQwMLMmaJG8we"
+	protocol="application/pgp-signature"; boundary="ogk02xgAdtyg13R4"
 Content-Disposition: inline
-In-Reply-To: <TY3PR01MB113464F2ED8BFBB823B038C038632A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <20250821100930.71404-2-hal.feng@starfivetech.com>
 
 
---7GlMQwMLMmaJG8we
+--ogk02xgAdtyg13R4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 07:15:59AM +0000, Biju Das wrote:
-> Hi Conor,
+On Thu, Aug 21, 2025 at 06:09:28PM +0800, Hal Feng wrote:
+> Add device tree bindings for the StarFive JH7110S SoC
+> and the VisionFive 2 Lite board equipped with it.
 >=20
-> Thanks for the feedback.
->=20
-> > -----Original Message-----
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: 20 August 2025 21:11
-> > Subject: Re: [PATCH 06/11] dt-bindings: usb: Document Renesas RZ/G3E US=
-B3HOST
-> >=20
-> > On Wed, Aug 20, 2025 at 06:17:53PM +0100, Biju wrote:
-> > > From: Biju Das <biju.das.jz@bp.renesas.com>
-> > >
-> > > Document the Renesas RZ/G3E USB3.2 Gen2 Host Controller (a.k.a USB3HO=
-ST).
-> > > The USB3HOST is compliant with the Universal Serial Bus 3.2
-> > > Specification Revision 1.0.
-> > >  - Supports 1 downstream USB receptacles
-> > >      - Number of SSP Gen2 or SS ports: 1
-> > >      - Number of HS or FS or LS ports: 1
-> > >  - Supports Super Speed Plus Gen2x1 (10 Gbps), Super Speed (5 Gbps),
-> > >    High Speed (480 Mbps), Full Speed (12Mbps), and Low Speed (1.5 Mbp=
-s).
-> > >  - Supports all transfer-types: Control, Bulk, Interrupt, Isochronous=
-, and
-> > >    these split-transactions.
-> > >  - Supports Power Control and Over Current Detection.
-> > >
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >=20
-> > > +---
-> > > +$id: http://devicetree.org/schemas/usb/renesas,rzg3e-xhci.yaml#
-> >=20
-> > > +    const: renesas,r9a09g047-xhci
-> >=20
-> > How come these don't match? I don't understand your naming scheme at al=
-l, so idk which is even correct!
->=20
-> r9a09g047 is SoC part number which also known as RZ/G3E SoC.
->=20
-> I just followed the convention used in [1] and [2].
-> Please let me know I should change rzg3e-xhci.yaml->r9a09g047-xhci.yaml ?
+> JH7110S SoC is an industrial SoC which can run at -40~85 degrees centigra=
+de
+> and up to 1.25GHz. Its CPU cores and peripherals are mostly similar to
+> those of the JH7110 SoC.
 
-What's the benefit of using that instead of the compatible, other than
-confusing me?
+How "mostly" is mostly? Are there memory map or capability differences?
 
 >=20
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commi=
-t/Documentation/devicetree/bindings?h=3Dnext-20250820&id=3D44b91d61c505863b=
-8ae90b7094aee5ca0dce808f
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> ---
+>  Documentation/devicetree/bindings/riscv/starfive.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 >=20
-> [2]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commi=
-t/Documentation/devicetree/bindings?h=3Dnext-20250820&id=3Db2d25905366b4e67=
-91f60e6bc76a636d1b88e6f8
+> diff --git a/Documentation/devicetree/bindings/riscv/starfive.yaml b/Docu=
+mentation/devicetree/bindings/riscv/starfive.yaml
+> index 7ef85174353d..a2952490709f 100644
+> --- a/Documentation/devicetree/bindings/riscv/starfive.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/starfive.yaml
+> @@ -33,6 +33,11 @@ properties:
+>                - starfive,visionfive-2-v1.3b
+>            - const: starfive,jh7110
+> =20
+> +      - items:
+> +          - enum:
+> +              - starfive,visionfive-2-lite
+> +          - const: starfive,jh7110s
+> +
+>  additionalProperties: true
+> =20
+>  ...
+> --=20
+> 2.43.2
 >=20
-> Cheers,
-> Biju
 
---7GlMQwMLMmaJG8we
+--ogk02xgAdtyg13R4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKdiYwAKCRB4tDGHoIJi
-0hSPAPoDdOTqCsOU1Lt3flNQYSPU1t6vbvU4LII0fUo2sw2JvAEA4rYPc7+ZtKBS
-xeByEQ0cVKS3bqvr0RWjOxjWXs2GRwA=
-=hwrx
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKdiuQAKCRB4tDGHoIJi
+0uloAQCW8zYJBmp+5pFUy5+K9wGBKt53uvd5revzwEq1efJRGgEA7Z3tBRMUIB5I
++Kok+f96PccyQMWOqm32iMRzqMSjBAE=
+=VGHm
 -----END PGP SIGNATURE-----
 
---7GlMQwMLMmaJG8we--
+--ogk02xgAdtyg13R4--
 
