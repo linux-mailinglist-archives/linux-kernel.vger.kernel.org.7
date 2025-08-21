@@ -1,147 +1,101 @@
-Return-Path: <linux-kernel+bounces-780537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9EA3B3032C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:47:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F74B30330
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AEB01899B5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:48:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24EFE1CC2B7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712F02E1C61;
-	Thu, 21 Aug 2025 19:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D1F3451B0;
+	Thu, 21 Aug 2025 19:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iaIU+YFQ"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPeL8Rov"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3354F1EA65;
-	Thu, 21 Aug 2025 19:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DA01EA65;
+	Thu, 21 Aug 2025 19:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755805656; cv=none; b=KrnSuYxwfQ847yhfW//+BEyd8kKGx0EqMUsX/GO7FIUVnDz2tULAmJp0q1svJnTBOBJDn5/+8LlxHkaunzH+08lu0ot3hcoL037LF1N8LAK3zg0g4sZP7v8zDz/FqCCdM4ShhZg2FHLQOAy4Rf3/+ScplJdyr4t9ngY7R4YFVrY=
+	t=1755805709; cv=none; b=FDPcRH0+CMIhFjFScdzdbhc7XbXukRUoLeJ7tDu6FOBJD112cLM4ebTtTUI7wnuNqZBkcUcmfvc+7MBAcWMt02lthtIEDN1ZV5YmA/IwJ5HX0JM5WC9k/9a57mQG7ks/enYozQk2HNWUxOeXTPoHaDHQkVkbb9rjugP6svQYmtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755805656; c=relaxed/simple;
-	bh=CoGv8RcpoVG47YjNA1FVRXLasWqQUk8AV1MmIH1kGPE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cOLRh27IJ1PzTNOs393M6pihCfK8dZMG1cCOdIEBVzh2n3s0UOVLG7zP8z2+Z667ffXGUVx0uE1KbL/b5Ztuylp13UBuBU8251otRLJwLjQUloCYKPwCVpcxHrOILK8PoWOrGKyc3tn1hMZ1b8tm9yylSqOMPLP6nsM6PZW+kG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iaIU+YFQ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45a1b05d252so10299105e9.1;
-        Thu, 21 Aug 2025 12:47:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755805652; x=1756410452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sk2MyQWIpVgT0DryeqZ1mPWw+HywqmfDV8FUlVIzj7A=;
-        b=iaIU+YFQGaLzstasIvVPHawjZKjoc3AnIn+KB+s7Gdt87QFQOkSDQniG1HLf0JlpZD
-         ha4J/sozZGtlAi9fGfHDgqC/ZyP0+yl5gkAxUFtiuFxkoCLFCAXYc2s6anXdUBoNVFUG
-         u4MYoTOChwE0cqB2oGNOXnaAVNI2N7A9T4ND4xP5wHaV2MPcQL6Rer+VjJlsBKbGjnPL
-         tbjc0ER609DEGQSH4YbCVQum26BaI+GJC75GKahiDhhlkz8yk++Wk9FjfBRLsHnIM9Sl
-         G3DiD+Ygux9mWl9RwIP5MI5JpmHywMRfn0LSKyNMOKoUic5vfz1wPhRnRsP5bQ3Fqkb3
-         GwyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755805652; x=1756410452;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sk2MyQWIpVgT0DryeqZ1mPWw+HywqmfDV8FUlVIzj7A=;
-        b=emnYsJPTRu8k3TKGHueL5C58NPQ5qVTWJh2EtsCZXhD8v1Bjwxj/Sklfahfnlq8W1R
-         UXJWM0vEik0RYrFOJT7UO57UIkGzpv0o03MZh2kDW2ibDRq61To2AFFTX0oBwpG6crjz
-         RamZe+mD75OGob3KzinDbZ9zBEBR6mEQl2TLhbIr4lZNPaNMzz4MMef1ZzMxxI6J8Sl+
-         XFVLmVq+J5H/CnjW0jCMwB17kr9Fu1CZNCSn8QLYaIGiCYpIghqsG0wPtkDbFBfIGtkA
-         A5BQ2sPIJsB+Xfq/vAjYPqsEVnVcpI3/jMzqYv2x1frMXsGAa2bl0NaOQpIY5dWIdi89
-         HnTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqgBzrjI1zjTc/nYqcKyULPcsfTAyCmxTA7yqiQ6LSk/HGDRJnmZxRW48x/XG5y+SdJuk1niK/GE0Z@vger.kernel.org, AJvYcCXNmyedeDQjyPoWSW7ENhkqRMyP9thWYRRqF3iJAWiiwLk1vgBBXGq/Kl3iS08Ehwb8OrOWV7nXXa44rTeN@vger.kernel.org, AJvYcCXPDlG2ILHGghX/SBAXKgSq7jIDEthqjZautL/l/OU5LJEHmtF5G/i7j/Nlw68dEjlcjTTcT+eYNRBKCA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl6N3XSwHrhxItLKEBKe7d5SgN5RfLC3MMRV9HCWEnlDFTdzwo
-	0tMEr7V2iXfDe79WtT9q6j33e2ykhRmMotpaRh5IevTRt5SWqYIC4Js=
-X-Gm-Gg: ASbGncuXTQsPxbhdPB46XweilTwe/3jHxEMC7PL8BvraBPllcCW6/LpHp9d3CQ+L+jK
-	x7/cGQNi7LRu3Gc8Jf5DZpGdLxbkzf7Wayjo8qmmTAkraIAgzY5F/U1Wm5s21cqgo8kzZn51ZML
-	G/ml/ruYxgh/Fg9f3mvQACyJyoOOhc3mFThXL9uVU/diUmqfzGF4DA6+Ge+UznYq/EskgKqUkiz
-	z29ZPwJW86qTZ3bPU3PvOE/f3ymoYfN5bAZ/uATG7v4D7YIqzlTKjFAYGWPcJhmRhYbZ3q2kh1t
-	8wmlcDJjw0vTBQNRIfdPcH8XvU8F6Wby8LjacsGzvZ+0n4Fgyd1Va/bSL/Vl9lX0rCfOm+2w/o/
-	tw9q8Su0oUqRV+5dpXCm6py4GfcXkaX374YIK10sLqFm5xGo=
-X-Google-Smtp-Source: AGHT+IEWs4m9FMp9lKhy3iv5a6XxAf8a4fji+2hVLLN5otIwqyq2NwPhIa893WoTFWcYdRCNexE8kA==
-X-Received: by 2002:a5d:5f8c:0:b0:3b7:8d70:dac5 with SMTP id ffacd0b85a97d-3c5da83b60fmr168731f8f.2.1755805652254;
-        Thu, 21 Aug 2025 12:47:32 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:e487:142f:8982:f293:902e:d51a:6b6f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c4c218c62asm3698218f8f.64.2025.08.21.12.47.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 12:47:31 -0700 (PDT)
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	aaro.koskinen@iki.fi,
-	andreas@kemnade.info,
-	khilman@baylibre.com,
-	rogerq@kernel.org,
-	tony@atomide.com
-Cc: krzk+dt@kernel.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	peter.ujfalusi@gmail.com,
-	lee@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	jihed.chaibi.dev@gmail.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v5] dt-bindings: gpio: ti,twl4030: Correct the schema $id path
-Date: Thu, 21 Aug 2025 21:47:10 +0200
-Message-Id: <20250821194710.16043-1-jihed.chaibi.dev@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1755805709; c=relaxed/simple;
+	bh=Xhpi152UPPYepOeU8j1aeDsj3ylJjhTecg57Bmk368c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SS/9ZOqufJtDN4wQOEilLJrQLCORqvquSBCckgsM6tNDEJxy2m4AjfqUQm8vRoCJv9oTDTR6dxFnRhUmH1KXTNuMZmJWvEP1szzWI8HVkTU27SM4ayKuJfbv4LC3w2U6OxP7fE/tNSgkJIQsAQLJy8DpoawS26LUmFjMjfP/UxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPeL8Rov; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86587C4CEEB;
+	Thu, 21 Aug 2025 19:48:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755805708;
+	bh=Xhpi152UPPYepOeU8j1aeDsj3ylJjhTecg57Bmk368c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aPeL8Rov3Iktdy05myWKuavwcXunCI9pAtp0qtEq6RW9516Eir+o7hfkREOVqthk3
+	 Qdy0kkDzDBro+I4FedReKYbyfi11N/znOSAdq9CK4Eg6Z2ncAnuRoZaW5HD26VdWmF
+	 4x8f9b6RHGDa70I002KCW+vT4eEBsRep1ozZjv8QhYYeTkwglTsHd7aPstJCrz82LV
+	 a6YyrfqgclCbnNcYgmU9jbfpRtFu1mwTrm+G5KjUCQ488RwQCDVXqJV5G28TE+LLaR
+	 1lcWpOowQqJSuBysUQXNjy5sq9ETmczj/hWlh7klb64Kp1oNCdRHWnDxhfS2hc5mIH
+	 2ggd3Tic9q/sw==
+Date: Thu, 21 Aug 2025 14:48:27 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Wenbin Yao <wenbin.yao@oss.qualcomm.com>
+Cc: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>,
+	Manivannan Sadhasivam <mani@kernel.org>, qiang.yu@oss.qualcomm.com,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, konrad.dybcio@oss.qualcomm.com,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Document the Glymur QMP PCIe PHY
+Message-ID: <175580569944.470925.12622150205137529754.robh@kernel.org>
+References: <20250821-glymur_pcie5-v2-0-cd516784ef20@oss.qualcomm.com>
+ <20250821-glymur_pcie5-v2-1-cd516784ef20@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-glymur_pcie5-v2-1-cd516784ef20@oss.qualcomm.com>
 
-The $id for a binding should match its file path. The ti,twl4030-gpio
-binding is located in the gpio/ subdirectory but was missing this from
-its $id.
 
-Correct the path to follow the standard convention.
+On Thu, 21 Aug 2025 02:44:28 -0700, Wenbin Yao wrote:
+> From: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+> 
+> The fifth PCIe instance on Glymur has a Gen5 4-lane PHY. Document it as a
+> separate compatible.
+> 
+> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+> Signed-off-by: Wenbin Yao <wenbin.yao@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Fixes: 842dcff8e2d6 ("dt-bindings: gpio: Convert ti,twl4030-gpio to DT schema")
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
----
-Changes in v5:
- - No changes, only added 'Fixes' tag.
+If a tag was not added on purpose, please state why and what changed.
 
-Changes in v4:
- - No changes.
- - This patch is split from larger series per maintainer feedback.
- - v3 link:
-    https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
+Missing tags:
 
-Changes in v3:
- - This patch was added to the patch series in v3.
----
- Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-diff --git a/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml b/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml
-index 5e3e199fd..96d50d14c 100644
---- a/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/ti,twl4030-gpio.yaml#
-+$id: http://devicetree.org/schemas/gpio/ti,twl4030-gpio.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: TI TWL4030 GPIO controller
--- 
-2.39.5
+
 
 
