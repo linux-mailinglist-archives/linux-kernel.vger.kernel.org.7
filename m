@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-778999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE915B2EDA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:42:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646E6B2ED9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDA618897FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17480A214A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F84029BD88;
-	Thu, 21 Aug 2025 05:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7733B221540;
+	Thu, 21 Aug 2025 05:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b="PrHBoU7K";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="OLE/uajL"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UqLH1ane"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBE0156F45
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEEF156F45
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755754808; cv=none; b=UwJulaRs9PxEH3TdNujyVRdguukqZc2bw4nBUmD7NNqtx66Ym7QKRJTFaCCl1nqKuQQnW2Unx95M4lIDVa/S6eXftRTJuR9EcwZ2KCzgac130YLYLxcRGg1+MK2pS1pG/KZi9lX9crxDsP+yhE5JexWFKkBu1TquNDefOQJPrPI=
+	t=1755754784; cv=none; b=S11p0lPbHAFWBV7Fy1a1TMNfQSO5pOOcsikdGXgLU/n76p4ymvU17X+/MhhyoBGKhT8TlCN1/6DX0vFnHD41PyWnyhdjyqgMhnpdvf2uCJT7PsLrD9PK9jXWF0udCttabdxqLRBqAZsvYI4Jq6IEpn7/ZwT+JIcgAMydNClE8Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755754808; c=relaxed/simple;
-	bh=J4Pt31yAdjggkVkhXKd4aEOD6o7lBlPQllPPBN6m1qQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YT5FJ8mCZe5mZvbPzizJswi/1jWEKdSGzAFE5JNeaMVxirnbRhXIhYnec4X5E86JfI7ZJ5aQ/lt+PIxef/9dT+VAYLfcwAPJFK356wskQpKcPQWpBacrZQRD6A0k7ixgO7NQdu3Se5ReODNOjU1aGHpJiIfyD/sm+AVO8RZyoeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space; spf=pass smtp.mailfrom=elijahs.space; dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b=PrHBoU7K; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=OLE/uajL; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=elijahs.space
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=PrHBoU7KhIsI1vFvA5Nn0cV4QxXhIn3ovXrXf4BHzdSUdbNyISYzhFYJRgvnN4N4J3L6bB5TR3PhYuXKkQVvrx+fA1GL0n3VIEB0CQOdT1tILBDD9odVZXskXBnpqHtS643oGUSmHjn6NBxhwPGhvyUJQuqZqis2mTNafGEZz51XzK7IracmkUN79xZwfGb9KBTbB8SsNy7v9xHZaHOFxLjnLpuV4xgiLLDuiWmAPL/mqwA+UCnpN/gN1lAw7hsdEQFqYBOmCCMfxNcJjYiAvPGdQ4/Ujg5A1xjQcxlFia+yDablstqrpaARR86W5x6uOWZMcWqH+PHGDch0LShNhA==; s=purelymail3; d=elijahs.space; v=1; bh=J4Pt31yAdjggkVkhXKd4aEOD6o7lBlPQllPPBN6m1qQ=; h=Received:From:To:Subject:Date;
-DKIM-Signature: a=rsa-sha256; b=OLE/uajLqzUOzajd+clPqsnqyDpoNjKJUzem2VfUUNJZxmbudVdXTRJKqmPJL53YBWOGl+GZIahjTY4I/ExK6nuyHECropwVzc6R6RHfOb7GqD1wLZoQD0vmJC1t84qCpo5RjYjYMAZA7xQLxCk6RDMGURMwMT/TvE5f8YrVZiyFO0Uqs/HvKY0eetH2WUinsO3ry7UJ2d4K8Sm0O8PBcMZYGDdV2nmDrV5fxXZIoxkTQ6R1B3R15DuFpBqrbrn7QMGnO3PdzGfpBQN2KI1ZjWnv/DHJ1DxD3uLcdjycwzzsfNpe+HHOzLGelBas9r4rYnxKKQ+p4lBJh3YHjfo9hw==; s=purelymail3; d=purelymail.com; v=1; bh=J4Pt31yAdjggkVkhXKd4aEOD6o7lBlPQllPPBN6m1qQ=; h=Feedback-ID:Received:From:To:Subject:Date;
-Feedback-ID: 147366:4866:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -770991182;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Thu, 21 Aug 2025 05:39:31 +0000 (UTC)
-From: Elijah Wright <git@elijahs.space>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: Elijah Wright <git@elijahs.space>
-Subject: [PATCH] tracing: move buffer in trace_seq to end of struct
-Date: Wed, 20 Aug 2025 22:39:07 -0700
-Message-ID: <20250821053917.23301-1-git@elijahs.space>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755754784; c=relaxed/simple;
+	bh=ZVRwY9UyLmfELmyQd5FagKf90snoN1VTuvCXhRUjQIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=sWAOLjC1WOIj15pwkz1d7uRfcVkydj/oBCA+/wUNvmVPy7vGwi7ljjRCZFP5/QAlYKb+NOidFSgLBxBtsjZqdcc9rvPgB6V2pStD7FSoL7Wfw/yxrlZxHdv5t0WRvOAUtcWKqBA8YjVZ+lKZungaPhaVSJQ3Aa73e+RTxox9o1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UqLH1ane; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250821053940epoutp024e027f622d17e8267a66865fd9099a91~dsaudFWl41951819518epoutp02M
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 05:39:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250821053940epoutp024e027f622d17e8267a66865fd9099a91~dsaudFWl41951819518epoutp02M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755754780;
+	bh=iH1pwxK5h8zaKzLO7uEYoulOZ2jTl+7LVkze5OMti3Y=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=UqLH1anezpMgkpJFrzoFNEKYKnY5vpRY7ZHr3sZLRJWO0b3uIvCxQgnBVOSHJM5Io
+	 pov+eunBZbJ9cSBfYslaiXiMyZClxceGLxszOgUXHLDRSwjICDIsiEciUzvH7kSJN8
+	 Lp/3mg7dsttnWo2aGvRX1gvTX5odsDgscs6Rio9A=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250821053939epcas5p451a25e767d61cfc0fb9a429634edaef2~dsat5sUIU0911909119epcas5p44;
+	Thu, 21 Aug 2025 05:39:39 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4c6sZy6y6Nz6B9m9; Thu, 21 Aug
+	2025 05:39:38 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250821053938epcas5p290f78790250d8cb09df2f35e45624359~dsasrxHFk0873308733epcas5p2Z;
+	Thu, 21 Aug 2025 05:39:38 +0000 (GMT)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250821053936epsmtip26f716bb48a68fd77790a74e134ba5da4~dsarKv-TI2276922769epsmtip2X;
+	Thu, 21 Aug 2025 05:39:36 +0000 (GMT)
+From: Bharat Uppal <bharat.uppal@samsung.com>
+To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: pankaj.dubey@samsung.com, aswani.reddy@samsung.com, Bharat Uppal
+	<bharat.uppal@samsung.com>, Nimesh Sati <nimesh.sati@samsung.com>
+Subject: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device in
+ reset on suspend
+Date: Thu, 21 Aug 2025 11:09:23 +0530
+Message-ID: <20250821053923.69411-1-bharat.uppal@samsung.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250821053938epcas5p290f78790250d8cb09df2f35e45624359
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250821053938epcas5p290f78790250d8cb09df2f35e45624359
+References: <CGME20250821053938epcas5p290f78790250d8cb09df2f35e45624359@epcas5p2.samsung.com>
 
-TRACE_SEQ_BUFFER_SIZE is dependent on the architecture for its size. on 64-=
-bit
-systems, it is 8148 bytes. forced 8-byte alignment in size_t and seq_buf me=
-ans
-that trace_seq is 8200 bytes on 64-bit systems. moving the buffer to the en=
-d
-of the struct fixes the issue. there shouldn't be any side effects, i.e.
-pointer arithmetic on trace_seq
+On FSD platform, gating the reference clock (ref_clk) and putting the
+UFS device in reset by asserting the reset signal during UFS suspend,
+improves the power savings and ensures the PHY is fully turned off.
 
-Signed-off-by: Elijah Wright <git@elijahs.space>
+These operations are added as FSD specific suspend hook to avoid
+unintended side effects on other SoCs supported by this driver.
+
+Signed-off-by: Nimesh Sati  <nimesh.sati@samsung.com>
+Signed-off-by: Bharat Uppal <bharat.uppal@samsung.com>
 ---
- include/linux/trace_seq.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ufs/host/ufs-exynos.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
-index a93ed5ac3226..557780fe1c77 100644
---- a/include/linux/trace_seq.h
-+++ b/include/linux/trace_seq.h
-@@ -21,10 +21,10 @@
- =09(sizeof(struct seq_buf) + sizeof(size_t) + sizeof(int)))
-=20
- struct trace_seq {
--=09char=09=09=09buffer[TRACE_SEQ_BUFFER_SIZE];
- =09struct seq_buf=09=09seq;
- =09size_t=09=09=09readpos;
- =09int=09=09=09full;
-+=09char                    buffer[TRACE_SEQ_BUFFER_SIZE];
+diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+index 3e545af536e5..4d0f7d6b84fe 100644
+--- a/drivers/ufs/host/ufs-exynos.c
++++ b/drivers/ufs/host/ufs-exynos.c
+@@ -1896,6 +1896,13 @@ static int fsd_ufs_pre_pwr_change(struct exynos_ufs *ufs,
+ 	return 0;
+ }
+ 
++static int fsd_ufs_suspend(struct exynos_ufs *ufs)
++{
++	exynos_ufs_gate_clks(ufs);
++	hci_writel(ufs, 0, HCI_GPIO_OUT);
++	return 0;
++}
++
+ static inline u32 get_mclk_period_unipro_18(struct exynos_ufs *ufs)
+ {
+ 	return (16 * 1000 * 1000000UL / ufs->mclk_rate);
+@@ -2162,6 +2169,7 @@ static const struct exynos_ufs_drv_data fsd_ufs_drvs = {
+ 	.pre_link               = fsd_ufs_pre_link,
+ 	.post_link              = fsd_ufs_post_link,
+ 	.pre_pwr_change         = fsd_ufs_pre_pwr_change,
++	.suspend                = fsd_ufs_suspend,
  };
-=20
- static inline void
---=20
-2.43.0
+ 
+ static const struct exynos_ufs_drv_data gs101_ufs_drvs = {
+-- 
+2.49.0
 
 
