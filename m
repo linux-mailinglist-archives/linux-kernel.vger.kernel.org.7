@@ -1,128 +1,142 @@
-Return-Path: <linux-kernel+bounces-780322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1F8B3006B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:49:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75988B3006F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D841BC42AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:45:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E61EE585EDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3429B2E5432;
-	Thu, 21 Aug 2025 16:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700AF2E5417;
+	Thu, 21 Aug 2025 16:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jjf6gZiu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X6SET56j"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC802E425F;
-	Thu, 21 Aug 2025 16:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764482E4258
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 16:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755794725; cv=none; b=Wfv3ltIYWw6I7DxMOEFjX3omZBZT7LiFgoNjPDmBjxbGRUymZdJ/rZICiSGDjbiahX+MWVRg93dfXBQZxvvcUDfyY6rI84N99fkng/zuu8HJMR5igqTCDJsbedq087HOZLqVA34SrfZGKKv+a+umkUyfCPjXeNtfThicG6z6ehg=
+	t=1755794746; cv=none; b=FBgzSQa+WPpLI641jz9L+hPhL8kZajiUeBsHOKD3sQEshU9s3wX4GLczBHl9N9f3Ozes6tZJhg8dGACyDAz6IyZFYBbwbmjrRJpojrTJhtXpcSDoFoCHhscbcy32dISmG69rQcvtP2a2G4thrfvwMf2OksttZAnneESiaY15o64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755794725; c=relaxed/simple;
-	bh=WyKn3BDOpcCAD6Fuy69UuDdyk4y6Ek+DhsMO5uPWEQY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=bwHhm9wKaqw75lt0v8Wh2/1yUSFLWUZYI2CS12AtghBpiFM96WZ2wZrNeXCV/veLrR6R2tlwe3UBipGRdITRzCpyPkgaUXhnvLkfVWhVQGDXkuMPwnFzFCX897UjNoHOjUdV9/Oq9baxtU0R9VdDQmHKauZLPqRZMdsCBRA1OEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jjf6gZiu; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755794724; x=1787330724;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=WyKn3BDOpcCAD6Fuy69UuDdyk4y6Ek+DhsMO5uPWEQY=;
-  b=Jjf6gZiuO0ZZHuBo8kN0yvMqh2pSpIai7RS/G1mhuEqzwt0vor5UijHG
-   tGq3HUJ5nFjaQ2s7r6gKFotUJNPwCycmFiOt58Zinrl+tO9hDuiucemwC
-   kvMDd0rCjLHcbLlHm2pWg/9p7+xgXfkrci8cExYWkm2FOsdgJh9jqax8m
-   vf7RsGn/3elapWoBsZQtInUPGtf5J85ZyhQCBqw2x4E0mNR1cKqDUYRdp
-   OKX7C2gDmS7tXAEu7d9q8F7bSWsd9UbJGL1KxpEGQHR0zdt/AHWmOxjNI
-   2L0nWEdjlA2m2FVp+Pqlf+xLnMx03Zd65SLXYtsdH1ULnS0mdDMBVQlmK
-   w==;
-X-CSE-ConnectionGUID: ZPZTHoKJQbm7KJNDik3z4g==
-X-CSE-MsgGUID: 4eTO7RlDR1u6scdwebCy1w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69531221"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="69531221"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 09:45:23 -0700
-X-CSE-ConnectionGUID: HVt0nzi6TyKGfYzTGLP0Uw==
-X-CSE-MsgGUID: EJjiqd8UQcSWgWGcjQABNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="168879136"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.192])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 09:45:19 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 21 Aug 2025 19:45:17 +0300 (EEST)
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-    stable@vger.kernel.org, tudor.ambarus@linaro.org, 
-    LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    D Scott Phillips <scott@os.amperecomputing.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Rio Liu <rio@r26.me>
-Subject: Re: [PATCH v2 1/3] PCI: Relaxed tail alignment should never increase
- min_align
-In-Reply-To: <8e9936e5-d720-4ded-8961-b9475aeb2ac7@web.de>
-Message-ID: <21e11870-f125-e9e7-04f3-ade94d6be6b1@linux.intel.com>
-References: <20250630142641.3516-2-ilpo.jarvinen@linux.intel.com> <8e9936e5-d720-4ded-8961-b9475aeb2ac7@web.de>
+	s=arc-20240116; t=1755794746; c=relaxed/simple;
+	bh=MhG6HxqKpezhCtJQ2gfazEz5am5SvJZx5BGlHvwcFv0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zq/6kb+ckBawGOI8mSQE06tSwNOM9fW/gDfpDBH0x4Jofr3zvZyFnQfuxjmEzs6yMJGiUwXctbkQ1uAd7dplJm22OFqktujnFkjQCD824YtwLu2c1rZOBJmrbe5GS3k9uTvur+ai9oUGyqLiMG5W/VmnFUVw95/Ly4KviroYBt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X6SET56j; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24611734e50so845ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:45:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755794745; x=1756399545; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dtcRwK56gAR8ZwI/7e//HivvdSeZfhowhjhRYyj31VI=;
+        b=X6SET56jXmXBmRB20NuZDESqGfovDMkNsS5DWNA6lF8y+neLUqTEuhvXMVkgVA3YzZ
+         UV5MzUHdsRngbq33zKqDNlTQRY/p4Y4ukH5FrEy3G6QflyKu+6Y92BWCQoFHVgfMC/ow
+         2yDsVRFe8l2FMKwKBgFEZ7bdAQIebtWmEvsU0IB2Yz4ZAh/GyUMBhu0LDMPerAwIv4so
+         h9BqfcFlMaGyszRrwkhqdw/UyT5yNddaGfAM/getCRA2lIqeJGwJyShpxyvVnEU+bQde
+         Vq4g4jhbSVEYtHb0oc0UG9+3nAN3Jjf0UHBdxiWJ4SY+eQHPttTcdrgrl7Fy173gdMiZ
+         FRCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755794745; x=1756399545;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dtcRwK56gAR8ZwI/7e//HivvdSeZfhowhjhRYyj31VI=;
+        b=icY7DpBl8mxp2olD1X/ZmhLnwEe/OmGevJEbzZqTI2HxbwFFMmSgIVD9o499wmXaKu
+         cIb0lM53AeS4zshNkn+XJkmdr7VvYXuirmonEEeDaHufGmSlT9QoGnj18ACE04L2OOkk
+         O74ZzKSLg/C/TF0qifrDoc9xYek7BpPdqTzM/00YHkz48+UVzxQt2g8b4OL1G1R2eV15
+         RNuKSkWvwbkv/2xz2thodMK/FBfAtme9Q/eQ0uwm3kEgSHy+lMJ804gItBaD3xfG6+wT
+         Pl/2EQRzoYFeXbZtJyEtJWPS4/PrMuCv1OrvO3Da02OYJ7WngsaCVIy011S1Ps/9PM0/
+         v3ng==
+X-Forwarded-Encrypted: i=1; AJvYcCXp+ifdxCm1lORuIt6cXqE/TERGPxTJqIGmOjfYTeyztsMj1xSOl7tJtl7Iq37kuJkEEybTbGBkSG3pIYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSjjYIv1vYuYAI0W66GduuCmpiKWRfr5iIq+k6UaAORxul8Way
+	7OiHhh55es/heibOhCkv4u8Hyc/IbkO7yToBctcPVrNH3nEChL7Y7bsLe9foKcgFlxZrkTpT3m1
+	62l5PUA2Xs5O7Rv0NZ2P0v/gxdGY2rV7bHwyhkaWM
+X-Gm-Gg: ASbGncvDrNajNxm/xNR+redDGgcYbbkSVAGoPK4hpODG7aZh1lv2mci2jop2v/EMFhh
+	U33aVcTitKYttdmnBCLEAgA2pqRv1iqScEWoJ7p9ESHBsZzq5OJc+k2Ar9ZWLYhg3OskqiFMOL9
+	xekiNIy8bw1meveeheAUU34U4Cee9/m7ZkGsA4/LCxK/Bmxxg6yQmfGCPWqFnpLQPAsUwdcN3Ns
+	9OUidLFZh0kHu9km1xOyVYgNuKwXorZtEpMrbe+6+o=
+X-Google-Smtp-Source: AGHT+IGc5M2pH+JuphSt7Wrta4P/SsO44cJ6Mc9+TzDooWaV+WIJJPFwCe1ixQlSizXmDs/0AaMxJ6grKNm5ZGhx0QA=
+X-Received: by 2002:a17:902:f552:b0:245:f7a8:bc60 with SMTP id
+ d9443c01a7336-245ffa76584mr4413645ad.16.1755794744597; Thu, 21 Aug 2025
+ 09:45:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1152484891-1755794717=:933"
+References: <20250519232539.831842-1-namhyung@kernel.org> <CAH0uvohxb4gvHYswCZMvCrrOn=0qSOeOaYyDVPEFb4GPhwntgw@mail.gmail.com>
+ <CAP-5=fWZectSpLzkfJUj-W-_oxhDJdnnOE18ET_iPb+bjmTdHw@mail.gmail.com> <aCz-wD2Syq8mj2_0@google.com>
+In-Reply-To: <aCz-wD2Syq8mj2_0@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 21 Aug 2025 09:45:33 -0700
+X-Gm-Features: Ac12FXwUBrTyS3oSzZtgEAH-YrEQkY0lFhTx9npzI33o1HnplYpkYxpBT8BeAbM
+Message-ID: <CAP-5=fVNgN5Budwaao_GqrZRN2wSrvo7CQySU-D9eEpnwBhY2A@mail.gmail.com>
+Subject: Re: [PATCH] perf trace: Increase syscall handler map size to 1024
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Howard Chu <howardchu95@gmail.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, May 20, 2025 at 3:14=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hi Ian,
+>
+> On Tue, May 20, 2025 at 08:05:37AM -0700, Ian Rogers wrote:
+> > On Mon, May 19, 2025 at 4:36=E2=80=AFPM Howard Chu <howardchu95@gmail.c=
+om> wrote:
+> > >
+> > > Hello Namhyung,
+> > >
+> > > On Mon, May 19, 2025 at 4:25=E2=80=AFPM Namhyung Kim <namhyung@kernel=
+.org> wrote:
+> > > >
+> > > > The syscalls_sys_{enter,exit} map in augmented_raw_syscalls.bpf.c h=
+as
+> > > > max entries of 512.  Usually syscall numbers are smaller than this =
+but
+> > > > x86 has x32 ABI where syscalls start from 512.
+> > > >
+> > > > That makes trace__init_syscalls_bpf_prog_array_maps() fail in the m=
+iddle
+> > > > of the loop when it accesses those keys.  As the loop iteration is =
+not
+> > > > ordered by syscall numbers anymore, the failure can affect non-x32
+> > > > syscalls.
+> > > >
+> > > > Let's increase the map size to 1024 so that it can handle those ABI=
+s
+> > > > too.  While most systems won't need this, increasing the size will =
+be
+> > > > safer for potential future changes.
+> >
+> > Do we need to worry about MIPS where syscalls can be offset by 1000s?
+> > https://lore.kernel.org/lkml/8ed7dfb2-1e4d-4aa4-a04b-0397a89365d1@app.f=
+astmail.com/
+>
+> Argh..
+>
+> > We could do with a map that combines BPF_MAP_TYPE_HASH with the tails
+> > calls of BPF_MAP_TYPE_PROG_ARRAY.
+>
+> Right, it'd complicate things but I think it's doable.
 
---8323328-1152484891-1755794717=:933
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Should we merge the x32 fix while waiting for the hash fix?
 
-On Thu, 21 Aug 2025, Markus Elfring wrote:
-
-> =E2=80=A6
-> > Ensure min_align is not increased by the relaxed tail alignment.
-> =E2=80=A6
->=20
->=20
-> =E2=80=A6
-> +++ b/drivers/pci/setup-bus.c
-> =E2=80=A6
-> @@ -1261,8 +1263,9 @@ static int pbus_size_mem(struct pci_bus *bus, unsig=
-ned long mask,
->  =09=09if (bus->self && size1 &&
->  =09=09    !pbus_upstream_space_available(bus, mask | IORESOURCE_PREFETCH=
-, type,
->  =09=09=09=09=09=09   size1, add_align)) {
-> -=09=09=09min_align =3D 1ULL << (max_order + __ffs(SZ_1M));
-> -=09=09=09min_align =3D max(min_align, win_align);
-> +=09=09=09relaxed_align =3D 1ULL << (max_order + __ffs(SZ_1M));
-> +=09=09=09relaxed_align =3D max(min_align, win_align);
-> =E2=80=A6
->=20
-> I wonder why a variable content would be overwritten here
-> without using the previous value.
-> https://cwe.mitre.org/data/definitions/563.html
-
-Hi Markus,
-
-This looks a very good catch. I think it too should have been:
-
-relaxed_align =3D max(relaxed_align, win_align);
-
-=2E..like in the other case.
-
---=20
- i.
-
---8323328-1152484891-1755794717=:933--
+Thanks,
+Ian
 
