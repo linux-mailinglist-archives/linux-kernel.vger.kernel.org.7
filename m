@@ -1,78 +1,118 @@
-Return-Path: <linux-kernel+bounces-780640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A67AB30730
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E55B3073B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB75B05A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:50:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2440E3BB7E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493BE2F3625;
-	Thu, 21 Aug 2025 20:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AE62FC01F;
+	Thu, 21 Aug 2025 20:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LywqfAjD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="hWWY0jRp"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B002F1FD1;
-	Thu, 21 Aug 2025 20:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981622E8B80;
+	Thu, 21 Aug 2025 20:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755808226; cv=none; b=YT3ciP7lITrIsaOwNdV8NYgIBWDKy+FHPhINZgGTBgcDv4nQCnQRSB+dPk/qoA7jwuU75bvw0ugr2rR/hq8KAsR+5G2yDUV/L9VK1nqWfrspVUkorhZuwT94LYD4qoXkGxOlKazbClyfxtJgcZ/adfi1+cRUEy0w/CDBMJNGtbU=
+	t=1755808325; cv=none; b=jzczpfF9WtkQQDIYLJu6hamSkDxOn+AkbG7MuRZ1zNwJ+aBeI6HdQ3EBKlJqUOUpUociwxii+y2rAfDRA3jUM92fMm7+u76JEZU37HChsVrZPk1K2MroG+ZQRW0tuBdrOFJUDD0592+AfX0C13Y25wGxhTcXPvQ4IywIzEckjN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755808226; c=relaxed/simple;
-	bh=bhl+p0DmMJQytQ9W8w6mhhTRl9UEVNIN7Aufw3znwr4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Ol3zzHHgdW9R2++9sRsEGzIKHTuf1xSczNNEdfLX3hPVyiEihnBtQjgjf9pgloZuQHD1rgvKu/G6r+fy8QzueS/5VWscV1W8ezul1qs+3aQlqnSlEBwcBVNlUYlgPs5rg1Lcg2OWR4vVrU1J7yq0Mte1knOWTe+onq2TJlXskHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LywqfAjD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13065C4CEEB;
-	Thu, 21 Aug 2025 20:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755808226;
-	bh=bhl+p0DmMJQytQ9W8w6mhhTRl9UEVNIN7Aufw3znwr4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=LywqfAjDisB+D+NnUDm2IHYO4oK9I75qVON4p3ctMUPZ3S9OWtqBdtNrygNJYcny8
-	 uGZuITCjIHhJjPHQ+9G/7q89Gae6oKP7tImf7SyYZcQSqjwFtcQU74OIg5eBjswhZk
-	 YLyHHJMrd94HIND/Yfn58R4P8gl3MQNL5jriGBKVjdyuKWAa1CDxrUi/jWUJ0qpbak
-	 IJMqNMwXGcSHnsbDsuN7drAWZ2qnWTpqvc2TuAGiMOnVculQUIlwOABfXddSiw6gYM
-	 09V6pBln29iC/lJo4RL0wRHbjfMvOiZicoUNlzDE0ANeDy1JElXxPeZdU6koZdVV6N
-	 GWwRKFIntmk9Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71099383BF5B;
-	Thu, 21 Aug 2025 20:30:36 +0000 (UTC)
-Subject: Re: [GIT PULL] SPI fixes for v6.17-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <df4a6a9145a7c42a25af15e9dff7fef9.broonie@kernel.org>
-References: <df4a6a9145a7c42a25af15e9dff7fef9.broonie@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <df4a6a9145a7c42a25af15e9dff7fef9.broonie@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.17-rc2
-X-PR-Tracked-Commit-Id: 7c7cda81159b1abe7d50bcef2ccc6f662e225c8b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9a36b58a88f62398dbd005e5f3648f257ae2b9b4
-Message-Id: <175580823515.1190489.8603738023519533955.pr-tracker-bot@kernel.org>
-Date: Thu, 21 Aug 2025 20:30:35 +0000
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+	s=arc-20240116; t=1755808325; c=relaxed/simple;
+	bh=koAxHIBSFF6bH48Q0RNFABzF3yhUiviXXzFvJ0pZf/Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BHL5MfS78Uf8ty4T8zPt0YR366864H8cuP0m3W2wSf1WFQQc+f9MqhxKw4Q81eOaVIULn7h50z/CuXI1MjT8qGfJ9XXSaDDhFJCjAAhmc5eMwDd0Eu/4UaW3LjK67zPKF62c3wu39RPWnCDeTPuu0QrRWghenpMoHCnAjzEZDBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=hWWY0jRp; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b471754c159so945921a12.3;
+        Thu, 21 Aug 2025 13:32:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1755808323; x=1756413123; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xzt1SP3iQ6Mi6cPK5jzb7ybF2HUvqkuc1RDuKVXJJow=;
+        b=hWWY0jRphgpJTb9wdmFt6E7du7kpxgqvPbfe6xxt+XZG6TCkZlBmvOfvBAqzMcKcaB
+         rsy2XJtdcIMzvGeu1Y5yBtXfcIGRoO02YTjVFrqcR2Kc8YILWVaDmUGvh6mOh9lSTfQV
+         mq8WwEer8txHODdGdS+4wuRMbj26EoNwLPrzDps90Zy11Fz0A7LgN3L/AjVH06pza0XL
+         SUwaHd4XRoUUoLeCENGeTAvHcqopMkHUKo+k7LzskNg00R2zwRt8+F3/crLg1ksNoCf0
+         /w/uOPC/69va02AFm9gMHqeS3S99Zkk4Q0vJI1umSrucrfRc3zfDsmOwWlRvmmFGw/pJ
+         1NWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755808323; x=1756413123;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xzt1SP3iQ6Mi6cPK5jzb7ybF2HUvqkuc1RDuKVXJJow=;
+        b=EfgSJR1QBiSbI95kKz2cLgAjyhcghnZZmumDvuf/QD6cisJd1qeSSXovaRAeV6zv9F
+         ixFytMbKGxzU5vw4yPORlKKh/TRVFZR+Hq1szugfhj00fUbvm4ke6XtlZKl3cbyXi2xX
+         1B1zB4f90X967mtF1WGscF1/GUgjr+mZ4cFywZZJ9L4gr8AeLkN3rigJSm/oJI7FO1Vc
+         qFj7b6IFk2EZqZggP9/Az0P8epdRb2/k3EGB1gBWEq5s6B9VYN7lVxkAp1/736pdQJIH
+         8mKYjuS/YIXF7IYzt2sdRL89as4vN/kM+DhGLO1W0txXmv3Pqs0FR6MUlAtmP5gh6WUN
+         XDfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjCTXFKSfpcXQtg1Yfd2KaZMfsTpQWJ6L0InepnCTwny1FhQHN4qgSlOoKrFZlEwYULzYu0RRrrf4=@vger.kernel.org, AJvYcCWzuZD/qWohl2IQ26c6hjZrFgn3n5a2y3JHZnmPv+O7CeV2zFP/qPIYOc6mPvnkIS2PzurEsHsFQaJmTblY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb9NIOKS6dNtxUm8qdfPKcZxu+oObnUQPJryBQxZ3UmRYATc+q
+	4j308ZspWkLqiwfpHUJlTa3a9C2Sby3ocrns/oX5YozGGKLm3onqwjp7+NOICttHuM4VAL/7m9p
+	kwZWxcIUA3XN48q7P5ZPYlYi4KQrqKY0=
+X-Gm-Gg: ASbGncuTthJ5e4KEhDehUn53AcPjO2zZCc2IxJ2D9FY/i+pCMd0t220n0ZIMr59WQQe
+	NN9RuZPO1jtppV2CDDI0bN5Fq0qtviRJa73e6pcparPF78k5VJouo8HvMq+0rdHzKEdV72QJ25A
+	DhjYIpLk491jZSZVw+ZAhHz+ECsVM8SY6NGsCZYZHpZz4f3A3gYeBGEq8sQ3EMMux6bzNQ6WG+f
+	GyuTj5JF4+x0KLa3BZj0ByOWGgbFHRUrTYOADrV
+X-Google-Smtp-Source: AGHT+IFMJWQfSak742OMRIUVPAmUKPCtjTTxsMGlopsj+ykj2AINC9Rf8YaWuAZsX0Tjk/DC56u1mBE4PhmXtNwtDIk=
+X-Received: by 2002:a17:902:ce02:b0:23f:f68b:fa1d with SMTP id
+ d9443c01a7336-2462ef4fd9dmr7514195ad.39.1755808322840; Thu, 21 Aug 2025
+ 13:32:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250821080723.525379-1-zhao.xichao@vivo.com> <20250821080723.525379-3-zhao.xichao@vivo.com>
+In-Reply-To: <20250821080723.525379-3-zhao.xichao@vivo.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Thu, 21 Aug 2025 22:31:51 +0200
+X-Gm-Features: Ac12FXxvviABKwS3Jk0G8ABxqYSzrQsOIcnTQmwdAPckvZYFYDz7726qKXLaDEA
+Message-ID: <CAFBinCDDMo2Dm1UAoB4QKyf-KKoRUTNNg4i7Qh_vgZh71trMNg@mail.gmail.com>
+Subject: Re: [PATCH 2/7] iio: adc: Remove dev_err_probe() if error is -ENOMEM
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: Andreas Klinger <ak@it-klinger.de>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Haibo Chen <haibo.chen@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Marius Cristea <marius.cristea@microchip.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Francesco Dolcini <francesco@dolcini.it>, 
+	=?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
+	"open list:AVIA HX711 ANALOG DIGITAL CONVERTER IIO DRIVER" <linux-iio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER" <imx@lists.linux.dev>, 
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Thu, 21 Aug 2025 20:21:23 +0100:
-
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.17-rc2
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9a36b58a88f62398dbd005e5f3648f257ae2b9b4
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+On Thu, Aug 21, 2025 at 10:07=E2=80=AFAM Xichao Zhao <zhao.xichao@vivo.com>=
+ wrote:
+>
+> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+> Therefore, remove the useless call to dev_err_probe(), and just
+> return the value instead.
+>
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>  drivers/iio/adc/hx711.c           | 2 +-
+>  drivers/iio/adc/imx93_adc.c       | 3 +--
+>  drivers/iio/adc/mcp3564.c         | 2 +-
+>  drivers/iio/adc/meson_saradc.c    | 2 +-
+For meson_saradc:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
