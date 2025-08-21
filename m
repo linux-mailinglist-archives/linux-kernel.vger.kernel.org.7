@@ -1,110 +1,157 @@
-Return-Path: <linux-kernel+bounces-779196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD60B2F051
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:59:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC0DB2F054
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11B45A21928
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:57:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A07BE16806A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2D92EA484;
-	Thu, 21 Aug 2025 07:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D302E92B6;
+	Thu, 21 Aug 2025 07:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IWXX3/U6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9zk31Atz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="csxHAubl"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B2C2EA14A
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ADC296BA6
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 07:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763013; cv=none; b=l9gZIYvCbpg56ehUwQ8FpkFlKgmSdVjpPD/M/H/ZVKQ+Wk/svZbCK1utKT3b3NSFCnWATU6HK6A7FN/39sCg4TfoQQkVPhx+QKXTimO5x0kSwAT+WTGcOCoqrT4hWNL/1LXugUEWBhamM8A5ZKCoKhCSfyzjcaNEQuHdx5AapCA=
+	t=1755763047; cv=none; b=LZE+pZ8fbscN5eMGjpGJnKO0n8RIzGuPbgbGoBMTC0Rd4mGfmHpVITMWvRFyK+0C9Pl5Qd74xJD3GBOzMKhoq2ALeA6kj6I2D+CvzUk8113w/IoD1lt6FHPFZlVd3RtKYAJ/NVUyVA5oIzVSu6C+h4CPO9y6w6cUou2AKvBUiQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763013; c=relaxed/simple;
-	bh=D/12OQ8vo23/Cq4trcCIK/F1NjLqR+YjyfQAZanzypg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UXRlAYrTK/HNHosATSeR3oZmQNsh/3pQXIM3Pmxzsi0U294mmAeyiOqOzyGNjrDqhyrhEFxkiBg7Je8Npq+5rfXAuljfNFqs4DHt8jmIwaWw5/7CH4hj2J6P1vzvXwQuJ5XHh6R/h08AYFqswfl2f+9ZKGHUjwYfR3RffpNJd+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IWXX3/U6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9zk31Atz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755763010;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DKpe3z5G5wNg83hukDMWCPcV+/73KXkYMZGFSKYmlXc=;
-	b=IWXX3/U6I7+HHr++GdGynma55/AkGgR1sm30+k+ENj1HdEFP04/N2xFo3VxFBXdNyWRKHf
-	c4XJBTnY0iOBTUrLVwbBesiNo7pBwvnO5ufuQarcV5ljDTYujVA8Y/VQsniE9h27dgnuJ3
-	0VJ4eVTsqU0f+m8oDe/HOIO/Vc/rDBthT1PCnBQ1MdOrdBGtsH0WHfEFUR4JTKMN8reEYu
-	FNl0RnpUdX408EvNfEwU/RrzO2HIxgRUuJ0wbARP+WYcuOVafUJLWf6da2xR5JVV9JYS7R
-	mGAl3m8m+zDkWmj3bnaWYw8QAxjR72SLEph+rk9FH1HiGLZ/YRMa3BIb3yy+Aw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755763010;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DKpe3z5G5wNg83hukDMWCPcV+/73KXkYMZGFSKYmlXc=;
-	b=9zk31AtzpdmPxaTFSQUbw+mBH1MWo2IADY3PWWNi9m1UfpZKEJKwFxlnLwl2ItR7AGZdaJ
-	JEB58TfQDYMEAzBw==
-Date: Thu, 21 Aug 2025 09:56:46 +0200
-Subject: [PATCH 3/3] arm64: vdso32: Respect -Werror from kbuild
+	s=arc-20240116; t=1755763047; c=relaxed/simple;
+	bh=mWlpw+fkzNl2HTOTZh9Un5HqYgwUcx6hxK0zkS34qjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FpMrvjyGdg8TlDLUEe+mAsPJ+ge6FfP9J4I9CEiVRoW/jK0WhgMjpPmvEt3H/2O+Ga1ViG6PQGNRo/fJFGO7J8OXqxhTu4kC3mQx/Wn1rHwZAKOpnGcZRYo/TQ/HHx5ykyMHZS5hxspkR6qzfUpNAMCM957OZNtj2m9GB7hashA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=csxHAubl; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1755763037;
+	bh=sax2l/uhGaoVMc5A5beGcQGw8z9geLQ5SDB6E7o7aIU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=csxHAublpdbK2DHYohWBbNPi6StCsfcsH/l274lDY8dtVPcg0VklTfSx4PMHdmICw
+	 JP6hYLK9nLNRTT/q+NM+6ZCVcxnFqkbXN940+OEefWzNjGfPnZPkDNUjfr2LSbVNAd
+	 GyDT2+9JhRLC79NgOFVwjDo4FafrHCwWQ+/dsjo4=
+X-QQ-mid: esmtpgz15t1755763015td44f2826
+X-QQ-Originating-IP: k3xqsQ6QizxKHvrmeVfM0flZPWWA4AlqFE6ixRPd+vY=
+Received: from [198.18.0.1] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 21 Aug 2025 15:56:53 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 3014638784407985306
+EX-QQ-RecipientCnt: 13
+Message-ID: <C559DC784053B698+aaafc990-e62a-4b71-86ba-a1ea4ce1c069@uniontech.com>
+Date: Thu, 21 Aug 2025 15:56:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] iio: imu: bmi270: Match PNP ID found on newer GPD
+ firmware
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Jonathan Cameron
+ <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yao Zi <ziyao@disroot.org>, WangYuli <wangyuli@deepin.org>,
+ Jun Zhan <zhanjun@uniontech.com>, niecheng1@uniontech.com2
+References: <20250821-bmi270-gpd-acpi-v3-1-91a873cb87c0@uniontech.com>
+ <CAHp75VeTgWifRnqYxi8P_yfMv_GMvJJi4+xJNB98gtKp0z93=A@mail.gmail.com>
+Content-Language: en-US
+From: Cryolitia PukNgae <cryolitia@uniontech.com>
+In-Reply-To: <CAHp75VeTgWifRnqYxi8P_yfMv_GMvJJi4+xJNB98gtKp0z93=A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250821-vdso-arm64-compat-bitsperlong-v1-3-700bcabe7732@linutronix.de>
-References: <20250821-vdso-arm64-compat-bitsperlong-v1-0-700bcabe7732@linutronix.de>
-In-Reply-To: <20250821-vdso-arm64-compat-bitsperlong-v1-0-700bcabe7732@linutronix.de>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Arnd Bergmann <arnd@arndb.de>, Andy Lutomirski <luto@kernel.org>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: John Stultz <jstultz@google.com>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755763005; l=1019;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=D/12OQ8vo23/Cq4trcCIK/F1NjLqR+YjyfQAZanzypg=;
- b=UOnKhtIauSWminqVFhBdCB8SbfiQ8ZETo2KzSj4wDnSfKf2vZnopjrVJZNjn8WlU80go3kso5
- ShCCXhPMl/yBtMt3LrSOHvneDqpjioh+1OUKnhXObFwLaaGdUenORfV
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: OX/+6nY/vs4TfMHpF05WeJYAHoVOqQkbw6WgWJdlTn+sLkPhKtscKdFG
+	ftC3k9dPyP9CyQ+RiJPiOSzLd79+1FEpWIkMk1aLz4Mz3b6LWcypN188KLDgxkkMYXM0TKm
+	giYoJSUU5hkDbBjhG6Whz6vxys0ZL5YYgpI6QLO1x3sTsOhwMZOfEmRwlWimU8Fbd+D/FjD
+	7TapFmcfMjxIB4u8/y20+YIYM/bgC5o/y+1nC7kYVFRp6GX/4rVhkdHO+snz/xWzawO4AZ0
+	ZpTi/THBw7CFqz4QV4H7eCKa5Txn5jbgwpxNM+o9d48vCiDr2IlC4M83mowMBJhcT648Mop
+	oJHAenFZA2WDIjd3K0iASjbLjDUZEK+ismKvc8Pg0k/H39kTH4aYmIUyxwbX08G4JDSWnl2
+	ljRqICvVbPhR6Zw4VLG6L8Fv61Xjt0eEAuLD8YrFvQAsHms/lkbdc/p7U0yCynPTBwXLukh
+	rlTdvy98qkiEBHug3VbUjEed1IDIUcut6mAjFK3dRJYW6l+hIC7PW5bveKkQHUzyezZfgg7
+	lKUTWATlgDoG2zyyHUuHg3yDiNji9eFALZCw2cQq4RwVnj+cwTMVTx8eZV2qMUJlYK5SBjb
+	eolpMQK2TLcq+l6n72nacOKxiiRVLdNoQ1vcSY+IN2SjueeD3+fNgKyUfndDGOPu2WIyUQI
+	DKbIZe0aumpJeQ64y2AoEd0LIC9p8znar3Hqk0W0twlEmqm1hsvugOfG7YTvjf6M7IMvqYM
+	2JU4gC35OFZ8LBtpx2sAcavdNU9+YEg1kQ84rayF8F799OPDGdfRPmmFdsODTHcaOf0rP2/
+	2kdeskPx6TJFkhdZD8OjJ4IJHxORoPpQYURN+VBEEnpvMJmfSLsN2xFId9UZqBXpTvWPKZ+
+	WDNjtnKxcQmfuOvRvFn0AVzJ0cBQKMFYAmoFJq6EBjTmQ29PcyRpZAot93Dl+Cl4DGjUoyC
+	cjC8JHs35Pkq393qh9xFTer390jSiji56TWfExjDjygZvI4bL6M159Z2DoRKwvcl+U/cYWY
+	Imxpuj349OPZ1+d4l/87OmaPKy7QTUEOsFTM/DQT3JUK1S6hxH
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-The compiler flags for the compat vDSO are built manually as they are not
-compatible with the ones from kbuild. CONFIG_WERROR is not respected.
 
-Explicitly inherit -Werror from kbuild.
-
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- arch/arm64/kernel/vdso32/Makefile | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
-index fd80123bc8e620d868040a61244e83575d855e35..5de4deaf42992046463963df193de47cd07ec1ae 100644
---- a/arch/arm64/kernel/vdso32/Makefile
-+++ b/arch/arm64/kernel/vdso32/Makefile
-@@ -61,6 +61,7 @@ VDSO_CFLAGS += -DENABLE_COMPAT_VDSO=1
- # KBUILD_CFLAGS from top-level Makefile
- VDSO_CFLAGS += -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-                -fno-strict-aliasing -fno-common \
-+               $(filter -Werror,$(KBUILD_CPPFLAGS)) \
-                -Werror-implicit-function-declaration \
-                -Wno-format-security \
-                -std=gnu11
-
--- 
-2.50.1
+On 21/08/2025 15.36, Andy Shevchenko wrote:
+> On Thu, Aug 21, 2025 at 9:17 AM Cryolitia PukNgae via B4 Relay
+> <devnull+cryolitia.uniontech.com@kernel.org> wrote:
+>> From: Cryolitia PukNgae <cryolitia@uniontech.com>
+>>
+>> GPD devices originally used BMI160 sensors with the "BMI0160" PNP ID.
+>> When they switched to BMI260 sensors in newer hardware, they reused
+>> the existing Windows driver which accepts both "BMI0160" and "BMI0260"
+>> IDs. Consequently, they kept "BMI0160" in DSDT tables for new BMI260
+>> devices, causing driver mismatches in Linux.
+>>
+>> 1. GPD updated BIOS v0.40+[1] for newer devices to report "BMI0260" for
+>> BMI260 sensors to avoid loading bmi160 driver on Linux. While this
+> the bmi160 driver
+>
+>> isn't Bosch's VID;
+>> 2. Bosch's official Windows driver uses "BMI0260" as a compatible ID
+>> 3. We're seeing real devices shipping with "BMI0260" in DSDT
+>>
+>> The DSDT excerpt of GPD G1619-04 with BIOS v0.40:
+>>
+>> Scope (_SB.I2CC)
+>> {
+>>      Device (BMA2)
+>>      {
+>>          Name (_ADR, Zero)  // _ADR: Address
+>>          Name (_HID, "BMI0260")  // _HID: Hardware ID
+>>          Name (_CID, "BMI0260")  // _CID: Compatible ID
+>>          Name (_DDN, "Accelerometer")  // _DDN: DOS Device Name
+>>          Name (_UID, One)  // _UID: Unique ID
+>>          Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+>>          {
+>>              Name (RBUF, ResourceTemplate ()
+>>              {
+>>                  I2cSerialBusV2 (0x0069, ControllerInitiated, 0x00061A80,
+>>                      AddressingMode7Bit, "\\_SB.I2CC",
+>>                      0x00, ResourceConsumer, , Exclusive,
+>>                      )
+>>              })
+>>              Return (RBUF) /* \_SB_.I2CC.BMA2._CRS.RBUF */
+>>          }
+>>          # omit some noise
+>>      }
+>> }
+>>
+>> Link: http://download.softwincn.com/WIN%20Max%202024/Max2-7840-BIOS-V0.41.zip #1
+> This blank line is not supposed to be here (the tag block is
+> considered as the last lines in the commit message without blank
+> lines, like a text paragraph).
+>
+>> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+> ...
+>
+> No need to resend for these nit-picks, I hope Jonathan will tweak them
+> whilst applying.
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+>
+Oops, I edited it without seeing this line before sending it out. I hope 
+it won't cause too much bother. thx for your review.
 
 
