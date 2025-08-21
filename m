@@ -1,150 +1,175 @@
-Return-Path: <linux-kernel+bounces-779394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E77DB2F37A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:14:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B85AB2F37C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948C11CC581C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36331CE00D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686C12ED14B;
-	Thu, 21 Aug 2025 09:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149342EE617;
+	Thu, 21 Aug 2025 09:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="NoLftIDx"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iY5lnBm1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA28B2D3ED1;
-	Thu, 21 Aug 2025 09:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C202D47F9;
+	Thu, 21 Aug 2025 09:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755767522; cv=none; b=VW1hWM+DMrdIzr41dEkhqo5+U4OtgIl8B07eOqNuclAT8eELimMLyR8Qa9VOitzF1CvppiF5YWOD0esWJzHyg+V1Ar6lCtgY8bOodEHFntbXgGhHBTDcRmYkCqPEGjhAeipsbuTzmsk2pnemBriGXE/mGoTGZmRwnsnKBr2Kaxc=
+	t=1755767531; cv=none; b=EfpsJgGhu5UcIt57/DpkoT6WCA/7ngVPH9V1nmv0f8jEEo+VS1l0OEUy0CikmGaz8bwbvgtmAH+4LQXxxVyarFa3ujqKZOae5UcIQHOH+u27T/wOlEmQ7mKxI4CTUDQnI+aisZX3DUV9TOQuNUgvfcnB72jHJmxGlqOyVp+K4Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755767522; c=relaxed/simple;
-	bh=g59s4/Qwtwv1YpMSQzMuBoZHeETrJWRYPs4pguuzfhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=at7djwTqFIm2Vj7NgFSP0qFztEgSd2kAJicLzLni9TStzQMNjNyqU5OUDWrcD//lqE/DureU/2BnoRNruncqHia/o/wVxQC0VQtE3lGUMi4acbol+guFEdUCGX1cw+oj/OgwNb7TM7Vw5DGGvZzqTsn77Z+G6UZ1ixzYrI3Oy9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=NoLftIDx; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [5.228.116.177])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id D91C140D3C55;
-	Thu, 21 Aug 2025 09:11:49 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru D91C140D3C55
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1755767509;
-	bh=sCzSseHm8aXWfxStb92YtXd+xaCSsUO+vJVCCr4NWHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NoLftIDxC/fj9s5CSXp5WL5ycPNK32f7Nuy6sF+8HHelNi1usU9rlnCUktMomw6ak
-	 sgU+ks5Popmg2Oc6+n9noaaCwkActjlyUXLKrFl8EsRSrVE+jEQYXd8n+9pPlQoHot
-	 QXJixOXEj1YplJICZ8ao+lUxI7D7bwQ7Lp2r74ag=
-Date: Thu, 21 Aug 2025 12:11:49 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Zong-Zhe Yang <kevin_yang@realtek.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Bernie Huang <phhuang@realtek.com>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH rtw-next 1/2] wifi: rtw89: fix use-after-free in
- rtw89_core_tx_kick_off_and_wait()
-Message-ID: <20250821113341-4d93a84ec8bcd73321acd2b7-pchelkin@ispras>
-References: <20250820141441.106156-1-pchelkin@ispras.ru>
- <20250820141441.106156-2-pchelkin@ispras.ru>
- <b4ec58864e544b0295ddb02ed408199b@realtek.com>
+	s=arc-20240116; t=1755767531; c=relaxed/simple;
+	bh=4ftSy9AZquCD3YWX8ybfUXm27XjKd0BU4eleDXm0U4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Sw/mt571HJRyX/zQRXAQotyMGrPceMlyRKiJ/yRGxGmFYbZ4dAlAYNIzSj5q7KMtjSQnfz5HuymaO+NW8UGgpSSIg0odfqJX0xNLYSIIMvd2qbLAOAxGeMgo80HNPGtN6IJv3Xyl/gUtVTEIwH32g/CbrVShFe+Fozmt9QjNwG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iY5lnBm1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0151DC4CEEB;
+	Thu, 21 Aug 2025 09:12:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755767530;
+	bh=4ftSy9AZquCD3YWX8ybfUXm27XjKd0BU4eleDXm0U4Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iY5lnBm1olCBsRPpghgXxjzWZdmWakMe3D/6nbyS2OprH7brpDtHHH/UUufrJGZR5
+	 B7r/WIwLcEjYDiMmTTFqoNkshhOjUO4blI6LAUBgme+yLpTj64TWn2rdP/Can+daZ3
+	 SFTt1jN6qYzZoa2xhi5ymDOsVGR26AcoG53sVjQ43yMoFZsYweql/iA9FMsywjdq38
+	 /st3OYMAucW8PRMLoQjfCraPDXPBnjiCljyFCrjt1sOG4HMA59qK4pJkDdvDMgpvrV
+	 gAllTDP/NimibpVJ/Fd3bl9C9YbMCO4qljO+V+n1t4pN1TiuZP76w+gLUjdYf0J+18
+	 GZOlnoyAoCZFw==
+Date: Thu, 21 Aug 2025 11:12:05 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Inkscape - Was: Re: [PATCH 00/11] Fix PDF doc builds on major
+ distros
+Message-ID: <20250821111205.15dc7843@foz.lan>
+In-Reply-To: <5fb6ce64-747b-46e4-b135-0d987334a12c@gmail.com>
+References: <20250817154544.78d61029@foz.lan>
+	<b6d18aa7-de85-4fd2-8456-c2f6342f1b06@gmail.com>
+	<87y0rg7e35.fsf@trenco.lwn.net>
+	<16b48826-6634-4ec9-86a0-7ddb59ce3bed@gmail.com>
+	<20250819030239.41a2e97f@foz.lan>
+	<142b209d-613a-4659-a0f7-27efa8c6be85@gmail.com>
+	<20250819153200.3c2b2ff6@foz.lan>
+	<08c3a7eb-0425-4709-a3ea-6d1d726fd3c8@gmail.com>
+	<20250820091530.068c4b62@foz.lan>
+	<3990f1c5-2108-44fe-913f-97ae3bb1ff42@gmail.com>
+	<xik6a2kb3mge5xh2mbdtc4p3ikbr4mnjlkk4ujc4sfztb3iqnr@tc76jva4smpm>
+	<526d1aee-d401-4f04-8ddc-122f1fef7905@gmail.com>
+	<5fb6ce64-747b-46e4-b135-0d987334a12c@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b4ec58864e544b0295ddb02ed408199b@realtek.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Thanks for the feedback, Zong-Zhe!
+Em Thu, 21 Aug 2025 09:09:41 +0900
+Akira Yokosawa <akiyks@gmail.com> escreveu:
 
-On Thu, 21. Aug 04:01, Zong-Zhe Yang wrote:
-> Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> > Though one solution that _works_ currently is to get rid of 'struct rtw89_tx_wait_info' and
-> > replace it with the only field it is used for - 'bool tx_done'.  Then it can be stored at 'struct
-> > ieee80211_tx_info::status::status_driver_data' directly without the need for allocating an
-> > extra dynamic object and tracking its lifecycle.
-> > I didn't post this since then the structure won't be expandable for new fields and that's
-> > probably the reason for why it wasn't done in this manner initially.
+> Hi,
 > 
-> With a busy waiting on tx waiting side ?
-> If so, it would be unacceptable.
-
-Ohh, I forgot about the need for async completion here. Nevermind that
-solution, sorry.
-
+> Let me do a quick follow up.
+> I messed up the table.
 > 
+> On Thu, 21 Aug 2025 08:53:04 +0900, Akira Yokosawa wrote:
+> > Hi,
 > > 
-> >  drivers/net/wireless/realtek/rtw89/core.c | 15 ++++++++---
-> > drivers/net/wireless/realtek/rtw89/core.h | 32 ++++++++++++++---------
-> > drivers/net/wireless/realtek/rtw89/pci.c  |  6 +++--
-> >  3 files changed, 36 insertions(+), 17 deletions(-)
+> > Commenting on your observation quoted below.
 > > 
-> > diff --git a/drivers/net/wireless/realtek/rtw89/core.c
-> > b/drivers/net/wireless/realtek/rtw89/core.c
-> > index 57590f5577a3..826540319027 100644
-> > --- a/drivers/net/wireless/realtek/rtw89/core.c
-> > +++ b/drivers/net/wireless/realtek/rtw89/core.c
-> > @@ -1088,6 +1088,7 @@ int rtw89_core_tx_kick_off_and_wait(struct rtw89_dev *rtwdev,
-> > struct sk_buff *sk
-> >         struct rtw89_tx_skb_data *skb_data = RTW89_TX_SKB_CB(skb);
-> >         struct rtw89_tx_wait_info *wait;
-> >         unsigned long time_left;
-> > +       bool free_wait = true;
-> >         int ret = 0;
+> > On Wed, 20 Aug 2025 18:48:10 +0200, Mauro Carvalho Chehab wrote:
+> > [...]
+> >   
+> >> If you want a more comprehensive answer:
+> >>
+> >> LaTeX is highly dependent lots of packages, including fonts. The
+> >> reason why you can't reproduce the font issues with Docker
+> >> (I wasn't able to reproduce with Docker here as well) is
+> >> probably due to either packaging differences between the
+> >> two containers, due to different environment technologies
+> >> or even due to the way Docker and LXC handles OS virtualization.
+> >>  
 > > 
-> >         wait = kzalloc(sizeof(*wait), GFP_KERNEL); @@ -1097,7 +1098,8 @@ int
-> > rtw89_core_tx_kick_off_and_wait(struct rtw89_dev *rtwdev, struct sk_buff *sk
-> >         }
+> > I'm not saying there is no difference between Docker and LXC.
 > > 
-> >         init_completion(&wait->completion);
-> > -       rcu_assign_pointer(skb_data->wait, wait);
-> > +       spin_lock_init(&wait->owner_lock);
-> > +       skb_data->wait = wait;
-> > 
-> >         rtw89_core_tx_kick_off(rtwdev, qsel);
-> >         time_left = wait_for_completion_timeout(&wait->completion,
-> > @@ -1107,8 +1109,15 @@ int rtw89_core_tx_kick_off_and_wait(struct rtw89_dev *rtwdev,
-> > struct sk_buff *sk
-> >         else if (!wait->tx_done)
-> >                 ret = -EAGAIN;
-> > 
-> > -       rcu_assign_pointer(skb_data->wait, NULL);
-> > -       kfree_rcu(wait, rcu_head);
+> > Can you fill in ???? cells in the table below ?  
+> I mean                                          with this series applied
 > 
-> Please consider the following.
-> (moving "rcu_assign_pointer(skb_data->wait, NULL)" to be under "if (time_left == 0)")
+> > Docker column is my observation of "FROM ubuntu:plucky" podman runs.
+> > 
+> >  "make SPHINXDIRS=gpu pdfdocs" under Ubuntu Plucky
+> >   
 > 
-
-There is still a tiny race window. Suppose wait_for_completion_timeout()
-exits with a timeout, so time_left is 0. If completing side goes on in
-parallel just after that, it has a chance to proceed and free skb_data
-before the below if (time_left == 0) fragment is executed.
-
->     if (time_left == 0) {
->         rcu_assign_pointer(skb_data->wait, NULL);
->         ret = -ETIMEDOUT;
->     } else if (!wait->tx_done) {
->         ret = -EAGAIN;
->     }
+> I meant:
 > 
->     kfree_rcu(wait, rcu_head);
+>      --------------- --------- ----------
+>      SVG --> PDF     Docker    LXC
+>      --------------- --------- ----------
+>      imagemagick     FAIL      ????
+>      inkscape        SUCCESS   ????
+>      imagemagick [*] FAIL      ????
+>      --------------- --------- ----------
 > 
-> If completing side does run as expected (potential racing mentioned in this patch),
-> there is no real need to assign NULL back.
+> >     --------------- --------- ----------
+> >     SVG --> PDF     Docker    LXC
+> >     --------------- --------- ----------
+> >     imagemagick     FAIL      FAIL
+> >     inkscape        SUCCESS   ????
+> >     imagemagick [*] FAIL      ????
+> >     --------------- --------- ----------
+> > 
+> > [*] after installing both inkscape and imagemagick, remove inkscape
+> >     with all its dependencies kept.
+> > 
+> > Do you see any difference between Docker and LXC columns in the table?
+> > I'm all ears.
 
-Actually the race happens regardless of wait_for_completion_timeout() exit
-status, it's briefly mentioned in the race diagram inside commit message
-(but the diagram can show only one possible concurrency scenario). I agree
-this may be improved and described more explicitly though.
+I'm repeating my tests again. This time, it has just this
+series applied:
 
-As for the patch itself, currently I can't see another way of fixing that
-other than introducing locks on both waiting and completing side.
+	https://lore.kernel.org/linux-doc/cover.1755763127.git.mchehab+huawei@kernel.org/T/#t
+
+(without that, not even simple PDF docs build here via Sphinx on Ubuntu)
+
+
+LXC container created from scratch, with a couple unrelated packages
+to make life easier (things like ssh server) and with locale-gen
+executed there.
+
+After its creation, I copied the
+relevant files from my machine to the container with:
+
+	for ip in 10.0.3.129; do for d in Documentation scripts Makefile arch include tools; do rsync -av --times --delete "$d" "root@$ip:/root" --exclude output/; done; done
+
+Then, at the container (accessed via ssh):
+
+	# Sphinx pre-install recommendations
+        sudo apt-get install dvipng fonts-noto-cjk graphviz imagemagick latexmk librsvg2-bin tex-gyre texlive-fonts-recommended texlive-lang-chinese texlive-xetex
+        sudo apt-get install python3-sphinx
+
+	# Needed to avoid sphinx-build crashes
+	for i in $(set|grep LC|cut  -d'=' -f1); do unset $i;done
+	export LC_ALL=C
+	export LANG=C
+
+with that:
+
+imagemagick: FAIL
+inkscape: PASS
+imagemagick(*): FAIL
+
+I wonder if this is related to the kfigure.py bug of writing
+a binary output with a file opened in "w" mode. In Python,
+"w" crashes for characters > 127. It should instead be "wb".
+
+Thanks,
+Mauro
 
