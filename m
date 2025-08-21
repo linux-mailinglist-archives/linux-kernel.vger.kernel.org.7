@@ -1,194 +1,112 @@
-Return-Path: <linux-kernel+bounces-779766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82560B2F87D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:45:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839A4B2F885
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79543AC4BD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3866AC428D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DDD31985A;
-	Thu, 21 Aug 2025 12:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BA2311C18;
+	Thu, 21 Aug 2025 12:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W21/DPCq"
-Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="txzMEN3F"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7130331196E;
-	Thu, 21 Aug 2025 12:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5953B311C09
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780097; cv=none; b=B6iay7zpaVF1X2kB3wiliMixMUpcQSGtEbegDB326RHRzVa8Lfp2XxwQ3WXVeVLuyQjLoQv9CAYvR2OSOBg4+JtJcqXScN78PswzvP7eYiSdLHKRIhIA52DJ4o2n71BAZd6uXN3Fau5uyd5XtwfIdQmx/Sx0+1uEvIbcCZ93kKs=
+	t=1755780124; cv=none; b=LqgF608IOiAlk5MMNkUa5Bw15uCN1pHKF5TF+Ixvp1NvaLpdZBIfPj1xKqA0pwqsQMmFEC0lmbT9TZAoYsZMW4mnPNuIuNfaYARbEQIQHQ0M93vcGi1aXI7qryVcQCAKoydHO66E/ykBXPUmFPIoQZ1HhM+cQyE9s2uHAblkAOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780097; c=relaxed/simple;
-	bh=vMbgsNjjm4zsv6kHeB79Iza9JJ78/9jVyLQ06lZ4lRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WNcoSAHWOllbRkM8/SUwwcFM/glpkiW0AC0AouzL/V+sNYAhhkSXQ6o1LfaDnqvuNIHC6HhfAyDUdyO/jYrUvxZUbHQJaFQsRB3icfbL+9BlbGKiYGptV+9ne0ujvCy1inZeSNT1CaRhtH+KdOhxiJLPhBcOSsI1pwxWBmmL1Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W21/DPCq; arc=none smtp.client-ip=209.85.221.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-3b9e413a219so710812f8f.3;
-        Thu, 21 Aug 2025 05:41:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755780093; x=1756384893; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K/rXJGPFK3wi2vxqTh6d3zW1dWSC1/Ce4Xx/Ix7y1KE=;
-        b=W21/DPCq+WrHPfgm62YAf8HNr1wWZVlKVf4t/g+Ii0WfIWZuV4BK9pxPkpFx0pChxY
-         Hn/7mOPX5y65MUKipsLwMoxJudxT2j/eEglv9sT2EyaJOufkmZQBfmtRcDuF6+5AHwB5
-         cDBh0fcvYX52d06Wobr3D9uLH7sJQ1l/eBKHLrX8m6EUJQAqXA8tCLsKsod66e6qNUvd
-         cTsKJVANayCeW8BXVVDkENju8Bw7RILNrxoF/zlK8SKvVc2OuxSh90kiIP/LJ8xbI4LF
-         SnftMwJQGtNNkVcgN9hlxru2zQdhx5HPdzM/gO6jzpYJLuIgfqp+zqbrBk/FF50CgdoG
-         uWgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755780093; x=1756384893;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K/rXJGPFK3wi2vxqTh6d3zW1dWSC1/Ce4Xx/Ix7y1KE=;
-        b=pP30lUQ3lU9xwmNBbOeFzZPkbTtBFP4pqAcQDp4BE76ZW+3r/gGhfAcoBQSyWvQk5R
-         5gwp++YyXypqu+BYv/Vhha4KsOMmJsv2RPCXsiA6XCdpoyDLhE8FxzHdFUfNwb6DFFGM
-         qaNSiDND13I9cbEj1cPVrGX+kJo//M/qISETxsVy2Q+k6j2h4T2DDF7LcDXUqJIqFTtk
-         EPlWagiTU1WimKWzIlBIUYWFQEMrmney18XEBomXVBhwFOQlqlCfvh0I1glGxNtdbqa4
-         rHF+B9aBJQsCzqM7jxxco0ESXNIg/cAG3+p3Pys7f2UcZOrdYTF6YLRGxw3ZQ8ZQMcmp
-         aDNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnvWsmLdu4XwPPBFqXXLay34ibjSlGjZbJkacajlWSHYZ8VDAPNSb3LHQLV6pZyOjMUWah09PLxA7BCac=@vger.kernel.org, AJvYcCWq/BLhd32VHuzpVVVBp764WbDXASlJqbMJDCRTedN0dRw5DhpANim+9HLoare6yKeJsfKgu+mDILjQ@vger.kernel.org, AJvYcCXhi0KJOcFeQXYAc24astv0F7/fXnm0zXyFi6WvEBbGgjkovXlvJw5nAt1Q5fwLLc1ikvs3mF9K@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEZd7+weyWduSN0Hko1WhPgbR8hMiLixSrYm7a7sXhDjWO5ZcL
-	CzDk3ShPUJ8S1LnUYujhG1Hu7sXQAsmeDlJBherxRDuB3C0LM7YeuhAa7py5iLxX
-X-Gm-Gg: ASbGnctTD7MQp3f2OoHR4lBsJR6mRGgY9HMDYoNgLRigWbjNgsSNO1lbjEpGssbpMJO
-	LR6B2KgL+k/vJij108tNDWB260X8kKmcfeKql1WxUCFkyGU7isf8UWblCY+O1ZmVrnI2lUaSQJB
-	tU7rx6stQggppVvuxq+frcU5JJ02WluewieBkLS6GKu1s5tkNeq2VIvrBI1eAuxJTakHmwlryQY
-	FrZDxVaiCOAO0P/NeAy0KKDGGfMcUdE8tV+SBEPtMvpXSvFnfi8NN9qLtQnWAaFe+qrEFybD2fw
-	nYItP5+PWaFvdzFxwMSLdYzYWQATvFIW33vIujWRjLZQK+kBx2uRmBXkPEV3IWVLfz0hjkZyJlB
-	3OkqFZKGu+pqM0p+zlu3pEaRay/enwDMl743zZjNUVZQ1W6buX4oEaSoO78+QeF6+KnFEqilcMC
-	UuwdC8EyOS3Q9yjjyPRr1TeZNBa/nsD0dOmu2onHfq2l0nDmQ3D4wG
-X-Google-Smtp-Source: AGHT+IGcpDcX/P1q3uGkxcuaxRs1676Mc/G7jVz/fGjilz+IUOZqIoSzLB5QGJrKSrKiTI0QC2xV8g==
-X-Received: by 2002:a05:6000:4284:b0:3b5:f0af:4bb0 with SMTP id ffacd0b85a97d-3c495687e00mr2017211f8f.23.1755780093100;
-        Thu, 21 Aug 2025 05:41:33 -0700 (PDT)
-Received: from [26.26.26.1] (ec2-63-178-255-169.eu-central-1.compute.amazonaws.com. [63.178.255.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c3e673ab01sm4930549f8f.18.2025.08.21.05.41.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Aug 2025 05:41:32 -0700 (PDT)
-Message-ID: <048bd3c4-887c-4d17-9636-354cc626afa3@gmail.com>
-Date: Thu, 21 Aug 2025 20:41:28 +0800
+	s=arc-20240116; t=1755780124; c=relaxed/simple;
+	bh=CU4cTKvaSQ23yYf+H4pKFowY3NHmF+KaBQQhNfP4Zvg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=H76VXi33aZIJgoX0iXU7hrE9Ltt6BKmPcCDgQvRg3Q+Wzrc91MCl1pUJ1X6Zy/MV0cq+6pPanb7jPeCEzIl8lanxjPO+hjKj3P0q113bJeHl0guzdCY/tm9FXpVMy49KPaWGtsgPov54xPUb17eDoky1ZcZOVcOKDD741GKmo50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=txzMEN3F; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, stable@vger.kernel.org
-References: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
- <dfdc655e-1e06-42df-918f-7d56f26a7473@gmail.com>
- <aKaK4WS0pY0Nb2yi@google.com>
-Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <aKaK4WS0pY0Nb2yi@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1755780117;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2qBXp2L6ghuaOFTwpw0VcF+lJn82b0iwLgdjpHusKRY=;
+	b=txzMEN3FKtz1olFZUVrErfLHlhVNtHZp9Kd/i2sWnJtnGBam8Rdp3Oaogr0G23n5z4Eehf
+	nGkZ9OB8Xo587f3LLNgNZFk6nWKx26GGOODXnDG6QmhwykAptAb4nKdWsxH5mY0lzf762R
+	v5ZuMJSkoNsbXkwH1yFunobZ3E4zLw9ecdcIjUIrrUWy3yPU3o8Radlqb5OGtBQjUE46wM
+	IzknYv9LHjnyR4g9tqA83ILR4aotfauXFfh970xI8ortZznliPacH7OK51v7hjHYF0jUKk
+	eCuIcurdewmlFv0qdyBGbByDQeQawkgA59EaxihTeqGqU8F1X+bMOwNtY3h9UA==
+Content-Type: multipart/signed;
+ boundary=3b571f17c3ddaedec092828a238ae966d2c316d9a762f9d2cf5b0d604e2a;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Thu, 21 Aug 2025 14:41:34 +0200
+Message-Id: <DC843K2CRBHH.1IUX1SB576TFZ@cknow.org>
+Cc: "Robin Murphy" <robin.murphy@arm.com>, <linux-pm@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <kernel@collabora.com>
+Subject: Re: [PATCH v2 2/3] thermal: rockchip: shut up GRF warning
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Sebastian Reichel" <sebastian.reichel@collabora.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Zhang Rui" <rui.zhang@intel.com>, "Lukasz Luba" <lukasz.luba@arm.com>,
+ "Heiko Stuebner" <heiko@sntech.de>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>
+References: <20250820-thermal-rockchip-grf-warning-v2-0-c7e2d35017b8@kernel.org> <20250820-thermal-rockchip-grf-warning-v2-2-c7e2d35017b8@kernel.org>
+In-Reply-To: <20250820-thermal-rockchip-grf-warning-v2-2-c7e2d35017b8@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
+--3b571f17c3ddaedec092828a238ae966d2c316d9a762f9d2cf5b0d604e2a
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
+On Wed Aug 20, 2025 at 7:40 PM CEST, Sebastian Reichel wrote:
+> Most of the recent Rockchip devices do not have a GRF associated
+> with the tsadc IP. Let's avoid printing a warning on those devices.
 
-On 8/21/2025 10:56 AM, Brian Norris wrote:
-> On Thu, Aug 21, 2025 at 08:54:52AM +0800, Ethan Zhao wrote:
->> On 8/21/2025 1:26 AM, Brian Norris wrote:
->>> From: Brian Norris <briannorris@google.com>
->>>
->>> max_link_speed, max_link_width, current_link_speed, current_link_width,
->>> secondary_bus_number, and subordinate_bus_number all access config
->>> registers, but they don't check the runtime PM state. If the device is
->>> in D3cold, we may see -EINVAL or even bogus values.
->> My understanding, if your device is in D3cold, returning of -EINVAL is
->> the right behavior.
-> 
-> That's not the guaranteed result though. Some hosts don't properly
-> return PCIBIOS_DEVICE_NOT_FOUND, for one. But also, it's racy -- because
-> we don't even try to hold a pm_runtime reference, the device could
-> possibly enter D3cold while we're in the middle of reading from it. If
-> you're lucky, that'll get you a completion timeout and an all-1's
-> result, and we'll return a garbage result.
-> 
-> So if we want to purposely not resume the device and retain "I can't
-> give you what you asked for" behavior, we'd at least need a
-> pm_runtime_get_noresume() or similar.
-I understand you just want the stable result of these caps, meanwhile
-you don't want the side effect either.>
->>> Wrap these access in pci_config_pm_runtime_{get,put}() like most of the
->>> rest of the similar sysfs attributes.
->>>
->>> Fixes: 56c1af4606f0 ("PCI: Add sysfs max_link_speed/width, current_link_speed/width, etc")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Brian Norris <briannorris@google.com>
->>> Signed-off-by: Brian Norris <briannorris@chromium.org>
->>> ---
->>>
->>>    drivers/pci/pci-sysfs.c | 32 +++++++++++++++++++++++++++++---
->>>    1 file changed, 29 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
->>> index 5eea14c1f7f5..160df897dc5e 100644
->>> --- a/drivers/pci/pci-sysfs.c
->>> +++ b/drivers/pci/pci-sysfs.c
->>> @@ -191,9 +191,16 @@ static ssize_t max_link_speed_show(struct device *dev,
->>>    				   struct device_attribute *attr, char *buf)
->>>    {
->>>    	struct pci_dev *pdev = to_pci_dev(dev);
->>> +	ssize_t ret;
->>> +
->>> +	pci_config_pm_runtime_get(pdev);
->> This function would potentially change the power state of device,
->> that would be a complex process, beyond the meaning of
->> max_link_speed_show(), given the semantics of these functions (
->> max_link_speed_show()/max_link_width_show()/current_link_speed_show()/
->> ....),
->> this cannot be done !
-> 
-> What makes this different than the 'config' attribute (i.e., "read
-> config register")? Why shouldn't that just return -EINVAL? I don't
-> really buy your reasoning -- "it's a complex process" is not a reason
-It is a reason to know there is side effect to be taken into account.> 
-not to do something. The user asked for the link speed; why not give it?
-> If the user wanted to know if the device was powered, they could check
-> the 'power_state' attribute instead.
-> 
-> (Side note: these attributes don't show up anywhere in Documentation/,
-> so it's also a bit hard to declare "best" semantics for them.)
-> 
-> To flip this question around a bit: if I have a system that aggressively
-> suspends devices when there's no recent activity, how am I supposed to
-> check what the link speed is? Probabilistically hammer the file while
-> hoping some other activity wakes the device, so I can find the small
-> windows of time where it's RPM_ACTIVE? Disable runtime_pm for the device
-> while I check?
-Hold a PM reference by pci_config_pm_runtime_get() and then write some
-data to the PCIe config space, no objection.
+Retested with v2 of this patch (set) and there were still no regressions
+on Rock64 (rk3328), RockPro64 (rk3399) and Quartz64-B (rk3566).
+I skipped testing my NanoPi R5S (rk3568) this time.
 
-To know about the linkspeed etc capabilities/not status, how about
-creating a cached version of these caps, no need to change their
-power state.
+And on Rock 5B (rk3588) I (still) no longer see this warning:
 
-If there is aggressive power saving requirement, and the polling
-of these caps will make up wakeup/poweron bugs.
+  rockchip-thermal fec00000.tsadc: Missing rockchip,grf property
 
+So also with v2:
 
-Thanks,
-Ethan
+Tested-by: Diederik de Haas <didi.debian@cknow.org>
 
+Cheers,
+  Diederik
 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  drivers/thermal/rockchip_thermal.c | 23 ++++++++++++++++++-----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
 
+--3b571f17c3ddaedec092828a238ae966d2c316d9a762f9d2cf5b0d604e2a
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaKcUAwAKCRDXblvOeH7b
+bkU/AQCEUoGxVyVSNGRj6qG6NCl2nThKkgrDRtbsVWcAv4iiLQEA5qiGnnUdk7ma
+IuxRHRF24a7aweQEHZRYm58eco2GUQQ=
+=xzaV
+-----END PGP SIGNATURE-----
 
-
-> 
-> Brian
-
+--3b571f17c3ddaedec092828a238ae966d2c316d9a762f9d2cf5b0d604e2a--
 
