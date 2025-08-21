@@ -1,132 +1,150 @@
-Return-Path: <linux-kernel+bounces-779716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE694B2F7BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:20:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D80CB2F7C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3321D6876CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83DED6029E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBAE2D3744;
-	Thu, 21 Aug 2025 12:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LlldnUvb"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCAC3074B1;
+	Thu, 21 Aug 2025 12:20:04 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A09258CDC
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6506C2E11D7
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755778748; cv=none; b=CGlQl9YdGUMaxS2WnCKqW0Tgzeo8j8m6sYxK+bxrRSUQkq3Zl4BVamlfBedsyjI+EkFnhIx/SxovY23OXN2deGF6bPNVSnZAIF49PLIbEGahIrWGDLheoQOKIA473mw9ixgDBwUzVcjEr3PCEyV1cYHmfNa2Vg3IKF9bKLRgfco=
+	t=1755778803; cv=none; b=hMqYuKs483icXqYEqlvSUkWu0IchspFqtMag/fwgMMvtuCmNN2gjcDou8BgW7HgQbVA+W0r41gO4uuNP0M0+0Yi5OBIbVVAUAYaSqHFugbTuq9szr/bMrcE/bCs93LEN69KZlM+SnZ4QgXFmDionrmeF5pbJwHE6OtvQFRd3RCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755778748; c=relaxed/simple;
-	bh=bFU9XiPsxjfmEfPRcMGGVE6IuhV4+uSXPKLukn2eMZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tH0Ix999awmuZF6oIabHKT5qpVuUs9/1CmuLaMPulTh0BBmlqG05TXpo9d3230/SaxxB/Ny24i71ErvLBbBIpdEmKA3orQqr/KT9QMC+SU41iXuPLM3GR62POAVZ++51kwY89pfjK106sP5w0NpPX2yWImkc2250JD7m0W763wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LlldnUvb; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755778744;
-	bh=bFU9XiPsxjfmEfPRcMGGVE6IuhV4+uSXPKLukn2eMZQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LlldnUvbdDItwIr0fva3L0VBACLEsvOo3kfYmC7RsQ2UjHiJhshdjDobOyLxiRj95
-	 axyQ4+VFtMviqwLn9VciweCumcVNmY+Y5HOivhZ+LSywkQgO0lhl6GVM1g+S6Wgt4A
-	 QSxMF5m9vh6T/uluedoz7qexQNjpID8VvKl+ddoCNBlhwo2iPDiHobTVP8jKDe4Ikg
-	 eOIPpy1GUjwG5d2D3RSVzUoqwq/ot2bzJI/QhiYKa+nQRKMXAy0JjRv94OT3x2j+e1
-	 h45hhdqxmoERCXz988lEmo41O7MOa/iok5tILLQXsebmkDBFYchBRZpvGrbDqfa4nh
-	 /8MbJjFNbkz5A==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 96E7317E0071;
-	Thu, 21 Aug 2025 14:19:03 +0200 (CEST)
-Date: Thu, 21 Aug 2025 14:18:57 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: "Danilo Krummrich" <dakr@kernel.org>
-Cc: "Caterina Shablia" <caterina.shablia@collabora.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Frank Binns"
- <frank.binns@imgtec.com>, "Matt Coster" <matt.coster@imgtec.com>, "Karol
- Herbst" <kherbst@redhat.com>, "Lyude Paul" <lyude@redhat.com>, "Steven
- Price" <steven.price@arm.com>, "Liviu Dudau" <liviu.dudau@arm.com>, "Lucas
- De Marchi" <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
- <thomas.hellstrom@linux.intel.com>, "Rodrigo Vivi"
- <rodrigo.vivi@intel.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <intel-xe@lists.freedesktop.org>, <asahi@lists.linux.dev>, "Asahi Lina"
- <lina@asahilina.net>
-Subject: Re: [PATCH v4 4/7] drm/gpuvm: Add a helper to check if two VA can
- be merged
-Message-ID: <20250821141857.26721bd6@fedora>
-In-Reply-To: <DB6240Y4VP7Y.2U5ERJO5J7F2W@kernel.org>
-References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
-	<20250707170442.1437009-5-caterina.shablia@collabora.com>
-	<DB61ZHDINPNE.1VFXNF2XXSJPA@kernel.org>
-	<DB6240Y4VP7Y.2U5ERJO5J7F2W@kernel.org>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755778803; c=relaxed/simple;
+	bh=xOuw/hPVKNxVGdaXrZKBQlzMxmMU/xFsJYCxsSlgYXg=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=P0rEREeKdFmzNrpb1xb0H28HLzh3hGCfRootuFrZfWd06zsgQlMennCn5vlk3dSsA3zJBRulm+EHzG2/lT7V7CWma9q58wikwuE1/Hf0N35wb2KQeO/E+EE84SnZqoLegi/qRd43NcPcI0gipe47YDUYtAq627w0EyVk4Univkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Valentin Schneider <vschneid@redhat.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>, "vincent.guittot@linaro.org"
+	<vincent.guittot@linaro.org>, "dietmar.eggemann@arm.com"
+	<dietmar.eggemann@arm.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"bsegall@google.com" <bsegall@google.com>, "mgorman@suse.de"
+	<mgorman@suse.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: Re: [PATCH] sched/fair: Optimize CPU iteration using
+ for_each_cpu_and[not]
+Thread-Topic: Re: [PATCH] sched/fair: Optimize CPU iteration using
+ for_each_cpu_and[not]
+Thread-Index: AdwSlNjfWk2e9fzLTdKJSWHIaD5DdQ==
+Date: Thu, 21 Aug 2025 12:19:04 +0000
+Message-ID: <d8da7d88bf91470cb1bc90630d6a7aff@baidu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-FEAS-Client-IP: 172.31.3.12
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Mon, 07 Jul 2025 21:06:50 +0200
-"Danilo Krummrich" <dakr@kernel.org> wrote:
 
-> On Mon Jul 7, 2025 at 9:00 PM CEST, Danilo Krummrich wrote:
-> > On Mon Jul 7, 2025 at 7:04 PM CEST, Caterina Shablia wrote:  
-> >> diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-> >> index 05978c5c38b1..dc3c2f906400 100644
-> >> --- a/drivers/gpu/drm/drm_gpuvm.c
-> >> +++ b/drivers/gpu/drm/drm_gpuvm.c
-> >> @@ -2098,12 +2098,48 @@ op_unmap_cb(const struct drm_gpuvm_ops *fn, void *priv,
-> >>  	return fn->sm_step_unmap(&op, priv);
-> >>  }
-> >>  
-> >> +static bool can_merge(struct drm_gpuvm *gpuvm, const struct drm_gpuva *a,
-> >> +		      const struct drm_gpuva *b)
-> >> +{
-> >> +	/* Only GEM-based mappings can be merged, and they must point to
-> >> +	 * the same GEM object.
-> >> +	 */
-> >> +	if (a->gem.obj != b->gem.obj || !a->gem.obj)
-> >> +		return false;
-> >> +
-> >> +	/* Let's keep things simple for now and force all flags to match. */
-> >> +	if (a->flags != b->flags)
-> >> +		return false;  
-> 
-> Forgot to mention, this can include driver specific flags. How do we know from
-> the generic code whether this condition makes sense? *At least* it would need to
-> be documented.
 
-You're right, it should have been:
+> On 15/08/25 09:15, lirongqing wrote:
+> > From: Li RongQing <lirongqing@baidu.com>
+> >
+> > Replace open-coded CPU iteration patterns with more efficient
+> > for_each_cpu_and() and for_each_cpu_andnot() macros in three locations.
+> >
+> > This change both simplifies the code and provides minor performance
+> > improvements by using the more specialized iteration macros.
+> >
+>=20
+> TBF I'm not sure it does improve anything for the SMT cases considering w=
+e
+> don't see much more than SMT8.
+>=20
 
-	if ((a->flags & DRM_GPUVA_MERGEABLE_FLAGS_MASK) !=
-	    (b->flags & DRM_GPUVA_MERGEABLE_FLAGS_MASK))
-		return false;
+I did the blow simple test on 128 cpu, smt 2 machine, and result shows for_=
+each_cpu_andnot is better :
 
-with DRM_GPUVA_COMMON_FLAGS_MASK set to the set of flags that matter
-when merging.
+for_each_cpu + if()    vs  for_each_cpu_andnot()
+5026373            vs   3398283
+4034229            vs   2711302
 
-> 
-> However, I think it would be better to provide an optional callback for drivers
-> to check whether merge makes sense or not. This doesn't mean we need drivers to
-> do those common checks, this can remain here in the common code.
 
-Seems a bit premature to me. Again, if there's a need for drivers to add
-extra checks we can always add a callback at this point, but until
-this is the case, I'd rather stick to these common checks.
+
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/cpumask.h>
+#include <linux/sched/clock.h>
+
+static int test_init(void)
+{
+
+        int cpu, sibling;
+        int i =3D 0;
+        int loop =3D 1000;
+        u64 now;
+
+        now =3D local_clock();
+
+        while (loop--) {
+                for (cpu =3D 0; cpu < 128; cpu++) {
+                        for_each_cpu(sibling, cpu_smt_mask(cpu)) {
+                                if (cpu =3D=3D sibling)
+                                        continue;
+                                i++;
+                        }
+                }
+        }
+        printk("%lld %d", local_clock() - now);
+
+        i =3D0;
+        loop =3D 1000;
+
+        now =3D local_clock();
+        while (loop--) {
+                for (cpu =3D 0; cpu < 128; cpu++) {
+                        for_each_cpu_andnot(sibling, cpu_smt_mask(cpu), cpu=
+mask_of(cpu)) {
+                                i++;
+                        }
+                }
+        }
+
+        printk("%lld %d", local_clock() - now);
+
+
+        return -1;
+}
+
+module_init(livepatch_init);
+MODULE_LICENSE("GPL");
+MODULE_INFO(livepatch, "Y");
+
+Thanks
+
+-Li
+
+
+
+
+
+> The task_numa_find_cpu() one I do agree makes things better.
+>=20
+> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
+>=20
+> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
+
 
