@@ -1,521 +1,242 @@
-Return-Path: <linux-kernel+bounces-779423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ADFCB2F3F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:32:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF3CB2F3EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E1917B67A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:28:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD3127A6140
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C8D2EFD91;
-	Thu, 21 Aug 2025 09:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D111B2EFD95;
+	Thu, 21 Aug 2025 09:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kF3Vr1Oy"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mj+zSffQ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VLOXLii+"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D1428031D;
-	Thu, 21 Aug 2025 09:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755768522; cv=none; b=M65Jww9JFHEGsLK6a5ulT7s8OIeGkrdi0ls8iMnUw3zXnJ8uGhpl18s5NtPsiV7uQ0aNzesZXN6OK0OurGYichyQxLHSDFdxSfXNYJRgJ20dxjQaOsDBsyK3ASr7wmVJBJuWrBRFXQ2FXd++LnKAcNLGPhs2YAQPhvToYpxD688=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755768522; c=relaxed/simple;
-	bh=cZModQeBMGeyUWSM72lOIX26lZnedL/6BGrCahhw6T0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bZGkU42oX57rv/q7uy4jbQvHMqNTyARrjewcvV6qr2JMv2QFNhyOYUyikH+jZPfPZvN1G057divniLmBj2RrBzyI0OtKYMdlDfvauTX3e2AqtZO9BiJFqnnFqAmsdlnp2ys736JtV0VKyHELX5Og9vN/sAOrc1YcuCuSfMdxzXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kF3Vr1Oy; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D3740C7B;
-	Thu, 21 Aug 2025 11:27:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755768458;
-	bh=cZModQeBMGeyUWSM72lOIX26lZnedL/6BGrCahhw6T0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kF3Vr1Oyve3CblT7dThAUDDdpFtErMvuDcfAkotHsZ6yNqYgFSW7+AEl4Fmjf/r8o
-	 K6cPF7m8xmAnviPsaqfF3zrBcix5YDSE1FBdguByrjGujh8ejdvxNvYGadzvUw6tFc
-	 FOtk+fNLVRkdbaKimxNQ5mVMNPEQrAOEinHhUbe8=
-Message-ID: <7284cad0-b71b-49dc-bb09-cd9f1ff00028@ideasonboard.com>
-Date: Thu, 21 Aug 2025 12:28:32 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125D6221FBE;
+	Thu, 21 Aug 2025 09:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755768555; cv=fail; b=HlYlkqOICHxkp7HiZp/7LxLcMVyUK+pAkk9ZPdWO3g0As3XkKE9EPJz2m9WdvXa3DMbj+9ipi9nBfmGQmS+0MIBvbWsuE8sML6e623xGSi8zIYiVlHZu6ZJc6tZLfresUknwXB4HTMxco3yqg5XLbHxoh1RFcLEu5VAhZ1ScrGQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755768555; c=relaxed/simple;
+	bh=xpet9CeMl5fJ/W/Sn/J784Rm0ZtNHYh6ph5nljWrxz8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=p9dmf8x3SkSFEF+LtM5aOY6urILxRUYkePWWNfXQUXdzkyWQfNoe3Ls44BnaANrG39QwnLmoNCP4yWsOE1DmbwKgtm2S/TYShWOx9Qw1ljUD81XAElRIyCHqGGTqry5h625REPvBi2Wu8IZeasCOOpOIeO6u2z7wXcVsG8aF+Mg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=mj+zSffQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VLOXLii+; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9GTi2032147;
+	Thu, 21 Aug 2025 09:29:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=KTLy3PZCdChyhsGZMdolQo6SghwNb4Tvlba9VdyVBmU=; b=
+	mj+zSffQ1sydv+hOgAMdYU/LxBx/iFo91AfuQ2Yr719LCoPmORaEFVusDespPabU
+	EOHIqA3zq2CcIf51jp7VbtkTYHKZQRS+WSSomcxC2sJnto5YGRgqawBWBgUnwgk9
+	sSYt17+oh7o3CwtwageWHX8E6wUzWStHLVkeTZUwsGMIWKiyGJ9kH0P9ejz6zmMZ
+	YHpm0p6Yl3SrEKKzgPR0fDiFyt8zobkBFuJmZ4r8sygKpL3X2aPHYmp3MyRf/eiA
+	c0+7TNx22/CTsQhJEMvp/pHRke3RWK2AhFymGfPROfJkZMlBBzAhQ3vUeXOj68k3
+	4hAcMNYabQtMADkRRdvxHQ==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48n0tr32w6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Aug 2025 09:29:03 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57L8iPux007246;
+	Thu, 21 Aug 2025 09:29:02 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2044.outbound.protection.outlook.com [40.107.94.44])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48my3rvcj5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Aug 2025 09:29:02 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eJGUxFLKcF9wY4Bm+jRM8wkveFygCpElQ7sCXoIYMQ84j5DM+qTPT2UJzJc/7Ofdmm0TBPYl8CpiyBg/IDHX22TIbpLFvx4fVqD46JrCb6iXGAPvmTH/XXO6Jz1RlURdTjdt+HhC/UzWQ7WiQCZCJd10krQY1EnB3sXK2pH1/lcGRPhJDesIfFvYtFw71+7AnBjjO+8uLsp24zhC+Cz+3CS0jJNEcX6kRajjo4Y2BbLTIWBKda1B1qZWEJwQsIbhz8tnowmodT7FjsROwVPVFnY5msHQMVQqAzcl415nlv8q0qV8ZAOTh/LGmlJm+Lw9tXvw6ukAWpUGNwy/HcbviQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KTLy3PZCdChyhsGZMdolQo6SghwNb4Tvlba9VdyVBmU=;
+ b=j94uc4MUuOGmtj2k5SqxzbWgbNiOuR8LH7HTMxYMkZfGQHFaw/sqIAhcpGs2bcdPElYbeMZyCSPPZFJa1c9bsLxZNJdZ9U3cuhxZJyzAd/frZjgKSa4mo9GhP90IuHDWMlvanXmPYPWeYjoJk5aSKBYNcrKQuRvubNPI7spM1z7YpdaLWYrIeJNFMNMneG0OFl9dO5wV9Dumfi8oT7jhCpDe53osiK+rGy1hkIKBIOW7X+gHmLZKKP5TCmDVQ67HKHLDYhNRdn7zGr0StdwotxkcJ1UNED2p2m01wcwqKtIMd18oZiKhLPuu2jYZIxvISxL0CEtIoBGXFJeVom3wNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KTLy3PZCdChyhsGZMdolQo6SghwNb4Tvlba9VdyVBmU=;
+ b=VLOXLii+f1du8MOSCUOLRdAZa+YazG6SGD4vNVs3i/AkclORwJ1YhdYd4HVxydhlRz14wDjh9NYVzZ6jrI8gFsdZ6mxFaK2VwL5xkyesw3NTVzLzIYj8rtx8HhDjyX4w1Ll2DVWY1Nc/snA5NIKqBsjQHcIB6o1DNUISSWWwU54=
+Received: from MN2PR10MB4320.namprd10.prod.outlook.com (2603:10b6:208:1d5::16)
+ by DM4PR10MB5965.namprd10.prod.outlook.com (2603:10b6:8:a1::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Thu, 21 Aug
+ 2025 09:29:00 +0000
+Received: from MN2PR10MB4320.namprd10.prod.outlook.com
+ ([fe80::42ec:1d58:8ba8:800c]) by MN2PR10MB4320.namprd10.prod.outlook.com
+ ([fe80::42ec:1d58:8ba8:800c%7]) with mapi id 15.20.9052.013; Thu, 21 Aug 2025
+ 09:29:00 +0000
+Message-ID: <8b39d392-0a10-47fd-ac3c-b73a1e341e86@oracle.com>
+Date: Thu, 21 Aug 2025 10:28:56 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 10/11] ext4: Atomic writes test for bigalloc using fio
+ crc verifier on multiple files
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+References: <cover.1754833177.git.ojaswin@linux.ibm.com>
+ <48873bdce79f491b8b8948680afe041831af08cd.1754833177.git.ojaswin@linux.ibm.com>
+ <7c4824a6-8922-470d-915c-e783a4e0e9cc@oracle.com>
+ <aKbYvubsS8xUG88d@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <aKbYvubsS8xUG88d@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR5P281CA0042.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f3::15) To MN2PR10MB4320.namprd10.prod.outlook.com
+ (2603:10b6:208:1d5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 6/6] drm: renesas: rz-du: mipi_dsi: Add support for
- RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>,
- Magnus Damm <magnus.damm@gmail.com>
-References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250728201435.3505594-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-In-Reply-To: <20250728201435.3505594-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4320:EE_|DM4PR10MB5965:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa039a98-4e6a-42ad-4506-08dde09528d9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bEdqVVJzZmdKdXNBUXBTNXFKaFluRGlPZ3VnMmxqOTJUZVFRVFJ6SmhaL1Bn?=
+ =?utf-8?B?RVlpRW1BNDF3M3RDVFVBMGpqMzFmbXN6WFV0bzdkai8ySkJvSkxTamVJR3hJ?=
+ =?utf-8?B?UkcyTHFIRWphMFdmNDdOaXh0S0JTTXQ5VWFuRGgycHpJMlJaS0Jwd3dZTG82?=
+ =?utf-8?B?bjkrWnQxcDNoSk9QcmIyU2JlNnpteXdOZG9saWhCQ05yeHNLNmVPRjRzM3o3?=
+ =?utf-8?B?MWxsQmVVY0dNTlJsMmtHZ3BERmw2d3NWbEkreGJJeCt3U0VXZERFQ0hsMEVv?=
+ =?utf-8?B?ZmtodURpb2I0aHRqMTRTUXdzLy9rWFE5SDNPb1RhdzhGVUgxTjR1ZXQ5SlBj?=
+ =?utf-8?B?Z1o4c0NWZGNqc09ObWlPTVdmU3gvcUhhV2IyQzVBQitjK2M3aUVFTnpzblpl?=
+ =?utf-8?B?bDJXbGpOd1pjV0JtcVp5TW5rL1hHWHFmVzJ6YkV6NEpCVWt0RzB4QnE1UWN0?=
+ =?utf-8?B?S0ZVTFFsazA3cGZCK1ZxMWpacHZrUHgzMnA5VDRaZWR2TXMzQmMzZ21yNVRm?=
+ =?utf-8?B?VnA0ZjRmSUMyeTlpUEtEc09yaVd2bVVHMFdhc2t0a0hoT2t0K0JSNUt1ZlpN?=
+ =?utf-8?B?NzAyVldMUEViRjBZdjNBdG5TejZjSmNZVHd6b1RDUDVpbnlyNzFpWWtPZjgw?=
+ =?utf-8?B?UnQ4NEpXdHZFTk5TazFFU1FXMjNnZ1IzWGhqZ3V2a0ttczMxVEFVUGxmVDV2?=
+ =?utf-8?B?czIyYityZ0VNc0tHSWZLcDZLQ1owUS9mVTdCTmk2WFFxbDBFekE3ejZrRFdr?=
+ =?utf-8?B?QkZuWjRKTERxZ2oyaGZKb01OR0F2RndTdHh4cGs2dE8zQWFPSG1MMkdGMFhS?=
+ =?utf-8?B?YjVQOXZWSkc2Yi84dThUVW9UQ0lnajNjQ2N1amwyaGVlbER2Z3U3cFBqcjlK?=
+ =?utf-8?B?ZE82UlhEMElXN3UvelR5cldPVExiWXZUTExKS29BbjJWN1BBc2R5NnFnTWZM?=
+ =?utf-8?B?KzdQalE0THcwMzVLbDltSkdPejhwNlhOZy8zaWplRkx5ZUNNYVV5OHRXT2JQ?=
+ =?utf-8?B?Q3VSNEJoTCtaeTNSZzdqN25USmNiWmU0cGNubXo5NCtHaWlMdjA5NEZTNWFS?=
+ =?utf-8?B?RWxhbnNXcHEwVVlqYWJ5R2lXaFpRMEpoRW9NRUVqM0tyY1NFRU1icDRRcTdt?=
+ =?utf-8?B?YUtHL2dZWWVFaG9JQ2tUSjIzQVNlZ0ltclhkUHlYYkkweWVNcVhWRllZbkNV?=
+ =?utf-8?B?UnBLZjVRbkFuYkMzUUdqRkt0NnFxaHE3VXJmaG03R2VRSWFrekkxQ05wSlZ4?=
+ =?utf-8?B?L1o1NFJ4VCtNdjI5Zko5MjdCajU5RHpzVmc4djkwM1pQSVFUaXF0RjhwOWRn?=
+ =?utf-8?B?T3hBanViekJaMnFleVZ6NE44dGJpOW1kdTdjVG83R2pEZTBWS2NVRExCS2Fl?=
+ =?utf-8?B?TC9nNUxUQ0FBZG0zWkNXRUovR1Bha1VTMkhDdFVBNjg2TkN3bUxHUE9tSDZB?=
+ =?utf-8?B?NEk1cW43U1FkV1RsNDNZMEZJdzJtUERGM2pFZzJ3L1M1S2dvQjc0ekFnVkhL?=
+ =?utf-8?B?d0M5bzBINkYzNXZsQ0FyNFFhcmt6VERVYVVCVVpKQVErd1QxY29Jbi8rM1d4?=
+ =?utf-8?B?aERYQ09tVTIwVjlwb2hKRkZQL0VEYVd5QmNtQUxYSk95b0Yrejk1OGVMT21r?=
+ =?utf-8?B?Uy9XWGdvcVVDNEt6bXNBMkRDTm5CVXZiVnpYMTdyNGlOMFljelRIbEtQQlJH?=
+ =?utf-8?B?YjVJUFJPb3VkWHRzamcwWG05R2lnMkpvRE1oUjZXMENvLzZ3bWd2aUhrZGtk?=
+ =?utf-8?B?TjYxbnRnUlNFQ0FMME9EK3pmNEVrMGVoQzZoTSttOWRtaFNkZjllMzZaZE5z?=
+ =?utf-8?B?bEN6bFk1T25EMlArZ3dyZ2t3dkp2QmtHeGJueGJtMDlWMW11NTdnandia3ND?=
+ =?utf-8?B?My92Z1E1NCtmK2pPMWRXT1pkUWtQVFRkK0JGYk5pVFFGdU5RMWVVQmxjMFdH?=
+ =?utf-8?Q?XTGLD4Ey2tg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4320.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dU5jbjhBaUtXYUdiMUllVk1kZzFQSXhwSnpubTh6R1hVUG1ZLzN4SXQ1VEUv?=
+ =?utf-8?B?QnZaMDFXcmZGdlF1cnZReHBPUEIrN0JzWnlVeHc5Unl5S0p3KzU0aWV0aW1T?=
+ =?utf-8?B?Tkk2aE00MGMrUmN2KytSb2lqUGxKOEFoYktFLzl4dWU4cm4wbFVSUTFlQUJM?=
+ =?utf-8?B?TklBamNFQWQ3aC90Ti9FbERGRVpubTlXK281WS9FSVRBOXZ5OHBtdkNqZmxt?=
+ =?utf-8?B?VzFGS3QvcldDYlZXMWlKMENCNnFzeC9HM28rcGsvTVdEbUR6dEpCVTZKVUJX?=
+ =?utf-8?B?Q0VQeEJZRnlNejVxMWpWVlhiaU00RG1kNU9DR3lUb01xTUx3eEJtMWpUbGNZ?=
+ =?utf-8?B?VlpiN1NkbEtlWjNMbEUxVzdQUVNabXdMNFp5Mko5WENRRjZTOWhpRkRhcklG?=
+ =?utf-8?B?ZUYvWUZUS3NZTHMyWUZjckZXM0RUQmc4L2xDVTFRMXdpSHZRRnhHK0hrNWJr?=
+ =?utf-8?B?YktWMldrbkh0cTg2bnBKazhWTVduZ2xkd0R3MkVsUEphTFlWOUtSMzdaVno5?=
+ =?utf-8?B?TDdoMlhvdkd5SXQ4Qkp2dzZuL2ZFSzIrbDBXdVBFakFHeWRaUkpnRTJJaVYy?=
+ =?utf-8?B?NTNPRWNnQVVGblNmYkRrTTVUeFhncEc1RTRBWkpnMVphZUxvY0Rxei95VU0x?=
+ =?utf-8?B?WnlWaENrTklBZUJmM3VOSFRMQm14Wnp3aytNemF3bDltelRjb1pCelNKdHl3?=
+ =?utf-8?B?clJGbE9OQjNpNnZLcnY4R0hyNmtPUUpvL2xSVTNsS21mSFlQMVdYeEF1N0VD?=
+ =?utf-8?B?eHYwS1l1RnpUYy9RWXhxVUlQUWRXeUkyNHBtdG4rUDduQThXQ3ZwUnA1WVpB?=
+ =?utf-8?B?VllXR3JyRCtUcWtzR0ROMFpxaXc3Rk4wOG83R3JVT1BEa3hOTXFkaGV4QXFB?=
+ =?utf-8?B?azJvWnczVkJBbmZUNzR0WC94U2hibFh4OFA4RzVmakpjbmh1SkhKQ0pSR0Q0?=
+ =?utf-8?B?Q1VhZkJ3ZlBscVRHR2Z0dGF0MHhST0JjV3hCYVNQRXVaMFBtTStabnBxTGY4?=
+ =?utf-8?B?ZnBPa0EwME9mblVrY2ZKTDBxaUFKaEFXM2gwcFlZNDlnWjNVZXF3cU1nZlFl?=
+ =?utf-8?B?S3JNQXZiZ216bEpwSi9WNGViMCtsdUtLaW0zeGtiQkdybEc2TzZMeSs4aVRS?=
+ =?utf-8?B?bDJTR3VNKyt2ekM4c0NUZnk0NTRmK09FNDJXOHUyZDc5ZDh3L2VnTVVuakI5?=
+ =?utf-8?B?cllEblVGTUN2OEZnOHQwQ2ZYelpocGZGMDBaUFZaWE1kTXVwY1JVSjhmSkNC?=
+ =?utf-8?B?M0Y3ejVUZElnOUxMVGh5QUtSSVN0UDRiZ1hQR2RVQXpLOTBrc00vbVhENGpN?=
+ =?utf-8?B?a1ZMSEhTOGY0NU55dWVRZEFOMEpPaHVOcE9nSFJBOU5CUHJMajdFdjlCSnlE?=
+ =?utf-8?B?cjVZQi9tY3JxSFhaVHNUOEhVWGZBL0d4TFdMWXl0c29mYnlyZ05HTnpGaHJv?=
+ =?utf-8?B?dERUU1lLM2RMSS9nVmJhcW5MeFhMdFFvYitQTUFUQkN6RkRRLzd6RGgxdnl0?=
+ =?utf-8?B?cHFRWnIvUUJUTDQwOWZ5QVdVL2xpNnFNK0VVQzNGQUNKeGt2YVpJc0o0OWNx?=
+ =?utf-8?B?TC9YKy9pemU3Mm5yZDJ1WFR1aG9SQmdLUE5HUzMzSHlLWHNHY2NQSWRwc3lV?=
+ =?utf-8?B?RmFBKyt5WElMb05oZ3BycDArZGp0RXhOb2hlaUl3TWlSSGc4M1JMVU85RHha?=
+ =?utf-8?B?akY2Nm1jY1orSm83eVZyRjdQMVdCOVZ5Q2NqMU05M1o5TExZdk1yV0p1VmNQ?=
+ =?utf-8?B?bXc5SWhtaFlsQmhJeFQ0Rzk1NHhLTUtxTDhvRHUrOFJJcDBaYzZvcE5TemNI?=
+ =?utf-8?B?aWNHZ29LVHM2ZVNIWkxqRlIwMzAya2hZSjZSZkhqT3RlOHh6cUl0RGJNajJ2?=
+ =?utf-8?B?RlZlQkp3N3MvcjE2OUdwOUpMVVl1U3g2TWdIUkQzRThNVDUramNnRXowYklO?=
+ =?utf-8?B?RkVTeEFQQXBhVmV1ZTcrWVB3ZzNpSld1elNhV3Y3eE43aEhwVjVsSWg4NktJ?=
+ =?utf-8?B?MEYwRkRKeG1pN3BFdTFCWDVKMnY4b0t1cm1xZXNpeEJjM0R6Y2dlaWlxSTdi?=
+ =?utf-8?B?MEJrdHFFVEJaOHRKcEpyaHcva05vMDFtSXd3RzczQWE4ZldJeXpLd21nWk42?=
+ =?utf-8?B?dEhUM2luYTk4Rmk2YUNLcG9JSGdpeVJpM2NxTGNKTVUxZi9nMHRSTWVrOG83?=
+ =?utf-8?B?cmc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	CiUYf/hdWhReSY1HLMtTxO56j0vh3zz/IbUiDGNyEVd3Erl2UxY+oWghUy+sRDIU09xXn24vWX43qeywqdL0Q2tUK5fHrpjBGRDKekejToSOBb3neF8tb1CGISRmrmHoxhDu1eVEsNRTItxKgcsDJFZ/2vo9iO+B9LKuPBWpSJDHiYM6ibFGx1iLZyjgPxM1iB4eorLC3jNpPphgG8ng05Ij72yOheOAzMZqWo36B1PGjTX35LxlLrSJNCFrs05GQGWNveEcMHiB4wSC9C4TKfsVdYxqtWmrJeQ/WGSnKdLte4v3AJnhzgQ9dwowQ16J6JFRZxmnVUI0v80re8yMh86DuAgP9T6eQvAC51dW5RLp7+8ajOEk+wlHtf4ju0QIUALVTgs23dArMuyaspbtX/QAcv2aTDo9r+kVp6bG8gBZIO3Pqb9DXH84C+REzNkAlTGo2J2aPrnt7Ma/1mS8O7EyxB4jxxnsVmSEfrsuM662+ANOB78T5TQJww+ZNs6B0cTL75hD7AKqXKtEQy28mJdek99x36eMwgufn92g/O1VclgC0k3keatbvfMQLWgrw8IoQP1uh6lWYkn/PVFqUkvqrtv0i/YYqOduNMHYbwE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa039a98-4e6a-42ad-4506-08dde09528d9
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4320.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 09:29:00.0415
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2B3pthl3aX+CRykE5VKz8LBX9WfshrLPTBphNx1tGWCIIDONC0KP++5DAtWBz4QWg5Fw3eN7TpJbT/WsXZCHsA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB5965
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=871
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2508210074
+X-Proofpoint-GUID: asOfbSEXua97icOZtMCAi2uUaxHoELlg
+X-Authority-Analysis: v=2.4 cv=FY1uBJ+6 c=1 sm=1 tr=0 ts=68a6e6df cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=i-KcieYvAL8oQoyEmZsA:9
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: asOfbSEXua97icOZtMCAi2uUaxHoELlg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDE5NyBTYWx0ZWRfXxyz3VBLYycxT
+ g3oKCA+3c0GlmmQujopCa0F2ASGCVTJev41C8iKXT6IzcoeBmOFb+LGgKhSnL9J2BTcdwdMGmpd
+ ePEVKy4JR0SI6aBFhucZuZ4/72ZpWabFoP0mnE7zlQrbxKITfe0TdhMHwjAH9EGZLpndZ/wBfiY
+ gzU9z2/FWmSxGFSQ9dYL5V+XZ/RNpLiPvrEh8UYQ0KcxYXocjHIDXWkBwCzY/dHU44q6Srxm1xL
+ kHF8W8sDaC7Q+GgKDel797WklECkG5uFGespoyLrGZFFBn7/cgwtFYolHOg8pL1QV/i7rJ090cT
+ t42BZMv7UsuoXhOoux7bmwgg2EACexfmm4ttEn1dxwKgM0xjQ0PZ2O5OsWxz5CEnzg/vnbl13ku
+ HkFiyun7LuSKx0CoQXhm+ZvW8WLWrQ==
 
-Hi,
-
-On 28/07/2025 23:14, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 21/08/2025 09:28, Ojaswin Mujoo wrote:
+> Yes these 2 tests are similar however 061 uses fallocate=native +
+> _scratch_mkfs_ext4 to test whether atomic writes on preallocated file
+> via multiple threads works correctly.
 > 
-> Add DSI support for Renesas RZ/V2H(P) SoC.
+> The 062 uses fallocate=truncate + _scratch_mkfs_sized 360MB +
+> 'multiple jobs each writing to a different file' to ensure we are
+> extensively stressing the allocation logic in low space scenarios.
 
-I think a bit longer desc would be in order, as this is not just a "add
-a new compatible string" patch, but we have new registers and functions.
+I see, please at least fully document this in the commit messages.
 
-> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v6->v7:
-> - Used the new apis for calculating the PLLDSI
->   parameters in the DSI driver.
-> 
-> v5->v6:
-> - Made use of GENMASK() macro for PLLCLKSET0R_PLL_*,
->   PHYTCLKSETR_* and PHYTHSSETR_* macros.
-> - Replaced 10000000UL with 10 * MEGA
-> - Renamed mode_freq_hz to mode_freq_khz in rzv2h_dsi_mode_calc
-> - Replaced `i -= 1;` with `i--;`
-> - Renamed RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA to
->   RZV2H_MIPI_DPHY_FOUT_MIN_IN_MHZ and
->   RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA to
->   RZV2H_MIPI_DPHY_FOUT_MAX_IN_MHZ.
-> 
-> v4->v5:
-> - No changes
-> 
-> v3->v4
-> - In rzv2h_dphy_find_ulpsexit() made the array static const.
-> 
-> v2->v3:
-> - Simplifed V2H DSI timings array to save space
-> - Switched to use fsleep() instead of udelay()
-> 
-> v1->v2:
-> - Dropped unused macros
-> - Added missing LPCLK flag to rzv2h info
-> ---
->  .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 345 ++++++++++++++++++
->  .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  34 ++
->  2 files changed, 379 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> index 893a90c7a886..3b2f77665309 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> @@ -7,6 +7,7 @@
->  
->  #include <linux/bitfield.h>
->  #include <linux/clk.h>
-> +#include <linux/clk/renesas-rzv2h-cpg-pll.h>
->  #include <linux/delay.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/io.h>
-> @@ -46,6 +47,11 @@ struct rzg2l_mipi_dsi_hw_info {
->  			      u64 *hsfreq_millihz);
->  	unsigned int (*dphy_mode_clk_check)(struct rzg2l_mipi_dsi *dsi,
->  					    unsigned long mode_freq);
-> +	struct {
-> +		const struct rzv2h_pll_limits **limits;
-> +		const u8 *table;
-> +		const u8 table_size;
-> +	} cpg_plldsi;
->  	u32 phy_reg_offset;
->  	u32 link_reg_offset;
->  	unsigned long min_dclk;
-> @@ -53,6 +59,11 @@ struct rzg2l_mipi_dsi_hw_info {
->  	u8 features;
->  };
->  
-> +struct rzv2h_dsi_mode_calc {
-> +	unsigned long mode_freq_khz;
-> +	struct rzv2h_pll_pars dsi_parameters;
-> +};
-> +
->  struct rzg2l_mipi_dsi {
->  	struct device *dev;
->  	void __iomem *mmio;
-> @@ -75,11 +86,22 @@ struct rzg2l_mipi_dsi {
->  	unsigned int lanes;
->  	unsigned long mode_flags;
->  
-> +	struct rzv2h_dsi_mode_calc mode_calc;
-> +
->  	/* DCS buffer pointers when using external memory. */
->  	dma_addr_t dcs_buf_phys;
->  	u8 *dcs_buf_virt;
->  };
->  
-> +static const struct rzv2h_pll_limits rzv2h_plldsi_div_limits = {
-> +	.fout = { .min = 80 * MEGA, .max = 1500 * MEGA },
-> +	.fvco = { .min = 1050 * MEGA, .max = 2100 * MEGA },
-> +	.m = { .min = 64, .max = 1023 },
-> +	.p = { .min = 1, .max = 4 },
-> +	.s = { .min = 0, .max = 5 },
-> +	.k = { .min = -32768, .max = 32767 },
-> +};
-> +
->  static inline struct rzg2l_mipi_dsi *
->  bridge_to_rzg2l_mipi_dsi(struct drm_bridge *bridge)
->  {
-> @@ -194,6 +216,155 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi_global_timings[] = {
->  	},
->  };
->  
-> +struct rzv2h_mipi_dsi_timings {
-> +	const u8 *hsfreq;
-> +	u8 len;
-> +	u8 start_index;
-> +};
-> +
-> +enum {
-> +	TCLKPRPRCTL,
-> +	TCLKZEROCTL,
-> +	TCLKPOSTCTL,
-> +	TCLKTRAILCTL,
-> +	THSPRPRCTL,
-> +	THSZEROCTL,
-> +	THSTRAILCTL,
-> +	TLPXCTL,
-> +	THSEXITCTL,
-> +};
-> +
-> +static const u8 tclkprprctl[] = {
-> +	15, 26, 37, 47, 58, 69, 79, 90, 101, 111, 122, 133, 143, 150,
-> +};
-> +
-> +static const u8 tclkzeroctl[] = {
-> +	9, 11, 13, 15, 18, 21, 23, 24, 25, 27, 29, 31, 34, 36, 38,
-> +	41, 43, 45, 47, 50, 52, 54, 57, 59, 61, 63, 66, 68, 70, 73,
-> +	75, 77, 79, 82, 84, 86, 89, 91, 93, 95, 98, 100, 102, 105,
-> +	107, 109, 111, 114, 116, 118, 121, 123, 125, 127, 130, 132,
-> +	134, 137, 139, 141, 143, 146, 148, 150,
-> +};
-> +
-> +static const u8 tclkpostctl[] = {
-> +	8, 21, 34, 48, 61, 74, 88, 101, 114, 128, 141, 150,
-> +};
-> +
-> +static const u8 tclktrailctl[] = {
-> +	14, 25, 37, 48, 59, 71, 82, 94, 105, 117, 128, 139, 150,
-> +};
-> +
-> +static const u8 thsprprctl[] = {
-> +	11, 19, 29, 40, 50, 61, 72, 82, 93, 103, 114, 125, 135, 146, 150,
-> +};
-> +
-> +static const u8 thszeroctl[] = {
-> +	18, 24, 29, 35, 40, 46, 51, 57, 62, 68, 73, 79, 84, 90,
-> +	95, 101, 106, 112, 117, 123, 128, 134, 139, 145, 150,
-> +};
-> +
-> +static const u8 thstrailctl[] = {
-> +	10, 21, 32, 42, 53, 64, 75, 85, 96, 107, 118, 128, 139, 150,
-> +};
-> +
-> +static const u8 tlpxctl[] = {
-> +	13, 26, 39, 53, 66, 79, 93, 106, 119, 133, 146,	150,
-> +};
-> +
-> +static const u8 thsexitctl[] = {
-> +	15, 23, 31, 39, 47, 55, 63, 71, 79, 87,
-> +	95, 103, 111, 119, 127, 135, 143, 150,
-> +};
-> +
-> +static const struct rzv2h_mipi_dsi_timings rzv2h_dsi_timings_tables[] = {
-> +	[TCLKPRPRCTL] = {
-> +		.hsfreq = tclkprprctl,
-> +		.len = ARRAY_SIZE(tclkprprctl),
-> +		.start_index = 0,
-> +	},
-> +	[TCLKZEROCTL] = {
-> +		.hsfreq = tclkzeroctl,
-> +		.len = ARRAY_SIZE(tclkzeroctl),
-> +		.start_index = 2,
-> +	},
-> +	[TCLKPOSTCTL] = {
-> +		.hsfreq = tclkpostctl,
-> +		.len = ARRAY_SIZE(tclkpostctl),
-> +		.start_index = 6,
-> +	},
-> +	[TCLKTRAILCTL] = {
-> +		.hsfreq = tclktrailctl,
-> +		.len = ARRAY_SIZE(tclktrailctl),
-> +		.start_index = 1,
-> +	},
-> +	[THSPRPRCTL] = {
-> +		.hsfreq = thsprprctl,
-> +		.len = ARRAY_SIZE(thsprprctl),
-> +		.start_index = 0,
-> +	},
-> +	[THSZEROCTL] = {
-> +		.hsfreq = thszeroctl,
-> +		.len = ARRAY_SIZE(thszeroctl),
-> +		.start_index = 0,
-> +	},
-> +	[THSTRAILCTL] = {
-> +		.hsfreq = thstrailctl,
-> +		.len = ARRAY_SIZE(thstrailctl),
-> +		.start_index = 3,
-> +	},
-> +	[TLPXCTL] = {
-> +		.hsfreq = tlpxctl,
-> +		.len = ARRAY_SIZE(tlpxctl),
-> +		.start_index = 0,
-> +	},
-> +	[THSEXITCTL] = {
-> +		.hsfreq = thsexitctl,
-> +		.len = ARRAY_SIZE(thsexitctl),
-> +		.start_index = 1,
-> +	},
-> +};
-> +
-> +static u16 rzv2h_dphy_find_ulpsexit(unsigned long freq)
-> +{
-> +	static const unsigned long hsfreq[] = {
-> +		1953125UL,
-> +		3906250UL,
-> +		7812500UL,
-> +		15625000UL,
-> +	};
-> +	static const u16 ulpsexit[] = {49, 98, 195, 391};
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(hsfreq); i++) {
-> +		if (freq <= hsfreq[i])
-> +			break;
-> +	}
-> +
-> +	if (i == ARRAY_SIZE(hsfreq))
-> +		i--;
-> +
-> +	return ulpsexit[i];
-> +}
-> +
-> +static u16 rzv2h_dphy_find_timings_val(unsigned long freq, u8 index)
-> +{
-> +	const struct rzv2h_mipi_dsi_timings *timings;
-> +	u16 i;
-> +
-> +	timings = &rzv2h_dsi_timings_tables[index];
-> +	for (i = 0; i < timings->len; i++) {
-> +		unsigned long hsfreq = timings->hsfreq[i] * 10 * MEGA;
-> +
-> +		if (freq <= hsfreq)
-> +			break;
-> +	}
-> +
-> +	if (i == timings->len)
-> +		i--;
-> +
-> +	return timings->start_index + i;
-> +};
-
-I have to say I really don't like this... In the minimum, the method how
-this works has to be explained in a comment. These values can't really
-be calculated? If we really have to deal with hardcoded values and with
-that table from the docs, I would say that just replicate the table in
-the driver (i.e. a struct that represents one row of the table), instead
-of the method in this driver.
-
-Or was this method added based on earlier feedback, for v3? I see
-"Simplifed V2H DSI timings array to save space" in the change log. If
-so, at least document it clearly.
-
-> +
->  static void rzg2l_mipi_dsi_phy_write(struct rzg2l_mipi_dsi *dsi, u32 reg, u32 data)
->  {
->  	iowrite32(data, dsi->mmio + dsi->info->phy_reg_offset + reg);
-> @@ -318,6 +489,150 @@ static int rzg2l_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_f
->  	return 0;
->  }
->  
-> +static unsigned int rzv2h_dphy_mode_clk_check(struct rzg2l_mipi_dsi *dsi,
-> +					      unsigned long mode_freq)
-> +{
-> +	u64 hsfreq_millihz, mode_freq_hz, mode_freq_millihz;
-> +	struct rzv2h_pll_div_pars cpg_dsi_parameters;
-> +	struct rzv2h_pll_pars dsi_parameters;
-> +	bool parameters_found;
-> +	unsigned int bpp;
-> +
-> +	bpp = mipi_dsi_pixel_format_to_bpp(dsi->format);
-> +	mode_freq_hz = mul_u32_u32(mode_freq, KILO);
-> +	mode_freq_millihz = mode_freq_hz * MILLI;
-> +	parameters_found =
-> +		rzv2h_get_pll_divs_pars(dsi->info->cpg_plldsi.limits[0],
-> +					&cpg_dsi_parameters,
-> +					dsi->info->cpg_plldsi.table,
-> +					dsi->info->cpg_plldsi.table_size,
-> +					mode_freq_millihz);
-> +	if (!parameters_found)
-> +		return MODE_CLOCK_RANGE;
-> +
-> +	hsfreq_millihz = DIV_ROUND_CLOSEST_ULL(cpg_dsi_parameters.div.freq_millihz * bpp,
-> +					       dsi->lanes);
-> +	parameters_found = rzv2h_get_pll_pars(&rzv2h_plldsi_div_limits,
-> +					      &dsi_parameters, hsfreq_millihz);
-> +	if (!parameters_found)
-> +		return MODE_CLOCK_RANGE;
-> +
-> +	if (abs(dsi_parameters.error_millihz) >= 500)
-> +		return MODE_CLOCK_RANGE;
-> +
-> +	memcpy(&dsi->mode_calc.dsi_parameters, &dsi_parameters, sizeof(dsi_parameters));
-> +	dsi->mode_calc.mode_freq_khz = mode_freq;
-> +
-> +	return MODE_OK;
-> +}
-> +
-> +static int rzv2h_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_freq,
-> +				u64 *hsfreq_millihz)
-> +{
-> +	struct rzv2h_pll_pars *dsi_parameters = &dsi->mode_calc.dsi_parameters;
-> +	unsigned long status;
-> +
-> +	if (dsi->mode_calc.mode_freq_khz != mode_freq) {
-> +		status = rzv2h_dphy_mode_clk_check(dsi, mode_freq);
-> +		if (status != MODE_OK) {
-> +			dev_err(dsi->dev, "No PLL parameters found for mode clk %lu\n",
-> +				mode_freq);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	*hsfreq_millihz = dsi_parameters->freq_millihz;
-> +
-> +	return 0;
-> +}
-> +
-> +static int rzv2h_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
-> +				    u64 hsfreq_millihz)
-> +{
-> +	struct rzv2h_pll_pars *dsi_parameters = &dsi->mode_calc.dsi_parameters;
-> +	unsigned long lpclk_rate = clk_get_rate(dsi->lpclk);
-> +	u32 phytclksetr, phythssetr, phytlpxsetr, phycr;
-> +	struct rzg2l_mipi_dsi_timings dphy_timings;
-> +	u16 ulpsexit;
-> +	u64 hsfreq;
-> +
-> +	hsfreq = DIV_ROUND_CLOSEST_ULL(hsfreq_millihz, MILLI);
-> +
-> +	if (dsi_parameters->freq_millihz == hsfreq_millihz)
-> +		goto parameters_found;
-> +
-> +	if (rzv2h_get_pll_pars(&rzv2h_plldsi_div_limits,
-> +			       dsi_parameters, hsfreq_millihz))
-> +		goto parameters_found;
-> +
-> +	dev_err(dsi->dev, "No PLL parameters found for HSFREQ %lluHz\n", hsfreq);
-> +	return -EINVAL;
-> +
-> +parameters_found:
-
-Maybe:
-
-if (dsi_parameters->freq_millihz != hsfreq_millihz &&
-	!rzv2h_get_pll_pars(&rzv2h_plldsi_div_limits, dsi_parameters,
-			hsfreq_millihz)) {
-	dev_err(dsi->dev, "No PLL parameters found for HSFREQ %lluHz\n",
-		hsfreq);
-	return -EINVAL;
-}
-
-keeps the flow a bit cleaner.
-
-> +	dphy_timings.tclk_trail =
-> +		rzv2h_dphy_find_timings_val(hsfreq, TCLKTRAILCTL);
-> +	dphy_timings.tclk_post =
-> +		rzv2h_dphy_find_timings_val(hsfreq, TCLKPOSTCTL);
-> +	dphy_timings.tclk_zero =
-> +		rzv2h_dphy_find_timings_val(hsfreq, TCLKZEROCTL);
-> +	dphy_timings.tclk_prepare =
-> +		rzv2h_dphy_find_timings_val(hsfreq, TCLKPRPRCTL);
-> +	dphy_timings.ths_exit =
-> +		rzv2h_dphy_find_timings_val(hsfreq, THSEXITCTL);
-> +	dphy_timings.ths_trail =
-> +		rzv2h_dphy_find_timings_val(hsfreq, THSTRAILCTL);
-> +	dphy_timings.ths_zero =
-> +		rzv2h_dphy_find_timings_val(hsfreq, THSZEROCTL);
-> +	dphy_timings.ths_prepare =
-> +		rzv2h_dphy_find_timings_val(hsfreq, THSPRPRCTL);
-> +	dphy_timings.tlpx =
-> +		rzv2h_dphy_find_timings_val(hsfreq, TLPXCTL);
-> +	ulpsexit = rzv2h_dphy_find_ulpsexit(lpclk_rate);
-> +
-> +	phytclksetr = FIELD_PREP(PHYTCLKSETR_TCLKTRAILCTL, dphy_timings.tclk_trail) |
-> +		      FIELD_PREP(PHYTCLKSETR_TCLKPOSTCTL, dphy_timings.tclk_post) |
-> +		      FIELD_PREP(PHYTCLKSETR_TCLKZEROCTL, dphy_timings.tclk_zero) |
-> +		      FIELD_PREP(PHYTCLKSETR_TCLKPRPRCTL, dphy_timings.tclk_prepare);
-> +	phythssetr = FIELD_PREP(PHYTHSSETR_THSEXITCTL, dphy_timings.ths_exit) |
-> +		     FIELD_PREP(PHYTHSSETR_THSTRAILCTL, dphy_timings.ths_trail) |
-> +		     FIELD_PREP(PHYTHSSETR_THSZEROCTL, dphy_timings.ths_zero) |
-> +		     FIELD_PREP(PHYTHSSETR_THSPRPRCTL, dphy_timings.ths_prepare);
-> +	phytlpxsetr = rzg2l_mipi_dsi_phy_read(dsi, PHYTLPXSETR) & ~PHYTLPXSETR_TLPXCTL;
-> +	phytlpxsetr |= FIELD_PREP(PHYTLPXSETR_TLPXCTL, dphy_timings.tlpx);
-> +	phycr = rzg2l_mipi_dsi_phy_read(dsi, PHYCR) & ~GENMASK(9, 0);
-> +	phycr |= FIELD_PREP(PHYCR_ULPSEXIT, ulpsexit);
-> +
-> +	/* Setting all D-PHY Timings Registers */
-> +	rzg2l_mipi_dsi_phy_write(dsi, PHYTCLKSETR, phytclksetr);
-> +	rzg2l_mipi_dsi_phy_write(dsi, PHYTHSSETR, phythssetr);
-> +	rzg2l_mipi_dsi_phy_write(dsi, PHYTLPXSETR, phytlpxsetr);
-> +	rzg2l_mipi_dsi_phy_write(dsi, PHYCR, phycr);
-> +
-> +	rzg2l_mipi_dsi_phy_write(dsi, PLLCLKSET0R,
-> +				 FIELD_PREP(PLLCLKSET0R_PLL_S, dsi_parameters->s) |
-> +				 FIELD_PREP(PLLCLKSET0R_PLL_P, dsi_parameters->p) |
-> +				 FIELD_PREP(PLLCLKSET0R_PLL_M, dsi_parameters->m));
-> +	rzg2l_mipi_dsi_phy_write(dsi, PLLCLKSET1R,
-> +				 FIELD_PREP(PLLCLKSET1R_PLL_K, dsi_parameters->k));
-> +	fsleep(20);
-
-Why sleep? Sleeps should (almost) always have a comment, explaining what
-it is waiting for.
-
-> +
-> +	rzg2l_mipi_dsi_phy_write(dsi, PLLENR, PLLENR_PLLEN);
-> +	fsleep(500);
-> +
-> +	return 0;
-> +}
-> +
-> +static void rzv2h_mipi_dsi_dphy_startup_late_init(struct rzg2l_mipi_dsi *dsi)
-> +{
-> +	fsleep(220);
-
-Especially sleeps like this, where the upper side is "open ended".
-
-> +	rzg2l_mipi_dsi_phy_write(dsi, PHYRSTR, PHYRSTR_PHYMRSTN);
-> +}
-> +
-
- Tomi
-
+Thanks
 
