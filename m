@@ -1,84 +1,112 @@
-Return-Path: <linux-kernel+bounces-780357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F734B300D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:17:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A17B300DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992771CE5AF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:17:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D00AC3AB61E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C6E3054EE;
-	Thu, 21 Aug 2025 17:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCAE3054E4;
+	Thu, 21 Aug 2025 17:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbcc+nuU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/UP3wml"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148D11DFCE;
-	Thu, 21 Aug 2025 17:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802482D0638;
+	Thu, 21 Aug 2025 17:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755796612; cv=none; b=oQZJyHtQGRDFEOwrkoUwO7wc0tSoKLFK03BI262a+hCU4FoXL6oNZREIU+39a+bAOy8WW1xuYiMBuQflEq74VeFGims4++4X/FCdLkxDo4J7MsManKRCjFMX8H14uyWbuZY/PdAi0rFe/NmvnQrto5y+iBfAcuOXZZZi5OEciB8=
+	t=1755796630; cv=none; b=FT0H8F9yRmlvYk6QetnVIXgng6rWeOZRV5VozRC+vQYxI6kFA8MLV5YxCeyuNh7C+4EWg090HkQOvQQhd2yuL3SMOt+buPP3pnk86xJD5MCPbw0+SNG7Y0wGykpi2jk5zgezzw1FnMkQ0KdmoodMIpmKr2+qO5GE61B8lhFA1tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755796612; c=relaxed/simple;
-	bh=3T5rhpFWpP7D0v9Okb1ShoQaiWCVpNjwESTpoSd1OYI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G+/cvmY9wEV2/JSwFLUjErXvt87V4aL/clgM1LiyCeeHUMpQFuqcZArSJWS5j1HK3MJz0lZ8pUwrQEc0KLws6OFTix62D+RajTjgezYQ4PlBMYMJqUgtqPRZrCx+52JOzVslcf2t7QKH3QaIk3nmJWlhwFGfehjM0rxu9mkMeNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbcc+nuU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A45C4CEEB;
-	Thu, 21 Aug 2025 17:16:51 +0000 (UTC)
+	s=arc-20240116; t=1755796630; c=relaxed/simple;
+	bh=WGhiuC8Crc/UzLl1IpIQpx1PRP3gGMcaGIqU0j6+iqo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=n6+eP026O4s2OZiCa8+xg3Bbds9yGHCfCbvZr1RgYzcz4qbJRVYQ9/wyj5fQVY9xFcOPp9kSu0KF+H9DHpRHTKWG7Ns9zHz1iqRm7KX4SpyQNojnUr5BrCuYe0/BDUVSikTwcXCkD7qBf7yyhRd6XU4qj7NAZHk5XPDWwLejDnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/UP3wml; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8122BC4CEEB;
+	Thu, 21 Aug 2025 17:17:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755796611;
-	bh=3T5rhpFWpP7D0v9Okb1ShoQaiWCVpNjwESTpoSd1OYI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kbcc+nuUOlC2C89O9MlccwmYw4h92fJxE9CwNdYca1iujvbhoITJVWJqK7zyxaiQ4
-	 PlXlQzvhIBRepm0Znw2JcPZdpfzrRX7LAj07CvJ6mYfMplMdJ2YXHxnGx+PSYAhxxP
-	 3qRumda8vnp52O3rlD1z+X5ifU3okfll4RsNR/8V3AvpQTbYRNE/WLoAFRnFMdx6oa
-	 QWrtPG4YJ5Bbv/a4VWBfv9Tm+x8msW2r2rxkB1XjVrNtQ6aFZyEVmmkR2Yrj+nDmnt
-	 N8riExVTzAZRzEP6NEXzdB8hzMtNtb9p4re4qV94bD7VyUqLBl51A/huYNLmGFc80k
-	 2QDezaFIUORhw==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [PATCH 04/11] mm/damon/paddr: support addr_unit for DAMOS_LRU_[DE]PRIO
-Date: Thu, 21 Aug 2025 10:16:49 -0700
-Message-Id: <20250821171649.81870-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250821105159.2503894-5-yanquanmin1@huawei.com>
-References: 
+	s=k20201202; t=1755796629;
+	bh=WGhiuC8Crc/UzLl1IpIQpx1PRP3gGMcaGIqU0j6+iqo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=b/UP3wmlTwyGmPjgtngrumnazxKZvzFLjsLbn/MbGdWAxTSvzH6ak1GwheXRVmJdF
+	 ywFd6y8s5HVbqhCvWM7ragFJAzX1X36ZiXQE3NLId1lbXUeILHvoaq6ZLyCx2MIUBV
+	 CPukduAbIsYva13EgqcW/cZc9xFv4FHhssQGCGZMFf9G8U5SONK6FlEWc2WC/8WtY8
+	 V/VscZ3eAvmCTtMjDFO3lu9QKfrKaonwQWhmJFBnmjwMMiRO4TpMfMSqJH2QJVhulo
+	 PWFLGPzwHwzOCEV+Q3jHmlQ8VkPM8aTeIzhnGpaufuxhimvztGOTKcvrkoCMdNmBcF
+	 oKQUIzdk6KWSA==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 0/2] sunrpc: allow dprintk() to go to the trace buffer
+ instead of console
+Date: Thu, 21 Aug 2025 13:16:52 -0400
+Message-Id: <20250821-nfs-testing-v1-0-f06099963eda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIVUp2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyND3by0Yt2S1OKSzLx0XaMkI0MDcwNLU6MUEyWgjoKi1LTMCrBp0bG
+ 1tQAk/nRiXQAAAA==
+X-Change-ID: 20250821-nfs-testing-2b21070952d4
+To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1032; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=WGhiuC8Crc/UzLl1IpIQpx1PRP3gGMcaGIqU0j6+iqo=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBop1STSucDQuLHQTR3p5j8FuR0uQaaLs/OYO0bI
+ eNVnks+SNmJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaKdUkwAKCRAADmhBGVaC
+ FQJ8D/9c68VsTp1l5hsGrGIp4c3GSzvV4OeAdWL7EjtMKPgOAGYSsCaR81G+4TkP7oVryMYv9Q7
+ lG25blljcj2p5vojF6hiMA6xjgyPzLBzs6nXPDC0ninhqKN09h7zerphnH7DGLPRzMqduSRUxNy
+ 8KbMoACnD6zfFT8xlPyXSj47qtRbyNHXc12L2kzgAE+I6w85M1EKHA78/y30+YQZ30OwB4xj+9f
+ sbQDGgCUvx9eM8J9mrgwGJ23rq/Vygpxg1qR2vxKdLGY4L5iFLTqO0CA/XMizAI6LA5NeCDXhGm
+ szR5h0aAmSYLwmkC3u+kKf8+5B12elWk/gqU8bfLATxLguKqabeKK349QOhWH55r1D/VE3DRMky
+ +FVPi4l932fIpJEJVthLcy+7JDWOhtDqFaXcbEpSFxCoQkU29ZzM10y8twMyTrS0KXdZQe8C7GI
+ 71X+KH/EJ16dvHrN6ailGwOcSJgTTf1jNhk6ko0oKWFFlSohoMsTNzYRIasGN1s0NFVnA6Jfrhq
+ rAfjefvLtTAljwjBp64tqp66CY1IJNFH1jYD3YQ/BeEXAO1xgLorvdCG9efSIKC8aJaH/wOLXp2
+ vweepTMTnuRAyWw79uNstry4I92k6elqoGmC8I8bTNgcmhP1dqT1ISmGNNe6eGey6x0AqyOoU0y
+ LcXUYMpRxFZUWgQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Thu, 21 Aug 2025 18:51:52 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+While we have added a lot of static tracepoints in the last few years,
+we still have a load of dprintks in place at all levels of the
+NFS/NLM/RPC stack. At the same time, they're pretty useless under any
+significant load.
 
-> From: SeongJae Park <sj@kernel.org>
-> 
-> Add support of addr_unit for DAMOS_LRU_PRIO and DAMOS_LRU_DEPRIO action
-> handling from the DAMOS operation implementation for the physical
-> address space.
-> 
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
+This adds a new Kconfig switch to allow those to go to the trace buffer
+instead. In addition to being more efficient, that allows us to enable
+static tracepoints alongside dprintk() and get a unified log.
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Jeff Layton (2):
+      sunrpc: remove dfprintk_cont() and dfprintk_rcu_cont()
+      sunrpc: add a Kconfig option to redirect dfprintk() output to trace buffer
 
+ fs/nfs/write.c               |  6 +++---
+ include/linux/sunrpc/debug.h | 30 ++++++++----------------------
+ net/sunrpc/Kconfig           | 14 ++++++++++++++
+ 3 files changed, 25 insertions(+), 25 deletions(-)
+---
+base-commit: 80a1bea0cd81de70c56b37a8292c23d57419776f
+change-id: 20250821-nfs-testing-2b21070952d4
 
-Thanks,
-SJ
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-[...]
 
