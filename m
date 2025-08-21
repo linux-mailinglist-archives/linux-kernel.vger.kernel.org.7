@@ -1,377 +1,181 @@
-Return-Path: <linux-kernel+bounces-779468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7149B2F47B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:48:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E6DB2F47F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EADC4AA44E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:46:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25FE61CE14A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E767E2EFD83;
-	Thu, 21 Aug 2025 09:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C55285CB5;
+	Thu, 21 Aug 2025 09:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="j8sHD9+r"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="R+oRKrWo"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013047.outbound.protection.outlook.com [40.107.44.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD062DAFC9;
-	Thu, 21 Aug 2025 09:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769541; cv=none; b=UoTsu2/EeAPG81vb3FWW9/S3a5QnsbTd2sD0PIhWZsG7cnkvyEqmBTNREfq5X881GdRs6NZwypVHWzoLveqzRnSztcjMxGx8z7XLbwJUsXVRZDAb/PV4K8rchmeSZtB/cXtlOcqDkAP/o65XfDYS2C0PhALFjVWudyRjGEJo+bk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769541; c=relaxed/simple;
-	bh=GHYBwVRKayplJxIt6mk36xNkPFzw+yBEuHRmZmt66SU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMAxHU4lETY3XAuixIGGRTH8uyL8NP8IJluWH1nDZVBrL0ekU63x0ALEwraMcRlmUBNsE4DRVkj712E4gEDr8ug5dQQxVRfqnl4/20oXUOk0kyadToXZrgxXPkGbvGtClhzBElv/PfqGnPs3Qd1XCxmvMBZYE6s3cgvP5xua9vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=j8sHD9+r; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KK3q03026005;
-	Thu, 21 Aug 2025 09:45:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=UhM3mEjjk5DZtBRTAhXSE7VrcYFGe6
-	9UApfW9dbbB2g=; b=j8sHD9+rWWovYqh/bGy24dmh5BakWqOYdOH0Zt5Tis3qjN
-	D2k+zKLA+pIWBllQfyGw7g1TikRIw5AFmFWS8AtmGEpv1sV08UxIJEnHeJn8quf4
-	hHR/OTvNJNMdrgDNuAPmEISnbIHH+8ZmExpOy166BUdobY31npX91250BQVmxqdc
-	ShVZTBuNP8FCQDxkyQ71w4MV+nS967JHGYclAB7qwfe5PF735tmsjtTux2cHRtCC
-	FnBXdvsE3MAt48y5TRjjGUdxyzQ6oAn45ShlR1rx/Z8D2/xK3JjbNUczH1FmVn7/
-	y7sfqQ2uXe/BINpyQnXavWEQ6Tw2Xgy/T4mmatXA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vfxn2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 09:45:32 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57L9eKFL015747;
-	Thu, 21 Aug 2025 09:45:32 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vfxmy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 09:45:32 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57L6rQu2031881;
-	Thu, 21 Aug 2025 09:45:31 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48my5y7pxd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 09:45:31 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57L9jTse19530138
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Aug 2025 09:45:29 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6AD262004E;
-	Thu, 21 Aug 2025 09:45:29 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 235E920043;
-	Thu, 21 Aug 2025 09:45:27 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 21 Aug 2025 09:45:26 +0000 (GMT)
-Date: Thu, 21 Aug 2025 15:15:24 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 03/11] ltp/fsx.c: Add atomic writes support to fsx
-Message-ID: <aKbqtJEfsI4iFY-E@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1754833177.git.ojaswin@linux.ibm.com>
- <8b3c42eb321b4a1a4850b7e76d53191cb20ffa41.1754833177.git.ojaswin@linux.ibm.com>
- <6cf3dc1e-919d-42b1-a8c0-cfd9bb158966@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9F9278146
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755769651; cv=fail; b=JRZFvPoykDl3WoUSQIFJznLMthME9TkyBoP6dECwR9IYYJe1E8cZssj88yOuxxwnDWywSoJGWcZsXd5eazX/0THQOE+3WNauSlo1fGl5S3cZaGwnGvd2U17Jsc2mM0wuQnjwHSASPv1Q6WVrfUaqhmiAdthmGvLIVVB7WZVziI4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755769651; c=relaxed/simple;
+	bh=LFT7+yeGEanemKdJmZIum7mdFNEhghb8GXHzc3oNraE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=UjcZGEajV9LeMjZI50wEDwzExwWTVwTURUCE12Z8PwyoAnXqxUnFl+iy2+t38ZyFUC8aw+HQot7qpCJEp4hPB8j4IwpL54tqqb9I01uPLrIEUXOytENpHcGQBCJeN5jf3aLjnX0CrvleKQur1m+XoqsMKXDjW24NYGhtHD6Cp0A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=R+oRKrWo; arc=fail smtp.client-ip=40.107.44.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J1X3TPuNuRAx7VXiNff6HXOg/RdALo/chLaVxc74eYRJS0lsWsv09LOJrijBvSCehiWv4VuoLlERZ7romJpBLxGWRw1cvTHYr3RCh9+OLpsWYy7mNt1PsQWjNlOEx0y3WYXGD/egJ5q9G7bhzJZCuO4cgLoC/6PaZEhhiQWe//n8lKYts3UQHJwYCtBZuCeEqFqMdsDV1wn0bKXuj6QMeC1Krtw0pOYSlWhQuOc+MWbAUSRjL5wYmNsgr8FMKWHsvrRN7Ply0yjkIkcnprBeFto6w6APvOscUpZGEyx5G56a7dLWU/A23J9rIe6X8OMN6cCbcQ9gF6vNdREbe86xVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l3qO4dN1p+/PrakekbMeW0kNjjNTzXx1dGZHwhtJcZE=;
+ b=Y8HHm7KKoC1tBVHCsSg1cQVAK5Ec0/NLYI6LPwDES+9zo2jJd2ZnuDzmCxSArgWl8biVf5nAwy2GKLEcTJswR6sIv2dJfQrQiifebK1lAsNBuvkCIlQGCLXb7AN/LApQBqaglzQYHF+Zb1dKgoR7L7CvS5DGI7Eiwpn5l/d9VbI4ZIg4KNcQ71HHUGPZqullcsDsm9hz0JIBwABCav2CehS9iPn6GzO6J1hcpxL7IbUNdAIq8htCGvIVPpo/WJKJ4ctZbX7zhEOWmt60j1P4F6AVPs9SBGjf+8qiC1ujoqMNIzl/whlxi9rgjXgkmashmAxIMnJP5XvR2pIUyXloVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l3qO4dN1p+/PrakekbMeW0kNjjNTzXx1dGZHwhtJcZE=;
+ b=R+oRKrWohDY2nVMdICq1Yu93sNtwhzFqYCtCGznKgDkx7JwZHqREcDLyv3UkOJfzPCXGMKbIURYInuXUhw6afDTujQkEFOQ2Z94oeWB20eUg45Z8vTlpzlqOGFm27sS2u9uUAQj87ggtvu/b0J9pegQMkEc2lOiNxH06KBdhVjQgqWun6MscM5Q/N3JoPLPZzBPmGNeDZEhvI3aQW4rIRh5cpicpBeRAvf5Edi1d8Ncgfg2epuB4vxwXFfOxGVlSesN/FhhnUKrM0fF6byMDEG+ejB6RTX7Tcn3akOiPzdThnC7yCq35dqMN/bCBtTkWGj+5J3eu+eQkx4owoap6rg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
+ by SEYPR06MB5695.apcprd06.prod.outlook.com (2603:1096:101:bc::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
+ 2025 09:47:26 +0000
+Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
+ ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9052.012; Thu, 21 Aug 2025
+ 09:47:25 +0000
+From: Xichao Zhao <zhao.xichao@vivo.com>
+To: will@kernel.org,
+	joro@8bytes.org
+Cc: robin.murphy@arm.com,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Xichao Zhao <zhao.xichao@vivo.com>
+Subject: [PATCH] iommu/arm-smmu: Remove dev_err_probe() if error is -ENOMEM
+Date: Thu, 21 Aug 2025 17:47:17 +0800
+Message-Id: <20250821094717.573232-1-zhao.xichao@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0194.apcprd04.prod.outlook.com
+ (2603:1096:4:14::32) To KL1PR06MB6020.apcprd06.prod.outlook.com
+ (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6cf3dc1e-919d-42b1-a8c0-cfd9bb158966@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfXxBayxs0uRmZk
- deY4eGwynkc1nnwA8HsxShYOKNPqPZKbV3H7QluKM6HcElM5JfJMx8bqTn49naiuIE9HVUi1+AW
- kWVNlS3/teDzpNG6TCevjvxmz4nle0HE4+A2qOZIMknehQCp17lAH/Zy/JmbJCX/rZekptVBmNg
- NNeOkLBd1dWf4T62aKxMFl5lqc5wJhno4hRxTxnSl6dHBvtmAGy4L03Hen1DzkV5M/LPSnldHM/
- zYmxLCskcUAltEL+KpRlUprIoEkY+54+ewyNHR02Ue3RagFoJMPWjKADOEmkiN93E4kY7bM/xCF
- dUT5JdTrWTOR1FgPmKFvyiHRGWoaQpVFMSidKuqVWuTCb+Yz2veUPdAyiAwP/J7zThYnB2AG07m
- piRVgEvjdmkFst5LNv4COwyfb/Io+w==
-X-Authority-Analysis: v=2.4 cv=PMlWOfqC c=1 sm=1 tr=0 ts=68a6eabc cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=2n9UC11wNmDO3C5zd8gA:9 a=CjuIK1q_8ugA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: s4kl0o4uwA3kNEyu0UkPSvtz-MZQkf0r
-X-Proofpoint-ORIG-GUID: lN_wrrKj12Xe6rctE8CUqv2d05e2Q2V-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2508110000
- definitions=main-2508190222
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SEYPR06MB5695:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62f77b2c-9d44-4e6c-ee71-08dde097bc1f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6BzGFpRKnIIZpWAF5IF05Uwey5Vh/G0W4iSMbYQ7j2BQNF8gFMte0paxwOAd?=
+ =?us-ascii?Q?ObiSVldVReWwqyuCcG3MklmlraONDb9qGIFhYh4+BoQwKgpKz/CgYR8m2gUq?=
+ =?us-ascii?Q?AHvNrBpb/qcW7crYcyI3yWzesvB4X+adO09/88o9Qn8RYLmElCjVmQIB9Jm2?=
+ =?us-ascii?Q?ynHNY3iEvj4mKld8x8tAq0JGnCxoclOoaP6ncbdwVPr18Thf51Y6Zr2wEZ/C?=
+ =?us-ascii?Q?FuJVFaZ5dztNNimktCiqXyd5NEP+/ds7pnad+3WqFyh95waIU7XO8XR/FfUm?=
+ =?us-ascii?Q?qS57MBPQDuWysyDRDYuPXQxZjyISxTgE6NaGOYd+2pgYokAZT2zexMxz8j3w?=
+ =?us-ascii?Q?GbDVd256kxUBvY22411zisRA+Bi54sge7lftQxTVmYsSD51kllhrA2VUvi+y?=
+ =?us-ascii?Q?Hl8RlIpo2uS9zOcjaQv2aRWmdJZGPihqE7wFmXWAK9MQeTWAPESh0ZhFRbfv?=
+ =?us-ascii?Q?9qzCFA36komu6l0fyeSBK/W82ImCk9OxnD2sD9JLDtikUbfYqXbTSGrCKBXr?=
+ =?us-ascii?Q?5pTsd+l3mL0lMPK1fvSNZQjEn8z+364/ySmeC/VXkgPCjtGo4XYCrT2riC8F?=
+ =?us-ascii?Q?z5q9bKLs9E8vdmNwkoml+qzxxJdW3OwCCaDf3wqn40/U7wRO1bVUzxg9Q5OZ?=
+ =?us-ascii?Q?LVichucgO6FUMSWjLvsDteP9wpMDG7q8o7Aes+gb2hTZlWOFiTD9/4ffBq5/?=
+ =?us-ascii?Q?wkl7nyupT9Nxj9AmcncYlaqFoeDLMSXFZ/WIQ1mcy5YEQBQYGpTLgguosMLn?=
+ =?us-ascii?Q?tMIr+2lX11Oz3ffu55o7SDcCiHBUlFcLti42PtqH2agVcQHf/POyYW/cxwhH?=
+ =?us-ascii?Q?MFB+4Fal5nnTh+aAiWkcjvQsjceNpk7Q09x/V1deXefi66MiBy3IHZqb6wOK?=
+ =?us-ascii?Q?rCrRuuPfw2Za0WsosBJz2tAF0PZ4HP0tunJaeU/9zrYas3twODxVCQYahFLm?=
+ =?us-ascii?Q?iZoycmHdvuzkAefbYD6Pb/v1THimIgWdoA1rVTEklObUmnw92RJYRlrcLDWa?=
+ =?us-ascii?Q?AHTnhxTLt90gMDC6mtfB07cj1AZ1CSLDeBL7fPP8+UyOfuKlyUaSzqNH4Ith?=
+ =?us-ascii?Q?rxNw5vuPrOfUHnF0HBKkewGdWoCM82v86vXSOImerSa355D0NBc1Jp+NsEam?=
+ =?us-ascii?Q?N8HYmLtSEBovJuirohP4bUhveDx/SU1l7+sDPt0LTPXcLCowNzUy2dt8zDzs?=
+ =?us-ascii?Q?nkglYopvzNGtvB1h3Tbywld/r4ftb/ya7HGK1cwMn9P2iYJOcBmqXYz5KR2G?=
+ =?us-ascii?Q?LBWWdLPTZFE7Cx5GuwfRXJokF4FD3qSgBeaXexDPsoqKQsBLAVc1kVSYNQ8Q?=
+ =?us-ascii?Q?L5JOTYv1IOxWeUIBEd7ugXaalivMRE60OWov6GqcWlxFw+v6P+z9kvy7LSvR?=
+ =?us-ascii?Q?PPi86/XfDUmH63PJy9Z06RO4QnMeEhE16r6cuAUb/gZRIKdaOVJeSIOz7KSq?=
+ =?us-ascii?Q?bfJZAeRjw6CJgmUgUSxhT48R6JjFCyzddr1EwlIVA4jB5rMcw1hETw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Cd/Bryp7s/lE9gprAMjHBDF2niXlkaS4JjA8uzvz1NocbeymPvtCFU8sIFmi?=
+ =?us-ascii?Q?+bRsvJOwsTCkcVWSe01JRF3wTp/luaL+iJ4blhqflOmCjz6RYF/iQ/KNNh2v?=
+ =?us-ascii?Q?r6bdxL4VvVFQ5gEYTkUP7Gwwb5Dj2T6kZIyGP7XQCZVQYp88RdHokBxvKIKF?=
+ =?us-ascii?Q?o/qcGLDVYiMLjJiXdncFlImFCuMvMSZbNS5BLgaGBasv/R1NV1qLVDr3NNk4?=
+ =?us-ascii?Q?hrtPWhxArd5crpWHP9MwSm1eSlY19r1uI//+Q5COLDbQPsvjxHJi/lEyODQM?=
+ =?us-ascii?Q?p+GJ7fD09bEZhtx/CVZjf3al59xKC3L+pYwPXRakBLWqy3KamB1IQrtGpqbQ?=
+ =?us-ascii?Q?NAVKZ4cDZYyecJWRppzY88AybPjfIB3JTBWsGSLS39dfvlTRYUleMu8SUCWL?=
+ =?us-ascii?Q?Y019LoGCUnPi3iR+fIBU7M2+FmcZoG4qqmEtGZomA216qWvvBUf27+LhWSwh?=
+ =?us-ascii?Q?hZc9h4XBy6XQ71Q/yeHm32BDVEtWDtnbJFzTIW+BNRUHJtjgW6QDGUxTinWg?=
+ =?us-ascii?Q?Smvz2oGypDAPcTsM/BHkQ16DjBUJAlVc5wF8yiVPf5kDgsTChswQEuBCKnTL?=
+ =?us-ascii?Q?cWo7Qy09RbvLede1JDOff8QMAGKdMT5L4Lw3bWcgxlBUIl6WuTB4pCYlVL+k?=
+ =?us-ascii?Q?+5q1l5ywLGgoTH8wKxVI4GWFqgD39tuqONzco71YH2GoAeIgyQDj8KfFESpC?=
+ =?us-ascii?Q?Gzo5qm9cXuDBhb6yijKBQQbguht5+KqccA1vSk1SGMABOEGaYB3blFg/DN2f?=
+ =?us-ascii?Q?VkLHiXVJn8Rw/4waZDFTv/8GJ9sc0Qewgm/BEpJ0CpobRM5Dk7WGxKUsvdOa?=
+ =?us-ascii?Q?ZXSVd1N1htUSh3N+eXzzOb+aykuM9HzkOGE09yfIkOcVTUYbTbLYF4/92lFh?=
+ =?us-ascii?Q?vekNG/jcJ4R3ykEAhIRKL102PDkGpGrfytOKFDkkDfjnn3n1Qm69wqvFlyPK?=
+ =?us-ascii?Q?Z5IghyXRbwUj7Zk7c/jSStsB6OCHzPp41hxqhyS445XUrz1l/RZu3yix4Fsq?=
+ =?us-ascii?Q?0d9h3S7IQNZrqLy91yNoVbWRVh7DSsFy6l1wFjilbR/JmgHMz/GQYss0xSLy?=
+ =?us-ascii?Q?Ga5/DKKPOn9+/xovUycLILe7u5vpJhly/pT4oqWJwN35vo1tL7GfP8E9NieG?=
+ =?us-ascii?Q?grzMMXyiGIt2nJ3lJHXh8f4WMiXiqPqowaRA1rroFKAS97mSUyzbK9aW4HcP?=
+ =?us-ascii?Q?uO4emtA374Zbe40SaY+0h9mMfFpW1KemmFwNP6hktwJOwtIHBwRN8voEEZwt?=
+ =?us-ascii?Q?fIZzpt3ulao95n6Rd/yvgbWvb+kKWYZhDWQBcGV4y7uB0lhL6yzPpMAH2rMO?=
+ =?us-ascii?Q?hoI18TUg86LotGSzLUIA6SJk3w1O+W298wo/XaY1OKtfUbKsGEzU+IAYp3Sg?=
+ =?us-ascii?Q?4XLEaPhISQdTevE7ZNOtv2l/0GrIrSLOGDDw3JlQln9nFi22jbykY8HhzDUj?=
+ =?us-ascii?Q?Kck6fqreP81WAia4f4exgWhnMs7EgVnSJQOn/o9tNnEKnVZl7UG+1OqsHOMw?=
+ =?us-ascii?Q?QxgoEzIS78+CxlReVGrJsk0w0W79SBvNqB1KpsCYqEerntIJW8T7xMDvg8qx?=
+ =?us-ascii?Q?wCd5mVqE/S5CYG5rPSdljkWytUN1gr8LJ+FsRTTO?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62f77b2c-9d44-4e6c-ee71-08dde097bc1f
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 09:47:25.9067
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V9mEdlq0SJz34ZFlyDjyoU6qZjsAF6ij0fpyPP7qkPNXBxuqGaMbDYilc+mTzXh/Y0uPYcD9vBk5okqrewkhbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5695
 
-On Wed, Aug 13, 2025 at 02:42:09PM +0100, John Garry wrote:
-> On 10/08/2025 14:41, Ojaswin Mujoo wrote:
-> > Implement atomic write support to help fuzz atomic writes
-> > with fsx.
-> > 
-> > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> 
-> this looks ok, but I am not familiar with fsx.
-> 
-> BTW, you guarantee O_DIRECT with RWF_ATOMIC only, right?
+The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+Therefore, remove the useless call to dev_err_probe(), and just
+return the value instead.
 
-So right now the user will have to pass in -Z to enable O_DIRECT.
+Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+---
+ drivers/iommu/arm/arm-smmu/arm-smmu.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-So if the underlying stack has atomic support, fsx will try to do atomic
-IO but if -Z is not passed it will fail the writes.
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+index 4ced4b5bee4d..9e441f3a75d5 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+@@ -2164,8 +2164,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 	smmu->irqs = devm_kcalloc(dev, smmu->num_context_irqs,
+ 				  sizeof(*smmu->irqs), GFP_KERNEL);
+ 	if (!smmu->irqs)
+-		return dev_err_probe(dev, -ENOMEM, "failed to allocate %d irqs\n",
+-				     smmu->num_context_irqs);
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < smmu->num_context_irqs; i++) {
+ 		int irq = platform_get_irq(pdev, global_irqs + pmu_irqs + i);
+-- 
+2.34.1
 
-I think I will change this to switch atomic writes off if -Z is not
-passed for convinience right now. Later if we have buffered support we
-can lift this off. That's what you were asking about right?
-
-Regards,
-ojaswin
-
-> 
-> Thanks,
-> John
-> 
-> > ---
-> >   ltp/fsx.c | 109 +++++++++++++++++++++++++++++++++++++++++++++++++++---
-> >   1 file changed, 104 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/ltp/fsx.c b/ltp/fsx.c
-> > index 163b9453..ea39ca29 100644
-> > --- a/ltp/fsx.c
-> > +++ b/ltp/fsx.c
-> > @@ -40,6 +40,7 @@
-> >   #include <liburing.h>
-> >   #endif
-> >   #include <sys/syscall.h>
-> > +#include "statx.h"
-> >   #ifndef MAP_FILE
-> >   # define MAP_FILE 0
-> > @@ -49,6 +50,10 @@
-> >   #define RWF_DONTCACHE	0x80
-> >   #endif
-> > +#ifndef RWF_ATOMIC
-> > +#define RWF_ATOMIC	0x40
-> > +#endif
-> > +
-> >   #define NUMPRINTCOLUMNS 32	/* # columns of data to print on each line */
-> >   /* Operation flags (bitmask) */
-> > @@ -110,6 +115,7 @@ enum {
-> >   	OP_READ_DONTCACHE,
-> >   	OP_WRITE,
-> >   	OP_WRITE_DONTCACHE,
-> > +	OP_WRITE_ATOMIC,
-> >   	OP_MAPREAD,
-> >   	OP_MAPWRITE,
-> >   	OP_MAX_LITE,
-> > @@ -200,6 +206,11 @@ int	uring = 0;
-> >   int	mark_nr = 0;
-> >   int	dontcache_io = 1;
-> >   int	hugepages = 0;                  /* -h flag */
-> > +int	do_atomic_writes = 1;		/* -a flag disables */
-> > +
-> > +/* User for atomic writes */
-> > +int awu_min = 0;
-> > +int awu_max = 0;
-> >   /* Stores info needed to periodically collapse hugepages */
-> >   struct hugepages_collapse_info {
-> > @@ -288,6 +299,7 @@ static const char *op_names[] = {
-> >   	[OP_READ_DONTCACHE] = "read_dontcache",
-> >   	[OP_WRITE] = "write",
-> >   	[OP_WRITE_DONTCACHE] = "write_dontcache",
-> > +	[OP_WRITE_ATOMIC] = "write_atomic",
-> >   	[OP_MAPREAD] = "mapread",
-> >   	[OP_MAPWRITE] = "mapwrite",
-> >   	[OP_TRUNCATE] = "truncate",
-> > @@ -422,6 +434,7 @@ logdump(void)
-> >   				prt("\t***RRRR***");
-> >   			break;
-> >   		case OP_WRITE_DONTCACHE:
-> > +		case OP_WRITE_ATOMIC:
-> >   		case OP_WRITE:
-> >   			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
-> >   			    lp->args[0], lp->args[0] + lp->args[1] - 1,
-> > @@ -1073,6 +1086,25 @@ update_file_size(unsigned offset, unsigned size)
-> >   	file_size = offset + size;
-> >   }
-> > +static int is_power_of_2(unsigned n) {
-> > +	return ((n & (n - 1)) == 0);
-> > +}
-> > +
-> > +/*
-> > + * Round down n to nearest power of 2.
-> > + * If n is already a power of 2, return n;
-> > + */
-> > +static int rounddown_pow_of_2(int n) {
-> > +	int i = 0;
-> > +
-> > +	if (is_power_of_2(n))
-> > +		return n;
-> > +
-> > +	for (; (1 << i) < n; i++);
-> > +
-> > +	return 1 << (i - 1);
-> > +}
-> > +
-> >   void
-> >   dowrite(unsigned offset, unsigned size, int flags)
-> >   {
-> > @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
-> >   	offset -= offset % writebdy;
-> >   	if (o_direct)
-> >   		size -= size % writebdy;
-> > +	if (flags & RWF_ATOMIC) {
-> > +		/* atomic write len must be inbetween awu_min and awu_max */
-> > +		if (size < awu_min)
-> > +			size = awu_min;
-> > +		if (size > awu_max)
-> > +			size = awu_max;
-> > +
-> > +		/* atomic writes need power-of-2 sizes */
-> > +		size = rounddown_pow_of_2(size);
-> > +
-> > +		/* atomic writes need naturally aligned offsets */
-> > +		offset -= offset % size;
-> > +
-> > +		/* Skip the write if we are crossing max filesize */
-> > +		if ((offset + size) > maxfilelen) {
-> > +			if (!quiet && testcalls > simulatedopcount)
-> > +				prt("skipping atomic write past maxfilelen\n");
-> > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
-> > +			return;
-> > +		}
-> > +	}
-> >   	if (size == 0) {
-> >   		if (!quiet && testcalls > simulatedopcount && !o_direct)
-> >   			prt("skipping zero size write\n");
-> > @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
-> >   		return;
-> >   	}
-> > -	log4(OP_WRITE, offset, size, FL_NONE);
-> > +	if (flags & RWF_ATOMIC)
-> > +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
-> > +	else
-> > +		log4(OP_WRITE, offset, size, FL_NONE);
-> >   	gendata(original_buf, good_buf, offset, size);
-> >   	if (offset + size > file_size) {
-> > @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
-> >   		       (monitorstart == -1 ||
-> >   			(offset + size > monitorstart &&
-> >   			(monitorend == -1 || offset <= monitorend))))))
-> > -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
-> > -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
-> > +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
-> > +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
-> > +		    (flags & RWF_ATOMIC) != 0);
-> >   	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
-> >   	if (iret != size) {
-> >   		if (iret == -1)
-> > @@ -1785,6 +1842,30 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
-> >   }
-> >   #endif
-> > +int test_atomic_writes(void) {
-> > +	int ret;
-> > +	struct statx stx;
-> > +
-> > +	ret = xfstests_statx(AT_FDCWD, fname, 0, STATX_WRITE_ATOMIC, &stx);
-> > +	if (ret < 0) {
-> > +		fprintf(stderr, "main: Statx failed with %d."
-> > +			" Failed to determine atomic write limits, "
-> > +			" disabling!\n", ret);
-> > +		return 0;
-> > +	}
-> > +
-> > +	if (stx.stx_attributes & STATX_ATTR_WRITE_ATOMIC &&
-> > +	    stx.stx_atomic_write_unit_min > 0) {
-> > +		awu_min = stx.stx_atomic_write_unit_min;
-> > +		awu_max = stx.stx_atomic_write_unit_max;
-> > +		return 1;
-> > +	}
-> > +
-> > +	fprintf(stderr, "main: IO Stack does not support "
-> > +			"atomic writes, disabling!\n");
-> > +	return 0;
-> > +}
-> > +
-> >   #ifdef HAVE_COPY_FILE_RANGE
-> >   int
-> >   test_copy_range(void)
-> > @@ -2356,6 +2437,12 @@ have_op:
-> >   			goto out;
-> >   		}
-> >   		break;
-> > +	case OP_WRITE_ATOMIC:
-> > +		if (!do_atomic_writes) {
-> > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
-> > +			goto out;
-> > +		}
-> > +		break;
-> >   	}
-> >   	switch (op) {
-> > @@ -2385,6 +2472,11 @@ have_op:
-> >   			dowrite(offset, size, 0);
-> >   		break;
-> > +	case OP_WRITE_ATOMIC:
-> > +		TRIM_OFF_LEN(offset, size, maxfilelen);
-> > +		dowrite(offset, size, RWF_ATOMIC);
-> > +		break;
-> > +
-> >   	case OP_MAPREAD:
-> >   		TRIM_OFF_LEN(offset, size, file_size);
-> >   		domapread(offset, size);
-> > @@ -2511,13 +2603,14 @@ void
-> >   usage(void)
-> >   {
-> >   	fprintf(stdout, "usage: %s",
-> > -		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
-> > +		"fsx [-adfhknqxyzBEFHIJKLORWXZ0]\n\
-> >   	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
-> >   	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
-> >   	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
-> >   	   [-A|-U] [-D startingop] [-N numops] [-P dirpath] [-S seed]\n\
-> >   	   [--replay-ops=opsfile] [--record-ops[=opsfile]] [--duration=seconds]\n\
-> >   	   ... fname\n\
-> > +	-a: disable atomic writes\n\
-> >   	-b opnum: beginning operation number (default 1)\n\
-> >   	-c P: 1 in P chance of file close+open at each op (default infinity)\n\
-> >   	-d: debug output for all operations\n\
-> > @@ -3059,9 +3152,13 @@ main(int argc, char **argv)
-> >   	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
-> >   	while ((ch = getopt_long(argc, argv,
-> > -				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> > +				 "0ab:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> >   				 longopts, NULL)) != EOF)
-> >   		switch (ch) {
-> > +		case 'a':
-> > +			prt("main(): Atomic writes disabled\n");
-> > +			do_atomic_writes = 0;
-> > +			break;
-> >   		case 'b':
-> >   			simulatedopcount = getnum(optarg, &endp);
-> >   			if (!quiet)
-> > @@ -3475,6 +3572,8 @@ main(int argc, char **argv)
-> >   		exchange_range_calls = test_exchange_range();
-> >   	if (dontcache_io)
-> >   		dontcache_io = test_dontcache_io();
-> > +	if (do_atomic_writes)
-> > +		do_atomic_writes = test_atomic_writes();
-> >   	while (keep_running())
-> >   		if (!test())
-> 
 
