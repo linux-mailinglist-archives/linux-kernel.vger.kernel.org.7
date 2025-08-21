@@ -1,147 +1,205 @@
-Return-Path: <linux-kernel+bounces-779442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDFAEB2F428
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:39:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38431B2F430
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 561D5601FBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:37:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20EC9AA463A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CF02F1FD9;
-	Thu, 21 Aug 2025 09:37:24 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8132EF648;
+	Thu, 21 Aug 2025 09:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgDVSRUZ"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19FA2D9ED8;
-	Thu, 21 Aug 2025 09:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D922E3AE8;
+	Thu, 21 Aug 2025 09:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769043; cv=none; b=s1tM9Fv9jqnwf6PT6/RxgErJjixqstDmWNG0ULIF5jPOoToCwnMojvU1QS7gY91iWJydD2ucLRQSAj2hhzjZcdA0QFL6Kl8jHk+7izfouDRxq71cPzO0+HRvHEruYmLyS1B6tcCHblHgX/0goV1kRSHKRwbssfNnIsF3Quu1Fvk=
+	t=1755769099; cv=none; b=mBsGZU4nsXGVBF+8kbaF7+EiGiGqkpPJf0XUAvW+adYrKYcixgNB7UN1K4tItOBFZw5Kv+89huytd8YfcpRm4AxxBhgctWKebaRC/3G7hXRt9Dm9o7h8LRoSvYlcO7iJXWAiDAdHUy29OuSx2pp3ZKd7zOU1Nd7Cd6ehMMHhqDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769043; c=relaxed/simple;
-	bh=n4fIBJ6MbfStIGrhDd09fFWKmMINwX0H3pKE+b6YzSQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=QvrfMQ8W+KxEvK64sdFAfP+5sSQVXRi7hG8boqLP5c63R6BwY9Xq15znK/Eum+yxAS2c1nQuu3Lx+fVU1MbYbGr5ZapBvcAcmPRjGeqK154moje3ONB5IC3zx4yTnoP9E5V4WzIxP8xRBUqX95xbJU7IQBe/veU4r3Io/KPiAuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6ysB1rqlzKHMST;
-	Thu, 21 Aug 2025 17:37:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B04971A0D11;
-	Thu, 21 Aug 2025 17:37:17 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAHzw_L6KZoEFaxEQ--.38020S3;
-	Thu, 21 Aug 2025 17:37:17 +0800 (CST)
-Subject: Re: [PATCH] block: fix disordered IO in the case recursive split
-To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, neil@brown.name, akpm@linux-foundation.org,
- linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, colyli@kernel.org, xni@redhat.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>, tieren@fnnas.com
-References: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
- <aKbcM1XDEGeay6An@infradead.org>
- <54fc027f-f4dc-0412-0d6d-b44a3e644c39@huaweicloud.com>
- <aKbgqoF0UN4_FbXO@infradead.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <060396d7-797e-b876-9945-1dc9c8cbf2b4@huaweicloud.com>
-Date: Thu, 21 Aug 2025 17:37:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1755769099; c=relaxed/simple;
+	bh=2XrUdi8SUVpgPaidlAGWpu/Up4QsrbyQfxqd7e+rGC8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qSaSkcQfbqMG2xzhH8mb5DCikGUOnhGKvXzePcfNncH9uciCQwCE+e7U0Kfp30p94uM3SG/RYDeJbGstCtSzniZZfwppS/hOmYDOVvwHnwzSLNCZ7rShMy35tUvY49b+D422qNMzXBlwcC6YMfcEQu7ZzPquXk2y/EanetLmbmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgDVSRUZ; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-246151aefaaso1916345ad.1;
+        Thu, 21 Aug 2025 02:38:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755769096; x=1756373896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=brKzv9sooymaBmDhs3Jfxb4RejEsd1WJhfh15Y7/Gto=;
+        b=UgDVSRUZnklQJP8tQwntBF6M7vV2CYZJdIk7s92jo7nJcyZVNt1MmzhJ/ZG8y0weSK
+         ggMVdVd2+wuDTfET1PycqAj+RGWVm5/H8cNdB40XAgPhKRiAHRO91rDx9ahnOukEalij
+         fbtRWQLycQKzl5pbiPRxdFl8LmaQr9R338TJKs+ElFwma/aE76zOnQ2C08aQd6EDsD1D
+         THUUFhMkdK5xB91s19acN6i9IePn2AhAAl78nLIhR2j3lHu7cRKmFJlBfZiXW92AjNYV
+         4UVaANLSfUv4PRZ3sWz5dVAraK3y0phfu2cTwiVQ9lA+zfbBKpKUuTghTxedoC4IvUEO
+         ty/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755769096; x=1756373896;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=brKzv9sooymaBmDhs3Jfxb4RejEsd1WJhfh15Y7/Gto=;
+        b=U3KAPGxNtx24pscPIclusiP90wuu8SebU5Q2sXRZ7Frv0VyoW1O4KCV2/vTuogNK/8
+         yU3bfqmg653g3KX9TjwukR/1FcS61ZJmuukm+LsfSnIICKF1PD53DryZaaTrZ46dX7Sh
+         C8djOefdBUC83UvqnRTjfcKp58fmPSczdnZ1CACcepz8ru29xBMx4L3Fxr/8DI5tEuo3
+         Stm0+RT7f0isz15Jdiye9MgDlH4BUzjqLpJAsc2EONif/9s89S2z+/IhG+D9EGEO2p6W
+         FPBbB/ubqsLwIsgt7xUgGmESZM23YmGJtp46zb30lRHg1IQP0TlxQ8VZp7x/wlMg6EfI
+         QzcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Tec+0Ylf2MV+XMvklpCVxmNtuCuMJ/iL/uyQoqnpH5i293/NVmgwLxim813mCa39QoE=@vger.kernel.org, AJvYcCVU2j4+cvOsgst1fWF2M1+CKeZVTzWoYSCtwour3RABW4DJhaM8BAmHDS/BrblUazW1ew2YeCmMyDYYdf4t@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo+HQIUuhwNFVXVGwCSjzU9DUvSdPRxDOh5WGXDVSK6DMoGV68
+	+w5uupzNRg/W/k09QghC8VFWNUk1f/dXlCu59Jz6fLHffmW4JJ0C/Ohs
+X-Gm-Gg: ASbGncvkIb/IYdFi1oHC/eg8ngficWp2sMpYA+wRxO5jnViZ3ry0E2KP/+dO8drMhwz
+	1yLINOltL/2pd9bmsYD3DWgqnn2Z11m4QjoR/ACSZD8dhkeKKCRDG0oHuIdyUeos41jCzg8xkE5
+	ePtCjguc7zOKLhpm5dU/2JRCssofAFU3FMB07L3c7oMnGnjidwx8XgkiUZto98rr7Srp9Qgyff6
+	j1+YXWCLG9mWY+kfH9XWRDaLV+QqicXxVbdQ3e/y9voGYhPVLW4olxFCtyg5s9poMh4uMqZYCSE
+	+oCQGISxjZoKq8XlmhM7o+ZLfWZtQKo04FKCoWHKm2d2639D/aGu6g2ddIZFd0x/L6abzxyfqUX
+	EoOZLw+7ACdSpddbLmc02bWI=
+X-Google-Smtp-Source: AGHT+IFG7O09pY9guGg2y+fdi2v+q2JBqjSLwwQ2iBHKaDlDTuu9lLo/v5vgwv9t7+HZldQ+Gz5aYA==
+X-Received: by 2002:a17:902:e5ce:b0:240:86b2:ae9c with SMTP id d9443c01a7336-2460622c663mr20255705ad.14.1755769096140;
+        Thu, 21 Aug 2025 02:38:16 -0700 (PDT)
+Received: from 7940hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed540040sm49652085ad.163.2025.08.21.02.38.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 02:38:15 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	tzimmermann@suse.de,
+	simona.vetter@ffwll.ch,
+	jani.nikula@intel.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH v3 0/3] sched: make migrate_enable/migrate_disable inline
+Date: Thu, 21 Aug 2025 17:38:04 +0800
+Message-ID: <20250821093807.49750-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aKbgqoF0UN4_FbXO@infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHzw_L6KZoEFaxEQ--.38020S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw4DGF1xKw47Gw47CFWUXFb_yoW8Wrykpw
-	n3Wan5tr4DtF1SkF9rWr4jq3WrA3yrXry8AF9agFn3Zay5KrnrZrn3Ja1Fkry5WFyDKayq
-	vrWxt345W3y5ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
+In this series, we make migrate_enable/migrate_disable inline to obtain
+better performance in some case.
 
-�� 2025/08/21 17:02, Christoph Hellwig д��:
-> On Thu, Aug 21, 2025 at 04:56:33PM +0800, Yu Kuai wrote:
->> Can you give some examples as how to chain the right way?
-> 
-> fs/xfs/xfs_bio_io.c: xfs_rw_bdev
+In the first patch, we add the macro "COMPILE_OFFSETS" to all the
+asm-offset.c to avoid circular dependency in the 2nd patch.
 
-Just take a look, this is
+In the 2nd patch, we generate the offset of nr_pinned in "struct rq" with
+rq-offsets.c, as the "struct rq" is defined internally and we need to
+access the "nr_pinned" field in migrate_enable and migrate_disable. Then,
+we move the definition of migrate_enable/migrate_disable from
+kernel/sched/core.c to include/linux/sched.h.
 
-old bio->new bio
+In the 3rd patch, we fix some typos in include/linux/preempt.h.
 
-while bio split is:
+One of the beneficiaries of this series is BPF trampoline. Without this
+series, the migrate_enable/migrate_disable is hot when we run the
+benchmark for FENTRY, FEXIT, MODIFY_RETURN, etc:
 
-new_bio->old bio
+  54.63% bpf_prog_2dcccf652aac1793_bench_trigger_fentry [k]
+                 bpf_prog_2dcccf652aac1793_bench_trigger_fentry
+  10.43% [kernel] [k] migrate_enable
+  10.07% bpf_trampoline_6442517037 [k] bpf_trampoline_6442517037
+  8.06% [kernel] [k] __bpf_prog_exit_recur
+  4.11% libc.so.6 [.] syscall
+  2.15% [kernel] [k] entry_SYSCALL_64
+  1.48% [kernel] [k] memchr_inv
+  1.32% [kernel] [k] fput
+  1.16% [kernel] [k] _copy_to_user
+  0.73% [kernel] [k] bpf_prog_test_run_raw_tp
 
-So xfs_rw_bdev won't flag old bio as BIO_CHAIN, while old bio will still
-be resubmitted to current->bio_list, hence this patch won't break this
-case, right?
+Before this patch, the performance of BPF FENTRY is:
 
-I'll take look at all the bio_chain() callers other than split case to
-make sure.
-> fs/xfs/xfs_buf.c: xfs_buf_submit_bio
+  fentry         :  113.030 ± 0.149M/s
+  fentry         :  112.501 ± 0.187M/s
+  fentry         :  112.828 ± 0.267M/s
+  fentry         :  115.287 ± 0.241M/s
 
-This is a little different, new bio -> old bio, while new bio is
-resubmitted, the new bio still don't have flag BIO_CHAIN, so this is not
-affected by this patch.
+After this patch, the performance of BPF FENTRY increases to:
 
-> fs/xfs/xfs_log.c: xlog_write_iclog
+  fentry         :  143.644 ± 0.670M/s
+  fentry         :  149.764 ± 0.362M/s
+  fentry         :  149.642 ± 0.156M/s
+  fentry         :  145.263 ± 0.221M/s
 
-This is the same as above.
-> 
->> BTW, for all
->> the io split case, should this order be fixed? I feel we should, this
->> disorder can happen on any stack case, where top max_sector is greater
->> than stacked disk.
-> 
-> Yes, I've been trying get Bart to fix this for a while instead of
-> putting in a workaround very similar to the one proposed here,
-> but so far nothing happened.
-> 
+Changes since V2:
+* some modification on the 2nd patch, as Peter advised:
+  - don't export runqueues, define migrate_enable and migrate_disable in
+    kernel/sched/core.c and use them for kernel modules instead
+  - define the macro this_rq_pinned()
+  - add some comment for this_rq_raw()
 
-Do you mean this thread?
+Changes since V1:
+* use PERCPU_PTR() for this_rq_raw() if !CONFIG_SMP in the 2nd patch
 
-Fix bio splitting by the crypto fallback code
+Menglong Dong (3):
+  arch: add the macro COMPILE_OFFSETS to all the asm-offsets.c
+  sched: make migrate_enable/migrate_disable inline
+  sched: fix some typos in include/linux/preempt.h
 
-I'll take look at all the callers of bio_chain(), in theory, we'll have
-different use cases like:
+ Kbuild                               |  13 +++-
+ arch/alpha/kernel/asm-offsets.c      |   1 +
+ arch/arc/kernel/asm-offsets.c        |   1 +
+ arch/arm/kernel/asm-offsets.c        |   2 +
+ arch/arm64/kernel/asm-offsets.c      |   1 +
+ arch/csky/kernel/asm-offsets.c       |   1 +
+ arch/hexagon/kernel/asm-offsets.c    |   1 +
+ arch/loongarch/kernel/asm-offsets.c  |   2 +
+ arch/m68k/kernel/asm-offsets.c       |   1 +
+ arch/microblaze/kernel/asm-offsets.c |   1 +
+ arch/mips/kernel/asm-offsets.c       |   2 +
+ arch/nios2/kernel/asm-offsets.c      |   1 +
+ arch/openrisc/kernel/asm-offsets.c   |   1 +
+ arch/parisc/kernel/asm-offsets.c     |   1 +
+ arch/powerpc/kernel/asm-offsets.c    |   1 +
+ arch/riscv/kernel/asm-offsets.c      |   1 +
+ arch/s390/kernel/asm-offsets.c       |   1 +
+ arch/sh/kernel/asm-offsets.c         |   1 +
+ arch/sparc/kernel/asm-offsets.c      |   1 +
+ arch/um/kernel/asm-offsets.c         |   2 +
+ arch/xtensa/kernel/asm-offsets.c     |   1 +
+ include/linux/preempt.h              |  11 +--
+ include/linux/sched.h                | 106 +++++++++++++++++++++++++++
+ kernel/bpf/verifier.c                |   1 +
+ kernel/sched/core.c                  |  63 ++++------------
+ kernel/sched/rq-offsets.c            |  12 +++
+ 26 files changed, 173 insertions(+), 57 deletions(-)
+ create mode 100644 kernel/sched/rq-offsets.c
 
-1) chain old -> new, or chain new -> old
-2) put old or new to current->bio_list, currently always in the tail,
-we might want a new case to the head;
-
-Perhaps it'll make sense to add high level helpers to do the chain
-and resubmit and convert all callers to use new helpers, want do you
-think?
-
-Thanks,
-Kuai
-
-> .
-> 
+-- 
+2.50.1
 
 
