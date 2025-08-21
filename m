@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-780365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA7AB300E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:21:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B39B300E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D4B18957E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD4E23B1F72
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 17:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEBB307AF2;
-	Thu, 21 Aug 2025 17:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79333311C3E;
+	Thu, 21 Aug 2025 17:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZ/s+UCx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XlLnFvpg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AC71F3B8A;
-	Thu, 21 Aug 2025 17:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAF0308F02;
+	Thu, 21 Aug 2025 17:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755796785; cv=none; b=OLznfaSzQryqTE6sQGDuRHw8b5ZKvmZWXKx1DXMMr44M6byZkDJA314Fvaeqy9UaEnoxWl2yaOk3GbT/6AjU920sA4jCrxjbDtsoGGn2ozF8zPE3kJO+lIJg4zw3qd/t5cUYDg9MNPwvvmTGZC9SUn6lBjb+kgoHZNs59mcGwRU=
+	t=1755796786; cv=none; b=hAfJKYu52rce76YhhTCM3gyeamsxuhTbz/L7Sj6n0ScHBRmH+efpwTkC6ZqVZebeQaXXq1vuz7j+gtGe/644q5Wvutsh91PsY6KlE16VzAs2nPdEaS4TMZd9rFs3IPtgzWZ69PeJ3Jq36ulJfwA5JLbTWkkzaobSwLbLdgVsYeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755796785; c=relaxed/simple;
-	bh=IHK0B0vbjFIm7tiUW5zNchHrSbYpWhq6dFSoqlxbP+E=;
+	s=arc-20240116; t=1755796786; c=relaxed/simple;
+	bh=IkEM90j9AB9fEVUaubBHggr7J8lF+yeDnZnqMajK8Pc=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=W93W6qL09PzGEu2aa77/JOndTRwXj6iOJm+MOqEHJeOUuEIIMsf3nRQSXtlmhBJeIxQuZ4AdlRx5SSgHK2Wwm2kvTzslCnMZDSfUGrTFjEL0M2vzPlgeApoZkwFj/PDUutQA5/vTCJJJKhjinU14S5sNG/SSU/7oqfHwTSbVkBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qZ/s+UCx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5177C4CEEB;
-	Thu, 21 Aug 2025 17:19:44 +0000 (UTC)
+	 Message-Id:Subject; b=O+SA8dYAb3kEv8h4IcuEjI+re+qOymXHwA8vJ6EBzTegG+Oe1Ab5WGcvAvvR4mBJTEy7NY168TBygx6Co68z+bu+lkAPPC9Ys4nofQNTmDJje9hVNYvuyNISvVck3aWj/QvPYDa9+ZKJDfLtzc4TsDh+nWPLe3rS1cLYTuD+o7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XlLnFvpg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECCE3C4CEF4;
+	Thu, 21 Aug 2025 17:19:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755796785;
-	bh=IHK0B0vbjFIm7tiUW5zNchHrSbYpWhq6dFSoqlxbP+E=;
+	s=k20201202; t=1755796786;
+	bh=IkEM90j9AB9fEVUaubBHggr7J8lF+yeDnZnqMajK8Pc=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=qZ/s+UCx9zJ7A6OILHKr08EaK+Kqn0vd34RzrnT+C2XPIVpzlGGCAHIdg3LTC7glu
-	 hXHfQEBAslXaywDV7aVUSS8a8e2T4E7Td2VON9C8I8ZPeXtKyfyRzm8736MXLocYN9
-	 U2p+s4GUInwmuHNP+wAHqU3QNHIojNw3TnGnaMmD8k+2Hr89XvNWHa1vTJI7gKmeoG
-	 hFd0MdKk1P6QhJ1E+NACKAR66V8si2F60z+bIpYqusaV+KLrXKpOtrquXayG8Ji3S5
-	 6W0NYoglLQegO+BnuGolIFcNfp2s5FqeGFsRxQHsEXmwbM+WNzxH5xGya2/Ef9xEvN
-	 uIh0i/bhYRtOw==
-Date: Thu, 21 Aug 2025 12:19:43 -0500
+	b=XlLnFvpguszjxbVQMQmmvQr18rAXlaCwrmPQn1BBthnaf0Nii2oICZx8GgMZoyu7W
+	 R0IPqBkYfHW5JpotaqQ7fLDwbei2ttpwVs0fYw2pVoKfCV+PtUeXTyKEk6W+w1ydcn
+	 1MJXg7djUXA7jlGcIlRY0VNEoyP3bdPw+GLzaI7qGgqJKhtYdzU8N6JwFAJoLHKG9B
+	 +xq0M2ZhC2DypCTCExctIizJyiol05dA+8wzxrd4ShgWCtYb5InkldWB40j/4gBCws
+	 06G+PJcgTbD8TPYrBul2rWtYDNolXOQm8jAott4kr8FYeioXsNJqu3wI0TY6T10IGw
+	 3xmysks9SZIGw==
+Date: Thu, 21 Aug 2025 12:19:45 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,98 +50,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, devicetree@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>, 
- linux-sound@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
- linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
- cros-qcom-dts-watchers@chromium.org, linux-gpio@vger.kernel.org, 
- Liam Girdwood <lgirdwood@gmail.com>, kernel@oss.qualcomm.com, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>
-To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-In-Reply-To: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
-References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
-Message-Id: <175579643373.37269.13580204801598375110.robh@kernel.org>
-Subject: Re: [PATCH v8 0/9] Enable audio on qcs6490-RB3Gen2 and qcm6490-idp
- boards
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Shawn Guo <shawnguo@kernel.org>, 
+ imx@lists.linux.dev, David Airlie <airlied@gmail.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Maxime Ripard <mripard@kernel.org>, 
+ dri-devel@lists.freedesktop.org, Simona Vetter <simona@ffwll.ch>, 
+ Sam Ravnborg <sam@ravnborg.org>, linux-arm-kernel@lists.infradead.org, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Fabio Estevam <festevam@gmail.com>
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+In-Reply-To: <20250821-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v1-0-b492ef807d12@pengutronix.de>
+References: <20250821-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v1-0-b492ef807d12@pengutronix.de>
+Message-Id: <175579643516.37357.10852050615304641702.robh@kernel.org>
+Subject: Re: [PATCH 0/5] arm64: dts: imx8mp-skov: add new 10" variant
 
 
-On Thu, 21 Aug 2025 10:19:05 +0530, Prasad Kumpatla wrote:
-> From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+On Thu, 21 Aug 2025 09:55:27 +0200, Steffen Trumtrar wrote:
+> Add a new board variant for the Skov i.MX8MP based family of boards.
 > 
-> Audio support is now enabled on the qcs6490-RB3Gen2 and qcm6490-idp boards.
-> The updates include adding the necessary audio device tree support and the required
-> dependencies.
+> This variant uses a different 10" panel than the existing ones.
 > 
-> Both the qcs6490-RB3Gen2 and qcm6490-idp boards are derived from the same SoC
-> platform. Therefore, the audio support changes are included in a single patch
-> set for consistency and ease of maintenance.
+> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> ---
+> Steffen Trumtrar (5):
+>       dt-bindings: vendor-prefixes: Add JuTouch Technology Co, Ltd
+>       dt-bindings: display: simple: Add JuTouch JT101TM023 panel
+>       drm/panel: simple: add JuTouch JT101TM023
+>       dt-bindings: arm: fsl: add compatible for Skov i.MX8MP variant
+>       arm64: dts: imx8mp-skov: support new 10" panel board
 > 
-> changes in [v8]:
-> 	- Added drive strength for all lpass_dmic pinctrl nodes reported by Konrad Dybcio.
-> 	- Rebased changes on top of the latest kernel tree.
-> 	- Link to V7: https://lore.kernel.org/all/20250720173215.3075576-1-quic_pkumpatl@quicinc.com/
+>  Documentation/devicetree/bindings/arm/fsl.yaml     |  1 +
+>  .../bindings/display/panel/panel-simple.yaml       |  2 +
+>  .../devicetree/bindings/vendor-prefixes.yaml       |  2 +
+>  arch/arm64/boot/dts/freescale/Makefile             |  1 +
+>  .../imx8mp-skov-revc-jutouch-jt101tm023.dts        | 79 ++++++++++++++++++++++
+>  drivers/gpu/drm/panel/panel-simple.c               | 35 ++++++++++
+>  6 files changed, 120 insertions(+)
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250821-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-9ef9faa75514
 > 
-> changes in [v7]:
-> 	- Addressed the review commnets in dt-binding patches from Krzysztof Kozlowski
-> 	- Rebased changes on top of dependent patches
-> 	- Link to V6: https://lore.kernel.org/linux-sound/20250715180050.3920019-1-quic_pkumpatl@quicinc.com/
-> 
-> changes in [v6]:
-> 	- Addressed the review commnets in dt-binding patches from Krzysztof Kozlowski
-> 	- Link to V5: https://lore.kernel.org/linux-arm-msm/20250625082927.31038-1-quic_pkumpatl@quicinc.com/
-> 
-> changes in [v5]:
-> 	- Added separate patch for QCS6490 pinctrl bindings.
-> 	- Updated commit message with more description.
-> 	- Addressed the review commnets.
-> 	- Link to V4: https://lore.kernel.org/linux-arm-msm/20250527111227.2318021-1-quic_pkumpatl@quicinc.com/
-> 
-> Changes in [v4]:
-> 	- Fix DT binding errors by adding dt-binding clock changes for ADSP base platform.
-> 	- Link to V3 : https://lore.kernel.org/linux-arm-msm/20250520062618.2765109-1-quic_pkumpatl@quicinc.com/
-> 
-> Changes in [v3]:
-> 	- Added protection-domain in gpr services.
-> 	- Addressed the review commnets from Konrad Dybcio.
-> 	- Fix DT binding errors reported by Rob Herring.
-> 	- Link to V2 : https://lore.kernel.org/linux-arm-msm/20250429092430.21477-1-quic_pkumpatl@quicinc.com/
-> 
-> Changes in [v2]:
-> 	- Created dtsi file to handle common audio nodes to support Audioreach.
-> 	- Addressed the review comments.
-> 	- Link to V1 : https://lore.kernel.org/linux-arm-msm/20250317054151.6095-2-quic_pkumpatl@quicinc.com/
-> 
-> Mohammad Rafi Shaik (9):
->   arm64: dts: qcom: qcs6490-audioreach: Add gpr node
->   dt-bindings: pinctrl: qcom,sc7280-lpass-lpi-pinctrl: Document the
->     clock property
->   ASoC: dt-bindings: qcom,lpass-va-macro: Update bindings for clocks to
->     support ADSP
->   arm64: dts: qcom: sc7280: Add WSA SoundWire and LPASS support
->   arm64: dts: qcom: qcs6490-audioreach: Modify LPASS macros clock
->     settings for audioreach
->   arm64: dts: qcom: qcs6490-rb3gen2: Add WSA8830 speakers amplifier
->   arm64: dts: qcom: qcs6490-rb3gen2: Add sound card
->   arm64: dts: qcom: qcm6490-idp: Add WSA8830 speakers and WCD9370
->     headset codec
->   arm64: dts: qcom: qcm6490-idp: Add sound card
-> 
->  .../qcom,sc7280-lpass-lpi-pinctrl.yaml        |  16 ++
->  .../bindings/sound/qcom,lpass-va-macro.yaml   |  23 +-
->  arch/arm64/boot/dts/qcom/qcm6490-idp.dts      | 207 ++++++++++++++++++
->  .../boot/dts/qcom/qcs6490-audioreach.dtsi     | 121 ++++++++++
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  |  80 +++++++
->  arch/arm64/boot/dts/qcom/sc7280.dtsi          |  99 ++++++++-
->  6 files changed, 540 insertions(+), 6 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-> 
-> 
-> base-commit: 5303936d609e09665deda94eaedf26a0e5c3a087
+> Best regards,
 > --
-> 2.34.1
+> Steffen Trumtrar <s.trumtrar@pengutronix.de>
 > 
 > 
 > 
@@ -162,17 +118,19 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: using specified base-commit 5303936d609e09665deda94eaedf26a0e5c3a087
+ Base: using specified base-commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250821044914.710044-1-quic_pkumpatl@quicinc.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250821-v6-17-topic-imx8mp-skov-dts-jutouch-10inch-v1-0-b492ef807d12@pengutronix.de:
 
-arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: pmic@2 (qcom,pm8350c): pwm:nvmem: [[366, 367]] is too short
-	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
-arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: pwm (qcom,pm8350c-pwm): nvmem: [[366, 367]] is too short
-	from schema $id: http://devicetree.org/schemas/leds/leds-qcom-lpg.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-skov-revc-jutouch-jt101tm023.dtb: touchscreen@2a (eeti,exc81w32): compatible: 'oneOf' conditional failed, one must be fixed:
+	['eeti,exc81w32'] is too short
+	'eeti,exc3000' was expected
+	'eeti,exc80h60' was expected
+	'eeti,exc80h84' was expected
+	from schema $id: http://devicetree.org/schemas/input/touchscreen/eeti,exc3000.yaml#
 
 
 
