@@ -1,135 +1,180 @@
-Return-Path: <linux-kernel+bounces-779430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19056B2F40F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:36:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25CDB2F411
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA6C7583B3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DB805E79FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792B02DFA25;
-	Thu, 21 Aug 2025 09:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD562DC32E;
+	Thu, 21 Aug 2025 09:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MB1ll6bg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zrXyiQAY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OMHyoTyx";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zrXyiQAY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OMHyoTyx"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826811F3BAE;
-	Thu, 21 Aug 2025 09:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9D91A08A3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755768806; cv=none; b=uqFxaid6KekhQmbbCd/W05EzDPspxNeNPehA9LnrFZE8cT/dhc8mzkt0M41GH7HlTK4YEBCQrEOLgQSzBDohhNWErM2M711EFkVz0coOQJVDqFlpkCgV9lYOz90bBCzgkpRbFZdphHuP2oPN56NdwXM7E86Sg3qfWtJnQcmhbn8=
+	t=1755768843; cv=none; b=CslnA91UBD7EryLB3kt9oPAbHP5j3NpK9I9E+GnPDZdsxEVfUwkpaovts7gPQx1/eP113SbdxVJlkJUF1gorp9fRM1qHHcTGGxnJjH5x9yvZmnupAqK8J9V4UZBMv05PGmTrBBHssWEPaZ8qH67dvOilkVm7gZLCbelZOTViq5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755768806; c=relaxed/simple;
-	bh=zi3d/9Je3Jsyyxd6QlTdXw4CB/lfFnOuOdagOMYLJEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLfcHandQtQXP50LF4pDPyjX2cmSKI/0DbX2p+2JDcWRe1ldsocMncFSVDmsZ3+ZDP7bVDHoJaXAjH/g1y/9+cGxrVuZl+G6JMpOMFHIexj1zzHkeEjwbYTj45pCu8YpgMGwTi+56/tDS3I+vDqYqVLbE4QeOdzuSMAhgpV5aR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MB1ll6bg; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755768806; x=1787304806;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zi3d/9Je3Jsyyxd6QlTdXw4CB/lfFnOuOdagOMYLJEc=;
-  b=MB1ll6bgwlouhY+xFtPJU3rm3q4WONQax3ewn4c2VDxNRYuAobmq3sQW
-   wz9tYbN2JTERXlvsKe1wrUr0lrRu8dM2GasvZNhpcLAyjXkHs6lgAF1v9
-   WzT/rFhcLoBB8zIwno7NcHskimGjpQl7HGd8TXtNLjmPwUL3rT9zURVzF
-   CcfLcqy6E64rX6NPaiZAYfOwiJYqGSmGrr6vWLXIVXQO+fe2txQCRtDRW
-   cCTg3tu8PF9KcwV8aJyFgpe0vnBMK0bHgn+ychxBQSi7NnGnatzQJls0/
-   JDVf8Y1TU9JFtcLw6f8LxNHRkPqwSevgXe73O0L6F753PsZ8WfNV3wC5N
-   Q==;
-X-CSE-ConnectionGUID: Dq5hDRXfQimIrP8Blj3B7g==
-X-CSE-MsgGUID: LLJANpJ7QIatzEjt0I9eiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="45624532"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="45624532"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 02:33:25 -0700
-X-CSE-ConnectionGUID: iZjUslTaQtaTauut5G1eEg==
-X-CSE-MsgGUID: qxPAxHq5Q4Gy1oZnH45InQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="173701227"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 02:33:22 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1up1fb-00000007BaD-2MSc;
-	Thu, 21 Aug 2025 12:33:19 +0300
-Date: Thu, 21 Aug 2025 12:33:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Ben Collins <bcollins@watter.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/5] iio: mcp9600: Recognize chip id for mcp9601
-Message-ID: <aKbn39Ek1pOVO7rb@smile.fi.intel.com>
-References: <20250818035053.32626-1-bcollins@watter.com>
- <20250818035053.32626-4-bcollins@watter.com>
+	s=arc-20240116; t=1755768843; c=relaxed/simple;
+	bh=JuXeAv/4FcR9lnR8pXag6In1cVN738yVG59mHtXWChI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UqMmXtnsD6mudhGGxSn25oSi0Njdf/xKfaHJq6HUs8Cv9vQOutsiP43B2P3QFaijZA9JVeUdLcw3lESyXE7NfIxdqyQDhqM817Oq7r0shFLmpQb7wE6nscPdd8xxcJs+iS4W3OW1pXg0SH51eSuJKxjkbzlDh+FOJEflDuWyLGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zrXyiQAY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OMHyoTyx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zrXyiQAY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OMHyoTyx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3ACF722532;
+	Thu, 21 Aug 2025 09:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755768840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gg0vUG6DASwLwZ3W8D+ed+NRC56JkeEwrvEc6aXDzQw=;
+	b=zrXyiQAY0DV+iXi6NvTSNzfbzyJKFdPiqZ8OCT2wQKzw+L86Jv06lku7zDfY57+C+tZqoj
+	fYVlG5dv4txir4l8F1Am31sXjUZ0YGCyGzTMSmgtksZ27f93pKjcEZ18Y9BKLX/3Nah90Y
+	g0daCCw4ws4NFx0hEfkMZzs5peLLuys=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755768840;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gg0vUG6DASwLwZ3W8D+ed+NRC56JkeEwrvEc6aXDzQw=;
+	b=OMHyoTyxm2TNr4dtHBVE0lrmibw5QFXiPcBbNQFBIlnlHpOFle5M1Xx3P7cuOmT+qRQW2V
+	I1x9lMVxNv4SIfAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755768840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gg0vUG6DASwLwZ3W8D+ed+NRC56JkeEwrvEc6aXDzQw=;
+	b=zrXyiQAY0DV+iXi6NvTSNzfbzyJKFdPiqZ8OCT2wQKzw+L86Jv06lku7zDfY57+C+tZqoj
+	fYVlG5dv4txir4l8F1Am31sXjUZ0YGCyGzTMSmgtksZ27f93pKjcEZ18Y9BKLX/3Nah90Y
+	g0daCCw4ws4NFx0hEfkMZzs5peLLuys=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755768840;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gg0vUG6DASwLwZ3W8D+ed+NRC56JkeEwrvEc6aXDzQw=;
+	b=OMHyoTyxm2TNr4dtHBVE0lrmibw5QFXiPcBbNQFBIlnlHpOFle5M1Xx3P7cuOmT+qRQW2V
+	I1x9lMVxNv4SIfAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DECA0139A8;
+	Thu, 21 Aug 2025 09:33:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZtywNQfopmgaKAAAD6G6ig
+	(envelope-from <hare@suse.de>); Thu, 21 Aug 2025 09:33:59 +0000
+Message-ID: <7db2eb2c-9566-4d6b-9f82-a0f65110a807@suse.de>
+Date: Thu, 21 Aug 2025 11:33:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818035053.32626-4-bcollins@watter.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block: fix disordered IO in the case recursive split
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, neil@brown.name, akpm@linux-foundation.org,
+ linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, colyli@kernel.org, xni@redhat.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
+ <aKbcM1XDEGeay6An@infradead.org>
+ <54fc027f-f4dc-0412-0d6d-b44a3e644c39@huaweicloud.com>
+ <aKbgqoF0UN4_FbXO@infradead.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <aKbgqoF0UN4_FbXO@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Sun, Aug 17, 2025 at 11:50:51PM -0400, Ben Collins wrote:
-> The current driver works with mcp9601, but emits a warning because it
-> does not recognize the chip id.
+On 8/21/25 11:02, Christoph Hellwig wrote:
+> On Thu, Aug 21, 2025 at 04:56:33PM +0800, Yu Kuai wrote:
+>> Can you give some examples as how to chain the right way?
 > 
-> MCP9601 is a superset of MCP9600. The drivers works without changes
-> on this chipset.
+> fs/xfs/xfs_bio_io.c: xfs_rw_bdev
+> fs/xfs/xfs_buf.c: xfs_buf_submit_bio
+> fs/xfs/xfs_log.c: xlog_write_iclog
 > 
-> However, the 9601 chip supports open/closed-circuit detection if wired
-> properly, so we'll need to be able to differentiate between them.
+>> BTW, for all
+>> the io split case, should this order be fixed? I feel we should, this
+>> disorder can happen on any stack case, where top max_sector is greater
+>> than stacked disk.
+> 
+> Yes, I've been trying get Bart to fix this for a while instead of
+> putting in a workaround very similar to the one proposed here,
+> but so far nothing happened.
+> 
+> 
+This feels like a really stupid fix, but wouldn't that help?
 
-...
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 023649fe2476..2b342bb59612 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -5478,7 +5478,6 @@ static struct bio *chunk_aligned_read(struct mddev 
+*mddev, struct bio *raid_bio)
+                 split = bio_split(raid_bio, sectors, GFP_NOIO, 
+&conf->bio_split);
+                 bio_chain(split, raid_bio);
+                 submit_bio_noacct(raid_bio);
+-               raid_bio = split;
+         }
 
->  static int mcp9600_probe(struct i2c_client *client)
->  {
-> +	const struct mcp_chip_info *chip_info = i2c_get_match_data(client);
 
-I believe I have commented on this already, please, split assignment...
+Cheers,
 
->  	struct iio_dev *indio_dev;
->  	struct mcp9600_data *data;
-> -	int ret, ch_sel;
-> +	int ch_sel, dev_id, ret;
-
-...and put it here.
-
-> +	if (chip_info == NULL)
-> +		return dev_err_probe(&client->dev, -EINVAL,
-> +                                     "No chip-info found for device\n");
-
-Wrong indentation.
-
-Besides that I have commented as well on
-
-	struct device *dev = &client->dev;
-
-at the top that helps to make the code neater.
-
-...
-
-Since it seems the comments were ignored, I stopped here. Please, find previous
-emails, take your time and fine grain the result for the next version.
-
+Hannes
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
