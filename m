@@ -1,192 +1,126 @@
-Return-Path: <linux-kernel+bounces-779538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8349DB2F55D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:32:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24EADB2F55F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 513043BB95E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FB45584A05
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF47304BD8;
-	Thu, 21 Aug 2025 10:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2E0305072;
+	Thu, 21 Aug 2025 10:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2hX44oDb"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2046.outbound.protection.outlook.com [40.107.223.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NL5+Bhx3"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EC517A2F6;
-	Thu, 21 Aug 2025 10:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755772256; cv=fail; b=W646EPSIrm3k8LxpVluUobt58wlPDehYFHWx4HmS0QZ1GvcO3eIJkmaNfQqD09CNUfXTDsQSVgaBrGZcQ/vt3e25TcnKbXlC9/p0tPG9hiLRfucvxxQtLwlKX5p0RjWPd2zHrVq4uSIk8L+azToYAXTxrbXd/kBkBVEVnf1m2Jc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755772256; c=relaxed/simple;
-	bh=59+uE9LbnxRbHPOcJnxqrwFFLzbC/MmOOb3LCplrQJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ya7aXgSiWF9EcYlAoL/evn0XUgVqVcZY7eRQS1BVuytPmk4NaubJnvnlZfdCSKeT0M3C4X4nn9MOaBvUUxZvRuFyc6VkuFGw2ukLdsWXoxlBkMG0FL04BNnRukyrrcfhQWzxc0FJD2sc4mEaDxSgYILrt2vr5jeAUVfwHg1rHDQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2hX44oDb; arc=fail smtp.client-ip=40.107.223.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kA0lTiQa4a+39aZPU9Xuo4ojDs5QRw5/Iw+7eBblrP1nAamH41Iu+2fZEJXSKWTBWRXrzLJPEiO1FWzyTh6/jhLOim0aFsQmhNM4HdKdKgoMNp5490J4qgChrFqbOAFhWzp01VpdJ943Fnxt3+yM+Vm9yuapJP1gIs8UbsJ0Bfsj4qvH10xG6QFS1E9gHFlHVDkY8tqsEXYj81ma73ltw7HRn/cJvLA/FD7k8QAsOevd75WfnvfWdONnNSfgtauefa4b3+bcgY5GeNRLQCknjT+rKocyyP02fQxCZtyiUz4DeDB9paBl8bVKKUSOuiR3GqSEx8aJF9ob9K3E/Lc60Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HpDzRj6Ok3bJUhOf2ZTh4l6Oy56Mv9CYzxBZieCO9aE=;
- b=sj1LnsbIC/NNah60YzmW9725TscX7/f24bWhOk3sjKZ7RMTw6fNy3n33KZNIn9816F1Ub+oeAJfHwp0ia5Y0GCfLcQlVTsc12v8MdOLu0PLmOO7Xts6xdcYIWNORbBdxVFlSQ1Qb37gEDmDKik9s58IiTVYZ/HqtwZ8J5vUPWKcr8V4xt7mkgJUenu+wHqOqMROTVLkMkOilOaMDX9ROZK9QV+imbI81b357Rc9bYB/iS/WKeWTntuEfQU9vh5QTL/1InDz6wkXP6isjnWKp0lGrv97oMZAfleb8058d/5MQEcJbNerIHGjHC6YwVHw+V5bhH8Skd7IlOQ/vyZzjaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HpDzRj6Ok3bJUhOf2ZTh4l6Oy56Mv9CYzxBZieCO9aE=;
- b=2hX44oDbBtbJUVUiv/8ViuL1Ej5ds4dGRFy51zVhLxH/bSM6t+6tepjWbg72oXnLqkkFFp74jYTVDKsw0id0TdwMYaZ13m28olJ+LEBQNE8yguINnye2sMMYnsQm03qeeMbQma04w5yQKLf0H4jgLhWyj9wozYxMrdZb1k38ojg=
-Received: from BN0PR08CA0030.namprd08.prod.outlook.com (2603:10b6:408:142::9)
- by DS0PR12MB6464.namprd12.prod.outlook.com (2603:10b6:8:c4::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.14; Thu, 21 Aug 2025 10:30:53 +0000
-Received: from BN1PEPF00006002.namprd05.prod.outlook.com
- (2603:10b6:408:142:cafe::91) by BN0PR08CA0030.outlook.office365.com
- (2603:10b6:408:142::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.16 via Frontend Transport; Thu,
- 21 Aug 2025 10:30:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00006002.mail.protection.outlook.com (10.167.243.234) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Thu, 21 Aug 2025 10:30:52 +0000
-Received: from [10.236.30.53] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
- 2025 05:30:51 -0500
-Message-ID: <922eaff1-b2dc-447c-9b9c-ac1281ee000d@amd.com>
-Date: Thu, 21 Aug 2025 05:30:45 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBE1305043;
+	Thu, 21 Aug 2025 10:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755772293; cv=none; b=hO/jHeJljcf5RzVR6BmaFDLV2u6hToWA2YvLPXMy3rqS08G/Qgn532ej2qcz1LseYqCQVHYzlsVrsTJGuBJF9GKDUKBHcWRscS5is6eJgbgKwauX20JV7YtjLsp0gLs57RtJCxZUNakvchAxfCwLEujQR8JDX3l6sTwfRWLyJuY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755772293; c=relaxed/simple;
+	bh=913Rz1D2vRcGEtURPFrrhnXSizcosdo+3hWGTRcSM8I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VRDwcPr0ICbDTCtiONyP4B4c0gzBogzAagES0Tp9yi76MwVoMLuirHPt2Ff4SbB9bOsdU1g2iDIvEgU0OA1KLOIIM7GgWgSa7Rwo4AEz5q08/h8YNQ1OUJnDdnLyOGq80Rx15qeIVSyBiNvriaoCHqDwDPTxFUwEnMHgmLFbegc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NL5+Bhx3; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24458051ac6so1191695ad.1;
+        Thu, 21 Aug 2025 03:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755772290; x=1756377090; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=913Rz1D2vRcGEtURPFrrhnXSizcosdo+3hWGTRcSM8I=;
+        b=NL5+Bhx3zexbg7+Q2ldvSv/r1XUqgIduUY+jdDNiXpDD6O+HtssXNL8g08IAq64BaP
+         tr5+2soTnln9MkYKrv4OYgS5wRK44hqkxp+QLr8TUJDh41IdB/Fl5AegtyoYuG3+/cOI
+         CZiPd4TURy2q2Pz9SH8+d85smGTDMpw2hgDwcWL06gLc02d4/QKgXkbHwAGaZBHIE3OK
+         n/qEq50oXuomC15q/wIBIOtHCvfYa1ZUCK8OjRfHlOd+k9GOGA2311qfJITF5UduCxuY
+         HBLTqdWuMFEt3Ok8bDsTrlk+r5W079PXcWROqiSn33nld1paii5q+m4mWtLCghoaHGxh
+         JMYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755772290; x=1756377090;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=913Rz1D2vRcGEtURPFrrhnXSizcosdo+3hWGTRcSM8I=;
+        b=esH2ltmBKXGRCiZi80zbhJNGTzz3SX7QtUGUzwqzL+4go/P3/BMua7qWS0arFwrYnc
+         jNDy9IOEFYazPEegYaERe4qwIY3X34rcHYkN7gLh+DMeIEKqiQbMzQDYvqneyEcon21d
+         zFAnK6rZZbeh1lPr1PoHo/BphGBfFzTh3Yscfay9fZrb3hJhDtb3ZPA2i1X1dnosFgso
+         HttdyQL1pYGj6QS6aOjEa3VKct4qTM8rznslDoa1Wwe430nw8oJ9bkRBCMIakcGHChZj
+         4RceBA7kl0sefgg0BhuZ2clB4lbglR9zIUyuivkDOplFtXg/1bc+TxzXfTH1klfbfMhS
+         dbRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUICVVPZHGch5bZ17zvmlCHb8Rni8k97HksX20hINjXGctYE7L74np9q30xSAurMqNoJVS3Q9Rud4kcH0U=@vger.kernel.org, AJvYcCXHIOUB0TZVjAZUBemekbu4Yi7YMsFFjdY856Di4OmmUWRXeF+xFjF5W2fYwA4rmw5L9UtnkohejmHAFtVXYws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCLmgaRsFNtF461C4+DR6Nh3ZZGs1udFEnqqN18kJ5EMNJwOLW
+	3UFhK/1sTM/rmx40Z0ciGn3tDJFJAqtSkDV1jWyZ6dKUllj3QwbNmS5HHO4YsiQK9sN0NHZoLu8
+	UXF5FWtg4g+84rA7cXX7Lo/rznrHaexnw8xRt
+X-Gm-Gg: ASbGncv/za6X7h/xPKQ6hfWNIFFtA4yTQs54M2+Cq2lhJ8zVVrCfIJJzjpW2CVhlNEY
+	2aq/gv5PdhpddYy0a5WwLtpJQbzYSz4WwyDYyOUFh94mwlSEkYygABvl9oe5+XohsQHR27RQHnM
+	aiDkON3dCxl/bDfPWaTs5pF/uTTrfgNPVPWDQ9dOc8dba5pwbqi4ChZ+eaE9Kmd76R9kse9/yMm
+	hgifBt14eRnMhd79dQ=
+X-Google-Smtp-Source: AGHT+IEjm0pT1tYKH4wdQFS+4SLVyM2EzMLuRZ4+YtmFOUPkssVGEQdTiYEF5APh7HBsvfeJHB94RTHEn016hNWb+Uk=
+X-Received: by 2002:a17:902:fc47:b0:23f:fd0e:e5c0 with SMTP id
+ d9443c01a7336-245ff86b777mr14664805ad.9.1755772290139; Thu, 21 Aug 2025
+ 03:31:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/2] KVM: SEV: Add SEV-SNP CipherTextHiding support
-To: "Kalra, Ashish" <ashish.kalra@amd.com>, Randy Dunlap
-	<rdunlap@infradead.org>, <corbet@lwn.net>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <thomas.lendacky@amd.com>, <herbert@gondor.apana.org>
-CC: <akpm@linux-foundation.org>, <rostedt@goodmis.org>, <paulmck@kernel.org>,
-	<michael.roth@amd.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-References: <cover.1755721927.git.ashish.kalra@amd.com>
- <95abc49edfde36d4fb791570ea2a4be6ad95fd0d.1755721927.git.ashish.kalra@amd.com>
- <5dff05c1-474e-4fff-a19b-7c17b4db6173@infradead.org>
- <7eed1970-4e7d-4b3a-a3c1-198b0a6521d5@amd.com>
-From: Kim Phillips <kim.phillips@amd.com>
-Content-Language: en-US
-In-Reply-To: <7eed1970-4e7d-4b3a-a3c1-198b0a6521d5@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00006002:EE_|DS0PR12MB6464:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16071f50-c6a5-4a29-9fd1-08dde09dcdf5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OWJBRkMxdlIvQ25pLzlyaFJyUjU1aEhDWGNyY0ZRWDE2Rk1JY0Z2VHhTZVR0?=
- =?utf-8?B?ZlZXVzlxdzF1a0o3cWVEZ2NLR3hRYkYyN2g3RVVueHV4UUlUeWJFYmowNCt6?=
- =?utf-8?B?VzZlZ1F0MHU1VmR4MEwzQzM0NC9uLzQ0dXRrTU5tNVJIanBWRmg3WHpvKzFs?=
- =?utf-8?B?cDZCTEtXNnQ1aGJld0t5dzgyaS9TOFBLUFQ2dHhtYnBOQmZqTXBLUTFxbU5K?=
- =?utf-8?B?VUZnWk5nNE1xTEwzNktiaG93U0NOUlRiSWczTndlSFFzb3I1MUpBK1EzNEZZ?=
- =?utf-8?B?bjRWZCtRejdRWUpvUDJSdGJ5Mm5KaDJJK1QxOEdYNURhZWdEQ2tPZGNsa3d6?=
- =?utf-8?B?aFdGbVpvWFRSWjRYTFU4TU1sZmptS0hjWVcrOFc2R3gvaXZMak5yUDN3UjlN?=
- =?utf-8?B?UEVhcnVtS3JSVDd3NnVGSlBqbC84M09vMUhkd1pyWEFWZFkraWhMTGxpVnRP?=
- =?utf-8?B?NWk3aWhNQmhwRXFnZFU5TXBaQnBQQVRxdFBkZW5IYXhERWtMWjh5a05EM3dk?=
- =?utf-8?B?a3FHV2JoUzhvRjhQRXBTYlRuVkx4WHNkQXhmWlErZkkwelEyRWsvRjJDWG82?=
- =?utf-8?B?L29EMSt3Z2pra3N2WHQyRjdzODk2L2t6d0FrS3Q2ZWFpTEtMbnM5SHk0YUUy?=
- =?utf-8?B?bnBSYmJYZUVrOWVUUi9vUjFEYll5VkdlU2g4aVppN1BGOWVnOVNoUjJONStY?=
- =?utf-8?B?V2dEV0dlaWdNM1MwQnVHeEpSVkx4czRBM0U3SWRJUHVFMUpMSU5RWjB1Yll6?=
- =?utf-8?B?Y25mOTByRUlwM0pGUVVMUjNDT3ZaSzNObFpWODNRVjZIeHRGQkQ2TTdUOFVE?=
- =?utf-8?B?cU1zcDB1ZGVPdEREcEVVVW9CZEpvOERBTEw4WVRCVWlDN05xRkR0bTZKald3?=
- =?utf-8?B?a2lxU2JoenZySGlXaXJKVEE3MUovcGkzQ3cva01QRm5lU0NncUxadHBkYW9B?=
- =?utf-8?B?VktTTXY3NW8ybk5rbnk4ZjBSTHNqMDVjTWxNb3VBdW5KNHN0YllpU3VsaDdQ?=
- =?utf-8?B?VnhlUDVqK3FFcUo1ZjFxSk9RcGxUWWpIc2tQOWRoT2hZVWlpc0hSREkyRXZm?=
- =?utf-8?B?V05DangvZHQ4Z1IvMy9YMWYyNEM4UGJDeHg3TU9QRFVoYW1ZTHRINTVzcjE0?=
- =?utf-8?B?eldrZExFSXFVVkc5WFBKdWhVZFQ2UTkxakxIcklmaERjNXYzaGhNdWg0STFj?=
- =?utf-8?B?b29KTFdkVzgvQjdZRUdpVUpWT2RweEZwYmRDMy91Z1o4THd2YnZFVU5zbDVz?=
- =?utf-8?B?bGJHTUZYRFN3QS96SmErRHk0M2VidFB6c3JCbWRUTUZETXhlNHBaU0F3MTVN?=
- =?utf-8?B?T2lJZW9wWXlTUTdRTEdUWTk2SE1yWFUxYjhNeHVheXVrK0VTYmRxTTBxUXBa?=
- =?utf-8?B?cy9TeUd5L1hPYnFKcFBlZWd6cHluNmlONVVDQ21qdHlzd1NxRUVlelBzNWZi?=
- =?utf-8?B?Wkd6S3BDMXVNSU1rbytGQzhkblNOaU0rTFhveWNXVk40VmJGMDVWUXBSSkln?=
- =?utf-8?B?N2VOWkRSb3kwYXRIVVhqM2J1RzA4cGNzT3oveFJuMWpreEtJaU52S2lWTG10?=
- =?utf-8?B?c3hYNUtaWDQ1eFZhT1dlVGFZR2crQUxaY1kxUlRLbEFMOHp6aUo3UlE2VE9p?=
- =?utf-8?B?cytUYmhwMVZsek1WRlhCV1VwRGdjc2hUcEJ4Z1J3ZUtvenRJcUYrcmd2ZWd0?=
- =?utf-8?B?MWcrUHRXenBLdzRmOFBpZHZtd212MDYrNGw3WUlSTjYrV2RpN29ESktpYko4?=
- =?utf-8?B?UmRwYzJqV0xtMlh0aHZZelJIZVl0UUF6MUhsM0xYOFM4NFhVMjZqQmlUaTR3?=
- =?utf-8?B?RkV1alY2RUJzeUF2T0JLK25sNmlpb3BjODZiY3dKM2YzSXd0MENxbVlVdzlG?=
- =?utf-8?B?WG9DaDQ5OEN5am9rWm9IcllJL1dFWThQZzhYTW1EWGRadTFaWWJ1Vm05L0JE?=
- =?utf-8?B?ZkxWcjZQR000emM0Skg0bEduOGlxRWFORm5xY0s3bjBrVW5NaytjZVhHNVYv?=
- =?utf-8?B?Rmhsa21XSXNnU2dIcXQrZGtSODFVbkVhNnl0c252M2MxWDFJQUE2OEZTVmdI?=
- =?utf-8?B?cHZMdXdUbmZ1enRENDlvaGlMNVhORHdnaXptZz09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 10:30:52.5967
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16071f50-c6a5-4a29-9fd1-08dde09dcdf5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00006002.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6464
+References: <20250812132712.61007-1-baptiste.lepers@gmail.com>
+ <20250820162927.34201cfb395ec7319b15920a@linux-foundation.org> <CAH5fLghx7K1fsdx15VsaTT1i3DRQD8zH2Yd-sEwumiByefTVAQ@mail.gmail.com>
+In-Reply-To: <CAH5fLghx7K1fsdx15VsaTT1i3DRQD8zH2Yd-sEwumiByefTVAQ@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 21 Aug 2025 12:31:18 +0200
+X-Gm-Features: Ac12FXxLCRtkAiXZ0gKUbVmOrCcrysG0-2smcnGVwz7_v545hEOcpz9rG47jg8I
+Message-ID: <CANiq72k1o7bi9tE0tQxaiu39_Drbvz3bPNXibeCightzEuDjWg@mail.gmail.com>
+Subject: Re: [PATCH] rust: mm: Mark VmaNew as transparent
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baptiste Lepers <baptiste.lepers@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
+	linux-mm@kvack.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/20/25 6:23 PM, Kalra, Ashish wrote:
-> On 8/20/2025 5:45 PM, Randy Dunlap wrote:
->> On 8/20/25 1:50 PM, Ashish Kalra wrote:
->>> @@ -3064,10 +3070,32 @@ void __init sev_hardware_setup(void)
->>>   out:
->>>   	if (sev_enabled) {
->>>   		init_args.probe = true;
->>> +
->>> +		if (sev_is_snp_ciphertext_hiding_supported())
->>> +			init_args.max_snp_asid = min(nr_ciphertext_hiding_asids,
->>> +						     min_sev_asid - 1);
->>> +
->>>   		if (sev_platform_init(&init_args))
->>>   			sev_supported = sev_es_supported = sev_snp_supported = false;
->>>   		else if (sev_snp_supported)
->>>   			sev_snp_supported = is_sev_snp_initialized();
->>> +
->>> +		if (sev_snp_supported)
->>> +			nr_ciphertext_hiding_asids = init_args.max_snp_asid;
->>> +
->>> +		/*
->>> +		 * If ciphertext hiding is enabled, the joint SEV-ES/SEV-SNP
->>> +		 * ASID range is partitioned into separate SEV-ES and SEV-SNP
->>> +		 * ASID ranges, with the SEV-SNP range being [1..max_snp_asid]
->>> +		 * and the SEV-ES range being [max_snp_asid..max_sev_es_asid].
->> 		                              [max_snp_asid + 1..max_sev_es_asid]
->> ?
-> Yes.
+On Thu, Aug 21, 2025 at 11:45=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> seen many things get backported when they are incorrect even if it
+> works in practice, so that is why I suggested to backport it anyway.
 
-So why wouldn't you have left Sean's original 
-"(max_snp_asid..max_sev_es_asid]" as-is?
+To clarify: "incorrect" here means in the stable kernel, i.e. not the
+backported patch.
 
-Kim
+Andrew: in the past, I was quite conservative in what I would mark as
+Cc: stable for Rust, but after discussing a few past cases with the
+current stable kernel team and/or being requested to add the tag, I am
+nowadays way more optimistic in tagging. Some backports would not pass
+the stated rules in principle, but they still wanted them.
 
+For instance, I tag even Clippy cleanups (so far, since it seems
+doable to keep it clean with the amount of code we have).
+Nevertheless, I still skip the tag when I really feel there is no
+point, and let their scripts pick them up if they really, really want
+them.
+
+For this particular case, since we support several compiler versions
+nowadays, I would have just tagged it if it had went through my
+branch. There is also little risk whether it gets backported or not.
+
+I hope that gives some context.
+
+Cheers,
+Miguel
 
