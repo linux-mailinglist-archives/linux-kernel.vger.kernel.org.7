@@ -1,126 +1,118 @@
-Return-Path: <linux-kernel+bounces-779786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0488CB2F8DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:52:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DC6B2F8BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1C77607A7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:49:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C7464E5E7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F07F31B112;
-	Thu, 21 Aug 2025 12:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD41315761;
+	Thu, 21 Aug 2025 12:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e1UB2SAB"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHZzOzID"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC4431A049
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 12:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F49305062;
+	Thu, 21 Aug 2025 12:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780431; cv=none; b=CFjN60RknUOtt4JddLknTRAp0LX9IJB8N99blL2giXvwtqI2Nm5ea1xs0X720SO4ZivIqrUMmmnaMYsZBHU4UPmkJkOtgyWjfuCK5b+bstlnXZRJTXKe+5ALrVVjjlnhTSUjPv5pAoSTBZtZezz7kgGzo6t+zMSF512P52oZXdk=
+	t=1755780470; cv=none; b=aDBfvUgBtD0PyCbhieG2FGRUwE1mtM/9I+sKJ8UpmCfoKT2if2tAw7tEkt7fSstxf+lyiIOXBcMjCEXGrVw6KmonwhRh1h7FrR3JbJiajwapTqaKcaBaqvzqai6ohdJtKqo2PIkP4ABzakIGNTUVd+UOtEfyZ4J1h/T3BSGh9AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780431; c=relaxed/simple;
-	bh=kOg13v+onhuGuxW4803UZ6u3K33G+5yvxevRUzFVDpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PA11SK24X9okNmeqZRMAkMM/RdlhQrOsJHdSedap1gII+D3SyMnhlMcGDbzeUeKaZ6c+VPG2DmLd8uBUPkdMgpq+st91S/soZCOksyFRdkEBnhm7RbxP5kflZruCsXittIsD8SK1BTuFnVUZ6F4aayt7AHCOLEfdEqsa6e7Xj2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e1UB2SAB; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=m2HSFc8Nh7kp8IpGRpCETSqySyj+cxKt6+J+l+bvbEM=; b=e1UB2SABn+kbINgZd7o1CPs/HZ
-	RzgtHNWwfjE5KM7fieXBrDZCYp2o2pq19JBVB1CvlU4ZAmXHUaGQLGtka41ob07fBI/60nIwNfYU2
-	XAeXNokzo6LMzpK6CFGAtTbSjHM+aueQq8Larm7dgT/xpDzsFcarkNNJJ7/hivCX42NhNWmwgTxGU
-	S//JbWKdjTxNALlbAQU/5pb6qiRD+3AHqNAhWcBKxz9YXQER0XoimEQJFy9DbqNM0IKtdy2Yq6skz
-	zRHu5BcqUDy2OcXVSLrPv1wldSTE6UIMD9aH87LiMY/85IgAZNI6MnwTZyvyCavLqaYt2DSLd0WUI
-	jZQbtJVQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1up4h0-00000007BD8-3iRD;
-	Thu, 21 Aug 2025 12:46:59 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0B3413002ED; Thu, 21 Aug 2025 14:46:59 +0200 (CEST)
-Date: Thu, 21 Aug 2025 14:46:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Marcos Del Sol Vives <marcos@orca.pet>, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>,
-	Uros Bizjak <ubizjak@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	David Kaplan <david.kaplan@amd.com>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Oleg Nesterov <oleg@redhat.com>, "Xin Li (Intel)" <xin@zytor.com>,
-	Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Subject: Re: [PATCH] x86: add hintable NOPs emulation
-Message-ID: <20250821124659.GO3289052@noisy.programming.kicks-ass.net>
-References: <20250820013452.495481-1-marcos@orca.pet>
- <20250820090733.GJ3245006@noisy.programming.kicks-ass.net>
- <20250821132807.0a898dfa@pumpkin>
+	s=arc-20240116; t=1755780470; c=relaxed/simple;
+	bh=Kww3Z8XQpKUqnrzv3IhCXTW3D/QqhIcasmUvK1+uYck=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lrFLIiC15LSTdjkSQtlI33Dy7wyc2WwgWre2kXAjLqMQo3L6cG0+UR+IhWHuG5vw6mThR1f/BV+JT2tAEoCjXoh5SnNhqbe4XB7+LrcGLEDi/WWD8WrDtoGhV5iXis2PlIMy/Vv3qMOKcay1i8ElUIk+9XeKM+oxPmNGcppHhBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHZzOzID; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so137705666b.3;
+        Thu, 21 Aug 2025 05:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755780467; x=1756385267; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kww3Z8XQpKUqnrzv3IhCXTW3D/QqhIcasmUvK1+uYck=;
+        b=RHZzOzIDT+HlFG6GhBSyocLV96tjffO7s1kPXwj/0bQWO0GIFm+wm/KMuwqUL2ameU
+         cOfi4jdHyN+7pu67M3Ae07GJbvwlr4cYVxTxh9zu6Y22fRhJQl7RscbnWmrf0GYs2FhI
+         Nxqd/shVK5XV0n/bPl+GvSNE4n0dBurZzMMwVeUHaCg79KcE/QN/+K77bZKMreHBW+rb
+         gFwArLuEJMBGomJurjtKRZLjdpa1uDMZQWnWTI+TGwp2ECWMzz+eM6clQioEFC5VmOxT
+         5ZqGTk9Eqnog8Qfw1aDRXfIrUh0u2jckX2lL21rS9pm6R80E8WOEZiwar5Lyacur8/tw
+         Ehtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755780467; x=1756385267;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kww3Z8XQpKUqnrzv3IhCXTW3D/QqhIcasmUvK1+uYck=;
+        b=T+5kxt5Ya2aynllIOxZmPcoxGMP4YRPGX5L9b6LN5LVr+arkawcMrBk28k/dkf/Wbu
+         2Zra7BegBkAt/HMwXZuWJnEXcKVk8PVCfA+3R0FNDOcyKAYvUADkX+NCRBK63+N4OcPi
+         puYr5XY9IoIodXaCHs2IYh+Cb0+wFtc/NuvrrEVnn2DZGktkvh7mGVVxAGgT2Q2YckqV
+         Xj9OTzq6INHYBHXeqW60j7rxFN1q4VJqRDsXHF6hrUNpXYcNzGoVRiBGZ6VshJrKITJg
+         625e8flkWy/NnBVYp4cbndU+b+1xHLdw1PnI+IqN481+8rg8VtCbdjGuSBoMGrOpVyjL
+         rRWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoSIv1uk0ghYX1hrP4nwUtUnFbs83ijAGkdAwVDGX/WMkZBHT7KpYGefpI8ElUQ9s3NVt1FjAzfxS13V5R@vger.kernel.org, AJvYcCW4iCnaCNx+mGor2+GUtmWiMztR0pvJogvIsryut/JkRaOjznfA+xiwsS3UwxKFBfsfHkB1p3llVEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcBXE+wSysxsXUQSuJ3lG1EvpqCzEejzvDghX+wdVp1O8FK5+2
+	0cGLukKR59d4CZdUsUed7dw/7PJsKwBuCfJcolbTJtpkE8uGw6IDgAd5CNOt7UaUtbyEaImpIza
+	CHKfpo5Ap8AWPfct2MSN+my/uM4JolmQ=
+X-Gm-Gg: ASbGncuPZ9TNky7LgIS+/YuLnq7g7RC+Eu0iw3+kUk7VCIYBdi6cW4We1RK12dane14
+	JgB0z6b17YkHcFGk1geW22YA1mo5R7URMPniBQWOfN5nBwTIsRqHrd7fhVnntxCZcV4svkT5xwA
+	9B3j7EuQZnNXhJeWrjeL6NCoVNkJV78m4x2QZHL8t+4g/itQicCiIiXTg/1gN4KayxMyqsTOSab
+	Dr6kcFaZw==
+X-Google-Smtp-Source: AGHT+IEPEbjECYdBW0nd8xX8lWG/FeWz08nR/1JcSgRS+BCimYdArukTA+i3b9djOGPovIzmf+wskUZ5f9vMyM/jPZM=
+X-Received: by 2002:a17:907:9711:b0:ae3:5e27:8e66 with SMTP id
+ a640c23a62f3a-afe07a7efc8mr229517766b.27.1755780467264; Thu, 21 Aug 2025
+ 05:47:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821132807.0a898dfa@pumpkin>
+References: <20250821080723.525379-1-zhao.xichao@vivo.com> <CAHp75VeDvK8cOr=rVGj_hVX5YzXM-UqrWRBgUrhiA1wzYn7C_w@mail.gmail.com>
+ <CAKv63uvfHYATd7ZFweZ0LMfTLt-idHVgYJqOV8PvzaNeigbt9w@mail.gmail.com>
+In-Reply-To: <CAKv63uvfHYATd7ZFweZ0LMfTLt-idHVgYJqOV8PvzaNeigbt9w@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 21 Aug 2025 15:47:10 +0300
+X-Gm-Features: Ac12FXyAa-NWG2kjb3jWIL5sg7tG4bcy5ylXKO82itEKrqXswF6DvDsUv85LdDQ
+Message-ID: <CAHp75VdL9kV2fyi63zqPZnW4CaeYPmJ74tmGEgU=M7FSYBv0ww@mail.gmail.com>
+Subject: Re: [PATCH 0/7] iio: Remove dev_err_probe() if error is -ENOMEM
+To: Crt Mori <cmo@melexis.com>
+Cc: Xichao Zhao <zhao.xichao@vivo.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Andreas Klinger <ak@it-klinger.de>, Haibo Chen <haibo.chen@nxp.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Marius Cristea <marius.cristea@microchip.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Francesco Dolcini <francesco@dolcini.it>, 
+	=?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>, Gustavo Silva <gustavograzs@gmail.com>, 
+	Tomasz Duszynski <tomasz.duszynski@octakon.com>, Jagath Jog J <jagathjog1996@gmail.com>, 
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>, Waqar Hameed <waqar.hameed@axis.com>, 
+	Yasin Lee <yasin.lee.x@gmail.com>, Julien Stephan <jstephan@baylibre.com>, 
+	"open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER" <imx@lists.linux.dev>, 
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 01:28:07PM +0100, David Laight wrote:
-> On Wed, 20 Aug 2025 11:07:33 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > On Wed, Aug 20, 2025 at 03:34:46AM +0200, Marcos Del Sol Vives wrote:
-> > > Hintable NOPs are a series of instructions introduced by Intel with the
-> > > Pentium Pro (i686), and described in US patent US5701442A.
-> > > 
-> > > These instructions were reserved to allow backwards-compatible changes
-> > > in the instruction set possible, by having old processors treat them as
-> > > variable-length NOPs, while having other semantics in modern processors.
-> > > 
-> > > Some modern uses are:
-> > >  - Multi-byte/long NOPs
-> > >  - Indirect Branch Tracking (ENDBR32)
-> > >  - Shadow Stack (part of CET)
-> > > 
-> > > Some processors advertising i686 compatibility lack full support for
-> > > them, which may cause #UD to be incorrectly triggered, crashing software
-> > > that uses then with an unexpected SIGILL.
-> > > 
-> > > One such software is sudo in Debian bookworm, which is compiled with
-> > > GCC -fcf-protection=branch and contains ENDBR32 instructions. It crashes
-> > > on my Vortex86DX3 processor and VIA C3 Nehalem processors [1].
-> > > 
-> > > This patch is a much simplified version of my previous patch for x86
-> > > instruction emulation [2], that only emulates hintable NOPs.
-> > > 
-> > > When #UD is raised, it checks if the opcode corresponds to a hintable NOP
-> > > in user space. If true, it warns the user via the dmesg and advances the
-> > > instruction pointer, thus emulating its expected NOP behaviour.
-> > > 
-> > > [1]: https://lists.debian.org/debian-devel/2023/10/msg00118.html
-> > > [2]: https://lore.kernel.org/all/20210626130313.1283485-1-marcos@orca.pet/
-> > > 
-> > > Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>  
-> > 
-> > This is going to be terribly slow if there's a significant number of
-> > traps (like with endbr32), but yeah, this ought to work.
-> 
-> Could you patch the memory resident page to contain a supported nop?
-> (without marking it 'dirty')
-> Then the same function wouldn't trap until the code page was reloaded
-> from the source file.
+On Thu, Aug 21, 2025 at 2:50=E2=80=AFPM Crt Mori <cmo@melexis.com> wrote:
+>
+> Sorry duplicate - as I commented on driver.
 
-It would mean cloning the page as private. Yes you can do it, uprobes
-has all the code for this. But it has non-trivial memory overhead.
+Yep, answered there.
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
