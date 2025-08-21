@@ -1,301 +1,367 @@
-Return-Path: <linux-kernel+bounces-780653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C498B30778
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:58:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E02B3078E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63E61B03615
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA7DD1D05435
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9F435A2A4;
-	Thu, 21 Aug 2025 20:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A627535AAB8;
+	Thu, 21 Aug 2025 20:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bHBkwHiS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXv+0i1h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC51E35082F;
-	Thu, 21 Aug 2025 20:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755808770; cv=fail; b=Xayt1fNZIRLl9TjJTk8biWhPowwd2m4GklMsZZR2FWtMvCGaHjeHjqtBwX/W5Pl5aLCx96IGMA/GQlR/gvBeFZtmA/S+oGY8IhrzSwKHhWlYFUKlGb9KvyttM9dJ9I9/PSFzLofWn56u1YliLuMXCix7N7pnr1vclhKb+oZ6tYo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755808770; c=relaxed/simple;
-	bh=FczZ+0UsFZROEojNBWQlkfiPQzs+GPGQIy4Jh4N3k4E=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EKxGQImtHS9YcR+f5LxXzxHfP5n3nWTNYwUi5saHqOEIHQrBA3E1IONgl6DXWiEBzCBRz5IAI5SLQ1II9SYDPDXS5Fua2WLnS6C4h+i9LZGN21fQa9YDp0QExtQ9CyvEIU/7Zw6Bql31vPK5xEG4RLQRhNzkIjs4K2BRnK4iyE0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bHBkwHiS; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755808769; x=1787344769;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=FczZ+0UsFZROEojNBWQlkfiPQzs+GPGQIy4Jh4N3k4E=;
-  b=bHBkwHiSSfH2GShbsfQ1TjSPIr3MwaOE/P2yE70ynQimw7t7pjrBlBfe
-   g2MSj4ujlDb95WkyZBy1nrbKoThzWT3pJWhu8Hk2WNLxIj10ykfdLSEDR
-   OLyb1libMPEK+O6u+fsYjomi1MtQmczcPuvfgZTjMLSAfYaQid2XGNjr3
-   /1ihDSsvalwDZ8zHJpXO6t3gWHDHtwUVfptTeC7Dgc6N210pIzMrk9hOi
-   IOQtv1xzyDgv2BxBeJAYqkAdNNK3EJm4lpAzYziixx1POG9P1rFrVyghH
-   gSZcaNcKx8I7Pt5H96kIvUugAEJFtKo5PalxzkrY7SmblSJLUmRx31/TZ
-   w==;
-X-CSE-ConnectionGUID: M0SQl1r/TtG7XqcF2zF6UQ==
-X-CSE-MsgGUID: VHf1LzQCTs6Jnmx0VIuv0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="68710140"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="68710140"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 13:39:27 -0700
-X-CSE-ConnectionGUID: UvoBhPT5SGynX+szm0fe1Q==
-X-CSE-MsgGUID: sGFJ+AcHQsKo6AnddMrQUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; 
-   d="scan'208";a="173785023"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 13:39:22 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 21 Aug 2025 13:39:22 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 21 Aug 2025 13:39:22 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.69) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 21 Aug 2025 13:39:21 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EmDHpwktlpmRi5uSSZlijxNBx5v5DE09X1NdoBq327GpnyqSW4NQBPZlvrl+LFQLUXlcfbovphQH6mWbYlnMks3qAs7lOD3mJ/FRZOKnuwlQrWAnQkW5vHgvlZBiAuvKiuNwRi7Js6QR634GH6kzN2qlqfqijF4Wjy6tBbK4pp1iCs6ARtmPF8JYFbZa9y1+/uIKID50oGYzOJgIa1OvQPC+Gk5YZkk1PIO97u7bAFV7CXnoD+Wlu0B40VuxhTjVWVHqN3OfmMbbVfp0jdnXeBB4FPSG6tYU4zf597gkbWSkSgCP9xJdF2yKTxDynxz2rmdiQXAntNIujd6pzdwIFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6jpkE4DJrgB+/KZNp8SnkjcYWHlf/Yn0tFVIo2Y9oAk=;
- b=g13CSB3sucEiDUanVQrfALdAOcuxqGX7PGQyhns8fKT29W5Z6HR2Bw+oBu9/ye0QyRw83L1JoAfeA1ze7GSW3pvuZu2Q0K4m7cyhmLjcHE0HP1WjslnGq9u36xCHtuJd/tHvZBV+0EhwU0WgST+Q+f8ocrX/xXfbh5NzEpjP0cT2mu/vzScsgYiKhA4iKJiKUTkt/cZRlwZQaG+rK2QMu6BHtiKH6NQiCIEjCS1M7eSpVfK3A3+wBxt1ofEMARkfsgV8EG866nqQ018Bh785YhS8z5unQn8dofD4lSi/+AgVVvEOQ7T+HkVAO0zz1yJOXgXAEBLeWeH1SVY+Qkm16Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by MW4PR11MB6838.namprd11.prod.outlook.com (2603:10b6:303:213::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
- 2025 20:39:18 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.9031.023; Thu, 21 Aug 2025
- 20:39:18 +0000
-Message-ID: <8f077022-e98a-4e30-901b-7e014fe5d5b2@intel.com>
-Date: Thu, 21 Aug 2025 22:39:13 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] i40e: Prevent unwanted interface name changes
-To: Calvin Owens <calvin@wbinvd.org>
-CC: Michal Schmidt <mschmidt@redhat.com>, <netdev@vger.kernel.org>, "Tony
- Nguyen" <anthony.l.nguyen@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Jedrzej
- Jagielski" <jedrzej.jagielski@intel.com>, Ivan Vecera <ivecera@redhat.com>,
-	<intel-wired-lan@lists.osuosl.org>, <linux-kernel@vger.kernel.org>
-References: <94d7d5c0bb4fc171154ccff36e85261a9f186923.1755661118.git.calvin@wbinvd.org>
- <CADEbmW100menFu3KACm4p72yPSjbnQwnYumDCGRw+GxpgXeMJA@mail.gmail.com>
- <aKXqVqj_bUefe1Nj@mozart.vkv.me> <aKYI5wXcEqSjunfk@mozart.vkv.me>
- <e71fe3bf-ec97-431e-b60c-634c5263ad82@intel.com>
- <aKcr7FCOHZycDrsC@mozart.vkv.me>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <aKcr7FCOHZycDrsC@mozart.vkv.me>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: DU7PR01CA0026.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50e::22) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8771E35082F
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755808805; cv=none; b=cdzxaBsvYgX06SxZxmc1WCsNr92wfR0HCLc8+cino/5qvNr0weFlhZGsUZ/P8ZFAJDsZbueOkYncKLHMJzeuJ8Pr35CXcfRqn41vYQNwvRYWv34qfWvpN3vlx71xKfbJCXgqahpwXHtA4+cHXMd0oYn7Fn3zE3Rwt8irMA38hck=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755808805; c=relaxed/simple;
+	bh=OE8FIce0XKN85i6wjDeep8ikOe2wz+53GSgWxMmBDuc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ihVUl591VIQUIExZZcYZa1WlcahU4dx0WWXbFJQXQhhGrkWgWbWp7Mo28Rg/j8WoXlZLAGbnHEcturfQxc1R8wAFypb3OXLLu4KEqkLIaJNM0bIF/jbkNUBJ/h9qAOEVXMIAaOd/SdK2FyFgIWG8IJXXBrEzVjFZgJOLPmOVnn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXv+0i1h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9807C19421
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755808805;
+	bh=OE8FIce0XKN85i6wjDeep8ikOe2wz+53GSgWxMmBDuc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dXv+0i1h56OrHCHlETeTNP585D1FpSGphmxFQ+FQUvGpqgiTfwSD9P7FddXfgv8LY
+	 GoWKDB/BAvmHwnHvo8Pw5YE9WhuUMoaWyoTh1A52XavUi4Iw6DfJ0R3cYolnyVaM6d
+	 c6+GkejS9Rj+8pYOSKnwkpMpxSZxnnoshYdKubV1iEoTYiFA7Kqjv82mhsWpXtTZ5E
+	 K9cj/qIuVXhyJeGJFSBZMBRbryy2dTc+AyMWNAX/gbVeEg8oMYCd7rvbML10fmnW+U
+	 bq97JE01OkvsUTUCjllsDlutOqZ8TG4/gbw+t5MAkrvSoJhCkkxPGdZUjNRSHwE6M+
+	 5onEN/X/0i8zQ==
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-459fbca0c95so21145e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:40:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU955Z8gS06G7ZW3VlelMv9u6pjUn3IDb+jPm4gLXBazrRLozGPHHAPvKGP1WnEwcZ1CozS+mvzfLsQbH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywep0Tmiwa/sNA/9CnwG8VHO25P5k5M8mkTXcJbCAC3hKh/Wee8
+	YWALYqIRDryff/1VZNoDs+tbF6aTNLxSt5dWYtCd6S6YP5b4yi/SrU8o8CSy4moP1O1ye7FeZDI
+	xKYW6vZ4fuBFq1QtOly0st+dS4H4so17KeFpmsugI
+X-Google-Smtp-Source: AGHT+IHAVVARzLJ+ujxq4b1q+Zeu2x/aLUsSEpqLl5XmMkgRCP5G74y7fShZw7wEhT73c61JdJx/IW6tPC7VB1P/PU8=
+X-Received: by 2002:a05:600c:35d3:b0:458:92d5:3070 with SMTP id
+ 5b1f17b1804b1-45b5172a23bmr415565e9.6.1755808803420; Thu, 21 Aug 2025
+ 13:40:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|MW4PR11MB6838:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2e555a9f-ef41-4d7d-39cb-08dde0f2ccba
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RzJyWHA2TUJscU03cHZKMlNYZEtsOWdvcGtOTFpxaysyR0paSmVUY0lNQnVW?=
- =?utf-8?B?c01pWTJtVXlHclAzSDRMWXhDRGRXOFhBL0tuNzNkV0NSWlpyQ2RPeUtXUXpJ?=
- =?utf-8?B?WmtFeHpqVk8xYmVzS1V1eGFuSDBtZGNlR2d5MGxIVll4dkhCcTdKSUgzaXoz?=
- =?utf-8?B?WWNSWkl4RDZQY243dVFyQjFFdVhiRkE4YlBFVmlicG9sQk1GK2lzNXpkMFFN?=
- =?utf-8?B?QW1USmlIeFpKUXRWcnl3VnNJWFgvNjA5c1hBbFcyUisxY3haUnJzOVB6Tm5E?=
- =?utf-8?B?Q1BxaEsvNDdPVWliYUtjbklRSFJZamttd0szNnFiY2JYT2Nzb21qaHpvSGxs?=
- =?utf-8?B?QjJmNUdUL2hWZXo2dVZuaEFjdVREZTFOeE5DQzlkRjg0azFVdkpRU1pKZCty?=
- =?utf-8?B?T1Z1QVZFalIvaDJNWEpsZEpJZTZmRkhxSUJ4Z2J1eGFQYUVITU9zdGpORXVS?=
- =?utf-8?B?MDl6VEVQUEFQTG1rTURicC9lZmppanJoR0FQYVJaZWVPb0poM0pVVSt5VEsz?=
- =?utf-8?B?QmlvRVk3V1BQNVc4TjhaTS9Hb3JEdjZXZ0NuSUZJWDl5RjlaZWJaSnhuRTlC?=
- =?utf-8?B?WDJoRGZLcUxpY1F3SFcva0xDSW41U2h3N1RrbUQ3cnRqalRyRnc3Um1qSmJT?=
- =?utf-8?B?aVQxNzN1bkJMdVFFWlRVcUhRWWx1dHJlYUVRbFQ2cGVaZjFLUHIxaGhZOVZz?=
- =?utf-8?B?TUdERXFXc04rQXJseTBBU1dKVCs0NHVRSmx0T3AwcEV1K2psUzZwczFGQmlY?=
- =?utf-8?B?TUUwbXVGbkkvL1c3VjVrOGt2MHhrTENCalhFSy9mUHdZSmpFc0xJMnY5b1dh?=
- =?utf-8?B?UXRBNXBnbTFjNmNWU1BRdi9odHV6UzFlNmRKdUtyL0tudVJVaWZyZ2ZrWC9j?=
- =?utf-8?B?R3pmdm5sU0JWNjJrd0ZzTVRxY2tSY0UwbEo1TmFpMmcwS2ViUXV2TTE3K1Jl?=
- =?utf-8?B?L1h5aTJub0t0RjRMVDFlT2pockVQTjJ3ei9MclFSU25YNEZNZjNJcWp4Znho?=
- =?utf-8?B?eXBSYTNRMXJsN0Z6WG9kaldEQUNBdjgxR0xmOXptSC9PU0ZqL0NvK0h3dm5X?=
- =?utf-8?B?ZGZ3RUh3R3NOOElrM202cEUwWk83ZEM4UkFzbnlDTEE0aUxmVVduWDczaDR5?=
- =?utf-8?B?U1IycmRuUTdaL2gveG9qMTZnYzhaUXVENHI1TFg4WXhKT1AwdXk4dFhLK2pj?=
- =?utf-8?B?WlZqRXI0STBIMllmaC9keFNya1FLT3JVV2hkNjJNcnU0TXhBaUN3T3VTUU4v?=
- =?utf-8?B?UjQwSWQrN2lQWnUybDRyVi9jbGVHeGYvRWtBQlB5MjMxa1pSd21KU0hlbG4y?=
- =?utf-8?B?TlI4S0s4djE1aWZyRTNQdkdPQ1I2L0N0aXVvQmxndkUyRm9wUW5GcXptRFh3?=
- =?utf-8?B?OGNiOC9pek82ZDhQeTFUY2F4NXFIL0s1Z0QrSDRFaW14Uno5dGZJM3BrbGNk?=
- =?utf-8?B?d0FFYWNFb3ovbVFTRWhsMHREek4wT0hpMnRFWi9IcjNaNFRyWFlDOEkwT2h0?=
- =?utf-8?B?LzFTdGoySzFsYkZSc0tYMUp2YVZXQ05VNjNwNVRFR1FWZEtlNVVHUWFXdEx0?=
- =?utf-8?B?b0J6OEQ0WEMwLzZiRVpPWERyQXlFNDc1b015N05CSE52eS9KRzhlOGtQZmtR?=
- =?utf-8?B?VWkzZ1p2V21nN2tRN2Q0Uy9MU3JTWFQ1b0xUYWZVbUhuMVZ3QXlOZk0rcmta?=
- =?utf-8?B?NWE1UUR2Y1kzekJJWUFOd2o5TDF0aVdtWkcvN0ZXeDlQamhiTHMrVVNBUHFi?=
- =?utf-8?B?Zk85TTFuZ2g5SVBSeXNPaHdPb3g4SmxTSEN2SHViTzZsZVp2TklYMy9ORldU?=
- =?utf-8?B?NlBvZjF4ZC9VaFRtRy82VmdVc3RRV1c0Sm1ORDdETHUxZTIvY1EvektKVndo?=
- =?utf-8?Q?PIHnDsXGcvC7l?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UWhtNVpSdUYyL3hFVHlZODk3cGpDMXY1UUtEbUtBMjQ3eWJrN3NBc1FDT2F4?=
- =?utf-8?B?Vk9LK2sySldpMnNheHZ2Q2N5NXJaY2JmUkNkMzgwbUtxZ2ZMR29KNXltalhL?=
- =?utf-8?B?N2RZL2N2aCtFUVRGRUNwRzZLRFZMb2ZUU21QdmJBMG43bnYrUmNaZXJpZE56?=
- =?utf-8?B?eC9BME1sWElON21VSkM2Q3ZBVUJRMmdBTEJGdWFLTDdULzlNWFhuVGhVVWRI?=
- =?utf-8?B?T0ZLejUvd0doQ3dUZHVSOEh6cW8yeDhuaGZrM0NQN1VYdnNHWk1oQ3BTU010?=
- =?utf-8?B?eGh4aXhjQVJHdTNLRDhyRGFJWHMwaXRTVXdKdXhrYitPKzlkNHRnT0FFbzR5?=
- =?utf-8?B?aE5CQnRDdGtBZElpRm9xclgwYWVMbHVKVm9lL0wzUmVDUjdSdzZSMzhHUTNS?=
- =?utf-8?B?M2pNNnEwaStTemxBS0RicWtUZTFwRDA5OW9KUkY4N01OMEtOalNzb29KRWxB?=
- =?utf-8?B?U05nZmpINW1EaTd4cy9uSEY5Wlg5cG95dTc4cFlkTFMwdUx1ZXZZL2tjZVkx?=
- =?utf-8?B?d0M0L3pUM3JaS0FFVjgwOXBNZ1lqelRIWTU3enVEZW42cDZQMHFQS1dRREZO?=
- =?utf-8?B?NmUrd3NWUFdURnZGR1JmdCsyQWY2Z3Q5WnUvN2JLUllUSXBQb1JZd1dLSVdq?=
- =?utf-8?B?RUxQTWkwZUhWNDBNekZtYXYxcjgzRHd5U2FEYmV3VlJ0WGdkOHh0b1BYeDhZ?=
- =?utf-8?B?NGFzY28xWlJQSWxkc3lTcXRBOFE2T09EVDZSL2JaRlR1dWJpeTlpOFFZUWpH?=
- =?utf-8?B?dUw5clNCNFpXRlYrQWdudHJPc0d2QXVVMUtDMElpRjVXZEJlU3ltR3drWDVr?=
- =?utf-8?B?YWs4Yjd2SVFYUk5kdkJVZzFTVXNSSldCajRldHlyS1M5SklvNHJaaXpEN2E5?=
- =?utf-8?B?a1V4djRhSjIydktxbk51SlJhVXZrNUlldVVIcjhNUzkyR0JhRDJsb2xITXd2?=
- =?utf-8?B?cEwxMnVWYTZrcEdwakt3cXUrWlg4Yis1cDBhL3k3R0thNk1PZkhKaTJhdFI2?=
- =?utf-8?B?cWNuMlV4N0FIVGRzeWx5QVlzQm92djdESlJmZjc4M09ZM0EvbHpvTnJXaUlF?=
- =?utf-8?B?RFVWM2J2bmNDM2ExU2Z3VHVLd3pZb3ZDbE5UeG8xeCtHaE4rVUliQkJsanla?=
- =?utf-8?B?UXRreWRtUW1MSmpGYnh2WDUxeGI5dTNNbVVxb3FGbmNteFY3YWsvWDJhMlhN?=
- =?utf-8?B?TEs4SXBiVUdrdzI1dUZoVjZkRTQwb3FSdWZXRUdLSkVFRWREVm9rOTRRQWdU?=
- =?utf-8?B?cHFMS1FiTVJCbDgrVDNmSWRVV1hnQVM3UHRoQ0lyZ1ZMZkxpMXFlbzZIWEg1?=
- =?utf-8?B?VGxzRXIyVDZoNFBxVnVZak9RZGdWUWIxRHhwTmo1VHJDRFAvSCtuRkNCaTRu?=
- =?utf-8?B?T1VEQ3I3anFxanF6bTZtd3RoZUZ5OXdZMWUyWU1HUWE3WGpKZS9NQUhvSmxx?=
- =?utf-8?B?M0wzbVFtODRMdDY4K3R5Tmt6cktHYWRTa2dueUNIMkc3eVorQzJhMlRGamwx?=
- =?utf-8?B?VVREc3FCajZpOFhGTHFPZFM4MEhNemUwYjU2T0FDSEFGSDVNWHJWRTRzVy84?=
- =?utf-8?B?OFlwbG5pZ3RQdDRZT2ZLdUpNTkp2aVp2VTZKSzQzYUVrTGFiTXN3U0JRZGhV?=
- =?utf-8?B?UkxDTHRmMDNMbGxKTXFXOVlORXQ4NzNVWllSVDY3cFprVytxSVo4dS96UzNQ?=
- =?utf-8?B?UHpzOGsraDE0Z2UwZWdQbXFDMG1iVWl4TlRtdVdETytoYTB4RzNKNlhtS3RB?=
- =?utf-8?B?OGdaMWFCOHVXdnBLd2tJRFlsQnlkQ24vUnVjM3duSTk0WGdLTWEwaHpPSVpM?=
- =?utf-8?B?enAvQjllc29YN2F3UDg1cVN2MzZ6d2VWekFQNCswQllCSGZxYmRZVTE4aEtO?=
- =?utf-8?B?Mml4VUhmekRqc0Q1WE00ZHpJZkU5dXcxeUYrVlFUZ3ZFckdTMkhZV1l3QXJ3?=
- =?utf-8?B?dmFqRkdobzg5c1ZKQlpZUjYvbVVaY0d0NE42V1RrSWd1Y25zUmJlZGx4Y3BX?=
- =?utf-8?B?YkpyNnk4cFEyenltRE45VEFTcmZ1dEVaOXo1TlB1NG84MVlWckl5QTlteDMr?=
- =?utf-8?B?RVV2NXRFdDRHWUZ4bG5GV1pkbVpZWmNaL3pXcytnd2EyMkpoTDJUVWJYVU9i?=
- =?utf-8?B?RUM1djFTM3dOU3ZPMmNvd292bFY4VDl2T2tWUjNhT0xCejAxTVBRV1ZyNnoy?=
- =?utf-8?Q?J8vOdvLGU2NuFZlJuDttHi4=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e555a9f-ef41-4d7d-39cb-08dde0f2ccba
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 20:39:18.0785
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iP20P1fkuuHlK4ubzvRKxZ9QpT3toH7KfR78eudJTNju0MMNO0pFpvjN9oT0pbmD/IPcTM6CSU1alC+x/ZMT4psPbl+Bf6U9E/2ac8Cb9Uo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6838
-X-OriginatorOrg: intel.com
+References: <20250716202006.3640584-2-youngjun.park@lge.com>
+ <jrkh2jy2pkoxgsxgsstpmijyhbzzyige6ubltvmvwl6fwkp3s7@kzc24pj2tcko>
+ <aH+apAbBCmkMGPlO@yjaykim-PowerEdge-T330> <aH/baxIgrBI3Z1Hl@yjaykim-PowerEdge-T330>
+ <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
+ <CAF8kJuMo3yNKOZL9n5UkHx_O5cTZts287HOnQOu=KqQcnbrMdg@mail.gmail.com>
+ <aKC+EU3I/qm6TcjG@yjaykim-PowerEdge-T330> <CAF8kJuNuNuxxTbtkCb3Opsjfy-or7E+0AwPDi7L-EgqoraQ3Qg@mail.gmail.com>
+ <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330> <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
+ <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330>
+In-Reply-To: <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 21 Aug 2025 13:39:51 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
+X-Gm-Features: Ac12FXxJpZnWqBXonP4CvO1eyKw0FGi0bEJQVwb0VczZMRYfT2Bm2J2f9ppOvfI
+Message-ID: <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+To: YoungJun Park <youngjun.park@lge.com>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
+	bhe@redhat.com, baohua@kernel.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, 
+	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Kairui Song <ryncsn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/21/25 16:23, Calvin Owens wrote:
-> On Thursday 08/21 at 10:00 +0200, Przemek Kitszel wrote:
->> On 8/20/25 19:41, Calvin Owens wrote:
->>> On Wednesday 08/20 at 08:31 -0700, Calvin Owens wrote:
->>>> On Wednesday 08/20 at 08:42 +0200, Michal Schmidt wrote:
->>>>> On Wed, Aug 20, 2025 at 6:30 AM Calvin Owens <calvin@wbinvd.org> wrote:
->>>>>> The same naming regression which was reported in ixgbe and fixed in
->>>>>> commit e67a0bc3ed4f ("ixgbe: prevent from unwanted interface name
->>>>>> changes") still exists in i40e.
->>>>>>
->>>>>> Fix i40e by setting the same flag, added in commit c5ec7f49b480
->>>>>> ("devlink: let driver opt out of automatic phys_port_name generation").
->>>>>>
->>>>>> Fixes: 9e479d64dc58 ("i40e: Add initial devlink support")
->>>>>
->>>>> But this one's almost two years old. By now, there may be more users
->>>>> relying on the new name than on the old one.
->>>>> Michal
->>>>
->>>> Well, I was relying on the new ixgbe names, and I had to revert them
->>>> all in a bunch of configs yesterday after e67a0bc3ed4f :)
->>
->> we have fixed (changed to old naming scheme) ixgbe right after the
->> kernel was used by real users (modulo usual delay needed to invent
->> a good solution)
-> 
-> No, the "fix" actually broke me for a *second time*, because I'd
-> already converted my infrastructure to use the *new* names, which match
-> i40e and the rest of the world.
-> 
-> We've seen *two* user ABI regressions in the last several months in
-> ixgbe now, both of which completely broke networking on the system.
-> 
-> I'm not here to whine about that: I just want to save as many people out
-> there in the real world as I can the trouble of having to do the same
-> work (which has absolutely no benefit) over the next five years in i40e.
-> 
-> If it's acceptable to break me for a second time to "fix" this, because
-> I'm the minority of users (a viewpoint I am in agreement with), it
-> should also be acceptable to break the minority of i40e users who are
-> running newer kernels to "fix" it there too.
-> 
-> Why isn't it?
+On Wed, Aug 20, 2025 at 7:39=E2=80=AFAM YoungJun Park <youngjun.park@lge.co=
+m> wrote:
+>
+> > > inclusion/exclusion semantics at the cgroup level. The reason I decid=
+ed not to
+> > > go with it is because it lacks flexibility =E2=80=94 it cannot expres=
+s arbitrary
+> > > ordering. As noted above, it is impossible to represent arbitrary ord=
+erings,
+> > > which is why I chose a per-device priority strategy instead.
+> >
+> > As said, arbitrary orders violate the swap entry LRU orders. You still
+> > haven't given me a detailed technical reason why you need arbitrary
+> > orders other than "I want a pony".
+>
+> I believe the examples I provided for arbitrary ordering can be considere=
+d
+> a detailed technical reason.
+> (You responded with Option 1 and Option 2.)
 
-I think we agree that it is ok-ish to sometime break setups for bleeding
-edge users, then fix (aka undo). It's bad that this time it was with
-effect equivalent to the first breakage (hope that it was easier to fix
-locally when it occurred second time in a row).
+You still did not provide the detailed reason for it yet. I understand
+you want the per cgroup swap device arbitrate ordering, that is a
+solution not the root cause. I want to go one level deeper, why do you
+want to have per cgroup swap device ordering. What is the
+consideration to use the per cgroups list of the swap device order vs
+other approach. For example, I want to preserve the fast swap device
+mostly for jobs requiring fast response, I don't want to fill the fast
+swap device with slow jobs' data. That is one of my guesses. Please
+provide the background usage case and thinking process to get to that
+conclusion.  Right now I am just guessing in the dark. You jump to the
+conclusion of using aribitury cgroup swap device order as the only
+solution too soon too quickly.
 
-But we dispute over change from Oct 2023, for me it is carved in stone
-at this point. Every user either adjusted or worked it around [1]
+> > > The `swap.tier` concept also requires mapping priorities to tiers, cr=
+eating
+> > > per-cgroup tier objects, and so forth. That means a number of support=
+ing
+> > > structures are needed as well. While I agree it is conceptually well-=
+defined,
+> > > I don=E2=80=99t necessarily find it simpler than the per-device prior=
+ity model.
+> >
+> > You haven't embraced the swap.tiers ideas to the full extent. I do see
+> > it can be simpler if you follow my suggestion. You are imaging a
+> > version using swap file priority data struct to implement the swap
+> > tiers.
+>
+> Thank you for the detailed explanation. I think I understood the core poi=
+nts of this concept
+> What I wrote was simply my interpretation =E2=80=94 that it can be
+> viewed as a well-defined extension of maintaining equal priority dependen=
+cy
+> together with inclusion/exclusion semantics. Nothing more and nothing les=
+s.
 
-> 
->>>
->>> And, even if it is e67a0bc3ed4f that introduced it, v6.7 was the first
->>> release with it. I strongly suspect most servers with i40e NICs running
->>> in the wild are running older kernels than that, and have not yet
->>> encountered the naming regression. But you probably have much better
->>> data about that than I do :)
->>
->> RedHat patches their kernels with current code of the drivers that their
->> customers use (including i40e and ixgbe)
->> One could expect that changes made today to those will reach RHEL 10.3,
->> even if it would be named "kernel 6.12".
->>
->> (*) the changes will likely be also in 10.2, but I don't want to make
->> any promises from Intel or Redhat here
-> 
-> But how many i40e users are actually on the most recent version of RHEL?
-> Not very many, is my guess. RHEL9 is 5.14, and has the old behavior.
+Good.
 
-RHEL 9 backported devlink for i40e in July 2024 [0], together with undo
-of interface name change [1] (this likely tells why there were zero
-complains from RH users).
 
-[0]
-https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/commit/bcbc349375ecd977aa429c3eff4d182b74dcdd8a
+> > That is not what I have in mind. The tiers can be just one
+> > integer to represent the set of tiers it enrolls and the default. If
+> > you follow my suggestion and the design you will have a simpler series
+> > in the end.
+>
+> Through this discussion my intention is to arrive at the best solution,
 
-[1]
-https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/commit/5ab8aa31dc2b44fbd6761bb19463f5427b9be245
+Ack.
 
-> 
-> If you actually have data on that, obviously that's different. But it
-> sounds like you're guessing just like I am.
+> and I appreciate that you pointed out areas I should reconsider. If you,
+> and other reviewers(If somebody gives opions of it, then it will be helpf=
+ul)
+> generally conclude that the tier concept is the right path,
 
-I could only guess about other OS Vendors, one could check it also
-for Ubuntu in their public git, but I don't think we need more data, as
-ultimate judge here are Stable Maintainers
+That is why we should make it a more formal proposal, list out the
+details to solicit feedback.
+
+> I have a clear willingness to re-propose an RFC and patches
+> based on your idea. In that case, since arbitrary ordering would not be
+> allowed, I fully agree that the main swap selection logic would become
+> simpler than my current implementation.
+
+Thank you. If you can integrate the swap.tiers into your next series,
+that would be great. I am worried that I might not have enough time to
+implement it myself. I can certainly reason about it and point you in
+the right direction as best as I can.
+
+> > The problem is that you pollute your fast tier with very cold swap
+> > entry data, that is to your disadvantage, because you will need to
+> > swap back more from the slower tier.
+> >
+> > e.g. you have two pages. Swap entry A will get 2 swap faults, the swap
+> > entry B will get 20 swap faults in the next 2 hours. B is hotter than
+> > A. Let's say you have to store them one in zswap and the other in hdd.
+> > Which one should you store in faster zswap? Obvious swap entry B.
+> >
+> > It will cause more problems when you flush the data to the lower tier.
+> > You want to flush the coldest data first. Please read about the
+> > history of zswap write back and what LRU problem it encountered. The
+> > most recent zswap storing the incompressible pages series in the mail
+> > list precisely driven by preserving the swap entry LRU order reason.
+> >
+> > You really should consider the effect on swap entry LRU ordering
+> > before you design the per cgroup swap priority.
+>
+> Then I would like to ask a fundamental question about priority. Priority =
+is
+> a user interface, and the user has the choice. From the beginning, when t=
+he
+> user sets priorities, there could be a scenario where the slower swap is
+
+The Priority is just the global swap file ordering. Higher priority
+use that swap device first.
+
+> given a higher priority and the faster swap is given a lower one. That is
+> possible. For example, if the faster device has a short lifetime, a real
+> use case might be to consume the slower swap first for endurance, and onl=
+y
+> use the faster swap when unavoidable.
+
+The idea of matching the faster swap with higher priority is just a
+strategy to get better performance. It does not mean the priority =3D=3D
+device speed.
+If the user wants  to choose another priority strategy, maybe slower
+performance, that is OK. They will get what they ask for.
+We as  the kernel developer design the system as simply as possible to
+achieve the good performance. Basically allow the good strategy to
+happen easily. I wouldn't go overboard to change the meaning of
+priority.
+
+> In this case, logically from the LRU perspective there is no inversion of
+> priority order, but in practice the slower device is filled first. That
+> looks like degradation from a performance perspective =E2=80=94 but it is=
+ exactly
+> what the user intended.
+
+You touch on a very good point. How to mix the global order and the
+per memcg order.
+
+> The swap tier concept appears to map priority semantics directly to servi=
+ce
+> speed, so that higher priority always means faster service. This looks li=
+ke
+> it enforces the choice on the user(but it is opend).
+
+Yes, and no. We should allow the better performance strategy to happen
+easily while maintaining the code complexity low. That is what I am
+trying to do here.
+
+> Even with swap tiers, under the semantics you suggested, it is possible f=
+or
+> a given cgroup to use only the slower tier. From that cgroup=E2=80=99s vi=
+ew there
+> is no LRU inversion, but since the fast swap exists and is left unused, i=
+t
+> could still be seen as an "inverse" in terms of usage.
+
+Yes, if you put all the fast tier in one group. It needs to be
+discussed case by case. That is exactly what I am asking for, what is
+your usage case in mind that demands the per cgroup priority. We can
+analyze the usage case and come up with creative solutions before we
+jump to the conclusion. You can, for example, have divided the swap
+space into two groups. A1 & A2 are both fast tiers. B1 & B2 are both
+slow tiers. The one always follows to fill up A to B order using the
+A1 and B1 group. The one wants to fill up the B first then A uses the
+A2 and B2 group. 1 and 2 groups never mix. Then you can still maintain
+LRU order when B2 fills up and starts to use A2, it will not upset the
+A1 LRU because they are different swap devices on different groups.
+
+If you give a more detailed usage situation, what challenge it faces.
+I can give a more detailed solution using per cgroup priority vs
+swap.tiers. That is why your usage case and reason is important.
+
+> In summary, what I struggle to understand is that if the major assumption
+> is that swap operation must always align with service speed, then even sw=
+ap
+> tiers can contradict it (since users may deliberately prefer the lower
+> tier). In that case, wouldn=E2=80=99t the whole concept of letting users =
+select swap
+> devices by priority itself also become a problem?
+
+Yes, if you keep them in one group and mix them. See the above 1 & 2
+group option.
+
+>
+> > > I mentioned already on this mail: what swap tiers cannot do is arbitr=
+ary
+> > > ordering. If ordering is fixed globally by tiers, some workloads that=
+ want to
+> > > consume slower swap devices first (and reserve faster devices as a sa=
+fety
+> > > backend to minimize swap failures) cannot be expressed. This kind of =
+policy
+> > > requires arbitrary ordering flexibility, which is possible with per-d=
+evice
+> > > priorities but not with fixed tiers.
+> >
+> > Let's say you have fast tier A and slow tier B.
+> >
+> > Option 1) All swap entries go through the fast tier A first. As time
+> > goes on, the colder swap entry will move to the end of the tier A LRU,
+> > because there is no swap fault happening to those colder entries. If
+> > you run out of space of  A, then you flush the end of the A to B. If
+> > the swap fault does happen in the relative short period of time, it
+> > will serve by the faster tier of A.
+> >
+> > That is a win compared to your proposal you want directly to go to B,
+> > with more swap faults will be served by B compared to option 1).
+> >
+> > option 2) Just disable fast tier A in the beginning, only use B until
+> > B is full. At some point B is full, you want to enable fast tier A.
+> > Then it should move the head LRU from B into A. That way it still
+> > maintains the LRU order.
+> >
+> > option 1) seems better than 2) because it serves more swap faults from
+> > faster tier A.
+>
+> Option 1 does not really align with the usage scenario I had in mind,
+> since it starts from the fast swap. Option 2 fits partially, but requires
+> controlling when to enable the fast tier once full, and handling LRU
+> movement =E2=80=94 which adds complexity.
+
+Why do you want to fill up the slower device first? You haven't
+answered that question in detail. You are asking for a behavior
+because you already determined you want this behavior. You need to go
+deeper to the root cause why you want this behavior. What is your
+ultimate goal? There might be other solutions addressing your ultimate
+goal without using the behavior you choose.
+
+> Your final suggestion of Option 1 seems consistent with your original
+> objection: that the system design should fundamentally aim at performance
+> improvement by making use of the fast swap first.
+
+You did not give me a reason why option 1) violates your goal. I feel
+that your goal is already fixated on the swap order. That is only the
+solution of your thought process. You haven't shown us how you come to
+that conclusion.
+
+> > > And vswap possible usage: if we must consider vswap (assume we can se=
+lect it
+> > > like an individual swap device), where should it be mapped in the tie=
+r model?
+> > > (see https://lore.kernel.org/linux-mm/CAMgjq7BA_2-5iCvS-vp9ZEoG=3D1Dw=
+HWYuVZOuH8DWH9wzdoC00g@mail.gmail.com/)
+> >
+> > The swap tires do not depend on vswap, you don't need to worry about th=
+at now.
+>
+> I initially understood vswap could also be treated as an
+> identity selectable in the unified swap framework. If that were the case,=
+ I
+> thought it would be hard to map vswap into the tier concept. Was that my
+> misinterpretation?
+
+Your series assumes adopting swap.tiers are likely to get in before
+the vswap does. If that is the case, that problem is for vswap to
+solve. Let's work on this incrementally one step at a time.
+
+> > The per cgroup swap tiers integer bitmask is simpler than maintaining
+> > a per cgroup order list. It might be the same complexity in your mind,
+> > I do see swap tiers as the simpler one.
+>
+> I agree that from the perspective of implementing the main swap selection
+> logic, tiers are simpler. Since arbitrary ordering is not allowed, a larg=
+e
+> part of the implementation complexity can indeed be reduced.
+
+Exactly. We can start with this simple case and address the main
+problem. If there is a special case we need to do the other order, we
+can add them later. It makes sense to have a simple and clean solution
+address the majority of the usage case first. The most common usage I
+see is that, let latency sensitive jobs use faster tiers. Overflow to
+a slower tier if necessary. The latency insensitive jobs just use the
+slower tiers.
+
+> Once again, thank you for your thoughtful comments and constructive feedb=
+ack.
+
+You are most welcome.
+
+
+Chris
 
