@@ -1,254 +1,177 @@
-Return-Path: <linux-kernel+bounces-779777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE0CB2F89B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:47:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCD2B2F8C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4245D6047E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:45:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8411CE112C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DD032BF3E;
-	Thu, 21 Aug 2025 12:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDB931A064;
+	Thu, 21 Aug 2025 12:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pSpcNT4l"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2057.outbound.protection.outlook.com [40.107.223.57])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WHhp+HVG"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B93D3218B6;
-	Thu, 21 Aug 2025 12:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780172; cv=fail; b=nI9IPIf/UxPCXolRn/RT/DFibEmZrY9dzSjs3jE/T+n9TTQMHw2q3i2zMfWzU9ZcKmu1iEjFfdAmHDgNT7et70Yfzmn30VFp26FvDyXCvf+hK3C3rSI18lHto+oVIe/H1gu6jtVnxlE185H9E7ijZV7s8xcB8ESmJQOFnk9eYC4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780172; c=relaxed/simple;
-	bh=9qWPz9nLVFirhHzskzzvtSt1Lj3lzCWroi1kT9C16mo=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=HDOsuAz7K1Fc3MSIqGSal8resS4ywBrBHTFoZe2qMxlodgjSMPL6od4hKQpnarvEIzAe6JJ+Mkcq+C3aLUI3VixujWG7GP+hUMSWCo4zLr31wX+aBPzl+uH895Qph2wgu1ca/k3kspGkwbN/rb+j/l2v8czZTo6zD4CmdVsOKhg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pSpcNT4l; arc=fail smtp.client-ip=40.107.223.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l+Ce9HPNPsojksLcZ3sQuddKmuK001okkhJ7IdwXJDwAdXyC3InjO61JU1dHMNRVtItnEYuQQvJqPN+nwPyV7OW9X3pVxrlL1g0/Rl/yYIepSnUATdR8jfHFIimsJb7qQiCQBAe92sZ9YVp9JOOUSWL3J6pGUBnqpCnktZSjA5OMbrevBqgdHQHJlH0L3pTuJC1a+1Rhwd9X/X+kTqt8MGO/S0GijIedhtvjuA7TYTkQypIv05Ro2Zn++7UYyfbSJ5hSztsxrQjAj1DEhd8zgVphjPSsKmL7JcHIp5WBMa8daxJ3T1rRYXpqwSmUjyMQfKKr5G5mvQCanOyqbTR4MQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VipooqB11ep7EWMCOdd4i+DLXkQOR+JH8YF5M1D8/zg=;
- b=qT8JyIJcYEJy5YM7NjEL4T8sH/VaO1XQWQP61WPRFvJcAPPZuamTbIFDIzsHOr8tfwNnA3FnTKoEmnTBsJp66ntevWQuU3jXeHSoSp5QV5I1eAzTWrtpgJlqIOCja1tpd1uTLjsrX9w6NOeQL1kro5RHPWpT0s6cSvLJgHvOHjsTuPZR2PMWwea++kcRLwtnIUC+Mx4l1iocfWI7BUZFjDbRpMsaHdoh0Q69oDYd0hBm/tI8mvtKoWqMUvp9CunAqXFqldQTRccxcvEFvDyFTqRTtClCqM5JsxmwdaiJoGxNwtjTj7E0DPt7eG+WFl3VIxSbpkpHXGnyCDM6HuZXMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VipooqB11ep7EWMCOdd4i+DLXkQOR+JH8YF5M1D8/zg=;
- b=pSpcNT4lCicc/D1H9iW+NdcWdrzysVmBtOvZXyOAar1P3Db1uZcMxkokKFz55kUd7A072iYf4LTnhl9B8mJ6mWbVRA8Z8GlZX4sdQYPR9X71XU3QaaZbFurru1GpL3NWuauSM8XgL7YFrikWf3Ow/eWVnMB0DIC84tc4TPx49yBdPgCmXhNeSzj0o1zC+foBL71JTxJKL39jQNZYoiTysBSdBomiyCcJtRgKR7yAK8gZZVj5A0peSNua+C/NWv4Rh/2BlnT3EjWnCAOrisHmG8i1/5VuCkh8A8ilV0po27Twep+1D8m+WD3+H9/e7Boa3Rt7u3VGtxWzrZjQhfyYww==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by SJ2PR12MB7961.namprd12.prod.outlook.com (2603:10b6:a03:4c0::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
- 2025 12:42:47 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9031.023; Thu, 21 Aug 2025
- 12:42:47 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Thu, 21 Aug 2025 21:42:18 +0900
-Subject: [PATCH v4 2/2] gpu: nova-core: use Alignment for alignment-related
- operations
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250821-num-v4-2-1f3a425d7244@nvidia.com>
-References: <20250821-num-v4-0-1f3a425d7244@nvidia.com>
-In-Reply-To: <20250821-num-v4-0-1f3a425d7244@nvidia.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- nouveau@lists.freedesktop.org, Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: TYAPR01CA0201.jpnprd01.prod.outlook.com
- (2603:1096:404:29::21) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948CD31985A;
+	Thu, 21 Aug 2025 12:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755780219; cv=none; b=rm3mnjlLTb6HiCbRhTSIYAG3gAWhGs190a/Og1PvouRMJ9rky3b//Wm3SfNXZZe97SKBAz20AQ493l3Hr15hDvXklnKao+OADYsTdVQhqMfMOI8pDMWnZzQ1UUjQcqzX3Sx/1nCHo6iyJ3iysZxn4ezzIliKZN0AoDET5UbdVf4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755780219; c=relaxed/simple;
+	bh=G2/2c80p8n9B1lsiqUL/VHUKEGaBjvzvFKFMlgmgbwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWFekMfYWQ4HDZlF52ipOT1izGkxa7v1c/UoZhO44BgkYTaSMrKG6GuuIslz2XZ8ao8BDHLryp9n6IfilRzZAcD7igH8bRDCTW76Sr3USI5USHVCcSL5G8kg60VyIs1PYrSXIbL0Z43q0X2rVjYA0v92WqsZo4ALdM2Rwq/xEZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WHhp+HVG; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L6xFRI012155;
+	Thu, 21 Aug 2025 12:43:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=d97PCBN2Mxcf1G3G9AAb1UIrmlS+H3
+	GNt0ptuWZnCQY=; b=WHhp+HVGEZd37dzp23AaHYjs5XhRjb4gqo1PgkzYqID8mY
+	nBiJNUnMLrPDgEkjSDBsUhk0OHQd4EhiTl6Opp5v8I3DYRLZNHtjblPuPzA+kG7y
+	GVy9eIASvUk3LD13t0H4kWCsPV1ghHtasS2tI8P2R2ft9q+ECNHAXoTn3hAan88R
+	4wID8bjmeHD7XgGogEM/wXKnSa35vagwkd3mbNtRb7TXhLfhR3DHDRr+GWmdNRrr
+	HB4nJQuUa+hmt+eSC+QXkIZNELTCeTgpkMoKR+7IEbuGgVHH4MoDWDU5zmo7vZnh
+	/X6HUhsZY0LeJK6FAmTHNFq36EjghwIuRmklvyhA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vrhpm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 12:43:32 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57LCbp68002952;
+	Thu, 21 Aug 2025 12:43:31 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48n38vrhpk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 12:43:31 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57LAvdb3024782;
+	Thu, 21 Aug 2025 12:43:30 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48my5w092c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 12:43:30 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57LChQSZ18350366
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Aug 2025 12:43:26 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EE5BE20049;
+	Thu, 21 Aug 2025 12:43:25 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A72AC20040;
+	Thu, 21 Aug 2025 12:43:25 +0000 (GMT)
+Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.155.202.194])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 21 Aug 2025 12:43:25 +0000 (GMT)
+Date: Thu, 21 Aug 2025 14:43:24 +0200
+From: Sumanth Korikkar <sumanthk@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, richard.weiyang@gmail.com,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: [PATCH v4] mm: fix accounting of memmap pages
+Message-ID: <aKcUbInGFUiwCgrw@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+References: <20250807183545.1424509-1-sumanthk@linux.ibm.com>
+ <687b556e-0196-4a38-986a-2e7b0308e03d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SJ2PR12MB7961:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b7a2fa0-e659-4988-528a-08dde0b03b3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U1Mya2s0Wk1uRm1rUnlwTDJpeVJQWDRuOEZNVDBwT0Qzclp6TGhQVmdYdk9J?=
- =?utf-8?B?UDNSVHIzQmUvaG1LQUM1RzNmeWh4WmRDMlduZ1R1MG1FNW0rQ2ZLRDhsRHND?=
- =?utf-8?B?K1JGM05kNkNzVEZrRU9rSElxVkhRYkFJL3ZUV1lES3hZYmVZeHhjWlhNYWwx?=
- =?utf-8?B?bkFJd1dJNnFaQVdtUW5wekZ1bHV1Y21FNnZVclpnRDB1enJVTml0UkpzdG5V?=
- =?utf-8?B?Q2IyQ2p5bHJ5K3ArN0lPbnVlRi9yZ0RsNm9qQm05UnFtTHlFbUYrUmY5Q1Fa?=
- =?utf-8?B?dTJFTVZJdjBJR2FMSTlEWGs4WUNsdksyUWFvVWZLRjFFbU0vZlljN2ErcDFH?=
- =?utf-8?B?R1RpaWtrSlUvQ2Irb2h6aHJMa29Fb1dsWFZudTVSZHdGYlUzczJOSDdnQTJT?=
- =?utf-8?B?M2E5Q3B2SDJPZy9UdytKbVRhZmNmcy8rT1hreFhZVFNRbkI1cUdIOFVzM1NN?=
- =?utf-8?B?N0VBRGxjWHBwSDNBckVpVUtJWVZ6UlJEV3BhYVRHdGJ1dXZjdzZ0OTR1QXRM?=
- =?utf-8?B?NU9ZNDJCSVV0cTBVSE1XTlpPRUxZUysyc2ZGWmtPYWZFL0xXT1BVWjFqMVY3?=
- =?utf-8?B?K2dUaXhwa1A1WGN5elFoTXBiUjFKcG96Z1JYZWtZOVhvSTBrb0tDTlQzeVZz?=
- =?utf-8?B?ZWkrQ2F0OVA1aXlRSkFDR0wzMXk3dDNQLzJsejVpNHVsTFc3MWdCeDBDdE1j?=
- =?utf-8?B?MWhJYUtBNHd2emhwS3h4TGhBTC9vVHZ4VjRhMEt1d1NBNTN3Tlp0d1FJYWJB?=
- =?utf-8?B?Wi81RWIvV0RZY01GOVN6QnR1Vjc5MkJhZ0FuQUVJUi9RWHByak5DeFQvQTZa?=
- =?utf-8?B?ajBzS3hDbDNyL3FDSC8xOHFtTHFrYjlMMzhuaGpPY1RSRkd6eERCWjROcnRS?=
- =?utf-8?B?ZlVwVlA1YjMyTGJYWjZNTUdOdFp0YnhQNFJtWExzZXZBRXgvOWVGUlo0UTRn?=
- =?utf-8?B?cyt1RXJScHE0SG9jTzdnQUZaTjJYNnR1Y01KZ3VrejBtc0FydDgyazRaQzA5?=
- =?utf-8?B?SFdiVzNxUjd5NDJoWlk1MkZkdUFyMW80UWZZOWhjREhYanFkS2lGcUxBM0Fm?=
- =?utf-8?B?NDZsUmVHZzkxSWE1dTFmSU1vS0ZTUFpNV09INko5bVBFWnB5czJVcGpIRVJR?=
- =?utf-8?B?Ung0RTBleTd5YlRxZWpNWUtkQmVKTGd6cjhsQVM3dzBQckcxb1h1VmFMWkto?=
- =?utf-8?B?dkpOcXpPSkNiMC9yMnBjR21oRUNBYWtSaHpEMmZIcjUxNDB6T1hmeW8vQlNZ?=
- =?utf-8?B?Mjl2OWZGZlVtM21UWjNFK0RyNnhNUjJ0ZzJoTjNNOFYySmc0VTZaNWJHNmtK?=
- =?utf-8?B?bjZJeG8yOHJ2cEtVWThUMC9DeG9qRGZYMk5MNksrUTUydnhqamRuMWR5ZjdC?=
- =?utf-8?B?cXpNWTE0QzI2NjB4VXJDTzM4ZG5rZ1daTDBGS0I4K3JQaVlCYkhCRHVGNjhj?=
- =?utf-8?B?ZWZ4R3Y4THNIRU5SUHFIRmV5SWQ2dlBhUXNjcVNBR3VQTUpWVm5qVXFTSDlD?=
- =?utf-8?B?cDZ5RGJwUk04Ni9lRFJqZVl1blkzbWxpMDA1ZHFLTVlLRVVVTWEyQ1hzZDZX?=
- =?utf-8?B?YXlvem9iSGFqK3lxODRKNXR0bWgvRlR5ekR1ODh4R0NXVTRWcE5CeVV6aHND?=
- =?utf-8?B?eUJEOFhkN0JDUGUzN3V5Yk5VTnN6WDBTR0V1ajF1SE9xUXFxNmljY0ZwNUZC?=
- =?utf-8?B?Q0E2NTVFUWhJZDBTMEE3aVkwZFhhejkzdHFvRkpYL0hRVENjWjdoNjRaaHd6?=
- =?utf-8?B?MzhpaDNNWmNpVXlGeGFEM2p4WG1pSEZQd3A5MWpPUDZXOWMxeGN6YXZJNG03?=
- =?utf-8?B?dEN6SzhwTDZYTzAxMWV5OFl3QkV6SEllWUhXU280S1B6YStpT0pjbjRzWXU0?=
- =?utf-8?B?cnJzMW5kTFFQK2c4dVIxb3VVaWRrM2JlbEU2UE5xM1E5aG5ILzg1ZnBlS29r?=
- =?utf-8?B?MlcrVENBZWthWG9VdUl0clhqTUNYWVdrM29aVGd0SDRGRUtIaGlTazFETEl2?=
- =?utf-8?B?bDlNVlVxOGl3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ejE0alNXSi9PZjN2TVFCMzQ2UXNXSVNWSStGSWNEYVVtVXVJSTlRWDJlNnlE?=
- =?utf-8?B?MklUbkZ4R3JrSENXOUJNd0ZhYTcwcXZKNE0zTTJRd0k0bmtiK0k5Qm43ZEVJ?=
- =?utf-8?B?Y3RmRU5xMjkyS3dIcDZQdzlsK2o1bGF1c2E3NGZaREk1Wk9FNmhZREVoQnpX?=
- =?utf-8?B?bnBBcm5KY3pEams1S1JiTGdmb0tyOE9mblJaa1FEdEkzb1Fpa29icjJlSFJV?=
- =?utf-8?B?SDArekpjaEs5WUpYZlVWdGQ0blViZG0xSTBCWkJjM2dvUFJTOFZoeXNycDBU?=
- =?utf-8?B?UFhPRlMxbDlwciszajFXM1J0bjVUM2FqTE9uK01CRHNWWklETGUwK01LUDlr?=
- =?utf-8?B?Ymk1MDFtbnRoU1MyOTFCUTBsTEhpRlpWYXNvOFNzcDBDcmZCOWVoZmZ0dlFH?=
- =?utf-8?B?STh3dzVyaTkzMzVDY2VMM25WSGVUTEIwaDBDMk81RnJlNk1weVl6aTVybEdx?=
- =?utf-8?B?MDdmejhQL0U1L3FXZHhRR1A3NDdVb1RDOTIzRVVJTFU0dXRWbnUxS3Yvdi8w?=
- =?utf-8?B?RkwxejMrd21kVTFCWWlEQloyMytqZ0VRT21nL0x3YUxXMktSTXFFNm9lUTRI?=
- =?utf-8?B?MjFaWkNWZ3FXVjNueUZpd2kvbWVrL3B6RHBEVWxZTHN0UldFSStoZm1FK0Jh?=
- =?utf-8?B?dnowWjdkVjRTUFdaYTJFZmFDbTVFaVd3SkhWVVZ4cGVaMnhyT3ppeWpHRGJF?=
- =?utf-8?B?cWU2Ri92SVZ0MFVXblkrM080OTF0SkVpWkVKMnBNRW5aaDBIMzZaNm4yMnlH?=
- =?utf-8?B?cFFzYTB6MGhBYWIyQWRSN0J2cjhKYnYvSGpMeno5L3VIQ1A2djdLNnN0aGJq?=
- =?utf-8?B?bm9UMnVmT1VOakJjVTNoZWpEWkNoZXBLRG1ScjZlYWVVVnJxRGRWUGRnVW1u?=
- =?utf-8?B?dVA0c0wrOFdIWXdwZ0FUQlhxRDRTendvRzB0WTdPUnBuT3duQTZuSGhaOGFU?=
- =?utf-8?B?ZWMwcG9XRjNPd1h1NXRDWnhvSEkyMmo0bFB0VkhlUFlvSjIwQ2lnOFBqeERQ?=
- =?utf-8?B?YklQc1l3dmJSK0JsSFBnZVhjRzVIR0d4ZUdDOW9TRjFDdXJ4WWVVUERaMzlO?=
- =?utf-8?B?aU03ZE80SDZzcS9JNkh6cTNac21LZFJlRjN2d1BqckhmUFFDYlJjaDI5ek0z?=
- =?utf-8?B?ZUR5NWRISGtoN2pFaE1YTXMwS0doemxyZnFvcHBkakoxUHBqOG1pRG1pblk1?=
- =?utf-8?B?S256Z0tHK3FsYURJUlo2Q05VZlIxR1EvNENSckpRblNCeXVFVjRMZllYZHdG?=
- =?utf-8?B?ZzhwbStzVUQzQ20zNzlsY2Fma2UxaWpsaVhsU2VzQnV5UUdrTkwzN2JjbHV5?=
- =?utf-8?B?bWhFZWdXdk1FR3RPZUhJaEVxODVJaWcvdTN6YkVnTDFYWG1wbmVER1VYVS9o?=
- =?utf-8?B?SDZTWkJ2T000dWp1WHVWRzJZM0xmYTZxeUFoeWxpeG1GejBTelIwNG1rK0FM?=
- =?utf-8?B?emhYckY5N0pET0dOSkIxMWJHemNhcDlQam1pa3BJZHp5UzIrMExvcU81NmVi?=
- =?utf-8?B?RStGSHkxUVcwcFBKSUlKckcvUllhMlZGNGEwSmthcUF1dFRPdk1qOVZKUE5w?=
- =?utf-8?B?R1FEMkZSOWV2cnFZb1FsNjRKemRYb0dEbVVhYnBBS0wyYXhFWXR3eU9iT0p5?=
- =?utf-8?B?OTRvVk9xTjlkNUtiYVlFTWNlMXdmdzhuWVJqblV0NGZqZnRtYWlIcUlkVlpt?=
- =?utf-8?B?WTc5TmxFTFFrOFdzMVRsRGc5MlZlNEdBZFh0MG5hNURxdWRVK3dLT2ZHUGZQ?=
- =?utf-8?B?Y0J5Q1EzSHNGdHZmNU1VSTVaTHVZRFVya0xMeDdxZWFxaXVoREtCMTN3RzdV?=
- =?utf-8?B?ODQreVNDcUVQTytuVktUdExNWTB2R1gzcjRDdm55c1JsMWNGSGNQUm53MEZn?=
- =?utf-8?B?N3IwY3EwRkkxd0p5YVBHN2IrcFNoNkMzUkNOQlI5WWpPZm1MQmk0Vmd3bXBT?=
- =?utf-8?B?UnFONlRTclIzT2lycFBNTHJ1N0J4bDVyRUZ6d01wVEVmTlBFRkZjcG02YnNO?=
- =?utf-8?B?cGI0N1FGVjJDYTNmWmhSdzR4d2c5WkdqT29XeHhJaDJHSHhweUh2Q1VXVDJN?=
- =?utf-8?B?U2hnU1FxRC9KQm5qRFE4QW8vaGo3TExCajJ2VHkxREV5VzZXZnVXdUpUTk1t?=
- =?utf-8?B?VWpSWjhVRCt6N1RrL3dYQXBadkdPWExNOWZCVWpMeXNERVRzbmticDNiMmZV?=
- =?utf-8?Q?IPK+DTFfjsDrmULDIu13B+0bmnINCEMMrg32wxHqSJFI?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b7a2fa0-e659-4988-528a-08dde0b03b3a
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 12:42:47.0412
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sH+whSAxheYsQwLG/TrxCLrO+g9XB22YzZQ92V2Chz79VxsqIJQnkCte2qH822CjxNg/hBRcsF+eoH242+U3sw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7961
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <687b556e-0196-4a38-986a-2e7b0308e03d@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDIyMiBTYWx0ZWRfX029ekrewtJmY
+ ww6QxLB3XPyK7ozqdFd0htWAU+zhYGhrJW8GE5tUvR1O84vO31XihtYybo+RHWn19eaNjWmpVpJ
+ TRrV+iI/iqGOjYqXtlnjHsYWTYny/uIa3q2p9jeIKQbJKL9vwUCnF8cnaYiD2suOolptm0qOt4f
+ Ad4784HoubASlYgbnGcQCt8w7bgIhKkih2hXWEu4JRJxG+nTKqbIW9LAD7oxhtl8/gLe/PiMbcf
+ upoQP17bSUnXOt4CGIpp8SQ/AwswvoZGSOkW8FG9Hy+Hi8HCNCaYVYF7A8/PltAZ2fKr/MkkISx
+ JDPZKacQJOpZIvJT37iMC1hKFMxrgUocKYnO91NijJDkx5DaKa8basqAxmHcj7m6/CF8uzGXCX4
+ U6zrs3/aYks6fWVCl+zdl6P9qe1fuQ==
+X-Proofpoint-ORIG-GUID: tuiJ1kOYy3Fj02YDJPICwUxi5SgNcJEc
+X-Authority-Analysis: v=2.4 cv=T9nVj/KQ c=1 sm=1 tr=0 ts=68a71474 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=ItlAY4iKiLxSNNkFt-cA:9
+ a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: k1Y4_EmX4WIVx7zjsJrzB7zq2DAIfDDd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 phishscore=0 spamscore=0 clxscore=1015
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508190222
 
-Make use of the newly-available `Alignment` type and remove the
-corresponding TODO item.
+> > diff --git a/mm/sparse.c b/mm/sparse.c
+> > index 066cbf82acb8..24323122f6cb 100644
+> > --- a/mm/sparse.c
+> > +++ b/mm/sparse.c
+> > @@ -454,9 +454,6 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
+> >   	 */
+> >   	sparsemap_buf = memmap_alloc(size, section_map_size(), addr, nid, true);
+> >   	sparsemap_buf_end = sparsemap_buf + size;
+> > -#ifndef CONFIG_SPARSEMEM_VMEMMAP
+> > -	memmap_boot_pages_add(DIV_ROUND_UP(size, PAGE_SIZE));
+> > -#endif
+> >   }
+> >   static void __init sparse_buffer_fini(void)
+> > @@ -567,6 +564,8 @@ static void __init sparse_init_nid(int nid, unsigned long pnum_begin,
+> >   				sparse_buffer_fini();
+> >   				goto failed;
+> >   			}
+> > +			memmap_boot_pages_add(DIV_ROUND_UP(PAGES_PER_SECTION * sizeof(struct page),
+> > +							   PAGE_SIZE));
+> 
+> IIRC, we can have partially populated boot sections, where only some
+> subsections actually have a memmap ... so this calculation is possibly wrong
+> in some cases.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- Documentation/gpu/nova/core/todo.rst | 1 -
- drivers/gpu/nova-core/fb.rs          | 6 +++---
- drivers/gpu/nova-core/vbios.rs       | 4 ++--
- 3 files changed, 5 insertions(+), 6 deletions(-)
+In section_activate():
 
-diff --git a/Documentation/gpu/nova/core/todo.rst b/Documentation/gpu/nova/core/todo.rst
-index 48b20656dcb16056db7784fa186f161126aae9aa..89431fec9041b1f35cc55799c91f48dc6bc918eb 100644
---- a/Documentation/gpu/nova/core/todo.rst
-+++ b/Documentation/gpu/nova/core/todo.rst
-@@ -145,7 +145,6 @@ Numerical operations [NUMM]
- Nova uses integer operations that are not part of the standard library (or not
- implemented in an optimized way for the kernel). These include:
- 
--- Aligning up and down to a power of two,
- - The "Find Last Set Bit" (`fls` function of the C part of the kernel)
-   operation.
- 
-diff --git a/drivers/gpu/nova-core/fb.rs b/drivers/gpu/nova-core/fb.rs
-index 4a702525fff4f394b75fcf54145ba78e34a1a539..344cb5d2d919c456212d60d7210667de8041f812 100644
---- a/drivers/gpu/nova-core/fb.rs
-+++ b/drivers/gpu/nova-core/fb.rs
-@@ -3,6 +3,7 @@
- use core::ops::Range;
- 
- use kernel::prelude::*;
-+use kernel::ptr::{Alignable, Alignment};
- use kernel::sizes::*;
- use kernel::types::ARef;
- use kernel::{dev_warn, device};
-@@ -130,10 +131,9 @@ pub(crate) fn new(chipset: Chipset, bar: &Bar0) -> Result<Self> {
-         };
- 
-         let frts = {
--            const FRTS_DOWN_ALIGN: u64 = SZ_128K as u64;
-+            const FRTS_DOWN_ALIGN: Alignment = Alignment::new(SZ_128K);
-             const FRTS_SIZE: u64 = SZ_1M as u64;
--            // TODO[NUMM]: replace with `align_down` once it lands.
--            let frts_base = (vga_workspace.start & !(FRTS_DOWN_ALIGN - 1)) - FRTS_SIZE;
-+            let frts_base = vga_workspace.start.align_down(FRTS_DOWN_ALIGN) - FRTS_SIZE;
- 
-             frts_base..frts_base + FRTS_SIZE
-         };
-diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
-index 50fbea69fc0038255a0a2b8f7bad57cd55eb65a2..9b81c39b11cea91a93359a239078576165a07200 100644
---- a/drivers/gpu/nova-core/vbios.rs
-+++ b/drivers/gpu/nova-core/vbios.rs
-@@ -10,6 +10,7 @@
- use kernel::error::Result;
- use kernel::pci;
- use kernel::prelude::*;
-+use kernel::ptr::{Alignable, Alignment};
- 
- /// The offset of the VBIOS ROM in the BAR0 space.
- const ROM_OFFSET: usize = 0x300000;
-@@ -177,8 +178,7 @@ fn next(&mut self) -> Option<Self::Item> {
- 
-         // Advance to next image (aligned to 512 bytes).
-         self.current_offset += image_size;
--        // TODO[NUMM]: replace with `align_up` once it lands.
--        self.current_offset = self.current_offset.next_multiple_of(512);
-+        self.current_offset = self.current_offset.align_up(Alignment::new(512))?;
- 
-         Some(Ok(full_image))
-     }
+/*
+ * The early init code does not consider partially populated initial
+ * sections, it simply assumes that memory will never be referenced.  If
+ * we hot-add memory into such a section then we do not need to populate
+ * the memmap and can simply reuse what is already there.
+ */
+if (nr_pages < PAGES_PER_SECTION && early_section(ms))
+        return pfn_to_page(pfn);
 
--- 
-2.50.1
+The patch ignores the accounting here, based on the comments
+described above for partially populated initial sections.
 
+memmap = populate_section_memmap(pfn, nr_pages, nid, altmap, pgmap);
+if (!memmap) {
+        section_deactivate(pfn, nr_pages, altmap);
+        return ERR_PTR(-ENOMEM);
+}
+memmap_pages_add(DIV_ROUND_UP(nr_pages * sizeof(struct page), PAGE_SIZE));
+
+only bookkeeping for newly allocated memmap is performed.
+
+Also before this patch, __populate_section_memmap() did memmap
+accounting for !NULL usecases. This patch also does similar change,
+but covers memmap accounting for both CONFIG_SPARSEMEM_VMEMMAP +
+!CONFIG_SPARSEMEM_VMEMMAP usecases and memmap accounting based on
+allocation resource. 
+
+Let me know, if this sounds right.
+
+Thank you.
 
