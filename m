@@ -1,100 +1,213 @@
-Return-Path: <linux-kernel+bounces-779033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F158B2EE30
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:26:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D45B2EE32
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B94A91C806A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:26:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F34007BC55A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9B62D6E61;
-	Thu, 21 Aug 2025 06:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614A5243374;
+	Thu, 21 Aug 2025 06:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UHkBUtdl"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="D08Ubbdg"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE559199FD0;
-	Thu, 21 Aug 2025 06:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F712C21E6
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755757587; cv=none; b=P5C9atDb/L4L78TOskqsKj+HiV7M07Gt2eQDcqTGrScy20CB4Oj2f0um4RyeG9voMX9TVDA3pL7bnnWw1uPBv54LhcbJEBw0x2VD19f34QRSHLNl2tWnQNmfyUoWhVqeDEwSjKK8o/NuBt5XQhk6V1iN7R1O1fk3pEvBC0zZXwo=
+	t=1755757597; cv=none; b=fsTlH92JmTovd4QsLygQ2aWHmMetqEkeUsDTftw4RuGWWaMlh8Ik7CPOg3VWH4hyp0ZinBGFYs2RMaEqrUEvVsQWKxSdwOl1Uf1p1WNxTCuY/AU+/YOCkK1jj5ycH8s+GzwwwNmiSjYVt5bN+J8fdgQs0ikPQ+Jla0q8O3LNkko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755757587; c=relaxed/simple;
-	bh=T54dbVxZQ4XI8T3aS3SwX7vh/BCJNqs/4kn27QOpeL0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a474gNAPR/yr8qTUJsABIFCAGTB+tkBcT/eaumH6JrgqOAZ9fLKJvfsU6PufV89bBPhZiXrObP1AlfOhyc4tVDPrZiHRZfDwUC8h+Jb5Ex7LeFmtK7ZQGnHySPC4fFIQvcbZxtRYLLi9lYU+tpKMWo7EVeY4jOM25e+UjM0yYSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UHkBUtdl; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755757581; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=0wpP37FFrGwfkc4hERAmWFOQlCcGuSri8vUf11HqOEQ=;
-	b=UHkBUtdl0ZKailM1p6B2xKCWEXZ2LuKShagYeDdKBV8pqRISQ6GZOlkhjFSxY1N2LDR2fTIJqCHck3zP9dw99GQBlzkGjIGXh8/VVIsLfK+GtNT4LC1N8H2Lp5o44VXXKIwK7H0MiDZmN2D9ImjK1dc5WCTFVt3HCGtBH4ue6UQ=
-Received: from 30.221.115.63(mailfrom:chengyou@linux.alibaba.com fp:SMTPD_---0WmEy4iA_1755757579 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 21 Aug 2025 14:26:20 +0800
-Message-ID: <176d4590-6cfd-8a39-a855-ee21105496b5@linux.alibaba.com>
-Date: Thu, 21 Aug 2025 14:26:19 +0800
+	s=arc-20240116; t=1755757597; c=relaxed/simple;
+	bh=Xr7oeQg2iR1u1golXvnoVAc2GNllf1OEPosZeEe0V6k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tcifm8MOM210budsGQBPr/qTZqJNNrLukMqmNZZqEIsT67e+uUoRpKsNAPDZSlNmldjBEG9bWCj0hYNn/0GQ42UpBGx/lvSKDVewB/EOUnIF/9rhqAZEHh+jOARsMqSmo9F8qzNbmQoCcOAvtXBK9lTgbAKT4mijvTve31vwr6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=D08Ubbdg; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-333f8ef379dso5584891fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 23:26:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1755757593; x=1756362393; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dvy5yQKV8vAz0HPfmKCuQpd8fq7qI9/IN8Rzy62sQac=;
+        b=D08UbbdgV2CbehXqdupIrT7HL5abY6+SlW5cVLVmWxIQdaK3RAwj0T7Zb6ihXTidx3
+         NKd2KKX+7BZAKit3xg8xEigYnc/ED6gsjUt711/R0RUr+gAFM+e62wCgwZzkk7kUFPsM
+         6NjNsF/GYheQWN36jYTqn95z6g6m57XgK41qlOmMGBRxzwuGrg2GFyPsOugp42vr40c/
+         U7d6egGRKo4zNILi5pwv+xuax9n/sqakHzpxFFHpF7o1tf2RhiyvDKjZPwzF9CgF5YvC
+         xf2x9aWm5Q8gpeiJlYg8i2n1OrouFjFa7jbgTLMmQjIQiRyZ8G/iapx+HyfFyu+zO7ir
+         fP2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755757593; x=1756362393;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dvy5yQKV8vAz0HPfmKCuQpd8fq7qI9/IN8Rzy62sQac=;
+        b=X05XxKbFtPtg65EjZL2Mho9IaYD0nxTMJgvUYUOhLNLLIG/aictDaiIwcUlCcbajP0
+         bB7mVFm2TD/atQay7rhxGR1bgIY3ykKhLOYbMwjYuWdpw1Ess/NYb3xZ6b89z+dKYnMO
+         UnpDNJaG37SVsyjDx/pHxGqGYuqG7MRSOGeT7xW74d5cqbCnfa84I2mieYgsPtqABfIh
+         4TlttiV6c4LZlj1A4W6FIIPa3/v2Zp1jaYmXzSkDFpKj4rzINN8TWMFUufT/hJ4vehbc
+         EpLOVJO+vrlUXY8xn+1puhEPk3QN3qrJbtp3ruN7RoFXYxPpugBv7lQDJH/GFLv/eYGo
+         X+Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWgkyyK1Sn3yZtA0vEQv/3AonwzrTk5CIh2R0bU7yo0iPqK6rs78L5Xumbx+rnx7sT7zzYSK3DbF+SCBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2PqC5U5/L29QSTKNiqHOQjExtqlpXbetdfQzU7ud4L7pdD0d2
+	KpyF4dJpMuQulBn1sBsWYJOkbOLdhCOJiWbTfje4Wu21MH5VfkxLsT1vA/oe0UbcdYfLtgUZVxE
+	WHUBxv+M2sebv+bsrwojW3dulhEYOpiGO8s4WGpQuAA==
+X-Gm-Gg: ASbGncsYJ+JbufH7Ks4km6sNJTCbre77BJVLUavhrAEeksellwg1nbonUXsrsiotRdx
+	RSOBJ3jeytgghABhRcaekVRIkFkl3CC0Tq0PvgG8dmKMGrx1TqZRC1liCidzkhy+MAbhx2siQHw
+	Cwe1nIZxFks0rg/mUCIowyiaw7dAdfSFHo6bRpAsOcWLdvf6WJ6+Cp2Ci7sE29jbhheu69M+ZzD
+	/yyEIRe
+X-Google-Smtp-Source: AGHT+IEmIpMzL2p0sePSaEQtsWGN7GzTW2rQrcL+IxbKSsSK5y/EXzsfv2bar47BDvSltEwnO/2h5O/l0DwBJFe20eA=
+X-Received: by 2002:a05:651c:2352:20b0:333:b6b1:a151 with SMTP id
+ 38308e7fff4ca-33549e43bd1mr2751101fa.7.1755757593442; Wed, 20 Aug 2025
+ 23:26:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.1
-Subject: Re: [PATCH] RDMA/erdma: Use vcalloc() instead of vzalloc()
-Content-Language: en-US
-To: Markus Elfring <Markus.Elfring@web.de>,
- Qianfeng Rong <rongqianfeng@vivo.com>, linux-rdma@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kai Shen <kaishen@linux.alibaba.com>, Leon Romanovsky <leon@kernel.org>,
- Liao Yuanhong <liaoyuanhong@vivo.com>
-References: <20250820132132.504099-1-rongqianfeng@vivo.com>
- <e8a8404b-b524-4d9e-b0de-d743acf8d7b4@web.de>
-From: Cheng Xu <chengyou@linux.alibaba.com>
-In-Reply-To: <e8a8404b-b524-4d9e-b0de-d743acf8d7b4@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250814155548.457172-1-apatel@ventanamicro.com>
+ <DC5HEJRMZ84K.34OPU922A7XBE@ventanamicro.com> <CAK9=C2X8-DBi7qQ87kMA0AiVdiFH0_4L4mzzZzbeCg2eiNm8Qg@mail.gmail.com>
+ <DC6DLP13J0LA.XW9J3XFBCM1Y@ventanamicro.com> <CAK9=C2VA2jswYm_yxYsCaGKUkJT46rxUH-6OKdsApMZ8nhkrQw@mail.gmail.com>
+ <DC6L3PG5HP48.2J8TC1JZHMJVO@ventanamicro.com>
+In-Reply-To: <DC6L3PG5HP48.2J8TC1JZHMJVO@ventanamicro.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Thu, 21 Aug 2025 11:56:21 +0530
+X-Gm-Features: Ac12FXyapBEN33sNaasfC13xpNgk4ysy5dm8Jpk-um4MizahmUqGfRu3V32Rwxw
+Message-ID: <CAK9=C2Uk-mL251XUVNtbU52KFuu+=sUR5-_=haAHmTACVDBQhA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] ONE_REG interface for SBI FWFT extension
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: Atish Patra <atish.patra@linux.dev>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-riscv <linux-riscv-bounces@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 19, 2025 at 11:05=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcm=
+ar@ventanamicro.com> wrote:
+>
+> 2025-08-19T21:22:27+05:30, Anup Patel <apatel@ventanamicro.com>:
+> > On Tue, Aug 19, 2025 at 5:13=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rk=
+rcmar@ventanamicro.com> wrote:
+> >>
+> >> 2025-08-19T12:00:43+05:30, Anup Patel <apatel@ventanamicro.com>:
+> >> > On Mon, Aug 18, 2025 at 3:59=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 =
+<rkrcmar@ventanamicro.com> wrote:
+> >> >>
+> >> >> 2025-08-14T21:25:42+05:30, Anup Patel <apatel@ventanamicro.com>:
+> >> >> > This series adds ONE_REG interface for SBI FWFT extension impleme=
+nted
+> >> >> > by KVM RISC-V.
+> >> >>
+> >> >> I think it would be better to ONE_REG the CSRs (medeleg/menvcfg), o=
+r at
+> >> >> least expose their CSR fields (each sensible medeleg bit, PMM, ...)
+> >> >> through kvm_riscv_config, than to couple this with SBI/FWFT.
+> >> >>
+> >> >> The controlled behavior is defined by the ISA, and userspace might =
+want
+> >> >> to configure the S-mode execution environment even when SBI/FWFT is=
+ not
+> >> >> present, which is not possible with the current design.
+> >> >>
+> >> >> Is there a benefit in expressing the ISA model through SBI/FWFT?
+> >> >>
+> >> >
+> >> > Exposing medeleg/menvcfg is not the right approach because a
+> >> > Guest/VM does not have M-mode hence it is not appropriate to
+> >> > expose m<xyz> CSRs via ONE_REG interface. This also aligns
+> >> > with H-extension architecture which does not virtualize M-mode.
+> >>
+> >> We already have mvendorid, marchid, and mipid in kvm_riscv_config.
+> >
+> > The mvendorid, marchid, and mipid are accessible via SBI BASE
+> > extension but not any other M-mode CSRs hence these are special.
+> >
+> >>
+> >> The virtualized M-mode is userspace+KVM.  (KVM doesn't allow userspace
+> >> to configure most things now, but I think we'll have to change that wh=
+en
+> >> getting ready for production.)
+> >
+> > The RISC-V architecture is not designed to virtualize M-mode
+> > and there is no practical use-case for virtualized M-mode hence
+> > WE WON'T BE SUPPORTING IT IN KVM RISC-V.
+>
+> Oh, sorry for the misunderstanding, I'll be clearer next time and talk
+> about implementation of the supervisor execution environment.
+> KVM+userspace provides SEE to the VS-mode, which is to VS-mode as what
+> M-mode is to S-mode, hence I called KVM+userspace a virtualized M-mode.
+>
+> > FYI, the KVM ARM64 does not virtualize EL3 either and it is
+> > already in production so please stop making random arguments
+> > for requiring virtualized M-mode for production.
+>
+> Yeah, I agree that we don't need it, I just had to provide so many
+> examples in the previous discussion that I went into quite niche cases.
+>
+> The increased flexibility is similarly useful for more important cases:
+> we can't avoid "virtualized M-mode"/SEE, but we don't have to completely
+> implement it in HS-mode.
+>
+> >> For general virtualization, we want to be able to configure the
+> >> following behavior for each exception that would go to the virtualized
+> >> M-mode:
+> >>   0) delegated to the guest
+> >>   1) implemented by userspace
+> >>   2-N) implementations by KVM (ideally zero or one)
+> >>
+> >> We can have medeleg, and another method to decide how to handle trappe=
+d
+> >> exceptions, but it probably makes more sense to have a per-exception
+> >> ONE_REG that sets how each exception behaves.
+> >>
+> >
+> > No pointing in discussing this further since we won't be supporting
+> > virtualized M-mode.
+>
+> I understand, back to the current series:
+>
+> I think we need to provide means with which userspace can control which
+> FWFT features are enabled, because KVM just exposes everything it know
+> and hardware supports right now:
+>  1) Migration between different systems would be hindered
+>  2) We couldn't add more FWFT features without breaking the SEE
 
+The FWFT features are defined to be backward compatible by SBI spec
+and these features only affect after Guest/VM has configured them. This
+means if a Guest/VM is not aware of SBI FWFT then it won't configure
+FWFT features and Guest/VM should still work fine.
 
-On 8/20/25 10:34 PM, Markus Elfring wrote:
->> Replace vzalloc() with vcalloc() in vmalloc_to_dma_addrs(). …
-> 
-> 
-> 
-> …
->> +++ b/drivers/infiniband/hw/erdma/erdma_verbs.c
->> @@ -671,7 +671,7 @@ static u32 vmalloc_to_dma_addrs(struct erdma_dev *dev, dma_addr_t **dma_addrs,
->>  
->>  	npages = (PAGE_ALIGN((u64)buf + len) - PAGE_ALIGN_DOWN((u64)buf)) >>
->>  		 PAGE_SHIFT;
->> -	pg_dma = vzalloc(npages * sizeof(dma_addr_t));
->> +	pg_dma = vcalloc(npages, sizeof(dma_addr_t));
-> …
-> 
-> How do you think about to adjust also the size determination?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.17-rc2#n944
-> 
-> 	pg_dma = vcalloc(npages, sizeof(*pg_dma));
-> 
+>
+> The (2) is similar to how we must set ".default_disabled =3D true" to
+> current FWFT, because KVM can't be changing the SEE for userspace.
 
-Hi Qianfeng and Markus,
+Not needed. We only keep an SBI extension disabled by default if
+it is being forwarded to KVM userspace (e.g. DBCN, SUSP) because
+KVM userspace needs to opt-in for such SBI extension handling. In other
+cases, the SBI extension is enabled by default and KVM userspace can
+explicitly disable it for Guest/VM using ONE_REG interface. This is true
+for ISA extensions as well.
 
-Both your changes look good to me.
+>
+> Do you want me to send a patch that inverts the default, to make all
+> future SBI extension start as disabled, so we can't easily repeat the
+> mistake in the future?
 
-Qianfeng, Could you send v2 including Markus's change?
+No need to send any patch. Please focus on your current assignments.
 
-Thanks,
-Cheng Xu
-
-> 
-> Regards,
-> Markus
+Regards,
+Anup
 
