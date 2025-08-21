@@ -1,113 +1,156 @@
-Return-Path: <linux-kernel+bounces-780724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E1C1B30861
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:32:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF5FB30865
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E1C7720A88
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:31:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9966D1CC6CD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8822C21DA;
-	Thu, 21 Aug 2025 21:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B622D47F5;
+	Thu, 21 Aug 2025 21:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LW9mUdlD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h9B1gb/R"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5F622172C;
-	Thu, 21 Aug 2025 21:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A02393DC3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 21:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755811856; cv=none; b=s0VsfRIjDCOY9SSjlkpK6ff8nVJDr/AU6M4B5Js4BL9F7cNWKnWLRMUas6VI7yBRfzSHIm1c0A6dGKGiF6gpiLrwIul4YrTlF3Yh4N4i+g1lfQDBZR5TFwaF5zg/v6BVNglMxcFG5vsnMjhRbEmXmPPbBcMC6zLK9gtat8yFUgU=
+	t=1755811857; cv=none; b=ILWzOHuUqLIalAL4hNe6Pnj/q1M+wD7GX4vnRfFakOPHc0DyyQWH7i6ayIZ7CbU0TvznOoGED3/7KjPBed3XYnnff3VREnUf4Twpu/Opsop5rIyRn1g56LmbcaWX+wUIUjKLT+dXYqQPdrCuirTRqCgkesLDBDdDzkKg/Q10Eqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755811856; c=relaxed/simple;
-	bh=/ty/vVkt74iKPXOsP7kI5bxNFsiih+atHcD6arkGgaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BYUCP+Fb1gzul0+/cmLnbsFVd9u7Y6CsF0wN/gaZYge6bBkjQf0rQuXELiqHjmtqt7gA1BYVFMqspyhDEjaItbWUCMHnFzkbt7CRLfWf15Qtib8tfyafloNS6Rp/qUgHdvIPcj22YcNFukgPrlw+/00TH/eJ8ocy+RqqKEks5xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LW9mUdlD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC2AC4CEEB;
-	Thu, 21 Aug 2025 21:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755811855;
-	bh=/ty/vVkt74iKPXOsP7kI5bxNFsiih+atHcD6arkGgaA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LW9mUdlDSGZ+grjKxbSX+AifJztORJQOb1dSeDbgHwiwmQZNgdGl5UHApou6TLyQ/
-	 FvpG+3V9fQxQ9Kg6rkc8EssNSNWz2GXdmwiqS7oT7vf/lO+0PZJoM7iiBlFDDYffMC
-	 vSLssyLMUr6hA92WxQwpM+P0a/lamHbRXvbiDSbO3+l1BAEQDtl8UhdIMQHhLqHMS8
-	 DUH3juTT7zbBRixz0rsprBs/UNsFmXyA6TYQ57HPmYQ/0Uft5Pz10zdO58Dvro8sR/
-	 lHSitmXV0Eh7BkhJWEprfSOwqAG6KgGtgbfTT8wGKoNiBquFvVtGUuLZr0plL98/Vf
-	 6PEyCVfjLtC8Q==
-Date: Thu, 21 Aug 2025 22:30:50 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Nikola Ivanov <zlatistiv@gmail.com>
-Cc: perex@perex.cz, tiwai@suse.com, shuah@kernel.org,
-	linux-sound@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] selftests/alsa: remove 0/NULL global variable assignment
-Message-ID: <f7ff446f-2a9e-49dc-af7a-6e4c76803471@sirena.org.uk>
-References: <20250821200132.1218850-1-zlatistiv@gmail.com>
- <9c310ab7-0f0b-412f-8df7-71730a2d2caa@sirena.org.uk>
- <CAHjv_as7m7UbSLAPU6hX_=tAvLZYR_7Q=1n+Xq-nW-6OJ237PA@mail.gmail.com>
+	s=arc-20240116; t=1755811857; c=relaxed/simple;
+	bh=l7JTVyDBrwzdzqWLgh5q55rpbseIAgVg8/axsZmM+FE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=bwhUHwKEXr6AMqPSKUyFiiaNK4cRyZe0FEmAEHdhXmUCsaSvnPeY+1aXrRh5vcUhkdghincKEFLHf4e3cN1pyVAyDeMCLTWexD4WFbJ47JxoFxq0c/ruc+SFEl8GYjV35BEtiPLxcyp6XglXgHbgchAujxNL5sr0L03dcoaEgSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h9B1gb/R; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2449b4f316fso11813475ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 14:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755811855; x=1756416655; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4UshrE7OOl7JjfXKttbRRCQ1Mj74LXDuZR7lXZXts9I=;
+        b=h9B1gb/RvusNBKlEwDjwOIvdrbrxs2yA/FSOV3L7NNt7wz0grTETg7aU3o8T/YV4Py
+         AbS8H9NaMeIRczk/iF6UbVhZdTlnyq0SRDvNCNIfHZjBCJhpBSmYVPjY4z2A0UU2w8o+
+         yvq8LrNb5+4kUbZXvQy6yFEp7J9aGt3JOq1KvQUaToF6VTIgiiu9BvnUY7XmynJNzdTk
+         Vb6dSYsExv+D29QHidTZb4Nu7+DS+khgZ047pETipK53xgYlkdkDSIQtufGtzQBbdKnR
+         2wMI7xH2W8tezta/HWfJVxPzdiw9dx7oyjVkC1f8m1xqFoFaFhwjPwgS9w7cuPdDqmQo
+         yoSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755811855; x=1756416655;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4UshrE7OOl7JjfXKttbRRCQ1Mj74LXDuZR7lXZXts9I=;
+        b=Es+mSvlP4MRhF2A3myLHgE9wZzSV8QFubp3p+D9T5WW4vYhlt74kc7X+JqrpJaLnuw
+         jULckdlERLm6yR6GOvSMvMYZpq/e4S7kaJNCtF5bEujcIHtwkI8A9aIWUPw2WQkgjccb
+         r8Sl37ZwGM3UvKCAbvMBwPcVHgMmxF17RGtWhBDgn+z2+U5a0w2+IOg+GsIFmFirBkYm
+         civr0bdlmSJg+eFvV/t7ckbUaGEW3vAClrPz1N9U2r6tP7O6k5DZHEV2DQW3+SE1xJJT
+         Qr/S43LzupOdq1rKAAc3s6xZnaXem4pKRfhS3WuclwTH+vIBszHQPXh5PAoCcMJ3dPBx
+         f2MA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEOJoEM0W++dQSSBR02slGxYTKGybsiBDDl+C6E1bRlVyETa523YfsQY4e6eeeHpimNA9KMrDuCOHKZSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV91MzF9rlb1cssOhPbZcYlvGMgQPF+pBSABMoful3XnAnsPGR
+	ZOsfAB3RZvk5wmAHNOHklyCZUNVD3hIoZrirTLd1EgeF2bEk8ppv/jDbsjynQ9sbSRC7QUQrWnu
+	MLCUsQQ==
+X-Google-Smtp-Source: AGHT+IH9/+s14JjolRiI8pQgplitlbopysM6BqPdLF/bJGELfeS3x0vhBgc0qhEDQ4A+J2ImucEeDwEN7JU=
+X-Received: from plbjy8.prod.google.com ([2002:a17:903:42c8:b0:240:3c5f:99d8])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d505:b0:242:a4f4:6b7d
+ with SMTP id d9443c01a7336-2462ef20675mr9150355ad.28.1755811854925; Thu, 21
+ Aug 2025 14:30:54 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 21 Aug 2025 14:30:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wXnrCk0mND4j2nmE"
-Content-Disposition: inline
-In-Reply-To: <CAHjv_as7m7UbSLAPU6hX_=tAvLZYR_7Q=1n+Xq-nW-6OJ237PA@mail.gmail.com>
-X-Cookie: Warp 7 -- It's a law we can live with.
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
+Message-ID: <20250821213051.3459190-1-seanjc@google.com>
+Subject: [GIT PULL] KVM: x86: Two KVM fixes and a selftest fix
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
+
+Please pull a few small KVM x86 fixes, along with a rather ugly selftest
+fix to resolve a collision with linux/overflow.h.  Sadly, my attempt at a
+less ugly fix fell flat, as trying to share linux/overflow.h's definition
+doesn't work since not all selftests add tools/include to their include path.
+
+Unrelated to this pull request, shameless plug for the guest_memfd mmap()
+series[1].  We'd like to get it merged sooner than later as there's a bit of a
+logjam of guest_memfd code piling up.  And I've promised others I'll yolo it
+into kvm-x86 at the end of next week if necessary :-)
+
+Thanks!
+
+P.S. the guest_memfd mmap() series needs one minor fixup in patch 23[2]:
+
+diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+index b86bf89a71e0..b3ca6737f304 100644
+--- a/tools/testing/selftests/kvm/guest_memfd_test.c
++++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+@@ -372,7 +372,7 @@ int main(int argc, char *argv[])
+         */
+        vm_types = kvm_check_cap(KVM_CAP_VM_TYPES);
+        if (!vm_types)
+-               vm_types = VM_TYPE_DEFAULT;
++               vm_types = BIT(VM_TYPE_DEFAULT);
+ 
+        for_each_set_bit(vm_type, &vm_types, BITS_PER_TYPE(vm_types))
+                test_guest_memfd(vm_type);
+
+[1] https://lore.kernel.org/all/20250729225455.670324-1-seanjc@google.com
+[2] https://lore.kernel.org/all/aIoWosN3UiPe2qQK@google.com
 
 
---wXnrCk0mND4j2nmE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-On Fri, Aug 22, 2025 at 12:17:14AM +0300, Nikola Ivanov wrote:
-> On Thu, Aug 21, 2025 at 09:49:29PM +0100, Mark Brown wrote:
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-> > > -int num_cards = 0;
-> > > -int num_controls = 0;
-> > > -struct card_data *card_list = NULL;
-> > > -struct ctl_data *ctl_list = NULL;
-> > > +int num_cards;
-> > > +int num_controls;
-> > > +struct card_data *card_list;
-> > > +struct ctl_data *ctl_list;
+are available in the Git repository at:
 
-> > Nothing now sets initial values for these variables so they all have
-> > undefined values which is buggy.  The code is relying on the default
-> > values.
+  https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.17-rc7
 
-> Checkpatch reports it as an error, it looks to be part of the C
-> standard that all compilers must initialize globals to 0.
-> Though I suppose it helps with readability to see
-> the num_ counters assigned 0.
+for you to fetch changes up to dce1b33ed7430c7189b8cc1567498f9e6bf12731:
 
-Do you have a reference there, note that these are just plain non-static
-variables?  I wouldn't trust checkpatch for anything that isn't kernel
-code (and even there it's got issues).
+  selftests: harness: Rename is_signed_type() to avoid collision with overflow.h (2025-08-20 08:04:09 -0700)
 
---wXnrCk0mND4j2nmE
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------
+KVM x86 fixes and a selftest fix for 6.17-rcN
 
------BEGIN PGP SIGNATURE-----
+ - Use array_index_nospec() to sanitize the target vCPU ID when handling PV
+   IPIs and yields as the ID is guest-controlled.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAminkAoACgkQJNaLcl1U
-h9Ch0Qf7BQo2dqPlUT7IzMvCZC9WzUrMkweHu+WVhf8d5Zkyb0EIaj1SuQqcxCxN
-030Alv6gWo+vWae3AOV+uRCfZ23AC4sATuUdHXTP2rq2pD5rWGhOOw04GcItAgnU
-I2Hso7PI/VvVh83VeGfR/rtgJc1+EcVzkOUnCz1Zbmy8rxDJlhxRiWZr9wb+OaZQ
-uEbP247E29lUdKuG1enVqcxAy6qedKa+zfjwuFPs9M1Jsr2vMkyLyiOBcQFwpYDo
-OhF//Lb5chZrQszhr1RYuF5nEjuJYueKumw7IqxZkUwDToUxSPa0c9gBtCDCrsPl
-JnwKwwjDjBV0EC+n94ryHvctoFxXvQ==
-=qDLL
------END PGP SIGNATURE-----
+ - Drop a superfluous cpumask_empty() check when reclaiming SEV memory, as
+   the common case, by far, is that at least one CPU will have entered the
+   VM, and wbnoinvd_on_cpus_mask() will naturally handle the rare case where
+   the set of have_run_cpus is empty.
 
---wXnrCk0mND4j2nmE--
+ - Rename the is_signed_type() macro in kselftest_harness.h to is_signed_var()
+   to fix a collision with linux/overflow.h.  The collision generates compiler
+   warnings due to the two macros having different implementations.
+
+----------------------------------------------------------------
+Sean Christopherson (1):
+      selftests: harness: Rename is_signed_type() to avoid collision with overflow.h
+
+Thijs Raymakers (1):
+      KVM: x86: use array_index_nospec with indices that come from guest
+
+Yury Norov (1):
+      KVM: SEV: don't check have_run_cpus in sev_writeback_caches()
+
+ arch/x86/kvm/lapic.c                        |  2 ++
+ arch/x86/kvm/svm/sev.c                      | 10 +++-------
+ arch/x86/kvm/x86.c                          |  7 +++++--
+ tools/testing/selftests/kselftest_harness.h |  4 ++--
+ 4 files changed, 12 insertions(+), 11 deletions(-)
 
