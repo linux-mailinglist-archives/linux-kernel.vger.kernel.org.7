@@ -1,217 +1,159 @@
-Return-Path: <linux-kernel+bounces-780454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E255BB3020C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:28:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A4BB30211
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85F01189103E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:29:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83C90B62B08
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 18:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7983634321C;
-	Thu, 21 Aug 2025 18:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BEB4343D66;
+	Thu, 21 Aug 2025 18:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ggqy1sN5"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H2KFGkXW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537D525B30E;
-	Thu, 21 Aug 2025 18:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39948341AA1
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 18:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755800928; cv=none; b=LO/5fMkjxE+t6HiZFFgucPOBYZdNwdKDnW+U3EzFngGpP7XAmmm7++EsDYGKJ5nP7w8yW5A5tElZQSN5lJ4Bor/5fnOgxyQ2gMCOjowJAU2BwUSTdBBEf35/XWPQwFUGJHPG83b9np38PfpCNaWEHNznfkasZ60jUofgRC0o1io=
+	t=1755801003; cv=none; b=ag8IqSdtiO13+18PLxb/HDxyWDbntIDmoB0Tw0LH1n3VA4H0tz9VEEeZz19mC5D0vI+kynvLQvxvZuPhqp30TmZUQiwGokSgR2OvhKNIeFInT/pGSHisv9Ag43Fw37p9BKFzhxX/7cBIq77C9EoKCdkyj+EOeF96qRN/8ZNF8Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755800928; c=relaxed/simple;
-	bh=irrCb5oJOWOd724NogNnH/LuopoDXINCIHXq8vhoRVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s7QayJJPAVgWHsAV3IDVt14jS8i2Xq4uAoZ2eBs8g11QU323cf3UjvCHnsZo5r3PiqvMnFKiYGd2+6T0gmM9JnhEPB+PWPzlVpPN8a7HgZLU/YSY26nRTEmsg1PHZ9vCqGBjcUecVEyRaWPhjLM/WioG/o2LCf0ACtXef6Sdp+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ggqy1sN5; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b472fd93ad1so925624a12.0;
-        Thu, 21 Aug 2025 11:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755800926; x=1756405726; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oRMXBc3KQplXBAbVSw/VgjpqcIwybUMzF6DaguqJcQk=;
-        b=Ggqy1sN5+iuGQQ3yqoV4EYezixQsuyHCM9kZJG2cW5zq+3I6wFmdW5RNWg+/GSR7Xx
-         niOo95VWr2oZwJ/7pPfI6rbksmv1myNb1OuSwAVDVHf/DsampCvH2qDu6QPDqZ82nTCa
-         HgUFm41z6t11ElWyZvGNPORuHtGExX3XHlSshqMR6gWgd84k1h6F7Z4wY1K2xuKtLDMn
-         AMhcUNB/PSX3uF2R/znTh1rME1D7vdZI+E/yfzUUD5nOk2BvX4lHJDgkXIns4OTo9/UU
-         o2JOVAVi0daEWTnmB/f95XKKh6qBH3gPKvUemCvv1/c9Wder6IT7ZsGKU3qylfuJj5Ml
-         7ZuA==
+	s=arc-20240116; t=1755801003; c=relaxed/simple;
+	bh=ybiNjcXgyPDUVFsLBLcWU7xqEVKtRmFUSuJNCZp1LJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KUMGaUdVX2wZLxyNGCObW8g0ShuthWG6ICrWC2KGJ+WgO8XRbo06EPS5L+gQegqqRtPwvKUTolSY5IwTs26/NCAHOkuzKPqjOkJhcHfIIKMqCWjVDGnTGJy1E6xnMNN0LMLgdmJB+HaDwY9r2u71OZ68XIIDOd+xtcbC7SQKyIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H2KFGkXW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755801001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yhECXnCIPDw3Lg4MBh/5jtv3LHZEJ/t3IMSb4dezezI=;
+	b=H2KFGkXWgJAdQlpgsCOLDxGJQj0U4xbf6vsk2KTo1olge5RG6Cp6oQHvZjM01VY9UGEIqx
+	tvCnIL8FcSzisrepmddLczNZr2NB+s+v6nejhuejMAlNtcO0/tzaOtfg94yz2PS8M3EGSf
+	01j12HDd5efAhlKdiJ9EphTvXHbKHfU=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-592-4jlZhhPoOT2MMI7L0-Z6aQ-1; Thu, 21 Aug 2025 14:29:59 -0400
+X-MC-Unique: 4jlZhhPoOT2MMI7L0-Z6aQ-1
+X-Mimecast-MFC-AGG-ID: 4jlZhhPoOT2MMI7L0-Z6aQ_1755800999
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70a928da763so27637556d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:29:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755800926; x=1756405726;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755800999; x=1756405799;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oRMXBc3KQplXBAbVSw/VgjpqcIwybUMzF6DaguqJcQk=;
-        b=KGntsNLQkZKY5aFULu0RcS5NWdtTHqDxvt3MpHCqwTjojE0E0TxRIvCPpPtn5Wd9Sb
-         lAyJKTYmJrpgpyw9PCw42PLN5GEuMPdjh2daTdvir+R6NcpXGxvHlA/HVWqiS2nZ6x80
-         rA+A4HrFJ69npIrmF3QJ7mKhI3oNHGxsZWd0iwGCcy7HtwiLT7MaSrBaoE0/3mlZGwf/
-         EI4m5fXch2u6sZoQwPlf0VKZD2TcFI4hpO0DGxYmw6SnysVQPW7iYrNWgDlFFTfZwBpR
-         oqU8FNT+wJJ1RIIsMjwIfpUUG1R4c0TQF7NimcJW4nV+9sk8+mzcdeZL+fsb9x4PDtvX
-         CFRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfiJndfV3ZZExp4UMJwmzVWilWhdKkMQWI80X9iuF9O4BWmEuapfd/g6l3xF+s4Od73Y8=@vger.kernel.org, AJvYcCX7o8mUuDBD0i/M4qsw7Ej+WD/R/kKC0T4FAw+nTIeHOG2ZXFSxcjbc9+zjXpjzgzWTuKxF7PemQX8xIi+rmp9u@vger.kernel.org, AJvYcCXYFScK9BB+TBrj/QofOx3CU9wz+7tZFLjU3y7TBmyC8hWJYv0fTb/gxyLg2MfTg1txUlmMhXVeodvjOX1+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkIgllgthtYaZSsIe9U36xAS1motSpnmsl8r1JdgfGfbxwjjZg
-	NcaNQgY2B4DZWdEVZ6xSHiwGTtZiUU/acZlKkQLXiG2BjqABGRUZzVTqxCuEk9+ILCdCf/zTn1q
-	ryNA8WdPXePZxyDchjvI1jlPvMk2kFu96ypAU
-X-Gm-Gg: ASbGncvGy0JrhcTje5l1dP3aRbPygKnOIK9JnxMVyTiL8ifnHkZwKjy7lLnq5dyrWFG
-	VUI4uxlhJ1p1xAMQTVYK4OhHR9vYrpVyWYhqHtI2sDwTYk7vMTyaMSYuCqzlzyTytdAUYhbkXrS
-	jqNxDISXGgoa7gTgRsSiTxKKr2BrwxVpIfK7sh8ukD5PHRz3BN/YDt26pG+DfxIfi5xdMZ9UQbE
-	B5faSJC1Eap6Fp73xcTpQGD8V6Vk4paiIRoAmQxdOtI
-X-Google-Smtp-Source: AGHT+IFnb0b/Oii6gre/2MJERcVnzSC+35nJHsL0gUNARV4flgsdPVX17CDH803ut0ZBXb7TqtGH10qMfHHodee5Jys=
-X-Received: by 2002:a17:90b:2ccd:b0:324:eac4:2968 with SMTP id
- 98e67ed59e1d1-32515ee13cdmr596495a91.33.1755800926466; Thu, 21 Aug 2025
- 11:28:46 -0700 (PDT)
+        bh=yhECXnCIPDw3Lg4MBh/5jtv3LHZEJ/t3IMSb4dezezI=;
+        b=QuKDQcuO0Ak3HUaEZnBjTZ92m8vTYMLKlkcjVXickhH9WSeL2t2TuuzSRs66pf1TDd
+         RdwN8Z3ov4I5cWWZq50qQd9CZKn0LYoWRMveZnjPNJWkxBD51ajIFN1N3GDRAQkDJP5U
+         dANUzAxVhm8g54yfvfwW2Fwuq1bEGwhDVdSajEQBjap/5C3lYxQSV3wmPEII2sXaOdgb
+         cMpy5Ldtr8JtWGxvjm7LbIGP+0Nz0uI5IlvdfKuna2bVXlwAthfxad3kqtjKp1OVOjmc
+         7PADYl99funLZSjPu2J3RG0ax/qyUaxBuVDZVlvUvE2jzlr9Q+SQaKcidoPRwkvD+HQi
+         /7Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzFpvRAaEcR3jrEizzc5Enns0xM68kDUUU53tDFx7M9oPHGBnprhkvjPAqkD3vRjYHAGpkMZi+V43zZ+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv4m0Dujo+CaImOxOHVhhuEUr0sJ2mn91bIH6w6gpppZOCXWYx
+	3bWibECtof9DibBX7qUvr5oXG1GkxXGn7/ZpHC1LzTjEIUpIcbLqffXQ0RZtXi9WzMrKO+swyF2
+	VstS2yPG0f0pfbzQvo3XBJrD/nC/T+RJGVPaOZjeCIfFTbs0uJJ6gCmHgzjMz+IHY/Q==
+X-Gm-Gg: ASbGncv4aAX8Ca3IQqXBV4G1mT8SM5Dnb7H6LyYFj0WceSzc49/zr9AP3HgKyWQEJoO
+	SMyl/fVzGZNGJZbLV62E95/nsaxJ4jbsfHbX7VHujFPhd2pjK/IXjnTS7n7o4UQNI547tEJSnV2
+	Nqm7qrW1EsIfzPQaWL++C7t11b/Ks9DrwajDsOHsdSKzsv97MlCqtRHtNPjHhEJXlCzFSt3BNq9
+	YAFeXmirIKaVzsTse/+lMkL0R7+dUFxYouxChfbAwvs3npVyyTPKsYTleaXqYDEDww5orvoMeCu
+	aGaldxBAxQ/Xol8JoFiB1yB1kuyypQ1rLVyQSIhGg3Tuci/zZrfcx/h8ks1G3qQ=
+X-Received: by 2002:a05:6214:411c:b0:707:5d90:5e92 with SMTP id 6a1803df08f44-70d9712564dmr7627166d6.23.1755800998806;
+        Thu, 21 Aug 2025 11:29:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHe8EN56eHT/hjQKp2x48P3siaQqYBM5dZ5CGM9Mf8D+ZZvBzIAW/a9XWvDRsldQ0ClduM2xQ==
+X-Received: by 2002:a05:6214:411c:b0:707:5d90:5e92 with SMTP id 6a1803df08f44-70d9712564dmr7626826d6.23.1755800998251;
+        Thu, 21 Aug 2025 11:29:58 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba9097dc4sm109917596d6.26.2025.08.21.11.29.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 11:29:57 -0700 (PDT)
+Date: Thu, 21 Aug 2025 14:29:55 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: thead: support changing DPU pixel clock rate
+Message-ID: <aKdlo6R3ER99klYn@x1>
+References: <20250812054258.1968351-1-uwu@icenowy.me>
+ <20250812054258.1968351-3-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806092458.111972-1-phoenix500526@163.com>
- <20250806092458.111972-3-phoenix500526@163.com> <f5d8d886-1de3-4521-917a-e98b645b987e@linux.dev>
- <30d8fcac.2669.19882763de2.Coremail.phoenix500526@163.com>
- <e7ba3f7f-38b8-4c06-8aff-ef1fb8d04d86@linux.dev> <310495cd.19eb.19893314d03.Coremail.phoenix500526@163.com>
- <0f6d16c1-0e85-4709-9846-3a993a9f041b@linux.dev> <65e51538.57aa.1989d162bb8.Coremail.phoenix500526@163.com>
- <2559a8cd-b439-43fc-96e4-d5f2941ca4d8@linux.dev> <3fbb9319.20c8.198a1410186.Coremail.phoenix500526@163.com>
- <6c444d7d-524d-4bc8-bda6-0440af621ebe@linux.dev> <46f4c341.1dea.198b845a4b0.Coremail.phoenix500526@163.com>
- <7495eeb9-777b-4b9e-8312-c6654268d6ec@linux.dev> <CAEf4Bzbpu9PM6GHV6ewE_hJJ7=94Rn1ZYq5QWVnpoH6_LRQDCw@mail.gmail.com>
- <eb7a3ed.9723.198cd47d479.Coremail.phoenix500526@163.com>
-In-Reply-To: <eb7a3ed.9723.198cd47d479.Coremail.phoenix500526@163.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 21 Aug 2025 11:28:31 -0700
-X-Gm-Features: Ac12FXwz8zMdMHKi5OkkmNPfee3WJJ2yngOjesrE_ZG4DaVHRNF6aLdrVLUSwr8
-Message-ID: <CAEf4BzZLMp5oLnF_Nfjru7+zE2P4981GXWGf6d=6jEY4TqBt4Q@mail.gmail.com>
-Subject: Re: Re: [PATCH v7 2/2] selftests/bpf: Force -O2 for USDT selftests to
- cover SIB handling logic
-To: =?UTF-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812054258.1968351-3-uwu@icenowy.me>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Thu, Aug 21, 2025 at 8:38=E2=80=AFAM =E8=B5=B5=E4=BD=B3=E7=82=9C <phoeni=
-x500526@163.com> wrote:
->
->
->
->
->
->
->
->
->
->
-> In the previous discussion with Yonghong Song, we found that some compile=
-r would generate
-> such an arguement format. Although I have never encounter such an issue, =
-I found that the
-> global volatile variable could trigger the compiler to generate this argu=
-ment spec. So I tried to
-> solve this problem. I guess this would not be a problem since we have alr=
-eady used STAP_PROBE_ASM
-> to reliably generate SIB argument spec.
+On Tue, Aug 12, 2025 at 01:42:56PM +0800, Icenowy Zheng wrote:
+> The DPU pixel clock rate corresponds to the required dot clock of the
+> display mode, so it needs to be tweakable.
+> 
+> Add support to change it, by adding generic divider setting code,
+> arming the code to the dpu0/dpu1 clocks, and setting the pixel clock
+> connected to the DPU (after a gate) to CLK_SET_RATE_PARENT to propagate
+> it to the dividers.
+> 
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> ---
+>  drivers/clk/thead/clk-th1520-ap.c | 87 +++++++++++++++++++++++++++++--
+>  1 file changed, 82 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+> index 2f87c7c2c3baf..3e81f3051cd6c 100644
+> --- a/drivers/clk/thead/clk-th1520-ap.c
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -55,6 +55,7 @@ struct ccu_gate {
+>  
+>  struct ccu_div {
+>  	u32			enable;
+> +	u32			div_en;
+>  	struct ccu_div_internal	div;
+>  	struct ccu_internal	mux;
+>  	struct ccu_common	common;
+> @@ -198,6 +199,78 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
+>  	return rate;
+>  }
+>  
+> +static long ccu_div_round_rate(struct clk_hw *hw, unsigned long rate,
+> +			       unsigned long *parent_rate)
+> +{
+> +	struct ccu_div *cd = hw_to_ccu_div(hw);
+> +	unsigned int val;
+> +
+> +	if (!cd->div_en) {
+> +		regmap_read(cd->common.map, cd->common.cfg0, &val);
+> +		val = val >> cd->div.shift;
+> +		val &= GENMASK(cd->div.width - 1, 0);
+> +		return divider_ro_round_rate(hw, rate, parent_rate,
+> +					     NULL, cd->div.width, cd->div.flags,
+> +					     val);
+> +	} else {
+> +		return divider_round_rate(hw, rate, parent_rate,
+> +					  NULL, cd->div.width, cd->div.flags);
+> +	}
+> +}
 
-Yep, let's hold off on implementing this, as it doesn't seem to be
-really necessary in practice.
+The round_rate clk op is deprecated. Please convert this over to use
+determine_rate.
 
->
-> BTW, I have another issue to discuss.
->
-> Now, bcc framework is not a recommendation for writing bpf program, so bp=
-ftrace is now migrating
-> from bcc framework to libbpf. Bcc framework provides some relevant APIs f=
-or get usdt probe info[1].
-> And I found that there is not similar APIs in libbpf, therefore I have to=
- parse elf file manually.
->
-> Could we add some relevant APIs, maybe like `bpf_program__usdt_probe_list=
-`, in libbpf? I can make
-> a patch to implement it. WDYT?
->
+Brian
 
-I'm not yet convinced this belongs in libbpf, tbh. The process of
-discovering USDTs actually involved two separate tasks: discovering
-binaries (executable and shared libs) that constitute a process, and
-then for each binary discovering which USDTs belong to it. The first
-part is pretty clearly out of scope for libbpf. Second one in
-principle can be added, but as I said I'm a bit hesitant at this
-point, as we don't even have "USDT manager" exposed through public
-API.
-
-So not yet.
-
->
-> [1]. https://github.com/bpftrace/bpftrace/blob/1cd4bbdd4a13dd55880f2cc638=
-dde641fb5f8474/src/usdt.cpp#L131C1-L152C2
->
->
->
->
->
->
->
-> At 2025-08-21 07:00:35, "Andrii Nakryiko" <andrii.nakryiko@gmail.com> wro=
-te:
-> >On Mon, Aug 18, 2025 at 10:35=E2=80=AFAM Yonghong Song <yonghong.song@li=
-nux.dev> wrote:
-> >>
-> >>
-> >>
-> >> On 8/17/25 6:43 AM, =E8=B5=B5=E4=BD=B3=E7=82=9C wrote:
-> >> >
-> >> >
-> >> >
-> >> >
-> >> >
-> >> >
-> >> > Hi, Yonghong. I've already filed an issue[1] in GCC  community.
-> >> >
-> >> >
-> >> > Accroding to the discussion, it's not a gcc bug but may be a systemt=
-ap bug.
-> >> > I don't know how to report this bug to systemtap, but I found that t=
-he
-> >> > libbpf/usdt have the same problem. I've filed an issue in libbpf/usd=
-t repo[2].
-> >> >
-> >> > I also have some ideas about it. I wrote it down in the issue[2] com=
-ment.
-> >> > May be we can discuss there.
-> >> >
-> >> > [1]. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D121569
-> >> > [2]. https://github.com/libbpf/usdt/issues/13
-> >>
-> >> Thanks for filing an issue on gcc and getting some feedback/suggestion=
-s
-> >> from gcc community.
-> >>
-> >> Currently, libbpf/usdt does not suport format like '-1@ti(%rip)'. If w=
-e do
-> >
-> >Exactly, it doesn't. I haven't yet ran into a case where real-world
-> >applications would use such an argument format, so there was no
-> >incentive in trying to support it.
-> >
-> >Was this issue discovered as part of testing on some real world
-> >application, or it's mostly through testing on synthetic cases?
-> >
-> >> intend to implement this. libbpf/usdt can reject that if 'ti' is a
-> >> static variable. libbpf can provide some hints about how to make it
-> >> work (see above [1] and [2]). Then, it would be user's reponsibility t=
-o
-> >> change code so libbpf can support it.
-> >>
-> >> >
-> >> >
-> >> >
-> >
-> >[...]
 
