@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-778741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43965B2E9CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:55:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A52B2E9E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0865E4E2B77
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8FFE1887F1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788FC1E493C;
-	Thu, 21 Aug 2025 00:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84E91E5B70;
+	Thu, 21 Aug 2025 01:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VeQ/g63d"
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="crESVaX0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F331804A;
-	Thu, 21 Aug 2025 00:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AA13B29E
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755737701; cv=none; b=sziBKrB6Cpm4K1XngzakOAsA2Ck0ONXjTfqkbAHUKa/FvHR7CNpCAd3IDGlAnmPu2B9nBmb5JOnrxRDQgOJ2nBhjy8YMHNct6aRbIodueH15Y8XR4Ls0zcJYrt850iaCbKaR/kWKmzUUFaaaggGKBxB5gfjUoM+81r1K6yfvxMQ=
+	t=1755738055; cv=none; b=VAAJUuLwxQzF2A7hYLlCZ14Qsg4kVa7di3mq8EvfqWmXXQ0HzFmZlo0xwWkNPX2UOHhMGz5H8KInDHDYQyT4qPuMVQfQtgryYxMa3WU71CvChRqxGMXquDhqcXAO+dQJtzb7sxuZ++7aCW+0qkpRGIoy83R5XlivE7NwjRSvOuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755737701; c=relaxed/simple;
-	bh=zEKH0whlqLewLZsL8A8sZUR/hXkcaQSTvtaOJ3AF/CY=;
+	s=arc-20240116; t=1755738055; c=relaxed/simple;
+	bh=OmOgrn3ENXD+NRu+t7TCwo1QQXtRWir/zLxY8vIxEks=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e2CuRpFLX2Ev7xiVSMI9hGgbmdoULpLhMmyKF6/vD3IuH/9aSfltzho9hIOxy6qbw60coZqcHF78RagSm0AyhrfJg6PQb5moab513bPW/SyJGYNjbA3wKyEVyJbfQMUKT1k8j9Lp3iJLVrLPWtFxDMXBarM3WN7KHk4XPzeUgFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VeQ/g63d; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-61a94bd82a5so849696a12.1;
-        Wed, 20 Aug 2025 17:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755737698; x=1756342498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ECt6+t5ZFrrfkRkr0o7E1VCkPJWhGAI+xLcJ6W+PWtc=;
-        b=VeQ/g63dz+YuNBBWe12yaleoR/xvwjE/lPB7i/eemdByNiu78d2BzOolJkj6VVZ4kV
-         6s4Xv1EMy1SRMgYe1DHawb8F9ATscYLA+1sN0RgWxwuLyG3HspBlRm/BhdbnXYWJHvan
-         zyCCFnO5f9E7AqrKX1kyJwHxLYeWe+UKhWJfzc2tU/lJYVU0rHNydLz9Hle4az9SBPpo
-         DyoTZXHRn+jN/RR7mVCVMwLtFPXntPNE2ynI6C5zVDGHMJSJmim8baxlbzpcXaDFXJsL
-         mVQXNXDa8Rc4WBeamWYM9wbU2jytyQfllyH1Bq2BklGO4VkLi1yFNyVj2pK19qeVyxT3
-         sosA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755737698; x=1756342498;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ECt6+t5ZFrrfkRkr0o7E1VCkPJWhGAI+xLcJ6W+PWtc=;
-        b=u7uIdhsTeOYDlNRG3adA7X1MDAthb4/HJZK59HeZ/lBCRKbdGfne5ThE4/nIr7I4tO
-         oDcDci9ffOJE2gEGBIUiDpxgIW31bhApo/q2npksImHG8xS3GqAglv3ruwtyZsOJVtTm
-         2x8lPitw5ntyvwDjlXdB430g0lFAj55WmSLGXLaDT+wEwKXUqfC13ls3PSq2zWJglNx3
-         IG66Ya/SSLekW51F/C7xBghgm3+NpANFOxY+fUOBB7GyTb2SIP8jlEisKDLnaO7TJBdD
-         63Bq6ylD1oVwxsKx7IMPJtPRh8qUYWfNCFarELmS5Vze2/NSQOFNP/kBcfn4+Vv9kRFc
-         Rkcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGaPNnEHeYbUrM0JEeh+7nECO5zyy7fsXUD+g1iCOlawnpjZTSJke45qP1Sjn+n5enCIO7Gx4kHfA=@vger.kernel.org, AJvYcCWOOiLGndnlmRZjiicq5KFIub7TSK4iudwwN1UtcP0xWAhIHyIIzL4Tc07d8wIl4RnHWYKLv3LI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrgavGVUEPhevK3vin9pomkumzK6DGdngvmuIm8z4NSbfkbfVq
-	Lt7T+JakzHpJNUCYh1xTFvLDr8ihInjzSP7Gag9X+uyHRV99B0NIBicb
-X-Gm-Gg: ASbGncsZlicflViyan75LqUOCll9K0pvawGqxhWiC+DkqF0uEZRKUsd3/pU1v8o9gEA
-	o75RGM3c/5YUYDu0IzJEzUmE1sz2RgvkjROY32niYTotKu8bVcY2orHShOeOvruHCHWsuD19A9G
-	lOYq9SmkzbUb9xG0kKd9HrdpwK6a2YznskTPZ8TF6qzS16ezIIrg3Y1w6Uw65wV5XPur5GAHZyv
-	vTsFsHy8QDgGAPciha5rWM+0TyvjFcFqXW4p28CXzYir5BiaGHnKDSoEBhw7m9Z1LRn/QqL1CpR
-	QU6ea4WBgPjIUWxuaGAiEH7dqjSUI9AiGJNLpPLt08B0WXgfuYRcYmKTEUtKCHOLy+bjT/gDyMS
-	6cdcNNBQjns4IrCSSiqRKiJtcTPOI81/UpJVczmYgL8drOlVtz1Yc92DadNvOPcire06qgVBPqm
-	M1H2T8vc+Xfdh7kzrYruai
-X-Google-Smtp-Source: AGHT+IGqhADzawZRc4KqXqlNcb31shVNdQejYqkinActEiOhb/cOrOXHd0P2GElngi4E1XNG9BHO5g==
-X-Received: by 2002:a17:907:6d24:b0:af9:5b1f:b87a with SMTP id a640c23a62f3a-afe07b08fdemr68615666b.20.1755737698151;
-        Wed, 20 Aug 2025 17:54:58 -0700 (PDT)
-Received: from [26.26.26.1] (95.112.207.35.bc.googleusercontent.com. [35.207.112.95])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded30bf00sm281725666b.30.2025.08.20.17.54.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Aug 2025 17:54:56 -0700 (PDT)
-Message-ID: <dfdc655e-1e06-42df-918f-7d56f26a7473@gmail.com>
-Date: Thu, 21 Aug 2025 08:54:52 +0800
+	 In-Reply-To:Content-Type; b=EEishMz/+syKC0lDA5AqG4v9+0nMniquqMz11ojj60nZnKzwyZOTASMXugNlO15S+DYYrs8toYv9GaO4+RbMjI7GCrZKgKq0zf8sikGFbns5W0R3u6DwhCmH0PMTkl421hlEXjowWHFU9/fxHzFog5W0P79wGV56ah5yFrOpUMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=crESVaX0; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755738054; x=1787274054;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OmOgrn3ENXD+NRu+t7TCwo1QQXtRWir/zLxY8vIxEks=;
+  b=crESVaX0MeIg90K0qxpVrQsv0Cx2k+ZwFutsAMlCcD8P+mc/amjOYRSB
+   tq4VkzPmM0NhRXsmUdBuy8fDv5tcyJWO+/SFtPuBEUSd62mvVPVpvy5Ja
+   PiuaNPcfeLMhR/RIV9cZcXVK96NQcbx5U48E/vSD3SdvJ6gOKhclQgRjv
+   cluBLAaQXr23N0mJIT+pea9Xt1jBBPl5jvgAv1BPyMcXFOp+u9q1beZRb
+   DbRS0dL4B3iFsy7m4THq4wwiVNfDWOiLUkH0SsYQJAbVZ2u+gAsH2FsOD
+   1gcSwXOz80PDNEXTdWx2dMFy2OwTof4DJi/OsxDnlxFzgXxbpB11WS+uv
+   g==;
+X-CSE-ConnectionGUID: du0kTvFqQeCdztxc3ay7Xg==
+X-CSE-MsgGUID: RI/DWi+DRmux1xaQW/iJQw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="80610386"
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="80610386"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 18:00:53 -0700
+X-CSE-ConnectionGUID: IvObkcrCQvepXrLMCrffRg==
+X-CSE-MsgGUID: vl+Zm4LLRWCPW58eV9t1BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
+   d="scan'208";a="168197736"
+Received: from cuijunya-mobl1.ccr.corp.intel.com (HELO [10.124.233.125]) ([10.124.233.125])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 18:00:48 -0700
+Message-ID: <dbd28326-1d47-462e-947c-34e3c4a08ec6@linux.intel.com>
+Date: Thu, 21 Aug 2025 09:00:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,132 +66,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
-To: Brian Norris <briannorris@chromium.org>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- Brian Norris <briannorris@google.com>, stable@vger.kernel.org
-References: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
+Subject: Re: [PATCH V3 05/17] perf/x86: Support XMM register for non-PEBS and
+ REGS_USER
+To: "Liang, Kan" <kan.liang@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ tglx@linutronix.de, dave.hansen@linux.intel.com, irogers@google.com,
+ adrian.hunter@intel.com, jolsa@kernel.org,
+ alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+ ak@linux.intel.com, zide.chen@intel.com, mark.rutland@arm.com,
+ broonie@kernel.org, ravi.bangoria@amd.com, eranian@google.com
+References: <20250815213435.1702022-1-kan.liang@linux.intel.com>
+ <20250815213435.1702022-6-kan.liang@linux.intel.com>
+ <20250819133902.GJ4067720@noisy.programming.kicks-ass.net>
+ <7009606d-0c47-4c3f-a7f9-0ae1922c9e5f@linux.intel.com>
+ <47cbf0f3-9480-497a-ad88-5eb0c50dd88a@linux.intel.com>
+ <53aebb23-2520-4016-ae71-18b66dec452f@linux.intel.com>
 Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <20250820102607.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <53aebb23-2520-4016-ae71-18b66dec452f@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
+On 8/21/2025 2:03 AM, Liang, Kan wrote:
+>
+> On 2025-08-20 2:46 a.m., Mi, Dapeng wrote:
+>> On 8/19/2025 11:55 PM, Liang, Kan wrote:
+>>> On 2025-08-19 6:39 a.m., Peter Zijlstra wrote:
+>>>> On Fri, Aug 15, 2025 at 02:34:23PM -0700, kan.liang@linux.intel.com wrote:
+>>>>> From: Kan Liang <kan.liang@linux.intel.com>
+>>>>>
+>>>>> Collecting the XMM registers in a PEBS record has been supported since
+>>>>> the Icelake. But non-PEBS events don't support the feature. It's
+>>>>> possible to retrieve the XMM registers from the XSAVE for non-PEBS.
+>>>>> Add it to make the feature complete.
+>>>>>
+>>>>> To utilize the XSAVE, a 64-byte aligned buffer is required. Add a
+>>>>> per-CPU ext_regs_buf to store the vector registers. The size of the
+>>>>> buffer is ~2K. kzalloc_node() is used because there's a _guarantee_
+>>>>> that all kmalloc()'s with powers of 2 are naturally aligned and also
+>>>>> 64b aligned.
+>>>>>
+>>>>> Extend the support for both REGS_USER and REGS_INTR. For REGS_USER, the
+>>>>> perf_get_regs_user() returns the regs from the task_pt_regs(current),
+>>>>> which is struct pt_regs. Need to move it to local struct x86_perf_regs
+>>>>> x86_user_regs.
+>>>>> For PEBS, the HW support is still preferred. The XMM should be retrieved
+>>>>> from PEBS records.
+>>>>>
+>>>>> There could be more vector registers supported later. Add ext_regs_mask
+>>>>> to track the supported vector register group.
+>>>> I'm a little confused... *again* :-)
+>>>>
+>>>> Specifically, we should consider two sets of registers:
+>>>>
+>>>>  - the live set, as per the CPU (XSAVE)
+>>>>  - the stored set, as per x86_task_fpu()
+>>>>
+>>>> regs_intr should always get a copy of the live set; however
+>>>> regs_user should not. It might need a copy of the x86_task_fpu() instead
+>>>> of the live set, depending on TIF_NEED_FPU_LOAD (more or less, we need
+>>>> another variable set in kernel_fpu_begin_mask() *after*
+>>>> save_fpregs_to_fpstate() is completed).
+>>>>
+>>>> I don't see this code make this distinction.
+>>>>
+>>>> Consider getting a sample while the kernel is doing some avx enhanced
+>>>> crypto and such.
+>>> The regs_user only needs a set when the NMI hits the user mode
+>>> (user_mode(regs)) or a non-kernel thread (!(current->flags &
+>>> PF_KTHREAD)). The live set is good enough for both cases.
+>> It's fine if NMI hits user mode, but if NMI hits the kernel mode
+>> (!(current->flags &PF_KTHREAD)), won't the kernel space SIMD/eGPR regs be
+>> exposed to user space for user-regs option? I'm not sure if kernel space
+>> really use these SIMD/eGPR regs right now, but it seems a risk.
+>>
+>>
+> I don't think it's possible for the existing kernel. But I cannot
+> guarantee future usage.
+>
+> If the kernel mode handling is still a concern, I think we should drop
+> the SIMD/eGPR regs for the case for now. Because
+> - To profile a userspace application which requires SIMD/eGPR regs, the
+> NMI usually hits the usersapce. It's not common to hit the kernel mode.
+> - The SIMD/eGPR cannot be retrieved from the task_pt_regs(). Although
+> it's possible to retrieve the values when the TIF_NEED_FPU_LOAD flag is
+> set, I don't think it's worth introducing such complexity to handle an
+> uncommon case in the critical path.
+> - Furthermore, only checking the TIF_NEED_FPU_LOAD flag cannot cure
+> everything. Some corner cases cannot be handled either. For example, an
+> NMI can happen when the flag just switched, but still in the kernel mode.
+>
+> We can always add the support later if someone thinks it's important to
+> retrieve the user SIMD/eGPR regs during the kernel syscall.
 
-On 8/21/2025 1:26 AM, Brian Norris wrote:
-> From: Brian Norris <briannorris@google.com>
-> 
-> max_link_speed, max_link_width, current_link_speed, current_link_width,
-> secondary_bus_number, and subordinate_bus_number all access config
-> registers, but they don't check the runtime PM state. If the device is
-> in D3cold, we may see -EINVAL or even bogus values. 
-My understanding, if your device is in D3cold, returning of -EINVAL is
-the right behavior.  >
-> Wrap these access in pci_config_pm_runtime_{get,put}() like most of the
-> rest of the similar sysfs attributes.
-> 
-> Fixes: 56c1af4606f0 ("PCI: Add sysfs max_link_speed/width, current_link_speed/width, etc")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Brian Norris <briannorris@google.com>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
-> 
->   drivers/pci/pci-sysfs.c | 32 +++++++++++++++++++++++++++++---
->   1 file changed, 29 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 5eea14c1f7f5..160df897dc5e 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -191,9 +191,16 @@ static ssize_t max_link_speed_show(struct device *dev,
->   				   struct device_attribute *attr, char *buf)
->   {
->   	struct pci_dev *pdev = to_pci_dev(dev);
-> +	ssize_t ret;
-> +
-> +	pci_config_pm_runtime_get(pdev);
-This function would potentially change the power state of device,
-that would be a complex process, beyond the meaning of
-max_link_speed_show(), given the semantics of these functions (
-max_link_speed_show()/max_link_width_show()/current_link_speed_show()/
-....),
-this cannot be done !
++1
 
-Thanks,
-Ethan>
-> -	return sysfs_emit(buf, "%s\n",
-> -			  pci_speed_string(pcie_get_speed_cap(pdev)));
-> +	ret = sysfs_emit(buf, "%s\n",
-> +			 pci_speed_string(pcie_get_speed_cap(pdev)));
-> +
-> +	pci_config_pm_runtime_put(pdev);
-> +
-> +	return ret;
->   }
->   static DEVICE_ATTR_RO(max_link_speed);
->   
-> @@ -201,8 +208,15 @@ static ssize_t max_link_width_show(struct device *dev,
->   				   struct device_attribute *attr, char *buf)
->   {
->   	struct pci_dev *pdev = to_pci_dev(dev);
-> +	ssize_t ret;
-> +
-> +	pci_config_pm_runtime_get(pdev);
-> +
-> +	ret = sysfs_emit(buf, "%u\n", pcie_get_width_cap(pdev));
->   
-> -	return sysfs_emit(buf, "%u\n", pcie_get_width_cap(pdev));
-> +	pci_config_pm_runtime_put(pdev);
-> +
-> +	return ret;
->   }
->   static DEVICE_ATTR_RO(max_link_width);
->   
-> @@ -214,7 +228,10 @@ static ssize_t current_link_speed_show(struct device *dev,
->   	int err;
->   	enum pci_bus_speed speed;
->   
-> +	pci_config_pm_runtime_get(pci_dev);
->   	err = pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &linkstat);
-> +	pci_config_pm_runtime_put(pci_dev);
-> +
->   	if (err)
->   		return -EINVAL;
->   
-> @@ -231,7 +248,10 @@ static ssize_t current_link_width_show(struct device *dev,
->   	u16 linkstat;
->   	int err;
->   
-> +	pci_config_pm_runtime_get(pci_dev);
->   	err = pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &linkstat);
-> +	pci_config_pm_runtime_put(pci_dev);
-> +
->   	if (err)
->   		return -EINVAL;
->   
-> @@ -247,7 +267,10 @@ static ssize_t secondary_bus_number_show(struct device *dev,
->   	u8 sec_bus;
->   	int err;
->   
-> +	pci_config_pm_runtime_get(pci_dev);
->   	err = pci_read_config_byte(pci_dev, PCI_SECONDARY_BUS, &sec_bus);
-> +	pci_config_pm_runtime_put(pci_dev);
-> +
->   	if (err)
->   		return -EINVAL;
->   
-> @@ -263,7 +286,10 @@ static ssize_t subordinate_bus_number_show(struct device *dev,
->   	u8 sub_bus;
->   	int err;
->   
-> +	pci_config_pm_runtime_get(pci_dev);
->   	err = pci_read_config_byte(pci_dev, PCI_SUBORDINATE_BUS, &sub_bus);
-> +	pci_config_pm_runtime_put(pci_dev);
-> +
->   	if (err)
->   		return -EINVAL;
->   
 
+>
+> Thanks,
+> Kan
+>>> I think the kernel crypto should be to a kernel thread (current->flags &
+>>> PF_KTHREAD). If so, the regs_user should return NULL.
+>>>
+>>> Thanks,
+>>> Kan
+>>>
 
