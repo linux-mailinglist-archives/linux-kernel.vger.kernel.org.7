@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-778709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4150B2E930
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C715AB2E932
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAEBA560097
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C23917C990
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C733D987;
-	Thu, 21 Aug 2025 00:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430ED1632DD;
+	Thu, 21 Aug 2025 00:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bnO3TDYv"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oGm/QCW+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C07139D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FA78F54
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755734678; cv=none; b=SlFl8qN/yVCf/8JigxBam+43L/zjxy4mXZWCueOqUHbzMxLIOfMD8MBPJ/69uXwCC+TB/FeVLohVX7r4hqk6ySJZ/EHhA0pshHLtFRVGvSzkp3TiPW4rY13iMBaxo6mFJV6JZGADAJLk/mUN7xEVSyM7VvVlVk/Db2YrutYxehk=
+	t=1755734680; cv=none; b=kIqFSC3CFHf+/lt3OaIkG/ryeoGaRVrRoQNI8g/BCBvOPxv6ycMVawS/gVsBUWwLZLrvF0qr8vbqTTH4hsupKiuHKaEdZJTn27f4rxWz2AIDkMJoCNmMuP6T7ZrEKf8uQp1tn3tjIhHZho00uxzrE6ZcCNYw5B6YDEtGqDGYhsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755734678; c=relaxed/simple;
-	bh=aJAOWN0ijFMS0Vkkf/yh1HfO36czNE64NzzeczFKSWE=;
+	s=arc-20240116; t=1755734680; c=relaxed/simple;
+	bh=FTfonb6H2UF2nVmZnazTx3PEb2S6ZWHLTuGTK0lDTo4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y1OMBFxBMvVVERfjw2kfHORcTrfIU0NS68Q26WMnQOHEFYKsrTQcN0dXh7W2HTnxVX/nwXpmlw94lrDAzqwnKXfe1vRDu+KB64Ufrk1YrljcMBBg3qOZtg4Jj/cwyqfs1y5IDLRTpWVf4htvnK3z9rkRNUNqw5wjnjSQ922kIdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bnO3TDYv; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version; b=qEHOgSGPsa8p7CZqc18hLRZC77G5RHPdwRayZ2tdTHZXwGaTMn8/vD6BVSs0yLgIRzMYWhWgLaDvAfq8+FPRDatd9WGgyP1HvsSC6tALY1b2AXZMbT/Dug25K+RS6M/eo9OiSVrqQb1Xc3tKtRrG5hboI02TmSVVi/lwDafjfFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oGm/QCW+; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KKkslg031528
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:04:36 GMT
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KI3sQe024699
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:04:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=UUeZ954T0o+
-	UR5vuNiqg0BBHjNOT7Hd/arRfZ79Ap5Y=; b=bnO3TDYveWTOLQkrfm5KcRB8buo
-	9/wxJEHtJNuR4gVm924oFrvDt4dqX8QBrtQ4wfPF3ZkFOIbppnEeavSg0/NR5KcB
-	nJeyjRuQRB7DplRV9XFwpxFA9rNRv0R1ajpcvmihLg2KNTZO6rintJ6vtBJe9m4w
-	vxHlDVsFcV55q52w5k+wiY1jHQ4ZUlJQ/kwhPl6yssTnNL/iFqVFfTK+KiiMfreG
-	Z70qJTUF0LRPC5Arcq4cUgww6QFylMX1L8yLKH5qppU5Hg0e8eh60SJMnVJK2PeG
-	7maKAnXNkVHXES43FarV9w0IYni2Ys9b0wUmkGQJ3naZpHGyx774r56lZJQ==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52dkb35-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=7GonE0I4O86
+	IMbS9YwA1nRfKE7NxszsWoTIBBuaYOXQ=; b=oGm/QCW+yDsDLwFUlm0BTzAsCYm
+	Q3CdZT4IjuaTN2G6iLwc6GW7VGglHZmkUZukV92bpXX4V5kbGIC76Cu9ZyHPWlmH
+	DuGjCb+i//M4OxZdUvRD1pL5ypAUeD8M5AjOxq99w7eCKNNsIOsiEVghoMtWOkRO
+	UsWIDXmuauwZPcQlh/xrHB6izFBDSdwBu+lAk/C9SkLgvc9/WtnBb7VDLGHORcjI
+	XEHLWzbMzTZKuh6Fd8kuddbByOwqHQJVpnobWTOqftGoy1X1qwk9FfbwSZKoinQ4
+	O6rEKr672qi1+tVLsEDEZ3NCRbVZMiSvz3A307bdxB0VdjWoB36PWgWuBxQ==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n5293ebg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:04:36 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b47173bb3daso274551a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:04:35 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:04:37 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-323266d8396so461372a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:04:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755734675; x=1756339475;
+        d=1e100.net; s=20230601; t=1755734676; x=1756339476;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UUeZ954T0o+UR5vuNiqg0BBHjNOT7Hd/arRfZ79Ap5Y=;
-        b=KO1l+jsOO9CQlC6X8pb9C3SHWkuo+D9p85nnHuXNxHB+8gTO9dEMV3kwYxffo96Tsn
-         4sVCQGA6XAe+gsQGnH9FeYQo8I89XLcgddr1Mi85aU8x4WCMNUfstEofbN524sYSJu1e
-         VVwSqU1CSUb4mWppDSNd0jxyKeECT4uaOg+XI341Xf2DANWoiB41+gfivUL1MULfW5UY
-         ozOJ5kc/Yz5CPa75neE2gSQVY83otRreIlVSiW9wAjiik+bw35wrDNVHKSSC0o6GhmvJ
-         t98tS8yRGMSE8yqL0L3QNggSGdSnCSyrnl6w6G6rEDbxygFy7OO8q3TjcyS0iBKZUrSK
-         lYbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtDxqQlcEo6Xj5VaNnoQXesut/sxplcvHc+yVcaEsvK67Nw8C6uEkJUeYuHVsoLeK/fylQ4XAkPGs9nm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN4Xuxqp330ylCJQ6cBC3I3I7xdNGB2CHBfifJ5gRfwQRogBpJ
-	yPAxGtYVGJBvlY7YqxeM1crv3SIvVEE4UlEXWjPaZoYcyB2m6xAdyIhK7n81XwMbu7zyEzrmt/n
-	xFSoUlkwnhzSSEDEnpHf/8fxBmAx/nVp5Bg8KulpCqAbqxGqaSJkBt1b7Gn7y1zlU/yulGM8NG/
-	Y=
-X-Gm-Gg: ASbGncvy5O9cFeXlk38R3jp99NAwrsrLkuJTx+ux96WcqePhO1oEssS6c21mddLSUn0
-	86MkvBgp+lDz72gfFck54C92VYFdC2k70mVRqEA78ZoNlBD8tDMaaJRkDMfl9JfezVeGxv3hawf
-	+Ah8nugTT0KvU1n4e73zK6j7ritN8gemHfK77tnLRnodaLSYFtRf0ot52LefocIHgE7FxfIzOnt
-	jU9qHst52DOVM+ID/jTVpdJbJEOx/raqYD8j0tbAR60mUx0PSFzvGeR+2YYklDahiEmQykndA8n
-	rV32LRGMj32l2h6yeM7TjOiLJxyyEoEylhy0xvX2NxTSQJblLG4=
-X-Received: by 2002:a05:6a20:2589:b0:240:750:58f with SMTP id adf61e73a8af0-24330a38b92mr513549637.30.1755734674626;
-        Wed, 20 Aug 2025 17:04:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFlUnW8lxbe7CPRYj4ZEmunFvuRSStPlf00u91BAFQGx6Z5Mg65P2yj1AhS1x6n8d3UR7v6+g==
-X-Received: by 2002:a05:6a20:2589:b0:240:750:58f with SMTP id adf61e73a8af0-24330a38b92mr513507637.30.1755734674129;
-        Wed, 20 Aug 2025 17:04:34 -0700 (PDT)
+        bh=7GonE0I4O86IMbS9YwA1nRfKE7NxszsWoTIBBuaYOXQ=;
+        b=AYF5h/enuilhSCOVwXt1g8RF5laKEpaiSlKIsYQZexKAfko5Zaq4jShS8pKBQqHLR8
+         t/otzsD+8Xbg7NVE+8phWhaLFPqOHbHYPjpJr0Af41qR2xvYcS1TL4cK9dvucvTo92r2
+         NK8zCE0rh6zAkHOOa/LdMtANtTrYqmlePwXHUIPLQzxLIR3mgfL3+lk8bDtNECTEP0zD
+         pIuNlMTB+BNm1L9JOW/xaYcRNZjAIBgDWqPz/p8DeyqcGO1dSGKvgvNeVGOn2cOi7mjc
+         2oARDNballu50OC3WteZmly4t+ELzneZSX5SWoDd1X6LjcpbeDTkz7+wM4jCy2WRODn9
+         Byjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMbPBXnnRo9Ifv0PsQ7oDl0XxogUaChKAXs2SXjSmYeW8qxdTXsIJ2Tpd2q5KaWTt6BusBUOzbORVNLhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVegNitR/doouNkWmWwNPT9bSH9iGpE3iKoTrNPp+UjTMrsPxj
+	Rg0eYQGB4gKxewVcGUVP74CV2lewQ8/LmmKT5KmGtTfjNHzvZT2Tcv5vwzijcBWoND3vwu4NDPW
+	zWMHcmeWoADnCV9jBQxgBSmoe6F88KM1Z+71lnPtzsM8C08733y2cSR06PMWdL73WcLg=
+X-Gm-Gg: ASbGncu12CvNdTvgp7K8zPOQNZrFAdpNaAysdZI8MyA4VLRIDF5og7RSj93VJ+BHAAp
+	ztUfhXQEYhkscnnBV21QG3h3/2EeaNppayhKYixemPyzuZfct3LWaYbIMqL7KN+mgOUH9PezgLh
+	yGvASYKk+CqYy0gU9Nn2HIiFAm4C8JO9cIvzMmiFjBeW7t8BODvNCpFwcx+rhSGk736T8bDiMc5
+	m/2ZryzxuPDkii2RsKpIm6hoZiK9Wx9xhHPu/VHtRGrHKR2M8xPQShib69UmTlLpLEmbwiiHKP3
+	jIWlZ6krARap828t3Wm9ne5GQ52T2HyDfGjjc4Z+qcj8U7SfG3s=
+X-Received: by 2002:a17:90a:c890:b0:321:c8e1:82e with SMTP id 98e67ed59e1d1-324ed1bfb25mr758857a91.26.1755734676233;
+        Wed, 20 Aug 2025 17:04:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENGaAHhgimor5pJiOH4MjaweNyjNHnC1m6WbGg+qru+W8Qt7ZVMax/uq24M3YIwwpqMOR0CQ==
+X-Received: by 2002:a17:90a:c890:b0:321:c8e1:82e with SMTP id 98e67ed59e1d1-324ed1bfb25mr758824a91.26.1755734675703;
+        Wed, 20 Aug 2025 17:04:35 -0700 (PDT)
 Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e8f20c7dbsm3229516b3a.68.2025.08.20.17.04.33
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b47640d3e3fsm3201333a12.56.2025.08.20.17.04.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 17:04:33 -0700 (PDT)
+        Wed, 20 Aug 2025 17:04:35 -0700 (PDT)
 From: Rob Clark <robin.clark@oss.qualcomm.com>
 To: dri-devel@lists.freedesktop.org
 Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
@@ -92,9 +91,9 @@ Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         Marijn Suijten <marijn.suijten@somainline.org>,
         David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 1/3] drm/msm: Fix obj leak in VM_BIND error path
-Date: Wed, 20 Aug 2025 17:04:25 -0700
-Message-ID: <20250821000429.303628-2-robin.clark@oss.qualcomm.com>
+Subject: [PATCH v2 2/3] drm/msm: Fix missing VM_BIND offset/range validation
+Date: Wed, 20 Aug 2025 17:04:26 -0700
+Message-ID: <20250821000429.303628-3-robin.clark@oss.qualcomm.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250821000429.303628-1-robin.clark@oss.qualcomm.com>
 References: <20250821000429.303628-1-robin.clark@oss.qualcomm.com>
@@ -105,103 +104,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX5nz7Y8ckcNzD
- s7FaK/UmQko4zl2eIJepM63Qjdb6QawGRqcWhMu0e6b63pqqL53lEtHkKKbZLgfK9yhTkXh1T+r
- tMaSyVvGlH/Nk3thl1eaABU/2isWtWB3BjVcOTjxKtxBoeXPnvu51HxS2bKcr+0fhMBPEj88A2o
- AWDehRfY8dY3UK0YpuNf+2nADrJZTNLiKb2HhQVPYLdNjBWmr7IlgzH0Yo4gejVKNy9O+MySFuQ
- TIK3KZt3xwhGo042DGe6KJL5nrL8qv2HPJJy99gBPFtXRiBB3tLSJdiPNy8T1gaHS0OLHnr9Pgl
- Fnmo/nyAoATMA85he3YvpgE7KJjOcLo2j4AhY+DOIfY6Fh20iQqBjbqW9Y4z/du99a3F5IHPLWV
- 95VNlf/vvfhKgSEdcvoJsB3ggqkrDg==
-X-Proofpoint-ORIG-GUID: jXyoWFH_esUve0nFNkvfDN0j6gJdrK8S
-X-Proofpoint-GUID: jXyoWFH_esUve0nFNkvfDN0j6gJdrK8S
-X-Authority-Analysis: v=2.4 cv=SoXJKPO0 c=1 sm=1 tr=0 ts=68a66294 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
- a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=hfQrMx_BsErUUvjcJTYA:9
- a=bFCP_H2QrGi7Okbo017w:22
+X-Authority-Analysis: v=2.4 cv=ZJKOWX7b c=1 sm=1 tr=0 ts=68a66295 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
+ a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=xd9qGtD1qYZMgD9OdIwA:9
+ a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-ORIG-GUID: gQk8NFPVagtyCWAc1n-TK7yf2jsFBwH6
+X-Proofpoint-GUID: gQk8NFPVagtyCWAc1n-TK7yf2jsFBwH6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXye+uKoAIUsHH
+ /nt8hOPF49PHqSoMrUQKAJSHMKfuE5T2xne9ws0/DfKPu/fFlp1d7ROf+rOSGUbwDMRET3uXdIM
+ cg5cHbzXHVHSjB/F8YskidSjeLQ2GRcg0fzkWxeBOoqvwmwFZyMdUXK04jyQ1j7OPNxl1CPEVbW
+ YfDepdXSzZxenfJviOhToBZCkrYmcf8tWsemUOjmB3Fs/GGWBVW8ulTB8hetwgPFqshKxRNdu7t
+ pfcYHIzkczmEcUK5eZp8C3UWtcE8RGMPtRs9/BXsfAaI5H40r23Hn83ycvRQOQIpdNqpzebpSE2
+ 9qFqA4juUmYXA8QGMX7PcoTgg8VO12MzroBO7uL+reEZ+sHJi6OJ93e2DaBME68hwDKZvuj623A
+ 3q9CzZUx1bZqpcdL7GVuY3Poap+nNg==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-20_06,2025-08-20_03,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0 clxscore=1015
+ bulkscore=0 priorityscore=1501 malwarescore=0 adultscore=0 suspectscore=0
+ lowpriorityscore=0 impostorscore=0 phishscore=0 clxscore=1015 spamscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-If we fail a handle-lookup part way thru, we need to drop the already
-obtained obj references.
+We need to reject the MAP op if offset+range is larger than the BO size.
 
+Reported-by: Connor Abbott <cwabbott0@gmail.com>
 Fixes: 2e6a8a1fe2b2 ("drm/msm: Add VM_BIND ioctl")
 Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
 Tested-by: Connor Abbott <cwabbott0@gmail.com>
 ---
- drivers/gpu/drm/msm/msm_gem_vma.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/msm/msm_gem_vma.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
-index 00d0f3b7ba32..209154be5efc 100644
+index 209154be5efc..381a0853c05b 100644
 --- a/drivers/gpu/drm/msm/msm_gem_vma.c
 +++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-@@ -1023,6 +1023,7 @@ vm_bind_job_lookup_ops(struct msm_vm_bind_job *job, struct drm_msm_vm_bind *args
- 	struct drm_device *dev = job->vm->drm;
- 	int ret = 0;
- 	int cnt = 0;
-+	int i = -1;
+@@ -1080,6 +1080,12 @@ vm_bind_job_lookup_ops(struct msm_vm_bind_job *job, struct drm_msm_vm_bind *args
  
- 	if (args->nr_ops == 1) {
- 		/* Single op case, the op is inlined: */
-@@ -1056,11 +1057,12 @@ vm_bind_job_lookup_ops(struct msm_vm_bind_job *job, struct drm_msm_vm_bind *args
- 
- 	spin_lock(&file->table_lock);
- 
--	for (unsigned i = 0; i < args->nr_ops; i++) {
-+	for (i = 0; i < args->nr_ops; i++) {
-+		struct msm_vm_bind_op *op = &job->ops[i];
- 		struct drm_gem_object *obj;
- 
--		if (!job->ops[i].handle) {
--			job->ops[i].obj = NULL;
-+		if (!op->handle) {
-+			op->obj = NULL;
- 			continue;
- 		}
- 
-@@ -1068,15 +1070,15 @@ vm_bind_job_lookup_ops(struct msm_vm_bind_job *job, struct drm_msm_vm_bind *args
- 		 * normally use drm_gem_object_lookup(), but for bulk lookup
- 		 * all under single table_lock just hit object_idr directly:
- 		 */
--		obj = idr_find(&file->object_idr, job->ops[i].handle);
-+		obj = idr_find(&file->object_idr, op->handle);
- 		if (!obj) {
--			ret = UERR(EINVAL, dev, "invalid handle %u at index %u\n", job->ops[i].handle, i);
-+			ret = UERR(EINVAL, dev, "invalid handle %u at index %u\n", op->handle, i);
- 			goto out_unlock;
- 		}
- 
- 		drm_gem_object_get(obj);
- 
--		job->ops[i].obj = obj;
-+		op->obj = obj;
+ 		op->obj = obj;
  		cnt++;
++
++		if ((op->range + op->obj_offset) > obj->size) {
++			ret = UERR(EINVAL, dev, "invalid range: %016llx + %016llx > %016zx\n",
++				   op->range, op->obj_offset, obj->size);
++			goto out_unlock;
++		}
  	}
  
-@@ -1085,6 +1087,17 @@ vm_bind_job_lookup_ops(struct msm_vm_bind_job *job, struct drm_msm_vm_bind *args
- out_unlock:
- 	spin_unlock(&file->table_lock);
- 
-+	if (ret) {
-+		for (; i >= 0; i--) {
-+			struct msm_vm_bind_op *op = &job->ops[i];
-+
-+			if (!op->obj)
-+				continue;
-+
-+			drm_gem_object_put(op->obj);
-+			op->obj = NULL;
-+		}
-+	}
- out:
- 	return ret;
- }
+ 	*nr_bos = cnt;
 -- 
 2.50.1
 
