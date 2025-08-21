@@ -1,467 +1,234 @@
-Return-Path: <linux-kernel+bounces-779175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE838B2F009
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:47:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61089B2F034
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41081CC4BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:46:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB301176835
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051722745E;
-	Thu, 21 Aug 2025 07:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aSdQ9EU1"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2066.outbound.protection.outlook.com [40.107.236.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A872A2E972E;
+	Thu, 21 Aug 2025 07:55:31 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1B013A265;
-	Thu, 21 Aug 2025 07:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755762352; cv=fail; b=WWC3xUK/1fi06epZn2BdNT0SZok+ksCyd0ij+/BjhFQD097bNlEXnUVg7k68HLqeHQ1DSZxZjRpAIA8/lA9eg0wEqZogJUUWg5aBILDonvU4SSau4D0UT3NHsIMjM7tug9iHPd3r1o2A5m99RogRHm1h4MnF2c32RSFaLvpMKlc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755762352; c=relaxed/simple;
-	bh=KO6KyoeanUnLslLu0DFon2FbO5L4rhADqS1z5CDPFig=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WDKOnmqshKXOJnFpnVpNkvZzcf7lr8Is3S7DVE8EAxOt3HMPtDkDHQQ2UW9AYR9bphXz/tn8zxyh+YdSy1tobNys0ahlmSwxomYbogj2YwOkHyqsKhTHMGEpKbm8wKYtWJKP876KwZI7fw/7PE+6nYhSzZzpnsS3eFtTG3rVO8c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aSdQ9EU1; arc=fail smtp.client-ip=40.107.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i2+cMDnl2WJqIoLEyU8z+sGoQ2MeN33hhmVq/Sx9CVQJ1RGgUOyKlGe4eJSEFtGgBehiykH76kD+Fgtz5rxbv4AtrcsR5voNOxn703S2pXp6xvOpIx6Js8BNzk5X54ZpjHQeIJdhyEMJFtEM6p0zgdZTLq4XO6nK79d4uNA6Y4abv9Oa2ZvdHN+ijnPuEhO0Xa8ZJmFSWqj8KXkV+z3Agc9jcOXZIdGCVVYJlPYgw70DErhDxdejL9kNCtRt4fx6Ngjxzb5Lg4f6m+sFf/sBbfvZdRK+yFqFK2S7dXlCr/6nU5IQvdUNdedyzfAo8uXtUBvVYuBID4Wu83I2ARLlWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mozZefmYMFS557lEDzsrmFmaIzSPBLetTJu7XszCnF8=;
- b=dzCiZwnGoc1aKIPGYb1U1e9StC+cvIMGU4zeUl2OdlYV4NTSoJn4B7zb47vQAxDZsBJx8sXgmZODc/z14H67uWtrp4b1lu8FZWwbF7qjHBqlkDoCIYHsklxeEQ9+ap/j4WZhSqocPDEaSAnXSm1z6JImv77DdPeU3Zr2phcU4qixg8HYSNyC500IT8v7nkkzWBAZUwaAt7irz1JVwyG0Tp+mnN3BuzfQMEw5gfQ4mtLXCm6UkqHgQP67IloOU7p8XIKE2sEeiNI2NL9//9fznj9D3NmcXEw9E00seq5XkOrmmOdFebUo2EI2LsQqepi2w6eZc1NU4xweIg5RUVSyMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mozZefmYMFS557lEDzsrmFmaIzSPBLetTJu7XszCnF8=;
- b=aSdQ9EU1oggWaScQCTkZyrtuSeO/pI3bWK5LoBCPmRiWqf8nA5vcrV9lrpo8qU7ogztlwr6uHpsefMhWGwKfzSx7MX8+bG8BAGTdOri8VaKMqGoEv9sTxOVzlv6XlmmdvIPoPC2AT7USwX/mp/tbGNY0cg7DhjYYk7iD18UIFrUeZRgPJCpvbhv0pTc+WONhEGAXhGmZrH0tXQ3iX70KbqY8xCuSQJAaLQo6NM1wA4gazFflajaPxroWVbvk8AoTZc8FctTZgrLYZeZrVRUP3Z+1FIFngse6CjNcJbMDqQIQ/BiJfPqqZwHnTY88KPKc0HhOzFqgeUmeUktIrf89cA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA1PR12MB6484.namprd12.prod.outlook.com (2603:10b6:208:3a7::13)
- by DM3PR12MB9416.namprd12.prod.outlook.com (2603:10b6:0:4b::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.14; Thu, 21 Aug 2025 07:45:45 +0000
-Received: from IA1PR12MB6484.namprd12.prod.outlook.com
- ([fe80::fb8b:583b:154:76f6]) by IA1PR12MB6484.namprd12.prod.outlook.com
- ([fe80::fb8b:583b:154:76f6%7]) with mapi id 15.20.9009.017; Thu, 21 Aug 2025
- 07:45:45 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] ARM: tegra: Add SOCTHERM support on Tegra114
-Date: Thu, 21 Aug 2025 16:45:41 +0900
-Message-ID: <3656751.iIbC2pHGDl@senjougahara>
-In-Reply-To: <20250820114231.150441-7-clamor95@gmail.com>
-References:
- <20250820114231.150441-1-clamor95@gmail.com>
- <20250820114231.150441-7-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0323.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3b7::15) To IA1PR12MB6484.namprd12.prod.outlook.com
- (2603:10b6:208:3a7::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E512E8DFD;
+	Thu, 21 Aug 2025 07:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755762931; cv=none; b=bTG3ZUJzL5uB9P6efu6H9Ox/iWOqJ3LKPozl8eeThqNslsc4ntG+VlXblWj3jrLTEs1iS41GfH+Z8DcYbvFKYZuG9rE5UOJYhXNQu9VG2yYgVwZwjSOINHzuS45c8lQV0iW0utIkju+uqzGIk8lms+W9N9BgKiZsVAywnJwabKc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755762931; c=relaxed/simple;
+	bh=luh7zUJNPaiMiCUc9aL02ayTbOO3oMhsEoGmoaeY6JM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jpJTgPuGQ/25rr4Crk3aeUYsw1Twr2C/2ATTHyKPg14IJpNhzRN7NCFc4Lo9kqj3J6FWl8jdDTJw8KYFvs71GM0UGeYixmYCldyIll1iwbwf8F+cYJ3imSmhkLqbHclsxIM385zNJxP+37fPtKbYVY6M2fWS6dOj7X7fQKFkq2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6wbW5l1ZzKHNSC;
+	Thu, 21 Aug 2025 15:55:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 44D711A0ADA;
+	Thu, 21 Aug 2025 15:55:19 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAHgxPl0KZoQiypEQ--.5616S4;
+	Thu, 21 Aug 2025 15:55:19 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	neil@brown.name,
+	akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	colyli@kernel.org,
+	xni@redhat.com,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH] block: fix disordered IO in the case recursive split
+Date: Thu, 21 Aug 2025 15:47:06 +0800
+Message-Id: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6484:EE_|DM3PR12MB9416:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4ee7b7d-1786-4d42-e40c-08dde086bca0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M0dHVEllaG9ZYWhkNHFyRFJSSFBBVERVb1BNT3l1SDFiQmlDdm00dlEzVzlM?=
- =?utf-8?B?TXFFWnZZcHEvelZsRWtyUnJIbTdnN05GZy9sQW9Da3RtM0ZaZVVySGVaVFk5?=
- =?utf-8?B?dFN3K0t3bGgzYTJGclAxaUozcmFwZVpHNHhkaVYweVlIaGlSQy93UHkyNGhM?=
- =?utf-8?B?ZWFsTUMrUGtuYWFMNVBzZnlGTURvaHBKVmpXNldzbnFoTG5pNjZLTzJyTGMx?=
- =?utf-8?B?NVJFUmNNNXdtL2NMaE1FMWNsUjJFWjhLT2FTK2NldE5JVktma1FMMllvdENH?=
- =?utf-8?B?dXNRQjdFamNLcnU3NVFlM1hnYjJwK0J1QlE4dUFyeUdYa05aZWE0TG91Qlpv?=
- =?utf-8?B?WTZ2UnhGQnJSMDNydlRjVTVLbHZIbm54SFFzR2JPUUcvRXNtcXZ6OExZWHUr?=
- =?utf-8?B?cDFkQjdLRjlkOVBvM1RDZGVFVkZ2Q1hCQTI4NmJtcXIwZlFKVmIzYjVZV0M2?=
- =?utf-8?B?VmgxRDRQZVV4Q0pSL2FQUmxsRlFOL1dEaTJYUklHb3E1bEpwTHZVTXdmS1Y4?=
- =?utf-8?B?RU1VTjBGbkREUHVRTDF0Qm1mam9XUjFZZDB4MnViSEFxYlFyRGc5U0JBdVZw?=
- =?utf-8?B?RHZXejJuTVlBeDBoc3dVK0dwVGQ2eHZPSmVTcDN3QXVhNGZmZ1VZeStLaFJX?=
- =?utf-8?B?eU5tVVJJTVdxclpSTGhjaVRhQ012a3I3WFZONDNramJ6c0pDK1RJbDFLQ05t?=
- =?utf-8?B?NlNtVThkVDlMVkhMTUhwUmNNWDRmM2VtTWZwM1dqUUVvbU9MMzFLQzNTMWN3?=
- =?utf-8?B?NGYweW9Fd2svcUNqVEhRMXN2d0FZUDNXVFdUeHpLVkEzSlBwMHc2ZHVtajIx?=
- =?utf-8?B?RVlLNmgyNGE5OVppdzhwdkp6UVFMNE90UURya0RPNHBtak5uY1JRSVVjWk1O?=
- =?utf-8?B?VEpUdXNvSTN4WlVPNFhZY3dmTEJJdlgrTnpmaEZDaEhFMWI5NUFXSXpLNFpB?=
- =?utf-8?B?MkFldEIrQjFrV1gxODl1WE50ci94b0V2amNIVmdSckYyNlhlVVZMZFhFWHdy?=
- =?utf-8?B?VUJSZWxZTE5HdzJpRUdXRmlsaFEySlZHYkJ3bkVSbVNTZ3VaaldVWlN1Qkc5?=
- =?utf-8?B?cEx0ZU13NTRyczl5OENQbTd6WnNoNWg0OU5WVFprS25PQXpVeHhWeEc0aC9l?=
- =?utf-8?B?ZmdnM21DVWNRSmF3TVl1U0NWL0FGMkNLNXo3ajJHZTlNZGxJTXlYZUNmRWpX?=
- =?utf-8?B?djJvaVVIN2pnUE4yMnJ4Um5ZY21nTG9JNG04dmZQNkQ2bXFvQi9rZkxWckVE?=
- =?utf-8?B?U2VScmYxL1JMV2JKbVNYQkcvaHIzY2MySUdNZURDUEhYS2tLckhVVVdKQXNM?=
- =?utf-8?B?by93cHZralNrdmR3REJZUitYSmZaL2dtSE43RDBLa2tqM3RHL3BNT05BNU5t?=
- =?utf-8?B?Tjg2b2ZtS2hqbmRWdm5TL3p6dDdpK21CWTJTMmpjQ1BLcG93Y2tSZDlRM1Bu?=
- =?utf-8?B?RWJidUhDL09hWTVIMkh3WFNHdkp0R1Y0V05yaWdZS3N6bGdpdUVEZE9Xdlc2?=
- =?utf-8?B?WnhuU0xZT0licmhDZmdMNXhRLzQrMW00azdwY3NUbHBTd043S1BPVHMrZ1Ji?=
- =?utf-8?B?dGhJRUNOeWZ2K25BanFIaTFxYkwrZXM0ekg4ZEtBM3VKWkJMc2cvOFFCTHI2?=
- =?utf-8?B?VFBOUVpZdGpPSzlFN1RUVmVNMUV6Q3RpaWVZK1NJSUxQakhZbVJNV2xiZ2tO?=
- =?utf-8?B?eDRqQVhrMi9VbDZLWThha01peUp0cjlONHdSRGF2dTB4MHh6K00rVVBPeGZU?=
- =?utf-8?B?QkJYV0thOXB3ZDVFTjlDZ0VkcG5iYnJpdUh2MDBrOVIzcWM3NGNoOVYvaGZF?=
- =?utf-8?B?YTZuSGlrMEdDMi9ySjFtS2F3WmY0YkI4MmxiZXBFYyswRittVGxWdCs1NVg3?=
- =?utf-8?B?VENxbDVsZDI2elFjRmRhclBES3ZkQStGVVdiandRWVJPVnJtMVBTd2ExQWVV?=
- =?utf-8?B?bkNLZTUzSmxWbVg0MHJlV3lxRjRuN2tmQ2JtTUI4eDV5YnU4MXVSNXRXa1U4?=
- =?utf-8?B?UXdIdG9xZzZnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6484.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dWFrK2RkaVkwd1MyZ0VCMnlSY3VXQWUwOWczWEhaaFFpMEhhNWVuNnI0SmJm?=
- =?utf-8?B?YW85TTlHbW1iRFEvcnVzOFl0c1NhSGcvbXBLRFpzMG41eDQyU2x4NmI2bkh3?=
- =?utf-8?B?dkxwY3g0dXN0ZnN4Q0JqOWh0Q09NSnFORE95NmZqbE9ienp1WHVCL2pmWFhz?=
- =?utf-8?B?OEowdzI2Nk9zbDI2NXR2amNPaUFDUWc3dm5uQmoyUGlmaFFnS2syamVyOTRo?=
- =?utf-8?B?RXpBWUtndUhsTWdja3FpU2lhWUJhRSt3aXlSblg2L2h6ZWI3YkVxY05BRzdj?=
- =?utf-8?B?UEgvUDNlbmhCWFIxZGFqTkVPcDhpWklOY2ZIbk03SGZuMFZPRWIxZDJwSE95?=
- =?utf-8?B?MERKMkUvYTJkbGE2eWQzY0Z2UWVhcytnZnRJaGlJSVhiN1BVOHhtaUtoeXV4?=
- =?utf-8?B?bzFJbzlFR2NzZFU0UEtxVkJwUWVIT05Mek9YQ3RsNVdhTVBoWGpodmg4dDdw?=
- =?utf-8?B?V2ZlaXZjd1EvdmR0QkVIdkVXR1RDVEQ4R1JpZXpDeVdtSnhGNmtGU2hXWml0?=
- =?utf-8?B?YlMrYkFGWFVNSkV6R0xqWUovWTgrY1hyS3l6SFJ1cHhvaFhoYVNsMEJEY2Jn?=
- =?utf-8?B?Slh1dFdXTU9qcjhTN24xb0NXcERhaitib1NFYlpzNER4RHNJZWI0QlRSdjVt?=
- =?utf-8?B?dzJjd0RMQWkrQ29mMGpnWXNwZWF3RVIwbExwTi9OWTdlV3dDWkdNUGJ0UU1n?=
- =?utf-8?B?R3hNaHB5RmxUbE1NenZIY2w2NTE5YUZBVXdvMVZhODcrSWRETERlYkJYYWlS?=
- =?utf-8?B?ZGFWUVBLTU15VXc1MEtxSGZPbE5TdTZHSGF5ZU1LR1Z3cmIxM0hDWVVHbDZp?=
- =?utf-8?B?TjJpOTI1R2tuR3JyS0FndE5EbW1iK0E4dTRnOGM2Tzk2L2k4RFhuL3J6UVZO?=
- =?utf-8?B?amlxQWxBejhLSkRkajFIeEtsdnNXUFErRng4czZFTDVTclVqbkVFMFZXRXFU?=
- =?utf-8?B?NTdneWhIck41bUlCNXgwZmFrYkVnTTIvNFdXeVZUcFZHbjVuN2MyVStZeEhO?=
- =?utf-8?B?NDN1czhVcWtJTzdmMVBCYkRTSlI5TEFNNGMwSzdYSkRZb3BxM3o0N1BEMlQ1?=
- =?utf-8?B?bFprbGExQ01EL2xwd1hUQ3hXU3orTUZOL01qMjhKUkRXTmVhSEdXM3FqR1Uz?=
- =?utf-8?B?Q0VuRXZsV2NoMFJIVDM0YWg3RXFEMnQ0NG9kSndCc0JxeTY4WVVFU2EvN2Yv?=
- =?utf-8?B?SFV5aGwweWZqNml4eVBkS1h4bFVJWUt4MWNMWG5nbzNHWjB0K3R4UFZFMGxM?=
- =?utf-8?B?QXg1YXFNNEROMmp4RmxsSnZWKzgxdFk2d1ZXZ3lIY3gvRk9CU1cxRHMwUFFv?=
- =?utf-8?B?aTV2YTd4M0RWWkZ6RkgxZUx0S2xlTEtDakpzNUs4bXdVYTk3YklEeURPWXl4?=
- =?utf-8?B?RVRsQnVlRzQvcGNYNHo4MzhUTEZTMCtmc1FyMDNEMlZOZFcvcUdpR0ptRUwy?=
- =?utf-8?B?NzJYdGJIOUcwOUhmV1A0NitPc2dsNklVVldKM3pyaHFLTUxVT3VDMEtJNFhh?=
- =?utf-8?B?U3lvRFVwUmkvZmhQWnEzQ3ArZmFkN0FycTlHcDc0N2FoWEprN054UVZkZ1JJ?=
- =?utf-8?B?TmN5OFp3THJZcnJteDl5RHJzNnZkVTJKd0VFYk9CTW9xZzRvODQ5akw0YzVs?=
- =?utf-8?B?U25nRHRWektDZWtOV1NsWU5xZGVnOEo0LzIyaVMydjVNSk1FVFVTc0tTcnl5?=
- =?utf-8?B?ZzdCNEJ2bmpvNVJVZE9lM285Rm45YVZDcXFpQkxhd2hvWVhFWHp5ZU5iWjhO?=
- =?utf-8?B?ZldmRmk1SjVRQVp2WXdRWWpoZUIwbHl3bCt0OWtYQktLVFNzc1hlRGZ2azY4?=
- =?utf-8?B?blpxTW9KV0JHTDZpS001MVUzMzZaays1Z3QyNGphb1VaWlhFSWhVM3hoMnk2?=
- =?utf-8?B?dmYvOElxdzZuTTZEWVk2b3MrMThIOGU5VC9lUDNvUk95aG01WUhWMFozTWJV?=
- =?utf-8?B?bUhkdm1XN280UHc2NE9HblpNdkNRc0VPNWkrblMwOG9xYzNMQlJ5L3FFSVlK?=
- =?utf-8?B?UmNaUkNNbjhWT0RyREpJa3ZOcVd3bTFNQ3pnTjdsaTNYMlgrRnpzMWwzYlJs?=
- =?utf-8?B?cE51dHZvdm15bWJQUGNzcitobGJ4UFpWSFB4b0NuU3pFQTVyUWgrM1M3bUNK?=
- =?utf-8?B?TWtsU3pnbkZkQXg1ZHVqK2ViZ25pUzBOQTlHdDVvbjN5c1VKc2xnZ1czVzJH?=
- =?utf-8?B?bURoam4wMDJOV1Z3K2tzVVhSNlZ3SHNKdnlKeEw0Qk9ic2dkOTlBcmRRejRU?=
- =?utf-8?B?eXpJZUY2UUN3WE1Oa21RNXUrdWp3PT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4ee7b7d-1786-4d42-e40c-08dde086bca0
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6484.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 07:45:45.4117
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8sOvtOBF2UKbp7frdgNt7BI7UgUOmrGkNrCucR6fpGBz8T0cMZyFDdVvDXcPj4DgfVrSYAGEhni2ymFWGzCCnA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9416
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHgxPl0KZoQiypEQ--.5616S4
+X-Coremail-Antispam: 1UD129KBjvJXoW3AryrZr13CF1UGryrCrWfKrg_yoW7GF45pr
+	47Gw1Ykr1DGF47Ar48GrWj9a1xtF98Cr4rCry5C3yfJr4YgrnFq3ZrAay0yasxAryUurZ8
+	Xa4kKr9093s2vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wednesday, August 20, 2025 8:42=E2=80=AFPM Svyatoslav Ryhel wrote:
-> Add SOCTHERM and thermal zones nodes into common Tegra 4 device tree.
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  arch/arm/boot/dts/nvidia/tegra114.dtsi | 197 +++++++++++++++++++++++++
->  1 file changed, 197 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-> b/arch/arm/boot/dts/nvidia/tegra114.dtsi index 3ee51d7f3935..d9c51e6900d8
-> 100644
-> --- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-> +++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-> @@ -5,6 +5,7 @@
->  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/reset/tegra114-car.h>
-> +#include <dt-bindings/thermal/tegra114-soctherm.h>
+From: Yu Kuai <yukuai3@huawei.com>
 
-'t'hermal comes after 's'oc
+Currently, split bio will be chained to original bio, and original bio
+will be resubmitted to the tail of current->bio_list, waiting for
+split bio to be issued. However, if split bio get split again, the IO
+order will be messed up, for example, in raid456 IO will first be
+split by max_sector from md_submit_bio(), and then later be split
+again by chunksize for internal handling:
 
->  #include <dt-bindings/soc/tegra-pmc.h>
->=20
->  / {
-> @@ -694,6 +695,46 @@ mipi: mipi@700e3000 {
->  		#nvidia,mipi-calibrate-cells =3D <1>;
->  	};
->=20
-> +	soctherm: thermal-sensor@700e2000 {
-> +		compatible =3D "nvidia,tegra114-soctherm";
-> +		reg =3D <0x700e2000 0x600>, /* SOC_THERM reg_base */
-> +		      <0x60006000 0x400>; /* CAR reg_base */
+For example, assume max_sectors is 1M, and chunksize is 512k
 
-Regrettable that the binding has CAR registers here, but that's a pre-exist=
-ing=20
-problem and not something we need to fix here.
+1) issue a 2M IO:
 
-> +		reg-names =3D "soctherm-reg", "car-reg";
+bio issuing: 0+2M
+current->bio_list: NULL
 
-Same for these names..
+2) md_submit_bio() split by max_sector:
 
-> +		interrupts =3D <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names =3D "thermal", "edp";
-> +		clocks =3D <&tegra_car TEGRA114_CLK_TSENSOR>,
-> +			 <&tegra_car TEGRA114_CLK_SOC_THERM>;
-> +		clock-names =3D "tsensor", "soctherm";
-> +		resets =3D <&tegra_car 78>;
-> +		reset-names =3D "soctherm";
-> +
-> +		assigned-clocks =3D <&tegra_car TEGRA114_CLK_TSENSOR>,
-> +				  <&tegra_car TEGRA114_CLK_SOC_THERM>;
-> +		assigned-clock-rates =3D <500000>, <51000000>;
-> +
-> +		assigned-clock-parents =3D <&tegra_car TEGRA114_CLK_CLK_M>,
-> +					 <&tegra_car TEGRA114_CLK_PLL_P>;
-> +
-> +		#thermal-sensor-cells =3D <1>;
-> +
-> +		throttle-cfgs {
-> +			throttle_heavy: heavy {
-> +				nvidia,priority =3D <100>;
-> +				nvidia,cpu-throt-percent =3D <80>;
-> +				nvidia,gpu-throt-level =3D=20
-<TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
+bio issuing: 0+1M
+current->bio_list: 1M+1M
 
-As mentioned elsewhere, these should have TEGRA114 prefixes.
+3) chunk_aligned_read() split by chunksize:
 
-> +				#cooling-cells =3D <2>;
-> +			};
-> +
-> +			throttle_light: light {
-> +				nvidia,priority =3D <80>;
-> +				nvidia,cpu-throt-percent =3D <50>;
-> +				nvidia,gpu-throt-level =3D=20
-<TEGRA_SOCTHERM_THROT_LEVEL_MED>;
-> +				#cooling-cells =3D <2>;
-> +			};
-> +		};
-> +	};
-> +
->  	dfll: clock@70110000 {
->  		compatible =3D "nvidia,tegra114-dfll";
->  		reg =3D <0x70110000 0x100>, /* DFLL control */
-> @@ -858,24 +899,28 @@ cpu0: cpu@0 {
->  			clock-names =3D "cpu_g", "cpu_lp", "pll_x", "pll_p",=20
-"dfll";
->  			/* FIXME: what's the actual transition time? */
->  			clock-latency =3D <300000>;
-> +			#cooling-cells =3D <2>;
->  		};
->=20
->  		cpu1: cpu@1 {
->  			device_type =3D "cpu";
->  			compatible =3D "arm,cortex-a15";
->  			reg =3D <1>;
-> +			#cooling-cells =3D <2>;
->  		};
->=20
->  		cpu2: cpu@2 {
->  			device_type =3D "cpu";
->  			compatible =3D "arm,cortex-a15";
->  			reg =3D <2>;
-> +			#cooling-cells =3D <2>;
->  		};
->=20
->  		cpu3: cpu@3 {
->  			device_type =3D "cpu";
->  			compatible =3D "arm,cortex-a15";
->  			reg =3D <3>;
-> +			#cooling-cells =3D <2>;
->  		};
->  	};
->=20
-> @@ -888,6 +933,158 @@ pmu {
->  		interrupt-affinity =3D <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
->  	};
->=20
-> +	thermal-zones {
-> +		cpu-thermal {
-> +			polling-delay-passive =3D <1000>;
-> +			polling-delay =3D <1000>;
-> +
-> +			thermal-sensors =3D
-> +				<&soctherm TEGRA114_SOCTHERM_SENSOR_CPU>;
-> +
-> +			trips {
-> +				cpu-shutdown-trip {
-> +					temperature =3D <102000>;
-> +					hysteresis =3D <0>;
-> +					type =3D "critical";
-> +				};
-> +
-> +				cpu_throttle_trip: cpu-throttle-trip {
-> +					temperature =3D <100000>;
-> +					hysteresis =3D <1000>;
-> +					type =3D "hot";
-> +				};
-> +
-> +				cpu_balanced_trip: cpu-balanced-trip {
-> +					temperature =3D <90000>;
-> +					hysteresis =3D <1000>;
-> +					type =3D "passive";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip =3D <&cpu_throttle_trip>;
-> +					cooling-device =3D <&throttle_heavy=20
-1 1>;
-> +				};
-> +
-> +				map1 {
-> +					trip =3D <&cpu_balanced_trip>;
-> +					cooling-device =3D <&throttle_light=20
-1 1>;
-> +				};
-> +			};
-> +		};
-> +
-> +		mem-thermal {
-> +			polling-delay-passive =3D <1000>;
-> +			polling-delay =3D <1000>;
-> +
-> +			thermal-sensors =3D
-> +				<&soctherm TEGRA114_SOCTHERM_SENSOR_MEM>;
-> +
-> +			trips {
-> +				mem-shutdown-trip {
-> +					temperature =3D <102000>;
-> +					hysteresis =3D <0>;
-> +					type =3D "critical";
-> +				};
-> +
-> +				mem_throttle_trip: mem-throttle-trip {
-> +					temperature =3D <100000>;
-> +					hysteresis =3D <1000>;
-> +					type =3D "hot";
-> +				};
-> +
-> +				mem_balanced_trip: mem-balanced-trip {
-> +					temperature =3D <90000>;
-> +					hysteresis =3D <1000>;
-> +					type =3D "passive";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				/*
-> +				 * There are currently no cooling maps,
-> +				 * because there are no cooling devices.
-> +				 */
-> +			};
-> +		};
-> +
-> +		gpu-thermal {
-> +			polling-delay-passive =3D <1000>;
-> +			polling-delay =3D <1000>;
-> +
-> +			thermal-sensors =3D
-> +				<&soctherm TEGRA114_SOCTHERM_SENSOR_GPU>;
-> +
-> +			trips {
-> +				gpu-shutdown-trip {
-> +					temperature =3D <102000>;
-> +					hysteresis =3D <0>;
-> +					type =3D "critical";
-> +				};
-> +
-> +				gpu_throttle_trip: gpu-throttle-trip {
-> +					temperature =3D <100000>;
-> +					hysteresis =3D <1000>;
-> +					type =3D "hot";
-> +				};
-> +
-> +				gpu_balanced_trip: gpu-balanced-trip {
-> +					temperature =3D <90000>;
-> +					hysteresis =3D <1000>;
-> +					type =3D "passive";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip =3D <&gpu_throttle_trip>;
-> +					cooling-device =3D <&throttle_heavy=20
-1 1>;
-> +				};
-> +
-> +				map1 {
-> +					trip =3D <&gpu_balanced_trip>;
-> +					cooling-device =3D <&throttle_light=20
-1 1>;
-> +				};
-> +			};
-> +		};
-> +
-> +		pllx-thermal {
-> +			polling-delay-passive =3D <1000>;
-> +			polling-delay =3D <1000>;
-> +
-> +			thermal-sensors =3D
-> +				<&soctherm TEGRA114_SOCTHERM_SENSOR_PLLX>;
-> +
-> +			trips {
-> +				pllx-shutdown-trip {
-> +					temperature =3D <102000>;
-> +					hysteresis =3D <0>;
-> +					type =3D "critical";
-> +				};
-> +
-> +				pllx_throttle_trip: pllx-throttle-trip {
-> +					temperature =3D <100000>;
-> +					hysteresis =3D <1000>;
-> +					type =3D "hot";
-> +				};
-> +
-> +				pllx_balanced_trip: pllx-balanced-trip {
-> +					temperature =3D <90000>;
-> +					hysteresis =3D <1000>;
-> +					type =3D "passive";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				/*
-> +				 * There are currently no cooling maps,
-> +				 * because there are no cooling devices.
-> +				 */
-> +			};
-> +		};
-> +	};
-> +
->  	timer {
->  		compatible =3D "arm,armv7-timer";
->  		interrupts =3D
+bio issuing: 0+512k
+current->bio_list: 1M+1M -> 512k+512k
 
+4) after first bio issued, __submit_bio_noacct() will contuine issuing
+next bio:
 
+bio issuing: 1M+1M
+current->bio_list: 512k+512k
+bio issued: 0+512k
 
+5) chunk_aligned_read() split by chunksize:
+
+bio issuing: 1M+512k
+current->bio_list: 512k+512k -> 1536k+512k
+bio issued: 0+512k
+
+6) no split afterwards, finally the issue order is:
+
+0+512k -> 1M+512k -> 512k+512k -> 1536k+512k
+
+This behaviour will cause large IO read on raid456 endup to be small
+discontinuous IO in underlying disks. Fix this problem by placing chanied
+bio to the head of current->bio_list.
+
+Test script: test on 8 disk raid5 with 64k chunksize
+dd if=/dev/md0 of=/dev/null bs=4480k iflag=direct
+
+Test results:
+Before this patch
+1) iostat results:
+Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz  aqu-sz  %util
+md0           52430.00   3276.87     0.00   0.00    0.62    64.00   32.60  80.10
+sd*           4487.00    409.00  2054.00  31.40    0.82    93.34    3.68  71.20
+2) blktrace G stage:
+  8,0    0   486445    11.357392936   843  G   R 14071424 + 128 [dd]
+  8,0    0   486451    11.357466360   843  G   R 14071168 + 128 [dd]
+  8,0    0   486454    11.357515868   843  G   R 14071296 + 128 [dd]
+  8,0    0   486468    11.357968099   843  G   R 14072192 + 128 [dd]
+  8,0    0   486474    11.358031320   843  G   R 14071936 + 128 [dd]
+  8,0    0   486480    11.358096298   843  G   R 14071552 + 128 [dd]
+  8,0    0   486490    11.358303858   843  G   R 14071808 + 128 [dd]
+3) io seek for sdx:
+Noted io seek is the result from blktrace D stage, statistic of:
+ABS((offset of next IO) - (offset + len of previous IO))
+
+Read|Write seek
+cnt 55175, zero cnt 25079
+    >=(KB) .. <(KB)     : count       ratio |distribution                            |
+         0 .. 1         : 25079       45.5% |########################################|
+         1 .. 2         : 0            0.0% |                                        |
+         2 .. 4         : 0            0.0% |                                        |
+         4 .. 8         : 0            0.0% |                                        |
+         8 .. 16        : 0            0.0% |                                        |
+        16 .. 32        : 0            0.0% |                                        |
+        32 .. 64        : 12540       22.7% |#####################                   |
+        64 .. 128       : 2508         4.5% |#####                                   |
+       128 .. 256       : 0            0.0% |                                        |
+       256 .. 512       : 10032       18.2% |#################                       |
+       512 .. 1024      : 5016         9.1% |#########                               |
+
+After this patch:
+1) iostat results:
+Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz  aqu-sz  %util
+md0           87965.00   5271.88     0.00   0.00    0.16    61.37   14.03  90.60
+sd*           6020.00    658.44  5117.00  45.95    0.44   112.00    2.68  86.50
+2) blktrace G stage:
+  8,0    0   206296     5.354894072   664  G   R 7156992 + 128 [dd]
+  8,0    0   206305     5.355018179   664  G   R 7157248 + 128 [dd]
+  8,0    0   206316     5.355204438   664  G   R 7157504 + 128 [dd]
+  8,0    0   206319     5.355241048   664  G   R 7157760 + 128 [dd]
+  8,0    0   206333     5.355500923   664  G   R 7158016 + 128 [dd]
+  8,0    0   206344     5.355837806   664  G   R 7158272 + 128 [dd]
+  8,0    0   206353     5.355960395   664  G   R 7158528 + 128 [dd]
+  8,0    0   206357     5.356020772   664  G   R 7158784 + 128 [dd]
+2) io seek for sdx
+Read|Write seek
+cnt 28644, zero cnt 21483
+    >=(KB) .. <(KB)     : count       ratio |distribution                            |
+         0 .. 1         : 21483       75.0% |########################################|
+         1 .. 2         : 0            0.0% |                                        |
+         2 .. 4         : 0            0.0% |                                        |
+         4 .. 8         : 0            0.0% |                                        |
+         8 .. 16        : 0            0.0% |                                        |
+        16 .. 32        : 0            0.0% |                                        |
+        32 .. 64        : 7161        25.0% |##############                          |
+
+BTW, this looks like a long term problem from day one, and large
+sequential IO read is pretty common case like video playing.
+
+And even with this patch, in this test case IO is merged to at most 128k
+is due to block layer plug limit BLK_PLUG_FLUSH_SIZE, increase such
+limit and cat get even better performance. However, we'll figure out
+how to do this properly later.
+
+Fixes: d89d87965dcb ("When stacked block devices are in-use (e.g. md or dm), the recursive calls")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ block/blk-core.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 4201504158a1..0d46d10edb22 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -745,12 +745,16 @@ void submit_bio_noacct_nocheck(struct bio *bio)
+ 	 * to collect a list of requests submited by a ->submit_bio method while
+ 	 * it is active, and then process them after it returned.
+ 	 */
+-	if (current->bio_list)
+-		bio_list_add(&current->bio_list[0], bio);
+-	else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
++	if (current->bio_list) {
++		if (bio_flagged(bio, BIO_CHAIN))
++			bio_list_add_head(&current->bio_list[0], bio);
++		else
++			bio_list_add(&current->bio_list[0], bio);
++	} else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO)) {
+ 		__submit_bio_noacct_mq(bio);
+-	else
++	} else {
+ 		__submit_bio_noacct(bio);
++	}
+ }
+ 
+ static blk_status_t blk_validate_atomic_write_op_size(struct request_queue *q,
+-- 
+2.39.2
 
 
