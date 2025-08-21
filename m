@@ -1,182 +1,115 @@
-Return-Path: <linux-kernel+bounces-779317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40159B2F27A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:40:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA730B2F28C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DCDFAA7FE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:35:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5091886324
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC38F286433;
-	Thu, 21 Aug 2025 08:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MWtOBtum"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F1E222582;
+	Thu, 21 Aug 2025 08:35:44 +0000 (UTC)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2898D25484D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53753594F
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755765247; cv=none; b=T5Eh/iFwDxxITOT0whoLuAF6igpeLOn1l+LUI1Kv+CNh4mdmOnlTogC+X31dlAEsHXXO/KDowL1HX1xB2vK10Bp3l0DcfAQhGqTzGd8ZUQTs9asI5PKCDcvXTcR6GAJR9kB0feEd/dpDWPRHlaXUQZb9UEnPjPZyjK/eE5H/pSM=
+	t=1755765344; cv=none; b=h+Pwtp3dJ15ez/CmcmJ9p8HwQWQ0shZgw6x2do8BcB80khNKmPt65sj5fXh3NqxRVVa6EpLyrLF4fwGf/o7e5bUrSqlWsTG/Sx5jN/6jJwDTrFcYlU6pUKUXj8n80sgEyPEQ/UhzUrLmwHQkIHfXi8jWiEyXrrYE9x2ZnXkAexg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755765247; c=relaxed/simple;
-	bh=wLUC/1W7EfFeUkMtGcj1FzsRd9x+m0ZbSOIe9wVACeQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YQzfvSm8OqVkhV5jVGy4wU0oA5CpxNfnqHUT+FVsBWpnz1AfjkWyFpGwBBEmmpwpIdJqRtJ5hqQolGOedlMhl87N5Iwf7bOHKvuucSz4poKkwUJIKSzsiRwI7J8ZdTKkzzcYWPs/qfYTKit1BDYjcWBwk3ehZgclI2m7QLPON7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MWtOBtum; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3c51f0158d8so147306f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:34:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755765243; x=1756370043; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eFk83CXRUT92P3+BiK0rArrXXY+KdlyqnAXLmJEMLjY=;
-        b=MWtOBtumbtGLO4eucaKH19C3h16GukiBdmQeS/W+Zr5+Mbfdg8LwYxtnZ03f9n59f+
-         QXNTQH8BPlmknTZExrVXCSvpDKlcXh6D914w3CeyAe3CRGb1K82P5bKtLjZEbmefObcR
-         gL0pAI1UfBk3F+vOzCEcdPjIJwu+xeG2hHrWIaxQhUks5IDjKlQ+3bQKHbXf+9UV1qHF
-         E1qfbJsNOsH1oBzr0gW+P+Kiwl08Oku6MTnSwOWLYOdZWz+fTzZs1R92aFbs5nXI8Uic
-         cuvc6t2NKgSeBzIBVhvVe31nxi5YF05H3WNhC1Pav43rwdSbL5KkfREoi8UOexjqCIMc
-         8uSw==
+	s=arc-20240116; t=1755765344; c=relaxed/simple;
+	bh=UaFhU0ASekfjt+7a2TVZKefNXSuYXrZL2vLsDrzLMU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=krqLndY4e1Yo7FWdHfgBhV+upM3rmIArjwKRGiFyLxh5e4oJD9qJ2EyfKR7AjJ1+Q4tFPly7WY4m+dW4eVVAycrAc+vUNDDPpdgPB9ka8gfq36YcxXrprNo6lc/RLZ3CNjr32Oqyfj3LtaWpLX1ozKq2jfF98qftOT2nIGPaRC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61a1c6a5338so1185974a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:35:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755765243; x=1756370043;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eFk83CXRUT92P3+BiK0rArrXXY+KdlyqnAXLmJEMLjY=;
-        b=BsUOB9+Kc/C8vM2iKyWzVHLAz37LrvbYliedvuO7aztohc1N59XHVsQModYCjEiQDv
-         It4bKBonpIQxmmGAtzUag6kuxb7D5xJjtDYBysw7OImuodz5p5N21vS61mlgbbulcH8t
-         ZT+fOEpNePD6GM5Xg+xV0RKCV+OoJfW7cT2GrKykKtA94VEo2wMYQwxMBvQFO0wBqLxU
-         LEL809R2xuEkiIU/FbxSXF6dXfgjRA/uI9nzG0i2B/aVq1Gk/+CH9UF/smOx5McKw8dZ
-         GeuhdNXrU1xD/wcT3hjH6nDDoa0VqCu42E9rc3qcs9hMS7tJo6YeQN9vvARBlBxDXksx
-         2cWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBQZ6Ih6w/QEsx9CeIA4frqu0uAwc20trhLINPwsSIh/tdoAgVvhsAvgJ83g/fhzn3dSu1bypxljjD6VM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuap8ctfo/2M5+XvlVTCDJcIkZRZ177BrDXik+uHsoDFumTqJt
-	uJpsBo+s5IF/u2y0+lHLGN+Ml32XExOcjf5R7rj82haRJ3LU13WsRYSN1sqBdq/rf1s=
-X-Gm-Gg: ASbGncvmWxmsYDUJHEj2gitej8B5ev8vzd5p44PuCXjTJKfxHCRV8i1fVyspb5W+Lgs
-	GYlEmbkMKR8ZiZWEsmEsnhi22DYk9++JScOtY2qihSXetoVqKLLGBxDbDZffEkFQfZOdQ+076Ua
-	ey3m3GkwVHS8UcVOAbPW+XEswKlDXvQh1TBnpSsSkezRiI54h4AuSIlk1ktbhclEMMmOPDdDGTX
-	t6hmQvv14ibkOqpbmvR6wqDnqtVpe9ufZAf3zxv5HMBk1QJAZYeNtbXl32QxtFw4hqwOVrfYC3W
-	lFB+4O+xWn5dXoAz7VxNEZY+cpap3iy4g0gdT5tE0MAz/QhyCk96XMOdkkZfxMcLyvaLbpCeiyW
-	ve8jCTnT1l7em6PytepAz4cxXZ1+ikg3abl+e
-X-Google-Smtp-Source: AGHT+IHW+YsmBVfepjw0RvvbIvLuyUZUzNrK5+vJha1JHDeloaVHEaX39wtYCOugbW2Umy9rn6hFAA==
-X-Received: by 2002:a5d:64e7:0:b0:3b7:899c:e867 with SMTP id ffacd0b85a97d-3c497741f55mr1258810f8f.59.1755765243275;
-        Thu, 21 Aug 2025 01:34:03 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:a59f:f2cf:3ca3:965])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b4db2a491sm18681295e9.8.2025.08.21.01.34.02
+        d=1e100.net; s=20230601; t=1755765340; x=1756370140;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TLTaYQKz+L6mS60IaQHO0FlbZom6v0EylZjn5fadR0E=;
+        b=pfShcT6Ya5VxHoO2ckTMYL0Cu4upUo1UxNV4MT3EU+jsh77Q9SUz6k8hVjncxHsl7x
+         d+HtS+w5jrJOVIzNH7iCQ822MXCvSodpWEMJ4abYzHTdZkF/1xJVSkAChS7BdGbvlhTD
+         hcdI3gPwp0orYdcdH6A8tYQylgk71wdWMFHUamBPoUwNA9CpMaIi8SX/YS8h1FbxY8je
+         8UBLvjX3za+M9eSZVcxpndbUE7duv79ok94Dp8MJEHa6XQMP1YYpQ/N6H5c0YoKlfsLH
+         gnihShMP+XuwYcK9zjCFt+4LFs9WfdiGrJ1TjfT2xx4PkxQq9xtwiTVtmWY2tOD06y+h
+         R60A==
+X-Forwarded-Encrypted: i=1; AJvYcCWKT7gy0Qkp9NGo2Vu4Y5mG2Evv76wzdB8JR3mV/ZkrkXtsbq+oTXnKeclGivHaMkxsytivBfyH/pYqJWM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCA1wcaRKY6tieh4EFig00u8aNDbUnxre3ddrHThpDbe1gqhgk
+	Yy1VOm2BPVZH2ghpPJlH4twLL7oo2XuN7FVi0z8aqqsa/PH252GFFbAf
+X-Gm-Gg: ASbGnct0wgb4j76P57xqy9ajlQJtjVFxEP8MUvLOvccq5JgjhaY1irK3Qcf/I/Zt8Rf
+	U2KhxPfoSwyoE2d5iFaG9jhd4lz/H8EjXbK0T9hT6QtVnY4B/A+UgTrTg9H1g91KXYzYViyeo0c
+	OtNkVyBGdbi4nS6JkXBlwGfTvv+NrK13xkDIq8WZ0HDuFLY/uFKb09vPLYchxstXzInv3rBmHOw
+	Mri2mTUN/Kwtohmvqfn9DzLUmmI9z6SBP9SZRGfqmUHE8I05uL6LpI8Otq+E2PslfleDmiGAK/P
+	EKOa82Ztf1mSkgAnufWIrOQRir9bAzYYALx07ggopjhIdYoRI79Xjt8ZUbl/hcm+wdPdN7vbg5H
+	0YKQ5ZaEHXsTr+J/hhgXa7OM=
+X-Google-Smtp-Source: AGHT+IEkJdR4ZytuF3ou0QnN9dqwsgDB4fi3WpC1cU6D2DxADi2r+x6LKDLki93uSdw4v8TOHeihdg==
+X-Received: by 2002:a05:6402:354a:b0:618:20c1:7e43 with SMTP id 4fb4d7f45d1cf-61bf8736398mr1310328a12.29.1755765339676;
+        Thu, 21 Aug 2025 01:35:39 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:8::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61bfb41b760sm727145a12.16.2025.08.21.01.35.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 01:34:02 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Thu, 21 Aug 2025 10:33:53 +0200
-Subject: [PATCH] iommu/arm-smmu-qcom: Enable use of all SMR groups when
- running bare-metal
+        Thu, 21 Aug 2025 01:35:38 -0700 (PDT)
+Date: Thu, 21 Aug 2025 01:35:35 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jiri Bohac <jbohac@suse.cz>
+Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org, akpm@linux-foundation.org, 
+	Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>, 
+	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <dhildenb@redhat.com>, Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH v5 0/5] kdump: crashkernel reservation from CMA
+Message-ID: <lofhq3bgtl2bcbrbkgctyyg2gl7ef2naqdrplyb37jyde2xoeh@twcwhwthnzxd>
+References: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
+ <airxp44zdyxskfwrhhveis7gd2vsz5m4f3ipidsghi2x55h64c@s37v5rkuoega>
+ <aKX1vbE5jWVUr298@dwarf.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250821-arm-smmu-qcom-all-smr-v1-1-7f5cbbceac3e@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAPDZpmgC/x3MSwqAMAwA0atI1gYaUSheRVyUmmrA+klRhOLdL
- S7fYiZDYhVO0FcZlG9Jsm8FVFfgF7fNjDIVQ2Oazljq0GnEFOOFp98junUtUqTgLXkytjUBSns
- oB3n+7zC+7wdtNni7ZwAAAA==
-X-Change-ID: 20250815-arm-smmu-qcom-all-smr-1fc81c10840f
-To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Joerg Roedel <joro@8bytes.org>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, Johan Hovold <johan@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, iommu@lists.linux.dev, 
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aKX1vbE5jWVUr298@dwarf.suse.cz>
 
-Some platforms (e.g. SC8280XP and X1E) support more than 128 stream
-matching groups. This is more than what is defined as maximum by the ARM
-SMMU architecture specification. Commit 122611347326 ("iommu/arm-smmu-qcom:
-Limit the SMR groups to 128") disabled use of the additional groups because
-they don't exhibit the same behavior as the architecture supported ones.
+Hello Jiri,
 
-It seems like this is just another quirk of the hypervisor: When running
-bare-metal without the hypervisor, the additional groups appear to behave
-just like all others. The boot firmware uses some of the additional groups,
-so ignoring them in this situation leads to stream match conflicts whenever
-we allocate a new SMR group for the same SID.
+On Wed, Aug 20, 2025 at 06:20:13PM +0200, Jiri Bohac wrote:
+> On Wed, Aug 20, 2025 at 08:46:54AM -0700, Breno Leitao wrote:
+> > First, thank you for making this change; it’s very helpful.
+> > I haven’t come across anything regarding arm64 support. Is this on
+> > anyone’s to-do list?
+> 
+> Yes, I plan to implement this at least for ppc64, arm64 and s390x,
+> hopefully in time for 6.18.
 
-The workaround exists primarily because the bypass quirk detection fails
-when using a S2CR register from the additional matching groups, so let's
-perform the test with the last reliable S2CR (127) and then limit the
-number of SMR groups only if we detect that we are running below the
-hypervisor (because of the bypass quirk).
+Thanks!
 
-Fixes: 122611347326 ("iommu/arm-smmu-qcom: Limit the SMR groups to 128")
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
-I modified arm_smmu_find_sme() to prefer allocating from the SMR groups
-above 128 (until they are all used). I did not see any issues, so I don't
-see any indication that they behave any different from the others.
----
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+I have another question. I assume it’s not possible to allocate only the
+CMA crashkernel area for the kdump kernel, since we need to keep the
+loaded kernel in the crashkernel area while the system is running.
+Therefore, specifying crashkernel=X (without ',cma') is necessary.
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-index 57c097e87613084ffdfbe685d4406a236d3b4b74..c939d0856b719cd2a5501c1206c594dfd115b1c5 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-@@ -431,17 +431,19 @@ static int qcom_smmu_cfg_probe(struct arm_smmu_device *smmu)
- 
- 	/*
- 	 * Some platforms support more than the Arm SMMU architected maximum of
--	 * 128 stream matching groups. For unknown reasons, the additional
--	 * groups don't exhibit the same behavior as the architected registers,
--	 * so limit the groups to 128 until the behavior is fixed for the other
--	 * groups.
-+	 * 128 stream matching groups. The additional registers appear to have
-+	 * the same behavior as the architected registers in the hardware.
-+	 * However, on some firmware versions, the hypervisor does not
-+	 * correctly trap and emulate accesses to the additional registers,
-+	 * resulting in unexpected behavior.
-+	 *
-+	 * If there are more than 128 groups, use the last reliable group to
-+	 * detect if we need to apply the bypass quirk.
- 	 */
--	if (smmu->num_mapping_groups > 128) {
--		dev_notice(smmu->dev, "\tLimiting the stream matching groups to 128\n");
--		smmu->num_mapping_groups = 128;
--	}
--
--	last_s2cr = ARM_SMMU_GR0_S2CR(smmu->num_mapping_groups - 1);
-+	if (smmu->num_mapping_groups > 128)
-+		last_s2cr = ARM_SMMU_GR0_S2CR(127);
-+	else
-+		last_s2cr = ARM_SMMU_GR0_S2CR(smmu->num_mapping_groups - 1);
- 
- 	/*
- 	 * With some firmware versions writes to S2CR of type FAULT are
-@@ -464,6 +466,11 @@ static int qcom_smmu_cfg_probe(struct arm_smmu_device *smmu)
- 
- 		reg = FIELD_PREP(ARM_SMMU_CBAR_TYPE, CBAR_TYPE_S1_TRANS_S2_BYPASS);
- 		arm_smmu_gr1_write(smmu, ARM_SMMU_GR1_CBAR(qsmmu->bypass_cbndx), reg);
-+
-+		if (smmu->num_mapping_groups > 128) {
-+			dev_notice(smmu->dev, "\tLimiting the stream matching groups to 128\n");
-+			smmu->num_mapping_groups = 128;
-+		}
- 	}
- 
- 	for (i = 0; i < smmu->num_mapping_groups; i++) {
+At the same time, since the crashdump environment will use CMA, the
+crashkernel area itself doesn’t need to be very large, as the CMA space
+will be allocated later.
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250815-arm-smmu-qcom-all-smr-1fc81c10840f
+With that in mind, how do I find what is the recommended size for the
+crashkernel area, assuming the CMA area will be more than sufficient at
+runtime?
 
-Best regards,
--- 
-Stephan Gerhold <stephan.gerhold@linaro.org>
+Does it need ot be much higher than the size of kdump kernel and initrd?
 
+Thanks
+--breno
 
