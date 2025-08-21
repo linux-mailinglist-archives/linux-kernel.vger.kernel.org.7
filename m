@@ -1,111 +1,151 @@
-Return-Path: <linux-kernel+bounces-779076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C30B2EEC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:55:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B0AB2EEC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2765116BB9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96501BC7565
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F7626E16E;
-	Thu, 21 Aug 2025 06:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DA42E7F07;
+	Thu, 21 Aug 2025 06:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Xi2HG+DU"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXVEfNPC"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D59F2E62B1
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 06:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EFB2E62D4;
+	Thu, 21 Aug 2025 06:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755759080; cv=none; b=htaJMR5lcF/YtOKAWKo38nz9F7xf9nVkVxbd9/gD8jVuQS59ExMKrw4kUSGtIYIHwfH2r2KfBCslj3pn+9syjuhcqP3rMF/EDXyNIZtNJvy8zR8pqtQ4N5cN9mzt4PoPOQLF3EoCYZtXuv2eG2/imVK659xUd8stIb5/73atAs8=
+	t=1755759116; cv=none; b=jZ8eCYiiUtWyggLIVRBPb59pHWn60WZa7eGd0dBVmSF4ArAl20yNavRxoxwMHhzvkt7llQtSLNByNHDsKIeGszTi7aPz4kMw5b9215jFZE0dDwh04/V46XaWXUYPkKaxgihwkDaaSvCTtpNDHlEmqkU00JwfApGnNvmjYvoICh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755759080; c=relaxed/simple;
-	bh=GfHgawS+yCqoXN1aSsOTJfn8eRUVQWMmUGj3iS9i514=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sm4RgPCkfyZwYd7XSX6Pu9W1wI7s2LJBHDpx0M4/nU60sUCNddZzWJKdVlCSETHS23V92l1g52utSzl4DlZYDgNuo8UjI1uBQmEdbMIEdA+SesXfHgh+JTQ57SU/1Va6NCmJ9fXbEYY6PgHE3c2n5mNp9w6P5808Bqzox6V3mdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Xi2HG+DU; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=GfHg
-	awS+yCqoXN1aSsOTJfn8eRUVQWMmUGj3iS9i514=; b=Xi2HG+DUcgxjEZQUE/nY
-	JEAesoXELinHjS54J7AN9vorMOOYvvYmqzss4aTBkSJjTUxJW7cicujsb4xMCpzw
-	F3Lr/Kof1BtzhhxO41Wcvr33QroeTkJNXMiPQHQvB6IEzusess3EibyuVVwrG1Pt
-	AzqymEmC7GDt7foVW89joImI1bFqItKEy0gGA8zEGq0/KTvm+F9IUI/jZPoxNYES
-	rLaKBX3tWanxpBiq2PUoA2er6AINmZ8KUwOgWUGvkgOQSDcnQH8UZ4yCE2U/ODkK
-	mny2gUpNDMIjdifOjDVp2iHLatAIavksENgNCoB8IbLZhs6x7yjk/hubyrkCnClq
-	jw==
-Received: (qmail 3407497 invoked from network); 21 Aug 2025 08:51:07 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Aug 2025 08:51:07 +0200
-X-UD-Smtp-Session: l3s3148p1@nL2Fg9o8NubUtcd1
-Date: Thu, 21 Aug 2025 08:51:05 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	stable@kernel.org
-Subject: Re: [PATCH net-next v2] net: pcs: rzn1-miic: Correct MODCTRL
- register offset
-Message-ID: <aKbB2XZhLZ7T-y5P@shikoro>
-References: <20250820170913.2037049-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1755759116; c=relaxed/simple;
+	bh=fVG9Y4yfM1WF5vSXD2mnbglXpSZtB22Yp8PCqp/JSWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FhRT1Wdtg9coS6jEiyNQRjTM3ifrvtZayXs3bBJhesDuwevrTQCyMfVKjGh25slAkRzbMjJNHysaARgmq9G7sKcGubSFFIxaRheIv7eFNQdWZXyqpiB28kF6nEgXe318WApucN4P7dxB30369AK6IOe/qt2DoVhpYlxlzOPcgsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXVEfNPC; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e94dfbf7ba1so638324276.3;
+        Wed, 20 Aug 2025 23:51:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755759114; x=1756363914; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7jj0RWb3NgQmNjLgwT9jEyVWruC4wLqZypmADAd++kU=;
+        b=nXVEfNPC5FVHFbYqaHQ6BmuYYq2pqs6CfnTdU1Hm5juxRBgxPcNrydmxzvx10wZKmn
+         CEj9pdLyF9bGzKdMFe27A9L2lW3l2kS7oJ/XDuPIbLl4J1d9I5U5crUOj3H5kYILKxyr
+         3X/7M4GhoPuNdibI69oGb1C4CjoGKSA+aqFGWDt+1gwMhMoKrohV4tdkzfTQktwz8kh6
+         LTW3ahh2jRsdKv2vNIbnji8xMMx4vldgQOqbH7Jj74fP8BgkEoLqpauzQWcg8Y1tq8m9
+         hyDxc1/I4CiIbX9aqurxiP6ebBx8kfgYNj4IDhmnmWZYGW43KYGv6SQxTjmlBQeC7U4b
+         bkjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755759114; x=1756363914;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7jj0RWb3NgQmNjLgwT9jEyVWruC4wLqZypmADAd++kU=;
+        b=mNPhaYuusYzHcWvzlJoysOzy5q1Z7kWLBuaFjPugIMFj2T5WsEvArNQPoUN5yWguzE
+         qrz+oh2tp2M/QXOH/3xie3ouwnXk4CN99lYTKxuqVpDhMep7iNDiaWzK0fP/RtAon4I7
+         UH/Pmt3KzDJ9OKCyaU5vRzZIC+Ky/dfOv0V5WI2f0USI1i+487sjxqktMj0KrXZI7/2Z
+         JcoUxRmG2CeApEyzj18TPtdE8Z5/rflw51rUG8r/VKKEya9HYIJNmCewixRcJwXG+fkc
+         C4qucV7SKYfHh4NykRfoZ7OJcMSTfk6yMwyMuT8RFKHDZQHna6ISwOmyCPa/eCaRpUxD
+         WsJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbi1q7iSVkyXimeRHos6kb6rwKL8mlJeTEy0SaCF+KqJBEzpPAfovk+wuSYI+BAwZ/DhajiM2iaY8nD68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfWC4m+Ckn3vuOhSRFkgDGHpZYOkeomFeRYPNgwTxDUQK1LuPL
+	8qoRoMWwzXh8MEZ1steIK4YseXGRecwG+1Dj3MnJRy+zojm9gcj+dL3okczX2sqU21TjbEQLxk1
+	Gcf7i/5PnkMnsXWxwGXqsz01Ju1Dlgpg=
+X-Gm-Gg: ASbGncviAbe1YR/yYNJKrYBqlckqTrUwnkPolhjHQuFiLUCVzHHQMENG81UMxuGht1Y
+	WK0LtRODlY4PzYm493qj8hxaAsbOcF4NMeff7XzzLKJJm9080b7MAGygL2nEwEr5taYJlnkxfS5
+	Ct8BQeIItXUaYZ1U/zo6aJT2AFTGr/y62/Acd0w0I3p44D4RjOgaRj1gOQMTAAA3PWo1/KcRrlz
+	sg7iwB2
+X-Google-Smtp-Source: AGHT+IH5IRSj7RIwsEmgN0S7S/Fcoa63Wm/F1dJC1WTH74qSbmlrgX9PHDJjd4/36xzJZo0pxQrRH22tVi8kSuqmFfo=
+X-Received: by 2002:a05:6902:540f:b0:e93:36f3:571a with SMTP id
+ 3f1490d57ef6-e95088fe627mr1280173276.19.1755759113882; Wed, 20 Aug 2025
+ 23:51:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TBeIdkOG2Lhrt6XW"
-Content-Disposition: inline
-In-Reply-To: <20250820170913.2037049-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250821032755.636661-1-rosenp@gmail.com> <86ddae9a-4931-b160-51a2-f89d45d4038d@oss.qualcomm.com>
+In-Reply-To: <86ddae9a-4931-b160-51a2-f89d45d4038d@oss.qualcomm.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Wed, 20 Aug 2025 23:51:43 -0700
+X-Gm-Features: Ac12FXyw_ixSA4Api_c3e9oT18wZB5ZGV1G--orns_TPaSoKPXA7k3zurYMbDDA
+Message-ID: <CAKxU2N-0Q2uxw=-v-XP8g=Y=yBb2ufv+T0yk7dmaszwUy8Z6tg@mail.gmail.com>
+Subject: Re: [PATCH ath-next] wifi: ath11k: switch to of_get_mac_address
+To: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+Cc: linux-wireless@vger.kernel.org, Jeff Johnson <jjohnson@kernel.org>, 
+	"open list:QUALCOMM ATHEROS ATH11K WIRELESS DRIVER" <ath11k@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 20, 2025 at 10:55=E2=80=AFPM Vasanthakumar Thiagarajan
+<vasanthakumar.thiagarajan@oss.qualcomm.com> wrote:
+>
+>
+>
+> On 8/21/2025 8:57 AM, Rosen Penev wrote:
+> > This is needed to support nvmem defined MAC addresses in DTS.
+> >
+> > In addition, check if the probe should be deferred as nvmem can load
+> > after ath11k.
+> >
+> > For brevity, ACPI is not a factor here. ath11k is too new for that.
+>
+> This may not be accurate, pcie devices are widely used on x86 where
+> ACPI is not certainly new.
+No way ACPI is used to define MAC addresses.
+>
+> >
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >   drivers/net/wireless/ath/ath11k/mac.c | 5 ++++-
+> >   1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/net/wireless/ath/ath11k/mac.c b/drivers/net/wirele=
+ss/ath/ath11k/mac.c
+> > index 1fadf5faafb8..801db15ca78b 100644
+> > --- a/drivers/net/wireless/ath/ath11k/mac.c
+> > +++ b/drivers/net/wireless/ath/ath11k/mac.c
+> > @@ -9,6 +9,7 @@
+> >   #include <linux/etherdevice.h>
+> >   #include <linux/bitfield.h>
+> >   #include <linux/inetdevice.h>
+> > +#include <linux/of_net.h>
+> >   #include <net/if_inet6.h>
+> >   #include <net/ipv6.h>
+> >
+> > @@ -10434,7 +10435,9 @@ int ath11k_mac_register(struct ath11k_base *ab)
+> >       if (ret)
+> >               return ret;
+> >
+> > -     device_get_mac_address(ab->dev, mac_addr);
+> > +     ret =3D of_get_mac_address(ab->dev->of_node, mac_addr);
+>
+> I still think it is better to keep the generic API and add the the one sp=
+ecific
+> to nvmem when the generic one fails.
+I don't. ath10k and ath11k are the only modern drivers using
+device_get_mac_address
+>
+> > +     if (ret =3D=3D -EPROBE_DEFER)
+> > +             return ret;
+>
+> Please note that this error does not impact the device probe as this is
+> being done in the event path after probe returns withis complete.
+> Also, this will result in device registration failure even when
+> the device is not really looking for mac_addr from nvmem (or it is not
+> there) as firmware can also provide the mac_addr from the hardware.
 
---TBeIdkOG2Lhrt6XW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
-> I've just build-tested this patch and found this issue while working
-> on a similar IP on the Renesas RZ/T2H SoC where the MODCTRL register
-> offset is also at offset 0x8.
-
-I can test this on affected hardware next week.
-
-
---TBeIdkOG2Lhrt6XW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmimwdUACgkQFA3kzBSg
-KbYYiA//aqr+N4gh4rBtIMI5BbvKJRMwXtKaUmKjVpfESdmbSS7MN8kYKCsW2hyE
-7z0WZjWq2ASOzhlP4JAlNlPeQrkBcLt1z06A0/sg17vcoJ8wn/U9S/ZbVFEvpCyX
-eM9XlwH2gr8aHbcQKVgV2VQsBNbcb5UTNZNEQTChESNh/I05NMrseGLfaulKihGl
-a42Gm8Vwu2UUG/oqKxZtxYeAnnFlnqwLIJG6Ot9ofG+IsO1pM3UazRoruZfxl5Bn
-CLurj04UyLCAkN7lHk2qTn9GJoAWQKHDbc9XUSPIYGvtbzXZTiC6Y4TkrwKKJO+n
-YZAI5qFxCfTZkPbKILbeGh7lqg4D4WERlWPYWJYoET5A9GaH5UVqg5Jmcg8eX1WE
-VU85h7UxOAVvkX2WrrMz9IGQn9XQZA0rkaXmknjV5WRiW2b7/R/T27+2jr50UmH6
-S/4leKbxwKb+4AE7rrFUwznqriqnqKgGZLBumuwknAWfQOMae0osqWZg+l7259tj
-l8B/TfEEBT3vbx3qdhlS27XwhICa+Vz7Nk41lV6agqXDoVQKknI3ikoD0nmNZK3o
-Wg8USc0KNXm5LL+F2mslAPN8NmXv/JYVXqToAyR5anvu9bUx1FkZJ5PYBqJtIKCK
-HkI8VmFc4WFBgWRMykJjYeAMOjn3TVfOgBOGxCMI2TTnuNNXNYQ=
-=eAE1
------END PGP SIGNATURE-----
-
---TBeIdkOG2Lhrt6XW--
+Does probe not handle EPROBE_DEFER?
+>
+> Vasanth
 
