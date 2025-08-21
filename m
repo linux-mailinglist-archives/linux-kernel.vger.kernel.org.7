@@ -1,138 +1,102 @@
-Return-Path: <linux-kernel+bounces-780655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C24BFB30751
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 22:56:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2A4B3079D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 23:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE2977BEB28
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:54:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4351D05EA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 20:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0B335CEB7;
-	Thu, 21 Aug 2025 20:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0DF3128AD;
+	Thu, 21 Aug 2025 20:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Xj3eWnKy"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWyAPBk6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8774435CEA0
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77FE3128A0
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755808829; cv=none; b=CGRQthNAh6IJpcYUmENbmFuNf1B/dy9TWAQi7F+el8tSXwH8blDf6F+ny504p5Mr96DHPvLIwMg9k6mjuwnmek0iEY4QsUCICgFeHKem/sSy/VAt+mpGUSH3nrelPoYD0/F8SnbxmEOJtxY1VIIdeTrVzggVG13cMB15dGzbjrE=
+	t=1755808944; cv=none; b=EfIABnMP/k3TIWU11gCl9tYti1cbiKlYFsm99euoeelmPW0JMt7Ez5zWHpvc90Y0lmhfHJ6fDB9CWGkawsAhfZ2iOe2htXmxhQvyTAdflwFGQNP0D8ju8hi+xh26uoQtYF8HpTcG4CORZwk/c9/5U+h4JKdS7jX3pwWLmIxXkXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755808829; c=relaxed/simple;
-	bh=1qrCIxXCctxTGv3WrCi51BAahcEwkBdshUsK554eypo=;
+	s=arc-20240116; t=1755808944; c=relaxed/simple;
+	bh=Xyr2vTQWJi84phHGI09fHiyAc/a2HiFJYMzB+7vMKUY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SYsmWFERKyDaNeRCGd0daV/To/T8zqg5I7zFrWR1kZkH9+aLlEVzW0/fGhGgtJDPxNRhBcPgPVRoJeVNQJ6mlDLSszl+yLnASJ/s4/ltZ6CPqaLLDRGlyWWPuYjJE40kl23VdCSkrHhA9BhksBKvst+TjJmfTAC3iwFNCpJQ46U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Xj3eWnKy; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e93cc7c64faso1509370276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:40:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1755808826; x=1756413626; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lHa4LrampbSXQx1Wyi9Bh9OjrywcR0PvG9lus2xsnNw=;
-        b=Xj3eWnKyDim2sWrPyXl0eiBk1OWSgs1ksQYyz2QefBrBdLLLXnht5zVD4ZioqosLXN
-         Dz19HC+4B2jldL4kkms2feJWTaQaDtE19/QczTKaZSvVvxdjVQfHCUywxEH8NFqilrQd
-         0w4Bkj7aKkm66WdkH1tFOjeZ3wgq4J/tQimS0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755808826; x=1756413626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lHa4LrampbSXQx1Wyi9Bh9OjrywcR0PvG9lus2xsnNw=;
-        b=P+aL8fUSQO/KbisZuLbLGVmvX7d4o8DJ0y/4hVZZCwc6YlKxaMtrBOY8RmlwOz9XbY
-         c6PIkU4Ku4EUvDOVou63R7LvrF4r9WRWa2uUuqvVh4QYrBvudIdgngr409GR6KI9unQ0
-         RJusXfG2I7t8pOpzcYJps1PwKyS3hvhQoCFY9QWRKrL36u2eCJ55AckvqLVJ6WDovEOL
-         /AoySEeV8gns5wCDaPqfzf5QqH/O4HJzg2QN3edIw0hK/j7MYVYdp2HjUrY/8Rf69Arz
-         worxZNPf3fMRz/piGLwXt/s5oWjsgt5Znkm64AN5VIZ9lexiOHZhZrOEVtxYrh4MpGcx
-         sMDw==
-X-Gm-Message-State: AOJu0Yy82d088zXVu6Wjy47x7OoT8SPiZib/nlNZEvFY4eFobLUJAuKV
-	c3yd7U1nRiveUDjkA1gRS6psgKXi8wDinFhn0FRlITEPnFKNCU7oCKmDlSjVyZsfoZfXxYGByJe
-	Ba+zFFCux8jobg55zlQjdCj5osEbk+ZtsHA0nnFe7twoMsqd6wItl/wMpXQ==
-X-Gm-Gg: ASbGncsrin9i4pO8JqHQ2udYigwCbvn3u+qlOQHWUE5HtOjFUBZ0sSiDXvocB2JMZK5
-	YaPc4gCvHy924Rn5z56k1iO5sGYhNKWGB9o/yYPc5Y2956ju5C3Iav43T0vBpuzCaIlRIQZ02rf
-	dKH1Lr+T8gIfk65ontraBtNOdwWX4WhwBygj8DMWbcRfEGnf4nqfKro5/LeWxHtzq9e2Z2rEjlR
-	CyHVG8uGefeF0/l
-X-Google-Smtp-Source: AGHT+IEDbX/Imr3oMuC/SvPpVgA4gK54+Q+BCEwHjysz7tgNECdpdXbU462KLrYXAP4tYmTYkQFLOtkp14xdKE7/w+U=
-X-Received: by 2002:a05:6902:c12:b0:e93:457a:37b0 with SMTP id
- 3f1490d57ef6-e951c33ee1bmr998901276.20.1755808826442; Thu, 21 Aug 2025
- 13:40:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=udxcGCqfTC0LnJ6jPm5bs6JBxC3GdSacYx75ORl8I+6hQH3j9CL+AzxXAlX1QmE8+fnQ9uAPBB2+MgZfIyC6KdckRk77d+HQpCMVst+kHtd8YFXhI8kHWHMXScZ8ZXQsjokNiimgBDR5UHv3mYycF63YiAh9LEARm7c6KFlbYEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWyAPBk6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C343C16AAE
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 20:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755808944;
+	bh=Xyr2vTQWJi84phHGI09fHiyAc/a2HiFJYMzB+7vMKUY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uWyAPBk6TQh4uZnvEeJ07eNzt1pl5zG9rmldduuxYxRyfKEAMUVD8cQsfBbfwVSBD
+	 pP1s8CGg9G7iP+YLi0bLtxLzMTq+WGQl+nV13zWSNa+QvXZ+H7d0QYkfn01nKyY2nA
+	 gCKFjQCOm8iOJ5JTPikff45cTnMpvdrxFPNiGbh7YGBXH41c7Ii62rLhoAXNqzTv4X
+	 v4OzAQbyIUkRZgTdciycY40FqqkLhJ5mCKk9PjrojY5Xu6Vvi2gtj2EilksoznfVyJ
+	 w8sHlKuVPcC9EJ6fUUf4Y+xJ0sXKFKeYdt8tlfHECs6PWt4BGAeK6/mGXjjXlBXjf1
+	 T0HjMag/QYNVg==
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459fc675d11so5855e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:42:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV30uWBAWm34WDcko0a04UeujubbrjS1gAYnx4PrTif6dvWZlC1NAj4u2MzPd0WAugB6cZ2ZRfspB+d1tM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIp//h33lAn9dD+ALxYWNLJpzz8GfxGELOh1IoXNKL3ltupCLR
+	8JFUUuPKaMcwAmvatOfCdBytokD3x9jCBFMJlVU8p5T2wl0XYo565UIaseUgtLm6rhVGVe48G/V
+	eO2FdqHT6XGJYrR70vnw1ya5tUrjiUN3RTFCGlDsu
+X-Google-Smtp-Source: AGHT+IHDZCalgfqlYi7MkLgFbyjbhsH3CZf0MNkISUXvgYgeAZsgXeUqGGDOaCg+VIv8TDFRobw1n05v/ADvT2/804M=
+X-Received: by 2002:a05:600c:8b01:b0:453:79c3:91d6 with SMTP id
+ 5b1f17b1804b1-45b52119c8dmr9385e9.1.1755808942940; Thu, 21 Aug 2025 13:42:22
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821200701.1329277-1-david@redhat.com> <20250821200701.1329277-32-david@redhat.com>
- <CAHk-=wjGzyGPgqKDNXM6_2Puf7OJ+DQAXMg5NgtSASN8De1roQ@mail.gmail.com> <2926d7d9-b44e-40c0-b05d-8c42e99c511d@redhat.com>
-In-Reply-To: <2926d7d9-b44e-40c0-b05d-8c42e99c511d@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 21 Aug 2025 16:40:13 -0400
-X-Gm-Features: Ac12FXw_AatpwCNNPCEiMwiwdQxQbayKDzVf5K7yc3iQ5tLY7APrv3zl2U8Z_SA
-Message-ID: <CAADWXX_5AJxTsk5m_RvP58d=quRMqT4-XbnQQx=obBTKjHr1Og@mail.gmail.com>
-Subject: Re: [PATCH RFC 31/35] crypto: remove nth_page() usage within SG entry
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Potapenko <glider@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Brendan Jackman <jackmanb@google.com>, 
-	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
-	iommu@lists.linux.dev, io-uring@vger.kernel.org, 
-	Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>, 
-	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com, kvm@vger.kernel.org, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-arm-kernel@axis.com, 
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, 
-	linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>, 
-	netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>, 
-	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, 
-	x86@kernel.org, Zi Yan <ziy@nvidia.com>
+References: <20250819193404.46680-1-sj@kernel.org> <CAGsJ_4ygTv1tCJeuF43NhRR4E0kiMLpk6i8c+UHoUMt6LXykww@mail.gmail.com>
+ <aKUi7hvcaK0h0oMg@gondor.apana.org.au> <CAGsJ_4z6YvQULrEmNjFjLNrJ4RK6w0+d9uF2-7v06gOYirrYRw@mail.gmail.com>
+ <CAF8kJuNJ8s2D9NBdXDQ4vpBP0a-5k7r_=DdFuJJ95nMKmm6LBg@mail.gmail.com>
+ <aKVYyGWiWRYgxfE-@gondor.apana.org.au> <CAF8kJuPPsLzWu8+xm2A_UPHMBhb7OTjJNErM1Kp3hPmvHXNDUQ@mail.gmail.com>
+ <aKVbqi6wd3Spz-TM@gondor.apana.org.au>
+In-Reply-To: <aKVbqi6wd3Spz-TM@gondor.apana.org.au>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 21 Aug 2025 13:42:11 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuOJsZ2RbvFedfKADVqa0TUrkO-ceqrtaMXgiHAS0V19hw@mail.gmail.com>
+X-Gm-Features: Ac12FXwy1vPVdOsVeHesiENd9Xc9-_4Gop9B9f4wYnWvLSSwoexOz99om6lRJM4
+Message-ID: <CAF8kJuOJsZ2RbvFedfKADVqa0TUrkO-ceqrtaMXgiHAS0V19hw@mail.gmail.com>
+Subject: Re: [PATCH v4] mm/zswap: store <PAGE_SIZE compression failed page as-is
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Barry Song <21cnbao@gmail.com>, SeongJae Park <sj@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Takero Funaki <flintglass@gmail.com>, 
+	David Hildenbrand <david@redhat.com>, Baoquan He <bhe@redhat.com>, Kairui Song <kasong@tencent.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 4:29=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
-> > Because doing a 64-bit shift on x86-32 is like three cycles. Doing a
-> > 64-bit signed division by a simple constant is something like ten
-> > strange instructions even if the end result is only 32-bit.
+On Tue, Aug 19, 2025 at 10:23=E2=80=AFPM Herbert Xu <herbert@gondor.apana.o=
+rg.au> wrote:
 >
-> I would have thought that the compiler is smart enough to optimize that?
-> PAGE_SIZE is a constant.
+> On Tue, Aug 19, 2025 at 10:20:45PM -0700, Chris Li wrote:
+> >
+> > In that case it is fair game for the caller to check for the error
+> > other than -ENOSPC. If the return value is -EINPROGRESS during
+> > synchronous crypto compression, it is a bug. We are not encouraged to
+> > use WARN_ON, then having an error count to check that something truly
+> > unlikely but possible to happen is better than folding it into
+> > incompressible and pretend the error never happened. At least we can
+> > know such an error case happened.
+>
+> Sure warning on -EINPROGRESS is fine.  But every other non-zero
+> return value should be treated as incompressible.
 
-Oh, the compiler optimizes things. But dividing a 64-bit signed value
-with a constant is still quite complicated.
+Ack.
 
-It doesn't generate a 'div' instruction, but it generates something like th=
-is:
+Thanks for the feedback.
 
-    movl %ebx, %edx
-    sarl $31, %edx
-    movl %edx, %eax
-    xorl %edx, %edx
-    andl $4095, %eax
-    addl %ecx, %eax
-    adcl %ebx, %edx
-
-and that's certainly a lot faster than an actual 64-bit divide would be.
-
-An unsigned divide - or a shift - results in just
-
-    shrdl $12, %ecx, %eax
-
-which is still not the fastest instruction (I think shrld gets split
-into two uops), but it's certainly simpler and easier to read.
-
-           Linus
+Chris
 
