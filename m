@@ -1,225 +1,321 @@
-Return-Path: <linux-kernel+bounces-779252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1F2B2F0E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C57B2F0C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 464EE1C219F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:18:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DB331899686
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E8A2EFD87;
-	Thu, 21 Aug 2025 08:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94242EA165;
+	Thu, 21 Aug 2025 08:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rNqeDHQk"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qmALpqai";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dXvHp8xc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A242ECE87
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489402727E7;
+	Thu, 21 Aug 2025 08:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755764088; cv=none; b=ePyp6ooAplzDyflO9ItXkvnznBFa5yyEU92tJvzaBBSdtyVpj/jjetO580TFGob/oUWyYAI4R1LcClnoW0/HNx3rBlZ5QNQX54MpBC37ZhIAI3p20T2HZN2OXgTe0lNA9+zemqgKZu7RshyzQKWHrCJCaersHsmSBZvt6UbYvXM=
+	t=1755764049; cv=none; b=BCzcj4cic+eEQQq3ADWQJx96qG8sCgNYDHOfhsnXH4Q9j3pz+sJZfW/+YQT3ZXypa7RFV+ii/IoQBWtw6XbQuYaqMyXXfvHObEBu06Tzetz8DttvNn/3JfWJ+blC3Lh9mb/9HxYLuayTqrgELIRPkGoyIejZfvoOZVEc/VKB7Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755764088; c=relaxed/simple;
-	bh=ssX6pnv/BMHDiEMq3MmpaclSzI29qITuu1YF5wLH5RY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=duzsGk5bF9jJvu+dD2vYJD9sBMvhmunPbv21lxovBzjiEkt3/uv5lj2h6F3KG1Zivj3hIbIMEHf3MBCNFDpBwFWEs8uQZRRIbY2YNcLROVar/ReNWglzGbhDmLbY2XEICdPygNB3SAqRMJ5zCt4g81ca71R/vgocWnlRxBqdIb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rNqeDHQk; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b9e4146902so284910f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:14:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755764084; x=1756368884; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J6PqHQ+VSrJuXFil8vRzl3n00OmPsRbJiS1vDm4o6lA=;
-        b=rNqeDHQkimAUlj+uYuSBK3YH1mLaL7eCdR/saeEeNuuF5Nwky1J1r0sATitJo3p0tw
-         ijHxulxRWb6mOtfYj6fUIf1oVZOLA7ryhrjSbhgfJQqOmEC5b8MNo9LYzVUkc7YlRual
-         11vIwqmFxx8HWY6pE8QliW6JC1x0k53mqe9wnBykSlqhi2mXiBUuOKJufKjIiKW+l85k
-         eqW8YTnkRqAxby/0yaVkpn2Ui+8pj44Dhe2Sd2Z2l/ie8Oy15PpG8oGQ/PSLL0RICOUe
-         wzr0LDM9nyCSwEH8bPYHOqPt4zEZLkcwPz8PadpWufoi9SNNUJpKWrQPbQcN1q6hfrIr
-         xnug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755764084; x=1756368884;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J6PqHQ+VSrJuXFil8vRzl3n00OmPsRbJiS1vDm4o6lA=;
-        b=w2xr85GybSiYYqOpJgCybWfalQE9vuTvmNF5zyfc0BLzlt3KSVdEGcM+51s+Vf8wqB
-         Q1qNvePRljh7tJx8THfak+69+WpJqj29+rwxunjVpMhbtT7Wq7ZRoRa/O4ZMzv672OSm
-         286SWXHP+haAKU5AIYkFbAVtj/vIk+HldtXrqEaG9MIhVVlNF4Lm9ZWYsyfM2atTPFeE
-         gMpdzqZzRSr3PPnRGmKJOuNcaFhROBZz2GR3C1sLQAKuJ2M54OWPVl+9mnnrnbW20qGh
-         c1vxWaS6/gsgGIfc3KrVEoFfcGmKhnQtTyIz1/WBoNK9Ar/LMBoDXVP1R+sdBnJBRkB1
-         y+hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVP4jnBiXzBeX1WVVUyklxhYordcWtpR2JwykSed1L2zTAYdapY+elz6UACUmu6SPrCNfbrN7wua/NJses=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoVIMASy5M8aw31TKJMH8/fqUvV1uAl4y8OaXS3w3ZH3GHOM4Z
-	Rb30OnUCjX9FSShnXUyz0B771d99Zo1oEuY6UypO31KAvUOEhV63AkN4LWcK6jwhFosDJAIqS/x
-	pGPD00kHz1OOeO9fPvC0u6A==
-X-Google-Smtp-Source: AGHT+IHjSHmggKyPUo9IkQhNfhc+5LXvr/ll1IavLoHjTMFXBwqe1Lx+YS0W/l095EMX48jc3sXU+Ed9/HB+3KTX
-X-Received: from wrar28.prod.google.com ([2002:adf:b1dc:0:b0:3b8:fa02:c0b5])
- (user=vdonnefort job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2d82:b0:3c4:edc0:2895 with SMTP id ffacd0b85a97d-3c4edc02d24mr532633f8f.62.1755764084544;
- Thu, 21 Aug 2025 01:14:44 -0700 (PDT)
-Date: Thu, 21 Aug 2025 09:14:04 +0100
-In-Reply-To: <20250821081412.1008261-1-vdonnefort@google.com>
+	s=arc-20240116; t=1755764049; c=relaxed/simple;
+	bh=4DkZhm+ttNFAoF/CFkhooXB7A4sxmjtdUUXaeN4G7EY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A79cIqM5n/yGVV4wJnv0UF/A4XFxrAFEpClC8fN1DButJ5E5cOn3+K/IF/sDidAAnpeOsIPkuYZXfnqf7JQnvWNe7t7Qa2vMgbWvthFfUwrBOEr1dnIoi+Uw0XPfFW72HqckMPdKDn6/TyqxpilGlYtnzURax3oNx4DYen3VT08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qmALpqai; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dXvHp8xc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 21 Aug 2025 10:14:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755764046;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0GIC4ZUCvr94Zkuj3kqHlKBZXwaMTSK6R/2NbQXv5yo=;
+	b=qmALpqai0wHoCYwbwLz3SCD2uda0CsodGTMl03Of5yPGjMHJ28EiAHyhNmW06G5oHR0CLC
+	wlFlvkcUb4vq58d4wL6S4o4SKqI9qnhqo900wP2mWVT+a2bUiNtLIis2seMbdGshCbW/7Y
+	9gQo9k8kIQKg1jFJ/N3zOz3p6klRdrF2N5dxPDc1BkKWw+cNlquhD7FgXNHtNkewIpuj66
+	hGovjF/GYrEcDlqO54f3A4DDMEVtR3CQbUSRTJ2YPQ6ezhu/0U7wSKQFosGK2V8J2xg4Vl
+	yVuA8Z1cnPCEr1t3kf8eEvMq7GPZHcwei3NLiUfmjVWZUdgSLkUQqUZ6ATg2Sg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755764046;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0GIC4ZUCvr94Zkuj3kqHlKBZXwaMTSK6R/2NbQXv5yo=;
+	b=dXvHp8xcckHKGBWgHl/7MdL1Nr+lrBExAxp1sjNQBXjwo5+dJVz923TeX8O+ehZRzxeoZg
+	FsS8U0INCJcBScBw==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [RFC PATCH 01/17] rv: Refactor da_monitor to minimise macros
+Message-ID: <20250821081405.RQhrWVKp@linutronix.de>
+References: <20250814150809.140739-1-gmonaco@redhat.com>
+ <20250814150809.140739-2-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250821081412.1008261-1-vdonnefort@google.com>
-X-Mailer: git-send-email 2.51.0.rc2.233.g662b1ed5c5-goog
-Message-ID: <20250821081412.1008261-17-vdonnefort@google.com>
-Subject: [PATCH v6 16/24] KVM: arm64: Add clock support for the pKVM hyp
-From: Vincent Donnefort <vdonnefort@google.com>
-To: rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
-	linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com
-Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	jstultz@google.com, qperret@google.com, will@kernel.org, 
-	aneesh.kumar@kernel.org, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, Vincent Donnefort <vdonnefort@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814150809.140739-2-gmonaco@redhat.com>
 
-By default, the arm64 host kernel is using the arch timer as a source
-for sched_clock. Conveniently, EL2 has access to that same counter,
-allowing to generate clock values that are synchronized.
+On Thu, Aug 14, 2025 at 05:07:53PM +0200, Gabriele Monaco wrote:
+> The da_monitor helper functions are generated from macros of the type:
+> 
+> DECLARE_DA_FUNCTION(name, type) \
+> static void da_func_x_##name(type arg) {} \
+> static void da_func_y_##name(type arg) {} \
+> 
+> This is good to minimise code duplication but the long macros made of
+> skipped end of lines is rather hard to parse. Since functions are
+> static, the advantage of naming them differently for each monitor is
+> minimal.
+> 
+> Refactor the da_monitor.h file to minimise macros, instead of declaring
+> functions from macros, we simply declare them with the same name for all
+> monitors (e.g. da_func_x) and for any remaining reference to the monitor
+> name (e.g. tracepoints, enums, global variables) we use the CONCATENATE
+> macro.
+> In this way the file is much easier to maintain while keeping the same
+> generality.
+> Functions depending on the monitor types are now conditionally compiled
+> according to the value of RV_MON_TYPE, which must be defined in the
+> monitor source.
+> The monitor type can be specified as in the original implementation,
+> although it's best to keep the default implementation (unsigned char) as
+> not all parts of code support larger data types, and likely there's no
+> need.
+> 
+> We keep the empty macro definitions to ease review of this change with
+> diff tools, but cleanup is required.
+> 
+> Also adapt existing monitors to keep the build working.
+> 
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 
-The clock needs nonetheless to be setup with the same slope values as
-the kernel. Introducing at the same time trace_clock() which is expected
-to be later configured by the hypervisor tracing.
+Yes please! The macros are not pleasant to work with.
 
-Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> ---
+>  include/linux/rv.h                     |   4 +
+>  include/rv/automata.h                  | 132 ++--
+>  include/rv/da_monitor.h                | 912 ++++++++++++-------------
+>  kernel/trace/rv/monitors/nrp/nrp.c     |  22 +-
+>  kernel/trace/rv/monitors/nrp/nrp.h     |   2 +
+>  kernel/trace/rv/monitors/opid/opid.c   |  32 +-
+>  kernel/trace/rv/monitors/opid/opid.h   |   2 +
+>  kernel/trace/rv/monitors/sco/sco.c     |  18 +-
+>  kernel/trace/rv/monitors/sco/sco.h     |   2 +
+>  kernel/trace/rv/monitors/scpd/scpd.c   |  20 +-
+>  kernel/trace/rv/monitors/scpd/scpd.h   |   2 +
+>  kernel/trace/rv/monitors/snep/snep.c   |  20 +-
+>  kernel/trace/rv/monitors/snep/snep.h   |   2 +
+>  kernel/trace/rv/monitors/snroc/snroc.c |  18 +-
+>  kernel/trace/rv/monitors/snroc/snroc.h |   2 +
+>  kernel/trace/rv/monitors/sssw/sssw.c   |  30 +-
+>  kernel/trace/rv/monitors/sssw/sssw.h   |   2 +
+>  kernel/trace/rv/monitors/sts/sts.c     |  26 +-
+>  kernel/trace/rv/monitors/sts/sts.h     |   2 +
+>  kernel/trace/rv/monitors/wip/wip.c     |  18 +-
+>  kernel/trace/rv/monitors/wip/wip.h     |   2 +
+>  kernel/trace/rv/monitors/wwnr/wwnr.c   |  20 +-
+>  kernel/trace/rv/monitors/wwnr/wwnr.h   |   2 +
+>  23 files changed, 650 insertions(+), 642 deletions(-)
+> 
+> diff --git a/include/linux/rv.h b/include/linux/rv.h
+> index 14410a42faef..3134681553b4 100644
+> --- a/include/linux/rv.h
+> +++ b/include/linux/rv.h
+> @@ -13,6 +13,10 @@
+>  #define MAX_DA_NAME_LEN			32
+>  #define MAX_DA_RETRY_RACING_EVENTS	3
+>  
+> +#define RV_MON_GLOBAL   0
+> +#define RV_MON_PER_CPU  1
+> +#define RV_MON_PER_TASK 2
+> +
+>  #ifdef CONFIG_RV
+>  #include <linux/bitops.h>
+>  #include <linux/types.h>
+> diff --git a/include/rv/automata.h b/include/rv/automata.h
+> index eb9e636809a0..5b5d2e94c034 100644
+> --- a/include/rv/automata.h
+> +++ b/include/rv/automata.h
+> @@ -6,6 +6,20 @@
+>   * models in C generated by the dot2k tool.
+>   */
+>  
+> +#ifndef MONITOR_NAME
+> +#error "MONITOR_NAME macro is not defined. Did you include $(MODEL_NAME).h generated by rvgen?"
+> +#endif
+> +
+> +#ifndef type
+> +#define type unsigned char
+> +#endif
+> +
+> +#define RV_AUTOMATON_NAME CONCATENATE(automaton_, MONITOR_NAME)
+> +#define EVENT_MAX CONCATENATE(event_max_, MONITOR_NAME)
+> +#define STATE_MAX CONCATENATE(state_max_, MONITOR_NAME)
+> +#define events CONCATENATE(events_, MONITOR_NAME)
+> +#define states CONCATENATE(states_, MONITOR_NAME)
 
-diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-index e6be1f5d0967..d46621d936e3 100644
---- a/arch/arm64/include/asm/kvm_hyp.h
-+++ b/arch/arm64/include/asm/kvm_hyp.h
-@@ -146,5 +146,4 @@ extern u64 kvm_nvhe_sym(id_aa64smfr0_el1_sys_val);
- extern unsigned long kvm_nvhe_sym(__icache_flags);
- extern unsigned int kvm_nvhe_sym(kvm_arm_vmid_bits);
- extern unsigned int kvm_nvhe_sym(kvm_host_sve_max_vl);
--
- #endif /* __ARM64_KVM_HYP_H__ */
-diff --git a/arch/arm64/kvm/hyp/include/nvhe/clock.h b/arch/arm64/kvm/hyp/include/nvhe/clock.h
-new file mode 100644
-index 000000000000..9e152521f345
---- /dev/null
-+++ b/arch/arm64/kvm/hyp/include/nvhe/clock.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __ARM64_KVM_HYP_NVHE_CLOCK_H
-+#define __ARM64_KVM_HYP_NVHE_CLOCK_H
-+#include <linux/types.h>
-+
-+#include <asm/kvm_hyp.h>
-+
-+#ifdef CONFIG_PKVM_TRACING
-+void trace_clock_update(u32 mult, u32 shift, u64 epoch_ns, u64 epoch_cyc);
-+u64 trace_clock(void);
-+#else
-+static inline void
-+trace_clock_update(u32 mult, u32 shift, u64 epoch_ns, u64 epoch_cyc) { }
-+static inline u64 trace_clock(void) { return 0; }
-+#endif
-+#endif
-diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/Makefile
-index 0b0a68b663d4..607357e36026 100644
---- a/arch/arm64/kvm/hyp/nvhe/Makefile
-+++ b/arch/arm64/kvm/hyp/nvhe/Makefile
-@@ -17,7 +17,7 @@ ccflags-y += -fno-stack-protector	\
- hostprogs := gen-hyprel
- HOST_EXTRACFLAGS += -I$(objtree)/include
- 
--lib-objs := clear_page.o copy_page.o memcpy.o memset.o
-+lib-objs := clear_page.o copy_page.o memcpy.o memset.o tishift.o
- lib-objs := $(addprefix ../../../lib/, $(lib-objs))
- 
- CFLAGS_switch.nvhe.o += -Wno-override-init
-@@ -28,6 +28,7 @@ hyp-obj-y := timer-sr.o sysreg-sr.o debug-sr.o switch.o tlb.o hyp-init.o host.o
- hyp-obj-y += ../vgic-v3-sr.o ../aarch32.o ../vgic-v2-cpuif-proxy.o ../entry.o \
- 	 ../fpsimd.o ../hyp-entry.o ../exception.o ../pgtable.o
- hyp-obj-$(CONFIG_LIST_HARDENED) += list_debug.o
-+hyp-obj-$(CONFIG_PKVM_TRACING) += clock.o
- hyp-obj-y += $(lib-objs)
- 
- ##
-diff --git a/arch/arm64/kvm/hyp/nvhe/clock.c b/arch/arm64/kvm/hyp/nvhe/clock.c
-new file mode 100644
-index 000000000000..600a300bece7
---- /dev/null
-+++ b/arch/arm64/kvm/hyp/nvhe/clock.c
-@@ -0,0 +1,65 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025 Google LLC
-+ * Author: Vincent Donnefort <vdonnefort@google.com>
-+ */
-+
-+#include <nvhe/clock.h>
-+
-+#include <asm/arch_timer.h>
-+#include <asm/div64.h>
-+
-+static struct clock_data {
-+	struct {
-+		u32 mult;
-+		u32 shift;
-+		u64 epoch_ns;
-+		u64 epoch_cyc;
-+		u64 cyc_overflow64;
-+	} data[2];
-+	u64 cur;
-+} trace_clock_data;
-+
-+static u64 __clock_mult_uint128(u64 cyc, u32 mult, u32 shift)
-+{
-+	__uint128_t ns = (__uint128_t)cyc * mult;
-+
-+	ns >>= shift;
-+
-+	return (u64)ns;
-+}
-+
-+/* Does not guarantee no reader on the modified bank. */
-+void trace_clock_update(u32 mult, u32 shift, u64 epoch_ns, u64 epoch_cyc)
-+{
-+	struct clock_data *clock = &trace_clock_data;
-+	u64 bank = clock->cur ^ 1;
-+
-+	clock->data[bank].mult			= mult;
-+	clock->data[bank].shift			= shift;
-+	clock->data[bank].epoch_ns		= epoch_ns;
-+	clock->data[bank].epoch_cyc		= epoch_cyc;
-+	clock->data[bank].cyc_overflow64	= ULONG_MAX / mult;
-+
-+	smp_store_release(&clock->cur, bank);
-+}
-+
-+/* Using host provided data. Do not use for anything else than debugging. */
-+u64 trace_clock(void)
-+{
-+	struct clock_data *clock = &trace_clock_data;
-+	u64 bank = smp_load_acquire(&clock->cur);
-+	u64 cyc, ns;
-+
-+	cyc = __arch_counter_get_cntpct() - clock->data[bank].epoch_cyc;
-+
-+	if (likely(cyc < clock->data[bank].cyc_overflow64)) {
-+		ns = cyc * clock->data[bank].mult;
-+		ns >>= clock->data[bank].shift;
-+	} else {
-+		ns = __clock_mult_uint128(cyc, clock->data[bank].mult,
-+					  clock->data[bank].shift);
-+	}
-+
-+	return (u64)ns + clock->data[bank].epoch_ns;
-+}
--- 
-2.51.0.rc2.233.g662b1ed5c5-goog
+I think these macros make it harder to read the code. E.g. it is not
+obvious what is "events" in "enum events event".
 
+How about renaming these to be the same for all monitors, and get rid of
+these 4 macros?
+
+Something like
+
+	enum states_wip -> enum da_states
+	state_max_wip   -> da_state_max
+	etc
+
+Just my preference, of course. You probably have your reasons for doing it
+this way?
+
+> +/*
+> + * model_get_state_name - return the (string) name of the given state
+> + */
+> +static char *model_get_state_name(enum states state)
+> +{
+> +	if ((state < 0) || (state >= STATE_MAX))
+> +		return "INVALID";
+
+Just notice that this probably should be
+	if (BUG_ON((state < 0) || (state >= STATE_MAX)))
+
+You shouldn't do it in this patch of course. I just want to note it down.
+
+> index 17fa4f6e5ea6..bc02334aa8be 100644
+> --- a/include/rv/da_monitor.h
+> +++ b/include/rv/da_monitor.h
+> @@ -13,97 +13,102 @@
+>  
+>  #include <rv/automata.h>
+>  #include <linux/rv.h>
+> +#include <linux/stringify.h>
+>  #include <linux/bug.h>
+>  #include <linux/sched.h>
+>  
+> +#define RV_MONITOR_NAME CONCATENATE(rv_, MONITOR_NAME)
+> +#define RV_DA_MON_NAME CONCATENATE(da_mon_, MONITOR_NAME)
+
+These macros as well. Should we rename the monitors to be the same and get
+rid of the macros?
+
+I see you took this RV_MONITOR_NAME idea from LTL. But I'm starting to
+wonder if this is really a good idea.
+
+What do you think?
+
+> +#if RV_MON_TYPE == RV_MON_GLOBAL || RV_MON_TYPE == RV_MON_PER_CPU
+> +
+> +static inline bool
+> +da_event(struct da_monitor *da_mon, enum events event)
+> +{
+> +	enum states curr_state, next_state;
+> +
+> +	curr_state = READ_ONCE(da_mon->curr_state);
+> +	for (int i = 0; i < MAX_DA_RETRY_RACING_EVENTS; i++) {
+> +		next_state = model_get_next_state(curr_state, event);
+> +		if (next_state == INVALID_STATE) {
+> +			cond_react(curr_state, event);
+> +			CONCATENATE(trace_error_, MONITOR_NAME)(model_get_state_name(curr_state),
+> +					   model_get_event_name(event));
+> +			return false;
+> +		}
+> +		if (likely(try_cmpxchg(&da_mon->curr_state, &curr_state, next_state))) {
+> +			CONCATENATE(trace_event_, MONITOR_NAME)(model_get_state_name(curr_state),
+> +					   model_get_event_name(event),
+> +					   model_get_state_name(next_state),
+> +					   model_is_final_state(next_state));
+> +			return true;
+> +		}
+> +	}
+> +
+> +	trace_rv_retries_error(__stringify(MONITOR_NAME), model_get_event_name(event));
+> +	pr_warn("rv: " __stringify(MAX_DA_RETRY_RACING_EVENTS)
+> +		" retries reached for event %s, resetting monitor %s",
+> +		model_get_event_name(event), __stringify(MONITOR_NAME));
+> +	return false;
+> +}
+
+You have two da_event(), which is mostly similar, except the function's
+signature and the trace event. Would it be sane to unify them, and only
+putting the differences in #ifdef?
+
+Perhaps something like:
+
+#if RV_MON_TYPE == RV_MON_GLOBAL || RV_MON_TYPE == RV_MON_PER_CPU
+
+typedef struct {} monitor_target;
+
+static void da_trace_event(struct da_monitor *da_mon, monitor_target target,
+			   enum events event, enum states curr, enum states next)
+{
+	CONCATENATE(trace_event_, MONITOR_NAME)(model_get_state_name(curr_state),
+		    model_get_event_name(event),
+		    model_get_state_name(next_state),
+		    model_is_final_state(next_state));
+}
+
+#elif RV_MON_TYPE == RV_MON_PER_TASK
+
+typedef struct task_struct *monitor_target;
+
+static void da_trace_event(struct da_monitor *da_mon, struct task_struct *task,
+			   enum events event, enum states curr, enum states next)
+{
+	CONCATENATE(trace_event_, MONITOR_NAME)(task->pid,
+		   model_get_state_name(curr_state),
+		   model_get_event_name(event),
+		   model_get_state_name(next_state),
+		   model_is_final_state(next_state));
+}
+
+#endif
+
+static inline bool
+da_event(struct da_monitor *da_mon, monitor_target target, enum events event)
+{
+	enum states curr_state, next_state;
+
+	curr_state = READ_ONCE(da_mon->curr_state);
+	for (int i = 0; i < MAX_DA_RETRY_RACING_EVENTS; i++) {
+		next_state = model_get_next_state(curr_state, event);
+		if (next_state == INVALID_STATE) {
+			cond_react(curr_state, event);
+			da_trace_event(da_mon, event, target, curr_state, next_state);
+			return false;
+		}
+		if (likely(try_cmpxchg(&da_mon->curr_state, &curr_state, next_state))) {
+			da_trace_error(...);
+			return true;
+		}
+	}
+
+	trace_rv_retries_error(__stringify(MONITOR_NAME), model_get_event_name(event));
+	pr_warn("rv: " __stringify(MAX_DA_RETRY_RACING_EVENTS)
+		" retries reached for event %s, resetting monitor %s",
+		model_get_event_name(event), __stringify(MONITOR_NAME));
+	return false;
+}
+
+Same for the other functions.
+
+Nam
 
