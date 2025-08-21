@@ -1,71 +1,54 @@
-Return-Path: <linux-kernel+bounces-778849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345FEB2EBFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:33:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07AE5B2EBFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79EA21BC7FAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:34:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E1A5638F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9772236FA;
-	Thu, 21 Aug 2025 03:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAD421D3F5;
+	Thu, 21 Aug 2025 03:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Hmv4e2X6"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMn4M4m6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CD62E7BC6;
-	Thu, 21 Aug 2025 03:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65714281353;
+	Thu, 21 Aug 2025 03:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755747216; cv=none; b=qCxUWBGRCvXFwjarXQQxK9oa5AiHUKwM/BmtlgwgR0gVzle2I7L/7l3ksX14I8a3GuCHeXVyXecxwbsv40I92Fpxed0rzgfByxENLbUd+vE1vy2VPZB9MlQ84E4Q5BsgBULA8ZX+hqQmwgLGvy9oUgTllr7rQAlHHtOowmMMxqw=
+	t=1755747263; cv=none; b=pBmtNKfAZggALZc6kmwI1wds+1UmoorIl9A6JLjsebv/D6HGDdIQ3813ZRMd7wi+XM3xrqP/a5fE2TfsPxJLJyIB5LfNL1g4rfjZLebjSly1OU9BC7HveskkcI4/frj3N0qbEeNuGs/DPUJV3Tyv84Ay4tLv2beSnnAgggjpFWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755747216; c=relaxed/simple;
-	bh=24BH5Rkal4AnYqqQtj74V/4hPzsLJlrlUZGruS4Dg3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sCRdU5qC96Ql6SmPK/tGMLPr1eYwwWWe6t1R/oX5C8gzbDYJnu7ZhtVFRl3oUJuXmSZOd6TQyUROLN6mHiUBTNL5SQ5eIcbkhAn70nuD/tpOlC2rTPBDAnJcu1k+wFmsv1A0bajgjMclspA98o8mdVgxSMIboBvQWHp97nUf47Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Hmv4e2X6; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=NhecIOpybuUkmVRn+RV36PWvwdJyuFnrfxzmzDFBna8=; b=Hmv4e2X61kfRt4AKpoofe646kq
-	+OlNDQvtDGPXi8oms7OYJ/6oEIjEzhjsJL7A5gesXFfDlcKge+jHv9dBJY7j3XTHjRIhzF4LDk1xe
-	gSVBZl88aCPwpRJU9bXmBTeLW2ajoPbGtz6VNWFLA7d3SqcqG1hM3eowksQ0wkAClWoE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uow3G-005P9K-PC; Thu, 21 Aug 2025 05:33:22 +0200
-Date: Thu, 21 Aug 2025 05:33:22 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, stable+noautosel@kernel.org
-Subject: Re: [PATCH v4 2/6] net: stmmac: Inverse the phy-mode definition
-Message-ID: <f93d325f-2c04-49ab-ae92-b87ae88ab49d@lunn.ch>
-References: <20250819-qcs615_eth-v4-0-5050ed3402cb@oss.qualcomm.com>
- <20250819-qcs615_eth-v4-2-5050ed3402cb@oss.qualcomm.com>
- <80a60564-3174-4edd-a57c-706431f2ad91@lunn.ch>
- <f467aade-e604-448d-b23e-9b169c30ff2e@oss.qualcomm.com>
+	s=arc-20240116; t=1755747263; c=relaxed/simple;
+	bh=WDmmYdxvpq2UMvNH7SzTCIRj2nfQH92lBEKnLvaAGk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m1xbV1LH1HYBzllqXdx5LgdgwklzsuhVfPo0zOeEWIKrhHA1vbchN9eSKhTtKrOAXEkSb54PNms1wk+X+LT3B//0wSXeL04yzRHE/e4fr5Q8+HauCMvJOLdFt/N79hK+BGuzSs0+btgfVOmGC1MOg9vmDviw4DjGf4gPhbRIFwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMn4M4m6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CA99C4CEF4;
+	Thu, 21 Aug 2025 03:34:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755747262;
+	bh=WDmmYdxvpq2UMvNH7SzTCIRj2nfQH92lBEKnLvaAGk8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KMn4M4m6IgA3HJtyfu11vJmaSkHDPPZzFbEgiFiAQUoGzHw88PRtqmeSs4K7F8WxE
+	 tPo7/XaWU2mRDgaZyvR9vmQUje8miKXqu33Jglw1lXidfZ8Aexm29keEl9VKTx4LBo
+	 svmaKQ9vH0oLUarBfZNXedoULr+5IdWt1eJPDlxKS5YBpdmCTopVS+UWUPGEKVWh7T
+	 etD+Q3C5l3ZqIl05I9dM/FUnEICgWgP65+0DYme0tsD8AbM4y2+iMOJcAHZXi5ibcp
+	 Wpj91iENUhMwmvpbyObYtyaKn8Ha8OI6XV8LOf4FY5sOHsddWnJE5rbaDG2zT8JWaA
+	 S0Af+zBd5vZDQ==
+Date: Wed, 20 Aug 2025 23:34:20 -0400
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Tal Zussman <tz2294@columbia.edu>
+Subject: [GIT PULL] Crypto library fixes for v6.17-rc3
+Message-ID: <20250821033420.GB185832@quark>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,40 +57,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f467aade-e604-448d-b23e-9b169c30ff2e@oss.qualcomm.com>
 
-On Thu, Aug 21, 2025 at 10:22:05AM +0800, Yijie Yang wrote:
-> 
-> 
-> On 2025-08-20 00:20, Andrew Lunn wrote:
-> > >   static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos, int speed)
-> > >   {
-> > >   	struct device *dev = &ethqos->pdev->dev;
-> > > -	int phase_shift;
-> > > +	int phase_shift = 0;
-> > >   	int loopback;
-> > >   	/* Determine if the PHY adds a 2 ns TX delay or the MAC handles it */
-> > > -	if (ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_ID ||
-> > > -	    ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_TXID)
-> > > -		phase_shift = 0;
-> > > -	else
-> > > +	if (ethqos->phy_mode == PHY_INTERFACE_MODE_RGMII_ID)
-> > >   		phase_shift = RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN;
-> > 
-> > Does this one setting control both RX and TX delays? The hardware
-> > cannot support 2ns delay on TX, but 0ns on RX? Or 2ns on RX but 0ns on
-> > TX?
-> > 
-> 
-> This setting is only for Tx delay. Rx delays are taken care separately with
-> DLL delays.
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-If this is only for Tx delays, why is it also not used for
-PHY_INTERFACE_MODE_RGMII_TXID?
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-It is simpler to just let the PHY add the delays, the PHY drivers get
-this right, are well tested, and just work. MAC drivers often get
-delays wrong.
+are available in the Git repository at:
 
-	Andrew
+  https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/libcrypto-for-linus
+
+for you to fetch changes up to fd7e5de4b2eddd34e3567cd419812d8869ef4f13:
+
+  lib/crypto: ensure generated *.S files are removed on make clean (2025-08-14 18:01:03 -0700)
+
+----------------------------------------------------------------
+
+Fix a regression where 'make clean' stopped removing some of the
+generated assembly files on arm and arm64.
+
+----------------------------------------------------------------
+Eric Biggers (1):
+      lib/crypto: sha: Update Kconfig help for SHA1 and SHA256
+
+Tal Zussman (1):
+      lib/crypto: ensure generated *.S files are removed on make clean
+
+ lib/crypto/Kconfig  | 10 +++++-----
+ lib/crypto/Makefile |  8 ++++----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
