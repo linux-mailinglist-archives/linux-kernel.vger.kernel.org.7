@@ -1,83 +1,61 @@
-Return-Path: <linux-kernel+bounces-778782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C34B2EAF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:51:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0F3B2EAFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B85095880CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8763A1BA247A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 01:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F0425B1EA;
-	Thu, 21 Aug 2025 01:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GzJwQksa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E469025D8E8;
+	Thu, 21 Aug 2025 01:53:19 +0000 (UTC)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D501DDC0B;
-	Thu, 21 Aug 2025 01:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DEB258ED7;
+	Thu, 21 Aug 2025 01:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755741105; cv=none; b=jkmeYjzO45vSjIHrSQdpjh9LJyG+rjfXZE6GtqNYW338nYuW2VyFFYdM3fRnDe0eCDOTKoJapun4ItXW7hz2PpcGzraYQvkPHbOJcu1qiNZUYDrS69NUwGoNaFwj0Fi4B6DJ3OPjTrzyARNXdO3rqnP0Egn75jDdUO8JqurMk3c=
+	t=1755741199; cv=none; b=qYZgmQ6pxMTjMaMjXYxaOMYI0tPC2GN07Hwm+Aq8KVJPuEiuyEsULqbeD41qKwZpVh5pWBlxwePu45aJnA5mVDsAwA75Kug6QlGUqccKEi1prV54WReU1WFEYimR8TVI7sl63PMhreFL70quFxvNK933u7Gmp4+HtQKPBp59iK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755741105; c=relaxed/simple;
-	bh=4AKDPWqATzK1Hsj9qLvg8hUknNHF8JNcg5P0w4J1UCE=;
+	s=arc-20240116; t=1755741199; c=relaxed/simple;
+	bh=cx5YUdGMO0svEm7a/UadbxDXZqCmBpAVHoAU3bdhdGA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZ1eyob5gFkHuglZGY+/XE73K8Yf24w87wLhTQGU2/ibVcmMcf5KNGLfwoYsRU6EFkIxndbGd47UfMfdKWVWbb7kHDOLP2dsifJATrxkJkEaUfD0mkpa8lFJFWbtPiGjlqD3W2j/qqwjPT4KSDh9pV10YwPi/t5pdp1MJ4+xMIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GzJwQksa; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755741103; x=1787277103;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4AKDPWqATzK1Hsj9qLvg8hUknNHF8JNcg5P0w4J1UCE=;
-  b=GzJwQksaBjxw8jVF9vcnhokpRnwQoReT6ZN50z5NE95REMVl+GtSaC0y
-   uuwguJuAOeKG0k/aM7IQNxa4GxsminkXWVT8mczmdyQq9G2Inif8s6toJ
-   QKGvYo0r+lCF0LP2XORXQJoQ7f1AOvAEzRwuzx4hqWnYYZvk97OaT9QVo
-   8A/lonHwL4M8sX1PIh3goxVP/Z33XXiebAgKiVPZtgfC2+ZQw423PQ8Rm
-   8xK7iWVDaQwQJ97KPQfKtPPyvxVpgj8ZuSS0GdQ4t2T+jgm198hn5Jfix
-   ZkeRQM0W1qrwoZvHijtg5HyPNZtXJ9Ax6SbVA3rlpSE4ES53++OVmOQIB
-   w==;
-X-CSE-ConnectionGUID: bI4kJQrYQEmVw7iXpawabQ==
-X-CSE-MsgGUID: Js1e3nMtQxOOFWzgy/Sg2A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="68290614"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="68290614"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 18:51:40 -0700
-X-CSE-ConnectionGUID: T8b1BdI7TIiBzajZQD/6hA==
-X-CSE-MsgGUID: AWjOEuNzQ7mcc38JzYs6WA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="168537534"
-Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2025 18:51:33 -0700
-Date: Wed, 20 Aug 2025 18:51:30 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: Re: [Patch v3 3/7] perf/x86: Check if cpuc->events[*] pointer exists
- before accessing it
-Message-ID: <aKZ7omM0-3i72hfr@tassilo>
-References: <20250820023032.17128-1-dapeng1.mi@linux.intel.com>
- <20250820023032.17128-4-dapeng1.mi@linux.intel.com>
- <aKVD4ATXW4LmhDJm@tassilo>
- <aedbcbb5-f0b4-4bf6-bc33-c8c3bf3f20bc@linux.intel.com>
- <aKVgyV4XWfJGR6uK@tassilo>
- <fab2a035-5ab3-4e24-bd3e-760a4b9be5e8@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0OgywwcIjB1JRmO5i4u5zIeFnE9MfgeSDFr16O4CH9GZSg27jeER2um5Wqtfh/IAMd8IOcCZIh7dpHah+A7q6PoFiwH1KRG+7WxUAITEnG/xBgZZAH4/ibFQ7XHi9c2PlHMO0yTM4UH/NfvdP7c/cvYYRJpb/RVx6r/E+a234w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz19t1755741186t3b5f08ce
+X-QQ-Originating-IP: jz3qN019iMHA861p4VQp21bgDluXpW5XD56RTS7CiPM=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 21 Aug 2025 09:53:04 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13122141616914188234
+Date: Thu, 21 Aug 2025 09:53:05 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] net: rnpgbe: Add n500/n210 chip support
+Message-ID: <4E76D5F5691FF908+20250821015305.GC1742451@nic-Precision-5820-Tower>
+References: <20250818112856.1446278-1-dong100@mucse.com>
+ <20250818112856.1446278-3-dong100@mucse.com>
+ <d4a84d76-8982-4a9d-a383-2e2d4d66550a@linux.dev>
+ <78DD9702C797EEA1+20250820014341.GA1580474@nic-Precision-5820-Tower>
+ <77d89708-19a1-4394-bd6b-ca5aef6bafc1@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,22 +64,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fab2a035-5ab3-4e24-bd3e-760a4b9be5e8@linux.intel.com>
+In-Reply-To: <77d89708-19a1-4394-bd6b-ca5aef6bafc1@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OST2d686M2k2FvKF74kfwoElwBaRjyAts83XUAM/gK8fIK32u5JfF6sV
+	kr+CDvDHV39S7SMR0hssCX0YcIC4PdEaq28J//P1s+hPc9AtkrOsHcgfyJUrmIbkS2biY7D
+	+QtRBYPn98t6W844jbwOaScItYL3ewiOLtZT/T+545JTZum0W4X2TxrGx834BhgCKRWFEXM
+	Ze/H+CA944Ewg0fsGk20turXOhgqql/uJ3qpNrJeFN0oKEtdTyIWgRnDjd02flXCUdYl6Rp
+	Aud5PqlJGyGLi4bbUOontDVXWtumBNlvTaWNJRrPVWbKw5p6RusFhzCot/nz4w3iUdfr7J8
+	nagY6Tn4YS9SoQJMEJdn0wdtWKnRD2HZ2oQR/BVrbCIFFST9MpnfgDH1nuP3Lx9HcsBgCQV
+	wUGkLNv5wgBjzufwMwTEAkDdKWFukHQv25vDVq4X1Q6qj+Yyl2/1ngj+gKKyouHxpRlbXdS
+	2uK9CGPBAi1VLXGZY9Rxazw4or5yucasDxRebtcY3qO0eENZMbnPH8Ff6wlBTdkmG+Pc6ha
+	MbPsOLbkqu87kZvUOY1bvVtiJ5rjRH3zNBGHAiucID/Taqw8tBYqY5/fnwyoqwX5Hk0jRMM
+	cia2BOZ6lLKqN03EeimJmslJe2S7O8/SoJzyOLqIa9Oshqhgc2Z2l4ZXteQJ+B46akDgLTj
+	WE/3veOBaJ+VEY4/sna7cBrI1EXfifcpjJ91oduoyHHojGD7n3rQnwjg/fKox3UmM11u2TC
+	nADBVZxl0/nY4hXXJLmiWQeeozUEyrrIoBEEsl0YzQzRfWAlgmJyPvZEiEDlOi5Nb39YZPz
+	W1RXKelxibdpjGZQFJEqZPnrH4Xo34ZiXplEBMDFiEhwL5bKev0O4xQSTRtCocO/awy73BB
+	eXaD8YdXjsQGDv7QNBIA0rsXRPBU5x0Cc6jZ/cmZs4vSvuzp81a+iDqiWlsbhd1s9Wnek3R
+	vlZmmSvMh8RyIm63MVmLsZXwKgDOEr7i9jkrlyfYIY3ORsUaQO6bzuGYCJleobQDjkl4jmG
+	6miFopQcK9sCqWdCgGDi5t4sMzrm0=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Wed, Aug 20, 2025 at 01:54:17PM +0800, Mi, Dapeng wrote:
+On Wed, Aug 20, 2025 at 10:10:00PM +0200, Andrew Lunn wrote:
+> On Wed, Aug 20, 2025 at 09:43:41AM +0800, Yibo Dong wrote:
+> > On Tue, Aug 19, 2025 at 02:59:09PM +0100, Vadim Fedorenko wrote:
+> > > On 18/08/2025 12:28, Dong Yibo wrote:
+> > > > Initialize n500/n210 chip bar resource map and
+> > > > dma, eth, mbx ... info for future use.
+> > > > 
+> > > [...]
+> > > 
+> > > > +struct mucse_hw {
+> > > > +	void __iomem *hw_addr;
+> > > > +	void __iomem *ring_msix_base;
+> > > > +	struct pci_dev *pdev;
+> > > > +	enum rnpgbe_hw_type hw_type;
+> > > > +	struct mucse_dma_info dma;
+> > > > +	struct mucse_eth_info eth;
+> > > > +	struct mucse_mac_info mac;
+> > > > +	struct mucse_mbx_info mbx;
+> > > > +	u32 usecstocount;
+> > > 
+> > > What is this field for? You don't use it anywhere in the patchset apart
+> > > from initialization. Maybe it's better to introduce it once it's used?
+> > > Together with the defines of values for this field...
+> > > 
+> > 
+> > It is used to store chip frequency which is used to calculate values
+> > related to 'delay register' in the future. I will improve this.
 > 
-> On 8/20/2025 1:44 PM, Andi Kleen wrote:
-> >> Andi, I didn't fully get the exact meaning about the "log" here. When
-> >> throttle is triggered, perf_event_throttle() has already called
-> >> perf_log_throttle() to log the throttle event although only for the group
-> >> leader. Is it enough?
-> > Throttle normally doesn't involve data loss, just less samples. But this
-> > is data loss, so it's an overflow.
+> Maybe also see if you can find a better name. count is rather
+> vague. Count of what?
 > 
-> IIUC, there should be no data loss, the unprocessed PEBS records of these
-> throttled events would be still processed eventually by calling
-> intel_pmu_drain_pebs_buffer() when stopping the event.
+> 	Andrew
+> 
 
-Makes sense. Thanks,
--Andi
+Chip use clock cycle not us(microsecond) to achieve timing. If chip is 125MHz,
+driver setups a register to 125 to get 1us timing(125 * 10^6 * 10^(-6)). 
+Maybe usecstocycle better?
+
+Thanks for your feedback.
+
 
