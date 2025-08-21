@@ -1,120 +1,77 @@
-Return-Path: <linux-kernel+bounces-780525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A971DB3030C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:38:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87238B30311
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 21:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD4765C82EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:36:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67BA016DAC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 19:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA2334DCCF;
-	Thu, 21 Aug 2025 19:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643FE34DCC0;
+	Thu, 21 Aug 2025 19:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="fj06HT0d"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWGObK2V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EC92DF71C;
-	Thu, 21 Aug 2025 19:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDDB2DFA2A;
+	Thu, 21 Aug 2025 19:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755804987; cv=none; b=sIU9jWFUrhV1p+0QYd/wtcRo2XOuARITI/cI8QdXp2BnsRsoNH9BKkrdyWgiNtzYfRlbrxnMrj7n1cEwTau6ZDTTDny/a/0ddLPLLZmAEG5ZAosa2AAawna8MZX8fcy27rKE9kSBDGwmEeyDVA7N7y8Y2iHYM3C9l5oM53WxUNo=
+	t=1755805167; cv=none; b=CMCpwWWI0iaSXcgxVgUBtf3x6e0BpJNCoiS8+pGEPxNfBovxX1N1DCOKTHQ6fvXG1wKjQFFKf+GCLx6CYfXrDhihZs23YupQCymKTji0uiK8o7tWNqkPFqZGJL2l3SO4NyUc0FTFJvtPR3Df2VQMPdNbmw5zwud9Hvliz3n4GUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755804987; c=relaxed/simple;
-	bh=uHcy2AviljsxLllJ3OPGmlhzgQEqdyQntMpt5D8c29U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gUySWPo1uBnKbs5CqjidSRiWLcB+5o3aIInQ8tlhNfaNIV53KXSJ35Wl6w+Nj/M2+HrMnu8EMgv8MOExlaumUmi2v+u3aZcgPksHzKfDAhrCsbwDV+1eDEcdNPcj7qNgiikv2loJdIlkgoDAaNBp5oUbDjUCziL7kxOIdAHzs6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=fj06HT0d; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E418940AD5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755804985; bh=pmY6KG+wTzJ4LEBx4m1XWQJtkWHMxxgvsD7nwMl8SYQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=fj06HT0d89qImOAXo2ani3JiR3pwXraPM90AW8x5eBBe06pZLslh/l+Dy/mosefIZ
-	 KUNfFJuD85Srygk0zFJFWEUF0aLMZv5Dc3lE+ygdvu/qLQQ+L/ezSqndfEs2QIzMMO
-	 JnS5r+qmyqe0vjCcKpytc3hBr/q49ZSVLfSN6qIJAzCoEuS9AgbPwJiR40UWbzfUrR
-	 2gZ8jieG/K2QGowQSYwZIwpkylpTZ3cQkRDizGd6mGSCKRjgggxghAhiA4bJ2PgUJb
-	 1B50cqbzdWrtEZ5swW7IH2dio9/CcRlVSfncaKFcgsJrNxPWxIjb/Hhp2lU9N8VOC9
-	 C8y1dNTHIWmqw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id E418940AD5;
-	Thu, 21 Aug 2025 19:36:24 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, =?utf-8?Q?Bj=C3=B6r?=
- =?utf-8?Q?n?= Roy Baron
- <bjorn3_gh@protonmail.com>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Alice
- Ryhl <aliceryhl@google.com>, Andreas Hindborg <mchehab+huawei@kernel.org>,
- Benno Lossin <mchehab+huawei@kernel.org>, Boqun Feng
- <boqun.feng@gmail.com>, Danilo Krummrich <mchehab+huawei@kernel.org>, Gary
- Guo <gary@garyguo.net>, Miguel Ojeda <mchehab+huawei@kernel.org>, Trevor
- Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 04/11] scripts: sphinx-build-wrapper: add a wrapper for
- sphinx-build
-In-Reply-To: <88a95c7f6996cafb247d6706060173b17a46d570.1755258303.git.mchehab+huawei@kernel.org>
-References: <cover.1755258303.git.mchehab+huawei@kernel.org>
- <88a95c7f6996cafb247d6706060173b17a46d570.1755258303.git.mchehab+huawei@kernel.org>
-Date: Thu, 21 Aug 2025 13:36:24 -0600
-Message-ID: <87v7mg5ux3.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755805167; c=relaxed/simple;
+	bh=LaB+1YXPeYAEKWifKqdPsPK2syI1t4wJ/ha/VnX1fLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=etGZHrEjp+PHQksqFW7U8/rbc6mxUmgGY4/Zjgru30hcZxCmsWeXS4dHM0mq9R0kYTqH7iN035eyIMWxafvaKjvj7xwRfBkQ97vWyd1BdOQ1vfKE/3TwpKct1YfmWDbOLsjcXGW6+t5W+Z/oaZGPicYSWFojXtjrOhjUTPqbUDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NWGObK2V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF1EC4CEEB;
+	Thu, 21 Aug 2025 19:39:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755805167;
+	bh=LaB+1YXPeYAEKWifKqdPsPK2syI1t4wJ/ha/VnX1fLg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NWGObK2VYjwYNetU1jj2k/PX5F71WrToAzI3FMjpOJfPYBBV/4E0pW+PLsX7yAHNx
+	 OvXkiE1fG93UPWcmynZz2xx0ubAGvo1klzbFh5Upo5FMA0jwiPKCoSCpSAF3vmZxrq
+	 F9UxpgXZ4lC1vCM6yZhw5kVuoYN2P7q+QuiJ5fC3hAnWTTdLvVmrZZQPQ8N+GgdGtc
+	 nfm2ETxDxFAezRcYI2kCkDCtLOsOPFwxv50INAsUsHN7hv2bZhlTQMxF51rFA7jRot
+	 9KAgdFeMFqghWsH9hz1kJWKoyWel0SzSbdfZbpAzlI6tFoIkW8IUfEb6Ya64yU0Kai
+	 S7lI/guFGFhfg==
+Message-ID: <55255353-11bc-4096-8dc1-4beaec89f44f@kernel.org>
+Date: Thu, 21 Aug 2025 21:39:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] rust: Add read_poll_timeout
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org,
+ aliceryhl@google.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com,
+ boqun.feng@gmail.com, frederic@kernel.org, gary@garyguo.net,
+ jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org,
+ lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org,
+ tglx@linutronix.de, tmgross@umich.edu, acourbot@nvidia.com,
+ daniel.almeida@collabora.com
+References: <20250821002055.3654160-1-fujita.tomonori@gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250821002055.3654160-1-fujita.tomonori@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On 8/21/25 2:20 AM, FUJITA Tomonori wrote:
+> FUJITA Tomonori (2):
 
-> There are too much magic inside docs Makefile to properly run
-> sphinx-build. Create an ancillary script that contains all
-> kernel-related sphinx-build call logic currently at Makefile.
+Applied to driver-core-testing, thanks!
 
-So I am just now looking at the script and seeking to understand it, but
-one thing has jumped at me that I wanted to toss out there...
+>    rust: Add cpu_relax() helper
+>    rust: Add read_poll_timeout function
 
-> +# Minimal supported Python version needed by Sphinx and its extensions
-> +MIN_PYTHON_VERSION = parse_version("3.7")
-> +
-> +# Default value for --venv parameter
-> +VENV_DEFAULT = "sphinx_latest"
-> +
-> +# List of make targets and its corresponding builder and output directory
-> +TARGETS = {
-
-We don't at this point have a formal coding standard for Python code,
-but I do think that we should, to the extent possible, stick to the
-rules that have been established for C code.  One thing I would really
-like to see is in the comment style; our rules want:
-
-    /*
-     * ...C comments spread out with the markers on separate lines
-     * like this...
-     */
-
-so can we do something similar for Python?
-
-    #
-    # Markers above and below
-    #
-
-I will confess that this matches my personal subject preference, but it
-also brings us closer to what our C code looks like.
-
-(I don't know that I would push to redo everything to match that style,
-but instead to move that way going forward).
-
-Thanks,
-
-jon
+     [ Fix a minor typo and add missing backticks. - Danilo ]
 
