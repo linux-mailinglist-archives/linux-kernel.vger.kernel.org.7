@@ -1,126 +1,139 @@
-Return-Path: <linux-kernel+bounces-779540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EADB2F55F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:32:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43075B2F55B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FB45584A05
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:31:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B525624BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2E0305072;
-	Thu, 21 Aug 2025 10:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C378C304BD8;
+	Thu, 21 Aug 2025 10:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NL5+Bhx3"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="j686JQrA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ELkRK+/u"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBE1305043;
-	Thu, 21 Aug 2025 10:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CE817A2F6;
+	Thu, 21 Aug 2025 10:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755772293; cv=none; b=hO/jHeJljcf5RzVR6BmaFDLV2u6hToWA2YvLPXMy3rqS08G/Qgn532ej2qcz1LseYqCQVHYzlsVrsTJGuBJF9GKDUKBHcWRscS5is6eJgbgKwauX20JV7YtjLsp0gLs57RtJCxZUNakvchAxfCwLEujQR8JDX3l6sTwfRWLyJuY=
+	t=1755772291; cv=none; b=e1e38FqDSROJwWQec5/HcaXXQTqYT367FVOGnwg45KfF/n1LqhAwPagD/WUBUnGt3Jj3Jz8nY666ByYS+edHfs/VN92Ot7EsdId5aw4qwCE/yC6YVl0OdQItlqittj3nqWCkKQG4Q2OyYH9e2o20OnTidPHTfDFC9F4amc5r8eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755772293; c=relaxed/simple;
-	bh=913Rz1D2vRcGEtURPFrrhnXSizcosdo+3hWGTRcSM8I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VRDwcPr0ICbDTCtiONyP4B4c0gzBogzAagES0Tp9yi76MwVoMLuirHPt2Ff4SbB9bOsdU1g2iDIvEgU0OA1KLOIIM7GgWgSa7Rwo4AEz5q08/h8YNQ1OUJnDdnLyOGq80Rx15qeIVSyBiNvriaoCHqDwDPTxFUwEnMHgmLFbegc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NL5+Bhx3; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24458051ac6so1191695ad.1;
-        Thu, 21 Aug 2025 03:31:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755772290; x=1756377090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=913Rz1D2vRcGEtURPFrrhnXSizcosdo+3hWGTRcSM8I=;
-        b=NL5+Bhx3zexbg7+Q2ldvSv/r1XUqgIduUY+jdDNiXpDD6O+HtssXNL8g08IAq64BaP
-         tr5+2soTnln9MkYKrv4OYgS5wRK44hqkxp+QLr8TUJDh41IdB/Fl5AegtyoYuG3+/cOI
-         CZiPd4TURy2q2Pz9SH8+d85smGTDMpw2hgDwcWL06gLc02d4/QKgXkbHwAGaZBHIE3OK
-         n/qEq50oXuomC15q/wIBIOtHCvfYa1ZUCK8OjRfHlOd+k9GOGA2311qfJITF5UduCxuY
-         HBLTqdWuMFEt3Ok8bDsTrlk+r5W079PXcWROqiSn33nld1paii5q+m4mWtLCghoaHGxh
-         JMYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755772290; x=1756377090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=913Rz1D2vRcGEtURPFrrhnXSizcosdo+3hWGTRcSM8I=;
-        b=esH2ltmBKXGRCiZi80zbhJNGTzz3SX7QtUGUzwqzL+4go/P3/BMua7qWS0arFwrYnc
-         jNDy9IOEFYazPEegYaERe4qwIY3X34rcHYkN7gLh+DMeIEKqiQbMzQDYvqneyEcon21d
-         zFAnK6rZZbeh1lPr1PoHo/BphGBfFzTh3Yscfay9fZrb3hJhDtb3ZPA2i1X1dnosFgso
-         HttdyQL1pYGj6QS6aOjEa3VKct4qTM8rznslDoa1Wwe430nw8oJ9bkRBCMIakcGHChZj
-         4RceBA7kl0sefgg0BhuZ2clB4lbglR9zIUyuivkDOplFtXg/1bc+TxzXfTH1klfbfMhS
-         dbRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUICVVPZHGch5bZ17zvmlCHb8Rni8k97HksX20hINjXGctYE7L74np9q30xSAurMqNoJVS3Q9Rud4kcH0U=@vger.kernel.org, AJvYcCXHIOUB0TZVjAZUBemekbu4Yi7YMsFFjdY856Di4OmmUWRXeF+xFjF5W2fYwA4rmw5L9UtnkohejmHAFtVXYws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCLmgaRsFNtF461C4+DR6Nh3ZZGs1udFEnqqN18kJ5EMNJwOLW
-	3UFhK/1sTM/rmx40Z0ciGn3tDJFJAqtSkDV1jWyZ6dKUllj3QwbNmS5HHO4YsiQK9sN0NHZoLu8
-	UXF5FWtg4g+84rA7cXX7Lo/rznrHaexnw8xRt
-X-Gm-Gg: ASbGncv/za6X7h/xPKQ6hfWNIFFtA4yTQs54M2+Cq2lhJ8zVVrCfIJJzjpW2CVhlNEY
-	2aq/gv5PdhpddYy0a5WwLtpJQbzYSz4WwyDYyOUFh94mwlSEkYygABvl9oe5+XohsQHR27RQHnM
-	aiDkON3dCxl/bDfPWaTs5pF/uTTrfgNPVPWDQ9dOc8dba5pwbqi4ChZ+eaE9Kmd76R9kse9/yMm
-	hgifBt14eRnMhd79dQ=
-X-Google-Smtp-Source: AGHT+IEjm0pT1tYKH4wdQFS+4SLVyM2EzMLuRZ4+YtmFOUPkssVGEQdTiYEF5APh7HBsvfeJHB94RTHEn016hNWb+Uk=
-X-Received: by 2002:a17:902:fc47:b0:23f:fd0e:e5c0 with SMTP id
- d9443c01a7336-245ff86b777mr14664805ad.9.1755772290139; Thu, 21 Aug 2025
- 03:31:30 -0700 (PDT)
+	s=arc-20240116; t=1755772291; c=relaxed/simple;
+	bh=L2n256knK+5dIW7WpN0KI9rFJ2kkJpRTU1MxJYBy+A8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J23N4uN5drBCtS1874l4mIxyS6ykh95N4NbULuSc8sva0fP8lo46jRPP4Pfu7HJykXGokeYh3J/Q27orjYt9/3/0ET+dMmxwlyub19/qphXAWEBYTUukAq9RtMegp1ofyAyN7BAGiwfqmm/UQ5KbSdNrYcZLWPBga1LodG88TSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=j686JQrA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ELkRK+/u; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 1EFD614000F8;
+	Thu, 21 Aug 2025 06:31:28 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Thu, 21 Aug 2025 06:31:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1755772288; x=1755858688; bh=PXKKI4OnXo
+	7t/YcWii3j+mJxOzhErP8TYu8TKKt71MY=; b=j686JQrAisvABfKcShupGMSwRS
+	br5RiBNpoR/5x/WdLoCsWaE/jZbUCa0bdiMZoP8mQfbjnZSrZngUR+0xsK/+9R90
+	wnNIQ3oqulZFKR90W+jPHHkKqgzBvI/HnfCYpuvSEe2jqKDyV4lpfOEyuNL2/qr3
+	C/w+alqMrRgqk7sRvi9VkQCqta3F/Z/ahkvTKfTY45NAFdRGqovXJ46Vbz6VZNRn
+	ojUgTKpF8k56vFEsN71kcY02sYT0YEhkuM6BnJeREhrM1EHAUnlVsvhw88vB9H+T
+	hUBojEAjlrZNpJNx4a2X3tdTOsQ1P/jXvbw9JhHVnuNBMIVXtkNxrnCMz8DA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1755772288; x=1755858688; bh=PXKKI4OnXo7t/YcWii3j+mJxOzhErP8TYu8
+	TKKt71MY=; b=ELkRK+/u7cZsOZClFlftg0BLd8LFmFzLPKpEarwFmg1S5qlVmXP
+	jCnWIQsQ5re3AlrADDTlfDvvLq2lUbhkEUZY8VYwX95WNmJNloY7bJNEcaUTKPwR
+	hvJYt2js+Up/64jJdK7jlgapUVrbM547UZbXiXO3hob5/jHiqlYJj304p6fS7tZa
+	cmXKKPhmxQqubAcI49zWX9GTg14F3dhRreEivjNtCxAmvSJfnr/10nVk11BflRsJ
+	SVZQAPqPqMmxwbYQrhl3/c7PjwtCjB/zivyn3wL460o1TZGfJnq93VlvuaDc9WcL
+	XJ3vmupyXBkw7cBrVya/IYk+qkPGIIhmR5Q==
+X-ME-Sender: <xms:f_WmaHZb7-9Xi55LSqFbgdhaZxNCe8RPzgyDMEu0jh5xKUPhpzohdQ>
+    <xme:f_WmaMUWzlarwwy7d5hhkGAqOeqsIStx-YHGL1kqb1sb6CIrECYpVUREYXPZLa55O
+    ZNnnEB35t7ltJFqhwY>
+X-ME-Received: <xmr:f_WmaHFPPlcnIyX62t4Lg-Sv5v2kWxUDHwpPgd3_PQZmi_JGfy2q9ZWSwJWE4OPHLwuDslf9D0t_Vplq-ccysQyfBjRBDmJz8-0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduiedutddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcu
+    ifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgvd
+    ffveelgedujeeffeehheekheelheefgfejffeftedugeethfeuudefheefteenucevlhhu
+    shhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruh
+    drnhgvthdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhvvghnsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdp
+    rhgtphhtthhopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtthhopehkrhiikhdoug
+    htsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepkhgvthhtvghnihhssehophgvnhgsshgurdhorhhgpdhrtg
+    hpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtoheprghsrghhihes
+    lhhishhtshdrlhhinhhugidruggvvh
+X-ME-Proxy: <xmx:f_WmaOZj_fNrTtNvP0lOwNRNBC3qfZShIW1IjIFRoj0EzONnzKcrKg>
+    <xmx:f_WmaOF4ViS7Ns38LIbqcmqU-JXKpiAsrjJ6_rS2y6kMC9jm3NcBDg>
+    <xmx:f_WmaM2AxTDvLAgkj7is4jeLWe8gIPYp0c71bcBG4rkGeM5R2l-MhA>
+    <xmx:f_WmaKz4kVZWeMZGdnwhZPLVprAZ9p-TB9-8cpNELntu2Z2ChhqsdQ>
+    <xmx:gPWmaHJIvsyYvtbRZcgHsJBj1t34ZPnZbGKcUktHp4tQA-6YcPP_M_2M>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Aug 2025 06:31:27 -0400 (EDT)
+Date: Thu, 21 Aug 2025 12:31:26 +0200
+From: Janne Grunau <j@jannau.net>
+To: Rob Herring <robh@kernel.org>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mark Kettenis <kettenis@openbsd.org>,
+	Hector Martin <marcan@marcan.st>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: arm: apple: Add t8112 j415 compatible
+Message-ID: <20250821103126.GD1270980@robin.jannau.net>
+References: <20250813-apple-dt-sync-6-17-v1-0-209f15d10aa0@jannau.net>
+ <20250813-apple-dt-sync-6-17-v1-4-209f15d10aa0@jannau.net>
+ <20250820190708.GA538860-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812132712.61007-1-baptiste.lepers@gmail.com>
- <20250820162927.34201cfb395ec7319b15920a@linux-foundation.org> <CAH5fLghx7K1fsdx15VsaTT1i3DRQD8zH2Yd-sEwumiByefTVAQ@mail.gmail.com>
-In-Reply-To: <CAH5fLghx7K1fsdx15VsaTT1i3DRQD8zH2Yd-sEwumiByefTVAQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 21 Aug 2025 12:31:18 +0200
-X-Gm-Features: Ac12FXxLCRtkAiXZ0gKUbVmOrCcrysG0-2smcnGVwz7_v545hEOcpz9rG47jg8I
-Message-ID: <CANiq72k1o7bi9tE0tQxaiu39_Drbvz3bPNXibeCightzEuDjWg@mail.gmail.com>
-Subject: Re: [PATCH] rust: mm: Mark VmaNew as transparent
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Baptiste Lepers <baptiste.lepers@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
-	linux-mm@kvack.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250820190708.GA538860-robh@kernel.org>
 
-On Thu, Aug 21, 2025 at 11:45=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> seen many things get backported when they are incorrect even if it
-> works in practice, so that is why I suggested to backport it anyway.
+On Wed, Aug 20, 2025 at 02:07:08PM -0500, Rob Herring wrote:
+> On Wed, Aug 13, 2025 at 11:53:36AM +0200, Janne Grunau wrote:
+> > This adds the "apple,j415" (MacBook Air (15-inch, M2, 2023) to the
+> > apple,t8112 platform.
+> > 
+> > Signed-off-by: Janne Grunau <j@jannau.net>
+> > ---
+> >  Documentation/devicetree/bindings/arm/apple.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/apple.yaml b/Documentation/devicetree/bindings/arm/apple.yaml
+> > index da60e9de1cfbd0151e973c3aafba6d0880fc21aa..3b90b5df60507b245de387de104a4e64f234139a 100644
+> > --- a/Documentation/devicetree/bindings/arm/apple.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/apple.yaml
+> > @@ -93,6 +93,7 @@ description: |
+> >  
+> >    - MacBook Air (M2, 2022)
+> >    - MacBook Pro (13-inch, M2, 2022)
+> > +  - MacBook Pro (15-inch, M2, 2023)
+> 
+> s/Pro/Air/?
 
-To clarify: "incorrect" here means in the stable kernel, i.e. not the
-backported patch.
+yes, thanks. changed moved the added entry below "MacBook Air (M2, 2022)"
 
-Andrew: in the past, I was quite conservative in what I would mark as
-Cc: stable for Rust, but after discussing a few past cases with the
-current stable kernel team and/or being requested to add the tag, I am
-nowadays way more optimistic in tagging. Some backports would not pass
-the stated rules in principle, but they still wanted them.
-
-For instance, I tag even Clippy cleanups (so far, since it seems
-doable to keep it clean with the amount of code we have).
-Nevertheless, I still skip the tag when I really feel there is no
-point, and let their scripts pick them up if they really, really want
-them.
-
-For this particular case, since we support several compiler versions
-nowadays, I would have just tagged it if it had went through my
-branch. There is also little risk whether it gets backported or not.
-
-I hope that gives some context.
-
-Cheers,
-Miguel
+Janne
 
