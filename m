@@ -1,141 +1,243 @@
-Return-Path: <linux-kernel+bounces-779454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A3EB2F450
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:43:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17697B2F458
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75AA217229F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:42:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69F85A050E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA742EE5F8;
-	Thu, 21 Aug 2025 09:42:16 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6762F0699;
+	Thu, 21 Aug 2025 09:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HVAe29ZC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A57B35975;
-	Thu, 21 Aug 2025 09:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7392E29BDA0;
+	Thu, 21 Aug 2025 09:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769336; cv=none; b=LRsnrhsQ/ZFrANvE3A5LegFiXUVnh1cWi7gf7euhk10zHdyPklGYlNpKCbe3SDK0Bebm/CAlOzctHFLZN5K2Iw3kiLpQX9+OCru/uIyX41PQEOamJSA95lZ/XhrCHxLa7qhdfavfAy3BECIzYDtT2QHdUafVXibbbCxfKgztK/U=
+	t=1755769371; cv=none; b=sn0GoBWAMYVb1HX9BfxhRZwzsICS1cHdzTFX/n/IVmJ7RtnPWEvWryA42breFxR2ijKP1qJHYYsvA+otRMJw7HJOVvydFIeFlJrLepcbLwrS6wQ4DhxvpE2KDfi4Y5nnwQrMNlU1wdxDzigyUHUM9i39BjWz9YOa3fnPOLwFABE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769336; c=relaxed/simple;
-	bh=nSeIorMmRmBVL1NRH30V5TAmMQCnj1rs/AYqG4xMiG4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=QH/OGVfnGrsBa20CdrMmZqxKT5+Z1pMzyxC1aG6sf9EzNp2a7OyYjM4ozUhO4TBj60qNTSTmBkAOxbwQaf85ckoIXptPGXHkSEan3A8yhYViOkuY8aOc9ZjRfHgY3+vGaHQWfH+89SLS2e+/p9ixc9XeQQYmhiuY4qpwvCmk8oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6yyp52x7zKHMvx;
-	Thu, 21 Aug 2025 17:42:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3068D1A1EB1;
-	Thu, 21 Aug 2025 17:42:10 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAHgxPw6aZoYbqxEQ--.6848S3;
-	Thu, 21 Aug 2025 17:42:09 +0800 (CST)
-Subject: Re: [PATCH] block: fix disordered IO in the case recursive split
-To: Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@infradead.org>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, neil@brown.name, akpm@linux-foundation.org,
- linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, colyli@kernel.org, xni@redhat.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250821074707.2604640-1-yukuai1@huaweicloud.com>
- <aKbcM1XDEGeay6An@infradead.org>
- <54fc027f-f4dc-0412-0d6d-b44a3e644c39@huaweicloud.com>
- <aKbgqoF0UN4_FbXO@infradead.org>
- <7db2eb2c-9566-4d6b-9f82-a0f65110a807@suse.de>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <c145302a-175e-da38-2d28-f92dd285b819@huaweicloud.com>
-Date: Thu, 21 Aug 2025 17:42:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1755769371; c=relaxed/simple;
+	bh=daHHXk6hGkf6STMZel23S0oS9VyuqpLyuFZi6TkLXIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hx8CeviS4swOehxUXcWzlH6ALgtTQQd9gmHF2QKxywtj/SuumW09kvGol1PSUAQH5I914b4B1+1kzAYTQIamHRPUyRc4pGbxWhYddlXs/Io1/iQPcJu7HEWGVw87V1TcODdbZb6S9pQDxyr2Z/KeaFuull7y2JIPBmMz9s1Cntg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HVAe29ZC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9bJM1013297;
+	Thu, 21 Aug 2025 09:42:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QxuQGDuMIJKU3/yfOdhqngcZERhDk4reACtx5u6/wi0=; b=HVAe29ZCL54LUJ4h
+	BCKOQUU9ZtC/9O56FVpEtI1AWr4uPiqc0ejzJgzrfF4IoAWXVc0N2qL1zKhPWbaG
+	H4WJunwr/kKN4+ZNMMrXuQN100rTFN1lsORxcwDs+R+8ZoozcRyc8FyK7LlRaxfq
+	T5LKDU8/B8LbOFatArLO4aTu29Yc92wkgqjBQoh8HqtJNVmLtnGN01u331yMaYKZ
+	9LCcFhqnd8fMfBoTDRZZz5wHtuicWDTGC5wEqrAgZYXSuN0goCcmdZFMR+OjOiap
+	+OHUZjSZfZQOxouRDiJ8sWEhX8+0bG9NpBB4ekZQKaEdGWhuJmozNzk56wukMNeR
+	YTWPWA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52dmvj9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 09:42:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57L9gZAL017835
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 09:42:35 GMT
+Received: from [10.50.10.127] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 21 Aug
+ 2025 02:42:33 -0700
+Message-ID: <6c93b790-6d84-aec5-5b4d-2584d249f74e@quicinc.com>
+Date: Thu, 21 Aug 2025 15:12:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <7db2eb2c-9566-4d6b-9f82-a0f65110a807@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHgxPw6aZoYbqxEQ--.6848S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar13XrykAF1kuFyUXw4kCrg_yoW8AF1fpr
-	4vqF1jyrWUJrsYkFnrJw4jqa4rtr1UJ34Fyr1rX3W7X34UJrnFqr45WrWY9r98XF48Kr12
-	yr48Jry5Zw1UtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] media: iris: fix module removal if firmware download
+ failed
+Content-Language: en-US
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250820-topic-sm8x50-iris-remove-fix-v1-1-07b23a0bd8fc@linaro.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <20250820-topic-sm8x50-iris-remove-fix-v1-1-07b23a0bd8fc@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfXymIFYtlw7Wlc
+ +GQWnTbstkTSkNX4hbhRR/mRJLglZ5iuqHhXjQ+l34pQxZqEAsyNYfWDquLtxCYgueZEY59w/Tj
+ pAjHH3yB6Xqnq0vhGV9VcCz+qcvEktBN13kq+M4ADUAXBIbozeaF9AEbz106YooaRRsmaB0hyTg
+ wVa4/RKjVQxwodJ2EKIwWfcLuQhSk084sqfE89wOSXVfDyFZSt2FXmdspgYe+xBFydIK7Zq7yQo
+ j5zq2bnh51AJuuX/G7wVGyXUYZn8ric0V3fHS2hFdjcncv7wgugQ8CW7yJ+8ELguEbdPxRrNhpf
+ IuNDjZlC/v5Q68OD2E2Zq5jN1tFcpg4z/hFIrj+PiO6u17JxiC3WL9Kac5qI1yy1pTUJEY6n1xY
+ auVlnzlMr4N1O1rlJXl4rnPwLjXiyQ==
+X-Proofpoint-ORIG-GUID: XF2zJmIe4FqVWKRRtjNIbo_1XtHV0-qI
+X-Proofpoint-GUID: XF2zJmIe4FqVWKRRtjNIbo_1XtHV0-qI
+X-Authority-Analysis: v=2.4 cv=SoXJKPO0 c=1 sm=1 tr=0 ts=68a6ea0c cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8
+ a=MzbH1S0u4NuMHKOXcXYA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-Hi,
 
-在 2025/08/21 17:33, Hannes Reinecke 写道:
-> On 8/21/25 11:02, Christoph Hellwig wrote:
->> On Thu, Aug 21, 2025 at 04:56:33PM +0800, Yu Kuai wrote:
->>> Can you give some examples as how to chain the right way?
->>
->> fs/xfs/xfs_bio_io.c: xfs_rw_bdev
->> fs/xfs/xfs_buf.c: xfs_buf_submit_bio
->> fs/xfs/xfs_log.c: xlog_write_iclog
->>
->>> BTW, for all
->>> the io split case, should this order be fixed? I feel we should, this
->>> disorder can happen on any stack case, where top max_sector is greater
->>> than stacked disk.
->>
->> Yes, I've been trying get Bart to fix this for a while instead of
->> putting in a workaround very similar to the one proposed here,
->> but so far nothing happened.
->>
->>
-> This feels like a really stupid fix, but wouldn't that help?
+
+On 8/20/2025 10:36 PM, Neil Armstrong wrote:
+> Fix remove if firmware failed to load:
+> qcom-iris aa00000.video-codec: Direct firmware load for qcom/vpu/vpu33_p4.mbn failed with error -2
+> qcom-iris aa00000.video-codec: firmware download failed
+> qcom-iris aa00000.video-codec: core init failed
 > 
-> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-> index 023649fe2476..2b342bb59612 100644
-> --- a/drivers/md/raid5.c
-> +++ b/drivers/md/raid5.c
-> @@ -5478,7 +5478,6 @@ static struct bio *chunk_aligned_read(struct mddev 
-> *mddev, struct bio *raid_bio)
->                  split = bio_split(raid_bio, sectors, GFP_NOIO, 
-> &conf->bio_split);
->                  bio_chain(split, raid_bio);
->                  submit_bio_noacct(raid_bio);
-> -               raid_bio = split;
->          }
+> then:
+> $ echo aa00000.video-codec > /sys/bus/platform/drivers/qcom-iris/unbind
+> 
+> Triggers:
+> genpd genpd:1:aa00000.video-codec: Runtime PM usage count underflow!
+> ------------[ cut here ]------------
+> video_cc_mvs0_clk already disabled
+> WARNING: drivers/clk/clk.c:1206 at clk_core_disable+0xa4/0xac, CPU#1: sh/542
+> <snip>
+> pc : clk_core_disable+0xa4/0xac
+> lr : clk_core_disable+0xa4/0xac
+> <snip>
+> Call trace:
+>  clk_core_disable+0xa4/0xac (P)
+>  clk_disable+0x30/0x4c
+>  iris_disable_unprepare_clock+0x20/0x48 [qcom_iris]
+>  iris_vpu_power_off_hw+0x48/0x58 [qcom_iris]
+>  iris_vpu33_power_off_hardware+0x44/0x230 [qcom_iris]
+>  iris_vpu_power_off+0x34/0x84 [qcom_iris]
+>  iris_core_deinit+0x44/0xc8 [qcom_iris]
+>  iris_remove+0x20/0x48 [qcom_iris]
+>  platform_remove+0x20/0x30
+>  device_remove+0x4c/0x80
+> <snip>
+> ---[ end trace 0000000000000000 ]---
+> ------------[ cut here ]------------
+> video_cc_mvs0_clk already unprepared
+> WARNING: drivers/clk/clk.c:1065 at clk_core_unprepare+0xf0/0x110, CPU#2: sh/542
+> <snip>
+> pc : clk_core_unprepare+0xf0/0x110
+> lr : clk_core_unprepare+0xf0/0x110
+> <snip>
+> Call trace:
+>  clk_core_unprepare+0xf0/0x110 (P)
+>  clk_unprepare+0x2c/0x44
+>  iris_disable_unprepare_clock+0x28/0x48 [qcom_iris]
+>  iris_vpu_power_off_hw+0x48/0x58 [qcom_iris]
+>  iris_vpu33_power_off_hardware+0x44/0x230 [qcom_iris]
+>  iris_vpu_power_off+0x34/0x84 [qcom_iris]
+>  iris_core_deinit+0x44/0xc8 [qcom_iris]
+>  iris_remove+0x20/0x48 [qcom_iris]
+>  platform_remove+0x20/0x30
+>  device_remove+0x4c/0x80
+> <snip>
+> ---[ end trace 0000000000000000 ]---
+> genpd genpd:0:aa00000.video-codec: Runtime PM usage count underflow!
+> ------------[ cut here ]------------
+> gcc_video_axi0_clk already disabled
+> WARNING: drivers/clk/clk.c:1206 at clk_core_disable+0xa4/0xac, CPU#4: sh/542
+> <snip>
+> pc : clk_core_disable+0xa4/0xac
+> lr : clk_core_disable+0xa4/0xac
+> <snip>
+> Call trace:
+>  clk_core_disable+0xa4/0xac (P)
+>  clk_disable+0x30/0x4c
+>  iris_disable_unprepare_clock+0x20/0x48 [qcom_iris]
+>  iris_vpu33_power_off_controller+0x17c/0x428 [qcom_iris]
+>  iris_vpu_power_off+0x48/0x84 [qcom_iris]
+>  iris_core_deinit+0x44/0xc8 [qcom_iris]
+>  iris_remove+0x20/0x48 [qcom_iris]
+>  platform_remove+0x20/0x30
+>  device_remove+0x4c/0x80
+> <snip>
+> ------------[ cut here ]------------
+> gcc_video_axi0_clk already unprepared
+> WARNING: drivers/clk/clk.c:1065 at clk_core_unprepare+0xf0/0x110, CPU#4: sh/542
+> <snip>
+> pc : clk_core_unprepare+0xf0/0x110
+> lr : clk_core_unprepare+0xf0/0x110
+> <snip>
+> Call trace:
+>  clk_core_unprepare+0xf0/0x110 (P)
+>  clk_unprepare+0x2c/0x44
+>  iris_disable_unprepare_clock+0x28/0x48 [qcom_iris]
+>  iris_vpu33_power_off_controller+0x17c/0x428 [qcom_iris]
+>  iris_vpu_power_off+0x48/0x84 [qcom_iris]
+>  iris_core_deinit+0x44/0xc8 [qcom_iris]
+>  iris_remove+0x20/0x48 [qcom_iris]
+>  platform_remove+0x20/0x30
+>  device_remove+0x4c/0x80
+> <snip>
+> ---[ end trace 0000000000000000 ]---
+> 
+> Skip deinit if initialization never succeeded.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/media/platform/qcom/iris/iris_core.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_core.c b/drivers/media/platform/qcom/iris/iris_core.c
+> index 0fa0a3b549a23877af57c9950a5892e821b9473a..8406c48d635b6eba0879396ce9f9ae2292743f09 100644
+> --- a/drivers/media/platform/qcom/iris/iris_core.c
+> +++ b/drivers/media/platform/qcom/iris/iris_core.c
+> @@ -15,10 +15,12 @@ void iris_core_deinit(struct iris_core *core)
+>  	pm_runtime_resume_and_get(core->dev);
+>  
+>  	mutex_lock(&core->lock);
+> -	iris_fw_unload(core);
+> -	iris_vpu_power_off(core);
+> -	iris_hfi_queues_deinit(core);
+> -	core->state = IRIS_CORE_DEINIT;
+> +	if (core->state != IRIS_CORE_DEINIT) {
+> +		iris_fw_unload(core);
+> +		iris_vpu_power_off(core);
+> +		iris_hfi_queues_deinit(core);
+> +		core->state = IRIS_CORE_DEINIT;
+> +	}
+>  	mutex_unlock(&core->lock);
+>  
+>  	pm_runtime_put_sync(core->dev);
 > 
 
-I do not understand how can this help, do you miss that submit split
-instead?
+The iris_core_deinit() API should ideally not be called when core->state is
+in IRIS_CORE_DEINIT. Better to handle this check in the caller itself.
 
-And with this change, this can help, however, I think we'll still submit
-the last lba bio first, like bio_last -> bio0 -> bio1 ... where the
-following is sequential.
-
-BTW, this is not just a raid5 problem, this is also possible for
-raid0/10 and all other recursive split case.
-
-Thanks,
-Kuai
-
+> ---
+> base-commit: 5303936d609e09665deda94eaedf26a0e5c3a087
+> change-id: 20250820-topic-sm8x50-iris-remove-fix-76f86621d6ac
 > 
-> Cheers,
-> 
-> Hannes
-
+> Best regards,
 
