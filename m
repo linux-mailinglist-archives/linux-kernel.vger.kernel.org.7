@@ -1,128 +1,120 @@
-Return-Path: <linux-kernel+bounces-779684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 970CCB2F746
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:56:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC565B2F73C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5461317AE32
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:53:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2D391CE1D8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1EF2DFA5B;
-	Thu, 21 Aug 2025 11:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F07C305043;
+	Thu, 21 Aug 2025 11:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OtMwwDtm"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EeTlcgdw"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF942DD608
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBD22DAFD9
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 11:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755777209; cv=none; b=bjEycuK1msRj2/fu2+JGQRv6hHM/9JzgJrOnvW/68N3uOM32e1mRAj2A60oz3HmPA5JtUXIljPGdbPeh9rtt0cc282UzbG7HM9CKNJM29W43mQDWU5/s+so9oavCk7XzeQfyEwJvYWwt3MaE0MVOAwmUWcX5fawjBcvutrRK9U0=
+	t=1755777240; cv=none; b=jz47oItnWhSS//ecdAFacAuIvEkl5Q8ydBdEHxfKjUKbPnhRznk/DwQarp+7CMFboXFydD6b901KhEYxXP4EevYDBGolncCLXdpqpsgVk4ErN86pv1h/tgmKocpYsp4q/9ObbI29d3H5D4v5781/wzeCuTAJQ8Q6KYu2RI5Lg0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755777209; c=relaxed/simple;
-	bh=gj8Ewp98g6KH3AuYkRIp4/z6BIYMV5RScmMuaTBfZz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HTBCYtfdSv+x+Lpzvap+oHu++aysqV42VdKi6mXdoG/yOrB4Ys4eTSmFLgz7sy0xbmNOX1G00Vvt6cNS0aa9ZBHRTzzQuH5BLSL7UlI7d1rL/b11d+5QJq+VSXaII1InXLgsJg1XjtBSUImVwEcqAt2k7OMW5smmkRWdYBDgWbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OtMwwDtm; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755777206;
-	bh=gj8Ewp98g6KH3AuYkRIp4/z6BIYMV5RScmMuaTBfZz0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OtMwwDtmwa/O7ggrird2cGFI/hroLbmib4VzTSaghb7/uOklbpvCSFe9mZZoGodol
-	 7NYNjM26c0+wW/QA95kR/E6UCcsSpc5wcVo90h5eEXfV9nKxlSEyuarkJw+5jIEOU4
-	 ugO/IkuZjikRGQsSnH+MiASOer3itiHp2tsSVYiCWsjkZXTQd960IYyen1pEYg137H
-	 aBi9t7TDJUNqSHuPrhu0mIGBArA9MD1h7M79wC0HyvCkG2vjFu5bBxpuJEtIb1Mssd
-	 brpaYAQPly2x+LErjxR16y0mXIXd7rZG9nRoledFXM9guZnoyiZML7x1DidHwZjJ0Z
-	 VkBIHzzD9MLPA==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8EBAB17E127B;
-	Thu, 21 Aug 2025 13:53:25 +0200 (CEST)
-Date: Thu, 21 Aug 2025 13:53:20 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: "Danilo Krummrich" <dakr@kernel.org>
-Cc: "Caterina Shablia" <caterina.shablia@collabora.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Frank Binns"
- <frank.binns@imgtec.com>, "Matt Coster" <matt.coster@imgtec.com>, "Karol
- Herbst" <kherbst@redhat.com>, "Lyude Paul" <lyude@redhat.com>, "Steven
- Price" <steven.price@arm.com>, "Liviu Dudau" <liviu.dudau@arm.com>, "Lucas
- De Marchi" <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
- <thomas.hellstrom@linux.intel.com>, "Rodrigo Vivi"
- <rodrigo.vivi@intel.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <intel-xe@lists.freedesktop.org>, <asahi@lists.linux.dev>, "Asahi Lina"
- <lina@asahilina.net>
-Subject: Re: [PATCH v4 3/7] drm/gpuvm: Pass map arguments through a struct
-Message-ID: <20250821135320.670f2409@fedora>
-In-Reply-To: <DB61N61AKIJ3.FG7GUJBG386P@kernel.org>
-References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
-	<20250707170442.1437009-4-caterina.shablia@collabora.com>
-	<DB61N61AKIJ3.FG7GUJBG386P@kernel.org>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755777240; c=relaxed/simple;
+	bh=L7PbAw7tFxkqZThPb3yJ9U2UGY2pHnuSaci2IGV7yfc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H4eredic0DU8+YkhSC7fGGjrTv75d8Qm3hElZjPqxbBnZxGKMJWJeCy07P1EWYKX3S8VMixNoCVkQlQQuuTEhZEs6EzZlJGQG5g5IbPGUsPJbeKaeLZlMlOyJa197yiu5PdaqxJl0eFWb+eUvwSZreMUZOAv0ONgY2KQ/nQMyaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EeTlcgdw; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-333e7517adcso18494831fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 04:53:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755777236; x=1756382036; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L7PbAw7tFxkqZThPb3yJ9U2UGY2pHnuSaci2IGV7yfc=;
+        b=EeTlcgdwYygVPvWzZ81l5IByZT3GZgdfLnceLEVRtnLKn5kjZAK18d9RTZKllNN3R9
+         UXNJuNZYhZL2/q7EIlmuqT/RNnXonu0xTXfM7Mu1hvzHJXxGStRwQ8wUjUvu1nmWe5kJ
+         bOvHqJiyfkTBFnPalQCG/zkNmCKpV4C//WOnsggDAKiSq2dxxWaUdzQDpOv4icRLO6jy
+         FLT1i4qApSx7t3oDdCbKZI6Uo/XCgFeugJGvh4s4McwDReUaIaDZCi4GNX1+YPb88r4q
+         FyMPyu6OD1xEbix9HWqrFIy2K24Qt+lvmhMkS4VLBb67YbyhwsoovUIdJ3elz5ONpvok
+         A3oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755777236; x=1756382036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L7PbAw7tFxkqZThPb3yJ9U2UGY2pHnuSaci2IGV7yfc=;
+        b=nmawYkaqmn53moJyiF3lcK37ZxFU7mlnYNKtmFLntPL/u5iTcUmwaSXPztxoPJGyQu
+         Q62DJTPDZy1g8l5dTqMeHzT6ZYHtdw68gATqCispDegX4WDaMnsJk5adCe7M+aFBrnSg
+         gccuiYmHSFYFMMhAoo0cw0CK28wRpdyki8PFgkRN8WzViVgWiCoqLYZ0qkkYmyOw4fUx
+         Iags1NGolA+JVvEuYAuxqG4bu1VfxnNL3cmFcx54OfkTERjomxwZLUYTM3evRDEyj/4p
+         qVW88wyjGwn7BeLw0at9s2q3k6JydHV8HRW9jcoONppQYBr4juuYGCrh7cMLInXcaxAU
+         Cs3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWKUTjbQSfIVkUwGuTp7mUjxwuI+MivdlN6KOmMJ+auxVPfeMK4UPI13BmHv2LiXGoAiG42HPfPUs1pk+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBUoJaM6Txqqu13CQS+evYRo2GVjwNjSy2eWwNLkk9fJTFISoI
+	GfzNCMa7eRr0qpRZ1U57Y7yp6K6j+OcpF44Dxt+8XRAHavwy+j82PcJNY4+SkOqC0Mec/GXMtPb
+	R41Tq/HfmlMQGrQt0L6xCj7oZpIrKlpUNWgCh266sGA==
+X-Gm-Gg: ASbGncvpD/VEozyNlDVSR1FhjfM98hJPv9IA38KqTFe6p53/bHlADssNrE0fW4C5YUO
+	w06enp6arA5nYNkPXLq3e0SQPYvXXbK41NaPy2woMS5vkVWDBp77DePaIWI6SouLJOdhWS03vu/
+	DPkTDxSviapwZuBl3vVh7NxP29XT/j51dK+I0Ur15BXSTnIf5ZlkdgkJWc3wRZd6rNgF7fF0Uan
+	m/ks0M=
+X-Google-Smtp-Source: AGHT+IFoewdvNuLwpOMDi7tPmb9FEQKLI5JEdERuyolhueuXHZ2+5KnKdkT/j3cc2QMbmt8jG7ipw7ObSBOoHSZHVLc=
+X-Received: by 2002:a2e:a013:0:b0:332:2d5c:e171 with SMTP id
+ 38308e7fff4ca-3354a275fd8mr4061531fa.11.1755777236482; Thu, 21 Aug 2025
+ 04:53:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com> <20250820171302.324142-10-ariel.dalessandro@collabora.com>
+In-Reply-To: <20250820171302.324142-10-ariel.dalessandro@collabora.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 21 Aug 2025 13:53:45 +0200
+X-Gm-Features: Ac12FXy1SuiUzS280qDRSJHcA_2jVr4y-FjGItB1ru8eWVK-JVnc9Ql5XGWxM9c
+Message-ID: <CACRpkdbVqNpz2HiAz+_vFUkDy1TE6ZDxp6X2g9rRWAt4s=jRgw@mail.gmail.com>
+Subject: Re: [PATCH v1 09/14] dt-bindings: pinctrl: mediatek,mt65xx-pinctrl:
+ Allow gpio-line-names
+To: "Ariel D'Alessandro" <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch, 
+	andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com, 
+	broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com, 
+	conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com, 
+	edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com, 
+	jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com, 
+	krzk+dt@kernel.org, kuba@kernel.org, 
+	kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com, 
+	louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com, 
+	matthias.bgg@gmail.com, mchehab@kernel.org, minghsiu.tsai@mediatek.com, 
+	mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com, 
+	robh@kernel.org, sean.wang@kernel.org, simona@ffwll.ch, 
+	support.opensource@diasemi.com, tiffany.lin@mediatek.com, tzimmermann@suse.de, 
+	yunfei.dong@mediatek.com, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-sound@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 07 Jul 2025 20:44:49 +0200
-"Danilo Krummrich" <dakr@kernel.org> wrote:
+On Wed, Aug 20, 2025 at 7:16=E2=80=AFPM Ariel D'Alessandro
+<ariel.dalessandro@collabora.com> wrote:
 
-> On Mon Jul 7, 2025 at 7:04 PM CEST, Caterina Shablia wrote:
-> > +/**
-> > + * struct drm_gpuvm_map_req - arguments passed to drm_gpuvm_sm_map[_ops_create]()
-> > + */
-> > +struct drm_gpuvm_map_req {
-> > +	/** @va: virtual address related fields */
-> > +	struct {
-> > +		/** @va.addr: start of the virtual address range to map to */
-> > +		u64 addr;
-> > +
-> > +		/** @va.size: size of the virtual address range to map to */
-> > +		u64 range;
-> > +	} va;
-> > +
-> > +	/** @gem: GEM related fields */
-> > +	struct {
-> > +		/**
-> > +		 * @obj: GEM object to map.
-> > +		 *
-> > +		 * Can be NULL if the virtual range is not backed by a GEM object.
-> > +		 */
-> > +		struct drm_gem_object *obj;
-> > +
-> > +		/** @offset: offset in the GEM */
-> > +		u64 offset;
-> > +	} gem;
-> > +};  
-> 
-> Can't we just use struct drm_gpuva_op_map instead? The structure is identical
-> and represents exactly what we want, a map operation.
+> Current, the DT bindings for MediaTek's MT65xx Pin controller is missing
+> the gpio-line-names property, add it to the associated schema.
+>
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
 
-Sure, we can do that. The only reason I didn't is because I thought it
-was preferable to distinguish a map request from the sub-operation it
-might be split into (the latter being described by drm_gpuva_op_map).
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> 
-> Let's use that instead of redefining an identical structure.
-> 
-> With that,
-> 
-> 	Acked-by: Danilo Krummrich <dakr@kernel.org>
-
+Yours,
+Linus Walleij
 
