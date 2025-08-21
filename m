@@ -1,80 +1,168 @@
-Return-Path: <linux-kernel+bounces-778970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF89B2ED59
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 06:55:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8CDB2ED5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7671E5E54E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:52:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74ACE5E3BA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB8D2E88A1;
-	Thu, 21 Aug 2025 04:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52601258ECE;
+	Thu, 21 Aug 2025 05:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="oewEGILT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aa7TKd2u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CD421E0AD;
-	Thu, 21 Aug 2025 04:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939103C17;
+	Thu, 21 Aug 2025 05:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755751893; cv=none; b=Oa5w5wyApBJMP2HlA879GrQ7ZKrCXvfbhHIF00XMi/zwDcRc9VhazT5RoAV9J17kEqYOMfqLCYMNiHRz00Es2Ekvp/f909Gk4IyNne2NrsMhgXyWObmPPQdi9n5SlSxHq3sp+BRwHXpXJqoRBUKYBtnt7mUE6Affu72w/PGfoLo=
+	t=1755752508; cv=none; b=cC0CJdywophzQmDluPpoQQ1i/Wtgtk9/YeSl+38xmIML3SmcP9Whh/M9yn5wSoiGnyMZLab1kQxzPeRPN8TfFgACKYfZtZSW1nUg/wLgCYErob239T5zwbYZf9VD0URkEE8U27wioZWWFNDnVA8lIwHhr8XqzWDZe6mned+OvrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755751893; c=relaxed/simple;
-	bh=vm7QKEaDiXO+rNlJ45FmZQoPoaxlWAsBMFsHstnZQ+Y=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OQoTF5b9LlfIGaDo++lPCfVRG4dNskuZ6Nr2nSYDJM3xjPAcmKicXRP+ZrAaKqAgUA4Z8E6el4dcvYvGPcX7CHeEZvwFhza781D5Cu/Rh3hQAmBmVlqfsh0+wMggPl0asBI/AAutKr9Q5AKZwKmRPy04BjR9B+mxD7aXxVq54Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=oewEGILT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C37FC4CEED;
-	Thu, 21 Aug 2025 04:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755751892;
-	bh=vm7QKEaDiXO+rNlJ45FmZQoPoaxlWAsBMFsHstnZQ+Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oewEGILT+80jklKi2EOEkEMU2Eo9leBjB3vGXsGZDBSJ3aPnWyhS5JMS4PquNaEq7
-	 1c9z2p15r2zyKsGcBAKA5ArNmr1nr2DFaL7v5fSWQzkoNQmCnDBba2l0Ya6sXYaiV8
-	 SWgHJcH55rHxyNde2GstGcoQv8+ccKcHXWt/AfOU=
-Date: Wed, 20 Aug 2025 21:51:31 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Sumanth Korikkar <sumanthk@linux.ibm.com>, linux-mm
- <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
- richard.weiyang@gmail.com, Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390
- <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH v4] mm: fix accounting of memmap pages
-Message-Id: <20250820215131.6925be694bf1d904c3f463b7@linux-foundation.org>
-In-Reply-To: <687b556e-0196-4a38-986a-2e7b0308e03d@redhat.com>
-References: <20250807183545.1424509-1-sumanthk@linux.ibm.com>
-	<687b556e-0196-4a38-986a-2e7b0308e03d@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755752508; c=relaxed/simple;
+	bh=y17oh05KWAMEIEy/khXMdgn0rc3Brufsz34KAhUY4M4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kltiYnDqNChB6ZA9i5aGDqRSSu/gJMQVUSrj2V6NjlT3bBbHu7h7FMXaVRSXCwA+aZo6oq90aMVIb3mVL5Hx+tsqVPZBj4JIcrgen5vgpkDMYthwDJZmIU0MGfc4hoIPaeu1SKbDosXXNkS4MJrOpZHc1lS+hmbqLLbHEoZq+Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aa7TKd2u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22CC5C4CEED;
+	Thu, 21 Aug 2025 05:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755752508;
+	bh=y17oh05KWAMEIEy/khXMdgn0rc3Brufsz34KAhUY4M4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Aa7TKd2u1Ezy8RbzW0I66PiwqfKtxCBwOLp29CdY3Tq+faAXGHShoUUkvINvAltVF
+	 OymjuuvUyoekaK0Qt5v2s5TBkzcO6xxpmVd8YZu+/WZZKRLamaJ7PHySZ66PpB3hi+
+	 2Lbzd8X/pC/yHs59kufy83AXMXcdqn53EylLJOyADkQScBtgiiQQSzSMza/ty6tUAz
+	 vVEMhw01P4xtLmDZzo5nczr3Oq5yyZoaTrhJQ/jFyF60uPCImSylHUPVqfKrHtY3z6
+	 p536P8LhTlj+PTjGASRZ3FOgQrnNpYuBAYpxPaEbitWKd86S1A/qLZ9ZXJoJuPJCBG
+	 zqP8fExOZj9Pg==
+Date: Thu, 21 Aug 2025 10:31:43 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Patrick Lai <plai@qti.qualcomm.com>,
+	Annemarie Porter <annemari@quicinc.com>,
+	srinivas.kandagatla@oss.qualcomm.com, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	kernel@oss.qualcomm.com,
+	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+Subject: Re: [PATCH 1/2] ALSA: compress: add raw opus codec define and opus
+ decoder structs
+Message-ID: <aKaoN7CmnXfojq-5@vaman>
+References: <20250820-opus_codec_rfc_v1-v1-0-54d5c7560856@linaro.org>
+ <20250820-opus_codec_rfc_v1-v1-1-54d5c7560856@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820-opus_codec_rfc_v1-v1-1-54d5c7560856@linaro.org>
 
-On Fri, 8 Aug 2025 16:23:52 +0200 David Hildenbrand <david@redhat.com> wrote:
-
-> > @@ -567,6 +564,8 @@ static void __init sparse_init_nid(int nid, unsigned long pnum_begin,
-> >   				sparse_buffer_fini();
-> >   				goto failed;
-> >   			}
-> > +			memmap_boot_pages_add(DIV_ROUND_UP(PAGES_PER_SECTION * sizeof(struct page),
-> > +							   PAGE_SIZE));
+On 20-08-25, 22:15, Alexey Klimov wrote:
+> Adds a raw opus codec define and raw opus decoder structs.
+> This is for raw OPUS packets not packed in any type of container
+> (for instance OGG container). The decoder struct fields are
+> taken from corresponding RFC document: RFC 7845 Section 5.
 > 
-> IIRC, we can have partially populated boot sections, where only some 
-> subsections actually have a memmap ... so this calculation is possibly 
-> wrong in some cases.
+> Cc: Srinivas Kandagatla <srini@kernel.org>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Co-developed-by: Annemarie Porter <annemari@quicinc.com>
+> Signed-off-by: Annemarie Porter <annemari@quicinc.com>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+>  include/uapi/sound/compress_params.h | 43 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 42 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/sound/compress_params.h b/include/uapi/sound/compress_params.h
+> index bc7648a30746f4632ecf6695868e79550a431dfa..faf4fa911f7fc2830c3ae42b93650fe40d8a776b 100644
+> --- a/include/uapi/sound/compress_params.h
+> +++ b/include/uapi/sound/compress_params.h
+> @@ -43,7 +43,8 @@
+>  #define SND_AUDIOCODEC_BESPOKE               ((__u32) 0x0000000E)
+>  #define SND_AUDIOCODEC_ALAC                  ((__u32) 0x0000000F)
+>  #define SND_AUDIOCODEC_APE                   ((__u32) 0x00000010)
+> -#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_APE
+> +#define SND_AUDIOCODEC_OPUS_RAW              ((__u32) 0x00000011)
+> +#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_OPUS_RAW
 
-The patch (which has cc:stable!) has been in state "stuck" for 12 days
-due to "possibly wrong".  Could someone please find a way to get it
-unstuck?
+we should bump API minor version with this
+
+>  
+>  /*
+>   * Profile and modes are listed with bit masks. This allows for a
+> @@ -324,6 +325,45 @@ struct snd_dec_ape {
+>  	__u32 seek_table_present;
+>  } __attribute__((packed, aligned(4)));
+>  
+> +/**
+> + * struct snd_dec_opus - Opus decoder parameters (raw opus packets)
+> + * @version: Usually should be '1' but can be split into major (4 upper bits)
+> + * and minor (4 lower bits) sub-fields.
+
+Please define bits, this is an ABI so needs to be properly defined
+
+> + * @num_channels: Number of output channels.
+> + * @pre_skip: Number of samples to discard at 48 kHz.
+> + * @sample_rate: Sample rate of original input.
+> + * @output_gain: Gain to apply when decoding (in Q7.8 format).
+> + * @mapping_family: Order and meaning of output channels. Only values 0 and 1
+> + * are expected; values 2..255 are not recommended for playback.
+> + *
+> + * Optional channel mapping table. Describes mapping of opus streams to decoded
+> + * channels.
+> + * @struct snd_dec_opus_ch_map
+> + *	@stream_count: Number of streams encoded in each Ogg packet.
+> + *	@coupled_count: Number of streams whose decoders are used for two
+> + *		channels.
+> + *	@channel_map: describes which decoded channel to be used for each one.
+> + *		See RFC doc for details.
+> + *		This supports only mapping families 0 and 1, therefore max
+> + *		number of channels is 8.
+> + *
+> + * These options were extracted from RFC7845 Section 5.
+> + */
+> +
+> +struct snd_dec_opus {
+> +	__u8 version;
+> +	__u8 num_channels;
+> +	__u16 pre_skip;
+> +	__u32 sample_rate;
+> +	__u16 output_gain;
+> +	__u8 mapping_family;
+> +	struct snd_dec_opus_ch_map {
+> +		__u8 stream_count;
+> +		__u8 coupled_count;
+> +		__u8 channel_map[8];
+> +	} chan_map;
+> +} __attribute__((packed, aligned(4)));
+> +
+>  union snd_codec_options {
+>  	struct snd_enc_wma wma;
+>  	struct snd_enc_vorbis vorbis;
+> @@ -334,6 +374,7 @@ union snd_codec_options {
+>  	struct snd_dec_wma wma_d;
+>  	struct snd_dec_alac alac_d;
+>  	struct snd_dec_ape ape_d;
+> +	struct snd_dec_opus opus_d;
+>  	struct {
+>  		__u32 out_sample_rate;
+>  	} src_d;
+> 
+> -- 
+> 2.47.2
+
+-- 
+~Vinod
 
