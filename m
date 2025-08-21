@@ -1,160 +1,132 @@
-Return-Path: <linux-kernel+bounces-778739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 466C9B2E989
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:44:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B653B2E9A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297FC1CC2AE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:45:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B3E1CC2B37
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 00:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F47E1E1A05;
-	Thu, 21 Aug 2025 00:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738681DE8AE;
+	Thu, 21 Aug 2025 00:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ip1JJzgr"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYLLNtjG"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853151DDC15
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 00:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A41B610B;
+	Thu, 21 Aug 2025 00:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755737086; cv=none; b=SiplxpjK8xdTvzcLnlZmZALdQPkqG1PcXWq/Yo9pz8nhrEQVu+GqbV45A9IXxqn0CnhmhktHL4OIVkOfFrFliAWYh/INy7gB0OATEFR1TkOgqmhUNVc9gXwPa/7DVRkHe7NqExNVLqyZ51vIq79D3haXZiWBcVOZ9Z1s2p+sxpc=
+	t=1755737202; cv=none; b=JJ9r8YXG/Lm9v9s6vJIGAwBz5EyIYDPctPY974W2t9BbXY55EzrbDEkhdahRzPkcJU3yxT+fExbSkw9HmSGsEbyRc92FAQnhnX3Pq1Vr3rA7K8sMHUfm6YiNz5o1YOHd7O6zuBX6G4vbdPilMxeexUsVTNIctXbkZhBgTBsdTk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755737086; c=relaxed/simple;
-	bh=VI4YATGAV6Ym+DsuQ7b7Vv/yuJyulwi5GTUFPFSI6s4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nYMgVy5GXdXVBDuQJq9Cx1jcHXCm5VJlNCEk48Vy4aAadnuZOB1ue+OwIciUkhaYMDrwzzgcpcoO8HNd5dZFN5xK/f7LZg/ssccr7XanpU842/t70oArXAUm2ehAnxi0rNk3yUyEetevCPHQzb9zBVCytZbhdwvTB8hFQ0WIZZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ip1JJzgr; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b47173bb3daso302829a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 17:44:45 -0700 (PDT)
+	s=arc-20240116; t=1755737202; c=relaxed/simple;
+	bh=ZYe5JE5AzYcba781Xa+Tyj5qUu469y8s0aRLOaLmMDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qz9YyLWrPT76Z08oKjA+RBCL+sfq/lZjAloO0nR8UiLks8/Bb18xAkasMAb8f4+W5huaU7Jqxbr5quJHOenwWhn/sZD4Gy5IqXlYL1exqQ8gicrhbyTwFUjLrT7fOq0109Y1WMxbH78ZThDoYTZfSBqz9i6h2NLS3VvD4lWgVc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kYLLNtjG; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b476cfc2670so266359a12.3;
+        Wed, 20 Aug 2025 17:46:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755737085; x=1756341885; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FvRmczNISAwtsuojMSWjNOah9ztyOwyZkoZkSR8Jha8=;
-        b=ip1JJzgrtmjXBCg50xzONxjn42An4nf4Wb7kM9b9DTxl3H+FF1grxv/tAe7aYRaYsZ
-         nmdyJ2Fbjr8gd2vor9EDD5ffu0nGSI04TmfRFYPQu0XMQNXfpyqGRWpQ0Bq6K3AOb2+4
-         +75JbpJvSteXA5WYbYZ9MQChG7eW/qXBCSHYtqb047GQxBnF2sp6wN1Hd4TIdlW1v0wI
-         XNH9phHgEAmn3BCZ1i5Z4C3wxub4xcQ7COdHHRBTeqRZgFmdZtsRsr/qRabaZo6TFMuQ
-         Gfyxegry56jdcwmAo6hLsgy3ziqQM7vXFwkdIz/1MrBVnr5pPG6ggwhWLna9yMYUaSto
-         UIWg==
+        d=gmail.com; s=20230601; t=1755737201; x=1756342001; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kMVT+kKZTHe2OyEbS0gfrhGsxk3Z5Axh7St6QKerpQg=;
+        b=kYLLNtjGH3j4FCOsq5zsAXHtOoPD5q/+ss50m3nTZ2foM/TSChBAn2yQJ9FwySYrGr
+         2Fz2lF8W7FACuHyF9I4zTCUJjiO61xR00o65pJnFCJ3us0PA6R3M+FQp23JPI+/f36KP
+         O6vUtSrd68mxDFUPquxKcqYDjAEsgD5PtYA9Izi+TgIIoBqUqCyRAYYNRmBOrfMf8iDw
+         7HFqcxLSKaM/27I+pUswGQHEglU1zckyzpGvTwz8UheGh23sVY0CV5XEV4ozkUzWQuvf
+         yV7WtgvcJhOYmAxKE52za3BhYtg+EWayQ6/VIT1EJYMjsJkEORzPpcLSmPYa1vCFlqzS
+         PtKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755737085; x=1756341885;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FvRmczNISAwtsuojMSWjNOah9ztyOwyZkoZkSR8Jha8=;
-        b=nd1objukOjECuqPU1+N9iSuCbqUvx0bRDVGUVQpfuZxMO0RkCZ26KD+zJ4km6CimIf
-         6URsDgRKmhXlMM66Cwn5M65h97zqLcQeY5ZhlGp9XcbQ0apoMdTfF21lOprJUNqLFKc2
-         0nZ/fTJxQws75kUNsZhOBQdHdekIEZvyGEoIDa3kUwQnDhYasT05s8WnaSwegzOjiStv
-         x6AsMxUsMmpMCN9iQwJ1HRZHHbboPpHV0L8V7vnVFtNpm7mIn582SvU3vD/xfoWf0D2z
-         7qso6P+4DMRbwyWf7MyQ+O3GlSNJa5zoNdiBogAlWqkLe//pZrYyFSLn9WQNDz9wtwXI
-         bgyw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/BLI1yHd1vUYNV3Kc1ah0KkZmIlO12HtqMaqzveC3jdfLPOo9VB66bVpiMNZlafGQZR4WWdwEOPvBNFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxseM8sIs8B5kGx2s8DLzLJqiLHgCjbKUt5/ZHqVdp5svmdq2j
-	3dJqq+SbcEyAwPJG1/SWZKA5L5W3gjBu1HZHowEu2IqmXym+ZqBKi3qkW4iQHPsfwmgfkDkwogb
-	N3Q4Hjw==
-X-Google-Smtp-Source: AGHT+IHCywj77PiiSBd9ot66gB446oV8EuXEPzwpq8DpcPnKD7okrtZlFs3FgcpSd8TvvHntDfrL1sEKApY=
-X-Received: from pjbtd16.prod.google.com ([2002:a17:90b:5450:b0:31c:4a51:8b75])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:914f:b0:240:1c36:79a3
- with SMTP id adf61e73a8af0-243307c8bb3mr600646637.22.1755737084805; Wed, 20
- Aug 2025 17:44:44 -0700 (PDT)
-Date: Wed, 20 Aug 2025 17:44:43 -0700
-In-Reply-To: <20250722055030.3126772-4-suleiman@google.com>
+        d=1e100.net; s=20230601; t=1755737201; x=1756342001;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kMVT+kKZTHe2OyEbS0gfrhGsxk3Z5Axh7St6QKerpQg=;
+        b=U6ng+ParioBoUrpQXZYApgpDyDkVUgq/OqMJJAbXd7ZGYWFsoE15V6sRtYolOp7MPZ
+         2PXLYTaJXaaFWuC9HRMjRw/pj8oujaAJEVgamvmj/vY1vdrecpYrd0gcoYPae75zAPIK
+         EiaSzczietew9T2bEvJdqjh5+KtD3wLNo7f+fbEb1o8PWIWvj6WJ/5yZgR9KoQTHAaOB
+         h2mhuxvSrT/sLzaYyrEdoVC7jGLHH2UPCxRTK0OW/0BgrktLdc5Axu5LE3i+h7BXsXwW
+         Gofi3Fy4/C3AcIG8S3Z0DYvGt21Ib5hanagiwggwGrHXRq/Ee+QxnfECrjK7UI9stm4R
+         /5jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbSPDK3ukwdje3q8CQwhiEBNtrSoH5bR6L298Las4I/EUmXh1BcE22jYSpPCcHVqPbLWMLI74bOGsV1GR3mQ==@vger.kernel.org, AJvYcCWqvSOcRgCyV1Uomkp7SxKEqof+C6JneVkYOgqV/tPsiTeVVWU4wHays2zuS2Qn/HkWBtbGVHGxeyOx@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe4+9llmf52wnT95/3pywNmECq4xzQkh1NkSWHuXHLRsCxPdBd
+	LeO23rUkZQ6eX1r5CDVcnSSenefK03dno8K3YeXAXRQSPRxkeYGK4YGi
+X-Gm-Gg: ASbGnctL7jEgZUESCxnGKQnqDoGu6cxEWCTQxvNBLDDVZ+tP8oOBRV6ytPNifBAbhZe
+	/gv69sFMnNmc0Z07vIa0fj2VFPqPkIiRmfkhkJsOIuGD6JxnFH1dQKOo5xcEmX3EC3naWrKYSYw
+	6fZX3iq55a3oa0R3VQHyXvjHSzt3QkU6/eLMTjduiVSjUwZJQt/NENvU74P0CqwKQKfe+xMXGaZ
+	bZcFwtde4X/JaCQ486IYqVMy2fchajWaf3MispxHITGHIwkQsBt0vM8BnvD+5GB0QdxiUc8XEZp
+	qVxcuUIZ/bv5yQFHj3MlhAKN8hAQN2Awp6EANxSl4UXWWS5PGasA17liMJJjhN41hF1ZoRVJd+P
+	0sRpt//4LjkPSkCXGM6tGNA==
+X-Google-Smtp-Source: AGHT+IG5X1O4EUAyYLH751+5LmCK1uRJZoilG8Hq5W9rsLq9nVtEeldXX2hkyouM0xAPeeSn9g8YEw==
+X-Received: by 2002:a17:902:ce12:b0:240:981d:a4f5 with SMTP id d9443c01a7336-245fedb8cdamr8288585ad.42.1755737200526;
+        Wed, 20 Aug 2025 17:46:40 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed35a632sm38471705ad.38.2025.08.20.17.46.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 17:46:39 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 8A083419B2BE; Thu, 21 Aug 2025 07:46:37 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux bcachefs <linux-bcachefs@vger.kernel.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH v2] Documentation: bcachefs: Add explicit title for idle work design doc
+Date: Thu, 21 Aug 2025 07:46:21 +0700
+Message-ID: <20250821004620.10772-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250722055030.3126772-1-suleiman@google.com> <20250722055030.3126772-4-suleiman@google.com>
-Message-ID: <aKZr-4sZWFZXL7hP@google.com>
-Subject: Re: [PATCH v8 3/3] KVM: x86: Add "suspendsteal" cmdline to request
- host to add suspend duration in steal time
-From: Sean Christopherson <seanjc@google.com>
-To: Suleiman Souhlal <suleiman@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	John Stultz <jstultz@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ssouhlal@freebsd.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1368; i=bagasdotme@gmail.com; h=from:subject; bh=ZYe5JE5AzYcba781Xa+Tyj5qUu469y8s0aRLOaLmMDw=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBnLskueXZ7H6PBuxYnd30onX2+beivsVOBDxQXrTLh6O m5d9NzJ31HKwiDGxSArpsgyKZGv6fQuI5EL7WsdYeawMoEMYeDiFICJzLvKyDBFrWtmQPLWT42t 8QpfQyS2TZh4OmrSIdZ4ZY69jZ/8DTsYGdYVm8sbTD9xZb7Ing3BryWDbj+ZKFG2j9U/TVT2mJl nNh8A
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 22, 2025, Suleiman Souhlal wrote:
-> Introduce a new command line parameter, "suspendsteal", enabling the
-> guest to use MSR_KVM_SUSPEND_STEAL, which tells the host that it would
-> like host suspend duration to be included in steal time.
-> 
-> Signed-off-by: Suleiman Souhlal <suleiman@google.com>
-> ---
+Commit 9e260e4590e044 ("docs: bcachefs: idle work scheduling design
+doc") adds design doc for idle work scheduling, but misses explicit
+title heading, causing its two section headings to be toctree entries
+instead.
 
-And then if we reuse MSR_KVM_STEAL_TIME:
+Add the title.
 
+Fixes: 9e260e4590e0 ("docs: bcachefs: idle work scheduling design doc")
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  5 +++++
- arch/x86/kernel/kvm.c                           | 13 ++++++++++++-
- 2 files changed, 17 insertions(+), 1 deletion(-)
+Changes since v1 [1]:
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 747a55abf494..8e80094317c3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -7178,6 +7178,11 @@
- 			improve throughput, but will also increase the
- 			amount of memory reserved for use by the client.
+  * Keep original "design doc" title (Kent)
+
+[1]: https://lore.kernel.org/linux-doc/20250820002218.11547-1-bagasdotme@gmail.com/
+
+ Documentation/filesystems/bcachefs/future/idle_work.rst | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/filesystems/bcachefs/future/idle_work.rst b/Documentation/filesystems/bcachefs/future/idle_work.rst
+index 59a332509dcd97..8519fdcaa5ff49 100644
+--- a/Documentation/filesystems/bcachefs/future/idle_work.rst
++++ b/Documentation/filesystems/bcachefs/future/idle_work.rst
+@@ -1,4 +1,5 @@
+-Idle/background work classes design doc:
++Idle/background work classes design doc
++=======================================
  
-+	suspendsteal
-+			[X86,PV_OPS]
-+			Enable requesting the host to include the duration the
-+			host was suspended in steal time. Disabled by default.
-+
- 	suspend.pm_test_delay=
- 			[SUSPEND]
- 			Sets the number of seconds to remain in a suspend test
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 8ae750cde0c6..1eea3e82c85b 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -71,6 +71,7 @@ static DEFINE_PER_CPU_READ_MOSTLY(bool, async_pf_enabled);
- static DEFINE_PER_CPU_DECRYPTED(struct kvm_vcpu_pv_apf_data, apf_reason) __aligned(64);
- DEFINE_PER_CPU_DECRYPTED(struct kvm_steal_time, steal_time) __aligned(64) __visible;
- static int has_steal_clock = 0;
-+static bool suspend_steal;
- 
- static int has_guest_poll = 0;
- /*
-@@ -320,6 +321,15 @@ static void __init paravirt_ops_setup(void)
- #endif
- }
- 
-+static int __init suspendsteal_setup(char *s)
-+{
-+	if (kvm_para_has_feature(KVM_FEATURE_SUSPEND_STEAL))
-+		suspend_steal = true;
-+
-+	return 0;
-+}
-+early_param("suspendsteal", suspendsteal_setup);
-+
- static void kvm_register_steal_time(void)
- {
- 	int cpu = smp_processor_id();
-@@ -328,7 +338,8 @@ static void kvm_register_steal_time(void)
- 	if (!has_steal_clock)
- 		return;
- 
--	wrmsrq(MSR_KVM_STEAL_TIME, (slow_virt_to_phys(st) | KVM_MSR_ENABLED));
-+	wrmsrq(MSR_KVM_STEAL_TIME, (slow_virt_to_phys(st) | KVM_MSR_ENABLED) |
-+				   (suspend_steal ? KVM_STEAL_SUSPEND_TIME : 0));
- 	pr_debug("stealtime: cpu %d, msr %llx\n", cpu,
- 		(unsigned long long) slow_virt_to_phys(st));
- }
---
+ Right now, our behaviour at idle isn't ideal, it was designed for servers that
+ would be under sustained load, to keep pending work at a "medium" level, to
+
+base-commit: 37c52167b007d9d0bb8c5ed53dd6efc4969a1356
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
