@@ -1,186 +1,179 @@
-Return-Path: <linux-kernel+bounces-779453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F58AB2F448
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:42:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832E8B2F418
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 11:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A923B8C19
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:40:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184C13BBE2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B452ED16B;
-	Thu, 21 Aug 2025 09:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3BC2D9ED8;
+	Thu, 21 Aug 2025 09:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="n5hHxiHw"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGl+HZep"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F6335975;
-	Thu, 21 Aug 2025 09:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D1A1DF74F
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755769241; cv=none; b=Z+BJ5d7pBOQXPmocuBILnnmrYavYH4QPIYJEu0pPZFx1xuKy3N3NnvUNGGKDNMjQ0+xWdbvxxJGTp5qbGbbURbGhJh8gsGUO7QS8a4bmyZnPNR/7E/1wI2g+Tyto58HS8xTYtIwgcKEdhkf0+FliPplJc1EhqTZQYmcpAwSr4+4=
+	t=1755768994; cv=none; b=qzvuFR1pDbsvgAd9JUWHcZ0tMlGetoGOkaJfJB3TZg8Sg4Y+6bL6F99mFyiRnUbYDZ1xDjwmFB6THw5ExBEp9GvZg+jqw9lgtBBOBNvbslImbnUJ7GxHHDy9BoeCJcxeZxh6t2LnfF6SnHIIG/UNknqVOn+BiwccrcfC/6OmtdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755769241; c=relaxed/simple;
-	bh=sKHSsSP2t9Q4hu73ZWzI6GSojTG0sgBzfCBLWO9XCxk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=o+uoQ5xi6GSy4bYciAf6GycyQH1vLHlLWOv+WGa+4Fulp1wRhpnhKOMwqAhKXNHmrHJatIlG8TBbqRYzDeCErXRNuFjeswK/OKtw4SmCBysXRPjpFro+8UkXWzEvsSCl0zO66lba6CDBujRzdH9VsmT+901JVuiVygFDpQUZbOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=n5hHxiHw; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L73mkn017291;
-	Thu, 21 Aug 2025 11:39:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	WlqqfI0U0npfmgU+tmlUwSHbK4ZelsnQ4LVffls/8aw=; b=n5hHxiHwTKdbVyRl
-	vHBWgMduDM+tlhtZeSXTi/mGPgVEsu/HOgOcBgDrwFVAPAVlc6/35j9oQpPweKad
-	b2qSUj3MTwx77kAkK3nbKgC77W4lGqLmIjx7LNzvM/UjDvLLrDJrMHOuAU6CtxCr
-	xjP3lYfEXbJUS0nBw/4kiq15Gi9Rf9+B5RecphEiZFJCv1mCLprGvM8uV+5MUVZT
-	fO1CxdWtOi6kMZTY82cKed2gYCB3d7Ds4+8ggAbvIlE4ywU/hhm9sKiDDh5r8zpz
-	/8z7stmnBupg7HBOfEsgTrji6B2v+Hp+gya+hzkvCOsMcbEyZJRxy1z+LDv1JwVz
-	vEpSJg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48n70de72d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Aug 2025 11:39:56 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3446F40046;
-	Thu, 21 Aug 2025 11:37:35 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F3EAD73DB5A;
-	Thu, 21 Aug 2025 11:36:15 +0200 (CEST)
-Received: from [10.48.87.178] (10.48.87.178) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
- 2025 11:36:14 +0200
-Message-ID: <86adb9ce-68de-494f-92e8-6e11773987fe@foss.st.com>
-Date: Thu, 21 Aug 2025 11:36:13 +0200
+	s=arc-20240116; t=1755768994; c=relaxed/simple;
+	bh=nqx9qiv0zX+m1DlAVHHEFQpBiJu5QKpiHNQao79cgLU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jx7Q9T2e2TfQRYKxGdqO2CNHXJBtZHT7s9MDF9JB1RiIEZJ/dBhvtwBSipDHqsaCmh4HTfFICYZx3qvPSY4GErLy/Kf4vIFIjZb15E1qPRewkTp8wrooddozbXysO24ZN/VwW9hRYeKH6Z1iAiB8j3TpWN1iqfMFPHaNXdGNMCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGl+HZep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F263C116C6
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 09:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755768994;
+	bh=nqx9qiv0zX+m1DlAVHHEFQpBiJu5QKpiHNQao79cgLU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LGl+HZepvSYTrSZQvPJz2CzFJjrPyIOlh2klCFObTfOrWk89AotH5iuMttASQbhRi
+	 Igy+IKt1CzX8mQbM8uVBWL38CND+hu2eGAxD6+zoJs1UuFv88OgIukQJGOeSphEKag
+	 vHP7epmux7UVDxIAaL0SUuQdMbaAW9EtxGkETU8aa/XDyyiqRrso5/37GxqIcsraip
+	 zHMSiUihE/fZNEF6o9MLFOR4MTaQB//Jc38+L7h9XknM0RgSvRWrfrFpIo7BCZB7V1
+	 AL1AVh1T1PAHvzEooatgXVC2khIcvjplxrqPXscyvR5mVvDbZUHks1bblPh6wjSzQD
+	 PPk4EGJ542FtA==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6188b5b11b2so1080969a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:36:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVare05ft/z/6aeCw1YmCE3CZcRWdKv5MpcRpkR5dq2wBXgBj/OTz/X38eOe/SNQtNGSWVCOm8Nt/WJ+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU3ClAKSDdt3rck6rDPt2ARU8FMeMq75aA+/rAKgp3jlURrIft
+	yvZxpNgj3FneD8xoRnWdg+s+CV2OdpwIdPkMKXjIuVVDTo5UJ4U2XsFPopu0yj00OWUVBEDOlkP
+	5R2DGd2Biwpbve70dhKt+QD2dr0lae3o=
+X-Google-Smtp-Source: AGHT+IFEA4wBZ6jlw56hAlRjDBUN+5W/lUtKr64PRv6Oy8jgud1DgDbvtzdnv5gAySIvxnJ+6+zjVTdFxjbAUHGHioE=
+X-Received: by 2002:a05:6402:34cc:b0:61a:7e43:65f7 with SMTP id
+ 4fb4d7f45d1cf-61bf8728294mr1495394a12.18.1755768992966; Thu, 21 Aug 2025
+ 02:36:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/9] drm/stm/lvds: convert from round_rate() to
- determine_rate()
-To: Brian Masney <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Shawn Guo
-	<shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "Pengutronix
- Kernel Team" <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Clark
-	<robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        "Abhinav
- Kumar" <abhinav.kumar@linux.dev>,
-        Jessica Zhang
-	<jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Raphael Gallais-Pou
-	<raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai
-	<wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland
-	<samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <freedreno@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-sunxi@lists.linux.dev>
-References: <20250811-drm-clk-round-rate-v2-0-4a91ccf239cf@redhat.com>
- <20250811-drm-clk-round-rate-v2-7-4a91ccf239cf@redhat.com>
-Content-Language: en-US
-From: Yannick FERTRE <yannick.fertre@foss.st.com>
-In-Reply-To: <20250811-drm-clk-round-rate-v2-7-4a91ccf239cf@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-21_02,2025-08-20_03,2025-03-28_01
+References: <20250820021551.911917-1-lixianglai@loongson.cn>
+In-Reply-To: <20250820021551.911917-1-lixianglai@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 21 Aug 2025 17:36:21 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4+HQ9tZTKUgBqfkjDQnvhqVRcXy+yH0ZrYmCZoiv0BQA@mail.gmail.com>
+X-Gm-Features: Ac12FXzhmiV55DKl9Us75CDtoKOVW4ffSqRstkEZquCXTuKFhGBz-lQsu-aTTUA
+Message-ID: <CAAhV-H4+HQ9tZTKUgBqfkjDQnvhqVRcXy+yH0ZrYmCZoiv0BQA@mail.gmail.com>
+Subject: Re: [PATCH V2] LoongArch: time: Fix the issue of high cpu usage of
+ vcpu threads in virtual machines
+To: Xianglai Li <lixianglai@loongson.cn>
+Cc: WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Bibo Mao <maobibo@loongson.cn>, 
+	Song Gao <gaosong@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Brian,
+Applied, thanks.
 
-thanks for the patch.
+Huacai
 
-Acked-by: Yannick Fertre <yannick.fertre@foss.st.com>
-
-Le 11/08/2025 à 12:56, Brian Masney a écrit :
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
+On Wed, Aug 20, 2025 at 10:39=E2=80=AFAM Xianglai Li <lixianglai@loongson.c=
+n> wrote:
 >
-> Acked-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> When the cpu is offline, the timer under loongarch is not correctly close=
+d,
+> resulting in an excessively high cpu usage rate of the offline vcpu threa=
+d
+> in the virtual machine.
+>
+> To correctly close the timer, we have made the following modifications:
+>
+> Register the cpu hotplug timer start event for loongarch.This event will
+> be called to close the timer when the cpu is offline.
+>
+> Clear the timer interrupt when the timer is turned off, Because before th=
+e
+> timer is turned off, there may be a timer interrupt that has been in the
+> pending state due to the interruption of the disabled, which also affects
+> the halt state of the offline vcpu.
+>
+> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
 > ---
->   drivers/gpu/drm/stm/lvds.c | 12 +++++++-----
->   1 file changed, 7 insertions(+), 5 deletions(-)
+> V1->V2:
+> 1.Add the implementation of the function arch_timer_starting
+> 2.Add more descriptions about clear timer interrupts in the commit messag=
+e
+> 3.Delete useless prints
+> 4.Adjust the calling position of the function cpuhp_setup_state
+> 5.Adjust the timer interrupt clear position
 >
-> diff --git a/drivers/gpu/drm/stm/lvds.c b/drivers/gpu/drm/stm/lvds.c
-> index 07788e8d3d8302a3951e97d64736b721033998d3..fe38c0984b2b552e1ccaef4d1e589b9d86a40ee3 100644
-> --- a/drivers/gpu/drm/stm/lvds.c
-> +++ b/drivers/gpu/drm/stm/lvds.c
-> @@ -682,8 +682,8 @@ static unsigned long lvds_pixel_clk_recalc_rate(struct clk_hw *hw,
->   	return (unsigned long)lvds->pixel_clock_rate;
->   }
->   
-> -static long lvds_pixel_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> -				      unsigned long *parent_rate)
-> +static int lvds_pixel_clk_determine_rate(struct clk_hw *hw,
-> +					 struct clk_rate_request *req)
->   {
->   	struct stm_lvds *lvds = container_of(hw, struct stm_lvds, lvds_ck_px);
->   	unsigned int pll_in_khz, bdiv = 0, mdiv = 0, ndiv = 0;
-> @@ -703,7 +703,7 @@ static long lvds_pixel_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->   	mode = list_first_entry(&connector->modes,
->   				struct drm_display_mode, head);
->   
-> -	pll_in_khz = (unsigned int)(*parent_rate / 1000);
-> +	pll_in_khz = (unsigned int)(req->best_parent_rate / 1000);
->   
->   	if (lvds_is_dual_link(lvds->link_type))
->   		multiplier = 2;
-> @@ -719,14 +719,16 @@ static long lvds_pixel_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->   	lvds->pixel_clock_rate = (unsigned long)pll_get_clkout_khz(pll_in_khz, bdiv, mdiv, ndiv)
->   					 * 1000 * multiplier / 7;
->   
-> -	return lvds->pixel_clock_rate;
-> +	req->rate = lvds->pixel_clock_rate;
+>  arch/loongarch/kernel/time.c | 22 ++++++++++++++++++++++
+>  include/linux/cpuhotplug.h   |  1 +
+>  2 files changed, 23 insertions(+)
+>
+> diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
+> index 367906b10f81..09b95f28bdcc 100644
+> --- a/arch/loongarch/kernel/time.c
+> +++ b/arch/loongarch/kernel/time.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/sched_clock.h>
+>  #include <linux/spinlock.h>
+> +#include <linux/cpu.h>
+>
+>  #include <asm/cpu-features.h>
+>  #include <asm/loongarch.h>
+> @@ -102,6 +103,23 @@ static int constant_timer_next_event(unsigned long d=
+elta, struct clock_event_dev
+>         return 0;
+>  }
+>
+> +static int arch_timer_dying_cpu(unsigned int cpu)
+> +{
+> +       constant_set_state_shutdown(this_cpu_ptr(&constant_clockevent_dev=
+ice));
 > +
-> +	return 0;
->   }
->   
->   static const struct clk_ops lvds_pixel_clk_ops = {
->   	.enable = lvds_pixel_clk_enable,
->   	.disable = lvds_pixel_clk_disable,
->   	.recalc_rate = lvds_pixel_clk_recalc_rate,
-> -	.round_rate = lvds_pixel_clk_round_rate,
-> +	.determine_rate = lvds_pixel_clk_determine_rate,
->   };
->   
->   static const struct clk_init_data clk_data = {
+> +       /* Clear Timer Interrupt */
+> +       write_csr_tintclear(CSR_TINTCLR_TI);
+> +
+> +       return 0;
+> +}
+> +
+> +static int arch_timer_starting(unsigned int cpu)
+> +{
+> +       set_csr_ecfg(ECFGF_TIMER);
+> +
+> +       return 0;
+> +}
+> +
+>  static unsigned long get_loops_per_jiffy(void)
+>  {
+>         unsigned long lpj =3D (unsigned long)const_clock_freq;
+> @@ -172,6 +190,10 @@ int constant_clockevent_init(void)
+>         lpj_fine =3D get_loops_per_jiffy();
+>         pr_info("Constant clock event device register\n");
+>
+> +       cpuhp_setup_state(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+> +                         "clockevents/loongarch/timer:starting",
+> +                         arch_timer_starting, arch_timer_dying_cpu);
+> +
+>         return 0;
+>  }
+>
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index edfa61d80702..6606c1546afc 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -159,6 +159,7 @@ enum cpuhp_state {
+>         CPUHP_AP_PERF_ARM_STARTING,
+>         CPUHP_AP_PERF_RISCV_STARTING,
+>         CPUHP_AP_ARM_L2X0_STARTING,
+> +       CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+>         CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>         CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+>         CPUHP_AP_ARM_ARCH_TIMER_EVTSTRM_STARTING,
+> --
+> 2.39.1
+>
 >
 
