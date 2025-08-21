@@ -1,103 +1,70 @@
-Return-Path: <linux-kernel+bounces-779005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4240B2EDB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:51:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7A0B2EDB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68A3CA237B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CC56A252C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4C32C11FA;
-	Thu, 21 Aug 2025 05:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZiG6NJqd"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72862D3A94;
+	Thu, 21 Aug 2025 05:56:53 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D4D42A8C;
-	Thu, 21 Aug 2025 05:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6849D17BA3;
+	Thu, 21 Aug 2025 05:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755755458; cv=none; b=Ectkr+r0vo9UdLjsNoe1OTQwrLcSlLnQHYYKiLCmVT5hyt6qgBiaowv0FxPoFksmtd9Cxo02/HZ8idRsPSubzuk0hsUEAXu2xpcyuYSGEcYdpeJIz4z2qAclIIFEuck90GPD2u/LRteYBJMSMH4w8tdxWH1BeyVBxACacuN4M4Q=
+	t=1755755813; cv=none; b=LxraF4LkpYibgdM1PVBGS2M5vEK7jXGGJyVAC98MEgt2glRCEGH+og0p9OYEofjWkPSMXmIZkfZPYGWLsxv+DzzHvefFU9RS5vOZ3Eil2MZFxd27eBvolnM4i/aI2gLRJnP2KMcteyjcv4zclqF+2Ame9SD3X/GKfANaMuYmlEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755755458; c=relaxed/simple;
-	bh=6MeHPAoS6P1rXHVAEvpb+8/X3A0Q1FEWiq4fcqDxlYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dPKiuHbTqIbEp66EtFT7dTTNSFFvqb9jhxi8xRyw6TMRMjEx1eiTtpCs9am/NvQEKYtmVwXSyHzWhF8na7PPxC2TFhQEFOVahbyjRY1QZV1sScSct4GsqHWTxtANPB5jzhyjfFvVjMvxFqHUHDH46KvLEUA6znQXEi9yeBbq3cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZiG6NJqd; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=IpUasE57HCQQtMjI01o7gP4bPg0/Wv7FtnAxVylR1C0=; b=ZiG6NJqdAXM+U2h9p74FoikH5F
-	v6YWtOrnkKfI4K/S0Dl6mrmHM2cKCsTIjumTSSMxaIne3IbGwcDP+IqxwEczRsJpSAj2Wbpvh9KSL
-	1MJrJr2vIujJj46gprh/OrnYunNZhnlufEQJfOAR25HPrn7ChInN7WF3pIbZGmb552JME8PM2pxFa
-	76F6NHvpf/ywci3ZfNvggTAqMxqzfPIdqRsKHzkN7PsrTO8wfPlnCt2XLGUIsX2AGy0CnF+QK/x85
-	roIGWGV1RZdM5bgmIUCX1bAB1UZyAHgWqXPw9luzDuw1RNnEma8tEiBPBVpDjMQgz8qj82GT4pbvW
-	VF6CHPPA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uoyCN-0000000FuFf-2RIX;
-	Thu, 21 Aug 2025 05:50:55 +0000
-Message-ID: <554d2bf2-3941-4d3c-8cec-11209ced908c@infradead.org>
-Date: Wed, 20 Aug 2025 22:50:54 -0700
+	s=arc-20240116; t=1755755813; c=relaxed/simple;
+	bh=u+naIwJRv/P1JexjaegzYYWrQG0ap9+JnttS0myNNXM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OKyrU5Ceqv4Mu6pSN/xV4ImlIsAM73mmK8L4e25/l9IlzpFbudo01KZbup7AKKK0RlUE9vfBuD1uiyRsl+IOyqYb5S3pz7L3qdeZemM736j7MEzMvYjzbIlFeU5yYVC8uJIlsO+FnXu5/xelnrsvGDHO5WmmTBskGbI3qG5msOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201606.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202508211355311966;
+        Thu, 21 Aug 2025 13:55:31 +0800
+Received: from localhost.localdomain.com (10.94.10.82) by
+ jtjnmail201606.home.langchao.com (10.100.2.6) with Microsoft SMTP Server id
+ 15.1.2507.57; Thu, 21 Aug 2025 13:55:31 +0800
+From: chuguangqing <chuguangqing@inspur.com>
+To: Carlos Maiolino <cem@kernel.org>
+CC: <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>, chuguangqing
+	<chuguangqing@inspur.com>
+Subject: [PATCH 0/1] fix  typo error in xfs comment
+Date: Thu, 21 Aug 2025 13:54:15 +0800
+Message-ID: <20250821055416.2009-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Fix typo in RAID arrays documentation
-To: Vivek Alurkar <primalkenja@gmail.com>, corbet@lwn.net
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev
-References: <20250821051622.8341-2-primalkenja@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250821051622.8341-2-primalkenja@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 2025821135532a9f6cfad76f4763800e593758c50706e
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
+The original comment contains two spelling mistakes: "attribute" is misspelled as "attibute", and "targeted" is misspelled as "targetted".
 
+chuguangqing (1):
+  xfs: fix typo in comment
 
-On 8/20/25 10:16 PM, Vivek Alurkar wrote:
-> Changed "write-throuth" to "write-through".
-> 
-> Signed-off-by: Vivek Alurkar <primalkenja@gmail.com>
-
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
-> Changes since v1:
-> 	-Changed '"write-through" and "write-back"' to
-> 	'"write-through" or "write-back"' as suggested by Randy Dunlap.
-> 
->  Documentation/admin-guide/md.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/md.rst b/Documentation/admin-guide/md.rst
-> index 4ff2cc291d18..04668272c0ee 100644
-> --- a/Documentation/admin-guide/md.rst
-> +++ b/Documentation/admin-guide/md.rst
-> @@ -758,7 +758,7 @@ These currently include:
->  
->    journal_mode (currently raid5 only)
->        The cache mode for raid5. raid5 could include an extra disk for
-> -      caching. The mode can be "write-throuth" and "write-back". The
-> +      caching. The mode can be "write-through" or "write-back". The
->        default is "write-through".
->  
->    ppl_write_hint
+ fs/xfs/libxfs/xfs_trans_resv.c | 2 +-
+ fs/xfs/scrub/dirtree.c         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 -- 
-~Randy
+2.43.5
+
 
