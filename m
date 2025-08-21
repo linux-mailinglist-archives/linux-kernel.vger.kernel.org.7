@@ -1,92 +1,121 @@
-Return-Path: <linux-kernel+bounces-779120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1349BB2EF44
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:18:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08753B2EF30
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 09:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 477E13AE53C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:18:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEE84174A8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 07:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282E32EA73F;
-	Thu, 21 Aug 2025 07:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4HgHHSW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F682820A4;
+	Thu, 21 Aug 2025 07:14:56 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC47287275;
-	Thu, 21 Aug 2025 07:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA772246786;
+	Thu, 21 Aug 2025 07:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755760613; cv=none; b=WKpBEwbkeg8hBHQCX66Q5EQF1mOZXo96+i+RkQkWbb8JPKA2Td8qtSA60Er9rMOQimHPyndIo/k+vYRSIbQILYUK/VC7NS9A/HhMpk/Cp+a9yoYpI6HZ7fKN0p7UFOvQSxwgoy5aaCZNJcslp6U4bL5QqftrB6eekMHoVyLgS44=
+	t=1755760496; cv=none; b=XMFyDWvGRR+xxqU0QdMhGsKs+d7xz4kwIAO9XxANCKN1Wocbt4TnMUkF6hFN3abSVScbIo9GkyqZQfVYHfLl7r3CiBvQ2hOBLt7NvIq7BAHKxL0C0Vl0VXrrtXbHWEExhfcnKxUKFwjJf9k+cd1XrxiNH6eZOCfmaJljFZbtJxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755760613; c=relaxed/simple;
-	bh=Up9g/vI3BHwIi+2MZpJPHWZDdmmaSTnrlf6OaSDp48E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsYPCh08zxqcuW1Zm0sErj2/cg8tJo7X1hg8s8U4z3deh7Wr7xzSmqMXmIF6+UPgJwOSz7dN1rOU44Eq1x91vSsqDkdpOtrYSq+gJ/ip25X0G1enqRblu1FrfDIIHeGm9ClRPYknAGDD72byzizo8GLUZxXF3pptqv+b+E6zUy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4HgHHSW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C277C2BC86;
-	Thu, 21 Aug 2025 07:16:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755760613;
-	bh=Up9g/vI3BHwIi+2MZpJPHWZDdmmaSTnrlf6OaSDp48E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z4HgHHSW26FlK4PTq5Po5duNBcyGsieoINkWA0JLtgZFu0Za+g3yXAzJogDq3TOHN
-	 muD88A6G1NLSRF1QtrshCP+o3FBA5xRw5rxGFlTtajuLG93TJyuM03PwX+6xbvHyX5
-	 Ar31qrHmZ1T+zTHSCVRKheegezxxIdck5GESemAchjeSFbg6dq9W004RgkRJJ/76rY
-	 XtksCiXETk0d8P/q4fBEH9r4ivd3ZoFdwhQ8WLzuua/zNrQSOaOZerABC4MoFgCZLY
-	 oR7oCCSHTFO4En8VwwcCUn9YaXdCFO0tHS9wsu8m5P4yE+GtHowh+9J+Bab8Os4Vd8
-	 75AvpDAmni6+Q==
-Date: Thu, 21 Aug 2025 09:16:49 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Julien Massot <julien.massot@collabora.com>
-Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ikjoon Jang <ikjn@chromium.org>, 
-	Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Weiyi Lu <weiyi.lu@mediatek.com>, Eugen Hristev <eugen.hristev@linaro.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: mediatek: Add power-domains
- property
-Message-ID: <20250821-whimsical-mustang-of-champagne-ca7a7d@kuoka>
-References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
- <20250820-mtk-dtb-warnings-v2-1-cf4721e58f4e@collabora.com>
+	s=arc-20240116; t=1755760496; c=relaxed/simple;
+	bh=NqCENmEVfUXXxHawVcKeQSrD5jWM+cjvxrnkE33kh4w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V2aWtUrk8TWgv8mj14w6dXXGR/NngR9wWcfdm+xLQuXsCHz+Ckv2zwqInePGlo17c48z9EDiO92mVvmGgI8H4uEOBbK+pN+M4aR6UV0LjeyhwZFxkBe77GlTMq1D8e2P9o7hAGVojvEefplYomfhAYyQ4X6LuiOKraMUoCUKpc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c6vhp4mwRzKHNFH;
+	Thu, 21 Aug 2025 15:14:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2706E1A1968;
+	Thu, 21 Aug 2025 15:14:50 +0800 (CST)
+Received: from ultra.huawei.com (unknown [10.90.53.71])
+	by APP4 (Coremail) with SMTP id gCh0CgDXng9mx6Zo2+2lEQ--.46218S2;
+	Thu, 21 Aug 2025 15:14:48 +0800 (CST)
+From: Pu Lehui <pulehui@huaweicloud.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	pulehui@huawei.com
+Subject: [PATCH] tracing: Fix missing errno when zero parser->idx in trace_pid_write
+Date: Thu, 21 Aug 2025 07:17:21 +0000
+Message-Id: <20250821071721.3609109-1-pulehui@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250820-mtk-dtb-warnings-v2-1-cf4721e58f4e@collabora.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXng9mx6Zo2+2lEQ--.46218S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFyDJrWrXF18Gw1rJr43KFg_yoW8WrWrpF
+	1akF93JryrJF4jya18XF4kuFyxG3s5XryxCFs8G34rXa42yrWqgwsrAasxX3WfKrWUGFWf
+	J3yjyrZ8KFZFvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7IJmUUUUU
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-On Wed, Aug 20, 2025 at 03:44:52PM +0200, Julien Massot wrote:
-> The mt8183-mfgcfg node uses a power domain in its device tree node.
-> To prevent schema validation warnings, add the optional `power-domains`
-> property to the binding schema for mediatek syscon clocks.
-> 
-> Fixes: 1781f2c46180 ("arm64: dts: mediatek: mt8183: Add power-domains property to mfgcfg")
+From: Pu Lehui <pulehui@huawei.com>
 
-Checkpatch complains here, but more important - where is explanation of
-dropped tag?
+When trace_get_user in trace_pid_write parses an only space, the
+!trace_parser_loaded branch will break with no errno, causing
+tr->filtered_pids to still be assigned with pid_list, which may trigger
+potential problems.
 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+This patch will also silence the fault injection syzkaller warning in
+tracepoint_add_func [0]. We can reproduce the warning by following the
+steps below:
+1. echo 8 >> set_event_notrace_pid. Let tr->filtered_pids owns one pid
+   and register sched_switch tracepoint.
+2. echo ' ' >> set_event_pid, and perform fault injection during chunk
+   allocation of trace_pid_list_alloc. Let pid_list with no pid and
+assign to tr->filtered_pids.
+3. echo ' ' >> set_event_pid. Let pid_list is NULL and assign to
+   tr->filtered_pids.
+4. echo 9 >> set_event_pid, will trigger the double register
+   sched_switch tracepoint warning.
 
-But this tag appeared? It wasn't even given!
+Link: https://lore.kernel.org/all/67cb890e.050a0220.d8275.022e.GAE@google.com [0]
+Fixes: b27f266f74fb ("tracing: Fix return value of trace_pid_write()")
+Signed-off-by: Pu Lehui <pulehui@huawei.com>
+---
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You remove public tags and add tags never given on the lists.
-
-Best regards,
-Krzysztof
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 8d8935ed416d..feeb7eb71318 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -853,10 +853,10 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+ 		ubuf += ret;
+ 		cnt -= ret;
+ 
++		ret = -EINVAL;
+ 		if (!trace_parser_loaded(&parser))
+ 			break;
+ 
+-		ret = -EINVAL;
+ 		if (kstrtoul(parser.buffer, 0, &val))
+ 			break;
+ 
+-- 
+2.34.1
 
 
