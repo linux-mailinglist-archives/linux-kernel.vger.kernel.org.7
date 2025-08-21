@@ -1,83 +1,82 @@
-Return-Path: <linux-kernel+bounces-779332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9649B2F2C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:50:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE43B2F2CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A5D6827B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:44:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20CFD7236E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B662EAD14;
-	Thu, 21 Aug 2025 08:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4106A2D7814;
+	Thu, 21 Aug 2025 08:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fG3g3Bfs"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2082.outbound.protection.outlook.com [40.107.220.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tMK3oWE7"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F78F2EA73F;
-	Thu, 21 Aug 2025 08:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755765853; cv=fail; b=INIktUkDBZl37RjRMx3W6KnpjFS2cyUXdquUHwmfbbhNY3ozkNGOfUykZ8Dx6R2XkrziEycBG2VUe2v7igdeCMHVS0Vo7xdabiD4MsW0QXyTETqnim9fpDf8T7BrxZQc9JRx6B6tsUgYIfitLtkZQyL6rTtwVLja9CJ42GbX/+U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755765853; c=relaxed/simple;
-	bh=v26M77AdxMPwbWN8ayJg/9Z9xtT3RhM8YaV0dsJ/06k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sQThrr8JWPbU9Wq9khqThwAKRoiIVzRza3OqhECQo8ZfbutPUwbzmfDKmGiY4AOfpQjaF5CuQKV3hLmFejEkRdwnOevgI3Bz/+7TZumYw0jtXKzSPHik1F+GsUoVeE6TzxWlsVxytVIIvfAjwZyU1FagJJ4TTG6foZPzwO+3Byk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fG3g3Bfs; arc=fail smtp.client-ip=40.107.220.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ws6Ra1diqX7V7SM8ytXDdCTTqBoafpKcOcweT9gQlXGLR2HgUvJEmJd4/KP0iDMZjhCayro36ie1FD2UUp3VxKIZgUWjDEdRLfg1odYJyZONYU1hHNj7hwca4Y+Z0oonzX7RtQK8g8ZQv5GDxMDex27YSp0rGveocHOqqZdMbf/CkfkHnBVutFKwZOpJvyvOMid1uTNP0i1m+hxHZZxcGxWdax7dcvsovp5rqYjtVxwSYYpIS2Yrrp3dALTl1Bl+6ib19RqUcwbU+zWRvchAyPuK9ndknZ7TINw+4Y5hebJWjkNytLJ8X6aIUzh1irT5ENOSz0dbn16iTM9KUolViA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sFSGSQNlWJNj/jJYzMd1ozhWmA6wOaJLiXpJeALuVCQ=;
- b=eYkdvHQo9Ziz8PNylt5fiUljn5Q4sSICFquaC7XRv5WJL7v+5p9BR6SR6ZMFbJZqoX/n1e4QMHecAy7XYLk4juQzkbUhKoLItAqnQvXLJwLjMNYrYM/H9u7fFI1lC3l/b1mFgyw3k0pM95RflO3THPmmeYQwwbWvGq1ONkCZR9rZWfoDhYFJRcWohAY9+AMroqA4/HFjiQJhPO25P8uDesz2TDbDSJmI8ksWDOODWZui7Y5O6XUCzPqjA7p79KQymtB0fnD1rkDblr7wknXorahaGEML3OF9PFiHQWAhL3Rv2AGFzczL9hVIN1+UNRz8shzabCLZdU5lMT9R6wxqIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sFSGSQNlWJNj/jJYzMd1ozhWmA6wOaJLiXpJeALuVCQ=;
- b=fG3g3Bfsfl3qmBdSgVxRHwP7QPny9bfAuCg06/e6G5IkbGIITn4TYwTLAbDW5JVlYqv+A5hJyBvRdwNkd38Kk63iZIhJ51T6l7TSgN2me2qT2w6XLAz6/UaUwsh8pLk/lvBtRPukACEY+s6r1M4Rfny9fIbfVMNUsr9ypfmGXYo=
-Received: from SA9PR13CA0038.namprd13.prod.outlook.com (2603:10b6:806:22::13)
- by SA1PR12MB7126.namprd12.prod.outlook.com (2603:10b6:806:2b0::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Thu, 21 Aug
- 2025 08:44:08 +0000
-Received: from SN1PEPF00036F43.namprd05.prod.outlook.com
- (2603:10b6:806:22:cafe::9c) by SA9PR13CA0038.outlook.office365.com
- (2603:10b6:806:22::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.6 via Frontend Transport; Thu,
- 21 Aug 2025 08:44:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SN1PEPF00036F43.mail.protection.outlook.com (10.167.248.27) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Thu, 21 Aug 2025 08:44:08 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 21 Aug
- 2025 03:44:04 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Thu, 21 Aug
- 2025 01:44:03 -0700
-Received: from [172.31.184.125] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 21 Aug 2025 03:44:00 -0500
-Message-ID: <47c67022-427c-4c24-8dcf-a3721f8c5bdd@amd.com>
-Date: Thu, 21 Aug 2025 14:13:54 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9F82EB5A0
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 08:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755765904; cv=none; b=QyIL/LkXpZcVW9/nUM//HmvGZFyG7rGzWlP4aGLZJrBgkKa8riim/5zdK1woPx/zFWQJypXcX4TLyLGHp+rXkW10X0nvjGH3145h4gfCelJU9PEFqEbPb6EU/xCbe4OuxQWkg4PbGr5RlQQ/wvmIPn1eEi5M74ZMoUr4vunan0E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755765904; c=relaxed/simple;
+	bh=eZGewZmE1n2kwXrwTz+zU0vLkHuK/OFSPIP5fs6SVpY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=epcoMXZBC3NQLumanhkNECa01VBWPb+WJvN2RxM/h9OUbkcMi1+/qJBUGFp1MxzcG6cVZfwORd3hAbmDI8Ib/QSIl7SQ53CuK6NBjQcLsvgq47yjZ0MUBHyRhHuDgZpkFE8leltxSqw779E0frejb1FfrzrFeC7YXgjTzkNnn4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tMK3oWE7; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9e411c820so450699f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 01:45:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755765900; x=1756370700; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e35TXGgqyRI8INBP5t0V1q1As4RTM7PmDPjdZXWomKk=;
+        b=tMK3oWE7YGGeycBHoS1Ynb0qfyGc0zyxjoOd7z/7yeHulZZELI7jzlJuhrwymv5lEC
+         xctRV/9ATsvHJb/X8Ldub+g9M3GOCtW7jMuLBKWrztFQWeMN52jx8fvmZ5tLJ+yCJRvU
+         e6W9Da4oj1QMQXx1BXdd9OExPzCnROcA9e33Z9TwwC9ajMNFsdQkV4DkJniDJ4AC0Uw3
+         bhzvd5M+qY9KttxWd7+yrdeyYomzn2RPQBR2pdplfmKfHKATTRbPSO/gvQlu7KUeuiUI
+         wPGt0L7oS5GYGnI/Ejey7cogFevrmHY4pL/C9i7UNgfY3GOCXyFO7L1Q2/25Ny9H8rji
+         kb/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755765900; x=1756370700;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=e35TXGgqyRI8INBP5t0V1q1As4RTM7PmDPjdZXWomKk=;
+        b=KJ31MeUOaJkyLNDdAaqkH9clUUIe9VpmzN88tu3k50KimD7lEryGzCaeQVAI0qLH8B
+         JlIz9AImg7CBfJ8E86cC+4md6SAjZKtgBvWVLeePjveY7ptl4kk4O6dFUAeU3phqhdeR
+         TyNxtcH5aqM4s/ZxZYDOOC6rDNKLc39g1T0qeahifdsEHtl4RgccHd4+j41npt/nF0hG
+         4h380+PH1eG45+H3ZI4dkMtwY2dFxYsheGqSdlgGRD0Wa6wLziupa+J4vZEmRzGKbg8k
+         uuiUHVXJ9LnHSCVc+TbjWJmOHK9EIyqxpfRSoz731mrKLMToC19e772xl79DauyhsmOe
+         QbjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVcObvOeCGH3SoG+kcAayRxOXqOODXxTZWIbiuw+jISGLfeuMfJmODf8mx1P1pvVATTcP9MM3lS2DJ4Kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyZ7LRltn/NcArtOIpVFUULZ+yb2FZS2TiEYIJ327zFWWs1HYg
+	11uIDuaKtehgcTn3EZDBzTXHaALF7jIGLyFzg+3Xewq6LjchRJqsVWHKnkiW2Ao8g0g=
+X-Gm-Gg: ASbGncu8nk04WTCEhd9J8Dx9WNcN+4nLSPT2lHD6galGMh09tNfCZUYKM9oO9cpxQqr
+	NiMWwu+oGXwvEV3m6jFtqKZsN1j8FNphMqDg3pTsygmFbO98E20NqkjsOIXl2KS/kABH93IHqAT
+	p5/hyp6NUn6fkBTePst8DURxAUvIlz17MMax90DWSP62wLhyGNXyp1Qvbu+lWLEcmzxwn2eUvvI
+	tXM9uG5NmqXJ0Qc8SLHGcaz3zRruCwXaAxGqhTXI8cHWN1qTzKXHyfawz6n2yCh9ZuQt3R2s8bI
+	6UJGuFA+pu47DXvos3qqGgCtSBi8ex7GYPgWB+E411zpAT/9bNa8uTEm2kLcKR2aKd65zL1QTre
+	nIToOEhmDsmvO5muO1p7wMyzH3lWdnjqLb72SEycT6vFaVMpo127Y/wazA45ghMi9xLZZ+Mc4nt
+	c=
+X-Google-Smtp-Source: AGHT+IHCmDvlrpMtyQJ+Qx5FBKwm9zvncJZoqNXzaFRrl4GVWwygtQAi0Zs4Firt+PF0PJBLS03WeQ==
+X-Received: by 2002:a05:6000:2385:b0:3b8:d893:5230 with SMTP id ffacd0b85a97d-3c4972741e6mr1057551f8f.47.1755765899892;
+        Thu, 21 Aug 2025 01:44:59 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:443c:3616:7f17:f26d? ([2a01:e0a:3d9:2080:443c:3616:7f17:f26d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c19fbsm10830353f8f.41.2025.08.21.01.44.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 01:44:59 -0700 (PDT)
+Message-ID: <086d3bce-b8fa-40fd-8efd-9e457bb01650@linaro.org>
+Date: Thu, 21 Aug 2025 10:44:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,153 +84,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] sched: Add task enqueue/dequeue trace points
-To: Nam Cao <namcao@linutronix.de>, Peter Zijlstra <peterz@infradead.org>
-CC: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
-	<mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>, Juri Lelli
-	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, "Phil
- Auld" <pauld@redhat.com>
-References: <cover.1754466623.git.namcao@linutronix.de>
- <f87ce0cb979daa3e8221c496de16883ca53f3950.1754466623.git.namcao@linutronix.de>
- <20250815134016.GB3289052@noisy.programming.kicks-ass.net>
- <20250815135212.GA1386988@noisy.programming.kicks-ass.net>
- <20250821070504.-ZhqdfHs@linutronix.de>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250821070504.-ZhqdfHs@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00036F43:EE_|SA1PR12MB7126:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7ad23782-ef42-46fa-b9fe-08dde08ee495
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0NOUUszdnpsL0RQamRwUHBvbnlKandwUzhsZUwyNWNxOXQ3amd2ZEwvdVBw?=
- =?utf-8?B?ditKRnR5OWpNMXphUUIzdExEVnE1OHNTTTZpV1hNK2t6aHRKZHp3N3RqenNN?=
- =?utf-8?B?MUVSdlZBampsaER5SE9Ob2d3dktQLytWVDBZM0MxWk1pMFV3ODdIZzNFR3Bk?=
- =?utf-8?B?Q1hWRldPbW15QUZRQ3BjSG5RMzNzSFpNeW1ZZHpGSEpYcUZGZU4rall2Z3NY?=
- =?utf-8?B?bUFTMUc2Mzd0TFgvMzZheVNhSEh5NkNFSkJQT1hQWGhtallyRUlYTVRoTUdW?=
- =?utf-8?B?M0hGNnN2YVFzdFNoZnpLQjY5K1NxOFVQaVU5TlBNcFV3Y3NVaktQSUd2R2VB?=
- =?utf-8?B?R0x4M2FuN3NyTmk5ejNENVIzRXNybGhFSlRIVzZZTkZDS0JlRm94bEpVeTNv?=
- =?utf-8?B?aDcxZDhWT2E4WjB6R3VIRUFPU0lOTGh1bTZrdHNRN0FDZGh3MGZoM3BhQ3Fz?=
- =?utf-8?B?M09vZjk0K1VLQWxyS0t4T2pHL3RPa3Y4SFphVm9jemh3Q2dsTldzMFpaRVJE?=
- =?utf-8?B?enFqTUlQUlVxTjZjeThKZEErUmVVMlJidHZCcXdpbnk3QnBYcitsUXpLdGtQ?=
- =?utf-8?B?aXEwZmNXZWdSSU9SYkx5Qmg0OG5VVUc5dFVJb2pCRmlvNFlEZkdLVWQwejFn?=
- =?utf-8?B?MEFaaUl3aWhmUllmRXByTmg5SjVUeloxb242cGRqTENSbzZ2TTUvdEd0M1FW?=
- =?utf-8?B?SitJRURDQ1hWclU2ckdaM3U1Z3VtaUNiOVlLc0FoZFBnaW9wTnBxSDlSSEta?=
- =?utf-8?B?L2ZMbE02K0wvNCtCeUlPNjR0TGFMM3NCVCsveUFSRFRDbk4zSHArZC8zcDBL?=
- =?utf-8?B?K1BQVFY1VS9ZNXFhTTVtOWFiQnpLcG1DaGtjSHUvWmdjQUxzVVRsajNOUlRQ?=
- =?utf-8?B?am15Qmh6QzlkTjRxalFDN09uREkxQThxTVdyTWJ1NWJ5L2FLNHZ0eVdPWmpW?=
- =?utf-8?B?Z0hCeVdLamhaY2dxNExKVzY1N1pHUEdzNEFvU01lU1JFdHh4R1d5ZWR5VlVz?=
- =?utf-8?B?cmphRXJPaVQwS0ppQXM4VUszRm1EbTVPQitTUnNNblBDeDY5Yzh0T05zV1g4?=
- =?utf-8?B?MWRsSDhSL1FDbHJwNGFjMEpYZGYwa3dzb0c5MCtUckxuZHEvMXRONHZUcUZ0?=
- =?utf-8?B?UmRsSTBWdVB1b2VmWXRjTE5FZEVFWElDSmI5b0M3ZENjU0xXL1BUazkrMmty?=
- =?utf-8?B?eFJtM1RReUFvNWwreTlBZ1p2bVc0b2pjelZWSUw1d2xhS3V0SzBQbXp6VTU3?=
- =?utf-8?B?RFBka1BmK1VSK2tqZFc5blNxbkNJeDRCWlBuS2hxVGg5bC9HdVAwejZpbGtV?=
- =?utf-8?B?TXdtRVQ4U2QxYmNCdnVvS25MWUhZOUVVQWhFUVFOK3MxTjVid1Y1dit1OVBR?=
- =?utf-8?B?eG0zQ1ZheDlNME0wQWRNQ2NGY2RBbXd5bGkwQWVXcFlYMHI5dUppdmxRV1JY?=
- =?utf-8?B?eHJqcm5iZkdCSHo3Q3k3aXR3K1U4c2VsL01INzJlWG0yOUZ0MTdBQlRWVkJK?=
- =?utf-8?B?bmNseXphR0pGc0RWLzFEaWo4ZCtqYjZEKzVBcFJoc1hUWFAvQUg4dm5haHcr?=
- =?utf-8?B?b09uT3IyUXdncVNCN1BKbUN3L0RSY29VTEFUSkFKck93dDlreVBGRHdRQ3FB?=
- =?utf-8?B?SU1SM3FFbGlVQzUvQTJPRHltSU00cktHcTlzOVVBNHdOeGR5Y3dsS2IybVRI?=
- =?utf-8?B?RFVsSjV3RW1WSEk2aVIrR2gwQTBSMWtXdUE5UEV1SExsTk5PRi9udTBGRzRl?=
- =?utf-8?B?NDNQaGRuUDJWY2NpUXRYcEh4Vnc3QlhIbmc1WGZSd05nVFYzTmZYSXdpVGhn?=
- =?utf-8?B?dHcwaDI0K2xmVlJSMDA0SStwWm5qN1luNFJZY1dQWlhEV3VjZ1hqVGFmSjlK?=
- =?utf-8?B?ODMwbGxaR2FBSmV3K1ZDcGliRFk5YTRYbnZyMlRzdUNsakx4bzBtLzNJZmVS?=
- =?utf-8?B?OU8yVUVBV1N6bzl1TWhYK0YzMWNKbllaVWNSbjVIRHRIaDdMdTFtUjRWb20v?=
- =?utf-8?B?cm1ZQXBzV3EvNCs0VHp6ZDNnYlJkbS9lWGtpRk10YWF0cHgweGNOS3IwbXVk?=
- =?utf-8?Q?CCHJz3?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2025 08:44:08.0801
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ad23782-ef42-46fa-b9fe-08dde08ee495
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00036F43.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7126
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v3 00/26] Enable H.264/H.265 encoder support and fixes in
+ iris driver common code
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Stefan Schmidt <stefan.schmidt@linaro.org>,
+ Vedang Nagar <quic_vnagar@quicinc.com>, Hans Verkuil <hverkuil@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Renjiang Han <quic_renjiang@quicinc.com>,
+ Wangao Wang <quic_wangaow@quicinc.com>
+References: <20250820-iris-video-encoder-v3-0-80ab0ba58b3d@quicinc.com>
+ <9584a286-7d8a-48b0-a65c-7a37ced78ac6@linaro.org>
+ <38d56655-cfea-ef3d-46ff-a77d81e35297@quicinc.com>
+ <f104c9d8-16ae-64c6-4494-49981ef950ea@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <f104c9d8-16ae-64c6-4494-49981ef950ea@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello Nam,
+Hi,
 
-On 8/21/2025 12:35 PM, Nam Cao wrote:
->>> How about something like:
->>>
->>> dequeue_task():
->>> 	...
->>> 	ret = p->sched_class->dequeue_task(rq, p, flags);
->>> 	if (trace_dequeue_task_p_enabled() && !(flags & DEQUEUE_SLEEP))
->>> 		__trace_dequeue_task_tp(rq->cpu, p);
->>> 	return ret;
->>>
->>>
->>> __block_task():
->>> 	trace_dequeue_task_tp(rq->cpu, p);
->>> 	...
->>>
->>>
->>> Specifically, only DEQUEUE_SLEEP is allowed to fail, and DEQUEUE_SLEEP
->>> will eventually cause __block_task() to be called, either directly, or
->>> delayed.
+On 21/08/2025 09:56, Vikash Garodia wrote:
+> 
+> On 8/21/2025 12:51 PM, Dikshita Agarwal wrote:
+>>> The change occurs around Aug 14 2024, So I checked the downstream driver
+>>> and I found that fixes the encoding:
+>>> ===========================><=================================================
+>>> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+>>> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+>>> @@ -863,9 +863,18 @@ static inline
+>>>   u32 size_vpss_line_buf(u32 num_vpp_pipes_enc, u32 frame_height_coded,
+>>>                         u32 frame_width_coded)
+>>>   {
+>>> -       return ALIGN(((((((8192) >> 2) << 5) * (num_vpp_pipes_enc)) + 64) +
+>>> -                     (((((max_t(u32, (frame_width_coded),
+>>> -                                (frame_height_coded)) + 3) >> 2) << 5) +
+>>> 256) * 16)), 256);
+>>> +       u32 vpss_4tap_top = 0, vpss_4tap_left = 0, vpss_div2_top = 0,
+>>> vpss_div2_left = 0, vpss_top_lb = 0, vpss_left_lb = 0, size_left = 0,
+>>> size_top = 0;
+>>> +
+>>> +       vpss_4tap_top = ((((max_t(u32, frame_width_coded,
+>>> frame_height_coded) * 2) + 3) >> 2) << 4) + 256;
+>>> +       vpss_4tap_left = (((8192 + 3) >> 2) << 5) + 64;
+>>> +       vpss_div2_top = (((max_t(u32,frame_width_coded, frame_height_coded)
+>>> + 3) >> 2) << 4) + 256;
+>>> +       vpss_div2_left = ((((max_t(u32, frame_width_coded,
+>>> frame_height_coded)* 2) + 3) >> 2) << 5) + 64;
+>>> +       vpss_top_lb = (frame_width_coded + 1) << 3;
+>>> +       vpss_left_lb = (frame_height_coded << 3) * num_vpp_pipes_enc;
+>>> +       size_left = (vpss_4tap_left + vpss_div2_left) * 2 * num_vpp_pipes_enc;
+>>> +       size_top = (vpss_4tap_top + vpss_div2_top) * 2;
+>>> +
+>>> +       return ALIGN(size_left + size_top + vpss_top_lb + vpss_left_lb,
+>>> DMA_ALIGNMENT);
+>>>   }
+>> Seems this calculation is different for iris3 and iris33, hence you see
+>> this issue on SM8650.
 >>
->> If you extend the tracepoint with the sleep state, you can probably
->> remove the nr_running tracepoints. Esp. once we get this new throttle
->> stuff sorted.
+>> Updating this calculation in common code will increase the buffer size with
+>> from ~400KB to ~2.2 MBs (for 640x480) and even more for higher resolution.
+>>
+>> @vikash, pls comment if we should update in common code or have this
+>> implemented specific for iris33 separately using some ops.
 > 
-> Sorry, I'm a bit out of depth here. Can you elaborate?
+> increasing 1.8 MBs for VGA and assuming it grows further for higher resolution,
+> i would recommend to separate it out for line buffer alone.
 > 
-> By "sleep state" do you mean (flags & DEQUEUE_SLEEP)? The nr_running
-> tracepoints are not hit if the task is throttled, while these new
-> tracepoints are hit. How does the sleep state help with this difference?
+> Neil,
+> We are doing something similar as a preparation for enabling an upcoming SOC,
+> maybe let me share the pseudo code offline with you. When you add encode support
+> for SM8650, you can raise that change to extend the line buffer calculation for
+> iris33.
 
-Once we have per-task throttling being discussed in
-https://lore.kernel.org/lkml/20250715071658.267-1-ziqianlu@bytedance.com/
-throttled tasks will do a
+I don't understand your point, encoding is already enabled with this patchset and
+works fine with _old_ firmwares, it just completely fail to encode anything with
+the firmware sent on linux-firmware yesterday.
 
-    dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_THROTTLE);
+But yes I can provide a fixup patch for vpu33 on top of this serie to be merged in the same
+time based on your pseudo code.
 
-and remove themselves from the runqueue but they won't hit block_task().
-
-To preserve current throttle behavior, I don't think per-task throttle
-should call dequeue_task() directly since it does a bunch more stuff
-with core-sched dequeue, psi, uclamp, etc or maybe it is fine to do
-that now with per-task throttling?
-
-Peter, what do you think?
-
-If we don't what to do all that stuff in the throttle path, adding to
-Peter's suggestion, perhaps we can have a wrapper like:
-    
-    int __dequeue_task(rq, p, flags)
-        int ret = p->sched_class->dequeue_task(rq, p, flags);
-        if (trace_dequeue_task_p_enabled() &&
-            !((flags & (DEQUEUE_SLEEP | DEQUEUE_THROTTLE)) == DEQUEUE_SLEEP))
-            __trace_dequeue_task_tp(rq->cpu, p);
-       
-        return ret;
-
-and then per-task throttle can just call __dequeue_task() instead. I'll
-let Peter chime in with his thoughts.
+Neil
 
 > 
-> Also +Cc Phil Auld <pauld@redhat.com>, who seems to care about the
-> nr_running tracepoints.
-> 
-> Nam
-
--- 
-Thanks and Regards,
-Prateek
+> Regards,
+> Vikash
 
 
