@@ -1,407 +1,133 @@
-Return-Path: <linux-kernel+bounces-779858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44254B2FA5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:29:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E81B2FA78
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B69F1891622
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:25:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DF163BCAC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DE333471E;
-	Thu, 21 Aug 2025 13:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94783334710;
+	Thu, 21 Aug 2025 13:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fKIkxKZU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="g8TqqRXR"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF453277AA;
-	Thu, 21 Aug 2025 13:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A00A322524;
+	Thu, 21 Aug 2025 13:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755782716; cv=none; b=CDj+UToOW5f2PMwlrI6kP97nCky6QiGkmcvJhngJsr7OtZkx8j05+zOGmbNbQLyVJ1m4WAcYpbewfOMDUjCMGkISgOShpv3rWsFnSJWMKhuCs5c4ijZ0j+qnNZN/48naSlXNDHxgaOf/SfOK38h7n3dXJvADnay/CUoha8mVpI0=
+	t=1755782760; cv=none; b=NjCeUlIIvWd5od/qZM2NmYdTgEkwBYLC+noGodkDGZeoBgWxsmEvVHG4QWTu76T6OoXRsCrnOnNGj8/gGc1A8TbRIvJFXX3/ssrNBO0sySkMmSMJYE1sV/W+go888hwwtutWoxPVuEmIhu6AKRLHp4QSDTdGA8bCYmMCxgFbthA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755782716; c=relaxed/simple;
-	bh=mGvUSFSZCF0OOEX0aeXdQXcaJGu6pcS/A/OO6T1Hyy8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gDP6Z5pE2bnm9H/rhVXJtVJfuoSgwlGoWkmKD5189qOZ4DUJ23qM/Fzqk2VdPC4rcyzO/I8B8OfNxC21t+1Y8keACmHK/eOioRXQuFKi84lIB+ZReGy55ATdiyVSfGUnenhQ4qvjFFjHfzHJ6I6h4XogBFrm0I/zawYlvfFl9Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fKIkxKZU; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755782714; x=1787318714;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mGvUSFSZCF0OOEX0aeXdQXcaJGu6pcS/A/OO6T1Hyy8=;
-  b=fKIkxKZU+XRfj9ra4Kf6CIul/OsAxzucoimbrcxx8hmQNXkQDHE3sba9
-   tm1LPG5u1pAb+4NpPlk+xNvubt3H7QBpRsAwLX9oJBOOQx1R8heXpekQ6
-   1xkMaZeZVagnKv43xxELQOKXN8E3Lh5ARiijtJYWw1xqdEwDIDX+TB2gE
-   2co/QshULIlHrvcsGNpEuqEWMRkAjzal2l6qWIDm8sN73w3wbtbANxAOz
-   88AZWa92rjhK4nkzPacOzdmLi43SPCRCmoHMpdT2IolSx7Y8QNYmIhnf/
-   OMXlvO/zEmkeqO2QK6iRukBDtHMKA77cSMy2M72rjZMyAWombrXOOkJ/9
-   g==;
-X-CSE-ConnectionGUID: koT6o3X6Q76iuxiLeZpKcA==
-X-CSE-MsgGUID: 85GcqtoUTZu6qMfrMM4YEg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="57781739"
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="57781739"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 06:25:14 -0700
-X-CSE-ConnectionGUID: AMbFKSLSR12xbutY7DtoEA==
-X-CSE-MsgGUID: sq/pLG4fQGWLfz/uVqTk0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,306,1747724400"; 
-   d="scan'208";a="167919203"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.144])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2025 06:25:10 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: "Cheatham, Benjamin" <benjamin.cheatham@amd.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Robert Richter <rrichter@amd.com>,
- ming.li@zohomail.com, linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Subject:
- Re: [PATCH 2/4 v4] cxl/core: Add helpers to detect Low Memory Holes on x86
-Date: Thu, 21 Aug 2025 15:25:06 +0200
-Message-ID: <5654082.UPlyArG6xL@fdefranc-mobl3>
-In-Reply-To: <301195cf-dbb3-45cc-927d-ffd58988aa37@amd.com>
-References:
- <20250724142144.776992-1-fabio.m.de.francesco@linux.intel.com>
- <20250724142144.776992-3-fabio.m.de.francesco@linux.intel.com>
- <301195cf-dbb3-45cc-927d-ffd58988aa37@amd.com>
+	s=arc-20240116; t=1755782760; c=relaxed/simple;
+	bh=Rg5a1kJfGoabeZ2AYyBKOqRJiGb41QX8UOGF3Viz9ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=borp+//IVzlXoVc9fvp/XqaYh9SWOZy8snwqcP5IG/b19B6oF366OTGEw8X0chdgZSaGnabrhTZ8ICKV3lCxscAsKGS7t+r3Scli3ZG8/g13o1PwxDXS4fGQhIpptMhGl7v0WyM0+ahqp3Ivzyl6BdMAnUbYKX2h3PRKQDn4jo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=g8TqqRXR; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 09B4040E0286;
+	Thu, 21 Aug 2025 13:25:55 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2LhyNk0ikMba; Thu, 21 Aug 2025 13:25:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755782751; bh=5Lp6My2Nv5fTSYseXVUYjemxdJizOCrp8obIux+qbJ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g8TqqRXRuU6G/uGOlbh1gNC/Ae+O7WNeabaPx+H+OIhGZV8Vjad5GoROpacKanfxH
+	 6udiTJH6yHRR9CoEurfLAgEi/aK84Mz/HQuCMomtyDu6/QRMOrMi6dunYmF7KcVxIh
+	 VoOl9iDaXYiY8XaMlFvGygV3Z7msjekWAjVu8qnrXzuIRwhs1yRfQ2/bu0eV5bid5M
+	 NtKMh8Hu8mfUoTSfOB4NIX8nZS9XpLOZLSn6zGM5PvXGkmSg9ygf+fLUhvVDLfi07I
+	 G9nlbXVzEUXgld6AomqmAOGaOpNRf7sHOuS8Q72g4YrNQa3ce14bjl1vXKtsidiprQ
+	 Il4k7P8qS/2JhojTXRb3LNJlEOTLv1kJBYsGlXgAgL8VBR8FnPqmyIdpHccCBce2ru
+	 vLhj8+T+aL5UQyWhPJlRvKhq97b4u08EWT88H12mYOYN1KZfG6PalKs9/X+znblwwS
+	 6Hpnt2Wmq0Z6KFB/FHjbEJBaqJ7c5YenbEUGTIqCXO4HxLpWY7W6KB4nzH+OES2lTn
+	 i1mKDHVghTSP30l51GoakbAAQMPxYHn2GJZLW2qKweihqOp6zoZx+BctnL/uUCUP9x
+	 05sbuOgFvfoNovO5XNiKTa33+3W16ldp7EnJ8NpMBMe7A8tYkQGUYnTNGWR0MSxsXG
+	 3oQd56hlgXYuJzExmU3eG+R4=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7628140E022E;
+	Thu, 21 Aug 2025 13:25:26 +0000 (UTC)
+Date: Thu, 21 Aug 2025 15:25:21 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>, pbonzini@redhat.com,
+	seanjc@google.com, vannapurve@google.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+	H Peter Anvin <hpa@zytor.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com, kai.huang@intel.com,
+	reinette.chatre@intel.com, xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com,
+	Fan Du <fan.du@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
+	yan.y.zhao@intel.com, chao.gao@intel.com
+Subject: Re: [PATCH RESEND V2 1/2] x86/mce: Fix missing address mask in
+ recovery for errors in TDX/SEAM non-root mode
+Message-ID: <20250821132521.GDaKceQXfEWHVwrlxV@fat_crate.local>
+References: <20250819162436.137625-1-adrian.hunter@intel.com>
+ <20250819162436.137625-2-adrian.hunter@intel.com>
+ <20250819213247.GJaKTtf1er-Ced_mzP@fat_crate.local>
+ <10587d02-1133-45fa-9ec8-2288a8868b68@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <10587d02-1133-45fa-9ec8-2288a8868b68@intel.com>
 
-On Friday, August 1, 2025 10:04:16=E2=80=AFPM Central European Summer Time =
-Cheatham, Benjamin wrote:
-> On 7/24/2025 9:20 AM, Fabio M. De Francesco wrote:
-> > In x86 with Low memory Hole, the BIOS may publishes CFMWS that describe
->=20
-> s/publishes/publish
->=20
-> > SPA ranges which are subsets of the corresponding CXL Endpoint Decoders
-> > HPA's because the CFMWS never intersects LMH's while EP Decoders HPA's
-> > ranges are always guaranteed to align to the NIW * 256M rule.
->=20
-> s/to align to/to align due to/
->=20
-> Also a spec reference for the rule would be helpful (same with next patch=
-).
->=20
-> >=20
-> > In order to construct Regions and attach Decoders, the driver needs to
-> > match Root Decoders and Regions with Endpoint Decoders, but it fails and
-> > the entire process returns errors because it doesn't expect to deal with
-> > SPA range lengths smaller than corresponding HPA's.
-> >=20
-> > Introduce functions that indirectly detect x86 LMH's by comparing SPA's
-> > with corresponding HPA's. They will be used in the process of Regions
-> > creation and Endpoint attachments to prevent driver failures in a few
-> > steps of the above-mentioned process.
-> >=20
-> > The helpers return true when HPA/SPA misalignments are detected under
-> > specific conditions: both the SPA and HPA ranges must start at
-> > LMH_CFMWS_RANGE_START (that in x86 with LMH's is 0x0), SPA range sizes
->=20
-> maybe sub "that in x86 with LMH's is 0x0" with "0x0 on x86 with LMH's" al=
-so
-> s/SPA range sizes/SPA range's size/.
->=20
-> > be less than HPA's, SPA's range's size be less than 4G, HPA's size be
-> > aligned to the NIW * 256M rule.
->=20
-> s/be/is/ in above list.
->=20
-I'll change the lines you corrected. Thank you.
-> >=20
-> > Also introduce a function to adjust the range end of the Regions to be
-> > created on x86 with LMH's.
-> >=20
-> > Cc: Alison Schofield <alison.schofield@intel.com>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Dave Jiang <dave.jiang@intel.com>
-> > Cc: Ira Weiny <ira.weiny@intel.com>
-> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
-com>
-> > ---
-> >  drivers/cxl/Kconfig         |  5 +++
-> >  drivers/cxl/core/Makefile   |  1 +
-> >  drivers/cxl/core/platform.c | 85 +++++++++++++++++++++++++++++++++++++
-> >  drivers/cxl/core/platform.h | 32 ++++++++++++++
-> >  4 files changed, 123 insertions(+)
-> >  create mode 100644 drivers/cxl/core/platform.c
-> >  create mode 100644 drivers/cxl/core/platform.h
-> >=20
-> > diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> > index 48b7314afdb8..eca90baeac10 100644
-> > --- a/drivers/cxl/Kconfig
-> > +++ b/drivers/cxl/Kconfig
-> > @@ -211,6 +211,11 @@ config CXL_REGION
-> > =20
-> >  	  If unsure say 'y'
-> > =20
-> > +config CXL_PLATFORM_QUIRKS
-> > +	def_bool y
-> > +	depends on CXL_REGION
-> > +	depends on X86
-> > +
->=20
-> I'm confused on the intention behind this symbol. The naming suggests it'=
-s for all platform quirks,
-> but the code and dependencies make this x86-specific.
->
-I'll remove this dependence on X86; it's neither needed nor wanted.=20
->=20
-> I'm going to suggest making this x86-specific for now. I'm not aware of a=
-ny other platforms with quirks
-> (someone correct me if I'm wrong), so making this x86-specific is fine fo=
-r now. I would rename this
-> symbol to CXL_X86_QUIRKS, leave dependencies as-is, and rename platform.c=
- to something like platform_x86.c.
-> Then, if someone comes along with other platform quirks they can do their=
- own symbol and file (or come
-> up with a generic scheme).
->
-Dan suggested this approach and I agree with him.[1]
->=20
-> >  config CXL_REGION_INVALIDATION_TEST
-> >  	bool "CXL: Region Cache Management Bypass (TEST)"
-> >  	depends on CXL_REGION
-> > diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
-> > index 79e2ef81fde8..4be729fb7d64 100644
-> > --- a/drivers/cxl/core/Makefile
-> > +++ b/drivers/cxl/core/Makefile
-> > @@ -18,6 +18,7 @@ cxl_core-y +=3D ras.o
-> >  cxl_core-y +=3D acpi.o
-> >  cxl_core-$(CONFIG_TRACING) +=3D trace.o
-> >  cxl_core-$(CONFIG_CXL_REGION) +=3D region.o
-> > +cxl_core-$(CONFIG_CXL_PLATFORM_QUIRKS) +=3D platform.o
-> >  cxl_core-$(CONFIG_CXL_MCE) +=3D mce.o
-> >  cxl_core-$(CONFIG_CXL_FEATURES) +=3D features.o
-> >  cxl_core-$(CONFIG_CXL_EDAC_MEM_FEATURES) +=3D edac.o
-> > diff --git a/drivers/cxl/core/platform.c b/drivers/cxl/core/platform.c
-> > new file mode 100644
-> > index 000000000000..8202750742d0
-> > --- /dev/null
-> > +++ b/drivers/cxl/core/platform.c
-> > @@ -0,0 +1,85 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +#include <linux/range.h>
-> > +#include "platform.h"
-> > +#include "cxlmem.h"
-> > +#include "core.h"
-> > +
-> > +/* Start of CFMWS range that end before x86 Low Memory Holes */
-> > +#define LMH_CFMWS_RANGE_START 0x0ULL
-> > +
-> > +/*
-> > + * Match CXL Root and Endpoint Decoders by comparing SPA and HPA range=
-s.
-> > + *
-> > + * On x86, CFMWS ranges never intersect memory holes while endpoint de=
-coders
-> > + * HPA range sizes are always guaranteed aligned to NIW * 256MB; there=
-fore,
-> > + * the given endpoint decoder HPA range size is always expected aligne=
-d and
-> > + * also larger than that of the matching root decoder. If there are LM=
-H's,
-> > + * the root decoder range end is always less than SZ_4G.
-> > + */
->=20
-> Where does the SZ_4G restraint come from?
->=20
-The hole is in low memory.
->
-> Also, might as well make this a kdoc comment since you've already done th=
-e majority of the work.
->=20
-> > +bool platform_root_decoder_contains(const struct cxl_root_decoder *cxl=
-rd,
-> > +				    const struct cxl_endpoint_decoder *cxled)
-> > +{
->=20
-> Assuming you take renaming suggestion above, these functions should proba=
-bly be start with
-> "platform_x86_*" instead.
->=20
-> > +	const struct range *r1, *r2;
-> > +	int niw;
-> > +
-> > +	r1 =3D &cxlrd->cxlsd.cxld.hpa_range;
-> > +	r2 =3D &cxled->cxld.hpa_range;
-> > +	niw =3D cxled->cxld.interleave_ways;
-> > +
-> > +	if (r1->start =3D=3D LMH_CFMWS_RANGE_START && r1->start =3D=3D r2->st=
-art &&
-> > +	    r1->end < (LMH_CFMWS_RANGE_START + SZ_4G) && r1->end < r2->end &&
-> > +	    IS_ALIGNED(range_len(r2), niw * SZ_256M))
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +/*
-> > + * Similar to platform_root_decoder_contains(), it matches regions and
-> > + * decoders
-> > + */
-> > +bool platform_region_contains(const struct cxl_region_params *p,
-> > +			      const struct cxl_decoder *cxld)
-> > +{
-> > +	const struct range *r =3D &cxld->hpa_range;
-> > +	const struct resource *res =3D p->res;
-> > +	int niw =3D cxld->interleave_ways;
-> > +
-> > +	if (res->start =3D=3D LMH_CFMWS_RANGE_START && res->start =3D=3D r->s=
-tart &&
-> > +	    res->end < (LMH_CFMWS_RANGE_START + SZ_4G) && res->end < r->end &&
-> > +	    IS_ALIGNED(range_len(r), niw * SZ_256M))
-> > +		return true;
-> > +
->=20
-> This if condition could probably move into its own helper function that t=
-akes the ranges and
-> interleave ways. My only hang up is that these functions become 2-3 lines=
- each after doing so.
->=20
-> You could also get rid of these two functions and just export the "helper=
-" function instead.
-> It would probably add some bloat to patch 3/4, so it's your call here.
->
-I'd rather leave these functions as they are.
->=20
-> > +	return false;
-> > +}
-> > +
-> > +void platform_res_adjust(struct resource *res,
-> > +			 struct cxl_endpoint_decoder *cxled,
-> > +			 const struct cxl_root_decoder *cxlrd)
-> > +{
-> > +	if (!platform_root_decoder_contains(cxlrd, cxled))
-> > +		return;
-> > +
-> > +	guard(rwsem_write)(&cxl_dpa_rwsem);
-> > +	dev_info(cxled_to_memdev(cxled)->dev.parent,
-> > +		 "(LMH) Resources were (%s: %pr, %pr)\n",
-> > +		 dev_name(&cxled->cxld.dev), res, cxled->dpa_res);
-> > +	if (res) {
-> > +		/*
-> > +		 * A region must be constructed with Endpoint Decoder's
-> > +		 * HPA range end adjusted to Root Decoder's resource end
-> > +		 */
->=20
-> This comment (and one below) are confusing to me. I'd reword as "Trim reg=
-ion resource
-> overlap with LMH".
->
-Okay, thanks.
->=20
-> > +		res->end =3D cxlrd->res->end;
-> > +	}
-> > +	/*
-> > +	 * The Endpoint Decoder's dpa_res->end must be adjusted with Root
-> > +	 * Decoder's resource end
-> > +	 */
->=20
-> and reword this one to "Match endpoint decoder's DPA resource to root dec=
-oder's". You could
-> also leave out this comment altogether, the below is self-explanatory IMO.
->
-Okay.
-> =20
-> > +	cxled->dpa_res->end =3D
-> > +		cxled->dpa_res->start +
-> > +		resource_size(cxlrd->res) / cxled->cxld.interleave_ways - 1;
-> > +	dev_info(cxled_to_memdev(cxled)->dev.parent,
-> > +		 "(LMH) Resources have been adjusted (%s: %pr, %pr)\n",
-> > +		 dev_name(&cxled->cxld.dev), res, cxled->dpa_res);
->=20
-> I think this function is a bit too noisy. I'd recommend having just this =
-print and
-> have it say something like "Low memory hole overlap detected, trimmed DPA=
- to %pr".
-> You could also include the amount trimmed, but that may not be very usefu=
-l info.
->=20
-> I'd make the first print a dev_dbg() and spell out LMH at the very least.=
- If it's a
-> dev_info() it should be relatively easy to tell what's going on for a lay=
-man.
->
-I'm using dev_info() according to what Alison suggested.[2]
->=20
-> > +}
-> > diff --git a/drivers/cxl/core/platform.h b/drivers/cxl/core/platform.h
-> > new file mode 100644
-> > index 000000000000..0baa39938729
-> > --- /dev/null
-> > +++ b/drivers/cxl/core/platform.h
->=20
-> This is a new file so that these functions can hook into cxl_test, right?
-> If not, I'd move the below into cxl/core/core.h and remove this file.
->=20
-> > @@ -0,0 +1,32 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +
-> > +#include "cxl.h"
-> > +
-> > +#ifdef CONFIG_CXL_PLATFORM_QUIRKS
-> > +bool platform_root_decoder_contains(const struct cxl_root_decoder *cxl=
-rd,
-> > +				    const struct cxl_endpoint_decoder *cxled);
-> > +bool platform_region_contains(const struct cxl_region_params *p,
-> > +			      const struct cxl_decoder *cxld);
-> > +void platform_res_adjust(struct resource *res,
-> > +			 struct cxl_endpoint_decoder *cxled,
-> > +			 const struct cxl_root_decoder *cxlrd);
-> > +#else
-> > +static bool
-> > +platform_root_decoder_contains(const struct cxl_root_decoder *cxlrd,
-> > +			       const struct cxl_endpoint_decoder *cxled)
-> > +{
-> > +	return false;
-> > +}
-> > +
-> > +static bool platform_region_contains(const struct cxl_region_params *p,
-> > +				     const struct cxl_decoder *cxld)
-> > +{
-> > +	return false;
-> > +}
-> > +
-> > +void platform_res_adjust(struct resource *res,
-> > +			 struct cxl_endpoint_decoder *cxled,
-> > +			 const struct cxl_root_decoder *cxlrd)
-> > +{
-> > +}
->=20
-> Don't these need "inline" in the function signatures?
->
-Yes, sure. They'll be inline in the next version.
->=20
-> > +#endif /* CONFIG_CXL_PLATFORM_QUIRKS */
->=20
-Thank you,
+On Thu, Aug 21, 2025 at 10:24:22AM +0300, Adrian Hunter wrote:
+> Something like below would work, but doesn't answer Dave's question
+> of why not do it in mce_read_aux()
 
-=46abio
+So, let me see what I understand from all this bla: you want to zap the KeyID
+from mci_addr because it is completely useless there. So zap it.
 
-[1] https://lore.kernel.org/linux-cxl/67ee07cd4f8ec_1c2c6294d5@dwillia2-xfh=
-=2Ejf.intel.com.notmuch
-[2] https://lore.kernel.org/linux-cxl/Z9xaBaM8Mzc8rQ90@aschofie-mobl2.lan/
+You can't make any other changes to mci_addr because that goes to luserspace.
 
+So far so good.
 
+Now, all that other bla leads me to believe that there might be some need to
+dump the raw mci_addr value after all.
 
+If so, your patch is not needed.
 
+Which makes me think, all yall folks need to make up your mind here.
+
+And you need to get rid of all that extraneous information in your commit
+message:
+
+"Investigation of user space expectations has concluded it..."
+
+No investigation needed - this is exported to userspace so you can't touch it.
+
+The one and only question you need to answer is, do you really need KeyID in
+it or not. And whatever you do, once you do it, we're stuck with it because it
+goes out to userspace.
+
+Especially if you want this backported to stable.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
