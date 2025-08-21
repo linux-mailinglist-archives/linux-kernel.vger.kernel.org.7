@@ -1,145 +1,127 @@
-Return-Path: <linux-kernel+bounces-778817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-778819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1191B2EB89
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 04:58:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF0BB2EB8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 05:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B7144E3955
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 02:58:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75783B54D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 03:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A112D3EEB;
-	Thu, 21 Aug 2025 02:58:34 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F842D4B61;
+	Thu, 21 Aug 2025 03:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gaSDnzkH"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777441C4A10
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 02:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF4328466E;
+	Thu, 21 Aug 2025 03:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755745114; cv=none; b=bq85eY6cvmW+lFkt8UpINRRcHH3bM4XeKSvGtnoB0OVrSf1DzfCvV2m1iNDese/9oQs1DqBXDHfAxJ1rQA/XnGdZ2nE7BcuvID8JwaDCFplb3NQPBt8VZvlK43Il9bC1VuQLdA4j15a08j9Y70hzAp8h8mJBeNgDj37loGp18TA=
+	t=1755745263; cv=none; b=L97nFO3U3a9rXq18TEpP7TnWlBxi8Zm1EPm2JNs/uks5RhG6/+Qd235aMH4utsCXN9b8POHx2l67xOmQjIAWsc0Cz7k5kIRJ+M4iRs55Y0N37/FGr2Z+2b2wbFlG8a2xMlfD0IcWKgnPmegWw2J6O5M+hP5N3dDMINCf7PLTurE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755745114; c=relaxed/simple;
-	bh=Ckzyyo8fMNJ1pKXd2LuWDzsluunYZETjwc3xFjhjF8E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=e/Kta7RhiQN3X4+tQBPZWH8tLIt+MD01fkCegSiWBW4VHjOk3ZTrS+/DxQHQq75Z2tju967o/F9DRf/gpmt95ExPnbB0nAjZigLTGANgn9OXPyiBCOV25cL1IUxGRGwNZNxX+8yOXn5G8IqdT8DYkvFajHGdazrteOogfgQRREc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e7172dea48so6053185ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Aug 2025 19:58:32 -0700 (PDT)
+	s=arc-20240116; t=1755745263; c=relaxed/simple;
+	bh=Wnj4zpvupDfJwbDnmrVHBhHb2H+f2JtBrQtLkPCOY9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=imWcuum4dREZog3aErTxOAhLHn6cqcJQRdvvAfeU0IDqVFfT/4KXxoHEifPHTdOu11GW+cPvbRlUBh36IaZQpR1KRiVaF7Xe6llg9D68qP/t2yw0VZ8sBmnlqtb8XVXo6GoMtLoJVO7vYoVgCF95v6iOp86L5IP/GDzOJV5WOtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gaSDnzkH; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b472fd93b4aso406032a12.0;
+        Wed, 20 Aug 2025 20:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755745261; x=1756350061; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uLIq0IXj0ljbI/uh1YhQvF3IAqw8jhRLNek2lIEpThg=;
+        b=gaSDnzkHkLJiIiV7nkTEjsmaY4FbUGUKggA0GctCAN5coQG8j/RNgGS4W0iFz1mD+D
+         SAnUEj1JhN9O0YZjHynAEeq0Kz3kr/aWjiTTuaj2A2rUEExiy81ahNCW8Q+c0YkWnuxB
+         icC9mAy1Vc5IZMjhRSoLtBumUVH1+a+5E1ROzUtCzVmKHiVcbhQOEUC+PMVC98f7mZcc
+         0zrsDKHmwmwiO5LKe1vojFne9o4QkyElQooV6o+w2UYvaJ8K03Ica0NiJU6m7AYpVOP5
+         AcGDkQF+ancKnSWpqe4M1oZbF1yMWeuZI8rh/RUjB83lBSz/fdrOlnlEBWiAYFSRcN4Q
+         0dSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755745111; x=1756349911;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HahCLua8zUrTqOzXr4U9vE+qOFX9I1AwrpiJRZveyPs=;
-        b=YeOsm6tlG47Qm1cuGQwldTKT62e4J5eEEevB16LhIGpchzdjdD3yI0G2WUWX+PmxHR
-         KzZebxTg9U7CMZZ9Zy8OgxRA+HomGkIzhjGbCsKlKA/Yp3mpa+cDQqf2INVVwVEsO6AI
-         q4jR8EPIqtDPuvE21rnaeGoKvMQW6DEznwydn74zyUNGEYccLn59OrWjsVlDbWvCiNC7
-         ShNwg4lzSdol3rKphjL09/p7PCyCvL+mbrNcMNIIGDG54nujEmOq+3dZeljalxKzDBlb
-         tU82A9yz8csKGaqDIqHs7JE5Z5XMm8giCvNF54EbOtAXm2fP58CgPRQzyOWbMq8UtBBB
-         O5UA==
-X-Forwarded-Encrypted: i=1; AJvYcCUloG/qrzAZzHizRqr4ra2bUYcHKF18rw8iec+jcivXYUCsUk09/i+oI2odgRyxQxAlb/MTlJaMBrntl2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9woaZCozKOesn87MhT8RZUw9jrXmnXwm9vM5j1HDAzanNmuRv
-	FxUaMid4vBT1NPWKWWQXW5mw0qf5CP62ky9j0TVzCSBcpyVc7IizwBe5GKPEv34keiBe/4H4gFr
-	2/XHYnbrhEEgqllUIZ5Um2qk0kMr3O7XoO3R4o6dzcw9KtwmRbZefNtizTMk=
-X-Google-Smtp-Source: AGHT+IHslzf/hk+X+HthHyVz9yOLGrLH/CQVRtSQ53f0E0gtvbiEL1S8Fb7DRaqQ5HM3GthZ4IEjMx0f1lrJamHWW/gdSlWybJ+o
+        d=1e100.net; s=20230601; t=1755745261; x=1756350061;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uLIq0IXj0ljbI/uh1YhQvF3IAqw8jhRLNek2lIEpThg=;
+        b=SPGzo+OA3Y8ghgqWEvhiV176JPBY+O/rbqOOtfUrSrqjLG9Gt0R9s7glUNUNl/EolI
+         ZEib+X3KI++2WIqMCnDsaYM00sGPHiWZUrt6zZWOd2Sbw/zwyx7SZvJi0XcY76XzSp3u
+         szFeCZjPr2tFnzPMFLyMT+CmhTOW4ei3HBWTXrQVgY+u1Tff+2hIKOHL3tlMXBFoBG8U
+         QBBg6NfnGmc+S3Ls+O4nsVQhM3t7/JWi5ClXFxF62twswKHcXymLNKb/99Q5r++Azy5F
+         JszmIU0cZjjyqRoVP2alUWu6eXvIJCprhA2mS+dqs/k7eUauotGKm9v4H6a9q/Op9APB
+         F8EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9K2+NzpkK47T5Z93tzsIBldNxSaQpIWy34JkE1Arh6gsPIXHL86rLWSHxMSnrF8uhcha+Z6Wv2RNG+gM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvp1nB7wGnAnWv4oS/2iDk1oHUSry9Osysem4Nag93LU7D4AMF
+	lLdzu3Qp7xjIGvYLJCpyEBEyijgS1oug3Ql7uY5eRC3IZgzxlOc8ARd8kXXRqQtImkw=
+X-Gm-Gg: ASbGncsabaH89b3IpTmHCN7LbvX62SwKe9C6buIdXb3828fSabejgLKZAk55Zt73Ufs
+	S4nM1i3pOfvof/ZFZ2HWFkQZ0drFlKc+wD67TY0w66YsL/vR966lG8ZqIpJntk+wAkWH7AzVuT7
+	7vZodpSCRSmdwquCWHqzTvFulcUnMWPvPW5R7NxXC2rs7M91DP6Dl48fCqhjLUdjgK6FJWN8Anw
+	fKM0HPyyzpVoODCY+DhnOqGI2S/E4HMVQOojV6uZVT5oLxLnOqBcaF0hD3LK6Rn3xWuS/P/WHib
+	Fa0AgskMizHWt0J/wMskqtpYUlqg+xPt49BNcsHCHUTyrNmE8pGIlhge6QaQ8hiDfEcvCu/TgI0
+	sjE5s3G7lPFyrl6hkarbGHWnm+jWAOgkJtn7CFg==
+X-Google-Smtp-Source: AGHT+IFvneYPfHw10OoTjF7DG4R4kNeVCtXde9LOb10gF9Bf3fn+/lBg5GgGDr671XjIvWiL9/bblQ==
+X-Received: by 2002:a17:902:f706:b0:240:1953:f9a with SMTP id d9443c01a7336-245febe9311mr14910865ad.2.1755745260921;
+        Wed, 20 Aug 2025 20:01:00 -0700 (PDT)
+Received: from lkmp.. ([49.37.161.210])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed4c73f2sm40160695ad.94.2025.08.20.20.00.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 20:01:00 -0700 (PDT)
+From: Rakuram Eswaran <rakuram.e96@gmail.com>
+To: linux-doc@vger.kernel.org,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	corbet@lwn.net
+Cc: tzimmermann@suse.de,
+	mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	simona@ffwll.ch,
+	siqueira@igalia.com,
+	harry.wentland@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org,
+	rakuram.e96@gmail.com
+Subject: [PATCH v2 0/2] docs: gpu: fix typo
+Date: Thu, 21 Aug 2025 08:29:54 +0530
+Message-ID: <20250821025957.22546-1-rakuram.e96@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c248:0:b0:3e5:5937:e555 with SMTP id
- e9e14a558f8ab-3e6d4060f71mr17648015ab.6.1755745111642; Wed, 20 Aug 2025
- 19:58:31 -0700 (PDT)
-Date: Wed, 20 Aug 2025 19:58:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68a68b57.050a0220.3d78fd.0012.GAE@google.com>
-Subject: [syzbot] [v9fs?] UBSAN: shift-out-of-bounds in v9fs_get_tree
-From: syzbot <syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
-	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
-	v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Fixed multiple typos in GPU documentation reported by Codespell.
 
-syzbot found the following issue on:
+This series touches both amdgpu- and drm-related files.
 
-HEAD commit:    3ac864c2d9bb Add linux-next specific files for 20250818
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13706442580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d1acc6b9e1fca1b
-dashboard link: https://syzkaller.appspot.com/bug?extid=30c83da54e948f6e9436
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141586f0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124c9ba2580000
+Changelog:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/37dbe82593f0/disk-3ac864c2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d2fea0824445/vmlinux-3ac864c2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6f2a83735a01/bzImage-3ac864c2.xz
+Changes since v1:
+- Dropped fix for drm-mm.rst (was included in v1)
+- Split into a patch series targeting both amdgpu and drm
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com
+Rakuram Eswaran (2):
+  docs: gpu: amdgpu: Fix spelling in amdgpu documentation
+  docs: gpu: Fix spelling in gpu documentation
 
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/9p/vfs_super.c:57:22
-shift exponent 32 is too large for 32-bit type 'int'
-CPU: 0 UID: 0 PID: 5861 Comm: syz-executor379 Not tainted 6.17.0-rc2-next-20250818-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
- __ubsan_handle_shift_out_of_bounds+0x386/0x410 lib/ubsan.c:494
- v9fs_fill_super fs/9p/vfs_super.c:57 [inline]
- v9fs_get_tree+0x957/0xa90 fs/9p/vfs_super.c:125
- vfs_get_tree+0x8f/0x2b0 fs/super.c:1752
- do_new_mount+0x2a2/0xa30 fs/namespace.c:3810
- do_mount fs/namespace.c:4138 [inline]
- __do_sys_mount fs/namespace.c:4349 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4326
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff35edd46a9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffeee8a4078 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00002000000025c0 RCX: 00007ff35edd46a9
-RDX: 00002000000000c0 RSI: 00002000000025c0 RDI: 0000000000000000
-RBP: 0000200000000280 R08: 0000200000000280 R09: 00007ffeee8a4258
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff35ee1d017
-R13: 00007ffeee8a4248 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
----[ end trace ]---
+ Documentation/gpu/amdgpu/debugfs.rst                       | 4 ++--
+ Documentation/gpu/amdgpu/display/programming-model-dcn.rst | 2 +-
+ Documentation/gpu/amdgpu/process-isolation.rst             | 2 +-
+ Documentation/gpu/drm-uapi.rst                             | 2 +-
+ Documentation/gpu/todo.rst                                 | 4 ++--
+ 5 files changed, 7 insertions(+), 7 deletions(-)
 
+-- 
+2.43.0
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
