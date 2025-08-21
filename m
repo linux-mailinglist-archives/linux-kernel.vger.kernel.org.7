@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-779952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD5AB2FB4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:53:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49633B2FB75
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 15:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13B76B6568D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:50:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B20762601C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 13:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5221D24DCF7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2D023D7DF;
 	Thu, 21 Aug 2025 13:50:58 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A7E233714
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C66E2356CE
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Aug 2025 13:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755784257; cv=none; b=agcAZ83fV9UCS12siBsoODBqmLljIbAVEWUVGoxpLaVHEgiDASp89o2E3Rgrcnzatfev5Mts9zvSRmFaFOJz2Bbxe9fRyyF7qoOTSuu0ydNvAwZUBpYOSekoI2HZWnwTZhCW7dYJHv+DFj071iJjA1djzBPGMrsJLgW04XlW9/w=
+	t=1755784257; cv=none; b=rqEwOb1wL0saFtIOsCFJvvKcj+peS7QpvRrt4+neqBwJ6K24K1CLp8R4SvTH/Oz5Kl6r7GAiAmIVxem/sYVwvaRcXzksObjhkJsk1Vo/m+6Cr6oddSBYr38JNL+k8Q3f/EAIXyVzY4o+k2vGRhZWaQaxQ6HQB0QL0If2w/e1zNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755784257; c=relaxed/simple;
-	bh=wfMrZ2Vpvp7qvM3/QbnApGT2OJbGdjuq0WK9km2NSXc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ARakIrJ1G3n4Hpt/YGdGEm9QOJ2qRkPyEXduAYuSHOOsltw3pev1AgSvnn7Ww8M+89Y+N+9k3HOAe5f5+WY4TpX/TZFC1C4Qa6aePzdWQM/RyAmy8T1+4h+kQfNvuddaIBoHTXNjcHKwuE+zZoUzPO7vKEA2vsSEoe0495ChqhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	bh=sXIalD13FQKfoSNKuJ8W0EysDObVx1fo3KJVI3JfQFc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K+rhwgDjWkCXMGPATOLhJTPfVDvRosXz/wn2xycH+bc32FksoAxN7ywsbM22zWNSaqMjweE8w2LWPKnv9WoffEBbn5I/PoskNMwVu3Qr80DdNXhxZqLLQ7ZdQQ3al9xU/Hr+H6fVgv7GdFBXWb4vW+nDLz4Eae+5iO/4C720idQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c74NR0SqVzPpKf;
-	Thu, 21 Aug 2025 21:46:15 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 03B27180087;
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4c74W108Zsz27j5F;
+	Thu, 21 Aug 2025 21:51:57 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 79969180044;
 	Thu, 21 Aug 2025 21:50:51 +0800 (CST)
 Received: from kwepemn100008.china.huawei.com (7.202.194.111) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 21 Aug 2025 21:50:50 +0800
+ 15.2.1544.11; Thu, 21 Aug 2025 21:50:51 +0800
 Received: from localhost.huawei.com (10.90.31.46) by
  kwepemn100008.china.huawei.com (7.202.194.111) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 21 Aug 2025 21:50:49 +0800
+ 15.2.1544.11; Thu, 21 Aug 2025 21:50:50 +0800
 From: Yushan Wang <wangyushan12@huawei.com>
 To: <will@kernel.org>, <mark.rutland@arm.com>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
@@ -48,10 +49,12 @@ CC: <robin.murphy@arm.com>, <yangyicong@huawei.com>,
 	<Jonathan.Cameron@huawei.com>, <liuyonglong@huawei.com>,
 	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
 	<wangyushan12@huawei.com>, <hejunhao3@h-partners.com>
-Subject: [PATCH v2 0/9] Updates of HiSilicon Uncore L3C PMU
-Date: Thu, 21 Aug 2025 21:50:40 +0800
-Message-ID: <20250821135049.2010220-1-wangyushan12@huawei.com>
+Subject: [PATCH v2 1/9] drivers/perf: hisi: Relax the event ID check in the framework
+Date: Thu, 21 Aug 2025 21:50:41 +0800
+Message-ID: <20250821135049.2010220-2-wangyushan12@huawei.com>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20250821135049.2010220-1-wangyushan12@huawei.com>
+References: <20250821135049.2010220-1-wangyushan12@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,75 +66,47 @@ Content-Type: text/plain
 X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
  kwepemn100008.china.huawei.com (7.202.194.111)
 
-Support new version of L3C PMU, which supports extended events space
-which can be controlled in up to 2 extra address spaces with separate
-overflow interrupts.  The layout of the control/event registers are kept
-the same.  The extended events with original ones together cover the
-monitoring job of all transactions on L3C.
+From: Yicong Yang <yangyicong@hisilicon.com>
 
-That's said, the driver supports finer granual statistics of L3 cache
-with separated and dedicated PMUs, and a new operand `ext` to give a
-hint of to which part should perf counting command be delivered.
+Event ID is only using the attr::config bit [7, 0] but we check the
+event range using the whole 64bit field. It blocks the usage of the
+rest field of attr::config. Relax the check by only using the
+bit [7, 0].
 
-The extended events is specified with `ext=[1|2]` option for the driver
-to distinguish:
-
-perf stat -e hisi_sccl0_l3c0_0/event=<event_id>,ext=<ext>/
-
-Currently only event option using config bit [7, 0]. There's still
-plenty unused space. Make ext using config [16, 17] and reserve
-bit [15, 8] for event option for future extension.
-
-With the capability of extra counters, number of counters for HiSilicon
-uncore PMU could reach up to 24, the usedmap is extended accordingly.
-
-The hw_perf_event::event_base is initialized to the base MMIO address
-of the event and will be used for later control, overflow handling and
-counts readout.
-
-We still make use of the Uncore PMU framework for handling the events
-and interrupt migration on CPU hotplug. The framework's cpuhp callback
-will handle the event migration and interrupt migration of orginial
-event, if PMU supports extended events then the interrupt of extended
-events is migrated to the same CPU choosed by the framework.
-
-A new HID of HISI0215 is used for this version of L3C PMU.
-
-Some necessary refactor is included, allowing the framework to cope with
-the new version of driver.
-
-Depends-on: drivers/perf: hisi: Add support for HiSilicon NOC and MN PMU driver
-Depends-on: Message-ID: <20250717121727.61057-1-yangyicong@huawei.com>
-
+Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
 ---
+ drivers/perf/hisilicon/hisi_uncore_pmu.c | 2 +-
+ drivers/perf/hisilicon/hisi_uncore_pmu.h | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-Changes:
-
-v1 -> v2:
-  - Don't call disable_irq() and simply return success when there is no
-    CPU available for irq migration.
-  - Documentation patch split.
-  - Fix of a few other issues etc. per Jonathan.
-
-Yicong Yang (7):
-  drivers/perf: hisi: Relax the event ID check in the framework
-  drivers/perf: hisi: Export hisi_uncore_pmu_isr()
-  drivers/perf: hisi: Simplify the probe process of each L3C PMU version
-  drivers/perf: hisi: Extract the event filter check of L3C PMU
-  drivers/perf: hisi: Extend the field of tt_core
-  drivers/perf: hisi: Refactor the event configuration of L3C PMU
-  drivers/perf: hisi: Add support for L3C PMU v3
-
-Yushan Wang (2):
-  Documentation: hisi-pmu: Fix of minor format error
-  Documentation: hisi-pmu: Add introduction to HiSilicon
-
- Documentation/admin-guide/perf/hisi-pmu.rst  |  43 +-
- drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c | 520 +++++++++++++++----
- drivers/perf/hisilicon/hisi_uncore_pmu.c     |   5 +-
- drivers/perf/hisilicon/hisi_uncore_pmu.h     |   6 +-
- 4 files changed, 477 insertions(+), 97 deletions(-)
-
+diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+index a449651f79c9..6594d64b03a9 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+@@ -234,7 +234,7 @@ int hisi_uncore_pmu_event_init(struct perf_event *event)
+ 		return -EINVAL;
+ 
+ 	hisi_pmu = to_hisi_pmu(event->pmu);
+-	if (event->attr.config > hisi_pmu->check_event)
++	if ((event->attr.config & HISI_EVENTID_MASK) > hisi_pmu->check_event)
+ 		return -EINVAL;
+ 
+ 	if (hisi_pmu->on_cpu == -1)
+diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.h b/drivers/perf/hisilicon/hisi_uncore_pmu.h
+index 777675838b80..6186b232f454 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_pmu.h
++++ b/drivers/perf/hisilicon/hisi_uncore_pmu.h
+@@ -43,7 +43,8 @@
+ 		return FIELD_GET(GENMASK_ULL(hi, lo), event->attr.config);  \
+ 	}
+ 
+-#define HISI_GET_EVENTID(ev) (ev->hw.config_base & 0xff)
++#define HISI_EVENTID_MASK	0xff
++#define HISI_GET_EVENTID(ev) ((ev)->hw.config_base & HISI_EVENTID_MASK)
+ 
+ #define HISI_PMU_EVTYPE_BITS		8
+ #define HISI_PMU_EVTYPE_SHIFT(idx)	((idx) % 4 * HISI_PMU_EVTYPE_BITS)
 -- 
 2.33.0
 
