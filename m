@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-779209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686EAB2F077
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:04:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C3AB2F07A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 10:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578221C86660
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:03:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65113A28088
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 08:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B552EB5A0;
-	Thu, 21 Aug 2025 08:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307C52EA168;
+	Thu, 21 Aug 2025 08:02:30 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716C72EACE9;
-	Thu, 21 Aug 2025 08:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373062EAD1B;
+	Thu, 21 Aug 2025 08:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755763348; cv=none; b=lbp18l/bcgs/11n+cBRZf0KwbUlJ0/jASm5biQ1wdM7Fw1XK4VoRwibOFAWgEr2emV8xo1tI4lRGlxHSaBrL0XrN72PTqRSjWZDmou18vvO0leJK8ixI9ut5fUJgO0COOEVAtqRbw3GoObkMogFL+zSZfNn7ib2kbLGB/PmXFLE=
+	t=1755763349; cv=none; b=PdvxrspL9REMYLGtLuobjIKOYPD8OocPhqee5DxIt0660RSWpNJU3QGQN+3iElugP8UheP3glvs219TW9gGOI/mK8rjh/0zuQvC4BxunKj4AvIOQLqqL6kGzd5DB5bBORmeGSkBT2b4QkTGMdann+qRVj7YBx5lcGDtetyXGn3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755763348; c=relaxed/simple;
-	bh=cPjqfdJrZGPUqbcMerEjKTPEAY7lBVPtkCGDUQYUjwM=;
+	s=arc-20240116; t=1755763349; c=relaxed/simple;
+	bh=tm3xCUjka8QQlURenrEVc9mlc+Uxa4SXF2NrSxVFsjk=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k+8HCmAmlzgHxGecpX8JVR99PJYxPfhbDkFe8GUK4NdsUTQidGp74t0iXwPP/S4/44siXycMMvPgqWbYviahcaYCLYyzzKP/+rT32GExLS7twON+jmP6vRytg2AWLlrkqc28BM1mJq/8SIsp2dnWxzNNWHovTEmd34/iiu63M08=
+	 MIME-Version:Content-Type; b=iiX5P7DHEI4b76WHWa/D8VQPd14QM8R6Yg9HmUAc3sZ8qN+R4+m1d3j7q/qtM3NAkzxvESMJXja/78fIGvW5QPr0Ca2bpy/ukAKzKRoERJyCqkZCHBd4doKW8b4tkeCYaLy/p3xmpUGz75Fn487nm8YJXp+kZa3TI8C/H6eBtRA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -52,9 +52,9 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>,
 	<romlem@google.com>, William Kennington <wak@google.com>, Yuxiao Zhang
 	<yuxiaozhang@google.com>, <wthai@nvidia.com>, <leohu@nvidia.com>,
 	<dkodihalli@nvidia.com>, <spuranik@nvidia.com>
-Subject: [PATCH v4 4/5] arm64: dts: aspeed: Add AST2700 Evaluation Board
-Date: Thu, 21 Aug 2025 16:02:13 +0800
-Message-ID: <20250821080214.513090-5-ryan_chen@aspeedtech.com>
+Subject: [PATCH v4 5/5] arm64: configs: Update defconfig for AST2700 platform support
+Date: Thu, 21 Aug 2025 16:02:14 +0800
+Message-ID: <20250821080214.513090-6-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250821080214.513090-1-ryan_chen@aspeedtech.com>
 References: <20250821080214.513090-1-ryan_chen@aspeedtech.com>
@@ -67,65 +67,25 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-ASPEED AST2700 EVB is prototype development board based
-on AST2700 SOC.
+Enable options for ASPEED AST2700 SoC.
 
 Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 ---
- arch/arm64/boot/dts/Makefile               |  1 +
- arch/arm64/boot/dts/aspeed/Makefile        |  4 ++++
- arch/arm64/boot/dts/aspeed/ast2700-evb.dts | 22 ++++++++++++++++++++++
- 3 files changed, 27 insertions(+)
- create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
- create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-index 79b73a21ddc2..d9c3e58b9ca5 100644
---- a/arch/arm64/boot/dts/Makefile
-+++ b/arch/arm64/boot/dts/Makefile
-@@ -35,3 +35,4 @@ subdir-y += tesla
- subdir-y += ti
- subdir-y += toshiba
- subdir-y += xilinx
-+subdir-y += aspeed
-diff --git a/arch/arm64/boot/dts/aspeed/Makefile b/arch/arm64/boot/dts/aspeed/Makefile
-new file mode 100644
-index 000000000000..ffe7e15017cc
---- /dev/null
-+++ b/arch/arm64/boot/dts/aspeed/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+dtb-$(CONFIG_ARCH_ASPEED) += \
-+	ast2700-evb.dtb
-diff --git a/arch/arm64/boot/dts/aspeed/ast2700-evb.dts b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-new file mode 100644
-index 000000000000..654b36ec24de
---- /dev/null
-+++ b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+/dts-v1/;
-+#include "aspeed-g7.dtsi"
-+
-+/ {
-+	model = "AST2700 EVB";
-+	compatible = "aspeed,ast2700-evb", "aspeed,ast2700";
-+
-+	chosen {
-+		stdout-path = "serial12:115200n8";
-+	};
-+
-+	memory@400000000 {
-+		device_type = "memory";
-+		reg = <0x4 0x00000000 0x0 0x40000000>;
-+	};
-+};
-+
-+&uart12 {
-+	status = "okay";
-+};
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 7e04a2905ce4..fe354c91cb7f 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -38,6 +38,7 @@ CONFIG_ARCH_AIROHA=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_ALPINE=y
+ CONFIG_ARCH_APPLE=y
++CONFIG_ARCH_ASPEED=y
+ CONFIG_ARCH_BCM=y
+ CONFIG_ARCH_BCM2835=y
+ CONFIG_ARCH_BCM_IPROC=y
 -- 
 2.34.1
 
