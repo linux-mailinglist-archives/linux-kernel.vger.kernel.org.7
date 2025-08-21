@@ -1,140 +1,137 @@
-Return-Path: <linux-kernel+bounces-779700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-779701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A65CB2F774
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:04:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA25B2F779
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9D31887C24
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:04:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A33D7ABEDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 12:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E717330F558;
-	Thu, 21 Aug 2025 12:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7A2310624;
+	Thu, 21 Aug 2025 12:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IABLKUv1"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="maaJAvxv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B752C1A2632;
-	Thu, 21 Aug 2025 12:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E892B20D50B;
+	Thu, 21 Aug 2025 12:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755777846; cv=none; b=BTam0eZ88L1ZzykJMHqM4mO2HNKlp03DHIeYqr+WwOEqAdpT0PTK9JwumWollBdPVB/CUmMPaANWFMNrNxjcGVc2dDMFMvOZwQ+TQzFjHVkudkMQvTJeEH7W/OFmqEfNKDE2SEw6Gwnj/N+fpl5Z4uIG94U8K/IVjRtDG+CBZVg=
+	t=1755777897; cv=none; b=kJ71PDqKGA6bQfUAKHWw6vmtJE0KKOVIczDOgHDv4ovqOh1DuHbchejpSIfNQVXWqznZVqgr3yzU2RIAgvk3+ECUZUD2pu3IFExuQM+/Jc9h6BWGbRwqQ83mgFUR0qQo/oVeHZzgayH6+kRIU7sdHOOMUpgfVlx3vzvQsLSMDQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755777846; c=relaxed/simple;
-	bh=iWqVCpEyCYQu75iRwh/RNEKe7kLijDnU6Sa+rhotX28=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Il9yOiHM6ecWY7GhCS6b/3M8ioChkeAknNHAffTwLRPbc5lWwSRxevnRomxbDKkDFeYqzXDMBvcw/2w4k3jeZw+kV7K5WaH0RVlaN7YJA9rp0w0Bq5UPeTUVD52zBeo2EznWHUWBSunH++emBMoFend1zsU7s30ZY8XVaeCbY2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IABLKUv1; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9e4148134so595852f8f.2;
-        Thu, 21 Aug 2025 05:04:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755777843; x=1756382643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0LPqDY2/mkP8AxkxfM5xJgI36OxqyfgR7+KAcWwBVK4=;
-        b=IABLKUv1AO8Tj466/moiNMxj2UhnIu0FVKcJvYbNqitHmgMgjWQ3kEoWHQ4pkbaTKk
-         U1fSqL0VwMYWAihnFQH8Lb/Al5iELobmq6NblAIrVeJqdcRrkMNB71Tq2DDZVgDvxtBe
-         TGpsrzt8Pyzf4F7Xatax2YCBvraDAlXtK6OP3TOIa74PFn9Vk+on4eMfbbfx4E3EoEY3
-         icRYwPX55/RwGdnLL2WvYQMBln8I4J5lx6b4qOloBc4HVyuE/dF8R5jSNRFDuw7nJzoa
-         BC8zJkGwq42qagN1R+wGeF5llkcr9a7Cn7/xP4XF9RohnP07ttJJdGQZOLLxG67AKGKM
-         yxCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755777843; x=1756382643;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0LPqDY2/mkP8AxkxfM5xJgI36OxqyfgR7+KAcWwBVK4=;
-        b=PTSxGPj9uthAtpQ29OhR8Mj42gfVKS/05J8f22Ea1oUP9GUG0pzQUoiCJA8XQws++d
-         6DUiW1pCUzShiXnRNLbvJMX9gc8yYgVUSHqDtOTH+qN7MOG5dJ4sTfX/pbbu8afTHsBx
-         I0VLZld2CwmcHTw9fZSjclbinbFy3jABtIJtSUApd3fI99d/iywaESkjUrhAipoNe57T
-         upVpSvfPJgoSB7MFFm7NPvhfuz3DdbRHYCEDKbhtHWfIuYONJ5NSwDs9WilI9MasEtNM
-         bqnFkxKY//oFjrXxdaLb3tCa6XJOWhjW95JFdN7btC2koV0f7NLvq/txjXfDeD5hhIqw
-         w/aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAF66H+HBg9AUKy6vBTPZxE3cVxFU0/gQsjlTuCr+vaXWvz6Di/l9ADVpkszHySeZcTRjmyTxmKByq7PoA@vger.kernel.org, AJvYcCVdOjr5NJapb9RdMUpZhNIa32uxWuzKQH6cgdh0rwxggi15MwNdpaft7ir6YmuWrS1I4LRVTeg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydmW19XqK8v2UC3HdLJ7tHp6iaI373HqsM/PusJpcoILy0PNrn
-	ziSVDvEYnUukndL2aMDazTw0jGHG3jVvKjV5xMokjSgTPieDNgjbN11W
-X-Gm-Gg: ASbGncuUlS0VJvry+G7vijAPtRGNLOuLUEezpDK80Vfmb5o3QkYC8UTkuqtHU1CGvB7
-	6SdmoB4BqT2bq3j74zqB7y7Wt2l7xbQpEk2K8BQHelqLIcbja8wdgCwEvyDNUH4WzqkfOgDWVGX
-	qWObQA5lw9fR5MEsJz0BvS9QVnxVqOvkP44nQEKESlxowskXlol/8HTRL3ScGgfr+O7Xmp/3lNd
-	5NvhrDChLbjFGgH5EBo28W5WpV4PIhptpyUMnYn1PrsLb55IoyC4Xf2QCO/wcROMHsq8pk+i75S
-	+lkMqHq6ZOJaRpPF/47iD7mIjWKHFxpXaddD/lhpm4JY6CFlGR0NRJfRK6krH+cW+EyOV6ea0pD
-	xZhCzfQcw/OGn4Y+txhO3iWVr64oAdSnWophfMVK5XKCNTB0tWWd5+HFFqLW2avx8
-X-Google-Smtp-Source: AGHT+IFckJ4WtlTmzyLHyIWZeU9o8mDbA8wfhj+ryhIamNuLocYch7hanc58/VS+k7IKHPsP/mOpwA==
-X-Received: by 2002:a05:6000:3111:b0:3b9:48f:1960 with SMTP id ffacd0b85a97d-3c4965fb3f5mr1688464f8f.49.1755777842695;
-        Thu, 21 Aug 2025 05:04:02 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c0771c19fbsm11511362f8f.41.2025.08.21.05.04.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 05:04:02 -0700 (PDT)
-Date: Thu, 21 Aug 2025 13:03:42 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
- autofs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spin_lock_irqsave() in autofs_write() is bogus
-Message-ID: <20250821130342.15ebaa26@pumpkin>
-In-Reply-To: <CAHk-=wj-NB_5KTCj7yhBsF145oLDuxQPt4J87tXsd6j+p3vzDw@mail.gmail.com>
-References: <20250817163609.GV222315@ZenIV>
-	<CAHk-=wj-NB_5KTCj7yhBsF145oLDuxQPt4J87tXsd6j+p3vzDw@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1755777897; c=relaxed/simple;
+	bh=c6UQ/BkOyGnAZtiZu1VrT/RJ3fByK+kTXyI+rOIXHZk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=L87IwfpMGp5gKL4MqkTm/gqTRS/EqlOA48jhG+cJjMzUbP8THY5B1+KPrdr/bI3jrNQEA7k0k+KgzwnITjOlpKiLAYkcz6l8G0M3Hg5lNLaF9ePiL3wJmADStWseDQ0pwhG48pNiOjR41BjjL684hV8sLeoR7u44x5lUb7TfqzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=maaJAvxv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L9bC2Q031439;
+	Thu, 21 Aug 2025 12:04:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xBBFqalNh5s8t2iKJIbEORIyjEwCQ+PjvcFtOq+otRs=; b=maaJAvxvmqsnv/86
+	kR+qkNY06L5brmxrubJ985ePQeysKj7qE6ipITETS6bR1V2u00KeSye1YvGrEDCE
+	girzhJLqJnIKEVkVZADHIKcqjqg4gEcLtzYyi028RARuH6sil3A7+9cwWrvQz3uZ
+	ON+fNkNc33BEnG9mjHCHMf0OQYPhWmrCRFlj9Ot5pZ+rxTHQy27kpYOXbB1VnYqZ
+	t0eIreCCYHWklrkQyUdwpzNdTbDTISIQgbtU3B0MqdBjqxA5n0rKxQ6ZgriOLFsk
+	5V4yqeo2iYBeaSMggFkUDFoFhZnzjpQruzMeNmozsPiuwrwbENwq5fexF19KaE8h
+	DqtSzg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48n52aw6v4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 12:04:51 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57LC4o2H002265
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Aug 2025 12:04:50 GMT
+Received: from [10.216.5.63] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 21 Aug
+ 2025 05:04:48 -0700
+Message-ID: <9c318b7c-544c-df55-eead-e00244d2992f@quicinc.com>
+Date: Thu, 21 Aug 2025 17:34:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] media: venus: firmware: Use correct reset sequence for
+ IRIS2
+Content-Language: en-US
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>
+CC: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Hans Verkuil
+	<hverkuil@kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250820-venus-iris2-no-tz-v1-1-9ebcc343195a@linaro.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250820-venus-iris2-no-tz-v1-1-9ebcc343195a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDAxMyBTYWx0ZWRfX0PjUm5s3Lxpq
+ by98Wa1KOxQi9etHVzEAp1Q2QW8e7hbM/8LJSCZ3uxcACaf6WNjIwSYL4Jz7LMG65jGq07Kzlv7
+ z29Yk5SdMdENdeqNfTwjmBwDSGICf6xXvfoBs9twdkzBgmM9MsYYPYvULbvh1eGCzCCrbx/uV6I
+ etZYe6CvxfPWrw8MjsImic7Z/8pvs/Fp+FUr+k9NJpHGoZ09c4k8lCOIX1sEpkbvTVi/JeWQZ9N
+ zKnT8hNIqQp+SH+eb0znRbKFRMiucWX9LqMOfDgu+OsE353YaU+e8tfGRUyN0JbY+gFiZ4AHqyq
+ cdSnrA9fxVygpwNcbClSiauQpHqTRsYVne9J0xRS9b0znn9W//YnM3vRNK0BDv8BRM0istGMQQP
+ fpJ2jKGJwRwM9zYzr1IgaOcBZ2pAmA==
+X-Authority-Analysis: v=2.4 cv=TIIci1la c=1 sm=1 tr=0 ts=68a70b64 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8
+ a=COk6AnOGAAAA:8 a=Zxh-gqEWaZ_blzi-cf4A:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: i7SL1eFTQbSwWBNmMhoIPXQfVktjE72q
+X-Proofpoint-GUID: i7SL1eFTQbSwWBNmMhoIPXQfVktjE72q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-21_03,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ bulkscore=0 impostorscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2508110000 definitions=main-2508200013
 
-On Sun, 17 Aug 2025 09:50:25 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> On Sun, 17 Aug 2025 at 09:36, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> >         That function should never be (and never is) called with irqs
-> > disabled - we have an explicit mutex_lock() in there, if nothing else.
-> > Which makes spin_lock_irqsave() use in there pointless - we do need to
-> > disable irqs for ->siglock, but that should be spin_lock_irq().  
+On 8/20/2025 8:46 PM, Stephan Gerhold wrote:
+> When starting venus with the "no_tz" code path, IRIS2 needs the same
+> boot/reset sequence as IRIS2_1. This is because most of the registers were
+> moved to the "wrapper_tz_base", which is already defined for both IRIS2 and
+> IRIS2_1 inside core.c. Add IRIS2 to the checks inside firmware.c as well to
+> make sure that it uses the correct reset sequence.
 > 
-> I think we basically did the irqsave/restore version as the default
-> when not wanting to think about the context.
+> Both IRIS and IRIS2_1 are HFI v6 variants, so the correct sequence was used
+
+s/IRIS/IRIS2
+
+> before commit c38610f8981e ("media: venus: firmware: Sanitize
+> per-VPU-version").
 > 
-> Your patch looks fine, but I doubt it's measurable outside of "it
-> makes the code a few bytes smaller".
+> Fixes: c38610f8981e ("media: venus: firmware: Sanitize per-VPU-version")
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>  drivers/media/platform/qcom/venus/firmware.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-There is a separate problem with all non-irqsave spin locks.
-The lock hold time for spin locks is expected to be short,
-perhaps only a few instruction.
-(If the hold time is long it shouldn't be a spin lock...)
-
-So disabling interrupts won't have a significant effect on interrupt
-latency.
-
-OTOH if an interrupt happens while the spin lock is help the lock
-hold time is extended until the interrupt completes.
-Get caught by an ethernet rx interrupt and it can be a very long
-time (easily several milliseconds) before the hardware interrupt
-and soft-int code returns.
-During that time any other code attempting to acquire the lock
-will spin.
-
-So you may want to disable interrupts on all spin locks.
-The downside is that the disable/enable isn't cheap on a lot
-of systems.
-I'm sure something could be done with the 'pre-empt disable'
-counter to conditionally enable/disable interrupts.
-
-There have also been systems that don't actually disable interrupts,
-they just set a flag.
-When an interrupt happens 'magic' is done so that the ISR can return
-and the interrupt processed when (eg) the spin lock is released.
-
-	David
+with that addressed,
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
 
