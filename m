@@ -1,60 +1,57 @@
-Return-Path: <linux-kernel+bounces-780040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-780026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C3DB2FCCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:35:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1670B2FCD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 16:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D17221D25099
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:26:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6F71BA4397
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Aug 2025 14:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D78528467D;
-	Thu, 21 Aug 2025 14:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8DD2D640D;
+	Thu, 21 Aug 2025 14:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPvniHZH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtlkHiPL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90732857DA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982D5280328;
 	Thu, 21 Aug 2025 14:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755786099; cv=none; b=cMwJLAjEv1vq3k7mFMiwL3Bcza6kWRKrrLFE0HcD382KDaaNL8dzS3jDFZ9EA3QYTim0itdZcffarkg2N0DdRtnzZUPJej1tZ3SL0Z4tUB+JZletwuSg3JlydlsFblv6rOiH/4qUjB3FAYTiEtaO9a39pt151KqpWy6exArHIcQ=
+	t=1755786099; cv=none; b=ABGjkJfWcFCtJRMJC61nv+RnJoYCQewFgV63JAPNDYKI9PlBDpcLGXAw+xFoEMSqz1ulZpz4gb++gRk/lDDKru7ApNON6FmAVySIfnlgMAEM/fj9FjPcGVbwQElXgcz43b+rTDRdrlIgKLBy+Bqlqf0o78CIm8WxrDDF08hjub8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755786099; c=relaxed/simple;
-	bh=RcaqdZwLfefMvyrZbcNpDpPDg5fNh39ClTRYBACxEw0=;
+	bh=uE8fFpGnhMJcK5GXfCzqeiiea156Y1/8xBUIdOSHKgI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EgK6PM/DnMR59h/oCD+amoqeHD9er5lGVwbuE9My6z74rL346KTVpFJLgFIgBhgoO7algsl4Kn1jEiLKhEbpniFGu8/zrq//+bQkg6qGxOarH/AxuYl21DlbTSnyaoPXD/G5hmOSiL9d1GD0WIMthwLqzSmguVr+H3DbEJVHqKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZPvniHZH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2761FC19424;
+	 MIME-Version; b=VV/tR9p0d1Bxz+WPEsp+Mj6qNKd1SyHi/I06GUSSf8xQulczhIsevLi+FapxvTlHOQS23u57gw+fyeIOsfe9hZvy+AdJfCQGIm9clCRJswZKqRPxm9JmOwJCVW2fy6Bnz2t4kAUNteeJyo3fniz4WTyNtGERWQIkHaeI08YEnN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BtlkHiPL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C2FC19422;
 	Thu, 21 Aug 2025 14:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1755786099;
-	bh=RcaqdZwLfefMvyrZbcNpDpPDg5fNh39ClTRYBACxEw0=;
+	bh=uE8fFpGnhMJcK5GXfCzqeiiea156Y1/8xBUIdOSHKgI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZPvniHZHCg+vn/mYW+ke9xN7gioni/R3dB7XDYnyFN1EZAjMKckMLYhN3qeSrhicc
-	 N85vgcLuNSQsfHI0YQG9fiFeUKFtB7suMPDsNYi7okinQ7QNPLtKXMmTnzGS1/q3/R
-	 sgyVe2geQlowjhFHnTLm5gPVLdwkxNxSPAu3McYLWPO+yMShuHy7RC3GMWSTDPgSEB
-	 SYmfNrTK55S4/42ZlrP4FD6LD8NFM2XgP/kqIJyP18VcFIoQSxJIcl/jXz41sI0gNH
-	 ee/0TYo3zS4wItAFYgDSFfRdNlRlaYRvIuy98/h+lDw3gY21i9mq8KcfutK76Vqu6/
-	 zw6w0OBRKnYfg==
+	b=BtlkHiPLBRNfXYO9ys83tffbtgIgbT6sHMOnthh2f9Mpm3nG/fSOkKLxnm+5bs3fR
+	 l63JoB1qK0FXSZQKP9aW/H/YcdjiXdX+ILuST7FEZx+bGmblHEX5HpoSB3YNH+zaT9
+	 AQtNNGsxssIMfql2DSJypEYL+UyYqPJ89fGfpZY3rzM1ZtfUgsjUUrnYnwlAFF+xU9
+	 UPsSy+xSmA1OJJf3TfemoBl86gFY21BqEfZaCbawAznJG2l99M5aGglgrSMFXyqZ2u
+	 CN2yefe9E4B2zIG6VoPz3rg2rdSB51PTzXrp8okl42jHIlADDPlMMLzCu3qd9YyOwH
+	 mxuBU5dEEc7kA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1up6Ab-0000000BT8O-0a5b;
+	id 1up6Ab-0000000BT8S-0gsH;
 	Thu, 21 Aug 2025 16:21:37 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jakub Kicinski <mchehab+huawei@kernel.org>,
-	Jan Stancek <jstancek@redhat.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 06/24] tools: docs: parse-headers.py: move it from sphinx dir
-Date: Thu, 21 Aug 2025 16:21:12 +0200
-Message-ID: <bef6a26663a9c7f7e515f36078432ee7a2a4330e.1755784930.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 07/24] tools: docs: parse_data_structs.py: add methods to return output
+Date: Thu, 21 Aug 2025 16:21:13 +0200
+Message-ID: <1588eefd164040e5b2d946201705459d36f273de.1755784930.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <cover.1755784929.git.mchehab+huawei@kernel.org>
 References: <cover.1755784929.git.mchehab+huawei@kernel.org>
@@ -67,310 +64,160 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-As suggested by Jon, we should start having a tools/docs
-directory, instead of placing everything under scripts.
+When running it from command line, we want to write an output
+file, but when used as a class, one may just want the output
+content returned as a string.
 
-In the specific case of parse-headers.py, the previous
-location is where we're placing Sphinx extensions, which is
-not the right place for execs.
+Split write_output() on two methods to allow both usecases.
 
-Move it to tools/docs/parse-headers.py.
+Also add an extra method to produce a TOC.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .pylintrc                                     |  2 +-
- tools/docs/lib/__init__.py                    |  0
- tools/docs/lib/enrich_formatter.py            | 70 ++++++++++++++
- .../docs/lib/parse_data_structs.py            | 95 ++-----------------
- tools/docs/parse-headers.py                   | 57 +++++++++++
- 5 files changed, 135 insertions(+), 89 deletions(-)
- create mode 100644 tools/docs/lib/__init__.py
- create mode 100644 tools/docs/lib/enrich_formatter.py
- rename Documentation/sphinx/parse-headers.py => tools/docs/lib/parse_data_structs.py (80%)
- create mode 100755 tools/docs/parse-headers.py
+ tools/docs/lib/parse_data_structs.py | 62 ++++++++++++++++++++++++++--
+ tools/docs/parse-headers.py          |  5 ++-
+ 2 files changed, 62 insertions(+), 5 deletions(-)
 
-diff --git a/.pylintrc b/.pylintrc
-index f1d21379254b..ad2476751f80 100644
---- a/.pylintrc
-+++ b/.pylintrc
-@@ -1,2 +1,2 @@
- [MASTER]
--init-hook='import sys; sys.path += ["scripts/lib", "scripts/lib/kdoc", "scripts/lib/abi"]'
-+init-hook='import sys; sys.path += ["scripts/lib", "scripts/lib/kdoc", "scripts/lib/abi", "tools/docs/lib"]'
-diff --git a/tools/docs/lib/__init__.py b/tools/docs/lib/__init__.py
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/tools/docs/lib/enrich_formatter.py b/tools/docs/lib/enrich_formatter.py
-new file mode 100644
-index 000000000000..bb171567a4ca
---- /dev/null
-+++ b/tools/docs/lib/enrich_formatter.py
-@@ -0,0 +1,70 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2025 by Mauro Carvalho Chehab <mchehab@kernel.org>.
-+
-+"""
-+Ancillary argparse HelpFormatter class that works on a similar way as
-+argparse.RawDescriptionHelpFormatter, e.g. description maintains line
-+breaks, but it also implement transformations to the help text. The
-+actual transformations ar given by enrich_text(), if the output is tty.
-+
-+Currently, the follow transformations are done:
-+
-+    - Positional arguments are shown in upper cases;
-+    - if output is TTY, ``var`` and positional arguments are shown prepended
-+      by an ANSI SGR code. This is usually translated to bold. On some
-+      terminals, like, konsole, this is translated into a colored bold text.
-+"""
-+
-+import argparse
-+import re
-+import sys
-+
-+class EnrichFormatter(argparse.HelpFormatter):
-+    """
-+    Better format the output, making easier to identify the positional args
-+    and how they're used at the __doc__ description.
-+    """
-+    def __init__(self, *args, **kwargs):
-+        """Initialize class and check if is TTY"""
-+        super().__init__(*args, **kwargs)
-+        self._tty = sys.stdout.isatty()
-+
-+    def enrich_text(self, text):
-+        """Handle ReST markups (currently, only ``foo``)"""
-+        if self._tty and text:
-+            # Replace ``text`` with ANSI SGR (bold)
-+            return re.sub(r'\`\`(.+?)\`\`',
-+                          lambda m: f'\033[1m{m.group(1)}\033[0m', text)
-+        return text
-+
-+    def _fill_text(self, text, width, indent):
-+        """Enrich descriptions with markups on it"""
-+        enriched = self.enrich_text(text)
-+        return "\n".join(indent + line for line in enriched.splitlines())
-+
-+    def _format_usage(self, usage, actions, groups, prefix):
-+        """Enrich positional arguments at usage: line"""
-+
-+        prog = self._prog
-+        parts = []
-+
-+        for action in actions:
-+            if action.option_strings:
-+                opt = action.option_strings[0]
-+                if action.nargs != 0:
-+                    opt += f" {action.dest.upper()}"
-+                parts.append(f"[{opt}]")
-+            else:
-+                # Positional argument
-+                parts.append(self.enrich_text(f"``{action.dest.upper()}``"))
-+
-+        usage_text = f"{prefix or 'usage: '} {prog} {' '.join(parts)}\n"
-+        return usage_text
-+
-+    def _format_action_invocation(self, action):
-+        """Enrich argument names"""
-+        if not action.option_strings:
-+            return self.enrich_text(f"``{action.dest.upper()}``")
-+
-+        return ", ".join(action.option_strings)
-diff --git a/Documentation/sphinx/parse-headers.py b/tools/docs/lib/parse_data_structs.py
-similarity index 80%
-rename from Documentation/sphinx/parse-headers.py
-rename to tools/docs/lib/parse_data_structs.py
-index 344090ef259c..2b7fa6bd8321 100755
---- a/Documentation/sphinx/parse-headers.py
+diff --git a/tools/docs/lib/parse_data_structs.py b/tools/docs/lib/parse_data_structs.py
+index 2b7fa6bd8321..a5aa2e182052 100755
+--- a/tools/docs/lib/parse_data_structs.py
 +++ b/tools/docs/lib/parse_data_structs.py
-@@ -1,36 +1,32 @@
- #!/usr/bin/env python3
- # SPDX-License-Identifier: GPL-2.0
--# Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@kernel.org>.
--# pylint: disable=C0103,R0902,R0912,R0914,R0915
-+# Copyright (c) 2016-2025 by Mauro Carvalho Chehab <mchehab@kernel.org>.
-+# pylint: disable=R0912,R0915
+@@ -97,33 +97,39 @@ class ParseDataStructs:
+             "prefix": "\\ ",
+             "suffix": "\\ ",
+             "ref_type": ":ref",
++            "description": "IOCTL Commands",
+         },
+         "define": {
+             "prefix": "\\ ",
+             "suffix": "\\ ",
+             "ref_type": ":ref",
++            "description": "Macros and Definitions",
+         },
+         # We're calling each definition inside an enum as "symbol"
+         "symbol": {
+             "prefix": "\\ ",
+             "suffix": "\\ ",
+             "ref_type": ":ref",
++            "description": "Enumeration values",
+         },
+         "typedef": {
+             "prefix": "\\ ",
+             "suffix": "\\ ",
+             "ref_type": ":c:type",
++            "description": "Type Definitions",
+         },
+-        # This is the name of the enum itself
++        # This is the description of the enum itself
+         "enum": {
+             "prefix": "\\ ",
+             "suffix": "\\ ",
+             "ref_type": ":c:type",
++            "description": "Enumerations",
+         },
+         "struct": {
+             "prefix": "\\ ",
+             "suffix": "\\ ",
+             "ref_type": ":c:type",
++            "description": "Structures",
+         },
+     }
  
- """
--Convert a C header or source file ``FILE_IN``, into a ReStructured Text
--included via ..parsed-literal block with cross-references for the
--documentation files that describe the API. It accepts an optional
--``FILE_RULES`` file to describes what elements will be either ignored or
--be pointed to a non-default reference type/name.
-+Parse a source file or header, creating ReStructured Text cross references.
+@@ -359,7 +365,7 @@ class ParseDataStructs:
  
--The output is written at ``FILE_OUT``.
-+It accepts an optional file to change the default symbol reference or to
-+suppress symbols from the output.
+             print()
  
- It is capable of identifying defines, functions, structs, typedefs,
- enums and enum symbols and create cross-references for all of them.
- It is also capable of distinguish #define used for specifying a Linux
- ioctl.
+-    def write_output(self, file_in: str, file_out: str):
++    def gen_output(self):
+         """Write the formatted output to a file."""
  
--The optional ``FILE_RULES`` contains a set of rules like:
-+The optional rules file contains a set of rules like:
+         # Avoid extra blank lines
+@@ -387,12 +393,60 @@ class ParseDataStructs:
+         text = re.sub(r"\\ ([\n ])", r"\1", text)
+         text = re.sub(r" \\ ", " ", text)
  
-     ignore ioctl VIDIOC_ENUM_FMT
-     replace ioctl VIDIOC_DQBUF vidioc_qbuf
-     replace define V4L2_EVENT_MD_FL_HAVE_FRAME_SEQ :c:type:`v4l2_event_motion_det`
- """
++        return text
  
--import argparse
- import os
- import re
- import sys
++    def gen_toc(self):
++        """
++        Create a TOC table pointing to each symbol from the header
++        """
++        text = []
++
++        # Add header
++        text.append(".. contents:: Table of Contents")
++        text.append("   :depth: 2")
++        text.append("   :local:")
++        text.append("")
++
++        # Sort symbol types per description
++        symbol_descriptions = []
++        for k, v in self.DEF_SYMBOL_TYPES.items():
++            symbol_descriptions.append((v['description'], k))
++
++        symbol_descriptions.sort()
++
++        # Process each category
++        for description, c_type in symbol_descriptions:
++
++            refs = self.symbols[c_type]
++            if not refs:  # Skip empty categories
++                continue
++
++            text.append(f"{description}")
++            text.append("-" * len(description))
++            text.append("")
++
++            # Sort symbols alphabetically
++            for symbol, ref in sorted(refs.items()):
++                text.append(f"* :{ref}:")
++
++            text.append("")  # Add empty line between categories
++
++        return "\n".join(text)
++
++    def write_output(self, file_in: str, file_out: str, toc: bool):
+         title = os.path.basename(file_in)
  
- 
--class ParseHeader:
-+class ParseDataStructs:
-     """
-     Creates an enriched version of a Kernel header file with cross-links
-     to each C data structure type.
-@@ -400,80 +396,3 @@ class ParseHeader:
-             f.write("=" * len(title))
-             f.write("\n\n.. parsed-literal::\n\n")
++        if toc:
++            text = self.gen_toc()
++        else:
++            text = self.gen_output()
++
+         with open(file_out, "w", encoding="utf-8", errors="backslashreplace") as f:
+             f.write(".. -*- coding: utf-8; mode: rst -*-\n\n")
+             f.write(f"{title}\n")
+-            f.write("=" * len(title))
+-            f.write("\n\n.. parsed-literal::\n\n")
++            f.write("=" * len(title) + "\n\n")
++
++            if not toc:
++                f.write(".. parsed-literal::\n\n")
++
              f.write(text)
--
--class EnrichFormatter(argparse.HelpFormatter):
--    """
--    Better format the output, making easier to identify the positional args
--    and how they're used at the __doc__ description.
--    """
--    def __init__(self, *args, **kwargs):
--        """Initialize class and check if is TTY"""
--        super().__init__(*args, **kwargs)
--        self._tty = sys.stdout.isatty()
--
--    def enrich_text(self, text):
--        """Handle ReST markups (currently, only ``foo``)"""
--        if self._tty and text:
--            # Replace ``text`` with ANSI bold
--            return re.sub(r'\`\`(.+?)\`\`',
--                          lambda m: f'\033[1m{m.group(1)}\033[0m', text)
--        return text
--
--    def _fill_text(self, text, width, indent):
--        """Enrich descriptions with markups on it"""
--        enriched = self.enrich_text(text)
--        return "\n".join(indent + line for line in enriched.splitlines())
--
--    def _format_usage(self, usage, actions, groups, prefix):
--        """Enrich positional arguments at usage: line"""
--
--        prog = self._prog
--        parts = []
--
--        for action in actions:
--            if action.option_strings:
--                opt = action.option_strings[0]
--                if action.nargs != 0:
--                    opt += f" {action.dest.upper()}"
--                parts.append(f"[{opt}]")
--            else:
--                # Positional argument
--                parts.append(self.enrich_text(f"``{action.dest.upper()}``"))
--
--        usage_text = f"{prefix or 'usage: '} {prog} {' '.join(parts)}\n"
--        return usage_text
--
--    def _format_action_invocation(self, action):
--        """Enrich argument names"""
--        if not action.option_strings:
--            return self.enrich_text(f"``{action.dest.upper()}``")
--        else:
--            return ", ".join(action.option_strings)
--
--
--def main():
--    """Main function"""
--    parser = argparse.ArgumentParser(description=__doc__,
--                                     formatter_class=EnrichFormatter)
--
--    parser.add_argument("-d", "--debug", action="count", default=0,
--                        help="Increase debug level. Can be used multiple times")
--    parser.add_argument("file_in", help="Input C file")
--    parser.add_argument("file_out", help="Output RST file")
--    parser.add_argument("file_rules", nargs="?",
--                        help="Exceptions file (optional)")
--
--    args = parser.parse_args()
--
--    parser = ParseHeader(debug=args.debug)
--    parser.parse_file(args.file_in)
--
--    if args.file_rules:
--        parser.process_exceptions(args.file_rules)
--
--    parser.debug_print()
--    parser.write_output(args.file_in, args.file_out)
--
--
--if __name__ == "__main__":
--    main()
 diff --git a/tools/docs/parse-headers.py b/tools/docs/parse-headers.py
-new file mode 100755
-index 000000000000..07d3b47c4834
---- /dev/null
+index 07d3b47c4834..bfa4e46a53e3 100755
+--- a/tools/docs/parse-headers.py
 +++ b/tools/docs/parse-headers.py
-@@ -0,0 +1,57 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2016, 2025 by Mauro Carvalho Chehab <mchehab@kernel.org>.
-+# pylint: disable=C0103
+@@ -36,6 +36,9 @@ def main():
+ 
+     parser.add_argument("-d", "--debug", action="count", default=0,
+                         help="Increase debug level. Can be used multiple times")
++    parser.add_argument("-t", "--toc", action="store_true",
++                        help="instead of a literal block, outputs a TOC table at the RST file")
 +
-+"""
-+Convert a C header or source file ``FILE_IN``, into a ReStructured Text
-+included via ..parsed-literal block with cross-references for the
-+documentation files that describe the API. It accepts an optional
-+``FILE_RULES`` file to describes what elements will be either ignored or
-+be pointed to a non-default reference type/name.
-+
-+The output is written at ``FILE_OUT``.
-+
-+It is capable of identifying defines, functions, structs, typedefs,
-+enums and enum symbols and create cross-references for all of them.
-+It is also capable of distinguish #define used for specifying a Linux
-+ioctl.
-+
-+The optional ``FILE_RULES`` contains a set of rules like:
-+
-+    ignore ioctl VIDIOC_ENUM_FMT
-+    replace ioctl VIDIOC_DQBUF vidioc_qbuf
-+    replace define V4L2_EVENT_MD_FL_HAVE_FRAME_SEQ :c:type:`v4l2_event_motion_det`
-+"""
-+
-+import argparse
-+
-+from lib.parse_data_structs import ParseDataStructs
-+from lib.enrich_formatter import EnrichFormatter
-+
-+def main():
-+    """Main function"""
-+    parser = argparse.ArgumentParser(description=__doc__,
-+                                     formatter_class=EnrichFormatter)
-+
-+    parser.add_argument("-d", "--debug", action="count", default=0,
-+                        help="Increase debug level. Can be used multiple times")
-+    parser.add_argument("file_in", help="Input C file")
-+    parser.add_argument("file_out", help="Output RST file")
-+    parser.add_argument("file_rules", nargs="?",
-+                        help="Exceptions file (optional)")
-+
-+    args = parser.parse_args()
-+
-+    parser = ParseDataStructs(debug=args.debug)
-+    parser.parse_file(args.file_in)
-+
-+    if args.file_rules:
-+        parser.process_exceptions(args.file_rules)
-+
-+    parser.debug_print()
-+    parser.write_output(args.file_in, args.file_out)
-+
-+
-+if __name__ == "__main__":
-+    main()
+     parser.add_argument("file_in", help="Input C file")
+     parser.add_argument("file_out", help="Output RST file")
+     parser.add_argument("file_rules", nargs="?",
+@@ -50,7 +53,7 @@ def main():
+         parser.process_exceptions(args.file_rules)
+ 
+     parser.debug_print()
+-    parser.write_output(args.file_in, args.file_out)
++    parser.write_output(args.file_in, args.file_out, args.toc)
+ 
+ 
+ if __name__ == "__main__":
 -- 
 2.50.1
 
